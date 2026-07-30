@@ -1,0 +1,28 @@
+II.8.2 Kitchen stations
+At minimum: Food, Cold + Dessert.
+II.8.3 Routing
+Routing is determined by product/category/station rules.
+II.8.4 Separate states
+Order state and kitchen ticket state are separate. This prevents partial
+kitchen completion from mutating payment/bill logic directly. Extended in
+this merge: ticket state and ticket-item state are also separate — see
+II.5.7A.
+II.9 Audit rules
+Audit is mandatory for: login/logout, order
+creation/modification/cancellation, table transfer/merge, bill split, payment
+creation/reversal/refund, meal card settlement changes, recipe version
+activation, production changes, inventory adjustments, waste,
+complimentary, discount, fiscal document actions, invoice actions,
+reconciliation actions, backup/restore events, permission changes, settings
+changes.
+Audit is not editable by ordinary users.
+Note on Table (II.5.15): Table status transitions are not individually
+mandatory audit events (they are high-frequency, low-stakes, non-
+financial) — this is a deliberate, explicitly-stated exception to the general
+rule above, not an oversight.
+II.10 Reporting domains
+Reporting is derived data, not source of truth. Reports include: daily sales,
+product sales, category sales, waiter performance, table performance, daily
+menu sell-through, portion consumption, waste report, cash report,
+payment mix, meal card settlement report, customer account aging, invoice
+aging, reconciliation backlog, printer failures, backup status.

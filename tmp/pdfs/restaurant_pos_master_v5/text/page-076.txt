@@ -1,0 +1,27 @@
+reconciliation.reconciliation_cases: reconciliation_case_id PK,
+case_type not null, severity not null, status not null, source_reference_type
+not null, source_reference_id not null, provider_code null, summary not null,
+details jsonb null, opened_at not null, closed_at null, closed_by null,
+row_version.
+Canonical status (→ II.5.12): Open, Investigating, WaitingProvider,
+Resolved, Dismissed, Escalated.
+III.23.2 reconciliation_events
+reconciliation.reconciliation_events: reconciliation_event_id PK,
+reconciliation_case_id FK not null, event_type not null, payload jsonb not
+null, created_at not null.
+III.23.3 reconciliation_actions
+reconciliation.reconciliation_actions: reconciliation_action_id PK,
+reconciliation_case_id FK not null, action_type not null, action_payload
+jsonb not null, performed_by null, performed_at not null.
+III.24 Audit schema
+III.24.1 audit_events
+audit.audit_events: audit_event_id PK, actor_user_id null, actor_device_id
+null, entity_type not null, entity_id null, action_type not null, before_state
+jsonb null, after_state jsonb null, reason null, correlation_id null, request_id
+null, created_at not null.
+Indexes: entity_type+entity_id, action_type, created_at, correlation_id.
+III.24.2 audit_event_details
+audit.audit_event_details: audit_event_detail_id PK, audit_event_id FK
+not null, detail_key not null, detail_value not null.
+III.25 Backup schema
+III.25.1 backup_jobs

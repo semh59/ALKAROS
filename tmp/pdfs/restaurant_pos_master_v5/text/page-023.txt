@@ -1,0 +1,22 @@
+Mismatch durumunda kayıt silinmez; ReconciliationCase oluşturulur.
+I.40 V1.5 — Alerting
+Alert sources: printer offline, print queue failure, payment unknown, fiscal
+failure, QNB failure, online provider failure, backup failure, database health,
+disk space, reconciliation mismatch.
+Severity: Info, Warning, Critical.
+Lifecycle (canonical: II.5.13): Open, Acknowledged, Escalated,
+Suppressed, Resolved.
+I.41 V1.5 — Backup & Recovery
+I.41.1 Backup
+local backup, encrypted off-site backup, retention, retry, verification, health
+status.
+I.41.2 Restore
+Backup →  Restore →  Database Integrity →  Application Startup → 
+Critical Flow Verification
+I.41.3 RPO / RTO
+Final plan içinde hedef değerler ayrıca ölçülerek belirlenir; varsayılan
+değerler ölçülmeden "garanti" olarak yazılmaz.
+I.42 V1.5 — Observability
+structured logging, correlation ID, provider reference, request ID, audit ID,
+health checks, integration health, printer health, backup health,
+reconciliation health. Kritik işlemler sonradan izlenebilir olmalıdır.

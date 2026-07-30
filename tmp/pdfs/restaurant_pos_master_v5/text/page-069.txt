@@ -1,0 +1,30 @@
+III.16.6 print_jobs — CORRECTED (Corrections v5 §2, closes
+audit finding B1a)
+kitchen.print_jobs: print_job_id PK, kitchen_ticket_id FK nullable, bill_id
+FK nullable, order_id FK nullable, printer_id FK not null, idempotency_key
+not null, status not null, attempt_count default 0, last_error null, created_at
+not null, updated_at not null. Constraint: unique(idempotency_key).
+Canonical status values (previously the only major status column in the
+schema with no defined list — now added, matches II.5.8 exactly):
+Pending
+Printing
+Printed
+Failed
+Retrying
+Cancelled
+Rules: Failed does not delete the parent kitchen_ticket_id / order_id;
+Retrying increments attempt_count, and idempotency_key prevents
+uncontrolled duplicate physical output on retry; Cancelled is only
+reachable from Pending or Retrying, never from Printed.
+III.16.7 print_job_attempts
+kitchen.print_job_attempts: print_job_attempt_id PK, print_job_id FK not
+null, attempt_no not null, request_payload jsonb not null, response_payload
+jsonb null, status not null, created_at not null.
+III.17 Meal Card schema
+III.17.1 meal_card_providers
+meal_card.meal_card_providers: meal_card_provider_id PK, code unique
+not null, name not null, active default true, settlement_policy not null.
+III.17.2 meal_card_payments — CORRECTED (Corrections v5
+§4.1, closes audit finding B4.1)
+meal_card.meal_card_payments: meal_card_payment_id PK, payment_id
+FK not null, meal_card_provider_id FK not null, provider_reference null,

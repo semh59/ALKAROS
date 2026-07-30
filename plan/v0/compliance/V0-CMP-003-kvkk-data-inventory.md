@@ -1,8 +1,8 @@
 # V0-CMP-003 - Create KVKK data inventory
 
 - Task ID: V0-CMP-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-cmp-003
 - Work type: validation
 - Surface state: Planned
 

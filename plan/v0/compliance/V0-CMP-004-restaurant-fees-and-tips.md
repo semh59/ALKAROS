@@ -1,8 +1,8 @@
 # V0-CMP-004 - Determine restaurant fee and tip applicability
 
 - Task ID: V0-CMP-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-cmp-004
 - Work type: validation
 - Surface state: Planned
 

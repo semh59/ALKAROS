@@ -1,8 +1,8 @@
 # V0-DOM-010 - Define inventory cost basis
 
 - Task ID: V0-DOM-010
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dom-010
 - Work type: decision
 - Surface state: Planned
 

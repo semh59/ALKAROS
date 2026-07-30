@@ -1,0 +1,31 @@
+external_order_id unique.
+III.29.6 Print idempotency: idempotency_key unique in print_jobs.
+III.29.7 Meal card settlement uniqueness: provider_id + settlement period
+unique enough to prevent duplicate settlement records for the same period
+model.
+III.29.8 Bill closure constraints: bill cannot be marked paid without full
+allocation and valid payment completion states.
+III.29.9 Non-negative quantities: stock and portion quantities must not go
+negative through normal operation.
+III.29.10 Reconciliation case uniqueness: source reference + case type may
+be unique for open cases, depending on policy.
+III.29.11(new — Corrections v5 §1)Payment allocation duplicate-
+protection: enforced via ux_payment_allocations_with_target,
+ux_payment_allocations_direct, and
+ux_payment_allocations_idempotency (III.8.2) — not application-logic-only.
+III.30 Indexing strategy
+III.30.1 High-frequency indexes
+orders by status/source/submitted_at; order_items by order_id; bills by
+status/opened_at; payments by bill_id/status/initiated_at; daily_menu_items
+by daily_menu_id/product_id; portion_reservations by
+daily_menu_item_id/status; stock_balances by
+stock_item_id/stock_location_id; print_jobs by status/printer_id/created_at;
+reconciliation_cases by status/severity/opened_at; audit_events by
+entity_type/entity_id/created_at.
+III.30.2 JSONB indexes
+GIN indexes where JSONB is used heavily: webhook payloads, raw provider
+responses, integration payloads, audit details if needed, reconciliation
+payloads.
+III.31 View strategy
+Use views or materialized views only for derived reporting layers: daily
+sales summary, waiter performance summary, daily menu sell-through,

@@ -1,0 +1,33 @@
+account_transactions.direction (fixed in C3/III.18.3 as a GENERATED
+ALWAYS column precisely to prevent drift), there is no equivalent
+database-level enforcement here — nothing prevents a settlement moving
+to
+Settled while some of its child meal_card_payments rows are still
+sitting at IncludedInSettlement because an application bug forgot to
+bulk-update them. This is the same class of risk already identified and
+fixed for direction, but not yet applied here.
+Fix: Either (a) add a database trigger/constraint that rejects a
+meal_card_settlements.status →  Settled transition unless all referenced
+meal_card_payments.settlement_status values are already updated in the
+same transaction (enforced via a deferred constraint trigger checking
+meal_card_settlement_items join), or (b), if a trigger is considered too
+heavy for this case, at minimum flag this explicitly in III.17.2/III.17.3 as
+an application-transaction-boundary responsibility — both the status
+update on the parent and the bulk update on all child payments must occur
+in one transaction, analogous to the Bill/Payment cached-field rule already
+stated in III.7.1. Recommend (b) as the pragmatic choice, consistent with
+how bills.allocated_amount/paid_amount are already handled as
+"application-updated cached projections" rather than triggers.
+C7 — [STRUCTURAL-ADJACENT] Polymorphic
+discriminator columns (source_type /
+source_reference_type) have no enumerated canonical
+value list anywhere
+Finding: Across the schema, several tables use an untyped text
+discriminator column to implement a polymorphic reference pattern:
+inventory.stock_movements.source_type
+inventory.waste_records.source_type
+reconciliation.reconciliation_cases.source_reference_type
+observability.alerts.source_reference_type
+invoicing.invoice_sources.source_type
+None of these has a canonical enumerated value list defined anywhere in
+Part II or Part III — unlike every status/movement_type column, which

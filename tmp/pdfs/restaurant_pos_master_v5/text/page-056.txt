@@ -1,0 +1,30 @@
+capacity int not null default 0
+active boolean not null default true
+current_status text not null
+current_order_id uuid FK nullable (references orders.orders, no
+cascade)
+current_bill_id uuid FK nullable (references billing.bills, no cascade)
+row_version bigint not null default 1
+Constraint: unique(zone_id, table_number).
+Canonical current_status values (→ II.5.15): Available, Occupied,
+Reserved, Cleaning, OutOfService.
+Note on current_order_id / current_bill_id: these are deliberate
+soft/cache-pointer foreign keys — they denormalize "what's currently open
+on this table" for fast UI reads, are allowed to be temporarily stale during a
+transfer/merge, and must never be treated as the source of truth for
+order/bill ownership. The source of truth is orders.orders.table_id and
+billing.bills.table_id. This note replaces the previously inconsistent
+(unlabeled) column documentation.
+III.5.3 table_transfers
+table_mgmt.table_transfers: table_transfer_id PK, source_table_id FK not
+null, target_table_id FK not null, order_id FK nullable, bill_id FK nullable,
+reason not null, transferred_by FK not null, transferred_at not null.
+III.5.4 table_merges
+table_mgmt.table_merges: table_merge_id PK, primary_table_id FK not
+null, merged_table_id FK not null, order_id FK nullable, bill_id FK nullable,
+reason not null, merged_by FK not null, merged_at not null. (A child table
+for many-to-many merge participants may be added if needed.)
+III.6 Orders schema
+III.6.1 orders
+orders.orders: order_id PK, source not null, source_reference_id null,
+source_external_id null, table_id FK nullable, customer_id null, status not

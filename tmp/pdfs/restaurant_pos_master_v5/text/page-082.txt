@@ -1,0 +1,40 @@
+Cash: cash_sessions, cash_transactions, cash_counts
+Menu: menus, menu_items
+Daily Menu: daily_menus, daily_menu_items, 
+daily_menu_item_history
+Recipe: recipes, recipe_versions, recipe_ingredients, 
+unit_conversions, recipe_cost_snapshots
+Production: production_batches, production_outputs, 
+production_consumptions
+Inventory: stock_items, stock_locations, stock_balances, 
+stock_movements, portion_reservations, waste_records, 
+inventory_adjustments
+Purchasing: suppliers, purchase_orders, goods_receipts, 
+goods_receipt_items
+Kitchen: kitchen_stations, printers, printer_routes, 
+kitchen_tickets, kitchen_ticket_items, print_jobs, 
+print_job_attempts
+Meal Card: meal_card_providers, meal_card_payments, 
+meal_card_settlements, meal_card_settlement_items
+Customer Account: customers, customer_accounts, 
+account_transactions, customer_account_snapshots
+Fiscal: fiscal_documents, fiscal_transactions, 
+fiscal_provider_references
+Invoicing: invoices, incoming_invoices, invoice_items, 
+invoice_sources
+QR: qr_tables, qr_sessions, qr_orders
+Online Ordering: online_providers, online_external_orders, 
+online_product_mappings, online_webhook_events
+Reconciliation: reconciliation_cases, reconciliation_events, 
+reconciliation_actions
+Audit: audit_events, audit_event_details
+Backup: backup_jobs, backup_artifacts, restore_tests
+Licensing: licenses, installations, license_events
+Settings: settings, setting_history
+Observability: health_checks, alerts, alert_events
+III.37 Final database decision
+PostgreSQL 18, UUID primary keys, numeric money, UTC timestamps,
+explicit foreign keys, unique constraints on provider references, immutable
+historical record keeping, auditable state transitions, module-based logical
+schemas. Supports the final modular monolith; does not imply
+microservices.

@@ -1,0 +1,27 @@
+III.11 Daily Menu schema
+III.11.1 daily_menus
+menu.daily_menus: daily_menu_id PK, business_date not null, status not
+null, opened_at not null, closed_at null, closed_by null, note null,
+row_version. Constraint: unique(business_date).
+Canonical status: Draft, Open, PartiallyConsumed, Closed.
+III.11.2 daily_menu_items
+menu.daily_menu_items: daily_menu_item_id PK, daily_menu_id FK not
+null, product_id FK not null, product_name_snapshot not null,
+recipe_version_id FK nullable, price not null, planned_portions default 0,
+prepared_portions default 0, available_portions default 0, reserved_portions
+default 0, consumed_portions default 0, waste_portions default 0,
+out_of_stock default false, printer_route_policy null, active default true.
+Constraint: unique(daily_menu_id, product_id).
+III.11.3 daily_menu_item_history
+menu.daily_menu_item_history: daily_menu_item_history_id PK,
+daily_menu_item_id FK not null, old_value jsonb not null, new_value jsonb
+not null, changed_by null, changed_at not null.
+III.12 Recipe schema
+III.12.1 recipes
+recipe.recipes: recipe_id PK, code unique not null, name not null, active
+default true.
+III.12.2 recipe_versions
+recipe.recipe_versions: recipe_version_id PK, recipe_id FK not null,
+version_no not null, status not null, effective_from not null, effective_to null,
+notes null, created_at not null, created_by null. Constraint:
+unique(recipe_id, version_no).

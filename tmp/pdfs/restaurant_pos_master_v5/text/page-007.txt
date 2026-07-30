@@ -1,0 +1,30 @@
+Order ≠ Bill
+Bill ≠ Payment
+Payment ≠ FiscalDocument
+Payment ≠ PaymentAllocation
+Product ≠ DailyMenuItem
+DailyMenuItem ≠ PortionInventory
+Recipe ≠ RecipeVersion
+RecipeVersion ≠ ProductionBatch
+ProductionBatch ≠ InventoryMovement
+Waste ≠ Refund
+Void ≠ Refund
+Void ≠ Complimentary
+CustomerAccount ≠ MealCardSettlement
+Table ≠ Bill
+Order ≠ KitchenTicket
+KitchenTicket ≠ PrintJob
+OnlineOrder ≠ Order
+I.5 Versiyon Modeli
+Version Ana amaç
+V0 External/technical validation
+V1 Core restaurant operation
+V1.1 Menu + recipe + production + portion inventory
+V1.2 Payment + T300 + fiscal + meal card
+V1.3 Customer account + periodic invoicing + QNB
+V1.4 QR + online ordering
+V1.5 Hardening + reconciliation + backup + KVKK + observability
+V2.0 Final production-grade modular monolith
+I.5.1 Version semantics
+Her özellik için üç ayrı kavram vardır: Design introduced, First operational
+implementation, Hardening / production maturity. Böylece aynı özellik

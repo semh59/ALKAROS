@@ -1,0 +1,30 @@
+For every state machine: allowed transitions are explicit; forbidden
+transitions are rejected; actor/role is recorded where required; transition
+reason is recorded where required; transition and side effects share a
+transaction boundary where local consistency requires it; idempotency is
+mandatory for external callbacks/retries; failures create recoverable state or
+reconciliation cases; terminal states cannot silently reopen.
+II.6 Core business rules
+II.6.1 Table transfer
+A table transfer moves the operational association of an open order/bill
+from one table to another. Rules: source table history remains; target table
+history remains; order id remains; bill id remains; transfer is audited;
+transfer is transactional; concurrent edit protection applies.
+II.6.2 Table merge
+A table merge joins multiple tables operationally. Rules: no history deletion;
+no silent overwriting; merged relationship is auditable; open orders remain
+intact; merge can be reversed only via explicit follow-up operation.
+II.6.3 Split bill
+Split bill is designed in V1 and operationally enabled in V1.2 (design-vs-
+operational distinction spelled out at I.11). Supported concepts: item split,
+amount split, mixed payment split, equal split as UI convenience over
+amount split. Rules: total allocations cannot exceed bill payable amount;
+rounding must be deterministic; the same item cannot be allocated to two
+owners unless explicit split-by-subitem rules exist; split state must remain
+auditable.
+II.6.4 Bill closure
+A bill is paid only when the sum of valid allocated payment values equals
+the payable amount and all required payment/fiscal states are acceptable.
+Acceptable: cash/bank card/meal card/customer account, each Approved.
+Not acceptable for final closure: pending, unknown, declined, cancelled
+payment, or unresolved reconciliation case.

@@ -1,0 +1,29 @@
+Created when two or more authoritative states diverge. Examples: payment
+approved but fiscal unknown; online provider accepted but local order
+rejected; print job lost but order exists; meal card settlement mismatch;
+QNB invoice timeout.
+II.3.16 Table (new subsection — closes prior audit gap B7)
+The physical/operational representation of a seating unit. Table is not Bill,
+not Order. A Table's current_status reflects seating availability, not
+financial state. See II.5.15 for the formal state machine and its deliberately
+lighter audit/reconciliation treatment relative to financial entities.
+II.4 Version map for domain introduction
+V1: user/role/permission, table management, order lifecycle, bill
+foundation, printer routing, print queue foundation, concurrency
+foundation, idempotency foundation, audit foundation, basic
+void/complimentary policy, backup foundation, alert foundation, table
+transfer, table merge.
+V1.1: product catalog maturity, menu, daily menu, recipe, recipe versioning,
+unit conversion, production batch, portion inventory, portion reservation,
+portion release, portion consumption, waste.
+V1.2: payment lifecycle, bill closure, payment allocation,
+overpayment/change, Hugin T300 integration, fiscal state machine, meal
+card payment, meal card settlement.
+V1.3: customer account, periodic invoicing, QNB integration, incoming
+invoice ingestion, KVKK-ready data model.
+V1.4: QR ordering, restaurant confirmation policy, online ordering, provider
+normalization, external order reconciliation.
+V1.5: operational hardening, full reconciliation, alert escalation, off-site
+backup, KVKK operational policy, observability maturity.
+V2.0: final production-grade modular monolith, stable module boundaries,
+stable state machines, stable operational runbooks.

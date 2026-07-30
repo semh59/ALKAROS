@@ -1,8 +1,8 @@
 # V0-DAT-005 - Resolve single-branch and business key strategy
 
 - Task ID: V0-DAT-005
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dat-005
 - Work type: decision
 - Surface state: Planned
 

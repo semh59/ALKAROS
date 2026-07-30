@@ -1,0 +1,26 @@
+not null, quantity not null, reason not null, created_by null, created_at not
+null.
+III.15 Purchasing schema
+III.15.1 suppliers
+purchasing.suppliers: supplier_id PK, code unique not null, name not
+null, tax_number null, tax_office null, phone null, email null, active default
+true.
+III.15.2 purchase_orders
+purchasing.purchase_orders: purchase_order_id PK, supplier_id FK not
+null, order_number unique not null, status not null, ordered_at not null,
+expected_at null, created_by null.
+III.15.3 goods_receipts
+purchasing.goods_receipts: goods_receipt_id PK, supplier_id FK not null,
+purchase_order_id FK nullable, receipt_number unique not null,
+invoice_number null, status not null, received_at not null, created_by null.
+III.15.4 goods_receipt_items
+purchasing.goods_receipt_items: goods_receipt_item_id PK,
+goods_receipt_id FK not null, product_id FK not null,
+product_name_snapshot not null, quantity not null, unit_code not null,
+unit_price not null, tax_rate not null, net_amount not null, gross_amount not
+null.
+III.16 Kitchen schema
+III.16.1 kitchen_stations
+kitchen.kitchen_stations: kitchen_station_id PK, code unique not null,
+name not null, active default true. Examples: Food, ColdDessert.
+III.16.2 printers

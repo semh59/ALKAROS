@@ -1,0 +1,27 @@
+II.5.13 Alert
+Open, Acknowledged, Escalated, Suppressed, Resolved
+→ III.28.2 alerts.status
+II.5.14 InventoryMovement
+InventoryMovement has no lifecycle state machine. It is an immutable
+ledger entry. Corrections are represented by a new compensating/reversal
+movement; historical movements are never rewritten.
+Canonical movement types:
+PurchaseReceipt, ProductionOutput, Consumption, Reservation, 
+Release, Waste, Adjustment, Return, Reversal
+→ III.14.4 stock_movements.movement_type(Reversal was previously
+missing from Part III — now added, Corrections v5 §3)
+II.5.15 Table (new subsection — closes prior audit gap B7)
+Available, Occupied, Reserved, Cleaning, OutOfService
+Rules:
+Table is intentionally excluded from financial/audit-grade state
+machine treatment (no ReconciliationCase integration, no mandatory
+actor/reason capture) because it represents physical seating status, not
+a financial or fiscal record.
+It is subject to the general concurrency rule (I.14): table status changes
+use optimistic concurrency (row_version), not UI-only locking.
+Transitions to Occupied normally accompany an Order creation;
+transitions to Available normally accompany a Bill reaching Paid
+or Cancelled — but the Table state machine does not enforce this
+coupling at the database level; it is an application-layer invariant.
+→ III.5.2 tables.current_status
+State-machine transition contract (applies to all of the above)

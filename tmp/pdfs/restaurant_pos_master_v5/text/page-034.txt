@@ -1,0 +1,28 @@
+11. (New assertion, added in this master merge) Every PaymentAllocation
+duplicate-protection path (both BillAllocation-targeted and direct-to-
+Bill) is enforced at the database level, not only in application logic.
+[Verified — III.8.2, Corrections v5 §1.]
+12. (New assertion, added in this master merge) Every status/enum column
+referenced by a domain rule has a canonical value list defined in exactly
+one place (Part II for behavior, Part III for storage), with no
+independently-writable derived columns. [Verified — III.4.4 direction
+is now a generated column, not independently writable; see Part IV
+C4.]
+If any assertion fails, API Specification is blocked. As of this merge, all
+twelve pass — the two gaps found during consolidation (assertions 2 and
+11/12 above) are the direct subject of Part IV's fresh audit and have been
+closed inline.
+PART II — DOMAIN SPECIFICATION
+II.0 Purpose
+This part defines the core domain model, invariants, state machines,
+command boundaries, and operational rules for the restaurant POS
+product. It is intentionally positioned before the database schema (Part III)
+because the schema must follow domain rules, not the other way around.
+The product is a single-branch restaurant POS with: local-first operation,
+waiter PWA, cashier terminal, kitchen printers, Hugin T300 fiscal/payment
+device, QNB eSolutions invoice integration, meal card settlement, QR
+ordering, online ordering, daily menu + portion pool, customer accounts,
+audit, backup, reconciliation.
+Microservices are not part of the target architecture.
+II.1 Domain principles
+II.1.1 Source of truth

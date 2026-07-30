@@ -1,8 +1,8 @@
 # V0-DOC-001 - Correct the master specification baseline
 
 - Task ID: V0-DOC-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-doc-001
 - Work type: decision
 - Surface state: Planned
 

@@ -1,0 +1,30 @@
+III.19.3 fiscal_provider_references
+fiscal.fiscal_provider_references: fiscal_provider_reference_id PK,
+fiscal_document_id FK not null, provider_code not null,
+provider_document_id null, fiscal_reference null, correlation_id null.
+III.20 Invoicing schema
+III.20.1 invoices
+invoicing.invoices: invoice_id PK, invoice_number unique null,
+customer_id FK null, customer_account_id FK null, invoice_type not null,
+status not null, invoice_date not null, period_start null, period_end null,
+subtotal default 0, discount_total default 0, tax_total default 0, total default
+0, provider_code default 'QNB', provider_reference null, created_at,
+issued_at null, cancelled_at null, row_version.
+Canonical status (→ II.5.11): Draft, Validating, PendingProvider,
+Issued, Rejected, Cancelled, ReconciliationRequired.
+Canonical invoice_type: EInvoice, EArchive.
+III.20.1A incoming_invoices
+invoicing.incoming_invoices: incoming_invoice_id PK, provider_code
+default 'QNB', external_invoice_id not null, invoice_number null,
+supplier_name null, supplier_tax_number null, invoice_date null,
+invoice_type null, status not null, received_at not null, imported_at null,
+raw_document jsonb null, rejection_reason null, created_at, updated_at,
+row_version.
+Canonical status: Received, Validating, Imported, Rejected,
+Duplicate, ReconciliationRequired.
+Constraint: unique(provider_code, external_invoice_id).
+This table represents incoming invoice ingestion and is intentionally
+separate from outgoing invoicing.invoices — it is not forced into the
+outgoing invoice lifecycle.
+III.20.2 invoice_items — CORRECTED (Corrections v5 §5, closes
+audit finding B5)

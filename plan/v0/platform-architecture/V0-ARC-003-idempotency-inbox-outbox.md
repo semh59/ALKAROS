@@ -1,8 +1,8 @@
 # V0-ARC-003 - Define idempotency inbox and outbox contract
 
 - Task ID: V0-ARC-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-003
 - Work type: decision
 - Surface state: Planned
 

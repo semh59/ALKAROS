@@ -1,0 +1,35 @@
+# Finding Severity Type
+C9 waste_factor × unit_conversions
+order of operations
+Low — no
+current
+inconsistency,
+future-
+proofing
+Ambiguity
+C8 Self-correction of this document's own
+miscount Cosmetic Editorial
+Recommendation: Close C1 and C7 before any implementation begins
+(both
+are cheap to fix and one is an outright migration blocker). C5 and C6
+should be resolved before API-Specification.md, since they affect
+observable behavior contracts. C3, C4, C2, C9 can be resolved as one-line
+clarifications directly in Part III without further architectural
+discussion. C8 requires no action beyond the correction already applied
+inline at I.46.
+END OF MASTER DOCUMENT
+This file (Parts I–IV) is now the single authoritative source, superseding:
+restaurant_pos_final_versioned_plan_v4.md,
+restaurant_pos_domain_specification_v2.md,
+restaurant_pos_database_schema_v2.md, and
+restaurant_pos_corrections_v5.md.
+Older files (restaurant_pos_v1_plan.md,
+restaurant_pos_versioned_plan.md,
+restaurant_pos_final_versioned_plan_v2.md,
+restaurant_pos_final_versioned_plan_v3.md,
+restaurant_pos_domain_specification.md [v1],
+restaurant_pos_database_schema.md [v1]) remain superseded/historical,
+per
+§9 of the prior Corrections v5 document.
+Before API-Specification.md begins: close C1 and C7 (structural),
+then re-verify the Cross-Document Consistency Gate (I.54) with these two

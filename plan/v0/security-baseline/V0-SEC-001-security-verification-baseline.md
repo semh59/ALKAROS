@@ -1,8 +1,8 @@
 # V0-SEC-001 - Define security verification baseline
 
 - Task ID: V0-SEC-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-sec-001
 - Work type: decision
 - Surface state: Planned
 

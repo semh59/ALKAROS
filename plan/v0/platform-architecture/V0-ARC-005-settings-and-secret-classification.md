@@ -1,8 +1,8 @@
 # V0-ARC-005 - Define settings ownership and secret classification
 
 - Task ID: V0-ARC-005
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-005
 - Work type: decision
 - Surface state: Planned
 

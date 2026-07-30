@@ -1,0 +1,24 @@
+Pending →  Unknown →  Reconciliation →  Approved / Declined / 
+Cancelled
+Bu finansal güvenlik için zorunludur.
+I.28 V1.2 — Fiscal
+Payment →  Fiscal strategy →  FiscalDocument
+Canonical fiscal state list: II.5.4.
+Requested, Pending, Issued, Rejected, Cancelled, Refunded, 
+ReconciliationRequired
+I.28.1 Void / Refund / Waste / Complimentary
+Void: Hazırlanmamış sipariş kaleminin iptali.
+Refund: Finansal ödemenin tersine çevrilmesi. Hugin adapter üzerinden
+fiscal iade/iptal fişi akışı da tetiklenir (refund/cancel pathway, I.27).
+Waste: Hazırlanmış ancak satılamayan ürünün stoktan çıkması.
+Complimentary: Ürün teslim edilir, bedel 0 TL olur; yetki/audit
+gerektirir.
+I.29 V1.2 — Meal Card
+MealCardProvider, MealCardPayment, MealCardSettlement, 
+MealCardSettlementItem
+Payment ve settlement ayrılır.
+Restaurant sale →  MealCardPayment →  Provider settlement → 
+Settlement statement
+Meal card provider'ın işletmeye settlement yükümlülüğü ile restoran
+müşterisinin cari hesabı aynı şey değildir. Per-payment settlement_status
+canonical list: III.17.2 (Corrections v5 §4.1).

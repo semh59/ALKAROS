@@ -1,0 +1,28 @@
+identity.permissions: permission_id PK, code unique not null,
+description not null.
+Examples: Order.Create, Order.Void, Payment.Approve, Bill.Split,
+Inventory.Adjust, Invoice.Create, Cash.Close.
+III.3.4 user_roles
+identity.user_roles: user_role_id PK, user_id FK, role_id FK, created_at.
+Constraint: unique(user_id, role_id).
+III.3.5 role_permissions
+identity.role_permissions: role_permission_id PK, role_id FK,
+permission_id FK. Constraint: unique(role_id, permission_id).
+III.3.6 device_sessions
+identity.device_sessions: device_session_id PK, user_id FK, device_type
+not null, device_name null, session_token_hash not null, expires_at not null,
+revoked_at null.
+III.4 Catalog schema
+III.4.1 categories
+catalog.categories: category_id PK, parent_category_id FK nullable, code
+unique not null, name not null, sort_order default 0, active default true.
+III.4.2 tax_profiles
+catalog.tax_profiles: tax_profile_id PK, code unique not null, name not
+null, vat_rate numeric(5,2) not null, active default true.
+III.4.3 products
+catalog.products: product_id PK, category_id FK nullable, tax_profile_id
+FK nullable, sku unique not null, name not null, description null,
+product_type not null, stock_mode not null, active default true,
+printer_route_policy null, display_order default 0, current_price null.
+Canonical stock_mode: Untracked, QuantityTracked, PortionTracked,
+RecipeDerived.

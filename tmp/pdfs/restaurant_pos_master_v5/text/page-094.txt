@@ -1,0 +1,7 @@
+additional assertions appended:
+13. Every FK declared on a table created earlier in the migration order
+(III.32) than its referenced table is either deferred/NOT VALID until a
+later migration step, or the migration order is corrected. [Open — C1.]
+14. Every polymorphic *_type/*_reference_type discriminator column
+has a
+canonical enumerated value list defined in Part III. [Open — C7.]

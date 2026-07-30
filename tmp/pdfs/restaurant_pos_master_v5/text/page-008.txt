@@ -1,0 +1,29 @@
+sonraki sürümlerde tekrar "yeni özellik" gibi görünmez. Section I.47 (Final
+Version Matrix) bu üç kavramı her yetenek için ayrı ayrı listeler ve
+bağlayıcıdır.
+I.6 V0 — External Dependency & Feasibility Gate
+V0 production feature geliştirme sürümü değildir. Amaç, sonradan mimariyi
+değiştirebilecek dış bağımlılıkları kodlamadan önce doğrulamaktır.
+I.6.1 Hugin T300
+Doğrulanacak: ödeme entegrasyon yöntemi, resmi entegrasyon
+protokolü/API/SDK, transaction request/response, approval, decline,
+timeout, unknown state, reconciliation, refund/cancel, fiscal reference,
+gerekli cihaz/terminal konfigürasyonu, test ortamı, production geçiş
+prosedürü.
+Cihaz seçimi yeniden açılmayacaktır. Hedef cihaz Hugin T300'dür. V0'ın
+görevi "başka cihaz seçmek" değil, T300 ile entegrasyon sözleşmesini
+kesinleştirmektir.
+I.6.2 Meal card
+Doğrulanacak: provider integration method, payment request/response,
+settlement, cancellation/refund, commission/fee information, provider
+statement, merchant invoice/settlement documentation, failed/unknown
+transaction handling.
+I.6.3 QNB
+Doğrulanacak: test/production credentials, e-Fatura, e-Arşiv, registered
+user query, invoice submission/status, incoming/outgoing invoice retrieval,
+error handling, idempotency, retry, provider limits.
+I.6.4 Yemeksepeti
+Doğrulanacak: partner access, webhook, order retrieval, status update,
+cancellation, rejection, catalog/menu mapping, availability, external
+identifiers, retry, duplicate webhook behavior, provider outage behavior.
+I.6.5 QR relay

@@ -1,8 +1,8 @@
 # V0-DAT-004 - Define projection ownership contracts
 
 - Task ID: V0-DAT-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dat-004
 - Work type: decision
 - Surface state: Planned
 

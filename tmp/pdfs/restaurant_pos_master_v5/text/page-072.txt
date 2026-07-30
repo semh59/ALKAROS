@@ -1,0 +1,33 @@
+    generated always as (
+        case transaction_type
+            when 'Charge'     then 'Debit'
+            when 'Invoice'    then 'Debit'
+            when 'Adjustment' then null   -- sign carried by 
+`amount`
+            when 'Payment'    then 'Credit'
+            when 'Credit'     then 'Credit'
+            when 'Debit'      then 'Debit'
+            when 'Refund'     then 'Credit'
+        end
+    ) stored;
+This guarantees direction can never contradict transaction_type; it
+exists purely to simplify reporting queries (aging, balance calculation)
+without a join or CASE in every consumer.
+III.18.4 customer_account_snapshots
+customer_account.customer_account_snapshots:
+customer_account_snapshot_id PK, customer_account_id FK not null,
+snapshot_date not null, balance not null, created_at not null.
+III.19 Fiscal schema
+III.19.1 fiscal_documents
+fiscal.fiscal_documents: fiscal_document_id PK, document_number
+unique null, document_type not null, document_strategy not null,
+payment_id FK nullable, bill_id FK nullable, invoice_id FK nullable,
+provider_reference null, status not null, requested_at not null, issued_at
+null, cancelled_at null, refunded_at null, raw_response jsonb null,
+row_version.
+Canonical status (→ II.5.4): Requested, Pending, Issued, Rejected,
+Cancelled, Refunded, ReconciliationRequired.
+III.19.2 fiscal_transactions
+fiscal.fiscal_transactions: fiscal_transaction_id PK, fiscal_document_id
+FK not null, provider_code not null, request_payload jsonb not null,
+response_payload jsonb null, status not null, created_at not null.

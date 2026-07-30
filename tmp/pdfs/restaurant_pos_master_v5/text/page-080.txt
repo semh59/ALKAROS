@@ -1,0 +1,25 @@
+stock critical summary, open reconciliation summary, alert summary. Do not
+use views as a substitute for core domain storage.
+III.32 Migration strategy
+Order: identity → catalog → table management → orders → billing →
+payments → cash → menu → recipe → production → inventory →
+purchasing → kitchen → meal card → customer account → fiscal →
+invoicing → qr → online ordering → reconciliation → audit → backup →
+licensing → settings → observability. This ordering respects dependency
+direction.
+III.33 Data lifecycle rules
+III.33.1 Immutable records
+Never deleted in normal operations: orders, bill history, payments, fiscal
+documents, audit events, backups, reconciliation cases, production history,
+inventory movements.
+III.33.2 Mutable operational records
+May change state but not be silently deleted: tables, product active states,
+menus, settings, printers, licenses, sessions.
+III.33.3 Historical snapshots
+Preserved: order price snapshot, recipe version reference, production batch
+reference, bill allocations, payment allocations, invoice source mappings,
+meal card settlement items.
+III.34 KVKK database modeling
+KVKK lifecycle metadata is part of the V1.3 data model, not a later
+migration. Required: minimal PII storage, retention metadata,
+anonymization state, anonymization timestamp, optional deletion request

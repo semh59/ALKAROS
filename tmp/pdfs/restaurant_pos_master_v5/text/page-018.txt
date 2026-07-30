@@ -1,0 +1,29 @@
+I.26A Bill ↔  Payment Closure Invariant
+Bill-level money fields have explicit ownership:
+Bill.payable_amount = final amount that must be covered.
+Bill.allocated_amount = SUM of valid
+PaymentAllocation.allocated_amount for the Bill.
+Bill.paid_amount = SUM of allocated amounts belonging to payments
+that are in a financially final state (Approved and not subsequently
+reversed/refunded).
+Bill.change_amount = SUM of cash change actually returned for the
+Bill; it is not part of the amount allocated to the Bill.
+Payment.allocated_amount is a cached/derived operational value equal to
+the SUM of that Payment's PaymentAllocation rows. It is never an
+independently authoritative amount.
+A Bill may become Paid only when:
+paid_amount == payable_amount
+AND all required payment allocations are valid
+AND no required payment is Pending / Unknown / Declined / 
+Cancelled
+AND no unresolved fiscal/reconciliation condition blocks closure
+For split payment, there is no SplitPayment tender. The Bill is closed from
+the composition of its individual approved tenders. (Duplicate-allocation
+protection at the database level: III.8.2, Corrections v5 §1.)
+I.27 V1.2 — Hugin T300
+T300 hedef cihazdır. Integration adapter: HuginIntegration.
+Sorumluluklar: payment request, approval, decline, timeout, unknown
+result, reconciliation, refund/cancel, fiscal reference, provider error
+normalization.
+I.27.1 Unknown state
+T300 timeout olduğunda doğrudan Declined veya Failed kabul edilmez.

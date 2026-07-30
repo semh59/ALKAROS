@@ -1,0 +1,28 @@
+II.3.7 Recipe & RecipeVersion
+A recipe is the conceptual definition. A recipe version is the historical,
+immutable operational definition used for a specific production batch or
+cost basis. Recipe version must never be rewritten for historical accounting
+purposes.
+II.3.8 ProductionBatch
+A concrete production event. Must always reference exactly one recipe
+version — one of the most important immutability rules in the product.
+II.3.9 PortionReservation
+Temporary lock of a prepared portion for an order or channel. Not the same
+as consumption.
+II.3.10 MealCardSettlement
+The operational accounting layer between the restaurant and meal card
+provider. Not the same thing as customer current account.
+II.3.11 CustomerAccount
+The restaurant-side receivable relationship with a customer/company. Used
+for periodic invoicing and deferred payment scenarios.
+II.3.12 FiscalDocument
+A provider/device-backed legal or operational fiscal artifact. Not the same
+thing as bill or payment.
+II.3.13 KitchenTicket
+A production instruction set derived from one or more orders and routed by
+station. Not a print job. Composed of KitchenTicketItem rows, each with
+its own finer-grained state — see II.5.7A.
+II.3.14 PrintJob
+The physical printing task. A failed print job must not destroy the order or
+the kitchen ticket.
+II.3.15 ReconciliationCase

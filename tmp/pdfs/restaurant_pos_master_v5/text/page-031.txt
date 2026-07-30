@@ -1,0 +1,34 @@
+        ↓
+DEPLOYMENT-AND-RECOVERY.md
+        ↓
+IMPLEMENTATION
+Neden Database ikinci değil?
+Çünkü database şeması Order lifecycle, Bill closure, PaymentAllocation,
+RecipeVersion, ProductionBatch, PortionReservation, KitchenTicket,
+PrintJob, ReconciliationCase gibi domain kararlarına bağlıdır. Domain
+invariant'ları kapanmadan database schema yazmak gereksiz migration
+üretir.
+I.51 Final Architectural Boundary
+┌─────────────────────────────────────
+─────────┐
+│               Restaurant POS                  │
+│   React/PWA                                   │
+│        │                                       │
+│   ASP.NET Core Modular Monolith               │
+│  
+┌────┴────────────────────────────────
+───┐   │
+│   │  Order / Bill / Payment / Inventory     │   │
+│   │  Production / Menu / Kitchen            │   │
+│   │  CustomerAccount / Fiscal / Invoice     │   │
+│   │  QR / Online / MealCard / Cash          │   │
+│   │  Audit / Reconciliation / Backup        │   │
+│  
+└──────────────────┬──────────────────
+───┘   │
+│                PostgreSQL                     │
+└─────────────────────────────────────
+─────────┘
+       │             │              │
+   Hugin T300     QNB       Yemeksepeti
+Bu yapı tek deployable ürün olarak kalacaktır.

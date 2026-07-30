@@ -1,0 +1,32 @@
+Alert), not 14. This is a small transcription error introduced during this
+merge's own commentary, not in the original source.
+Fix: I.46's note is corrected to read "Orijinal liste 13 madde idi; bu
+turda KitchenTicketItem ve Table eklenerek 15'e çıkarılmıştır." (Two
+additions to a 13-item base correctly produce 15 — the final count of 15
+was already right; only the stated starting count of "14" was wrong.) This
+finding is included precisely because a "zero-context" audit should verify
+even its own document's internal arithmetic, not only the source material.
+C9 — recipe_ingredients.waste_factor order-of-operations
+vs. unit_conversions not specified
+Finding:recipe.recipe_ingredients (III.12.3) has both quantity +
+unit_code and a separate waste_factor numeric(18,4) default 0.
+recipe.unit_conversions (III.12.4) separately converts between units.
+Neither Part II nor Part III states the order of operations when a
+production batch consumes raw material: is waste_factor applied before
+or
+after unit conversion to the stock item's native unit? (E.g., if a recipe
+calls for 200 g of an ingredient with a 5% waste factor, and the
+stock_items row is tracked in kg, does the system compute
+200g × 1.05 = 210g, then convert to 0.21 kg; or convert first to
+0.2 kg, then apply waste factor to get 0.21 kg? For a linear
+percentage factor these are mathematically equivalent — but if
+waste_factor were ever changed to a non-linear/tiered model in the
+future, the order would matter, and it costs nothing to state it now.)
+Fix: Add one sentence to III.12.3: "Effective consumption quantity =
+recipe_ingredients.quantity × (1 + waste_factor), computed in the
+recipe's native unit_code, then converted to the stock item's tracked
+unit via unit_conversions as the final step." Low severity, but exactly
+the kind of ambiguity that becomes expensive once
+production_consumptions
+rows (III.13.3) have already been written using an undocumented, possibly
+inconsistent order.

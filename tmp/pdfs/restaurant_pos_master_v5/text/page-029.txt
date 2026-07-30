@@ -1,0 +1,27 @@
+19. Rejected order final inventory consumption oluşturmaz.
+I.48.5 Kitchen / Printing
+20. Order state ile kitchen state aynı değildir.
+21. Printer failure order kaybına yol açmaz.
+22. Retry duplicate print üretmemelidir; duplicate risk yönetilmelidir.
+I.48.6 Integration
+23. External provider timeout success kabul edilmez.
+24. Unknown state reconciliation gerektirir.
+25. Webhook duplicate işlenmemelidir.
+26. External ID ve internal ID ayrıdır.
+I.48.7 QR
+27. Public QR internal network'e doğrudan erişemez.
+28. QR default order mode Restaurant Confirmation'dır.
+29. QR order reservation policy explicit olmalıdır.
+I.48.8 Audit
+30. Critical state transition audit edilir.
+31. Audit history sessizce değiştirilmez.
+32. Financial correction yeni transaction/action ile yapılır.
+I.49 Edge Case Master List
+Tables: transfer during active kitchen order · transfer during payment ·
+merge with multiple bills · merge with partially paid bill · concurrent table
+edit.
+Orders: duplicate submit · offline submit · rejected order · partial item
+cancellation · full cancellation · order modification after kitchen start · QR
+pending confirmation · online order cancellation.
+Split Bill: equal split · item split · amount split · mixed payment · one
+allocation refunded · overpayment · rounding · unpaid remainder.

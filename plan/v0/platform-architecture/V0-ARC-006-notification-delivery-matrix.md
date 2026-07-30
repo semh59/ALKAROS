@@ -1,8 +1,8 @@
 # V0-ARC-006 - Define notification delivery matrix
 
 - Task ID: V0-ARC-006
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-006
 - Work type: decision
 - Surface state: Planned
 

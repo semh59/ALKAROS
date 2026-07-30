@@ -1,8 +1,8 @@
 # V0-ARC-008 - Define release evidence contract
 
 - Task ID: V0-ARC-008
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-008
 - Work type: decision
 - Surface state: Planned
 

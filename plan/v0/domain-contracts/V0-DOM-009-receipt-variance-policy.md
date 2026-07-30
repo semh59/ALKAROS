@@ -1,8 +1,8 @@
 # V0-DOM-009 - Define receipt variance policy
 
 - Task ID: V0-DOM-009
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dom-009
 - Work type: decision
 - Surface state: Planned
 

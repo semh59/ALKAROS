@@ -1,8 +1,8 @@
 # V0-BKP-001 - Validate PostgreSQL backup and restore tooling
 
 - Task ID: V0-BKP-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-bkp-001
 - Work type: validation
 - Surface state: Planned
 

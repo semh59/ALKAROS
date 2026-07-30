@@ -1,0 +1,33 @@
+(after the B1–B4 fixes) now does. This is the same class of defect as B1/B4
+but was not caught in the prior pass because the focus was specifically on
+lifecycle/status columns, not discriminator columns.
+Fix (recommended, scoped per table):
+stock_movements.source_type → canonical: Order, ProductionBatch,
+GoodsReceipt, ManualAdjustment, StockMovement (the last one
+specifically
+for Reversal rows referencing another movement, per III.14.4).
+waste_records.source_type → canonical: PortionReservation,
+ProductionBatch, StockItem, ManualEntry.
+reconciliation_cases.source_reference_type → canonical: Order,
+Bill, Payment, FiscalDocument, MealCardPayment, Invoice,
+PrintJob, OnlineExternalOrder.
+alerts.source_reference_type → canonical: Printer, BackupJob,
+ReconciliationCase, Payment, FiscalDocument, OnlineProvider,
+StockBalance.
+invoice_sources.source_type → canonical: AccountTransaction
+(currently
+the only real source type; documented as extensible).
+This should be added to Part III as a new cross-cutting subsection (e.g.
+III.29.12) rather than scattered per-table, since the pattern and its risk
+(an unconstrained text column standing in for what should be a
+constrained reference) is identical in every case.
+C8 — Self-correction: prior merge note miscounted
+the original lifecycle-model list
+Finding (editorial, not domain-relevant): I.46 in this master document
+states "Orijinal liste 14 madde idi" (the original list had 14 items). On
+re-count against the actual source text
+(restaurant_pos_final_versioned_plan_v4.md
+§46), the original code block lists exactly 13 items (Order, Bill,
+Payment, FiscalDocument, ProductionBatch, PortionReservation,
+KitchenTicket,
+PrintJob, CashSession, MealCardSettlement, Invoice, ReconciliationCase,

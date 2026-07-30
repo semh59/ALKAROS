@@ -1,0 +1,20 @@
+RESTAURANT POS — MASTER
+SPECIFICATION (v5, Consolidated)
+Single-source merge of: Final Versioned Plan v4 +
+Domain Specification v2 + Database Schema v2
+All Corrections v5 (B1–B7 + prior audit items)
+applied inline
+Architecture: Modular Monolith — no microservice
+transition, ever
+Code language: English · UI language: Turkish
+Backend: C# / .NET 10 LTS · DB: PostgreSQL 18 ·
+Frontend: React + TypeScript · Realtime: SignalR
+Fiscal/payment device: Hugin TIGER T300 · E-
+invoice: QNB eSolutions · Online ordering:
+Yemeksepeti Partner API
+Document map
+This master file merges three previously separate documents into one, with
+every correction from the v5 audit applied at its exact location instead of
+left as a separate patch. Section numbers are prefixed by part to stay
+globally unique and avoid the cross-part collisions a naive merge would
+otherwise introduce (see §0.2 below):

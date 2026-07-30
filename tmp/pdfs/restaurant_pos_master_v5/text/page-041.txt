@@ -1,0 +1,27 @@
+II.5.6 PortionReservation
+Reserved, Released, Consumed, Waste
+Available is a stock-pool condition, not a reservation lifecycle state. →
+III.14.5 portion_reservations.status. The denormalized mirror on
+order_items.portion_reservation_status (III.6.2) additionally carries
+NotApplicable/NotReserved entry states — see III.6.2 note (Corrections
+v5 §4.2).
+II.5.7 KitchenTicket
+Queued, Accepted, Preparing, Ready, Cancelled
+KitchenTicket represents an operational kitchen instruction. It is not a
+physical PrintJob. → III.16.4 kitchen_tickets.status
+II.5.7A KitchenTicketItem (new subsection — closes prior audit
+gap B4.3)
+Queued, Preparing, Ready, Served, Cancelled
+A distinct, finer-grained state machine from KitchenTicket (II.5.7) — a
+single ticket can have some items Ready and others still Preparing.
+Extends the existing rule (II.8.4: "Order state and kitchen ticket state are
+separate") one level deeper: ticket-item state and ticket state are also
+separate. The parent ticket only reaches Ready when all non-cancelled
+items are Ready or Served. → III.16.5 kitchen_ticket_items.status
+II.5.8 PrintJob
+Pending, Printing, Printed, Failed, Retrying, Cancelled
+Rules: print failure does not delete order or kitchen ticket; retry must not
+cause uncontrolled duplicate output; printer outage is a recoverable
+operational incident. → III.16.6 print_jobs.status(previously undefined in
+Part III — now added, Corrections v5 §2)
+II.5.9 CashSession

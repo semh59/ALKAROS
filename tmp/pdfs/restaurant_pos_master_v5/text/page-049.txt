@@ -1,0 +1,27 @@
+II.11 Security rules
+PII is minimized. Payment secrets are masked. Public QR cannot reach
+internal APIs directly. Internal admin actions require permission checks.
+Audit records must remain immutable. Sensitive provider credentials are
+never embedded in code. No plaintext passwords. No financial sensitive
+logging.
+II.12 KVKK-aware design rules
+KVKK is not only a policy topic; it affects the model. Rules: customer PII
+must be minimal; retention metadata should exist early; anonymization
+support must be modeled; financial/legal records may be retained while
+personal data is removed or anonymized where allowed; personal data
+deletion should not break invoice/payment integrity.
+Schema correspondence:retention_until, anonymization_status,
+anonymized_at on customers and customer_accounts — III.18.1, III.18.2.
+II.13 Version introduction summary
+Capability Design
+introduced
+First
+operational Hardening
+Order lifecycle V1 V1 V1.5
+Table transfer V1 V1 V1.5
+Table merge V1 V1 V1.5
+Bill split design V1 V1.2 V1.5
+Bill payment closure V1 V1.2 V1.5
+Payment allocation V1 V1.2 V1.5
+Overpayment/change V1.2 V1.2 V1.5
+Recipe versioning V1.1 V1.1 V1.5

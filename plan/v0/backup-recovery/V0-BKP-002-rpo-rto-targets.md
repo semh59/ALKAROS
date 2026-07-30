@@ -1,8 +1,8 @@
 # V0-BKP-002 - Approve RPO and RTO targets
 
 - Task ID: V0-BKP-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-bkp-002
 - Work type: decision
 - Surface state: Planned
 

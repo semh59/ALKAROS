@@ -1,8 +1,8 @@
 # V0-ARC-007 - Define deployment compatibility matrix
 
 - Task ID: V0-ARC-007
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-007
 - Work type: decision
 - Surface state: Planned
 

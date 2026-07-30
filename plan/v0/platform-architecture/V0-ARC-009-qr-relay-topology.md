@@ -1,8 +1,8 @@
 # V0-ARC-009 - Define QR relay production topology
 
 - Task ID: V0-ARC-009
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-009
 - Work type: decision
 - Surface state: Planned
 

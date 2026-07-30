@@ -1,0 +1,33 @@
+C1 — [STRUCTURAL] Migration order creates a
+forward/circular FK reference
+Finding: III.32 (Migration strategy) orders schemas as:
+1. identity  2. catalog  3. table management  4. orders  5. 
+billing ...
+But III.5.2 (table_mgmt.tables) declares:
+current_order_id uuid FK nullable (references orders.orders, 
+...)
+current_bill_id  uuid FK nullable (references billing.bills, 
+...)
+table_mgmt (step 3) is migrated beforeorders (step 4) and billing
+(step 5) — a table cannot declare a foreign key to a table that does not
+exist yet. This is a genuine migration-ordering defect, not merely
+cosmetic: running the migrations in the stated order will fail at the
+tables table creation step.
+Fix: Two acceptable options —
+1. Add the current_order_id / current_bill_id columns to tables
+without an FK constraint at initial migration time, then add the FK
+constraints in a later migration step once orders and billing exist
+(ALTER TABLE ... ADD CONSTRAINT ... FOREIGN KEY ... NOT VALID,
+then
+VALIDATE CONSTRAINT after backfill). This is the standard pattern for
+resolving circular cross-schema dependencies.
+2. Reorder migration steps so orders and billing are created before
+table_mgmt — but this is awkward because orders.orders.table_id
+also
+references table_mgmt.tables, producing a genuine circular
+dependency
+between the two schemas either way.
+Recommended: Option 1 (deferred/NOT VALID FK) — update III.32 and
+III.5.2 to state explicitly that tables.current_order_id /
+current_bill_id FKs are added in a second migration pass after orders
+and billing exist, not in the initial table_mgmt migration.

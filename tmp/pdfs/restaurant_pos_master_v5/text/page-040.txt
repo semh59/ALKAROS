@@ -1,0 +1,24 @@
+II.5 State machines
+State machines below are canonical. Database status values MUST match
+them exactly (Part III cross-references given inline).
+II.5.1 Order
+Draft, Submitted, PendingConfirmation, Accepted, Rejected, 
+Preparing, Ready, Served, Completed, Cancelled
+→ III.6.1 orders.status
+II.5.2 Bill
+Open, PartiallyAllocated, Allocated, PartiallyPaid, Paid, 
+Cancelled, Reopened
+→ III.7.1 bills.status
+II.5.3 Payment
+Initiated, Pending, Approved, Declined, Cancelled, Unknown, 
+ReconciliationRequired, Refunded
+SplitPayment is not a Payment state and not a Payment method. → III.8.1
+payments.status / payment_method
+II.5.4 FiscalDocument
+Requested, Pending, Issued, Rejected, Cancelled, Refunded, 
+ReconciliationRequired
+→ III.19.1 fiscal_documents.status
+II.5.5 ProductionBatch
+Planned, InProgress, Completed, Cancelled
+A ProductionBatch must reference exactly one immutable RecipeVersion. →
+III.13.1 production_batches.status

@@ -1,8 +1,8 @@
 # V0-DOM-008 - Define reporting metric contracts
 
 - Task ID: V0-DOM-008
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dom-008
 - Work type: decision
 - Surface state: Planned
 

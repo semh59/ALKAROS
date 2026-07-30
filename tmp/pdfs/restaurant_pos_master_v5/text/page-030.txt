@@ -1,0 +1,35 @@
+Inventory: last portion race · reservation timeout · cancellation before
+kitchen · cancellation after kitchen · waste · production overage/shortage
+· recipe version change during production.
+Payment: T300 timeout · T300 unknown result · duplicate callback ·
+declined payment · partial payment · payment after bill modification ·
+refund · mixed payment.
+Fiscal: fiscal timeout · fiscal rejection · duplicate fiscal request ·
+refund/cancel · fiscal/payment mismatch.
+QNB: registered user query failure · invoice submission timeout · invoice
+rejected · invoice accepted but local timeout · duplicate submission ·
+incoming invoice retrieval failure.
+Online: duplicate webhook · provider outage · local outage · provider
+accepted/local rejected · stock race · cancellation race · status mismatch.
+Printer: offline · paper out · timeout · duplicate retry · queue backlog ·
+wrong route · printer recovered.
+Backup: backup failure · disk full · off-site upload failure · corrupted
+backup · restore failure · partial restore.
+I.50 Final Development Order
+FINAL VERSIONED PLAN (Part I)
+        ↓
+DOMAIN-SPECIFICATION (Part II)
+        ↓
+DATABASE-SCHEMA (Part III)
+        ↓
+API-SPECIFICATION.md
+        ↓
+INTEGRATION-SPECIFICATION.md
+        ↓
+UI-SPECIFICATION.md
+        ↓
+PRINTER-SPECIFICATION.md
+        ↓
+FISCAL-SPECIFICATION.md
+        ↓
+TEST-PLAN.md

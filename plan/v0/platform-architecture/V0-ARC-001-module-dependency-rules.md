@@ -1,8 +1,8 @@
 # V0-ARC-001 - Lock module dependency rules
 
 - Task ID: V0-ARC-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-001
 - Work type: decision
 - Surface state: Planned
 

@@ -1,0 +1,22 @@
+V1: event creation, severity, dashboard visibility.
+V1.5: escalation, notification channels, acknowledgement workflows,
+operational dashboards, backup/printer/payment/integration alerts.
+I.20 V1 — Backup Foundation
+Minimum (V1): database backup, backup metadata, backup status, backup
+error, retention foundation.
+V1.5: encrypted off-site backup, restore verification, retention enforcement,
+recovery test, RPO/RTO verification.
+I.21 V1.1 — Menu, Recipe, Production, Portion
+Inventory
+I.21.1 Catalog
+Product, Category, Modifier, Price, TaxConfiguration
+I.21.2 Daily Menu
+DailyMenu, DailyMenuItem
+Örnek: Chicken Meal — 80 portions, Soup — 120 portions, Dessert — 60
+portions.
+I.21.3 Recipe
+Recipe, RecipeVersion, RecipeIngredient
+I.21.4 Unit conversion
+kg ↔  g
+liter ↔  ml
+Unit conversion domain seviyesinde tanımlanır (bkz. III.12.4).

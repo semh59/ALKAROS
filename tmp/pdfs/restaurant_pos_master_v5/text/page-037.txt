@@ -1,0 +1,32 @@
+Stock mode:Untracked, QuantityTracked, PortionTracked,
+RecipeDerived.
+Examples: Cola → QuantityTracked; Chicken Meal → PortionTracked +
+RecipeDerived; Napkin → Untracked; Tea → QuantityTracked or
+RecipeDerived depending on operational policy.
+II.3.2 Order
+The canonical channel-independent sales request. Origins: cashier, waiter,
+QR, online provider. Order is not bill, not payment, not fiscal document, not
+kitchen ticket.
+Responsibilities: capture intent, capture channel, capture customer/table
+context, track item states, trigger inventory reservation at the correct state,
+trigger kitchen routing, support cancellation paths, preserve price
+snapshot.
+II.3.3 Bill
+Customer-facing financial summary of one or more orders or order parts.
+Bill is not payment. Responsibilities: calculate payable amount, support
+splits, support allocations, support closure, support re-open/void policy
+only if explicitly allowed, represent adisyon/checkout context.
+II.3.4 Payment
+A tendering event with a specific method and provider. Methods: cash,
+bank card, meal card, customer account, split payment as a composition
+model, not a separate tender type. Payment is not bill closure by itself.
+II.3.5 PaymentAllocation
+The mapping between a payment event and the amount assigned to a bill
+allocation or payable segment. Exists because: one payment can settle part
+of a bill; one bill can be settled by many payments; cash tendered can
+exceed allocated amount and generate change; payment callbacks can be
+partial or uncertain. Duplicate-protection enforcement: III.8.2.
+II.3.6 DailyMenu
+The operational menu for a specific business date: what is available today,
+how many portions are planned, what price applies today, whether the item
+is open/closed/sold out. Not the same as the product catalog.

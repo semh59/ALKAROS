@@ -1,0 +1,32 @@
+PostgreSQL is the authoritative source of truth. SignalR, printer buffers,
+external provider callbacks, QR sessions, and UI state are not authoritative.
+II.1.2 English codebase
+Every domain term in code must be English. Examples: Order, Bill,
+BillAllocation, Payment, PaymentAllocation, DailyMenu,
+DailyMenuItem, RecipeVersion, ProductionBatch, PortionReservation,
+KitchenTicket, PrintJob, MealCardSettlement, CustomerAccount,
+FiscalDocument, ReconciliationCase.
+II.1.3 No silent destructive actions
+The following cannot be silently deleted: financial transactions, fiscal
+documents, audit events, order history, production history, backup history,
+reconciliation history. Corrections must be represented as new domain
+actions.
+II.1.4 Immutable historical references
+Anything that affects historical calculation must be snapshotted or version-
+referenced. Examples: order price snapshot, recipe version reference,
+production batch reference, payment allocation reference, fiscal reference,
+meal card settlement reference.
+II.2 Bounded contexts
+II.2.1 Identity & Authorization — Users, roles, permissions, devices,
+sessions.
+II.2.2 Catalog — Product catalog, categories, modifiers, tax profiles, price
+definitions.
+II.2.3 Table Management — Tables, zones, seating, transfer, merge,
+operational state.
+II.2.4 Order — Channel-independent order lifecycle and order item state.
+II.2.5 Bill — Customer-facing bill/adisyon, bill splitting, bill closure,
+allocations.
+II.2.6 Payment — Tendering, payment states, payment allocations, payment
+attempts, reversals.
+II.2.7 Cash — Cash sessions, cash movements, counts, differences.
+II.2.8 Menu — Static catalog to daily menu mapping.

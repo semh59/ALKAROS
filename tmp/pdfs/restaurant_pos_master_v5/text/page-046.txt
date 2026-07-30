@@ -1,0 +1,30 @@
+case, in addition to a required idempotency_key uniqueness constraint
+(III.8.2, Corrections v5 §1); refunds/reversals create compensating
+financial records — historical allocation rows are not rewritten.
+II.6.7 Recipe versioning
+A production batch must always point to an immutable recipe version.
+Rules: a recipe may have many versions; production batch references
+exactly one version; historical cost reporting uses the referenced version;
+recipe version must not be overwritten in place.
+II.6.8 QR ordering
+Default policy: restaurant confirmation. Rules: QR submission creates a
+pending customer order request; the restaurant may confirm or reject; only
+accepted orders reserve portions and proceed operationally; QR must not
+expose internal network resources; QR must not be able to create
+uncontrolled stock consumption.
+II.6.9 Inventory reservation
+Rules: reservation is not consumption; available stock cannot become
+negative; reservation must be atomic; release returns to availability; waste
+is final; restaurant and online channels share the same portion pool.
+II.6.10 Print idempotency
+Rules: one logical kitchen print request must not generate uncontrolled
+duplicates; retry must be idempotent or deduplicated; paper-out or offline
+printer must queue the job, not lose the order; print failure is recoverable.
+II.6.11 Reconciliation
+(Renumbered from the erroneous duplicate "§6.10" in the prior draft —
+Corrections v5 §8.1.)
+Rules: any mismatch between authoritative states generates a
+reconciliation case; mismatches are not silently ignored; reconciliation state
+is auditable; provider timeouts are not assumed successful; external
+duplicate callbacks are ignored through idempotency.
+II.6.12 Cash session

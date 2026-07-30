@@ -1,0 +1,31 @@
+PART I    — Roadmap / Versioned Plan            →  sections I.0  
+– I.54
+PART II   — Domain Specification                 →  sections 
+II.0 – II.16
+PART III  — Database Schema                       →  sections 
+III.0 – III.40
+PART IV   — Fresh Cross-Document Audit (this pass) →  new 
+findings, C1–C9
+0.1 Provenance
+PART I body = restaurant_pos_final_versioned_plan_v4.md, with the
+§53/§53A ordering defect corrected (§53 exit gate now precedes §54
+consistency gate, per Corrections v5 §8.3).
+PART II body = restaurant_pos_domain_specification_v2.md, with the
+duplicate §6.10 renumbered (per Corrections v5 §8.1) and a new §5.15
+Table state machine inserted (per Corrections v5 §7).
+PART III body = restaurant_pos_database_schema_v2.md, with the
+duplicate §39 renumbered, payment_allocations partial-unique-index
+fix,
+print_jobs canonical status list, stock_movementsReversal type,
+four undefined enum definitions, invoice_items de-duplication, and
+tables FK-labeling clarification all applied in place (per Corrections
+v5 §1–§6).
+0.2 Why part-prefixed numbering
+Each source document had its own independent numbering starting at 0/1.
+Concatenating them verbatim would have produced multiple unrelated
+"Section 5", "Section 14", "Section 39" etc. across the merged file — a new,
+entirely avoidable defect. Every heading below is therefore written as
+I.N, II.N, or III.N. Cross-references between parts use the same
+prefixed form (e.g. "see II.5.6 Bill closure") so a reader can always tell
+which part a citation belongs to without ambiguity.
+PART I — VERSIONED ROADMAP

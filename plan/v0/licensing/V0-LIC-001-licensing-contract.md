@@ -1,8 +1,8 @@
 # V0-LIC-001 - Define offline-safe licensing contract
 
 - Task ID: V0-LIC-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-lic-001
 - Work type: decision
 - Surface state: Planned
 

@@ -1,0 +1,25 @@
+8. Hugin T300 remains the selected fiscal/payment device. [Verified —
+I.1.3.]
+9. Code identifiers and comments are English. [Verified.]
+10. Architecture remains a single modular monolith; no microservice
+decomposition. [Verified.]
+III.40 Final note
+(Renumbering correction — Corrections v5 §8.2: this was erroneously also
+numbered "§39" in the prior draft, colliding with III.39 above.)
+This schema is intentionally detailed enough to start implementation
+without forcing a redesign later. It is still expected that: the domain
+specification (Part II) remains the primary reference; the API specification
+will follow; integration adapter contracts will be defined next; UI and printer
+behavior will be documented after that.
+The schema is final enough for development, but only if the domain rules in
+Part II are respected.
+PART IV — FRESH CROSS-DOCUMENT
+AUDIT (this consolidation pass)
+IV.0 Method
+This audit was performed as a genuinely fresh pass over the merged Part I–
+III
+above, specifically hunting for defects the merge itself could introduce
+(cross-part reference breaks, migration-order conflicts introduced by
+renumbering, and any status/enum column that survived the B1–B7 cleanup
+without actually being checked end-to-end). Nine findings, C1–C9, below.
+Three (C1, C7) are structural; the rest are scoping/ambiguity gaps.

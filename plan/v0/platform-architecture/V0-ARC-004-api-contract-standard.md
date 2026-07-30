@@ -1,8 +1,8 @@
 # V0-ARC-004 - Define API and event contract standard
 
 - Task ID: V0-ARC-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-004
 - Work type: decision
 - Surface state: Planned
 

@@ -1,0 +1,28 @@
+Canonical status (→ II.5.2): Open, PartiallyAllocated, Allocated,
+PartiallyPaid, Paid, Cancelled, Reopened.
+III.7.2 bill_items
+billing.bill_items: bill_item_id PK, bill_id FK not null, order_item_id FK
+not null, product_id FK not null, product_name_snapshot not null, quantity
+not null, unit_price not null, discount_amount default 0, tax_rate not null,
+net_amount not null, gross_amount not null, line_type not null.
+Canonical line_type: Sale, Discount, Complimentary, Refund, Waste,
+Adjustment.
+III.7.3 bill_allocations
+billing.bill_allocations: bill_allocation_id PK, bill_id FK not null,
+bill_item_id FK nullable, owner_type not null, owner_reference not null,
+allocated_amount not null, created_at not null, created_by null.
+Use cases: split bill by person, by item, by amount, customer account
+allocation.
+Constraints: allocated_amount > 0; unique rules must prevent double
+allocation of the same bill item unless explicit sub-item splitting exists.
+III.7.4 bill_closures
+billing.bill_closures: bill_closure_id PK, bill_id FK not null,
+closure_status not null, closure_reason null, closed_by null, closed_at not
+null. Preserves bill finalization attempts and failures.
+III.8 Payment schema
+III.8.1 payments
+payments.payments: payment_id PK, bill_id FK not null, payment_method
+not null, payment_provider null, status not null, requested_amount not null,
+approved_amount default 0, tendered_amount default 0, allocated_amount
+default 0, change_amount default 0, currency_code char(3) default 'TRY'.
+Derived-field contract:

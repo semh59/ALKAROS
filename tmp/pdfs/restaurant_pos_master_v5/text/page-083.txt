@@ -1,0 +1,31 @@
+III.38 Schema design non-negotiables
+1. Do not use floating point for money.
+2. Do not allow silent deletion of financial/fiscal/audit history.
+3. Do not collapse order, bill, payment, and fiscal document into one table.
+4. Do not put external provider payloads inside core business tables where
+they would pollute the model.
+5. Do not let recipe changes alter past production history.
+6. Do not let QR bypass confirmation policy.
+7. Do not let print failure destroy operational data.
+8. Do not let payment timeout become silent success.
+9. Do not let stock reservation go negative.
+10. Do not let customer PII design ignore KVKK retention needs.
+11. Do not let online provider IDs become internal primary keys.
+12. Do not let meal card settlement and customer account merge into one
+concept.
+III.39 Cross-document consistency assertions
+Before API Specification is accepted:
+1. No SplitPayment payment method exists. [Verified — III.8.1.]
+2. All canonical statuses exactly match Domain Specification (Part II).
+[Verified as of this merge — every status column in Part III now
+cross-references its Part II source, including the four previously-
+missing lists closed in this pass.]
+3. InventoryMovement is immutable and has no lifecycle state. [Verified —
+III.14.4.]
+4. Bill/Payment monetary fields have one calculation contract. [Verified —
+III.7.1, III.8.1.]
+5. KVKK lifecycle fields exist in PII-bearing customer tables. [Verified —
+III.18.1, III.18.2.]
+6. ProductionBatch.recipe_version_id is immutable. [Verified — III.13.1.]
+7. Incoming invoice ingestion has a dedicated persistence model. [Verified
+— III.20.1A.]

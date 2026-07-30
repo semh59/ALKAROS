@@ -1,0 +1,33 @@
+kitchen.printers: printer_id PK, kitchen_station_id FK nullable, code
+unique not null, name not null, connection_type not null,
+connection_address null, active default true, last_seen_at null, status not
+null.
+Canonical connection_type: USB, Network, LocalAgent.
+III.16.3 printer_routes
+kitchen.printer_routes: printer_route_id PK, product_id FK nullable,
+category_id FK nullable, daily_menu_item_id FK nullable, kitchen_station_id
+FK not null, printer_id FK nullable, active default true. Constraint: route
+rules must not be ambiguous for the same operational scope.
+III.16.4 kitchen_tickets
+kitchen.kitchen_tickets: kitchen_ticket_id PK, order_id FK not null,
+status not null, station_code not null, requested_at not null, accepted_at
+null, ready_at null, cancelled_at null, row_version.
+Canonical status (→ II.5.7): Queued, Accepted, Preparing, Ready,
+Cancelled.
+III.16.5 kitchen_ticket_items — CORRECTED (Corrections v5
+§4.3, closes audit finding B4.3)
+kitchen.kitchen_ticket_items: kitchen_ticket_item_id PK,
+kitchen_ticket_id FK not null, order_item_id FK not null,
+product_name_snapshot not null, quantity not null, status not null, notes
+null.
+Canonical status values (previously undefined — now added, matches
+II.5.7A):
+Queued
+Preparing
+Ready
+Served
+Cancelled
+This is a distinct, finer-grained state machine from
+kitchen_tickets.status — a single ticket can have some items Ready
+and others still Preparing. The parent ticket only reaches Ready when all
+non-cancelled items are Ready or Served.

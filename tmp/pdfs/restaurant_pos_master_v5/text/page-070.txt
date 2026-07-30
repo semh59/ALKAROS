@@ -1,0 +1,32 @@
+gross_amount not null, commission_amount default 0, deduction_amount
+default 0, net_receivable not null, settlement_status not null,
+settlement_period_start null, settlement_period_end null.
+Canonical settlement_status values (previously undefined — now
+added, matches II.5.10A):
+Unsettled
+IncludedInSettlement
+Settled
+Disputed
+Rules:
+A payment starts Unsettled.
+Moves to IncludedInSettlement only when referenced by a
+meal_card_settlement_items row belonging to a settlement in
+Prepared or later state.
+Moves to Settled when the parent meal_card_settlements.status
+reaches Settled.
+Disputed may be entered from IncludedInSettlement or Settled
+and requires a corresponding reconciliation_cases row.
+III.17.3 meal_card_settlements
+meal_card.meal_card_settlements: meal_card_settlement_id PK,
+meal_card_provider_id FK not null, settlement_period_start not null,
+settlement_period_end not null, gross_total default 0, commission_total
+default 0, deduction_total default 0, net_total default 0, status not null,
+submitted_at null, settled_at null, row_version.
+Canonical status (→ II.5.10): Open, Prepared, Submitted,
+PartiallySettled, Settled, Disputed, Reconciled.
+III.17.4 meal_card_settlement_items
+meal_card.meal_card_settlement_items: meal_card_settlement_item_id
+PK, meal_card_settlement_id FK not null, meal_card_payment_id FK not
+null, gross_amount not null, commission_amount default 0,
+deduction_amount default 0, net_amount not null. Constraint:
+unique(meal_card_settlement_id, meal_card_payment_id).

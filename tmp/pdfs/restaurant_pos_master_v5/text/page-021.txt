@@ -1,0 +1,27 @@
+I.33 V1.3 — KVKK Data Model
+İlk prensipler: data minimization, PII/financial data separation, retention
+metadata, anonymization capability, auditability, legally required financial
+records ile personal data ayrımı.
+Silme talebi geldiğinde her kayıt fiziksel olarak silinmek zorunda değildir.
+Finansal/yasal saklama yükümlülüğü olan kayıtlar korunurken kişisel verinin
+gerekli olmayan kısmı anonymize edilebilir.
+Şema karşılığı zaten uygulanmış:customers / customer_accounts
+tablolarında retention_until, anonymization_status, anonymized_at
+kolonları mevcut (III.18.1, III.18.2) — bu, roadmap prensibinin V1.3'te veriye ilk
+girdiği andan itibaren şemada yer aldığı, V1.5'e ertelenmediği anlamına gelir.
+I.34 V1.4 — QR Ordering
+Customer Phone →  Public QR →  Secure Relay / Gateway →  Local 
+POS
+I.34.1 Security
+QR: internal network'e doğrudan erişemez, database'e erişemez, local
+admin interface'e erişemez, signed/limited token kullanır, rate limit
+uygulanabilir, replay protection uygulanır, abuse durumunda revoke
+edilebilir.
+I.35 V1.4 — QR Order Confirmation
+Default güvenli mod: Restaurant Confirmation.
+QR Customer →  Order Submitted →  PendingConfirmation → 
+Restaurant confirms →  Accepted →  Portion Reservation →  Kitchen
+Bu karar stok yarışlarını ve kötü niyetli public ordering etkisini azaltır. Auto-
+accept gelecekte ayarlanabilir bir policy olabilir; ancak default davranış
+Restaurant Confirmation'dır. (Bu karar Domain Specification'a taşınmıştır —
+bkz. II.6.8, kayıp değildir.)

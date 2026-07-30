@@ -1,8 +1,8 @@
 # V0-ARC-002 - Define local-first synchronization contract
 
 - Task ID: V0-ARC-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-arc-002
 - Work type: decision
 - Surface state: Planned
 

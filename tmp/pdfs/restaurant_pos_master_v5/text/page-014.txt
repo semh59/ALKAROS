@@ -1,0 +1,24 @@
+PrintJob
+├──  Id
+├──  OrderId
+├──  PrinterRoute
+├──  Status          -- canonical list: II.5.8 / III.16.6
+├──  AttemptCount
+├──  IdempotencyKey
+└──  LastError
+I.18 V1 — Reconciliation Foundation
+İlk framework: ReconciliationCase, ReconciliationSource,
+ReconciliationStatus, ReconciliationReason. V1.2+ ile kaynaklar
+genişler.
+Alan İlk çalışan sürüm
+Order vs Bill V1
+Print state mismatch V1
+Payment vs T300 V1.2
+Fiscal vs payment V1.2
+QNB vs invoice V1.3
+Online provider vs local order V1.4
+Meal card settlement V1.2
+Full reconciliation dashboard V1.5
+I.19 V1 — Alerting Foundation
+Alert, AlertRule, AlertSeverity, AlertStatus, 
+AlertAcknowledgement

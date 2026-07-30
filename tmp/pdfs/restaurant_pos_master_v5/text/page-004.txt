@@ -1,0 +1,30 @@
+Outbox pattern: gerekli integration/event akışlarında kullanılabilir
+Local-first: EVET
+I.1.2 Teknoloji
+Backend: C# / .NET 10 LTS
+ORM: Entity Framework Core 10
+Database: PostgreSQL 18
+Frontend: React + TypeScript
+Waiter client: PWA
+Realtime: SignalR
+Code naming language: English
+UI language: Turkish
+I.1.3 Sabit donanım
+Fiscal/payment terminal: Hugin T300
+Cashier terminal: 1 touchscreen POS terminal
+Kitchen printer #1: Food/Kitchen
+Kitchen printer #2: Cold + Dessert
+Waiter device: Garsonun kendi telefonu
+Customer device: Kendi telefonu
+Restaurant Wi-Fi: Customer ordering için zorunlu değil
+I.1.4 Sabit dış sistemler
+E-invoice / e-document provider: QNB eSolutions
+Online ordering initial provider: Yemeksepeti
+Meal card providers: desteklenecek; provider-specific adapter
+QR public access: Secure Relay/Gateway
+I.1.5 Ticari model
+Software license: One-time sale
+External provider/device/communication costs: software license'tan ayrı
+operational concern
+Product architecture external recurring services'e bağımlı olabilir; ancak
+core restaurant operation internet olmadan devam edebilmelidir.
