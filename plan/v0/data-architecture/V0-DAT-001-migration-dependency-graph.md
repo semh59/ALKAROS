@@ -4,7 +4,7 @@
 - Status: Done
 - Assignee: codex-v0-dat-001
 - Work type: decision
-- Surface state: Planned
+- Surface state: Done
 
 ## Source basis
 

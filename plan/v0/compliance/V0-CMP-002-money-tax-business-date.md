@@ -4,7 +4,7 @@
 - Status: Done
 - Assignee: codex-v0-cmp-002
 - Work type: decision
-- Surface state: Planned
+- Surface state: Done
 
 ## Source basis
 

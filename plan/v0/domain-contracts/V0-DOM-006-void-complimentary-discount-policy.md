@@ -1,10 +1,10 @@
 # V0-DOM-006 - Define void complimentary and discount policy
 
 - Task ID: V0-DOM-006
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dom-006
 - Work type: decision
-- Surface state: Planned
+- Surface state: Done
 
 ## Source basis
 

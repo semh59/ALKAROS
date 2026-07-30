@@ -1,10 +1,10 @@
 # V0-DOM-007 - Define customer credit and invoice reclassification semantics
 
 - Task ID: V0-DOM-007
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dom-007
 - Work type: decision
-- Surface state: Planned
+- Surface state: Done
 
 ## Source basis
 
