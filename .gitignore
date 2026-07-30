@@ -1,0 +1,28 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.sln.docstates
+.vs/
+*.DotSettings.user
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build
+packages/
+*.nupkg
+build/
+artifacts/
+
+# Secrets
+appsettings.*.local.json
+*.secret.*
