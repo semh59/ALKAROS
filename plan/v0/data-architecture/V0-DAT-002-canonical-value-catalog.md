@@ -1,8 +1,8 @@
 # V0-DAT-002 - Create canonical status and enum catalog
 
 - Task ID: V0-DAT-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dat-002
 - Work type: decision
 - Surface state: Planned
 

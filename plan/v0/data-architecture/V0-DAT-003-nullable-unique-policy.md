@@ -1,8 +1,8 @@
 # V0-DAT-003 - Define nullable uniqueness policy
 
 - Task ID: V0-DAT-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dat-003
 - Work type: decision
 - Surface state: Planned
 

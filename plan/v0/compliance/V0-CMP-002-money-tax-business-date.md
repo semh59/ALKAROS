@@ -1,8 +1,8 @@
 # V0-CMP-002 - Define money tax and business-date rules
 
 - Task ID: V0-CMP-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-cmp-002
 - Work type: decision
 - Surface state: Planned
 

@@ -1,8 +1,8 @@
 # V0-CMP-001 - Determine GIB and e-Adisyon scope
 
 - Task ID: V0-CMP-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-cmp-001
 - Work type: validation
 - Surface state: Planned
 

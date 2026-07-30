@@ -1,8 +1,8 @@
 # V0-DAT-001 - Build migration dependency graph
 
 - Task ID: V0-DAT-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: codex-v0-dat-001
 - Work type: decision
 - Surface state: Planned
 
