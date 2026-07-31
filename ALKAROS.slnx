@@ -1,0 +1,27 @@
+<Solution>
+  <Project Path="src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj" />
+  <Project Path="src/Host/ALKAROS.Host.csproj" />
+  <Project Path="src/Modules/Orders/ALKAROS.Orders.csproj" />
+  <Project Path="src/Modules/Billing/ALKAROS.Billing.csproj" />
+  <Project Path="src/Modules/Payments/ALKAROS.Payments.csproj" />
+  <Project Path="src/Modules/Kitchen/ALKAROS.Kitchen.csproj" />
+  <Project Path="src/Modules/Catalog/ALKAROS.Catalog.csproj" />
+  <Project Path="src/Modules/Tables/ALKAROS.Tables.csproj" />
+  <Project Path="src/Modules/Cash/ALKAROS.Cash.csproj" />
+  <Project Path="src/Modules/Fiscal/ALKAROS.Fiscal.csproj" />
+  <Project Path="src/Modules/Inventory/ALKAROS.Inventory.csproj" />
+  <Project Path="src/Modules/Accounts/ALKAROS.Accounts.csproj" />
+  <Project Path="src/Modules/Reporting/ALKAROS.Reporting.csproj" />
+  <Project Path="src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj" />
+  <Project Path="src/Modules/Notifications/ALKAROS.Notifications.csproj" />
+  <Project Path="src/Modules/Settings/ALKAROS.Settings.csproj" />
+  <Project Path="src/Modules/Identity/ALKAROS.Identity.csproj" />
+  <Project Path="src/Clients/Cashier/ALKAROS.Cashier.csproj" />
+  <Project Path="src/Clients/Waiter/ALKAROS.Waiter.csproj" />
+  <Project Path="src/Integrations/Hugin/ALKAROS.Hugin.csproj" />
+  <Project Path="src/Integrations/Qnb/ALKAROS.Qnb.csproj" />
+  <Project Path="src/Integrations/Yemeksepeti/ALKAROS.Yemeksepeti.csproj" />
+  <Project Path="src/Integrations/MealCard/ALKAROS.MealCard.csproj" />
+  <Project Path="src/Integrations/QrRelay/ALKAROS.QrRelay.csproj" />
+  <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
+</Solution>

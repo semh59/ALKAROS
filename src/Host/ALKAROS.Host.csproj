@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSHost>true</ALKAROSHost>
+    <RootNamespace>ALKAROS.Host</RootNamespace>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\Orders\ALKAROS.Orders.csproj" />
+    <ProjectReference Include="..\Modules\Billing\ALKAROS.Billing.csproj" />
+    <ProjectReference Include="..\Modules\Payments\ALKAROS.Payments.csproj" />
+    <ProjectReference Include="..\Modules\Kitchen\ALKAROS.Kitchen.csproj" />
+    <ProjectReference Include="..\Modules\Catalog\ALKAROS.Catalog.csproj" />
+    <ProjectReference Include="..\Modules\Tables\ALKAROS.Tables.csproj" />
+    <ProjectReference Include="..\Modules\Cash\ALKAROS.Cash.csproj" />
+    <ProjectReference Include="..\Modules\Fiscal\ALKAROS.Fiscal.csproj" />
+    <ProjectReference Include="..\Modules\Inventory\ALKAROS.Inventory.csproj" />
+    <ProjectReference Include="..\Modules\Accounts\ALKAROS.Accounts.csproj" />
+    <ProjectReference Include="..\Modules\Reporting\ALKAROS.Reporting.csproj" />
+    <ProjectReference Include="..\Modules\Reconciliation\ALKAROS.Reconciliation.csproj" />
+    <ProjectReference Include="..\Modules\Notifications\ALKAROS.Notifications.csproj" />
+    <ProjectReference Include="..\Modules\Settings\ALKAROS.Settings.csproj" />
+    <ProjectReference Include="..\Modules\Identity\ALKAROS.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

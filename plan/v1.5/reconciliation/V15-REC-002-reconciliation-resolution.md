@@ -50,6 +50,8 @@ yürütmek.
 
 - Yetkisiz veya geçersiz eylem hiçbir şeyi değiştirmez; tekrarlanan eylem önemsizdir; mali düzeltme telafi edici kayıt
   oluşturur.
+- `V15-REC-001` kanıtlı `NotApplicable` ise çözüm eylemleri için okuma modeli vaka kaynağı beklenmez; yetki, idempotency
+  ve telafi edici kayıt davranışı yine doğrulanır.
 
 ## Handoff
 

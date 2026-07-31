@@ -1,10 +1,10 @@
 # V1-FND-001 - Create the modular monolith skeleton
 
 - Task ID: V1-FND-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: cline-v1-fnd-001
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 

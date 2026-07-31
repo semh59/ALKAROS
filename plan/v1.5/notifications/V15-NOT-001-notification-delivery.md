@@ -48,6 +48,8 @@ operasyonel uyarılar sunun.
 
 - Bir alert parmak izi, yinelenen fırtınalar olmadan yapılandırılmış teslimat/yükseltme sırasını üretir; her denemenin
   düzeltilmiş bir denetim sonucu vardır.
+- `V15-OBS-002` kanıtlı `NotApplicable` ise alert kaynaklı bildirim tetikleyicileri beklenmez; kalan yapılandırılmış
+  teslimat/yükseltme davranışı yine doğrulanır.
 
 ## Handoff
 

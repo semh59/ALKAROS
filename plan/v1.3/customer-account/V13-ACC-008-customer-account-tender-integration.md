@@ -55,6 +55,10 @@ allocation sonucunu fiscal Bill closure gate'ine bağlamak.
 - Retry tek AccountCharge, Payment ve PaymentAllocation üretir; CustomerAccount allocation yalnız `V12-FSC-002`
   policy sonucu izin verirse Bill'i final closed yapar.
 - Missing/duplicate registration startup'ı fail-closed durdurur; bu task cash/card/meal-card handler'larını değiştirmez.
+- `V12-PAY-003` kanıtlı `NotApplicable` ise MealCard tender handler'ı V1.3 composition'a kaydedilmez; Cash/BankCard
+  routing ve fail-closed registration testleri yine doğrulanır. `V12-FSC-002` kanıtlı `NotApplicable` ise
+  CustomerAccount allocation'un Bill'i final closed yapma yolu kapsam dışı kalır; kalan routing ve registration
+  davranışı yine doğrulanır.
 
 ## Handoff
 

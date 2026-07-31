@@ -1,7 +1,7 @@
 # Nullable Uniqueness Policy
 
 > **Task:** V0-DAT-003
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dat-003
 > **Work type:** decision
 > **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2, PDF:II.13-II.15, PDF:III.29-III.40

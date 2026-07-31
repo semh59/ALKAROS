@@ -1,0 +1,1 @@
+Task V0-ARC-003 completed. Output: docs/architecture/idempotency-inbox-outbox.md

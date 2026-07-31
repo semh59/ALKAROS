@@ -1,7 +1,7 @@
 # Canonical Value Catalog
 
 > **Task:** V0-DAT-002
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dat-002
 > **Work type:** decision
 > **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2, PDF:II.13-II.15, PDF:III.29-III.40, CORR:C2, CORR:C7

@@ -60,6 +60,13 @@ adlandırılmış, tarihli onayı toplayın.
 
 - Uygulanabilir her yükümlülüğe, onay ve uygulama kanıtları adı verilmiştir; çözülmemiş veya süresi dolmuş herhangi bir
   onay kapıyı bloke eder.
+- `V12-FSC-003` kanıtlı `NotApplicable` ise adisyon lifecycle yükümlülüğü sign-off'ta adlandırılmış dated decision ile
+  kapanır; `V20-INT-001` veya `V20-INT-002` kanıtlı `NotApplicable` ise ilgili provider certification yükümlülüğü
+  benzer şekilde ele alınır; kalan yükümlülükler onay ve uygulama kanıtlarıyla yine doğrulanır.
+- `V20-UAT-002` kanıtlı `NotApplicable` ise finance/inventory acceptance onayı sign-off'ta adlandırılmış dated decision
+  ile ele alınır; kalan yükümlülükler onay ve uygulama kanıtlarıyla yine doğrulanır.
+- `V20-UAT-001` kanıtlı `NotApplicable` ise service flow acceptance onayı sign-off'ta adlandırılmış dated decision ile
+  ele alınır; kalan yükümlülükler onay ve uygulama kanıtlarıyla yine doğrulanır.
 
 ## Handoff
 

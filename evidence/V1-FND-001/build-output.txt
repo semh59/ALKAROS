@@ -1,0 +1,32 @@
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Hugin -> D:\PROJECT\ALKAROS\src\Integrations\Hugin\bin\Debug\net8.0\ALKAROS.Hugin.dll
+  ALKAROS.Cashier -> D:\PROJECT\ALKAROS\src\Clients\Cashier\bin\Debug\net8.0\ALKAROS.Cashier.dll
+  ALKAROS.Waiter -> D:\PROJECT\ALKAROS\src\Clients\Waiter\bin\Debug\net8.0\ALKAROS.Waiter.dll
+  ALKAROS.MealCard -> D:\PROJECT\ALKAROS\src\Integrations\MealCard\bin\Debug\net8.0\ALKAROS.MealCard.dll
+  ALKAROS.QrRelay -> D:\PROJECT\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.Yemeksepeti -> D:\PROJECT\ALKAROS\src\Integrations\Yemeksepeti\bin\Debug\net8.0\ALKAROS.Yemeksepeti.dll
+  ALKAROS.Qnb -> D:\PROJECT\ALKAROS\src\Integrations\Qnb\bin\Debug\net8.0\ALKAROS.Qnb.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Notifications -> D:\PROJECT\ALKAROS\src\Modules\Notifications\bin\Debug\net8.0\ALKAROS.Notifications.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Accounts -> D:\PROJECT\ALKAROS\src\Modules\Accounts\bin\Debug\net8.0\ALKAROS.Accounts.dll
+  ALKAROS.Fiscal -> D:\PROJECT\ALKAROS\src\Modules\Fiscal\bin\Debug\net8.0\ALKAROS.Fiscal.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Architecture.Tests -> D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll
+
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+
+Geçen Süre 00:00:03.20
+EXIT:0  

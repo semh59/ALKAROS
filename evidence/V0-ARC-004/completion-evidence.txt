@@ -1,0 +1,1 @@
+Task V0-ARC-004 completed. Output: docs/architecture/api-contract-standard.md

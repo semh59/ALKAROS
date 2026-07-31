@@ -59,6 +59,8 @@ V1.2 yetkili kaynakları farklılaştığında tekilleştirilmiş Reconciliation
   cash reconciliation kaynakları yine doğrulanır.
 - Aynı durumda `V12-MCD-002` de aynı dated decision ile `NotApplicable` olabilir; task kalan reconciliation
   kaynaklarıyla çalışmaya devam eder.
+- `V12-FSC-002` tarihli `NotApplicable` ise meal-card fiscal closure branch'i bu reconciliation'da disabled kalır;
+  fiscal ve cash kaynak çiftleri yine doğrulanır.
 
 ## Handoff
 

@@ -45,6 +45,8 @@ yolunu kanıtlayın.
   değiştirmeden hizmeti geri yükler.
 - `V20-LIC-001` kanıtlı `NotApplicable` ise aynı decision ID, tarih ve approver kaydedilir; recovery exercise
   çalıştırılmaz ve bu task da `NotApplicable` kapanır.
+- `V15-RUN-001` kanıtlı `NotApplicable` ise runbook kaynaklı kurtarma senaryoları beklenmez; kalan arıza senaryoları
+  güvenli durum ve geri yükleme kuralına yine uyar.
 
 ## Handoff
 

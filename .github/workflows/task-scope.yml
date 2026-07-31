@@ -1,0 +1,30 @@
+name: task-scope
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      task-id:
+        description: "Active Task ID to enforce"
+        required: true
+        default: "V1-FND-003"
+
+permissions:
+  contents: read
+
+jobs:
+  enforce:
+    name: Task scope enforcement
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run task-scope validation
+        shell: pwsh
+        run: python tools/task-scope/task_scope_tool.py --task-id "${{ github.event.inputs.task-id || 'V1-FND-003' }}" --format text

@@ -1,7 +1,7 @@
 # Accessibility Conformance Target
 
 > **Task:** V0-CMP-005
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-cmp-005
 > **Work type:** decision
 > **Source basis:** EXT:WCAG-2.2, CORR:C19

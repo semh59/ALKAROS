@@ -1,7 +1,7 @@
 # Notification Delivery Matrix
 
 > **Task:** V0-ARC-006
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-arc-006
 > **Work type:** decision
 > **Source basis:** PDF:I.40, PDF:II.2.25, CORR:C14

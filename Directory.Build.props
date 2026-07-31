@@ -1,0 +1,31 @@
+<Project>
+
+  <PropertyGroup>
+    <Product>ALKAROS</Product>
+    <Company>ALKAROS</Company>
+    <Copyright>Copyright (c) ALKAROS. All rights reserved.</Copyright>
+    <Version>1.0.0</Version>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageFloatingVersionEnabled>false</CentralPackageFloatingVersionEnabled>
+    <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode>true</RestoreLockedMode>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+    <RepositoryCommit>0f4f537ea4ec8f1c366b78bc52b8a6f1a692e662</RepositoryCommit>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ALKAROSRoot>$(MSBuildThisFileDirectory)</ALKAROSRoot>
+    <ALKAROSSourceRoot>$(ALKAROSRoot)src\</ALKAROSSourceRoot>
+    <ALKAROSTestsRoot>$(ALKAROSRoot)tests\</ALKAROSTestsRoot>
+  </PropertyGroup>
+
+</Project>

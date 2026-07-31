@@ -51,6 +51,8 @@ Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamla
 ## Acceptance evidence
 
 - Bilinen test periyodu sıfır farkla uzlaşır; enjekte edilen eksik/ekstra işlem, izlenebilir bir vaka oluşturur.
+- `V12-REC-001` tarihli `NotApplicable` ise payment reconciliation case üretimi bu task kapsamında doğrulanmaz; Hugin
+  terminal totals karşılaştırması kendi doğrulanmış toplam/işlem sorgu kaynaklarıyla yine doğrulanır.
 
 ## Handoff
 

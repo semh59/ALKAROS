@@ -1,7 +1,7 @@
 # Security Verification Baseline
 
 > **Task:** V0-SEC-001
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-sec-001
 > **Work type:** decision
 > **Source basis:** PDF:I.15, PDF:I.48.6, EXT:OWASP-ASVS-4.0

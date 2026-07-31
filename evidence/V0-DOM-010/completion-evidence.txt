@@ -1,0 +1,1 @@
+Task V0-DOM-010 completed. Output: docs/domain/inventory-cost-basis.md

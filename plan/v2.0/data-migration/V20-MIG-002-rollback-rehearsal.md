@@ -45,6 +45,8 @@ Taşınan release adayından migration öncesi kurtarılabilir durumuna onaylanm
 
 - Prova edilen yol, sistemi tüm kontrol toplamları açıklanarak RTO dahilinde ve onaylanmış RPO kayıp sınırı dahilinde
   onaylanmış checkpoint'ye döndürür.
+- `V20-MIG-001` kanıtlı `NotApplicable` ise ileri yön provası kapsam dışı kalır; geri alma provası kendi kaynaklarıyla
+  RTO/RPO ve kontrol toplamı kuralına yine uyar.
 
 ## Handoff
 

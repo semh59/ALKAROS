@@ -1,7 +1,7 @@
 # Offline-Safe Licensing Contract
 
 > **Task:** V0-LIC-001
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-lic-001
 > **Work type:** decision
 > **Source basis:** PDF:II.2.24, PDF:III.26

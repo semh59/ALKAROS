@@ -50,6 +50,8 @@ Local/provider Order, status, cancellation ve stock outcome farklılıklarını 
 
 - Provider kabul edildi/yerel reddedildi ve yerel kabul edildi/provider bilinmiyor her biri güvenli bir sonraki eylemle
   bir vaka oluşturur.
+- `V12-REC-001` kanıtlı `NotApplicable` ise online order reconciliation vaka üretimi yerel/provider Order, status ve
+  stock outcome kaynaklarıyla bağımsız olarak yine doğrulanır.
 
 ## Handoff
 

@@ -1,0 +1,1 @@
+Task V0-CMP-001 completed. Output: evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md

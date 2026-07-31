@@ -48,6 +48,10 @@ Yalnız signed Approve kararı verilen exact release artifact'ını kontrollü p
 - Başarılı kurulum aynı artifact hash'ini, son backup checkpoint'ini ve kontrollü ilk smoke işlemini kanıtlar.
 - `V0-ARC-009` selected topology applicable ise public relay'den authenticated local connector'a production smoke
   kanıtlanır; seçilmemiş relay/provider artifact'i dağıtılmaz.
+- `V20-REL-003` kanıtlı `NotApplicable` ise go-live decision evidence'ı production kanıtına dahil edilmez; Approve
+  olmayan sonuç için hiçbir production adımının çalışmaması kuralı yine geçerlidir.
+- `V20-MIG-002` kanıtlı `NotApplicable` ise rollback rehearsal kaynaklı production kanıtı beklenmez; kalan production
+  adımları ve smoke kuralı yine geçerlidir.
 
 ## Handoff
 

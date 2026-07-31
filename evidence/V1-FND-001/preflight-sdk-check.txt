@@ -1,0 +1,51 @@
+V1-FND-001 Preflight - SDK Availability Check
+Date: 2026-07-30
+Executor: cline-v1-fnd-001
+
+Command: dotnet --info
+Exit code: 0 (command ran, but reports no SDK)
+
+Result:
+  Host:
+    Version:      8.0.29
+    Architecture: x64
+    Commit:       18fd75c847
+    RID:          win-x64
+
+  .NET SDKs installed:
+    No SDKs were found.
+
+  .NET runtimes installed:
+    Microsoft.NETCore.App 8.0.29
+    Microsoft.WindowsDesktop.App 8.0.29
+
+  Environment variables:
+    Not set
+
+  global.json file:
+    Not found
+
+Blocker:
+  V1-FND-001 Acceptance evidence requires `dotnet restore`, `dotnet build` and
+  `dotnet test` to pass on the exact solution graph. No .NET SDK is installed on
+  this machine — only the 8.0.29 runtime host exists. Without a verified SDK:
+
+  1. `global.json` cannot pin a real, verified SDK version (writing an
+     unverified version would be an unsupported fallback / default behavior,
+     explicitly forbidden by AGENTS.md and ASSUMPTION_POLICY.md).
+  2. `dotnet new`, `dotnet build`, `dotnet test` cannot run, so acceptance
+     evidence ("clean restore/build/test") cannot be produced.
+  3. Central Package Management (`Directory.Packages.props`) and `slnx` format
+     support both depend on a specific SDK version that cannot be confirmed.
+
+  Per AGENTS.md: "Gerekli gerçek kaynak, decision record, sandbox/device kanıtı
+  ya da secret erişimi yoksa durur; stub veya varsayılan davranış üretmez."
+
+Required resolution:
+  Install a .NET 8 SDK (or the SDK version mandated by an approved decision
+  record) so that `dotnet --list-sdks` reports at least one SDK and
+  `dotnet build`/`dotnet test` can execute. Then re-run preflight and resume
+  V1-FND-001 implementation.
+
+No code or project files were written. Write-set remains clean except this
+evidence file.

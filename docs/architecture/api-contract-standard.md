@@ -1,7 +1,7 @@
 # API and Event Contract Standard
 
 > **Task:** V0-ARC-004
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-arc-004
 > **Work type:** decision
 > **Source basis:** PDF:I.0-I.5, PDF:II.0-II.1, PDF:III.0-III.2

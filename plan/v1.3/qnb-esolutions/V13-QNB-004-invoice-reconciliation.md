@@ -52,6 +52,8 @@ Gönderim, cancellation/correction, local/provider status ve incoming retrieval 
   local ve provider reference taşıyan tek açık case'e bağlanır.
 - `V13-QNB-005` kanıtlı `NotApplicable` ise cancellation case'i üretilmez; aynı tarihli decision evidence kaydedilir ve
   submission/incoming reconciliation kapsamı test edilmeye devam eder.
+- `V12-REC-001` kanıtlı `NotApplicable` ise QNB invoice reconciliation kendi submission/status kaynaklarıyla vaka
+  üretmeye devam eder; payment reconciliation case'lerine bağımlılık beklenmez.
 
 ## Handoff
 

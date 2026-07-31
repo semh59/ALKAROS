@@ -1,7 +1,7 @@
 # Bill-Order Cardinality Contract
 
 > **Task:** V0-DOM-002
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-002
 > **Work type:** decision
 > **Source basis:** PDF:I.11-I.15, PDF:II.2.5, PDF:II.3.3, PDF:II.5.2, PDF:III.7

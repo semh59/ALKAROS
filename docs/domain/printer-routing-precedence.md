@@ -1,7 +1,7 @@
 # Printer Routing Precedence Contract
 
 > **Task:** V0-DOM-011
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-011
 > **Work type:** decision
 > **Source basis:** PDF:I.16.1, PDF:II.3.13-II.3.14, CORR:C13

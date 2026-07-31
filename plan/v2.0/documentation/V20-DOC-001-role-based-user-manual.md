@@ -47,6 +47,8 @@ yayınlayın.
 
 - Belgelenen her eylem release adayında başarıyla yeniden oynatılır; hiçbir talimat o rol için mevcut olmayan bir izni
   gerektirmez.
+- `V12-PUI-003` kanıtlı `NotApplicable` ise refund/exception UI talimatları kılavuza dahil edilmez; belgelenen kalan
+  eylemler release adayında yine yeniden oynatılır.
 
 ## Handoff
 

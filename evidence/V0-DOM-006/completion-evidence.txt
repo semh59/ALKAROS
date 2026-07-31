@@ -1,0 +1,1 @@
+Task V0-DOM-006 completed. Output: docs/domain/void-complimentary-discount-policy.md

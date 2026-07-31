@@ -46,6 +46,8 @@ yayınlayın.
 
 - Otomatik bağlantı/şema kontrolleri başarıyla tamamlanır ve temiz bir incelemeci, her genel contract ve sahip olunan
   veri kümesini tam olarak tek bir modül ve release sürümüyle eşleyebilir.
+- `V15-RUN-001` kanıtlı `NotApplicable` ise runbook bağlantıları referansa dahil edilmez; kalan contract/şema eşleme
+  kuralı yine geçerlidir.
 
 ## Handoff
 

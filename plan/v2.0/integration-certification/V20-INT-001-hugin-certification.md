@@ -49,6 +49,8 @@ onaylayın.
   bir mali işlem üretmez.
 - `V12-FSC-003` tarihli `NotApplicable` ise adisyon lifecycle bu certification'a dahil edilmez; Hugin payment ve terminal
   total senaryoları yine kanıtlanır.
+- `V12-HUG-004` kanıtlı `NotApplicable` ise terminal totals senaryoları certification kapsamına dahil edilmez; Hugin
+  payment senaryoları yine kanıtlanır.
 
 ## Handoff
 

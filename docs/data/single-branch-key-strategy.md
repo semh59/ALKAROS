@@ -1,7 +1,7 @@
 # Single-Branch and Business Key Strategy
 
 > **Task:** V0-DAT-005
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dat-005
 > **Work type:** decision
 > **Source basis:** PDF:I.1.2, PDF:II.0-II.1, PDF:III.0-III.2, CORR:C5

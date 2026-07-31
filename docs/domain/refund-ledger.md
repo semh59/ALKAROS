@@ -1,7 +1,7 @@
 # Refund Ledger Contract
 
 > **Task:** V0-DOM-003
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-003
 > **Work type:** decision
 > **Source basis:** PDF:II.2.6, PDF:II.3.4-II.3.5, PDF:II.5.3, PDF:III.8

@@ -1,0 +1,31 @@
+Oluşturma başlatıldı: 31.07.2026 01:05:19.
+     1>1 düğümünde "D:\PROJECT\ALKAROS\ALKAROS.sln" projesi (VSTest hedef).
+     1>ValidateSolutionConfiguration:
+         "Debug|Any CPU" çözüm yapılandırması oluşturuluyor.
+D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+VSTest sürümü 17.11.1 (x64)
+
+Test yürütmesi başlatılıyor, lütfen bekleyin...
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.29)
+[xUnit.net 00:00:00.08]   Discovering: ALKAROS.Architecture.Tests
+[xUnit.net 00:00:00.11]   Discovered:  ALKAROS.Architecture.Tests
+[xUnit.net 00:00:00.12]   Starting:    ALKAROS.Architecture.Tests
+[xUnit.net 00:00:00.29]   Finished:    ALKAROS.Architecture.Tests
+  Başarılı ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionShouldNotDependOnAnyModule [96 ms]
+  Başarılı ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldComposeInTopologicalOrder [17 ms]
+  Başarılı ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldRejectUnknownDependency [< 1 ms]
+  Başarılı ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldDetectCyclicDependencies [< 1 ms]
+
+Test Çalıştırması Başarılı.
+Toplam test sayısı: 4
+     Geçti: 4
+ Toplam süre: 0,9355 Saniye
+     1>"D:\PROJECT\ALKAROS\ALKAROS.sln" Projesini Oluşturma İşlemi Tamamlandı (VSTest hedef).
+
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+
+Geçen Süre 00:00:04.36
+EXIT:0  

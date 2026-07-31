@@ -1,7 +1,7 @@
 # Restaurant POS Master Specification
 
 > **Task:** V0-DOC-001
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-doc-001
 > **Work type:** decision
 > **Source basis:** PDF:II.0-II.15, PDF:IV.0-IV.1, CORR:C1-C9

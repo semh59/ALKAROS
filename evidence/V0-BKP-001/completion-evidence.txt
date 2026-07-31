@@ -1,0 +1,1 @@
+Task V0-BKP-001 completed. Output: evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md

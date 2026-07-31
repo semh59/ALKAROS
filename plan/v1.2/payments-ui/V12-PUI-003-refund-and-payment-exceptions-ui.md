@@ -50,6 +50,8 @@
 - Kısmi geri ödeme önizlemesi sunucuyla eşleşir; retry bir işlem üretir; bilinmeyen sonuç hiçbir zaman kanıt olmadan
   tamamlanmış olarak görüntülenmez.
 - Exception akışları `V0-CMP-005` kararındaki cashier success criteria ve approved exception kayıtlarını karşılar.
+- `V12-REC-001` kanıtlı `NotApplicable` ise vaka bağlantılı mutabakat status gösterimi beklenmez; kısmi geri ödeme
+  önizlemesi, retry ve bilinmeyen sonuç davranışı kendi kaynaklarıyla yine doğrulanır.
 
 ## Handoff
 

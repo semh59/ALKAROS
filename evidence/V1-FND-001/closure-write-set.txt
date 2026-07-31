@@ -1,0 +1,14 @@
+ M plan/v1/foundation/V1-FND-001-module-skeleton.md
+?? .config/
+?? ALKAROS.sln
+?? ALKAROS.slnx
+?? Directory.Build.props
+?? Directory.Build.targets
+?? Directory.Packages.props
+?? NuGet.config
+?? evidence/V1-FND-001/
+?? global.json
+?? src/
+?? tests/
+?? tmp/preflight-snapshot.txt
+0f4f537ea4ec8f1c366b78bc52b8a6f1a692e662

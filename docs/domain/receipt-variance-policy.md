@@ -1,7 +1,7 @@
 # Receipt Variance Policy
 
 > **Task:** V0-DOM-009
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-009
 > **Work type:** decision
 > **Source basis:** PDF:III.15, CORR:C11

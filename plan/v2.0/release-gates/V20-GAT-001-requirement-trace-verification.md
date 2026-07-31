@@ -44,6 +44,8 @@ onaylanmış bir uygulanamaz düzenlemeye sahip olduğunu kanıtlayın.
 
 - Doğrulama komutu sıfır sahipsiz, kanıtsız veya kapsam içi çözümlenmemiş PDF satırını rapor eder; rapor exact
   release artifact hash ve source revision'a bağlıdır; her NotApplicable satırda adlandırılmış onay kanıtı bulunur.
+- `V20-REL-001` kanıtlı `NotApplicable` ise release adayı hashi beklenmez; satır bazında doğrulama ve onay kanıtı
+  kuralı yine geçerlidir.
 
 ## Handoff
 

@@ -1,7 +1,7 @@
 # Void, Complimentary and Discount Policy
 
 > **Task:** V0-DOM-006
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-006
 > **Work type:** decision
 > **Source basis:** PDF:II.2.5, PDF:II.3.3, PDF:II.5.2, PDF:III.7

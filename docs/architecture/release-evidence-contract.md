@@ -1,7 +1,7 @@
 # Release Evidence Contract
 
 > **Task:** V0-ARC-008
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-arc-008
 > **Work type:** decision
 > **Source basis:** EXT:CYCLONEDX-1.7, EXT:SLSA-1.2, CORR:C16

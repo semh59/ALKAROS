@@ -48,6 +48,12 @@ data ile pilot rehearsal olarak çalıştırmak.
 
 - Approved workflow ve reliability threshold'ları exact release artifact üzerinde geçer; real customer, real payment
   veya real fiscal issuance kullanılmaz.
+- `V20-INT-001`, `V20-INT-002` veya `V20-INT-004` kanıtlı `NotApplicable` ise ilgili provider workflow'u pilot kapsamına
+  dahil edilmez; kalan approved workflow'lar exact release artifact üzerinde yine doğrulanır.
+- `V20-UAT-003` kanıtlı `NotApplicable` ise recovery/exception senaryoları pilot kapsamına dahil edilmez; kalan approved
+  workflow'lar exact release artifact üzerinde yine doğrulanır.
+- `V20-REL-001` kanıtlı `NotApplicable` ise release adayı paketlemesi beklenmez; kalan approved workflow'lar exact
+  release artifact üzerinde yine doğrulanır.
 
 ## Handoff
 

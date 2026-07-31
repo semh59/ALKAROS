@@ -1,7 +1,7 @@
 # Payment Allocation Integrity Rules
 
 > **Task:** V0-DOM-004
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-004
 > **Work type:** decision
 > **Source basis:** PDF:I.11-I.15, PDF:II.2.6, PDF:II.3.4-II.3.5, PDF:II.5.3, PDF:III.8, CORR:C4

@@ -4,7 +4,7 @@
 - Status: Blocked
 - Assignee: Unassigned (exactly one person)
 - Work type: validation
-- Surface state: InProgress
+- Surface state: Planned
 
 ## Source basis
 

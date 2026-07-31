@@ -50,6 +50,8 @@ resource usage değerlerini ölçmek.
 
 - release adayı, onaylanan pencere içinde geçiş yapar ve onaylanan her bütünlük/kontrol-toplam sorgusu, temsili veri
   kümesine aktarılır.
+- `V15-REC-001` kanıtlı `NotApplicable` ise reconciliation vaka doğrulaması migration rehearsal'a dahil edilmez;
+  bütünlük ve kontrol-toplam sorguları yine çalıştırılır.
 
 ## Handoff
 

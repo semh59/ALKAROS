@@ -1,7 +1,7 @@
 # Reporting Metric Contracts
 
 > **Task:** V0-DOM-008
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-008
 > **Work type:** decision
 > **Source basis:** PDF:II.2.20, PDF:II.10, PDF:III.31

@@ -1,0 +1,1 @@
+Task V0-DAT-006 completed. Output: docs/data/migration-rehearsal-profile.md

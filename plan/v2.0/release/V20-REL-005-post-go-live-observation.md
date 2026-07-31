@@ -42,6 +42,10 @@ Onaylı gözlem penceresinde production finansal, fiscal, stok ve integration si
 
 - Finansal/fiscal/stok control total veya kritik integration sinyali eşik dışındaysa release sağlıklı ilan edilmez.
 - Gözlem penceresi ve son karar exact deployment/artifact kimliğine bağlanır.
+- `V20-REL-004` kanıtlı `NotApplicable` ise production deployment sinyalleri beklenmez; staging benzeri ortam kontrol
+  total sinyalleriyle gözlem kuralı yine geçerlidir.
+- `V15-REC-002` kanıtlı `NotApplicable` ise reconciliation vaka sinyalleri gözleme dahil edilmez; kalan finansal/fiscal
+  kontrol total sinyalleri yine eşik kuralına tabidir.
 
 ## Handoff
 

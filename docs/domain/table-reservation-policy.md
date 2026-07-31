@@ -1,7 +1,7 @@
 # Table Reservation Policy
 
 > **Task:** V0-DOM-005
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-005
 > **Work type:** decision
 > **Source basis:** PDF:II.2.3, PDF:II.3.16, PDF:II.5.15, PDF:III.5, CORR:C5

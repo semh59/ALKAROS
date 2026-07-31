@@ -46,6 +46,14 @@ acceptance toplamak.
 
 - Her zorunlu istisna, onaylanmış sınırlar dahilinde belgelenmiş güvenli/kurtarılabilir durumuna ulaşır; çözülmemiş
   hatalar kabulü engeller.
+- `V20-UAT-002` kanıtlı `NotApplicable` ise finance/inventory acceptance senaryoları kapsam dışı kalır; kalan istisna
+  ve recovery senaryoları yine doğrulanır.
+- `V20-MIG-002` kanıtlı `NotApplicable` ise rollback rehearsal kaynaklı recovery senaryoları kapsam dışı kalır; kalan
+  istisna ve recovery senaryoları yine doğrulanır.
+- `V15-NOT-001` kanıtlı `NotApplicable` ise notification kaynaklı istisna senaryoları kapsam dışı kalır; kalan istisna
+  ve recovery senaryoları yine doğrulanır.
+- `V20-UAT-001` kanıtlı `NotApplicable` ise service flow acceptance senaryoları kapsam dışı kalır; kalan istisna ve
+  recovery senaryoları yine doğrulanır.
 
 ## Handoff
 

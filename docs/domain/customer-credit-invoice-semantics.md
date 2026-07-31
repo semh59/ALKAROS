@@ -1,7 +1,7 @@
 # Customer Credit and Invoice Semantics
 
 > **Task:** V0-DOM-007
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-007
 > **Work type:** decision
 > **Source basis:** PDF:II.2.15, PDF:II.3.11, PDF:III.18, CORR:C3

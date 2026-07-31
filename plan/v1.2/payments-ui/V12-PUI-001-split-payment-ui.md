@@ -48,6 +48,8 @@ Açık Bill tahsisleri üzerine Cash, BankCard ve onaylı MealCard payment kompo
 - UI over-allocation gönderemez; Unknown payment duplicate tender'ı engeller; mixed payment yalnız server doğrulamasıyla
   kapanır.
 - Payment akışı `V0-CMP-005` kararındaki cashier success criteria ve device/browser matrix'ini karşılar.
+- `V12-PAY-003` kanıtlı `NotApplicable` ise MealCard tender UI'da enable edilmez; Cash ve BankCard payment kompozisyonu
+  yine doğrulanır.
 
 ## Handoff
 

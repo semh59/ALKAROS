@@ -1,0 +1,1 @@
+Task V0-ARC-002 completed. Output: docs/architecture/local-first-sync-contract.md

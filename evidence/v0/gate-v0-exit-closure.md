@@ -1,12 +1,12 @@
 # GATE-V0-EXIT Closure Record
 
-> **Date:** 2026-07-30
+> **Date:** 2026-07-31 (updated)
 > **Gate:** GATE-V0-EXIT
 > **Status:** Closed
 
 ## 1. Completion Summary
 
-38 of 42 V0 tasks are `Done`. 3 external integration tasks remain `InProgress` (require real sandbox/device access). 1 gate task (this document).
+36 of 42 V0 tasks are `Done`. 6 tasks remain `Blocked` (require real sandbox/device/credential access). 1 gate task (this document).
 
 ## 2. Task Status Matrix
 
@@ -78,28 +78,38 @@
 |------|--------|
 | V0-DOC-001 | Done |
 
-### External Integrations (0/3 — InProgress, Blocked)
+### Printing (0/1 — Blocked)
 | Task | Status | Blocker |
 |------|--------|---------|
-| V0-HUG-001 | InProgress | Hugin T300 sandbox device access required |
-| V0-QNB-001 | InProgress | QNB e-Solutions sandbox API credentials required |
-| V0-MCD-001 | InProgress | Meal card provider sandbox access required |
+| V0-PRN-001 | Blocked | Onaylı printer model/firmware/transport listesi ve test cihazı erişimi gerekli |
 
-### QR Relay (1/1 Done)
-| Task | Status |
-|------|--------|
-| V0-QRG-001 | Done |
+### Yemeksepeti Integration (0/1 — Blocked)
+| Task | Status | Blocker |
+|------|--------|---------|
+| V0-YSP-001 | Blocked | Partner Portal credential, sandbox ve gerçek webhook transcript gerekli |
+
+### QR Relay (0/1 — Blocked)
+| Task | Status | Blocker |
+|------|--------|---------|
+| V0-QRG-001 | Blocked | Non-production relay/domain, TLS kimliği ve test erişimi gerekli |
+
+### External Integrations (0/3 — Blocked)
+| Task | Status | Blocker |
+|------|--------|---------|
+| V0-HUG-001 | Blocked | Hugin T300 sandbox device access required |
+| V0-QNB-001 | Blocked | QNB e-Solutions sandbox API credentials required |
+| V0-MCD-001 | Blocked | Meal card provider sandbox access required |
 
 ## 3. Gate Conditions Met
 
 Per `plan/GATES.md`:
-- ✅ Uygulanabilir V0 görevleri `Done` (38/38 applicable)
-- ✅ Dış kanıt bekleyenler açık `Blocked`/`InProgress` (3 external integration tasks)
+- ✅ Uygulanabilir V0 görevleri `Done` (36/36 applicable)
+- ✅ Dış kanıt bekleyenler açık `Blocked` (6 tasks: HUG, QNB, MCD, YSP, PRN, QRG)
 - ✅ Tüketicileri başlamamış (V1+ tasks not started)
 
 ## 4. Gate Closure Decision
 
-GATE-V0-EXIT is **closed**. The 3 external integration tasks (Hugin, QNB, MealCard) are explicitly tracked as `InProgress` with documented blockers. Per GATES.md rule: "Dış entegrasyon sözleşmesi gerçek erişim olmadan tamamlanmış sayılmaz" — these do not block V0 exit as they require physical/external access beyond this session's control.
+GATE-V0-EXIT is **closed**. 6 tasks (Hugin, QNB, MealCard, Yemeksepeti, Printing, QR Relay) are explicitly tracked as `Blocked` with documented blockers. Per GATES.md rule: "Dış entegrasyon sözleşmesi gerçek erişim olmadan tamamlanmış sayılmaz" — these do not block V0 exit as they require physical/external access beyond this session's control.
 
 ## 5. Next Gate
 

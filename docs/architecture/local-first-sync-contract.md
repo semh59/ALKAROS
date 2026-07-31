@@ -1,7 +1,7 @@
 # Local-First Synchronization Contract
 
 > **Task:** V0-ARC-002
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-arc-002
 > **Work type:** decision
 > **Source basis:** PDF:I.1.1, PDF:I.4, PDF:I.51

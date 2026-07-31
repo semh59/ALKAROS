@@ -56,6 +56,8 @@ Alan izinleri altında müşteri profili, hesap defteri, bakiye/yaşlanma ve hes
   yeniden tahsil edilebilir olarak sunulmaz.
 - Bill üzerindeki CustomerAccount tender yalnız `V13-ACC-008` route ve fiscal closure sonucu ile success gösterir.
 - Customer account UI, `V0-CMP-005` kararındaki cashier success criteria listesini karşılar.
+- `V13-ACC-008` kanıtlı `NotApplicable` ise CustomerAccount tender UI'da enable edilmez; kalan bakiye, receipt ve
+  reconciliation gereksinimi gösterimi yine doğrulanır.
 
 ## Handoff
 

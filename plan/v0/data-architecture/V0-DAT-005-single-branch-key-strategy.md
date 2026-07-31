@@ -4,7 +4,7 @@
 - Status: Done
 - Assignee: codex-v0-dat-005
 - Work type: decision
-- Surface state: Done
+- Surface state: Existing
 
 ## Source basis
 
@@ -19,7 +19,7 @@ Tek şubeli ürün kararı ile gelecekteki çok şube hazırlığı için opsiyo
 
 ## Owned surface
 
-- `docs/data/business-scope-key-strategy.md`
+- `docs/data/single-branch-key-strategy.md`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

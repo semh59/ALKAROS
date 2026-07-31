@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSModule>true</ALKAROSModule>
+    <RootNamespace>ALKAROS.Reconciliation</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Payments\ALKAROS.Payments.csproj" />
+    <ProjectReference Include="..\Cash\ALKAROS.Cash.csproj" />
+    <ProjectReference Include="..\Accounts\ALKAROS.Accounts.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+  </ItemGroup>
+
+</Project>

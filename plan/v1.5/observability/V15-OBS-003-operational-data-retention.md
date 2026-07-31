@@ -49,6 +49,8 @@ retention/partition kurallarıyla sınırlamak.
 
 - Tutma testi yalnızca süresi dolmuş uygun bölümleri/satırları kaldırır; tutulan veya değiştirilemeyen veriler kalır;
   işin yeniden başlatılması güvenlidir.
+- `V15-OBS-002` kanıtlı `NotApplicable` ise alert kaynaklı tutma senaryoları beklenmez; kalan bölüm/satır tutma ve
+  idempotent restart davranışı yine doğrulanır.
 
 ## Handoff
 

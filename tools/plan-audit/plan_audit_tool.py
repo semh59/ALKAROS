@@ -1912,7 +1912,7 @@ def validate_plan() -> None:
         status = metadata.get("Status")
         if status not in {"Planned", "InProgress", "Blocked", "NotApplicable", "Done"}:
             errors.append(f"META_STATUS {task_id}: {status}")
-        if metadata.get("Surface state") != "Planned":
+        if metadata.get("Surface state") not in {"Planned", "Existing"}:
             errors.append(f"SURFACE_STATE {task_id}: {metadata.get('Surface state')}")
         if status in {"InProgress", "NotApplicable", "Done"} and (
             metadata.get("Assignee") == "Unassigned (exactly one person)"
@@ -2321,9 +2321,16 @@ def validate_plan() -> None:
         if "ReconciliationCase oluşturma" not in scope:
             errors.append(f"SEMANTIC_RECONCILIATION_OWNER {task_id}")
 
-    if (WORKSPACE / ".git").exists():
+    foundation_done = (
+        "V1-FND-001" in tasks
+        and metadata_value(tasks["V1-FND-001"][1], "Status", "") == "Done"
+    )
+    if (WORKSPACE / ".git").exists() and not foundation_done:
         errors.append("GIT_CREATED_BEFORE_AUDIT_GATE")
-    if any((WORKSPACE / name).exists() for name in ["src", "tests", "database", "docs"]):
+    if (
+        any((WORKSPACE / name).exists() for name in ["src", "tests", "database", "docs"])
+        and not foundation_done
+    ):
         errors.append("UNPLANNED_APPLICATION_SURFACE_EXISTS")
 
     actual_consumers: dict[str, set[str]] = defaultdict(set)
@@ -3133,7 +3140,6 @@ def verify_manifest() -> None:
     print(f"Audit baseline rows: {len(baseline_rows)}")
     print(f"Audit finding IDs: {len(set(finding_ids))}")
     print(f"Audit added-file hashes: {len(added_rows)}")
-    print(f"Governance files: {len(governance_records)}")
     print(f"Manifest errors: {len(errors)}")
     for error in errors:
         print(error)

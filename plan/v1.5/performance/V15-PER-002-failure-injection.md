@@ -45,6 +45,8 @@ Kritik işlem sınırlarında süreç, veritabanı, ağ, provider ve yazıcı ha
 
 - Her enjekte edilen başarısızlığın deterministik güvenli sonucu vardır; sessiz başarı yok, kayıp order, yinelenen mali
   etki veya negatif stok.
+- `V15-OBS-002` kanıtlı `NotApplicable` ise alert kaynaklı failure enjeksiyon senaryoları beklenmez; kalan
+  başarısızlıklar için deterministik güvenli sonuç kuralı yine geçerlidir.
 
 ## Handoff
 

@@ -1,0 +1,1 @@
+Task V0-CMP-004 completed. Output: evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md

@@ -49,6 +49,8 @@ workflow'ları için named user acceptance toplamak.
 - Yetkili restaurant personeli online-order kuyruğunda kabul, ret ve iptal senaryolarını gerçek provider
   certification sonucu üzerinde tamamlar; arayüz sonucu authoritative Order status ile eşleşir.
 - Kullanıcı akışları `V0-CMP-005` kararındaki surface-specific accessibility kriterlerini karşılar.
+- `V20-REL-001` kanıtlı `NotApplicable` ise release adayı paketlemesi beklenmez; scenario çalıştırma ve kabul kanıtı
+  kuralı yine geçerlidir.
 
 ## Handoff
 

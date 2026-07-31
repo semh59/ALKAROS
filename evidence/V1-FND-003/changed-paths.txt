@@ -1,0 +1,27 @@
+# V1-FND-003 Closure Write-Set
+
+Date: 2026-07-31
+Assignee: cline-v1-fnd-003
+
+## Owned surface
+
+- tools/task-scope/task_scope_tool.py
+- tests/Architecture/TaskScope/conftest.py
+- tests/Architecture/TaskScope/test_task_scope.py
+- .github/workflows/task-scope.yml
+- docs/engineering/task-scope-contract.md
+
+## Metadata
+
+- plan/v1/foundation/V1-FND-003-codex-task-scope-enforcement.md
+
+## Evidence
+
+- evidence/V1-FND-003/changed-paths.txt
+- evidence/V1-FND-003/file-hashes.json
+- evidence/V1-FND-003/test-results.md
+
+## Verification
+
+- `python tools/task-scope/task_scope_tool.py --task-id V1-FND-003 --format json` — exit 0
+- `python -m pytest tests/Architecture/TaskScope -q` — 39 passed

@@ -44,6 +44,10 @@ runbook'lar yazmak.
 ## Acceptance evidence
 
 - Her runbook başlangıç koşulu, sıralı command/action, expected result, stop condition ve escalation owner içerir.
+- `V15-REC-002` veya `V15-OBS-002` kanıtlı `NotApplicable` ise ilgili vaka kaynaklı runbook beklenmez; kalan incident
+  sınıfları için runbook yapısı kuralı yine geçerlidir.
+- `V15-PER-002` kanıtlı `NotApplicable` ise failure injection kaynaklı runbook beklenmez; kalan incident sınıfları için
+  runbook yapısı kuralı yine geçerlidir.
 
 ## Handoff
 

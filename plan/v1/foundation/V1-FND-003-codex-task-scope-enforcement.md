@@ -1,10 +1,10 @@
 # V1-FND-003 - Enforce Codex task write boundaries
 
 - Task ID: V1-FND-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: cline-v1-fnd-003
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 

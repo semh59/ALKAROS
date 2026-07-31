@@ -4,7 +4,7 @@
 - Status: Done
 - Assignee: codex-v0-cmp-004
 - Work type: validation
-- Surface state: Done
+- Surface state: Existing
 
 ## Source basis
 

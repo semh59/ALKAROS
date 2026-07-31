@@ -1,7 +1,7 @@
 # Settings Ownership and Secret Classification
 
 > **Task:** V0-ARC-005
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-arc-005
 > **Work type:** decision
 > **Source basis:** PDF:III.27

@@ -48,6 +48,8 @@ Veritabanı, disk, yazıcı, yedekleme ve entegrasyon durumunu tekilleştirilmi�
 ## Acceptance evidence
 
 - Tekrarlanan aynı hata, bir aktif alert sağlar; iyileşme sorunu çözer; eski/başarısız kontrol sağlıklı raporlanamaz.
+- `V15-REC-001` kanıtlı `NotApplicable` ise reconciliation kaynaklı alert tetikleyicileri beklenmez; health kontrol ve
+  iyileşme davranışı kendi kaynaklarıyla yine doğrulanır.
 
 ## Handoff
 

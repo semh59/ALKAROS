@@ -1,7 +1,7 @@
 # Migration Rehearsal Profile
 
 > **Task:** V0-DAT-006
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dat-006
 > **Work type:** decision
 > **Source basis:** PDF:I.45.1, PDF:III.39-III.40, EXT:POSTGRESQL-18.4, CORR:C17

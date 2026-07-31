@@ -47,6 +47,8 @@ onaylayın.
 
 - Public ve private evidence ile applicable olduğu kanıtlanan senaryolar tek traceable sonuç üretir; doğrulanmayan
   cancellation/webhook satırları tarihli `NotApplicable` evidence veya açık blocker taşır.
+- `V13-QNB-004` veya `V13-QNB-005` kanıtlı `NotApplicable` ise ilgili reconciliation/cancellation senaryosu sertifika
+  matrisine dahil edilmez; kalan senaryolar gerçek sandbox yanıtlarıyla yine doğrulanır.
 
 ## Handoff
 

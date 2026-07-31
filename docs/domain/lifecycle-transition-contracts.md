@@ -1,7 +1,7 @@
 # Lifecycle Transition Contracts
 
 > **Task:** V0-DOM-001
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-001
 > **Work type:** decision
 > **Source basis:** PDF:I.0-I.5, PDF:II.2.4, PDF:II.3.2, PDF:II.5.1, PDF:III.6

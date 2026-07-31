@@ -54,6 +54,8 @@ oluşturun.
 
 - Okuma modeli rebuild vaka sayılarını yeniden üretir; hiçbir vaka türü kaynak referanslarını veya gerekli sonraki
   eylemi kaybetmez.
+- `V12-REC-001`, `V13-QNB-004` veya `V14-REC-001` kanıtlı `NotApplicable` ise ilgili vaka türleri okuma modelinde yer
+  almaz; kalan kaynak türleri rebuild sayılarını yine yeniden üretir.
 
 ## Handoff
 

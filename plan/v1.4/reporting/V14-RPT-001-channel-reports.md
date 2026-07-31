@@ -43,6 +43,8 @@ Onaylanan metrik tanımlarından QR ve çevrimiçi kanal hacim, değer, iptal ve
 ## Acceptance evidence
 
 - Rapor toplamları, aynı iş tarihi aralığı için onaylanmış order ve mutabakat kaynağı kayıtlarıyla mutabakat sağlar.
+- `V14-REC-001` kanıtlı `NotApplicable` ise kanal raporları onaylanmış order kaynaklarıyla yine mutabakat sağlar;
+  mutabakat vaka kaynağı beklenmez.
 
 ## Handoff
 

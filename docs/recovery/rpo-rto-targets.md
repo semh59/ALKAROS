@@ -1,7 +1,7 @@
 # RPO and RTO Targets
 
 > **Task:** V0-BKP-002
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-bkp-002
 > **Work type:** decision
 > **Source basis:** PDF:II.2.23, PDF:III.25

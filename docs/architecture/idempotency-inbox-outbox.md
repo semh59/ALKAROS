@@ -1,7 +1,7 @@
 # Idempotency, Inbox and Outbox Contract
 
 > **Task:** V0-ARC-003
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-arc-003
 > **Work type:** decision
 > **Source basis:** PDF:I.15, PDF:I.48.6

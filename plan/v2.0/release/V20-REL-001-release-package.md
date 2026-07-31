@@ -45,6 +45,10 @@ bir release adayı oluşturun.
 
 - Bağımsız doğrulama, hashları/imzaları yeniden üretir ve paketlenmiş her bileşeni tek bir yapı kimliğine ve kaynak
   revizyonuna eşler.
+- `V20-DOC-001` kanıtlı `NotApplicable` ise rol kılavuzu pakete dahil edilmez; kalan bileşenlerin doğrulama ve
+  eşleme kuralı yine geçerlidir.
+- `V20-DOC-002` kanıtlı `NotApplicable` ise teknik referans pakete dahil edilmez; kalan bileşenlerin doğrulama ve
+  eşleme kuralı yine geçerlidir.
 
 ## Handoff
 

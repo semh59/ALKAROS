@@ -1,0 +1,23 @@
+<Project>
+
+  <PropertyGroup Condition="'$(IsPackable)' == ''">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ALKAROSModule)' == 'true'">
+    <ALKAROSProjectKind>module</ALKAROSProjectKind>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ALKAROSClient)' == 'true'">
+    <ALKAROSProjectKind>client</ALKAROSProjectKind>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ALKAROSIntegration)' == 'true'">
+    <ALKAROSProjectKind>integration</ALKAROSProjectKind>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ALKAROSHost)' == 'true'">
+    <ALKAROSProjectKind>host</ALKAROSProjectKind>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ALKAROSTest)' == 'true'">
+    <ALKAROSProjectKind>test</ALKAROSProjectKind>
+  </PropertyGroup>
+
+</Project>

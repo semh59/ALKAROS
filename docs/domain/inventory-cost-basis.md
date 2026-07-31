@@ -1,7 +1,7 @@
 # Inventory Cost Basis
 
 > **Task:** V0-DOM-010
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-dom-010
 > **Work type:** decision
 > **Source basis:** PDF:I.22.1, PDF:II.2.10, PDF:III.12, CORR:C9, CORR:C12

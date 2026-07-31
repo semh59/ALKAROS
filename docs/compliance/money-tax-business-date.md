@@ -1,7 +1,7 @@
 # Money, Tax and Business Date Rules
 
 > **Task:** V0-CMP-002
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-cmp-002
 > **Work type:** decision
 > **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2

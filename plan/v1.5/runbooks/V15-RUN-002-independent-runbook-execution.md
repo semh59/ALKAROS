@@ -40,6 +40,8 @@ Critical operational runbook'ları yazar müdahalesi olmadan test ortamında uyg
 ## Acceptance evidence
 
 - Assignee, `V15-RUN-001` assignee'sinden farklıdır; her critical runbook beklenen safe recovery sonucunu üretir.
+- `V15-RUN-001` kanıtlı `NotApplicable` ise bağımsız çalıştırma kapsamına alınacak critical runbook beklenmez; kalan
+  yürütme ve safe recovery kuralı yine geçerlidir.
 
 ## Handoff
 

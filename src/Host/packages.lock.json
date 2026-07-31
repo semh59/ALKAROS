@@ -1,0 +1,112 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net8.0": {
+      "alkaros.accounts": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Billing": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )"
+        }
+      },
+      "alkaros.billing": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Orders": "[1.0.0, )"
+        }
+      },
+      "alkaros.cash": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )"
+        }
+      },
+      "alkaros.catalog": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.fiscal": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Billing": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )"
+        }
+      },
+      "alkaros.identity": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.inventory": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Catalog": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.kitchen": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Orders": "[1.0.0, )"
+        }
+      },
+      "alkaros.modulecomposition": {
+        "type": "Project"
+      },
+      "alkaros.notifications": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.orders": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.payments": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Billing": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.reconciliation": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Accounts": "[1.0.0, )",
+          "ALKAROS.Cash": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )"
+        }
+      },
+      "alkaros.reporting": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.settings": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.tables": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      }
+    }
+  }
+}
