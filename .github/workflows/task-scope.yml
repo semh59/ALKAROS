@@ -7,7 +7,7 @@ on:
       task-id:
         description: "Active Task ID to enforce"
         required: true
-        default: "V1-FND-003"
+        default: "V1-FND-005"
 
 permissions:
   contents: read
@@ -27,4 +27,4 @@ jobs:
           python-version: "3.12"
       - name: Run task-scope validation
         shell: pwsh
-        run: python tools/task-scope/task_scope_tool.py --task-id "${{ github.event.inputs.task-id || 'V1-FND-003' }}" --format text
+        run: python tools/task-scope/task_scope_tool.py --task-id "${{ github.event.inputs.task-id || 'V1-FND-005' }}" --format text

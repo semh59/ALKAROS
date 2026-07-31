@@ -4,7 +4,7 @@
 - Status: Done
 - Assignee: opencode-v1-fnd-004
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
