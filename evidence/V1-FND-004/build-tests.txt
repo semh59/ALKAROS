@@ -1,0 +1,5 @@
+PS> dotnet build tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj -v q --nologo
+    0 Hata
+
+Ge+ðen S+-re 00:00:04.72
+exit: 0

@@ -1,0 +1,11 @@
+psql.exe : psql: hata (error): connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentica
+tion failed for user "postgres"
+At line:1 char:267
++ ... ification"; & "C:\PostgreSQL\18\bin\psql.exe" -U postgres -h localhos ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (psql: hata (err...user "postgres":String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+psql-exit: 2
+pg_hba.conf hash == original backup hash: True

@@ -1,8 +1,8 @@
 # V1-FND-004 - Implement host migration composition
 
 - Task ID: V1-FND-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-fnd-004
 - Work type: implementation
 - Surface state: Planned
 

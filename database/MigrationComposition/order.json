@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "source": [
+    "V0-DAT-001",
+    "CORR:C1"
+  ],
+  "phaseARange": {
+    "min": "001",
+    "max": "030"
+  },
+  "phaseBRange": {
+    "min": "031",
+    "max": "040"
+  },
+  "migrations": [
+    {
+      "id": "001",
+      "phase": "A",
+      "tables": [
+        "stores",
+        "users",
+        "roles"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "002",
+      "phase": "A",
+      "tables": [
+        "printers",
+        "printer_routes"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "003",
+      "phase": "A",
+      "tables": [
+        "products",
+        "categories",
+        "units"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "004",
+      "phase": "A",
+      "tables": [
+        "suppliers",
+        "payment_providers",
+        "meal_card_providers",
+        "fiscal_devices"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "005",
+      "phase": "A",
+      "tables": [
+        "tables",
+        "reservations"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "006",
+      "phase": "A",
+      "tables": [
+        "orders",
+        "order_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "007",
+      "phase": "A",
+      "tables": [
+        "recipes",
+        "recipe_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "008",
+      "phase": "A",
+      "tables": [
+        "daily_menus",
+        "menu_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "009",
+      "phase": "A",
+      "tables": [
+        "purchase_orders",
+        "purchase_order_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "010",
+      "phase": "A",
+      "tables": [
+        "bills",
+        "bill_order_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "011",
+      "phase": "A",
+      "tables": [
+        "payments",
+        "payment_allocations"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "012",
+      "phase": "A",
+      "tables": [
+        "fiscal_documents"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "013",
+      "phase": "A",
+      "tables": [
+        "kitchen_tickets",
+        "kitchen_ticket_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "014",
+      "phase": "A",
+      "tables": [
+        "print_jobs"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "015",
+      "phase": "A",
+      "tables": [
+        "cash_sessions",
+        "cash_transactions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "016",
+      "phase": "A",
+      "tables": [
+        "meal_card_settlements"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "017",
+      "phase": "A",
+      "tables": [
+        "customer_accounts",
+        "account_transactions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "018",
+      "phase": "A",
+      "tables": [
+        "stock_ledger_entries",
+        "stock_balances"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "019",
+      "phase": "A",
+      "tables": [
+        "production_batches",
+        "portion_reservations"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "020",
+      "phase": "A",
+      "tables": [
+        "refund_ledger_entries"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "021",
+      "phase": "A",
+      "tables": [
+        "reconciliation_cases",
+        "alerts"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "031",
+      "phase": "B",
+      "tables": [
+        "invoices",
+        "invoice_lines"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "032",
+      "phase": "B",
+      "tables": [],
+      "deferredConstraints": [
+        "ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_documents(id);"
+      ]
+    },
+    {
+      "id": "033",
+      "phase": "B",
+      "tables": [],
+      "deferredConstraints": [
+        "ALTER TABLE fiscal_documents ADD COLUMN invoice_id UUID REFERENCES invoices(id);"
+      ]
+    },
+    {
+      "id": "034",
+      "phase": "B",
+      "tables": [],
+      "deferredConstraints": [
+        "ALTER TABLE invoices ADD COLUMN customer_account_id UUID REFERENCES customer_accounts(id);"
+      ]
+    },
+    {
+      "id": "035",
+      "phase": "B",
+      "tables": [],
+      "deferredConstraints": [
+        "ALTER TABLE account_transactions ADD COLUMN invoice_id UUID REFERENCES invoices(id);"
+      ]
+    }
+  ]
+}

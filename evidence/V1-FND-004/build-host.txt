@@ -1,0 +1,5 @@
+PS> dotnet build src/Host/ALKAROS.Host.csproj -v q --nologo
+    0 Hata
+
+Ge+ðen S+-re 00:00:05.07
+exit: 0

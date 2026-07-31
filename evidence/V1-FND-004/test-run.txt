@@ -1,0 +1,4 @@
+PS> dotnet test tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj -v q --nologo --no-build
+
+Ba+þar¦-l¦-!  - Ba+þar¦-s¦-z:     0, Ba+þar¦-l¦-:    46, Atlanan:     0, Toplam:    46, S+-re: 7 s - ALKAROS.Host.Tests.dll (net8.0)
+exit: 0
