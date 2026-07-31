@@ -26,3 +26,10 @@ artifacts/
 # Secrets
 appsettings.*.local.json
 *.secret.*
+
+# Python
+__pycache__/
+*.pyc
+
+# Temporary tool output (regenerable: recover-baseline, audit reports, PDF dumps)
+tmp/
