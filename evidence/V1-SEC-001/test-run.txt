@@ -1,0 +1,4 @@
+﻿D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    21, Atlanan:     0, Toplam:    21, S├╝re: 53 ms - ALKAROS.Secrets.Tests.dll (net8.0)

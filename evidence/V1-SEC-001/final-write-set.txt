@@ -1,0 +1,5 @@
+﻿ M ALKAROS.slnx
+ M plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md
+?? evidence/V1-SEC-001/
+?? src/BuildingBlocks/Security/
+?? tests/BuildingBlocks/Security/

@@ -1,10 +1,10 @@
 # V1-SEC-001 - Implement secret resolution boundary
 
 - Task ID: V1-SEC-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-sec-001
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -19,6 +19,8 @@
 ## Owned surface
 
 - `src/BuildingBlocks/Security/Secrets/**`, `tests/BuildingBlocks/Security/Secrets/**`
+- Kapsam genişletme onayı (2026-07-31 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
+  `build/project-manifest.json` içine kaydı.
 - Bu görev provider-specific credential adı veya production secret değeri oluşturamaz.
 
 ## In scope
