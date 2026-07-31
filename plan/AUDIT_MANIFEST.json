@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 247,
-  "markdown_line_count": 18416,
-  "markdown_byte_count": 1415283,
+  "markdown_line_count": 18423,
+  "markdown_byte_count": 1415943,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -78,7 +78,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "4AA98F91EFC58C0C9903056EEAB0C2DA40CD1706D5B764FF187B05009EEA8D77",
+      "sha256": "7D345640B9B4CEA1AA95EA2411BFD3615CAF6BCACF00098B8901AAE3741A763E",
       "lines": 1523,
       "bytes": 206761,
       "utf8": true
@@ -512,9 +512,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-001-module-skeleton.md",
-      "sha256": "E1D22B9E392B08AA9AF32443D780CEC847F53581E107EB824E650793FC8D9F0E",
-      "lines": 58,
-      "bytes": 2045,
+      "sha256": "89123DCE62A8966648CCAE53BD5B58002EB49AFB0EEEAAC5CA977F066BDA2527",
+      "lines": 63,
+      "bytes": 2574,
       "utf8": true
     },
     {
@@ -533,16 +533,16 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-004-host-migration-composition.md",
-      "sha256": "6A5A19075425E4ED9BDC205D37EE08869D9442F5CA49C5A287BCC77B7DCEFD45",
+      "sha256": "6693DA8FF3750C2824433D02F6CB65ECA39377F1F2493E4CB9F30E0532D0BDC3",
       "lines": 54,
-      "bytes": 1423,
+      "bytes": 1409,
       "utf8": true
     },
     {
       "path": "plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md",
-      "sha256": "13A179F885D56AD79A1DEBCB66C353DB0735701EB63ADE485B084F09F4ECD396",
-      "lines": 56,
-      "bytes": 1342,
+      "sha256": "A1E44A9DB53E1ACF409EE16E3B4A1EF09526FA4707A94B76C8E178FD56EE8C0A",
+      "lines": 58,
+      "bytes": 1487,
       "utf8": true
     },
     {
