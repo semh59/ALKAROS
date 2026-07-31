@@ -24,4 +24,5 @@
   <Project Path="src/Integrations/MealCard/ALKAROS.MealCard.csproj" />
   <Project Path="src/Integrations/QrRelay/ALKAROS.QrRelay.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
+  <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
 </Solution>

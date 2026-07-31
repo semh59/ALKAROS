@@ -2,7 +2,7 @@
 
 - Task ID: V1-FND-001
 - Status: Done
-- Assignee: cline-v1-fnd-001
+- Assignee: opencode-v1-fnd-001
 - Work type: implementation
 - Surface state: Existing
 
@@ -23,7 +23,7 @@ oluşturmak.
 - `src/Modules/**/ALKAROS.*.csproj`, `src/Clients/**/ALKAROS.*.csproj`
 - `src/Integrations/**/ALKAROS.*.csproj`
 - `tests/Modules/**/ALKAROS.*.Tests.csproj`, `tests/Clients/**/ALKAROS.*.Tests.csproj`
-- `tests/Integration/**/ALKAROS.*.Tests.csproj`
+- `tests/Integration/**/ALKAROS.*.Tests.csproj`, `tests/Host/**/ALKAROS.*.Tests.csproj`
 - `src/BuildingBlocks/ModuleComposition/**`, `tests/Architecture/ModuleBoundaries/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
@@ -31,6 +31,8 @@ oluşturmak.
 
 - V0-ARC-001 ve V0-ARC-009 sonucuna göre bütün planlı module/client/integration project dosyaları, exact project
   manifest, central build/package kuralları, module registration contract ve yasak dependency testleri.
+- V1-FND-004 sonrasında `tests/Host/**` altında açılan test projelerinin `ALKAROS.slnx` ve
+  `build/project-manifest.json` içine kaydı (kapsam genişletme onayı: 2026-07-31 kullanıcı talimatı).
 
 ## Out of scope
 

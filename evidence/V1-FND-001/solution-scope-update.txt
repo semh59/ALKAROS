@@ -1,0 +1,14 @@
+PS> dotnet test tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj -v q --nologo --no-build
+
+Ba+þar¦-l¦-!  - Ba+þar¦-s¦-z:     0, Ba+þar¦-l¦-:    46, Atlanan:     0, Toplam:    46, S+-re: 8 s - ALKAROS.Host.Tests.dll (net8.0)
+exit: 0
+PS> dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -v q --nologo --no-build
+
+Ba+þar¦-l¦-!  - Ba+þar¦-s¦-z:     0, Ba+þar¦-l¦-:     4, Atlanan:     0, Toplam:     4, S+-re: 12 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+exit: 0
+PS> dotnet build ALKAROS.slnx -v q --nologo (SDK 8.0.423, slnx requires .NET 9+ SDK)
+    0 Uyar¦-
+    1 Hata
+
+Ge+ðen S+-re 00:00:00.03
+exit: 1
