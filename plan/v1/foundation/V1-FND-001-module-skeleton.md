@@ -33,6 +33,9 @@ oluşturmak.
   manifest, central build/package kuralları, module registration contract ve yasak dependency testleri.
 - V1-FND-004 sonrasında `tests/Host/**` altında açılan test projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı (kapsam genişletme onayı: 2026-07-31 kullanıcı talimatı).
+- SDK yükseltmesi: `ALKAROS.slnx` (XML solution) .NET 9+ SDK gerektirdiği için `global.json` ve
+  `build/project-manifest.json` sdk sürümünün .NET 10 LTS'e taşınması; solution-level build/test
+  doğrulaması (kapsam genişletme onayı: 2026-07-31 kullanıcı talimatı).
 
 ## Out of scope
 

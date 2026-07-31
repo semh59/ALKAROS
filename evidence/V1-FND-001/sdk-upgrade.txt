@@ -1,0 +1,19 @@
+# V1-FND-001 SDK upgrade + solution-level verification
+Date: 2026-07-31, Executor: opencode-v1-fnd-001
+
+winget install Microsoft.DotNet.SDK.10 -> Microsoft .NET SDK 10.0.302 installed
+dotnet --list-sdks:
+8.0.423 [C:\Program Files\dotnet\sdk]
+10.0.302 [C:\Program Files\dotnet\sdk]
+
+global.json: 8.0.423 -> 10.0.302; build/project-manifest.json sdk.version: 8.0.423 -> 10.0.302
+
+PS> dotnet build ALKAROS.slnx -v q --nologo
+    0 Hata
+
+Ge+ðen S+-re 00:00:06.52
+exit: 0
+
+PS> dotnet test ALKAROS.slnx -v q --nologo --no-build (temporary local trust, restored to scram after)
+Architecture: 4/4 passed; Host migration composition: 46/46 passed; total 50/50, exit 0
+psql after restore: exit=2 (password authentication enforced)
