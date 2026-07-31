@@ -1,0 +1,38 @@
+V1-FND-005 build evidence
+=========================
+
+SDK:
+PS> dotnet --version
+10.0.302
+
+Target frameworks: net8.0 (global.json pins SDK 10.0.302)
+
+1. New project restore (first restore of the new projects requires
+   RestoreLockedMode=false to generate packages.lock.json; subsequent
+   restores run locked):
+
+PS> dotnet restore tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj -p:RestoreLockedMode=false -v q --nologo
+exit: 0
+
+Generated lock files:
+  src/BuildingBlocks/Transactions/packages.lock.json     (no packages, net8.0 only)
+  tests/BuildingBlocks/Transactions/packages.lock.json   (Microsoft.NET.Test.Sdk 17.11.1,
+                                                          xunit 2.9.2,
+                                                          xunit.runner.visualstudio 2.8.2;
+                                                          Project: alkaros.transactions)
+
+2. Test project build (compiles src + tests, warnings as errors):
+
+PS> dotnet build tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj -v q --nologo
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+exit: 0
+
+3. Full solution build:
+
+PS> dotnet build ALKAROS.slnx -v q --nologo
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+exit: 0

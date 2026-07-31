@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSTest>true</ALKAROSTest>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>ALKAROS.Transactions.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\BuildingBlocks\Transactions\ALKAROS.Transactions.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+V1-FND-005 task-scope validation
+================================
+
+Command:
+PS> python tools/task-scope/task_scope_tool.py --task-id V1-FND-005
+
+Output:
+{
+  "task_id": "V1-FND-005",
+  "valid": true,
+  "metadata_errors": [],
+  "findings": []
+}
+
+exit: 0

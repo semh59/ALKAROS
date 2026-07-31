@@ -1,10 +1,10 @@
 # V1-FND-005 - Implement transaction execution boundary
 
 - Task ID: V1-FND-005
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-fnd-005
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -20,6 +20,8 @@ V0-ARC-001 ve V0-ARC-003 kararlarını tek transaction, rollback ve retry yürü
 ## Owned surface
 
 - `src/BuildingBlocks/Transactions/**`, `tests/BuildingBlocks/Transactions/**`
+- Kapsam genişletme onayı (2026-07-31 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
+  `build/project-manifest.json` içine kaydı.
 - Bu görev domain workflow veya module repository yüzeyini değiştiremez.
 
 ## In scope

@@ -1,0 +1,27 @@
+V1-FND-005 PostgreSQL pg_hba temporary trust procedure
+======================================================
+
+Host migration tests (V1-FND-004 surface) need PostgreSQL credentials on
+localhost:5432. No password is available in this environment; the same
+procedure documented in evidence/V1-FND-004/pg-hba-restore.txt was used.
+
+1. Backup:
+   Copy-Item C:\PostgreSQL\18\data\pg_hba.conf $env:TEMP\pg_hba_fnd005.bak
+   hash match: True
+
+2. Switch local host lines to trust:
+   host  all  all  127.0.0.1/32  trust
+   host  all  all  ::1/128       trust
+   PS> & "C:\PostgreSQL\18\bin\pg_ctl.exe" reload -D "C:\PostgreSQL\18\data"
+   exit: 0
+
+3. Run tests (host suite 46/46, then full solution 75/75; see test-run.txt).
+
+4. Restore:
+   Copy-Item $env:TEMP\pg_hba_fnd005.bak C:\PostgreSQL\18\data\pg_hba.conf
+   PS> & "C:\PostgreSQL\18\bin\pg_ctl.exe" reload -D "C:\PostgreSQL\18\data"
+   restore hash match: True
+   local auth lines back to scram-sha-256
+   backup deleted.
+
+No repository file was touched by this procedure.

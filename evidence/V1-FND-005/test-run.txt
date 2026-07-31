@@ -1,0 +1,48 @@
+V1-FND-005 test evidence
+========================
+
+Host migration tests require a local PostgreSQL (localhost:5432, user
+postgres). No password is available; the same procedure used for
+V1-FND-004 was applied: pg_hba.conf backed up, local host lines switched
+to trust, pg_ctl reload, run tests, restore pg_hba.conf, pg_ctl reload,
+verify SHA-256 hash match. See pg-hba-restore.txt.
+
+1. New test project (25 tests):
+
+PS> dotnet test tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj -v q --nologo
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25
+exit: 0
+
+2. Full solution test suite (75 tests):
+
+PS> dotnet test ALKAROS.slnx --no-build -v q --nologo
+ALKAROS.Architecture.Tests:    Başarılı!  - Başarısız: 0, Başarılı:   4, Atlanan: 0, Toplam:   4
+ALKAROS.Transactions.Tests:    Başarılı!  - Başarısız: 0, Başarılı:  25, Atlanan: 0, Toplam:  25
+ALKAROS.Host.Tests:            Başarılı!  - Başarısız: 0, Başarılı:  46, Atlanan: 0, Toplam:  46
+exit: 0
+
+V1-FND-005 acceptance coverage:
+- Join behavior propagates into the ambient transaction; the inner call
+  does not commit independently (Propagation: 3 tests).
+- CreateNew inside an active scope is rejected with
+  NestedTransactionException and rolls back the outer scope; CreateNew
+  without ambient starts a root (Propagation: 2 tests).
+- Workflow failure rolls back every enlisted resource in reverse commit
+  order and the original exception is rethrown unchanged (Execution).
+- Commit failure rolls back already-committed resources too; journal:
+  first:committed, second:commit-failed, third:rolled-back,
+  second:rolled-back, first:rolled-back (Execution).
+- Rollback failure surfaces TransactionExecutionException with
+  AggregateException(original, rollback) (Execution).
+- Unknown failures are never retried (1 attempt with MaxAttempts 5);
+  only ITransientFailure (including inner exceptions) is retried; every
+  retry runs on a fresh scope; attempts are exhausted by 3; default
+  policy never retries (Retry: 8 tests).
+- Retry delay receives completed-attempt numbers 1, 2 (Retry).
+- Invalid options/arguments are rejected: MaxAttempts 0, JoinBehavior
+  out of range, null workflow/enlist (Execution + Retry).
+- Cancellation propagates: OperationCanceledException surfaces with the
+  caller token, resources rolled back, no retry on cancellation (Execution).
+- Concurrent root transactions are isolated: ambient state does not leak
+  between parallel flows (16 parallel roots + nested joins) (Concurrency: 3 tests).
