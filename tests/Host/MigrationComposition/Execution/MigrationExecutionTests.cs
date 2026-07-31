@@ -167,16 +167,22 @@ public sealed class MigrationExecutionTests : IAsyncLifetime
             SinglePosition,
             ("099-rogue.up.sql", "CREATE TABLE rogue (id integer);"));
 
-        Assert.Equal((int)HostExitCode.Success, Program.Main(
+        string[] WithPassword(string[] arguments)
+        {
+            var password = _database.PsqlOptions.Password;
+            return password is null ? arguments : [.. arguments, "--db-password", password];
+        }
+
+        Assert.Equal((int)HostExitCode.Success, Program.Main(WithPassword(
             ["--order-manifest", success.ManifestPath, "--migrations-dir", success.DirectoryPath,
-             "--db-url", _database.Url]));
-        Assert.Equal((int)HostExitCode.MigrationFailed, Program.Main(
+             "--db-url", _database.Url])));
+        Assert.Equal((int)HostExitCode.MigrationFailed, Program.Main(WithPassword(
             ["--order-manifest", failing.ManifestPath, "--migrations-dir", failing.DirectoryPath,
-             "--db-url", _database.Url]));
-        Assert.Equal((int)HostExitCode.StartupFailed, Program.Main(
+             "--db-url", _database.Url])));
+        Assert.Equal((int)HostExitCode.StartupFailed, Program.Main(WithPassword(
             ["--order-manifest", violating.ManifestPath, "--migrations-dir", violating.DirectoryPath,
-             "--db-url", _database.Url]));
-        Assert.Equal((int)HostExitCode.StartupFailed, Program.Main(["--db-url", _database.Url]));
+             "--db-url", _database.Url])));
+        Assert.Equal((int)HostExitCode.StartupFailed, Program.Main(WithPassword(["--db-url", _database.Url])));
     }
 
     [Fact]
