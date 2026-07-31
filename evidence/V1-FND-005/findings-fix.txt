@@ -8,10 +8,10 @@ değişiklikler ve gerçek komut çıktıları.
 | # | Bulgu | Karar | Durum |
 |---|-------|-------|-------|
 | 1 | markdownlint MD013: V1-FND-005 satır 23 (156 karakter > 120) | Satır sarmalandı (içerik değişmedi) | Kapandı |
-| 2 | AUDIT_MANIFEST drift (verify-manifest exit 1, 14 hata) | Kullanıcı yanıt vermedi; `generate-manifest` çalıştırılmadı | Açık (plan bakım görevi) |
+| 2 | AUDIT_MANIFEST drift (verify-manifest exit 1, 14 hata) | `generate-audit-report` + `generate-manifest` çalıştırıldı (kullanıcı onayı) | Kapandı |
 | 3 | RepositoryCommit pin stale (0f4f537, 7 commit geride) | FND-005 commit'i sonrası yeni HEAD'e güncellendi | Kapandı |
 | 4 | Surface state: FND-004/005 = Planned (kod üretildi) | İkisi de Existing yapıldı (kullanıcı onayı) | Kapandı |
-| 5 | ALKAROS_TEST_PG_PASSWORD yok | Belgelenmiş pg_hba trust prosedürüyle devam (kullanıcı onayı); CI stratejisi ayrı karar | Açık (operasyonel) |
+| 5 | ALKAROS_TEST_PG_PASSWORD yok | Ayrıcalıklı test rolü `alkaros_test` (CREATEDB) + User env var'ları; scram ile 75/75 kanıt (bkz. pg-credentials.txt) | Kapandı |
 | 6 | Legacy: ALKAROS.sln, workflow default V1-FND-003, build/ ignore | sln silindi, default V1-FND-005, build/ ignore'da kaldı (kullanıcı onayı) | Kapandı |
 | 7 | FND-005 değişiklikleri commit edilmemişti | 3 commit ile tarihçeye alındı (kullanıcı onayı) | Kapandı |
 
@@ -47,11 +47,23 @@ PS> dotnet test tests/Architecture/ModuleBoundaries/...csproj
     Başarılı: 4, Başarısız: 0                             EXIT: 0
 ```
 
-Host testleri (46) bu oturumda kod değişmediği için önceki 75/75 kanıtı (test-run.txt) geçerli;
-pg_hba trust prosedürü üçüncü kez tekrarlanmadı.
+Host testleri (46) ilk oturumda trust ile 46/46, bu oturumda scram şifre doğrulamasıyla 46/46
+geçti; tam çözüm 75/75 (Architecture 4 + Host 46 + Transactions 25), EXIT 0.
+
+## İkinci oturum (2. ve 5. bulgu kapanışı, 2026-07-31)
+
+- Bulgu 2: `generate-audit-report` + `generate-manifest` çalıştırıldı; `verify-manifest` 0 hata
+  (247 dosya, 18423 satır). Değişen: `plan/AUDIT_MANIFEST.json` (22 satır), `plan/AUDIT_REPORT.md`
+  (6 satır) — yalnız hash/satır kayıtları. Commit: `fc48cb2`.
+- Bulgu 5: dedicated rol `alkaros_test` (LOGIN + CREATEDB) oluşturuldu; pg_hba.conf geçici trust
+  ile kurulup hash-doğrulamalı geri yüklendi; `ALKAROS_TEST_PG_USER` / `ALKAROS_TEST_PG_PASSWORD`
+  User kapsamında kalıcı env var olarak kaydedildi (şifre yalnız env var'da, repo'da asla yok).
+  Detay: `pg-credentials.txt`.
+- Gerekli test yüzeyi düzeltmesi: `ProgramMainProducesTheDocumentedExitCodes` `Program.Main`'e
+  şifre iletmiyordu (trust bu açığı maskeliyordu); `--db-password` artık fixture şifresi varsa
+  ekleniyor. Kapsam dışı dokunuş: `tests/Host/MigrationComposition/Execution/MigrationExecutionTests.cs`.
 
 ## Açık kalemler
 
-- Bulgu 2: AUDIT_MANIFEST.json drift'i (14 hata) — kullanıcı yanıtsız bıraktı; ayrı plan bakım
-  görevinde `generate-manifest` ile kapatılmalı.
-- Bulgu 5: Host testleri için kalıcı PG kimlik bilgisi stratejisi (CI secret kararı) bekliyor.
+- CI test workflow'u yok; oluşturulduğunda `ALKAROS_TEST_PG_USER` / `ALKAROS_TEST_PG_PASSWORD`
+  repository secret olarak tanımlanmalı (bkz. pg-credentials.txt CI notu).
