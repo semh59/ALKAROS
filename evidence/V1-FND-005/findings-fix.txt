@@ -1,0 +1,57 @@
+# V1-FND-005 - Findings fix session (2026-07-31)
+
+Derin analiz sonrası raporlanan 7 bulgunun kapatma oturumu. Kullanıcı onayıyla uygulanan
+değişiklikler ve gerçek komut çıktıları.
+
+## Bulgu dağılımı
+
+| # | Bulgu | Karar | Durum |
+|---|-------|-------|-------|
+| 1 | markdownlint MD013: V1-FND-005 satır 23 (156 karakter > 120) | Satır sarmalandı (içerik değişmedi) | Kapandı |
+| 2 | AUDIT_MANIFEST drift (verify-manifest exit 1, 14 hata) | Kullanıcı yanıt vermedi; `generate-manifest` çalıştırılmadı | Açık (plan bakım görevi) |
+| 3 | RepositoryCommit pin stale (0f4f537, 7 commit geride) | FND-005 commit'i sonrası yeni HEAD'e güncellendi | Kapandı |
+| 4 | Surface state: FND-004/005 = Planned (kod üretildi) | İkisi de Existing yapıldı (kullanıcı onayı) | Kapandı |
+| 5 | ALKAROS_TEST_PG_PASSWORD yok | Belgelenmiş pg_hba trust prosedürüyle devam (kullanıcı onayı); CI stratejisi ayrı karar | Açık (operasyonel) |
+| 6 | Legacy: ALKAROS.sln, workflow default V1-FND-003, build/ ignore | sln silindi, default V1-FND-005, build/ ignore'da kaldı (kullanıcı onayı) | Kapandı |
+| 7 | FND-005 değişiklikleri commit edilmemişti | 3 commit ile tarihçeye alındı (kullanıcı onayı) | Kapandı |
+
+## Uygulanan değişiklikler
+
+- `plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md`: satır 23 sarmalandı, Surface state = Existing.
+- `plan/v1/foundation/V1-FND-004-host-migration-composition.md`: Surface state = Existing.
+- `ALKAROS.sln` (legacy, yalnız tarihsel evidence referanslı): `git rm` ile kaldırıldı.
+- `.github/workflows/task-scope.yml`: workflow_dispatch default ve fallback `V1-FND-003` → `V1-FND-005`.
+- `Directory.Build.props`:22: `RepositoryCommit` `0f4f537...` → `e313532...` (HEAD).
+
+## Commits
+
+1. `f1da765` feat(transactions): add transaction execution boundary (29 dosya, +1402/-215;
+   src/**, tests/**, evidence/V1-FND-005/**, ALKAROS.slnx, V1-FND-005 plan dosyası, ALKAROS.sln silme)
+2. `e313532` chore(plan): mark V1-FND-004 surface as existing, retarget workflow default task-id
+3. `a9de570` chore(ci): pin RepositoryCommit to current HEAD
+
+## Doğrulama komutları (exit code ile)
+
+```
+PS> npx --yes markdownlint-cli2@0.23.2
+    248 dosya, 0 sorun                                    EXIT: 0
+PS> uv run ... plan_audit_tool.py validate
+    0 errors / 0 warnings (247 MD, 228 task, 18 gate, 837 edge)  EXIT: 0
+PS> python tools\task-scope\task_scope_tool.py --task-id V1-FND-005
+    valid: true, findings: []                             EXIT: 0
+PS> dotnet build ALKAROS.slnx -v q --nologo
+    0 Uyarı / 0 Hata                                     EXIT: 0
+PS> dotnet test tests/BuildingBlocks/Transactions/...csproj
+    Başarılı: 25, Başarısız: 0                            EXIT: 0
+PS> dotnet test tests/Architecture/ModuleBoundaries/...csproj
+    Başarılı: 4, Başarısız: 0                             EXIT: 0
+```
+
+Host testleri (46) bu oturumda kod değişmediği için önceki 75/75 kanıtı (test-run.txt) geçerli;
+pg_hba trust prosedürü üçüncü kez tekrarlanmadı.
+
+## Açık kalemler
+
+- Bulgu 2: AUDIT_MANIFEST.json drift'i (14 hata) — kullanıcı yanıtsız bıraktı; ayrı plan bakım
+  görevinde `generate-manifest` ile kapatılmalı.
+- Bulgu 5: Host testleri için kalıcı PG kimlik bilgisi stratejisi (CI secret kararı) bekliyor.
