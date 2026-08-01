@@ -1,0 +1,29 @@
+V1-FND-009 force-push evidence (2026-08-01)
+=============================================
+
+Command:
+  git push --force origin master
+
+Output:
+  + 8374fc3...672380c master -> master (forced update)
+  Push exit code: 0
+
+Verification (after fetch):
+  HEAD          = 672380c6977ff5bbb4eb6b3b0bd924810c0a4a6e
+  origin/master = 672380c6977ff5bbb4eb6b3b0bd924810c0a4a6e
+  git log origin/master..HEAD -> empty (0 commits)
+  git ls-remote origin -> only HEAD and refs/heads/master; no remote tags
+
+Rewritten pushed range (old -> new, footer added):
+  fc5ae22  -> unchanged (root baseline, NO_FOOTER exception FIND-IA-0050)
+  655d0b2  -> unchanged (Task: V0-DOM-001 already present; Gate: GATE-V0-ENTRY)
+  662e466  -> unchanged (Gate: GATE-V0-ENTRY already present)
+  72db2fa  -> Task: V0-DOM-007 added
+  70bf442  -> unchanged (Gate: GATE-V0-ENTRY already present)
+  df7605c  -> dc67dd4  (Gate: GATE-V0-EXIT added)
+  0f4f537  -> d871890  (Gate: GATE-V0-EXIT added)
+  1784dc5  -> 0c37dc6  (Task: V1-FND-003 added)
+  8374fc3  -> 36c06cf  (Task: V1-FND-003 added)
+
+Full-history boundary audit (27 commits): 8 violations, all recorded
+exceptions (FIND-IA-0040, 0045..0048, 0050, 0051) — see boundary-audit-final.txt.
