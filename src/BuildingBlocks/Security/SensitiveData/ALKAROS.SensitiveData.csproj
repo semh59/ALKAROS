@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSProjectKind>buildingblock</ALKAROSProjectKind>
+    <RootNamespace>ALKAROS.SensitiveData</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Security\Secrets\ALKAROS.Secrets.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,54 @@
+V1-SEC-002 sensitive payload leak scan
+======================================
+
+Acceptance evidence: "Siniflandirilmis payload hicbir persistence/log
+yolunda plaintext kalmaz; authorized read disinda cozulmez."
+"Encryption veya classification failure veri yazmadan fail-closed sonuc
+uretilir."
+
+1. Plaintext persistence scan (src/BuildingBlocks/Security/SensitiveData/**):
+
+   Scanned marker values (test seed constants):
+     Alice Customer
+     4111111111111111
+     ALICE CUSTOMER
+     ORD-1001
+     MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY= (envelope key, base64)
+
+   Result: 0 hits in src/. Markers appear only as test seed constants
+   inside tests/BuildingBlocks/Security/SensitiveData/**.
+
+2. Protection tests (tests/.../Protection/EnvelopeProtectionTests.cs):
+   - ProtectProducesEnvelopeWithoutAnyPlaintextValue: envelope persistence
+     bytes contain no payload plaintext value.
+   - ProtectThenUnprotectReturnsTheOriginalPayload (authorized read).
+   - EnvelopeSurvivesPersistenceRoundTrip.
+   - PayloadRejectsFieldWithoutClassification (classification failure fails
+     closed before encryption).
+   - FromPersistenceBytes rejects malformed bytes and null JSON with a typed
+     SensitiveDataException (doc-contract behaviour).
+
+3. Log leakage tests (tests/.../Protection/PayloadRedactionTests.cs):
+   - Non-public fields are masked ("***"), public fields stay readable.
+   - A log line built from redacted fields contains no sensitive value.
+
+4. Unauthorized read tests (tests/.../Authorization/UnauthorizedReadTests.cs):
+   - Denied accessor throws UnauthorizedSensitiveReadException and the
+     cipher Decrypt is never invoked (recording cipher, DecryptCalls == 0).
+   - Exception formatting reveals no payload content.
+
+5. Key failure tests (tests/.../Encryption/KeyFailureTests.cs):
+   - Missing key fails closed on Protect and on Unprotect (typed
+     SecretNotFoundException from the secret boundary).
+   - Malformed base64 and wrong-length keys fail closed with
+     SensitiveDataEncryptionException.
+   - Tampered ciphertext fails the integrity check; no plaintext in
+     exception formatting.
+
+6. Retention hook tests (tests/.../Retention/RetentionPolicyHookTests.cs):
+   - MaxAgeRetentionPolicyHook expires only strictly older envelopes; the
+     period itself stays owned by the policy configuration.
+
+7. Test run output: no marker value appears in evidence/V1-SEC-002/test-run.txt.
+
+All 20 tests pass (see test-run.txt).

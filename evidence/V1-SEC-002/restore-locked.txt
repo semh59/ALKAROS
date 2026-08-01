@@ -1,0 +1,88 @@
+﻿Olu┼şturma ba┼şlat─▒ld─▒: 1.08.2026 08:15:47.
+     1>1 d├╝─ş├╝m├╝nde "D:\PROJECT\ALKAROS\ALKAROS.slnx" projesi (Restore hedef).
+     1>ValidateSolutionConfiguration:
+         "Debug|Any CPU" ├ğ├Âz├╝m yap─▒land─▒rmas─▒ olu┼şturuluyor.
+       _GetAllRestoreProjectPathItems:
+         Geri y├╝klenecek projeler belirleniyor...
+       Restore:
+         X.509 sertifika zinciri do─şrulamas─▒, kod imzalama i├ğin .NET taraf─▒ndan se├ğilen varsay─▒lan g├╝ven deposunu kullan─▒r.
+         X.509 sertifika zinciri do─şrulamas─▒, zaman damgalama i├ğin .NET taraf─▒ndan se├ğilen varsay─▒lan g├╝ven deposunu kullan─▒r.
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Fiscal\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Tables\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Accounts\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Host\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Kitchen\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Integrations\Hugin\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Inventory\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Integrations\QrRelay\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Identity\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Cash\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Integrations\Yemeksepeti\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Integrations\Yemeksepeti\ALKAROS.Yemeksepeti.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Modules\Inventory\ALKAROS.Inventory.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Host\ALKAROS.Host.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Integrations\QrRelay\ALKAROS.QrRelay.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Modules\Tables\ALKAROS.Tables.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Modules\Cash\ALKAROS.Cash.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Modules\Identity\ALKAROS.Identity.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Modules\Fiscal\ALKAROS.Fiscal.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Modules\Accounts\ALKAROS.Accounts.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Modules\Kitchen\ALKAROS.Kitchen.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\ALKAROS.Architecture.Tests.csproj geri y├╝klendi (96 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Integrations\Hugin\ALKAROS.Hugin.csproj geri y├╝klendi (96 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Settings\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Orders\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Modules\Settings\ALKAROS.Settings.csproj geri y├╝klendi (1 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\Modules\Orders\ALKAROS.Orders.csproj geri y├╝klendi (0,8 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Reporting\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Modules\Reporting\ALKAROS.Reporting.csproj geri y├╝klendi (1 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Notifications\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Modules\Notifications\ALKAROS.Notifications.csproj geri y├╝klendi (1 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Clients\Waiter\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Clients\Waiter\ALKAROS.Waiter.csproj geri y├╝klendi (0,6 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\obj\project.assets.json
+         D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.Tests.csproj geri y├╝klendi (0,7 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Reconciliation\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Modules\Reconciliation\ALKAROS.Reconciliation.csproj geri y├╝klendi (1 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\obj\project.assets.json
+         D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.Tests.csproj geri y├╝klendi (0,9 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Catalog\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Modules\Catalog\ALKAROS.Catalog.csproj geri y├╝klendi (0,5 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\tests\BuildingBlocks\Transactions\obj\project.assets.json
+         D:\PROJECT\ALKAROS\tests\BuildingBlocks\Transactions\ALKAROS.Transactions.Tests.csproj geri y├╝klendi (1 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj geri y├╝klendi (0,7 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj geri y├╝klendi (0,5 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Integrations\Qnb\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Integrations\Qnb\ALKAROS.Qnb.csproj geri y├╝klendi (0,5 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Clients\Cashier\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Clients\Cashier\ALKAROS.Cashier.csproj geri y├╝klendi (1 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Integrations\MealCard\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Integrations\MealCard\ALKAROS.MealCard.csproj geri y├╝klendi (0,5 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Payments\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Modules\Payments\ALKAROS.Payments.csproj geri y├╝klendi (2 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\BuildingBlocks\Transactions\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\BuildingBlocks\Transactions\ALKAROS.Transactions.csproj geri y├╝klendi (0,4 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\Modules\Billing\obj\project.assets.json
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\obj\project.assets.json
+         D:\PROJECT\ALKAROS\src\Modules\Billing\ALKAROS.Billing.csproj geri y├╝klendi (0,6 ms i├ğinde).
+         D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj geri y├╝klendi (0,5 ms i├ğinde).
+         Varl─▒klar dosyas─▒ de─şi┼ştirilmedi. Varl─▒klar dosyas─▒na yazma i┼şlemi atlan─▒yor. Yol: D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\obj\project.assets.json
+         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\ALKAROS.Host.Tests.csproj geri y├╝klendi (4 ms i├ğinde).
+         
+         Kullan─▒lan NuGet yap─▒land─▒rma dosyalar─▒:
+             D:\PROJECT\ALKAROS\NuGet.Config
+             C:\Users\semih\AppData\Roaming\NuGet\NuGet.Config
+         
+         Kullan─▒lan ak─▒┼şlar:
+             https://api.nuget.org/v3/index.json
+         Geri y├╝kleme i├ğin t├╝m projeler g├╝ncel.
+     1>"D:\PROJECT\ALKAROS\ALKAROS.slnx" Projesini Olu┼şturma ─░┼şlemi Tamamland─▒ (Restore hedef).
+
+Olu┼şturma ba┼şar─▒l─▒ oldu.
+    0 Uyar─▒
+    0 Hata
+
+Ge├ğen S├╝re 00:00:01.75

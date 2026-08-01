@@ -1,0 +1,5 @@
+﻿ M ALKAROS.slnx
+ M plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md
+?? evidence/V1-SEC-002/
+?? src/BuildingBlocks/Security/SensitiveData/
+?? tests/BuildingBlocks/Security/SensitiveData/

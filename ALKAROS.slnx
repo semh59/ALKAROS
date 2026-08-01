@@ -2,6 +2,7 @@
   <Project Path="src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj" />
   <Project Path="src/BuildingBlocks/Transactions/ALKAROS.Transactions.csproj" />
   <Project Path="src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj" />
+  <Project Path="src/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.csproj" />
   <Project Path="src/Host/ALKAROS.Host.csproj" />
   <Project Path="src/Modules/Orders/ALKAROS.Orders.csproj" />
   <Project Path="src/Modules/Billing/ALKAROS.Billing.csproj" />
@@ -29,4 +30,5 @@
   <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj" />
+  <Project Path="tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj" />
 </Solution>

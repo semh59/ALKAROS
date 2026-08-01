@@ -1,10 +1,10 @@
 # V1-SEC-002 - Implement sensitive payload boundary
 
 - Task ID: V1-SEC-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-sec-002
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -19,6 +19,8 @@ Payment, fiscal, invoice ve webhook payload'larının saklama, şifreleme, maske
 ## Owned surface
 
 - `src/BuildingBlocks/Security/SensitiveData/**`, `tests/BuildingBlocks/Security/SensitiveData/**`
+- Kapsam genişletme onayı (2026-07-31 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
+  `build/project-manifest.json` içine kaydı.
 - Bu görev provider payload schema veya business retention süresi belirleyemez.
 
 ## In scope
