@@ -26,6 +26,24 @@
       "packages": []
     },
     {
+      "path": "src/BuildingBlocks/Idempotency/ALKAROS.Idempotency.csproj",
+      "kind": "buildingblock",
+      "module": "Idempotency",
+      "references": [],
+      "packages": [
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "src/BuildingBlocks/Messaging/ALKAROS.Messaging.csproj",
+      "kind": "buildingblock",
+      "module": "Messaging",
+      "references": [],
+      "packages": [
+        "Npgsql"
+      ]
+    },
+    {
       "path": "src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj",
       "kind": "buildingblock",
       "module": "Secrets",
@@ -314,6 +332,21 @@
         "Microsoft.NET.Test.Sdk",
         "xunit",
         "xunit.runner.visualstudio"
+      ]
+    },
+    {
+      "path": "tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj",
+      "kind": "test",
+      "module": "Idempotency",
+      "references": [
+        "src/BuildingBlocks/Idempotency/ALKAROS.Idempotency.csproj",
+        "src/BuildingBlocks/Messaging/ALKAROS.Messaging.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "Npgsql"
       ]
     },
     {

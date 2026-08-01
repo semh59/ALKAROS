@@ -3,7 +3,7 @@
   "audit_date": "2026-07-30",
   "markdown_file_count": 250,
   "markdown_line_count": 18828,
-  "markdown_byte_count": 1448328,
+  "markdown_byte_count": 1448322,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -78,7 +78,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "402279C9F715BECD8CF85FCD748A6D7E3042453D887775FBC2316604B8CD64D1",
+      "sha256": "DDF7671BEA67A5E76C48FFC0EC946340FC0F2B71A539B8A4A9AA93DC34F721F3",
       "lines": 1526,
       "bytes": 207287,
       "utf8": true
@@ -519,9 +519,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-002-idempotency-infrastructure.md",
-      "sha256": "2D4194E993A0261B4CB605F400D21825E39AF64783805EE8E3B113DB9F22278C",
+      "sha256": "BDB7614C37E1614C718DACEEB80E98E6463ECB202B58815246728612BFBCB789",
       "lines": 82,
-      "bytes": 4336,
+      "bytes": 4330,
       "utf8": true
     },
     {
