@@ -52,6 +52,9 @@ npx --yes markdownlint-cli2@0.23.2
 - `V1-FND-001`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` direct dependency zinciriyle bu
   sırada tamamlanır; zincir bitmeden başka application görevi `InProgress` olamaz.
+- 2026-08-01 kullanıcı onayıyla `V1-FND-007` (audit remediation) zincirden önce
+  başlatılabilir; karar kaydı `TRACEABILITY.md` FIND-IA-0027'dir ve diğer
+  application görevleri için zincir kuralı değişmez.
 - Codex write allowlist yalnız `Owned surface`, aktif görev metadata alanları ve
   `evidence/<Task-ID>/**` birleşimidir.
 - Scope doğrulaması staged, unstaged, untracked, deleted ve rename işleminin her
@@ -103,7 +106,7 @@ hash'lerini de doğrular.
 
 Mevcut koşullu Markdown sayısı:
 
-`247 + (2 × approved meal-card provider count)`
+`248 + (2 × approved meal-card provider count)`
 
-Provider kararı yokken sayı `247` olur. Licensing task dosyaları
+Provider kararı yokken sayı `248` olur. Licensing task dosyaları
 `NotApplicable` sonucunda da korunur; bilinmeyen karar için sayı uydurulmaz.

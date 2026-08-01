@@ -120,7 +120,8 @@ public static class PsqlScriptRunner
 
     /// <summary>
     /// Kills the psql process tree. If the process has already exited in the
-    /// instant the timeout fired, the kill is intentionally a no-op.
+    /// instant the timeout fired, the kill is a no-op; any other kill failure
+    /// is rethrown so a hung psql process is never silently left behind.
     /// </summary>
     private static void KillProcessTree(Process process)
     {
@@ -128,8 +129,9 @@ public static class PsqlScriptRunner
         {
             process.Kill(entireProcessTree: true);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException) when (process.HasExited)
         {
+            // The process exited before the kill could run; nothing to kill.
         }
     }
 }

@@ -1,0 +1,6 @@
+﻿421add3 feat(security): add sensitive payload boundary --- Task: V1-SEC-002
+
+91c8672 feat(security): add secret resolution boundary --- Task: V1-SEC-001
+
+b0ff003 docs(evidence): record PostgreSQL test role credentials procedure --- 
+67ebaf8 fix(tests): pass database password to Program.Main in exit-code tests --- 

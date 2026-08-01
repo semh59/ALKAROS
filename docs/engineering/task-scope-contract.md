@@ -10,6 +10,9 @@ fail-closed olarak reddeden sözleşme. Uygulama: `tools/task-scope/task_scope_t
 - `--repo-root` (opsiyonel): Git repository kökü. Varsayılan: araç dosyasının iki üst dizini.
 - `--plan-dir` (opsiyonel): Görev Markdown dosyalarının dizini. Varsayılan: `plan/`.
 - `--format` (opsiyonel): `json` (varsayılan) veya `text`.
+- `--diff-base` (opsiyonel): Base ref. Verildiğinde değişen yollar worktree yerine
+  `git diff --name-status <base>... HEAD` çıktısından toplanır (CI PR/dispatch modu); verilmediğinde worktree
+  `git status --porcelain=v1` modu (local preflight) kullanılır.
 
 ## Output
 
@@ -29,8 +32,10 @@ fail-closed olarak reddeden sözleşme. Uygulama: `tools/task-scope/task_scope_t
 ## Allowlist
 
 Görev Markdown'ının `Owned surface` bölümündeki her yol, görev dosyasının kendi yolu ve `evidence/<Task-ID>/**`
-allowlist'i oluşturur. Kontrol edilen değişiklikler: staged, unstaged, untracked, deleted ve renamed yollar.
-Rename'de eski ve yeni yolun ikisi de allowlist'te olmalıdır.
+allowlist'i oluşturur. Yalnız path şekilli backtick parçaları (içinde `/`, `\`, `.`, `*` veya `?` bulunan) allowlist
+ögesi sayılır; serbest metin, task ID ve diğer backtickli kelimeler yok sayılır. Kontrol edilen değişiklikler:
+worktree modunda staged, unstaged, untracked, deleted ve renamed yollar; diff modunda base ile HEAD arasındaki
+committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te olmalıdır.
 
 ## Path normalizasyonu ve glob
 
@@ -52,6 +57,7 @@ Rename'de eski ve yeni yolun ikisi de allowlist'te olmalıdır.
 - Araç hiçbir dosyayı değiştirmez, geri almaz veya otomatik düzeltmez; yalnız kesin path ve gerekçe raporlar.
 - Local kullanım: `--format text` ile bulgu listesi incelenir, hatalı değişiklik uygun görev kapsamına taşınır veya
   geri alınır, komut yeniden çalıştırılır.
-- CI: non-zero exit required check'i kırar; aynı fixture seti local komut ve CI'da aynı exit code ve sıralı finding
-  listesini üretir.
+- CI: `--diff-base` ile PR base SHA'sına göre çalışır; temiz worktree diff modunda sonucu bozmaz. Aynı fixture seti
+  local komut ve CI'da aynı exit code ve sıralı finding listesini üretir (worktree modu local, diff modu CI için;
+  her iki modun çıktı sözleşmesi aynıdır).
 - Dependency `Done` değilse önce dependency görevi kanıtla kapatılır, sonra aktif görev doğrulanır.

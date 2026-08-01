@@ -17,7 +17,8 @@ olarak reddetmek.
 
 ## Owned surface
 
-- `tools/task-scope/**`, `tests/Architecture/TaskScope/**`
+- `tools/task-scope/**`
+- `tests/Architecture/TaskScope/conftest.py`, `tests/Architecture/TaskScope/test_task_scope.py`
 - `.github/workflows/task-scope.yml`, `docs/engineering/task-scope-contract.md`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 

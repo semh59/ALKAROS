@@ -1,11 +1,12 @@
 # KVKK Data Inventory
 
 > **Task:** V0-CMP-003
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-cmp-003
 > **Work type:** validation
 > **Source basis:** PDF:I.30-I.33, PDF:II.11-II.12, PDF:III.33-III.34
 > **Date:** 2026-07-30
+> **Metadata corrected:** 2026-08-01 by V1-FND-007 — Status `InProgress` -> `Done` (plan dosyası zaten Done idi; içerik değişmedi)
 
 ## 1. PII Data Inventory
 

@@ -24,7 +24,8 @@ oluşturmak.
 - `src/Integrations/**/ALKAROS.*.csproj`
 - `tests/Modules/**/ALKAROS.*.Tests.csproj`, `tests/Clients/**/ALKAROS.*.Tests.csproj`
 - `tests/Integration/**/ALKAROS.*.Tests.csproj`, `tests/Host/**/ALKAROS.*.Tests.csproj`
-- `src/BuildingBlocks/ModuleComposition/**`, `tests/Architecture/ModuleBoundaries/**`
+- `src/BuildingBlocks/ModuleComposition/IModule.cs`, `src/BuildingBlocks/ModuleComposition/ModuleContext.cs`,
+  `tests/Architecture/ModuleBoundaries/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

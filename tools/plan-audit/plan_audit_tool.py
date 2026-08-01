@@ -3016,7 +3016,7 @@ def verify_manifest() -> None:
             if re.search(r"/V12-MCD-1\d{2}-", path)
         ]
     )
-    expected_markdown_count = 247 + (2 * provider_count)
+    expected_markdown_count = 248 + (2 * provider_count)
     if (
         len(actual_paths) != expected_markdown_count
         or manifest.get("markdown_file_count") != expected_markdown_count

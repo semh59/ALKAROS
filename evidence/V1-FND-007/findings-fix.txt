@@ -1,0 +1,127 @@
+# V1-FND-007 Remediation Evidence
+
+Görev: plan/v1/foundation/V1-FND-007-audit-remediation.md
+Tarih: 2026-08-01
+Sahip: opencode-v1-fnd-007
+
+## Bulgular ve düzeltmeler
+
+| Bulgu | Düzeltme | Kanıt |
+|-------|----------|-------|
+| FIND-IA-0027: kapı zinciri V1-FND-007'yi bloke ediyor | Kullanıcı onaylı istisna kaydı | plan/GATES.md, plan/VALIDATION_CONTRACT.md, plan/TRACEABILITY.md |
+| FIND-IA-0028: CI task-scope check'i temiz worktree'de her zaman geçiyor | `--diff-base` modu + PR base SHA tabanlı workflow | ci-diff-mode.txt, task-scope.json |
+| FIND-IA-0029: build/project-manifest.json git'te yok | .gitignore istisnası + izleme | git-status.txt |
+| FIND-IA-0030: ModuleComposition/Primitives ölü kod | Silindi; FND-001 yüzey daraltması | build-solution.txt, task-scope.json |
+| FIND-IA-0031: PsqlScriptRunner sessiz boş catch | Yalnız HasExited guard'ı altında no-op | test-run.txt |
+| FIND-IA-0032: commit footer ihlali | SEC-001/SEC-002 commit'leri footer'lı yeniden yazıldı | git-log-footer.txt |
+| FIND-IA-0033: V0-CMP-003 evidence metadata InProgress | Status: Done düzeltmesi | git-status.txt |
+| FIND-IA-0034: backtick ayrıştırıcı açığı | Path-şekil filtresi + test | pytest.txt |
+| FIND-IA-0035: handoff 38 eksik iddiası | Mekanik kurallarla yeniden üretilemedi, kurgusal düzeltme yapılmadı | findings-fix.txt (aşağıda) |
+| FIND-IA-0036: plan-audit tool 247 hard-code | 248'e güncellendi + VALIDATION_CONTRACT eşitlendi | validate.txt |
+
+## Komutlar ve exit code'lar
+
+### 1. Plan validate (FND-007 dahil)
+```
+uv run --python 3.12.12 --with-requirements plan/validation-requirements.lock python tools/plan-audit/plan_audit_tool.py validate
+Markdown files: 248
+Task files: 229
+Registered gates: 18
+Registered EXT sources: 18
+Dependency edges: 843
+Validation errors: 0
+Validation warnings: 0
+EXIT: 0
+```
+
+### 2. generate-audit-report + generate-manifest + verify-manifest
+```
+generate-audit-report: Audit findings recorded: 1827, English Goal findings: 174, Audit report lines: 1524
+generate-manifest: Manifest Markdown files: 248, lines: 18547, bytes: 1425023
+verify-manifest: Manifest errors: 0
+EXIT: 0
+```
+
+### 3. markdownlint (repo kökü)
+```
+markdownlint-cli2 v0.23.2 (markdownlint v0.41.1)
+Finding: plan/**/*.md AGENTS.md
+Linting: 249 files
+Summary: 0 issues in 0 files
+EXIT: 0
+```
+
+### 4. dotnet build
+```
+dotnet build ALKAROS.slnx --nologo -v q
+Oluşturma başarılı oldu. 0 Uyarı 0 Hata
+EXIT: 0
+```
+
+### 5. Çözüm testleri (ALKAROS_TEST_PG_USER/ALKAROS_TEST_PG_PASSWORD User env var'larıyla)
+```
+dotnet test ALKAROS.slnx --nologo -v q --no-build
+ALKAROS.SensitiveData.Tests: 20/20  EXIT: 0
+ALKAROS.Secrets.Tests:        21/21  EXIT: 0
+ALKAROS.Architecture.Tests:    4/4  EXIT: 0
+ALKAROS.Transactions.Tests:   25/25  EXIT: 0
+ALKAROS.Host.Tests:            46/46  EXIT: 0
+Toplam: 116/116
+```
+
+Not: env var'ları process'e aktarılmadan 9 Host testi "fe_sendauth: no password supplied" ile
+düşer; bu, kodla ilgisiz çevresel durumdur (b0ff003 kaydı). Var'lar aktarılınca 46/46 yeşil.
+
+### 6. Task-scope pytest seti
+```
+uv run --python 3.12.12 pytest tests/Architecture/TaskScope -q
+48 passed in 23.94s
+EXIT: 0
+```
+
+### 7. Task-scope validator (worktree modu)
+```
+uv run --python 3.12.12 python tools/task-scope/task_scope_tool.py --task-id V1-FND-007 --format text
+OK: All changes within scope for V1-FND-007
+EXIT: 0
+```
+
+### 8. Diff modu (ci-diff-mode.txt)
+`--diff-base HEAD~1` karşılaştırmasında SEC-002'nin kendi dosyaları doğru şekilde yabancı
+write-set olarak işaretlendi (33 finding, tamamı SEC-002 yüzeyi) — diff modunun temiz
+worktree'de bile gerçek değişim setini gördüğünün kanıtı. FND-007'ye ait commit sonrası
+diff koşusu: task-scope.json (valid: true).
+
+### 9. Commit footer denetimi
+```
+git log -4 --format="%h %s --- %b"
+421add3 feat(security): add sensitive payload boundary --- Task: V1-SEC-002
+91c8672 feat(security): add secret resolution boundary --- Task: V1-SEC-001
+b0ff003 docs(evidence): record PostgreSQL test role credentials procedure ---
+67ebaf8 fix(tests): pass database password to Program.Main in exit-code tests ---
+```
+FND-007 teslimat commit'i de `Task: V1-FND-007` footer'ı taşır (git-log-footer.txt).
+
+## Handoff iddiası doğrulaması (FIND-IA-0035)
+
+Denetimde "handoff↔Dependencies karşılıklılık eksikliği 38 adet" iddiası vardı. Oturum içinde
+inline Python ile plan ayrıştırılıp tüm task'ların handoff ve dependencies listeleri üzerinde
+mekanik kurallar tek tek denenerek yeniden üretim denemesi yapıldı:
+
+| Kural | Eksik sayısı |
+|-------|--------------|
+| Naif: handoff'taki her ID dependencies listesinde aranır | 428 |
+| Sender-impl: handoff eden task'ın karşılıklılık iddiası + implementasyon eşleşmesi | 67 |
+| Sender-impl + aynı modül eşleşmesi | 51 |
+| Sender-impl + aynı sürüm eşleşmesi | 65 |
+| Aynı sürüm + aynı modül zincir tutarlılığı | 0 |
+| Aynı sürüm impl→impl geçiş tutarlılığı | 0 |
+
+"38" hiçbir mekanik kuralla yeniden üretilemedi; aynı sürüm/modül kuralında tüm zincirler
+tutarlıdır. Bu yüzden kurgusal düzeltme yapılmadı; görev Out of scope'a bu gerekçeyle alındı.
+Kural tanımları öznel kalırsa sonuç değişir; sayıyı kesinleştiren mekanik tanım yoktur.
+
+## Kapanış write-set'i
+
+Git status snapshot'ı ve allowlist eşleşmesi: git-status.txt ve task-scope.json.
+Final commit footer'ı: Task: V1-FND-007.

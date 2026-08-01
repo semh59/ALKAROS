@@ -78,6 +78,16 @@ relay erişimi olmadan public QR transport tamamlanmış sayılmaz.
 | `FIND-IA-0024` | Compliance sign-off mali karar zincirini tüketmiyordu. | `V20-CMP-001` | Decision, implementation ve UAT dependency'leri eklendi. |
 | `FIND-IA-0025` | Production deployment/hypercare sahibi yoktu. | `V20-REL-004`, `V20-REL-005` | İki ayrı tek-sahip task eklendi. |
 | `FIND-IA-0026` | Coverage validation-only owner ile false-positive verebiliyordu. | Plan audit tool | Task sources ve parent/owner semantiği doğrulanır. |
+| `FIND-IA-0027` | Kapı zinciri `V1-FND-007` remediation görevini bloke ediyordu. | `V1-FND-007` | 2026-08-01 kullanıcı onaylı istisna; `GATES.md` ve `VALIDATION_CONTRACT.md` kaydı eklendi; zincir diğer application görevleri için değişmez. |
+| `FIND-IA-0028` | CI task-scope check'i temiz worktree yüzünden her zaman geçiyordu. | `V1-FND-007` | `--diff-base` modu (`git diff <base>...HEAD`) ve PR base SHA tabanlı workflow eklendi; contract güncellendi. |
+| `FIND-IA-0029` | `build/project-manifest.json` git'te yoktu; fresh clone'da plan audit kırılıyordu. | `V1-FND-007` | `.gitignore` istisnası (`build/*` + `!build/project-manifest.json`) ve dosya izlemeye alındı. |
+| `FIND-IA-0030` | `ModuleComposition/Primitives/*` ve `ModuleCompositionRoot.Modules` ölü koddur. | `V1-FND-007` | Dosyalar silindi; property kaldırıldı; FND-001 yüzey daraltması plan değişikliği olarak işlendi. |
+| `FIND-IA-0031` | `PsqlScriptRunner.KillProcessTree` sessiz boş catch içeriyordu. | `V1-FND-007` | Yalnız `process.HasExited` guard'ı altında no-op; diğer kill hataları fail-closed yeniden fırlatır. |
+| `FIND-IA-0032` | Commit footer sözleşmesi (`Task:`/`Gate:`) ihlal ediliyordu. | `V1-FND-007` | `e2c9e3a` → `91c8672` ve SEC-002 commit'i `421add3` footer'lı yeniden yazıldı; push edilmemiş local history. |
+| `FIND-IA-0033` | V0-CMP-003 evidence `Status: InProgress`, plan `Done` idi. | `V1-FND-007` | Evidence metadata `Done` düzeltildi; içerik değişmedi, tarihli not eklendi. |
+| `FIND-IA-0034` | Owned surface backtick ayrıştırıcısı path olmayan metinleri allowlist'e alıyordu. | `V1-FND-007` | Yalnız path şekilli parçalar (`/`, `\`, `.`, `*`, `?`) kabul edilir; test eklendi. |
+| `FIND-IA-0035` | Plan handoff↔Dependencies karşılıklılık eksikliği iddiası (38). | `V1-FND-007` | Mekanik kurallarla (naif, sender impl, aynı modül, aynı sürüm) yeniden üretilemedi; zincirler tutarlı; kurgusal düzeltme yapılmadı, kanıt `evidence/V1-FND-007/` altında. |
+| `FIND-IA-0036` | Plan-audit tool Markdown sayısı 247 hard-code'u yeni görev dosyasını engelliyordu. | `V1-FND-007` | Sayı 248'e güncellendi; `VALIDATION_CONTRACT.md` ile eşitlendi; manifest yeniden üretildi. |
 
 ## Yapısal denetim bulguları
 

@@ -1,0 +1,26 @@
+﻿ M .github/workflows/task-scope.yml
+M  .gitignore
+ M ALKAROS.slnx
+A  build/project-manifest.json
+ M docs/engineering/task-scope-contract.md
+ M evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md
+ M plan/AUDIT_MANIFEST.json
+ M plan/AUDIT_REPORT.md
+ M plan/GATES.md
+ M plan/TRACEABILITY.md
+ M plan/VALIDATION_CONTRACT.md
+ M plan/v1/foundation/V1-FND-001-module-skeleton.md
+ M plan/v1/foundation/V1-FND-003-codex-task-scope-enforcement.md
+ M plan/v1/foundation/V1-FND-004-host-migration-composition.md
+ M src/BuildingBlocks/ModuleComposition/ModuleCompositionRoot.cs
+ D src/BuildingBlocks/ModuleComposition/Primitives/DomainEvent.cs
+ D src/BuildingBlocks/ModuleComposition/Primitives/Entity.cs
+ D src/BuildingBlocks/ModuleComposition/Primitives/Guard.cs
+ D src/BuildingBlocks/ModuleComposition/Primitives/Result.cs
+ D src/BuildingBlocks/ModuleComposition/Primitives/ValueObject.cs
+ M src/Host/Composition/Migrations/PsqlScriptRunner.cs
+ M tools/plan-audit/plan_audit_tool.py
+ M tools/task-scope/task_scope_tool.py
+?? evidence/V1-FND-007/
+?? plan/v1/foundation/V1-FND-007-audit-remediation.md
+?? tests/Architecture/TaskScope/test_task_scope_diff.py

@@ -20,7 +20,8 @@ Thumbs.db
 # Build
 packages/
 *.nupkg
-build/
+build/*
+!build/project-manifest.json
 artifacts/
 
 # Secrets

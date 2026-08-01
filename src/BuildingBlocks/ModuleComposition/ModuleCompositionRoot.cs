@@ -1,5 +1,3 @@
-using System.Collections.ObjectModel;
-
 namespace ALKAROS.ModuleComposition;
 
 /// <summary>
@@ -12,11 +10,8 @@ public sealed class ModuleCompositionRoot
 {
     private readonly Dictionary<string, IModule> _modulesById = new(StringComparer.Ordinal);
 
-    public IReadOnlyDictionary<string, IModule> Modules { get; }
-
     public ModuleCompositionRoot()
     {
-        Modules = new ReadOnlyDictionary<string, IModule>(_modulesById);
     }
 
     public ModuleCompositionRoot AddModule(IModule module)

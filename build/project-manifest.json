@@ -1,0 +1,354 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "version": 1,
+  "generatedBy": "V1-FND-001",
+  "source": {
+    "dependencyRules": "docs/architecture/module-dependency-rules.md",
+    "qrRelayTopology": "docs/architecture/qr-relay-topology.md"
+  },
+  "sdk": {
+    "version": "10.0.302",
+    "rollForward": "latestFeature"
+  },
+  "projects": [
+    {
+      "path": "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj",
+      "kind": "buildingblock",
+      "module": "ModuleComposition",
+      "references": [],
+      "packages": []
+    },
+    {
+      "path": "src/BuildingBlocks/Transactions/ALKAROS.Transactions.csproj",
+      "kind": "buildingblock",
+      "module": "Transactions",
+      "references": [],
+      "packages": []
+    },
+    {
+      "path": "src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj",
+      "kind": "buildingblock",
+      "module": "Secrets",
+      "references": [],
+      "packages": []
+    },
+    {
+      "path": "src/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.csproj",
+      "kind": "buildingblock",
+      "module": "SensitiveData",
+      "references": [
+        "src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Host/ALKAROS.Host.csproj",
+      "kind": "host",
+      "module": "Host",
+      "references": [
+        "src/Modules/Orders/ALKAROS.Orders.csproj",
+        "src/Modules/Billing/ALKAROS.Billing.csproj",
+        "src/Modules/Payments/ALKAROS.Payments.csproj",
+        "src/Modules/Kitchen/ALKAROS.Kitchen.csproj",
+        "src/Modules/Catalog/ALKAROS.Catalog.csproj",
+        "src/Modules/Tables/ALKAROS.Tables.csproj",
+        "src/Modules/Cash/ALKAROS.Cash.csproj",
+        "src/Modules/Fiscal/ALKAROS.Fiscal.csproj",
+        "src/Modules/Inventory/ALKAROS.Inventory.csproj",
+        "src/Modules/Accounts/ALKAROS.Accounts.csproj",
+        "src/Modules/Reporting/ALKAROS.Reporting.csproj",
+        "src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj",
+        "src/Modules/Notifications/ALKAROS.Notifications.csproj",
+        "src/Modules/Settings/ALKAROS.Settings.csproj",
+        "src/Modules/Identity/ALKAROS.Identity.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Orders/ALKAROS.Orders.csproj",
+      "kind": "module",
+      "module": "Orders",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Billing/ALKAROS.Billing.csproj",
+      "kind": "module",
+      "module": "Billing",
+      "references": [
+        "src/Modules/Orders/ALKAROS.Orders.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Payments/ALKAROS.Payments.csproj",
+      "kind": "module",
+      "module": "Payments",
+      "references": [
+        "src/Modules/Billing/ALKAROS.Billing.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Kitchen/ALKAROS.Kitchen.csproj",
+      "kind": "module",
+      "module": "Kitchen",
+      "references": [
+        "src/Modules/Orders/ALKAROS.Orders.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Catalog/ALKAROS.Catalog.csproj",
+      "kind": "module",
+      "module": "Catalog",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Tables/ALKAROS.Tables.csproj",
+      "kind": "module",
+      "module": "Tables",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Cash/ALKAROS.Cash.csproj",
+      "kind": "module",
+      "module": "Cash",
+      "references": [
+        "src/Modules/Payments/ALKAROS.Payments.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Fiscal/ALKAROS.Fiscal.csproj",
+      "kind": "module",
+      "module": "Fiscal",
+      "references": [
+        "src/Modules/Payments/ALKAROS.Payments.csproj",
+        "src/Modules/Billing/ALKAROS.Billing.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Inventory/ALKAROS.Inventory.csproj",
+      "kind": "module",
+      "module": "Inventory",
+      "references": [
+        "src/Modules/Catalog/ALKAROS.Catalog.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Accounts/ALKAROS.Accounts.csproj",
+      "kind": "module",
+      "module": "Accounts",
+      "references": [
+        "src/Modules/Billing/ALKAROS.Billing.csproj",
+        "src/Modules/Payments/ALKAROS.Payments.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Reporting/ALKAROS.Reporting.csproj",
+      "kind": "module",
+      "module": "Reporting",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": [],
+      "note": "Read-only projections; references to other modules are forbidden from write paths."
+    },
+    {
+      "path": "src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj",
+      "kind": "module",
+      "module": "Reconciliation",
+      "references": [
+        "src/Modules/Payments/ALKAROS.Payments.csproj",
+        "src/Modules/Cash/ALKAROS.Cash.csproj",
+        "src/Modules/Accounts/ALKAROS.Accounts.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Notifications/ALKAROS.Notifications.csproj",
+      "kind": "module",
+      "module": "Notifications",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Settings/ALKAROS.Settings.csproj",
+      "kind": "module",
+      "module": "Settings",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Modules/Identity/ALKAROS.Identity.csproj",
+      "kind": "module",
+      "module": "Identity",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Clients/Cashier/ALKAROS.Cashier.csproj",
+      "kind": "client",
+      "module": "Cashier",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Clients/Waiter/ALKAROS.Waiter.csproj",
+      "kind": "client",
+      "module": "Waiter",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Integrations/Hugin/ALKAROS.Hugin.csproj",
+      "kind": "integration",
+      "module": "Hugin",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Integrations/Qnb/ALKAROS.Qnb.csproj",
+      "kind": "integration",
+      "module": "Qnb",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Integrations/Yemeksepeti/ALKAROS.Yemeksepeti.csproj",
+      "kind": "integration",
+      "module": "Yemeksepeti",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Integrations/MealCard/ALKAROS.MealCard.csproj",
+      "kind": "integration",
+      "module": "MealCard",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "src/Integrations/QrRelay/ALKAROS.QrRelay.csproj",
+      "kind": "integration",
+      "module": "QrRelay",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": []
+    },
+    {
+      "path": "tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj",
+      "kind": "test",
+      "module": "Architecture",
+      "references": [
+        "src/Host/ALKAROS.Host.csproj",
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "NetArchTest.Rules"
+      ]
+    },
+    {
+      "path": "tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj",
+      "kind": "test",
+      "module": "Host",
+      "references": [
+        "src/Host/ALKAROS.Host.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio"
+      ]
+    },
+    {
+      "path": "tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj",
+      "kind": "test",
+      "module": "Transactions",
+      "references": [
+        "src/BuildingBlocks/Transactions/ALKAROS.Transactions.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio"
+      ]
+    },
+    {
+      "path": "tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj",
+      "kind": "test",
+      "module": "Secrets",
+      "references": [
+        "src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio"
+      ]
+    },
+    {
+      "path": "tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj",
+      "kind": "test",
+      "module": "SensitiveData",
+      "references": [
+        "src/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio"
+      ]
+    }
+  ],
+  "dependencyRules": {
+    "acyclic": true,
+    "domainDependsOnNothing": true,
+    "infrastructureCannotReferenceApi": true,
+    "crossAggregateUseIds": true,
+    "reportingReadOnly": true,
+    "everyCrossModuleCallHasOwner": true
+  }
+}

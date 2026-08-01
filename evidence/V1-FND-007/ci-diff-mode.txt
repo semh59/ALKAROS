@@ -1,0 +1,172 @@
+﻿{
+  "task_id": "V1-FND-007",
+  "valid": false,
+  "metadata_errors": [],
+  "findings": [
+    {
+      "path": "evidence/v1-sec-002/build-solution.txt",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-sec-002/final-write-set.txt",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-sec-002/no-plaintext-leak.txt",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-sec-002/restore-locked.txt",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-sec-002/task-scope.json",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-sec-002/test-run.txt",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "plan/v1/security-foundation/v1-sec-002-sensitive-payload-boundary.md",
+      "change_type": "modified",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/alkaros.sensitivedata.csproj",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/aesgcmenvelopecipher.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/envelopeciphertext.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/envelopekeycodec.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/ienvelopecipher.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/ipayloadredactor.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/iretentionpolicyhook.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/isensitivedataaccesspolicy.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/maxageretentionpolicyhook.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/payloadredactor.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/sensitivecategory.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/sensitivedataencryptionexception.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/sensitivedataexception.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/sensitiveenvelope.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/sensitivepayload.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/sensitivepayloadprotector.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/unauthorizedsensitivereadexception.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "src/buildingblocks/security/sensitivedata/packages.lock.json",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "tests/buildingblocks/security/sensitivedata/alkaros.sensitivedata.tests.csproj",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "tests/buildingblocks/security/sensitivedata/authorization/unauthorizedreadtests.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "tests/buildingblocks/security/sensitivedata/encryption/keyfailuretests.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "tests/buildingblocks/security/sensitivedata/fixtures/sensitivedatafixtures.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "tests/buildingblocks/security/sensitivedata/protection/envelopeprotectiontests.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "tests/buildingblocks/security/sensitivedata/protection/payloadredactiontests.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "tests/buildingblocks/security/sensitivedata/retention/retentionpolicyhooktests.cs",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "tests/buildingblocks/security/sensitivedata/packages.lock.json",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    }
+  ]
+}

@@ -3,9 +3,15 @@ from __future__ import annotations
 """Task scope enforcement tool for ALKAROS.
 
 Parses a task Markdown file, builds a write allowlist from the task's
-``Owned surface`` section, inspects the current Git worktree for all
-changed paths (staged, unstaged, untracked, deleted, renamed), and
-validates every path against the allowlist.
+``Owned surface`` section, inspects either the current Git worktree or the
+committed diff between a base ref and HEAD, and validates every changed path
+against the allowlist.
+
+Local preflight uses worktree mode (the default): staged, unstaged, untracked,
+deleted and renamed paths are collected from ``git status --porcelain=v1``.
+CI uses diff mode: ``--diff-base <ref>`` collects committed changes from
+``git diff --name-status <ref>...HEAD`` so a fresh checkout still detects
+out-of-scope paths.
 
 Exit code 0 means every changed path is within scope.
 Exit code 1 means one or more paths are out of scope or the task metadata
@@ -38,6 +44,7 @@ _OWNED_SURFACE_HEADER = re.compile(r"^##\s+Owned surface\s*$", re.MULTILINE)
 _NEXT_HEADER = re.compile(r"^##\s+", re.MULTILINE)
 _TASK_ID_FORMAT = re.compile(r"^V\d+-[A-Z]+-\d+$")
 _BACKTICK_PATH = re.compile(r"`([^`]+)`")
+_PATH_SHAPE = re.compile(r"[/\\.*?]")
 
 VALID_STATUSES: Set[str] = {"Planned", "InProgress", "Done", "Blocked"}
 
@@ -135,9 +142,14 @@ def parse_task_file(file_path: Path) -> TaskMetadata:
     for line in owned_section.splitlines():
         line = line.strip()
         if line.startswith("- ") and not line.startswith("- Bu görev"):
-            paths = _BACKTICK_PATH.findall(line)
-            for p in paths:
-                owned_surface.append(p.strip())
+            for p in _BACKTICK_PATH.findall(line):
+                fragment = p.strip()
+                # Only path-shaped fragments (contain a separator, dot, or
+                # glob character) enter the allowlist. Prose, task IDs and
+                # other backticked words in the Owned surface section are
+                # ignored so free-text lines cannot widen the write set.
+                if _PATH_SHAPE.search(fragment):
+                    owned_surface.append(fragment)
 
     return TaskMetadata(
         task_id=task_id,
@@ -284,11 +296,13 @@ def get_git_changes(repo_root: Path) -> List[GitChange]:
     """
     result = subprocess.run(
         [
-            "git", "-C", str(repo_root),
+            "git", "-c", "core.quotePath=false", "-C", str(repo_root),
             "status", "--porcelain=v1", "--renames", "-uall",
         ],
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=True,
     )
     changes: List[GitChange] = []
@@ -321,6 +335,56 @@ def get_git_changes(repo_root: Path) -> List[GitChange]:
             else:
                 change_type = "modified"
             changes.append(GitChange(path=path, change_type=change_type))
+
+    return changes
+
+
+def get_git_diff_changes(repo_root: Path, base_ref: str) -> List[GitChange]:
+    """Return all paths changed in commits reachable from HEAD but not from
+    the merge-base with *base_ref*.
+
+    Uses ``git diff --name-status <base_ref>...HEAD`` so a fresh checkout
+    with a clean worktree still yields the PR/branch change set. Renames are
+    reported with both old and new paths.
+    """
+    result = subprocess.run(
+        [
+            "git", "-c", "core.quotePath=false", "-C", str(repo_root),
+            "diff", "--name-status", "--find-renames",
+            f"{base_ref}...HEAD",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=True,
+    )
+    changes: List[GitChange] = []
+    for line in result.stdout.splitlines():
+        if not line:
+            continue
+        parts = line.split("\t")
+        status = parts[0]
+        if status.startswith(("R", "C")):
+            changes.append(
+                GitChange(
+                    path=normalize_path(parts[2]),
+                    change_type="renamed",
+                    old_path=normalize_path(parts[1]),
+                )
+            )
+        elif status.startswith("D"):
+            changes.append(
+                GitChange(path=normalize_path(parts[1]), change_type="deleted")
+            )
+        elif status.startswith("A"):
+            changes.append(
+                GitChange(path=normalize_path(parts[1]), change_type="added")
+            )
+        else:
+            changes.append(
+                GitChange(path=normalize_path(parts[1]), change_type="modified")
+            )
 
     return changes
 
@@ -433,8 +497,13 @@ def run_validation(
     task_id: str,
     repo_root: Path,
     plan_dir: Path,
+    diff_base: Optional[str] = None,
 ) -> Dict:
-    """Run the full validation and return a result dict."""
+    """Run the full validation and return a result dict.
+
+    *diff_base* selects diff mode (committed changes vs worktree). When
+    *diff_base* is None the current worktree is inspected.
+    """
     result: Dict = {
         "task_id": task_id,
         "valid": False,
@@ -464,7 +533,10 @@ def run_validation(
     result["metadata_errors"] = metadata_errors
 
     allowlist = build_allowlist(task, workspace=repo_root)
-    changes = get_git_changes(repo_root)
+    if diff_base is not None:
+        changes = get_git_diff_changes(repo_root, diff_base)
+    else:
+        changes = get_git_changes(repo_root)
     findings = validate_changes(changes, allowlist)
     result["findings"] = findings
 
@@ -499,9 +571,21 @@ def main(argv: Optional[List[str]] = None) -> int:
         default="json",
         help="Output format (default: json).",
     )
+    parser.add_argument(
+        "--diff-base",
+        default=None,
+        help="Base ref for committed-diff mode (e.g. a PR base SHA or "
+        "origin/master). When set, changed paths come from "
+        "'git diff --name-status <base>... HEAD' instead of the worktree.",
+    )
     args = parser.parse_args(argv)
 
-    result = run_validation(args.task_id, args.repo_root, args.plan_dir)
+    result = run_validation(
+        args.task_id,
+        args.repo_root,
+        args.plan_dir,
+        diff_base=args.diff_base,
+    )
 
     if args.format == "json":
         print(json.dumps(result, indent=2))

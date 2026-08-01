@@ -49,6 +49,11 @@ sözleşmesi bu sonucu açıkça ele alıyorsa başlayabilir; aksi durumda gate 
 `V1-FND-002` ve `V1-FND-006` tamamlanır. Bu sekiz görev gerçek kanıtla `Done`
 olmadan başka hiçbir application görevi `InProgress` yapılamaz.
 
+2026-08-01 tarihli kullanıcı onaylı plan değişikliğiyle `V1-FND-007`
+(audit remediation) bu zincirden önce başlatılır; kayıt `TRACEABILITY.md`
+FIND-IA-0027 satırındadır. Zincir kuralı diğer application görevleri için
+aynen geçerliliğini korur.
+
 ## Canlı veri kuralı
 
 `V20-REL-003` signed Approve kararı üretmeden hiçbir sürüm gerçek müşteri veya
