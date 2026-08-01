@@ -1,7 +1,7 @@
 # V1-FND-008 - Remediate boundary audit round 2
 
 - Task ID: V1-FND-008
-- Status: InProgress
+- Status: Done
 - Assignee: opencode-v1-fnd-008
 - Work type: implementation
 - Surface state: Existing

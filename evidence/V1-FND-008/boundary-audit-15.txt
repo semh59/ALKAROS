@@ -1,0 +1,14 @@
+﻿VIOLATION 41495d6 V1-FND-005 chore(plan): regenerate audit manifest and report
+
+    plan/audit_manifest.json
+    plan/audit_report.md
+VIOLATION a721e81 V1-FND-005 chore(ci): pin RepositoryCommit to current HEAD
+
+    directory.build.props
+VIOLATION 72cafee V1-FND-004 chore(plan): mark V1-FND-004 surface as existing, retarget workflow default task-id
+
+    .github/workflows/task-scope.yml
+VIOLATION 47f0a64 V1-FND-005 feat(transactions): add transaction execution boundary
+
+    alkaros.sln
+RESULT: 4 violation(s)

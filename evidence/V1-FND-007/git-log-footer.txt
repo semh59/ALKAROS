@@ -4,3 +4,7 @@
 
 b0ff003 docs(evidence): record PostgreSQL test role credentials procedure --- 
 67ebaf8 fix(tests): pass database password to Program.Main in exit-code tests --- 
+
+---
+Tarihli düzeltme notu (2026-08-01, V1-FND-008):
+Bu liste V1-FND-007 kapanışındaki footer durumunu gösterir. V1-FND-008 sırasında 10 commit'e Task: footer'ı eklendi ve commit'ler yeniden yazıldı; güncel durum için bkz. evidence/V1-FND-008/rewritten-commits.txt ve boundary-audit-15.txt.

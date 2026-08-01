@@ -1507,7 +1507,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md` | ✅ | `A1E44A9DB53E1ACF409EE16E3B4A1EF09526FA4707A94B76C8E178FD56EE8C0A` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-006-transaction-outbox-integration.md` | ✅ | `FE2190EC33F0C929611FAFCE4B12D00E654A700A5DAE9499EB36AB0A80585D45` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-007-audit-remediation.md` | ✅ | `66F78CE331B05C30068737859686BA138461B8DAF7FDDD0C63EE502F27D01063` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-008-audit-remediation-round2.md` | ✅ | `E013AE346180E16E637B45A48225CA3832BA4A2CCE8B58C78D5770DDE478C4F3` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-008-audit-remediation-round2.md` | ✅ | `254696914448FFE256CDFF0EB9A2FB1B6049E6D35F61D5CCC990B1A58E821C31` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `24623A6E669EB2C9DF00914C529190C888D2B22D4282BE594200AB24F6FF362A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `ECE8B0766DDC5D375452D6FB521B64143249F1A02CDB02086B6E7D97A79484DA` | Tek-sahip görev |
 | `plan/v2.0/release/V20-REL-004-production-deployment.md` | ✅ | `711707C47D8E8112FA2A15ED3BE1C8B6EE0FD3150E08F8CBF088285AC7902BD8` | Tek-sahip görev |

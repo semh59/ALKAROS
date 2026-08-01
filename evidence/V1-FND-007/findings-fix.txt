@@ -125,3 +125,7 @@ Kural tanımları öznel kalırsa sonuç değişir; sayıyı kesinleştiren meka
 
 Git status snapshot'ı ve allowlist eşleşmesi: git-status.txt ve task-scope.json.
 Final commit footer'ı: Task: V1-FND-007.
+
+---
+Tarihli düzeltme notu (2026-08-01, V1-FND-008):
+Bağımsız sınır denetimi round-2 bulguları (FIND-IA-0037..0049) ve bu dosyadaki eski commit kimliklerinin (e2c9e3a, 830fa20, db829cc) yeniden yazılmış halleri için bkz. plan/TRACEABILITY.md ve evidence/V1-FND-008/.
