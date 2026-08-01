@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 249,
-  "markdown_line_count": 18683,
-  "markdown_byte_count": 1437313,
+  "markdown_file_count": 250,
+  "markdown_line_count": 18791,
+  "markdown_byte_count": 1444142,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -78,16 +78,16 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F13034B97C51E23B19C5A2ECFF4B041944CFFA15D4DD28486E8C05A98FAB47B8",
-      "lines": 1525,
-      "bytes": 207131,
+      "sha256": "14BCE84271F4098F8DDF44ADBA5A334C665169CE7DCFD99A3A916037D8438C40",
+      "lines": 1526,
+      "bytes": 207287,
       "utf8": true
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "A7A54BB9199411B0EDBB74AA06FB66E15C18977B7104AC9814EAFE2E6DDA1D53",
-      "lines": 67,
-      "bytes": 3868,
+      "sha256": "25095852E3A0491B35538A5E405E2C1B589B00B3C3717F9E5B4DF270E6802A0C",
+      "lines": 72,
+      "bytes": 4205,
       "utf8": true
     },
     {
@@ -134,9 +134,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "901C3C396B859D78F4BE55B927992A72FE90886E6A062C2D19BB0BFDB53712F5",
-      "lines": 119,
-      "bytes": 16507,
+      "sha256": "EF31AB3529C90940A2DC38D385FF44A8E257BBA1EC37430C496610C1A95E183B",
+      "lines": 121,
+      "bytes": 17428,
       "utf8": true
     },
     {
@@ -564,6 +564,13 @@
       "sha256": "254696914448FFE256CDFF0EB9A2FB1B6049E6D35F61D5CCC990B1A58E821C31",
       "lines": 108,
       "bytes": 6252,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md",
+      "sha256": "43112C8183B6FF83751EFDE8875DE5EF436084F150649F0082CE8CC301D90F44",
+      "lines": 96,
+      "bytes": 5130,
       "utf8": true
     },
     {
@@ -1807,9 +1814,9 @@
     },
     {
       "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "2FF2AAF77CCA214DDDCAB1874ADA8BF631F5C3B391ACCD11CE92B3467E8B17C0",
-      "lines": 116,
-      "bytes": 6690,
+      "sha256": "B2471379F0F0A9008A1D569EC60D6F706B7F6F9F009C91968D7A5100FF45C319",
+      "lines": 120,
+      "bytes": 6975,
       "utf8": true
     }
   ]

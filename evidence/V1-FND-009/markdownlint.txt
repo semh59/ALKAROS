@@ -1,0 +1,3 @@
+﻿Finding: plan/**/*.md AGENTS.md
+Linting: 251 files
+Summary: 0 issues in 0 files

@@ -1,0 +1,3 @@
+﻿Audit finding IDs: 1827
+Audit added-file hashes: 38
+Manifest errors: 0

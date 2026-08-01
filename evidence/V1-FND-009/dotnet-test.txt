@@ -1,0 +1,2 @@
+﻿
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    46, Atlanan:     0, Toplam:    46, S├╝re: 9 s - ALKAROS.Host.Tests.dll (net8.0)

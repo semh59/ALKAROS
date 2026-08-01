@@ -1,0 +1,5 @@
+﻿Registered gates: 18
+Registered EXT sources: 18
+Dependency edges: 850
+Validation errors: 0
+Validation warnings: 0
