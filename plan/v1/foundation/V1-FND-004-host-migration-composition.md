@@ -24,7 +24,10 @@ Executable host'u ve module migration'larını doğrulanmış global sırayla ç
 - `src/Host/Composition/Migrations/MigrationExecutor.cs`, `src/Host/Composition/Migrations/MigrationFile.cs`
 - `src/Host/Composition/Migrations/MigrationManifest.cs`, `src/Host/Composition/Migrations/MigrationManifestException.cs`
 - `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
-- `tests/Host/MigrationComposition/**`, `database/MigrationComposition/**`
+- `tests/Host/MigrationComposition/**`
+- Owned surface devri (2026-08-01 kullanıcı onaylı plan değişikliği, V1-FND-002): database/MigrationComposition
+  klasöründeki order.json sahipliği V1-FND-002'ye devredildi; database/MigrationComposition klasörü bu yüzeyden
+  çıkarıldı.
 - Bu görev module-specific schema veya başka bir task'ın migration dosyasını değiştiremez.
 
 ## In scope
