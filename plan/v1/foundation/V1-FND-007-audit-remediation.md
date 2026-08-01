@@ -1,7 +1,7 @@
 # V1-FND-007 - Remediate independent audit findings
 
 - Task ID: V1-FND-007
-- Status: InProgress
+- Status: Done
 - Assignee: opencode-v1-fnd-007
 - Work type: implementation
 - Surface state: Existing
