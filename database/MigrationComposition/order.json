@@ -1,214 +1,157 @@
 {
   "version": 1,
-  "source": [
-    "V0-DAT-001",
-    "CORR:C1"
-  ],
-  "phaseARange": {
-    "min": "001",
-    "max": "030"
-  },
-  "phaseBRange": {
-    "min": "031",
-    "max": "040"
-  },
+  "source": ["V0-DAT-001"],
+  "phaseARange": { "min": "001", "max": "030" },
+  "phaseBRange": { "min": "031", "max": "040" },
   "migrations": [
     {
       "id": "001",
       "phase": "A",
-      "tables": [
-        "stores",
-        "users",
-        "roles"
-      ],
+      "tables": ["idempotency_keys"],
       "deferredConstraints": []
     },
     {
       "id": "002",
       "phase": "A",
-      "tables": [
-        "printers",
-        "printer_routes"
-      ],
+      "tables": ["inbox_messages"],
       "deferredConstraints": []
     },
     {
       "id": "003",
       "phase": "A",
-      "tables": [
-        "products",
-        "categories",
-        "units"
-      ],
+      "tables": ["outbox_messages"],
       "deferredConstraints": []
     },
     {
       "id": "004",
       "phase": "A",
-      "tables": [
-        "suppliers",
-        "payment_providers",
-        "meal_card_providers",
-        "fiscal_devices"
-      ],
+      "tables": ["stores", "users", "roles"],
       "deferredConstraints": []
     },
     {
       "id": "005",
       "phase": "A",
-      "tables": [
-        "tables",
-        "reservations"
-      ],
+      "tables": ["printers", "printer_routes"],
       "deferredConstraints": []
     },
     {
       "id": "006",
       "phase": "A",
-      "tables": [
-        "orders",
-        "order_items"
-      ],
+      "tables": ["products", "categories", "units"],
       "deferredConstraints": []
     },
     {
       "id": "007",
       "phase": "A",
-      "tables": [
-        "recipes",
-        "recipe_items"
-      ],
+      "tables": ["suppliers", "payment_providers", "meal_card_providers", "fiscal_devices"],
       "deferredConstraints": []
     },
     {
       "id": "008",
       "phase": "A",
-      "tables": [
-        "daily_menus",
-        "menu_items"
-      ],
+      "tables": ["tables", "reservations"],
       "deferredConstraints": []
     },
     {
       "id": "009",
       "phase": "A",
-      "tables": [
-        "purchase_orders",
-        "purchase_order_items"
-      ],
+      "tables": ["orders", "order_items"],
       "deferredConstraints": []
     },
     {
       "id": "010",
       "phase": "A",
-      "tables": [
-        "bills",
-        "bill_order_items"
-      ],
+      "tables": ["recipes", "recipe_items"],
       "deferredConstraints": []
     },
     {
       "id": "011",
       "phase": "A",
-      "tables": [
-        "payments",
-        "payment_allocations"
-      ],
+      "tables": ["daily_menus", "menu_items"],
       "deferredConstraints": []
     },
     {
       "id": "012",
       "phase": "A",
-      "tables": [
-        "fiscal_documents"
-      ],
+      "tables": ["purchase_orders", "purchase_order_items"],
       "deferredConstraints": []
     },
     {
       "id": "013",
       "phase": "A",
-      "tables": [
-        "kitchen_tickets",
-        "kitchen_ticket_items"
-      ],
+      "tables": ["bills", "bill_order_items"],
       "deferredConstraints": []
     },
     {
       "id": "014",
       "phase": "A",
-      "tables": [
-        "print_jobs"
-      ],
+      "tables": ["payments", "payment_allocations"],
       "deferredConstraints": []
     },
     {
       "id": "015",
       "phase": "A",
-      "tables": [
-        "cash_sessions",
-        "cash_transactions"
-      ],
+      "tables": ["fiscal_documents"],
       "deferredConstraints": []
     },
     {
       "id": "016",
       "phase": "A",
-      "tables": [
-        "meal_card_settlements"
-      ],
+      "tables": ["kitchen_tickets", "kitchen_ticket_items"],
       "deferredConstraints": []
     },
     {
       "id": "017",
       "phase": "A",
-      "tables": [
-        "customer_accounts",
-        "account_transactions"
-      ],
+      "tables": ["print_jobs"],
       "deferredConstraints": []
     },
     {
       "id": "018",
       "phase": "A",
-      "tables": [
-        "stock_ledger_entries",
-        "stock_balances"
-      ],
+      "tables": ["cash_sessions", "cash_transactions"],
       "deferredConstraints": []
     },
     {
       "id": "019",
       "phase": "A",
-      "tables": [
-        "production_batches",
-        "portion_reservations"
-      ],
+      "tables": ["meal_card_settlements"],
       "deferredConstraints": []
     },
     {
       "id": "020",
       "phase": "A",
-      "tables": [
-        "refund_ledger_entries"
-      ],
+      "tables": ["customer_accounts", "account_transactions"],
       "deferredConstraints": []
     },
     {
       "id": "021",
       "phase": "A",
-      "tables": [
-        "reconciliation_cases",
-        "alerts"
-      ],
+      "tables": ["stock_ledger_entries", "stock_balances"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "022",
+      "phase": "A",
+      "tables": ["production_batches", "portion_reservations"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "023",
+      "phase": "A",
+      "tables": ["refund_ledger_entries"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "024",
+      "phase": "A",
+      "tables": ["reconciliation_cases", "alerts"],
       "deferredConstraints": []
     },
     {
       "id": "031",
       "phase": "B",
-      "tables": [
-        "invoices",
-        "invoice_lines"
-      ],
+      "tables": ["invoices", "invoice_lines"],
       "deferredConstraints": []
     },
     {

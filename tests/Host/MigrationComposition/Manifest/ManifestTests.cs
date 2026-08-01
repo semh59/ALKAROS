@@ -6,7 +6,7 @@ namespace ALKAROS.Host.Tests.Manifest;
 
 public sealed class ManifestTests : IDisposable
 {
-    private static readonly string[] FirstEntryTables = ["stores", "users", "roles"];
+    private static readonly string[] FirstEntryTables = ["idempotency_keys"];
     private static readonly string[] FirstPhaseBEntryTables = ["invoices", "invoice_lines"];
     private static readonly string[] ExpectedDeferredConstraints =
     [
@@ -34,19 +34,19 @@ public sealed class ManifestTests : IDisposable
     {
         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
 
-        Assert.Equal(26, manifest.Migrations.Count);
-        Assert.Equal(21, manifest.Migrations.Count(e => e.Phase == MigrationManifest.PhaseA));
+        Assert.Equal(29, manifest.Migrations.Count);
+        Assert.Equal(24, manifest.Migrations.Count(e => e.Phase == MigrationManifest.PhaseA));
         Assert.Equal(5, manifest.Migrations.Count(e => e.Phase == MigrationManifest.PhaseB));
         Assert.Equal(
             FirstEntryTables,
             manifest.Migrations[0].Tables);
         Assert.Equal("021", manifest.Migrations[20].Id);
         Assert.Equal("035", manifest.Migrations[^1].Id);
-        Assert.Equal(MigrationManifest.PhaseB, manifest.Migrations[21].Phase);
-        Assert.Equal(FirstPhaseBEntryTables, manifest.Migrations[21].Tables);
+        Assert.Equal(MigrationManifest.PhaseB, manifest.Migrations[24].Phase);
+        Assert.Equal(FirstPhaseBEntryTables, manifest.Migrations[24].Tables);
         Assert.Equal(
             ExpectedDeferredConstraints,
-            manifest.Migrations.Skip(22).SelectMany(e => e.DeferredConstraints).ToArray());
+            manifest.Migrations.Skip(25).SelectMany(e => e.DeferredConstraints).ToArray());
     }
 
     [Fact]

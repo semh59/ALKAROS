@@ -7,11 +7,21 @@
 > **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2, PDF:II.13-II.15, PDF:III.29-III.40, CORR:C1
 > **Date:** 2026-07-30
 
+> **2026-08-01 kayıtlı güncelleme (V1-FND-002 kapsamı, V0-DAT-001 sahipliğinde):** Altyapı tabloları
+> `idempotency_keys`, `inbox_messages` ve `outbox_messages` eklendi. Bu tablolar hiçbir domain tablosuna FK
+> taşımaz ve domain tablolarından kendilerine FK taşınmaz (örn. `payment_allocations.idempotency_key` V0-DOM-004
+> kararı gereği FK değil, düz unique kolondur); bu yüzden Phase 1'in başında, pozisyonlar 001-003'te konumlanır.
+> Pozisyon kaydı `database/MigrationComposition/order.json` içindedir; her pozisyon tek tablo içerir ve ileri/geri
+> scriptleri vardır. Kalan domain tabloları pozisyon atamalarını kendi görevlerinde alır.
+
 ## 1. Entity Dependency Graph
 
 ```
 Phase 1 (no FK dependencies):
   ┌─────────────────────────────┐
+  │ idempotency_keys            │
+  │ inbox_messages              │
+  │ outbox_messages             │
   │ stores                      │
   │ users                       │
   │ roles                       │
@@ -106,6 +116,10 @@ ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_docume
 ```
 
 ## 3. Table Creation Order (Phase A)
+
+> V1-FND-002 (2026-08-01): altyapı tabloları ayrı pozisyonlarda, adım listesinin başında konumlanır —
+> `idempotency_keys` → 001, `inbox_messages` → 002, `outbox_messages` → 003 (her biri tek tabloluk ileri/geri
+> script; kayıt `database/MigrationComposition/order.json`).
 
 1. stores, users, roles
 2. printers, printer_routes
