@@ -5,6 +5,7 @@
 > **Assignee:** codex-v0-dom-001
 > **Work type:** decision
 > **Source basis:** PDF:I.0-I.5, PDF:II.2.4, PDF:II.3.2, PDF:II.5.1, PDF:III.6
+> **Corrections (2026-08-01, CORR:C29):** Provider timeout örtük decline/success sayılmaz; terminal sonucu bir kez uygulanır. Payment durumlarına `Unknown`, `ReconciliationRequired`; FiscalDocument durumlarına `Requested`, `Pending`, `Rejected`, `Refunded`, `ReconciliationRequired` eklendi (kaynak: PDF:II.3.15, PDF:II.5.3, PDF:II.5.4).
 
 ## 1. Entities and States
 
@@ -17,12 +18,12 @@
 - Transitions: Open→PartiallyPaid, Open→Settled, PartiallyPaid→Settled, Open→Voided
 
 ### Payment
-- States: `Pending`, `Authorized`, `Captured`, `Failed`, `Refunded`, `PartiallyRefunded`
-- Transitions: Pending→Authorized, Pending→Failed, Authorized→Captured, Authorized→Failed, Captured→Refunded, Captured→PartiallyRefunded, PartiallyRefunded→Refunded
+- States: `Pending`, `Authorized`, `Captured`, `Failed`, `Refunded`, `PartiallyRefunded`, `Unknown`, `ReconciliationRequired`
+- Transitions: Pending→Authorized, Pending→Failed, Pending→Unknown, Unknown→Authorized, Unknown→Captured, Unknown→Failed, Unknown→ReconciliationRequired, Authorized→Captured, Authorized→Failed, Authorized→Unknown, Captured→Refunded, Captured→PartiallyRefunded, PartiallyRefunded→Refunded
 
 ### FiscalDocument
-- States: `Draft`, `Issued`, `Cancelled`
-- Transitions: Draft→Issued, Issued→Cancelled
+- States: `Requested`, `Pending`, `Issued`, `Rejected`, `Cancelled`, `Refunded`, `ReconciliationRequired`
+- Transitions: Requested→Pending, Pending→Issued, Pending→Rejected, Pending→ReconciliationRequired, Issued→Cancelled, Issued→Refunded
 
 ### ProductionBatch
 - States: `Planned`, `InProgress`, `Completed`, `Cancelled`
@@ -80,15 +81,25 @@
 | Bill | Open | Settled | Payment | Full payment received | Yes | Yes | N/A |
 | Bill | PartiallyPaid | Settled | Payment | Remaining payment received | Yes | Yes | N/A |
 | Bill | Open | Voided | Manager | Bill voided | Yes | Yes | N/A |
-| Payment | Pending | Authorized | PaymentProvider | Authorization success | Yes | Yes | Retry 3x, then Failed |
+| Payment | Pending | Authorized | PaymentProvider | Authorization success | Yes | Yes | N/A |
 | Payment | Pending | Failed | PaymentProvider | Authorization declined | Yes | Yes | N/A |
-| Payment | Authorized | Captured | Cashier | Capture confirmed | Yes | Yes | Retry 3x, then Failed |
+| Payment | Pending | Unknown | PaymentProvider | Authorization timeout/connection loss | Yes | Yes | No implicit decline; query terminal, apply result once |
+| Payment | Unknown | Authorized | System | Terminal query confirms authorization | Yes | Yes | N/A |
+| Payment | Unknown | Captured | System | Terminal query confirms capture | Yes | Yes | N/A |
+| Payment | Unknown | Failed | System | Terminal query confirms decline | Yes | Yes | N/A |
+| Payment | Unknown | ReconciliationRequired | System | Unresolvable divergence | Yes | Yes | Create ReconciliationCase |
+| Payment | Authorized | Captured | Cashier | Capture confirmed | Yes | Yes | N/A |
 | Payment | Authorized | Failed | PaymentProvider | Capture declined | Yes | Yes | N/A |
+| Payment | Authorized | Unknown | PaymentProvider | Capture timeout/connection loss | Yes | Yes | No implicit decline; query terminal, apply result once |
 | Payment | Captured | Refunded | Manager | Full refund | Yes | Yes | N/A |
 | Payment | Captured | PartiallyRefunded | Manager | Partial refund | Yes | Yes | N/A |
 | Payment | PartiallyRefunded | Refunded | Manager | Remaining refund | Yes | Yes | N/A |
-| FiscalDocument | Draft | Issued | FiscalDevice | Fiscalization success | Yes | Yes | Retry 3x, then manual |
+| FiscalDocument | Requested | Pending | FiscalDevice | Fiscalization submitted | Yes | Yes | N/A |
+| FiscalDocument | Pending | Issued | FiscalDevice | Fiscalization success | Yes | Yes | N/A |
+| FiscalDocument | Pending | Rejected | FiscalDevice | Fiscalization declined by device | Yes | Yes | N/A |
+| FiscalDocument | Pending | ReconciliationRequired | System | Timeout/connection loss, unresolvable | Yes | Yes | No implicit issued; query device, apply result once; create ReconciliationCase |
 | FiscalDocument | Issued | Cancelled | Manager | Fiscal cancellation | Yes | Yes | N/A |
+| FiscalDocument | Issued | Refunded | Manager | Fiscal refund document | Yes | Yes | N/A |
 | ProductionBatch | Planned | InProgress | Kitchen | Production started | Yes | Yes | N/A |
 | ProductionBatch | InProgress | Completed | Kitchen | Production finished | Yes | Yes | N/A |
 | ProductionBatch | Planned | Cancelled | Manager | Batch cancelled | Yes | Yes | N/A |
@@ -149,6 +160,10 @@
 - A captured Payment MUST have an associated FiscalDocument in `Issued` state.
 - FiscalDocument MUST be issued before or at the same time as Payment capture.
 
+### Payment → ReconciliationCase
+- A Payment that reaches `Unknown` and cannot be resolved by terminal query MUST create a ReconciliationCase in `Open` state.
+- A FiscalDocument that reaches `ReconciliationRequired` MUST have an associated ReconciliationCase.
+
 ### Order → KitchenTicket
 - An Order in `Active` state with food items MUST have at least one KitchenTicket.
 - KitchenTicket state changes are independent of Order state (kitchen can continue preparing after Order is closed).
@@ -178,7 +193,8 @@
 3. **Atomicity**: Each transition is atomic within its transaction boundary. Partial transitions are not permitted.
 4. **Audit trail**: Every transition MUST produce an audit log entry with timestamp, actor, source state, target state, and reason.
 5. **Retry limit**: All retry-capable transitions have a maximum of 3 retry attempts before manual intervention is required.
-6. **Cascade rules**: Cross-entity transitions follow the rules in Section 3. Violations MUST be detected and rejected.
+6. **No implicit timeout outcome**: A provider timeout MUST NOT be treated as an implicit success or decline; the terminal/device MUST be queried and the confirmed result applied exactly once. Unresolvable outcomes transition to `ReconciliationRequired` and create a ReconciliationCase.
+7. **Cascade rules**: Cross-entity transitions follow the rules in Section 3. Violations MUST be detected and rejected.
 
 ## 5. Positive Examples
 
@@ -186,7 +202,7 @@
 1. Order: Draft → Active (Waiter submits order)
 2. Bill: Open → PartiallyPaid (Customer pays partially)
 3. Payment: Pending → Authorized → Captured
-4. FiscalDocument: Draft → Issued
+4. FiscalDocument: Requested → Pending → Issued
 5. Bill: PartiallyPaid → Settled
 6. Order: Active → Closed
 
@@ -204,7 +220,7 @@
 - Result: Transition rejected, error returned
 
 ### Example 2: Payment capture without fiscal document
-- Payment: Authorized → Captured without FiscalDocument: Draft → Issued
+- Payment: Authorized → Captured without FiscalDocument: Requested → Pending → Issued
 - Result: Transition blocked, FiscalDocument must be issued first
 
 ## 7. Consumer Task Interface

@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 250,
-  "markdown_line_count": 18791,
-  "markdown_byte_count": 1444142,
+  "markdown_line_count": 18828,
+  "markdown_byte_count": 1448328,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -78,7 +78,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "14BCE84271F4098F8DDF44ADBA5A334C665169CE7DCFD99A3A916037D8438C40",
+      "sha256": "402279C9F715BECD8CF85FCD748A6D7E3042453D887775FBC2316604B8CD64D1",
       "lines": 1526,
       "bytes": 207287,
       "utf8": true
@@ -134,9 +134,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "EF31AB3529C90940A2DC38D385FF44A8E257BBA1EC37430C496610C1A95E183B",
-      "lines": 121,
-      "bytes": 17428,
+      "sha256": "8EE4873D88E8B1FE0601F28EEB715328760853E1B701AEBB906054B11CD30C86",
+      "lines": 122,
+      "bytes": 17823,
       "utf8": true
     },
     {
@@ -239,9 +239,9 @@
     },
     {
       "path": "plan/v0/domain-contracts/V0-DOM-001-lifecycle-transition-contracts.md",
-      "sha256": "D6CF6FE04484FE03554DD9EC26B26F4B4BF24D1F38DC23BA0454CCB1CBDDC1F5",
-      "lines": 56,
-      "bytes": 1663,
+      "sha256": "43B62E3317171F7A3A7C3C5C79F749CD4254E961FD80462455A44524D343D2FE",
+      "lines": 62,
+      "bytes": 2291,
       "utf8": true
     },
     {
@@ -519,9 +519,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-002-idempotency-infrastructure.md",
-      "sha256": "F7941E89731DD3CC0343FBDD45EE9F037847A19A670FB61D9DB062DD7B8FCBA3",
-      "lines": 55,
-      "bytes": 1393,
+      "sha256": "2D4194E993A0261B4CB605F400D21825E39AF64783805EE8E3B113DB9F22278C",
+      "lines": 82,
+      "bytes": 4336,
       "utf8": true
     },
     {
@@ -533,9 +533,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-004-host-migration-composition.md",
-      "sha256": "E8286DBC435572BB716F222637738A16F2B7B84E0B41DA2366038248E3E3922B",
-      "lines": 58,
-      "bytes": 1932,
+      "sha256": "B097B42B336BBF9412ABE66E9959F20A90D5C25A7C01263FE2D63FA26899478C",
+      "lines": 61,
+      "bytes": 2152,
       "utf8": true
     },
     {

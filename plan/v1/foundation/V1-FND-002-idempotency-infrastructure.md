@@ -4,7 +4,7 @@
 - Status: InProgress
 - Assignee: opencode-v1-fnd-002
 - Work type: implementation
-- Surface state: InProgress
+- Surface state: Existing
 
 ## Source basis
 

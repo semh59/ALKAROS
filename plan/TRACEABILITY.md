@@ -41,6 +41,7 @@ değişebilir dış kaynaklar `OFFICIAL_SOURCE_REGISTER.md` içinde izlenir.
 | `C26` | CustomerAccount handler V1.3 registry ve fiscal closure zincirine kayıtlı değildi. | `V0-DOM-007` | `V13-ACC-003`, `V13-ACC-008` | Planned |
 | `C27` | On-hand projection reservation producer'dan önce reserved/available değerlerini sahipleniyordu. | `V0-DAT-004` | `V11-INV-002`, `V11-INV-007`, `V11-RSV-001` | Planned |
 | `C28` | Transaction primitive gerçek Outbox oluşmadan post-commit handoff sahipleniyordu. | `V0-ARC-003` | `V1-FND-002`, `V1-FND-005`, `V1-FND-006` | Planned |
+| `C29` | V0-DOM-001 lifecycle kontratı provider timeout'u örtük decline/success olarak modelliyordu (`Retry 3x, then Failed`); Unknown/ReconciliationRequired ara durumu ve ReconciliationCase bağlantısı yoktu; PDF II.5.3/II.5.4 kanonik state listeleriyle çelişiyordu. | `V0-DOM-001` | `V12-HUG-001`, `V12-HUG-002`, `V12-PAY-003`, `V12-PAY-004`, `V12-FSC-001`, `V12-REC-001` | Planned |
 
 `C20` için provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` dosyaları,
 `V0-MCD-001` legal provider code ve approved provider listesini üretmeden
