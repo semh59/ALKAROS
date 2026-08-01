@@ -139,17 +139,27 @@ def parse_task_file(file_path: Path) -> TaskMetadata:
 
     owned_section = _extract_section(text, _OWNED_SURFACE_HEADER)
     owned_surface: List[str] = []
+    in_item = False
     for line in owned_section.splitlines():
-        line = line.strip()
-        if line.startswith("- ") and not line.startswith("- Bu görev"):
-            for p in _BACKTICK_PATH.findall(line):
-                fragment = p.strip()
-                # Only path-shaped fragments (contain a separator, dot, or
-                # glob character) enter the allowlist. Prose, task IDs and
-                # other backticked words in the Owned surface section are
-                # ignored so free-text lines cannot widen the write set.
-                if _PATH_SHAPE.search(fragment):
-                    owned_surface.append(fragment)
+        stripped = line.strip()
+        if stripped.startswith("- "):
+            in_item = not stripped.startswith("- Bu görev")
+            line_source = stripped
+        elif in_item and "`" in stripped:
+            # Continuation of the previous bullet: wrapped backtick
+            # fragments belong to the same Owned surface item.
+            line_source = stripped
+        else:
+            in_item = False
+            continue
+        for p in _BACKTICK_PATH.findall(line_source):
+            fragment = p.strip()
+            # Only path-shaped fragments (contain a separator, dot, or
+            # glob character) enter the allowlist. Prose, task IDs and
+            # other backticked words in the Owned surface section are
+            # ignored so free-text lines cannot widen the write set.
+            if _PATH_SHAPE.search(fragment):
+                owned_surface.append(fragment)
 
     return TaskMetadata(
         task_id=task_id,

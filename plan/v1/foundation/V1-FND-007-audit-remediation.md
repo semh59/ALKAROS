@@ -19,18 +19,16 @@ git izlenebilirliği, ölü kod, sessiz catch, commit footer ihlalleri ve V0-CMP
 ## Owned surface
 
 - `tools/task-scope/**`, `tools/plan-audit/plan_audit_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope_diff.py`
 - `.github/workflows/task-scope.yml`, `docs/engineering/task-scope-contract.md`
 - `.gitignore`, `build/project-manifest.json`
-- `src/BuildingBlocks/ModuleComposition/Primitives/**`, `src/BuildingBlocks/ModuleComposition/ModuleCompositionRoot.cs`
-- `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
+- `src/BuildingBlocks/ModuleComposition/Primitives/**`
 - `evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md`
 - `plan/TRACEABILITY.md`, `plan/GATES.md`, `plan/VALIDATION_CONTRACT.md`
 - `plan/AUDIT_REPORT.md`, `plan/AUDIT_MANIFEST.json`
 - `plan/v1/foundation/V1-FND-001-module-skeleton.md` (yalnız Owned surface daraltma satırı)
 - `plan/v1/foundation/V1-FND-003-codex-task-scope-enforcement.md` (yalnız Owned surface daraltma satırı)
 - `plan/v1/foundation/V1-FND-004-host-migration-composition.md` (yalnız Owned surface daraltma satırı)
-- `ALKAROS.slnx` (yalnız dosya sonu yeni satırı)
+- `plan/v1/foundation/V1-FND-007-audit-remediation.md` (metadata; otomatik)
 
 ## In scope
 

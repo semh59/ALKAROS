@@ -23,6 +23,7 @@ sözleşmede tanımlamak.
 ## Owned surface
 
 - `docs/domain/lifecycle-transition-contracts.md`
+- `docs/versioning-strategy.md` (2026-08-01 V1-FND-008 sahiplik devri: 655d0b2 ile oluşturulan dosya)
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -47,6 +48,8 @@ sözleşmede tanımlamak.
 
 - Her state için en az bir izinli ve yasak geçiş testi üretilebilecek kadar kesin bir transition matrix; belirsiz
   wildcard geçiş yok.
+- 2026-08-01: `docs/versioning-strategy.md` sahipliği V1-FND-008 plan değişikliğiyle bu göreve devredildi (FIND-IA-0040);
+  dosya ilk olarak `655d0b2` commit'iyle üretilmiştir ve commit footer konvansiyonunu içerir.
 
 ## Handoff
 

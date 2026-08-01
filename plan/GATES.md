@@ -54,6 +54,11 @@ olmadan başka hiçbir application görevi `InProgress` yapılamaz.
 FIND-IA-0027 satırındadır. Zincir kuralı diğer application görevleri için
 aynen geçerliliğini korur.
 
+2026-08-01 tarihli ikinci kullanıcı onaylı plan değişikliğiyle `V1-FND-008`
+(boundary audit round 2) de aynı istisna kapsamında zincirden önce
+başlatılır; kayıt `TRACEABILITY.md` FIND-IA-0037 satırındadır. Zincir kuralı
+diğer application görevleri için aynen geçerliliğini korur.
+
 ## Canlı veri kuralı
 
 `V20-REL-003` signed Approve kararı üretmeden hiçbir sürüm gerçek müşteri veya

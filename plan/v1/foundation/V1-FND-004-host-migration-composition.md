@@ -20,9 +20,10 @@ Executable host'u ve module migration'larını doğrulanmış global sırayla ç
 ## Owned surface
 
 - `src/Host/Program.cs`, `src/Host/Composition/HostComposition.cs`, `src/Host/Composition/Modules/**`
-- `src/Host/Composition/Migrations/MigrationCompositionValidator.cs`, `src/Host/Composition/Migrations/MigrationDiscoverer.cs`,
-  `src/Host/Composition/Migrations/MigrationExecutor.cs`, `src/Host/Composition/Migrations/MigrationFile.cs`,
-  `src/Host/Composition/Migrations/MigrationManifest.cs`, `src/Host/Composition/Migrations/MigrationManifestException.cs`
+- `src/Host/Composition/Migrations/MigrationCompositionValidator.cs`, `src/Host/Composition/Migrations/MigrationDiscoverer.cs`
+- `src/Host/Composition/Migrations/MigrationExecutor.cs`, `src/Host/Composition/Migrations/MigrationFile.cs`
+- `src/Host/Composition/Migrations/MigrationManifest.cs`, `src/Host/Composition/Migrations/MigrationManifestException.cs`
+- `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
 - `tests/Host/MigrationComposition/**`, `database/MigrationComposition/**`
 - Bu görev module-specific schema veya başka bir task'ın migration dosyasını değiştiremez.
 

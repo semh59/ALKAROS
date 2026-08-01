@@ -55,6 +55,10 @@ npx --yes markdownlint-cli2@0.23.2
 - 2026-08-01 kullanıcı onayıyla `V1-FND-007` (audit remediation) zincirden önce
   başlatılabilir; karar kaydı `TRACEABILITY.md` FIND-IA-0027'dir ve diğer
   application görevleri için zincir kuralı değişmez.
+- 2026-08-01 kullanıcı onayıyla `V1-FND-008` (boundary audit round 2) da aynı
+  istisna kapsamında zincirden önce başlatılabilir; karar kaydı
+  `TRACEABILITY.md` FIND-IA-0037'dir ve zincir kuralı diğer application
+  görevleri için değişmez.
 - Codex write allowlist yalnız `Owned surface`, aktif görev metadata alanları ve
   `evidence/<Task-ID>/**` birleşimidir.
 - Scope doğrulaması staged, unstaged, untracked, deleted ve rename işleminin her
@@ -104,9 +108,9 @@ npx --yes markdownlint-cli2@0.23.2
 config, runtime/dependency lock'ları, baseline manifest ve kalıcı audit tool
 hash'lerini de doğrular.
 
-Mevcut koşullu Markdown sayısı:
-
-`248 + (2 × approved meal-card provider count)`
-
-Provider kararı yokken sayı `248` olur. Licensing task dosyaları
-`NotApplicable` sonucunda da korunur; bilinmeyen karar için sayı uydurulmaz.
+Mevcut koşullu Markdown sayısı artık sabit değil: `verify-manifest` sayıyı
+diskteki `plan/**/*.md` dosyalarından türetir; meal-card provider kararı
+eklendikçe `V12-MCD-1xx` dosyaları diskte göründüğünde sayı otomatik artar.
+Plan dosyası eklemek/çıkarmak için plan-audit aracında hard-code düzenlemesi
+gerekmez. Licensing task dosyaları `NotApplicable` sonucunda da korunur;
+bilinmeyen karar için sayı uydurulmaz.

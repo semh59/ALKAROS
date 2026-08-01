@@ -1,0 +1,42 @@
+﻿97e9cf0 chore(plan): mark V1-FND-007 done and regenerate audit report/manifest
+  Task: Task: V1-FND-007
+
+5a165f8 fix(remediation): resolve audit findings under V1-FND-007
+  Task: Task: V1-FND-007
+
+af5bcbd feat(security): add sensitive payload boundary
+  Task: Task: V1-SEC-002
+
+dc92a0b feat(security): add secret resolution boundary
+  Task: Task: V1-SEC-001
+
+2a9385e docs(evidence): record PostgreSQL test role credentials procedure
+  Task: Task: V1-FND-005
+
+6c0d16b fix(tests): pass database password to Program.Main in exit-code tests
+  Task: Task: V1-FND-004
+
+41495d6 chore(plan): regenerate audit manifest and report
+  Task: Task: V1-FND-005
+
+9c57ea1 docs(evidence): record findings fix session for V1-FND-005
+  Task: Task: V1-FND-005
+
+a721e81 chore(ci): pin RepositoryCommit to current HEAD
+  Task: Task: V1-FND-005
+
+72cafee chore(plan): mark V1-FND-004 surface as existing, retarget workflow default task-id
+  Task: Task: V1-FND-004
+
+47f0a64 feat(transactions): add transaction execution boundary
+  Task: Task: V1-FND-005
+
+26fa8f8 build(fnd-001): move SDK to 10.0.302 for slnx support
+  Task: Task: V1-FND-001
+
+81b7fd5 feat(fnd-001): register host tests in solution and project manifest
+  Task: Task: V1-FND-001
+
+3a39b62 feat(fnd-004): add host migration composition with verified global order
+  Task: Task: V1-FND-004
+

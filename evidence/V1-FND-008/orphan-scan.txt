@@ -1,0 +1,26 @@
+﻿Tracked files: 534
+Tasks with surfaces: 230
+ORPHAN FILES (23):
+  .markdownlint-cli2.jsonc
+  AGENTS.md
+  evidence/v0/gate-v0-exit-closure.md
+  plan/.markdownlint-cli2.jsonc
+  plan/ASSUMPTION_POLICY.md
+  plan/AUDIT_BASELINE_MANIFEST.json
+  plan/OFFICIAL_SOURCE_REGISTER.md
+  plan/OWNERSHIP.md
+  plan/PDF_COVERAGE.md
+  plan/PDF_SOURCE.md
+  plan/README.md
+  plan/TASK_STANDARD.md
+  plan/v0/README.md
+  plan/v1.1/README.md
+  plan/v1.2/README.md
+  plan/v1.3/README.md
+  plan/v1.4/README.md
+  plan/v1.5/README.md
+  plan/v1/README.md
+  plan/v2.0/README.md
+  plan/validation-node-requirements.lock
+  plan/validation-requirements.lock
+  plan/validation-runtime.lock

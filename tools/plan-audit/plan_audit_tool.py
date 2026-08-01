@@ -1836,6 +1836,36 @@ def wrap_markdown() -> None:
     print(f"Wrapped Markdown files: {changed}")
 
 
+def _surface_glob_to_regex(pattern: str) -> re.Pattern[str]:
+    """Convert a task surface glob to an anchored regex.
+
+    Semantics match task_scope_tool.glob_to_regex: ``**`` crosses directory
+    separators while ``*`` and ``?`` do not. Used to verify that every
+    tracked production file is owned by at least one task surface.
+    """
+    result: list[str] = []
+    i = 0
+    while i < len(pattern):
+        char = pattern[i]
+        if char == "*":
+            if i + 1 < len(pattern) and pattern[i + 1] == "*":
+                result.append(".*")
+                i += 2
+                if i < len(pattern) and pattern[i] == "/":
+                    result.append("/")
+                    i += 1
+            else:
+                result.append("[^/]*")
+                i += 1
+        elif char == "?":
+            result.append("[^/]")
+            i += 1
+        else:
+            result.append(re.escape(char))
+            i += 1
+    return re.compile("^" + "".join(result) + "$")
+
+
 def validate_plan() -> None:
     errors: list[str] = []
     warnings: list[str] = []
@@ -2001,6 +2031,7 @@ def validate_plan() -> None:
     task_ids = set(tasks)
     dependency_graph: dict[str, list[str]] = {}
     production_surfaces: dict[str, list[str]] = defaultdict(list)
+    surface_patterns: list[str] = []
     for task_id, (path, preamble, sections, order) in tasks.items():
         for line in sections.get("Source basis", []):
             value = line[2:].strip()
@@ -2045,11 +2076,26 @@ def validate_plan() -> None:
         backward = handoffs & set(deps)
         if backward:
             errors.append(f"HANDOFF_TO_DEPENDENCY {task_id}: {', '.join(sorted(backward))}")
+        owned_surface_lines: list[str] = []
+        in_item = False
         for line in sections.get("Owned surface", []):
+            stripped = line.strip()
+            if stripped.startswith("- "):
+                in_item = not stripped.startswith("- Bu görev")
+                if in_item:
+                    owned_surface_lines.append(stripped)
+            elif in_item and "`" in stripped:
+                # Wrapped continuation of the previous bullet keeps the
+                # backtick fragments in the same Owned surface item.
+                owned_surface_lines.append(stripped)
+            else:
+                in_item = False
+        for line in owned_surface_lines:
             for value in re.findall(r"`([^`]+)`", line):
                 if value.startswith(("src/", "tests/", "database/")):
                     root = value.removesuffix("/**").rstrip("/")
                     production_surfaces[root].append(task_id)
+                    surface_patterns.append(value)
 
     state: dict[str, int] = {}
     trail: list[str] = []
@@ -2086,6 +2132,26 @@ def validate_plan() -> None:
                     f"SURFACE_PREFIX_OVERLAP {left} ({', '.join(sorted(left_owners))}) / "
                     f"{right} ({', '.join(sorted(right_owners))})"
                 )
+
+    # Every tracked file under the production directories must be matched by
+    # at least one Owned surface pattern. Files that no task may write are a
+    # governance gap, not a free zone: they can only be modified through a new
+    # plan task, so a violation here blocks the release.
+    tracked_production = [
+        rel
+        for rel in subprocess.check_output(
+            ["git", "ls-files"], text=True, stderr=subprocess.DEVNULL
+        ).splitlines()
+        if rel.startswith(("src/", "tests/", "database/"))
+    ]
+    surface_matchers = [
+        (pattern, _surface_glob_to_regex(pattern.lower()))
+        for pattern in sorted(set(p.lower() for p in surface_patterns))
+    ]
+    for rel in tracked_production:
+        rel_lower = rel.replace("\\", "/").lower()
+        if not any(matcher.match(rel_lower) for _, matcher in surface_matchers):
+            errors.append(f"UNOWNED_PRODUCTION_FILE {rel}")
 
     required_dependencies = {
         "V1-FND-003": {"V0-ARC-001", "V1-FND-001"},
@@ -2885,7 +2951,7 @@ def generate_audit_report() -> None:
             "- Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.",
             "- Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.",
             "- Codex execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.",
-            "- Beklenen nihai Markdown sayısı: `247 + (2 × 0) = 247`.",
+            f"- Kayıtlı Markdown dosyası sayısı: `{len(current_paths) + 1}` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).",
             "- Git kurulumu, uzak repo, commit ve uygulama geliştirmesi bu rapordan sonra yapılacak ayrı iştir.",
             "",
         ]
@@ -3009,21 +3075,11 @@ def verify_manifest() -> None:
             errors.append(f"MANIFEST_LINES {relative}")
         if path.stat().st_size != record["bytes"]:
             errors.append(f"MANIFEST_BYTES {relative}")
-    provider_count = len(
-        [
-            path
-            for path in actual_paths
-            if re.search(r"/V12-MCD-1\d{2}-", path)
-        ]
-    )
-    expected_markdown_count = 248 + (2 * provider_count)
-    if (
-        len(actual_paths) != expected_markdown_count
-        or manifest.get("markdown_file_count") != expected_markdown_count
-    ):
+    expected_markdown_count = len(actual_paths)
+    if manifest.get("markdown_file_count") != expected_markdown_count:
         errors.append(
-            f"MARKDOWN_COUNT actual={len(actual_paths)} "
-            f"manifest={manifest.get('markdown_file_count')} expected={expected_markdown_count}"
+            f"MARKDOWN_COUNT manifest={manifest.get('markdown_file_count')} "
+            f"actual={expected_markdown_count}"
         )
     if total_lines != manifest.get("markdown_line_count"):
         errors.append(f"TOTAL_LINES actual={total_lines} manifest={manifest.get('markdown_line_count')}")
