@@ -1,0 +1,92 @@
+# V1-FND-006 Completion Evidence
+
+Task ID: V1-FND-006
+Task title: Integrate transaction and Outbox execution
+Assignee: opencode-v1-fnd-006
+Date: 2026-08-01
+
+## 1. Goal
+
+Transaction commit ile durable Outbox enqueue/dispatch sinirini tek crash-safe
+integration contract'inda birlestirmek: transactional enqueue,
+commit-before-dispatch, rollback suppression, post-commit wake-up, restart
+recovery, duplicate-dispatch idempotency ve typed failure propagation.
+
+## 2. Production code
+
+- src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutboxResource.cs
+  (ITransactionResource: workflow sirasinda Enqueue biriktirir; CommitAsync tek
+  Npgsql transaction ile all-or-nothing INSERT; RollbackAsync buffer temizler)
+- src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutbox.cs
+  (RunAsync: her attempt basta ResetForAttempt + workflow sonrasi Enlist, boylece
+  outbox en son commit edilir)
+- ALKAROS.TransactionOutboxIntegration.csproj (buildingblock; refs:
+  Transactions, Messaging; package: Npgsql)
+
+Transaction ve Inbox/Outbox owner surface'leri degistirilmedi
+(src/BuildingBlocks/Transactions/**, src/BuildingBlocks/Messaging/** untouched).
+
+## 3. Test suite (per commit/crash window)
+
+Command: dotnet test tests/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.Tests.csproj -c Release --no-build
+Result (first run): 9 passed, 0 failed
+Result (second run): 9 passed, 0 failed
+
+- CommitPersistsEnqueuedEnvelopeWithoutDispatch        (commit sonrasi kayit)
+- EnqueuedEnvelopeIsInvisibleBeforeCommit              (post-commit oncesi gorunmezlik)
+- PostCommitDispatchDeliversCommittedRecords           (commit-before-dispatch)
+- WorkflowFailureRollsBackWithoutOutboxRecordOrDispatch (rollback suppression)
+- CommitFailureLeavesNoOutboxRecordAndNoDispatch        (commit penceresi)
+- RetryAttemptResetPreventsDuplicateOutboxRows          (retry attempt izolasyonu)
+- OutboxCommitFailureRollsBackAllRowsAndPropagatesTypedError (kismi commit + tip)
+- RestartRecoveryDispatchesCommittedRecords             (crash sonrasi kurtarma)
+- DuplicateDeliveryDoesNotProduceSecondBusinessEffect   (consumer idempotency)
+
+PostgresException (Npgsql check violation) commit hatasi tipi oldugu gibi
+yayilir (TransactionExecutionException sarmasi yok) - typed failure propagation.
+
+## 4. Full solution build & test suite
+
+Command: dotnet build ALKAROS.slnx -c Release --no-restore
+Result: 0 hata, 0 uyar
+
+Command: dotnet test ALKAROS.slnx -c Release --no-build
+Result (all projects):
+  Secrets.Tests 21, SensitiveData.Tests 20, Architecture.Tests 4,
+  Transactions.Tests 25, Idempotency.Tests 58,
+  TransactionOutboxIntegration.Tests 9, Host.Tests 46
+  Total: 183 passed, 0 failed
+
+## 5. Plan audit & scope gates
+
+Command: python tools/plan-audit/plan_audit_tool.py validate
+Result: Registered gates: 18, EXT sources: 18, dependency edges: 850, errors: 0, warnings: 0
+
+Command: python tools/plan-audit/plan_audit_tool.py generate-audit-report
+Result: Added Markdown records: 39, findings: 1827
+
+Command: python tools/plan-audit/plan_audit_tool.py generate-manifest
+Result: Markdown files: 250, lines: 18830, bytes: 1448530
+SHA-256: BD2A4646B70D156A5433DE6E83A493744B56536A3E691FE4F973CAEAAAC5B98F
+
+Command: python tools/plan-audit/plan_audit_tool.py verify-manifest
+Result: Audit baseline rows: 211, finding IDs: 1827, added-file hashes: 38, errors: 0
+
+Command: python tools/task-scope/task_scope_tool.py --task-id V1-FND-006
+Result: valid: true, metadata_errors: [], findings: []
+
+Command: npx markdownlint-cli2 (repo root)
+Result: 0 issues in 251 files
+
+## 6. Files changed in this task
+
+- src/BuildingBlocks/TransactionOutboxIntegration/** (2 source + csproj + packages.lock.json)
+- tests/BuildingBlocks/TransactionOutboxIntegration/** (csproj, 2 fixture, 1 test file)
+- ALKAROS.slnx (2 project registrations)
+- build/project-manifest.json (2 project registrations)
+- plan/v1/foundation/V1-FND-006-transaction-outbox-integration.md (scope note + Done)
+
+## 7. Out of scope respected
+
+- Transaction primitive, Outbox schema/dispatcher, domain event mapping ve
+  provider transport degistirilmedi (Transactions/Messaging surfaces untouched).

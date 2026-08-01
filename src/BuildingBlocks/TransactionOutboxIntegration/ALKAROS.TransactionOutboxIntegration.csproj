@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSProjectKind>buildingblock</ALKAROSProjectKind>
+    <RootNamespace>ALKAROS.TransactionOutboxIntegration</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Transactions\ALKAROS.Transactions.csproj" />
+    <ProjectReference Include="..\Messaging\ALKAROS.Messaging.csproj" />
+  </ItemGroup>
+
+</Project>

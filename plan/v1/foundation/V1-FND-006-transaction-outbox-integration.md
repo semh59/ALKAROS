@@ -1,10 +1,10 @@
 # V1-FND-006 - Integrate transaction and Outbox execution
 
 - Task ID: V1-FND-006
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-fnd-006
 - Work type: integration
-- Surface state: Planned
+- Surface state: Implemented
 
 ## Source basis
 
@@ -20,6 +20,8 @@ Transaction commit ile durable Outbox enqueue/dispatch sınırını tek crash-sa
 ## Owned surface
 
 - `src/BuildingBlocks/TransactionOutboxIntegration/**`, `tests/BuildingBlocks/TransactionOutboxIntegration/**`
+- Kapsam genişletme onayı (2026-08-01 kullanıcı onayı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
+  `build/project-manifest.json` içine kaydı (Npgsql zaten `Directory.Packages.props` merkezi paketindedir).
 - Bu görev, transaction veya Inbox/Outbox owner surface'lerini değiştiremez.
 
 ## In scope

@@ -1505,7 +1505,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/foundation/V1-FND-003-codex-task-scope-enforcement.md` | ✅ | `45A1B919AE713F11B94D5E76DCA86C8184770CEA540A6185C8BB8AEF58886A57` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-004-host-migration-composition.md` | ✅ | `B097B42B336BBF9412ABE66E9959F20A90D5C25A7C01263FE2D63FA26899478C` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md` | ✅ | `A1E44A9DB53E1ACF409EE16E3B4A1EF09526FA4707A94B76C8E178FD56EE8C0A` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-006-transaction-outbox-integration.md` | ✅ | `FE2190EC33F0C929611FAFCE4B12D00E654A700A5DAE9499EB36AB0A80585D45` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-006-transaction-outbox-integration.md` | ✅ | `4FB4FEC4751CB94BA74ECC1B4087C84118B999657731C9C6253EFFAD50EB82A5` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-007-audit-remediation.md` | ✅ | `66F78CE331B05C30068737859686BA138461B8DAF7FDDD0C63EE502F27D01063` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-008-audit-remediation-round2.md` | ✅ | `254696914448FFE256CDFF0EB9A2FB1B6049E6D35F61D5CCC990B1A58E821C31` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md` | ✅ | `43112C8183B6FF83751EFDE8875DE5EF436084F150649F0082CE8CC301D90F44` | Tek-sahip görev |

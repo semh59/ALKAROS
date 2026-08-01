@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj" />
   <Project Path="src/BuildingBlocks/Transactions/ALKAROS.Transactions.csproj" />
+  <Project Path="src/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.csproj" />
   <Project Path="src/BuildingBlocks/Idempotency/ALKAROS.Idempotency.csproj" />
   <Project Path="src/BuildingBlocks/Messaging/ALKAROS.Messaging.csproj" />
   <Project Path="src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj" />
@@ -31,6 +32,7 @@
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
   <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj" />
+  <Project Path="tests/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj" />

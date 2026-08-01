@@ -26,6 +26,18 @@
       "packages": []
     },
     {
+      "path": "src/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.csproj",
+      "kind": "buildingblock",
+      "module": "TransactionOutboxIntegration",
+      "references": [
+        "src/BuildingBlocks/Transactions/ALKAROS.Transactions.csproj",
+        "src/BuildingBlocks/Messaging/ALKAROS.Messaging.csproj"
+      ],
+      "packages": [
+        "Npgsql"
+      ]
+    },
+    {
       "path": "src/BuildingBlocks/Idempotency/ALKAROS.Idempotency.csproj",
       "kind": "buildingblock",
       "module": "Idempotency",
@@ -332,6 +344,22 @@
         "Microsoft.NET.Test.Sdk",
         "xunit",
         "xunit.runner.visualstudio"
+      ]
+    },
+    {
+      "path": "tests/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.Tests.csproj",
+      "kind": "test",
+      "module": "TransactionOutboxIntegration",
+      "references": [
+        "src/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.csproj",
+        "src/BuildingBlocks/Messaging/ALKAROS.Messaging.csproj",
+        "src/BuildingBlocks/Transactions/ALKAROS.Transactions.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "Npgsql"
       ]
     },
     {
