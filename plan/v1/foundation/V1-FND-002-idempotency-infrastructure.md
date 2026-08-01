@@ -1,10 +1,10 @@
 # V1-FND-002 - Implement the idempotency infrastructure
 
 - Task ID: V1-FND-002
-- Status: Planned
+- Status: InProgress
 - Assignee: opencode-v1-fnd-002
 - Work type: implementation
-- Surface state: Planned
+- Surface state: InProgress
 
 ## Source basis
 
