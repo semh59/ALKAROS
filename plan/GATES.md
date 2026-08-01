@@ -59,6 +59,11 @@ aynen geçerliliğini korur.
 başlatılır; kayıt `TRACEABILITY.md` FIND-IA-0037 satırındadır. Zincir kuralı
 diğer application görevleri için aynen geçerliliğini korur.
 
+2026-08-01 tarihli üçüncü kullanıcı onaylı plan değişikliğiyle ("DÜZELT")
+`V1-FND-009` (pushed history rewrite + force-push) de aynı istisna kapsamında
+zincirden önce başlatılır; kayıt `TRACEABILITY.md` FIND-IA-0050 satırındadır.
+Zincir kuralı diğer application görevleri için aynen geçerliliğini korur.
+
 ## Canlı veri kuralı
 
 `V20-REL-003` signed Approve kararı üretmeden hiçbir sürüm gerçek müşteri veya

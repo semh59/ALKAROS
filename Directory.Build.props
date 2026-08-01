@@ -19,7 +19,7 @@
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
-    <RepositoryCommit>97e9cf01e6d52aa6cc0442296ac3ab0eb75f5480</RepositoryCommit>
+    <RepositoryCommit>67e87900a4253a4b3a557763a3df53cc96b58b9f</RepositoryCommit>
   </PropertyGroup>
 
   <PropertyGroup>

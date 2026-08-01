@@ -59,6 +59,10 @@ npx --yes markdownlint-cli2@0.23.2
   istisna kapsamında zincirden önce başlatılabilir; karar kaydı
   `TRACEABILITY.md` FIND-IA-0037'dir ve zincir kuralı diğer application
   görevleri için değişmez.
+- 2026-08-01 kullanıcı onayıyla ("DÜZELT") `V1-FND-009` (pushed history
+  rewrite + force-push) da aynı istisna kapsamında zincirden önce
+  başlatılabilir; karar kaydı `TRACEABILITY.md` FIND-IA-0050'dir ve zincir
+  kuralı diğer application görevleri için değişmez.
 - Codex write allowlist yalnız `Owned surface`, aktif görev metadata alanları ve
   `evidence/<Task-ID>/**` birleşimidir.
 - Scope doğrulaması staged, unstaged, untracked, deleted ve rename işleminin her

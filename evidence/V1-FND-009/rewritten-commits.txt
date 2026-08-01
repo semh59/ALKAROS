@@ -1,0 +1,103 @@
+﻿fc5ae22 V0: initial plan baseline and decision records
+  Task:
+  Gate:
+655d0b2 docs(versioning): define branching model, commit convention, and tagging strategy
+  Task:V0-DOM-001
+
+  Gate:GATE-V0-ENTRY
+
+662e466 decision: complete V0-DAT-001/002/003, V0-CMP-001/002, V0-DOM-006
+  Task:V0-DAT-001, V0-DAT-002, V0-DAT-003, V0-CMP-001, V0-CMP-002, V0-DOM-006
+
+  Gate:GATE-V0-ENTRY
+
+72db2fa decision: complete V0-DOM-007 customer credit invoice semantics
+  Task:V0-DOM-007
+
+  Gate:GATE-V0-ENTRY
+
+70bf442 decision: complete V0 batch ÔÇö DOM-006/007/008/009/010, DAT-004/005/006, ARC-001-009, CMP-001/002/003/004/005, SEC-001, BKP-001/002, LIC-001, DOC-001
+  Task:V0-DOM-006, V0-DOM-007, V0-DOM-008, V0-DOM-009, V0-DOM-010, V0-DAT-004, V0-DAT-005, V0-DAT-006, V0-ARC-001, V0-ARC-002, V0-ARC-003, V0-ARC-004, V0-ARC-005, V0-ARC-006, V0-ARC-007, V0-ARC-008, V0-ARC-009, V0-CMP-001, V0-CMP-002, V0-CMP-003, V0-CMP-004, V0-CMP-005, V0-SEC-001, V0-BKP-001, V0-BKP-002, V0-LIC-001, V0-DOC-001
+
+  Gate:GATE-V0-ENTRY
+
+dc67dd4 gate: close GATE-V0-EXIT ÔÇö 38/42 V0 tasks Done, 3 external InProgress
+  Task:
+  Gate:GATE-V0-EXIT
+
+d871890 fix: update all V0 task surface state to Done or InProgress
+  Task:
+  Gate:GATE-V0-EXIT
+
+0c37dc6 fix(plan): zero-error audit validation and build through V1-FND-003
+  Task:V1-FND-003
+
+  Gate:
+36c06cf chore: ignore tmp artifacts and Python cache
+  Task:V1-FND-003
+
+  Gate:
+cad3a62 feat(fnd-004): add host migration composition with verified global order
+  Task:V1-FND-004
+
+  Gate:
+77319a0 feat(fnd-001): register host tests in solution and project manifest
+  Task:V1-FND-001
+
+  Gate:
+c462838 build(fnd-001): move SDK to 10.0.302 for slnx support
+  Task:V1-FND-001
+
+  Gate:
+d88d9fa feat(transactions): add transaction execution boundary
+  Task:V1-FND-005
+
+  Gate:
+92a5372 chore(plan): mark V1-FND-004 surface as existing, retarget workflow default task-id
+  Task:V1-FND-004
+
+  Gate:
+7e6ca26 chore(ci): pin RepositoryCommit to current HEAD
+  Task:V1-FND-005
+
+  Gate:
+27cdee9 docs(evidence): record findings fix session for V1-FND-005
+  Task:V1-FND-005
+
+  Gate:
+b25e91f chore(plan): regenerate audit manifest and report
+  Task:V1-FND-005
+
+  Gate:
+7a49027 fix(tests): pass database password to Program.Main in exit-code tests
+  Task:V1-FND-004
+
+  Gate:
+d8d117b docs(evidence): record PostgreSQL test role credentials procedure
+  Task:V1-FND-005
+
+  Gate:
+2129b38 feat(security): add secret resolution boundary
+  Task:V1-SEC-001
+
+  Gate:
+2ced55b feat(security): add sensitive payload boundary
+  Task:V1-SEC-002
+
+  Gate:
+0fa461b fix(remediation): resolve audit findings under V1-FND-007
+  Task:V1-FND-007
+
+  Gate:
+a742405 chore(plan): mark V1-FND-007 done and regenerate audit report/manifest
+  Task:V1-FND-007
+
+  Gate:
+a2f8d9b fix(audit): remediate boundary findings round 2 under V1-FND-008
+  Task:V1-FND-008
+
+  Gate:
+67e8790 chore(plan): mark V1-FND-008 done and regenerate audit report/manifest
+  Task:V1-FND-008
+
+  Gate:

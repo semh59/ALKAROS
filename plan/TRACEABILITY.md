@@ -101,6 +101,8 @@ relay erişimi olmadan public QR transport tamamlanmış sayılmaz.
 | `FIND-IA-0047` | `72cafee` (V1-FND-004) `.github/workflows/task-scope.yml` default task-id'sini değiştirdi; dosya FND-003 yüzeyinde. | `V1-FND-008` | Tarihsel scope ihlali; geçmişe dönük değiştirilmedi, kayıt düşüldü. |
 | `FIND-IA-0048` | `47f0a64` (V1-FND-005) transaction testlerini `ALKAROS.slnx` içine kaydetti; dosya FND-001 yüzeyinde. | `V1-FND-008` | Tarihsel scope ihlali; geçmişe dönük değiştirilmedi, kayıt düşüldü. |
 | `FIND-IA-0049` | `3a39b62` (V1-FND-004) `src/Host/Composition/Migrations/**` dosyaları, eski devam satırı formatı yüzünden yüzeyde görünmüyordu. | `V1-FND-008` | Yüzey devam satırı ayrıştırıcı düzeltmesi + ayrı bullet formatıyla giderildi; sınır denetimi tekrar çalıştırıldığında VIOLATION kalmadı. |
+| `FIND-IA-0050` | `fc5ae22` kök baseline commit'i konvansiyon öncesi; hiçbir görev yüzeyine atfedilemez, footer'sız kaldı. | `V1-FND-009` | 2026-08-01 kullanıcı onaylı ("DÜZELT") push edilmiş geçmiş düzeltmesi kapsamında kayıtlı istisna; kurgusal Task ID atfedilmedi; `GATES.md` ve `VALIDATION_CONTRACT.md`'ye üçüncü zincir istisnası kaydı eklendi. |
+| `FIND-IA-0051` | `1784dc5`/`8374fc3` (V1-FND-003 oturumu, yeniden yazım sonrası `0c37dc6`/`36c06cf`) yüzey dışı batch artefaktları: `0c37dc6` 239 yol (sln/slnx, global.json, nuget.config, docs/**, evidence/v0-* completion kanıtları, plan/v0/** vb.), `36c06cf` `.gitignore` + `tmp/**` (268 dosya). | `V1-FND-009` | Geçmiş bölünmedi; commit'ler `Task: V1-FND-003` footer'ı taşır, yüzey dışı yollar tam geçmiş denetiminde kayıtlı VIOLATION olarak düşüldü (2026-08-01, `evidence/V1-FND-009/boundary-audit-25.txt`). |
 
 ## Yapısal denetim bulguları
 

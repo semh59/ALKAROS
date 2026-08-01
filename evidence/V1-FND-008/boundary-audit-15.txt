@@ -12,3 +12,7 @@ VIOLATION 47f0a64 V1-FND-005 feat(transactions): add transaction execution bound
 
     alkaros.sln
 RESULT: 4 violation(s)
+
+2026-08-01 düzeltme notu (V1-FND-009): Bu çıktı, push edilmiş 9 commit'in (fc5ae22..8374fc3) `Task:`/`Gate:`
+footer'larıyla yeniden yazımından ÖNCEKİ geçmişe aittir; listedeki SHA'lar force-push öncesi commit'lerdir.
+Tam geçmiş (25 commit) denetiminin güncel çıktısı `evidence/V1-FND-009/boundary-audit-25.txt` içindedir.
