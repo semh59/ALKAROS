@@ -28,6 +28,39 @@ public sealed class TransactionOutboxIntegrationTests : IClassFixture<Transactio
     private static OutboxEnvelope Envelope(string eventType, byte[] payload)
         => new(eventType, "order", Guid.NewGuid(), payload);
 
+    private static async Task WriteDomainAsync(ITransactionContext context, Guid id)
+    {
+        await using var command = context.Connection.CreateCommand();
+        command.Transaction = context.Transaction;
+        command.CommandText = "INSERT INTO fnd011_domain_writes (id, value) VALUES (@id, 'written');";
+
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "id";
+        parameter.Value = id;
+        command.Parameters.Add(parameter);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    [Fact]
+    public async Task DomainWriteAndOutboxEnqueueCommitInTheSameTransaction()
+    {
+        await ResetAsync();
+        var resource = new TransactionOutboxResource(_database.DataSource);
+        var domainId = Guid.NewGuid();
+
+        await TransactionOutbox.RunAsync(
+            async context =>
+            {
+                await WriteDomainAsync(context, domainId);
+                resource.Enqueue(Envelope("order.created", new byte[] { 1, 2, 3 }));
+            },
+            resource);
+
+        Assert.Equal(1, await _database.CountAsync("fnd011_domain_writes"));
+        Assert.Equal(1, await _database.CountAsync("outbox_messages"));
+    }
+
     [Fact]
     public async Task CommitPersistsEnqueuedEnvelopeWithoutDispatch()
     {
@@ -177,17 +210,19 @@ public sealed class TransactionOutboxIntegrationTests : IClassFixture<Transactio
         try
         {
             var resource = new TransactionOutboxResource(_database.DataSource);
+            var domainId = Guid.NewGuid();
 
             await Assert.ThrowsAsync<PostgresException>(() =>
                 TransactionOutbox.RunAsync(
-                    _ =>
+                    async context =>
                     {
+                        await WriteDomainAsync(context, domainId);
                         resource.Enqueue(Envelope("order.created", new byte[] { 1 }));
                         resource.Enqueue(Envelope("order.approved", new byte[] { 1, 2, 3, 4, 5 }));
-                        return Task.CompletedTask;
                     },
                     resource));
 
+            Assert.Equal(0, await _database.CountAsync("fnd011_domain_writes"));
             Assert.Equal(0, await _database.CountAsync("outbox_messages"));
         }
         finally
@@ -195,6 +230,42 @@ public sealed class TransactionOutboxIntegrationTests : IClassFixture<Transactio
             await _database.ExecuteAsync(
                 "ALTER TABLE outbox_messages DROP CONSTRAINT fnd006_payload_limit;");
         }
+    }
+
+    [Fact]
+    public async Task RetryUsesANewTransactionAndCommitsOnlyTheSuccessfulAttempt()
+    {
+        await ResetAsync();
+        var resource = new TransactionOutboxResource(_database.DataSource);
+        var domainId = Guid.NewGuid();
+        var attempts = 0;
+        object? firstTransaction = null;
+        var retryPolicy = new TransactionRetryPolicy(
+            maxAttempts: 2,
+            delayForAttempt: _ => TimeSpan.Zero,
+            classifier: new FixedClassifier(RetryClassification.Transient));
+
+        await TransactionOutbox.RunAsync(
+            async context =>
+            {
+                if (attempts++ == 0)
+                {
+                    firstTransaction = context.Transaction;
+                    await WriteDomainAsync(context, domainId);
+                    resource.Enqueue(Envelope("order.created", new byte[] { 1 }));
+                    throw new SimulatedTransientException("retry transaction");
+                }
+
+                Assert.NotNull(firstTransaction);
+                Assert.NotSame(firstTransaction, context.Transaction);
+                await WriteDomainAsync(context, domainId);
+                resource.Enqueue(Envelope("order.created", new byte[] { 1 }));
+            },
+            resource,
+            retryPolicy: retryPolicy);
+
+        Assert.Equal(1, await _database.CountAsync("fnd011_domain_writes"));
+        Assert.Equal(1, await _database.CountAsync("outbox_messages"));
     }
 
     [Fact]

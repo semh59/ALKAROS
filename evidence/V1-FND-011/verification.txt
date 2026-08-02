@@ -1,0 +1,37 @@
+V1-FND-011 verification record
+
+Preflight
+Command: python tools/task-scope/task_scope_tool.py --task-id V1-FND-011
+Exit code: 0
+Result: valid=true; no metadata errors or out-of-scope findings.
+
+Build
+Command: dotnet restore tests/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.Tests.csproj --locked-mode
+Exit code: 0
+Command: dotnet build tests/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.Tests.csproj --no-restore
+Exit code: 0
+Result: 0 warnings, 0 errors.
+
+Transaction tests
+Command: dotnet restore tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj --locked-mode
+Exit code: 0
+Command: dotnet test tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj --no-restore
+Exit code: 0
+Result: 25 passed, 0 failed, 0 skipped.
+
+PostgreSQL integration test
+Command: copied ALKAROS_TEST_PG_HOST, ALKAROS_TEST_PG_PORT, ALKAROS_TEST_PG_USER and ALKAROS_TEST_PG_PASSWORD from User environment scope to the test process, then ran dotnet test tests/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.Tests.csproj --nologo
+Exit code: 0
+Result: 11 passed, 0 failed, 0 skipped. The suite verified domain and Outbox commits, Outbox failure rollback, and retry transaction isolation against PostgreSQL.
+
+Closing checks
+Command: python tools/task-scope/task_scope_tool.py --task-id V1-FND-011
+Exit code: 0
+Result: valid=true; no out-of-scope findings.
+Command: git diff --check
+Exit code: 0
+
+Final scope audit
+Command: python tools/task-scope/task_scope_tool.py --task-id V1-FND-011
+Exit code: 0
+Result: valid=true; no out-of-scope findings.

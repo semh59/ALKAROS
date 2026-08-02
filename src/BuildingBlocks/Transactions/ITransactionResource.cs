@@ -1,3 +1,5 @@
+using System.Data.Common;
+
 namespace ALKAROS.Transactions;
 
 /// <summary>
@@ -13,6 +15,17 @@ public interface ITransactionResource
     /// Called once per successful workflow, in enlistment order.
     /// </summary>
     Task CommitAsync(CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Persists the resource using the database session owned by the current
+    /// transaction scope. Resources that do not write to a database retain
+    /// the original commit behavior.
+    /// </summary>
+    Task CommitAsync(
+        DbConnection connection,
+        DbTransaction transaction,
+        CancellationToken cancellationToken)
+        => CommitAsync(cancellationToken);
 
     /// <summary>
     /// Undoes the resource's writes when the transaction fails.

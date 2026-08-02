@@ -1,8 +1,8 @@
 # V1-FND-011 - Correct transaction-outbox atomicity
 
 - Task ID: V1-FND-011
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 

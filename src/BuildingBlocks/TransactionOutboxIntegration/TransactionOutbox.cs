@@ -36,6 +36,7 @@ public static class TransactionOutbox
         ArgumentNullException.ThrowIfNull(resource);
 
         await TransactionContext.RunAsync(
+            resource.DataSource,
             async context =>
             {
                 resource.ResetForAttempt();

@@ -1,31 +1,31 @@
 using System.Globalization;
+using System.Data.Common;
 using System.Text;
 using ALKAROS.Messaging;
 using ALKAROS.Transactions;
-using Npgsql;
 
 namespace ALKAROS.TransactionOutboxIntegration;
 
 /// <summary>
 /// An <see cref="ITransactionResource"/> that persists <see cref="Enqueue"/>
 /// calls into the outbox as part of the ambient transaction commit. Envelopes
-/// are buffered during the workflow and written in a single PostgreSQL
-/// transaction at commit time, so a failed commit leaves no partial outbox
-/// rows. The resource must be enlisted last (the
+/// are buffered during the workflow and written through the connection and
+/// transaction owned by the transaction scope. The resource must be enlisted last (the
 /// <see cref="TransactionOutbox.RunAsync"/> wrapper does this automatically)
-/// so that domain state commits before the outbox writes and no resource
-/// runs after them. Rolling back only clears the buffer: nothing was
-/// persisted outside the commit transaction (V0-ARC-003 §3).
+/// so that all domain and Outbox database writes commit together. Rolling
+/// back clears the buffer and the shared transaction (V0-ARC-003 §3).
 /// </summary>
 public sealed class TransactionOutboxResource : ITransactionResource
 {
-    private readonly NpgsqlDataSource _dataSource;
+    private readonly DbDataSource _dataSource;
     private readonly List<OutboxEnvelope> _envelopes = new();
 
-    public TransactionOutboxResource(NpgsqlDataSource dataSource)
+    public TransactionOutboxResource(DbDataSource dataSource)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
+
+    internal DbDataSource DataSource => _dataSource;
 
     /// <summary>
     /// The number of envelopes buffered for the current attempt.
@@ -53,18 +53,28 @@ public sealed class TransactionOutboxResource : ITransactionResource
     }
 
     /// <summary>
-    /// Writes every buffered envelope in one PostgreSQL transaction. The
-    /// write is all-or-nothing: any failure rolls the transaction back and
-    /// surfaces the database error, and the buffered envelopes remain
-    /// pending for the next attempt.
+    /// This method must be called through a transaction scope with a shared
+    /// database connection and transaction.
     /// </summary>
-    public async Task CommitAsync(CancellationToken cancellationToken)
+    public Task CommitAsync(CancellationToken cancellationToken)
+        => throw new InvalidOperationException(
+            "TransactionOutboxResource requires the transaction scope database session.");
+
+    /// <summary>
+    /// Writes every buffered envelope using the connection and transaction
+    /// owned by the transaction scope. This resource never opens or commits
+    /// an independent database transaction.
+    /// </summary>
+    public async Task CommitAsync(
+        DbConnection connection,
+        DbTransaction transaction,
+        CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
         if (_envelopes.Count == 0)
             return;
-
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
         await using var command = connection.CreateCommand();
         command.Transaction = transaction;
@@ -82,15 +92,21 @@ public sealed class TransactionOutboxResource : ITransactionResource
             sb.AppendLine(");");
 
             var envelope = _envelopes[i];
-            command.Parameters.AddWithValue(envelope.EventType);
-            command.Parameters.AddWithValue(envelope.AggregateType);
-            command.Parameters.AddWithValue(envelope.AggregateId);
-            command.Parameters.AddWithValue(envelope.PayloadEnvelope);
+            AddParameter(command, envelope.EventType);
+            AddParameter(command, envelope.AggregateType);
+            AddParameter(command, envelope.AggregateId);
+            AddParameter(command, envelope.PayloadEnvelope);
         }
 
         command.CommandText = sb.ToString();
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static void AddParameter(DbCommand command, object value)
+    {
+        var parameter = command.CreateParameter();
+        parameter.Value = value;
+        command.Parameters.Add(parameter);
     }
 
     /// <summary>

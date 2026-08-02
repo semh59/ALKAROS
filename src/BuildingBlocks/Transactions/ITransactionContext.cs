@@ -1,3 +1,5 @@
+using System.Data.Common;
+
 namespace ALKAROS.Transactions;
 
 /// <summary>
@@ -11,6 +13,18 @@ public interface ITransactionContext
     /// join the ambient transaction share the same identifier.
     /// </summary>
     Guid Id { get; }
+
+    /// <summary>
+    /// The shared database connection for this transaction. It is available
+    /// only when the transaction was started with a database data source.
+    /// </summary>
+    DbConnection Connection { get; }
+
+    /// <summary>
+    /// The shared database transaction for this transaction. Persistent
+    /// writes must assign it to their commands.
+    /// </summary>
+    DbTransaction Transaction { get; }
 
     /// <summary>
     /// Registers <paramref name="resource"/> in the current transaction.

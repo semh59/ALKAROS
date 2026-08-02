@@ -1,3 +1,5 @@
+using System.Data.Common;
+
 namespace ALKAROS.Transactions;
 
 /// <summary>
@@ -39,11 +41,45 @@ public static class TransactionContext
             return workflow(current);
         }
 
-        return RunRootAsync(workflow, retryPolicy, cancellationToken);
+        return RunRootAsync(workflow, dataSource: null, retryPolicy, cancellationToken);
+    }
+
+    /// <summary>
+    /// Executes <paramref name="workflow"/> with one connection and database
+    /// transaction owned by the transaction scope. The connection and
+    /// transaction are exposed through <see cref="ITransactionContext"/> for
+    /// persistent writes and enlisted database resources.
+    /// </summary>
+    public static Task RunAsync(
+        DbDataSource dataSource,
+        Func<ITransactionContext, Task> workflow,
+        TransactionOptions? options = null,
+        TransactionRetryPolicy? retryPolicy = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(dataSource);
+        ArgumentNullException.ThrowIfNull(workflow);
+
+        if (!Enum.IsDefined(options?.JoinBehavior ?? TransactionJoinBehavior.Join))
+            throw new ArgumentOutOfRangeException(
+                nameof(options),
+                "Invalid TransactionJoinBehavior value.");
+
+        var current = TransactionScope.Current;
+        if (current is not null)
+        {
+            if ((options?.JoinBehavior ?? TransactionJoinBehavior.Join) == TransactionJoinBehavior.CreateNew)
+                throw new NestedTransactionException();
+
+            return workflow(current);
+        }
+
+        return RunRootAsync(workflow, dataSource, retryPolicy, cancellationToken);
     }
 
     private static async Task RunRootAsync(
         Func<ITransactionContext, Task> workflow,
+        DbDataSource? dataSource,
         TransactionRetryPolicy? retryPolicy,
         CancellationToken cancellationToken)
     {
@@ -52,7 +88,7 @@ public static class TransactionContext
         {
             try
             {
-                await RunSingleAttemptAsync(workflow, cancellationToken).ConfigureAwait(false);
+                await RunSingleAttemptAsync(workflow, dataSource, cancellationToken).ConfigureAwait(false);
                 return;
             }
             catch (Exception exception) when (retryPolicy is not null
@@ -71,6 +107,7 @@ public static class TransactionContext
 
     private static async Task RunSingleAttemptAsync(
         Func<ITransactionContext, Task> workflow,
+        DbDataSource? dataSource,
         CancellationToken cancellationToken)
     {
         // Suspend before touching the AsyncLocal ambient: writes executed
@@ -78,12 +115,14 @@ public static class TransactionContext
         // ExecutionContext and leak into unrelated concurrent flows.
         await Task.Yield();
 
-        var scope = new TransactionScope();
+        var scope = new TransactionScope(dataSource);
         var previous = TransactionScope.Current;
         TransactionScope.Current = scope;
 
         try
         {
+            await scope.InitializeAsync(cancellationToken).ConfigureAwait(false);
+
             try
             {
                 await workflow(scope).ConfigureAwait(false);
@@ -107,6 +146,7 @@ public static class TransactionContext
         finally
         {
             TransactionScope.Current = previous;
+            await scope.DisposeAsync().ConfigureAwait(false);
         }
     }
 
