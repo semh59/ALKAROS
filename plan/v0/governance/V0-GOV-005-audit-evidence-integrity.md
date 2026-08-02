@@ -1,8 +1,8 @@
 # V0-GOV-005 - Reconcile audit evidence with current task state
 
 - Task ID: V0-GOV-005
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 
