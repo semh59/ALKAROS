@@ -1,8 +1,8 @@
 # V1-FND-012 - Align the runtime migration manifest
 
 - Task ID: V1-FND-012
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 

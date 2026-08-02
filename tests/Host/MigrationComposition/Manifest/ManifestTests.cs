@@ -7,15 +7,8 @@ namespace ALKAROS.Host.Tests.Manifest;
 public sealed class ManifestTests : IDisposable
 {
     private static readonly string[] FirstEntryTables = ["idempotency_keys"];
-    private static readonly string[] FirstPhaseBEntryTables = ["invoices", "invoice_lines"];
-    private static readonly string[] ExpectedDeferredConstraints =
-    [
-        "ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_documents(id);",
-        "ALTER TABLE fiscal_documents ADD COLUMN invoice_id UUID REFERENCES invoices(id);",
-        "ALTER TABLE invoices ADD COLUMN customer_account_id UUID REFERENCES customer_accounts(id);",
-        "ALTER TABLE account_transactions ADD COLUMN invoice_id UUID REFERENCES invoices(id);",
-    ];
-
+    private static readonly string[] RuntimeManifestIds = ["001", "002", "003", "005"];
+    private static readonly string[] LastEntryTables = ["users"];
     private readonly string _directory = Path.Combine(
         Path.GetTempPath(), "alkaros-fnd004-" + Guid.NewGuid().ToString("N")[..8]);
 
@@ -30,23 +23,17 @@ public sealed class ManifestTests : IDisposable
     }
 
     [Fact]
-    public void RealManifestLoadsWithVerifiedOrderFromV0Dat001()
+    public void RuntimeManifestContainsOnlyImplementedMigrationPairs()
     {
         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
 
-        Assert.Equal(31, manifest.Migrations.Count);
-        Assert.Equal(26, manifest.Migrations.Count(e => e.Phase == MigrationManifest.PhaseA));
-        Assert.Equal(5, manifest.Migrations.Count(e => e.Phase == MigrationManifest.PhaseB));
+        Assert.Equal(4, manifest.Migrations.Count);
+        Assert.All(manifest.Migrations, entry => Assert.Equal(MigrationManifest.PhaseA, entry.Phase));
+        Assert.Equal(RuntimeManifestIds, manifest.Migrations.Select(entry => entry.Id));
         Assert.Equal(
             FirstEntryTables,
             manifest.Migrations[0].Tables);
-        Assert.Equal("021", manifest.Migrations[20].Id);
-        Assert.Equal("035", manifest.Migrations[^1].Id);
-        Assert.Equal(MigrationManifest.PhaseB, manifest.Migrations[26].Phase);
-        Assert.Equal(FirstPhaseBEntryTables, manifest.Migrations[26].Tables);
-        Assert.Equal(
-            ExpectedDeferredConstraints,
-            manifest.Migrations.Skip(27).SelectMany(e => e.DeferredConstraints).ToArray());
+        Assert.Equal(LastEntryTables, manifest.Migrations[^1].Tables);
     }
 
     [Fact]
