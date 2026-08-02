@@ -16,6 +16,7 @@
 ### Bill
 - States: `Open`, `Settled`, `Voided`, `PartiallyPaid`
 - Transitions: Open→PartiallyPaid, Open→Settled, PartiallyPaid→Settled, Open→Voided
+- `Settled` is terminal: a refund MUST NOT reopen a settled Bill; refunds net via the refund ledger and compensating allocations (V0-DOM-003, V12-ALC-004, docs/domain/refund-ledger.md Rule 3).
 
 ### Payment
 - States: `Pending`, `Authorized`, `Captured`, `Failed`, `Refunded`, `PartiallyRefunded`, `Unknown`, `ReconciliationRequired`
@@ -67,7 +68,7 @@
 
 ### Table
 - States: `Available`, `Occupied`, `Reserved`, `Cleaning`, `OutOfService`
-- Transitions: Available→Occupied, Available→Reserved, Reserved→Occupied, Occupied→Cleaning, Cleaning→Available, Available→OutOfService, OutOfService→Available
+- Transitions: Available→Occupied, Available→Reserved, Reserved→Occupied, Reserved→Available (expiry/cancellation), Occupied→Cleaning, Cleaning→Available, Available→OutOfService, OutOfService→Available
 
 ## 2. Transition Matrix
 
@@ -141,6 +142,7 @@
 | Table | Available | Occupied | Host | Table assigned | Yes | Yes | N/A |
 | Table | Available | Reserved | Host | Table reserved | Yes | Yes | N/A |
 | Table | Reserved | Occupied | Host | Reservation seated | Yes | Yes | N/A |
+| Table | Reserved | Available | System/Operator | Reservation expired or cancelled | Yes | Yes | N/A |
 | Table | Occupied | Cleaning | Staff | Table being cleaned | Yes | Yes | N/A |
 | Table | Cleaning | Available | Staff | Table ready | Yes | Yes | N/A |
 | Table | Available | OutOfService | Manager | Table out of service | Yes | Yes | N/A |
@@ -149,12 +151,16 @@
 ## 3. Cross-Entity Transition Rules
 
 ### Order → Bill
-- An Order in `Active` state MUST have exactly one Bill in `Open` state.
+- An Order in `Active` state MUST have at least one Bill in `Open` or `PartiallyPaid` state (an Order may be split across multiple Bills via `bill_order_items` — V0-DOM-002).
 - Bill transitions to `Settled` or `Voided` trigger Order to `Closed` or `Cancelled` respectively.
 
 ### Bill → Payment
 - A Bill in `Open` or `PartiallyPaid` state MUST have at least one associated Payment.
 - Total captured Payment amount MUST equal Bill total for `Settled` transition.
+
+### Bill → Refund
+- A refund on a `Settled` Bill MUST NOT transition the Bill out of `Settled`; the refund nets through the refund ledger
+  and compensating allocations (V0-DOM-003, V12-ALC-004, docs/domain/refund-ledger.md Rule 3).
 
 ### Payment → FiscalDocument
 - A captured Payment MUST have an associated FiscalDocument in `Issued` state.

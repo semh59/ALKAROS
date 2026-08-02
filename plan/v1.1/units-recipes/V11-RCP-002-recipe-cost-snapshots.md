@@ -35,6 +35,7 @@ Geçmiş tarif maliyetini yeniden oluşturmak için gereken içerik düzeyindeki
 
 - V11-RCP-001
 - V11-UNT-001
+- V11-PUR-001
 - V0-DOM-010
 
 ## Deliverables

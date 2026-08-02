@@ -11,7 +11,8 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altındaki 42 görev dosyasının tamamı `Done`.
+- Bu sürüm altındaki 45 görev dosyasının tamamı `Done` (2026-08-01 kullanıcı onaylı FND-007/008/009 remediation
+  görevleri dahil).
 - `V1-FND-001`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` sıralı foundation kapısı geçmeden
   başka application görevi başlamaz.
@@ -27,4 +28,4 @@ uca çalıştıran çekirdek operasyon.
 `reconciliation`, `reporting`, `security-foundation`, `settings`,
 `table-management`, `waiter-pwa`.
 
-Doğrulanan plan hacmi: 16 modül, 42 tek-sahip görev.
+Doğrulanan plan hacmi: 16 modül, 45 tek-sahip görev.

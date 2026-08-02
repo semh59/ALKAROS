@@ -46,7 +46,8 @@ Authenticated QR customer session için available sellable menu'yü internal man
 
 - Geçerli bir table oturumu yalnızca yayınlanmış satılabilir öğeleri görür; iptal edilen/süresi dolan oturumlar ve
   kullanılamayan ürünler, dahili tanımlayıcılar sızdırılmadan işlenir.
-- Public menu, `V0-CMP-005` kararındaki customer QR criteria ve device/browser matrix'ini karşılar.
+- Public menu, `docs/compliance/accessibility-target.md`'deki customer QR kriterleri ve device/browser matrix'ini
+  karşılar.
 
 ## Handoff
 

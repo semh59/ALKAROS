@@ -57,4 +57,5 @@ Doğrulanmış T300 contract'ye karşı onaylanmış ve reddedilen kart payment 
 - V12-HUG-002
 - V12-PAY-003
 - V12-PAY-004
+- V12-FSC-002
 - V13-ACC-006

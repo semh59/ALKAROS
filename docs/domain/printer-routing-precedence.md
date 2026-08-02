@@ -24,9 +24,9 @@ Routes are evaluated in the following order, from most specific to least specifi
 | Level | Scope | Example | Override |
 |-------|-------|---------|----------|
 | 1 | **Item-level override** | `item_id=abc123 → printer=kitchen-1` | Overrides all below |
-| 2 | **Product-level** | `product_id=456 → printer=kitchen-2` | Overrides category & default |
-| 3 | **Category-level** | `category_id=pizza → printer=kitchen-3` | Overrides default |
-| 4 | **Daily special override** | `date=2026-07-30, category=specials → printer=kitchen-4` | Overrides category for date range |
+| 2 | **Product-level** | `product_id=456 → printer=kitchen-2` | Overrides daily special, category & default |
+| 3 | **Daily special override** | `date=2026-07-30, category=specials → printer=kitchen-4` | Overrides category & default for date range |
+| 4 | **Category-level** | `category_id=pizza → printer=kitchen-3` | Overrides default |
 | 5 | **Default route** | `default → printer=kitchen-main` | Fallback if no match |
 
 ## 3. Precedence Rules

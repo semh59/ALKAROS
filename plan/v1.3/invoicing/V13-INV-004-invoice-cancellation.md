@@ -48,6 +48,8 @@ Issued Invoice'ı silmeden veya Account balance'ı değiştirmeden izinli cancel
 ## Acceptance evidence
 
 - Issued Invoice değişmez kalır; duplicate request tek Pending intent üretir ve bu görev provider success varsaymaz.
+- İptal penceresi geçmişse Pending intent `Expired` terminal durumuna geçer; belge iptal edilemez ve gerekçe kaydı
+  tutulur (iade akışı ayrıdır).
 
 ## Handoff
 

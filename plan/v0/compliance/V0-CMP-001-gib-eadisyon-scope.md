@@ -28,6 +28,7 @@ doğrulamak.
 ## In scope
 
 - İşletme tipi, belge başlangıç/kapanış ilişkisi, saklama, raporlama ve entegratör/device sorumluluğu.
+- Kapsam dışı: e-İrsaliye belge akışı (restoran perakende satışında irsaliye düzenlenmez); belge süreçleri e-Fatura/e-Arşiv ve YN ÖKC/adisyon ile sınırlıdır. Gelecekte irsaliye gereksinimi çıkarsa yeni görev açılır.
 
 ## Out of scope
 

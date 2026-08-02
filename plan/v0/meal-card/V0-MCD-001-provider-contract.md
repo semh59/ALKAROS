@@ -2,7 +2,7 @@
 
 - Task ID: V0-MCD-001
 - Status: Blocked
-- Assignee: Unassigned (exactly one person)
+- Assignee: Unassigned
 - Work type: validation
 - Surface state: Planned
 
@@ -54,7 +54,7 @@ contract'larını doğrulamak.
 
 ## Acceptance evidence
 
-- Onaylanmış en az bir provider'nin resmi contract/sandbox kanıtı vardır; bilinmeyen/kullanılamayan provider'lar açıkça
+- Onaylanmış en az bir provider'ın resmi contract/sandbox kanıtı vardır; bilinmeyen/kullanılamayan provider'lar açıkça
   desteklenmemektedir.
 
 ## Handoff

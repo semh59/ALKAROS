@@ -3327,29 +3327,30 @@ Toplam `178` geometry-detected row ayrı unit olarak kaydedilmiştir.
 | `P093-T03-R004` | 93 | `IV.1` | Geometry table row | `DA6F2C32386FC83C90656CD20F793C30F36317BA8D59C74596EB0475CA68CD94` | restaurant_pos_domain_specification.md | V0-DOC-001 | Planned |
 | `P093-T03-R005` | 93 | `IV.1` | Geometry table row | `65DF246EE22FF739D4C1109D5ECEE2960E45B06C40B4E749AFECC425CDB76497` | restaurant_pos_database_schema.md | V0-DOC-001 | Planned |
 
-## Plan denetiminde eklenen C10-C28 açıkları
+## Plan denetiminde eklenen C10-C29 açıkları
 
-| Correction | Kanıtlanan açık | Decision/validation owner |
-| --- | --- | --- |
-| `C10` | Fee/tip davranışı PDF'de tanımlı değil. | V0-CMP-004 |
-| `C11` | Over-receipt ve receipt variance politikası yok. | V0-DOM-009 |
-| `C12` | Historical cost için valuation method yok. | V0-DOM-010 |
-| `C13` | Printer route precedence tanımlı değil. | V0-DOM-011 |
-| `C14` | Notification transport/recipient matrisi yok. | V0-ARC-006 |
-| `C15` | Desteklenen OS/package/update compatibility matrisi yok. | V0-ARC-007 |
-| `C16` | Signing, SBOM ve provenance evidence contract'ı yok. | V0-ARC-008 |
-| `C17` | Migration rehearsal dataset/control total profili yok. | V0-DAT-006 |
-| `C18` | Security verification target ve requirement sürümü yok. | V0-SEC-001 |
-| `C19` | Accessibility conformance target yok. | V0-CMP-005 |
-| `C20` | Meal-card task'ı birden fazla provider'ı tek işte topluyor. | V0-MCD-001, V20-INT-004 |
-| `C21` | QNB cancellation/webhook public contract'ta doğrulanmıyor. | V0-QNB-001, V20-INT-002, V20-CMP-001 |
-| `C22` | QR relay production topology/transport/deployment sahibi yoktu. | V0-ARC-009, V0-QRG-001, V14-QRT-001 |
-| `C23` | Bill-independent account receipt source ve reconciliation zinciri yoktu. | V0-DOM-007, V13-ACC-004, V13-ACC-007 |
-| `C24` | Meal-card result allocation/fiscal workflow'a bağlanmıyordu. | V0-MCD-001, V12-MCD-004 |
-| `C25` | T300 ve QNB adisyon branch'leri koşulsuz birlikte zorunluydu. | V0-CMP-001, V12-FSC-003 |
-| `C26` | CustomerAccount handler registry/fiscal closure integration sahibi yoktu. | V13-ACC-008 |
-| `C27` | On-hand ve reservation balance projection sırası producer cycle üretiyordu. | V11-INV-002, V11-INV-007 |
-| `C28` | Transaction primitive Outbox oluşmadan post-commit handoff sahipleniyordu. | V1-FND-006 |
+| Correction | Kanıtlanan açık | Karar veya validation sahibi | Uygulama/doğrulama sahipleri | Durum |
+| --- | --- | --- | --- | --- |
+| `C10` | Fee/tip davranışı PDF'de tanımlı değil. | V0-CMP-004 | V1-BIL-003 | Planned |
+| `C11` | Purchase receipt variance ve fazla teslim politikası yok. | V0-DOM-009 | V11-PUR-001 | Planned |
+| `C12` | Stok valuation ve historical recipe cost kaynağı yok. | V0-DOM-010 | V11-RCP-002, V11-PRD-002 | Planned |
+| `C13` | Printer route precedence tanımlı değil. | V0-DOM-011 | V1-KIT-002 | Planned |
+| `C14` | Notification transport ve recipient matrisi yok. | V0-ARC-006 | V15-NOT-001 | Planned |
+| `C15` | OS, package ve update compatibility matrisi yok. | V0-ARC-007 | V20-INS-001, V20-INS-002 | Planned |
+| `C16` | Artifact signing, SBOM ve provenance sözleşmesi yok. | V0-ARC-008 | V20-REL-001, V20-GAT-002 | Planned |
+| `C17` | Migration rehearsal veri profili ve control total kataloğu yok. | V0-DAT-006 | V20-MIG-001, V20-MIG-002 | Planned |
+| `C18` | Security doğrulama seviyesi ve sürümlü requirement tabanı yok. | V0-SEC-001 | V15-SEC-002, V20-SEC-001 | Planned |
+| `C19` | Accessibility conformance hedefi kararlaştırılmamış. | V0-CMP-005 | V1-CUI-001, V1-CUI-002, V1-CUI-003, V1-WTR-001, V1-WTR-002, V1-WTR-003, V11-UI-001, V11-UI-002, V11-UI-003, V12-PUI-001, V12-PUI-002, V12-PUI-003, V13-UI-001, V13-UI-002, V13-UI-003, V14-CWB-001, V14-CWB-002, V14-OUI-001, V20-INT-006, V20-UAT-001 | Planned |
+| `C20` | Meal-card provider'ları tek adapter/certification işine sığmıyor. | V0-MCD-001 | V12-MCD-003, V20-INT-004 | Blocked |
+| `C21` | QNB public API iptal ve webhook capability'sini doğrulamıyor. | V0-QNB-001 | V13-QNB-005, V20-INT-002, V20-CMP-001 | Blocked |
+| `C22` | QR relay production topology, transport ve deployment sahibi yoktu. | V0-ARC-009, V0-QRG-001 | V14-QRT-001, V20-INT-006, V20-INS-001 | Blocked |
+| `C23` | Bill'den bağımsız cari tahsilatın durable kaynağı ve reconciliation zinciri yoktu. | V0-DOM-007 | V13-ACC-004, V13-ACC-005, V13-ACC-006, V13-ACC-007 | Planned |
+| `C24` | Meal-card Approved sonucu allocation ve fiscal workflow'a bağlı değildi. | V0-MCD-001 | V12-MCD-004, V12-FSC-002, V12-REC-001 | Blocked |
+| `C25` | T300/QNB adisyon stratejileri koşullu branch yerine birlikte zorunlu tutuluyordu. | V0-CMP-001 | V12-FSC-003, V12-FSC-004, V12-FSC-005 | Planned |
+| `C26` | CustomerAccount handler V1.3 registry ve fiscal closure zincirine kayıtlı değildi. | V0-DOM-007 | V13-ACC-003, V13-ACC-008 | Planned |
+| `C27` | On-hand projection reservation producer'dan önce reserved/available değerlerini sahipleniyordu. | V0-DAT-004 | V11-INV-002, V11-INV-007, V11-RSV-001 | Planned |
+| `C28` | Transaction primitive gerçek Outbox oluşmadan post-commit handoff sahipleniyordu. | V0-ARC-003 | V1-FND-002, V1-FND-005, V1-FND-006 | Planned |
+| `C29` | V0-DOM-001 lifecycle kontratı provider timeout'u örtük decline/success olarak modelliyordu (`Retry 3x, then Failed`); Unknown/ReconciliationRequired ara durumu ve ReconciliationCase bağlantısı yoktu; PDF II.5.3/II.5.4 kanonik state listeleriyle çelişiyordu. | V0-DOM-001 | V12-HUG-001, V12-HUG-002, V12-PAY-003, V12-PAY-004, V12-FSC-001, V12-REC-001 | Planned |
 
 ## Coverage kapısı
 

@@ -28,7 +28,7 @@ oluşturmak.
 ## In scope
 
 - Oturum verme, karma kalıcılığı, boş/mutlak süre sonu, iptal, table bağlama ve çerez/başlık güvenlik politikası.
-- Oturumdan tokena köken ve denetim olayları.
+- Oturumdan token kaynağı ve denetim olayları.
 
 ## Out of scope
 

@@ -35,7 +35,12 @@ yayınlayın.
 ## Dependencies
 
 - V14-MAP-001
+- V11-MNU-001
 - V11-MNU-002
+- V11-MNU-003
+- V1-CAT-001
+- V1-CAT-002
+- V0-CMP-002
 - V0-YSP-001
 
 ## Deliverables

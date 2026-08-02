@@ -34,6 +34,7 @@ Onaylı void/complimentary politikasını permission, reason, audit ve kitchen-s
 
 - V1-ORD-001
 - V1-IAM-002
+- V1-KIT-001
 - V1-OPS-001
 - V0-DOM-006
 

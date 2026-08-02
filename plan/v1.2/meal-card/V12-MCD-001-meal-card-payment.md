@@ -26,7 +26,7 @@ kalıcılaştırmak.
 
 ## In scope
 
-- Her Payment için bir alt tür satırı, tutar formülü, provider referansı ve Kararsız durum.
+- Her Payment için bir alt tür satırı, tutar formülü, provider referansı ve Pending durum.
 
 ## Out of scope
 
@@ -50,6 +50,7 @@ kalıcılaştırmak.
 ## Acceptance evidence
 
 - MealCard olmayan payment ayrıntı satırını alamaz; net formül ve benzersizlik uygulanır.
+- Net tutar = `gross` − `commission` − `deduction`; formül ve kaynak alanlar dosyada açıkça tanımlanır.
 - `V0-MCD-001` tarihli/onaylı sonucu approved provider olmadığını gösterirse bu task `NotApplicable` olur; schema,
   success stub veya dead code oluşturulmaz.
 

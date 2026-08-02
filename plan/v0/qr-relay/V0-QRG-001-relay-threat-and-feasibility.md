@@ -2,7 +2,7 @@
 
 - Task ID: V0-QRG-001
 - Status: Blocked
-- Assignee: Unassigned (exactly one person)
+- Assignee: Unassigned
 - Work type: validation
 - Surface state: Planned
 
@@ -35,8 +35,8 @@ Public QR trafiğinin local POS'a inbound LAN erişimi açmadan taşınabileceğ
 
 ## Blocker
 
-`V0-ARC-009` onaylı topology kararı ile adlandırılmış non-production relay/domain, TLS kimliği, credentials ve test
-erişimi mevcut değildir. Görev ancak karar `Done` olduğunda ve bu erişimler sağlandığında `Planned` olabilir; gerçek
+V0-ARC-009 topology kararı onaylıdır; ancak adlandırılmış non-production relay/domain, TLS kimliği, credentials ve
+test erişimi mevcut değildir. Görev ancak karar `Done` olduğunda ve bu erişimler sağlandığında `Planned` olabilir; gerçek
 outage/replay/revocation transkriptleri `Done` acceptance kanıtıdır.
 
 ## Deliverables

@@ -33,6 +33,7 @@ evidence event'i üretmek.
 
 ## Dependencies
 
+- V14-ONL-001
 - V14-ONL-002
 - V14-MAP-002
 - V0-YSP-001
@@ -57,3 +58,4 @@ evidence event'i üretmek.
 ## Handoff
 
 - V14-REC-001
+- V14-STK-001

@@ -40,6 +40,7 @@ resource usage değerlerini ölçmek.
 - V20-INS-002
 - V1-FND-004
 - V0-DAT-006
+- V20-REL-001
 
 ## Deliverables
 

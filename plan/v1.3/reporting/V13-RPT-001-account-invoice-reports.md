@@ -31,6 +31,7 @@ Hesap yaşlandırma, invoice yaşlandırma/status, gelen eşleşme ve tedarikçi
 
 ## Dependencies
 
+- V0-DOM-007
 - V0-DOM-008
 - V13-ACC-002
 - V13-INV-003

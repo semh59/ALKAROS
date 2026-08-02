@@ -52,3 +52,4 @@ Cash tender için Payment, PaymentAllocation, CashTransaction ve change sonucunu
 ## Handoff
 
 - V12-PAY-003
+- V12-FSC-002

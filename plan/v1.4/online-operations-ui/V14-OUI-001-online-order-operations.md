@@ -35,6 +35,7 @@ operasyonel kuyruk verin.
 
 - V14-QRO-003
 - V14-ONL-003
+- V14-ONL-004
 - V14-MAP-002
 - V0-CMP-005
 
@@ -47,7 +48,8 @@ operasyonel kuyruk verin.
 
 - Her kullanıcı eylemi, sahip olan contract modülünü çağırır ve kalıcı sonucunu gösterir; eski veya yetkisiz eylemler
   order'yi değiştiremez.
-- Queue ve action akışları `V0-CMP-005` kararındaki operations UI success criteria listesini karşılar.
+- Queue ve action akışları `docs/compliance/accessibility-target.md`'deki operations UI success kriterleri listesini
+  karşılar.
 
 ## Handoff
 

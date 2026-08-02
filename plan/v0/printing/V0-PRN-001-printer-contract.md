@@ -2,7 +2,7 @@
 
 - Task ID: V0-PRN-001
 - Status: Blocked
-- Assignee: Unassigned (exactly one person)
+- Assignee: Unassigned
 - Work type: validation
 - Surface state: Planned
 

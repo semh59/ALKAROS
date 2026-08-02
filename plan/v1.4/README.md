@@ -7,7 +7,8 @@ domain'ine bağlamak.
 
 ## Giriş koşulu
 
-`GATE-V14-ENTRY` ile uygulanacak QR/Yemeksepeti sözleşmeleri kapanmış olmalıdır.
+`GATE-V14-ENTRY` koşulu plan/GATES.md'de tanımlıdır; dış sözleşme sahipleri (V0-YSP-001, V0-QRG-001) açık Blocked
+olduğu sürece giriş koşulu sağlanmaz.
 
 ## Çıkış kapısı
 

@@ -33,6 +33,8 @@ Onaylı gözlem penceresinde production finansal, fiscal, stok ve integration si
 - V20-REL-004
 - V15-OBS-001
 - V15-REC-002
+- V0-BKP-002
+- V15-OBS-002
 
 ## Deliverables
 
@@ -40,6 +42,7 @@ Onaylı gözlem penceresinde production finansal, fiscal, stok ve integration si
 
 ## Acceptance evidence
 
+- Rollback eşikleri `V0-BKP-002` RPO/RTO kararı ve `V15-OBS-002` health/alert eşiklerinden türetilir.
 - Finansal/fiscal/stok control total veya kritik integration sinyali eşik dışındaysa release sağlıklı ilan edilmez.
 - Gözlem penceresi ve son karar exact deployment/artifact kimliğine bağlanır.
 - `V20-REL-004` kanıtlı `NotApplicable` ise production deployment sinyalleri beklenmez; staging benzeri ortam kontrol

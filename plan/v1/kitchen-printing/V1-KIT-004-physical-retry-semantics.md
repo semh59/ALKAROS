@@ -46,8 +46,8 @@ Send/ack crash window'u explicit Unknown state ve operator-controlled reprint se
 
 ## Acceptance evidence
 
-- Cihaz gönderildikten sonra ancak yerel işlemeden önce çökme hiçbir zaman tam olarak bir kez otomatik talepte
-  bulunulmaz; kurtarma açık bir güvenli politika gerektirir ve denetlenir.
+- Send/ack penceresinde çökme sonrası teslimat Unknown state'te kalır ve otomatik reprint başlatılmaz; reprint yalnız
+  operator onayıyla yapılır, yeniden basılan etiket etiketlenir ve mükerrer risk denetimiyle denetlenir.
 
 ## Handoff
 

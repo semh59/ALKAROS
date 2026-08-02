@@ -38,6 +38,7 @@ Kimliği doğrulanmış bir QR gönderimini PendingConfirmation'deki bir dahili 
 - V14-QRS-002
 - V1-ORD-001
 - V1-ORD-002
+- V1-TBL-001
 - V14-QRS-003
 
 ## Deliverables

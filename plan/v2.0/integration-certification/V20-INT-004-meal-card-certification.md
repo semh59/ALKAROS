@@ -18,7 +18,7 @@ gate olarak toplamak.
 
 ## Owned surface
 
-- `release/evidence/integrations/meal-card/**`
+- `release/evidence/integrations/meal-card/manifest/**`
 - Bu görev meal-card adapter kodunu değiştiremez.
 
 ## In scope
@@ -35,6 +35,7 @@ gate olarak toplamak.
 - V12-MCD-001
 - V12-MCD-002
 - V12-MCD-003
+- V12-MCD-004
 
 ## Blocker
 

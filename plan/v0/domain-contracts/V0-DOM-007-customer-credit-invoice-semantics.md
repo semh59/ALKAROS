@@ -25,7 +25,7 @@ oluşturmadan nasıl etkilediğini tanımlamak.
 
 ## In scope
 
-- Ücretlendirme, Payment, Invoice, Kredi, Borç, Ayarlama, Geri Ödeme ve invoice-iptal imzalı etkiler.
+- Ücretlendirme, Payment, Invoice, Kredi, Borç, Ayarlama, Geri Ödeme ve invoice-iptal state geçiş etkileri.
 
 ## Out of scope
 
@@ -38,7 +38,7 @@ oluşturmadan nasıl etkilediğini tanımlamak.
 
 ## Deliverables
 
-- V0-DOM-007 için bağlayıcı karar dokümanı.
+- V0-DOM-007 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
 - Pozitif/negatif örnekler ve rejected alternatives.
 - Tüketici görevler için test edilebilir invariant/output listesi.
 

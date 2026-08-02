@@ -50,6 +50,8 @@ kalıcılaştırmak.
 
 - Tam olarak tek bir geçerli kaynak ilişkisi uygulanır; reddedilen/bilinmeyen düzenleme, önceki denemelerin yeniden
   yazılmasına gerek kalmadan kurtarılabilir.
+- Belge numarası strateji/cihaz bazında boşluksuz monoton artar; numara çakışması veya tekrar kullanım olmaz
+  (yalnızca iptal/red numarayı yakmaz).
 
 ## Handoff
 

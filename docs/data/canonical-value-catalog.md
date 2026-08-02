@@ -4,7 +4,7 @@
 > **Status:** Done
 > **Assignee:** codex-v0-dat-002
 > **Work type:** decision
-> **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2, PDF:II.13-II.15, PDF:III.29-III.40, CORR:C2, CORR:C7
+> **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2, PDF:II.13-II.15, PDF:III.29-III.40, CORR:C2, CORR:C7, CORR:C29
 > **Date:** 2026-07-30
 
 ## 1. Entity Status Values
@@ -13,6 +13,10 @@
 | Value | Description |
 |-------|-------------|
 | `Draft` | Order being composed, not yet submitted |
+| `Submitted` | Order submitted for restaurant confirmation (CORR:C2) |
+| `PendingConfirmation` | Awaiting restaurant confirmation (QR/online) (CORR:C2) |
+| `Accepted` | Restaurant confirmed the order (CORR:C2) |
+| `Rejected` | Restaurant declined the order (CORR:C2) |
 | `Active` | Order submitted, items being prepared |
 | `Closed` | Order completed, bill settled |
 | `Cancelled` | Order voided or discarded |
@@ -32,6 +36,8 @@
 | `Authorized` | Payment authorized by provider |
 | `Captured` | Payment captured successfully |
 | `Failed` | Payment failed |
+| `Unknown` | Payment outcome unknown (provider timeout/connection loss) (CORR:C29) |
+| `ReconciliationRequired` | Unresolvable divergence, reconciliation case required (CORR:C29) |
 | `Refunded` | Full refund completed |
 | `PartiallyRefunded` | Partial refund completed |
 
@@ -39,7 +45,12 @@
 | Value | Description |
 |-------|-------------|
 | `Draft` | Document being prepared |
+| `Requested` | Fiscalization requested (CORR:C29) |
+| `Pending` | Awaiting device result (CORR:C29) |
 | `Issued` | Document fiscalized |
+| `Rejected` | Fiscalization declined by device (CORR:C29) |
+| `Refunded` | Fiscal refund document issued (CORR:C29) |
+| `ReconciliationRequired` | Unresolvable divergence, reconciliation case required (CORR:C29) |
 | `Cancelled` | Document cancelled |
 
 ### ProductionBatch

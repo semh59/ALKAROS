@@ -1,7 +1,7 @@
 # V0-BKP-001 - Validate PostgreSQL backup and restore tooling
 
 - Task ID: V0-BKP-001
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-bkp-001
 - Work type: validation
 - Surface state: Existing
@@ -43,6 +43,8 @@ Disposable PostgreSQL 18 instance üzerinde backup, checksum ve restore tool pat
 
 - Temiz PostgreSQL 18 instance'a restore edilen seeded kayıt ve checksum eşleşir; corrupted artifact application kanıtı
   sayılmadan reddedilir.
+- checksum hash: SHA-256; restore komutu exit code 0; evidence'e komut transcript'i, artifact hash'i ve ölçülen süre
+  yazılır.
 
 ## Handoff
 

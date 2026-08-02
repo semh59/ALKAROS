@@ -53,6 +53,7 @@ enforcement'ı uygulamak.
 
 - Çapraz bill, çapraz para birimi, kopya ve aşırı tahsis eklemeleri hem uygulama hem de veritabanı testlerinde başarısız
   olur.
+- Sıfır tutarlı allocation kaydı oluşturulamaz.
 
 ## Handoff
 

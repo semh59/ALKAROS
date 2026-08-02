@@ -25,6 +25,8 @@ V1-SEC-002 sınırı üzerinde retention enforcement, authorized re-encryption v
 ## In scope
 
 - Retention execution, authorized re-encryption, deletion queue, legal hold conflict ve coverage verification.
+- Provider payload retention silme/anonimleştirme bu görevde; iş kayıtları PII silme V15-KVK-001 kapsamında; V0-CMP-003
+  disposal matrisi üstündür.
 
 ## Out of scope
 
@@ -45,7 +47,8 @@ V1-SEC-002 sınırı üzerinde retention enforcement, authorized re-encryption v
 
 ## Acceptance evidence
 
-- Expired payload legal hold yoksa silinir; re-encryption ve deletion retry idempotent'tır; plaintext/log leakage yoktur.
+- Expired payload, V0-CMP-003 disposal matrisine göre Anonymize edilir; yalnız matriste Delete sınıfındaki veriler
+  silinir; re-encryption ve deletion retry idempotent'tır; plaintext/log leakage yoktur.
 
 ## Handoff
 

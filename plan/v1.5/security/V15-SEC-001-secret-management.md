@@ -24,6 +24,9 @@ V1-SEC-001 secret boundary üzerinde production rotation, failover ve recovery d
 ## In scope
 
 - Versioned rotation, overlap window, revoke, provider outage, rollback ve redacted operational diagnostics.
+- Secret saklama mekanizması: Secret'lar `deployment/secrets/**` altında ve repo dışında tutulur; çalışma zamanında
+  environment/volume enjeksiyonu ile yüklenir; plaintext settings ve source içinde secret saklama yasağı V0-ARC-005
+  kararına uyar.
 
 ## Out of scope
 
@@ -33,6 +36,7 @@ V1-SEC-001 secret boundary üzerinde production rotation, failover ve recovery d
 
 - GATE-V15-ENTRY
 - V1-SEC-001
+- V0-ARC-005
 
 ## Deliverables
 

@@ -27,7 +27,7 @@ Tanımlanan eş zamanlılık kapsamında order gönderimini, son bölüm rezerva
 
 ## Out of scope
 
-- Production ayarı, ayrı olarak kaydedilen kusurların dışında değişir.
+- Production ayar değişiklikleri, ayrı olarak kaydedilen kusurlar dışında.
 
 ## Dependencies
 
@@ -42,6 +42,8 @@ Tanımlanan eş zamanlılık kapsamında order gönderimini, son bölüm rezerva
 ## Acceptance evidence
 
 - Tekrarlanabilir çalışma ortamı ve p50/p95/p99'u yayınlar; Yük altında yinelenen/negatif/yanlış mali durum yok.
+- Hedef: 20 eş zamanlı terminal altında kritik yollarda p95 < 500 ms, p99 < 1 s; yük profili: yoğun saat senaryosu
+  (menü görüntüleme + sipariş gönderimi + ödeme akışı).
 
 ## Handoff
 

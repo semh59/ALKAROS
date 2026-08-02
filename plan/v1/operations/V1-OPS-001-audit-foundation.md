@@ -24,7 +24,7 @@ Actor, reason, correlation ve before/after reference alanlarıyla V1 critical co
 
 ## In scope
 
-- API, veritabanı yazma kısıtlamaları, hassas alan filtreleme ve temel V1 komut entegrasyonunu ekleyin.
+- API, veritabanı yazma kısıtlamaları, hassas alan filtreleme ve temel V1 komut entegrasyonu.
 
 ## Out of scope
 

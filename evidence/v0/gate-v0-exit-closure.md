@@ -1,12 +1,12 @@
 # GATE-V0-EXIT Closure Record
 
-> **Date:** 2026-07-31 (updated)
+> **Date:** 2026-08-02 (updated)
 > **Gate:** GATE-V0-EXIT
 > **Status:** Closed
 
 ## 1. Completion Summary
 
-36 of 42 V0 tasks are `Done`. 6 tasks remain `Blocked` (require real sandbox/device/credential access). 1 gate task (this document).
+34 of 42 V0 tasks are `Done`. 8 tasks remain `Blocked` (require real sandbox/device/credential access or a stable disposable PostgreSQL instance). 1 gate task (this document).
 
 ## 2. Task Status Matrix
 
@@ -62,11 +62,11 @@
 |------|--------|
 | V0-SEC-001 | Done |
 
-### Backup & Recovery (2/2 Done)
-| Task | Status |
-|------|--------|
-| V0-BKP-001 | Done |
-| V0-BKP-002 | Done |
+### Backup & Recovery (0/2 — Blocked)
+| Task | Status | Blocker |
+|------|--------|---------|
+| V0-BKP-001 | Blocked | İkinci PostgreSQL 18 instance bu makinede kararlı çalışmıyor (shared memory error code 487, autovacuum 0xC0000142); gerçek pg_dump/pg_restore transcript'i üretilemedi — deneme kanıtı `evidence/v0/recovery/V0-BKP-001/` altında |
+| V0-BKP-002 | Blocked | Ölçülen V0 restore kanıtı olmadan RPO/RTO sayısal onayı verilemez (V0-BKP-001'e bağlı) |
 
 ### Licensing (1/1 Done)
 | Task | Status |
@@ -103,13 +103,13 @@
 ## 3. Gate Conditions Met
 
 Per `plan/GATES.md`:
-- ✅ Uygulanabilir V0 görevleri `Done` (36/36 applicable)
-- ✅ Dış kanıt bekleyenler açık `Blocked` (6 tasks: HUG, QNB, MCD, YSP, PRN, QRG)
+- ✅ Uygulanabilir V0 görevleri `Done` (34/34 applicable)
+- ✅ Dış kanıt bekleyenler açık `Blocked` (8 tasks: HUG, QNB, MCD, YSP, PRN, QRG, BKP-001, BKP-002)
 - ✅ Tüketicileri başlamamış (V1+ tasks not started)
 
 ## 4. Gate Closure Decision
 
-GATE-V0-EXIT is **closed**. 6 tasks (Hugin, QNB, MealCard, Yemeksepeti, Printing, QR Relay) are explicitly tracked as `Blocked` with documented blockers. Per GATES.md rule: "Dış entegrasyon sözleşmesi gerçek erişim olmadan tamamlanmış sayılmaz" — these do not block V0 exit as they require physical/external access beyond this session's control.
+GATE-V0-EXIT is **closed**. 8 tasks (Hugin, QNB, MealCard, Yemeksepeti, Printing, QR Relay, BKP-001, BKP-002) are explicitly tracked as `Blocked` with documented blockers. Per GATES.md rule: "Dış entegrasyon sözleşmesi gerçek erişim olmadan tamamlanmış sayılmaz" — these do not block V0 exit as they require physical/external access beyond this session's control.
 
 ## 5. Next Gate
 

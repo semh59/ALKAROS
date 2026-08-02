@@ -37,7 +37,9 @@ ProductionBatch transaction'ında IngredientConsumption ve prepared-portion Prod
 
 - V11-PRD-001
 - V11-RCP-002
+- V11-UNT-001
 - V11-INV-001
+- V11-INV-002
 - V0-DOM-010
 - V1-FND-005
 

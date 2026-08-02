@@ -29,12 +29,14 @@ Kaynak önizlemesini, kayıtlı kullanıcı sonucunu, draft incelemesini, gönde
 
 ## Dependencies
 
+- V13-ACC-007
 - V13-INV-001
 - V13-INV-002
 - V13-INV-003
 - V13-INV-004
 - V13-QNB-001
 - V13-QNB-002
+- V13-QNB-004
 - V13-QNB-005
 - V0-CMP-005
 
@@ -47,7 +49,7 @@ Kaynak önizlemesini, kayıtlı kullanıcı sonucunu, draft incelemesini, gönde
 
 ## Acceptance evidence
 
-- Kullanıcı PendingProvider'yi körü körüne yeniden gönderemez; kaynaklara kadar izlenen toplamlar; iptal belirsizliği
+- Kullanıcı Pending provider durumunu körü körüne yeniden gönderemez; kaynaklara kadar izlenen toplamlar; iptal belirsizliği
   görünür ve çözümsüz kalıyor.
 - `V13-QNB-005` kanıtlı `NotApplicable` ise provider cancellation action etkinleşmez; UI aynı tarihli capability
   kararına bağlı typed unavailable sonucu gösterir.

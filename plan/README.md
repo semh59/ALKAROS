@@ -31,6 +31,11 @@ teslimatın tamamlanma kanıtıdır; bağımsız ikinci bir özellik değildir.
 - `InProgress`: Aktif olarak yürütülüyor; aynı geliştirici aynı anda ikinci bir
   görev kodu açmaz.
 - `Blocked`: Somut dış bağımlılık veya karara bağlı engel var.
+- `NotApplicable`: Yalnız koşullu bir görev için; tamamlanmış ve tarihli decision
+  kanıtı capability/policy'nin uygulanmadığını açıkça gösteriyorsa kullanılır
+  (ör. `GATE-V12-MEAL-CARD-ADAPTERS` altında boş provider listesi). Dosya
+  silinmez; `Acceptance evidence`, karar kimliği, tarih, approver ve neden
+  kod/artifact üretilmediğini kaydeder. `Blocked` kısaltması değildir.
 - `Done`: Kabul kanıtı gerçek komut, test, migration veya imzalı entegrasyon
   çıktısıyla doğrulandı.
 

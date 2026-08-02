@@ -47,7 +47,8 @@ Payment durumu bulunan Bill için table transfer, merge ve bill mutation işleml
 ## Acceptance evidence
 
 - Pending veya Unknown payment sırasında transfer, merge ve bill mutation hiçbir ilişkiyi değiştirmeden reddedilir.
-- Partially-paid işlem yalnız onaylı policy ile atomik sonuç üretir; allocation yanlış Bill'e taşınmaz.
+- Partially-paid işlem yalnız `V12-TBL-001` sahipliğindeki partially-paid transfer/merge policy ile atomik sonuç üretir
+  (devir: V1-TBL-002/V1-TBL-003 out-of-scope); allocation yanlış Bill'e taşınmaz.
 
 ## Handoff
 

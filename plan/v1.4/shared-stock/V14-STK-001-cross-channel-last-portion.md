@@ -26,6 +26,8 @@ sonucu sağlamak.
 ## In scope
 
 - Kanaldan bağımsız komut, eşzamanlılık sonuç eşlemesi ve provider reddetme telafisi.
+- Kanal reddi/iptal telafisi V14-ONL-003 status sync sözleşmesi üzerinden yapılır; bu task yalnız rezervasyon sonucunu
+  üretir.
 
 ## Out of scope
 
@@ -35,6 +37,7 @@ sonucu sağlamak.
 
 - V11-RSV-002
 - V11-RSV-003
+- V0-YSP-001
 
 ## Deliverables
 
@@ -46,8 +49,8 @@ sonucu sağlamak.
 ## Acceptance evidence
 
 - Tek bölümlü paralel dört kanallı test, bir rezervasyon ve üç açık OutOfStock/red sonucu verir.
-- Mutfak başlamadan iptal tam olarak bir Release, hazırlık başladıktan sonra iptal tam olarak bir Waste üretir;
-  crash/retry aynı stok etkisini ikinci kez oluşturmaz.
+- Rezervasyon yaşam döngüsü davranışı V11-RSV-003 ve V14-ONL-003 kanıtlarına handoff edilir; bu task kanıtı
+  tekrarlamaz.
 
 ## Handoff
 

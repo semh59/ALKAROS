@@ -33,6 +33,7 @@ onaylanmış bir uygulanamaz düzenlemeye sahip olduğunu kanıtlayın.
 ## Dependencies
 
 - GATE-V15-EXIT
+- GATE-V20-ENTRY
 - V20-REL-001
 
 ## Deliverables

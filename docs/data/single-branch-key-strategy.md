@@ -4,7 +4,7 @@
 > **Status:** Done
 > **Assignee:** codex-v0-dat-005
 > **Work type:** decision
-> **Source basis:** PDF:I.1.2, PDF:II.0-II.1, PDF:III.0-III.2, CORR:C5
+> **Source basis:** PDF:I.1.5, PDF:II.0, PDF:III.2
 > **Date:** 2026-07-30
 
 ## 1. Key Strategy

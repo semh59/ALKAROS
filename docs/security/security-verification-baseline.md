@@ -4,7 +4,7 @@
 > **Status:** Done
 > **Assignee:** codex-v0-sec-001
 > **Work type:** decision
-> **Source basis:** PDF:I.15, PDF:I.48.6, EXT:OWASP-ASVS-4.0
+> **Source basis:** PDF:I.15, PDF:I.48.6, EXT:OWASP-ASVS-5.0.0, CORR:C18
 > **Date:** 2026-07-30
 
 ## 1. Baseline Requirements
@@ -29,4 +29,10 @@
 - Secret scan: every commit (pre-commit hook)
 
 ## 3. Affected Tasks
-- V1-SEC-001, V1-SEC-002
+
+- V15-SEC-001
+- V15-SEC-002
+- V15-SEC-003
+- V20-SEC-001
+
+> Sürümlü ASVS requirement ID'leri (applicable/N/A gerekçesi) V0-SEC-001 kapsamındadır.

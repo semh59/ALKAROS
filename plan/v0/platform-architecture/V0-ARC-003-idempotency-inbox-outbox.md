@@ -35,7 +35,7 @@ Internal command, client retry ve external callback tekrarlarını tek altyapı 
 
 ## Deliverables
 
-- V0-ARC-003 için bağlayıcı karar veya contract dokümanı.
+- V0-ARC-003 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
 - En az iki pozitif ve iki negatif örnek.
 - Tüketici görevler için açık input/output ve invariant listesi.
 

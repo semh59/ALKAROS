@@ -10,18 +10,21 @@
 > **2026-08-01 kayıtlı güncelleme (V1-FND-002 kapsamı, V0-DAT-001 sahipliğinde):** Altyapı tabloları
 > `idempotency_keys`, `inbox_messages` ve `outbox_messages` eklendi. Bu tablolar hiçbir domain tablosuna FK
 > taşımaz ve domain tablolarından kendilerine FK taşınmaz (örn. `payment_allocations.idempotency_key` V0-DOM-004
-> kararı gereği FK değil, düz unique kolondur); bu yüzden Phase 1'in başında, pozisyonlar 001-003'te konumlanır.
+> kararı gereği FK değil, düz unique kolondur); bu yüzden Phase A'nın başında, pozisyonlar 001-003'te konumlanır.
 > Pozisyon kaydı `database/MigrationComposition/order.json` içindedir; her pozisyon tek tablo içerir ve ileri/geri
 > scriptleri vardır. Kalan domain tabloları pozisyon atamalarını kendi görevlerinde alır.
 
 ## 1. Entity Dependency Graph
 
+> Dependency depth labels (Layer 1-4) — execution uses Phase A/B (Section 2); Layer N is NOT a migration phase.
+
 ```
-Phase 1 (no FK dependencies):
+Layer 1 (no FK dependencies):
   ┌─────────────────────────────┐
   │ idempotency_keys            │
   │ inbox_messages              │
   │ outbox_messages             │
+  │ backup_logs                 │
   │ stores                      │
   │ users                       │
   │ roles                       │
@@ -37,7 +40,7 @@ Phase 1 (no FK dependencies):
   └─────────────────────────────┘
             │
             ▼
-Phase 2 (FK to Phase 1):
+Layer 2 (FK to Layer 1):
   ┌─────────────────────────────┐
   │ tables                      │
   │ reservations                │
@@ -52,7 +55,7 @@ Phase 2 (FK to Phase 1):
   └─────────────────────────────┘
             │
             ▼
-Phase 3 (FK to Phase 1-2):
+Layer 3 (FK to Layer 1-2):
   ┌─────────────────────────────┐
   │ bills                       │
   │ bill_order_items            │
@@ -68,7 +71,7 @@ Phase 3 (FK to Phase 1-2):
   └─────────────────────────────┘
             │
             ▼
-Phase 4 (FK to Phase 1-3):
+Layer 4 (FK to Layer 1-3):
   ┌─────────────────────────────┐
   │ invoices                    │
   │ invoice_lines               │
@@ -115,11 +118,13 @@ CREATE TABLE invoices (
 ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_documents(id);
 ```
 
-## 3. Table Creation Order (Phase A)
+## 3. Table Creation Order (Phase A and Phase B)
 
 > V1-FND-002 (2026-08-01): altyapı tabloları ayrı pozisyonlarda, adım listesinin başında konumlanır —
 > `idempotency_keys` → 001, `inbox_messages` → 002, `outbox_messages` → 003 (her biri tek tabloluk ileri/geri
 > script; kayıt `database/MigrationComposition/order.json`).
+
+### Phase A (migrations 001-030)
 
 1. stores, users, roles
 2. printers, printer_routes
@@ -142,6 +147,10 @@ ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_docume
 19. production_batches, portion_reservations
 20. refund_ledger_entries
 21. reconciliation_cases, alerts
+
+### Phase B (migrations 031-040)
+
+22. invoices, invoice_lines (migration 031; cycle FKs applied in migrations 032-035, see Section 4)
 
 ## 4. Deferred Constraints (Phase B)
 
@@ -187,18 +196,21 @@ ALTER TABLE account_transactions ADD COLUMN invoice_id UUID REFERENCES invoices(
 ```json
 {
   "entityName": "invoices",
-  "phase": "A | B"
+  "phase": "B"
 }
 ```
 
 ### Output
 ```json
 {
-  "creationOrder": 17,
+  "creationOrder": "031",
   "dependencies": ["fiscal_documents", "customer_accounts"],
   "deferredFks": ["fiscal_document_id", "customer_account_id"]
 }
 ```
+
+> `creationOrder` değerleri `database/MigrationComposition/order.json` migration id'leridir; `backup_logs` bu V0
+> aralığında (001-040) değildir ve pozisyonunu backup modülü görevinde alır.
 
 ## 9. Affected Tasks
 

@@ -24,6 +24,8 @@ Onaylanan veri envanterini değerlendirin ve tüm mağazalarda uygun silme/anoni
 ## In scope
 
 - Politika sürümü, vade seçimi, yasal bekletme, prova, idempotency ve denetim.
+- Bu görev iş kayıtlarındaki PII'nin saklama süresi sonunda silinmesi/anonimleştirilmesini kapsar; provider payload
+  retention/silme V15-SEC-003 kapsamındadır; sınıflar çakışırsa V0-CMP-003 disposal matrisi üstündür.
 
 ## Out of scope
 

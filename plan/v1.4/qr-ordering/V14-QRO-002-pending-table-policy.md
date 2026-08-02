@@ -47,8 +47,8 @@ Uzaktan QR hizmet reddine izin vermeden onaylı dolu/ayrılmış/değişiklik yo
 
 ## Acceptance evidence
 
-- Fotoğrafı çekilmiş/eski QR tek başına ücretsiz bir table'yi süresiz olarak alamaz; eşzamanlı personel durumu
-  değişikliği kazanır veya açık bir çatışmaya neden olur.
+- Eski/mükerrer QR tek başına ücretsiz bir table'yi süresiz olarak alamaz; eşzamanlı personel durumu değişikliği
+  kazanır veya açık bir çatışmaya neden olur.
 
 ## Handoff
 

@@ -36,6 +36,7 @@ Tam original movement'a bağlı tek bir idempotent `Reversal` movement oluşturm
 
 - V11-INV-001
 - V11-INV-002
+- V0-DOM-010
 
 ## Deliverables
 

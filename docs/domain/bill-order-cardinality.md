@@ -37,7 +37,8 @@ CREATE INDEX idx_bill_order_items_order_id ON bill_order_items(order_id);
 | `order_item_id` nullable | Nullable | Allows bill split at Order level (not item level) |
 | `amount` per row | Per junction row | Supports partial item billing (e.g., half portion on separate bill) |
 | `ON DELETE RESTRICT` | Restrict | Prevents orphan bill-order links; explicit cleanup required |
-| Unique constraint | `(bill_id, order_item_id)` | Prevents duplicate item billing within same bill |
+| Unique constraint | `(bill_id, order_item_id)` | Prevents duplicate item billing within same bill only; cross-bill uniqueness is enforced at the application layer |
+| `order_item_id` nullable + UNIQUE | Default PG semantics (NULLs distinct) | `bill_order_items` is NOT in the V0-DAT-003 `NULLS NOT DISTINCT` list, so NULL `order_item_id` rows are never deduplicated by the constraint — application checks MUST enforce uniqueness of NULL-item split rows |
 
 ## 3. Cardinality Rules
 
@@ -48,12 +49,15 @@ CREATE INDEX idx_bill_order_items_order_id ON bill_order_items(order_id);
 
 ### N:1 — Multiple Orders, One Bill (Merge)
 - A Bill can reference 1..N Orders via `bill_order_items`.
-- Each OrderItem belongs to exactly one Bill at a time.
-- An OrderItem cannot be on two Bills simultaneously (enforced by UNIQUE on `order_item_id` across active Bills).
+- Each OrderItem belongs to exactly one active Bill at a time.
+- An OrderItem cannot be on two Bills simultaneously (enforced by an application-layer active-Bill check; the schema
+  constraint `UNIQUE (bill_id, order_item_id)` only prevents duplicate rows within the same Bill — cross-bill
+  uniqueness is NOT schema-enforced).
 
 ### 1:1 — Simple Case
-- Default case: one Order → one Bill.
-- Junction table still used for consistency; no special optimization for 1:1.
+- Default case when an Order is not split: one Order → one Bill.
+- This is a special case of the 1:N rule above (V0-DOM-002: an Order can have 1..N Bills); the junction table is still
+  used for consistency, no special optimization for 1:1.
 
 ## 4. Split Scenarios
 
@@ -90,8 +94,9 @@ CREATE INDEX idx_bill_order_items_order_id ON bill_order_items(order_id);
 
 ### Example 1: Duplicate item billing
 - Bill 1 contains item 1 from Order A
-- Bill 2 attempts to contain the same item 1 from Order A
-- Result: UNIQUE constraint violation on `(bill_id, order_item_id)` — rejected
+- Bill 2 attempts to contain the same item 1 from Order A while Bill 1 is still active
+- Result: Rejected by the application-layer active-Bill check — the schema constraint `UNIQUE (bill_id, order_item_id)`
+  only prevents duplicates within the same Bill and does not catch cross-Bill duplicates
 
 ### Example 2: Cross-order bill merge
 - Bill 1 attempts to reference items from Order A AND Order B

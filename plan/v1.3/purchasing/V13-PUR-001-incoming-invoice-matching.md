@@ -33,6 +33,7 @@ eşleştirin.
 ## Dependencies
 
 - V11-PUR-001
+- V11-PUR-002
 - V11-RCP-002
 - V13-QNB-003
 

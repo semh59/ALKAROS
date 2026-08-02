@@ -14,7 +14,7 @@
 
 ## Goal
 
-Onaylanmış ölçüm sözleşmelerini kullanarak order, table, garson ve yazdırma hatası raporlarını uygulayın.
+Onaylanmış ölçüm sözleşmelerini kullanarak order, table, garson ve yazdırma hatası raporlarını uygulamak.
 
 ## Owned surface
 
@@ -34,6 +34,7 @@ Onaylanmış ölçüm sözleşmelerini kullanarak order, table, garson ve yazdı
 
 - V0-DOM-008
 - V1-ORD-001
+- V1-REC-001
 - V1-TBL-001
 - V1-KIT-003
 

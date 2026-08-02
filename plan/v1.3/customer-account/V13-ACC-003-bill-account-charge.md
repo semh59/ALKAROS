@@ -37,6 +37,7 @@ dönüştürmek.
 - V13-ACC-001
 - V12-PAY-002
 - V12-ALC-001
+- V0-DOM-007
 
 ## Deliverables
 

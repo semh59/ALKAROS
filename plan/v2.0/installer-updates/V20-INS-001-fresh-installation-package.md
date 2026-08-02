@@ -36,6 +36,7 @@ Signed release candidate'ı deterministic ve belgelenmiş package ile clean supp
 - V1-SET-001
 - V0-ARC-007
 - V14-QRT-001
+- V0-ARC-009
 
 ## Deliverables
 

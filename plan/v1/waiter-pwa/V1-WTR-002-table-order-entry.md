@@ -25,7 +25,7 @@ Waiter permission kapsamında Table seçimi, Product/modifier/note girişi ve id
 
 ## Out of scope
 
-- Payment, table yönetimi ve QR müşteri UI'yi birleştirir.
+- Payment, table yönetimi ve QR müşteri UI'si.
 
 ## Dependencies
 

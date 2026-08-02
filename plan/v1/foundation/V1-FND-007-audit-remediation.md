@@ -21,7 +21,6 @@ git izlenebilirliği, ölü kod, sessiz catch, commit footer ihlalleri ve V0-CMP
 - `tools/task-scope/**`, `tools/plan-audit/plan_audit_tool.py`
 - `.github/workflows/task-scope.yml`, `docs/engineering/task-scope-contract.md`
 - `.gitignore`, `build/project-manifest.json`
-- `src/BuildingBlocks/ModuleComposition/Primitives/**`
 - `evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md`
 - `plan/TRACEABILITY.md`, `plan/GATES.md`, `plan/VALIDATION_CONTRACT.md`
 - `plan/AUDIT_REPORT.md`, `plan/AUDIT_MANIFEST.json`
@@ -29,6 +28,8 @@ git izlenebilirliği, ölü kod, sessiz catch, commit footer ihlalleri ve V0-CMP
 - `plan/v1/foundation/V1-FND-003-codex-task-scope-enforcement.md` (yalnız Owned surface daraltma satırı)
 - `plan/v1/foundation/V1-FND-004-host-migration-composition.md` (yalnız Owned surface daraltma satırı)
 - `plan/v1/foundation/V1-FND-007-audit-remediation.md` (metadata; otomatik)
+- tools/plan-audit/** ve tools/task-scope/** yüzeyleri V1-FND-008'e devredilmiştir; bu görev artık bu path'leri
+  yazamaz.
 
 ## In scope
 

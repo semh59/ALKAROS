@@ -47,8 +47,8 @@ Gelen provider belgelerini bir kez özel, değişmez alım kayıtlarına alın.
 
 ## Acceptance evidence
 
-- Özgeçmişleri checkpoint'den yeniden başlatın; yinelenen provider belgesi bir giriş satırı oluşturur; geçersiz belge
-  incelenebilir durumda kalır.
+- Özgeçmişleri checkpoint'den yeniden başlatın; yinelenen provider belgesi idempotent olarak mevcut giriş satırını
+  döndürür; yeni satır üretilmez; geçersiz belge incelenebilir durumda kalır.
 
 ## Handoff
 

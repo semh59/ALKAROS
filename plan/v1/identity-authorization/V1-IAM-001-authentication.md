@@ -24,8 +24,8 @@ Password verification, active-user check, login/logout ve secure session issuanc
 
 ## In scope
 
-- Kullanıcı kimlik bilgileri depolama, parola karma politikası, oturum açma/oturumu kapatma ve kilitlenebilir arıza
-  yanıtları.
+- Kullanıcı kimlik bilgileri depolama, parola karma politikası, oturum açma/oturumu kapatma ve tekrarlanan başarısız
+  denemelerde oturum kilidi (lockout) uygulayan arıza yanıtları.
 
 ## Out of scope
 
@@ -34,6 +34,7 @@ Password verification, active-user check, login/logout ve secure session issuanc
 ## Dependencies
 
 - V1-FND-001
+- V0-ARC-002
 
 ## Deliverables
 

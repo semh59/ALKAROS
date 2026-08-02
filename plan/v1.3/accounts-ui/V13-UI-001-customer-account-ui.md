@@ -31,6 +31,7 @@ Alan izinleri altında müşteri profili, hesap defteri, bakiye/yaşlanma ve hes
 ## Dependencies
 
 - V13-CST-001
+- V13-ACC-001
 - V13-ACC-002
 - V13-ACC-003
 - V13-ACC-004

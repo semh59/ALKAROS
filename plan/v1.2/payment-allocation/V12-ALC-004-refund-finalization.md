@@ -29,6 +29,8 @@ Yalnız provider Approved refund sonucundan sonra compensating allocation ve fis
 ## In scope
 
 - Approved finalization, cumulative limit recheck, durable resume, fiscal handoff ve Unknown reconciliation lock.
+- Provider-neutral iade finalization: approved meal-card iadeleri de aynı akıştan geçer (transport: V12-MCD-003 adapter
+  sözleşmesi).
 
 ## Out of scope
 
@@ -40,6 +42,7 @@ Yalnız provider Approved refund sonucundan sonra compensating allocation ve fis
 - V12-HUG-003
 - V12-FSC-001
 - V1-FND-005
+- V12-MCD-003
 
 ## Deliverables
 

@@ -46,7 +46,8 @@ QR customer'ın açık final summary ile Order oluşturup PendingConfirmation wo
 
 - Submit yalnız tek PendingConfirmation QR Order üretir; approved confirmation öncesinde KitchenTicket oluşturamaz veya
   stok ayıramaz.
-- QR order entry, `V0-CMP-005` kararındaki customer QR success criteria ve approved exception kayıtlarını karşılar.
+- QR order entry, `docs/compliance/accessibility-target.md`'deki customer QR success kriterleri ve approved exception
+  kayıtlarını karşılar.
 
 ## Handoff
 

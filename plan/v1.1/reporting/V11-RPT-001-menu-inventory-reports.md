@@ -35,6 +35,7 @@ Satış oranı, porsiyon tüketimi, production, atık ve kritik stok raporların
 - V11-MNU-002
 - V11-PRD-002
 - V11-INV-002
+- V11-INV-005
 - V11-INV-006
 
 ## Deliverables

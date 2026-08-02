@@ -41,13 +41,14 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 
 - Backslash `/`'ye çevrilir, `./` başlangıcı atılır ve tüm yol lowercase yapılır (Windows case-insensitive).
 - `**` (her şey dahil `/`), `*` (tek segment), `?` (tek karakter) desteklenir; diğer karakterler literal eşleşir.
+- Wildcard yüzeyler, exact path'lerden sonra değerlendirilir; aynı dosyayı eşleyen birden fazla yüzey kapsam dışı sayılır.
 - `..` dizin traversal segmenti içeren yol her koşulda reddedilir.
 
 ## Fail-closed durumlar
 
 - Görev dosyası `plan/` altında bulunamaz.
 - Görev dosyası birden fazla veya hiç Task ID içermez; Task ID biçimi geçersizdir.
-- `Status` değeri `Planned`, `InProgress`, `Done`, `Blocked` dışındadır.
+- `Status` değeri `Planned`, `InProgress`, `Done`, `Blocked`, `NotApplicable` dışındadır.
 - `Assignee` boştur veya genel (`codex`, `ai`, `none`, `unassigned*`) tanımlıdır.
 - Bağımlılıklardan herhangi biri `Done` değildir.
 - Değişen bir yol allowlist'te değildir veya traversal içerir.

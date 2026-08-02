@@ -3,6 +3,7 @@
 > **Date:** 2026-07-31
 > **Auditor:** cline-retrospective
 > **Scope:** V0 (42 görev) + V1-FND-001 (modular monolith skeleton)
+> **Status:** SUPERSEDED — 2026-08-02 tarihinde `retrospective-audit-v2.md` (tüm V0 görev dosyası tek tek okunarak) ve ardından sıfır-context bağımsız plan denetimi (bkz. `plan/TRACEABILITY.md` "Sıfır-context bağımsız denetim bulguları") ile aşıldı. Bu dosya tarihsel kayıt olarak korunur; güncel durum için v2 ve TRACEABILITY esas alınır.
 
 ## 1. V0 Gate Durumu
 

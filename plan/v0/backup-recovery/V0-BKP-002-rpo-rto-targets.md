@@ -1,7 +1,7 @@
 # V0-BKP-002 - Approve RPO and RTO targets
 
 - Task ID: V0-BKP-002
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-bkp-002
 - Work type: decision
 - Surface state: Existing
@@ -23,6 +23,7 @@
 ## In scope
 
 - Kritik veri sınıfları, yerel/tesis dışı ritim, geri yükleme önceliği, sorumlu onaylayıcı ve ölçüm yöntemi.
+- Yedek kopyalardaki PII saklama/imha, V0-CMP-003 envanterinin tüketimidir.
 
 ## Out of scope
 
@@ -31,10 +32,11 @@
 ## Dependencies
 
 - V0-BKP-001
+- V0-CMP-003
 
 ## Deliverables
 
-- V0-BKP-002 için bağlayıcı karar dokümanı.
+- V0-BKP-002 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
 - Pozitif/negatif örnekler ve rejected alternatives.
 - Tüketici görevler için test edilebilir invariant/output listesi.
 

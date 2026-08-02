@@ -28,6 +28,7 @@ V1.2 yetkili kaynakları farklılaştığında tekilleştirilmiş Reconciliation
 
 - Hugin Unknown, approved-without-allocation, allocation/provider mismatch, fiscal mismatch, cash farkı ve meal-card
   settlement mismatch kaynak çiftleri.
+- Terminal totals mismatch (kaynak: V12-HUG-004) kaynak çifti.
 
 ## Out of scope
 
@@ -43,6 +44,7 @@ V1.2 yetkili kaynakları farklılaştığında tekilleştirilmiş Reconciliation
 - V12-CSH-002
 - V12-MCD-002
 - V12-MCD-004
+- V1-REC-001
 
 ## Deliverables
 
@@ -61,6 +63,8 @@ V1.2 yetkili kaynakları farklılaştığında tekilleştirilmiş Reconciliation
   kaynaklarıyla çalışmaya devam eder.
 - `V12-FSC-002` tarihli `NotApplicable` ise meal-card fiscal closure branch'i bu reconciliation'da disabled kalır;
   fiscal ve cash kaynak çiftleri yine doğrulanır.
+- Terminal totals sapmaları ReconciliationCase kaydını yalnız `V12-REC-001` API'si üzerinden üretir; `V12-HUG-004`
+  doğrudan case yazamaz.
 
 ## Handoff
 

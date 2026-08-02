@@ -1,0 +1,16 @@
+2026-08-02 11:20:37.016 +03 [25936] LOG:  starting PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35226, 64-bit
+2026-08-02 11:20:37.023 +03 [25936] LOG:  could not bind IPv6 address "::1": Only one usage of each socket address (protocol/network address/port) is normally permitted.
+	
+2026-08-02 11:20:37.023 +03 [25936] HINT:  Is another postmaster already running on port 5433? If not, wait a few seconds and retry.
+2026-08-02 11:20:37.023 +03 [25936] LOG:  listening on IPv4 address "127.0.0.1", port 5433
+2026-08-02 11:20:37.098 +03 [26056] LOG:  database system was shut down at 2026-08-02 11:20:00 +03
+2026-08-02 11:20:37.107 +03 [25936] LOG:  database system is ready to accept connections
+2026-08-02 11:23:37.272 +03 [25936] LOG:  autovacuum worker (PID 28956) was terminated by exception 0xC0000142
+2026-08-02 11:23:37.272 +03 [25936] HINT:  See C include file "ntstatus.h" for a description of the hexadecimal value.
+2026-08-02 11:23:37.277 +03 [25936] LOG:  terminating any other active server processes
+2026-08-02 11:23:37.287 +03 [25936] LOG:  all server processes terminated; reinitializing
+2026-08-02 11:27:03.873 +03 [25936] LOG:  could not reserve shared memory region (addr=000002C3C6920000) for child 0000000000000F84: error code 487
+2026-08-02 11:27:46.721 +03 [25936] LOG:  could not reserve shared memory region (addr=000002C3C6920000) for child 0000000000000EF0: error code 487
+2026-08-02 11:27:50.195 +03 [25936] LOG:  received fast shutdown request
+2026-08-02 11:27:50.200 +03 [25936] LOG:  abnormal database system shutdown
+2026-08-02 11:27:50.206 +03 [25936] LOG:  database system is shut down

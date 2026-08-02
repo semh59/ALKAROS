@@ -47,6 +47,7 @@ Master PDF'deki doğrulanmış çelişki ve açık maddeleri tek revize edilebil
 - V0-DOM-006
 - V0-DOM-007
 - V0-DOM-008
+- V0-DOM-010
 - V0-DAT-001
 - V0-DAT-002
 - V0-DAT-003
@@ -67,7 +68,7 @@ Master PDF'deki doğrulanmış çelişki ve açık maddeleri tek revize edilebil
 
 ## Deliverables
 
-- V0-DOC-001 için bağlayıcı karar veya contract dokümanı.
+- V0-DOC-001 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
 - En az iki pozitif ve iki negatif örnek.
 - Tüketici görevler için açık input/output ve invariant listesi.
 

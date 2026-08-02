@@ -27,6 +27,8 @@ kalıcılaştırmak.
 ## In scope
 
 - Müşteri türü, vergi kimliği, iletişim alanları, saklama meta verileri ve rol tabanlı okumalar.
+- Anonimleştirilmiş müşteri kaydına e-Fatura düzenlenemez; UBL zorunlu tanımlayıcı gereksinimleri V13-INV-002
+  kapsamındadır.
 
 ## Out of scope
 

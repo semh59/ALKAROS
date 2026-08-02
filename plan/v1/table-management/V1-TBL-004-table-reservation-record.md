@@ -25,7 +25,7 @@
 
 ## In scope
 
-- Rezervasyonu ve atomik Table status projeksiyonunu oluşturun/iptal edin/süresini sonlandırın.
+- Rezervasyon oluşturma, iptal etme ve süre sonlandırma ile atomik Table status projeksiyonu.
 
 ## Out of scope
 

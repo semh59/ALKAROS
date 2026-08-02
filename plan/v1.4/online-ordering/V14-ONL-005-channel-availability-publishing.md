@@ -26,8 +26,8 @@ yayınlayın.
 
 ## In scope
 
-- Kullanılabilirlik event tüketimi, provider azaltma, eş zamanlı güncellemeler, retry, geçersiz harflerin işlenmesi ve
-  sapma tespiti.
+- Kullanılabilirlik event tüketimi, provider azaltma, eş zamanlı güncellemeler, retry, eski/güncel olmayan olayların
+  işlenmesi ve sapma tespiti.
 
 ## Out of scope
 
@@ -37,6 +37,8 @@ yayınlayın.
 
 - V14-STK-001
 - V14-ONL-004
+- V11-INV-007
+- V11-MNU-002
 
 ## Deliverables
 

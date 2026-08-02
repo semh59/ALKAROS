@@ -2,7 +2,7 @@
 
 - Task ID: V0-HUG-001
 - Status: Blocked
-- Assignee: Unassigned (exactly one person)
+- Assignee: Unassigned
 - Work type: validation
 - Surface state: Planned
 
@@ -72,3 +72,5 @@ model, firmware ve topology düzeyinde gerçek doküman ve erişimle doğrulamak
 - V12-HUG-001
 - V12-HUG-002
 - V12-HUG-003
+- V12-HUG-004
+- V12-FSC-004

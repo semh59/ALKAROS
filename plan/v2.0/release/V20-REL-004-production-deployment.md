@@ -24,6 +24,8 @@ Yalnız signed Approve kararı verilen exact release artifact'ını kontrollü p
 
 - Artifact hash doğrulama, backup checkpoint, secret provisioning kanıtı, migration, selected QR relay/local connector
   deployment, smoke test ve rollback trigger.
+- Production rollback yürütme prosedürü ve kanıt üretimi: `release/evidence/production-rollback/**` altına komut
+  transcript'i, exit code ve doğrulama adımları.
 
 ## Out of scope
 
@@ -36,6 +38,7 @@ Yalnız signed Approve kararı verilen exact release artifact'ını kontrollü p
 - V20-MIG-002
 - V20-SEC-001
 - V14-QRT-001
+- V0-ARC-009
 
 ## Deliverables
 

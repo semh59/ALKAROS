@@ -55,4 +55,5 @@ V0-CMP-001 tarafından seçilen tam olarak bir adisyon branch'ini fail-closed re
 
 ## Handoff
 
+- V12-FSC-002
 - V20-CMP-001

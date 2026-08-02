@@ -26,7 +26,7 @@ Bill, BillItem ve V0-DOM-002 tarafından seçilen referentially safe Order/Order
 
 ## In scope
 
-- bill oluşturmayı, kaynak bağlantılarını, parasal anlık görüntüleri ve payment olmayan status alt kümesini açın.
+- Bill oluşturma, kaynak bağlantıları, parasal anlık görüntüler ve payment olmayan status alt kümesi.
 
 ## Out of scope
 

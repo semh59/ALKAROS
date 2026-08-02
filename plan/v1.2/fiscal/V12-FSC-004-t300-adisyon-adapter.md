@@ -37,6 +37,7 @@ open/update/close command mapping'ini uygulamak.
 
 - GATE-V12-FSC-STRATEGY
 - V12-FSC-001
+- V0-HUG-001
 
 ## Deliverables
 

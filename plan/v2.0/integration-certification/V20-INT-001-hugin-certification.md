@@ -51,6 +51,8 @@ onaylayın.
   total senaryoları yine kanıtlanır.
 - `V12-HUG-004` kanıtlı `NotApplicable` ise terminal totals senaryoları certification kapsamına dahil edilmez; Hugin
   payment senaryoları yine kanıtlanır.
+- NotApplicable koşulu: `GATE-V12-FSC-STRATEGY` tarihli branch kararı Hugin'i dışlarsa bu task kanıtlı `NotApplicable`
+  olarak kapanır (karar kaydı + `V12-FSC-003`/`V12-FSC-004` durum kanıtıyla).
 
 ## Handoff
 

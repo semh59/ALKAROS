@@ -55,8 +55,8 @@ V0-DAT-001..006 — tümü Done, docs çıktıları mevcut (`migration-dependenc
 
 ### 1.5 Security, Backup, Licensing, Document Baseline
 - V0-SEC-001: Done, docs `security-verification-baseline.md`, 4 handoff
-- V0-BKP-001: Done, owned surface `evidence/v0/recovery/V0-BKP-001/**`
-- V0-BKP-002: Done, docs `rpo-rto-targets.md`
+- V0-BKP-001: Blocked (2026-08-02 güncellemesi), owned surface `evidence/v0/recovery/V0-BKP-001/**` — ikinci PostgreSQL 18 instance host'ta kararlı çalışmıyor (error code 487, 0xC0000142); deneme kanıtı `evidence/v0/recovery/V0-BKP-001/` altında
+- V0-BKP-002: Blocked (2026-08-02 güncellemesi), docs `rpo-rto-targets.md` — ölçülen restore kanıtı olmadan sayısal onay verilemez (V0-BKP-001'e bağlı)
 - V0-LIC-001: Done, docs `licensing-contract.md`
 - V0-DOC-001: Done, 26 dependency, docs `restaurant-pos-master.md`
 

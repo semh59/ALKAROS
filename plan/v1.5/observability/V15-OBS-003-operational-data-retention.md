@@ -37,6 +37,7 @@ retention/partition kurallarıyla sınırlamak.
 - V15-OBS-001
 - V15-OBS-002
 - V0-CMP-003
+- V1-OBS-001
 
 ## Deliverables
 

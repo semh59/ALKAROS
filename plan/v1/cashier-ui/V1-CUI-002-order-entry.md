@@ -25,10 +25,12 @@ Product/modifier seçimi, note, Draft düzenleme ve idempotent submit akışın�
 
 ## Out of scope
 
-- Payment, bill ve production/envanter ekranlarını ayırın.
+- Payment, bill ve production/envanter ekranları.
 
 ## Dependencies
 
+- V1-CAT-001
+- V1-CAT-002
 - V1-CUI-001
 - V1-ORD-001
 - V1-ORD-002

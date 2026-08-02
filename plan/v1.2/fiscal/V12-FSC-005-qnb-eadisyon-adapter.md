@@ -37,6 +37,7 @@ open/update/close mapping'ini uygulamak.
 
 - GATE-V12-FSC-STRATEGY
 - V12-FSC-001
+- V0-QNB-001
 
 ## Deliverables
 
@@ -53,3 +54,4 @@ open/update/close mapping'ini uygulamak.
 
 - V12-FSC-003
 - V20-CMP-001
+- V20-INT-002

@@ -66,3 +66,4 @@ bağlamak.
 - V12-PAY-003
 - V12-FSC-002
 - V12-REC-001
+- V12-ALC-004

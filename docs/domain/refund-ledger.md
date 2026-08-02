@@ -58,8 +58,10 @@ SUM(refund_ledger_entries.amount) WHERE payment_id = X <= payments.captured_amou
 ### Rule 2: Partial Refund Allocation
 A partial refund MUST specify which PaymentAllocation line items are being refunded. If not specified at item level, the refund is distributed proportionally across all items in the Bill.
 
-### Rule 3: Bill Reopening
-A refund on a settled Bill MUST reopen the Bill to `PartiallyPaid` or `Open` state if the refund reduces the paid amount below the Bill total.
+### Rule 3: Bill State Immutability on Refund
+A refund on a settled Bill MUST NOT reopen the Bill. The Bill remains `Settled`; the refund nets through the refund
+ledger (compensating allocation), and the derived paid/allocated projections are updated atomically with the refund
+entry (V0-DOM-003, V12-ALC-002, V12-ALC-004, V12-FSC-002).
 
 ### Rule 4: Fiscal Linkage
 If a refund requires a fiscal cancellation or credit note, the `fiscal_document_id` MUST reference the issued fiscal document. Refunds without fiscal linkage are permitted only for non-fiscal payments (e.g., meal card).
@@ -73,19 +75,19 @@ A refund entry with `reversed_by` set is considered reversed. A reversed refund 
 2. **No double refund**: A payment can have at most one active full refund.
 3. **Immutable**: Once written, a refund ledger entry cannot be modified. Only reversed via `reversed_by`.
 4. **Audit trail**: Every refund entry MUST record actor, timestamp, reason, and fiscal document reference.
-5. **Bill consistency**: After refund, Bill state MUST reflect the new paid amount.
+5. **Bill state immutability**: A settled Bill MUST NOT be reopened by a refund; the paid/allocated projections MUST be updated atomically with the refund entry.
 
 ## 5. Positive Examples
 
 ### Example 1: Full Refund
 - Payment A: captured 100 TL
 - Refund entry: amount=100, type=full, reason="Customer returned order"
-- Result: Payment A net = 0, Bill reopened to Open
+- Result: Payment A net = 0; Bill remains `Settled` (refund nets via the ledger; Bill is not reopened)
 
 ### Example 2: Partial Refund
 - Payment A: captured 100 TL (items: 1=60, 2=40)
 - Refund entry: amount=40, type=partial, reason="Item 2 returned", references item 2
-- Result: Payment A net = 60, Bill remains Settled (60 >= 60 minimum)
+- Result: Payment A net = 60; Bill remains `Settled` (settled Bills are never reopened by refunds)
 
 ## 6. Negative Examples
 

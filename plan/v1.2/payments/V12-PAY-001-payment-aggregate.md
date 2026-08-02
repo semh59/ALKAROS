@@ -48,6 +48,7 @@ V0 finansal sözleşmeleri kapsamında payment kimliğini, kanonik status geçi�
 ## Acceptance evidence
 
 - Geçersiz status/para kombinasyonları reddedildi; payment geçmişi değişmez kalır ve para birimi açıktır.
+- Sıfır tutarlı tender reddedilir; negatif tutar geçersiz kombinasyon kuralı altında kalır.
 
 ## Handoff
 

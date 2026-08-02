@@ -36,6 +36,7 @@ log olarak yayınlamak.
 
 - V15-SEC-003
 - V1-OPS-001
+- V1-OBS-001
 
 ## Deliverables
 
@@ -51,4 +52,5 @@ log olarak yayınlamak.
 ## Handoff
 
 - V15-OBS-002
+- V15-OBS-003
 - V20-GAT-002

@@ -1,5 +1,12 @@
 {
-  "tools/task-scope/task_scope_tool.py": "112dc1d21e15e9db7794c828cf171cde52f46902a9dec5e4575dc605decc7efb",
+  "tools/task-scope/task_scope_tool.py": "8c5bbbe7b6ca8fc60de2891cb4249fce65a68fa867412a9a7543bd5e2913923f",
+  "tests/Architecture/TaskScope/conftest.py": "715c7344082c34a6891d6b097506dc5ec36fa237773be8fc99bf912bf2c96c3c",
+  "tests/Architecture/TaskScope/test_task_scope.py": "312edaed7869c6089661ac4b229ef86977ca05e2b9e5c8b9b89d19136cdd82ec",
+  "tests/Architecture/TaskScope/test_task_scope_continuation.py": "dac5797ff345a88feaa44c2179e678b12d8720098099ca9278c4e0f838187fc3",
+  "tests/Architecture/TaskScope/test_task_scope_diff.py": "8cd7c5f9f603e44c99333f4cc744890f1f57692a9fe74975718a1c646c3399a5",
+  ".github/workflows/task-scope.yml": "bc375a03506ca01775c98ecac648f22c0d348039b033bba519f04e0561d55735",
+  "docs/engineering/task-scope-contract.md": "b29a42f6e584168c217505bf517f3673a828bc7ba741708f751c4da94873c874",
   "algorithm": "sha256",
-  "timestamp": "2026-07-31T17:10:00+03:00"
+  "timestamp": "2026-08-02T12:00:00+03:00",
+  "note": "FND-003 owned surface (plan/v1/foundation/V1-FND-003-codex-task-scope-enforcement.md) kapsamındaki tüm dosyaların güncel hash'leri"
 }

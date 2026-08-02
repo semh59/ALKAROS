@@ -13,17 +13,17 @@ This is the corrected master specification baseline. All V0 decision documents s
 
 ## 2. Applied Corrections (C1-C9)
 
-| Correction | Source | Applied In | Status |
-|-----------|--------|-----------|--------|
-| C1 | Migration FK cycle | V0-DAT-001 | ✅ Two-phase resolution documented |
-| C2 | Status enum ambiguity | V0-DAT-002 | ✅ Canonical value catalog created |
-| C3 | Customer account double-count | V0-DOM-007 | ✅ Balance formula locked |
-| C4 | Refund ledger gap | V0-DOM-003 | ✅ Refund ledger entry contract |
-| C5 | Multi-branch key collision | V0-DAT-005 | ✅ UUID v7 + store-scoped business keys |
-| C6 | Projection ownership ambiguity | V0-DAT-004 | ✅ Projection registry with source-of-truth |
-| C7 | Printer route discriminator | V0-DAT-002 | ✅ PrinterType enum defined |
-| C8 | Tax rounding inconsistency | V0-CMP-002 | ✅ Line-level rounding, kuruş precision |
-| C9 | FIFO cost basis | V0-DOM-010 | ✅ FIFO with historical cost snapshot |
+| Correction | Kanıtlanan sorun | Karar veya contract sahibi | Uygulama/doğrulama sahipleri | Durum |
+|-----------|------------------|----------------------------|------------------------------|--------|
+| C1 | Migration sırası forward/cyclic foreign key riski taşıyor. | V0-DAT-001 | V20-MIG-001, V20-MIG-002 | Planned |
+| C2 | Order pre-reservation durumları eksik. | V0-DAT-002 | V11-RSV-001, V14-QRO-001 | Planned |
+| C3 | `account_transactions.amount` işaret kuralı tanımsız. | V0-DOM-007 | V13-ACC-001 | Planned |
+| C4 | `payment_allocations.idempotency_key` kapsamı ve çapraz-bill bütünlüğü eksik. | V0-DOM-004 | V1-FND-002, V12-ALC-001 | Planned |
+| C5 | Table status, QR `PendingConfirmation` durumunu güvenilir biçimde yansıtmıyor. | V0-DOM-005 | V14-QRO-002 | Planned |
+| C6 | Meal-card parent/child settlement status güncellemesi atomik değil. | V0-DAT-004 | V12-MCD-002 | Planned |
+| C7 | Polymorphic reference değer kataloğu ve kısıtları eksik. | V0-DAT-002 | V20-GAT-001 | Planned |
+| C8 | `I.46` başlangıç lifecycle listesi 14 diyor; doğrulanmış sayı 13. | V0-DOC-001 | V20-GAT-001 | Planned |
+| C9 | `recipe_ingredients.waste_factor` işlem sırası açık değil. | V0-DOM-010 | V11-PRD-002 | Planned |
 
 ## 3. II.16 Map Correction
 
@@ -39,8 +39,9 @@ All V0 decision documents are cross-referenced. Key findings resolved:
 
 ## 5. Remaining Blockers
 
-- 3 external integration tasks (Hugin, QNB, MealCard) require real sandbox/device access
-- These are tracked as InProgress and do NOT block V0 exit gate
+- 8 external/sandbox tasks (Hugin, QNB, MealCard, Yemeksepeti, Printing, QR Relay, BKP-001, BKP-002) require real
+  sandbox/device access or a stable disposable PostgreSQL instance
+- These are tracked as `Blocked` and do NOT block V0 exit gate per `plan/GATES.md`
 
 ## 6. Consumer Interface
 

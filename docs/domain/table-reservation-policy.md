@@ -45,7 +45,7 @@ CREATE TABLE reservations (
 | `actor` enum | host/waiter/customer_qr/system | Clear ownership of reservation |
 | `expires_at` | Required | Prevents abandoned reservations blocking tables |
 | `cancelled_at` | Nullable | Soft cancellation with audit trail |
-| QR limitation | QR cannot create reservation | QR is for menu/view only; reservation requires explicit actor |
+| QR table hold | QR order in `PendingConfirmation` places the table in `Reserved`; `Accepted` → `Occupied`, `Rejected` → `Available` (CORR:C5, implementation: V14-QRO-002) | Table state reliably reflects QR order confirmation without direct QR reservation creation |
 
 ## 3. Reservation Rules
 
@@ -63,8 +63,10 @@ A reservation can be cancelled by:
 
 Cancellation MUST record `cancelled_at`, `cancelled_by`, and `cancel_reason`.
 
-### Rule 4: QR Cannot Reserve
-The QR customer flow (menu view, order) MUST NOT create a reservation. QR is read-only for table state. Only `host`, `waiter`, or `system` actors can create reservations.
+### Rule 4: QR Order Table Hold (CORR:C5)
+A QR order that reaches `PendingConfirmation` MUST transition the table to `Reserved`. When the order is `Accepted`,
+the table becomes `Occupied`; when `Rejected`, the table returns to `Available`. The QR flow itself MUST NOT create a
+reservation record directly — the table transition is driven by the order state machine (implementation: V14-QRO-002).
 
 ### Rule 5: Occupancy Priority
 When a Table is `Reserved` and a walk-in customer arrives:
@@ -78,7 +80,7 @@ A Table can have at most one active (non-expired, non-cancelled) reservation at 
 ## 4. Invariants
 
 1. **Single active reservation**: A Table may have at most one reservation where `expires_at > now()` AND `cancelled_at IS NULL`.
-2. **QR cannot reserve**: The `customer_qr` actor MUST NOT create reservations.
+2. **QR table hold (CORR:C5)**: A QR order in `PendingConfirmation` MUST place the table in `Reserved`; `Accepted` → `Occupied`; `Rejected` → `Available`. The QR flow MUST NOT create reservation records directly.
 3. **Expiry enforcement**: `expires_at` MUST be in the future at creation time.
 4. **Audit trail**: Every reservation creation, cancellation, and expiry MUST be logged.
 5. **Table state consistency**: When a reservation expires or is cancelled, Table state MUST return to `Available`.
@@ -95,12 +97,18 @@ A Table can have at most one active (non-expired, non-cancelled) reservation at 
 - Customer cancels; waiter cancels reservation with reason "customer cancelled"
 - Table 3: Reserved → Available immediately
 
+### Example 3: QR order table hold
+- Customer scans QR code on Table 7 and submits an order
+- Order enters `PendingConfirmation` → Table 7: Available → Reserved (system hold)
+- Restaurant accepts the order → Table 7: Reserved → Occupied
+- (If rejected instead → Table 7: Reserved → Available)
+
 ## 6. Negative Examples
 
-### Example 1: QR attempts reservation
+### Example 1: QR attempts direct reservation
 - Customer scans QR code on Table 7
-- QR flow attempts to create reservation with actor=customer_qr
-- Result: Rejected — QR cannot create reservations
+- QR flow attempts to create a reservation record directly with actor=`customer_qr` without an order in `PendingConfirmation`
+- Result: Rejected — table transitions are driven by order state (PendingConfirmation/Accepted/Rejected) or explicit `host`/`waiter`/`system` actors; the QR flow cannot create reservations
 
 ### Example 2: Double reservation
 - Table 2 has active reservation (19:00-21:00)

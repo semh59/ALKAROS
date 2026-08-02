@@ -47,7 +47,8 @@ V1 flow'ları için structured event contract, correlation/request ID ve bounded
 ## Acceptance evidence
 
 - Order yazdırma kuyruğuna gönderme ID tek korelasyonla izlenebilir; sağlık status standarttır; gizli test işaretçisi
-  düzeltildi; onaylanmış bir saklama politikası kimliği olmadan ısrar reddedilir.
+  senaryosu ilgili testlerle doğrulanır (ilgili test: `tests/Modules/Observability/Foundation/**`; çalıştırma komutu,
+  komut çıktısı ve exit code evidence'e eklenir); onaylanmış bir saklama politikası kimliği olmadan ısrar reddedilir.
 
 ## Handoff
 

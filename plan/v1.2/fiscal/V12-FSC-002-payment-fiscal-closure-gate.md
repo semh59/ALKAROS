@@ -37,6 +37,7 @@ policy ile karar vermek.
 - V12-ALC-002
 - V12-HUG-001
 - V12-FSC-001
+- V12-FSC-003
 - V12-PAY-004
 - V12-ALC-004
 - V0-CMP-001

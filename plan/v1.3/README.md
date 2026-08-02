@@ -16,7 +16,8 @@ sözleşmesi kapanmış olmalıdır.
 - Cari bakiye transaction ledger'dan yeniden üretilebilir.
 - Faturalama charge değerini ikinci kez borç yazmaz.
 - QNB outgoing/incoming ve timeout reconciliation akışları geçer.
-- KVKK veri yaşam döngüsü müşteri tabloları dışındaki PII alanlarını da kapsar.
+- KVKK veri yaşam döngüsü; müşteri tabloları dışındaki PII alanlarının yaşam döngüsü `V15-KVK-001/002` görevleriyle
+  kapanır.
 
 ## Modüller
 

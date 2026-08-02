@@ -1,0 +1,13 @@
+2026-08-02 11:27:53.485 +03 [32152] LOG:  starting PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35226, 64-bit
+2026-08-02 11:27:53.491 +03 [32152] LOG:  could not bind IPv6 address "::1": Only one usage of each socket address (protocol/network address/port) is normally permitted.
+	
+2026-08-02 11:27:53.491 +03 [32152] HINT:  Is another postmaster already running on port 5433? If not, wait a few seconds and retry.
+2026-08-02 11:27:53.491 +03 [32152] LOG:  listening on IPv4 address "127.0.0.1", port 5433
+2026-08-02 11:27:53.568 +03 [20256] LOG:  database system was interrupted; last known up at 2026-08-02 11:20:37 +03
+2026-08-02 11:27:53.807 +03 [20256] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-08-02 11:27:53.810 +03 [20256] LOG:  redo starts at 0/17F1220
+2026-08-02 11:27:53.815 +03 [20256] LOG:  invalid record length at 0/1844728: expected at least 24, got 0
+2026-08-02 11:27:53.815 +03 [20256] LOG:  redo done at 0/18446F0 system usage: CPU: user: 0.00 s, system: 0.01 s, elapsed: 0.00 s
+2026-08-02 11:27:53.822 +03 [13276] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-08-02 11:27:53.840 +03 [13276] LOG:  checkpoint complete: wrote 43 buffers (0.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.008 s, total=0.022 s; sync files=11, longest=0.002 s, average=0.001 s; distance=333 kB, estimate=333 kB; lsn=0/1844728, redo lsn=0/1844728
+2026-08-02 11:27:53.857 +03 [32152] LOG:  database system is ready to accept connections

@@ -26,6 +26,7 @@ Bakiyeyi değiştirmeden kapalı bir fatura dönemi için uygun faturalanmamış
 ## In scope
 
 - Dönem sınırı, uygunluk, kilitleme, kaynağın benzersizliği ve yeniden çalıştırma davranışı.
+- Fatura dönemi operator komutuyla kapatılır; kapalı döneme yeni kaynak eklenemez; kapanış tarihi kayıt altına alınır.
 
 ## Out of scope
 
@@ -35,6 +36,7 @@ Bakiyeyi değiştirmeden kapalı bir fatura dönemi için uygun faturalanmamış
 
 - V13-ACC-002
 - V13-ACC-003
+- V0-DOM-007
 - V0-CMP-002
 
 ## Deliverables

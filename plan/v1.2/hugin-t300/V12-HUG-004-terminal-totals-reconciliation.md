@@ -26,7 +26,8 @@ Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamla
 
 ## In scope
 
-- Dönem/kesim kimliği, terminal referans eşleştirmesi, eksik/ekstra işlem ve vaka oluşturma.
+- Dönem/kesim kimliği, terminal referans eşleştirmesi, eksik/ekstra işlem ve sapma tespiti; case üretimi
+  `V12-REC-001` API'si üzerinden.
 
 ## Out of scope
 
@@ -56,4 +57,5 @@ Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamla
 
 ## Handoff
 
+- V12-REC-001
 - V15-REC-001

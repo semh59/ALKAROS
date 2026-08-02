@@ -27,8 +27,8 @@ Yalnız `fc5ae22` (kök baseline, konvansiyon öncesi) kayıtlı istisnadır ve 
 - `plan/AUDIT_MANIFEST.json`
 - `Directory.Build.props`
 - `docs/versioning-strategy.md`
-- `evidence/V1-FND-008/**`
 - `evidence/V1-FND-009/**`
+- Bu görev notları yalnız kendi `evidence/V1-FND-009/**` dizinine yazar (başka görev kanıt dizinlerine yazılmaz).
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez; aşağıdaki geçmiş yeniden yazımı 2026-08-01
   kullanıcı onaylı plan değişikliğidir.
 

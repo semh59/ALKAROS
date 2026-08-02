@@ -47,8 +47,8 @@ Waiter/cashier submit akışını response replay içeren version-controlled con
 
 ## Acceptance evidence
 
-- retry'ye iki kez dokunup yeniden bağlanın ve bir submitted Order oluşturun; yeniden kullanılan anahtarla değiştirilen
-  gövde reddedilir; Eski sürüm hiçbir şeyi değiştirmez.
+- Retry'ye çift dokunuş ve yeniden bağlanma yalnız bir submitted Order oluşturur; yeniden kullanılan anahtarla
+  değiştirilen gövde reddedilir; eski sürüm hiçbir şeyi değiştirmez.
 
 ## Handoff
 

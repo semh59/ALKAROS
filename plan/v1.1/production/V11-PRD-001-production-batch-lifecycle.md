@@ -35,8 +35,10 @@ Immutable RecipeVersion'a bağlı Planned, InProgress, Completed ve Cancelled Pr
 ## Dependencies
 
 - V11-RCP-001
+- V11-RCP-002
 - V11-MNU-001
 - V0-DOM-001
+- V0-DOM-010
 
 ## Deliverables
 

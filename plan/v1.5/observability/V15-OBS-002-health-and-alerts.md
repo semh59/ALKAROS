@@ -37,6 +37,7 @@ Veritabanı, disk, yazıcı, yedekleme ve entegrasyon durumunu tekilleştirilmi�
 - V15-REC-001
 - V0-DAT-002
 - V0-DOM-001
+- V1-ALT-001
 
 ## Deliverables
 

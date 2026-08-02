@@ -13,7 +13,7 @@
 |-------|-------|
 | **Decision ID** | V0-CMP-005-D001 |
 | **Date** | 2026-07-30 |
-| **Approver** | TBD (accessibility/product owner) |
+| **Approver** | TBD (onay bekliyor) |
 | **Selected result** | WCAG 2.2 Level AA for all UI surfaces |
 | **Rejected alternatives** | Level A only (insufficient for public-facing restaurant POS); Level AAA (impractical for cashier speed-critical UI) |
 
@@ -87,7 +87,6 @@
 - 3.3.4 Error Prevention (Legal, Financial, Data) (AA)
 
 ### Robust
-- 4.1.1 Parsing (A) — obsolete in WCAG 2.2
 - 4.1.2 Name, Role, Value (A)
 - 4.1.3 Status Messages (AA)
 
@@ -104,7 +103,7 @@
 
 | Exception ID | Surface | Criterion | Rationale | Approval Date | Approver |
 |-------------|---------|-----------|-----------|---------------|----------|
-| EXC-001 | CUI | 2.4.11 Focus Appearance | Touch-only kiosk mode; no keyboard focus indicator needed | TBD | TBD |
+| EXC-001 | CUI | 2.4.11 Focus Appearance | Touch-only kiosk mode; no keyboard focus indicator needed | TBD (onay bekliyor) | TBD (onay bekliyor) |
 
 ## 6. Affected Tasks
 

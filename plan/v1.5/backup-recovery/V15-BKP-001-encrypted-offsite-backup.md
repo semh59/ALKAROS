@@ -25,10 +25,12 @@ Doğrulanmış şifrelenmiş veritabanı yapılarını, saklama ve anahtar meta 
 ## In scope
 
 - İstemci tarafı şifreleme, sağlama toplamı, retry, saklama, değişmez yapıt meta verileri ve alert hatası.
+- Fiscal/audit verisi için RPO=0 mekanizması (WAL/continuous streaming arşivleme) ve financial veri için 15 dk akış;
+  off-site yükleme günlük ritimde.
 
 ## Out of scope
 
-- Düzenlemeyi ve yerel yedekleme oluşturmayı geri yükleyin.
+- Geri yükleme orkestrasyonu ve yerel yedekleme oluşturma.
 
 ## Dependencies
 
@@ -49,6 +51,7 @@ Doğrulanmış şifrelenmiş veritabanı yapılarını, saklama ve anahtar meta 
 - İndirilen yapı sağlama toplamı eşleşir ve yetkili anahtar olmadan geri yüklenemez; yükleme hatası görünür ve güvenli
   bir şekilde yeniden denenir.
 - Ölçülen backup sıklığı ve en eski kurtarılabilir nokta, `V0-BKP-002` kararındaki onaylı RPO eşiğini karşılar.
+- RPO=0/15 dk karşılanma kanıtı: WAL arşiv konum farkı ölçümü ve restore noktası doğrulaması.
 
 ## Handoff
 

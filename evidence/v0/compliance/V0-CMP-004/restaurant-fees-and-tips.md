@@ -1,11 +1,12 @@
 # Restaurant Fee and Tip Applicability
 
 > **Task:** V0-CMP-004
-> **Status:** InProgress
+> **Status:** Done
 > **Assignee:** codex-v0-cmp-004
 > **Work type:** validation
 > **Source basis:** CORR:C10
 > **Date:** 2026-07-30
+> **Updated:** 2026-08-02 — metadata `InProgress` → `Done`; içerik değişmedi. Karar kaynağı: `CORR:C10`; hedef işletme profili restoran/hızlı yemek (ücret/tip matrisi bu profile göre); tüketici: `V1-BIL-003`.
 
 ## 1. Fee/Tip Matrix
 

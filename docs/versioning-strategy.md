@@ -35,12 +35,12 @@ main (protected)
 
 Each task gets a branch from its version base:
 ```
-git checkout -b v0/DOM-001-lifecycle-transitions
-git checkout -b v1/FND-001-module-skeleton
-git checkout -b v12/PAY-001-payment-aggregate
+git checkout -b V0-DOM-001-lifecycle-transitions
+git checkout -b V1-FND-001-module-skeleton
+git checkout -b V12-PAY-001-payment-aggregate
 ```
 
-Branch naming: `<version>/<TASK-ID>-<short-description>`
+Branch naming: `<TASK-ID>-<short-description>` (branch off the task's version base)
 
 ## 2. Commit Convention
 

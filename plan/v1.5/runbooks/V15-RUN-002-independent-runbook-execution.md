@@ -17,7 +17,7 @@ Critical operational runbook'ları yazar müdahalesi olmadan test ortamında uyg
 
 ## Owned surface
 
-- `evidence/v15/runbooks/V15-RUN-002/**`
+- `evidence/V15-RUN-002/**`
 - Bu görev runbook içeriğini veya production code'u değiştiremez.
 
 ## In scope
