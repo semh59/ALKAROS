@@ -49,7 +49,7 @@ npx --yes markdownlint-cli2@0.23.2
 - Mevcut kod ağacı oluşmadığı sürece bütün görevlerde `Surface state: Planned` olur.
 - Repository kökündeki `AGENTS.md`, tek `Task ID` ve fail-closed Codex write-set
   sözleşmesini içerir.
-- `V1-FND-001`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
+- `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` direct dependency zinciriyle bu
   sırada tamamlanır; zincir bitmeden başka application görevi `InProgress` olamaz.
 - 2026-08-01 kullanıcı onayıyla `V1-FND-007` (audit remediation) zincirden önce
@@ -63,6 +63,14 @@ npx --yes markdownlint-cli2@0.23.2
   rewrite + force-push) da aynı istisna kapsamında zincirden önce
   başlatılabilir; karar kaydı `TRACEABILITY.md` FIND-IA-0050'dir ve zincir
   kuralı diğer application görevleri için değişmez.
+- `GATES.md` içindeki `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu 2026-08-02
+  kullanıcı onayını makinece doğrular. Yalnız `V1-FND-011`, `V1-FND-012`,
+  `V1-IAM-004` ve `V1-SEC-003` exact kayıtları, açık `GATE-V0-EXIT`
+  kontrolünü kanıtlanmış bulgu remediation'ı için atlayabilir.
+- Tablo marker'ı, başlığı, ayıracı, satır biçimi, approval tarihi veya exact
+  Task ID kümesi bozuksa; yinelenen ya da ek bir kayıt varsa task-scope
+  denetimi fail-closed non-zero exit verir. İstisna V0/V1 gate kapanış kanıtı
+  değildir ve yeni product behavior başlatma izni vermez.
 - Codex write allowlist yalnız `Owned surface`, aktif görev metadata alanları ve
   `evidence/<Task-ID>/**` birleşimidir.
 - Scope doğrulaması staged, unstaged, untracked, deleted ve rename işleminin her
@@ -82,7 +90,7 @@ npx --yes markdownlint-cli2@0.23.2
 
 ## PDF coverage kontrolleri
 
-- PDF'deki 374 adet `I.*`, `II.*`, `III.*`, `IV.*` başlığı ve `C1-C9`
+- PDF'deki 375 adet `I.*`, `II.*`, `III.*`, `IV.*` başlığı ve `C1-C9`
   kayıtları coverage matrisinde tam olarak bir kez yer alır.
 - PDF'nin 94 sayfasından çıkarılan 2.725 non-empty text line; page, parent
   section, class, tam normalize text SHA-256, owner ve disposition taşır.
@@ -91,7 +99,7 @@ npx --yes markdownlint-cli2@0.23.2
 - `pdfplumber` geometry detector tarafından bulunan 178 table-like row ayrıca
   page/bounding-order temelli unit kimliği ve tam normalize cell-text SHA-256
   değeriyle izlenir. Bu sınıf semantik tablo varsayımı değildir.
-- Regeneration aynı 374/9/2.725/178 sayılarını, parent/owner değerlerini ve aynı
+- Regeneration aynı 375/9/2.725/178 sayılarını, parent/owner değerlerini ve aynı
   unit hash'lerini üretir.
 - `II.16` plan gereksinimi olarak oluşturulmaz; belge haritası finding'i olarak
   tutulur.
@@ -107,10 +115,12 @@ npx --yes markdownlint-cli2@0.23.2
 ## Kapanış
 
 İlk doğrulamadan sonra aynı kontroller taze bağlamlı bağımsız denetimde yeniden
-çalıştırılır. İkinci çalıştırma sıfır hata üretmeden Git hazırlık işi başlamaz.
-`AUDIT_MANIFEST.json`; bütün Markdown dosyalarının yanında `AGENTS.md`, lint
-config, runtime/dependency lock'ları, baseline manifest ve kalıcı audit tool
-hash'lerini de doğrular.
+çalıştırılır. İkinci çalıştırma sıfır hata üretmeden hiçbir application görevi
+başlamaz; Git geçmişinin varlığı veya yokluğu gate yerine geçmez.
+`AUDIT_MANIFEST.json`; aktif `plan/`, `docs/`, `evidence/` Markdown dosyaları ile
+`AGENTS.md` dosyasını, lint config, runtime/dependency lock'ları, baseline
+manifest ve kalıcı audit tool hash'lerini de doğrular. `tmp/plan_audit_original/`
+yalnız değişmez başlangıç arşividir ve aktif kapsam değildir.
 
 Mevcut koşullu Markdown sayısı artık sabit değil: `verify-manifest` sayıyı
 diskteki `plan/**/*.md` dosyalarından türetir; meal-card provider kararı

@@ -22,6 +22,7 @@ and CI can consume the same result contract.
 """
 
 import argparse
+import difflib
 import json
 import re
 import subprocess
@@ -46,7 +47,39 @@ _TASK_ID_FORMAT = re.compile(r"^V\d+-[A-Z]+-\d+$")
 _BACKTICK_PATH = re.compile(r"`([^`]+)`")
 _PATH_SHAPE = re.compile(r"[/\\.*?]")
 
-VALID_STATUSES: Set[str] = {"Planned", "InProgress", "Done", "Blocked"}
+VALID_STATUSES: Set[str] = {
+    "Planned", "InProgress", "Done", "Blocked", "NotApplicable"
+}
+EXECUTABLE_STATUSES: Set[str] = {"Planned", "InProgress"}
+
+_VERSION_PATTERN = re.compile(r"^(V(?:0|1|11|12|13|14|15|20))-")
+_ENTRY_GATE_BY_VERSION = {
+    "V1": "V0",
+    "V11": "V1",
+    "V12": "V11",
+    "V13": "V12",
+    "V14": "V13",
+    "V15": "V14",
+    "V20": "V15",
+}
+_REMEDIATION_EXCEPTION_START = "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->"
+_REMEDIATION_EXCEPTION_END = "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->"
+_REMEDIATION_EXCEPTION_HEADER = (
+    "| Task ID | Approval date | Purpose | Gate closure evidence | "
+    "New feature behavior |"
+)
+_REMEDIATION_EXCEPTION_SEPARATOR = "| --- | --- | --- | --- | --- |"
+_REMEDIATION_EXCEPTION_ROW = re.compile(
+    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`2026-08-02`\s*\|\s*"
+    r"Verified finding remediation only\s*\|\s*Not gate closure evidence\s*\|\s*"
+    r"No new feature behavior\s*\|$"
+)
+_APPROVED_REMEDIATION_TASK_IDS = {
+    "V1-FND-011",
+    "V1-FND-012",
+    "V1-IAM-004",
+    "V1-SEC-003",
+}
 
 
 class TaskParseError(Exception):
@@ -102,6 +135,11 @@ def parse_task_file(file_path: Path) -> TaskMetadata:
         raise TaskParseError(f"Task file not found: {file_path}")
 
     text = file_path.read_text(encoding="utf-8")
+    return parse_task_text(text, file_path)
+
+
+def parse_task_text(text: str, file_path: Path) -> TaskMetadata:
+    """Parse task Markdown text using *file_path* for diagnostics."""
 
     task_id_matches = _TASK_ID_PATTERN.findall(text)
     if len(task_id_matches) != 1:
@@ -196,6 +234,120 @@ def check_dependency_status(
     if dep_meta.status != "Done":
         return False, dep_meta.status
     return True, "Done"
+
+
+def _task_version(task_id: str) -> str:
+    """Return the supported release version encoded in *task_id*."""
+    match = _VERSION_PATTERN.match(task_id)
+    if match is None:
+        raise TaskParseError(f"Task ID does not have a supported version: {task_id}")
+    return match.group(1)
+
+
+def _all_tasks(plan_dir: Path) -> List[TaskMetadata]:
+    """Return every parseable task under *plan_dir*, sorted by task ID."""
+    tasks: List[TaskMetadata] = []
+    for task_file in sorted(plan_dir.rglob("*.md")):
+        text = task_file.read_text(encoding="utf-8")
+        if not _TASK_ID_PATTERN.search(text):
+            continue
+        tasks.append(parse_task_text(text, task_file))
+    return sorted(tasks, key=lambda item: item.task_id)
+
+
+def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
+    """Return the exact user-approved remediation IDs from ``GATES.md``.
+
+    The table is deliberately strict: a malformed, duplicate, missing, or
+    non-approved record cannot expand the entry-gate bypass.
+    """
+    gates_file = plan_dir / "GATES.md"
+    if not gates_file.is_file():
+        raise TaskParseError("Remediation exception table not found in GATES.md")
+
+    lines = gates_file.read_text(encoding="utf-8").splitlines()
+    starts = [
+        index for index, line in enumerate(lines) if line == _REMEDIATION_EXCEPTION_START
+    ]
+    ends = [
+        index for index, line in enumerate(lines) if line == _REMEDIATION_EXCEPTION_END
+    ]
+    if len(starts) != 1 or len(ends) != 1:
+        raise TaskParseError("Remediation exception table markers must occur exactly once")
+    start, end = starts[0], ends[0]
+
+    if start >= end:
+        raise TaskParseError("Remediation exception table markers are out of order")
+
+    table_lines = lines[start + 1:end]
+    if len(table_lines) < 3:
+        raise TaskParseError("Remediation exception table is incomplete")
+    if table_lines[0] != _REMEDIATION_EXCEPTION_HEADER:
+        raise TaskParseError("Remediation exception table header is invalid")
+    if table_lines[1] != _REMEDIATION_EXCEPTION_SEPARATOR:
+        raise TaskParseError("Remediation exception table separator is invalid")
+
+    exception_ids: Set[str] = set()
+    for line in table_lines[2:]:
+        match = _REMEDIATION_EXCEPTION_ROW.fullmatch(line)
+        if match is None:
+            raise TaskParseError("Remediation exception table contains an invalid record")
+        task_id = match.group("task_id")
+        if task_id in exception_ids:
+            raise TaskParseError(
+                f"Remediation exception table contains a duplicate Task ID: {task_id}"
+            )
+        exception_ids.add(task_id)
+
+    if exception_ids != _APPROVED_REMEDIATION_TASK_IDS:
+        raise TaskParseError(
+            "Remediation exception table Task IDs must exactly match the "
+            "2026-08-02 user approval"
+        )
+    return exception_ids
+
+
+def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
+    """Return closure errors for the release gate immediately before *task*.
+
+    A gate is closed only when every task in the preceding release version is
+    explicitly ``Done`` or ``NotApplicable``.  The plan has no authoritative
+    closure flag; deriving the result from the task records prevents a mutable
+    prose statement from opening a release gate.
+    """
+    version = _task_version(task.task_id)
+    prerequisite_version = _ENTRY_GATE_BY_VERSION.get(version)
+    if prerequisite_version is None:
+        return []
+
+    preceding = [
+        item for item in _all_tasks(plan_dir)
+        if _task_version(item.task_id) == prerequisite_version
+    ]
+    gate_id = f"GATE-{prerequisite_version}-EXIT"
+    if not preceding:
+        return [f"Entry gate {gate_id} cannot be verified: no {prerequisite_version} tasks found"]
+
+    unfinished = [
+        f"{item.task_id} ({item.status})"
+        for item in preceding
+        if item.status not in {"Done", "NotApplicable"}
+    ]
+    if unfinished:
+        if task.task_id not in _APPROVED_REMEDIATION_TASK_IDS:
+            return [
+                f"Entry gate {gate_id} is open: " + ", ".join(unfinished)
+            ]
+        try:
+            exception_ids = parse_remediation_exception_ids(plan_dir)
+        except TaskParseError as exc:
+            return [f"Entry gate {gate_id} remediation exception rejected: {exc}"]
+        if task.task_id in exception_ids:
+            return []
+        return [
+            f"Entry gate {gate_id} is open: " + ", ".join(unfinished)
+        ]
+    return []
 
 
 # ---------------------------------------------------------------------------
@@ -410,18 +562,15 @@ def build_allowlist(
 
     The allowlist includes:
     - All patterns from the task's ``Owned surface`` section.
-    - The task's own metadata file path.
     - ``evidence/<Task-ID>/**``.
+
+    The task Markdown is deliberately excluded. It is validated separately
+    because only its ``Status`` and ``Assignee`` metadata lines may change.
     """
     patterns: List[str] = []
     for surface in task.owned_surface:
         normalized = normalize_path(surface)
         patterns.append(normalized)
-
-    metadata_path = normalize_path(
-        str(task.file_path.relative_to(workspace))
-    )
-    patterns.append(metadata_path)
 
     patterns.append(f"evidence/{task.task_id.lower()}/**")
 
@@ -466,15 +615,15 @@ def validate_task_metadata(
     """Validate task metadata and return a list of error messages.
 
     Checks:
-    - Status is InProgress or Done (not Planned or Blocked).
+    - Status is Planned or a named active InProgress session.
     - Assignee is set and not generic.
     - All dependencies are Done.
     """
     errors: List[str] = []
 
-    if task.status not in ("InProgress", "Done"):
+    if task.status not in EXECUTABLE_STATUSES:
         errors.append(
-            f"Task status is {task.status!r}, expected 'InProgress' or 'Done'"
+            f"Task status is {task.status!r}, expected 'Planned' or 'InProgress'"
         )
 
     assignee_lower = task.assignee.lower().strip()
@@ -496,7 +645,98 @@ def validate_task_metadata(
                 f"Dependency {dep_id} is not Done (status: {reason})"
             )
 
+    errors.extend(check_entry_gate(task, plan_dir))
+
     return errors
+
+
+def _git_file_text(repo_root: Path, ref: str, relative_path: str) -> Optional[str]:
+    """Return UTF-8 text for *relative_path* at *ref*, or None if absent."""
+    result = subprocess.run(
+        ["git", "-C", str(repo_root), "show", f"{ref}:{relative_path}"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    return result.stdout if result.returncode == 0 else None
+
+
+def validate_task_markdown_change(
+    task: TaskMetadata,
+    changes: List[GitChange],
+    repo_root: Path,
+    diff_base: Optional[str],
+) -> List[Dict[str, str]]:
+    """Reject task Markdown changes outside the two mutable metadata lines.
+
+    The baseline comes from HEAD in worktree mode and from the merge-base in
+    CI diff mode. A task file absent from that baseline is rejected: otherwise
+    an untracked task could define its own broad Owned surface and immediately
+    write outside the intended boundary.
+    """
+    relative_path_raw = task.file_path.relative_to(repo_root).as_posix()
+    relative_path = normalize_path(relative_path_raw)
+    task_change = next(
+        (change for change in changes if relative_path in change.all_paths()),
+        None,
+    )
+    if task_change is None:
+        return []
+
+    baseline_ref = "HEAD"
+    if diff_base is not None:
+        merge_base = subprocess.run(
+            ["git", "-C", str(repo_root), "merge-base", diff_base, "HEAD"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        if merge_base.returncode != 0:
+            return [{
+                "path": relative_path,
+                "change_type": task_change.change_type,
+                "reason": "cannot resolve diff-mode task Markdown baseline",
+            }]
+        baseline_ref = merge_base.stdout.strip()
+
+    baseline = _git_file_text(repo_root, baseline_ref, relative_path_raw)
+    if baseline is None:
+        return [{
+            "path": relative_path,
+            "change_type": task_change.change_type,
+            "reason": "task Markdown has no committed baseline",
+        }]
+
+    if diff_base is None:
+        current = task.file_path.read_text(encoding="utf-8") if task.file_path.exists() else ""
+    else:
+        current = _git_file_text(repo_root, "HEAD", relative_path_raw)
+        if current is None:
+            return [{
+                "path": relative_path,
+                "change_type": task_change.change_type,
+                "reason": "task Markdown deletion is not permitted",
+            }]
+
+    mutable_line = re.compile(r"^- (?:Status|Assignee):.*$", re.MULTILINE)
+    baseline_fixed = mutable_line.sub("", baseline)
+    current_fixed = mutable_line.sub("", current)
+    if baseline_fixed == current_fixed:
+        return []
+
+    changed_lines = list(
+        difflib.unified_diff(
+            baseline_fixed.splitlines(), current_fixed.splitlines(), n=0
+        )
+    )
+    return [{
+        "path": relative_path,
+        "change_type": task_change.change_type,
+        "reason": "task Markdown changed outside Status or Assignee metadata",
+        "detail": "\\n".join(changed_lines[:8]),
+    }]
 
 
 # ---------------------------------------------------------------------------
@@ -542,12 +782,49 @@ def run_validation(
     metadata_errors = validate_task_metadata(task, plan_dir)
     result["metadata_errors"] = metadata_errors
 
-    allowlist = build_allowlist(task, workspace=repo_root)
     if diff_base is not None:
         changes = get_git_diff_changes(repo_root, diff_base)
     else:
         changes = get_git_changes(repo_root)
-    findings = validate_changes(changes, allowlist)
+    task_path = normalize_path(str(task.file_path.relative_to(repo_root)))
+    allowlist_task = task
+    if any(task_path in change.all_paths() for change in changes):
+        baseline_ref = "HEAD"
+        if diff_base is not None:
+            merge_base = subprocess.run(
+                ["git", "-C", str(repo_root), "merge-base", diff_base, "HEAD"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            if merge_base.returncode == 0:
+                baseline_ref = merge_base.stdout.strip()
+            else:
+                baseline_ref = ""
+        baseline = (
+            _git_file_text(
+                repo_root,
+                baseline_ref,
+                task.file_path.relative_to(repo_root).as_posix(),
+            )
+            if baseline_ref
+            else None
+        )
+        if baseline is not None:
+            allowlist_task = parse_task_text(baseline, task.file_path)
+
+    allowlist = build_allowlist(allowlist_task, workspace=repo_root)
+    non_metadata_changes = [
+        change
+        for change in changes
+        if task_path not in change.all_paths()
+    ]
+    findings = validate_changes(non_metadata_changes, allowlist)
+    findings.extend(
+        validate_task_markdown_change(task, changes, repo_root, diff_base)
+    )
+    findings.sort(key=lambda finding: (finding["path"], finding["reason"]))
     result["findings"] = findings
 
     result["valid"] = len(metadata_errors) == 0 and len(findings) == 0

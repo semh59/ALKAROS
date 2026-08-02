@@ -49,6 +49,34 @@ def _commit(repo: Path, rel: str, content: str = "x\n") -> Path:
     return p
 
 
+def _write_remediation_exceptions(plan_dir: Path, rows: list[str]) -> None:
+    """Write the strict GATES.md remediation-exception table fixture."""
+    table = "\n".join(rows)
+    (plan_dir / "GATES.md").write_text(
+        "\n".join(
+            [
+                "# Version Gates",
+                "",
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->",
+                "| Task ID | Approval date | Purpose | Gate closure evidence | New feature behavior |",
+                "| --- | --- | --- | --- | --- |",
+                table,
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+
+REMEDIATION_ROWS = [
+    "| `V1-FND-011` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `V1-FND-012` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `V1-IAM-004` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `V1-SEC-003` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+]
+
+
 # ---------------------------------------------------------------------------
 # Allow / deny
 # ---------------------------------------------------------------------------
@@ -231,11 +259,11 @@ class TestTaskMetadata:
         assert exit_code == 1
         assert any("exactly one Task ID" in e for e in result["metadata_errors"])
 
-    def test_wrong_status_planned(self, write_task, make_repo, make_plan, run_tool):
-        write_task(status="Planned")
+    def test_done_status_rejected(self, write_task, make_repo, make_plan, run_tool):
+        write_task(status="Done")
         exit_code, result = run_tool("V1-FND-003", make_repo, make_plan)
         assert exit_code == 1
-        assert any("Planned" in e for e in result["metadata_errors"])
+        assert any("Done" in e for e in result["metadata_errors"])
 
     def test_wrong_assignee_unassigned(self, write_task, make_repo, make_plan, run_tool):
         write_task(assignee="Unassigned (exactly one person)")
@@ -285,6 +313,79 @@ class TestDependencies:
         exit_code, result = run_tool("V1-FND-003", make_repo, make_plan)
         assert exit_code == 1
         assert any("V1-FND-999" in e for e in result["metadata_errors"])
+
+
+# ---------------------------------------------------------------------------
+# User-approved remediation entry-gate exceptions
+# ---------------------------------------------------------------------------
+
+class TestRemediationEntryGateExceptions:
+    def _prepare_open_v0_gate(self, write_task, make_repo, make_plan) -> None:
+        _write_remediation_exceptions(make_plan, REMEDIATION_ROWS)
+        write_task(task_id="V0-DOM-001", status="Planned")
+
+    def test_approved_task_bypasses_open_v0_entry_gate(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-011")
+
+        exit_code, result = run_tool("V1-FND-011", make_repo, make_plan)
+
+        assert exit_code == 0
+        assert result["metadata_errors"] == []
+
+    def test_unapproved_task_cannot_bypass_open_v0_entry_gate(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-999")
+
+        exit_code, result = run_tool("V1-FND-999", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("Entry gate GATE-V0-EXIT is open" in error for error in result["metadata_errors"])
+
+    def test_duplicate_exception_record_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-011")
+        _write_remediation_exceptions(make_plan, REMEDIATION_ROWS + [REMEDIATION_ROWS[0]])
+
+        exit_code, result = run_tool("V1-FND-011", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("duplicate Task ID" in error for error in result["metadata_errors"])
+
+    def test_nonmatching_exception_record_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-011")
+        nonmatching_rows = REMEDIATION_ROWS[:-1] + [
+            "| `V1-FND-999` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |"
+        ]
+        _write_remediation_exceptions(make_plan, nonmatching_rows)
+
+        exit_code, result = run_tool("V1-FND-011", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    def test_malformed_exception_record_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-011")
+        malformed_rows = REMEDIATION_ROWS.copy()
+        malformed_rows[0] = "| `V1-FND-011` | malformed |"
+        _write_remediation_exceptions(make_plan, malformed_rows)
+
+        exit_code, result = run_tool("V1-FND-011", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("invalid record" in error for error in result["metadata_errors"])
 
 
 # ---------------------------------------------------------------------------

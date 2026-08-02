@@ -2,6 +2,15 @@
 
 ## Global kurallar
 
+- `DECISION_REVALIDATION.md` içindeki her kayıt `Blocked` sayılır; eski artifact
+  veya task başlığındaki `Done` bu merkezi invalidation kaydını geçersiz kılamaz.
+- `V0-GOV-001` ve kullanıcı tarafından 2026-08-02'de onaylanan `V0-GOV-002`,
+  product behavior üretmeyen task-scope enforcement remediation görevleridir;
+  `GATE-V0-EXIT` öncesinde yalnız bu amaçla başlatılabilir.
+- 2026-08-02 kullanıcı onaylı aşağıdaki makinece ayrıştırılan exception
+  tablosundaki yalnız exact Task ID'ler, kanıtlanmış bulguyu düzeltmek için
+  `GATE-V0-EXIT` açıkken başlatılabilir. Bu istisna V0/V1 gate kapanış kanıtı
+  değildir ve yeni product behavior üretemez.
 - `v0` kapanmadan production uygulama geliştirmesi başlamaz.
 - Bir sürümün açık finansal, stok veya mevzuat kararı sonraki sürüme borç olarak
   taşınmaz.
@@ -19,7 +28,7 @@
 | Gate | Kapanma koşulu |
 | --- | --- |
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
-| `GATE-V0-EXIT` | Uygulanabilir V0 görevleri `Done`, dış kanıt bekleyenler açık `Blocked` ve tüketicileri başlamamış olur. |
+| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
 | `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
@@ -44,8 +53,19 @@ finansal/stok/mevzuat kararı varken kapanamaz.
 Bir consumer, dependency'si `NotApplicable` olduğunda yalnız kendi acceptance
 sözleşmesi bu sonucu açıkça ele alıyorsa başlayabilir; aksi durumda gate açık kalır.
 
+## 2026-08-02 user-approved remediation exceptions
+
+<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->
+| Task ID | Approval date | Purpose | Gate closure evidence | New feature behavior |
+| --- | --- | --- | --- | --- |
+| `V1-FND-011` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-012` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-004` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-SEC-003` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->
+
 `GATE-V1-ENTRY` sonrasında yalnız `V1-FND-001` başlatılır. Ardından sırasıyla
-`V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`, `V1-SEC-002`,
+`V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`, `V1-SEC-002`,
 `V1-FND-002` ve `V1-FND-006` tamamlanır. Bu sekiz görev gerçek kanıtla `Done`
 olmadan başka hiçbir application görevi `InProgress` yapılamaz.
 

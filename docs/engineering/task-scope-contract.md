@@ -31,8 +31,10 @@ fail-closed olarak reddeden sözleşme. Uygulama: `tools/task-scope/task_scope_t
 
 ## Allowlist
 
-Görev Markdown'ının `Owned surface` bölümündeki her yol, görev dosyasının kendi yolu ve `evidence/<Task-ID>/**`
-allowlist'i oluşturur. Yalnız path şekilli backtick parçaları (içinde `/`, `\`, `.`, `*` veya `?` bulunan) allowlist
+Görev Markdown'ının `Owned surface` bölümündeki her yol ve `evidence/<Task-ID>/**`
+allowlist'i oluşturur. Görev Markdown dosyasının kendisinde yalnız metadata `Status` ve `Assignee` satırları
+değişebilir; başlık, `Owned surface` veya başka bir bölüm allowlist değildir. Yalnız path şekilli backtick parçaları
+(içinde `/`, `\`, `.`, `*` veya `?` bulunan) allowlist
 ögesi sayılır; serbest metin, task ID ve diğer backtickli kelimeler yok sayılır. Kontrol edilen değişiklikler:
 worktree modunda staged, unstaged, untracked, deleted ve renamed yollar; diff modunda base ile HEAD arasındaki
 committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te olmalıdır.
@@ -41,17 +43,37 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 
 - Backslash `/`'ye çevrilir, `./` başlangıcı atılır ve tüm yol lowercase yapılır (Windows case-insensitive).
 - `**` (her şey dahil `/`), `*` (tek segment), `?` (tek karakter) desteklenir; diğer karakterler literal eşleşir.
-- Wildcard yüzeyler, exact path'lerden sonra değerlendirilir; aynı dosyayı eşleyen birden fazla yüzey kapsam dışı sayılır.
+- Wildcard yüzeyler, exact path'lerden sonra değerlendirilir; aynı dosyayı eşleyen birden fazla yüzey kapsam dışı
+  sayılır.
 - `..` dizin traversal segmenti içeren yol her koşulda reddedilir.
 
 ## Fail-closed durumlar
 
-- Görev dosyası `plan/` altında bulunamaz.
+- Görev dosyası `plan/` altında bulunamaz veya Git'te committed baseline'ı yoktur.
 - Görev dosyası birden fazla veya hiç Task ID içermez; Task ID biçimi geçersizdir.
 - `Status` değeri `Planned`, `InProgress`, `Done`, `Blocked`, `NotApplicable` dışındadır.
 - `Assignee` boştur veya genel (`codex`, `ai`, `none`, `unassigned*`) tanımlıdır.
 - Bağımlılıklardan herhangi biri `Done` değildir.
 - Değişen bir yol allowlist'te değildir veya traversal içerir.
+- Görev Markdown değişikliği `Status` veya `Assignee` metadata satırı dışında bir satıra dokunur.
+- `Status` değeri `Planned` veya gerçek oturum sahibine atanmış `InProgress` değildir.
+- Sürüm entry gate'i, önceki sürümdeki her görevin `Done` veya kanıtlı
+  `NotApplicable` kaydıyla kapandığı ispatlanamamıştır.
+- `GATES.md` içindeki 2026-08-02 remediation exception tablosunun marker'ı,
+  başlığı, ayıracı, satır biçimi veya exact Task ID kümesi geçersizdir;
+  yinelenen veya onaysız Task ID kaydı vardır.
+
+## Kanıtlanmış bulgu remediation istisnası
+
+`GATE-V0-EXIT` açıkken `check_entry_gate`, yalnız `GATES.md` içindeki
+`TASK_SCOPE_REMEDIATION_EXCEPTIONS` marker'ları arasındaki katı tablodan
+ayrıştırılan exact ID'leri kabul eder. 2026-08-02 kullanıcı onayının sabit
+kümesi `V1-FND-011`, `V1-FND-012`, `V1-IAM-004` ve `V1-SEC-003`'tür.
+
+Tablo eksik, bozuk, yinelenen veya bu kümeyle eşleşmeyen bir kayıt içerirse
+denetim fail-closed olarak non-zero exit verir. İstisna yalnız kanıtlanmış
+bulguyu düzeltmeye yarar; V0/V1 gate kapanış kanıtı değildir ve yeni product
+behavior üretme izni vermez.
 
 ## Failure recovery
 
@@ -62,3 +84,13 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
   local komut ve CI'da aynı exit code ve sıralı finding listesini üretir (worktree modu local, diff modu CI için;
   her iki modun çıktı sözleşmesi aynıdır).
 - Dependency `Done` değilse önce dependency görevi kanıtla kapatılır, sonra aktif görev doğrulanır.
+
+## Task Markdown immutability
+
+- Araç, worktree modunda görev Markdown'ını `HEAD` sürümüyle; diff modunda ise
+  `merge-base` sürümüyle karşılaştırır.
+- Yalnız `Status` ve `Assignee` metadata satırları değişebilir. `Owned surface`,
+  Goal, dependency veya başka herhangi bir satırdaki fark fail-closed bulgudur.
+- Baseline'da olmayan yeni görev Markdown'ı write-set doğrulaması için güvenilir
+  input değildir ve reddedilir. Plan görevi önce ayrı plan denetimiyle
+  kaydedilmelidir; kendi untracked dosyasından write scope üretemez.

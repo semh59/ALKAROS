@@ -42,6 +42,14 @@ değişebilir dış kaynaklar `OFFICIAL_SOURCE_REGISTER.md` içinde izlenir.
 | `C27` | On-hand projection reservation producer'dan önce reserved/available değerlerini sahipleniyordu. | `V0-DAT-004` | `V11-INV-002`, `V11-INV-007`, `V11-RSV-001` | Planned |
 | `C28` | Transaction primitive gerçek Outbox oluşmadan post-commit handoff sahipleniyordu. | `V0-ARC-003` | `V1-FND-002`, `V1-FND-005`, `V1-FND-006` | Planned |
 | `C29` | V0-DOM-001 lifecycle kontratı provider timeout'u örtük decline/success olarak modelliyordu (`Retry 3x, then Failed`); Unknown/ReconciliationRequired ara durumu ve ReconciliationCase bağlantısı yoktu; PDF II.5.3/II.5.4 kanonik state listeleriyle çelişiyordu. | `V0-DOM-001` | `V12-HUG-001`, `V12-HUG-002`, `V12-PAY-003`, `V12-PAY-004`, `V12-FSC-001`, `V12-REC-001` | Planned |
+| `C30` | Shared integration-test fixture dosyaları task-owned surface dışında kalmıştı; mevcut test kodu provenance ve tek sahiplik kanıtı olmadan kabul edilemez. | `V1-FND-010` | `V1-FND-010` | Blocked |
+| `C31` | Task-scope aracı görev Markdown'ının tamamını allowlist sayıyor; görev kendi `Owned surface` alanını değiştirerek write-set'ini genişletebiliyor. | `V0-GOV-001` | `V0-GOV-001` | Planned |
+| `C32` | Domain write ve Outbox enqueue aynı PostgreSQL transaction'ında değildi; commit/rollback atomikliği kanıtlanamıyordu. | `V0-ARC-003` | `V1-FND-011` | Planned |
+| `C33` | Runtime migration manifesti, diskte karşılıklı up/down script'i olmayan position'lar içeriyordu. | `V1-FND-004` | `V1-FND-012` | Planned |
+| `C34` | Paralel başarısız login denemeleri failure counter güncellemelerini kaybedebilir ve lockout eşiğini atomik uygulamayabilirdi. | `V1-IAM-001` | `V1-IAM-004` | Planned |
+| `C35` | Host database parolası command line ile alınabiliyor ve process/usage çıktısına sızabilirdi. | `V1-FND-004` | `V1-SEC-003` | Planned |
+| `C36` | Bağımsız denetimde plan dependency/ownership düzeltmeleri için eksik kesin remediation sahibi belirlendi. | `V0-GOV-004` | `V0-GOV-004` | Planned |
+| `C37` | V0 gate closure kaydı ve audit manifesti güncel task/Markdown durumundan sapmıştı. | `V0-GOV-005` | `V0-GOV-005` | Planned |
 
 `C20` için provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` dosyaları,
 `V0-MCD-001` legal provider code ve approved provider listesini üretmeden
