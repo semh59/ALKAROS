@@ -144,4 +144,20 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
             "SELECT failed_login_attempts FROM identity.users WHERE user_id = '" + userId + "';");
         Assert.Equal(2, attempts);
     }
+
+    [Fact]
+    public async Task ConcurrentWrongPasswordsDoNotLoseAttemptsAndArmLockout()
+    {
+        var userId = await _database.InsertUserAsync("concurrent-login", _hasher.Hash("correct"));
+        var service = new AuthenticationService(_store, maxFailedAttempts: 5);
+
+        var results = await Task.WhenAll(Enumerable.Range(0, 12).Select(_ =>
+            service.LoginAsync("concurrent-login", "wrong", Now)));
+
+        Assert.All(results, result => Assert.IsType<LoginFailure>(result));
+        Assert.Equal(5, await _database.ScalarAsync<int>(
+            "SELECT failed_login_attempts FROM identity.users WHERE user_id = '" + userId + "';"));
+        Assert.True(await _database.ScalarAsync<bool>(
+            "SELECT locked_until IS NOT NULL FROM identity.users WHERE user_id = '" + userId + "';"));
+    }
 }

@@ -1,8 +1,8 @@
 # V1-IAM-004 - Make authentication lockout concurrency safe
 
 - Task ID: V1-IAM-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 

@@ -47,30 +47,43 @@ public sealed class PostgresUserStore : IUserStore
             LastLoginAt: reader.IsDBNull(7) ? null : reader.GetFieldValue<DateTimeOffset>(7));
     }
 
-    public async Task RecordLoginFailureAsync(
+    public async Task<LoginFailureUpdate?> RecordLoginFailureAsync(
         Guid userId,
-        int failedLoginAttempts,
-        DateTimeOffset? lockedUntil,
+        DateTimeOffset now,
+        int maxFailedAttempts,
+        TimeSpan lockoutDuration,
         CancellationToken cancellationToken = default)
     {
         await using var command = _dataSource.CreateCommand(
             $"""
             UPDATE {Table}
-            SET failed_login_attempts = @attempts,
-                locked_until = @locked_until,
-                updated_at = now()
-            WHERE user_id = @user_id;
+            SET failed_login_attempts = failed_login_attempts + 1,
+                locked_until = CASE
+                    WHEN failed_login_attempts + 1 >= @max_failed_attempts
+                        THEN @now + @lockout_duration
+                    ELSE locked_until
+                END,
+                updated_at = @now,
+                row_version = row_version + 1
+            WHERE user_id = @user_id
+              AND (locked_until IS NULL OR locked_until <= @now)
+            RETURNING failed_login_attempts, locked_until;
             """);
-        command.Parameters.AddWithValue("attempts", failedLoginAttempts);
-        command.Parameters.AddWithValue("locked_until", (object?)lockedUntil ?? DBNull.Value);
+        command.Parameters.AddWithValue("now", now);
+        command.Parameters.AddWithValue("max_failed_attempts", maxFailedAttempts);
+        command.Parameters.AddWithValue("lockout_duration", lockoutDuration);
         command.Parameters.AddWithValue("user_id", userId);
 
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken);
-        if (affected != 1)
-            throw new InvalidOperationException($"User {userId} no longer exists.");
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new LoginFailureUpdate(
+            reader.GetInt32(0),
+            reader.IsDBNull(1) ? null : reader.GetFieldValue<DateTimeOffset>(1));
     }
 
-    public async Task RecordLoginSuccessAsync(
+    public async Task<bool> RecordLoginSuccessAsync(
         Guid userId,
         DateTimeOffset lastLoginAt,
         CancellationToken cancellationToken = default)
@@ -83,13 +96,13 @@ public sealed class PostgresUserStore : IUserStore
                 last_login_at = @last_login_at,
                 updated_at = now(),
                 row_version = row_version + 1
-            WHERE user_id = @user_id;
+            WHERE user_id = @user_id
+              AND (locked_until IS NULL OR locked_until <= @last_login_at);
             """);
         command.Parameters.AddWithValue("last_login_at", lastLoginAt);
         command.Parameters.AddWithValue("user_id", userId);
 
         var affected = await command.ExecuteNonQueryAsync(cancellationToken);
-        if (affected != 1)
-            throw new InvalidOperationException($"User {userId} no longer exists.");
+        return affected == 1;
     }
 }

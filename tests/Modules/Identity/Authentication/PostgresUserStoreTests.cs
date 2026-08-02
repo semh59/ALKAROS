@@ -51,15 +51,18 @@ public sealed class PostgresUserStoreTests : IClassFixture<AuthTestDatabase>
     [Fact]
     public async Task RecordLoginFailurePersistsAttemptsAndLock()
     {
-        var userId = await _database.InsertUserAsync("fail-store", "hash-value");
-        var lockedUntil = new DateTimeOffset(2026, 8, 2, 12, 30, 0, TimeSpan.Zero);
+        var userId = await _database.InsertUserAsync("fail-store", "hash-value", failedLoginAttempts: 3);
+        var now = new DateTimeOffset(2026, 8, 2, 12, 15, 0, TimeSpan.Zero);
 
-        await _store.RecordLoginFailureAsync(userId, failedLoginAttempts: 4, lockedUntil);
+        var update = await _store.RecordLoginFailureAsync(
+            userId, now, maxFailedAttempts: 4, lockoutDuration: TimeSpan.FromMinutes(15));
 
         var user = await _store.GetByUsernameAsync("fail-store");
         Assert.NotNull(user);
         Assert.Equal(4, user.FailedLoginAttempts);
-        Assert.Equal(lockedUntil, user.LockedUntil);
+        Assert.Equal(now.AddMinutes(15), user.LockedUntil);
+        Assert.NotNull(update);
+        Assert.Equal(4, update.FailedLoginAttempts);
     }
 
     [Fact]
@@ -67,10 +70,10 @@ public sealed class PostgresUserStoreTests : IClassFixture<AuthTestDatabase>
     {
         var userId = await _database.InsertUserAsync(
             "success-store", "hash-value", failedLoginAttempts: 3,
-            lockedUntil: new DateTimeOffset(2026, 8, 2, 12, 30, 0, TimeSpan.Zero));
+            lockedUntil: new DateTimeOffset(2026, 8, 2, 12, 10, 0, TimeSpan.Zero));
         var lastLoginAt = new DateTimeOffset(2026, 8, 2, 12, 15, 0, TimeSpan.Zero);
 
-        await _store.RecordLoginSuccessAsync(userId, lastLoginAt);
+        Assert.True(await _store.RecordLoginSuccessAsync(userId, lastLoginAt));
 
         var user = await _store.GetByUsernameAsync("success-store");
         Assert.NotNull(user);
@@ -84,21 +87,36 @@ public sealed class PostgresUserStoreTests : IClassFixture<AuthTestDatabase>
     {
         var userId = await _database.InsertUserAsync("version-store", "hash-value");
 
-        await _store.RecordLoginSuccessAsync(
-            userId, new DateTimeOffset(2026, 8, 2, 12, 15, 0, TimeSpan.Zero));
+        Assert.True(await _store.RecordLoginSuccessAsync(
+            userId, new DateTimeOffset(2026, 8, 2, 12, 15, 0, TimeSpan.Zero)));
 
         Assert.Equal(1, await _database.ScalarAsync<long>(
             "SELECT row_version FROM identity.users WHERE user_id = '" + userId + "';"));
     }
 
     [Fact]
-    public async Task RecordOperationsOnMissingUserThrow()
+    public async Task RecordOperationsOnMissingUserReturnNoUpdate()
     {
         var missing = Guid.NewGuid();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _store.RecordLoginFailureAsync(missing, 1, null));
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _store.RecordLoginSuccessAsync(missing, DateTimeOffset.UtcNow));
+        Assert.Null(await _store.RecordLoginFailureAsync(
+            missing, DateTimeOffset.UtcNow, 5, TimeSpan.FromMinutes(15)));
+        Assert.False(await _store.RecordLoginSuccessAsync(missing, DateTimeOffset.UtcNow));
+    }
+
+    [Fact]
+    public async Task ConcurrentFailuresReachTheLockoutThresholdWithoutLostUpdates()
+    {
+        var userId = await _database.InsertUserAsync("concurrent-store", "hash-value");
+        var now = new DateTimeOffset(2026, 8, 2, 12, 15, 0, TimeSpan.Zero);
+
+        var updates = await Task.WhenAll(Enumerable.Range(0, 12).Select(_ =>
+            _store.RecordLoginFailureAsync(userId, now, 5, TimeSpan.FromMinutes(15))));
+
+        var user = await _store.GetByUsernameAsync("concurrent-store");
+        Assert.NotNull(user);
+        Assert.Equal(5, user.FailedLoginAttempts);
+        Assert.Equal(now.AddMinutes(15), user.LockedUntil);
+        Assert.Equal(5, updates.Count(update => update is not null));
     }
 }

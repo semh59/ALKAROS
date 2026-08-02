@@ -54,16 +54,16 @@ public sealed class AuthenticationService
 
         if (!PasswordHasher.Verify(password, user.PasswordHash))
         {
-            var attempts = user.FailedLoginAttempts + 1;
-            DateTimeOffset? lockUntil = attempts >= _maxFailedAttempts
-                ? now.Add(_lockoutDuration)
-                : null;
+            var update = await _store.RecordLoginFailureAsync(
+                user.UserId, now, _maxFailedAttempts, _lockoutDuration, cancellationToken);
+            if (update is null)
+                return new LoginFailure(LoginFailureReason.LockedOut);
 
-            await _store.RecordLoginFailureAsync(user.UserId, attempts, lockUntil, cancellationToken);
             return new LoginFailure(LoginFailureReason.InvalidCredentials);
         }
 
-        await _store.RecordLoginSuccessAsync(user.UserId, now, cancellationToken);
+        if (!await _store.RecordLoginSuccessAsync(user.UserId, now, cancellationToken))
+            return new LoginFailure(LoginFailureReason.LockedOut);
         var session = SessionTokenIssuer.Issue(now);
         return new LoginSuccess(user.UserId, user.DisplayName, session);
     }
