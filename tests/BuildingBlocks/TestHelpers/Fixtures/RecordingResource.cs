@@ -1,6 +1,6 @@
 using ALKAROS.Transactions;
 
-namespace ALKAROS.TransactionOutboxIntegration.Tests.Fixtures;
+namespace ALKAROS.TestHelpers;
 
 /// <summary>
 /// Records CommitAsync/RollbackAsync invocations and can fail the commit at
@@ -8,7 +8,7 @@ namespace ALKAROS.TransactionOutboxIntegration.Tests.Fixtures;
 /// persist across retry attempts of the same instance, so a transient
 /// commit failure succeeds on the next attempt.
 /// </summary>
-internal sealed class RecordingResource : ITransactionResource
+public sealed class RecordingResource : ITransactionResource
 {
     private readonly int _commitFailureAt;
     private readonly bool _transientFailure;

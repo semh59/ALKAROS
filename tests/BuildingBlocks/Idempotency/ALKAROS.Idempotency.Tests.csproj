@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\BuildingBlocks\Idempotency\ALKAROS.Idempotency.csproj" />
     <ProjectReference Include="..\..\..\src\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
+    <ProjectReference Include="..\TestHelpers\ALKAROS.TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

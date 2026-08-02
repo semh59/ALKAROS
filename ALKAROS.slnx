@@ -30,6 +30,7 @@
   <Project Path="src/Integrations/MealCard/ALKAROS.MealCard.csproj" />
   <Project Path="src/Integrations/QrRelay/ALKAROS.QrRelay.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
+  <Project Path="tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj" />
   <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.Tests.csproj" />

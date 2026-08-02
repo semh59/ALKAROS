@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using ALKAROS.Messaging;
 using ALKAROS.Transactions;
 using Npgsql;
@@ -64,22 +66,30 @@ public sealed class TransactionOutboxResource : ITransactionResource
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-        foreach (var envelope in _envelopes)
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+
+        var sb = new StringBuilder();
+        for (var i = 0; i < _envelopes.Count; i++)
         {
-            await using var command = connection.CreateCommand();
-            command.Transaction = transaction;
-            command.CommandText =
+            var offset = i * 4;
+            sb.Append(
                 """
                 INSERT INTO outbox_messages (event_type, aggregate_type, aggregate_id, payload_envelope)
-                VALUES ($1, $2, $3, $4);
-                """;
+                VALUES (
+                """);
+            sb.Append(CultureInfo.InvariantCulture, $"${offset + 1}, ${offset + 2}, ${offset + 3}, ${offset + 4}");
+            sb.AppendLine(");");
+
+            var envelope = _envelopes[i];
             command.Parameters.AddWithValue(envelope.EventType);
             command.Parameters.AddWithValue(envelope.AggregateType);
             command.Parameters.AddWithValue(envelope.AggregateId);
             command.Parameters.AddWithValue(envelope.PayloadEnvelope);
-            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
+        command.CommandText = sb.ToString();
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
 

@@ -1,4 +1,4 @@
-using ALKAROS.Transactions.Tests.Fixtures;
+using ALKAROS.TestHelpers;
 using Xunit;
 
 namespace ALKAROS.Transactions.Tests.Execution;

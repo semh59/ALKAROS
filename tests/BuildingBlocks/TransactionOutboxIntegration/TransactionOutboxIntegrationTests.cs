@@ -1,4 +1,5 @@
 using ALKAROS.Messaging;
+using ALKAROS.TestHelpers;
 using ALKAROS.TransactionOutboxIntegration.Tests.Fixtures;
 using ALKAROS.Transactions;
 using Npgsql;

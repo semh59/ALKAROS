@@ -321,6 +321,18 @@
       ]
     },
     {
+      "path": "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj",
+      "kind": "test",
+      "module": "TestHelpers",
+      "references": [
+        "src/BuildingBlocks/Transactions/ALKAROS.Transactions.csproj"
+      ],
+      "packages": [
+        "Npgsql",
+        "xunit"
+      ]
+    },
+    {
       "path": "tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj",
       "kind": "test",
       "module": "Host",

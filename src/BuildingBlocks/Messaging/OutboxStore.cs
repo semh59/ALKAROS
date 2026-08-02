@@ -68,7 +68,14 @@ public sealed class OutboxStore
         ArgumentNullException.ThrowIfNull(handler);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);
 
-        var messages = await ClaimPendingAsync(batchSize, cancellationToken).ConfigureAwait(false);
+        // The claim locks and every state transition run in one transaction,
+        // so the FOR UPDATE locks stay held until all deliveries are marked
+        // and a concurrent dispatcher can never claim the same message twice.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        var messages = await ClaimPendingAsync(connection, transaction, batchSize, cancellationToken)
+            .ConfigureAwait(false);
         var attempted = 0;
 
         foreach (var message in messages)
@@ -85,22 +92,28 @@ public sealed class OutboxStore
             }
 
             if (handled)
-                await MarkDispatchedAsync(message.Id, cancellationToken).ConfigureAwait(false);
+                await MarkDispatchedAsync(connection, transaction, message.Id, cancellationToken).ConfigureAwait(false);
             else
-                await RecordFailureAsync(message.Id, failure ?? "handler returned false", cancellationToken)
+                await RecordFailureAsync(
+                        connection, transaction, message.Id, failure ?? "handler returned false", cancellationToken)
                     .ConfigureAwait(false);
 
             attempted++;
         }
 
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return attempted;
     }
 
-    private async Task<IReadOnlyList<OutboxMessage>> ClaimPendingAsync(
+    private static async Task<IReadOnlyList<OutboxMessage>> ClaimPendingAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         int batchSize,
         CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
             """
             SELECT id, event_type, aggregate_type, aggregate_id, payload_envelope, status,
                    attempt_count, created_at, next_retry_at, dispatched_at, last_error
@@ -109,7 +122,7 @@ public sealed class OutboxStore
             ORDER BY created_at
             LIMIT $1
             FOR UPDATE SKIP LOCKED;
-            """);
+            """;
         command.Parameters.AddWithValue(batchSize);
 
         var messages = new List<OutboxMessage>();
@@ -134,37 +147,30 @@ public sealed class OutboxStore
             reader.IsDBNull(9) ? null : new DateTimeOffset(reader.GetDateTime(9)),
             reader.IsDBNull(10) ? null : reader.GetString(10));
 
-    private async Task MarkDispatchedAsync(Guid id, CancellationToken cancellationToken)
+    private static async Task MarkDispatchedAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        Guid id,
+        CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
             """
             UPDATE outbox_messages
             SET status = 'dispatched', dispatched_at = now()
             WHERE id = $1 AND status = 'pending';
-            """);
+            """;
         command.Parameters.AddWithValue(id);
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task RecordFailureAsync(
+    private Task RecordFailureAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         Guid id,
         string error,
         CancellationToken cancellationToken)
-    {
-        await using var command = _dataSource.CreateCommand(
-            """
-            UPDATE outbox_messages
-            SET attempt_count = attempt_count + 1,
-                last_error = $2,
-                status = CASE WHEN attempt_count + 1 >= $3 THEN 'dead' ELSE 'pending' END,
-                next_retry_at = CASE WHEN attempt_count + 1 >= $3
-                                     THEN NULL ELSE now() + make_interval(secs => $4) END
-            WHERE id = $1 AND status = 'pending';
-            """);
-        command.Parameters.AddWithValue(id);
-        command.Parameters.AddWithValue(error);
-        command.Parameters.AddWithValue(RetryPolicy.MaxAttempts);
-        command.Parameters.AddWithValue(_baseDelay.TotalSeconds);
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-    }
+        => RetryPolicy.RecordFailureAsync(
+            connection, "outbox_messages", id, error, _baseDelay, transaction, cancellationToken);
 }

@@ -134,6 +134,17 @@
         "dependencies": {
           "Npgsql": "[9.0.2, )"
         }
+      },
+      "alkaros.testhelpers": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Transactions": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )",
+          "xunit": "[2.9.2, )"
+        }
+      },
+      "alkaros.transactions": {
+        "type": "Project"
       }
     }
   }

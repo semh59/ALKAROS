@@ -1,46 +1,6 @@
 using ALKAROS.Messaging;
-using ALKAROS.Transactions;
 
 namespace ALKAROS.TransactionOutboxIntegration.Tests.Fixtures;
-
-/// <summary>
-/// A permanent or unknown failure used in tests. Never classified as
-/// transient by <see cref="DefaultRetryClassifier"/>.
-/// </summary>
-internal sealed class SimulatedFailureException : Exception
-{
-    public SimulatedFailureException(string message)
-        : base(message)
-    {
-    }
-}
-
-/// <summary>
-/// A transient failure that is explicitly marked retryable through
-/// <see cref="ITransientFailure"/>.
-/// </summary>
-internal sealed class SimulatedTransientException : Exception, ITransientFailure
-{
-    public SimulatedTransientException(string message)
-        : base(message)
-    {
-    }
-}
-
-/// <summary>
-/// A classifier that always returns a fixed classification.
-/// </summary>
-internal sealed class FixedClassifier : IRetryClassifier
-{
-    private readonly RetryClassification _classification;
-
-    public FixedClassifier(RetryClassification classification)
-    {
-        _classification = classification;
-    }
-
-    public RetryClassification Classify(Exception exception) => _classification;
-}
 
 /// <summary>
 /// A delivery sink that records every delivered message.

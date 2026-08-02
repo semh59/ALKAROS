@@ -1,0 +1,76 @@
+V1-FND-FIX completion evidence
+==============================
+
+Scope: V1 foundation integrity fixes across the surface owned by V1-FND-001
+(slnx, host project, project manifest), V1-FND-002 (messaging stores,
+idempotency/transactions test fixtures) and V1-FND-006 (transaction/outbox
+integration), requested by the user ("gelinen noktaya kadar olan risk ve
+hatalari duzelt"). No new task file was created; the fixes were applied
+directly on the committed foundation surfaces.
+
+Date: 2026-08-02
+Base commit: 1c11603
+
+1. Fixes applied
+----------------
+- src/BuildingBlocks/Messaging/RetryPolicy.cs: RecordFailureAsync now takes
+  NpgsqlConnection + optional NpgsqlTransaction (join the claim transaction)
+  instead of NpgsqlDataSource; parameterised UPDATE unchanged.
+- src/BuildingBlocks/Messaging/OutboxStore.cs and InboxStore.cs: claim
+  (SELECT ... FOR UPDATE SKIP LOCKED), delivery and state transitions now
+  run in a single transaction committed after all marks. Previously the
+  claim lock dropped when the reader closed, so a concurrent dispatcher
+  could re-claim the same pending messages and deliver them twice
+  (reproduced as DispatchConcurrentDispatchersDeliverEachMessageOnce
+  delivering 12 instead of 8, and the inbox equivalent).
+- src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutboxResource.cs:
+  CommitAsync writes all buffered envelopes in one multi-row INSERT batch
+  (single command, single commit) instead of one command per envelope;
+  CultureInfo.InvariantCulture on the interpolated placeholder append
+  (CA1305).
+- src/Host/ALKAROS.Host.csproj: OutputType Library -> Exe (the host is an
+  executable entry point).
+- tests/BuildingBlocks/TestHelpers: new shared project (PgTestDatabase base
+  fixture, RecordingResource, SimulatedFailures/FixedClassifier) that the
+  Idempotency, Transactions and TransactionOutboxIntegration test projects
+  reference; duplicated fixtures removed.
+- ALKAROS.slnx, build/project-manifest.json: TestHelpers registered.
+- plan/v1/foundation/V1-FND-006-transaction-outbox-integration.md:
+  Surface state Implemented -> Existing (only legal values are
+  Planned/Existing; validation error fixed).
+
+2. Verification
+---------------
+Command: dotnet build ALKAROS.slnx --no-restore
+Exit code: 0
+Result: 0 Uyari, 0 Hata
+
+Command: dotnet test ALKAROS.slnx --no-build --no-restore (real PostgreSQL
+18.4, docker container alkaros_test, port 5433)
+Exit code: 0
+Results:
+- ALKAROS.Idempotency.Tests: 58/58 passed
+- ALKAROS.TransactionOutboxIntegration.Tests: 9/9 passed
+- ALKAROS.Transactions.Tests: 25/25 passed
+- ALKAROS.Host.Tests: 46/46 passed
+- ALKAROS.Architecture.Tests: 4/4 passed
+- ALKAROS.Secrets.Tests: 21/21 passed
+- ALKAROS.SensitiveData.Tests: 20/20 passed
+Total: 183/183 passed, 0 failed
+
+Command: python tools/plan-audit/plan_audit_tool.py validate
+Exit code: 0
+Result: Validation errors: 0, warnings: 0
+
+Command: python tools/plan-audit/plan_audit_tool.py verify-manifest
+Exit code: 0
+Result: Manifest errors: 0
+
+3. Environment note
+-------------------
+The test PostgreSQL instance (ALKAROS_TEST_PG_* User env) pointed to an
+unreachable host (alkaros_test). A new disposable PostgreSQL 18.4 docker
+container (name: alkaros_test, port 5433, named volume alkaros_test_pg_data)
+was created and the User env ALKAROS_TEST_PG_HOST/PORT/USER/PASSWORD were
+updated (localhost/5433/postgres/<generated password>). The existing 5432
+listener belongs to another project and was left untouched.

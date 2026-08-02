@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\..\src\BuildingBlocks\TransactionOutboxIntegration\ALKAROS.TransactionOutboxIntegration.csproj" />
     <ProjectReference Include="..\..\..\src\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
     <ProjectReference Include="..\..\..\src\BuildingBlocks\Transactions\ALKAROS.Transactions.csproj" />
+    <ProjectReference Include="..\TestHelpers\ALKAROS.TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>
