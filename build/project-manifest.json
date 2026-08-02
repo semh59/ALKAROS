@@ -414,6 +414,21 @@
         "xunit",
         "xunit.runner.visualstudio"
       ]
+    },
+    {
+      "path": "tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj",
+      "kind": "test",
+      "module": "Identity",
+      "references": [
+        "src/Modules/Identity/ALKAROS.Identity.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "Npgsql"
+      ]
     }
   ],
   "dependencyRules": {

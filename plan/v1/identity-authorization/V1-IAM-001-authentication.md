@@ -1,10 +1,10 @@
 # V1-IAM-001 - Implement user authentication
 
 - Task ID: V1-IAM-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-iam-001
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -20,7 +20,15 @@ Password verification, active-user check, login/logout ve secure session issuanc
 
 - `src/Modules/Identity/Authentication/**`, `tests/Modules/Identity/Authentication/**`,
   `database/migrations/V1/V1-IAM-001/**`
+- Kapsam genişletme onayı (2026-08-02 kullanıcı onayı): bu task'ın users migration pozisyon kaydı
+  `database/MigrationComposition/order.json` (004 stores / 005 users / 006 roles, sonraki pozisyonlar +2 kayar) ve
+  karşılık gelen `docs/data/migration-dependency-graph.md` notu; `src/Modules/Identity/ALKAROS.Identity.csproj` içine
+  merkezi `Npgsql` PackageReference; bu task'ın test projesinin `ALKAROS.slnx` ve `build/project-manifest.json`
+  kayıtları.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- Kapsam genişletme onayı (2026-08-02 kullanıcı onayı, ikinci): `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
+  içindeki `RealManifestLoadsWithVerifiedOrderFromV0Dat001` testi order.json'a eklenen 2 pozisyon (005 users, 006 roles)
+  nedeniyle 29 -> 31 pozisyon beklentisine güncellendi (Phase A 24 -> 26, Phase B 5 sabit, pozisyon indeksleri 20 ve 24 -> 26).
 
 ## In scope
 

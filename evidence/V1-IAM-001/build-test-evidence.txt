@@ -1,0 +1,57 @@
+# V1-IAM-001 - Build & Test Kanıtı (2026-08-02)
+
+## Ortam
+- SDK: dotnet 10.0.302 (global.json), projeler net8.0
+- PG: Docker container alkaros_test (localhost:5433), user postgres, PGPASSWORD user-level env'dan aktarıldı (ekrana yazılmadı)
+- Test DB'leri: alkaros_iam001_* (PgTestDatabase prefix), her test class'ına özel
+
+## 1. Build (tüm solution)
+Komut: dotnet build ALKAROS.slnx --nologo
+Sonuç: EXIT 0, 0 Uyarı, 0 Hata
+Not: Yeni proje (ALKAROS.Identity.Authentication.Tests) ve Identity'ye Npgsql eklendiği için
+önce -p:RestoreLockedMode=false ile restore edildi (packages.lock.json güncellendi: Identity + Host + test projeleri).
+
+## 2. Testler (tüm solution)
+Komut: dotnet test ALKAROS.slnx --nologo
+Sonuç: EXIT 0 — 8 proje, toplam 215 test, 0 başarısız, 0 atlanan
+
+| Proje | Toplam | Başarılı |
+|---|---|---|
+| ALKAROS.Architecture.Tests | 4 | 4 |
+| ALKAROS.Host.Tests (migration composition) | 46 | 46 |
+| ALKAROS.Transactions.Tests | 25 | 25 |
+| ALKAROS.TransactionOutboxIntegration.Tests | 9 | 9 |
+| ALKAROS.Idempotency.Tests | 58 | 58 |
+| ALKAROS.Secrets.Tests | 21 | 21 |
+| ALKAROS.SensitiveData.Tests | 20 | 20 |
+| ALKAROS.Identity.Authentication.Tests (yeni) | 32 | 32 |
+
+## 3. Yeni test projesi detayı (V1-IAM-001)
+- PasswordHasherTests: 11 test (format, tuzlama, round-trip, iterasyon kuralları, malformed input)
+- SessionTokenIssuerTests: 5 test (uzunluk, hex hash, benzersizlik, ömür, deterministik olmama)
+- PostgresUserStoreTests: 7 integration test (gerçek PG18, identity.users)
+- AuthenticationServiceTests: 9 integration test (başarı/başarısızlık, lockout, aktiflik, kilit süresi dolunca giriş)
+- Toplam 32 test, hepsi geçti (gerçek PostgreSQL container üzerinde)
+
+## 4. Migration up/down kanıtı (005-users)
+Hedef DB: alkaros_iam001_mig (geçici, sonunda DROP edildi)
+
+UP:  database\migrations\V1\V1-IAM-001\005-users.up.sql  -> EXIT 0 (CREATE SCHEMA identity, CREATE TABLE users, 2 index)
+Doğrulama: to_regclass('identity.users') = t, kolon sayısı = 13
+DOWN: database\migrations\V1\V1-IAM-001\005-users.down.sql -> EXIT 0 (DROP TABLE)
+Doğrulama: to_regclass('identity.users') IS NULL = t
+
+## 5. Düzeltmeler (test-run sırasında)
+- ManifestTests.cs: order.json 29->31 pozisyon (users + roles eklenmesi) için beklenen değerler güncellendi
+  (kullanıcı onaylı kapsam genişletmesi, görev dosyasına işlendi)
+- PasswordHasherTests: salt uzunluğu 16 byte (kodun gerçeği) olarak düzeltildi
+- PostgresUserStoreTests: row_version BIGINT -> ScalarAsync<long>
+- AuthTestDatabase.ForceLockExpiredAsync: sabit DateTimeOffset parametresi alacak şekilde düzeltildi
+  (testin sabit Now değeriyle tutarlılık)
+
+## 6. Kapanış tekrar koşusu (görev Done öncesi)
+Komut: dotnet test ALKAROS.slnx --nologo
+Sonuç: EXIT 0 — 8 proje, toplam 215 test, 0 başarısız, 0 atlanan (son durum doğrulandı)
+
+## 7. Kalan durum
+- Git write-set: allowlist denetimi tamam; commit kullanıcı onayı bekliyor.

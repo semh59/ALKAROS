@@ -1,0 +1,38 @@
+# V1-IAM-001 Preflight (opencode)
+
+Date: 2026-08-02
+Repo root: D:\PROJECT\ALKAROS
+Task ID: V1-IAM-001 (Implement user authentication)
+
+## Starting snapshot
+- `git status --short`: clean (no output)
+- `git diff --name-only`: empty
+- HEAD: 630e324 docs(plan): fix audit findings across plan, docs and evidence
+
+## Write allowlist
+Owned surface (V1-IAM-001-authentication.md):
+- `src/Modules/Identity/Authentication/**`
+- `tests/Modules/Identity/Authentication/**`
+- `database/migrations/V1/V1-IAM-001/**`
+- Task file metadata only: `plan/v1/identity-authorization/V1-IAM-001-authentication.md`
+- Evidence: `evidence/V1-IAM-001/**`
+
+User-approved scope extensions (2026-08-02, kullanıcı onayı):
+- `database/MigrationComposition/order.json` - users position split (004 stores / 005 users / 006 roles, sonrası +2 kayar)
+- `src/Modules/Identity/ALKAROS.Identity.csproj` - Npgsql PackageReference
+- `ALKAROS.slnx` - new test project registration
+- `build/project-manifest.json` - new test project registration
+- `docs/data/migration-dependency-graph.md` - position range note (FND-002 emsalinde V0-DAT-001 sahipliğinde kayıt)
+
+## Test environment
+- ALKAROS_TEST_PG_USER / ALKAROS_TEST_PG_PASSWORD user-level env vars (FND-005 procedure, scram auth, alkaros_test role CREATEDB)
+- PostgreSQL 18 on localhost:5432
+
+## Dependencies verified
+- V1-FND-001: Done (closure-report.md, 25 projects build EXIT:0, 4/4 tests)
+- V0-ARC-002: Done (docs/architecture/local-first-sync-contract.md)
+
+## Gate check
+- Foundation gate closed: V1-FND-001..009 + V1-SEC-001 + V1-SEC-002 all Done (11/11)
+- GATE-V0-EXIT closed (34/42)
+- No other task is InProgress in this session (single-task rule)

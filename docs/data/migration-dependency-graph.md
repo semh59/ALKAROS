@@ -13,6 +13,11 @@
 > kararı gereği FK değil, düz unique kolondur); bu yüzden Phase A'nın başında, pozisyonlar 001-003'te konumlanır.
 > Pozisyon kaydı `database/MigrationComposition/order.json` içindedir; her pozisyon tek tablo içerir ve ileri/geri
 > scriptleri vardır. Kalan domain tabloları pozisyon atamalarını kendi görevlerinde alır.
+>
+> **2026-08-02 kayıtlı güncelleme (V1-IAM-001 kapsamı, V0-DAT-001 sahipliğinde):** 004 pozisyonu `stores`, `users`,
+> `roles` üçlüsünden ayrıldı: 004 `stores`, 005 `users` (V1-IAM-001), 006 `roles` (V1-IAM-002) olur; sonraki
+> pozisyonlar 005-024 → 007-026 olarak +2 kayar (Phase B 031-035 değişmez). Kayma, migration scriptleri henüz
+> oluşturulmadan yapıldığı için mevcut hiçbir scripti etkilemez.
 
 ## 1. Entity Dependency Graph
 

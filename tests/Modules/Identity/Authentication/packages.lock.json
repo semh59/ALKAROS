@@ -12,13 +12,13 @@
           "Microsoft.TestPlatform.TestHost": "17.11.1"
         }
       },
-      "NetArchTest.Rules": {
+      "Npgsql": {
         "type": "Direct",
-        "requested": "[1.3.2, )",
-        "resolved": "1.3.2",
-        "contentHash": "puPyNXkwJq8/UwXhHV8NrzNzkQl4IxEbcP+3PU0xLRiOedsVpaSdpwHhvOZfI0VwTcRvawCNxYQcSRbD4RUg4w==",
+        "requested": "[9.0.2, )",
+        "resolved": "9.0.2",
+        "contentHash": "hCbO8box7i/XXiTFqCJ3GoowyLqx3JXxyrbOJ6om7dr+eAknvBNhhUHeJVGAQo44sySZTfdVffp4BrtPeLZOAA==",
         "dependencies": {
-          "Mono.Cecil": "0.11.3"
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
         }
       },
       "xunit": {
@@ -73,11 +73,6 @@
           "Newtonsoft.Json": "13.0.1"
         }
       },
-      "Mono.Cecil": {
-        "type": "Transitive",
-        "resolved": "0.11.3",
-        "contentHash": "DNYE+io5XfEE8+E+5padThTPHJARJHbz1mhbhMPNrrWGKVKKqj/KEeLvbawAmbIcT73NuxLV7itHZaYCZcVWGg=="
-      },
       "Newtonsoft.Json": {
         "type": "Transitive",
         "resolved": "13.0.1",
@@ -128,62 +123,6 @@
           "xunit.extensibility.core": "[2.9.2]"
         }
       },
-      "alkaros.accounts": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
-        }
-      },
-      "alkaros.billing": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Orders": "[1.0.0, )"
-        }
-      },
-      "alkaros.cash": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
-        }
-      },
-      "alkaros.catalog": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
-      },
-      "alkaros.fiscal": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
-        }
-      },
-      "alkaros.host": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Accounts": "[1.0.0, )",
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.Cash": "[1.0.0, )",
-          "ALKAROS.Catalog": "[1.0.0, )",
-          "ALKAROS.Fiscal": "[1.0.0, )",
-          "ALKAROS.Identity": "[1.0.0, )",
-          "ALKAROS.Inventory": "[1.0.0, )",
-          "ALKAROS.Kitchen": "[1.0.0, )",
-          "ALKAROS.Notifications": "[1.0.0, )",
-          "ALKAROS.Orders": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )",
-          "ALKAROS.Reconciliation": "[1.0.0, )",
-          "ALKAROS.Reporting": "[1.0.0, )",
-          "ALKAROS.Settings": "[1.0.0, )",
-          "ALKAROS.Tables": "[1.0.0, )"
-        }
-      },
       "alkaros.identity": {
         "type": "Project",
         "dependencies": {
@@ -191,77 +130,19 @@
           "Npgsql": "[9.0.2, )"
         }
       },
-      "alkaros.inventory": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Catalog": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
-      },
-      "alkaros.kitchen": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Orders": "[1.0.0, )"
-        }
-      },
       "alkaros.modulecomposition": {
         "type": "Project"
       },
-      "alkaros.notifications": {
+      "alkaros.testhelpers": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
+          "ALKAROS.Transactions": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )",
+          "xunit": "[2.9.2, )"
         }
       },
-      "alkaros.orders": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
-      },
-      "alkaros.payments": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
-      },
-      "alkaros.reconciliation": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Accounts": "[1.0.0, )",
-          "ALKAROS.Cash": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
-        }
-      },
-      "alkaros.reporting": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
-      },
-      "alkaros.settings": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
-      },
-      "alkaros.tables": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
-      },
-      "Npgsql": {
-        "type": "CentralTransitive",
-        "requested": "[9.0.2, )",
-        "resolved": "9.0.2",
-        "contentHash": "hCbO8box7i/XXiTFqCJ3GoowyLqx3JXxyrbOJ6om7dr+eAknvBNhhUHeJVGAQo44sySZTfdVffp4BrtPeLZOAA==",
-        "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
-        }
+      "alkaros.transactions": {
+        "type": "Project"
       }
     }
   }

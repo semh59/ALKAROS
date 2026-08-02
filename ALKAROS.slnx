@@ -37,4 +37,5 @@
   <Project Path="tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj" />
+  <Project Path="tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj" />
 </Solution>
