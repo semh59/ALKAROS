@@ -1,8 +1,8 @@
 # V1-SEC-003 - Remove database passwords from host command lines
 
 - Task ID: V1-SEC-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 
@@ -19,6 +19,7 @@ engellemek; yalniz environment tabanli secret resolution kullanmak.
 
 - `src/Host/Program.cs`
 - `tests/Host/MigrationComposition/Program/ProgramArgumentTests.cs`
+- `tests/Host/MigrationComposition/Execution/MigrationExecutionTests.cs`
 - `evidence/V1-SEC-003/**`
 
 ## In scope

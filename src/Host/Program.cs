@@ -44,7 +44,6 @@ public static class Program
         string? databaseUrl = null;
         string? psqlExecutable = null;
         string? rollbackId = null;
-        string? password = null;
 
         for (var i = 0; i < args.Length; i++)
         {
@@ -70,10 +69,6 @@ public static class Program
                     if (rollbackId is not null) return null;
                     rollbackId = args[++i];
                     break;
-                case "--db-password" when i + 1 < args.Length:
-                    if (password is not null) return null;
-                    password = args[++i];
-                    break;
                 default:
                     return null;
             }
@@ -87,9 +82,9 @@ public static class Program
         if (rollbackId is not null && !IsPosition(rollbackId))
             return null;
 
-        password ??= Environment.GetEnvironmentVariable(PasswordEnvironmentVariable);
+        var password = Environment.GetEnvironmentVariable(PasswordEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(password))
-            password = null;
+            return null;
 
         return new HostCompositionOptions(
             manifestPath,
@@ -105,12 +100,12 @@ public static class Program
 
     private static void PrintUsage(TextWriter writer)
     {
-        writer.WriteLine("Usage: ALKAROS.Host --order-manifest <path> --migrations-dir <path> --db-url <url> [--psql <path>] [--rollback <position>] [--db-password <password>]");
+        writer.WriteLine("Usage: ALKAROS.Host --order-manifest <path> --migrations-dir <path> --db-url <url> [--psql <path>] [--rollback <position>]");
         writer.WriteLine("  --order-manifest  Path to database/MigrationComposition/order.json");
         writer.WriteLine("  --migrations-dir  Directory scanned for <NNN>-<name>.up.sql / .down.sql files");
         writer.WriteLine("  --db-url          PostgreSQL connection URL (e.g. postgresql://user@host:5432/db)");
         writer.WriteLine("  --psql            psql executable path (default: psql from PATH)");
         writer.WriteLine("  --rollback        Run the rollback script of the given position instead of forward");
-        writer.WriteLine("  --db-password     Password for the database user (default: environment variable ALKAROS_DB_PASSWORD)");
+        writer.WriteLine("  Database password is read from the ALKAROS_DB_PASSWORD environment variable.");
     }
 }

@@ -9,6 +9,7 @@ namespace ALKAROS.Host.Tests.Execution;
 /// Integration tests against an empty PostgreSQL 18 instance. Every test
 /// runs inside its own freshly created database.
 /// </summary>
+[Collection("Host database password environment")]
 public sealed class MigrationExecutionTests : IAsyncLifetime
 {
     private static readonly string[] SinglePosition = ["001"];
@@ -167,22 +168,27 @@ public sealed class MigrationExecutionTests : IAsyncLifetime
             SinglePosition,
             ("099-rogue.up.sql", "CREATE TABLE rogue (id integer);"));
 
-        string[] WithPassword(string[] arguments)
+        var originalPassword = Environment.GetEnvironmentVariable("ALKAROS_DB_PASSWORD");
+        try
         {
             var password = _database.PsqlOptions.Password;
-            return password is null ? arguments : [.. arguments, "--db-password", password];
-        }
+            Environment.SetEnvironmentVariable("ALKAROS_DB_PASSWORD", password);
 
-        Assert.Equal((int)HostExitCode.Success, Program.Main(WithPassword(
-            ["--order-manifest", success.ManifestPath, "--migrations-dir", success.DirectoryPath,
-             "--db-url", _database.Url])));
-        Assert.Equal((int)HostExitCode.MigrationFailed, Program.Main(WithPassword(
-            ["--order-manifest", failing.ManifestPath, "--migrations-dir", failing.DirectoryPath,
-             "--db-url", _database.Url])));
-        Assert.Equal((int)HostExitCode.StartupFailed, Program.Main(WithPassword(
-            ["--order-manifest", violating.ManifestPath, "--migrations-dir", violating.DirectoryPath,
-             "--db-url", _database.Url])));
-        Assert.Equal((int)HostExitCode.StartupFailed, Program.Main(WithPassword(["--db-url", _database.Url])));
+            Assert.Equal((int)HostExitCode.Success, ALKAROS.Host.Program.Main(
+                ["--order-manifest", success.ManifestPath, "--migrations-dir", success.DirectoryPath,
+                 "--db-url", _database.Url]));
+            Assert.Equal((int)HostExitCode.MigrationFailed, ALKAROS.Host.Program.Main(
+                ["--order-manifest", failing.ManifestPath, "--migrations-dir", failing.DirectoryPath,
+                 "--db-url", _database.Url]));
+            Assert.Equal((int)HostExitCode.StartupFailed, ALKAROS.Host.Program.Main(
+                ["--order-manifest", violating.ManifestPath, "--migrations-dir", violating.DirectoryPath,
+                 "--db-url", _database.Url]));
+            Assert.Equal((int)HostExitCode.StartupFailed, ALKAROS.Host.Program.Main(["--db-url", _database.Url]));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("ALKAROS_DB_PASSWORD", originalPassword);
+        }
     }
 
     [Fact]
@@ -190,7 +196,7 @@ public sealed class MigrationExecutionTests : IAsyncLifetime
     {
         using var set = TestMigrationSet.Create(Script("001", "stores"));
 
-        var exitCode = Program.Main(
+        var exitCode = ALKAROS.Host.Program.Main(
             ["--order-manifest", set.ManifestPath, "--migrations-dir", set.DirectoryPath,
              "--db-url", _database.Url, "--db-url", _database.Url]);
 
