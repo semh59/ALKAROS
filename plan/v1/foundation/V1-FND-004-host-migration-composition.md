@@ -19,12 +19,20 @@ Executable host'u ve module migration'larını doğrulanmış global sırayla ç
 
 ## Owned surface
 
-- `src/Host/Program.cs`, `src/Host/Composition/HostComposition.cs`, `src/Host/Composition/Modules/**`
-- `src/Host/Composition/Migrations/MigrationCompositionValidator.cs`, `src/Host/Composition/Migrations/MigrationDiscoverer.cs`
+- `src/Host/Composition/HostComposition.cs`, `src/Host/Composition/Modules/**`
+- `src/Host/Composition/Migrations/MigrationCompositionValidator.cs`,
+  `src/Host/Composition/Migrations/MigrationDiscoverer.cs`
 - `src/Host/Composition/Migrations/MigrationExecutor.cs`, `src/Host/Composition/Migrations/MigrationFile.cs`
-- `src/Host/Composition/Migrations/MigrationManifest.cs`, `src/Host/Composition/Migrations/MigrationManifestException.cs`
+- `src/Host/Composition/Migrations/MigrationManifest.cs`,
+  `src/Host/Composition/Migrations/MigrationManifestException.cs`
 - `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
-- `tests/Host/MigrationComposition/**`
+- `tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj`
+- `tests/Host/MigrationComposition/packages.lock.json`
+- `tests/Host/MigrationComposition/Discovery/MigrationDiscovererTests.cs`
+- `tests/Host/MigrationComposition/Fixtures/TestDatabase.cs`
+- `tests/Host/MigrationComposition/Fixtures/TestMigrationSet.cs`
+- `tests/Host/MigrationComposition/Registry/ModuleRegistryTests.cs`
+- `tests/Host/MigrationComposition/Validation/MigrationCompositionValidatorTests.cs`
 - Owned surface devri (2026-08-01 kullanıcı onaylı plan değişikliği, V1-FND-002): database/MigrationComposition
   klasöründeki order.json sahipliği V1-FND-002'ye devredildi; database/MigrationComposition klasörü bu yüzeyden
   çıkarıldı.

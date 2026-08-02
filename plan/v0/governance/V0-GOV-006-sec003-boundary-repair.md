@@ -1,8 +1,8 @@
 # V0-GOV-006 - Repair V1-SEC-003 ownership boundary
 
 - Task ID: V0-GOV-006
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: documentation
 - Surface state: Existing
 
@@ -26,7 +26,7 @@ tamamlanmis V1-FND-004 yuzeyinden keskin bicimde devretmek.
 
 - `src/Host/Program.cs` ve `MigrationExecutionTests.cs` yuzeylerini V1-SEC-003
   sahibi yapmak.
-- V1-FND-004 genis test sahipligini kalan kesin dosyalara daraltmak.
+- V1-FND-004 kapsamındaki test sahipliğini kalan kesin dosyalara daraltmak.
 
 ## Out of scope
 
@@ -38,12 +38,12 @@ tamamlanmis V1-FND-004 yuzeyinden keskin bicimde devretmek.
 
 ## Deliverables
 
-- C35 duzeltmesinin tum gerekli dosyalar icin tek-sahip plan kaydi.
+- C35 düzeltmesinin tüm gerekli dosyalar için tek-sahip plan kaydı.
 
 ## Acceptance evidence
 
 - Iki task arasinda `Program.cs` veya `MigrationExecutionTests.cs` overlap'i kalmaz.
-- Plan denetleyicisi sahiplik cakisma hatasi vermez.
+- Plan denetleyicisi sahiplik çakışması hatası vermez.
 
 ## Handoff
 
