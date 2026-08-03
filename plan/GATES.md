@@ -49,6 +49,9 @@
 Bir gate, uygulanabilir görevlerde açık `Blocked`, kanıtsız `Done`, onaysız
 `NotApplicable`, açık critical/high finding veya çözümlenmemiş
 finansal/stok/mevzuat kararı varken kapanamaz.
+- `Done` statüsündeki her görev, doğrudan ve transitive task dependency zincirinde
+  yalnız `Done` statusu taşımalıdır. Bu koşul `plan_audit_tool.py validate`
+  tarafından fail-closed doğrulanmadan hiçbir version gate kapanamaz.
 
 Bir consumer, dependency'si `NotApplicable` olduğunda yalnız kendi acceptance
 sözleşmesi bu sonucu açıkça ele alıyorsa başlayabilir; aksi durumda gate açık kalır.

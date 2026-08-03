@@ -2123,6 +2123,39 @@ def validate_plan() -> None:
         if state.get(task_id, 0) == 0:
             visit(task_id)
 
+    task_statuses = {
+        task_id: metadata_value(preamble, "Status", "")
+        for task_id, (_, preamble, _, _) in tasks.items()
+    }
+
+    def find_non_final_ancestors(
+        task_id: str,
+        dependency_id: str,
+        path: list[str],
+    ) -> None:
+        dependency_status = task_statuses[dependency_id]
+        if dependency_status != "Done":
+            if len(path) == 2:
+                errors.append(
+                    f"DONE_DEPENDENCY_NOT_FINAL {task_id}: "
+                    f"{dependency_id} status={dependency_status}"
+                )
+            else:
+                errors.append(
+                    f"DONE_DEPENDENCY_TRANSITIVE_NOT_FINAL {task_id}: "
+                    f"{' -> '.join(path)} status={dependency_status}"
+                )
+            return
+
+        for ancestor_id in dependency_graph[dependency_id]:
+            find_non_final_ancestors(task_id, ancestor_id, [*path, ancestor_id])
+
+    for task_id in sorted(task_ids):
+        if task_statuses[task_id] != "Done":
+            continue
+        for dependency_id in dependency_graph[task_id]:
+            find_non_final_ancestors(task_id, dependency_id, [task_id, dependency_id])
+
     for surface, owners in sorted(production_surfaces.items()):
         unique = sorted(set(owners))
         if len(unique) > 1:

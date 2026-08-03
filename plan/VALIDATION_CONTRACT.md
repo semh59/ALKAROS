@@ -40,6 +40,10 @@ npx --yes markdownlint-cli2@0.23.2
 - `Blocked` görevde bir `Blocker` bölümü vardır; diğer durumlarda yoktur.
 - `Dependencies` ve `Handoff` yalnız mevcut task ID, gate ID veya `None` içerir.
 - Dependency graph döngüsüzdür.
+- `Done` görevin bütün doğrudan task dependency'leri `Done` olmalıdır.
+- `Done` görevin bütün transitive task dependency zinciri `Done` olmalıdır.
+- Bu iki status kontrolü sırasıyla `DONE_DEPENDENCY_NOT_FINAL` ve
+  `DONE_DEPENDENCY_TRANSITIVE_NOT_FINAL` hatalarıyla fail-closed çalışır.
 - `InProgress`, `NotApplicable` ve `Done` görevlerde tek gerçek assignee bulunur.
 - `NotApplicable` yalnız tamamlanmış, tarihli ve gerçek assignee taşıyan decision
   kanıtıyla kapanır; task dosyası ve dependency kimliği korunur.

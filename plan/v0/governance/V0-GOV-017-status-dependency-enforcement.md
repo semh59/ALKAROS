@@ -1,7 +1,7 @@
 # V0-GOV-017 - Enforce status dependency closure
 
 - Task ID: V0-GOV-017
-- Status: InProgress
+- Status: Done
 - Assignee: /root
 - Work type: validation
 - Surface state: Existing

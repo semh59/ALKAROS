@@ -59,6 +59,12 @@ task'ın `Acceptance evidence` bölümü bu sonucu adıyla ele alıyor ve kalan
 davranışın nasıl doğrulanacağını belirtiyorsa terminal dependency sayılır.
 `Blocked`, `Planned` veya kanıtsız `NotApplicable` dependency'yi kapatmaz.
 
+`Done` statüsündeki bir task'ın bütün doğrudan ve transitive task dependency'leri
+de `Done` olmalıdır. Bu kuralda `NotApplicable` terminal dependency değildir;
+consumer task ancak kendi sonucu `Done` olmadan bekler. Plan denetimi doğrudan
+ihlal için `DONE_DEPENDENCY_NOT_FINAL`, ancestor ihlali için
+`DONE_DEPENDENCY_TRANSITIVE_NOT_FINAL` üretir.
+
 Bu beş metadata alanı görev başlığının hemen altında ve yukarıdaki sırada yer
 alır. `Task ID` yalnız başlıktan türetilmiş kabul edilmez; metadata satırı da
 zorunludur.
