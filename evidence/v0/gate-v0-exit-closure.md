@@ -7,7 +7,7 @@
 
 ## Mekanik sayim
 
-Bu kayit uretilirken V0 altinda 51 task bulundu: `30 Done`, `21 Blocked`.
+Bu kayit uretilirken V0 altinda 54 task bulundu: `33 Done`, `21 Blocked`.
 Dolayisiyla `GATE-V0-EXIT` kapanamaz.
 
 ## Acik Blocked tasklar

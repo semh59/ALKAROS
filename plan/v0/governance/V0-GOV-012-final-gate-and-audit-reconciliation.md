@@ -1,8 +1,8 @@
 # V0-GOV-012 - Reconcile final V0 gate and audit records
 
 - Task ID: V0-GOV-012
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 

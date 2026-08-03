@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 328,
-  "markdown_line_count": 23160,
-  "markdown_byte_count": 1649948,
+  "markdown_file_count": 329,
+  "markdown_line_count": 23188,
+  "markdown_byte_count": 1650650,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -337,7 +337,7 @@
     },
     {
       "path": "evidence/v0/gate-v0-exit-closure.md",
-      "sha256": "0F900B06EDCBCFCDC11027DDB446D18E285FC8871510D4228B61994A23AA902F",
+      "sha256": "39A7B0DDB7CE6A5AC3449301D5A231D0FFB678CBDF371DF96A20C1C929F30291",
       "lines": 46,
       "bytes": 1258,
       "utf8": true
@@ -427,6 +427,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V0-GOV-012/closure-report.md",
+      "sha256": "9FDBA76ED26A990D31AC9DC351C278CDF11EABB78FE7A11E1EA33BA59E7497A4",
+      "lines": 27,
+      "bytes": 589,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-001/closure-report.md",
       "sha256": "F56A5345D07B40930525F6C3C4780E6038B904645648E3AC1201241A137D1955",
       "lines": 90,
@@ -491,9 +498,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6D15010CC7C44B866D887F584FAB00DF7830D1CE601FED75A9105E29E8786AE2",
-      "lines": 1604,
-      "bytes": 218979,
+      "sha256": "0432E46537A4FE3D0227E0EC3C1801C71ABED4660DCFC5B3E48E7C9D917084E9",
+      "lines": 1605,
+      "bytes": 219121,
       "utf8": true
     },
     {
@@ -813,9 +820,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-012-final-gate-and-audit-reconciliation.md",
-      "sha256": "7A6FDCE48317F33BBD598967A75C85150C112AD3B0B1C6B95E553FB1A2717AA5",
+      "sha256": "FD6DB815A68F20D369EADDAEB0FDE725DD3FC7824FE5D3FEB91681153FEB0411",
       "lines": 52,
-      "bytes": 1156,
+      "bytes": 1127,
       "utf8": true
     },
     {
