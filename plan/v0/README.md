@@ -24,8 +24,8 @@ Kodlamadan önce domain, veri, mevzuat ve dış sistem belirsizliklerini kapatma
 ## Modüller
 
 `backup-recovery`, `compliance`, `data-architecture`, `document-baseline`,
-`domain-contracts`, `hugin-t300`, `licensing`, `meal-card`,
+`domain-contracts`, `governance`, `hugin-t300`, `licensing`, `meal-card`,
 `platform-architecture`, `printing`, `qnb-esolutions`, `qr-relay`,
 `security-baseline`, `yemeksepeti`.
 
-Doğrulanan plan hacmi: 15 modül, 43 tek-sahip görev.
+Doğrulanan plan hacmi: 16 modül, 52 tek-sahip görev.

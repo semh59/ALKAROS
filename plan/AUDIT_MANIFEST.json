@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 323,
-  "markdown_line_count": 22932,
-  "markdown_byte_count": 1644013,
+  "markdown_file_count": 324,
+  "markdown_line_count": 22989,
+  "markdown_byte_count": 1645692,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -477,9 +477,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "7CA06D9E61A878E5678A452FCE3F10F869C79A3E9F2E5A23F299F323CCB82D0F",
-      "lines": 1599,
-      "bytes": 218201,
+      "sha256": "D6E48CC862238FDECBBE0337B3A419AE3462329B8BA18E00BD768FFA3C4B7097",
+      "lines": 1600,
+      "bytes": 218364,
       "utf8": true
     },
     {
@@ -784,6 +784,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v0/governance/V0-GOV-010-task-scope-root-normalization.md",
+      "sha256": "273B2B363EF21E7FF7ADF2C2A49F6C9E02AC91CEB06C83BA6571BDBA4C16969F",
+      "lines": 56,
+      "bytes": 1502,
+      "utf8": true
+    },
+    {
       "path": "plan/v0/hugin-t300/V0-HUG-001-integration-contract.md",
       "sha256": "9C53C2805848D4F79D546B101D2BEE403CD82ACF9D38AB377765D0C08711009E",
       "lines": 76,
@@ -890,9 +897,9 @@
     },
     {
       "path": "plan/v0/README.md",
-      "sha256": "B75251F36F1B6F931D692EAB728590B0A538872280D1A3E16E2D8226F0CE5A29",
+      "sha256": "F546BE9D5EA842674048F94C4462C3A98A1AF1894530382D6F7A2544195131DB",
       "lines": 31,
-      "bytes": 1219,
+      "bytes": 1233,
       "utf8": true
     },
     {
