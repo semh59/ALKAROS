@@ -53,6 +53,9 @@ npx --yes markdownlint-cli2@0.23.2
 - Mevcut kod ağacı oluşmadığı sürece bütün görevlerde `Surface state: Planned` olur.
 - Repository kökündeki `AGENTS.md`, tek `Task ID` ve fail-closed Codex write-set
   sözleşmesini içerir.
+- Mevcut Git geçmişi ve application ağacı candidate evidence'dır; V0 altında açık
+  `Blocked` görev varken `implementation` veya `integration` türündeki V1+ görevi
+  `InProgress` ise `APPLICATION_STARTED_BEFORE_V0_EXIT` hatası üretilir.
 - `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` direct dependency zinciriyle bu
   sırada tamamlanır; zincir bitmeden başka application görevi `InProgress` olamaz.

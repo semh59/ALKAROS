@@ -1,8 +1,8 @@
 # V0-GOV-021 - Enforce candidate evidence gate
 
 - Task ID: V0-GOV-021
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 

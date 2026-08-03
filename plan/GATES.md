@@ -12,6 +12,9 @@
   `GATE-V0-EXIT` açıkken başlatılabilir. Bu istisna V0/V1 gate kapanış kanıtı
   değildir ve yeni product behavior üretemez.
 - `v0` kapanmadan production uygulama geliştirmesi başlamaz.
+- Mevcut Git geçmişi ve application ağacı yalnız candidate evidence'dır; V0 altında
+  `Blocked` görev varken `implementation` veya `integration` türündeki V1+ görevi
+  `InProgress` yapmak `APPLICATION_STARTED_BEFORE_V0_EXIT` ile reddedilir.
 - Bir sürümün açık finansal, stok veya mevzuat kararı sonraki sürüme borç olarak
   taşınmaz.
 - Dış entegrasyon sözleşmesi gerçek erişim olmadan tamamlanmış sayılmaz.
@@ -49,6 +52,7 @@
 Bir gate, uygulanabilir görevlerde açık `Blocked`, kanıtsız `Done`, onaysız
 `NotApplicable`, açık critical/high finding veya çözümlenmemiş
 finansal/stok/mevzuat kararı varken kapanamaz.
+
 - `Done` statüsündeki her görev, doğrudan ve transitive task dependency zincirinde
   yalnız `Done` statusu taşımalıdır. Bu koşul `plan_audit_tool.py validate`
   tarafından fail-closed doğrulanmadan hiçbir version gate kapanamaz.

@@ -1873,6 +1873,28 @@ def _surface_glob_to_regex(pattern: str) -> re.Pattern[str]:
     return re.compile("^" + "".join(result) + "$")
 
 
+def application_tasks_started_before_v0_exit(
+    tasks: dict[str, tuple[Path, list[str], dict[str, list[str]], list[str]]],
+) -> list[str]:
+    """Reject newly started application work while a V0 task remains blocked."""
+    v0_gate_open = any(
+        task_id.startswith("V0-")
+        and metadata_value(preamble, "Status", "") == "Blocked"
+        for task_id, (_, preamble, _, _) in tasks.items()
+    )
+    if not v0_gate_open:
+        return []
+
+    application_work_types = {"implementation", "integration"}
+    return [
+        f"APPLICATION_STARTED_BEFORE_V0_EXIT {task_id}"
+        for task_id, (_, preamble, _, _) in tasks.items()
+        if not task_id.startswith("V0-GOV-")
+        and metadata_value(preamble, "Status", "") == "InProgress"
+        and metadata_value(preamble, "Work type", "") in application_work_types
+    ]
+
+
 def validate_plan() -> None:
     errors: list[str] = []
     warnings: list[str] = []
@@ -2432,17 +2454,7 @@ def validate_plan() -> None:
         if "ReconciliationCase oluşturma" not in scope:
             errors.append(f"SEMANTIC_RECONCILIATION_OWNER {task_id}")
 
-    foundation_done = (
-        "V1-FND-001" in tasks
-        and metadata_value(tasks["V1-FND-001"][1], "Status", "") == "Done"
-    )
-    if (WORKSPACE / ".git").exists() and not foundation_done:
-        errors.append("GIT_CREATED_BEFORE_AUDIT_GATE")
-    if (
-        any((WORKSPACE / name).exists() for name in ["src", "tests", "database", "docs"])
-        and not foundation_done
-    ):
-        errors.append("UNPLANNED_APPLICATION_SURFACE_EXISTS")
+    errors.extend(application_tasks_started_before_v0_exit(tasks))
 
     actual_consumers: dict[str, set[str]] = defaultdict(set)
     for task_id, (_, _, sections, _) in tasks.items():
