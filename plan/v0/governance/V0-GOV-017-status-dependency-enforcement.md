@@ -1,8 +1,8 @@
 # V0-GOV-017 - Enforce status dependency closure
 
 - Task ID: V0-GOV-017
-- Status: Blocked
-- Assignee: /root
+- Status: Planned
+- Assignee: Unassigned (exactly one person)
 - Work type: validation
 - Surface state: Existing
 
@@ -37,12 +37,6 @@ dependency zincirinin `Done` olmasını zorunlu kılan mekanik denetimi eklemek.
 ## Dependencies
 
 - V0-GOV-016
-
-## Blocker
-
-- Kök `AGENTS.md` V1 zorunlu zincirinde `V1-FND-010` görevini içermiyor;
-  ancak bu görev bu dosyanın sahibi değildir. `V0-GOV-020` hizalama görevi
-  tamamlanıp dependency kaydı eklendiğinde görev yeniden `Planned` yapılabilir.
 
 ## Deliverables
 
