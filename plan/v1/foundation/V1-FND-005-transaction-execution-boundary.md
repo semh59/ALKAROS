@@ -1,7 +1,7 @@
 # V1-FND-005 - Implement transaction execution boundary
 
 - Task ID: V1-FND-005
-- Status: Done
+- Status: Blocked
 - Assignee: opencode-v1-fnd-005
 - Work type: implementation
 - Surface state: Existing
@@ -38,6 +38,11 @@ V0-ARC-001 ve V0-ARC-003 kararlarını tek transaction, rollback ve retry yürü
 - V1-FND-004
 - V0-ARC-001
 - V0-ARC-003
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

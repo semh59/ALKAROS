@@ -1,7 +1,7 @@
 # V0-CMP-003 - Create KVKK data inventory
 
 - Task ID: V0-CMP-003
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-cmp-003
 - Work type: validation
 - Surface state: Existing
@@ -32,6 +32,11 @@ Tüm modüllerdeki kişisel veriyi, hukuki amacı, saklama süresini ve imha/ano
 ## Dependencies
 
 - V0-ARC-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

@@ -1,7 +1,7 @@
 # V0-DAT-006 - Define migration rehearsal profile
 
 - Task ID: V0-DAT-006
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dat-006
 - Work type: decision
 - Surface state: Existing
@@ -34,6 +34,11 @@ Migration rehearsal veri sınıflarını, sanitize kurallarını, hacim profilin
 
 - V0-DAT-001
 - V0-DAT-002
+
+## Blocker
+
+- Candidate evidence, `V0-DOM-002` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

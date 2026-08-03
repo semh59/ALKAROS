@@ -1,7 +1,7 @@
 # V0-GOV-013 - Authenticate sensitive envelope metadata
 
 - Task ID: V0-GOV-013
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: implementation
 - Surface state: Existing
@@ -41,6 +41,11 @@ saglamak.
 
 - V0-GOV-012
 - V1-SEC-002
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

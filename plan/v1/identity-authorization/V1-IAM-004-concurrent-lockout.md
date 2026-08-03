@@ -1,7 +1,7 @@
 # V1-IAM-004 - Make authentication lockout concurrency safe
 
 - Task ID: V1-IAM-004
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: implementation
 - Surface state: Existing
@@ -46,6 +46,11 @@ engellemek ve lockout esigini atomik olarak uygulamak.
 - V0-GOV-003
 - V1-FND-012
 - V1-IAM-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

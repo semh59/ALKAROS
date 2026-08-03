@@ -1,7 +1,7 @@
 # V1-SEC-001 - Implement secret resolution boundary
 
 - Task ID: V1-SEC-001
-- Status: Done
+- Status: Blocked
 - Assignee: opencode-v1-sec-001
 - Work type: implementation
 - Surface state: Existing
@@ -36,6 +36,11 @@
 - V1-FND-005
 - V0-ARC-005
 - V0-SEC-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

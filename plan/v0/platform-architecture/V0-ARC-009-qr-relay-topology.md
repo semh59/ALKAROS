@@ -1,7 +1,7 @@
 # V0-ARC-009 - Define QR relay production topology
 
 - Task ID: V0-ARC-009
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-arc-009
 - Work type: decision
 - Surface state: Existing
@@ -38,6 +38,11 @@ kararla tanımlamak.
 - V0-ARC-003
 - V0-ARC-005
 - V0-SEC-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

@@ -1,7 +1,7 @@
 # V1-SEC-002 - Implement sensitive payload boundary
 
 - Task ID: V1-SEC-002
-- Status: Done
+- Status: Blocked
 - Assignee: opencode-v1-sec-002
 - Work type: implementation
 - Surface state: Existing
@@ -55,6 +55,11 @@ Payment, fiscal, invoice ve webhook payload'larının saklama, şifreleme, maske
 - V1-SEC-001
 - V0-CMP-003
 - V0-SEC-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

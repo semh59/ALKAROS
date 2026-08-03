@@ -1,7 +1,7 @@
 # V0-GOV-014 - Apply exponential messaging retry backoff
 
 - Task ID: V0-GOV-014
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: implementation
 - Surface state: Existing
@@ -36,6 +36,11 @@ belirlenmis exponential backoff kuraliyla kalici olarak hesaplamak.
 
 - V0-GOV-012
 - V1-FND-002
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

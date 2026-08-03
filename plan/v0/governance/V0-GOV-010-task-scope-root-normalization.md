@@ -1,7 +1,7 @@
 # V0-GOV-010 - Normalize task-scope repository roots
 
 - Task ID: V0-GOV-010
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: implementation
 - Surface state: Existing
@@ -37,6 +37,11 @@ sonucu uretmesini ve traceback yerine fail-closed JSON sonucu vermesini saglamak
 
 - V0-GOV-009
 - V1-FND-003
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

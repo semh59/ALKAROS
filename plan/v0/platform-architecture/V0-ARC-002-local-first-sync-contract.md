@@ -1,7 +1,7 @@
 # V0-ARC-002 - Define local-first synchronization contract
 
 - Task ID: V0-ARC-002
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-arc-002
 - Work type: decision
 - Surface state: Existing
@@ -33,6 +33,11 @@ Waiter PWA ve local backend arasındaki offline queue, replay, conflict ve recon
 ## Dependencies
 
 - V0-ARC-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

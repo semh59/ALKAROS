@@ -1,7 +1,7 @@
 # V1-FND-011 - Correct transaction-outbox atomicity
 
 - Task ID: V1-FND-011
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: implementation
 - Surface state: Existing
@@ -48,6 +48,11 @@ baglamak; tek commit veya tam rollback disinda kalici sonuc birakmamak.
 - V1-FND-002
 - V1-FND-005
 - V1-FND-006
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

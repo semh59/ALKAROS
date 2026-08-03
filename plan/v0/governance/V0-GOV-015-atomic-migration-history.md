@@ -1,7 +1,7 @@
 # V0-GOV-015 - Make migrations atomic and history-backed
 
 - Task ID: V0-GOV-015
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: implementation
 - Surface state: Existing
@@ -39,6 +39,11 @@ uygulanmamis veya sonraki position varken rollback'i reddetmek.
 
 - V0-GOV-012
 - V1-FND-004
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

@@ -1,7 +1,7 @@
 # V0-GOV-016 - Refresh post-remediation audit integrity records
 
 - Task ID: V0-GOV-016
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: validation
 - Surface state: Existing
@@ -39,6 +39,11 @@ açıklaştırmak ve aktif Markdown envanterinin hash kayıtlarını yeniden ür
 - V0-GOV-013
 - V0-GOV-014
 - V0-GOV-015
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

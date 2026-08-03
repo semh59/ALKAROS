@@ -1,7 +1,7 @@
 # V0-DAT-003 - Define nullable uniqueness policy
 
 - Task ID: V0-DAT-003
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dat-003
 - Work type: decision
 - Surface state: Existing
@@ -33,6 +33,11 @@ Nullable kolon içeren tüm unique kurallar için PostgreSQL uyumlu tek enforcem
 ## Dependencies
 
 - V0-DAT-001
+
+## Blocker
+
+- Candidate evidence, `V0-DOM-002` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

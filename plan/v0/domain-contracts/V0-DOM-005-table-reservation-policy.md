@@ -1,7 +1,7 @@
 # V0-DOM-005 - Define table reservation policy
 
 - Task ID: V0-DOM-005
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dom-005
 - Work type: decision
 - Surface state: Existing
@@ -35,6 +35,11 @@ tanımlamak.
 ## Dependencies
 
 - V0-DOM-001
+
+## Blocker
+
+- Candidate evidence, `V0-DOM-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

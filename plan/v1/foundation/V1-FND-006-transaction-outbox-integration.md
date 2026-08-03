@@ -1,7 +1,7 @@
 # V1-FND-006 - Integrate transaction and Outbox execution
 
 - Task ID: V1-FND-006
-- Status: Done
+- Status: Blocked
 - Assignee: opencode-v1-fnd-006
 - Work type: integration
 - Surface state: Existing
@@ -36,6 +36,11 @@ Transaction commit ile durable Outbox enqueue/dispatch sınırını tek crash-sa
 
 - V1-FND-005
 - V1-FND-002
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

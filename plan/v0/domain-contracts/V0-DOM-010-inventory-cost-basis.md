@@ -1,7 +1,7 @@
 # V0-DOM-010 - Define inventory cost basis
 
 - Task ID: V0-DOM-010
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dom-010
 - Work type: decision
 - Surface state: Existing
@@ -37,6 +37,11 @@ inventory calculation basis olarak belirlemek.
 
 - V0-CMP-002
 - V0-DAT-002
+
+## Blocker
+
+- Candidate evidence, `V0-CMP-002` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

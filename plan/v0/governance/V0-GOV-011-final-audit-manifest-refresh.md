@@ -1,7 +1,7 @@
 # V0-GOV-011 - Refresh final audit manifest
 
 - Task ID: V0-GOV-011
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: validation
 - Surface state: Existing
@@ -34,6 +34,11 @@ Markdown envanteriyle tekrar eslemek.
 
 - V0-GOV-009
 - V0-GOV-010
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

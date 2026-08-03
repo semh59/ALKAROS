@@ -1,7 +1,7 @@
 # V0-ARC-007 - Define deployment compatibility matrix
 
 - Task ID: V0-ARC-007
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-arc-007
 - Work type: decision
 - Surface state: Existing
@@ -33,6 +33,11 @@ Desteklenen OS, architecture, .NET patch, PostgreSQL patch, package, install ve 
 ## Dependencies
 
 - V0-ARC-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

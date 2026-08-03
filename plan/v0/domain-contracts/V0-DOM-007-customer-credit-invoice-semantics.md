@@ -1,7 +1,7 @@
 # V0-DOM-007 - Define customer credit and invoice reclassification semantics
 
 - Task ID: V0-DOM-007
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dom-007
 - Work type: decision
 - Surface state: Existing
@@ -35,6 +35,11 @@ oluşturmadan nasıl etkilediğini tanımlamak.
 
 - V0-DOM-003
 - V0-CMP-002
+
+## Blocker
+
+- Candidate evidence, `V0-DOM-003` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

@@ -1,7 +1,7 @@
 # V1-FND-002 - Implement the idempotency infrastructure
 
 - Task ID: V1-FND-002
-- Status: Done
+- Status: Blocked
 - Assignee: opencode-v1-fnd-002
 - Work type: implementation
 - Surface state: Existing
@@ -71,6 +71,11 @@ uygulamak.
 - V1-FND-001
 - V1-SEC-002
 - V0-ARC-003
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

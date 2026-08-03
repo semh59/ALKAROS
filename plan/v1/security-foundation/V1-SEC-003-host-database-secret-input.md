@@ -1,7 +1,7 @@
 # V1-SEC-003 - Remove database passwords from host command lines
 
 - Task ID: V1-SEC-003
-- Status: Done
+- Status: Blocked
 - Assignee: /root
 - Work type: implementation
 - Surface state: Existing
@@ -38,6 +38,11 @@ engellemek; yalniz environment tabanli secret resolution kullanmak.
 - V0-GOV-003
 - V1-FND-004
 - V1-SEC-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

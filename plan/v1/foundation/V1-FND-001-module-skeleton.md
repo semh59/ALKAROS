@@ -1,7 +1,7 @@
 # V1-FND-001 - Create the modular monolith skeleton
 
 - Task ID: V1-FND-001
-- Status: Done
+- Status: Blocked
 - Assignee: opencode-v1-fnd-001
 - Work type: implementation
 - Surface state: Existing
@@ -49,6 +49,11 @@ oluşturmak.
 - GATE-V0-EXIT
 - V0-ARC-001
 - V0-ARC-009
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

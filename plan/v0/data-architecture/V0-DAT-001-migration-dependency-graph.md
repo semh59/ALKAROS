@@ -1,7 +1,7 @@
 # V0-DAT-001 - Build migration dependency graph
 
 - Task ID: V0-DAT-001
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dat-001
 - Work type: decision
 - Surface state: Existing
@@ -34,6 +34,11 @@ Tüm şema ve FK bağımlılıklarını çıkarıp uygulanabilir tek veya iki a�
 ## Dependencies
 
 - V0-DOM-002
+
+## Blocker
+
+- Candidate evidence, `V0-DOM-002` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

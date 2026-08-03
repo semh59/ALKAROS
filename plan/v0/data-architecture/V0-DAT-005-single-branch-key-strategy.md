@@ -1,7 +1,7 @@
 # V0-DAT-005 - Resolve single-branch and business key strategy
 
 - Task ID: V0-DAT-005
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dat-005
 - Work type: decision
 - Surface state: Existing
@@ -33,6 +33,11 @@ Tek şubeli ürün kararı ile gelecekteki çok şube hazırlığı için opsiyo
 ## Dependencies
 
 - V0-ARC-001
+
+## Blocker
+
+- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
+  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 
