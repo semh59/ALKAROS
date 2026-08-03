@@ -71,13 +71,27 @@ _REMEDIATION_EXCEPTION_HEADER = (
 )
 _REMEDIATION_EXCEPTION_SEPARATOR = "| --- | --- | --- | --- | --- |"
 _REMEDIATION_EXCEPTION_ROW = re.compile(
-    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`2026-08-02`\s*\|\s*"
+    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-02|2026-08-03)`\s*\|\s*"
     r"Verified finding remediation only\s*\|\s*Not gate closure evidence\s*\|\s*"
     r"No new feature behavior\s*\|$"
 )
 _APPROVED_REMEDIATION_TASK_IDS = {
+    "V1-FND-001",
+    "V1-FND-002",
+    "V1-FND-004",
+    "V1-FND-005",
+    "V1-FND-006",
     "V1-FND-011",
     "V1-FND-012",
+    "V1-IAM-004",
+    "V1-SEC-003",
+}
+_CANDIDATE_CODE_REMEDIATION_TASK_IDS = {
+    "V1-FND-001",
+    "V1-FND-002",
+    "V1-FND-004",
+    "V1-FND-005",
+    "V1-FND-006",
     "V1-IAM-004",
     "V1-SEC-003",
 }
@@ -602,6 +616,7 @@ def validate_task_metadata(
     task: TaskMetadata,
     plan_dir: Path = PLAN_DIR,
     allow_blocked_transition: bool = False,
+    candidate_remediation: bool = False,
 ) -> List[str]:
     """Validate task metadata and return a list of error messages.
 
@@ -629,14 +644,16 @@ def validate_task_metadata(
             f"Assignee is {task.assignee!r}, must be a specific session ID"
         )
 
-    for dep_id in task.dependencies:
-        is_done, reason = check_dependency_status(dep_id, plan_dir)
-        if not is_done:
-            errors.append(
-                f"Dependency {dep_id} is not Done (status: {reason})"
-            )
+    if not candidate_remediation:
+        for dep_id in task.dependencies:
+            is_done, reason = check_dependency_status(dep_id, plan_dir)
+            if not is_done:
+                errors.append(
+                    f"Dependency {dep_id} is not Done (status: {reason})"
+                )
 
-    errors.extend(check_entry_gate(task, plan_dir))
+    if not candidate_remediation:
+        errors.extend(check_entry_gate(task, plan_dir))
 
     return errors
 
@@ -797,6 +814,7 @@ def run_validation(
     repo_root: Path,
     plan_dir: Path,
     diff_base: Optional[str] = None,
+    candidate_remediation: bool = False,
 ) -> Dict:
     """Run the full validation and return a result dict.
 
@@ -871,6 +889,23 @@ def run_validation(
 
             baseline_task = allowlist_task
 
+    if candidate_remediation:
+        try:
+            exception_ids = parse_remediation_exception_ids(plan_dir)
+        except TaskParseError as exc:
+            result["metadata_errors"].append(
+                f"Candidate-code remediation exception rejected: {exc}"
+            )
+            return result
+        if (
+            task.task_id not in _CANDIDATE_CODE_REMEDIATION_TASK_IDS
+            or task.task_id not in exception_ids
+        ):
+            result["metadata_errors"].append(
+                f"Task {task.task_id} is not an approved candidate-code remediation"
+            )
+            return result
+
     allow_blocked_transition = (
         task.status == "Blocked"
         and baseline_task is not None
@@ -880,6 +915,7 @@ def run_validation(
         task,
         plan_dir,
         allow_blocked_transition=allow_blocked_transition,
+        candidate_remediation=candidate_remediation,
     )
     result["metadata_errors"] = metadata_errors
 
@@ -943,6 +979,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         "origin/master). When set, changed paths come from "
         "'git diff --name-status <base>... HEAD' instead of the worktree.",
     )
+    parser.add_argument(
+        "--candidate-remediation",
+        action="store_true",
+        help="Allow only a registered candidate-code remediation task to repair pre-existing evidence while its dependencies remain Blocked.",
+    )
     args = parser.parse_args(argv)
 
     result = run_validation(
@@ -950,6 +991,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         args.repo_root,
         args.plan_dir,
         diff_base=args.diff_base,
+        candidate_remediation=args.candidate_remediation,
     )
 
     if args.format == "json":

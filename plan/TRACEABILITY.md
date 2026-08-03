@@ -115,6 +115,7 @@ relay erişimi olmadan public QR transport tamamlanmış sayılmaz.
 | `FIND-IA-0052` | Plan validator yalnız dependency kimliği ve cycle kontrolü yapıyor; `Done` bir task'ın açık direct veya transitive dependency'sini reddetmiyordu. | `V0-GOV-017` | Direct/transitive status-dependency denetimi fail-closed eklendi; geçersiz tarihsel `Done` kayıtları V0-GOV-018 ile candidate evidence olarak geri alınır. |
 | `FIND-IA-0053` | Geçmiş Git/application ağacı `V1-FND-001` `Done` olmadan doğrudan hata sayılıyor; aday kanıt ile yeni application başlangıcı ayrışmıyordu. | `V0-GOV-021` | Ağaç candidate evidence kabul edilir; V0 açıkken yeni `implementation`/`integration` `InProgress` durumu fail-closed reddedilir. |
 | `FIND-IA-0054` | `Blocked` görev, standardın zorunlu tuttuğu `Blocker` bölümünü silmeden executable statüye geçemiyor; task-scope bu zorunlu silmeyi reddediyordu. | `V0-GOV-022` | Yalnız legal `Blocked` status geçişindeki eksiksiz `Blocker` ekleme/silme işlemi izinli; diğer task gövdesi değişikliği fail-closed kalır. |
+| `FIND-IA-0055` | Mevcut candidate-code kusurları düzeltilemeden açık V0 dependency zincirinde kilitli kalıyordu. | `V0-GOV-028` | Yalnız kayıtlı kimlikler için `--candidate-remediation` modu eklendi; allowlist sabit kalır, dependency/gate kapanışı ve yeni davranış üretilmez. |
 
 ## Yapısal denetim bulguları
 

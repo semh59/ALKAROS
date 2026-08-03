@@ -74,6 +74,11 @@ REMEDIATION_ROWS = [
     "| `V1-FND-012` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
     "| `V1-IAM-004` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
     "| `V1-SEC-003` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `V1-FND-001` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `V1-FND-002` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `V1-FND-004` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `V1-FND-005` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `V1-FND-006` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
 ]
 
 
@@ -334,6 +339,47 @@ class TestRemediationEntryGateExceptions:
 
         assert exit_code == 0
         assert result["metadata_errors"] == []
+
+    def test_candidate_remediation_skips_only_blocked_dependencies(
+        self, write_task, make_repo, make_plan
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-001", dependencies="- V0-DOM-001")
+
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        result = mod.run_validation(
+            "V1-FND-001", make_repo, make_plan, candidate_remediation=True
+        )
+
+        assert result["valid"] is True
+
+    def test_candidate_remediation_rejects_unapproved_task(
+        self, write_task, make_repo, make_plan
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-999", dependencies="- V0-DOM-001")
+
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        result = mod.run_validation(
+            "V1-FND-999", make_repo, make_plan, candidate_remediation=True
+        )
+
+        assert result["valid"] is False
+        assert "not an approved" in result["metadata_errors"][0]
 
     def test_unapproved_task_cannot_bypass_open_v0_entry_gate(
         self, write_task, make_repo, make_plan, run_tool

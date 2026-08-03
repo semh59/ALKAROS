@@ -1,8 +1,8 @@
 # V0-GOV-028 - Control candidate code remediation
 
 - Task ID: V0-GOV-028
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 

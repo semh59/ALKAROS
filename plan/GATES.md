@@ -69,6 +69,11 @@ sözleşmesi bu sonucu açıkça ele alıyorsa başlayabilir; aksi durumda gate 
 | `V1-FND-012` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 | `V1-IAM-004` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 | `V1-SEC-003` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-001` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-002` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-004` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-005` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-006` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 <!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->
 
 `GATE-V1-ENTRY` sonrasında yalnız `V1-FND-001` başlatılır. Ardından sırasıyla

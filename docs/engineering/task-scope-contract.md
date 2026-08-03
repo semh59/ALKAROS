@@ -13,6 +13,8 @@ fail-closed olarak reddeden sözleşme. Uygulama: `tools/task-scope/task_scope_t
 - `--diff-base` (opsiyonel): Base ref. Verildiğinde değişen yollar worktree yerine
   `git diff --name-status <base>... HEAD` çıktısından toplanır (CI PR/dispatch modu); verilmediğinde worktree
   `git status --porcelain=v1` modu (local preflight) kullanılır.
+- `--candidate-remediation` (opsiyonel): yalnız kayıtlı candidate-code remediation görevinin mevcut kusurunu,
+  kapalı dependency zincirini kabul kanıtı saymadan düzeltmek için kullanılır.
 
 ## Output
 
@@ -55,7 +57,7 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 - Görev dosyası birden fazla veya hiç Task ID içermez; Task ID biçimi geçersizdir.
 - `Status` değeri `Planned`, `InProgress`, `Done`, `Blocked`, `NotApplicable` dışındadır.
 - `Assignee` boştur veya genel (`codex`, `ai`, `none`, `unassigned*`) tanımlıdır.
-- Bağımlılıklardan herhangi biri `Done` değildir.
+- `--candidate-remediation` kullanılmadığında bağımlılıklardan herhangi biri `Done` değildir.
 - Değişen bir yol allowlist'te değildir veya traversal içerir.
 - Görev Markdown değişikliği `Status` veya `Assignee` metadata satırı dışında bir satıra dokunur.
   Tek istisna, `Blocked` ile `Planned` veya `InProgress` arasındaki geçişte eksiksiz
@@ -63,7 +65,7 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 - `Status` değeri `Planned` veya gerçek oturum sahibine atanmış `InProgress` değildir.
 - Sürüm entry gate'i, önceki sürümdeki her görevin `Done` veya kanıtlı
   `NotApplicable` kaydıyla kapandığı ispatlanamamıştır.
-- `GATES.md` içindeki 2026-08-02 remediation exception tablosunun marker'ı,
+- `GATES.md` içindeki remediation exception tablosunun marker'ı,
   başlığı, ayıracı, satır biçimi veya exact Task ID kümesi geçersizdir;
   yinelenen veya onaysız Task ID kaydı vardır.
 
@@ -71,13 +73,17 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 
 `GATE-V0-EXIT` açıkken `check_entry_gate`, yalnız `GATES.md` içindeki
 `TASK_SCOPE_REMEDIATION_EXCEPTIONS` marker'ları arasındaki katı tablodan
-ayrıştırılan exact ID'leri kabul eder. 2026-08-02 kullanıcı onayının sabit
-kümesi `V1-FND-011`, `V1-FND-012`, `V1-IAM-004` ve `V1-SEC-003`'tür.
+ayrıştırılan exact ID'leri kabul eder. 2026-08-02 ve 2026-08-03 kullanıcı onaylarının sabit
+kümesi GATES.md ile araç kodunda birebir eşleşir.
 
 Tablo eksik, bozuk, yinelenen veya bu kümeyle eşleşmeyen bir kayıt içerirse
 denetim fail-closed olarak non-zero exit verir. İstisna yalnız kanıtlanmış
 bulguyu düzeltmeye yarar; V0/V1 gate kapanış kanıtı değildir ve yeni product
 behavior üretme izni vermez.
+
+`--candidate-remediation`, yalnız sabit candidate-code kimlikleri için kullanılabilir. Bu modda görev
+`InProgress` ve gerçek bir oturum sahibine atanmış olmalıdır; yazılabilir yüzey değişmez. Mod, görevi
+`Done` yapmaz, dependency veya gate'i kapatmaz ve yeni ürün davranışı eklemeye izin vermez.
 
 ## Failure recovery
 
@@ -87,7 +93,8 @@ behavior üretme izni vermez.
 - CI: `--diff-base` ile PR base SHA'sına göre çalışır; temiz worktree diff modunda sonucu bozmaz. Aynı fixture seti
   local komut ve CI'da aynı exit code ve sıralı finding listesini üretir (worktree modu local, diff modu CI için;
   her iki modun çıktı sözleşmesi aynıdır).
-- Dependency `Done` değilse önce dependency görevi kanıtla kapatılır, sonra aktif görev doğrulanır.
+- Normal görevde dependency `Done` değilse önce dependency görevi kanıtla kapatılır, sonra aktif görev doğrulanır.
+  Kayıtlı candidate-code remediation görevi bu kuralın yalnız düzeltme çalışması istisnasıdır.
 
 ## Task Markdown immutability
 

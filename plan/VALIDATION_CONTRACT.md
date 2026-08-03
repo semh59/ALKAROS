@@ -71,9 +71,9 @@ npx --yes markdownlint-cli2@0.23.2
   başlatılabilir; karar kaydı `TRACEABILITY.md` FIND-IA-0050'dir ve zincir
   kuralı diğer application görevleri için değişmez.
 - `GATES.md` içindeki `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu 2026-08-02
-  kullanıcı onayını makinece doğrular. Yalnız `V1-FND-011`, `V1-FND-012`,
-  `V1-IAM-004` ve `V1-SEC-003` exact kayıtları, açık `GATE-V0-EXIT`
-  kontrolünü kanıtlanmış bulgu remediation'ı için atlayabilir.
+  ve 2026-08-03 kullanıcı onaylarını makinece doğrular. Kayıtlı candidate-code
+  remediation kimliği `--candidate-remediation` ile yalnız mevcut kanıtlanmış
+  kusuru düzeltebilir; açık dependency veya gate kabul kanıtı sayılmaz.
 - Tablo marker'ı, başlığı, ayıracı, satır biçimi, approval tarihi veya exact
   Task ID kümesi bozuksa; yinelenen ya da ek bir kayıt varsa task-scope
   denetimi fail-closed non-zero exit verir. İstisna V0/V1 gate kapanış kanıtı
