@@ -42,6 +42,7 @@ _STATUS_PATTERN = re.compile(r"^- Status:\s*(.+?)\s*$", re.MULTILINE)
 _ASSIGNEE_PATTERN = re.compile(r"^- Assignee:\s*(.+?)\s*$", re.MULTILINE)
 _DEPENDENCIES_HEADER = re.compile(r"^##\s+Dependencies\s*$", re.MULTILINE)
 _OWNED_SURFACE_HEADER = re.compile(r"^##\s+Owned surface\s*$", re.MULTILINE)
+_BLOCKER_HEADER = re.compile(r"^##\s+Blocker\s*$", re.MULTILINE)
 _NEXT_HEADER = re.compile(r"^##\s+", re.MULTILINE)
 _TASK_ID_FORMAT = re.compile(r"^V\d+-[A-Z]+-\d+$")
 _BACKTICK_PATH = re.compile(r"`([^`]+)`")
@@ -650,6 +651,34 @@ def _git_file_text(repo_root: Path, ref: str, relative_path: str) -> Optional[st
     return result.stdout if result.returncode == 0 else None
 
 
+def _blocker_section(text: str) -> str:
+    """Return the complete Blocker section, including its heading."""
+    match = _BLOCKER_HEADER.search(text)
+    if match is None:
+        return ""
+    next_header = _NEXT_HEADER.search(text, match.end())
+    end = next_header.start() if next_header is not None else len(text)
+    return text[match.start():end]
+
+
+def _without_mutable_task_content(text: str, allow_blocker: bool) -> str:
+    """Remove the only task Markdown content permitted during a status change."""
+    mutable_metadata = re.compile(r"^- (?:Status|Assignee):.*$", re.MULTILINE)
+    result = mutable_metadata.sub("", text)
+    if not allow_blocker:
+        return result
+    blocker = _blocker_section(result)
+    return result.replace(blocker, "", 1) if blocker else result
+
+
+def _is_legal_blocker_transition(baseline: TaskMetadata, current: TaskMetadata) -> bool:
+    return (
+        baseline.status == "Blocked" and current.status in EXECUTABLE_STATUSES
+    ) or (
+        baseline.status in EXECUTABLE_STATUSES and current.status == "Blocked"
+    )
+
+
 def validate_task_markdown_change(
     task: TaskMetadata,
     changes: List[GitChange],
@@ -708,9 +737,34 @@ def validate_task_markdown_change(
                 "reason": "task Markdown deletion is not permitted",
             }]
 
-    mutable_line = re.compile(r"^- (?:Status|Assignee):.*$", re.MULTILINE)
-    baseline_fixed = mutable_line.sub("", baseline)
-    current_fixed = mutable_line.sub("", current)
+    try:
+        baseline_task = parse_task_text(baseline, task.file_path)
+    except TaskParseError:
+        baseline_task = None
+
+    allow_blocker = (
+        baseline_task is not None
+        and _is_legal_blocker_transition(baseline_task, task)
+    )
+    if allow_blocker:
+        baseline_blocker = _blocker_section(baseline)
+        current_blocker = _blocker_section(current)
+        if baseline_task.status == "Blocked":
+            if not baseline_blocker or current_blocker:
+                return [{
+                    "path": relative_path,
+                    "change_type": task_change.change_type,
+                    "reason": "Blocked-to-executable transition must remove Blocker",
+                }]
+        elif not current_blocker or "ancak" not in current_blocker.casefold():
+            return [{
+                "path": relative_path,
+                "change_type": task_change.change_type,
+                "reason": "Executable-to-Blocked transition needs an unlockable Blocker",
+            }]
+
+    baseline_fixed = _without_mutable_task_content(baseline, allow_blocker)
+    current_fixed = _without_mutable_task_content(current, allow_blocker)
     if baseline_fixed == current_fixed:
         return []
 

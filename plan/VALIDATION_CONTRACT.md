@@ -80,6 +80,9 @@ npx --yes markdownlint-cli2@0.23.2
   değildir ve yeni product behavior başlatma izni vermez.
 - Codex write allowlist yalnız `Owned surface`, aktif görev metadata alanları ve
   `evidence/<Task-ID>/**` birleşimidir.
+- Aktif görev `Blocked` ile `Planned` veya `InProgress` arasında geçerken yalnız
+  kendi zorunlu `Blocker` bölümünü ekleyebilir veya silebilir; başka görev gövdesi
+  değişikliği fail-closed reddedilir.
 - Scope doğrulaması staged, unstaged, untracked, deleted ve rename işleminin her
   iki yolunu kapsar; allowlist dışı tek yol non-zero exit üretir.
 

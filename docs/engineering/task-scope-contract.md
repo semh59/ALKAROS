@@ -33,7 +33,9 @@ fail-closed olarak reddeden sözleşme. Uygulama: `tools/task-scope/task_scope_t
 
 Görev Markdown'ının `Owned surface` bölümündeki her yol ve `evidence/<Task-ID>/**`
 allowlist'i oluşturur. Görev Markdown dosyasının kendisinde yalnız metadata `Status` ve `Assignee` satırları
-değişebilir; başlık, `Owned surface` veya başka bir bölüm allowlist değildir. Yalnız path şekilli backtick parçaları
+değişebilir. `Blocked` ile `Planned` veya `InProgress` arasındaki geçişte zorunlu `Blocker`
+bölümü de eklenebilir veya silinebilir; başlık, `Owned surface` veya başka bir bölüm
+allowlist değildir. Yalnız path şekilli backtick parçaları
 (içinde `/`, `\`, `.`, `*` veya `?` bulunan) allowlist
 ögesi sayılır; serbest metin, task ID ve diğer backtickli kelimeler yok sayılır. Kontrol edilen değişiklikler:
 worktree modunda staged, unstaged, untracked, deleted ve renamed yollar; diff modunda base ile HEAD arasındaki
@@ -56,6 +58,8 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 - Bağımlılıklardan herhangi biri `Done` değildir.
 - Değişen bir yol allowlist'te değildir veya traversal içerir.
 - Görev Markdown değişikliği `Status` veya `Assignee` metadata satırı dışında bir satıra dokunur.
+  Tek istisna, `Blocked` ile `Planned` veya `InProgress` arasındaki geçişte eksiksiz
+  `Blocker` bölümünün eklenmesi veya silinmesidir.
 - `Status` değeri `Planned` veya gerçek oturum sahibine atanmış `InProgress` değildir.
 - Sürüm entry gate'i, önceki sürümdeki her görevin `Done` veya kanıtlı
   `NotApplicable` kaydıyla kapandığı ispatlanamamıştır.
@@ -89,8 +93,10 @@ behavior üretme izni vermez.
 
 - Araç, worktree modunda görev Markdown'ını `HEAD` sürümüyle; diff modunda ise
   `merge-base` sürümüyle karşılaştırır.
-- Yalnız `Status` ve `Assignee` metadata satırları değişebilir. `Owned surface`,
-  Goal, dependency veya başka herhangi bir satırdaki fark fail-closed bulgudur.
+- Yalnız `Status` ve `Assignee` metadata satırları değişebilir. `Blocked` ile
+  `Planned` veya `InProgress` arasındaki geçişte yalnız `Blocker` bölümünün tamamı
+  da değişebilir. `Owned surface`, Goal, dependency veya başka herhangi bir satırdaki
+  fark fail-closed bulgudur.
 - Baseline'da olmayan yeni görev Markdown'ı write-set doğrulaması için güvenilir
   input değildir ve reddedilir. Plan görevi önce ayrı plan denetimiyle
   kaydedilmelidir; kendi untracked dosyasından write scope üretemez.

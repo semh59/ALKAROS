@@ -19,6 +19,8 @@ Bir Codex oturumu yalnız şu yolları değiştirebilir:
 
 1. Aktif görevde açıkça listelenen `Owned surface` yolları.
 2. Yalnız aktif görevin `Status` ve `Assignee` metadata satırları için kendi görev Markdown dosyası.
+   `Blocked` ile `Planned` veya `InProgress` arasındaki geçişte zorunlu `Blocker`
+   bölümü de eklenebilir veya silinebilir; başka görev gövdesi değişemez.
 3. Komut çıktısı, test raporu ve hash gibi yeniden üretilebilir kanıtlar için `evidence/<Task-ID>/**`.
 
 Okuma erişimi yazma yetkisi değildir. Parent directory, benzer adlı dosya, solution/project dosyası, lockfile, shared

@@ -101,7 +101,9 @@ tek görev kalabilir.
 - `V1-FND-001` tarafından sahiplenilen solution/project/build dosyaları global
   reserved surface'tir; feature task klasör wildcard'ı bu dosyalara yazma izni vermez.
 - Aktif görev dosyasında yalnız `Status` ve `Assignee` yürütme sırasında
-  değişebilir. Scope değişikliği ayrı plan değişikliğidir.
+  değişebilir. `Blocked` ile `Planned` veya `InProgress` arasındaki geçişte zorunlu
+  `Blocker` bölümü de eklenebilir veya silinebilir. Scope değişikliği ayrı plan
+  değişikliğidir.
 - Her görev `evidence/<Task-ID>/**` altında yeniden üretilebilir kabul kanıtı
   bırakabilir; bu izin başka görev kanıtlarına erişim vermez.
 - Allowlist dışı ihtiyaç, kullanıcıya kesin path ve gerekçeyle blocker olarak
