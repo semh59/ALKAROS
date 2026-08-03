@@ -65,15 +65,17 @@ public static class SensitiveDataFixtures
         public EnvelopeCiphertext Encrypt(
             SecretReference key,
             string accessor,
-            ReadOnlyMemory<byte> plaintext) => _inner.Encrypt(key, accessor, plaintext);
+            ReadOnlyMemory<byte> plaintext,
+            ReadOnlyMemory<byte> associatedData) => _inner.Encrypt(key, accessor, plaintext, associatedData);
 
         public byte[] Decrypt(
             SecretReference key,
             string accessor,
-            EnvelopeCiphertext ciphertext)
+            EnvelopeCiphertext ciphertext,
+            ReadOnlyMemory<byte> associatedData)
         {
             DecryptCalls++;
-            return _inner.Decrypt(key, accessor, ciphertext);
+            return _inner.Decrypt(key, accessor, ciphertext, associatedData);
         }
     }
 }

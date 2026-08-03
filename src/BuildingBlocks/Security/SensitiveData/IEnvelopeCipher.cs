@@ -14,12 +14,20 @@ public interface IEnvelopeCipher
     /// Encrypts <paramref name="plaintext"/> with the key resolved from
     /// <paramref name="key"/>.
     /// </summary>
-    EnvelopeCiphertext Encrypt(SecretReference key, string accessor, ReadOnlyMemory<byte> plaintext);
+    EnvelopeCiphertext Encrypt(
+        SecretReference key,
+        string accessor,
+        ReadOnlyMemory<byte> plaintext,
+        ReadOnlyMemory<byte> associatedData);
 
     /// <summary>
     /// Decrypts <paramref name="ciphertext"/> with the key resolved from
     /// <paramref name="key"/>. Integrity failures raise
     /// <see cref="SensitiveDataEncryptionException"/>.
     /// </summary>
-    byte[] Decrypt(SecretReference key, string accessor, EnvelopeCiphertext ciphertext);
+    byte[] Decrypt(
+        SecretReference key,
+        string accessor,
+        EnvelopeCiphertext ciphertext,
+        ReadOnlyMemory<byte> associatedData);
 }

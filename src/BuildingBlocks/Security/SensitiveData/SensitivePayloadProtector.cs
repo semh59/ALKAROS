@@ -37,9 +37,14 @@ public sealed class SensitivePayloadProtector
         ArgumentNullException.ThrowIfNull(key);
         ArgumentException.ThrowIfNullOrWhiteSpace(accessor);
 
+        var createdAt = DateTimeOffset.UtcNow;
+        var associatedData = SensitiveEnvelope.BuildAssociatedData(
+            payload.Categories,
+            createdAt,
+            key.Name);
         var plaintext = JsonSerializer.SerializeToUtf8Bytes(payload);
-        var ciphertext = _cipher.Encrypt(key, accessor, plaintext);
-        return new SensitiveEnvelope(payload.Categories, ciphertext, DateTimeOffset.UtcNow);
+        var ciphertext = _cipher.Encrypt(key, accessor, plaintext, associatedData);
+        return new SensitiveEnvelope(payload.Categories, ciphertext, createdAt);
     }
 
     /// <summary>
@@ -62,9 +67,22 @@ public sealed class SensitivePayloadProtector
         if (!_accessPolicy.CanRead(accessor, envelope))
             throw new UnauthorizedSensitiveReadException(accessor);
 
-        var plaintext = _cipher.Decrypt(key, accessor, envelope.Ciphertext);
-        return JsonSerializer.Deserialize<SensitivePayload>(plaintext)
+        if (!string.Equals(envelope.Ciphertext.KeyId, key.Name, StringComparison.Ordinal))
+            throw new SensitiveDataException("Envelope key identity does not match the requested key.");
+
+        var associatedData = SensitiveEnvelope.BuildAssociatedData(
+            envelope.FieldCategories,
+            envelope.CreatedAt,
+            envelope.Ciphertext.KeyId);
+        var plaintext = _cipher.Decrypt(key, accessor, envelope.Ciphertext, associatedData);
+        var payload = JsonSerializer.Deserialize<SensitivePayload>(plaintext)
             ?? throw new SensitiveDataException(
                 "Payload failed to deserialize; it was not written by this boundary.");
+
+        if (!payload.Categories.OrderBy(static item => item.Key, StringComparer.Ordinal)
+                .SequenceEqual(envelope.FieldCategories.OrderBy(static item => item.Key, StringComparer.Ordinal)))
+            throw new SensitiveDataException("Envelope classification does not match its protected payload.");
+
+        return payload;
     }
 }

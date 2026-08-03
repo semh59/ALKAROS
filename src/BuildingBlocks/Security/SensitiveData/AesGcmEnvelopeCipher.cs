@@ -25,7 +25,8 @@ public sealed class AesGcmEnvelopeCipher : IEnvelopeCipher
     public EnvelopeCiphertext Encrypt(
         SecretReference key,
         string accessor,
-        ReadOnlyMemory<byte> plaintext)
+        ReadOnlyMemory<byte> plaintext,
+        ReadOnlyMemory<byte> associatedData)
     {
         ArgumentNullException.ThrowIfNull(key);
 
@@ -38,7 +39,7 @@ public sealed class AesGcmEnvelopeCipher : IEnvelopeCipher
         {
             using (var aes = new AesGcm(keyBytes, TagLengthBytes))
             {
-                aes.Encrypt(nonce, plaintext.Span, ciphertext, tag);
+                aes.Encrypt(nonce, plaintext.Span, ciphertext, tag, associatedData.Span);
             }
         }
         catch (CryptographicException exception)
@@ -55,7 +56,8 @@ public sealed class AesGcmEnvelopeCipher : IEnvelopeCipher
     public byte[] Decrypt(
         SecretReference key,
         string accessor,
-        EnvelopeCiphertext ciphertext)
+        EnvelopeCiphertext ciphertext,
+        ReadOnlyMemory<byte> associatedData)
     {
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(ciphertext);
@@ -66,7 +68,12 @@ public sealed class AesGcmEnvelopeCipher : IEnvelopeCipher
         try
         {
             using var aes = new AesGcm(keyBytes, TagLengthBytes);
-            aes.Decrypt(ciphertext.Nonce, ciphertext.Ciphertext, ciphertext.Tag, plaintext);
+            aes.Decrypt(
+                ciphertext.Nonce,
+                ciphertext.Ciphertext,
+                ciphertext.Tag,
+                plaintext,
+                associatedData.Span);
         }
         catch (CryptographicException exception)
         {

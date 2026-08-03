@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace ALKAROS.SensitiveData;
 
 /// <summary>
@@ -8,6 +10,7 @@ namespace ALKAROS.SensitiveData;
 /// </summary>
 public sealed record SensitiveEnvelope
 {
+    private const int MetadataFormatVersion = 1;
     public IReadOnlyDictionary<string, SensitiveCategory> FieldCategories { get; init; }
 
     public EnvelopeCiphertext Ciphertext { get; init; }
@@ -56,5 +59,31 @@ public sealed record SensitiveEnvelope
                 "Payload failed to deserialize; it was not written by this boundary.",
                 exception);
         }
+    }
+
+    internal static byte[] BuildAssociatedData(
+        IReadOnlyDictionary<string, SensitiveCategory> fieldCategories,
+        DateTimeOffset createdAt,
+        string keyId)
+    {
+        ArgumentNullException.ThrowIfNull(fieldCategories);
+        ArgumentException.ThrowIfNullOrWhiteSpace(keyId);
+
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+        writer.Write(MetadataFormatVersion);
+        writer.Write(keyId);
+        writer.Write(createdAt.UtcDateTime.Ticks);
+        writer.Write(fieldCategories.Count);
+
+        foreach (var (field, category) in fieldCategories.OrderBy(static item => item.Key, StringComparer.Ordinal))
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(field);
+            writer.Write(field);
+            writer.Write((int)category);
+        }
+
+        writer.Flush();
+        return stream.ToArray();
     }
 }

@@ -1,8 +1,8 @@
 # V0-GOV-013 - Authenticate sensitive envelope metadata
 
 - Task ID: V0-GOV-013
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 
