@@ -742,6 +742,8 @@ def run_validation(
     *diff_base* selects diff mode (committed changes vs worktree). When
     *diff_base* is None the current worktree is inspected.
     """
+    repo_root = repo_root.resolve()
+    plan_dir = plan_dir.resolve()
     result: Dict = {
         "task_id": task_id,
         "valid": False,
@@ -774,7 +776,13 @@ def run_validation(
         changes = get_git_diff_changes(repo_root, diff_base)
     else:
         changes = get_git_changes(repo_root)
-    task_path = normalize_path(str(task.file_path.relative_to(repo_root)))
+    try:
+        task_path = normalize_path(str(task.file_path.relative_to(repo_root)))
+    except ValueError:
+        result["metadata_errors"].append(
+            f"Task file must be within repository root: {task.file_path}"
+        )
+        return result
     allowlist_task = task
     if any(task_path in change.all_paths() for change in changes):
         baseline_ref = "HEAD"

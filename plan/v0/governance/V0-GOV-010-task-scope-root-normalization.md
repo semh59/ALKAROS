@@ -1,8 +1,8 @@
 # V0-GOV-010 - Normalize task-scope repository roots
 
 - Task ID: V0-GOV-010
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 
