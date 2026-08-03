@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 326,
-  "markdown_line_count": 23073,
-  "markdown_byte_count": 1647816,
+  "markdown_file_count": 327,
+  "markdown_line_count": 23107,
+  "markdown_byte_count": 1648623,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -420,6 +420,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V0-GOV-011/closure-report.md",
+      "sha256": "680C3E66C7EA8A32D5EE5546EBB3DD16B0E1C86D13501C84EEAE3A8B4DAF6C85",
+      "lines": 33,
+      "bytes": 694,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-001/closure-report.md",
       "sha256": "F56A5345D07B40930525F6C3C4780E6038B904645648E3AC1201241A137D1955",
       "lines": 90,
@@ -484,9 +491,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F9F0E3B07B94DB29B8499988FCEFA2F6D5128B68C713630AAA15A2463162D51F",
-      "lines": 1602,
-      "bytes": 218668,
+      "sha256": "FD4B43263BBA28144F62282A6203E4DBBDD4B86C3EF5AEB0E000BAF94F2E187E",
+      "lines": 1603,
+      "bytes": 218810,
       "utf8": true
     },
     {
@@ -799,9 +806,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-011-final-audit-manifest-refresh.md",
-      "sha256": "684E89E3B05E61C0A212D0D230C88BA428B1076E1554B29EF867334F7029CE4B",
+      "sha256": "2F17E82C462FF940B06B6044B2B1ADEBC54BBE6B0125D5D64ECD55B8D710D221",
       "lines": 49,
-      "bytes": 1022,
+      "bytes": 993,
       "utf8": true
     },
     {

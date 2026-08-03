@@ -1,8 +1,8 @@
 # V0-GOV-011 - Refresh final audit manifest
 
 - Task ID: V0-GOV-011
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 
