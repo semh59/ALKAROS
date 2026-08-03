@@ -1889,7 +1889,7 @@ def application_tasks_started_before_v0_exit(
     return [
         f"APPLICATION_STARTED_BEFORE_V0_EXIT {task_id}"
         for task_id, (_, preamble, _, _) in tasks.items()
-        if not task_id.startswith("V0-GOV-")
+        if not task_id.startswith("V0-")
         and metadata_value(preamble, "Status", "") == "InProgress"
         and metadata_value(preamble, "Work type", "") in application_work_types
     ]
