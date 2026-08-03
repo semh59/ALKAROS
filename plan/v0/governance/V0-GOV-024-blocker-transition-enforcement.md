@@ -1,8 +1,8 @@
 # V0-GOV-024 - Enforce Blocker transitions
 
 - Task ID: V0-GOV-024
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 

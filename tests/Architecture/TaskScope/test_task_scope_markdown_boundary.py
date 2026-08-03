@@ -41,7 +41,10 @@ def _task(
     status: str,
     owned_surface: str,
     assignee: str = "real-session-123",
+    blocker: str | None = None,
+    extra_sections: str = "",
 ) -> str:
+    blocker_section = f"\n## Blocker\n\n- {blocker}\n" if blocker else ""
     return f"""# {task_id}
 
 - Task ID: {task_id}
@@ -55,13 +58,17 @@ def _task(
 ## Owned surface
 
 - `{owned_surface}`
-"""
+{blocker_section}{extra_sections}"""
+
+
+def _validate_task(repo: Path, task_id: str):
+    module = _tool()
+    result = module.run_validation(task_id, repo, repo / "plan")
+    return result["valid"], result
 
 
 def _validate(repo: Path):
-    module = _tool()
-    result = module.run_validation("V1-FND-003", repo, repo / "plan")
-    return result["valid"], result
+    return _validate_task(repo, "V1-FND-003")
 
 
 @pytest.fixture()
@@ -127,7 +134,16 @@ def test_closed_or_non_executable_task_cannot_write(gated_repo: Path, status: st
     valid, result = _validate(gated_repo)
 
     assert valid is False
-    assert any("expected 'Planned' or 'InProgress'" in error for error in result["metadata_errors"])
+    if status == "Blocked":
+        assert any(
+            finding["reason"] == "Executable-to-Blocked transition cannot write non-task paths"
+            for finding in result["findings"]
+        )
+    else:
+        assert any(
+            "expected 'Planned' or 'InProgress'" in error
+            for error in result["metadata_errors"]
+        )
 
 
 def test_open_preceding_release_gate_blocks_write(gated_repo: Path):
@@ -160,5 +176,104 @@ def test_untracked_task_cannot_supply_its_own_allowlist(tmp_path: Path):
     assert valid is False
     assert any(
         finding["reason"] == "task Markdown has no committed baseline"
+        for finding in result["findings"]
+    )
+
+
+def test_blocked_to_in_progress_can_remove_only_blocker(tmp_path: Path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    _git(repo, "config", "user.email", "test@example.com")
+    _git(repo, "config", "user.name", "Test")
+    task_path = _write(
+        repo,
+        "plan/v0/V0-GOV-001.md",
+        _task(
+            "V0-GOV-001",
+            "Blocked",
+            "tools/task-scope/**",
+            blocker="External evidence is missing; ancak it can be resumed after proof.",
+        ),
+    )
+    _git(repo, "add", "plan")
+    _git(repo, "commit", "-qm", "blocked baseline")
+
+    task_path.write_text(
+        _task("V0-GOV-001", "InProgress", "tools/task-scope/**"),
+        encoding="utf-8",
+    )
+
+    valid, result = _validate_task(repo, "V0-GOV-001")
+
+    assert valid is True
+    assert result["findings"] == []
+
+
+def test_in_progress_to_blocked_requires_unlockable_blocker(tmp_path: Path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    _git(repo, "config", "user.email", "test@example.com")
+    _git(repo, "config", "user.name", "Test")
+    task_path = _write(
+        repo,
+        "plan/v0/V0-GOV-001.md",
+        _task("V0-GOV-001", "InProgress", "tools/task-scope/**"),
+    )
+    _git(repo, "add", "plan")
+    _git(repo, "commit", "-qm", "in progress baseline")
+
+    task_path.write_text(
+        _task(
+            "V0-GOV-001",
+            "Blocked",
+            "tools/task-scope/**",
+            blocker="External evidence is missing; ancak it can be resumed after proof.",
+        ),
+        encoding="utf-8",
+    )
+
+    valid, result = _validate_task(repo, "V0-GOV-001")
+
+    assert valid is True
+    assert result["findings"] == []
+
+
+def test_blocker_transition_rejects_goal_change(tmp_path: Path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    _git(repo, "config", "user.email", "test@example.com")
+    _git(repo, "config", "user.name", "Test")
+    task_path = _write(
+        repo,
+        "plan/v0/V0-GOV-001.md",
+        _task(
+            "V0-GOV-001",
+            "Blocked",
+            "tools/task-scope/**",
+            blocker="External evidence is missing; ancak it can be resumed after proof.",
+            extra_sections="\n## Goal\n\n- Preserve the original goal.\n",
+        ),
+    )
+    _git(repo, "add", "plan")
+    _git(repo, "commit", "-qm", "blocked baseline")
+
+    task_path.write_text(
+        _task(
+            "V0-GOV-001",
+            "InProgress",
+            "tools/task-scope/**",
+            extra_sections="\n## Goal\n\n- Change the original goal.\n",
+        ),
+        encoding="utf-8",
+    )
+
+    valid, result = _validate_task(repo, "V0-GOV-001")
+
+    assert valid is False
+    assert any(
+        finding["reason"] == "task Markdown changed outside Status or Assignee metadata"
         for finding in result["findings"]
     )

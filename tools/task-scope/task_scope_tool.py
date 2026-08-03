@@ -599,7 +599,9 @@ def validate_changes(
 
 
 def validate_task_metadata(
-    task: TaskMetadata, plan_dir: Path = PLAN_DIR
+    task: TaskMetadata,
+    plan_dir: Path = PLAN_DIR,
+    allow_blocked_transition: bool = False,
 ) -> List[str]:
     """Validate task metadata and return a list of error messages.
 
@@ -610,7 +612,7 @@ def validate_task_metadata(
     """
     errors: List[str] = []
 
-    if task.status not in EXECUTABLE_STATUSES:
+    if task.status not in EXECUTABLE_STATUSES and not allow_blocked_transition:
         errors.append(
             f"Task status is {task.status!r}, expected 'Planned' or 'InProgress'"
         )
@@ -668,7 +670,12 @@ def _without_mutable_task_content(text: str, allow_blocker: bool) -> str:
     if not allow_blocker:
         return result
     blocker = _blocker_section(result)
-    return result.replace(blocker, "", 1) if blocker else result
+    if not blocker:
+        return result
+    start = result.find(blocker)
+    before = result[:start].rstrip("\r\n")
+    after = result[start + len(blocker):].lstrip("\r\n")
+    return before + ("\n\n" + after if after else "\n")
 
 
 def _is_legal_blocker_transition(baseline: TaskMetadata, current: TaskMetadata) -> bool:
@@ -823,9 +830,6 @@ def run_validation(
         )
         return result
 
-    metadata_errors = validate_task_metadata(task, plan_dir)
-    result["metadata_errors"] = metadata_errors
-
     if diff_base is not None:
         changes = get_git_diff_changes(repo_root, diff_base)
     else:
@@ -838,6 +842,7 @@ def run_validation(
         )
         return result
     allowlist_task = task
+    baseline_task: Optional[TaskMetadata] = None
     if any(task_path in change.all_paths() for change in changes):
         baseline_ref = "HEAD"
         if diff_base is not None:
@@ -864,6 +869,20 @@ def run_validation(
         if baseline is not None:
             allowlist_task = parse_task_text(baseline, task.file_path)
 
+            baseline_task = allowlist_task
+
+    allow_blocked_transition = (
+        task.status == "Blocked"
+        and baseline_task is not None
+        and baseline_task.status in EXECUTABLE_STATUSES
+    )
+    metadata_errors = validate_task_metadata(
+        task,
+        plan_dir,
+        allow_blocked_transition=allow_blocked_transition,
+    )
+    result["metadata_errors"] = metadata_errors
+
     allowlist = build_allowlist(allowlist_task)
     non_metadata_changes = [
         change
@@ -871,6 +890,15 @@ def run_validation(
         if task_path not in change.all_paths()
     ]
     findings = validate_changes(non_metadata_changes, allowlist)
+    if allow_blocked_transition:
+        findings.extend(
+            {
+                "path": change.path,
+                "change_type": change.change_type,
+                "reason": "Executable-to-Blocked transition cannot write non-task paths",
+            }
+            for change in non_metadata_changes
+        )
     findings.extend(
         validate_task_markdown_change(task, changes, repo_root, diff_base)
     )
