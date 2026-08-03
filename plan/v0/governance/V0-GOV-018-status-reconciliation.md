@@ -1,7 +1,7 @@
 # V0-GOV-018 - Reconcile invalid Done statuses
 
 - Task ID: V0-GOV-018
-- Status: Blocked
+- Status: InProgress
 - Assignee: /root
 - Work type: validation
 - Surface state: Existing
@@ -77,12 +77,6 @@ görevlerini candidate evidence korunarak `Blocked` durumuna geri almak.
 ## Dependencies
 
 - V0-GOV-017
-
-## Blocker
-
-- Validator candidate evidence olarak korunan mevcut Git/kod ağacını erken
-  application yüzeyi sayıyor. `V0-GOV-021` fail-closed runtime gate kuralını
-  tamamlayınca görev yeniden `Planned` yapılabilir.
 
 ## Deliverables
 
