@@ -42,10 +42,8 @@ Exact immutable release candidate için evidence-backed approve veya reject kara
 
 - Bütün mandatory gate'ler geçer ve açık critical/high defect yoksa approve; aksi durumda blocking evidence ile reject
   kaydedilir. Deployment çalıştırılmaz.
-- `V20-GAT-002` kanıtlı `NotApplicable` ise evidence pack gate'i go-live kararında beklenmez; kalan mandatory gate'ler
-  yine evidence ile doğrulanır.
-- `V20-CMP-001` kanıtlı `NotApplicable` ise compliance sign-off gate'i go-live kararında beklenmez; kalan mandatory
-  gate'ler yine evidence ile doğrulanır.
+- `V20-GAT-002` ve `V20-CMP-001` gerçek kanıtla `Done` değilse yalnız Reject kaydı üretilebilir; `NotApplicable` bu
+  mandatory release gate'leri atlayamaz.
 
 ## Handoff
 

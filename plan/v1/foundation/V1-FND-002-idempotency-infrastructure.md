@@ -23,14 +23,8 @@ uygulamak.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı; `Directory.Packages.props` içine `Npgsql` PackageVersion eklentisi.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): `docs/data/migration-dependency-graph.md` (V0-DAT-001
-  sahipliğinde kayıtlı güncelleme) ve `database/MigrationComposition/order.json` üzerinde bu task'ın migration
-  pozisyon kaydı; `order.json` sahipliği V1-FND-004'ten devralınır (V1-FND-004 yüzey daraltma satırı).
-- Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): altyapı tabloları 001-003 pozisyonlarını alır; domain
-  tabloları 004-024 (A) ve 031-035 (B) aralığına kayar. V1-FND-004'ün `tests/Host/MigrationComposition/Manifest/
-  ManifestTests.cs` dosyasındaki `RealManifestLoadsWithVerifiedOrderFromV0Dat001` testi gerçek order.json'un tam
-  içeriğini sabitlediği için ilgili satırları (26→29, 21→24, ilk entry, Phase B endeksi 21→24, Skip(22)→Skip(25))
-  yalnız bu görevde güncellenir; testin kalanına dokunulmaz.
-- `plan/v1/foundation/V1-FND-004-host-migration-composition.md` (yalnız Owned surface devir satırı)
+  sahipliğinde kayıtlı güncelleme) üzerinde bu task'ın migration pozisyon kaydı. Runtime `order.json` ve manifest
+  testi sahipliği V1-FND-012 remediation görevindedir.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

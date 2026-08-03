@@ -19,7 +19,6 @@ V0-ARC-001 ve V0-ARC-003 kararlarını tek transaction, rollback ve retry yürü
 
 ## Owned surface
 
-- `src/BuildingBlocks/Transactions/**`, `tests/BuildingBlocks/Transactions/**`
 - Kapsam genişletme onayı (2026-07-31 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı.
 - Bu görev domain workflow veya module repository yüzeyini değiştiremez.
@@ -30,7 +29,8 @@ V0-ARC-001 ve V0-ARC-003 kararlarını tek transaction, rollback ve retry yürü
 
 ## Out of scope
 
-- Inbox/Outbox persistence/dispatch, post-commit event handoff, provider network çağrısı, domain-specific compensation ve
+- Inbox/Outbox persistence/dispatch, post-commit event handoff, provider network çağrısı, domain-specific compensation
+  ve
   module schema.
 
 ## Dependencies

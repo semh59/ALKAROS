@@ -43,7 +43,8 @@ Boyutlar arası ve tutarsız döngüleri reddeden birim tanımlarını, boyutlar
 
 ## Acceptance evidence
 
-- kg-g ve litre-ml dönüşümleri geri döndürülebilir: karşılaştırma toleransı uygulama sabiti 1e-9'dur; dönüşüm sonucu bu tolerans içinde karşılaştırılır; kg-litre ve çelişkili çevrimler reddedilir.
+- kg-g ve litre-ml dönüşümleri geri döndürülebilir: karşılaştırma toleransı uygulama sabiti 1e-9'dur; dönüşüm sonucu bu
+  tolerans içinde karşılaştırılır; kg-litre ve çelişkili çevrimler reddedilir.
 
 ## Handoff
 

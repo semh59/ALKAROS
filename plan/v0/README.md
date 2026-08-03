@@ -10,11 +10,12 @@ Kodlamadan önce domain, veri, mevzuat ve dış sistem belirsizliklerini kapatma
 
 ## Çıkış kapısı
 
-- Uygulanabilir V0 görevleri `Done`; private kanıt bekleyen görevler açık
-  `Blocked` ve bunları tüketen implementation görevleri başlamamış olmalıdır.
-- Tüm `V0-DOM`, `V0-DAT`, `V0-ARC` ve `V0-CMP` görevleri `Done`.
-- Hugin, QNB, Yemeksepeti, meal-card, printer ve QR relay görevleri ya gerçek kanıtla
-  `Done` ya da açık kaldırılma koşuluyla `Blocked` durumundadır.
+- Tüm V0 görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur;
+  açık `Blocked` görev kalmaz.
+- Tüm `V0-DOM`, `V0-DAT`, `V0-ARC`, `V0-CMP`, recovery ve dış-sözleşme görevleri
+  karar kaynakları ve named approver kanıtıyla kapanır.
+- Hugin, QNB, Yemeksepeti, meal-card, printer ve QR relay görevleri gerçek
+  sandbox/device/contract kanıtı olmadan V0 çıkışını geçiremez.
 - Backup tool path'i disposable PostgreSQL 18 üzerinde doğrulanmış, RPO/RTO
   hedefi karar kaydına bağlanmıştır; application restore kanıtı V1.5'e aittir.
 - Açık kritik karar yok; migration dependency graph çevrimsiz veya açıkça iki
@@ -27,4 +28,4 @@ Kodlamadan önce domain, veri, mevzuat ve dış sistem belirsizliklerini kapatma
 `platform-architecture`, `printing`, `qnb-esolutions`, `qr-relay`,
 `security-baseline`, `yemeksepeti`.
 
-Doğrulanan plan hacmi: 14 modül, 42 tek-sahip görev.
+Doğrulanan plan hacmi: 15 modül, 43 tek-sahip görev.

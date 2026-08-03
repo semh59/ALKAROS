@@ -34,9 +34,16 @@
 - V0-BKP-001
 - V0-CMP-003
 
+## Blocker
+
+- V0-BKP-001 ölçülmüş restore kanıtı üretmedi ve named business approver tarafından imzalanmış sayısal RPO/RTO hedefi
+  yoktur. Ancak başarılı V0-BKP-001 evidence package ile onaylayan ve hedef değerler kayda girince görev `Planned`
+  yapılabilir.
+
 ## Deliverables
 
-- V0-BKP-002 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-BKP-002 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - Pozitif/negatif örnekler ve rejected alternatives.
 - Tüketici görevler için test edilebilir invariant/output listesi.
 

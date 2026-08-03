@@ -60,6 +60,8 @@ policy ile karar vermek.
   Bill closed status yazmaz.
 - `V12-MCD-004` tarihli `NotApplicable` ise MealCard branch disabled kalır; Cash ve BankCard closure matrisi yine
   doğrulanır ve bu task başlayabilir.
+- `V12-FSC-003` tarihli `NotApplicable` ise managed fiscal lifecycle branch'i etkin değildir; seçilmiş ve kanıtlı legal
+  strategy için aynı close/deny matrisi doğrulanır, bu task varsayımsal provider davranışı üretmez.
 - Approved-without-allocation, refund Unknown ve fiscal/payment mismatch Bill'i kapatmaz.
 
 ## Handoff

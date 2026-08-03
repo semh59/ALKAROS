@@ -440,16 +440,6 @@ class GitChange:
             paths.append(self.old_path)
         return paths
 
-    def to_dict(self) -> Dict[str, str]:
-        result: Dict[str, str] = {
-            "path": self.path,
-            "change_type": self.change_type,
-        }
-        if self.old_path is not None:
-            result["old_path"] = self.old_path
-        return result
-
-
 def get_git_changes(repo_root: Path) -> List[GitChange]:
     """Return all changed paths in the Git worktree.
 
@@ -555,9 +545,7 @@ def get_git_diff_changes(repo_root: Path, base_ref: str) -> List[GitChange]:
 # Allowlist construction and validation
 # ---------------------------------------------------------------------------
 
-def build_allowlist(
-    task: TaskMetadata, workspace: Path = WORKSPACE
-) -> List[str]:
+def build_allowlist(task: TaskMetadata) -> List[str]:
     """Build the write allowlist for a task.
 
     The allowlist includes:
@@ -814,7 +802,7 @@ def run_validation(
         if baseline is not None:
             allowlist_task = parse_task_text(baseline, task.file_path)
 
-    allowlist = build_allowlist(allowlist_task, workspace=repo_root)
+    allowlist = build_allowlist(allowlist_task)
     non_metadata_changes = [
         change
         for change in changes

@@ -19,7 +19,6 @@ Transaction commit ile durable Outbox enqueue/dispatch sınırını tek crash-sa
 
 ## Owned surface
 
-- `src/BuildingBlocks/TransactionOutboxIntegration/**`, `tests/BuildingBlocks/TransactionOutboxIntegration/**`
 - Kapsam genişletme onayı (2026-08-01 kullanıcı onayı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı (Npgsql zaten `Directory.Packages.props` merkezi paketindedir).
 - Bu görev, transaction veya Inbox/Outbox owner surface'lerini değiştiremez.

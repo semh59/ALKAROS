@@ -1,7 +1,7 @@
 # V0-LIC-001 - Define offline-safe licensing contract
 
 - Task ID: V0-LIC-001
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-lic-001
 - Work type: decision
 - Surface state: Existing
@@ -34,9 +34,16 @@ tanımlamak.
 - V0-ARC-002
 - V0-CMP-003
 
+## Blocker
+
+- Mevcut license record product/legal onay olmadan crypto, device limiti ve grace davranışı seçmektedir. Ancak named
+  product
+  owner ve legal approver tarafından imzalı license policy sağlanınca görev yeniden `Planned` yapılabilir.
+
 ## Deliverables
 
-- V0-LIC-001 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-LIC-001 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - Pozitif/negatif örnekler ve rejected alternatives.
 - Tüketici görevler için test edilebilir invariant/output listesi.
 

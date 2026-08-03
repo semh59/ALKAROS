@@ -1,7 +1,7 @@
 # V0-DOC-001 - Correct the master specification baseline
 
 - Task ID: V0-DOC-001
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-doc-001
 - Work type: decision
 - Surface state: Existing
@@ -66,9 +66,16 @@ Master PDF'deki doğrulanmış çelişki ve açık maddeleri tek revize edilebil
 - V0-BKP-002
 - V0-LIC-001
 
+## Blocker
+
+- Mevcut master specification gerçek olmayan `II.16` gereksinimi üretmiş ve açık Blocked dependency'lere rağmen `Done`
+  olarak işaretlenmiştir. Ancak yalnız PDF'de doğrulanmış heading/Correction kayıtları ve tüm dependency kararları
+  geçerli kanıtla kapandığında görev yeniden `Planned` yapılabilir.
+
 ## Deliverables
 
-- V0-DOC-001 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-DOC-001 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - En az iki pozitif ve iki negatif örnek.
 - Tüketici görevler için açık input/output ve invariant listesi.
 

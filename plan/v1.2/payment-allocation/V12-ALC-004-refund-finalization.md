@@ -53,6 +53,9 @@ Yalnız provider Approved refund sonucundan sonra compensating allocation ve fis
 
 - 100 payment / 20 Approved refund tam olarak 80 net paid bırakır; Rejected veya Unknown allocation yazmaz.
 - Crash sonrası resume aynı provider action için tek compensating allocation ve tek fiscal handoff üretir.
+- `V12-MCD-003` tarihli `NotApplicable` ise MealCard refund branch'i disabled kalır; kanıtlı Hugin refund sonucu için
+  aynı
+  Approved/Rejected/Unknown finalization invariant'ları doğrulanır.
 
 ## Handoff
 

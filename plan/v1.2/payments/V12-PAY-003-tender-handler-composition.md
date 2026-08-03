@@ -36,7 +36,6 @@ Cash handler, durable BankCard workflow ve MealCard provider-registry bridge'ini
 - V12-CSH-003
 - V12-PAY-004
 - V12-MCD-004
-- V12-MCD-003
 
 ## Deliverables
 

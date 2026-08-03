@@ -8,7 +8,7 @@
 
 ## Source basis
 
-- DEC:V0-DOM-001
+- CORR:C31
 
 ## Goal
 
@@ -36,7 +36,8 @@ Yalnız `fc5ae22` (kök baseline, konvansiyon öncesi) kayıtlı istisnadır ve 
 
 - Push edilmiş 9 commit'in yeniden yazımı (footer atıfları, commit mesajındaki görev listesi ve kayıtlı oturum
   gerçeğine dayanır; 2026-08-01 tam geçmiş denetim sonucuna göre):
-  - `655d0b2`: mevcut `Task: V0-DOM-001` footer'ı korundu; SHA değişmedi. Commit-anı yüzeyi `docs/versioning-strategy.md`
+  - `655d0b2`: mevcut `Task: V0-DOM-001` footer'ı korundu; SHA değişmedi. Commit-anı yüzeyi
+    `docs/versioning-strategy.md`
     içermediği için denetim VIOLATION raporlar — FIND-IA-0040 kaydıyla örtüşür (kayıtlı istisna).
   - `662e466`: mesajı zaten `Gate: GATE-V0-ENTRY` trailer'ı taşıyordu → yeniden yazılmadı; denetim GATE_OK.
   - `72db2fa`: `Task: V0-DOM-007` eklendi (dosya seti V0-DOM-007 yüzeyiyle birebir örtüşür).
@@ -57,7 +58,7 @@ Yalnız `fc5ae22` (kök baseline, konvansiyon öncesi) kayıtlı istisnadır ve 
 - `origin/master`'a force-push (kullanıcı onayı: "DÜZELT", 2026-08-01).
 - Sınır denetimi scriptinin `Gate:` footer desteğiyle güncellenmesi ve tam geçmiş (25 commit) denetimi.
 - Governance: GATES/VALIDATION_CONTRACT FND-009 notu, TRACEABILITY FIND-IA-0050/0051 kayıtları,
-  `evidence/V1-FND-008/**` tarihli düzeltme notları, AUDIT_REPORT/MANIFEST yeniden üretimi.
+  `evidence/V1-FND-009/**` altındaki tarihli düzeltme notları, AUDIT_REPORT/MANIFEST yeniden üretimi.
 
 ## Out of scope
 

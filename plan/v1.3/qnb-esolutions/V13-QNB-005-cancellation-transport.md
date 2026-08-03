@@ -48,8 +48,8 @@ Yalnız `V0-QNB-001` kanıtında onaylanan QNB iptal/düzeltme işlemini eşleme
 
 ## Acceptance evidence
 
-- `V0-QNB-001` iptal capability'si `V20-INT-002` sertifikasyonunda kanıtlanır; capability kanıtı olmadan
-  `NotApplicable` uygulanamaz.
+- `V0-QNB-001` iptal capability'sini private/partner contract ve sandbox transcript'iyle kanıtlar; bu kanıt yoksa task
+  `Blocked` kalır. `V20-INT-002` yalnız tamamlanmış V1.3 davranışını sertifikalandırır.
 - İptal penceresi geçmişse Pending intent `Expired` terminal durumuna geçer; provider'a iptal talebi gönderilmez ve
   gerekçe kaydı tutulur (iade akışı ayrıdır).
 - Capability doğrulanırsa sandbox kanıtları accepted, rejected ve timeout/query sonuçlarını kapsar; retry tek provider

@@ -1,7 +1,7 @@
 # Void, Complimentary and Discount Policy
 
 > **Task:** V0-DOM-006
-> **Status:** Done
+> **Status:** Blocked
 > **Assignee:** codex-v0-dom-006
 > **Work type:** decision
 > **Source basis:** PDF:II.2.5, PDF:II.3.3, PDF:II.5.2, PDF:III.7
@@ -10,7 +10,7 @@
 ## 1. Operation Types
 
 | Operation | Description | Tax Impact | Actor | Approval Threshold |
-|-----------|-------------|------------|-------|-------------------|
+| ----------- | ------------- | ------------ | ------- | ------------------- |
 | Void | Item removed before payment | Reverses tax | Waiter, Manager | >100 TL requires manager |
 | Complimentary | Item given free | Tax still applies | Manager only | All amounts |
 | Discount | Price reduction | Proportional tax reduction | Waiter (up to %10), Manager (any) | >%10 requires manager |
@@ -19,22 +19,26 @@
 ## 2. Eligibility Rules
 
 ### Void
+
 - Item MUST be in `Queued` or `Cooking` state (KitchenTicketItem).
 - If item is already `Done` or `Served`, use Refund instead.
 - Voided item's inventory reservation is released.
 
 ### Complimentary
+
 - Item MUST be on an active Order.
 - Complimentary items still appear on the Bill with price=0 and tax calculated.
 - Manager approval required for all complimentary items.
 
 ### Discount
+
 - Applied at line level or bill level.
 - Line-level discount: specific item price reduced.
 - Bill-level discount: distributed proportionally (per CMP-002 rules).
 - Total discount MUST NOT exceed bill total.
 
 ### Waste
+
 - Only for production/kitchen items, not for customer orders.
 - Waste records decrement inventory without a sale.
 

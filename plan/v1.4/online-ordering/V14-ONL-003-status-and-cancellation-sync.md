@@ -52,8 +52,9 @@ evidence event'i üretmek.
 
 - Duplicate status tek etki üretir; cancellation race deterministik kapanır; çözümlenemeyen fark aynı evidence event'i
   idempotent olarak üretir.
-- Mutfak başlamadan provider iptali tam olarak bir Release, hazırlık başladıktan sonra tam olarak bir Waste üretir;
-  crash/retry stok etkisini tekrarlamaz ve bu görev ReconciliationCase oluşturmaz.
+- Mutfak başlamadan provider iptali V11-RSV-003'ün tam olarak bir Release sonucuna, hazırlık başladıktan sonra aynı
+  görevin tam olarak bir Waste sonucuna bağlanır; crash/retry stok etkisini tekrarlamaz ve bu görev ReconciliationCase
+  oluşturmaz.
 
 ## Handoff
 

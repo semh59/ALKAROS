@@ -1,0 +1,59 @@
+V1-FND-006-rev preflight snapshot (2026-08-02)
+===============================================
+
+Repository root : D:\PROJECT\ALKAROS
+Git branch      : master
+HEAD            : edde9ee (feat(iam-001): implement user authentication with lockout and sessions)
+Remote origin   : https://github.com/semh59/ALKAROS.git
+
+Task file       : plan/v1/foundation/V1-FND-006-rev-transaction-outbox-atomicity.md (yeni)
+Assignee        : opencode-v1-fnd-006-rev
+Kullanıcı onayı : 2026-08-02 "düzelt" — önerilen kapsam (a) gerçek paylaşımlı DB transaction
+                  mekanizması, (b) domain+outbox atomicity testleri, (c) TRACEABILITY kaydı.
+
+Başlangıç write-set snapshot'ı (git status --short, HEAD edde9ee)
+-----------------------------------------------------------------
+Oturum başlangıcında working tree'de 110 dosya değişmiş ve plan/v0/governance/,
+evidence/V0-GOV-001/, evidence/V0-GOV-002/, plan/DECISION_REVALIDATION.md,
+plan/v1/foundation/V1-FND-010-*.md, tests/Architecture/TaskScope/test_task_scope_markdown_boundary.py
+untracked idi. Bu değişiklikler bu oturumun diff'iyle birlikte COMMIT EDİLMEYECEK;
+yalnız aşağıdaki kesin allowlist yolları yazılacak ve commit edilecek.
+
+Bu görevin yazma allowlist'i:
+- plan/v1/foundation/V1-FND-006-rev-transaction-outbox-atomicity.md (yeni görev dosyası)
+- src/BuildingBlocks/Transactions/**            (ITransactionContext, ITransactionResource,
+                                                 TransactionScope, TransactionContext)
+- src/BuildingBlocks/TransactionOutboxIntegration/** (TransactionOutbox, TransactionOutboxResource)
+- tests/BuildingBlocks/TransactionOutboxIntegration/** (testler + test fixture)
+- tests/BuildingBlocks/Transactions/**          (yalnız imza uyumu gerekiyorsa)
+- evidence/V1-FND-006-rev/**                    (bu kanıtlar)
+
+Kapsam genişletme onayı (2026-08-02 kullanıcı onayı "düzelt"):
+- V1-FND-005 'Transactions' surface'ında ITransactionContext/TransactionScope/TransactionContext
+  değiştirilecek (shared database transaction desteği ekleniyor).
+- V1-FND-006 'TransactionOutboxIntegration' surface'ında TransactionOutbox/TransactionOutboxResource
+  değiştirilecek (ortak connection+transaction'a geçiş).
+- V1-FND-010 (Blocked) sahipliğindeki tests/BuildingBlocks/TestHelpers/** DEĞİŞTİRİLMEYECEK.
+  (RecordingResource/SimulatedFailures/Fixtures salt okunur — imza değişikliği yapılmayacak.)
+- Tests/BuildingBlocks/Transactions/** mevcut testleri değiştirilmeyecek (yalnız derlenir).
+- V1-IAM-001 PostgresUserStore bu görevde kapsam DIŞI (adoption ayrı görev olabilir).
+
+Ortam
+-----
+- Docker: alkaros_test container'ı localhost:5433 (test veritabanı sağlayıcısı).
+- Test env var'ları User scope'tan sürece yüklenir (şifre diske yazılmaz).
+- Baseline: ALKAROS.slnx 8 proje / 215 test / 0 başarısız (V1-IAM-001 kapanışı, edde9ee).
+
+Doğrulanan kusur (kullanıcı denetimi + kaynak kanıtı)
+------------------------------------------------------
+1. V0-ARC-003 §3: "Domain events written to outbox in same transaction as state change."
+   (docs/architecture/idempotency-inbox-outbox.md §3)
+2. TransactionScope.CommitAsync (src/BuildingBlocks/Transactions/TransactionScope.cs:32-36)
+   resource'ları ortak DB transaction NESNESİ olmadan sırayla çağırıyor.
+3. TransactionOutboxResource.CommitAsync (src/BuildingBlocks/TransactionOutboxIntegration/
+   TransactionOutboxResource.cs:66-67,93) KENDİ bağlantısında kendi BeginTransactionAsync +
+   CommitAsync yapıyor → domain state (ayrı connection) ile atomic DEĞİL.
+4. TRACEABILITY.md C28 kaydı farklı konu (post-commit handoff); outbox atomicity ihlali
+   kayıtlı değil → yeni C32 kaydı eklenecek.
+5. Mevcut testlerin workflow'ları yalnız Enqueue çağırıyor; domain+outbox aynı transaction
+   senaryosu hiç test edilmemiş (TransactionOutboxIntegrationTests.cs).

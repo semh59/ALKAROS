@@ -1,28 +1,16 @@
-# Offline-Safe Licensing Contract
+# Licensing Contract — product and legal decision pending
 
 > **Task:** V0-LIC-001
-> **Status:** Done
-> **Assignee:** codex-v0-lic-001
-> **Work type:** decision
+> **Status:** Blocked
 > **Source basis:** PDF:II.2.24, PDF:III.26
-> **Date:** 2026-07-30
+> **Access date:** 2026-08-02
+> **Approver:** None — decision is not approved
 
-## 1. Licensing Model
-- One-time activation per store (machine-bound).
-- License key signed with Ed25519 (offline verification).
-- Machine binding: hardware fingerprint (CPU ID + disk serial).
-- Store limit: configurable per license (default: 1 store, 5 devices).
+The PDF establishes that licensing has a persistence boundary. It does not
+select cryptography, machine identifiers, store/device limits, grace period,
+read-only behavior or support transfer process. The former policy values are
+withdrawn.
 
-## 2. Offline Operation
-- License verified locally (no internet required after activation).
-- Grace period: 30 days if license check fails (clock skew tolerance).
-- After grace period: read-only mode (no new orders, existing data accessible).
-
-## 3. Rules
-1. License activation: one-time, online, binds to machine fingerprint.
-2. Transfer: deactivate on old machine, activate on new (requires internet).
-3. Clock rollback: detected via monotonic clock + last-known-timestamp; triggers grace period.
-4. Recovery: license re-issuance by vendor support (manual process).
-
-## 4. Affected Tasks
-- V20-LIC-001, V20-LIC-002
+A named product owner and legal approver must provide a dated policy before a
+license service, client identifier collection or enforcement behavior is
+implemented.

@@ -4,17 +4,20 @@ Date: 2026-07-31
 Assignee: cline-v1-fnd-001
 
 ## Build & Test Evidence
+
 - `dotnet restore ALKAROS.sln` — success
 - `dotnet build ALKAROS.sln` — EXIT:0, 0 warnings, 0 errors (25 projects)
 - `dotnet test ALKAROS.sln` — EXIT:0, 4/4 tests passed
 
 Test results:
+
 1. ModuleCompositionShouldNotDependOnAnyModule — passed
 2. ModuleCompositionRootShouldComposeInTopologicalOrder — passed
 3. ModuleCompositionRootShouldRejectUnknownDependency — passed
 4. ModuleCompositionRootShouldDetectCyclicDependencies — passed
 
 Evidence files:
+
 - `evidence/V1-FND-001/build-output.txt`
 - `evidence/V1-FND-001/test-output.txt`
 - `evidence/V1-FND-001/closure-write-set.txt`
@@ -24,7 +27,7 @@ Evidence files:
 ## Write-set Allowlist Audit
 
 | Path | Status | Allowlist | Notes |
-|------|--------|-----------|-------|
+| ------ | -------- | ----------- | ------- |
 | `plan/v1/foundation/V1-FND-001-module-skeleton.md` | Modified | Yes (metadata) | Status + Assignee |
 | `.config/dotnet-tools.json` | Untracked | Yes | Tool manifest |
 | `ALKAROS.slnx` | Untracked | Yes | Owned surface (reserved for .NET 9+) |
@@ -49,6 +52,7 @@ The owned surface lists `ALKAROS.slnx` but the installed SDK (8.0.423) does not
 support the `slnx` format — `dotnet restore` returns MSB4068 for `<Solution>`.
 A classic `ALKAROS.sln` was generated via `dotnet new sln` so that restore,
 build and test can execute. Both files are retained:
+
 - `ALKAROS.sln` — active solution for .NET 8 (functional)
 - `ALKAROS.slnx` — owned-surface solution for future .NET 9+ SDKs
 
@@ -56,9 +60,11 @@ This is a technology-compatibility obligation, not a scope expansion. No
 feature or host runtime behavior was added.
 
 ### Removed
+
 - `tmp/preflight-snapshot.txt` — preflight artifact, deleted
 
 ## Deliverables
+
 - Root build/config: global.json, Directory.Build.props/.targets/.Packages.props,
   NuGet.config, .config/dotnet-tools.json
 - Solution: ALKAROS.slnx (owned) + ALKAROS.sln (functional for .NET 8)
@@ -73,10 +79,12 @@ feature or host runtime behavior was added.
   rejection, topological composition order, and ModuleComposition isolation
 
 ## Acceptance Evidence
+
 - Clean restore/build/test on exact solution graph: passed
 - Forbidden project reference automatically tested: ModuleComposition does not
   depend on any business module assembly (NetArchTest)
 - Root build/config files contain no feature or host runtime behavior
 
 ## Remaining Blockers
+
 None. ALKAROS.sln deviation documented above.

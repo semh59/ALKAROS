@@ -1,7 +1,7 @@
 # V0-CMP-001 - Determine GIB and e-Adisyon scope
 
 - Task ID: V0-CMP-001
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-cmp-001
 - Work type: validation
 - Surface state: Existing
@@ -14,6 +14,9 @@
 - PDF:III.19
 - EXT:GIB-YNOKC-GUIDE
 - EXT:GIB-TK2-4.0
+- EXT:GIB-EADISYON
+- EXT:GIB-VUK509-2026
+- EXT:GIB-YNOKC-SSS
 
 ## Goal
 
@@ -28,7 +31,8 @@ doğrulamak.
 ## In scope
 
 - İşletme tipi, belge başlangıç/kapanış ilişkisi, saklama, raporlama ve entegratör/device sorumluluğu.
-- Kapsam dışı: e-İrsaliye belge akışı (restoran perakende satışında irsaliye düzenlenmez); belge süreçleri e-Fatura/e-Arşiv ve YN ÖKC/adisyon ile sınırlıdır. Gelecekte irsaliye gereksinimi çıkarsa yeni görev açılır.
+- Kapsam dışı: e-İrsaliye belge akışı (restoran perakende satışında irsaliye düzenlenmez); belge süreçleri
+  e-Fatura/e-Arşiv ve YN ÖKC/adisyon ile sınırlıdır. Gelecekte irsaliye gereksinimi çıkarsa yeni görev açılır.
 
 ## Out of scope
 
@@ -37,6 +41,12 @@ doğrulamak.
 ## Dependencies
 
 - None
+
+## Blocker
+
+- GİB kaynakları işletme profilinin tüm yükümlülüklerini tek başına belirlemez; mevcut evidence package'ta named mali
+  müşavir/uyum sorumlusu onayı ve kayıtlı tüm kaynakların erişim tarihi yoktur. Ancak güncel resmî kaynaklar ile named
+  approver applicability matrix'i doğrulanınca görev yeniden `Planned` yapılabilir.
 
 ## Deliverables
 

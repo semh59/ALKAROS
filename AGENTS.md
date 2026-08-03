@@ -80,7 +80,7 @@ Görev `Done` yapılmadan önce:
 - `evidence/<Task-ID>/**` altında komut, exit code, ilgili hash ve sonuç kaydedilir.
 - Final cevap değişen yolları, çalıştırılan kontrolleri ve kalan blocker'ları açıkça listeler.
 
-`V1-FND-001`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`, `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006`
+`V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`, `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006`
 bu sırayla gerçek kanıtla `Done` olmadan başka hiçbir application görevi `InProgress` yapılamaz. `V1-FND-001`
 tarafından sahiplenilen exact solution/project/build dosyaları reserved surface'tir; feature task wildcard'ı bu
 dosyalara yazma izni vermez.

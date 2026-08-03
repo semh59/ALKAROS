@@ -36,7 +36,8 @@ Public QR trafiğinin local POS'a inbound LAN erişimi açmadan taşınabileceğ
 ## Blocker
 
 V0-ARC-009 topology kararı onaylıdır; ancak adlandırılmış non-production relay/domain, TLS kimliği, credentials ve
-test erişimi mevcut değildir. Görev ancak karar `Done` olduğunda ve bu erişimler sağlandığında `Planned` olabilir; gerçek
+test erişimi mevcut değildir. Görev ancak karar `Done` olduğunda ve bu erişimler sağlandığında `Planned` olabilir;
+gerçek
 outage/replay/revocation transkriptleri `Done` acceptance kanıtıdır.
 
 ## Deliverables

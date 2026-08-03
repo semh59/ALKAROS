@@ -57,5 +57,4 @@ Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamla
 
 ## Handoff
 
-- V12-REC-001
 - V15-REC-001

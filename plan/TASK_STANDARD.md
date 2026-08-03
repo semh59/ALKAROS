@@ -104,7 +104,7 @@ tek görev kalabilir.
   bunları açıkça sahiplenen ayrı görevde yapılabilir.
 - Compile, static analysis ve acceptance testleri doğrulanmadan; kullanılmayan
   kod, dependency, public API veya test helper varken görev `Done` yapılamaz.
-- `V1-FND-001`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
+- `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` bu sırayla `Done` olmadan başka
   application görevi başlatılamaz.
 

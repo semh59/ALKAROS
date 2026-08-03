@@ -39,7 +39,8 @@ Tekrarlanan/cached alanların source-of-truth, atomik güncelleme ve rebuild kur
 
 ## Deliverables
 
-- V0-DAT-004 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-DAT-004 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - En az iki pozitif ve iki negatif örnek.
 - Tüketici görevler için açık input/output ve invariant listesi.
 

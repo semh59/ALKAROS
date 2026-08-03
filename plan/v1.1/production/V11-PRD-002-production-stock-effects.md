@@ -58,4 +58,3 @@ ProductionBatch transaction'ında IngredientConsumption ve prepared-portion Prod
 ## Handoff
 
 - V11-MNU-002
-- V11-INV-002

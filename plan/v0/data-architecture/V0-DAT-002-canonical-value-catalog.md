@@ -1,15 +1,15 @@
 # V0-DAT-002 - Create canonical status and enum catalog
 
 - Task ID: V0-DAT-002
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dat-002
 - Work type: decision
 - Surface state: Existing
 
 ## Source basis
 
-- PDF:II.0-II.1
-- PDF:III.0-III.2
+- PDF:II.5.1-II.5.15
+- PDF:III.3-III.40
 - PDF:II.13-II.15
 - PDF:III.29-III.40
 - CORR:C2
@@ -37,9 +37,17 @@ Her status, type, method, direction ve discriminator alanı için tek kanonik de
 
 - V0-DOM-001
 
+## Blocker
+
+- Mevcut katalog PDF'nin kanonik state listeleriyle çelişmektedir ve decision record'da erişim tarihi, gerçek onaylayan
+  ile
+  reddedilen alternatifler yoktur. Ancak kaynakla bire bir state matrisi ve named approver içeren tarihli karar kaydı
+  doğrulanınca görev yeniden `Planned` yapılabilir.
+
 ## Deliverables
 
-- V0-DAT-002 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-DAT-002 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - En az iki pozitif ve iki negatif örnek.
 - Tüketici görevler için açık input/output ve invariant listesi.
 

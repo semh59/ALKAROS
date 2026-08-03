@@ -1,7 +1,7 @@
 # V0-DOM-003 - Define full and partial refund ledger
 
 - Task ID: V0-DOM-003
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dom-003
 - Work type: decision
 - Surface state: Existing
@@ -35,9 +35,16 @@ tanımlamak.
 
 - V0-DOM-002
 
+## Blocker
+
+- Mevcut refund record partial refund'u isterken CHECK ifadesi partial satırı reddetmektedir. Ancak immutable reversal
+  modelini ve cumulative limitlerini aynı şemayla kanıtlayan named approver kararı doğrulanınca görev yeniden `Planned`
+  yapılabilir.
+
 ## Deliverables
 
-- V0-DOM-003 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-DOM-003 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - En az iki pozitif ve iki negatif örnek.
 - Tüketici görevler için açık input/output ve invariant listesi.
 

@@ -1,7 +1,7 @@
 # Accessibility Conformance Target
 
 > **Task:** V0-CMP-005
-> **Status:** Done
+> **Status:** Blocked
 > **Assignee:** codex-v0-cmp-005
 > **Work type:** decision
 > **Source basis:** EXT:WCAG-2.2, CORR:C19
@@ -10,7 +10,7 @@
 ## 1. Decision Record
 
 | Field | Value |
-|-------|-------|
+| ------- | ------- |
 | **Decision ID** | V0-CMP-005-D001 |
 | **Date** | 2026-07-30 |
 | **Approver** | TBD (onay bekliyor) |
@@ -20,7 +20,7 @@
 ## 2. UI Surface Inventory
 
 | Surface ID | Description | Target Level | Applicable Criteria | Exception |
-|------------|-------------|--------------|---------------------|-----------|
+| ------------ | ------------- | -------------- | --------------------- | ----------- |
 | CUI | Cashier UI (touch-screen POS) | WCAG 2.2 AA | All AA criteria except 2.4.11 (Focus Appearance) — waived for touch-only kiosk mode | 2.4.11: Touch-only device, no keyboard focus indicator needed |
 | WTR | Waiter UI (handheld tablet) | WCAG 2.2 AA | All AA criteria | None |
 | PUI | Customer QR UI (mobile browser) | WCAG 2.2 AA | All AA criteria | None |
@@ -30,6 +30,7 @@
 ## 3. Selected Success Criteria (AA Level)
 
 ### Perceivable
+
 - 1.1.1 Non-text Content (A)
 - 1.2.1 Audio-only and Video-only (A) — N/A for POS
 - 1.2.2 Captions (A) — N/A
@@ -52,6 +53,7 @@
 - 1.4.13 Content on Hover or Focus (AA)
 
 ### Operable
+
 - 2.1.1 Keyboard (A)
 - 2.1.2 No Keyboard Trap (A)
 - 2.1.4 Character Key Shortcuts (A)
@@ -75,6 +77,7 @@
 - 2.5.8 Target Size (AA)
 
 ### Understandable
+
 - 3.1.1 Language of Page (A)
 - 3.1.2 Language of Parts (AA)
 - 3.2.1 On Focus (A)
@@ -87,13 +90,14 @@
 - 3.3.4 Error Prevention (Legal, Financial, Data) (AA)
 
 ### Robust
+
 - 4.1.2 Name, Role, Value (A)
 - 4.1.3 Status Messages (AA)
 
 ## 4. Test Device/Browser Matrix
 
 | Device | OS | Browser | Screen Reader |
-|--------|----|---------|---------------|
+| -------- | ---- | --------- | --------------- |
 | Cashier touch-screen | Windows 11 | Chrome (kiosk mode) | N/A (touch-only) |
 | Waiter tablet | Android 14 | Chrome | TalkBack |
 | Customer phone | iOS 18 / Android 14 | Safari / Chrome | VoiceOver / TalkBack |
@@ -102,7 +106,7 @@
 ## 5. Exception Register
 
 | Exception ID | Surface | Criterion | Rationale | Approval Date | Approver |
-|-------------|---------|-----------|-----------|---------------|----------|
+| ------------- | --------- | ----------- | ----------- | --------------- | ---------- |
 | EXC-001 | CUI | 2.4.11 Focus Appearance | Touch-only kiosk mode; no keyboard focus indicator needed | TBD (onay bekliyor) | TBD (onay bekliyor) |
 
 ## 6. Affected Tasks

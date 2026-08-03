@@ -1,7 +1,7 @@
 # V12-FSC-001 - Implement FiscalDocument lifecycle
 
 - Task ID: V12-FSC-001
-- Status: Planned
+- Status: Blocked
 - Assignee: Unassigned (exactly one person)
 - Work type: implementation
 - Surface state: Planned
@@ -38,6 +38,12 @@ kalıcılaştırmak.
 - V0-CMP-001
 - V0-DAT-002
 - V1-SEC-002
+
+## Blocker
+
+- GİB applicability, seçilmiş fiscal strategy ve Hugin/QNB private contract kanıtları tamamlanmamıştır; mevcut planın
+  gapless number veya numara yakma davranışı için doğrulanmış kaynak yoktur. Ancak seçilen provider'ın tarihli contract
+  kanıtı ve named compliance approver kararı doğrulanınca görev yeniden `Planned` yapılabilir.
 
 ## Deliverables
 

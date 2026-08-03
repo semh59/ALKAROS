@@ -49,8 +49,8 @@ sonucu sağlamak.
 ## Acceptance evidence
 
 - Tek bölümlü paralel dört kanallı test, bir rezervasyon ve üç açık OutOfStock/red sonucu verir.
-- Rezervasyon yaşam döngüsü davranışı V11-RSV-003 ve V14-ONL-003 kanıtlarına handoff edilir; bu task kanıtı
-  tekrarlamaz.
+- Online iptal sonucu V14-ONL-003 üzerinden tüketilir; Release/Waste yaşam döngüsü kararı yalnız V11-RSV-003
+  kanıtıyla doğrulanır ve bu task aynı etkileri yeniden üretmez.
 
 ## Handoff
 

@@ -29,7 +29,8 @@ On-hand projection ve authoritative PortionReservation lifecycle'ından reserved
 
 ## In scope
 
-- Active reservation aggregation, Released/Consumed/Wasted terminal effects, available formula, atomic projection update,
+- Active reservation aggregation, Released/Consumed/Wasted terminal effects, available formula, atomic projection
+  update,
   drift detection ve full rebuild.
 
 ## Out of scope

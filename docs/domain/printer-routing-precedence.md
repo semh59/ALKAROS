@@ -1,7 +1,7 @@
 # Printer Routing Precedence Contract
 
 > **Task:** V0-DOM-011
-> **Status:** Done
+> **Status:** Blocked
 > **Assignee:** codex-v0-dom-011
 > **Work type:** decision
 > **Source basis:** PDF:I.16.1, PDF:II.3.13-II.3.14, CORR:C13
@@ -10,7 +10,7 @@
 ## 1. Decision Record
 
 | Field | Value |
-|-------|-------|
+| ------- | ------- |
 | **Decision ID** | V0-DOM-011-D001 |
 | **Date** | 2026-07-30 |
 | **Approver** | TBD |
@@ -22,7 +22,7 @@
 Routes are evaluated in the following order, from most specific to least specific:
 
 | Level | Scope | Example | Override |
-|-------|-------|---------|----------|
+| ------- | ------- | --------- | ---------- |
 | 1 | **Item-level override** | `item_id=abc123 → printer=kitchen-1` | Overrides all below |
 | 2 | **Product-level** | `product_id=456 → printer=kitchen-2` | Overrides daily special, category & default |
 | 3 | **Daily special override** | `date=2026-07-30, category=specials → printer=kitchen-4` | Overrides category & default for date range |
@@ -32,19 +32,26 @@ Routes are evaluated in the following order, from most specific to least specifi
 ## 3. Precedence Rules
 
 ### Rule 1: Most Specific Wins
-When multiple routes match an item, the most specific level wins. Specificity order: Item > Product > Daily Special > Category > Default.
+
+When multiple routes match an item, the most specific level wins. Specificity order: Item > Product > Daily Special >
+Category > Default.
 
 ### Rule 2: Disabled Route
+
 If the winning route's printer is disabled (offline, paper jam, error), the system MUST:
+
 1. Check the next most specific matching route
 2. If no alternative match exists, use the default route
 3. If default is also disabled, raise `NO_AVAILABLE_PRINTER` error — do NOT print to arbitrary printer
 
 ### Rule 3: Ambiguity Rejection
-If two routes at the same specificity level match (e.g., two category-level routes for the same item), the configuration is INVALID. The system MUST reject the configuration at validation time.
+
+If two routes at the same specificity level match (e.g., two category-level routes for the same item), the configuration
+is INVALID. The system MUST reject the configuration at validation time.
 
 ### Rule 4: Fallback Chain
-```
+
+```text
 Item route → Product route → Daily Special route → Category route → Default route → NO_AVAILABLE_PRINTER
 ```
 
@@ -59,23 +66,27 @@ Item route → Product route → Daily Special route → Category route → Defa
 ## 5. Conflict Examples
 
 ### Example 1: Item overrides category
+
 - Item `abc` belongs to category `pizza`
 - Category `pizza` → printer `kitchen-3`
 - Item `abc` → printer `kitchen-1`
 - **Result**: Item `abc` prints to `kitchen-1` (item level wins)
 
 ### Example 2: Disabled route fallback
+
 - Item `abc` → printer `kitchen-1` (disabled)
 - Category `pizza` → printer `kitchen-3` (available)
 - Default → printer `kitchen-main` (available)
 - **Result**: Item `abc` prints to `kitchen-3` (next specific match), NOT `kitchen-main`
 
 ### Example 3: Ambiguity (configuration error)
+
 - Category `pizza` → printer `kitchen-3`
 - Category `pizza` → printer `kitchen-4` (duplicate)
 - **Result**: Configuration rejected at validation — `DUPLICATE_ROUTE` error
 
 ### Example 4: No available printer
+
 - Item `abc` → printer `kitchen-1` (disabled)
 - Category `pizza` → printer `kitchen-3` (disabled)
 - Default → printer `kitchen-main` (disabled)
@@ -84,6 +95,7 @@ Item route → Product route → Daily Special route → Category route → Defa
 ## 6. Consumer Task Interface
 
 ### Input
+
 ```json
 {
   "itemId": "uuid",
@@ -91,9 +103,10 @@ Item route → Product route → Daily Special route → Category route → Defa
   "categoryId": "uuid",
   "date": "2026-07-30"
 }
-```
+```text
 
 ### Output
+
 ```json
 {
   "printerId": "uuid",
@@ -103,13 +116,14 @@ Item route → Product route → Daily Special route → Category route → Defa
 ```
 
 ### Error Output
+
 ```json
 {
   "resolved": false,
   "error": "NO_AVAILABLE_PRINTER | AMBIGUOUS_ROUTE | CONFIGURATION_ERROR",
   "details": "string"
 }
-```
+```text
 
 ## 7. Affected Tasks
 

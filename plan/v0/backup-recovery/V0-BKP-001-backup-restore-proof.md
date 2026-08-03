@@ -33,6 +33,14 @@ Disposable PostgreSQL 18 instance üzerinde backup, checksum ve restore tool pat
 
 - V0-DAT-001
 
+## Blocker
+
+- Disposable PostgreSQL 18 doğrulama ortamı stabil değildir: mevcut kanıt, Windows ikinci instance denemesinde
+  shared-memory
+  error 487 ve worker crash gösterir. Ancak ayrı ve stabil bir disposable PostgreSQL 18 container veya makine
+sağlanınca,
+  tam backup/restore transcript'i aynı evidence yüzeyinde başarıyla yeniden çalıştırılarak görev `Planned` yapılabilir.
+
 ## Deliverables
 
 - V0-BKP-001 için tarihli ve kaynakları belirtilmiş evidence package.

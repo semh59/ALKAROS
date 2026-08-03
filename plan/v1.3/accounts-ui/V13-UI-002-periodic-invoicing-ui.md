@@ -49,7 +49,8 @@ Kaynak önizlemesini, kayıtlı kullanıcı sonucunu, draft incelemesini, gönde
 
 ## Acceptance evidence
 
-- Kullanıcı Pending provider durumunu körü körüne yeniden gönderemez; kaynaklara kadar izlenen toplamlar; iptal belirsizliği
+- Kullanıcı Pending provider durumunu körü körüne yeniden gönderemez; kaynaklara kadar izlenen toplamlar; iptal
+  belirsizliği
   görünür ve çözümsüz kalıyor.
 - `V13-QNB-005` kanıtlı `NotApplicable` ise provider cancellation action etkinleşmez; UI aynı tarihli capability
   kararına bağlı typed unavailable sonucu gösterir.

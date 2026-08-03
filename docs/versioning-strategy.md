@@ -5,7 +5,7 @@
 
 ## 1. Branching Model
 
-```
+```text
 main (protected)
   ├── v0/          (V0 validation & architecture closure)
   ├── v1/          (V1 foundation + core features)
@@ -20,7 +20,7 @@ main (protected)
 ### Branch Rules
 
 | Branch | Source | Merge Target | Protection |
-|--------|--------|-------------|------------|
+| -------- | -------- | ------------- | ------------ |
 | `main` | — | — | Protected. Requires gate approval |
 | `v0/*` | `main` | `main` | Feature branches off `v0/` |
 | `v1/*` | `main` | `main` | Only after GATE-V0-EXIT |
@@ -34,7 +34,8 @@ main (protected)
 ### Task Branches
 
 Each task gets a branch from its version base:
-```
+
+```text
 git checkout -b V0-DOM-001-lifecycle-transitions
 git checkout -b V1-FND-001-module-skeleton
 git checkout -b V12-PAY-001-payment-aggregate
@@ -44,7 +45,7 @@ Branch naming: `<TASK-ID>-<short-description>` (branch off the task's version ba
 
 ## 2. Commit Convention
 
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -54,8 +55,9 @@ Gate: <GATE-ID>
 ```
 
 ### Types
+
 | Type | Usage |
-|------|-------|
+| ------ | ------- |
 | `decision` | V0 decision record |
 | `validation` | V0 validation evidence |
 | `feat` | New feature implementation |
@@ -67,14 +69,15 @@ Gate: <GATE-ID>
 | `gate` | Gate approval/closure |
 
 ### Examples
-```
+
+```text
 decision(domain): define lifecycle transition contracts
 
 Task: V0-DOM-001
 Gate: GATE-V0-ENTRY
 ```
 
-```
+```text
 feat(billing): implement bill aggregate with split support
 
 - Bill aggregate root with event sourcing
@@ -88,7 +91,8 @@ Gate: GATE-V1-ENTRY
 ## 3. Tagging Strategy
 
 ### Version Tags
-```
+
+```text
 v0.0.0          # V0 baseline (initial commit)
 v0.1.0          # V0 all decision records complete
 v0.2.0          # V0 all validation evidence complete
@@ -105,7 +109,8 @@ v2.0.0          # Production release (GATE-V20-EXIT)
 ```
 
 ### Gate Tags
-```
+
+```text
 gate/v0-entry    # GATE-V0-ENTRY verified
 gate/v0-exit     # GATE-V0-EXIT closed
 gate/v1-entry    # GATE-V1-ENTRY closed
@@ -117,7 +122,7 @@ gate/v20-exit    # GATE-V20-EXIT closed
 ## 4. Current State
 
 | Tag | Status | Commit |
-|-----|--------|--------|
+| ----- | -------- | -------- |
 | `v0.0.0` | ✅ Done | `655d0b2` (docs(versioning) commit) |
 | `gate/v0-entry` | ✅ Done | `655d0b2` (PDF verified, sources registered) |
 

@@ -160,6 +160,21 @@ def _write_done_task(plan_dir: Path, task_id: str) -> Path:
     return task_file
 
 
+def _commit_task_baseline(repo: Path, task_file: Path) -> None:
+    """Commit a V0 prerequisite and immutable baseline for the active task."""
+    prerequisite = repo / "plan" / "V0-DOM-001.md"
+    if not prerequisite.exists():
+        _write_done_task(prerequisite.parent, "V0-DOM-001")
+    _run_git(repo, "add", "plan")
+    _run_git(repo, "commit", "-q", "-m", "add task baseline")
+
+    text = task_file.read_text(encoding="utf-8")
+    task_file.write_text(
+        text.replace("- Assignee: test-session", "- Assignee: test-session-active"),
+        encoding="utf-8",
+    )
+
+
 @pytest.fixture()
 def make_repo(tmp_path: Path) -> Path:
     """Create a temporary git repository and return its path."""
@@ -178,7 +193,7 @@ def make_plan(make_repo: Path) -> Path:
 
 
 @pytest.fixture()
-def write_task(make_plan: Path):
+def write_task(make_repo: Path, make_plan: Path):
     """Fixture factory to write task files."""
     def _write(
         task_id: str = "V1-FND-003",
@@ -187,7 +202,7 @@ def write_task(make_plan: Path):
         owned_surface: str = "- `tools/task-scope/**`\n- `tests/architecture/taskscope/**`",
         dependencies: str = "- None",
     ) -> Path:
-        return _write_task_file(
+        task_file = _write_task_file(
             make_plan,
             task_id,
             status,
@@ -195,6 +210,8 @@ def write_task(make_plan: Path):
             owned_surface,
             dependencies,
         )
+        _commit_task_baseline(make_repo, task_file)
+        return task_file
     return _write
 
 

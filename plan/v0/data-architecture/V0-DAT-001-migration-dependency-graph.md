@@ -37,7 +37,8 @@ Tüm şema ve FK bağımlılıklarını çıkarıp uygulanabilir tek veya iki a�
 
 ## Deliverables
 
-- V0-DAT-001 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-DAT-001 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - En az iki pozitif ve iki negatif örnek.
 - Tüketici görevler için açık input/output ve invariant listesi.
 

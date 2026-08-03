@@ -49,9 +49,10 @@ V0-CMP-001 tarafından seçilen tam olarak bir adisyon branch'ini fail-closed re
 ## Acceptance evidence
 
 - Tam olarak selected branch çözümlenir; missing/duplicate/wrong branch startup'ı fail-closed durdurur.
-- `V12-FSC-004` veya `V12-FSC-005` seçilmemiş branch olarak tarihli `NotApplicable` olabilir. V0-CMP-001 hiçbir
-  software-managed lifecycle gerektirmiyorsa iki branch ve bu composition task'ı aynı dated decision ile
-  `NotApplicable` olur; boş success implementation üretilmez.
+- GATE-V12-FSC-STRATEGY yalnız seçilen Hugin veya QNB branch'inin tamamlanmış contract kanıtıyla kapanır; seçilmeyen
+  branch, karar kimliği, tarih ve approver içeren kanıtlı `NotApplicable` olmadan terminal sayılmaz.
+- V0-CMP-001 hiçbir software-managed lifecycle gerektirmiyorsa iki branch ve bu composition task'ı aynı dated decision
+  ile `NotApplicable` olur; boş success implementation üretilmez.
 
 ## Handoff
 

@@ -1,7 +1,7 @@
 # V0-SEC-001 - Define security verification baseline
 
 - Task ID: V0-SEC-001
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-sec-001
 - Work type: decision
 - Surface state: Existing
@@ -35,6 +35,12 @@ ALKAROS için ASVS hedef seviyesini ve authentication, session, logging, SAST, S
 
 - V0-ARC-004
 - V0-ARC-005
+
+## Blocker
+
+- OWASP kaynakları kontrol seçeneklerini verir; mevcut record hedef ASVS seviyesi ve teknoloji zorunluluklarını threat
+  model
+  ile named security approver olmadan seçmektedir. Ancak bu kanıtlar doğrulanınca görev yeniden `Planned` yapılabilir.
 
 ## Deliverables
 

@@ -38,7 +38,8 @@ oluşturmadan nasıl etkilediğini tanımlamak.
 
 ## Deliverables
 
-- V0-DOM-007 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-DOM-007 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - Pozitif/negatif örnekler ve rejected alternatives.
 - Tüketici görevler için test edilebilir invariant/output listesi.
 

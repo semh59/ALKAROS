@@ -8,7 +8,7 @@
 
 ## Source basis
 
-- DEC:V0-DOM-001
+- CORR:C31
 
 ## Goal
 
@@ -33,17 +33,17 @@ eksik `Task:` footer'ları, (3) plan-audit aracındaki hard-code Markdown sayıs
 - `plan/AUDIT_MANIFEST.json`
 - `tools/plan-audit/plan_audit_tool.py`
 - `tools/task-scope/task_scope_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope_continuation.py` (faz 1'de oluşturulur; faz 2'de sahiplik V1-FND-003'e devredilir)
+- `tests/Architecture/TaskScope/test_task_scope_continuation.py` (faz 1'de oluşturulur; faz 2'de sahiplik V1-FND-003'e
+  devredilir)
 - `Directory.Build.props`
-- `evidence/V1-FND-007/git-log-footer.txt`
-- `evidence/V1-FND-007/findings-fix.txt`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez; aşağıdaki yüzey düzeltmeleri 2026-08-01 kullanıcı
   onaylı plan değişikliğidir.
 
 ## In scope
 
 - Owned surface düzeltmeleri (sahipsiz dosyaların orijinal sahiplerine devri):
-  - V1-FND-001: `src/BuildingBlocks/ModuleComposition/ModuleCompositionRoot.cs`, `tests/Architecture/ModuleBoundaries/**`,
+  - V1-FND-001: `src/BuildingBlocks/ModuleComposition/ModuleCompositionRoot.cs`,
+    `tests/Architecture/ModuleBoundaries/**`,
     `src/BuildingBlocks/**/ALKAROS.*.csproj`, `src/**/packages.lock.json`, `tests/**/packages.lock.json` yüzeye eklenir.
   - V1-FND-004: `src/Host/Composition/Migrations/PsqlScriptRunner.cs` eklenir; devam satırı formatı düzeltilir.
   - V1-FND-003: `tests/Architecture/TaskScope/test_task_scope_diff.py` yüzeye eklenir;
@@ -60,8 +60,7 @@ eksik `Task:` footer'ları, (3) plan-audit aracındaki hard-code Markdown sayıs
 - Commit footer düzeltmesi: push edilmemiş 14 commit (`e19eb6a..HEAD`) `Task:` footer'ıyla yeniden yazılır;
   `Directory.Build.props` RepositoryCommit pin'i yeni HEAD commit'ine güncellenir.
 - Governance: `GATES.md`/`VALIDATION_CONTRACT.md` FND-008 notu, `TRACEABILITY.md` FIND-IA-0037..0043 kayıtları,
-  `evidence/V1-FND-007/git-log-footer.txt` ve `findings-fix.txt` tarihli düzeltme notları,
-  `AUDIT_REPORT.md`/`AUDIT_MANIFEST.json` yeniden üretimi.
+  `evidence/V1-FND-008/**` altındaki tarihli düzeltme notları, `AUDIT_REPORT.md`/`AUDIT_MANIFEST.json` yeniden üretimi.
 
 ## Out of scope
 

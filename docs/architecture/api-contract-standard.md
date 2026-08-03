@@ -1,28 +1,16 @@
-# API and Event Contract Standard
+# API and Event Contract Standard — decision pending
 
 > **Task:** V0-ARC-004
-> **Status:** Done
-> **Assignee:** codex-v0-arc-004
-> **Work type:** decision
+> **Status:** Blocked
 > **Source basis:** PDF:I.0-I.5, PDF:II.0-II.1, PDF:III.0-III.2
-> **Date:** 2026-07-30
+> **Access date:** 2026-08-02
+> **Approver:** None — decision is not approved
 
-## 1. HTTP API Standard
-- Versioning: URL path (`/api/v1/...`), breaking changes require new version.
-- Validation: FluentValidation, 400 Bad Request with field-level errors.
-- Error format: RFC 7807 ProblemDetails.
-- Idempotency: `Idempotency-Key` header (per ARC-003).
-- Concurrency: `If-Match` header with ETag for optimistic concurrency.
-- Pagination: `?page=1&pageSize=50`, response includes `total`, `page`, `pageSize`.
+The PDF does not select HTTP versioning, validation library, header names,
+pagination size, event schema or error-code catalogue. The former default
+values are withdrawn.
 
-## 2. Event Contract Standard
-- Event naming: `<Module>.<Entity>.<Action>` (e.g., `Billing.Bill.Settled`).
-- Event payload: JSON with `eventId`, `eventType`, `occurredAt`, `version`, `data`.
-- Schema: JSON Schema validation on publish and consume.
-- Versioning: Additive only (new fields optional); breaking changes require new event type.
-
-## 3. Error Codes
-- `400` Validation error, `401` Unauthorized, `403` Forbidden, `404` Not found, `409` Conflict, `422` Business rule violation, `500` Server error.
-
-## 4. Affected Tasks
-- None
+An approved record must tie each selected API behavior to the supported
+platform documentation, state its compatibility rule, record rejected
+alternatives and name the architecture approver. Until then no public endpoint
+or event contract is authorized.

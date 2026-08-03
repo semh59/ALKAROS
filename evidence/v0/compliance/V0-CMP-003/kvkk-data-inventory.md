@@ -6,12 +6,13 @@
 > **Work type:** validation
 > **Source basis:** PDF:I.30-I.33, PDF:II.11-II.12, PDF:III.33-III.34
 > **Date:** 2026-07-30
-> **Metadata corrected:** 2026-08-01 by V1-FND-007 — Status `InProgress` -> `Done` (plan dosyası zaten Done idi; içerik değişmedi)
+> **Metadata corrected:** 2026-08-01 by V1-FND-007 — Status `InProgress` -> `Done` (plan dosyası zaten Done idi; içerik
+değişmedi)
 
 ## 1. PII Data Inventory
 
 | Data Category | Fields | Owner Module | Legal Purpose | Retention | Access Role | Disposal |
-|---------------|--------|--------------|---------------|----------|-------------|----------|
+| --------------- | -------- | -------------- | --------------- | ---------- | ------------- | ---------- |
 | Customer PII | name, phone, email, address | Accounts | Contract performance | 10 years (tax) | Manager, Cashier | Anonymize after retention |
 | User credentials | username, password hash, role | Identity | Authentication | Employment + 1 year | IT admin | Delete |
 | Order notes | free text (may contain PII) | Orders | Service delivery | 5 years | Waiter, Cashier | Anonymize |
@@ -23,10 +24,12 @@
 | Device data | device ID, location, config | Infrastructure | Device management | Device lifecycle | IT admin | Delete on decommission |
 
 ## 2. Rules
+
 1. Every PII field MUST have an owner module and legal purpose.
 2. Retention periods align with Turkish Tax Procedure Law (10 years) and KVKK.
 3. Anonymization: irreversible hashing or deletion of identifying fields.
 4. Access: role-based, least privilege.
 
 ## 3. Affected Tasks
+
 - V13-CST-001, V15-KVK-001

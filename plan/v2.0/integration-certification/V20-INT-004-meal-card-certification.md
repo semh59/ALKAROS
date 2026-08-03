@@ -52,7 +52,8 @@ gate olarak toplamak.
 - Her approved provider tam bir V12-MCD-1xx ve V20-INT-1xx çifti taşır; missing, failed veya ambiguous provider gate'i
   kapatır.
 - `V0-MCD-001` onaylı provider listesini boş kapatır ve `V12-MCD-001`, `V12-MCD-002`, `V12-MCD-003` aynı evidence ile
-  `NotApplicable` olursa bu task da named approver evidence ile `NotApplicable` olur; başarı iddiası üretilmez.
+  `NotApplicable` olursa `V12-MCD-004` de `NotApplicable` olur; bu task da named approver evidence ile
+  `NotApplicable` olur ve başarı iddiası üretilmez.
 
 ## Handoff
 

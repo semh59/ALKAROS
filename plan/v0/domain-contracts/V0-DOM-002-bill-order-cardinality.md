@@ -1,7 +1,7 @@
 # V0-DOM-002 - Close Bill to Order cardinality
 
 - Task ID: V0-DOM-002
-- Status: Done
+- Status: Blocked
 - Assignee: codex-v0-dom-002
 - Work type: decision
 - Surface state: Existing
@@ -36,9 +36,16 @@ tek ilişki modelini seçmek.
 
 - None
 
+## Blocker
+
+- Mevcut decision record N:1 Bill-to-Order modelini kabul ederken aynı Bill için tek Order invariantı koymaktadır. Ancak
+  örnek veriyle tutarlı cardinality, split ve merge kararını named approver onaylayınca görev yeniden `Planned`
+yapılabilir.
+
 ## Deliverables
 
-- V0-DOM-002 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler + etkilenen task kimlikleri.
+- V0-DOM-002 için tek decision record: kaynak + erişim tarihi + onaylayan + seçilen sonuç + reddedilen alternatifler +
+  etkilenen task kimlikleri.
 - En az iki pozitif ve iki negatif örnek.
 - Tüketici görevler için açık input/output ve invariant listesi.
 

@@ -1,12 +1,11 @@
 # Migration Dependency Graph
 
 > **Task:** V0-DAT-001
-> **Status:** Done
+> **Status:** Blocked
 > **Assignee:** codex-v0-dat-001
 > **Work type:** decision
 > **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2, PDF:II.13-II.15, PDF:III.29-III.40, CORR:C1
 > **Date:** 2026-07-30
-
 > **2026-08-01 kayıtlı güncelleme (V1-FND-002 kapsamı, V0-DAT-001 sahipliğinde):** Altyapı tabloları
 > `idempotency_keys`, `inbox_messages` ve `outbox_messages` eklendi. Bu tablolar hiçbir domain tablosuna FK
 > taşımaz ve domain tablolarından kendilerine FK taşınmaz (örn. `payment_allocations.idempotency_key` V0-DOM-004
@@ -23,7 +22,7 @@
 
 > Dependency depth labels (Layer 1-4) — execution uses Phase A/B (Section 2); Layer N is NOT a migration phase.
 
-```
+```text
 Layer 1 (no FK dependencies):
   ┌─────────────────────────────┐
   │ idempotency_keys            │
@@ -96,14 +95,15 @@ Layer 4 (FK to Layer 1-3):
 
 ### Two-Phase Approach
 
-Due to circular dependencies between Fiscal-Invoicing and CustomerAccount-Invoicing, a single-phase migration is not possible. The migration is split into two phases:
+Due to circular dependencies between Fiscal-Invoicing and CustomerAccount-Invoicing, a single-phase migration is not
+possible. The migration is split into two phases:
 
 **Phase A (Migrations 001-030):** All tables except those in the fiscal-invoicing cycle.
 **Phase B (Migrations 031-040):** Remaining tables with deferred FK constraints.
 
 ### Circular Dependency Resolution
 
-```
+```text
 Cycle: fiscal_documents → invoices → customer_accounts → payments → fiscal_documents
 Resolution: Phase A creates all tables WITHOUT the cycle FKs.
             Phase B adds the cycle FKs as ALTER TABLE ADD CONSTRAINT.
@@ -121,7 +121,7 @@ CREATE TABLE invoices (
 
 -- Phase B: Add cycle FK
 ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_documents(id);
-```
+```text
 
 ## 3. Table Creation Order (Phase A and Phase B)
 
@@ -155,7 +155,7 @@ ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_docume
 
 ### Phase B (migrations 031-040)
 
-22. invoices, invoice_lines (migration 031; cycle FKs applied in migrations 032-035, see Section 4)
+ 1. invoices, invoice_lines (migration 031; cycle FKs applied in migrations 032-035, see Section 4)
 
 ## 4. Deferred Constraints (Phase B)
 
@@ -180,32 +180,38 @@ ALTER TABLE account_transactions ADD COLUMN invoice_id UUID REFERENCES invoices(
 ## 6. Positive Examples
 
 ### Example 1: Simple FK (no cycle)
+
 - `orders.store_id` REFERENCES `stores(id)` — both in Phase A, stores created before orders. ✅
 
 ### Example 2: Deferred FK (cycle)
+
 - `invoices.fiscal_document_id` REFERENCES `fiscal_documents(id)` — cycle detected, deferred to Phase B. ✅
 
 ## 7. Negative Examples
 
 ### Example 1: Forward reference
+
 - Phase A migration attempts to create FK to a Phase B table.
 - Result: Migration rejected — must be deferred to Phase B.
 
 ### Example 2: Undocumented deferred FK
+
 - A deferred FK is added in Phase B without documentation.
 - Result: Audit failure — all deferred FKs must be documented.
 
 ## 8. Consumer Task Interface
 
 ### Input
+
 ```json
 {
   "entityName": "invoices",
   "phase": "B"
 }
-```
+```text
 
 ### Output
+
 ```json
 {
   "creationOrder": "031",

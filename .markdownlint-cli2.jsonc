@@ -5,10 +5,14 @@
       "code_blocks": false,
       "tables": false
     },
-    "MD060": true
+    "MD060": {
+      "style": "compact"
+    }
   },
   "globs": [
     "plan/**/*.md",
+    "docs/**/*.md",
+    "evidence/**/*.md",
     "AGENTS.md"
   ]
 }

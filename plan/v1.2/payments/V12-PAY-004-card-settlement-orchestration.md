@@ -50,7 +50,8 @@ Approved BankCard sonucu, PaymentAllocation ve fiscal request geçişini crash-s
 
 ## Acceptance evidence
 
-- Approved charge allocation olmadan tekrar tahsilata açılamaz; resume aynı provider referansını tek allocation'a bağlar.
+- Approved charge allocation olmadan tekrar tahsilata açılamaz; resume aynı provider referansını tek allocation'a
+  bağlar.
 - Unknown veya allocation/provider mismatch bill'i kapatmaz ve `V12-REC-001` için typed evidence üretir.
 
 ## Handoff

@@ -16,8 +16,8 @@
 
 ## Goal
 
-Bill'den bağımsız tahsilatın kimliğini, method'unu, amount'unu ve durable Requested/Approved/Declined/Unknown durum
-geçişlerini AccountPayment aggregate'ında kalıcılaştırmak.
+AccountPayment'ın kimliğini, method'unu, amount'unu ve durable Requested/Approved/Declined/Unknown durum geçişlerini
+kalıcılaştırmak; bağımsız AccountReceipt'i veya Bill allocation'ını bu aggregate'a yüklememek.
 
 ## Owned surface
 
@@ -27,12 +27,13 @@ geçişlerini AccountPayment aggregate'ında kalıcılaştırmak.
 
 ## In scope
 
-- Bill-null invariant, customer account, positive amount/currency, Cash/BankCard method, idempotency key, provider/cash
-  reference uniqueness, status history ve audit.
+- Customer account, positive amount/currency, Cash/BankCard method, idempotency key, provider/cash reference
+  uniqueness, status history ve audit.
 
 ## Out of scope
 
-- CashSession/CashTransaction yazımı, Hugin transport, AccountTransaction posting ve PaymentAllocation.
+- AccountReceipt oluşturma, Bill allocation, CashSession/CashTransaction yazımı, Hugin transport, AccountTransaction
+  posting ve PaymentAllocation.
 
 ## Dependencies
 
@@ -55,3 +56,4 @@ geçişlerini AccountPayment aggregate'ında kalıcılaştırmak.
 
 - V13-ACC-005
 - V13-ACC-006
+- V13-ACC-009

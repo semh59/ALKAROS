@@ -18,7 +18,6 @@ olarak reddetmek.
 ## Owned surface
 
 - `tools/task-scope/**`
-- `tests/Architecture/TaskScope/conftest.py`, `tests/Architecture/TaskScope/test_task_scope.py`
 - `tests/Architecture/TaskScope/test_task_scope_diff.py`
 - `.github/workflows/task-scope.yml`, `docs/engineering/task-scope-contract.md`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
@@ -41,6 +40,7 @@ olarak reddetmek.
 
 - V0-ARC-001
 - V1-FND-001
+- V1-FND-010
 
 ## Deliverables
 

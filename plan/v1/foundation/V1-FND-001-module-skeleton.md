@@ -59,7 +59,8 @@ oluşturmak.
 
 - Clean restore/build/test exact solution graph üzerinde geçer; yasak project reference otomatik testte reddedilir.
 - Root build/config dosyalarının her biri bu task allowlist'inde yer alır; feature veya host runtime davranışı içermez.
-- Sonraki feature task'ları module/client project dosyasını değiştiremez; yeni project/reference ayrı plan değişikliği ister.
+- Sonraki feature task'ları module/client project dosyasını değiştiremez; yeni project/reference ayrı plan değişikliği
+  ister.
 
 ## Handoff
 

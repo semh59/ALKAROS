@@ -27,7 +27,8 @@ Açık mutfak durumunu kullanarak mutfak öncesi iptali Release'ye ve hazırlık
 
 ## In scope
 
-- Durum araması, release/atık kararı, denetim nedeni ve tek seferlik yürütme; hareket kaydı V11-INV-006 sözleşmesi üzerinden yazılır (bu görev hareketi doğrudan üretmez).
+- Durum araması, release/atık kararı, denetim nedeni ve tek seferlik yürütme; hareket kaydı V11-INV-006 sözleşmesi
+  üzerinden yazılır (bu görev hareketi doğrudan üretmez).
 
 ## Out of scope
 

@@ -13,7 +13,8 @@
 
 ## Goal
 
-Onaylı gözlem penceresinde production finansal, fiscal, stok ve integration sinyallerini rollback eşikleriyle doğrulamak.
+Onaylı gözlem penceresinde production finansal, fiscal, stok ve integration sinyallerini rollback eşikleriyle
+doğrulamak.
 
 ## Owned surface
 
@@ -45,10 +46,8 @@ Onaylı gözlem penceresinde production finansal, fiscal, stok ve integration si
 - Rollback eşikleri `V0-BKP-002` RPO/RTO kararı ve `V15-OBS-002` health/alert eşiklerinden türetilir.
 - Finansal/fiscal/stok control total veya kritik integration sinyali eşik dışındaysa release sağlıklı ilan edilmez.
 - Gözlem penceresi ve son karar exact deployment/artifact kimliğine bağlanır.
-- `V20-REL-004` kanıtlı `NotApplicable` ise production deployment sinyalleri beklenmez; staging benzeri ortam kontrol
-  total sinyalleriyle gözlem kuralı yine geçerlidir.
-- `V15-REC-002` kanıtlı `NotApplicable` ise reconciliation vaka sinyalleri gözleme dahil edilmez; kalan finansal/fiscal
-  kontrol total sinyalleri yine eşik kuralına tabidir.
+- `V20-REL-004` gerçek production deployment ve `V15-REC-002` reconciliation kanıtı `Done` olmadan observation
+  tamamlanamaz; staging sinyali veya `NotApplicable` production kanıtı yerine geçmez.
 
 ## Handoff
 
