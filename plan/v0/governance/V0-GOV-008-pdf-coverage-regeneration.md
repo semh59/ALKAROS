@@ -8,8 +8,8 @@
 
 ## Source basis
 
-- PDF:I-IV
-- CORR:C1-C9
+- PDF:I.1-I.46
+- CORR:C1
 
 ## Goal
 
