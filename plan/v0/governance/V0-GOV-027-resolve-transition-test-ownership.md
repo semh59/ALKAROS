@@ -1,8 +1,8 @@
 # V0-GOV-027 - Resolve transition test ownership
 
 - Task ID: V0-GOV-027
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 

@@ -18,7 +18,6 @@ metadata hem Markdown sınırında fail-closed doğrulamak.
 ## Owned surface
 
 - `tools/task-scope/task_scope_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope_markdown_boundary.py`
 - `evidence/V0-GOV-024/**`
 
 ## In scope

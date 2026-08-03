@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 345,
-  "markdown_line_count": 24216,
-  "markdown_byte_count": 1687601,
+  "markdown_file_count": 349,
+  "markdown_line_count": 24386,
+  "markdown_byte_count": 1692271,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -490,6 +490,20 @@
       "utf8": true
     },
     {
+      "path": "evidence/V0-GOV-024/closure-report.md",
+      "sha256": "19F2A0A7EB33DBDB12CDCF312524066F67063AC60E40FF06452FDFD44F495A08",
+      "lines": 31,
+      "bytes": 827,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V0-GOV-027/closure-report.md",
+      "sha256": "9586155EB8C0CA09BA857D76F079A832576352A82F89D25727F934EB6C48A19D",
+      "lines": 32,
+      "bytes": 781,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-001/closure-report.md",
       "sha256": "F56A5345D07B40930525F6C3C4780E6038B904645648E3AC1201241A137D1955",
       "lines": 90,
@@ -554,9 +568,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "03E2655A642E8B1B2F47C4DC77C0FCF8FBAC0AB721C43EC46CA672AD1B1A75F6",
-      "lines": 1621,
-      "bytes": 221606,
+      "sha256": "E725998835C2DD3082A1A67E1E00D384174CA80C1137ECE647A8ACF394C89712",
+      "lines": 1625,
+      "bytes": 222221,
       "utf8": true
     },
     {
@@ -935,6 +949,20 @@
       "sha256": "5DF1BF43963DD9DC76B8EA6980047EDE08278682A43E1F32BE9C75D23797C685",
       "lines": 60,
       "bytes": 1665,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-024-blocker-transition-enforcement.md",
+      "sha256": "645CE5E56F18866012441524423137BFA7AD7859204D074D79C942043B2DA625",
+      "lines": 49,
+      "bytes": 1104,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-027-resolve-transition-test-ownership.md",
+      "sha256": "64EDD9737B1C23F51832A328CE31C1968A5018AD809EB866398B84F0A5864895",
+      "lines": 54,
+      "bytes": 1343,
       "utf8": true
     },
     {
