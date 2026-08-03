@@ -55,8 +55,29 @@ public static class PsqlScriptRunner
         CancellationToken cancellationToken)
     {
         var startInfo = CreateStartInfo(options);
+        startInfo.ArgumentList.Add("--single-transaction");
         startInfo.ArgumentList.Add("--file");
         startInfo.ArgumentList.Add(scriptPath);
+
+        return await RunProcessAsync(startInfo, options, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Runs a migration script and its control-table command in one PostgreSQL
+    /// transaction. Either both effects commit or neither effect commits.
+    /// </summary>
+    public static async Task<ScriptExecutionResult> RunScriptWithCommandAsync(
+        string scriptPath,
+        string command,
+        PsqlOptions options,
+        CancellationToken cancellationToken)
+    {
+        var startInfo = CreateStartInfo(options);
+        startInfo.ArgumentList.Add("--single-transaction");
+        startInfo.ArgumentList.Add("--file");
+        startInfo.ArgumentList.Add(scriptPath);
+        startInfo.ArgumentList.Add("--command");
+        startInfo.ArgumentList.Add(command);
 
         return await RunProcessAsync(startInfo, options, cancellationToken).ConfigureAwait(false);
     }

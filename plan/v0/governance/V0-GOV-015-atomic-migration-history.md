@@ -1,8 +1,8 @@
 # V0-GOV-015 - Make migrations atomic and history-backed
 
 - Task ID: V0-GOV-015
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 

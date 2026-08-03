@@ -96,7 +96,8 @@ public static class HostComposition
             return HostExitCode.MigrationFailed;
         }
 
-        output.WriteLine($"All {result.Steps.Count} migration(s) applied.");
+        output.WriteLine(
+            $"All {manifest.Migrations.Count} migration(s) verified; {result.AppliedIds.Count} applied.");
         return HostExitCode.Success;
     }
 
@@ -122,7 +123,16 @@ public static class HostComposition
             return HostExitCode.StartupFailed;
         }
 
-        var step = MigrationExecutor.RollbackAsync(rollbackId, rollbackFile, options.Psql, cancellationToken)
+        var forwardFiles = discovery.Files
+            .Where(f => f.Kind == MigrationScriptKind.Up)
+            .ToDictionary(f => f.Id, StringComparer.Ordinal);
+        var step = MigrationExecutor.RollbackAppliedAsync(
+                manifest,
+                forwardFiles,
+                rollbackId,
+                rollbackFile,
+                options.Psql,
+                cancellationToken)
             .GetAwaiter()
             .GetResult();
 
@@ -132,7 +142,11 @@ public static class HostComposition
         if (!step.Success && !string.IsNullOrWhiteSpace(step.StandardError))
             output.WriteLine($"      {step.StandardError.Trim()}");
 
-        return step.Success ? HostExitCode.Success : HostExitCode.MigrationFailed;
+        return step.Success
+            ? HostExitCode.Success
+            : step.StandardError.StartsWith("Rollback refused:", StringComparison.Ordinal)
+                ? HostExitCode.StartupFailed
+                : HostExitCode.MigrationFailed;
     }
 
     private static IReadOnlyList<string>? ComposeModules(TextWriter output)
