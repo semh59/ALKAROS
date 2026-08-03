@@ -1,8 +1,8 @@
 # V0-GOV-016 - Refresh post-remediation audit integrity records
 
 - Task ID: V0-GOV-016
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 

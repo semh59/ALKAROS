@@ -6,8 +6,8 @@
 - PDF SHA-256: `AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822`
 - Başlangıç manifesti: `plan/AUDIT_BASELINE_MANIFEST.json`
 - Nihai bütünlük manifesti: `plan/AUDIT_MANIFEST.json`
-- Git durumu: denetim kapısı gereği `.git` oluşturulmadı.
-- Uygulama yüzeyi: `src`, `tests`, `database` ve gerçek `docs` ağacı yoktur.
+- Başlangıç anı: denetim kapısı gereği Git deposu ve uygulama yüzeyi yoktu.
+- Bu kayıt başlangıç plan denetimini açıklar; güncel repository durumu için manifest ve Git geçmişi esas alınır.
 
 ## Yöntem ve sonuç
 
@@ -45,7 +45,7 @@ markdownlint'in raporladığı kesin satırı korur.
 | `plan/README.md` | `1-43` | `75E2D7A6BCB4FB1E96C96FEF95D11F9EAE67706508C70EE64B522BFBE31F14F7` | `plan/README.md` | `1-60` | `0BA05425C84A357D85393E571F9398E4D27A49E5B97102A6263D830223D93C7B` | `None` | ✅ |
 | `plan/TASK_STANDARD.md` | `1-47` | `8E51D07739656FB93EBA13895B729B0A2FE8910E09324763FA9ABD4EFFB8952D` | `plan/TASK_STANDARD.md` | `1-128` | `DE96FF36ED19C29379C04409D0066345DB42F92846E4D37693FDB51A904FF2E3` | `FIND-SCHEMA-0391@31` | ✅ |
 | `plan/TRACEABILITY.md` | `1-33` | `A2CAB0FD4EE1392070FBBD6B3661B8391C4453AE7E33A2E098E5980A61DACBAF` | `plan/TRACEABILITY.md` | `1-130` | `9C1FE26DAADF4A2D430BB91590DC2120D5BD37EDC0215B310C7A49DBAE315A01` | `FIND-MD060-0025@8`; `FIND-MD060-0026@8`; `FIND-MD060-0027@8`; `FIND-MD060-0028@8`; `FIND-MD060-0029@8`; `FIND-MD060-0030@8`; `FIND-MD013-0056@9`; `FIND-MD013-0057@10`; `FIND-MD013-0058@11`; `FIND-MD013-0059@12`; `FIND-MD013-0060@13`; `FIND-MD013-0061@14`; `FIND-MD013-0062@15`; `FIND-MD013-0063@16`; `FIND-MD013-0064@17`; `FIND-MD013-0065@18`; `FIND-MD013-0066@19`; `FIND-MD013-0067@20`; `FIND-MD013-0068@21`; `FIND-MD013-0069@22`; `FIND-MD013-0070@23`; `FIND-MD013-0071@24`; `FIND-MD013-0072@25`; `FIND-MD013-0073@26`; `FIND-MD013-0074@27`; `FIND-MD013-0075@28`; `FIND-MD013-0076@29`; `FIND-MD013-0077@30`; `FIND-MD013-0078@32`; `FIND-DECISION-0001@1` | ✅ |
-| `plan/v0/README.md` | `1-27` | `63330EC4C6F1A98525C1D4F9F48E1CD10601990325482D81A707DF136C2C7560` | `plan/v0/README.md` | `1-31` | `9C2ECA4C035D980C7D69D5DCFA7724CD752987FA3ABF92E3E00F69927D960202` | `None` | ✅ |
+| `plan/v0/README.md` | `1-27` | `63330EC4C6F1A98525C1D4F9F48E1CD10601990325482D81A707DF136C2C7560` | `plan/v0/README.md` | `1-31` | `8594F9A1BAE72E611919094983EF7877CB7BD1799614FB3FDBD88CE141547858` | `None` | ✅ |
 | `plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md` | `1-41 (+EOF 42)` | `DB03AC185BD15DCFDA8A2C5CEFED0DBD1DD9C9F48AE470DCB7376085C04C8D36` | `plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md` | `1-61` | `B38B506B6052D07E6E6931AAC14AF2728C5774249E8440C7EED6085C045068D8` | `FIND-SCHEMA-0001@1`; `FIND-SCHEMA-0002@3`; `FIND-SOURCE-0001@9`; `FIND-MD013-0079@9`; `FIND-MD013-0080@18`; `FIND-MD013-0081@36`; `FIND-MD012-0004@42`; `FIND-EVIDENCE-0002@36` | ✅ |
 | `plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md` | `1-45 (+EOF 46)` | `91905773F4AC0DEA59F3D97E21C0BA76695A3819C6B2B90CBB318D41EE77461E` | `plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md` | `1-58` | `EF58481D5938842AC85A52ADE3816EFDF6B4010B71EE98507A2E64CE9FF933F2` | `FIND-SCHEMA-0003@1`; `FIND-SCHEMA-0004@3`; `FIND-LANGUAGE-0001@13`; `FIND-MD013-0082@9`; `FIND-MD013-0083@13`; `FIND-MD013-0084@22`; `FIND-MD013-0085@40`; `FIND-MD012-0005@46` | ✅ |
 | `plan/v0/compliance/V0-CMP-001-gib-eadisyon-scope.md` | `1-41 (+EOF 42)` | `97DF76672F4F18D74599A464E5AE4A45D1A10655B6F071313B180EEE11212ED6` | `plan/v0/compliance/V0-CMP-001-gib-eadisyon-scope.md` | `1-65` | `0A244B7B46F97A88145D576788F99FC794712CA17B1454D4BD3942A57E32BD00` | `FIND-SCHEMA-0005@1`; `FIND-SCHEMA-0006@3`; `FIND-SOURCE-0002@9`; `FIND-MD013-0086@9`; `FIND-MD013-0087@18`; `FIND-MD013-0088@36`; `FIND-MD012-0006@42` | ✅ |
@@ -1522,6 +1522,10 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V0-GOV-010/closure-report.md` | ✅ | `56FCB6035967929B54EB26A1ED62F52CC282F1720A071E5F3109E6731E758BC7` | Denetim sözleşmesi |
 | `evidence/V0-GOV-011/closure-report.md` | ✅ | `680C3E66C7EA8A32D5EE5546EBB3DD16B0E1C86D13501C84EEAE3A8B4DAF6C85` | Denetim sözleşmesi |
 | `evidence/V0-GOV-012/closure-report.md` | ✅ | `9FDBA76ED26A990D31AC9DC351C278CDF11EABB78FE7A11E1EA33BA59E7497A4` | Denetim sözleşmesi |
+| `evidence/V0-GOV-013/closure-report.md` | ✅ | `E98103463CA62D429CBB95376AAC2B8114C6619451C01EC2251E93EDD4839566` | Denetim sözleşmesi |
+| `evidence/V0-GOV-014/closure-report.md` | ✅ | `7F59618E89EED9F567A03AC59421D3E7C44C70BD7FE63A0F98AEF1855E6E20E9` | Denetim sözleşmesi |
+| `evidence/V0-GOV-015/closure-report.md` | ✅ | `54CEA5FD42F1BE518A3E89CFDD597C7DBB1B492C83D5DEEF23DF96E9DE1F9226` | Denetim sözleşmesi |
+| `evidence/V0-GOV-016/closure-report.md` | ✅ | `FEDF5E8767B81F8A5B2823A65F2C2ECA9CCCBA507D5316FCC9CB282EC8910E24` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/closure-report.md` | ✅ | `F56A5345D07B40930525F6C3C4780E6038B904645648E3AC1201241A137D1955` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/retrospective-audit-v2.md` | ✅ | `8681B1C0702F46E1864D26F313F17C1B4B544A6E3D00C1E4053F836768599950` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/retrospective-audit.md` | ✅ | `8AFEC645C09555C5F57FC942F251CD6B9DFB5B8628A67B25B7F5ED46526E0546` | Denetim sözleşmesi |
@@ -1555,9 +1559,10 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v0/governance/V0-GOV-010-task-scope-root-normalization.md` | ✅ | `D71E503CD0690652D474CF3904F2BD918501571119DE72D8260572C32B9F9899` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-011-final-audit-manifest-refresh.md` | ✅ | `2F17E82C462FF940B06B6044B2B1ADEBC54BBE6B0125D5D64ECD55B8D710D221` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-012-final-gate-and-audit-reconciliation.md` | ✅ | `FD6DB815A68F20D369EADDAEB0FDE725DD3FC7824FE5D3FEB91681153FEB0411` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-013-sensitive-envelope-metadata-integrity.md` | ✅ | `006F07B0D0FDCADBC7025E4A266D15C4DFA3AE74B0963F8331287797EAC5708A` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-014-messaging-retry-backoff.md` | ✅ | `F87705948F77067F14FDC1DC749833EFECCBCB4C096FEC4160879A528E6E4804` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-015-atomic-migration-history.md` | ✅ | `81D98771070F5312EA23E1095CC83DCBC3184E03CD4C80AF1660FD8834EDC22E` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-013-sensitive-envelope-metadata-integrity.md` | ✅ | `F0D5E515EFC59671B0B120833E813D83E029687420D75565B9742DA54EB3F454` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-014-messaging-retry-backoff.md` | ✅ | `6116A8D346A2EF94CBA2D042BB84A6A31962578887801E6975FD245A85BDD33B` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-015-atomic-migration-history.md` | ✅ | `9E16EF72ECF800FD0674F61C212FB0F90981E957B1B5883528A35A1F53B8D4A8` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-016-post-remediation-audit-refresh.md` | ✅ | `937F28D23491F80EC49C01367DED4AD6387D5F8B9E19F78A37CF4FDFE34ACDC0` | Tek-sahip görev |
 | `plan/v0/platform-architecture/V0-ARC-006-notification-delivery-matrix.md` | ✅ | `0F3C99A22E9865275FE9D5A6DC71D3C542FDBAC684368F0A1516EC67BAB40774` | Tek-sahip görev |
 | `plan/v0/platform-architecture/V0-ARC-007-deployment-compatibility-matrix.md` | ✅ | `8BC0A8D7021F058D2BA4DAD70440AB93B62BFD8327C551DF3AB1E3458D962AA4` | Tek-sahip görev |
 | `plan/v0/platform-architecture/V0-ARC-008-release-evidence-contract.md` | ✅ | `0CB5CDACA826B5A978E398D09C4500DF1D6FD95492C33F050AD1B5867CD434C2` | Tek-sahip görev |
@@ -1604,5 +1609,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Codex execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `332` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `337` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

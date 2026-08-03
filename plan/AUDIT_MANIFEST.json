@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 332,
-  "markdown_line_count": 23402,
-  "markdown_byte_count": 1658283,
+  "markdown_file_count": 337,
+  "markdown_line_count": 23574,
+  "markdown_byte_count": 1663231,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "84D1579193CEBFFA6CFB81455D487C10072C159F7A73E13128B32713347920A7",
+      "sha256": "8927390047DB722534425A9EF4D6468658626B0F4423F22B48226317F56BAAA5",
       "lines": 3255,
-      "bytes": 152810,
+      "bytes": 152873,
       "utf8": true
     }
   ],
@@ -434,6 +434,34 @@
       "utf8": true
     },
     {
+      "path": "evidence/V0-GOV-013/closure-report.md",
+      "sha256": "E98103463CA62D429CBB95376AAC2B8114C6619451C01EC2251E93EDD4839566",
+      "lines": 27,
+      "bytes": 714,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V0-GOV-014/closure-report.md",
+      "sha256": "7F59618E89EED9F567A03AC59421D3E7C44C70BD7FE63A0F98AEF1855E6E20E9",
+      "lines": 27,
+      "bytes": 711,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V0-GOV-015/closure-report.md",
+      "sha256": "54CEA5FD42F1BE518A3E89CFDD597C7DBB1B492C83D5DEEF23DF96E9DE1F9226",
+      "lines": 29,
+      "bytes": 784,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V0-GOV-016/closure-report.md",
+      "sha256": "FEDF5E8767B81F8A5B2823A65F2C2ECA9CCCBA507D5316FCC9CB282EC8910E24",
+      "lines": 28,
+      "bytes": 713,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-001/closure-report.md",
       "sha256": "F56A5345D07B40930525F6C3C4780E6038B904645648E3AC1201241A137D1955",
       "lines": 90,
@@ -498,9 +526,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "1A0EB298311083D7280B235E6E8142A9DFD9A896997871E9C2FDEAD3A28F2341",
-      "lines": 1608,
-      "bytes": 219607,
+      "sha256": "F3D14509121D355A7EE8D563593AA1F463C94A9AC29F9484862DCAD466EAF823",
+      "lines": 1613,
+      "bytes": 220404,
       "utf8": true
     },
     {
@@ -827,23 +855,30 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-013-sensitive-envelope-metadata-integrity.md",
-      "sha256": "006F07B0D0FDCADBC7025E4A266D15C4DFA3AE74B0963F8331287797EAC5708A",
+      "sha256": "F0D5E515EFC59671B0B120833E813D83E029687420D75565B9742DA54EB3F454",
       "lines": 59,
-      "bytes": 1729,
+      "bytes": 1700,
       "utf8": true
     },
     {
       "path": "plan/v0/governance/V0-GOV-014-messaging-retry-backoff.md",
-      "sha256": "F87705948F77067F14FDC1DC749833EFECCBCB4C096FEC4160879A528E6E4804",
+      "sha256": "6116A8D346A2EF94CBA2D042BB84A6A31962578887801E6975FD245A85BDD33B",
       "lines": 53,
-      "bytes": 1293,
+      "bytes": 1264,
       "utf8": true
     },
     {
       "path": "plan/v0/governance/V0-GOV-015-atomic-migration-history.md",
-      "sha256": "81D98771070F5312EA23E1095CC83DCBC3184E03CD4C80AF1660FD8834EDC22E",
+      "sha256": "9E16EF72ECF800FD0674F61C212FB0F90981E957B1B5883528A35A1F53B8D4A8",
       "lines": 57,
-      "bytes": 1569,
+      "bytes": 1540,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-016-post-remediation-audit-refresh.md",
+      "sha256": "937F28D23491F80EC49C01367DED4AD6387D5F8B9E19F78A37CF4FDFE34ACDC0",
+      "lines": 56,
+      "bytes": 1316,
       "utf8": true
     },
     {
@@ -953,7 +988,7 @@
     },
     {
       "path": "plan/v0/README.md",
-      "sha256": "9C2ECA4C035D980C7D69D5DCFA7724CD752987FA3ABF92E3E00F69927D960202",
+      "sha256": "8594F9A1BAE72E611919094983EF7877CB7BD1799614FB3FDBD88CE141547858",
       "lines": 31,
       "bytes": 1233,
       "utf8": true
