@@ -84,6 +84,47 @@ public static class ModuleBoundaryTests
         Assert.Equal(ExpectedCompositionOrder, composed);
     }
 
+    [Fact]
+    public static void ModuleCompositionRootShouldRetainTypedServiceRegistrations()
+    {
+        var singleton = new RegistrationImplementation();
+        var root = new ModuleCompositionRoot();
+        root.AddModule(new TestModule(
+            "Registrations",
+            "Registrations",
+            EmptyDependencies,
+            context => context
+                .RegisterSingleton<IRegistrationService>(singleton)
+                .RegisterSingleton<IRegistrationService, RegistrationImplementation>()
+                .RegisterTransient<IRegistrationService, RegistrationImplementation>()));
+
+        root.Compose();
+
+        Assert.Collection(
+            root.Services,
+            descriptor =>
+            {
+                Assert.Equal(typeof(IRegistrationService), descriptor.ServiceType);
+                Assert.Equal(typeof(RegistrationImplementation), descriptor.ImplementationType);
+                Assert.Equal(ModuleContext.ServiceLifetime.Singleton, descriptor.Lifetime);
+                Assert.Same(singleton, descriptor.ImplementationInstance);
+            },
+            descriptor =>
+            {
+                Assert.Equal(typeof(IRegistrationService), descriptor.ServiceType);
+                Assert.Equal(typeof(RegistrationImplementation), descriptor.ImplementationType);
+                Assert.Equal(ModuleContext.ServiceLifetime.Singleton, descriptor.Lifetime);
+                Assert.Null(descriptor.ImplementationInstance);
+            },
+            descriptor =>
+            {
+                Assert.Equal(typeof(IRegistrationService), descriptor.ServiceType);
+                Assert.Equal(typeof(RegistrationImplementation), descriptor.ImplementationType);
+                Assert.Equal(ModuleContext.ServiceLifetime.Transient, descriptor.Lifetime);
+                Assert.Null(descriptor.ImplementationInstance);
+            });
+    }
+
     private sealed class TestModule : IModule
     {
         private readonly Action<ModuleContext> _onRegister;
@@ -117,5 +158,13 @@ public static class ModuleBoundaryTests
         public string DisplayName => "Dependent";
         public IReadOnlyCollection<string> DependsOn => UnknownDependency;
         public void Register(ModuleContext context) { }
+    }
+
+    private interface IRegistrationService
+    {
+    }
+
+    private sealed class RegistrationImplementation : IRegistrationService
+    {
     }
 }

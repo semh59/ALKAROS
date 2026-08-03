@@ -9,7 +9,7 @@ public sealed class ModuleContext
 {
     private readonly List<ServiceDescriptor> _services = new();
 
-    public IReadOnlyList<ServiceDescriptor> Services => _services;
+    public IReadOnlyList<ServiceDescriptor> Services => _services.AsReadOnly();
 
     public ModuleContext RegisterSingleton<TService>(TService instance)
         where TService : notnull
@@ -35,23 +35,24 @@ public sealed class ModuleContext
     }
 
     public sealed record ServiceDescriptor(
-        string ServiceFullName,
-        string ImplementationFullName,
-        ServiceLifetime Lifetime)
+        Type ServiceType,
+        Type ImplementationType,
+        ServiceLifetime Lifetime,
+        object? ImplementationInstance)
     {
         public static ServiceDescriptor Singleton<TService>(TService instance)
             where TService : notnull
-            => new(typeof(TService).FullName!, instance.GetType().FullName!, ServiceLifetime.Singleton);
+            => new(typeof(TService), instance.GetType(), ServiceLifetime.Singleton, instance);
 
         public static ServiceDescriptor Singleton<TService, TImplementation>()
             where TService : class
             where TImplementation : class, TService
-            => new(typeof(TService).FullName!, typeof(TImplementation).FullName!, ServiceLifetime.Singleton);
+            => new(typeof(TService), typeof(TImplementation), ServiceLifetime.Singleton, null);
 
         public static ServiceDescriptor Transient<TService, TImplementation>()
             where TService : class
             where TImplementation : class, TService
-            => new(typeof(TService).FullName!, typeof(TImplementation).FullName!, ServiceLifetime.Transient);
+            => new(typeof(TService), typeof(TImplementation), ServiceLifetime.Transient, null);
     }
 
     public enum ServiceLifetime { Singleton, Transient }

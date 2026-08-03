@@ -2,7 +2,7 @@
 
 - Task ID: V1-FND-001
 - Status: Blocked
-- Assignee: opencode-v1-fnd-001
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 
