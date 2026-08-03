@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 329,
-  "markdown_line_count": 23188,
-  "markdown_byte_count": 1650650,
+  "markdown_file_count": 332,
+  "markdown_line_count": 23402,
+  "markdown_byte_count": 1658283,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -498,9 +498,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "0432E46537A4FE3D0227E0EC3C1801C71ABED4660DCFC5B3E48E7C9D917084E9",
-      "lines": 1605,
-      "bytes": 219121,
+      "sha256": "1A0EB298311083D7280B235E6E8142A9DFD9A896997871E9C2FDEAD3A28F2341",
+      "lines": 1608,
+      "bytes": 219607,
       "utf8": true
     },
     {
@@ -826,6 +826,27 @@
       "utf8": true
     },
     {
+      "path": "plan/v0/governance/V0-GOV-013-sensitive-envelope-metadata-integrity.md",
+      "sha256": "006F07B0D0FDCADBC7025E4A266D15C4DFA3AE74B0963F8331287797EAC5708A",
+      "lines": 59,
+      "bytes": 1729,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-014-messaging-retry-backoff.md",
+      "sha256": "F87705948F77067F14FDC1DC749833EFECCBCB4C096FEC4160879A528E6E4804",
+      "lines": 53,
+      "bytes": 1293,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-015-atomic-migration-history.md",
+      "sha256": "81D98771070F5312EA23E1095CC83DCBC3184E03CD4C80AF1660FD8834EDC22E",
+      "lines": 57,
+      "bytes": 1569,
+      "utf8": true
+    },
+    {
       "path": "plan/v0/hugin-t300/V0-HUG-001-integration-contract.md",
       "sha256": "9C53C2805848D4F79D546B101D2BEE403CD82ACF9D38AB377765D0C08711009E",
       "lines": 76,
@@ -932,7 +953,7 @@
     },
     {
       "path": "plan/v0/README.md",
-      "sha256": "81778F610ED8268BB186F912D85AF38DB0C1E604E5E7F62112DEEE19F34321F3",
+      "sha256": "9C2ECA4C035D980C7D69D5DCFA7724CD752987FA3ABF92E3E00F69927D960202",
       "lines": 31,
       "bytes": 1233,
       "utf8": true
@@ -1030,9 +1051,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-002-idempotency-infrastructure.md",
-      "sha256": "9B1B150865673D299D49F83DE3594CBEFCD98EB4854765155BA0E0E2352F4738",
-      "lines": 76,
-      "bytes": 3629,
+      "sha256": "9CA48F3B16FA85627F88DC7B9B74F4165E94DC1FC715FECD43BC8CAC232FBFB1",
+      "lines": 97,
+      "bytes": 4747,
       "utf8": true
     },
     {
@@ -1044,9 +1065,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-004-host-migration-composition.md",
-      "sha256": "D296E90D466A41BD05B60FAE5955C314CC1814A2CFAFC00B0124D940BF40B5E8",
-      "lines": 69,
-      "bytes": 2503,
+      "sha256": "405B2721C95743AABB4887EC1A04D4364B1B67057DAE5F4CB024A530FE12999E",
+      "lines": 71,
+      "bytes": 2524,
       "utf8": true
     },
     {
@@ -1233,9 +1254,9 @@
     },
     {
       "path": "plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md",
-      "sha256": "ECE8B0766DDC5D375452D6FB521B64143249F1A02CDB02086B6E7D97A79484DA",
-      "lines": 56,
-      "bytes": 1514,
+      "sha256": "FD6CE2DE43453FD96776C4C5289A31C898F40DCB293FCF6A4AE551410363FEF3",
+      "lines": 75,
+      "bytes": 2931,
       "utf8": true
     },
     {

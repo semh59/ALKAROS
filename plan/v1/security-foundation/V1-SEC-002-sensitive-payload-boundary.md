@@ -18,7 +18,26 @@ Payment, fiscal, invoice ve webhook payload'larının saklama, şifreleme, maske
 
 ## Owned surface
 
-- `src/BuildingBlocks/Security/SensitiveData/**`, `tests/BuildingBlocks/Security/SensitiveData/**`
+- `src/BuildingBlocks/Security/SensitiveData/EnvelopeKeyCodec.cs`
+- `src/BuildingBlocks/Security/SensitiveData/IPayloadRedactor.cs`
+- `src/BuildingBlocks/Security/SensitiveData/IRetentionPolicyHook.cs`
+- `src/BuildingBlocks/Security/SensitiveData/ISensitiveDataAccessPolicy.cs`
+- `src/BuildingBlocks/Security/SensitiveData/MaxAgeRetentionPolicyHook.cs`
+- `src/BuildingBlocks/Security/SensitiveData/PayloadRedactor.cs`
+- `src/BuildingBlocks/Security/SensitiveData/SensitiveCategory.cs`
+- `src/BuildingBlocks/Security/SensitiveData/SensitiveDataEncryptionException.cs`
+- `src/BuildingBlocks/Security/SensitiveData/SensitiveDataException.cs`
+- `src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs`
+- `src/BuildingBlocks/Security/SensitiveData/UnauthorizedSensitiveReadException.cs`
+- `tests/BuildingBlocks/Security/SensitiveData/Authorization/UnauthorizedReadTests.cs`
+- `tests/BuildingBlocks/Security/SensitiveData/Encryption/KeyFailureTests.cs`
+- `tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs`
+- `tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs`
+- `tests/BuildingBlocks/Security/SensitiveData/Retention/RetentionPolicyHookTests.cs`
+- `tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj`
+- `tests/BuildingBlocks/Security/SensitiveData/packages.lock.json`
+- V0-GOV-013 tarafindan remediated metadata-authentication dosyalari bu task'in
+  yuzeyinden devredilmistir; V0-GOV-013 bu task'a dependency ile siralanir.
 - Kapsam genişletme onayı (2026-07-31 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı.
 - Bu görev provider payload schema veya business retention süresi belirleyemez.

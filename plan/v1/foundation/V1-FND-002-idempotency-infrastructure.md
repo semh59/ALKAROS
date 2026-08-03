@@ -18,8 +18,29 @@ uygulamak.
 
 ## Owned surface
 
-- `src/BuildingBlocks/Idempotency/**`, `src/BuildingBlocks/Messaging/**`, `tests/BuildingBlocks/Idempotency/**`,
-  `database/migrations/V1/V1-FND-002/**`
+- `src/BuildingBlocks/Idempotency/**`
+- `src/BuildingBlocks/Messaging/IInboxHandler.cs`
+- `src/BuildingBlocks/Messaging/IOutboxDeliverySink.cs`
+- `src/BuildingBlocks/Messaging/InboxEnvelope.cs`
+- `src/BuildingBlocks/Messaging/InboxMessage.cs`
+- `src/BuildingBlocks/Messaging/InboxStatus.cs`
+- `src/BuildingBlocks/Messaging/InboxStore.cs`
+- `src/BuildingBlocks/Messaging/OutboxEnvelope.cs`
+- `src/BuildingBlocks/Messaging/OutboxMessage.cs`
+- `src/BuildingBlocks/Messaging/OutboxStatus.cs`
+- `src/BuildingBlocks/Messaging/OutboxStore.cs`
+- `tests/BuildingBlocks/Idempotency/EnvelopeValidationTests.cs`
+- `tests/BuildingBlocks/Idempotency/IdempotencyKeyStoreTests.cs`
+- `tests/BuildingBlocks/Idempotency/IdempotencyKeyTests.cs`
+- `tests/BuildingBlocks/Idempotency/InboxStoreTests.cs`
+- `tests/BuildingBlocks/Idempotency/OutboxStoreTests.cs`
+- `tests/BuildingBlocks/Idempotency/RequestHashTests.cs`
+- `tests/BuildingBlocks/Idempotency/Fixtures/StoreTestDatabase.cs`
+- `tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj`
+- `tests/BuildingBlocks/Idempotency/packages.lock.json`
+- `database/migrations/V1/V1-FND-002/**`
+- V0-GOV-014 tarafindan remediated retry policy dosyasi bu task'in yuzeyinden
+  devredilmistir; V0-GOV-014 bu task'a dependency ile siralanir.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı; `Directory.Packages.props` içine `Npgsql` PackageVersion eklentisi.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): `docs/data/migration-dependency-graph.md` (V0-DAT-001
