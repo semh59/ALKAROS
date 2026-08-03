@@ -825,6 +825,21 @@ def task_files() -> list[Path]:
     return paths
 
 
+def audited_markdown_paths() -> list[Path]:
+    """Return every active Markdown artifact, excluding the frozen tmp baseline."""
+
+    paths = [
+        path
+        for root in [PLAN_DIR, WORKSPACE / "docs", WORKSPACE / "evidence"]
+        if root.exists()
+        for path in root.rglob("*.md")
+    ]
+    agents_path = WORKSPACE / "AGENTS.md"
+    if agents_path.exists():
+        paths.append(agents_path)
+    return sorted(paths)
+
+
 def split_sections(text: str) -> tuple[list[str], dict[str, list[str]], list[str]]:
     lines = text.splitlines()
     preamble: list[str] = []
@@ -872,24 +887,6 @@ def parse_coverage_sources() -> dict[str, list[str]]:
                 if source not in mapping[task_id]:
                     mapping[task_id].append(source)
     return mapping
-
-
-def parse_coverage_owner_ranges() -> list[tuple[str, list[str]]]:
-    entries: list[tuple[str, list[str]]] = []
-    for line in read_utf8(PLAN_DIR / "PDF_COVERAGE.md").splitlines():
-        if not line.startswith("|"):
-            continue
-        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-        if len(cells) < 2:
-            continue
-        owners = TASK_ID.findall(line)
-        if not owners:
-            continue
-        for token in PDF_SECTION.findall(cells[0]):
-            entries.append((token, owners))
-        if re.fullmatch(r"C[1-9]", cells[0]):
-            entries.append((cells[0], owners))
-    return entries
 
 
 def task_source_owner_ranges() -> list[tuple[str, list[str]]]:
@@ -1281,7 +1278,7 @@ def generate_coverage() -> None:
     lines.extend(
         [
             "",
-            "## Plan denetiminde eklenen C10-C28 açıkları",
+            "## Plan denetiminde eklenen C10-C31 açıkları",
             "",
             "| Correction | Kanıtlanan açık | Decision/validation owner |",
             "| --- | --- | --- |",
@@ -1304,6 +1301,9 @@ def generate_coverage() -> None:
             "| `C26` | CustomerAccount handler registry/fiscal closure integration sahibi yoktu. | V13-ACC-008 |",
             "| `C27` | On-hand ve reservation balance projection sırası producer cycle üretiyordu. | V11-INV-002, V11-INV-007 |",
             "| `C28` | Transaction primitive Outbox oluşmadan post-commit handoff sahipleniyordu. | V1-FND-006 |",
+            "| `C29` | Provider timeout Unknown/ReconciliationRequired durumu olmadan modellenmişti. | V0-DOM-001 |",
+            "| `C30` | Shared integration-test fixture dosyalarının tek task sahibi ve provenance kanıtı yoktu. | V1-FND-010 |",
+            "| `C31` | Task Markdown değişikliği own write allowlist'i genişletebiliyordu. | V0-GOV-001 |",
             "",
             "## Coverage kapısı",
             "",
@@ -1792,7 +1792,14 @@ def report_english() -> None:
 
 def wrap_markdown() -> None:
     changed = 0
-    for path in sorted(PLAN_DIR.rglob("*.md")):
+    markdown_roots = [PLAN_DIR, WORKSPACE / "docs", WORKSPACE / "evidence"]
+    markdown_paths = sorted(
+        path
+        for root in markdown_roots
+        if root.exists()
+        for path in root.rglob("*.md")
+    )
+    for path in markdown_paths:
         original = read_utf8(path)
         output: list[str] = []
         in_fence = False
@@ -2344,10 +2351,15 @@ def validate_plan() -> None:
         if present:
             errors.append(f"SEMANTIC_DEPENDENCY_FORBIDDEN {task_id}: {', '.join(sorted(present))}")
 
+    conditional_task_pattern = re.compile(
+        r"(?:bu (?:task|görev)(?:\s+da|\s+de|ı|i|ü|u)?|this task|bu composition task['’]ı)"
+        r".{0,120}?NotApplicable",
+        re.IGNORECASE,
+    )
     conditional_tasks = {
         task_id
         for task_id, (_, _, sections, _) in tasks.items()
-        if "NotApplicable" in " ".join(sections.get("Acceptance evidence", []))
+        if conditional_task_pattern.search(" ".join(sections.get("Acceptance evidence", [])))
     }
     for consumer_id, dependencies in dependency_graph.items():
         acceptance = " ".join(tasks[consumer_id][2].get("Acceptance evidence", []))
@@ -2527,22 +2539,6 @@ def validate_coverage() -> None:
         print(error)
     if errors:
         raise SystemExit(1)
-
-
-def compressed_numbers(values: list[int]) -> str:
-    numbers = sorted(set(values))
-    if not numbers:
-        return "-"
-    ranges: list[str] = []
-    start = previous = numbers[0]
-    for number in numbers[1:]:
-        if number == previous + 1:
-            previous = number
-            continue
-        ranges.append(str(start) if start == previous else f"{start}-{previous}")
-        start = previous = number
-    ranges.append(str(start) if start == previous else f"{start}-{previous}")
-    return ",".join(ranges)
 
 
 def baseline_lint_findings() -> tuple[dict[str, list[tuple[str, int]]], dict[str, int], int]:
@@ -2815,7 +2811,7 @@ def generate_audit_report() -> None:
 
     current_paths = {
         path.relative_to(WORKSPACE).as_posix(): path
-        for path in sorted(PLAN_DIR.rglob("*.md"))
+        for path in audited_markdown_paths()
         if path.name != "AUDIT_REPORT.md"
     }
     final_baseline_paths = {rename_map.get(path, path) for path in baseline_records}
@@ -2947,12 +2943,12 @@ def generate_audit_report() -> None:
             "## Kapanış durumu",
             "",
             f"- Kayıtlı finding toplamı: `{sum(counters.values()) + len(post_audit_findings())}`.",
-            "- Açık finding: `0`.",
+            "- Açık finding: `31` decision record revalidation blocker'ı; ayrıntı `plan/DECISION_REVALIDATION.md` içindedir.",
             "- Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.",
             "- Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.",
             "- Codex execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.",
             f"- Kayıtlı Markdown dosyası sayısı: `{len(current_paths) + 1}` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).",
-            "- Git kurulumu, uzak repo, commit ve uygulama geliştirmesi bu rapordan sonra yapılacak ayrı iştir.",
+            "- Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.",
             "",
         ]
     )
@@ -2968,7 +2964,7 @@ def generate_audit_report() -> None:
 def generate_manifest() -> None:
     from pypdf import PdfReader
 
-    paths = sorted(PLAN_DIR.rglob("*.md"))
+    paths = audited_markdown_paths()
     records = []
     total_lines = 0
     total_bytes = 0
@@ -3050,7 +3046,7 @@ def verify_manifest() -> None:
     errors: list[str] = []
     actual_paths = {
         path.relative_to(WORKSPACE).as_posix(): path
-        for path in sorted(PLAN_DIR.rglob("*.md"))
+        for path in audited_markdown_paths()
     }
     records = {record["path"]: record for record in manifest["files"]}
     if set(actual_paths) != set(records):
@@ -3175,7 +3171,7 @@ def verify_manifest() -> None:
     added_rows = {
         match.group("path"): match.group("sha")
         for match in re.finditer(
-            r"^\| `(?P<path>plan/[^`]+\.md)` \| ✅ \| `(?P<sha>[A-F0-9]{64})` \|",
+            r"^\| `(?P<path>[^`]+\.md)` \| ✅ \| `(?P<sha>[A-F0-9]{64})` \|",
             added_section,
             re.MULTILINE,
         )

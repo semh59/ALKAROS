@@ -1,15 +1,14 @@
 # V0-GOV-007 - Correct plan-audit tool integrity
 
 - Task ID: V0-GOV-007
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 
 ## Source basis
 
 - CORR:C37
-- DEC:V0-GOV-005
 
 ## Goal
 
