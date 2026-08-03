@@ -92,7 +92,8 @@ public static class Program
             new PsqlOptions(
                 databaseUrl,
                 psqlExecutable ?? "psql",
-                password));
+                password),
+            rollbackId);
     }
 
     private static bool IsPosition(string value)
