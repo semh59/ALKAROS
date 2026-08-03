@@ -1,8 +1,8 @@
 # V0-GOV-009 - Refresh final audit evidence
 
 - Task ID: V0-GOV-009
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 

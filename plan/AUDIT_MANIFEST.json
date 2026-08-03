@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 317,
-  "markdown_line_count": 22748,
-  "markdown_byte_count": 1629500,
+  "markdown_file_count": 322,
+  "markdown_line_count": 22922,
+  "markdown_byte_count": 1643597,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "AB633D571AA10C2BAAB00B9A5BFD0185B6B7464395DFB8BC757ABDF2B1E1A612",
-      "lines": 3295,
-      "bytes": 154226,
+      "sha256": "84D1579193CEBFFA6CFB81455D487C10072C159F7A73E13128B32713347920A7",
+      "lines": 3255,
+      "bytes": 152810,
       "utf8": true
     }
   ],
@@ -392,6 +392,20 @@
       "utf8": true
     },
     {
+      "path": "evidence/V0-GOV-007/verification.md",
+      "sha256": "CCF3A9B50CC57726531DBEF595557694F5693D02E8469428B83210DA2EEA20A4",
+      "lines": 15,
+      "bytes": 529,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V0-GOV-008/verification.md",
+      "sha256": "4B19535A80E58F123756994E2E8D348C7FEDE935334ECD0C0E7F40AEDC2A9CD9",
+      "lines": 14,
+      "bytes": 363,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-001/closure-report.md",
       "sha256": "F56A5345D07B40930525F6C3C4780E6038B904645648E3AC1201241A137D1955",
       "lines": 90,
@@ -456,9 +470,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D68DDD7AFBDA887AC2BA4A6D5ABFF148755763FFFE39D18F0B061A60F63D53D7",
-      "lines": 1593,
-      "bytes": 217340,
+      "sha256": "B72339447F7A48A575897E19DE4F4918BA136204AC902045206247DAEA004D68",
+      "lines": 1598,
+      "bytes": 218061,
       "utf8": true
     },
     {
@@ -491,9 +505,9 @@
     },
     {
       "path": "plan/PDF_COVERAGE.md",
-      "sha256": "F3982C6E8A5BF77FDEEA5A53BB617A5DFD413E2C84AF5883F83B707FF197307C",
-      "lines": 3363,
-      "bytes": 844234,
+      "sha256": "07C1CC8ADF707815D55755B7EB1E4DBCCCAE41D7BB8FB10446FDF3FBBFB99266",
+      "lines": 3361,
+      "bytes": 854013,
       "utf8": true
     },
     {
@@ -739,6 +753,27 @@
       "sha256": "15DDDADE79BEBF77286F43FCFB3CBB4A89C7FA6219A17981BAEA69C9B54BAB80",
       "lines": 50,
       "bytes": 1181,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-007-plan-audit-tool-integrity.md",
+      "sha256": "79612FE8FCD0DE4A1E7D158556B5252477424CADBE33F72C60376BF01D8D01BA",
+      "lines": 48,
+      "bytes": 1049,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-008-pdf-coverage-regeneration.md",
+      "sha256": "E46027881BA07963D2B6E4854F87BCB8ABF3A7E0C8A1B8A6CEA20C9C8D8C445F",
+      "lines": 47,
+      "bytes": 867,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-009-final-audit-refresh.md",
+      "sha256": "E881AA4C5E42D09AAD2A727ECA5C79DF370A78134B87C4C18C57C4CE170C0482",
+      "lines": 47,
+      "bytes": 789,
       "utf8": true
     },
     {
