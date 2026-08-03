@@ -1,7 +1,7 @@
 # V0-GOV-018 - Reconcile invalid Done statuses
 
 - Task ID: V0-GOV-018
-- Status: InProgress
+- Status: Done
 - Assignee: /root
 - Work type: validation
 - Surface state: Existing
