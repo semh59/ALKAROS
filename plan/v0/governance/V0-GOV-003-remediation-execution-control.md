@@ -18,14 +18,9 @@ sinirli remediation task'larinin fail-closed denetimle calismasini saglamak.
 
 ## Owned surface
 
-- `tools/task-scope/task_scope_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope.py`
-- `tests/Architecture/TaskScope/test_task_scope_remediation_exceptions.py`
-- `docs/engineering/task-scope-contract.md`
-- `plan/GATES.md`
-- `plan/VALIDATION_CONTRACT.md`
-- `plan/TRACEABILITY.md`
 - `evidence/V0-GOV-003/**`
+
+2026-08-03 tarihli kullanıcı talimatıyla remediation yürütme kontrolünün aktif yüzeyleri V0-GOV-028'e devredildi.
 
 ## In scope
 
@@ -60,6 +55,7 @@ sinirli remediation task'larinin fail-closed denetimle calismasini saglamak.
 
 ## Handoff
 
+- V0-GOV-028
 - V1-FND-011
 - V1-FND-012
 - V1-IAM-004
