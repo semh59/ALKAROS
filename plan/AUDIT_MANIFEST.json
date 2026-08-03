@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 327,
-  "markdown_line_count": 23107,
-  "markdown_byte_count": 1648623,
+  "markdown_file_count": 328,
+  "markdown_line_count": 23160,
+  "markdown_byte_count": 1649948,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -491,9 +491,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "FD4B43263BBA28144F62282A6203E4DBBDD4B86C3EF5AEB0E000BAF94F2E187E",
-      "lines": 1603,
-      "bytes": 218810,
+      "sha256": "6D15010CC7C44B866D887F584FAB00DF7830D1CE601FED75A9105E29E8786AE2",
+      "lines": 1604,
+      "bytes": 218979,
       "utf8": true
     },
     {
@@ -812,6 +812,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v0/governance/V0-GOV-012-final-gate-and-audit-reconciliation.md",
+      "sha256": "7A6FDCE48317F33BBD598967A75C85150C112AD3B0B1C6B95E553FB1A2717AA5",
+      "lines": 52,
+      "bytes": 1156,
+      "utf8": true
+    },
+    {
       "path": "plan/v0/hugin-t300/V0-HUG-001-integration-contract.md",
       "sha256": "9C53C2805848D4F79D546B101D2BEE403CD82ACF9D38AB377765D0C08711009E",
       "lines": 76,
@@ -918,7 +925,7 @@
     },
     {
       "path": "plan/v0/README.md",
-      "sha256": "08AC8A86683A92D4C8CE079E16DA016D90A9A817D992152D2A4BAD7588B59259",
+      "sha256": "81778F610ED8268BB186F912D85AF38DB0C1E604E5E7F62112DEEE19F34321F3",
       "lines": 31,
       "bytes": 1233,
       "utf8": true
