@@ -28,4 +28,4 @@ Kodlamadan önce domain, veri, mevzuat ve dış sistem belirsizliklerini kapatma
 `platform-architecture`, `printing`, `qnb-esolutions`, `qr-relay`,
 `security-baseline`, `yemeksepeti`.
 
-Doğrulanan plan hacmi: 16 modül, 52 tek-sahip görev.
+Doğrulanan plan hacmi: 16 modül, 53 tek-sahip görev.
