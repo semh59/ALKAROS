@@ -1518,6 +1518,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V0-GOV-006/verification.md` | ✅ | `AE0FD305FFF55A6D4C20F92FBB47B2C3627944B7B4F9C251522345D2BA900344` | Denetim sözleşmesi |
 | `evidence/V0-GOV-007/verification.md` | ✅ | `CCF3A9B50CC57726531DBEF595557694F5693D02E8469428B83210DA2EEA20A4` | Denetim sözleşmesi |
 | `evidence/V0-GOV-008/verification.md` | ✅ | `4B19535A80E58F123756994E2E8D348C7FEDE935334ECD0C0E7F40AEDC2A9CD9` | Denetim sözleşmesi |
+| `evidence/V0-GOV-009/verification.md` | ✅ | `BA6E6871DA416720CD0CE808041A3B95A89F9006685A865243ED9B1A11E6E8C0` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/closure-report.md` | ✅ | `F56A5345D07B40930525F6C3C4780E6038B904645648E3AC1201241A137D1955` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/retrospective-audit-v2.md` | ✅ | `8681B1C0702F46E1864D26F313F17C1B4B544A6E3D00C1E4053F836768599950` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/retrospective-audit.md` | ✅ | `8AFEC645C09555C5F57FC942F251CD6B9DFB5B8628A67B25B7F5ED46526E0546` | Denetim sözleşmesi |
@@ -1547,7 +1548,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v0/governance/V0-GOV-006-sec003-boundary-repair.md` | ✅ | `15DDDADE79BEBF77286F43FCFB3CBB4A89C7FA6219A17981BAEA69C9B54BAB80` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-007-plan-audit-tool-integrity.md` | ✅ | `79612FE8FCD0DE4A1E7D158556B5252477424CADBE33F72C60376BF01D8D01BA` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-008-pdf-coverage-regeneration.md` | ✅ | `E46027881BA07963D2B6E4854F87BCB8ABF3A7E0C8A1B8A6CEA20C9C8D8C445F` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-009-final-audit-refresh.md` | ✅ | `E881AA4C5E42D09AAD2A727ECA5C79DF370A78134B87C4C18C57C4CE170C0482` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-009-final-audit-refresh.md` | ✅ | `914379F6E9B2465A7B9F0D459BF8C5785D92C421233B1872F72F3EE026B94A2B` | Tek-sahip görev |
 | `plan/v0/platform-architecture/V0-ARC-006-notification-delivery-matrix.md` | ✅ | `0F3C99A22E9865275FE9D5A6DC71D3C542FDBAC684368F0A1516EC67BAB40774` | Tek-sahip görev |
 | `plan/v0/platform-architecture/V0-ARC-007-deployment-compatibility-matrix.md` | ✅ | `8BC0A8D7021F058D2BA4DAD70440AB93B62BFD8327C551DF3AB1E3458D962AA4` | Tek-sahip görev |
 | `plan/v0/platform-architecture/V0-ARC-008-release-evidence-contract.md` | ✅ | `0CB5CDACA826B5A978E398D09C4500DF1D6FD95492C33F050AD1B5867CD434C2` | Tek-sahip görev |
@@ -1594,5 +1595,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Codex execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `322` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `323` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
