@@ -65,7 +65,10 @@ public static class RetryPolicy
                 last_error = $2,
                 status = CASE WHEN attempt_count + 1 >= $3 THEN 'dead' ELSE 'pending' END,
                 next_retry_at = CASE WHEN attempt_count + 1 >= $3
-                                     THEN NULL ELSE now() + make_interval(secs => $4) END
+                                     THEN NULL
+                                     ELSE now() + make_interval(
+                                         secs => $4 * power(2::double precision, attempt_count))
+                                END
             WHERE id = $1 AND status = 'pending';
             """;
         command.Parameters.AddWithValue(id);

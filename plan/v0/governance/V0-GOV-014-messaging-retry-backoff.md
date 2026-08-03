@@ -1,8 +1,8 @@
 # V0-GOV-014 - Apply exponential messaging retry backoff
 
 - Task ID: V0-GOV-014
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 
