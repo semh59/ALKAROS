@@ -337,7 +337,7 @@
     },
     {
       "path": "evidence/v0/gate-v0-exit-closure.md",
-      "sha256": "3196CAD161215BDE69F83D3F924AE76125CF50E41F1E555B055F746CFD4BF06D",
+      "sha256": "0F900B06EDCBCFCDC11027DDB446D18E285FC8871510D4228B61994A23AA902F",
       "lines": 46,
       "bytes": 1258,
       "utf8": true
@@ -477,7 +477,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "FBEF7C13D54C74A5A5E08823C723A3C42CBEBB1381FDEBCB29AEBA752CA0E18F",
+      "sha256": "7CA06D9E61A878E5678A452FCE3F10F869C79A3E9F2E5A23F299F323CCB82D0F",
       "lines": 1599,
       "bytes": 218201,
       "utf8": true

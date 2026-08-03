@@ -1530,7 +1530,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md` | ✅ | `E50325C311962E7012E558BBD504D0D91D81D1DB79593F28C1C9196179683B7E` | Denetim sözleşmesi |
 | `evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md` | ✅ | `31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA` | Denetim sözleşmesi |
 | `evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md` | ✅ | `874C3A4FF2543F8EECB3564F9EB3FDE27A62A062C7716D9DE081B50EA99F6C6D` | Denetim sözleşmesi |
-| `evidence/v0/gate-v0-exit-closure.md` | ✅ | `3196CAD161215BDE69F83D3F924AE76125CF50E41F1E555B055F746CFD4BF06D` | Denetim sözleşmesi |
+| `evidence/v0/gate-v0-exit-closure.md` | ✅ | `0F900B06EDCBCFCDC11027DDB446D18E285FC8871510D4228B61994A23AA902F` | Denetim sözleşmesi |
 | `evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md` | ✅ | `9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7` | Denetim sözleşmesi |
 | `plan/DECISION_REVALIDATION.md` | ✅ | `1CA2F1942AD9BB3A39038DD10B1DB0F49B5ED73EDB80A9FC835AE66C0CBB9063` | Denetim sözleşmesi |
 | `plan/OFFICIAL_SOURCE_REGISTER.md` | ✅ | `F058354DEEEECFDBA40F4AD371B17FD028EB052A56ACE04216C38239F776A7C4` | Denetim sözleşmesi |
