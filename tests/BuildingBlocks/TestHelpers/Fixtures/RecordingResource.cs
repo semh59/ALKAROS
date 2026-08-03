@@ -1,3 +1,4 @@
+using System.Data.Common;
 using ALKAROS.Transactions;
 
 namespace ALKAROS.TestHelpers;
@@ -60,6 +61,16 @@ public sealed class RecordingResource : ITransactionResource
         _log.Add($"{Name}:committed");
         await Task.CompletedTask;
     }
+
+    /// <summary>
+    /// Runs the same recorded commit when the transaction scope owns a
+    /// database session, so tests can exercise database-backed scopes.
+    /// </summary>
+    public Task CommitAsync(
+        DbConnection connection,
+        DbTransaction transaction,
+        CancellationToken cancellationToken)
+        => CommitAsync(cancellationToken);
 
     public Task RollbackAsync(CancellationToken cancellationToken)
     {

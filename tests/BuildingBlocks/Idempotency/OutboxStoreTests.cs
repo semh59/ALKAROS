@@ -93,7 +93,7 @@ public sealed class OutboxStoreTests : IClassFixture<StoreTestDatabase>
         await store.EnqueueAsync(Envelope(eventType));
 
         var attempted = await store.DispatchAsync(
-            new RecordingSink(_ => throw new InvalidOperationException("boom")),
+            new RecordingSink((Func<OutboxMessage, Task<bool>>)(_ => throw new InvalidOperationException("boom"))),
             batchSize: 10);
 
         Assert.Equal(1, attempted);
@@ -188,20 +188,92 @@ public sealed class OutboxStoreTests : IClassFixture<StoreTestDatabase>
         Assert.Equal(8, dispatched);
     }
 
+    [Fact]
+    public async Task DispatchExpiredLeaseIsReclaimedAndDelivered()
+    {
+        var store = new OutboxStore(_database.DataSource, leaseTimeout: TimeSpan.FromSeconds(1));
+        await _database.ResetTablesAsync();
+        var eventType = Guid.NewGuid().ToString("N");
+        await store.EnqueueAsync(Envelope(eventType));
+        await _database.ExecuteAsync(
+            "UPDATE outbox_messages SET status = 'in_flight', claimed_at = now() - interval '2 seconds';");
+        var delivered = new ConcurrentBag<Guid>();
+
+        var attempted = await store.DispatchAsync(
+            new RecordingSink(message =>
+            {
+                delivered.Add(message.Id);
+                return true;
+            }),
+            batchSize: 10);
+
+        Assert.Equal(1, attempted);
+        Assert.Single(delivered);
+        var status = await _database.ScalarAsync<string>(
+            $"SELECT status FROM outbox_messages WHERE event_type = '{eventType}';");
+        Assert.Equal("dispatched", status);
+    }
+
+    [Fact]
+    public async Task DispatchHandlerRunsOutsideTheClaimTransaction()
+    {
+        var store = new OutboxStore(_database.DataSource);
+        await _database.ResetTablesAsync();
+        var eventType = Guid.NewGuid().ToString("N");
+        await store.EnqueueAsync(Envelope(eventType));
+        var observedStatus = string.Empty;
+
+        var attempted = await store.DispatchAsync(
+            new RecordingSink(async message =>
+            {
+                observedStatus = await _database.ScalarAsync<string>(
+                    $"SELECT status FROM outbox_messages WHERE id = '{message.Id}';");
+                return true;
+            }),
+            batchSize: 10);
+
+        Assert.Equal(1, attempted);
+        Assert.Equal("in_flight", observedStatus);
+    }
+
+    [Fact]
+    public async Task DispatchLeaseLostBeforeMarkThrowsInsteadOfSkippingSilently()
+    {
+        var store = new OutboxStore(_database.DataSource);
+        await _database.ResetTablesAsync();
+        var eventType = Guid.NewGuid().ToString("N");
+        await store.EnqueueAsync(Envelope(eventType));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => store.DispatchAsync(
+            new RecordingSink(async message =>
+            {
+                await _database.ExecuteAsync(
+                    "UPDATE outbox_messages SET status = 'pending', claimed_at = NULL WHERE id = @id;",
+                    ("id", message.Id));
+                return true;
+            }),
+            batchSize: 10));
+    }
+
     private async Task<Guid> GetMessageIdAsync(string eventType)
         => await _database.ScalarAsync<Guid>(
             $"SELECT id FROM outbox_messages WHERE event_type = '{eventType}';");
 
     private sealed class RecordingSink : IOutboxDeliverySink
     {
-        private readonly Func<OutboxMessage, bool> _handler;
+        private readonly Func<OutboxMessage, CancellationToken, Task<bool>> _handler;
 
         public RecordingSink(Func<OutboxMessage, bool> handler)
         {
-            _handler = handler;
+            _handler = (message, _) => Task.FromResult(handler(message));
+        }
+
+        public RecordingSink(Func<OutboxMessage, Task<bool>> handler)
+        {
+            _handler = (message, _) => handler(message);
         }
 
         public Task<bool> HandleAsync(OutboxMessage message, CancellationToken cancellationToken)
-            => Task.FromResult(_handler(message));
+            => _handler(message, cancellationToken);
     }
 }

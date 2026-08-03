@@ -61,6 +61,51 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
     }
 
     [Fact]
+    public async Task UnknownUsernameLoginTakesComparableTimeToKnownUserLogin()
+    {
+        await _database.InsertUserAsync("timing-unknown", _hasher.Hash("correct"));
+        var stopwatch = new System.Diagnostics.Stopwatch();
+
+        stopwatch.Start();
+        var unknown = await _service.LoginAsync("ghost-user", "some-password", Now);
+        stopwatch.Stop();
+        var unknownElapsed = stopwatch.Elapsed;
+
+        stopwatch.Restart();
+        var known = await _service.LoginAsync("timing-unknown", "wrong-password", Now);
+        stopwatch.Stop();
+        var knownElapsed = stopwatch.Elapsed;
+
+        Assert.IsType<LoginFailure>(unknown);
+        Assert.IsType<LoginFailure>(known);
+        Assert.True(unknownElapsed >= knownElapsed * 0.8,
+            $"Unknown-user login ({unknownElapsed}) must burn the same PBKDF2 work as a known-user login ({knownElapsed}).");
+    }
+
+    [Fact]
+    public async Task InactiveUserLoginTakesComparableTimeToKnownUserLogin()
+    {
+        await _database.InsertUserAsync("timing-inactive", _hasher.Hash("correct"), active: false);
+        await _database.InsertUserAsync("timing-active", _hasher.Hash("correct"));
+        var stopwatch = new System.Diagnostics.Stopwatch();
+
+        stopwatch.Start();
+        var inactive = await _service.LoginAsync("timing-inactive", "some-password", Now);
+        stopwatch.Stop();
+        var inactiveElapsed = stopwatch.Elapsed;
+
+        stopwatch.Restart();
+        var active = await _service.LoginAsync("timing-active", "wrong-password", Now);
+        stopwatch.Stop();
+        var activeElapsed = stopwatch.Elapsed;
+
+        Assert.IsType<LoginFailure>(inactive);
+        Assert.IsType<LoginFailure>(active);
+        Assert.True(inactiveElapsed >= activeElapsed * 0.8,
+            $"Inactive-user login ({inactiveElapsed}) must burn the same PBKDF2 work as an active-user login ({activeElapsed}).");
+    }
+
+    [Fact]
     public async Task WrongPasswordFailsWithoutLeakingCredentials()
     {
         await _database.InsertUserAsync("waiter2", _hasher.Hash("correct"));
@@ -143,6 +188,35 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
         var attempts = await _database.ScalarAsync<int>(
             "SELECT failed_login_attempts FROM identity.users WHERE user_id = '" + userId + "';");
         Assert.Equal(2, attempts);
+    }
+
+    [Fact]
+    public async Task ExpiredLockRestartsFailureCountingAndReLocksOnlyAfterNewMaxFailures()
+    {
+        var userId = await _database.InsertUserAsync("expired-restart", _hasher.Hash("correct"));
+        var service = new AuthenticationService(_store, maxFailedAttempts: 2);
+
+        await service.LoginAsync("expired-restart", "wrong-1", Now);
+        await service.LoginAsync("expired-restart", "wrong-2", Now);
+        Assert.Equal(LoginFailureReason.LockedOut,
+            Assert.IsType<LoginFailure>(await service.LoginAsync("expired-restart", "wrong-3", Now)).Reason);
+
+        await _database.ForceLockExpiredAsync(userId, Now.AddSeconds(-1));
+        var afterExpiry = Now.AddMinutes(16);
+
+        var firstAfter = await service.LoginAsync("expired-restart", "wrong-4", afterExpiry);
+        Assert.Equal(LoginFailureReason.InvalidCredentials, Assert.IsType<LoginFailure>(firstAfter).Reason);
+        Assert.Equal(1, await _database.ScalarAsync<int>(
+            "SELECT failed_login_attempts FROM identity.users WHERE user_id = '" + userId + "';"));
+        Assert.False(await _database.ScalarAsync<bool>(
+            "SELECT locked_until IS NOT NULL FROM identity.users WHERE user_id = '" + userId + "';"));
+
+        var secondAfter = await service.LoginAsync("expired-restart", "wrong-5", afterExpiry);
+        Assert.Equal(LoginFailureReason.InvalidCredentials, Assert.IsType<LoginFailure>(secondAfter).Reason);
+        Assert.Equal(2, await _database.ScalarAsync<int>(
+            "SELECT failed_login_attempts FROM identity.users WHERE user_id = '" + userId + "';"));
+        Assert.True(await _database.ScalarAsync<bool>(
+            "SELECT locked_until IS NOT NULL FROM identity.users WHERE user_id = '" + userId + "';"));
     }
 
     [Fact]

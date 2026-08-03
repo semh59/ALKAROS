@@ -11,6 +11,28 @@ namespace ALKAROS.Identity.Authentication;
 public sealed class PasswordHasher
 {
     public const int DefaultIterations = 600_000;
+
+    /// <summary>
+    /// Upper bound enforced when parsing the iteration count embedded in an
+    /// encoded hash. Prevents a corrupted or tampered record from forcing an
+    /// unbounded PBKDF2 work factor (denial of service).
+    /// </summary>
+    public const int MaximumIterations = 2_000_000;
+
+    /// <summary>
+    /// Password of the built-in dummy hash. It belongs to no account; it is
+    /// only used to burn the same verification work for unknown usernames.
+    /// </summary>
+    public const string DummyPassword = "alkaros-dummy-user-verify";
+
+    /// <summary>
+    /// A valid 600k-iteration encoded hash of <see cref="DummyPassword"/>,
+    /// used by the authentication service to keep login response time uniform
+    /// for known and unknown usernames.
+    /// </summary>
+    public const string DummyHash =
+        "pbkdf2-sha256$600000$ABEiM0RVZneImaq7zN3u/w==$LB8eA/gWEVLWqhBml+YbdECa1XzbXVvviwYDiM7TfF8=";
+
     private const int SaltSize = 16;
     private const int HashSize = 32;
     private const string AlgorithmTag = "pbkdf2-sha256";
@@ -73,7 +95,9 @@ public sealed class PasswordHasher
         var parts = encoded.Split('$');
         if (parts.Length != 4 || !string.Equals(parts[0], AlgorithmTag, StringComparison.Ordinal))
             return false;
-        if (!int.TryParse(parts[1], out iterations) || iterations < MinimumIterations)
+        if (!int.TryParse(parts[1], out iterations)
+            || iterations < MinimumIterations
+            || iterations > MaximumIterations)
             return false;
 
         try

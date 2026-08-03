@@ -47,7 +47,13 @@ public sealed class AuthenticationService
 
         var user = await _store.GetByUsernameAsync(username, cancellationToken);
         if (user is null || !user.Active)
+        {
+            // Burn the same PBKDF2 work as a real credential check so
+            // unknown and inactive usernames cannot be distinguished from
+            // active accounts by response time.
+            PasswordHasher.Verify(password, PasswordHasher.DummyHash);
             return new LoginFailure(LoginFailureReason.InvalidCredentials);
+        }
 
         if (user.LockedUntil is { } effectiveLock && effectiveLock > now)
             return new LoginFailure(LoginFailureReason.LockedOut);

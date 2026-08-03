@@ -109,7 +109,7 @@ public sealed class InboxStoreTests : IClassFixture<StoreTestDatabase>
         await store.TryEnqueueAsync(Envelope(source, eventId));
 
         var attempted = await store.ProcessPendingAsync(
-            new RecordingHandler(_ => throw new InvalidOperationException("boom")),
+            new RecordingHandler((Func<InboxMessage, Task<bool>>)(_ => throw new InvalidOperationException("boom"))),
             batchSize: 10);
 
         Assert.Equal(1, attempted);
@@ -207,6 +207,79 @@ public sealed class InboxStoreTests : IClassFixture<StoreTestDatabase>
         Assert.Equal(8, processed);
     }
 
+    [Fact]
+    public async Task ProcessExpiredLeaseIsReclaimedAndProcessed()
+    {
+        var store = new InboxStore(_database.DataSource, leaseTimeout: TimeSpan.FromSeconds(1));
+        await _database.ResetTablesAsync();
+        var source = $"qnb-{Guid.NewGuid():N}";
+        var eventId = Guid.NewGuid().ToString("N");
+        var messageId = await store.TryEnqueueAsync(Envelope(source, eventId))
+            ? await _database.ScalarAsync<Guid>(
+                "SELECT id FROM inbox_messages ORDER BY received_at DESC LIMIT 1;")
+            : throw new InvalidOperationException("Enqueue failed.");
+        await _database.ExecuteAsync(
+            "UPDATE inbox_messages SET status = 'in_flight', claimed_at = now() - interval '2 seconds';");
+        var handled = new ConcurrentBag<Guid>();
+
+        var attempted = await store.ProcessPendingAsync(
+            new RecordingHandler(message =>
+            {
+                handled.Add(message.Id);
+                return true;
+            }),
+            batchSize: 10);
+
+        Assert.Equal(1, attempted);
+        Assert.Single(handled);
+        var status = await _database.ScalarAsync<string>(
+            $"SELECT status FROM inbox_messages WHERE source = '{source}' AND external_event_id = '{eventId}';");
+        Assert.Equal("processed", status);
+    }
+
+    [Fact]
+    public async Task ProcessHandlerRunsOutsideTheClaimTransaction()
+    {
+        var store = new InboxStore(_database.DataSource);
+        await _database.ResetTablesAsync();
+        var source = $"qnb-{Guid.NewGuid():N}";
+        var eventId = Guid.NewGuid().ToString("N");
+        await store.TryEnqueueAsync(Envelope(source, eventId));
+        var observedStatus = string.Empty;
+
+        var attempted = await store.ProcessPendingAsync(
+            new RecordingHandler(async message =>
+            {
+                observedStatus = await _database.ScalarAsync<string>(
+                    $"SELECT status FROM inbox_messages WHERE id = '{message.Id}';");
+                return true;
+            }),
+            batchSize: 10);
+
+        Assert.Equal(1, attempted);
+        Assert.Equal("in_flight", observedStatus);
+    }
+
+    [Fact]
+    public async Task ProcessLeaseLostBeforeMarkThrowsInsteadOfSkippingSilently()
+    {
+        var store = new InboxStore(_database.DataSource);
+        await _database.ResetTablesAsync();
+        var source = $"qnb-{Guid.NewGuid():N}";
+        var eventId = Guid.NewGuid().ToString("N");
+        await store.TryEnqueueAsync(Envelope(source, eventId));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => store.ProcessPendingAsync(
+            new RecordingHandler(async message =>
+            {
+                await _database.ExecuteAsync(
+                    "UPDATE inbox_messages SET status = 'pending', claimed_at = NULL WHERE id = @id;",
+                    ("id", message.Id));
+                return true;
+            }),
+            batchSize: 10));
+    }
+
     private async Task<Guid> EnqueueSingleAsync(InboxStore store)
         => await store.TryEnqueueAsync(
             Envelope($"qnb-{Guid.NewGuid():N}", Guid.NewGuid().ToString("N")))
@@ -216,14 +289,19 @@ public sealed class InboxStoreTests : IClassFixture<StoreTestDatabase>
 
     private sealed class RecordingHandler : IInboxHandler
     {
-        private readonly Func<InboxMessage, bool> _handler;
+        private readonly Func<InboxMessage, CancellationToken, Task<bool>> _handler;
 
         public RecordingHandler(Func<InboxMessage, bool> handler)
         {
-            _handler = handler;
+            _handler = (message, _) => Task.FromResult(handler(message));
+        }
+
+        public RecordingHandler(Func<InboxMessage, Task<bool>> handler)
+        {
+            _handler = (message, _) => handler(message);
         }
 
         public Task<bool> HandleAsync(InboxMessage message, CancellationToken cancellationToken)
-            => Task.FromResult(_handler(message));
+            => _handler(message, cancellationToken);
     }
 }

@@ -37,9 +37,10 @@ public static class RetryPolicy
     /// Records a delivery failure on <paramref name="tableName"/>: increments
     /// the attempt counter, saves the error, and moves the message to the
     /// dead-letter state after <see cref="MaxAttempts"/> attempts or schedules
-    /// the next exponential-backoff retry. When <paramref name="transaction"/>
-    /// is provided the update joins it so the claim lock stays held until the
-    /// enclosing dispatch commits.
+    /// the next exponential-backoff retry. Only messages leased by the
+    /// current dispatcher (status <c>in_flight</c>) are touched, so a
+    /// concurrently recovered record is never overwritten. When
+    /// <paramref name="transaction"/> is provided the update joins it.
     /// </summary>
     public static async Task RecordFailureAsync(
         NpgsqlConnection connection,
@@ -69,7 +70,7 @@ public static class RetryPolicy
                                      ELSE now() + make_interval(
                                          secs => $4 * power(2::double precision, attempt_count))
                                 END
-            WHERE id = $1 AND status = 'pending';
+            WHERE id = $1 AND status = 'in_flight';
             """;
         command.Parameters.AddWithValue(id);
         command.Parameters.AddWithValue(error);

@@ -47,6 +47,26 @@ public static class ModuleRegistry
     /// </summary>
     public static IReadOnlyList<string> Compose(IEnumerable<Type> moduleTypes)
     {
+        var root = BuildRoot(moduleTypes);
+        return root.Compose().Select(module => module.Id).ToList();
+    }
+
+    /// <summary>
+    /// Registers the given module types, runs the validated composition, and
+    /// returns the composition root so callers can read the concrete service
+    /// registrations produced by the modules.
+    /// </summary>
+    public static ModuleCompositionRoot ComposeRoot(IEnumerable<Type> moduleTypes)
+    {
+        var root = BuildRoot(moduleTypes);
+        root.Compose();
+        return root;
+    }
+
+    private static ModuleCompositionRoot BuildRoot(IEnumerable<Type> moduleTypes)
+    {
+        ArgumentNullException.ThrowIfNull(moduleTypes);
+
         var root = new ModuleCompositionRoot();
 
         foreach (var type in moduleTypes)
@@ -58,6 +78,6 @@ public static class ModuleRegistry
             root.AddModule((IModule)constructor.Invoke(null));
         }
 
-        return root.Compose().Select(module => module.Id).ToList();
+        return root;
     }
 }

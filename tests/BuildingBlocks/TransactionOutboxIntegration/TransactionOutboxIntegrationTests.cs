@@ -323,4 +323,38 @@ public sealed class TransactionOutboxIntegrationTests : IClassFixture<Transactio
         Assert.Equal(1, reattempted);
         Assert.Equal(1, sink.BusinessEffectCount);
     }
+
+    [Fact]
+    public async Task DatabaseScopedCommitRejectsResourceWithoutDatabaseCommit()
+    {
+        await ResetAsync();
+        var resource = new TransactionOutboxResource(_database.DataSource);
+        var sideEffect = new ExternalSideEffectResource();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            TransactionOutbox.RunAsync(
+                context =>
+                {
+                    context.Enlist(sideEffect);
+                    return Task.CompletedTask;
+                },
+                resource));
+
+        Assert.False(sideEffect.SideEffectPerformed);
+        Assert.Contains("outbox", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private sealed class ExternalSideEffectResource : ITransactionResource
+    {
+        public bool SideEffectPerformed { get; private set; }
+
+        public Task CommitAsync(CancellationToken cancellationToken)
+        {
+            SideEffectPerformed = true;
+            return Task.CompletedTask;
+        }
+
+        public Task RollbackAsync(CancellationToken cancellationToken)
+            => Task.CompletedTask;
+    }
 }

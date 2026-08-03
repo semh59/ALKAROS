@@ -123,6 +123,53 @@ public sealed class MigrationHistoryTests : IAsyncLifetime
         Assert.Equal(0, await HistoryCountAsync());
     }
 
+    [Fact]
+    public async Task MismatchedHistoryTableSchemaIsRejectedBeforeAnyWrite()
+    {
+        var createMismatch = await PsqlScriptRunner.RunCommandAsync(
+            "CREATE TABLE alkaros_schema_migrations (migration_id text PRIMARY KEY, checksum text NOT NULL);",
+            _database.PsqlOptions,
+            CancellationToken.None);
+        Assert.True(createMismatch.Success, createMismatch.ErrorSummary);
+
+        using var set = TestMigrationSet.Create(Script("001", "stores"));
+        using var output = new StringWriter();
+        var exitCode = HostComposition.Run(
+            new HostCompositionOptions(set.ManifestPath, set.DirectoryPath, _database.PsqlOptions),
+            output);
+
+        Assert.Equal(HostExitCode.MigrationFailed, exitCode);
+        Assert.Contains("does not match the expected contract", output.ToString(), StringComparison.Ordinal);
+        Assert.False(await _database.TableExistsAsync("stores"));
+        Assert.Equal(0, await HistoryCountAsync());
+    }
+
+    [Fact]
+    public async Task MatchingHistoryTableSchemaIsAccepted()
+    {
+        var createMatch = await PsqlScriptRunner.RunCommandAsync(
+            """
+            CREATE TABLE alkaros_schema_migrations (
+                migration_id text PRIMARY KEY CHECK (migration_id ~ '^[0-9]{3}$'),
+                checksum text NOT NULL CHECK (checksum ~ '^[0-9A-F]{64}$'),
+                applied_at timestamp with time zone NOT NULL DEFAULT now()
+            );
+            """,
+            _database.PsqlOptions,
+            CancellationToken.None);
+        Assert.True(createMatch.Success, createMatch.ErrorSummary);
+
+        using var set = TestMigrationSet.Create(Script("001", "stores"));
+        using var output = new StringWriter();
+        var exitCode = HostComposition.Run(
+            new HostCompositionOptions(set.ManifestPath, set.DirectoryPath, _database.PsqlOptions),
+            output);
+
+        Assert.Equal(HostExitCode.Success, exitCode);
+        Assert.True(await _database.TableExistsAsync("stores"));
+        Assert.Equal(1, await HistoryCountAsync());
+    }
+
     private HostExitCode RunHost(TestMigrationSet set)
         => HostComposition.Run(
             new HostCompositionOptions(set.ManifestPath, set.DirectoryPath, _database.PsqlOptions),

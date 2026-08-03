@@ -4,10 +4,12 @@ namespace ALKAROS.Idempotency;
 
 /// <summary>
 /// Persists idempotency records in the <c>idempotency_keys</c> table and
-/// enforces the V0-ARC-003 §1 semantics atomically in a single statement:
-/// first use registers the operation, an identical replay returns the cached
-/// response envelope, and a conflicting replay fails with
-/// <see cref="IdempotencyKeyConflictException"/>.
+/// enforces the V0-ARC-003 §1 semantics atomically: first use registers the
+/// operation, an identical replay returns the cached response envelope, a
+/// conflicting replay fails with <see cref="IdempotencyKeyConflictException"/>,
+/// and an expired record is atomically replaced by a new registration
+/// instead of being replayed. A replay never extends the retention window
+/// and never overwrites the stored envelope.
 /// </summary>
 public sealed class IdempotencyKeyStore
 {
@@ -26,9 +28,11 @@ public sealed class IdempotencyKeyStore
     /// Registers the operation under <paramref name="key"/> or replays the
     /// cached response. <paramref name="responseEnvelope"/> is only written
     /// on first registration; a replay never overwrites the stored envelope.
+    /// An expired record is treated as absent: the operation is registered
+    /// again atomically, so a stale key can never be replayed or conflict.
     /// </summary>
     /// <exception cref="IdempotencyKeyConflictException">
-    /// The key exists with a different request hash (IDEMPOTENCY_KEY_CONFLICT).
+    /// An active key exists with a different request hash (IDEMPOTENCY_KEY_CONFLICT).
     /// </exception>
     public async Task<IdempotencyOutcome> RegisterOrReplayAsync(
         IdempotencyKey key,
@@ -39,30 +43,105 @@ public sealed class IdempotencyKeyStore
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(responseEnvelope);
 
-        await using var command = _dataSource.CreateCommand(
-            """
-            INSERT INTO idempotency_keys (client_id, operation_id, request_hash, response_envelope, expires_at)
-            VALUES ($1, $2, $3, $4, now() + $5 * interval '1 second')
-            ON CONFLICT (client_id, operation_id)
-            DO UPDATE SET expires_at = EXCLUDED.expires_at
-            WHERE idempotency_keys.request_hash = EXCLUDED.request_hash
-            RETURNING (xmax = 0) AS inserted, response_envelope;
-            """);
-        command.Parameters.AddWithValue(key.ClientId);
-        command.Parameters.AddWithValue(key.OperationId);
-        command.Parameters.AddWithValue(RequestHash.Compute(requestBody));
-        command.Parameters.AddWithValue(responseEnvelope);
-        command.Parameters.AddWithValue(_retention.TotalSeconds);
+        var requestHash = RequestHash.Compute(requestBody);
 
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-        if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        // Fast path: a record with no prior entry registers immediately.
+        // Under concurrent first use the loser of the INSERT race falls
+        // through to the locked re-evaluation below, never to a duplicate.
+        byte[]? insertedEnvelope = null;
+        await using (var insertCommand = connection.CreateCommand())
+        {
+            insertCommand.Transaction = transaction;
+            insertCommand.CommandText =
+                """
+                INSERT INTO idempotency_keys (client_id, operation_id, request_hash, response_envelope, expires_at)
+                VALUES ($1, $2, $3, $4, now() + $5 * interval '1 second')
+                ON CONFLICT (client_id, operation_id) DO NOTHING
+                RETURNING response_envelope;
+                """;
+            insertCommand.Parameters.AddWithValue(key.ClientId);
+            insertCommand.Parameters.AddWithValue(key.OperationId);
+            insertCommand.Parameters.AddWithValue(requestHash);
+            insertCommand.Parameters.AddWithValue(responseEnvelope);
+            insertCommand.Parameters.AddWithValue(_retention.TotalSeconds);
+
+            await using var reader = await insertCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                insertedEnvelope = reader.GetFieldValue<byte[]>(0);
+        }
+
+        if (insertedEnvelope is not null)
+        {
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return new IdempotencyOutcome(IdempotencyStatus.Created, insertedEnvelope);
+        }
+
+        // A record already exists; lock it so the classification is atomic
+        // against concurrent callers and the expired check runs in the
+        // database clock. An expired record is replaced in place (fresh
+        // registration); an active record with the same hash replays without
+        // touching retention or envelope; any other combination conflicts.
+        string storedHash;
+        byte[] storedEnvelope;
+        bool expired;
+        await using (var lockCommand = connection.CreateCommand())
+        {
+            lockCommand.Transaction = transaction;
+            lockCommand.CommandText =
+                """
+                SELECT request_hash, response_envelope, expires_at <= now() AS expired
+                FROM idempotency_keys
+                WHERE client_id = $1 AND operation_id = $2
+                FOR UPDATE;
+                """;
+            lockCommand.Parameters.AddWithValue(key.ClientId);
+            lockCommand.Parameters.AddWithValue(key.OperationId);
+
+            await using var reader = await lockCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+                throw new InvalidOperationException(
+                    "Idempotency record disappeared between the insert attempt and the lock.");
+            }
+
+            storedHash = reader.GetString(0).TrimEnd();
+            storedEnvelope = reader.GetFieldValue<byte[]>(1);
+            expired = reader.GetBoolean(2);
+        }
+
+        if (expired)
+        {
+            await using var replaceCommand = connection.CreateCommand();
+            replaceCommand.Transaction = transaction;
+            replaceCommand.CommandText =
+                """
+                UPDATE idempotency_keys
+                SET request_hash = $3, response_envelope = $4, expires_at = now() + $5 * interval '1 second'
+                WHERE client_id = $1 AND operation_id = $2;
+                """;
+            replaceCommand.Parameters.AddWithValue(key.ClientId);
+            replaceCommand.Parameters.AddWithValue(key.OperationId);
+            replaceCommand.Parameters.AddWithValue(requestHash);
+            replaceCommand.Parameters.AddWithValue(responseEnvelope);
+            replaceCommand.Parameters.AddWithValue(_retention.TotalSeconds);
+            await replaceCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return new IdempotencyOutcome(IdempotencyStatus.Created, responseEnvelope);
+        }
+
+        if (!string.Equals(storedHash, requestHash, StringComparison.Ordinal))
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
             throw new IdempotencyKeyConflictException(key);
+        }
 
-        var inserted = reader.GetBoolean(0);
-        var envelope = reader.GetFieldValue<byte[]>(1);
-        return new IdempotencyOutcome(
-            inserted ? IdempotencyStatus.Created : IdempotencyStatus.Replayed,
-            envelope);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return new IdempotencyOutcome(IdempotencyStatus.Replayed, storedEnvelope);
     }
 
     /// <summary>

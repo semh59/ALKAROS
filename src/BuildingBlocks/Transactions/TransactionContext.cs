@@ -5,7 +5,10 @@ namespace ALKAROS.Transactions;
 /// <summary>
 /// The transaction execution boundary: runs a workflow inside an ambient
 /// transaction so that every enlisted <see cref="ITransactionResource"/>
-/// commits together or rolls back completely. Independent nested
+/// commits together or rolls back completely. Atomicity covers the database
+/// transaction: a resource that cannot write to the database session is
+/// rejected at commit time, so external side effects must be moved to an
+/// outbox message instead of joining the transaction. Independent nested
 /// transactions are rejected; nested calls join the ambient transaction.
 /// Failures are retried only when a retry policy classifies them as
 /// transient; unknown failures always surface immediately.

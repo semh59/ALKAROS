@@ -7,19 +7,29 @@ namespace ALKAROS.Messaging;
 /// them through an <see cref="IInboxHandler"/>. Deduplication by
 /// (source, externalEventId) is enforced by the unique constraint; a
 /// message that fails three times is moved to the dead-letter state
-/// (V0-ARC-003 Â§2).
+/// (V0-ARC-003 §2). A dispatcher leases a message
+/// (<see cref="InboxStatus.InFlight"/>) in a short transaction and runs the
+/// handler strictly outside it, so no database lock is held across a
+/// side effect; expired leases return to pending after a worker crash.
 /// </summary>
 public sealed class InboxStore
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly TimeSpan _baseDelay;
+    private readonly TimeSpan _leaseTimeout;
 
-    public InboxStore(NpgsqlDataSource dataSource, TimeSpan? baseDelay = null)
+    public InboxStore(
+        NpgsqlDataSource dataSource,
+        TimeSpan? baseDelay = null,
+        TimeSpan? leaseTimeout = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _baseDelay = baseDelay ?? TimeSpan.FromSeconds(5);
         if (_baseDelay <= TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(baseDelay), "Base delay must be positive.");
+        _leaseTimeout = leaseTimeout ?? TimeSpan.FromMinutes(5);
+        if (_leaseTimeout <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(leaseTimeout), "Lease timeout must be positive.");
     }
 
     /// <summary>
@@ -48,11 +58,12 @@ public sealed class InboxStore
     }
 
     /// <summary>
-    /// Claims pending messages with SKIP LOCKED so concurrent dispatchers
-    /// never race, then hands each to <paramref name="handler"/>. Successful
-    /// handling marks the message processed; failures increment the attempt
-    /// counter, schedule the exponential backoff retry, and move the message
-    /// to dead-letter after <see cref="RetryPolicy.MaxAttempts"/> attempts.
+    /// Claims pending messages (due now, SKIP LOCKED) into a short in-flight
+    /// lease and hands each to <paramref name="handler"/> strictly after the
+    /// claim transaction committed. Successful handling marks the message
+    /// processed; failures increment the attempt counter, schedule the
+    /// exponential backoff retry, and move the message to dead-letter after
+    /// <see cref="RetryPolicy.MaxAttempts"/> attempts.
     /// </summary>
     /// <returns>The number of messages that were attempted.</returns>
     public async Task<int> ProcessPendingAsync(
@@ -63,14 +74,7 @@ public sealed class InboxStore
         ArgumentNullException.ThrowIfNull(handler);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);
 
-        // The claim locks and every state transition run in one transaction,
-        // so the FOR UPDATE locks stay held until all messages are marked
-        // and a concurrent dispatcher can never claim the same message twice.
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-
-        var messages = await ClaimPendingAsync(connection, transaction, batchSize, cancellationToken)
-            .ConfigureAwait(false);
+        var messages = await ClaimAsync(batchSize, cancellationToken).ConfigureAwait(false);
         var attempted = 0;
 
         foreach (var message in messages)
@@ -86,6 +90,9 @@ public sealed class InboxStore
                 failure = ex.Message;
             }
 
+            await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+            await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
             if (handled)
                 await MarkProcessedAsync(connection, transaction, message.Id, cancellationToken).ConfigureAwait(false);
             else
@@ -93,11 +100,59 @@ public sealed class InboxStore
                         connection, transaction, message.Id, failure ?? "handler returned false", cancellationToken)
                     .ConfigureAwait(false);
 
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             attempted++;
         }
 
-        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return attempted;
+    }
+
+    private async Task<IReadOnlyList<InboxMessage>> ClaimAsync(
+        int batchSize,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        // Leases that outlived the timeout return to pending so a crashed
+        // worker can never strand a message. Runs inside the claim
+        // transaction, so released records are claimable immediately.
+        await using (var releaseCommand = connection.CreateCommand())
+        {
+            releaseCommand.Transaction = transaction;
+            releaseCommand.CommandText =
+                """
+                UPDATE inbox_messages
+                SET status = 'pending', claimed_at = NULL
+                WHERE status = 'in_flight' AND claimed_at <= now() - $1 * interval '1 second';
+                """;
+            releaseCommand.Parameters.AddWithValue(_leaseTimeout.TotalSeconds);
+            await releaseCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        var messages = await ClaimPendingAsync(connection, transaction, batchSize, cancellationToken)
+            .ConfigureAwait(false);
+        if (messages.Count == 0)
+        {
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return messages;
+        }
+
+        await using (var leaseCommand = connection.CreateCommand())
+        {
+            leaseCommand.Transaction = transaction;
+            leaseCommand.CommandText =
+                """
+                UPDATE inbox_messages
+                SET status = 'in_flight', claimed_at = now()
+                WHERE id = ANY($1);
+                """;
+            leaseCommand.Parameters.AddWithValue(messages.Select(message => message.Id).ToArray());
+            await leaseCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return messages;
     }
 
     private static async Task<IReadOnlyList<InboxMessage>> ClaimPendingAsync(
@@ -151,10 +206,13 @@ public sealed class InboxStore
             """
             UPDATE inbox_messages
             SET status = 'processed', processed_at = now()
-            WHERE id = $1 AND status = 'pending';
+            WHERE id = $1 AND status = 'in_flight';
             """;
         command.Parameters.AddWithValue(id);
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        if (affected != 1)
+            throw new InvalidOperationException(
+                "Inbox message lease was lost before processing could be confirmed; the message will be re-claimed.");
     }
 
     private Task RecordFailureAsync(

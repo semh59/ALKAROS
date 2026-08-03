@@ -57,11 +57,17 @@ public sealed class PostgresUserStore : IUserStore
         await using var command = _dataSource.CreateCommand(
             $"""
             UPDATE {Table}
-            SET failed_login_attempts = failed_login_attempts + 1,
+            SET failed_login_attempts = CASE
+                    WHEN locked_until IS NOT NULL AND locked_until <= @now THEN 1
+                    ELSE failed_login_attempts + 1
+                END,
                 locked_until = CASE
-                    WHEN failed_login_attempts + 1 >= @max_failed_attempts
+                    WHEN CASE
+                        WHEN locked_until IS NOT NULL AND locked_until <= @now THEN 1
+                        ELSE failed_login_attempts + 1
+                    END >= @max_failed_attempts
                         THEN @now + @lockout_duration
-                    ELSE locked_until
+                    ELSE NULL
                 END,
                 updated_at = @now,
                 row_version = row_version + 1

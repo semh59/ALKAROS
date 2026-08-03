@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Modules\Orders\ALKAROS.Orders.csproj" />
     <ProjectReference Include="..\Modules\Billing\ALKAROS.Billing.csproj" />
     <ProjectReference Include="..\Modules\Payments\ALKAROS.Payments.csproj" />

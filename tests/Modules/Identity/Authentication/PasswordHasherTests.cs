@@ -63,6 +63,21 @@ public sealed class PasswordHasherTests
     }
 
     [Fact]
+    public void VerifyRejectsExcessiveIterationCount()
+    {
+        var encoded = $"pbkdf2-sha256${PasswordHasher.MaximumIterations + 1}$"
+            + $"{Convert.ToBase64String(new byte[16])}${Convert.ToBase64String(new byte[32])}";
+
+        Assert.False(PasswordHasher.Verify("password", encoded));
+    }
+
+    [Fact]
+    public void VerifyAcceptsTheDummyHash()
+    {
+        Assert.True(PasswordHasher.Verify(PasswordHasher.DummyPassword, PasswordHasher.DummyHash));
+    }
+
+    [Fact]
     public void VerifyRejectsTamperedSalt()
     {
         var encoded = Hasher.Hash("correct-password");

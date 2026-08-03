@@ -1,6 +1,8 @@
 using System.Reflection;
 using ALKAROS.Host.Composition.Migrations;
 using ALKAROS.Host.Composition.Modules;
+using ALKAROS.ModuleComposition;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ALKAROS.Host.Composition;
 
@@ -32,8 +34,8 @@ public static class HostComposition
         TextWriter output,
         CancellationToken cancellationToken = default)
     {
-        var moduleIds = ComposeModules(output);
-        if (moduleIds is null)
+        using var services = ComposeModules(output);
+        if (services is null)
             return HostExitCode.StartupFailed;
 
         var manifest = LoadManifest(options.OrderManifestPath, output);
@@ -149,23 +151,52 @@ public static class HostComposition
                 : HostExitCode.MigrationFailed;
     }
 
-    private static IReadOnlyList<string>? ComposeModules(TextWriter output)
+    /// <summary>
+    /// Composes every discovered module and applies its concrete service
+    /// registrations to the host's dependency container. The provider is
+    /// built so that a module registration that cannot be constructed fails
+    /// the composition fail-closed, before any migration runs. Returns null
+    /// when composition fails. When <paramref name="moduleTypes"/> is given,
+    /// only those module types are composed (used by tests); otherwise the
+    /// modules discovered in the host assembly set are used.
+    /// </summary>
+    public static ServiceProvider? ComposeModules(
+        TextWriter output,
+        IEnumerable<Type>? moduleTypes = null)
     {
+        ArgumentNullException.ThrowIfNull(output);
+
         try
         {
-            var hostAssembly = typeof(HostComposition).Assembly;
-            var assemblies = new List<Assembly> { hostAssembly };
-            foreach (var name in hostAssembly.GetReferencedAssemblies())
+            IReadOnlyList<Type> discovered;
+            if (moduleTypes is not null)
             {
-                if (name.Name?.StartsWith("ALKAROS.", StringComparison.Ordinal) == true)
-                    assemblies.Add(Assembly.Load(name));
+                discovered = moduleTypes.ToList();
+            }
+            else
+            {
+                var hostAssembly = typeof(HostComposition).Assembly;
+                var assemblies = new List<Assembly> { hostAssembly };
+                foreach (var name in hostAssembly.GetReferencedAssemblies())
+                {
+                    if (name.Name?.StartsWith("ALKAROS.", StringComparison.Ordinal) == true)
+                        assemblies.Add(Assembly.Load(name));
+                }
+
+                discovered = ModuleRegistry.Discover(assemblies);
             }
 
-            var moduleIds = ModuleRegistry.Compose(ModuleRegistry.Discover(assemblies));
-            output.WriteLine(moduleIds.Count == 0
+            var root = ModuleRegistry.ComposeRoot(discovered);
+
+            var services = new ServiceCollection();
+            foreach (var descriptor in root.Services)
+                AddRegistration(services, descriptor);
+
+            var provider = services.BuildServiceProvider();
+            output.WriteLine(root.Services.Count == 0
                 ? "Modules composed: none registered."
-                : $"Modules composed ({moduleIds.Count}): {string.Join(", ", moduleIds)}.");
-            return moduleIds;
+                : $"Modules composed: {root.Services.Count} service(s) registered.");
+            return provider;
         }
         catch (Exception ex) when (ex is InvalidOperationException
             or ReflectionTypeLoadException
@@ -175,6 +206,18 @@ public static class HostComposition
             output.WriteLine($"Module composition failed: {ex.Message}");
             return null;
         }
+    }
+
+    private static void AddRegistration(
+        ServiceCollection services,
+        ModuleContext.ServiceDescriptor descriptor)
+    {
+        if (descriptor.ImplementationInstance is not null)
+            services.AddSingleton(descriptor.ServiceType, descriptor.ImplementationInstance);
+        else if (descriptor.Lifetime == ModuleContext.ServiceLifetime.Transient)
+            services.AddTransient(descriptor.ServiceType, descriptor.ImplementationType);
+        else
+            services.AddSingleton(descriptor.ServiceType, descriptor.ImplementationType);
     }
 
     private static MigrationManifest? LoadManifest(string path, TextWriter output)

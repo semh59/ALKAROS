@@ -54,7 +54,8 @@ public sealed class ProgramArgumentTests
     {
         using var set = TestMigrationSet.CreateWithFiles(
             ["001"],
-            ("001-stores.up.sql", TestMigrationSet.DefaultUpSql("stores")));
+            ("001-stores.up.sql", TestMigrationSet.DefaultUpSql("stores")),
+            ("001-stores.down.sql", TestMigrationSet.DefaultDownSql("stores")));
         var originalPassword = Environment.GetEnvironmentVariable("ALKAROS_DB_PASSWORD");
         var originalOutput = Console.Out;
         using var output = new StringWriter();
@@ -69,12 +70,12 @@ public sealed class ProgramArgumentTests
                     "--migrations-dir", set.DirectoryPath,
                     "--db-url", "postgresql://user@host:5432/database",
                     "--psql", Path.Combine(Path.GetTempPath(), $"alkaros-{Guid.NewGuid():N}.exe"),
-                    "--rollback", "001",
+                    "--rollback", "002",
                 ]);
 
             Assert.Equal((int)HostExitCode.StartupFailed, exitCode);
             Assert.Contains(
-                "Rollback refused: no rollback script declares position [001].",
+                "Rollback refused: position [002] is not declared in the verified order.",
                 output.ToString(),
                 StringComparison.Ordinal);
         }

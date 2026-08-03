@@ -10,7 +10,9 @@ public sealed record MigrationHistoryReadResult(
 /// <summary>
 /// Persists the immutable checksum of each migration that committed. The
 /// control table deliberately contains no product schema and is created
-/// before the first migration is attempted.
+/// before the first migration is attempted. An existing table whose schema
+/// does not match the expected contract is detected fail-closed: no
+/// migration history is ever written against a mismatched table.
 /// </summary>
 public static class MigrationHistoryStore
 {
@@ -24,10 +26,69 @@ public static class MigrationHistoryStore
         );
         """;
 
-    public static Task<ScriptExecutionResult> EnsureAsync(
+    private const string SchemaValidationCommand = """
+        SELECT NOT EXISTS (
+            SELECT column_name::text, data_type, is_nullable
+            FROM information_schema.columns
+            WHERE table_schema = 'public' AND table_name = 'alkaros_schema_migrations'
+            EXCEPT
+            VALUES ('migration_id', 'text', 'NO'),
+                   ('checksum', 'text', 'NO'),
+                   ('applied_at', 'timestamp with time zone', 'NO')
+        ) AND NOT EXISTS (
+            VALUES ('migration_id', 'text', 'NO'),
+                   ('checksum', 'text', 'NO'),
+                   ('applied_at', 'timestamp with time zone', 'NO')
+            EXCEPT
+            SELECT column_name::text, data_type, is_nullable
+            FROM information_schema.columns
+            WHERE table_schema = 'public' AND table_name = 'alkaros_schema_migrations'
+        ) AND EXISTS (
+            SELECT 1
+            FROM information_schema.table_constraints tc
+            JOIN information_schema.key_column_usage kcu
+              ON kcu.constraint_name = tc.constraint_name
+             AND kcu.table_schema = tc.table_schema
+             AND kcu.table_name = tc.table_name
+            WHERE tc.table_schema = 'public'
+              AND tc.table_name = 'alkaros_schema_migrations'
+              AND tc.constraint_type = 'PRIMARY KEY'
+              AND kcu.column_name = 'migration_id'
+        ) AND (
+            SELECT count(*)
+            FROM pg_constraint
+            WHERE conrelid = 'alkaros_schema_migrations'::regclass
+              AND contype = 'c'
+              AND conname IN (
+                  'alkaros_schema_migrations_migration_id_check',
+                  'alkaros_schema_migrations_checksum_check')
+        ) = 2;
+        """;
+
+    public static async Task<ScriptExecutionResult> EnsureAsync(
         PsqlOptions options,
         CancellationToken cancellationToken)
-        => PsqlScriptRunner.RunCommandAsync(CreateTableCommand, options, cancellationToken);
+    {
+        var create = await PsqlScriptRunner.RunCommandAsync(CreateTableCommand, options, cancellationToken)
+            .ConfigureAwait(false);
+        if (!create.Success)
+            return create;
+
+        var validation = await PsqlScriptRunner.RunCommandAsync(
+            SchemaValidationCommand,
+            options,
+            cancellationToken).ConfigureAwait(false);
+        if (!validation.Success
+            || !string.Equals(validation.StandardOutput.Trim(), "t", StringComparison.Ordinal))
+        {
+            return new ScriptExecutionResult(
+                false,
+                string.Empty,
+                "Migration history table schema does not match the expected contract.");
+        }
+
+        return validation;
+    }
 
     public static async Task<MigrationHistoryReadResult> ReadAsync(
         PsqlOptions options,

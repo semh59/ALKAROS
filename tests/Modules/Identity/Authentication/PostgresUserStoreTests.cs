@@ -105,6 +105,38 @@ public sealed class PostgresUserStoreTests : IClassFixture<AuthTestDatabase>
     }
 
     [Fact]
+    public async Task RecordLoginFailureAfterLockExpiryRestartsTheCounter()
+    {
+        var userId = await _database.InsertUserAsync(
+            "expired-store", "hash-value", failedLoginAttempts: 5,
+            lockedUntil: new DateTimeOffset(2026, 8, 2, 11, 0, 0, TimeSpan.Zero));
+        var now = new DateTimeOffset(2026, 8, 2, 12, 15, 0, TimeSpan.Zero);
+
+        var update = await _store.RecordLoginFailureAsync(
+            userId, now, maxFailedAttempts: 5, lockoutDuration: TimeSpan.FromMinutes(15));
+
+        Assert.NotNull(update);
+        Assert.Equal(1, update.FailedLoginAttempts);
+        Assert.Null(update.LockedUntil);
+    }
+
+    [Fact]
+    public async Task RecordLoginFailureAfterLockExpiryCanReLockOnNewWindow()
+    {
+        var userId = await _database.InsertUserAsync(
+            "expired-relock", "hash-value", failedLoginAttempts: 5,
+            lockedUntil: new DateTimeOffset(2026, 8, 2, 11, 0, 0, TimeSpan.Zero));
+        var now = new DateTimeOffset(2026, 8, 2, 12, 15, 0, TimeSpan.Zero);
+
+        var update = await _store.RecordLoginFailureAsync(
+            userId, now, maxFailedAttempts: 1, lockoutDuration: TimeSpan.FromMinutes(15));
+
+        Assert.NotNull(update);
+        Assert.Equal(1, update.FailedLoginAttempts);
+        Assert.Equal(now.AddMinutes(15), update.LockedUntil);
+    }
+
+    [Fact]
     public async Task ConcurrentFailuresReachTheLockoutThresholdWithoutLostUpdates()
     {
         var userId = await _database.InsertUserAsync("concurrent-store", "hash-value");
