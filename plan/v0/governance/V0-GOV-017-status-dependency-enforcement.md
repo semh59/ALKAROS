@@ -1,8 +1,8 @@
 # V0-GOV-017 - Enforce status dependency closure
 
 - Task ID: V0-GOV-017
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: /root
 - Work type: validation
 - Surface state: Existing
 
@@ -36,7 +36,7 @@ dependency zincirinin `Done` olmasını zorunlu kılan mekanik denetimi eklemek.
 
 ## Dependencies
 
-- V0-GOV-016
+- None
 
 ## Deliverables
 
@@ -49,7 +49,6 @@ dependency zincirinin `Done` olmasını zorunlu kılan mekanik denetimi eklemek.
   hatası üretir.
 - Açık ancestor'a sahip `Done` görev `DONE_DEPENDENCY_TRANSITIVE_NOT_FINAL`
   hatası üretir.
-- V0-GOV-018 sonrası validator sıfır hata ile tamamlanır.
 
 ## Handoff
 
