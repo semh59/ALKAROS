@@ -31,7 +31,7 @@
 | Gate | Kapanma koşulu |
 | --- | --- |
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
-| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. |
+| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
 | `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |

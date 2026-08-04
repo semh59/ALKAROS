@@ -1,8 +1,9 @@
 # GATE-V0-EXIT Durum Kaydı
 
 - Tarih: 2026-08-03
+- Kapanış onayı: 2026-08-04 (kullanıcı)
 - Gate: `GATE-V0-EXIT`
-- Durum: **Open — kapanış koşulu sağlandı; kapanış kararı GATE-V0-EXIT kullanıcı onayına tabidir**
+- Durum: **Closed — 2026-08-04 kullanıcı onayıyla resmen kapatıldı**
 - Kaynak: plan metadata tam okuma ve `plan_audit_tool.py validate` / `validate-coverage` / `verify-manifest`.
 
 ## Güncel mekanik sayım
@@ -38,6 +39,8 @@ aşamada (V12-V20) toplanır.
   `DEPENDENCY_REMOVALS` + forbidden seti; kayıt `TRACEABILITY.md` C39).
 - 2026-08-03 kullanıcı onaylı plan değişikliği `C40` ile 11 dış-girdi görevi
   devredildi (kayıt `TRACEABILITY.md` C40).
+- 2026-08-04: kullanıcı onayıyla `GATE-V0-EXIT` kapanışı resmen ilan edildi
+  (kayıt `TRACEABILITY.md` C41); `GATE-V1-ENTRY` kapanma koşulu sağlandı.
 
 ## Doğrulama
 
@@ -60,3 +63,8 @@ Devredilen 11 görev hariç tüm V0 karar, uyum, güvenlik, recovery ve dış
 sözleşme görevleri gerçek kanıtla `Done` durumundadır. Kapanış kararı
 (plan metadata'da `GATE-V0-EXIT` kapanışının resmen ilanı) kullanıcı
 onayına tabidir; devir yeni product behavior başlatma izni vermez.
+
+**2026-08-04:** Kullanıcı onayı verilmiştir; `GATE-V0-EXIT` resmen
+kapatılmıştır. Devredilen 11 görev `Blocked` kalır ve kanıtları ilgili
+aşamada (V12–V20) toplanır; bu devir yeni product behavior başlatma izni
+vermez.

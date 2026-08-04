@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 393,
-  "markdown_line_count": 26634,
-  "markdown_byte_count": 1821388,
+  "markdown_line_count": 26643,
+  "markdown_byte_count": 1822339,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -358,9 +358,9 @@
     },
     {
       "path": "evidence/v0/gate-v0-exit-closure.md",
-      "sha256": "7396DCD85F2A16B9D4D7EE268AB25FCA18E312AA30E9F0422CE20096D5E61C82",
-      "lines": 62,
-      "bytes": 2744,
+      "sha256": "DEACF2E90576D5EDA20C10FDC9D3F099F33C42A2C1BA5F44AB31B34A838D1DEE",
+      "lines": 70,
+      "bytes": 3150,
       "utf8": true
     },
     {
@@ -855,7 +855,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C54D0E9B07284C674552A4D549688B6F4660E99223B8CA99D323A11A9DB1B335",
+      "sha256": "AA791F4BB37D870E3BDAFEB0EB508E151E91DC5EBCCA982A33A2D5FFEF4D17FA",
       "lines": 1669,
       "bytes": 228587,
       "utf8": true
@@ -876,9 +876,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "83C0B0751291A9DDE6A5059D5236436B48295970248D2F5A95072EEEA55AAADC",
+      "sha256": "7734236AB38A4D8DAE5DB15CDBA4046F4113F19EB51378D56FA598BE01FECDE4",
       "lines": 128,
-      "bytes": 8982,
+      "bytes": 9056,
       "utf8": true
     },
     {
@@ -925,9 +925,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "5E87E29F698CDE71DEC10D651BBDFC1A8C7FBE652B8BE0E2796669D0758A0E55",
-      "lines": 137,
-      "bytes": 22381,
+      "sha256": "C0E86B6F56D95C2B48380F16CC75C88DD537CDB8E48640D1A45F0D4105397258",
+      "lines": 138,
+      "bytes": 22852,
       "utf8": true
     },
     {
