@@ -1504,6 +1504,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/domain/reporting-metrics.md` | ✅ | `001E6FD5A12D25A6CDAA5D57F9F471E06F724174EBF12181DC236CF2C840CE81` | Denetim sözleşmesi |
 | `docs/domain/table-reservation-policy.md` | ✅ | `536C87C386E94DC01AD6E8F72C8D60F8444856B8FBFD8DB0BFEED39C38D9AFF4` | Denetim sözleşmesi |
 | `docs/domain/void-complimentary-discount-policy.md` | ✅ | `938C4B7E46CF824B0B941EC814FCD8BC9DB6A7AA810B1F62F7D03C2E6FC26FD1` | Denetim sözleşmesi |
+| `docs/engineering/login-timing-contract.md` | ✅ | `05F7C0E522229E2FC0BB341D635FD04140EA6A18483639B89DF3106F1DB9E3A1` | Denetim sözleşmesi |
 | `docs/engineering/task-scope-contract.md` | ✅ | `FD7126C275FF9B23190E5A162A1A565CA0A0BD9514E3AC3A0EE2388377B71D8B` | Denetim sözleşmesi |
 | `docs/licensing/licensing-contract.md` | ✅ | `8A2AA58265B800F88B80033EA0119BD198FFB975BA205A8623F998DDE18A0730` | Denetim sözleşmesi |
 | `docs/recovery/rpo-rto-targets.md` | ✅ | `F0C6DBE7F797EE84CA936E7FE2A176EFDBAD9D85C9F591708B6C4252EFD2D30F` | Denetim sözleşmesi |
@@ -1579,6 +1580,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-FND-012/closure-report.md` | ✅ | `13EC4E6C7C6439ECE442876083DFE2A1F3B5DA57012AB320DDE90250EC94EBFC` | Denetim sözleşmesi |
 | `evidence/V1-IAM-001/defect-7-closure.md` | ✅ | `D1567120296FB180FE0981B03EC973A380948359AEEBF85D6B483260E7DF2B5C` | Denetim sözleşmesi |
 | `evidence/V1-IAM-004/closure-report.md` | ✅ | `57F464EE1CC298053C0FF634410028F3CB84CDA3B61345E7D0649B8EC6C3F4C0` | Denetim sözleşmesi |
+| `evidence/V1-IAM-005/verification.md` | ✅ | `E2D10CABF39DBDDB945F823AE37EB1564A7F41D4E4CBA9A5B5D4EC12B02E4BD0` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/candidate-remediation-2026-08-03.md` | ✅ | `C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/closure-report.md` | ✅ | `B873CEEC58BDC13B7970878719186B4BE54DC6332121D4469DC0F9D8BA311FAC` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/defect-2-closure.md` | ✅ | `F032C394B87213971C259C6497C69DCB591766D27912602C7DC1C9A83A9E791B` | Denetim sözleşmesi |
@@ -1657,7 +1659,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/foundation/V1-FND-014-retry-sql-identifier-hardening.md` | ✅ | `B85C2F5ADA69BF0BCDD24705EE6BA2C73933497EC6583B351D3B4284C1D25159` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-015-inbox-idempotency-contract.md` | ✅ | `0C39A8618CF7CA1581EDBE2800EBB2210736C4A4A2912A1E1615CDB980CE9C6E` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md` | ✅ | `ACACFF68072C251FABB9D00F6122EB6A2F60CB9093BDDBA5709FB5893058CBBE` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md` | ✅ | `0AD5CBE85828DC12EB2ACB5F552CA516A2A959DEDB4F4D9B03F666EB0DBF10A9` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md` | ✅ | `9C0D3CFE7AC4A05A6A12EDE41F03596EEE945951473CF6795AFAD7EAF81F8785` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `E5089004DCAF4FB7E5A18394885E6F920549E7DB93A0A6134D0DAB92114BC76A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `DFEC2B096FD835FB60D3A6E5EFEEF00E3507DA0C465E3771C3DAB2F5C4986F6A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `69D4B40A146A78C94A14692C3247D04BA207F9DAD73F1D5D18CEDAA579A7BFDF` | Tek-sahip görev |
@@ -1672,5 +1674,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Codex execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `400` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `402` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

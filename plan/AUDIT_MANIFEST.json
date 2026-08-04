@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 400,
-  "markdown_line_count": 27142,
-  "markdown_byte_count": 1847235,
+  "markdown_file_count": 402,
+  "markdown_line_count": 27284,
+  "markdown_byte_count": 1853811,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -270,6 +270,13 @@
       "sha256": "938C4B7E46CF824B0B941EC814FCD8BC9DB6A7AA810B1F62F7D03C2E6FC26FD1",
       "lines": 62,
       "bytes": 4179,
+      "utf8": true
+    },
+    {
+      "path": "docs/engineering/login-timing-contract.md",
+      "sha256": "05F7C0E522229E2FC0BB341D635FD04140EA6A18483639B89DF3106F1DB9E3A1",
+      "lines": 59,
+      "bytes": 3206,
       "utf8": true
     },
     {
@@ -833,6 +840,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-IAM-005/verification.md",
+      "sha256": "E2D10CABF39DBDDB945F823AE37EB1564A7F41D4E4CBA9A5B5D4EC12B02E4BD0",
+      "lines": 81,
+      "bytes": 3081,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -862,9 +876,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6D8BBB1079665E7C3DC78A86062C4D7CCD3093C2C458B5A80C736254AF25FB33",
-      "lines": 1676,
-      "bytes": 229697,
+      "sha256": "1BC85E733B5F8AAD4C6F56BC0C4C508661E48756776162B771130E46D6AB7E80",
+      "lines": 1678,
+      "bytes": 229983,
       "utf8": true
     },
     {
@@ -1625,9 +1639,9 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md",
-      "sha256": "0AD5CBE85828DC12EB2ACB5F552CA516A2A959DEDB4F4D9B03F666EB0DBF10A9",
+      "sha256": "9C0D3CFE7AC4A05A6A12EDE41F03596EEE945951473CF6795AFAD7EAF81F8785",
       "lines": 74,
-      "bytes": 2939,
+      "bytes": 2942,
       "utf8": true
     },
     {

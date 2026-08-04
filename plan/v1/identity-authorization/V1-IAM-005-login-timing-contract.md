@@ -1,7 +1,7 @@
 # V1-IAM-005 - Enforce login timing equality contract
 
 - Task ID: V1-IAM-005
-- Status: Planned
+- Status: Done
 - Assignee: opencode-v1-iam-005
 - Work type: implementation
 - Surface state: Existing

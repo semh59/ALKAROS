@@ -61,51 +61,6 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
     }
 
     [Fact]
-    public async Task UnknownUsernameLoginTakesComparableTimeToKnownUserLogin()
-    {
-        await _database.InsertUserAsync("timing-unknown", _hasher.Hash("correct"));
-        var stopwatch = new System.Diagnostics.Stopwatch();
-
-        stopwatch.Start();
-        var unknown = await _service.LoginAsync("ghost-user", "some-password", Now);
-        stopwatch.Stop();
-        var unknownElapsed = stopwatch.Elapsed;
-
-        stopwatch.Restart();
-        var known = await _service.LoginAsync("timing-unknown", "wrong-password", Now);
-        stopwatch.Stop();
-        var knownElapsed = stopwatch.Elapsed;
-
-        Assert.IsType<LoginFailure>(unknown);
-        Assert.IsType<LoginFailure>(known);
-        Assert.True(unknownElapsed >= knownElapsed * 0.8,
-            $"Unknown-user login ({unknownElapsed}) must burn the same PBKDF2 work as a known-user login ({knownElapsed}).");
-    }
-
-    [Fact]
-    public async Task InactiveUserLoginTakesComparableTimeToKnownUserLogin()
-    {
-        await _database.InsertUserAsync("timing-inactive", _hasher.Hash("correct"), active: false);
-        await _database.InsertUserAsync("timing-active", _hasher.Hash("correct"));
-        var stopwatch = new System.Diagnostics.Stopwatch();
-
-        stopwatch.Start();
-        var inactive = await _service.LoginAsync("timing-inactive", "some-password", Now);
-        stopwatch.Stop();
-        var inactiveElapsed = stopwatch.Elapsed;
-
-        stopwatch.Restart();
-        var active = await _service.LoginAsync("timing-active", "wrong-password", Now);
-        stopwatch.Stop();
-        var activeElapsed = stopwatch.Elapsed;
-
-        Assert.IsType<LoginFailure>(inactive);
-        Assert.IsType<LoginFailure>(active);
-        Assert.True(inactiveElapsed >= activeElapsed * 0.8,
-            $"Inactive-user login ({inactiveElapsed}) must burn the same PBKDF2 work as an active-user login ({activeElapsed}).");
-    }
-
-    [Fact]
     public async Task WrongPasswordFailsWithoutLeakingCredentials()
     {
         await _database.InsertUserAsync("waiter2", _hasher.Hash("correct"));

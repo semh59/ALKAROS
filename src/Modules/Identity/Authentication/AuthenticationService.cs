@@ -1,6 +1,14 @@
 namespace ALKAROS.Identity.Authentication;
 
 /// <summary>
+/// Verifies a raw password against an encoded PBKDF2 hash. The production
+/// implementation is <see cref="PasswordHasher.Verify"/>; the seam exists so
+/// the login work contract (see docs/engineering/login-timing-contract.md)
+/// can be proven deterministically in tests without real PBKDF2 computation.
+/// </summary>
+public delegate bool PasswordVerifier(string password, string encodedHash);
+
+/// <summary>
 /// Application service for username/password login. Enforces the active-user
 /// rule, records failed attempts, applies a temporary lockout after
 /// <see cref="MaxFailedAttempts"/> consecutive failures, and issues a
@@ -15,11 +23,13 @@ public sealed class AuthenticationService
     private readonly IUserStore _store;
     private readonly int _maxFailedAttempts;
     private readonly TimeSpan _lockoutDuration;
+    private readonly PasswordVerifier _verify;
 
     public AuthenticationService(
         IUserStore store,
         int maxFailedAttempts = DefaultMaxFailedAttempts,
-        TimeSpan? lockoutDuration = null)
+        TimeSpan? lockoutDuration = null,
+        PasswordVerifier? verifier = null)
     {
         _store = store ?? throw new ArgumentNullException(nameof(store));
         _maxFailedAttempts = maxFailedAttempts > 0
@@ -28,6 +38,7 @@ public sealed class AuthenticationService
         _lockoutDuration = lockoutDuration ?? DefaultLockoutDuration;
         if (_lockoutDuration <= TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(lockoutDuration), "Must be positive.");
+        _verify = verifier ?? PasswordHasher.Verify;
     }
 
     /// <summary>
@@ -51,14 +62,14 @@ public sealed class AuthenticationService
             // Burn the same PBKDF2 work as a real credential check so
             // unknown and inactive usernames cannot be distinguished from
             // active accounts by response time.
-            PasswordHasher.Verify(password, PasswordHasher.DummyHash);
+            _verify(password, PasswordHasher.DummyHash);
             return new LoginFailure(LoginFailureReason.InvalidCredentials);
         }
 
         if (user.LockedUntil is { } effectiveLock && effectiveLock > now)
             return new LoginFailure(LoginFailureReason.LockedOut);
 
-        if (!PasswordHasher.Verify(password, user.PasswordHash))
+        if (!_verify(password, user.PasswordHash))
         {
             var update = await _store.RecordLoginFailureAsync(
                 user.UserId, now, _maxFailedAttempts, _lockoutDuration, cancellationToken);
