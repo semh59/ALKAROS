@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 412,
-  "markdown_line_count": 28036,
-  "markdown_byte_count": 1889364,
+  "markdown_file_count": 413,
+  "markdown_line_count": 28072,
+  "markdown_byte_count": 1891006,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -854,6 +854,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-FND-005/verification.md",
+      "sha256": "BDB9062649121867DF6EC0DB5F9A30B335DC8776F3500C20832D12A66B13F272",
+      "lines": 40,
+      "bytes": 1684,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-010/verification.md",
       "sha256": "566DAEE4CDB3EB3AE7A04FB94E56B726DAE5D401B8162E272044133AFEF11584",
       "lines": 52,
@@ -939,9 +946,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "5421860964A8694C5C7896A29F7581EC165335C8639F83E0A14734F84A275A4D",
-      "lines": 1688,
-      "bytes": 231408,
+      "sha256": "12BB90CD4629148123AD230692E0174EB233AA503AC760B8F111562390F8CAC8",
+      "lines": 1689,
+      "bytes": 231548,
       "utf8": true
     },
     {
@@ -1604,9 +1611,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md",
-      "sha256": "B040A2D0C88872659442DFC92C9AA22460E8340454C273DA7F404CB53B1CB2D7",
-      "lines": 63,
-      "bytes": 1592,
+      "sha256": "0D864E5256A77BCF4EE9F384192864D4D7A2CFD6D5B233F2AB3A20424EAEBE00",
+      "lines": 58,
+      "bytes": 1410,
       "utf8": true
     },
     {
