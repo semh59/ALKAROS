@@ -90,3 +90,15 @@ devir tablosu sözleşmesi (C44) eklendi.
   görevleri için kapalı olur; bu, C41 kapanış kararını makinece doğrular.
 - Devir kimlikleri gate kapanış kanıtı üretmez; kanıtlar ilgili aşamada
   (V12-V20) toplanır (C40).
+
+## Denetim düzeltmesi (2026-08-04, bağımsız denetim)
+
+- Kapanışta `verification.md` manifest üretiminden sonra düzenlendiği için
+  `f56ead9` manifest'i bu dosyanın eski hâlini (82 satır) kaydediyordu;
+  commit'teki son hâl 92 satırdı ve `verify-manifest` 5 hata veriyordu.
+- Bu kayıt, manifest bu dosyanın son hâliyle yeniden üretildikten sonra
+  commit'lenmiştir; `verify-manifest` artık 0 hata üretir.
+- Ders: görev kapanışında manifest, `evidence/**` ve görev dosyası dahil tüm
+  değişikliklerin son hâlinden SONRA üretilir; kapanıştan sonra hiçbir
+  evidence dosyası düzenlenmez (düzenleme ayrı düzeltme commit'i + yeniden
+  üretim gerektirir).

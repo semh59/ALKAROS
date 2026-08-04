@@ -1567,7 +1567,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V0-GOV-029/verification.md` | ✅ | `2D2009A03C76F04AF822A206C80C758ED53EE9357EE4FED37E90A1FE00838163` | Denetim sözleşmesi |
 | `evidence/V0-GOV-030/verification.md` | ✅ | `1A72791823B5EB42E93B1BA388C570FFF55DCBD8F334150F8A5F64A5D5165391` | Denetim sözleşmesi |
 | `evidence/V0-GOV-031/verification.md` | ✅ | `8C87D1F6DAABF17EAB5B6F5ABEB23888039C0EC721F0D1D1ADAEC23DDCD377CB` | Denetim sözleşmesi |
-| `evidence/V0-GOV-032/verification.md` | ✅ | `9AAA2CED3BC16782E59006646B09CEBAE4458EE8F3A7E976A9E622DB04C25991` | Denetim sözleşmesi |
+| `evidence/V0-GOV-032/verification.md` | ✅ | `BC22FB61D996341CF27F008879F7BB1F0871D25E0FA11E1D620FAEB001B3DEF4` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/candidate-remediation-2026-08-03.md` | ✅ | `0E2C3211B539FACC94A98B2AD7CAD5D922D9E1A15E6068641DAA5F77C87AD77E` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/closure-report.md` | ✅ | `F56A5345D07B40930525F6C3C4780E6038B904645648E3AC1201241A137D1955` | Denetim sözleşmesi |
 | `evidence/V1-FND-001/defect-1-closure.md` | ✅ | `E0C98C88270CF5D089082AB916B6010B0A2943F95A638FFAC36DF4D33510CC75` | Denetim sözleşmesi |
@@ -1659,7 +1659,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/foundation/V1-FND-007-audit-remediation.md` | ✅ | `F3D341F598864D71DBB91784AC12460531008F58EFE1EDEF2F051244D49DA361` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-008-audit-remediation-round2.md` | ✅ | `3679EA5D78DB454F99315D5905FC59999A14B5FEFF33EC6C4E6F786F4165195E` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md` | ✅ | `DC5C20823046120D9B8FDA89341454B2AEB5ACC1465CB88D8F286A74C34BA87A` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md` | ✅ | `06211676437067151709C2A365E4E329B3170F526C78ABE070BB5F57F71B643A` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md` | ✅ | `536DF8B8EF8CCECAB3F982256D3E274CAE1C6B04288C766B556974EF9F7EAAF4` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-011-transaction-outbox-atomicity.md` | ✅ | `F95B7C4BFD5B2535E79F37942806F698FDA8C63D2C3D3D75603084A8EF7BE2D5` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-012-runtime-migration-manifest.md` | ✅ | `D4BCB5A134ED7B7B8D72E3A3C06C0E8C81873357A4251724F995FAC4E95E85E7` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-013-host-composition-constructability.md` | ✅ | `3ED50C2DFFC4E9381267DF1DC2E55D3F0B441EDEBA33E8FE04831CC595A42E7D` | Tek-sahip görev |
