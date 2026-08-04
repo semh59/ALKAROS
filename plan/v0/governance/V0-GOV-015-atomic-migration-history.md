@@ -18,7 +18,7 @@ uygulanmamis veya sonraki position varken rollback'i reddetmek.
 
 ## Owned surface
 
-- `src/Host/Composition/HostComposition.cs`
+- HostComposition.cs sahipliği V1-FND-013'e devredilmiştir (C42); bu görev artık bu path'i yazamaz.
 - `src/Host/Composition/Migrations/MigrationExecutor.cs`
 - `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
 - `src/Host/Composition/Migrations/MigrationHistoryStore.cs`

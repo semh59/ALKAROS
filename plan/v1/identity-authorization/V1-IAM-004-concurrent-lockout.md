@@ -19,13 +19,13 @@ engellemek ve lockout esigini atomik olarak uygulamak.
 
 ## Owned surface
 
-- `src/Modules/Identity/Authentication/AuthenticationService.cs`
 - `src/Modules/Identity/Authentication/IUserStore.cs`
 - `src/Modules/Identity/Authentication/PostgresUserStore.cs`
-- `tests/Modules/Identity/Authentication/AuthenticationServiceTests.cs`
 - `tests/Modules/Identity/Authentication/PostgresUserStoreTests.cs`
 - `tests/Modules/Identity/Authentication/Fixtures/AuthTestDatabase.cs`
 - `evidence/V1-IAM-004/**`
+- AuthenticationService.cs ve AuthenticationServiceTests.cs sahipliği
+  V1-IAM-005'e devredilmiştir (C42); bu görev artık bu path'leri yazamaz.
 
 ## In scope
 

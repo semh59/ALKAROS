@@ -96,6 +96,14 @@ diğer application görevleri için aynen geçerliliğini korur.
 zincirden önce başlatılır; kayıt `TRACEABILITY.md` FIND-IA-0050 satırındadır.
 Zincir kuralı diğer application görevleri için aynen geçerliliğini korur.
 
+2026-08-04 tarihli kullanıcı onaylı bağımsız-denetim remediasyon planı
+(`TRACEABILITY.md` C42): `V1-IAM-005` (login timing sözleşmesi + kararlı
+test), `V1-FND-013` (host DI constructability), `V1-FND-014` (retry SQL
+identifier), `V1-FND-015` (inbox idempotency sözleşmesi) ve `V0-GOV-030`
+(gate evidence sayım refresh) yalnız kanıtlanmış bulguyu (FIND-IA-0056..0061)
+düzeltir, gate kapanış kanıtı üretmez ve yeni product behavior başlatmaz;
+Aşama 3 kabul zinciri sırası değişmez.
+
 ## 2026-08-03 user-approved V0 deferrals
 
 <!-- V0_DEFERRED_TASKS:START -->

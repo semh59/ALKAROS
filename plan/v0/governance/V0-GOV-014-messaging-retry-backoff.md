@@ -17,8 +17,8 @@ belirlenmis exponential backoff kuraliyla kalici olarak hesaplamak.
 
 ## Owned surface
 
-- `src/BuildingBlocks/Messaging/RetryPolicy.cs`
-- `tests/BuildingBlocks/Idempotency/RetryPolicyTests.cs`
+- RetryPolicy.cs ve RetryPolicyTests.cs sahipliği V1-FND-014'e
+  devredilmiştir (C42); bu görev artık bu path'leri yazamaz.
 - `tests/BuildingBlocks/Idempotency/RetryScheduleIntegrationTests.cs`
 - `evidence/V0-GOV-014/**`
 

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 393,
-  "markdown_line_count": 26643,
-  "markdown_byte_count": 1822339,
+  "markdown_file_count": 398,
+  "markdown_line_count": 26977,
+  "markdown_byte_count": 1839821,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -855,9 +855,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "AA791F4BB37D870E3BDAFEB0EB508E151E91DC5EBCCA982A33A2D5FFEF4D17FA",
-      "lines": 1669,
-      "bytes": 228587,
+      "sha256": "90284B417C8821494B43C90CC3BBCE85039D4367050E0A3D1CA3736390744B87",
+      "lines": 1674,
+      "bytes": 229400,
       "utf8": true
     },
     {
@@ -869,16 +869,16 @@
     },
     {
       "path": "plan/EXECUTION_READY_PLAN.md",
-      "sha256": "370F5FAF032DA19F01DF06CC6D1D3EAF2A2B2E2A23B9EF4EAD34BEB707F6FA3E",
-      "lines": 215,
-      "bytes": 11000,
+      "sha256": "44BEB65DD033B3DB5C3886ED136A90DCB86F76A6CD9879A3383D58660E93F298",
+      "lines": 226,
+      "bytes": 12702,
       "utf8": true
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "7734236AB38A4D8DAE5DB15CDBA4046F4113F19EB51378D56FA598BE01FECDE4",
-      "lines": 128,
-      "bytes": 9056,
+      "sha256": "ECCB16A44B6EAAFF7C041A3F4B9C607336F180BE305FE2728DEB0C5C0EF012FF",
+      "lines": 136,
+      "bytes": 9574,
       "utf8": true
     },
     {
@@ -897,9 +897,9 @@
     },
     {
       "path": "plan/PDF_COVERAGE.md",
-      "sha256": "07C1CC8ADF707815D55755B7EB1E4DBCCCAE41D7BB8FB10446FDF3FBBFB99266",
+      "sha256": "FAB706021A6AA2899C10BA335B7C33F4D7717F8D5B3E8FC77001D1C43DBFBE58",
       "lines": 3361,
-      "bytes": 854013,
+      "bytes": 856305,
       "utf8": true
     },
     {
@@ -925,9 +925,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "C0E86B6F56D95C2B48380F16CC75C88DD537CDB8E48640D1A45F0D4105397258",
-      "lines": 138,
-      "bytes": 22852,
+      "sha256": "8F525259A49A63731BD67D9F0FF63A4A8318DC5616F5DCC5B13B0CB3DF1815F1",
+      "lines": 145,
+      "bytes": 25521,
       "utf8": true
     },
     {
@@ -1198,16 +1198,16 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-014-messaging-retry-backoff.md",
-      "sha256": "EFA27B56D9AA7135C1E40EA5A3270EDCBC88D75B9F5B269FD25C0768367E18A8",
+      "sha256": "18CB8F9B6F84C911039D159980D8E80B099BAA1D1D317A4B80F066C1B2EB9E4E",
       "lines": 53,
-      "bytes": 1275,
+      "bytes": 1298,
       "utf8": true
     },
     {
       "path": "plan/v0/governance/V0-GOV-015-atomic-migration-history.md",
-      "sha256": "531D175A92F028609829C4C02186B924527B16BA8F6130D96BB531119C7A8A90",
+      "sha256": "FA751FED7B161467FF76D8CA494EF207341C06DC864C68D31D96E2B5E0DFBEE5",
       "lines": 58,
-      "bytes": 1631,
+      "bytes": 1691,
       "utf8": true
     },
     {
@@ -1271,6 +1271,13 @@
       "sha256": "D0A47834249DB04BE171A485DE8120A6A13A251845F976776DF7518D7DD850EB",
       "lines": 64,
       "bytes": 1859,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-030-gate-evidence-recount.md",
+      "sha256": "8DBC9AAA8CCC22D09890401622782CB802DCEE5A990C24EBCE741612F64CCA83",
+      "lines": 60,
+      "bytes": 1685,
       "utf8": true
     },
     {
@@ -1478,9 +1485,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-002-idempotency-infrastructure.md",
-      "sha256": "C94A50F04DC61F3E6E86DFB1092A141684BD6E1C619664DC79FFE3245EE88BBE",
+      "sha256": "49C2FC9C7596E2CEB26DC25A053855B5E6756B3C5769474634B45CC814EC3A6A",
       "lines": 102,
-      "bytes": 4929,
+      "bytes": 4956,
       "utf8": true
     },
     {
@@ -1554,10 +1561,31 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/foundation/V1-FND-013-host-composition-constructability.md",
+      "sha256": "F2B59CFFE4A092CE4C31B9E7E8073D88C70DB9A55B532DC0C432AC9DB4F3F582",
+      "lines": 55,
+      "bytes": 1396,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/foundation/V1-FND-014-retry-sql-identifier-hardening.md",
+      "sha256": "B85C2F5ADA69BF0BCDD24705EE6BA2C73933497EC6583B351D3B4284C1D25159",
+      "lines": 56,
+      "bytes": 1483,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/foundation/V1-FND-015-inbox-idempotency-contract.md",
+      "sha256": "0C39A8618CF7CA1581EDBE2800EBB2210736C4A4A2912A1E1615CDB980CE9C6E",
+      "lines": 58,
+      "bytes": 1819,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
-      "sha256": "0A4C18357C9FC22153B27E1A22623A379B29D5F7DFC929CB725B82BCD1BAD150",
+      "sha256": "84CE2BDCC1F5907CE0830AEEB8B39170A14D91D97AF048B604A28ECC84F80B69",
       "lines": 65,
-      "bytes": 1987,
+      "bytes": 2032,
       "utf8": true
     },
     {
@@ -1576,9 +1604,16 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md",
-      "sha256": "99F476B9C1E0812452FF592F7AE1818A97583EF9BB4D5647A3BF873FA0267C78",
+      "sha256": "ACACFF68072C251FABB9D00F6122EB6A2F60CB9093BDDBA5709FB5893058CBBE",
       "lines": 70,
-      "bytes": 1919,
+      "bytes": 1930,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md",
+      "sha256": "0AD5CBE85828DC12EB2ACB5F552CA516A2A959DEDB4F4D9B03F666EB0DBF10A9",
+      "lines": 74,
+      "bytes": 2939,
       "utf8": true
     },
     {

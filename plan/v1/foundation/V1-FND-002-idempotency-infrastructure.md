@@ -19,10 +19,8 @@ uygulamak.
 ## Owned surface
 
 - `src/BuildingBlocks/Idempotency/**`
-- `src/BuildingBlocks/Messaging/IInboxHandler.cs`
 - `src/BuildingBlocks/Messaging/IOutboxDeliverySink.cs`
 - `src/BuildingBlocks/Messaging/InboxEnvelope.cs`
-- `src/BuildingBlocks/Messaging/InboxMessage.cs`
 - `src/BuildingBlocks/Messaging/InboxStatus.cs`
 - `src/BuildingBlocks/Messaging/InboxStore.cs`
 - `src/BuildingBlocks/Messaging/OutboxEnvelope.cs`
@@ -39,6 +37,8 @@ uygulamak.
 - `tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj`
 - `tests/BuildingBlocks/Idempotency/packages.lock.json`
 - `database/migrations/V1/V1-FND-002/**`
+- IInboxHandler.cs ve InboxMessage.cs sahipliği V1-FND-015'e
+  devredilmiştir (C42); bu görev artık bu path'leri yazamaz.
 - V0-GOV-014 tarafindan remediated retry policy dosyasi bu task'in yuzeyinden
   devredilmistir; V0-GOV-014 bu task'a dependency ile siralanir.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve

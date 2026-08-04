@@ -153,12 +153,21 @@ eksikleri, hataları, sıralamayı ve kabul kanıtını kilitler. Diskte kod bul
 | 4 | `V1-FND-002`, `V0-GOV-015` | `CREATE TABLE IF NOT EXISTS`, uyumsuz şemayı kabul edip history'ye başarı yazabilir. | Schema doğrulaması fail-closed; uyumsuz şemada history yazılmaz. |
 | 5 | `V1-FND-005` | Database dışı resource DB commit'ten önce commit olabiliyor; tam atomiklik iddiası yanlış. | External side-effect outbox/post-commit contract'a taşınır; failure testleri geçer. |
 | 6 | `V1-FND-002`, `V1-FND-006` | Inbox/Outbox handler DB lock/transaction açıkken çağrılıyor. | Claim/lease transaction içinde, handler dışında; paralel worker testleri geçer. |
-| 7 | `V1-IAM-001` | Expired lock resetlenmiyor; unknown-user timing farkı ve sınırsız hash iteration riski var. | Reset, constant-work ve bounded-iteration testleri geçer. |
+| 7 | `V1-IAM-001` | Expired lock resetlenmiyor; unknown-user timing farkı ve sınırsız hash iteration riski var. | Reset ve bounded-iteration testleri geçer; timing eşit-iş garantisi ve test kararlılığı `V1-IAM-005`'e devredildi (FIND-IA-0056/0057). |
+| 8 | `V1-IAM-005` | Login timing eşit-iş garantisi yok: unknown yolu sabit 600k dummy PBKDF2; bilinen yanlış parola yolu gerçek hash iteration'ı (10k–2M) + ekstra DB UPDATE; stopwatch tabanlı zamanlama testi tam koşuda kararsız. | Work-factor yakınsama (rehash-on-login) ve yazılı güvenlik sözleşmesi; stopwatch testi kaldırılır, deterministik sözleşme testi; ardışık tam koşulda flake'siz. |
+| 9 | `V1-FND-013` | Host "fail-closed constructability" kanıtsız: `BuildServiceProvider()` kayıtlı graph'ı doğrulamıyor. | Kayıtlı her servis constructor graph'ı resolve edilir; kırık graph kompozisyonu fail-closed reddedilir. |
+| 10 | `V1-FND-014` | `RetryPolicy.RecordFailureAsync` serbest `tableName`'i SQL'e interpolate ediyor. | Yalnız kayıtlı sabit tablo kimlikleri kabul edilir; serbest string fail-closed reddedilir. |
+| 11 | `V1-FND-015` | Inbox handler sözleşmesi idempotency zorunlu kılmıyor; lease expiry sonrası yeniden işleme çift etki riski. | Handler sözleşmesi tekrar-teslimde çift etkiyi yasaklar; contract testleri geçer. |
+| 12 | `V0-GOV-030` | GATE-V0-EXIT evidence sayımı bayat: 62/51/11 yazıyor, gerçek 66/55/11. | Sayım yeniden üretilir; 51/62 sayımı tarihsel hata kaydına işlenir; Open/Closed tek kaynağı C41/C42. |
 
 ## Aşama 3 — foundation kabul sırası
 
 V0 kapandıktan sonra mevcut kod yeniden yazılmaz; acceptance evidence üretir ve
 kusur varsa Aşama 2 altında düzeltilir.
+
+Aşama 2 denetim remediasyon görevleri (`V1-IAM-005`, `V1-FND-013`,
+`V1-FND-014`, `V1-FND-015`, `V0-GOV-030`) kabul zincirinden önce kapanır;
+aşağıdaki zincir sırası değişmez (C42).
 
 1. `V1-FND-001`
 2. `V1-FND-010`
@@ -181,6 +190,8 @@ etiketlenir.
 
 - `GATE-V0-EXIT` kapalıdır.
 - Aşama 3 zorunlu chain'i `Done`dur.
+- Aşama 2 denetim remediasyon görevleri (`V1-IAM-005`, `V1-FND-013`,
+  `V1-FND-014`, `V1-FND-015`, `V0-GOV-030`) `Done`dur.
 - `V0-DAT-002` ve `V0-CMP-002` `Done`dur.
 - Tek gerçek assignee atanmıştır.
 - Yalnız `src/Modules/Catalog/ProductCatalog/**`, ilgili test yüzeyi ve
