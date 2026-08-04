@@ -1,7 +1,7 @@
 # V1-FND-015 - Mandate inbox side-effect idempotency contract
 
 - Task ID: V1-FND-015
-- Status: Planned
+- Status: Done
 - Assignee: opencode-v1-fnd-015
 - Work type: implementation
 - Surface state: Existing

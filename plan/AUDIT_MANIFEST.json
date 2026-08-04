@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 403,
-  "markdown_line_count": 27364,
-  "markdown_byte_count": 1857250,
+  "markdown_file_count": 404,
+  "markdown_line_count": 27426,
+  "markdown_byte_count": 1859853,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -833,6 +833,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-FND-014/verification.md",
+      "sha256": "EB3FFB184815D7976E727913C9D2E0C2F939B266B8E55F514858E1138A63BB6A",
+      "lines": 61,
+      "bytes": 2466,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/defect-7-closure.md",
       "sha256": "D1567120296FB180FE0981B03EC973A380948359AEEBF85D6B483260E7DF2B5C",
       "lines": 120,
@@ -883,9 +890,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F1CE3C62A8A52CBE2B4B5B627D8DC8988791094A1012CC11B4F05CC8EBBDCAEF",
-      "lines": 1679,
-      "bytes": 230123,
+      "sha256": "3584331F2E6C05C4FB488BB4CE3B7FF8D0E0469F3E8BF3485E0F5466C517D494",
+      "lines": 1680,
+      "bytes": 230263,
       "utf8": true
     },
     {
@@ -1604,16 +1611,16 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-014-retry-sql-identifier-hardening.md",
-      "sha256": "520A8EE16A08D00326FF12899072F0399DE73627F5BC34C1B2D62E2A000DA2C7",
+      "sha256": "44C7E63B54DD98B672544E9A0FF9276159015800F02E0C86F9AC5912C3E94FAF",
       "lines": 56,
-      "bytes": 1486,
+      "bytes": 1480,
       "utf8": true
     },
     {
       "path": "plan/v1/foundation/V1-FND-015-inbox-idempotency-contract.md",
-      "sha256": "0C39A8618CF7CA1581EDBE2800EBB2210736C4A4A2912A1E1615CDB980CE9C6E",
+      "sha256": "D6A325A45F3E35D55A290C7376AA55ACC554E67B943883F90640EDE42407222B",
       "lines": 58,
-      "bytes": 1819,
+      "bytes": 1822,
       "utf8": true
     },
     {
