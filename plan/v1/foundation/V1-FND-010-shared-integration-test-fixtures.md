@@ -1,8 +1,8 @@
 # V1-FND-010 - Verify shared integration-test fixture ownership
 
 - Task ID: V1-FND-010
-- Status: Blocked
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-fnd-010
 - Work type: validation
 - Surface state: Existing
 
@@ -40,14 +40,6 @@ sahipliğini doğrulamak; doğrulanmayan yardımcıyı kabul edilmiş foundation
 ## Dependencies
 
 - V1-FND-001
-
-## Blocker
-
-- Bu dört mevcut dosya hiçbir task tarafından sahiplenilmemiştir; oluşturma commit'i ve mevcut kullanıcı testleriyle
-  uyumlu
-  provenance kanıtı henüz bu task altında yoktur. Ancak her dosya için commit/hash/kullanım/test transcript'i doğrulanır
-ve
-  kabul edilen remediation karar kaydı oluşursa görev `Planned` yapılabilir.
 
 ## Deliverables
 

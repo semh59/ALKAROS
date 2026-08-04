@@ -1,0 +1,54 @@
+# V1-FND-010 provenance
+
+Dört shared integration-test fixture dosyasının commit/hash/kullanım kanıtı.
+
+## Dosyalar
+
+- `tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj`
+  - Oluşturan commit: `6f5278c` (2026-08-02, "fix(foundation): hold dispatch claim locks and consolidate test fixtures")
+  - SHA-256: `CDFE656CBB4A5E5E18BAD168ADAEE9A344F001E168EFE3CDCF51B54AD30C4E83`
+- `tests/BuildingBlocks/TestHelpers/Fixtures/PgTestDatabase.cs`
+  - Oluşturan commit: `6f5278c` (2026-08-02)
+  - SHA-256: `E830CE1D339D3BA8BBF6B0D549F989B19A9A6FAC15DCD2A89FE36DF4357D4BB1`
+- `tests/BuildingBlocks/TestHelpers/Fixtures/RecordingResource.cs`
+  - Oluşturan commit: `6f5278c` (2026-08-02)
+  - SHA-256: `8728DC02F89720BE772EEB8D00FC6FCD49451E6399B31B93FAD0C3ADC9B207DA`
+- `tests/BuildingBlocks/TestHelpers/Fixtures/SimulatedFailures.cs`
+  - Oluşturan commit: `6f5278c` (2026-08-02)
+  - SHA-256: `030B4D76D025C0A57A9607D32CD7E2A27CD275E68F2C3D4E08C2217705876B4B`
+
+## Tüketici test projeleri (ProjectReference -> ALKAROS.TestHelpers.csproj)
+
+1. `tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj`
+2. `tests/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.Tests.csproj`
+3. `tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj`
+4. `tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj`
+
+`src/` altında TestHelpers'e hiçbir proje referansı yoktur (test-only altyapı).
+
+## Fixture kullanımı
+
+- `PgTestDatabase`: `AuthTestDatabase` (Identity.Authentication),
+  `TransactionOutboxTestDatabase` (TransactionOutboxIntegration),
+  `StoreTestDatabase` (Idempotency) alt sınıfları.
+- `RecordingResource`: `ITransactionResource` — Transactions (Concurrency,
+  Retry, Propagation, Execution) + TransactionOutboxIntegrationTests.
+- `SimulatedFailures` (`SimulatedFailureException`,
+  `SimulatedTransientException`, `FixedClassifier`): Transactions (Retry,
+  Execution, Propagation) + TransactionOutboxIntegration +
+  `RecordingResource` içinde.
+
+## Tek sahiplik
+
+- Bu dört path'i kendi görev dosyası dışında hiçbir task dosyası Owned
+  surface olarak yazmaz; `plan_audit_tool.py validate` SURFACE_DUPLICATE 0.
+- Tek sahip: V1-FND-010.
+
+## Test kanıtı
+
+- Tam çözüm koşusu (`dotnet test ALKAROS.slnx --no-build`, çevre:
+  ALKAROS_TEST_PG_PORT=5433 + ALKAROS_TEST_PG_PASSWORD) exit 0:
+  `test-fullsuite.txt` — 279/279 (Transactions 25, TxOutbox 12, Idempotency
+  80, Identity 51 dahil; tüm tüketici projeleri aynı koşuda yeşil).
+- Bu koşu, kapsam değişikliği yapılmadan yürütülmüştür: fixture dosyaları
+  üzerinde hiçbir yazma işlemi yok; görev saf validasyondur.

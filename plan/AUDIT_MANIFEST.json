@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 409,
-  "markdown_line_count": 27881,
-  "markdown_byte_count": 1881649,
+  "markdown_file_count": 410,
+  "markdown_line_count": 27934,
+  "markdown_byte_count": 1884121,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -840,6 +840,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-FND-010/verification.md",
+      "sha256": "566DAEE4CDB3EB3AE7A04FB94E56B726DAE5D401B8162E272044133AFEF11584",
+      "lines": 52,
+      "bytes": 2338,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-012/closure-report.md",
       "sha256": "13EC4E6C7C6439ECE442876083DFE2A1F3B5DA57012AB320DDE90250EC94EBFC",
       "lines": 24,
@@ -918,9 +925,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "BD2F077B2FA3EFD79D26FF9E122FE9EC916D483952BD55CE52DBCC79035168A8",
-      "lines": 1685,
-      "bytes": 230988,
+      "sha256": "95E8B5F4434A9CD7CE7EF07FCF41D4D81204E58AEDE2A04EC56F0BD9A5FA0704",
+      "lines": 1686,
+      "bytes": 231128,
       "utf8": true
     },
     {
@@ -1618,9 +1625,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md",
-      "sha256": "536DF8B8EF8CCECAB3F982256D3E274CAE1C6B04288C766B556974EF9F7EAAF4",
+      "sha256": "78F2C976BA22B9F17C6556DD380BB1A5C68CA24E57E8F7B7B8112DB3A3F40B68",
       "lines": 58,
-      "bytes": 2104,
+      "bytes": 2098,
       "utf8": true
     },
     {
