@@ -1,7 +1,7 @@
 # V0-DOM-008 - Define reporting metric contracts
 
 - Task ID: V0-DOM-008
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-dom-008
 - Work type: decision
 - Surface state: Existing
@@ -35,11 +35,6 @@ tanımlamak.
 
 - V0-DAT-004
 - V0-CMP-002
-
-## Blocker
-
-- Candidate evidence, `V0-DOM-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

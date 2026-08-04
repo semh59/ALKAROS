@@ -1,8 +1,8 @@
 # V0-GOV-015 - Make migrations atomic and history-backed
 
 - Task ID: V0-GOV-015
-- Status: Blocked
-- Assignee: /root
+- Status: Done
+- Assignee: codex-v0-gov-015
 - Work type: implementation
 - Surface state: Existing
 
@@ -23,6 +23,7 @@ uygulanmamis veya sonraki position varken rollback'i reddetmek.
 - `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
 - `src/Host/Composition/Migrations/MigrationHistoryStore.cs`
 - `tests/Host/MigrationComposition/History/MigrationHistoryTests.cs`
+- `tests/Host/MigrationComposition/Composition/HostServiceRegistrationTests.cs`
 - `evidence/V0-GOV-015/**`
 
 ## In scope
@@ -39,11 +40,6 @@ uygulanmamis veya sonraki position varken rollback'i reddetmek.
 
 - V0-GOV-012
 - V1-FND-004
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

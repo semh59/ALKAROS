@@ -1,11 +1,13 @@
 # Nullable Uniqueness Policy
 
 > **Task:** V0-DAT-003
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-dat-003
 > **Work type:** decision
 > **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2, PDF:II.13-II.15, PDF:III.29-III.40
 > **Date:** 2026-07-30
+> **Approver:** Semih — 2026-08-03
+> **Decision type:** Business decision (named business approver)
 
 ## 1. Decision
 

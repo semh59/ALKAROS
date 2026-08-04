@@ -1,174 +1,50 @@
-# Table Reservation Policy
+# Table Reservation Policy — approved decision record
 
 > **Task:** V0-DOM-005
-> **Status:** Blocked
-> **Assignee:** codex-v0-dom-005
+> **Status:** Done
 > **Work type:** decision
 > **Source basis:** PDF:II.2.3, PDF:II.3.16, PDF:II.5.15, PDF:III.5, CORR:C5
-> **Date:** 2026-07-30
+> **Access date:** 2026-08-02
+> **Approver:** Semih — 2026-08-03
+> **Decision type:** Business decision (named business approver)
 
-## 1. Decision Record
+PDF `II.5.15` defines table `current_status`: `Available, Occupied,
+Reserved, Cleaning, OutOfService` and states the table state machine is
+deliberately lighter than financial machines (no ReconciliationCase, no
+mandatory actor/reason), subject to the general concurrency rule (I.14,
+optimistic concurrency). `CORR:C5`'s fix (`I.35`/`II.5.15`) binds the QR
+seating race: `PendingConfirmation` moves the table to `Reserved`,
+`Accepted` to `Occupied`, `Rejected` back to `Available`.
 
-| Field | Value |
-| ------- | ------- |
-| **Decision ID** | V0-DOM-005-D001 |
-| **Date** | 2026-07-30 |
-| **Approver** | TBD |
-| **Selected result** | Reservation as first-class entity with owner, reason, expiry, and cancellation |
-| **Rejected alternatives** | Table-level flag only (no audit trail, no expiry); Soft-delete reservation (complexity) |
+## Selected decisions
 
-## 2. Reservation Model
+| Rule | Selected result | Basis |
+| --- | --- | --- |
+| `Reserved` meaning | The table is not physically occupied but not free for other seating; it is owned by exactly one pending QR order | PDF `II.5.15` + CORR:C5 fix |
+| Who creates `Reserved` | Only the QR order state machine: entering `PendingConfirmation` moves the table `Available → Reserved`; walk-in/personnel cannot create reservation semantics | CORR:C5 fix; "QR bir rezervasyon semantiği icat edemez" inverse holds: QR is the only reservation creator |
+| Exit transitions | `PendingConfirmation → Accepted` ⇒ `Reserved → Occupied`; `Rejected`/`Cancelled` ⇒ `Reserved → Available` (subject to optimistic concurrency — if another process changed the table, its change wins) | CORR:C5 fix; I.14 |
+| Expiry | No time-based expiry: `Reserved` persists as long as the owning order is `PendingConfirmation`; the order state machine is the single owner | Avoids a second timer state the PDF does not define |
+| Walk-in priority | A `Reserved` table is never assigned to a walk-in; walk-in allocation considers only `Available` tables | "not free for other seating" (CORR:C5) |
+| Transfer/merge | `Reserved` tables cannot be transferred or merged; transfer/merge apply to `Occupied` tables and carry the soft cache pointers | PDF `III.5.3/III.5.4`; keeping Reserved single-owner |
+| Concurrency | All table transitions use `row_version` optimistic concurrency; stale updates are rejected | PDF `II.5.15`/I.14 |
+| Cache pointers | `tables.current_order_id`/`current_bill_id` are soft cache pointers; ownership truth is `orders.orders.table_id`/`billing.bills.table_id` | PDF `III.5.2` note |
 
-### Core Schema
+## Rejected alternatives
 
-```sql
-CREATE TABLE reservations (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    table_id        UUID NOT NULL REFERENCES tables(id) ON DELETE RESTRICT,
-    actor           VARCHAR(50) NOT NULL CHECK (actor IN ('host', 'waiter', 'customer_qr', 'system')),
-    actor_id        UUID, -- user or customer reference
-    reason          VARCHAR(500) NOT NULL,
-    reserved_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-    expires_at      TIMESTAMPTZ NOT NULL,
-    cancelled_at    TIMESTAMPTZ,
-    cancelled_by    UUID,
-    cancel_reason   VARCHAR(500),
-    CONSTRAINT chk_expiry_after_reserve CHECK (expires_at > reserved_at)
-);
-```
+- Time-based reservation expiry — rejected: creates a second ownership
+  model; the order state machine already owns the lifecycle.
+- Personnel-created manual reservations — rejected: no PDF source and
+  explicit reservation UI is out of scope.
+- Transferring a `Reserved` table — rejected: breaks the single-owner
+  invariant during the pending window.
+- Walk-in taking a `Reserved` table on no-show — rejected: no no-show model
+  exists; table is released only through the order lifecycle.
 
-### Key Design Decisions
+## Invariants (consumers)
 
-| Decision | Choice | Rationale |
-| ---------- | -------- | ----------- |
-| Reservation as entity | Separate table | Full audit trail, expiry, cancellation tracking |
-| `actor` enum | host/waiter/customer_qr/system | Clear ownership of reservation |
-| `expires_at` | Required | Prevents abandoned reservations blocking tables |
-| `cancelled_at` | Nullable | Soft cancellation with audit trail |
-| QR table hold | QR order in `PendingConfirmation` places the table in `Reserved`; `Accepted` → `Occupied`, `Rejected` → `Available` (CORR:C5, implementation: V14-QRO-002) | Table state reliably reflects QR order confirmation without direct QR reservation creation |
-
-## 3. Reservation Rules
-
-### Rule 1: Reservation Ownership
-
-Every reservation MUST have an actor and reason. A reservation without an owner is invalid.
-
-### Rule 2: Expiry
-
-A reservation in `Reserved` state automatically transitions to `Available` when `expires_at` is reached. The system MUST
-check expiry on any Table state query.
-
-### Rule 3: Cancellation
-
-A reservation can be cancelled by:
-
-- The original actor (host/waiter)
-- A manager
-- System (e.g., table reassignment)
-
-Cancellation MUST record `cancelled_at`, `cancelled_by`, and `cancel_reason`.
-
-### Rule 4: QR Order Table Hold (CORR:C5)
-
-A QR order that reaches `PendingConfirmation` MUST transition the table to `Reserved`. When the order is `Accepted`,
-the table becomes `Occupied`; when `Rejected`, the table returns to `Available`. The QR flow itself MUST NOT create a
-reservation record directly — the table transition is driven by the order state machine (implementation: V14-QRO-002).
-
-### Rule 5: Occupancy Priority
-
-When a Table is `Reserved` and a walk-in customer arrives:
-
-- If the reservation is within 15 minutes of `expires_at`, the host may offer the table to walk-in
-- If the reservation has expired, the table is automatically `Available`
-- A walk-in cannot override an active (non-expired) reservation without manager approval
-
-### Rule 6: Concurrent Reservation Prevention
-
-A Table can have at most one active (non-expired, non-cancelled) reservation at any time.
-
-## 4. Invariants
-
-1. **Single active reservation**: A Table may have at most one reservation where `expires_at > now()` AND `cancelled_at
-   IS NULL`.
-2. **QR table hold (CORR:C5)**: A QR order in `PendingConfirmation` MUST place the table in `Reserved`; `Accepted` →
-   `Occupied`; `Rejected` → `Available`. The QR flow MUST NOT create reservation records directly.
-3. **Expiry enforcement**: `expires_at` MUST be in the future at creation time.
-4. **Audit trail**: Every reservation creation, cancellation, and expiry MUST be logged.
-5. **Table state consistency**: When a reservation expires or is cancelled, Table state MUST return to `Available`.
-
-## 5. Positive Examples
-
-### Example 1: Host reserves table
-
-- Host creates reservation for Table 5, 19:00-21:00
-- Table 5: Available → Reserved
-- At 21:00, reservation expires → Table 5: Reserved → Available
-
-### Example 2: Waiter cancels reservation
-
-- Waiter creates reservation for Table 3
-- Customer cancels; waiter cancels reservation with reason "customer cancelled"
-- Table 3: Reserved → Available immediately
-
-### Example 3: QR order table hold
-
-- Customer scans QR code on Table 7 and submits an order
-- Order enters `PendingConfirmation` → Table 7: Available → Reserved (system hold)
-- Restaurant accepts the order → Table 7: Reserved → Occupied
-- (If rejected instead → Table 7: Reserved → Available)
-
-## 6. Negative Examples
-
-### Example 1: QR attempts direct reservation
-
-- Customer scans QR code on Table 7
-- QR flow attempts to create a reservation record directly with actor=`customer_qr` without an order in
-  `PendingConfirmation`
-- Result: Rejected — table transitions are driven by order state (PendingConfirmation/Accepted/Rejected) or explicit
-  `host`/`waiter`/`system` actors; the QR flow cannot create reservations
-
-### Example 2: Double reservation
-
-- Table 2 has active reservation (19:00-21:00)
-- Host attempts to create another reservation for Table 2 at 19:30
-- Result: Rejected — table already has active reservation
-
-## 7. Consumer Task Interface
-
-### Input (Create)
-
-```json
-{
-  "tableId": "uuid",
-  "actor": "host | waiter | system",
-  "actorId": "uuid",
-  "reason": "Customer requested",
-  "expiresAt": "2026-07-30T21:00:00Z"
-}
-```
-
-### Output
-
-```json
-{
-  "reservationId": "uuid",
-  "tableId": "uuid",
-  "newState": "Reserved",
-  "expiresAt": "2026-07-30T21:00:00Z"
-}
-```
-
-### Error Output
-
-```json
-{
-  "success": false,
-  "error": "TABLE_ALREADY_RESERVED | QR_CANNOT_RESERVE | INVALID_ACTOR | EXPIRY_IN_PAST",
-  "details": "string"
-}
-```
-
-## 8. Affected Tasks
-
-- V1-TBL-004 (Table management)
-- V14-QRO-002 (QR order flow)
+- `V1-TBL-004`, `V14-QRO-002`: `Reserved` has one persistent owner (the
+  pending order), one exit path per order result, and no time-based expiry.
+- The QR flow never invents reservation semantics beyond the
+  `PendingConfirmation` mapping; other channels never create `Reserved`.
+- A table's `current_status` always converges to the owning order's state
+  within the same transaction that moves the order.

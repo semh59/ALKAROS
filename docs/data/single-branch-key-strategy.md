@@ -1,11 +1,13 @@
 # Single-Branch and Business Key Strategy
 
 > **Task:** V0-DAT-005
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-dat-005
 > **Work type:** decision
 > **Source basis:** PDF:I.1.5, PDF:II.0, PDF:III.2
 > **Date:** 2026-07-30
+> **Approver:** Semih — 2026-08-03
+> **Decision type:** Business decision (named business approver)
 
 ## 1. Key Strategy
 

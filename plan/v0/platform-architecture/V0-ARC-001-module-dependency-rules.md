@@ -1,7 +1,7 @@
 # V0-ARC-001 - Lock module dependency rules
 
 - Task ID: V0-ARC-001
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-arc-001
 - Work type: decision
 - Surface state: Existing
@@ -33,12 +33,6 @@ Modular Monolith modüllerinin public contract ve dependency yönünü belirleme
 
 - V0-DOM-001
 - V0-DOM-002
-
-## Blocker
-
-- Mevcut record hem doğrudan compile-time module dependency hem de "yalnız integration event" kuralını tanımlar;
-  seçilmiş tek iletişim modeli ve named approver yoktur. Ancak kesin reference/event boundary karar kaydı doğrulanınca
-  görev yeniden `Planned` yapılabilir.
 
 ## Deliverables
 

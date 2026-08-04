@@ -1,7 +1,7 @@
 # V0-DOM-006 - Define void complimentary and discount policy
 
 - Task ID: V0-DOM-006
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-dom-006
 - Work type: decision
 - Surface state: Existing
@@ -35,11 +35,6 @@ tanımlamak.
 
 - V0-CMP-002
 - V0-DOM-003
-
-## Blocker
-
-- Candidate evidence, `V0-CMP-002` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

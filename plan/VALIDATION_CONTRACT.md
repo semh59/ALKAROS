@@ -74,6 +74,13 @@ npx --yes markdownlint-cli2@0.23.2
   ve 2026-08-03 kullanıcı onaylarını makinece doğrular. Kayıtlı candidate-code
   remediation kimliği `--candidate-remediation` ile yalnız mevcut kanıtlanmış
   kusuru düzeltebilir; açık dependency veya gate kabul kanıtı sayılmaz.
+- `GATES.md` içindeki `V0_DEFERRED_TASKS` marker tablosu 2026-08-03 kullanıcı
+  onaylı devir listesini makinece doğrular (`TRACEABILITY.md` C40). Listede
+  olmayan V0 görevi `Blocked` ise `APPLICATION_STARTED_BEFORE_V0_EXIT` hatası
+  üretilmeye devam eder; listedeki görevler `Blocked` kalır, kanıtlarını ilgili
+  aşamada (V12-V20) toplar ve `GATE-V0-EXIT` kapanış kanıtı sayılmaz.
+  `DEPENDENCY_REMOVALS`/forbidden seti dışında dependency düzenlemesi kabul
+  edilmez; devir yeni product behavior başlatma izni vermez.
 - Tablo marker'ı, başlığı, ayıracı, satır biçimi, approval tarihi veya exact
   Task ID kümesi bozuksa; yinelenen ya da ek bir kayıt varsa task-scope
   denetimi fail-closed non-zero exit verir. İstisna V0/V1 gate kapanış kanıtı
@@ -100,8 +107,9 @@ npx --yes markdownlint-cli2@0.23.2
 
 ## PDF coverage kontrolleri
 
-- PDF'deki 375 adet `I.*`, `II.*`, `III.*`, `IV.*` başlığı ve `C1-C9`
-  kayıtları coverage matrisinde tam olarak bir kez yer alır.
+- PDF'deki 374 adet `I.*`, `II.*`, `III.*`, `IV.*` başlığı ve `C1-C9`
+  kayıtları coverage matrisinde tam olarak bir kez yer alır. (2026-08-03:
+  FIND-IA-0004 doğrulamasına göre 375→374 düzeltildi; C38.)
 - PDF'nin 94 sayfasından çıkarılan 2.725 non-empty text line; page, parent
   section, class, tam normalize text SHA-256, owner ve disposition taşır.
 - List item ve normative expression sınıfları line matrix içinde ayrıca
@@ -109,7 +117,7 @@ npx --yes markdownlint-cli2@0.23.2
 - `pdfplumber` geometry detector tarafından bulunan 178 table-like row ayrıca
   page/bounding-order temelli unit kimliği ve tam normalize cell-text SHA-256
   değeriyle izlenir. Bu sınıf semantik tablo varsayımı değildir.
-- Regeneration aynı 375/9/2.725/178 sayılarını, parent/owner değerlerini ve aynı
+- Regeneration aynı 374/9/2.725/178 sayılarını, parent/owner değerlerini ve aynı
   unit hash'lerini üretir.
 - `II.16` plan gereksinimi olarak oluşturulmaz; belge haritası finding'i olarak
   tutulur.

@@ -1,11 +1,13 @@
 # Deployment Compatibility Matrix
 
 > **Task:** V0-ARC-007
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-arc-007
 > **Work type:** decision
 > **Source basis:** PDF:I.45.1, EXT:DOTNET-SUPPORT-2026-07, EXT:POSTGRESQL-18.4, CORR:C15
 > **Date:** 2026-07-30
+> **Approver:** Semih — 2026-08-03
+> **Decision type:** Business decision (named business approver)
 
 ## 1. Compatibility Matrix
 

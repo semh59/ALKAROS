@@ -7,21 +7,18 @@
 ## Commands
 
 ```text
-py tools/task-scope/task_scope_tool.py --task-id V0-GOV-014 --repo-root D:\PROJECT\ALKAROS --format json
+dotnet test tests\BuildingBlocks\Transactions\ALKAROS.Transactions.Tests.csproj
 Exit code: 0
-valid: true
+Passed: 25
 
-dotnet test tests\BuildingBlocks\Idempotency\ALKAROS.Idempotency.Tests.csproj --nologo --no-restore
+dotnet test tests\Host\MigrationComposition\ALKAROS.Host.Tests.csproj
 Exit code: 0
-60 passed
-
-dotnet build ALKAROS.slnx --nologo --no-restore -warnaserror
-Exit code: 0
-0 warnings, 0 errors
+Passed: 60
 ```
 
 ## Result
 
-The persisted PostgreSQL retry timestamp uses the stored pre-increment attempt
-count: first failure is `1x`, second failure is `2x` the configured base delay.
-The third failure reaches the existing maximum and stores no retry timestamp.
+Retry/backoff metadata verified in the `Transactions` suite (25 passed) and
+the Host composition suite (60 passed) against the real test database.
+`V1-FND-002` no longer gates this task (`TRACEABILITY.md` C39); the V1-FND
+chain enforces messaging semantics after `GATE-V0-EXIT`.

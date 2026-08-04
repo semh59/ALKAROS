@@ -1,11 +1,13 @@
 # QR Relay Production Topology
 
 > **Task:** V0-ARC-009
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-arc-009
 > **Work type:** decision
 > **Source basis:** PDF:I.6.5, PDF:I.34-I.35, PDF:II.7.3, CORR:C22
 > **Date:** 2026-07-30
+> **Approver:** Semih — 2026-08-03
+> **Decision type:** Business decision (named business approver)
 
 ## 1. Topology
 

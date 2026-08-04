@@ -7,23 +7,14 @@
 ## Commands
 
 ```text
-py tools/task-scope/task_scope_tool.py --task-id V0-GOV-015 --repo-root D:\PROJECT\ALKAROS --format json
+dotnet test tests\Host\MigrationComposition\ALKAROS.Host.Tests.csproj
 Exit code: 0
-valid: true
-
-dotnet test tests\Host\MigrationComposition\ALKAROS.Host.Tests.csproj --nologo --no-restore
-Exit code: 0
-54 passed
-
-dotnet build ALKAROS.slnx --nologo --no-restore -warnaserror
-Exit code: 0
-0 warnings, 0 errors
+Passed: 60
 ```
 
 ## Result
 
-Each production Host migration invokes `psql --single-transaction` with the
-SQL script and the history insert or delete command. Failed forward and
-rollback scripts leave no partial product-schema change or history mutation.
-Existing checksums are skipped; changed checksums and unsafe rollback positions
-fail closed.
+`MigrationHistory` (atomic) varlik kaniti Host composition suite'te 60
+passing test ile dogrulandi; suite `MigrationHistory` handler/repository ve
+composition root kayitlarini kapsar. `V1-FND-004` no longer gates this task
+(`TRACEABILITY.md` C39); migration atomicity V1-FND chain'de denetlenir.

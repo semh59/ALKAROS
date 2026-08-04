@@ -114,6 +114,32 @@ DEPENDENCY_ADDITIONS = {
 DEPENDENCY_REMOVALS = {
     "V14-QRO-002": ["V0-CMP-001"],
     "V14-STK-001": ["V14-QRO-003", "V14-ONL-002"],
+    "V0-ARC-009": ["V0-SEC-001"],
+    "V0-CMP-002": ["V0-CMP-001"],
+    "V0-CMP-004": ["V0-CMP-001"],
+    "V0-GOV-010": ["V1-FND-003"],
+    "V0-GOV-013": ["V1-SEC-002"],
+    "V0-GOV-014": ["V1-FND-002"],
+    "V0-GOV-015": ["V1-FND-004"],
+}
+
+# 2026-08-03 user-approved plan change (TRACEABILITY C40): these V0 tasks
+# require real external evidence (provider contract, device, license or
+# security standard) that cannot exist before V0 exits. They stay Blocked but
+# are excluded from the V0 gate-open check and close with evidence at the
+# stage named in GATES.md.
+V0_DEFERRED_TASKS = {
+    "V0-HUG-001",
+    "V0-QNB-001",
+    "V0-YSP-001",
+    "V0-MCD-001",
+    "V0-PRN-001",
+    "V0-QRG-001",
+    "V0-CMP-001",
+    "V0-SEC-001",
+    "V0-LIC-001",
+    "V0-BKP-001",
+    "V0-BKP-002",
 }
 
 BROAD_HANDOFF_REPLACEMENTS = {
@@ -1879,6 +1905,7 @@ def application_tasks_started_before_v0_exit(
     """Reject newly started application work while a V0 task remains blocked."""
     v0_gate_open = any(
         task_id.startswith("V0-")
+        and task_id not in V0_DEFERRED_TASKS
         and metadata_value(preamble, "Status", "") == "Blocked"
         for task_id, (_, preamble, _, _) in tasks.items()
     )
@@ -1931,6 +1958,23 @@ def validate_plan() -> None:
     )
     gate_text = read_utf8(PLAN_DIR / "GATES.md")
     registered_gates = set(GATE_ID.findall(gate_text))
+    deferred_block = gate_text.split("<!-- V0_DEFERRED_TASKS:START -->", 1)
+    if len(deferred_block) != 2 or "<!-- V0_DEFERRED_TASKS:END -->" not in deferred_block[1]:
+        errors.append("GATES_V0_DEFERRED_MARKER_MISSING")
+    else:
+        deferred_table = deferred_block[1].split("<!-- V0_DEFERRED_TASKS:END -->", 1)[0]
+        registered_deferred = set(
+            re.findall(
+                r"^\| `(V0-[A-Z0-9]+-\d+)` \| `2026-08-03` \|",
+                deferred_table,
+                re.MULTILINE,
+            )
+        )
+        if registered_deferred != V0_DEFERRED_TASKS:
+            errors.append(
+                "GATES_V0_DEFERRED_MISMATCH expected=%s registered=%s"
+                % (sorted(V0_DEFERRED_TASKS), sorted(registered_deferred))
+            )
     traceability_text = read_utf8(PLAN_DIR / "TRACEABILITY.md")
     registered_corrections = set(
         re.findall(r"^\| `(C\d+)` \|", traceability_text, re.MULTILINE)
@@ -2090,6 +2134,8 @@ def validate_plan() -> None:
                     deps.append(value)
             elif value.startswith("GATE-") and value not in registered_gates:
                 errors.append(f"GATE_UNKNOWN {task_id}: {value}")
+        for removal in DEPENDENCY_REMOVALS.get(task_id, []):
+            deps = [value for value in deps if value != removal]
         dependency_graph[task_id] = deps
         for line in sections.get("Handoff", []):
             value = line[2:].strip()
@@ -2400,6 +2446,13 @@ def validate_plan() -> None:
     forbidden_dependencies = {
         "V14-QRO-002": {"V0-CMP-001"},
         "V14-STK-001": {"V14-QRO-003", "V14-ONL-002"},
+        "V0-ARC-009": {"V0-SEC-001"},
+        "V0-CMP-002": {"V0-CMP-001"},
+        "V0-CMP-004": {"V0-CMP-001"},
+        "V0-GOV-010": {"V1-FND-003"},
+        "V0-GOV-013": {"V1-SEC-002"},
+        "V0-GOV-014": {"V1-FND-002"},
+        "V0-GOV-015": {"V1-FND-004"},
     }
     for task_id, forbidden in forbidden_dependencies.items():
         present = forbidden & set(dependency_graph.get(task_id, []))

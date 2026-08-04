@@ -1,7 +1,7 @@
 # V0-CMP-004 - Determine restaurant fee and tip applicability
 
 - Task ID: V0-CMP-004
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-cmp-004
 - Work type: validation
 - Surface state: Existing
@@ -31,12 +31,6 @@ Hedef işletme için bahşiş, servis, masa ve kuver ücretlerinin yasal ve oper
 
 - V0-CMP-001
 - V0-CMP-002
-
-## Blocker
-
-- `CORR:C10` yalnız kaynak boşluğunu gösterir; tip, servis, kuver veya vergi sonucunu kanıtlamaz. Ancak resmî mali
-  kaynak
-  ve named business approver her ücret için sonucu onaylayınca görev yeniden `Planned` yapılabilir.
 
 ## Deliverables
 

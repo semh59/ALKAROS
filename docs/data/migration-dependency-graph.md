@@ -1,11 +1,13 @@
 # Migration Dependency Graph
 
 > **Task:** V0-DAT-001
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-dat-001
 > **Work type:** decision
 > **Source basis:** PDF:II.0-II.1, PDF:III.0-III.2, PDF:II.13-II.15, PDF:III.29-III.40, CORR:C1
 > **Date:** 2026-07-30
+> **Approver:** Semih — 2026-08-03
+> **Decision type:** Business decision (named business approver)
 > **2026-08-01 kayıtlı güncelleme (V1-FND-002 kapsamı, V0-DAT-001 sahipliğinde):** Altyapı tabloları
 > `idempotency_keys`, `inbox_messages` ve `outbox_messages` eklendi. Bu tablolar hiçbir domain tablosuna FK
 > taşımaz ve domain tablolarından kendilerine FK taşınmaz (örn. `payment_allocations.idempotency_key` V0-DOM-004

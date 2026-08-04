@@ -7,22 +7,25 @@
 ## Commands
 
 ```text
-py tools/task-scope/task_scope_tool.py --task-id V0-GOV-016 --repo-root D:\PROJECT\ALKAROS --format json
+py tools/plan-audit/plan_audit_tool.py generate-audit-report
 Exit code: 0
-valid: true
+Audit findings recorded: 1827
+Audit report lines: 1669
 
-dotnet test ALKAROS.slnx --nologo --no-restore
+py tools/plan-audit/plan_audit_tool.py generate-manifest
 Exit code: 0
-232 passed
+Manifest Markdown files: 393
+Manifest SHA-256: C22E5C7BEDCA3363E61E9CD548D32AEADCC40ED9223906438E3349AF0247E75D
 
-py tools\plan-audit\plan_audit_tool.py validate
-py tools\plan-audit\plan_audit_tool.py validate-coverage
-py tools\plan-audit\plan_audit_tool.py verify-manifest
+py tools/plan-audit/plan_audit_tool.py verify-manifest
+Exit code: 0
+
+git diff --check
 Exit code: 0
 ```
 
 ## Result
 
-The audit generator now labels Git and application-surface statements as
-initial-audit context. The regenerated report and manifest record the active
-Markdown inventory after the three verified remediation tasks.
+Post-remediation audit refresh: audit report ve manifest, 2026-08-03 V0
+kapanis batch'i sonrasi yeniden uretildi ve verify-manifest ile eslendi.
+Baseline audit records 211, added 182; no drift.

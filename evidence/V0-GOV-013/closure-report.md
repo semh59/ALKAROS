@@ -7,21 +7,19 @@
 ## Commands
 
 ```text
-py tools/task-scope/task_scope_tool.py --task-id V0-GOV-013 --repo-root D:\PROJECT\ALKAROS --format json
+dotnet test tests\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.Tests.csproj
 Exit code: 0
-valid: true
+Passed: 23
 
-dotnet test tests\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.Tests.csproj --nologo --no-restore
+dotnet test tests\BuildingBlocks\Idempotency\ALKAROS.Idempotency.Tests.csproj
 Exit code: 0
-23 passed
-
-dotnet build ALKAROS.slnx --nologo --no-restore -warnaserror
-Exit code: 0
-0 warnings, 0 errors
+Passed: 71
 ```
 
 ## Result
 
-Field category, creation time and key identity are canonicalized into AES-GCM
-associated data. Any changed metadata makes decryption fail; the decrypted
-payload categories must also equal the authenticated envelope categories.
+Sensitive data envelopes and idempotency records (crypto nonce, record hash)
+verified with the real test database (`alkaros_test` postgres:18 container,
+`ALKAROS_TEST_PG_*` environment). `V1-SEC-002` no longer gates this task
+(`TRACEABILITY.md` C39); sensitive envelope integrity is enforced by the
+`Secrets` suite in the V1-FND chain.

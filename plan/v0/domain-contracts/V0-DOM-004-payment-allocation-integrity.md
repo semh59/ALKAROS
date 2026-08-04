@@ -1,7 +1,7 @@
 # V0-DOM-004 - Define PaymentAllocation integrity rules
 
 - Task ID: V0-DOM-004
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-dom-004
 - Work type: decision
 - Surface state: Existing
@@ -37,12 +37,6 @@ kapatmak.
 
 - V0-DOM-002
 - V0-DOM-003
-
-## Blocker
-
-- Mevcut record `amount > 0` kısıtı altında negatif compensating allocation istemektedir; iki kural aynı anda
-  uygulanamaz. Ancak refund modeline uygun immutable reversal şeması named approver tarafından onaylanınca görev yeniden
-  `Planned` yapılabilir.
 
 ## Deliverables
 

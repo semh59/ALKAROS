@@ -1,7 +1,7 @@
 # V0-DOM-009 - Define receipt variance policy
 
 - Task ID: V0-DOM-009
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-dom-009
 - Work type: decision
 - Surface state: Existing
@@ -32,11 +32,6 @@ politikasını belirlemek.
 ## Dependencies
 
 - V0-CMP-002
-
-## Blocker
-
-- Candidate evidence, `V0-CMP-002` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

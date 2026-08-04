@@ -1,11 +1,13 @@
 # Idempotency, Inbox and Outbox Contract
 
 > **Task:** V0-ARC-003
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-arc-003
 > **Work type:** decision
 > **Source basis:** PDF:I.15, PDF:I.48.6
 > **Date:** 2026-07-30
+> **Approver:** Semih — 2026-08-03
+> **Decision type:** Business decision (named business approver)
 
 ## 1. Idempotency
 

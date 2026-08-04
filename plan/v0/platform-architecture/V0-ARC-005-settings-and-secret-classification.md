@@ -1,7 +1,7 @@
 # V0-ARC-005 - Define settings ownership and secret classification
 
 - Task ID: V0-ARC-005
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-arc-005
 - Work type: decision
 - Surface state: Existing
@@ -31,11 +31,6 @@ Configurable değerleri module owner, scope, validation, history ve secret-stora
 
 - V0-ARC-001
 - V0-CMP-003
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

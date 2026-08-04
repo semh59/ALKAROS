@@ -1,7 +1,7 @@
 # V0-ARC-006 - Define notification delivery matrix
 
 - Task ID: V0-ARC-006
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-arc-006
 - Work type: decision
 - Surface state: Existing
@@ -34,11 +34,6 @@ belirlemek.
 
 - V0-ARC-004
 - V0-ARC-005
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-004` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

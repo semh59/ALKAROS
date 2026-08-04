@@ -1,11 +1,13 @@
 # Release Evidence Contract
 
 > **Task:** V0-ARC-008
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-arc-008
 > **Work type:** decision
 > **Source basis:** EXT:CYCLONEDX-1.7, EXT:SLSA-1.2, CORR:C16
 > **Date:** 2026-07-30
+> **Approver:** Semih — 2026-08-03
+> **Decision type:** Business decision (named business approver)
 
 ## 1. Release Evidence Schema
 

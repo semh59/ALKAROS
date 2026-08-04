@@ -8,48 +8,51 @@ değişebilir dış kaynaklar `OFFICIAL_SOURCE_REGISTER.md` içinde izlenir.
 
 | Finding | Kanıtlanan sorun | Karar veya contract sahibi | Uygulama/doğrulama sahipleri | Durum |
 | --- | --- | --- | --- | --- |
-| `C1` | Migration sırası forward/cyclic foreign key riski taşıyor. | `V0-DAT-001` | `V20-MIG-001`, `V20-MIG-002` | Planned |
-| `C2` | Order pre-reservation durumları eksik. | `V0-DAT-002` | `V11-RSV-001`, `V14-QRO-001` | Planned |
-| `C3` | `account_transactions.amount` işaret kuralı tanımsız. | `V0-DOM-007` | `V13-ACC-001` | Planned |
-| `C4` | `payment_allocations.idempotency_key` kapsamı ve çapraz-bill bütünlüğü eksik. | `V0-DOM-004` | `V1-FND-002`, `V12-ALC-001` | Planned |
-| `C5` | Table status, QR `PendingConfirmation` durumunu güvenilir biçimde yansıtmıyor. | `V0-DOM-005` | `V14-QRO-002` | Planned |
-| `C6` | Meal-card parent/child settlement status güncellemesi atomik değil. | `V0-DAT-004` | `V12-MCD-002` | Planned |
-| `C7` | Polymorphic reference değer kataloğu ve kısıtları eksik. | `V0-DAT-002` | `V20-GAT-001` | Planned |
-| `C8` | `I.46` başlangıç lifecycle listesi 14 diyor; doğrulanmış sayı 13. | `V0-DOC-001` | `V20-GAT-001` | Planned |
-| `C9` | `recipe_ingredients.waste_factor` işlem sırası açık değil. | `V0-DOM-010` | `V11-PRD-002` | Planned |
+| `C1` | Migration sırası forward/cyclic foreign key riski taşıyor. | `V0-DAT-001` | `V20-MIG-001`, `V20-MIG-002` | Done |
+| `C2` | Order pre-reservation durumları eksik. | `V0-DAT-002` | `V11-RSV-001`, `V14-QRO-001` | Done |
+| `C3` | `account_transactions.amount` işaret kuralı tanımsız. | `V0-DOM-007` | `V13-ACC-001` | Done |
+| `C4` | `payment_allocations.idempotency_key` kapsamı ve çapraz-bill bütünlüğü eksik. | `V0-DOM-004` | `V1-FND-002`, `V12-ALC-001` | Done |
+| `C5` | Table status, QR `PendingConfirmation` durumunu güvenilir biçimde yansıtmıyor. | `V0-DOM-005` | `V14-QRO-002` | Done |
+| `C6` | Meal-card parent/child settlement status güncellemesi atomik değil. | `V0-DAT-004` | `V12-MCD-002` | Done |
+| `C7` | Polymorphic reference değer kataloğu ve kısıtları eksik. | `V0-DAT-002` | `V20-GAT-001` | Done |
+| `C8` | `I.46` başlangıç lifecycle listesi 14 diyor; doğrulanmış sayı 13. | `V0-DOC-001` | `V20-GAT-001` | Done |
+| `C9` | `recipe_ingredients.waste_factor` işlem sırası açık değil. | `V0-DOM-010` | `V11-PRD-002` | Done |
 
 ## Plan denetiminde eklenen açıklar
 
 | Finding | Kanıtlanan sorun | Karar veya validation sahibi | Uygulama/doğrulama sahipleri | Durum |
 | --- | --- | --- | --- | --- |
-| `C10` | Fee/tip davranışı PDF'de tanımlı değil. | `V0-CMP-004` | `V1-BIL-003` | Planned |
-| `C11` | Purchase receipt variance ve fazla teslim politikası yok. | `V0-DOM-009` | `V11-PUR-001` | Planned |
-| `C12` | Stok valuation ve historical recipe cost kaynağı yok. | `V0-DOM-010` | `V11-RCP-002`, `V11-PRD-002` | Planned |
-| `C13` | Printer route precedence tanımlı değil. | `V0-DOM-011` | `V1-KIT-002` | Planned |
-| `C14` | Notification transport ve recipient matrisi yok. | `V0-ARC-006` | `V15-NOT-001` | Planned |
-| `C15` | OS, package ve update compatibility matrisi yok. | `V0-ARC-007` | `V20-INS-001`, `V20-INS-002` | Planned |
-| `C16` | Artifact signing, SBOM ve provenance sözleşmesi yok. | `V0-ARC-008` | `V20-REL-001`, `V20-GAT-002` | Planned |
-| `C17` | Migration rehearsal veri profili ve control total kataloğu yok. | `V0-DAT-006` | `V20-MIG-001`, `V20-MIG-002` | Planned |
+| `C10` | Fee/tip davranışı PDF'de tanımlı değil. | `V0-CMP-004` | `V1-BIL-003` | Done |
+| `C11` | Purchase receipt variance ve fazla teslim politikası yok. | `V0-DOM-009` | `V11-PUR-001` | Done |
+| `C12` | Stok valuation ve historical recipe cost kaynağı yok. | `V0-DOM-010` | `V11-RCP-002`, `V11-PRD-002` | Done |
+| `C13` | Printer route precedence tanımlı değil. | `V0-DOM-011` | `V1-KIT-002` | Done |
+| `C14` | Notification transport ve recipient matrisi yok. | `V0-ARC-006` | `V15-NOT-001` | Done |
+| `C15` | OS, package ve update compatibility matrisi yok. | `V0-ARC-007` | `V20-INS-001`, `V20-INS-002` | Done |
+| `C16` | Artifact signing, SBOM ve provenance sözleşmesi yok. | `V0-ARC-008` | `V20-REL-001`, `V20-GAT-002` | Done |
+| `C17` | Migration rehearsal veri profili ve control total kataloğu yok. | `V0-DAT-006` | `V20-MIG-001`, `V20-MIG-002` | Done |
 | `C18` | Security doğrulama seviyesi ve sürümlü requirement tabanı yok. | `V0-SEC-001` | `V15-SEC-002`, `V20-SEC-001` | Planned |
-| `C19` | Accessibility conformance hedefi kararlaştırılmamış. | `V0-CMP-005` | `V1-CUI-001`, `V1-CUI-002`, `V1-CUI-003`, `V1-WTR-001`, `V1-WTR-002`, `V1-WTR-003`, `V11-UI-001`, `V11-UI-002`, `V11-UI-003`, `V12-PUI-001`, `V12-PUI-002`, `V12-PUI-003`, `V13-UI-001`, `V13-UI-002`, `V13-UI-003`, `V14-CWB-001`, `V14-CWB-002`, `V14-OUI-001`, `V20-INT-006`, `V20-UAT-001` | Planned |
+| `C19` | Accessibility conformance hedefi kararlaştırılmamış. | `V0-CMP-005` | `V1-CUI-001`, `V1-CUI-002`, `V1-CUI-003`, `V1-WTR-001`, `V1-WTR-002`, `V1-WTR-003`, `V11-UI-001`, `V11-UI-002`, `V11-UI-003`, `V12-PUI-001`, `V12-PUI-002`, `V12-PUI-003`, `V13-UI-001`, `V13-UI-002`, `V13-UI-003`, `V14-CWB-001`, `V14-CWB-002`, `V14-OUI-001`, `V20-INT-006`, `V20-UAT-001` | Done |
 | `C20` | Meal-card provider'ları tek adapter/certification işine sığmıyor. | `V0-MCD-001` | `V12-MCD-003`, `V20-INT-004` | Blocked |
 | `C21` | QNB public API iptal ve webhook capability'sini doğrulamıyor. | `V0-QNB-001` | `V13-QNB-005`, `V20-INT-002`, `V20-CMP-001` | Blocked |
 | `C22` | QR relay production topology, transport ve deployment sahibi yoktu. | `V0-ARC-009`, `V0-QRG-001` | `V14-QRT-001`, `V20-INT-006`, `V20-INS-001` | Blocked |
-| `C23` | Bill'den bağımsız cari tahsilatın durable kaynağı ve reconciliation zinciri yoktu. | `V0-DOM-007` | `V13-ACC-004`, `V13-ACC-005`, `V13-ACC-006`, `V13-ACC-007` | Planned |
+| `C23` | Bill'den bağımsız cari tahsilatın durable kaynağı ve reconciliation zinciri yoktu. | `V0-DOM-007` | `V13-ACC-004`, `V13-ACC-005`, `V13-ACC-006`, `V13-ACC-007` | Done |
 | `C24` | Meal-card Approved sonucu allocation ve fiscal workflow'a bağlı değildi. | `V0-MCD-001` | `V12-MCD-004`, `V12-FSC-002`, `V12-REC-001` | Blocked |
 | `C25` | T300/QNB adisyon stratejileri koşullu branch yerine birlikte zorunlu tutuluyordu. | `V0-CMP-001` | `V12-FSC-003`, `V12-FSC-004`, `V12-FSC-005` | Planned |
-| `C26` | CustomerAccount handler V1.3 registry ve fiscal closure zincirine kayıtlı değildi. | `V0-DOM-007` | `V13-ACC-003`, `V13-ACC-008` | Planned |
-| `C27` | On-hand projection reservation producer'dan önce reserved/available değerlerini sahipleniyordu. | `V0-DAT-004` | `V11-INV-002`, `V11-INV-007`, `V11-RSV-001` | Planned |
-| `C28` | Transaction primitive gerçek Outbox oluşmadan post-commit handoff sahipleniyordu. | `V0-ARC-003` | `V1-FND-002`, `V1-FND-005`, `V1-FND-006` | Planned |
-| `C29` | V0-DOM-001 lifecycle kontratı provider timeout'u örtük decline/success olarak modelliyordu (`Retry 3x, then Failed`); Unknown/ReconciliationRequired ara durumu ve ReconciliationCase bağlantısı yoktu; PDF II.5.3/II.5.4 kanonik state listeleriyle çelişiyordu. | `V0-DOM-001` | `V12-HUG-001`, `V12-HUG-002`, `V12-PAY-003`, `V12-PAY-004`, `V12-FSC-001`, `V12-REC-001` | Planned |
+| `C26` | CustomerAccount handler V1.3 registry ve fiscal closure zincirine kayıtlı değildi. | `V0-DOM-007` | `V13-ACC-003`, `V13-ACC-008` | Done |
+| `C27` | On-hand projection reservation producer'dan önce reserved/available değerlerini sahipleniyordu. | `V0-DAT-004` | `V11-INV-002`, `V11-INV-007`, `V11-RSV-001` | Done |
+| `C28` | Transaction primitive gerçek Outbox oluşmadan post-commit handoff sahipleniyordu. | `V0-ARC-003` | `V1-FND-002`, `V1-FND-005`, `V1-FND-006` | Done |
+| `C29` | V0-DOM-001 lifecycle kontratı provider timeout'u örtük decline/success olarak modelliyordu (`Retry 3x, then Failed`); Unknown/ReconciliationRequired ara durumu ve ReconciliationCase bağlantısı yoktu; PDF II.5.3/II.5.4 kanonik state listeleriyle çelişiyordu. | `V0-DOM-001` | `V12-HUG-001`, `V12-HUG-002`, `V12-PAY-003`, `V12-PAY-004`, `V12-FSC-001`, `V12-REC-001` | Done |
 | `C30` | Shared integration-test fixture dosyaları task-owned surface dışında kalmıştı; mevcut test kodu provenance ve tek sahiplik kanıtı olmadan kabul edilemez. | `V1-FND-010` | `V1-FND-010` | Blocked |
-| `C31` | Task-scope aracı görev Markdown'ının tamamını allowlist sayıyor; görev kendi `Owned surface` alanını değiştirerek write-set'ini genişletebiliyor. | `V0-GOV-001` | `V0-GOV-001` | Planned |
-| `C32` | Domain write ve Outbox enqueue aynı PostgreSQL transaction'ında değildi; commit/rollback atomikliği kanıtlanamıyordu. | `V0-ARC-003` | `V1-FND-011` | Planned |
+| `C31` | Task-scope aracı görev Markdown'ının tamamını allowlist sayıyor; görev kendi `Owned surface` alanını değiştirerek write-set'ini genişletebiliyor. | `V0-GOV-001` | `V0-GOV-001` | Done |
+| `C32` | Domain write ve Outbox enqueue aynı PostgreSQL transaction'ında değildi; commit/rollback atomikliği kanıtlanamıyordu. | `V0-ARC-003` | `V1-FND-011` | Done |
 | `C33` | Runtime migration manifesti, diskte karşılıklı up/down script'i olmayan position'lar içeriyordu. | `V1-FND-004` | `V1-FND-012` | Planned |
 | `C34` | Paralel başarısız login denemeleri failure counter güncellemelerini kaybedebilir ve lockout eşiğini atomik uygulamayabilirdi. | `V1-IAM-001` | `V1-IAM-004` | Planned |
 | `C35` | Host database parolası command line ile alınabiliyor ve process/usage çıktısına sızabilirdi. | `V1-FND-004` | `V1-SEC-003` | Planned |
-| `C36` | Bağımsız denetimde plan dependency/ownership düzeltmeleri için eksik kesin remediation sahibi belirlendi. | `V0-GOV-004` | `V0-GOV-004` | Planned |
-| `C37` | V0 gate closure kaydı ve audit manifesti güncel task/Markdown durumundan sapmıştı. | `V0-GOV-005` | `V0-GOV-005` | Planned |
+| `C36` | Bağımsız denetimde plan dependency/ownership düzeltmeleri için eksik kesin remediation sahibi belirlendi. | `V0-GOV-004` | `V0-GOV-004` | Done |
+| `C37` | V0 gate closure kaydı ve audit manifesti güncel task/Markdown durumundan sapmıştı. | `V0-GOV-005` | `V0-GOV-005` | Done |
+| `C38` | 2026-08-03 kullanıcı onaylı plan değişikliği: V0-ARC-004'ün `V0-ARC-003` (Blocked) dependency'si kaldırıldı; V0-DOC-001 dependency'leri yalnız kapanan karar görevlerine (`V0-ARC-001`, `V0-ARC-004`, `V0-DOM-001`, `V0-DOM-002`, `V0-DOM-003`, `V0-DOM-004`, `V0-DAT-002`) daraltıldı; çıkarılan karar konuları ilgili C-row sahiplerinde (C1, C3, C5, C6, C9, C10-C19, C23, C25, C26, C27, C28, C32) izlenmeye devam eder; `VALIDATION_CONTRACT.md` heading sayısı FIND-IA-0004'e göre 375→374 düzeltildi. | `V0-ARC-004`, `V0-DOC-001` | `GATE-V0-EXIT`, V0-GOV kapanış denetimi | Done |
+| `C39` | 2026-08-03 kullanıcı onaylı plan değişikliği: V1-FND zinciri `GATE-V0-EXIT`'e bağımlı olduğu için V0 kapanışını yapısal olarak kilitliyordu; `V0-GOV-010`→`V1-FND-003`, `V0-GOV-013`→`V1-SEC-002`, `V0-GOV-014`→`V1-FND-002`, `V0-GOV-015`→`V1-FND-004` dependency'leri kaldırıldı (güvenlik konuları `V1-SEC-001`/`V20-SEC-001` tüketicilerinde izlenir); `V0-ARC-009`→`V0-SEC-001`, `V0-CMP-002`→`V0-CMP-001`, `V0-CMP-004`→`V0-CMP-001` dependency'leri kaldırıldı; kaldırılan bağımlılıklar plan denetim aracının forbidden setine işlendi; görevler gerçek test kanıtıyla kapanır. | `V0-GOV-010`, `V0-GOV-013`, `V0-GOV-014`, `V0-GOV-015`, `V0-ARC-009`, `V0-CMP-002`, `V0-CMP-004` | `GATE-V0-EXIT`, V0-GOV kapanış denetimi | Done |
+| `C40` | 2026-08-03 kullanıcı onaylı plan değişikliği: gerçek dış kanıt gerektiren 11 V0 görevi (`V0-HUG-001`, `V0-QNB-001`, `V0-YSP-001`, `V0-MCD-001`, `V0-PRN-001`, `V0-QRG-001`, `V0-CMP-001`, `V0-SEC-001`, `V0-LIC-001`, `V0-BKP-001`, `V0-BKP-002`) kullanıcı onayıyla `Blocked` kalır; `GATES.md` "user-approved V0 deferrals" bölümü eklendi; `GATE-V0-EXIT` koşulu ve plan denetim aracının V0 gate-open kontrolü bu listeden muaf tutar; kanıtlar ilgili aşamada (V12-V20) toplanır; devir yeni product behavior başlatma izni vermez ve V0 karar kapsamını daraltmaz. | `GATE-V0-EXIT` | `GATE-V0-EXIT`, V0-GOV kapanış denetimi | Done |
 
 `C20` için provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` dosyaları,
 `V0-MCD-001` legal provider code ve approved provider listesini üretmeden

@@ -1,7 +1,7 @@
 # V0-ARC-004 - Define API and event contract standard
 
 - Task ID: V0-ARC-004
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-arc-004
 - Work type: decision
 - Surface state: Existing
@@ -34,13 +34,6 @@ tanımlamak.
 ## Dependencies
 
 - V0-ARC-001
-- V0-ARC-003
-
-## Blocker
-
-- Mevcut record kaynak/approver olmadan URL versioning, validation library, header, pagination ve error davranışı seçer.
-  Ancak supported platform kaynakları ve named architecture approver kararı doğrulanınca görev yeniden `Planned`
-yapılabilir.
 
 ## Deliverables
 

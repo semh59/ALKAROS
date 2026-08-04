@@ -1,7 +1,7 @@
 # V0-DAT-004 - Define projection ownership contracts
 
 - Task ID: V0-DAT-004
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-dat-004
 - Work type: decision
 - Surface state: Existing
@@ -36,11 +36,6 @@ Tekrarlanan/cached alanların source-of-truth, atomik güncelleme ve rebuild kur
 
 - V0-DOM-001
 - V0-DOM-004
-
-## Blocker
-
-- Candidate evidence, `V0-DOM-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

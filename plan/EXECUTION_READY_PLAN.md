@@ -30,6 +30,19 @@ eksikleri, hataları, sıralamayı ve kabul kanıtını kilitler. Diskte kod bul
 
 ## Aşama 0 — doğrulama ortamı
 
+### Aşama 0.1 — execution-ready kayıt uzlaştırması
+
+- `V0-GOV-029`, yeni candidate-code commitleri sonrasında ilk yürütülecek
+  governance görevidir. `HostServiceRegistrationTests.cs` yalnız
+  `V0-GOV-015` tarafından sahiplenilir; test hem Host composition hem module
+  registry kullansa da Host DI composition sınırını doğrular.
+- `AUDIT_REPORT.md` ve `AUDIT_MANIFEST.json` yeni Markdown ağacından yeniden
+  üretilmeden, plan doğrulaması sıfır hataya inmeden ve coverage/manifest
+  kontrolleri geçmeden hiçbir task kapanış kanıtı güncel sayılmaz.
+- `ENV-*` klasörleri task kimliği değildir. Bunlar yalnız doğrulama ortamı
+  kayıtlarıdır; bağımsız bir görevi `Done` yapmak, gate kapatmak veya ürün
+  davranışını kanıtlamak için kullanılamaz.
+
 ### ENV-001 — .NET SDK onarımı
 
 - Sorun: kurulu .NET 10.0.302 SDK'da
@@ -67,9 +80,14 @@ eksikleri, hataları, sıralamayı ve kabul kanıtını kilitler. Diskte kod bul
 
 ### ENV-003 — test matrisi
 
-- Architecture (5), Idempotency (60), Transactions (25), SensitiveData (23),
-  Secrets (21), TransactionOutboxIntegration (11), Host (55) ve
-  Identity.Authentication (34) test projeleri ayrı ayrı exit 0 verir.
+- 2026-08-03 tarihli önceki ENV-003 kaydı Architecture (5), Idempotency (60),
+  Transactions (25), SensitiveData (23), Secrets (21),
+  TransactionOutboxIntegration (11), Host (55) ve Identity.Authentication
+  (34) sayımlarını taşır. Bu kayıt tarihsel candidate evidence'dır; sonraki
+  commitlerde test sayıları değiştiği için güncel kabul sayımı değildir.
+- Bu uzlaştırma sırasında yeniden çalıştırılan güncel sonuçlar: Architecture
+  5/5, Host 60/60 ve Idempotency 71/71. Kalan paketler, ilgili task `Done`
+  yapılmadan hemen önce aynı commit üzerinde yeniden çalıştırılır.
 - Çözüm build'i warning/error olmadan geçer.
 - `tests/Host/MigrationComposition/Program/ProgramArgumentTests.cs` (V1-SEC-003
   yüzeyi) 2026-08-03'te düzeltildi: eski senaryo down script içermeyen fixture'la

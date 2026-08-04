@@ -1,7 +1,7 @@
 # V0-ARC-003 - Define idempotency inbox and outbox contract
 
 - Task ID: V0-ARC-003
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-arc-003
 - Work type: decision
 - Surface state: Existing
@@ -32,11 +32,6 @@ Internal command, client retry ve external callback tekrarlarını tek altyapı 
 
 - V0-ARC-001
 - V0-ARC-002
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

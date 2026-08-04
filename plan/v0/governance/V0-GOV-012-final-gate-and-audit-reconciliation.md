@@ -1,8 +1,8 @@
 # V0-GOV-012 - Reconcile final V0 gate and audit records
 
 - Task ID: V0-GOV-012
-- Status: Blocked
-- Assignee: /root
+- Status: Done
+- Assignee: codex-v0-gov-012
 - Work type: validation
 - Surface state: Existing
 
@@ -37,11 +37,6 @@ envanterini ayni plan metadata durumuna eslemek.
 
 - V0-GOV-010
 - V0-GOV-011
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

@@ -31,7 +31,7 @@
 | Gate | Kapanma koşulu |
 | --- | --- |
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
-| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. |
+| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
 | `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
@@ -95,6 +95,30 @@ diğer application görevleri için aynen geçerliliğini korur.
 `V1-FND-009` (pushed history rewrite + force-push) de aynı istisna kapsamında
 zincirden önce başlatılır; kayıt `TRACEABILITY.md` FIND-IA-0050 satırındadır.
 Zincir kuralı diğer application görevleri için aynen geçerliliğini korur.
+
+## 2026-08-03 user-approved V0 deferrals
+
+<!-- V0_DEFERRED_TASKS:START -->
+| Task ID | Approval date | Reopen stage | Required evidence | Gate closure evidence |
+| --- | --- | --- | --- | --- |
+| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |
+| `V0-QNB-001` | `2026-08-03` | `V13` | Gerçek QNB provider contract/erişim kanıtı | Not V0 gate closure evidence |
+| `V0-YSP-001` | `2026-08-03` | `V12` | Gerçek Yapı Kredi provider contract/erişim kanıtı | Not V0 gate closure evidence |
+| `V0-MCD-001` | `2026-08-03` | `V12` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |
+| `V0-PRN-001` | `2026-08-03` | `V14` | Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı | Not V0 gate closure evidence |
+| `V0-QRG-001` | `2026-08-03` | `V14` | Gerçek QR relay public kanal onay kanıtı | Not V0 gate closure evidence |
+| `V0-CMP-001` | `2026-08-03` | `V12` | Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı | Not V0 gate closure evidence |
+| `V0-SEC-001` | `2026-08-03` | `V14` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |
+| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |
+| `V0-BKP-001` | `2026-08-03` | `V15` | Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı | Not V0 gate closure evidence |
+| `V0-BKP-002` | `2026-08-03` | `V15` | Gerçek yedekleme donanımı/cihaz kanıtı | Not V0 gate closure evidence |
+<!-- V0_DEFERRED_TASKS:END -->
+
+Bu devir listesi 2026-08-03 kullanıcı onayıyla kayıtlıdır (`TRACEABILITY.md`
+C40). Devredilen görev `Blocked` durumunda kalır; `GATE-V0-EXIT` bunların
+kanıtı olmadan kapanabilir ve görev ilgili aşama gate'inde gerçek kanıtla
+`Done` veya tarihli/onaylı `NotApplicable` olur. Devir yeni product behavior
+başlatma izni vermez ve V0 karar/uygulama kapsamını daraltmaz.
 
 ## Canlı veri kuralı
 

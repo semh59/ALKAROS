@@ -1,7 +1,7 @@
 # V0-DOM-001 - Define lifecycle transition contracts
 
 - Task ID: V0-DOM-001
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-dom-001
 - Work type: decision
 - Surface state: Existing
@@ -36,12 +36,6 @@ sözleşmede tanımlamak.
 ## Dependencies
 
 - None
-
-## Blocker
-
-- Mevcut transition record PDF'nin kanonik state listelerini değiştirmekte ve provider sözleşmesi olmadan fiscal/payment
-  sırası emretmektedir. Ancak PDF state'leriyle bire bir matrisi ve provider dışı davranışların named approver kararı
-  doğrulanınca görev yeniden `Planned` yapılabilir.
 
 ## Deliverables
 

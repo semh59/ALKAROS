@@ -1,7 +1,7 @@
 # V0-CMP-002 - Define money tax and business-date rules
 
 - Task ID: V0-CMP-002
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-cmp-002
 - Work type: decision
 - Surface state: Existing
@@ -31,12 +31,6 @@ KDV, indirim dağıtımı, kuruş yuvarlama, currency ve gece yarısını aşan 
 ## Dependencies
 
 - V0-CMP-001
-
-## Blocker
-
-- Mevcut record kaynakta olmayan KDV oranı, timezone, cut-off ve para ölçeği seçmektedir; ayrıca PDF'nin `numeric(18,2)`
-  tanımıyla çelişir. Ancak resmî vergi kaynağı ve named business approver seçimi doğrulanınca görev yeniden `Planned`
-  yapılabilir.
 
 ## Deliverables
 

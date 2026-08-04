@@ -1,7 +1,7 @@
 # V0-ARC-008 - Define release evidence contract
 
 - Task ID: V0-ARC-008
-- Status: Blocked
+- Status: Done
 - Assignee: codex-v0-arc-008
 - Work type: decision
 - Surface state: Existing
@@ -33,11 +33,6 @@ Release artifact, checksum, signing, CycloneDX SBOM ve SLSA provenance için tek
 
 - V0-ARC-004
 - V0-ARC-005
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-004` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 
