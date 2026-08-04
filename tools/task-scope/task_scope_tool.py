@@ -71,7 +71,7 @@ _REMEDIATION_EXCEPTION_HEADER = (
 )
 _REMEDIATION_EXCEPTION_SEPARATOR = "| --- | --- | --- | --- | --- |"
 _REMEDIATION_EXCEPTION_ROW = re.compile(
-    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-02|2026-08-03)`\s*\|\s*"
+    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-02|2026-08-03|2026-08-04)`\s*\|\s*"
     r"Verified finding remediation only\s*\|\s*Not gate closure evidence\s*\|\s*"
     r"No new feature behavior\s*\|$"
 )
@@ -84,6 +84,10 @@ _APPROVED_REMEDIATION_TASK_IDS = {
     "V1-FND-011",
     "V1-FND-012",
     "V1-IAM-004",
+    "V1-IAM-005",
+    "V1-FND-013",
+    "V1-FND-014",
+    "V1-FND-015",
     "V1-SEC-003",
 }
 _CANDIDATE_CODE_REMEDIATION_TASK_IDS = {

@@ -70,8 +70,8 @@ npx --yes markdownlint-cli2@0.23.2
   rewrite + force-push) da aynı istisna kapsamında zincirden önce
   başlatılabilir; karar kaydı `TRACEABILITY.md` FIND-IA-0050'dir ve zincir
   kuralı diğer application görevleri için değişmez.
-- `GATES.md` içindeki `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu 2026-08-02
-  ve 2026-08-03 kullanıcı onaylarını makinece doğrular. Kayıtlı candidate-code
+- `GATES.md` içindeki `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu 2026-08-02,
+  2026-08-03 ve 2026-08-04 kullanıcı onaylarını makinece doğrular. Kayıtlı candidate-code
   remediation kimliği `--candidate-remediation` ile yalnız mevcut kanıtlanmış
   kusuru düzeltebilir; açık dependency veya gate kabul kanıtı sayılmaz.
 - `GATES.md` içindeki `V0_DEFERRED_TASKS` marker tablosu 2026-08-03 kullanıcı

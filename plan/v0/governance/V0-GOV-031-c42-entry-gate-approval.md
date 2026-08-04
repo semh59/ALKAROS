@@ -1,7 +1,7 @@
 # V0-GOV-031 - Approve C42 remediation entry-gate exceptions
 
 - Task ID: V0-GOV-031
-- Status: Planned
+- Status: Done
 - Assignee: opencode-v0-gov-031
 - Work type: implementation
 - Surface state: Existing

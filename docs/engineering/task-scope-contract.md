@@ -73,7 +73,7 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 
 `GATE-V0-EXIT` açıkken `check_entry_gate`, yalnız `GATES.md` içindeki
 `TASK_SCOPE_REMEDIATION_EXCEPTIONS` marker'ları arasındaki katı tablodan
-ayrıştırılan exact ID'leri kabul eder. 2026-08-02 ve 2026-08-03 kullanıcı onaylarının sabit
+ayrıştırılan exact ID'leri kabul eder. 2026-08-02, 2026-08-03 ve 2026-08-04 kullanıcı onaylarının sabit
 kümesi GATES.md ile araç kodunda birebir eşleşir.
 
 Tablo eksik, bozuk, yinelenen veya bu kümeyle eşleşmeyen bir kayıt içerirse

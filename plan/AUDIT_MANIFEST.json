@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 399,
-  "markdown_line_count": 27061,
-  "markdown_byte_count": 1843900,
+  "markdown_file_count": 400,
+  "markdown_line_count": 27142,
+  "markdown_byte_count": 1847235,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -274,9 +274,9 @@
     },
     {
       "path": "docs/engineering/task-scope-contract.md",
-      "sha256": "87A82E8A049A3045BBE1DE05B180B40407493EA652032B454926065344F62654",
+      "sha256": "FD7126C275FF9B23190E5A162A1A565CA0A0BD9514E3AC3A0EE2388377B71D8B",
       "lines": 109,
-      "bytes": 6894,
+      "bytes": 6906,
       "utf8": true
     },
     {
@@ -728,6 +728,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V0-GOV-031/verification.md",
+      "sha256": "8C87D1F6DAABF17EAB5B6F5ABEB23888039C0EC721F0D1D1ADAEC23DDCD377CB",
+      "lines": 76,
+      "bytes": 2681,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-001/candidate-remediation-2026-08-03.md",
       "sha256": "0E2C3211B539FACC94A98B2AD7CAD5D922D9E1A15E6068641DAA5F77C87AD77E",
       "lines": 46,
@@ -855,9 +862,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "EC5D208970A5F8D24F9108165CB194DAE92FE688216F1372E1AA3B9DA1CD6321",
-      "lines": 1675,
-      "bytes": 229557,
+      "sha256": "6D8BBB1079665E7C3DC78A86062C4D7CCD3093C2C458B5A80C736254AF25FB33",
+      "lines": 1676,
+      "bytes": 229697,
       "utf8": true
     },
     {
@@ -876,9 +883,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "00AA1FC518A5379F26CAD3D51096B4B1D3A91952F6CB0A93136DEC882B5E941D",
-      "lines": 143,
-      "bytes": 10054,
+      "sha256": "35F3A47632D69E4DA821063EA8890307AD176353F03FBAAE15A8E58459D1020B",
+      "lines": 147,
+      "bytes": 10547,
       "utf8": true
     },
     {
@@ -1282,9 +1289,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-031-c42-entry-gate-approval.md",
-      "sha256": "4A2F72426BF63C58CA32EF5F18486C6F47F3CD5F1B0BEEBE5B4487144B234A8B",
+      "sha256": "5F0A17E6CA9452943245DA44B007A57AD5CCA1231DA8C144BCCC51FED2918059",
       "lines": 73,
-      "bytes": 2405,
+      "bytes": 2402,
       "utf8": true
     },
     {
@@ -2857,9 +2864,9 @@
     },
     {
       "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "5CC0F29BB1E8F6C07141D8F5D77B40366FEE12D32C6FE3A4C496B85280964143",
+      "sha256": "DBA0C779CA91EDDC0BF0FCD6E075FC8E2D3121B5C4526D757D0AD9A71B0588B3",
       "lines": 148,
-      "bytes": 9207,
+      "bytes": 9219,
       "utf8": true
     }
   ]
