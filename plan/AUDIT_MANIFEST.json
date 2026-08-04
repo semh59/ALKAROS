@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 405,
-  "markdown_line_count": 27515,
-  "markdown_byte_count": 1863858,
+  "markdown_file_count": 406,
+  "markdown_line_count": 27568,
+  "markdown_byte_count": 1866177,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -735,6 +735,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V0-GOV-030/verification.md",
+      "sha256": "1A72791823B5EB42E93B1BA388C570FFF55DCBD8F334150F8A5F64A5D5165391",
+      "lines": 57,
+      "bytes": 2347,
+      "utf8": true
+    },
+    {
       "path": "evidence/V0-GOV-031/verification.md",
       "sha256": "8C87D1F6DAABF17EAB5B6F5ABEB23888039C0EC721F0D1D1ADAEC23DDCD377CB",
       "lines": 76,
@@ -897,9 +904,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "34CFBC58AAEFA44439B9705D3CFB5AEFDF841D0CAC694D2E9B7762B0C2D029B1",
-      "lines": 1681,
-      "bytes": 230403,
+      "sha256": "412530030F1C61B0B8F05B9F44C9E08E58A71C5384058136C80CD452339F415E",
+      "lines": 1682,
+      "bytes": 230543,
       "utf8": true
     },
     {
@@ -1317,9 +1324,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-030-gate-evidence-recount.md",
-      "sha256": "D3784061DFAAB89F801F319DAF897FB9AD80392EBFAE780310EAF70CC3B21EAA",
+      "sha256": "09A582A88D81F6E5B985EF7ED9E8CA2B18272EBE631372AE1EA31CD0779967A1",
       "lines": 60,
-      "bytes": 1688,
+      "bytes": 1682,
       "utf8": true
     },
     {
@@ -1527,9 +1534,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-001-module-skeleton.md",
-      "sha256": "CD6DD77DDA8F4C19443CB3DC350A8E2F3EA6242B0AE7E362B2B3CB987431E9E0",
-      "lines": 72,
-      "bytes": 2979,
+      "sha256": "458E97877D3931CE6DEB0417E6255C82E75F6D67C48DD8C3E917D545E8006EAC",
+      "lines": 67,
+      "bytes": 2817,
       "utf8": true
     },
     {
