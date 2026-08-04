@@ -1,8 +1,8 @@
 # V1-FND-003 - Enforce Codex task write boundaries
 
 - Task ID: V1-FND-003
-- Status: Blocked
-- Assignee: cline-v1-fnd-003
+- Status: Done
+- Assignee: opencode-v1-fnd-003
 - Work type: implementation
 - Surface state: Existing
 
@@ -41,11 +41,6 @@ olarak reddetmek.
 - V0-ARC-001
 - V1-FND-001
 - V1-FND-010
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 
