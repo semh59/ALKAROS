@@ -1,0 +1,11 @@
+﻿FAIL: Scope violations for V1-FND-010
+  METADATA ERROR: Task status is 'Blocked', expected 'Planned' or 'InProgress'
+  METADATA ERROR: Assignee is 'Unassigned (exactly one person)', must be a specific session ID
+  METADATA ERROR: Entry gate GATE-V0-EXIT is open: V0-GOV-032 (InProgress)
+  FINDING: docs/engineering/task-scope-contract.md (modified) ù path not in task allowlist
+  FINDING: plan/audit_manifest.json (modified) ù path not in task allowlist
+  FINDING: plan/audit_report.md (modified) ù path not in task allowlist
+  FINDING: plan/v0/governance/v0-gov-032-deferral-entry-gate-recognition.md (modified) ù path not in task allowlist
+  FINDING: plan/validation_contract.md (modified) ù path not in task allowlist
+  FINDING: tests/architecture/taskscope/test_task_scope.py (modified) ù path not in task allowlist
+  FINDING: tools/task-scope/task_scope_tool.py (modified) ù path not in task allowlist

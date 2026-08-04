@@ -1,0 +1,7 @@
+﻿PDF SHA-256: AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822
+PDF pages: 94
+Numbered headings: 374
+Part IV corrections: 9
+Text line units: 2725
+Geometry table rows: 178
+Coverage errors: 0

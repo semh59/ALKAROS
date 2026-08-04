@@ -1,7 +1,7 @@
 # V0-GOV-032 - Recognize user-approved V0 deferrals in entry-gate derivation
 
 - Task ID: V0-GOV-032
-- Status: Planned
+- Status: Done
 - Assignee: opencode-v0-gov-032
 - Work type: implementation
 - Surface state: Existing

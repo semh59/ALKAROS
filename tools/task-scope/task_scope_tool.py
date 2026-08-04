@@ -99,6 +99,32 @@ _CANDIDATE_CODE_REMEDIATION_TASK_IDS = {
     "V1-IAM-004",
     "V1-SEC-003",
 }
+_DEFERRED_TASKS_START = "<!-- V0_DEFERRED_TASKS:START -->"
+_DEFERRED_TASKS_END = "<!-- V0_DEFERRED_TASKS:END -->"
+_DEFERRED_TASKS_HEADER = (
+    "| Task ID | Approval date | Reopen stage | Required evidence | "
+    "Gate closure evidence |"
+)
+_DEFERRED_TASKS_SEPARATOR = "| --- | --- | --- | --- | --- |"
+_DEFERRED_TASKS_ROW = re.compile(
+    r"^\|\s*`(?P<task_id>V0-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-03)`\s*\|\s*"
+    r"`(?P<reopen_stage>V11|V12|V13|V14|V15|V20)`\s*\|\s*"
+    r"(?P<required_evidence>[^|]+?)\s*\|\s*Not V0 gate closure evidence\s*\|$"
+)
+_DEFERRED_TASK_RECORDS = {
+    ("V0-HUG-001", "2026-08-03", "V12", "Gerçek Hugin provider contract/erişim kanıtı"),
+    ("V0-QNB-001", "2026-08-03", "V13", "Gerçek QNB provider contract/erişim kanıtı"),
+    ("V0-YSP-001", "2026-08-03", "V12", "Gerçek Yapı Kredi provider contract/erişim kanıtı"),
+    ("V0-MCD-001", "2026-08-03", "V12", "Gerçek meal-card provider sözleşme/onay kanıtı"),
+    ("V0-PRN-001", "2026-08-03", "V14", "Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı"),
+    ("V0-QRG-001", "2026-08-03", "V14", "Gerçek QR relay public kanal onay kanıtı"),
+    ("V0-CMP-001", "2026-08-03", "V12", "Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı"),
+    ("V0-SEC-001", "2026-08-03", "V14", "Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı"),
+    ("V0-LIC-001", "2026-08-03", "V20", "Gerçek license server ve lisans sözleşmesi kanıtı"),
+    ("V0-BKP-001", "2026-08-03", "V15", "Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı"),
+    ("V0-BKP-002", "2026-08-03", "V15", "Gerçek yedekleme donanımı/cihaz kanıtı"),
+}
+_DEFERRED_TASK_IDS = {record[0] for record in _DEFERRED_TASK_RECORDS}
 
 
 class TaskParseError(Exception):
@@ -326,6 +352,63 @@ def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
     return exception_ids
 
 
+def parse_v0_deferral_ids(plan_dir: Path) -> Set[str]:
+    """Return the user-approved deferred V0 task IDs from ``GATES.md``.
+
+    The table is deliberately strict: a malformed, duplicate, missing, or
+    non-approved record cannot expand or hide the entry-gate exemption.
+    """
+    gates_file = plan_dir / "GATES.md"
+    if not gates_file.is_file():
+        raise TaskParseError("V0 deferral table not found in GATES.md")
+
+    lines = gates_file.read_text(encoding="utf-8").splitlines()
+    starts = [
+        index for index, line in enumerate(lines) if line == _DEFERRED_TASKS_START
+    ]
+    ends = [
+        index for index, line in enumerate(lines) if line == _DEFERRED_TASKS_END
+    ]
+    if len(starts) != 1 or len(ends) != 1:
+        raise TaskParseError("V0 deferral table markers must occur exactly once")
+    start, end = starts[0], ends[0]
+
+    if start >= end:
+        raise TaskParseError("V0 deferral table markers are out of order")
+
+    table_lines = lines[start + 1:end]
+    if len(table_lines) < 3:
+        raise TaskParseError("V0 deferral table is incomplete")
+    if table_lines[0] != _DEFERRED_TASKS_HEADER:
+        raise TaskParseError("V0 deferral table header is invalid")
+    if table_lines[1] != _DEFERRED_TASKS_SEPARATOR:
+        raise TaskParseError("V0 deferral table separator is invalid")
+
+    records: Set[tuple] = set()
+    for line in table_lines[2:]:
+        match = _DEFERRED_TASKS_ROW.fullmatch(line)
+        if match is None:
+            raise TaskParseError("V0 deferral table contains an invalid record")
+        record = (
+            match.group("task_id"),
+            match.group("approval_date"),
+            match.group("reopen_stage"),
+            match.group("required_evidence"),
+        )
+        if record in records:
+            raise TaskParseError(
+                f"V0 deferral table contains a duplicate Task ID: {record[0]}"
+            )
+        records.add(record)
+
+    if records != _DEFERRED_TASK_RECORDS:
+        raise TaskParseError(
+            "V0 deferral table records must exactly match the 2026-08-03 "
+            "user approval"
+        )
+    return _DEFERRED_TASK_IDS
+
+
 def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
     """Return closure errors for the release gate immediately before *task*.
 
@@ -353,19 +436,33 @@ def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
         if item.status not in {"Done", "NotApplicable"}
     ]
     if unfinished:
-        if task.task_id not in _APPROVED_REMEDIATION_TASK_IDS:
-            return [
-                f"Entry gate {gate_id} is open: " + ", ".join(unfinished)
+        if task.task_id in _APPROVED_REMEDIATION_TASK_IDS:
+            try:
+                exception_ids = parse_remediation_exception_ids(plan_dir)
+            except TaskParseError as exc:
+                return [
+                    f"Entry gate {gate_id} remediation exception rejected: {exc}"
+                ]
+            if task.task_id in exception_ids:
+                return []
+            return [f"Entry gate {gate_id} is open: " + ", ".join(unfinished)]
+        if gate_id == "GATE-V0-EXIT":
+            try:
+                deferred_ids = parse_v0_deferral_ids(plan_dir)
+            except TaskParseError as exc:
+                if not (plan_dir / "GATES.md").is_file():
+                    return [f"Entry gate {gate_id} is open: " + ", ".join(unfinished)]
+                return [f"Entry gate {gate_id} deferral table rejected: {exc}"]
+            still_open = [
+                f"{item.task_id} ({item.status})"
+                for item in preceding
+                if item.status not in {"Done", "NotApplicable"}
+                and item.task_id not in deferred_ids
             ]
-        try:
-            exception_ids = parse_remediation_exception_ids(plan_dir)
-        except TaskParseError as exc:
-            return [f"Entry gate {gate_id} remediation exception rejected: {exc}"]
-        if task.task_id in exception_ids:
+            if still_open:
+                return [f"Entry gate {gate_id} is open: " + ", ".join(still_open)]
             return []
-        return [
-            f"Entry gate {gate_id} is open: " + ", ".join(unfinished)
-        ]
+        return [f"Entry gate {gate_id} is open: " + ", ".join(unfinished)]
     return []
 
 

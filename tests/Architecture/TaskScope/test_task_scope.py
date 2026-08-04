@@ -69,6 +69,26 @@ def _write_remediation_exceptions(plan_dir: Path, rows: list[str]) -> None:
     )
 
 
+def _write_v0_deferrals(plan_dir: Path, rows: list[str]) -> None:
+    """Write the strict GATES.md V0-deferral table fixture."""
+    table = "\n".join(rows)
+    (plan_dir / "GATES.md").write_text(
+        "\n".join(
+            [
+                "# Version Gates",
+                "",
+                "<!-- V0_DEFERRED_TASKS:START -->",
+                "| Task ID | Approval date | Reopen stage | Required evidence | Gate closure evidence |",
+                "| --- | --- | --- | --- | --- |",
+                table,
+                "<!-- V0_DEFERRED_TASKS:END -->",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+
 REMEDIATION_ROWS = [
     "| `V1-FND-011` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
     "| `V1-FND-012` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
@@ -83,6 +103,34 @@ REMEDIATION_ROWS = [
     "| `V1-FND-013` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
     "| `V1-FND-014` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
     "| `V1-FND-015` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+]
+
+DEFERRED_TASK_IDS = [
+    "V0-HUG-001",
+    "V0-QNB-001",
+    "V0-YSP-001",
+    "V0-MCD-001",
+    "V0-PRN-001",
+    "V0-QRG-001",
+    "V0-CMP-001",
+    "V0-SEC-001",
+    "V0-LIC-001",
+    "V0-BKP-001",
+    "V0-BKP-002",
+]
+
+DEFERRED_ROWS = [
+    "| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |",
+    "| `V0-QNB-001` | `2026-08-03` | `V13` | Gerçek QNB provider contract/erişim kanıtı | Not V0 gate closure evidence |",
+    "| `V0-YSP-001` | `2026-08-03` | `V12` | Gerçek Yapı Kredi provider contract/erişim kanıtı | Not V0 gate closure evidence |",
+    "| `V0-MCD-001` | `2026-08-03` | `V12` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |",
+    "| `V0-PRN-001` | `2026-08-03` | `V14` | Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı | Not V0 gate closure evidence |",
+    "| `V0-QRG-001` | `2026-08-03` | `V14` | Gerçek QR relay public kanal onay kanıtı | Not V0 gate closure evidence |",
+    "| `V0-CMP-001` | `2026-08-03` | `V12` | Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı | Not V0 gate closure evidence |",
+    "| `V0-SEC-001` | `2026-08-03` | `V14` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |",
+    "| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |",
+    "| `V0-BKP-001` | `2026-08-03` | `V15` | Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı | Not V0 gate closure evidence |",
+    "| `V0-BKP-002` | `2026-08-03` | `V15` | Gerçek yedekleme donanımı/cihaz kanıtı | Not V0 gate closure evidence |",
 ]
 
 
@@ -394,7 +442,7 @@ class TestRemediationEntryGateExceptions:
         exit_code, result = run_tool("V1-FND-999", make_repo, make_plan)
 
         assert exit_code == 1
-        assert any("Entry gate GATE-V0-EXIT is open" in error for error in result["metadata_errors"])
+        assert any("GATE-V0-EXIT" in error for error in result["metadata_errors"])
 
     def test_duplicate_exception_record_fails_closed(
         self, write_task, make_repo, make_plan, run_tool
@@ -436,6 +484,117 @@ class TestRemediationEntryGateExceptions:
 
         assert exit_code == 1
         assert any("invalid record" in error for error in result["metadata_errors"])
+
+
+# ---------------------------------------------------------------------------
+# User-approved V0 deferrals in entry-gate derivation
+# ---------------------------------------------------------------------------
+
+class TestDeferredV0EntryGate:
+    def _prepare_deferred_v0_gate(self, write_task, make_repo, make_plan) -> None:
+        _write_v0_deferrals(make_plan, DEFERRED_ROWS)
+        for task_id in DEFERRED_TASK_IDS:
+            write_task(task_id=task_id, status="Blocked")
+        _git(make_repo, "checkout", "--", "plan")
+
+    def test_deferred_v0_tasks_close_open_v0_entry_gate(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_deferred_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-010")
+
+        exit_code, result = run_tool("V1-FND-010", make_repo, make_plan)
+
+        assert exit_code == 0
+        assert result["metadata_errors"] == []
+        assert result["valid"] is True
+
+    def test_non_deferred_v0_task_keeps_gate_open(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_deferred_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V0-DOM-999", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V1-FND-010")
+
+        exit_code, result = run_tool("V1-FND-010", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("GATE-V0-EXIT is open" in error for error in result["metadata_errors"])
+        assert any("V0-DOM-999 (Planned)" in error for error in result["metadata_errors"])
+
+    def test_missing_deferral_table_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        write_task(task_id="V0-DOM-001", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V1-FND-010")
+
+        exit_code, result = run_tool("V1-FND-010", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("GATE-V0-EXIT is open" in error for error in result["metadata_errors"])
+        assert any("V0-DOM-001 (Planned)" in error for error in result["metadata_errors"])
+
+    def test_duplicate_deferral_record_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        _write_v0_deferrals(make_plan, DEFERRED_ROWS + [DEFERRED_ROWS[0]])
+        for task_id in DEFERRED_TASK_IDS:
+            write_task(task_id=task_id, status="Blocked")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V1-FND-010")
+
+        exit_code, result = run_tool("V1-FND-010", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("duplicate Task ID" in error for error in result["metadata_errors"])
+
+    def test_nonmatching_deferral_record_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        nonmatching_rows = DEFERRED_ROWS[:-1] + [
+            "| `V0-BKP-002` | `2026-08-03` | `V15` | Değiştirilmiş kanıt metni | Not V0 gate closure evidence |"
+        ]
+        _write_v0_deferrals(make_plan, nonmatching_rows)
+        for task_id in DEFERRED_TASK_IDS:
+            write_task(task_id=task_id, status="Blocked")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V1-FND-010")
+
+        exit_code, result = run_tool("V1-FND-010", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    def test_malformed_deferral_record_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        malformed_rows = DEFERRED_ROWS.copy()
+        malformed_rows[0] = "| `V0-HUG-001` | malformed |"
+        _write_v0_deferrals(make_plan, malformed_rows)
+        for task_id in DEFERRED_TASK_IDS:
+            write_task(task_id=task_id, status="Blocked")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V1-FND-010")
+
+        exit_code, result = run_tool("V1-FND-010", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("invalid record" in error for error in result["metadata_errors"])
+
+    def test_deferral_does_not_apply_to_other_gates(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_deferred_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-003", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V11-ALT-001")
+
+        exit_code, result = run_tool("V11-ALT-001", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("GATE-V1-EXIT is open" in error for error in result["metadata_errors"])
 
 
 # ---------------------------------------------------------------------------

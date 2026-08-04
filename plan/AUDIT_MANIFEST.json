@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 406,
-  "markdown_line_count": 27568,
-  "markdown_byte_count": 1866177,
+  "markdown_file_count": 409,
+  "markdown_line_count": 27867,
+  "markdown_byte_count": 1880665,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -281,9 +281,9 @@
     },
     {
       "path": "docs/engineering/task-scope-contract.md",
-      "sha256": "FD7126C275FF9B23190E5A162A1A565CA0A0BD9514E3AC3A0EE2388377B71D8B",
-      "lines": 109,
-      "bytes": 6906,
+      "sha256": "B04049E3D74EB63AB22A11E7D9AC8B29750F561703C2E7E2C368BA133307CC00",
+      "lines": 128,
+      "bytes": 8028,
       "utf8": true
     },
     {
@@ -749,6 +749,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V0-GOV-032/verification.md",
+      "sha256": "9AAA2CED3BC16782E59006646B09CEBAE4458EE8F3A7E976A9E622DB04C25991",
+      "lines": 82,
+      "bytes": 3931,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-001/candidate-remediation-2026-08-03.md",
       "sha256": "0E2C3211B539FACC94A98B2AD7CAD5D922D9E1A15E6068641DAA5F77C87AD77E",
       "lines": 46,
@@ -788,6 +795,13 @@
       "sha256": "36FC94A6817B5E9348001D66AA690FA23E4BA4BA086B4D0D685947200F1B1C9E",
       "lines": 37,
       "bytes": 1864,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-FND-001/verification.md",
+      "sha256": "5A0E5755182DDFB26E0430EAADE62E4924048FEEB2CDD51F39FA0AE145EF4AFF",
+      "lines": 98,
+      "bytes": 3228,
       "utf8": true
     },
     {
@@ -904,9 +918,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "412530030F1C61B0B8F05B9F44C9E08E58A71C5384058136C80CD452339F415E",
-      "lines": 1682,
-      "bytes": 230543,
+      "sha256": "3CED800825CBF977BCF030EEAAED6B59947F44C18AB208E9179F924EF8496CBC",
+      "lines": 1685,
+      "bytes": 230988,
       "utf8": true
     },
     {
@@ -918,16 +932,16 @@
     },
     {
       "path": "plan/EXECUTION_READY_PLAN.md",
-      "sha256": "0A1C4317999439669063B9A703ED172C6B1F2C961D2DCC2CB50E51D494F7E5B4",
-      "lines": 228,
-      "bytes": 13118,
+      "sha256": "B5C99EA77503D8FA3D6FFB8FD3378BA82440367BEF379C648AAF2501CFAD3670",
+      "lines": 230,
+      "bytes": 13641,
       "utf8": true
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "35F3A47632D69E4DA821063EA8890307AD176353F03FBAAE15A8E58459D1020B",
-      "lines": 147,
-      "bytes": 10547,
+      "sha256": "1AF103C0E8CDC1874B2980BE4B7A93B15802D309B50801AAC0412345DD40B2EB",
+      "lines": 156,
+      "bytes": 11184,
       "utf8": true
     },
     {
@@ -974,9 +988,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "03E0D3890A3446D53FEF0EB9C2FC51072DDAFCE98F9B7DC8270B7EB6E77CB5D5",
-      "lines": 146,
-      "bytes": 26090,
+      "sha256": "681FEFBF0A3747255A4BF054658599B902D14C4809920621DB9BD9BCA2760099",
+      "lines": 147,
+      "bytes": 26973,
       "utf8": true
     },
     {
@@ -1331,9 +1345,16 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-031-c42-entry-gate-approval.md",
-      "sha256": "5F0A17E6CA9452943245DA44B007A57AD5CCA1231DA8C144BCCC51FED2918059",
+      "sha256": "880BE870316BC7DE3C970B8553C01B77ACDD402D16D7350A23B8D86377239F04",
       "lines": 73,
-      "bytes": 2402,
+      "bytes": 2484,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-032-deferral-entry-gate-recognition.md",
+      "sha256": "71CD3047EB53E4B7CE14C85A1F6A44F3F98A73CC80C4A97CE13364BC338E49DC",
+      "lines": 77,
+      "bytes": 2947,
       "utf8": true
     },
     {
@@ -1534,9 +1555,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-001-module-skeleton.md",
-      "sha256": "458E97877D3931CE6DEB0417E6255C82E75F6D67C48DD8C3E917D545E8006EAC",
+      "sha256": "85AC591B63E820309D43E23101A929D7AE7EFD3262E71D6983551CA76D1A8D9C",
       "lines": 67,
-      "bytes": 2817,
+      "bytes": 2811,
       "utf8": true
     },
     {
@@ -1597,9 +1618,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md",
-      "sha256": "969DCE8A4B8693073411C465BE96BDD127D524FFBB0E727EB004231519B75411",
+      "sha256": "06211676437067151709C2A365E4E329B3170F526C78ABE070BB5F57F71B643A",
       "lines": 66,
-      "bytes": 2414,
+      "bytes": 2480,
       "utf8": true
     },
     {
@@ -2906,9 +2927,9 @@
     },
     {
       "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "DBA0C779CA91EDDC0BF0FCD6E075FC8E2D3121B5C4526D757D0AD9A71B0588B3",
-      "lines": 148,
-      "bytes": 9219,
+      "sha256": "6A43CCA27F27FBE22C18A89874E67F6AEA325480E68B5AE5EE37C0EE2D590568",
+      "lines": 156,
+      "bytes": 9849,
       "utf8": true
     }
   ]

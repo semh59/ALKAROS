@@ -68,6 +68,9 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 - `GATES.md` içindeki remediation exception tablosunun marker'ı,
   başlığı, ayıracı, satır biçimi veya exact Task ID kümesi geçersizdir;
   yinelenen veya onaysız Task ID kaydı vardır.
+- `GATES.md` içindeki `V0_DEFERRED_TASKS` tablosunun marker'ı, başlığı,
+  ayıracı, satır biçimi veya exact kayıt kümesi geçersizdir; yinelenen
+  veya onaysız Task ID kaydı vardır.
 
 ## Kanıtlanmış bulgu remediation istisnası
 
@@ -84,6 +87,22 @@ behavior üretme izni vermez.
 `--candidate-remediation`, yalnız sabit candidate-code kimlikleri için kullanılabilir. Bu modda görev
 `InProgress` ve gerçek bir oturum sahibine atanmış olmalıdır; yazılabilir yüzey değişmez. Mod, görevi
 `Done` yapmaz, dependency veya gate'i kapatmaz ve yeni ürün davranışı eklemeye izin vermez.
+
+## V0 devir istisnası (C44)
+
+`GATE-V0-EXIT` türetilmiş kontrolü, 2026-08-03 kullanıcı onaylı
+(`TRACEABILITY.md` C40) devir listesini `GATES.md` içindeki
+`V0_DEFERRED_TASKS` marker'ları arasındaki katı tablodan okur ve 11 devir
+kimliğini yalnız bu gate'in kapanma koşulundan muaf sayar. Kayıt kümesi
+GATES.md ile araç kodunda birebir eşleşir; istisna setine kayıtlı görevler
+için önce remediation exception yolu uygulanır (sıra değişmez).
+
+Tablo eksik, bozuk, yinelenen veya kayıt kümesiyle eşleşmeyen bir satır
+içerirse denetim fail-closed olarak non-zero exit verir; `GATES.md` dosyası
+hiç yoksa gate açık listesiyle reddedilir (muafiyet uygulanmaz). Muafiyet
+yalnız `GATE-V0-EXIT` türetimi içindir; diğer aşama gate'lerini, kanıtlanmış
+bulgu istisnasını veya candidate-code modunu değiştirmez, V0 kapanış kanıtı
+üretmez ve yeni product behavior başlatma izni vermez.
 
 ## Failure recovery
 

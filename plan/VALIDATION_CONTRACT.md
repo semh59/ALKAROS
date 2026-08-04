@@ -81,6 +81,14 @@ npx --yes markdownlint-cli2@0.23.2
   aşamada (V12-V20) toplar ve `GATE-V0-EXIT` kapanış kanıtı sayılmaz.
   `DEPENDENCY_REMOVALS`/forbidden seti dışında dependency düzenlemesi kabul
   edilmez; devir yeni product behavior başlatma izni vermez.
+- 2026-08-04 kullanıcı onayıyla (`TRACEABILITY.md` C44) task-scope aracının
+  `GATE-V0-EXIT` türetilmiş entry-gate kontrolü, `V0_DEFERRED_TASKS` tablosunu
+  fail-closed okur ve 11 devir kimliğini yalnız bu gate'in kapanma koşulundan
+  muaf sayar; kayıt kümesi GATES.md ile araç kodunda birebir eşleşir, tablo
+  bozuk/yinelenen/eksikse denetim non-zero exit verir, `GATES.md` yoksa gate
+  açık listesiyle reddedilir. Muafiyet yalnız `GATE-V0-EXIT` türetimi içindir,
+  remediation exception mekanizmasını değiştirmez, V0 kapanış kanıtı üretmez
+  ve yeni product behavior başlatma izni vermez.
 - Tablo marker'ı, başlığı, ayıracı, satır biçimi, approval tarihi veya exact
   Task ID kümesi bozuksa; yinelenen ya da ek bir kayıt varsa task-scope
   denetimi fail-closed non-zero exit verir. İstisna V0/V1 gate kapanış kanıtı

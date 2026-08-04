@@ -1,0 +1,13 @@
+﻿Manifest Markdown files: 409
+UTF-8 full reads: 409
+Markdown lines: 27866
+Markdown bytes: 1880531
+Audit baseline rows: 211
+Audit finding IDs: 1827
+Audit added-file hashes: 196
+Manifest errors: 5
+MANIFEST_PATHS missing=1 extra=0
+MARKDOWN_COUNT manifest=408 actual=409
+TOTAL_LINES actual=27866 manifest=27784
+TOTAL_BYTES actual=1880531 manifest=1876600
+AUDIT_ADDED_ROWS actual=196 expected=197
