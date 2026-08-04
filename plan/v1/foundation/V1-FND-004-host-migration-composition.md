@@ -1,7 +1,7 @@
 # V1-FND-004 - Implement host migration composition
 
 - Task ID: V1-FND-004
-- Status: Blocked
+- Status: Done
 - Assignee: opencode-v1-fnd-004
 - Work type: implementation
 - Surface state: Existing
@@ -54,11 +54,6 @@ Executable host'u ve module migration'larını doğrulanmış global sırayla ç
 - V1-FND-003
 - V0-ARC-001
 - V0-DAT-001
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 
