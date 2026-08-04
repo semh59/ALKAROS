@@ -1578,6 +1578,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-FND-003/test-results.md` | ✅ | `EA49E72915441FFFFB2CC35FF84FDCAFF4E108D1D94056FB4CA712CFD78DA86B` | Denetim sözleşmesi |
 | `evidence/V1-FND-005/defect-5-closure.md` | ✅ | `52FECCA753D4C214D0D45565F50A4BE82C41D76BA661F94C26EBEBEF2FF3623E` | Denetim sözleşmesi |
 | `evidence/V1-FND-012/closure-report.md` | ✅ | `13EC4E6C7C6439ECE442876083DFE2A1F3B5DA57012AB320DDE90250EC94EBFC` | Denetim sözleşmesi |
+| `evidence/V1-FND-013/verification.md` | ✅ | `DC10486428BBFAB254E22D0BC4BAFC5DE0E013231D01687FEF8345F6AFF4D000` | Denetim sözleşmesi |
 | `evidence/V1-IAM-001/defect-7-closure.md` | ✅ | `D1567120296FB180FE0981B03EC973A380948359AEEBF85D6B483260E7DF2B5C` | Denetim sözleşmesi |
 | `evidence/V1-IAM-004/closure-report.md` | ✅ | `57F464EE1CC298053C0FF634410028F3CB84CDA3B61345E7D0649B8EC6C3F4C0` | Denetim sözleşmesi |
 | `evidence/V1-IAM-005/verification.md` | ✅ | `D7AF716AB358D4CE07CDE130B37707AA257E63D16FFDB5D9F71ACC63C299E18F` | Denetim sözleşmesi |
@@ -1655,8 +1656,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md` | ✅ | `969DCE8A4B8693073411C465BE96BDD127D524FFBB0E727EB004231519B75411` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-011-transaction-outbox-atomicity.md` | ✅ | `F95B7C4BFD5B2535E79F37942806F698FDA8C63D2C3D3D75603084A8EF7BE2D5` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-012-runtime-migration-manifest.md` | ✅ | `D4BCB5A134ED7B7B8D72E3A3C06C0E8C81873357A4251724F995FAC4E95E85E7` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-013-host-composition-constructability.md` | ✅ | `8FAF0D5FECC497CF8050CE921E4D1970CB69C4783E789FEE1D77B9BE30610B72` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-014-retry-sql-identifier-hardening.md` | ✅ | `B85C2F5ADA69BF0BCDD24705EE6BA2C73933497EC6583B351D3B4284C1D25159` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-013-host-composition-constructability.md` | ✅ | `3ED50C2DFFC4E9381267DF1DC2E55D3F0B441EDEBA33E8FE04831CC595A42E7D` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-014-retry-sql-identifier-hardening.md` | ✅ | `520A8EE16A08D00326FF12899072F0399DE73627F5BC34C1B2D62E2A000DA2C7` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-015-inbox-idempotency-contract.md` | ✅ | `0C39A8618CF7CA1581EDBE2800EBB2210736C4A4A2912A1E1615CDB980CE9C6E` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md` | ✅ | `ACACFF68072C251FABB9D00F6122EB6A2F60CB9093BDDBA5709FB5893058CBBE` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md` | ✅ | `1078F8518A4CCD35E9AEBC3DBB16E1338378F05CF7C4C72AF5AE64522530CAFC` | Tek-sahip görev |
@@ -1674,5 +1675,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Codex execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `402` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `403` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

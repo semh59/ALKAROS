@@ -13,6 +13,15 @@ public static class RetryPolicy
     public const int MaxAttempts = 3;
 
     /// <summary>
+    /// The only table identifiers accepted by <see cref="RecordFailureAsync"/>.
+    /// The SQL surface is closed to these registered constants; any other
+    /// value is rejected before a command is built.
+    /// </summary>
+    public static readonly IReadOnlySet<string> AllowedTableNames = new HashSet<string>(
+        ["inbox_messages", "outbox_messages"],
+        StringComparer.Ordinal);
+
+    /// <summary>
     /// The delay before the next attempt after <paramref name="completedAttempts"/>
     /// failed attempts. Only valid below <see cref="MaxAttempts"/>; at the
     /// threshold the message is dead, not retried.
@@ -53,6 +62,9 @@ public static class RetryPolicy
     {
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
+        if (!AllowedTableNames.Contains(tableName))
+            throw new ArgumentException(
+                $"Table name '{tableName}' is not an allowed retry table.", nameof(tableName));
         ArgumentNullException.ThrowIfNull(error);
         if (baseDelay <= TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(baseDelay), "Base delay must be positive.");

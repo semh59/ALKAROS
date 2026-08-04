@@ -1,7 +1,7 @@
 # V1-FND-014 - Harden retry SQL identifier surface
 
 - Task ID: V1-FND-014
-- Status: Planned
+- Status: Done
 - Assignee: opencode-v1-fnd-014
 - Work type: implementation
 - Surface state: Existing
