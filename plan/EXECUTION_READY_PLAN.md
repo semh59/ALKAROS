@@ -159,6 +159,7 @@ eksikleri, hataları, sıralamayı ve kabul kanıtını kilitler. Diskte kod bul
 | 10 | `V1-FND-014` | `RetryPolicy.RecordFailureAsync` serbest `tableName`'i SQL'e interpolate ediyor. | Yalnız kayıtlı sabit tablo kimlikleri kabul edilir; serbest string fail-closed reddedilir. |
 | 11 | `V1-FND-015` | Inbox handler sözleşmesi idempotency zorunlu kılmıyor; lease expiry sonrası yeniden işleme çift etki riski. | Handler sözleşmesi tekrar-teslimde çift etkiyi yasaklar; contract testleri geçer. |
 | 12 | `V0-GOV-030` | GATE-V0-EXIT evidence sayımı bayat: 62/51/11 yazıyor, gerçek 66/55/11. | Sayım yeniden üretilir; 51/62 sayımı tarihsel hata kaydına işlenir; Open/Closed tek kaynağı C41/C42. |
+| 13 | `V0-GOV-031` | C42 remediasyon görevleri GATE-V0-EXIT açıkken `InProgress` olamıyor: task-scope onay seti ve istisna tablosu C42 kimliklerini içermiyor (araç çıktısıyla kanıtlandı, C43). | Onay seti + `2026-08-04` tablo kayıtları + sözleşme metinleri güncellenir; dört kimlik entry gate'ten muaf olur. |
 
 ## Aşama 3 — foundation kabul sırası
 
@@ -167,7 +168,8 @@ kusur varsa Aşama 2 altında düzeltilir.
 
 Aşama 2 denetim remediasyon görevleri (`V1-IAM-005`, `V1-FND-013`,
 `V1-FND-014`, `V1-FND-015`, `V0-GOV-030`) kabul zincirinden önce kapanır;
-aşağıdaki zincir sırası değişmez (C42).
+`V0-GOV-031` entry-gate onayı (C43) bunlardan önce tamamlanır; aşağıdaki
+zincir sırası değişmez (C42, C43).
 
 1. `V1-FND-001`
 2. `V1-FND-010`
@@ -191,7 +193,7 @@ etiketlenir.
 - `GATE-V0-EXIT` kapalıdır.
 - Aşama 3 zorunlu chain'i `Done`dur.
 - Aşama 2 denetim remediasyon görevleri (`V1-IAM-005`, `V1-FND-013`,
-  `V1-FND-014`, `V1-FND-015`, `V0-GOV-030`) `Done`dur.
+  `V1-FND-014`, `V1-FND-015`, `V0-GOV-030`) ve `V0-GOV-031` `Done`dur.
 - `V0-DAT-002` ve `V0-CMP-002` `Done`dur.
 - Tek gerçek assignee atanmıştır.
 - Yalnız `src/Modules/Catalog/ProductCatalog/**`, ilgili test yüzeyi ve

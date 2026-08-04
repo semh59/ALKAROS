@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 398,
-  "markdown_line_count": 26977,
-  "markdown_byte_count": 1839821,
+  "markdown_file_count": 399,
+  "markdown_line_count": 27061,
+  "markdown_byte_count": 1843900,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -855,9 +855,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "90284B417C8821494B43C90CC3BBCE85039D4367050E0A3D1CA3736390744B87",
-      "lines": 1674,
-      "bytes": 229400,
+      "sha256": "EC5D208970A5F8D24F9108165CB194DAE92FE688216F1372E1AA3B9DA1CD6321",
+      "lines": 1675,
+      "bytes": 229557,
       "utf8": true
     },
     {
@@ -869,16 +869,16 @@
     },
     {
       "path": "plan/EXECUTION_READY_PLAN.md",
-      "sha256": "44BEB65DD033B3DB5C3886ED136A90DCB86F76A6CD9879A3383D58660E93F298",
-      "lines": 226,
-      "bytes": 12702,
+      "sha256": "0A1C4317999439669063B9A703ED172C6B1F2C961D2DCC2CB50E51D494F7E5B4",
+      "lines": 228,
+      "bytes": 13118,
       "utf8": true
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "ECCB16A44B6EAAFF7C041A3F4B9C607336F180BE305FE2728DEB0C5C0EF012FF",
-      "lines": 136,
-      "bytes": 9574,
+      "sha256": "00AA1FC518A5379F26CAD3D51096B4B1D3A91952F6CB0A93136DEC882B5E941D",
+      "lines": 143,
+      "bytes": 10054,
       "utf8": true
     },
     {
@@ -925,9 +925,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "8F525259A49A63731BD67D9F0FF63A4A8318DC5616F5DCC5B13B0CB3DF1815F1",
-      "lines": 145,
-      "bytes": 25521,
+      "sha256": "03E0D3890A3446D53FEF0EB9C2FC51072DDAFCE98F9B7DC8270B7EB6E77CB5D5",
+      "lines": 146,
+      "bytes": 26090,
       "utf8": true
     },
     {
@@ -1261,9 +1261,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-028-candidate-code-remediation-control.md",
-      "sha256": "9BA8FA8F5B49C43AA4E6BD439D8F08F8988342C8AA928F9177BD943C0AD0070B",
+      "sha256": "B9FAED699E1BA59517E9608DFFDF27A58EB8F364DCAF42FAA5225AB6FB64ED0B",
       "lines": 66,
-      "bytes": 2159,
+      "bytes": 2211,
       "utf8": true
     },
     {
@@ -1278,6 +1278,13 @@
       "sha256": "8DBC9AAA8CCC22D09890401622782CB802DCEE5A990C24EBCE741612F64CCA83",
       "lines": 60,
       "bytes": 1685,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-031-c42-entry-gate-approval.md",
+      "sha256": "4A2F72426BF63C58CA32EF5F18486C6F47F3CD5F1B0BEEBE5B4487144B234A8B",
+      "lines": 73,
+      "bytes": 2405,
       "utf8": true
     },
     {

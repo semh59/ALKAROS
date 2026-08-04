@@ -104,6 +104,13 @@ identifier), `V1-FND-015` (inbox idempotency sözleşmesi) ve `V0-GOV-030`
 düzeltir, gate kapanış kanıtı üretmez ve yeni product behavior başlatmaz;
 Aşama 3 kabul zinciri sırası değişmez.
 
+2026-08-04 tarihli kullanıcı onaylı plan değişikliği (`TRACEABILITY.md` C43):
+`V0-GOV-031` (C42 remediasyon entry-gate onayı) task-scope aracının onay
+setini ve `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosunu `V1-IAM-005`,
+`V1-FND-013`, `V1-FND-014`, `V1-FND-015` kimlikleriyle genişletir; istisna
+yalnız kanıtlanmış bulgu remediasyonu içindir, gate kapanış kanıtı üretmez ve
+yeni product behavior başlatmaz; Aşama 3 kabul zinciri sırası değişmez.
+
 ## 2026-08-03 user-approved V0 deferrals
 
 <!-- V0_DEFERRED_TASKS:START -->

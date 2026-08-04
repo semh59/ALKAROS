@@ -21,7 +21,7 @@ fail-closed remediation görevleriyle düzeltilmesini sağlamak.
 - `plan/v0/governance/V0-GOV-003-remediation-execution-control.md`
 - `plan/v0/governance/V0-GOV-028-candidate-code-remediation-control.md`
 - `tools/task-scope/task_scope_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope.py`
+- test_task_scope.py sahipliği V0-GOV-031'e devredilmiştir (C43); bu görev artık bu path'i yazamaz.
 - `tests/Architecture/TaskScope/test_task_scope_remediation_exceptions.py`
 - `docs/engineering/task-scope-contract.md`
 - `plan/GATES.md`
