@@ -160,6 +160,7 @@ eksikleri, hataları, sıralamayı ve kabul kanıtını kilitler. Diskte kod bul
 | 11 | `V1-FND-015` | Inbox handler sözleşmesi idempotency zorunlu kılmıyor; lease expiry sonrası yeniden işleme çift etki riski. | Handler sözleşmesi tekrar-teslimde çift etkiyi yasaklar; contract testleri geçer. |
 | 12 | `V0-GOV-030` | GATE-V0-EXIT evidence sayımı bayat: 62/51/11 yazıyor, gerçek 66/55/11. | Sayım yeniden üretilir; 51/62 sayımı tarihsel hata kaydına işlenir; Open/Closed tek kaynağı C41/C42. |
 | 13 | `V0-GOV-031` | C42 remediasyon görevleri GATE-V0-EXIT açıkken `InProgress` olamıyor: task-scope onay seti ve istisna tablosu C42 kimliklerini içermiyor (araç çıktısıyla kanıtlandı, C43). | Onay seti + `2026-08-04` tablo kayıtları + sözleşme metinleri güncellenir; dört kimlik entry gate'ten muaf olur. |
+| 14 | `V0-GOV-032` | Devirli V0 görevleri (C40) `Blocked` kaldığı için türetilmiş `GATE-V0-EXIT` makinece doğrulanamıyor; istisna seti dışındaki 41 V1 görevi (tüm feature görevleri dahil) başlayamıyor (C44). | Araç `V0_DEFERRED_TASKS` tablosunu fail-closed okur; 11 devir kimliği yalnız GATE-V0-EXIT türetiminde muaf sayılır; sözleşme metinleri ve fail-closed testler güncellenir. |
 
 ## Aşama 3 — foundation kabul sırası
 
@@ -168,8 +169,9 @@ kusur varsa Aşama 2 altında düzeltilir.
 
 Aşama 2 denetim remediasyon görevleri (`V1-IAM-005`, `V1-FND-013`,
 `V1-FND-014`, `V1-FND-015`, `V0-GOV-030`) kabul zincirinden önce kapanır;
-`V0-GOV-031` entry-gate onayı (C43) bunlardan önce tamamlanır; aşağıdaki
-zincir sırası değişmez (C42, C43).
+`V0-GOV-031` entry-gate onayı (C43) bunlardan önce tamamlanır; `V0-GOV-032`
+devirli entry-gate tanıma (C44) kabul zincirindeki görevlerin başlayabilmesi
+için gerekir; aşağıdaki zincir sırası değişmez (C42, C43, C44).
 
 1. `V1-FND-001`
 2. `V1-FND-010`

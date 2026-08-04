@@ -115,6 +115,15 @@ setini ve `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosunu `V1-IAM-005`,
 yalnız kanıtlanmış bulgu remediasyonu içindir, gate kapanış kanıtı üretmez ve
 yeni product behavior başlatmaz; Aşama 3 kabul zinciri sırası değişmez.
 
+2026-08-04 tarihli kullanıcı onaylı plan değişikliği (`TRACEABILITY.md` C44):
+`V0-GOV-032` (devirli entry-gate tanıma) task-scope aracının `GATE-V0-EXIT`
+türetilmiş entry-gate kontrolünü, aşağıdaki `V0_DEFERRED_TASKS` tablosundaki
+kullanıcı onaylı 11 devir kimliğini kapanma koşulundan muaf sayacak şekilde
+genişletir; böylece 2026-08-04 kullanıcı onaylı kapanış (C41) makinece
+doğrulanabilir ve V1 görevleri remediasyon istisnası olmadan başlayabilir.
+İstisna yalnız gate türetimidir, devir kanıtı üretmez ve yeni product
+behavior başlatmaz; Aşama 3 kabul zinciri sırası değişmez.
+
 ## 2026-08-03 user-approved V0 deferrals
 
 <!-- V0_DEFERRED_TASKS:START -->
