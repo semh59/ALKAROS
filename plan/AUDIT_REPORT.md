@@ -1580,7 +1580,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-FND-012/closure-report.md` | ✅ | `13EC4E6C7C6439ECE442876083DFE2A1F3B5DA57012AB320DDE90250EC94EBFC` | Denetim sözleşmesi |
 | `evidence/V1-IAM-001/defect-7-closure.md` | ✅ | `D1567120296FB180FE0981B03EC973A380948359AEEBF85D6B483260E7DF2B5C` | Denetim sözleşmesi |
 | `evidence/V1-IAM-004/closure-report.md` | ✅ | `57F464EE1CC298053C0FF634410028F3CB84CDA3B61345E7D0649B8EC6C3F4C0` | Denetim sözleşmesi |
-| `evidence/V1-IAM-005/verification.md` | ✅ | `E2D10CABF39DBDDB945F823AE37EB1564A7F41D4E4CBA9A5B5D4EC12B02E4BD0` | Denetim sözleşmesi |
+| `evidence/V1-IAM-005/verification.md` | ✅ | `D7AF716AB358D4CE07CDE130B37707AA257E63D16FFDB5D9F71ACC63C299E18F` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/candidate-remediation-2026-08-03.md` | ✅ | `C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/closure-report.md` | ✅ | `B873CEEC58BDC13B7970878719186B4BE54DC6332121D4469DC0F9D8BA311FAC` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/defect-2-closure.md` | ✅ | `F032C394B87213971C259C6497C69DCB591766D27912602C7DC1C9A83A9E791B` | Denetim sözleşmesi |
@@ -1655,11 +1655,11 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md` | ✅ | `969DCE8A4B8693073411C465BE96BDD127D524FFBB0E727EB004231519B75411` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-011-transaction-outbox-atomicity.md` | ✅ | `F95B7C4BFD5B2535E79F37942806F698FDA8C63D2C3D3D75603084A8EF7BE2D5` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-012-runtime-migration-manifest.md` | ✅ | `D4BCB5A134ED7B7B8D72E3A3C06C0E8C81873357A4251724F995FAC4E95E85E7` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-013-host-composition-constructability.md` | ✅ | `F2B59CFFE4A092CE4C31B9E7E8073D88C70DB9A55B532DC0C432AC9DB4F3F582` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-013-host-composition-constructability.md` | ✅ | `8FAF0D5FECC497CF8050CE921E4D1970CB69C4783E789FEE1D77B9BE30610B72` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-014-retry-sql-identifier-hardening.md` | ✅ | `B85C2F5ADA69BF0BCDD24705EE6BA2C73933497EC6583B351D3B4284C1D25159` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-015-inbox-idempotency-contract.md` | ✅ | `0C39A8618CF7CA1581EDBE2800EBB2210736C4A4A2912A1E1615CDB980CE9C6E` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md` | ✅ | `ACACFF68072C251FABB9D00F6122EB6A2F60CB9093BDDBA5709FB5893058CBBE` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md` | ✅ | `9C0D3CFE7AC4A05A6A12EDE41F03596EEE945951473CF6795AFAD7EAF81F8785` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md` | ✅ | `1078F8518A4CCD35E9AEBC3DBB16E1338378F05CF7C4C72AF5AE64522530CAFC` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `E5089004DCAF4FB7E5A18394885E6F920549E7DB93A0A6134D0DAB92114BC76A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `DFEC2B096FD835FB60D3A6E5EFEEF00E3507DA0C465E3771C3DAB2F5C4986F6A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `69D4B40A146A78C94A14692C3247D04BA207F9DAD73F1D5D18CEDAA579A7BFDF` | Tek-sahip görev |

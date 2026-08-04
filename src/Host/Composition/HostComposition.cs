@@ -192,7 +192,12 @@ public static class HostComposition
             foreach (var descriptor in root.Services)
                 AddRegistration(services, descriptor);
 
-            var provider = services.BuildServiceProvider();
+            var provider = services.BuildServiceProvider(
+                new ServiceProviderOptions
+                {
+                    ValidateOnBuild = true,
+                    ValidateScopes = true,
+                });
             output.WriteLine(root.Services.Count == 0
                 ? "Modules composed: none registered."
                 : $"Modules composed: {root.Services.Count} service(s) registered.");
@@ -201,7 +206,8 @@ public static class HostComposition
         catch (Exception ex) when (ex is InvalidOperationException
             or ReflectionTypeLoadException
             or FileNotFoundException
-            or BadImageFormatException)
+            or BadImageFormatException
+            or AggregateException { InnerException: InvalidOperationException })
         {
             output.WriteLine($"Module composition failed: {ex.Message}");
             return null;

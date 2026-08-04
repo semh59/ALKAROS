@@ -1,7 +1,7 @@
 # V1-FND-013 - Prove host composition fail-closed constructability
 
 - Task ID: V1-FND-013
-- Status: Planned
+- Status: Done
 - Assignee: opencode-v1-fnd-013
 - Work type: implementation
 - Surface state: Existing
