@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 404,
-  "markdown_line_count": 27426,
-  "markdown_byte_count": 1859853,
+  "markdown_file_count": 405,
+  "markdown_line_count": 27515,
+  "markdown_byte_count": 1863858,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -365,9 +365,9 @@
     },
     {
       "path": "evidence/v0/gate-v0-exit-closure.md",
-      "sha256": "DEACF2E90576D5EDA20C10FDC9D3F099F33C42A2C1BA5F44AB31B34A838D1DEE",
-      "lines": 70,
-      "bytes": 3150,
+      "sha256": "B315D4D98EE7FA03DD6BD65002C91FBE44DAB71FB454BF98F98A8A28C23ACF86",
+      "lines": 91,
+      "bytes": 4280,
       "utf8": true
     },
     {
@@ -840,6 +840,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-FND-015/verification.md",
+      "sha256": "062E60BAFB35529F5640459B6659C55D5E670886F11484BE7FDDBD486DAAE01C",
+      "lines": 67,
+      "bytes": 2738,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/defect-7-closure.md",
       "sha256": "D1567120296FB180FE0981B03EC973A380948359AEEBF85D6B483260E7DF2B5C",
       "lines": 120,
@@ -890,9 +897,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3584331F2E6C05C4FB488BB4CE3B7FF8D0E0469F3E8BF3485E0F5466C517D494",
-      "lines": 1680,
-      "bytes": 230263,
+      "sha256": "34CFBC58AAEFA44439B9705D3CFB5AEFDF841D0CAC694D2E9B7762B0C2D029B1",
+      "lines": 1681,
+      "bytes": 230403,
       "utf8": true
     },
     {
@@ -1310,9 +1317,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-030-gate-evidence-recount.md",
-      "sha256": "8DBC9AAA8CCC22D09890401622782CB802DCEE5A990C24EBCE741612F64CCA83",
+      "sha256": "D3784061DFAAB89F801F319DAF897FB9AD80392EBFAE780310EAF70CC3B21EAA",
       "lines": 60,
-      "bytes": 1685,
+      "bytes": 1688,
       "utf8": true
     },
     {
@@ -1618,9 +1625,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-015-inbox-idempotency-contract.md",
-      "sha256": "D6A325A45F3E35D55A290C7376AA55ACC554E67B943883F90640EDE42407222B",
+      "sha256": "4C367CEED0BAF5CF8C66A7DB42FFF479E3DF66EBDAE92AB81419E80F02FA3FFA",
       "lines": 58,
-      "bytes": 1822,
+      "bytes": 1816,
       "utf8": true
     },
     {

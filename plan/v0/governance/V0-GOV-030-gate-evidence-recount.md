@@ -1,7 +1,7 @@
 # V0-GOV-030 - Regenerate gate closure evidence counts
 
 - Task ID: V0-GOV-030
-- Status: Planned
+- Status: Done
 - Assignee: opencode-v0-gov-030
 - Work type: documentation
 - Surface state: Existing
