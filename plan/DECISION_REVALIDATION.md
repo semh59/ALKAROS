@@ -38,7 +38,6 @@ consumer bu kayıtlar kapanmadan ilerleyemez.
 | `V0-ARC-009` | `docs/architecture/qr-relay-topology.md` | Topology decision evidence |
 | `V0-CMP-002` | `docs/compliance/money-tax-business-date.md` | Tax/business decision evidence |
 | `V0-CMP-005` | `docs/compliance/accessibility-target.md` | Conformance approver |
-| `V0-SEC-001` | `docs/security/security-verification-baseline.md` | Threat model, selected ASVS level, approver |
 
 Her satır ancak ilgili task Markdown'ı `Planned` durumuna alındıktan, artifact
 source basis ile eşleştirildikten ve `TASK_STANDARD.md` karar sözleşmesinin tüm
