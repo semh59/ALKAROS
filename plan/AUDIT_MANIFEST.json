@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 413,
-  "markdown_line_count": 28097,
-  "markdown_byte_count": 1893490,
+  "markdown_file_count": 414,
+  "markdown_line_count": 28148,
+  "markdown_byte_count": 1895817,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -861,6 +861,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-FND-009/closure-report-2026-08-05.md",
+      "sha256": "DD7918943CD17C821513E5CBB54CA54F75FB5082F73BBC6B71088E03A9814B27",
+      "lines": 50,
+      "bytes": 2180,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-010/verification.md",
       "sha256": "566DAEE4CDB3EB3AE7A04FB94E56B726DAE5D401B8162E272044133AFEF11584",
       "lines": 52,
@@ -946,9 +953,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "229324A3024E13E0BEB19E7808A1566A15E72F52E81A9A309DA7C25665BB8B31",
-      "lines": 1689,
-      "bytes": 231547,
+      "sha256": "CD77D6641FE6F5EFEE31700CFBFBEEE1BAC3FF71EF264F8FBBEA90A72B881200",
+      "lines": 1690,
+      "bytes": 231700,
       "utf8": true
     },
     {
@@ -1639,9 +1646,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md",
-      "sha256": "4309D275058A8D4A16CAD2521181625C3FB07164DB1B5539F30AE97698D97E2C",
+      "sha256": "987B9142F166B4DC0D14A81C8F4E8B19ABF48CA9E0F06BB0CFF58798DC295D34",
       "lines": 97,
-      "bytes": 5240,
+      "bytes": 5234,
       "utf8": true
     },
     {
