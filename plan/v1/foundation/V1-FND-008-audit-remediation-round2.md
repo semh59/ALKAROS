@@ -1,7 +1,7 @@
 # V1-FND-008 - Remediate boundary audit round 2
 
 - Task ID: V1-FND-008
-- Status: Blocked
+- Status: Done
 - Assignee: opencode-v1-fnd-008
 - Work type: implementation
 - Surface state: Existing
@@ -80,11 +80,6 @@ eksik `Task:` footer'ları, (3) plan-audit aracındaki hard-code Markdown sayıs
 - V1-FND-004
 - V1-FND-007
 - V0-DOM-001
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 
