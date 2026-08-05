@@ -1,7 +1,7 @@
 # V1-IAM-001 - Implement user authentication
 
 - Task ID: V1-IAM-001
-- Status: Blocked
+- Status: Done
 - Assignee: opencode-v1-iam-001
 - Work type: implementation
 - Surface state: Existing
@@ -41,11 +41,6 @@ Password verification, active-user check, login/logout ve secure session issuanc
 
 - V1-FND-001
 - V0-ARC-002
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 
