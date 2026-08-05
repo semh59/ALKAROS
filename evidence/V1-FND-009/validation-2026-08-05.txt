@@ -1,0 +1,36 @@
+V1-FND-009 full-history rewrite — validation evidence (2026-08-05)
+
+Uygulanan komutlar ve gerçek çıktı sonuçları:
+
+1) git filter-branch --force --msg-filter "...fnd009_add_footer.py" --tag-name-filter cat -- master
+   -> "Ref 'refs/heads/master' was rewritten"; 126 commit; tag objeleri yeniden oluşturuldu.
+
+2) git diff --stat fnd009-safety-backup master
+   -> boş (exit 0): içerik birebir korundu, yalnız SHA/mesaj değişti.
+
+3) git fsck --no-dangling
+   -> sorunsuz (dangling yok).
+
+4) dotnet build ALKAROS.slnx
+   -> 0 Uyarı, 0 Hata.
+
+5) dotnet test ALKAROS.slnx
+   -> ALKAROS.Identity.Authentication.Tests: 51/51
+      ALKAROS.Architecture.Tests:         5/5
+      ALKAROS.Host.Tests:                62/62
+
+6) dotnet test tests/BuildingBlocks/Transactions/...        -> 25/25
+   dotnet test .../TransactionOutboxIntegration/... (PG)   -> 12/12
+
+7) python -m pytest tests/Architecture/TaskScope/ -q
+   -> 80 passed
+
+8) python tools/plan-audit/plan_audit_tool.py validate
+   -> Validation errors: 0, warnings: 0
+
+9) python tools/plan-audit/plan_audit_tool.py generate-audit-report
+   -> Audit report lines: 1689
+   python ... generate-manifest -> SHA-256 BE6786BE...; verify-manifest -> Manifest errors: 0
+
+10) task_scope_tool.py --task-id V1-FND-009
+    -> tek bulgu: .graphify_detect.json (untracked, kapsam dışı kalıntı)

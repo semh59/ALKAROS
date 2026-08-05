@@ -1,7 +1,7 @@
 # V1-FND-009 - Rewrite pushed history with footers and force-push
 
 - Task ID: V1-FND-009
-- Status: InProgress
+- Status: Done
 - Assignee: opencode-v1-fnd-009
 - Work type: implementation
 - Surface state: Existing

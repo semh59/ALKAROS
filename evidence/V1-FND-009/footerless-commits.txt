@@ -1,0 +1,31 @@
+﻿0cd9a717686e8e00aa051fb7e4201d2510b9c165 feat(foundation): complete V1-FND-005 transaction execution boundary validation
+570c7b33c76e7a26d80fc7ecf20d14562641d706 feat(foundation): complete V1-FND-004 host migration composition validation
+143009d238c6fba0f0d73040fe9bace9d16e0866 feat(foundation): complete V1-FND-003 codex task-scope enforcement validation
+03f6102c048372c533c5e4d02d0a8903fde65a9c feat(foundation): complete V1-FND-010 shared integration-test fixture validation
+4c3094a4219916e1ab10ac055a7a86190757d157 fix(governance): regenerate audit manifest after GOV-032 evidence final edit
+f56ead94897363136d258ca6fb326f023108247c feat(governance): recognize deferred V0 tasks in entry-gate derivation (V0-GOV-032)
+9c441d1665b33fe3ef1a2d57e60749f1f7e6f511 docs(governance): transfer task-scope test surface to GOV-032 (C44)
+0bc01939aa50bc9c2c495175ab5f30c44efbe5cc docs(governance): plan change C44 for deferred V0 entry-gate recognition
+b6c1c0ae0b369d8d81818febf3714377e8f30be5 feat(foundation): verify modular monolith skeleton acceptance (V1-FND-001)
+32116438f7715f0b2b8b39f7b652d15c4ee7ff3a docs(governance): regenerate gate closure evidence counts (V0-GOV-030)
+3aab4650407319dac815b1437ceee9d383f85b47 feat(messaging): mandate inbox redelivery idempotency contract (V1-FND-015)
+baf8b6775dc11bf9d0bb1d6dd38af7d2bf839620 feat(messaging): close retry SQL identifier surface to registered tables (V1-FND-014)
+d4d62d6a02346dfd638ba912dbd9786c0319e4a9 feat(host): validate composition constructability fail-closed (V1-FND-013)
+678565f2d0f10327caef881177887325fd33095b feat(identity): enforce login timing equality contract (V1-IAM-005)
+78958dacd6f532b43039e7adcb6cb5210a114323 fix(governance): approve C42 remediation entry-gate exceptions (V0-GOV-031)
+9e2a6b66ae416e26a326c00b9313ed838b26fada docs(plan): add V0-GOV-031 C42 entry-gate approval task (C43)
+1991abb08deb8ca3c2fad1033817b300889f57f4 docs(plan): add C42 audit remediation tasks for FIND-IA-0056..0061
+5c9697dd4ad42c3b3c6fafc274b5b51415fcfaed docs(plan): declare GATE-V0-EXIT closed with user approval (C41)
+8d59493a85904cadf581ea9852a48e9e01c97758 docs(plan): close V0 gate exit with decision records and closure evidence
+ed3d97d16f3d2aea243c79a6fa1c37e64c4d9ebd fix(foundation): close stage 2 execution-ready defects with evidence
+f87c7dc2851ab152ed165bb4fdad7bb8bc07ab80 docs(plan): finalize verified remediation set
+849bcaa87b75f5fcbeae4024e78e78d366ea5f8e docs(plan): define final audit refresh task
+d6f743810bd9fc146e77ec1dae4a9e87a2f71b3c docs(plan): define PDF coverage regeneration task
+4374a3b2cf9de01596601bdffe1f722842131c58 docs(plan): define plan audit tool integrity task
+f87468b2553586368e5d7bc246f1ab430b05ee6f docs(plan): define SEC-003 boundary repair
+17c90806461f86db3add26cf9d5a6c4b5bf5bd34 fix(governance): constrain remediation gate exceptions
+792fa2cae98e7107be559c837454513696b1f3c2 docs(plan): define constrained audit remediations
+630e3242e1eddcc5c009e6220b751855512eba7b docs(plan): fix audit findings across plan, docs and evidence
+6f5278ccefc6c3aec17e3e3d8f8263dc6de2faa8 fix(foundation): hold dispatch claim locks and consolidate test fixtures
+1c116033e8b087c0fa6a46660e8dfe1d1c6cb452 feat(fnd-006): integrate transaction and outbox execution with tests
+fc5ae22295bdf1317c382079e4dbe70f34df7514 V0: initial plan baseline and decision records
