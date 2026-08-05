@@ -1,7 +1,7 @@
 # V1-FND-007 - Remediate independent audit findings
 
 - Task ID: V1-FND-007
-- Status: Blocked
+- Status: Done
 - Assignee: opencode-v1-fnd-007
 - Work type: implementation
 - Surface state: Existing
@@ -67,11 +67,6 @@ git izlenebilirliği, ölü kod, sessiz catch, commit footer ihlalleri ve V0-CMP
 - V1-SEC-001
 - V1-SEC-002
 - V0-CMP-003
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 
