@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c0678b8d-22e1-4307-9398-9fe0e2dd29ac" name="semih@SEMIH 2026-08-04 23:10:51" runUser="SEMIH\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-08-04T23:10:51.0504591+03:00" queuing="2026-08-04T23:10:51.0504594+03:00" start="2026-08-04T23:10:50.2299179+03:00" finish="2026-08-04T23:10:51.0921310+03:00" />
+  <TestSettings name="default" id="05231832-c6d6-46f9-8a43-ac3dd61a8504">
+    <Deployment runDeploymentRoot="semih_SEMIH_2026-08-04_23_10_51" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f05f30a9-0ac6-4983-8c70-b18a84c6422e" testId="f894973f-d327-8602-61d9-766d3a5d4eff" testName="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferenceRejectsEmptyName" computerName="SEMIH" duration="00:00:00.0001875" startTime="2026-08-04T23:10:51.0142580+03:00" endTime="2026-08-04T23:10:51.0142581+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f05f30a9-0ac6-4983-8c70-b18a84c6422e" />
+    <UnitTestResult executionId="6e5d7c77-3913-46f5-b930-da03b39a34d1" testId="b502ed4d-ab85-0202-23de-9ab6f2914b73" testName="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests.ValidateSucceedsWhenAllRequiredSecretsAreResolvable" computerName="SEMIH" duration="00:00:00.0001558" startTime="2026-08-04T23:10:50.9787695+03:00" endTime="2026-08-04T23:10:50.9787696+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e5d7c77-3913-46f5-b930-da03b39a34d1" />
+    <UnitTestResult executionId="b18b512f-6248-42fb-a026-b4b301929c6d" testId="4b31a234-8210-ddff-625f-434a1c874fcd" testName="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.SecretValueValueAccessAfterDisposeThrows" computerName="SEMIH" duration="00:00:00.0046625" startTime="2026-08-04T23:10:50.9771677+03:00" endTime="2026-08-04T23:10:50.9771678+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b18b512f-6248-42fb-a026-b4b301929c6d" />
+    <UnitTestResult executionId="e093c5fd-af38-4729-8be1-8fd4a7d907c2" testId="78ec1c50-0f77-62a4-8aa6-b62eaeb8a4b4" testName="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests.ValidateThrowsWhenRequiredSecretIsDenied" computerName="SEMIH" duration="00:00:00.0004272" startTime="2026-08-04T23:10:50.9784660+03:00" endTime="2026-08-04T23:10:50.9784661+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e093c5fd-af38-4729-8be1-8fd4a7d907c2" />
+    <UnitTestResult executionId="e70f313f-45db-4114-a24b-fab9b980b533" testId="badbb29b-bf4b-5a55-43fd-d9fdb8c8fa45" testName="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.DeniedAccessExceptionFormattingNeverContainsTheValue" computerName="SEMIH" duration="00:00:00.0003827" startTime="2026-08-04T23:10:51.0143897+03:00" endTime="2026-08-04T23:10:51.0143898+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e70f313f-45db-4114-a24b-fab9b980b533" />
+    <UnitTestResult executionId="9c91bb32-e737-4b19-b4fc-db63eec2129b" testId="d92999f8-cf1e-8dec-2fc7-dc80a33eb033" testName="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.StringInterpolationOfSecretValueRendersRedacted" computerName="SEMIH" duration="00:00:00.0001704" startTime="2026-08-04T23:10:51.0143473+03:00" endTime="2026-08-04T23:10:51.0143474+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c91bb32-e737-4b19-b4fc-db63eec2129b" />
+    <UnitTestResult executionId="328ffa44-953c-48d4-9443-6bc6277a0973" testId="f242e8e8-b023-3cfb-67ad-46b9824fdd46" testName="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.TestProviderRejectsBlankSecretValue" computerName="SEMIH" duration="00:00:00.0002567" startTime="2026-08-04T23:10:51.0142893+03:00" endTime="2026-08-04T23:10:51.0142893+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="328ffa44-953c-48d4-9443-6bc6277a0973" />
+    <UnitTestResult executionId="0584a0bf-f070-4e41-95d1-ffb5e7137d92" testId="c26fe942-2ab0-8148-7841-75951e02fa41" testName="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests.ValidateIsRepeatableAndChangesNothingInTheProvider" computerName="SEMIH" duration="00:00:00.0002567" startTime="2026-08-04T23:10:51.0125877+03:00" endTime="2026-08-04T23:10:51.0125878+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0584a0bf-f070-4e41-95d1-ffb5e7137d92" />
+    <UnitTestResult executionId="25facc3b-61de-459e-b1ac-2f42ccee8aea" testId="bf3aa8e5-991b-fa02-4fbd-756188082f26" testName="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.MissingSecretExceptionFormattingNeverContainsTheValue" computerName="SEMIH" duration="00:00:00.0068308" startTime="2026-08-04T23:10:51.0142995+03:00" endTime="2026-08-04T23:10:51.0142996+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25facc3b-61de-459e-b1ac-2f42ccee8aea" />
+    <UnitTestResult executionId="800b07bc-5e0a-4c6d-ba55-818db36e3b0d" testId="9bd184ad-5315-76f7-1dc6-09ff7652acfd" testName="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferenceRejectsEmbeddedWhitespace" computerName="SEMIH" duration="00:00:00.0002249" startTime="2026-08-04T23:10:51.0141766+03:00" endTime="2026-08-04T23:10:51.0141766+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="800b07bc-5e0a-4c6d-ba55-818db36e3b0d" />
+    <UnitTestResult executionId="19f7472b-27c2-4a32-9fd5-c68ec462e172" testId="e6fb0de3-f800-a7ca-a254-c5098a8dd91d" testName="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.DeniedAccessThrowsSecretAccessDeniedException" computerName="SEMIH" duration="00:00:00.0004111" startTime="2026-08-04T23:10:51.0126430+03:00" endTime="2026-08-04T23:10:51.0126431+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19f7472b-27c2-4a32-9fd5-c68ec462e172" />
+    <UnitTestResult executionId="23822ffc-f84c-4258-abfb-513194ea6b96" testId="8b8a2ee0-fe78-e824-0387-635663924cfd" testName="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferencesWithSameNameAreEqual" computerName="SEMIH" duration="00:00:00.0068757" startTime="2026-08-04T23:10:51.0127773+03:00" endTime="2026-08-04T23:10:51.0127773+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="23822ffc-f84c-4258-abfb-513194ea6b96" />
+    <UnitTestResult executionId="4c2636a6-4930-4364-9798-d50992ed1737" testId="b9256e32-978e-4f49-b893-9b1afc7fa467" testName="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferenceRejectsWhitespaceOnlyName" computerName="SEMIH" duration="00:00:00.0046680" startTime="2026-08-04T23:10:50.9771291+03:00" endTime="2026-08-04T23:10:50.9771292+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c2636a6-4930-4364-9798-d50992ed1737" />
+    <UnitTestResult executionId="1cf4697d-5c0e-4f57-ad15-376fa5c452b0" testId="9f6b7a04-5ed0-0a06-cd14-a48990586431" testName="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferenceKeepsGivenNameForStringOutput" computerName="SEMIH" duration="00:00:00.0001309" startTime="2026-08-04T23:10:51.0142223+03:00" endTime="2026-08-04T23:10:51.0142223+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1cf4697d-5c0e-4f57-ad15-376fa5c452b0" />
+    <UnitTestResult executionId="1edde908-aa3a-4e5a-bccc-3d0a0dbf6e76" testId="2422e645-d339-c3e8-5cbe-1906006149b1" testName="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests.ValidateThrowsWhenRequiredSecretIsMissing" computerName="SEMIH" duration="00:00:00.0046767" startTime="2026-08-04T23:10:50.9766804+03:00" endTime="2026-08-04T23:10:50.9766805+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1edde908-aa3a-4e5a-bccc-3d0a0dbf6e76" />
+    <UnitTestResult executionId="a3e81d3e-e7af-4e34-b0f9-e03f7fd24e6c" testId="0f08109f-8fc2-5604-a13e-1c6ee03bbbd5" testName="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.MissingSecretThrowsSecretNotFoundException" computerName="SEMIH" duration="00:00:00.0003762" startTime="2026-08-04T23:10:51.0126103+03:00" endTime="2026-08-04T23:10:51.0126103+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3e81d3e-e7af-4e34-b0f9-e03f7fd24e6c" />
+    <UnitTestResult executionId="f2dddec9-b533-494a-b3b8-cc3f1d341195" testId="c25e669b-f888-0d6c-9cdb-359b5b55e57b" testName="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.ResolvesSecretForAllowedAccessor" computerName="SEMIH" duration="00:00:00.0009197" startTime="2026-08-04T23:10:51.0123693+03:00" endTime="2026-08-04T23:10:51.0123694+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f2dddec9-b533-494a-b3b8-cc3f1d341195" />
+    <UnitTestResult executionId="26fa737e-6f78-4429-b711-4e5b2f362a32" testId="0c61f907-6829-c9ba-df13-974cb7b48616" testName="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.SecretValueToStringNeverContainsTheValue" computerName="SEMIH" duration="00:00:00.0010211" startTime="2026-08-04T23:10:51.0125334+03:00" endTime="2026-08-04T23:10:51.0125335+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="26fa737e-6f78-4429-b711-4e5b2f362a32" />
+    <UnitTestResult executionId="25dc50bb-243c-4722-8983-2fd4fd7b02e6" testId="4db196ed-b45d-2d41-a918-3a439c0c160e" testName="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.ResolveRejectsBlankAccessor" computerName="SEMIH" duration="00:00:00.0003475" startTime="2026-08-04T23:10:51.0127374+03:00" endTime="2026-08-04T23:10:51.0127375+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25dc50bb-243c-4722-8983-2fd4fd7b02e6" />
+    <UnitTestResult executionId="58028739-e255-4269-bd79-6e3cf19acae4" testId="c34dc330-e9bc-de74-28d8-7c69d6dc880d" testName="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.AccessIsPerSecretAndPerAccessor" computerName="SEMIH" duration="00:00:00.0005613" startTime="2026-08-04T23:10:51.0126762+03:00" endTime="2026-08-04T23:10:51.0126762+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="58028739-e255-4269-bd79-6e3cf19acae4" />
+    <UnitTestResult executionId="fe3c2794-ac1a-41d3-a4f4-6e86a404dfb8" testId="2fa47118-f957-e8ee-51ac-2f39e29071d4" testName="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.AccessIsCheckedBeforeProviderLookup" computerName="SEMIH" duration="00:00:00.0046648" startTime="2026-08-04T23:10:50.9730350+03:00" endTime="2026-08-04T23:10:50.9730771+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe3c2794-ac1a-41d3-a4f4-6e86a404dfb8" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.ResolvesSecretForAllowedAccessor" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="c25e669b-f888-0d6c-9cdb-359b5b55e57b">
+      <Execution id="f2dddec9-b533-494a-b3b8-cc3f1d341195" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests" name="ResolvesSecretForAllowedAccessor" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.SecretValueValueAccessAfterDisposeThrows" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="4b31a234-8210-ddff-625f-434a1c874fcd">
+      <Execution id="b18b512f-6248-42fb-a026-b4b301929c6d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests" name="SecretValueValueAccessAfterDisposeThrows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferencesWithSameNameAreEqual" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="8b8a2ee0-fe78-e824-0387-635663924cfd">
+      <Execution id="23822ffc-f84c-4258-abfb-513194ea6b96" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests" name="SecretReferencesWithSameNameAreEqual" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.StringInterpolationOfSecretValueRendersRedacted" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="d92999f8-cf1e-8dec-2fc7-dc80a33eb033">
+      <Execution id="9c91bb32-e737-4b19-b4fc-db63eec2129b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests" name="StringInterpolationOfSecretValueRendersRedacted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.MissingSecretExceptionFormattingNeverContainsTheValue" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="bf3aa8e5-991b-fa02-4fbd-756188082f26">
+      <Execution id="25facc3b-61de-459e-b1ac-2f42ccee8aea" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests" name="MissingSecretExceptionFormattingNeverContainsTheValue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests.ValidateIsRepeatableAndChangesNothingInTheProvider" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="c26fe942-2ab0-8148-7841-75951e02fa41">
+      <Execution id="0584a0bf-f070-4e41-95d1-ffb5e7137d92" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests" name="ValidateIsRepeatableAndChangesNothingInTheProvider" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferenceRejectsEmptyName" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="f894973f-d327-8602-61d9-766d3a5d4eff">
+      <Execution id="f05f30a9-0ac6-4983-8c70-b18a84c6422e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests" name="SecretReferenceRejectsEmptyName" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.AccessIsCheckedBeforeProviderLookup" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="2fa47118-f957-e8ee-51ac-2f39e29071d4">
+      <Execution id="fe3c2794-ac1a-41d3-a4f4-6e86a404dfb8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests" name="AccessIsCheckedBeforeProviderLookup" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.DeniedAccessExceptionFormattingNeverContainsTheValue" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="badbb29b-bf4b-5a55-43fd-d9fdb8c8fa45">
+      <Execution id="e70f313f-45db-4114-a24b-fab9b980b533" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests" name="DeniedAccessExceptionFormattingNeverContainsTheValue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferenceKeepsGivenNameForStringOutput" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="9f6b7a04-5ed0-0a06-cd14-a48990586431">
+      <Execution id="1cf4697d-5c0e-4f57-ad15-376fa5c452b0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests" name="SecretReferenceKeepsGivenNameForStringOutput" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests.ValidateThrowsWhenRequiredSecretIsDenied" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="78ec1c50-0f77-62a4-8aa6-b62eaeb8a4b4">
+      <Execution id="e093c5fd-af38-4729-8be1-8fd4a7d907c2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests" name="ValidateThrowsWhenRequiredSecretIsDenied" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests.ValidateSucceedsWhenAllRequiredSecretsAreResolvable" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="b502ed4d-ab85-0202-23de-9ab6f2914b73">
+      <Execution id="6e5d7c77-3913-46f5-b930-da03b39a34d1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests" name="ValidateSucceedsWhenAllRequiredSecretsAreResolvable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests.SecretValueToStringNeverContainsTheValue" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="0c61f907-6829-c9ba-df13-974cb7b48616">
+      <Execution id="26fa737e-6f78-4429-b711-4e5b2f362a32" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Redaction.SecretRedactionTests" name="SecretValueToStringNeverContainsTheValue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.TestProviderRejectsBlankSecretValue" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="f242e8e8-b023-3cfb-67ad-46b9824fdd46">
+      <Execution id="328ffa44-953c-48d4-9443-6bc6277a0973" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests" name="TestProviderRejectsBlankSecretValue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferenceRejectsEmbeddedWhitespace" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="9bd184ad-5315-76f7-1dc6-09ff7652acfd">
+      <Execution id="800b07bc-5e0a-4c6d-ba55-818db36e3b0d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests" name="SecretReferenceRejectsEmbeddedWhitespace" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests.SecretReferenceRejectsWhitespaceOnlyName" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="b9256e32-978e-4f49-b893-9b1afc7fa467">
+      <Execution id="4c2636a6-4930-4364-9798-d50992ed1737" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Malformed.SecretReferenceMalformedTests" name="SecretReferenceRejectsWhitespaceOnlyName" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.DeniedAccessThrowsSecretAccessDeniedException" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="e6fb0de3-f800-a7ca-a254-c5098a8dd91d">
+      <Execution id="19f7472b-27c2-4a32-9fd5-c68ec462e172" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests" name="DeniedAccessThrowsSecretAccessDeniedException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.ResolveRejectsBlankAccessor" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="4db196ed-b45d-2d41-a918-3a439c0c160e">
+      <Execution id="25dc50bb-243c-4722-8983-2fd4fd7b02e6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests" name="ResolveRejectsBlankAccessor" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.AccessIsPerSecretAndPerAccessor" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="c34dc330-e9bc-de74-28d8-7c69d6dc880d">
+      <Execution id="58028739-e255-4269-bd79-6e3cf19acae4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests" name="AccessIsPerSecretAndPerAccessor" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests.MissingSecretThrowsSecretNotFoundException" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="0f08109f-8fc2-5604-a13e-1c6ee03bbbd5">
+      <Execution id="a3e81d3e-e7af-4e34-b0f9-e03f7fd24e6c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Resolution.SecretResolutionTests" name="MissingSecretThrowsSecretNotFoundException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests.ValidateThrowsWhenRequiredSecretIsMissing" storage="d:\project\alkaros\tests\buildingblocks\security\secrets\bin\debug\net8.0\alkaros.secrets.tests.dll" id="2422e645-d339-c3e8-5cbe-1906006149b1">
+      <Execution id="1edde908-aa3a-4e5a-bccc-3d0a0dbf6e76" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Secrets.Tests.Validation.SecretStartupValidatorTests" name="ValidateThrowsWhenRequiredSecretIsMissing" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f894973f-d327-8602-61d9-766d3a5d4eff" executionId="f05f30a9-0ac6-4983-8c70-b18a84c6422e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b502ed4d-ab85-0202-23de-9ab6f2914b73" executionId="6e5d7c77-3913-46f5-b930-da03b39a34d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b31a234-8210-ddff-625f-434a1c874fcd" executionId="b18b512f-6248-42fb-a026-b4b301929c6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78ec1c50-0f77-62a4-8aa6-b62eaeb8a4b4" executionId="e093c5fd-af38-4729-8be1-8fd4a7d907c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="badbb29b-bf4b-5a55-43fd-d9fdb8c8fa45" executionId="e70f313f-45db-4114-a24b-fab9b980b533" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d92999f8-cf1e-8dec-2fc7-dc80a33eb033" executionId="9c91bb32-e737-4b19-b4fc-db63eec2129b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f242e8e8-b023-3cfb-67ad-46b9824fdd46" executionId="328ffa44-953c-48d4-9443-6bc6277a0973" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c26fe942-2ab0-8148-7841-75951e02fa41" executionId="0584a0bf-f070-4e41-95d1-ffb5e7137d92" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf3aa8e5-991b-fa02-4fbd-756188082f26" executionId="25facc3b-61de-459e-b1ac-2f42ccee8aea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9bd184ad-5315-76f7-1dc6-09ff7652acfd" executionId="800b07bc-5e0a-4c6d-ba55-818db36e3b0d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6fb0de3-f800-a7ca-a254-c5098a8dd91d" executionId="19f7472b-27c2-4a32-9fd5-c68ec462e172" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b8a2ee0-fe78-e824-0387-635663924cfd" executionId="23822ffc-f84c-4258-abfb-513194ea6b96" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9256e32-978e-4f49-b893-9b1afc7fa467" executionId="4c2636a6-4930-4364-9798-d50992ed1737" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9f6b7a04-5ed0-0a06-cd14-a48990586431" executionId="1cf4697d-5c0e-4f57-ad15-376fa5c452b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2422e645-d339-c3e8-5cbe-1906006149b1" executionId="1edde908-aa3a-4e5a-bccc-3d0a0dbf6e76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f08109f-8fc2-5604-a13e-1c6ee03bbbd5" executionId="a3e81d3e-e7af-4e34-b0f9-e03f7fd24e6c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c25e669b-f888-0d6c-9cdb-359b5b55e57b" executionId="f2dddec9-b533-494a-b3b8-cc3f1d341195" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c61f907-6829-c9ba-df13-974cb7b48616" executionId="26fa737e-6f78-4429-b711-4e5b2f362a32" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4db196ed-b45d-2d41-a918-3a439c0c160e" executionId="25dc50bb-243c-4722-8983-2fd4fd7b02e6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c34dc330-e9bc-de74-28d8-7c69d6dc880d" executionId="58028739-e255-4269-bd79-6e3cf19acae4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fa47118-f957-e8ee-51ac-2f39e29071d4" executionId="fe3c2794-ac1a-41d3-a4f4-6e86a404dfb8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="21" executed="21" passed="21" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.29)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: ALKAROS.Secrets.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  ALKAROS.Secrets.Tests&#xD;
+[xUnit.net 00:00:00.13]   Starting:    ALKAROS.Secrets.Tests&#xD;
+[xUnit.net 00:00:00.22]   Finished:    ALKAROS.Secrets.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
