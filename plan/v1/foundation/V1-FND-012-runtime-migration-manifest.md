@@ -1,8 +1,8 @@
 # V1-FND-012 - Align the runtime migration manifest
 
 - Task ID: V1-FND-012
-- Status: Blocked
-- Assignee: /root
+- Status: Done
+- Assignee: opencode-v1-fnd-012
 - Work type: implementation
 - Surface state: Existing
 
@@ -44,11 +44,6 @@ gibi gostermemek.
 - V0-GOV-003
 - V1-FND-002
 - V1-FND-004
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 

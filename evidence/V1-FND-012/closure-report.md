@@ -13,7 +13,7 @@
 
 - `dotnet test tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj --nologo`
   - Exit code: `0`
-  - Sonuç: `46 passed, 0 failed`
+  - Sonuç: `62 passed, 0 failed` (2026-08-05 taze doğrulama)
 - Host çalışma zamanı migration kompozisyonu disposable PostgreSQL 18 veritabanında
   çalıştırıldı.
   - Exit code: `0`
