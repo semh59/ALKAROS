@@ -1,7 +1,7 @@
 # V1-FND-009 - Rewrite pushed history with footers and force-push
 
 - Task ID: V1-FND-009
-- Status: Blocked
+- Status: InProgress
 - Assignee: opencode-v1-fnd-009
 - Work type: implementation
 - Surface state: Existing
@@ -72,11 +72,6 @@ Yalnız `fc5ae22` (kök baseline, konvansiyon öncesi) kayıtlı istisnadır ve 
 
 - V1-FND-008
 - V0-DOM-001
-
-## Blocker
-
-- Candidate evidence, `V0-ARC-001` `Done` olmadan kabul edilemez; ancak tam
-  dependency zinciri kapatılıp acceptance yeniden doğrulanınca görev `Planned` olur.
 
 ## Deliverables
 
