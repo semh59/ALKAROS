@@ -100,6 +100,15 @@ diğer application görevleri için aynen geçerliliğini korur.
 zincirden önce başlatılır; kayıt `TRACEABILITY.md` FIND-IA-0050 satırındadır.
 Zincir kuralı diğer application görevleri için aynen geçerliliğini korur.
 
+2026-08-05 tarihli kullanıcı onaylı plan değişikliği (`TRACEABILITY.md` C45):
+`V1-FND-009` kapsamı push edilmiş geçmişin tamamına (125 commit) genişletildi.
+19 commit kanıtlı `Task:`/`Gate:` footer'ı alır; sahiplik kanıtlanamayan
+11 commit (`1991abb`, `ed3d97d`, `f87c7dc`, `849bcaa`, `d6f7438`, `4374a3b`,
+`f87468b`, `17c9080`, `792fa2c`, `630e324`, `6f5278c`) ve `fc5ae22` kök
+baseline kurgusal atıf almaz (kayıtlı istisna). Force-push güncel
+`origin/master` HEAD'i üzerine uygulanır; zincir kuralı diğer application
+görevleri için aynen geçerliliğini korur.
+
 2026-08-04 tarihli kullanıcı onaylı bağımsız-denetim remediasyon planı
 (`TRACEABILITY.md` C42): `V1-IAM-005` (login timing sözleşmesi + kararlı
 test), `V1-FND-013` (host DI constructability), `V1-FND-014` (retry SQL
