@@ -123,13 +123,18 @@ gate/v20-exit    # GATE-V20-EXIT closed
 
 | Tag | Status | Commit |
 | ----- | -------- | -------- |
-| `v0.0.0` | ✅ Done | `655d0b2` (docs(versioning) commit) |
-| `gate/v0-entry` | ✅ Done | `655d0b2` (PDF verified, sources registered) |
+| `v0.0.0` | ✅ Done | `46c8d7d` (docs(versioning) commit) |
+| `gate/v0-entry` | ✅ Done | `46c8d7d` (PDF verified, sources registered) |
 
 2026-08-01 tarihli düzeltme (V1-FND-009 kapsamı, V0-DOM-001 sahipliğinde): `v0.0.0` ve
 `gate/v0-entry` tag'lerinin ikisi de `655d0b2` commit'inde doğrulandı (annotated tag objeleri
 `39ccb50`/`e302c4c`); önceki tablo yanlışlıkla `fc5ae22` yazıyordu. Geçmiş yeniden yazımında
 bu commit `Task: V0-DOM-001` footer'ı zaten mevcut olduğu için SHA değişmedi.
+
+2026-08-05 tarihli ikinci düzeltme (V1-FND-009 C45 kapsamı, V0-DOM-001 sahipliğinde): tam geçmiş
+yeniden yazımı sonrası her iki tag de `46c8d7d` (yeni kök baseline, eski `fc5ae22`'nin yeniden
+yazılmış hâli) commit'ine işaret eder; annotated tag objeleri `f6efc80`/`439e4e8` olarak yeniden
+oluşturuldu.
 
 ## 5. Workflow
 
