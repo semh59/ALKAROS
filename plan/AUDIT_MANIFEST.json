@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 413,
-  "markdown_line_count": 28082,
-  "markdown_byte_count": 1891270,
+  "markdown_line_count": 28097,
+  "markdown_byte_count": 1893490,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -316,9 +316,9 @@
     },
     {
       "path": "docs/versioning-strategy.md",
-      "sha256": "7E237C0804840CECAAA9872C5E919C85D29B4F5CF72C20D412DC5AADD33E3132",
-      "lines": 139,
-      "bytes": 4272,
+      "sha256": "51A159A783E7AC704BFF2D25EFDA1E8FD418B5DD0FBE9B3AE44BF8474F5F27D5",
+      "lines": 144,
+      "bytes": 4595,
       "utf8": true
     },
     {
@@ -946,7 +946,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "7C734141FEC8ADC57C4F7789B81B3C56B31A3D3AE67E9F175BE69A4F9C44B3C0",
+      "sha256": "229324A3024E13E0BEB19E7808A1566A15E72F52E81A9A309DA7C25665BB8B31",
       "lines": 1689,
       "bytes": 231547,
       "utf8": true
@@ -967,9 +967,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "1AF103C0E8CDC1874B2980BE4B7A93B15802D309B50801AAC0412345DD40B2EB",
-      "lines": 156,
-      "bytes": 11184,
+      "sha256": "B2B47DDD8679EB41496222AC1840E2CE31DE09FD5DC79741BBA288AFD65E881A",
+      "lines": 165,
+      "bytes": 11785,
       "utf8": true
     },
     {
@@ -1016,9 +1016,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "681FEFBF0A3747255A4BF054658599B902D14C4809920621DB9BD9BCA2760099",
-      "lines": 147,
-      "bytes": 26973,
+      "sha256": "C03E741170BC50BE51D5E498B59B8844833D828D11B0CCAEBFD81930855BE593",
+      "lines": 148,
+      "bytes": 28172,
       "utf8": true
     },
     {
@@ -1639,9 +1639,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md",
-      "sha256": "2EB853DAA5800B14E86AF7F0CB42256FAE6C7ED8AF5A816A22AA1B57B6417AB6",
+      "sha256": "4309D275058A8D4A16CAD2521181625C3FB07164DB1B5539F30AE97698D97E2C",
       "lines": 97,
-      "bytes": 5143,
+      "bytes": 5240,
       "utf8": true
     },
     {
