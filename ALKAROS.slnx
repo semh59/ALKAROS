@@ -38,4 +38,6 @@
   <Project Path="tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj" />
+  <Project Path="tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj" />
+  <Project Path="tests/Modules/Catalog/Pricing/ALKAROS.Catalog.Pricing.Tests.csproj" />
 </Solution>

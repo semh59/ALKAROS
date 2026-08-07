@@ -140,7 +140,9 @@
       "references": [
         "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
       ],
-      "packages": []
+      "packages": [
+        "Npgsql"
+      ]
     },
     {
       "path": "src/Modules/Tables/ALKAROS.Tables.csproj",
@@ -427,6 +429,38 @@
         "Microsoft.NET.Test.Sdk",
         "xunit",
         "xunit.runner.visualstudio",
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj",
+      "kind": "test",
+      "module": "Catalog",
+      "references": [
+        "src/Modules/Catalog/ALKAROS.Catalog.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "FluentAssertions",
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "tests/Modules/Catalog/Pricing/ALKAROS.Catalog.Pricing.Tests.csproj",
+      "kind": "test",
+      "module": "Catalog",
+      "references": [
+        "src/Modules/Catalog/ALKAROS.Catalog.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "FluentAssertions",
         "Npgsql"
       ]
     }

@@ -27,6 +27,18 @@
       "phase": "A",
       "tables": ["users"],
       "deferredConstraints": []
+    },
+    {
+      "id": "006",
+      "phase": "A",
+      "tables": ["categories", "tax_profiles", "products", "modifier_groups", "modifiers"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "007",
+      "phase": "A",
+      "tables": ["product_prices"],
+      "deferredConstraints": []
     }
   ]
 }
