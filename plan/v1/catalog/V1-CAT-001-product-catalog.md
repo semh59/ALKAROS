@@ -1,10 +1,10 @@
 # V1-CAT-001 - Implement the product catalog
 
 - Task ID: V1-CAT-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-cat-001
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -45,7 +45,10 @@ Category, TaxProfile, Product, ModifierGroup ve Modifier yönetimini domain kıs
 
 ## Acceptance evidence
 
-- Geçersiz stok/tür/vergi kombinasyonları reddedilir; SKU ve değiştirici kısıtlamaları PostgreSQL ve testlerde
+- PDF III.4'te tanımlı olmayan ürün türü, stok modu ve selection_type değerleri ile min_selections >
+  max_selections aralığı PostgreSQL check constraint ve domain testlerinde reddedilir.
+- SKU, kategori kodu, vergi kodu, değiştirici kodu (global unique) ve product_modifier_groups ikilisi unique
+  kısıtlarıyla; bilinmeyen category_id / product_id / modifier_group_id FK doğrulamalarıyla PostgreSQL ve testlerde
   uygulanır.
 
 ## Handoff
