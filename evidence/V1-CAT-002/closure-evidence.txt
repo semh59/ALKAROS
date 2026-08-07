@@ -7,6 +7,10 @@ Executor: opencode-v1-cat-002
 == Build ==
 Command: dotnet build ALKAROS.slnx --nologo -v q
 Result: succeeded, 0 errors, 0 warnings (exit 0)
+Build note: clean-checkout verification (HEAD = a558546) also passes. The
+net8.0 exe apphost generation fails with SDK 10.0.302 fresh obj on ALL commits
+(verified on 67f8a03, pre-existing environment issue, unrelated to this task).
+Build command used for clean-checkout proof: -p:UseAppHost=false (same 0/0).
 
 == Full test suite ==
 Command: dotnet test ALKAROS.slnx --nologo (env: ALKAROS_TEST_PG_*=docker localhost:5433)
@@ -22,6 +26,12 @@ Files:
   ALKAROS.Secrets.Tests                 21/21 passed
   ALKAROS.SensitiveData.Tests           23/23 passed
 TOTAL: 383/383 passed (previous 356 + 27 new pricing tests)
+Clean-checkout proof: `dotnet test ALKAROS.slnx -p:UseAppHost=false` on detached
+HEAD (worktree at commit a558546, no working-tree edits) => 383/383 passed in the
+same 10 projects, including Host.Tests 62/62 and Architecture.Tests 5/5. This
+confirms V1-CAT-001 (committed as 37a44b5) and the Npgsql/FluentAssertions build
+dependencies (committed as the dependency commit) were missing from git history
+and are now present, so HEAD is self-contained.
 
 == Migration forward/rollback evidence ==
 007-catalog-pricing.up.sql:
