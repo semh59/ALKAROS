@@ -449,6 +449,22 @@
       ]
     },
     {
+      "path": "tests/Modules/Identity/DeviceSessions/ALKAROS.Identity.DeviceSessions.Tests.csproj",
+      "kind": "test",
+      "module": "Identity",
+      "references": [
+        "src/Modules/Identity/ALKAROS.Identity.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "FluentAssertions",
+        "Npgsql"
+      ]
+    },
+    {
       "path": "tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj",
       "kind": "test",
       "module": "Catalog",

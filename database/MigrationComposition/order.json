@@ -45,6 +45,12 @@
       "phase": "A",
       "tables": ["permissions", "roles", "role_permissions", "user_roles", "denial_events"],
       "deferredConstraints": []
+    },
+    {
+      "id": "009",
+      "phase": "A",
+      "tables": ["device_sessions", "session_operations"],
+      "deferredConstraints": []
     }
   ]
 }
