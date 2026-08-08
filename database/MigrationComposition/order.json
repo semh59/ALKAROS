@@ -39,6 +39,12 @@
       "phase": "A",
       "tables": ["product_prices"],
       "deferredConstraints": []
+    },
+    {
+      "id": "008",
+      "phase": "A",
+      "tables": ["permissions", "roles", "role_permissions", "user_roles", "denial_events"],
+      "deferredConstraints": []
     }
   ]
 }
