@@ -1,7 +1,7 @@
 # V1-IAM-004 - Make authentication lockout concurrency safe
 
 - Task ID: V1-IAM-004
-- Status: InProgress
+- Status: Done
 - Assignee: opencode-v1-iam-004
 - Work type: implementation
 - Surface state: Existing
