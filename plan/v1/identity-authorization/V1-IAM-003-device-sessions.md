@@ -1,7 +1,7 @@
 # V1-IAM-003 - Implement device session lifecycle
 
 - Task ID: V1-IAM-003
-- Status: InProgress
+- Status: Done
 - Assignee: opencode-v1-iam-003
 - Work type: implementation
 - Surface state: Planned

@@ -1,7 +1,7 @@
 # V1-IAM-002 - Implement role and permission enforcement
 
 - Task ID: V1-IAM-002
-- Status: InProgress
+- Status: Done
 - Assignee: opencode-v1-iam-002
 - Work type: implementation
 - Surface state: Planned
