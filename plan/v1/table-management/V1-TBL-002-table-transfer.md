@@ -20,7 +20,7 @@ History'yi koruyarak open operational Order/Bill ilişkisini Table'lar arasında
 
 ## Owned surface
 
-- `src/Modules/TableManagement/TableTransfer/**`, `tests/Modules/TableManagement/TableTransfer/**`,
+- `src/Modules/Tables/TableTransfer/**`, `tests/Modules/Tables/TableTransfer/**`,
   `database/migrations/V1/V1-TBL-002/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
@@ -38,6 +38,7 @@ History'yi koruyarak open operational Order/Bill ilişkisini Table'lar arasında
 - V1-ORD-001
 - V1-BIL-001
 - V1-FND-005
+- V1-OPS-001
 
 ## Deliverables
 

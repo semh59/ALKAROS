@@ -36,6 +36,7 @@ Uzaktan QR hizmet reddine izin vermeden onaylı dolu/ayrılmış/değişiklik yo
 
 - V14-QRO-001
 - V1-TBL-001
+- V1-TBL-004
 - V0-DOM-005
 
 ## Deliverables

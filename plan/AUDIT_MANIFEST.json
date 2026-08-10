@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 420,
-  "markdown_line_count": 28486,
-  "markdown_byte_count": 1913437,
+  "markdown_file_count": 421,
+  "markdown_line_count": 28545,
+  "markdown_byte_count": 1920358,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -938,6 +938,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-IAM-003/manifest-recover-2026-08-09.md",
+      "sha256": "66F1BF019BCA176159A5813D1BB1EC6BD4B6DA0F8D86C2AC05F1A363099F29C7",
+      "lines": 49,
+      "bytes": 1834,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-004/closure-2026-08-08.md",
       "sha256": "63438956BE89DC3A0D5BDDF7840878766CEAB001818B90C178BDF59B8FE99ABF",
       "lines": 56,
@@ -995,9 +1002,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "AC36EE9860F98C5C1D52781FEA56733E78C377E465695D49B400AB7A99F534A8",
-      "lines": 1696,
-      "bytes": 232590,
+      "sha256": "4F3393ABCF77EB9F2556A7F56A9440F7F73787A401F1C8AE6FFC90A1F873503D",
+      "lines": 1697,
+      "bytes": 232745,
       "utf8": true
     },
     {
@@ -1065,9 +1072,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "ADC5A4E03EFA6DB9F2C6262AADA984497274D71FA15B43D2C86D4735D5E859FE",
-      "lines": 148,
-      "bytes": 28320,
+      "sha256": "C88FA12BB31A5646B80C96FB9A118BA646CF07BECCFE56309C5BF1095B6FC268",
+      "lines": 154,
+      "bytes": 33317,
       "utf8": true
     },
     {
@@ -1891,37 +1898,37 @@
     },
     {
       "path": "plan/v1/table-management/V1-TBL-001-table-lifecycle.md",
-      "sha256": "AF64475544FD3C09BD7C12302A3103D5FA3F41DB2860F83D2E5874C4CD2C1566",
+      "sha256": "07036741DC7210F9C5B26989519230E06DD27991CBCD8D913CDF06627BCEDA7A",
       "lines": 58,
-      "bytes": 1454,
+      "bytes": 1422,
       "utf8": true
     },
     {
       "path": "plan/v1/table-management/V1-TBL-002-table-transfer.md",
-      "sha256": "09BC2C8F1FE464384628A1E792F9AE37308580E25F689ABCBB8F7ABE889388F2",
-      "lines": 59,
-      "bytes": 1589,
+      "sha256": "DF9897C466813626CA8C8B1B71D1C55CBBD50946A4AC5A0B387E57909537323E",
+      "lines": 60,
+      "bytes": 1584,
       "utf8": true
     },
     {
       "path": "plan/v1/table-management/V1-TBL-003-table-merge.md",
-      "sha256": "9A55BF6863F151B644084A8ADB162A8BD0027B465497833E697A8AE1CDE22872",
-      "lines": 60,
-      "bytes": 1564,
+      "sha256": "7EBD5B5A5FEF77F222C9E431BE0305F78B3AE0FCD86B1B20361D669C0E666A52",
+      "lines": 61,
+      "bytes": 1559,
       "utf8": true
     },
     {
       "path": "plan/v1/table-management/V1-TBL-004-table-reservation-record.md",
-      "sha256": "501A6F6CCF67F1A554D6C0C219CA2F69E439238C18BC1F6C58795C06B02DE2A0",
+      "sha256": "1CE75C90C0EA79EBD91C7DABC3F21BE4FD4E335F034D411B47CBD2730CC38D9A",
       "lines": 53,
-      "bytes": 1319,
+      "bytes": 1301,
       "utf8": true
     },
     {
       "path": "plan/v1/table-management/V1-TBL-005-current-pointer-projection.md",
-      "sha256": "1097F59601BE8C8DD9BB06B0845DA73059240A2AD049F4152E7BEF1F639B4A60",
+      "sha256": "03D8EA06750A7F3580A6D900E28FF44DE0C344C987A4AB0F20B051C0205AE764",
       "lines": 58,
-      "bytes": 1562,
+      "bytes": 1544,
       "utf8": true
     },
     {
@@ -2598,9 +2605,9 @@
     },
     {
       "path": "plan/v1.4/qr-ordering/V14-QRO-002-pending-table-policy.md",
-      "sha256": "64034FEFF413B12B0C583F609D6ADED5058DBB7F46CDC9103059AD3D75D76ED4",
-      "lines": 55,
-      "bytes": 1365,
+      "sha256": "5EC09F4CE719CEB3E9D41C3C6543A95E4669C5B2B0A1EF03567409C2CE2CA0E9",
+      "lines": 56,
+      "bytes": 1378,
       "utf8": true
     },
     {

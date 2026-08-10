@@ -1,10 +1,10 @@
 # V1-TBL-001 - Implement Table lifecycle and persistence
 
 - Task ID: V1-TBL-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-tbl-001
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -20,7 +20,7 @@ Table identity, zone, canonical status transition ve optimistic concurrency davr
 
 ## Owned surface
 
-- `src/Modules/TableManagement/TableLifecycle/**`, `tests/Modules/TableManagement/TableLifecycle/**`,
+- `src/Modules/Tables/TableLifecycle/**`, `tests/Modules/Tables/TableLifecycle/**`,
   `database/migrations/V1/V1-TBL-001/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
