@@ -1,7 +1,7 @@
 # V0-GOV-033 - Route the frozen independent-audit findings
 
 - Task ID: V0-GOV-033
-- Status: Planned
+- Status: Done
 - Assignee: 019fea95-a9d0-78a1-887c-5544a4d1b19f
 - Work type: documentation
 - Surface state: Planned

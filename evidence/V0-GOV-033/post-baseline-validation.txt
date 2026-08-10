@@ -1,0 +1,74 @@
+Task-ID: V0-GOV-033
+Captured-At: 2026-08-10T16:07:27.2951865+03:00
+Repository-Root: D:\PROJECT\ALKAROS-REMEDIATION
+Branch: codex/audit-remediation
+Committed-Baseline: bdda772a5f9dd0f78462e9df52577de90e287673
+
+Committed baseline check:
+- Command: git status --short
+- Result: no output after the baseline commit.
+- Command: python tools/task-scope/task_scope_tool.py --task-id V0-GOV-033
+  --repo-root D:\PROJECT\ALKAROS-REMEDIATION --format text
+- Planned baseline result: OK; exit code 0.
+- InProgress metadata result: OK; exit code 0.
+
+Frozen register and routing parity:
+- External path:
+  D:\PROJECT\ALKAROS-AUDIT\20260810-110911-825882aa\finding-register.csv
+- Test-Path: True.
+- SHA-256:
+  EE46C13075AFA4F7B7CECF02E6899DB9AF66FDB252C7052841BDB0BC49034F7F
+- Audit rows: 42.
+- CSV rows: 42; JSON item rows: 42.
+- Audit/JSON ID delta: 0; CSV/JSON ID delta: 0.
+- Finding-ID canonical owner mapping delta: 0.
+
+Task catalog:
+- Catalog rows: 68, including V0-GOV-034 itself.
+- Catalog child task paths after excluding V0-GOV-034: 67.
+- V0-GOV-034 Owned surface Markdown paths: 68, including the non-task support
+  file plan/TRACEABILITY.md.
+- Materializer child task paths after excluding plan/TRACEABILITY.md: 67.
+- Child path delta: 0.
+- Task ID duplicates: 0.
+- Unresolved dependencies against catalog or existing plan filenames: 0.
+- Kahn traversal over task_catalog.dependencies: 67/67 child nodes; cycle false.
+
+Measurement correction:
+- The first local PowerShell counter reported four unresolved dependencies and
+  one child-path delta.
+- Root cause 1: its task-ID regular expression captured only the V1- prefix for
+  existing V1-IAM task files.
+- Root cause 2: it counted plan/TRACEABILITY.md as a child task.
+- The corrected comparison uses exact task filename prefixes, treats
+  plan/TRACEABILITY.md as a support file, and compares canonical owner sets.
+- Corrected result: unresolved dependencies 0; child path delta 0.
+
+Plan controls:
+- Command: python tools/plan-audit/plan_audit_tool.py validate
+- Result: 292 Markdown files, 271 task files, 948 dependency edges,
+  0 errors, 0 warnings; exit code 0.
+- Command: python tools/plan-audit/plan_audit_tool.py validate-coverage
+- Result: 94 PDF pages, 374 numbered headings, 9 Part IV corrections,
+  0 coverage errors; exit code 0.
+
+Known downstream controls, not claimed green by this task:
+- Command: python tools/plan-audit/plan_audit_tool.py verify-manifest
+- Result: 46 manifest errors; exit code 1.
+- Disposition: VER-GOV-003 / V0-GOV-045.
+- Markdownlint was not rerun after the baseline. The recorded offline attempt
+  timed out at 34.1 seconds with no output and exit code 124.
+- Disposition: VER-GOV-002 / V0-GOV-044.
+
+No product, test, migration, CI, remote branch, Git history rewrite, or path in
+the original dirty D:\PROJECT\ALKAROS worktree was modified.
+
+Pre-close controls with Status InProgress:
+- task-scope: OK; exit code 0.
+- plan validate: 0 errors, 0 warnings; exit code 0.
+- coverage validate: 0 errors; exit code 0.
+- evidence hash mismatches: 0.
+- git diff --check: exit code 0.
+- TODO/FIXME/HACK/NotImplemented/mock-success/empty-catch markers in the
+  routing task and ledgers: 0.
+- Independent post-baseline verdict: VERIFIED; the task may be marked Done.
