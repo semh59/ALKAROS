@@ -1,8 +1,8 @@
 # V0-GOV-034 - Materialize the C52 remediation task graph
 
 - Task ID: V0-GOV-034
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: 019fea95-a9d0-78a1-887c-5544a4d1b19f
 - Work type: documentation
 - Surface state: Planned
 
