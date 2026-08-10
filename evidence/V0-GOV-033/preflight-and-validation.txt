@@ -1,0 +1,114 @@
+Task-ID: V0-GOV-033
+Captured-At: 2026-08-10T15:00:29.0677669+03:00
+Repository-Root: D:\PROJECT\ALKAROS-REMEDIATION
+Branch: codex/audit-remediation
+Baseline-HEAD: 73b5b402444ae3c54d2a912c015e43107988845c
+Initial-Status-Count: 0
+Assignee: 019fea95-a9d0-78a1-887c-5544a4d1b19f
+
+Repository preparation before task creation:
+- D:\PROJECT\ALKAROS\.git\config contained core.worktree pointing to the
+  frozen audit snapshot.
+- The exact local core.worktree value was removed after verifying the
+  repository was non-bare and HEAD was 73b5b402444ae3c54d2a912c015e43107988845c.
+- HEAD remained unchanged; the original D:\PROJECT\ALKAROS status remained
+  45 paths with zero path delta.
+- D:\PROJECT\ALKAROS-REMEDIATION was created from the same HEAD on
+  codex/audit-remediation with initial status count 0.
+
+Frozen audit register:
+- Path: D:\PROJECT\ALKAROS-AUDIT\20260810-110911-825882aa\finding-register.csv
+- SHA-256: EE46C13075AFA4F7B7CECF02E6899DB9AF66FDB252C7052841BDB0BC49034F7F
+- Rows: 42
+
+Dependency preflight:
+- V0-GOV-017: Done
+- V0-GOV-028: Done
+- V0-GOV-032: Done
+
+Routing parity command result:
+- CSV rows: 42
+- JSON rows: 42
+- Audit rows: 42
+- CSV duplicate IDs: 0
+- JSON duplicate IDs: 0
+- CSV/JSON ID delta: 0
+- CSV/audit ID delta: 0
+- CSV/JSON owner delta: 0
+- Routed owner tasks: 35
+- Routing dependency cycles: 0
+- Task catalog rows: 68
+- Materializer child task paths: 67
+- Task catalog/materializer path delta: 0
+- Task ID duplicates: 0
+- Task path duplicates: 0
+- Task dependency cycles: 0
+- Task profiles missing lane/dependency/closure/model/effort/state: 0
+- Exit code: 0
+
+Plan validation:
+- Command: uv run --python 3.12.12 --with-requirements
+  plan/validation-requirements.lock python -B
+  tools/plan-audit/plan_audit_tool.py validate
+- Markdown files: 292
+- Task files: 271
+- Dependency edges: 948
+- Validation errors: 0
+- Validation warnings: 0
+- Exit code: 0
+
+Coverage-map validation:
+- Command: uv run --python 3.12.12 --with-requirements
+  plan/validation-requirements.lock python -B
+  tools/plan-audit/plan_audit_tool.py validate-coverage
+- PDF SHA-256: AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822
+- PDF pages: 94
+- Numbered headings: 374
+- Coverage errors: 0
+- Exit code: 0
+
+Task-scope bootstrap check:
+- Command: py -B tools/task-scope/task_scope_tool.py --task-id V0-GOV-033
+  --format text
+- Result: FAIL
+- Finding: plan/v0/governance/v0-gov-033-audit-remediation-routing.md
+  (untracked) - task Markdown has no committed baseline
+- Exit code: 1
+- Disposition: expected bootstrap blocker for a newly created plan task. It is
+  not treated as a product fix or as a passed control. The user authorized
+  local intermediate task/plan checkpoint commits on 2026-08-10, with no push
+  until all 42 findings are independently closed. This checkpoint records the
+  committed baseline; task-scope is rerun after the commit.
+
+Manifest check:
+- Command: uv run --python 3.12.12 --with-requirements
+  plan/validation-requirements.lock python -B
+  tools/plan-audit/plan_audit_tool.py verify-manifest
+- Clean HEAD before this task: 33 manifest errors, exit code 1.
+- Current task worktree: 46 manifest errors, exit code 1.
+- Current additional causes include three new task Markdown paths,
+  TRACEABILITY.md, and the V0-GOV-032 ownership transfer.
+- Disposition: routed to VER-GOV-003 / V0-GOV-045. No green claim is made.
+
+Markdown lint check:
+- Canonical `npx.cmd --yes markdownlint-cli2@0.23.2` command was started and
+  produced no result before it was terminated; markdownlint-cli2 is not
+  installed as a direct executable.
+- Offline retry command: `npm.cmd exec --offline --yes
+  --package=markdownlint-cli2@0.23.2 -- markdownlint-cli2`.
+- Offline retry result: timeout after 34.1 seconds, no stdout/stderr.
+- Offline retry exit code: 124.
+- The frozen audit VER-GOV-002 failure remains open and is routed to
+  V0-GOV-044. No current green or red count is claimed by V0-GOV-033.
+
+Current write-set before evidence files:
+- plan/TRACEABILITY.md
+- plan/v0/governance/V0-GOV-032-deferral-entry-gate-recognition.md
+- plan/AUDIT_REMEDIATION_ROUTING.csv
+- plan/AUDIT_REMEDIATION_ROUTING.json
+- plan/v0/governance/V0-GOV-033-audit-remediation-routing.md
+- plan/v0/governance/V0-GOV-034-remediation-task-materialization.md
+- plan/v0/governance/V0-GOV-035-remediation-admission-control.md
+
+No product, test, migration, PDF coverage, Git history, remote branch, or
+original dirty worktree path was modified by V0-GOV-033.

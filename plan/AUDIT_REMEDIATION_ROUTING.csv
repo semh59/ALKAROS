@@ -1,0 +1,43 @@
+finding_id,audit_verdict,severity,route_kind,owner_task_ids,execution_lane,prerequisites,closure_evidence,source_basis,agent_model,reasoning_effort,state
+GOV-001,VERIFIED,CRITICAL,decision_revalidation,V0-GOV-036,3,"V0-GOV-035;V0-REV-001;V0-REV-002;V0-REV-003;V0-REV-004;V0-REV-005;V0-REV-006;V0-REV-007;V0-REV-008;V0-REV-009;V0-REV-010;V0-REV-011;V0-REV-012;V0-REV-013;V0-REV-014;V0-REV-015;V0-REV-016;V0-REV-017;V0-REV-018;V0-REV-019;V0-REV-020;V0-REV-021;V0-REV-022;V0-REV-023;V0-REV-024;V0-REV-025;V0-REV-026;V0-REV-027;V0-REV-028;V0-REV-029;V0-REV-030",30 decision supplements plus effective gate reconciliation,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_BLOCKED_EXTERNAL_EVIDENCE
+GOV-002,VERIFIED,CRITICAL,status_dependency_revalidation,V0-GOV-036,3,V0-GOV-035,fresh dependency graph and effective status proof,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+GOV-006,VERIFIED,CRITICAL,historical_attestation_and_reacceptance,"V0-GOV-038;V1-CAT-004",4,"V0-GOV-035;V1-CAT-003",immutable scope attestation plus current Catalog acceptance,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+CODE-001,VERIFIED,HIGH,implementation,V1-FND-016,3,"V0-GOV-035;V1-FND-013;V1-FND-017",default executable module discovery and missing-module startup failure,CORR:C52,gpt-5.6-sol,max,ROUTED_OPEN
+CODE-002,VERIFIED,HIGH,implementation,V1-FND-017,3,"V0-GOV-035;V1-SEC-004;V1-FND-013",NpgsqlDataSource startup constructability and disposal proof,CORR:C52,gpt-5.6-sol,max,ROUTED_OPEN
+CODE-004,VERIFIED,HIGH,implementation,V1-FND-019,3,"V0-GOV-035;V1-FND-018",lease generation fencing concurrency proof,CORR:C52,gpt-5.6-sol,max,ROUTED_OPEN
+CODE-006,VERIFIED,HIGH,implementation,V1-IAM-006,3,"V0-GOV-035;V1-IAM-011",concurrent reconnect applied-count proof,CORR:C52,gpt-5.6-sol,max,ROUTED_OPEN
+CODE-013,VERIFIED,HIGH,worktree_reacceptance,"V1-FND-022;V1-TBL-006",3,"V0-GOV-035;V0-GOV-037",clean candidate handoff plus repository transition matrix proof,CORR:C52,gpt-5.6-sol,max,ROUTED_BLOCKED_DIRTY_HANDOFF
+CODE-016,VERIFIED,HIGH,implementation,"V1-IAM-011;V1-IAM-013",3,"V0-GOV-035;V1-IAM-010",single persisted validated revocable login credential lifecycle,CORR:C52,gpt-5.6-sol,max,ROUTED_OPEN
+GOV-003,VERIFIED,HIGH,historical_attestation,V0-GOV-038,4,V0-GOV-035,current canonical trailer ledger without history rewrite,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+GOV-004,VERIFIED,HIGH,historical_attestation,V0-GOV-038,4,V0-GOV-035,interpret-trailers evidence and immutable exception record,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+GOV-007,VERIFIED,HIGH,historical_attestation_and_reacceptance,"V0-GOV-038;V0-GOV-040;V1-CAT-004",4,"V0-GOV-035;V1-CAT-003",post-Done dependency attestation plus current build acceptance,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+GOV-008,VERIFIED,HIGH,status_surface_reconciliation,"V0-GOV-037;V1-IAM-014",4,V0-GOV-035,Identity metadata correction and current acceptance,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+GOV-010,VERIFIED,HIGH,dirty_worktree_custody,"V0-GOV-037;V1-FND-022;V1-TBL-006",3,V0-GOV-035,45-path custody ledger and clean Tables reacceptance,CORR:C52,gpt-5.6-sol,max,ROUTED_BLOCKED_DIRTY_HANDOFF
+GOV-012,VERIFIED,HIGH,evidence_reacceptance,"V0-GOV-039;V1-TBL-006",4,"V0-GOV-035;V0-GOV-037",raw command envelope and current Tables evidence,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+VER-CI-001,VERIFIED,HIGH,external_ci_control,V0-GOV-041,5,V0-GOV-035,successful Actions run plus required-check and branch-policy readback,CORR:C52,gpt-5.6-sol,high,ROUTED_EXTERNAL_ADMIN
+VER-GOV-002,VERIFIED,HIGH,markdown_remediation,V0-GOV-044,4,V0-GOV-035,markdownlint exit 0 with zero issues,CORR:C52,gpt-5.6-terra,medium,ROUTED_OPEN
+VER-GOV-003,VERIFIED,HIGH,manifest_refresh,V0-GOV-045,5,"V0-GOV-044;V0-GOV-046;V0-GOV-047",committed candidate manifest verification exit 0,CORR:C52,gpt-5.6-sol,high,ROUTED_OPEN
+CODE-003,PARTIAL,MEDIUM,implementation_after_reproduction,V1-FND-018,3,V0-GOV-035,concurrent protected mutation count one and crash replay proof,CORR:C52,gpt-5.6-sol,max,ROUTED_REPRODUCTION_REQUIRED
+CODE-005,VERIFIED,MEDIUM,implementation,V1-FND-019,3,"V0-GOV-035;V1-FND-018",lost lease produces non-success affected-row result,CORR:C52,gpt-5.6-sol,max,ROUTED_OPEN
+CODE-007,CANDIDATE,MEDIUM,validation_then_remediation,V1-IAM-007,2,V0-GOV-035,deterministic revoke interleaving verdict and conditional fix proof,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_REPRODUCTION_REQUIRED
+CODE-008,CANDIDATE,MEDIUM,validation_then_remediation,V1-IAM-008,2,V0-GOV-035,deterministic authorization revoke interleaving verdict,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_REPRODUCTION_REQUIRED
+CODE-009,VERIFIED,MEDIUM,split_secret_redaction,"V1-SEC-004;V1-IAM-013",3,V0-GOV-035,Host password and bearer-token formatting sentinel tests,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+CODE-010,VERIFIED,MEDIUM,implementation,V1-SEC-005,3,V0-GOV-035,immutable classification downcast and redaction tests,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+CODE-011,VERIFIED,MEDIUM,implementation,V1-IAM-009,3,V0-GOV-035,constructor accepted range round-trip tests,CORR:C52,gpt-5.6-sol,medium,ROUTED_OPEN
+CODE-012,VERIFIED,MEDIUM,implementation,V1-IAM-010,3,"V0-GOV-035;V1-IAM-009",deterministic work-factor contract and repeated integration proof,CORR:C52,gpt-5.6-sol,max,ROUTED_OPEN
+CODE-014,VERIFIED,MEDIUM,implementation,V1-CAT-003,3,V0-GOV-035,domain and PostgreSQL nonnegative current-price proof,CORR:C52,gpt-5.6-sol,max,ROUTED_OPEN
+CODE-015,VERIFIED,MEDIUM,implementation,V1-FND-020,3,V0-GOV-035,all rollback resources attempted and errors aggregated,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+CODE-018,CANDIDATE,MEDIUM,validation_then_remediation,V1-SEC-006,2,V0-GOV-035,PostgreSQL sentinel persistence verdict and sanitized bounded error proof,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_REPRODUCTION_REQUIRED
+CODE-019,VERIFIED,MEDIUM,implementation,V1-IAM-012,3,"V0-GOV-035;V1-IAM-006",positive bounded lifetime domain and database proof,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+GOV-005,PARTIAL,MEDIUM,historical_attestation,V0-GOV-038,4,V0-GOV-035,complete current commit-scope ledger and immutable exceptions,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_REPRODUCTION_REQUIRED
+GOV-009,PARTIAL,MEDIUM,evidence_contract,V0-GOV-039,4,V0-GOV-035,raw command exit hash environment and commit envelope proof,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_REPRODUCTION_REQUIRED
+GOV-011,VERIFIED,MEDIUM,plan_reacceptance,"V0-GOV-037;V1-TBL-006",4,V0-GOV-035,Tables owned-surface and deliverable path parity,CORR:C52,gpt-5.6-sol,high,ROUTED_OPEN
+GOV-013,VERIFIED,MEDIUM,status_traceability_reconciliation,V0-GOV-037,4,"V0-GOV-035;V0-GOV-036",trace rows and effective task statuses exact parity,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+GOV-014,VERIFIED,MEDIUM,semantic_manifest_control,V0-GOV-046,4,"V0-GOV-035;V0-GOV-039",byte manifest and governance semantic validation separated,CORR:C52,gpt-5.6-sol,high,ROUTED_OPEN
+GOV-015,VERIFIED,MEDIUM,historical_attestation,V0-GOV-038,4,V0-GOV-035,current commit-count acceptance and stale claim retirement,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_OPEN
+VER-BUILD-004,VERIFIED,MEDIUM,project_manifest_fidelity,V0-GOV-040,4,V0-GOV-035,solution project and package graph equality plus Release build,CORR:C52,gpt-5.6-sol,high,ROUTED_OPEN
+VER-COV-007,VERIFIED,MEDIUM,coverage_decision_and_gate,V0-GOV-042,5,"V0-GOV-035;V0-GOV-041",supported exporter summary threshold and CI enforcement proof,CORR:C52,gpt-5.6-sol,high,ROUTED_DECISION_REQUIRED
+VER-FMT-005,VERIFIED,MEDIUM,format_remediation,V0-GOV-043,4,V0-GOV-035,dotnet format verify-no-changes exit 0,CORR:C52,gpt-5.6-terra,low,ROUTED_OPEN
+VER-PROV-006,VERIFIED,MEDIUM,build_provenance,V0-GOV-047,4,"V0-GOV-035;V0-GOV-041",artifact repository commit equals candidate SHA,CORR:C52,gpt-5.6-sol,high,ROUTED_OPEN
+CODE-017,VERIFIED,LOW,decision_then_implementation,"V0-DAT-007;V1-FND-021",3,"V0-GOV-035;V1-CAT-003",extension owner decision and PG18 rollback or declared residue proof,CORR:C52,gpt-5.6-sol,xhigh,ROUTED_DECISION_REQUIRED
+VER-ACC-008,UNPROVEN,LOW,acceptance_replay,V0-GOV-039,4,V0-GOV-035,real Git worktree replay with exit 0 or precise blocker,CORR:C52,gpt-5.6-terra,medium,ROUTED_REPRODUCTION_REQUIRED
