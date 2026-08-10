@@ -1,10 +1,10 @@
 # V1-CAT-002 - Implement effective-dated product pricing
 
 - Task ID: V1-CAT-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-cat-002
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
