@@ -48,3 +48,4 @@ POST-CL-004,VERIFIED,HIGH,immutable_closure_gap_attestation,V0-GOV-051,4,"V0-GOV
 POST-CL-005,VERIFIED,HIGH,final_commit_worktree_substitution,V0-GOV-052,4,V0-GOV-049,final validator reads E evidence blobs from Git tree only,CORR:C55,gpt-5.6-terra,xhigh,ROUTED_OPEN
 POST-CL-006,PARTIAL,MEDIUM,subject_artifact_completeness_regression,V0-GOV-052,4,V0-GOV-049,checked-in missing-owned-artifact negative regression,CORR:C55,gpt-5.6-terra,high,ROUTED_OPEN
 POST-CL-007,VERIFIED,MEDIUM,admission_contract_semantic_divergence,V0-GOV-046,4,V0-GOV-052,contract/GATES/tool exact admission tuple semantic parity,CORR:C56,gpt-5.6-terra,high,ROUTED_OPEN
+POST-CL-008,VERIFIED,HIGH,application_admission_semantic_gate,V0-GOV-054,4,"V0-GOV-046;V0-GOV-050",plan validator admits only C54-authorized V1-FND-023,CORR:C57,gpt-5.6-terra,xhigh,ROUTED_OPEN

@@ -11,6 +11,7 @@
 - CORR:C52
 - CORR:C53
 - CORR:C54
+- CORR:C57
 
 ## Goal
 
@@ -43,6 +44,7 @@ test çalışmayan solution test kapısını ortadan kaldırmak.
 ## Dependencies
 
 - V0-GOV-050
+- V0-GOV-054
 - V1-FND-001
 
 ## Blocker
