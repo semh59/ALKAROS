@@ -18,8 +18,11 @@ doğrulamasını sağlamak.
 
 ## Owned surface
 
-- `tests/Architecture/TaskScope/test_task_scope.py`
 - `evidence/V0-GOV-056/**`
+
+CORR:C61, yalnız `tests/Architecture/TaskScope/test_task_scope.py` yolunun ileri
+custody'sini `V0-GOV-058`e devreder. Bu historical task'ın status, assignee,
+acceptance evidence, `evidence/V0-GOV-056/**` ve commit tarihçesi aynen kalır.
 
 ## In scope
 
