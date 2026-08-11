@@ -1,8 +1,8 @@
 # V0-GOV-055 - Close the interrupted V1-FND-023 remediation
 
 - Task ID: V0-GOV-055
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: /root/implement_v0_gov_055
 - Work type: implementation
 - Surface state: Existing
 

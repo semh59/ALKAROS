@@ -29,6 +29,22 @@ _SECRET_FLAG = re.compile(
 _AUTHORIZATION_BEARER = re.compile(r"\bauthorization\s*:\s*bearer\s+\S+", re.IGNORECASE)
 _V0_GOV_035_BASELINE = "1d41e97b39ac975ab55c2bdf4198b0d6b92681ed"
 _V0_GOV_035_CLOSURE = "78b317a5c3d04009d94394da58c5913d59c22b91"
+_V3_TASK_ID = "V1-FND-023"
+_V3_B0_COMMIT = "fd3344f15c5257b53bf5281ee9129f800c62f0a7"
+_V3_B0_PARENT = "645a07f6992ece6efd70dc2fb2e0a7f7bccc945c"
+_V3_INTERRUPTION_COMMIT = "479881636c8142c7161f2d5980d37ca2f9b48591"
+_V3_TASK_PATH = "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
+_V3_SOURCE_ARTIFACTS = {
+    "Directory.Build.targets": "a4a6e142edcd8d64ec841396aa45c26c720e2922e47169d2c10f076e0d2e71dd",
+    "tests/Architecture/TestDiscovery/test_solution_test_discovery.py": "05b27d3dddcb7882a586ea01fbb81495818e84aa0119485fe3d68f2d70fca764",
+}
+_V3_INTERRUPTION_BLOCKER = (
+    "## Blocker\n\n"
+    "- Command: `py -B tools\\\\plan-audit\\\\plan_audit_tool.py validate`\n"
+    "- Result: exit code `1` with `APPLICATION_STARTED_BEFORE_V0_EXIT V1-FND-023`.\n"
+    "- Unlock: `V0-GOV-054` plan denetiminin C52/C53/C54 kabulünü tanımasını "
+    "düzeltmelidir; ancak bu tamamlandığında görev sürdürülebilir.\n"
+)
 
 
 def canonical_payload_hash(envelope: dict[str, Any]) -> str:
@@ -92,12 +108,12 @@ def _git_text(repo: Path, commit: str, path: str) -> str | None:
         return None
 
 
-def _is_stale_candidate(repo: Path, candidate_commit: str, path: str) -> bool:
-    if _git(repo, "rev-parse", "--verify", "HEAD^{commit}").returncode != 0:
+def _is_stale_candidate(repo: Path, candidate_commit: str, path: str, reference_commit: str = "HEAD") -> bool:
+    if _git(repo, "rev-parse", "--verify", f"{reference_commit}^{{commit}}").returncode != 0:
         return True
-    if _git(repo, "merge-base", "--is-ancestor", candidate_commit, "HEAD").returncode != 0:
+    if _git(repo, "merge-base", "--is-ancestor", candidate_commit, reference_commit).returncode != 0:
         return True
-    return _git(repo, "diff", "--quiet", f"{candidate_commit}..HEAD", "--", path).returncode != 0
+    return _git(repo, "diff", "--quiet", f"{candidate_commit}..{reference_commit}", "--", path).returncode != 0
 
 
 def _validate_environment(value: object, errors: list[dict[str, str]]) -> None:
@@ -190,7 +206,13 @@ def _validate_commands(
         _validate_raw_output(command["raw_output"], read_blob, task_id, errors, f"{field}.raw_output")
 
 
-def _validate_source_artifacts(value: object, repo: Path, subject_commit: str | None, errors: list[dict[str, str]]) -> set[str]:
+def _validate_source_artifacts(
+    value: object,
+    repo: Path,
+    subject_commit: str | None,
+    errors: list[dict[str, str]],
+    reference_commit: str = "HEAD",
+) -> set[str]:
     paths: set[str] = set()
     if not isinstance(value, list) or not value:
         _error(errors, "MISSING_ARTIFACT_HASH", "artifacts must contain at least one source blob")
@@ -213,7 +235,7 @@ def _validate_source_artifacts(value: object, repo: Path, subject_commit: str | 
         blob = _git_blob(repo, subject_commit, path)
         if blob is None or hashlib.sha256(blob).hexdigest() != expected_hash:
             _error(errors, "FINAL_BLOB_HASH_MISMATCH", f"subject blob hash differs: {path}")
-        if _is_stale_candidate(repo, subject_commit, path):
+        if _is_stale_candidate(repo, subject_commit, path, reference_commit):
             _error(errors, "STALE_CANDIDATE_COMMIT", f"subject commit is stale for artifact: {path}")
     return paths
 
@@ -237,6 +259,7 @@ def _validate_envelope(
     envelope: dict[str, Any],
     repository: Path,
     read_raw_blob: Callable[[str], bytes | None],
+    reference_commit: str = "HEAD",
 ) -> dict[str, object]:
     """Validate one loaded envelope using the supplied raw-evidence blob reader."""
     errors: list[dict[str, str]] = []
@@ -261,7 +284,7 @@ def _validate_envelope(
         subject_commit = None
     _validate_environment(envelope["environment"], errors)
     _validate_commands(envelope["commands"], read_raw_blob, task_id, errors)
-    _validate_source_artifacts(envelope["artifacts"], repository, subject_commit, errors)
+    _validate_source_artifacts(envelope["artifacts"], repository, subject_commit, errors, reference_commit)
     integrity = envelope["integrity"]
     if not isinstance(integrity, dict) or set(integrity) != {"payload_sha256"}:
         _error(errors, "INVALID_INTEGRITY", "integrity must contain only payload_sha256")
@@ -283,9 +306,29 @@ def _commit_parent(repo: Path, commit: str) -> str | None:
     return result.stdout.decode().strip() if result.returncode == 0 else None
 
 
+def _commit_parents(repo: Path, commit: str) -> tuple[str, ...] | None:
+    result = _git(repo, "show", "-s", "--format=%P", commit)
+    if result.returncode != 0:
+        return None
+    return tuple(result.stdout.decode().split())
+
+
 def _changed_paths(repo: Path, older: str, newer: str) -> set[str]:
     result = _git(repo, "diff", "--name-only", older, newer)
     return set(result.stdout.decode().splitlines()) if result.returncode == 0 else set()
+
+
+def _changed_path_statuses(repo: Path, older: str, newer: str) -> set[tuple[str, str]] | None:
+    result = _git(repo, "diff", "--name-status", "--no-renames", older, newer)
+    if result.returncode != 0:
+        return None
+    parsed: set[tuple[str, str]] = set()
+    for line in result.stdout.decode().splitlines():
+        status, separator, path = line.partition("\t")
+        if not separator or status not in {"A", "M", "D"}:
+            return None
+        parsed.add((status, path))
+    return parsed
 
 
 def _task_path(repo: Path, commit: str, task_id: str) -> str | None:
@@ -318,11 +361,185 @@ def _parse_trailers(repo: Path, commit: str) -> list[str] | None:
     return parsed.stdout.decode().splitlines() if parsed.returncode == 0 else None
 
 
+def _task_without_blocker(task_text: str) -> str | None:
+    match = re.search(r"\n## Blocker\r?\n.*?(?=\n## )", task_text, re.DOTALL)
+    if match is None or task_text.count("\n## Blocker\n") + task_text.count("\n## Blocker\r\n") != 1:
+        return None
+    return task_text[:match.start()] + task_text[match.end():]
+
+
+def _v3_error(errors: list[dict[str, str]], code: str, message: str) -> None:
+    _error(errors, code, message)
+
+
+def validate_v3_interrupted_final_commit(final_commit: str, repository: Path) -> dict[str, object]:
+    """Verify the fixed V1-FND-023 interrupted-source closure topology."""
+    errors: list[dict[str, str]] = []
+    if not _git_commit_exists(repository, final_commit):
+        return {"valid": False, "errors": [{"code": "MISSING_FINAL_COMMIT", "message": final_commit}]}
+
+    final_parents = _commit_parents(repository, final_commit)
+    if final_parents is None or len(final_parents) != 1:
+        _v3_error(errors, "V3_INVALID_TOPOLOGY", "final commit must have exactly one evidence parent")
+        return {"valid": False, "errors": errors}
+    evidence_commit = final_parents[0]
+    evidence_parents = _commit_parents(repository, evidence_commit)
+    if evidence_parents is None or len(evidence_parents) != 1:
+        _v3_error(errors, "V3_INVALID_TOPOLOGY", "evidence commit must have exactly one reentry parent")
+        return {"valid": False, "errors": errors}
+    reentry_commit = evidence_parents[0]
+    reentry_parents = _commit_parents(repository, reentry_commit)
+    if reentry_parents is None or len(reentry_parents) != 1:
+        _v3_error(errors, "V3_INVALID_TOPOLOGY", "reentry must have exactly one V0-GOV-055 final parent")
+        return {"valid": False, "errors": errors}
+    v055_final = reentry_parents[0]
+
+    v055_result = validate_final_commit(v055_final, repository)
+    if not v055_result["valid"]:
+        _v3_error(errors, "V3_REENTRY_PARENT_NOT_V055_FINAL", "reentry parent must be a valid V0-GOV-055 v2 final")
+    else:
+        v055_trailers = _parse_trailers(repository, v055_final)
+        if v055_trailers is None or not v055_trailers or v055_trailers[0] != "Task: V0-GOV-055":
+            _v3_error(errors, "V3_REENTRY_PARENT_NOT_V055_FINAL", "reentry parent must close V0-GOV-055")
+
+    if _git(repository, "merge-base", "--is-ancestor", _V3_INTERRUPTION_COMMIT, v055_final).returncode != 0:
+        _v3_error(errors, "V3_INVALID_TOPOLOGY", "V0-GOV-055 final must descend from the fixed interruption")
+
+    b0_parents = _commit_parents(repository, _V3_B0_COMMIT)
+    interruption_parents = _commit_parents(repository, _V3_INTERRUPTION_COMMIT)
+    if b0_parents != (_V3_B0_PARENT,):
+        _v3_error(errors, "V3_INVALID_B0_PARENT", "B0 must retain its fixed single parent")
+    if interruption_parents != (_V3_B0_COMMIT,):
+        _v3_error(errors, "V3_INVALID_INTERRUPTION", "interruption must be the fixed direct B0 child")
+
+    expected_b0_changes = {
+        ("M", "Directory.Build.targets"),
+        ("M", _V3_TASK_PATH),
+        ("A", "tests/Architecture/TestDiscovery/test_solution_test_discovery.py"),
+    }
+    if _changed_path_statuses(repository, _V3_B0_PARENT, _V3_B0_COMMIT) != expected_b0_changes:
+        _v3_error(errors, "V3_INVALID_B0_DIFF", "B0 must retain its exact three-path source and task diff")
+
+    b0_parent_task = _git_text(repository, _V3_B0_PARENT, _V3_TASK_PATH)
+    b0_task = _git_text(repository, _V3_B0_COMMIT, _V3_TASK_PATH)
+    if b0_parent_task is None or b0_task is None:
+        _v3_error(errors, "V3_INVALID_B0_METADATA", "B0 task metadata must be readable")
+    else:
+        expected_b0_task = b0_parent_task.replace("- Status: Planned", "- Status: InProgress", 1).replace(
+            "- Assignee: Unassigned (exactly one person)",
+            "- Assignee: /root/implement_v1_fnd_023",
+            1,
+        )
+        if b0_task != expected_b0_task:
+            _v3_error(errors, "V3_INVALID_B0_METADATA", "B0 must make only the exact Planned to InProgress metadata transition")
+
+    for path, expected_hash in _V3_SOURCE_ARTIFACTS.items():
+        blob = _git_blob(repository, _V3_B0_COMMIT, path)
+        if blob is None or hashlib.sha256(blob).hexdigest() != expected_hash:
+            _v3_error(errors, "V3_B0_BLOB_MISMATCH", f"B0 source blob differs: {path}")
+
+    interruption_task = _git_text(repository, _V3_INTERRUPTION_COMMIT, _V3_TASK_PATH)
+    if _changed_path_statuses(repository, _V3_B0_COMMIT, _V3_INTERRUPTION_COMMIT) != {("M", _V3_TASK_PATH)}:
+        _v3_error(errors, "V3_INVALID_INTERRUPTION_DIFF", "interruption may change only the V1-FND-023 task")
+    elif b0_task is None or interruption_task is None:
+        _v3_error(errors, "V3_INVALID_INTERRUPTION", "interruption task metadata must be readable")
+    else:
+        expected_interruption = b0_task.replace("- Status: InProgress", "- Status: Blocked", 1).replace(
+            "\n## Deliverables\n",
+            f"\n{_V3_INTERRUPTION_BLOCKER}\n## Deliverables\n",
+            1,
+        )
+        if interruption_task != expected_interruption:
+            _v3_error(errors, "V3_INVALID_INTERRUPTION_DIFF", "interruption must add only the exact blocker")
+
+    parent_task = _git_text(repository, v055_final, _V3_TASK_PATH)
+    reentry_task = _git_text(repository, reentry_commit, _V3_TASK_PATH)
+    if _changed_path_statuses(repository, v055_final, reentry_commit) != {("M", _V3_TASK_PATH)}:
+        _v3_error(errors, "V3_INVALID_REENTRY_DIFF", "reentry may change only the V1-FND-023 task")
+    elif parent_task is None or reentry_task is None or _metadata(parent_task) is None or _metadata(reentry_task) is None:
+        _v3_error(errors, "V3_INVALID_REENTRY_METADATA", "reentry task metadata must be readable")
+    else:
+        expected_reentry = _task_without_blocker(parent_task)
+        if (
+            _metadata(parent_task)[0] != "Blocked"
+            or _metadata(reentry_task)[0] != "InProgress"
+            or _metadata(parent_task)[1] != _metadata(reentry_task)[1]
+            or expected_reentry is None
+            or reentry_task != expected_reentry.replace("- Status: Blocked", "- Status: InProgress", 1)
+        ):
+            _v3_error(errors, "V3_INVALID_REENTRY_DIFF", "reentry must remove exactly one blocker and change only Blocked to InProgress")
+
+    for commit in (v055_final, reentry_commit, evidence_commit, final_commit):
+        for path, expected_hash in _V3_SOURCE_ARTIFACTS.items():
+            blob = _git_blob(repository, commit, path)
+            if blob is None or hashlib.sha256(blob).hexdigest() != expected_hash:
+                _v3_error(errors, "V3_SOURCE_BLOB_MISMATCH", f"source blob differs at {commit}: {path}")
+
+    evidence_changes = _changed_path_statuses(repository, reentry_commit, evidence_commit)
+    envelope_path = f"evidence/{_V3_TASK_ID}/closure-evidence-envelope.json"
+    if not evidence_changes or any(status != "A" or not path.startswith(f"evidence/{_V3_TASK_ID}/") for status, path in evidence_changes):
+        _v3_error(errors, "V3_EVIDENCE_NOT_CHECKPOINT_ONLY", "evidence checkpoint may add only V1-FND-023 evidence")
+    envelope_blob = _git_blob(repository, evidence_commit, envelope_path)
+    envelope = _load_envelope_bytes(envelope_blob) if envelope_blob is not None else None
+    if envelope is None or envelope.get("schema") != SCHEMA or envelope.get("task_id") != _V3_TASK_ID or envelope.get("subject_commit") != _V3_B0_COMMIT:
+        _v3_error(errors, "V3_INVALID_CLOSURE_ENVELOPE", "v3 envelope must bind V1-FND-023 and the fixed B0 subject")
+        return {"valid": False, "errors": errors}
+    envelope_result = _validate_envelope(
+        envelope,
+        repository,
+        lambda path: _git_blob(repository, evidence_commit, path),
+        final_commit,
+    )
+    if not envelope_result["valid"]:
+        errors.extend(envelope_result["errors"])
+    artifact_paths = _validate_source_artifacts(
+        envelope.get("artifacts"), repository, _V3_B0_COMMIT, errors, final_commit
+    )
+    if artifact_paths != set(_V3_SOURCE_ARTIFACTS):
+        _v3_error(errors, "V3_SOURCE_ARTIFACT_SET_MISMATCH", "v3 envelope must hash exactly the two B0 source artifacts")
+    raw_paths = {
+        record.get("raw_output", {}).get("path")
+        for record in envelope.get("commands", [])
+        if isinstance(record, dict)
+    }
+    if not raw_paths or not all(isinstance(path, str) and ("A", path) in evidence_changes for path in raw_paths):
+        _v3_error(errors, "V3_EVIDENCE_RAW_NOT_CHECKPOINTED", "every raw command output must be added by the evidence checkpoint")
+    checkpoint_paths = {envelope_path} | {path for path in raw_paths if isinstance(path, str)}
+    if not all(("A", path) in evidence_changes for path in checkpoint_paths):
+        _v3_error(errors, "V3_EVIDENCE_NOT_CHECKPOINT_ONLY", "envelope and raw outputs must be checkpoint additions")
+    if any(_worktree_blob(repository, path) != _git_blob(repository, evidence_commit, path) for path in checkpoint_paths):
+        _v3_error(errors, "WORKTREE_EVIDENCE_SUBSTITUTION", "worktree evidence differs from the v3 evidence checkpoint tree")
+
+    trailers = _parse_trailers(repository, final_commit)
+    expected_trailers = [
+        f"Task: {_V3_TASK_ID}",
+        "Gate: GATE-V0-EXIT",
+        f"Closure-Subject: {_V3_B0_COMMIT}",
+        f"Closure-Interruption: {_V3_INTERRUPTION_COMMIT}",
+        f"Closure-Reentry: {reentry_commit}",
+        f"Closure-Evidence-Checkpoint: {evidence_commit}",
+    ]
+    if trailers != expected_trailers:
+        _v3_error(errors, "V3_INVALID_FINAL_TRAILERS", "v3 final must carry exactly the ordered six-trailer block")
+    final_task = _git_text(repository, final_commit, _V3_TASK_PATH)
+    if _changed_path_statuses(repository, evidence_commit, final_commit) != {("M", _V3_TASK_PATH)}:
+        _v3_error(errors, "V3_FINAL_NOT_METADATA_ONLY", "v3 final may change only the V1-FND-023 task")
+    elif reentry_task is None or final_task is None or _metadata(reentry_task) is None or _metadata(final_task) is None or (
+        re.sub(r"^- Status: .+$", "- Status: <status>", reentry_task, flags=re.MULTILINE)
+        != re.sub(r"^- Status: .+$", "- Status: <status>", final_task, flags=re.MULTILINE)
+    ) or _metadata(reentry_task)[0] != "InProgress" or _metadata(final_task)[0] != "Done":
+        _v3_error(errors, "V3_FINAL_NOT_METADATA_ONLY", "v3 final must change only InProgress to Done")
+    return {"valid": not errors, "errors": errors}
+
+
 def validate_final_commit(final_commit: str, repository: Path) -> dict[str, object]:
     """Verify a v2 B -> E -> F closure chain ending at ``final_commit``."""
     errors: list[dict[str, str]] = []
     if not _git_commit_exists(repository, final_commit):
         return {"valid": False, "errors": [{"code": "MISSING_FINAL_COMMIT", "message": final_commit}]}
+    trailers = _parse_trailers(repository, final_commit)
+    if trailers and trailers[0] == f"Task: {_V3_TASK_ID}":
+        return validate_v3_interrupted_final_commit(final_commit, repository)
     evidence_commit = _commit_parent(repository, final_commit)
     if evidence_commit is None:
         _error(errors, "INVALID_CLOSURE_CHAIN", "final commit must have an evidence parent")
@@ -331,7 +548,6 @@ def validate_final_commit(final_commit: str, repository: Path) -> dict[str, obje
     if subject_commit is None:
         _error(errors, "INVALID_CLOSURE_CHAIN", "evidence commit must have a subject parent")
         return {"valid": False, "errors": errors}
-    trailers = _parse_trailers(repository, final_commit)
     task_id = None
     if trailers is None or len(trailers) != 4:
         _error(errors, "INVALID_FINAL_TRAILERS", "final commit must contain exactly four Git trailers")

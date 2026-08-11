@@ -167,6 +167,115 @@ def _write_closure_chain(
     return subject, evidence, final
 
 
+def _write_v3_interrupted_chain(repo: Path, tool_module, monkeypatch) -> tuple[str, str, str, str, str]:
+    fnd_task_path = "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
+    v055_task_path = "plan/v0/governance/V0-GOV-055.md"
+    fnd_task = repo / fnd_task_path
+    v055_task = repo / v055_task_path
+    source_test_path = "tests/Architecture/TestDiscovery/test_solution_test_discovery.py"
+    source_paths = ("Directory.Build.targets", source_test_path)
+    (repo / "Directory.Build.targets").write_text("before\n", encoding="utf-8")
+    fnd_task.parent.mkdir(parents=True)
+    fnd_task.write_text(
+        "# V1-FND-023\n\n- Task ID: V1-FND-023\n- Status: Planned\n"
+        "- Assignee: Unassigned (exactly one person)\n\n## Owned surface\n\n"
+        "- `Directory.Build.targets`\n"
+        "- `tests/Architecture/TestDiscovery/test_solution_test_discovery.py`\n"
+        "- `evidence/V1-FND-023/**`\n\n## Deliverables\n",
+        encoding="utf-8",
+    )
+    v055_task.parent.mkdir(parents=True)
+    v055_owned_paths = (
+        "tools/evidence-envelope/evidence_envelope_tool.py",
+        "tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py",
+        "docs/engineering/closure-evidence-envelope.md",
+        "tools/plan-audit/plan_audit_tool.py",
+        "tests/Architecture/PlanAudit/test_plan_audit.py",
+        "plan/VALIDATION_CONTRACT.md",
+    )
+    v055_task.write_text(
+        "# V0-GOV-055\n\n- Task ID: V0-GOV-055\n- Status: Planned\n"
+        "- Assignee: Unassigned (exactly one person)\n\n## Owned surface\n\n"
+        + "".join(f"- `{path}`\n" for path in v055_owned_paths)
+        + "- `evidence/V0-GOV-055/**`\n\n## Deliverables\n",
+        encoding="utf-8",
+    )
+    b0_parent = _commit(repo, "initial")
+    (repo / "Directory.Build.targets").write_text("restored\n", encoding="utf-8")
+    source_test = repo / source_test_path
+    source_test.parent.mkdir(parents=True)
+    source_test.write_text("test source\n", encoding="utf-8")
+    fnd_task.write_text(
+        fnd_task.read_text(encoding="utf-8")
+        .replace("Status: Planned", "Status: InProgress")
+        .replace("Assignee: Unassigned (exactly one person)", "Assignee: /root/implement_v1_fnd_023"),
+        encoding="utf-8",
+    )
+    b0 = _commit(repo, "B0")
+    fnd_task.write_text(
+        fnd_task.read_text(encoding="utf-8")
+        .replace("Status: InProgress", "Status: Blocked")
+        .replace("\n## Deliverables\n", f"\n{tool_module._V3_INTERRUPTION_BLOCKER}\n## Deliverables\n"),
+        encoding="utf-8",
+    )
+    interruption = _commit(repo, "interruption")
+
+    for path in v055_owned_paths:
+        artifact = repo / path
+        artifact.parent.mkdir(parents=True, exist_ok=True)
+        artifact.write_text(f"{path}\n", encoding="utf-8")
+    v055_task.write_text(
+        v055_task.read_text(encoding="utf-8")
+        .replace("Status: Planned", "Status: InProgress")
+        .replace("Assignee: Unassigned (exactly one person)", "Assignee: /root/v055"),
+        encoding="utf-8",
+    )
+    v055_subject = _commit(repo, "V055 subject")
+    v055_raw = repo / "evidence/V0-GOV-055/raw/pytest.txt"
+    v055_raw.parent.mkdir(parents=True)
+    v055_raw.write_bytes(b"1 passed\n")
+    v055_envelope = {
+        "schema": tool_module.SCHEMA,
+        "task_id": "V0-GOV-055",
+        "subject_commit": v055_subject,
+        "environment": {"platform": "Windows", "toolchain": {"python": "3.12"}, "variables": {}, "secrets": []},
+        "commands": [{"command": "py -m pytest", "exit_code": 0, "raw_output": {"path": "evidence/V0-GOV-055/raw/pytest.txt", "sha256": _hash(v055_raw)}}],
+        "artifacts": [{"path": path, "sha256": _candidate_blob_hash(repo, v055_subject, path)} for path in v055_owned_paths],
+    }
+    v055_envelope["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(v055_envelope)}
+    (repo / "evidence/V0-GOV-055/closure-evidence-envelope.json").write_text(json.dumps(v055_envelope), encoding="utf-8")
+    v055_evidence = _commit(repo, "V055 evidence")
+    v055_task.write_text(v055_task.read_text(encoding="utf-8").replace("Status: InProgress", "Status: Done"), encoding="utf-8")
+    v055_final = _commit(repo, f"V055 final\n\nTask: V0-GOV-055\nGate: GATE-V0-EXIT\nClosure-Subject: {v055_subject}\nClosure-Evidence-Checkpoint: {v055_evidence}")
+
+    reentry_text = tool_module._task_without_blocker(fnd_task.read_text(encoding="utf-8"))
+    assert reentry_text is not None
+    fnd_task.write_text(reentry_text.replace("Status: Blocked", "Status: InProgress"), encoding="utf-8")
+    reentry = _commit(repo, "reentry")
+    raw = repo / "evidence/V1-FND-023/raw/acceptance.txt"
+    raw.parent.mkdir(parents=True)
+    raw.write_bytes(b"acceptance passed\n")
+    envelope = {
+        "schema": tool_module.SCHEMA,
+        "task_id": "V1-FND-023",
+        "subject_commit": b0,
+        "environment": {"platform": "Windows", "toolchain": {"python": "3.12"}, "variables": {}, "secrets": []},
+        "commands": [{"command": "py -m pytest", "exit_code": 0, "raw_output": {"path": "evidence/V1-FND-023/raw/acceptance.txt", "sha256": _hash(raw)}}],
+        "artifacts": [{"path": path, "sha256": _candidate_blob_hash(repo, b0, path)} for path in source_paths],
+    }
+    envelope["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(envelope)}
+    (repo / "evidence/V1-FND-023/closure-evidence-envelope.json").write_text(json.dumps(envelope), encoding="utf-8")
+    evidence = _commit(repo, "V1 evidence")
+    fnd_task.write_text(fnd_task.read_text(encoding="utf-8").replace("Status: InProgress", "Status: Done"), encoding="utf-8")
+    final = _commit(repo, f"V1 final\n\nTask: V1-FND-023\nGate: GATE-V0-EXIT\nClosure-Subject: {b0}\nClosure-Interruption: {interruption}\nClosure-Reentry: {reentry}\nClosure-Evidence-Checkpoint: {evidence}")
+
+    monkeypatch.setattr(tool_module, "_V3_B0_PARENT", b0_parent)
+    monkeypatch.setattr(tool_module, "_V3_B0_COMMIT", b0)
+    monkeypatch.setattr(tool_module, "_V3_INTERRUPTION_COMMIT", interruption)
+    monkeypatch.setattr(tool_module, "_V3_SOURCE_ARTIFACTS", {path: _candidate_blob_hash(repo, b0, path) for path in source_paths})
+    return b0, interruption, reentry, evidence, final
+
+
 def test_valid_envelope_is_accepted(repository, tool_module):
     repo, candidate = repository
     envelope = _write_envelope(repo, candidate, tool_module)
@@ -179,6 +288,30 @@ def test_final_commit_requires_v2_subject_evidence_final_chain(repository, tool_
     _, _, final = _write_closure_chain(repo, tool_module)
 
     assert tool_module.validate_final_commit(final, repo) == {"valid": True, "errors": []}
+
+
+def test_v3_interrupted_fnd023_closure_is_accepted(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _, _, _, _, final = _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+
+    assert tool_module.validate_final_commit(final, repo) == {"valid": True, "errors": []}
+
+
+def test_v3_interrupted_fnd023_rejects_worktree_evidence_substitution(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _, _, _, _, final = _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+    (repo / "evidence/V1-FND-023/raw/acceptance.txt").write_bytes(b"forged\n")
+
+    assert "WORKTREE_EVIDENCE_SUBSTITUTION" in _error_codes(tool_module.validate_final_commit(final, repo))
+
+
+def test_v3_interrupted_fnd023_rejects_extra_final_trailer(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _, _, _, _, final = _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+    _git(repo, "commit", "--amend", "-q", "-m", _git(repo, "show", "-s", "--format=%B", final) + "Extra: trailer")
+    amended = _git(repo, "rev-parse", "HEAD")
+
+    assert "V3_INVALID_FINAL_TRAILERS" in _error_codes(tool_module.validate_final_commit(amended, repo))
 
 
 def test_final_commit_rejects_worktree_evidence_substitution(repository, tool_module):

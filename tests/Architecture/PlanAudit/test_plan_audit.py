@@ -32,6 +32,9 @@ def _copy_validation_workspace(tmp_path: Path) -> Path:
     shutil.copytree(
         REPOSITORY / "tools" / "task-scope", workspace / "tools" / "task-scope"
     )
+    shutil.copytree(
+        REPOSITORY / "tools" / "evidence-envelope", workspace / "tools" / "evidence-envelope"
+    )
     subprocess.run(["git", "init", "-q"], cwd=workspace, check=True)
     subprocess.run(["git", "add", "."], cwd=workspace, check=True)
     return workspace
@@ -252,7 +255,7 @@ class TestC54ApplicationAdmission:
         assert expected_error in result.stdout
         assert "APPLICATION_STARTED_BEFORE_V0_EXIT V1-FND-023" in result.stdout
 
-    def test_done_fnd023_is_not_a_c54_application_admission(self, tmp_path: Path) -> None:
+    def test_done_fnd023_requires_the_v3_interrupted_closure(self, tmp_path: Path) -> None:
         workspace = _copy_validation_workspace(tmp_path)
         path = _activate_fnd023(workspace)
         _replace(path, "- Status: InProgress", "- Status: Done")
@@ -260,7 +263,7 @@ class TestC54ApplicationAdmission:
         result = _run_validate(workspace)
 
         assert result.returncode == 1
-        assert "C54_APPLICATION_ADMISSION_STATUS expected=InProgress actual=Done" in result.stdout
+        assert "C54_APPLICATION_ADMISSION_V3_FINAL_MISSING" in result.stdout
 
     def test_other_v1_application_is_not_admitted(self, tmp_path: Path) -> None:
         workspace = _copy_validation_workspace(tmp_path)

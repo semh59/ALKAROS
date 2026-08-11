@@ -4,6 +4,7 @@ import argparse
 import ast
 from collections import defaultdict
 import hashlib
+import importlib.util
 import json
 import logging
 import re
@@ -2137,6 +2138,30 @@ def application_tasks_started_before_v0_exit(
     ]
 
 
+def v3_interrupted_closure_errors() -> list[str]:
+    """Require the fixed V1-FND-023 final commit when its task is marked Done."""
+    tool_path = WORKSPACE / "tools" / "evidence-envelope" / "evidence_envelope_tool.py"
+    if not tool_path.is_file():
+        return ["C54_APPLICATION_ADMISSION_V3_TOOL_MISSING"]
+    spec = importlib.util.spec_from_file_location("plan_audit_evidence_envelope", tool_path)
+    if spec is None or spec.loader is None:
+        return ["C54_APPLICATION_ADMISSION_V3_TOOL_INVALID"]
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    head = subprocess.run(
+        ["git", "-C", str(WORKSPACE), "rev-parse", "--verify", "HEAD^{commit}"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if head.returncode != 0:
+        return ["C54_APPLICATION_ADMISSION_V3_FINAL_MISSING"]
+    result = module.validate_final_commit(head.stdout.strip(), WORKSPACE)
+    if result["valid"]:
+        return []
+    return ["C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID"]
+
+
 def c54_application_admission_errors(
     tasks: dict[str, tuple[Path, list[str], dict[str, list[str]], list[str]]],
 ) -> list[str]:
@@ -2151,7 +2176,9 @@ def c54_application_admission_errors(
         return []
 
     errors: list[str] = []
-    if status != "InProgress":
+    if status == "Done":
+        errors.extend(v3_interrupted_closure_errors())
+    elif status != "InProgress":
         errors.append(f"C54_APPLICATION_ADMISSION_STATUS expected=InProgress actual={status}")
 
     sources = tuple(line.removeprefix("- ").strip() for line in sections["Source basis"])
