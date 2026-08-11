@@ -30,6 +30,7 @@ _AUTHORIZATION_BEARER = re.compile(r"\bauthorization\s*:\s*bearer\s+\S+", re.IGN
 _V0_GOV_035_BASELINE = "1d41e97b39ac975ab55c2bdf4198b0d6b92681ed"
 _V0_GOV_035_CLOSURE = "78b317a5c3d04009d94394da58c5913d59c22b91"
 _V3_TASK_ID = "V1-FND-023"
+_V3_REENTRY_PARENT_TASK_ID = "V0-GOV-059"
 _V3_B0_COMMIT = "fd3344f15c5257b53bf5281ee9129f800c62f0a7"
 _V3_B0_PARENT = "645a07f6992ece6efd70dc2fb2e0a7f7bccc945c"
 _V3_INTERRUPTION_COMMIT = "479881636c8142c7161f2d5980d37ca2f9b48591"
@@ -390,20 +391,28 @@ def validate_v3_interrupted_final_commit(final_commit: str, repository: Path) ->
     reentry_commit = evidence_parents[0]
     reentry_parents = _commit_parents(repository, reentry_commit)
     if reentry_parents is None or len(reentry_parents) != 1:
-        _v3_error(errors, "V3_INVALID_TOPOLOGY", "reentry must have exactly one V0-GOV-055 final parent")
+        _v3_error(errors, "V3_INVALID_TOPOLOGY", "reentry must have exactly one governance final parent")
         return {"valid": False, "errors": errors}
-    v055_final = reentry_parents[0]
+    governance_final = reentry_parents[0]
 
-    v055_result = validate_final_commit(v055_final, repository)
-    if not v055_result["valid"]:
-        _v3_error(errors, "V3_REENTRY_PARENT_NOT_V055_FINAL", "reentry parent must be a valid V0-GOV-055 v2 final")
+    governance_result = validate_final_commit(governance_final, repository)
+    if not governance_result["valid"]:
+        _v3_error(errors, "V3_REENTRY_PARENT_NOT_LATEST_GOV_FINAL", "reentry parent must be a valid governance v2 final")
     else:
-        v055_trailers = _parse_trailers(repository, v055_final)
-        if v055_trailers is None or not v055_trailers or v055_trailers[0] != "Task: V0-GOV-055":
-            _v3_error(errors, "V3_REENTRY_PARENT_NOT_V055_FINAL", "reentry parent must close V0-GOV-055")
+        governance_trailers = _parse_trailers(repository, governance_final)
+        if (
+            governance_trailers is None
+            or not governance_trailers
+            or governance_trailers[0] != f"Task: {_V3_REENTRY_PARENT_TASK_ID}"
+        ):
+            _v3_error(
+                errors,
+                "V3_REENTRY_PARENT_NOT_LATEST_GOV_FINAL",
+                f"reentry parent must close {_V3_REENTRY_PARENT_TASK_ID}",
+            )
 
-    if _git(repository, "merge-base", "--is-ancestor", _V3_INTERRUPTION_COMMIT, v055_final).returncode != 0:
-        _v3_error(errors, "V3_INVALID_TOPOLOGY", "V0-GOV-055 final must descend from the fixed interruption")
+    if _git(repository, "merge-base", "--is-ancestor", _V3_INTERRUPTION_COMMIT, governance_final).returncode != 0:
+        _v3_error(errors, "V3_INVALID_TOPOLOGY", "governance final must descend from the fixed interruption")
 
     b0_parents = _commit_parents(repository, _V3_B0_COMMIT)
     interruption_parents = _commit_parents(repository, _V3_INTERRUPTION_COMMIT)
@@ -452,9 +461,9 @@ def validate_v3_interrupted_final_commit(final_commit: str, repository: Path) ->
         if interruption_task != expected_interruption:
             _v3_error(errors, "V3_INVALID_INTERRUPTION_DIFF", "interruption must add only the exact blocker")
 
-    parent_task = _git_text(repository, v055_final, _V3_TASK_PATH)
+    parent_task = _git_text(repository, governance_final, _V3_TASK_PATH)
     reentry_task = _git_text(repository, reentry_commit, _V3_TASK_PATH)
-    if _changed_path_statuses(repository, v055_final, reentry_commit) != {("M", _V3_TASK_PATH)}:
+    if _changed_path_statuses(repository, governance_final, reentry_commit) != {("M", _V3_TASK_PATH)}:
         _v3_error(errors, "V3_INVALID_REENTRY_DIFF", "reentry may change only the V1-FND-023 task")
     elif parent_task is None or reentry_task is None or _metadata(parent_task) is None or _metadata(reentry_task) is None:
         _v3_error(errors, "V3_INVALID_REENTRY_METADATA", "reentry task metadata must be readable")
@@ -469,7 +478,7 @@ def validate_v3_interrupted_final_commit(final_commit: str, repository: Path) ->
         ):
             _v3_error(errors, "V3_INVALID_REENTRY_DIFF", "reentry must remove exactly one blocker and change only Blocked to InProgress")
 
-    for commit in (v055_final, reentry_commit, evidence_commit, final_commit):
+    for commit in (governance_final, reentry_commit, evidence_commit, final_commit):
         for path, expected_hash in _V3_SOURCE_ARTIFACTS.items():
             blob = _git_blob(repository, commit, path)
             if blob is None or hashlib.sha256(blob).hexdigest() != expected_hash:

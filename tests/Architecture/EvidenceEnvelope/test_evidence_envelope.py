@@ -173,11 +173,12 @@ def _write_v3_interrupted_chain(
     tool_module,
     monkeypatch,
     mutate: Callable[[str, Path], None] | None = None,
+    reentry_parent_task_id: str = "V0-GOV-059",
 ) -> tuple[str, str, str, str, str]:
     fnd_task_path = "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
-    v055_task_path = "plan/v0/governance/V0-GOV-055.md"
+    governance_task_path = f"plan/v0/governance/{reentry_parent_task_id}.md"
     fnd_task = repo / fnd_task_path
-    v055_task = repo / v055_task_path
+    governance_task = repo / governance_task_path
     source_test_path = "tests/Architecture/TestDiscovery/test_solution_test_discovery.py"
     source_paths = ("Directory.Build.targets", source_test_path)
     (repo / "Directory.Build.targets").write_text("before\n", encoding="utf-8")
@@ -190,8 +191,8 @@ def _write_v3_interrupted_chain(
         "- `evidence/V1-FND-023/**`\n\n## Deliverables\n",
         encoding="utf-8",
     )
-    v055_task.parent.mkdir(parents=True)
-    v055_owned_paths = (
+    governance_task.parent.mkdir(parents=True)
+    governance_owned_paths = (
         "tools/evidence-envelope/evidence_envelope_tool.py",
         "tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py",
         "docs/engineering/closure-evidence-envelope.md",
@@ -199,11 +200,11 @@ def _write_v3_interrupted_chain(
         "tests/Architecture/PlanAudit/test_plan_audit.py",
         "plan/VALIDATION_CONTRACT.md",
     )
-    v055_task.write_text(
-        "# V0-GOV-055\n\n- Task ID: V0-GOV-055\n- Status: Planned\n"
+    governance_task.write_text(
+        f"# {reentry_parent_task_id}\n\n- Task ID: {reentry_parent_task_id}\n- Status: Planned\n"
         "- Assignee: Unassigned (exactly one person)\n\n## Owned surface\n\n"
-        + "".join(f"- `{path}`\n" for path in v055_owned_paths)
-        + "- `evidence/V0-GOV-055/**`\n\n## Deliverables\n",
+        + "".join(f"- `{path}`\n" for path in governance_owned_paths)
+        + f"- `evidence/{reentry_parent_task_id}/**`\n\n## Deliverables\n",
         encoding="utf-8",
     )
     b0_parent = _commit(repo, "initial")
@@ -232,33 +233,33 @@ def _write_v3_interrupted_chain(
         mutate("interruption", repo)
     interruption = _commit(repo, "interruption")
 
-    for path in v055_owned_paths:
+    for path in governance_owned_paths:
         artifact = repo / path
         artifact.parent.mkdir(parents=True, exist_ok=True)
         artifact.write_text(f"{path}\n", encoding="utf-8")
-    v055_task.write_text(
-        v055_task.read_text(encoding="utf-8")
+    governance_task.write_text(
+        governance_task.read_text(encoding="utf-8")
         .replace("Status: Planned", "Status: InProgress")
-        .replace("Assignee: Unassigned (exactly one person)", "Assignee: /root/v055"),
+        .replace("Assignee: Unassigned (exactly one person)", f"Assignee: /root/{reentry_parent_task_id.lower()}"),
         encoding="utf-8",
     )
-    v055_subject = _commit(repo, "V055 subject")
-    v055_raw = repo / "evidence/V0-GOV-055/raw/pytest.txt"
-    v055_raw.parent.mkdir(parents=True)
-    v055_raw.write_bytes(b"1 passed\n")
-    v055_envelope = {
+    governance_subject = _commit(repo, "governance subject")
+    governance_raw = repo / reentry_parent_task_id.join(("evidence/", "/raw/pytest.txt"))
+    governance_raw.parent.mkdir(parents=True)
+    governance_raw.write_bytes(b"1 passed\n")
+    governance_envelope = {
         "schema": tool_module.SCHEMA,
-        "task_id": "V0-GOV-055",
-        "subject_commit": v055_subject,
+        "task_id": reentry_parent_task_id,
+        "subject_commit": governance_subject,
         "environment": {"platform": "Windows", "toolchain": {"python": "3.12"}, "variables": {}, "secrets": []},
-        "commands": [{"command": "py -m pytest", "exit_code": 0, "raw_output": {"path": "evidence/V0-GOV-055/raw/pytest.txt", "sha256": _hash(v055_raw)}}],
-        "artifacts": [{"path": path, "sha256": _candidate_blob_hash(repo, v055_subject, path)} for path in v055_owned_paths],
+        "commands": [{"command": "py -m pytest", "exit_code": 0, "raw_output": {"path": f"evidence/{reentry_parent_task_id}/raw/pytest.txt", "sha256": _hash(governance_raw)}}],
+        "artifacts": [{"path": path, "sha256": _candidate_blob_hash(repo, governance_subject, path)} for path in governance_owned_paths],
     }
-    v055_envelope["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(v055_envelope)}
-    (repo / "evidence/V0-GOV-055/closure-evidence-envelope.json").write_text(json.dumps(v055_envelope), encoding="utf-8")
-    v055_evidence = _commit(repo, "V055 evidence")
-    v055_task.write_text(v055_task.read_text(encoding="utf-8").replace("Status: InProgress", "Status: Done"), encoding="utf-8")
-    v055_final = _commit(repo, f"V055 final\n\nTask: V0-GOV-055\nGate: GATE-V0-EXIT\nClosure-Subject: {v055_subject}\nClosure-Evidence-Checkpoint: {v055_evidence}")
+    governance_envelope["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(governance_envelope)}
+    (repo / f"evidence/{reentry_parent_task_id}/closure-evidence-envelope.json").write_text(json.dumps(governance_envelope), encoding="utf-8")
+    governance_evidence = _commit(repo, "governance evidence")
+    governance_task.write_text(governance_task.read_text(encoding="utf-8").replace("Status: InProgress", "Status: Done"), encoding="utf-8")
+    _commit(repo, f"governance final\n\nTask: {reentry_parent_task_id}\nGate: GATE-V0-EXIT\nClosure-Subject: {governance_subject}\nClosure-Evidence-Checkpoint: {governance_evidence}")
 
     reentry_text = tool_module._task_without_blocker(fnd_task.read_text(encoding="utf-8"))
     assert reentry_text is not None
@@ -322,6 +323,20 @@ def test_v3_task_specific_api_rejects_a_valid_generic_v2_final(repository, tool_
     assert tool_module.validate_final_commit(final, repo) == {"valid": True, "errors": []}
     assert "V3_INVALID_TOPOLOGY" in _error_codes(
         tool_module.validate_v1_fnd_023_v3_final_commit(final, repo)
+    )
+
+
+def test_v3_interrupted_fnd023_rejects_old_v055_reentry_parent(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _write_v3_interrupted_chain(
+        repo,
+        tool_module,
+        monkeypatch,
+        reentry_parent_task_id="V0-GOV-055",
+    )
+
+    assert "V3_REENTRY_PARENT_NOT_LATEST_GOV_FINAL" in _error_codes(
+        tool_module.validate_v1_fnd_023_v3_final_commit(_git(repo, "rev-parse", "HEAD"), repo)
     )
 
 
@@ -488,7 +503,7 @@ def test_v3_interrupted_fnd023_rejects_other_task_and_non_final_head(repository,
     assert "V3_INVALID_FINAL_TRAILERS" in _error_codes(
         tool_module.validate_v3_interrupted_final_commit(wrong_task, repo)
     )
-    assert "V3_REENTRY_PARENT_NOT_V055_FINAL" in _error_codes(
+    assert "V3_REENTRY_PARENT_NOT_LATEST_GOV_FINAL" in _error_codes(
         tool_module.validate_v3_interrupted_final_commit(evidence, repo)
     )
 

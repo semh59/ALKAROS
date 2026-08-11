@@ -233,12 +233,12 @@ V3 interrupted remediation closure ek koşulları:
   task dosyasındaki B0 bloblarını; interruption'ın B0 direct child'ı ve yalnız
   exact `InProgress`→`Blocked` metadata ile exact `Blocker` diff'i olduğunu
   byte/diff/topology olarak doğrular.
-- Reentry A, fixed interruption'ın descendant'ı olan geçerli `V0-GOV-055` v2
+- Reentry A, fixed interruption'ın descendant'ı olan geçerli `V0-GOV-059` v2
   finalinin direct child'ı olmalı, yalnız exact `Blocked`→`InProgress` geçişini
   yapmalı ve exact `Blocker` bölümünü kaldırmalıdır. E, A'nın direct child'ı
   olarak yalnız `evidence/V1-FND-023/**` ekler; F, E'nin direct child'ı olarak
   yalnız task `Status: InProgress` satırını `Status: Done` yapar.
-- B0'nın iki source artifact blobu V0-GOV-055 finalinde ve A/E/F'de stale veya
+- B0'nın iki source artifact blobu V0-GOV-059 finalinde ve A/E/F'de stale veya
   değiştirilmiş olamaz; E zarfı bunların tam SHA-256 kümesini taşır. E
   tree'sindeki envelope/raw bytes, raw hashleri ve worktree-substitution reddi
   v2 kadar zorunludur. F trailer bloğu sırasıyla `Task`, `Gate`,

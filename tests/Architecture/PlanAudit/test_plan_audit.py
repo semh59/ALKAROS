@@ -265,6 +265,22 @@ class TestC54ApplicationAdmission:
         assert result.returncode == 1
         assert "C54_APPLICATION_ADMISSION_V3_FINAL_MISSING" in result.stdout
 
+    def test_done_fnd023_requires_current_v3_reentry_parent_task(self, tmp_path: Path) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        path = _activate_fnd023(workspace)
+        _replace(path, "- Status: InProgress", "- Status: Done")
+        tool_path = workspace / "tools/evidence-envelope/evidence_envelope_tool.py"
+        _replace(
+            tool_path,
+            '_V3_REENTRY_PARENT_TASK_ID = "V0-GOV-059"',
+            '_V3_REENTRY_PARENT_TASK_ID = "V0-GOV-055"',
+        )
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "C54_APPLICATION_ADMISSION_V3_PARENT_TASK_MISMATCH" in result.stdout
+
     def test_done_fnd023_requires_v3_when_the_v0_gate_is_closed(self, tmp_path: Path) -> None:
         workspace = _copy_validation_workspace(tmp_path)
         path = _activate_fnd023(workspace)

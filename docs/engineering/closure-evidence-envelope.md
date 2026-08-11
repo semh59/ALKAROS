@@ -58,7 +58,7 @@ V3 yalnız `V1-FND-023` için, immutable B0
 subject veya interruption için genel bir closure istisnası değildir.
 
 V3'ün immutable kaynak zinciri `B0 → interruption`dır. Reentry ancak bu
-interruption'ın descendant'ı olan geçerli `V0-GOV-055` v2 finalinin direct child'ı
+interruption'ın descendant'ı olan geçerli `V0-GOV-059` v2 finalinin direct child'ı
 `A` ile başlar; ardından `A → E → F` gelir. Validator B0 parent'ını, B0'ın exact
 değişen path/bloblarını ve interruption'ın yalnız exact `InProgress`→`Blocked`
 metadata + `Blocker` diff'ini byte/diff/topology ile doğrular. A yalnız exact
@@ -66,7 +66,7 @@ blocker'ı kaldırıp task'ı `Blocked`den `InProgress`e geçirir. E, A'nın dir
 child'ı olarak yalnız `evidence/V1-FND-023/**` ekler; F, E'nin direct child'ı
 olarak yalnız task statusunu `Done` yapar.
 
-B0'nın iki source artifact blobu `V0-GOV-055` finalinde ve A/E/F'de değişemez
+B0'nın iki source artifact blobu `V0-GOV-059` finalinde ve A/E/F'de değişemez
 veya stale olamaz. E zarfı bu iki source artifact'ın SHA-256 değerlerinin tam
 kümesini taşır. F'nin son contiguous trailer bloğu `Task`, `Gate`,
 `Closure-Subject`, `Closure-Interruption`, `Closure-Reentry` ve

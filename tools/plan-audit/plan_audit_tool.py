@@ -2150,6 +2150,8 @@ def v3_interrupted_closure_errors() -> list[str]:
         return ["C54_APPLICATION_ADMISSION_V3_TOOL_INVALID"]
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    if getattr(module, "_V3_REENTRY_PARENT_TASK_ID", None) != "V0-GOV-059":
+        return ["C54_APPLICATION_ADMISSION_V3_PARENT_TASK_MISMATCH"]
     head = subprocess.run(
         ["git", "-C", str(WORKSPACE), "rev-parse", "--verify", "HEAD^{commit}"],
         check=False,
