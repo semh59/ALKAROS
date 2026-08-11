@@ -1,0 +1,9 @@
+{
+  "candidate": "0c8cd75fbebeacfdf455f24de9b13c5ee7434da6",
+  "root": "8d466ba540f74025ac17e3f29d367333fd16d4c1",
+  "commit_count": 157,
+  "pre_task_commit_sequence_sha256": "4ABB78702C89E7F19BAA9D409CD6B56F0C9D530AF6DA904939435EA728867DBE",
+  "post_generation_commit_sequence_sha256": "4ABB78702C89E7F19BAA9D409CD6B56F0C9D530AF6DA904939435EA728867DBE",
+  "equal": true,
+  "method": "SHA-256 of newline-delimited git rev-list --reverse <candidate> object IDs"
+}

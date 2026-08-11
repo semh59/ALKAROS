@@ -1,7 +1,7 @@
 # Versioning Strategy
 
 > **Based on:** GATES.md, TASK_STANDARD.md
-> **Date:** 2026-07-30
+> **Date:** 2026-08-11
 
 ## 1. Branching Model
 
@@ -53,6 +53,11 @@ Branch naming: `<TASK-ID>-<short-description>` (branch off the task's version ba
 Task: <TASK-ID>
 Gate: <GATE-ID>
 ```
+
+`Task:` ve `Gate:` satırları commit mesajının sonunda tek, bitişik bir trailer
+bloğu oluşturur. İlk trailer'dan önce boş bir ayırıcı satır bulunur; trailer
+satırlarının arasında boş satır, literal `\n` karakterleri veya serbest metin
+bulunmaz. Böylece `git interpret-trailers --parse` iki alanı da ayrıştırır.
 
 ### Types
 
@@ -134,7 +139,31 @@ bu commit `Task: V0-DOM-001` footer'ı zaten mevcut olduğu için SHA değişmed
 2026-08-05 tarihli ikinci düzeltme (V1-FND-009 C45 kapsamı, V0-DOM-001 sahipliğinde): tam geçmiş
 yeniden yazımı sonrası her iki tag de `46c8d7d` (yeni kök baseline, eski `fc5ae22`'nin yeniden
 yazılmış hâli) commit'ine işaret eder; annotated tag objeleri `f6efc80`/`439e4e8` olarak yeniden
-oluşturuldu.
+oluşturuldu. C45'teki `125 commit` değeri o günün tarihsel ölçümüdür; güncel sayı değildir.
+
+### Immutable history attestation (CORR:C52)
+
+2026-08-11 tarihinde `V0-GOV-038`, `8d466ba` kökünden
+`0c8cd75` candidate'ına kadar **157 commit** ölçtü. C52'nin dondurulmuş
+145-commit denetim satırı SHA-256 ile doğrulandı; candidate'a sonradan eklenen
+12 commit aynı ledger'a canlı Git nesnelerinden eklendi. Bu iki sayı farklı
+tarihlere aittir; C45'in 125-commit tarihi güncel tarihçe sayımı gibi
+kullanılamaz.
+
+- Commit-time scope sonucu 45 `FAIL` satırıdır.
+- C52 current-contract snapshot sonucu 53 `FAIL` satırıdır. Retrospective ve
+  current verdict'ler aynı alan değildir ve birbirinin yerine geçmez.
+- 13 C52 missing-footer commit'i exact SHA listesiyle
+  `evidence/V0-GOV-038/controls.md` içinde tutulur.
+- `2afa0c3` literal `\n` trailer metni ve `0f2efe6` ayrık trailer bloğu,
+  yeniden yazılmayacak immutable istisnalardır. Bu istisnalar 13-commit C52
+  footer kümesinden ayrıdır.
+
+Attestation, rebase, amend, force-push, tag taşıma veya eski commit mesajını
+değiştirme yetkisi vermez. Her gelecekteki commit bu belgedeki canonical trailer
+bloğunu kullanır; geçmiş bulgular yeni task kapsamındaki kanıt veya remediation
+ile ele alınır. Tam changed-path ledger, commit-time dependency durumları ve
+before/after history fingerprint'i `evidence/V0-GOV-038/` altındadır.
 
 ## 5. Workflow
 

@@ -1,8 +1,8 @@
 # V0-GOV-038 - Attest immutable commit history
 
 - Task ID: V0-GOV-038
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root/v0_gov_038_history_resume
 - Work type: validation
 - Surface state: Existing
 
