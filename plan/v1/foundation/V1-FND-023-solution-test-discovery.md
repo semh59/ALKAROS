@@ -1,7 +1,7 @@
 # V1-FND-023 - Restore solution test discovery
 
 - Task ID: V1-FND-023
-- Status: InProgress
+- Status: Blocked
 - Assignee: /root/implement_v1_fnd_023
 - Work type: implementation
 - Surface state: Existing
@@ -46,6 +46,15 @@ test çalışmayan solution test kapısını ortadan kaldırmak.
 - V0-GOV-050
 - V0-GOV-054
 - V1-FND-001
+
+## Blocker
+
+- Result: Reentry commit `d1b037b3b6de4d86200a0119c4e4d18f2659fb34` `V0-GOV-057`
+  finalinden geliyor; mevcut v3 verifier ise reentry parent olarak halen
+  `V0-GOV-055` finali bekliyor.
+- Unlock: Bu task ancak yeni governance hardening gorevi v3 contract ve
+  verifier'i guncel admission-hardening finaliyle hizaladiktan sonra yeni
+  reentry/evidence/final closure zinciri uretebilir.
 
 ## Deliverables
 
