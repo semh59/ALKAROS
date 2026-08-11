@@ -76,16 +76,18 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 
 `GATE-V0-EXIT` açıkken `check_entry_gate`, yalnız `GATES.md` içindeki
 `TASK_SCOPE_REMEDIATION_EXCEPTIONS` marker'ları arasındaki katı tablodan
-ayrıştırılan exact ID'leri kabul eder. Tek güncel kaynak `CORR:C52`'dir: 2026-08-10
-onaylı 18 yeni C52 remediation görevinin kümesi GATES.md ile araç kodunda birebir
-eşleşir. Mevcut `Done` görevler bu kümeye alınmaz ve yeniden açılmaz.
+ayrıştırılan exact ID'leri kabul eder. Güncel kaynak kayıtları, 2026-08-10
+tarihli `CORR:C52` onaylı 18 task ile 2026-08-11 tarihli
+`CORR:C52;CORR:C53;CORR:C54` onaylı yalnız `V1-FND-023` task'ıdır. Bu 19
+kayıt, tarih ve source basis metadata'sıyla birlikte GATES.md ile araç kodunda
+birebir eşleşir. Mevcut `Done` görevler bu kümeye alınmaz ve yeniden açılmaz.
 
 Tablo eksik, bozuk, yinelenen veya bu kümeyle eşleşmeyen bir kayıt içerirse
 denetim fail-closed olarak non-zero exit verir. İstisna yalnız kanıtlanmış
 bulguyu düzeltmeye yarar; V0/V1 gate kapanış kanıtı değildir ve yeni product
 behavior üretme izni vermez.
 
-`--candidate-remediation`, yalnız sabit 18 C52 candidate-code kimliği için kullanılabilir. Bu modda görev
+`--candidate-remediation`, yalnız sabit 19 C52/C53/C54 candidate-code kimliği için kullanılabilir. Bu modda görev
 `InProgress` ve gerçek bir oturum sahibine atanmış olmalıdır; yazılabilir yüzey değişmez. Mod, görevi
 `Done` yapmaz, dependency veya gate'i kapatmaz ve yeni ürün davranışı eklemeye izin vermez. Tarihsel
 PDF veya önceki remediation onayları current admission kaynağı değildir.

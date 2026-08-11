@@ -8,6 +8,8 @@ dependency, wrong status/assignee, broken Markdown, evidence directory,
 metadata file, glob matching, and deterministic output.
 """
 
+import csv
+import json
 import subprocess
 from pathlib import Path
 
@@ -89,47 +91,34 @@ def _write_v0_deferrals(plan_dir: Path, rows: list[str]) -> None:
     )
 
 
+REMEDIATION_RECORDS = {
+    "V1-CAT-003": ("2026-08-10", "CORR:C52"),
+    "V1-FND-016": ("2026-08-10", "CORR:C52"),
+    "V1-FND-017": ("2026-08-10", "CORR:C52"),
+    "V1-FND-018": ("2026-08-10", "CORR:C52"),
+    "V1-FND-019": ("2026-08-10", "CORR:C52"),
+    "V1-FND-020": ("2026-08-10", "CORR:C52"),
+    "V1-FND-021": ("2026-08-10", "CORR:C52"),
+    "V1-FND-022": ("2026-08-10", "CORR:C52"),
+    "V1-FND-023": ("2026-08-11", "CORR:C52;CORR:C53;CORR:C54"),
+    "V1-IAM-006": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-007": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-008": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-009": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-010": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-011": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-012": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-013": ("2026-08-10", "CORR:C52"),
+    "V1-SEC-004": ("2026-08-10", "CORR:C52"),
+    "V1-SEC-005": ("2026-08-10", "CORR:C52"),
+}
 REMEDIATION_ROWS = [
-    "| `V1-FND-016` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-017` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-018` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-019` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-020` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-021` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-022` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-006` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-007` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-008` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-009` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-010` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-011` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-012` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-013` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-SEC-004` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-SEC-005` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-CAT-003` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `{task_id}` | `{approval_date}` | `{source_basis}` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |".format(
+        task_id=task_id, approval_date=approval_date, source_basis=source_basis
+    )
+    for task_id, (approval_date, source_basis) in REMEDIATION_RECORDS.items()
 ]
-
-C52_REMEDIATION_TASK_IDS = [
-    "V1-FND-016",
-    "V1-FND-017",
-    "V1-FND-018",
-    "V1-FND-019",
-    "V1-FND-020",
-    "V1-FND-021",
-    "V1-FND-022",
-    "V1-IAM-006",
-    "V1-IAM-007",
-    "V1-IAM-008",
-    "V1-IAM-009",
-    "V1-IAM-010",
-    "V1-IAM-011",
-    "V1-IAM-012",
-    "V1-IAM-013",
-    "V1-SEC-004",
-    "V1-SEC-005",
-    "V1-CAT-003",
-]
+C52_C53_C54_REMEDIATION_TASK_IDS = list(REMEDIATION_RECORDS)
 
 DEFERRED_TASK_IDS = [
     "V0-HUG-001",
@@ -407,8 +396,8 @@ class TestRemediationEntryGateExceptions:
         _write_remediation_exceptions(make_plan, REMEDIATION_ROWS)
         write_task(task_id="V0-DOM-001", status="Planned")
 
-    @pytest.mark.parametrize("task_id", C52_REMEDIATION_TASK_IDS)
-    def test_every_c52_task_bypasses_open_v0_entry_gate(
+    @pytest.mark.parametrize("task_id", C52_C53_C54_REMEDIATION_TASK_IDS)
+    def test_every_c52_c53_c54_task_bypasses_open_v0_entry_gate(
         self, task_id, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
@@ -418,6 +407,77 @@ class TestRemediationEntryGateExceptions:
 
         assert exit_code == 0
         assert result["metadata_errors"] == []
+
+    def test_exception_records_require_the_canonical_metadata(
+        self, make_plan
+    ):
+        _write_remediation_exceptions(make_plan, REMEDIATION_ROWS)
+
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        assert mod.parse_remediation_exception_records(make_plan) == REMEDIATION_RECORDS
+
+    def test_fnd023_wrong_approval_date_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-023")
+        wrong_date_rows = REMEDIATION_ROWS.copy()
+        wrong_date_rows[8] = wrong_date_rows[8].replace("2026-08-11", "2026-08-10")
+        _write_remediation_exceptions(make_plan, wrong_date_rows)
+
+        exit_code, result = run_tool("V1-FND-023", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    def test_fnd023_wrong_source_basis_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-023")
+        wrong_source_rows = REMEDIATION_ROWS.copy()
+        wrong_source_rows[8] = wrong_source_rows[8].replace(
+            "CORR:C52;CORR:C53;CORR:C54", "CORR:C52"
+        )
+        _write_remediation_exceptions(make_plan, wrong_source_rows)
+
+        exit_code, result = run_tool("V1-FND-023", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    def test_out_of_order_exception_markers_fail_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-023")
+        gates = make_plan / "GATES.md"
+        gates.write_text(
+            gates.read_text(encoding="utf-8").replace(
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->",
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:TEMP -->",
+            ).replace(
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->",
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->",
+            ).replace(
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:TEMP -->",
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->",
+            ),
+            encoding="utf-8",
+        )
+
+        exit_code, result = run_tool("V1-FND-023", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("markers are out of order" in error for error in result["metadata_errors"])
 
     def test_candidate_remediation_skips_only_blocked_dependencies(
         self, write_task, make_repo, make_plan
@@ -536,13 +596,14 @@ class TestRemediationEntryGateExceptions:
         exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
 
         assert exit_code == 1
-        assert any("invalid record" in error for error in result["metadata_errors"])
+        assert any("must exactly match" in error for error in result["metadata_errors"])
 
+    @pytest.mark.parametrize("task_id", ["V1-FND-001", "V0-GOV-052"])
     def test_existing_done_task_is_not_a_candidate_remediation(
-        self, write_task, make_repo, make_plan
+        self, task_id, write_task, make_repo, make_plan
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-001", status="Done")
+        write_task(task_id=task_id, status="Done")
 
         import importlib.util
 
@@ -553,12 +614,12 @@ class TestRemediationEntryGateExceptions:
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         result = mod.run_validation(
-            "V1-FND-001", make_repo, make_plan, candidate_remediation=True
+            task_id, make_repo, make_plan, candidate_remediation=True
         )
 
         assert result["valid"] is False
         assert result["metadata_errors"] == [
-            "Task V1-FND-001 is not an approved candidate-code remediation"
+            f"Task {task_id} is not an approved candidate-code remediation"
         ]
 
     def test_c52_candidate_requires_an_active_session(
@@ -584,6 +645,29 @@ class TestRemediationEntryGateExceptions:
             "Candidate-code remediation task status is 'Planned', expected 'InProgress'"
         ]
 
+    def test_fnd023_candidate_requires_an_active_session(
+        self, write_task, make_repo, make_plan
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-023", status="Planned")
+
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        result = mod.run_validation(
+            "V1-FND-023", make_repo, make_plan, candidate_remediation=True
+        )
+
+        assert result["valid"] is False
+        assert result["metadata_errors"] == [
+            "Candidate-code remediation task status is 'Planned', expected 'InProgress'"
+        ]
+
     def test_non_c52_source_basis_fails_closed(
         self, write_task, make_repo, make_plan, run_tool
     ):
@@ -596,7 +680,51 @@ class TestRemediationEntryGateExceptions:
         exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
 
         assert exit_code == 1
-        assert any("invalid record" in error for error in result["metadata_errors"])
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    def test_repository_fnd023_admission_source_and_routing_catalog_parity(self):
+        repository = Path(__file__).resolve().parents[3]
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            repository / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        fnd023 = (repository / "plan" / "v1" / "foundation" / "V1-FND-023-solution-test-discovery.md").read_text(
+            encoding="utf-8"
+        )
+        source_basis = fnd023.split("## Source basis\n\n", 1)[1].split("\n## ", 1)[0]
+        assert source_basis.splitlines() == [
+            "- CORR:C52",
+            "- CORR:C53",
+            "- CORR:C54",
+        ]
+
+        with (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.csv").open(
+            encoding="utf-8", newline=""
+        ) as handle:
+            csv_items = list(csv.DictReader(handle))
+        routing = json.loads(
+            (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        csv_item = next(item for item in csv_items if item["finding_id"] == "POST-CL-002")
+        json_item = next(item for item in routing["items"] if item["finding_id"] == "POST-CL-002")
+        catalog = next(
+            item for item in routing["task_catalog"] if item["task_id"] == "V0-GOV-050"
+        )
+
+        assert mod.parse_remediation_exception_records(repository / "plan") == REMEDIATION_RECORDS
+        assert len(csv_items) == routing["audit_register"]["routed_finding_count"] == 48
+        assert csv_item["owner_task_ids"] == "V0-GOV-050;V1-FND-023"
+        assert csv_item["source_basis"] == "CORR:C52;CORR:C53;CORR:C54"
+        assert csv_item["closure_evidence"] == json_item["closure_evidence"]
+        assert json_item["owner_task_ids"] == ["V0-GOV-050", "V1-FND-023"]
+        assert json_item["source_basis"] == "CORR:C52;CORR:C53;CORR:C54"
+        assert catalog["closure_evidence"] == "exact 19-ID C52/C53/C54 admission set"
 
 
 # ---------------------------------------------------------------------------

@@ -60,14 +60,14 @@ finansal/stok/mevzuat kararı varken kapanamaz.
 Bir consumer, dependency'si `NotApplicable` olduğunda yalnız kendi acceptance
 sözleşmesi bu sonucu açıkça ele alıyorsa başlayabilir; aksi durumda gate açık kalır.
 
-## 2026-08-10 C52 remediation admission
+## 2026-08-10/2026-08-11 C52/C53/C54 remediation admission
 
-`CORR:C52` bu tablonun tek güncel kabul kaynağıdır. Önceki remediation
-onayları tarihsel kayıttır; mevcut `Done` görevleri bu tabloya girmez, yeniden
-açılamaz ve `--candidate-remediation` ile kabul edilmez. Bu izin yalnız aşağıdaki
-18 yeni C52 görevine, `V0-GOV-037` tarafından devredilen exact yüzeydeki
-kanıtlanmış bulguyu düzeltmek için uygulanır; gate kapanış kanıtı veya yeni ürün
-davranışı izni değildir.
+Bu tablo yalnız `CORR:C52` kaynaklı 18 görevi ve C53/C54 ile onaylanan
+`V1-FND-023` kaydını kabul eder. Önceki remediation onayları tarihsel kayıttır;
+mevcut `Done` görevleri bu tabloya girmez, yeniden açılamaz ve
+`--candidate-remediation` ile kabul edilmez. Bu izin yalnız `V0-GOV-037`
+tarafından devredilen exact yüzeydeki kanıtlanmış bulguyu düzeltmek için
+uygulanır; gate kapanış kanıtı veya yeni ürün davranışı izni değildir.
 
 <!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->
 | Task ID | Approval date | Source basis | Purpose | Gate closure evidence | New feature behavior |
@@ -79,6 +79,7 @@ davranışı izni değildir.
 | `V1-FND-020` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 | `V1-FND-021` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 | `V1-FND-022` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-023` | `2026-08-11` | `CORR:C52;CORR:C53;CORR:C54` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 | `V1-IAM-006` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 | `V1-IAM-007` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 | `V1-IAM-008` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |

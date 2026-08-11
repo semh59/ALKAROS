@@ -71,31 +71,35 @@ _REMEDIATION_EXCEPTION_HEADER = (
 )
 _REMEDIATION_EXCEPTION_SEPARATOR = "| --- | --- | --- | --- | --- | --- |"
 _REMEDIATION_EXCEPTION_ROW = re.compile(
-    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-10)`\s*\|\s*"
-    r"`(?P<source_basis>CORR:C52)`\s*\|\s*"
+    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>\d{4}-\d{2}-\d{2})`\s*\|\s*"
+    r"`(?P<source_basis>[^`|]+)`\s*\|\s*"
     r"Verified finding remediation only\s*\|\s*Not gate closure evidence\s*\|\s*"
     r"No new feature behavior\s*\|$"
 )
-_C52_CANDIDATE_CODE_REMEDIATION_TASK_IDS = {
-    "V1-CAT-003",
-    "V1-FND-016",
-    "V1-FND-017",
-    "V1-FND-018",
-    "V1-FND-019",
-    "V1-FND-020",
-    "V1-FND-021",
-    "V1-FND-022",
-    "V1-IAM-006",
-    "V1-IAM-007",
-    "V1-IAM-008",
-    "V1-IAM-009",
-    "V1-IAM-010",
-    "V1-IAM-011",
-    "V1-IAM-012",
-    "V1-IAM-013",
-    "V1-SEC-004",
-    "V1-SEC-005",
+_C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS = {
+    "V1-CAT-003": ("2026-08-10", "CORR:C52"),
+    "V1-FND-016": ("2026-08-10", "CORR:C52"),
+    "V1-FND-017": ("2026-08-10", "CORR:C52"),
+    "V1-FND-018": ("2026-08-10", "CORR:C52"),
+    "V1-FND-019": ("2026-08-10", "CORR:C52"),
+    "V1-FND-020": ("2026-08-10", "CORR:C52"),
+    "V1-FND-021": ("2026-08-10", "CORR:C52"),
+    "V1-FND-022": ("2026-08-10", "CORR:C52"),
+    "V1-FND-023": ("2026-08-11", "CORR:C52;CORR:C53;CORR:C54"),
+    "V1-IAM-006": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-007": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-008": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-009": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-010": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-011": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-012": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-013": ("2026-08-10", "CORR:C52"),
+    "V1-SEC-004": ("2026-08-10", "CORR:C52"),
+    "V1-SEC-005": ("2026-08-10", "CORR:C52"),
 }
+_C52_C53_C54_CANDIDATE_CODE_REMEDIATION_TASK_IDS = set(
+    _C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS
+)
 _DEFERRED_TASKS_START = "<!-- V0_DEFERRED_TASKS:START -->"
 _DEFERRED_TASKS_END = "<!-- V0_DEFERRED_TASKS:END -->"
 _DEFERRED_TASKS_HEADER = (
@@ -297,8 +301,8 @@ def _all_tasks(plan_dir: Path) -> List[TaskMetadata]:
     return sorted(tasks, key=lambda item: item.task_id)
 
 
-def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
-    """Return the exact C52-approved remediation IDs from ``GATES.md``.
+def parse_remediation_exception_records(plan_dir: Path) -> Dict[str, Tuple[str, str]]:
+    """Return the exact C52/C53/C54-approved remediation records from ``GATES.md``.
 
     The table is deliberately strict: a malformed, duplicate, missing, or
     non-approved record cannot expand the entry-gate bypass.
@@ -329,24 +333,29 @@ def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
     if table_lines[1] != _REMEDIATION_EXCEPTION_SEPARATOR:
         raise TaskParseError("Remediation exception table separator is invalid")
 
-    exception_ids: Set[str] = set()
+    records: Dict[str, Tuple[str, str]] = {}
     for line in table_lines[2:]:
         match = _REMEDIATION_EXCEPTION_ROW.fullmatch(line)
         if match is None:
             raise TaskParseError("Remediation exception table contains an invalid record")
         task_id = match.group("task_id")
-        if task_id in exception_ids:
+        if task_id in records:
             raise TaskParseError(
                 f"Remediation exception table contains a duplicate Task ID: {task_id}"
             )
-        exception_ids.add(task_id)
+        records[task_id] = (match.group("approval_date"), match.group("source_basis"))
 
-    if exception_ids != _C52_CANDIDATE_CODE_REMEDIATION_TASK_IDS:
+    if records != _C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS:
         raise TaskParseError(
-            "Remediation exception table Task IDs must exactly match the "
-            "2026-08-10 C52 user approval"
+            "Remediation exception table records must exactly match the "
+            "C52/C53/C54 user approval"
         )
-    return exception_ids
+    return records
+
+
+def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
+    """Return the exact candidate-remediation IDs from ``GATES.md``."""
+    return set(parse_remediation_exception_records(plan_dir))
 
 
 def parse_v0_deferral_ids(plan_dir: Path) -> Set[str]:
@@ -433,7 +442,7 @@ def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
         if item.status not in {"Done", "NotApplicable"}
     ]
     if unfinished:
-        if task.task_id in _C52_CANDIDATE_CODE_REMEDIATION_TASK_IDS:
+        if task.task_id in _C52_C53_C54_CANDIDATE_CODE_REMEDIATION_TASK_IDS:
             try:
                 exception_ids = parse_remediation_exception_ids(plan_dir)
             except TaskParseError as exc:
@@ -1002,7 +1011,7 @@ def run_validation(
             )
             return result
         if (
-            task.task_id not in _C52_CANDIDATE_CODE_REMEDIATION_TASK_IDS
+            task.task_id not in _C52_C53_C54_CANDIDATE_CODE_REMEDIATION_TASK_IDS
             or task.task_id not in exception_ids
         ):
             result["metadata_errors"].append(
