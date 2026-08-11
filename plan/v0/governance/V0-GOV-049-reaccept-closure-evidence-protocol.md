@@ -1,7 +1,7 @@
 # V0-GOV-049 - Reaccept the closure-evidence protocol
 
 - Task ID: V0-GOV-049
-- Status: InProgress
+- Status: Done
 - Assignee: /root/implement_v0_gov_049
 - Work type: implementation
 - Surface state: Existing
