@@ -1,7 +1,7 @@
 # V0-GOV-059 - Align V3 reentry parent with latest admission hardening
 
 - Task ID: V0-GOV-059
-- Status: InProgress
+- Status: Done
 - Assignee: /root/implement_v0_gov_059
 - Work type: implementation
 - Surface state: Existing
