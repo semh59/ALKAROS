@@ -49,11 +49,12 @@ test çalışmayan solution test kapısını ortadan kaldırmak.
 
 ## Blocker
 
-- Result: Reentry commit `d1b037b3b6de4d86200a0119c4e4d18f2659fb34` `V0-GOV-057`
-  finalinden geliyor; mevcut v3 verifier ise reentry parent olarak halen
-  `V0-GOV-055` finali bekliyor.
-- Unlock: Bu task ancak `V0-GOV-059` v3 contract ve
-  verifier'i guncel admission-hardening finaliyle hizaladiktan sonra yeni
+- Result: `V1-FND-023` v3 final commit `506097d00a5737dc819683bb6e28befde5277581`
+  final verifier'da `V3_B0_BLOB_MISMATCH` ve `V3_SOURCE_BLOB_MISMATCH`
+  hatalariyla reddedildi; verifier sabitleri gercek B0 source blob hashleriyle
+  eslesmiyor.
+- Unlock: Bu task ancak `V0-GOV-060` gercek B0 blob hashlerini ve guncel
+  governance reentry parent finalini fail-closed hizaladiktan sonra yeni
   reentry/evidence/final closure zinciri uretebilir.
 
 ## Deliverables

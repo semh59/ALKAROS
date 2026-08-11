@@ -17,6 +17,7 @@
 - CORR:C60
 - CORR:C61
 - CORR:C62
+- CORR:C63
 
 ## Goal
 
@@ -30,7 +31,7 @@ Bütün remediation taskleri kapandıktan sonra `plan/AUDIT_REPORT.md` ile `plan
 
 ## In scope
 
-- 55 finding verdict'ini terminal task/evidence ile exact eşlemek.
+- 56 finding verdict'ini terminal task/evidence ile exact eşlemek.
 - Candidate commit, tracked artifact hash'leri ve validation sonuçlarını manifest'e yazmak.
 - Manifest'i commit sonrası ayrı temiz worktree'de doğrulamak.
 
@@ -55,6 +56,7 @@ Bütün remediation taskleri kapandıktan sonra `plan/AUDIT_REPORT.md` ile `plan
 - V0-GOV-057
 - V0-GOV-058
 - V0-GOV-059
+- V0-GOV-060
 - V0-GOV-040
 - V0-GOV-041
 - V0-GOV-042
@@ -93,7 +95,7 @@ Bütün remediation taskleri kapandıktan sonra `plan/AUDIT_REPORT.md` ile `plan
 
 ## Acceptance evidence
 
-- 55 finding'in her biri evidence-backed terminal verdict ve owner task'a sahiptir.
+- 56 finding'in her biri evidence-backed terminal verdict ve owner task'a sahiptir.
 - Committed candidate üzerinde manifest verifier exit code `0` ve hash mismatch count `0` verir.
 - Report/manifest aynı candidate SHA, finding seti ve verdict toplamlarını taşır.
 - `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-045/**` altındadır.
