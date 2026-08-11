@@ -34,6 +34,7 @@
 
 - V0-GOV-035
 - V1-FND-001
+- V1-FND-023
 - V1-FND-022
 
 ## Deliverables

@@ -18,12 +18,8 @@ metinlerinin aynı kimlikleri taşımasını sağlamak.
 
 ## Owned surface
 
-- `tools/task-scope/task_scope_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope.py`
-- `docs/engineering/task-scope-contract.md`
-- `plan/GATES.md`
-- `plan/VALIDATION_CONTRACT.md`
 - `evidence/V0-GOV-035/**`
+- Post-closure admission surface was transferred to `V0-GOV-050` by `CORR:C53`; this historical task remains closed.
 
 ## In scope
 

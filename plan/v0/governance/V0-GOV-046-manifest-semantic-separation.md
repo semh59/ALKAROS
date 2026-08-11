@@ -18,7 +18,6 @@ Plan audit manifest byte/hash doğrulaması ile task/gate/evidence semantic kont
 
 - `tools/plan-audit/plan_audit_tool.py`
 - `tests/Architecture/PlanAudit/test_plan_audit.py`
-- `plan/VALIDATION_CONTRACT.md`
 - `evidence/V0-GOV-046/**`
 
 ## In scope
@@ -38,7 +37,7 @@ Plan audit manifest byte/hash doğrulaması ile task/gate/evidence semantic kont
 ## Dependencies
 
 - V0-GOV-035
-- V0-GOV-039
+- V0-GOV-049
 
 ## Deliverables
 

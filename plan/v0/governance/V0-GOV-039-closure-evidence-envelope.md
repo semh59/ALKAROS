@@ -16,11 +16,8 @@ Task closure kanıtında command, exit code, environment, candidate commit ve ar
 
 ## Owned surface
 
-- `tools/evidence-envelope/evidence_envelope_tool.py`
-- `tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py`
-- `docs/engineering/closure-evidence-envelope.md`
-- `plan/VALIDATION_CONTRACT.md`
 - `evidence/V0-GOV-039/**`
+- Post-closure envelope implementation surface was transferred to `V0-GOV-049` by `CORR:C53`; historical evidence remains immutable.
 
 ## In scope
 

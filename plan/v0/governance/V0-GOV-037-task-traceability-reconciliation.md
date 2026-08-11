@@ -16,9 +16,7 @@ Mevcut `Done` görevleri yeniden açmadan, düzeltilecek exact production/test/m
 
 ## Owned surface
 
-- `plan/TRACEABILITY.md`
-- `plan/AUDIT_REMEDIATION_ROUTING.csv`
-- `plan/AUDIT_REMEDIATION_ROUTING.json`
+- Post-closure routing and traceability surface was transferred to `V0-GOV-050` by `CORR:C53`; this historical task remains closed.
 - `plan/v0/governance/V0-GOV-013-sensitive-envelope-metadata-integrity.md`
 - `plan/v0/governance/V0-GOV-015-atomic-migration-history.md`
 - `plan/v1/foundation/V1-FND-001-module-skeleton.md`
