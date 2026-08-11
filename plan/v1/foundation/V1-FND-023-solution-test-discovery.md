@@ -1,7 +1,7 @@
 # V1-FND-023 - Restore solution test discovery
 
 - Task ID: V1-FND-023
-- Status: Blocked
+- Status: InProgress
 - Assignee: /root/implement_v1_fnd_023
 - Work type: implementation
 - Surface state: Existing
@@ -46,16 +46,6 @@ test çalışmayan solution test kapısını ortadan kaldırmak.
 - V0-GOV-050
 - V0-GOV-054
 - V1-FND-001
-
-## Blocker
-
-- Result: Immutable B0 `fd3344f15c5257b53bf5281ee9129f800c62f0a7` ve interruption
-  `479881636c8142c7161f2d5980d37ca2f9b48591` arasına giren `Blocked` transition,
-  mevcut v2 B→E→F topolojisiyle final closure olamaz.
-- Unlock: `V0-GOV-057`, `V0-GOV-055`in eksik kalan v3 admissionını yalnız bu
-  B0/interruption için `B0 → interruption → A → E → F` task-specific
-  topology/byte/diff kurallarıyla harden etmelidir; ancak ardından task reentry
-  ve final evidence oluşturulabilir.
 
 ## Deliverables
 
