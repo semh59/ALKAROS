@@ -1,0 +1,68 @@
+{
+  "schema": "alkaros.closure-evidence-envelope/v1",
+  "task_id": "V0-GOV-039",
+  "candidate_commit": "9528f783e26a1248d490c28b1989556fec5fcbf7",
+  "environment": {
+    "platform": "Windows 10.0.26200",
+    "toolchain": {
+      "dotnet_sdk": "10.0.302",
+      "python": "3.12.12"
+    },
+    "variables": {
+      "ALKAROS_TEST_PG_PORT": "5433"
+    },
+    "secrets": [
+      {
+        "location": "env:ALKAROS_TEST_PG_PASSWORD",
+        "fingerprint": "sha256:1a0c8e00406ad509fad0c4e3f173c41623e84de6deba721a73f8368f6603de24"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "command": "dotnet test ALKAROS.slnx",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-039/raw/v1-iam-005-task-acceptance-run-1.txt",
+        "sha256": "d1efc07c2452dde80a6d6ff1cb531c4f0b0faad1fa7fb2a43527878d0fe81af1"
+      }
+    },
+    {
+      "command": "dotnet test ALKAROS.slnx",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-039/raw/v1-iam-005-task-acceptance-run-2.txt",
+        "sha256": "a6d4b1a8ed043b9631d76b17817b676cafe6911637b375e37ce7d56743d5d64a"
+      }
+    },
+    {
+      "command": "dotnet test ALKAROS.slnx",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-039/raw/v1-iam-005-task-acceptance-run-3.txt",
+        "sha256": "1247716f680d44f373c73dd34d3df71477ae7bf313bec502fe303eaeaa0fe26e"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/engineering/login-timing-contract.md",
+      "sha256": "05f7c0e522229e2fc0bb341d635fd04140ea6a18483639b89df3106f1db9e3a1"
+    },
+    {
+      "path": "src/Modules/Identity/Authentication/AuthenticationService.cs",
+      "sha256": "259beb0bc5698f4a5a9793fc952fdc35f340b19eda4990b1c1a77d6280991426"
+    },
+    {
+      "path": "tests/Modules/Identity/Authentication/AuthenticationServiceTests.cs",
+      "sha256": "661d676d6ebf4787ac0f65ab653405a2780723617afed920a03b57c022262c18"
+    },
+    {
+      "path": "tests/Modules/Identity/Authentication/AuthenticationTimingContractTests.cs",
+      "sha256": "ecf85a24553659e7b345bf060aa13b5ca94d04c81c082d7f4c4c49a3589fc8c0"
+    }
+  ],
+  "integrity": {
+    "payload_sha256": "94aee68be08b8921f272913a307f3a2f5e85f5c3c5bb1c3dbe94d64982bc5d22"
+  }
+}

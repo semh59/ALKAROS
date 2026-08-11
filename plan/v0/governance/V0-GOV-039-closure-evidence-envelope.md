@@ -1,8 +1,8 @@
 # V0-GOV-039 - Enforce reproducible closure evidence envelopes
 
 - Task ID: V0-GOV-039
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root/v0_gov_039_evidence
 - Work type: implementation
 - Surface state: Planned
 

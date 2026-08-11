@@ -141,6 +141,25 @@ npx --yes markdownlint-cli2@0.23.2
 - Table row, code block ve bölünemeyen URL satırları `MD013` istisnasıdır.
 - `MD012` ve `MD060` istisnasız sıfır olmalıdır.
 
+## Kapanış kanıt zarfı
+
+- `Done` için command, integer exit code `0`, environment, candidate Git commit,
+  raw command output ve SHA-256 artifact hash'leri machine-readable closure
+  evidence envelope içinde birlikte doğrulanır.
+- Candidate commit artifact blob'unu içermeli; candidate ile güncel `HEAD`
+  arasında artifact değişmişse veya final blob hash'i farklıysa kanıt
+  fail-closed reddedilir.
+- Raw output, `evidence/<Task-ID>/` altında kalır ve secret value içeremez.
+  Sensitive environment girdileri yalnız redacted `env:<NAME>` location ve
+  SHA-256 fingerprint ile kaydedilir; narrative-only kayıt kabul değildir.
+- `py -B tools/evidence-envelope/evidence_envelope_tool.py --envelope
+  evidence/<Task-ID>/closure-evidence-envelope.json --repository . --format
+  text` non-zero exit verirse task closure kanıtı geçersizdir.
+- Tarihsel acceptance replay mevcut `Done` task üzerinde değil, executable
+  candidate commit'te repository dışındaki geçici Git worktree'de yapılır.
+  Candidate veya gerekli ortam bulunamazsa task `Blocked` kalır; başarı sonucu
+  uydurulmaz.
+
 ## Kapanış
 
 İlk doğrulamadan sonra aynı kontroller taze bağlamlı bağımsız denetimde yeniden
