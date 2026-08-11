@@ -1,0 +1,73 @@
+{
+  "schema": "alkaros.closure-evidence-envelope/v2",
+  "task_id": "V0-GOV-054",
+  "subject_commit": "0f408e3a20aa377ba41b7f29002d44a72a3aa4db",
+  "environment": {
+    "platform": "Windows",
+    "toolchain": {
+      "git": "2.55.0.windows.3",
+      "python": "3.14.2"
+    },
+    "variables": {},
+    "secrets": []
+  },
+  "commands": [
+    {
+      "command": "py -B -m pytest tests/Architecture/PlanAudit/test_plan_audit.py -q",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-054/raw/pytest-plan-audit.txt",
+        "sha256": "bfa5421b990cf3f02f195258c6c29db829e4cdd94e6c36daa09a92453999f270"
+      }
+    },
+    {
+      "command": "py -B tools/plan-audit/plan_audit_tool.py validate",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-054/raw/plan-validation.txt",
+        "sha256": "d82c9518e1692cea0d1dca90bf57cf5d56ccbd690cf6b9cee3641d31ea2407e4"
+      }
+    },
+    {
+      "command": "py -B tools/task-scope/task_scope_tool.py --task-id V0-GOV-054 --repo-root . --diff-base 0f408e3a20aa377ba41b7f29002d44a72a3aa4db --format text",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-054/raw/task-scope-pre-done.txt",
+        "sha256": "becf5d06309ba20c9bd845aec70cdd04a72f7d1efbceffef253fdb38a5e31e9d"
+      }
+    },
+    {
+      "command": "git diff --check b041eb58b22b85774cd00436de391682e3cae29c 0f408e3a20aa377ba41b7f29002d44a72a3aa4db",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-054/raw/diff-check.txt",
+        "sha256": "8bdd50462cec8669cb001d73d6c620bbffc30c3bb5cc3309fe1f2c06bb6823b3"
+      }
+    },
+    {
+      "command": "git worktree add --detach <redacted-temp-worktree> 0f408e3a20aa377ba41b7f29002d44a72a3aa4db; git worktree remove --force <redacted-temp-worktree>",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-054/raw/temporary-worktree.txt",
+        "sha256": "d196503f9148f5ffedb8025a71555de6e4ea5d4e697e0a00c2e57fb4d1fce469"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "tools/plan-audit/plan_audit_tool.py",
+      "sha256": "3feb5af136322f2d8f9aab48c201c141a2e9755f161a7fb6cd6034cbed04fbdb"
+    },
+    {
+      "path": "tests/Architecture/PlanAudit/test_plan_audit.py",
+      "sha256": "71009a7ac8585c460437e0c3148f73b95d776551e5e9faafcf91594936b8d59f"
+    },
+    {
+      "path": "plan/VALIDATION_CONTRACT.md",
+      "sha256": "ce831148362d78319a814009e5d1e4c995ac02f48b3d8403a99d0bd9af779e5e"
+    }
+  ],
+  "integrity": {
+    "payload_sha256": "19238c896a8ae684e26d0235e99720924664e3434958036e8b5be01027e2e103"
+  }
+}

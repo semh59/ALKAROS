@@ -1,0 +1,4 @@
+Command: git diff --check b041eb58b22b85774cd00436de391682e3cae29c 0f408e3a20aa377ba41b7f29002d44a72a3aa4db
+Exit code: 0
+
+OK: git diff --check passed
