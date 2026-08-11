@@ -69,7 +69,7 @@ def _write_envelope(repo: Path, candidate: str, tool_module, **overrides: object
     envelope: dict[str, object] = {
         "schema": tool_module.SCHEMA,
         "task_id": "V0-GOV-039",
-        "candidate_commit": candidate,
+        "subject_commit": candidate,
         "environment": {
             "platform": "Windows 10",
             "toolchain": {"python": "3.12.12"},
@@ -108,11 +108,76 @@ def _error_codes(result: dict[str, object]) -> set[str]:
     return {item["code"] for item in errors}
 
 
+def _write_closure_chain(repo: Path, tool_module) -> tuple[str, str, str]:
+    task_path = "plan/v0/governance/V0-GOV-049.md"
+    owned_paths = [
+        "tools/evidence-envelope/evidence_envelope_tool.py",
+        "tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py",
+        "docs/engineering/closure-evidence-envelope.md",
+        "plan/VALIDATION_CONTRACT.md",
+    ]
+    task = repo / task_path
+    task.parent.mkdir(parents=True)
+    task.write_text(
+        "# V0-GOV-049\n\n"
+        "- Task ID: V0-GOV-049\n"
+        "- Status: Planned\n"
+        "- Assignee: Unassigned (exactly one person)\n\n"
+        "## Owned surface\n\n"
+        + "".join(f"- `{path}`\n" for path in owned_paths)
+        + "- `evidence/V0-GOV-049/**`\n\n## In scope\n",
+        encoding="utf-8",
+    )
+    _commit(repo, "add task")
+    for path in owned_paths:
+        artifact = repo / path
+        artifact.parent.mkdir(parents=True, exist_ok=True)
+        artifact.write_text(f"{path}\n", encoding="utf-8")
+    task.write_text(task.read_text(encoding="utf-8").replace("Status: Planned", "Status: InProgress").replace("Assignee: Unassigned (exactly one person)", "Assignee: /root/test"), encoding="utf-8")
+    subject = _commit(repo, "subject")
+    raw = repo / "evidence" / "V0-GOV-049" / "raw" / "pytest.txt"
+    raw.parent.mkdir(parents=True)
+    raw.write_text("1 passed\n", encoding="utf-8")
+    envelope = {
+        "schema": tool_module.SCHEMA,
+        "task_id": "V0-GOV-049",
+        "subject_commit": subject,
+        "environment": {"platform": "Windows", "toolchain": {"python": "3.12"}, "variables": {}, "secrets": []},
+        "commands": [{"command": "py -m pytest tests/Architecture/EvidenceEnvelope -q", "exit_code": 0, "raw_output": {"path": "evidence/V0-GOV-049/raw/pytest.txt", "sha256": _hash(raw)}}],
+        "artifacts": [{"path": path, "sha256": _candidate_blob_hash(repo, subject, path)} for path in owned_paths],
+    }
+    envelope["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(envelope)}
+    envelope_path = repo / "evidence" / "V0-GOV-049" / "closure-evidence-envelope.json"
+    envelope_path.write_text(json.dumps(envelope, indent=2) + "\n", encoding="utf-8")
+    evidence = _commit(repo, "evidence")
+    task.write_text(task.read_text(encoding="utf-8").replace("Status: InProgress", "Status: Done"), encoding="utf-8")
+    final = _commit(
+        repo,
+        "close\n\nTask: V0-GOV-049\nGate: GATE-V0-EXIT\n"
+        f"Closure-Subject: {subject}\nClosure-Evidence-Checkpoint: {evidence}",
+    )
+    return subject, evidence, final
+
+
 def test_valid_envelope_is_accepted(repository, tool_module):
     repo, candidate = repository
     envelope = _write_envelope(repo, candidate, tool_module)
 
     assert tool_module.validate_envelope(envelope, repo) == {"valid": True, "errors": []}
+
+
+def test_final_commit_requires_v2_subject_evidence_final_chain(repository, tool_module):
+    repo, _ = repository
+    _, _, final = _write_closure_chain(repo, tool_module)
+
+    assert tool_module.validate_final_commit(final, repo) == {"valid": True, "errors": []}
+
+
+def test_immutable_v0_gov_035_hash_ledger_is_invalid(tool_module):
+    repository = TOOL.parents[2]
+
+    errors = _error_codes(tool_module.validate_historical_v0_gov_035(repository))
+    assert {"STALE_CANDIDATE_COMMIT", "FINAL_BLOB_HASH_MISMATCH"} <= errors
 
 
 def test_missing_exit_code_fails_closed(repository, tool_module):
@@ -170,6 +235,40 @@ def test_raw_secret_assignment_fails_closed(repository, tool_module):
     envelope = _write_envelope(repo, candidate, tool_module)
     raw = repo / "evidence" / "V0-GOV-039" / "raw" / "pytest.txt"
     raw.write_text("password=not-redacted\n", encoding="utf-8")
+
+    assert "SECRET_LEAKAGE" in _error_codes(tool_module.validate_envelope(envelope, repo))
+
+
+@pytest.mark.parametrize(
+    "secret_text",
+    [
+        "Authorization: Bearer leaked-value",
+        "api key: leaked-value",
+    ],
+)
+def test_raw_bearer_and_api_key_leakage_fails_closed(repository, tool_module, secret_text):
+    repo, candidate = repository
+    envelope = _write_envelope(repo, candidate, tool_module)
+    raw = repo / "evidence" / "V0-GOV-039" / "raw" / "pytest.txt"
+    raw.write_text(secret_text + "\n", encoding="utf-8")
+
+    assert "SECRET_LEAKAGE" in _error_codes(tool_module.validate_envelope(envelope, repo))
+
+
+@pytest.mark.parametrize(
+    "secret_text",
+    [
+        "Authorization: Bearer leaked-value",
+        "api key: leaked-value",
+    ],
+)
+def test_command_bearer_and_api_key_leakage_fails_closed(repository, tool_module, secret_text):
+    repo, candidate = repository
+    envelope = _write_envelope(repo, candidate, tool_module)
+    payload = json.loads(envelope.read_text(encoding="utf-8"))
+    payload["commands"][0]["command"] = secret_text
+    payload["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(payload)}
+    envelope.write_text(json.dumps(payload), encoding="utf-8")
 
     assert "SECRET_LEAKAGE" in _error_codes(tool_module.validate_envelope(envelope, repo))
 

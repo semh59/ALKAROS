@@ -160,6 +160,27 @@ npx --yes markdownlint-cli2@0.23.2
   Candidate veya gerekli ortam bulunamazsa task `Blocked` kalır; başarı sonucu
   uydurulmaz.
 
+V2 closure protocol ek koşulları:
+
+- V2 kapanışı B subject -> E evidence checkpoint -> F metadata-only final
+  zinciridir. B bütün non-evidence owned artifactları ve `Planned`→`InProgress`
+  geçişini; E yalnız aktif görev evidence'ını; F yalnız task status satırında
+  `InProgress`→`Done` geçişini taşır.
+- Git, F'nin bitişik trailer bloğunu tam olarak `Task`, `Gate`,
+  `Closure-Subject` ve `Closure-Evidence-Checkpoint` olarak ayrıştırmalıdır.
+  Son iki değer B ve E full commit hash'leridir. E, F SHA'sını veya payload hash'ini taşımaz.
+- V2, validator, testleri, closure dokümanı ve bu sözleşme dahil B'de değişen her
+  owned artifactı hashler. Eksik, stale veya mismatch blob fail-closed olur.
+- Raw output `evidence/<Task-ID>/` altında kalır; command veya raw transcript
+  içinde `Authorization: Bearer <value>` ya da `api key: <value>` secret leakage
+  sayılır ve fail-closed olur. Worktree create/remove, exit code, LF raw transcript
+  hash ve cleanup sonucu E'de checkpoint edilir.
+- `py -B tools/evidence-envelope/evidence_envelope_tool.py --final-commit <F> --repository . --format text`
+  task closure öncesi zero exit vermelidir; non-zero exit closure evidence'ı geçersiz kılar.
+- `--historical-v0-gov-035`, immutable historical verification ledger'ını eski
+  baseline ile gerçek closure blobları karşılaştırarak `STALE_CANDIDATE_COMMIT`
+  ve `FINAL_BLOB_HASH_MISMATCH` ile invalid bulmalıdır; eski evidence değişmez.
+
 ## Kapanış
 
 İlk doğrulamadan sonra aynı kontroller taze bağlamlı bağımsız denetimde yeniden

@@ -1,103 +1,77 @@
 # Kapanış Kanıt Zarfı Sözleşmesi
 
-Bir görev `Done` yapılmadan önce kanıt, yalnız anlatı veya elle yazılmış bir
-özet olamaz. `tools/evidence-envelope/evidence_envelope_tool.py`, JSON
-biçimindeki kapanış zarfını doğrular ve herhangi bir eksiklikte non-zero exit
-ile fail-closed sonuç üretir.
+Bir görev `Done` olmadan önce kanıt anlatı veya elle yazılmış özet olamaz.
+`tools/evidence-envelope/evidence_envelope_tool.py`, JSON zarfını ve v2 kapanış
+zincirini doğrular; her ihlal non-zero exit ile fail-closed olur.
 
-## Şema
+## V2 zarf şeması
 
-Kök nesne aşağıdaki alanların tamamını ve yalnız bunları taşır:
+Zarf, E evidence checkpoint içinde şu alanları ve yalnız bu alanları taşır:
 
 ```json
 {
-  "schema": "alkaros.closure-evidence-envelope/v1",
-  "task_id": "V0-GOV-039",
-  "candidate_commit": "40-or-64-lowercase-git-hex",
-  "environment": {
-    "platform": "Windows 10",
-    "toolchain": { "python": "3.12.12" },
-    "variables": { "CI": "false" },
-    "secrets": [
-      {
-        "location": "env:ALKAROS_TEST_PG_PASSWORD",
-        "fingerprint": "sha256:<64-lowercase-hex>"
-      }
-    ]
-  },
-  "commands": [
-    {
-      "command": "py -m pytest tests/Architecture/EvidenceEnvelope -q",
-      "exit_code": 0,
-      "raw_output": {
-        "path": "evidence/V0-GOV-039/raw/pytest.txt",
-        "sha256": "<64-lowercase-hex>"
-      }
-    }
-  ],
-  "artifacts": [
-    {
-      "path": "tools/evidence-envelope/evidence_envelope_tool.py",
-      "sha256": "<64-lowercase-hex>"
-    }
-  ],
-  "integrity": { "payload_sha256": "<64-lowercase-hex>" }
+  "schema": "alkaros.closure-evidence-envelope/v2",
+  "task_id": "V0-GOV-049",
+  "subject_commit": "<B full Git SHA>",
+  "environment": { "platform": "Windows", "toolchain": {}, "variables": {}, "secrets": [] },
+  "commands": [{ "command": "...", "exit_code": 0, "raw_output": { "path": "...", "sha256": "..." } }],
+  "artifacts": [{ "path": "...", "sha256": "..." }],
+  "integrity": { "payload_sha256": "..." }
 }
 ```
 
-`integrity.payload_sha256`, `integrity` alanı hariç kök nesnenin UTF-8,
-anahtarları sıralı ve boşluksuz JSON gösteriminin SHA-256 değeridir. Böylece
-zarf alanında yapılmış bir değişiklik hash güncellenmeden görünür olur. Git
-commit nesnesi ise zarfın saklandığı kapanış kaydını immutable history içinde
-ayrı olarak bağlar; zarfın kendi hash'i Git tarihini yeniden yazmaya yetki
-vermez.
+`integrity.payload_sha256`, `integrity` hariç kök nesnenin sıralı, boşluksuz
+UTF-8 JSON gösteriminin SHA-256 değeridir. Zarf F SHA'sını veya F'nin payload
+hash'ini taşımaz; bu nedenle F öncesi kanıtta self-reference kurulamaz.
 
-## Candidate ve artifact doğrulaması
+## B → E → F protokolü
 
-`candidate_commit`, acceptance komutlarının çalıştırıldığı kaynak bloblarını
-içeren gerçek Git commit'idir. Her `artifacts` kaydı bu commit'ten byte olarak
-okunur; SHA-256 değeri kaydedilen değerle eşleşmelidir. Aynı artifact candidate
-ile mevcut `HEAD` arasında değişmişse candidate stale sayılır ve zarf reddedilir.
+`--final-commit F` yalnız aşağıdaki üç bitişik committen oluşan zinciri kabul eder:
 
-Bu kural V0-GOV-035'in tarihsel kaydındaki hatayı yakalar: verification
-dosyasındaki `1d41e97b39ac975ab55c2bdf4198b0d6b92681ed` SHA'sı, görevin altı
-source/test/contract blob'unu değiştiren `78b317a5c3d04009d94394da58c5913d59c22b91`
-kapanış commit'inin parent'ıdır. Kaydedilen final SHA-256 değerleri bu candidate
-tree'de değildir. Bu tarihsel kayıt değiştirilmez; validator bu tür zarfı
-`STALE_CANDIDATE_COMMIT` ve `FINAL_BLOB_HASH_MISMATCH` ile reddeder.
+1. B, aktif taskı `Planned` durumundan gerçek assignee ile `InProgress` durumuna
+   taşır ve aktif taskın bütün non-evidence `Owned surface` artifactlarını değiştirir.
+2. E, B'nin doğrudan çocuğudur ve yalnız `evidence/<Task-ID>/` altındaki raw
+   çıktıları ve `closure-evidence-envelope.json` zarfını ekler.
+3. F, E'nin doğrudan çocuğudur; yalnız aktif task dosyasında `Status: InProgress`
+   satırını `Status: Done` yapar.
+
+F'nin son trailer bloğu Git tarafından ayrıştırıldığında aşağıdaki dört satır,
+bu sırayla ve bitişik olarak bulunur:
+
+```text
+Task: V0-GOV-049
+Gate: GATE-V0-EXIT
+Closure-Subject: <B full Git SHA>
+Closure-Evidence-Checkpoint: <E full Git SHA>
+```
+
+V2 validator, B'de değişen owned artifactların zarf listesinin tamamı ve tam
+kümesi olduğunu; B blob hashlerinin E ve F'de stale olmadığını da kontrol eder.
+Bu kural validator'ın kendi tool, test, doküman veya plan sözleşmesi değişikliğini
+atlamayı reddeder.
 
 ## Raw çıktı ve secret koruması
 
-Her komut `command`, integer `exit_code: 0` ve task'ın kendi
-`evidence/<Task-ID>/` dizininde hash'i doğrulanabilir raw çıktıyı taşır.
-Anlatı tek başına şema değildir. Secret değerleri `environment.variables`,
-komut veya raw çıktıda bulunamaz. Sensitive girişler yalnız `env:<NAME>`
-konumu ve SHA-256 fingerprint'iyle kaydedilir; değer asla yazılmaz.
+Her command kaydı komut, integer `exit_code: 0` ve taskın kendi evidence dizinindeki
+hash'i doğrulanabilir raw çıktıyı taşır. Raw transcript ve command içinde secret
+değeri olamaz. `Authorization: Bearer <value>` ve `api key: <value>` biçimleri de
+secret leakage sayılır. Sensitive environment girdileri yalnız redacted `env:<NAME>`
+konumu ve SHA-256 fingerprint ile yazılır.
 
-## Tarihsel acceptance replay
+Geçici worktree create/remove işlemleri de redacted komut, exit code, raw output
+hash ve cleanup sonucu ile E altına kaydedilir. Raw Git text dosyaları LF ile yazılır.
 
-Mevcut `Done` task doğrudan task-scope acceptance için executable değildir.
-Replay, geçici bir Git worktree'de, code ve acceptance testinin bulunduğu
-tarihsel candidate commit'te yapılır:
+## Tarihsel kayıtlar
 
-```text
-git worktree add --detach <outside-repository-path> <candidate-commit>
-Set required non-secret environment values and supply secrets only through the process environment.
-Run the task acceptance command and capture raw stdout/stderr under the active task's evidence directory.
-git worktree remove --force <outside-repository-path>
-```
-
-V1-IAM-005 için 2026-08-04 candidate commit
-`9528f783e26a1248d490c28b1989556fec5fcbf7` code blobs'unu taşır ve login
-source yolları bu commit ile mevcut `HEAD` arasında değişmemiştir. Bu commit
-aynı zamanda task metadata'sını `Done` yaptığı için pre-Done task-scope replay
-kanıtı üretmez; bu ayrı tarihsel kusur kabul edilmez. Acceptance replay yalnız
-task'ın gerçek `dotnet test ALKAROS.slnx --no-restore -v q` koşulunu bu geçici
-worktree'de çalıştırır. Candidate bulunamaz veya ortam kurulamazsa görev
-`Blocked` kalır; başarılı sonuç uydurulmaz.
+V0-GOV-035, V0-GOV-037, V0-GOV-039 ve V1-IAM-005 kapanışları C53 uyarınca immutable
+historical exception'dır. Eski evidence veya history değiştirilmez. Legacy v1 zarfı
+doğrulandığında V0-GOV-035 için bilinen stale candidate ve blob-hash mismatch
+fail-closed raporlanır; bu sonuç yeni bir başarı iddiası değildir.
 
 ## Kullanım
 
 ```text
 py -B tools/evidence-envelope/evidence_envelope_tool.py --envelope evidence/<Task-ID>/closure-evidence-envelope.json --repository . --format text
+py -B tools/evidence-envelope/evidence_envelope_tool.py --final-commit <F full Git SHA> --repository . --format text
+py -B tools/evidence-envelope/evidence_envelope_tool.py --historical-v0-gov-035 --repository . --format text
 ```
