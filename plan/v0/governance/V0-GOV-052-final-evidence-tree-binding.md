@@ -1,7 +1,7 @@
 # V0-GOV-052 - Bind final evidence validation to the checkpoint tree
 
 - Task ID: V0-GOV-052
-- Status: InProgress
+- Status: Done
 - Assignee: /root/implement_v0_gov_052
 - Work type: implementation
 - Surface state: Existing
