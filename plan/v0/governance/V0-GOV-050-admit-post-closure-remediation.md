@@ -1,7 +1,7 @@
 # V0-GOV-050 - Admit post-closure C52 remediation
 
 - Task ID: V0-GOV-050
-- Status: InProgress
+- Status: Done
 - Assignee: /root/implement_v0_gov_050
 - Work type: implementation
 - Surface state: Existing
