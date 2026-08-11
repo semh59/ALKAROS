@@ -1,0 +1,2 @@
+Command: git diff --check 74650a69bf6837ecb03b4937f7ea069b9ce67373 HEAD
+Exit code: 0

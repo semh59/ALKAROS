@@ -1,0 +1,5 @@
+Command: py -B -m pytest tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py tests/Architecture/PlanAudit/test_plan_audit.py -q
+Exit code: 0
+
+.....................................                                    [100%]
+37 passed in 103.54s (0:01:43)
