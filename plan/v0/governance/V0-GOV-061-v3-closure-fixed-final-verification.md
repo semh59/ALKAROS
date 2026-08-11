@@ -1,8 +1,8 @@
 # V0-GOV-061 - Verify V1-FND-023 v3 closure against the fixed final commit
 
 - Task ID: V0-GOV-061
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root/implement_v0_gov_061
 - Work type: implementation
 - Surface state: Existing
 
