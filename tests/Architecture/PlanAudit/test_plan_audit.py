@@ -67,21 +67,60 @@ def _task_path(workspace: Path, task_id: str) -> Path:
 
 
 def _activate_fnd023(workspace: Path) -> Path:
+    """Reopen the historically closed V1-FND-023 as the in-progress application clone."""
     path = _task_path(workspace, "V1-FND-023")
     text = path.read_text(encoding="utf-8")
-    assert "- Status: Blocked" in text
-    text = text.replace("- Status: Blocked", "- Status: InProgress", 1)
-    blocker_start = text.index("\n## Blocker\n")
-    deliverables_start = text.index("\n## Deliverables\n")
+    assert "- Status: Done" in text
     path.write_text(
-        text[:blocker_start] + text[deliverables_start:], encoding="utf-8", newline="\n"
+        text.replace("- Status: Done", "- Status: InProgress", 1),
+        encoding="utf-8",
+        newline="\n",
     )
     return path
 
 
+def _commit_all(workspace: Path, message: str) -> str:
+    subprocess.run(
+        ["git", "-C", str(workspace), "add", "-A"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(workspace),
+            "-c",
+            "user.name=plan-audit-test",
+            "-c",
+            "user.email=plan-audit-test@example.invalid",
+            "commit",
+            "-q",
+            "-m",
+            message,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return (
+        subprocess.run(
+            ["git", "-C", str(workspace), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        .stdout.strip()
+    )
+
+
 class TestRemediationAdmissionSemanticValidation:
     def test_exact_19_record_tuple_is_semantically_valid(self, tmp_path: Path) -> None:
-        result = _run_validate(_copy_validation_workspace(tmp_path))
+        workspace = _copy_validation_workspace(tmp_path)
+        _activate_fnd023(workspace)
+
+        result = _run_validate(workspace)
 
         assert result.returncode == 0, result.stdout + result.stderr
         assert "Validation errors: 0" in result.stdout
@@ -297,6 +336,63 @@ class TestC54ApplicationAdmission:
 
         assert result.returncode == 1
         assert "C54_APPLICATION_ADMISSION_V3_FINAL_MISSING" in result.stdout
+
+    def test_done_fnd023_without_the_fixed_final_commit_rejects_final_missing(
+        self, tmp_path: Path
+    ) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        path = _activate_fnd023(workspace)
+        _replace(path, "- Status: InProgress", "- Status: Done")
+        _commit_all(workspace, "workspace head")
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "C54_APPLICATION_ADMISSION_V3_FINAL_MISSING" in result.stdout
+
+    def test_done_fnd023_rejects_closure_invalid_at_the_fixed_final(self, tmp_path: Path) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        path = _activate_fnd023(workspace)
+        _replace(path, "- Status: InProgress", "- Status: Done")
+        fixed = _commit_all(workspace, "workspace head")
+        tool_path = workspace / "tools/evidence-envelope/evidence_envelope_tool.py"
+        _replace(
+            tool_path,
+            '_V3_FINAL_COMMIT = "53bde4988f336e9481d57bce3319e6a658d44a2d"',
+            f'_V3_FINAL_COMMIT = "{fixed}"',
+        )
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID" in result.stdout
+
+    def test_done_fnd023_rejects_head_not_descending_from_the_fixed_final(
+        self, tmp_path: Path
+    ) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        path = _activate_fnd023(workspace)
+        _replace(path, "- Status: InProgress", "- Status: Done")
+        _commit_all(workspace, "workspace head")
+        (workspace / "descendant-marker.txt").write_text("descendant", encoding="utf-8")
+        ahead = _commit_all(workspace, "descendant head")
+        subprocess.run(
+            ["git", "-C", str(workspace), "reset", "--hard", "HEAD~1"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        tool_path = workspace / "tools/evidence-envelope/evidence_envelope_tool.py"
+        _replace(
+            tool_path,
+            '_V3_FINAL_COMMIT = "53bde4988f336e9481d57bce3319e6a658d44a2d"',
+            f'_V3_FINAL_COMMIT = "{ahead}"',
+        )
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID" in result.stdout
 
     def test_other_v1_application_is_not_admitted(self, tmp_path: Path) -> None:
         workspace = _copy_validation_workspace(tmp_path)

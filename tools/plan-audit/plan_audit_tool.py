@@ -2152,6 +2152,9 @@ def v3_interrupted_closure_errors() -> list[str]:
     spec.loader.exec_module(module)
     if getattr(module, "_V3_REENTRY_PARENT_TASK_ID", None) != "V0-GOV-060":
         return ["C54_APPLICATION_ADMISSION_V3_PARENT_TASK_MISMATCH"]
+    final_commit = module.resolve_v3_final_commit(WORKSPACE)
+    if final_commit is None:
+        return ["C54_APPLICATION_ADMISSION_V3_FINAL_MISSING"]
     head = subprocess.run(
         ["git", "-C", str(WORKSPACE), "rev-parse", "--verify", "HEAD^{commit}"],
         check=False,
@@ -2160,7 +2163,16 @@ def v3_interrupted_closure_errors() -> list[str]:
     )
     if head.returncode != 0:
         return ["C54_APPLICATION_ADMISSION_V3_FINAL_MISSING"]
-    result = module.validate_v1_fnd_023_v3_final_commit(head.stdout.strip(), WORKSPACE)
+    if (
+        subprocess.run(
+            ["git", "-C", str(WORKSPACE), "merge-base", "--is-ancestor", final_commit, head.stdout.strip()],
+            check=False,
+            capture_output=True,
+        ).returncode
+        != 0
+    ):
+        return ["C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID"]
+    result = module.validate_v1_fnd_023_v3_final_commit(final_commit, WORKSPACE)
     if result["valid"]:
         return []
     return ["C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID"]

@@ -244,10 +244,13 @@ V3 interrupted remediation closure ek koşulları:
   v2 kadar zorunludur. F trailer bloğu sırasıyla `Task`, `Gate`,
   `Closure-Subject`, `Closure-Interruption`, `Closure-Reentry` ve
   `Closure-Evidence-Checkpoint` alanlarını full SHA ile taşır.
-- `V1-FND-023` `Done` statüsü, ancak current `HEAD` yukarıdaki exact v3 F final
-  commit'iyse kabul edilir; PlanAudit generic v2 sonucu değil doğrudan
-  task-specific v3 verifier'ı çağırır. Bu kontrol V0 gate açık veya kapalıyken
-  zorunludur; task metadata'sı tek başına admission değildir.
+- `V1-FND-023` `Done` statüsü, ancak fixed v3 F final commit'i üzerinden
+  doğrulanırsa kabul edilir: ilgili task-specific v3 verifier sabit
+  `_V3_FINAL_COMMIT` commit'inin repository'de mevcut olduğunu ve current
+  `HEAD`'in o sabit finalın descendant'ı (ya da kendisi) olduğunu doğrular;
+  PlanAudit generic v2 sonucu değil doğrudan task-specific v3 verifier'ı
+  çağırır. Bu kontrol V0 gate açık veya kapalıyken zorunludur; task metadata'sı
+  tek başına admission değildir.
 - Wrong task/subject/interruption, altered B0/interruption byte veya diff,
   non-adjacent A/E/F, evidence dışı E diff, stale B0 blob, final metadata/trailer
   sapması ve worktree substitution deterministic non-zero ile reddedilir.

@@ -34,6 +34,7 @@ _V3_REENTRY_PARENT_TASK_ID = "V0-GOV-060"
 _V3_B0_COMMIT = "fd3344f15c5257b53bf5281ee9129f800c62f0a7"
 _V3_B0_PARENT = "645a07f6992ece6efd70dc2fb2e0a7f7bccc945c"
 _V3_INTERRUPTION_COMMIT = "479881636c8142c7161f2d5980d37ca2f9b48591"
+_V3_FINAL_COMMIT = "53bde4988f336e9481d57bce3319e6a658d44a2d"
 _V3_TASK_PATH = "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
 _V3_SOURCE_ARTIFACTS = {
     "Directory.Build.targets": "28548ec2fe1dc53083049798c7b8f4c49016975c61fec1f1082eee43e08342d1",
@@ -544,6 +545,15 @@ def validate_v3_interrupted_final_commit(final_commit: str, repository: Path) ->
 def validate_v1_fnd_023_v3_final_commit(final_commit: str, repository: Path) -> dict[str, object]:
     """Validate only the fixed V1-FND-023 interrupted-remediation final."""
     return validate_v3_interrupted_final_commit(final_commit, repository)
+
+
+def resolve_v3_final_commit(repository: Path) -> str | None:
+    """Return the fixed V1-FND-023 final commit only when it exists in the repository."""
+    if not _GIT_COMMIT.fullmatch(_V3_FINAL_COMMIT):
+        return None
+    if not _git_commit_exists(repository, _V3_FINAL_COMMIT):
+        return None
+    return _V3_FINAL_COMMIT
 
 
 def validate_final_commit(final_commit: str, repository: Path) -> dict[str, object]:

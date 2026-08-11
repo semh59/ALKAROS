@@ -291,6 +291,7 @@ def _write_v3_interrupted_chain(
     monkeypatch.setattr(tool_module, "_V3_B0_PARENT", b0_parent)
     monkeypatch.setattr(tool_module, "_V3_B0_COMMIT", b0)
     monkeypatch.setattr(tool_module, "_V3_INTERRUPTION_COMMIT", interruption)
+    monkeypatch.setattr(tool_module, "_V3_FINAL_COMMIT", final)
     monkeypatch.setattr(tool_module, "_V3_SOURCE_ARTIFACTS", {path: _candidate_blob_hash(repo, b0, path) for path in source_paths})
     return b0, interruption, reentry, evidence, final
 
@@ -314,6 +315,29 @@ def test_v3_interrupted_fnd023_closure_is_accepted(repository, tool_module, monk
     _, _, _, _, final = _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
 
     assert tool_module.validate_final_commit(final, repo) == {"valid": True, "errors": []}
+
+
+def test_v3_final_commit_resolve_returns_the_fixed_final(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _, _, _, _, final = _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+
+    assert tool_module.resolve_v3_final_commit(repo) == final
+
+
+def test_v3_final_commit_resolve_rejects_malformed_constant(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+    monkeypatch.setattr(tool_module, "_V3_FINAL_COMMIT", "not-a-commit")
+
+    assert tool_module.resolve_v3_final_commit(repo) is None
+
+
+def test_v3_final_commit_resolve_rejects_absent_commit(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+    monkeypatch.setattr(tool_module, "_V3_FINAL_COMMIT", "0" * 40)
+
+    assert tool_module.resolve_v3_final_commit(repo) is None
 
 
 def test_v3_task_specific_api_rejects_a_valid_generic_v2_final(repository, tool_module):
