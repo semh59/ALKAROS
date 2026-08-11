@@ -1,0 +1,69 @@
+{
+  "schema": "alkaros.closure-evidence-envelope/v2",
+  "task_id": "V0-GOV-052",
+  "subject_commit": "54427afb40f5d4d4579091a9592ea5a6ed3d20a8",
+  "environment": {
+    "platform": "Windows",
+    "toolchain": {
+      "git": "2.55.0.windows.3",
+      "python": "3.14.2"
+    },
+    "variables": {},
+    "secrets": []
+  },
+  "commands": [
+    {
+      "command": "py -B -m pytest tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py -q",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-052/raw/pytest-evidence-envelope.txt",
+        "sha256": "eeda0cea6056d093f84d95ba86c58b86d0ea0ee39a0d9ad7de6c5621221a7bbd"
+      }
+    },
+    {
+      "command": "py -B tools/plan-audit/plan_audit_tool.py validate",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-052/raw/plan-validation.txt",
+        "sha256": "40d18c6052e8674b081c31bb0066aec89c38bad1f4abbb705b68a492c88f6851"
+      }
+    },
+    {
+      "command": "py -B tools/task-scope/task_scope_tool.py --task-id V0-GOV-052 --format text",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-052/raw/task-scope-pre-done.txt",
+        "sha256": "d6bc70d39c41d337c7ae5e501203efdbd5e511806a5e37266c327f99234ddec9"
+      }
+    },
+    {
+      "command": "git diff --check 9ce839959c60e8d67c8b946f284e1739b7266d00..HEAD",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-052/raw/whitespace-check.txt",
+        "sha256": "aa01a17b034ab037032a3ddb794ce1b8e411e535aec519bd0f2e6cbbf440ee21"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "tools/evidence-envelope/evidence_envelope_tool.py",
+      "sha256": "e8c2602c68b64562c55547516dd0752040507b05b37240ac8a372e9fa169d483"
+    },
+    {
+      "path": "tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py",
+      "sha256": "ae8ae283bca24b717db375c1d977b2aa3412279c7b55e4c2c9f9797749af6ed4"
+    },
+    {
+      "path": "docs/engineering/closure-evidence-envelope.md",
+      "sha256": "1b0e3c3783876076013b9c368aa784024f9b75aace3d75f731481a680357bb98"
+    },
+    {
+      "path": "plan/VALIDATION_CONTRACT.md",
+      "sha256": "4cbc6783bae5131576bcb22f378b09478c92c7119fa9c5df3170d16e973f76dc"
+    }
+  ],
+  "integrity": {
+    "payload_sha256": "d50076d8e1c7c58538987a8f2790943cc8cbffe5a03031619bc979c22a491f79"
+  }
+}
