@@ -14,6 +14,7 @@
 - CORR:C57
 - CORR:C58
 - CORR:C59
+- CORR:C60
 
 ## Goal
 
@@ -26,7 +27,7 @@
 ## In scope
 
 - Her CRITICAL/HIGH finding'i kendi implementer'ı olmayan ikinci ajanla yeniden üretmek.
-- Bütün 52 finding, task, commit, test, migration ve evidence zincirini terminal verdict ile eşlemek.
+- Bütün 53 finding, task, commit, test, migration ve evidence zincirini terminal verdict ile eşlemek.
 - Clean worktree, local-vs-origin baseline ve final commit manifest/provenance kontrollerini doğrulamak.
 
 ## Out of scope
@@ -47,6 +48,7 @@
 - V0-GOV-054
 - V0-GOV-055
 - V0-GOV-056
+- V0-GOV-057
 - V0-GOV-040
 - V0-GOV-041
 - V0-GOV-042
@@ -86,7 +88,7 @@
 
 ## Acceptance evidence
 
-- 52 finding'in tamamı `VERIFIED` veya evidence-backed terminal blocker olarak listelenir; belirsiz satır yoktur.
+- 53 finding'in tamamı `VERIFIED` veya evidence-backed terminal blocker olarak listelenir; belirsiz satır yoktur.
 - Her CRITICAL/HIGH finding bağımsız ikinci ajan tarafından exact reproduction ile onaylanır.
 - Final repository status beklenen write-set ile exact eşleşir; manifest, build, tests, lint ve provenance zorunlu kontrolleri exit code `0` verir.
 - `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-048/**` altındadır.

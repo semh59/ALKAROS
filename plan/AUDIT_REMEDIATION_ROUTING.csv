@@ -51,3 +51,4 @@ POST-CL-007,VERIFIED,MEDIUM,admission_contract_semantic_divergence,V0-GOV-046,4,
 POST-CL-008,VERIFIED,HIGH,application_admission_semantic_gate,V0-GOV-054,4,"V0-GOV-046;V0-GOV-050",plan validator admits only C54-authorized V1-FND-023,CORR:C57,gpt-5.6-terra,xhigh,ROUTED_OPEN
 POST-CL-009,VERIFIED,HIGH,interrupted_remediation_closure,V0-GOV-055,4,"V0-GOV-052;V0-GOV-054",V1-FND-023-only v3 fixed B0/interruption byte-diff-topology closure,CORR:C58,gpt-5.6-terra,xhigh,ROUTED_OPEN
 POST-CL-010,VERIFIED,HIGH,task_scope_parity_regression,V0-GOV-056,4,"V0-GOV-050;V0-GOV-054",exact C52/C53/C54/C57 source-basis and 42+10 routing/catalog parity,CORR:C59,gpt-5.6-terra,high,ROUTED_OPEN
+POST-CL-011,VERIFIED,HIGH,v3_admission_hardening,V0-GOV-057,4,V0-GOV-055,V1-FND-023 Done admission invokes the fixed task-specific v3 verifier regardless of V0 gate state,CORR:C60,gpt-5.6-terra,xhigh,ROUTED_OPEN

@@ -19,13 +19,14 @@ verifier ile yeniden kapatılabilir yapmak.
 
 ## Owned surface
 
-- `tools/evidence-envelope/evidence_envelope_tool.py`
-- `tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py`
-- `docs/engineering/closure-evidence-envelope.md`
-- `tools/plan-audit/plan_audit_tool.py`
-- `tests/Architecture/PlanAudit/test_plan_audit.py`
-- `plan/VALIDATION_CONTRACT.md`
 - `evidence/V0-GOV-055/**`
+
+CORR:C60, aşağıdaki exact yolların ileri custody'sini V0-GOV-057'ye devreder:
+tools/evidence-envelope/evidence_envelope_tool.py,
+tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py,
+docs/engineering/closure-evidence-envelope.md, tools/plan-audit/plan_audit_tool.py,
+tests/Architecture/PlanAudit/test_plan_audit.py ve plan/VALIDATION_CONTRACT.md.
+Bu historical task closed kalır.
 
 ## In scope
 
