@@ -1,8 +1,8 @@
 # V0-GOV-051 - Attest immutable post-closure exceptions
 
 - Task ID: V0-GOV-051
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: /root/implement_v0_gov_051
 - Work type: validation
 - Surface state: Existing
 
