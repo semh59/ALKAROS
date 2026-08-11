@@ -1,8 +1,8 @@
 # V0-GOV-056 - Restore TaskScope post-closure parity regression coverage
 
 - Task ID: V0-GOV-056
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: /root/implement_v0_gov_056
 - Work type: implementation
 - Surface state: Existing
 

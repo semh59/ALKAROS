@@ -119,6 +119,12 @@ REMEDIATION_ROWS = [
     for task_id, (approval_date, source_basis) in REMEDIATION_RECORDS.items()
 ]
 C52_C53_C54_REMEDIATION_TASK_IDS = list(REMEDIATION_RECORDS)
+FND023_SOURCE_BASIS = [
+    "- CORR:C52",
+    "- CORR:C53",
+    "- CORR:C54",
+    "- CORR:C57",
+]
 
 DEFERRED_TASK_IDS = [
     "V0-HUG-001",
@@ -682,6 +688,23 @@ class TestRemediationEntryGateExceptions:
         assert exit_code == 1
         assert any("must exactly match" in error for error in result["metadata_errors"])
 
+    @staticmethod
+    def _assert_fnd023_source_basis(source_basis: list[str]) -> None:
+        assert source_basis == FND023_SOURCE_BASIS
+
+    @pytest.mark.parametrize(
+        "source_basis",
+        [
+            FND023_SOURCE_BASIS[:-1],
+            FND023_SOURCE_BASIS + ["- CORR:C58"],
+            [*FND023_SOURCE_BASIS[:2], FND023_SOURCE_BASIS[3], FND023_SOURCE_BASIS[2]],
+        ],
+        ids=["missing", "extra", "out_of_order"],
+    )
+    def test_fnd023_source_basis_negative_variants_fail_closed(self, source_basis):
+        with pytest.raises(AssertionError):
+            self._assert_fnd023_source_basis(source_basis)
+
     def test_repository_fnd023_admission_source_and_routing_catalog_parity(self):
         repository = Path(__file__).resolve().parents[3]
         import importlib.util
@@ -696,11 +719,7 @@ class TestRemediationEntryGateExceptions:
             encoding="utf-8"
         )
         source_basis = fnd023.split("## Source basis\n\n", 1)[1].split("\n## ", 1)[0]
-        assert source_basis.splitlines() == [
-            "- CORR:C52",
-            "- CORR:C53",
-            "- CORR:C54",
-        ]
+        self._assert_fnd023_source_basis(source_basis.splitlines())
 
         with (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.csv").open(
             encoding="utf-8", newline=""
@@ -713,18 +732,40 @@ class TestRemediationEntryGateExceptions:
         )
         csv_item = next(item for item in csv_items if item["finding_id"] == "POST-CL-002")
         json_item = next(item for item in routing["items"] if item["finding_id"] == "POST-CL-002")
-        catalog = next(
+        post_cl_010_csv_item = next(
+            item for item in csv_items if item["finding_id"] == "POST-CL-010"
+        )
+        post_cl_010_json_item = next(
+            item for item in routing["items"] if item["finding_id"] == "POST-CL-010"
+        )
+        v050_catalog = next(
             item for item in routing["task_catalog"] if item["task_id"] == "V0-GOV-050"
+        )
+        v056_catalog = next(
+            item for item in routing["task_catalog"] if item["task_id"] == "V0-GOV-056"
         )
 
         assert mod.parse_remediation_exception_records(repository / "plan") == REMEDIATION_RECORDS
-        assert len(csv_items) == routing["audit_register"]["routed_finding_count"] == 48
+        assert len(REMEDIATION_RECORDS) == 19
+        assert routing["audit_register"]["finding_count"] == 42
+        assert routing["audit_register"]["post_closure_finding_count"] == 10
+        assert len(csv_items) == routing["audit_register"]["routed_finding_count"] == 42 + 10 == 52
         assert csv_item["owner_task_ids"] == "V0-GOV-050;V1-FND-023"
         assert csv_item["source_basis"] == "CORR:C52;CORR:C53;CORR:C54"
         assert csv_item["closure_evidence"] == json_item["closure_evidence"]
         assert json_item["owner_task_ids"] == ["V0-GOV-050", "V1-FND-023"]
         assert json_item["source_basis"] == "CORR:C52;CORR:C53;CORR:C54"
-        assert catalog["closure_evidence"] == "exact 19-ID C52/C53/C54 admission set"
+        assert v050_catalog["task_path"] == "plan/v0/governance/V0-GOV-050-admit-post-closure-remediation.md"
+        assert v050_catalog["dependencies"] == ["V0-GOV-035", "V0-GOV-037", "V0-GOV-049", "V0-GOV-052"]
+        assert v050_catalog["closure_evidence"] == "exact 19-ID C52/C53/C54 admission set"
+        assert post_cl_010_csv_item["owner_task_ids"] == "V0-GOV-056"
+        assert post_cl_010_csv_item["source_basis"] == "CORR:C59"
+        assert post_cl_010_csv_item["closure_evidence"] == post_cl_010_json_item["closure_evidence"]
+        assert post_cl_010_json_item["owner_task_ids"] == ["V0-GOV-056"]
+        assert post_cl_010_json_item["source_basis"] == "CORR:C59"
+        assert v056_catalog["task_path"] == "plan/v0/governance/V0-GOV-056-task-scope-parity-regression.md"
+        assert v056_catalog["dependencies"] == ["V0-GOV-050", "V0-GOV-054"]
+        assert v056_catalog["closure_evidence"] == "exact C52/C53/C54/C57 TaskScope source basis and 42+10 routing/catalog parity"
 
 
 # ---------------------------------------------------------------------------
