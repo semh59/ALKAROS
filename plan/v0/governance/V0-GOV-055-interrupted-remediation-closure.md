@@ -9,6 +9,7 @@
 ## Source basis
 
 - CORR:C58
+- CORR:C59
 
 ## Goal
 
@@ -57,6 +58,7 @@ verifier ile yeniden kapatılabilir yapmak.
 
 - V0-GOV-052
 - V0-GOV-054
+- V0-GOV-056
 
 ## Deliverables
 
@@ -73,6 +75,9 @@ verifier ile yeniden kapatılabilir yapmak.
 - EvidenceEnvelope ve PlanAudit testleri, plan validation, pre-Done task-scope
   ve diff check exit code `0` verir; raw transcriptler yalnız
   `evidence/V0-GOV-055/**` altındadır.
+- Plan-audit `validate` exit code `0`, C59 routing/catalog parity'sinin bağımsız
+  kabul kanıtı değildir; bu parity yalnız `V0-GOV-056` TaskScope evidence'ı ile
+  doğrulanır.
 
 ## Handoff
 

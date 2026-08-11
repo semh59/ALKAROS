@@ -22,13 +22,14 @@ fail-closed reddetmek.
 ## Owned surface
 
 - `tools/task-scope/task_scope_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope.py`
 - `docs/engineering/task-scope-contract.md`
 - `plan/GATES.md`
 - `plan/TRACEABILITY.md`
 - `plan/AUDIT_REMEDIATION_ROUTING.csv`
 - `plan/AUDIT_REMEDIATION_ROUTING.json`
 - `evidence/V0-GOV-050/**`
+- Forward TaskScope parity test custody was transferred to `V0-GOV-056` by
+  `CORR:C59`; this historical task remains closed.
 
 ## In scope
 
