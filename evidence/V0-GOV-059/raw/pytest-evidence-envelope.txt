@@ -1,0 +1,6 @@
+Command: py -B -m pytest -p no:cacheprovider tests\Architecture\EvidenceEnvelope -q
+WorkingDirectory: D:\PROJECT\ALKAROS-REMEDIATION
+
+.................................                                        [100%]
+33 passed in 182.47s (0:03:02)
+ExitCode: 0

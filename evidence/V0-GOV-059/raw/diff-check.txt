@@ -1,0 +1,4 @@
+Command: git diff --check 1a68765..0a7705e
+WorkingDirectory: D:\PROJECT\ALKAROS-REMEDIATION
+
+ExitCode: 0

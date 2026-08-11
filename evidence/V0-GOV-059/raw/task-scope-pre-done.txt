@@ -1,0 +1,5 @@
+Command: py -B tools\task-scope\task_scope_tool.py --task-id V0-GOV-059 --diff-base 1a68765 --format text
+WorkingDirectory: D:\PROJECT\ALKAROS-REMEDIATION
+
+OK: All changes within scope for V0-GOV-059
+ExitCode: 0
