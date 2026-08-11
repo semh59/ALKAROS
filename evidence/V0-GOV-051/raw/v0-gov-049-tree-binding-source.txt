@@ -1,0 +1,15 @@
+commit 4a5e96311c3db12346e5c60a56ece90d5596aca5
+Author:     Test <test@example.com>
+AuthorDate: Tue Aug 11 12:50:23 2026 +0300
+Commit:     Test <test@example.com>
+CommitDate: Tue Aug 11 12:50:23 2026 +0300
+
+    chore(governance): close closure evidence protocol
+
+    Task: V0-GOV-049
+    Gate: GATE-V0-EXIT
+    Closure-Subject: d716f4fb44e2120b7cf52195cd0a6456829d3100
+    Closure-Evidence-Checkpoint: 263df13833b70b7ed22ebb4f76007aa63a1df5c0
+exit_code: 0
+source: plan/TRACEABILITY.md C55
+verdict: historical worktree-substitution defect; forward correction is V0-GOV-052 checkpoint-tree binding

@@ -1,0 +1,113 @@
+{
+  "schema": "alkaros.closure-evidence-envelope/v2",
+  "task_id": "V0-GOV-051",
+  "subject_commit": "ffeb6287bd515c4ceed3d4908ceb7f0b2f5728de",
+  "environment": {
+    "platform": "Windows",
+    "toolchain": {
+      "git": "git version 2.55.0.windows.3",
+      "python": "3.14.2"
+    },
+    "variables": {},
+    "secrets": []
+  },
+  "commands": [
+    {
+      "command": "py -B tools/evidence-envelope/evidence_envelope_tool.py --historical-v0-gov-035 --repository . --format text (expected historical-invalid result asserted by wrapper)",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/historical-v0-gov-035.txt",
+        "sha256": "7ba3ca4456e9f45601e424d07783da7ec7a88c16c5a36d659612af51858c6fd2"
+      }
+    },
+    {
+      "command": "git show -s --format=%B 0f2efe6616a90007d326c0d1870a436f0ae2577e (contiguous-trailer absence asserted)",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/v0-gov-037-trailer.txt",
+        "sha256": "6c30d19c3e083971c196a15726cd30e6685146ad846db49cd2e0ef33f8e0dff4"
+      }
+    },
+    {
+      "command": "binary-safe wrapper captures git show --check --format=fuller e5d701116e1f3edc79529a4bb6608ab294a21f12 and asserts exit 2",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/e5d7011-git-show-check.stdout.gz",
+        "sha256": "d1f9b3db8e596c705abccce1ae3a6884da07bf9544de7fee73bea816dfbcb7a5"
+      }
+    },
+    {
+      "command": "binary-safe gzip decompression/readback assertion for e5d7011 diagnostic",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/e5d7011-gzip-readback.txt",
+        "sha256": "5656cda62d4b72df752d4c1f2398f077efb38793e2fd18b156002dc707da04e8"
+      }
+    },
+    {
+      "command": "py -B tools/evidence-envelope/evidence_envelope_tool.py --envelope evidence/V0-GOV-039/closure-evidence-envelope.json --repository . --format text",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/v0-gov-039-legacy-envelope.txt",
+        "sha256": "99550c6d68f34182fb3a1656c18439e9826c53b40a9b73f080793dc9331458ef"
+      }
+    },
+    {
+      "command": "git show -s --format=fuller 4a5e96311c3db12346e5c60a56ece90d5596aca5",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/v0-gov-049-tree-binding-source.txt",
+        "sha256": "3ffebad612d8a347019dcf650f35c9107d3af6c762972539f74e2d3b2b6c8820"
+      }
+    },
+    {
+      "command": "git show 9528f783e26a1248d490c28b1989556fec5fcbf7:plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/v1-iam-005-pre-done-gap.txt",
+        "sha256": "d3f9182dd91fe6c1cb719521b916b29c94dc3fc80e5b968ba861c3701f21d84a"
+      }
+    },
+    {
+      "command": "git diff --no-index --check -- NUL evidence/V0-GOV-051/raw/.ordinary-trailing-whitespace-probe.txt (expected rejection asserted by wrapper)",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/ordinary-trailing-whitespace-rejection.txt",
+        "sha256": "7c089d27dfc7ab286fd45d38ecf015050dce96cf93d7a099b5609ce749a28ce7"
+      }
+    },
+    {
+      "command": "py -B tools/plan-audit/plan_audit_tool.py validate",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/plan-validation.txt",
+        "sha256": "85fffcdfb83a1a2b047e774154668ff9dacede57d91e52fccbd068809301a3e7"
+      }
+    },
+    {
+      "command": "py -B tools/task-scope/task_scope_tool.py --task-id V0-GOV-051 --format text",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/task-scope-pre-done.txt",
+        "sha256": "4fd0ede53dbd02184fb26261fd2c891bedbeb5ce4ee1e8eabce4a467c428286f"
+      }
+    },
+    {
+      "command": "git diff --check ffeb6287bd515c4ceed3d4908ceb7f0b2f5728de..HEAD",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-051/raw/subject-whitespace-check.txt",
+        "sha256": "849b5308ba7bcccd173022e0041ad23d29f0c18d9443404c8beff30520eed937"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/engineering/immutable-closure-exceptions.md",
+      "sha256": "d6a95988a952fad394b3f8645b9ac5f9c6f5db98208b90caa49728c0347ab409"
+    }
+  ],
+  "integrity": {
+    "payload_sha256": "2a82a2063e837637698fadd4932e8f96b04a8458734f713c40d3f38e1ea6fff1"
+  }
+}

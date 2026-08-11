@@ -1,0 +1,4 @@
+command: git diff --no-index --check -- NUL evidence/V0-GOV-051/raw/.ordinary-trailing-whitespace-probe.txt
+inner_exit_code: 3
+assertion: normal non-CR trailing whitespace is rejected separately
+diagnostic: trailing whitespace detected
