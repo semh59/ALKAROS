@@ -21,12 +21,9 @@ uncommitted substitution ile yanlış closure sonucu üretmesini engellemek.
 
 ## Owned surface
 
-- `tools/evidence-envelope/evidence_envelope_tool.py`
-- `tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py`
-- `docs/engineering/closure-evidence-envelope.md`
 - `evidence/V0-GOV-052/**`
-- Forward `VALIDATION_CONTRACT` custody was transferred to `V0-GOV-046` by
-  `CORR:C56`; this historical task remains closed.
+- Forward closure-evidence tool/test/doc/contract custody was transferred to
+  `V0-GOV-055` by `CORR:C58`; this historical task remains closed.
 
 ## In scope
 

@@ -50,6 +50,27 @@ kümesi olduğunu; B blob hashlerinin E ve F'de stale olmadığını da kontrol 
 Bu kural validator'ın kendi tool, test, doküman veya plan sözleşmesi değişikliğini
 atlamayı reddeder.
 
+## V3 interrupted `V1-FND-023` closure
+
+V3 yalnız `V1-FND-023` için, immutable B0
+`fd3344f15c5257b53bf5281ee9129f800c62f0a7` ve direct-child interruption
+`479881636c8142c7161f2d5980d37ca2f9b48591` ile uygulanır. Bu, başka task,
+subject veya interruption için genel bir closure istisnası değildir.
+
+V3 final zinciri `B0 → interruption → A → E → F` olmalıdır. Validator B0
+parent'ını, B0'ın exact değişen path/bloblarını ve interruption'ın yalnız exact
+`InProgress`→`Blocked` metadata + `Blocker` diff'ini byte/diff/topology ile
+doğrular. A interruption'ın direct child'ıdır; yalnız exact blocker'ı kaldırıp
+task'ı `Blocked`den `InProgress`e geçirir. E, A'nın direct child'ı olarak yalnız
+`evidence/V1-FND-023/**` ekler; F, E'nin direct child'ı olarak yalnız task
+statusunu `Done` yapar.
+
+B0 subject blobları A/E/F'de değişemez veya stale olamaz. F'nin son contiguous
+trailer bloğu `Task`, `Gate`, `Closure-Subject`, `Closure-Interruption`,
+`Closure-Reentry` ve `Closure-Evidence-Checkpoint` alanlarını full SHA ile bu
+sırada taşımalıdır. Wrong SHA, task, parent, diff, blob, evidence path veya
+trailer deterministic fail-closed sonuç üretir.
+
 `--final-commit` zarfı ve her kayıtlı raw output'u yalnız `E:<path>` Git
 blobundan okur; çağrıldığı worktree bu bytes'ların kaynağı değildir. Aynı zarf
 veya kayıtlı raw yolunda worktree byte'ı E blobundan farklıysa validator

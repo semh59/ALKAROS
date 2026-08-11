@@ -23,10 +23,9 @@ exception üretmemek.
 
 ## Owned surface
 
-- `tools/plan-audit/plan_audit_tool.py`
-- `tests/Architecture/PlanAudit/test_plan_audit.py`
-- `plan/VALIDATION_CONTRACT.md`
 - `evidence/V0-GOV-054/**`
+- Forward plan-audit tool/test/contract custody was transferred to `V0-GOV-055`
+  by `CORR:C58`; this historical task remains closed.
 
 ## In scope
 

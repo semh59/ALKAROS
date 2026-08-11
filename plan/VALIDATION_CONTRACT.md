@@ -222,6 +222,31 @@ V2 closure protocol ek koşulları:
   baseline ile gerçek closure blobları karşılaştırarak `STALE_CANDIDATE_COMMIT`
   ve `FINAL_BLOB_HASH_MISMATCH` ile invalid bulmalıdır; eski evidence değişmez.
 
+V3 interrupted remediation closure ek koşulları:
+
+- V3 yalnız `V1-FND-023` için fixed B0
+  `fd3344f15c5257b53bf5281ee9129f800c62f0a7` ve fixed interruption
+  `479881636c8142c7161f2d5980d37ca2f9b48591` arasında uygulanır; başka task,
+  subject veya interruption için generic exception yoktur.
+- Verifier B0 parent'ını, `Directory.Build.targets`,
+  `tests/Architecture/TestDiscovery/test_solution_test_discovery.py` ve aktif
+  task dosyasındaki B0 bloblarını; interruption'ın B0 direct child'ı ve yalnız
+  exact `InProgress`→`Blocked` metadata ile exact `Blocker` diff'i olduğunu
+  byte/diff/topology olarak doğrular.
+- Reentry A interruption'ın direct child'ı olmalı, yalnız exact
+  `Blocked`→`InProgress` geçişini yapmalı ve exact `Blocker` bölümünü
+  kaldırmalıdır. E, A'nın direct child'ı olarak yalnız `evidence/V1-FND-023/**`
+  ekler; F, E'nin direct child'ı olarak yalnız task `Status: InProgress` satırını
+  `Status: Done` yapar.
+- B0 subject blobları A/E/F'de stale veya değiştirilmiş olamaz. E tree'sindeki
+  envelope/raw bytes, raw hashleri ve worktree-substitution reddi v2 kadar
+  zorunludur. F trailer bloğu sırasıyla `Task`, `Gate`, `Closure-Subject`,
+  `Closure-Interruption`, `Closure-Reentry` ve `Closure-Evidence-Checkpoint`
+  alanlarını full SHA ile taşır.
+- Wrong task/subject/interruption, altered B0/interruption byte veya diff,
+  non-adjacent A/E/F, evidence dışı E diff, stale B0 blob, final metadata/trailer
+  sapması ve worktree substitution deterministic non-zero ile reddedilir.
+
 ## Kapanış
 
 İlk doğrulamadan sonra aynı kontroller taze bağlamlı bağımsız denetimde yeniden
