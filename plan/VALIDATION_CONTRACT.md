@@ -82,6 +82,14 @@ npx --yes markdownlint-cli2@0.23.2
   canonical record'larını exact source/date/ID değerleriyle doğrular. Count,
   duplicate, order, extra, missing, source veya date divergence deterministic
   `SEMANTIC_REMEDIATION_ADMISSION_*` hatasıyla non-zero exit verir.
+- C54, açık V0 gate altında yalnız `V1-FND-023` `InProgress` olduğunda istisnadır.
+  Validator statik olarak `TRACEABILITY.md` C54 exact authority satırını,
+  `V1-FND-023`ün exact `Directory.Build.targets` owned surface'ini, C52/C53/C54
+  source zincirini, üç canonical 19-ID tuple'ını ve `V0-GOV-050` ile
+  `V1-FND-001` Done dependency'lerini birlikte doğrular. Missing, expanded veya
+  malformed authority; wrong source/date/tuple; open dependency; `Done` status
+  veya başka V1 application deterministic semantic hata üretir; target/tool code
+  yürütülmez.
 
 <!-- PLAN_AUDIT_REMEDIATION_ADMISSION:START -->
 | Task ID | Approval date | Source basis | Purpose | Gate closure evidence | New feature behavior |

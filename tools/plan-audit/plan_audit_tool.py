@@ -750,6 +750,32 @@ _REMEDIATION_ADMISSION_RECORDS = (
     ("V1-SEC-005", "2026-08-10", "CORR:C52"),
     ("V1-CAT-003", "2026-08-10", "CORR:C52"),
 )
+_C54_APPLICATION_TASK_ID = "V1-FND-023"
+_C54_APPLICATION_SOURCES = ("CORR:C52", "CORR:C53", "CORR:C54", "CORR:C57")
+_C54_APPLICATION_SURFACES = (
+    "Directory.Build.targets",
+    "tests/Architecture/TestDiscovery/test_solution_test_discovery.py",
+    "evidence/V1-FND-023/**",
+)
+_C54_APPLICATION_DEPENDENCIES = ("V0-GOV-050", "V0-GOV-054", "V1-FND-001")
+_C54_DONE_DEPENDENCIES = ("V0-GOV-050", "V1-FND-001")
+_C54_TRACEABILITY_ROW = (
+    "| `C54` | 2026-08-11 kullanıcı onaylı C53 plan düzeltmesi: `V1-FND-001` "
+    "historical `Done` body’si ve C52 reserved-surface kaydı aynen korunur; "
+    "`V1-FND-023` yalnız C53’te kanıtlanmış test-discovery kusuru için "
+    "`Directory.Build.targets` üzerinde tek-seferlik exact write authority alır. "
+    "Bu authority historical ownership transferi veya `V1-FND-001`in yeniden "
+    "açılması değildir. `V0-GOV-050`, `plan/GATES.md`nin tek ileriye-dönük "
+    "owner’ıdır; `V0-GOV-036` bu dosyayı read-only tüketir ve `V0-GOV-050`e "
+    "bağımlıdır. `V1-FND-023` admission kaydı, `2026-08-11` tarihi ve "
+    "`CORR:C52;CORR:C53;CORR:C54` source basis’iyle C54’ün dar C52/C53 "
+    "düzeltmesini taşır. Önceki `a7c5a85` plan kaydındaki `V1-FND-001` body "
+    "değişikliği yeni committe geri alınır; geçmiş rewrite edilmez. C52 yalnız bu "
+    "dar çelişki için C54 tarafından tamamlanır. PDF current authority değildir, "
+    "gate kapatmaz ve product behavior izni vermez. | `V0-GOV-036`, "
+    "`V0-GOV-050`, `V1-FND-023` | C53 plan correction ve bağımsız final denetim "
+    "| Planned |"
+)
 
 
 def parse_remediation_admission_table(
@@ -2098,14 +2124,68 @@ def application_tasks_started_before_v0_exit(
     if not v0_gate_open:
         return []
 
+    c54_errors = c54_application_admission_errors(tasks)
+    c54_is_admitted = not c54_errors and not validate_remediation_admission_tuple()
     application_work_types = {"implementation", "integration"}
-    return [
+    return c54_errors + [
         f"APPLICATION_STARTED_BEFORE_V0_EXIT {task_id}"
         for task_id, (_, preamble, _, _) in tasks.items()
         if not task_id.startswith("V0-")
         and metadata_value(preamble, "Status", "") == "InProgress"
         and metadata_value(preamble, "Work type", "") in application_work_types
+        and not (task_id == _C54_APPLICATION_TASK_ID and c54_is_admitted)
     ]
+
+
+def c54_application_admission_errors(
+    tasks: dict[str, tuple[Path, list[str], dict[str, list[str]], list[str]]],
+) -> list[str]:
+    """Verify the one C54 application admission from static plan artifacts."""
+    task = tasks.get(_C54_APPLICATION_TASK_ID)
+    if task is None:
+        return ["C54_APPLICATION_ADMISSION_TASK_MISSING"]
+
+    _, preamble, sections, _ = task
+    status = metadata_value(preamble, "Status", "")
+    if status not in {"InProgress", "Done"}:
+        return []
+
+    errors: list[str] = []
+    if status != "InProgress":
+        errors.append(f"C54_APPLICATION_ADMISSION_STATUS expected=InProgress actual={status}")
+
+    sources = tuple(line.removeprefix("- ").strip() for line in sections["Source basis"])
+    if sources != _C54_APPLICATION_SOURCES:
+        errors.append("C54_APPLICATION_ADMISSION_SOURCE")
+
+    surfaces = tuple(
+        match.group(1)
+        for line in sections["Owned surface"]
+        if (match := re.fullmatch(r"- `(.+)`", line)) is not None
+    )
+    if surfaces != _C54_APPLICATION_SURFACES:
+        errors.append("C54_APPLICATION_ADMISSION_AUTHORITY")
+
+    dependencies = tuple(line.removeprefix("- ").strip() for line in sections["Dependencies"])
+    if dependencies != _C54_APPLICATION_DEPENDENCIES:
+        errors.append("C54_APPLICATION_ADMISSION_DEPENDENCIES")
+    for dependency_id in _C54_DONE_DEPENDENCIES:
+        dependency = tasks.get(dependency_id)
+        dependency_status = (
+            metadata_value(dependency[1], "Status", "") if dependency is not None else "Missing"
+        )
+        if dependency_status != "Done":
+            errors.append(
+                f"C54_APPLICATION_ADMISSION_DEPENDENCY {dependency_id} "
+                f"status={dependency_status}"
+            )
+
+    traceability_rows = [
+        line for line in read_utf8(PLAN_DIR / "TRACEABILITY.md").splitlines() if line.startswith("| `C54` |")
+    ]
+    if traceability_rows != [_C54_TRACEABILITY_ROW]:
+        errors.append("C54_APPLICATION_ADMISSION_TRACEABILITY_AUTHORITY")
+    return errors
 
 
 def validate_plan() -> None:

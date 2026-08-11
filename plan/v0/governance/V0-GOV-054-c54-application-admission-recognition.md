@@ -1,8 +1,8 @@
 # V0-GOV-054 - Recognize the C54 application admission exactly
 
 - Task ID: V0-GOV-054
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: /root/implement_v0_gov_054
 - Work type: implementation
 - Surface state: Existing
 

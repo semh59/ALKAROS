@@ -57,6 +57,25 @@ def _replace_contract(workspace: Path, old: str, new: str) -> None:
     _replace(workspace / "plan" / "VALIDATION_CONTRACT.md", old, new)
 
 
+def _task_path(workspace: Path, task_id: str) -> Path:
+    matches = list((workspace / "plan").rglob(f"{task_id}-*.md"))
+    assert len(matches) == 1
+    return matches[0]
+
+
+def _activate_fnd023(workspace: Path) -> Path:
+    path = _task_path(workspace, "V1-FND-023")
+    text = path.read_text(encoding="utf-8")
+    assert "- Status: Blocked" in text
+    text = text.replace("- Status: Blocked", "- Status: InProgress", 1)
+    blocker_start = text.index("\n## Blocker\n")
+    deliverables_start = text.index("\n## Deliverables\n")
+    path.write_text(
+        text[:blocker_start] + text[deliverables_start:], encoding="utf-8", newline="\n"
+    )
+    return path
+
+
 class TestRemediationAdmissionSemanticValidation:
     def test_exact_19_record_tuple_is_semantically_valid(self, tmp_path: Path) -> None:
         result = _run_validate(_copy_validation_workspace(tmp_path))
@@ -154,3 +173,102 @@ class TestRemediationAdmissionSemanticValidation:
 
         assert result.returncode == 1
         assert "SEMANTIC_REMEDIATION_ADMISSION_TASK_SCOPE_SOURCE V1-FND-023" in result.stdout
+
+
+class TestC54ApplicationAdmission:
+    def test_exact_c54_fnd023_in_progress_is_admitted(self, tmp_path: Path) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        _activate_fnd023(workspace)
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "APPLICATION_STARTED_BEFORE_V0_EXIT V1-FND-023" not in result.stdout
+
+    @pytest.mark.parametrize(
+        ("mutation", "expected_error"),
+        [
+            (
+                lambda workspace: _replace(
+                    _task_path(workspace, "V1-FND-023"),
+                    "- CORR:C54",
+                    "- CORR:C56",
+                ),
+                "C54_APPLICATION_ADMISSION_SOURCE",
+            ),
+            (
+                lambda workspace: _replace(
+                    _task_path(workspace, "V1-FND-023"),
+                    "- `Directory.Build.targets`",
+                    "- `Directory.Build.targets`\n- `Directory.Build.props`",
+                ),
+                "C54_APPLICATION_ADMISSION_AUTHORITY",
+            ),
+            (
+                lambda workspace: _replace(
+                    workspace / "plan" / "TRACEABILITY.md",
+                    "`Directory.Build.targets` üzerinde tek-seferlik exact write authority",
+                    "`Directory.Build.targets` ve `Directory.Build.props` üzerinde authority",
+                ),
+                "C54_APPLICATION_ADMISSION_TRACEABILITY_AUTHORITY",
+            ),
+            (
+                lambda workspace: _replace(
+                    _task_path(workspace, "V1-FND-023"),
+                    "- V0-GOV-050\n- V0-GOV-054\n- V1-FND-001",
+                    "- V0-GOV-054\n- V1-FND-001",
+                ),
+                "C54_APPLICATION_ADMISSION_DEPENDENCIES",
+            ),
+            (
+                lambda workspace: _replace(
+                    _task_path(workspace, "V1-FND-001"),
+                    "- Status: Done",
+                    "- Status: Planned",
+                ),
+                "C54_APPLICATION_ADMISSION_DEPENDENCY V1-FND-001 status=Planned",
+            ),
+            (
+                lambda workspace: _replace_contract(
+                    workspace,
+                    FND023_ROW,
+                    FND023_ROW.replace("2026-08-11", "2026-08-10"),
+                ),
+                "SEMANTIC_REMEDIATION_ADMISSION_CONTRACT_DATE V1-FND-023",
+            ),
+        ],
+        ids=["source", "expanded-authority", "traceability", "dependencies", "open-dependency", "tuple"],
+    )
+    def test_c54_admission_divergence_fails_closed(
+        self, tmp_path: Path, mutation, expected_error: str
+    ) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        _activate_fnd023(workspace)
+        mutation(workspace)
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert expected_error in result.stdout
+        assert "APPLICATION_STARTED_BEFORE_V0_EXIT V1-FND-023" in result.stdout
+
+    def test_done_fnd023_is_not_a_c54_application_admission(self, tmp_path: Path) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        path = _activate_fnd023(workspace)
+        _replace(path, "- Status: InProgress", "- Status: Done")
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "C54_APPLICATION_ADMISSION_STATUS expected=InProgress actual=Done" in result.stdout
+
+    def test_other_v1_application_is_not_admitted(self, tmp_path: Path) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        path = _task_path(workspace, "V1-FND-022")
+        _replace(path, "- Status: Planned", "- Status: InProgress")
+        _replace(path, "- Assignee: Unassigned (exactly one person)", "- Assignee: test-session")
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "APPLICATION_STARTED_BEFORE_V0_EXIT V1-FND-022" in result.stdout
