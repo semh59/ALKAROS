@@ -396,7 +396,7 @@ def validate_v3_interrupted_final_commit(final_commit: str, repository: Path) ->
         return {"valid": False, "errors": errors}
     governance_final = reentry_parents[0]
 
-    governance_result = validate_final_commit(governance_final, repository)
+    governance_result = validate_final_commit(governance_final, repository, governance_final)
     if not governance_result["valid"]:
         _v3_error(errors, "V3_REENTRY_PARENT_NOT_LATEST_GOV_FINAL", "reentry parent must be a valid governance v2 final")
     else:
@@ -556,8 +556,16 @@ def resolve_v3_final_commit(repository: Path) -> str | None:
     return _V3_FINAL_COMMIT
 
 
-def validate_final_commit(final_commit: str, repository: Path) -> dict[str, object]:
-    """Verify a v2 B -> E -> F closure chain ending at ``final_commit``."""
+def validate_final_commit(  # noqa: PLR0912 - closure traversal over fixed evidence chain
+    final_commit: str, repository: Path, reference_commit: str = "HEAD"
+) -> dict[str, object]:
+    """Verify a v2 B -> E -> F closure chain ending at ``final_commit``.
+
+    The optional ``reference_commit`` pins the staleness check to a fixed
+    closure snapshot instead of the moving ``HEAD``; the v3 reentry guard
+    passes the governance final itself so later task commits cannot invalidate
+    the historical governance closure.
+    """
     errors: list[dict[str, str]] = []
     if not _git_commit_exists(repository, final_commit):
         return {"valid": False, "errors": [{"code": "MISSING_FINAL_COMMIT", "message": final_commit}]}
@@ -614,6 +622,7 @@ def validate_final_commit(final_commit: str, repository: Path) -> dict[str, obje
         envelope,
         repository,
         lambda path: _git_blob(repository, evidence_commit, path),
+        reference_commit,
     )
     if not envelope_result["valid"]:
         errors.extend(envelope_result["errors"])
@@ -629,7 +638,7 @@ def validate_final_commit(final_commit: str, repository: Path) -> dict[str, obje
     if subject_task is None or subject_parent_task is None or _metadata(subject_task) is None or _metadata(subject_parent_task) is None or _metadata(subject_task)[0] != "InProgress" or _metadata(subject_parent_task)[0] != "Planned" or not _metadata(subject_task)[1].startswith("/"):
         _error(errors, "INVALID_SUBJECT_METADATA", "subject commit must move the active task from Planned to InProgress with a real assignee")
     owned_paths = _owned_surface_paths(subject_task) if subject_task else None
-    artifact_paths = _validate_source_artifacts(envelope.get("artifacts"), repository, subject_commit, errors)
+    artifact_paths = _validate_source_artifacts(envelope.get("artifacts"), repository, subject_commit, errors, reference_commit)
     expected_artifacts = {path for path in owned_paths or set() if not path.startswith("evidence/")}
     subject_changes = _changed_paths(repository, subject_parent, subject_commit) if subject_parent else set()
     if owned_paths is None or artifact_paths != expected_artifacts or subject_changes != expected_artifacts | {task_path}:

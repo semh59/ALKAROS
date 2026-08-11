@@ -8,7 +8,7 @@
 
 ## Changed paths (allowlist verified)
 
-- `tools/evidence-envelope/evidence_envelope_tool.py` — `_V3_FINAL_COMMIT` constant, `resolve_v3_final_commit` fail-closed resolver
+- `tools/evidence-envelope/evidence_envelope_tool.py` — `_V3_FINAL_COMMIT` constant, `resolve_v3_final_commit` fail-closed resolver, `validate_final_commit` `reference_commit` pin for governance closure (v3 reentry guard validates the governance final against its own fixed closure commit, not the moving HEAD)
 - `tools/plan-audit/plan_audit_tool.py` — `v3_interrupted_closure_errors` HEAD-independent contract
 - `plan/VALIDATION_CONTRACT.md` — v3 clause updated to fixed final + HEAD descendant
 - `tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py` — fixed-final monkeypatch + 3 resolver tests
@@ -18,7 +18,7 @@
 ## SHA-256 of changed implementation files
 
 ```
-7DE5E766D202DC314F410E4949B61E4BB139384D9F1C60E022875265F0EA31CA  tools\evidence-envelope\evidence_envelope_tool.py
+D2C7C46817F5FDA776F81E7B1B3FB3092FBC6EAC41AAAB6C172B8C9330407525  tools\evidence-envelope\evidence_envelope_tool.py
 86EEA56FFD7F49C43055885D490FD664D3553B7DE79551B779BC75152425E3CF  tools\plan-audit\plan_audit_tool.py
 BDB0C481FD790EA176741339198650AB65C5FCBD9EFB6174CF477AA2E42FBC50  tests\Architecture\EvidenceEnvelope\test_evidence_envelope.py
 1704233CC75E139D7EB4303E57DF0EDAE23725CCFBD44733FC6A38518289938D  tests\Architecture\PlanAudit\test_plan_audit.py
@@ -42,6 +42,7 @@ BDB0C481FD790EA176741339198650AB65C5FCBD9EFB6174CF477AA2E42FBC50  tests\Architec
 - `test_done_fnd023_rejects_closure_invalid_at_the_fixed_final` — fixed final present but v3 chain invalid -> CLOSURE_INVALID
 - `test_done_fnd023_rejects_head_not_descending_from_the_fixed_final` — HEAD ancestor of fixed final -> CLOSURE_INVALID
 - Pre-existing tests repaired for the historical closure: `_activate_fnd023` reopens Done task, `test_exact_19_record_tuple_is_semantically_valid` baseline preserved
+- Governance closure pinned: `validate_final_commit(governance_final, repository, governance_final)` in v3 reentry guard — later task commits touching V0-GOV-060 subject artifacts no longer invalidate the historical governance closure (verified post-closure: validate exit 0 with `STALE_CANDIDATE_COMMIT` gone)
 
 ## Notes
 
