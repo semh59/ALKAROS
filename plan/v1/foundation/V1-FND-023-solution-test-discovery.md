@@ -1,7 +1,7 @@
 # V1-FND-023 - Restore solution test discovery
 
 - Task ID: V1-FND-023
-- Status: Blocked
+- Status: InProgress
 - Assignee: /root/implement_v1_fnd_023
 - Work type: implementation
 - Surface state: Existing
@@ -46,16 +46,6 @@ test çalışmayan solution test kapısını ortadan kaldırmak.
 - V0-GOV-050
 - V0-GOV-054
 - V1-FND-001
-
-## Blocker
-
-- Result: `V1-FND-023` v3 final commit `506097d00a5737dc819683bb6e28befde5277581`
-  final verifier'da `V3_B0_BLOB_MISMATCH` ve `V3_SOURCE_BLOB_MISMATCH`
-  hatalariyla reddedildi; verifier sabitleri gercek B0 source blob hashleriyle
-  eslesmiyor.
-- Unlock: Bu task ancak `V0-GOV-060` gercek B0 blob hashlerini ve guncel
-  governance reentry parent finalini fail-closed hizaladiktan sonra yeni
-  reentry/evidence/final closure zinciri uretebilir.
 
 ## Deliverables
 
