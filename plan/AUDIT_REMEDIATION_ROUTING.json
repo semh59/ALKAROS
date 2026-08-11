@@ -5,8 +5,8 @@
     "path": "D:\\PROJECT\\ALKAROS-AUDIT\\20260810-110911-825882aa\\finding-register.csv",
     "sha256": "EE46C13075AFA4F7B7CECF02E6899DB9AF66FDB252C7052841BDB0BC49034F7F",
     "finding_count": 42,
-    "post_closure_finding_count": 14,
-    "routed_finding_count": 56
+    "post_closure_finding_count": 15,
+    "routed_finding_count": 57
   },
   "final_audit_task": "V0-GOV-048",
   "items": [
@@ -65,7 +65,8 @@
     {"finding_id":"POST-CL-011","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"v3_admission_hardening","source_basis":"CORR:C60","owner_task_ids":["V0-GOV-057"],"execution_lane":4,"prerequisites":["V0-GOV-055"],"closure_evidence":"V1-FND-023 Done admission invokes the fixed task-specific v3 verifier regardless of V0 gate state","agent_model":"gpt-5.6-terra","reasoning_effort":"xhigh","state":"ROUTED_OPEN"},
     {"finding_id":"POST-CL-012","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"dynamic_route_parity_structural_invariant","source_basis":"CORR:C61","owner_task_ids":["V0-GOV-058"],"execution_lane":4,"prerequisites":["V0-GOV-056","V0-GOV-057"],"closure_evidence":"immutable 42-ID baseline plus live post-closure CSV/JSON/catalog parity with required C59/C60 routes","agent_model":"gpt-5.6-terra","reasoning_effort":"high","state":"ROUTED_OPEN"},
     {"finding_id":"POST-CL-013","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"v3_reentry_parent_alignment","source_basis":"CORR:C62","owner_task_ids":["V0-GOV-059"],"execution_lane":4,"prerequisites":["V0-GOV-057"],"closure_evidence":"V1-FND-023 v3 reentry parent is the latest admission-hardening final","agent_model":"gpt-5.6-terra","reasoning_effort":"xhigh","state":"ROUTED_OPEN"},
-    {"finding_id":"POST-CL-014","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"v3_b0_blob_alignment","source_basis":"CORR:C63","owner_task_ids":["V0-GOV-060"],"execution_lane":4,"prerequisites":["V0-GOV-059"],"closure_evidence":"V1-FND-023 v3 verifier uses the real immutable B0 source blob hashes","agent_model":"gpt-5.6-terra","reasoning_effort":"xhigh","state":"ROUTED_OPEN"}
+    {"finding_id":"POST-CL-014","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"v3_b0_blob_alignment","source_basis":"CORR:C63","owner_task_ids":["V0-GOV-060"],"execution_lane":4,"prerequisites":["V0-GOV-059"],"closure_evidence":"V1-FND-023 v3 verifier uses the real immutable B0 source blob hashes","agent_model":"gpt-5.6-terra","reasoning_effort":"xhigh","state":"ROUTED_OPEN"},
+    {"finding_id":"POST-CL-015","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"v3_closure_fixed_final_verification","source_basis":"CORR:C64","owner_task_ids":["V0-GOV-061"],"execution_lane":4,"prerequisites":["V0-GOV-060"],"closure_evidence":"V1-FND-023 v3 closure admission verifies the fixed final commit as HEAD descendant instead of current HEAD","agent_model":"gpt-5.6-terra","reasoning_effort":"xhigh","state":"ROUTED_OPEN"}
   ],
   "task_catalog": [
     {"task_id":"V0-GOV-034","task_path":"plan/v0/governance/V0-GOV-034-remediation-task-materialization.md","execution_lane":1,"dependencies":["V0-GOV-033"],"closure_evidence":"67 child tasks materialized and plan validation exit 0","agent_model":"gpt-5.6-sol","reasoning_effort":"xhigh","initial_state":"Planned"},

@@ -55,3 +55,4 @@ POST-CL-011,VERIFIED,HIGH,v3_admission_hardening,V0-GOV-057,4,V0-GOV-055,V1-FND-
 POST-CL-012,VERIFIED,HIGH,dynamic_route_parity_structural_invariant,V0-GOV-058,4,"V0-GOV-056;V0-GOV-057",immutable 42-ID baseline plus live post-closure CSV/JSON/catalog parity with required C59/C60 routes,CORR:C61,gpt-5.6-terra,high,ROUTED_OPEN
 POST-CL-013,VERIFIED,HIGH,v3_reentry_parent_alignment,V0-GOV-059,4,V0-GOV-057,V1-FND-023 v3 reentry parent is the latest admission-hardening final,CORR:C62,gpt-5.6-terra,xhigh,ROUTED_OPEN
 POST-CL-014,VERIFIED,HIGH,v3_b0_blob_alignment,V0-GOV-060,4,V0-GOV-059,V1-FND-023 v3 verifier uses the real immutable B0 source blob hashes,CORR:C63,gpt-5.6-terra,xhigh,ROUTED_OPEN
+POST-CL-015,VERIFIED,HIGH,v3_closure_fixed_final_verification,V0-GOV-061,4,V0-GOV-060,V1-FND-023 v3 closure admission verifies the fixed final commit as HEAD descendant instead of current HEAD,CORR:C64,gpt-5.6-terra,xhigh,ROUTED_OPEN

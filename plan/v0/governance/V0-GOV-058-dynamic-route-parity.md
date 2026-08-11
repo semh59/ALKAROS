@@ -65,6 +65,7 @@ hale getirmek.
 
 - V0-GOV-056
 - V0-GOV-057
+- V0-GOV-061
 
 ## Deliverables
 
