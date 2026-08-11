@@ -5,8 +5,8 @@
     "path": "D:\\PROJECT\\ALKAROS-AUDIT\\20260810-110911-825882aa\\finding-register.csv",
     "sha256": "EE46C13075AFA4F7B7CECF02E6899DB9AF66FDB252C7052841BDB0BC49034F7F",
     "finding_count": 42,
-    "post_closure_finding_count": 6,
-    "routed_finding_count": 48
+    "post_closure_finding_count": 7,
+    "routed_finding_count": 49
   },
   "final_audit_task": "V0-GOV-048",
   "items": [
@@ -57,7 +57,8 @@
     {"finding_id":"POST-CL-003","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"immutable_crlf_exception_attestation","source_basis":"CORR:C52;CORR:C53;CORR:C54","owner_task_ids":["V0-GOV-051"],"execution_lane":4,"prerequisites":["V0-GOV-049","V0-GOV-038"],"closure_evidence":"lossless CRLF diagnostic attestation without history rewrite","agent_model":"gpt-5.6-terra","reasoning_effort":"high","state":"ROUTED_OPEN"},
     {"finding_id":"POST-CL-004","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"immutable_closure_gap_attestation","source_basis":"CORR:C52;CORR:C53;CORR:C54","owner_task_ids":["V0-GOV-051"],"execution_lane":4,"prerequisites":["V0-GOV-049","V0-GOV-035","V0-GOV-037","V0-GOV-038"],"closure_evidence":"historical trailer and pre-Done evidence exception ledger","agent_model":"gpt-5.6-terra","reasoning_effort":"high","state":"ROUTED_OPEN"},
     {"finding_id":"POST-CL-005","audit_verdict":"VERIFIED","severity":"HIGH","route_kind":"final_commit_worktree_substitution","source_basis":"CORR:C55","owner_task_ids":["V0-GOV-052"],"execution_lane":4,"prerequisites":["V0-GOV-049"],"closure_evidence":"final validator reads E evidence blobs from Git tree only","agent_model":"gpt-5.6-terra","reasoning_effort":"xhigh","state":"ROUTED_OPEN"},
-    {"finding_id":"POST-CL-006","audit_verdict":"PARTIAL","severity":"MEDIUM","route_kind":"subject_artifact_completeness_regression","source_basis":"CORR:C55","owner_task_ids":["V0-GOV-052"],"execution_lane":4,"prerequisites":["V0-GOV-049"],"closure_evidence":"checked-in missing-owned-artifact negative regression","agent_model":"gpt-5.6-terra","reasoning_effort":"high","state":"ROUTED_OPEN"}
+    {"finding_id":"POST-CL-006","audit_verdict":"PARTIAL","severity":"MEDIUM","route_kind":"subject_artifact_completeness_regression","source_basis":"CORR:C55","owner_task_ids":["V0-GOV-052"],"execution_lane":4,"prerequisites":["V0-GOV-049"],"closure_evidence":"checked-in missing-owned-artifact negative regression","agent_model":"gpt-5.6-terra","reasoning_effort":"high","state":"ROUTED_OPEN"},
+    {"finding_id":"POST-CL-007","audit_verdict":"VERIFIED","severity":"MEDIUM","route_kind":"admission_contract_semantic_divergence","source_basis":"CORR:C56","owner_task_ids":["V0-GOV-046"],"execution_lane":4,"prerequisites":["V0-GOV-052"],"closure_evidence":"contract/GATES/tool exact admission tuple semantic parity","agent_model":"gpt-5.6-terra","reasoning_effort":"high","state":"ROUTED_OPEN"}
   ],
   "task_catalog": [
     {"task_id":"V0-GOV-034","task_path":"plan/v0/governance/V0-GOV-034-remediation-task-materialization.md","execution_lane":1,"dependencies":["V0-GOV-033"],"closure_evidence":"67 child tasks materialized and plan validation exit 0","agent_model":"gpt-5.6-sol","reasoning_effort":"xhigh","initial_state":"Planned"},

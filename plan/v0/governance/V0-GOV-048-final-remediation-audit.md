@@ -10,10 +10,11 @@
 
 - CORR:C52
 - CORR:C55
+- CORR:C56
 
 ## Goal
 
-48 bulgunun tamamını düzeltme oturumlarından bağımsız ajanlarla yeniden üretmek, repository write-set bütünlüğünü doğrulamak ve yalnız tüm terminal kriterler sağlanırsa push izni vermek.
+49 bulgunun tamamını düzeltme oturumlarından bağımsız ajanlarla yeniden üretmek, repository write-set bütünlüğünü doğrulamak ve yalnız tüm terminal kriterler sağlanırsa push izni vermek.
 
 ## Owned surface
 
@@ -22,7 +23,7 @@
 ## In scope
 
 - Her CRITICAL/HIGH finding'i kendi implementer'ı olmayan ikinci ajanla yeniden üretmek.
-- Bütün 48 finding, task, commit, test, migration ve evidence zincirini terminal verdict ile eşlemek.
+- Bütün 49 finding, task, commit, test, migration ve evidence zincirini terminal verdict ile eşlemek.
 - Clean worktree, local-vs-origin baseline ve final commit manifest/provenance kontrollerini doğrulamak.
 
 ## Out of scope
@@ -79,7 +80,7 @@
 
 ## Acceptance evidence
 
-- 48 finding'in tamamı `VERIFIED` veya evidence-backed terminal blocker olarak listelenir; belirsiz satır yoktur.
+- 49 finding'in tamamı `VERIFIED` veya evidence-backed terminal blocker olarak listelenir; belirsiz satır yoktur.
 - Her CRITICAL/HIGH finding bağımsız ikinci ajan tarafından exact reproduction ile onaylanır.
 - Final repository status beklenen write-set ile exact eşleşir; manifest, build, tests, lint ve provenance zorunlu kontrolleri exit code `0` verir.
 - `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-048/**` altındadır.
