@@ -30,14 +30,14 @@ _AUTHORIZATION_BEARER = re.compile(r"\bauthorization\s*:\s*bearer\s+\S+", re.IGN
 _V0_GOV_035_BASELINE = "1d41e97b39ac975ab55c2bdf4198b0d6b92681ed"
 _V0_GOV_035_CLOSURE = "78b317a5c3d04009d94394da58c5913d59c22b91"
 _V3_TASK_ID = "V1-FND-023"
-_V3_REENTRY_PARENT_TASK_ID = "V0-GOV-059"
+_V3_REENTRY_PARENT_TASK_ID = "V0-GOV-060"
 _V3_B0_COMMIT = "fd3344f15c5257b53bf5281ee9129f800c62f0a7"
 _V3_B0_PARENT = "645a07f6992ece6efd70dc2fb2e0a7f7bccc945c"
 _V3_INTERRUPTION_COMMIT = "479881636c8142c7161f2d5980d37ca2f9b48591"
 _V3_TASK_PATH = "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
 _V3_SOURCE_ARTIFACTS = {
-    "Directory.Build.targets": "a4a6e142edcd8d64ec841396aa45c26c720e2922e47169d2c10f076e0d2e71dd",
-    "tests/Architecture/TestDiscovery/test_solution_test_discovery.py": "05b27d3dddcb7882a586ea01fbb81495818e84aa0119485fe3d68f2d70fca764",
+    "Directory.Build.targets": "28548ec2fe1dc53083049798c7b8f4c49016975c61fec1f1082eee43e08342d1",
+    "tests/Architecture/TestDiscovery/test_solution_test_discovery.py": "5d0e0826230ca47ffc9dc1c8a5d83a83465b9a09f04ee91a9d063e2ccd1d379a",
 }
 _V3_INTERRUPTION_BLOCKER = (
     "## Blocker\n\n"

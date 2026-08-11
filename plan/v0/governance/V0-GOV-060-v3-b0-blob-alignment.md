@@ -1,8 +1,8 @@
 # V0-GOV-060 - Align V3 B0 source blob constants
 
 - Task ID: V0-GOV-060
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 

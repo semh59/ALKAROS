@@ -272,7 +272,7 @@ class TestC54ApplicationAdmission:
         tool_path = workspace / "tools/evidence-envelope/evidence_envelope_tool.py"
         _replace(
             tool_path,
-            '_V3_REENTRY_PARENT_TASK_ID = "V0-GOV-059"',
+            '_V3_REENTRY_PARENT_TASK_ID = "V0-GOV-060"',
             '_V3_REENTRY_PARENT_TASK_ID = "V0-GOV-055"',
         )
 

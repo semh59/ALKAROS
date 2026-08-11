@@ -173,7 +173,7 @@ def _write_v3_interrupted_chain(
     tool_module,
     monkeypatch,
     mutate: Callable[[str, Path], None] | None = None,
-    reentry_parent_task_id: str = "V0-GOV-059",
+    reentry_parent_task_id: str = "V0-GOV-060",
 ) -> tuple[str, str, str, str, str]:
     fnd_task_path = "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
     governance_task_path = f"plan/v0/governance/{reentry_parent_task_id}.md"
