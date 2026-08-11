@@ -8,7 +8,7 @@ import json
 import re
 import subprocess
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 SCHEMA = "alkaros.closure-evidence-envelope/v2"
@@ -131,7 +131,18 @@ def _validate_environment(value: object, errors: list[dict[str, str]]) -> None:
             _error(errors, "SECRET_LEAKAGE", f"environment.secrets[{index}].fingerprint is invalid")
 
 
-def _validate_raw_output(value: object, repo: Path, task_id: str, errors: list[dict[str, str]], field: str) -> None:
+def _worktree_blob(repository: Path, path: str) -> bytes | None:
+    artifact = repository / path
+    return artifact.read_bytes() if artifact.is_file() else None
+
+
+def _validate_raw_output(
+    value: object,
+    read_blob: Callable[[str], bytes | None],
+    task_id: str,
+    errors: list[dict[str, str]],
+    field: str,
+) -> None:
     if not isinstance(value, dict) or set(value) != {"path", "sha256"}:
         _error(errors, "INVALID_RAW_OUTPUT", f"{field} must contain path and sha256")
         return
@@ -142,18 +153,22 @@ def _validate_raw_output(value: object, repo: Path, task_id: str, errors: list[d
     if not path.startswith(f"evidence/{task_id}/"):
         _error(errors, "INVALID_RAW_OUTPUT", f"{field}.path must stay under evidence/{task_id}/")
         return
-    artifact = repo / path
-    if not artifact.is_file():
+    content = read_blob(path)
+    if content is None:
         _error(errors, "MISSING_RAW_OUTPUT", f"{field}.path is missing: {path}")
         return
-    content = artifact.read_bytes()
     if hashlib.sha256(content).hexdigest() != expected_hash:
         _error(errors, "RAW_OUTPUT_HASH_MISMATCH", f"{field}.path hash does not match")
     if _contains_secret(content.decode("utf-8", errors="replace")):
         _error(errors, "SECRET_LEAKAGE", f"{field}.path contains a secret value")
 
 
-def _validate_commands(value: object, repo: Path, task_id: str, errors: list[dict[str, str]]) -> None:
+def _validate_commands(
+    value: object,
+    read_blob: Callable[[str], bytes | None],
+    task_id: str,
+    errors: list[dict[str, str]],
+) -> None:
     if not isinstance(value, list) or not value:
         _error(errors, "MISSING_COMMAND", "commands must contain at least one command record")
         return
@@ -172,7 +187,7 @@ def _validate_commands(value: object, repo: Path, task_id: str, errors: list[dic
             _error(errors, "MISSING_EXIT_CODE", f"{field}.exit_code must be an integer")
         elif exit_code != 0:
             _error(errors, "NONZERO_EXIT_CODE", f"{field}.exit_code must be 0 for closure evidence")
-        _validate_raw_output(command["raw_output"], repo, task_id, errors, f"{field}.raw_output")
+        _validate_raw_output(command["raw_output"], read_blob, task_id, errors, f"{field}.raw_output")
 
 
 def _validate_source_artifacts(value: object, repo: Path, subject_commit: str | None, errors: list[dict[str, str]]) -> set[str]:
@@ -203,19 +218,27 @@ def _validate_source_artifacts(value: object, repo: Path, subject_commit: str | 
     return paths
 
 
-def _load_envelope(envelope_path: Path) -> dict[str, Any] | None:
+def _load_envelope_bytes(value: bytes) -> dict[str, Any] | None:
     try:
-        loaded = json.loads(envelope_path.read_text(encoding="utf-8"))
-    except (FileNotFoundError, UnicodeDecodeError, json.JSONDecodeError):
+        loaded = json.loads(value.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
         return None
     return loaded if isinstance(loaded, dict) else None
 
 
-def validate_envelope(envelope_path: Path, repository: Path) -> dict[str, object]:
-    """Return a deterministic validation result for one closure-evidence envelope."""
-    envelope = _load_envelope(envelope_path)
-    if envelope is None:
-        return {"valid": False, "errors": [{"code": "INVALID_ENVELOPE", "message": str(envelope_path)}]}
+def _load_envelope(envelope_path: Path) -> dict[str, Any] | None:
+    try:
+        return _load_envelope_bytes(envelope_path.read_bytes())
+    except FileNotFoundError:
+        return None
+
+
+def _validate_envelope(
+    envelope: dict[str, Any],
+    repository: Path,
+    read_raw_blob: Callable[[str], bytes | None],
+) -> dict[str, object]:
+    """Validate one loaded envelope using the supplied raw-evidence blob reader."""
     errors: list[dict[str, str]] = []
     schema = envelope.get("schema")
     subject_field = "subject_commit" if schema == SCHEMA else "candidate_commit"
@@ -237,7 +260,7 @@ def validate_envelope(envelope_path: Path, repository: Path) -> dict[str, object
         _error(errors, "STALE_CANDIDATE_COMMIT", f"{subject_field} does not resolve to a commit")
         subject_commit = None
     _validate_environment(envelope["environment"], errors)
-    _validate_commands(envelope["commands"], repository, task_id, errors)
+    _validate_commands(envelope["commands"], read_raw_blob, task_id, errors)
     _validate_source_artifacts(envelope["artifacts"], repository, subject_commit, errors)
     integrity = envelope["integrity"]
     if not isinstance(integrity, dict) or set(integrity) != {"payload_sha256"}:
@@ -245,6 +268,14 @@ def validate_envelope(envelope_path: Path, repository: Path) -> dict[str, object
     elif integrity["payload_sha256"] != canonical_payload_hash(envelope):
         _error(errors, "INTEGRITY_HASH_MISMATCH", "integrity.payload_sha256 does not match the envelope")
     return {"valid": not errors, "errors": errors}
+
+
+def validate_envelope(envelope_path: Path, repository: Path) -> dict[str, object]:
+    """Return a deterministic validation result for one closure-evidence envelope."""
+    envelope = _load_envelope(envelope_path)
+    if envelope is None:
+        return {"valid": False, "errors": [{"code": "INVALID_ENVELOPE", "message": str(envelope_path)}]}
+    return _validate_envelope(envelope, repository, lambda path: _worktree_blob(repository, path))
 
 
 def _commit_parent(repo: Path, commit: str) -> str | None:
@@ -334,16 +365,24 @@ def validate_final_commit(final_commit: str, repository: Path) -> dict[str, obje
     envelope_path = f"evidence/{task_id}/closure-evidence-envelope.json"
     if not evidence_changes or envelope_path not in evidence_changes or any(not path.startswith(f"evidence/{task_id}/") for path in evidence_changes):
         _error(errors, "EVIDENCE_NOT_CHECKPOINT_ONLY", "evidence commit may change only the active task evidence checkpoint")
-    envelope = _load_envelope(repository / envelope_path)
+    envelope_blob = _git_blob(repository, evidence_commit, envelope_path)
+    envelope = _load_envelope_bytes(envelope_blob) if envelope_blob is not None else None
     if envelope is None or envelope.get("schema") != SCHEMA or envelope.get("task_id") != task_id or envelope.get("subject_commit") != subject_commit:
         _error(errors, "INVALID_CLOSURE_ENVELOPE", "v2 envelope must bind the active task and subject commit")
         return {"valid": False, "errors": errors}
-    envelope_result = validate_envelope(repository / envelope_path, repository)
+    envelope_result = _validate_envelope(
+        envelope,
+        repository,
+        lambda path: _git_blob(repository, evidence_commit, path),
+    )
     if not envelope_result["valid"]:
         errors.extend(envelope_result["errors"])
     raw_paths = {record.get("raw_output", {}).get("path") for record in envelope.get("commands", []) if isinstance(record, dict)}
     if not all(isinstance(path, str) and path in evidence_changes for path in raw_paths):
         _error(errors, "EVIDENCE_RAW_NOT_CHECKPOINTED", "every raw command output must be added by the evidence checkpoint")
+    checkpoint_paths = {envelope_path} | {path for path in raw_paths if isinstance(path, str)}
+    if any(_worktree_blob(repository, path) != _git_blob(repository, evidence_commit, path) for path in checkpoint_paths):
+        _error(errors, "WORKTREE_EVIDENCE_SUBSTITUTION", "worktree envelope or raw evidence differs from the evidence checkpoint tree")
     subject_parent = _commit_parent(repository, subject_commit)
     subject_task = _git_text(repository, subject_commit, task_path)
     subject_parent_task = _git_text(repository, subject_parent, task_path) if subject_parent else None

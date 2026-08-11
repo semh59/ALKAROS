@@ -50,6 +50,12 @@ kümesi olduğunu; B blob hashlerinin E ve F'de stale olmadığını da kontrol 
 Bu kural validator'ın kendi tool, test, doküman veya plan sözleşmesi değişikliğini
 atlamayı reddeder.
 
+`--final-commit` zarfı ve her kayıtlı raw output'u yalnız `E:<path>` Git
+blobundan okur; çağrıldığı worktree bu bytes'ların kaynağı değildir. Aynı zarf
+veya kayıtlı raw yolunda worktree byte'ı E blobundan farklıysa validator
+`WORKTREE_EVIDENCE_SUBSTITUTION` ile reddeder. Böylece uncommitted değiştirme,
+silme veya yeniden yazma sahte bir başarı sonucu üretemez.
+
 ## Raw çıktı ve secret koruması
 
 Her command kaydı komut, integer `exit_code: 0` ve taskın kendi evidence dizinindeki

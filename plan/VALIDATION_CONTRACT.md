@@ -171,6 +171,10 @@ V2 closure protocol ek koşulları:
   Son iki değer B ve E full commit hash'leridir. E, F SHA'sını veya payload hash'ini taşımaz.
 - V2, validator, testleri, closure dokümanı ve bu sözleşme dahil B'de değişen her
   owned artifactı hashler. Eksik, stale veya mismatch blob fail-closed olur.
+- `--final-commit`, envelope ve kayıtlı her raw output byte'ını yalnız E commit
+  tree'sinden okur. Aynı zarf veya kayıtlı raw path worktree'de E blobundan
+  farklıysa `WORKTREE_EVIDENCE_SUBSTITUTION` ile non-zero exit verir; worktree
+  içeriği kanıt kaynağı olamaz.
 - Raw output `evidence/<Task-ID>/` altında kalır; command veya raw transcript
   içinde `Authorization: Bearer <value>` ya da `api key: <value>` secret leakage
   sayılır ve fail-closed olur. Worktree create/remove, exit code, LF raw transcript

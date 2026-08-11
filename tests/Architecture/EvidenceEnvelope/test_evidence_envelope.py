@@ -65,7 +65,7 @@ def _candidate_blob_hash(repo: Path, candidate: str, path: str) -> str:
 def _write_envelope(repo: Path, candidate: str, tool_module, **overrides: object) -> Path:
     raw = repo / "evidence" / "V0-GOV-039" / "raw" / "pytest.txt"
     raw.parent.mkdir(parents=True, exist_ok=True)
-    raw.write_text("1 passed in 0.01s\n", encoding="utf-8")
+    raw.write_bytes(b"1 passed in 0.01s\n")
     envelope: dict[str, object] = {
         "schema": tool_module.SCHEMA,
         "task_id": "V0-GOV-039",
@@ -108,7 +108,11 @@ def _error_codes(result: dict[str, object]) -> set[str]:
     return {item["code"] for item in errors}
 
 
-def _write_closure_chain(repo: Path, tool_module) -> tuple[str, str, str]:
+def _write_closure_chain(
+    repo: Path,
+    tool_module,
+    omitted_artifact: str | None = None,
+) -> tuple[str, str, str]:
     task_path = "plan/v0/governance/V0-GOV-049.md"
     owned_paths = [
         "tools/evidence-envelope/evidence_envelope_tool.py",
@@ -137,18 +141,22 @@ def _write_closure_chain(repo: Path, tool_module) -> tuple[str, str, str]:
     subject = _commit(repo, "subject")
     raw = repo / "evidence" / "V0-GOV-049" / "raw" / "pytest.txt"
     raw.parent.mkdir(parents=True)
-    raw.write_text("1 passed\n", encoding="utf-8")
+    raw.write_bytes(b"1 passed\n")
     envelope = {
         "schema": tool_module.SCHEMA,
         "task_id": "V0-GOV-049",
         "subject_commit": subject,
         "environment": {"platform": "Windows", "toolchain": {"python": "3.12"}, "variables": {}, "secrets": []},
         "commands": [{"command": "py -m pytest tests/Architecture/EvidenceEnvelope -q", "exit_code": 0, "raw_output": {"path": "evidence/V0-GOV-049/raw/pytest.txt", "sha256": _hash(raw)}}],
-        "artifacts": [{"path": path, "sha256": _candidate_blob_hash(repo, subject, path)} for path in owned_paths],
+        "artifacts": [
+            {"path": path, "sha256": _candidate_blob_hash(repo, subject, path)}
+            for path in owned_paths
+            if path != omitted_artifact
+        ],
     }
     envelope["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(envelope)}
     envelope_path = repo / "evidence" / "V0-GOV-049" / "closure-evidence-envelope.json"
-    envelope_path.write_text(json.dumps(envelope, indent=2) + "\n", encoding="utf-8")
+    envelope_path.write_bytes((json.dumps(envelope, indent=2) + "\n").encode("utf-8"))
     evidence = _commit(repo, "evidence")
     task.write_text(task.read_text(encoding="utf-8").replace("Status: InProgress", "Status: Done"), encoding="utf-8")
     final = _commit(
@@ -171,6 +179,32 @@ def test_final_commit_requires_v2_subject_evidence_final_chain(repository, tool_
     _, _, final = _write_closure_chain(repo, tool_module)
 
     assert tool_module.validate_final_commit(final, repo) == {"valid": True, "errors": []}
+
+
+def test_final_commit_rejects_worktree_evidence_substitution(repository, tool_module):
+    repo, _ = repository
+    _, _, final = _write_closure_chain(repo, tool_module)
+    raw = repo / "evidence" / "V0-GOV-049" / "raw" / "pytest.txt"
+    envelope = repo / "evidence" / "V0-GOV-049" / "closure-evidence-envelope.json"
+    raw.write_bytes(b"forged success\n")
+    payload = json.loads(envelope.read_text(encoding="utf-8"))
+    payload["commands"][0]["raw_output"]["sha256"] = _hash(raw)
+    payload["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(payload)}
+    envelope.write_bytes((json.dumps(payload, indent=2) + "\n").encode("utf-8"))
+
+    errors = _error_codes(tool_module.validate_final_commit(final, repo))
+    assert errors == {"WORKTREE_EVIDENCE_SUBSTITUTION"}
+
+
+def test_final_commit_rejects_missing_owned_subject_artifact(repository, tool_module):
+    repo, _ = repository
+    _, _, final = _write_closure_chain(
+        repo,
+        tool_module,
+        omitted_artifact="docs/engineering/closure-evidence-envelope.md",
+    )
+
+    assert "SUBJECT_ARTIFACT_SET_MISMATCH" in _error_codes(tool_module.validate_final_commit(final, repo))
 
 
 def test_immutable_v0_gov_035_hash_ledger_is_invalid(tool_module):
