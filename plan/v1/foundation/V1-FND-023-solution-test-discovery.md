@@ -1,7 +1,7 @@
 # V1-FND-023 - Restore solution test discovery
 
 - Task ID: V1-FND-023
-- Status: InProgress
+- Status: Blocked
 - Assignee: /root/implement_v1_fnd_023
 - Work type: implementation
 - Surface state: Existing
@@ -44,6 +44,12 @@ test çalışmayan solution test kapısını ortadan kaldırmak.
 
 - V0-GOV-050
 - V1-FND-001
+
+## Blocker
+
+- Command: `py -B tools\\plan-audit\\plan_audit_tool.py validate`
+- Result: exit code `1` with `APPLICATION_STARTED_BEFORE_V0_EXIT V1-FND-023`.
+- Unlock: `V0-GOV-054` plan denetiminin C52/C53/C54 kabulünü tanımasını düzeltmelidir; ancak bu tamamlandığında görev sürdürülebilir.
 
 ## Deliverables
 
