@@ -9,6 +9,7 @@
 ## Source basis
 
 - CORR:C52
+- CORR:C54
 
 ## Goal
 
@@ -17,7 +18,6 @@
 ## Owned surface
 
 - `plan/DECISION_REVALIDATION.md`
-- `plan/GATES.md`
 - `evidence/v0/gate-v0-exit-closure.md`
 - `evidence/V0-GOV-036/**`
 
@@ -25,6 +25,7 @@
 
 - Her supplement sonucunu `confirms`, `supersedes` veya `conflicts` olarak mevcut task/gate kaydıyla eşlemek.
 - Effective status ve transitive gate sonucunu yeni graph ölçümüyle üretmek.
+- `plan/GATES.md`ni `V0-GOV-050` çıktısı olarak read-only tüketmek.
 - Named approval eksik veya çelişkili kaydı fail-closed tutmak.
 
 ## Out of scope
@@ -35,6 +36,7 @@
 ## Dependencies
 
 - V0-GOV-035
+- V0-GOV-050
 - V0-REV-001
 - V0-REV-002
 - V0-REV-003
@@ -68,7 +70,7 @@
 
 ## Deliverables
 
-- Güncel `DECISION_REVALIDATION`, `GATES` ve gate closure reconciliation kayıtları.
+- Güncel `DECISION_REVALIDATION` ve read-only `GATES` girdisine dayalı gate closure reconciliation kayıtları.
 
 ## Acceptance evidence
 

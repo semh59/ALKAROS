@@ -17,7 +17,7 @@ oluşturmak.
 
 ## Owned surface
 
-- `ALKAROS.slnx`, `global.json`, `Directory.Build.props`, `Directory.Packages.props`
+- `ALKAROS.slnx`, `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props`
 - `NuGet.config`, `.config/dotnet-tools.json`
 - `build/project-manifest.json`, `src/Host/ALKAROS.Host.csproj`
 - `src/Modules/**/ALKAROS.*.csproj`, `src/Clients/**/ALKAROS.*.csproj`
@@ -29,7 +29,6 @@ oluşturmak.
 - `tests/Architecture/ModuleBoundaries/**`
 - `src/BuildingBlocks/**/ALKAROS.*.csproj`, `src/**/packages.lock.json`, `tests/**/packages.lock.json`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
-- `Directory.Build.targets` post-closure test-discovery remediation için `V1-FND-023`e `CORR:C53` ile devredilmiştir; bu historical task closed kalır.
 
 ## In scope
 

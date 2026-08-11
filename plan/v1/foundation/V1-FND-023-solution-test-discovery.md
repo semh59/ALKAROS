@@ -10,6 +10,7 @@
 
 - CORR:C52
 - CORR:C53
+- CORR:C54
 
 ## Goal
 
@@ -26,6 +27,7 @@ test çalışmayan solution test kapısını ortadan kaldırmak.
 ## In scope
 
 - `ALKAROSTest=true` evaluated MSBuild durumunda `IsTestProject=true` yapmak.
+- C54’ün tanıdığı tek-seferlik exact authority dışında `V1-FND-001` reserved build yüzeyine dokunmamak.
 - `ALKAROS.TestHelpers.csproj` gibi `ALKAROSTest` taşımayan helper'ın test
   projesi sayılmadığını korumak.
 - `dotnet test ALKAROS.slnx --no-restore --list-tests` çıktısında bilinen test
