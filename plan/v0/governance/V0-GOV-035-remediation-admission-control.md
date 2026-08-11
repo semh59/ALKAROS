@@ -1,8 +1,8 @@
 # V0-GOV-035 - Admit only the approved C52 remediation tasks
 
 - Task ID: V0-GOV-035
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root/v0_gov_035_admission
 - Work type: implementation
 - Surface state: Existing
 

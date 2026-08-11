@@ -66,38 +66,35 @@ _ENTRY_GATE_BY_VERSION = {
 _REMEDIATION_EXCEPTION_START = "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->"
 _REMEDIATION_EXCEPTION_END = "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->"
 _REMEDIATION_EXCEPTION_HEADER = (
-    "| Task ID | Approval date | Purpose | Gate closure evidence | "
+    "| Task ID | Approval date | Source basis | Purpose | Gate closure evidence | "
     "New feature behavior |"
 )
-_REMEDIATION_EXCEPTION_SEPARATOR = "| --- | --- | --- | --- | --- |"
+_REMEDIATION_EXCEPTION_SEPARATOR = "| --- | --- | --- | --- | --- | --- |"
 _REMEDIATION_EXCEPTION_ROW = re.compile(
-    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-02|2026-08-03|2026-08-04)`\s*\|\s*"
+    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-10)`\s*\|\s*"
+    r"`(?P<source_basis>CORR:C52)`\s*\|\s*"
     r"Verified finding remediation only\s*\|\s*Not gate closure evidence\s*\|\s*"
     r"No new feature behavior\s*\|$"
 )
-_APPROVED_REMEDIATION_TASK_IDS = {
-    "V1-FND-001",
-    "V1-FND-002",
-    "V1-FND-004",
-    "V1-FND-005",
-    "V1-FND-006",
-    "V1-FND-011",
-    "V1-FND-012",
-    "V1-IAM-004",
-    "V1-IAM-005",
-    "V1-FND-013",
-    "V1-FND-014",
-    "V1-FND-015",
-    "V1-SEC-003",
-}
-_CANDIDATE_CODE_REMEDIATION_TASK_IDS = {
-    "V1-FND-001",
-    "V1-FND-002",
-    "V1-FND-004",
-    "V1-FND-005",
-    "V1-FND-006",
-    "V1-IAM-004",
-    "V1-SEC-003",
+_C52_CANDIDATE_CODE_REMEDIATION_TASK_IDS = {
+    "V1-CAT-003",
+    "V1-FND-016",
+    "V1-FND-017",
+    "V1-FND-018",
+    "V1-FND-019",
+    "V1-FND-020",
+    "V1-FND-021",
+    "V1-FND-022",
+    "V1-IAM-006",
+    "V1-IAM-007",
+    "V1-IAM-008",
+    "V1-IAM-009",
+    "V1-IAM-010",
+    "V1-IAM-011",
+    "V1-IAM-012",
+    "V1-IAM-013",
+    "V1-SEC-004",
+    "V1-SEC-005",
 }
 _DEFERRED_TASKS_START = "<!-- V0_DEFERRED_TASKS:START -->"
 _DEFERRED_TASKS_END = "<!-- V0_DEFERRED_TASKS:END -->"
@@ -301,7 +298,7 @@ def _all_tasks(plan_dir: Path) -> List[TaskMetadata]:
 
 
 def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
-    """Return the exact user-approved remediation IDs from ``GATES.md``.
+    """Return the exact C52-approved remediation IDs from ``GATES.md``.
 
     The table is deliberately strict: a malformed, duplicate, missing, or
     non-approved record cannot expand the entry-gate bypass.
@@ -344,10 +341,10 @@ def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
             )
         exception_ids.add(task_id)
 
-    if exception_ids != _APPROVED_REMEDIATION_TASK_IDS:
+    if exception_ids != _C52_CANDIDATE_CODE_REMEDIATION_TASK_IDS:
         raise TaskParseError(
             "Remediation exception table Task IDs must exactly match the "
-            "2026-08-02 user approval"
+            "2026-08-10 C52 user approval"
         )
     return exception_ids
 
@@ -436,7 +433,7 @@ def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
         if item.status not in {"Done", "NotApplicable"}
     ]
     if unfinished:
-        if task.task_id in _APPROVED_REMEDIATION_TASK_IDS:
+        if task.task_id in _C52_CANDIDATE_CODE_REMEDIATION_TASK_IDS:
             try:
                 exception_ids = parse_remediation_exception_ids(plan_dir)
             except TaskParseError as exc:
@@ -733,6 +730,12 @@ def validate_task_metadata(
             f"Task status is {task.status!r}, expected 'Planned' or 'InProgress'"
         )
 
+    if candidate_remediation and task.status != "InProgress":
+        errors.append(
+            "Candidate-code remediation task status is "
+            f"{task.status!r}, expected 'InProgress'"
+        )
+
     assignee_lower = task.assignee.lower().strip()
     if (
         not task.assignee
@@ -999,7 +1002,7 @@ def run_validation(
             )
             return result
         if (
-            task.task_id not in _CANDIDATE_CODE_REMEDIATION_TASK_IDS
+            task.task_id not in _C52_CANDIDATE_CODE_REMEDIATION_TASK_IDS
             or task.task_id not in exception_ids
         ):
             result["metadata_errors"].append(

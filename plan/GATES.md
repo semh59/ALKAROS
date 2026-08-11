@@ -60,24 +60,36 @@ finansal/stok/mevzuat kararı varken kapanamaz.
 Bir consumer, dependency'si `NotApplicable` olduğunda yalnız kendi acceptance
 sözleşmesi bu sonucu açıkça ele alıyorsa başlayabilir; aksi durumda gate açık kalır.
 
-## 2026-08-02 user-approved remediation exceptions
+## 2026-08-10 C52 remediation admission
+
+`CORR:C52` bu tablonun tek güncel kabul kaynağıdır. Önceki remediation
+onayları tarihsel kayıttır; mevcut `Done` görevleri bu tabloya girmez, yeniden
+açılamaz ve `--candidate-remediation` ile kabul edilmez. Bu izin yalnız aşağıdaki
+18 yeni C52 görevine, `V0-GOV-037` tarafından devredilen exact yüzeydeki
+kanıtlanmış bulguyu düzeltmek için uygulanır; gate kapanış kanıtı veya yeni ürün
+davranışı izni değildir.
 
 <!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->
-| Task ID | Approval date | Purpose | Gate closure evidence | New feature behavior |
-| --- | --- | --- | --- | --- |
-| `V1-FND-011` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-012` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-IAM-004` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-SEC-003` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-001` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-002` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-004` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-005` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-006` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-IAM-005` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-013` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-014` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
-| `V1-FND-015` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| Task ID | Approval date | Source basis | Purpose | Gate closure evidence | New feature behavior |
+| --- | --- | --- | --- | --- | --- |
+| `V1-FND-016` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-017` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-018` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-019` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-020` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-021` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-022` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-006` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-007` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-008` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-009` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-010` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-011` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-012` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-013` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-SEC-004` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-SEC-005` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-CAT-003` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 <!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->
 
 `GATE-V1-ENTRY` sonrasında yalnız `V1-FND-001` başlatılır. Ardından sırasıyla
