@@ -18,13 +18,14 @@ yerine geçmesini fail-closed engellemek.
 
 ## Owned surface
 
-- `tools/evidence-envelope/evidence_envelope_tool.py`
-- `tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py`
-- `tools/plan-audit/plan_audit_tool.py`
-- `tests/Architecture/PlanAudit/test_plan_audit.py`
-- `docs/engineering/closure-evidence-envelope.md`
-- `plan/VALIDATION_CONTRACT.md`
 - `evidence/V0-GOV-057/**`
+
+CORR:C62, aşağıdaki exact yolların ileri custody'sini V0-GOV-059'a devreder:
+tools/evidence-envelope/evidence_envelope_tool.py,
+tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py,
+tools/plan-audit/plan_audit_tool.py, tests/Architecture/PlanAudit/test_plan_audit.py,
+docs/engineering/closure-evidence-envelope.md ve plan/VALIDATION_CONTRACT.md.
+Bu historical task closed kalır.
 
 ## In scope
 

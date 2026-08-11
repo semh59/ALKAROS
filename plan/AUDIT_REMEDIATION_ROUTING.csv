@@ -53,3 +53,4 @@ POST-CL-009,VERIFIED,HIGH,interrupted_remediation_closure,V0-GOV-055,4,"V0-GOV-0
 POST-CL-010,VERIFIED,HIGH,task_scope_parity_regression,V0-GOV-056,4,"V0-GOV-050;V0-GOV-054",exact C52/C53/C54/C57 source-basis and 42+10 routing/catalog parity,CORR:C59,gpt-5.6-terra,high,ROUTED_OPEN
 POST-CL-011,VERIFIED,HIGH,v3_admission_hardening,V0-GOV-057,4,V0-GOV-055,V1-FND-023 Done admission invokes the fixed task-specific v3 verifier regardless of V0 gate state,CORR:C60,gpt-5.6-terra,xhigh,ROUTED_OPEN
 POST-CL-012,VERIFIED,HIGH,dynamic_route_parity_structural_invariant,V0-GOV-058,4,"V0-GOV-056;V0-GOV-057",immutable 42-ID baseline plus live post-closure CSV/JSON/catalog parity with required C59/C60 routes,CORR:C61,gpt-5.6-terra,high,ROUTED_OPEN
+POST-CL-013,VERIFIED,HIGH,v3_reentry_parent_alignment,V0-GOV-059,4,V0-GOV-057,V1-FND-023 v3 reentry parent is the latest admission-hardening final,CORR:C62,gpt-5.6-terra,xhigh,ROUTED_OPEN

@@ -52,7 +52,7 @@ test çalışmayan solution test kapısını ortadan kaldırmak.
 - Result: Reentry commit `d1b037b3b6de4d86200a0119c4e4d18f2659fb34` `V0-GOV-057`
   finalinden geliyor; mevcut v3 verifier ise reentry parent olarak halen
   `V0-GOV-055` finali bekliyor.
-- Unlock: Bu task ancak yeni governance hardening gorevi v3 contract ve
+- Unlock: Bu task ancak `V0-GOV-059` v3 contract ve
   verifier'i guncel admission-hardening finaliyle hizaladiktan sonra yeni
   reentry/evidence/final closure zinciri uretebilir.
 
