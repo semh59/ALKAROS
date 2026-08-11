@@ -2116,6 +2116,9 @@ def application_tasks_started_before_v0_exit(
     tasks: dict[str, tuple[Path, list[str], dict[str, list[str]], list[str]]],
 ) -> list[str]:
     """Reject newly started application work while a V0 task remains blocked."""
+    c54_errors = c54_application_admission_errors(tasks)
+    fnd023 = tasks.get(_C54_APPLICATION_TASK_ID)
+    fnd023_done = fnd023 is not None and metadata_value(fnd023[1], "Status", "") == "Done"
     v0_gate_open = any(
         task_id.startswith("V0-")
         and task_id not in V0_DEFERRED_TASKS
@@ -2123,9 +2126,8 @@ def application_tasks_started_before_v0_exit(
         for task_id, (_, preamble, _, _) in tasks.items()
     )
     if not v0_gate_open:
-        return []
+        return c54_errors if fnd023_done else []
 
-    c54_errors = c54_application_admission_errors(tasks)
     c54_is_admitted = not c54_errors and not validate_remediation_admission_tuple()
     application_work_types = {"implementation", "integration"}
     return c54_errors + [
@@ -2156,7 +2158,7 @@ def v3_interrupted_closure_errors() -> list[str]:
     )
     if head.returncode != 0:
         return ["C54_APPLICATION_ADMISSION_V3_FINAL_MISSING"]
-    result = module.validate_final_commit(head.stdout.strip(), WORKSPACE)
+    result = module.validate_v1_fnd_023_v3_final_commit(head.stdout.strip(), WORKSPACE)
     if result["valid"]:
         return []
     return ["C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID"]

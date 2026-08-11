@@ -532,6 +532,11 @@ def validate_v3_interrupted_final_commit(final_commit: str, repository: Path) ->
     return {"valid": not errors, "errors": errors}
 
 
+def validate_v1_fnd_023_v3_final_commit(final_commit: str, repository: Path) -> dict[str, object]:
+    """Validate only the fixed V1-FND-023 interrupted-remediation final."""
+    return validate_v3_interrupted_final_commit(final_commit, repository)
+
+
 def validate_final_commit(final_commit: str, repository: Path) -> dict[str, object]:
     """Verify a v2 B -> E -> F closure chain ending at ``final_commit``."""
     errors: list[dict[str, str]] = []

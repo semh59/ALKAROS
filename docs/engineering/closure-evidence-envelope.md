@@ -72,7 +72,9 @@ kümesini taşır. F'nin son contiguous trailer bloğu `Task`, `Gate`,
 `Closure-Subject`, `Closure-Interruption`, `Closure-Reentry` ve
 `Closure-Evidence-Checkpoint` alanlarını full SHA ile bu sırada taşımalıdır.
 Wrong SHA, task, parent, diff, blob, evidence path veya trailer deterministic
-fail-closed sonuç üretir.
+fail-closed sonuç üretir. `V1-FND-023` `Done` admission'ı current `HEAD` için
+doğrudan task-specific v3 verifier'ı çağırır; generic geçerli bir v2 final veya
+V0 gate'in açık/kapalı olması v3 kontrolünün yerine geçmez.
 
 `--final-commit` zarfı ve her kayıtlı raw output'u yalnız `E:<path>` Git
 blobundan okur; çağrıldığı worktree bu bytes'ların kaynağı değildir. Aynı zarf

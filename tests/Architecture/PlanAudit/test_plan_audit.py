@@ -265,6 +265,23 @@ class TestC54ApplicationAdmission:
         assert result.returncode == 1
         assert "C54_APPLICATION_ADMISSION_V3_FINAL_MISSING" in result.stdout
 
+    def test_done_fnd023_requires_v3_when_the_v0_gate_is_closed(self, tmp_path: Path) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        path = _activate_fnd023(workspace)
+        _replace(path, "- Status: InProgress", "- Status: Done")
+        for task_path in (workspace / "plan" / "v0").rglob("*.md"):
+            text = task_path.read_text(encoding="utf-8")
+            task_path.write_text(
+                text.replace("- Status: Blocked", "- Status: Done"),
+                encoding="utf-8",
+                newline="\n",
+            )
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "C54_APPLICATION_ADMISSION_V3_FINAL_MISSING" in result.stdout
+
     def test_other_v1_application_is_not_admitted(self, tmp_path: Path) -> None:
         workspace = _copy_validation_workspace(tmp_path)
         path = _task_path(workspace, "V1-FND-022")

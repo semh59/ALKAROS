@@ -1,8 +1,8 @@
 # V0-GOV-057 - Harden V3 admission for the interrupted FND-023 closure
 
 - Task ID: V0-GOV-057
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: /root/implement_v0_gov_057
 - Work type: implementation
 - Surface state: Existing
 

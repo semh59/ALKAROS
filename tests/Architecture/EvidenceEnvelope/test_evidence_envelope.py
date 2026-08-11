@@ -4,6 +4,7 @@ import hashlib
 import importlib.util
 import json
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -167,7 +168,12 @@ def _write_closure_chain(
     return subject, evidence, final
 
 
-def _write_v3_interrupted_chain(repo: Path, tool_module, monkeypatch) -> tuple[str, str, str, str, str]:
+def _write_v3_interrupted_chain(
+    repo: Path,
+    tool_module,
+    monkeypatch,
+    mutate: Callable[[str, Path], None] | None = None,
+) -> tuple[str, str, str, str, str]:
     fnd_task_path = "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
     v055_task_path = "plan/v0/governance/V0-GOV-055.md"
     fnd_task = repo / fnd_task_path
@@ -211,13 +217,19 @@ def _write_v3_interrupted_chain(repo: Path, tool_module, monkeypatch) -> tuple[s
         .replace("Assignee: Unassigned (exactly one person)", "Assignee: /root/implement_v1_fnd_023"),
         encoding="utf-8",
     )
+    if mutate is not None:
+        mutate("b0", repo)
     b0 = _commit(repo, "B0")
+    if mutate is not None:
+        mutate("before_interruption", repo)
     fnd_task.write_text(
         fnd_task.read_text(encoding="utf-8")
         .replace("Status: InProgress", "Status: Blocked")
         .replace("\n## Deliverables\n", f"\n{tool_module._V3_INTERRUPTION_BLOCKER}\n## Deliverables\n"),
         encoding="utf-8",
     )
+    if mutate is not None:
+        mutate("interruption", repo)
     interruption = _commit(repo, "interruption")
 
     for path in v055_owned_paths:
@@ -251,6 +263,8 @@ def _write_v3_interrupted_chain(repo: Path, tool_module, monkeypatch) -> tuple[s
     reentry_text = tool_module._task_without_blocker(fnd_task.read_text(encoding="utf-8"))
     assert reentry_text is not None
     fnd_task.write_text(reentry_text.replace("Status: Blocked", "Status: InProgress"), encoding="utf-8")
+    if mutate is not None:
+        mutate("reentry", repo)
     reentry = _commit(repo, "reentry")
     raw = repo / "evidence/V1-FND-023/raw/acceptance.txt"
     raw.parent.mkdir(parents=True)
@@ -265,8 +279,12 @@ def _write_v3_interrupted_chain(repo: Path, tool_module, monkeypatch) -> tuple[s
     }
     envelope["integrity"] = {"payload_sha256": tool_module.canonical_payload_hash(envelope)}
     (repo / "evidence/V1-FND-023/closure-evidence-envelope.json").write_text(json.dumps(envelope), encoding="utf-8")
+    if mutate is not None:
+        mutate("evidence", repo)
     evidence = _commit(repo, "V1 evidence")
     fnd_task.write_text(fnd_task.read_text(encoding="utf-8").replace("Status: InProgress", "Status: Done"), encoding="utf-8")
+    if mutate is not None:
+        mutate("final", repo)
     final = _commit(repo, f"V1 final\n\nTask: V1-FND-023\nGate: GATE-V0-EXIT\nClosure-Subject: {b0}\nClosure-Interruption: {interruption}\nClosure-Reentry: {reentry}\nClosure-Evidence-Checkpoint: {evidence}")
 
     monkeypatch.setattr(tool_module, "_V3_B0_PARENT", b0_parent)
@@ -297,6 +315,16 @@ def test_v3_interrupted_fnd023_closure_is_accepted(repository, tool_module, monk
     assert tool_module.validate_final_commit(final, repo) == {"valid": True, "errors": []}
 
 
+def test_v3_task_specific_api_rejects_a_valid_generic_v2_final(repository, tool_module):
+    repo, _ = repository
+    _, _, final = _write_closure_chain(repo, tool_module)
+
+    assert tool_module.validate_final_commit(final, repo) == {"valid": True, "errors": []}
+    assert "V3_INVALID_TOPOLOGY" in _error_codes(
+        tool_module.validate_v1_fnd_023_v3_final_commit(final, repo)
+    )
+
+
 def test_v3_interrupted_fnd023_rejects_worktree_evidence_substitution(repository, tool_module, monkeypatch):
     repo, _ = repository
     _, _, _, _, final = _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
@@ -312,6 +340,157 @@ def test_v3_interrupted_fnd023_rejects_extra_final_trailer(repository, tool_modu
     amended = _git(repo, "rev-parse", "HEAD")
 
     assert "V3_INVALID_FINAL_TRAILERS" in _error_codes(tool_module.validate_final_commit(amended, repo))
+
+
+def test_v3_interrupted_fnd023_rejects_wrong_b0_source_hash(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+    monkeypatch.setattr(tool_module, "_V3_SOURCE_ARTIFACTS", {"Directory.Build.targets": "0" * 64})
+
+    assert "V3_B0_BLOB_MISMATCH" in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(_git(repo, "rev-parse", "HEAD"), repo)
+    )
+
+
+def test_v3_interrupted_fnd023_rejects_non_direct_interruption(repository, tool_module, monkeypatch):
+    repo, _ = repository
+
+    def mutate(stage: str, fixture: Path) -> None:
+        if stage == "before_interruption":
+            (fixture / "interloper.txt").write_text("break adjacency\n", encoding="utf-8")
+            _commit(fixture, "interloper")
+
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch, mutate)
+
+    assert "V3_INVALID_INTERRUPTION" in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(_git(repo, "rev-parse", "HEAD"), repo)
+    )
+
+
+def test_v3_interrupted_fnd023_rejects_changed_blocker_text(repository, tool_module, monkeypatch):
+    repo, _ = repository
+
+    def mutate(stage: str, fixture: Path) -> None:
+        if stage == "interruption":
+            task = fixture / "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
+            task.write_text(
+                task.read_text(encoding="utf-8").replace("V0-GOV-054", "V0-GOV-999"),
+                encoding="utf-8",
+            )
+
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch, mutate)
+
+    assert "V3_INVALID_INTERRUPTION_DIFF" in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(_git(repo, "rev-parse", "HEAD"), repo)
+    )
+
+
+@pytest.mark.parametrize(
+    ("stage", "path", "expected"),
+    [
+        ("reentry", "reentry-extra.txt", "V3_INVALID_REENTRY_DIFF"),
+        ("evidence", "evidence-extra.txt", "V3_EVIDENCE_NOT_CHECKPOINT_ONLY"),
+        ("final", "final-extra.txt", "V3_FINAL_NOT_METADATA_ONLY"),
+    ],
+    ids=["a-path", "e-path", "f-path"],
+)
+def test_v3_interrupted_fnd023_rejects_extra_changed_path(
+    repository, tool_module, monkeypatch, stage, path, expected
+):
+    repo, _ = repository
+
+    def mutate(current_stage: str, fixture: Path) -> None:
+        if current_stage == stage:
+            (fixture / path).write_text("out of contract\n", encoding="utf-8")
+
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch, mutate)
+
+    assert expected in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(_git(repo, "rev-parse", "HEAD"), repo)
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected"),
+    [
+        (
+            lambda repo: (repo / "evidence/V1-FND-023/raw/acceptance.txt").unlink(),
+            "V3_EVIDENCE_RAW_NOT_CHECKPOINTED",
+        ),
+        (
+            lambda repo: (repo / "evidence/V1-FND-023/closure-evidence-envelope.json").unlink(),
+            "V3_INVALID_CLOSURE_ENVELOPE",
+        ),
+    ],
+    ids=["missing-raw", "missing-envelope"],
+)
+def test_v3_interrupted_fnd023_rejects_missing_checkpoint_artifact(
+    repository, tool_module, monkeypatch, mutation, expected
+):
+    repo, _ = repository
+
+    def mutate(stage: str, fixture: Path) -> None:
+        if stage == "evidence":
+            mutation(fixture)
+
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch, mutate)
+
+    assert expected in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(_git(repo, "rev-parse", "HEAD"), repo)
+    )
+
+
+def test_v3_interrupted_fnd023_rejects_tampered_checkpoint_hash(repository, tool_module, monkeypatch):
+    repo, _ = repository
+
+    def mutate(stage: str, fixture: Path) -> None:
+        if stage == "evidence":
+            envelope = fixture / "evidence/V1-FND-023/closure-evidence-envelope.json"
+            payload = json.loads(envelope.read_text(encoding="utf-8"))
+            payload["commands"][0]["raw_output"]["sha256"] = "0" * 64
+            envelope.write_text(json.dumps(payload), encoding="utf-8")
+
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch, mutate)
+
+    assert "INTEGRITY_HASH_MISMATCH" in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(_git(repo, "rev-parse", "HEAD"), repo)
+    )
+
+
+@pytest.mark.parametrize(
+    ("message_transform", "expected"),
+    [
+        (lambda lines: lines[:-1], "V3_INVALID_FINAL_TRAILERS"),
+        (lambda lines: [lines[1], lines[0], *lines[2:]], "V3_INVALID_FINAL_TRAILERS"),
+    ],
+    ids=["missing-trailer", "misordered-trailer"],
+)
+def test_v3_interrupted_fnd023_rejects_missing_or_misordered_trailer(
+    repository, tool_module, monkeypatch, message_transform, expected
+):
+    repo, _ = repository
+    _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+    message = _git(repo, "show", "-s", "--format=%B", "HEAD").splitlines()
+    _git(repo, "commit", "--amend", "-q", "-m", "\n".join(message_transform(message)))
+
+    assert expected in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(_git(repo, "rev-parse", "HEAD"), repo)
+    )
+
+
+def test_v3_interrupted_fnd023_rejects_other_task_and_non_final_head(repository, tool_module, monkeypatch):
+    repo, _ = repository
+    _, _, _, evidence, final = _write_v3_interrupted_chain(repo, tool_module, monkeypatch)
+    message = _git(repo, "show", "-s", "--format=%B", final).replace("Task: V1-FND-023", "Task: V1-FND-022")
+    _git(repo, "commit", "--amend", "-q", "-m", message)
+    wrong_task = _git(repo, "rev-parse", "HEAD")
+
+    assert "V3_INVALID_FINAL_TRAILERS" in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(wrong_task, repo)
+    )
+    assert "V3_REENTRY_PARENT_NOT_V055_FINAL" in _error_codes(
+        tool_module.validate_v3_interrupted_final_commit(evidence, repo)
+    )
 
 
 def test_final_commit_rejects_worktree_evidence_substitution(repository, tool_module):
