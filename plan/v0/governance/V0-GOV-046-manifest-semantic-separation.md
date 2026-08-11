@@ -1,8 +1,8 @@
 # V0-GOV-046 - Separate byte integrity from governance semantics
 
 - Task ID: V0-GOV-046
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: /root/implement_v0_gov_046
 - Work type: implementation
 - Surface state: Existing
 

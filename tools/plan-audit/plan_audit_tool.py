@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 from collections import defaultdict
 import hashlib
 import json
@@ -716,6 +717,191 @@ def sha256(path: Path) -> str:
 
 def read_utf8(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+_REMEDIATION_ADMISSION_TABLE_HEADER = (
+    "| Task ID | Approval date | Source basis | Purpose | Gate closure evidence | "
+    "New feature behavior |"
+)
+_REMEDIATION_ADMISSION_TABLE_SEPARATOR = "| --- | --- | --- | --- | --- | --- |"
+_REMEDIATION_ADMISSION_TABLE_ROW = re.compile(
+    r"^\| `(?P<task_id>V\d+-[A-Z]+-\d+)` \| `(?P<approval_date>\d{4}-\d{2}-\d{2})` \| "
+    r"`(?P<source_basis>CORR:C\d+(?:;CORR:C\d+)*)` \| Verified finding remediation only \| "
+    r"Not gate closure evidence \| No new feature behavior \|$"
+)
+_REMEDIATION_ADMISSION_RECORDS = (
+    ("V1-FND-016", "2026-08-10", "CORR:C52"),
+    ("V1-FND-017", "2026-08-10", "CORR:C52"),
+    ("V1-FND-018", "2026-08-10", "CORR:C52"),
+    ("V1-FND-019", "2026-08-10", "CORR:C52"),
+    ("V1-FND-020", "2026-08-10", "CORR:C52"),
+    ("V1-FND-021", "2026-08-10", "CORR:C52"),
+    ("V1-FND-022", "2026-08-10", "CORR:C52"),
+    ("V1-FND-023", "2026-08-11", "CORR:C52;CORR:C53;CORR:C54"),
+    ("V1-IAM-006", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-007", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-008", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-009", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-010", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-011", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-012", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-013", "2026-08-10", "CORR:C52"),
+    ("V1-SEC-004", "2026-08-10", "CORR:C52"),
+    ("V1-SEC-005", "2026-08-10", "CORR:C52"),
+    ("V1-CAT-003", "2026-08-10", "CORR:C52"),
+)
+
+
+def parse_remediation_admission_table(
+    text: str,
+    start_marker: str,
+    end_marker: str,
+    label: str,
+) -> tuple[list[tuple[str, str, str]], list[str]]:
+    """Parse one strict admission table without granting malformed rows authority."""
+    errors: list[str] = []
+    lines = text.splitlines()
+    starts = [index for index, line in enumerate(lines) if line == start_marker]
+    ends = [index for index, line in enumerate(lines) if line == end_marker]
+    prefix = f"SEMANTIC_REMEDIATION_ADMISSION_{label}"
+    if len(starts) != 1 or len(ends) != 1:
+        return [], [f"{prefix}_MARKER"]
+    start, end = starts[0], ends[0]
+    if start >= end:
+        return [], [f"{prefix}_MARKER_ORDER"]
+    table_lines = lines[start + 1 : end]
+    if len(table_lines) < 2 or table_lines[0] != _REMEDIATION_ADMISSION_TABLE_HEADER:
+        errors.append(f"{prefix}_HEADER")
+    if len(table_lines) < 2 or table_lines[1] != _REMEDIATION_ADMISSION_TABLE_SEPARATOR:
+        errors.append(f"{prefix}_SEPARATOR")
+
+    records: list[tuple[str, str, str]] = []
+    for line in table_lines[2:]:
+        match = _REMEDIATION_ADMISSION_TABLE_ROW.fullmatch(line)
+        if match is None:
+            errors.append(f"{prefix}_ROW")
+            continue
+        records.append(
+            (
+                match.group("task_id"),
+                match.group("approval_date"),
+                match.group("source_basis"),
+            )
+        )
+    return records, errors
+
+
+def admission_record_errors(
+    label: str,
+    actual: list[tuple[str, str, str]],
+    expected: tuple[tuple[str, str, str], ...],
+) -> list[str]:
+    """Return stable, specific errors for divergence from one admission tuple."""
+    prefix = f"SEMANTIC_REMEDIATION_ADMISSION_{label}"
+    errors: list[str] = []
+    actual_ids = [record[0] for record in actual]
+    expected_ids = [record[0] for record in expected]
+    if len(actual) != len(expected):
+        errors.append(f"{prefix}_COUNT expected={len(expected)} actual={len(actual)}")
+    duplicates = sorted({task_id for task_id in actual_ids if actual_ids.count(task_id) > 1})
+    if duplicates:
+        errors.append(f"{prefix}_DUPLICATE {','.join(duplicates)}")
+    missing = sorted(set(expected_ids) - set(actual_ids))
+    if missing:
+        errors.append(f"{prefix}_MISSING {','.join(missing)}")
+    extra = sorted(set(actual_ids) - set(expected_ids))
+    if extra:
+        errors.append(f"{prefix}_EXTRA {','.join(extra)}")
+    if not missing and not extra and not duplicates and actual_ids != expected_ids:
+        errors.append(f"{prefix}_ORDER")
+
+    actual_by_id = {task_id: (approval_date, source_basis) for task_id, approval_date, source_basis in actual}
+    for task_id, expected_date, expected_source in expected:
+        record = actual_by_id.get(task_id)
+        if record is None:
+            continue
+        actual_date, actual_source = record
+        if actual_date != expected_date:
+            errors.append(
+                f"{prefix}_DATE {task_id} expected={expected_date} actual={actual_date}"
+            )
+        if actual_source != expected_source:
+            errors.append(
+                f"{prefix}_SOURCE {task_id} expected={expected_source} actual={actual_source}"
+            )
+    return errors
+
+
+def parse_task_scope_admission_records(path: Path) -> tuple[list[tuple[str, str, str]], list[str]]:
+    """Read the task-scope literal records while preserving source declaration order."""
+    prefix = "SEMANTIC_REMEDIATION_ADMISSION_TASK_SCOPE"
+    tree = ast.parse(read_utf8(path), filename=str(path))
+    assignment = next(
+        (
+            node
+            for node in tree.body
+            if isinstance(node, ast.Assign)
+            and any(
+                isinstance(target, ast.Name)
+                and target.id == "_C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS"
+                for target in node.targets
+            )
+        ),
+        None,
+    )
+    if assignment is None or not isinstance(assignment.value, ast.Dict):
+        return [], [f"{prefix}_DECLARATION"]
+
+    records: list[tuple[str, str, str]] = []
+    for key, value in zip(assignment.value.keys, assignment.value.values, strict=True):
+        if key is None:
+            return [], [f"{prefix}_ROW"]
+        parsed_key = ast.literal_eval(key)
+        parsed_value = ast.literal_eval(value)
+        if (
+            not isinstance(parsed_key, str)
+            or not isinstance(parsed_value, tuple)
+            or len(parsed_value) != 2
+            or not all(isinstance(item, str) for item in parsed_value)
+        ):
+            return [], [f"{prefix}_ROW"]
+        records.append((parsed_key, parsed_value[0], parsed_value[1]))
+    return records, []
+
+
+def validate_remediation_admission_tuple() -> list[str]:
+    """Require contract, gate table and canonical task-scope records to agree."""
+    errors: list[str] = []
+    gates_records, gates_errors = parse_remediation_admission_table(
+        read_utf8(PLAN_DIR / "GATES.md"),
+        "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->",
+        "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->",
+        "GATES",
+    )
+    errors.extend(gates_errors)
+    errors.extend(admission_record_errors("GATES", gates_records, _REMEDIATION_ADMISSION_RECORDS))
+
+    contract_records, contract_errors = parse_remediation_admission_table(
+        read_utf8(PLAN_DIR / "VALIDATION_CONTRACT.md"),
+        "<!-- PLAN_AUDIT_REMEDIATION_ADMISSION:START -->",
+        "<!-- PLAN_AUDIT_REMEDIATION_ADMISSION:END -->",
+        "CONTRACT",
+    )
+    errors.extend(contract_errors)
+    errors.extend(
+        admission_record_errors("CONTRACT", contract_records, _REMEDIATION_ADMISSION_RECORDS)
+    )
+
+    tool_records, tool_errors = parse_task_scope_admission_records(
+        WORKSPACE / "tools" / "task-scope" / "task_scope_tool.py"
+    )
+    errors.extend(tool_errors)
+    errors.extend(
+        admission_record_errors(
+            "TASK_SCOPE", tool_records, tuple(sorted(_REMEDIATION_ADMISSION_RECORDS))
+        )
+    )
+    return errors
 
 
 def relative_workspace_path(value: str) -> str | None:
@@ -1957,6 +2143,7 @@ def validate_plan() -> None:
         )
     )
     gate_text = read_utf8(PLAN_DIR / "GATES.md")
+    errors.extend(validate_remediation_admission_tuple())
     registered_gates = set(GATE_ID.findall(gate_text))
     deferred_block = gate_text.split("<!-- V0_DEFERRED_TASKS:START -->", 1)
     if len(deferred_block) != 2 or "<!-- V0_DEFERRED_TASKS:END -->" not in deferred_block[1]:

@@ -70,13 +70,42 @@ npx --yes markdownlint-cli2@0.23.2
   rewrite + force-push) da aynı istisna kapsamında zincirden önce
   başlatılabilir; karar kaydı `TRACEABILITY.md` FIND-IA-0050'dir ve zincir
   kuralı diğer application görevleri için değişmez.
-- `GATES.md` içindeki `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu yalnız
-  `CORR:C52` kaynaklı 2026-08-10 onaylı exact 18 yeni remediation kimliğini
-  makinece doğrular. Mevcut `Done` görevler kabul kümesine giremez veya yeniden
-  açılamaz. Kayıtlı candidate-code remediation kimliği
+- `GATES.md` içindeki `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu, 2026-08-10
+  tarihli `CORR:C52` kaynaklı 18 kayıt ile yalnız `V1-FND-023` için 2026-08-11
+  tarihli `CORR:C52;CORR:C53;CORR:C54` kaydından oluşan exact 19-ID admission
+  tuple'ını makinece doğrular. Mevcut `Done` görevler kabul kümesine giremez veya
+  yeniden açılamaz. Kayıtlı candidate-code remediation kimliği
   `--candidate-remediation` ile yalnız mevcut kanıtlanmış kusuru düzeltebilir;
   açık dependency veya gate kabul kanıtı sayılmaz. Historical PDF current
   remediation authority değildir.
+- `validate`, aşağıdaki contract tablosunu, `GATES.md` tablosunu ve task-scope
+  canonical record'larını exact source/date/ID değerleriyle doğrular. Count,
+  duplicate, order, extra, missing, source veya date divergence deterministic
+  `SEMANTIC_REMEDIATION_ADMISSION_*` hatasıyla non-zero exit verir.
+
+<!-- PLAN_AUDIT_REMEDIATION_ADMISSION:START -->
+| Task ID | Approval date | Source basis | Purpose | Gate closure evidence | New feature behavior |
+| --- | --- | --- | --- | --- | --- |
+| `V1-FND-016` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-017` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-018` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-019` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-020` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-021` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-022` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-023` | `2026-08-11` | `CORR:C52;CORR:C53;CORR:C54` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-006` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-007` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-008` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-009` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-010` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-011` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-012` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-013` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-SEC-004` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-SEC-005` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-CAT-003` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+<!-- PLAN_AUDIT_REMEDIATION_ADMISSION:END -->
 - `GATES.md` içindeki `V0_DEFERRED_TASKS` marker tablosu 2026-08-03 kullanıcı
   onaylı devir listesini makinece doğrular (`TRACEABILITY.md` C40). Listede
   olmayan V0 görevi `Blocked` ise `APPLICATION_STARTED_BEFORE_V0_EXIT` hatası
