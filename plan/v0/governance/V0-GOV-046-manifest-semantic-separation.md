@@ -9,6 +9,7 @@
 ## Source basis
 
 - CORR:C52
+- CORR:C55
 
 ## Goal
 
@@ -37,7 +38,7 @@ Plan audit manifest byte/hash doğrulaması ile task/gate/evidence semantic kont
 ## Dependencies
 
 - V0-GOV-035
-- V0-GOV-049
+- V0-GOV-052
 
 ## Deliverables
 

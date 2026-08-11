@@ -20,11 +20,9 @@ aynı kusurların tekrarını önlemek.
 
 ## Owned surface
 
-- `tools/evidence-envelope/evidence_envelope_tool.py`
-- `tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py`
-- `docs/engineering/closure-evidence-envelope.md`
-- `plan/VALIDATION_CONTRACT.md`
 - `evidence/V0-GOV-049/**`
+- Forward closure-evidence tool/test/doc/contract custody was transferred to
+  `V0-GOV-052` by `CORR:C55`; this historical task remains closed.
 
 ## In scope
 

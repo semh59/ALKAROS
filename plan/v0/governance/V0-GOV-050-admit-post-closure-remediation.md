@@ -11,6 +11,7 @@
 - CORR:C52
 - CORR:C53
 - CORR:C54
+- CORR:C55
 
 ## Goal
 
@@ -49,6 +50,7 @@ fail-closed reddetmek.
 - V0-GOV-035
 - V0-GOV-037
 - V0-GOV-049
+- V0-GOV-052
 
 ## Deliverables
 
