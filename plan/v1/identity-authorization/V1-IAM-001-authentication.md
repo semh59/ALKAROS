@@ -18,14 +18,10 @@ Password verification, active-user check, login/logout ve secure session issuanc
 
 ## Owned surface
 
-- `src/Modules/Identity/Authentication/LoginResult.cs`
-- `src/Modules/Identity/Authentication/SessionTokenIssuer.cs`
 - `src/Modules/Identity/Authentication/StoredUser.cs`
-- `tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj`
-- `tests/Modules/Identity/Authentication/PasswordHasherTests.cs`
-- `tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs`
 - `database/migrations/V1/V1-IAM-001/**`
 - PasswordHasher.cs sahipliği V1-IAM-005'e devredilmiştir (C42); bu görev artık bu path'i yazamaz.
+- C52 password-bound and login-session lifecycle surfaces are transferred to V1-IAM-009 and V1-IAM-011; this historical task remains closed.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

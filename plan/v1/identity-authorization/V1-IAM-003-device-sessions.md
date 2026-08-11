@@ -17,8 +17,16 @@ Cashier ve waiter client'ları için device-bound session creation, expiry ve re
 
 ## Owned surface
 
-- `src/Modules/Identity/DeviceSessions/**`, `tests/Modules/Identity/DeviceSessions/**`,
-  `database/migrations/V1/V1-IAM-003/**`
+- `src/Modules/Identity/DeviceSessions/DeviceSession.cs`
+- `src/Modules/Identity/DeviceSessions/DeviceSessionExceptions.cs`
+- `src/Modules/Identity/DeviceSessions/DeviceSessionToken.cs`
+- `src/Modules/Identity/DeviceSessions/IDeviceSessionRepository.cs`
+- `src/Modules/Identity/DeviceSessions/IDeviceSessionService.cs`
+- `src/Modules/Identity/DeviceSessions/PostgresDeviceSessionRepository.cs`
+- `tests/Modules/Identity/DeviceSessions/DeviceSessionTokenTests.cs`
+- `tests/Modules/Identity/DeviceSessions/Fixtures/DeviceSessionsTestDatabase.cs`
+- `database/migrations/V1/V1-IAM-003/**`
+- C52 shared DeviceSessionService source/test surface is transferred to V1-IAM-006; this historical task remains closed.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

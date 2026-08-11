@@ -32,8 +32,8 @@ known-invalid ve unknown-user login yollarının aynı deterministic KDF work fa
 ## Dependencies
 
 - V0-GOV-035
-- V1-IAM-004
-- V1-IAM-005
+- V1-IAM-009
+- V1-IAM-011
 
 ## Deliverables
 

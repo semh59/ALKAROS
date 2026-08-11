@@ -37,7 +37,7 @@
 
 - V0-GOV-035
 - V0-DAT-007
-- V1-CAT-003
+- V1-FND-012
 
 ## Deliverables
 
@@ -56,4 +56,4 @@
 
 ## Handoff
 
-- V1-FND-012
+- V1-FND-022

@@ -32,8 +32,8 @@ sentinel bearer token'ın object formatting, exception, assertion ve transcript 
 ## Dependencies
 
 - V0-GOV-035
-- V1-IAM-001
 - V1-IAM-011
+- V1-SEC-004
 
 ## Deliverables
 

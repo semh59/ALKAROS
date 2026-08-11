@@ -3,7 +3,7 @@
 - Task ID: V1-FND-019
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: integration
 - Surface state: Existing
 
 ## Source basis
@@ -16,36 +16,41 @@ inbox/outbox stale lease worker'ının acknowledgement, retry veya terminal succ
 
 ## Owned surface
 
+- `src/BuildingBlocks/Messaging/InboxStore.cs`
+- `src/BuildingBlocks/Messaging/InboxMessage.cs`
+- `src/BuildingBlocks/Messaging/RetryPolicy.cs`
+- `tests/BuildingBlocks/Idempotency/InboxStoreTests.cs`
+- `tests/BuildingBlocks/Idempotency/InboxRedeliveryContractTests.cs`
+- `tests/BuildingBlocks/Idempotency/RetryPolicyTests.cs`
 - `evidence/V1-FND-019/**`
 
 ## In scope
 
-- `CODE-004;CODE-005` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-004;CODE-005;CODE-018` için lease-token fencing, affected-row enforcement ve sanitized persisted error finalization'ını tek messaging integration diff'inde uygulamak.
+- Stale-worker, zero-row retry ve secret-bearing handler failure interleavinglerini task-owned testlerle doğrulamak.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki Idempotency contract, migration, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
 - V0-GOV-035
 - V1-FND-002
 - V1-FND-012
+- V1-FND-018
 - V1-FND-014
 - V1-FND-015
 
 ## Deliverables
 
-- `evidence/V1-FND-019/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Tek message-finalization integration diff'i, concurrency/security regression tests ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-FND-019/**` ve task metadata'sıdır.
+- Stale lease owner acknowledgement/retry/terminal write yapamaz; affected-row count `1` değilse success sayılmaz.
+- Persisted handler error bounded/allowlisted olur ve raw secret/PII taşımaz.
+- Focused tests ve `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir.
 
 ## Handoff
 

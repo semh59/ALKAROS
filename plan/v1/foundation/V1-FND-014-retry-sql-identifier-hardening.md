@@ -19,10 +19,9 @@ kimliklerine kapatmak.
 
 ## Owned surface
 
-- `src/BuildingBlocks/Messaging/RetryPolicy.cs` (V0-GOV-014'ten devredilmiştir, C42)
-- `tests/BuildingBlocks/Idempotency/RetryPolicyTests.cs` (V0-GOV-014'ten devredilmiştir, C42)
 - `tests/BuildingBlocks/Idempotency/RetrySqlIdentifierTests.cs`
 - `evidence/V1-FND-014/**`
+- C52 fenced message-finalization surface is transferred to V1-FND-019; this historical task remains closed.
 
 ## In scope
 

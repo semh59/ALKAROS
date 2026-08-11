@@ -19,11 +19,10 @@ gibi gostermemek.
 
 ## Owned surface
 
-- `database/MigrationComposition/order.json`
-- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `plan/v1/foundation/V1-FND-002-idempotency-infrastructure.md`
 - `plan/v1/foundation/V1-FND-004-host-migration-composition.md`
 - `evidence/V1-FND-012/**`
+- C52 shared MigrationComposition integration surface is transferred to V1-FND-022; this historical task remains closed.
 
 ## In scope
 

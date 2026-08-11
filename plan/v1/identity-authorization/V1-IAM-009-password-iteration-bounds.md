@@ -3,7 +3,7 @@
 - Task ID: V1-IAM-009
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: implementation
 - Surface state: Existing
 
 ## Source basis
@@ -16,18 +16,17 @@ supported PBKDF2 iteration minimum/maximum sınırlarının round-trip geçtiği
 
 ## Owned surface
 
+- `src/Modules/Identity/Authentication/PasswordHasher.cs`
+- `tests/Modules/Identity/Authentication/PasswordHasherTests.cs`
 - `evidence/V1-IAM-009/**`
 
 ## In scope
 
-- `CODE-011` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-011` için password iteration constructor/verify bounds'ını aynı invariant altında uygulamak ve boundary round-trip testlerini eklemek.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki authentication, migration, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
@@ -37,13 +36,12 @@ supported PBKDF2 iteration minimum/maximum sınırlarının round-trip geçtiği
 
 ## Deliverables
 
-- `evidence/V1-IAM-009/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Password bound implementation diff'i, exact boundary tests ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-IAM-009/**` ve task metadata'sıdır.
+- Minimum/default/maximum round-trip geçer; maximum üstü constructor fail-closed reddedilir.
+- Focused tests ve plan validator exit code `0` verir.
 
 ## Handoff
 

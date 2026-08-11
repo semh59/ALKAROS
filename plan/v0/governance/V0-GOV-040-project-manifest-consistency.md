@@ -23,13 +23,12 @@
 ## In scope
 
 - Final Tables import sonrasında solution/disk/project manifest exact setlerini read-only karşılaştırmak.
-- ProjectReference, central package version ve bütün tracked lockfile graph'ını karşılaştırmak.
 - Locked restore ve Release build'i manifest candidate SHA'sıyla kanıtlamak.
 
 ## Out of scope
 
-- Solution, csproj, package lock veya ürün source dosyası değiştirmek.
 - Eksik projeyi manifestten gizlemek ya da restore'u unlocked çalıştırarak lock drift'i kabul etmek.
+- Solution, csproj, package lock veya ürün source dosyası değiştirmek; bu reserved surface V1-FND-001'de kalır.
 
 ## Dependencies
 

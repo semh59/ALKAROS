@@ -42,7 +42,7 @@ History'yi koruyarak open operational Order/Bill ilişkisini Table'lar arasında
 
 ## Deliverables
 
-- `src/Modules/TableManagement/TableTransfer/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Tables/TableTransfer/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Owned surface içinde otomatik başarı, ret ve edge-case testleri.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

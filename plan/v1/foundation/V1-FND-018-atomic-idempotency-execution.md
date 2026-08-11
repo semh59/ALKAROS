@@ -3,7 +3,7 @@
 - Task ID: V1-FND-018
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: implementation
 - Surface state: Existing
 
 ## Source basis
@@ -16,18 +16,18 @@ aynı idempotency key için protected mutation ve terminal outcome davranışın
 
 ## Owned surface
 
+- `src/BuildingBlocks/Idempotency/IdempotencyKeyStore.cs`
+- `tests/BuildingBlocks/Idempotency/IdempotencyKeyStoreTests.cs`
 - `evidence/V1-FND-018/**`
 
 ## In scope
 
-- `CODE-003` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-003` için idempotency claim/in-progress/completed state machine'ini protected mutation transaction sınırına bağlamak.
+- Concurrent claim ve crash-replay yollarını task-owned testlerle doğrulamak.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki messaging, migration, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
@@ -37,13 +37,12 @@ aynı idempotency key için protected mutation ve terminal outcome davranışın
 
 ## Deliverables
 
-- `evidence/V1-FND-018/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Atomic execution implementation diff'i, concurrency/crash-replay tests ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-FND-018/**` ve task metadata'sıdır.
+- Aynı idempotency key protected mutation'ı en fazla bir kez uygular; replay terminal outcome'ı döndürür.
+- Focused tests ve `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir.
 
 ## Handoff
 

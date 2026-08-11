@@ -3,7 +3,7 @@
 - Task ID: V1-FND-017
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: integration
 - Surface state: Existing
 
 ## Source basis
@@ -16,35 +16,38 @@ Host'un tek doğrulanmış `NpgsqlDataSource` ile constructable olduğunu, modü
 
 ## Owned surface
 
+- `src/Host/Composition/HostComposition.cs`
+- `src/Host/Composition/Modules/ModuleRegistry.cs`
+- `tests/Host/MigrationComposition/Composition/HostConstructabilityTests.cs`
+- `tests/Host/MigrationComposition/Composition/HostServiceRegistrationTests.cs`
+- `tests/Host/MigrationComposition/Registry/ModuleRegistryTests.cs`
+- `tests/Host/MigrationComposition/Composition/HostModuleReachabilityTests.cs`
 - `evidence/V1-FND-017/**`
 
 ## In scope
 
-- `CODE-002` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-001;CODE-002` için explicit executable module catalog ve tek validated `NpgsqlDataSource` composition akışını uygulamak.
+- Module discovery, data-source disposal ve missing-module startup failure'ını aynı Host integration test setiyle doğrulamak.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki Host, migration, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
 - V0-GOV-035
-- V1-FND-001
 - V1-FND-013
 - V1-SEC-003
 
 ## Deliverables
 
-- `evidence/V1-FND-017/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Tek Host integration diff'i, focused runtime tests ve `evidence/V1-FND-017/**` altında raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-FND-017/**` ve task metadata'sıdır.
+- Default discovery implemented modules'ın exact setini yükler; beklenen module eksikse startup fail-closed olur.
+- NpgsqlDataSource module registration'dan önce validate edilir ve provider dispose edilir.
+- İlgili Host testleri ve `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir.
 
 ## Handoff
 

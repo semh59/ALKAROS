@@ -19,18 +19,14 @@ Executable host'u ve module migration'larını doğrulanmış global sırayla ç
 
 ## Owned surface
 
-- `src/Host/Composition/Modules/**`
 - `src/Host/Composition/Migrations/MigrationCompositionValidator.cs`,
   `src/Host/Composition/Migrations/MigrationDiscoverer.cs`
 - `src/Host/Composition/Migrations/MigrationFile.cs`
 - `src/Host/Composition/Migrations/MigrationManifest.cs`,
   `src/Host/Composition/Migrations/MigrationManifestException.cs`
-- `tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj`
-- `tests/Host/MigrationComposition/packages.lock.json`
 - `tests/Host/MigrationComposition/Discovery/MigrationDiscovererTests.cs`
 - `tests/Host/MigrationComposition/Fixtures/TestDatabase.cs`
 - `tests/Host/MigrationComposition/Fixtures/TestMigrationSet.cs`
-- `tests/Host/MigrationComposition/Registry/ModuleRegistryTests.cs`
 - `tests/Host/MigrationComposition/Validation/MigrationCompositionValidatorTests.cs`
 - V0-GOV-015 tarafindan remediated host composition, executor ve psql runner
   dosyalari bu task'in yuzeyinden devredilmistir; V0-GOV-015 bu task'a
@@ -39,6 +35,7 @@ Executable host'u ve module migration'larını doğrulanmış global sırayla ç
   klasöründeki order.json sahipliği V1-FND-002'ye devredildi; database/MigrationComposition klasörü bu yüzeyden
   çıkarıldı.
 - Bu görev module-specific schema veya başka bir task'ın migration dosyasını değiştiremez.
+- C52 module reachability source and test surface is transferred to V1-FND-017; this historical task remains closed.
 
 ## In scope
 

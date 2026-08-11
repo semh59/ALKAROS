@@ -32,8 +32,7 @@ handler exception'ındaki sentinel secret/PII'nin PostgreSQL row, log ve transcr
 ## Dependencies
 
 - V0-GOV-035
-- V1-FND-002
-- V1-FND-014
+- V1-FND-019
 - V1-SEC-005
 
 ## Deliverables

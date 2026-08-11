@@ -44,7 +44,7 @@ Source Table veya Order silmeden multi-table merge membership ve explicit undo m
 
 ## Deliverables
 
-- `src/Modules/TableManagement/TableMerge/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Tables/TableMerge/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Owned surface içinde otomatik başarı, ret ve edge-case testleri.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

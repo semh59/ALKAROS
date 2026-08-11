@@ -32,8 +32,7 @@ default Host akışında desteklenen bütün executable modüllerin tam bir kez 
 ## Dependencies
 
 - V0-GOV-035
-- V1-FND-004
-- V1-FND-013
+- V1-FND-017
 
 ## Deliverables
 

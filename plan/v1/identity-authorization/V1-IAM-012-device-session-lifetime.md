@@ -3,7 +3,7 @@
 - Task ID: V1-IAM-012
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: integration
 - Surface state: Existing
 
 ## Source basis
@@ -16,35 +16,33 @@ session lifetime değerinin domain ve PostgreSQL katmanında pozitif, bounded ve
 
 ## Owned surface
 
+- `database/migrations/V1/V1-IAM-012/013-device-session-lifetime.up.sql`
+- `database/migrations/V1/V1-IAM-012/013-device-session-lifetime.down.sql`
+- `tests/Modules/Identity/DeviceSessions/DeviceSessionLifetimeMigrationTests.cs`
 - `evidence/V1-IAM-012/**`
 
 ## In scope
 
-- `CODE-019` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-019` için V1-IAM-006 lifetime invariant'ını additive forward/down migration pair ile PostgreSQL katmanında zorunlu kılmak.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- DeviceSessionService, global manifest, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
 - V0-GOV-035
-- V1-FND-012
-- V1-IAM-003
-- V1-FND-019
+- V1-IAM-006
+- V1-FND-021
 
 ## Deliverables
 
-- `evidence/V1-IAM-012/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Additive device-session lifetime migration pair, PostgreSQL lifecycle testleri ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-IAM-012/**` ve task metadata'sıdır.
+- Forward/down/forward lifecycle expires_at > created_at invariant'ını korur.
+- Migration testleri ve plan validator exit code `0` verir.
 
 ## Handoff
 

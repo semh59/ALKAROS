@@ -1,8 +1,8 @@
 # V0-GOV-037 - Transfer C52 remediation ownership and custody
 
 - Task ID: V0-GOV-037
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root/c52_ownership_transfer_resume
 - Work type: documentation
 - Surface state: Existing
 

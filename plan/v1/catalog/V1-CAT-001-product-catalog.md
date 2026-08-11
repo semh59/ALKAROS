@@ -18,8 +18,22 @@ Category, TaxProfile, Product, ModifierGroup ve Modifier yönetimini domain kıs
 
 ## Owned surface
 
-- `src/Modules/Catalog/ProductCatalog/**`, `tests/Modules/Catalog/ProductCatalog/**`,
-  `database/migrations/V1/V1-CAT-001/**`
+- `src/Modules/Catalog/ProductCatalog/CatalogModule.cs`
+- `src/Modules/Catalog/ProductCatalog/Category.cs`
+- `src/Modules/Catalog/ProductCatalog/Enums.cs`
+- `src/Modules/Catalog/ProductCatalog/Modifier.cs`
+- `src/Modules/Catalog/ProductCatalog/ModifierGroup.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresCategoryRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresModifierGroupRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresModifierRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresProductModifierGroupRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresTaxProfileRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/ProductModifierGroup.cs`
+- `src/Modules/Catalog/ProductCatalog/Repositories.cs`
+- `src/Modules/Catalog/ProductCatalog/TaxProfile.cs`
+- `tests/Modules/Catalog/ProductCatalog/Fixtures/CatalogTestDatabase.cs`
+- `database/migrations/V1/V1-CAT-001/**`
+- C52 current-price source/test surface is transferred to V1-CAT-003; this historical task remains closed.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

@@ -3,7 +3,7 @@
 - Task ID: V1-IAM-008
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: implementation
 - Surface state: Existing
 
 ## Source basis
@@ -16,18 +16,17 @@ role/permission revoke commit'inden sonra concurrent authorization sonucunun fai
 
 ## Owned surface
 
+- `src/Modules/Identity/Authorization/RoleManagementService.cs`
+- `tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs`
 - `evidence/V1-IAM-008/**`
 
 ## In scope
 
-- `CODE-008` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-008` için authorization predicate ve protected write linearization kuralını uygulamak ve formatter-only drift'i aynı owned testte kapatmak.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki authorization, migration, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
@@ -36,13 +35,12 @@ role/permission revoke commit'inden sonra concurrent authorization sonucunun fai
 
 ## Deliverables
 
-- `evidence/V1-IAM-008/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Authorization linearization implementation diff'i, concurrency testleri ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-IAM-008/**` ve task metadata'sıdır.
+- Permission decision ve mutation chosen linearization kuralına göre aynı transaction/conditional write ile bağlanır.
+- Authorization tests, `dotnet format ALKAROS.slnx --verify-no-changes --no-restore` ve plan validator exit code `0` verir.
 
 ## Handoff
 

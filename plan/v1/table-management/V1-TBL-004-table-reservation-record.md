@@ -38,7 +38,7 @@
 
 ## Deliverables
 
-- `src/Modules/TableManagement/Reservations/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Tables/Reservations/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Public API/event contract varsa contract testleri dahil otomatik testler.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

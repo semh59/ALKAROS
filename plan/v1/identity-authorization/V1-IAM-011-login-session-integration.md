@@ -3,7 +3,7 @@
 - Task ID: V1-IAM-011
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: integration
 - Surface state: Existing
 
 ## Source basis
@@ -16,35 +16,37 @@ başarılı login'in tek persisted, validated ve revocable credential lifecycle 
 
 ## Owned surface
 
+- `src/Modules/Identity/Authentication/LoginResult.cs`
+- `src/Modules/Identity/Authentication/SessionTokenIssuer.cs`
+- `src/Modules/Identity/Authentication/AuthenticationService.cs`
+- `tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs`
+- `tests/Modules/Identity/Authentication/AuthenticationServiceTests.cs`
+- `tests/Modules/Identity/Authentication/AuthenticationTimingContractTests.cs`
 - `evidence/V1-IAM-011/**`
 
 ## In scope
 
-- `CODE-016` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-012;CODE-016` için single persisted/validated/revocable login credential lifecycle ve bounded work-factor contract'ını tek authentication integration diff'inde uygulamak.
+- Success, failure ve revoke paths'ini task-owned tests ile doğrulamak.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki password hashing, device-session migration, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
 - V0-GOV-035
-- V1-IAM-001
 - V1-IAM-003
-- V1-IAM-005
+- V1-IAM-009
 
 ## Deliverables
 
-- `evidence/V1-IAM-011/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Authentication lifecycle integration diff'i, success/failure/revoke tests ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-IAM-011/**` ve task metadata'sıdır.
+- Raw credential is persisted/validated/revocable through one lifecycle; orphan issuer/session oluşmaz.
+- Unknown/known failure work bounded contract'ı taşır; focused tests ve plan validator exit code `0` verir.
 
 ## Handoff
 

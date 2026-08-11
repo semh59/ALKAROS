@@ -3,7 +3,7 @@
 - Task ID: V1-SEC-005
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: implementation
 - Surface state: Existing
 
 ## Source basis
@@ -16,18 +16,17 @@ sensitive payload/envelope classification metadata'sının caller alias veya sup
 
 ## Owned surface
 
+- `src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs`
+- `tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs`
 - `evidence/V1-SEC-005/**`
 
 ## In scope
 
-- `CODE-010` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-010` için mutable category metadata alias/downcast yolunu fail-closed immutable representation ile kapatmak.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki sensitive-data, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
@@ -37,13 +36,12 @@ sensitive payload/envelope classification metadata'sının caller alias veya sup
 
 ## Deliverables
 
-- `evidence/V1-SEC-005/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Immutable classification implementation diff'i, mutation regression tests ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-SEC-005/**` ve task metadata'sıdır.
+- Caller mutable cast/downcast ile category metadata'yı değiştiremez; raw payload redaction bypass olmaz.
+- Focused tests ve plan validator exit code `0` verir.
 
 ## Handoff
 

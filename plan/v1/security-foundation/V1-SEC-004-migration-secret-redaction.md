@@ -3,7 +3,7 @@
 - Task ID: V1-SEC-004
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: implementation
 - Surface state: Existing
 
 ## Source basis
@@ -16,18 +16,17 @@ sentinel database password'ünün child-process argument, exception, stdout/stde
 
 ## Owned surface
 
+- `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
+- `tests/Host/MigrationComposition/Execution/MigrationExecutionTests.cs`
 - `evidence/V1-SEC-004/**`
 
 ## In scope
 
-- `CODE-009` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-009` için Psql password formatting/exception/output redaction davranışını uygulamak ve regression testini eklemek.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki Host composition, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
@@ -37,13 +36,12 @@ sentinel database password'ünün child-process argument, exception, stdout/stde
 
 ## Deliverables
 
-- `evidence/V1-SEC-004/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Migration secret-redaction implementation diff'i, sentinel regression tests ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-SEC-004/**` ve task metadata'sıdır.
+- Password child-process argument, exception, stdout/stderr ve transcript formatting'inde görünmez.
+- Focused tests ve plan validator exit code `0` verir.
 
 ## Handoff
 

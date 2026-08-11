@@ -12,7 +12,7 @@
 
 ## Goal
 
-`V1-IAM-002` tarafından düzeltilen exact C# formatting farkından sonra zorunlu `dotnet format --verify-no-changes` kapısını bağımsız doğrulamak.
+`V1-IAM-008` tarafından düzeltilen exact C# formatting farkından sonra zorunlu `dotnet format --verify-no-changes` kapısını bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -32,7 +32,7 @@
 ## Dependencies
 
 - V0-GOV-035
-- V1-IAM-002
+- V1-IAM-008
 
 ## Deliverables
 
@@ -40,7 +40,7 @@
 
 ## Acceptance evidence
 
-- `V1-IAM-002` candidate diff'inde yalnız formatter kaynaklı değişiklik bulunur.
+- `V1-IAM-008` candidate diff'inde yalnız formatter kaynaklı değişiklik bulunur.
 - `dotnet format ALKAROS.slnx --verify-no-changes --no-restore` exit code `0` verir.
 - İlgili Authorization testleri exit code `0` verir.
 - `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-043/**` altındadır.

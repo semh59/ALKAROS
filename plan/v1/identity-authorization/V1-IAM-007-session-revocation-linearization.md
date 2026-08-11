@@ -32,7 +32,7 @@ revoke commit'inden sonra stale use/reconnect akışının session'ı canlandır
 ## Dependencies
 
 - V0-GOV-035
-- V1-IAM-003
+- V1-IAM-006
 
 ## Deliverables
 

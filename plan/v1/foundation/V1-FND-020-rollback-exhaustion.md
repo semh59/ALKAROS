@@ -3,7 +3,7 @@
 - Task ID: V1-FND-020
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
-- Work type: validation
+- Work type: implementation
 - Surface state: Existing
 
 ## Source basis
@@ -16,18 +16,17 @@ bir rollback callback'i hata verdiğinde bütün kayıtlı rollback kaynakların
 
 ## Owned surface
 
+- `src/BuildingBlocks/Transactions/TransactionScope.cs`
+- `tests/BuildingBlocks/Transactions/Execution/TransactionExecutionTests.cs`
 - `evidence/V1-FND-020/**`
 
 ## In scope
 
-- `CODE-015` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
-- Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
+- `CODE-015` için bütün rollback resource'larının CancellationToken.None ile denenmesini ve bütün hataların aggregate edilmesini uygulamak.
 
 ## Out of scope
 
-- Production, test, migration, project, lock, plan veya başka task evidence dosyası değiştirmek.
-- Focused test veya static inspection sonucunu bütün baseline için yeterli kanıt saymak.
+- Owned surface dışındaki transaction, project, lock veya plan dosyası değiştirmek.
 
 ## Dependencies
 
@@ -36,13 +35,12 @@ bir rollback callback'i hata verdiğinde bütün kayıtlı rollback kaynakların
 
 ## Deliverables
 
-- `evidence/V1-FND-020/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- Rollback exhaustion implementation diff'i, failure aggregation testleri ve raw transcript.
 
 ## Acceptance evidence
 
-- Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
-- Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-FND-020/**` ve task metadata'sıdır.
+- Bir rollback callback hata verse de kalan kaynaklar birer kez denenir ve original/rollback hataları korunur.
+- Focused tests ve `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir.
 
 ## Handoff
 
