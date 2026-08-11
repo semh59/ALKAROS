@@ -1,7 +1,7 @@
 # V1-FND-023 - Restore solution test discovery
 
 - Task ID: V1-FND-023
-- Status: InProgress
+- Status: Done
 - Assignee: /root/implement_v1_fnd_023
 - Work type: implementation
 - Surface state: Existing
