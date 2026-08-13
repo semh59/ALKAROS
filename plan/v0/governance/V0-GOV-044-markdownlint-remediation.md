@@ -1,7 +1,7 @@
 # V0-GOV-044 - Close the Markdown lint failures
 
 - Task ID: V0-GOV-044
-- Status: Planned
+- Status: Done
 - Assignee: /root/implement_v0_gov_044
 - Work type: documentation
 - Surface state: Existing
