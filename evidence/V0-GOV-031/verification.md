@@ -11,11 +11,12 @@ Repo: `https://github.com/semh59/ALKAROS.git` branch `master` @ `9e2a6b6` (plan 
   - `_APPROVED_REMEDIATION_TASK_IDS`: `V1-IAM-005`, `V1-FND-013`, `V1-FND-014`, `V1-FND-015` eklendi.
 - `plan/GATES.md` `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu: aynı dört kimlik `2026-08-04` kayıtlarıyla eklendi.
 - `tests/Architecture/TaskScope/test_task_scope.py` `REMEDIATION_ROWS`: dört `2026-08-04` satırı eklendi.
-- `docs/engineering/task-scope-contract.md` ve `plan/VALIDATION_CONTRACT.md`: onay kümesi tarih ifadesi `2026-08-04`'ü kapsar.
+- `docs/engineering/task-scope-contract.md` ve `plan/VALIDATION_CONTRACT.md`: onay kümesi tarih ifadesi `2026-08-04`'ü
+  kapsar.
 
 ## Komutlar ve exit code'lar
 
-```
+```console
 > py -m pytest tests/Architecture/TaskScope -q
 73 passed in 48.90s
 exit=0
@@ -49,7 +50,7 @@ exit=0
 
 GOV-031 değişiklikleri commit edilip push edildikten sonra çalıştırıldı:
 
-```
+```console
 > py tools/task-scope/task_scope_tool.py --task-id V1-IAM-005 --format text
 OK: All changes within scope for V1-IAM-005
 exit=0

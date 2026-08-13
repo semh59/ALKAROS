@@ -1,0 +1,6 @@
+git worktree add --detach <redacted-temp-worktree> 761756efacc136b2881701f16217d41a5373c101
+HEAD is now at 761756e test(task-scope): restore C59 routing parity
+EXIT_CODE=0
+git worktree remove --force <redacted-temp-worktree>
+EXIT_CODE=0
+CLEANUP=removed

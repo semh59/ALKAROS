@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 414,
-  "markdown_line_count": 28148,
-  "markdown_byte_count": 1895817,
+  "markdown_file_count": 421,
+  "markdown_line_count": 28545,
+  "markdown_byte_count": 1920358,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -372,9 +372,9 @@
     },
     {
       "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
-      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
+      "sha256": "A0CFC1E1B921021C8F8A700BC9DC285B5A0174F93C718ABBFBFE429F1BCFD2A3",
       "lines": 68,
-      "bytes": 2507,
+      "bytes": 2575,
       "utf8": true
     },
     {
@@ -903,10 +903,52 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
+      "sha256": "9F98CF007372E517376D0AB9FD91995092CB68FFCFF119363742D97BC1DF9284",
+      "lines": 43,
+      "bytes": 1636,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/defect-7-closure.md",
       "sha256": "D1567120296FB180FE0981B03EC973A380948359AEEBF85D6B483260E7DF2B5C",
       "lines": 120,
       "bytes": 6620,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-IAM-002/closure-2026-08-08.md",
+      "sha256": "7FAB4327864D3E16C79AD77E217C82ED627D1277F02523DFED98841F64F9F935",
+      "lines": 77,
+      "bytes": 3860,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-IAM-003/audit-slnx-regression-2026-08-09.md",
+      "sha256": "5A6BCA358B43AD19DD927F554BE0B4BFC438193955F16D68E02D63BA30021C56",
+      "lines": 25,
+      "bytes": 1110,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-IAM-003/closure-2026-08-08.md",
+      "sha256": "A43C021CDB497ED8819BF938C03C755B2EAD876633560E71D28D9C9A2BFDFA73",
+      "lines": 74,
+      "bytes": 4407,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-IAM-003/manifest-recover-2026-08-09.md",
+      "sha256": "66F1BF019BCA176159A5813D1BB1EC6BD4B6DA0F8D86C2AC05F1A363099F29C7",
+      "lines": 49,
+      "bytes": 1834,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-IAM-004/closure-2026-08-08.md",
+      "sha256": "63438956BE89DC3A0D5BDDF7840878766CEAB001818B90C178BDF59B8FE99ABF",
+      "lines": 56,
+      "bytes": 2662,
       "utf8": true
     },
     {
@@ -928,6 +970,13 @@
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
       "bytes": 1990,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-SEC-003/closure-2026-08-05.md",
+      "sha256": "25F00AF3A2B982F28E52AC12BF04320E8C94EF6D05DE2FA4092BD8C6C525D3DF",
+      "lines": 69,
+      "bytes": 2987,
       "utf8": true
     },
     {
@@ -953,9 +1002,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "CD77D6641FE6F5EFEE31700CFBFBEEE1BAC3FF71EF264F8FBBEA90A72B881200",
-      "lines": 1690,
-      "bytes": 231700,
+      "sha256": "4F3393ABCF77EB9F2556A7F56A9440F7F73787A401F1C8AE6FFC90A1F873503D",
+      "lines": 1697,
+      "bytes": 232745,
       "utf8": true
     },
     {
@@ -1023,23 +1072,23 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "C03E741170BC50BE51D5E498B59B8844833D828D11B0CCAEBFD81930855BE593",
-      "lines": 148,
-      "bytes": 28172,
+      "sha256": "C88FA12BB31A5646B80C96FB9A118BA646CF07BECCFE56309C5BF1095B6FC268",
+      "lines": 154,
+      "bytes": 33317,
       "utf8": true
     },
     {
       "path": "plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md",
-      "sha256": "B38B506B6052D07E6E6931AAC14AF2728C5774249E8440C7EED6085C045068D8",
+      "sha256": "226E7D20BD72FDB37E38AA8BEF45416CADA5462B411BF8AB6012EB180DB22971",
       "lines": 61,
-      "bytes": 1775,
+      "bytes": 1836,
       "utf8": true
     },
     {
       "path": "plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md",
-      "sha256": "EF58481D5938842AC85A52ADE3816EFDF6B4010B71EE98507A2E64CE9FF933F2",
+      "sha256": "04621622960EB9CC011BBD1E5CFFD4716D9398B2916314045229C0A06973AA31",
       "lines": 58,
-      "bytes": 1578,
+      "bytes": 1636,
       "utf8": true
     },
     {
@@ -1576,16 +1625,16 @@
     },
     {
       "path": "plan/v1/catalog/V1-CAT-001-product-catalog.md",
-      "sha256": "F8E2EBB01C6DE89630C617EDF0615EC345DA0B7DB5E6719F7ECF788143722B5F",
-      "lines": 55,
-      "bytes": 1343,
+      "sha256": "3392C57C796F013C1F7714C856E6CA772D340FC3B465099F822CD13E35DF7FC6",
+      "lines": 58,
+      "bytes": 1640,
       "utf8": true
     },
     {
       "path": "plan/v1/catalog/V1-CAT-002-effective-pricing.md",
-      "sha256": "C0908C7E4B44C4AB55DD309E6B907A80D2E6DA7089F61BCB582D85AB93450BD5",
+      "sha256": "DBAB9ED922FACE718D9571E4E971AEFE44E7A63F8D36AB7EAD2442565B2CEE26",
       "lines": 53,
-      "bytes": 1347,
+      "bytes": 1333,
       "utf8": true
     },
     {
@@ -1695,30 +1744,30 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
-      "sha256": "84CE2BDCC1F5907CE0830AEEB8B39170A14D91D97AF048B604A28ECC84F80B69",
-      "lines": 65,
-      "bytes": 2032,
+      "sha256": "62EBF554E1A83ECEA2755D86C8AADF2DE7F481A36F59060D50C1AC5F389C1F88",
+      "lines": 60,
+      "bytes": 1850,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-002-authorization.md",
-      "sha256": "424AE94930F8703251980048D439F43DB42CF48BFCBA51B3B02EA8618AA1DAE5",
+      "sha256": "A1893B85C440DFB097F4AF8237E04FD7B3E74F1F80DF5AB948E527B2752FAD8D",
       "lines": 51,
-      "bytes": 1289,
+      "bytes": 1274,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-003-device-sessions.md",
-      "sha256": "3A0B871FEDA8BE887CB0E8241D999B656095208BC8BDE25B92AFE0FAB5A8D880",
+      "sha256": "722D926EDA09887C7FCE72EF9E69DF4A95FCC00A7D958CB16F299F199B2D52B1",
       "lines": 52,
-      "bytes": 1375,
+      "bytes": 1360,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md",
-      "sha256": "ACACFF68072C251FABB9D00F6122EB6A2F60CB9093BDDBA5709FB5893058CBBE",
-      "lines": 70,
-      "bytes": 1930,
+      "sha256": "EFC074826264CFFD48E6B7D6DB7C1E0B1CB4CD7C75C763BAF5A05615311A2769",
+      "lines": 65,
+      "bytes": 1760,
       "utf8": true
     },
     {
@@ -1835,9 +1884,9 @@
     },
     {
       "path": "plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md",
-      "sha256": "69D4B40A146A78C94A14692C3247D04BA207F9DAD73F1D5D18CEDAA579A7BFDF",
-      "lines": 59,
-      "bytes": 1470,
+      "sha256": "893F54B0AF537FAAF24634C056E061FC6B7DCC10F8FF2322687E7741DC2C5707",
+      "lines": 54,
+      "bytes": 1302,
       "utf8": true
     },
     {
@@ -1849,37 +1898,37 @@
     },
     {
       "path": "plan/v1/table-management/V1-TBL-001-table-lifecycle.md",
-      "sha256": "AF64475544FD3C09BD7C12302A3103D5FA3F41DB2860F83D2E5874C4CD2C1566",
+      "sha256": "07036741DC7210F9C5B26989519230E06DD27991CBCD8D913CDF06627BCEDA7A",
       "lines": 58,
-      "bytes": 1454,
+      "bytes": 1422,
       "utf8": true
     },
     {
       "path": "plan/v1/table-management/V1-TBL-002-table-transfer.md",
-      "sha256": "09BC2C8F1FE464384628A1E792F9AE37308580E25F689ABCBB8F7ABE889388F2",
-      "lines": 59,
-      "bytes": 1589,
+      "sha256": "DF9897C466813626CA8C8B1B71D1C55CBBD50946A4AC5A0B387E57909537323E",
+      "lines": 60,
+      "bytes": 1584,
       "utf8": true
     },
     {
       "path": "plan/v1/table-management/V1-TBL-003-table-merge.md",
-      "sha256": "9A55BF6863F151B644084A8ADB162A8BD0027B465497833E697A8AE1CDE22872",
-      "lines": 60,
-      "bytes": 1564,
+      "sha256": "7EBD5B5A5FEF77F222C9E431BE0305F78B3AE0FCD86B1B20361D669C0E666A52",
+      "lines": 61,
+      "bytes": 1559,
       "utf8": true
     },
     {
       "path": "plan/v1/table-management/V1-TBL-004-table-reservation-record.md",
-      "sha256": "501A6F6CCF67F1A554D6C0C219CA2F69E439238C18BC1F6C58795C06B02DE2A0",
+      "sha256": "1CE75C90C0EA79EBD91C7DABC3F21BE4FD4E335F034D411B47CBD2730CC38D9A",
       "lines": 53,
-      "bytes": 1319,
+      "bytes": 1301,
       "utf8": true
     },
     {
       "path": "plan/v1/table-management/V1-TBL-005-current-pointer-projection.md",
-      "sha256": "1097F59601BE8C8DD9BB06B0845DA73059240A2AD049F4152E7BEF1F639B4A60",
+      "sha256": "03D8EA06750A7F3580A6D900E28FF44DE0C344C987A4AB0F20B051C0205AE764",
       "lines": 58,
-      "bytes": 1562,
+      "bytes": 1544,
       "utf8": true
     },
     {
@@ -2556,9 +2605,9 @@
     },
     {
       "path": "plan/v1.4/qr-ordering/V14-QRO-002-pending-table-policy.md",
-      "sha256": "64034FEFF413B12B0C583F609D6ADED5058DBB7F46CDC9103059AD3D75D76ED4",
-      "lines": 55,
-      "bytes": 1365,
+      "sha256": "5EC09F4CE719CEB3E9D41C3C6543A95E4669C5B2B0A1EF03567409C2CE2CA0E9",
+      "lines": 56,
+      "bytes": 1378,
       "utf8": true
     },
     {

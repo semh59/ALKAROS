@@ -1,10 +1,10 @@
 # V1-TBL-001 - Implement Table lifecycle and persistence
 
 - Task ID: V1-TBL-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-tbl-001
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -20,8 +20,16 @@ Table identity, zone, canonical status transition ve optimistic concurrency davr
 
 ## Owned surface
 
-- `src/Modules/TableManagement/TableLifecycle/**`, `tests/Modules/TableManagement/TableLifecycle/**`,
-  `database/migrations/V1/V1-TBL-001/**`
+- `src/Modules/Tables/TableLifecycle/PostgresZoneRepository.cs`
+- `src/Modules/Tables/TableLifecycle/Table.cs`
+- `src/Modules/Tables/TableLifecycle/TableRepository.cs`
+- `src/Modules/Tables/TableLifecycle/TableState.cs`
+- `src/Modules/Tables/TableLifecycle/TablesModule.cs`
+- `src/Modules/Tables/TableLifecycle/Zone.cs`
+- `tests/Modules/Tables/TableLifecycle/Fixtures/TablesTestDatabase.cs`
+- `tests/Modules/Tables/TableLifecycle/TableDomainTests.cs`
+- `database/migrations/V1/V1-TBL-001/**`
+- C52 repository transition source/test surface is transferred to V1-FND-022; this historical task remains closed.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -41,7 +49,7 @@ Table identity, zone, canonical status transition ve optimistic concurrency davr
 
 ## Deliverables
 
-- `src/Modules/TableManagement/TableLifecycle/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Tables/TableLifecycle/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Owned surface içinde otomatik başarı, ret ve edge-case testleri.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

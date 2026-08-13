@@ -1,0 +1,13 @@
+FINAL_BLOB_HASH_MISMATCH: historical baseline blob differs: tools/task-scope/task_scope_tool.py
+STALE_CANDIDATE_COMMIT: historical baseline predates closure artifact: tools/task-scope/task_scope_tool.py
+FINAL_BLOB_HASH_MISMATCH: historical baseline blob differs: tests/Architecture/TaskScope/test_task_scope.py
+STALE_CANDIDATE_COMMIT: historical baseline predates closure artifact: tests/Architecture/TaskScope/test_task_scope.py
+FINAL_BLOB_HASH_MISMATCH: historical baseline blob differs: docs/engineering/task-scope-contract.md
+STALE_CANDIDATE_COMMIT: historical baseline predates closure artifact: docs/engineering/task-scope-contract.md
+FINAL_BLOB_HASH_MISMATCH: historical baseline blob differs: plan/GATES.md
+STALE_CANDIDATE_COMMIT: historical baseline predates closure artifact: plan/GATES.md
+FINAL_BLOB_HASH_MISMATCH: historical baseline blob differs: plan/VALIDATION_CONTRACT.md
+STALE_CANDIDATE_COMMIT: historical baseline predates closure artifact: plan/VALIDATION_CONTRACT.md
+FINAL_BLOB_HASH_MISMATCH: historical baseline blob differs: plan/v0/governance/V0-GOV-035-remediation-admission-control.md
+STALE_CANDIDATE_COMMIT: historical baseline predates closure artifact: plan/v0/governance/V0-GOV-035-remediation-admission-control.md
+EXIT=1 (expected invalid historical record)

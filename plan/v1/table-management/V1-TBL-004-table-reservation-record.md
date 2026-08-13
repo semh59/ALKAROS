@@ -19,7 +19,7 @@
 
 ## Owned surface
 
-- `src/Modules/TableManagement/Reservations/**`, `tests/Modules/TableManagement/Reservations/**`,
+- `src/Modules/Tables/Reservations/**`, `tests/Modules/Tables/Reservations/**`,
   `database/migrations/V1/V1-TBL-004/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
@@ -38,7 +38,7 @@
 
 ## Deliverables
 
-- `src/Modules/TableManagement/Reservations/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Tables/Reservations/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Public API/event contract varsa contract testleri dahil otomatik testler.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

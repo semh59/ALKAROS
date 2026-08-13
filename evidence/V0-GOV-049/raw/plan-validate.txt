@@ -1,0 +1,8 @@
+Markdown files: 362
+Task files: 341
+Registered gates: 18
+Registered EXT sources: 21
+Dependency edges: 1197
+Validation errors: 0
+Validation warnings: 0
+EXIT=0

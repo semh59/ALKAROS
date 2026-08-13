@@ -1,0 +1,7 @@
+Known forward blocker; not V0-GOV-057 acceptance evidence.
+
+Command: py -m pytest tests/Architecture/TaskScope -q
+Exit code: 1
+Failure: tests/Architecture/TaskScope/test_task_scope.py::TestRemediationEntryGateExceptions::test_repository_fnd023_admission_source_and_routing_catalog_parity
+Cause: the V0-GOV-058-owned test expects post_closure_finding_count == 10 while the current routing catalog value is 12.
+Scope: tests/Architecture/TaskScope/test_task_scope.py is not an owned surface of V0-GOV-057.

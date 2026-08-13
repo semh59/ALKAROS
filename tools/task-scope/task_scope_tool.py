@@ -66,39 +66,40 @@ _ENTRY_GATE_BY_VERSION = {
 _REMEDIATION_EXCEPTION_START = "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->"
 _REMEDIATION_EXCEPTION_END = "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->"
 _REMEDIATION_EXCEPTION_HEADER = (
-    "| Task ID | Approval date | Purpose | Gate closure evidence | "
+    "| Task ID | Approval date | Source basis | Purpose | Gate closure evidence | "
     "New feature behavior |"
 )
-_REMEDIATION_EXCEPTION_SEPARATOR = "| --- | --- | --- | --- | --- |"
+_REMEDIATION_EXCEPTION_SEPARATOR = "| --- | --- | --- | --- | --- | --- |"
 _REMEDIATION_EXCEPTION_ROW = re.compile(
-    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-02|2026-08-03|2026-08-04)`\s*\|\s*"
+    r"^\|\s*`(?P<task_id>V\d+-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>\d{4}-\d{2}-\d{2})`\s*\|\s*"
+    r"`(?P<source_basis>[^`|]+)`\s*\|\s*"
     r"Verified finding remediation only\s*\|\s*Not gate closure evidence\s*\|\s*"
     r"No new feature behavior\s*\|$"
 )
-_APPROVED_REMEDIATION_TASK_IDS = {
-    "V1-FND-001",
-    "V1-FND-002",
-    "V1-FND-004",
-    "V1-FND-005",
-    "V1-FND-006",
-    "V1-FND-011",
-    "V1-FND-012",
-    "V1-IAM-004",
-    "V1-IAM-005",
-    "V1-FND-013",
-    "V1-FND-014",
-    "V1-FND-015",
-    "V1-SEC-003",
+_C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS = {
+    "V1-CAT-003": ("2026-08-10", "CORR:C52"),
+    "V1-FND-016": ("2026-08-10", "CORR:C52"),
+    "V1-FND-017": ("2026-08-10", "CORR:C52"),
+    "V1-FND-018": ("2026-08-10", "CORR:C52"),
+    "V1-FND-019": ("2026-08-10", "CORR:C52"),
+    "V1-FND-020": ("2026-08-10", "CORR:C52"),
+    "V1-FND-021": ("2026-08-10", "CORR:C52"),
+    "V1-FND-022": ("2026-08-10", "CORR:C52"),
+    "V1-FND-023": ("2026-08-11", "CORR:C52;CORR:C53;CORR:C54"),
+    "V1-IAM-006": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-007": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-008": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-009": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-010": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-011": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-012": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-013": ("2026-08-10", "CORR:C52"),
+    "V1-SEC-004": ("2026-08-10", "CORR:C52"),
+    "V1-SEC-005": ("2026-08-10", "CORR:C52"),
 }
-_CANDIDATE_CODE_REMEDIATION_TASK_IDS = {
-    "V1-FND-001",
-    "V1-FND-002",
-    "V1-FND-004",
-    "V1-FND-005",
-    "V1-FND-006",
-    "V1-IAM-004",
-    "V1-SEC-003",
-}
+_C52_C53_C54_CANDIDATE_CODE_REMEDIATION_TASK_IDS = set(
+    _C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS
+)
 _DEFERRED_TASKS_START = "<!-- V0_DEFERRED_TASKS:START -->"
 _DEFERRED_TASKS_END = "<!-- V0_DEFERRED_TASKS:END -->"
 _DEFERRED_TASKS_HEADER = (
@@ -107,7 +108,7 @@ _DEFERRED_TASKS_HEADER = (
 )
 _DEFERRED_TASKS_SEPARATOR = "| --- | --- | --- | --- | --- |"
 _DEFERRED_TASKS_ROW = re.compile(
-    r"^\|\s*`(?P<task_id>V0-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-03)`\s*\|\s*"
+    r"^\|\s*`(?P<task_id>V0-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-03|2026-08-13)`\s*\|\s*"
     r"`(?P<reopen_stage>V11|V12|V13|V14|V15|V20)`\s*\|\s*"
     r"(?P<required_evidence>[^|]+?)\s*\|\s*Not V0 gate closure evidence\s*\|$"
 )
@@ -123,6 +124,36 @@ _DEFERRED_TASK_RECORDS = {
     ("V0-LIC-001", "2026-08-03", "V20", "Gerçek license server ve lisans sözleşmesi kanıtı"),
     ("V0-BKP-001", "2026-08-03", "V15", "Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı"),
     ("V0-BKP-002", "2026-08-03", "V15", "Gerçek yedekleme donanımı/cihaz kanıtı"),
+    ("V0-REV-001", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-002", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-003", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-004", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-005", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-006", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-007", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-008", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-009", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-010", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-011", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-012", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-013", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-014", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-015", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-016", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-017", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-018", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-019", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-020", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-021", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-022", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-023", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-024", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-025", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-026", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-027", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-028", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-029", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-REV-030", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
 }
 _DEFERRED_TASK_IDS = {record[0] for record in _DEFERRED_TASK_RECORDS}
 
@@ -300,8 +331,8 @@ def _all_tasks(plan_dir: Path) -> List[TaskMetadata]:
     return sorted(tasks, key=lambda item: item.task_id)
 
 
-def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
-    """Return the exact user-approved remediation IDs from ``GATES.md``.
+def parse_remediation_exception_records(plan_dir: Path) -> Dict[str, Tuple[str, str]]:
+    """Return the exact C52/C53/C54-approved remediation records from ``GATES.md``.
 
     The table is deliberately strict: a malformed, duplicate, missing, or
     non-approved record cannot expand the entry-gate bypass.
@@ -332,24 +363,29 @@ def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
     if table_lines[1] != _REMEDIATION_EXCEPTION_SEPARATOR:
         raise TaskParseError("Remediation exception table separator is invalid")
 
-    exception_ids: Set[str] = set()
+    records: Dict[str, Tuple[str, str]] = {}
     for line in table_lines[2:]:
         match = _REMEDIATION_EXCEPTION_ROW.fullmatch(line)
         if match is None:
             raise TaskParseError("Remediation exception table contains an invalid record")
         task_id = match.group("task_id")
-        if task_id in exception_ids:
+        if task_id in records:
             raise TaskParseError(
                 f"Remediation exception table contains a duplicate Task ID: {task_id}"
             )
-        exception_ids.add(task_id)
+        records[task_id] = (match.group("approval_date"), match.group("source_basis"))
 
-    if exception_ids != _APPROVED_REMEDIATION_TASK_IDS:
+    if records != _C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS:
         raise TaskParseError(
-            "Remediation exception table Task IDs must exactly match the "
-            "2026-08-02 user approval"
+            "Remediation exception table records must exactly match the "
+            "C52/C53/C54 user approval"
         )
-    return exception_ids
+    return records
+
+
+def parse_remediation_exception_ids(plan_dir: Path) -> Set[str]:
+    """Return the exact candidate-remediation IDs from ``GATES.md``."""
+    return set(parse_remediation_exception_records(plan_dir))
 
 
 def parse_v0_deferral_ids(plan_dir: Path) -> Set[str]:
@@ -404,7 +440,7 @@ def parse_v0_deferral_ids(plan_dir: Path) -> Set[str]:
     if records != _DEFERRED_TASK_RECORDS:
         raise TaskParseError(
             "V0 deferral table records must exactly match the 2026-08-03 "
-            "user approval"
+            "or 2026-08-13 user approval"
         )
     return _DEFERRED_TASK_IDS
 
@@ -436,7 +472,7 @@ def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
         if item.status not in {"Done", "NotApplicable"}
     ]
     if unfinished:
-        if task.task_id in _APPROVED_REMEDIATION_TASK_IDS:
+        if task.task_id in _C52_C53_C54_CANDIDATE_CODE_REMEDIATION_TASK_IDS:
             try:
                 exception_ids = parse_remediation_exception_ids(plan_dir)
             except TaskParseError as exc:
@@ -733,6 +769,12 @@ def validate_task_metadata(
             f"Task status is {task.status!r}, expected 'Planned' or 'InProgress'"
         )
 
+    if candidate_remediation and task.status != "InProgress":
+        errors.append(
+            "Candidate-code remediation task status is "
+            f"{task.status!r}, expected 'InProgress'"
+        )
+
     assignee_lower = task.assignee.lower().strip()
     if (
         not task.assignee
@@ -999,7 +1041,7 @@ def run_validation(
             )
             return result
         if (
-            task.task_id not in _CANDIDATE_CODE_REMEDIATION_TASK_IDS
+            task.task_id not in _C52_C53_C54_CANDIDATE_CODE_REMEDIATION_TASK_IDS
             or task.task_id not in exception_ids
         ):
             result["metadata_errors"].append(

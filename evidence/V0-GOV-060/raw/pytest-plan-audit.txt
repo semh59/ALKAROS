@@ -1,0 +1,6 @@
+Command: py -B -m pytest -p no:cacheprovider tests\Architecture\PlanAudit -q
+WorkingDirectory: D:\PROJECT\ALKAROS-REMEDIATION
+
+....................                                                     [100%]
+20 passed in 76.26s (0:01:16)
+ExitCode: 0

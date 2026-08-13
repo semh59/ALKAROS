@@ -18,29 +18,31 @@ uygulamak.
 
 ## Owned surface
 
-- `src/BuildingBlocks/Idempotency/**`
+- `src/BuildingBlocks/Idempotency/IdempotencyKey.cs`
+- `src/BuildingBlocks/Idempotency/IdempotencyKeyConflictException.cs`
+- `src/BuildingBlocks/Idempotency/IdempotencyOutcome.cs`
+- `src/BuildingBlocks/Idempotency/IdempotencyStatus.cs`
+- `src/BuildingBlocks/Idempotency/RequestHash.cs`
 - `src/BuildingBlocks/Messaging/IOutboxDeliverySink.cs`
 - `src/BuildingBlocks/Messaging/InboxEnvelope.cs`
 - `src/BuildingBlocks/Messaging/InboxStatus.cs`
-- `src/BuildingBlocks/Messaging/InboxStore.cs`
 - `src/BuildingBlocks/Messaging/OutboxEnvelope.cs`
 - `src/BuildingBlocks/Messaging/OutboxMessage.cs`
 - `src/BuildingBlocks/Messaging/OutboxStatus.cs`
 - `src/BuildingBlocks/Messaging/OutboxStore.cs`
 - `tests/BuildingBlocks/Idempotency/EnvelopeValidationTests.cs`
-- `tests/BuildingBlocks/Idempotency/IdempotencyKeyStoreTests.cs`
 - `tests/BuildingBlocks/Idempotency/IdempotencyKeyTests.cs`
-- `tests/BuildingBlocks/Idempotency/InboxStoreTests.cs`
 - `tests/BuildingBlocks/Idempotency/OutboxStoreTests.cs`
 - `tests/BuildingBlocks/Idempotency/RequestHashTests.cs`
 - `tests/BuildingBlocks/Idempotency/Fixtures/StoreTestDatabase.cs`
 - `tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj`
-- `tests/BuildingBlocks/Idempotency/packages.lock.json`
 - `database/migrations/V1/V1-FND-002/**`
 - IInboxHandler.cs ve InboxMessage.cs sahipliği V1-FND-015'e
   devredilmiştir (C42); bu görev artık bu path'leri yazamaz.
 - V0-GOV-014 tarafindan remediated retry policy dosyasi bu task'in yuzeyinden
   devredilmistir; V0-GOV-014 bu task'a dependency ile siralanir.
+- C52 atomic execution and message-finalization remediation surfaces are transferred to V1-FND-018 and V1-FND-019; this
+  historical task remains closed.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı; `Directory.Packages.props` içine `Npgsql` PackageVersion eklentisi.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): `docs/data/migration-dependency-graph.md` (V0-DAT-001

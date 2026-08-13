@@ -32,7 +32,7 @@ Test DB: `alkaros_test` docker container (host port 5433).
 
 ### Hedefli koşu (ilk derleme hatası düzeltildi: CA1305 invariant culture)
 
-```
+```console
 > dotnet test ALKAROS.slnx --filter "FullyQualifiedName~Authentication"
 Başarılı! - Başarısız: 0, Başarılı: 51, Toplam: 51 - ALKAROS.Identity.Authentication.Tests.dll
 exit=0
@@ -40,7 +40,7 @@ exit=0
 
 ### Tam çözüm — 3 ardışık koşu (kabul kanıtı)
 
-```
+```console
 > dotnet test ALKAROS.slnx --no-restore -v q   (run 1)
 exit=0   (transcript: full-run-1.txt; Host 60/60, Architecture 5/5, Identity 51/51 dahil)
 
@@ -56,7 +56,7 @@ Flake kontrolü: `tests/Modules/Identity/Authentication/**` içinde
 
 ### Kapsam ve plan doğrulaması
 
-```
+```console
 > py tools/task-scope/task_scope_tool.py --task-id V1-IAM-005 --format text
 OK: All changes within scope for V1-IAM-005
 exit=0

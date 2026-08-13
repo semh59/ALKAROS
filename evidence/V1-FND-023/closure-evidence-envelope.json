@@ -1,0 +1,77 @@
+{
+  "schema": "alkaros.closure-evidence-envelope/v2",
+  "task_id": "V1-FND-023",
+  "subject_commit": "fd3344f15c5257b53bf5281ee9129f800c62f0a7",
+  "environment": {
+    "platform": "Windows",
+    "toolchain": {
+      "dotnet": "8.0",
+      "python": "3.14.2"
+    },
+    "variables": {},
+    "secrets": []
+  },
+  "commands": [
+    {
+      "command": "py -B -m pytest -p no:cacheprovider tests\\Architecture\\TestDiscovery\\test_solution_test_discovery.py -q",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V1-FND-023/raw/pytest-test-discovery.txt",
+        "sha256": "85ae51b150193e96aa971e33bb7c93a84bc9dec3af54029ab91ac98edafec5af"
+      }
+    },
+    {
+      "command": "dotnet test ALKAROS.slnx --no-restore --list-tests",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V1-FND-023/raw/dotnet-list-tests.txt",
+        "sha256": "27b4f810751b584e594848cb7dce80ffd900cb30a3ff84277acb7ba198fc6ffe"
+      }
+    },
+    {
+      "command": "dotnet test ALKAROS.slnx --no-restore -v q",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V1-FND-023/raw/dotnet-test-solution.txt",
+        "sha256": "563ff3b1e7e3706091eed233847c10f18d05afbcdb24bf118fe480534c104a7b"
+      }
+    },
+    {
+      "command": "py -B tools\\plan-audit\\plan_audit_tool.py validate",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V1-FND-023/raw/plan-validate.txt",
+        "sha256": "70ef3349ed2152f8225d675c4a6b1cbff4ccc8e390d9335b7381d92bbef29a35"
+      }
+    },
+    {
+      "command": "py -B tools\\task-scope\\task_scope_tool.py --task-id V1-FND-023 --diff-base 53299e8d9d20721e8ce12f451f550c6305a962ea --candidate-remediation --format text",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V1-FND-023/raw/task-scope-pre-done.txt",
+        "sha256": "3cbc923bf5ddc81a4369a97495c754c9ad9adfd5d853e3f8a41b4b7db550e8bc"
+      }
+    },
+    {
+      "command": "git diff --check 53299e8d9d20721e8ce12f451f550c6305a962ea..ce3a423949d41101d9e937a33ff66eaf21193711",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V1-FND-023/raw/diff-check.txt",
+        "sha256": "9615176f3da3e6e4541b53035ed140dbae18eb44f2ebaf7fc4b65873bf9d59a0"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "Directory.Build.targets",
+      "sha256": "28548ec2fe1dc53083049798c7b8f4c49016975c61fec1f1082eee43e08342d1"
+    },
+    {
+      "path": "tests/Architecture/TestDiscovery/test_solution_test_discovery.py",
+      "sha256": "5d0e0826230ca47ffc9dc1c8a5d83a83465b9a09f04ee91a9d063e2ccd1d379a"
+    }
+  ],
+  "integrity": {
+    "payload_sha256": "ef1970ed4bce9c1b022e397fd6cda51923dc072a2257b38c2b9151279740ef3a"
+  }
+}

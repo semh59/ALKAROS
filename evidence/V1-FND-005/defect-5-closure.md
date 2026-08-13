@@ -6,7 +6,7 @@ DB commit'ten önce commit olabiliyor; tam atomiklik iddiası yanlış."
 ## Değişen yollar
 
 | Dosya | Değişiklik |
-|---|---|
+| --- | --- |
 | `src/BuildingBlocks/Transactions/ITransactionResource.cs` | DB overload'ına fail-closed default gövde: `CommitAsync(DbConnection, DbTransaction, CancellationToken)` → `throw new InvalidOperationException("...external side effects must be written as outbox messages...")`; parametresiz `CommitAsync(CancellationToken)` imzası korundu |
 | `src/BuildingBlocks/Transactions/TransactionContext.cs` | Doc: external side-effect taşıma contract'ı (outbox/post-commit) |
 | `src/BuildingBlocks/Transactions/TransactionOutbox.cs` (ve Resource) | Doc güncellemeleri; xUnit doctag'leri düzeltildi (Â§ → §) |
@@ -24,7 +24,7 @@ DB commit'ten önce commit olabiliyor; tam atomiklik iddiası yanlış."
 
 Komut (tam suite içinden):
 
-```
+```console
 Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 1 s - ALKAROS.TransactionOutboxIntegration.Tests.dll (net8.0)
 Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 380 ms - ALKAROS.Transactions.Tests.dll (net8.0)
 ```

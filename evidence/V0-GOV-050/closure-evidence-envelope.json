@@ -1,0 +1,81 @@
+{
+  "schema": "alkaros.closure-evidence-envelope/v2",
+  "task_id": "V0-GOV-050",
+  "subject_commit": "a85a66f20da07efe762e817f76ec47e7c3f9d799",
+  "environment": {
+    "platform": "Windows",
+    "toolchain": {
+      "python": "3.14.2",
+      "uv": "0.10.7"
+    },
+    "variables": {},
+    "secrets": []
+  },
+  "commands": [
+    {
+      "command": "py -m pytest tests/Architecture/TaskScope -q; $pytestExit=$LASTEXITCODE; Write-Output \"PYTEST_EXIT=$pytestExit\"",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-050/pytest.txt",
+        "sha256": "e900008a0ffdee8da246b10627d17dba9adf65dbb1dbf1cfaa9a06ef3160e741"
+      }
+    },
+    {
+      "command": "uv run --python 3.12.12 --with-requirements plan/validation-requirements.lock python tools/plan-audit/plan_audit_tool.py validate; $planExit=$LASTEXITCODE; Write-Output \"PLAN_VALIDATE_EXIT=$planExit\"",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-050/plan-validate.txt",
+        "sha256": "23eb8417cdb64167bc324f0a5beabc6cdc91e3fec841bad0ba0f008fe6d3191c"
+      }
+    },
+    {
+      "command": "py -B tools/task-scope/task_scope_tool.py --task-id V0-GOV-050 --repo-root . --plan-dir plan --format text; $scopeExit=$LASTEXITCODE; Write-Output \"TASK_SCOPE_EXIT=$scopeExit\"",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-050/task-scope.txt",
+        "sha256": "edfcbbcf977ae66ff5debe06383bbf1a97bbfeacc82346e01d7c611cffbe4df4"
+      }
+    },
+    {
+      "command": "git diff --check; $diffExit=$LASTEXITCODE; Write-Output \"DIFF_CHECK_EXIT=$diffExit\"",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-050/diff-check.txt",
+        "sha256": "fc81ad274059f2c11e11919bd7917d3cb983ca6112ed1485c747dd6f55350b02"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/engineering/task-scope-contract.md",
+      "sha256": "eb901c2a45b1747e8946956fafc7c54bd0a88449a27d144eb6bd06f6275c9538"
+    },
+    {
+      "path": "plan/AUDIT_REMEDIATION_ROUTING.csv",
+      "sha256": "9352df6ba4409dbab25e28e4bc5ef13aa9c7ee1b932de4f5f0610c556a977bf1"
+    },
+    {
+      "path": "plan/AUDIT_REMEDIATION_ROUTING.json",
+      "sha256": "e4417190d3038cf1529d962b831d2668dce3646f4f52f9d7ca5e7f211f17eaeb"
+    },
+    {
+      "path": "plan/GATES.md",
+      "sha256": "3ed1a66aa6f6478dca65dd1992383487295412dbd08d94c05f8f12643a8b917f"
+    },
+    {
+      "path": "plan/TRACEABILITY.md",
+      "sha256": "ad6237e9723c3f1bf0f93a6581701976b4fea68d0e696a10bc8178a03ead6d7d"
+    },
+    {
+      "path": "tests/Architecture/TaskScope/test_task_scope.py",
+      "sha256": "e30192743257f27e2f03a14f3cce9bd267d6ebf574865a41cb20ee38f54e479e"
+    },
+    {
+      "path": "tools/task-scope/task_scope_tool.py",
+      "sha256": "11c8acf3fbcf194293549828f057fd04dced4823d695e9a45dbf7a8aa74daa84"
+    }
+  ],
+  "integrity": {
+    "payload_sha256": "9ff6d6e6c17c8ba5c05284a5bc99e9e881f9a8164c7aba9f21b435c876341c6c"
+  }
+}

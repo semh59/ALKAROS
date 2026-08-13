@@ -27,6 +27,30 @@
       "phase": "A",
       "tables": ["users"],
       "deferredConstraints": []
+    },
+    {
+      "id": "006",
+      "phase": "A",
+      "tables": ["categories", "tax_profiles", "products", "modifier_groups", "modifiers"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "007",
+      "phase": "A",
+      "tables": ["product_prices"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "008",
+      "phase": "A",
+      "tables": ["permissions", "roles", "role_permissions", "user_roles", "denial_events"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "009",
+      "phase": "A",
+      "tables": ["device_sessions", "session_operations"],
+      "deferredConstraints": []
     }
   ]
 }

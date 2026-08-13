@@ -1,0 +1,11 @@
+Command: py -B tools\plan-audit\plan_audit_tool.py validate
+WorkingDirectory: D:\PROJECT\ALKAROS-REMEDIATION
+
+Markdown files: 369
+Task files: 348
+Registered gates: 18
+Registered EXT sources: 21
+Dependency edges: 1226
+Validation errors: 0
+Validation warnings: 0
+ExitCode: 0

@@ -24,7 +24,8 @@ kaydına dayanır.
 ## Owned surface
 
 - `tools/task-scope/task_scope_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope.py`
+- tests/Architecture/TaskScope/test_task_scope.py sahipliği V0-GOV-035'e
+  devredilmiştir (C52); bu görev artık bu path'i yazamaz.
 - `docs/engineering/task-scope-contract.md`
 - `plan/GATES.md`
 - `plan/VALIDATION_CONTRACT.md`

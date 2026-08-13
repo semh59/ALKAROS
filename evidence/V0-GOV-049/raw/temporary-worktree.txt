@@ -1,0 +1,7 @@
+COMMAND=git worktree add --detach <redacted-temp-worktree> d716f4fb44e2120b7cf52195cd0a6456829d3100
+Preparing worktree (detached HEAD d716f4f)
+HEAD is now at d716f4f feat(evidence-envelope): enforce v2 closure chain
+EXIT=0
+COMMAND=git worktree remove --force <redacted-temp-worktree>
+EXIT=0
+CLEANUP=worktree path absent

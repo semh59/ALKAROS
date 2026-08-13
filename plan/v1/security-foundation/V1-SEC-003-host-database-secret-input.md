@@ -19,8 +19,8 @@ engellemek; yalniz environment tabanli secret resolution kullanmak.
 
 - `src/Host/Program.cs`
 - `tests/Host/MigrationComposition/Program/ProgramArgumentTests.cs`
-- `tests/Host/MigrationComposition/Execution/MigrationExecutionTests.cs`
 - `evidence/V1-SEC-003/**`
+- C52 migration secret-redaction execution test surface is transferred to V1-SEC-004; this historical task remains closed.
 
 ## In scope
 

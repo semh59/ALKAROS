@@ -7,7 +7,7 @@ production akışında yok."
 ## Değişen yollar
 
 | Dosya | Değişiklik |
-|---|---|
+| --- | --- |
 | `src/BuildingBlocks/Idempotency/IdempotencyKeyStore.cs` | Transaction + fast-path `INSERT ... ON CONFLICT DO NOTHING RETURNING` + yavaş yol `SELECT ... FOR UPDATE`; expired kayıt yerinde UPDATE ile yeni kayda dönüşür (Created + yeni envelope); aktif aynı hash → Replayed; farklı hash → rollback + `IdempotencyKeyConflictException`; concurrency `FOR UPDATE` ile serileşir |
 | `tests/BuildingBlocks/Idempotency/IdempotencyKeyStoreTests.cs` | 5 yeni test + sweep testlerine `ResetTablesAsync()` |
 
@@ -22,7 +22,7 @@ production akışında yok."
 
 Komut (tam suite içinden): Idempotency suite
 
-```
+```console
 Başarılı!  - Başarısız:     0, Başarılı:    69, Atlanan:     0, Toplam:    69, Süre: 2 s - ALKAROS.Idempotency.Tests.dll (net8.0)
 ```
 

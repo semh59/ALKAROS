@@ -22,7 +22,7 @@ koşullarını gerçek komutlarla doğruladı:
 
 ### SDK ve restore
 
-```
+```console
 > dotnet --version
 10.0.302
 
@@ -33,7 +33,7 @@ exit=0
 
 ### Temiz build (0 uyarı, 0 hata)
 
-```
+```console
 > dotnet build ALKAROS.slnx --no-restore -v q
 Oluşturma başarılı oldu. 0 Uyarı, 0 Hata.
 exit=0
@@ -41,14 +41,14 @@ exit=0
 
 ### Tam çözüm testleri — 3 ardışık koşu (`--no-build`)
 
-```
+```console
 > dotnet test ALKAROS.slnx --no-build -v q   (run 1,2,3)
 run1=0  run2=0  run3=0
 ```
 
 Koşu 1 proje özetleri (tamamı "Başarısız: 0"):
 
-```
+```console
 ALKAROS.SensitiveData.Tests.dll           23/23
 ALKAROS.Secrets.Tests.dll                 21/21
 ALKAROS.Architecture.Tests.dll             5/5   (ModuleBoundaries)
@@ -66,13 +66,13 @@ root'u cycle/unknown-dependency reddi — 5/5 geçti.
 
 ### Project manifest birebir eşleşmesi
 
-```
+```console
 manifest projeleri = 39, diskteki csproj = 39; yol bazlı fark: 0
 ```
 
 ### Kapsam ve plan doğrulaması
 
-```
+```console
 > py tools/task-scope/task_scope_tool.py --task-id V1-FND-001 --format text
 OK: All changes within scope for V1-FND-001
 exit=0

@@ -1,0 +1,104 @@
+  Geri yüklenecek projeler belirleniyor...
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Reconciliation\ALKAROS.Reconciliation.csproj geri yüklendi (290 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Cash\ALKAROS.Cash.csproj geri yüklendi (290 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Payments\ALKAROS.Payments.csproj geri yüklendi (282 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Catalog\ALKAROS.Catalog.csproj geri yüklendi (292 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Inventory\ALKAROS.Inventory.csproj geri yüklendi (281 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Transactions\ALKAROS.Transactions.csproj geri yüklendi (269 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Orders\ALKAROS.Orders.csproj geri yüklendi (284 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Billing\ALKAROS.Billing.csproj geri yüklendi (298 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Accounts\ALKAROS.Accounts.csproj geri yüklendi (290 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Integrations\Yemeksepeti\ALKAROS.Yemeksepeti.csproj geri yüklendi (13 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Integrations\Qnb\ALKAROS.Qnb.csproj geri yüklendi (18 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Fiscal\ALKAROS.Fiscal.csproj geri yüklendi (23 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Integrations\Hugin\ALKAROS.Hugin.csproj geri yüklendi (5 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Integrations\QrRelay\ALKAROS.QrRelay.csproj geri yüklendi (61 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Integrations\MealCard\ALKAROS.MealCard.csproj geri yüklendi (102 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Idempotency\ALKAROS.Idempotency.csproj geri yüklendi (1,27 sn içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Identity\ALKAROS.Identity.csproj geri yüklendi (790 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\TestHelpers\ALKAROS.TestHelpers.csproj geri yüklendi (700 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.Tests.csproj geri yüklendi (704 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Transactions\ALKAROS.Transactions.Tests.csproj geri yüklendi (807 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.Tests.csproj geri yüklendi (1,3 sn içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Tables\ALKAROS.Tables.csproj geri yüklendi (5 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Idempotency\ALKAROS.Idempotency.Tests.csproj geri yüklendi (690 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj geri yüklendi (6 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Modules\Identity\Authentication\ALKAROS.Identity.Authentication.Tests.csproj geri yüklendi (822 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Settings\ALKAROS.Settings.csproj geri yüklendi (19 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Host\ALKAROS.Host.csproj geri yüklendi (758 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\TransactionOutboxIntegration\ALKAROS.TransactionOutboxIntegration.Tests.csproj geri yüklendi (782 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Host\MigrationComposition\ALKAROS.Host.Tests.csproj geri yüklendi (823 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Kitchen\ALKAROS.Kitchen.csproj geri yüklendi (5 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Clients\Cashier\ALKAROS.Cashier.csproj geri yüklendi (5 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Architecture\ModuleBoundaries\ALKAROS.Architecture.Tests.csproj geri yüklendi (1,39 sn içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Reporting\ALKAROS.Reporting.csproj geri yüklendi (31 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\TransactionOutboxIntegration\ALKAROS.TransactionOutboxIntegration.csproj geri yüklendi (24 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj geri yüklendi (39 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj geri yüklendi (110 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Clients\Waiter\ALKAROS.Waiter.csproj geri yüklendi (4 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj geri yüklendi (57 ms içinde).
+  D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Notifications\ALKAROS.Notifications.csproj geri yüklendi (27 ms içinde).
+  ALKAROS.ModuleComposition -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Transactions -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.dll
+  ALKAROS.Idempotency -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Idempotency\bin\Debug\net8.0\ALKAROS.Idempotency.dll
+  ALKAROS.Secrets -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Messaging -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.SensitiveData -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Orders -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Identity -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Reporting -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Settings -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Tables -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Catalog -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Secrets.Tests -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll
+  ALKAROS.Notifications -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Notifications\bin\Debug\net8.0\ALKAROS.Notifications.dll
+  ALKAROS.SensitiveData.Tests -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll
+D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+  ALKAROS.Inventory -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Kitchen -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Billing -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+  ALKAROS.Payments -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Fiscal -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Fiscal\bin\Debug\net8.0\ALKAROS.Fiscal.dll
+  ALKAROS.Cash -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+
+Başarılı!  - Başarısız:     0, Başarılı:    21, Atlanan:     0, Toplam:    21, Süre: 234 ms - ALKAROS.Secrets.Tests.dll (net8.0)
+
+Başarılı!  - Başarısız:     0, Başarılı:    23, Atlanan:     0, Toplam:    23, Süre: 306 ms - ALKAROS.SensitiveData.Tests.dll (net8.0)
+  ALKAROS.Accounts -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Accounts\bin\Debug\net8.0\ALKAROS.Accounts.dll
+  ALKAROS.TransactionOutboxIntegration -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\BuildingBlocks\TransactionOutboxIntegration\bin\Debug\net8.0\ALKAROS.TransactionOutboxIntegration.dll
+  ALKAROS.TestHelpers -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Reconciliation -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Transactions.Tests -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.Tests.dll
+D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+  ALKAROS.Idempotency.Tests -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Idempotency\bin\Debug\net8.0\ALKAROS.Idempotency.Tests.dll
+D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\Idempotency\bin\Debug\net8.0\ALKAROS.Idempotency.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+  ALKAROS.TransactionOutboxIntegration.Tests -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\TransactionOutboxIntegration\bin\Debug\net8.0\ALKAROS.TransactionOutboxIntegration.Tests.dll
+  ALKAROS.Identity.Authentication.Tests -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Modules\Identity\Authentication\bin\Debug\net8.0\ALKAROS.Identity.Authentication.Tests.dll
+D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\BuildingBlocks\TransactionOutboxIntegration\bin\Debug\net8.0\ALKAROS.TransactionOutboxIntegration.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Modules\Identity\Authentication\bin\Debug\net8.0\ALKAROS.Identity.Authentication.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 326 ms - ALKAROS.Transactions.Tests.dll (net8.0)
+
+Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 1 s - ALKAROS.TransactionOutboxIntegration.Tests.dll (net8.0)
+
+Başarılı!  - Başarısız:     0, Başarılı:    71, Atlanan:     0, Toplam:    71, Süre: 4 s - ALKAROS.Idempotency.Tests.dll (net8.0)
+
+Başarılı!  - Başarısız:     0, Başarılı:    51, Atlanan:     0, Toplam:    51, Süre: 6 s - ALKAROS.Identity.Authentication.Tests.dll (net8.0)
+  ALKAROS.Host -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Host.Tests -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll
+D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+  ALKAROS.Architecture.Tests -> D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll
+D:\TEMP\alkaros-v1-iam-005-replay-9528f783e26a\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 674 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+
+Başarılı!  - Başarısız:     0, Başarılı:    60, Atlanan:     0, Toplam:    60, Süre: 15 s - ALKAROS.Host.Tests.dll (net8.0)

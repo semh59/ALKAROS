@@ -20,7 +20,7 @@ Source Table veya Order silmeden multi-table merge membership ve explicit undo m
 
 ## Owned surface
 
-- `src/Modules/TableManagement/TableMerge/**`, `tests/Modules/TableManagement/TableMerge/**`,
+- `src/Modules/Tables/TableMerge/**`, `tests/Modules/Tables/TableMerge/**`,
   `database/migrations/V1/V1-TBL-003/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
@@ -40,10 +40,11 @@ Source Table veya Order silmeden multi-table merge membership ve explicit undo m
 - V1-BIL-001
 - V0-DOM-002
 - V1-FND-005
+- V1-OPS-001
 
 ## Deliverables
 
-- `src/Modules/TableManagement/TableMerge/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Tables/TableMerge/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Owned surface içinde otomatik başarı, ret ve edge-case testleri.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

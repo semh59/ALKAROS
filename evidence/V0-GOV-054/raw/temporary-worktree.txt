@@ -1,0 +1,8 @@
+COMMAND=git worktree add --detach <redacted-temp-worktree> 0f408e3a20aa377ba41b7f29002d44a72a3aa4db
+Preparing worktree (detached HEAD 0f408e3)
+HEAD is now at 0f408e3 fix(plan-audit): admit exact C54 remediation
+EXIT=0
+COMMAND=git worktree remove --force <redacted-temp-worktree>
+EXIT=0
+CLEANUP=worktree path absent
+EXIT=0

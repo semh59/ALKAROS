@@ -1,10 +1,10 @@
 # V1-CAT-001 - Implement the product catalog
 
 - Task ID: V1-CAT-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-cat-001
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -18,8 +18,22 @@ Category, TaxProfile, Product, ModifierGroup ve Modifier yönetimini domain kıs
 
 ## Owned surface
 
-- `src/Modules/Catalog/ProductCatalog/**`, `tests/Modules/Catalog/ProductCatalog/**`,
-  `database/migrations/V1/V1-CAT-001/**`
+- `src/Modules/Catalog/ProductCatalog/CatalogModule.cs`
+- `src/Modules/Catalog/ProductCatalog/Category.cs`
+- `src/Modules/Catalog/ProductCatalog/Enums.cs`
+- `src/Modules/Catalog/ProductCatalog/Modifier.cs`
+- `src/Modules/Catalog/ProductCatalog/ModifierGroup.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresCategoryRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresModifierGroupRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresModifierRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresProductModifierGroupRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/PostgresTaxProfileRepository.cs`
+- `src/Modules/Catalog/ProductCatalog/ProductModifierGroup.cs`
+- `src/Modules/Catalog/ProductCatalog/Repositories.cs`
+- `src/Modules/Catalog/ProductCatalog/TaxProfile.cs`
+- `tests/Modules/Catalog/ProductCatalog/Fixtures/CatalogTestDatabase.cs`
+- `database/migrations/V1/V1-CAT-001/**`
+- C52 current-price source/test surface is transferred to V1-CAT-003; this historical task remains closed.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -45,7 +59,10 @@ Category, TaxProfile, Product, ModifierGroup ve Modifier yönetimini domain kıs
 
 ## Acceptance evidence
 
-- Geçersiz stok/tür/vergi kombinasyonları reddedilir; SKU ve değiştirici kısıtlamaları PostgreSQL ve testlerde
+- PDF III.4'te tanımlı olmayan ürün türü, stok modu ve selection_type değerleri ile min_selections >
+  max_selections aralığı PostgreSQL check constraint ve domain testlerinde reddedilir.
+- SKU, kategori kodu, vergi kodu, değiştirici kodu (global unique) ve product_modifier_groups ikilisi unique
+  kısıtlarıyla; bilinmeyen category_id / product_id / modifier_group_id FK doğrulamalarıyla PostgreSQL ve testlerde
   uygulanır.
 
 ## Handoff

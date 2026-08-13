@@ -7,8 +7,8 @@ namespace ALKAROS.Host.Tests.Manifest;
 public sealed class ManifestTests : IDisposable
 {
     private static readonly string[] FirstEntryTables = ["idempotency_keys"];
-    private static readonly string[] RuntimeManifestIds = ["001", "002", "003", "005"];
-    private static readonly string[] LastEntryTables = ["users"];
+    private static readonly string[] RuntimeManifestIds = ["001", "002", "003", "005", "006", "007", "008", "009"];
+    private static readonly string[] LastEntryTables = ["device_sessions", "session_operations"];
     private readonly string _directory = Path.Combine(
         Path.GetTempPath(), "alkaros-fnd004-" + Guid.NewGuid().ToString("N")[..8]);
 
@@ -27,7 +27,7 @@ public sealed class ManifestTests : IDisposable
     {
         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
 
-        Assert.Equal(4, manifest.Migrations.Count);
+        Assert.Equal(8, manifest.Migrations.Count);
         Assert.All(manifest.Migrations, entry => Assert.Equal(MigrationManifest.PhaseA, entry.Phase));
         Assert.Equal(RuntimeManifestIds, manifest.Migrations.Select(entry => entry.Id));
         Assert.Equal(

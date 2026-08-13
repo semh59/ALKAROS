@@ -19,9 +19,8 @@ gerçek test kanıtıyla göstermek.
 
 ## Owned surface
 
-- `src/Host/Composition/HostComposition.cs` (V1-FND-004'ten devredilmiştir, C42)
-- `tests/Host/MigrationComposition/Composition/HostConstructabilityTests.cs`
 - `evidence/V1-FND-013/**`
+- C52 Host module/data-source integration surface is transferred to V1-FND-017; this historical task remains closed.
 
 ## In scope
 

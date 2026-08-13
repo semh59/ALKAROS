@@ -1,0 +1,65 @@
+{
+  "schema": "alkaros.closure-evidence-envelope/v2",
+  "task_id": "V0-GOV-056",
+  "subject_commit": "761756efacc136b2881701f16217d41a5373c101",
+  "environment": {
+    "platform": "Windows",
+    "toolchain": {
+      "git": "2.55.0.windows.3",
+      "python": "3.14.2"
+    },
+    "variables": {},
+    "secrets": []
+  },
+  "commands": [
+    {
+      "command": "py -B -m pytest tests/Architecture/TaskScope -q",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-056/raw/pytest-task-scope.txt",
+        "sha256": "69b27c6548c53f637e371b0a3633c151b75230ae1e870294efe913cb7847b006"
+      }
+    },
+    {
+      "command": "py -B tools/plan-audit/plan_audit_tool.py validate",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-056/raw/plan-validation.txt",
+        "sha256": "2adef03a6ebebd5d4810223f43090ec789a451eb325d908d4d5763cb8cbb6d93"
+      }
+    },
+    {
+      "command": "py -B tools/task-scope/task_scope_tool.py --task-id V0-GOV-056 --repo-root . --diff-base 9cbc179b6a541c6490498c3b18ed59ed1cad9bbd --format text",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-056/raw/task-scope-pre-done.txt",
+        "sha256": "e6eeda21f1dacae29b24f285275b9ac27e15dfabb0f876b22407961a5aad6e87"
+      }
+    },
+    {
+      "command": "git diff --check 9cbc179b6a541c6490498c3b18ed59ed1cad9bbd 761756efacc136b2881701f16217d41a5373c101",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-056/raw/diff-check.txt",
+        "sha256": "1ca4a13146b2891c0e462123ac0cb848f92e6221f18b870a1b78c232d1956c35"
+      }
+    },
+    {
+      "command": "git worktree add --detach <redacted-temp-worktree> 761756efacc136b2881701f16217d41a5373c101; git worktree remove --force <redacted-temp-worktree>",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-056/raw/temporary-worktree.txt",
+        "sha256": "1102272ee5f15945abd144be6787faa5942b160f0ba41e8e65ac2674e94d0345"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "tests/Architecture/TaskScope/test_task_scope.py",
+      "sha256": "e41bf8c5ee4d8a1646dc1ce0d171d79958561fc85568437d5dded7f77b7d72cf"
+    }
+  ],
+  "integrity": {
+    "payload_sha256": "042533600d1b6a5508e3bba8c205df36ac53eaf3be798b06f0caa35b6b964825"
+  }
+}

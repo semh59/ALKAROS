@@ -20,9 +20,9 @@ kılmak; lease expiry sonrası yeniden teslim yolunu testlerle kapatmak.
 ## Owned surface
 
 - `src/BuildingBlocks/Messaging/IInboxHandler.cs` (V1-FND-002'den devredilmiştir, C42)
-- `src/BuildingBlocks/Messaging/InboxMessage.cs` (V1-FND-002'den devredilmiştir, C42)
-- `tests/BuildingBlocks/Idempotency/InboxRedeliveryContractTests.cs`
 - `evidence/V1-FND-015/**`
+- C52 lease-token `InboxMessage.cs` and redelivery-contract surface is transferred to V1-FND-019; this historical task
+  remains closed.
 
 ## In scope
 

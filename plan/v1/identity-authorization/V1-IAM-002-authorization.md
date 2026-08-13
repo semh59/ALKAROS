@@ -1,8 +1,8 @@
 # V1-IAM-002 - Implement role and permission enforcement
 
 - Task ID: V1-IAM-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: opencode-v1-iam-002
 - Work type: implementation
 - Surface state: Planned
 
@@ -17,8 +17,23 @@ Role, permission, assignment ve server-side authorization check davranışların
 
 ## Owned surface
 
-- `src/Modules/Identity/Authorization/**`, `tests/Modules/Identity/Authorization/**`,
-  `database/migrations/V1/V1-IAM-002/**`
+- `src/Modules/Identity/Authorization/AuthorizationDeniedException.cs`
+- `src/Modules/Identity/Authorization/AuthorizationService.cs`
+- `src/Modules/Identity/Authorization/IAuthorizationService.cs`
+- `src/Modules/Identity/Authorization/IDenialEventSink.cs`
+- `src/Modules/Identity/Authorization/IPermissionRepository.cs`
+- `src/Modules/Identity/Authorization/IRoleManagementService.cs`
+- `src/Modules/Identity/Authorization/IRoleRepository.cs`
+- `src/Modules/Identity/Authorization/PermissionCodes.cs`
+- `src/Modules/Identity/Authorization/PostgresDenialEventSink.cs`
+- `src/Modules/Identity/Authorization/PostgresPermissionRepository.cs`
+- `src/Modules/Identity/Authorization/PostgresRoleRepository.cs`
+- `tests/Modules/Identity/Authorization/AuthorizationServiceTests.cs`
+- `tests/Modules/Identity/Authorization/Fixtures/AuthorizationTestDatabase.cs`
+- `tests/Modules/Identity/Authorization/PermissionRepositoryTests.cs`
+- `database/migrations/V1/V1-IAM-002/**`
+- C52 RoleManagementService and formatter remediation surface is transferred to V1-IAM-008; this historical task remains
+  closed.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

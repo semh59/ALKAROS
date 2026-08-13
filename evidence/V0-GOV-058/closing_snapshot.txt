@@ -1,0 +1,9 @@
+﻿ .../governance/V0-GOV-058-dynamic-route-parity.md  |   4 +-
+ tests/Architecture/TaskScope/test_task_scope.py    | 329 +++++++++++++++++++--
+ 2 files changed, 302 insertions(+), 31 deletions(-)
+---git status short---
+ M plan/v0/governance/V0-GOV-058-dynamic-route-parity.md
+ M tests/Architecture/TaskScope/test_task_scope.py
+?? evidence/V0-GOV-058/
+---task_scope diff check (pre-Done)---
+diff_EXIT=0

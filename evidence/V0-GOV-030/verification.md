@@ -22,7 +22,7 @@ Repo: `https://github.com/semh59/ALKAROS.git` branch `master`.
 V0 task dosyaları (`plan/v0/**`, `V0-` önekli 68 dosya) üzerinde
 `^- Status:` metadata okuması:
 
-```
+```console
 total=68 done=56 blocked=11 planned=1 inprog=0   (GOV-030 InProgress öncesi)
 → GOV-030 Done sonrası: done=57, blocked=11, planned=0, inprog=0
 ```
@@ -31,7 +31,7 @@ total=68 done=56 blocked=11 planned=1 inprog=0   (GOV-030 InProgress öncesi)
 
 ### Kapsam ve plan doğrulaması
 
-```
+```console
 > py tools/task-scope/task_scope_tool.py --task-id V0-GOV-030 --format text
 OK: All changes within scope for V0-GOV-030
 exit=0

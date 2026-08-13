@@ -70,20 +70,62 @@ npx --yes markdownlint-cli2@0.23.2
   rewrite + force-push) da aynı istisna kapsamında zincirden önce
   başlatılabilir; karar kaydı `TRACEABILITY.md` FIND-IA-0050'dir ve zincir
   kuralı diğer application görevleri için değişmez.
-- `GATES.md` içindeki `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu 2026-08-02,
-  2026-08-03 ve 2026-08-04 kullanıcı onaylarını makinece doğrular. Kayıtlı candidate-code
-  remediation kimliği `--candidate-remediation` ile yalnız mevcut kanıtlanmış
-  kusuru düzeltebilir; açık dependency veya gate kabul kanıtı sayılmaz.
+- `GATES.md` içindeki `TASK_SCOPE_REMEDIATION_EXCEPTIONS` tablosu, 2026-08-10
+  tarihli `CORR:C52` kaynaklı 18 kayıt ile yalnız `V1-FND-023` için 2026-08-11
+  tarihli `CORR:C52;CORR:C53;CORR:C54` kaydından oluşan exact 19-ID admission
+  tuple'ını makinece doğrular. Mevcut `Done` görevler kabul kümesine giremez veya
+  yeniden açılamaz. Kayıtlı candidate-code remediation kimliği
+  `--candidate-remediation` ile yalnız mevcut kanıtlanmış kusuru düzeltebilir;
+  açık dependency veya gate kabul kanıtı sayılmaz. Historical PDF current
+  remediation authority değildir.
+- `validate`, aşağıdaki contract tablosunu, `GATES.md` tablosunu ve task-scope
+  canonical record'larını exact source/date/ID değerleriyle doğrular. Count,
+  duplicate, order, extra, missing, source veya date divergence deterministic
+  `SEMANTIC_REMEDIATION_ADMISSION_*` hatasıyla non-zero exit verir.
+- C54, açık V0 gate altında yalnız `V1-FND-023` `InProgress` olduğunda istisnadır.
+  Validator statik olarak `TRACEABILITY.md` C54 exact authority satırını,
+  `V1-FND-023`ün exact `Directory.Build.targets` owned surface'ini, C52/C53/C54
+  source zincirini, üç canonical 19-ID tuple'ını ve `V0-GOV-050` ile
+  `V1-FND-001` Done dependency'lerini birlikte doğrular. Missing, expanded veya
+  malformed authority; wrong source/date/tuple; open dependency; `Done` status
+  veya başka V1 application deterministic semantic hata üretir; target/tool code
+  yürütülmez.
+
+<!-- PLAN_AUDIT_REMEDIATION_ADMISSION:START -->
+| Task ID | Approval date | Source basis | Purpose | Gate closure evidence | New feature behavior |
+| --- | --- | --- | --- | --- | --- |
+| `V1-FND-016` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-017` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-018` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-019` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-020` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-021` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-022` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-FND-023` | `2026-08-11` | `CORR:C52;CORR:C53;CORR:C54` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-006` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-007` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-008` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-009` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-010` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-011` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-012` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-IAM-013` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-SEC-004` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-SEC-005` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+| `V1-CAT-003` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
+<!-- PLAN_AUDIT_REMEDIATION_ADMISSION:END -->
 - `GATES.md` içindeki `V0_DEFERRED_TASKS` marker tablosu 2026-08-03 kullanıcı
-  onaylı devir listesini makinece doğrular (`TRACEABILITY.md` C40). Listede
-  olmayan V0 görevi `Blocked` ise `APPLICATION_STARTED_BEFORE_V0_EXIT` hatası
-  üretilmeye devam eder; listedeki görevler `Blocked` kalır, kanıtlarını ilgili
-  aşamada (V12-V20) toplar ve `GATE-V0-EXIT` kapanış kanıtı sayılmaz.
-  `DEPENDENCY_REMOVALS`/forbidden seti dışında dependency düzenlemesi kabul
-  edilmez; devir yeni product behavior başlatma izni vermez.
+  onaylı devir listesini makinece doğrular (`TRACEABILITY.md` C40); 2026-08-13
+  kullanıcı onaylı ekleme (`TRACEABILITY.md` C65, `V0-GOV-062`) ile
+  `V0-REV-001..030` da listededir. Listede olmayan V0 görevi `Blocked` ise
+  `APPLICATION_STARTED_BEFORE_V0_EXIT` hatası üretilmeye devam eder; listedeki
+  görevler `Blocked` kalır, kanıtlarını ilgili aşamada (V12-V20) toplar ve
+  `GATE-V0-EXIT` kapanış kanıtı sayılmaz. `DEPENDENCY_REMOVALS`/forbidden seti
+  dışında dependency düzenlemesi kabul edilmez; devir yeni product behavior
+  başlatma izni vermez.
 - 2026-08-04 kullanıcı onayıyla (`TRACEABILITY.md` C44) task-scope aracının
   `GATE-V0-EXIT` türetilmiş entry-gate kontrolü, `V0_DEFERRED_TASKS` tablosunu
-  fail-closed okur ve 11 devir kimliğini yalnız bu gate'in kapanma koşulundan
+  fail-closed okur ve 41 devir kimliğini yalnız bu gate'in kapanma koşulundan
   muaf sayar; kayıt kümesi GATES.md ile araç kodunda birebir eşleşir, tablo
   bozuk/yinelenen/eksikse denetim non-zero exit verir, `GATES.md` yoksa gate
   açık listesiyle reddedilir. Muafiyet yalnız `GATE-V0-EXIT` türetimi içindir,
@@ -137,6 +179,83 @@ npx --yes markdownlint-cli2@0.23.2
 - Prose line length 120 karakterdir.
 - Table row, code block ve bölünemeyen URL satırları `MD013` istisnasıdır.
 - `MD012` ve `MD060` istisnasız sıfır olmalıdır.
+
+## Kapanış kanıt zarfı
+
+- `Done` için command, integer exit code `0`, environment, candidate Git commit,
+  raw command output ve SHA-256 artifact hash'leri machine-readable closure
+  evidence envelope içinde birlikte doğrulanır.
+- Candidate commit artifact blob'unu içermeli; candidate ile güncel `HEAD`
+  arasında artifact değişmişse veya final blob hash'i farklıysa kanıt
+  fail-closed reddedilir.
+- Raw output, `evidence/<Task-ID>/` altında kalır ve secret value içeremez.
+  Sensitive environment girdileri yalnız redacted `env:<NAME>` location ve
+  SHA-256 fingerprint ile kaydedilir; narrative-only kayıt kabul değildir.
+- `py -B tools/evidence-envelope/evidence_envelope_tool.py --envelope
+  evidence/<Task-ID>/closure-evidence-envelope.json --repository . --format
+  text` non-zero exit verirse task closure kanıtı geçersizdir.
+- Tarihsel acceptance replay mevcut `Done` task üzerinde değil, executable
+  candidate commit'te repository dışındaki geçici Git worktree'de yapılır.
+  Candidate veya gerekli ortam bulunamazsa task `Blocked` kalır; başarı sonucu
+  uydurulmaz.
+
+V2 closure protocol ek koşulları:
+
+- V2 kapanışı B subject -> E evidence checkpoint -> F metadata-only final
+  zinciridir. B bütün non-evidence owned artifactları ve `Planned`→`InProgress`
+  geçişini; E yalnız aktif görev evidence'ını; F yalnız task status satırında
+  `InProgress`→`Done` geçişini taşır.
+- Git, F'nin bitişik trailer bloğunu tam olarak `Task`, `Gate`,
+  `Closure-Subject` ve `Closure-Evidence-Checkpoint` olarak ayrıştırmalıdır.
+  Son iki değer B ve E full commit hash'leridir. E, F SHA'sını veya payload hash'ini taşımaz.
+- V2, validator, testleri, closure dokümanı ve bu sözleşme dahil B'de değişen her
+  owned artifactı hashler. Eksik, stale veya mismatch blob fail-closed olur.
+- `--final-commit`, envelope ve kayıtlı her raw output byte'ını yalnız E commit
+  tree'sinden okur. Aynı zarf veya kayıtlı raw path worktree'de E blobundan
+  farklıysa `WORKTREE_EVIDENCE_SUBSTITUTION` ile non-zero exit verir; worktree
+  içeriği kanıt kaynağı olamaz.
+- Raw output `evidence/<Task-ID>/` altında kalır; command veya raw transcript
+  içinde `Authorization: Bearer <value>` ya da `api key: <value>` secret leakage
+  sayılır ve fail-closed olur. Worktree create/remove, exit code, LF raw transcript
+  hash ve cleanup sonucu E'de checkpoint edilir.
+- `py -B tools/evidence-envelope/evidence_envelope_tool.py --final-commit <F> --repository . --format text`
+  task closure öncesi zero exit vermelidir; non-zero exit closure evidence'ı geçersiz kılar.
+- `--historical-v0-gov-035`, immutable historical verification ledger'ını eski
+  baseline ile gerçek closure blobları karşılaştırarak `STALE_CANDIDATE_COMMIT`
+  ve `FINAL_BLOB_HASH_MISMATCH` ile invalid bulmalıdır; eski evidence değişmez.
+
+V3 interrupted remediation closure ek koşulları:
+
+- V3 yalnız `V1-FND-023` için fixed B0
+  `fd3344f15c5257b53bf5281ee9129f800c62f0a7` ve fixed interruption
+  `479881636c8142c7161f2d5980d37ca2f9b48591` arasında uygulanır; başka task,
+  subject veya interruption için generic exception yoktur.
+- Verifier B0 parent'ını, `Directory.Build.targets`,
+  `tests/Architecture/TestDiscovery/test_solution_test_discovery.py` ve aktif
+  task dosyasındaki B0 bloblarını; interruption'ın B0 direct child'ı ve yalnız
+  exact `InProgress`→`Blocked` metadata ile exact `Blocker` diff'i olduğunu
+  byte/diff/topology olarak doğrular.
+- Reentry A, fixed interruption'ın descendant'ı olan geçerli `V0-GOV-060` v2
+  finalinin direct child'ı olmalı, yalnız exact `Blocked`→`InProgress` geçişini
+  yapmalı ve exact `Blocker` bölümünü kaldırmalıdır. E, A'nın direct child'ı
+  olarak yalnız `evidence/V1-FND-023/**` ekler; F, E'nin direct child'ı olarak
+  yalnız task `Status: InProgress` satırını `Status: Done` yapar.
+- B0'nın iki source artifact blobu V0-GOV-060 finalinde ve A/E/F'de stale veya
+  değiştirilmiş olamaz; E zarfı bunların tam SHA-256 kümesini taşır. E
+  tree'sindeki envelope/raw bytes, raw hashleri ve worktree-substitution reddi
+  v2 kadar zorunludur. F trailer bloğu sırasıyla `Task`, `Gate`,
+  `Closure-Subject`, `Closure-Interruption`, `Closure-Reentry` ve
+  `Closure-Evidence-Checkpoint` alanlarını full SHA ile taşır.
+- `V1-FND-023` `Done` statüsü, ancak fixed v3 F final commit'i üzerinden
+  doğrulanırsa kabul edilir: ilgili task-specific v3 verifier sabit
+  `_V3_FINAL_COMMIT` commit'inin repository'de mevcut olduğunu ve current
+  `HEAD`'in o sabit finalın descendant'ı (ya da kendisi) olduğunu doğrular;
+  PlanAudit generic v2 sonucu değil doğrudan task-specific v3 verifier'ı
+  çağırır. Bu kontrol V0 gate açık veya kapalıyken zorunludur; task metadata'sı
+  tek başına admission değildir.
+- Wrong task/subject/interruption, altered B0/interruption byte veya diff,
+  non-adjacent A/E/F, evidence dışı E diff, stale B0 blob, final metadata/trailer
+  sapması ve worktree substitution deterministic non-zero ile reddedilir.
 
 ## Kapanış
 

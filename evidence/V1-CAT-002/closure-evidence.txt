@@ -1,0 +1,54 @@
+﻿V1-CAT-002 closure evidence
+Task: V1-CAT-002 - Implement effective-dated product pricing
+Status: Done
+Date: 2026-08-07
+Executor: opencode-v1-cat-002
+
+== Build ==
+Command: dotnet build ALKAROS.slnx --nologo -v q
+Result: succeeded, 0 errors, 0 warnings (exit 0)
+Build note: clean-checkout verification (HEAD = a558546) also passes. The
+net8.0 exe apphost generation fails with SDK 10.0.302 fresh obj on ALL commits
+(verified on 67f8a03, pre-existing environment issue, unrelated to this task).
+Build command used for clean-checkout proof: -p:UseAppHost=false (same 0/0).
+
+== Full test suite ==
+Command: dotnet test ALKAROS.slnx --nologo (env: ALKAROS_TEST_PG_*=docker localhost:5433)
+Files:
+  ALKAROS.Catalog.Pricing.Tests         27/27 passed
+  ALKAROS.Catalog.ProductCatalog.Tests  77/77 passed
+  ALKAROS.Idempotency.Tests             80/80 passed
+  ALKAROS.Identity.Authentication.Tests 51/51 passed
+  ALKAROS.Transactions.Tests            25/25 passed
+  ALKAROS.TransactionOutboxIntegration.Tests 12/12 passed
+  ALKAROS.Host.Tests                    62/62 passed
+  ALKAROS.Architecture.Tests             5/5 passed
+  ALKAROS.Secrets.Tests                 21/21 passed
+  ALKAROS.SensitiveData.Tests           23/23 passed
+TOTAL: 383/383 passed (previous 356 + 27 new pricing tests)
+Clean-checkout proof: `dotnet test ALKAROS.slnx -p:UseAppHost=false` on detached
+HEAD (worktree at commit a558546, no working-tree edits) => 383/383 passed in the
+same 10 projects, including Host.Tests 62/62 and Architecture.Tests 5/5. This
+confirms V1-CAT-001 (committed as 37a44b5) and the Npgsql/FluentAssertions build
+dependencies (committed as the dependency commit) were missing from git history
+and are now present, so HEAD is self-contained.
+
+== Migration forward/rollback evidence ==
+007-catalog-pricing.up.sql:
+  - Applied by PricingTestDatabase fixture on real PostgreSQL 18 (alkaros_cat002_*).
+  - Prelight on scratch DB: adjacent half-open ranges [a,b)+[b,inf) accepted; interior overlap rejected
+    with SQLSTATE 23P01 (btree_gist EXCLUDE USING gist, tstzrange && on product_id, price_type, currency).
+  price_type CHECK (price_type IN (1)); FK product_id -> catalog.products ON DELETE CASCADE.
+007-catalog-pricing.down.sql:
+  - DROPs catalog.product_prices; verified by PricingRollbackScriptTests -> SQLSTATE 42P01 on re-query,
+    remaining catalog tables = 6 (unchanged 006 schema).
+Host migration manifest:
+  - database/MigrationComposition/order.json 007 entry tables [product_prices]; ManifestTests now
+    RuntimeManifestIds contains 001,002,003,005,006,007, count=6, last entry tables [product_prices] -> Host.Tests 62/62 green.
+
+== Domain/repo behaviour ==
+- ProductPrice: rejects empty ids, negative price, non-3-letter currency, effectiveTo <= effectiveFrom (unit tests).
+- GetEffectivePriceAsync: half-open [effective_from, effective_to) semantics; nullable effective_to = open-ended;
+  returns at most one price per (product, price_type, currency) per timestamp (DB exclusion enforces).
+  Tests: inside interval, at end boundary -> null, open-ended future, adjacent boundary picks later price.
+- Default currency_code 'TRY' verified via raw insert.

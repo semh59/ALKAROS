@@ -1,0 +1,77 @@
+{
+  "schema": "alkaros.closure-evidence-envelope/v2",
+  "task_id": "V0-GOV-055",
+  "subject_commit": "74650a69bf6837ecb03b4937f7ea069b9ce67373",
+  "environment": {
+    "platform": "Windows",
+    "toolchain": {
+      "git": "2.55.0.windows.3",
+      "python": "3.14.2"
+    },
+    "variables": {},
+    "secrets": []
+  },
+  "commands": [
+    {
+      "command": "py -B -m pytest tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py tests/Architecture/PlanAudit/test_plan_audit.py -q",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-055/raw/pytest-governance.txt",
+        "sha256": "d7a0a4bcdfdf5da91dae96fae63340317a6747b58e0d3fefee53035feca695f5"
+      }
+    },
+    {
+      "command": "py -B tools/plan-audit/plan_audit_tool.py validate",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-055/raw/plan-validation.txt",
+        "sha256": "7cdb580ba24fb03e5e903061cfa10b4f21345ebcca1d84aee3658d1933555469"
+      }
+    },
+    {
+      "command": "py -B tools/task-scope/task_scope_tool.py --task-id V0-GOV-055 --repo-root . --diff-base 74650a69bf6837ecb03b4937f7ea069b9ce67373 --format text",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-055/raw/task-scope-pre-done.txt",
+        "sha256": "f1fd561ffa9d31f944ef05587bb6c561a94ff37261758a49781c52ca7e483921"
+      }
+    },
+    {
+      "command": "git diff --check 74650a69bf6837ecb03b4937f7ea069b9ce67373 HEAD",
+      "exit_code": 0,
+      "raw_output": {
+        "path": "evidence/V0-GOV-055/raw/diff-check.txt",
+        "sha256": "7fce095b91ad9d8a18719b3d5fd4cd6960427f9188f1f355a12961bf8c8b87ef"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "tools/evidence-envelope/evidence_envelope_tool.py",
+      "sha256": "04048ae5fd7faead8756c75a8364c993c2f68e2b9b4d7045c51a4ba26d62d67a"
+    },
+    {
+      "path": "tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py",
+      "sha256": "c54936c6359b4a734009d3530b9e4f440bf8fa8230e7ba64748cb6a7c3e1d617"
+    },
+    {
+      "path": "docs/engineering/closure-evidence-envelope.md",
+      "sha256": "61fed2ebc177b74063cf72cee3d626257875c44c82791473f4fabb35ad356046"
+    },
+    {
+      "path": "tools/plan-audit/plan_audit_tool.py",
+      "sha256": "0c006a9c6c15b06a4f22aea41f194cb4ca6f12532bf3902136dfc16029fdb8ce"
+    },
+    {
+      "path": "tests/Architecture/PlanAudit/test_plan_audit.py",
+      "sha256": "fd0302ccec694a6e893a6eb5217b57a25554b11b664ea66bbd806c6dd2dde71b"
+    },
+    {
+      "path": "plan/VALIDATION_CONTRACT.md",
+      "sha256": "3dd68bdb886d33c5a84e1dafce0d2dc66a279566acb1d3d82fdc7f420873c4fa"
+    }
+  ],
+  "integrity": {
+    "payload_sha256": "3e93f34ce6cc61a81ad4d6d9748222ab544881969a4cd3eff1d3d3d2a00c9d60"
+  }
+}

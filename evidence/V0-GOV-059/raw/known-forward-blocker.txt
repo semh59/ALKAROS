@@ -1,0 +1,5 @@
+Known forward blocker; not V0-GOV-059 acceptance evidence.
+
+Command: py -m pytest tests/Architecture/TaskScope -q
+Expected: non-zero until V0-GOV-058 replaces fixed route totals with dynamic parity.
+Scope: tests/Architecture/TaskScope/test_task_scope.py is not an owned surface of V0-GOV-059.

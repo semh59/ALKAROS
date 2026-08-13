@@ -20,11 +20,11 @@ uygulanmamis veya sonraki position varken rollback'i reddetmek.
 
 - HostComposition.cs sahipliği V1-FND-013'e devredilmiştir (C42); bu görev artık bu path'i yazamaz.
 - `src/Host/Composition/Migrations/MigrationExecutor.cs`
-- `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
 - `src/Host/Composition/Migrations/MigrationHistoryStore.cs`
 - `tests/Host/MigrationComposition/History/MigrationHistoryTests.cs`
-- `tests/Host/MigrationComposition/Composition/HostServiceRegistrationTests.cs`
 - `evidence/V0-GOV-015/**`
+- C52 Host composition service-registration and migration-secret remediation surfaces are transferred to V1-FND-017 and
+  V1-SEC-004; this historical task remains closed.
 
 ## In scope
 

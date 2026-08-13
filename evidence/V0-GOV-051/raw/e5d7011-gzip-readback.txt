@@ -1,0 +1,7 @@
+inner_command_exit_code: 2
+stdout_bytes: 2556479
+stdout_sha256: 7a06b59e20f185bbaff8e360845dc532b533f0e3a125f04f33bc14841338f0a2
+gzip_sha256: d1f9b3db8e596c705abccce1ae3a6884da07bf9544de7fee73bea816dfbcb7a5
+decompression_readback_sha256: 7a06b59e20f185bbaff8e360845dc532b533f0e3a125f04f33bc14841338f0a2
+readback_matches_stdout: True
+crlf_pairs_in_stdout: 18894

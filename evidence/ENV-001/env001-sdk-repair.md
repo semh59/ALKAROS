@@ -16,7 +16,7 @@ Machine: win32 (Windows 10.0.26200)
 ## Repair
 
 - Downloaded official SDK payload:
-  https://dotnetcli.blob.core.windows.net/dotnet/Sdk/10.0.302/dotnet-sdk-10.0.302-win-x64.zip
+  <https://dotnetcli.blob.core.windows.net/dotnet/Sdk/10.0.302/dotnet-sdk-10.0.302-win-x64.zip>
   (sha256 via zip integrity: extracted 3792 sdk/ entries).
 - Moved corrupt C:\Program Files\dotnet\sdk\10.0.302 -> 10.0.302.broken (kept as backup).
 - Extracted the full official sdk/ tree to C:\Program Files\dotnet\sdk\10.0.302.

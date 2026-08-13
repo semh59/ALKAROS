@@ -23,7 +23,7 @@ Repo: `https://github.com/semh59/ALKAROS.git` branch `master`.
 
 ### Hedefli koşu
 
-```
+```console
 > dotnet test ALKAROS.slnx --filter "FullyQualifiedName~RetrySqlIdentifier"
 Başarılı! - Başarısız: 0, Başarılı: 7, Toplam: 7 - ALKAROS.Idempotency.Tests.dll
 exit=0
@@ -34,7 +34,7 @@ exit=0
 
 ### Tam çözüm — 3 ardışık koşu
 
-```
+```console
 > dotnet test ALKAROS.slnx --no-restore -v q   (run 1,2,3)
 run1=0  run2=0  run3=0
 Transcripts: full-run-1.txt, full-run-2.txt, full-run-3.txt
@@ -42,7 +42,7 @@ Transcripts: full-run-1.txt, full-run-2.txt, full-run-3.txt
 
 ### Kapsam ve plan doğrulaması
 
-```
+```console
 > py tools/task-scope/task_scope_tool.py --task-id V1-FND-014 --format text
 OK: All changes within scope for V1-FND-014
 exit=0

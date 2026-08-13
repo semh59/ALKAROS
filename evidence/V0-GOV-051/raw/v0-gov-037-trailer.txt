@@ -1,0 +1,9 @@
+docs(c52): transfer remediation ownership
+
+Task: V0-GOV-037
+
+Gate: GATE-V1-EXIT
+
+exit_code: 0
+assertion: Task and Gate are separated by a blank line; no contiguous canonical trailer block
+assertion_exit_code: 0

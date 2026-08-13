@@ -8,6 +8,10 @@ dependency, wrong status/assignee, broken Markdown, evidence directory,
 metadata file, glob matching, and deterministic output.
 """
 
+import copy
+import csv
+import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -58,8 +62,8 @@ def _write_remediation_exceptions(plan_dir: Path, rows: list[str]) -> None:
                 "# Version Gates",
                 "",
                 "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->",
-                "| Task ID | Approval date | Purpose | Gate closure evidence | New feature behavior |",
-                "| --- | --- | --- | --- | --- |",
+                "| Task ID | Approval date | Source basis | Purpose | Gate closure evidence | New feature behavior |",
+                "| --- | --- | --- | --- | --- | --- |",
                 table,
                 "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->",
                 "",
@@ -89,21 +93,288 @@ def _write_v0_deferrals(plan_dir: Path, rows: list[str]) -> None:
     )
 
 
+REMEDIATION_RECORDS = {
+    "V1-CAT-003": ("2026-08-10", "CORR:C52"),
+    "V1-FND-016": ("2026-08-10", "CORR:C52"),
+    "V1-FND-017": ("2026-08-10", "CORR:C52"),
+    "V1-FND-018": ("2026-08-10", "CORR:C52"),
+    "V1-FND-019": ("2026-08-10", "CORR:C52"),
+    "V1-FND-020": ("2026-08-10", "CORR:C52"),
+    "V1-FND-021": ("2026-08-10", "CORR:C52"),
+    "V1-FND-022": ("2026-08-10", "CORR:C52"),
+    "V1-FND-023": ("2026-08-11", "CORR:C52;CORR:C53;CORR:C54"),
+    "V1-IAM-006": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-007": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-008": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-009": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-010": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-011": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-012": ("2026-08-10", "CORR:C52"),
+    "V1-IAM-013": ("2026-08-10", "CORR:C52"),
+    "V1-SEC-004": ("2026-08-10", "CORR:C52"),
+    "V1-SEC-005": ("2026-08-10", "CORR:C52"),
+}
 REMEDIATION_ROWS = [
-    "| `V1-FND-011` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-012` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-004` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-SEC-003` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-001` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-002` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-004` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-005` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-006` | `2026-08-03` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-IAM-005` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-013` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-014` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
-    "| `V1-FND-015` | `2026-08-04` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |",
+    "| `{task_id}` | `{approval_date}` | `{source_basis}` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |".format(
+        task_id=task_id, approval_date=approval_date, source_basis=source_basis
+    )
+    for task_id, (approval_date, source_basis) in REMEDIATION_RECORDS.items()
 ]
+C52_C53_C54_REMEDIATION_TASK_IDS = list(REMEDIATION_RECORDS)
+FND023_SOURCE_BASIS = [
+    "- CORR:C52",
+    "- CORR:C53",
+    "- CORR:C54",
+    "- CORR:C57",
+]
+
+ORIGIN_FINDING_IDS = [
+    "GOV-001",
+    "GOV-002",
+    "GOV-006",
+    "CODE-001",
+    "CODE-002",
+    "CODE-004",
+    "CODE-006",
+    "CODE-013",
+    "CODE-016",
+    "GOV-003",
+    "GOV-004",
+    "GOV-007",
+    "GOV-008",
+    "GOV-010",
+    "GOV-012",
+    "VER-CI-001",
+    "VER-GOV-002",
+    "VER-GOV-003",
+    "CODE-003",
+    "CODE-005",
+    "CODE-007",
+    "CODE-008",
+    "CODE-009",
+    "CODE-010",
+    "CODE-011",
+    "CODE-012",
+    "CODE-014",
+    "CODE-015",
+    "CODE-018",
+    "CODE-019",
+    "GOV-005",
+    "GOV-009",
+    "GOV-011",
+    "GOV-013",
+    "GOV-014",
+    "GOV-015",
+    "VER-BUILD-004",
+    "VER-COV-007",
+    "VER-FMT-005",
+    "VER-PROV-006",
+    "CODE-017",
+    "VER-ACC-008",
+]
+
+CANONICAL_POST_CLOSURE_ROUTES = {
+    "POST-CL-010": {
+        "owner_task_ids": "V0-GOV-056",
+        "source_basis": "CORR:C59",
+        "prerequisites": "V0-GOV-050;V0-GOV-054",
+        "closure_evidence": "exact C52/C53/C54/C57 source-basis and 42+10 routing/catalog parity",
+    },
+    "POST-CL-011": {
+        "owner_task_ids": "V0-GOV-057",
+        "source_basis": "CORR:C60",
+        "prerequisites": "V0-GOV-055",
+        "closure_evidence": "V1-FND-023 Done admission invokes the fixed task-specific v3 verifier regardless of V0 gate state",
+    },
+}
+
+REQUIRED_ROUTE_CATALOG_ENTRIES = {
+    "V0-GOV-056": {
+        "task_path": "plan/v0/governance/V0-GOV-056-task-scope-parity-regression.md",
+        "dependencies": ["V0-GOV-050", "V0-GOV-054"],
+        "closure_evidence": "exact C52/C53/C54/C57 TaskScope source basis and 42+10 routing/catalog parity",
+    },
+    "V0-GOV-057": {
+        "task_path": "plan/v0/governance/V0-GOV-057-v3-admission-hardening.md",
+        "dependencies": ["V0-GOV-055"],
+        "closure_evidence": "V1-FND-023 Done admission invokes the fixed task-specific v3 verifier regardless of V0 gate state",
+    },
+    "V0-GOV-058": {
+        "task_path": "plan/v0/governance/V0-GOV-058-dynamic-route-parity.md",
+        "dependencies": ["V0-GOV-056", "V0-GOV-057"],
+        "closure_evidence": "immutable 42-ID baseline plus dynamic post-closure count and C59/C60 CSV/JSON/catalog parity",
+    },
+}
+
+POST_CLOSURE_ID_PATTERN = re.compile(r"POST-CL-\d{3}$")
+
+
+def _load_live_route_data(repository: Path) -> tuple[list[dict], dict]:
+    with (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        csv_items = list(csv.DictReader(handle))
+    routing = json.loads(
+        (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    return csv_items, routing
+
+
+def _assert_unique_and_canonical_order(csv_ids: list[str], json_ids: list[str]) -> None:
+    assert len(csv_ids) == len(set(csv_ids))
+    assert len(json_ids) == len(set(json_ids))
+    assert csv_ids == json_ids
+
+
+def _assert_field_parity(csv_item: dict, json_item: dict) -> None:
+    assert set(json_item) <= set(csv_item)
+    for key in json_item:
+        if key in ("owner_task_ids", "prerequisites"):
+            assert csv_item[key] == ";".join(json_item[key])
+        else:
+            assert str(csv_item[key]) == str(json_item[key])
+
+
+def _assert_live_route_invariants(csv_items: list[dict], routing: dict) -> None:
+    csv_ids = [row["finding_id"] for row in csv_items]
+    json_ids = [item["finding_id"] for item in routing["items"]]
+    _assert_unique_and_canonical_order(csv_ids, json_ids)
+    origin_ids = [row["finding_id"] for row in csv_items if not row["finding_id"].startswith("POST-CL-")]
+    assert origin_ids == ORIGIN_FINDING_IDS
+    post_closure_rows = [
+        row for row in csv_items if row["finding_id"].startswith("POST-CL-")
+    ]
+    assert post_closure_rows == sorted(post_closure_rows, key=lambda row: row["finding_id"])
+    assert all(POST_CLOSURE_ID_PATTERN.match(row["finding_id"]) for row in post_closure_rows)
+    assert len(origin_ids) == 42
+    assert len(csv_items) == 42 + len(post_closure_rows)
+    assert routing["audit_register"]["finding_count"] == 42
+    assert routing["audit_register"]["post_closure_finding_count"] == len(post_closure_rows)
+    assert routing["audit_register"]["routed_finding_count"] == len(csv_items)
+    for csv_item, json_item in zip(csv_items, routing["items"]):
+        _assert_field_parity(csv_item, json_item)
+    csv_by_id = {row["finding_id"]: row for row in csv_items}
+    json_by_id = {item["finding_id"]: item for item in routing["items"]}
+    for post_id, expected in CANONICAL_POST_CLOSURE_ROUTES.items():
+        assert post_id in csv_by_id
+        assert post_id in json_by_id
+        for key, value in expected.items():
+            assert csv_by_id[post_id][key] == value
+            if key in ("owner_task_ids", "prerequisites"):
+                assert json_by_id[post_id][key] == value.split(";")
+            else:
+                assert json_by_id[post_id][key] == value
+    catalog_by_id = {item["task_id"]: item for item in routing["task_catalog"]}
+    for task_id, expected in REQUIRED_ROUTE_CATALOG_ENTRIES.items():
+        assert task_id in catalog_by_id
+        for key, value in expected.items():
+            assert catalog_by_id[task_id][key] == value
+
+
+def _mutate_drop_post_closure_from_csv(csv_items: list[dict], routing: dict) -> None:
+    csv_items[:] = [row for row in csv_items if row["finding_id"] != "POST-CL-015"]
+
+
+def _mutate_malformed_post_closure_id(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-015":
+            row["finding_id"] = "POST-CL-15"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-015":
+            item["finding_id"] = "POST-CL-15"
+
+
+def _mutate_non_canonical_post_closure_id(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-015":
+            row["finding_id"] = "POST-CL-015A"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-015":
+            item["finding_id"] = "POST-CL-015A"
+
+
+def _mutate_extra_post_closure_row(csv_items: list[dict], routing: dict) -> None:
+    csv_items.append(dict(csv_items[-1], finding_id="POST-CL-016"))
+
+
+def _mutate_duplicate_post_closure_row(csv_items: list[dict], routing: dict) -> None:
+    csv_items.append(dict(csv_items[-1]))
+    routing["items"].append(dict(routing["items"][-1]))
+
+
+def _mutate_missing_origin_id(csv_items: list[dict], routing: dict) -> None:
+    csv_items[:] = [row for row in csv_items if row["finding_id"] != "GOV-001"]
+    routing["items"][:] = [
+        item for item in routing["items"] if item["finding_id"] != "GOV-001"
+    ]
+
+
+def _mutate_extra_origin_id(csv_items: list[dict], routing: dict) -> None:
+    csv_items.append(dict(csv_items[0], finding_id="GOV-999"))
+    routing["items"].append(dict(routing["items"][0], finding_id="GOV-999"))
+
+
+def _mutate_duplicate_origin_id(csv_items: list[dict], routing: dict) -> None:
+    csv_items.append(dict(csv_items[0]))
+    routing["items"].append(dict(routing["items"][0]))
+
+
+def _mutate_csv_json_row_mismatch(csv_items: list[dict], routing: dict) -> None:
+    csv_items[:] = [row for row in csv_items if row["finding_id"] != "POST-CL-013"]
+
+
+def _mutate_register_count_mismatch(csv_items: list[dict], routing: dict) -> None:
+    routing["audit_register"]["post_closure_finding_count"] = 14
+
+
+def _mutate_field_mismatch(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-010":
+            row["closure_evidence"] = "mutated closure evidence"
+
+
+def _mutate_catalog_mismatch(csv_items: list[dict], routing: dict) -> None:
+    for entry in routing["task_catalog"]:
+        if entry["task_id"] == "V0-GOV-058":
+            entry["dependencies"] = ["V0-GOV-056"]
+
+
+def _mutate_c59_owner_difference(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-010":
+            row["owner_task_ids"] = "V0-GOV-999"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-010":
+            item["owner_task_ids"] = ["V0-GOV-999"]
+
+
+def _mutate_c59_source_difference(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-010":
+            row["source_basis"] = "CORR:XX"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-010":
+            item["source_basis"] = "CORR:XX"
+
+
+def _mutate_c59_prerequisite_difference(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-010":
+            row["prerequisites"] = "V0-GOV-000"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-010":
+            item["prerequisites"] = ["V0-GOV-000"]
+
+
+def _mutate_c60_closure_evidence_difference(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-011":
+            row["closure_evidence"] = "mutated C60 closure"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-011":
+            item["closure_evidence"] = "mutated C60 closure"
 
 DEFERRED_TASK_IDS = [
     "V0-HUG-001",
@@ -117,7 +388,42 @@ DEFERRED_TASK_IDS = [
     "V0-LIC-001",
     "V0-BKP-001",
     "V0-BKP-002",
+    "V0-REV-001",
+    "V0-REV-002",
+    "V0-REV-003",
+    "V0-REV-004",
+    "V0-REV-005",
+    "V0-REV-006",
+    "V0-REV-007",
+    "V0-REV-008",
+    "V0-REV-009",
+    "V0-REV-010",
+    "V0-REV-011",
+    "V0-REV-012",
+    "V0-REV-013",
+    "V0-REV-014",
+    "V0-REV-015",
+    "V0-REV-016",
+    "V0-REV-017",
+    "V0-REV-018",
+    "V0-REV-019",
+    "V0-REV-020",
+    "V0-REV-021",
+    "V0-REV-022",
+    "V0-REV-023",
+    "V0-REV-024",
+    "V0-REV-025",
+    "V0-REV-026",
+    "V0-REV-027",
+    "V0-REV-028",
+    "V0-REV-029",
+    "V0-REV-030",
 ]
+
+DEFERRED_REV_ROW = (
+    "| `{id}` | `2026-08-13` | `V12` | Tarihli source packet + named approver "
+    "(ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |"
+)
 
 DEFERRED_ROWS = [
     "| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |",
@@ -131,7 +437,7 @@ DEFERRED_ROWS = [
     "| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |",
     "| `V0-BKP-001` | `2026-08-03` | `V15` | Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı | Not V0 gate closure evidence |",
     "| `V0-BKP-002` | `2026-08-03` | `V15` | Gerçek yedekleme donanımı/cihaz kanıtı | Not V0 gate closure evidence |",
-]
+] + [DEFERRED_REV_ROW.format(id=f"V0-REV-{i:03d}") for i in range(1, 31)]
 
 
 # ---------------------------------------------------------------------------
@@ -381,22 +687,94 @@ class TestRemediationEntryGateExceptions:
         _write_remediation_exceptions(make_plan, REMEDIATION_ROWS)
         write_task(task_id="V0-DOM-001", status="Planned")
 
-    def test_approved_task_bypasses_open_v0_entry_gate(
-        self, write_task, make_repo, make_plan, run_tool
+    @pytest.mark.parametrize("task_id", C52_C53_C54_REMEDIATION_TASK_IDS)
+    def test_every_c52_c53_c54_task_bypasses_open_v0_entry_gate(
+        self, task_id, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-011")
+        write_task(task_id=task_id)
 
-        exit_code, result = run_tool("V1-FND-011", make_repo, make_plan)
+        exit_code, result = run_tool(task_id, make_repo, make_plan)
 
         assert exit_code == 0
         assert result["metadata_errors"] == []
+
+    def test_exception_records_require_the_canonical_metadata(
+        self, make_plan
+    ):
+        _write_remediation_exceptions(make_plan, REMEDIATION_ROWS)
+
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        assert mod.parse_remediation_exception_records(make_plan) == REMEDIATION_RECORDS
+
+    def test_fnd023_wrong_approval_date_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-023")
+        wrong_date_rows = REMEDIATION_ROWS.copy()
+        wrong_date_rows[8] = wrong_date_rows[8].replace("2026-08-11", "2026-08-10")
+        _write_remediation_exceptions(make_plan, wrong_date_rows)
+
+        exit_code, result = run_tool("V1-FND-023", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    def test_fnd023_wrong_source_basis_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-023")
+        wrong_source_rows = REMEDIATION_ROWS.copy()
+        wrong_source_rows[8] = wrong_source_rows[8].replace(
+            "CORR:C52;CORR:C53;CORR:C54", "CORR:C52"
+        )
+        _write_remediation_exceptions(make_plan, wrong_source_rows)
+
+        exit_code, result = run_tool("V1-FND-023", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    def test_out_of_order_exception_markers_fail_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-023")
+        gates = make_plan / "GATES.md"
+        gates.write_text(
+            gates.read_text(encoding="utf-8").replace(
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->",
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:TEMP -->",
+            ).replace(
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->",
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->",
+            ).replace(
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:TEMP -->",
+                "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->",
+            ),
+            encoding="utf-8",
+        )
+
+        exit_code, result = run_tool("V1-FND-023", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("markers are out of order" in error for error in result["metadata_errors"])
 
     def test_candidate_remediation_skips_only_blocked_dependencies(
         self, write_task, make_repo, make_plan
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-001", dependencies="- V0-DOM-001")
+        write_task(task_id="V1-FND-016", dependencies="- V0-DOM-001")
 
         import importlib.util
 
@@ -407,7 +785,7 @@ class TestRemediationEntryGateExceptions:
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         result = mod.run_validation(
-            "V1-FND-001", make_repo, make_plan, candidate_remediation=True
+            "V1-FND-016", make_repo, make_plan, candidate_remediation=True
         )
 
         assert result["valid"] is True
@@ -448,10 +826,10 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-011")
+        write_task(task_id="V1-FND-016")
         _write_remediation_exceptions(make_plan, REMEDIATION_ROWS + [REMEDIATION_ROWS[0]])
 
-        exit_code, result = run_tool("V1-FND-011", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("duplicate Task ID" in error for error in result["metadata_errors"])
@@ -460,13 +838,13 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-011")
+        write_task(task_id="V1-FND-016")
         nonmatching_rows = REMEDIATION_ROWS[:-1] + [
-            "| `V1-FND-999` | `2026-08-02` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |"
+            "| `V1-FND-999` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |"
         ]
         _write_remediation_exceptions(make_plan, nonmatching_rows)
 
-        exit_code, result = run_tool("V1-FND-011", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("must exactly match" in error for error in result["metadata_errors"])
@@ -475,15 +853,225 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-011")
+        write_task(task_id="V1-FND-016")
         malformed_rows = REMEDIATION_ROWS.copy()
-        malformed_rows[0] = "| `V1-FND-011` | malformed |"
+        malformed_rows[0] = "| `V1-FND-016` | malformed |"
         _write_remediation_exceptions(make_plan, malformed_rows)
 
-        exit_code, result = run_tool("V1-FND-011", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("invalid record" in error for error in result["metadata_errors"])
+
+    def test_missing_exception_markers_fail_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-016")
+        (make_plan / "GATES.md").write_text("# Version Gates\n", encoding="utf-8")
+
+        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("markers must occur exactly once" in error for error in result["metadata_errors"])
+
+    def test_wrong_c52_approval_date_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-016")
+        wrong_date_rows = REMEDIATION_ROWS.copy()
+        wrong_date_rows[0] = wrong_date_rows[0].replace("2026-08-10", "2026-08-09")
+        _write_remediation_exceptions(make_plan, wrong_date_rows)
+
+        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    @pytest.mark.parametrize("task_id", ["V1-FND-001", "V0-GOV-052"])
+    def test_existing_done_task_is_not_a_candidate_remediation(
+        self, task_id, write_task, make_repo, make_plan
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id=task_id, status="Done")
+
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        result = mod.run_validation(
+            task_id, make_repo, make_plan, candidate_remediation=True
+        )
+
+        assert result["valid"] is False
+        assert result["metadata_errors"] == [
+            f"Task {task_id} is not an approved candidate-code remediation"
+        ]
+
+    def test_c52_candidate_requires_an_active_session(
+        self, write_task, make_repo, make_plan
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-016", status="Planned")
+
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        result = mod.run_validation(
+            "V1-FND-016", make_repo, make_plan, candidate_remediation=True
+        )
+
+        assert result["valid"] is False
+        assert result["metadata_errors"] == [
+            "Candidate-code remediation task status is 'Planned', expected 'InProgress'"
+        ]
+
+    def test_fnd023_candidate_requires_an_active_session(
+        self, write_task, make_repo, make_plan
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-023", status="Planned")
+
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        result = mod.run_validation(
+            "V1-FND-023", make_repo, make_plan, candidate_remediation=True
+        )
+
+        assert result["valid"] is False
+        assert result["metadata_errors"] == [
+            "Candidate-code remediation task status is 'Planned', expected 'InProgress'"
+        ]
+
+    def test_non_c52_source_basis_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_open_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-016")
+        wrong_source_rows = REMEDIATION_ROWS.copy()
+        wrong_source_rows[0] = wrong_source_rows[0].replace("CORR:C52", "PDF:I.7")
+        _write_remediation_exceptions(make_plan, wrong_source_rows)
+
+        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("must exactly match" in error for error in result["metadata_errors"])
+
+    @staticmethod
+    def _assert_fnd023_source_basis(source_basis: list[str]) -> None:
+        assert source_basis == FND023_SOURCE_BASIS
+
+    @pytest.mark.parametrize(
+        "source_basis",
+        [
+            FND023_SOURCE_BASIS[:-1],
+            FND023_SOURCE_BASIS + ["- CORR:C58"],
+            [*FND023_SOURCE_BASIS[:2], FND023_SOURCE_BASIS[3], FND023_SOURCE_BASIS[2]],
+        ],
+        ids=["missing", "extra", "out_of_order"],
+    )
+    def test_fnd023_source_basis_negative_variants_fail_closed(self, source_basis):
+        with pytest.raises(AssertionError):
+            self._assert_fnd023_source_basis(source_basis)
+
+    def test_repository_fnd023_admission_source_and_routing_catalog_parity(self):
+        repository = Path(__file__).resolve().parents[3]
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            repository / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        fnd023 = (repository / "plan" / "v1" / "foundation" / "V1-FND-023-solution-test-discovery.md").read_text(
+            encoding="utf-8"
+        )
+        source_basis = fnd023.split("## Source basis\n\n", 1)[1].split("\n## ", 1)[0]
+        self._assert_fnd023_source_basis(source_basis.splitlines())
+
+        csv_items, routing = _load_live_route_data(repository)
+        csv_item = next(item for item in csv_items if item["finding_id"] == "POST-CL-002")
+        json_item = next(item for item in routing["items"] if item["finding_id"] == "POST-CL-002")
+        v050_catalog = next(
+            item for item in routing["task_catalog"] if item["task_id"] == "V0-GOV-050"
+        )
+
+        assert mod.parse_remediation_exception_records(repository / "plan") == REMEDIATION_RECORDS
+        assert len(REMEDIATION_RECORDS) == 19
+        _assert_live_route_invariants(csv_items, routing)
+        assert csv_item["owner_task_ids"] == "V0-GOV-050;V1-FND-023"
+        assert csv_item["source_basis"] == "CORR:C52;CORR:C53;CORR:C54"
+        assert csv_item["closure_evidence"] == json_item["closure_evidence"]
+        assert json_item["owner_task_ids"] == ["V0-GOV-050", "V1-FND-023"]
+        assert json_item["source_basis"] == "CORR:C52;CORR:C53;CORR:C54"
+        assert v050_catalog["task_path"] == "plan/v0/governance/V0-GOV-050-admit-post-closure-remediation.md"
+        assert v050_catalog["dependencies"] == ["V0-GOV-035", "V0-GOV-037", "V0-GOV-049", "V0-GOV-052"]
+        assert v050_catalog["closure_evidence"] == "exact 19-ID C52/C53/C54 admission set"
+
+    @pytest.mark.parametrize(
+        "mutate",
+        [
+            _mutate_drop_post_closure_from_csv,
+            _mutate_malformed_post_closure_id,
+            _mutate_non_canonical_post_closure_id,
+            _mutate_extra_post_closure_row,
+            _mutate_duplicate_post_closure_row,
+            _mutate_missing_origin_id,
+            _mutate_extra_origin_id,
+            _mutate_duplicate_origin_id,
+            _mutate_csv_json_row_mismatch,
+            _mutate_register_count_mismatch,
+            _mutate_field_mismatch,
+            _mutate_catalog_mismatch,
+            _mutate_c59_owner_difference,
+            _mutate_c59_source_difference,
+            _mutate_c59_prerequisite_difference,
+            _mutate_c60_closure_evidence_difference,
+        ],
+        ids=[
+            "missing_post_closure_row",
+            "malformed_post_closure_id",
+            "non_canonical_post_closure_id",
+            "extra_post_closure_row",
+            "duplicate_post_closure_row",
+            "missing_origin_id",
+            "extra_origin_id",
+            "duplicate_origin_id",
+            "csv_json_row_mismatch",
+            "register_count_mismatch",
+            "field_mismatch",
+            "catalog_mismatch",
+            "c59_owner_difference",
+            "c59_source_difference",
+            "c59_prerequisite_difference",
+            "c60_closure_evidence_difference",
+        ],
+    )
+    def test_live_route_invariants_reject_structural_break(self, mutate):
+        repository = Path(__file__).resolve().parents[3]
+        csv_items, routing = _load_live_route_data(repository)
+        csv_items = copy.deepcopy(csv_items)
+        routing = copy.deepcopy(routing)
+        mutate(csv_items, routing)
+        with pytest.raises(AssertionError):
+            _assert_live_route_invariants(csv_items, routing)
 
 
 # ---------------------------------------------------------------------------

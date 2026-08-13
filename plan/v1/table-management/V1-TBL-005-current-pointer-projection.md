@@ -19,7 +19,7 @@ Authoritative source ilişkilerinden current Order/Bill pointer projection'ları
 
 ## Owned surface
 
-- `src/Modules/TableManagement/CurrentPointers/**`, `tests/Modules/TableManagement/CurrentPointers/**`
+- `src/Modules/Tables/CurrentPointers/**`, `tests/Modules/Tables/CurrentPointers/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -41,7 +41,7 @@ Authoritative source ilişkilerinden current Order/Bill pointer projection'ları
 
 ## Deliverables
 
-- `src/Modules/TableManagement/CurrentPointers/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Tables/CurrentPointers/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Public API/event contract varsa contract testleri dahil otomatik testler.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

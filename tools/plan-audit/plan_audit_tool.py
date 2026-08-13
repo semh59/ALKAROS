@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import ast
 from collections import defaultdict
 import hashlib
+import importlib.util
 import json
 import logging
 import re
@@ -140,6 +142,36 @@ V0_DEFERRED_TASKS = {
     "V0-LIC-001",
     "V0-BKP-001",
     "V0-BKP-002",
+    "V0-REV-001",
+    "V0-REV-002",
+    "V0-REV-003",
+    "V0-REV-004",
+    "V0-REV-005",
+    "V0-REV-006",
+    "V0-REV-007",
+    "V0-REV-008",
+    "V0-REV-009",
+    "V0-REV-010",
+    "V0-REV-011",
+    "V0-REV-012",
+    "V0-REV-013",
+    "V0-REV-014",
+    "V0-REV-015",
+    "V0-REV-016",
+    "V0-REV-017",
+    "V0-REV-018",
+    "V0-REV-019",
+    "V0-REV-020",
+    "V0-REV-021",
+    "V0-REV-022",
+    "V0-REV-023",
+    "V0-REV-024",
+    "V0-REV-025",
+    "V0-REV-026",
+    "V0-REV-027",
+    "V0-REV-028",
+    "V0-REV-029",
+    "V0-REV-030",
 }
 
 BROAD_HANDOFF_REPLACEMENTS = {
@@ -716,6 +748,217 @@ def sha256(path: Path) -> str:
 
 def read_utf8(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+_REMEDIATION_ADMISSION_TABLE_HEADER = (
+    "| Task ID | Approval date | Source basis | Purpose | Gate closure evidence | "
+    "New feature behavior |"
+)
+_REMEDIATION_ADMISSION_TABLE_SEPARATOR = "| --- | --- | --- | --- | --- | --- |"
+_REMEDIATION_ADMISSION_TABLE_ROW = re.compile(
+    r"^\| `(?P<task_id>V\d+-[A-Z]+-\d+)` \| `(?P<approval_date>\d{4}-\d{2}-\d{2})` \| "
+    r"`(?P<source_basis>CORR:C\d+(?:;CORR:C\d+)*)` \| Verified finding remediation only \| "
+    r"Not gate closure evidence \| No new feature behavior \|$"
+)
+_REMEDIATION_ADMISSION_RECORDS = (
+    ("V1-FND-016", "2026-08-10", "CORR:C52"),
+    ("V1-FND-017", "2026-08-10", "CORR:C52"),
+    ("V1-FND-018", "2026-08-10", "CORR:C52"),
+    ("V1-FND-019", "2026-08-10", "CORR:C52"),
+    ("V1-FND-020", "2026-08-10", "CORR:C52"),
+    ("V1-FND-021", "2026-08-10", "CORR:C52"),
+    ("V1-FND-022", "2026-08-10", "CORR:C52"),
+    ("V1-FND-023", "2026-08-11", "CORR:C52;CORR:C53;CORR:C54"),
+    ("V1-IAM-006", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-007", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-008", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-009", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-010", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-011", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-012", "2026-08-10", "CORR:C52"),
+    ("V1-IAM-013", "2026-08-10", "CORR:C52"),
+    ("V1-SEC-004", "2026-08-10", "CORR:C52"),
+    ("V1-SEC-005", "2026-08-10", "CORR:C52"),
+    ("V1-CAT-003", "2026-08-10", "CORR:C52"),
+)
+_C54_APPLICATION_TASK_ID = "V1-FND-023"
+_C54_APPLICATION_SOURCES = ("CORR:C52", "CORR:C53", "CORR:C54", "CORR:C57")
+_C54_APPLICATION_SURFACES = (
+    "Directory.Build.targets",
+    "tests/Architecture/TestDiscovery/test_solution_test_discovery.py",
+    "evidence/V1-FND-023/**",
+)
+_C54_APPLICATION_DEPENDENCIES = ("V0-GOV-050", "V0-GOV-054", "V1-FND-001")
+_C54_DONE_DEPENDENCIES = ("V0-GOV-050", "V1-FND-001")
+_C54_TRACEABILITY_ROW = (
+    "| `C54` | 2026-08-11 kullanıcı onaylı C53 plan düzeltmesi: `V1-FND-001` "
+    "historical `Done` body’si ve C52 reserved-surface kaydı aynen korunur; "
+    "`V1-FND-023` yalnız C53’te kanıtlanmış test-discovery kusuru için "
+    "`Directory.Build.targets` üzerinde tek-seferlik exact write authority alır. "
+    "Bu authority historical ownership transferi veya `V1-FND-001`in yeniden "
+    "açılması değildir. `V0-GOV-050`, `plan/GATES.md`nin tek ileriye-dönük "
+    "owner’ıdır; `V0-GOV-036` bu dosyayı read-only tüketir ve `V0-GOV-050`e "
+    "bağımlıdır. `V1-FND-023` admission kaydı, `2026-08-11` tarihi ve "
+    "`CORR:C52;CORR:C53;CORR:C54` source basis’iyle C54’ün dar C52/C53 "
+    "düzeltmesini taşır. Önceki `a7c5a85` plan kaydındaki `V1-FND-001` body "
+    "değişikliği yeni committe geri alınır; geçmiş rewrite edilmez. C52 yalnız bu "
+    "dar çelişki için C54 tarafından tamamlanır. PDF current authority değildir, "
+    "gate kapatmaz ve product behavior izni vermez. | `V0-GOV-036`, "
+    "`V0-GOV-050`, `V1-FND-023` | C53 plan correction ve bağımsız final denetim "
+    "| Planned |"
+)
+
+
+def parse_remediation_admission_table(
+    text: str,
+    start_marker: str,
+    end_marker: str,
+    label: str,
+) -> tuple[list[tuple[str, str, str]], list[str]]:
+    """Parse one strict admission table without granting malformed rows authority."""
+    errors: list[str] = []
+    lines = text.splitlines()
+    starts = [index for index, line in enumerate(lines) if line == start_marker]
+    ends = [index for index, line in enumerate(lines) if line == end_marker]
+    prefix = f"SEMANTIC_REMEDIATION_ADMISSION_{label}"
+    if len(starts) != 1 or len(ends) != 1:
+        return [], [f"{prefix}_MARKER"]
+    start, end = starts[0], ends[0]
+    if start >= end:
+        return [], [f"{prefix}_MARKER_ORDER"]
+    table_lines = lines[start + 1 : end]
+    if len(table_lines) < 2 or table_lines[0] != _REMEDIATION_ADMISSION_TABLE_HEADER:
+        errors.append(f"{prefix}_HEADER")
+    if len(table_lines) < 2 or table_lines[1] != _REMEDIATION_ADMISSION_TABLE_SEPARATOR:
+        errors.append(f"{prefix}_SEPARATOR")
+
+    records: list[tuple[str, str, str]] = []
+    for line in table_lines[2:]:
+        match = _REMEDIATION_ADMISSION_TABLE_ROW.fullmatch(line)
+        if match is None:
+            errors.append(f"{prefix}_ROW")
+            continue
+        records.append(
+            (
+                match.group("task_id"),
+                match.group("approval_date"),
+                match.group("source_basis"),
+            )
+        )
+    return records, errors
+
+
+def admission_record_errors(
+    label: str,
+    actual: list[tuple[str, str, str]],
+    expected: tuple[tuple[str, str, str], ...],
+) -> list[str]:
+    """Return stable, specific errors for divergence from one admission tuple."""
+    prefix = f"SEMANTIC_REMEDIATION_ADMISSION_{label}"
+    errors: list[str] = []
+    actual_ids = [record[0] for record in actual]
+    expected_ids = [record[0] for record in expected]
+    if len(actual) != len(expected):
+        errors.append(f"{prefix}_COUNT expected={len(expected)} actual={len(actual)}")
+    duplicates = sorted({task_id for task_id in actual_ids if actual_ids.count(task_id) > 1})
+    if duplicates:
+        errors.append(f"{prefix}_DUPLICATE {','.join(duplicates)}")
+    missing = sorted(set(expected_ids) - set(actual_ids))
+    if missing:
+        errors.append(f"{prefix}_MISSING {','.join(missing)}")
+    extra = sorted(set(actual_ids) - set(expected_ids))
+    if extra:
+        errors.append(f"{prefix}_EXTRA {','.join(extra)}")
+    if not missing and not extra and not duplicates and actual_ids != expected_ids:
+        errors.append(f"{prefix}_ORDER")
+
+    actual_by_id = {task_id: (approval_date, source_basis) for task_id, approval_date, source_basis in actual}
+    for task_id, expected_date, expected_source in expected:
+        record = actual_by_id.get(task_id)
+        if record is None:
+            continue
+        actual_date, actual_source = record
+        if actual_date != expected_date:
+            errors.append(
+                f"{prefix}_DATE {task_id} expected={expected_date} actual={actual_date}"
+            )
+        if actual_source != expected_source:
+            errors.append(
+                f"{prefix}_SOURCE {task_id} expected={expected_source} actual={actual_source}"
+            )
+    return errors
+
+
+def parse_task_scope_admission_records(path: Path) -> tuple[list[tuple[str, str, str]], list[str]]:
+    """Read the task-scope literal records while preserving source declaration order."""
+    prefix = "SEMANTIC_REMEDIATION_ADMISSION_TASK_SCOPE"
+    tree = ast.parse(read_utf8(path), filename=str(path))
+    assignment = next(
+        (
+            node
+            for node in tree.body
+            if isinstance(node, ast.Assign)
+            and any(
+                isinstance(target, ast.Name)
+                and target.id == "_C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS"
+                for target in node.targets
+            )
+        ),
+        None,
+    )
+    if assignment is None or not isinstance(assignment.value, ast.Dict):
+        return [], [f"{prefix}_DECLARATION"]
+
+    records: list[tuple[str, str, str]] = []
+    for key, value in zip(assignment.value.keys, assignment.value.values, strict=True):
+        if key is None:
+            return [], [f"{prefix}_ROW"]
+        parsed_key = ast.literal_eval(key)
+        parsed_value = ast.literal_eval(value)
+        if (
+            not isinstance(parsed_key, str)
+            or not isinstance(parsed_value, tuple)
+            or len(parsed_value) != 2
+            or not all(isinstance(item, str) for item in parsed_value)
+        ):
+            return [], [f"{prefix}_ROW"]
+        records.append((parsed_key, parsed_value[0], parsed_value[1]))
+    return records, []
+
+
+def validate_remediation_admission_tuple() -> list[str]:
+    """Require contract, gate table and canonical task-scope records to agree."""
+    errors: list[str] = []
+    gates_records, gates_errors = parse_remediation_admission_table(
+        read_utf8(PLAN_DIR / "GATES.md"),
+        "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:START -->",
+        "<!-- TASK_SCOPE_REMEDIATION_EXCEPTIONS:END -->",
+        "GATES",
+    )
+    errors.extend(gates_errors)
+    errors.extend(admission_record_errors("GATES", gates_records, _REMEDIATION_ADMISSION_RECORDS))
+
+    contract_records, contract_errors = parse_remediation_admission_table(
+        read_utf8(PLAN_DIR / "VALIDATION_CONTRACT.md"),
+        "<!-- PLAN_AUDIT_REMEDIATION_ADMISSION:START -->",
+        "<!-- PLAN_AUDIT_REMEDIATION_ADMISSION:END -->",
+        "CONTRACT",
+    )
+    errors.extend(contract_errors)
+    errors.extend(
+        admission_record_errors("CONTRACT", contract_records, _REMEDIATION_ADMISSION_RECORDS)
+    )
+
+    tool_records, tool_errors = parse_task_scope_admission_records(
+        WORKSPACE / "tools" / "task-scope" / "task_scope_tool.py"
+    )
+    errors.extend(tool_errors)
+    errors.extend(
+        admission_record_errors(
+            "TASK_SCOPE", tool_records, tuple(sorted(_REMEDIATION_ADMISSION_RECORDS))
+        )
+    )
+    return errors
 
 
 def relative_workspace_path(value: str) -> str | None:
@@ -1903,6 +2146,9 @@ def application_tasks_started_before_v0_exit(
     tasks: dict[str, tuple[Path, list[str], dict[str, list[str]], list[str]]],
 ) -> list[str]:
     """Reject newly started application work while a V0 task remains blocked."""
+    c54_errors = c54_application_admission_errors(tasks)
+    fnd023 = tasks.get(_C54_APPLICATION_TASK_ID)
+    fnd023_done = fnd023 is not None and metadata_value(fnd023[1], "Status", "") == "Done"
     v0_gate_open = any(
         task_id.startswith("V0-")
         and task_id not in V0_DEFERRED_TASKS
@@ -1910,16 +2156,109 @@ def application_tasks_started_before_v0_exit(
         for task_id, (_, preamble, _, _) in tasks.items()
     )
     if not v0_gate_open:
-        return []
+        return c54_errors if fnd023_done else []
 
+    c54_is_admitted = not c54_errors and not validate_remediation_admission_tuple()
     application_work_types = {"implementation", "integration"}
-    return [
+    return c54_errors + [
         f"APPLICATION_STARTED_BEFORE_V0_EXIT {task_id}"
         for task_id, (_, preamble, _, _) in tasks.items()
         if not task_id.startswith("V0-")
         and metadata_value(preamble, "Status", "") == "InProgress"
         and metadata_value(preamble, "Work type", "") in application_work_types
+        and not (task_id == _C54_APPLICATION_TASK_ID and c54_is_admitted)
     ]
+
+
+def v3_interrupted_closure_errors() -> list[str]:
+    """Require the fixed V1-FND-023 final commit when its task is marked Done."""
+    tool_path = WORKSPACE / "tools" / "evidence-envelope" / "evidence_envelope_tool.py"
+    if not tool_path.is_file():
+        return ["C54_APPLICATION_ADMISSION_V3_TOOL_MISSING"]
+    spec = importlib.util.spec_from_file_location("plan_audit_evidence_envelope", tool_path)
+    if spec is None or spec.loader is None:
+        return ["C54_APPLICATION_ADMISSION_V3_TOOL_INVALID"]
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    if getattr(module, "_V3_REENTRY_PARENT_TASK_ID", None) != "V0-GOV-060":
+        return ["C54_APPLICATION_ADMISSION_V3_PARENT_TASK_MISMATCH"]
+    final_commit = module.resolve_v3_final_commit(WORKSPACE)
+    if final_commit is None:
+        return ["C54_APPLICATION_ADMISSION_V3_FINAL_MISSING"]
+    head = subprocess.run(
+        ["git", "-C", str(WORKSPACE), "rev-parse", "--verify", "HEAD^{commit}"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if head.returncode != 0:
+        return ["C54_APPLICATION_ADMISSION_V3_FINAL_MISSING"]
+    if (
+        subprocess.run(
+            ["git", "-C", str(WORKSPACE), "merge-base", "--is-ancestor", final_commit, head.stdout.strip()],
+            check=False,
+            capture_output=True,
+        ).returncode
+        != 0
+    ):
+        return ["C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID"]
+    result = module.validate_v1_fnd_023_v3_final_commit(final_commit, WORKSPACE)
+    if result["valid"]:
+        return []
+    return ["C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID"]
+
+
+def c54_application_admission_errors(
+    tasks: dict[str, tuple[Path, list[str], dict[str, list[str]], list[str]]],
+) -> list[str]:
+    """Verify the one C54 application admission from static plan artifacts."""
+    task = tasks.get(_C54_APPLICATION_TASK_ID)
+    if task is None:
+        return ["C54_APPLICATION_ADMISSION_TASK_MISSING"]
+
+    _, preamble, sections, _ = task
+    status = metadata_value(preamble, "Status", "")
+    if status not in {"InProgress", "Done"}:
+        return []
+
+    errors: list[str] = []
+    if status == "Done":
+        errors.extend(v3_interrupted_closure_errors())
+    elif status != "InProgress":
+        errors.append(f"C54_APPLICATION_ADMISSION_STATUS expected=InProgress actual={status}")
+
+    sources = tuple(line.removeprefix("- ").strip() for line in sections["Source basis"])
+    if sources != _C54_APPLICATION_SOURCES:
+        errors.append("C54_APPLICATION_ADMISSION_SOURCE")
+
+    surfaces = tuple(
+        match.group(1)
+        for line in sections["Owned surface"]
+        if (match := re.fullmatch(r"- `(.+)`", line)) is not None
+    )
+    if surfaces != _C54_APPLICATION_SURFACES:
+        errors.append("C54_APPLICATION_ADMISSION_AUTHORITY")
+
+    dependencies = tuple(line.removeprefix("- ").strip() for line in sections["Dependencies"])
+    if dependencies != _C54_APPLICATION_DEPENDENCIES:
+        errors.append("C54_APPLICATION_ADMISSION_DEPENDENCIES")
+    for dependency_id in _C54_DONE_DEPENDENCIES:
+        dependency = tasks.get(dependency_id)
+        dependency_status = (
+            metadata_value(dependency[1], "Status", "") if dependency is not None else "Missing"
+        )
+        if dependency_status != "Done":
+            errors.append(
+                f"C54_APPLICATION_ADMISSION_DEPENDENCY {dependency_id} "
+                f"status={dependency_status}"
+            )
+
+    traceability_rows = [
+        line for line in read_utf8(PLAN_DIR / "TRACEABILITY.md").splitlines() if line.startswith("| `C54` |")
+    ]
+    if traceability_rows != [_C54_TRACEABILITY_ROW]:
+        errors.append("C54_APPLICATION_ADMISSION_TRACEABILITY_AUTHORITY")
+    return errors
 
 
 def validate_plan() -> None:
@@ -1957,6 +2296,7 @@ def validate_plan() -> None:
         )
     )
     gate_text = read_utf8(PLAN_DIR / "GATES.md")
+    errors.extend(validate_remediation_admission_tuple())
     registered_gates = set(GATE_ID.findall(gate_text))
     deferred_block = gate_text.split("<!-- V0_DEFERRED_TASKS:START -->", 1)
     if len(deferred_block) != 2 or "<!-- V0_DEFERRED_TASKS:END -->" not in deferred_block[1]:
@@ -1965,7 +2305,7 @@ def validate_plan() -> None:
         deferred_table = deferred_block[1].split("<!-- V0_DEFERRED_TASKS:END -->", 1)[0]
         registered_deferred = set(
             re.findall(
-                r"^\| `(V0-[A-Z0-9]+-\d+)` \| `2026-08-03` \|",
+                r"^\| `(V0-[A-Z0-9]+-\d+)` \| `(?:2026-08-03|2026-08-13)` \|",
                 deferred_table,
                 re.MULTILINE,
             )
