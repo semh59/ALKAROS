@@ -8,8 +8,10 @@ dependency, wrong status/assignee, broken Markdown, evidence directory,
 metadata file, glob matching, and deterministic output.
 """
 
+import copy
 import csv
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -126,6 +128,254 @@ FND023_SOURCE_BASIS = [
     "- CORR:C57",
 ]
 
+ORIGIN_FINDING_IDS = [
+    "GOV-001",
+    "GOV-002",
+    "GOV-006",
+    "CODE-001",
+    "CODE-002",
+    "CODE-004",
+    "CODE-006",
+    "CODE-013",
+    "CODE-016",
+    "GOV-003",
+    "GOV-004",
+    "GOV-007",
+    "GOV-008",
+    "GOV-010",
+    "GOV-012",
+    "VER-CI-001",
+    "VER-GOV-002",
+    "VER-GOV-003",
+    "CODE-003",
+    "CODE-005",
+    "CODE-007",
+    "CODE-008",
+    "CODE-009",
+    "CODE-010",
+    "CODE-011",
+    "CODE-012",
+    "CODE-014",
+    "CODE-015",
+    "CODE-018",
+    "CODE-019",
+    "GOV-005",
+    "GOV-009",
+    "GOV-011",
+    "GOV-013",
+    "GOV-014",
+    "GOV-015",
+    "VER-BUILD-004",
+    "VER-COV-007",
+    "VER-FMT-005",
+    "VER-PROV-006",
+    "CODE-017",
+    "VER-ACC-008",
+]
+
+CANONICAL_POST_CLOSURE_ROUTES = {
+    "POST-CL-010": {
+        "owner_task_ids": "V0-GOV-056",
+        "source_basis": "CORR:C59",
+        "prerequisites": "V0-GOV-050;V0-GOV-054",
+        "closure_evidence": "exact C52/C53/C54/C57 source-basis and 42+10 routing/catalog parity",
+    },
+    "POST-CL-011": {
+        "owner_task_ids": "V0-GOV-057",
+        "source_basis": "CORR:C60",
+        "prerequisites": "V0-GOV-055",
+        "closure_evidence": "V1-FND-023 Done admission invokes the fixed task-specific v3 verifier regardless of V0 gate state",
+    },
+}
+
+REQUIRED_ROUTE_CATALOG_ENTRIES = {
+    "V0-GOV-056": {
+        "task_path": "plan/v0/governance/V0-GOV-056-task-scope-parity-regression.md",
+        "dependencies": ["V0-GOV-050", "V0-GOV-054"],
+        "closure_evidence": "exact C52/C53/C54/C57 TaskScope source basis and 42+10 routing/catalog parity",
+    },
+    "V0-GOV-057": {
+        "task_path": "plan/v0/governance/V0-GOV-057-v3-admission-hardening.md",
+        "dependencies": ["V0-GOV-055"],
+        "closure_evidence": "V1-FND-023 Done admission invokes the fixed task-specific v3 verifier regardless of V0 gate state",
+    },
+    "V0-GOV-058": {
+        "task_path": "plan/v0/governance/V0-GOV-058-dynamic-route-parity.md",
+        "dependencies": ["V0-GOV-056", "V0-GOV-057"],
+        "closure_evidence": "immutable 42-ID baseline plus dynamic post-closure count and C59/C60 CSV/JSON/catalog parity",
+    },
+}
+
+POST_CLOSURE_ID_PATTERN = re.compile(r"POST-CL-\d{3}$")
+
+
+def _load_live_route_data(repository: Path) -> tuple[list[dict], dict]:
+    with (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        csv_items = list(csv.DictReader(handle))
+    routing = json.loads(
+        (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    return csv_items, routing
+
+
+def _assert_unique_and_canonical_order(csv_ids: list[str], json_ids: list[str]) -> None:
+    assert len(csv_ids) == len(set(csv_ids))
+    assert len(json_ids) == len(set(json_ids))
+    assert csv_ids == json_ids
+
+
+def _assert_field_parity(csv_item: dict, json_item: dict) -> None:
+    assert set(json_item) <= set(csv_item)
+    for key in json_item:
+        if key in ("owner_task_ids", "prerequisites"):
+            assert csv_item[key] == ";".join(json_item[key])
+        else:
+            assert str(csv_item[key]) == str(json_item[key])
+
+
+def _assert_live_route_invariants(csv_items: list[dict], routing: dict) -> None:
+    csv_ids = [row["finding_id"] for row in csv_items]
+    json_ids = [item["finding_id"] for item in routing["items"]]
+    _assert_unique_and_canonical_order(csv_ids, json_ids)
+    origin_ids = [row["finding_id"] for row in csv_items if not row["finding_id"].startswith("POST-CL-")]
+    assert origin_ids == ORIGIN_FINDING_IDS
+    post_closure_rows = [
+        row for row in csv_items if row["finding_id"].startswith("POST-CL-")
+    ]
+    assert post_closure_rows == sorted(post_closure_rows, key=lambda row: row["finding_id"])
+    assert all(POST_CLOSURE_ID_PATTERN.match(row["finding_id"]) for row in post_closure_rows)
+    assert len(origin_ids) == 42
+    assert len(csv_items) == 42 + len(post_closure_rows)
+    assert routing["audit_register"]["finding_count"] == 42
+    assert routing["audit_register"]["post_closure_finding_count"] == len(post_closure_rows)
+    assert routing["audit_register"]["routed_finding_count"] == len(csv_items)
+    for csv_item, json_item in zip(csv_items, routing["items"]):
+        _assert_field_parity(csv_item, json_item)
+    csv_by_id = {row["finding_id"]: row for row in csv_items}
+    json_by_id = {item["finding_id"]: item for item in routing["items"]}
+    for post_id, expected in CANONICAL_POST_CLOSURE_ROUTES.items():
+        assert post_id in csv_by_id
+        assert post_id in json_by_id
+        for key, value in expected.items():
+            assert csv_by_id[post_id][key] == value
+            if key in ("owner_task_ids", "prerequisites"):
+                assert json_by_id[post_id][key] == value.split(";")
+            else:
+                assert json_by_id[post_id][key] == value
+    catalog_by_id = {item["task_id"]: item for item in routing["task_catalog"]}
+    for task_id, expected in REQUIRED_ROUTE_CATALOG_ENTRIES.items():
+        assert task_id in catalog_by_id
+        for key, value in expected.items():
+            assert catalog_by_id[task_id][key] == value
+
+
+def _mutate_drop_post_closure_from_csv(csv_items: list[dict], routing: dict) -> None:
+    csv_items[:] = [row for row in csv_items if row["finding_id"] != "POST-CL-015"]
+
+
+def _mutate_malformed_post_closure_id(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-015":
+            row["finding_id"] = "POST-CL-15"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-015":
+            item["finding_id"] = "POST-CL-15"
+
+
+def _mutate_non_canonical_post_closure_id(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-015":
+            row["finding_id"] = "POST-CL-015A"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-015":
+            item["finding_id"] = "POST-CL-015A"
+
+
+def _mutate_extra_post_closure_row(csv_items: list[dict], routing: dict) -> None:
+    csv_items.append(dict(csv_items[-1], finding_id="POST-CL-016"))
+
+
+def _mutate_duplicate_post_closure_row(csv_items: list[dict], routing: dict) -> None:
+    csv_items.append(dict(csv_items[-1]))
+    routing["items"].append(dict(routing["items"][-1]))
+
+
+def _mutate_missing_origin_id(csv_items: list[dict], routing: dict) -> None:
+    csv_items[:] = [row for row in csv_items if row["finding_id"] != "GOV-001"]
+    routing["items"][:] = [
+        item for item in routing["items"] if item["finding_id"] != "GOV-001"
+    ]
+
+
+def _mutate_extra_origin_id(csv_items: list[dict], routing: dict) -> None:
+    csv_items.append(dict(csv_items[0], finding_id="GOV-999"))
+    routing["items"].append(dict(routing["items"][0], finding_id="GOV-999"))
+
+
+def _mutate_duplicate_origin_id(csv_items: list[dict], routing: dict) -> None:
+    csv_items.append(dict(csv_items[0]))
+    routing["items"].append(dict(routing["items"][0]))
+
+
+def _mutate_csv_json_row_mismatch(csv_items: list[dict], routing: dict) -> None:
+    csv_items[:] = [row for row in csv_items if row["finding_id"] != "POST-CL-013"]
+
+
+def _mutate_register_count_mismatch(csv_items: list[dict], routing: dict) -> None:
+    routing["audit_register"]["post_closure_finding_count"] = 14
+
+
+def _mutate_field_mismatch(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-010":
+            row["closure_evidence"] = "mutated closure evidence"
+
+
+def _mutate_catalog_mismatch(csv_items: list[dict], routing: dict) -> None:
+    for entry in routing["task_catalog"]:
+        if entry["task_id"] == "V0-GOV-058":
+            entry["dependencies"] = ["V0-GOV-056"]
+
+
+def _mutate_c59_owner_difference(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-010":
+            row["owner_task_ids"] = "V0-GOV-999"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-010":
+            item["owner_task_ids"] = ["V0-GOV-999"]
+
+
+def _mutate_c59_source_difference(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-010":
+            row["source_basis"] = "CORR:XX"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-010":
+            item["source_basis"] = "CORR:XX"
+
+
+def _mutate_c59_prerequisite_difference(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-010":
+            row["prerequisites"] = "V0-GOV-000"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-010":
+            item["prerequisites"] = ["V0-GOV-000"]
+
+
+def _mutate_c60_closure_evidence_difference(csv_items: list[dict], routing: dict) -> None:
+    for row in csv_items:
+        if row["finding_id"] == "POST-CL-011":
+            row["closure_evidence"] = "mutated C60 closure"
+    for item in routing["items"]:
+        if item["finding_id"] == "POST-CL-011":
+            item["closure_evidence"] = "mutated C60 closure"
+
 DEFERRED_TASK_IDS = [
     "V0-HUG-001",
     "V0-QNB-001",
@@ -138,7 +388,42 @@ DEFERRED_TASK_IDS = [
     "V0-LIC-001",
     "V0-BKP-001",
     "V0-BKP-002",
+    "V0-REV-001",
+    "V0-REV-002",
+    "V0-REV-003",
+    "V0-REV-004",
+    "V0-REV-005",
+    "V0-REV-006",
+    "V0-REV-007",
+    "V0-REV-008",
+    "V0-REV-009",
+    "V0-REV-010",
+    "V0-REV-011",
+    "V0-REV-012",
+    "V0-REV-013",
+    "V0-REV-014",
+    "V0-REV-015",
+    "V0-REV-016",
+    "V0-REV-017",
+    "V0-REV-018",
+    "V0-REV-019",
+    "V0-REV-020",
+    "V0-REV-021",
+    "V0-REV-022",
+    "V0-REV-023",
+    "V0-REV-024",
+    "V0-REV-025",
+    "V0-REV-026",
+    "V0-REV-027",
+    "V0-REV-028",
+    "V0-REV-029",
+    "V0-REV-030",
 ]
+
+DEFERRED_REV_ROW = (
+    "| `{id}` | `2026-08-13` | `V12` | Tarihli source packet + named approver "
+    "(ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |"
+)
 
 DEFERRED_ROWS = [
     "| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |",
@@ -152,7 +437,7 @@ DEFERRED_ROWS = [
     "| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |",
     "| `V0-BKP-001` | `2026-08-03` | `V15` | Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı | Not V0 gate closure evidence |",
     "| `V0-BKP-002` | `2026-08-03` | `V15` | Gerçek yedekleme donanımı/cihaz kanıtı | Not V0 gate closure evidence |",
-]
+] + [DEFERRED_REV_ROW.format(id=f"V0-REV-{i:03d}") for i in range(1, 31)]
 
 
 # ---------------------------------------------------------------------------
@@ -721,35 +1006,16 @@ class TestRemediationEntryGateExceptions:
         source_basis = fnd023.split("## Source basis\n\n", 1)[1].split("\n## ", 1)[0]
         self._assert_fnd023_source_basis(source_basis.splitlines())
 
-        with (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.csv").open(
-            encoding="utf-8", newline=""
-        ) as handle:
-            csv_items = list(csv.DictReader(handle))
-        routing = json.loads(
-            (repository / "plan" / "AUDIT_REMEDIATION_ROUTING.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        csv_items, routing = _load_live_route_data(repository)
         csv_item = next(item for item in csv_items if item["finding_id"] == "POST-CL-002")
         json_item = next(item for item in routing["items"] if item["finding_id"] == "POST-CL-002")
-        post_cl_010_csv_item = next(
-            item for item in csv_items if item["finding_id"] == "POST-CL-010"
-        )
-        post_cl_010_json_item = next(
-            item for item in routing["items"] if item["finding_id"] == "POST-CL-010"
-        )
         v050_catalog = next(
             item for item in routing["task_catalog"] if item["task_id"] == "V0-GOV-050"
-        )
-        v056_catalog = next(
-            item for item in routing["task_catalog"] if item["task_id"] == "V0-GOV-056"
         )
 
         assert mod.parse_remediation_exception_records(repository / "plan") == REMEDIATION_RECORDS
         assert len(REMEDIATION_RECORDS) == 19
-        assert routing["audit_register"]["finding_count"] == 42
-        assert routing["audit_register"]["post_closure_finding_count"] == 10
-        assert len(csv_items) == routing["audit_register"]["routed_finding_count"] == 42 + 10 == 52
+        _assert_live_route_invariants(csv_items, routing)
         assert csv_item["owner_task_ids"] == "V0-GOV-050;V1-FND-023"
         assert csv_item["source_basis"] == "CORR:C52;CORR:C53;CORR:C54"
         assert csv_item["closure_evidence"] == json_item["closure_evidence"]
@@ -758,14 +1024,54 @@ class TestRemediationEntryGateExceptions:
         assert v050_catalog["task_path"] == "plan/v0/governance/V0-GOV-050-admit-post-closure-remediation.md"
         assert v050_catalog["dependencies"] == ["V0-GOV-035", "V0-GOV-037", "V0-GOV-049", "V0-GOV-052"]
         assert v050_catalog["closure_evidence"] == "exact 19-ID C52/C53/C54 admission set"
-        assert post_cl_010_csv_item["owner_task_ids"] == "V0-GOV-056"
-        assert post_cl_010_csv_item["source_basis"] == "CORR:C59"
-        assert post_cl_010_csv_item["closure_evidence"] == post_cl_010_json_item["closure_evidence"]
-        assert post_cl_010_json_item["owner_task_ids"] == ["V0-GOV-056"]
-        assert post_cl_010_json_item["source_basis"] == "CORR:C59"
-        assert v056_catalog["task_path"] == "plan/v0/governance/V0-GOV-056-task-scope-parity-regression.md"
-        assert v056_catalog["dependencies"] == ["V0-GOV-050", "V0-GOV-054"]
-        assert v056_catalog["closure_evidence"] == "exact C52/C53/C54/C57 TaskScope source basis and 42+10 routing/catalog parity"
+
+    @pytest.mark.parametrize(
+        "mutate",
+        [
+            _mutate_drop_post_closure_from_csv,
+            _mutate_malformed_post_closure_id,
+            _mutate_non_canonical_post_closure_id,
+            _mutate_extra_post_closure_row,
+            _mutate_duplicate_post_closure_row,
+            _mutate_missing_origin_id,
+            _mutate_extra_origin_id,
+            _mutate_duplicate_origin_id,
+            _mutate_csv_json_row_mismatch,
+            _mutate_register_count_mismatch,
+            _mutate_field_mismatch,
+            _mutate_catalog_mismatch,
+            _mutate_c59_owner_difference,
+            _mutate_c59_source_difference,
+            _mutate_c59_prerequisite_difference,
+            _mutate_c60_closure_evidence_difference,
+        ],
+        ids=[
+            "missing_post_closure_row",
+            "malformed_post_closure_id",
+            "non_canonical_post_closure_id",
+            "extra_post_closure_row",
+            "duplicate_post_closure_row",
+            "missing_origin_id",
+            "extra_origin_id",
+            "duplicate_origin_id",
+            "csv_json_row_mismatch",
+            "register_count_mismatch",
+            "field_mismatch",
+            "catalog_mismatch",
+            "c59_owner_difference",
+            "c59_source_difference",
+            "c59_prerequisite_difference",
+            "c60_closure_evidence_difference",
+        ],
+    )
+    def test_live_route_invariants_reject_structural_break(self, mutate):
+        repository = Path(__file__).resolve().parents[3]
+        csv_items, routing = _load_live_route_data(repository)
+        csv_items = copy.deepcopy(csv_items)
+        routing = copy.deepcopy(routing)
+        mutate(csv_items, routing)
+        with pytest.raises(AssertionError):
+            _assert_live_route_invariants(csv_items, routing)
 
 
 # ---------------------------------------------------------------------------

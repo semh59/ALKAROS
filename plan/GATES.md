@@ -31,7 +31,7 @@
 | Gate | Kapanma koşulu |
 | --- | --- |
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
-| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
+| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev ve 2026-08-13 kullanıcı onaylı `V0-REV-001..030` bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
 | `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
@@ -162,6 +162,36 @@ behavior başlatmaz; Aşama 3 kabul zinciri sırası değişmez.
 | `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |
 | `V0-BKP-001` | `2026-08-03` | `V15` | Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı | Not V0 gate closure evidence |
 | `V0-BKP-002` | `2026-08-03` | `V15` | Gerçek yedekleme donanımı/cihaz kanıtı | Not V0 gate closure evidence |
+| `V0-REV-001` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-002` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-003` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-004` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-005` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-006` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-007` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-008` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-009` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-010` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-011` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-012` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-013` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-014` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-015` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-016` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-017` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-018` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-019` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-020` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-021` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-022` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-023` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-024` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-025` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-026` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-027` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-028` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-029` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-REV-030` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
 <!-- V0_DEFERRED_TASKS:END -->
 
 Bu devir listesi 2026-08-03 kullanıcı onayıyla kayıtlıdır (`TRACEABILITY.md`
@@ -169,6 +199,11 @@ C40). Devredilen görev `Blocked` durumunda kalır; `GATE-V0-EXIT` bunların
 kanıtı olmadan kapanabilir ve görev ilgili aşama gate'inde gerçek kanıtla
 `Done` veya tarihli/onaylı `NotApplicable` olur. Devir yeni product behavior
 başlatma izni vermez ve V0 karar/uygulama kapsamını daraltmaz.
+
+`V0-REV-001..030` satırları 2026-08-13 kullanıcı onayıyla kayıtlıdır
+(`TRACEABILITY.md` C65): revalidation görevleri tarihli source packet + named
+approver kanıtı bekler ve bu harici kanıt V0 exit'ten önce var olamaz; aynı
+C40 muafiyet hükümleri geçerlidir.
 
 ## Canlı veri kuralı
 

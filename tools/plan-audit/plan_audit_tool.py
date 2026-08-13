@@ -142,6 +142,36 @@ V0_DEFERRED_TASKS = {
     "V0-LIC-001",
     "V0-BKP-001",
     "V0-BKP-002",
+    "V0-REV-001",
+    "V0-REV-002",
+    "V0-REV-003",
+    "V0-REV-004",
+    "V0-REV-005",
+    "V0-REV-006",
+    "V0-REV-007",
+    "V0-REV-008",
+    "V0-REV-009",
+    "V0-REV-010",
+    "V0-REV-011",
+    "V0-REV-012",
+    "V0-REV-013",
+    "V0-REV-014",
+    "V0-REV-015",
+    "V0-REV-016",
+    "V0-REV-017",
+    "V0-REV-018",
+    "V0-REV-019",
+    "V0-REV-020",
+    "V0-REV-021",
+    "V0-REV-022",
+    "V0-REV-023",
+    "V0-REV-024",
+    "V0-REV-025",
+    "V0-REV-026",
+    "V0-REV-027",
+    "V0-REV-028",
+    "V0-REV-029",
+    "V0-REV-030",
 }
 
 BROAD_HANDOFF_REPLACEMENTS = {
@@ -2275,7 +2305,7 @@ def validate_plan() -> None:
         deferred_table = deferred_block[1].split("<!-- V0_DEFERRED_TASKS:END -->", 1)[0]
         registered_deferred = set(
             re.findall(
-                r"^\| `(V0-[A-Z0-9]+-\d+)` \| `2026-08-03` \|",
+                r"^\| `(V0-[A-Z0-9]+-\d+)` \| `(?:2026-08-03|2026-08-13)` \|",
                 deferred_table,
                 re.MULTILINE,
             )

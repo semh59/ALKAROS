@@ -115,15 +115,17 @@ npx --yes markdownlint-cli2@0.23.2
 | `V1-CAT-003` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |
 <!-- PLAN_AUDIT_REMEDIATION_ADMISSION:END -->
 - `GATES.md` içindeki `V0_DEFERRED_TASKS` marker tablosu 2026-08-03 kullanıcı
-  onaylı devir listesini makinece doğrular (`TRACEABILITY.md` C40). Listede
-  olmayan V0 görevi `Blocked` ise `APPLICATION_STARTED_BEFORE_V0_EXIT` hatası
-  üretilmeye devam eder; listedeki görevler `Blocked` kalır, kanıtlarını ilgili
-  aşamada (V12-V20) toplar ve `GATE-V0-EXIT` kapanış kanıtı sayılmaz.
-  `DEPENDENCY_REMOVALS`/forbidden seti dışında dependency düzenlemesi kabul
-  edilmez; devir yeni product behavior başlatma izni vermez.
+  onaylı devir listesini makinece doğrular (`TRACEABILITY.md` C40); 2026-08-13
+  kullanıcı onaylı ekleme (`TRACEABILITY.md` C65, `V0-GOV-062`) ile
+  `V0-REV-001..030` da listededir. Listede olmayan V0 görevi `Blocked` ise
+  `APPLICATION_STARTED_BEFORE_V0_EXIT` hatası üretilmeye devam eder; listedeki
+  görevler `Blocked` kalır, kanıtlarını ilgili aşamada (V12-V20) toplar ve
+  `GATE-V0-EXIT` kapanış kanıtı sayılmaz. `DEPENDENCY_REMOVALS`/forbidden seti
+  dışında dependency düzenlemesi kabul edilmez; devir yeni product behavior
+  başlatma izni vermez.
 - 2026-08-04 kullanıcı onayıyla (`TRACEABILITY.md` C44) task-scope aracının
   `GATE-V0-EXIT` türetilmiş entry-gate kontrolü, `V0_DEFERRED_TASKS` tablosunu
-  fail-closed okur ve 11 devir kimliğini yalnız bu gate'in kapanma koşulundan
+  fail-closed okur ve 41 devir kimliğini yalnız bu gate'in kapanma koşulundan
   muaf sayar; kayıt kümesi GATES.md ile araç kodunda birebir eşleşir, tablo
   bozuk/yinelenen/eksikse denetim non-zero exit verir, `GATES.md` yoksa gate
   açık listesiyle reddedilir. Muafiyet yalnız `GATE-V0-EXIT` türetimi içindir,

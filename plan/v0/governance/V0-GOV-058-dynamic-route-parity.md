@@ -1,8 +1,8 @@
 # V0-GOV-058 - Replace fixed TaskScope route totals with structural parity
 
 - Task ID: V0-GOV-058
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: /root/implement_v0_gov_058
 - Work type: implementation
 - Surface state: Existing
 
@@ -19,8 +19,12 @@ hale getirmek.
 
 ## Owned surface
 
-- `tests/Architecture/TaskScope/test_task_scope.py`
 - `evidence/V0-GOV-058/**`
+
+CORR:C65, `tests/Architecture/TaskScope/test_task_scope.py` yüzeyi ileri
+custody ile `V0-GOV-062`ye devredilmiştir; bu historical task'ın status,
+assignee, acceptance evidence, commit tarihçesi ve mevcut diff'leri aynen
+kalır (yalnız Owned surface daraltma kaydı).
 
 ## In scope
 
