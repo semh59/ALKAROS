@@ -1,5 +1,17 @@
 namespace ALKAROS.Identity.Authorization;
 
+/// <summary>
+/// Role and permission management commands.
+///
+/// Command-start linearization rule (CODE-008): each command takes its
+/// authorization decision exactly once, at command start, before any
+/// repository mutation. The protected write is conditional on that
+/// decision: when the actor is denied, the command throws
+/// <see cref="AuthorizationDeniedException"/> and no mutation is executed.
+/// A revocation that commits after a command started does not retroactively
+/// fail that in-flight command; every command started after the revocation
+/// commit observes the revoked state and is denied (fail-closed deny).
+/// </summary>
 public sealed class RoleManagementService : IRoleManagementService
 {
     private readonly IAuthorizationService _authorization;

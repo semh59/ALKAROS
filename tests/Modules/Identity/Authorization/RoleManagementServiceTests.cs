@@ -61,7 +61,7 @@ public sealed class RoleManagementServiceTests : IClassFixture<AuthorizationTest
         (await _roles.GetByCodeAsync(code)).Should().BeNull();
     }
 
-[Fact]
+    [Fact]
     public async Task AllowedActorAssignsPermissionToItsOwnRole()
     {
         var (manager, _) = await InsertActorsAsync();
@@ -157,5 +157,77 @@ public sealed class RoleManagementServiceTests : IClassFixture<AuthorizationTest
 
         await act.Should().ThrowAsync<AuthorizationDeniedException>();
         (await _database.CountAsync("identity.permissions")).Should().Be(before);
+    }
+
+    [Fact]
+    public async Task RevokeCommitBeforeCommandStartDeniesCommandAndLeavesStateUnchanged()
+    {
+        var (manager, staff) = await InsertActorsAsync();
+        var roleId = (await _roles.GetRoleIdsForUserAsync(manager)).Single();
+        var before = await _database.CountAsync("identity.user_roles");
+
+        await using var connection = await _database.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using (var revoke = connection.CreateCommand())
+        {
+            revoke.Transaction = transaction;
+            revoke.CommandText =
+                """
+                DELETE FROM identity.role_permissions
+                WHERE role_id = @role_id
+                  AND permission_id = (
+                      SELECT permission_id
+                      FROM identity.permissions
+                      WHERE code = @permission_code);
+                """;
+            revoke.Parameters.AddWithValue("role_id", roleId);
+            revoke.Parameters.AddWithValue("permission_code", PermissionCodes.RolesManage);
+            await revoke.ExecuteNonQueryAsync();
+        }
+
+        await transaction.CommitAsync();
+
+        var act = () => _service.AssignUserAsync(manager, staff, roleId);
+
+        await act.Should().ThrowAsync<AuthorizationDeniedException>();
+        (await _database.CountAsync("identity.user_roles")).Should().Be(before);
+    }
+
+    [Fact]
+    public async Task CommandStartedBeforeRevokeCommitCompletesUnderCommandStartRule()
+    {
+        var (manager, staff) = await InsertActorsAsync();
+        var roleId = (await _roles.GetRoleIdsForUserAsync(manager)).Single();
+
+        await using var connection = await _database.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using (var revoke = connection.CreateCommand())
+        {
+            revoke.Transaction = transaction;
+            revoke.CommandText =
+                """
+                DELETE FROM identity.role_permissions
+                WHERE role_id = @role_id
+                  AND permission_id = (
+                      SELECT permission_id
+                      FROM identity.permissions
+                      WHERE code = @permission_code);
+                """;
+            revoke.Parameters.AddWithValue("role_id", roleId);
+            revoke.Parameters.AddWithValue("permission_code", PermissionCodes.RolesManage);
+            await revoke.ExecuteNonQueryAsync();
+        }
+
+        await _service.AssignUserAsync(manager, staff, roleId);
+
+        await transaction.CommitAsync();
+
+        (await _roles.GetRoleIdsForUserAsync(staff)).Should().Contain(roleId);
+
+        var before = await _database.CountAsync("identity.user_roles");
+        var act = () => _service.AssignUserAsync(manager, staff, roleId);
+
+        await act.Should().ThrowAsync<AuthorizationDeniedException>();
+        (await _database.CountAsync("identity.user_roles")).Should().Be(before);
     }
 }
