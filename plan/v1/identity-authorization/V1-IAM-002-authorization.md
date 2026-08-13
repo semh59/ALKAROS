@@ -32,7 +32,8 @@ Role, permission, assignment ve server-side authorization check davranışların
 - `tests/Modules/Identity/Authorization/Fixtures/AuthorizationTestDatabase.cs`
 - `tests/Modules/Identity/Authorization/PermissionRepositoryTests.cs`
 - `database/migrations/V1/V1-IAM-002/**`
-- C52 RoleManagementService and formatter remediation surface is transferred to V1-IAM-008; this historical task remains closed.
+- C52 RoleManagementService and formatter remediation surface is transferred to V1-IAM-008; this historical task remains
+  closed.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

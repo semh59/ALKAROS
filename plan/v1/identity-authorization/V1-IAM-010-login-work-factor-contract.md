@@ -12,7 +12,8 @@
 
 ## Goal
 
-known-invalid ve unknown-user login yollarının aynı deterministic KDF work factor'ünü yürüttüğünü elapsed-time varsayımına dayanmadan bağımsız doğrulamak.
+known-invalid ve unknown-user login yollarının aynı deterministic KDF work factor'ünü yürüttüğünü elapsed-time
+varsayımına dayanmadan bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -21,7 +22,8 @@ known-invalid ve unknown-user login yollarının aynı deterministic KDF work fa
 ## In scope
 
 - `CODE-012` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
+- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile
+  kaydetmek.
 - Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
 
 ## Out of scope
@@ -43,7 +45,8 @@ known-invalid ve unknown-user login yollarının aynı deterministic KDF work fa
 
 - Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
 - Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-IAM-010/**` ve task metadata'sıdır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız
+  `evidence/V1-IAM-010/**` ve task metadata'sıdır.
 
 ## Handoff
 

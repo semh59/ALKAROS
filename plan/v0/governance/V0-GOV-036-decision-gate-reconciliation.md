@@ -13,7 +13,8 @@
 
 ## Goal
 
-30 additive decision supplement'ını mevcut karar, gate ve effective dependency grafiğiyle uzlaştırmak; source evidence olmadan hiçbir kararı seçmemek veya gate'i açmamak.
+30 additive decision supplement'ını mevcut karar, gate ve effective dependency grafiğiyle uzlaştırmak; source evidence
+olmadan hiçbir kararı seçmemek veya gate'i açmamak.
 
 ## Owned surface
 
@@ -77,7 +78,8 @@
 - 30 supplement'ın tamamı exact Task ID ile tek satıra bağlıdır ve belirsiz verdict yoktur.
 - Nominal ve effective status ayrı tutulur; unresolved conflict bulunan gate kapalı kalır.
 - Plan validation ve effective dependency graph kontrolü exit code `0` verir.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-036/**` altındadır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-036/**`
+  altındadır.
 
 ## Handoff
 

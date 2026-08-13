@@ -6,7 +6,7 @@ EXISTS`, uyumsuz şemayı kabul edip history'ye başarı yazabilir."
 ## Değişen yollar
 
 | Dosya | Değişiklik |
-|---|---|
+| --- | --- |
 | `src/Host/Composition/Migrations/MigrationHistoryStore.cs` | `EnsureAsync`: `CREATE TABLE IF NOT EXISTS` sonrası `information_schema.columns` + PK + CHECK constraint'leriyle fail-closed şema doğrulaması; uyumsuzlukta `InvalidOperationException` ("Migration history table schema does not match the expected contract.") |
 | `tests/Host/MigrationComposition/History/MigrationHistoryTests.cs` | 2 yeni test: uyumsuz şema reddedilir, eşleşen şema kabul edilir |
 
@@ -20,7 +20,7 @@ EXISTS`, uyumsuz şemayı kabul edip history'ye başarı yazabilir."
 
 Komut (tam suite içinden): Host suite
 
-```
+```console
 Başarılı!  - Başarısız:     0, Başarılı:    60, Atlanan:     0, Toplam:    60, Süre: 13 s - ALKAROS.Host.Tests.dll (net8.0)
 ```
 

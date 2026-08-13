@@ -6,7 +6,7 @@ DB lock/transaction açıkken çağrılıyor."
 ## Değişen yollar
 
 | Dosya | Değişiklik |
-|---|---|
+| --- | --- |
 | `src/BuildingBlocks/Messaging/OutboxStore.cs` | Lease modeli: `_leaseTimeout` ctor parametresi (varsayılan 5 dk); `DispatchAsync` claim'ı kendi transaction'ında; handler tamamen transaction dışında; per-message outcome transaction; `MarkDispatchedAsync` `WHERE id = $1 AND status = 'in_flight'` |
 | `src/BuildingBlocks/Messaging/InboxStore.cs` | Aynı model: lease-recovery UPDATE → `ClaimPendingAsync` → `in_flight` lease; `MarkProcessedAsync`/`RecordFailureAsync` `status='in_flight'` guard |
 | `src/BuildingBlocks/Messaging/RetryPolicy.cs` | `in_flight` guard |
@@ -27,14 +27,14 @@ DB lock/transaction açıkken çağrılıyor."
 
 Komut (tam suite içinden):
 
-```
+```console
 Başarılı!  - Başarısız:     0, Başarılı:    69, Atlanan:     0, Toplam:    69, Süre: 2 s - ALKAROS.Idempotency.Tests.dll (net8.0)
 Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 1 s - ALKAROS.TransactionOutboxIntegration.Tests.dll (net8.0)
 ```
 
 Idempotency 65 → 69 → 71 (Inbox/Outbox lease testleri + denetim fix'i: lease kaybı
 senaryosu için 2 yeni test `DispatchLeaseLostBeforeMarkThrowsInsteadOfSkippingSilently`
-ve `ProcessLeaseLostBeforeMarkThrowsInsteadOfSkippingSilently`), 
+ve `ProcessLeaseLostBeforeMarkThrowsInsteadOfSkippingSilently`),
 TransactionOutboxIntegration 11 → 12. Hepsi gerçek PostgreSQL container'ında
 (alkaros_test:5433).
 

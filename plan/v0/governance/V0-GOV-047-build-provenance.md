@@ -12,7 +12,8 @@
 
 ## Goal
 
-`V1-FND-001` tarafından Release artifact'larına gömülen candidate repository commit SHA'sını CI'da source candidate ile exact karşılaştırmak.
+`V1-FND-001` tarafından Release artifact'larına gömülen candidate repository commit SHA'sını CI'da source candidate ile
+exact karşılaştırmak.
 
 ## Owned surface
 
@@ -46,7 +47,8 @@
 - Her production Release assembly'sindeki repository commit candidate SHA ile exact eşleşir.
 - Eksik, eski veya geçersiz provenance verifier'da non-zero verir.
 - Locked Release build ve provenance testleri exit code `0` verir.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-047/**` altındadır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-047/**`
+  altındadır.
 
 ## Handoff
 

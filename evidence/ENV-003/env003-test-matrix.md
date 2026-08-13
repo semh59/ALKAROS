@@ -3,7 +3,7 @@
 Date: 2026-08-03
 All runs with ALKAROS_TEST_PG_PASSWORD / ALKAROS_TEST_PG_PORT=5433 (Docker postgres:18).
 
-## Matrix (dotnet test <proj> --no-build, each exit 0)
+## Matrix (dotnet test `<proj>` --no-build, each exit 0)
 
 | Project | Result |
 | --- | --- |

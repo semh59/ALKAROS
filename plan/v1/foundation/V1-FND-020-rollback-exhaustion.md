@@ -12,7 +12,8 @@
 
 ## Goal
 
-bir rollback callback'i hata verdiğinde bütün kayıtlı rollback kaynaklarının yine de tam bir kez denendiğini ve hataların korunduğunu bağımsız doğrulamak.
+bir rollback callback'i hata verdiğinde bütün kayıtlı rollback kaynaklarının yine de tam bir kez denendiğini ve
+hataların korunduğunu bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -22,7 +23,8 @@ bir rollback callback'i hata verdiğinde bütün kayıtlı rollback kaynakların
 
 ## In scope
 
-- `CODE-015` için bütün rollback resource'larının CancellationToken.None ile denenmesini ve bütün hataların aggregate edilmesini uygulamak.
+- `CODE-015` için bütün rollback resource'larının CancellationToken.None ile denenmesini ve bütün hataların aggregate
+  edilmesini uygulamak.
 
 ## Out of scope
 

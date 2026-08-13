@@ -21,7 +21,8 @@ Password verification, active-user check, login/logout ve secure session issuanc
 - `src/Modules/Identity/Authentication/StoredUser.cs`
 - `database/migrations/V1/V1-IAM-001/**`
 - PasswordHasher.cs sahipliği V1-IAM-005'e devredilmiştir (C42); bu görev artık bu path'i yazamaz.
-- C52 password-bound and login-session lifecycle surfaces are transferred to V1-IAM-009 and V1-IAM-011; this historical task remains closed.
+- C52 password-bound and login-session lifecycle surfaces are transferred to V1-IAM-009 and V1-IAM-011; this historical
+  task remains closed.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

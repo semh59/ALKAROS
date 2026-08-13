@@ -12,7 +12,8 @@
 
 ## Goal
 
-aynı operation için concurrent reconnect çağrılarında applied count toplamının tam `1` olduğunu bağımsız PostgreSQL interleaving'iyle doğrulamak.
+aynı operation için concurrent reconnect çağrılarında applied count toplamının tam `1` olduğunu bağımsız PostgreSQL
+interleaving'iyle doğrulamak.
 
 ## Owned surface
 

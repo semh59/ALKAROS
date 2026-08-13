@@ -1,16 +1,17 @@
 # V1-FND-009 Full-History Rewrite — Closure Report (2026-08-05)
 
 Kullanıcı onaylı plan değişikliği: `TRACEABILITY.md` C45 (2026-08-05, "Tam geçmişi yeniden yaz
+
 + force-push", "Net olanlara atıf, belirsizlere istisna").
 
 ## Yapılan işlem
 
-- `git filter-branch --force --msg-filter ... --tag-name-filter cat` ile tüm `master` geçmişi
++ `git filter-branch --force --msg-filter ... --tag-name-filter cat` ile tüm `master` geçmişi
   (126 commit) yeniden yazıldı; yalnız 19 hedef commit'in mesajına footer eklendi, diğer mesajlar
   ve tüm içerik aynen korundu.
-- Hem `gate/v0-entry` hem `v0.0.0` tag'i yeniden konumlandı (annotated tag objeleri yeniden
++ Hem `gate/v0-entry` hem `v0.0.0` tag'i yeniden konumlandı (annotated tag objeleri yeniden
   oluşturuldu).
-- Yedek: `fnd009-safety-backup` branch'i (`a268a10`) rewrite öncesi durumu korur.
++ Yedek: `fnd009-safety-backup` branch'i (`a268a10`) rewrite öncesi durumu korur.
 
 ## Footer atıfları (19 commit)
 
@@ -38,13 +39,13 @@ Kullanıcı onaylı plan değişikliği: `TRACEABILITY.md` C45 (2026-08-05, "Tam
 
 ## Kayıtlı istisnalar (footer yok)
 
-- 11 belirsiz commit (`1991abb`, `ed3d97d`, `f87c7dc`, `849bcaa`, `d6f7438`, `4374a3b`,
++ 11 belirsiz commit (`1991abb`, `ed3d97d`, `f87c7dc`, `849bcaa`, `d6f7438`, `4374a3b`,
   `f87468b`, `17c9080`, `792fa2c`, `630e324`, `6f5278c`) — sahiplik kanıtlanamadı, kurgusal atıf
   yapılmadı.
-- `fc5ae22` kök baseline → yeni `46c8d7d` (konvansiyon öncesi, FIND-IA-0050).
++ `fc5ae22` kök baseline → yeni `46c8d7d` (konvansiyon öncesi, FIND-IA-0050).
 
 ## İçerik korunması
 
-- `git diff --stat fnd009-safety-backup master` → boş (yalnız commit SHA/mesaj değişti, içerik
++ `git diff --stat fnd009-safety-backup master` → boş (yalnız commit SHA/mesaj değişti, içerik
   birebir korundu).
-- `git fsck --no-dangling` → sorunsuz.
++ `git fsck --no-dangling` → sorunsuz.

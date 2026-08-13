@@ -12,11 +12,14 @@
 
 ## Goal
 
-Mevcut `Done` görevleri yeniden açmadan, düzeltilecek exact production/test/migration yüzeylerini yeni tek-sorumluluklu C52 görevlerine devretmek; routing, traceability ve dondurulmuş worktree custody kayıtlarını aynı owner grafiğinde uzlaştırmak.
+Mevcut `Done` görevleri yeniden açmadan, düzeltilecek exact production/test/migration yüzeylerini yeni tek-sorumluluklu
+C52 görevlerine devretmek; routing, traceability ve dondurulmuş worktree custody kayıtlarını aynı owner grafiğinde
+uzlaştırmak.
 
 ## Owned surface
 
-- Post-closure routing and traceability surface was transferred to `V0-GOV-050` by `CORR:C53`; this historical task remains closed.
+- Post-closure routing and traceability surface was transferred to `V0-GOV-050` by `CORR:C53`; this historical task
+  remains closed.
 - `plan/v0/governance/V0-GOV-013-sensitive-envelope-metadata-integrity.md`
 - `plan/v0/governance/V0-GOV-015-atomic-migration-history.md`
 - `plan/v1/foundation/V1-FND-001-module-skeleton.md`
@@ -69,17 +72,24 @@ Mevcut `Done` görevleri yeniden açmadan, düzeltilecek exact production/test/m
 
 ## In scope
 
-- Eski 19 surface custodian task'ın `Owned surface` kayıtlarından yalnız C52 bulgularının değiştireceği exact yolları çıkarmak; untouched tracked production dosyalarının owner coverage'ını korumak.
-- Devredilen yolları yeni C52 tasklerine tek owner olacak biçimde eklemek; aynı dosyada birden fazla düzeltme gerekiyorsa tek implementation/integration owner ve ayrı read-only validation task seçmek.
-- `database/MigrationComposition/order.json`, Host composition, project/lock, Identity service ve messaging store gibi ortak yüzeyleri tek final integration sahibine bağlamak ve dependency DAG'ını seri hale getirmek.
-- `V1-FND-015` tarafından sahiplenilen `InboxMessage.cs` lease-token değişikliğini `V1-FND-019` owner zincirine exact devretmek.
-- Identity tasklerinde doğrulanan `Surface state`, Table tasklerinde owned/deliverable parity ve frozen 17 tracked + 15 untracked = 32 yol / 16 out-of-scope custody sonucunu uzlaştırmak.
-- Eski tasklerin source/history metnini historical provenance olarak korumak; yeni remediation tasklerinin current source authority'sini yalnız `CORR:C52` tutmak.
+- Eski 19 surface custodian task'ın `Owned surface` kayıtlarından yalnız C52 bulgularının değiştireceği exact yolları
+  çıkarmak; untouched tracked production dosyalarının owner coverage'ını korumak.
+- Devredilen yolları yeni C52 tasklerine tek owner olacak biçimde eklemek; aynı dosyada birden fazla düzeltme
+  gerekiyorsa tek implementation/integration owner ve ayrı read-only validation task seçmek.
+- `database/MigrationComposition/order.json`, Host composition, project/lock, Identity service ve messaging store gibi
+  ortak yüzeyleri tek final integration sahibine bağlamak ve dependency DAG'ını seri hale getirmek.
+- `V1-FND-015` tarafından sahiplenilen `InboxMessage.cs` lease-token değişikliğini `V1-FND-019` owner zincirine exact
+  devretmek.
+- Identity tasklerinde doğrulanan `Surface state`, Table tasklerinde owned/deliverable parity ve frozen 17 tracked + 15
+  untracked = 32 yol / 16 out-of-scope custody sonucunu uzlaştırmak.
+- Eski tasklerin source/history metnini historical provenance olarak korumak; yeni remediation tasklerinin current
+  source authority'sini yalnız `CORR:C52` tutmak.
 
 ## Out of scope
 
 - Production, test, migration, solution, project, lock, validator veya CI dosyası değiştirmek.
-- Mevcut `Done` task'ı yeniden açmak, status/assignee değerini değiştirmek, geçmiş commit'i rewrite etmek veya kullanıcı dirty worktree'sine yazmak.
+- Mevcut `Done` task'ı yeniden açmak, status/assignee değerini değiştirmek, geçmiş commit'i rewrite etmek veya kullanıcı
+  dirty worktree'sine yazmak.
 - 45 tarihsel commit-scope ihlalini current dirty path sayısı gibi sunmak; bu kayıt `V0-GOV-038` kapsamındadır.
 
 ## Dependencies
@@ -94,8 +104,10 @@ Mevcut `Done` görevleri yeniden açmadan, düzeltilecek exact production/test/m
 
 ## Acceptance evidence
 
-- 19 eski task'ın tamamı `Done` ve mevcut assignee değeriyle kalır; yeni child tasklerin hiçbiri `InProgress` veya `Done` yapılmaz.
-- Devredilen her production/test/migration yolu tam bir yeni implementation/integration owner'a sahiptir; exact duplicate ve prefix overlap sayısı `0` olur.
+- 19 eski task'ın tamamı `Done` ve mevcut assignee değeriyle kalır; yeni child tasklerin hiçbiri `InProgress` veya
+  `Done` yapılmaz.
+- Devredilen her production/test/migration yolu tam bir yeni implementation/integration owner'a sahiptir; exact
+  duplicate ve prefix overlap sayısı `0` olur.
 - Untouched tracked production coverage açığı, routing owner eksikliği ve task-catalog dependency farkı sayısı `0` olur.
 - Custody ledger tam `32` yol ve `16` out-of-scope sonucu verir; 45 sayısı yalnız immutable history ledger'ında kalır.
 - `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir.

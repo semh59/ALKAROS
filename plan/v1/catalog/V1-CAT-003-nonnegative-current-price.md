@@ -12,7 +12,8 @@
 
 ## Goal
 
-zero/positive price'ın kabul edildiğini ve negative price'ın domain ile PostgreSQL sınırlarında atomik olarak reddedildiğini bağımsız doğrulamak.
+zero/positive price'ın kabul edildiğini ve negative price'ın domain ile PostgreSQL sınırlarında atomik olarak
+reddedildiğini bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -26,7 +27,8 @@ zero/positive price'ın kabul edildiğini ve negative price'ın domain ile Postg
 
 ## In scope
 
-- `CODE-014` için current-price nonnegative invariant'ını Product, PostgreSQL repository ve additive migration sınırlarında uygulamak.
+- `CODE-014` için current-price nonnegative invariant'ını Product, PostgreSQL repository ve additive migration
+  sınırlarında uygulamak.
 
 ## Out of scope
 

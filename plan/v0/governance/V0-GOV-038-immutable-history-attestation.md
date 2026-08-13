@@ -12,7 +12,8 @@
 
 ## Goal
 
-Root commit'ten candidate HEAD'e kadar Task/Gate trailer ve commit-time scope sonuçlarını geçmişi yeniden yazmadan kanıtlamak; current ve retrospective sözleşmeleri ayırmak.
+Root commit'ten candidate HEAD'e kadar Task/Gate trailer ve commit-time scope sonuçlarını geçmişi yeniden yazmadan
+kanıtlamak; current ve retrospective sözleşmeleri ayırmak.
 
 ## Owned surface
 
@@ -41,9 +42,11 @@ Root commit'ten candidate HEAD'e kadar Task/Gate trailer ve commit-time scope so
 ## Acceptance evidence
 
 - Root..candidate bütün commitler ledger'da tam bir satıra bağlıdır.
-- Commit-time ve current-contract verdict'leri ayrı sütunlardadır; 45 scope ve 13 footer kaydı exact SHA listesiyle doğrulanır.
+- Commit-time ve current-contract verdict'leri ayrı sütunlardadır; 45 scope ve 13 footer kaydı exact SHA listesiyle
+  doğrulanır.
 - Repository history hash'leri task öncesi/sonrası aynıdır.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-038/**` altındadır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-038/**`
+  altındadır.
 
 ## Handoff
 

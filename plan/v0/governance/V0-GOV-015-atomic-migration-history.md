@@ -23,7 +23,8 @@ uygulanmamis veya sonraki position varken rollback'i reddetmek.
 - `src/Host/Composition/Migrations/MigrationHistoryStore.cs`
 - `tests/Host/MigrationComposition/History/MigrationHistoryTests.cs`
 - `evidence/V0-GOV-015/**`
-- C52 Host composition service-registration and migration-secret remediation surfaces are transferred to V1-FND-017 and V1-SEC-004; this historical task remains closed.
+- C52 Host composition service-registration and migration-secret remediation surfaces are transferred to V1-FND-017 and
+  V1-SEC-004; this historical task remains closed.
 
 ## In scope
 

@@ -20,7 +20,8 @@ güncellemek.
 
 ## Owned surface
 
-- tests/Architecture/TaskScope/test_task_scope.py sahipliği V0-GOV-032'ye devredilmiştir (C44); bu görev artık bu path'i yazamaz.
+- tests/Architecture/TaskScope/test_task_scope.py sahipliği V0-GOV-032'ye devredilmiştir (C44); bu görev artık bu path'i
+  yazamaz.
 - `tools/task-scope/task_scope_tool.py`
 - `docs/engineering/task-scope-contract.md`
 - `plan/GATES.md`

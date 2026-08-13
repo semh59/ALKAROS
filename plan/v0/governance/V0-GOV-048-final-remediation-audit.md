@@ -21,7 +21,8 @@
 
 ## Goal
 
-56 bulgunun tamamını düzeltme oturumlarından bağımsız ajanlarla yeniden üretmek, repository write-set bütünlüğünü doğrulamak ve yalnız tüm terminal kriterler sağlanırsa push izni vermek.
+56 bulgunun tamamını düzeltme oturumlarından bağımsız ajanlarla yeniden üretmek, repository write-set bütünlüğünü
+doğrulamak ve yalnız tüm terminal kriterler sağlanırsa push izni vermek.
 
 ## Owned surface
 
@@ -96,8 +97,10 @@
 
 - 56 finding'in tamamı `VERIFIED` veya evidence-backed terminal blocker olarak listelenir; belirsiz satır yoktur.
 - Her CRITICAL/HIGH finding bağımsız ikinci ajan tarafından exact reproduction ile onaylanır.
-- Final repository status beklenen write-set ile exact eşleşir; manifest, build, tests, lint ve provenance zorunlu kontrolleri exit code `0` verir.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-048/**` altındadır.
+- Final repository status beklenen write-set ile exact eşleşir; manifest, build, tests, lint ve provenance zorunlu
+  kontrolleri exit code `0` verir.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-048/**`
+  altındadır.
 
 ## Handoff
 

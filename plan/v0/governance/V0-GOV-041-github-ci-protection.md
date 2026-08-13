@@ -12,7 +12,8 @@
 
 ## Goal
 
-GitHub Actions üzerinde repository'nin zorunlu build, test, format, Markdown ve governance kontrollerini çalıştırmak ve branch policy'de required check olarak doğrulamak.
+GitHub Actions üzerinde repository'nin zorunlu build, test, format, Markdown ve governance kontrollerini çalıştırmak ve
+branch policy'de required check olarak doğrulamak.
 
 ## Owned surface
 
@@ -21,7 +22,8 @@ GitHub Actions üzerinde repository'nin zorunlu build, test, format, Markdown ve
 
 ## In scope
 
-- Workflow'a task scope, locked Release build/test, format, markdownlint, project-manifest ve governance semantic kontrollerini bağlamak.
+- Workflow'a task scope, locked Release build/test, format, markdownlint, project-manifest ve governance semantic
+  kontrollerini bağlamak.
 - Successful Actions run URL/SHA ve required-check/ruleset readback evidence'ı almak.
 - Fork/PR permissions ve secret gereksinimlerini minimum tutmak.
 
@@ -40,8 +42,10 @@ GitHub Actions üzerinde repository'nin zorunlu build, test, format, Markdown ve
 
 ## Blocker
 
-- GitHub Actions workflow çalıştırma ile branch ruleset/required-check okuma-yazma yetkisi workspace'te kanıtlanmış değildir.
-- Blocker ancak successful candidate workflow URL/SHA'sı ve repository admin readback'i aynı required check adını doğruladığında kaldırılabilir.
+- GitHub Actions workflow çalıştırma ile branch ruleset/required-check okuma-yazma yetkisi workspace'te kanıtlanmış
+  değildir.
+- Blocker ancak successful candidate workflow URL/SHA'sı ve repository admin readback'i aynı required check adını
+  doğruladığında kaldırılabilir.
 
 ## Deliverables
 
@@ -52,7 +56,8 @@ GitHub Actions üzerinde repository'nin zorunlu build, test, format, Markdown ve
 - Candidate SHA için workflow bütün zorunlu adımları exit `0` ile tamamlar.
 - Required check adı branch/ruleset readback'inde exact görünür ve failing fixture merge'i engeller.
 - Erişim yoksa tahmin yapılmaz; task `Blocked` ve kanıt `UNPROVEN` kalır.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-041/**` altındadır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-041/**`
+  altındadır.
 
 ## Handoff
 

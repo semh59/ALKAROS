@@ -12,7 +12,8 @@
 
 ## Goal
 
-Desteklenen collector/exporter, kapsam dahil projeler ve line/branch threshold için named policy kararı aldıktan sonra CI coverage gate'ini fail-closed uygulamak.
+Desteklenen collector/exporter, kapsam dahil projeler ve line/branch threshold için named policy kararı aldıktan sonra
+CI coverage gate'ini fail-closed uygulamak.
 
 ## Owned surface
 
@@ -39,7 +40,8 @@ Desteklenen collector/exporter, kapsam dahil projeler ve line/branch threshold i
 ## Blocker
 
 - Coverage threshold, project scope ve supported exporter için tarihli named technical approval yoktur.
-- Blocker ancak exact line/branch eşikleri, dahil/hariç project seti ve installed collector/exporter uyumluluğu yazılı onayla doğrulandığında kaldırılabilir.
+- Blocker ancak exact line/branch eşikleri, dahil/hariç project seti ve installed collector/exporter uyumluluğu yazılı
+  onayla doğrulandığında kaldırılabilir.
 
 ## Deliverables
 
@@ -47,10 +49,12 @@ Desteklenen collector/exporter, kapsam dahil projeler ve line/branch threshold i
 
 ## Acceptance evidence
 
-- Approved line/branch eşiklerinin üstündeki fixture geçer, altındaki ve eksik artifact fixture'ı fail-closed reddedilir.
+- Approved line/branch eşiklerinin üstündeki fixture geçer, altındaki ve eksik artifact fixture'ı fail-closed
+  reddedilir.
 - Coverage summary candidate SHA ve test run ile bağlanır.
 - Dış araç kurulumu veya undocumented exporter varsayımı yapılmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-042/**` altındadır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-042/**`
+  altındadır.
 
 ## Handoff
 

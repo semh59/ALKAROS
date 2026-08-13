@@ -6,7 +6,7 @@ compose sonunda kayboluyordu; Host henüz bunları DI adapter'a uygulamıyor."
 ## Değişen yollar
 
 | Dosya | Değişiklik |
-|---|---|
+| --- | --- |
 | `src/Host/Composition/Modules/ModuleRegistry.cs` | `ComposeRoot(IEnumerable<Type>)` eklendi; mevcut `Compose` bunun üzerine kuruldu; `ModuleCompositionRoot.Services` DI adapter'ın girdisi |
 | `src/Host/Composition/HostComposition.cs` | `ComposeModules(TextWriter, IEnumerable<Type>? = null)`: discovery → `ComposeRoot` → `ServiceCollection.AddRegistration` (instance/transient/singleton) → `BuildServiceProvider` → fail-closed catch. `Run` içinde `using var services = ComposeModules(output)` + `ComposeRegisteredServices(output)` validation |
 | `Directory.Packages.props` | `Microsoft.Extensions.DependencyInjection` 8.0.1 paket versiyonu |
@@ -27,7 +27,7 @@ compose sonunda kayboluyordu; Host henüz bunları DI adapter'a uygulamıyor."
 
 Identity suite hariç Host suite koşusu (tam suite içinden):
 
-```
+```console
 Başarılı!  - Başarısız:     0, Başarılı:    60, Atlanan:     0, Toplam:    60, Süre: 14 s - ALKAROS.Host.Tests.dll (net8.0)
 ```
 
@@ -35,7 +35,7 @@ Host 57 → 60 test (3 yeni DI adapter testi).
 
 Build:
 
-```
+```console
 Oluşturma başarılı oldu.
     0 Uyarı
     0 Hata

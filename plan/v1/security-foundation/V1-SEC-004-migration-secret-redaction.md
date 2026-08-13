@@ -12,7 +12,8 @@
 
 ## Goal
 
-sentinel database password'ünün child-process argument, exception, stdout/stderr veya transcript formatting'inde görünmediğini bağımsız doğrulamak.
+sentinel database password'ünün child-process argument, exception, stdout/stderr veya transcript formatting'inde
+görünmediğini bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -22,7 +23,8 @@ sentinel database password'ünün child-process argument, exception, stdout/stde
 
 ## In scope
 
-- `CODE-009` için Psql password formatting/exception/output redaction davranışını uygulamak ve regression testini eklemek.
+- `CODE-009` için Psql password formatting/exception/output redaction davranışını uygulamak ve regression testini
+  eklemek.
 
 ## Out of scope
 

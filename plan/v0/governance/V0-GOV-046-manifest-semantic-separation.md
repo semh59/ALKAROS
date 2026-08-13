@@ -14,7 +14,8 @@
 
 ## Goal
 
-Plan audit manifest byte/hash doğrulaması ile task/gate/evidence semantic kontrollerini ayrı ve fail-closed kapılar haline getirmek.
+Plan audit manifest byte/hash doğrulaması ile task/gate/evidence semantic kontrollerini ayrı ve fail-closed kapılar
+haline getirmek.
 
 ## Owned surface
 
@@ -24,7 +25,8 @@ Plan audit manifest byte/hash doğrulaması ile task/gate/evidence semantic kont
 
 ## In scope
 
-- Byte manifest geçerken stale status, revalidation conflict, final Done write-set ve non-Markdown evidence tampering fixture'larını semantic kapıda reddetmek.
+- Byte manifest geçerken stale status, revalidation conflict, final Done write-set ve non-Markdown evidence tampering
+  fixture'larını semantic kapıda reddetmek.
 - Her kapının ayrı command, exit code ve error taxonomy üretmesini sağlamak.
 - Evidence envelope alanlarını `V0-GOV-039` sözleşmesinden doğrulamak.
 - `VALIDATION_CONTRACT`, `GATES.md` ve task-scope tool admission tuple'ı
@@ -57,7 +59,8 @@ Plan audit manifest byte/hash doğrulaması ile task/gate/evidence semantic kont
 - Contract/GATES/tool exact 19-ID admission tuple divergence'ı non-zero
   semantic validation ile reddedilir.
 - Plan audit testleri ve repository semantic validation exit code `0` verir.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-046/**` altındadır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-046/**`
+  altındadır.
 
 ## Handoff
 

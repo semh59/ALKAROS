@@ -12,7 +12,8 @@
 
 ## Goal
 
-supported PBKDF2 iteration minimum/maximum sınırlarının round-trip geçtiğini, range dışı ve malformed değerlerin fail-closed reddedildiğini bağımsız doğrulamak.
+supported PBKDF2 iteration minimum/maximum sınırlarının round-trip geçtiğini, range dışı ve malformed değerlerin
+fail-closed reddedildiğini bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -22,7 +23,8 @@ supported PBKDF2 iteration minimum/maximum sınırlarının round-trip geçtiği
 
 ## In scope
 
-- `CODE-011` için password iteration constructor/verify bounds'ını aynı invariant altında uygulamak ve boundary round-trip testlerini eklemek.
+- `CODE-011` için password iteration constructor/verify bounds'ını aynı invariant altında uygulamak ve boundary
+  round-trip testlerini eklemek.
 
 ## Out of scope
 

@@ -23,7 +23,8 @@ kararsız zamanlama testini deterministik kanıtla değiştirmek.
 
 - `docs/engineering/login-timing-contract.md`
 - `evidence/V1-IAM-005/**`
-- C52 password/work-factor and login-session surfaces are transferred to V1-IAM-009 and V1-IAM-011; this historical task remains closed.
+- C52 password/work-factor and login-session surfaces are transferred to V1-IAM-009 and V1-IAM-011; this historical task
+  remains closed.
 
 ## In scope
 

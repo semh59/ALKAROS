@@ -19,7 +19,7 @@ tamamının düzeltilmesi onaylandı.
 
 ## Uygulanan düzeltme (yalnız araç yeniden üretimi)
 
-```
+```console
 > python tools/plan-audit/plan_audit_tool.py generate-audit-report
 Baseline audit records: 211 | Added Markdown records including report: 209
 Audit findings recorded: 1827 | Audit report lines: 1696
@@ -33,7 +33,7 @@ Manifest SHA-256: F337F2E14A6282347D047BF6F7A0C93A3E2F992618308A227B48DE6792BEAF
 
 ## Sonuç
 
-```
+```console
 > python3 tools/plan-audit/plan_audit_tool.py verify-manifest
 Manifest errors: 0          (exit 0)
 

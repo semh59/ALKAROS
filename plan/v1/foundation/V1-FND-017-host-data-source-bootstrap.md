@@ -12,7 +12,8 @@
 
 ## Goal
 
-Host'un tek doğrulanmış `NpgsqlDataSource` ile constructable olduğunu, modüllerden önce validate edildiğini ve kapanışta dispose edildiğini bağımsız runtime probe ile doğrulamak.
+Host'un tek doğrulanmış `NpgsqlDataSource` ile constructable olduğunu, modüllerden önce validate edildiğini ve kapanışta
+dispose edildiğini bağımsız runtime probe ile doğrulamak.
 
 ## Owned surface
 
@@ -26,8 +27,10 @@ Host'un tek doğrulanmış `NpgsqlDataSource` ile constructable olduğunu, modü
 
 ## In scope
 
-- `CODE-001;CODE-002` için explicit executable module catalog ve tek validated `NpgsqlDataSource` composition akışını uygulamak.
-- Module discovery, data-source disposal ve missing-module startup failure'ını aynı Host integration test setiyle doğrulamak.
+- `CODE-001;CODE-002` için explicit executable module catalog ve tek validated `NpgsqlDataSource` composition akışını
+  uygulamak.
+- Module discovery, data-source disposal ve missing-module startup failure'ını aynı Host integration test setiyle
+  doğrulamak.
 
 ## Out of scope
 

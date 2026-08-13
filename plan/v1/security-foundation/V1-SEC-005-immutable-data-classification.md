@@ -12,7 +12,8 @@
 
 ## Goal
 
-sensitive payload/envelope classification metadata'sının caller alias veya supported downcast üzerinden değiştirilemediğini bağımsız doğrulamak.
+sensitive payload/envelope classification metadata'sının caller alias veya supported downcast üzerinden
+değiştirilemediğini bağımsız doğrulamak.
 
 ## Owned surface
 

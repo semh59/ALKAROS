@@ -12,7 +12,8 @@
 
 ## Goal
 
-default Host akışında desteklenen bütün executable modüllerin tam bir kez yüklendiğini ve eksik modülün startup'ı durdurduğunu bağımsız runtime probe ile doğrulamak.
+default Host akışında desteklenen bütün executable modüllerin tam bir kez yüklendiğini ve eksik modülün startup'ı
+durdurduğunu bağımsız runtime probe ile doğrulamak.
 
 ## Owned surface
 
@@ -21,7 +22,8 @@ default Host akışında desteklenen bütün executable modüllerin tam bir kez 
 ## In scope
 
 - `CODE-001` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
+- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile
+  kaydetmek.
 - Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
 
 ## Out of scope
@@ -42,7 +44,8 @@ default Host akışında desteklenen bütün executable modüllerin tam bir kez 
 
 - Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
 - Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-FND-016/**` ve task metadata'sıdır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız
+  `evidence/V1-FND-016/**` ve task metadata'sıdır.
 
 ## Handoff
 

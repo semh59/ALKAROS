@@ -12,7 +12,8 @@
 
 ## Goal
 
-Catalog domain, repository ve migration davranışını temiz candidate üzerinde üç ardışık test ve PostgreSQL forward/down/forward akışıyla doğrulamak.
+Catalog domain, repository ve migration davranışını temiz candidate üzerinde üç ardışık test ve PostgreSQL
+forward/down/forward akışıyla doğrulamak.
 
 ## Owned surface
 
@@ -21,7 +22,8 @@ Catalog domain, repository ve migration davranışını temiz candidate üzerind
 ## In scope
 
 - `GOV-006;GOV-007` bulgu zincirini dependency tasklerinin committed candidate'ı üzerinde yeniden üretmek.
-- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile kaydetmek.
+- Source, test, migration ve runtime sonucunu read-only inceleyip command, exit code, environment ve commit SHA ile
+  kaydetmek.
 - Sonucu `VERIFIED`, `UNPROVEN`, `PARTIAL` veya `CANDIDATE` olarak fail-closed sınıflandırmak.
 
 ## Out of scope
@@ -43,7 +45,8 @@ Catalog domain, repository ve migration davranışını temiz candidate üzerind
 
 - Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
 - Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız `evidence/V1-CAT-004/**` ve task metadata'sıdır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız
+  `evidence/V1-CAT-004/**` ve task metadata'sıdır.
 
 ## Handoff
 

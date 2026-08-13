@@ -12,7 +12,8 @@
 
 ## Goal
 
-role/permission revoke commit'inden sonra concurrent authorization sonucunun fail-closed deny olduğunu deterministic transaction interleaving'iyle doğrulamak.
+role/permission revoke commit'inden sonra concurrent authorization sonucunun fail-closed deny olduğunu deterministic
+transaction interleaving'iyle doğrulamak.
 
 ## Owned surface
 
@@ -22,7 +23,8 @@ role/permission revoke commit'inden sonra concurrent authorization sonucunun fai
 
 ## In scope
 
-- `CODE-008` için authorization predicate ve protected write linearization kuralını uygulamak ve formatter-only drift'i aynı owned testte kapatmak.
+- `CODE-008` için authorization predicate ve protected write linearization kuralını uygulamak ve formatter-only drift'i
+  aynı owned testte kapatmak.
 
 ## Out of scope
 
@@ -40,7 +42,8 @@ role/permission revoke commit'inden sonra concurrent authorization sonucunun fai
 ## Acceptance evidence
 
 - Permission decision ve mutation chosen linearization kuralına göre aynı transaction/conditional write ile bağlanır.
-- Authorization tests, `dotnet format ALKAROS.slnx --verify-no-changes --no-restore` ve plan validator exit code `0` verir.
+- Authorization tests, `dotnet format ALKAROS.slnx --verify-no-changes --no-restore` ve plan validator exit code `0`
+  verir.
 
 ## Handoff
 

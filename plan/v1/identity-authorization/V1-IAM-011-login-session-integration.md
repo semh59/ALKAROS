@@ -12,7 +12,8 @@
 
 ## Goal
 
-başarılı login'in tek persisted, validated ve revocable credential lifecycle ürettiğini; failure'da orphan token/session bırakmadığını bağımsız doğrulamak.
+başarılı login'in tek persisted, validated ve revocable credential lifecycle ürettiğini; failure'da orphan token/session
+bırakmadığını bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -26,7 +27,8 @@ başarılı login'in tek persisted, validated ve revocable credential lifecycle 
 
 ## In scope
 
-- `CODE-012;CODE-016` için single persisted/validated/revocable login credential lifecycle ve bounded work-factor contract'ını tek authentication integration diff'inde uygulamak.
+- `CODE-012;CODE-016` için single persisted/validated/revocable login credential lifecycle ve bounded work-factor
+  contract'ını tek authentication integration diff'inde uygulamak.
 - Success, failure ve revoke paths'ini task-owned tests ile doğrulamak.
 
 ## Out of scope

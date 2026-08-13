@@ -12,7 +12,8 @@
 
 ## Goal
 
-dondurulmuş candidate custody hash'leriyle temiz dala alınan Tables module, project, lock ve migration setinin eksiksizliğini ve transition invariant'ını bağımsız doğrulamak.
+dondurulmuş candidate custody hash'leriyle temiz dala alınan Tables module, project, lock ve migration setinin
+eksiksizliğini ve transition invariant'ını bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -25,7 +26,8 @@ dondurulmuş candidate custody hash'leriyle temiz dala alınan Tables module, pr
 ## In scope
 
 - `CODE-013` için repository transition predicate'ini task-owned Table surface'te atomik kılmak.
-- C52 migration SQL çiftlerini tek final `MigrationComposition` manifest integration diff'inde kaydetmek ve manifest testini güncellemek.
+- C52 migration SQL çiftlerini tek final `MigrationComposition` manifest integration diff'inde kaydetmek ve manifest
+  testini güncellemek.
 
 ## Out of scope
 

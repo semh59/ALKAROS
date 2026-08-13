@@ -25,7 +25,7 @@ Repo: `https://github.com/semh59/ALKAROS.git` branch `master`.
 
 ### Hedefli koşu
 
-```
+```console
 > dotnet test ALKAROS.slnx --filter "FullyQualifiedName~HostConstructability"
 Başarılı! - Başarısız: 0, Başarılı: 2, Toplam: 2 - ALKAROS.Host.Tests.dll
 exit=0
@@ -37,7 +37,7 @@ filtresi genişletilip yeniden koşuldu → 2/2 geçti.
 
 ### Tam çözüm — 3 ardışık koşu
 
-```
+```console
 > dotnet test ALKAROS.slnx --no-restore -v q   (run 1,2,3)
 run1=0  run2=0  run3=0
 Transcripts: full-run-1.txt, full-run-2.txt, full-run-3.txt
@@ -48,7 +48,7 @@ Test DB: `ALKAROS_TEST_PG_PORT=5433` + `alkaros_test` container parolası.
 
 ### Kapsam ve plan doğrulaması
 
-```
+```console
 > py tools/task-scope/task_scope_tool.py --task-id V1-FND-013 --format text
 OK: All changes within scope for V1-FND-013
 exit=0

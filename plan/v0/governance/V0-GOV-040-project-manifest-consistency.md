@@ -12,7 +12,8 @@
 
 ## Goal
 
-`V1-FND-001` tarafından yenilenen project manifest ile solution, disk, project reference, package ve lock graph'ının exact eşitliğini fail-closed doğrulamak.
+`V1-FND-001` tarafından yenilenen project manifest ile solution, disk, project reference, package ve lock graph'ının
+exact eşitliğini fail-closed doğrulamak.
 
 ## Owned surface
 
@@ -46,7 +47,8 @@
 - Solution, disk ve manifest project set farkları `0` olur.
 - ProjectReference/package/lock graph drift fixture'ları non-zero reddedilir.
 - `dotnet restore ALKAROS.slnx --locked-mode` ve locked Release build exit code `0` verir.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-040/**` altındadır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-040/**`
+  altındadır.
 
 ## Handoff
 

@@ -12,7 +12,8 @@
 
 ## Goal
 
-session lifetime değerinin domain ve PostgreSQL katmanında pozitif, bounded ve UTC tabanlı aynı invariant'ı taşıdığını bağımsız doğrulamak.
+session lifetime değerinin domain ve PostgreSQL katmanında pozitif, bounded ve UTC tabanlı aynı invariant'ı taşıdığını
+bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -23,7 +24,8 @@ session lifetime değerinin domain ve PostgreSQL katmanında pozitif, bounded ve
 
 ## In scope
 
-- `CODE-019` için V1-IAM-006 lifetime invariant'ını additive forward/down migration pair ile PostgreSQL katmanında zorunlu kılmak.
+- `CODE-019` için V1-IAM-006 lifetime invariant'ını additive forward/down migration pair ile PostgreSQL katmanında
+  zorunlu kılmak.
 
 ## Out of scope
 

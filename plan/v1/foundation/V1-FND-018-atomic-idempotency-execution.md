@@ -12,7 +12,8 @@
 
 ## Goal
 
-aynı idempotency key için protected mutation ve terminal outcome davranışını deterministic concurrency/crash-replay probe ile yeniden üretmek ve atomiklik sonucunu bağımsız doğrulamak.
+aynı idempotency key için protected mutation ve terminal outcome davranışını deterministic concurrency/crash-replay
+probe ile yeniden üretmek ve atomiklik sonucunu bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -22,7 +23,8 @@ aynı idempotency key için protected mutation ve terminal outcome davranışın
 
 ## In scope
 
-- `CODE-003` için idempotency claim/in-progress/completed state machine'ini protected mutation transaction sınırına bağlamak.
+- `CODE-003` için idempotency claim/in-progress/completed state machine'ini protected mutation transaction sınırına
+  bağlamak.
 - Concurrent claim ve crash-replay yollarını task-owned testlerle doğrulamak.
 
 ## Out of scope

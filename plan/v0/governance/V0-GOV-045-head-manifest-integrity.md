@@ -21,7 +21,8 @@
 
 ## Goal
 
-Bütün remediation taskleri kapandıktan sonra `plan/AUDIT_REPORT.md` ile `plan/AUDIT_MANIFEST.json` dosyalarını tek committed candidate HEAD için yeniden üretmek ve byte/hash doğrulamasını kapatmak.
+Bütün remediation taskleri kapandıktan sonra `plan/AUDIT_REPORT.md` ile `plan/AUDIT_MANIFEST.json` dosyalarını tek
+committed candidate HEAD için yeniden üretmek ve byte/hash doğrulamasını kapatmak.
 
 ## Owned surface
 
@@ -98,7 +99,8 @@ Bütün remediation taskleri kapandıktan sonra `plan/AUDIT_REPORT.md` ile `plan
 - 56 finding'in her biri evidence-backed terminal verdict ve owner task'a sahiptir.
 - Committed candidate üzerinde manifest verifier exit code `0` ve hash mismatch count `0` verir.
 - Report/manifest aynı candidate SHA, finding seti ve verdict toplamlarını taşır.
-- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-045/**` altındadır.
+- `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; kanıtlar yalnız `evidence/V0-GOV-045/**`
+  altındadır.
 
 ## Handoff
 

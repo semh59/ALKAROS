@@ -17,7 +17,7 @@ unknown-user timing farkı ve sınırsız hash iteration riski var."
 ## Değişen yollar
 
 | Dosya | Değişiklik |
-|---|---|
+| --- | --- |
 | `src/Modules/Identity/Authentication/PasswordHasher.cs` | `DummyPassword`/`DummyHash` const'ları; `MaximumIterations` (2_000_000) üst sınırı; `TryParse`'te `iterations > MaximumIterations` reddi |
 | `src/Modules/Identity/Authentication/AuthenticationService.cs` | Unknown-user yolunda `PasswordHasher.Verify(password, PasswordHasher.DummyHash)` — sabit PBKDF2 işi (timing oracle kapatıldı) |
 | `src/Modules/Identity/Authentication/PostgresUserStore.cs` | `RecordLoginFailureAsync` SQL'i: expired lock'ta sayaç 1'den başlar, `locked_until` NULL'a resetlenir; aktif lock'ta değişiklik yok |
@@ -64,26 +64,32 @@ Son koşu: 40/40, concurrency testi dahil.
 
 Komut: `dotnet test tests\Modules\Identity\Authentication\ALKAROS.Identity.Authentication.Tests.csproj --nologo -v q`
 
-```
+```console
 Başarılı!  - Başarısız:     0, Başarılı:    40, Atlanan:     0, Toplam:    40, Süre: 3 s
 EXIT=0
 ```
 
 Önceki 34 → 40 → 41 test (6 yeni + denetim fix'leri). Yeni testler:
-- `PasswordHasherTests.VerifyRejectsExcessiveIterationCount` — `MaximumIterations + 1` iterasyonlu encoded hash reddedilir.
+
+- `PasswordHasherTests.VerifyRejectsExcessiveIterationCount` — `MaximumIterations + 1` iterasyonlu encoded hash
+  reddedilir.
 - `PasswordHasherTests.VerifyAcceptsTheDummyHash` — dummy literal gerçek hash'tir.
-- `AuthenticationServiceTests.UnknownUsernameLoginTakesComparableTimeToKnownUserLogin` — unknown login, bilinen kullanıcının yanlış-parola login süresinin ≥ %80'i kadar PBKDF2 işi yapar (karşılaştırmalı; mutlak eşik kaldırıldı).
-- `AuthenticationServiceTests.InactiveUserLoginTakesComparableTimeToKnownUserLogin` — inaktif kullanıcı da aynı sabit işi yapar (denetim fix'i: inactive yoluna dummy verify eklendi, `AuthenticationService.LoginAsync`).
-- `AuthenticationServiceTests.ExpiredLockRestartsFailureCountingAndReLocksOnlyAfterNewMaxFailures` — expired sonrası 1 hata lock arm etmez, 2. hata eder; DB state her adımda doğrulanır.
+- `AuthenticationServiceTests.UnknownUsernameLoginTakesComparableTimeToKnownUserLogin` — unknown login, bilinen
+  kullanıcının yanlış-parola login süresinin ≥ %80'i kadar PBKDF2 işi yapar (karşılaştırmalı; mutlak eşik kaldırıldı).
+- `AuthenticationServiceTests.InactiveUserLoginTakesComparableTimeToKnownUserLogin` — inaktif kullanıcı da aynı sabit
+  işi yapar (denetim fix'i: inactive yoluna dummy verify eklendi, `AuthenticationService.LoginAsync`).
+- `AuthenticationServiceTests.ExpiredLockRestartsFailureCountingAndReLocksOnlyAfterNewMaxFailures` — expired sonrası 1
+  hata lock arm etmez, 2. hata eder; DB state her adımda doğrulanır.
 - `PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryRestartsTheCounter` — sayaç 1, locked_until NULL.
-- `PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryCanReLockOnNewWindow` — max=1 edge case'te yeni pencerede yeniden lock.
+- `PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryCanReLockOnNewWindow` — max=1 edge case'te yeni pencerede
+  yeniden lock.
 
 ### 3.2 Full solution suite (regresyon)
 
 Komut: `dotnet test ALKAROS.slnx --no-build --nologo -v q` → EXIT=0
 
 | Proje | Başarılı | Toplam |
-|---|---|---|
+| --- | --- | --- |
 | ALKAROS.Architecture.Tests | 5 | 5 |
 | ALKAROS.Secrets.Tests | 21 | 21 |
 | ALKAROS.SensitiveData.Tests | 23 | 23 |
@@ -100,7 +106,7 @@ Sonuç: 258/258 başarılı, 0 başarısız, 0 atlanan (kusur 1/3/4/5/6 regresyo
 
 Komut: `dotnet build ALKAROS.slnx --no-restore --nologo -v q`
 
-```
+```console
 Oluşturma başarılı oldu.
     0 Uyarı
     0 Hata

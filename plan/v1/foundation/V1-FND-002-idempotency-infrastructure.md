@@ -41,7 +41,8 @@ uygulamak.
   devredilmiştir (C42); bu görev artık bu path'leri yazamaz.
 - V0-GOV-014 tarafindan remediated retry policy dosyasi bu task'in yuzeyinden
   devredilmistir; V0-GOV-014 bu task'a dependency ile siralanir.
-- C52 atomic execution and message-finalization remediation surfaces are transferred to V1-FND-018 and V1-FND-019; this historical task remains closed.
+- C52 atomic execution and message-finalization remediation surfaces are transferred to V1-FND-018 and V1-FND-019; this
+  historical task remains closed.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı; `Directory.Packages.props` içine `Npgsql` PackageVersion eklentisi.
 - Kapsam genişletme onayı (2026-08-01 kullanıcı talimatı): `docs/data/migration-dependency-graph.md` (V0-DAT-001

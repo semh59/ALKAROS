@@ -7,7 +7,7 @@ senaryosu down script eksikliği yüzünden fail-closed validation'la çelişiyo
 ## Değişen yollar
 
 | Dosya | Değişiklik |
-|---|---|
+| --- | --- |
 | `src/Host/Program.cs` | `--rollback` argümanı composition options'a forward edilir (commit `9a988a9`, HEAD) |
 | `tests/Host/MigrationComposition/Program/ProgramArgumentTests.cs` | Rollback forward testi eklendi; down script eksikliği senaryosu fail-closed validation ile tutarlı hale getirildi (2026-08-03 düzeltmesi) |
 
@@ -17,13 +17,13 @@ Test `RollbackArgumentIsForwardedToTheHostComposition` — `--rollback 002`
 argümanı parse edilir, composition'a iletilir ve fail-closed doğrulama mesajı
 üretir:
 
-```
+```console
 "Rollback refused: position [002] is not declared in the verified order."
 ```
 
 Host suite (tam suite içinden):
 
-```
+```console
 Başarılı!  - Başarısız:     0, Başarılı:    60, Atlanan:     0, Toplam:    60, Süre: 13 s - ALKAROS.Host.Tests.dll (net8.0)
 ```
 

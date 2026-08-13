@@ -12,7 +12,8 @@
 
 ## Goal
 
-inbox/outbox stale lease worker'ının acknowledgement, retry veya terminal success yazamadığını generation/fencing interleaving'iyle bağımsız doğrulamak.
+inbox/outbox stale lease worker'ının acknowledgement, retry veya terminal success yazamadığını generation/fencing
+interleaving'iyle bağımsız doğrulamak.
 
 ## Owned surface
 
@@ -26,7 +27,8 @@ inbox/outbox stale lease worker'ının acknowledgement, retry veya terminal succ
 
 ## In scope
 
-- `CODE-004;CODE-005;CODE-018` için lease-token fencing, affected-row enforcement ve sanitized persisted error finalization'ını tek messaging integration diff'inde uygulamak.
+- `CODE-004;CODE-005;CODE-018` için lease-token fencing, affected-row enforcement ve sanitized persisted error
+  finalization'ını tek messaging integration diff'inde uygulamak.
 - Stale-worker, zero-row retry ve secret-bearing handler failure interleavinglerini task-owned testlerle doğrulamak.
 
 ## Out of scope

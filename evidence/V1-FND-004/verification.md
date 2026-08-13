@@ -17,20 +17,27 @@ Yürütme: opencode-v1-fnd-004
 
 ### 2. Acceptance criteria
 
-**"Host yalnız kayıtlı module'ları yükler"**
-- `src/Host/Composition/Modules/ModuleRegistry.cs` (satır 19-39): `Discover()` yalnız ALKAROS.* assembly'lerindeki somut `IModule` türlerini tarar; `Compose()` topological order + cyclic/duplicate reddi.
+"Host yalnız kayıtlı module'ları yükler"
 
-**"C1 ile düzeltilen sırayı ihlal eden veya duplicate migration çalıştırılmaz"**
-- `MigrationManifest.Load()` (satır 81-128): ascending position doğrulama (`CompareOrdinal <= 0` throw), duplicate position fail-closed, phase range kontrolü.
-- `MigrationCompositionValidator.Validate()` (satır 38-102): bilinmeyen pozisyon → `UnknownPosition`, duplicate script → `DuplicateUp`/`DuplicateDown`, eksik → `MissingUp`/`MissingDown`; tüm finding'ler non-empty ise hiç SQL çalıştırılmaz.
+- `src/Host/Composition/Modules/ModuleRegistry.cs` (satır 19-39): `Discover()` yalnız ALKAROS.* assembly'lerindeki somut
+  `IModule` türlerini tarar; `Compose()` topological order + cyclic/duplicate reddi.
 
-**"Migration failure non-zero startup sonucu üretir; kısmi başarı gizlenmez"**
-- Findings listesi non-empty → executor çalışmayı durdurur; manifest okunamazsa `MigrationManifestException` fırlatılır; her iki durumda da non-zero exit.
+"C1 ile düzeltilen sırayı ihlal eden veya duplicate migration çalıştırılmaz"
+
+- `MigrationManifest.Load()` (satır 81-128): ascending position doğrulama (`CompareOrdinal <= 0` throw), duplicate
+  position fail-closed, phase range kontrolü.
+- `MigrationCompositionValidator.Validate()` (satır 38-102): bilinmeyen pozisyon → `UnknownPosition`, duplicate script →
+  `DuplicateUp`/`DuplicateDown`, eksik → `MissingUp`/`MissingDown`; tüm finding'ler non-empty ise hiç SQL çalıştırılmaz.
+
+"Migration failure non-zero startup sonucu üretir; kısmi başarı gizlenmez"
+
+- Findings listesi non-empty → executor çalışmayı durdurur; manifest okunamazsa `MigrationManifestException` fırlatılır;
+  her iki durumda da non-zero exit.
 
 ### 3. Owned surface dosyaları
 
 | Dosya | Mevcut |
-|---|---|
+| --- | --- |
 | `src/Host/Composition/Modules/ModuleRegistry.cs` | ✓ |
 | `src/Host/Composition/Migrations/MigrationCompositionValidator.cs` | ✓ |
 | `src/Host/Composition/Migrations/MigrationDiscoverer.cs` | ✓ |
@@ -49,7 +56,8 @@ V0-GOV-015 tarafından remediate edilen executor/history/psql dosyaları bu task
 
 ### 4. Local preflight
 
-`py tools/task-scope/task_scope_tool.py --task-id V1-FND-004 --format text` -> `OK: All changes within scope for V1-FND-004`, exit 0.
+`py tools/task-scope/task_scope_tool.py --task-id V1-FND-004 --format text` -> `OK: All changes within scope for
+V1-FND-004`, exit 0.
 
 ## Sonuç
 
