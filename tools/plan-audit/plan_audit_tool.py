@@ -142,6 +142,8 @@ V0_DEFERRED_TASKS = {
     "V0-LIC-001",
     "V0-BKP-001",
     "V0-BKP-002",
+    "V0-GOV-041",
+    "V0-GOV-042",
     "V0-REV-001",
     "V0-REV-002",
     "V0-REV-003",
@@ -2147,8 +2149,6 @@ def application_tasks_started_before_v0_exit(
 ) -> list[str]:
     """Reject newly started application work while a V0 task remains blocked."""
     c54_errors = c54_application_admission_errors(tasks)
-    fnd023 = tasks.get(_C54_APPLICATION_TASK_ID)
-    fnd023_done = fnd023 is not None and metadata_value(fnd023[1], "Status", "") == "Done"
     v0_gate_open = any(
         task_id.startswith("V0-")
         and task_id not in V0_DEFERRED_TASKS
@@ -2156,7 +2156,7 @@ def application_tasks_started_before_v0_exit(
         for task_id, (_, preamble, _, _) in tasks.items()
     )
     if not v0_gate_open:
-        return c54_errors if fnd023_done else []
+        return c54_errors
 
     c54_is_admitted = not c54_errors and not validate_remediation_admission_tuple()
     application_work_types = {"implementation", "integration"}

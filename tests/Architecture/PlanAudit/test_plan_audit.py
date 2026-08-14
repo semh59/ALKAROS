@@ -292,7 +292,6 @@ class TestC54ApplicationAdmission:
 
         assert result.returncode == 1
         assert expected_error in result.stdout
-        assert "APPLICATION_STARTED_BEFORE_V0_EXIT V1-FND-023" in result.stdout
 
     def test_done_fnd023_requires_the_v3_interrupted_closure(self, tmp_path: Path) -> None:
         workspace = _copy_validation_workspace(tmp_path)
@@ -399,6 +398,8 @@ class TestC54ApplicationAdmission:
         path = _task_path(workspace, "V1-FND-022")
         _replace(path, "- Status: Planned", "- Status: InProgress")
         _replace(path, "- Assignee: Unassigned (exactly one person)", "- Assignee: test-session")
+        gate = _task_path(workspace, "V0-GOV-040")
+        _replace(gate, "- Status: Planned", "- Status: Blocked")
 
         result = _run_validate(workspace)
 

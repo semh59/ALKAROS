@@ -154,6 +154,8 @@ _DEFERRED_TASK_RECORDS = {
     ("V0-REV-028", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
     ("V0-REV-029", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
     ("V0-REV-030", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-GOV-041", "2026-08-13", "V12", "Successful GitHub Actions candidate workflow URL/SHA + repository admin ruleset/required-check readback (ad-soyad, kurum/rol, onay tarihi)"),
+    ("V0-GOV-042", "2026-08-13", "V12", "Coverage threshold, project scope ve supported exporter için tarihli named technical approval (ad-soyad, kurum/rol, onay tarihi)"),
 }
 _DEFERRED_TASK_IDS = {record[0] for record in _DEFERRED_TASK_RECORDS}
 

@@ -49,6 +49,13 @@ kurum/rol, onay tarihi). Bu kanıtlar ilgili görevlerin (GOV-041/GOV-042)
 `evidence/` klasörlerine yazılır; bu görev (V1-IAM-008) yalnız `Status`/
 `Assignee` metadata blokajını kaldırır, başka yerde kanıt yazmaz.
 
+GÜNCELLEME (C66, `V0-GOV-063`): 2026-08-13 kullanıcı onayıyla `V0-GOV-041` ve
+`V0-GOV-042` `V0_DEFERRED_TASKS` listesine eklendi (reopen stage `V12`).
+Uygulama görevi `V1-IAM-008` için `APPLICATION_STARTED_BEFORE_V0_EXIT` bloğu
+yukarıdaki iki görev için kalktı; kalan engel yalnız bu devir kaydının varlığı
+değildir ve `V1-IAM-008`, `GATE-V1-ENTRY` koşulları ve kendi dependency
+gates'leri tamamlandığında `InProgress` yapılabilir.
+
 ## Deliverables
 
 - Authorization linearization implementation diff'i, concurrency testleri ve raw transcript.

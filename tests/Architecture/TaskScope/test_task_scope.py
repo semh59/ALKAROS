@@ -388,6 +388,8 @@ DEFERRED_TASK_IDS = [
     "V0-LIC-001",
     "V0-BKP-001",
     "V0-BKP-002",
+    "V0-GOV-041",
+    "V0-GOV-042",
     "V0-REV-001",
     "V0-REV-002",
     "V0-REV-003",
@@ -425,6 +427,11 @@ DEFERRED_REV_ROW = (
     "(ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |"
 )
 
+DEFERRED_GOV_ROWS = [
+    "| `V0-GOV-041` | `2026-08-13` | `V12` | Successful GitHub Actions candidate workflow URL/SHA + repository admin ruleset/required-check readback (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |",
+    "| `V0-GOV-042` | `2026-08-13` | `V12` | Coverage threshold, project scope ve supported exporter için tarihli named technical approval (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |",
+]
+
 DEFERRED_ROWS = [
     "| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |",
     "| `V0-QNB-001` | `2026-08-03` | `V13` | Gerçek QNB provider contract/erişim kanıtı | Not V0 gate closure evidence |",
@@ -437,7 +444,7 @@ DEFERRED_ROWS = [
     "| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |",
     "| `V0-BKP-001` | `2026-08-03` | `V15` | Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı | Not V0 gate closure evidence |",
     "| `V0-BKP-002` | `2026-08-03` | `V15` | Gerçek yedekleme donanımı/cihaz kanıtı | Not V0 gate closure evidence |",
-] + [DEFERRED_REV_ROW.format(id=f"V0-REV-{i:03d}") for i in range(1, 31)]
+] + [DEFERRED_REV_ROW.format(id=f"V0-REV-{i:03d}") for i in range(1, 31)] + DEFERRED_GOV_ROWS
 
 
 # ---------------------------------------------------------------------------
