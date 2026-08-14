@@ -1502,3 +1502,26 @@ class TestDoneTransitionDiffMode:
             "expected 'Planned' or 'InProgress'" in e
             for e in result["metadata_errors"]
         )
+
+    def test_closure_evidence_pr_keeps_done_accepted(
+        self, make_repo, make_plan
+    ):
+        """An evidence-only PR after closure (task file already Done on the
+        base) must not re-fail on status: Done stays Done."""
+        base = self._baseline(make_repo, make_plan, "InProgress")
+        task_file = make_plan / "V1-FND-003.md"
+        text = task_file.read_text(encoding="utf-8")
+        task_file.write_text(
+            text.replace("- Status: InProgress", "- Status: Done"),
+            encoding="utf-8",
+        )
+        _git(make_repo, "add", "plan/V1-FND-003.md")
+        _git(make_repo, "commit", "-q", "-m", "close task")
+        base = _git(make_repo, "rev-parse", "HEAD").strip()
+        _write(make_repo, "evidence/v1-fnd-003/verification.md", "proof\n")
+        _git(make_repo, "add", "evidence/v1-fnd-003/verification.md")
+        _git(make_repo, "commit", "-q", "-m", "closure evidence")
+        mod = self._load_module()
+        result = mod.run_validation("V1-FND-003", make_repo, make_plan, diff_base=base)
+        assert result["metadata_errors"] == []
+        assert result["valid"] is True

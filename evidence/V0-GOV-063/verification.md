@@ -124,3 +124,37 @@ Command:
 gh pr checks 3 → Task scope enforcement pass
 gh api repos/semh59/ALKAROS/pulls/3 --jq .mergeable_state → clean (ruleset fix sonrası)
 git log origin/master → 551d75d Merge pull request #3
+
+## 8. PR #5 close: InProgress -> Done transition support (user-approved scope)
+
+PR'da `Done` durumu task-scope tarafından reddediliyordu (EXECUTABLE_STATUSES =
+Planned|InProgress); V0-GOV-063'ü kapatmak imkânsızdı. Kullanıcı onayı ile
+(2026-08-14) task_scope_tool.py'ye yalnız InProgress->Done geçişine izin veren
+`allow_done_transition` istisnası eklendi (`_is_legal_done_transition`:
+current Done + baseline InProgress; Planned/Blocked->Done reddedilir). Diff-mode
+baseline çözümüne de merge-base'de görev dosyası yoksa HEAD fallback'i eklendi
+(validate_task_markdown_change ile tutarlı).
+
+Testler (tests/Architecture/TaskScope/test_task_scope.py,
+TestDoneTransitionDiffMode):
+- test_done_transition_from_in_progress_accepted -> pass
+- test_done_transition_from_planned_rejected -> pass
+- test_added_task_markdown_in_diff_mode_uses_head_baseline -> pass
+
+Command:
+python -m pytest tests/Architecture/TaskScope tests/Architecture/PlanAudit -q
+python -B tools/plan-audit/plan_audit_tool.py validate
+
+Output (tail):
+155 passed in 223.66s (0:03:43)
+Validation errors: 0 / Validation warnings: 0
+
+Exit code: 0
+
+PR #5 (V0-GOV-063: Close task - Done transition support (C66)):
+https://github.com/semh59/ALKAROS/pull/5 — merged, merge commit c5ab8e5
+(2026-08-14T12:35:58Z). V0-GOV-063 Status: Done (master'da).
+
+Komut kanıtı:
+gh pr checks 5 → Task scope enforcement pass
+gh api repos/semh59/ALKAROS/pulls/5 --jq .mergeable_state → clean
