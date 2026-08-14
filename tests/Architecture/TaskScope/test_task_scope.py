@@ -95,7 +95,7 @@ def _write_v0_deferrals(plan_dir: Path, rows: list[str]) -> None:
 
 REMEDIATION_RECORDS = {
     "V1-CAT-003": ("2026-08-10", "CORR:C52"),
-    "V1-FND-016": ("2026-08-10", "CORR:C52"),
+    "V1-FND-024": ("2026-08-10", "CORR:C52"),
     "V1-FND-017": ("2026-08-10", "CORR:C52"),
     "V1-FND-018": ("2026-08-10", "CORR:C52"),
     "V1-FND-019": ("2026-08-10", "CORR:C52"),
@@ -781,7 +781,7 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-016", dependencies="- V0-DOM-001")
+        write_task(task_id="V1-FND-024", dependencies="- V0-DOM-001")
 
         import importlib.util
 
@@ -792,7 +792,7 @@ class TestRemediationEntryGateExceptions:
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         result = mod.run_validation(
-            "V1-FND-016", make_repo, make_plan, candidate_remediation=True
+            "V1-FND-024", make_repo, make_plan, candidate_remediation=True
         )
 
         assert result["valid"] is True
@@ -833,10 +833,10 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-016")
+        write_task(task_id="V1-FND-024")
         _write_remediation_exceptions(make_plan, REMEDIATION_ROWS + [REMEDIATION_ROWS[0]])
 
-        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-024", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("duplicate Task ID" in error for error in result["metadata_errors"])
@@ -845,13 +845,13 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-016")
+        write_task(task_id="V1-FND-024")
         nonmatching_rows = REMEDIATION_ROWS[:-1] + [
             "| `V1-FND-999` | `2026-08-10` | `CORR:C52` | Verified finding remediation only | Not gate closure evidence | No new feature behavior |"
         ]
         _write_remediation_exceptions(make_plan, nonmatching_rows)
 
-        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-024", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("must exactly match" in error for error in result["metadata_errors"])
@@ -860,12 +860,12 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-016")
+        write_task(task_id="V1-FND-024")
         malformed_rows = REMEDIATION_ROWS.copy()
-        malformed_rows[0] = "| `V1-FND-016` | malformed |"
+        malformed_rows[0] = "| `V1-FND-024` | malformed |"
         _write_remediation_exceptions(make_plan, malformed_rows)
 
-        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-024", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("invalid record" in error for error in result["metadata_errors"])
@@ -874,10 +874,10 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-016")
+        write_task(task_id="V1-FND-024")
         (make_plan / "GATES.md").write_text("# Version Gates\n", encoding="utf-8")
 
-        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-024", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("markers must occur exactly once" in error for error in result["metadata_errors"])
@@ -886,12 +886,12 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-016")
+        write_task(task_id="V1-FND-024")
         wrong_date_rows = REMEDIATION_ROWS.copy()
         wrong_date_rows[0] = wrong_date_rows[0].replace("2026-08-10", "2026-08-09")
         _write_remediation_exceptions(make_plan, wrong_date_rows)
 
-        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-024", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("must exactly match" in error for error in result["metadata_errors"])
@@ -924,7 +924,7 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-016", status="Planned")
+        write_task(task_id="V1-FND-024", status="Planned")
 
         import importlib.util
 
@@ -935,7 +935,7 @@ class TestRemediationEntryGateExceptions:
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         result = mod.run_validation(
-            "V1-FND-016", make_repo, make_plan, candidate_remediation=True
+            "V1-FND-024", make_repo, make_plan, candidate_remediation=True
         )
 
         assert result["valid"] is False
@@ -970,12 +970,12 @@ class TestRemediationEntryGateExceptions:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_open_v0_gate(write_task, make_repo, make_plan)
-        write_task(task_id="V1-FND-016")
+        write_task(task_id="V1-FND-024")
         wrong_source_rows = REMEDIATION_ROWS.copy()
         wrong_source_rows[0] = wrong_source_rows[0].replace("CORR:C52", "PDF:I.7")
         _write_remediation_exceptions(make_plan, wrong_source_rows)
 
-        exit_code, result = run_tool("V1-FND-016", make_repo, make_plan)
+        exit_code, result = run_tool("V1-FND-024", make_repo, make_plan)
 
         assert exit_code == 1
         assert any("must exactly match" in error for error in result["metadata_errors"])
