@@ -856,11 +856,12 @@ def _is_legal_blocker_transition(baseline: TaskMetadata, current: TaskMetadata) 
 def _is_legal_done_transition(
     baseline: Optional[TaskMetadata], current: TaskMetadata
 ) -> bool:
-    """A task may move to Done only from InProgress (never Planned/Blocked)."""
+    """A task may stay Done (closure-evidence PRs) or reach Done only from
+    InProgress; Planned and Blocked cannot jump to Done."""
     return (
         current.status == "Done"
         and baseline is not None
-        and baseline.status == "InProgress"
+        and baseline.status in ("InProgress", "Done")
     )
 
 
@@ -1028,7 +1029,9 @@ def run_validation(
         return result
     allowlist_task = task
     baseline_task: Optional[TaskMetadata] = None
-    if any(task_path in change.all_paths() for change in changes):
+    if diff_base is not None or any(
+        task_path in change.all_paths() for change in changes
+    ):
         baseline_ref = "HEAD"
         if diff_base is not None:
             merge_base = subprocess.run(
@@ -1084,11 +1087,15 @@ def run_validation(
         and baseline_task is not None
         and baseline_task.status in EXECUTABLE_STATUSES
     )
+    allow_done_transition = (
+        diff_base is not None
+        and _is_legal_done_transition(baseline_task, task)
+    )
     metadata_errors = validate_task_metadata(
         task,
         plan_dir,
         allow_blocked_transition=allow_blocked_transition,
-        allow_done_transition=_is_legal_done_transition(baseline_task, task),
+        allow_done_transition=allow_done_transition,
         candidate_remediation=candidate_remediation,
     )
     result["metadata_errors"] = metadata_errors
