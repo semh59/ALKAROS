@@ -102,3 +102,25 @@ M tools/task-scope/task_scope_tool.py
 
 - V1-IAM-008 (blocker GOV-041/042 kalktı, C66 kaydı Blocker bölümünde)
 - V0-GOV-045
+
+## 7. PR #3 merge + ruleset context fix (user-approved scope)
+
+PR #2 task-scope check geçti (2026-08-14, run 31775223010 pass), ancak GitHub merge
+engelledi: `mergeable_state=blocked`. Kök neden: ruleset verify-required-checks (id
+20817586) required_status_checks context'i `task-scope / Task scope enforcement`
+bekliyordu; workflow check-run adı ise `Task scope enforcement` (job name). GitHub
+check-run'ları name ile eşleştirdiğinden beklenti karşılanmıyor, kural "expected ama
+perform edilmedi" sayılıyordu. Kullanıcı onayı ile ruleset context'i `Task scope
+enforcement` olarak güncellendi (PUT /repos/semh59/ALKAROS/rulesets/20817586,
+updated_at 2026-08-14T13:52:38.069+03:00); strict policy korundu.
+
+PR #3 (V0-GOV-063: Defer V0-GOV-041/042 integration gates (C66)):
+https://github.com/semh59/ALKAROS/pull/3 — merged, merge commit 551d75d
+(2026-08-14T10:53:20Z).
+
+Komut kanıtı:
+
+Command:
+gh pr checks 3 → Task scope enforcement pass
+gh api repos/semh59/ALKAROS/pulls/3 --jq .mergeable_state → clean (ruleset fix sonrası)
+git log origin/master → 551d75d Merge pull request #3
