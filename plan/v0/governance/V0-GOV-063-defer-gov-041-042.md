@@ -28,6 +28,10 @@ admin/onay kanıtı gerektirir; bu kanıt V0 gate kapanışından önce
 - `tools/task-scope/task_scope_tool.py`
 - `tests/Architecture/TaskScope/test_task_scope.py`
 - `tests/Architecture/PlanAudit/test_plan_audit.py`
+- `plan/v0/governance/V0-GOV-060-v3-b0-blob-alignment.md` (yalnız
+  test_plan_audit.py sahiplik devir kaydı, C66)
+- `plan/v0/governance/V0-GOV-062-rev-deferral.md` (yalnız
+  test_task_scope.py sahiplik devir kaydı, C66)
 - `plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md`
 - `evidence/V0-GOV-063/**`
 
