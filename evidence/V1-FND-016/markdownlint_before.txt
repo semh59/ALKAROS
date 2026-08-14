@@ -1,0 +1,334 @@
+﻿markdownlint-cli2 v0.23.2 (markdownlint v0.41.1)
+Finding: plan/**/*.md docs/**/*.md evidence/**/*.md AGENTS.md
+Linting: 422 files
+Summary: 173 issues in 29 files
+npx.cmd : evidence/ENV-001/env001-sdk-repair.md:19:3 error MD034/no-bare-urls Bare URL used [Context: "https://dotnetcl
+i.blob.core.wi..."]
+At line:1 char:8
++ $out = npx.cmd --yes markdownlint-cli2@0.23.2 2>&1; $out | Out-File " ...
++        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (evidence/ENV-00...ob.core.wi..."]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+evidence/ENV-003/env003-test-matrix.md:6:24 error MD033/no-inline-html Inline HTML [Element: proj]
+evidence/V0-GOV-030/verification.md:25 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V0-GOV-030/verification.md:34 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V0-GOV-031/verification.md:18 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V0-GOV-031/verification.md:52 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-001/defect-1-closure.md:9:1 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the right for style "compact"]
+evidence/V1-FND-001/defect-1-closure.md:9:5 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the left for style "compact"]
+evidence/V1-FND-001/defect-1-closure.md:9:5 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the right for style "compact"]
+evidence/V1-FND-001/defect-1-closure.md:9:9 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the left for style "compact"]
+evidence/V1-FND-001/defect-1-closure.md:30 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+evidence/V1-FND-001/defect-1-closure.md:38 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+evidence/V1-FND-001/verification.md:25 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-001/verification.md:36 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-001/verification.md:44 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-001/verification.md:51 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-001/verification.md:69 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-001/verification.md:75 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-002/defect-3-closure.md:10:1 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-FND-002/defect-3-closure.md:10:5 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the left for style "compact"]
+evidence/V1-FND-002/defect-3-closure.md:10:5 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-FND-002/defect-3-closure.md:10:9 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the left for style "compact"]
+evidence/V1-FND-002/defect-3-closure.md:25 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+evidence/V1-FND-002/defect-4-closure.md:9:1 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the right for style "compact"]
+evidence/V1-FND-002/defect-4-closure.md:9:5 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the left for style "compact"]
+evidence/V1-FND-002/defect-4-closure.md:9:5 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the right for style "compact"]
+evidence/V1-FND-002/defect-4-closure.md:9:9 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the left for style "compact"]
+evidence/V1-FND-002/defect-4-closure.md:23 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+evidence/V1-FND-002/defect-6-closure.md:9:1 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the right for style "compact"]
+evidence/V1-FND-002/defect-6-closure.md:9:5 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the left for style "compact"]
+evidence/V1-FND-002/defect-6-closure.md:9:5 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the right for style "compact"]
+evidence/V1-FND-002/defect-6-closure.md:9:9 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the left for style "compact"]
+evidence/V1-FND-002/defect-6-closure.md:30 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+evidence/V1-FND-002/defect-6-closure.md:37:65 error MD009/no-trailing-spaces Trailing spaces [Expected: 0 or 2; Actual:
+ 1]
+evidence/V1-FND-003/verification.md:14:1 error MD060/table-column-style Table column style [Table pipe is missing space
+ to the right for style "compact"]
+evidence/V1-FND-003/verification.md:14:5 error MD060/table-column-style Table column style [Table pipe is missing space
+ to the left for style "compact"]
+evidence/V1-FND-003/verification.md:14:5 error MD060/table-column-style Table column style [Table pipe is missing space
+ to the right for style "compact"]
+evidence/V1-FND-003/verification.md:14:9 error MD060/table-column-style Table column style [Table pipe is missing space
+ to the left for style "compact"]
+evidence/V1-FND-003/verification.md:29:121 error MD013/line-length Line length [Expected: 120; Actual: 148]
+evidence/V1-FND-003/verification.md:29 error MD032/blanks-around-lists Lists should be surrounded by blank lines [Conte
+xt: "- TestDiffMode: committed out-..."]
+evidence/V1-FND-003/verification.md:34:121 error MD013/line-length Line length [Expected: 120; Actual: 132]
+evidence/V1-FND-003/verification.md:38:121 error MD013/line-length Line length [Expected: 120; Actual: 211]
+evidence/V1-FND-003/verification.md:42:121 error MD013/line-length Line length [Expected: 120; Actual: 311]
+evidence/V1-FND-003/verification.md:50:121 error MD013/line-length Line length [Expected: 120; Actual: 232]
+evidence/V1-FND-003/verification.md:54:53 error MD047/single-trailing-newline Files should end with a single newline ch
+aracter
+evidence/V1-FND-004/verification.md:20 error MD036/no-emphasis-as-heading Emphasis used instead of a heading [Context: 
+""Host yaln─▒z kay─▒tl─▒ module'la..."]
+evidence/V1-FND-004/verification.md:21:121 error MD013/line-length Line length [Expected: 120; Actual: 203]
+evidence/V1-FND-004/verification.md:21 error MD032/blanks-around-lists Lists should be surrounded by blank lines [Conte
+xt: "- `src/Host/Composition/Module..."]
+evidence/V1-FND-004/verification.md:23 error MD036/no-emphasis-as-heading Emphasis used instead of a heading [Context: 
+""C1 ile d├╝zeltilen s─▒ray─▒ ihla..."]
+evidence/V1-FND-004/verification.md:24:121 error MD013/line-length Line length [Expected: 120; Actual: 158]
+evidence/V1-FND-004/verification.md:24 error MD032/blanks-around-lists Lists should be surrounded by blank lines [Conte
+xt: "- `MigrationManifest.Load()` (..."]
+evidence/V1-FND-004/verification.md:25:121 error MD013/line-length Line length [Expected: 120; Actual: 239]
+evidence/V1-FND-004/verification.md:27 error MD036/no-emphasis-as-heading Emphasis used instead of a heading [Context: 
+""Migration failure non-zero st..."]
+evidence/V1-FND-004/verification.md:28:121 error MD013/line-length Line length [Expected: 120; Actual: 154]
+evidence/V1-FND-004/verification.md:28 error MD032/blanks-around-lists Lists should be surrounded by blank lines [Conte
+xt: "- Findings listesi non-empty ÔåÆ..."]
+evidence/V1-FND-004/verification.md:33:1 error MD060/table-column-style Table column style [Table pipe is missing space
+ to the right for style "compact"]
+evidence/V1-FND-004/verification.md:33:5 error MD060/table-column-style Table column style [Table pipe is missing space
+ to the left for style "compact"]
+evidence/V1-FND-004/verification.md:33:5 error MD060/table-column-style Table column style [Table pipe is missing space
+ to the right for style "compact"]
+evidence/V1-FND-004/verification.md:33:9 error MD060/table-column-style Table column style [Table pipe is missing space
+ to the left for style "compact"]
+evidence/V1-FND-004/verification.md:52:121 error MD013/line-length Line length [Expected: 120; Actual: 133]
+evidence/V1-FND-004/verification.md:56:53 error MD047/single-trailing-newline Files should end with a single newline ch
+aracter
+evidence/V1-FND-005/defect-5-closure.md:9:1 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the right for style "compact"]
+evidence/V1-FND-005/defect-5-closure.md:9:5 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the left for style "compact"]
+evidence/V1-FND-005/defect-5-closure.md:9:5 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the right for style "compact"]
+evidence/V1-FND-005/defect-5-closure.md:9:9 error MD060/table-column-style Table column style [Table pipe is missing sp
+ace to the left for style "compact"]
+evidence/V1-FND-005/defect-5-closure.md:27 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+evidence/V1-FND-005/verification.md:20 error MD036/no-emphasis-as-heading Emphasis used instead of a heading [Context: 
+""Ayn─▒ workflow i├ğindeki module..."]
+evidence/V1-FND-005/verification.md:21:121 error MD013/line-length Line length [Expected: 120; Actual: 153]
+evidence/V1-FND-005/verification.md:21 error MD032/blanks-around-lists Lists should be surrounded by blank lines [Conte
+xt: "- `TransactionScope.CommitAsyn..."]
+evidence/V1-FND-005/verification.md:24 error MD036/no-emphasis-as-heading Emphasis used instead of a heading [Context: 
+""Bilinmeyen hata otomatik retr..."]
+evidence/V1-FND-005/verification.md:25:121 error MD013/line-length Line length [Expected: 120; Actual: 143]
+evidence/V1-FND-005/verification.md:25 error MD032/blanks-around-lists Lists should be surrounded by blank lines [Conte
+xt: "- `DefaultRetryClassifier.Clas..."]
+evidence/V1-FND-005/verification.md:27 error MD036/no-emphasis-as-heading Emphasis used instead of a heading [Context: 
+""Nested ba─ş─▒ms─▒z transaction a..."]
+evidence/V1-FND-005/verification.md:28:121 error MD013/line-length Line length [Expected: 120; Actual: 187]
+evidence/V1-FND-005/verification.md:28 error MD032/blanks-around-lists Lists should be surrounded by blank lines [Conte
+xt: "- `NestedTransactionException`..."]
+evidence/V1-FND-005/verification.md:32:121 error MD013/line-length Line length [Expected: 120; Actual: 153]
+evidence/V1-FND-005/verification.md:36:121 error MD013/line-length Line length [Expected: 120; Actual: 133]
+evidence/V1-FND-005/verification.md:40:53 error MD047/single-trailing-newline Files should end with a single newline ch
+aracter
+evidence/V1-FND-009/closure-report-2026-08-05.md:4 error MD032/blanks-around-lists Lists should be surrounded by blank 
+lines [Context: "+ force-push", "Net olanlara a..."]
+evidence/V1-FND-009/closure-report-2026-08-05.md:8:1 error MD004/ul-style Unordered list style [Expected: plus; Actual:
+ dash]
+evidence/V1-FND-009/closure-report-2026-08-05.md:11:1 error MD004/ul-style Unordered list style [Expected: plus; Actual
+: dash]
+evidence/V1-FND-009/closure-report-2026-08-05.md:13:1 error MD004/ul-style Unordered list style [Expected: plus; Actual
+: dash]
+evidence/V1-FND-009/closure-report-2026-08-05.md:41:1 error MD004/ul-style Unordered list style [Expected: plus; Actual
+: dash]
+evidence/V1-FND-009/closure-report-2026-08-05.md:44:1 error MD004/ul-style Unordered list style [Expected: plus; Actual
+: dash]
+evidence/V1-FND-009/closure-report-2026-08-05.md:48:1 error MD004/ul-style Unordered list style [Expected: plus; Actual
+: dash]
+evidence/V1-FND-009/closure-report-2026-08-05.md:50:1 error MD004/ul-style Unordered list style [Expected: plus; Actual
+: dash]
+evidence/V1-FND-013/verification.md:28 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-013/verification.md:40 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-013/verification.md:51 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-014/verification.md:26 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-014/verification.md:37 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-014/verification.md:45 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-015/verification.md:31 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-015/verification.md:43 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-FND-015/verification.md:51 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-IAM-001/closure-2026-08-05.md:7 error MD032/blanks-around-lists Lists should be surrounded by blank lines [
+Context: "- `V1-FND-001` ÔåÆ Done"]
+evidence/V1-IAM-001/closure-2026-08-05.md:32 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-001/defect-7-closure.md:20:1 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:20:5 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the left for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:20:5 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:20:9 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the left for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:67 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+evidence/V1-IAM-001/defect-7-closure.md:73 error MD032/blanks-around-lists Lists should be surrounded by blank lines [C
+ontext: "- `PasswordHasherTests.VerifyR..."]
+evidence/V1-IAM-001/defect-7-closure.md:75:121 error MD013/line-length Line length [Expected: 120; Actual: 228]
+evidence/V1-IAM-001/defect-7-closure.md:76:121 error MD013/line-length Line length [Expected: 120; Actual: 218]
+evidence/V1-IAM-001/defect-7-closure.md:77:121 error MD013/line-length Line length [Expected: 120; Actual: 185]
+evidence/V1-IAM-001/defect-7-closure.md:79:121 error MD013/line-length Line length [Expected: 120; Actual: 130]
+evidence/V1-IAM-001/defect-7-closure.md:86:1 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:86:5 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the left for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:86:5 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:86:9 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the left for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:86:9 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:86:13 error MD060/table-column-style Table column style [Table pipe is missing 
+space to the left for style "compact"]
+evidence/V1-IAM-001/defect-7-closure.md:103 error MD040/fenced-code-language Fenced code blocks should have a language 
+specified [Context: "```"]
+evidence/V1-IAM-002/closure-2026-08-08.md:23 error MD025/single-title/single-h1 Multiple top-level headings in the same
+ document [Context: "V1-IAM-002 ÔÇö closure evidence ..."]
+evidence/V1-IAM-002/closure-2026-08-08.md:37 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-002/closure-2026-08-08.md:45 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-002/closure-2026-08-08.md:54:1 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the right for style "compact"]
+evidence/V1-IAM-002/closure-2026-08-08.md:54:5 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the left for style "compact"]
+evidence/V1-IAM-002/closure-2026-08-08.md:54:5 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the right for style "compact"]
+evidence/V1-IAM-002/closure-2026-08-08.md:54:9 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the left for style "compact"]
+evidence/V1-IAM-002/closure-2026-08-08.md:54:9 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the right for style "compact"]
+evidence/V1-IAM-002/closure-2026-08-08.md:54:13 error MD060/table-column-style Table column style [Table pipe is missin
+g space to the left for style "compact"]
+evidence/V1-IAM-002/closure-2026-08-08.md:77:70 error MD047/single-trailing-newline Files should end with a single newl
+ine character
+evidence/V1-IAM-003/audit-slnx-regression-2026-08-09.md:25:55 error MD047/single-trailing-newline Files should end with
+ a single newline character
+evidence/V1-IAM-003/closure-2026-08-08.md:28 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:30 error MD031/blanks-around-fences Fenced code blocks should be surrounded b
+y blank lines [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:33 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:35 error MD031/blanks-around-fences Fenced code blocks should be surrounded b
+y blank lines [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:38 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:40 error MD031/blanks-around-fences Fenced code blocks should be surrounded b
+y blank lines [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:43 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:45 error MD031/blanks-around-fences Fenced code blocks should be surrounded b
+y blank lines [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:48 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:50 error MD031/blanks-around-fences Fenced code blocks should be surrounded b
+y blank lines [Context: "```"]
+evidence/V1-IAM-003/closure-2026-08-08.md:64 error MD022/blanks-around-headings Headings should be surrounded by blank 
+lines [Expected: 1; Actual: 0; Below] [Context: "## Acceptance evidence mapping"]
+evidence/V1-IAM-003/closure-2026-08-08.md:65 error MD058/blanks-around-tables Tables should be surrounded by blank line
+s [Context: "| Ko┼şul | Kan─▒t (test) |"]
+evidence/V1-IAM-003/closure-2026-08-08.md:66:1 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the right for style "compact"]
+evidence/V1-IAM-003/closure-2026-08-08.md:66:5 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the left for style "compact"]
+evidence/V1-IAM-003/closure-2026-08-08.md:66:5 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the right for style "compact"]
+evidence/V1-IAM-003/closure-2026-08-08.md:66:9 error MD060/table-column-style Table column style [Table pipe is missing
+ space to the left for style "compact"]
+evidence/V1-IAM-003/closure-2026-08-08.md:72 error MD022/blanks-around-headings Headings should be surrounded by blank 
+lines [Expected: 1; Actual: 0; Below] [Context: "## Kalan blocker"]
+evidence/V1-IAM-003/closure-2026-08-08.md:73 error MD032/blanks-around-lists Lists should be surrounded by blank lines 
+[Context: "- Yok. InProgressÔåÆDone legal g..."]
+evidence/V1-IAM-003/closure-2026-08-08.md:74:100 error MD047/single-trailing-newline Files should end with a single new
+line character
+evidence/V1-IAM-003/manifest-recover-2026-08-09.md:22 error MD040/fenced-code-language Fenced code blocks should have a
+ language specified [Context: "```"]
+evidence/V1-IAM-003/manifest-recover-2026-08-09.md:36 error MD040/fenced-code-language Fenced code blocks should have a
+ language specified [Context: "```"]
+evidence/V1-IAM-003/manifest-recover-2026-08-09.md:49:50 error MD047/single-trailing-newline Files should end with a si
+ngle newline character
+evidence/V1-IAM-004/closure-2026-08-08.md:35 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-IAM-004/closure-2026-08-08.md:56:37 error MD047/single-trailing-newline Files should end with a single newl
+ine character
+evidence/V1-IAM-005/verification.md:35 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-IAM-005/verification.md:43 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-IAM-005/verification.md:59 error MD040/fenced-code-language Fenced code blocks should have a language speci
+fied [Context: "```"]
+evidence/V1-SEC-003/closure-2026-08-05.md:7 error MD032/blanks-around-lists Lists should be surrounded by blank lines [
+Context: "- `V0-ARC-001` ÔåÆ Done"]
+evidence/V1-SEC-003/closure-2026-08-05.md:26 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-SEC-003/closure-2026-08-05.md:57 error MD040/fenced-code-language Fenced code blocks should have a language
+ specified [Context: "```"]
+evidence/V1-SEC-003/defect-2-closure.md:10:1 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-SEC-003/defect-2-closure.md:10:5 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the left for style "compact"]
+evidence/V1-SEC-003/defect-2-closure.md:10:5 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the right for style "compact"]
+evidence/V1-SEC-003/defect-2-closure.md:10:9 error MD060/table-column-style Table column style [Table pipe is missing s
+pace to the left for style "compact"]
+evidence/V1-SEC-003/defect-2-closure.md:20 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+evidence/V1-SEC-003/defect-2-closure.md:26 error MD040/fenced-code-language Fenced code blocks should have a language s
+pecified [Context: "```"]
+plan/TRACEABILITY.md:61:558 error MD038/no-space-in-code Spaces inside code span elements [Context: "`'ine `"]
+plan/TRACEABILITY.md:61:756 error MD038/no-space-in-code Spaces inside code span elements [Context: "`'ine `"]
+plan/TRACEABILITY.md:61:319 error MD056/table-column-count Table column count [Expected: 5; Actual: 9; Too many cells, 
+extra data will be missing]
+plan/TRACEABILITY.md:61:281 error MD060/table-column-style Table column style [Table pipe is missing space to the left 
+for style "compact"]
+plan/TRACEABILITY.md:61:281 error MD060/table-column-style Table column style [Table pipe is missing space to the right
+ for style "compact"]
+plan/TRACEABILITY.md:61:295 error MD060/table-column-style Table column style [Table pipe is missing space to the left 
+for style "compact"]
+plan/TRACEABILITY.md:61:295 error MD060/table-column-style Table column style [Table pipe is missing space to the right
+ for style "compact"]
+plan/TRACEABILITY.md:61:306 error MD060/table-column-style Table column style [Table pipe is missing space to the left 
+for style "compact"]
+plan/TRACEABILITY.md:61:306 error MD060/table-column-style Table column style [Table pipe is missing space to the right
+ for style "compact"]
+plan/TRACEABILITY.md:61:319 error MD060/table-column-style Table column style [Table pipe is missing space to the left 
+for style "compact"]
+plan/TRACEABILITY.md:61:319 error MD060/table-column-style Table column style [Table pipe is missing space to the right
+ for style "compact"]
+plan/v0/governance/V0-GOV-031-c42-entry-gate-approval.md:23:121 error MD013/line-length Line length [Expected: 120; Act
+ual: 129]

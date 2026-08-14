@@ -1,0 +1,45 @@
+﻿FAIL: Scope violations for V1-FND-016
+  METADATA ERROR: Task status is 'Done', expected 'Planned' or 'InProgress'
+  FINDING: alkaros.slnx (modified) ù path not in task allowlist
+  FINDING: database/migrationcomposition/order.json (modified) ù path not in task allowlist
+  FINDING: database/migrations/v1/v1-tbl-001/010-tables.down.sql (untracked) ù path not in task allowlist
+  FINDING: database/migrations/v1/v1-tbl-001/010-tables.up.sql (untracked) ù path not in task allowlist
+  FINDING: evidence/v1-tbl-001/closure-evidence.txt (untracked) ù path not in task allowlist
+  FINDING: plan/audit_baseline_manifest.json (modified) ù path not in task allowlist
+  FINDING: plan/gates.md (modified) ù path not in task allowlist
+  FINDING: plan/pdf_coverage.md (modified) ù path not in task allowlist
+  FINDING: plan/v0/backup-recovery/v0-bkp-001-backup-restore-proof.md (modified) ù path not in task allowlist
+  FINDING: plan/v0/backup-recovery/v0-bkp-002-rpo-rto-targets.md (modified) ù path not in task allowlist
+  FINDING: plan/v0/governance/v0-gov-006-sec003-boundary-repair.md (modified) ù path not in task allowlist
+  FINDING: plan/v1.4/qr-ordering/v14-qro-002-pending-table-policy.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/foundation/v1-fnd-003-codex-task-scope-enforcement.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/foundation/v1-fnd-007-audit-remediation.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/foundation/v1-fnd-009-rewrite-pushed-history.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/foundation/v1-fnd-010-shared-integration-test-fixtures.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/foundation/v1-fnd-011-transaction-outbox-atomicity.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/foundation/v1-fnd-016-markdownlint-format-remediation.md (untracked) ù task Markdown has no committed baseline
+  FINDING: plan/v1/identity-authorization/v1-iam-004-concurrent-lockout.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/table-management/v1-tbl-001-table-lifecycle.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/table-management/v1-tbl-002-table-transfer.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/table-management/v1-tbl-003-table-merge.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/table-management/v1-tbl-004-table-reservation-record.md (modified) ù path not in task allowlist
+  FINDING: plan/v1/table-management/v1-tbl-005-current-pointer-projection.md (modified) ù path not in task allowlist
+  FINDING: plan/validation_contract.md (modified) ù path not in task allowlist
+  FINDING: src/host/packages.lock.json (modified) ù path not in task allowlist
+  FINDING: src/modules/tables/alkaros.tables.csproj (modified) ù path not in task allowlist
+  FINDING: src/modules/tables/packages.lock.json (modified) ù path not in task allowlist
+  FINDING: src/modules/tables/tablelifecycle/postgrestablerepository.cs (untracked) ù path not in task allowlist
+  FINDING: src/modules/tables/tablelifecycle/postgreszonerepository.cs (untracked) ù path not in task allowlist
+  FINDING: src/modules/tables/tablelifecycle/table.cs (untracked) ù path not in task allowlist
+  FINDING: src/modules/tables/tablelifecycle/tablerepository.cs (untracked) ù path not in task allowlist
+  FINDING: src/modules/tables/tablelifecycle/tablesmodule.cs (untracked) ù path not in task allowlist
+  FINDING: src/modules/tables/tablelifecycle/tablestate.cs (untracked) ù path not in task allowlist
+  FINDING: src/modules/tables/tablelifecycle/zone.cs (untracked) ù path not in task allowlist
+  FINDING: tests/architecture/moduleboundaries/packages.lock.json (modified) ù path not in task allowlist
+  FINDING: tests/host/migrationcomposition/manifest/manifesttests.cs (modified) ù path not in task allowlist
+  FINDING: tests/host/migrationcomposition/packages.lock.json (modified) ù path not in task allowlist
+  FINDING: tests/modules/tables/tablelifecycle/alkaros.tables.tablelifecycle.tests.csproj (untracked) ù path not in task allowlist
+  FINDING: tests/modules/tables/tablelifecycle/fixtures/tablestestdatabase.cs (untracked) ù path not in task allowlist
+  FINDING: tests/modules/tables/tablelifecycle/packages.lock.json (untracked) ù path not in task allowlist
+  FINDING: tests/modules/tables/tablelifecycle/postgrestabletests.cs (untracked) ù path not in task allowlist
+  FINDING: tests/modules/tables/tablelifecycle/tabledomaintests.cs (untracked) ù path not in task allowlist

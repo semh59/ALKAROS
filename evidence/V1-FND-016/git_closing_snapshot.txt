@@ -1,0 +1,65 @@
+﻿ M ALKAROS.slnx
+ M database/MigrationComposition/order.json
+ M evidence/ENV-001/env001-sdk-repair.md
+ M evidence/ENV-003/env003-test-matrix.md
+ M evidence/V0-GOV-030/verification.md
+ M evidence/V0-GOV-031/verification.md
+ M evidence/V1-FND-001/defect-1-closure.md
+ M evidence/V1-FND-001/verification.md
+ M evidence/V1-FND-002/defect-3-closure.md
+ M evidence/V1-FND-002/defect-4-closure.md
+ M evidence/V1-FND-002/defect-6-closure.md
+ M evidence/V1-FND-003/verification.md
+ M evidence/V1-FND-004/verification.md
+ M evidence/V1-FND-005/defect-5-closure.md
+ M evidence/V1-FND-005/verification.md
+ M evidence/V1-FND-009/closure-report-2026-08-05.md
+ M evidence/V1-FND-013/verification.md
+ M evidence/V1-FND-014/verification.md
+ M evidence/V1-FND-015/verification.md
+ M evidence/V1-IAM-001/closure-2026-08-05.md
+ M evidence/V1-IAM-001/defect-7-closure.md
+ M evidence/V1-IAM-002/closure-2026-08-08.md
+ M evidence/V1-IAM-003/audit-slnx-regression-2026-08-09.md
+ M evidence/V1-IAM-003/closure-2026-08-08.md
+ M evidence/V1-IAM-003/manifest-recover-2026-08-09.md
+ M evidence/V1-IAM-004/closure-2026-08-08.md
+ M evidence/V1-IAM-005/verification.md
+ M evidence/V1-SEC-003/closure-2026-08-05.md
+ M evidence/V1-SEC-003/defect-2-closure.md
+M  plan/AUDIT_BASELINE_MANIFEST.json
+MM plan/AUDIT_MANIFEST.json
+MM plan/AUDIT_REPORT.md
+M  plan/GATES.md
+M  plan/PDF_COVERAGE.md
+MM plan/TRACEABILITY.md
+M  plan/VALIDATION_CONTRACT.md
+M  plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md
+M  plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md
+M  plan/v0/governance/V0-GOV-006-sec003-boundary-repair.md
+ M plan/v0/governance/V0-GOV-031-c42-entry-gate-approval.md
+MM plan/v1.4/qr-ordering/V14-QRO-002-pending-table-policy.md
+M  plan/v1/foundation/V1-FND-003-codex-task-scope-enforcement.md
+M  plan/v1/foundation/V1-FND-007-audit-remediation.md
+M  plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md
+M  plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md
+M  plan/v1/foundation/V1-FND-011-transaction-outbox-atomicity.md
+M  plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md
+MM plan/v1/table-management/V1-TBL-001-table-lifecycle.md
+MM plan/v1/table-management/V1-TBL-002-table-transfer.md
+MM plan/v1/table-management/V1-TBL-003-table-merge.md
+MM plan/v1/table-management/V1-TBL-004-table-reservation-record.md
+MM plan/v1/table-management/V1-TBL-005-current-pointer-projection.md
+ M src/Host/packages.lock.json
+ M src/Modules/Tables/ALKAROS.Tables.csproj
+ M src/Modules/Tables/packages.lock.json
+ M tests/Architecture/ModuleBoundaries/packages.lock.json
+ M tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+ M tests/Host/MigrationComposition/packages.lock.json
+?? database/migrations/V1/V1-TBL-001/
+?? evidence/V1-FND-016/
+?? evidence/V1-TBL-001/
+?? plan/v1/foundation/V1-FND-016-markdownlint-format-remediation.md
+?? src/Modules/Tables/TableLifecycle/
+?? tests/Modules/Tables/
+73b5b40 add task baseline

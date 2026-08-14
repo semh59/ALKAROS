@@ -1,0 +1,99 @@
+V1-TBL-001 closure evidence
+Date: 2026-08-09
+
+## Scope executed
+- table_mgmt schema: zones + tables (PDF:III.5.1, PDF:III.5.2) migration 010
+  (up/down pair, manifest order.json position 010, C47).
+- Table lifecycle domain: TableState enum (canonical values), Table entity with
+  canonical transition matrix (PDF:II.5.15 lifecycle-transition-contracts.md),
+  Zone entity.
+- ITableRepository/IZoneRepository + Postgres repositories with optimistic
+  concurrency (row_version guarded UPDATE ... RETURNING row_version).
+- TablesModule (IModule, Id "Tables") registering both repositories.
+- Tests: TableDomainTests, ZoneDomainTests, PostgresTableTests, PostgresDownSqlTests.
+- Build dependencies: Npgsql in ALKAROS.Tables.csproj, test project in
+  ALKAROS.slnx, ManifestTests count update, lockfile refresh (C48, C49).
+
+## dotnet build ALKAROS.slnx
+Result: 0 warnings, 0 errors (exit 0)
+
+## dotnet test ALKAROS.slnx --no-build  (13 test projects)
+All projects passed, exit code 0, no failures.
+- ALKAROS.Architecture.Tests: 5/5
+- ALKAROS.Transactions.Tests: 25/25
+- ALKAROS.TransactionOutboxIntegration.Tests: 12/12
+- ALKAROS.Secrets.Tests: 21/21
+- ALKAROS.SensitiveData.Tests: 23/23
+- ALKAROS.Idempotency.Tests: 80/80
+- ALKAROS.Identity.Authentication.Tests: 51/51
+- ALKAROS.Identity.Authorization.Tests: 18/18
+- ALKAROS.Identity.DeviceSessions.Tests: 17/17
+- ALKAROS.Host.Tests: 62/62 (manifest composition incl. position 010)
+- ALKAROS.Catalog.ProductCatalog.Tests: 77/77
+- ALKAROS.Catalog.Pricing.Tests: 27/27
+- ALKAROS.Tables.TableLifecycle.Tests: 51/51 (new)
+
+## Migration evidence (real PostgreSQL 18 via PgTestDatabase)
+- Up: 010-tables.up.sql applied in fresh DB; unique NULLS NOT DISTINCT,
+  zone FK, status CHECK, row_version bump (1->2), stale-version rejection
+  exercised in PostgresTableTests (12 tests incl. 23505/23503/23514).
+- Down: 010-tables.down.sql drops table_mgmt.zones + tables and the schema
+  (PostgresDownSqlTests, single test on its own fresh DB).
+
+## Plan audit
+- plan_audit_tool.py validate: 0 errors, 0 warnings (943 dependency edges)
+- plan_audit_tool.py verify-manifest: 0 errors (SHA-256 D879BF2AA553...90BE)
+- task_scope pytest suite: 80/80 passed (InProgress surface check)
+
+## Write-set vs allowlist
+Within owned surface:
+  src/Modules/Tables/TableLifecycle/**      (5 files)
+  tests/Modules/Tables/TableLifecycle/**    (4 files incl. csproj)
+  database/migrations/V1/V1-TBL-001/**      (up/down pair)
+  evidence/V1-TBL-001/**
+
+Outside owned surface (user-approved, C47-C50):
+  database/MigrationComposition/order.json  (position 010, Zones+Tables)
+  plan/TRACEABILITY.md                      (C47, C48, C49, C50 rows)
+  ALKAROS.Tables.csproj / ALKAROS.slnx     (Npgsql + test project entry, C48)
+  tests/Host/MigrationComposition/Manifest/ManifestTests.cs (count, C49)
+  packages.lock.json files (Host, Architecture.Tests, Host.Tests, Tables) - C49
+Task metadata only: plan/v1/table-management/V1-TBL-001-table-lifecycle.md
+  (Status Planned->InProgress->Done, Assignee opencode-v1-tbl-001)
+
+## Schema notes (source: PDF:III.5 verbatim + repo decisions)
+- zones: zone_id PK, code UNIQUE NOT NULL, name NOT NULL, sort_order DEFAULT 0,
+  active DEFAULT true. No timestamps, no store_id (PDF has none).
+- tables: table_id PK, zone_id FK nullable -> table_mgmt.zones,
+  table_number TEXT NOT NULL, capacity INT DEFAULT 0, active BOOLEAN DEFAULT
+  true, current_status TEXT CHECK (Available|Occupied|Reserved|Cleaning|
+  OutOfService), current_order_id/current_bill_id UUID nullable (cache
+  pointers, FK deferred to ORD-001/BIL-001 per C50), row_version BIGINT
+  DEFAULT 1, UNIQUE NULLS NOT DISTINCT (zone_id, table_number) per
+  V0-DAT-003. No created_at/updated_at (PDF defines none for tables).
+- Zone/table number uniqueness is store-less; PDF defines no store_id column
+  (same as catalog 006). V0-DAT-005 "isolated by store_id" rule therefore
+  does not apply to this schema; noted for GATE-V1-EXIT review.
+
+## Remaining blockers
+- None. Handoff: V1-TBL-002, V1-TBL-003, V1-ORD-001 (WIP C50 FK notes).
+
+## 2026-08-10 independent audit (bagimsiz-denetim) - findings resolved
+Re-verified with fresh command outputs (not session claims):
+- dotnet build ALKAROS.slnx: 0 warnings, 0 errors, exit 0 (15.72s) - matched.
+- dotnet test ALKAROS.slnx --no-build: 13 projects, exit 0; per-project pass
+  counts matched the closure list exactly (Tables 51/51 included).
+- task_scope pytest suite: 80/80 passed, exit 0 (70.71s) - matched.
+- plan_audit_tool.py validate: 0 errors, 0 warnings, 943 edges - matched.
+- verify-manifest: found stale (4 errors, exit 1) because task file metadata
+  edits (Status/Assignee/Owned surface) happened AFTER report/manifest
+  generation; fixed by regenerating AUDIT_REPORT.md + AUDIT_MANIFEST.json in
+  the correct order (report -> manifest), now 0 errors, exit 0. Surface state
+  row moved Planned -> Existing (user-approved, TRACEABILITY C51).
+- Stub/TODO/placeholder scan over the write set: zero matches.
+- Migrations and transitions: 010-tables.up.sql matched PDF:III.5.1/III.5.2
+  column-by-column; Table.CanTransitionTo matched lifecycle-transition-
+  contracts.md Table row incl. no-op rejection; real PG constraint codes
+  23505/23503/23514 exercised in tests; down-sql rollback verified by
+  PostgresDownSqlTests (to_regclass null).
+- Findings: no ❌. One doc inconsistency fixed above (12 -> 13 test projects).
