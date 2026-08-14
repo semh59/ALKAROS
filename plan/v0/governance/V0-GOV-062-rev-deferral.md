@@ -27,7 +27,6 @@ kanıtı sağlayana kadar V1 application admission engeli olmaya devam eder.
   deferral satır regex'i)
 - `tools/task-scope/task_scope_tool.py` (yalnız `_DEFERRED_TASKS_ROW` regex'i
   ve `_DEFERRED_TASK_RECORDS` sabiti)
-- `tests/Architecture/TaskScope/test_task_scope.py`
 - `plan/v0/governance/V0-GOV-058-dynamic-route-parity.md` (yalnız
   test_task_scope.py sahiplik devir kaydı, C65)
 - `plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md`
@@ -35,6 +34,11 @@ kanıtı sağlayana kadar V1 application admission engeli olmaya devam eder.
 - `plan/TRACEABILITY.md` (yalnız C65 kaydı)
 - `plan/VALIDATION_CONTRACT.md` (yalnız V0 deferral listesi ile ilgili metin)
 - `evidence/V0-GOV-062/**`
+
+CORR:C66, `tests/Architecture/TaskScope/test_task_scope.py` yüzeyi ileri
+custody ile `V0-GOV-063`e devredilmiştir; bu task'ın status, assignee,
+acceptance evidence, commit tarihçesi ve mevcut diff'leri aynen kalır (yalnız
+Owned surface daraltma kaydı).
 
 ## In scope
 

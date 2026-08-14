@@ -21,10 +21,14 @@ direct child reentry zincirine bağlamak.
 - `tools/evidence-envelope/evidence_envelope_tool.py`
 - `tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py`
 - `tools/plan-audit/plan_audit_tool.py`
-- `tests/Architecture/PlanAudit/test_plan_audit.py`
 - `docs/engineering/closure-evidence-envelope.md`
 - `plan/VALIDATION_CONTRACT.md`
 - `evidence/V0-GOV-060/**`
+
+CORR:C66, `tests/Architecture/PlanAudit/test_plan_audit.py` yüzeyi ileri
+custody ile `V0-GOV-063`e devredilmiştir (kullanıcı onaylı kapsam
+düzenlemesi, 2026-08-14); bu task'ın status, assignee, acceptance evidence
+ve commit tarihçesi aynen kalır (yalnız Owned surface daraltma kaydı).
 
 ## In scope
 

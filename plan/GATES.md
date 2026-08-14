@@ -31,7 +31,7 @@
 | Gate | Kapanma koşulu |
 | --- | --- |
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
-| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev ve 2026-08-13 kullanıcı onaylı `V0-REV-001..030` bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
+| `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev ve 2026-08-13 kullanıcı onaylı `V0-REV-001..030`, `V0-GOV-041`, `V0-GOV-042` bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
 | `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
@@ -192,6 +192,8 @@ behavior başlatmaz; Aşama 3 kabul zinciri sırası değişmez.
 | `V0-REV-028` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
 | `V0-REV-029` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
 | `V0-REV-030` | `2026-08-13` | `V12` | Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-GOV-041` | `2026-08-13` | `V12` | Successful GitHub Actions candidate workflow URL/SHA + repository admin ruleset/required-check readback (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
+| `V0-GOV-042` | `2026-08-13` | `V12` | Coverage threshold, project scope ve supported exporter için tarihli named technical approval (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |
 <!-- V0_DEFERRED_TASKS:END -->
 
 Bu devir listesi 2026-08-03 kullanıcı onayıyla kayıtlıdır (`TRACEABILITY.md`
@@ -204,6 +206,11 @@ başlatma izni vermez ve V0 karar/uygulama kapsamını daraltmaz.
 (`TRACEABILITY.md` C65): revalidation görevleri tarihli source packet + named
 approver kanıtı bekler ve bu harici kanıt V0 exit'ten önce var olamaz; aynı
 C40 muafiyet hükümleri geçerlidir.
+
+`V0-GOV-041`/`V0-GOV-042` satırları 2026-08-13 kullanıcı onayıyla kayıtlıdır
+(`TRACEABILITY.md` C66): GitHub branch-policy/ruleset ve coverage named
+technical approval kanıtı V0 exit'ten önce doğrulanamaz; aynı C40 muafiyet
+hükümleri geçerlidir.
 
 ## Canlı veri kuralı
 
