@@ -1,6 +1,6 @@
-# V1-FND-016 - Independently verify Host module reachability
+# V1-FND-024 - Independently verify Host module reachability
 
-- Task ID: V1-FND-016
+- Task ID: V1-FND-024
 - Status: Planned
 - Assignee: Unassigned (exactly one person)
 - Work type: validation
@@ -17,7 +17,7 @@ durdurduğunu bağımsız runtime probe ile doğrulamak.
 
 ## Owned surface
 
-- `evidence/V1-FND-016/**`
+- `evidence/V1-FND-024/**`
 
 ## In scope
 
@@ -38,14 +38,14 @@ durdurduğunu bağımsız runtime probe ile doğrulamak.
 
 ## Deliverables
 
-- `evidence/V1-FND-016/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
+- `evidence/V1-FND-024/**` altında raw reproduction transcript'i, hash'ler ve terminal verdict.
 
 ## Acceptance evidence
 
 - Her command exact candidate SHA, environment ve gerçek exit code ile kaydedilir.
 - Bulguya özgü başarı ve negatif yol bağımsız olarak yeniden üretilir; belirsiz sonuç `VERIFIED` olmaz.
 - `python -B tools/plan-audit/plan_audit_tool.py validate` exit code `0` verir; repository write-set yalnız
-  `evidence/V1-FND-016/**` ve task metadata'sıdır.
+  `evidence/V1-FND-024/**` ve task metadata'sıdır.
 
 ## Handoff
 
