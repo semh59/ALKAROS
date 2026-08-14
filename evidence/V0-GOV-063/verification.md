@@ -59,7 +59,30 @@ Exit code: 0
   iken c54_errors doğrudan döner (eski davranış: [] dönüyordu, mutasyonlar
   sessizce geçiyordu).
 
-## 5. Write set (this task)
+## 5. Added-task-Markdown baseline fix (user-approved scope)
+
+Kullanıcı onaylı kapsam düzenlemesi (2026-08-14): task_scope_tool.py
+validate_task_markdown_change diff-mode'da merge-base'de görev dosyası yoksa
+(added) baseline olarak HEAD'deki dosyayı kullanır; worktree modunda
+HEAD'de de yoksa eski fail-closed davranışı korunur
+(test_untracked_task_cannot_supply_its_own_allowlist hâlâ geçer).
+
+Regression test PR #2 task-scope gate'i için ilk commit'te test_task_scope_diff.py'ye
+eklendi; V1-FND-003'ün dosyasına dokunmamak için test, V0-GOV-063'ün sahibi
+olduğu test_task_scope.py'ye taşındı (TestAddedTaskMarkdownDiffMode).
+
+Command:
+python -m pytest tests/Architecture/TaskScope -q
+python -m pytest tests/Architecture/TaskScope tests/Architecture/PlanAudit -q
+
+Output (tail):
+1 passed (added_task_markdown)
+130 passed in 116.00s (0:01:55)
+153 passed in 193.58s (0:03:13)
+
+Exit code: 0
+
+## 6. Write set (this task)
 
 M plan/GATES.md
 M plan/TRACEABILITY.md
@@ -69,6 +92,7 @@ M plan/v0/governance/V0-GOV-062-rev-deferral.md (yalnız yüzey devir notu, CORR
 M plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md
 M tests/Architecture/PlanAudit/test_plan_audit.py
 M tests/Architecture/TaskScope/test_task_scope.py
+(TestAddedTaskMarkdownDiffMode, tip test_task_scope_diff.py'den taşındı)
 M tools/plan-audit/plan_audit_tool.py
 M tools/task-scope/task_scope_tool.py
 ?? plan/v0/governance/V0-GOV-063-defer-gov-041-042.md

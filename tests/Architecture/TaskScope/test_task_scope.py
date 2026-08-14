@@ -1375,3 +1375,51 @@ class TestCommaSeparatedSurface:
         _write(make_repo, "tests/architecture/taskscope/b.py")
         exit_code, result = run_tool("V1-FND-003", make_repo, make_plan)
         assert exit_code == 0
+
+
+# ---------------------------------------------------------------------------
+# Diff mode: task Markdown added in the PR itself
+# ---------------------------------------------------------------------------
+
+class TestAddedTaskMarkdownDiffMode:
+    def test_added_task_markdown_in_diff_mode_uses_head_baseline(
+        self, make_repo, make_plan
+    ):
+        """A task Markdown file introduced in the PR itself (absent from the
+        merge-base) must validate against its own HEAD baseline instead of
+        failing with a missing-baseline finding. The surface check still
+        applies: the changed paths diffed against the base are allowed."""
+        import importlib.util
+        from conftest import DONE_TASK_TEMPLATE, VALID_TASK_TEMPLATE
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        _write(
+            make_repo,
+            "plan/V0-DOM-001.md",
+            DONE_TASK_TEMPLATE.format(task_id="V0-DOM-001"),
+        )
+        _git(make_repo, "add", "plan/V0-DOM-001.md")
+        _git(make_repo, "commit", "-q", "-m", "add v0 prerequisite")
+        base = _git(make_repo, "rev-parse", "HEAD").strip()
+        _write(
+            make_repo,
+            "plan/V1-FND-003.md",
+            VALID_TASK_TEMPLATE.format(
+                task_id="V1-FND-003",
+                status="InProgress",
+                assignee="real-session-123",
+                owned_surface="- `tools/task-scope/**`",
+                dependencies="- None",
+            ),
+        )
+        _git(make_repo, "add", "plan/V1-FND-003.md")
+        _git(make_repo, "commit", "-q", "-m", "add task markdown")
+        result = mod.run_validation("V1-FND-003", make_repo, make_plan, diff_base=base)
+        assert result["valid"] is True
+        assert result["findings"] == []

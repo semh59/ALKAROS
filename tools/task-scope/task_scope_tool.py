@@ -857,9 +857,13 @@ def validate_task_markdown_change(
     """Reject task Markdown changes outside the two mutable metadata lines.
 
     The baseline comes from HEAD in worktree mode and from the merge-base in
-    CI diff mode. A task file absent from that baseline is rejected: otherwise
+    CI diff mode. A task file absent from that baseline is otherwise rejected:
     an untracked task could define its own broad Owned surface and immediately
-    write outside the intended boundary.
+    write outside the intended boundary. When the merge-base has no committed
+    version of a task file that HEAD introduces (an added task Markdown in the
+    PR itself), HEAD is the only meaningful baseline: its fixed content equals
+    the current fixed content, leaving only the Status/Assignee transition to
+    validate.
     """
     relative_path_raw = task.file_path.relative_to(repo_root).as_posix()
     relative_path = normalize_path(relative_path_raw)
@@ -888,6 +892,8 @@ def validate_task_markdown_change(
         baseline_ref = merge_base.stdout.strip()
 
     baseline = _git_file_text(repo_root, baseline_ref, relative_path_raw)
+    if baseline is None:
+        baseline = _git_file_text(repo_root, "HEAD", relative_path_raw)
     if baseline is None:
         return [{
             "path": relative_path,
