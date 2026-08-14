@@ -1423,3 +1423,82 @@ class TestAddedTaskMarkdownDiffMode:
         result = mod.run_validation("V1-FND-003", make_repo, make_plan, diff_base=base)
         assert result["valid"] is True
         assert result["findings"] == []
+
+
+# ---------------------------------------------------------------------------
+# Diff mode: InProgress -> Done transition
+# ---------------------------------------------------------------------------
+
+class TestDoneTransitionDiffMode:
+    def _load_module(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "task_scope_tool",
+            Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py",
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def _baseline(self, make_repo, make_plan, status):
+        from conftest import DONE_TASK_TEMPLATE, VALID_TASK_TEMPLATE
+
+        _write(
+            make_repo,
+            "plan/V0-DOM-001.md",
+            DONE_TASK_TEMPLATE.format(task_id="V0-DOM-001"),
+        )
+        _write(
+            make_repo,
+            "plan/V1-FND-003.md",
+            VALID_TASK_TEMPLATE.format(
+                task_id="V1-FND-003",
+                status=status,
+                assignee="test-session-active",
+                owned_surface="- `tools/task-scope/**`",
+                dependencies="- None",
+            ),
+        )
+        _git(make_repo, "add", "plan/V0-DOM-001.md", "plan/V1-FND-003.md")
+        _git(make_repo, "commit", "-q", "-m", "add task baseline")
+        return _git(make_repo, "rev-parse", "HEAD").strip()
+
+    def test_done_transition_from_in_progress_accepted(
+        self, make_repo, make_plan
+    ):
+        """InProgress -> Done in diff mode is a legal closing PR."""
+        base = self._baseline(make_repo, make_plan, "InProgress")
+        task_file = make_plan / "V1-FND-003.md"
+        text = task_file.read_text(encoding="utf-8")
+        task_file.write_text(
+            text.replace("- Status: InProgress", "- Status: Done"),
+            encoding="utf-8",
+        )
+        _git(make_repo, "add", "plan/V1-FND-003.md")
+        _git(make_repo, "commit", "-q", "-m", "close task")
+        mod = self._load_module()
+        result = mod.run_validation("V1-FND-003", make_repo, make_plan, diff_base=base)
+        assert result["metadata_errors"] == []
+        assert result["valid"] is True
+
+    def test_done_transition_from_planned_rejected(
+        self, make_repo, make_plan
+    ):
+        """Planned -> Done jumps the executable states and must be rejected."""
+        base = self._baseline(make_repo, make_plan, "Planned")
+        task_file = make_plan / "V1-FND-003.md"
+        text = task_file.read_text(encoding="utf-8")
+        task_file.write_text(
+            text.replace("- Status: Planned", "- Status: Done"),
+            encoding="utf-8",
+        )
+        _git(make_repo, "add", "plan/V1-FND-003.md")
+        _git(make_repo, "commit", "-q", "-m", "close task")
+        mod = self._load_module()
+        result = mod.run_validation("V1-FND-003", make_repo, make_plan, diff_base=base)
+        assert result["valid"] is False
+        assert any(
+            "expected 'Planned' or 'InProgress'" in e
+            for e in result["metadata_errors"]
+        )
