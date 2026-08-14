@@ -1,7 +1,7 @@
 # V0-GOV-063 - Defer V0-GOV-041/042 integration gates (C66)
 
 - Task ID: V0-GOV-063
-- Status: InProgress
+- Status: Done
 - Assignee: opencode-v0-gov-063
 - Work type: plan-change
 - Surface state: Existing

@@ -755,6 +755,7 @@ def validate_task_metadata(
     task: TaskMetadata,
     plan_dir: Path = PLAN_DIR,
     allow_blocked_transition: bool = False,
+    allow_done_transition: bool = False,
     candidate_remediation: bool = False,
 ) -> List[str]:
     """Validate task metadata and return a list of error messages.
@@ -766,7 +767,11 @@ def validate_task_metadata(
     """
     errors: List[str] = []
 
-    if task.status not in EXECUTABLE_STATUSES and not allow_blocked_transition:
+    if (
+        task.status not in EXECUTABLE_STATUSES
+        and not allow_blocked_transition
+        and not allow_done_transition
+    ):
         errors.append(
             f"Task status is {task.status!r}, expected 'Planned' or 'InProgress'"
         )
@@ -845,6 +850,17 @@ def _is_legal_blocker_transition(baseline: TaskMetadata, current: TaskMetadata) 
         baseline.status == "Blocked" and current.status in EXECUTABLE_STATUSES
     ) or (
         baseline.status in EXECUTABLE_STATUSES and current.status == "Blocked"
+    )
+
+
+def _is_legal_done_transition(
+    baseline: Optional[TaskMetadata], current: TaskMetadata
+) -> bool:
+    """A task may move to Done only from InProgress (never Planned/Blocked)."""
+    return (
+        current.status == "Done"
+        and baseline is not None
+        and baseline.status == "InProgress"
     )
 
 
@@ -1035,6 +1051,12 @@ def run_validation(
             if baseline_ref
             else None
         )
+        if baseline is None and diff_base is not None:
+            baseline = _git_file_text(
+                repo_root,
+                "HEAD",
+                task.file_path.relative_to(repo_root).as_posix(),
+            )
         if baseline is not None:
             allowlist_task = parse_task_text(baseline, task.file_path)
 
@@ -1066,6 +1088,7 @@ def run_validation(
         task,
         plan_dir,
         allow_blocked_transition=allow_blocked_transition,
+        allow_done_transition=_is_legal_done_transition(baseline_task, task),
         candidate_remediation=candidate_remediation,
     )
     result["metadata_errors"] = metadata_errors
