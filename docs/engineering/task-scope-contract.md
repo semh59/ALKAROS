@@ -56,7 +56,7 @@ committed değişiklikler. Rename'de eski ve yeni yolun ikisi de allowlist'te ol
 - Görev dosyası `plan/` altında bulunamaz veya Git'te committed baseline'ı yoktur.
 - Görev dosyası birden fazla veya hiç Task ID içermez; Task ID biçimi geçersizdir.
 - `Status` değeri `Planned`, `InProgress`, `Done`, `Blocked`, `NotApplicable` dışındadır.
-- `Assignee` boştur veya genel (`codex`, `ai`, `none`, `unassigned*`) tanımlıdır.
+- `Assignee` boştur veya genel (`agent`, `ai`, `none`, `unassigned*`) tanımlıdır.
 - `--candidate-remediation` kullanılmadığında bağımlılıklardan herhangi biri `Done` değildir.
 - Değişen bir yol allowlist'te değildir veya traversal içerir.
 - Görev Markdown değişikliği `Status` veya `Assignee` metadata satırı dışında bir satıra dokunur.

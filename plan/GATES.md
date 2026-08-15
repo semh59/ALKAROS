@@ -218,3 +218,11 @@ hükümleri geçerlidir.
 gerçek para ile çalıştırılmaz. Production yetkisi yalnız `V20-REL-004` task'ına
 aittir. `V20-REL-002` yalnız sentetik ya da yetkili sanitize edilmiş veriyle
 yapılan non-production pilot rehearsal görevidir.
+
+## Aşama 2 süreç notu
+
+`TRACEABILITY.md` C67 ile onaylanan Aşama 2 süreç katmanı sadeleştirmesi
+(terminoloji ve şablon metni) gate koşullarını, `V0_DEFERRED_TASKS`,
+`TASK_SCOPE_REMEDIATION_EXCEPTIONS` devir/remediation tablolarını ve yukarıdaki
+gate kapanma koşullarını değiştirmez. Bu not PDF current authority değildir,
+gate kapanış kanıtı üretmez ve yeni product behavior başlatmaz.

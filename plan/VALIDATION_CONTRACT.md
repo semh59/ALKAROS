@@ -51,7 +51,7 @@ npx --yes markdownlint-cli2@0.23.2
   alıyorsa terminaldir; aksi durumda consumer başlatılamaz.
 - Bütün görevlerde en az bir geçerli `Source basis` bulunur.
 - Mevcut kod ağacı oluşmadığı sürece bütün görevlerde `Surface state: Planned` olur.
-- Repository kökündeki `AGENTS.md`, tek `Task ID` ve fail-closed Codex write-set
+- Repository kökündeki `AGENTS.md`, tek `Task ID` ve fail-closed Agent write-set
   sözleşmesini içerir.
 - Mevcut Git geçmişi ve application ağacı candidate evidence'dır; V0 altında açık
   `Blocked` görev varken `implementation` veya `integration` türündeki V1+ görevi
@@ -135,7 +135,7 @@ npx --yes markdownlint-cli2@0.23.2
   Task ID kümesi bozuksa; yinelenen ya da ek bir kayıt varsa task-scope
   denetimi fail-closed non-zero exit verir. İstisna V0/V1 gate kapanış kanıtı
   değildir ve yeni product behavior başlatma izni vermez.
-- Codex write allowlist yalnız `Owned surface`, aktif görev metadata alanları ve
+- Agent write allowlist yalnız `Owned surface`, aktif görev metadata alanları ve
   `evidence/<Task-ID>/**` birleşimidir.
 - Aktif görev `Blocked` ile `Planned` veya `InProgress` arasında geçerken yalnız
   kendi zorunlu `Blocker` bölümünü ekleyebilir veya silebilir; başka görev gövdesi

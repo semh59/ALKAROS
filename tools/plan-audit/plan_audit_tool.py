@@ -2279,7 +2279,8 @@ def validate_plan() -> None:
     source_pattern = re.compile(
         r"^(?:PDF:(?:I|II|III|IV)\.\d+(?:\.\d+)*[A-Z]?"
         r"(?:-(?:I|II|III|IV)\.\d+(?:\.\d+)*[A-Z]?)?|"
-        r"CORR:C\d+|EXT:[A-Z0-9][A-Z0-9.-]*|DEC:V\d+-[A-Z0-9]+-\d+)$"
+        r"CORR:C\d+|EXT:[A-Z0-9][A-Z0-9.-]*|DEC:V\d+-[A-Z0-9]+-\d+|"
+        r"PO:\d{4}-\d{2}-\d{2})$"
     )
     turkish_narrative = re.compile(
         r"[çğıöşüÇĞİÖŞÜ]|(?i:\b(?:ve|veya|ile|için|olarak|görev|kanıt|tanımla|uygula|doğrula|"
@@ -2771,7 +2772,7 @@ def validate_plan() -> None:
 
     agents_path = WORKSPACE / "AGENTS.md"
     if not agents_path.exists():
-        errors.append("CODEX_BOUNDARY_AGENTS_MISSING")
+        errors.append("AGENT_BOUNDARY_AGENTS_MISSING")
     else:
         agents_text = read_utf8(agents_path)
         for required_phrase in [
@@ -2782,7 +2783,7 @@ def validate_plan() -> None:
             "`V1-FND-003`",
         ]:
             if required_phrase not in agents_text:
-                errors.append(f"CODEX_BOUNDARY_AGENTS_CONTENT {required_phrase}")
+                errors.append(f"AGENT_BOUNDARY_AGENTS_CONTENT {required_phrase}")
     forbidden_dependencies = {
         "V14-QRO-002": {"V0-CMP-001"},
         "V14-STK-001": {"V14-QRO-003", "V14-ONL-002"},
@@ -3384,7 +3385,7 @@ def generate_audit_report() -> None:
             "- Açık finding: `31` decision record revalidation blocker'ı; ayrıntı `plan/DECISION_REVALIDATION.md` içindedir.",
             "- Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.",
             "- Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.",
-            "- Codex execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.",
+            "- Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.",
             f"- Kayıtlı Markdown dosyası sayısı: `{len(current_paths) + 1}` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).",
             "- Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.",
             "",

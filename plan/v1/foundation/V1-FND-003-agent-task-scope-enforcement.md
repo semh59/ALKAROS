@@ -1,4 +1,4 @@
-# V1-FND-003 - Enforce Codex task write boundaries
+# V1-FND-003 - Enforce agent task write boundaries
 
 - Task ID: V1-FND-003
 - Status: Done

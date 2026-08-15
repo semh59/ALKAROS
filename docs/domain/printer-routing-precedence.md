@@ -1,11 +1,12 @@
 # Printer Routing Precedence Contract
 
 > **Task:** V0-DOM-011
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-dom-011
 > **Work type:** decision
 > **Source basis:** PDF:I.16.1, PDF:II.3.13-II.3.14, CORR:C13
 > **Date:** 2026-07-30
+> **Approver:** Semih — 2026-08-15
 
 ## 1. Decision Record
 
@@ -13,7 +14,7 @@
 | ------- | ------- |
 | **Decision ID** | V0-DOM-011-D001 |
 | **Date** | 2026-07-30 |
-| **Approver** | TBD |
+| **Approver** | Semih |
 | **Selected result** | Most-specific-route-wins with explicit fallback chain |
 | **Rejected alternatives** | Priority-number system (fragile, requires global coordination); First-match (non-deterministic with overlapping configs) |
 

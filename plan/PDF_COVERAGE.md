@@ -1,5 +1,10 @@
 # PDF Coverage Matrix
 
+> **Aşama 2 notu (`TRACEABILITY.md` C67):** Bu matris süreç sadeleştirmesi
+> onayından etkilenmez; satır birimleri, hash'ler ve owner dağılımı aynen
+> korunur. Coverage davranışı değişmez. Bu matris PDF current authority
+> değildir ve gate kapanış kanıtı üretmez.
+
 Bu matris `PDF_SOURCE.md` ile sabitlenen 94 sayfalık PDF'nin bütün
 numaralı başlıklarını izler. Her satırın kapsam birimi, o başlıktan sonraki
 numaralı başlığa kadar olan paragraph, bullet ve table row'ların tamamıdır.

@@ -29,3 +29,10 @@ kimliği hash ile sabitlenmiştir.
   çalıştırılır.
 - Text extraction bir doğruluk kanıtı olarak tek başına kullanılmaz. Bölüm
   haritası ve C8 gibi kritik sayfalar render edilerek görsel olarak da denetlenir.
+
+## Aşama 2 notu
+
+`TRACEABILITY.md` C67 ile onaylanan Aşama 2 süreç sadeleştirmesi bu PDF'nin
+kimliğini, hash'ini ve kaynak sınırını değiştirmez; kaynak doğrulama kuralları
+aynen geçerlidir. Bu not PDF current authority değildir ve gate kapanış kanıtı
+üretmez.

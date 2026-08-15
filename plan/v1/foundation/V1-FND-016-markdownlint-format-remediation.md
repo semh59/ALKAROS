@@ -1,8 +1,8 @@
-# V1-FND-024 - Remediate root markdownlint findings
+# V1-FND-016 - Remediate root markdownlint findings
 
-- Task ID: V1-FND-024
+- Task ID: V1-FND-016
 - Status: Done
-- Assignee: opencode-V1-FND-024
+- Assignee: opencode-V1-FND-016
 - Work type: documentation
 - Surface state: Existing
 
@@ -50,8 +50,8 @@ düzeltmeleriyle kapatmak. İçerik anlamı, kanıt değeri ve başka görevleri
 - `plan/v0/governance/V0-GOV-031-c42-entry-gate-approval.md` (yalnız MD013 satır sarması)
 - `plan/AUDIT_REPORT.md` (yalnız araçla yeniden üretimi)
 - `plan/AUDIT_MANIFEST.json` (yalnız araçla yeniden üretimi)
-- `evidence/V1-FND-024/**`
-- `plan/v1/foundation/V1-FND-024-markdownlint-format-remediation.md` (metadata; otomatik)
+- `evidence/V1-FND-016/**`
+- `plan/v1/foundation/V1-FND-016-markdownlint-format-remediation.md` (metadata; otomatik)
 
 ## In scope
 
@@ -66,7 +66,7 @@ düzeltmeleriyle kapatmak. İçerik anlamı, kanıt değeri ve başka görevleri
   MD038/MD056/MD060 kurallarına göre yeniden biçimlendirilmesi.
 - Audit report ve manifestin araçla yeniden üretilmesi (report sonra manifest
   sırası; V0-GOV-030 ve C51 emsali).
-- Tüm komut çıktıları ve exit code'ların `evidence/V1-FND-024/**` altına
+- Tüm komut çıktıları ve exit code'ların `evidence/V1-FND-016/**` altına
   kaydedilmesi.
 
 ## Out of scope
@@ -107,7 +107,7 @@ düzeltmeleriyle kapatmak. İçerik anlamı, kanıt değeri ve başka görevleri
   birebir eşleşen; içerik anlamı korunur).
 - `plan/TRACEABILITY.md` C52 kayıt satırı ve C45 satırının format düzeltmesi.
 - Araçla yeniden üretilmiş `plan/AUDIT_REPORT.md` ve `plan/AUDIT_MANIFEST.json`.
-- `evidence/V1-FND-024/**` altında komut, exit code ve sonuç kanıtları.
+- `evidence/V1-FND-016/**` altında komut, exit code ve sonuç kanıtları.
 
 ## Acceptance evidence
 

@@ -30,9 +30,9 @@ açılır.
 Bağımlılık sırasına alınır veya ortak dosyayı sahiplenen tek bir integration
 görevine bağlanır.
 
-## Codex write-set sınırı
+## Agent write-set sınırı
 
-ChatGPT Codex ile yürütülen her kodlama oturumu tam olarak bir `Task ID` ile
+AI agent ile yürütülen her kodlama oturumu tam olarak bir `Task ID` ile
 başlar. Yazma yetkisi yalnız şu birleşimdir:
 
 - Aktif görevin açık `Owned surface` yolları.
@@ -44,7 +44,7 @@ generated file, lockfile, project/solution dosyası, shared component ve global
 configuration örtük izin üretmez. Rename işleminde eski ve yeni yol ayrı ayrı
 izinli olmalıdır.
 
-Codex, ilk yazmadan önce mevcut Git değişikliklerini ve görev allowlist'ini
+Agent, ilk yazmadan önce mevcut Git değişikliklerini ve görev allowlist'ini
 kaydeder. Kapanışta staged, unstaged, untracked, deleted ve renamed yolların
 tamamını allowlist ile karşılaştırır. Tek bir kapsam dışı yol görevi başarısız
 yapar; dosya düzeltilerek gizlice kapsam içine alınamaz.

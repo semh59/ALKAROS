@@ -90,12 +90,12 @@ Bir görev açıklamasında birbirinden bağımsız iki fiil varsa görev bölü
 transaction veya aynı invariant içinde zorunlu olarak birlikte değişen adımlar
 tek görev kalabilir.
 
-## Codex yürütme sözleşmesi
+## Agent yürütme sözleşmesi
 
 - Kodlama isteği tam olarak bir `Task ID` belirtir; aynı diff içinde ikinci iş
   alınmaz.
-- Codex, dependency ve gate kanıtını okumadan `Status: InProgress` yapamaz.
-- `Assignee` gerçek Codex task/thread kimliğidir; genel AI etiketi değildir.
+- Agent, dependency ve gate kanıtını okumadan `Status: InProgress` yapamaz.
+- `Assignee` gerçek agent task/thread kimliğidir; genel AI etiketi değildir.
 - `Owned surface`, yazma allowlist'idir; açıklama veya yaklaşık klasör önerisi
   değildir.
 - `V1-FND-001` tarafından sahiplenilen solution/project/build dosyaları global
@@ -128,9 +128,17 @@ Sıra değiştirilemez:
 6. `Dependencies`
 7. `Blocker` - yalnız `Blocked` görevlerde
 8. `Deliverables`
-9. `Acceptance evidence`
+9. `Acceptance evidence` - kapsamı aşağıdaki "Acceptance evidence şablon notu"nda tanımlanır
 10. `Handoff`
 
 `Dependencies` ve `Handoff` satırları yalnız görev ID'si, sabit gate ID'si veya
 `None` içerir. “All tasks”, “owners” ya da yorum gerektiren serbest metin
 kullanılmaz.
+
+## Acceptance evidence şablon notu
+
+Her `Acceptance evidence` bölümü asgari üç kanıt başlığı içerir: `build + test
+exit 0` (gerçek komut exit code'u), migration isteyen görevde `ileri/geri
+uygulama`, ve elle doğrulanabilen bir senaryo kaydı. Bu şablon mevcut görev
+dosyalarının `Acceptance evidence` bölümlerini değiştirmez; yalnız yeni görev
+yazımı için kılavuzdur.

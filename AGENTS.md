@@ -1,7 +1,7 @@
-# ALKAROS Codex Execution Contract
+# ALKAROS Agent Execution Contract
 
-Bu dosya, repository içinde kod yazan bütün ChatGPT Codex oturumları için zorunludur. Kullanıcı açıkça plan değişikliği
-istemeden hiçbir Codex oturumu bu kuralları gevşetemez veya görev kapsamını sohbet içinde genişletemez.
+Bu dosya, repository içinde kod yazan bütün AI agent oturumları için zorunludur. Kullanıcı açıkça plan değişikliği
+istemeden hiçbir agent oturumu bu kuralları gevşetemez veya görev kapsamını sohbet içinde genişletemez.
 
 ## Tek görev sınırı
 
@@ -10,12 +10,12 @@ istemeden hiçbir Codex oturumu bu kuralları gevşetemez veya görev kapsamın�
 - Seçilen görev dosyası, `plan/TASK_STANDARD.md`, `plan/OWNERSHIP.md`, ilgili gate ve bütün dependency görevleri yazma
   işleminden önce okunur.
 - Görev `Planned` değilse veya dependency/gate kanıtı tamamlanmamışsa kodlama başlamaz.
-- `Assignee`, yazmadan önce gerçek Codex task/thread kimliğiyle güncellenir; genel `Codex`, `AI` veya ortak sahiplik
+- `Assignee`, yazmadan önce gerçek agent task/thread kimliğiyle güncellenir; genel `Agent`, `AI` veya ortak sahiplik
   kabul edilmez.
 
 ## Yazılabilir yüzey
 
-Bir Codex oturumu yalnız şu yolları değiştirebilir:
+Bir agent oturumu yalnız şu yolları değiştirebilir:
 
 1. Aktif görevde açıkça listelenen `Owned surface` yolları.
 2. Yalnız aktif görevin `Status` ve `Assignee` metadata satırları için kendi görev Markdown dosyası.
@@ -29,7 +29,7 @@ sayılmaz. Rename işleminde hem eski hem yeni yol allowlist içinde olmalıdır
 
 ## Zorunlu preflight
 
-Codex ilk yazmadan önce:
+Agent ilk yazmadan önce:
 
 - Repository root ve aktif `Task ID` değerini bildirir.
 - `git status --short` ve `git diff --name-only` ile başlangıç write-set snapshot'ını kaydeder.
@@ -43,7 +43,7 @@ işleri bu kuralın dışındadır.
 
 ## Kapsam dışına çıkma yasağı
 
-- Kapsam dışı dosya gereksinimi ortaya çıkarsa Codex yazmayı durdurur ve kesin yolu, gerekçeyi ve gerekli yeni
+- Kapsam dışı dosya gereksinimi ortaya çıkarsa agent yazmayı durdurur ve kesin yolu, gerekçeyi ve gerekli yeni
   dependency/integration görevini bildirir.
 - Aktif görev sırasında `Goal`, `Owned surface`, `In scope`, `Out of scope`, `Dependencies`, `Deliverables`,
   `Acceptance evidence` veya `Handoff` genişletilemez.

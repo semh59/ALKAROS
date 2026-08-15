@@ -78,7 +78,7 @@ _REMEDIATION_EXCEPTION_ROW = re.compile(
 )
 _C52_C53_C54_CANDIDATE_REMEDIATION_RECORDS = {
     "V1-CAT-003": ("2026-08-10", "CORR:C52"),
-    "V1-FND-024": ("2026-08-10", "CORR:C52"),
+    "V1-FND-016": ("2026-08-10", "CORR:C52"),
     "V1-FND-017": ("2026-08-10", "CORR:C52"),
     "V1-FND-018": ("2026-08-10", "CORR:C52"),
     "V1-FND-019": ("2026-08-10", "CORR:C52"),
@@ -785,7 +785,7 @@ def validate_task_metadata(
     assignee_lower = task.assignee.lower().strip()
     if (
         not task.assignee
-        or assignee_lower == "codex"
+        or assignee_lower == "agent"
         or assignee_lower == "ai"
         or assignee_lower == "none"
         or assignee_lower.startswith("unassigned")
@@ -1128,7 +1128,7 @@ def run_validation(
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Enforce Codex task write boundaries."
+        description="Enforce agent task write boundaries."
     )
     parser.add_argument(
         "--task-id",

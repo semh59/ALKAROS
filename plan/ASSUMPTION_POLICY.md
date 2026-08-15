@@ -16,6 +16,10 @@
 3. `External evidence`: Resmi mevzuat, sağlayıcı dokümanı, sandbox veya cihaz
    transkripti.
 4. `Business decision`: Ürün sahibi/operasyon/muhasebe tarafından tarihli onay.
+5. `Product decision`: Ürün sahibinin (Semih) doğrudan, PDF veya dış kaynak
+   gerektirmeyen mühendislik/ürün kararı. Source basis kimliği: `PO:<tarih>`.
+   PDF veya external kaynak yoksa/yetersizse bu sınıf geçerlidir; ayrı bir
+   revalidation task açmaya gerek yoktur.
 
 ## Source basis kimlikleri
 
@@ -23,6 +27,7 @@
 - `CORR:<C-number>`: `TRACEABILITY.md` içindeki doğrulanmış düzeltme veya açık.
 - `EXT:<source-id>`: `OFFICIAL_SOURCE_REGISTER.md` içindeki resmî kaynak.
 - `DEC:<task-id>`: Tamamlanmış ve tarihli karar görevi.
+- `PO:<date>`: Semih'in doğrudan onayı, ayrı task gerekmez.
 
 Serbest metin kaynak adı, kaynaksız “best practice” veya yalnızca genel PDF adı
 geçerli `Source basis` değildir.
