@@ -3,7 +3,7 @@
   "audit_date": "2026-07-30",
   "markdown_file_count": 524,
   "markdown_line_count": 36975,
-  "markdown_byte_count": 2300968,
+  "markdown_byte_count": 2300978,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "B3EB57DF17CEE496FA697451593D75D6116CFA25E8599C568AF1087D0150C83A",
-      "lines": 3675,
-      "bytes": 167428,
+      "sha256": "CC9209EB5505310F4FEA13407FC4E84B67B4CA2161B3249480DA755FBC03AFCB",
+      "lines": 3678,
+      "bytes": 167578,
       "utf8": true
     }
   ],
@@ -1121,7 +1121,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "0E2826DE2616FB9E3B8FBF91C0FDFF9ECC15CDCA81A7463502B5061D817DDD34",
+      "sha256": "179D68D8426F6E8464982AB422FF7BFB2463CB91009AB24179B40F26C26599F4",
       "lines": 1800,
       "bytes": 249207,
       "utf8": true
@@ -1191,16 +1191,16 @@
     },
     {
       "path": "plan/TASK_STANDARD.md",
-      "sha256": "2A6A6559C1EE57920583137975EF7E47D0666F403385505824F02E00961BC712",
+      "sha256": "EA15D69422A61CD4B58DE51CFB6CABB9FB7377139A5A56F4596D06ADB4A1A766",
       "lines": 163,
-      "bytes": 8331,
+      "bytes": 8296,
       "utf8": true
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "6E422BCE9A122BD7CFFD18F61571AE730EE3CC3E56B626752CE43C5930E7BB4E",
+      "sha256": "C1B53AFAED4EEE5DBA419B94E428CFE757C1FB1181404C84F3AC8C3E3281DDE0",
       "lines": 172,
-      "bytes": 55228,
+      "bytes": 55273,
       "utf8": true
     },
     {

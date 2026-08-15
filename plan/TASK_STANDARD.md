@@ -126,10 +126,10 @@ integration görevleri için kısa tutulur; sıra değiştirilemez:
 3. `Dependencies`
 4. `Acceptance evidence` - kapsamı aşağıdaki "Kabul kanıtı (sadeleştirilmiş)" bölümünde tanımlanır
 
-`Source basis`, `Access date`, `Decision type` gibi alanlar **yalnız**
-`Work type: decision` dosyalarında zorunludur; implementation/integration
-görevlerinde aranmaz (kod, PDF referansı gerektirmez; `PO:<date>` kanıt sınıfı
-yeterlidir). `In scope`, `Out of scope`, `Deliverables` ve `Handoff` bölümleri
+`Source basis` bölümü **yalnız** `Work type: decision` dosyalarında zorunludur;
+implementation/integration görevlerinde aranmaz (kod, PDF referansı gerektirmez;
+`PO:<date>` kanıt sınıfı yeterlidir). `In scope`, `Out of scope`,
+`Deliverables` ve `Handoff` bölümleri
 mevcut içerikse korunur ve tanımlı sıraya yerleştirilir:
 
 1. `Source basis` - yalnız decision görevlerinde

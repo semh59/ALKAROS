@@ -421,3 +421,22 @@ class TestProductDecisionSourceBasis:
 
         assert result.returncode == 0, result.stdout + result.stderr
         assert "SOURCE_FORMAT V0-GOV-040" not in result.stdout
+
+    def test_decision_source_basis_is_mandatory(self, tmp_path: Path) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        _activate_fnd023(workspace)
+        _replace(
+            _task_path(workspace, "V0-GOV-040"),
+            "- Work type: implementation",
+            "- Work type: decision",
+        )
+        _replace(
+            _task_path(workspace, "V0-GOV-040"),
+            "## Source basis\n\n- CORR:C52\n",
+            "",
+        )
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "SECTION_EMPTY V0-GOV-040: Source basis" in result.stdout

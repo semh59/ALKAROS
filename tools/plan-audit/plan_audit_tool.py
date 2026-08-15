@@ -2337,6 +2337,9 @@ def validate_plan() -> None:
 
         wanted = [section for section in expected_sections if section in sections]
         mandatory = ["Goal", "Owned surface", "Dependencies", "Acceptance evidence"]
+        work_type_mandatory = metadata.get("Work type")
+        if work_type_mandatory == "decision":
+            mandatory.insert(0, "Source basis")
         if task_id in BLOCKERS:
             mandatory.insert(mandatory.index("Dependencies") + 1, "Blocker")
         if "Blocker" in sections:
