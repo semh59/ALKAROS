@@ -1,0 +1,51 @@
+﻿  Geri y├╝klenecek projeler belirleniyor...
+  Geri y├╝kleme i├ğin t├╝m projeler g├╝ncel.
+  ALKAROS.Idempotency -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Idempotency\bin\Debug\net8.0\ALKAROS.Idempotency.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll
+  ALKAROS.Transactions -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Waiter -> D:\PROJECT\ALKAROS\src\Clients\Waiter\bin\Debug\net8.0\ALKAROS.Waiter.dll
+  ALKAROS.Hugin -> D:\PROJECT\ALKAROS\src\Integrations\Hugin\bin\Debug\net8.0\ALKAROS.Hugin.dll
+  ALKAROS.Notifications -> D:\PROJECT\ALKAROS\src\Modules\Notifications\bin\Debug\net8.0\ALKAROS.Notifications.dll
+  ALKAROS.Qnb -> D:\PROJECT\ALKAROS\src\Integrations\Qnb\bin\Debug\net8.0\ALKAROS.Qnb.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Yemeksepeti -> D:\PROJECT\ALKAROS\src\Integrations\Yemeksepeti\bin\Debug\net8.0\ALKAROS.Yemeksepeti.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.QrRelay -> D:\PROJECT\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.MealCard -> D:\PROJECT\ALKAROS\src\Integrations\MealCard\bin\Debug\net8.0\ALKAROS.MealCard.dll
+  ALKAROS.Cashier -> D:\PROJECT\ALKAROS\src\Clients\Cashier\bin\Debug\net8.0\ALKAROS.Cashier.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Identity.DeviceSessions.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Identity\DeviceSessions\bin\Debug\net8.0\ALKAROS.Identity.DeviceSessions.Tests.dll
+  ALKAROS.Identity.Authorization.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Identity\Authorization\bin\Debug\net8.0\ALKAROS.Identity.Authorization.Tests.dll
+  ALKAROS.Identity.Authentication.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Identity\Authentication\bin\Debug\net8.0\ALKAROS.Identity.Authentication.Tests.dll
+  ALKAROS.SensitiveData.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Transactions.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.Tests.dll
+  ALKAROS.Catalog.ProductCatalog.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Catalog\ProductCatalog\bin\Debug\net8.0\ALKAROS.Catalog.ProductCatalog.Tests.dll
+  ALKAROS.TransactionOutboxIntegration -> D:\PROJECT\ALKAROS\src\BuildingBlocks\TransactionOutboxIntegration\bin\Debug\net8.0\ALKAROS.TransactionOutboxIntegration.dll
+  ALKAROS.Catalog.Pricing.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Catalog\Pricing\bin\Debug\net8.0\ALKAROS.Catalog.Pricing.Tests.dll
+  ALKAROS.Idempotency.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Idempotency\bin\Debug\net8.0\ALKAROS.Idempotency.Tests.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.TransactionOutboxIntegration.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TransactionOutboxIntegration\bin\Debug\net8.0\ALKAROS.TransactionOutboxIntegration.Tests.dll
+  ALKAROS.Fiscal -> D:\PROJECT\ALKAROS\src\Modules\Fiscal\bin\Debug\net8.0\ALKAROS.Fiscal.dll
+  ALKAROS.Accounts -> D:\PROJECT\ALKAROS\src\Modules\Accounts\bin\Debug\net8.0\ALKAROS.Accounts.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Host.Tests -> D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll
+  ALKAROS.Architecture.Tests -> D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll
+
+Olu┼şturma ba┼şar─▒l─▒ oldu.
+    0 Uyar─▒
+    0 Hata
+
+Ge├ğen S├╝re 00:00:12.30

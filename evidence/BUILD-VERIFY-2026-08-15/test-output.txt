@@ -1,0 +1,86 @@
+﻿  Geri y├╝klenecek projeler belirleniyor...
+  Geri y├╝kleme i├ğin t├╝m projeler g├╝ncel.
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Transactions -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Idempotency -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Idempotency\bin\Debug\net8.0\ALKAROS.Idempotency.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Secrets.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll
+D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Notifications -> D:\PROJECT\ALKAROS\src\Modules\Notifications\bin\Debug\net8.0\ALKAROS.Notifications.dll
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+  ALKAROS.SensitiveData.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll
+D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    21, Atlanan:     0, Toplam:    21, S├╝re: 121 ms - ALKAROS.Secrets.Tests.dll (net8.0)
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    23, Atlanan:     0, Toplam:    23, S├╝re: 173 ms - ALKAROS.SensitiveData.Tests.dll (net8.0)
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.TransactionOutboxIntegration -> D:\PROJECT\ALKAROS\src\BuildingBlocks\TransactionOutboxIntegration\bin\Debug\net8.0\ALKAROS.TransactionOutboxIntegration.dll
+  ALKAROS.Catalog.ProductCatalog.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Catalog\ProductCatalog\bin\Debug\net8.0\ALKAROS.Catalog.ProductCatalog.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Catalog\ProductCatalog\bin\Debug\net8.0\ALKAROS.Catalog.ProductCatalog.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    77, Atlanan:     0, Toplam:    77, S├╝re: 1 s - ALKAROS.Catalog.ProductCatalog.Tests.dll (net8.0)
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.TransactionOutboxIntegration.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TransactionOutboxIntegration\bin\Debug\net8.0\ALKAROS.TransactionOutboxIntegration.Tests.dll
+  ALKAROS.Catalog.Pricing.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Catalog\Pricing\bin\Debug\net8.0\ALKAROS.Catalog.Pricing.Tests.dll
+D:\PROJECT\ALKAROS\tests\BuildingBlocks\TransactionOutboxIntegration\bin\Debug\net8.0\ALKAROS.TransactionOutboxIntegration.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+  ALKAROS.Transactions.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Catalog\Pricing\bin\Debug\net8.0\ALKAROS.Catalog.Pricing.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+D:\PROJECT\ALKAROS\tests\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+  ALKAROS.Idempotency.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Idempotency\bin\Debug\net8.0\ALKAROS.Idempotency.Tests.dll
+D:\PROJECT\ALKAROS\tests\BuildingBlocks\Idempotency\bin\Debug\net8.0\ALKAROS.Idempotency.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Accounts -> D:\PROJECT\ALKAROS\src\Modules\Accounts\bin\Debug\net8.0\ALKAROS.Accounts.dll
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+  ALKAROS.Fiscal -> D:\PROJECT\ALKAROS\src\Modules\Fiscal\bin\Debug\net8.0\ALKAROS.Fiscal.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    25, Atlanan:     0, Toplam:    25, S├╝re: 714 ms - ALKAROS.Transactions.Tests.dll (net8.0)
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    12, Atlanan:     0, Toplam:    12, S├╝re: 984 ms - ALKAROS.TransactionOutboxIntegration.Tests.dll (net8.0)
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    27, Atlanan:     0, Toplam:    27, S├╝re: 2 s - ALKAROS.Catalog.Pricing.Tests.dll (net8.0)
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    80, Atlanan:     0, Toplam:    80, S├╝re: 2 s - ALKAROS.Idempotency.Tests.dll (net8.0)
+  ALKAROS.Identity.Authentication.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Identity\Authentication\bin\Debug\net8.0\ALKAROS.Identity.Authentication.Tests.dll
+  ALKAROS.Identity.DeviceSessions.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Identity\DeviceSessions\bin\Debug\net8.0\ALKAROS.Identity.DeviceSessions.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Identity\Authentication\bin\Debug\net8.0\ALKAROS.Identity.Authentication.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+D:\PROJECT\ALKAROS\tests\Modules\Identity\DeviceSessions\bin\Debug\net8.0\ALKAROS.Identity.DeviceSessions.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+  ALKAROS.Identity.Authorization.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Identity\Authorization\bin\Debug\net8.0\ALKAROS.Identity.Authorization.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Identity\Authorization\bin\Debug\net8.0\ALKAROS.Identity.Authorization.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    17, Atlanan:     0, Toplam:    17, S├╝re: 1 s - ALKAROS.Identity.DeviceSessions.Tests.dll (net8.0)
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    20, Atlanan:     0, Toplam:    20, S├╝re: 667 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    51, Atlanan:     0, Toplam:    51, S├╝re: 3 s - ALKAROS.Identity.Authentication.Tests.dll (net8.0)
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Architecture.Tests -> D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll
+  ALKAROS.Host.Tests -> D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll
+D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:     5, Atlanan:     0, Toplam:     5, S├╝re: 197 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    62, Atlanan:     0, Toplam:    62, S├╝re: 12 s - ALKAROS.Host.Tests.dll (net8.0)
