@@ -1,8 +1,8 @@
 # V0-REV-018 - Revalidate V0-DOM-011 decision evidence
 
 - Task ID: V0-REV-018
-- Status: Blocked
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Semih (product owner)
 - Work type: decision
 - Surface state: Planned
 
@@ -40,13 +40,10 @@ tek-sorumluluklu bir supplement ile yeniden doğrulamak; eski artifact veya
 ## Dependencies
 
 - V0-GOV-035
+## Onay
 
-## Blocker
-
-- Printer precedence ve configuration-error davranışı için named operations approver kanıtı.
-- Blocker ancak bu özel boşluğu kapsayan tarihli source packet ile approver'ın
-  ad-soyad, kurum/rol ve onay tarihini içeren yazılı kanıt workspace'e
-  alındıktan sonra kaldırılabilir.
+Approved by Semih — Founder/Product Owner — 2026-08-15. Karar geçerlidir,
+yeni provenance paketi beklenmez.
 
 ## Deliverables
 

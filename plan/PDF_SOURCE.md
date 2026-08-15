@@ -36,3 +36,10 @@ kimliği hash ile sabitlenmiştir.
 kimliğini, hash'ini ve kaynak sınırını değiştirmez; kaynak doğrulama kuralları
 aynen geçerlidir. Bu not PDF current authority değildir ve gate kapanış kanıtı
 üretmez.
+
+## Not (2026-08-15)
+
+Bu PDF ilk taslak referans belgesiydi, mükemmel/nihai spesifikasyon değildir.
+Yeni görevler için PDF eşlemesi zorunlu değildir; `Product decision (PO:<date>)`
+kanıt sınıfı da geçerlidir (bkz. ASSUMPTION_POLICY.md).
+(`TRACEABILITY.md` C69, remediasyon Faz 2.4.)

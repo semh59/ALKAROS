@@ -104,8 +104,8 @@ tek görev kalabilir.
   değişebilir. `Blocked` ile `Planned` veya `InProgress` arasındaki geçişte zorunlu
   `Blocker` bölümü de eklenebilir veya silinebilir. Scope değişikliği ayrı plan
   değişikliğidir.
-- Her görev `evidence/<Task-ID>/**` altında yeniden üretilebilir kabul kanıtı
-  bırakabilir; bu izin başka görev kanıtlarına erişim vermez.
+- Her görev `evidence/<Task-ID>/**` altında ek arşiv kanıtı bırakabilir;
+  bu klasör zorunlu değildir ve başka görev kanıtlarına erişim vermez.
 - Allowlist dışı ihtiyaç, kullanıcıya kesin path ve gerekçeyle blocker olarak
   bildirilir; görev kendiliğinden genişletilmez.
 - Repository-wide formatter, dependency upgrade veya unrelated cleanup ancak
@@ -118,27 +118,46 @@ tek görev kalabilir.
 
 ## Zorunlu görev dosyası bölümleri
 
-Sıra değiştirilemez:
+Yeni şablon (`TRACEABILITY.md` C69, remediasyon Faz 2.5) implementation ve
+integration görevleri için kısa tutulur; sıra değiştirilemez:
 
-1. `Source basis`
+1. `Goal` - 1-3 cümle
+2. `Owned surface` - yazılabilir yollar
+3. `Dependencies`
+4. `Acceptance evidence` - kapsamı aşağıdaki "Kabul kanıtı (sadeleştirilmiş)" bölümünde tanımlanır
+
+`Source basis`, `Access date`, `Decision type` gibi alanlar **yalnız**
+`Work type: decision` dosyalarında zorunludur; implementation/integration
+görevlerinde aranmaz (kod, PDF referansı gerektirmez; `PO:<date>` kanıt sınıfı
+yeterlidir). `In scope`, `Out of scope`, `Deliverables` ve `Handoff` bölümleri
+mevcut içerikse korunur ve tanımlı sıraya yerleştirilir:
+
+1. `Source basis` - yalnız decision görevlerinde
 2. `Goal`
 3. `Owned surface`
-4. `In scope`
-5. `Out of scope`
+4. `In scope` (varsa)
+5. `Out of scope` (varsa)
 6. `Dependencies`
 7. `Blocker` - yalnız `Blocked` görevlerde
-8. `Deliverables`
-9. `Acceptance evidence` - kapsamı aşağıdaki "Acceptance evidence şablon notu"nda tanımlanır
-10. `Handoff`
+8. `Deliverables` (varsa)
+9. `Acceptance evidence`
+10. `Handoff` (varsa)
+
+Bu kısaltma mevcut görev dosyalarının bölümlerini silmez veya yeniden
+yazmaz; yalnız yeni görev yazımı için kılavuzdur.
 
 `Dependencies` ve `Handoff` satırları yalnız görev ID'si, sabit gate ID'si veya
 `None` içerir. “All tasks”, “owners” ya da yorum gerektiren serbest metin
 kullanılmaz.
 
-## Acceptance evidence şablon notu
+## Kabul kanıtı (sadeleştirilmiş)
 
-Her `Acceptance evidence` bölümü asgari üç kanıt başlığı içerir: `build + test
-exit 0` (gerçek komut exit code'u), migration isteyen görevde `ileri/geri
-uygulama`, ve elle doğrulanabilen bir senaryo kaydı. Bu şablon mevcut görev
-dosyalarının `Acceptance evidence` bölümlerini değiştirmez; yalnız yeni görev
-yazımı için kılavuzdur.
+Bir görev şu üçü sağlanmadan Done olamaz:
+1. `dotnet build` ve ilgili testler exit code 0 ile geçer (komut çıktısı
+   final cevapta gösterilir, ayrı dosyaya kaydedilmez).
+2. Migration varsa ileri/geri (up/down) ikisi de boş veritabanında denenir.
+3. Semih'in elle deneyebileceği en az bir gerçek senaryo tarif edilir
+   (örn. "masaya sipariş al, mutfağa gönder, öde, kapat").
+
+Bu şablon mevcut görev dosyalarının `Acceptance evidence` bölümlerini
+değiştirmez; yalnız yeni görev yazımı için kılavuzdur.

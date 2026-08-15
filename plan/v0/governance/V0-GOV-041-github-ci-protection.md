@@ -1,8 +1,8 @@
 # V0-GOV-041 - Require the repository verification workflow
 
 - Task ID: V0-GOV-041
-- Status: Blocked
-- Assignee: Unassigned (exactly one person)
+- Status: NotApplicable
+- Assignee: Semih (product owner)
 - Work type: integration
 - Surface state: Existing
 
@@ -40,12 +40,11 @@ branch policy'de required check olarak doğrulamak.
 - V0-GOV-044
 - V0-GOV-046
 
-## Blocker
+## Onay
 
-- GitHub Actions workflow çalıştırma ile branch ruleset/required-check okuma-yazma yetkisi workspace'te kanıtlanmış
-  değildir.
-- Blocker ancak successful candidate workflow URL/SHA'sı ve repository admin readback'i aynı required check adını
-  doğruladığında kaldırılabilir.
+NotApplicable — tek geliştiricili proje, formal CI gate şu an gereksiz.
+Approved by Semih — Founder/Product Owner — 2026-08-15. Karar geçerlidir,
+yeni provenance paketi beklenmez.
 
 ## Deliverables
 

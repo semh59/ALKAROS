@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 524,
-  "markdown_line_count": 37053,
-  "markdown_byte_count": 2306382,
+  "markdown_line_count": 36975,
+  "markdown_byte_count": 2300968,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "6E5144D16B3110CD35A0363D740764651969335BB34D4F113A68937D65379DD0",
-      "lines": 3694,
-      "bytes": 167137,
+      "sha256": "B3EB57DF17CEE496FA697451593D75D6116CFA25E8599C568AF1087D0150C83A",
+      "lines": 3675,
+      "bytes": 167428,
       "utf8": true
     }
   ],
@@ -1121,7 +1121,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2857A6A18FC2DEBA496A3963E7538117332BBBDDDFCDEABCA6CBB3CD01BF4B25",
+      "sha256": "0E2826DE2616FB9E3B8FBF91C0FDFF9ECC15CDCA81A7463502B5061D817DDD34",
       "lines": 1800,
       "bytes": 249207,
       "utf8": true
@@ -1142,9 +1142,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "FEF0614CF5B298A3BAF2E3B202076A86FFF1930ECF2ACD2D3CCD626FE542E968",
-      "lines": 228,
-      "bytes": 19134,
+      "sha256": "38C991A30AEEA54D36E0B5D2AA457F812B6BAEADD2275FC2F798B41C7998C059",
+      "lines": 192,
+      "bytes": 14037,
       "utf8": true
     },
     {
@@ -1163,16 +1163,16 @@
     },
     {
       "path": "plan/PDF_COVERAGE.md",
-      "sha256": "5719716FB57C9F5342F412FFBBEA9304559B447E2AFA6C23D7C10F7867A19343",
-      "lines": 3366,
-      "bytes": 856596,
+      "sha256": "8A01EA7BDDA9AD8F70F032C850AE234535A3A264DB55F0F39B79A17D14CEFE12",
+      "lines": 3370,
+      "bytes": 856778,
       "utf8": true
     },
     {
       "path": "plan/PDF_SOURCE.md",
-      "sha256": "8BF6F97D88F451297291F9D4E4296C2ED14955B66AC6F80E2AE34612F11C9F60",
-      "lines": 38,
-      "bytes": 1756,
+      "sha256": "DD1BC2615483D60C43694C25A427D79AA752D2A11AB27B029AA2460162EDD9DF",
+      "lines": 45,
+      "bytes": 2050,
       "utf8": true
     },
     {
@@ -1191,16 +1191,16 @@
     },
     {
       "path": "plan/TASK_STANDARD.md",
-      "sha256": "068B8A3D000733F9BEC3DAF9CEB704EB0D1FAF84EBFD153F825A615088AD7616",
-      "lines": 144,
-      "bytes": 7331,
+      "sha256": "2A6A6559C1EE57920583137975EF7E47D0666F403385505824F02E00961BC712",
+      "lines": 163,
+      "bytes": 8331,
       "utf8": true
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "C3FAE94B81913D60E8E89B98DB25EB37E2FB8F5BCC31391229D0652D7ED83ACD",
-      "lines": 171,
-      "bytes": 52224,
+      "sha256": "6E422BCE9A122BD7CFFD18F61571AE730EE3CC3E56B626752CE43C5930E7BB4E",
+      "lines": 172,
+      "bytes": 55228,
       "utf8": true
     },
     {
@@ -1632,16 +1632,16 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-041-github-ci-protection.md",
-      "sha256": "9E427C57C69765CC563F4658C2054553CD7BDE2A4D8E5962463E2B7B3F981485",
-      "lines": 65,
-      "bytes": 1938,
+      "sha256": "DE062CCC14482B918D3676F2B460D069157898DECC8FE550B2C4EDE294D862C1",
+      "lines": 64,
+      "bytes": 1827,
       "utf8": true
     },
     {
       "path": "plan/v0/governance/V0-GOV-042-code-coverage-gate.md",
-      "sha256": "9BD6D923528A65462BA0236EF3CAD49F7819F3ECB7FEF255DDD6C599B1DC95CB",
+      "sha256": "F95422B2B5B147AEDF933076B56918782B8D5114E6321CC88CD1B20E624D4559",
       "lines": 61,
-      "bytes": 1856,
+      "bytes": 1771,
       "utf8": true
     },
     {
@@ -1898,212 +1898,212 @@
     },
     {
       "path": "plan/v0/revalidation/V0-REV-001-dat001-decision-revalidation.md",
-      "sha256": "F865DCE35B5EB99ED29E99CCDD8A10A29CD85D4D3C30B7FE0474516922135982",
-      "lines": 68,
-      "bytes": 2492,
+      "sha256": "B08D689641AC2A8A227D6842ADA061A8C5F8735B42B1BBF4DAA219D3F9994264",
+      "lines": 65,
+      "bytes": 2305,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-002-dat002-decision-revalidation.md",
-      "sha256": "C9B67986E5853D8EA44DA6A64F4852473222717750A4A0F2B34D16C06207E863",
-      "lines": 68,
-      "bytes": 2467,
+      "sha256": "712594EA7069E245A3ECDAEEC93071621ADCAEDCA9B8DE2693D1A9FB82CA2D7D",
+      "lines": 65,
+      "bytes": 2288,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-003-dat003-decision-revalidation.md",
-      "sha256": "B62E21EC2DA8D11EC483F1BC536BFA0DE0157D3604BAB002CC41658187B1E8AB",
-      "lines": 68,
-      "bytes": 2464,
+      "sha256": "F37D105EBFCF7C9450B7356C9A38F76272785631FDD8C19B4F6A28DACBA43E0C",
+      "lines": 65,
+      "bytes": 2285,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-004-dat004-decision-revalidation.md",
-      "sha256": "E4BAEB24F211FDD4AC1701EF7163049D1231801EEDB00A7B4381640EF49C8CAA",
-      "lines": 68,
-      "bytes": 2474,
+      "sha256": "246426DE80F64EDF1991271107DB86EAF1D0DBC8F8D0F02E72EABF970CB66715",
+      "lines": 65,
+      "bytes": 2287,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-005-dat005-decision-revalidation.md",
-      "sha256": "CA420C65CD7A68F259B5FF12535974E714487F4B714A1796512DD0A2236ACAD2",
-      "lines": 68,
-      "bytes": 2506,
+      "sha256": "A6B55761D2970036D09FE2C69B455DD3A2A6976F5E2EEB4869B3F53A05F520D7",
+      "lines": 65,
+      "bytes": 2312,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-006-dat006-decision-revalidation.md",
-      "sha256": "B9D16A2048DE88B294F50234E261D28EF5B43C593192A5E34533E7ED71049BC5",
-      "lines": 68,
-      "bytes": 2519,
+      "sha256": "6115A25DE9FF448E374CA878D6865D87328AB0E9226A3585D6715BFF78FF16DA",
+      "lines": 65,
+      "bytes": 2320,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-007-doc001-decision-revalidation.md",
-      "sha256": "C08EA709A0A1FB8CC04A91D64FB51622A2D92F8A7BD317B7E20E6F82EB7D03FF",
-      "lines": 68,
-      "bytes": 2552,
+      "sha256": "97AA649B078DC3102E9C2FCC18B53291AC4D59AFA853F55A2B141468E6010774",
+      "lines": 65,
+      "bytes": 2341,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-008-dom001-decision-revalidation.md",
-      "sha256": "4A1A0E1AE7880EF586D7929A3E82D0342A94370EA60974744DE500A10B9691B9",
-      "lines": 68,
-      "bytes": 2550,
+      "sha256": "68C7B63AF43EBEC2D2E3F96A07CEEC409426E6B06345B700E9E47E354BA97A2F",
+      "lines": 65,
+      "bytes": 2343,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-009-dom002-decision-revalidation.md",
-      "sha256": "95F6FD9D700DF25BF8FDD4D4D91B6B2238A044E0376125D5F22F57854134F528",
-      "lines": 68,
-      "bytes": 2492,
+      "sha256": "FA489D3D8C47248E0841EC823733EFE25320E15374D5160BAC9DAC43B79B48AA",
+      "lines": 65,
+      "bytes": 2302,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-010-dom003-decision-revalidation.md",
-      "sha256": "14521498754DFB05490DE0C354B8428992D0D20777ED4ACD26E66D4E7FD334E2",
-      "lines": 68,
-      "bytes": 2489,
+      "sha256": "BA8EFB9D71264A38041B45B5C077E9080FE9E79C43732CE1695FEDD0132CABED",
+      "lines": 65,
+      "bytes": 2287,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-011-dom004-decision-revalidation.md",
-      "sha256": "343136109FCA2BE053A02623F9DE165F06947BC636DA6899B43864F296B20D7A",
-      "lines": 68,
-      "bytes": 2552,
+      "sha256": "D7512E24D0854A8DF413A7A33F32E1FFCF7B95560E9B0E134572592AB0105771",
+      "lines": 65,
+      "bytes": 2341,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-012-dom005-decision-revalidation.md",
-      "sha256": "CE76D747AB53C5CFAB800C7B63EA5A75B9C673703E7652485D6D2121E5559A72",
-      "lines": 68,
-      "bytes": 2512,
+      "sha256": "F958C1B5C95493728320EC1C6D55FC69E09DFB6A9416195C2DC3C21337231422",
+      "lines": 65,
+      "bytes": 2315,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-013-dom006-decision-revalidation.md",
-      "sha256": "2ACF67AACAE301FF95D1CCA5D21D3D2CDADA4DCA9BFEFC5FDC7716BD9091E6FF",
-      "lines": 68,
-      "bytes": 2524,
+      "sha256": "61B6746A04234EB417B78AB19C9D81C6572410ACD897F391FE66887F02AF2373",
+      "lines": 65,
+      "bytes": 2336,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-014-dom007-decision-revalidation.md",
-      "sha256": "C658A2E9D0B80E9ED9B09737140B8E1FCE74A4CEE4AB9550DA1FA5B46055EAB6",
-      "lines": 68,
-      "bytes": 2545,
+      "sha256": "F9F6DF799FD7E9E8606E97B57484B18D57109527C10CDD9773A9669F3310B8B5",
+      "lines": 65,
+      "bytes": 2345,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-015-dom008-decision-revalidation.md",
-      "sha256": "D9B49C94095B059E3314D95A8BA94A563330C638C8F18830831CCCCAECDF75FB",
-      "lines": 68,
-      "bytes": 2475,
+      "sha256": "FF751E2E2022B8072EACDE0BB1BBE15C1E26606BD839BF80D1245FBD55B07DF0",
+      "lines": 65,
+      "bytes": 2286,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-016-dom009-decision-revalidation.md",
-      "sha256": "6402016540C9C24C7D7DD3826ED89B0B71DFA359D8E97C1553F8EA6CDF39C09F",
-      "lines": 68,
-      "bytes": 2477,
+      "sha256": "0102DE9B9E689055B9D665700B25FAE88B8C819F9915974EAC961303B46C6E8C",
+      "lines": 65,
+      "bytes": 2296,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-017-dom010-decision-revalidation.md",
-      "sha256": "022180C26504D7780C03886AA9696F63B6E53342D94091431C1EBC7B1AAABF5B",
-      "lines": 68,
-      "bytes": 2484,
+      "sha256": "FC7FC090C066EDB9289EBBCCF7C2B6A35DF39BED1A54472765DD89DE74057A6C",
+      "lines": 65,
+      "bytes": 2295,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-018-dom011-decision-revalidation.md",
-      "sha256": "D12ED4B3B6CF7F9B1B1AAAACF15C15DDCD1B858B3062BD93FEA2C7DCABD94D30",
-      "lines": 68,
-      "bytes": 2524,
+      "sha256": "10CA8DDF26952D798BED3689394E31C8552BDB2EA3F069C29CEFBED232BC8995",
+      "lines": 65,
+      "bytes": 2324,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-019-lic001-decision-revalidation.md",
-      "sha256": "25A8BCA13EEBA7CAFB39D1EFA8E6B5B211C6A99BDC44B1AFB8352D2019EB8C80",
-      "lines": 68,
-      "bytes": 2485,
+      "sha256": "BF7FB716DB35C296A24A545085828546F5C117B6410FAD39F3C88809B65B48E0",
+      "lines": 65,
+      "bytes": 2297,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-020-arc001-decision-revalidation.md",
-      "sha256": "BFC6112F48F9D525963FDF891D3C49D7F57B7E8DFC572F1245A431EA95D509F2",
-      "lines": 68,
-      "bytes": 2525,
+      "sha256": "4598C8CFE30EB9AF8E8F45B1FA4EC94BF7E1CDB522CF34300CE9D4F3650FD0FA",
+      "lines": 65,
+      "bytes": 2329,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-021-arc002-decision-revalidation.md",
-      "sha256": "C3696BE94F13CEBEC76DC4123B06EAD3BDA737F9DF03E3658E5730B5B91F444E",
-      "lines": 68,
-      "bytes": 2543,
+      "sha256": "8E3AEA7E0C979EEC2F4B57EE3873D0ED28037BB99C8F49A1790B27B2482B1E54",
+      "lines": 65,
+      "bytes": 2341,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-022-arc003-decision-revalidation.md",
-      "sha256": "59521435B235C735AE1A57BA7F23CA682F205188D29E8D7748801112B8B6300C",
-      "lines": 68,
-      "bytes": 2512,
+      "sha256": "BF3887FD0C1956976E13E054DF564BFCF8DE30BCA6A1A6530777066F696E9C86",
+      "lines": 65,
+      "bytes": 2324,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-023-arc004-decision-revalidation.md",
-      "sha256": "C6874F17C8D480768C54FEA17806BBC2EB25F573AC9165C71C2AE99E6E7C20EE",
-      "lines": 68,
-      "bytes": 2519,
+      "sha256": "456392B14CEFB3AA216C287920F1676C6774D33CB88F0D3257D9BCD3F9715679",
+      "lines": 65,
+      "bytes": 2323,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-024-arc005-decision-revalidation.md",
-      "sha256": "996741DAB7F8315000C30E799D4662577A43315ACF4DF3C00841AE9911C22DAE",
-      "lines": 68,
-      "bytes": 2502,
+      "sha256": "84DCCBEFE4F37098E11D81B8F5A14B3FCE5D0FC9D294645DDCB86261A8629733",
+      "lines": 65,
+      "bytes": 2310,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-025-arc006-decision-revalidation.md",
-      "sha256": "BD1929B4BD118266BEEB5D0055A7638E0165F8522C69565224BB281E41E5C2B8",
-      "lines": 68,
-      "bytes": 2534,
+      "sha256": "0A2C3E6B58C489BFE2237E9FC47651E2A909A0CFE823526183020D794E5311BB",
+      "lines": 65,
+      "bytes": 2341,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-026-arc007-decision-revalidation.md",
-      "sha256": "9FD2E22261E014FFDCDD1C221F5D75D4269E4F2FAC74F4C5D4D4559308BF676F",
-      "lines": 68,
-      "bytes": 2523,
+      "sha256": "73578013DA2D116D0B4B5AAB920C665251AA4E55D813E2DD17CDC1CCB41AD30E",
+      "lines": 65,
+      "bytes": 2340,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-027-arc008-decision-revalidation.md",
-      "sha256": "10F0BA22FE22019E6D578DFF592EBAEFAE3B921446657926C872C831835957E3",
-      "lines": 68,
-      "bytes": 2511,
+      "sha256": "4354C7CFC9CAB115A6E034ABCD8228D0CA6B6E54396B14C678140A054903E514",
+      "lines": 65,
+      "bytes": 2325,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-028-arc009-decision-revalidation.md",
-      "sha256": "91BBEF07E11428D1B1A46A5DF12AF0B4D11A3635EB418C4C676CEE80D36CA94D",
-      "lines": 68,
-      "bytes": 2547,
+      "sha256": "CDB8AA43D5BDD4B67C85235E1A9B068C8C082230EF84D955AE24848F06CDFCA0",
+      "lines": 65,
+      "bytes": 2331,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-029-cmp002-decision-revalidation.md",
-      "sha256": "EAC34257018D66999195A0FABF79A225FDA6D42C831D5C9577E3687E5953A722",
-      "lines": 68,
-      "bytes": 2531,
+      "sha256": "71D6B5E3755ED81FF8FF1DE707E4312609117E6DDFC417408142469661F7B87A",
+      "lines": 65,
+      "bytes": 2329,
       "utf8": true
     },
     {
       "path": "plan/v0/revalidation/V0-REV-030-cmp005-decision-revalidation.md",
-      "sha256": "3A2B25F3B64AA7A7E8AB7055B82907F56FD1E39A3092D0C1C8B148A7252B0A44",
-      "lines": 68,
-      "bytes": 2486,
+      "sha256": "2210A02FBDA2FFAE62825D637A7138F060F9A8E1BA9A4B185AECEF7A0BD4B8A2",
+      "lines": 65,
+      "bytes": 2302,
       "utf8": true
     },
     {
@@ -3732,9 +3732,9 @@
     },
     {
       "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "C5FE2D0925761E7B3247448E1AED01EAA0F47CDD0BF4A2BF8838652542630982",
-      "lines": 275,
-      "bytes": 19057,
+      "sha256": "44AD6EA05CD553AB1CA01784BF1B966D113295B28499BC62A28800A581A84BD1",
+      "lines": 293,
+      "bytes": 20272,
       "utf8": true
     }
   ]

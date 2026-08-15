@@ -108,10 +108,15 @@ _DEFERRED_TASKS_HEADER = (
 )
 _DEFERRED_TASKS_SEPARATOR = "| --- | --- | --- | --- | --- |"
 _DEFERRED_TASKS_ROW = re.compile(
-    r"^\|\s*`(?P<task_id>V0-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-03|2026-08-13)`\s*\|\s*"
+    r"^\|\s*`(?P<task_id>V0-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-08-03)`\s*\|\s*"
     r"`(?P<reopen_stage>V11|V12|V13|V14|V15|V20)`\s*\|\s*"
     r"(?P<required_evidence>[^|]+?)\s*\|\s*Not V0 gate closure evidence\s*\|$"
 )
+# The 2026-08-13 deferral entries V0-REV-001..030 and V0-GOV-041/042 were
+# removed from GATES.md on 2026-08-15 (TRACEABILITY C69): the revalidation
+# tasks closed as Done with an ## Onay block and the gov tasks closed as
+# NotApplicable in remediation phase 1.2. Only the 2026-08-03 C40 entries
+# remain.
 _DEFERRED_TASK_RECORDS = {
     ("V0-HUG-001", "2026-08-03", "V12", "Gerçek Hugin provider contract/erişim kanıtı"),
     ("V0-QNB-001", "2026-08-03", "V13", "Gerçek QNB provider contract/erişim kanıtı"),
@@ -124,38 +129,6 @@ _DEFERRED_TASK_RECORDS = {
     ("V0-LIC-001", "2026-08-03", "V20", "Gerçek license server ve lisans sözleşmesi kanıtı"),
     ("V0-BKP-001", "2026-08-03", "V15", "Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı"),
     ("V0-BKP-002", "2026-08-03", "V15", "Gerçek yedekleme donanımı/cihaz kanıtı"),
-    ("V0-REV-001", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-002", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-003", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-004", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-005", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-006", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-007", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-008", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-009", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-010", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-011", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-012", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-013", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-014", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-015", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-016", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-017", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-018", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-019", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-020", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-021", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-022", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-023", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-024", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-025", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-026", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-027", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-028", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-029", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-REV-030", "2026-08-13", "V12", "Tarihli source packet + named approver (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-GOV-041", "2026-08-13", "V12", "Successful GitHub Actions candidate workflow URL/SHA + repository admin ruleset/required-check readback (ad-soyad, kurum/rol, onay tarihi)"),
-    ("V0-GOV-042", "2026-08-13", "V12", "Coverage threshold, project scope ve supported exporter için tarihli named technical approval (ad-soyad, kurum/rol, onay tarihi)"),
 }
 _DEFERRED_TASK_IDS = {record[0] for record in _DEFERRED_TASK_RECORDS}
 
@@ -442,7 +415,7 @@ def parse_v0_deferral_ids(plan_dir: Path) -> Set[str]:
     if records != _DEFERRED_TASK_RECORDS:
         raise TaskParseError(
             "V0 deferral table records must exactly match the 2026-08-03 "
-            "or 2026-08-13 user approval"
+            "user approval"
         )
     return _DEFERRED_TASK_IDS
 

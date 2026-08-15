@@ -1,8 +1,8 @@
 # V0-GOV-042 - Define and enforce the code-coverage gate
 
 - Task ID: V0-GOV-042
-- Status: Blocked
-- Assignee: Unassigned (exactly one person)
+- Status: NotApplicable
+- Assignee: Semih (product owner)
 - Work type: integration
 - Surface state: Planned
 
@@ -37,11 +37,11 @@ CI coverage gate'ini fail-closed uygulamak.
 - V0-GOV-035
 - V0-GOV-041
 
-## Blocker
+## Onay
 
-- Coverage threshold, project scope ve supported exporter için tarihli named technical approval yoktur.
-- Blocker ancak exact line/branch eşikleri, dahil/hariç project seti ve installed collector/exporter uyumluluğu yazılı
-  onayla doğrulandığında kaldırılabilir.
+NotApplicable — tek geliştiricili proje, formal CI coverage gate şu an gereksiz.
+Approved by Semih — Founder/Product Owner — 2026-08-15. Karar geçerlidir,
+yeni provenance paketi beklenmez.
 
 ## Deliverables
 

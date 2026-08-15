@@ -136,7 +136,8 @@ npx --yes markdownlint-cli2@0.23.2
   denetimi fail-closed non-zero exit verir. İstisna V0/V1 gate kapanış kanıtı
   değildir ve yeni product behavior başlatma izni vermez.
 - Agent write allowlist yalnız `Owned surface`, aktif görev metadata alanları ve
-  `evidence/<Task-ID>/**` birleşimidir.
+  `evidence/<Task-ID>/**` birleşimidir (`evidence/<Task-ID>/**` artık zorunlu
+  değildir; extra arşiv izni olarak kalır).
 - Aktif görev `Blocked` ile `Planned` veya `InProgress` arasında geçerken yalnız
   kendi zorunlu `Blocker` bölümünü ekleyebilir veya silebilir; başka görev gövdesi
   değişikliği fail-closed reddedilir.
@@ -180,11 +181,28 @@ npx --yes markdownlint-cli2@0.23.2
 - Table row, code block ve bölünemeyen URL satırları `MD013` istisnasıdır.
 - `MD012` ve `MD060` istisnasız sıfır olmalıdır.
 
-## Kapanış kanıt zarfı
+## Kabul kanıtı (sadeleştirilmiş)
+
+`Done` için kabul kanıtı artık `evidence/<Task-ID>/**` altında zarf dosyası
+zorunluluğuna bağlı değildir (TASK_STANDARD.md "Kabul kanıtı (sadeleştirilmiş)"
+ile değiştirildi). Bir görev şu üçü sağlanmadan `Done` olamaz:
+
+1. `dotnet build` ve ilgili testler exit code 0 ile geçer (komut çıktısı final
+   cevapta gösterilir, ayrı dosyaya kaydedilmez).
+2. Migration varsa ileri/geri (up/down) ikisi de boş veritabanında denenir.
+3. Semih'in elle deneyebileceği en az bir gerçek senaryo tarif edilir.
+
+`tools/evidence-envelope/evidence_envelope_tool.py` artık zorunlu değildir;
+tarihsel görev kanıtları için read-only arşiv olarak kalır
+(`tools/evidence-envelope/DEPRECATED.md`).
+
+Aşağıdaki V1/V2/V3 closure envelope kuralları tarihsel görev kanıtlarını
+denetlerken geçerlidir; yeni görevlerin `Done` kabulü için yukarıdaki
+sadeleştirilmiş kabul kanıtı geçerlidir.
 
 - `Done` için command, integer exit code `0`, environment, candidate Git commit,
   raw command output ve SHA-256 artifact hash'leri machine-readable closure
-  evidence envelope içinde birlikte doğrulanır.
+  evidence envelope içinde birlikte doğrulanır (yalnız tarihsel görevler).
 - Candidate commit artifact blob'unu içermeli; candidate ile güncel `HEAD`
   arasında artifact değişmişse veya final blob hash'i farklıysa kanıt
   fail-closed reddedilir.
@@ -193,13 +211,13 @@ npx --yes markdownlint-cli2@0.23.2
   SHA-256 fingerprint ile kaydedilir; narrative-only kayıt kabul değildir.
 - `py -B tools/evidence-envelope/evidence_envelope_tool.py --envelope
   evidence/<Task-ID>/closure-evidence-envelope.json --repository . --format
-  text` non-zero exit verirse task closure kanıtı geçersizdir.
+  text` non-zero exit verirse tarihsel task closure kanıtı geçersizdir.
 - Tarihsel acceptance replay mevcut `Done` task üzerinde değil, executable
   candidate commit'te repository dışındaki geçici Git worktree'de yapılır.
   Candidate veya gerekli ortam bulunamazsa task `Blocked` kalır; başarı sonucu
   uydurulmaz.
 
-V2 closure protocol ek koşulları:
+Tarihsel V2 closure protocol ek koşulları (yalnız bu protokolle kapanmış görevlerin yeniden denetiminde):
 
 - V2 kapanışı B subject -> E evidence checkpoint -> F metadata-only final
   zinciridir. B bütün non-evidence owned artifactları ve `Planned`→`InProgress`
@@ -224,7 +242,7 @@ V2 closure protocol ek koşulları:
   baseline ile gerçek closure blobları karşılaştırarak `STALE_CANDIDATE_COMMIT`
   ve `FINAL_BLOB_HASH_MISMATCH` ile invalid bulmalıdır; eski evidence değişmez.
 
-V3 interrupted remediation closure ek koşulları:
+Tarihsel V3 interrupted remediation closure ek koşulları (yalnız `V1-FND-023` tarihsel kanıtında):
 
 - V3 yalnız `V1-FND-023` için fixed B0
   `fd3344f15c5257b53bf5281ee9129f800c62f0a7` ve fixed interruption

@@ -388,49 +388,11 @@ DEFERRED_TASK_IDS = [
     "V0-LIC-001",
     "V0-BKP-001",
     "V0-BKP-002",
-    "V0-GOV-041",
-    "V0-GOV-042",
-    "V0-REV-001",
-    "V0-REV-002",
-    "V0-REV-003",
-    "V0-REV-004",
-    "V0-REV-005",
-    "V0-REV-006",
-    "V0-REV-007",
-    "V0-REV-008",
-    "V0-REV-009",
-    "V0-REV-010",
-    "V0-REV-011",
-    "V0-REV-012",
-    "V0-REV-013",
-    "V0-REV-014",
-    "V0-REV-015",
-    "V0-REV-016",
-    "V0-REV-017",
-    "V0-REV-018",
-    "V0-REV-019",
-    "V0-REV-020",
-    "V0-REV-021",
-    "V0-REV-022",
-    "V0-REV-023",
-    "V0-REV-024",
-    "V0-REV-025",
-    "V0-REV-026",
-    "V0-REV-027",
-    "V0-REV-028",
-    "V0-REV-029",
-    "V0-REV-030",
 ]
 
-DEFERRED_REV_ROW = (
-    "| `{id}` | `2026-08-13` | `V12` | Tarihli source packet + named approver "
-    "(ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |"
-)
-
-DEFERRED_GOV_ROWS = [
-    "| `V0-GOV-041` | `2026-08-13` | `V12` | Successful GitHub Actions candidate workflow URL/SHA + repository admin ruleset/required-check readback (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |",
-    "| `V0-GOV-042` | `2026-08-13` | `V12` | Coverage threshold, project scope ve supported exporter için tarihli named technical approval (ad-soyad, kurum/rol, onay tarihi) | Not V0 gate closure evidence |",
-]
+# 2026-08-15 (TRACEABILITY C69): V0-REV-001..030 (Done, phase 1.1) and
+# V0-GOV-041/042 (NotApplicable, phase 1.2) were removed from the deferral
+# list in GATES.md; only the 2026-08-03 C40 entries remain.
 
 DEFERRED_ROWS = [
     "| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |",
@@ -444,7 +406,7 @@ DEFERRED_ROWS = [
     "| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |",
     "| `V0-BKP-001` | `2026-08-03` | `V15` | Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı | Not V0 gate closure evidence |",
     "| `V0-BKP-002` | `2026-08-03` | `V15` | Gerçek yedekleme donanımı/cihaz kanıtı | Not V0 gate closure evidence |",
-] + [DEFERRED_REV_ROW.format(id=f"V0-REV-{i:03d}") for i in range(1, 31)] + DEFERRED_GOV_ROWS
+]
 
 
 # ---------------------------------------------------------------------------

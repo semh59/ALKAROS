@@ -130,6 +130,10 @@ DEPENDENCY_REMOVALS = {
 # security standard) that cannot exist before V0 exits. They stay Blocked but
 # are excluded from the V0 gate-open check and close with evidence at the
 # stage named in GATES.md.
+# 2026-08-15 (TRACEABILITY C69): V0-REV-001..030 closed as Done with an
+# ## Onay block and V0-GOV-041/042 closed as NotApplicable in phase 1.2 of the
+# remediation plan; their deferral entries were removed from GATES.md and so
+# are removed here to keep the registered set equal to the table.
 V0_DEFERRED_TASKS = {
     "V0-HUG-001",
     "V0-QNB-001",
@@ -142,38 +146,6 @@ V0_DEFERRED_TASKS = {
     "V0-LIC-001",
     "V0-BKP-001",
     "V0-BKP-002",
-    "V0-GOV-041",
-    "V0-GOV-042",
-    "V0-REV-001",
-    "V0-REV-002",
-    "V0-REV-003",
-    "V0-REV-004",
-    "V0-REV-005",
-    "V0-REV-006",
-    "V0-REV-007",
-    "V0-REV-008",
-    "V0-REV-009",
-    "V0-REV-010",
-    "V0-REV-011",
-    "V0-REV-012",
-    "V0-REV-013",
-    "V0-REV-014",
-    "V0-REV-015",
-    "V0-REV-016",
-    "V0-REV-017",
-    "V0-REV-018",
-    "V0-REV-019",
-    "V0-REV-020",
-    "V0-REV-021",
-    "V0-REV-022",
-    "V0-REV-023",
-    "V0-REV-024",
-    "V0-REV-025",
-    "V0-REV-026",
-    "V0-REV-027",
-    "V0-REV-028",
-    "V0-REV-029",
-    "V0-REV-030",
 }
 
 BROAD_HANDOFF_REPLACEMENTS = {
@@ -2306,7 +2278,7 @@ def validate_plan() -> None:
         deferred_table = deferred_block[1].split("<!-- V0_DEFERRED_TASKS:END -->", 1)[0]
         registered_deferred = set(
             re.findall(
-                r"^\| `(V0-[A-Z0-9]+-\d+)` \| `(?:2026-08-03|2026-08-13)` \|",
+                r"^\| `(V0-[A-Z0-9]+-\d+)` \| `2026-08-03` \|",
                 deferred_table,
                 re.MULTILINE,
             )
@@ -2363,12 +2335,21 @@ def validate_plan() -> None:
         ):
             errors.append(f"ASSIGNEE_REQUIRED {task_id}")
 
-        wanted = list(expected_sections)
-        if status == "Blocked":
-            wanted.insert(6, "Blocker")
+        wanted = [section for section in expected_sections if section in sections]
+        mandatory = ["Goal", "Owned surface", "Dependencies", "Acceptance evidence"]
+        if task_id in BLOCKERS:
+            mandatory.insert(mandatory.index("Dependencies") + 1, "Blocker")
+        if "Blocker" in sections:
+            wanted.insert(wanted.index("Dependencies") + 1, "Blocker")
+        if "Onay" in sections:
+            insert_at = wanted.index("Deliverables") if "Deliverables" in wanted else len(wanted)
+            wanted.insert(insert_at, "Onay")
         if order != wanted:
             errors.append(f"SECTION_ORDER {task_id}: {order}")
         for section in wanted:
+            if not sections.get(section):
+                errors.append(f"SECTION_EMPTY {task_id}: {section}")
+        for section in mandatory:
             if not sections.get(section):
                 errors.append(f"SECTION_EMPTY {task_id}: {section}")
         if status != "Blocked" and "Blocker" in sections:

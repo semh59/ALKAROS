@@ -1,5 +1,9 @@
 # PDF Coverage Matrix
 
+> Bu dosya artık aktif güncellenmiyor; geçmiş kayıt olarak tutulur.
+> Yeni task'lar için bu dosyayı güncellemeyi durdur. (`TRACEABILITY.md` C69,
+> remediasyon Faz 2.4.)
+
 > **Aşama 2 notu (`TRACEABILITY.md` C67):** Bu matris süreç sadeleştirmesi
 > onayından etkilenmez; satır birimleri, hash'ler ve owner dağılımı aynen
 > korunur. Coverage davranışı değişmez. Bu matris PDF current authority
