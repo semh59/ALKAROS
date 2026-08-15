@@ -211,11 +211,12 @@ yönetimi yazılır. Geçerli tarihli fiyat, günlük menü ve UI kapsam dışı
 2. `V1-OPS-001` append-only audit foundation
 3. `V1-ORD-001` channel-independent Order aggregate
 4. `V1-KIT-001` KitchenTicket lifecycle
-5. `GATE-V1-EXIT`
-6. `V11-UNT-001` dimension-safe unit/conversion
-7. `V11-INV-004` stock master/location
-8. `V11-INV-001` immutable stock ledger
-9. `V11-INV-002` rebuildable stock balance projection
+5. `V1-ORD-003` item void and complimentary commands
+6. `GATE-V1-EXIT`
+7. `V11-UNT-001` dimension-safe unit/conversion
+8. `V11-INV-004` stock master/location
+9. `V11-INV-001` immutable stock ledger
+10. `V11-INV-002` rebuildable stock balance projection
 
 UI görevleri, bağlı domain/projection görevleri kapanmadan başlatılmaz.
 

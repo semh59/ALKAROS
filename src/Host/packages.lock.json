@@ -128,7 +128,8 @@
       "alkaros.tables": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "Npgsql": {
