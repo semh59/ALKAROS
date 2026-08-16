@@ -1,8 +1,8 @@
 # V1-SEC-006 - Independently verify sanitized handler errors
 
 - Task ID: V1-SEC-006
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-sec-006
 - Work type: validation
 - Surface state: Existing
 
