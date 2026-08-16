@@ -1,8 +1,8 @@
 # V1-FND-019 - Independently verify message lease fencing
 
 - Task ID: V1-FND-019
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-fnd-019
 - Work type: integration
 - Surface state: Existing
 
