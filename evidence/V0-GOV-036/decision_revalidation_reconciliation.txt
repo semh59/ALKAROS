@@ -1,0 +1,10 @@
+Task: V0-GOV-036
+Status: Done
+Assignee: Antigravity-v0-gov-036
+Date: 2026-08-16
+
+Reconciliation Summary:
+- 30 decision supplement tasks (V0-REV-001 .. V0-REV-030) reconciled with DECISION_REVALIDATION.md.
+- All 30 tasks are Done with named approver and source basis.
+- Nominal and effective status aligned across all decision artifacts.
+- Zero unresolved conflicts remaining.

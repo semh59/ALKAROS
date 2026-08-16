@@ -89,3 +89,8 @@ onayına tabidir; devir yeni product behavior başlatma izni vermez.
 kapatılmıştır. Devredilen 11 görev `Blocked` kalır ve kanıtları ilgili
 aşamada (V12–V20) toplanır; bu devir yeni product behavior başlatma izni
 vermez.
+
+**2026-08-16 (V0-GOV-036):** 30 karar revalidasyon kaydı (`V0-REV-001` .. `V0-REV-030`)
+`DECISION_REVALIDATION.md` ile tam uzlaştırılmış ve tüm nominal/effective durumlar
+doğrulanmıştır.
+

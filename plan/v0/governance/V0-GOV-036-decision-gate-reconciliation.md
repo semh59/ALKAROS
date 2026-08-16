@@ -1,8 +1,8 @@
 # V0-GOV-036 - Reconcile decision revalidation with effective gates
 
 - Task ID: V0-GOV-036
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v0-gov-036
 - Work type: validation
 - Surface state: Existing
 
