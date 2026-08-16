@@ -1,0 +1,11 @@
+﻿COMMAND: python -B tools/plan-audit/plan_audit_tool.py validate
+EXIT_CODE: 0
+HEAD: c6672f88c7e1f194d216bc63e3f073d3436f3d18
+
+Markdown files: 376
+Task files: 354
+Registered gates: 18
+Registered EXT sources: 21
+Dependency edges: 1255
+Validation errors: 0
+Validation warnings: 0

@@ -17,11 +17,12 @@ eksiksizliğini ve transition invariant'ını bağımsız doğrulamak.
 
 ## Owned surface
 
-- `database/MigrationComposition/order.json`
 - `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `src/Modules/Tables/TableLifecycle/PostgresTableRepository.cs`
 - `tests/Modules/Tables/TableLifecycle/PostgresTableTests.cs`
 - `evidence/V1-FND-022/**`
+- C70 (2026-08-16) konsolidasyonu: MigrationComposition order.json dosyası konsolide remediasyon yüzeyine taşındı
+  (V1-RMD-001); bu görev order.json manifest bütünlüğünü RMD-001 kapsamında doğrular.
 
 ## In scope
 
@@ -40,7 +41,7 @@ eksiksizliğini ve transition invariant'ını bağımsız doğrulamak.
 - V1-FND-012
 - V1-FND-021
 - V1-IAM-012
-- V1-CAT-003
+- V1-RMD-001
 - V1-TBL-001
 
 ## Deliverables

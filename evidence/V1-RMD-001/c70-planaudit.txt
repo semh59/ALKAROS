@@ -1,0 +1,5 @@
+﻿COMMAND: python -B -m pytest tests/Architecture/PlanAudit -q
+EXIT_CODE: 0
+
+.........................                                                [100%]
+25 passed in 90.88s (0:01:30)

@@ -34,12 +34,11 @@ remediation verdict'lerini terminal evidence ile uzlaştırmak.
 ## Dependencies
 
 - V0-GOV-035
-- V1-IAM-006
+- V1-RMD-001
 - V1-IAM-007
 - V1-IAM-008
 - V1-IAM-009
 - V1-IAM-010
-- V1-IAM-011
 - V1-IAM-012
 - V1-IAM-013
 

@@ -1,8 +1,8 @@
 # V1-IAM-006 - Independently verify reconnect operation claiming
 
 - Task ID: V1-IAM-006
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: NotApplicable
+- Assignee: Semih (product owner)
 - Work type: integration
 - Surface state: Existing
 
@@ -17,8 +17,8 @@ interleaving'iyle doğrulamak.
 
 ## Owned surface
 
-- `src/Modules/Identity/DeviceSessions/DeviceSessionService.cs`
-- `tests/Modules/Identity/DeviceSessions/DeviceSessionServiceTests.cs`
+- C70 (2026-08-16) konsolidasyonu: production yüzeyleri (`DeviceSessionService.cs`, ilgili tests) tam yüzey devri ile
+  V1-RMD-001'e taşındı; bu historical task NotApplicable kapalı kalır.
 - `evidence/V1-IAM-006/**`
 
 ## In scope
@@ -34,6 +34,12 @@ interleaving'iyle doğrulamak.
 
 - V0-GOV-035
 - V1-IAM-003
+
+## Onay
+
+NotApplicable — C70 (2026-08-16) kullanıcı onaylı konsolidasyon: bulgu yüzeyleri ve kabul koşulları tam
+yüzey devri ile V1-RMD-001'e taşındı. Approved by Semih — Founder/Product Owner — 2026-08-16.
+Karar geçerlidir, yeni provenance paketi beklenmez.
 
 ## Deliverables
 

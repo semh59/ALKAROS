@@ -35,7 +35,7 @@ varsayımına dayanmadan bağımsız doğrulamak.
 
 - V0-GOV-035
 - V1-IAM-009
-- V1-IAM-011
+- V1-RMD-001
 
 ## Deliverables
 

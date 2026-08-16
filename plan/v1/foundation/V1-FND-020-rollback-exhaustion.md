@@ -1,8 +1,8 @@
 # V1-FND-020 - Independently verify rollback exhaustion
 
 - Task ID: V1-FND-020
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: NotApplicable
+- Assignee: Semih (product owner)
 - Work type: implementation
 - Surface state: Existing
 
@@ -17,8 +17,8 @@ hataların korunduğunu bağımsız doğrulamak.
 
 ## Owned surface
 
-- `src/BuildingBlocks/Transactions/TransactionScope.cs`
-- `tests/BuildingBlocks/Transactions/Execution/TransactionExecutionTests.cs`
+- C70 (2026-08-16) konsolidasyonu: production yüzeyleri (rollback exhaustion invariant ürünü) tam yüzey devri ile
+  V1-RMD-001'e taşındı; bu historical task NotApplicable kapalı kalır.
 - `evidence/V1-FND-020/**`
 
 ## In scope
@@ -34,6 +34,12 @@ hataların korunduğunu bağımsız doğrulamak.
 
 - V0-GOV-035
 - V1-FND-011
+
+## Onay
+
+NotApplicable — C70 (2026-08-16) kullanıcı onaylı konsolidasyon: bulgu yüzeyleri ve kabul koşulları tam
+yüzey devri ile V1-RMD-001'e taşındı. Approved by Semih — Founder/Product Owner — 2026-08-16.
+Karar geçerlidir, yeni provenance paketi beklenmez.
 
 ## Deliverables
 

@@ -34,7 +34,7 @@ doğrulamak.
 ## Dependencies
 
 - V0-GOV-035
-- V1-IAM-006
+- V1-RMD-001
 
 ## Deliverables
 

@@ -17,10 +17,11 @@ engellemek; yalniz environment tabanli secret resolution kullanmak.
 
 ## Owned surface
 
-- `src/Host/Program.cs`
 - `tests/Host/MigrationComposition/Program/ProgramArgumentTests.cs`
 - `evidence/V1-SEC-003/**`
 - C52 migration secret-redaction execution test surface is transferred to V1-SEC-004; this historical task remains closed.
+- C70 (2026-08-16) konsolidasyonu: host Program.cs dosyası konsolide remediasyon yüzeyine taşındı (V1-RMD-001);
+  bu historical task closed kalır.
 
 ## In scope
 

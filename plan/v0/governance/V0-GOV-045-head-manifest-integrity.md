@@ -70,23 +70,20 @@ committed candidate HEAD için yeniden üretmek ve byte/hash doğrulamasını ka
 - V1-FND-017
 - V1-FND-018
 - V1-FND-019
-- V1-FND-020
+- V1-RMD-001
 - V1-FND-021
 - V1-FND-022
 - V1-FND-023
-- V1-IAM-006
 - V1-IAM-007
 - V1-IAM-008
 - V1-IAM-009
 - V1-IAM-010
-- V1-IAM-011
 - V1-IAM-012
 - V1-IAM-013
 - V1-IAM-014
 - V1-SEC-004
 - V1-SEC-005
 - V1-SEC-006
-- V1-CAT-003
 - V1-CAT-004
 - V1-TBL-006
 

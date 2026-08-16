@@ -25,12 +25,9 @@ baglamak; tek commit veya tam rollback disinda kalici sonuc birakmamak.
 - `src/BuildingBlocks/Transactions/ITransientFailure.cs`
 - `src/BuildingBlocks/Transactions/NestedTransactionException.cs`
 - `src/BuildingBlocks/Transactions/RetryClassification.cs`
-- `src/BuildingBlocks/Transactions/TransactionContext.cs`
 - `src/BuildingBlocks/Transactions/TransactionExecutionException.cs`
 - `src/BuildingBlocks/Transactions/TransactionOptions.cs`
 - `src/BuildingBlocks/Transactions/TransactionRetryPolicy.cs`
-- `src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutbox.cs`
-- `src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutboxResource.cs`
 - `tests/BuildingBlocks/TransactionOutboxIntegration/Fixtures/Sinks.cs`
 - `tests/BuildingBlocks/TransactionOutboxIntegration/Fixtures/TransactionOutboxTestDatabase.cs`
 - `tests/BuildingBlocks/TransactionOutboxIntegration/TransactionOutboxIntegrationTests.cs`
@@ -41,6 +38,8 @@ baglamak; tek commit veya tam rollback disinda kalici sonuc birakmamak.
 - `tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj`
 - `evidence/V1-FND-011/**`
 - C52 rollback-exhaustion remediation surface is transferred to V1-FND-020; this historical task remains closed.
+- C70 (2026-08-16) konsolidasyonu: `TransactionContext.cs`, `TransactionOutbox.cs`, `TransactionOutboxResource.cs`
+  konsolide remediasyon yüzeyine taşındı (V1-RMD-001); bu historical task closed kalır.
 
 ## In scope
 
