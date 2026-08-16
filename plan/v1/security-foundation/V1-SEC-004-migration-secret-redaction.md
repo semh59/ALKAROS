@@ -1,8 +1,8 @@
 # V1-SEC-004 - Independently verify migration secret redaction
 
 - Task ID: V1-SEC-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-sec-004
 - Work type: implementation
 - Surface state: Existing
 
