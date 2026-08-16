@@ -1,0 +1,9 @@
+Task: V1-IAM-008
+Status: Done
+Assignee: Antigravity-v1-iam-008
+Date: 2026-08-16
+
+Authorization Linearization Verification:
+- Command-start linearization rule (CODE-008) verified: authorization decision evaluated before protected mutation.
+- Concurrency and interleaving tests pass: revoke before start throws AuthorizationDeniedException without changing state.
+- Formatter verification (dotnet format --verify-no-changes) passed with exit code 0.
