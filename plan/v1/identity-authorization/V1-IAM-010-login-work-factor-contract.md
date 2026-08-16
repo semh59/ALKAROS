@@ -1,8 +1,8 @@
 # V1-IAM-010 - Independently verify the login work-factor contract
 
 - Task ID: V1-IAM-010
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-iam-010
 - Work type: validation
 - Surface state: Existing
 

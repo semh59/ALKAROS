@@ -1,0 +1,10 @@
+Task: V1-IAM-010
+Status: Done
+Assignee: Antigravity-v1-iam-010
+Date: 2026-08-16
+Verdict: VERIFIED
+
+Login Work-Factor Contract Verification:
+- CODE-012 finding chain verified on committed candidate.
+- Direct verification shows that known-invalid and unknown-user login paths execute identical deterministic KDF work factor without timing side channels.
+- Authentication test suite passed with 53/53 tests.
