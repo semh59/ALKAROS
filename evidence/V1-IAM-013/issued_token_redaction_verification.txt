@@ -1,0 +1,10 @@
+Task: V1-IAM-013
+Status: Done
+Assignee: Antigravity-v1-iam-013
+Date: 2026-08-16
+Verdict: VERIFIED
+
+Issued-Token Redaction Verification:
+- CODE-009, CODE-016 finding chain verified on committed candidate.
+- Sentinel bearer tokens do not leak into object formatting, exceptions, or logs.
+- Authentication test suite passed with 53/53 tests.

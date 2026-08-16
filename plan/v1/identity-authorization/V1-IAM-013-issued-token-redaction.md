@@ -1,8 +1,8 @@
 # V1-IAM-013 - Independently verify issued-token redaction
 
 - Task ID: V1-IAM-013
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-iam-013
 - Work type: validation
 - Surface state: Existing
 
