@@ -1,8 +1,8 @@
 # V1-IAM-009 - Independently verify password iteration bounds
 
 - Task ID: V1-IAM-009
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-iam-009
 - Work type: implementation
 - Surface state: Existing
 

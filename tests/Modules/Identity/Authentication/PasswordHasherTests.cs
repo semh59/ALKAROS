@@ -114,6 +114,23 @@ public sealed class PasswordHasherTests
     }
 
     [Fact]
+    public void ConstructorRejectsExcessiveIterations()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PasswordHasher(iterations: PasswordHasher.MaximumIterations + 1));
+    }
+
+    [Fact]
+    public void ConstructorAcceptsBoundaryIterationsAndRoundTripsSuccessfully()
+    {
+        var minHasher = new PasswordHasher(10_000);
+        var minHash = minHasher.Hash("boundary-pass");
+        Assert.True(PasswordHasher.Verify("boundary-pass", minHash));
+
+        var maxHasher = new PasswordHasher(PasswordHasher.MaximumIterations);
+        Assert.NotNull(maxHasher);
+    }
+
+    [Fact]
     public void HashRejectsNullOrEmptyPassword()
     {
         Assert.Throws<ArgumentNullException>(() => Hasher.Hash(null!));

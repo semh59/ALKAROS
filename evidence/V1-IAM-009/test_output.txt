@@ -1,0 +1,2 @@
+Passed!  - Failed: 0, Passed: 53, Skipped: 0, Total: 53, Duration: 3 s - ALKAROS.Identity.Authentication.Tests.dll (net8.0)
+Exit code: 0

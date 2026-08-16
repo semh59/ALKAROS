@@ -42,8 +42,8 @@ public sealed class PasswordHasher
 
     public PasswordHasher(int iterations = DefaultIterations)
     {
-        if (iterations < MinimumIterations)
-            throw new ArgumentOutOfRangeException(nameof(iterations), iterations, "Too few iterations.");
+        if (iterations < MinimumIterations || iterations > MaximumIterations)
+            throw new ArgumentOutOfRangeException(nameof(iterations), iterations, "Iteration count is out of range.");
         _iterations = iterations;
     }
 
