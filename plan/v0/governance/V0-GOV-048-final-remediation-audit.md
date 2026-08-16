@@ -1,8 +1,8 @@
 # V0-GOV-048 - Independently audit the complete remediation
 
 - Task ID: V0-GOV-048
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v0-gov-048
 - Work type: release gate
 - Surface state: Existing
 

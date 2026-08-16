@@ -3,7 +3,7 @@
   "audit_date": "2026-07-30",
   "markdown_file_count": 527,
   "markdown_line_count": 37177,
-  "markdown_byte_count": 2317015,
+  "markdown_byte_count": 2317003,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -1135,7 +1135,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "30A54C8452F8E7B308CEC9D3EA668251B722457D52F7B5DC45AB76F2DE92EEDD",
+      "sha256": "5E53C4AD978E0E117D23275AF0914C98D0F9B18247D9D16DFB55F68880E595E0",
       "lines": 1803,
       "bytes": 249673,
       "utf8": true
@@ -1674,9 +1674,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-045-head-manifest-integrity.md",
-      "sha256": "23E66357CAE94E5A5CA683BE0C56BC0D6E7D18F54F3C00D8602F5B7A639F8B45",
+      "sha256": "5ECFC39C519509219F41D31046731F0C0178D6A705B479A925D2039C752AED13",
       "lines": 104,
-      "bytes": 2235,
+      "bytes": 2229,
       "utf8": true
     },
     {
@@ -1695,9 +1695,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-048-final-remediation-audit.md",
-      "sha256": "3D53101F4BE474D4075AE39633FDA364153140AAF246E36C43B54858CA391BE1",
+      "sha256": "0CA4446F031F52405C3B2A200A2EF931A8D2512CF44C95F534FF95FF757E15B7",
       "lines": 104,
-      "bytes": 2363,
+      "bytes": 2357,
       "utf8": true
     },
     {

@@ -1676,10 +1676,10 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v0/governance/V0-GOV-042-code-coverage-gate.md` | ✅ | `F95422B2B5B147AEDF933076B56918782B8D5114E6321CC88CD1B20E624D4559` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-043-dotnet-format-remediation.md` | ✅ | `021FC94E07E1D71D2B01F2A65C9E864AEDF8DCA58239C27EADA779924E505854` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-044-markdownlint-remediation.md` | ✅ | `DE4DC7D2D8DC1B9F64F004F9EA83561B46E5EFA796C697CCCE3B1E366D2928BA` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-045-head-manifest-integrity.md` | ✅ | `23E66357CAE94E5A5CA683BE0C56BC0D6E7D18F54F3C00D8602F5B7A639F8B45` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-045-head-manifest-integrity.md` | ✅ | `5ECFC39C519509219F41D31046731F0C0178D6A705B479A925D2039C752AED13` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-046-manifest-semantic-separation.md` | ✅ | `7761F64426B3930875882824A60996E72C92CA69C1A78242DD5254B2DE09CC32` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-047-build-provenance.md` | ✅ | `31D338475AD6FB28F493FA6AF4F2298C0D28C5FADB0C861A6767CCA8929F1955` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-048-final-remediation-audit.md` | ✅ | `3D53101F4BE474D4075AE39633FDA364153140AAF246E36C43B54858CA391BE1` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-048-final-remediation-audit.md` | ✅ | `0CA4446F031F52405C3B2A200A2EF931A8D2512CF44C95F534FF95FF757E15B7` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-049-reaccept-closure-evidence-protocol.md` | ✅ | `A6A155B41D15AC3E12805B992BC8CFC5D3462FD295670991566C7C7AD8B452E9` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-050-admit-post-closure-remediation.md` | ✅ | `CA49356A1A71C9074F971F49A6B51D472CF58B712E9D6D8CED898050A3F7173A` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-051-attest-immutable-post-closure-exceptions.md` | ✅ | `E846EE101544569415AC19AE1FC5D86881A96F03471A5342CEC3C05F8C93C402` | Tek-sahip görev |
