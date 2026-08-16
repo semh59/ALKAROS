@@ -31,7 +31,7 @@
     {
       "id": "006",
       "phase": "A",
-      "tables": ["categories", "tax_profiles", "products", "modifier_groups", "modifiers"],
+      "tables": ["categories", "tax_profiles", "products", "modifier_groups", "modifiers", "product_modifier_groups"],
       "deferredConstraints": []
     },
     {

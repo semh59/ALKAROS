@@ -1,0 +1,16 @@
+Passed!  - Failed: 0, Passed: 21, Skipped: 0, Total: 21 - ALKAROS.Secrets.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 23, Skipped: 0, Total: 23 - ALKAROS.SensitiveData.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 53, Skipped: 0, Total: 53 - ALKAROS.Identity.Authentication.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 26, Skipped: 0, Total: 26 - ALKAROS.Transactions.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 20, Skipped: 0, Total: 20 - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 17, Skipped: 0, Total: 17 - ALKAROS.Identity.DeviceSessions.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 80, Skipped: 0, Total: 80 - ALKAROS.Catalog.ProductCatalog.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 83, Skipped: 0, Total: 83 - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 12, Skipped: 0, Total: 12 - ALKAROS.TransactionOutboxIntegration.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 51, Skipped: 0, Total: 51 - ALKAROS.Tables.TableLifecycle.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 27, Skipped: 0, Total: 27 - ALKAROS.Catalog.Pricing.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 80, Skipped: 0, Total: 80 - ALKAROS.Idempotency.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed:  5, Skipped: 0, Total:  5 - ALKAROS.Architecture.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 65, Skipped: 0, Total: 65 - ALKAROS.Host.Tests.dll (net8.0)
+Total Passed: 486 / 486 (0 Failed).
+Exit code: 0

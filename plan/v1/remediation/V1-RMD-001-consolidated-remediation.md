@@ -1,8 +1,8 @@
 # V1-RMD-001 - Consolidated remediation of independent audit findings
 
 - Task ID: V1-RMD-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-rmd-001
 - Work type: implementation
 - Surface state: Existing
 

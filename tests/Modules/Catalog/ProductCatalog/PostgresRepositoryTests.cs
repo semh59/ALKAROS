@@ -361,6 +361,29 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
             _productModifierGroups.AddAsync(new ProductModifierGroup(Guid.NewGuid(), productId, Guid.NewGuid())));
         Assert.Equal(ForeignKeyViolation, ex.SqlState);
     }
+
+    [Fact]
+    public async Task ProductNegativeCurrentPriceIsRejectedByCheckConstraint()
+    {
+        await _database.ExecuteAsync(
+            "ALTER TABLE catalog.products ADD CONSTRAINT chk_products_current_price_nonnegative CHECK (current_price IS NULL OR current_price >= 0);");
+
+        try
+        {
+            var ex = await Assert.ThrowsAsync<PostgresException>(() =>
+                _database.ExecuteAsync(
+                    """
+                    INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+                    VALUES (gen_random_uuid(), 'SKU-NEG', 'Negative Price', 1, 1, -5.00);
+                    """));
+            Assert.Equal(CheckViolation, ex.SqlState);
+        }
+        finally
+        {
+            await _database.ExecuteAsync(
+                "ALTER TABLE catalog.products DROP CONSTRAINT IF EXISTS chk_products_current_price_nonnegative;");
+        }
+    }
 }
 
 /// <summary>

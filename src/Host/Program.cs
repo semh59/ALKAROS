@@ -4,10 +4,9 @@ using ALKAROS.Host.Composition.Migrations;
 namespace ALKAROS.Host;
 
 /// <summary>
-/// Entry point of the ALKAROS host. The host project is a library (its
-/// project file is owned by V1-FND-001 and is reserved surface), so the
-/// entry point is exposed as a callable <c>Main</c> returning the process
-/// exit code; the executable packaging is owned by the release tasks.
+/// Entry point of the ALKAROS host application. The host executable entry
+/// point is exposed as a callable <c>Main</c> returning the process exit code;
+/// the executable packaging is owned by the release tasks.
 /// Exit codes: 0 = success, 1 = migration execution failed, 2 = startup or
 /// validation failed.
 /// </summary>

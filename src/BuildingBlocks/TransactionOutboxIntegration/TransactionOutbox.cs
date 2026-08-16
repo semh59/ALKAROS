@@ -46,5 +46,7 @@ public static class TransactionOutbox
             options,
             retryPolicy,
             cancellationToken).ConfigureAwait(false);
+
+        resource.NotifyCommitted();
     }
 }

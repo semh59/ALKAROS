@@ -19,13 +19,27 @@ public sealed class TransactionOutboxResource : ITransactionResource
 {
     private readonly DbDataSource _dataSource;
     private readonly List<OutboxEnvelope> _envelopes = new();
+    private readonly Action? _onCommitted;
 
-    public TransactionOutboxResource(DbDataSource dataSource)
+    public TransactionOutboxResource(DbDataSource dataSource, Action? onCommitted = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _onCommitted = onCommitted;
     }
 
     internal DbDataSource DataSource => _dataSource;
+
+    /// <summary>
+    /// Invoked immediately after the ambient transaction commits to notify
+    /// outbox listeners for crash-safe immediate dispatch wake-up.
+    /// </summary>
+    public void NotifyCommitted()
+    {
+        if (_envelopes.Count > 0)
+        {
+            _onCommitted?.Invoke();
+        }
+    }
 
     /// <summary>
     /// The number of envelopes buffered for the current attempt.

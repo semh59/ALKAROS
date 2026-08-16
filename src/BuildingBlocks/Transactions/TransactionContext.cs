@@ -41,6 +41,7 @@ public static class TransactionContext
             if ((options?.JoinBehavior ?? TransactionJoinBehavior.Join) == TransactionJoinBehavior.CreateNew)
                 throw new NestedTransactionException();
 
+            cancellationToken.ThrowIfCancellationRequested();
             return workflow(current);
         }
 
@@ -74,6 +75,7 @@ public static class TransactionContext
             if ((options?.JoinBehavior ?? TransactionJoinBehavior.Join) == TransactionJoinBehavior.CreateNew)
                 throw new NestedTransactionException();
 
+            cancellationToken.ThrowIfCancellationRequested();
             return workflow(current);
         }
 

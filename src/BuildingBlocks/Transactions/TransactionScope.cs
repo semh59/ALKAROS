@@ -81,11 +81,39 @@ internal sealed class TransactionScope : ITransactionContext, IAsyncDisposable
 
     public async Task RollbackAsync(CancellationToken cancellationToken)
     {
+        List<Exception>? exceptions = null;
+
         if (_transaction is not null)
-            await _transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+        {
+            try
+            {
+                await _transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                exceptions = [ex];
+            }
+        }
 
         for (var i = _resources.Count - 1; i >= 0; i--)
-            await _resources[i].RollbackAsync(cancellationToken).ConfigureAwait(false);
+        {
+            try
+            {
+                await _resources[i].RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                exceptions ??= [];
+                exceptions.Add(ex);
+            }
+        }
+
+        if (exceptions is { Count: > 0 })
+        {
+            if (exceptions.Count == 1)
+                throw exceptions[0];
+            throw new AggregateException("One or more errors occurred during transaction rollback.", exceptions);
+        }
     }
 
     public async ValueTask DisposeAsync()

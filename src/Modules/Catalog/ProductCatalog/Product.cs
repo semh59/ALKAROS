@@ -25,6 +25,8 @@ public sealed class Product
             throw new ArgumentException("Product SKU cannot be empty.", nameof(sku));
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Product name cannot be empty.", nameof(name));
+        if (currentPrice is < 0)
+            throw new ArgumentOutOfRangeException(nameof(currentPrice), "Current price cannot be negative.");
 
         Id = id;
         Sku = sku;

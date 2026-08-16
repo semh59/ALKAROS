@@ -127,6 +127,26 @@ public static class TransactionExecutionTests
     }
 
     [Fact]
+    public static async Task MultipleRollbackFailuresAggregateAllExceptions()
+    {
+        var resource1 = new RecordingResource("r1", rollbackFails: true);
+        var resource2 = new RecordingResource("r2", rollbackFails: true);
+
+        var ex = await Assert.ThrowsAsync<TransactionExecutionException>(() =>
+            TransactionContext.RunAsync(context =>
+            {
+                context.Enlist(resource1);
+                context.Enlist(resource2);
+                return Task.FromException(new SimulatedFailureException("workflow failed"));
+            }));
+
+        var aggregate = Assert.IsType<AggregateException>(ex.InnerException);
+        Assert.Equal(2, aggregate.InnerExceptions.Count);
+        var rollbackAggregate = Assert.IsType<AggregateException>(aggregate.InnerExceptions[1]);
+        Assert.Equal(2, rollbackAggregate.InnerExceptions.Count);
+    }
+
+    [Fact]
     public static async Task EnlistRejectsNullResource()
     {
         await TransactionContext.RunAsync(context =>

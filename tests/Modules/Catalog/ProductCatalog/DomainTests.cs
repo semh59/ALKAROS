@@ -374,6 +374,17 @@ public class ProductTests
         act.Should().Throw<ArgumentException>()
             .WithParameterName(nameof(name));
     }
+
+    [Theory]
+    [InlineData(-0.01)]
+    [InlineData(-100.0)]
+    public void ConstructorNegativeCurrentPriceThrowsArgumentOutOfRangeException(decimal price)
+    {
+        var act = () => new Product(Guid.NewGuid(), "SKU001", "Burger", ProductType.MenuItem, StockMode.QuantityTracked, currentPrice: price);
+
+        act.Should().Throw<ArgumentOutOfRangeException>()
+            .WithParameterName("currentPrice");
+    }
 }
 
 public class ProductModifierGroupTests
