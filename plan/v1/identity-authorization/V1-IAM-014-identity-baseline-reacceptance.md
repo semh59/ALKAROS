@@ -1,8 +1,8 @@
 # V1-IAM-014 - Reaccept the complete Identity baseline
 
 - Task ID: V1-IAM-014
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-iam-014
 - Work type: validation
 - Surface state: Existing
 
