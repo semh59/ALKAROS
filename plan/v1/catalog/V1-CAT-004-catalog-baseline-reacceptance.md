@@ -1,8 +1,8 @@
 # V1-CAT-004 - Reaccept the complete Catalog baseline
 
 - Task ID: V1-CAT-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-cat-004
 - Work type: validation
 - Surface state: Existing
 

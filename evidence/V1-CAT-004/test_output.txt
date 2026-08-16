@@ -1,0 +1,3 @@
+Passed!  - Failed: 0, Passed: 80, Skipped: 0, Total: 80, Duration: 887 ms - ALKAROS.Catalog.ProductCatalog.Tests.dll (net8.0)
+Passed!  - Failed: 0, Passed: 27, Skipped: 0, Total: 27, Duration: 793 ms - ALKAROS.Catalog.Pricing.Tests.dll (net8.0)
+Exit code: 0

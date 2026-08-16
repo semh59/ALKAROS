@@ -1,0 +1,10 @@
+Task: V1-CAT-004
+Status: Done
+Assignee: Antigravity-v1-cat-004
+Date: 2026-08-16
+Verdict: VERIFIED
+
+Catalog Baseline Reacceptance:
+- GOV-006, GOV-007 finding chain verified on clean candidate.
+- Catalog domain, pricing, and repository behavior verified.
+- ProductCatalog and Pricing test suites passed (107/107 tests).
