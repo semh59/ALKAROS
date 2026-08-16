@@ -1,0 +1,2 @@
+Passed!  - Failed: 0, Passed: 19, Skipped: 0, Total: 19, Duration: 719 ms - ALKAROS.Identity.DeviceSessions.Tests.dll (net8.0)
+Exit code: 0

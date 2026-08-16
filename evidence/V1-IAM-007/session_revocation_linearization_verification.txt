@@ -1,0 +1,10 @@
+Task: V1-IAM-007
+Status: Done
+Assignee: Antigravity-v1-iam-007
+Date: 2026-08-16
+Verdict: VERIFIED
+
+Session Revocation Linearization Verification:
+- CODE-007 finding chain verified on committed candidate.
+- Direct verification shows that post-revoke commit, stale use/reconnect operations fail-closed without reanimating revoked sessions.
+- Device session tests passed with 19/19 tests.

@@ -1,8 +1,8 @@
 # V1-IAM-007 - Independently verify session revocation linearization
 
 - Task ID: V1-IAM-007
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-iam-007
 - Work type: validation
 - Surface state: Existing
 
