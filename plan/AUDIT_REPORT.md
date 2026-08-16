@@ -44,7 +44,7 @@ markdownlint'in raporladığı kesin satırı korur.
 | `plan/PDF_SOURCE.md` | `1-27` | `00CC4190D5A289FFE5809768DB5FA3D204CD2851FD57AB64AB6E83D863394C45` | `plan/PDF_SOURCE.md` | `1-45` | `DD1BC2615483D60C43694C25A427D79AA752D2A11AB27B029AA2460162EDD9DF` | `FIND-MD060-0021@7`; `FIND-MD060-0022@7`; `FIND-MD060-0023@7`; `FIND-MD060-0024@7`; `FIND-MD013-0055@8` | ✅ |
 | `plan/README.md` | `1-43` | `75E2D7A6BCB4FB1E96C96FEF95D11F9EAE67706508C70EE64B522BFBE31F14F7` | `plan/README.md` | `1-60` | `0BA05425C84A357D85393E571F9398E4D27A49E5B97102A6263D830223D93C7B` | `None` | ✅ |
 | `plan/TASK_STANDARD.md` | `1-47` | `8E51D07739656FB93EBA13895B729B0A2FE8910E09324763FA9ABD4EFFB8952D` | `plan/TASK_STANDARD.md` | `1-163` | `EA15D69422A61CD4B58DE51CFB6CABB9FB7377139A5A56F4596D06ADB4A1A766` | `FIND-SCHEMA-0391@31` | ✅ |
-| `plan/TRACEABILITY.md` | `1-33` | `A2CAB0FD4EE1392070FBBD6B3661B8391C4453AE7E33A2E098E5980A61DACBAF` | `plan/TRACEABILITY.md` | `1-172` | `C1B53AFAED4EEE5DBA419B94E428CFE757C1FB1181404C84F3AC8C3E3281DDE0` | `FIND-MD060-0025@8`; `FIND-MD060-0026@8`; `FIND-MD060-0027@8`; `FIND-MD060-0028@8`; `FIND-MD060-0029@8`; `FIND-MD060-0030@8`; `FIND-MD013-0056@9`; `FIND-MD013-0057@10`; `FIND-MD013-0058@11`; `FIND-MD013-0059@12`; `FIND-MD013-0060@13`; `FIND-MD013-0061@14`; `FIND-MD013-0062@15`; `FIND-MD013-0063@16`; `FIND-MD013-0064@17`; `FIND-MD013-0065@18`; `FIND-MD013-0066@19`; `FIND-MD013-0067@20`; `FIND-MD013-0068@21`; `FIND-MD013-0069@22`; `FIND-MD013-0070@23`; `FIND-MD013-0071@24`; `FIND-MD013-0072@25`; `FIND-MD013-0073@26`; `FIND-MD013-0074@27`; `FIND-MD013-0075@28`; `FIND-MD013-0076@29`; `FIND-MD013-0077@30`; `FIND-MD013-0078@32`; `FIND-DECISION-0001@1` | ✅ |
+| `plan/TRACEABILITY.md` | `1-33` | `A2CAB0FD4EE1392070FBBD6B3661B8391C4453AE7E33A2E098E5980A61DACBAF` | `plan/TRACEABILITY.md` | `1-174` | `E8F95B852B7B1AFDAE15EBBBC655690F157E28F4405851C017E835C5BA9D6013` | `FIND-MD060-0025@8`; `FIND-MD060-0026@8`; `FIND-MD060-0027@8`; `FIND-MD060-0028@8`; `FIND-MD060-0029@8`; `FIND-MD060-0030@8`; `FIND-MD013-0056@9`; `FIND-MD013-0057@10`; `FIND-MD013-0058@11`; `FIND-MD013-0059@12`; `FIND-MD013-0060@13`; `FIND-MD013-0061@14`; `FIND-MD013-0062@15`; `FIND-MD013-0063@16`; `FIND-MD013-0064@17`; `FIND-MD013-0065@18`; `FIND-MD013-0066@19`; `FIND-MD013-0067@20`; `FIND-MD013-0068@21`; `FIND-MD013-0069@22`; `FIND-MD013-0070@23`; `FIND-MD013-0071@24`; `FIND-MD013-0072@25`; `FIND-MD013-0073@26`; `FIND-MD013-0074@27`; `FIND-MD013-0075@28`; `FIND-MD013-0076@29`; `FIND-MD013-0077@30`; `FIND-MD013-0078@32`; `FIND-DECISION-0001@1` | ✅ |
 | `plan/v0/README.md` | `1-27` | `63330EC4C6F1A98525C1D4F9F48E1CD10601990325482D81A707DF136C2C7560` | `plan/v0/README.md` | `1-31` | `B1B6AB267A4E0CAFE1CD0852CC2428C7F7A0DB669272A91C2227F1B89D93265C` | `None` | ✅ |
 | `plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md` | `1-41 (+EOF 42)` | `DB03AC185BD15DCFDA8A2C5CEFED0DBD1DD9C9F48AE470DCB7376085C04C8D36` | `plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md` | `1-61` | `226E7D20BD72FDB37E38AA8BEF45416CADA5462B411BF8AB6012EB180DB22971` | `FIND-SCHEMA-0001@1`; `FIND-SCHEMA-0002@3`; `FIND-SOURCE-0001@9`; `FIND-MD013-0079@9`; `FIND-MD013-0080@18`; `FIND-MD013-0081@36`; `FIND-MD012-0004@42`; `FIND-EVIDENCE-0002@36` | ✅ |
 | `plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md` | `1-45 (+EOF 46)` | `91905773F4AC0DEA59F3D97E21C0BA76695A3819C6B2B90CBB318D41EE77461E` | `plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md` | `1-58` | `04621622960EB9CC011BBD1E5CFFD4716D9398B2916314045229C0A06973AA31` | `FIND-SCHEMA-0003@1`; `FIND-SCHEMA-0004@3`; `FIND-LANGUAGE-0001@13`; `FIND-MD013-0082@9`; `FIND-MD013-0083@13`; `FIND-MD013-0084@22`; `FIND-MD013-0085@40`; `FIND-MD012-0005@46` | ✅ |
@@ -185,7 +185,7 @@ markdownlint'in raporladığı kesin satırı korur.
 | `plan/v1.5/security/V15-SEC-002-identity-hardening.md` | `1-41 (+EOF 42)` | `6B58430C193ECE63599621A3B32F3F55CA091E5012329EF99F246B7F37C6C028` | `plan/v1.5/security/V15-SEC-002-identity-hardening.md` | `1-55` | `50A606AE020279CF7697E8214023C4D255099B57CC06CFE7CCEFEEA6EF5B6E1D` | `FIND-SCHEMA-0263@1`; `FIND-SCHEMA-0264@3`; `FIND-SOURCE-0098@9`; `FIND-LANGUAGE-0111@9`; `FIND-DELIVERABLE-0090@30`; `FIND-MD013-0489@18`; `FIND-MD013-0490@36`; `FIND-MD012-0122@42` | ✅ |
 | `plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md` | `1-41 (+EOF 42)` | `37F8CA0A3EE696FE6A1881E4079FE9019174CC4021D066FECD2D2A9C33B30336` | `plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md` | `1-57` | `31DE2EE24F1B2D56E8BA52026C88C14BD3B1E6FB5E3E6E114A28E5FFF706E329` | `FIND-SCHEMA-0265@1`; `FIND-SCHEMA-0266@3`; `FIND-SOURCE-0099@9`; `FIND-LANGUAGE-0112@9`; `FIND-DELIVERABLE-0091@30`; `FIND-MD013-0491@9`; `FIND-MD013-0492@13`; `FIND-MD013-0493@18`; `FIND-MD013-0494@36`; `FIND-MD012-0123@42` | ✅ |
 | `plan/v1.5/support/V15-SUP-001-diagnostic-bundle.md` | `1-39` | `48F88528982869AB9955162CCA3C5D62D0462BF8D04186A1C5107D14B6ADB333` | `plan/v1.5/support/V15-SUP-001-diagnostic-bundle.md` | `1-52` | `AE8281470274A7DCA5163A3F9A40427BD04DDB246663944C6051B07C2D29755B` | `FIND-SCHEMA-0267@1`; `FIND-SCHEMA-0268@3`; `FIND-SOURCE-0100@9`; `FIND-LANGUAGE-0113@9`; `FIND-MD013-0495@9`; `FIND-MD013-0496@18`; `FIND-MD013-0497@35` | ✅ |
-| `plan/v1/README.md` | `1-26` | `09835AEF1B8E18DFB1CB8E65293B5A264242854D21D185C068BCB97A0277AB62` | `plan/v1/README.md` | `1-31` | `67B95A4FCA4704753993AD9963636AE66B4C381717B45A4DDEBB392EBD190B4E` | `None` | ✅ |
+| `plan/v1/README.md` | `1-26` | `09835AEF1B8E18DFB1CB8E65293B5A264242854D21D185C068BCB97A0277AB62` | `plan/v1/README.md` | `1-31` | `204AA3B397EAE9111F32CC6439C193EB0F43F920D378A9AF65E26BE436A73E12` | `None` | ✅ |
 | `plan/v1/alerts/V1-ALT-001-alert-foundation.md` | `1-45 (+EOF 46)` | `B876D718CB2DFDC43E975EA500E04B37D8230475E76023D8358EB8573381919B` | `plan/v1/alerts/V1-ALT-001-alert-foundation.md` | `1-54` | `9D2B0772ABDB385DBF70C42CA826BA43A9252A521382AAEAE8F95419E8712E04` | `FIND-SCHEMA-0269@1`; `FIND-SCHEMA-0270@3`; `FIND-LANGUAGE-0114@13`; `FIND-DELIVERABLE-0092@34`; `FIND-MD013-0498@9`; `FIND-MD013-0499@13`; `FIND-MD013-0500@17`; `FIND-MD013-0501@40`; `FIND-MD012-0124@46` | ✅ |
 | `plan/v1/billing/V1-BIL-001-bill-foundation.md` | `1-41 (+EOF 42)` | `BEF2A5E536F3D05714EB58600AB24FF0C3FA7F1953576423457DA5FB63B3A8C5` | `plan/v1/billing/V1-BIL-001-bill-foundation.md` | `1-57` | `C8398AF19E69940D53BFCC08CD44A708EB67FEB6BE37421829125059202E7944` | `FIND-SCHEMA-0271@1`; `FIND-SCHEMA-0272@3`; `FIND-SOURCE-0101@9`; `FIND-LANGUAGE-0115@9`; `FIND-DELIVERABLE-0093@30`; `FIND-MD013-0502@9`; `FIND-MD013-0503@13`; `FIND-MD013-0504@36`; `FIND-MD012-0125@42` | ✅ |
 | `plan/v1/billing/V1-BIL-002-split-design-persistence.md` | `1-41 (+EOF 42)` | `6BAD5280EE4F06BD52FAE409AB14EDB455849E14957F1E9E751D174A4576B83F` | `plan/v1/billing/V1-BIL-002-split-design-persistence.md` | `1-52` | `6ADD78A005EB5F9E9FBE9FBAF6BA8B97EE56A32B95088F94827A08DC460ADEF1` | `FIND-SCHEMA-0273@1`; `FIND-SCHEMA-0274@3`; `FIND-SOURCE-0102@9`; `FIND-LANGUAGE-0116@9`; `FIND-DELIVERABLE-0094@30`; `FIND-MD013-0505@13`; `FIND-MD013-0506@18`; `FIND-MD013-0507@36`; `FIND-MD012-0126@42` | ✅ |
@@ -1491,6 +1491,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/data/migration-dependency-graph.md` | ✅ | `FEC72142ABB3FBE7CA5ECC9D1D9F5E16AECB913E5FE0AB402D25D82FD71D5B9B` | Denetim sözleşmesi |
 | `docs/data/migration-rehearsal-profile.md` | ✅ | `E48EAE829FA07213527E9D6CC907972A8E9224ADB6CB94F0A47BBE2D40AA91C6` | Denetim sözleşmesi |
 | `docs/data/nullable-unique-policy.md` | ✅ | `810F5C247A1862B7DF8127F14C2710AD771F999246D49B89EDE8695AADCE8210` | Denetim sözleşmesi |
+| `docs/data/postgresql-extension-ownership.md` | ✅ | `AFF7F364CF2AF9BB69AB176FC433DA175B4DC055C02D13EBB9E4C08072DF930E` | Denetim sözleşmesi |
 | `docs/data/projection-ownership.md` | ✅ | `8BC5FD3BA4AE8B4B3F304276A5DEE825BE4863D0D1B3922640FFBE08FEDB218C` | Denetim sözleşmesi |
 | `docs/data/single-branch-key-strategy.md` | ✅ | `F484711A2BF18CBDCB7F2B259F5F9F153026B2A8841B141BA99F00619AD9153C` | Denetim sözleşmesi |
 | `docs/domain/bill-order-cardinality.md` | ✅ | `E078D51310DF29AC2E4312D1021FE20F3EB20897DF59B665B44D525954954522` | Denetim sözleşmesi |
@@ -1615,6 +1616,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-IAM-004/closure-2026-08-08.md` | ✅ | `C73F82337CC7DC626FFA837AE636EEE712E36D8F3A6D9483619AFE36FAD5242D` | Denetim sözleşmesi |
 | `evidence/V1-IAM-004/closure-report.md` | ✅ | `860B7EC17F32B042A762F64D2D7DF3B58094248E54A1BBA3326AB936DAC202D4` | Denetim sözleşmesi |
 | `evidence/V1-IAM-005/verification.md` | ✅ | `7B5095FB4FF9A6550046FC6F3BF329E91CF21B78EFE5416809C1C9E9CB4FA3CB` | Denetim sözleşmesi |
+| `evidence/V1-RMD-001/consolidated_remediation_report.md` | ✅ | `48D80C07F42AE3F9EC398BA00FF18559A4B202091E282D5C4E8DA1CFD850FCE8` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/candidate-remediation-2026-08-03.md` | ✅ | `C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/closure-2026-08-05.md` | ✅ | `055205F9C60FFF4EA57BC87F7C21B548C95466BE6FA7F86ACA13C02DF122C66C` | Denetim sözleşmesi |
 | `evidence/V1-SEC-003/closure-report.md` | ✅ | `B873CEEC58BDC13B7970878719186B4BE54DC6332121D4469DC0F9D8BA311FAC` | Denetim sözleşmesi |
@@ -1622,16 +1624,16 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md` | ✅ | `E50325C311962E7012E558BBD504D0D91D81D1DB79593F28C1C9196179683B7E` | Denetim sözleşmesi |
 | `evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md` | ✅ | `31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA` | Denetim sözleşmesi |
 | `evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md` | ✅ | `D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277` | Denetim sözleşmesi |
-| `evidence/v0/gate-v0-exit-closure.md` | ✅ | `B315D4D98EE7FA03DD6BD65002C91FBE44DAB71FB454BF98F98A8A28C23ACF86` | Denetim sözleşmesi |
+| `evidence/v0/gate-v0-exit-closure.md` | ✅ | `3FF767432E31830584F687F127BABABC5BDD77A1846FC886941FE90901AE40F9` | Denetim sözleşmesi |
 | `evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md` | ✅ | `9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7` | Denetim sözleşmesi |
-| `plan/DECISION_REVALIDATION.md` | ✅ | `4135122B48417A75963E8C1C70BA71DEC697A8D48CB8D5AAC5E44F7C510FC4E2` | Denetim sözleşmesi |
+| `plan/DECISION_REVALIDATION.md` | ✅ | `88512077F11004C80CAEF72770752D808571D98B29DE8F74FA7387BAB0B78F85` | Denetim sözleşmesi |
 | `plan/EXECUTION_READY_PLAN.md` | ✅ | `FEB10E822CC3E93BE3DFCBD7C79F386D3AF3D52E4E69A89869FEA0B78AFB6590` | Denetim sözleşmesi |
 | `plan/OFFICIAL_SOURCE_REGISTER.md` | ✅ | `F058354DEEEECFDBA40F4AD371B17FD028EB052A56ACE04216C38239F776A7C4` | Denetim sözleşmesi |
 | `plan/REMAINING_WORK_PLAN.md` | ✅ | `D3D87062AAFACE33A8D9A67E25CCABEC30787402933701F7BB1AF0AAA855BC3B` | Denetim sözleşmesi |
 | `plan/VALIDATION_CONTRACT.md` | ✅ | `44AD6EA05CD553AB1CA01784BF1B966D113295B28499BC62A28800A581A84BD1` | Denetim sözleşmesi |
 | `plan/v0/compliance/V0-CMP-005-accessibility-target.md` | ✅ | `0AFF6E3CB7294CB4C4970AAD3A0FBE64AFCF7BC5F6021144818F202AA329DC7D` | Tek-sahip görev |
 | `plan/v0/data-architecture/V0-DAT-006-migration-rehearsal-profile.md` | ✅ | `78D8BCA7B5497EFBAEA534E2A5580AD7F0763AA142ADC2937A79FF2BC5176189` | Tek-sahip görev |
-| `plan/v0/data-architecture/V0-DAT-007-postgresql-extension-ownership.md` | ✅ | `306BFDE0D9EEC112C2FB40540B2A1DB99A93F8B9A0F5A3C23CBF8E811016F0B9` | Tek-sahip görev |
+| `plan/v0/data-architecture/V0-DAT-007-postgresql-extension-ownership.md` | ✅ | `C42F0035AF588BC91EE67B59F61C6F8E3FB4310E89C5DA200386EE72A05F24F4` | Tek-sahip görev |
 | `plan/v0/domain-contracts/V0-DOM-009-receipt-variance-policy.md` | ✅ | `5947E0149E5C1ACF0465A6D68E786DB3976B273A793C83EB9AB35526817FEB7D` | Tek-sahip görev |
 | `plan/v0/domain-contracts/V0-DOM-010-inventory-cost-basis.md` | ✅ | `8E3FC48C44D97151A2DC3FE4C5AC7FCF8D6361A9DFF4C66AE7378035D5B69881` | Tek-sahip görev |
 | `plan/v0/domain-contracts/V0-DOM-011-printer-routing-precedence.md` | ✅ | `0CB83A4206C211248FA9C62C3CF29E148228D87C89BFADE2387B20ACC51DAF34` | Tek-sahip görev |
@@ -1665,19 +1667,19 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v0/governance/V0-GOV-033-audit-remediation-routing.md` | ✅ | `C8F13D740429AD12348E74DC40CB0CF172841235E8872CAE36515B3EE4560490` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-034-remediation-task-materialization.md` | ✅ | `238D523CCA46395C7A5C02D13920C88B5DE9D5829BD3F275E318B73332875EF1` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-035-remediation-admission-control.md` | ✅ | `9B44DCEADEB9BDDD11D1C3A4A86146B5650CB9F38AD480A5F4D68FDE30B95F4B` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-036-decision-gate-reconciliation.md` | ✅ | `168F556114E6E622AA505FDF7FEF1FC718BE736D60A8858C5319749272B22778` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-036-decision-gate-reconciliation.md` | ✅ | `B99C2F2035F973AEFE5C0AEF66C15C7DFF1E25DDCCB6D715A74F665667EAD7A6` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-037-task-traceability-reconciliation.md` | ✅ | `9CA2478893E3A58109ECA638B65B4C31A4AB25D17685641AC61984974D49EEBD` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-038-immutable-history-attestation.md` | ✅ | `31E62409F3F970EAF3998E7706567BD453C0B9E428D412F552785EA0C069123C` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-039-closure-evidence-envelope.md` | ✅ | `2D225AA65D15DB62FB3739ACE65D1591CC3405232EA963F020F3632FF4A76DAA` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-040-project-manifest-consistency.md` | ✅ | `B9B7CCBB077594C4AE1ED34D8A384F6D66C7EB5899E6E7165997F6E59CD1BE7E` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-040-project-manifest-consistency.md` | ✅ | `C35323B0E60AE93055A05D20FCCBE0E4A2CEDCC0E197A0A04DACF3AEE2654DAB` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-041-github-ci-protection.md` | ✅ | `DE062CCC14482B918D3676F2B460D069157898DECC8FE550B2C4EDE294D862C1` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-042-code-coverage-gate.md` | ✅ | `F95422B2B5B147AEDF933076B56918782B8D5114E6321CC88CD1B20E624D4559` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-043-dotnet-format-remediation.md` | ✅ | `59CCFD6A2951472E531F4DC6CC4B8C613385A32D9CBE498FDA67C58637762177` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-043-dotnet-format-remediation.md` | ✅ | `021FC94E07E1D71D2B01F2A65C9E864AEDF8DCA58239C27EADA779924E505854` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-044-markdownlint-remediation.md` | ✅ | `DE4DC7D2D8DC1B9F64F004F9EA83561B46E5EFA796C697CCCE3B1E366D2928BA` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-045-head-manifest-integrity.md` | ✅ | `18242929EB77CE003EE23BC47F62BA6D6184ACE425E88F4ECB149CF347809431` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-045-head-manifest-integrity.md` | ✅ | `23E66357CAE94E5A5CA683BE0C56BC0D6E7D18F54F3C00D8602F5B7A639F8B45` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-046-manifest-semantic-separation.md` | ✅ | `7761F64426B3930875882824A60996E72C92CA69C1A78242DD5254B2DE09CC32` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-047-build-provenance.md` | ✅ | `E5E07B53D77A821A90AAD991C068187AD869C4E6C3856D0A9C07AEF99DD5D514` | Tek-sahip görev |
-| `plan/v0/governance/V0-GOV-048-final-remediation-audit.md` | ✅ | `F80AB0198ECEB349A3D44A2872A2243F64076EE038561C95D8B99949BE93C4EB` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-047-build-provenance.md` | ✅ | `31D338475AD6FB28F493FA6AF4F2298C0D28C5FADB0C861A6767CCA8929F1955` | Tek-sahip görev |
+| `plan/v0/governance/V0-GOV-048-final-remediation-audit.md` | ✅ | `3D53101F4BE474D4075AE39633FDA364153140AAF246E36C43B54858CA391BE1` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-049-reaccept-closure-evidence-protocol.md` | ✅ | `A6A155B41D15AC3E12805B992BC8CFC5D3462FD295670991566C7C7AD8B452E9` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-050-admit-post-closure-remediation.md` | ✅ | `CA49356A1A71C9074F971F49A6B51D472CF58B712E9D6D8CED898050A3F7173A` | Tek-sahip görev |
 | `plan/v0/governance/V0-GOV-051-attest-immutable-post-closure-exceptions.md` | ✅ | `E846EE101544569415AC19AE1FC5D86881A96F03471A5342CEC3C05F8C93C402` | Tek-sahip görev |
@@ -1743,8 +1745,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.3/customer-account/V13-ACC-009-independent-account-receipt.md` | ✅ | `2A4EF38EF238A26CDEBF5E68CFF4C040FE369E215C9D345CF8DC202DC3B076CD` | Tek-sahip görev |
 | `plan/v1.4/qr-transport/V14-QRT-001-public-relay-transport.md` | ✅ | `C19D8FB09D016224C9C109F932C1B30C9713AF95B9B5B866D07896583896683D` | Tek-sahip görev |
 | `plan/v1.5/runbooks/V15-RUN-002-independent-runbook-execution.md` | ✅ | `395D4943279B9425D31A4FD811B61C6B6A93E35A43CF04FA4824C3F02B67E602` | Tek-sahip görev |
-| `plan/v1/catalog/V1-CAT-003-nonnegative-current-price.md` | ✅ | `B6304307F198FB26D23CF28BE0D6D4B9526E058ABA708629B87E4C7EA9FF6523` | Tek-sahip görev |
-| `plan/v1/catalog/V1-CAT-004-catalog-baseline-reacceptance.md` | ✅ | `B3E7140542BA1DF5E7168752834AC98A5B80A1F7E6E1426D877B363635F7C52C` | Tek-sahip görev |
+| `plan/v1/catalog/V1-CAT-003-nonnegative-current-price.md` | ✅ | `6493F916CF8B1A4FB0BDD2E2476DACF386745807F252D0D688CCE75A4A65122A` | Tek-sahip görev |
+| `plan/v1/catalog/V1-CAT-004-catalog-baseline-reacceptance.md` | ✅ | `CB6A92EA6AD8850166729E13718BB33DE593394F36D0F05ED65A1A0818D3E401` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-003-agent-task-scope-enforcement.md` | ✅ | `3930AD5B39783A2C6965D8D528DAD1A8460516A8348FB2461FC24B2A55B7287C` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-004-host-migration-composition.md` | ✅ | `CE4898EC0C14BA823E436534B3450A872CF082496C60DF0D6FFFBDD6F1C99669` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md` | ✅ | `0D864E5256A77BCF4EE9F384192864D4D7A2CFD6D5B233F2AB3A20424EAEBE00` | Tek-sahip görev |
@@ -1753,38 +1755,39 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/foundation/V1-FND-008-audit-remediation-round2.md` | ✅ | `082F50FF1B5C5DD24C108922D1607C305FEA272FF055F176FD80B302AB2A3467` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md` | ✅ | `987B9142F166B4DC0D14A81C8F4E8B19ABF48CA9E0F06BB0CFF58798DC295D34` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md` | ✅ | `78F2C976BA22B9F17C6556DD380BB1A5C68CA24E57E8F7B7B8112DB3A3F40B68` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-011-transaction-outbox-atomicity.md` | ✅ | `599A0FD73C9B102D3F886552BBBCEB6001D4FB750E60E77BBFE5E5A5591CCEA2` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-011-transaction-outbox-atomicity.md` | ✅ | `E6FAC3ECD8891D798027976A1EA77D5432BD75715BF7989A6778A1AA2F70F959` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-012-runtime-migration-manifest.md` | ✅ | `1A6AE8A1C70F7FDE2C7A1720A446D17135FBAC19A96A81AE2D2C594C0FBF1213` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-013-host-composition-constructability.md` | ✅ | `36827266B0F29844B76D7ECBF3987E4E97DC5ED16A35CB24D32113E171449E65` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-014-retry-sql-identifier-hardening.md` | ✅ | `CF1D16222F2FC1B8D23E8572BDAEAA018C1C2B930C0DBA200DB0EF85F6B592EC` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-015-inbox-idempotency-contract.md` | ✅ | `3717B80DEEB0EEA20AE6359F9C8059B5F0B8B6C5868C0AF534944C59864BE69D` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-016-markdownlint-format-remediation.md` | ✅ | `4BEB3DE1D2BBFC85DF56BA2C8D24273C02E113F45DCA8FED5D8C721914531391` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-017-host-data-source-bootstrap.md` | ✅ | `745C06E38B6163DD9E02D1CB05267E89286674CA11AFE5934D06729506BC3395` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-018-atomic-idempotency-execution.md` | ✅ | `FC07E4D0AFD51ECE82BCA03ED76351940AA7A93BF17510BBD7B770B222952776` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-019-message-lease-fencing.md` | ✅ | `1CE5608DE3BAB44168CCA3232E9D814FA8F19CD94759680F9C7138781D0F1CBE` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-020-rollback-exhaustion.md` | ✅ | `DA358D112AB10329DAE5EBDBC219DA2CB573918FCDF131DA7B4E10CB8AAD5C73` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-021-postgresql-extension-integration.md` | ✅ | `B165FDADF0D2C98456295292A49BE706D8C861C1C281AFEB784280CC0709957C` | Tek-sahip görev |
-| `plan/v1/foundation/V1-FND-022-table-module-integration.md` | ✅ | `B71778F8397993A2D1AA985E4E503ED5CEF74014296C465E1ACB358F25EC4B50` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-017-host-data-source-bootstrap.md` | ✅ | `B0103339EEBBF45666BCECB8B7522E0F3903BCD79921F776725B3D7010F5E090` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-018-atomic-idempotency-execution.md` | ✅ | `CC890374F15A52BC6ED5E2AEEE0D99C68147186006301C59E592E562B523D4D3` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-019-message-lease-fencing.md` | ✅ | `B4F090EBE0153689EC993144992DD8650F262374853EED7DCE5CCD159364D83E` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-020-rollback-exhaustion.md` | ✅ | `1243744B391A9F97D6655C417F63AE10BC41F7FCA391E5BB256030BF49DE678A` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-021-postgresql-extension-integration.md` | ✅ | `BAB0526ED228998CC19DDF82805F2E82E95196147377A11F801C776CCBF440FC` | Tek-sahip görev |
+| `plan/v1/foundation/V1-FND-022-table-module-integration.md` | ✅ | `ED4F66883C6B9FCEDD19D97344B596EDC9C5E04E65ED5554CC360E1F51BF1DC8` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-023-solution-test-discovery.md` | ✅ | `23F1A06407376A10856937DF3FA3DF6C5AC150C853962EB0854D92376DF742E1` | Tek-sahip görev |
 | `plan/v1/foundation/V1-FND-024-host-module-reachability.md` | ✅ | `CF9B9905192AEBDDD2DDD24BE56011899D00061CAE2494A88E57C71CE482D1BC` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md` | ✅ | `EFC074826264CFFD48E6B7D6DB7C1E0B1CB4CD7C75C763BAF5A05615311A2769` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md` | ✅ | `29960A48FD68282E81699825B56A993BA04C78F56190FA18B1356E85AD43DC37` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-006-reconnect-operation-claiming.md` | ✅ | `6C7F9E60982C0704C4785A2CE302F15E45C2EA521C34B6DDC27ABF047D788777` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-007-session-revocation-linearization.md` | ✅ | `E44248ACC23E14BC72EEF8881F02D820F0C44DC807F3BC93C601E09C7F2AC22C` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md` | ✅ | `165180E0C81C6CB2C8DC532EBF6649B3997E60A3E8E1088FDFCA82AEC939793B` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-009-password-iteration-bounds.md` | ✅ | `A546436F938C2562DE175DD88C01C9D6E2775F719212D3BA984926A41A4BC528` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-010-login-work-factor-contract.md` | ✅ | `5FA8758C067130EEC843B4DE12D02F252375BC9B0A632DFE6081610E40F5AA9D` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-011-login-session-integration.md` | ✅ | `6150A6A20A637E2FBB07E13355DB0C63AEBEC2A2CB3D53899356A4AA1C059319` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-012-device-session-lifetime.md` | ✅ | `CAE8DBDC5415C4428EA4811C26700A111CCEACAE037E0C9DC4CF51588C651E71` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md` | ✅ | `3FC379AAA3A6E0BEE969A54FA7B83B02C95BF0383EE858BAEFB446D4308F2B74` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-014-identity-baseline-reacceptance.md` | ✅ | `467011DD0CF1DA22FD82D9D4564E6AA3BDC9C8E28BBF1F74FDAEA71972560A4D` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-006-reconnect-operation-claiming.md` | ✅ | `630A1950558D73EF84B0D2FAA9D6A50C3E5E6CAD63A53668618BBC7AA0510BD0` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-007-session-revocation-linearization.md` | ✅ | `2C3471F698FFDD442F281363201C866D517F754DBD99C87D2D28BB5F69BED250` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md` | ✅ | `4FEAABE7FA932FD6D4B27222DC0AA3733DCA395EF4340D9BBDD7A2A23F4B37F1` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-009-password-iteration-bounds.md` | ✅ | `403A1BE96E1F20E0222EFF2AF36D7A8B1B425E4D6F02A1CDE5D206E6F6E6EF6A` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-010-login-work-factor-contract.md` | ✅ | `14A5BF47596768A8510A8A2E6FFA8CA1262D5E5383F4E3BE5244439193A143D9` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-011-login-session-integration.md` | ✅ | `599919C1050A080B03AFD0C2D0810F92F8BB221D9797A39CDB1A5FE6392CA191` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-012-device-session-lifetime.md` | ✅ | `0ABDFD38CCDE6BDD9263900D30A68FDFCEB8E316868EA0D4F70E76A0A5C9B579` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md` | ✅ | `161C344577F8921B62E564304CFE2DB38CF0D9BCA34800F181B907E303F0A9A2` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-014-identity-baseline-reacceptance.md` | ✅ | `91F9877B1A4DAC453E6C9E81A1270352BE3DA4DA69BF839BC679B6E69017EA5E` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-001-consolidated-remediation.md` | ✅ | `006C1F3EE018CF9B031D249E44F2350A0CDE4BC87D2A641A8A4CBE55CAF280D1` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `24623A6E669EB2C9DF00914C529190C888D2B22D4282BE594200AB24F6FF362A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6D1025A8A7CC567F02E2512A79F379E551A0A0F7BBC31E13664509C706F2C0C8` | Tek-sahip görev |
-| `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `A5B0B306154E335A4CEFB05EE804F1D83ACE1C196906FDEFE13C92D3DB563709` | Tek-sahip görev |
-| `plan/v1/security-foundation/V1-SEC-004-migration-secret-redaction.md` | ✅ | `CCE7DA3FF42F099DF0F9EC8C94AE048286FF045DB7EBA464907810864EC3ADFE` | Tek-sahip görev |
-| `plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md` | ✅ | `CEDC537A49D85E7CAD6AAA5A7C8D96F2092C4793A47333710FEE100C94B11F63` | Tek-sahip görev |
-| `plan/v1/security-foundation/V1-SEC-006-sanitized-handler-errors.md` | ✅ | `958FC27A91850F8A5EC34EB1EB2EF8FFF845EC1AD714B8D1A885A98D167EABDD` | Tek-sahip görev |
-| `plan/v1/table-management/V1-TBL-006-table-lifecycle-reacceptance.md` | ✅ | `96A9FD987B2D7AA1BA82EC62AA84B8E9D70B89468A2224C089B5BC155A375486` | Tek-sahip görev |
+| `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D34024736579411AAC65D11B12BCBA96927101FCF3BA4E1E836DF543735ADD28` | Tek-sahip görev |
+| `plan/v1/security-foundation/V1-SEC-004-migration-secret-redaction.md` | ✅ | `E614DA667C6A9501D3DE9B486671AB05949D40835C3B2FAA1FBB0FD070ED57EA` | Tek-sahip görev |
+| `plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md` | ✅ | `595A7FD6A08C8D2B46CABAD3A4B8C4D5494341FDA9552EC62D26DE0EFAFAFAA1` | Tek-sahip görev |
+| `plan/v1/security-foundation/V1-SEC-006-sanitized-handler-errors.md` | ✅ | `8A14D11AE5FA220DA6858FA69567C9724344BF07A833AD1DCC8913BCDE28BBFF` | Tek-sahip görev |
+| `plan/v1/table-management/V1-TBL-006-table-lifecycle-reacceptance.md` | ✅ | `BBDFADC66C4F08E3112B3C57FF18E5DD2F6F6AB3A51838C4EAC54822CC29DC8F` | Tek-sahip görev |
 | `plan/v2.0/release/V20-REL-004-production-deployment.md` | ✅ | `D87BE8B6ECF771AE9F0C10590041865AA61E91707F696EF86D12AE64921713B9` | Tek-sahip görev |
 | `plan/v2.0/release/V20-REL-005-post-go-live-observation.md` | ✅ | `18DA1BFFA21344C9EFEF7E8138B805503FE3376946A7AB35902339DFFC52C8EF` | Tek-sahip görev |
 | `plan/AUDIT_REPORT.md` | ✅ | `plan/AUDIT_MANIFEST.json` içinde | Bu satır bazlı denetim kaydı |
@@ -1796,5 +1799,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `524` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `527` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

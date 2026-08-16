@@ -1,8 +1,8 @@
 # V0-GOV-045 - Refresh and verify the committed HEAD audit manifest
 
 - Task ID: V0-GOV-045
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v0-gov-045
 - Work type: validation
 - Surface state: Existing
 

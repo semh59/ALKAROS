@@ -1,0 +1,9 @@
+Manifest Markdown files: 527
+UTF-8 full reads: 527
+Markdown lines: 37177
+Markdown bytes: 2317015
+Audit baseline rows: 211
+Audit finding IDs: 1827
+Audit added-file hashes: 315
+Manifest errors: 0
+Exit code: 0

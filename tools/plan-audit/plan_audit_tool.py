@@ -2527,7 +2527,7 @@ def validate_plan() -> None:
         path: list[str],
     ) -> None:
         dependency_status = task_statuses[dependency_id]
-        if dependency_status != "Done":
+        if dependency_status not in ("Done", "NotApplicable"):
             if len(path) == 2:
                 errors.append(
                     f"DONE_DEPENDENCY_NOT_FINAL {task_id}: "
