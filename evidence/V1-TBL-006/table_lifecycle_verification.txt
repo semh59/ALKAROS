@@ -1,0 +1,10 @@
+Task: V1-TBL-006
+Status: Done
+Assignee: Antigravity-v1-tbl-006
+Date: 2026-08-16
+Verdict: VERIFIED
+
+Table Lifecycle Baseline Reacceptance:
+- CODE-013, GOV-010, GOV-011, GOV-012 finding chain verified on clean candidate.
+- Tables state transition matrix, concurrent repository updates, and lifecycle verified.
+- Tables test suite passed (51/51 tests).

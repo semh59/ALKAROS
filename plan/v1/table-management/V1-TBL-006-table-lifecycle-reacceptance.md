@@ -1,8 +1,8 @@
 # V1-TBL-006 - Reaccept the complete Table lifecycle baseline
 
 - Task ID: V1-TBL-006
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-tbl-006
 - Work type: validation
 - Surface state: Existing
 

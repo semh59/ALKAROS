@@ -1,0 +1,2 @@
+Passed!  - Failed: 0, Passed: 51, Skipped: 0, Total: 51, Duration: 574 ms - ALKAROS.Tables.TableLifecycle.Tests.dll (net8.0)
+Exit code: 0
