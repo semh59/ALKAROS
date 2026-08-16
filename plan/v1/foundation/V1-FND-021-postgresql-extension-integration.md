@@ -1,8 +1,8 @@
 # V1-FND-021 - Integrate the approved PostgreSQL extension lifecycle
 
 - Task ID: V1-FND-021
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-fnd-021
 - Work type: integration
 - Surface state: Planned
 

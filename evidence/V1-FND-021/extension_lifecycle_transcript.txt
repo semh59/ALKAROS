@@ -1,0 +1,13 @@
+Task: V1-FND-021
+Status: Done
+Assignee: Antigravity-v1-fnd-021
+Date: 2026-08-16
+
+Lifecycle Verification:
+1. Fresh Empty DB:
+   - Forward 012-btree-gist-ownership.up.sql -> btree_gist installed.
+   - Rollback 012-btree-gist-ownership.down.sql -> btree_gist dropped cleanly.
+2. Pre-existing Extension:
+   - Pre-installed btree_gist -> 012.up.sql succeeds idempotently.
+3. Forward-Down-Forward Symmetry:
+   - Clean state transitions verified on PostgreSQL 18.
