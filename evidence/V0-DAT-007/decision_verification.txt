@@ -1,0 +1,12 @@
+Task: V0-DAT-007
+Status: Done
+Assignee: Antigravity-v0-dat-007
+Date: 2026-08-16
+Approver: Semih (product owner) — 2026-08-16
+
+Decision Summary:
+- Selected Ownership: Dedicated Foundation Migration (012-btree-gist-ownership)
+- Forward Action: CREATE EXTENSION IF NOT EXISTS btree_gist;
+- Reverse Action: DROP EXTENSION IF EXISTS btree_gist;
+- Declared Residue: Pre-existing / external shared extensions remain safe without failing rollback.
+- Consumers: V1-FND-021, V1-CAT-002, V1-CAT-003.

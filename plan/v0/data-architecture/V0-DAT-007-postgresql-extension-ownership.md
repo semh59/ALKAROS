@@ -1,8 +1,8 @@
 # V0-DAT-007 - Define PostgreSQL extension ownership and rollback policy
 
 - Task ID: V0-DAT-007
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v0-dat-007
 - Work type: decision
 - Surface state: Planned
 
