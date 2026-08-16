@@ -1,8 +1,8 @@
 # V1-FND-022 - Independently verify the Tables candidate integration
 
 - Task ID: V1-FND-022
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-fnd-022
 - Work type: integration
 - Surface state: Existing
 
