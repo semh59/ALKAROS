@@ -1,8 +1,8 @@
 # V1-IAM-012 - Independently verify bounded device-session lifetime
 
 - Task ID: V1-IAM-012
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-iam-012
 - Work type: integration
 - Surface state: Existing
 

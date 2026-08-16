@@ -1,0 +1,9 @@
+Task: V1-IAM-012
+Status: Done
+Assignee: Antigravity-v1-iam-012
+Date: 2026-08-16
+
+Device Session Lifetime Verification:
+- Created 013-device-session-lifetime.up.sql and 013-device-session-lifetime.down.sql.
+- Constraint chk_device_sessions_lifetime (expires_at > created_at) enforced in PostgreSQL.
+- Forward/down/forward migration symmetry and invalid duration rejection verified with unit/integration tests.
