@@ -1,8 +1,8 @@
 # V0-GOV-043 - Close the dotnet-format failure
 
 - Task ID: V0-GOV-043
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v0-gov-043
 - Work type: validation
 - Surface state: Existing
 
