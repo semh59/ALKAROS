@@ -1,8 +1,8 @@
 # V0-GOV-047 - Embed and verify build provenance
 
 - Task ID: V0-GOV-047
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v0-gov-047
 - Work type: validation
 - Surface state: Existing
 

@@ -1,0 +1,11 @@
+Task: V0-GOV-047
+Status: Done
+Assignee: Antigravity-v0-gov-047
+Date: 2026-08-16
+
+Build Provenance Verification:
+- Created tools/build-provenance/verify_build_provenance.py.
+- Validated embedded repository commit across all 30 production assemblies.
+- All 30 production Release assemblies match candidate SHA.
+- Positive and negative fixtures in test_build_provenance.py passed (4/4 passed).
+- Plan audit validate exit code 0.
