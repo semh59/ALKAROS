@@ -1,0 +1,2 @@
+Passed!  - Failed: 0, Passed: 23, Skipped: 0, Total: 23, Duration: 83 ms - ALKAROS.SensitiveData.Tests.dll (net8.0)
+Exit code: 0

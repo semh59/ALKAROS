@@ -1,8 +1,8 @@
 # V1-SEC-005 - Independently verify immutable data classification
 
 - Task ID: V1-SEC-005
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-sec-005
 - Work type: implementation
 - Surface state: Existing
 
