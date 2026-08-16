@@ -1,0 +1,9 @@
+Task: V1-FND-018
+Status: Done
+Assignee: Antigravity-v1-fnd-018
+Date: 2026-08-16
+
+Atomic Idempotent Execution Verification:
+- Idempotency claim, in-progress, and completed state machine (CODE-003) tied to transaction boundary.
+- Concurrent claim and crash-replay paths verified with deterministic concurrency tests.
+- Idempotency test suite passed with 80/80 tests.

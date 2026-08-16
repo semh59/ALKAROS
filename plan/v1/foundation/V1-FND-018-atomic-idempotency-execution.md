@@ -1,8 +1,8 @@
 # V1-FND-018 - Independently verify atomic idempotent execution
 
 - Task ID: V1-FND-018
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-fnd-018
 - Work type: implementation
 - Surface state: Existing
 

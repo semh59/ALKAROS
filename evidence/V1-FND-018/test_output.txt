@@ -1,0 +1,2 @@
+Passed!  - Failed: 0, Passed: 80, Skipped: 0, Total: 80, Duration: 1 s - ALKAROS.Idempotency.Tests.dll (net8.0)
+Exit code: 0
