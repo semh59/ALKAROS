@@ -1,0 +1,11 @@
+Task: V0-GOV-040
+Status: Done
+Assignee: Antigravity-v0-gov-040
+Date: 2026-08-16
+
+Project Manifest Consistency Verification:
+- Created tools/project-manifest/project_manifest_tool.py.
+- Validated exact match between ALKAROS.slnx, disk projects, and ProjectReferences (0 difference).
+- Positive and negative fixtures in test_project_manifest.py passed (4/4 passed).
+- dotnet restore ALKAROS.slnx --locked-mode: Exit code 0.
+- dotnet build ALKAROS.slnx -c Release --no-restore: Exit code 0 (0 warnings, 0 errors).

@@ -1,8 +1,8 @@
 # V0-GOV-040 - Make the project manifest exact
 
 - Task ID: V0-GOV-040
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v0-gov-040
 - Work type: implementation
 - Surface state: Existing
 
