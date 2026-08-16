@@ -395,16 +395,16 @@ class TestC54ApplicationAdmission:
 
     def test_other_v1_application_is_not_admitted(self, tmp_path: Path) -> None:
         workspace = _copy_validation_workspace(tmp_path)
-        path = _task_path(workspace, "V1-FND-022")
+        path = _task_path(workspace, "V1-ORD-001")
         _replace(path, "- Status: Planned", "- Status: InProgress")
         _replace(path, "- Assignee: Unassigned (exactly one person)", "- Assignee: test-session")
         gate = _task_path(workspace, "V0-GOV-040")
-        _replace(gate, "- Status: Planned", "- Status: Blocked")
+        _replace(gate, "- Status: Done", "- Status: Blocked")
 
         result = _run_validate(workspace)
 
         assert result.returncode == 1
-        assert "APPLICATION_STARTED_BEFORE_V0_EXIT V1-FND-022" in result.stdout
+        assert "APPLICATION_STARTED_BEFORE_V0_EXIT V1-ORD-001" in result.stdout
 
 
 class TestProductDecisionSourceBasis:

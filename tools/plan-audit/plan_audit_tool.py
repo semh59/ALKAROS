@@ -2521,6 +2521,12 @@ def validate_plan() -> None:
         for task_id, (_, preamble, _, _) in tasks.items()
     }
 
+    c54_admitted_as_final = (
+        task_statuses.get(_C54_APPLICATION_TASK_ID) == "InProgress"
+        and not c54_application_admission_errors(tasks)
+        and not validate_remediation_admission_tuple()
+    )
+
     def find_non_final_ancestors(
         task_id: str,
         dependency_id: str,
@@ -2528,6 +2534,8 @@ def validate_plan() -> None:
     ) -> None:
         dependency_status = task_statuses[dependency_id]
         if dependency_status not in ("Done", "NotApplicable"):
+            if c54_admitted_as_final and dependency_id == _C54_APPLICATION_TASK_ID:
+                return
             if len(path) == 2:
                 errors.append(
                     f"DONE_DEPENDENCY_NOT_FINAL {task_id}: "
