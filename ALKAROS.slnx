@@ -42,4 +42,6 @@
   <Project Path="tests/Modules/Identity/DeviceSessions/ALKAROS.Identity.DeviceSessions.Tests.csproj" />
   <Project Path="tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj" />
   <Project Path="tests/Modules/Catalog/Pricing/ALKAROS.Catalog.Pricing.Tests.csproj" />
+  <Project Path="tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj" />
+  <Project Path="tests/Modules/Orders/OrderAggregate/ALKAROS.Orders.OrderAggregate.Tests.csproj" />
 </Solution>

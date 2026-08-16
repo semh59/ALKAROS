@@ -1,0 +1,21 @@
+Command: dotnet test D:\PROJECT\ALKAROS\ALKAROS.slnx --no-build
+Exit code: 0
+Result: ALL PASSING. Total 554 tests, 0 failed, 0 skipped.
+
+Per-assembly summary:
+  ALKAROS.Architecture.Tests.dll             5   ok
+  ALKAROS.Idempotency.Tests.dll             80   ok
+  ALKAROS.Host.Tests.dll (Manifest)         62   ok
+  ALKAROS.TransactionOutboxIntegration.Tests.dll 12 ok
+  ALKAROS.Transactions.Tests.dll            25   ok
+  ALKAROS.Catalog.ProductCatalog.Tests.dll  77   ok
+  ALKAROS.SensitiveData.Tests.dll           23   ok
+  ALKAROS.Secrets.Tests.dll                 21   ok
+  ALKAROS.Catalog.Pricing.Tests.dll         27   ok
+  ALKAROS.Identity.Authentication.Tests.dll 51   ok
+  ALKAROS.Identity.Authorization.Tests.dll  20   ok
+  ALKAROS.Identity.DeviceSessions.Tests.dll 17   ok
+  ALKAROS.Orders.OrderAggregate.Tests.dll   83   ok
+  ALKAROS.Tables.TableLifecycle.Tests.dll   51   ok
+
+V1-ORD-001 specific: ALKAROS.Orders.OrderAggregate.Tests 83/83 (domain contract matrix incl. forbidden transitions, snapshot immutability after catalog change, void policy, submit activation; Npgsql round-trip, optimistic concurrency, CHECK/FK violations, up/down migration rollback) against a scratch PostgreSQL database (prefix alkaros_ord001_).

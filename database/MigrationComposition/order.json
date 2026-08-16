@@ -51,6 +51,18 @@
       "phase": "A",
       "tables": ["device_sessions", "session_operations"],
       "deferredConstraints": []
+    },
+    {
+      "id": "010",
+      "phase": "A",
+      "tables": ["zones", "tables"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "011",
+      "phase": "A",
+      "tables": ["orders", "order_items", "order_item_modifiers", "order_status_history"],
+      "deferredConstraints": []
     }
   ]
 }

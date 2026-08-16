@@ -1,0 +1,5 @@
+Command: dotnet build D:\PROJECT\ALKAROS\ALKAROS.slnx
+Exit code: 0
+Result: Build succeeded. 0 Warnings, 0 Errors (45 projects restored, full solution build ok).
+Notable assemblies: ALKAROS.Orders -> src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll, ALKAROS.Orders.OrderAggregate.Tests -> tests\Modules\Orders\OrderAggregate\bin\Debug\net8.0\ALKAROS.Orders.OrderAggregate.Tests.dll, ALKAROS.Host.Tests (manifest), ALKAROS.Architecture.Tests.
+Prior to this build, `dotnet restore ALKAROS.slnx --force-evaluate` regenerated lock files for all projects referencing ALKAROS.Orders after Npgsql was added to ALKAROS.Orders.csproj (NU1004 resolution). Locked mode (RestoreLockedMode) otherwise rejected the changed dependency graph.
