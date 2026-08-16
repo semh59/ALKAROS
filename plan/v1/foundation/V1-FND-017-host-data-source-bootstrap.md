@@ -1,8 +1,8 @@
 # V1-FND-017 - Independently verify Host data-source bootstrap
 
 - Task ID: V1-FND-017
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-fnd-017
 - Work type: integration
 - Surface state: Existing
 

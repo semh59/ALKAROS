@@ -1,0 +1,2 @@
+Passed!  - Failed: 0, Passed: 65, Skipped: 0, Total: 65, Duration: 14 s - ALKAROS.Host.Tests.dll (net8.0)
+Exit code: 0
