@@ -1,0 +1,229 @@
+name: chatgpt-sandbox-verify
+
+on:
+  push:
+    branches:
+      - chatgpt/sandbox-verify-20260817
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: .NET + PostgreSQL 18.4 full verification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: alkaros_ci_pw
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      ALKAROS_TEST_PG_HOST: localhost
+      ALKAROS_TEST_PG_PORT: "5432"
+      ALKAROS_TEST_PG_USER: postgres
+      ALKAROS_TEST_PG_PASSWORD: alkaros_ci_pw
+      ALKAROS_DB_PASSWORD: alkaros_ci_pw
+      PGPASSWORD: alkaros_ci_pw
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 10 SDK and .NET 8 runtime
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            10.0.302
+            8.0.x
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PostgreSQL 18 client
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y curl ca-certificates
+          sudo install -d /usr/share/postgresql-common/pgdg
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc >/dev/null
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-18
+          echo "/usr/lib/postgresql/18/bin" >> "$GITHUB_PATH"
+
+      - name: Record exact sandbox toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .sandbox-results/logs
+          {
+            echo "=== git ==="
+            git rev-parse HEAD
+            git status --short
+            echo "=== dotnet ==="
+            dotnet --version
+            dotnet --info
+            echo "=== psql ==="
+            /usr/lib/postgresql/18/bin/psql --version
+            echo "=== postgres server ==="
+            cid="$(docker ps --filter ancestor=postgres:18.4 --format '{{.ID}}' | head -n 1)"
+            test -n "$cid"
+            docker exec "$cid" postgres --version
+            /usr/lib/postgresql/18/bin/psql -h localhost -U postgres -d postgres -Atc "select version();"
+          } 2>&1 | tee .sandbox-results/logs/toolchain.log
+
+      - name: Restore every project in locked mode
+        id: restore
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p .sandbox-results/logs
+          fail=0
+          count=0
+          : > .sandbox-results/restore-summary.txt
+          while IFS= read -r -d '' proj; do
+            count=$((count + 1))
+            safe="$(echo "$proj" | tr '/. ' '___')"
+            echo "===== RESTORE $proj =====" | tee -a .sandbox-results/restore-summary.txt
+            dotnet restore "$proj" --locked-mode --nologo 2>&1 | tee ".sandbox-results/logs/restore-${safe}.log"
+            rc=${PIPESTATUS[0]}
+            echo "$proj rc=$rc" | tee -a .sandbox-results/restore-summary.txt
+            if [ "$rc" -ne 0 ]; then fail=1; fi
+          done < <(find src tests -type f -name '*.csproj' -print0 | sort -z)
+          echo "project_count=$count" | tee -a .sandbox-results/restore-summary.txt
+          exit "$fail"
+
+      - name: Build every project in Release with warnings as errors
+        id: build
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p .sandbox-results/logs
+          fail=0
+          count=0
+          : > .sandbox-results/build-summary.txt
+          while IFS= read -r -d '' proj; do
+            count=$((count + 1))
+            safe="$(echo "$proj" | tr '/. ' '___')"
+            echo "===== BUILD $proj =====" | tee -a .sandbox-results/build-summary.txt
+            dotnet build "$proj" -c Release --no-restore --warnaserror --nologo 2>&1 | tee ".sandbox-results/logs/build-${safe}.log"
+            rc=${PIPESTATUS[0]}
+            echo "$proj rc=$rc" | tee -a .sandbox-results/build-summary.txt
+            if [ "$rc" -ne 0 ]; then fail=1; fi
+          done < <(find src tests -type f -name '*.csproj' -print0 | sort -z)
+          echo "project_count=$count" | tee -a .sandbox-results/build-summary.txt
+          exit "$fail"
+
+      - name: Run every .NET test project against PostgreSQL 18.4
+        id: tests
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p .sandbox-results/logs .sandbox-results/trx
+          fail=0
+          count=0
+          : > .sandbox-results/test-summary.txt
+          while IFS= read -r -d '' proj; do
+            count=$((count + 1))
+            safe="$(echo "$proj" | tr '/. ' '___')"
+            outdir=".sandbox-results/trx/$safe"
+            mkdir -p "$outdir"
+            echo "===== TEST $proj =====" | tee -a .sandbox-results/test-summary.txt
+            dotnet test "$proj" -c Release --no-build --no-restore --nologo --logger "trx;LogFileName=${safe}.trx" --results-directory "$outdir" 2>&1 | tee ".sandbox-results/logs/test-${safe}.log"
+            rc=${PIPESTATUS[0]}
+            echo "$proj rc=$rc" | tee -a .sandbox-results/test-summary.txt
+            if [ "$rc" -ne 0 ]; then fail=1; fi
+          done < <(find tests -type f -name '*.csproj' -print0 | sort -z)
+          echo "test_project_count=$count" | tee -a .sandbox-results/test-summary.txt
+          exit "$fail"
+
+      - name: Run architecture and governance Python tests
+        id: pytests
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pip install --disable-pip-version-check -q pytest
+          python -m pytest tests/Architecture -q --junitxml=.sandbox-results/architecture.xml 2>&1 | tee .sandbox-results/logs/architecture-tests.log
+
+      - name: Exercise global migration composition against PostgreSQL 18.4
+        id: migration
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p .sandbox-results/logs .sandbox-migrations
+          rm -f .sandbox-migrations/*
+          find database/migrations -type f \( -name '*.up.sql' -o -name '*.down.sql' \) -exec cp {} .sandbox-migrations/ \;
+          {
+            echo "=== flattened migrations ==="
+            find .sandbox-migrations -maxdepth 1 -type f -printf '%f\n' | sort
+            echo "=== create disposable database ==="
+            /usr/lib/postgresql/18/bin/psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS alkaros_sandbox WITH (FORCE);" -c "CREATE DATABASE alkaros_sandbox;"
+            echo "=== host migration run ==="
+            dotnet run --project src/Host/ALKAROS.Host.csproj -c Release --no-build -- --order-manifest database/MigrationComposition/order.json --migrations-dir .sandbox-migrations --db-url postgresql://postgres@localhost:5432/alkaros_sandbox --psql /usr/lib/postgresql/18/bin/psql
+            rc=$?
+            echo "host_migration_exit=$rc"
+            echo "=== schema after run ==="
+            /usr/lib/postgresql/18/bin/psql -h localhost -U postgres -d alkaros_sandbox -Atc "select schemaname||'.'||tablename from pg_tables where schemaname not in ('pg_catalog','information_schema') order by 1;"
+            exit "$rc"
+          } 2>&1 | tee .sandbox-results/logs/migration-smoke.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Write outcome summary
+        if: always()
+        shell: bash
+        run: |
+          cat > .sandbox-results/outcomes.txt <<EOF
+          commit=$(git rev-parse HEAD)
+          restore=${{ steps.restore.outcome }}
+          build=${{ steps.build.outcome }}
+          dotnet_tests=${{ steps.tests.outcome }}
+          architecture_tests=${{ steps.pytests.outcome }}
+          migration_smoke=${{ steps.migration.outcome }}
+          EOF
+          cat .sandbox-results/outcomes.txt
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alkaros-chatgpt-sandbox-results
+          path: .sandbox-results/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Final verification gate
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.restore.outcome }}" = "success"
+          test "${{ steps.build.outcome }}" = "success"
+          test "${{ steps.tests.outcome }}" = "success"
+          test "${{ steps.pytests.outcome }}" = "success"
+          test "${{ steps.migration.outcome }}" = "success"
