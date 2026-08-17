@@ -38,8 +38,8 @@ yürütülür; V1-IAM-008 kendi kod sahibi olarak kalır ve bu görevin yüzeyin
 - `tests/Modules/Catalog/ProductCatalog/DomainTests.cs`
 - `tests/Modules/Catalog/ProductCatalog/PostgresRepositoryTests.cs`
 - `tests/BuildingBlocks/Transactions/Execution/TransactionExecutionTests.cs`
-- `database/migrations/V1/V1-CAT-003/014-catalog-current-price-bound.up.sql`
-- `database/migrations/V1/V1-CAT-003/014-catalog-current-price-bound.down.sql`
+- `database/migrations/V1/V1-CAT-003/022-catalog-current-price-bound.up.sql`
+- `database/migrations/V1/V1-CAT-003/022-catalog-current-price-bound.down.sql`
 - `evidence/V1-RMD-001/**`
 
 ## In scope

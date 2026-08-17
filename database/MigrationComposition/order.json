@@ -63,6 +63,72 @@
       "phase": "A",
       "tables": ["orders", "order_items", "order_item_modifiers", "order_status_history"],
       "deferredConstraints": []
+    },
+    {
+      "id": "012",
+      "phase": "A",
+      "tables": ["btree_gist"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "013",
+      "phase": "A",
+      "tables": ["device_sessions"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "014",
+      "phase": "A",
+      "tables": ["kitchen_tickets", "kitchen_ticket_items"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "015",
+      "phase": "A",
+      "tables": ["audit_events"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "016",
+      "phase": "A",
+      "tables": ["printers", "printer_routes"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "017",
+      "phase": "A",
+      "tables": ["print_jobs"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "018",
+      "phase": "A",
+      "tables": ["physical_print_deliveries"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "019",
+      "phase": "A",
+      "tables": ["bills", "bill_items"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "020",
+      "phase": "A",
+      "tables": ["bill_allocations"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "021",
+      "phase": "A",
+      "tables": ["bill_adjustments"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "022",
+      "phase": "A",
+      "tables": ["products"],
+      "deferredConstraints": []
     }
   ]
 }

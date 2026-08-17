@@ -12,6 +12,7 @@ public static class TransactionConcurrencyTests
     [Fact]
     public static async Task ParallelRootTransactionsDoNotLeakAmbientState()
     {
+        var heldStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var heldResource = new RecordingResource("held");
         var fastResource = new RecordingResource("fast");
@@ -22,8 +23,11 @@ public static class TransactionConcurrencyTests
         {
             heldId = context.Id;
             context.Enlist(heldResource);
+            heldStarted.SetResult();
             await gate.Task;
         });
+
+        await heldStarted.Task;
 
         var fastTask = TransactionContext.RunAsync(context =>
         {
@@ -79,6 +83,7 @@ public static class TransactionConcurrencyTests
     [Fact]
     public static async Task ParallelRootWithNestedJoinKeepsSeparateScopes()
     {
+        var firstStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var firstResource = new RecordingResource("first-inner");
         var secondResource = new RecordingResource("second-inner");
@@ -88,9 +93,12 @@ public static class TransactionConcurrencyTests
             await TransactionContext.RunAsync(async nested =>
             {
                 nested.Enlist(firstResource);
+                firstStarted.SetResult();
                 await gate.Task;
             });
         });
+
+        await firstStarted.Task;
 
         var secondTask = TransactionContext.RunAsync(async context =>
         {

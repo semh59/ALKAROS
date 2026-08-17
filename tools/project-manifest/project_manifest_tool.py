@@ -67,7 +67,7 @@ def parse_project_references(csproj_path: Path) -> Set[Path]:
         for elem in root.iter("ProjectReference"):
             include = elem.attrib.get("Include")
             if include:
-                ref_path = (csproj_path.parent / include).resolve()
+                ref_path = (csproj_path.parent / include.replace("\\", "/")).resolve()
                 references.add(ref_path)
     except Exception as e:
         print(f"Error parsing {csproj_path}: {e}", file=sys.stderr)

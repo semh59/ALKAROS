@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 import sys
@@ -396,8 +397,10 @@ class TestC54ApplicationAdmission:
     def test_other_v1_application_is_not_admitted(self, tmp_path: Path) -> None:
         workspace = _copy_validation_workspace(tmp_path)
         path = _task_path(workspace, "V1-ORD-001")
-        _replace(path, "- Status: Planned", "- Status: InProgress")
-        _replace(path, "- Assignee: Unassigned (exactly one person)", "- Assignee: test-session")
+        text = path.read_text(encoding="utf-8")
+        text = re.sub(r"- Status: .*", "- Status: InProgress", text, count=1)
+        text = re.sub(r"- Assignee: .*", "- Assignee: test-session", text, count=1)
+        path.write_text(text, encoding="utf-8", newline="\n")
         gate = _task_path(workspace, "V0-GOV-040")
         _replace(gate, "- Status: Done", "- Status: Blocked")
 

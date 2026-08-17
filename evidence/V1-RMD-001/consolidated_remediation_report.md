@@ -21,7 +21,7 @@
 
 4. **Product Non-Negative Price Validation & Check Constraint**:
    - Added validation `if (currentPrice is < 0) throw new ArgumentOutOfRangeException(...)` in `Product.cs`.
-   - Created migration `014-catalog-current-price-bound.up.sql` and `014-catalog-current-price-bound.down.sql` with check constraint `chk_products_current_price_nonnegative`.
+   - Created migration `022-catalog-current-price-bound.up.sql` and `022-catalog-current-price-bound.down.sql` with check constraint `chk_products_current_price_nonnegative`.
    - Verified via domain tests and repository database check constraint tests.
 
 5. **Migration Composition Manifest Tables Fix**:

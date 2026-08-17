@@ -44,4 +44,14 @@
   <Project Path="tests/Modules/Catalog/Pricing/ALKAROS.Catalog.Pricing.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj" />
   <Project Path="tests/Modules/Orders/OrderAggregate/ALKAROS.Orders.OrderAggregate.Tests.csproj" />
+  <Project Path="tests/Modules/Orders/SubmitOrder/ALKAROS.Orders.SubmitOrder.Tests.csproj" />
+  <Project Path="tests/Modules/Orders/ItemExceptions/ALKAROS.Orders.ItemExceptions.Tests.csproj" />
+  <Project Path="tests/Modules/Kitchen/TicketLifecycle/ALKAROS.Kitchen.TicketLifecycle.Tests.csproj" />
+  <Project Path="tests/Modules/Kitchen/Routing/ALKAROS.Kitchen.Routing.Tests.csproj" />
+  <Project Path="tests/Modules/Kitchen/PrintQueue/ALKAROS.Kitchen.PrintQueue.Tests.csproj" />
+  <Project Path="tests/Modules/Kitchen/PhysicalPrintRecovery/ALKAROS.Kitchen.PhysicalPrintRecovery.Tests.csproj" />
+  <Project Path="tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj" />
+  <Project Path="tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj" />
+  <Project Path="tests/Modules/Billing/Adjustments/ALKAROS.Billing.Adjustments.Tests.csproj" />
+  <Project Path="tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj" />
 </Solution>
