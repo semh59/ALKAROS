@@ -1,8 +1,8 @@
 # V1-BIL-002 - Implement split-bill design persistence
 
 - Task ID: V1-BIL-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-bil-002
 - Work type: implementation
 - Surface state: Planned
 
