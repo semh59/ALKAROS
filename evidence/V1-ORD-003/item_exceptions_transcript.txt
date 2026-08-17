@@ -1,0 +1,30 @@
+﻿Task: V1-ORD-003
+Status: Done
+Assignee: Antigravity-v1-ord-003
+Date: 2026-08-17
+
+Item Void and Complimentary Policy Verification:
+1. Void Policy Enforcement (PDF:I.24, PDF:I.28.1, V0-DOM-006):
+   - Void eligibility: Only an Active item before kitchen processing (KitchenState == NotSent) can be voided.
+   - Late void rejection: Items in Preparing, Ready, or Served states fail closed with LateVoidRejectedException.
+   - Authority: Void requires verified Manager authority; unauthorized attempts throw UnauthorizedItemOperationException.
+   - Reason Catalog: Only recognized reasons (OperatorError, ProductUnavailable, CustomerChange, DuplicateEntry) are permitted.
+
+2. Complimentary Policy Enforcement (PDF:I.28.1, V0-DOM-006):
+   - Authority: Complimentary requires Manager authority.
+   - Zero-price outcome: Customer payable amount becomes 0 TL.
+   - Fiscal/Tax Invariant: Delivered quantity, snapshot unit price, and tax rate are preserved for tax/fiscal records.
+   - Reason Catalog: Requires recognized reason (CustomerSatisfaction, ManagerPromotion, VIPGuest, ServiceApology).
+
+3. Audit & Concurrency:
+   - Order history records transition reason, actor, and timestamp.
+   - Audit store records immutable event with before/after state snapshots.
+   - Optimistic concurrency is enforced against ExpectedRowVersion.
+
+4. Test Verification:
+   - ALKAROS.Orders.ItemExceptions.Tests: 22/22 passing.
+   - ALKAROS.Audit.EventStore.Tests: 9/9 passing.
+   - ALKAROS.Kitchen.TicketLifecycle.Tests: 10/10 passing.
+   - ALKAROS.Orders.SubmitOrder.Tests: 14/14 passing.
+   - Plan Audit Validation: 0 errors, 0 warnings.
+   - Task Scope Verification: valid (all in-scope).

@@ -1,8 +1,8 @@
 # V1-ORD-003 - Implement item void and complimentary commands
 
 - Task ID: V1-ORD-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-ord-003
 - Work type: implementation
 - Surface state: Planned
 
