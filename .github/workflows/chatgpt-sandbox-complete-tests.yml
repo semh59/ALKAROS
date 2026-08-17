@@ -1,0 +1,179 @@
+name: chatgpt-sandbox-complete-tests
+
+on:
+  push:
+    branches: [chatgpt/sandbox-verify-20260817]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  complete:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: alkaros_ci_pw
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      ALKAROS_TEST_PG_HOST: localhost
+      ALKAROS_TEST_PG_PORT: "5432"
+      ALKAROS_TEST_PG_USER: postgres
+      ALKAROS_TEST_PG_PASSWORD: alkaros_ci_pw
+      ALKAROS_DB_PASSWORD: alkaros_ci_pw
+      PGPASSWORD: alkaros_ci_pw
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            10.0.302
+            8.0.x
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PostgreSQL 18 client
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y curl ca-certificates
+          sudo install -d /usr/share/postgresql-common/pgdg
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc >/dev/null
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-18
+          echo "/usr/lib/postgresql/18/bin" >> "$GITHUB_PATH"
+
+      - name: Toolchain proof
+        run: |
+          mkdir -p sandbox-complete/logs sandbox-complete/trx
+          {
+            echo "head=$(git rev-parse HEAD)"
+            echo "dotnet=$(dotnet --version)"
+            /usr/lib/postgresql/18/bin/psql --version
+            cid="$(docker ps --filter ancestor=postgres:18.4 --format '{{.ID}}' | head -1)"
+            docker exec "$cid" postgres --version
+            /usr/lib/postgresql/18/bin/psql -h localhost -U postgres -d postgres -Atc "select version();"
+          } | tee sandbox-complete/toolchain.txt
+
+      - name: Run ALL .NET test projects
+        id: alltests
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          fail=0; count=0
+          : > sandbox-complete/test-summary.txt
+          while IFS= read -r -d '' proj; do
+            count=$((count+1))
+            safe="$(echo "$proj" | tr '/. ' '___')"
+            out="sandbox-complete/trx/$safe"
+            mkdir -p "$out"
+            echo "===== $proj ====="
+            dotnet test "$proj" -c Release --nologo --logger "trx;LogFileName=${safe}.trx" --results-directory "$out" 2>&1 | tee "sandbox-complete/logs/test-${safe}.log"
+            rc=${PIPESTATUS[0]}
+            echo "$proj rc=$rc" | tee -a sandbox-complete/test-summary.txt
+            if [ "$rc" -ne 0 ]; then fail=1; fi
+          done < <(find tests -type f -name '*.csproj' -print0 | sort -z)
+          echo "test_project_count=$count" | tee -a sandbox-complete/test-summary.txt
+          echo "overall_rc=$fail" | tee -a sandbox-complete/test-summary.txt
+          exit "$fail"
+
+      - name: Repeat transaction concurrency test 30 times
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          pass=0; fail=0
+          : > sandbox-complete/transaction-repeat.txt
+          for i in $(seq 1 30); do
+            dotnet test tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj -c Release --no-restore --nologo --filter "FullyQualifiedName~ParallelRootTransactionsDoNotLeakAmbientState" >"sandbox-complete/logs/transaction-repeat-$i.log" 2>&1
+            rc=$?
+            if [ "$rc" -eq 0 ]; then pass=$((pass+1)); else fail=$((fail+1)); fi
+            echo "run=$i rc=$rc" >> sandbox-complete/transaction-repeat.txt
+          done
+          echo "repeat_pass=$pass" | tee -a sandbox-complete/transaction-repeat.txt
+          echo "repeat_fail=$fail" | tee -a sandbox-complete/transaction-repeat.txt
+          exit 0
+
+      - name: Architecture and governance tests
+        if: always()
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check -q pytest
+          python -m pytest tests/Architecture -q --junitxml=sandbox-complete/architecture.xml 2>&1 | tee sandbox-complete/logs/architecture.log
+
+      - name: Global migration smoke
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p sandbox-complete/migrations
+          find database/migrations -type f \( -name '*.up.sql' -o -name '*.down.sql' \) -exec cp {} sandbox-complete/migrations/ \;
+          /usr/lib/postgresql/18/bin/psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS alkaros_sandbox WITH (FORCE);" -c "CREATE DATABASE alkaros_sandbox;"
+          dotnet run --project src/Host/ALKAROS.Host.csproj -c Release -- --order-manifest database/MigrationComposition/order.json --migrations-dir sandbox-complete/migrations --db-url postgresql://postgres@localhost:5432/alkaros_sandbox --psql /usr/lib/postgresql/18/bin/psql 2>&1 | tee sandbox-complete/logs/migration.log
+          rc=${PIPESTATUS[0]}
+          echo "migration_rc=$rc" | tee sandbox-complete/migration-result.txt
+          exit "$rc"
+
+      - name: Aggregate exact counts
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY' | tee sandbox-complete/exact-counts.txt
+          import glob, xml.etree.ElementTree as ET
+          total=passed=failed=skipped=0
+          files=glob.glob('sandbox-complete/trx/**/*.trx', recursive=True)
+          for f in files:
+              root=ET.parse(f).getroot()
+              c=next((e for e in root.iter() if e.tag.endswith('Counters')), None)
+              if c is not None:
+                  total += int(c.attrib.get('total',0))
+                  passed += int(c.attrib.get('passed',0))
+                  failed += int(c.attrib.get('failed',0))
+                  skipped += int(c.attrib.get('notExecuted',0))
+          print(f'trx_files={len(files)}')
+          print(f'dotnet_total={total}')
+          print(f'dotnet_passed={passed}')
+          print(f'dotnet_failed={failed}')
+          print(f'dotnet_skipped={skipped}')
+          try:
+              r=ET.parse('sandbox-complete/architecture.xml').getroot()
+              print(f'python_total={r.attrib.get("tests","?")}')
+              print(f'python_failures={r.attrib.get("failures","?")}')
+              print(f'python_errors={r.attrib.get("errors","?")}')
+              print(f'python_skipped={r.attrib.get("skipped","?")}')
+          except Exception as e: print(f'python_parse_error={e}')
+          PY
+          cat sandbox-complete/test-summary.txt
+          cat sandbox-complete/transaction-repeat.txt
+          cat sandbox-complete/migration-result.txt
+
+      - name: Upload all evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alkaros-complete-sandbox-evidence
+          path: sandbox-complete/
+          if-no-files-found: error
+          retention-days: 7
