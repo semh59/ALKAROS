@@ -1,8 +1,8 @@
 # V1-OPS-001 - Implement append-only audit foundation
 
 - Task ID: V1-OPS-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-ops-001
 - Work type: implementation
 - Surface state: Planned
 
