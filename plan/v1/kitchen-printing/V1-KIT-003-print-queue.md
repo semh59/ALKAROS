@@ -1,8 +1,8 @@
 # V1-KIT-003 - Implement persistent print queue
 
 - Task ID: V1-KIT-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-kit-003
 - Work type: implementation
 - Surface state: Planned
 
@@ -39,7 +39,6 @@ Ticket/output başına tek logical PrintJob kalıcılaştırmak ve retry'ları i
 - V1-KIT-002
 - V1-FND-002
 - V1-FND-006
-- V0-PRN-001
 
 ## Deliverables
 

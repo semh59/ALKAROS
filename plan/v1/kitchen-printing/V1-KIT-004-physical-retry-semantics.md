@@ -1,8 +1,8 @@
 # V1-KIT-004 - Implement physical print retry safeguards
 
 - Task ID: V1-KIT-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-kit-004
 - Work type: implementation
 - Surface state: Planned
 
@@ -21,7 +21,7 @@ Send/ack crash window'u explicit Unknown state ve operator-controlled reprint se
 
 ## Owned surface
 
-- `src/Modules/Kitchen/PhysicalPrintRecovery/**`, `tests/Modules/Kitchen/PhysicalPrintRecovery/**`
+- `src/Modules/Kitchen/PhysicalPrintRecovery/**`, `tests/Modules/Kitchen/PhysicalPrintRecovery/**`, `database/migrations/V1/V1-KIT-004/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -35,7 +35,6 @@ Send/ack crash window'u explicit Unknown state ve operator-controlled reprint se
 ## Dependencies
 
 - V1-KIT-003
-- V0-PRN-001
 
 ## Deliverables
 

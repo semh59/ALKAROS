@@ -1,0 +1,31 @@
+Task: V1-KIT-002
+Status: Done
+Assignee: Antigravity-v1-kit-002
+Date: 2026-08-17
+
+Deterministic Printer Routing Implementation & Verification (V0-DOM-011 / V1-KIT-002):
+1. Precedence Hierarchy:
+   - Evaluates routes in strict specificity order: Item (1) > Product (2) > DailySpecial (3) > Category (4) > Default (5).
+   - Higher specificity routes deterministically override lower specificity routes.
+
+2. Disabled Route & Fallback Chain:
+   - If the winning route's printer is disabled (inactive/offline), the engine traverses down the fallback chain:
+     Item -> Product -> Daily Special -> Category -> Default -> NO_AVAILABLE_PRINTER.
+   - If all candidate printers are disabled or missing, returns a fail-closed NO_AVAILABLE_PRINTER result.
+
+3. Ambiguity Rejection:
+   - If multiple active routes match at the same specificity level, configuration is rejected at evaluation/save time with AMBIGUOUS_ROUTE.
+   - Enforced at the database level using partial unique indexes for Default, Category, Product, Item, and DailySpecial.
+
+4. Configuration Validation:
+   - PrinterRoutingConfigurationValidator verifies atomically that all referenced printers exist, no duplicate active routes exist, and an active Default route is present.
+
+5. Database Migrations & Cleanliness:
+   - 016-printer-routing.up.sql / 016-printer-routing.down.sql creates and drops kitchen.printers and kitchen.printer_routes with partial unique indexes.
+   - Verified clean round-trip execution (up -> down -> up) on PostgreSQL 18.
+
+6. Test Verification:
+   - ALKAROS.Kitchen.Routing.Tests: 22/22 passing (0 failures).
+   - ALKAROS.Kitchen.TicketLifecycle.Tests: 10/10 passing (0 failures).
+   - Entire solution build: 0 errors, 0 warnings.
+   - Plan Audit Validation: 0 errors, 0 warnings.

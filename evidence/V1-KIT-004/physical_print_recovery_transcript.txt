@@ -1,0 +1,36 @@
+Task: V1-KIT-004
+Status: Done
+Assignee: Antigravity-v1-kit-004
+Date: 2026-08-17
+
+Physical Print Retry Safeguards & Crash-Window Recovery Verification (PDF:I.16-I.20, PDF:II.5.7-II.5.8, V1-KIT-004):
+1. Crash Window Uncertainty:
+   - When socket crashes, timeouts, or network disconnects occur during byte transmission before physical ACK, status transitions to Unknown.
+   - Prohibits automated retry: the system NEVER automatically retries a print in Unknown status, preventing duplicate food preparation in the kitchen.
+
+2. Operator-Controlled Reprint Approval:
+   - Deliveries in Unknown status are queued for operator visual review.
+   - Operator can approve reprint (ApproveOperatorReprintAsync) or reject/dismiss reprint (RejectOperatorReprintAsync).
+
+3. Distinct Reprint Watermark Banner:
+   - Approved reprints generate distinct watermark headers:
+     "*** TEKRAR BASKI / REPRINT ***"
+     "*** MUKERRER RISKLI KOPYA ***"
+     "ONAYLAYAN: {operatorId}"
+     "NEDEN: {reason}"
+   - Clearly alerts kitchen staff that the ticket is a duplicate copy.
+
+4. Data Safety Invariant:
+   - Failed or unknown print deliveries never modify, cancel, or delete Order or KitchenTicket records.
+
+5. Database Migrations & Persistence:
+   - 018-physical-print-recovery.up.sql / 018-physical-print-recovery.down.sql manages kitchen.physical_print_deliveries.
+   - Cleanly tested and verified on PostgreSQL 18.
+
+6. Test Verification:
+   - ALKAROS.Kitchen.PhysicalPrintRecovery.Tests: 14/14 passing (0 failures).
+   - ALKAROS.Kitchen.PrintQueue.Tests: 18/18 passing (0 failures).
+   - ALKAROS.Kitchen.Routing.Tests: 22/22 passing (0 failures).
+   - ALKAROS.Kitchen.TicketLifecycle.Tests: 10/10 passing (0 failures).
+   - Entire solution build: 0 errors, 0 warnings.
+   - Plan Audit Validation: 0 errors, 0 warnings.

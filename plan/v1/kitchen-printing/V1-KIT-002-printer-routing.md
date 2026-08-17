@@ -1,8 +1,8 @@
 # V1-KIT-002 - Implement deterministic printer routing
 
 - Task ID: V1-KIT-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-kit-002
 - Work type: implementation
 - Surface state: Planned
 

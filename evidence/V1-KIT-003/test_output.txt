@@ -1,0 +1,12 @@
+  Geri yuklenecek projeler belirleniyor...
+  Geri yukleme icin tum projeler guncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Transactions -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Kitchen.PrintQueue.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll (.NETCoreApp,Version=v8.0) icin test calistirmasi
+Toplam 1 test dosyasi belirtilen desenle eslesti.
+
+Basarili!  - Basarisiz:     0, Basarili:    18, Atlanan:     0, Toplam:    18, Sure: 2 s - ALKAROS.Kitchen.PrintQueue.Tests.dll (net8.0)

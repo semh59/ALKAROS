@@ -1,0 +1,39 @@
+Task: V1-KIT-003
+Status: Done
+Assignee: Antigravity-v1-kit-003
+Date: 2026-08-17
+
+Persistent Print Queue & Standard 80mm ESC/POS Simulator Verification:
+1. Single Logical Job & Idempotency:
+   - EnqueueJobAsync enforces logical deduplication using idempotency_key UNIQUE constraint in PostgreSQL.
+   - Duplicate enqueues return the canonical existing PrintJob without creating duplicate physical prints or corrupting state.
+
+2. Lease Locking & Concurrency Control:
+   - Atomic job claiming uses SELECT ... FOR UPDATE SKIP LOCKED.
+   - Prevents double-claiming across concurrent workers.
+   - Optimistic concurrency control (row_version) enforces atomic state updates.
+
+3. Standard 80mm Thermal Printer Simulator & ESC/POS Ticket Formatter:
+   - EscPosTicketFormatter formats KitchenTicket into 42-column layout (Header, Station, Table, Order Number, Timestamp, Items with modifiers/notes, and GS V 'B' 3 cut command).
+   - KitchenPrinterSimulator simulates thermal POS kitchen printer behaviors (Online, PaperOut, Offline, BufferOverflow).
+
+4. Backoff Retries & Dead Letter:
+   - Failed print executions record failure reasons and calculate exponential backoff (2s, 4s, 8s, 16s... up to 300s).
+   - Once attempt_count reaches max_attempts (default 5), job transitions to DeadLetter for manual operator review.
+
+5. Data Safety Acceptance Invariant:
+   - Failed printing never modifies, cancels, or deletes order or ticket records. Orders and tickets remain intact.
+
+6. Restart & Stale Lease Recovery:
+   - Unprocessed pending jobs persist across restarts.
+   - RecoverExpiredLeasesAsync identifies crashed worker leases and resets them to Pending for immediate reprocessing.
+
+7. Database Migrations:
+   - 017-print-queue.up.sql / 017-print-queue.down.sql tested and verified cleanly on PostgreSQL 18.
+
+8. Test Verification:
+   - ALKAROS.Kitchen.PrintQueue.Tests: 18/18 passing (0 failures).
+   - ALKAROS.Kitchen.Routing.Tests: 22/22 passing (0 failures).
+   - ALKAROS.Kitchen.TicketLifecycle.Tests: 10/10 passing (0 failures).
+   - Entire solution build: 0 errors, 0 warnings.
+   - Plan Audit Validation: 0 errors, 0 warnings.
