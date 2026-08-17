@@ -1,8 +1,8 @@
 # V1-BIL-001 - Implement Bill foundation and source links
 
 - Task ID: V1-BIL-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-bil-001
 - Work type: implementation
 - Surface state: Planned
 

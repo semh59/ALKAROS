@@ -1,0 +1,25 @@
+Command: dotnet test tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 34 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Modules/Orders/OrderAggregate/ALKAROS.Orders.OrderAggregate.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 83 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 5 tests, 0 failed, 0 skipped.
+
+Command: dotnet build ALKAROS.slnx
+Exit code: 0
+Result: 0 Warning, 0 Error.
+
+V1-BIL-001 specific: ALKAROS.Billing.BillFoundation.Tests 34/34 passing.
+Coverage:
+- Bill and BillItem domain models, constructor invariant checks, kuruş rounding (V0-CMP-002), snapshot preservation.
+- Canonical Bill transition matrix (PDF:I.46A, PDF:II.5.2, V0-DOM-001) including allowed paths and rejection of forbidden transitions.
+- Multi-order bill sourcing: merging items from multiple orders onto a single bill (V0-DOM-002 Positive 1).
+- Split-bill partitioning: lossless partition of order items across multiple bills (V0-DOM-002 Positive 2).
+- Global uniqueness constraint on billing.bill_items.order_item_id preventing double-billing (V0-DOM-002 Negative 2).
+- PostgresBillRepository transactional persistence, queries, item addition/removal, optimistic concurrency control.
+- 019-billing up/down migration verification on scratch PostgreSQL database (alkaros_bil001_).
