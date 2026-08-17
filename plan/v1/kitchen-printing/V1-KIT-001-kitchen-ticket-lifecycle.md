@@ -1,8 +1,8 @@
 # V1-KIT-001 - Implement KitchenTicket and KitchenTicketItem lifecycles
 
 - Task ID: V1-KIT-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-kit-001
 - Work type: implementation
 - Surface state: Planned
 

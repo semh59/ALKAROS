@@ -1,0 +1,30 @@
+﻿Task: V1-KIT-001
+Status: Done
+Assignee: Antigravity-v1-kit-001
+Date: 2026-08-17
+
+KitchenTicket and KitchenTicketItem Lifecycle Verification:
+1. Station-Scoped Ticket Creation:
+   - Factory method KitchenTicket.CreateFromOrder partitions order items into station-scoped tickets with status Queued.
+   - Preserves product name snapshots, modifier summaries, quantities, and preparation notes.
+
+2. Item State Machine & Independence:
+   - Canonical states: Queued -> Preparing -> Ready -> Served, with terminal Cancelled available from non-terminal states.
+   - Individual items transition independently while recording timestamps (ReadyAt, ServedAt, CancelledAt).
+
+3. Parent Aggregation Invariants (PDF:II.5.7A):
+   - In-flight mixed states (e.g. Item 1 Ready, Item 2 Preparing) are valid.
+   - Parent ticket Ready transition fails closed unless EVERY non-cancelled item is Ready or Served.
+   - Item starting preparation auto-promotes an Accepted parent ticket to Preparing.
+   - All items being cancelled auto-cancels the parent ticket; parent cancellation cascades cancellation to active items.
+
+4. Database Migration & Concurrency:
+   - 014-kitchen-tickets.up.sql / 014-kitchen-tickets.down.sql creates and drops schema kitchen and its tables cleanly.
+   - PostgresKitchenTicketRepository enforces row_version optimistic concurrency checks.
+
+5. Test Verification:
+   - ALKAROS.Kitchen.TicketLifecycle.Tests: 10/10 passing.
+   - ALKAROS.Orders.SubmitOrder.Tests: 14/14 passing.
+   - ALKAROS.Orders.OrderAggregate.Tests: 83/83 passing.
+   - Plan Audit Validation: 0 errors, 0 warnings.
+   - Task Scope Verification: valid (all in-scope).
