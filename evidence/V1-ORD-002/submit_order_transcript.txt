@@ -1,0 +1,28 @@
+﻿Task: V1-ORD-002
+Status: Done
+Assignee: Antigravity-v1-ord-002
+Date: 2026-08-17
+
+Idempotent Order Submission Verification:
+1. Client Operation Identity & Request Hash:
+   - Canonical SHA-256 payload hash computed from command fields (OrderId, ExpectedRowVersion, ChangedBy, SubmittedAt, Reason).
+   - Duplicate submissions with identical (ClientId, OperationId) return the exact cached SubmitOrderResult with IsReplay = true.
+   - Order row version and status are not mutated twice on replay.
+
+2. Conflict Rejection:
+   - Reused (ClientId, OperationId) with modified payload hash is rejected with SubmitOrderIdempotencyConflictException.
+
+3. Optimistic Concurrency & Stale Version Rejection:
+   - Command ExpectedRowVersion is checked against current aggregate version.
+   - Out-of-date version throws StaleOrderVersionException and prevents database modification.
+
+4. Transition Contract:
+   - Enforces Draft -> Submitted lifecycle transition via Order aggregate.
+   - Non-Draft orders reject submit command with InvalidOperationException.
+
+5. Test Verification:
+   - ALKAROS.Orders.SubmitOrder.Tests: 14/14 passing (unit + PostgreSQL integration).
+   - ALKAROS.Orders.OrderAggregate.Tests: 83/83 passing.
+   - Full solution test suite: 568/568 passing.
+   - Plan Audit Validation: 0 errors, 0 warnings.
+   - Task Scope Verification: valid (all in-scope).
