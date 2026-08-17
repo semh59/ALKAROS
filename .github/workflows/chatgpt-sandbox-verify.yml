@@ -75,11 +75,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p .sandbox-results/logs
+          mkdir -p sandbox-results/logs
           {
             echo "=== git ==="
             git rev-parse HEAD
-            git status --short
             echo "=== dotnet ==="
             dotnet --version
             dotnet --info
@@ -90,143 +89,129 @@ jobs:
             test -n "$cid"
             docker exec "$cid" postgres --version
             /usr/lib/postgresql/18/bin/psql -h localhost -U postgres -d postgres -Atc "select version();"
-          } 2>&1 | tee .sandbox-results/logs/toolchain.log
+          } 2>&1 | tee sandbox-results/logs/toolchain.log
 
       - name: Restore every project in locked mode
-        id: restore
-        continue-on-error: true
         shell: bash
         run: |
           set -uo pipefail
-          mkdir -p .sandbox-results/logs
-          fail=0
-          count=0
-          : > .sandbox-results/restore-summary.txt
+          fail=0; count=0
+          : > sandbox-results/restore-summary.txt
           while IFS= read -r -d '' proj; do
-            count=$((count + 1))
-            safe="$(echo "$proj" | tr '/. ' '___')"
-            echo "===== RESTORE $proj =====" | tee -a .sandbox-results/restore-summary.txt
-            dotnet restore "$proj" --locked-mode --nologo 2>&1 | tee ".sandbox-results/logs/restore-${safe}.log"
-            rc=${PIPESTATUS[0]}
-            echo "$proj rc=$rc" | tee -a .sandbox-results/restore-summary.txt
-            if [ "$rc" -ne 0 ]; then fail=1; fi
+            count=$((count + 1)); safe="$(echo "$proj" | tr '/. ' '___')"
+            dotnet restore "$proj" --locked-mode --nologo 2>&1 | tee "sandbox-results/logs/restore-${safe}.log"
+            rc=${PIPESTATUS[0]}; echo "$proj rc=$rc" >> sandbox-results/restore-summary.txt
+            [ "$rc" -eq 0 ] || fail=1
           done < <(find src tests -type f -name '*.csproj' -print0 | sort -z)
-          echo "project_count=$count" | tee -a .sandbox-results/restore-summary.txt
+          echo "project_count=$count" | tee -a sandbox-results/restore-summary.txt
           exit "$fail"
 
       - name: Build every project in Release with warnings as errors
-        id: build
         if: always()
-        continue-on-error: true
         shell: bash
         run: |
           set -uo pipefail
-          mkdir -p .sandbox-results/logs
-          fail=0
-          count=0
-          : > .sandbox-results/build-summary.txt
+          fail=0; count=0
+          : > sandbox-results/build-summary.txt
           while IFS= read -r -d '' proj; do
-            count=$((count + 1))
-            safe="$(echo "$proj" | tr '/. ' '___')"
-            echo "===== BUILD $proj =====" | tee -a .sandbox-results/build-summary.txt
-            dotnet build "$proj" -c Release --no-restore --warnaserror --nologo 2>&1 | tee ".sandbox-results/logs/build-${safe}.log"
-            rc=${PIPESTATUS[0]}
-            echo "$proj rc=$rc" | tee -a .sandbox-results/build-summary.txt
-            if [ "$rc" -ne 0 ]; then fail=1; fi
+            count=$((count + 1)); safe="$(echo "$proj" | tr '/. ' '___')"
+            dotnet build "$proj" -c Release --no-restore --warnaserror --nologo 2>&1 | tee "sandbox-results/logs/build-${safe}.log"
+            rc=${PIPESTATUS[0]}; echo "$proj rc=$rc" >> sandbox-results/build-summary.txt
+            [ "$rc" -eq 0 ] || fail=1
           done < <(find src tests -type f -name '*.csproj' -print0 | sort -z)
-          echo "project_count=$count" | tee -a .sandbox-results/build-summary.txt
+          echo "project_count=$count" | tee -a sandbox-results/build-summary.txt
           exit "$fail"
 
       - name: Run every .NET test project against PostgreSQL 18.4
-        id: tests
         if: always()
-        continue-on-error: true
         shell: bash
         run: |
           set -uo pipefail
-          mkdir -p .sandbox-results/logs .sandbox-results/trx
-          fail=0
-          count=0
-          : > .sandbox-results/test-summary.txt
+          mkdir -p sandbox-results/trx
+          fail=0; count=0
+          : > sandbox-results/test-summary.txt
           while IFS= read -r -d '' proj; do
-            count=$((count + 1))
-            safe="$(echo "$proj" | tr '/. ' '___')"
-            outdir=".sandbox-results/trx/$safe"
+            count=$((count + 1)); safe="$(echo "$proj" | tr '/. ' '___')"; outdir="sandbox-results/trx/$safe"
             mkdir -p "$outdir"
-            echo "===== TEST $proj =====" | tee -a .sandbox-results/test-summary.txt
-            dotnet test "$proj" -c Release --no-build --no-restore --nologo --logger "trx;LogFileName=${safe}.trx" --results-directory "$outdir" 2>&1 | tee ".sandbox-results/logs/test-${safe}.log"
-            rc=${PIPESTATUS[0]}
-            echo "$proj rc=$rc" | tee -a .sandbox-results/test-summary.txt
-            if [ "$rc" -ne 0 ]; then fail=1; fi
+            dotnet test "$proj" -c Release --no-build --no-restore --nologo --logger "trx;LogFileName=${safe}.trx" --results-directory "$outdir" 2>&1 | tee "sandbox-results/logs/test-${safe}.log"
+            rc=${PIPESTATUS[0]}; echo "$proj rc=$rc" >> sandbox-results/test-summary.txt
+            [ "$rc" -eq 0 ] || fail=1
           done < <(find tests -type f -name '*.csproj' -print0 | sort -z)
-          echo "test_project_count=$count" | tee -a .sandbox-results/test-summary.txt
+          echo "test_project_count=$count" | tee -a sandbox-results/test-summary.txt
           exit "$fail"
 
       - name: Run architecture and governance Python tests
-        id: pytests
         if: always()
-        continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
           python -m pip install --disable-pip-version-check -q pytest
-          python -m pytest tests/Architecture -q --junitxml=.sandbox-results/architecture.xml 2>&1 | tee .sandbox-results/logs/architecture-tests.log
+          python -m pytest tests/Architecture -q --junitxml=sandbox-results/architecture.xml 2>&1 | tee sandbox-results/logs/architecture-tests.log
 
       - name: Exercise global migration composition against PostgreSQL 18.4
-        id: migration
         if: always()
-        continue-on-error: true
         shell: bash
         run: |
           set -uo pipefail
-          mkdir -p .sandbox-results/logs .sandbox-migrations
-          rm -f .sandbox-migrations/*
-          find database/migrations -type f \( -name '*.up.sql' -o -name '*.down.sql' \) -exec cp {} .sandbox-migrations/ \;
+          mkdir -p sandbox-results/logs sandbox-migrations
+          rm -f sandbox-migrations/*
+          find database/migrations -type f \( -name '*.up.sql' -o -name '*.down.sql' \) -exec cp {} sandbox-migrations/ \;
           {
             echo "=== flattened migrations ==="
-            find .sandbox-migrations -maxdepth 1 -type f -printf '%f\n' | sort
-            echo "=== create disposable database ==="
+            find sandbox-migrations -maxdepth 1 -type f -printf '%f\n' | sort
             /usr/lib/postgresql/18/bin/psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS alkaros_sandbox WITH (FORCE);" -c "CREATE DATABASE alkaros_sandbox;"
-            echo "=== host migration run ==="
-            dotnet run --project src/Host/ALKAROS.Host.csproj -c Release --no-build -- --order-manifest database/MigrationComposition/order.json --migrations-dir .sandbox-migrations --db-url postgresql://postgres@localhost:5432/alkaros_sandbox --psql /usr/lib/postgresql/18/bin/psql
+            dotnet run --project src/Host/ALKAROS.Host.csproj -c Release --no-build -- --order-manifest database/MigrationComposition/order.json --migrations-dir sandbox-migrations --db-url postgresql://postgres@localhost:5432/alkaros_sandbox --psql /usr/lib/postgresql/18/bin/psql
             rc=$?
             echo "host_migration_exit=$rc"
-            echo "=== schema after run ==="
             /usr/lib/postgresql/18/bin/psql -h localhost -U postgres -d alkaros_sandbox -Atc "select schemaname||'.'||tablename from pg_tables where schemaname not in ('pg_catalog','information_schema') order by 1;"
             exit "$rc"
-          } 2>&1 | tee .sandbox-results/logs/migration-smoke.log
+          } 2>&1 | tee sandbox-results/logs/migration-smoke.log
           exit ${PIPESTATUS[0]}
 
-      - name: Write outcome summary
+      - name: Aggregate exact test counts
         if: always()
         shell: bash
         run: |
-          cat > .sandbox-results/outcomes.txt <<EOF
-          commit=$(git rev-parse HEAD)
-          restore=${{ steps.restore.outcome }}
-          build=${{ steps.build.outcome }}
-          dotnet_tests=${{ steps.tests.outcome }}
-          architecture_tests=${{ steps.pytests.outcome }}
-          migration_smoke=${{ steps.migration.outcome }}
-          EOF
-          cat .sandbox-results/outcomes.txt
+          python - <<'PY' | tee sandbox-results/exact-counts.txt
+          import glob, xml.etree.ElementTree as ET
+          total=passed=failed=skipped=0
+          trx_files=glob.glob('sandbox-results/trx/**/*.trx', recursive=True)
+          for f in trx_files:
+              root=ET.parse(f).getroot()
+              c=root.find('{http://microsoft.com/schemas/VisualStudio/TeamTest/2010}ResultSummary/{http://microsoft.com/schemas/VisualStudio/TeamTest/2010}Counters')
+              if c is None:
+                  for e in root.iter():
+                      if e.tag.endswith('Counters'): c=e; break
+              if c is not None:
+                  total += int(c.attrib.get('total',0)); passed += int(c.attrib.get('passed',0)); failed += int(c.attrib.get('failed',0))
+                  skipped += int(c.attrib.get('notExecuted',0))
+          print(f'trx_files={len(trx_files)}')
+          print(f'dotnet_total={total}')
+          print(f'dotnet_passed={passed}')
+          print(f'dotnet_failed={failed}')
+          print(f'dotnet_skipped={skipped}')
+          try:
+              r=ET.parse('sandbox-results/architecture.xml').getroot()
+              suites=[r] if r.tag=='testsuite' else list(r.iter('testsuite'))
+              if r.tag!='testsuite': suites=[s for s in suites if s is not r]
+              if suites:
+                  s=suites[0]
+                  print(f'python_total={s.attrib.get("tests","?")}')
+                  print(f'python_failures={s.attrib.get("failures","?")}')
+                  print(f'python_errors={s.attrib.get("errors","?")}')
+                  print(f'python_skipped={s.attrib.get("skipped","?")}')
+          except Exception as e:
+              print(f'python_junit_parse_error={e}')
+          PY
+          cat sandbox-results/restore-summary.txt | tail -1
+          cat sandbox-results/build-summary.txt | tail -1
+          cat sandbox-results/test-summary.txt | tail -1
 
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: alkaros-chatgpt-sandbox-results
-          path: .sandbox-results/
+          name: alkaros-chatgpt-sandbox-results-v2
+          path: sandbox-results/
           if-no-files-found: error
           retention-days: 7
-
-      - name: Final verification gate
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "${{ steps.restore.outcome }}" = "success"
-          test "${{ steps.build.outcome }}" = "success"
-          test "${{ steps.tests.outcome }}" = "success"
-          test "${{ steps.pytests.outcome }}" = "success"
-          test "${{ steps.migration.outcome }}" = "success"
