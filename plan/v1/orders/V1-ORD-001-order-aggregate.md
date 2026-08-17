@@ -1,8 +1,8 @@
 # V1-ORD-001 - Implement the channel-independent Order aggregate
 
 - Task ID: V1-ORD-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-ord-001
 - Work type: implementation
 - Surface state: Planned
 

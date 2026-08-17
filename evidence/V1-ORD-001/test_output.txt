@@ -1,0 +1,11 @@
+﻿  Geri y´┐¢klenecek projeler belirleniyor...
+  Geri y´┐¢kleme i´┐¢in t´┐¢m projeler g´┐¢ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Transactions -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Transactions\bin\Debug\net8.0\ALKAROS.Transactions.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Orders.OrderAggregate.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\bin\Debug\net8.0\ALKAROS.Orders.OrderAggregate.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\bin\Debug\net8.0\ALKAROS.Orders.OrderAggregate.Tests.dll (.NETCoreApp,Version=v8.0) i├ğin test ├ğal─▒┼şt─▒rmas─▒
+Toplam 1 test dosyas─▒ belirtilen desenle e┼şle┼şti.
+
+Ba┼şar─▒l─▒!  - Ba┼şar─▒s─▒z:     0, Ba┼şar─▒l─▒:    83, Atlanan:     0, Toplam:    83, S├╝re: 1 s - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0)
