@@ -1,8 +1,8 @@
 # V1-FND-024 - Independently verify Host module reachability
 
 - Task ID: V1-FND-024
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-fnd-024
 - Work type: validation
 - Surface state: Existing
 
