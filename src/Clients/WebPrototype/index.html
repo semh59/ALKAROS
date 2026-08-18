@@ -34,8 +34,8 @@
         </button>
       </div>
 
-      <!-- Simulation Actions -->
-      <div class="control-group" role="group" aria-label="Simülasyon Eylemleri">
+      <!-- Simulation & Chaos Actions -->
+      <div class="control-group" role="group" aria-label="Simülasyon ve Kaos Testleri">
         <button type="button" class="proto-btn-action" id="btn-sim-network" title="Ağ Kesintisi / LAN Kopması Simülasyonu">
           <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.007-1.523"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.278-3.714"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
           <span id="label-network">Ağ: Çevrimiçi</span>
@@ -43,6 +43,10 @@
         <button type="button" class="proto-btn-action" id="btn-sim-lock" title="Oturum Zaman Aşımı / Kilitlenme">
           <svg class="icon" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           Oturumu Kilitle
+        </button>
+        <button type="button" class="proto-btn-action chaos-btn" id="btn-open-chaos" title="Gerçek Hayat Restoran Stres ve Kaos Testleri">
+          <svg class="icon" viewBox="0 0 24 24"><path d="m13 2-2 2.5V8l3-3 7 7-3 3h-3.5L12 11l-2 2"/><circle cx="12" cy="12" r="10"/></svg>
+          🧪 Kaos & Stres Testleri
         </button>
       </div>
 
@@ -214,6 +218,10 @@
                 <button type="button" class="btn-action-pill" id="btn-action-print-prebill" title="Ön Adisyon / Fiş Yazdır">
                   <svg class="icon" viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
                   Adisyon Yazdır
+                </button>
+                <button type="button" class="btn-action-pill" id="btn-action-split-bill" title="Parçalı / Koltuk Bazlı Hesap Kapat">
+                  <svg class="icon" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                  Parçalı Ödeme
                 </button>
               </div>
 
@@ -853,6 +861,153 @@
         </button>
       </div>
       <p class="pin-hint">Demo PIN: <strong>1234</strong></p>
+    </div>
+  </div>
+
+  <!-- 11. Modal: Kaos & Stres Test Merkezi (Real-Life Disaster Scenarios) -->
+  <div class="modal-overlay" id="modal-chaos-center" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header">
+        <div>
+          <h3>🧪 Restoran Kaos ve Stres Test Merkezi</h3>
+          <span class="mod-subtitle">Gerçek Hayat Hata ve Felaket Senaryoları (V1 Resilience Suite)</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-chaos">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc-text">Kağıt üstünde değil, gerçek restoran temposundaki felaket senaryolarını test edin:</p>
+        <div class="chaos-scenario-list">
+          <div class="chaos-card" id="chaos-card-concurrency">
+            <div class="chaos-info">
+              <strong>⚡ Senaryo 1: Eşzamanlı Çakışma (Concurrency Conflict)</strong>
+              <p>Masa S-02 siz işlem yaparken başka bir garson tarafından değiştirildi! RowVersion çatışmasını ve uzlaşma (reconciliation) ekranını test eder.</p>
+            </div>
+            <button type="button" class="btn-primary-sm" id="btn-run-chaos-concurrency">Tetikle</button>
+          </div>
+
+          <div class="chaos-card" id="chaos-card-86">
+            <div class="chaos-info">
+              <strong>🚫 Senaryo 2: Mutfakta Ürün Bitti (86'd - Ani Stok Tükenmesi)</strong>
+              <p>Şef "Bonfile Bitti!" uyarısı verir. Bonfile ürünü anında tüm terminallerde kilitlenir ve satış engeli devreye girer.</p>
+            </div>
+            <button type="button" class="btn-primary-sm" id="btn-run-chaos-86">Tetikle</button>
+          </div>
+
+          <div class="chaos-card" id="chaos-card-printer">
+            <div class="chaos-info">
+              <strong>🖨️ Senaryo 3: Bar Yazıcısında Kağıt Bitti (Print Failover)</strong>
+              <p>Bar yazıcısı kağıt sonu arızasına geçer, kırmızı alarm verir ve bekleyen fişlerin Sıcak Mutfak yazıcısına yönlendirilmesini sağlar.</p>
+            </div>
+            <button type="button" class="btn-primary-sm" id="btn-run-chaos-printer">Tetikle</button>
+          </div>
+
+          <div class="chaos-card" id="chaos-card-split">
+            <div class="chaos-info">
+              <strong>💳 Senaryo 4: Koltuk Bazlı Parçalı Ödeme (Split Bill)</strong>
+              <p>4 kişilik masada 1 misafir kendi hesabını ödeyip ayrılır. Kalan bakiye masada açık adisyon olarak devam eder.</p>
+            </div>
+            <button type="button" class="btn-primary-sm" id="btn-run-chaos-split">Tetikle</button>
+          </div>
+
+          <div class="chaos-card" id="chaos-card-offline-sync">
+            <div class="chaos-info">
+              <strong>📡 Senaryo 5: Bahçede Garson Çevrimdışı Siparişi & Mutasyon</strong>
+              <p>Wi-Fi kopukken garson sipariş girer, müşteri masadan kalkmadan 1 ürünü iptal eder. Ağ geri gelince tekil idempotency ile senkronize olur.</p>
+            </div>
+            <button type="button" class="btn-primary-sm" id="btn-run-chaos-offline-sync">Tetikle</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btn-cancel-chaos">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. Modal: Eşzamanlı Çakışma Yönetimi (Optimistic Concurrency Conflict) -->
+  <div class="modal-overlay" id="modal-concurrency-conflict" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-card" style="border-top: 4px solid #DC2626;">
+      <div class="modal-header">
+        <div>
+          <h3 style="color:#DC2626">⚠️ Eşzamanlı Değişiklik Çakışması!</h3>
+          <span class="mod-subtitle" id="conflict-table-subtitle">Masa S-02 (RowVersion Mismatch)</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-conflict">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="conflict-alert-box">
+          <p><strong>Dikkat:</strong> Siz bu masada işlem yaparken, <strong>Garson Mehmet K.</strong> başka bir terminalden bu masaya <strong>2x İçecek (90,00 TL)</strong> ekledi!</p>
+          <div class="conflict-diff">
+            <div class="diff-box">
+              <span>Sizin Ekrandaki Tutar:</span>
+              <strong id="conflict-local-amount">485,00 TL</strong>
+            </div>
+            <div class="diff-arrow">➔</div>
+            <div class="diff-box highlight">
+              <span>Sunucudaki Güncel Tutar:</span>
+              <strong id="conflict-server-amount">575,00 TL</strong>
+            </div>
+          </div>
+        </div>
+        <p class="modal-desc-text">Mükerrer veya hatalı hesap kesimini önlemek için lütfen bir işlem seçiniz:</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btn-conflict-abort">Vazgeç ve Yenile</button>
+        <button type="button" class="btn-primary" id="btn-conflict-merge">Güncel Veriyi Al ve Birleştir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13. Modal: Parçalı Tahsilat / Koltuk Bazlı Hesap Kapatma (Split Bill) -->
+  <div class="modal-overlay" id="modal-split-bill" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div>
+          <h3>Parçalı Tahsilat (Split Bill)</h3>
+          <span class="mod-subtitle" id="split-bill-subtitle">Masa S-02 — Koltuk / Kalem Bazlı Ödeme</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-split-bill">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="split-seats-selector" id="split-seats-selector">
+          <button type="button" class="split-seat-btn active" data-split-seat="1">Koltuk 1 (240 TL)</button>
+          <button type="button" class="split-seat-btn" data-split-seat="2">Koltuk 2 (160 TL)</button>
+          <button type="button" class="split-seat-btn" data-split-seat="shared">Ortaya / Kalan (85 TL)</button>
+        </div>
+
+        <div class="split-items-list" id="split-items-list">
+          <!-- Dynamically populated -->
+        </div>
+
+        <div class="split-payment-summary">
+          <div class="total-row">
+            <span>Ödenecek Tutar:</span>
+            <strong class="num-val" id="split-paying-amount" style="font-size:18px;color:var(--color-primary)">240,00 TL</strong>
+          </div>
+          <div class="total-row">
+            <span>Masada Kalan Tutar:</span>
+            <span class="num-val" id="split-remaining-amount">245,00 TL</span>
+          </div>
+        </div>
+
+        <div class="option-group">
+          <label class="group-label">Ödeme Yöntemi</label>
+          <div class="radio-pill-group">
+            <label class="radio-pill"><input type="radio" name="splitPaymentMethod" value="Kredi Kartı" checked><span>Kredi Kartı</span></label>
+            <label class="radio-pill"><input type="radio" name="splitPaymentMethod" value="Nakit"><span>Nakit</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btn-cancel-split-bill">İptal</button>
+        <button type="button" class="btn-primary" id="btn-confirm-split-payment">Koltuk 1 Ödemesini Al ve Kapat</button>
+      </div>
     </div>
   </div>
 

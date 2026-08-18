@@ -1,7 +1,11 @@
 /**
  * ALKAROS V1 — Kurumsal Restoran Yönetimi, Salon/Masa Düzeni ve POS Motoru
- * Standartlar: WCAG 2.2 AA, Deterministik Olay Dinleyicileri, Çift Tetiklenme Koruması,
- * Tam Senkronize Masa & Menü Yönetimi (V1-TBL-001 / V1-ORD-001)
+ * Gerçek Hayat Restoran Stres & Kaos Senaryoları Test Merkezi Dahil:
+ * 1. Eşzamanlı Çakışma (Concurrency Conflict & RowVersion Reconciliation)
+ * 2. 86'd Mutfak Stok Çökmesi (Out-of-Stock Emergency Lock)
+ * 3. Bar Yazıcısı Kağıt Sonu ve Sıcak Yazıcıya Failover (Printer Paper Out Recovery)
+ * 4. Koltuk Bazlı Parçalı Ödeme (Split Bill & Seat-based Settlement)
+ * 5. Garson Bahçede Çevrimdışı Sipariş, Mutasyon ve İdempotent Senkronizasyon
  */
 
 (function () {
@@ -28,56 +32,56 @@
 
   const INITIAL_PRODUCTS = [
     {
-      id: 'p1', name: 'Alkaros Burger (200g)', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 240.00, station: 'hot', allergen: 'Gluten, Süt',
+      id: 'p1', name: 'Alkaros Burger (200g)', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 240.00, station: 'hot', allergen: 'Gluten, Süt', is86: false,
       modifierGroups: [
         { id: 'mg_done', title: 'Pişme Derecesi', required: true, type: 'single', options: [{ name: 'Az Pişmiş', price: 0 }, { name: 'Orta Pişmiş', price: 0, default: true }, { name: 'Çok Pişmiş', price: 0 }] },
         { id: 'mg_ext', title: 'Ekstra Malzemeler', required: false, type: 'multi', options: [{ name: 'Ekstra Cheddar', price: 30.00 }, { name: 'Karamelize Soğan', price: 20.00 }, { name: 'Duble Köfte (+150g)', price: 90.00 }] }
       ]
     },
     {
-      id: 'p2', name: 'Cheese Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 220.00, station: 'hot', allergen: 'Gluten, Süt',
+      id: 'p2', name: 'Cheese Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 220.00, station: 'hot', allergen: 'Gluten, Süt', is86: false,
       modifierGroups: [
         { id: 'mg_done', title: 'Pişme Derecesi', required: true, type: 'single', options: [{ name: 'Orta Pişmiş', price: 0, default: true }, { name: 'Çok Pişmiş', price: 0 }] },
         { id: 'mg_ext', title: 'Ekstralar', required: false, type: 'multi', options: [{ name: 'Füme Kaburga', price: 45.00 }, { name: 'Jalapeno Biber', price: 15.00 }] }
       ]
     },
     {
-      id: 'p3', name: 'Bonfile Izgara (250g)', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 450.00, station: 'hot', allergen: 'Gluten-Free',
+      id: 'p3', name: 'Bonfile Izgara (250g)', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 450.00, station: 'hot', allergen: 'Gluten-Free', is86: false,
       modifierGroups: [
         { id: 'mg_done', title: 'Et Pişme', required: true, type: 'single', options: [{ name: 'Az Pişmiş', price: 0 }, { name: 'Orta (Medium)', price: 0, default: true }, { name: 'İyi Pişmiş', price: 0 }] },
         { id: 'mg_sauce', title: 'Şef Sosu', required: true, type: 'single', options: [{ name: 'Trüflü Mantar Sosu', price: 40.00, default: true }, { name: 'Taze Karabiber Sosu', price: 35.00 }] }
       ]
     },
     {
-      id: 'p4', name: 'Köfte Porsiyon (Izgara)', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 280.00, station: 'hot', allergen: 'Gluten',
+      id: 'p4', name: 'Köfte Porsiyon (Izgara)', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 280.00, station: 'hot', allergen: 'Gluten', is86: false,
       modifierGroups: [
         { id: 'mg_garnish', title: 'Garnitür', required: false, type: 'multi', options: [{ name: 'Bol Köz Biber & Domates', price: 15.00 }, { name: 'Sumaklı Soğan', price: 10.00 }] }
       ]
     },
     {
-      id: 'p5', name: 'Patates Tava', category: 'Başlangıçlar', defaultCourse: 'Başlangıç', price: 85.00, station: 'hot', allergen: 'Vegan',
+      id: 'p5', name: 'Patates Tava', category: 'Başlangıçlar', defaultCourse: 'Başlangıç', price: 85.00, station: 'hot', allergen: 'Vegan', is86: false,
       modifierGroups: [
         { id: 'mg_dip', title: 'Yan Sos', required: false, type: 'multi', options: [{ name: 'Trüflü Mayonez', price: 20.00 }, { name: 'Cajun Baharatı', price: 10.00 }] }
       ]
     },
     {
-      id: 'p6', name: 'Coca Cola 330ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 45.00, station: 'bar', allergen: 'Vegan',
+      id: 'p6', name: 'Coca Cola 330ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 45.00, station: 'bar', allergen: 'Vegan', is86: false,
       modifierGroups: [{ id: 'mg_ice', title: 'Buz / Limon', required: false, type: 'multi', options: [{ name: 'Buzsuz', price: 0 }, { name: 'Limon Dilimli', price: 0 }] }]
     },
     {
-      id: 'p7', name: 'Ayran 300ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 30.00, station: 'bar', allergen: 'Süt',
+      id: 'p7', name: 'Ayran 300ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 30.00, station: 'bar', allergen: 'Süt', is86: false,
       modifierGroups: []
     },
     {
-      id: 'p8', name: 'Su 0.5L', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 15.00, station: 'bar', allergen: 'Vegan',
+      id: 'p8', name: 'Su 0.5L', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 15.00, station: 'bar', allergen: 'Vegan', is86: false,
       modifierGroups: []
     },
     {
-      id: 'p9', name: 'Çikolatalı Sufle', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 120.00, station: 'cold', allergen: 'Yumurta, Süt',
+      id: 'p9', name: 'Çikolatalı Sufle', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 120.00, station: 'cold', allergen: 'Yumurta, Süt', is86: false,
       modifierGroups: [{ id: 'mg_icecream', title: 'Dondurma', required: false, type: 'single', options: [{ name: 'Vanilyalı Dondurma Ekle', price: 35.00 }, { name: 'Sade', price: 0, default: true }] }]
     },
     {
-      id: 'p10', name: 'Fırın Sütlaç', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 95.00, station: 'cold', allergen: 'Süt',
+      id: 'p10', name: 'Fırın Sütlaç', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 95.00, station: 'cold', allergen: 'Süt', is86: false,
       modifierGroups: [{ id: 'mg_nut', title: 'Fındık İsteği', required: false, type: 'single', options: [{ name: 'Kavrulmuş Fındıklı', price: 15.00, default: true }, { name: 'Sade', price: 0 }] }]
     }
   ];
@@ -136,6 +140,9 @@
       '[14:29:00] Kasiyer Ahmet Y.: Fiş #1043 Sıcak Yazıcısına yönlendirildi.'
     ],
 
+    // Split Bill State
+    splitActiveSeat: '1',
+
     // Waiter PWA
     wtrSectionFilter: 'Tümü',
     wtrSearchQuery: '',
@@ -147,8 +154,7 @@
     // PIN Lockout
     enteredPin: '',
     failedPinAttempts: 0,
-    cooldownRemaining: 0,
-    cooldownTimer: null
+    cooldownRemaining: 0
   };
 
   // --- 3. HELPERS ---
@@ -170,7 +176,7 @@
     setTimeout(() => {
       toast.style.animation = 'slideInRight 200ms ease reverse';
       setTimeout(() => toast.remove(), 200);
-    }, 3000);
+    }, 3200);
   };
 
   const getDistinctSections = () => {
@@ -367,7 +373,7 @@
       }
 
       return `
-        <div class="product-card" data-prod-id="${p.id}">
+        <div class="product-card ${p.is86 ? 'is-86' : ''}" data-prod-id="${p.id}">
           <div class="prod-name">${p.name}</div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
             <div class="prod-price num-val">${formatTL(p.price)}</div>
@@ -405,14 +411,15 @@
       });
 
       tbody.innerHTML = filtered.map((p, idx) => `
-        <tr>
-          <td><strong>${p.name}</strong></td>
+        <tr class="${p.is86 ? 'row-86' : ''}">
+          <td><strong>${p.name}</strong> ${p.is86 ? '<span style="color:#DC2626;font-size:11px;font-weight:700">[86\'d TÜKENDİ]</span>' : ''}</td>
           <td><span class="occupancy-pill available">${p.category}</span></td>
           <td class="num-val"><strong>${formatTL(p.price)}</strong></td>
           <td>${p.station === 'hot' ? 'Sıcak Mutfak' : p.station === 'bar' ? 'Bar & İçecek' : 'Soğuk / Tatlı'}</td>
           <td>${p.defaultCourse}</td>
           <td>${p.allergen ? `<span class="allergen-tag" style="font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active)">${p.allergen}</span>` : '—'}</td>
-          <td>
+          <td style="display:flex;gap:6px">
+            <button type="button" class="cart-item-actions-btn btn-toggle-86" data-prod-id="${p.id}">${p.is86 ? 'Satışa Aç' : '86\'d (Tükendi)'}</button>
             <button type="button" class="cart-item-actions-btn btn-delete-product" data-prod-idx="${idx}" style="color:var(--color-danger)">Sil</button>
           </td>
         </tr>
@@ -425,6 +432,19 @@
           showToast(`${deleted.name} menüden kaldırıldı.`, 'warning');
           renderMenuManagement();
           renderPOSCatalog();
+        });
+      });
+
+      tbody.querySelectorAll('.btn-toggle-86').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = state.products.find(item => item.id === btn.dataset.prodId);
+          if (p) {
+            p.is86 = !p.is86;
+            showToast(`${p.name} durumu: ${p.is86 ? '86\'d (Tükendi)' : 'Tekrar Satışta'}`, p.is86 ? 'warning' : 'success');
+            renderMenuManagement();
+            renderPOSCatalog();
+            renderWaiterSurface();
+          }
         });
       });
     }
@@ -556,6 +576,11 @@
 
   // 4.5 Dynamic Universal Modifier Modal
   function openDynamicModifierModal(prod, existingItem = null) {
+    if (prod.is86) {
+      showToast(`DİKKAT: ${prod.name} mutfakta tükendi (86'd)! Sipariş alınamaz.`, 'error');
+      return;
+    }
+
     state.activeModifierProduct = prod;
     state.selectedQuickTags = existingItem ? [...(existingItem.quickTags || [])] : [];
 
@@ -646,12 +671,10 @@
 
     container.innerHTML = bodyHtml;
 
-    // Attach Price Update Listener
     container.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(inp => {
       inp.addEventListener('change', updateModifierLivePrice);
     });
 
-    // Attach Quick Tags
     container.querySelectorAll('.quick-tag-btn').forEach(btn => {
       const tag = btn.dataset.tag;
       if (state.selectedQuickTags.includes(tag)) btn.classList.add('active');
@@ -744,7 +767,46 @@
     `;
   }
 
-  // 4.7 Operations & Printers
+  // 4.7 Split Bill Modal Renderer
+  function renderSplitBill() {
+    const list = document.getElementById('split-items-list');
+    const payEl = document.getElementById('split-paying-amount');
+    const remainEl = document.getElementById('split-remaining-amount');
+    const titleEl = document.getElementById('split-bill-subtitle');
+
+    if (!state.selectedTable) return;
+    if (titleEl) titleEl.textContent = `Masa ${state.selectedTable.number} (${formatTL(state.selectedTable.billAmount)})`;
+
+    let payAmount = 0;
+    let items = [];
+
+    if (state.splitActiveSeat === '1') {
+      payAmount = 240.00;
+      items = [{ name: '1x Alkaros Burger (200g)', price: 240.00 }];
+    } else if (state.splitActiveSeat === '2') {
+      payAmount = 160.00;
+      items = [{ name: '1x Bonfile Kısmi Porsiyon', price: 160.00 }];
+    } else {
+      payAmount = 85.00;
+      items = [{ name: '1x Patates Tava (Ortaya)', price: 85.00 }];
+    }
+
+    const remaining = Math.max(0, (state.selectedTable.billAmount || 485.00) - payAmount);
+
+    if (list) {
+      list.innerHTML = items.map(i => `
+        <div class="split-item-row">
+          <span>${i.name}</span>
+          <span class="num-val">${formatTL(i.price)}</span>
+        </div>
+      `).join('');
+    }
+
+    if (payEl) payEl.textContent = formatTL(payAmount);
+    if (remainEl) remainEl.textContent = formatTL(remaining);
+  }
+
+  // 4.8 Operations & Printers
   function renderOperations() {
     const feed = document.getElementById('ops-tickets-feed');
     const printersList = document.getElementById('ops-printers-list');
@@ -784,14 +846,27 @@
             <span class="printer-name">${p.name}</span>
             <span class="printer-ip">IP: ${p.ip} • Durum: <strong>${p.status === 'paper_out' ? p.issue : 'Çevrimiçi'}</strong></span>
           </div>
-          <div>
+          <div style="display:flex;gap:6px;align-items:center">
             ${p.status === 'paper_out' 
-              ? `<span class="occupancy-pill" style="background:#FEE2E2;color:#DC2626">Arıza</span>`
+              ? `<button type="button" class="btn-primary-sm btn-reroute-printer" data-prn-id="${p.id}">Kuyruğu Yönlendir</button>`
               : `<span class="occupancy-pill available">Normal</span>`
             }
           </div>
         </div>
       `).join('');
+
+      printersList.querySelectorAll('.btn-reroute-printer').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const prn = state.printers.find(p => p.id === btn.dataset.prnId);
+          if (prn) {
+            prn.status = 'online';
+            prn.queueCount = 0;
+            state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Acil Yönlendirme: ${prn.name} kuyruğundaki 2 fiş Sıcak Mutfak Yazıcısına başarıyla aktarıldı.`);
+            showToast(`${prn.name} kuyruğu Sıcak Mutfak Yazıcısına yönlendirildi.`);
+            renderOperations();
+          }
+        });
+      });
     }
 
     if (auditBox) {
@@ -799,7 +874,7 @@
     }
   }
 
-  // 4.8 Waiter Surface
+  // 4.9 Waiter Surface
   function renderWaiterSurface() {
     const grid = document.getElementById('waiter-tables-container');
     const productList = document.getElementById('wtr-product-list');
@@ -837,7 +912,7 @@
 
     if (productList) {
       productList.innerHTML = state.products.map(p => `
-        <div class="product-card" data-wtr-prod-id="${p.id}">
+        <div class="product-card ${p.is86 ? 'is-86' : ''}" data-wtr-prod-id="${p.id}">
           <div class="prod-name">${p.name}</div>
           <div class="prod-price num-val">${formatTL(p.price)}</div>
         </div>
@@ -852,7 +927,7 @@
         cartContainer.innerHTML = state.wtrCart.map(item => {
           total += item.unitPrice * item.quantity;
           return `
-            <div style="display:flex;justify-content:space-between;font-size:13px">
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0">
               <span>${item.quantity}x ${item.name}</span>
               <span class="num-val">${formatTL(item.unitPrice * item.quantity)}</span>
             </div>
@@ -1015,6 +1090,7 @@
           station,
           defaultCourse,
           allergen,
+          is86: false,
           modifierGroups: []
         };
 
@@ -1230,7 +1306,54 @@
       });
     }
 
-    // 5.14 Table Transfer Modal
+    // 5.14 Split Bill Button & Modal
+    const btnSplitBill = document.getElementById('btn-action-split-bill');
+    const modalSplitBill = document.getElementById('modal-split-bill');
+    const btnCloseSplitBill = document.getElementById('btn-close-split-bill');
+    const btnCancelSplitBill = document.getElementById('btn-cancel-split-bill');
+    const btnConfirmSplitPayment = document.getElementById('btn-confirm-split-payment');
+
+    if (btnSplitBill) {
+      btnSplitBill.addEventListener('click', () => {
+        if (!state.selectedTable) return;
+        renderSplitBill();
+        if (modalSplitBill) modalSplitBill.style.display = 'flex';
+      });
+    }
+    if (btnCloseSplitBill) btnCloseSplitBill.addEventListener('click', () => modalSplitBill.style.display = 'none');
+    if (btnCancelSplitBill) btnCancelSplitBill.addEventListener('click', () => modalSplitBill.style.display = 'none');
+
+    document.querySelectorAll('.split-seat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.split-seat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.splitActiveSeat = btn.dataset.splitSeat;
+        const confirmBtn = document.getElementById('btn-confirm-split-payment');
+        if (confirmBtn) {
+          confirmBtn.textContent = `${btn.textContent} Ödemesini Al ve Kapat`;
+        }
+        renderSplitBill();
+      });
+    });
+
+    if (btnConfirmSplitPayment) {
+      btnConfirmSplitPayment.addEventListener('click', () => {
+        const payAmount = state.splitActiveSeat === '1' ? 240.00 : state.splitActiveSeat === '2' ? 160.00 : 85.00;
+        const payMethod = document.querySelector('input[name="splitPaymentMethod"]:checked')?.value || 'Kredi Kartı';
+
+        if (state.selectedTable) {
+          state.selectedTable.billAmount = Math.max(0, (state.selectedTable.billAmount || 485.00) - payAmount);
+          state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Parçalı Tahsilat: Masa ${state.selectedTable.number} - Koltuk ${state.splitActiveSeat} için ${formatTL(payAmount)} ödendi (${payMethod}).`);
+          showToast(`Koltuk ${state.splitActiveSeat} tahsilatı alındı (${formatTL(payAmount)}). Kalan: ${formatTL(state.selectedTable.billAmount)}`);
+        }
+
+        if (modalSplitBill) modalSplitBill.style.display = 'none';
+        renderCart();
+        renderCashierTables();
+      });
+    }
+
+    // 5.15 Table Transfer Modal
     const btnTransfer = document.getElementById('btn-action-transfer-table');
     const modalTransfer = document.getElementById('modal-transfer-table');
     const btnCloseTransfer = document.getElementById('btn-close-transfer-modal');
@@ -1284,7 +1407,7 @@
       });
     }
 
-    // 5.15 Table Merge Modal
+    // 5.16 Table Merge Modal
     const btnMerge = document.getElementById('btn-action-merge-table');
     const modalMerge = document.getElementById('modal-merge-table');
     const btnCloseMerge = document.getElementById('btn-close-merge-modal');
@@ -1332,7 +1455,7 @@
       });
     }
 
-    // 5.16 Discount Modal
+    // 5.17 Discount Modal
     const btnAddDiscount = document.getElementById('btn-cart-add-discount');
     const modalDiscount = document.getElementById('modal-discount');
     const btnCloseDiscount = document.getElementById('btn-close-discount-modal');
@@ -1365,7 +1488,7 @@
       });
     }
 
-    // 5.17 Product Grid Click -> Modifier Modal
+    // 5.18 Product Grid Click -> Modifier Modal
     const prodGrid = document.getElementById('pos-product-grid');
     if (prodGrid) {
       prodGrid.addEventListener('click', (e) => {
@@ -1380,7 +1503,7 @@
       });
     }
 
-    // 5.18 Dynamic Modifier Sheet Confirm Button
+    // 5.19 Dynamic Modifier Sheet Confirm Button
     const btnConfirmMod = document.getElementById('btn-confirm-modifier');
     const btnCloseMod = document.getElementById('btn-close-modifier');
     const btnCancelMod = document.getElementById('btn-cancel-modifier');
@@ -1450,7 +1573,7 @@
       });
     }
 
-    // 5.19 Cart Item Click (Edit Modifier) / Dec / Inc / Remove / Manage
+    // 5.20 Cart Item Actions
     const cartItemsList = document.getElementById('pos-cart-items');
     const modalItemAction = document.getElementById('modal-item-action');
     const btnCloseItemAction = document.getElementById('btn-close-item-action');
@@ -1525,7 +1648,7 @@
       });
     }
 
-    // 5.20 Submit POS Order
+    // 5.21 Submit POS Order
     const btnSubmit = document.getElementById('btn-pos-submit-order');
     if (btnSubmit) {
       btnSubmit.addEventListener('click', () => {
@@ -1579,7 +1702,141 @@
       });
     }
 
-    // 5.21 Simulator Controls (Görünüm, Tema, Ağ)
+    // 5.22 Chaos Center Suite Triggers
+    const btnOpenChaos = document.getElementById('btn-open-chaos');
+    const modalChaos = document.getElementById('modal-chaos-center');
+    const btnCloseChaos = document.getElementById('btn-close-chaos');
+    const btnCancelChaos = document.getElementById('btn-cancel-chaos');
+
+    if (btnOpenChaos) btnOpenChaos.addEventListener('click', () => modalChaos.style.display = 'flex');
+    if (btnCloseChaos) btnCloseChaos.addEventListener('click', () => modalChaos.style.display = 'none');
+    if (btnCancelChaos) btnCancelChaos.addEventListener('click', () => modalChaos.style.display = 'none');
+
+    // Chaos Scenario 1: Concurrency Conflict
+    const btnRunConcurrency = document.getElementById('btn-run-chaos-concurrency');
+    const modalConflict = document.getElementById('modal-concurrency-conflict');
+    const btnCloseConflict = document.getElementById('btn-close-conflict');
+    const btnConflictAbort = document.getElementById('btn-conflict-abort');
+    const btnConflictMerge = document.getElementById('btn-conflict-merge');
+
+    if (btnRunConcurrency) {
+      btnRunConcurrency.addEventListener('click', () => {
+        modalChaos.style.display = 'none';
+        const tbl = state.tables.find(t => t.number === 'S-02');
+        if (tbl) {
+          state.selectedTable = tbl;
+        }
+        if (modalConflict) modalConflict.style.display = 'flex';
+      });
+    }
+    if (btnCloseConflict) btnCloseConflict.addEventListener('click', () => modalConflict.style.display = 'none');
+    if (btnConflictAbort) {
+      btnConflictAbort.addEventListener('click', () => {
+        const tbl = state.tables.find(t => t.number === 'S-02');
+        if (tbl) tbl.billAmount = 575.00;
+        showToast('Masa S-02 güncel sunucu verisiyle (575 TL) yenilendi.');
+        modalConflict.style.display = 'none';
+        renderCashierTables();
+      });
+    }
+    if (btnConflictMerge) {
+      btnConflictMerge.addEventListener('click', () => {
+        const tbl = state.tables.find(t => t.number === 'S-02');
+        if (tbl) tbl.billAmount = 575.00;
+        state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Concurrency Uzlaşması: Masa S-02 (575 TL) başarıyla senkronize edildi.`);
+        showToast('Eşzamanlı değişiklikler başarıyla birleştirildi.');
+        modalConflict.style.display = 'none';
+        renderCashierTables();
+      });
+    }
+
+    // Chaos Scenario 2: 86'd Out-of-Stock
+    const btnRun86 = document.getElementById('btn-run-chaos-86');
+    if (btnRun86) {
+      btnRun86.addEventListener('click', () => {
+        modalChaos.style.display = 'none';
+        const bonfile = state.products.find(p => p.id === 'p3');
+        if (bonfile) {
+          bonfile.is86 = !bonfile.is86;
+          state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] ŞEF ALARMI: ${bonfile.name} durumu -> ${bonfile.is86 ? '86\'d (TÜKENDİ)' : 'Satışta'}.`);
+          showToast(`ŞEF ALARMI: ${bonfile.name} ${bonfile.is86 ? 'tükendi (86\'d)!' : 'tekrar satışa açıldı.'}`, bonfile.is86 ? 'error' : 'success');
+          renderPOSProducts();
+          renderMenuManagement();
+          renderWaiterSurface();
+        }
+      });
+    }
+
+    // Chaos Scenario 3: Printer Paper Out
+    const btnRunPrinter = document.getElementById('btn-run-chaos-printer');
+    if (btnRunPrinter) {
+      btnRunPrinter.addEventListener('click', () => {
+        modalChaos.style.display = 'none';
+        const prn = state.printers.find(p => p.id === 'prn-2');
+        if (prn) {
+          prn.status = 'paper_out';
+          prn.issue = 'Kağıt Bitti / Beklemede';
+          state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Donanım Uyarısı: Bar Yazıcısı kağıt sonu alarmı tetiklendi.`);
+          showToast('UYARI: Bar Yazıcısı kağıt sonu alarmı! Mutfak sekmesini kontrol ediniz.', 'error');
+          renderOperations();
+        }
+      });
+    }
+
+    // Chaos Scenario 4: Split Bill
+    const btnRunSplit = document.getElementById('btn-run-chaos-split');
+    if (btnRunSplit) {
+      btnRunSplit.addEventListener('click', () => {
+        modalChaos.style.display = 'none';
+        const tbl = state.tables.find(t => t.number === 'S-02');
+        if (tbl) {
+          state.selectedTable = tbl;
+          renderSplitBill();
+          if (modalSplitBill) modalSplitBill.style.display = 'flex';
+        }
+      });
+    }
+
+    // Chaos Scenario 5: Offline Waiter Mutation & Resync
+    const btnRunOfflineSync = document.getElementById('btn-run-chaos-offline-sync');
+    if (btnRunOfflineSync) {
+      btnRunOfflineSync.addEventListener('click', () => {
+        modalChaos.style.display = 'none';
+        // 1. Switch to waiter view
+        document.querySelectorAll('.proto-btn[data-view]').forEach(b => b.classList.remove('active'));
+        const wtrBtn = document.getElementById('btn-view-waiter-phone');
+        if (wtrBtn) wtrBtn.classList.add('active');
+        state.currentView = 'waiter-phone';
+
+        const cashierSurf = document.getElementById('surface-cashier');
+        const waiterSurf = document.getElementById('surface-waiter');
+        const waiterFrame = document.getElementById('waiter-device-frame');
+        cashierSurf.style.display = 'none';
+        waiterSurf.style.display = 'flex';
+        waiterFrame.className = 'device-frame phone-mode';
+
+        // 2. Cut Network
+        state.isOnline = false;
+        updateNetworkUI();
+
+        // 3. Populate Waiter Cart with 2 items and simulate offline queue
+        state.wtrActiveTable = state.tables.find(t => t.number === 'B-01');
+        state.wtrCart = [
+          { id: 'p1', name: 'Alkaros Burger (200g)', unitPrice: 240.00, quantity: 1 },
+          { id: 'p7', name: 'Ayran 300ml', unitPrice: 30.00, quantity: 2 }
+        ];
+
+        document.getElementById('wtr-view-tables').style.display = 'none';
+        document.getElementById('wtr-view-order').style.display = 'flex';
+        const nameEl = document.getElementById('wtr-active-table-name');
+        if (nameEl) nameEl.textContent = `Masa B-01 (Bahçe - Offline)`;
+
+        renderWaiterSurface();
+        showToast('Bahçede Wi-Fi koptu! Çevrimdışı sipariş modundasınız. Sipariş verip ağı açtığınızda test edebilirsiniz.', 'warning');
+      });
+    }
+
+    // 5.23 Simulator Controls (Görünüm, Tema, Ağ)
     document.querySelectorAll('.proto-btn[data-view]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.proto-btn[data-view]').forEach(b => b.classList.remove('active'));
@@ -1667,7 +1924,7 @@
       });
     }
 
-    // 5.22 PIN Lockout Keypad
+    // 5.24 PIN Lockout Keypad
     const lockBtn = document.getElementById('btn-sim-lock');
     const cashierLockBtn = document.getElementById('btn-cashier-lock');
     const lockModal = document.getElementById('modal-lockout');
@@ -1721,7 +1978,7 @@
       });
     }
 
-    // 5.23 Waiter Surface Actions
+    // 5.25 Waiter Surface Actions
     document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(item => {
       item.addEventListener('click', () => {
         document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(i => i.classList.remove('active'));
@@ -1811,6 +2068,11 @@
         const prod = state.products.find(p => p.id === prodId);
         if (!prod) return;
 
+        if (prod.is86) {
+          showToast(`DİKKAT: ${prod.name} tükendi (86'd)! Sipariş edilemez.`, 'error');
+          return;
+        }
+
         const existing = state.wtrCart.find(i => i.id === prod.id);
         if (existing) {
           existing.quantity += 1;
@@ -1883,7 +2145,7 @@
       });
     }
 
-    // 5.24 Clock Loop
+    // 5.26 Clock Loop
     setInterval(() => {
       const clock = document.getElementById('cashier-clock');
       if (clock) {
