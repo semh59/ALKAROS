@@ -111,4 +111,37 @@ public sealed class CashierShellTests
         state.SelectedTable!.TableNumber.Should().Be("M-02");
         state.SelectedTable.ActiveBillAmount.Should().Be(120.00m);
     }
+
+    [Fact]
+    public void TwoDimensionalTableStateMaintainsOccupancyAndOperationalBadgeDistinctly()
+    {
+        var session = new CashierSession(
+            SessionId: Guid.NewGuid(),
+            UserId: Guid.NewGuid(),
+            UserName: "Kasiyer Mehmet",
+            TerminalId: "POS-01",
+            ExpiresAt: DateTimeOffset.UtcNow.AddHours(2),
+            IsActive: true);
+
+        _engine.SetSession(session);
+
+        var table = new TableCardViewModel(
+            TableId: Guid.NewGuid(),
+            TableNumber: "S-02",
+            Section: "Salon",
+            Status: TableViewStatus.Occupied,
+            Capacity: 4,
+            ActiveBillAmount: 485.00m,
+            RowVersion: 1,
+            OccupiedSince: DateTimeOffset.UtcNow.AddMinutes(-35),
+            IsSelected: false,
+            OperationalBadge: TableOperationalBadge.BillRequested);
+
+        _engine.LoadTables(new[] { table });
+
+        var tables = _engine.GetFilteredTables();
+        tables.Should().HaveCount(1);
+        tables[0].Status.Should().Be(TableViewStatus.Occupied);
+        tables[0].OperationalBadge.Should().Be(TableOperationalBadge.BillRequested);
+    }
 }

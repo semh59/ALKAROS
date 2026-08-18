@@ -1,0 +1,1517 @@
+/**
+ * ALKAROS V1 — Core Restaurant POS & Waiter UI Simulation Engine (Stitch Enterprise Complete Version)
+ * Standards: Title Case, Lucide SVG Icons, 2-Dimensional Table State, 
+ * Table Transfer (V1-TBL-002), Table Merge (V1-TBL-003), Discount Line (V1-BIL-003),
+ * Reserved Table Seating, Cart Item In-Place Editing, Live Extra Ingredient Pricing,
+ * Coursing (Servis Aşamaları), Seat-Based Ordering, 1-Tap Repeat Round,
+ * Void/Complimentary (V1-ORD-003), Station Routing (V1-KIT-002), Waiter Mobile Bottom Sheet,
+ * Idempotency Protection, Offline Queue Replay, PIN Security Rate Limiting
+ */
+
+(function () {
+  'use strict';
+
+  // --- 1. INITIAL MOCK DATA ---
+
+  const INITIAL_TABLES = [
+    { id: 'tbl-1', number: 'S-01', section: 'Salon', occupancy: 'available', opBadge: null, capacity: 4, billAmount: 0.00, waiter: null, minutes: null, previousDrinks: [] },
+    { id: 'tbl-2', number: 'S-02', section: 'Salon', occupancy: 'occupied', opBadge: 'cooking', capacity: 4, billAmount: 485.00, waiter: 'Mehmet K.', minutes: 35, previousDrinks: [{ name: 'Ayran 300ml', price: 30.00 }, { name: 'Coca Cola 330ml', price: 45.00 }] },
+    { id: 'tbl-3', number: 'S-03', section: 'Salon', occupancy: 'occupied', opBadge: null, capacity: 6, billAmount: 1250.00, waiter: 'Can T.', minutes: 12, previousDrinks: [{ name: 'Ayran 300ml', price: 30.00 }] },
+    { id: 'tbl-4', number: 'S-04', section: 'Salon', occupancy: 'occupied', opBadge: 'bill-requested', capacity: 4, billAmount: 820.00, waiter: 'Mehmet K.', minutes: 58, previousDrinks: [] },
+    { id: 'tbl-5', number: 'S-05', section: 'Salon', occupancy: 'reserved', opBadge: null, capacity: 4, billAmount: 0.00, waiter: null, minutes: null, note: '19:30 - 4 Kişi' },
+    { id: 'tbl-6', number: 'S-06', section: 'Salon', occupancy: 'occupied', opBadge: 'ready', capacity: 2, billAmount: 310.00, waiter: 'Mehmet K.', minutes: 22, previousDrinks: [{ name: 'Su 0.5L', price: 15.00 }] },
+    { id: 'tbl-7', number: 'S-07', section: 'Salon', occupancy: 'available', opBadge: null, capacity: 2, billAmount: 0.00, waiter: null, minutes: null },
+    { id: 'tbl-8', number: 'S-08', section: 'Salon', occupancy: 'available', opBadge: null, capacity: 6, billAmount: 0.00, waiter: null, minutes: null },
+    { id: 'tbl-9', number: 'B-01', section: 'Bahçe', occupancy: 'occupied', opBadge: 'cooking', capacity: 4, billAmount: 290.00, waiter: 'Can T.', minutes: 18, previousDrinks: [{ name: 'Türk Kahvesi', price: 30.00 }] },
+    { id: 'tbl-10', number: 'B-02', section: 'Bahçe', occupancy: 'available', opBadge: null, capacity: 4, billAmount: 0.00, waiter: null, minutes: null },
+    { id: 'tbl-11', number: 'B-03', section: 'Bahçe', occupancy: 'available', opBadge: null, capacity: 6, billAmount: 0.00, waiter: null, minutes: null },
+    { id: 'tbl-12', number: 'B-04', section: 'Bahçe', occupancy: 'occupied', opBadge: null, capacity: 2, billAmount: 175.00, waiter: 'Mehmet K.', minutes: 40, previousDrinks: [] },
+    { id: 'tbl-13', number: 'T-01', section: 'Teras', occupancy: 'available', opBadge: null, capacity: 4, billAmount: 0.00, waiter: null, minutes: null },
+    { id: 'tbl-14', number: 'T-02', section: 'Teras', occupancy: 'occupied', opBadge: 'bill-requested', capacity: 4, billAmount: 640.00, waiter: 'Can T.', minutes: 50, previousDrinks: [] }
+  ];
+
+  const CATALOG_PRODUCTS = [
+    { id: 'p1', name: 'Alkaros Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 240.00, station: 'hot', stock: 'Son 5 Porsiyon' },
+    { id: 'p2', name: 'Cheese Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 220.00, station: 'hot' },
+    { id: 'p3', name: 'Tavuk Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 190.00, station: 'hot' },
+    { id: 'p4', name: 'Bonfile Izgara', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 450.00, station: 'hot', stock: 'Son 3 Porsiyon' },
+    { id: 'p5', name: 'Köfte Porsiyon', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 280.00, station: 'hot' },
+    { id: 'p6', name: 'Tavuk Şiş', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 230.00, station: 'hot' },
+    { id: 'p7', name: 'Patates Tava', category: 'Ana Yemek', defaultCourse: 'Başlangıç', price: 85.00, station: 'hot' },
+    { id: 'p8', name: 'Coca Cola 330ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 45.00, station: 'bar' },
+    { id: 'p9', name: 'Ayran 300ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 30.00, station: 'bar' },
+    { id: 'p10', name: 'Su 0.5L', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 15.00, station: 'bar' },
+    { id: 'p11', name: 'Çikolatalı Sufle', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 120.00, station: 'cold', stock: 'Son 4 Porsiyon' },
+    { id: 'p12', name: 'Fırın Sütlaç', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 95.00, station: 'cold' }
+  ];
+
+  const INITIAL_TICKETS = [
+    {
+      id: '1042',
+      table: 'Masa S-02',
+      time: '12 dk önce',
+      station: 'hot',
+      items: [
+        { name: '1x Alkaros Burger (Orta, +Cheddar)', status: 'cooking' },
+        { name: '1x Patates Tava', status: 'ready' }
+      ]
+    },
+    {
+      id: '1043',
+      table: 'Masa B-01',
+      time: '5 dk önce',
+      station: 'bar',
+      items: [
+        { name: '2x Türk Kahvesi', status: 'pending' },
+        { name: '1x Sufle', status: 'cooking' }
+      ]
+    },
+    {
+      id: '1044',
+      table: 'Masa S-06',
+      time: '2 dk önce',
+      station: 'hot',
+      items: [
+        { name: '1x Köfte Porsiyon', status: 'ready' }
+      ]
+    }
+  ];
+
+  const INITIAL_PRINTERS = [
+    { id: 'prn-1', name: 'Mutfak Sıcak Yazıcısı', ip: '192.168.1.200', status: 'online', queueCount: 0 },
+    { id: 'prn-2', name: 'İçecek / Bar Yazıcısı', ip: '192.168.1.201', status: 'paper_out', queueCount: 2, issue: 'Kağıt Bitti / Beklemede' },
+    { id: 'prn-3', name: 'Mutfak Soğuk/Tatlı Yazıcısı', ip: '192.168.1.202', status: 'online', queueCount: 0 }
+  ];
+
+  const INITIAL_NOTIFICATIONS = [
+    { id: 'notif-1', time: '14:28', text: 'Masa S-06: 1x Köfte Porsiyon HAZIR — Servis Bekliyor!', unread: true },
+    { id: 'notif-2', time: '14:22', text: 'Masa S-02: 1x Patates Tava HAZIR — Servis Bekliyor!', unread: true }
+  ];
+
+  // --- 2. APPLICATION STATE ---
+
+  const state = {
+    theme: localStorage.getItem('alkaros_theme') || 'light',
+    currentView: 'cashier', // 'cashier', 'waiter-phone', 'waiter-tablet'
+    isOnline: true,
+    isLocked: false,
+    tables: [...INITIAL_TABLES],
+    selectedTable: null,
+    activeSectionFilter: 'Tümü',
+    activeStatusFilter: 'all',
+    searchTableQuery: '',
+    
+    // Seat, Discount & Order Entry
+    activeSeat: 'shared',
+    activeCategory: 'Tümü',
+    searchProductQuery: '',
+    activeCart: [],
+    activeDiscount: 0, // In TL or percentage applied
+    activeModifierProduct: null,
+    editingCartIndex: null, // null if new item, number if editing existing
+    selectedQuickTags: [],
+    selectedCartItemIndex: null,
+
+    // Operations & Printer
+    activeStationFilter: 'all',
+    tickets: [...INITIAL_TICKETS],
+    printers: [...INITIAL_PRINTERS],
+    auditLogs: [
+      '[14:28:10] Sistem: Bar Yazıcısı kağıt sonu algılandı. Fiş #1043 beklemede.',
+      '[14:29:00] Kasiyer Ahmet Y.: Fiş #1043 Sıcak Yazıcısına yönlendirildi (Gerekçe: Bar Kağıt Arızası).'
+    ],
+
+    // Waiter PWA specific
+    wtrSectionFilter: 'Tümü',
+    wtrSearchQuery: '',
+    wtrActiveTable: null,
+    wtrCart: [],
+    wtrOfflineQueue: [],
+    notifications: [...INITIAL_NOTIFICATIONS],
+
+    // PIN Lockout state
+    enteredPin: '',
+    failedPinAttempts: 0,
+    cooldownRemaining: 0,
+    cooldownTimer: null
+  };
+
+  // --- 3. DOM HELPERS & FORMATTING ---
+
+  const formatTL = (val) => {
+    return Number(val || 0).toLocaleString('tr-TR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }) + ' TL';
+  };
+
+  const showToast = (message, type = 'success') => {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'slideInRight 200ms ease reverse';
+      setTimeout(() => toast.remove(), 200);
+    }, 3000);
+  };
+
+  // --- 4. RENDERERS ---
+
+  // 4.1 Render Cashier Tables Grid
+  function renderCashierTables() {
+    const grid = document.getElementById('cashier-table-grid');
+    const emptyState = document.getElementById('cashier-empty-search');
+    if (!grid) return;
+
+    let filtered = state.tables.filter(t => {
+      const matchSection = state.activeSectionFilter === 'Tümü' || t.section === state.activeSectionFilter;
+      const matchStatus = state.activeStatusFilter === 'all' || 
+        (state.activeStatusFilter === 'bill-requested' && t.opBadge === 'bill-requested') ||
+        (state.activeStatusFilter === 'cooking' && t.opBadge === 'cooking');
+      const matchSearch = !state.searchTableQuery || 
+        t.number.toLowerCase().includes(state.searchTableQuery.toLowerCase()) ||
+        (t.waiter && t.waiter.toLowerCase().includes(state.searchTableQuery.toLowerCase()));
+      return matchSection && matchStatus && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      grid.style.display = 'none';
+      if (emptyState) emptyState.style.display = 'flex';
+    } else {
+      grid.style.display = 'grid';
+      if (emptyState) emptyState.style.display = 'none';
+    }
+
+    grid.innerHTML = filtered.map(t => {
+      // 1. Dimension: Occupancy
+      let occupClass = 'available';
+      let occupText = 'Boş';
+      if (t.occupancy === 'occupied') { occupClass = 'occupied'; occupText = 'Dolu'; }
+      else if (t.occupancy === 'reserved') { occupClass = 'reserved'; occupText = 'Rezerve'; }
+
+      // 2. Dimension: Operational Action Badge
+      let actionBadgeHtml = '';
+      if (t.occupancy === 'occupied' && t.opBadge) {
+        if (t.opBadge === 'bill-requested') {
+          actionBadgeHtml = `<div class="table-action-badge bill-requested"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Hesap İstendi</div>`;
+        } else if (t.opBadge === 'cooking') {
+          actionBadgeHtml = `<div class="table-action-badge kitchen-cooking"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Hazırlanıyor</div>`;
+        } else if (t.opBadge === 'ready') {
+          actionBadgeHtml = `<div class="table-action-badge kitchen-ready"><svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Servise Hazır</div>`;
+        }
+      }
+
+      // 3. Heatmap Elapsed Timer Bar
+      let timerBarHtml = '';
+      if (t.occupancy === 'occupied' && t.minutes) {
+        const pct = Math.min(100, (t.minutes / 60) * 100);
+        let barClass = 'table-elapsed-fill';
+        if (t.minutes >= 45) barClass += ' alert';
+        else if (t.minutes >= 25) barClass += ' warning';
+        timerBarHtml = `
+          <div class="table-elapsed-bar" title="${t.minutes} dakikadır açık">
+            <div class="${barClass}" style="width: ${pct}%"></div>
+          </div>
+        `;
+      }
+
+      const btnLabel = t.occupancy === 'available' 
+        ? 'Sipariş Aç' 
+        : t.occupancy === 'reserved' 
+          ? 'Misafiri Oturt >' 
+          : 'Masayı Aç >';
+
+      return `
+        <div class="table-card" data-table-id="${t.id}">
+          <div class="table-card-top">
+            <span class="table-number">Masa ${t.number}</span>
+            <span class="occupancy-pill ${occupClass}">${occupText}</span>
+          </div>
+          ${timerBarHtml}
+          <div class="table-card-body">
+            ${t.occupancy === 'available' 
+              ? `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Kapasite: ${t.capacity} Kişi</div>` 
+              : t.occupancy === 'reserved'
+                ? `<div class="meta-row"><strong style="color:var(--badge-reserv-text)">${t.note || '19:30 - 4 Kişi'}</strong></div>`
+                : `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${t.minutes} dk • Garson: ${t.waiter || 'Mehmet K.'}</div>
+                   <div class="table-amount num-val">${formatTL(t.billAmount)}</div>`
+            }
+            ${actionBadgeHtml}
+          </div>
+          <button type="button" class="table-card-btn">${btnLabel}</button>
+        </div>
+      `;
+    }).join('');
+
+    // Update stats
+    const openBillsCount = state.tables.filter(t => t.occupancy === 'occupied').length;
+    const statOpen = document.getElementById('stat-open-bills');
+    if (statOpen) statOpen.textContent = `${openBillsCount} Masa`;
+
+    const countBillReq = state.tables.filter(t => t.opBadge === 'bill-requested').length;
+    const countCooking = state.tables.filter(t => t.opBadge === 'cooking').length;
+    const elBillReq = document.getElementById('count-bill-req');
+    const elCooking = document.getElementById('count-cooking');
+    if (elBillReq) elBillReq.textContent = countBillReq;
+    if (elCooking) elCooking.textContent = countCooking;
+  }
+
+  // 4.2 Render POS Catalog Products
+  function renderCatalogProducts() {
+    const grid = document.getElementById('pos-product-grid');
+    if (!grid) return;
+
+    let filtered = CATALOG_PRODUCTS.filter(p => {
+      const matchCat = state.activeCategory === 'Tümü' || p.category === state.activeCategory;
+      const matchSearch = !state.searchProductQuery || p.name.toLowerCase().includes(state.searchProductQuery.toLowerCase());
+      return matchCat && matchSearch;
+    });
+
+    grid.innerHTML = filtered.map(p => `
+      <div class="product-card" data-prod-id="${p.id}">
+        ${p.stock ? `<span class="stock-tag">${p.stock}</span>` : ''}
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price num-val">${formatTL(p.price)}</div>
+      </div>
+    `).join('');
+  }
+
+  // 4.3 Render POS Cart Draft Grouped by Coursing with In-Place Edit Trigger
+  function renderCart() {
+    const list = document.getElementById('pos-cart-items');
+    const badge = document.getElementById('cart-item-count');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const discountRow = document.getElementById('row-discount');
+    const discountEl = document.getElementById('cart-discount');
+    const taxEl = document.getElementById('cart-tax');
+    const grandTotalEl = document.getElementById('cart-grand-total');
+    const submitBtn = document.getElementById('btn-pos-submit-order');
+
+    if (!list) return;
+
+    if (state.activeCart.length === 0) {
+      list.innerHTML = `
+        <div class="cart-empty-placeholder">
+          <p>Henüz ürün seçilmedi.</p>
+          <span>Soldaki menüden ürün ekleyiniz.</span>
+        </div>
+      `;
+      if (badge) badge.textContent = '0 Kalem';
+      if (subtotalEl) subtotalEl.textContent = '0,00 TL';
+      if (discountRow) discountRow.style.display = 'none';
+      if (taxEl) taxEl.textContent = '0,00 TL';
+      if (grandTotalEl) grandTotalEl.textContent = '0,00 TL';
+      if (submitBtn) submitBtn.disabled = true;
+      return;
+    }
+
+    const courses = [
+      { name: 'Başlangıç', key: 'Başlangıç', title: '1. AŞAMA: BAŞLANGIÇLAR', cssClass: 'starter' },
+      { name: 'Ana Yemek', key: 'Ana Yemek', title: '2. AŞAMA: ANA YEMEKLER', cssClass: 'main' },
+      { name: 'Tatlı', key: 'Tatlı', title: '3. AŞAMA: TATLI & KAHVE', cssClass: 'dessert' }
+    ];
+
+    let subtotal = 0;
+    let fullHtml = '';
+
+    courses.forEach(course => {
+      const itemsInCourse = state.activeCart
+        .map((item, originalIndex) => ({ item, originalIndex }))
+        .filter(({ item }) => item.course === course.key);
+
+      if (itemsInCourse.length > 0) {
+        fullHtml += `
+          <div class="course-group">
+            <div class="course-header ${course.cssClass}">
+              <span>${course.title}</span>
+              <span style="font-size:11px;font-weight:600">${itemsInCourse.length} Kalem</span>
+            </div>
+        `;
+
+        itemsInCourse.forEach(({ item, originalIndex }) => {
+          const itemTotal = item.unitPrice * item.quantity;
+          subtotal += itemTotal;
+
+          const modDetails = [];
+          if (item.doneness) modDetails.push(`Pişme: ${item.doneness}`);
+          if (item.extras && item.extras.length) modDetails.push(`+ ${item.extras.join(', ')}`);
+          if (item.quickTags && item.quickTags.length) modDetails.push(`Etiket: ${item.quickTags.join(', ')}`);
+          if (item.note) modDetails.push(`Not: "${item.note}"`);
+
+          const seatLabel = item.seat === 'shared' ? 'Ortaya' : `Koltuk ${item.seat}`;
+
+          fullHtml += `
+            <div class="cart-item-row" data-cart-index="${originalIndex}">
+              <div class="cart-item-main btn-edit-cart-item" data-index="${originalIndex}" title="Düzenlemek için tıklayın">
+                <div>
+                  <span class="item-seat-badge">${seatLabel}</span>
+                  <span class="cart-item-title">${item.isComplimentary ? '<strong style="color:#059669">[İkram] </strong>' : ''}${item.name}</span>
+                </div>
+                <span class="cart-item-price num-val">${formatTL(itemTotal)}</span>
+              </div>
+              ${modDetails.length ? `<div class="cart-item-modifiers btn-edit-cart-item" data-index="${originalIndex}">${modDetails.join('<br>')}</div>` : ''}
+              <div class="cart-item-controls">
+                <div class="qty-control">
+                  <button type="button" class="btn-qty btn-qty-dec" data-index="${originalIndex}">-</button>
+                  <span class="qty-num num-val">${item.quantity}</span>
+                  <button type="button" class="btn-qty btn-qty-inc" data-index="${originalIndex}">+</button>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button type="button" class="cart-item-actions-btn btn-item-manage" data-index="${originalIndex}">İkram / İptal</button>
+                  <button type="button" class="btn-clear-cart btn-cart-remove" data-index="${originalIndex}">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        fullHtml += `</div>`;
+      }
+    });
+
+    list.innerHTML = fullHtml;
+
+    let discountAmount = 0;
+    if (state.activeDiscount > 0) {
+      if (state.activeDiscount < 1) {
+        discountAmount = subtotal * state.activeDiscount;
+      } else {
+        discountAmount = state.activeDiscount;
+      }
+      if (discountRow) {
+        discountRow.style.display = 'flex';
+        discountEl.textContent = `-${formatTL(discountAmount)}`;
+      }
+    } else {
+      if (discountRow) discountRow.style.display = 'none';
+    }
+
+    const discountedSubtotal = Math.max(0, subtotal - discountAmount);
+    const tax = discountedSubtotal * 0.10;
+    const total = discountedSubtotal;
+
+    if (badge) badge.textContent = `${state.activeCart.length} Kalem`;
+    if (subtotalEl) subtotalEl.textContent = formatTL(subtotal);
+    if (taxEl) taxEl.textContent = formatTL(tax);
+    if (grandTotalEl) grandTotalEl.textContent = formatTL(total);
+    if (submitBtn) submitBtn.disabled = !state.isOnline;
+  }
+
+  // 4.4 Render Operations & Printers Panel
+  function renderOperations() {
+    const feed = document.getElementById('ops-tickets-feed');
+    const printersList = document.getElementById('ops-printers-list');
+    const auditBox = document.getElementById('ops-audit-log');
+    const ticketCountEl = document.getElementById('ops-ticket-count');
+
+    if (feed) {
+      let filtered = state.tickets.filter(t => {
+        return state.activeStationFilter === 'all' || t.station === state.activeStationFilter;
+      });
+
+      if (ticketCountEl) ticketCountEl.textContent = `${filtered.length} Fiş`;
+
+      feed.innerHTML = filtered.map(ticket => `
+        <div class="ticket-card">
+          <div class="ticket-top">
+            <span>Fiş #${ticket.id} — ${ticket.table}</span>
+            <span class="meta-row">${ticket.time}</span>
+          </div>
+          <div class="ticket-items-list">
+            ${ticket.items.map(i => {
+              let badgeHtml = '';
+              if (i.status === 'cooking') badgeHtml = '<span class="occupancy-pill" style="background:var(--badge-cooking-bg);color:var(--badge-cooking-text)">Hazırlanıyor</span>';
+              else if (i.status === 'ready') badgeHtml = '<span class="occupancy-pill" style="background:var(--badge-ready-bg);color:var(--badge-ready-text)">Hazır</span>';
+              else if (i.status === 'served') badgeHtml = '<span class="occupancy-pill" style="background:var(--badge-avail-bg);color:var(--badge-avail-text)">Teslim</span>';
+              else badgeHtml = '<span class="occupancy-pill" style="background:var(--color-surface-active);color:var(--color-text-muted)">Bekliyor</span>';
+              return `<div class="ticket-item-row"><span>${i.name}</span>${badgeHtml}</div>`;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    if (printersList) {
+      printersList.innerHTML = state.printers.map(p => `
+        <div class="printer-card ${p.status === 'paper_out' ? 'warning' : ''}">
+          <div class="printer-info">
+            <span class="printer-name">${p.name}</span>
+            <span class="printer-ip">IP: ${p.ip} • Durum: <strong>${p.status === 'paper_out' ? p.issue : 'Çevrimiçi'}</strong></span>
+          </div>
+          <div>
+            ${p.status === 'paper_out' 
+              ? `<button type="button" class="btn-secondary" id="btn-open-reroute" style="padding:6px 12px;font-size:12px">Yönlendir</button>`
+              : `<span class="occupancy-pill available">Normal</span>`
+            }
+          </div>
+        </div>
+      `).join('');
+    }
+
+    if (auditBox) {
+      auditBox.innerHTML = state.auditLogs.map(l => `<div class="log-entry">${l}</div>`).join('');
+    }
+  }
+
+  // 4.5 Render Waiter Surface
+  function renderWaiterSurface() {
+    const grid = document.getElementById('waiter-tables-container');
+    const productList = document.getElementById('wtr-product-list');
+    const cartContainer = document.getElementById('wtr-cart-items');
+    const wtrTotal = document.getElementById('wtr-cart-total');
+    const wtrCount = document.getElementById('wtr-cart-count');
+    const wtrBtnPrice = document.getElementById('wtr-btn-price');
+    const notifFeed = document.getElementById('wtr-notif-feed');
+    const unreadDot = document.getElementById('wtr-unread-dot');
+
+    if (grid) {
+      let filtered = state.tables.filter(t => {
+        const matchSection = state.wtrSectionFilter === 'Tümü' || 
+          (state.wtrSectionFilter === 'mine' && t.waiter === 'Mehmet K.') ||
+          t.section === state.wtrSectionFilter;
+        const matchSearch = !state.wtrSearchQuery || t.number.toLowerCase().includes(state.wtrSearchQuery.toLowerCase());
+        return matchSection && matchSearch;
+      });
+
+      grid.innerHTML = filtered.map(t => {
+        let occupClass = t.occupancy === 'occupied' ? 'occupied' : t.occupancy === 'reserved' ? 'reserved' : 'available';
+        let occupText = t.occupancy === 'occupied' ? 'Dolu' : t.occupancy === 'reserved' ? 'Rezerve' : 'Boş';
+        return `
+          <div class="table-card" data-wtr-table-id="${t.id}">
+            <div class="table-card-top">
+              <span class="table-number">Masa ${t.number}</span>
+              <span class="occupancy-pill ${occupClass}">${occupText}</span>
+            </div>
+            <div class="table-card-body">
+              ${t.occupancy === 'occupied' ? `<div class="table-amount num-val">${formatTL(t.billAmount)}</div>` : `<div class="meta-row">${t.capacity} Kişi</div>`}
+            </div>
+            <button type="button" class="table-card-btn">${t.occupancy === 'available' ? 'Sipariş Aç' : t.occupancy === 'reserved' ? 'Misafiri Oturt >' : 'Masayı Aç >'}</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (productList) {
+      productList.innerHTML = CATALOG_PRODUCTS.map(p => `
+        <div class="product-card" data-wtr-prod-id="${p.id}">
+          <div class="prod-name">${p.name}</div>
+          <div class="prod-price num-val">${formatTL(p.price)}</div>
+        </div>
+      `).join('');
+    }
+
+    if (cartContainer) {
+      let total = 0;
+      if (state.wtrCart.length === 0) {
+        cartContainer.innerHTML = '<span style="font-size:12px;color:var(--color-text-dim)">Sepet boş</span>';
+      } else {
+        cartContainer.innerHTML = state.wtrCart.map(item => {
+          total += item.unitPrice * item.quantity;
+          return `
+            <div style="display:flex;justify-content:space-between;font-size:13px">
+              <span>${item.quantity}x ${item.name}</span>
+              <span class="num-val">${formatTL(item.unitPrice * item.quantity)}</span>
+            </div>
+          `;
+        }).join('');
+      }
+      if (wtrTotal) wtrTotal.textContent = formatTL(total);
+      if (wtrCount) wtrCount.textContent = state.wtrCart.length;
+      if (wtrBtnPrice) wtrBtnPrice.textContent = formatTL(total);
+    }
+
+    if (notifFeed) {
+      const unreadCount = state.notifications.filter(n => n.unread).length;
+      if (unreadDot) unreadDot.style.display = unreadCount > 0 ? 'block' : 'none';
+
+      notifFeed.innerHTML = state.notifications.map((n, i) => `
+        <div class="wtr-notif-card ${n.unread ? 'unread' : ''}">
+          <div>
+            <div style="font-weight:600;font-size:13px">${n.text}</div>
+            <div class="meta-row">${n.time}</div>
+          </div>
+          <button type="button" class="btn-secondary-sm btn-deliver-notif" data-notif-idx="${i}">Teslim Ettim</button>
+        </div>
+      `).join('');
+    }
+  }
+
+  // --- 5. EVENT HANDLERS & INTERACTIONS ---
+
+  function setupEvents() {
+    // 5.1 Simulator View Switcher
+    document.querySelectorAll('.proto-btn[data-view]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.proto-btn[data-view]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentView = btn.dataset.view;
+
+        const cashierSurf = document.getElementById('surface-cashier');
+        const waiterSurf = document.getElementById('surface-waiter');
+        const waiterFrame = document.getElementById('waiter-device-frame');
+
+        if (state.currentView === 'cashier') {
+          cashierSurf.style.display = 'flex';
+          waiterSurf.style.display = 'none';
+        } else if (state.currentView === 'waiter-phone') {
+          cashierSurf.style.display = 'none';
+          waiterSurf.style.display = 'flex';
+          waiterFrame.className = 'device-frame phone-mode';
+        } else if (state.currentView === 'waiter-tablet') {
+          cashierSurf.style.display = 'none';
+          waiterSurf.style.display = 'flex';
+          waiterFrame.className = 'device-frame tablet-mode';
+        }
+      });
+    });
+
+    // 5.2 Simulator Theme Toggle
+    const themeBtn = document.getElementById('btn-theme-toggle');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        state.theme = state.theme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', state.theme);
+        localStorage.setItem('alkaros_theme', state.theme);
+      });
+    }
+
+    // 5.3 Simulator Network Toggle
+    const netBtn = document.getElementById('btn-sim-network');
+    if (netBtn) {
+      netBtn.addEventListener('click', () => {
+        state.isOnline = !state.isOnline;
+        const banner = document.getElementById('network-outage-banner');
+        const labelNet = document.getElementById('label-network');
+        const cuiNetDot = document.getElementById('cashier-net-status');
+        const wtrPill = document.getElementById('waiter-net-pill');
+        const wtrOffBar = document.getElementById('waiter-offline-bar');
+
+        if (!state.isOnline) {
+          labelNet.textContent = 'Ağ: Kesildi (Offline)';
+          netBtn.classList.add('active-danger');
+          if (banner) banner.style.display = 'flex';
+          if (cuiNetDot) cuiNetDot.className = 'connection-status offline';
+          if (wtrPill) wtrPill.innerHTML = '<span class="dot" style="background:#DC2626"></span><span>Çevrimdışı</span>';
+          if (wtrOffBar) wtrOffBar.style.display = 'flex';
+          showToast('Ağ bağlantısı koptu! Sistem çevrimdışı moda geçti.', 'warning');
+        } else {
+          labelNet.textContent = 'Ağ: Çevrimiçi';
+          netBtn.classList.remove('active-danger');
+          if (banner) banner.style.display = 'none';
+          if (cuiNetDot) cuiNetDot.className = 'connection-status';
+          if (wtrPill) wtrPill.innerHTML = '<span class="dot"></span><span>Çevrimiçi</span>';
+          if (wtrOffBar) wtrOffBar.style.display = 'none';
+
+          if (state.wtrOfflineQueue.length > 0) {
+            const count = state.wtrOfflineQueue.length;
+            showToast(`Ağ bağlantısı kuruldu! ${count} çevrimdışı sipariş mutfağa iletildi.`, 'success');
+            state.wtrOfflineQueue = [];
+            const qCountEl = document.getElementById('waiter-queue-count');
+            if (qCountEl) qCountEl.textContent = '0';
+          } else {
+            showToast('Ağ bağlantısı kuruldu. Masa verileri senkronize edildi.', 'success');
+          }
+        }
+        renderCart();
+      });
+    }
+
+    // 5.4 Cashier Tabs
+    const tabTables = document.getElementById('tab-cui-tables');
+    const tabOps = document.getElementById('tab-cui-operations');
+    const viewTables = document.getElementById('cui-view-tables');
+    const viewOps = document.getElementById('cui-view-operations');
+    const viewOrder = document.getElementById('cui-view-order-entry');
+
+    if (tabTables && tabOps) {
+      tabTables.addEventListener('click', () => {
+        tabTables.classList.add('active');
+        tabOps.classList.remove('active');
+        viewTables.style.display = 'flex';
+        viewOps.style.display = 'none';
+        viewOrder.style.display = 'none';
+      });
+
+      tabOps.addEventListener('click', () => {
+        tabOps.classList.add('active');
+        tabTables.classList.remove('active');
+        viewTables.style.display = 'none';
+        viewOps.style.display = 'flex';
+        viewOrder.style.display = 'none';
+        renderOperations();
+      });
+    }
+
+    // 5.5 Section Filter Chips & Status Quick Filters
+    document.querySelectorAll('.filter-chips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.activeSectionFilter = chip.dataset.section;
+        renderCashierTables();
+      });
+    });
+
+    document.querySelectorAll('.status-quick-filters .filter-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.status-quick-filters .filter-tag-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.activeStatusFilter = btn.dataset.statusFilter;
+        renderCashierTables();
+      });
+    });
+
+    // 5.6 Table Search Input
+    const searchInput = document.getElementById('input-search-tables');
+    const clearSearchBtn = document.getElementById('btn-clear-table-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        state.searchTableQuery = e.target.value.trim();
+        if (clearSearchBtn) clearSearchBtn.style.display = state.searchTableQuery ? 'flex' : 'none';
+        renderCashierTables();
+      });
+    }
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        state.searchTableQuery = '';
+        clearSearchBtn.style.display = 'none';
+        renderCashierTables();
+      });
+    }
+
+    // 5.7 Table Card Selection (Including Reserved Table Seating)
+    const tableGrid = document.getElementById('cashier-table-grid');
+    if (tableGrid) {
+      tableGrid.addEventListener('click', (e) => {
+        const card = e.target.closest('.table-card');
+        if (!card) return;
+        const tableId = card.dataset.tableId;
+        const table = state.tables.find(t => t.id === tableId);
+        if (!table) return;
+
+        // If reserved, seat the guest and transition to occupied
+        if (table.occupancy === 'reserved') {
+          table.occupancy = 'occupied';
+          table.waiter = 'Mehmet K.';
+          table.minutes = 1;
+          showToast(`Masa ${table.number} misafiri oturtuldu. Sipariş girişi açıldı.`);
+        }
+
+        state.selectedTable = table;
+        state.activeCart = [];
+        state.activeDiscount = 0;
+
+        viewTables.style.display = 'none';
+        viewOrder.style.display = 'flex';
+        
+        const titleEl = document.getElementById('pos-active-table-title');
+        if (titleEl) {
+          titleEl.innerHTML = `Masa ${table.number} <span class="table-section-tag">(${table.section})</span>`;
+        }
+
+        renderCatalogProducts();
+        renderCart();
+      });
+    }
+
+    // 5.8 Back to Tables from POS
+    const btnBack = document.getElementById('btn-pos-back-to-tables');
+    if (btnBack) {
+      btnBack.addEventListener('click', () => {
+        viewOrder.style.display = 'none';
+        viewTables.style.display = 'flex';
+        renderCashierTables();
+      });
+    }
+
+    // 5.9 Seat Selector Chips
+    document.querySelectorAll('.seat-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.seat-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.activeSeat = chip.dataset.seat;
+      });
+    });
+
+    // 5.10 1-Tap Repeat Round
+    const btnRepeatRound = document.getElementById('btn-action-repeat-round');
+    if (btnRepeatRound) {
+      btnRepeatRound.addEventListener('click', () => {
+        if (!state.selectedTable) return;
+        const drinks = state.selectedTable.previousDrinks || [];
+        if (drinks.length === 0) {
+          const demoDrinks = [
+            { id: 'p9', name: 'Ayran 300ml', unitPrice: 30.00, quantity: 2, course: 'Başlangıç', seat: 'shared' }
+          ];
+          demoDrinks.forEach(d => state.activeCart.push(d));
+          renderCart();
+          showToast('Önceki içecek turu sepete kopyalandı! (2x Ayran)');
+        } else {
+          drinks.forEach(d => {
+            state.activeCart.push({
+              id: 'rep_' + Math.random().toString(36).substring(2, 7),
+              name: d.name,
+              unitPrice: d.price,
+              quantity: 1,
+              course: 'Başlangıç',
+              seat: state.activeSeat
+            });
+          });
+          renderCart();
+          showToast(`Masa ${state.selectedTable.number} içecek turu kopyalandı!`);
+        }
+      });
+    }
+
+    // 5.11 Table Merge Modal (V1-TBL-003)
+    const btnMerge = document.getElementById('btn-action-merge-table');
+    const modalMerge = document.getElementById('modal-merge-table');
+    const btnCloseMerge = document.getElementById('btn-close-merge-modal');
+    const btnCancelMerge = document.getElementById('btn-cancel-merge');
+    const btnConfirmMerge = document.getElementById('btn-confirm-merge');
+    const selectMergeTarget = document.getElementById('select-merge-target-table');
+
+    if (btnMerge) {
+      btnMerge.addEventListener('click', () => {
+        if (!state.selectedTable) return;
+        const otherOccupied = state.tables.filter(t => t.occupancy === 'occupied' && t.id !== state.selectedTable.id);
+        if (otherOccupied.length === 0) {
+          showToast('Birleştirilecek başka açık/dolu masa bulunamadı!', 'warning');
+          return;
+        }
+        if (selectMergeTarget) {
+          selectMergeTarget.innerHTML = otherOccupied.map(t => `<option value="${t.id}">Masa ${t.number} (${t.section} - ${formatTL(t.billAmount)})</option>`).join('');
+        }
+        const titleEl = document.getElementById('merge-source-title');
+        if (titleEl) titleEl.textContent = `Ana Masa: Masa ${state.selectedTable.number}`;
+        if (modalMerge) modalMerge.style.display = 'flex';
+      });
+    }
+
+    if (btnCloseMerge) btnCloseMerge.addEventListener('click', () => modalMerge.style.display = 'none');
+    if (btnCancelMerge) btnCancelMerge.addEventListener('click', () => modalMerge.style.display = 'none');
+    if (btnConfirmMerge) {
+      btnConfirmMerge.addEventListener('click', () => {
+        const targetId = selectMergeTarget?.value;
+        const targetTable = state.tables.find(t => t.id === targetId);
+        if (targetTable && state.selectedTable) {
+          state.selectedTable.billAmount = (state.selectedTable.billAmount || 0) + (targetTable.billAmount || 0);
+
+          // Free target table
+          targetTable.occupancy = 'available';
+          targetTable.billAmount = 0.00;
+          targetTable.waiter = null;
+          targetTable.minutes = null;
+          targetTable.opBadge = null;
+
+          state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Masa Birleştirme: Masa ${targetTable.number} -> Masa ${state.selectedTable.number} ile birleştirildi.`);
+          showToast(`Masa ${targetTable.number} adisyonu Masa ${state.selectedTable.number} ile birleştirildi!`);
+
+          if (modalMerge) modalMerge.style.display = 'none';
+          renderCart();
+        }
+      });
+    }
+
+    // 5.12 Discount Modal (V1-BIL-003)
+    const btnAddDiscount = document.getElementById('btn-cart-add-discount');
+    const modalDiscount = document.getElementById('modal-discount');
+    const btnCloseDiscount = document.getElementById('btn-close-discount-modal');
+    const btnCancelDiscount = document.getElementById('btn-cancel-discount');
+    const btnConfirmDiscount = document.getElementById('btn-confirm-discount');
+
+    if (btnAddDiscount) {
+      btnAddDiscount.addEventListener('click', () => {
+        if (modalDiscount) modalDiscount.style.display = 'flex';
+      });
+    }
+    if (btnCloseDiscount) btnCloseDiscount.addEventListener('click', () => modalDiscount.style.display = 'none');
+    if (btnCancelDiscount) btnCancelDiscount.addEventListener('click', () => modalDiscount.style.display = 'none');
+    if (btnConfirmDiscount) {
+      btnConfirmDiscount.addEventListener('click', () => {
+        const rateVal = parseFloat(document.querySelector('input[name="discountRate"]:checked')?.value || 10);
+        const reason = document.getElementById('select-discount-reason')?.value;
+
+        if (rateVal === 50) {
+          state.activeDiscount = 50.00; // Fixed 50 TL
+        } else {
+          state.activeDiscount = rateVal / 100; // 0.10 or 0.20
+        }
+
+        state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] İndirim: Masa ${state.selectedTable.number} için ${rateVal === 50 ? '50 TL Sabit' : '%' + rateVal} uygulandı (${reason}).`);
+        showToast('Yetkili indirimi adisyona uygulandı.');
+
+        if (modalDiscount) modalDiscount.style.display = 'none';
+        renderCart();
+      });
+    }
+
+    // 5.13 Category Filter in POS
+    document.querySelectorAll('.cat-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        state.activeCategory = tab.dataset.category;
+        renderCatalogProducts();
+      });
+    });
+
+    // 5.14 Product Card Click -> Open Modifier Modal (New Item)
+    const prodGrid = document.getElementById('pos-product-grid');
+    if (prodGrid) {
+      prodGrid.addEventListener('click', (e) => {
+        const card = e.target.closest('.product-card');
+        if (!card) return;
+        const prodId = card.dataset.prodId;
+        const prod = CATALOG_PRODUCTS.find(p => p.id === prodId);
+        if (!prod) return;
+
+        state.activeModifierProduct = prod;
+        state.editingCartIndex = null;
+        state.selectedQuickTags = [];
+
+        const modal = document.getElementById('modal-modifier');
+        const titleEl = document.getElementById('mod-title');
+        const priceEl = document.getElementById('mod-price');
+        const finalPriceEl = document.getElementById('mod-final-price');
+
+        if (titleEl) titleEl.textContent = prod.name;
+        if (priceEl) priceEl.textContent = formatTL(prod.price);
+        if (finalPriceEl) finalPriceEl.textContent = formatTL(prod.price);
+
+        const defaultCourse = prod.defaultCourse || 'Ana Yemek';
+        const courseRadio = document.querySelector(`#modal-modifier input[name="courseType"][value="${defaultCourse}"]`);
+        if (courseRadio) courseRadio.checked = true;
+
+        const noteInput = document.getElementById('mod-special-note');
+        if (noteInput) noteInput.value = '';
+        document.querySelectorAll('#modal-modifier input[name="extra"]').forEach(cb => cb.checked = false);
+        document.querySelectorAll('.quick-tag-btn').forEach(b => b.classList.remove('active'));
+
+        const confirmBtn = document.getElementById('btn-confirm-modifier');
+        if (confirmBtn) confirmBtn.innerHTML = `Sepete Ekle (<span id="mod-final-price">${formatTL(prod.price)}</span>)`;
+
+        if (modal) modal.style.display = 'flex';
+      });
+    }
+
+    // Dynamic Live Price Calculation when Extra Ingredients are toggled
+    function updateModifierLivePrice() {
+      if (!state.activeModifierProduct) return;
+      let extraTotal = 0;
+      document.querySelectorAll('#modal-modifier input[name="extra"]:checked').forEach(cb => {
+        extraTotal += parseFloat(cb.dataset.extraPrice || 0);
+      });
+      const currentTotal = state.activeModifierProduct.price + extraTotal;
+      const finalPriceEl = document.getElementById('mod-final-price');
+      const priceSubtitleEl = document.getElementById('mod-price');
+      if (finalPriceEl) finalPriceEl.textContent = formatTL(currentTotal);
+      if (priceSubtitleEl) priceSubtitleEl.textContent = formatTL(currentTotal);
+    }
+
+    document.querySelectorAll('#modal-modifier input[name="extra"]').forEach(cb => {
+      cb.addEventListener('change', updateModifierLivePrice);
+    });
+
+    // 5.15 Quick Tags in Modifier Sheet
+    document.querySelectorAll('.quick-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('active');
+        const tag = btn.dataset.tag;
+        if (btn.classList.contains('active')) {
+          state.selectedQuickTags.push(tag);
+        } else {
+          state.selectedQuickTags = state.selectedQuickTags.filter(t => t !== tag);
+        }
+      });
+    });
+
+    // 5.16 Modifier Modal Confirm (Handles both New Item and Edit Existing Item)
+    const btnConfirmMod = document.getElementById('btn-confirm-modifier');
+    const btnCloseMod = document.getElementById('btn-close-modifier');
+    const btnCancelMod = document.getElementById('btn-cancel-modifier');
+    const modModal = document.getElementById('modal-modifier');
+
+    const closeModModal = () => {
+      if (modModal) modModal.style.display = 'none';
+      state.activeModifierProduct = null;
+      state.editingCartIndex = null;
+    };
+
+    if (btnCloseMod) btnCloseMod.addEventListener('click', closeModModal);
+    if (btnCancelMod) btnCancelMod.addEventListener('click', closeModModal);
+
+    if (btnConfirmMod) {
+      btnConfirmMod.addEventListener('click', () => {
+        if (!state.activeModifierProduct) return;
+
+        const courseEl = document.querySelector('#modal-modifier input[name="courseType"]:checked');
+        const course = courseEl ? courseEl.value : 'Ana Yemek';
+
+        const donenessEl = document.querySelector('#modal-modifier input[name="doneness"]:checked');
+        const doneness = donenessEl ? donenessEl.value : null;
+
+        const extras = [];
+        let extraTotal = 0;
+        document.querySelectorAll('#modal-modifier input[name="extra"]:checked').forEach(cb => {
+          extras.push(cb.value);
+          extraTotal += parseFloat(cb.dataset.extraPrice || 0);
+        });
+
+        const note = document.getElementById('mod-special-note')?.value.trim() || null;
+
+        if (state.editingCartIndex !== null) {
+          // Update existing item
+          const existingItem = state.activeCart[state.editingCartIndex];
+          existingItem.unitPrice = state.activeModifierProduct.price + extraTotal;
+          existingItem.course = course;
+          existingItem.doneness = doneness;
+          existingItem.extras = extras;
+          existingItem.quickTags = [...state.selectedQuickTags];
+          existingItem.note = note;
+          showToast(`${existingItem.name} sipariş detayları güncellendi.`);
+        } else {
+          // Add new item
+          const cartItem = {
+            id: state.activeModifierProduct.id,
+            name: state.activeModifierProduct.name,
+            unitPrice: state.activeModifierProduct.price + extraTotal,
+            quantity: 1,
+            course,
+            seat: state.activeSeat,
+            doneness,
+            extras,
+            quickTags: [...state.selectedQuickTags],
+            note,
+            isComplimentary: false
+          };
+          state.activeCart.push(cartItem);
+          showToast(`${cartItem.name} (${course} - ${cartItem.seat === 'shared' ? 'Ortaya' : 'Koltuk ' + cartItem.seat}) eklendi.`);
+        }
+
+        closeModModal();
+        renderCart();
+      });
+    }
+
+    // 5.17 Cart Item Click (Edit Modifier) / Dec / Inc / Remove / Manage
+    const cartItemsList = document.getElementById('pos-cart-items');
+    const modalItemAction = document.getElementById('modal-item-action');
+    const btnCloseItemAction = document.getElementById('btn-close-item-action');
+    const btnCancelItemAction = document.getElementById('btn-cancel-item-action');
+    const btnConfirmItemAction = document.getElementById('btn-confirm-item-action');
+
+    if (cartItemsList) {
+      cartItemsList.addEventListener('click', (e) => {
+        const editTrigger = e.target.closest('.btn-edit-cart-item');
+        const incBtn = e.target.closest('.btn-qty-inc');
+        const decBtn = e.target.closest('.btn-qty-dec');
+        const removeBtn = e.target.closest('.btn-cart-remove');
+        const manageBtn = e.target.closest('.btn-item-manage');
+
+        if (editTrigger) {
+          const idx = parseInt(editTrigger.dataset.index, 10);
+          const item = state.activeCart[idx];
+          if (!item) return;
+
+          state.editingCartIndex = idx;
+          const prod = CATALOG_PRODUCTS.find(p => p.name === item.name) || { id: item.id, name: item.name, price: item.unitPrice };
+          state.activeModifierProduct = prod;
+          state.selectedQuickTags = [...(item.quickTags || [])];
+
+          const modal = document.getElementById('modal-modifier');
+          const titleEl = document.getElementById('mod-title');
+          const priceEl = document.getElementById('mod-price');
+
+          if (titleEl) titleEl.textContent = `${item.name} (Düzenle)`;
+          if (priceEl) priceEl.textContent = formatTL(item.unitPrice);
+
+          const courseRadio = document.querySelector(`#modal-modifier input[name="courseType"][value="${item.course}"]`);
+          if (courseRadio) courseRadio.checked = true;
+
+          if (item.doneness) {
+            const doneRadio = document.querySelector(`#modal-modifier input[name="doneness"][value="${item.doneness}"]`);
+            if (doneRadio) doneRadio.checked = true;
+          }
+
+          document.querySelectorAll('#modal-modifier input[name="extra"]').forEach(cb => {
+            cb.checked = item.extras && item.extras.includes(cb.value);
+          });
+
+          document.querySelectorAll('.quick-tag-btn').forEach(b => {
+            b.classList.toggle('active', item.quickTags && item.quickTags.includes(b.dataset.tag));
+          });
+
+          const noteInput = document.getElementById('mod-special-note');
+          if (noteInput) noteInput.value = item.note || '';
+
+          const confirmBtn = document.getElementById('btn-confirm-modifier');
+          if (confirmBtn) confirmBtn.innerHTML = `Güncelle ve Kaydet (<span id="mod-final-price">${formatTL(item.unitPrice)}</span>)`;
+
+          updateModifierLivePrice();
+          if (modal) modal.style.display = 'flex';
+        } else if (incBtn) {
+          const idx = parseInt(incBtn.dataset.index, 10);
+          state.activeCart[idx].quantity += 1;
+          renderCart();
+        } else if (decBtn) {
+          const idx = parseInt(decBtn.dataset.index, 10);
+          if (state.activeCart[idx].quantity > 1) {
+            state.activeCart[idx].quantity -= 1;
+          } else {
+            state.activeCart.splice(idx, 1);
+          }
+          renderCart();
+        } else if (removeBtn) {
+          const idx = parseInt(removeBtn.dataset.index, 10);
+          state.activeCart.splice(idx, 1);
+          renderCart();
+        } else if (manageBtn) {
+          const idx = parseInt(manageBtn.dataset.index, 10);
+          state.selectedCartItemIndex = idx;
+          const item = state.activeCart[idx];
+          const subTitle = document.getElementById('item-action-subtitle');
+          if (subTitle) subTitle.textContent = `${item.quantity}x ${item.name}`;
+          if (modalItemAction) modalItemAction.style.display = 'flex';
+        }
+      });
+    }
+
+    if (btnCloseItemAction) btnCloseItemAction.addEventListener('click', () => modalItemAction.style.display = 'none');
+    if (btnCancelItemAction) btnCancelItemAction.addEventListener('click', () => modalItemAction.style.display = 'none');
+    if (btnConfirmItemAction) {
+      btnConfirmItemAction.addEventListener('click', () => {
+        if (state.selectedCartItemIndex !== null && state.activeCart[state.selectedCartItemIndex]) {
+          const actionType = document.querySelector('input[name="itemActionType"]:checked')?.value;
+          const reason = document.getElementById('select-item-reason')?.value;
+          const item = state.activeCart[state.selectedCartItemIndex];
+
+          if (actionType === 'complimentary') {
+            item.unitPrice = 0.00;
+            item.isComplimentary = true;
+            state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] İkram: Masa ${state.selectedTable.number} -> ${item.name} ikram edildi (${reason}).`);
+            showToast(`${item.name} ikram olarak güncellendi.`);
+          } else if (actionType === 'void') {
+            state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] İptal (Void): Masa ${state.selectedTable.number} -> ${item.name} iptal edildi (${reason}).`);
+            state.activeCart.splice(state.selectedCartItemIndex, 1);
+            showToast(`${item.name} iptal edildi.`);
+          }
+        }
+        if (modalItemAction) modalItemAction.style.display = 'none';
+        renderCart();
+      });
+    }
+
+    // 5.18 Table Transfer Action (V1-TBL-002)
+    const btnTransfer = document.getElementById('btn-action-transfer-table');
+    const modalTransfer = document.getElementById('modal-transfer-table');
+    const btnCloseTransfer = document.getElementById('btn-close-transfer-modal');
+    const btnCancelTransfer = document.getElementById('btn-cancel-transfer');
+    const btnConfirmTransfer = document.getElementById('btn-confirm-transfer');
+    const selectTarget = document.getElementById('select-target-table');
+
+    if (btnTransfer) {
+      btnTransfer.addEventListener('click', () => {
+        if (!state.selectedTable) return;
+        const availTables = state.tables.filter(t => t.occupancy === 'available' && t.id !== state.selectedTable.id);
+        if (availTables.length === 0) {
+          showToast('Taşıma yapılacak boş masa bulunamadı!', 'warning');
+          return;
+        }
+        if (selectTarget) {
+          selectTarget.innerHTML = availTables.map(t => `<option value="${t.id}">Masa ${t.number} (${t.section})</option>`).join('');
+        }
+        const titleEl = document.getElementById('transfer-source-title');
+        if (titleEl) titleEl.textContent = `Kaynak: Masa ${state.selectedTable.number} (${formatTL(state.selectedTable.billAmount)})`;
+        if (modalTransfer) modalTransfer.style.display = 'flex';
+      });
+    }
+
+    if (btnCloseTransfer) btnCloseTransfer.addEventListener('click', () => modalTransfer.style.display = 'none');
+    if (btnCancelTransfer) btnCancelTransfer.addEventListener('click', () => modalTransfer.style.display = 'none');
+    if (btnConfirmTransfer) {
+      btnConfirmTransfer.addEventListener('click', () => {
+        const targetId = selectTarget?.value;
+        const targetTable = state.tables.find(t => t.id === targetId);
+        if (targetTable && state.selectedTable) {
+          targetTable.occupancy = 'occupied';
+          targetTable.billAmount = state.selectedTable.billAmount;
+          targetTable.waiter = state.selectedTable.waiter;
+          targetTable.minutes = state.selectedTable.minutes;
+          targetTable.opBadge = state.selectedTable.opBadge;
+
+          state.selectedTable.occupancy = 'available';
+          state.selectedTable.billAmount = 0.00;
+          state.selectedTable.waiter = null;
+          state.selectedTable.minutes = null;
+          state.selectedTable.opBadge = null;
+
+          state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Masa Transferi: Masa ${state.selectedTable.number} -> Masa ${targetTable.number} aktarıldı.`);
+          showToast(`Masa ${state.selectedTable.number} başarıyla Masa ${targetTable.number}'e taşındı!`);
+          
+          if (modalTransfer) modalTransfer.style.display = 'none';
+          viewOrder.style.display = 'none';
+          viewTables.style.display = 'flex';
+          renderCashierTables();
+        }
+      });
+    }
+
+    // 5.19 Pre-bill Print Action
+    const btnPrintPrebill = document.getElementById('btn-action-print-prebill');
+    if (btnPrintPrebill) {
+      btnPrintPrebill.addEventListener('click', () => {
+        if (!state.selectedTable) return;
+        state.selectedTable.opBadge = 'bill-requested';
+        showToast(`Masa ${state.selectedTable.number} adisyon fişi yazdırıldı. Durum: Hesap İstendi.`);
+        viewOrder.style.display = 'none';
+        viewTables.style.display = 'flex';
+        renderCashierTables();
+      });
+    }
+
+    // 5.20 Submit Order (Idempotent Mutfağa Gönder)
+    const btnSubmit = document.getElementById('btn-pos-submit-order');
+    if (btnSubmit) {
+      btnSubmit.addEventListener('click', () => {
+        if (!state.isOnline) {
+          showToast('Sunucu bağlantısı olmadan sipariş iletilemez!', 'error');
+          return;
+        }
+        if (state.activeCart.length === 0) return;
+
+        const idempotencyKey = 'ord_' + Math.random().toString(36).substring(2, 11);
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<span class="icon">⏳</span><span>İletiliyor (${idempotencyKey.substring(0, 8)})...</span>`;
+
+        setTimeout(() => {
+          if (state.selectedTable) {
+            const tbl = state.tables.find(t => t.id === state.selectedTable.id);
+            if (tbl) {
+              tbl.occupancy = 'occupied';
+              tbl.opBadge = 'cooking';
+              tbl.waiter = 'Ahmet Y.';
+              tbl.minutes = 1;
+              const cartSum = state.activeCart.reduce((sum, i) => sum + (i.unitPrice * i.quantity), 0);
+              tbl.billAmount = (tbl.billAmount || 0) + cartSum;
+            }
+          }
+
+          state.tickets.unshift({
+            id: String(1045 + state.tickets.length),
+            table: `Masa ${state.selectedTable.number}`,
+            time: 'Yeni',
+            station: 'hot',
+            items: state.activeCart.map(i => ({ name: `${i.quantity}x ${i.name} [${i.course}]`, status: 'cooking' }))
+          });
+
+          state.notifications.unshift({
+            id: 'notif_' + Date.now(),
+            time: new Date().toLocaleTimeString('tr-TR').substring(0, 5),
+            text: `Masa ${state.selectedTable.number}: ${state.activeCart.length} Kalem mutfağa iletildi!`,
+            unread: true
+          });
+
+          state.activeCart = [];
+          state.activeDiscount = 0;
+          showToast(`Sipariş mutfağa iletildi! Masa ${state.selectedTable.number} güncellendi.`);
+          
+          viewOrder.style.display = 'none';
+          viewTables.style.display = 'flex';
+          renderCashierTables();
+          renderOperations();
+        }, 600);
+      });
+    }
+
+    // 5.21 Station Filters in Operations
+    document.querySelectorAll('#station-filters .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#station-filters .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.activeStationFilter = chip.dataset.station;
+        renderOperations();
+      });
+    });
+
+    // 5.22 Printer Reroute Modal Action
+    const opsList = document.getElementById('ops-printers-list');
+    const modalPrinter = document.getElementById('modal-printer-action');
+    const btnClosePrinter = document.getElementById('btn-close-printer-modal');
+    const btnCancelPrinter = document.getElementById('btn-cancel-reroute');
+    const btnConfirmPrinter = document.getElementById('btn-confirm-reroute');
+
+    if (opsList) {
+      opsList.addEventListener('click', (e) => {
+        if (e.target.id === 'btn-open-reroute') {
+          if (modalPrinter) modalPrinter.style.display = 'flex';
+        }
+      });
+    }
+    if (btnClosePrinter) btnClosePrinter.addEventListener('click', () => modalPrinter.style.display = 'none');
+    if (btnCancelPrinter) btnCancelPrinter.addEventListener('click', () => modalPrinter.style.display = 'none');
+    if (btnConfirmPrinter) {
+      btnConfirmPrinter.addEventListener('click', () => {
+        const targetPrn = document.getElementById('select-reroute-printer')?.value;
+        const reason = document.getElementById('input-reroute-reason')?.value;
+        state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Yazıcı Yönlendirme: Bar Fişleri -> ${targetPrn} yönlendirildi (Sebep: ${reason}).`);
+        state.printers[1].queueCount = 0;
+        showToast('Bekleyen fişler hedef yazıcıya yönlendirildi ve yazdırıldı.');
+        if (modalPrinter) modalPrinter.style.display = 'none';
+        renderOperations();
+      });
+    }
+
+    // 5.23 PIN Lockout & Security Keypad Logic
+    const lockBtn = document.getElementById('btn-sim-lock');
+    const cashierLockBtn = document.getElementById('btn-cashier-lock');
+    const waiterLockBtn = document.getElementById('btn-waiter-lock');
+    const lockModal = document.getElementById('modal-lockout');
+    const keypad = document.getElementById('keypad-grid');
+
+    const openLockModal = () => {
+      state.isLocked = true;
+      state.enteredPin = '';
+      updatePinDots();
+      if (lockModal) lockModal.style.display = 'flex';
+    };
+
+    if (lockBtn) lockBtn.addEventListener('click', openLockModal);
+    if (cashierLockBtn) cashierLockBtn.addEventListener('click', openLockModal);
+    if (waiterLockBtn) waiterLockBtn.addEventListener('click', openLockModal);
+
+    const updatePinDots = () => {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (dot) dot.classList.toggle('filled', i <= state.enteredPin.length);
+      }
+    };
+
+    if (keypad) {
+      keypad.addEventListener('click', (e) => {
+        if (state.cooldownRemaining > 0) return;
+        const keyBtn = e.target.closest('.key-btn');
+        if (!keyBtn) return;
+        const key = keyBtn.dataset.key;
+
+        if (key === 'C') {
+          state.enteredPin = '';
+          updatePinDots();
+        } else if (key === 'OK' || state.enteredPin.length === 3) {
+          if (key !== 'OK') state.enteredPin += key;
+          updatePinDots();
+
+          if (state.enteredPin === '1234') {
+            state.isLocked = false;
+            state.failedPinAttempts = 0;
+            if (lockModal) lockModal.style.display = 'none';
+            showToast('Oturum kilidi açıldı.');
+          } else {
+            state.failedPinAttempts += 1;
+            const errMsg = document.getElementById('pin-error-msg');
+            const remSpan = document.getElementById('pin-remaining-attempts');
+            
+            if (state.failedPinAttempts >= 5) {
+              showToast('5 Hatalı PIN denemesi! Oturum tamamen iptal edildi.', 'error');
+              if (errMsg) errMsg.textContent = 'Oturum iptal edildi! Süpervizör şifresi gerekli.';
+            } else if (state.failedPinAttempts >= 3) {
+              state.cooldownRemaining = 30;
+              const cooldownBox = document.getElementById('pin-cooldown-box');
+              const cooldownSec = document.getElementById('pin-cooldown-sec');
+              if (cooldownBox) cooldownBox.style.display = 'block';
+
+              state.cooldownTimer = setInterval(() => {
+                state.cooldownRemaining -= 1;
+                if (cooldownSec) cooldownSec.textContent = state.cooldownRemaining;
+                if (state.cooldownRemaining <= 0) {
+                  clearInterval(state.cooldownTimer);
+                  if (cooldownBox) cooldownBox.style.display = 'none';
+                }
+              }, 1000);
+            } else {
+              if (errMsg) errMsg.style.display = 'block';
+              if (remSpan) remSpan.textContent = 3 - state.failedPinAttempts;
+            }
+            state.enteredPin = '';
+            setTimeout(updatePinDots, 300);
+          }
+        } else if (state.enteredPin.length < 4) {
+          state.enteredPin += key;
+          updatePinDots();
+        }
+      });
+    }
+
+    // 5.24 Waiter PWA Bottom Nav & Sections
+    document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        const target = item.dataset.wtrTarget;
+        
+        document.getElementById('wtr-view-tables').style.display = target === 'tables' ? 'flex' : 'none';
+        document.getElementById('wtr-view-status').style.display = target === 'status' ? 'flex' : 'none';
+        document.getElementById('wtr-view-notifications').style.display = target === 'notifications' ? 'flex' : 'none';
+        document.getElementById('wtr-view-order').style.display = 'none';
+
+        if (target === 'notifications') {
+          state.notifications.forEach(n => n.unread = false);
+          const dot = document.getElementById('wtr-unread-dot');
+          if (dot) dot.style.display = 'none';
+        }
+        renderWaiterSurface();
+      });
+    });
+
+    // 5.25 Waiter Table Selection & Quick Bill Request
+    const wtrGrid = document.getElementById('waiter-tables-container');
+    const wtrViewTables = document.getElementById('wtr-view-tables');
+    const wtrViewOrder = document.getElementById('wtr-view-order');
+    const btnWtrBack = document.getElementById('btn-wtr-back-tables');
+    const btnWtrReqBill = document.getElementById('btn-wtr-request-bill');
+
+    if (wtrGrid) {
+      wtrGrid.addEventListener('click', (e) => {
+        const card = e.target.closest('.table-card');
+        if (!card) return;
+        const tblId = card.dataset.wtrTableId;
+        const tbl = state.tables.find(t => t.id === tblId);
+        if (!tbl) return;
+
+        if (tbl.occupancy === 'reserved') {
+          tbl.occupancy = 'occupied';
+          tbl.waiter = 'Mehmet K.';
+          tbl.minutes = 1;
+          showToast(`Masa ${tbl.number} misafiri oturtuldu.`);
+        }
+
+        state.wtrActiveTable = tbl;
+        state.wtrCart = [];
+
+        wtrViewTables.style.display = 'none';
+        wtrViewOrder.style.display = 'flex';
+        const nameEl = document.getElementById('wtr-active-table-name');
+        if (nameEl) nameEl.textContent = `Masa ${tbl.number} (${tbl.section})`;
+        renderWaiterSurface();
+      });
+    }
+
+    if (btnWtrBack) {
+      btnWtrBack.addEventListener('click', () => {
+        wtrViewOrder.style.display = 'none';
+        wtrViewTables.style.display = 'flex';
+        renderWaiterSurface();
+      });
+    }
+
+    if (btnWtrReqBill) {
+      btnWtrReqBill.addEventListener('click', () => {
+        if (!state.wtrActiveTable) return;
+        state.wtrActiveTable.opBadge = 'bill-requested';
+        showToast(`Masa ${state.wtrActiveTable.number} için hesap talebi kasaya iletildi.`);
+        wtrViewOrder.style.display = 'none';
+        wtrViewTables.style.display = 'flex';
+        renderWaiterSurface();
+        renderCashierTables();
+      });
+    }
+
+    // Waiter Mobile Cart Drawer Expand/Collapse
+    const wtrCartToggle = document.getElementById('wtr-cart-toggle');
+    const wtrCartTray = document.getElementById('wtr-cart-tray');
+    if (wtrCartToggle && wtrCartTray) {
+      wtrCartToggle.addEventListener('click', () => {
+        wtrCartTray.classList.toggle('expanded');
+      });
+    }
+
+    const wtrProdList = document.getElementById('wtr-product-list');
+    if (wtrProdList) {
+      wtrProdList.addEventListener('click', (e) => {
+        const card = e.target.closest('.product-card');
+        if (!card) return;
+        const prodId = card.dataset.wtrProdId;
+        const prod = CATALOG_PRODUCTS.find(p => p.id === prodId);
+        if (!prod) return;
+
+        const existing = state.wtrCart.find(i => i.id === prod.id);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          state.wtrCart.push({ id: prod.id, name: prod.name, unitPrice: prod.price, quantity: 1 });
+        }
+        renderWaiterSurface();
+        showToast(`${prod.name} sepete eklendi.`);
+      });
+    }
+
+    const btnWtrSubmit = document.getElementById('btn-wtr-submit-order');
+    if (btnWtrSubmit) {
+      btnWtrSubmit.addEventListener('click', () => {
+        if (state.wtrCart.length === 0) return;
+
+        if (!state.isOnline) {
+          const queueItem = {
+            opId: 'wtr_op_' + Math.random().toString(36).substring(2, 9),
+            table: state.wtrActiveTable.number,
+            items: [...state.wtrCart]
+          };
+          state.wtrOfflineQueue.push(queueItem);
+          const qCountEl = document.getElementById('waiter-queue-count');
+          if (qCountEl) qCountEl.textContent = state.wtrOfflineQueue.length;
+
+          showToast('Çevrimdışı: Sipariş cihaz kuyruğuna alındı. Ağ gelince iletilecek.', 'warning');
+          state.wtrCart = [];
+          wtrViewOrder.style.display = 'none';
+          wtrViewTables.style.display = 'flex';
+          renderWaiterSurface();
+        } else {
+          showToast(`Masa ${state.wtrActiveTable.number} siparişi mutfağa gönderildi!`);
+          state.wtrCart = [];
+          wtrViewOrder.style.display = 'none';
+          wtrViewTables.style.display = 'flex';
+          renderWaiterSurface();
+        }
+      });
+    }
+
+    // 5.26 Notification Delivery Action
+    const notifFeed = document.getElementById('wtr-notif-feed');
+    if (notifFeed) {
+      notifFeed.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-deliver-notif');
+        if (!btn) return;
+        const idx = parseInt(btn.dataset.notifIdx, 10);
+        state.notifications.splice(idx, 1);
+        showToast('Yemek teslim edildi olarak işaretlendi.');
+        renderWaiterSurface();
+      });
+    }
+
+    // 5.27 Clock Update Loop
+    setInterval(() => {
+      const clock = document.getElementById('cashier-clock');
+      if (clock) {
+        const now = new Date();
+        clock.textContent = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR');
+      }
+    }, 1000);
+  }
+
+  // --- 6. INITIALIZATION ---
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.documentElement.setAttribute('data-theme', state.theme);
+    renderCashierTables();
+    renderOperations();
+    renderWaiterSurface();
+    setupEvents();
+  });
+
+})();

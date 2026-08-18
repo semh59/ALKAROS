@@ -12,7 +12,18 @@ public enum TableViewStatus
 }
 
 /// <summary>
-/// Client view model for a table card in the cashier matrix (V1-CUI-001).
+/// Operational action badge for 2-dimensional table state (V1-CUI-001, DESIGN.md).
+/// </summary>
+public enum TableOperationalBadge
+{
+    None,
+    BillRequested,
+    KitchenCooking,
+    KitchenReady
+}
+
+/// <summary>
+/// Client view model for a table card in the cashier matrix (V1-CUI-001, DESIGN.md).
 /// </summary>
 public sealed record TableCardViewModel(
     Guid TableId,
@@ -23,7 +34,8 @@ public sealed record TableCardViewModel(
     decimal? ActiveBillAmount,
     int RowVersion,
     DateTimeOffset? OccupiedSince,
-    bool IsSelected = false);
+    bool IsSelected = false,
+    TableOperationalBadge OperationalBadge = TableOperationalBadge.None);
 
 /// <summary>
 /// State payload for the Cashier Table Shell (V1-CUI-001).
