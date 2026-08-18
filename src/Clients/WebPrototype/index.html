@@ -70,7 +70,7 @@
   <!-- Main Container -->
   <main class="app-viewport" id="app-viewport">
     
-    <!-- SURFACE 1: CASHIER UI (POS KIOSK) -->
+    <!-- SURFACE 1: CASHIER POS (CUI) -->
     <section class="surface-cashier" id="surface-cashier">
       
       <!-- Top Cashier Header -->
@@ -121,7 +121,7 @@
             <button type="button" class="chip" data-section="Teras">Teras <span class="chip-count">(4)</span></button>
           </div>
 
-          <!-- Fast Quick Status Filter (All / Occupied / Bill Requested) -->
+          <!-- Fast Quick Status Filter -->
           <div class="status-quick-filters">
             <button type="button" class="filter-tag-btn active" data-status-filter="all">Tüm Durumlar</button>
             <button type="button" class="filter-tag-btn" data-status-filter="bill-requested">
@@ -195,6 +195,10 @@
                   <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
                   Tur Tekrarı
                 </button>
+                <button type="button" class="btn-action-pill" id="btn-action-custom-item" title="Özel / Menü Dışı Açık Kalem Ekle">
+                  <svg class="icon" viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                  + Açık Kalem
+                </button>
                 <button type="button" class="btn-action-pill" id="btn-action-merge-table" title="Başka Masa ile Birleştir (V1-TBL-003)">
                   <svg class="icon" viewBox="0 0 24 24"><path d="m8 6 4-4 4 4"/><path d="M12 2v10.3a4 4 0 0 1-1.172 2.872L4 22"/><path d="m20 22-5-5"/></svg>
                   Birleştir
@@ -236,7 +240,7 @@
               <button type="button" class="cat-tab" data-category="Tatlılar">Tatlılar</button>
             </div>
 
-            <!-- Products Grid -->
+            <!-- Products Grid with Allergen Tags -->
             <div class="product-grid" id="pos-product-grid">
               <!-- Dynamically populated via app.js -->
             </div>
@@ -488,7 +492,7 @@
 
   <!-- MODAL DIALOGS -->
 
-  <!-- 1. Modifier Sheet Modal (Single-Level Forced Modifier + Edit Support) -->
+  <!-- 1. Modifier Sheet Modal -->
   <div class="modal-overlay" id="modal-modifier" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="mod-title">
     <div class="modal-card">
       <div class="modal-header">
@@ -588,7 +592,66 @@
     </div>
   </div>
 
-  <!-- 2. Table Transfer Modal (Masa Taşıma - V1-TBL-002) -->
+  <!-- 2. Custom Item Modal (Açık Kalem Girişi) -->
+  <div class="modal-overlay" id="modal-custom-item" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3>Özel / Açık Kalem Ekle</h3>
+          <span class="mod-subtitle">Menü Dışı İstek (V1-ORD-001)</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-custom-modal">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="option-group">
+          <label class="group-label" for="input-custom-name">Ürün / Kalem Adı</label>
+          <input type="text" id="input-custom-name" placeholder="Örn. Özel Şef Sosu / Duble Espresso..." class="form-input">
+        </div>
+        <div class="option-group">
+          <label class="group-label" for="input-custom-price">Birim Fiyat (TL)</label>
+          <input type="number" id="input-custom-price" placeholder="0,00" step="0.50" min="0" class="form-input">
+        </div>
+        <div class="option-group">
+          <label class="group-label">Servis Aşaması</label>
+          <div class="radio-pill-group">
+            <label class="radio-pill"><input type="radio" name="customCourse" value="Başlangıç"><span>Başlangıç</span></label>
+            <label class="radio-pill"><input type="radio" name="customCourse" value="Ana Yemek" checked><span>Ana Yemek</span></label>
+            <label class="radio-pill"><input type="radio" name="customCourse" value="Tatlı"><span>Tatlı</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btn-cancel-custom">İptal</button>
+        <button type="button" class="btn-primary" id="btn-confirm-custom">Sepete Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Thermal Slip Preview Modal (80mm Ön Adisyon Fişi) -->
+  <div class="modal-overlay" id="modal-thermal-slip" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-card thermal-card">
+      <div class="modal-header">
+        <div>
+          <h3>80mm Termal Adisyon Önizleme</h3>
+          <span class="mod-subtitle" id="thermal-slip-subtitle">Masa S-02</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-thermal">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body thermal-body" id="thermal-slip-content">
+        <!-- Rendered Thermal Slip -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btn-close-thermal-btn">Kapat</button>
+        <button type="button" class="btn-primary" id="btn-print-hardware">Termal Yazıcıya Gönder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Table Transfer Modal -->
   <div class="modal-overlay" id="modal-transfer-table" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
@@ -604,9 +667,7 @@
         <p class="modal-desc-text">Açık adisyon ve mutfak fişleri seçilen hedef masaya aktarılacaktır.</p>
         <div class="option-group">
           <label class="group-label" for="select-target-table">Hedef Boş Masa Seçiniz</label>
-          <select id="select-target-table" class="form-select">
-            <!-- Dynamically populated -->
-          </select>
+          <select id="select-target-table" class="form-select"></select>
         </div>
       </div>
       <div class="modal-footer">
@@ -616,7 +677,7 @@
     </div>
   </div>
 
-  <!-- 3. Table Merge Modal (Masa Birleştirme - V1-TBL-003) -->
+  <!-- 5. Table Merge Modal -->
   <div class="modal-overlay" id="modal-merge-table" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
@@ -629,12 +690,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc-text">Seçilen masanın açık adisyonu ve misafirleri ana masa ile tek hesap altında birleştirilecek, diğer masa serbest kalacaktır.</p>
+        <p class="modal-desc-text">Seçilen masanın açık adisyonu ana masa ile birleştirilecek, diğer masa serbest kalacaktır.</p>
         <div class="option-group">
           <label class="group-label" for="select-merge-target-table">Birleştirilecek Dolu Masayı Seçiniz</label>
-          <select id="select-merge-target-table" class="form-select">
-            <!-- Dynamically populated -->
-          </select>
+          <select id="select-merge-target-table" class="form-select"></select>
         </div>
       </div>
       <div class="modal-footer">
@@ -644,7 +703,7 @@
     </div>
   </div>
 
-  <!-- 4. Add Discount Modal (Yetkili İndirimi - V1-BIL-003) -->
+  <!-- 6. Add Discount Modal -->
   <div class="modal-overlay" id="modal-discount" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
@@ -660,18 +719,9 @@
         <div class="option-group">
           <label class="group-label">İndirim Türü</label>
           <div class="radio-pill-group">
-            <label class="radio-pill">
-              <input type="radio" name="discountRate" value="10" checked>
-              <span>%10 İndirim</span>
-            </label>
-            <label class="radio-pill">
-              <input type="radio" name="discountRate" value="20">
-              <span>%20 İndirim</span>
-            </label>
-            <label class="radio-pill">
-              <input type="radio" name="discountRate" value="50">
-              <span>50 TL Sabit</span>
-            </label>
+            <label class="radio-pill"><input type="radio" name="discountRate" value="10" checked><span>%10 İndirim</span></label>
+            <label class="radio-pill"><input type="radio" name="discountRate" value="20"><span>%20 İndirim</span></label>
+            <label class="radio-pill"><input type="radio" name="discountRate" value="50"><span>50 TL Sabit</span></label>
           </div>
         </div>
         <div class="option-group">
@@ -691,7 +741,7 @@
     </div>
   </div>
 
-  <!-- 5. Void / Complimentary Modal (İptal ve İkram - V1-ORD-003) -->
+  <!-- 7. Void / Complimentary Modal -->
   <div class="modal-overlay" id="modal-item-action" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
@@ -707,14 +757,8 @@
         <div class="option-group">
           <label class="group-label">Uygulanacak Eylem</label>
           <div class="radio-pill-group">
-            <label class="radio-pill">
-              <input type="radio" name="itemActionType" value="complimentary" checked>
-              <span>İkram Et (0 TL)</span>
-            </label>
-            <label class="radio-pill">
-              <input type="radio" name="itemActionType" value="void">
-              <span>İptal Et (Sil)</span>
-            </label>
+            <label class="radio-pill"><input type="radio" name="itemActionType" value="complimentary" checked><span>İkram Et (0 TL)</span></label>
+            <label class="radio-pill"><input type="radio" name="itemActionType" value="void"><span>İptal Et (Sil)</span></label>
           </div>
         </div>
         <div class="option-group">
@@ -724,7 +768,6 @@
             <option value="Müşteri Memnuniyeti">Müşteri Memnuniyeti</option>
             <option value="Yanlış Sipariş Girişi">Yanlış Sipariş Girişi</option>
             <option value="Müşteri Vazgeçti">Müşteri Vazgeçti</option>
-            <option value="Ürün Kusurlu / Gecikme">Ürün Kusurlu / Gecikme</option>
           </select>
         </div>
       </div>
@@ -735,7 +778,7 @@
     </div>
   </div>
 
-  <!-- 6. Session Timeout / Security PIN Lockout Modal -->
+  <!-- 8. Session Timeout / Security PIN Lockout Modal -->
   <div class="modal-overlay modal-lockout" id="modal-lockout" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card pin-card">
       <div class="lockout-icon">
@@ -755,7 +798,6 @@
         Hatalı PIN! Kalan deneme: <span id="pin-remaining-attempts">3</span>
       </div>
 
-      <!-- Cooldown Timer Notice -->
       <div class="pin-cooldown-box" id="pin-cooldown-box" style="display: none;">
         Tekrar denemek için kalan süre: <strong id="pin-cooldown-sec">30</strong> sn
       </div>
@@ -780,7 +822,7 @@
     </div>
   </div>
 
-  <!-- 7. Printer Failure / Reroute Modal -->
+  <!-- 9. Printer Failure / Reroute Modal -->
   <div class="modal-overlay" id="modal-printer-action" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">

@@ -2,10 +2,11 @@
  * ALKAROS V1 — Core Restaurant POS & Waiter UI Simulation Engine (Stitch Enterprise Complete Version)
  * Standards: Title Case, Lucide SVG Icons, 2-Dimensional Table State, 
  * Table Transfer (V1-TBL-002), Table Merge (V1-TBL-003), Discount Line (V1-BIL-003),
- * Reserved Table Seating, Cart Item In-Place Editing, Live Extra Ingredient Pricing,
- * Coursing (Servis Aşamaları), Seat-Based Ordering, 1-Tap Repeat Round,
- * Void/Complimentary (V1-ORD-003), Station Routing (V1-KIT-002), Waiter Mobile Bottom Sheet,
- * Idempotency Protection, Offline Queue Replay, PIN Security Rate Limiting
+ * Custom Quick Item Entry (+ Açık Kalem), 80mm ESC/POS Thermal Slip Preview,
+ * Allergen & Dietary Badges (Gluten-Free, Vegan), Reserved Table Seating,
+ * Cart Item In-Place Editing, Live Extra Ingredient Pricing, Coursing (Servis Aşamaları),
+ * Seat-Based Ordering, 1-Tap Repeat Round, Void/Complimentary (V1-ORD-003),
+ * Station Routing (V1-KIT-002), Waiter Mobile Bottom Sheet, PIN Security Rate Limiting
  */
 
 (function () {
@@ -31,18 +32,18 @@
   ];
 
   const CATALOG_PRODUCTS = [
-    { id: 'p1', name: 'Alkaros Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 240.00, station: 'hot', stock: 'Son 5 Porsiyon' },
-    { id: 'p2', name: 'Cheese Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 220.00, station: 'hot' },
-    { id: 'p3', name: 'Tavuk Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 190.00, station: 'hot' },
-    { id: 'p4', name: 'Bonfile Izgara', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 450.00, station: 'hot', stock: 'Son 3 Porsiyon' },
-    { id: 'p5', name: 'Köfte Porsiyon', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 280.00, station: 'hot' },
-    { id: 'p6', name: 'Tavuk Şiş', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 230.00, station: 'hot' },
-    { id: 'p7', name: 'Patates Tava', category: 'Ana Yemek', defaultCourse: 'Başlangıç', price: 85.00, station: 'hot' },
-    { id: 'p8', name: 'Coca Cola 330ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 45.00, station: 'bar' },
-    { id: 'p9', name: 'Ayran 300ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 30.00, station: 'bar' },
-    { id: 'p10', name: 'Su 0.5L', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 15.00, station: 'bar' },
-    { id: 'p11', name: 'Çikolatalı Sufle', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 120.00, station: 'cold', stock: 'Son 4 Porsiyon' },
-    { id: 'p12', name: 'Fırın Sütlaç', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 95.00, station: 'cold' }
+    { id: 'p1', name: 'Alkaros Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 240.00, station: 'hot', stock: 'Son 5 Porsiyon', allergen: 'Gluten, Süt' },
+    { id: 'p2', name: 'Cheese Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 220.00, station: 'hot', allergen: 'Gluten, Süt' },
+    { id: 'p3', name: 'Tavuk Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 190.00, station: 'hot', allergen: 'Gluten' },
+    { id: 'p4', name: 'Bonfile Izgara', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 450.00, station: 'hot', stock: 'Son 3 Porsiyon', allergen: 'Gluten-Free' },
+    { id: 'p5', name: 'Köfte Porsiyon', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 280.00, station: 'hot', allergen: 'Gluten' },
+    { id: 'p6', name: 'Tavuk Şiş', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 230.00, station: 'hot', allergen: 'Gluten-Free' },
+    { id: 'p7', name: 'Patates Tava', category: 'Ana Yemek', defaultCourse: 'Başlangıç', price: 85.00, station: 'hot', allergen: 'Vegan' },
+    { id: 'p8', name: 'Coca Cola 330ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 45.00, station: 'bar', allergen: 'Vegan' },
+    { id: 'p9', name: 'Ayran 300ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 30.00, station: 'bar', allergen: 'Süt' },
+    { id: 'p10', name: 'Su 0.5L', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 15.00, station: 'bar', allergen: 'Vegan' },
+    { id: 'p11', name: 'Çikolatalı Sufle', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 120.00, station: 'cold', stock: 'Son 4 Porsiyon', allergen: 'Yumurta, Süt' },
+    { id: 'p12', name: 'Fırın Sütlaç', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 95.00, station: 'cold', allergen: 'Süt' }
   ];
 
   const INITIAL_TICKETS = [
@@ -92,7 +93,7 @@
 
   const state = {
     theme: localStorage.getItem('alkaros_theme') || 'light',
-    currentView: 'cashier', // 'cashier', 'waiter-phone', 'waiter-tablet'
+    currentView: 'cashier',
     isOnline: true,
     isLocked: false,
     tables: [...INITIAL_TABLES],
@@ -106,9 +107,9 @@
     activeCategory: 'Tümü',
     searchProductQuery: '',
     activeCart: [],
-    activeDiscount: 0, // In TL or percentage applied
+    activeDiscount: 0,
     activeModifierProduct: null,
-    editingCartIndex: null, // null if new item, number if editing existing
+    editingCartIndex: null,
     selectedQuickTags: [],
     selectedCartItemIndex: null,
 
@@ -186,13 +187,11 @@
     }
 
     grid.innerHTML = filtered.map(t => {
-      // 1. Dimension: Occupancy
       let occupClass = 'available';
       let occupText = 'Boş';
       if (t.occupancy === 'occupied') { occupClass = 'occupied'; occupText = 'Dolu'; }
       else if (t.occupancy === 'reserved') { occupClass = 'reserved'; occupText = 'Rezerve'; }
 
-      // 2. Dimension: Operational Action Badge
       let actionBadgeHtml = '';
       if (t.occupancy === 'occupied' && t.opBadge) {
         if (t.opBadge === 'bill-requested') {
@@ -204,7 +203,6 @@
         }
       }
 
-      // 3. Heatmap Elapsed Timer Bar
       let timerBarHtml = '';
       if (t.occupancy === 'occupied' && t.minutes) {
         const pct = Math.min(100, (t.minutes / 60) * 100);
@@ -246,7 +244,6 @@
       `;
     }).join('');
 
-    // Update stats
     const openBillsCount = state.tables.filter(t => t.occupancy === 'occupied').length;
     const statOpen = document.getElementById('stat-open-bills');
     if (statOpen) statOpen.textContent = `${openBillsCount} Masa`;
@@ -259,7 +256,7 @@
     if (elCooking) elCooking.textContent = countCooking;
   }
 
-  // 4.2 Render POS Catalog Products
+  // 4.2 Render POS Catalog Products with Allergen Badges
   function renderCatalogProducts() {
     const grid = document.getElementById('pos-product-grid');
     if (!grid) return;
@@ -270,16 +267,27 @@
       return matchCat && matchSearch;
     });
 
-    grid.innerHTML = filtered.map(p => `
-      <div class="product-card" data-prod-id="${p.id}">
-        ${p.stock ? `<span class="stock-tag">${p.stock}</span>` : ''}
-        <div class="prod-name">${p.name}</div>
-        <div class="prod-price num-val">${formatTL(p.price)}</div>
-      </div>
-    `).join('');
+    grid.innerHTML = filtered.map(p => {
+      let allergenPill = '';
+      if (p.allergen) {
+        let pillClass = p.allergen.includes('Vegan') ? 'badge-avail-bg' : p.allergen.includes('Gluten-Free') ? 'badge-ready-bg' : 'color-surface-active';
+        allergenPill = `<span class="allergen-tag" style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active);color:var(--color-text-muted)">${p.allergen}</span>`;
+      }
+
+      return `
+        <div class="product-card" data-prod-id="${p.id}">
+          ${p.stock ? `<span class="stock-tag">${p.stock}</span>` : ''}
+          <div class="prod-name">${p.name}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+            <div class="prod-price num-val">${formatTL(p.price)}</div>
+            ${allergenPill}
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
-  // 4.3 Render POS Cart Draft Grouped by Coursing with In-Place Edit Trigger
+  // 4.3 Render POS Cart Draft Grouped by Coursing
   function renderCart() {
     const list = document.getElementById('pos-cart-items');
     const badge = document.getElementById('cart-item-count');
@@ -402,7 +410,57 @@
     if (submitBtn) submitBtn.disabled = !state.isOnline;
   }
 
-  // 4.4 Render Operations & Printers Panel
+  // 4.4 Render 80mm ESC/POS Thermal Slip
+  function renderThermalSlip() {
+    const container = document.getElementById('thermal-slip-content');
+    const subTitle = document.getElementById('thermal-slip-subtitle');
+    if (!container || !state.selectedTable) return;
+
+    if (subTitle) subTitle.textContent = `Masa ${state.selectedTable.number} (${state.selectedTable.section})`;
+
+    const items = state.activeCart.length > 0 ? state.activeCart : [
+      { name: 'Alkaros Burger', unitPrice: 270.00, quantity: 1, seat: '1' },
+      { name: 'Patates Tava', unitPrice: 85.00, quantity: 1, seat: 'shared' },
+      { name: 'Coca Cola 330ml', unitPrice: 45.00, quantity: 2, seat: 'shared' }
+    ];
+
+    const subtotal = items.reduce((sum, i) => sum + (i.unitPrice * i.quantity), 0);
+    const tax = subtotal * 0.10;
+    const total = subtotal;
+
+    container.innerHTML = `
+      <div class="slip-paper">
+        <div class="slip-header">
+          <div class="slip-brand">*** ALKAROS RESTAURANT ***</div>
+          <div class="slip-meta">Masa: ${state.selectedTable.number} | Garson: ${state.selectedTable.waiter || 'Mehmet K.'}</div>
+          <div class="slip-meta">Tarih: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}</div>
+          <div class="slip-divider">------------------------------------------</div>
+        </div>
+        <div class="slip-items">
+          ${items.map(i => `
+            <div class="slip-line">
+              <span>${i.quantity}x ${i.name}</span>
+              <span class="num-val">${formatTL(i.unitPrice * i.quantity)}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="slip-divider">------------------------------------------</div>
+        <div class="slip-totals">
+          <div class="slip-line"><span>ARA TOPLAM:</span><span>${formatTL(subtotal)}</span></div>
+          <div class="slip-line"><span>KDV (%10):</span><span>${formatTL(tax)}</span></div>
+          <div class="slip-line slip-grand-total"><strong>GENEL TOPLAM:</strong><strong>${formatTL(total)}</strong></div>
+        </div>
+        <div class="slip-footer">
+          <div class="slip-divider">------------------------------------------</div>
+          <div>BU BİR ÖN ADİSYON BİLGİ FİŞİDİR</div>
+          <div>MALİ DEĞERİ YOKTUR</div>
+          <div class="slip-barcode">||| | ||||| ||| |||| |||| |||</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 4.5 Render Operations & Printers Panel
   function renderOperations() {
     const feed = document.getElementById('ops-tickets-feed');
     const printersList = document.getElementById('ops-printers-list');
@@ -458,7 +516,7 @@
     }
   }
 
-  // 4.5 Render Waiter Surface
+  // 4.6 Render Waiter Surface
   function renderWaiterSurface() {
     const grid = document.getElementById('waiter-tables-container');
     const productList = document.getElementById('wtr-product-list');
@@ -685,7 +743,7 @@
       });
     }
 
-    // 5.7 Table Card Selection (Including Reserved Table Seating)
+    // 5.7 Table Card Selection
     const tableGrid = document.getElementById('cashier-table-grid');
     if (tableGrid) {
       tableGrid.addEventListener('click', (e) => {
@@ -695,7 +753,6 @@
         const table = state.tables.find(t => t.id === tableId);
         if (!table) return;
 
-        // If reserved, seat the guest and transition to occupied
         if (table.occupancy === 'reserved') {
           table.occupancy = 'occupied';
           table.waiter = 'Mehmet K.';
@@ -769,7 +826,82 @@
       });
     }
 
-    // 5.11 Table Merge Modal (V1-TBL-003)
+    // 5.11 Custom Item Modal (+ Açık Kalem Ekle)
+    const btnCustomItem = document.getElementById('btn-action-custom-item');
+    const modalCustom = document.getElementById('modal-custom-item');
+    const btnCloseCustom = document.getElementById('btn-close-custom-modal');
+    const btnCancelCustom = document.getElementById('btn-cancel-custom');
+    const btnConfirmCustom = document.getElementById('btn-confirm-custom');
+
+    if (btnCustomItem) {
+      btnCustomItem.addEventListener('click', () => {
+        document.getElementById('input-custom-name').value = '';
+        document.getElementById('input-custom-price').value = '';
+        if (modalCustom) modalCustom.style.display = 'flex';
+      });
+    }
+    if (btnCloseCustom) btnCloseCustom.addEventListener('click', () => modalCustom.style.display = 'none');
+    if (btnCancelCustom) btnCancelCustom.addEventListener('click', () => modalCustom.style.display = 'none');
+    if (btnConfirmCustom) {
+      btnConfirmCustom.addEventListener('click', () => {
+        const name = document.getElementById('input-custom-name')?.value.trim();
+        const price = parseFloat(document.getElementById('input-custom-price')?.value || 0);
+        const course = document.querySelector('input[name="customCourse"]:checked')?.value || 'Ana Yemek';
+
+        if (!name || price <= 0) {
+          showToast('Lütfen geçerli bir ürün adı ve fiyat giriniz!', 'warning');
+          return;
+        }
+
+        const customItem = {
+          id: 'custom_' + Date.now(),
+          name: `[Özel] ${name}`,
+          unitPrice: price,
+          quantity: 1,
+          course: course,
+          seat: state.activeSeat,
+          doneness: null,
+          extras: [],
+          quickTags: [],
+          note: 'Menü Dışı Açık Kalem',
+          isComplimentary: false
+        };
+
+        state.activeCart.push(customItem);
+        showToast(`${customItem.name} sepete eklendi.`);
+        if (modalCustom) modalCustom.style.display = 'none';
+        renderCart();
+      });
+    }
+
+    // 5.12 80mm ESC/POS Thermal Slip Preview
+    const btnPrintPrebill = document.getElementById('btn-action-print-prebill');
+    const modalThermal = document.getElementById('modal-thermal-slip');
+    const btnCloseThermal = document.getElementById('btn-close-thermal');
+    const btnCloseThermalBtn = document.getElementById('btn-close-thermal-btn');
+    const btnPrintHardware = document.getElementById('btn-print-hardware');
+
+    if (btnPrintPrebill) {
+      btnPrintPrebill.addEventListener('click', () => {
+        if (!state.selectedTable) return;
+        renderThermalSlip();
+        if (modalThermal) modalThermal.style.display = 'flex';
+      });
+    }
+    if (btnCloseThermal) btnCloseThermal.addEventListener('click', () => modalThermal.style.display = 'none');
+    if (btnCloseThermalBtn) btnCloseThermalBtn.addEventListener('click', () => modalThermal.style.display = 'none');
+    if (btnPrintHardware) {
+      btnPrintHardware.addEventListener('click', () => {
+        state.selectedTable.opBadge = 'bill-requested';
+        showToast(`Masa ${state.selectedTable.number} ön adisyon fişi yazıcıya iletildi. Durum: Hesap İstendi.`);
+        if (modalThermal) modalThermal.style.display = 'none';
+        viewOrder.style.display = 'none';
+        viewTables.style.display = 'flex';
+        renderCashierTables();
+      });
+    }
+
+    // 5.13 Table Merge Modal (V1-TBL-003)
     const btnMerge = document.getElementById('btn-action-merge-table');
     const modalMerge = document.getElementById('modal-merge-table');
     const btnCloseMerge = document.getElementById('btn-close-merge-modal');
@@ -803,7 +935,6 @@
         if (targetTable && state.selectedTable) {
           state.selectedTable.billAmount = (state.selectedTable.billAmount || 0) + (targetTable.billAmount || 0);
 
-          // Free target table
           targetTable.occupancy = 'available';
           targetTable.billAmount = 0.00;
           targetTable.waiter = null;
@@ -819,7 +950,7 @@
       });
     }
 
-    // 5.12 Discount Modal (V1-BIL-003)
+    // 5.14 Discount Modal (V1-BIL-003)
     const btnAddDiscount = document.getElementById('btn-cart-add-discount');
     const modalDiscount = document.getElementById('modal-discount');
     const btnCloseDiscount = document.getElementById('btn-close-discount-modal');
@@ -839,9 +970,9 @@
         const reason = document.getElementById('select-discount-reason')?.value;
 
         if (rateVal === 50) {
-          state.activeDiscount = 50.00; // Fixed 50 TL
+          state.activeDiscount = 50.00;
         } else {
-          state.activeDiscount = rateVal / 100; // 0.10 or 0.20
+          state.activeDiscount = rateVal / 100;
         }
 
         state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] İndirim: Masa ${state.selectedTable.number} için ${rateVal === 50 ? '50 TL Sabit' : '%' + rateVal} uygulandı (${reason}).`);
@@ -852,7 +983,7 @@
       });
     }
 
-    // 5.13 Category Filter in POS
+    // 5.15 Category Filter in POS
     document.querySelectorAll('.cat-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
@@ -862,7 +993,7 @@
       });
     });
 
-    // 5.14 Product Card Click -> Open Modifier Modal (New Item)
+    // 5.16 Product Card Click -> Open Modifier Modal (New Item)
     const prodGrid = document.getElementById('pos-product-grid');
     if (prodGrid) {
       prodGrid.addEventListener('click', (e) => {
@@ -901,7 +1032,6 @@
       });
     }
 
-    // Dynamic Live Price Calculation when Extra Ingredients are toggled
     function updateModifierLivePrice() {
       if (!state.activeModifierProduct) return;
       let extraTotal = 0;
@@ -919,7 +1049,6 @@
       cb.addEventListener('change', updateModifierLivePrice);
     });
 
-    // 5.15 Quick Tags in Modifier Sheet
     document.querySelectorAll('.quick-tag-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.classList.toggle('active');
@@ -932,7 +1061,6 @@
       });
     });
 
-    // 5.16 Modifier Modal Confirm (Handles both New Item and Edit Existing Item)
     const btnConfirmMod = document.getElementById('btn-confirm-modifier');
     const btnCloseMod = document.getElementById('btn-close-modifier');
     const btnCancelMod = document.getElementById('btn-cancel-modifier');
@@ -967,7 +1095,6 @@
         const note = document.getElementById('mod-special-note')?.value.trim() || null;
 
         if (state.editingCartIndex !== null) {
-          // Update existing item
           const existingItem = state.activeCart[state.editingCartIndex];
           existingItem.unitPrice = state.activeModifierProduct.price + extraTotal;
           existingItem.course = course;
@@ -977,7 +1104,6 @@
           existingItem.note = note;
           showToast(`${existingItem.name} sipariş detayları güncellendi.`);
         } else {
-          // Add new item
           const cartItem = {
             id: state.activeModifierProduct.id,
             name: state.activeModifierProduct.name,
@@ -1108,7 +1234,7 @@
       });
     }
 
-    // 5.18 Table Transfer Action (V1-TBL-002)
+    // 5.18 Table Transfer Action
     const btnTransfer = document.getElementById('btn-action-transfer-table');
     const modalTransfer = document.getElementById('modal-transfer-table');
     const btnCloseTransfer = document.getElementById('btn-close-transfer-modal');
@@ -1163,20 +1289,7 @@
       });
     }
 
-    // 5.19 Pre-bill Print Action
-    const btnPrintPrebill = document.getElementById('btn-action-print-prebill');
-    if (btnPrintPrebill) {
-      btnPrintPrebill.addEventListener('click', () => {
-        if (!state.selectedTable) return;
-        state.selectedTable.opBadge = 'bill-requested';
-        showToast(`Masa ${state.selectedTable.number} adisyon fişi yazdırıldı. Durum: Hesap İstendi.`);
-        viewOrder.style.display = 'none';
-        viewTables.style.display = 'flex';
-        renderCashierTables();
-      });
-    }
-
-    // 5.20 Submit Order (Idempotent Mutfağa Gönder)
+    // 5.19 Submit Order
     const btnSubmit = document.getElementById('btn-pos-submit-order');
     if (btnSubmit) {
       btnSubmit.addEventListener('click', () => {
@@ -1230,7 +1343,7 @@
       });
     }
 
-    // 5.21 Station Filters in Operations
+    // 5.20 Station Filters in Operations
     document.querySelectorAll('#station-filters .chip').forEach(chip => {
       chip.addEventListener('click', () => {
         document.querySelectorAll('#station-filters .chip').forEach(c => c.classList.remove('active'));
@@ -1240,7 +1353,7 @@
       });
     });
 
-    // 5.22 Printer Reroute Modal Action
+    // 5.21 Printer Reroute Modal Action
     const opsList = document.getElementById('ops-printers-list');
     const modalPrinter = document.getElementById('modal-printer-action');
     const btnClosePrinter = document.getElementById('btn-close-printer-modal');
@@ -1268,7 +1381,7 @@
       });
     }
 
-    // 5.23 PIN Lockout & Security Keypad Logic
+    // 5.22 PIN Lockout & Security Keypad Logic
     const lockBtn = document.getElementById('btn-sim-lock');
     const cashierLockBtn = document.getElementById('btn-cashier-lock');
     const waiterLockBtn = document.getElementById('btn-waiter-lock');
@@ -1348,7 +1461,7 @@
       });
     }
 
-    // 5.24 Waiter PWA Bottom Nav & Sections
+    // 5.23 Waiter PWA Bottom Nav & Sections
     document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(item => {
       item.addEventListener('click', () => {
         document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(i => i.classList.remove('active'));
@@ -1369,7 +1482,7 @@
       });
     });
 
-    // 5.25 Waiter Table Selection & Quick Bill Request
+    // 5.24 Waiter Table Selection & Quick Bill Request
     const wtrGrid = document.getElementById('waiter-tables-container');
     const wtrViewTables = document.getElementById('wtr-view-tables');
     const wtrViewOrder = document.getElementById('wtr-view-order');
@@ -1422,7 +1535,6 @@
       });
     }
 
-    // Waiter Mobile Cart Drawer Expand/Collapse
     const wtrCartToggle = document.getElementById('wtr-cart-toggle');
     const wtrCartTray = document.getElementById('wtr-cart-tray');
     if (wtrCartToggle && wtrCartTray) {
@@ -1481,7 +1593,7 @@
       });
     }
 
-    // 5.26 Notification Delivery Action
+    // 5.25 Notification Delivery Action
     const notifFeed = document.getElementById('wtr-notif-feed');
     if (notifFeed) {
       notifFeed.addEventListener('click', (e) => {
@@ -1494,7 +1606,7 @@
       });
     }
 
-    // 5.27 Clock Update Loop
+    // 5.26 Clock Update Loop
     setInterval(() => {
       const clock = document.getElementById('cashier-clock');
       if (clock) {
