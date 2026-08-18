@@ -34,7 +34,6 @@ yayımlamak.
 ## Dependencies
 
 - V1-FND-001
-- V0-BKP-001
 - V0-DAT-002
 
 ## Deliverables

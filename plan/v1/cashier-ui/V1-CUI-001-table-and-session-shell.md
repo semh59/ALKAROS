@@ -17,7 +17,7 @@ Türkçe cashier shell, authenticated session ve concurrency-aware Table status 
 
 ## Owned surface
 
-- `src/Clients/Cashier/TableShell/**`, `tests/Clients/Cashier/TableShell/**`
+- `src/Clients/Cashier/TableShell/**`, `tests/Clients/Cashier/TableShell/**`, `src/Clients/WebPrototype/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
