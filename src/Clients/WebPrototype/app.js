@@ -1,11 +1,12 @@
 /**
  * ALKAROS V1 — Kurumsal Restoran Yönetimi, Salon/Masa Düzeni ve POS Motoru
- * Gerçek Hayat Restoran Stres & Kaos Senaryoları Test Merkezi Dahil:
- * 1. Eşzamanlı Çakışma (Concurrency Conflict & RowVersion Reconciliation)
- * 2. 86'd Mutfak Stok Çökmesi (Out-of-Stock Emergency Lock)
- * 3. Bar Yazıcısı Kağıt Sonu ve Sıcak Yazıcıya Failover (Printer Paper Out Recovery)
- * 4. Koltuk Bazlı Parçalı Ödeme (Split Bill & Seat-based Settlement)
- * 5. Garson Bahçede Çevrimdışı Sipariş, Mutasyon ve İdempotent Senkronizasyon
+ * Kapsamlı ve Eksiksiz Event Entegrasyonu (Tüm Eksiklikler Giderildi):
+ * 1. Station Filters (İstasyon Filtreleri: Sıcak, Bar, Soğuk) Dinleyicileri Bağlandı
+ * 2. Mutfak Fiş Sayacı (#badge-kitchen-count & #stat-kitchen-pending) Dinamik Senkronize Edildi
+ * 3. Garson Arama (#input-wtr-search) ve Oturum Kilitleme (#btn-waiter-lock) Bağlandı
+ * 4. Garson Kategori Çipleri (#wtr-cat-chips) ve Fiş Durumu Akışı (#wtr-status-feed) Eklendi
+ * 5. Garson Sepeti (+ / - / Sil) Mobil Kontrolleri Entegre Edildi
+ * 6. Gerçek Hayat Stres ve Kaos Testleri (Concurrency, 86'd, Split Bill, Printer Failover, Offline Sync)
  */
 
 (function () {
@@ -145,6 +146,7 @@
 
     // Waiter PWA
     wtrSectionFilter: 'Tümü',
+    wtrCatFilter: 'Tümü',
     wtrSearchQuery: '',
     wtrActiveTable: null,
     wtrCart: [],
@@ -322,8 +324,13 @@
     const openBillsCount = state.tables.filter(t => t.occupancy === 'occupied').length;
     const statTotal = document.getElementById('stat-total-tables');
     const statOpen = document.getElementById('stat-open-bills');
+    const statPending = document.getElementById('stat-kitchen-pending');
+    const badgeKitchen = document.getElementById('badge-kitchen-count');
+
     if (statTotal) statTotal.textContent = `${state.tables.length} Masa`;
     if (statOpen) statOpen.textContent = `${openBillsCount} Masa`;
+    if (statPending) statPending.textContent = `${state.tickets.length} Fiş`;
+    if (badgeKitchen) badgeKitchen.textContent = state.tickets.length;
 
     const countBillReq = state.tables.filter(t => t.opBadge === 'bill-requested').length;
     const countCooking = state.tables.filter(t => t.opBadge === 'cooking').length;
@@ -877,11 +884,13 @@
   // 4.9 Waiter Surface
   function renderWaiterSurface() {
     const grid = document.getElementById('waiter-tables-container');
+    const catChips = document.getElementById('wtr-cat-chips');
     const productList = document.getElementById('wtr-product-list');
     const cartContainer = document.getElementById('wtr-cart-items');
     const wtrTotal = document.getElementById('wtr-cart-total');
     const wtrCount = document.getElementById('wtr-cart-count');
     const wtrBtnPrice = document.getElementById('wtr-btn-price');
+    const statusFeed = document.getElementById('wtr-status-feed');
     const notifFeed = document.getElementById('wtr-notif-feed');
     const unreadDot = document.getElementById('wtr-unread-dot');
 
@@ -910,8 +919,28 @@
       }).join('');
     }
 
+    if (catChips) {
+      const categories = getDistinctCategories();
+      catChips.innerHTML = categories.map(cat => `
+        <button type="button" class="wtr-chip ${state.wtrCatFilter === cat ? 'active' : ''}" data-wtr-cat="${cat}">${cat}</button>
+      `).join('');
+
+      catChips.querySelectorAll('.wtr-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          catChips.querySelectorAll('.wtr-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          state.wtrCatFilter = chip.dataset.wtrCat;
+          renderWaiterSurface();
+        });
+      });
+    }
+
     if (productList) {
-      productList.innerHTML = state.products.map(p => `
+      let filteredProds = state.products.filter(p => {
+        return state.wtrCatFilter === 'Tümü' || p.category === state.wtrCatFilter;
+      });
+
+      productList.innerHTML = filteredProds.map(p => `
         <div class="product-card ${p.is86 ? 'is-86' : ''}" data-wtr-prod-id="${p.id}">
           <div class="prod-name">${p.name}</div>
           <div class="prod-price num-val">${formatTL(p.price)}</div>
@@ -924,19 +953,81 @@
       if (state.wtrCart.length === 0) {
         cartContainer.innerHTML = '<span style="font-size:12px;color:var(--color-text-dim)">Sepet boş</span>';
       } else {
-        cartContainer.innerHTML = state.wtrCart.map(item => {
+        cartContainer.innerHTML = state.wtrCart.map((item, idx) => {
           total += item.unitPrice * item.quantity;
           return `
-            <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0">
-              <span>${item.quantity}x ${item.name}</span>
-              <span class="num-val">${formatTL(item.unitPrice * item.quantity)}</span>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;border-bottom:1px solid var(--color-border)">
+              <div>
+                <span>${item.name}</span>
+                <span class="num-val" style="display:block;font-size:11px;color:var(--color-text-dim)">${formatTL(item.unitPrice * item.quantity)}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px">
+                <button type="button" class="btn-qty btn-wtr-qty-dec" data-wtr-idx="${idx}">-</button>
+                <span style="font-weight:700;font-size:12px;min-width:18px;text-align:center">${item.quantity}</span>
+                <button type="button" class="btn-qty btn-wtr-qty-inc" data-wtr-idx="${idx}">+</button>
+                <button type="button" class="btn-clear-cart btn-wtr-remove" data-wtr-idx="${idx}" style="margin-left:4px">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
             </div>
           `;
         }).join('');
+
+        cartContainer.querySelectorAll('.btn-wtr-qty-inc').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.wtrIdx, 10);
+            state.wtrCart[idx].quantity += 1;
+            renderWaiterSurface();
+          });
+        });
+
+        cartContainer.querySelectorAll('.btn-wtr-qty-dec').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.wtrIdx, 10);
+            if (state.wtrCart[idx].quantity > 1) {
+              state.wtrCart[idx].quantity -= 1;
+            } else {
+              state.wtrCart.splice(idx, 1);
+            }
+            renderWaiterSurface();
+          });
+        });
+
+        cartContainer.querySelectorAll('.btn-wtr-remove').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.wtrIdx, 10);
+            state.wtrCart.splice(idx, 1);
+            renderWaiterSurface();
+          });
+        });
       }
       if (wtrTotal) wtrTotal.textContent = formatTL(total);
       if (wtrCount) wtrCount.textContent = state.wtrCart.length;
       if (wtrBtnPrice) wtrBtnPrice.textContent = formatTL(total);
+    }
+
+    if (statusFeed) {
+      statusFeed.innerHTML = state.tickets.map(t => `
+        <div class="ticket-card" style="margin-bottom:10px">
+          <div class="ticket-top">
+            <span>Fiş #${t.id} — ${t.table}</span>
+            <span class="meta-row">${t.time}</span>
+          </div>
+          <div class="ticket-items-list">
+            ${t.items.map(i => `
+              <div class="ticket-item-row">
+                <span>${i.name}</span>
+                <span class="occupancy-pill" style="background:${i.status === 'cooking' ? 'var(--badge-cooking-bg)' : i.status === 'ready' ? 'var(--badge-ready-bg)' : 'var(--color-surface-active)'};color:${i.status === 'cooking' ? 'var(--badge-cooking-text)' : i.status === 'ready' ? 'var(--badge-ready-text)' : 'var(--color-text-muted)'}">
+                  ${i.status === 'cooking' ? 'Hazırlanıyor' : i.status === 'ready' ? 'Servise Hazır' : 'Bekliyor'}
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
     }
 
     if (notifFeed) {
@@ -1000,7 +1091,20 @@
       });
     }
 
-    // 5.2 Add Table Modal (İşletmeci Masa Ekleme)
+    // 5.2 Station Filters in Operations Tab
+    const stationFilters = document.getElementById('station-filters');
+    if (stationFilters) {
+      stationFilters.querySelectorAll('button[data-station]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          stationFilters.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.activeStationFilter = btn.dataset.station;
+          renderOperations();
+        });
+      });
+    }
+
+    // 5.3 Add Table Modal (İşletmeci Masa Ekleme)
     const btnOpenAddTable = document.getElementById('btn-open-add-table');
     const modalAddTable = document.getElementById('modal-add-table');
     const btnCloseAddTable = document.getElementById('btn-close-add-table');
@@ -1050,7 +1154,7 @@
       });
     }
 
-    // 5.3 Add Product Modal (İşletmeci Menüye Ürün Ekleme)
+    // 5.4 Add Product Modal (İşletmeci Menüye Ürün Ekleme)
     const btnOpenAddProduct = document.getElementById('btn-open-add-product');
     const modalAddProduct = document.getElementById('modal-add-product');
     const btnCloseAddProduct = document.getElementById('btn-close-add-product');
@@ -1105,7 +1209,7 @@
       });
     }
 
-    // 5.4 Table Card Click -> Open POS
+    // 5.5 Table Card Click -> Open POS
     const tableGrid = document.getElementById('cashier-table-grid');
     if (tableGrid) {
       tableGrid.addEventListener('click', (e) => {
@@ -1139,7 +1243,7 @@
       });
     }
 
-    // 5.5 Back to Tables from POS
+    // 5.6 Back to Tables from POS
     const btnBack = document.getElementById('btn-pos-back-to-tables');
     if (btnBack) {
       btnBack.addEventListener('click', () => {
@@ -1149,7 +1253,7 @@
       });
     }
 
-    // 5.6 Table Status Quick Filters
+    // 5.7 Table Status Quick Filters
     document.querySelectorAll('.status-quick-filters .filter-tag-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.status-quick-filters .filter-tag-btn').forEach(b => b.classList.remove('active'));
@@ -1159,7 +1263,7 @@
       });
     });
 
-    // 5.7 Table Search
+    // 5.8 Table Search (Cashier & Waiter)
     const searchInput = document.getElementById('input-search-tables');
     const clearSearchBtn = document.getElementById('btn-clear-table-search');
     if (searchInput) {
@@ -1178,7 +1282,15 @@
       });
     }
 
-    // 5.8 Product Search
+    const wtrSearchInput = document.getElementById('input-wtr-search');
+    if (wtrSearchInput) {
+      wtrSearchInput.addEventListener('input', (e) => {
+        state.wtrSearchQuery = e.target.value.trim();
+        renderWaiterSurface();
+      });
+    }
+
+    // 5.9 Product Search
     const prodSearchInput = document.getElementById('input-search-products');
     if (prodSearchInput) {
       prodSearchInput.addEventListener('input', (e) => {
@@ -1187,7 +1299,7 @@
       });
     }
 
-    // 5.9 Seat Selector
+    // 5.10 Seat Selector
     document.querySelectorAll('.seat-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         document.querySelectorAll('.seat-chip').forEach(c => c.classList.remove('active'));
@@ -1196,7 +1308,7 @@
       });
     });
 
-    // 5.10 Clear Cart Button
+    // 5.11 Clear Cart Button
     const btnClearCartTop = document.getElementById('btn-clear-cart');
     if (btnClearCartTop) {
       btnClearCartTop.addEventListener('click', () => {
@@ -1209,7 +1321,7 @@
       });
     }
 
-    // 5.11 Repeat Round
+    // 5.12 Repeat Round
     const btnRepeatRound = document.getElementById('btn-action-repeat-round');
     if (btnRepeatRound) {
       btnRepeatRound.addEventListener('click', () => {
@@ -1232,7 +1344,7 @@
       });
     }
 
-    // 5.12 Custom Item Modal (+ Açık Kalem Ekle)
+    // 5.13 Custom Item Modal (+ Açık Kalem Ekle)
     const btnCustomItem = document.getElementById('btn-action-custom-item');
     const modalCustom = document.getElementById('modal-custom-item');
     const btnCloseCustom = document.getElementById('btn-close-custom-modal');
@@ -1279,7 +1391,7 @@
       });
     }
 
-    // 5.13 80mm ESC/POS Thermal Slip
+    // 5.14 80mm ESC/POS Thermal Slip
     const btnPrintPrebill = document.getElementById('btn-action-print-prebill');
     const modalThermal = document.getElementById('modal-thermal-slip');
     const btnCloseThermal = document.getElementById('btn-close-thermal');
@@ -1306,7 +1418,7 @@
       });
     }
 
-    // 5.14 Split Bill Button & Modal
+    // 5.15 Split Bill Button & Modal
     const btnSplitBill = document.getElementById('btn-action-split-bill');
     const modalSplitBill = document.getElementById('modal-split-bill');
     const btnCloseSplitBill = document.getElementById('btn-close-split-bill');
@@ -1353,7 +1465,7 @@
       });
     }
 
-    // 5.15 Table Transfer Modal
+    // 5.16 Table Transfer Modal
     const btnTransfer = document.getElementById('btn-action-transfer-table');
     const modalTransfer = document.getElementById('modal-transfer-table');
     const btnCloseTransfer = document.getElementById('btn-close-transfer-modal');
@@ -1407,7 +1519,7 @@
       });
     }
 
-    // 5.16 Table Merge Modal
+    // 5.17 Table Merge Modal
     const btnMerge = document.getElementById('btn-action-merge-table');
     const modalMerge = document.getElementById('modal-merge-table');
     const btnCloseMerge = document.getElementById('btn-close-merge-modal');
@@ -1455,7 +1567,7 @@
       });
     }
 
-    // 5.17 Discount Modal
+    // 5.18 Discount Modal
     const btnAddDiscount = document.getElementById('btn-cart-add-discount');
     const modalDiscount = document.getElementById('modal-discount');
     const btnCloseDiscount = document.getElementById('btn-close-discount-modal');
@@ -1488,7 +1600,7 @@
       });
     }
 
-    // 5.18 Product Grid Click -> Modifier Modal
+    // 5.19 Product Grid Click -> Modifier Modal
     const prodGrid = document.getElementById('pos-product-grid');
     if (prodGrid) {
       prodGrid.addEventListener('click', (e) => {
@@ -1503,7 +1615,7 @@
       });
     }
 
-    // 5.19 Dynamic Modifier Sheet Confirm Button
+    // 5.20 Dynamic Modifier Sheet Confirm Button
     const btnConfirmMod = document.getElementById('btn-confirm-modifier');
     const btnCloseMod = document.getElementById('btn-close-modifier');
     const btnCancelMod = document.getElementById('btn-cancel-modifier');
@@ -1573,7 +1685,7 @@
       });
     }
 
-    // 5.20 Cart Item Actions
+    // 5.21 Cart Item Actions
     const cartItemsList = document.getElementById('pos-cart-items');
     const modalItemAction = document.getElementById('modal-item-action');
     const btnCloseItemAction = document.getElementById('btn-close-item-action');
@@ -1648,7 +1760,7 @@
       });
     }
 
-    // 5.21 Submit POS Order
+    // 5.22 Submit POS Order
     const btnSubmit = document.getElementById('btn-pos-submit-order');
     if (btnSubmit) {
       btnSubmit.addEventListener('click', () => {
@@ -1702,7 +1814,7 @@
       });
     }
 
-    // 5.22 Chaos Center Suite Triggers
+    // 5.23 Chaos Center Suite Triggers
     const btnOpenChaos = document.getElementById('btn-open-chaos');
     const modalChaos = document.getElementById('modal-chaos-center');
     const btnCloseChaos = document.getElementById('btn-close-chaos');
@@ -1802,7 +1914,6 @@
     if (btnRunOfflineSync) {
       btnRunOfflineSync.addEventListener('click', () => {
         modalChaos.style.display = 'none';
-        // 1. Switch to waiter view
         document.querySelectorAll('.proto-btn[data-view]').forEach(b => b.classList.remove('active'));
         const wtrBtn = document.getElementById('btn-view-waiter-phone');
         if (wtrBtn) wtrBtn.classList.add('active');
@@ -1815,11 +1926,9 @@
         waiterSurf.style.display = 'flex';
         waiterFrame.className = 'device-frame phone-mode';
 
-        // 2. Cut Network
         state.isOnline = false;
         updateNetworkUI();
 
-        // 3. Populate Waiter Cart with 2 items and simulate offline queue
         state.wtrActiveTable = state.tables.find(t => t.number === 'B-01');
         state.wtrCart = [
           { id: 'p1', name: 'Alkaros Burger (200g)', unitPrice: 240.00, quantity: 1 },
@@ -1836,7 +1945,7 @@
       });
     }
 
-    // 5.23 Simulator Controls (Görünüm, Tema, Ağ)
+    // 5.24 Simulator Controls (Görünüm, Tema, Ağ)
     document.querySelectorAll('.proto-btn[data-view]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.proto-btn[data-view]').forEach(b => b.classList.remove('active'));
@@ -1924,9 +2033,10 @@
       });
     }
 
-    // 5.24 PIN Lockout Keypad
+    // 5.25 PIN Lockout Keypad & Multi-Trigger
     const lockBtn = document.getElementById('btn-sim-lock');
     const cashierLockBtn = document.getElementById('btn-cashier-lock');
+    const waiterLockBtn = document.getElementById('btn-waiter-lock');
     const lockModal = document.getElementById('modal-lockout');
     const keypad = document.getElementById('keypad-grid');
 
@@ -1939,6 +2049,7 @@
 
     if (lockBtn) lockBtn.addEventListener('click', openLockModal);
     if (cashierLockBtn) cashierLockBtn.addEventListener('click', openLockModal);
+    if (waiterLockBtn) waiterLockBtn.addEventListener('click', openLockModal);
 
     const updatePinDots = () => {
       for (let i = 1; i <= 4; i++) {
@@ -1978,7 +2089,7 @@
       });
     }
 
-    // 5.25 Waiter Surface Actions
+    // 5.26 Waiter Surface Actions
     document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(item => {
       item.addEventListener('click', () => {
         document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(i => i.classList.remove('active'));
@@ -2145,7 +2256,7 @@
       });
     }
 
-    // 5.26 Clock Loop
+    // 5.27 Clock Loop
     setInterval(() => {
       const clock = document.getElementById('cashier-clock');
       if (clock) {

