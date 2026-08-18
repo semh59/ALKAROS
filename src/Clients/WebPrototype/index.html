@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ALKAROS V1 — Evrensel Restoran POS ve Garson Arayüzü</title>
+  <title>ALKAROS V1 — Kurumsal Restoran Yönetimi ve Satış Noktası (POS)</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,20 +14,10 @@
   <aside class="prototype-nav" aria-label="Prototip Denetim Çubuğu">
     <div class="prototype-nav-brand">
       <span class="brand-badge">ALKAROS V1</span>
-      <span class="prototype-title">Evrensel POS</span>
+      <span class="prototype-title">Kurumsal Restoran POS</span>
     </div>
     
     <div class="prototype-nav-controls">
-      <!-- Restaurant Concept Switcher -->
-      <div class="control-group" role="group" aria-label="Restoran Konsepti">
-        <select id="select-restaurant-concept" class="proto-select-concept" title="Restoran İş Modeli & Menü Konseptini Değiştir">
-          <option value="burger">🍔 Burger & Steakhouse</option>
-          <option value="cafe">☕ 3. Nesil Kafe & Kahve</option>
-          <option value="pizza">🍕 İtalyan & Pizza Trattoria</option>
-          <option value="tavern">🐟 Ocakbaşı & Meyhane</option>
-        </select>
-      </div>
-
       <!-- Surface Switcher -->
       <div class="control-group" role="group" aria-label="Görünüm Seçimi">
         <button type="button" class="proto-btn active" id="btn-view-cashier" data-view="cashier">
@@ -53,10 +43,6 @@
         <button type="button" class="proto-btn-action" id="btn-sim-lock" title="Oturum Zaman Aşımı / Kilitlenme">
           <svg class="icon" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           Oturumu Kilitle
-        </button>
-        <button type="button" class="proto-btn-action" id="btn-sim-printer-err" title="Yazıcı Hatası Simülasyonu">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
-          Yazıcı Hatası
         </button>
       </div>
 
@@ -88,7 +74,7 @@
         <div class="header-left">
           <div class="logo-mark">ALKAROS</div>
           <div class="session-info">
-            <span class="user-name">Kasiyer: Ahmet Yılmaz</span>
+            <span class="user-name">Kasiyer / İşletmeci: Ahmet Yılmaz</span>
             <span class="terminal-id">POS-01 • Ana Kasa</span>
           </div>
         </div>
@@ -98,6 +84,10 @@
             <button type="button" class="tab-btn active" id="tab-cui-tables" role="tab" aria-selected="true">
               <svg class="icon" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
               Masalar
+            </button>
+            <button type="button" class="tab-btn" id="tab-cui-menu" role="tab" aria-selected="false">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/></svg>
+              Menü Yönetimi
             </button>
             <button type="button" class="tab-btn" id="tab-cui-operations" role="tab" aria-selected="false">
               <svg class="icon" viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
@@ -122,18 +112,15 @@
 
       <!-- View 1A: Tables Shell & Matrix -->
       <div class="cashier-view-content" id="cui-view-tables">
-        <!-- Sub-header Filter Bar -->
+        <!-- Sub-header Filter & Actions Bar -->
         <div class="section-filter-bar">
-          <div class="filter-chips" role="group" aria-label="Bölge Filtreleri">
-            <button type="button" class="chip active" data-section="Tümü">Tümü <span class="chip-count">(24)</span></button>
-            <button type="button" class="chip" data-section="Salon">Salon <span class="chip-count">(12)</span></button>
-            <button type="button" class="chip" data-section="Bahçe">Bahçe <span class="chip-count">(8)</span></button>
-            <button type="button" class="chip" data-section="Teras">Teras <span class="chip-count">(4)</span></button>
+          <div class="filter-chips" id="floor-section-chips" role="group" aria-label="Bölge Filtreleri">
+            <!-- Dynamically populated -->
           </div>
 
-          <!-- Fast Quick Status Filter -->
+          <!-- Quick Status Filter -->
           <div class="status-quick-filters">
-            <button type="button" class="filter-tag-btn active" data-status-filter="all">Tüm Durumlar</button>
+            <button type="button" class="filter-tag-btn active" data-status-filter="all">Tüm Masalar</button>
             <button type="button" class="filter-tag-btn" data-status-filter="bill-requested">
               <span class="dot-amber"></span> Hesap İstendi (<span id="count-bill-req">2</span>)
             </button>
@@ -142,11 +129,19 @@
             </button>
           </div>
 
-          <div class="search-box">
-            <svg class="icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" id="input-search-tables" placeholder="Ara (Masa No veya Garson)..." autocomplete="off">
-            <button type="button" class="search-clear-btn" id="btn-clear-table-search" style="display: none;">
-              <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="search-box">
+              <svg class="icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="input-search-tables" placeholder="Masa No veya Garson Ara..." autocomplete="off">
+              <button type="button" class="search-clear-btn" id="btn-clear-table-search" style="display: none;">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+            </div>
+
+            <!-- İşletmeci Yeni Masa Ekle Butonu -->
+            <button type="button" class="btn-primary-action" id="btn-open-add-table">
+              <svg class="icon" viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+              + Yeni Masa Ekle
             </button>
           </div>
         </div>
@@ -161,22 +156,21 @@
           <svg class="icon empty-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <h3>Eşleşen Masa Bulunamadı</h3>
           <p>Arama kriterlerinizi kontrol ediniz veya filtreyi temizleyiniz.</p>
-          <button type="button" class="btn-secondary" id="btn-reset-search">Aramayı Temizle</button>
         </div>
 
         <!-- Bottom Stats Bar -->
         <footer class="cashier-footer-stats">
           <div class="stat-item">
             <span class="stat-label">Toplam Masa:</span>
-            <strong class="stat-val">24</strong>
+            <strong class="stat-val" id="stat-total-tables">14 Masa</strong>
           </div>
           <div class="stat-item">
             <span class="stat-label">Açık Adisyon:</span>
-            <strong class="stat-val" id="stat-open-bills">14 Masa</strong>
+            <strong class="stat-val" id="stat-open-bills">5 Masa</strong>
           </div>
           <div class="stat-item">
             <span class="stat-label">Bekleyen Mutfak Fişi:</span>
-            <strong class="stat-val" id="stat-kitchen-pending">3 Fiş</strong>
+            <strong class="stat-val" id="stat-kitchen-pending">2 Fiş</strong>
           </div>
           <div class="stat-item">
             <span class="stat-label">Yazıcı Durumu:</span>
@@ -185,7 +179,7 @@
         </footer>
       </div>
 
-      <!-- View 1B: Order Entry Workspace (Split View with Coursing, Seats & Dynamic Modifiers) -->
+      <!-- View 1B: Order Entry Workspace (Split View with Coursing, Seats & Modifiers) -->
       <div class="cashier-view-content" id="cui-view-order-entry" style="display: none;">
         <div class="pos-workspace">
           <!-- Left Panel: Catalog Navigation & Products -->
@@ -201,7 +195,7 @@
 
               <!-- Quick Table Actions -->
               <div class="table-quick-actions">
-                <button type="button" class="btn-action-pill" id="btn-action-repeat-round" title="Son İçecek ve Meze Turunu Tekrarla">
+                <button type="button" class="btn-action-pill" id="btn-action-repeat-round" title="Son İçecek Turunu Tekrarla">
                   <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
                   Tur Tekrarı
                 </button>
@@ -225,7 +219,7 @@
 
               <div class="catalog-search-box">
                 <svg class="icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="text" id="input-search-products" placeholder="Ürün veya Barkod Ara..." autocomplete="off">
+                <input type="text" id="input-search-products" placeholder="Ürün Ara..." autocomplete="off">
               </div>
             </div>
 
@@ -241,7 +235,7 @@
               </div>
             </div>
 
-            <!-- Categories Horizontal Tabs (Dynamically updated per concept) -->
+            <!-- Categories Horizontal Tabs -->
             <div class="category-tabs" id="pos-category-tabs">
               <!-- Dynamically populated -->
             </div>
@@ -308,7 +302,39 @@
         </div>
       </div>
 
-      <!-- View 1C: Operations, Kitchen Tickets & Printer Status -->
+      <!-- View 1C: Menu & Catalog Management (İşletmeci Menü Kataloğu) -->
+      <div class="cashier-view-content" id="cui-view-menu" style="display: none;">
+        <div class="section-filter-bar">
+          <div class="filter-chips" id="menu-category-chips">
+            <!-- Dynamically populated -->
+          </div>
+          <button type="button" class="btn-primary-action" id="btn-open-add-product">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+            + Yeni Ürün Ekle
+          </button>
+        </div>
+
+        <div class="menu-mgmt-table-container">
+          <table class="menu-table">
+            <thead>
+              <tr>
+                <th>Ürün Adı</th>
+                <th>Kategori</th>
+                <th>Fiyat</th>
+                <th>Mutfak İstasyonu</th>
+                <th>Aşama (Course)</th>
+                <th>Alerjen / Diyet</th>
+                <th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="menu-mgmt-tbody">
+              <!-- Dynamically populated via app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- View 1D: Operations, Kitchen Tickets & Printer Status -->
       <div class="cashier-view-content" id="cui-view-operations" style="display: none;">
         <div class="operations-panel">
           <!-- Left: Active Kitchen Tickets by Stations -->
@@ -331,7 +357,6 @@
           <div class="ops-printers-column">
             <div class="column-header">
               <h3>Yazıcı Cihazları ve Kuyruk</h3>
-              <button type="button" class="btn-secondary-sm" id="btn-refresh-printers">Yenile</button>
             </div>
             
             <div class="printers-list" id="ops-printers-list">
@@ -384,16 +409,12 @@
           <!-- Waiter View 1: Tables List -->
           <div class="waiter-view" id="wtr-view-tables">
             <div class="waiter-filter-bar">
-              <div class="wtr-chips">
-                <button type="button" class="wtr-chip active" data-wtr-section="Tümü">Tümü</button>
-                <button type="button" class="wtr-chip" data-wtr-section="mine">Masalarım (4)</button>
-                <button type="button" class="wtr-chip" data-wtr-section="Salon">Salon</button>
-                <button type="button" class="wtr-chip" data-wtr-section="Bahçe">Bahçe</button>
-                <button type="button" class="wtr-chip" data-wtr-section="Teras">Teras</button>
+              <div class="wtr-chips" id="wtr-section-chips">
+                <!-- Dynamically populated -->
               </div>
               <div class="wtr-search-box">
                 <svg class="icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="text" id="input-wtr-search" placeholder="Ara (Masa No)...">
+                <input type="text" id="input-wtr-search" placeholder="Masa No Ara...">
               </div>
             </div>
 
@@ -416,7 +437,6 @@
               </button>
             </div>
 
-            <!-- Waiter Order Body -->
             <div class="wtr-order-body">
               <div class="wtr-catalog-section">
                 <div class="wtr-categories" id="wtr-cat-chips">
@@ -427,12 +447,12 @@
                 </div>
               </div>
 
-              <!-- Waiter Mobile Bottom Sheet / Drawer Cart Tray -->
+              <!-- Waiter Mobile Cart Tray -->
               <div class="wtr-cart-tray" id="wtr-cart-tray">
                 <div class="wtr-cart-header" id="wtr-cart-toggle">
                   <div style="display:flex;align-items:center;gap:6px">
                     <svg class="icon" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
-                    <span>Taslak Sipariş (<span id="wtr-cart-count">0</span> Kalem)</span>
+                    <span>Taslak (<span id="wtr-cart-count">0</span> Kalem)</span>
                   </div>
                   <span class="num-val" id="wtr-cart-total">0,00 TL</span>
                 </div>
@@ -451,22 +471,16 @@
           <div class="waiter-view" id="wtr-view-status" style="display: none;">
             <div class="wtr-status-header">
               <h3>Mutfak ve Fiş Durumları</h3>
-              <button type="button" class="btn-secondary-sm" id="btn-wtr-refresh-status">Yenile</button>
             </div>
-            <div class="wtr-status-feed" id="wtr-status-feed">
-              <!-- Live order status items -->
-            </div>
+            <div class="wtr-status-feed" id="wtr-status-feed"></div>
           </div>
 
           <!-- Waiter View 4: Live Notifications Feed -->
           <div class="waiter-view" id="wtr-view-notifications" style="display: none;">
             <div class="wtr-status-header">
               <h3>Garson Bildirimleri</h3>
-              <button type="button" class="btn-secondary-sm" id="btn-clear-notifications">Tümünü Okundu Say</button>
             </div>
-            <div class="wtr-notif-feed" id="wtr-notif-feed">
-              <!-- Dynamically populated via app.js -->
-            </div>
+            <div class="wtr-notif-feed" id="wtr-notif-feed"></div>
           </div>
         </div>
 
@@ -494,7 +508,105 @@
 
   <!-- MODAL DIALOGS -->
 
-  <!-- 1. Universal Dynamic Modifier Sheet Modal -->
+  <!-- 1. Modal: Yeni Masa / Sandalye Ekle (İşletmeci Floor Plan Builder) -->
+  <div class="modal-overlay" id="modal-add-table" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3>Yeni Masa Ekle</h3>
+          <span class="mod-subtitle">Salon Düzeni ve Sandalye Kapasitesi (V1-TBL-001)</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-add-table">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="option-group">
+          <label class="group-label" for="input-table-number">Masa Numarası / Adı</label>
+          <input type="text" id="input-table-number" placeholder="Örn. S-09, B-05, VIP-1..." class="form-input">
+        </div>
+        <div class="option-group">
+          <label class="group-label" for="select-table-section">Restoran Bölgesi</label>
+          <select id="select-table-section" class="form-select">
+            <option value="Salon">Salon</option>
+            <option value="Bahçe">Bahçe</option>
+            <option value="Teras">Teras</option>
+            <option value="VIP Salonu">VIP Salonu</option>
+            <option value="Bar">Bar</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label class="group-label">Sandalye / Kişi Kapasitesi</label>
+          <div class="radio-pill-group">
+            <label class="radio-pill"><input type="radio" name="tableCapacity" value="2"><span>2 Kişilik</span></label>
+            <label class="radio-pill"><input type="radio" name="tableCapacity" value="4" checked><span>4 Kişilik</span></label>
+            <label class="radio-pill"><input type="radio" name="tableCapacity" value="6"><span>6 Kişilik</span></label>
+            <label class="radio-pill"><input type="radio" name="tableCapacity" value="8"><span>8 Kişilik</span></label>
+            <label class="radio-pill"><input type="radio" name="tableCapacity" value="12"><span>12 Kişilik (Grup)</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btn-cancel-add-table">İptal</button>
+        <button type="button" class="btn-primary" id="btn-confirm-add-table">Masayı Oluştur ve Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Modal: Yeni Ürün / Menü Kalemi Ekle (İşletmeci Catalog Builder) -->
+  <div class="modal-overlay" id="modal-add-product" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3>Menüye Yeni Ürün Ekle</h3>
+          <span class="mod-subtitle">Katalog ve Fiyatlandırma (V1-ORD-001)</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-add-product">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="option-group">
+          <label class="group-label" for="input-product-name">Ürün Adı</label>
+          <input type="text" id="input-product-name" placeholder="Örn. Levrek Izgara, Flat White, Napolitan Pizza..." class="form-input">
+        </div>
+        <div class="option-group">
+          <label class="group-label" for="input-product-category">Kategori</label>
+          <input type="text" id="input-product-category" placeholder="Örn. Ana Yemek, İçecekler, Sıcak Kahveler..." class="form-input">
+        </div>
+        <div class="option-group">
+          <label class="group-label" for="input-product-price">Satış Fiyatı (TL - KDV Dahil)</label>
+          <input type="number" id="input-product-price" placeholder="0,00" step="0.50" min="0" class="form-input">
+        </div>
+        <div class="option-group">
+          <label class="group-label" for="select-product-station">Mutfak Yazıcı İstasyonu</label>
+          <select id="select-product-station" class="form-select">
+            <option value="hot">Sıcak Mutfak</option>
+            <option value="bar">Bar & İçecek İstasyonu</option>
+            <option value="cold">Soğuk / Tatlı İstasyonu</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label class="group-label">Varsayılan Servis Aşaması</label>
+          <div class="radio-pill-group">
+            <label class="radio-pill"><input type="radio" name="prodCourse" value="Başlangıç"><span>Başlangıç</span></label>
+            <label class="radio-pill"><input type="radio" name="prodCourse" value="Ana Yemek" checked><span>Ana Yemek</span></label>
+            <label class="radio-pill"><input type="radio" name="prodCourse" value="Tatlı"><span>Tatlı & Kahve</span></label>
+          </div>
+        </div>
+        <div class="option-group">
+          <label class="group-label" for="input-product-allergen">Alerjen / Diyet Etiketi (Opsiyonel)</label>
+          <input type="text" id="input-product-allergen" placeholder="Örn. Gluten-Free, Vegan, Süt, Fıstık..." class="form-input">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="btn-cancel-add-product">İptal</button>
+        <button type="button" class="btn-primary" id="btn-confirm-add-product">Ürünü Menüye Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Modal: Universal Dynamic Modifier Sheet -->
   <div class="modal-overlay" id="modal-modifier" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="mod-title">
     <div class="modal-card">
       <div class="modal-header">
@@ -506,11 +618,7 @@
           <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
         </button>
       </div>
-
-      <div class="modal-body" id="mod-dynamic-options-container">
-        <!-- Dynamically rendered modifier groups per product -->
-      </div>
-
+      <div class="modal-body" id="mod-dynamic-options-container"></div>
       <div class="modal-footer">
         <button type="button" class="btn-secondary" id="btn-cancel-modifier">İptal</button>
         <button type="button" class="btn-primary" id="btn-confirm-modifier">
@@ -520,13 +628,13 @@
     </div>
   </div>
 
-  <!-- 2. Custom Item Modal (Açık Kalem Girişi) -->
+  <!-- 4. Modal: Custom Item (+ Açık Kalem Ekle) -->
   <div class="modal-overlay" id="modal-custom-item" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
         <div>
           <h3>Özel / Açık Kalem Ekle</h3>
-          <span class="mod-subtitle">Menü Dışı İstek (V1-ORD-001)</span>
+          <span class="mod-subtitle">Menü Dışı Sipariş (V1-ORD-001)</span>
         </div>
         <button type="button" class="modal-close-btn" id="btn-close-custom-modal">
           <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -535,7 +643,7 @@
       <div class="modal-body">
         <div class="option-group">
           <label class="group-label" for="input-custom-name">Ürün / Kalem Adı</label>
-          <input type="text" id="input-custom-name" placeholder="Örn. Özel Şef Sosu / Duble Espresso..." class="form-input">
+          <input type="text" id="input-custom-name" placeholder="Örn. Özel Şef Sosu, Ekstra İçecek..." class="form-input">
         </div>
         <div class="option-group">
           <label class="group-label" for="input-custom-price">Birim Fiyat (TL)</label>
@@ -557,7 +665,7 @@
     </div>
   </div>
 
-  <!-- 3. Thermal Slip Preview Modal (80mm Ön Adisyon Fişi) -->
+  <!-- 5. Modal: 80mm ESC/POS Thermal Slip Preview -->
   <div class="modal-overlay" id="modal-thermal-slip" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card thermal-card">
       <div class="modal-header">
@@ -569,9 +677,7 @@
           <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
         </button>
       </div>
-      <div class="modal-body thermal-body" id="thermal-slip-content">
-        <!-- Rendered Thermal Slip -->
-      </div>
+      <div class="modal-body thermal-body" id="thermal-slip-content"></div>
       <div class="modal-footer">
         <button type="button" class="btn-secondary" id="btn-close-thermal-btn">Kapat</button>
         <button type="button" class="btn-primary" id="btn-print-hardware">Termal Yazıcıya Gönder</button>
@@ -579,13 +685,13 @@
     </div>
   </div>
 
-  <!-- 4. Table Transfer Modal -->
+  <!-- 6. Modal: Table Transfer -->
   <div class="modal-overlay" id="modal-transfer-table" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
         <div>
           <h3>Masa Taşıma</h3>
-          <span class="mod-subtitle" id="transfer-source-title">Kaynak: Masa S-02 (485,00 TL)</span>
+          <span class="mod-subtitle" id="transfer-source-title">Kaynak: Masa S-02</span>
         </div>
         <button type="button" class="modal-close-btn" id="btn-close-transfer-modal">
           <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -605,7 +711,7 @@
     </div>
   </div>
 
-  <!-- 5. Table Merge Modal -->
+  <!-- 7. Modal: Table Merge -->
   <div class="modal-overlay" id="modal-merge-table" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
@@ -618,7 +724,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc-text">Seçilen masanın açık adisyonu ana masa ile birleştirilecek, diğer masa serbest kalacaktır.</p>
+        <p class="modal-desc-text">Seçilen masanın açık adisyonu ana masa ile birleştirilecek, diğer masa boş duruma geçecektir.</p>
         <div class="option-group">
           <label class="group-label" for="select-merge-target-table">Birleştirilecek Dolu Masayı Seçiniz</label>
           <select id="select-merge-target-table" class="form-select"></select>
@@ -631,7 +737,7 @@
     </div>
   </div>
 
-  <!-- 6. Add Discount Modal -->
+  <!-- 8. Modal: Add Discount -->
   <div class="modal-overlay" id="modal-discount" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
@@ -669,7 +775,7 @@
     </div>
   </div>
 
-  <!-- 7. Void / Complimentary Modal -->
+  <!-- 9. Modal: Void / Complimentary -->
   <div class="modal-overlay" id="modal-item-action" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-header">
@@ -706,14 +812,14 @@
     </div>
   </div>
 
-  <!-- 8. Session Timeout / Security PIN Lockout Modal -->
+  <!-- 10. Modal: PIN Lockout -->
   <div class="modal-overlay modal-lockout" id="modal-lockout" style="display: none;" role="dialog" aria-modal="true">
     <div class="modal-card pin-card">
       <div class="lockout-icon">
         <svg class="icon" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
       <h3>Oturum Kilitlendi</h3>
-      <p class="lockout-desc">Güvenlik nedeniyle oturum kilitlendi. Açık taslağınız korundu.</p>
+      <p class="lockout-desc">Güvenlik nedeniyle oturum kilitlendi.</p>
       
       <div class="pin-display">
         <span class="pin-dot" id="dot-1"></span>
@@ -747,38 +853,6 @@
         </button>
       </div>
       <p class="pin-hint">Demo PIN: <strong>1234</strong></p>
-    </div>
-  </div>
-
-  <!-- 9. Printer Failure / Reroute Modal -->
-  <div class="modal-overlay" id="modal-printer-action" style="display: none;" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>
-          <h3>Yazıcı Kurtarma ve Yönlendirme</h3>
-          <span class="mod-subtitle" id="printer-action-target">Fiş #1043 — Masa B-01</span>
-        </div>
-        <button type="button" class="modal-close-btn" id="btn-close-printer-modal">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="option-group">
-          <label class="group-label">Yönlendirilecek Yedek Yazıcı</label>
-          <select id="select-reroute-printer" class="form-select">
-            <option value="Mutfak Sıcak Yazıcısı">Mutfak Sıcak Yazıcısı (192.168.1.200 - Çevrimiçi)</option>
-            <option value="Mutfak Soğuk/Tatlı Yazıcısı">Mutfak Soğuk/Tatlı Yazıcısı (192.168.1.202 - Çevrimiçi)</option>
-          </select>
-        </div>
-        <div class="option-group">
-          <label class="group-label" for="input-reroute-reason">Denetim Gerekçesi (Zorunlu)</label>
-          <input type="text" id="input-reroute-reason" placeholder="Örn. Bar yazıcısı kağıt bitti arızası" value="Bar yazıcısı kağıt bitti arızası">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-secondary" id="btn-cancel-reroute">İptal</button>
-        <button type="button" class="btn-primary" id="btn-confirm-reroute">Yeniden Yönlendir ve Yazdır</button>
-      </div>
     </div>
   </div>
 

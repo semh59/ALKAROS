@@ -1,218 +1,22 @@
 /**
- * ALKAROS V1 — Universal Multi-Concept Restaurant POS & Waiter Engine (Stitch Enterprise Version)
- * Concepts Supported:
- *  1) 🍔 Burger & Steakhouse (Et Pişme, Ekstralar, Soslar)
- *  2) ☕ 3. Nesil Kafe & Specialty Coffee (Süt Seçimi: Yulaf/Badem/Laktozsuz, Şurup, Çekirdek, Sıcaklık)
- *  3) 🍕 İtalyan & Pizza Trattoria (Hamur Tipi: Ekşi Mayalı/Napolitan, Boyut: 30/36cm, Peynir)
- *  4) 🐟 Ocakbaşı & Meyhane (Porsiyon: Tek/1.5/Kg, Rakı Servisi: Buzlu/Sek/Karaf, Meze Eşleşmesi)
+ * ALKAROS V1 — Kurumsal Restoran Yönetimi, Masa Düzeni ve POS Motoru
+ * Mimari: Tekil Standart Arayüz, Dinamik Masa/Sandalye Yönetimi (V1-TBL-001),
+ * Dinamik Menü & Kategori Yönetimi (V1-ORD-001), 80mm Termal Slip,
+ * Masa Taşıma/Birleştirme (V1-TBL-002 / V1-TBL-003), İndirim (V1-BIL-003)
  */
 
 (function () {
   'use strict';
 
-  // --- 1. MULTI-CONCEPT CATALOG REPOSITORY ---
-
-  const CONCEPTS = {
-    burger: {
-      name: 'Burger & Steakhouse',
-      courses: [
-        { key: 'Başlangıç', title: '1. AŞAMA: BAŞLANGIÇ & ATIŞTIRMALIK', cssClass: 'starter' },
-        { key: 'Ana Yemek', title: '2. AŞAMA: BURGERLER & IZGARALAR', cssClass: 'main' },
-        { key: 'Tatlı', title: '3. AŞAMA: TATLI & KAHVE', cssClass: 'dessert' }
-      ],
-      categories: ['Tümü', 'Burgerler', 'Ana Yemek', 'İçecekler', 'Tatlılar'],
-      products: [
-        {
-          id: 'b1', name: 'Alkaros Burger (200g)', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 240.00, station: 'hot', stock: 'Son 5 Porsiyon', allergen: 'Gluten, Süt',
-          modifierGroups: [
-            { id: 'mg_done', title: 'Pişme Derecesi', required: true, type: 'single', options: [{ name: 'Az Pişmiş', price: 0 }, { name: 'Orta Pişmiş', price: 0, default: true }, { name: 'Çok Pişmiş', price: 0 }] },
-            { id: 'mg_ext', title: 'Ekstra Malzemeler', required: false, type: 'multi', options: [{ name: 'Ekstra Cheddar', price: 30.00 }, { name: 'Karamelize Soğan', price: 20.00 }, { name: 'Duble Köfte (+150g)', price: 90.00 }] }
-          ]
-        },
-        {
-          id: 'b2', name: 'Cheese Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 220.00, station: 'hot', allergen: 'Gluten, Süt',
-          modifierGroups: [
-            { id: 'mg_done', title: 'Pişme Derecesi', required: true, type: 'single', options: [{ name: 'Orta Pişmiş', price: 0, default: true }, { name: 'Çok Pişmiş', price: 0 }] },
-            { id: 'mg_ext', title: 'Ekstralar', required: false, type: 'multi', options: [{ name: 'Füme Kaburga', price: 45.00 }, { name: 'Jalapeno Biber', price: 15.00 }] }
-          ]
-        },
-        {
-          id: 'b3', name: 'Bonfile Izgara (250g)', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 450.00, station: 'hot', stock: 'Son 3 Porsiyon', allergen: 'Gluten-Free',
-          modifierGroups: [
-            { id: 'mg_done', title: 'Et Pişme Derecesi', required: true, type: 'single', options: [{ name: 'Az Pişmiş (Rare)', price: 0 }, { name: 'Orta (Medium)', price: 0, default: true }, { name: 'Orta-İyi (Medium Well)', price: 0 }, { name: 'Çok Pişmiş (Well Done)', price: 0 }] },
-            { id: 'mg_sauce', title: 'Şef Sosu Seçimi', required: true, type: 'single', options: [{ name: 'Trüflü Mantar Sosu', price: 40.00, default: true }, { name: 'Taze Karabiber Sosu', price: 35.00 }, { name: 'Sade / Tereyağlı', price: 0 }] }
-          ]
-        },
-        {
-          id: 'b4', name: 'Patates Tava', category: 'Ana Yemek', defaultCourse: 'Başlangıç', price: 85.00, station: 'hot', allergen: 'Vegan',
-          modifierGroups: [
-            { id: 'mg_dip', title: 'Yan Sos', required: false, type: 'multi', options: [{ name: 'Truf Mayonez', price: 20.00 }, { name: 'Cajun Baharatı', price: 10.00 }] }
-          ]
-        },
-        { id: 'b5', name: 'Coca Cola 330ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 45.00, station: 'bar', allergen: 'Vegan', modifierGroups: [{ id: 'mg_ice', title: 'Buz / Limon', required: false, type: 'multi', options: [{ name: 'Buzsuz', price: 0 }, { name: 'Limon Dilimli', price: 0 }] }] },
-        { id: 'b6', name: 'Ayran 300ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 30.00, station: 'bar', allergen: 'Süt', modifierGroups: [] },
-        { id: 'b7', name: 'Çikolatalı Sufle', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 120.00, station: 'cold', stock: 'Son 4 Porsiyon', allergen: 'Yumurta, Süt', modifierGroups: [{ id: 'mg_icecream', title: 'Dondurma İsteği', required: false, type: 'single', options: [{ name: 'Vanilyalı Dondurma Ekle', price: 35.00 }, { name: 'Sade', price: 0, default: true }] }] }
-      ]
-    },
-
-    cafe: {
-      name: '3. Nesil Kafe & Specialty Coffee',
-      courses: [
-        { key: 'Başlangıç', title: '1. AŞAMA: SICAK & SOĞUK KAHVELER', cssClass: 'starter' },
-        { key: 'Ana Yemek', title: '2. AŞAMA: SANDVİÇ & TOSTLAR', cssClass: 'main' },
-        { key: 'Tatlı', title: '3. AŞAMA: FIRIN & TATLILAR', cssClass: 'dessert' }
-      ],
-      categories: ['Tümü', 'Sıcak Kahveler', 'Soğuk Kahveler', 'Kahvaltı & Sandviç', 'Fırın & Tatlı'],
-      products: [
-        {
-          id: 'c1', name: 'Flat White (Specialty)', category: 'Sıcak Kahveler', defaultCourse: 'Başlangıç', price: 95.00, station: 'bar', allergen: 'Süt',
-          modifierGroups: [
-            { id: 'mg_milk', title: 'Süt Tercihi', required: true, type: 'single', options: [{ name: 'Tam Yağlı Süt', price: 0, default: true }, { name: 'Yulaf Sütü (Oat)', price: 20.00 }, { name: 'Badem Sütü (Almond)', price: 25.00 }, { name: 'Laktozsuz Süt', price: 15.00 }, { name: 'Soya Sütü', price: 20.00 }] },
-            { id: 'mg_bean', title: 'Çekirdek Orijini', required: true, type: 'single', options: [{ name: 'Etiyopya Yirgacheffe (Meyvemsi)', price: 0, default: true }, { name: 'Kolombiya Supremo (Çikolatamsı)', price: 0 }, { name: 'Decaf (Kafeinsiz)', price: 15.00 }] },
-            { id: 'mg_syrup', title: 'Şurup & Aroma', required: false, type: 'multi', options: [{ name: 'Doğal Vanilya Şurubu', price: 15.00 }, { name: 'Tuzlu Karamel', price: 15.00 }, { name: 'Kavrulmuş Fındık', price: 15.00 }] }
-          ]
-        },
-        {
-          id: 'c2', name: 'Iced Spanish Latte', category: 'Soğuk Kahveler', defaultCourse: 'Başlangıç', price: 110.00, station: 'bar', allergen: 'Süt',
-          modifierGroups: [
-            { id: 'mg_ice', title: 'Buz Oranı', required: true, type: 'single', options: [{ name: 'Standart Buz', price: 0, default: true }, { name: 'Az Buzlu', price: 0 }, { name: 'Buzsuz', price: 0 }] },
-            { id: 'mg_shot', title: 'Ekstra Shot', required: false, type: 'multi', options: [{ name: 'Ekstra Espresso Shot (+30ml)', price: 30.00 }] }
-          ]
-        },
-        {
-          id: 'c3', name: 'V60 Manuel Demleme (Pour-Over)', category: 'Sıcak Kahveler', defaultCourse: 'Başlangıç', price: 130.00, station: 'bar', allergen: 'Vegan',
-          modifierGroups: [
-            { id: 'mg_origin', title: 'Single Origin Çekirdek', required: true, type: 'single', options: [{ name: 'Kenya Nyeri AA', price: 0, default: true }, { name: 'Panama Geisha (+Özel Seri)', price: 65.00 }, { name: 'Guatemala Huehuetenango', price: 10.00 }] }
-          ]
-        },
-        {
-          id: 'c4', name: 'Avokado & Poşe Yumurta Sandviç', category: 'Kahvaltı & Sandviç', defaultCourse: 'Ana Yemek', price: 210.00, station: 'hot', allergen: 'Yumurta, Gluten',
-          modifierGroups: [
-            { id: 'mg_bread', title: 'Ekmek Tercihi', required: true, type: 'single', options: [{ name: 'Ekşi Mayalı Köy Ekmeği', price: 0, default: true }, { name: 'Çavdarlı Siyez', price: 15.00 }, { name: 'Glutensiz Ekmek', price: 25.00 }] },
-            { id: 'mg_add', title: 'İlave Lezzet', required: false, type: 'multi', options: [{ name: 'Norveç Somon Füme (50g)', price: 75.00 }, { name: 'Krem Peynir', price: 20.00 }] }
-          ]
-        },
-        {
-          id: 'c5', name: 'Tereyağlı Fransız Kruvasan', category: 'Fırın & Tatlı', defaultCourse: 'Tatlı', price: 80.00, station: 'hot', allergen: 'Gluten, Süt',
-          modifierGroups: [
-            { id: 'mg_heat', title: 'Servis Şekli', required: true, type: 'single', options: [{ name: 'Fırında Isıtılmış & Sıcak', price: 0, default: true }, { name: 'Oda Sıcaklığında', price: 0 }] },
-            { id: 'mg_spread', title: 'İç Dolgu / Sürülebilir', required: false, type: 'multi', options: [{ name: 'Belçika Çikolatası', price: 25.00 }, { name: 'Antep Fıstığı Ezmesi', price: 35.00 }] }
-          ]
-        },
-        {
-          id: 'c6', name: 'San Sebastian Cheesecake', category: 'Fırın & Tatlı', defaultCourse: 'Tatlı', price: 140.00, station: 'cold', stock: 'Son 4 Dilim', allergen: 'Yumurta, Süt',
-          modifierGroups: [
-            { id: 'mg_sauce', title: 'Sıcak Sos Seçimi', required: true, type: 'single', options: [{ name: 'Eritilmiş Callebaut Sütlü Çikolata', price: 30.00, default: true }, { name: 'Bitter Çikolata Sosu', price: 30.00 }, { name: 'Sossuz / Sade', price: 0 }] }
-          ]
-        }
-      ]
-    },
-
-    pizza: {
-      name: 'İtalyan Trattoria & Pizzeria',
-      courses: [
-        { key: 'Başlangıç', title: '1. AŞAMA: ANTIPASTI (BAŞLANGIÇLAR)', cssClass: 'starter' },
-        { key: 'Ana Yemek', title: '2. AŞAMA: NAPOLITAN PIZZA & PASTA', cssClass: 'main' },
-        { key: 'Tatlı', title: '3. AŞAMA: DOLCI (İTALYAN TATLILARI)', cssClass: 'dessert' }
-      ],
-      categories: ['Tümü', 'Napolitan Pizza', 'Makarna & Risotto', 'Başlangıçlar', 'İtalyan Tatlılar'],
-      products: [
-        {
-          id: 'pz1', name: 'Pizza Margherita Verace', category: 'Napolitan Pizza', defaultCourse: 'Ana Yemek', price: 260.00, station: 'hot', allergen: 'Gluten, Süt',
-          modifierGroups: [
-            { id: 'mg_size', title: 'Pizza Boyutu', required: true, type: 'single', options: [{ name: 'Standart (30cm - 6 Dilim)', price: 0, default: true }, { name: 'Büyük (36cm - 8 Dilim)', price: 65.00 }] },
-            { id: 'mg_dough', title: 'Hamur Stili', required: true, type: 'single', options: [{ name: 'Geleneksel Napolitan İnce', price: 0, default: true }, { name: '48 Saat Fermante Ekşi Maya', price: 25.00 }, { name: 'Peynir Dolgulu Kenar (Cornicione)', price: 45.00 }] },
-            { id: 'mg_top', title: 'Ekstra Malzemeler', required: false, type: 'multi', options: [{ name: 'Manda Mozzarella (Bufala)', price: 50.00 }, { name: 'Taze Fesleğen & Zeytinyağı', price: 10.00 }, { name: 'Kurutulmuş Domates', price: 25.00 }] }
-          ]
-        },
-        {
-          id: 'pz2', name: 'Pizza Quattro Formaggi (4 Peynirli)', category: 'Napolitan Pizza', defaultCourse: 'Ana Yemek', price: 340.00, station: 'hot', allergen: 'Gluten, Süt',
-          modifierGroups: [
-            { id: 'mg_size', title: 'Pizza Boyutu', required: true, type: 'single', options: [{ name: 'Standart 30cm', price: 0, default: true }, { name: 'Büyük 36cm', price: 70.00 }] },
-            { id: 'mg_honey', title: 'Bal Eşleşmesi', required: false, type: 'single', options: [{ name: 'Truffle Aromalı Çiçek Balı', price: 35.00 }, { name: 'Balsamik Glaze', price: 25.00 }] }
-          ]
-        },
-        {
-          id: 'pz3', name: 'Penne All\'Arrabbiata', category: 'Makarna & Risotto', defaultCourse: 'Ana Yemek', price: 220.00, station: 'hot', allergen: 'Vegan, Gluten',
-          modifierGroups: [
-            { id: 'mg_spicy', title: 'Acı Seviyesi', required: true, type: 'single', options: [{ name: 'Hafif Acılı (Calabrian Mild)', price: 0 }, { name: 'Orijinal Acılı (Medium)', price: 0, default: true }, { name: 'Ekstra Ateşli (Molto Piccante)', price: 0 }] },
-            { id: 'mg_cheese', title: 'Peynir İlavesi', required: false, type: 'multi', options: [{ name: '24 Ay Olgunlaştırılmış Parmigiano Reggiano', price: 35.00 }, { name: 'Pecorino Romano', price: 35.00 }] }
-          ]
-        },
-        {
-          id: 'pz4', name: 'Burrata Con Pomodorini', category: 'Başlangıçlar', defaultCourse: 'Başlangıç', price: 290.00, station: 'cold', allergen: 'Süt, Gluten-Free',
-          modifierGroups: [
-            { id: 'mg_bread', title: 'Kıtır Ekmek', required: false, type: 'single', options: [{ name: 'Focaccia Dilimleri Ekle', price: 30.00 }, { name: 'Ekmeksiz', price: 0, default: true }] }
-          ]
-        },
-        {
-          id: 'pz5', name: 'Tiramisù Tradizionale', category: 'İtalyan Tatlılar', defaultCourse: 'Tatlı', price: 135.00, station: 'cold', allergen: 'Yumurta, Süt',
-          modifierGroups: []
-        }
-      ]
-    },
-
-    tavern: {
-      name: 'Ocakbaşı, Balık & Meyhane',
-      courses: [
-        { key: 'Başlangıç', title: '1. AŞAMA: SOĞUK MEZELER & SALATALAR', cssClass: 'starter' },
-        { key: 'Ana Yemek', title: '2. AŞAMA: ARA SICAKLAR, BALIK & IZGARA', cssClass: 'main' },
-        { key: 'Tatlı', title: '3. AŞAMA: MEYVE & GELENEKSEL TATLILAR', cssClass: 'dessert' }
-      ],
-      categories: ['Tümü', 'Soğuk Mezeler', 'Ara Sıcaklar', 'Ana Izgaralar & Balık', 'Rakı & İçecekler', 'Tatlılar'],
-      products: [
-        {
-          id: 'tv1', name: 'Deniz Levreği Izgara (600g)', category: 'Ana Izgaralar & Balık', defaultCourse: 'Ana Yemek', price: 460.00, station: 'hot', allergen: 'Balık, Gluten-Free',
-          modifierGroups: [
-            { id: 'mg_prep', title: 'Pişirme Tekniği', required: true, type: 'single', options: [{ name: 'Kömür Ateşinde Izgara', price: 0, default: true }, { name: 'Fırında Buğulama (Sebzeli)', price: 30.00 }, { name: 'Kaya Tuzunda (Özel Şef)', price: 60.00 }] },
-            { id: 'mg_side', title: 'Garnitür Tercihi', required: true, type: 'single', options: [{ name: 'Taze Roka & Kırmızı Soğan & Limon', price: 0, default: true }, { name: 'Ilık Hardallı Patates Salatası', price: 20.00 }] }
-          ]
-        },
-        {
-          id: 'tv2', name: 'Zırh Kıyma Adana Kebap (200g)', category: 'Ana Izgaralar & Balık', defaultCourse: 'Ana Yemek', price: 320.00, station: 'hot', allergen: 'Gluten',
-          modifierGroups: [
-            { id: 'mg_portion', title: 'Porsiyon Seçimi', required: true, type: 'single', options: [{ name: '1 Porsiyon (200g)', price: 0, default: true }, { name: '1.5 Porsiyon (300g)', price: 130.00 }, { name: 'Dürüm Servis', price: -20.00 }] },
-            { id: 'mg_garnish', title: 'Garnitür / Közleme', required: false, type: 'multi', options: [{ name: 'Bol Köz Biber & Domates', price: 15.00 }, { name: 'Sumaklı Maydanozlu Soğan', price: 10.00 }] }
-          ]
-        },
-        {
-          id: 'tv3', name: 'Atom & Haydari İkili Meze Tabağı', category: 'Soğuk Mezeler', defaultCourse: 'Başlangıç', price: 125.00, station: 'cold', allergen: 'Süt',
-          modifierGroups: [
-            { id: 'mg_oil', title: 'Yağ & Biber', required: true, type: 'single', options: [{ name: 'Kızgın Tereyağlı Acı Biberli', price: 0, default: true }, { name: 'Sızma Zeytinyağlı Sade', price: 0 }] }
-          ]
-        },
-        {
-          id: 'tv4', name: 'Tereyağlı Karides Güveç', category: 'Ara Sıcaklar', defaultCourse: 'Ana Yemek', price: 310.00, station: 'hot', allergen: 'Deniz Ürünü, Süt',
-          modifierGroups: [
-            { id: 'mg_garlic', title: 'Sarımsak / Pul Biber', required: false, type: 'multi', options: [{ name: 'Bol Sarımsaklı', price: 0 }, { name: 'Ekstra Pul Biberli', price: 0 }, { name: 'Kaşar Peynirli Fırın', price: 35.00 }] }
-          ]
-        },
-        {
-          id: 'tv5', name: 'Yeni Rakı Uzun Demleme 35cl', category: 'Rakı & İçecekler', defaultCourse: 'Başlangıç', price: 580.00, station: 'bar', allergen: 'Vegan',
-          modifierGroups: [
-            { id: 'mg_raki_srv', title: 'Servis Tarzı', required: true, type: 'single', options: [{ name: 'Bol Buzlu Karaf + Soğuk Su Yanında', price: 0, default: true }, { name: 'Sek & Soğuk Su Yanında', price: 0 }, { name: 'Buzsuz', price: 0 }] },
-            { id: 'mg_glasses', title: 'Kadeh Adedi', required: true, type: 'single', options: [{ name: '2 Kadeh', price: 0, default: true }, { name: '3 Kadeh', price: 0 }, { name: '4 Kadeh', price: 0 }] }
-          ]
-        },
-        {
-          id: 'tv6', name: 'Fıstıklı Sıcak Katmer', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 160.00, station: 'hot', allergen: 'Fıstık, Süt, Gluten',
-          modifierGroups: [
-            { id: 'mg_maras', title: 'Dondurma Tercihi', required: true, type: 'single', options: [{ name: 'Hakiki Maraş Kesme Dondurma İle', price: 40.00, default: true }, { name: 'Sade / Dondurmasız', price: 0 }] }
-          ]
-        }
-      ]
-    }
-  };
-
-  // --- 2. TABLES & OPERATIONS STATE ---
+  // --- 1. DEFAULT DATA ---
 
   const INITIAL_TABLES = [
     { id: 'tbl-1', number: 'S-01', section: 'Salon', occupancy: 'available', opBadge: null, capacity: 4, billAmount: 0.00, waiter: null, minutes: null, previousDrinks: [] },
-    { id: 'tbl-2', number: 'S-02', section: 'Salon', occupancy: 'occupied', opBadge: 'cooking', capacity: 4, billAmount: 485.00, waiter: 'Mehmet K.', minutes: 35, previousDrinks: [{ name: 'İçecek', price: 45.00 }] },
-    { id: 'tbl-3', number: 'S-03', section: 'Salon', occupancy: 'occupied', opBadge: null, capacity: 6, billAmount: 1250.00, waiter: 'Can T.', minutes: 12, previousDrinks: [{ name: 'İçecek', price: 30.00 }] },
+    { id: 'tbl-2', number: 'S-02', section: 'Salon', occupancy: 'occupied', opBadge: 'cooking', capacity: 4, billAmount: 485.00, waiter: 'Mehmet K.', minutes: 35, previousDrinks: [{ name: 'Ayran 300ml', price: 30.00 }, { name: 'Coca Cola 330ml', price: 45.00 }] },
+    { id: 'tbl-3', number: 'S-03', section: 'Salon', occupancy: 'occupied', opBadge: null, capacity: 6, billAmount: 1250.00, waiter: 'Can T.', minutes: 12, previousDrinks: [{ name: 'Ayran 300ml', price: 30.00 }] },
     { id: 'tbl-4', number: 'S-04', section: 'Salon', occupancy: 'occupied', opBadge: 'bill-requested', capacity: 4, billAmount: 820.00, waiter: 'Mehmet K.', minutes: 58, previousDrinks: [] },
     { id: 'tbl-5', number: 'S-05', section: 'Salon', occupancy: 'reserved', opBadge: null, capacity: 4, billAmount: 0.00, waiter: null, minutes: null, note: '19:30 - 4 Kişi' },
-    { id: 'tbl-6', number: 'S-06', section: 'Salon', occupancy: 'occupied', opBadge: 'ready', capacity: 2, billAmount: 310.00, waiter: 'Mehmet K.', minutes: 22, previousDrinks: [] },
+    { id: 'tbl-6', number: 'S-06', section: 'Salon', occupancy: 'occupied', opBadge: 'ready', capacity: 2, billAmount: 310.00, waiter: 'Mehmet K.', minutes: 22, previousDrinks: [{ name: 'Su 0.5L', price: 15.00 }] },
     { id: 'tbl-7', number: 'S-07', section: 'Salon', occupancy: 'available', opBadge: null, capacity: 2, billAmount: 0.00, waiter: null, minutes: null },
     { id: 'tbl-8', number: 'S-08', section: 'Salon', occupancy: 'available', opBadge: null, capacity: 6, billAmount: 0.00, waiter: null, minutes: null },
     { id: 'tbl-9', number: 'B-01', section: 'Bahçe', occupancy: 'occupied', opBadge: 'cooking', capacity: 4, billAmount: 290.00, waiter: 'Can T.', minutes: 18, previousDrinks: [] },
@@ -223,8 +27,64 @@
     { id: 'tbl-14', number: 'T-02', section: 'Teras', occupancy: 'occupied', opBadge: 'bill-requested', capacity: 4, billAmount: 640.00, waiter: 'Can T.', minutes: 50, previousDrinks: [] }
   ];
 
+  const INITIAL_PRODUCTS = [
+    {
+      id: 'p1', name: 'Alkaros Burger (200g)', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 240.00, station: 'hot', allergen: 'Gluten, Süt',
+      modifierGroups: [
+        { id: 'mg_done', title: 'Pişme Derecesi', required: true, type: 'single', options: [{ name: 'Az Pişmiş', price: 0 }, { name: 'Orta Pişmiş', price: 0, default: true }, { name: 'Çok Pişmiş', price: 0 }] },
+        { id: 'mg_ext', title: 'Ekstra Malzemeler', required: false, type: 'multi', options: [{ name: 'Ekstra Cheddar', price: 30.00 }, { name: 'Karamelize Soğan', price: 20.00 }, { name: 'Duble Köfte (+150g)', price: 90.00 }] }
+      ]
+    },
+    {
+      id: 'p2', name: 'Cheese Burger', category: 'Burgerler', defaultCourse: 'Ana Yemek', price: 220.00, station: 'hot', allergen: 'Gluten, Süt',
+      modifierGroups: [
+        { id: 'mg_done', title: 'Pişme Derecesi', required: true, type: 'single', options: [{ name: 'Orta Pişmiş', price: 0, default: true }, { name: 'Çok Pişmiş', price: 0 }] },
+        { id: 'mg_ext', title: 'Ekstralar', required: false, type: 'multi', options: [{ name: 'Füme Kaburga', price: 45.00 }, { name: 'Jalapeno Biber', price: 15.00 }] }
+      ]
+    },
+    {
+      id: 'p3', name: 'Bonfile Izgara (250g)', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 450.00, station: 'hot', allergen: 'Gluten-Free',
+      modifierGroups: [
+        { id: 'mg_done', title: 'Et Pişme', required: true, type: 'single', options: [{ name: 'Az Pişmiş', price: 0 }, { name: 'Orta (Medium)', price: 0, default: true }, { name: 'İyi Pişmiş', price: 0 }] },
+        { id: 'mg_sauce', title: 'Şef Sosu', required: true, type: 'single', options: [{ name: 'Trüflü Mantar Sosu', price: 40.00, default: true }, { name: 'Taze Karabiber Sosu', price: 35.00 }] }
+      ]
+    },
+    {
+      id: 'p4', name: 'Köfte Porsiyon (Izgara)', category: 'Ana Yemek', defaultCourse: 'Ana Yemek', price: 280.00, station: 'hot', allergen: 'Gluten',
+      modifierGroups: [
+        { id: 'mg_garnish', title: 'Garnitür', required: false, type: 'multi', options: [{ name: 'Bol Köz Biber & Domates', price: 15.00 }, { name: 'Sumaklı Soğan', price: 10.00 }] }
+      ]
+    },
+    {
+      id: 'p5', name: 'Patates Tava', category: 'Başlangıçlar', defaultCourse: 'Başlangıç', price: 85.00, station: 'hot', allergen: 'Vegan',
+      modifierGroups: [
+        { id: 'mg_dip', title: 'Yan Sos', required: false, type: 'multi', options: [{ name: 'Trüflü Mayonez', price: 20.00 }, { name: 'Cajun Baharatı', price: 10.00 }] }
+      ]
+    },
+    {
+      id: 'p6', name: 'Coca Cola 330ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 45.00, station: 'bar', allergen: 'Vegan',
+      modifierGroups: [{ id: 'mg_ice', title: 'Buz / Limon', required: false, type: 'multi', options: [{ name: 'Buzsuz', price: 0 }, { name: 'Limon Dilimli', price: 0 }] }]
+    },
+    {
+      id: 'p7', name: 'Ayran 300ml', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 30.00, station: 'bar', allergen: 'Süt',
+      modifierGroups: []
+    },
+    {
+      id: 'p8', name: 'Su 0.5L', category: 'İçecekler', defaultCourse: 'Başlangıç', price: 15.00, station: 'bar', allergen: 'Vegan',
+      modifierGroups: []
+    },
+    {
+      id: 'p9', name: 'Çikolatalı Sufle', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 120.00, station: 'cold', allergen: 'Yumurta, Süt',
+      modifierGroups: [{ id: 'mg_icecream', title: 'Dondurma', required: false, type: 'single', options: [{ name: 'Vanilyalı Dondurma Ekle', price: 35.00 }, { name: 'Sade', price: 0, default: true }] }]
+    },
+    {
+      id: 'p10', name: 'Fırın Sütlaç', category: 'Tatlılar', defaultCourse: 'Tatlı', price: 95.00, station: 'cold', allergen: 'Süt',
+      modifierGroups: [{ id: 'mg_nut', title: 'Fındık İsteği', required: false, type: 'single', options: [{ name: 'Kavrulmuş Fındıklı', price: 15.00, default: true }, { name: 'Sade', price: 0 }] }]
+    }
+  ];
+
   const INITIAL_TICKETS = [
-    { id: '1042', table: 'Masa S-02', time: '12 dk önce', station: 'hot', items: [{ name: '1x Sipariş', status: 'cooking' }] },
+    { id: '1042', table: 'Masa S-02', time: '12 dk önce', station: 'hot', items: [{ name: '1x Alkaros Burger', status: 'cooking' }, { name: '1x Patates Tava', status: 'ready' }] },
     { id: '1043', table: 'Masa B-01', time: '5 dk önce', station: 'bar', items: [{ name: '2x İçecek', status: 'pending' }] }
   ];
 
@@ -235,27 +95,32 @@
   ];
 
   const INITIAL_NOTIFICATIONS = [
-    { id: 'notif-1', time: '14:28', text: 'Masa S-06: 1x Sipariş HAZIR — Servis Bekliyor!', unread: true }
+    { id: 'notif-1', time: '14:28', text: 'Masa S-06: 1x Köfte Porsiyon HAZIR — Servis Bekliyor!', unread: true }
   ];
 
-  // --- 3. APPLICATION RUNTIME STATE ---
+  // --- 2. APPLICATION STATE ---
 
   const state = {
-    activeConcept: 'burger',
     theme: localStorage.getItem('alkaros_theme') || 'light',
     currentView: 'cashier',
     isOnline: true,
     isLocked: false,
+
+    // Tables & Floor
     tables: [...INITIAL_TABLES],
     selectedTable: null,
     activeSectionFilter: 'Tümü',
     activeStatusFilter: 'all',
     searchTableQuery: '',
-    
-    // Order Entry
-    activeSeat: 'shared',
+
+    // Catalog & Menu Management
+    products: [...INITIAL_PRODUCTS],
     activeCategory: 'Tümü',
     searchProductQuery: '',
+    menuMgmtCatFilter: 'Tümü',
+
+    // Order Entry
+    activeSeat: 'shared',
     activeCart: [],
     activeDiscount: 0,
     activeModifierProduct: null,
@@ -263,7 +128,7 @@
     selectedQuickTags: [],
     selectedCartItemIndex: null,
 
-    // Operations
+    // Operations & Printers
     activeStationFilter: 'all',
     tickets: [...INITIAL_TICKETS],
     printers: [...INITIAL_PRINTERS],
@@ -280,14 +145,14 @@
     wtrOfflineQueue: [],
     notifications: [...INITIAL_NOTIFICATIONS],
 
-    // PIN
+    // PIN Lockout
     enteredPin: '',
     failedPinAttempts: 0,
     cooldownRemaining: 0,
     cooldownTimer: null
   };
 
-  // --- 4. FORMATTERS & TOASTS ---
+  // --- 3. DOM HELPERS ---
 
   const formatTL = (val) => {
     return Number(val || 0).toLocaleString('tr-TR', {
@@ -309,48 +174,66 @@
     }, 3000);
   };
 
-  const getActiveConceptData = () => CONCEPTS[state.activeConcept] || CONCEPTS.burger;
+  const getDistinctSections = () => {
+    const set = new Set(['Tümü']);
+    state.tables.forEach(t => set.add(t.section));
+    return Array.from(set);
+  };
 
-  // --- 5. RENDERERS ---
+  const getDistinctCategories = () => {
+    const set = new Set(['Tümü']);
+    state.products.forEach(p => set.add(p.category));
+    return Array.from(set);
+  };
 
-  // 5.1 Render Concept Tabs & Categories
-  function renderConceptNavigation() {
-    const conceptData = getActiveConceptData();
-    const posTabs = document.getElementById('pos-category-tabs');
-    const wtrTabs = document.getElementById('wtr-cat-chips');
+  // --- 4. RENDERERS ---
 
-    if (posTabs) {
-      posTabs.innerHTML = conceptData.categories.map((cat, idx) => `
-        <button type="button" class="cat-tab ${idx === 0 ? 'active' : ''}" data-category="${cat}">${cat}</button>
-      `).join('');
+  // 4.1 Render Floor Sections & Tables
+  function renderFloorSections() {
+    const container = document.getElementById('floor-section-chips');
+    const wtrContainer = document.getElementById('wtr-section-chips');
+    const sections = getDistinctSections();
 
-      posTabs.querySelectorAll('.cat-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          posTabs.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          state.activeCategory = tab.dataset.category;
-          renderCatalogProducts();
+    if (container) {
+      container.innerHTML = sections.map(sec => {
+        const count = sec === 'Tümü' ? state.tables.length : state.tables.filter(t => t.section === sec).length;
+        const isActive = state.activeSectionFilter === sec;
+        return `
+          <button type="button" class="chip ${isActive ? 'active' : ''}" data-section="${sec}">
+            ${sec} <span class="chip-count">(${count})</span>
+          </button>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          state.activeSectionFilter = chip.dataset.section;
+          renderCashierTables();
         });
       });
     }
 
-    if (wtrTabs) {
-      wtrTabs.innerHTML = conceptData.categories.map((cat, idx) => `
-        <button type="button" class="wtr-chip ${idx === 0 ? 'active' : ''}" data-wtr-cat="${cat}">${cat}</button>
-      `).join('');
+    if (wtrContainer) {
+      wtrContainer.innerHTML = sections.map(sec => {
+        const isActive = state.wtrSectionFilter === sec;
+        return `
+          <button type="button" class="wtr-chip ${isActive ? 'active' : ''}" data-wtr-section="${sec}">${sec}</button>
+        `;
+      }).join('');
 
-      wtrTabs.querySelectorAll('.wtr-chip').forEach(chip => {
+      wtrContainer.querySelectorAll('.wtr-chip').forEach(chip => {
         chip.addEventListener('click', () => {
-          wtrTabs.querySelectorAll('.wtr-chip').forEach(c => c.classList.remove('active'));
+          wtrContainer.querySelectorAll('.wtr-chip').forEach(c => c.classList.remove('active'));
           chip.classList.add('active');
-          state.activeCategory = chip.dataset.wtrCat;
+          state.wtrSectionFilter = chip.dataset.wtrSection;
           renderWaiterSurface();
         });
       });
     }
   }
 
-  // 5.2 Render Tables Grid
   function renderCashierTables() {
     const grid = document.getElementById('cashier-table-grid');
     const emptyState = document.getElementById('cashier-empty-search');
@@ -418,7 +301,7 @@
           ${timerBarHtml}
           <div class="table-card-body">
             ${t.occupancy === 'available' 
-              ? `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Kapasite: ${t.capacity} Kişi</div>` 
+              ? `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Kapasite: ${t.capacity} Kişi (${t.section})</div>` 
               : t.occupancy === 'reserved'
                 ? `<div class="meta-row"><strong style="color:var(--badge-reserv-text)">${t.note || '19:30 - 4 Kişi'}</strong></div>`
                 : `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${t.minutes} dk • Garson: ${t.waiter || 'Mehmet K.'}</div>
@@ -432,7 +315,9 @@
     }).join('');
 
     const openBillsCount = state.tables.filter(t => t.occupancy === 'occupied').length;
+    const statTotal = document.getElementById('stat-total-tables');
     const statOpen = document.getElementById('stat-open-bills');
+    if (statTotal) statTotal.textContent = `${state.tables.length} Masa`;
     if (statOpen) statOpen.textContent = `${openBillsCount} Masa`;
 
     const countBillReq = state.tables.filter(t => t.opBadge === 'bill-requested').length;
@@ -443,13 +328,34 @@
     if (elCooking) elCooking.textContent = countCooking;
   }
 
-  // 5.3 Render Catalog Products with Allergens
-  function renderCatalogProducts() {
+  // 4.2 Render POS Catalog Navigation & Products
+  function renderPOSCatalog() {
+    const tabsContainer = document.getElementById('pos-category-tabs');
+    const categories = getDistinctCategories();
+
+    if (tabsContainer) {
+      tabsContainer.innerHTML = categories.map(cat => `
+        <button type="button" class="cat-tab ${state.activeCategory === cat ? 'active' : ''}" data-category="${cat}">${cat}</button>
+      `).join('');
+
+      tabsContainer.querySelectorAll('.cat-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabsContainer.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          state.activeCategory = tab.dataset.category;
+          renderPOSProducts();
+        });
+      });
+    }
+
+    renderPOSProducts();
+  }
+
+  function renderPOSProducts() {
     const grid = document.getElementById('pos-product-grid');
     if (!grid) return;
 
-    const conceptData = getActiveConceptData();
-    let filtered = conceptData.products.filter(p => {
+    let filtered = state.products.filter(p => {
       const matchCat = state.activeCategory === 'Tümü' || p.category === state.activeCategory;
       const matchSearch = !state.searchProductQuery || p.name.toLowerCase().includes(state.searchProductQuery.toLowerCase());
       return matchCat && matchSearch;
@@ -463,7 +369,6 @@
 
       return `
         <div class="product-card" data-prod-id="${p.id}">
-          ${p.stock ? `<span class="stock-tag">${p.stock}</span>` : ''}
           <div class="prod-name">${p.name}</div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
             <div class="prod-price num-val">${formatTL(p.price)}</div>
@@ -474,7 +379,59 @@
     }).join('');
   }
 
-  // 5.4 Render Cart Grouped by Coursing
+  // 4.3 Render Menu Management Table
+  function renderMenuManagement() {
+    const chipsContainer = document.getElementById('menu-category-chips');
+    const tbody = document.getElementById('menu-mgmt-tbody');
+    const categories = getDistinctCategories();
+
+    if (chipsContainer) {
+      chipsContainer.innerHTML = categories.map(cat => `
+        <button type="button" class="chip ${state.menuMgmtCatFilter === cat ? 'active' : ''}" data-menu-cat="${cat}">${cat}</button>
+      `).join('');
+
+      chipsContainer.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          state.menuMgmtCatFilter = chip.dataset.menuCat;
+          renderMenuManagement();
+        });
+      });
+    }
+
+    if (tbody) {
+      let filtered = state.products.filter(p => {
+        return state.menuMgmtCatFilter === 'Tümü' || p.category === state.menuMgmtCatFilter;
+      });
+
+      tbody.innerHTML = filtered.map((p, idx) => `
+        <tr>
+          <td><strong>${p.name}</strong></td>
+          <td><span class="occupancy-pill available">${p.category}</span></td>
+          <td class="num-val"><strong>${formatTL(p.price)}</strong></td>
+          <td>${p.station === 'hot' ? 'Sıcak Mutfak' : p.station === 'bar' ? 'Bar & İçecek' : 'Soğuk / Tatlı'}</td>
+          <td>${p.defaultCourse}</td>
+          <td>${p.allergen ? `<span class="allergen-tag" style="font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active)">${p.allergen}</span>` : '—'}</td>
+          <td>
+            <button type="button" class="cart-item-actions-btn btn-delete-product" data-prod-idx="${idx}" style="color:var(--color-danger)">Sil</button>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.querySelectorAll('.btn-delete-product').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.dataset.prodIdx, 10);
+          const deleted = state.products.splice(idx, 1)[0];
+          showToast(`${deleted.name} menüden kaldırıldı.`, 'warning');
+          renderMenuManagement();
+          renderPOSCatalog();
+        });
+      });
+    }
+  }
+
+  // 4.4 Render Cart Grouped by Coursing
   function renderCart() {
     const list = document.getElementById('pos-cart-items');
     const badge = document.getElementById('cart-item-count');
@@ -503,8 +460,11 @@
       return;
     }
 
-    const conceptData = getActiveConceptData();
-    const courses = conceptData.courses;
+    const courses = [
+      { key: 'Başlangıç', title: '1. AŞAMA: BAŞLANGIÇ & İÇECEK', cssClass: 'starter' },
+      { key: 'Ana Yemek', title: '2. AŞAMA: ANA YEMEKLER', cssClass: 'main' },
+      { key: 'Tatlı', title: '3. AŞAMA: TATLI & KAHVE', cssClass: 'dessert' }
+    ];
 
     let subtotal = 0;
     let fullHtml = '';
@@ -595,7 +555,7 @@
     if (submitBtn) submitBtn.disabled = !state.isOnline;
   }
 
-  // 5.5 Render Dynamic Universal Modifier Sheet
+  // 4.5 Dynamic Universal Modifier Modal
   function openDynamicModifierModal(prod, existingItem = null) {
     state.activeModifierProduct = prod;
     state.selectedQuickTags = existingItem ? [...(existingItem.quickTags || [])] : [];
@@ -608,30 +568,26 @@
     if (titleEl) titleEl.textContent = existingItem ? `${prod.name} (Düzenle)` : prod.name;
     if (priceEl) priceEl.textContent = formatTL(prod.price);
 
-    const conceptData = getActiveConceptData();
     let bodyHtml = '';
 
-    // 1. Coursing Selector Group
+    // 1. Coursing
     bodyHtml += `
       <div class="option-group">
-        <label class="group-label">Servis Aşaması (Coursing)</label>
+        <label class="group-label">Servis Aşaması</label>
         <div class="radio-pill-group">
-          ${conceptData.courses.map((c, i) => `
-            <label class="radio-pill">
-              <input type="radio" name="courseType" value="${c.key}" ${existingItem ? (existingItem.course === c.key ? 'checked' : '') : (i === 1 ? 'checked' : '')}>
-              <span>${c.key}</span>
-            </label>
-          `).join('')}
+          <label class="radio-pill"><input type="radio" name="courseType" value="Başlangıç" ${existingItem ? (existingItem.course === 'Başlangıç' ? 'checked' : '') : (prod.defaultCourse === 'Başlangıç' ? 'checked' : '')}><span>Başlangıç</span></label>
+          <label class="radio-pill"><input type="radio" name="courseType" value="Ana Yemek" ${existingItem ? (existingItem.course === 'Ana Yemek' ? 'checked' : '') : (prod.defaultCourse === 'Ana Yemek' ? 'checked' : '')}><span>Ana Yemek</span></label>
+          <label class="radio-pill"><input type="radio" name="courseType" value="Tatlı" ${existingItem ? (existingItem.course === 'Tatlı' ? 'checked' : '') : (prod.defaultCourse === 'Tatlı' ? 'checked' : '')}><span>Tatlı & Kahve</span></label>
         </div>
       </div>
     `;
 
-    // 2. Dynamic Product Modifier Groups
+    // 2. Modifier Groups
     const groups = prod.modifierGroups || [];
     groups.forEach(g => {
       bodyHtml += `
         <div class="option-group">
-          <label class="group-label">${g.title} ${g.required ? '<span class="required-tag">Zorunlu</span>' : ''}</label>
+          <label class="group-label">${g.title} ${g.required ? '<span style="color:#DC2626;font-size:10px">(Zorunlu)</span>' : ''}</label>
       `;
 
       if (g.type === 'single') {
@@ -675,7 +631,7 @@
     bodyHtml += `
       <div class="option-group">
         <label class="group-label">Hızlı Hazırlık Etiketleri</label>
-        <div class="quick-tags-container">
+        <div class="radio-pill-group">
           <button type="button" class="quick-tag-btn" data-tag="Sos Ayrı">Sos Ayrı</button>
           <button type="button" class="quick-tag-btn" data-tag="Buzsuz">Buzsuz</button>
           <button type="button" class="quick-tag-btn" data-tag="Tuzsuz">Tuzsuz</button>
@@ -685,15 +641,16 @@
       </div>
       <div class="option-group">
         <label class="group-label" for="mod-special-note">Özel Sipariş Notu</label>
-        <input type="text" id="mod-special-note" placeholder="Örn. Şef Notu..." value="${existingItem?.note || ''}" autocomplete="off">
+        <input type="text" id="mod-special-note" placeholder="Örn. Şef Notu..." value="${existingItem?.note || ''}" class="form-input" autocomplete="off">
       </div>
     `;
 
     container.innerHTML = bodyHtml;
 
-    // Attach real-time price calculations
-    const inputs = container.querySelectorAll('input[type="radio"], input[type="checkbox"]');
-    inputs.forEach(inp => inp.addEventListener('change', updateDynamicModifierPrice));
+    // Attach Price Update Listener
+    container.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(inp => {
+      inp.addEventListener('change', updateModifierLivePrice);
+    });
 
     // Attach Quick Tags
     container.querySelectorAll('.quick-tag-btn').forEach(btn => {
@@ -717,11 +674,11 @@
         : `Sepete Ekle (<span id="mod-final-price">${formatTL(prod.price)}</span>)`;
     }
 
-    updateDynamicModifierPrice();
+    updateModifierLivePrice();
     if (modal) modal.style.display = 'flex';
   }
 
-  function updateDynamicModifierPrice() {
+  function updateModifierLivePrice() {
     if (!state.activeModifierProduct) return;
     let extraTotal = 0;
     const container = document.getElementById('mod-dynamic-options-container');
@@ -738,18 +695,18 @@
     if (priceSubtitleEl) priceSubtitleEl.textContent = formatTL(currentTotal);
   }
 
-  // 5.6 Render 80mm ESC/POS Thermal Slip
+  // 4.6 80mm ESC/POS Thermal Slip Simulation
   function renderThermalSlip() {
     const container = document.getElementById('thermal-slip-content');
     const subTitle = document.getElementById('thermal-slip-subtitle');
     if (!container || !state.selectedTable) return;
 
-    const conceptData = getActiveConceptData();
-    if (subTitle) subTitle.textContent = `Masa ${state.selectedTable.number} (${conceptData.name})`;
+    if (subTitle) subTitle.textContent = `Masa ${state.selectedTable.number} (${state.selectedTable.section})`;
 
     const items = state.activeCart.length > 0 ? state.activeCart : [
-      { name: 'Ana Kalem', unitPrice: 240.00, quantity: 1, seat: '1' },
-      { name: 'İçecek', unitPrice: 45.00, quantity: 2, seat: 'shared' }
+      { name: 'Alkaros Burger', unitPrice: 240.00, quantity: 1, seat: '1' },
+      { name: 'Patates Tava', unitPrice: 85.00, quantity: 1, seat: 'shared' },
+      { name: 'Coca Cola 330ml', unitPrice: 45.00, quantity: 2, seat: 'shared' }
     ];
 
     const subtotal = items.reduce((sum, i) => sum + (i.unitPrice * i.quantity), 0);
@@ -759,8 +716,7 @@
     container.innerHTML = `
       <div class="slip-paper">
         <div class="slip-header">
-          <div class="slip-brand">*** ALKAROS RESTAURANT ***</div>
-          <div class="slip-meta">${conceptData.name.toUpperCase()}</div>
+          <div class="slip-brand">*** ALKAROS RESTORAN ***</div>
           <div class="slip-meta">Masa: ${state.selectedTable.number} | Garson: ${state.selectedTable.waiter || 'Mehmet K.'}</div>
           <div class="slip-meta">Tarih: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}</div>
           <div class="slip-divider">------------------------------------------</div>
@@ -789,7 +745,7 @@
     `;
   }
 
-  // 5.7 Render Operations & Printers
+  // 4.7 Operations & Printers
   function renderOperations() {
     const feed = document.getElementById('ops-tickets-feed');
     const printersList = document.getElementById('ops-printers-list');
@@ -831,7 +787,7 @@
           </div>
           <div>
             ${p.status === 'paper_out' 
-              ? `<button type="button" class="btn-secondary" id="btn-open-reroute" style="padding:6px 12px;font-size:12px">Yönlendir</button>`
+              ? `<span class="occupancy-pill" style="background:#FEE2E2;color:#DC2626">Arıza</span>`
               : `<span class="occupancy-pill available">Normal</span>`
             }
           </div>
@@ -844,7 +800,7 @@
     }
   }
 
-  // 5.8 Render Waiter Surface
+  // 4.8 Waiter Surface
   function renderWaiterSurface() {
     const grid = document.getElementById('waiter-tables-container');
     const productList = document.getElementById('wtr-product-list');
@@ -857,9 +813,7 @@
 
     if (grid) {
       let filtered = state.tables.filter(t => {
-        const matchSection = state.wtrSectionFilter === 'Tümü' || 
-          (state.wtrSectionFilter === 'mine' && t.waiter === 'Mehmet K.') ||
-          t.section === state.wtrSectionFilter;
+        const matchSection = state.wtrSectionFilter === 'Tümü' || t.section === state.wtrSectionFilter;
         const matchSearch = !state.wtrSearchQuery || t.number.toLowerCase().includes(state.wtrSearchQuery.toLowerCase());
         return matchSection && matchSearch;
       });
@@ -874,7 +828,7 @@
               <span class="occupancy-pill ${occupClass}">${occupText}</span>
             </div>
             <div class="table-card-body">
-              ${t.occupancy === 'occupied' ? `<div class="table-amount num-val">${formatTL(t.billAmount)}</div>` : `<div class="meta-row">${t.capacity} Kişi</div>`}
+              ${t.occupancy === 'occupied' ? `<div class="table-amount num-val">${formatTL(t.billAmount)}</div>` : `<div class="meta-row">${t.capacity} Kişi (${t.section})</div>`}
             </div>
             <button type="button" class="table-card-btn">${t.occupancy === 'available' ? 'Sipariş Aç' : t.occupancy === 'reserved' ? 'Misafiri Oturt >' : 'Masayı Aç >'}</button>
           </div>
@@ -882,9 +836,8 @@
       }).join('');
     }
 
-    const conceptData = getActiveConceptData();
     if (productList) {
-      productList.innerHTML = conceptData.products.map(p => `
+      productList.innerHTML = state.products.map(p => `
         <div class="product-card" data-wtr-prod-id="${p.id}">
           <div class="prod-name">${p.name}</div>
           <div class="prod-price num-val">${formatTL(p.price)}</div>
@@ -928,168 +881,156 @@
     }
   }
 
-  // --- 6. EVENT ATTACHMENTS ---
+  // --- 5. EVENT ATTACHMENTS ---
 
   function setupEvents() {
-    // 6.1 Concept Switcher Event
-    const conceptSelect = document.getElementById('select-restaurant-concept');
-    if (conceptSelect) {
-      conceptSelect.addEventListener('change', (e) => {
-        state.activeConcept = e.target.value;
-        state.activeCategory = 'Tümü';
-        state.activeCart = [];
-        state.activeDiscount = 0;
-
-        renderConceptNavigation();
-        renderCatalogProducts();
-        renderCart();
-        renderWaiterSurface();
-        showToast(`Konsept Değiştirildi: ${getActiveConceptData().name}`);
-      });
-    }
-
-    // 6.2 Simulator View Switcher
-    document.querySelectorAll('.proto-btn[data-view]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.proto-btn[data-view]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.currentView = btn.dataset.view;
-
-        const cashierSurf = document.getElementById('surface-cashier');
-        const waiterSurf = document.getElementById('surface-waiter');
-        const waiterFrame = document.getElementById('waiter-device-frame');
-
-        if (state.currentView === 'cashier') {
-          cashierSurf.style.display = 'flex';
-          waiterSurf.style.display = 'none';
-        } else if (state.currentView === 'waiter-phone') {
-          cashierSurf.style.display = 'none';
-          waiterSurf.style.display = 'flex';
-          waiterFrame.className = 'device-frame phone-mode';
-        } else if (state.currentView === 'waiter-tablet') {
-          cashierSurf.style.display = 'none';
-          waiterSurf.style.display = 'flex';
-          waiterFrame.className = 'device-frame tablet-mode';
-        }
-      });
-    });
-
-    // 6.3 Theme Toggle
-    const themeBtn = document.getElementById('btn-theme-toggle');
-    if (themeBtn) {
-      themeBtn.addEventListener('click', () => {
-        state.theme = state.theme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', state.theme);
-        localStorage.setItem('alkaros_theme', state.theme);
-      });
-    }
-
-    // 6.4 Network Outage Toggle
-    const netBtn = document.getElementById('btn-sim-network');
-    if (netBtn) {
-      netBtn.addEventListener('click', () => {
-        state.isOnline = !state.isOnline;
-        const banner = document.getElementById('network-outage-banner');
-        const labelNet = document.getElementById('label-network');
-        const cuiNetDot = document.getElementById('cashier-net-status');
-        const wtrPill = document.getElementById('waiter-net-pill');
-        const wtrOffBar = document.getElementById('waiter-offline-bar');
-
-        if (!state.isOnline) {
-          labelNet.textContent = 'Ağ: Kesildi (Offline)';
-          netBtn.classList.add('active-danger');
-          if (banner) banner.style.display = 'flex';
-          if (cuiNetDot) cuiNetDot.className = 'connection-status offline';
-          if (wtrPill) wtrPill.innerHTML = '<span class="dot" style="background:#DC2626"></span><span>Çevrimdışı</span>';
-          if (wtrOffBar) wtrOffBar.style.display = 'flex';
-          showToast('Ağ bağlantısı koptu! Sistem çevrimdışı moda geçti.', 'warning');
-        } else {
-          labelNet.textContent = 'Ağ: Çevrimiçi';
-          netBtn.classList.remove('active-danger');
-          if (banner) banner.style.display = 'none';
-          if (cuiNetDot) cuiNetDot.className = 'connection-status';
-          if (wtrPill) wtrPill.innerHTML = '<span class="dot"></span><span>Çevrimiçi</span>';
-          if (wtrOffBar) wtrOffBar.style.display = 'none';
-
-          if (state.wtrOfflineQueue.length > 0) {
-            const count = state.wtrOfflineQueue.length;
-            showToast(`Ağ bağlantısı kuruldu! ${count} çevrimdışı sipariş mutfağa iletildi.`, 'success');
-            state.wtrOfflineQueue = [];
-            const qCountEl = document.getElementById('waiter-queue-count');
-            if (qCountEl) qCountEl.textContent = '0';
-          } else {
-            showToast('Ağ bağlantısı kuruldu. Masa verileri senkronize edildi.', 'success');
-          }
-        }
-        renderCart();
-      });
-    }
-
-    // 6.5 Cashier Tabs
+    // 5.1 Main Cashier Navigation Tabs
     const tabTables = document.getElementById('tab-cui-tables');
+    const tabMenu = document.getElementById('tab-cui-menu');
     const tabOps = document.getElementById('tab-cui-operations');
+
     const viewTables = document.getElementById('cui-view-tables');
-    const viewOps = document.getElementById('cui-view-operations');
     const viewOrder = document.getElementById('cui-view-order-entry');
+    const viewMenu = document.getElementById('cui-view-menu');
+    const viewOps = document.getElementById('cui-view-operations');
 
-    if (tabTables && tabOps) {
+    const resetViews = () => {
+      [viewTables, viewOrder, viewMenu, viewOps].forEach(v => { if (v) v.style.display = 'none'; });
+      [tabTables, tabMenu, tabOps].forEach(t => { if (t) t.classList.remove('active'); });
+    };
+
+    if (tabTables) {
       tabTables.addEventListener('click', () => {
+        resetViews();
         tabTables.classList.add('active');
-        tabOps.classList.remove('active');
         viewTables.style.display = 'flex';
-        viewOps.style.display = 'none';
-        viewOrder.style.display = 'none';
+        renderCashierTables();
       });
+    }
 
+    if (tabMenu) {
+      tabMenu.addEventListener('click', () => {
+        resetViews();
+        tabMenu.classList.add('active');
+        viewMenu.style.display = 'flex';
+        renderMenuManagement();
+      });
+    }
+
+    if (tabOps) {
       tabOps.addEventListener('click', () => {
+        resetViews();
         tabOps.classList.add('active');
-        tabTables.classList.remove('active');
-        viewTables.style.display = 'none';
         viewOps.style.display = 'flex';
-        viewOrder.style.display = 'none';
         renderOperations();
       });
     }
 
-    // 6.6 Section & Status Filters
-    document.querySelectorAll('.filter-chips .chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        document.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        state.activeSectionFilter = chip.dataset.section;
-        renderCashierTables();
-      });
-    });
+    // 5.2 Add Table Modal (İşletmeci Masa Ekleme)
+    const btnOpenAddTable = document.getElementById('btn-open-add-table');
+    const modalAddTable = document.getElementById('modal-add-table');
+    const btnCloseAddTable = document.getElementById('btn-close-add-table');
+    const btnCancelAddTable = document.getElementById('btn-cancel-add-table');
+    const btnConfirmAddTable = document.getElementById('btn-confirm-add-table');
 
-    document.querySelectorAll('.status-quick-filters .filter-tag-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.status-quick-filters .filter-tag-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.activeStatusFilter = btn.dataset.statusFilter;
-        renderCashierTables();
-      });
-    });
-
-    // 6.7 Search Table
-    const searchInput = document.getElementById('input-search-tables');
-    const clearSearchBtn = document.getElementById('btn-clear-table-search');
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        state.searchTableQuery = e.target.value.trim();
-        if (clearSearchBtn) clearSearchBtn.style.display = state.searchTableQuery ? 'flex' : 'none';
-        renderCashierTables();
+    if (btnOpenAddTable) {
+      btnOpenAddTable.addEventListener('click', () => {
+        document.getElementById('input-table-number').value = '';
+        if (modalAddTable) modalAddTable.style.display = 'flex';
       });
     }
-    if (clearSearchBtn) {
-      clearSearchBtn.addEventListener('click', () => {
-        if (searchInput) searchInput.value = '';
-        state.searchTableQuery = '';
-        clearSearchBtn.style.display = 'none';
+    if (btnCloseAddTable) btnCloseAddTable.addEventListener('click', () => modalAddTable.style.display = 'none');
+    if (btnCancelAddTable) btnCancelAddTable.addEventListener('click', () => modalAddTable.style.display = 'none');
+    if (btnConfirmAddTable) {
+      btnConfirmAddTable.addEventListener('click', () => {
+        const number = document.getElementById('input-table-number')?.value.trim();
+        const section = document.getElementById('select-table-section')?.value || 'Salon';
+        const capacity = parseInt(document.querySelector('input[name="tableCapacity"]:checked')?.value || 4, 10);
+
+        if (!number) {
+          showToast('Lütfen masa numarası giriniz!', 'warning');
+          return;
+        }
+
+        const newTable = {
+          id: 'tbl-' + Date.now(),
+          number: number.toUpperCase(),
+          section,
+          occupancy: 'available',
+          opBadge: null,
+          capacity,
+          billAmount: 0.00,
+          waiter: null,
+          minutes: null,
+          previousDrinks: []
+        };
+
+        state.tables.push(newTable);
+        state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Yeni Masa: Masa ${newTable.number} (${section} - ${capacity} Kişilik) eklendi.`);
+        showToast(`Masa ${newTable.number} (${section}) başarıyla eklendi.`);
+
+        if (modalAddTable) modalAddTable.style.display = 'none';
+        renderFloorSections();
         renderCashierTables();
+        renderWaiterSurface();
       });
     }
 
-    // 6.8 Table Card Click -> Open POS
+    // 5.3 Add Product Modal (İşletmeci Menüye Ürün Ekleme)
+    const btnOpenAddProduct = document.getElementById('btn-open-add-product');
+    const modalAddProduct = document.getElementById('modal-add-product');
+    const btnCloseAddProduct = document.getElementById('btn-close-add-product');
+    const btnCancelAddProduct = document.getElementById('btn-cancel-add-product');
+    const btnConfirmAddProduct = document.getElementById('btn-confirm-add-product');
+
+    if (btnOpenAddProduct) {
+      btnOpenAddProduct.addEventListener('click', () => {
+        document.getElementById('input-product-name').value = '';
+        document.getElementById('input-product-category').value = '';
+        document.getElementById('input-product-price').value = '';
+        document.getElementById('input-product-allergen').value = '';
+        if (modalAddProduct) modalAddProduct.style.display = 'flex';
+      });
+    }
+    if (btnCloseAddProduct) btnCloseAddProduct.addEventListener('click', () => modalAddProduct.style.display = 'none');
+    if (btnCancelAddProduct) btnCancelAddProduct.addEventListener('click', () => modalAddProduct.style.display = 'none');
+    if (btnConfirmAddProduct) {
+      btnConfirmAddProduct.addEventListener('click', () => {
+        const name = document.getElementById('input-product-name')?.value.trim();
+        const category = document.getElementById('input-product-category')?.value.trim() || 'Genel';
+        const price = parseFloat(document.getElementById('input-product-price')?.value || 0);
+        const station = document.getElementById('select-product-station')?.value || 'hot';
+        const defaultCourse = document.querySelector('input[name="prodCourse"]:checked')?.value || 'Ana Yemek';
+        const allergen = document.getElementById('input-product-allergen')?.value.trim() || null;
+
+        if (!name || price <= 0) {
+          showToast('Lütfen geçerli ürün adı ve fiyat giriniz!', 'warning');
+          return;
+        }
+
+        const newProd = {
+          id: 'p_' + Date.now(),
+          name,
+          category,
+          price,
+          station,
+          defaultCourse,
+          allergen,
+          modifierGroups: []
+        };
+
+        state.products.push(newProd);
+        state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Menü Ekleme: ${newProd.name} (${category} - ${formatTL(price)}) eklendi.`);
+        showToast(`${newProd.name} menüye eklendi.`);
+
+        if (modalAddProduct) modalAddProduct.style.display = 'none';
+        renderMenuManagement();
+        renderPOSCatalog();
+        renderWaiterSurface();
+      });
+    }
+
+    // 5.4 Table Card Click -> Open POS
     const tableGrid = document.getElementById('cashier-table-grid');
     if (tableGrid) {
       tableGrid.addEventListener('click', (e) => {
@@ -1118,12 +1059,12 @@
           titleEl.innerHTML = `Masa ${table.number} <span class="table-section-tag">(${table.section})</span>`;
         }
 
-        renderCatalogProducts();
+        renderPOSCatalog();
         renderCart();
       });
     }
 
-    // 6.9 Back to Tables
+    // 5.5 Back to Tables
     const btnBack = document.getElementById('btn-pos-back-to-tables');
     if (btnBack) {
       btnBack.addEventListener('click', () => {
@@ -1133,7 +1074,45 @@
       });
     }
 
-    // 6.10 Seat Selector
+    // 5.6 Table Status Quick Filters
+    document.querySelectorAll('.status-quick-filters .filter-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.status-quick-filters .filter-tag-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.activeStatusFilter = btn.dataset.statusFilter;
+        renderCashierTables();
+      });
+    });
+
+    // 5.7 Table Search
+    const searchInput = document.getElementById('input-search-tables');
+    const clearSearchBtn = document.getElementById('btn-clear-table-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        state.searchTableQuery = e.target.value.trim();
+        if (clearSearchBtn) clearSearchBtn.style.display = state.searchTableQuery ? 'flex' : 'none';
+        renderCashierTables();
+      });
+    }
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        state.searchTableQuery = '';
+        clearSearchBtn.style.display = 'none';
+        renderCashierTables();
+      });
+    }
+
+    // 5.8 Product Search
+    const prodSearchInput = document.getElementById('input-search-products');
+    if (prodSearchInput) {
+      prodSearchInput.addEventListener('input', (e) => {
+        state.searchProductQuery = e.target.value.trim();
+        renderPOSProducts();
+      });
+    }
+
+    // 5.9 Seat Selector
     document.querySelectorAll('.seat-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         document.querySelectorAll('.seat-chip').forEach(c => c.classList.remove('active'));
@@ -1142,13 +1121,12 @@
       });
     });
 
-    // 6.11 Repeat Round
+    // 5.10 Repeat Round
     const btnRepeatRound = document.getElementById('btn-action-repeat-round');
     if (btnRepeatRound) {
       btnRepeatRound.addEventListener('click', () => {
         if (!state.selectedTable) return;
-        const conceptData = getActiveConceptData();
-        const drink = conceptData.products.find(p => p.category.includes('İçecek') || p.category.includes('Kahve')) || conceptData.products[0];
+        const drink = state.products.find(p => p.category.includes('İçecek')) || state.products[0];
         state.activeCart.push({
           id: 'rep_' + Math.random().toString(36).substring(2, 7),
           name: drink.name,
@@ -1166,7 +1144,7 @@
       });
     }
 
-    // 6.12 Custom Item Modal
+    // 5.11 Custom Item Modal (+ Açık Kalem Ekle)
     const btnCustomItem = document.getElementById('btn-action-custom-item');
     const modalCustom = document.getElementById('modal-custom-item');
     const btnCloseCustom = document.getElementById('btn-close-custom-modal');
@@ -1213,7 +1191,7 @@
       });
     }
 
-    // 6.13 80mm ESC/POS Thermal Slip
+    // 5.12 80mm ESC/POS Thermal Slip
     const btnPrintPrebill = document.getElementById('btn-action-print-prebill');
     const modalThermal = document.getElementById('modal-thermal-slip');
     const btnCloseThermal = document.getElementById('btn-close-thermal');
@@ -1232,7 +1210,7 @@
     if (btnPrintHardware) {
       btnPrintHardware.addEventListener('click', () => {
         state.selectedTable.opBadge = 'bill-requested';
-        showToast(`Masa ${state.selectedTable.number} ön adisyon fişi yazıcıya iletildi. Durum: Hesap İstendi.`);
+        showToast(`Masa ${state.selectedTable.number} ön adisyon fişi yazıcıya iletildi.`);
         if (modalThermal) modalThermal.style.display = 'none';
         viewOrder.style.display = 'none';
         viewTables.style.display = 'flex';
@@ -1240,7 +1218,61 @@
       });
     }
 
-    // 6.14 Table Merge Modal
+    // 5.13 Table Transfer Modal
+    const btnTransfer = document.getElementById('btn-action-transfer-table');
+    const modalTransfer = document.getElementById('modal-transfer-table');
+    const btnCloseTransfer = document.getElementById('btn-close-transfer-modal');
+    const btnCancelTransfer = document.getElementById('btn-cancel-transfer');
+    const btnConfirmTransfer = document.getElementById('btn-confirm-transfer');
+    const selectTarget = document.getElementById('select-target-table');
+
+    if (btnTransfer) {
+      btnTransfer.addEventListener('click', () => {
+        if (!state.selectedTable) return;
+        const availTables = state.tables.filter(t => t.occupancy === 'available' && t.id !== state.selectedTable.id);
+        if (availTables.length === 0) {
+          showToast('Taşıma yapılacak boş masa bulunamadı!', 'warning');
+          return;
+        }
+        if (selectTarget) {
+          selectTarget.innerHTML = availTables.map(t => `<option value="${t.id}">Masa ${t.number} (${t.section})</option>`).join('');
+        }
+        const titleEl = document.getElementById('transfer-source-title');
+        if (titleEl) titleEl.textContent = `Kaynak: Masa ${state.selectedTable.number} (${formatTL(state.selectedTable.billAmount)})`;
+        if (modalTransfer) modalTransfer.style.display = 'flex';
+      });
+    }
+    if (btnCloseTransfer) btnCloseTransfer.addEventListener('click', () => modalTransfer.style.display = 'none');
+    if (btnCancelTransfer) btnCancelTransfer.addEventListener('click', () => modalTransfer.style.display = 'none');
+    if (btnConfirmTransfer) {
+      btnConfirmTransfer.addEventListener('click', () => {
+        const targetId = selectTarget?.value;
+        const targetTable = state.tables.find(t => t.id === targetId);
+        if (targetTable && state.selectedTable) {
+          targetTable.occupancy = 'occupied';
+          targetTable.billAmount = state.selectedTable.billAmount;
+          targetTable.waiter = state.selectedTable.waiter;
+          targetTable.minutes = state.selectedTable.minutes;
+          targetTable.opBadge = state.selectedTable.opBadge;
+
+          state.selectedTable.occupancy = 'available';
+          state.selectedTable.billAmount = 0.00;
+          state.selectedTable.waiter = null;
+          state.selectedTable.minutes = null;
+          state.selectedTable.opBadge = null;
+
+          state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Masa Transferi: Masa ${state.selectedTable.number} -> Masa ${targetTable.number} aktarıldı.`);
+          showToast(`Masa ${state.selectedTable.number} başarıyla Masa ${targetTable.number}'e taşındı!`);
+          
+          if (modalTransfer) modalTransfer.style.display = 'none';
+          viewOrder.style.display = 'none';
+          viewTables.style.display = 'flex';
+          renderCashierTables();
+        }
+      });
+    }
+
+    // 5.14 Table Merge Modal
     const btnMerge = document.getElementById('btn-action-merge-table');
     const modalMerge = document.getElementById('modal-merge-table');
     const btnCloseMerge = document.getElementById('btn-close-merge-modal');
@@ -1264,7 +1296,6 @@
         if (modalMerge) modalMerge.style.display = 'flex';
       });
     }
-
     if (btnCloseMerge) btnCloseMerge.addEventListener('click', () => modalMerge.style.display = 'none');
     if (btnCancelMerge) btnCancelMerge.addEventListener('click', () => modalMerge.style.display = 'none');
     if (btnConfirmMerge) {
@@ -1289,7 +1320,7 @@
       });
     }
 
-    // 6.15 Discount Modal
+    // 5.15 Discount Modal
     const btnAddDiscount = document.getElementById('btn-cart-add-discount');
     const modalDiscount = document.getElementById('modal-discount');
     const btnCloseDiscount = document.getElementById('btn-close-discount-modal');
@@ -1322,15 +1353,14 @@
       });
     }
 
-    // 6.16 Product Grid Click -> Open Dynamic Modifier Sheet
+    // 5.16 Product Grid Click -> Modifier Modal
     const prodGrid = document.getElementById('pos-product-grid');
     if (prodGrid) {
       prodGrid.addEventListener('click', (e) => {
         const card = e.target.closest('.product-card');
         if (!card) return;
         const prodId = card.dataset.prodId;
-        const conceptData = getActiveConceptData();
-        const prod = conceptData.products.find(p => p.id === prodId);
+        const prod = state.products.find(p => p.id === prodId);
         if (!prod) return;
 
         state.editingCartIndex = null;
@@ -1338,7 +1368,7 @@
       });
     }
 
-    // 6.17 Dynamic Modifier Sheet Confirm Button
+    // 5.17 Dynamic Modifier Sheet Confirm Button
     const btnConfirmMod = document.getElementById('btn-confirm-modifier');
     const btnCloseMod = document.getElementById('btn-close-modifier');
     const btnCancelMod = document.getElementById('btn-cancel-modifier');
@@ -1385,7 +1415,7 @@
           existingItem.selectedOptions = selectedOptions;
           existingItem.quickTags = [...state.selectedQuickTags];
           existingItem.note = note;
-          showToast(`${existingItem.name} sipariş detayları güncellendi.`);
+          showToast(`${existingItem.name} detayları güncellendi.`);
         } else {
           const cartItem = {
             id: state.activeModifierProduct.id,
@@ -1400,7 +1430,7 @@
             isComplimentary: false
           };
           state.activeCart.push(cartItem);
-          showToast(`${cartItem.name} (${course} - ${cartItem.seat === 'shared' ? 'Ortaya' : 'Koltuk ' + cartItem.seat}) eklendi.`);
+          showToast(`${cartItem.name} sepete eklendi.`);
         }
 
         closeModModal();
@@ -1408,7 +1438,7 @@
       });
     }
 
-    // 6.18 Cart Item Click (Edit Modifier) / Dec / Inc / Remove / Manage
+    // 5.18 Cart Item Click (Edit Modifier) / Dec / Inc / Remove / Manage
     const cartItemsList = document.getElementById('pos-cart-items');
     const modalItemAction = document.getElementById('modal-item-action');
     const btnCloseItemAction = document.getElementById('btn-close-item-action');
@@ -1429,8 +1459,7 @@
           if (!item) return;
 
           state.editingCartIndex = idx;
-          const conceptData = getActiveConceptData();
-          const prod = conceptData.products.find(p => p.name === item.name || p.id === item.id) || { id: item.id, name: item.name, price: item.unitPrice, modifierGroups: [] };
+          const prod = state.products.find(p => p.name === item.name || p.id === item.id) || { id: item.id, name: item.name, price: item.unitPrice, modifierGroups: [] };
           openDynamicModifierModal(prod, item);
         } else if (incBtn) {
           const idx = parseInt(incBtn.dataset.index, 10);
@@ -1474,7 +1503,7 @@
             state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] İkram: Masa ${state.selectedTable.number} -> ${item.name} ikram edildi (${reason}).`);
             showToast(`${item.name} ikram olarak güncellendi.`);
           } else if (actionType === 'void') {
-            state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] İptal (Void): Masa ${state.selectedTable.number} -> ${item.name} iptal edildi (${reason}).`);
+            state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] İptal: Masa ${state.selectedTable.number} -> ${item.name} iptal edildi (${reason}).`);
             state.activeCart.splice(state.selectedCartItemIndex, 1);
             showToast(`${item.name} iptal edildi.`);
           }
@@ -1484,62 +1513,7 @@
       });
     }
 
-    // 6.19 Table Transfer Action
-    const btnTransfer = document.getElementById('btn-action-transfer-table');
-    const modalTransfer = document.getElementById('modal-transfer-table');
-    const btnCloseTransfer = document.getElementById('btn-close-transfer-modal');
-    const btnCancelTransfer = document.getElementById('btn-cancel-transfer');
-    const btnConfirmTransfer = document.getElementById('btn-confirm-transfer');
-    const selectTarget = document.getElementById('select-target-table');
-
-    if (btnTransfer) {
-      btnTransfer.addEventListener('click', () => {
-        if (!state.selectedTable) return;
-        const availTables = state.tables.filter(t => t.occupancy === 'available' && t.id !== state.selectedTable.id);
-        if (availTables.length === 0) {
-          showToast('Taşıma yapılacak boş masa bulunamadı!', 'warning');
-          return;
-        }
-        if (selectTarget) {
-          selectTarget.innerHTML = availTables.map(t => `<option value="${t.id}">Masa ${t.number} (${t.section})</option>`).join('');
-        }
-        const titleEl = document.getElementById('transfer-source-title');
-        if (titleEl) titleEl.textContent = `Kaynak: Masa ${state.selectedTable.number} (${formatTL(state.selectedTable.billAmount)})`;
-        if (modalTransfer) modalTransfer.style.display = 'flex';
-      });
-    }
-
-    if (btnCloseTransfer) btnCloseTransfer.addEventListener('click', () => modalTransfer.style.display = 'none');
-    if (btnCancelTransfer) btnCancelTransfer.addEventListener('click', () => modalTransfer.style.display = 'none');
-    if (btnConfirmTransfer) {
-      btnConfirmTransfer.addEventListener('click', () => {
-        const targetId = selectTarget?.value;
-        const targetTable = state.tables.find(t => t.id === targetId);
-        if (targetTable && state.selectedTable) {
-          targetTable.occupancy = 'occupied';
-          targetTable.billAmount = state.selectedTable.billAmount;
-          targetTable.waiter = state.selectedTable.waiter;
-          targetTable.minutes = state.selectedTable.minutes;
-          targetTable.opBadge = state.selectedTable.opBadge;
-
-          state.selectedTable.occupancy = 'available';
-          state.selectedTable.billAmount = 0.00;
-          state.selectedTable.waiter = null;
-          state.selectedTable.minutes = null;
-          state.selectedTable.opBadge = null;
-
-          state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Masa Transferi: Masa ${state.selectedTable.number} -> Masa ${targetTable.number} aktarıldı.`);
-          showToast(`Masa ${state.selectedTable.number} başarıyla Masa ${targetTable.number}'e taşındı!`);
-          
-          if (modalTransfer) modalTransfer.style.display = 'none';
-          viewOrder.style.display = 'none';
-          viewTables.style.display = 'flex';
-          renderCashierTables();
-        }
-      });
-    }
-
-    // 6.20 Submit Order
+    // 5.19 Submit Order
     const btnSubmit = document.getElementById('btn-pos-submit-order');
     if (btnSubmit) {
       btnSubmit.addEventListener('click', () => {
@@ -1551,7 +1525,7 @@
 
         const idempotencyKey = 'ord_' + Math.random().toString(36).substring(2, 11);
         btnSubmit.disabled = true;
-        btnSubmit.innerHTML = `<span class="icon">⏳</span><span>İletiliyor (${idempotencyKey.substring(0, 8)})...</span>`;
+        btnSubmit.innerHTML = `<span>⏳ İletiliyor (${idempotencyKey.substring(0, 8)})...</span>`;
 
         setTimeout(() => {
           if (state.selectedTable) {
@@ -1593,10 +1567,69 @@
       });
     }
 
-    // 6.21 PIN Lockout & Security
+    // 5.20 Simulator Controls
+    document.querySelectorAll('.proto-btn[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.proto-btn[data-view]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentView = btn.dataset.view;
+
+        const cashierSurf = document.getElementById('surface-cashier');
+        const waiterSurf = document.getElementById('surface-waiter');
+        const waiterFrame = document.getElementById('waiter-device-frame');
+
+        if (state.currentView === 'cashier') {
+          cashierSurf.style.display = 'flex';
+          waiterSurf.style.display = 'none';
+        } else if (state.currentView === 'waiter-phone') {
+          cashierSurf.style.display = 'none';
+          waiterSurf.style.display = 'flex';
+          waiterFrame.className = 'device-frame phone-mode';
+        } else if (state.currentView === 'waiter-tablet') {
+          cashierSurf.style.display = 'none';
+          waiterSurf.style.display = 'flex';
+          waiterFrame.className = 'device-frame tablet-mode';
+        }
+      });
+    });
+
+    const themeBtn = document.getElementById('btn-theme-toggle');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        state.theme = state.theme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', state.theme);
+        localStorage.setItem('alkaros_theme', state.theme);
+      });
+    }
+
+    const netBtn = document.getElementById('btn-sim-network');
+    if (netBtn) {
+      netBtn.addEventListener('click', () => {
+        state.isOnline = !state.isOnline;
+        const banner = document.getElementById('network-outage-banner');
+        const labelNet = document.getElementById('label-network');
+        const cuiNetDot = document.getElementById('cashier-net-status');
+
+        if (!state.isOnline) {
+          labelNet.textContent = 'Ağ: Kesildi (Offline)';
+          netBtn.classList.add('active-danger');
+          if (banner) banner.style.display = 'flex';
+          if (cuiNetDot) cuiNetDot.className = 'connection-status offline';
+          showToast('Ağ bağlantısı koptu! Sistem çevrimdışı moda geçti.', 'warning');
+        } else {
+          labelNet.textContent = 'Ağ: Çevrimiçi';
+          netBtn.classList.remove('active-danger');
+          if (banner) banner.style.display = 'none';
+          if (cuiNetDot) cuiNetDot.className = 'connection-status';
+          showToast('Ağ bağlantısı kuruldu.', 'success');
+        }
+        renderCart();
+      });
+    }
+
+    // 5.21 PIN Lockout Keypad
     const lockBtn = document.getElementById('btn-sim-lock');
     const cashierLockBtn = document.getElementById('btn-cashier-lock');
-    const waiterLockBtn = document.getElementById('btn-waiter-lock');
     const lockModal = document.getElementById('modal-lockout');
     const keypad = document.getElementById('keypad-grid');
 
@@ -1609,7 +1642,6 @@
 
     if (lockBtn) lockBtn.addEventListener('click', openLockModal);
     if (cashierLockBtn) cashierLockBtn.addEventListener('click', openLockModal);
-    if (waiterLockBtn) waiterLockBtn.addEventListener('click', openLockModal);
 
     const updatePinDots = () => {
       for (let i = 1; i <= 4; i++) {
@@ -1620,7 +1652,6 @@
 
     if (keypad) {
       keypad.addEventListener('click', (e) => {
-        if (state.cooldownRemaining > 0) return;
         const keyBtn = e.target.closest('.key-btn');
         if (!keyBtn) return;
         const key = keyBtn.dataset.key;
@@ -1638,31 +1669,7 @@
             if (lockModal) lockModal.style.display = 'none';
             showToast('Oturum kilidi açıldı.');
           } else {
-            state.failedPinAttempts += 1;
-            const errMsg = document.getElementById('pin-error-msg');
-            const remSpan = document.getElementById('pin-remaining-attempts');
-            
-            if (state.failedPinAttempts >= 5) {
-              showToast('5 Hatalı PIN denemesi! Oturum tamamen iptal edildi.', 'error');
-              if (errMsg) errMsg.textContent = 'Oturum iptal edildi! Süpervizör şifresi gerekli.';
-            } else if (state.failedPinAttempts >= 3) {
-              state.cooldownRemaining = 30;
-              const cooldownBox = document.getElementById('pin-cooldown-box');
-              const cooldownSec = document.getElementById('pin-cooldown-sec');
-              if (cooldownBox) cooldownBox.style.display = 'block';
-
-              state.cooldownTimer = setInterval(() => {
-                state.cooldownRemaining -= 1;
-                if (cooldownSec) cooldownSec.textContent = state.cooldownRemaining;
-                if (state.cooldownRemaining <= 0) {
-                  clearInterval(state.cooldownTimer);
-                  if (cooldownBox) cooldownBox.style.display = 'none';
-                }
-              }, 1000);
-            } else {
-              if (errMsg) errMsg.style.display = 'block';
-              if (remSpan) remSpan.textContent = 3 - state.failedPinAttempts;
-            }
+            showToast('Hatalı PIN! (Demo PIN: 1234)', 'error');
             state.enteredPin = '';
             setTimeout(updatePinDots, 300);
           }
@@ -1673,153 +1680,7 @@
       });
     }
 
-    // 6.22 Waiter PWA Bottom Nav
-    document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(item => {
-      item.addEventListener('click', () => {
-        document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-        const target = item.dataset.wtrTarget;
-        
-        document.getElementById('wtr-view-tables').style.display = target === 'tables' ? 'flex' : 'none';
-        document.getElementById('wtr-view-status').style.display = target === 'status' ? 'flex' : 'none';
-        document.getElementById('wtr-view-notifications').style.display = target === 'notifications' ? 'flex' : 'none';
-        document.getElementById('wtr-view-order').style.display = 'none';
-
-        if (target === 'notifications') {
-          state.notifications.forEach(n => n.unread = false);
-          const dot = document.getElementById('wtr-unread-dot');
-          if (dot) dot.style.display = 'none';
-        }
-        renderWaiterSurface();
-      });
-    });
-
-    // 6.23 Waiter Table Selection
-    const wtrGrid = document.getElementById('waiter-tables-container');
-    const wtrViewTables = document.getElementById('wtr-view-tables');
-    const wtrViewOrder = document.getElementById('wtr-view-order');
-    const btnWtrBack = document.getElementById('btn-wtr-back-tables');
-    const btnWtrReqBill = document.getElementById('btn-wtr-request-bill');
-
-    if (wtrGrid) {
-      wtrGrid.addEventListener('click', (e) => {
-        const card = e.target.closest('.table-card');
-        if (!card) return;
-        const tblId = card.dataset.wtrTableId;
-        const tbl = state.tables.find(t => t.id === tblId);
-        if (!tbl) return;
-
-        if (tbl.occupancy === 'reserved') {
-          tbl.occupancy = 'occupied';
-          tbl.waiter = 'Mehmet K.';
-          tbl.minutes = 1;
-          showToast(`Masa ${tbl.number} misafiri oturtuldu.`);
-        }
-
-        state.wtrActiveTable = tbl;
-        state.wtrCart = [];
-
-        wtrViewTables.style.display = 'none';
-        wtrViewOrder.style.display = 'flex';
-        const nameEl = document.getElementById('wtr-active-table-name');
-        if (nameEl) nameEl.textContent = `Masa ${tbl.number} (${tbl.section})`;
-        renderWaiterSurface();
-      });
-    }
-
-    if (btnWtrBack) {
-      btnWtrBack.addEventListener('click', () => {
-        wtrViewOrder.style.display = 'none';
-        wtrViewTables.style.display = 'flex';
-        renderWaiterSurface();
-      });
-    }
-
-    if (btnWtrReqBill) {
-      btnWtrReqBill.addEventListener('click', () => {
-        if (!state.wtrActiveTable) return;
-        state.wtrActiveTable.opBadge = 'bill-requested';
-        showToast(`Masa ${state.wtrActiveTable.number} için hesap talebi kasaya iletildi.`);
-        wtrViewOrder.style.display = 'none';
-        wtrViewTables.style.display = 'flex';
-        renderWaiterSurface();
-        renderCashierTables();
-      });
-    }
-
-    const wtrCartToggle = document.getElementById('wtr-cart-toggle');
-    const wtrCartTray = document.getElementById('wtr-cart-tray');
-    if (wtrCartToggle && wtrCartTray) {
-      wtrCartToggle.addEventListener('click', () => {
-        wtrCartTray.classList.toggle('expanded');
-      });
-    }
-
-    const wtrProdList = document.getElementById('wtr-product-list');
-    if (wtrProdList) {
-      wtrProdList.addEventListener('click', (e) => {
-        const card = e.target.closest('.product-card');
-        if (!card) return;
-        const prodId = card.dataset.wtrProdId;
-        const conceptData = getActiveConceptData();
-        const prod = conceptData.products.find(p => p.id === prodId);
-        if (!prod) return;
-
-        const existing = state.wtrCart.find(i => i.id === prod.id);
-        if (existing) {
-          existing.quantity += 1;
-        } else {
-          state.wtrCart.push({ id: prod.id, name: prod.name, unitPrice: prod.price, quantity: 1 });
-        }
-        renderWaiterSurface();
-        showToast(`${prod.name} sepete eklendi.`);
-      });
-    }
-
-    const btnWtrSubmit = document.getElementById('btn-wtr-submit-order');
-    if (btnWtrSubmit) {
-      btnWtrSubmit.addEventListener('click', () => {
-        if (state.wtrCart.length === 0) return;
-
-        if (!state.isOnline) {
-          const queueItem = {
-            opId: 'wtr_op_' + Math.random().toString(36).substring(2, 9),
-            table: state.wtrActiveTable.number,
-            items: [...state.wtrCart]
-          };
-          state.wtrOfflineQueue.push(queueItem);
-          const qCountEl = document.getElementById('waiter-queue-count');
-          if (qCountEl) qCountEl.textContent = state.wtrOfflineQueue.length;
-
-          showToast('Çevrimdışı: Sipariş cihaz kuyruğuna alındı. Ağ gelince iletilecek.', 'warning');
-          state.wtrCart = [];
-          wtrViewOrder.style.display = 'none';
-          wtrViewTables.style.display = 'flex';
-          renderWaiterSurface();
-        } else {
-          showToast(`Masa ${state.wtrActiveTable.number} siparişi mutfağa gönderildi!`);
-          state.wtrCart = [];
-          wtrViewOrder.style.display = 'none';
-          wtrViewTables.style.display = 'flex';
-          renderWaiterSurface();
-        }
-      });
-    }
-
-    // 6.24 Notification Delivery
-    const notifFeed = document.getElementById('wtr-notif-feed');
-    if (notifFeed) {
-      notifFeed.addEventListener('click', (e) => {
-        const btn = e.target.closest('.btn-deliver-notif');
-        if (!btn) return;
-        const idx = parseInt(btn.dataset.notifIdx, 10);
-        state.notifications.splice(idx, 1);
-        showToast('Yemek teslim edildi olarak işaretlendi.');
-        renderWaiterSurface();
-      });
-    }
-
-    // 6.25 Clock Loop
+    // 5.22 Clock Loop
     setInterval(() => {
       const clock = document.getElementById('cashier-clock');
       if (clock) {
@@ -1829,13 +1690,14 @@
     }, 1000);
   }
 
-  // --- 7. INITIALIZATION ---
+  // --- 6. INITIALIZATION ---
 
   document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.setAttribute('data-theme', state.theme);
-    renderConceptNavigation();
+    renderFloorSections();
     renderCashierTables();
-    renderCatalogProducts();
+    renderPOSCatalog();
+    renderMenuManagement();
     renderOperations();
     renderWaiterSurface();
     setupEvents();
