@@ -230,7 +230,7 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
         };
 
         var details = !string.IsNullOrWhiteSpace(request.ReasonOrNote)
-            ? $"{{\"reason\":\"{request.ReasonOrNote.Replace("\"", "\\\"")}\"}}"
+            ? System.Text.Json.JsonSerializer.Serialize(new { reason = request.ReasonOrNote })
             : null;
 
         await InsertActionInternalAsync(
@@ -268,7 +268,7 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
         if (existing is null)
             throw new CaseNotFoundException(request.CaseId);
 
-        var details = $"{{\"note\":\"{request.Note.Replace("\"", "\\\"")}\"}}";
+        var details = System.Text.Json.JsonSerializer.Serialize(new { note = request.Note });
 
         await InsertActionInternalAsync(
             connection,

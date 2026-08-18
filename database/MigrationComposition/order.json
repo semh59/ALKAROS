@@ -129,6 +129,60 @@
       "phase": "A",
       "tables": ["products"],
       "deferredConstraints": []
+    },
+    {
+      "id": "023",
+      "phase": "A",
+      "tables": ["table_transfers"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "024",
+      "phase": "A",
+      "tables": ["table_merges"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "025",
+      "phase": "A",
+      "tables": ["table_reservations"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "026",
+      "phase": "A",
+      "tables": ["settings", "setting_history"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "027",
+      "phase": "A",
+      "tables": ["alerts", "alert_events"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "028",
+      "phase": "A",
+      "tables": ["health_checks"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "029",
+      "phase": "A",
+      "tables": ["backups", "system_health_snapshots"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "030",
+      "phase": "A",
+      "tables": ["cases", "case_actions"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "031",
+      "phase": "B",
+      "tables": ["daily_business_days", "waiter_performance_summaries", "print_error_summaries"],
+      "deferredConstraints": []
     }
   ]
 }

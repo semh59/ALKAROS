@@ -12,6 +12,16 @@
 (function () {
   'use strict';
 
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   // --- 1. DEFAULT DATA REPOSITORY ---
 
   const INITIAL_TABLES = [
@@ -515,19 +525,19 @@
 
           const modDetails = [];
           if (item.selectedOptions && item.selectedOptions.length) {
-            item.selectedOptions.forEach(opt => modDetails.push(`${opt.group}: ${opt.name}`));
+            item.selectedOptions.forEach(opt => modDetails.push(`${escapeHtml(opt.group)}: ${escapeHtml(opt.name)}`));
           }
-          if (item.quickTags && item.quickTags.length) modDetails.push(`Etiket: ${item.quickTags.join(', ')}`);
-          if (item.note) modDetails.push(`Not: "${item.note}"`);
+          if (item.quickTags && item.quickTags.length) modDetails.push(`Etiket: ${item.quickTags.map(escapeHtml).join(', ')}`);
+          if (item.note) modDetails.push(`Not: "${escapeHtml(item.note)}"`);
 
-          const seatLabel = item.seat === 'shared' ? 'Ortaya' : `Koltuk ${item.seat}`;
+          const seatLabel = item.seat === 'shared' ? 'Ortaya' : `Koltuk ${escapeHtml(item.seat)}`;
 
           fullHtml += `
             <div class="cart-item-row" data-cart-index="${originalIndex}">
               <div class="cart-item-main btn-edit-cart-item" data-index="${originalIndex}" title="Düzenlemek için tıklayın">
                 <div>
                   <span class="item-seat-badge">${seatLabel}</span>
-                  <span class="cart-item-title">${item.isComplimentary ? '<strong style="color:#059669">[İkram] </strong>' : ''}${item.name}</span>
+                  <span class="cart-item-title">${item.isComplimentary ? '<strong style="color:#059669">[İkram] </strong>' : ''}${escapeHtml(item.name)}</span>
                 </div>
                 <span class="cart-item-price num-val">${formatTL(itemTotal)}</span>
               </div>

@@ -82,6 +82,23 @@ public sealed class PostgresOrderRepository : IOrderRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
+        var newRowVersion = await SaveAsync(order, expectedRowVersion, connection, transaction, cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+        return newRowVersion;
+    }
+
+    public async Task<long> SaveAsync(
+        Order order,
+        long expectedRowVersion,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
         var newRowVersion = await UpdateOrderAsync(connection, transaction, order, expectedRowVersion, cancellationToken);
 
         var knownItemIds = (await ReadItemIdsAsync(connection, transaction, order.Id, cancellationToken)).ToHashSet();
@@ -100,7 +117,6 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 await InsertHistoryAsync(connection, transaction, row, cancellationToken);
         }
 
-        await transaction.CommitAsync(cancellationToken);
         return newRowVersion;
     }
 

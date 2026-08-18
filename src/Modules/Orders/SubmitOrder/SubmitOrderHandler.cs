@@ -1,4 +1,4 @@
-﻿namespace ALKAROS.Orders.SubmitOrder;
+namespace ALKAROS.Orders.SubmitOrder;
 
 using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
@@ -38,15 +38,23 @@ public sealed class SubmitOrderHandler
         var requestHash = SubmitOrderRequestHash.Compute(command);
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
 
-        // 1. Check existing idempotency key
+        string? storedHash = null;
+        byte[]? storedEnvelope = null;
+        bool expired = false;
+        bool found = false;
+
+        // 1. Check existing idempotency key within transaction
         await using (var checkCommand = connection.CreateCommand())
         {
+            checkCommand.Transaction = transaction;
             checkCommand.CommandText =
                 """
                 SELECT request_hash, response_envelope, expires_at <= now() AS expired
                 FROM idempotency_keys
-                WHERE client_id = @client_id AND operation_id = @operation_id;
+                WHERE client_id = @client_id AND operation_id = @operation_id
+                FOR UPDATE;
                 """;
             checkCommand.Parameters.AddWithValue("client_id", command.ClientId);
             checkCommand.Parameters.AddWithValue("operation_id", command.OperationId);
@@ -54,20 +62,22 @@ public sealed class SubmitOrderHandler
             await using var reader = await checkCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
             if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                var storedHash = reader.GetString(0).TrimEnd();
-                var storedEnvelope = reader.GetFieldValue<byte[]>(1);
-                var expired = reader.GetBoolean(2);
-
-                if (!expired)
-                {
-                    if (!string.Equals(storedHash, requestHash, StringComparison.Ordinal))
-                    {
-                        throw new SubmitOrderIdempotencyConflictException(command.ClientId, command.OperationId);
-                    }
-
-                    return SubmitOrderResponseSerializer.Deserialize(storedEnvelope, isReplay: true);
-                }
+                storedHash = reader.GetString(0).TrimEnd();
+                storedEnvelope = reader.GetFieldValue<byte[]>(1);
+                expired = reader.GetBoolean(2);
+                found = true;
             }
+        }
+
+        if (found && !expired)
+        {
+            if (!string.Equals(storedHash, requestHash, StringComparison.Ordinal))
+            {
+                throw new SubmitOrderIdempotencyConflictException(command.ClientId, command.OperationId);
+            }
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return SubmitOrderResponseSerializer.Deserialize(storedEnvelope!, isReplay: true);
         }
 
         // 2. First-time execution (or expired key replacement)
@@ -77,27 +87,37 @@ public sealed class SubmitOrderHandler
         if (order.RowVersion != command.ExpectedRowVersion)
         {
             // Under concurrent execution, an earlier worker for this same idempotency key may have completed.
-            await using var recheckCommand = connection.CreateCommand();
-            recheckCommand.CommandText =
-                """
-                SELECT request_hash, response_envelope, expires_at <= now() AS expired
-                FROM idempotency_keys
-                WHERE client_id = @client_id AND operation_id = @operation_id;
-                """;
-            recheckCommand.Parameters.AddWithValue("client_id", command.ClientId);
-            recheckCommand.Parameters.AddWithValue("operation_id", command.OperationId);
+            string? recheckHash = null;
+            byte[]? recheckEnvelope = null;
+            bool recheckExpired = false;
+            bool recheckFound = false;
 
-            await using var reader = await recheckCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-            if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            await using (var recheckCommand = connection.CreateCommand())
             {
-                var storedHash = reader.GetString(0).TrimEnd();
-                var storedEnvelope = reader.GetFieldValue<byte[]>(1);
-                var expired = reader.GetBoolean(2);
+                recheckCommand.Transaction = transaction;
+                recheckCommand.CommandText =
+                    """
+                    SELECT request_hash, response_envelope, expires_at <= now() AS expired
+                    FROM idempotency_keys
+                    WHERE client_id = @client_id AND operation_id = @operation_id;
+                    """;
+                recheckCommand.Parameters.AddWithValue("client_id", command.ClientId);
+                recheckCommand.Parameters.AddWithValue("operation_id", command.OperationId);
 
-                if (!expired && string.Equals(storedHash, requestHash, StringComparison.Ordinal))
+                await using var reader = await recheckCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                 {
-                    return SubmitOrderResponseSerializer.Deserialize(storedEnvelope, isReplay: true);
+                    recheckHash = reader.GetString(0).TrimEnd();
+                    recheckEnvelope = reader.GetFieldValue<byte[]>(1);
+                    recheckExpired = reader.GetBoolean(2);
+                    recheckFound = true;
                 }
+            }
+
+            if (recheckFound && !recheckExpired && string.Equals(recheckHash, requestHash, StringComparison.Ordinal))
+            {
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                return SubmitOrderResponseSerializer.Deserialize(recheckEnvelope!, isReplay: true);
             }
 
             throw new StaleOrderVersionException(order.Id, command.ExpectedRowVersion, order.RowVersion);
@@ -117,7 +137,7 @@ public sealed class SubmitOrderHandler
 
         try
         {
-            var newVersion = await _orderRepository.SaveAsync(submitted, command.ExpectedRowVersion, cancellationToken).ConfigureAwait(false);
+            var newVersion = await _orderRepository.SaveAsync(submitted, command.ExpectedRowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
 
             var result = new SubmitOrderResult(
                 submitted.Id,
@@ -131,9 +151,10 @@ public sealed class SubmitOrderHandler
 
             var responseEnvelope = SubmitOrderResponseSerializer.Serialize(result);
 
-            // 3. Persist idempotency key atomically
+            // 3. Persist idempotency key atomically in the SAME transaction
             await using (var saveIdempotencyCommand = connection.CreateCommand())
             {
+                saveIdempotencyCommand.Transaction = transaction;
                 saveIdempotencyCommand.CommandText =
                     """
                     INSERT INTO idempotency_keys (client_id, operation_id, request_hash, response_envelope, expires_at)
@@ -152,6 +173,7 @@ public sealed class SubmitOrderHandler
                 await saveIdempotencyCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
 
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return result;
         }
         catch (InvalidOperationException)
@@ -170,13 +192,13 @@ public sealed class SubmitOrderHandler
             await using var reader = await recheckCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
             if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                var storedHash = reader.GetString(0).TrimEnd();
-                var storedEnvelope = reader.GetFieldValue<byte[]>(1);
-                var expired = reader.GetBoolean(2);
+                var catchStoredHash = reader.GetString(0).TrimEnd();
+                var catchStoredEnvelope = reader.GetFieldValue<byte[]>(1);
+                var catchExpired = reader.GetBoolean(2);
 
-                if (!expired && string.Equals(storedHash, requestHash, StringComparison.Ordinal))
+                if (!catchExpired && string.Equals(catchStoredHash, requestHash, StringComparison.Ordinal))
                 {
-                    return SubmitOrderResponseSerializer.Deserialize(storedEnvelope, isReplay: true);
+                    return SubmitOrderResponseSerializer.Deserialize(catchStoredEnvelope, isReplay: true);
                 }
             }
 

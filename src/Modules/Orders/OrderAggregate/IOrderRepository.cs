@@ -29,4 +29,9 @@ public interface IOrderRepository
     /// (missing order or stale version).
     /// </summary>
     Task<long> SaveAsync(Order order, long expectedRowVersion, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Persists changes of an aggregate within an existing connection and transaction for atomic operations.
+    /// </summary>
+    Task<long> SaveAsync(Order order, long expectedRowVersion, Npgsql.NpgsqlConnection connection, Npgsql.NpgsqlTransaction transaction, CancellationToken cancellationToken = default);
 }

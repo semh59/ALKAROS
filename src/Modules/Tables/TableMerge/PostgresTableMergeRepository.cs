@@ -151,6 +151,21 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
+        // 0. Canonical lock ordering: Lock all involved tables in deterministic Guid ascending order to prevent PostgreSQL 40P01 deadlocks
+        var allTableIdsToLock = allTableIds.Distinct().OrderBy(id => id).ToArray();
+        const string canonicalLockSql = $"""
+            SELECT table_id FROM {TablesTable}
+            WHERE table_id = ANY(@table_ids)
+            ORDER BY table_id
+            FOR UPDATE;
+            """;
+        await using (var lockCmd = new NpgsqlCommand(canonicalLockSql, connection, transaction))
+        {
+            lockCmd.Parameters.AddWithValue("table_ids", allTableIdsToLock);
+            await using var lockReader = await lockCmd.ExecuteReaderAsync(cancellationToken);
+            while (await lockReader.ReadAsync(cancellationToken)) { }
+        }
+
         // 1. Lock and validate Primary Table
         string primaryStatus;
         Guid? primaryCurrentOrderId;
@@ -160,8 +175,7 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
         const string selectPrimarySql = $"""
             SELECT table_id, table_number, active, current_status, current_order_id, current_bill_id, row_version
             FROM {TablesTable}
-            WHERE table_id = @primary_id
-            FOR UPDATE;
+            WHERE table_id = @primary_id;
             """;
 
         await using (var cmd = new NpgsqlCommand(selectPrimarySql, connection, transaction))
@@ -209,8 +223,7 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
             const string selectParticipantSql = $"""
                 SELECT table_id, table_number, active, current_status, current_order_id, current_bill_id, row_version
                 FROM {TablesTable}
-                WHERE table_id = @participant_id
-                FOR UPDATE;
+                WHERE table_id = @participant_id;
                 """;
 
             await using var cmd = new NpgsqlCommand(selectParticipantSql, connection, transaction);
