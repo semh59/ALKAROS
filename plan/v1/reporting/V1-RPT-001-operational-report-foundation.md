@@ -1,8 +1,8 @@
 # V1-RPT-001 - Implement V1 operational reports
 
 - Task ID: V1-RPT-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-rpt-001
 - Work type: implementation
 - Surface state: Planned
 

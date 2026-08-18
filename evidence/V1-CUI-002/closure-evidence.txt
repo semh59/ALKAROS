@@ -1,0 +1,14 @@
+Command: dotnet test tests/Clients/Cashier/OrderEntry/ALKAROS.Cashier.OrderEntry.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 4 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-CUI-002 specific coverage:
+- Cashier order entry engine and draft management models created in src/Clients/Cashier/OrderEntry/.
+- Accurate subtotal and modifier price calculation for complex orders.
+- Acceptance evidence #1: Reusing the same idempotency key during active submission prevents duplicate order creation on double-click or network retry.
+- Acceptance evidence #2: Server validation/price mismatch errors preserve the cashier's recoverable draft and notes in the UI rather than wiping entered state.
+- Acceptance evidence #3: Quantity modifications and item removals operate cleanly.

@@ -1,0 +1,14 @@
+Command: dotnet test tests/Clients/WaiterPwa/OrderEntry/ALKAROS.WaiterPwa.OrderEntry.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 4 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-WTR-002 specific coverage:
+- Waiter PWA table selection, draft item models, and submission controller created in src/Clients/WaiterPwa/OrderEntry/.
+- Accurate subtotal and modifier price calculation for mobile draft orders.
+- Acceptance evidence #1: Idempotency key preservation during active submission ensures network reconnect or double submission creates only one order.
+- Acceptance evidence #2: Stale table status/row-version conflict surfaces a clear error in the UI and never silently relocates or drops the order.
+- Acceptance evidence #3: Successful submission clears draft while keeping mobile touch performance responsive.

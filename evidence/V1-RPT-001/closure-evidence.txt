@@ -1,0 +1,14 @@
+Command: dotnet test tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 4 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-RPT-001 specific coverage:
+- Tables reporting.daily_business_days, reporting.waiter_performance_summaries, and reporting.print_error_summaries created and verified via 031-operational-reports migration up/down cycle.
+- Business day lifecycle management (Open -> Closed) with unique date constraints and status check constraint.
+- Waiter performance summaries aggregation (orders served, sales amount, cancellations, discounts).
+- Print error metrics aggregation per kitchen station (total, failed, recovered).
+- Acceptance evidence: End-of-day report totals reconcile with source metrics, and service day window calculation across midnight (06:00 to 05:59 next day) verified across time zones.

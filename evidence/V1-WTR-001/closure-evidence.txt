@@ -1,0 +1,13 @@
+Command: dotnet test tests/Clients/WaiterPwa/SessionQueue/ALKAROS.WaiterPwa.SessionQueue.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 4 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-WTR-001 specific coverage:
+- Waiter PWA session and offline queue management engine created in src/Clients/WaiterPwa/SessionQueue/.
+- Acceptance evidence #1: Browser restart retains allowable queued operations from persistent storage.
+- Acceptance evidence #2: Revoked/expired session strictly forbids offline queue replay.
+- Acceptance evidence #3: Unsupported offline operations (e.g. direct fiscal payment settlement) are immediately rejected with clear error and never report fake offline success.

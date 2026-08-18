@@ -1,8 +1,8 @@
 # V1-CUI-002 - Implement cashier Order entry
 
 - Task ID: V1-CUI-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-cui-002
 - Work type: implementation
 - Surface state: Planned
 

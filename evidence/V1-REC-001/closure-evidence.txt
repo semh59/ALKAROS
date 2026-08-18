@@ -1,0 +1,14 @@
+Command: dotnet test tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 6 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-REC-001 specific coverage:
+- Tables reconciliation.cases and reconciliation.case_actions created and verified via 030-reconciliation-cases migration up/down cycle.
+- Canonical CaseType, CaseSeverity, and CaseStatus enums enforced with check constraints (chk_rec_case_type, chk_rec_case_severity, chk_rec_case_status).
+- Acceptance evidence #1: Single active open case per discrepancy key via partial unique index uq_reconciliation_cases_active_dedup. Second submission appends Deduplicated action to the single open case.
+- Acceptance evidence #2: Strict state machine transitions. Terminal states (Resolved, Dismissed) forbid further transitions with InvalidCaseStatusTransitionException.
+- Acceptance evidence #3: Append-only audit trail in reconciliation.case_actions tracking all actions (Created, Deduplicated, StatusChanged, NoteAdded, Resolved, Dismissed, Escalated).

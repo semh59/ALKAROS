@@ -1,0 +1,13 @@
+Command: dotnet test tests/Modules/Operations/BackupHealth/ALKAROS.Operations.BackupHealth.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 7 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-OPS-002 specific coverage:
+- Tables operations.backups and operations.system_health_snapshots created and verified via 029-backup-health migration up/down cycle.
+- Local backup execution with SHA-256 checksum calculation and integrity verification.
+- Check constraints enforced: chk_backup_type (Full, Incremental, SchemaOnly), chk_backup_status (InProgress, Completed, Failed), chk_snap_db_status, chk_snap_disk_status, chk_snap_backup_status.
+- Acceptance evidence: Source failure is explicitly recorded with Failed status and error message, never reporting fake success.

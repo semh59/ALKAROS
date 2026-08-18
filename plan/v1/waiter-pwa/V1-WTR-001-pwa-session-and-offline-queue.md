@@ -1,8 +1,8 @@
 # V1-WTR-001 - Implement Waiter PWA session and offline queue
 
 - Task ID: V1-WTR-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-wtr-001
 - Work type: implementation
 - Surface state: Planned
 

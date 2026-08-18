@@ -1,0 +1,14 @@
+Command: dotnet test tests/Clients/Cashier/TableShell/ALKAROS.Cashier.TableShell.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 4 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-CUI-001 specific coverage:
+- Cashier shell state and table matrix view models created in src/Clients/Cashier/TableShell/.
+- Acceptance evidence #1: Expired session invalidates state and prompts for login redirection.
+- Acceptance evidence #2: Concurrency-aware table updates enforce row_version matching; stale client updates trigger clear conflict notifications without allowing client-side authoritative state override.
+- Acceptance evidence #3: Table section filtering (Tümü, Salon, Bahçe, Teras, Bar) operates accurately.
+- UI Design Directive noted: UI blueprints and components will be produced via Stitch in MCP.

@@ -1,0 +1,14 @@
+Command: dotnet test tests/Clients/WaiterPwa/OrderStatus/ALKAROS.WaiterPwa.OrderStatus.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 4 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-WTR-003 specific coverage:
+- Waiter PWA order and kitchen ticket progress tracking view models and controller created in src/Clients/WaiterPwa/OrderStatus/.
+- Acceptance evidence #1: Disconnection marks UI data as stale (IsStale = true, IsConnected = false) with visible indicators.
+- Acceptance evidence #2: Reconnection seamlessly converges to authoritative server snapshot and resets stale data flag.
+- Acceptance evidence #3: Waiter order status view is strictly read-only and explicitly rejects client-side kitchen ticket status mutations.
+- UI Design Directive recorded: Frontend UI blueprints and components designed via Stitch in MCP.

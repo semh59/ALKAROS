@@ -1,8 +1,8 @@
 # V1-REC-001 - Implement ReconciliationCase foundation
 
 - Task ID: V1-REC-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-rec-001
 - Work type: implementation
 - Surface state: Planned
 

@@ -1,0 +1,13 @@
+Command: dotnet test tests/Clients/Cashier/OperationsStatus/ALKAROS.Cashier.OperationsStatus.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 4 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-CUI-003 specific coverage:
+- Cashier operational status and kitchen ticket / print job tracking models created in src/Clients/Cashier/OperationsStatus/.
+- Linked Order/Bill metrics (BillTotal, PaidAmount, RemainingAmount, IsFullyPaid) computed accurately.
+- Acceptance evidence #1: UI cannot directly mark or mutate backend status; reprint requests adhere strictly to V1-KIT-004 contracts.
+- Acceptance evidence #2: Reprint validation enforces both operator permissions (kitchen.print.reprint) and mandatory audit reason.

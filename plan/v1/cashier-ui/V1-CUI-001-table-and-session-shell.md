@@ -1,8 +1,8 @@
 # V1-CUI-001 - Implement cashier shell and table view
 
 - Task ID: V1-CUI-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-cui-001
 - Work type: implementation
 - Surface state: Planned
 

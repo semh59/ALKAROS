@@ -1,8 +1,8 @@
 # V1-WTR-002 - Implement Waiter PWA table Order entry
 
 - Task ID: V1-WTR-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-wtr-002
 - Work type: implementation
 - Surface state: Planned
 
