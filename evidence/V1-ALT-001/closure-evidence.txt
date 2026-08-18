@@ -1,0 +1,17 @@
+Command: dotnet test tests/Modules/Observability/AlertFoundation/ALKAROS.Observability.AlertFoundation.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 12 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-ALT-001 specific coverage:
+- Schema observability.alerts and observability.alert_events created and verified via 027-alerts migration up/down cycle.
+- Severity levels (Info, Warning, Critical) enforced with check constraint chk_alerts_severity.
+- Lifecycle states (Open, Acknowledged, Escalated, Suppressed, Resolved) enforced with check constraint chk_alerts_status.
+- Deduplication logic: Repeated identical alerts (by deduplication_key or alert_type + source_reference_type + source_reference_id) do not create multiple open alerts; instead, they append Deduplicated events to the single active alert.
+- Re-opening after resolution: If the previous alert was Resolved or Suppressed, raising the same alert opens a fresh new active alert.
+- Actor and timestamp attribution: AcknowledgedBy, AcknowledgedAt, ResolvedBy, ResolvedAt, and ResolutionReason accurately tracked.
+- Append-only event history: Created, Deduplicated, Acknowledged, Escalated, Suppressed, Resolved events recorded in alert_events with JSON payloads.
+- Optimistic concurrency: row_version validated on all status transitions, throwing AlertConcurrencyException on conflict.

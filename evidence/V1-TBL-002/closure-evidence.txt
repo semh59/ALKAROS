@@ -1,0 +1,29 @@
+Command: dotnet test tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 33 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 51 tests, 0 failed, 0 skipped.
+
+Command: dotnet test ALKAROS.slnx
+Exit code: 0
+Result: ALL PASSING. Full solution test suite passed.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-TBL-002 specific coverage:
+- TableTransferRecord domain model constructor validation, argument verification, and property integrity.
+- TableTransferRequest command validation: non-empty IDs, same-table rejection (SameTableTransferException), positive expected row versions, non-empty reason, non-empty transferredBy user ID.
+- TableTransferExceptions hierarchy and capture of domain error details (SameTableTransferException, TableNotFoundException, InvalidSourceTableStateException, InvalidTargetTableStateException, PaymentPolicyRequiredException, TableTransferConcurrencyException).
+- PostgresTableTransferRepository transactional execution:
+  * Single atomic transaction encompassing source/target table state validation, optimistic row version locking (FOR UPDATE), payment progress verification, orders and bills reparenting, table state transitions (Occupied -> Available, Available -> Occupied), soft-pointer updates, table_transfers provenance insertion, and audit_events log appending.
+  * Successful transfer preserving Order and Bill identities while moving their table_id foreign key references.
+  * Payment-policy constraint enforcement (Acceptance Criteria #2): any bill with allocated_amount > 0, paid_amount > 0, non-Open status, or existing bill_allocations rows is rejected with typed PaymentPolicyRequiredException and completely rolled back without partial pointer changes.
+  * Optimistic concurrency validation on source and target table row versions, failing closed with clean rollback on concurrent modifications.
+  * Inappropriate target state validation: Occupied, Reserved, Cleaning, OutOfService, or Inactive target tables are rejected with InvalidTargetTableStateException.
+  * Inappropriate source state validation: non-Occupied source tables rejected with InvalidSourceTableStateException.
+  * TableTransferService domain orchestration and request validation delegation.
+  * 023-table-transfers up/down migration verification on scratch PostgreSQL test database (alkaros_tbl002_).

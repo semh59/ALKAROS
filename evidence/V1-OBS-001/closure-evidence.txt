@@ -1,0 +1,15 @@
+Command: dotnet test tests/Modules/Observability/Foundation/ALKAROS.Observability.Foundation.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 22 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-OBS-001 specific coverage:
+- Schema observability.health_checks created and verified via 028-health-checks migration up/down cycle.
+- Canonical HealthStatus (Healthy, Degraded, Unhealthy) enforced with check constraint chk_health_checks_status.
+- End-to-end request / workflow tracing with ambient CorrelationContext and CorrelationScope (CorrelationId, RequestId, UserId, TraceChain).
+- Automated sensitive data redaction via ObservabilityRedactionHook (masking password, token, pan, cvv, api_key, secret, tc_kimlik with ***REDACTED***) complying with KVKK (V0-CMP-003) and payload protection (V1-SEC-002).
+- Approved retention policy enforcement via RetentionPolicyCatalog (HOT_7D, OPERATIONAL_30D, AUDIT_90D, AUDIT_365D); unapproved policy IDs strictly rejected with UnapprovedRetentionPolicyException.
+- Storage sanitization: details payload automatically redacted before persistence.

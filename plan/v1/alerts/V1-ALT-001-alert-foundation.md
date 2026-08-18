@@ -1,8 +1,8 @@
 # V1-ALT-001 - Implement Alert foundation
 
 - Task ID: V1-ALT-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-alt-001
 - Work type: implementation
 - Surface state: Planned
 

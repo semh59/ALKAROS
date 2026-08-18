@@ -1,0 +1,40 @@
+Command: dotnet test tests/Modules/Tables/CurrentPointers/ALKAROS.Tables.CurrentPointers.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 19 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Modules/Tables/Reservations/ALKAROS.Tables.Reservations.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 27 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Modules/Tables/TableMerge/ALKAROS.Tables.TableMerge.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 29 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 33 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 51 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-TBL-005 specific coverage:
+- TablePointerDiscrepancy and TablePointerDriftType bitwise flags and metric calculations.
+- Authoritative vs Soft-pointer drift detection:
+  * Detection of missing order/bill pointers on active tables.
+  * Detection of stale order/bill pointers (pointing to completed/cancelled/paid orders/bills).
+  * Detection of ghost pointers (pointing to non-existent orders/bills).
+  * Detection of table status mismatches (Available vs Occupied vs Reserved).
+- Multi-Open Source Policy (Acceptance Criteria #2):
+  * Deterministic primary pointer selection selecting most recent active order by created_at DESC.
+  * Deterministic primary bill pointer selection by opened_at/created_at DESC.
+  * Full rebuild produces identical authoritative result across repeated executions.
+- Active merged table pointer policy: participant tables projected Occupied with cleared pointers.
+- Active reservation pointer policy: reserved tables projected Reserved with reservation order.
+- Cleaning and OutOfService state preservation when no active orders exist.
+- Single-table atomic rebuild (RebuildTablePointersAsync) with row_version increments and Table.PointersRebuilt audit logging.
+- System-wide full scan and rebuild (RebuildAllTablePointersAsync).

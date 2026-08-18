@@ -1,8 +1,8 @@
 # V1-CSH-001 - Finalize CashSession design for V1.2
 
 - Task ID: V1-CSH-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-csh-001
 - Work type: decision
 - Surface state: Planned
 

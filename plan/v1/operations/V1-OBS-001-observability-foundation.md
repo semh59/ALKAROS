@@ -1,8 +1,8 @@
 # V1-OBS-001 - Implement observability correlation foundation
 
 - Task ID: V1-OBS-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-obs-001
 - Work type: implementation
 - Surface state: Planned
 

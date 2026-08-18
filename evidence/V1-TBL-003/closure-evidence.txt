@@ -1,0 +1,31 @@
+Command: dotnet test tests/Modules/Tables/TableMerge/ALKAROS.Tables.TableMerge.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 29 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 33 tests, 0 failed, 0 skipped.
+
+Command: dotnet test tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 51 tests, 0 failed, 0 skipped.
+
+Command: dotnet test ALKAROS.slnx
+Exit code: 0
+Result: ALL PASSING. Full solution test suite passed.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-TBL-003 specific coverage:
+- Multi-table merge (1 primary table + 2 participant tables) transactional consolidation of orders and bills.
+- Primary table retains active focus and consolidated pointers; participant tables marked Occupied with pointers cleared.
+- Explicit undo/unmerge restores original table associations, order pointers, and bill pointers for all participating tables.
+- Immutability and history preservation: merge records updated to Unmerged state with timestamp, actor, and reason; no physical table or order records deleted.
+- Payment-policy constraint enforcement (Acceptance Criteria #2): any bill with allocated_amount > 0, paid_amount > 0, non-Open status, or existing bill_allocations rows is rejected with typed PaymentPolicyRequiredException and completely rolled back.
+- Payment-policy constraint enforcement on unmerge: unmerge is rejected with PaymentPolicyRequiredException if payment occurred on the primary table's bill after merging.
+- Optimistic concurrency conflict validation on table row versions during both merge and unmerge operations.
+- Inappropriate table state validation: Reserved, Cleaning, OutOfService, Inactive, or already-merged tables rejected with InvalidTableMergeStateException.
+- TableMergeService domain orchestration and request validation delegation.
+- 024-table-merges up/down migration verification on scratch PostgreSQL test database (alkaros_tbl003_).

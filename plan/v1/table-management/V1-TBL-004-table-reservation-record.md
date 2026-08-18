@@ -1,8 +1,8 @@
 # V1-TBL-004 - Implement Table reservation records
 
 - Task ID: V1-TBL-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-tbl-004
 - Work type: implementation
 - Surface state: Planned
 

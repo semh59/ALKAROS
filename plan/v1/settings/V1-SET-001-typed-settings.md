@@ -1,8 +1,8 @@
 # V1-SET-001 - Implement typed module-owned settings
 
 - Task ID: V1-SET-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Antigravity-v1-set-001
 - Work type: implementation
 - Surface state: Planned
 

@@ -1,0 +1,18 @@
+Command: dotnet test tests/Modules/Settings/TypedSettings/ALKAROS.Settings.TypedSettings.Tests.csproj
+Exit code: 0
+Result: ALL PASSING. Total 33 tests, 0 failed, 0 skipped.
+
+Command: dotnet format ALKAROS.slnx --verify-no-changes
+Exit code: 0
+Result: 0 format issues.
+
+V1-SET-001 specific coverage:
+- Schema settings.settings and settings.setting_history created and verified via 026-typed-settings migration up/down cycle.
+- SettingDataType mapping (Text, WholeNumber, PreciseNumber, Toggle, Json, Duration) matching database check constraint.
+- SettingScope mapping (Global, Module, Device, Tenant).
+- Secret Storage Ban (PDF:II.11, V0-ARC-005): Strictly rejects keys containing secret/password/token/api_key/credential with SecretSettingsStorageBanException.
+- Value type validation: strictly validates integer, decimal, boolean, json, duration formats; rejects invalid types with SettingTypeValidationException.
+- Append-only change history: each register, update, and deactivation atomically writes setting_history record with old_value, new_value, reason, changed_by, changed_at.
+- Deactivation (soft delete): active = false, preserves audit history and record.
+- Optimistic concurrency: row_version validated on update and deactivation, throwing SettingConcurrencyException on mismatch.
+- Generic type-safe service (ISettingsService.GetValueAsync<T>, GetValueOrDefaultAsync<T>, SetValueAsync<T>).
