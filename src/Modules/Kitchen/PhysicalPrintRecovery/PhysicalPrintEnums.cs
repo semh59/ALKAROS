@@ -28,12 +28,18 @@ public enum PhysicalPrintDeliveryStatus
     ReprintApproved = 4,
 
     /// <summary>
+    /// A single worker has claimed the approved reprint. The external printer call
+    /// is in progress; this state prevents a second worker from transmitting it.
+    /// </summary>
+    ReprintInFlight = 5,
+
+    /// <summary>
     /// Operator inspected kitchen / station, confirmed ticket did print, and dismissed reprint.
     /// </summary>
-    ReprintRejected = 5,
+    ReprintRejected = 6,
 
     /// <summary>
     /// Operator-approved reprint executed with explicit reprint banner (Terminal Reprint Success).
     /// </summary>
-    Reprinted = 6
+    Reprinted = 7
 }

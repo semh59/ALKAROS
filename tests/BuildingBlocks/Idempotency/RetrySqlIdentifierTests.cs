@@ -36,6 +36,7 @@ public sealed class RetrySqlIdentifierTests
                 connection,
                 tableName,
                 Guid.NewGuid(),
+                1,
                 "boom",
                 TimeSpan.FromSeconds(1)));
     }
@@ -55,6 +56,7 @@ public sealed class RetrySqlIdentifierTests
                 connection,
                 tableName,
                 Guid.NewGuid(),
+                1,
                 "boom",
                 TimeSpan.FromSeconds(1)));
     }

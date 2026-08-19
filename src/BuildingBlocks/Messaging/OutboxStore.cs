@@ -48,7 +48,7 @@ public sealed class OutboxStore
             INSERT INTO outbox_messages (event_type, aggregate_type, aggregate_id, payload_envelope)
             VALUES ($1, $2, $3, $4)
             RETURNING id, event_type, aggregate_type, aggregate_id, payload_envelope,
-                      status, attempt_count, created_at, next_retry_at, dispatched_at, last_error;
+                      status, attempt_count, lease_generation, created_at, next_retry_at, dispatched_at, last_error;
             """);
         command.Parameters.AddWithValue(envelope.EventType);
         command.Parameters.AddWithValue(envelope.AggregateType);
@@ -99,10 +99,10 @@ public sealed class OutboxStore
             await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
             if (handled)
-                await MarkDispatchedAsync(connection, transaction, message.Id, cancellationToken).ConfigureAwait(false);
+                await MarkDispatchedAsync(connection, transaction, message.Id, message.LeaseGeneration + 1, cancellationToken).ConfigureAwait(false);
             else
                 await RecordFailureAsync(
-                        connection, transaction, message.Id, failure ?? "handler returned false", cancellationToken)
+                        connection, transaction, message.Id, message.LeaseGeneration + 1, failure ?? "handler returned false", cancellationToken)
                     .ConfigureAwait(false);
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -149,7 +149,7 @@ public sealed class OutboxStore
             leaseCommand.CommandText =
                 """
                 UPDATE outbox_messages
-                SET status = 'in_flight', claimed_at = now()
+                SET status = 'in_flight', claimed_at = now(), lease_generation = lease_generation + 1
                 WHERE id = ANY($1);
                 """;
             leaseCommand.Parameters.AddWithValue(messages.Select(message => message.Id).ToArray());
@@ -171,7 +171,7 @@ public sealed class OutboxStore
         command.CommandText =
             """
             SELECT id, event_type, aggregate_type, aggregate_id, payload_envelope, status,
-                   attempt_count, created_at, next_retry_at, dispatched_at, last_error
+                   attempt_count, lease_generation, created_at, next_retry_at, dispatched_at, last_error
             FROM outbox_messages
             WHERE status = 'pending' AND (next_retry_at IS NULL OR next_retry_at <= now())
             ORDER BY created_at
@@ -197,15 +197,17 @@ public sealed class OutboxStore
             reader.GetFieldValue<byte[]>(4),
             Enum.Parse<OutboxStatus>(reader.GetString(5), ignoreCase: true),
             reader.GetInt32(6),
-            new DateTimeOffset(reader.GetDateTime(7)),
-            reader.IsDBNull(8) ? null : new DateTimeOffset(reader.GetDateTime(8)),
+            reader.GetInt64(7),
+            new DateTimeOffset(reader.GetDateTime(8)),
             reader.IsDBNull(9) ? null : new DateTimeOffset(reader.GetDateTime(9)),
-            reader.IsDBNull(10) ? null : reader.GetString(10));
+            reader.IsDBNull(10) ? null : new DateTimeOffset(reader.GetDateTime(10)),
+            reader.IsDBNull(11) ? null : reader.GetString(11));
 
     private static async Task MarkDispatchedAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         Guid id,
+        long leaseGeneration,
         CancellationToken cancellationToken)
     {
         await using var command = connection.CreateCommand();
@@ -214,9 +216,10 @@ public sealed class OutboxStore
             """
             UPDATE outbox_messages
             SET status = 'dispatched', dispatched_at = now()
-            WHERE id = $1 AND status = 'in_flight';
+            WHERE id = $1 AND status = 'in_flight' AND lease_generation = $2;
             """;
         command.Parameters.AddWithValue(id);
+        command.Parameters.AddWithValue(leaseGeneration);
         var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         if (affected != 1)
             throw new InvalidOperationException(
@@ -227,8 +230,9 @@ public sealed class OutboxStore
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         Guid id,
+        long leaseGeneration,
         string error,
         CancellationToken cancellationToken)
         => RetryPolicy.RecordFailureAsync(
-            connection, "outbox_messages", id, error, _baseDelay, transaction, cancellationToken);
+            connection, "outbox_messages", id, leaseGeneration, error, _baseDelay, transaction, cancellationToken);
 }

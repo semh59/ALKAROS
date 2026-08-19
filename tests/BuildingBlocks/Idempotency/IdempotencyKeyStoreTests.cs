@@ -178,4 +178,28 @@ public sealed class IdempotencyKeyStoreTests : IClassFixture<StoreTestDatabase>
         Assert.Single(outcomes, outcome => outcome.Status == IdempotencyStatus.Created);
         Assert.Single(outcomes, outcome => outcome.Status == IdempotencyStatus.Replayed);
     }
+
+    [Fact]
+    public async Task ExecuteConcurrentSameKeyRunsProtectedMutationOnceAndReplaysEnvelope()
+    {
+        await _database.ResetTablesAsync();
+        var store = new IdempotencyKeyStore(_database.DataSource);
+        var key = new IdempotencyKey($"client-{Guid.NewGuid():N}", "protected-op");
+        var mutations = 0;
+
+        async Task<IdempotencyOutcome> Execute()
+            => await store.ExecuteAsync(key, "body"u8.ToArray(), async (_, _, cancellationToken) =>
+            {
+                Interlocked.Increment(ref mutations);
+                await Task.Delay(20, cancellationToken);
+                return [4, 5, 6];
+            });
+
+        var outcomes = await Task.WhenAll(Execute(), Execute());
+
+        Assert.Equal(1, mutations);
+        Assert.Single(outcomes, outcome => outcome.Status == IdempotencyStatus.Created);
+        Assert.Single(outcomes, outcome => outcome.Status == IdempotencyStatus.Replayed);
+        Assert.All(outcomes, outcome => Assert.Equal(new byte[] { 4, 5, 6 }, outcome.ResponseEnvelope));
+    }
 }

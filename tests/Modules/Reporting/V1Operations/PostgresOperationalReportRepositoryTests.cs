@@ -96,6 +96,46 @@ public sealed class PostgresOperationalReportRepositoryTests : IClassFixture<Rep
 
         await act.Should().ThrowAsync<BusinessDayAlreadyOpenException>();
     }
+
+    [Fact]
+    public async Task ConcurrentOpenAttemptsAllowOnlyOneActiveBusinessDay()
+    {
+        var active = await _repository.GetActiveBusinessDayAsync();
+        if (active is not null)
+            await _repository.CloseBusinessDayAsync(active.BusinessDate, DateTimeOffset.UtcNow, 0m, 0, 0, 0);
+
+        var firstDate = new DateOnly(2036, 1, 1);
+        var secondDate = new DateOnly(2036, 1, 2);
+
+        var attempts = new[]
+        {
+            _service.OpenBusinessDayAsync(firstDate, DateTimeOffset.UtcNow),
+            _service.OpenBusinessDayAsync(secondDate, DateTimeOffset.UtcNow)
+        };
+
+        var results = await Task.WhenAll(attempts.Select(async attempt =>
+        {
+            try
+            {
+                await attempt;
+                return true;
+            }
+            catch (InvalidBusinessDayOperationException)
+            {
+                return false;
+            }
+            catch (PostgresException ex) when (ex.SqlState == "23505")
+            {
+                return false;
+            }
+        }));
+
+        results.Count(result => result).Should().Be(1);
+
+        var opened = await _repository.GetActiveBusinessDayAsync();
+        if (opened is not null)
+            await _repository.CloseBusinessDayAsync(opened.BusinessDate, DateTimeOffset.UtcNow, 0m, 0, 0, 0);
+    }
 }
 
 public sealed class PostgresReportingMigrationTests : IClassFixture<ReportingTestDatabase>

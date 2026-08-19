@@ -55,6 +55,7 @@ public static class RetryPolicy
         NpgsqlConnection connection,
         string tableName,
         Guid id,
+        long leaseGeneration,
         string error,
         TimeSpan baseDelay,
         NpgsqlTransaction? transaction = null,
@@ -82,12 +83,13 @@ public static class RetryPolicy
                                      ELSE now() + make_interval(
                                          secs => $4 * power(2::double precision, attempt_count))
                                 END
-            WHERE id = $1 AND status = 'in_flight';
+            WHERE id = $1 AND status = 'in_flight' AND lease_generation = $5;
             """;
         command.Parameters.AddWithValue(id);
         command.Parameters.AddWithValue(SanitizeError(error));
         command.Parameters.AddWithValue(MaxAttempts);
         command.Parameters.AddWithValue(baseDelay.TotalSeconds);
+        command.Parameters.AddWithValue(leaseGeneration);
         var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         if (affected != 1)
             throw new InvalidOperationException(
@@ -99,20 +101,10 @@ public static class RetryPolicy
         if (string.IsNullOrWhiteSpace(error))
             return string.Empty;
 
-        var text = error.Length > 1000 ? error[..1000] : error;
-
-        text = System.Text.RegularExpressions.Regex.Replace(
-            text,
-            @"(password\s*=\s*)([^;\s]+)",
-            "$1***",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
-        text = System.Text.RegularExpressions.Regex.Replace(
-            text,
-            @"(postgres(?:ql)?://[^:]+:)([^@]+)(@)",
-            "$1***$3",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
-        return text;
+        // Handler exception text is untrusted and may contain secrets, PII,
+        // SQL fragments, or provider credentials. Persist only a bounded,
+        // allowlisted classification; operators can correlate the failure
+        // through structured telemetry without exposing the raw message.
+        return "handler failure";
     }
 }

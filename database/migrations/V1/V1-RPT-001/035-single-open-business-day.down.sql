@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS reporting.ux_reporting_single_open_business_day;

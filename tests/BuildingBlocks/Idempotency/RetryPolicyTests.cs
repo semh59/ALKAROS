@@ -40,4 +40,17 @@ public sealed class RetryPolicyTests
         Assert.Throws<ArgumentOutOfRangeException>(
             () => RetryPolicy.NextRetryDelay(1, TimeSpan.Zero));
     }
+
+    [Theory]
+    [InlineData("password=super-secret; user=alice")]
+    [InlineData("customer email alice@example.com failed")]
+    [InlineData("postgresql://admin:secret@db.example.com/app")]
+    public void SanitizeErrorNeverPersistsRawHandlerText(string rawError)
+    {
+        var sanitized = RetryPolicy.SanitizeError(rawError);
+
+        Assert.Equal("handler failure", sanitized);
+        Assert.DoesNotContain(rawError, sanitized, StringComparison.Ordinal);
+        Assert.True(sanitized.Length <= 100);
+    }
 }

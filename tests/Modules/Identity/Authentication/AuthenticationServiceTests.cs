@@ -37,6 +37,22 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
     }
 
     [Fact]
+    public async Task SuccessfulLoginUpgradesLegacyPasswordHashToCurrentWorkFactor()
+    {
+        var legacyHash = new PasswordHasher(iterations: 10_000).Hash("legacy-secret");
+        var userId = await _database.InsertUserAsync("legacy-hash", legacyHash);
+
+        var result = await _service.LoginAsync("legacy-hash", "legacy-secret", Now);
+
+        Assert.IsType<LoginSuccess>(result);
+        var upgradedHash = await _database.ScalarAsync<string>(
+            "SELECT password_hash FROM identity.users WHERE user_id = '" + userId + "';");
+        Assert.Equal(PasswordHasher.DefaultIterations,
+            int.Parse(upgradedHash.Split('$')[1], System.Globalization.CultureInfo.InvariantCulture));
+        Assert.True(PasswordHasher.Verify("legacy-secret", upgradedHash));
+    }
+
+    [Fact]
     public async Task SuccessfulLoginClearsFailureCounterAndSetsLastLogin()
     {
         var userId = await _database.InsertUserAsync(

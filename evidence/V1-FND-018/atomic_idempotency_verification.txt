@@ -7,3 +7,7 @@ Atomic Idempotent Execution Verification:
 - Idempotency claim, in-progress, and completed state machine (CODE-003) tied to transaction boundary.
 - Concurrent claim and crash-replay paths verified with deterministic concurrency tests.
 - Idempotency test suite passed with 80/80 tests.
+- Revalidation 2026-08-19: `IdempotencyKeyStore.ExecuteAsync` now claims the unique key, runs the protected mutation and stores the terminal envelope in one transaction.
+- Concurrent same-key execution ran the mutation once and returned one Created plus one Replayed outcome.
+- Idempotency/Messaging suite passed 86/86.
+- Verdict: VERIFIED for the current candidate.

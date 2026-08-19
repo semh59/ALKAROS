@@ -67,18 +67,6 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         DateTimeOffset openedAt,
         CancellationToken cancellationToken = default)
     {
-        var existing = await GetBusinessDayByDateAsync(businessDate, cancellationToken);
-        if (existing is not null)
-        {
-            throw new BusinessDayAlreadyOpenException(businessDate);
-        }
-
-        var active = await GetActiveBusinessDayAsync(cancellationToken);
-        if (active is not null)
-        {
-            throw new InvalidBusinessDayOperationException($"An active business day is already open for date '{active.BusinessDate:yyyy-MM-dd}'. Close it first.");
-        }
-
         var id = Guid.NewGuid();
 
         const string sql = $"""
@@ -90,13 +78,43 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await using (var lockCommand = connection.CreateCommand())
+        {
+            lockCommand.Transaction = transaction;
+            lockCommand.CommandText = "SELECT pg_advisory_xact_lock(hashtextextended('alkaros.reporting.business_day', 0));";
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await using (var checkCommand = connection.CreateCommand())
+        {
+            checkCommand.Transaction = transaction;
+            checkCommand.CommandText = $"SELECT status FROM {BusinessDaysTable} WHERE business_date = @date;";
+            AddParameter(checkCommand, "date", businessDate.ToDateTime(TimeOnly.MinValue));
+            var status = await checkCommand.ExecuteScalarAsync(cancellationToken);
+            if (status is not null)
+                throw new BusinessDayAlreadyOpenException(businessDate);
+        }
+
+        await using (var activeCommand = connection.CreateCommand())
+        {
+            activeCommand.Transaction = transaction;
+            activeCommand.CommandText = $"SELECT business_date FROM {BusinessDaysTable} WHERE status = 'Open' LIMIT 1;";
+            var activeDate = await activeCommand.ExecuteScalarAsync(cancellationToken);
+            if (activeDate is DateTime active)
+                throw new InvalidBusinessDayOperationException($"An active business day is already open for date '{active:yyyy-MM-dd}'. Close it first.");
+        }
+
         await using var cmd = connection.CreateCommand();
+        cmd.Transaction = transaction;
         cmd.CommandText = sql;
         AddParameter(cmd, "id", id);
         AddParameter(cmd, "date", businessDate.ToDateTime(TimeOnly.MinValue));
         AddParameter(cmd, "opened", openedAt);
 
         await cmd.ExecuteNonQueryAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return new BusinessDayRecord(
             id,
@@ -133,7 +151,7 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         const string sql = $"""
             UPDATE {BusinessDaysTable}
             SET status = 'Closed', closed_at = @closed, total_revenue = @revenue, total_orders_count = @orders, total_cancelled_items_count = @cancelled, total_print_failures_count = @prints
-            WHERE business_date = @date;
+            WHERE business_date = @date AND status = 'Open';
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -146,7 +164,9 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         AddParameter(cmd, "cancelled", cancelledItems);
         AddParameter(cmd, "prints", printFailures);
 
-        await cmd.ExecuteNonQueryAsync(cancellationToken);
+        var affected = await cmd.ExecuteNonQueryAsync(cancellationToken);
+        if (affected == 0)
+            throw new InvalidBusinessDayOperationException($"Business day '{businessDate:yyyy-MM-dd}' was closed by another operation.");
 
         return existing with
         {

@@ -49,6 +49,13 @@ public sealed class AuthenticationTimingContractTests
             SuccessWrites++;
             return Task.FromResult(true);
         }
+
+        public Task<bool> TryUpgradePasswordHashAsync(
+            Guid userId,
+            string expectedCurrentHash,
+            string upgradedHash,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(true);
     }
 
     private static StoredUser ActiveUser(string passwordHash) => new(

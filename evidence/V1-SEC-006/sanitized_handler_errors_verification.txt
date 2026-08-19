@@ -8,3 +8,9 @@ Sanitized Handler Errors Verification:
 - CODE-018 finding chain verified on clean candidate.
 - Handler exceptions do not leak raw secret or PII to database rows, logs, or transcripts.
 - SensitiveData and Idempotency/Messaging error recording test suites passed (103/103 tests).
+
+Revalidation 2026-08-19:
+- RetryPolicy now persists only the bounded allowlisted classification `handler failure`; raw exception text is never stored.
+- Sentinel password, email/PII, and PostgreSQL credential cases are covered by RetryPolicyTests.
+- Idempotency/Messaging test suite passed 85/85.
+- Verdict remains VERIFIED for the current candidate.

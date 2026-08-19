@@ -226,7 +226,7 @@ public sealed class PhysicalPrintDelivery
 
     public PhysicalPrintDelivery MarkReprinted(DateTimeOffset now)
     {
-        if (Status != PhysicalPrintDeliveryStatus.ReprintApproved)
+        if (Status != PhysicalPrintDeliveryStatus.ReprintInFlight)
         {
             throw new UnauthorizedReprintException(
                 $"Cannot execute reprint from status '{Status}'. Operator must approve reprint first.");
@@ -249,5 +249,33 @@ public sealed class PhysicalPrintDelivery
             deliveredAt: now,
             resolvedAt: now,
             rowVersion: RowVersion);
+    }
+
+    public PhysicalPrintDelivery BeginApprovedReprint(DateTimeOffset now)
+    {
+        if (Status != PhysicalPrintDeliveryStatus.ReprintApproved)
+            throw new InvalidPhysicalPrintTransitionException(
+                $"Cannot start reprint from {Status}. Delivery must be ReprintApproved.");
+
+        return new PhysicalPrintDelivery(
+            Id, PrintJobId, TicketId, PrinterId,
+            PhysicalPrintDeliveryStatus.ReprintInFlight,
+            AttemptNumber, IsReprint, OperatorId, OperatorReason, CrashWindowReason,
+            PayloadSnapshot, ReprintPayload, CreatedAt, DeliveredAt, null, RowVersion);
+    }
+
+    public PhysicalPrintDelivery MarkReprintUnknown(string reason, DateTimeOffset now)
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+            throw new ArgumentException("Crash reason cannot be empty.", nameof(reason));
+        if (Status != PhysicalPrintDeliveryStatus.ReprintInFlight)
+            throw new InvalidPhysicalPrintTransitionException(
+                $"Cannot transition to Unknown from {Status}. Delivery must be ReprintInFlight.");
+
+        return new PhysicalPrintDelivery(
+            Id, PrintJobId, TicketId, PrinterId,
+            PhysicalPrintDeliveryStatus.Unknown,
+            AttemptNumber, false, OperatorId, OperatorReason, reason,
+            PayloadSnapshot, null, CreatedAt, null, now, RowVersion);
     }
 }

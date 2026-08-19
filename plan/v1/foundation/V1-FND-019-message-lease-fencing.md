@@ -19,10 +19,16 @@ interleaving'iyle bağımsız doğrulamak.
 
 - `src/BuildingBlocks/Messaging/InboxStore.cs`
 - `src/BuildingBlocks/Messaging/InboxMessage.cs`
+- `src/BuildingBlocks/Messaging/OutboxStore.cs`
+- `src/BuildingBlocks/Messaging/OutboxMessage.cs`
 - `src/BuildingBlocks/Messaging/RetryPolicy.cs`
+- `database/migrations/V1/V1-FND-019/**` (additive lease-generation migration; runtime manifest entry remains V1-FND-012-owned)
 - `tests/BuildingBlocks/Idempotency/InboxStoreTests.cs`
+- `tests/BuildingBlocks/Idempotency/OutboxStoreTests.cs`
 - `tests/BuildingBlocks/Idempotency/InboxRedeliveryContractTests.cs`
 - `tests/BuildingBlocks/Idempotency/RetryPolicyTests.cs`
+- `tests/BuildingBlocks/Idempotency/Fixtures/StoreTestDatabase.cs`
+- `tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj`
 - `evidence/V1-FND-019/**`
 
 ## In scope

@@ -49,6 +49,7 @@ public sealed class BackupDomainTests : IDisposable
         result.FileSizeBytes.Should().Be(rawData.Length);
         result.ChecksumSha256.Should().Be(expectedHash);
         File.Exists(result.FilePath).Should().BeTrue();
+        Directory.GetFiles(_tempDirectory, "*.tmp").Should().BeEmpty();
 
         // Verify with engine
         var isVerified = await _engine.VerifyBackupChecksumAsync(result.FilePath, expectedHash);

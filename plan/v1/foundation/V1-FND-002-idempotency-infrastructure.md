@@ -27,15 +27,10 @@ uygulamak.
 - `src/BuildingBlocks/Messaging/InboxEnvelope.cs`
 - `src/BuildingBlocks/Messaging/InboxStatus.cs`
 - `src/BuildingBlocks/Messaging/OutboxEnvelope.cs`
-- `src/BuildingBlocks/Messaging/OutboxMessage.cs`
 - `src/BuildingBlocks/Messaging/OutboxStatus.cs`
-- `src/BuildingBlocks/Messaging/OutboxStore.cs`
 - `tests/BuildingBlocks/Idempotency/EnvelopeValidationTests.cs`
 - `tests/BuildingBlocks/Idempotency/IdempotencyKeyTests.cs`
-- `tests/BuildingBlocks/Idempotency/OutboxStoreTests.cs`
 - `tests/BuildingBlocks/Idempotency/RequestHashTests.cs`
-- `tests/BuildingBlocks/Idempotency/Fixtures/StoreTestDatabase.cs`
-- `tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj`
 - `database/migrations/V1/V1-FND-002/**`
 - IInboxHandler.cs ve InboxMessage.cs sahipliği V1-FND-015'e
   devredilmiştir (C42); bu görev artık bu path'leri yazamaz.

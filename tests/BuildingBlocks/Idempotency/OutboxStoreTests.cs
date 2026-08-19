@@ -99,7 +99,7 @@ public sealed class OutboxStoreTests : IClassFixture<StoreTestDatabase>
         Assert.Equal(1, attempted);
         var lastError = await _database.ScalarAsync<string>(
             $"SELECT last_error FROM outbox_messages WHERE event_type = '{eventType}';");
-        Assert.Equal("boom", lastError);
+        Assert.Equal("handler failure", lastError);
     }
 
     [Fact]
@@ -249,6 +249,25 @@ public sealed class OutboxStoreTests : IClassFixture<StoreTestDatabase>
             {
                 await _database.ExecuteAsync(
                     "UPDATE outbox_messages SET status = 'pending', claimed_at = NULL WHERE id = @id;",
+                    ("id", message.Id));
+                return true;
+            }),
+            batchSize: 10));
+    }
+
+    [Fact]
+    public async Task DispatchStaleLeaseGenerationCannotFinalizeCurrentLease()
+    {
+        var store = new OutboxStore(_database.DataSource);
+        await _database.ResetTablesAsync();
+        var eventType = Guid.NewGuid().ToString("N");
+        await store.EnqueueAsync(Envelope(eventType));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => store.DispatchAsync(
+            new RecordingSink(async message =>
+            {
+                await _database.ExecuteAsync(
+                    "UPDATE outbox_messages SET lease_generation = lease_generation + 1 WHERE id = @id;",
                     ("id", message.Id));
                 return true;
             }),

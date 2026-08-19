@@ -81,6 +81,14 @@ public sealed class AuthenticationService
 
         if (!await _store.RecordLoginSuccessAsync(user.UserId, now, cancellationToken))
             return new LoginFailure(LoginFailureReason.LockedOut);
+
+        if (PasswordHasher.NeedsRehash(user.PasswordHash))
+        {
+            var upgradedHash = new PasswordHasher().Hash(password);
+            await _store.TryUpgradePasswordHashAsync(
+                user.UserId, user.PasswordHash, upgradedHash, cancellationToken);
+        }
+
         var session = SessionTokenIssuer.Issue(now);
         return new LoginSuccess(user.UserId, user.DisplayName, session);
     }

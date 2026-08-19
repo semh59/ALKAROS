@@ -118,7 +118,7 @@ public sealed class InboxStoreTests : IClassFixture<StoreTestDatabase>
         var lastError = await _database.ScalarAsync<string>(
             $"SELECT last_error FROM inbox_messages WHERE source = '{source}' AND external_event_id = '{eventId}';");
         Assert.Equal(1, attemptCount);
-        Assert.Equal("boom", lastError);
+        Assert.Equal("handler failure", lastError);
     }
 
     [Fact]
@@ -274,6 +274,26 @@ public sealed class InboxStoreTests : IClassFixture<StoreTestDatabase>
             {
                 await _database.ExecuteAsync(
                     "UPDATE inbox_messages SET status = 'pending', claimed_at = NULL WHERE id = @id;",
+                    ("id", message.Id));
+                return true;
+            }),
+            batchSize: 10));
+    }
+
+    [Fact]
+    public async Task ProcessStaleLeaseGenerationCannotFinalizeCurrentLease()
+    {
+        var store = new InboxStore(_database.DataSource);
+        await _database.ResetTablesAsync();
+        var source = $"qnb-{Guid.NewGuid():N}";
+        var eventId = Guid.NewGuid().ToString("N");
+        await store.TryEnqueueAsync(Envelope(source, eventId));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => store.ProcessPendingAsync(
+            new RecordingHandler(async message =>
+            {
+                await _database.ExecuteAsync(
+                    "UPDATE inbox_messages SET lease_generation = lease_generation + 1 WHERE id = @id;",
                     ("id", message.Id));
                 return true;
             }),

@@ -134,6 +134,12 @@ public sealed class PhysicalPrintRecoveryService : IPhysicalPrintRecoveryService
 
         if (delivery.Status != PhysicalPrintDeliveryStatus.ReprintApproved)
         {
+            if (delivery.Status == PhysicalPrintDeliveryStatus.ReprintInFlight)
+            {
+                throw new PhysicalPrintDeliveryConcurrencyException(
+                    $"Reprint for delivery '{deliveryId}' is already claimed by another worker.");
+            }
+
             throw new UnauthorizedReprintException(
                 $"Cannot execute reprint on delivery '{deliveryId}' with status '{delivery.Status}'. Must be ReprintApproved.");
         }
@@ -141,13 +147,25 @@ public sealed class PhysicalPrintRecoveryService : IPhysicalPrintRecoveryService
         var payloadToPrint = delivery.ReprintPayload
             ?? throw new InvalidOperationException("Reprint payload is missing from approved delivery.");
 
-        var success = await physicalPrinterTransport(payloadToPrint).ConfigureAwait(false);
-        if (!success)
+        // Fence the external side effect before invoking the printer. Only one
+        // worker can transition the row from ReprintApproved to ReprintInFlight.
+        var claimed = delivery.BeginApprovedReprint(DateTimeOffset.UtcNow);
+        await _repository.SaveAsync(claimed, ct).ConfigureAwait(false);
+
+        try
         {
-            throw new InvalidOperationException("Physical printer transport rejected reprint transmission.");
+            var success = await physicalPrinterTransport(payloadToPrint).ConfigureAwait(false);
+            if (!success)
+                throw new InvalidOperationException("Physical printer transport rejected reprint transmission.");
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            var uncertain = claimed.MarkReprintUnknown(ex.Message, DateTimeOffset.UtcNow);
+            await _repository.SaveAsync(uncertain, ct).ConfigureAwait(false);
+            throw;
         }
 
-        var reprinted = delivery.MarkReprinted(DateTimeOffset.UtcNow);
+        var reprinted = claimed.MarkReprinted(DateTimeOffset.UtcNow);
         await _repository.SaveAsync(reprinted, ct).ConfigureAwait(false);
         return reprinted;
     }

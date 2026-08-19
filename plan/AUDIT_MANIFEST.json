@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 537,
-  "markdown_line_count": 37861,
-  "markdown_byte_count": 2346829,
+  "markdown_line_count": 37911,
+  "markdown_byte_count": 2352324,
   "source_pdf": {
     "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -876,9 +876,9 @@
     },
     {
       "path": "evidence/v1/gate-v1-exit-closure.md",
-      "sha256": "C727EB861DAD4FF2FD4934C36CD7CFDEFCC7B8AA1EE7FCBE36ACBD2A216FFCB1",
-      "lines": 34,
-      "bytes": 2346,
+      "sha256": "CF8A7380A9B9ADE31EED783B3CF0CDDBA569498E00CD7318BE4F66E2EE373D18",
+      "lines": 77,
+      "bytes": 7064,
       "utf8": true
     },
     {
@@ -1156,7 +1156,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2588CC79589DA2AF0BC4407CC2A2A4F3FF38986AE911450FB04DA618D9AA8EBC",
+      "sha256": "7138C87B4A38640EF249BAC1CBD9BA0195430A48FC02C451B7EB6AB916938D4B",
       "lines": 1813,
       "bytes": 251262,
       "utf8": true
@@ -1177,9 +1177,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "491D3F3EDB9A2CA9FF1B9372622C3C269E3E09DA2F21FC7EE4FE7482D5DD1E20",
-      "lines": 192,
-      "bytes": 14077,
+      "sha256": "F2AEB141418D452283D2863214C5735471CBDFD7C367399073DA53F110DC4B48",
+      "lines": 197,
+      "bytes": 14545,
       "utf8": true
     },
     {
@@ -2255,9 +2255,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-002-idempotency-infrastructure.md",
-      "sha256": "712FCAACDEAE9234388F6F2CB5A792FF22984A8B1DFF2CB866796DDE5982DDB2",
-      "lines": 99,
-      "bytes": 4952,
+      "sha256": "515AB5620412E3E34E9FA4A6A097947CFF889B5808B541CE82C3D29B6645CCAB",
+      "lines": 94,
+      "bytes": 4660,
       "utf8": true
     },
     {
@@ -2374,9 +2374,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-019-message-lease-fencing.md",
-      "sha256": "B4F090EBE0153689EC993144992DD8650F262374853EED7DCE5CCD159364D83E",
-      "lines": 59,
-      "bytes": 1759,
+      "sha256": "9D91CF0A7FDA5CD2B61B8546BFD54F818B31BFBC07881329387A7F530EBD0007",
+      "lines": 65,
+      "bytes": 2179,
       "utf8": true
     },
     {
@@ -2423,9 +2423,9 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-001-v1-reconciliation-and-gate-closure.md",
-      "sha256": "ADEAA2C971A02A1DF9A5B7805C69F741D940DF14DB7D7143164F9585C62E2519",
+      "sha256": "42C2C1FFBAE4A61984489F3DA2E51F0B35DA2BEED584E8C6B9A2B16EFC1C4276",
       "lines": 36,
-      "bytes": 1020,
+      "bytes": 1026,
       "utf8": true
     },
     {
@@ -2612,9 +2612,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "42AA006B4D63DDCDDB300F5D553BFB5E17D1FB95194FD332A583B7D5703DB87C",
+      "sha256": "F80F5730A7AD8ED270DE6A491C91CD5EEF29E4BD9706DB4BD82BB2CC66BD3937",
       "lines": 30,
-      "bytes": 1240,
+      "bytes": 1335,
       "utf8": true
     },
     {
@@ -2661,9 +2661,9 @@
     },
     {
       "path": "plan/v1/security-foundation/V1-SEC-004-migration-secret-redaction.md",
-      "sha256": "E614DA667C6A9501D3DE9B486671AB05949D40835C3B2FAA1FBB0FD070ED57EA",
-      "lines": 50,
-      "bytes": 1198,
+      "sha256": "E92BB46036F37E72740D93BF0088F696322BEBB23CF615E07141498C31370CF4",
+      "lines": 51,
+      "bytes": 1278,
       "utf8": true
     },
     {

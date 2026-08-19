@@ -13,6 +13,7 @@ public sealed record OutboxMessage(
     byte[] PayloadEnvelope,
     OutboxStatus Status,
     int AttemptCount,
+    long LeaseGeneration,
     DateTimeOffset CreatedAt,
     DateTimeOffset? NextRetryAt,
     DateTimeOffset? DispatchedAt,

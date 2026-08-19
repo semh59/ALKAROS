@@ -36,6 +36,7 @@ public sealed class LocalBackupEngine : IBackupEngine
         if (string.IsNullOrWhiteSpace(destinationDirectory))
             throw new ArgumentException("Destination directory cannot be null or whitespace.", nameof(destinationDirectory));
 
+        string? temporaryPath = null;
         try
         {
             if (!Directory.Exists(destinationDirectory))
@@ -45,9 +46,25 @@ public sealed class LocalBackupEngine : IBackupEngine
 
             var fileName = $"alkaros_backup_{backupType.ToString().ToLowerInvariant()}_{backupId:N}.bak";
             var filePath = Path.Combine(destinationDirectory, fileName);
+            temporaryPath = filePath + $".{Guid.NewGuid():N}.tmp";
 
-            // Write payload
-            await File.WriteAllBytesAsync(filePath, payload, cancellationToken);
+            // Write and flush a sibling temp file, then replace the target on the
+            // same volume. This prevents a crash from exposing a partial backup.
+            await using (var stream = new FileStream(
+                temporaryPath,
+                FileMode.CreateNew,
+                FileAccess.Write,
+                FileShare.None,
+                bufferSize: 64 * 1024,
+                options: FileOptions.Asynchronous | FileOptions.WriteThrough))
+            {
+                await stream.WriteAsync(payload, cancellationToken);
+                await stream.FlushAsync(cancellationToken);
+                stream.Flush(flushToDisk: true);
+            }
+
+            File.Move(temporaryPath, filePath, overwrite: true);
+            temporaryPath = null;
 
             // Compute SHA-256 checksum
             var hashBytes = SHA256.HashData(payload);
@@ -74,6 +91,11 @@ public sealed class LocalBackupEngine : IBackupEngine
                 string.Empty,
                 IsSuccess: false,
                 ErrorMessage: ex.Message);
+        }
+        finally
+        {
+            if (temporaryPath is not null)
+                File.Delete(temporaryPath);
         }
     }
 

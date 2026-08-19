@@ -19,6 +19,7 @@ görünmediğini bağımsız doğrulamak.
 
 - `src/Host/Composition/Migrations/PsqlScriptRunner.cs`
 - `tests/Host/MigrationComposition/Execution/MigrationExecutionTests.cs`
+- `tests/Host/MigrationComposition/Migrations/PsqlScriptRunnerSecurityTests.cs`
 - `evidence/V1-SEC-004/**`
 
 ## In scope

@@ -21,6 +21,7 @@ public sealed record InboxMessage(
     byte[] PayloadEnvelope,
     InboxStatus Status,
     int AttemptCount,
+    long LeaseGeneration,
     DateTimeOffset ReceivedAt,
     DateTimeOffset? ProcessedAt,
     string? LastError);

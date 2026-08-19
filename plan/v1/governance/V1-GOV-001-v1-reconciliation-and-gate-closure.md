@@ -1,7 +1,7 @@
 # V1-GOV-001 - V1 reconciliation, audit report regen and gate closure
 
 - Task ID: V1-GOV-001
-- Status: Done
+- Status: InProgress
 - Assignee: Antigravity-v1-gov-001
 - Work type: validation
 - Surface state: Existing

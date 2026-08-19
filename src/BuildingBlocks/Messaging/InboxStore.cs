@@ -94,10 +94,10 @@ public sealed class InboxStore
             await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
             if (handled)
-                await MarkProcessedAsync(connection, transaction, message.Id, cancellationToken).ConfigureAwait(false);
+                await MarkProcessedAsync(connection, transaction, message.Id, message.LeaseGeneration + 1, cancellationToken).ConfigureAwait(false);
             else
                 await RecordFailureAsync(
-                        connection, transaction, message.Id, failure ?? "handler returned false", cancellationToken)
+                        connection, transaction, message.Id, message.LeaseGeneration + 1, failure ?? "handler returned false", cancellationToken)
                     .ConfigureAwait(false);
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -144,7 +144,7 @@ public sealed class InboxStore
             leaseCommand.CommandText =
                 """
                 UPDATE inbox_messages
-                SET status = 'in_flight', claimed_at = now()
+                SET status = 'in_flight', claimed_at = now(), lease_generation = lease_generation + 1
                 WHERE id = ANY($1);
                 """;
             leaseCommand.Parameters.AddWithValue(messages.Select(message => message.Id).ToArray());
@@ -166,7 +166,7 @@ public sealed class InboxStore
         command.CommandText =
             """
             SELECT id, source, external_event_id, payload_envelope, status, attempt_count,
-                   received_at, processed_at, last_error
+                   lease_generation, received_at, processed_at, last_error
             FROM inbox_messages
             WHERE status = 'pending' AND (next_retry_at IS NULL OR next_retry_at <= now())
             ORDER BY received_at
@@ -186,9 +186,10 @@ public sealed class InboxStore
                 reader.GetFieldValue<byte[]>(3),
                 Enum.Parse<InboxStatus>(reader.GetString(4), ignoreCase: true),
                 reader.GetInt32(5),
-                new DateTimeOffset(reader.GetDateTime(6)),
-                reader.IsDBNull(7) ? null : new DateTimeOffset(reader.GetDateTime(7)),
-                reader.IsDBNull(8) ? null : reader.GetString(8)));
+                reader.GetInt64(6),
+                new DateTimeOffset(reader.GetDateTime(7)),
+                reader.IsDBNull(8) ? null : new DateTimeOffset(reader.GetDateTime(8)),
+                reader.IsDBNull(9) ? null : reader.GetString(9)));
         }
 
         return messages;
@@ -198,6 +199,7 @@ public sealed class InboxStore
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         Guid id,
+        long leaseGeneration,
         CancellationToken cancellationToken)
     {
         await using var command = connection.CreateCommand();
@@ -206,9 +208,10 @@ public sealed class InboxStore
             """
             UPDATE inbox_messages
             SET status = 'processed', processed_at = now()
-            WHERE id = $1 AND status = 'in_flight';
+            WHERE id = $1 AND status = 'in_flight' AND lease_generation = $2;
             """;
         command.Parameters.AddWithValue(id);
+        command.Parameters.AddWithValue(leaseGeneration);
         var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         if (affected != 1)
             throw new InvalidOperationException(
@@ -219,8 +222,9 @@ public sealed class InboxStore
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         Guid id,
+        long leaseGeneration,
         string error,
         CancellationToken cancellationToken)
         => RetryPolicy.RecordFailureAsync(
-            connection, "inbox_messages", id, error, _baseDelay, transaction, cancellationToken);
+            connection, "inbox_messages", id, leaseGeneration, error, _baseDelay, transaction, cancellationToken);
 }

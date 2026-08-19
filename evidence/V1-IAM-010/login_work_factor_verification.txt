@@ -8,3 +8,10 @@ Login Work-Factor Contract Verification:
 - CODE-012 finding chain verified on committed candidate.
 - Direct verification shows that known-invalid and unknown-user login paths execute identical deterministic KDF work factor without timing side channels.
 - Authentication test suite passed with 53/53 tests.
+
+Revalidation 2026-08-19:
+- AuthenticationService now rehashes a verified legacy hash when `PasswordHasher.NeedsRehash` is true.
+- The replacement is conditional on the expected current hash, preventing concurrent credential overwrite.
+- A 10,000-iteration login was upgraded to 600,000 iterations and verified successfully.
+- Authentication test suite passed 54/54.
+- Verdict: VERIFIED for the current candidate.

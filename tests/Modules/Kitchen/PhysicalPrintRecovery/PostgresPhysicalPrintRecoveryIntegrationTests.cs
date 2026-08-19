@@ -186,6 +186,45 @@ public sealed class PostgresPhysicalPrintRecoveryIntegrationTests : IAsyncLifeti
     }
 
     [Fact]
+    public async Task ConcurrentReprintExecutionAllowsOnlyOnePhysicalTransmission()
+    {
+        var delivery = await _recoveryService.StartInFlightDeliveryAsync(
+            _testJob.Id, _testTicket.Id, _testPrinterId, _testJob.Payload);
+        await _recoveryService.ReportCrashWindowUncertaintyAsync(delivery.Id, "Socket drop");
+        await _recoveryService.ApproveOperatorReprintAsync(delivery.Id, "Operator-Concurrency", "Verified no paper output");
+
+        var firstTransmissionStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseFirstTransmission = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var transmissionCount = 0;
+
+        var first = _recoveryService.ExecuteApprovedReprintAsync(
+            delivery.Id,
+            async _ =>
+            {
+                Interlocked.Increment(ref transmissionCount);
+                firstTransmissionStarted.SetResult();
+                await releaseFirstTransmission.Task;
+                return true;
+            });
+
+        await firstTransmissionStarted.Task;
+        var second = () => _recoveryService.ExecuteApprovedReprintAsync(
+            delivery.Id,
+            _ =>
+            {
+                Interlocked.Increment(ref transmissionCount);
+                return Task.FromResult(true);
+            });
+
+        await second.Should().ThrowAsync<PhysicalPrintDeliveryConcurrencyException>();
+        releaseFirstTransmission.SetResult();
+        var completed = await first;
+
+        completed.Status.Should().Be(PhysicalPrintDeliveryStatus.Reprinted);
+        transmissionCount.Should().Be(1);
+    }
+
+    [Fact]
     public async Task CrashAndRecoveryNeverModifiesOrDeletesOrderAndTicket()
     {
         var delivery = await _recoveryService.StartInFlightDeliveryAsync(

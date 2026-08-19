@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <None Include="..\..\..\database\migrations\V1\V1-FND-002\*.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\database\migrations\V1\V1-FND-019\*.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

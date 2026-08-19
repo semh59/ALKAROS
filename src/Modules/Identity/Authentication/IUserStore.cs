@@ -27,6 +27,12 @@ public interface IUserStore
     /// Records a successful login only when no active lock exists.
     /// </summary>
     Task<bool> RecordLoginSuccessAsync(Guid userId, DateTimeOffset lastLoginAt, CancellationToken cancellationToken = default);
+
+    Task<bool> TryUpgradePasswordHashAsync(
+        Guid userId,
+        string expectedCurrentHash,
+        string upgradedHash,
+        CancellationToken cancellationToken = default);
 }
 
 public sealed record LoginFailureUpdate(int FailedLoginAttempts, DateTimeOffset? LockedUntil);

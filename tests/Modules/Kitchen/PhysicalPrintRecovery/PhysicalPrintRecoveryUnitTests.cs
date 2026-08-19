@@ -113,7 +113,9 @@ public sealed class PhysicalPrintRecoveryUnitTests
         var unknown = delivery.MarkUnknown("Crash", now);
         var approved = unknown.ApproveReprint("Operator-1", "Onaylandi", now);
 
-        var reprinted = approved.MarkReprinted(now.AddSeconds(5));
+        var claimed = approved.BeginApprovedReprint(now.AddSeconds(1));
+        claimed.Status.Should().Be(PhysicalPrintDeliveryStatus.ReprintInFlight);
+        var reprinted = claimed.MarkReprinted(now.AddSeconds(5));
 
         reprinted.Status.Should().Be(PhysicalPrintDeliveryStatus.Reprinted);
         reprinted.IsReprint.Should().BeTrue();

@@ -189,6 +189,24 @@
       "phase": "B",
       "tables": ["bill_items", "bill_allocations", "bill_adjustments"],
       "deferredConstraints": []
+    },
+    {
+      "id": "033",
+      "phase": "B",
+      "tables": ["inbox_messages", "outbox_messages"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "034",
+      "phase": "B",
+      "tables": ["physical_print_deliveries"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "035",
+      "phase": "B",
+      "tables": ["daily_business_days"],
+      "deferredConstraints": []
     }
   ]
 }
