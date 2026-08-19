@@ -11,30 +11,45 @@
 
 ## 1. Context and Problem Statement
 
-The `btree_gist` extension in PostgreSQL 18 is required by the `catalog` module for exclusion constraints on `catalog.product_prices` (preventing overlapping active price date ranges for the same product and price list, PDF:III.4.4).
-Previously, extension installation was implicit or ambiguously distributed across feature migrations (`007-product-prices`). This created ambiguities regarding:
+The `btree_gist` extension in PostgreSQL 18 is required by the `catalog` module for exclusion constraints on
+`catalog.product_prices` (preventing overlapping active price date ranges for the same product and price list,
+PDF:III.4.4).
+Previously, extension installation was implicit or ambiguously distributed across feature migrations
+(`007-product-prices`). This created ambiguities regarding:
+
 1. Extension lifecycle ownership (which module or foundation layer owns the extension lifecycle).
-2. Rollback policy (whether tearing down a feature migration or rolling back to position `000` should drop `btree_gist`).
-3. Behavior in shared, pre-provisioned, or restricted-privilege database environments where extensions cannot or should not be dropped.
+2. Rollback policy (whether tearing down a feature migration or rolling back to position `000` should drop
+   `btree_gist`).
+3. Behavior in shared, pre-provisioned, or restricted-privilege database environments where extensions cannot or should
+   not be dropped.
 
 ## 2. Selected Decision
 
 **Dedicated Foundation Migration Ownership (`012-btree-gist-ownership`)**:
-1. **Ownership**: `btree_gist` is classified as a shared system-level foundation dependency. Its lifecycle is managed explicitly via a dedicated migration position (`012-btree-gist-ownership`).
+
+1. **Ownership**: `btree_gist` is classified as a shared system-level foundation dependency. Its lifecycle is managed
+   explicitly via a dedicated migration position (`012-btree-gist-ownership`).
 2. **Forward Lifecycle**:
    - Migration `012-btree-gist-ownership.up.sql` executes:
+
      ```sql
      CREATE EXTENSION IF NOT EXISTS btree_gist;
      ```
+
    - This ensures idempotent initialization on fresh empty databases as well as pre-provisioned environments.
 3. **Reverse / Rollback Lifecycle**:
    - Migration `012-btree-gist-ownership.down.sql` executes:
+
      ```sql
      DROP EXTENSION IF EXISTS btree_gist;
      ```
+
    - On a clean ALKAROS-managed database, rolling back position `012` safely cleans up the extension.
-   - In environments where dependent database objects outside ALKAROS exist, or in managed hosting with shared extension pools, failing to drop due to external dependencies or pre-existing installation is classified as **declared pre-existing residue** and handled safely without corrupting ALKAROS migration state.
+   - In environments where dependent database objects outside ALKAROS exist, or in managed hosting with shared extension
+     pools, failing to drop due to external dependencies or pre-existing installation is classified as **declared
+     pre-existing residue** and handled safely without corrupting ALKAROS migration state.
 4. **Verification Query**:
+
    ```sql
    SELECT extname FROM pg_extension WHERE extname = 'btree_gist';
    ```
@@ -50,16 +65,22 @@ Previously, extension installation was implicit or ambiguously distributed acros
 ## 4. Rejected Alternatives
 
 1. **Feature Migration Ownership (Embedded in `007-product-prices`)**:
-   - *Rejected*: Embedding `CREATE EXTENSION` within a domain feature table migration tightly couples foundation infrastructure to a specific business table and creates rollback failure if another module later relies on `btree_gist`.
+   - *Rejected*: Embedding `CREATE EXTENSION` within a domain feature table migration tightly couples foundation
+     infrastructure to a specific business table and creates rollback failure if another module later relies on
+     `btree_gist`.
 2. **External Provisioning Only (No Migration)**:
-   - *Rejected*: Requiring manual DBA intervention before running automated integration tests or local container setups violates zero-configuration test automation and CI/CD requirements.
+   - *Rejected*: Requiring manual DBA intervention before running automated integration tests or local container setups
+     violates zero-configuration test automation and CI/CD requirements.
 3. **`CASCADE` Dropping on Rollback**:
-   - *Rejected*: Using `DROP EXTENSION btree_gist CASCADE` risks silently dropping unintended dependent domain objects. Standard fail-closed `DROP EXTENSION IF EXISTS btree_gist;` is enforced.
+   - *Rejected*: Using `DROP EXTENSION btree_gist CASCADE` risks silently dropping unintended dependent domain objects.
+     Standard fail-closed `DROP EXTENSION IF EXISTS btree_gist;` is enforced.
 
 ## 5. Invariants for Consumers
 
-- `V1-FND-021` will implement the additive `012-btree-gist-ownership.up.sql` and `.down.sql` migrations matching this exact contract and verify forward/reverse on PostgreSQL 18.
-- `V1-CAT-002` and `V1-CAT-003` can safely rely on `btree_gist` being provisioned prior to applying exclusion constraints without embedding extension management in catalog migrations.
+- `V1-FND-021` will implement the additive `012-btree-gist-ownership.up.sql` and `.down.sql` migrations matching this
+  exact contract and verify forward/reverse on PostgreSQL 18.
+- `V1-CAT-002` and `V1-CAT-003` can safely rely on `btree_gist` being provisioned prior to applying exclusion
+  constraints without embedding extension management in catalog migrations.
 
 ## 6. Affected Tasks
 

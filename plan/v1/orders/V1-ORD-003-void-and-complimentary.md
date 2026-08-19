@@ -19,7 +19,9 @@ Onaylı void/complimentary politikasını permission, reason, audit ve kitchen-s
 
 ## Owned surface
 
-- `src/Modules/Orders/ItemExceptions/**`, `tests/Modules/Orders/ItemExceptions/**`
+- `evidence/V1-ORD-003/**`
+- C71 (2026-08-19) konsolidasyonu: src/Modules/Orders/ItemExceptions/**ve tests/Modules/Orders/ItemExceptions/**
+  yüzeyleri V1-ORD-004'e devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

@@ -115,7 +115,7 @@ enforcement` olarak güncellendi (PUT /repos/semh59/ALKAROS/rulesets/20817586,
 updated_at 2026-08-14T13:52:38.069+03:00); strict policy korundu.
 
 PR #3 (V0-GOV-063: Defer V0-GOV-041/042 integration gates (C66)):
-https://github.com/semh59/ALKAROS/pull/3 — merged, merge commit 551d75d
+<https://github.com/semh59/ALKAROS/pull/3> — merged, merge commit 551d75d
 (2026-08-14T10:53:20Z).
 
 Komut kanıtı:
@@ -137,6 +137,7 @@ baseline çözümüne de merge-base'de görev dosyası yoksa HEAD fallback'i ekl
 
 Testler (tests/Architecture/TaskScope/test_task_scope.py,
 TestDoneTransitionDiffMode):
+
 - test_done_transition_from_in_progress_accepted -> pass
 - test_done_transition_from_planned_rejected -> pass
 - test_added_task_markdown_in_diff_mode_uses_head_baseline -> pass
@@ -152,7 +153,7 @@ Validation errors: 0 / Validation warnings: 0
 Exit code: 0
 
 PR #5 (V0-GOV-063: Close task - Done transition support (C66)):
-https://github.com/semh59/ALKAROS/pull/5 — merged, merge commit c5ab8e5
+<https://github.com/semh59/ALKAROS/pull/5> — merged, merge commit c5ab8e5
 (2026-08-14T12:35:58Z). V0-GOV-063 Status: Done (master'da).
 
 Komut kanıtı:

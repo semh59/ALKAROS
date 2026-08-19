@@ -110,12 +110,93 @@ public sealed class WaiterSessionQueueTests
 
         _engine.PendingOperations.Should().HaveCount(2);
 
-        var replayResults = _engine.ReplayPendingQueue();
+        var replayResults = _engine.ReplayPendingQueue(serverDispatcher: _ => true);
 
         replayResults.Should().HaveCount(2);
         replayResults.Should().OnlyContain(r => r.IsReplayed);
 
         // Queue drained
         _engine.PendingOperations.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void MissingServerDispatcherRejectsReplayWithoutModifyingQueue()
+    {
+        var session = new WaiterPwaSession(
+            SessionId: Guid.NewGuid(),
+            WaiterId: Guid.NewGuid(),
+            WaiterName: "Garson Deniz",
+            DeviceFingerprint: "device_pwa_phone_04b",
+            ExpiresAt: DateTimeOffset.UtcNow.AddHours(5),
+            IsActive: true,
+            IsRevoked: false);
+
+        _engine.SetSession(session);
+        _engine.EnqueueOperation(QueuedOperationType.SubmitOrder, "{\"table\":\"T-02\"}");
+
+        var replayResults = _engine.ReplayPendingQueue(serverDispatcher: null);
+
+        replayResults.Should().ContainSingle();
+        replayResults[0].IsReplayed.Should().BeFalse();
+        replayResults[0].ErrorMessage.Should().Contain("serverDispatcher");
+
+        _engine.PendingOperations.Should().ContainSingle();
+    }
+
+    [Fact]
+    public void OfflineReplayLeavesQueueIntactAndReturnsOfflineError()
+    {
+        var session = new WaiterPwaSession(
+            SessionId: Guid.NewGuid(),
+            WaiterId: Guid.NewGuid(),
+            WaiterName: "Garson Deniz",
+            DeviceFingerprint: "device_pwa_phone_05",
+            ExpiresAt: DateTimeOffset.UtcNow.AddHours(5),
+            IsActive: true,
+            IsRevoked: false);
+
+        _engine.SetSession(session);
+        _engine.EnqueueOperation(QueuedOperationType.SubmitOrder, "{\"table\":\"T-05\"}");
+        _engine.PendingOperations.Should().ContainSingle();
+
+        // Simulate network loss
+        _engine.SetNetworkState(false);
+
+        var replayResults = _engine.ReplayPendingQueue();
+
+        replayResults.Should().ContainSingle();
+        replayResults[0].IsReplayed.Should().BeFalse();
+        replayResults[0].ErrorMessage.Should().Contain("çevrimdışı");
+
+        // Queue remains intact
+        _engine.PendingOperations.Should().ContainSingle();
+    }
+
+    [Fact]
+    public void FailedServerDispatchLeavesFailedOperationInPendingQueue()
+    {
+        var session = new WaiterPwaSession(
+            SessionId: Guid.NewGuid(),
+            WaiterId: Guid.NewGuid(),
+            WaiterName: "Garson Deniz",
+            DeviceFingerprint: "device_pwa_phone_06",
+            ExpiresAt: DateTimeOffset.UtcNow.AddHours(5),
+            IsActive: true,
+            IsRevoked: false);
+
+        _engine.SetSession(session);
+        _engine.EnqueueOperation(QueuedOperationType.SubmitOrder, "{\"table\":\"T-06\"}");
+        _engine.EnqueueOperation(QueuedOperationType.AddOrderNote, "{\"note\":\"Acısız\"}");
+
+        // Dispatcher approves only the first op
+        var replayResults = _engine.ReplayPendingQueue(serverDispatcher: op => op.OperationType == QueuedOperationType.SubmitOrder);
+
+        replayResults.Should().HaveCount(2);
+        replayResults[0].IsReplayed.Should().BeTrue();
+        replayResults[1].IsReplayed.Should().BeFalse();
+
+        // Second operation remains in queue
+        _engine.PendingOperations.Should().ContainSingle();
+        _engine.PendingOperations[0].OperationType.Should().Be(QueuedOperationType.AddOrderNote);
     }
 }

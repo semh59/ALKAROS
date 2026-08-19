@@ -6,9 +6,11 @@
 
 ## Commands
 
-- `npx --yes markdownlint-cli2@0.23.2 "plan/**/*.md" "docs/**/*.md" "AGENTS.md"` — exit `0`, plan/docs/AGENTS lint `0` issues.
+- `npx --yes markdownlint-cli2@0.23.2 "plan/**/*.md" "docs/**/*.md" "AGENTS.md"` — exit `0`, plan/docs/AGENTS lint `0`
+  issues.
 - `python tools/plan-audit/plan_audit_tool.py generate-audit-report` — exit `0`, report lines `1669`.
-- `python tools/plan-audit/plan_audit_tool.py generate-manifest` — exit `0`, manifest SHA-256 `C22E5C7BEDCA3363E61E9CD548D32AEADCC40ED9223906438E3349AF0247E75D`.
+- `python tools/plan-audit/plan_audit_tool.py generate-manifest` — exit `0`, manifest SHA-256
+  `C22E5C7BEDCA3363E61E9CD548D32AEADCC40ED9223906438E3349AF0247E75D`.
 - `python tools/plan-audit/plan_audit_tool.py validate` — exit `0`, `Validation errors: 0`, `Validation warnings: 0`.
 - `python tools/plan-audit/plan_audit_tool.py validate-coverage` — exit `0`, `Coverage errors: 0`.
 - `python tools/plan-audit/plan_audit_tool.py verify-manifest` — exit `0`, `Manifest errors: 0`.

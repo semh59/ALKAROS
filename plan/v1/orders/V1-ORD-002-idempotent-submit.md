@@ -19,7 +19,9 @@ Waiter/cashier submit akışını response replay içeren version-controlled con
 
 ## Owned surface
 
-- `src/Modules/Orders/SubmitOrder/**`, `tests/Modules/Orders/SubmitOrder/**`
+- `evidence/V1-ORD-002/**`
+- C71 (2026-08-19) konsolidasyonu: src/Modules/Orders/SubmitOrder/**ve tests/Modules/Orders/SubmitOrder/** yüzeyleri
+  V1-ORD-004'e devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

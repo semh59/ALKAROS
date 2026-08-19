@@ -62,16 +62,23 @@ public sealed class DeviceSessionService : IDeviceSessionService
         ArgumentNullException.ThrowIfNull(pendingOperations);
 
         var session = await ValidateAsync(userId, deviceId, rawToken, touchLastSeen: false, cancellationToken);
-        var processed = (await _repository.GetProcessedOperationIdsAsync(cancellationToken))
-            .ToHashSet();
+        if (pendingOperations.Count == 0)
+        {
+            return new ReconnectResult(session, Array.Empty<PendingOperation>());
+        }
 
-        var applied = pendingOperations
-            .Where(op => !processed.Contains(op.OperationId))
+        var candidateOps = pendingOperations
             .OrderBy(op => op.QueuedAt)
             .ThenBy(op => op.OperationId)
             .ToList();
 
-        await _repository.AddProcessedOperationsAsync(session.SessionId, applied, cancellationToken);
+        var insertedIds = (await _repository.AddProcessedOperationsAsync(session.SessionId, candidateOps, cancellationToken))
+            .ToHashSet();
+
+        var applied = candidateOps
+            .Where(op => insertedIds.Contains(op.OperationId))
+            .ToList();
+
         return new ReconnectResult(session, applied);
     }
 

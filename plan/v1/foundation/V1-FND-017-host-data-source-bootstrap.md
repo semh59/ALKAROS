@@ -17,13 +17,11 @@ dispose edildiğini bağımsız runtime probe ile doğrulamak.
 
 ## Owned surface
 
-- `src/Host/Composition/HostComposition.cs`
-- `src/Host/Composition/Modules/ModuleRegistry.cs`
-- `tests/Host/MigrationComposition/Composition/HostConstructabilityTests.cs`
 - `tests/Host/MigrationComposition/Composition/HostServiceRegistrationTests.cs`
 - `tests/Host/MigrationComposition/Registry/ModuleRegistryTests.cs`
-- `tests/Host/MigrationComposition/Composition/HostModuleReachabilityTests.cs`
 - `evidence/V1-FND-017/**`
+- C71 (2026-08-19) konsolidasyonu: HostComposition.cs, ModuleRegistry.cs, HostConstructabilityTests.cs ve
+  HostModuleReachabilityTests.cs V1-FND-025'e devredildi; bu historical task closed kalır.
 
 ## In scope
 

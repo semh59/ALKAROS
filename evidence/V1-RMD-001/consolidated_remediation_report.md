@@ -13,7 +13,8 @@
    - Verified via unit test `MultipleRollbackFailuresAggregateAllExceptions`.
 
 2. **Ambient Transaction Join Cancellation Propagation**:
-   - Updated `TransactionContext.cs` to explicitly invoke `cancellationToken.ThrowIfCancellationRequested()` when joining an active ambient transaction scope.
+   - Updated `TransactionContext.cs` to explicitly invoke `cancellationToken.ThrowIfCancellationRequested()` when
+     joining an active ambient transaction scope.
 
 3. **Transaction Outbox Post-Commit Dispatch Wake-Up**:
    - Added `onCommitted` hook and `NotifyCommitted()` method in `TransactionOutboxResource.cs`.
@@ -21,7 +22,8 @@
 
 4. **Product Non-Negative Price Validation & Check Constraint**:
    - Added validation `if (currentPrice is < 0) throw new ArgumentOutOfRangeException(...)` in `Product.cs`.
-   - Created migration `022-catalog-current-price-bound.up.sql` and `022-catalog-current-price-bound.down.sql` with check constraint `chk_products_current_price_nonnegative`.
+   - Created migration `022-catalog-current-price-bound.up.sql` and `022-catalog-current-price-bound.down.sql` with
+     check constraint `chk_products_current_price_nonnegative`.
    - Verified via domain tests and repository database check constraint tests.
 
 5. **Migration Composition Manifest Tables Fix**:

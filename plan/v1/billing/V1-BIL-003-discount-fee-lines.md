@@ -19,7 +19,10 @@ Yalnız onaylanmış discount, fee ve tip line type'larını tax ve authorizatio
 
 ## Owned surface
 
-- `src/Modules/Billing/Adjustments/**`, `tests/Modules/Billing/Adjustments/**`, `database/migrations/V1/V1-BIL-003/**`
+- `database/migrations/V1/V1-BIL-003/**`
+- `evidence/V1-BIL-003/**`
+- C71 (2026-08-19) konsolidasyonu: src/Modules/Billing/Adjustments/**ve tests/Modules/Billing/Adjustments/** yüzeyleri
+  V1-BIL-004'e devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

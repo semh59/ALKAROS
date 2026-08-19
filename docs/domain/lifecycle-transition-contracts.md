@@ -31,7 +31,8 @@
 - Table: `Available, Occupied, Reserved, Cleaning, OutOfService` (application-layer
   invariant only, not a DB constraint)
 - InventoryMovement: no state machine — immutable ledger entry;
-  `MovementType: PurchaseReceipt, ProductionOutput, Consumption, Reservation, Release, Waste, Adjustment, Return, Reversal`
+  `MovementType: PurchaseReceipt, ProductionOutput, Consumption, Reservation, Release, Waste, Adjustment, Return,
+Reversal`
 
 PDF:II.5: "Database status values MUST match them exactly." No state, rename or
 deletion outside this list.

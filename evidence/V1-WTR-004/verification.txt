@@ -1,0 +1,23 @@
+TASK ID: V1-WTR-004
+DATE: 2026-08-19
+STATUS: VERIFIED
+
+WAITER PWA OFFLINE QUEUE DISPATCH ACKNOWLEDGMENT:
+- WaiterOfflineQueueEngine: Mandatory serverDispatcher adapter enforced; queue elements are removed only upon verified successful server acknowledgment.
+- On dispatch failure or network error, replay loop halts to preserve FIFO ordering for subsequent dependent requests.
+
+TEST RESULTS:
+- ALKAROS.WaiterPwa.SessionQueue.Tests: 7 passed, 0 failed.
+- ALKAROS.WaiterPwa.OrderEntry.Tests: 4 passed, 0 failed.
+- ALKAROS.WaiterPwa.OrderStatus.Tests: 4 passed, 0 failed.
+- ALKAROS.Cashier.TableShell.Tests: 9 passed, 0 failed.
+- ALKAROS.Cashier.OrderEntry.Tests: 4 passed, 0 failed.
+- ALKAROS.Cashier.OperationsStatus.Tests: 4 passed, 0 failed.
+Total: 32 passed, 0 failed.
+
+ALLOWLIST & SCOPE:
+- src/Clients/WaiterPwa/SessionQueue/**
+- src/Clients/WebPrototype/**
+- tests/Clients/WaiterPwa/SessionQueue/**
+- tools/run_e2e_browser_test.js
+- evidence/V1-WTR-004/**

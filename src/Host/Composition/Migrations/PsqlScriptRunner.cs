@@ -95,12 +95,71 @@ public static class PsqlScriptRunner
         startInfo.ArgumentList.Add("-w");
         startInfo.ArgumentList.Add("-v");
         startInfo.ArgumentList.Add("ON_ERROR_STOP=1");
-        startInfo.ArgumentList.Add("--dbname");
-        startInfo.ArgumentList.Add(options.DatabaseUrl);
+
+        ApplyConnectionSettings(startInfo, options);
+
+        return startInfo;
+    }
+
+    private static void ApplyConnectionSettings(ProcessStartInfo startInfo, PsqlOptions options)
+    {
         if (options.Password is not null)
             startInfo.Environment["PGPASSWORD"] = options.Password;
 
-        return startInfo;
+        var dbUrl = options.DatabaseUrl;
+        if (string.IsNullOrWhiteSpace(dbUrl))
+            return;
+
+        if (Uri.TryCreate(dbUrl, UriKind.Absolute, out var uri)
+            && (string.Equals(uri.Scheme, "postgres", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(uri.Scheme, "postgresql", StringComparison.OrdinalIgnoreCase)))
+        {
+            if (!string.IsNullOrEmpty(uri.Host))
+            {
+                startInfo.Environment["PGHOST"] = uri.Host;
+                startInfo.ArgumentList.Add("-h");
+                startInfo.ArgumentList.Add(uri.Host);
+            }
+
+            if (uri.Port > 0)
+            {
+                var portStr = uri.Port.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                startInfo.Environment["PGPORT"] = portStr;
+                startInfo.ArgumentList.Add("-p");
+                startInfo.ArgumentList.Add(portStr);
+            }
+
+            if (!string.IsNullOrEmpty(uri.UserInfo))
+            {
+                var userParts = uri.UserInfo.Split(':', 2);
+                if (!string.IsNullOrEmpty(userParts[0]))
+                {
+                    var user = Uri.UnescapeDataString(userParts[0]);
+                    startInfo.Environment["PGUSER"] = user;
+                    startInfo.ArgumentList.Add("-U");
+                    startInfo.ArgumentList.Add(user);
+                }
+
+                if (userParts.Length > 1 && !string.IsNullOrEmpty(userParts[1]))
+                {
+                    startInfo.Environment["PGPASSWORD"] = Uri.UnescapeDataString(userParts[1]);
+                }
+            }
+
+            var dbName = uri.AbsolutePath.TrimStart('/');
+            if (!string.IsNullOrEmpty(dbName))
+            {
+                var unescapedDb = Uri.UnescapeDataString(dbName);
+                startInfo.Environment["PGDATABASE"] = unescapedDb;
+                startInfo.ArgumentList.Add("-d");
+                startInfo.ArgumentList.Add(unescapedDb);
+            }
+        }
+        else
+        {
+            startInfo.ArgumentList.Add("-d");
+            startInfo.ArgumentList.Add(dbUrl);
+        }
     }
 
     private static async Task<ScriptExecutionResult> RunProcessAsync(
@@ -136,7 +195,30 @@ public static class PsqlScriptRunner
 
         var stdout = await stdoutTask.ConfigureAwait(false);
         var stderr = await stderrTask.ConfigureAwait(false);
-        return new ScriptExecutionResult(process.ExitCode == 0, stdout, stderr);
+        return new ScriptExecutionResult(
+            process.ExitCode == 0,
+            Redact(stdout),
+            Redact(stderr));
+    }
+
+    public static string Redact(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return input;
+
+        var redacted = System.Text.RegularExpressions.Regex.Replace(
+            input,
+            @"(password\s*=\s*)([^;\s]+)",
+            "$1***",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        redacted = System.Text.RegularExpressions.Regex.Replace(
+            redacted,
+            @"(postgres(?:ql)?://[^:]+:)([^@]+)(@)",
+            "$1***$3",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        return redacted;
     }
 
     /// <summary>

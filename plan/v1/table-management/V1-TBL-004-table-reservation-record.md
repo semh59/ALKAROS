@@ -19,8 +19,10 @@
 
 ## Owned surface
 
-- `src/Modules/Tables/Reservations/**`, `tests/Modules/Tables/Reservations/**`,
-  `database/migrations/V1/V1-TBL-004/**`
+- `database/migrations/V1/V1-TBL-004/**`
+- `evidence/V1-TBL-004/**`
+- C71 (2026-08-19) konsolidasyonu: src/Modules/Tables/Reservations/**ve tests/Modules/Tables/Reservations/** yüzeyleri
+  V1-TBL-007'ye devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

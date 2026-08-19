@@ -94,6 +94,9 @@ public sealed class PostgresSplitDesignRepository : ISplitDesignRepository
 
         foreach (var allocation in allocations)
         {
+            if (allocation.BillId != billId)
+                throw new ArgumentException($"Allocation bill ID '{allocation.BillId}' does not match target bill ID '{billId}'.", nameof(allocations));
+
             await using var insertCommand = new NpgsqlCommand(insertSql, connection, transaction);
             insertCommand.Parameters.AddWithValue("bill_allocation_id", allocation.Id);
             insertCommand.Parameters.AddWithValue("bill_id", allocation.BillId);

@@ -183,7 +183,7 @@
     if (!container) return;
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.innerHTML = `<span>${message}</span>`;
+    toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
     setTimeout(() => {
       toast.style.animation = 'slideInRight 200ms ease reverse';
@@ -887,7 +887,7 @@
     }
 
     if (auditBox) {
-      auditBox.innerHTML = state.auditLogs.map(l => `<div class="log-entry">${l}</div>`).join('');
+      auditBox.innerHTML = state.auditLogs.map(l => `<div class="log-entry">${escapeHtml(l)}</div>`).join('');
     }
   }
 

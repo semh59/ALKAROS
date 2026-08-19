@@ -1,0 +1,18 @@
+TASK ID: V1-FND-025
+DATE: 2026-08-19
+STATUS: VERIFIED
+
+FAIL-CLOSED & DATA-SOURCE BOOTSTRAP:
+- HostComposition: Broad catch and fallback hardcoded credentials removed. Malformed database URLs now fail-closed safely.
+- ModuleRegistry: Standard production modules registered and verified constructible.
+- DataSource disposal and validation verified before and during module composition.
+
+TEST RESULTS:
+- ALKAROS.Host.Tests (70 tests including HostConstructabilityTests and HostModuleReachabilityTests): 70 passed, 0 failed.
+
+ALLOWLIST & SCOPE:
+- src/Host/Composition/HostComposition.cs
+- src/Host/Composition/Modules/ModuleRegistry.cs
+- tests/Host/MigrationComposition/Composition/HostConstructabilityTests.cs
+- tests/Host/MigrationComposition/Composition/HostModuleReachabilityTests.cs
+- evidence/V1-FND-025/**

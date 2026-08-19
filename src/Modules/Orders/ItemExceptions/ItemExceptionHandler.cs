@@ -1,4 +1,4 @@
-﻿namespace ALKAROS.Orders.ItemExceptions;
+namespace ALKAROS.Orders.ItemExceptions;
 
 using System.Text.Json;
 using ALKAROS.Orders.OrderAggregate;
@@ -276,47 +276,39 @@ public sealed class ItemExceptionHandler
         object afterState,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-            await using var cmd = connection.CreateCommand();
-            cmd.CommandText =
-                """
-                INSERT INTO audit.audit_events (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, @event_name, @aggregate_type, @aggregate_id, @actor_id, @actor_type,
-                    @reason, @correlation_id, @causation_id, @before_state_json, @after_state_json,
-                    @metadata_json, @occurred_at
-                );
-                """;
-            cmd.Parameters.AddWithValue("id", Guid.NewGuid());
-            cmd.Parameters.AddWithValue("event_name", eventName);
-            cmd.Parameters.AddWithValue("aggregate_type", "Order");
-            cmd.Parameters.AddWithValue("aggregate_id", orderId);
-            cmd.Parameters.AddWithValue("actor_id", actorId);
-            cmd.Parameters.AddWithValue("actor_type", "User");
-            cmd.Parameters.AddWithValue("reason", reason);
-            cmd.Parameters.AddWithValue("correlation_id", correlationId);
-            cmd.Parameters.AddWithValue("causation_id", DBNull.Value);
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var cmd = connection.CreateCommand();
+        cmd.CommandText =
+            """
+            INSERT INTO audit.audit_events (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, @event_name, @aggregate_type, @aggregate_id, @actor_id, @actor_type,
+                @reason, @correlation_id, @causation_id, @before_state_json, @after_state_json,
+                @metadata_json, @occurred_at
+            );
+            """;
+        cmd.Parameters.AddWithValue("id", Guid.NewGuid());
+        cmd.Parameters.AddWithValue("event_name", eventName);
+        cmd.Parameters.AddWithValue("aggregate_type", "Order");
+        cmd.Parameters.AddWithValue("aggregate_id", orderId);
+        cmd.Parameters.AddWithValue("actor_id", actorId);
+        cmd.Parameters.AddWithValue("actor_type", "User");
+        cmd.Parameters.AddWithValue("reason", reason);
+        cmd.Parameters.AddWithValue("correlation_id", correlationId);
+        cmd.Parameters.AddWithValue("causation_id", DBNull.Value);
 
-            var pBefore = cmd.Parameters.AddWithValue("before_state_json", JsonSerializer.Serialize(beforeState));
-            pBefore.NpgsqlDbType = NpgsqlDbType.Jsonb;
+        var pBefore = cmd.Parameters.AddWithValue("before_state_json", JsonSerializer.Serialize(beforeState));
+        pBefore.NpgsqlDbType = NpgsqlDbType.Jsonb;
 
-            var pAfter = cmd.Parameters.AddWithValue("after_state_json", JsonSerializer.Serialize(afterState));
-            pAfter.NpgsqlDbType = NpgsqlDbType.Jsonb;
+        var pAfter = cmd.Parameters.AddWithValue("after_state_json", JsonSerializer.Serialize(afterState));
+        pAfter.NpgsqlDbType = NpgsqlDbType.Jsonb;
 
-            cmd.Parameters.AddWithValue("metadata_json", DBNull.Value);
-            cmd.Parameters.AddWithValue("occurred_at", DateTimeOffset.UtcNow);
+        cmd.Parameters.AddWithValue("metadata_json", DBNull.Value);
+        cmd.Parameters.AddWithValue("occurred_at", DateTimeOffset.UtcNow);
 
-            await cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (PostgresException)
-        {
-            // Fail open only if audit table does not exist in lightweight test fixtures;
-            // when present in standard environment it persists append-only records.
-        }
+        await cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 }

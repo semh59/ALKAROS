@@ -1,0 +1,26 @@
+TASK ID: V1-TBL-007
+DATE: 2026-08-19
+STATUS: VERIFIED
+
+FAIL-CLOSED AUDIT & TRANSACTION INTEGRITY:
+- Removed 42P01 (undefined_table) exception swallows across PostgresTableTransferRepository, PostgresTableMergeRepository, PostgresTableReservationRepository, and PostgresTablePointerProjector.
+- Audit event insertion and domain writes execute within the same PostgreSQL transaction; failures fail-closed and trigger full rollback.
+
+TEST RESULTS:
+- ALKAROS.Tables.CurrentPointers.Tests: 19 passed, 0 failed.
+- ALKAROS.Tables.Reservations.Tests: 27 passed, 0 failed.
+- ALKAROS.Tables.TableMerge.Tests: 29 passed, 0 failed.
+- ALKAROS.Tables.TableTransfer.Tests: 33 passed, 0 failed.
+- ALKAROS.Tables.TableLifecycle.Tests: 51 passed, 0 failed.
+Total: 159 passed, 0 failed.
+
+ALLOWLIST & SCOPE:
+- src/Modules/Tables/CurrentPointers/**
+- src/Modules/Tables/Reservations/**
+- src/Modules/Tables/TableMerge/**
+- src/Modules/Tables/TableTransfer/**
+- tests/Modules/Tables/CurrentPointers/**
+- tests/Modules/Tables/Reservations/**
+- tests/Modules/Tables/TableMerge/**
+- tests/Modules/Tables/TableTransfer/**
+- evidence/V1-TBL-007/**

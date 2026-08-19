@@ -183,6 +183,12 @@
       "phase": "B",
       "tables": ["daily_business_days", "waiter_performance_summaries", "print_error_summaries"],
       "deferredConstraints": []
+    },
+    {
+      "id": "032",
+      "phase": "B",
+      "tables": ["bill_items", "bill_allocations", "bill_adjustments"],
+      "deferredConstraints": []
     }
   ]
 }

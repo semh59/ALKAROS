@@ -299,18 +299,17 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
             }
         }
 
-        // Check bill_allocations table
-        try
-        {
-            const string checkAllocationsSql = $"""
-                SELECT ba.bill_id
-                FROM {BillAllocationsTable} ba
-                JOIN {BillsTable} b ON ba.bill_id = b.bill_id
-                WHERE b.table_id = ANY(@table_ids) AND b.status NOT IN ('Paid', 'Cancelled')
-                LIMIT 1;
-                """;
+        // 3. Precondition: Check bill_allocations table (AUD-01: Fail-Closed)
+        const string checkAllocationsSql = $"""
+            SELECT ba.bill_id
+            FROM {BillAllocationsTable} ba
+            JOIN {BillsTable} b ON ba.bill_id = b.bill_id
+            WHERE b.table_id = ANY(@table_ids) AND b.status NOT IN ('Paid', 'Cancelled')
+            LIMIT 1;
+            """;
 
-            await using var cmd = new NpgsqlCommand(checkAllocationsSql, connection, transaction);
+        await using (var cmd = new NpgsqlCommand(checkAllocationsSql, connection, transaction))
+        {
             cmd.Parameters.AddWithValue("table_ids", allTableIds.ToArray());
             var allocBillId = await cmd.ExecuteScalarAsync(cancellationToken);
             if (allocBillId is not null and not DBNull)
@@ -320,10 +319,6 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
                     billId,
                     $"Bill '{billId}' has split allocations in {BillAllocationsTable}. Table merge with allocations requires V1.2 payment policy.");
             }
-        }
-        catch (PostgresException ex) when (ex.SqlState == "42P01")
-        {
-            // Table does not exist in minimal fixture; continue
         }
 
         // 4. Consolidate and reparent Orders and Bills from participants to Primary Table
@@ -518,53 +513,52 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
             newPrimaryRowVersion = (long)result;
         }
 
-        // 6. Append Audit Event to audit.audit_events
-        try
+        // 6. Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
+        const string insertAuditSql = $"""
+            INSERT INTO {AuditEventsTable} (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, 'Table.Merged', 'Table', @primary_id, @actor_id, 'User',
+                @reason, @correlation_id, NULL, @before_state_json, @after_state_json,
+                @metadata_json, @occurred_at
+            );
+            """;
+
+        var beforeState = new
         {
-            const string insertAuditSql = $"""
-                INSERT INTO {AuditEventsTable} (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, 'Table.Merged', 'Table', @primary_id, @actor_id, 'User',
-                    @reason, @correlation_id, NULL, @before_state_json, @after_state_json,
-                    @metadata_json, @occurred_at
-                );
-                """;
-
-            var beforeState = new
+            PrimaryTableId = request.PrimaryTableId,
+            PrimaryStatus = primaryStatus,
+            PrimaryRowVersion = primaryRowVersion,
+            Participants = participantData.Select(kvp => new
             {
-                PrimaryTableId = request.PrimaryTableId,
-                PrimaryStatus = primaryStatus,
-                PrimaryRowVersion = primaryRowVersion,
-                Participants = participantData.Select(kvp => new
-                {
-                    TableId = kvp.Key,
-                    Status = kvp.Value.Status,
-                    RowVersion = kvp.Value.RowVersion
-                })
-            };
+                TableId = kvp.Key,
+                Status = kvp.Value.Status,
+                RowVersion = kvp.Value.RowVersion
+            })
+        };
 
-            var afterState = new
-            {
-                MergeGroupId = mergeGroupId,
-                PrimaryTableId = request.PrimaryTableId,
-                NewPrimaryRowVersion = newPrimaryRowVersion,
-                NewParticipantRowVersions = newParticipantRowVersions,
-                ConsolidatedOrderIds = allConsolidatedOrderIds,
-                ConsolidatedBillIds = allConsolidatedBillIds
-            };
+        var afterState = new
+        {
+            MergeGroupId = mergeGroupId,
+            PrimaryTableId = request.PrimaryTableId,
+            NewPrimaryRowVersion = newPrimaryRowVersion,
+            NewParticipantRowVersions = newParticipantRowVersions,
+            ConsolidatedOrderIds = allConsolidatedOrderIds,
+            ConsolidatedBillIds = allConsolidatedBillIds
+        };
 
-            var metadata = new
-            {
-                MergeGroupId = mergeGroupId,
-                TableMergeIds = tableMergeIds,
-                Reason = request.Reason,
-                MergedBy = request.MergedBy
-            };
+        var metadata = new
+        {
+            MergeGroupId = mergeGroupId,
+            TableMergeIds = tableMergeIds,
+            Reason = request.Reason,
+            MergedBy = request.MergedBy
+        };
 
-            await using var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction);
+        await using (var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction))
+        {
             auditCmd.Parameters.AddWithValue("id", Guid.NewGuid());
             auditCmd.Parameters.AddWithValue("primary_id", request.PrimaryTableId);
             auditCmd.Parameters.AddWithValue("actor_id", request.MergedBy);
@@ -583,10 +577,6 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
             auditCmd.Parameters.AddWithValue("occurred_at", now);
 
             await auditCmd.ExecuteNonQueryAsync(cancellationToken);
-        }
-        catch (PostgresException ex) when (ex.SqlState == "42P01")
-        {
-            // audit_events table does not exist in minimal fixture
         }
 
         await transaction.CommitAsync(cancellationToken);
@@ -870,31 +860,30 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
             newPrimaryRowVersion = (long)result;
         }
 
-        // 7. Append Audit Event to audit.audit_events
-        try
+        // 7. Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
+        const string insertAuditSql = $"""
+            INSERT INTO {AuditEventsTable} (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, 'Table.Unmerged', 'Table', @primary_id, @actor_id, 'User',
+                @reason, @correlation_id, NULL, @before_state_json, @after_state_json,
+                @metadata_json, @occurred_at
+            );
+            """;
+
+        var metadata = new
         {
-            const string insertAuditSql = $"""
-                INSERT INTO {AuditEventsTable} (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, 'Table.Unmerged', 'Table', @primary_id, @actor_id, 'User',
-                    @reason, @correlation_id, NULL, @before_state_json, @after_state_json,
-                    @metadata_json, @occurred_at
-                );
-                """;
+            MergeGroupId = request.MergeGroupId,
+            Reason = request.Reason,
+            UnmergedBy = request.UnmergedBy,
+            RestoredOrderIds = restoredOrderIds,
+            RestoredBillIds = restoredBillIds
+        };
 
-            var metadata = new
-            {
-                MergeGroupId = request.MergeGroupId,
-                Reason = request.Reason,
-                UnmergedBy = request.UnmergedBy,
-                RestoredOrderIds = restoredOrderIds,
-                RestoredBillIds = restoredBillIds
-            };
-
-            await using var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction);
+        await using (var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction))
+        {
             auditCmd.Parameters.AddWithValue("id", Guid.NewGuid());
             auditCmd.Parameters.AddWithValue("primary_id", primaryTableId);
             auditCmd.Parameters.AddWithValue("actor_id", request.UnmergedBy);
@@ -910,10 +899,6 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
             auditCmd.Parameters.AddWithValue("occurred_at", now);
 
             await auditCmd.ExecuteNonQueryAsync(cancellationToken);
-        }
-        catch (PostgresException ex) when (ex.SqlState == "42P01")
-        {
-            // Audit table does not exist in minimal fixture
         }
 
         await transaction.CommitAsync(cancellationToken);

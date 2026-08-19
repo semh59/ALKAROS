@@ -27,11 +27,8 @@ yürütülür; V1-IAM-008 kendi kod sahibi olarak kalır ve bu görevin yüzeyin
 - `src/Modules/Identity/Authentication/AuthenticationService.cs`
 - `src/Modules/Identity/Authentication/LoginResult.cs`
 - `src/Modules/Identity/Authentication/SessionTokenIssuer.cs`
-- `src/Modules/Identity/DeviceSessions/DeviceSessionService.cs`
 - `src/Modules/Catalog/ProductCatalog/Product.cs`
 - `src/Modules/Catalog/ProductCatalog/PostgresProductRepository.cs`
-- `database/MigrationComposition/order.json`
-- `tests/Modules/Identity/DeviceSessions/DeviceSessionServiceTests.cs`
 - `tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs`
 - `tests/Modules/Identity/Authentication/AuthenticationServiceTests.cs`
 - `tests/Modules/Identity/Authentication/AuthenticationTimingContractTests.cs`
@@ -41,6 +38,8 @@ yürütülür; V1-IAM-008 kendi kod sahibi olarak kalır ve bu görevin yüzeyin
 - `database/migrations/V1/V1-CAT-003/022-catalog-current-price-bound.up.sql`
 - `database/migrations/V1/V1-CAT-003/022-catalog-current-price-bound.down.sql`
 - `evidence/V1-RMD-001/**`
+- C71 (2026-08-19) konsolidasyonu: order.json V1-BIL-004'e, DeviceSessionService.cs ve DeviceSessionServiceTests.cs
+  V1-IAM-015'e devredildi; bu historical task closed kalır.
 
 ## In scope
 

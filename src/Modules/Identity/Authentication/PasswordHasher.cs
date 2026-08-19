@@ -66,7 +66,8 @@ public sealed class PasswordHasher
     /// <summary>
     /// Verifies <paramref name="password"/> against a previously produced
     /// encoded hash. The encoded hash carries its own iteration count, so
-    /// re-hashing with the current default is never required.
+    /// re-hashing with the current default is never required for authentication,
+    /// though callers can use <see cref="NeedsRehash"/> to upgrade stored hashes.
     /// </summary>
     public static bool Verify(string password, string encodedHash)
     {
@@ -80,6 +81,18 @@ public sealed class PasswordHasher
             password, salt, iterations, HashAlgorithmName.SHA256, expectedHash.Length);
 
         return CryptographicOperations.FixedTimeEquals(actualHash, expectedHash);
+    }
+
+    /// <summary>
+    /// Checks whether an encoded hash was produced with a lower iteration count
+    /// than the current <see cref="DefaultIterations"/> or needs upgrading.
+    /// </summary>
+    public static bool NeedsRehash(string encodedHash)
+    {
+        if (string.IsNullOrWhiteSpace(encodedHash))
+            return true;
+
+        return !TryParse(encodedHash, out var iterations, out _, out _) || iterations < DefaultIterations;
     }
 
     private static bool TryParse(

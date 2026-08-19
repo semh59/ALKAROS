@@ -13,6 +13,16 @@ namespace ALKAROS.Host.Composition.Modules;
 public static class ModuleRegistry
 {
     /// <summary>
+    /// The default executable module catalog containing every standard production ALKAROS module.
+    /// </summary>
+    public static readonly IReadOnlyList<Type> DefaultCatalog = [
+        typeof(ALKAROS.Orders.OrderAggregate.OrdersModule),
+        typeof(ALKAROS.Billing.BillFoundation.BillingModule),
+        typeof(ALKAROS.Catalog.ProductCatalog.CatalogModule),
+        typeof(ALKAROS.Tables.TableLifecycle.TablesModule)
+    ];
+
+    /// <summary>
     /// Returns every candidate <see cref="IModule"/> type declared in the
     /// scanned ALKAROS assemblies, in deterministic assembly order.
     /// </summary>

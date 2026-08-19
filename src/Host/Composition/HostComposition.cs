@@ -3,6 +3,7 @@ using ALKAROS.Host.Composition.Migrations;
 using ALKAROS.Host.Composition.Modules;
 using ALKAROS.ModuleComposition;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace ALKAROS.Host.Composition;
 
@@ -17,7 +18,8 @@ public sealed record HostCompositionOptions(
     string OrderManifestPath,
     string MigrationsDirectory,
     PsqlOptions Psql,
-    string? RollbackMigrationId = null);
+    string? RollbackMigrationId = null,
+    NpgsqlDataSource? DataSource = null);
 
 /// <summary>
 /// The single composition surface of the executable host: composes the
@@ -34,7 +36,12 @@ public static class HostComposition
         TextWriter output,
         CancellationToken cancellationToken = default)
     {
-        using var services = ComposeModules(output);
+        using var createdDataSource = options.DataSource is null
+            ? TryCreateDataSource(options.Psql)
+            : null;
+        var effectiveDataSource = options.DataSource ?? createdDataSource;
+
+        using var services = ComposeModules(output, dataSource: effectiveDataSource);
         if (services is null)
             return HostExitCode.StartupFailed;
 
@@ -86,7 +93,7 @@ public static class HostComposition
                 ? $"  [{step.Id}] applied ({step.FilePath})"
                 : $"  [{step.Id}] FAILED ({step.FilePath})");
             if (!step.Success && !string.IsNullOrWhiteSpace(step.StandardError))
-                output.WriteLine($"      {step.StandardError.Trim()}");
+                output.WriteLine($"      {PsqlScriptRunner.Redact(step.StandardError.Trim())}");
         }
 
         if (!result.AllApplied)
@@ -142,7 +149,7 @@ public static class HostComposition
             ? $"  [{step.Id}] rolled back ({step.FilePath})"
             : $"  [{step.Id}] ROLLBACK FAILED ({step.FilePath})");
         if (!step.Success && !string.IsNullOrWhiteSpace(step.StandardError))
-            output.WriteLine($"      {step.StandardError.Trim()}");
+            output.WriteLine($"      {PsqlScriptRunner.Redact(step.StandardError.Trim())}");
 
         return step.Success
             ? HostExitCode.Success
@@ -162,7 +169,8 @@ public static class HostComposition
     /// </summary>
     public static ServiceProvider? ComposeModules(
         TextWriter output,
-        IEnumerable<Type>? moduleTypes = null)
+        IEnumerable<Type>? moduleTypes = null,
+        NpgsqlDataSource? dataSource = null)
     {
         ArgumentNullException.ThrowIfNull(output);
 
@@ -175,20 +183,17 @@ public static class HostComposition
             }
             else
             {
-                var hostAssembly = typeof(HostComposition).Assembly;
-                var assemblies = new List<Assembly> { hostAssembly };
-                foreach (var name in hostAssembly.GetReferencedAssemblies())
-                {
-                    if (name.Name?.StartsWith("ALKAROS.", StringComparison.Ordinal) == true)
-                        assemblies.Add(Assembly.Load(name));
-                }
-
-                discovered = ModuleRegistry.Discover(assemblies);
+                discovered = ModuleRegistry.DefaultCatalog;
             }
 
             var root = ModuleRegistry.ComposeRoot(discovered);
 
             var services = new ServiceCollection();
+            if (dataSource is not null)
+            {
+                services.AddSingleton(dataSource);
+            }
+
             foreach (var descriptor in root.Services)
                 AddRegistration(services, descriptor);
 
@@ -255,5 +260,29 @@ public static class HostComposition
             output.WriteLine($"Migration discovery error: {ex.Message}");
             return null;
         }
+    }
+
+    private static NpgsqlDataSource? TryCreateDataSource(PsqlOptions? psql)
+    {
+        if (psql is null || string.IsNullOrWhiteSpace(psql.DatabaseUrl))
+            return null;
+
+        var url = psql.DatabaseUrl;
+        if (url.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
+            url.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
+        {
+            var uri = new Uri(url);
+            var builder = new NpgsqlConnectionStringBuilder
+            {
+                Host = string.IsNullOrEmpty(uri.Host) ? "localhost" : uri.Host,
+                Port = uri.Port > 0 ? uri.Port : 5432,
+                Database = string.IsNullOrEmpty(uri.AbsolutePath.TrimStart('/')) ? "alkaros" : uri.AbsolutePath.TrimStart('/'),
+                Username = !string.IsNullOrEmpty(uri.UserInfo) ? uri.UserInfo.Split(':')[0] : "postgres",
+                Password = psql.Password
+            };
+            return NpgsqlDataSource.Create(builder.ConnectionString);
+        }
+
+        return NpgsqlDataSource.Create(url);
     }
 }

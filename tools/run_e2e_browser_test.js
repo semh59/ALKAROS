@@ -203,7 +203,8 @@ async function runAllTests() {
 
   await client.eval('document.querySelector(".btn-wtr-qty-dec").click()');
   await sleep(300);
-  assert('Garson Sepetinde Kalem Adedi Azaltıldı (-)', true);
+  const wtrQty1 = await client.eval('document.getElementById("wtr-cart-items").innerText.includes("1") || !document.getElementById("wtr-cart-items").innerText.includes("2")');
+  assert('Garson Sepetinde Kalem Adedi Azaltıldı (-)', wtrQty1);
 
   // Test 6: Waiter Status (Fişler) Tab
   await client.eval('document.getElementById("wtr-nav-status").click()');
@@ -231,7 +232,8 @@ async function runAllTests() {
 
   await client.eval('document.querySelector(\'button[data-station="all"]\').click()');
   await sleep(300);
-  assert('İstasyon Filtresi: Tüm İstasyonlara Geri Dönüldü', true);
+  const allTickets = await client.eval('document.getElementById("ops-tickets-feed").children.length >= 2');
+  assert('İstasyon Filtresi: Tüm İstasyonlara Geri Dönüldü', allTickets);
 
   // Test 8: Live Kitchen Counter Sync
   const kitchenBadgeNum = await client.eval('parseInt(document.getElementById("badge-kitchen-count").textContent, 10)');

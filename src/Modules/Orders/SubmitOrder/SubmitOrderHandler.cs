@@ -162,7 +162,9 @@ public sealed class SubmitOrderHandler
                     ON CONFLICT (client_id, operation_id)
                     DO UPDATE SET request_hash = EXCLUDED.request_hash,
                                   response_envelope = EXCLUDED.response_envelope,
-                                  expires_at = EXCLUDED.expires_at;
+                                  expires_at = EXCLUDED.expires_at
+                    WHERE idempotency_keys.request_hash = EXCLUDED.request_hash
+                       OR idempotency_keys.expires_at <= now();
                     """;
                 saveIdempotencyCommand.Parameters.AddWithValue("client_id", command.ClientId);
                 saveIdempotencyCommand.Parameters.AddWithValue("operation_id", command.OperationId);
@@ -170,7 +172,11 @@ public sealed class SubmitOrderHandler
                 saveIdempotencyCommand.Parameters.AddWithValue("response_envelope", responseEnvelope);
                 saveIdempotencyCommand.Parameters.AddWithValue("retention_seconds", _idempotencyRetention.TotalSeconds);
 
-                await saveIdempotencyCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                var affected = await saveIdempotencyCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                if (affected == 0)
+                {
+                    throw new SubmitOrderIdempotencyConflictException(command.ClientId, command.OperationId);
+                }
             }
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);

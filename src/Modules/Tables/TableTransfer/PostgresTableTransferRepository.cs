@@ -245,9 +245,8 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             LIMIT 1;
             """;
 
-        try
+        await using (var cmd = new NpgsqlCommand(selectAllocationsSql, connection, transaction))
         {
-            await using var cmd = new NpgsqlCommand(selectAllocationsSql, connection, transaction);
             cmd.Parameters.AddWithValue("source_id", request.SourceTableId);
             var allocBillId = await cmd.ExecuteScalarAsync(cancellationToken);
             if (allocBillId is not null and not DBNull)
@@ -257,10 +256,6 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
                     billId,
                     $"Bill '{billId}' has split/payment allocations. Table transfer requires V1.2 payment policy.");
             }
-        }
-        catch (PostgresException ex) when (ex.SqlState == "42P01") // undefined_table if bill_allocations not created in fixture
-        {
-            // Table doesn't exist in minimal test fixture; continue
         }
 
         // 4. Find open orders on Source Table
@@ -396,55 +391,54 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             await cmd.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        // 11. Append Audit Event to audit.audit_events in the same atomic transaction
-        try
+        // 10. Persist Audit Event in the SAME transaction (AUD-01: Fail-Closed)
+        const string insertAuditSql = $"""
+            INSERT INTO {AuditEventsTable} (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, @event_name, @aggregate_type, @aggregate_id, @actor_id, @actor_type,
+                @reason, @correlation_id, @causation_id, @before_state_json, @after_state_json,
+                @metadata_json, @occurred_at
+            );
+            """;
+
+        var beforeState = new
         {
-            const string insertAuditSql = $"""
-                INSERT INTO {AuditEventsTable} (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, @event_name, @aggregate_type, @aggregate_id, @actor_id, @actor_type,
-                    @reason, @correlation_id, @causation_id, @before_state_json, @after_state_json,
-                    @metadata_json, @occurred_at
-                );
-                """;
+            SourceTableId = request.SourceTableId,
+            SourceStatus = sourceStatus,
+            SourceRowVersion = sourceRowVersion,
+            TargetTableId = request.TargetTableId,
+            TargetStatus = targetStatus,
+            TargetRowVersion = targetRowVersion,
+            OrderIds = activeOrderIds,
+            BillIds = activeBillIds
+        };
 
-            var beforeState = new
-            {
-                SourceTableId = request.SourceTableId,
-                SourceStatus = sourceStatus,
-                SourceRowVersion = sourceRowVersion,
-                TargetTableId = request.TargetTableId,
-                TargetStatus = targetStatus,
-                TargetRowVersion = targetRowVersion,
-                OrderIds = activeOrderIds,
-                BillIds = activeBillIds
-            };
+        var afterState = new
+        {
+            SourceTableId = request.SourceTableId,
+            SourceStatus = "Available",
+            SourceRowVersion = newSourceRowVersion,
+            TargetTableId = request.TargetTableId,
+            TargetStatus = "Occupied",
+            TargetRowVersion = newTargetRowVersion,
+            PrimaryOrderId = primaryOrderId,
+            PrimaryBillId = primaryBillId,
+            TransferredOrderIds = activeOrderIds,
+            TransferredBillIds = activeBillIds
+        };
 
-            var afterState = new
-            {
-                SourceTableId = request.SourceTableId,
-                SourceStatus = "Available",
-                SourceRowVersion = newSourceRowVersion,
-                TargetTableId = request.TargetTableId,
-                TargetStatus = "Occupied",
-                TargetRowVersion = newTargetRowVersion,
-                PrimaryOrderId = primaryOrderId,
-                PrimaryBillId = primaryBillId,
-                TransferredOrderIds = activeOrderIds,
-                TransferredBillIds = activeBillIds
-            };
+        var metadata = new
+        {
+            TransferId = transferId,
+            Reason = request.Reason,
+            TransferredBy = request.TransferredBy
+        };
 
-            var metadata = new
-            {
-                TransferId = transferId,
-                Reason = request.Reason,
-                TransferredBy = request.TransferredBy
-            };
-
-            await using var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction);
+        await using (var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction))
+        {
             auditCmd.Parameters.AddWithValue("id", Guid.NewGuid());
             auditCmd.Parameters.AddWithValue("event_name", "Table.Transferred");
             auditCmd.Parameters.AddWithValue("aggregate_type", "Table");
@@ -467,10 +461,6 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             auditCmd.Parameters.AddWithValue("occurred_at", now);
 
             await auditCmd.ExecuteNonQueryAsync(cancellationToken);
-        }
-        catch (PostgresException ex) when (ex.SqlState == "42P01") // undefined_table
-        {
-            // If audit_events table is not present in lightweight test fixture, continue
         }
 
         await transaction.CommitAsync(cancellationToken);

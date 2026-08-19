@@ -38,7 +38,8 @@ Payment, fiscal, invoice ve webhook payload'larının saklama, şifreleme, maske
 - Kapsam genişletme onayı (2026-07-31 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı.
 - Bu görev provider payload schema veya business retention süresi belirleyemez.
-- C52 immutable SensitivePayload classification surface is transferred to V1-SEC-005; this historical task remains closed.
+- C52 immutable SensitivePayload classification surface is transferred to V1-SEC-005; this historical task remains
+  closed.
 
 ## In scope
 

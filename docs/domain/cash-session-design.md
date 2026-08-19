@@ -8,27 +8,33 @@
 
 ## 1. Context and Problem Statement
 
-In POS restaurant operations, cash drawer management requires strict physical and logical controls to prevent unrecorded transactions, cash variance leakage, and unauthorized register drawer operations.
+In POS restaurant operations, cash drawer management requires strict physical and logical controls to prevent unrecorded
+transactions, cash variance leakage, and unauthorized register drawer operations.
 
-Prior to implementing physical database persistence and payment integration in **V1.2**, this document formalizes the binding contracts, state machines, terminal ownership models, variance formulas, and permission boundaries for `CashSession`.
+Prior to implementing physical database persistence and payment integration in **V1.2**, this document formalizes the
+binding contracts, state machines, terminal ownership models, variance formulas, and permission boundaries for
+`CashSession`.
 
 ---
 
 ## 2. Terminal and Cashier Ownership Invariants
 
 1. **Single Active Open Session per Terminal (Invariant CSH-INV-01):**
-   - A POS terminal / workstation (`terminal_id`) can have **at most one** cash session in an active state (`Open`, `Counting`, or `Closing`) at any given moment.
-   - A new session cannot be opened on a terminal until the previous session on that terminal reaches `Closed` or `Reconciled` status.
+   - A POS terminal / workstation (`terminal_id`) can have **at most one** cash session in an active state (`Open`,
+     `Counting`, or `Closing`) at any given moment.
+   - A new session cannot be opened on a terminal until the previous session on that terminal reaches `Closed` or
+     `Reconciled` status.
 
 2. **Cashier Assignment and Responsibility (Invariant CSH-INV-02):**
    - Each cash session is initiated by a specific cashier (`cashier_user_id`).
-   - If a shift hand-over occurs, the current session MUST be closed (with physical count) and a new session opened by the incoming cashier.
+   - If a shift hand-over occurs, the current session MUST be closed (with physical count) and a new session opened by
+     the incoming cashier.
 
 ---
 
 ## 3. CashSession Lifecycle State Machine
 
-```
+```text
               ┌───────────────────────────────────────────────────┐
               │                                                   │
               ▼                                                   │
@@ -47,27 +53,35 @@ Prior to implementing physical database persistence and payment integration in *
                                         [ RECONCILED ]
 ```
 
-### Canonical State Definitions (`PDF:II.5.9`, `PDF:III.9.1`):
+### Canonical State Definitions (`PDF:II.5.9`, `PDF:III.9.1`)
+
 - **`Open`**: The session is active and accepting cash sales, cash-in, cash-out, and cash refunds.
-- **`Counting`**: Shift end initiated; cash register is locked from new transactions while physical cash denomination counting takes place (`cash_counts`).
+- **`Counting`**: Shift end initiated; cash register is locked from new transactions while physical cash denomination
+  counting takes place (`cash_counts`).
 - **`Closing`**: Cash counting is complete. The system calculates `expected_cash`, `actual_cash`, and `difference`.
 - **`Closed`**: Session is sealed. No further counts or balance modifications are permitted.
-- **`Reconciled`**: Daily finance / accounting audit has matched the session totals with fiscal Z-reports and bank deposits.
+- **`Reconciled`**: Daily finance / accounting audit has matched the session totals with fiscal Z-reports and bank
+  deposits.
 
 ---
 
 ## 4. Financial Calculations and Invariants
 
-### Formulas:
-$$\text{ExpectedCash} = \text{OpeningBalance} + \sum \text{CashIn} + \sum \text{CashSales} - \sum \text{CashOut} - \sum \text{CashRefunds}$$
+### Formulas
+
+$$\text{ExpectedCash} = \text{OpeningBalance} + \sum \text{CashIn} + \sum \text{CashSales} - \sum \text{CashOut} - \sum
+\text{CashRefunds}$$
 
 $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
 
-### Invariants:
+### Invariants
+
 - **`OpeningBalance >= 0`**: Negative opening float is strictly prohibited.
 - **`ActualCash >= 0`**: Physical counted cash cannot be negative.
 - **Variance Handling (`Difference != 0`)**:
-  - If $|\text{Difference}| > \text{VarianceToleranceThreshold}$ (e.g. 50.00 TL), standard cashier close is blocked; **Supervisor approval** (`ManagerForceCloseSession` / `CashierSupervisorOverride`) is required with an explicit reason logged to audit trail.
+  - If $|\text{Difference}| > \text{VarianceToleranceThreshold}$ (e.g. 50.00 TL), standard cashier close is blocked;
+    **Supervisor approval** (`ManagerForceCloseSession` / `CashierSupervisorOverride`) is required with an explicit
+    reason logged to audit trail.
 
 ---
 
@@ -98,7 +112,7 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
 
 ## 7. Downstream Dependency Roadmap (Why Implementation Waits for V1.2)
 
-```
+```text
 V1-CSH-001 (Design & Contracts) [Current Task]
        │
        ▼
@@ -109,4 +123,6 @@ V1.2 Implementation Milestone:
        └── V12-PAY-001: Integration with Multi-Tender Payment Aggregate
 ```
 
-**Rationale:** The execution of cash transactions requires atomic coordination with the **Payments Aggregate** (`V12-PAY-001`) and fiscal printer closure gates (`V12-FSC-002`). Implementing database tables prematurely in V1 without the payment executor would create orphan state and risk divergence.
+**Rationale:** The execution of cash transactions requires atomic coordination with the **Payments Aggregate**
+(`V12-PAY-001`) and fiscal printer closure gates (`V12-FSC-002`). Implementing database tables prematurely in V1 without
+the payment executor would create orphan state and risk divergence.

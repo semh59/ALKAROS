@@ -19,7 +19,9 @@ Authoritative source ilişkilerinden current Order/Bill pointer projection'ları
 
 ## Owned surface
 
-- `src/Modules/Tables/CurrentPointers/**`, `tests/Modules/Tables/CurrentPointers/**`
+- `evidence/V1-TBL-005/**`
+- C71 (2026-08-19) konsolidasyonu: src/Modules/Tables/CurrentPointers/**ve tests/Modules/Tables/CurrentPointers/**
+  yüzeyleri V1-TBL-007'ye devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

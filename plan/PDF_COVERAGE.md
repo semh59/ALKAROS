@@ -3,7 +3,7 @@
 > Bu dosya artık aktif güncellenmiyor; geçmiş kayıt olarak tutulur.
 > Yeni task'lar için bu dosyayı güncellemeyi durdur. (`TRACEABILITY.md` C69,
 > remediasyon Faz 2.4.)
-
+>
 > **Aşama 2 notu (`TRACEABILITY.md` C67):** Bu matris süreç sadeleştirmesi
 > onayından etkilenmez; satır birimleri, hash'ler ve owner dağılımı aynen
 > korunur. Coverage davranışı değişmez. Bu matris PDF current authority
@@ -23,7 +23,8 @@ matristeki metin hücresi de aynı tam içeriği taşır.
 ## Doğrulanan belge kusurları
 
 - `FIND-PDF-001`: Sayfa 2 belge haritası `II.0-II.16` der; Part II gerçekte `II.15` ile biter.
-- `FIND-PDF-002` / `CORR:C8`: Sayfa 25 `I.46` başlangıç listesini 14 sayar; sayfa 90-91 doğru sayının 13 olduğunu kanıtlar.
+- `FIND-PDF-002` / `CORR:C8`: Sayfa 25 `I.46` başlangıç listesini 14 sayar; sayfa 90-91 doğru sayının 13 olduğunu
+  kanıtlar.
 - Bu iki bulgu text extraction yanında render edilmiş sayfalarda da görsel olarak doğrulanmıştır.
 
 ## Numara başlık matrisi

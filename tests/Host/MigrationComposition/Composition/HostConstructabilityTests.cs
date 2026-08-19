@@ -46,6 +46,42 @@ public sealed class HostConstructabilityTests
         Assert.Contains("BrokenGraphLeaf", message, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void ComposeModulesWithDataSourceConstructsDatabaseDependentServices()
+    {
+        using var output = new StringWriter();
+        using var dataSource = Npgsql.NpgsqlDataSource.Create("Host=localhost;Database=alkaros_test");
+        using var provider = HostComposition.ComposeModules(
+            output,
+            moduleTypes: [typeof(DatabaseDependentModule)],
+            dataSource: dataSource);
+
+        Assert.NotNull(provider);
+        Assert.Contains(
+            "Modules composed: 1 service(s) registered.",
+            output.ToString(),
+            StringComparison.Ordinal);
+
+        var repo = provider.GetRequiredService<IDatabaseRepository>();
+        Assert.NotNull(repo);
+        Assert.Same(dataSource, ((DatabaseRepository)repo).DataSource);
+    }
+
+    [Fact]
+    public void ComposeModulesWithoutDataSourceFailsWhenModuleRequiresDataSource()
+    {
+        using var output = new StringWriter();
+        var provider = HostComposition.ComposeModules(
+            output,
+            moduleTypes: [typeof(DatabaseDependentModule)],
+            dataSource: null);
+
+        Assert.Null(provider);
+        var message = output.ToString();
+        Assert.Contains("Module composition failed:", message, StringComparison.Ordinal);
+        Assert.Contains("NpgsqlDataSource", message, StringComparison.Ordinal);
+    }
+
     private interface IGraphLeaf
     {
     }
@@ -111,5 +147,29 @@ public sealed class HostConstructabilityTests
 
         public void Register(ModuleContext context) => context
             .RegisterSingleton<IBrokenGraphService, BrokenGraphLeaf>();
+    }
+
+    private interface IDatabaseRepository
+    {
+    }
+
+    private sealed class DatabaseRepository : IDatabaseRepository
+    {
+        public Npgsql.NpgsqlDataSource DataSource { get; }
+
+        public DatabaseRepository(Npgsql.NpgsqlDataSource dataSource)
+        {
+            DataSource = dataSource;
+        }
+    }
+
+    private sealed class DatabaseDependentModule : IModule
+    {
+        public string Id => "DatabaseDependentModule";
+        public string DisplayName => "DatabaseDependentModule";
+        public IReadOnlyCollection<string> DependsOn => Array.Empty<string>();
+
+        public void Register(ModuleContext context) => context
+            .RegisterTransient<IDatabaseRepository, DatabaseRepository>();
     }
 }

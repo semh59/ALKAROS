@@ -101,17 +101,25 @@ public sealed class PostgresDeviceSessionRepository : IDeviceSessionRepository
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public async Task AddProcessedOperationsAsync(Guid sessionId, IReadOnlyList<PendingOperation> operations, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Guid>> AddProcessedOperationsAsync(Guid sessionId, IReadOnlyList<PendingOperation> operations, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(operations);
         if (operations.Count == 0)
-            return;
+            return Array.Empty<Guid>();
 
+        var inserted = new List<Guid>();
         await using var command = _dataSource.CreateCommand(
             $"""
             INSERT INTO {Operations} (operation_id, session_id, queued_at)
-            VALUES (@operation_id, @session_id, @queued_at)
-            ON CONFLICT (operation_id) DO NOTHING;
+            SELECT @operation_id, @session_id, @queued_at
+            WHERE EXISTS (
+                SELECT 1 FROM {Sessions}
+                WHERE session_id = @session_id
+                  AND revoked_at IS NULL
+                  AND expires_at > now()
+            )
+            ON CONFLICT (operation_id) DO NOTHING
+            RETURNING operation_id;
             """);
         command.Parameters.Add("operation_id", NpgsqlDbType.Uuid);
         command.Parameters.Add("session_id", NpgsqlDbType.Uuid);
@@ -122,8 +130,14 @@ public sealed class PostgresDeviceSessionRepository : IDeviceSessionRepository
             command.Parameters["operation_id"].Value = operation.OperationId;
             command.Parameters["session_id"].Value = sessionId;
             command.Parameters["queued_at"].Value = operation.QueuedAt;
-            await command.ExecuteNonQueryAsync(cancellationToken);
+            var result = await command.ExecuteScalarAsync(cancellationToken);
+            if (result is Guid returnedId)
+            {
+                inserted.Add(returnedId);
+            }
         }
+
+        return inserted;
     }
 
     public async Task<IReadOnlyList<Guid>> GetProcessedOperationIdsAsync(CancellationToken cancellationToken = default)

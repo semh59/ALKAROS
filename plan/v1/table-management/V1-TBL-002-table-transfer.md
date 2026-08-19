@@ -20,8 +20,10 @@ History'yi koruyarak open operational Order/Bill ilişkisini Table'lar arasında
 
 ## Owned surface
 
-- `src/Modules/Tables/TableTransfer/**`, `tests/Modules/Tables/TableTransfer/**`,
-  `database/migrations/V1/V1-TBL-002/**`
+- `database/migrations/V1/V1-TBL-002/**`
+- `evidence/V1-TBL-002/**`
+- C71 (2026-08-19) konsolidasyonu: src/Modules/Tables/TableTransfer/**ve tests/Modules/Tables/TableTransfer/** yüzeyleri
+  V1-TBL-007'ye devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

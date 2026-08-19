@@ -1,6 +1,7 @@
 # V0-GOV-044 — before/after rule ledger
 
-Ölçüm komutu: `npx markdownlint-cli2@0.23.2` (config `.markdownlint-cli2.jsonc`, globs: `plan/** docs/** evidence/** AGENTS.md`)
+Ölçüm komutu: `npx markdownlint-cli2@0.23.2` (config `.markdownlint-cli2.jsonc`, globs: `plan/** docs/** evidence/**
+AGENTS.md`)
 
 ## Before (2026-08-13, HEAD `c9e1961` öncesi canlı ölçüm)
 

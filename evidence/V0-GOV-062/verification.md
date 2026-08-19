@@ -26,6 +26,7 @@ Tarih: 2026-08-13
 ## V0-GOV-041/042 durumu
 
 Defer edilmedi (kullanıcı kararı). Kanıtları:
+
 - V0-GOV-041: successful candidate workflow URL/SHA + repository admin
   readback (branch protection/required-check okuma-yazma yetkisi).
 - V0-GOV-042: coverage threshold, project scope ve supported exporter için
@@ -35,7 +36,7 @@ Defer edilmedi (kullanıcı kararı). Kanıtları:
 
 ### plan validator
 
-```
+```text
 python -B tools/plan-audit/plan_audit_tool.py validate
 Validation errors: 0
 Validation warnings: 0
@@ -46,7 +47,7 @@ Tam çıktı: `evidence/V0-GOV-062/plan-validate.txt`
 
 ### TaskScope + PlanAudit testleri
 
-```
+```text
 py -m pytest tests/Architecture/TaskScope tests/Architecture/PlanAudit -q
 152 passed in 221.36s
 exit=0

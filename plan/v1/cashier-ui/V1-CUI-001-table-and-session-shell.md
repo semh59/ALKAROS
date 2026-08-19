@@ -17,7 +17,10 @@ Türkçe cashier shell, authenticated session ve concurrency-aware Table status 
 
 ## Owned surface
 
-- `src/Clients/Cashier/TableShell/**`, `tests/Clients/Cashier/TableShell/**`, `src/Clients/WebPrototype/**`
+- `src/Clients/Cashier/TableShell/**`, `tests/Clients/Cashier/TableShell/**`
+- `evidence/V1-CUI-001/**`
+- C71 (2026-08-19) konsolidasyonu: src/Clients/WebPrototype/** yüzeyi V1-WTR-004'e devredildi; bu historical task closed
+  kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

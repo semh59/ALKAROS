@@ -153,6 +153,7 @@ kullanılmaz.
 ## Kabul kanıtı (sadeleştirilmiş)
 
 Bir görev şu üçü sağlanmadan Done olamaz:
+
 1. `dotnet build` ve ilgili testler exit code 0 ile geçer (komut çıktısı
    final cevapta gösterilir, ayrı dosyaya kaydedilmez).
 2. Migration varsa ileri/geri (up/down) ikisi de boş veritabanında denenir.

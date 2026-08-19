@@ -9,7 +9,8 @@
 ## Changed paths (allowlist verified)
 
 - `tools/evidence-envelope/evidence_envelope_tool.py` — `_V3_FINAL_COMMIT` constant, `resolve_v3_final_commit`
-  fail-closed resolver, `validate_final_commit` `reference_commit` pin for governance closure (v3 reentry guard validates
+  fail-closed resolver, `validate_final_commit` `reference_commit` pin for governance closure (v3 reentry guard
+validates
   the governance final against its own fixed closure commit, not the moving HEAD)
 - `tools/plan-audit/plan_audit_tool.py` — `v3_interrupted_closure_errors` HEAD-independent contract
 - `plan/VALIDATION_CONTRACT.md` — v3 clause updated to fixed final + HEAD descendant

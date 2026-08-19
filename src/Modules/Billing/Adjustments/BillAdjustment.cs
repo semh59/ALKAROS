@@ -50,6 +50,13 @@ public sealed class BillAdjustment
             throw new ArgumentException("Reason is mandatory for every adjustment (V0-DOM-006).", nameof(reason));
         if (authorizedBy == Guid.Empty)
             throw new ArgumentException("AuthorizedBy manager ID is mandatory for every adjustment (V0-DOM-006).", nameof(authorizedBy));
+        var expectedDeduction = adjustmentType is AdjustmentType.DiscountPercentage or AdjustmentType.DiscountAmount;
+        if (isDeduction.HasValue && isDeduction.Value != expectedDeduction)
+        {
+            throw new ArgumentException(
+                $"Adjustment type '{adjustmentType}' cannot have isDeduction={isDeduction.Value}. Expected isDeduction={expectedDeduction}.",
+                nameof(isDeduction));
+        }
 
         Id = id;
         BillId = billId;
@@ -62,7 +69,7 @@ public sealed class BillAdjustment
         TaxAmount = BillMath.RoundCurrency(taxAmount);
         NetAmount = BillMath.RoundCurrency(netAmount);
         GrossAmount = BillMath.RoundCurrency(grossAmount);
-        IsDeduction = isDeduction ?? (adjustmentType is AdjustmentType.DiscountPercentage or AdjustmentType.DiscountAmount);
+        IsDeduction = expectedDeduction;
         Reason = reason;
         AuthorizedBy = authorizedBy;
         Notes = notes;

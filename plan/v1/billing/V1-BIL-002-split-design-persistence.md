@@ -20,7 +20,10 @@ Payment execution'ı etkinleştirmeden item, quantity ve amount ownership segmen
 
 ## Owned surface
 
-- `src/Modules/Billing/SplitDesign/**`, `tests/Modules/Billing/SplitDesign/**`, `database/migrations/V1/V1-BIL-002/**`
+- `database/migrations/V1/V1-BIL-002/**`
+- `evidence/V1-BIL-002/**`
+- C71 (2026-08-19) konsolidasyonu: src/Modules/Billing/SplitDesign/**ve tests/Modules/Billing/SplitDesign/** yüzeyleri
+  V1-BIL-004'e devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

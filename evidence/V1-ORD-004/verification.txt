@@ -1,0 +1,20 @@
+TASK ID: V1-ORD-004
+DATE: 2026-08-19
+STATUS: VERIFIED
+
+IDEMPOTENT SUBMIT REQUEST HASH LIFECYCLE:
+- SubmitOrderHandler: When expired idempotency key is submitted with a new payload, request_hash is updated atomically alongside response_envelope in the same PostgreSQL transaction.
+- Subsequent calls with the new payload replay the new envelope; calls with obsolete payload produce deterministic conflict.
+
+TEST RESULTS:
+- ALKAROS.Orders.SubmitOrder.Tests: 14 passed, 0 failed.
+- ALKAROS.Orders.ItemExceptions.Tests: 22 passed, 0 failed.
+- ALKAROS.Orders.OrderAggregate.Tests: 83 passed, 0 failed.
+Total: 119 passed, 0 failed.
+
+ALLOWLIST & SCOPE:
+- src/Modules/Orders/SubmitOrder/**
+- src/Modules/Orders/ItemExceptions/**
+- tests/Modules/Orders/SubmitOrder/**
+- tests/Modules/Orders/ItemExceptions/**
+- evidence/V1-ORD-004/**

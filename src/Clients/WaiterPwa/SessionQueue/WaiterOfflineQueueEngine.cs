@@ -90,12 +90,26 @@ public sealed class WaiterOfflineQueueEngine
     }
 
     /// <summary>
-    /// Replays pending queue when back online. Rejects replay if session was revoked.
+    /// Replays pending queue when back online. Rejects replay if offline or session was revoked.
     /// </summary>
-    public IReadOnlyList<QueueOperationResult> ReplayPendingQueue(DateTimeOffset? utcNow = null)
+    public IReadOnlyList<QueueOperationResult> ReplayPendingQueue(
+        Func<QueuedOperation, bool>? serverDispatcher = null,
+        DateTimeOffset? utcNow = null)
     {
         var now = utcNow ?? DateTimeOffset.UtcNow;
         var results = new List<QueueOperationResult>();
+
+        // Precondition: Network connectivity must be active to replay
+        if (!_isOnline)
+        {
+            results.Add(new QueueOperationResult(
+                IsEnqueued: false,
+                IsReplayed: false,
+                ErrorMessage: "Cihaz çevrimdışı. Kuyruk ancak çevrimiçi olunduğunda sunucuya iletilebilir.",
+                IsRejectedUnsupportedOffline: false));
+
+            return results;
+        }
 
         // Acceptance evidence #2: Revoked/expired session cannot replay queue
         if (_session is null || !_session.IsValid(now))
@@ -109,17 +123,59 @@ public sealed class WaiterOfflineQueueEngine
             return results;
         }
 
+        // Precondition: Server dispatcher adapter is required to acknowledge delivery (WTR-01)
+        if (serverDispatcher is null)
+        {
+            results.Add(new QueueOperationResult(
+                IsEnqueued: false,
+                IsReplayed: false,
+                ErrorMessage: "Sunucu bağlantı dağıtıcısı (serverDispatcher) gereklidir.",
+                IsRejectedUnsupportedOffline: false));
+
+            return results;
+        }
+
         var operationsToProcess = _queue.ToList();
         foreach (var op in operationsToProcess)
         {
-            // Simulated server dispatch
-            results.Add(new QueueOperationResult(
-                IsEnqueued: true,
-                IsReplayed: true,
-                ErrorMessage: null,
-                IsRejectedUnsupportedOffline: false));
+            bool success = true;
+            string? errorMessage = null;
 
-            _queue.Remove(op);
+            try
+            {
+                success = serverDispatcher(op);
+                if (!success)
+                {
+                    errorMessage = "Sunucu işlemi onaylamadı.";
+                }
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                errorMessage = ex.Message;
+            }
+
+            if (success)
+            {
+                results.Add(new QueueOperationResult(
+                    IsEnqueued: true,
+                    IsReplayed: true,
+                    ErrorMessage: null,
+                    IsRejectedUnsupportedOffline: false));
+
+                _queue.Remove(op);
+            }
+            else
+            {
+                results.Add(new QueueOperationResult(
+                    IsEnqueued: true,
+                    IsReplayed: false,
+                    ErrorMessage: errorMessage,
+                    IsRejectedUnsupportedOffline: false));
+
+                // On first error, stop replay loop to preserve FIFO ordering for dependent operations
+                break;
+            }
         }
 
         return results;

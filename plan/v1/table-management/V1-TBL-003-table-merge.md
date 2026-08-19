@@ -20,8 +20,10 @@ Source Table veya Order silmeden multi-table merge membership ve explicit undo m
 
 ## Owned surface
 
-- `src/Modules/Tables/TableMerge/**`, `tests/Modules/Tables/TableMerge/**`,
-  `database/migrations/V1/V1-TBL-003/**`
+- `database/migrations/V1/V1-TBL-003/**`
+- `evidence/V1-TBL-003/**`
+- C71 (2026-08-19) konsolidasyonu: src/Modules/Tables/TableMerge/**ve tests/Modules/Tables/TableMerge/** yüzeyleri
+  V1-TBL-007'ye devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

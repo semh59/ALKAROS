@@ -40,6 +40,7 @@ tek-sorumluluklu bir supplement ile yeniden doğrulamak; eski artifact veya
 ## Dependencies
 
 - V0-GOV-035
+
 ## Onay
 
 Approved by Semih — Founder/Product Owner — 2026-08-15. Karar geçerlidir,

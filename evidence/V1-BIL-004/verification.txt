@@ -1,0 +1,22 @@
+TASK ID: V1-BIL-004
+DATE: 2026-08-19
+STATUS: VERIFIED
+
+MIGRATION UP/DOWN:
+- 032-billing-composite-integrity.up.sql: Applied composite unique and foreign key constraints on billing.bill_items, billing.bill_allocations, billing.bill_adjustments.
+- 032-billing-composite-integrity.down.sql: Reverted constraints to previous simple item FK structure.
+
+TEST RESULTS:
+- ALKAROS.Host.Tests (ManifestTests): 15 passed, 0 failed.
+- ALKAROS.Billing.Adjustments.Tests: 14 passed, 0 failed.
+- ALKAROS.Billing.SplitDesign.Tests: 22 passed, 0 failed.
+
+ALLOWLIST & SCOPE:
+- database/MigrationComposition/order.json
+- database/migrations/V1/V1-BIL-004/**
+- src/Modules/Billing/Adjustments/**
+- src/Modules/Billing/SplitDesign/**
+- tests/Modules/Billing/Adjustments/**
+- tests/Modules/Billing/SplitDesign/**
+- tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- evidence/V1-BIL-004/**

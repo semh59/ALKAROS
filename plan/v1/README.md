@@ -11,8 +11,7 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altındaki 47 görev dosyasının tamamı `Done` olur; `V1-FND-010` shared fixture provenance blocker'ı
-  çözülmeden `GATE-V1-EXIT` kapanmaz.
+- Bu sürüm altındaki 86 görev dosyasının tamamı `Done` veya onaylı `NotApplicable` olur (82 Done, 4 NotApplicable).
 - `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` sıralı foundation kapısı geçmeden
   başka application görevi başlamaz.
@@ -23,9 +22,9 @@ uca çalıştıran çekirdek operasyon.
 
 ## Modüller
 
-`alerts`, `billing`, `cash-design`, `cashier-ui`, `catalog`, `foundation`,
+`alerts`, `billing`, `cash-design`, `cashier-ui`, `catalog`, `foundation`, `governance`,
 `identity-authorization`, `kitchen-printing`, `operations`, `orders`,
-`reconciliation`, `reporting`, `security-foundation`, `settings`,
-`table-management`, `waiter-pwa`, `remediation`.
+`reconciliation`, `remediation`, `reporting`, `security-foundation`, `settings`,
+`table-management`, `waiter-pwa`.
 
-Doğrulanan plan hacmi: 16 modül, 47 tek-sahip görev.
+Doğrulanan plan hacmi: 18 modül/dizin, 86 tek-sahip görev (82 Done, 4 NotApplicable).

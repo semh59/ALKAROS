@@ -46,7 +46,8 @@ düzeltmeleriyle kapatmak. İçerik anlamı, kanıt değeri ve başka görevleri
 - `evidence/V1-IAM-005/verification.md`
 - `evidence/V1-SEC-003/closure-2026-08-05.md`
 - `evidence/V1-SEC-003/defect-2-closure.md`
-- `plan/TRACEABILITY.md` (C52 kayıt satırı + mevcut C45 satırının MD038/MD056/MD060 format düzeltmesi; içerik metni değişmez)
+- `plan/TRACEABILITY.md` (C52 kayıt satırı + mevcut C45 satırının MD038/MD056/MD060 format düzeltmesi; içerik metni
+  değişmez)
 - `plan/v0/governance/V0-GOV-031-c42-entry-gate-approval.md` (yalnız MD013 satır sarması)
 - `plan/AUDIT_REPORT.md` (yalnız araçla yeniden üretimi)
 - `plan/AUDIT_MANIFEST.json` (yalnız araçla yeniden üretimi)

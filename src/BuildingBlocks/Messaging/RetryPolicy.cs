@@ -85,9 +85,34 @@ public static class RetryPolicy
             WHERE id = $1 AND status = 'in_flight';
             """;
         command.Parameters.AddWithValue(id);
-        command.Parameters.AddWithValue(error);
+        command.Parameters.AddWithValue(SanitizeError(error));
         command.Parameters.AddWithValue(MaxAttempts);
         command.Parameters.AddWithValue(baseDelay.TotalSeconds);
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        if (affected != 1)
+            throw new InvalidOperationException(
+                $"Message lease was lost before failure could be recorded on '{tableName}'.");
+    }
+
+    public static string SanitizeError(string error)
+    {
+        if (string.IsNullOrWhiteSpace(error))
+            return string.Empty;
+
+        var text = error.Length > 1000 ? error[..1000] : error;
+
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"(password\s*=\s*)([^;\s]+)",
+            "$1***",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        text = System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"(postgres(?:ql)?://[^:]+:)([^@]+)(@)",
+            "$1***$3",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        return text;
     }
 }

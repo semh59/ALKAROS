@@ -234,26 +234,25 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             await cmd.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        // 5. Append Audit Event to audit.audit_events
-        try
+        // 5. Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
+        const string insertAuditSql = $"""
+            INSERT INTO {AuditEventsTable} (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, 'Table.Reserved', 'Table', @table_id, @actor_id, @actor_type,
+                @reason, @correlation_id, NULL, @before_state_json, @after_state_json,
+                @metadata_json, @occurred_at
+            );
+            """;
+
+        var beforeState = new { TableId = request.TableId, Status = tableStatus, RowVersion = tableRowVersion };
+        var afterState = new { TableId = request.TableId, Status = "Reserved", RowVersion = newTableRowVersion, ReservationId = reservationId };
+        var metadata = new { ReservationId = reservationId, PartySize = request.PartySize, ExpiresAt = request.ExpiresAt };
+
+        await using (var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction))
         {
-            const string insertAuditSql = $"""
-                INSERT INTO {AuditEventsTable} (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, 'Table.Reserved', 'Table', @table_id, @actor_id, @actor_type,
-                    @reason, @correlation_id, NULL, @before_state_json, @after_state_json,
-                    @metadata_json, @occurred_at
-                );
-                """;
-
-            var beforeState = new { TableId = request.TableId, Status = tableStatus, RowVersion = tableRowVersion };
-            var afterState = new { TableId = request.TableId, Status = "Reserved", RowVersion = newTableRowVersion, ReservationId = reservationId };
-            var metadata = new { ReservationId = reservationId, PartySize = request.PartySize, ExpiresAt = request.ExpiresAt };
-
-            await using var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction);
             auditCmd.Parameters.AddWithValue("id", Guid.NewGuid());
             auditCmd.Parameters.AddWithValue("table_id", request.TableId);
             auditCmd.Parameters.AddWithValue("actor_id", (object?)request.ActorId ?? DBNull.Value);
@@ -273,10 +272,6 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             auditCmd.Parameters.AddWithValue("occurred_at", now);
 
             await auditCmd.ExecuteNonQueryAsync(cancellationToken);
-        }
-        catch (PostgresException ex) when (ex.SqlState == "42P01")
-        {
-            // Audit table does not exist in minimal fixture
         }
 
         await transaction.CommitAsync(cancellationToken);
@@ -412,20 +407,20 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         }
 
         // 5. Append Audit Event
-        try
-        {
-            const string insertAuditSql = $"""
-                INSERT INTO {AuditEventsTable} (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, 'Table.ReservationClaimed', 'Table', @table_id, @actor_id, 'User',
-                    'Claimed reservation', @correlation_id, NULL, NULL, NULL, NULL, @occurred_at
-                );
-                """;
+        // Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
+        const string insertAuditSql = $"""
+            INSERT INTO {AuditEventsTable} (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, 'Table.ReservationClaimed', 'Table', @table_id, @actor_id, 'User',
+                'Claimed reservation', @correlation_id, NULL, NULL, NULL, NULL, @occurred_at
+            );
+            """;
 
-            await using var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction);
+        await using (var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction))
+        {
             auditCmd.Parameters.AddWithValue("id", Guid.NewGuid());
             auditCmd.Parameters.AddWithValue("table_id", tableId);
             auditCmd.Parameters.AddWithValue("actor_id", (object?)request.ClaimedBy ?? DBNull.Value);
@@ -433,7 +428,6 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             auditCmd.Parameters.AddWithValue("occurred_at", now);
             await auditCmd.ExecuteNonQueryAsync(cancellationToken);
         }
-        catch (PostgresException ex) when (ex.SqlState == "42P01") { }
 
         await transaction.CommitAsync(cancellationToken);
 
@@ -568,21 +562,20 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             finalTableStatus = "Available";
         }
 
-        // 5. Append Audit Event
-        try
-        {
-            const string insertAuditSql = $"""
-                INSERT INTO {AuditEventsTable} (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, 'Table.ReservationCancelled', 'Table', @table_id, @actor_id, 'User',
-                    @reason, @correlation_id, NULL, NULL, NULL, NULL, @occurred_at
-                );
-                """;
+        // 5. Append Audit Event (AUD-01: Fail-Closed)
+        const string insertAuditSql = $"""
+            INSERT INTO {AuditEventsTable} (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, 'Table.ReservationCancelled', 'Table', @table_id, @actor_id, 'User',
+                @reason, @correlation_id, NULL, NULL, NULL, NULL, @occurred_at
+            );
+            """;
 
-            await using var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction);
+        await using (var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction))
+        {
             auditCmd.Parameters.AddWithValue("id", Guid.NewGuid());
             auditCmd.Parameters.AddWithValue("table_id", tableId);
             auditCmd.Parameters.AddWithValue("actor_id", (object?)request.CancelledBy ?? DBNull.Value);
@@ -591,7 +584,6 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             auditCmd.Parameters.AddWithValue("occurred_at", now);
             await auditCmd.ExecuteNonQueryAsync(cancellationToken);
         }
-        catch (PostgresException ex) when (ex.SqlState == "42P01") { }
 
         await transaction.CommitAsync(cancellationToken);
 
@@ -727,20 +719,20 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         }
 
         // 5. Append Audit Event
-        try
-        {
-            const string insertAuditSql = $"""
-                INSERT INTO {AuditEventsTable} (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, 'Table.ReservationExpired', 'Table', @table_id, @actor_id, 'System',
-                    @reason, @correlation_id, NULL, NULL, NULL, NULL, @occurred_at
-                );
-                """;
+        // Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
+        const string insertAuditSql = $"""
+            INSERT INTO {AuditEventsTable} (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, 'Table.ReservationExpired', 'Table', @table_id, @actor_id, 'System',
+                @reason, @correlation_id, NULL, NULL, NULL, NULL, @occurred_at
+            );
+            """;
 
-            await using var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction);
+        await using (var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction))
+        {
             auditCmd.Parameters.AddWithValue("id", Guid.NewGuid());
             auditCmd.Parameters.AddWithValue("table_id", tableId);
             auditCmd.Parameters.AddWithValue("actor_id", (object?)request.ExpiredBy ?? DBNull.Value);
@@ -749,7 +741,6 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             auditCmd.Parameters.AddWithValue("occurred_at", now);
             await auditCmd.ExecuteNonQueryAsync(cancellationToken);
         }
-        catch (PostgresException ex) when (ex.SqlState == "42P01") { }
 
         await transaction.CommitAsync(cancellationToken);
 

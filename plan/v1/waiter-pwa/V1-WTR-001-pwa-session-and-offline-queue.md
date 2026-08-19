@@ -17,7 +17,9 @@ Personal device session, installable shell ve izinli offline operation queue dav
 
 ## Owned surface
 
-- `src/Clients/WaiterPwa/SessionQueue/**`, `tests/Clients/WaiterPwa/SessionQueue/**`
+- `evidence/V1-WTR-001/**`
+- C71 (2026-08-19) konsolidasyonu: src/Clients/WaiterPwa/SessionQueue/**ve tests/Clients/WaiterPwa/SessionQueue/**
+  yüzeyleri V1-WTR-004'e devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

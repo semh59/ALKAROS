@@ -155,44 +155,43 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
             newRowVersion = (long)result!;
         }
 
-        // Append Audit Event
-        try
+        // Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
+        const string insertAuditSql = $"""
+            INSERT INTO {AuditEventsTable} (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json,
+                metadata_json, occurred_at
+            ) VALUES (
+                @id, 'Table.PointersRebuilt', 'Table', @table_id, NULL, 'System',
+                'Authoritative pointer projection rebuild', @correlation_id, NULL,
+                @before_state_json, @after_state_json, @metadata_json, @occurred_at
+            );
+            """;
+
+        var beforeState = new
         {
-            const string insertAuditSql = $"""
-                INSERT INTO {AuditEventsTable} (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, 'Table.PointersRebuilt', 'Table', @table_id, NULL, 'System',
-                    'Authoritative pointer projection rebuild', @correlation_id, NULL,
-                    @before_state_json, @after_state_json, @metadata_json, @occurred_at
-                );
-                """;
+            Status = currentStatus,
+            CurrentOrderId = currentOrderId,
+            CurrentBillId = currentBillId,
+            RowVersion = rowVersion
+        };
 
-            var beforeState = new
-            {
-                Status = currentStatus,
-                CurrentOrderId = currentOrderId,
-                CurrentBillId = currentBillId,
-                RowVersion = rowVersion
-            };
+        var afterState = new
+        {
+            Status = discrepancy.ProjectedStatus,
+            CurrentOrderId = discrepancy.AuthoritativeOrderId,
+            CurrentBillId = discrepancy.AuthoritativeBillId,
+            RowVersion = newRowVersion
+        };
 
-            var afterState = new
-            {
-                Status = discrepancy.ProjectedStatus,
-                CurrentOrderId = discrepancy.AuthoritativeOrderId,
-                CurrentBillId = discrepancy.AuthoritativeBillId,
-                RowVersion = newRowVersion
-            };
+        var metadata = new
+        {
+            DriftFlags = discrepancy.DriftTypes.ToString(),
+            CorrectedDrift = (int)discrepancy.DriftTypes
+        };
 
-            var metadata = new
-            {
-                DriftFlags = discrepancy.DriftTypes.ToString(),
-                CorrectedDrift = (int)discrepancy.DriftTypes
-            };
-
-            await using var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction);
+        await using (var auditCmd = new NpgsqlCommand(insertAuditSql, connection, transaction))
+        {
             auditCmd.Parameters.AddWithValue("id", Guid.NewGuid());
             auditCmd.Parameters.AddWithValue("table_id", tableId);
             auditCmd.Parameters.AddWithValue("correlation_id", Guid.NewGuid().ToString("N"));
@@ -209,10 +208,6 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
             auditCmd.Parameters.AddWithValue("occurred_at", now);
 
             await auditCmd.ExecuteNonQueryAsync(cancellationToken);
-        }
-        catch (PostgresException ex) when (ex.SqlState == "42P01")
-        {
-            // Audit table does not exist in minimal fixture
         }
 
         await transaction.CommitAsync(cancellationToken);
@@ -349,34 +344,32 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
         }
 
         // 4. Check active merge participation
+        // 4. Check active merge participation (AUD-01: Fail-Closed)
         bool isMergedParticipant = false;
-        try
+        const string checkMergeSql = $"""
+            SELECT table_merge_id
+            FROM {TableMergesTable}
+            WHERE merged_table_id = @table_id AND status = 'Active'
+            LIMIT 1;
+            """;
+        await using (var cmd = new NpgsqlCommand(checkMergeSql, connection, transaction))
         {
-            const string checkMergeSql = $"""
-                SELECT table_merge_id
-                FROM {TableMergesTable}
-                WHERE merged_table_id = @table_id AND status = 'Active'
-                LIMIT 1;
-                """;
-            await using var cmd = new NpgsqlCommand(checkMergeSql, connection, transaction);
             cmd.Parameters.AddWithValue("table_id", tableId);
             var mergeId = await cmd.ExecuteScalarAsync(cancellationToken);
             isMergedParticipant = mergeId is not null && mergeId != DBNull.Value;
         }
-        catch (PostgresException ex) when (ex.SqlState == "42P01") { }
 
-        // 5. Check active reservation
+        // 5. Check active reservation (AUD-01: Fail-Closed)
         bool hasActiveReservation = false;
         Guid? reservationOrderId = null;
-        try
+        const string checkResSql = $"""
+            SELECT table_reservation_id, order_id
+            FROM {TableReservationsTable}
+            WHERE table_id = @table_id AND status = 'Active'
+            LIMIT 1;
+            """;
+        await using (var cmd = new NpgsqlCommand(checkResSql, connection, transaction))
         {
-            const string checkResSql = $"""
-                SELECT table_reservation_id, order_id
-                FROM {TableReservationsTable}
-                WHERE table_id = @table_id AND status = 'Active'
-                LIMIT 1;
-                """;
-            await using var cmd = new NpgsqlCommand(checkResSql, connection, transaction);
             cmd.Parameters.AddWithValue("table_id", tableId);
             await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
             if (await reader.ReadAsync(cancellationToken))
@@ -385,7 +378,6 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
                 reservationOrderId = reader.IsDBNull(1) ? null : reader.GetGuid(1);
             }
         }
-        catch (PostgresException ex) when (ex.SqlState == "42P01") { }
 
         // 6. Compute Canonical Projected Status and Authoritative Pointers
         string projectedStatus;

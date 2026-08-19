@@ -8,10 +8,10 @@
 ## Verified public sources
 
 - GİB YN ÖKC rehberi:
-  <https://www.gib.gov.tr/duyuru-arsivi/guncel/15314_yeni-nesil-odeme-kaydedici-cihaz-yn-okc-kullanimina-iliskin-rehber-yayimlandi>
+<https://www.gib.gov.tr/duyuru-arsivi/guncel/15314_yeni-nesil-odeme-kaydedici-cihaz-yn-okc-kullanimina-iliskin-rehber-yayimlandi>
 - GİB e-Adisyon tebliğ metni: <https://gib.gov.tr/mevzuat/kanun/434/teblig/7885>
 - GİB VUK Genel Tebliği No. 509 güncel metni, IV.12:
-  <https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=MEVZUAT_TEBLIGLER%2FUNIVERSAL%2F2026%2FMEVZUAT_TEBLIGLER_2026_VukTeb509_Guncel.pdf>
+<https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=MEVZUAT_TEBLIGLER%2FUNIVERSAL%2F2026%2FMEVZUAT_TEBLIGLER_2026_VukTeb509_Guncel.pdf>
 - GİB YN ÖKC SSS: <https://ynokc.gib.gov.tr/Home/SSS>
 
 ## Verified boundary
