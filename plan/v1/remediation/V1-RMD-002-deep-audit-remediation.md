@@ -1,0 +1,80 @@
+# V1-RMD-002 - Deep audit remediation
+
+- Task ID: V1-RMD-002
+- Status: Planned
+- Assignee: Unassigned (exactly one person)
+- Work type: implementation
+- Surface state: Existing
+
+## Goal
+
+PO:2026-08-24 kararıyla derin kod denetiminde doğrulanan build, composition, domain invariant, concurrency,
+offline persistence, print recovery, query performance, browser security ve audit portability kusurlarını tek
+konsolide remediasyon zincirinde kapatmak.
+
+## Owned surface
+
+- `global.json`
+- `src/Host/ALKAROS.Host.csproj`
+- `src/Host/Composition/Modules/ModuleRegistry.cs`
+- `src/Modules/Audit/AuditModule.cs`
+- `src/Modules/Cash/CashModule.cs`
+- `src/Modules/Identity/IdentityModule.cs`
+- `src/Modules/Kitchen/KitchenModule.cs`
+- `src/Modules/Observability/ObservabilityModule.cs`
+- `src/Modules/Operations/OperationsModule.cs`
+- `src/Modules/Reconciliation/ReconciliationModule.cs`
+- `src/Modules/Reporting/ReportingModule.cs`
+- `src/Modules/Settings/SettingsModule.cs`
+- `tests/Host/MigrationComposition/Registry/ModuleRegistryTests.cs`
+- `tests/Host/MigrationComposition/Composition/HostModuleReachabilityTests.cs`
+- `src/Modules/Orders/SubmitOrder/SubmitOrderHandler.cs`
+- `src/Modules/Orders/OrderAggregate/Order.cs`
+- `src/Modules/Orders/OrderAggregate/OrderItem.cs`
+- `tests/Modules/Orders/SubmitOrder/SubmitOrderTests.cs`
+- `tests/Modules/Orders/OrderAggregate/OrderDomainTests.cs`
+- `src/Modules/Identity/DeviceSessions/DeviceSessionService.cs`
+- `src/Modules/Identity/DeviceSessions/IDeviceSessionRepository.cs`
+- `src/Modules/Identity/DeviceSessions/PostgresDeviceSessionRepository.cs`
+- `tests/Modules/Identity/DeviceSessions/DeviceSessionServiceTests.cs`
+- `src/Clients/WaiterPwa/SessionQueue/**`
+- `tests/Clients/WaiterPwa/SessionQueue/**`
+- `src/Clients/WebPrototype/**`
+- `src/Modules/Billing/BillFoundation/BillItem.cs`
+- `tests/Modules/Billing/BillFoundation/BillDomainTests.cs`
+- `tests/Modules/Billing/BillFoundation/PostgresBillTests.cs`
+- `src/Modules/Orders/OrderAggregate/PostgresOrderRepository.cs`
+- `tests/Modules/Orders/OrderAggregate/PostgresOrderTests.cs`
+- `src/Modules/Kitchen/PhysicalPrintRecovery/**`
+- `tests/Modules/Kitchen/PhysicalPrintRecovery/**`
+- `src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs`
+- `tests/Modules/Kitchen/TicketLifecycle/KitchenTicketTests.cs`
+- `database/migrations/V1/V1-RMD-002/**`
+- `database/MigrationComposition/order.json`
+- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
+- `tools/plan-audit/plan_audit_tool.py`
+- `tests/Architecture/PlanAudit/test_plan_audit.py`
+- `plan/PDF_SOURCE.md`
+- `plan/AUDIT_REPORT.md`
+- `plan/AUDIT_MANIFEST.json`
+- `evidence/V1-RMD-002/**`
+
+## Dependencies
+
+- V1-FND-001
+- V1-FND-025
+- V1-ORD-004
+- V1-IAM-015
+- V1-WTR-004
+- V1-BIL-004
+- V1-KIT-004
+
+## Acceptance evidence
+
+- `dotnet restore ALKAROS.slnx`, `dotnet build ALKAROS.slnx --no-restore` ve ilgili bütün test projeleri exit 0 verir.
+- Reconnect/revoke yarışı, restart sonrası offline kuyruk, negatif toplam reddi, stale print recovery, tek sorgulu aktif
+  ticket yükleme ve DOM injection negatif yolları otomatik testlerle doğrulanır.
+- Yeni migration çiftleri boş PostgreSQL üzerinde forward/down/forward uygulanır ve manifest testi exit 0 verir.
+- Plan audit doğrulaması makineye özel dosya yolu gerektirmeden çalışır; audit raporu ve manifest gerçek repository
+  sayımlarıyla yeniden üretilir.
+- `task_scope_tool.py --task-id V1-RMD-002` yalnız owned surface değişiklikleriyle exit 0 verir.
