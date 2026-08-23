@@ -27,6 +27,9 @@
     <ProjectReference Include="..\Modules\Notifications\ALKAROS.Notifications.csproj" />
     <ProjectReference Include="..\Modules\Settings\ALKAROS.Settings.csproj" />
     <ProjectReference Include="..\Modules\Identity\ALKAROS.Identity.csproj" />
+    <ProjectReference Include="..\Modules\Audit\ALKAROS.Audit.csproj" />
+    <ProjectReference Include="..\Modules\Observability\ALKAROS.Observability.csproj" />
+    <ProjectReference Include="..\Modules\Operations\ALKAROS.Operations.csproj" />
   </ItemGroup>
 
 </Project>

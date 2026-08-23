@@ -12,7 +12,26 @@ public interface IDeviceSessionRepository
 
     Task<int> RevokeForDeviceAsync(Guid userId, string deviceId, DateTimeOffset revokedAt, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<Guid>> AddProcessedOperationsAsync(Guid sessionId, IReadOnlyList<PendingOperation> operations, CancellationToken cancellationToken = default);
+    Task<ReconnectClaimResult> ClaimReconnectOperationsAsync(
+        string tokenHash,
+        Guid userId,
+        string deviceId,
+        IReadOnlyList<PendingOperation> operations,
+        DateTimeOffset utcNow,
+        CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<Guid>> GetProcessedOperationIdsAsync(CancellationToken cancellationToken = default);
 }
+
+public enum ReconnectClaimStatus
+{
+    Success,
+    InvalidSession,
+    Revoked,
+    Expired,
+}
+
+public sealed record ReconnectClaimResult(
+    ReconnectClaimStatus Status,
+    DeviceSession? Session,
+    IReadOnlyList<Guid> InsertedOperationIds);

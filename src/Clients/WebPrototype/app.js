@@ -169,6 +169,50 @@
     cooldownRemaining: 0
   };
 
+  const offlineQueueStore = {
+    open() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('alkaros-waiter-pwa', 1);
+        request.onupgradeneeded = () => {
+          const database = request.result;
+          if (!database.objectStoreNames.contains('queue')) {
+            database.createObjectStore('queue');
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('Offline queue database could not be opened.'));
+      });
+    },
+
+    async load() {
+      const database = await this.open();
+      try {
+        return await new Promise((resolve, reject) => {
+          const request = database.transaction('queue', 'readonly').objectStore('queue').get('operations');
+          request.onsuccess = () => resolve(Array.isArray(request.result) ? request.result : []);
+          request.onerror = () => reject(request.error || new Error('Offline queue could not be read.'));
+        });
+      } finally {
+        database.close();
+      }
+    },
+
+    async save(operations) {
+      const database = await this.open();
+      try {
+        await new Promise((resolve, reject) => {
+          const transaction = database.transaction('queue', 'readwrite');
+          transaction.objectStore('queue').put(operations, 'operations');
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = () => reject(transaction.error || new Error('Offline queue could not be persisted.'));
+          transaction.onabort = () => reject(transaction.error || new Error('Offline queue persistence was aborted.'));
+        });
+      } finally {
+        database.close();
+      }
+    }
+  };
+
   // --- 3. HELPERS ---
 
   const formatTL = (val) => {
@@ -182,7 +226,8 @@
     const container = document.getElementById('toast-container');
     if (!container) return;
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
+    const toastType = ['success', 'warning', 'error'].includes(type) ? type : 'error';
+    toast.className = `toast toast-${toastType}`;
     toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
     setTimeout(() => {
@@ -216,8 +261,8 @@
         const count = sec === 'Tümü' ? state.tables.length : state.tables.filter(t => t.section === sec).length;
         const isActive = state.activeSectionFilter === sec;
         return `
-          <button type="button" class="chip ${isActive ? 'active' : ''}" data-section="${sec}">
-            ${sec} <span class="chip-count">(${count})</span>
+          <button type="button" class="chip ${isActive ? 'active' : ''}" data-section="${escapeHtml(sec)}">
+            ${escapeHtml(sec)} <span class="chip-count">(${count})</span>
           </button>
         `;
       }).join('');
@@ -236,7 +281,7 @@
       wtrContainer.innerHTML = sections.map(sec => {
         const isActive = state.wtrSectionFilter === sec;
         return `
-          <button type="button" class="wtr-chip ${isActive ? 'active' : ''}" data-wtr-section="${sec}">${sec}</button>
+          <button type="button" class="wtr-chip ${isActive ? 'active' : ''}" data-wtr-section="${escapeHtml(sec)}">${escapeHtml(sec)}</button>
         `;
       }).join('');
 
@@ -310,18 +355,18 @@
           : 'Masayı Aç >';
 
       return `
-        <div class="table-card" data-table-id="${t.id}">
+        <div class="table-card" data-table-id="${escapeHtml(t.id)}">
           <div class="table-card-top">
-            <span class="table-number">Masa ${t.number}</span>
+            <span class="table-number">Masa ${escapeHtml(t.number)}</span>
             <span class="occupancy-pill ${occupClass}">${occupText}</span>
           </div>
           ${timerBarHtml}
           <div class="table-card-body">
             ${t.occupancy === 'available' 
-              ? `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Kapasite: ${t.capacity} Kişi (${t.section})</div>` 
+              ? `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Kapasite: ${t.capacity} Kişi (${escapeHtml(t.section)})</div>`
               : t.occupancy === 'reserved'
-                ? `<div class="meta-row"><strong style="color:var(--badge-reserv-text)">${t.note || '19:30 - 4 Kişi'}</strong></div>`
-                : `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${t.minutes} dk • Garson: ${t.waiter || 'Mehmet K.'}</div>
+                ? `<div class="meta-row"><strong style="color:var(--badge-reserv-text)">${escapeHtml(t.note || '19:30 - 4 Kişi')}</strong></div>`
+                : `<div class="meta-row"><svg class="icon" style="width:14px;height:14px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${t.minutes} dk • Garson: ${escapeHtml(t.waiter || 'Mehmet K.')}</div>
                    <div class="table-amount num-val">${formatTL(t.billAmount)}</div>`
             }
             ${actionBadgeHtml}
@@ -357,7 +402,7 @@
 
     if (tabsContainer) {
       tabsContainer.innerHTML = categories.map(cat => `
-        <button type="button" class="cat-tab ${state.activeCategory === cat ? 'active' : ''}" data-category="${cat}">${cat}</button>
+        <button type="button" class="cat-tab ${state.activeCategory === cat ? 'active' : ''}" data-category="${escapeHtml(cat)}">${escapeHtml(cat)}</button>
       `).join('');
 
       tabsContainer.querySelectorAll('.cat-tab').forEach(tab => {
@@ -386,12 +431,12 @@
     grid.innerHTML = filtered.map(p => {
       let allergenPill = '';
       if (p.allergen) {
-        allergenPill = `<span class="allergen-tag" style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active);color:var(--color-text-muted)">${p.allergen}</span>`;
+        allergenPill = `<span class="allergen-tag" style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active);color:var(--color-text-muted)">${escapeHtml(p.allergen)}</span>`;
       }
 
       return `
-        <div class="product-card ${p.is86 ? 'is-86' : ''}" data-prod-id="${p.id}">
-          <div class="prod-name">${p.name}</div>
+        <div class="product-card ${p.is86 ? 'is-86' : ''}" data-prod-id="${escapeHtml(p.id)}">
+          <div class="prod-name">${escapeHtml(p.name)}</div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
             <div class="prod-price num-val">${formatTL(p.price)}</div>
             ${allergenPill}
@@ -409,7 +454,7 @@
 
     if (chipsContainer) {
       chipsContainer.innerHTML = categories.map(cat => `
-        <button type="button" class="chip ${state.menuMgmtCatFilter === cat ? 'active' : ''}" data-menu-cat="${cat}">${cat}</button>
+        <button type="button" class="chip ${state.menuMgmtCatFilter === cat ? 'active' : ''}" data-menu-cat="${escapeHtml(cat)}">${escapeHtml(cat)}</button>
       `).join('');
 
       chipsContainer.querySelectorAll('.chip').forEach(chip => {
@@ -429,14 +474,14 @@
 
       tbody.innerHTML = filtered.map((p, idx) => `
         <tr class="${p.is86 ? 'row-86' : ''}">
-          <td><strong>${p.name}</strong> ${p.is86 ? '<span style="color:#DC2626;font-size:11px;font-weight:700">[86\'d TÜKENDİ]</span>' : ''}</td>
-          <td><span class="occupancy-pill available">${p.category}</span></td>
+          <td><strong>${escapeHtml(p.name)}</strong> ${p.is86 ? '<span style="color:#DC2626;font-size:11px;font-weight:700">[86\'d TÜKENDİ]</span>' : ''}</td>
+          <td><span class="occupancy-pill available">${escapeHtml(p.category)}</span></td>
           <td class="num-val"><strong>${formatTL(p.price)}</strong></td>
           <td>${p.station === 'hot' ? 'Sıcak Mutfak' : p.station === 'bar' ? 'Bar & İçecek' : 'Soğuk / Tatlı'}</td>
-          <td>${p.defaultCourse}</td>
-          <td>${p.allergen ? `<span class="allergen-tag" style="font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active)">${p.allergen}</span>` : '—'}</td>
+          <td>${escapeHtml(p.defaultCourse)}</td>
+          <td>${p.allergen ? `<span class="allergen-tag" style="font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active)">${escapeHtml(p.allergen)}</span>` : '—'}</td>
           <td style="display:flex;gap:6px">
-            <button type="button" class="cart-item-actions-btn btn-toggle-86" data-prod-id="${p.id}">${p.is86 ? 'Satışa Aç' : '86\'d (Tükendi)'}</button>
+            <button type="button" class="cart-item-actions-btn btn-toggle-86" data-prod-id="${escapeHtml(p.id)}">${p.is86 ? 'Satışa Aç' : '86\'d (Tükendi)'}</button>
             <button type="button" class="cart-item-actions-btn btn-delete-product" data-prod-idx="${idx}" style="color:var(--color-danger)">Sil</button>
           </td>
         </tr>
@@ -628,7 +673,7 @@
     groups.forEach(g => {
       bodyHtml += `
         <div class="option-group">
-          <label class="group-label">${g.title} ${g.required ? '<span style="color:#DC2626;font-size:10px">(Zorunlu)</span>' : ''}</label>
+          <label class="group-label">${escapeHtml(g.title)} ${g.required ? '<span style="color:#DC2626;font-size:10px">(Zorunlu)</span>' : ''}</label>
       `;
 
       if (g.type === 'single') {
@@ -640,8 +685,8 @@
                 : opt.default;
               return `
                 <label class="radio-pill">
-                  <input type="radio" name="group_${g.id}" value="${opt.name}" data-group-title="${g.title}" data-extra-price="${opt.price}" ${isChecked ? 'checked' : ''}>
-                  <span>${opt.name} ${opt.price > 0 ? '(+' + formatTL(opt.price) + ')' : ''}</span>
+                  <input type="radio" name="group_${escapeHtml(g.id)}" value="${escapeHtml(opt.name)}" data-group-title="${escapeHtml(g.title)}" data-extra-price="${escapeHtml(opt.price)}" ${isChecked ? 'checked' : ''}>
+                  <span>${escapeHtml(opt.name)} ${opt.price > 0 ? '(+' + formatTL(opt.price) + ')' : ''}</span>
                 </label>
               `;
             }).join('')}
@@ -656,8 +701,8 @@
                 : false;
               return `
                 <label class="check-row">
-                  <input type="checkbox" name="group_${g.id}" value="${opt.name}" data-group-title="${g.title}" data-extra-price="${opt.price}" ${isChecked ? 'checked' : ''}>
-                  <span class="check-text">${opt.name}</span>
+                  <input type="checkbox" name="group_${escapeHtml(g.id)}" value="${escapeHtml(opt.name)}" data-group-title="${escapeHtml(g.title)}" data-extra-price="${escapeHtml(opt.price)}" ${isChecked ? 'checked' : ''}>
+                  <span class="check-text">${escapeHtml(opt.name)}</span>
                   <span class="check-price">${opt.price > 0 ? '+' + formatTL(opt.price) : 'Ücretsiz'}</span>
                 </label>
               `;
@@ -682,7 +727,7 @@
       </div>
       <div class="option-group">
         <label class="group-label" for="mod-special-note">Özel Sipariş Notu</label>
-        <input type="text" id="mod-special-note" placeholder="Örn. Şef Notu..." value="${existingItem?.note || ''}" class="form-input" autocomplete="off">
+        <input type="text" id="mod-special-note" placeholder="Örn. Şef Notu..." value="${escapeHtml(existingItem?.note || '')}" class="form-input" autocomplete="off">
       </div>
     `;
 
@@ -756,14 +801,14 @@
       <div class="slip-paper">
         <div class="slip-header">
           <div class="slip-brand">*** ALKAROS RESTORAN ***</div>
-          <div class="slip-meta">Masa: ${state.selectedTable.number} | Garson: ${state.selectedTable.waiter || 'Mehmet K.'}</div>
+          <div class="slip-meta">Masa: ${escapeHtml(state.selectedTable.number)} | Garson: ${escapeHtml(state.selectedTable.waiter || 'Mehmet K.')}</div>
           <div class="slip-meta">Tarih: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')}</div>
           <div class="slip-divider">------------------------------------------</div>
         </div>
         <div class="slip-items">
           ${items.map(i => `
             <div class="slip-line">
-              <span>${i.quantity}x ${i.name}</span>
+              <span>${i.quantity}x ${escapeHtml(i.name)}</span>
               <span class="num-val">${formatTL(i.unitPrice * i.quantity)}</span>
             </div>
           `).join('')}
@@ -813,7 +858,7 @@
     if (list) {
       list.innerHTML = items.map(i => `
         <div class="split-item-row">
-          <span>${i.name}</span>
+            <span>${escapeHtml(i.name)}</span>
           <span class="num-val">${formatTL(i.price)}</span>
         </div>
       `).join('');
@@ -840,8 +885,8 @@
       feed.innerHTML = filtered.map(ticket => `
         <div class="ticket-card">
           <div class="ticket-top">
-            <span>Fiş #${ticket.id} — ${ticket.table}</span>
-            <span class="meta-row">${ticket.time}</span>
+            <span>Fiş #${escapeHtml(ticket.id)} — ${escapeHtml(ticket.table)}</span>
+            <span class="meta-row">${escapeHtml(ticket.time)}</span>
           </div>
           <div class="ticket-items-list">
             ${ticket.items.map(i => {
@@ -849,7 +894,7 @@
               if (i.status === 'cooking') badgeHtml = '<span class="occupancy-pill" style="background:var(--badge-cooking-bg);color:var(--badge-cooking-text)">Hazırlanıyor</span>';
               else if (i.status === 'ready') badgeHtml = '<span class="occupancy-pill" style="background:var(--badge-ready-bg);color:var(--badge-ready-text)">Hazır</span>';
               else badgeHtml = '<span class="occupancy-pill" style="background:var(--color-surface-active);color:var(--color-text-muted)">Bekliyor</span>';
-              return `<div class="ticket-item-row"><span>${i.name}</span>${badgeHtml}</div>`;
+              return `<div class="ticket-item-row"><span>${escapeHtml(i.name)}</span>${badgeHtml}</div>`;
             }).join('')}
           </div>
         </div>
@@ -860,12 +905,12 @@
       printersList.innerHTML = state.printers.map(p => `
         <div class="printer-card ${p.status === 'paper_out' ? 'warning' : ''}">
           <div class="printer-info">
-            <span class="printer-name">${p.name}</span>
-            <span class="printer-ip">IP: ${p.ip} • Durum: <strong>${p.status === 'paper_out' ? p.issue : 'Çevrimiçi'}</strong></span>
+            <span class="printer-name">${escapeHtml(p.name)}</span>
+            <span class="printer-ip">IP: ${escapeHtml(p.ip)} • Durum: <strong>${escapeHtml(p.status === 'paper_out' ? p.issue : 'Çevrimiçi')}</strong></span>
           </div>
           <div style="display:flex;gap:6px;align-items:center">
             ${p.status === 'paper_out' 
-              ? `<button type="button" class="btn-primary-sm btn-reroute-printer" data-prn-id="${p.id}">Kuyruğu Yönlendir</button>`
+              ? `<button type="button" class="btn-primary-sm btn-reroute-printer" data-prn-id="${escapeHtml(p.id)}">Kuyruğu Yönlendir</button>`
               : `<span class="occupancy-pill available">Normal</span>`
             }
           </div>
@@ -915,13 +960,13 @@
         let occupClass = t.occupancy === 'occupied' ? 'occupied' : t.occupancy === 'reserved' ? 'reserved' : 'available';
         let occupText = t.occupancy === 'occupied' ? 'Dolu' : t.occupancy === 'reserved' ? 'Rezerve' : 'Boş';
         return `
-          <div class="table-card" data-wtr-table-id="${t.id}">
+          <div class="table-card" data-wtr-table-id="${escapeHtml(t.id)}">
             <div class="table-card-top">
-              <span class="table-number">Masa ${t.number}</span>
+              <span class="table-number">Masa ${escapeHtml(t.number)}</span>
               <span class="occupancy-pill ${occupClass}">${occupText}</span>
             </div>
             <div class="table-card-body">
-              ${t.occupancy === 'occupied' ? `<div class="table-amount num-val">${formatTL(t.billAmount)}</div>` : `<div class="meta-row">${t.capacity} Kişi (${t.section})</div>`}
+              ${t.occupancy === 'occupied' ? `<div class="table-amount num-val">${formatTL(t.billAmount)}</div>` : `<div class="meta-row">${t.capacity} Kişi (${escapeHtml(t.section)})</div>`}
             </div>
             <button type="button" class="table-card-btn">${t.occupancy === 'available' ? 'Sipariş Aç' : t.occupancy === 'reserved' ? 'Misafiri Oturt >' : 'Masayı Aç >'}</button>
           </div>
@@ -932,7 +977,7 @@
     if (catChips) {
       const categories = getDistinctCategories();
       catChips.innerHTML = categories.map(cat => `
-        <button type="button" class="wtr-chip ${state.wtrCatFilter === cat ? 'active' : ''}" data-wtr-cat="${cat}">${cat}</button>
+        <button type="button" class="wtr-chip ${state.wtrCatFilter === cat ? 'active' : ''}" data-wtr-cat="${escapeHtml(cat)}">${escapeHtml(cat)}</button>
       `).join('');
 
       catChips.querySelectorAll('.wtr-chip').forEach(chip => {
@@ -951,8 +996,8 @@
       });
 
       productList.innerHTML = filteredProds.map(p => `
-        <div class="product-card ${p.is86 ? 'is-86' : ''}" data-wtr-prod-id="${p.id}">
-          <div class="prod-name">${p.name}</div>
+        <div class="product-card ${p.is86 ? 'is-86' : ''}" data-wtr-prod-id="${escapeHtml(p.id)}">
+          <div class="prod-name">${escapeHtml(p.name)}</div>
           <div class="prod-price num-val">${formatTL(p.price)}</div>
         </div>
       `).join('');
@@ -968,7 +1013,7 @@
           return `
             <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;border-bottom:1px solid var(--color-border)">
               <div>
-                <span>${item.name}</span>
+                <span>${escapeHtml(item.name)}</span>
                 <span class="num-val" style="display:block;font-size:11px;color:var(--color-text-dim)">${formatTL(item.unitPrice * item.quantity)}</span>
               </div>
               <div style="display:flex;align-items:center;gap:4px">
@@ -1023,13 +1068,13 @@
       statusFeed.innerHTML = state.tickets.map(t => `
         <div class="ticket-card" style="margin-bottom:10px">
           <div class="ticket-top">
-            <span>Fiş #${t.id} — ${t.table}</span>
-            <span class="meta-row">${t.time}</span>
+            <span>Fiş #${escapeHtml(t.id)} — ${escapeHtml(t.table)}</span>
+            <span class="meta-row">${escapeHtml(t.time)}</span>
           </div>
           <div class="ticket-items-list">
             ${t.items.map(i => `
               <div class="ticket-item-row">
-                <span>${i.name}</span>
+                <span>${escapeHtml(i.name)}</span>
                 <span class="occupancy-pill" style="background:${i.status === 'cooking' ? 'var(--badge-cooking-bg)' : i.status === 'ready' ? 'var(--badge-ready-bg)' : 'var(--color-surface-active)'};color:${i.status === 'cooking' ? 'var(--badge-cooking-text)' : i.status === 'ready' ? 'var(--badge-ready-text)' : 'var(--color-text-muted)'}">
                   ${i.status === 'cooking' ? 'Hazırlanıyor' : i.status === 'ready' ? 'Servise Hazır' : 'Bekliyor'}
                 </span>
@@ -1047,8 +1092,8 @@
       notifFeed.innerHTML = state.notifications.map((n, i) => `
         <div class="wtr-notif-card ${n.unread ? 'unread' : ''}">
           <div>
-            <div style="font-weight:600;font-size:13px">${n.text}</div>
-            <div class="meta-row">${n.time}</div>
+            <div style="font-weight:600;font-size:13px">${escapeHtml(n.text)}</div>
+            <div class="meta-row">${escapeHtml(n.time)}</div>
           </div>
           <button type="button" class="btn-secondary-sm btn-deliver-notif" data-notif-idx="${i}">Teslim Ettim</button>
         </div>
@@ -1245,7 +1290,7 @@
         
         const titleEl = document.getElementById('pos-active-table-title');
         if (titleEl) {
-          titleEl.innerHTML = `Masa ${table.number} <span class="table-section-tag">(${table.section})</span>`;
+          titleEl.innerHTML = `Masa ${escapeHtml(table.number)} <span class="table-section-tag">(${escapeHtml(table.section)})</span>`;
         }
 
         renderPOSCatalog();
@@ -1492,7 +1537,7 @@
           return;
         }
         if (selectTarget) {
-          selectTarget.innerHTML = availTables.map(t => `<option value="${t.id}">Masa ${t.number} (${t.section})</option>`).join('');
+          selectTarget.innerHTML = availTables.map(t => `<option value="${escapeHtml(t.id)}">Masa ${escapeHtml(t.number)} (${escapeHtml(t.section)})</option>`).join('');
         }
         const titleEl = document.getElementById('transfer-source-title');
         if (titleEl) titleEl.textContent = `Kaynak: Masa ${state.selectedTable.number} (${formatTL(state.selectedTable.billAmount)})`;
@@ -1546,7 +1591,7 @@
           return;
         }
         if (selectMergeTarget) {
-          selectMergeTarget.innerHTML = otherOccupied.map(t => `<option value="${t.id}">Masa ${t.number} (${t.section} - ${formatTL(t.billAmount)})</option>`).join('');
+          selectMergeTarget.innerHTML = otherOccupied.map(t => `<option value="${escapeHtml(t.id)}">Masa ${escapeHtml(t.number)} (${escapeHtml(t.section)} - ${formatTL(t.billAmount)})</option>`).join('');
         }
         const titleEl = document.getElementById('merge-source-title');
         if (titleEl) titleEl.textContent = `Ana Masa: Masa ${state.selectedTable.number}`;
@@ -1993,7 +2038,7 @@
     const netBtn = document.getElementById('btn-sim-network');
     const bannerRetryBtn = document.getElementById('btn-banner-retry');
 
-    const updateNetworkUI = () => {
+      const updateNetworkUI = () => {
       const banner = document.getElementById('network-outage-banner');
       const labelNet = document.getElementById('label-network');
       const cuiNetDot = document.getElementById('cashier-net-status');
@@ -2018,10 +2063,7 @@
 
         if (state.wtrOfflineQueue.length > 0) {
           const count = state.wtrOfflineQueue.length;
-          showToast(`Ağ bağlantısı kuruldu! ${count} çevrimdışı sipariş mutfağa iletildi.`, 'success');
-          state.wtrOfflineQueue = [];
-          const qCountEl = document.getElementById('waiter-queue-count');
-          if (qCountEl) qCountEl.textContent = '0';
+          showToast(`Ağ bağlantısı kuruldu. ${count} işlem sunucu onayı bekliyor.`, 'warning');
         } else {
           showToast('Ağ bağlantısı kuruldu.', 'success');
         }
@@ -2207,7 +2249,7 @@
 
     const btnWtrSubmit = document.getElementById('btn-wtr-submit-order');
     if (btnWtrSubmit) {
-      btnWtrSubmit.addEventListener('click', () => {
+      btnWtrSubmit.addEventListener('click', async () => {
         if (state.wtrCart.length === 0) return;
 
         if (!state.isOnline) {
@@ -2216,7 +2258,14 @@
             table: state.wtrActiveTable.number,
             items: [...state.wtrCart]
           };
-          state.wtrOfflineQueue.push(queueItem);
+          const persistedQueue = [...state.wtrOfflineQueue, queueItem];
+          try {
+            await offlineQueueStore.save(persistedQueue);
+          } catch (error) {
+            showToast(`Sipariş kalıcı kuyruğa yazılamadı: ${error.message}`, 'error');
+            return;
+          }
+          state.wtrOfflineQueue = persistedQueue;
           const qCountEl = document.getElementById('waiter-queue-count');
           if (qCountEl) qCountEl.textContent = state.wtrOfflineQueue.length;
 
@@ -2278,7 +2327,15 @@
 
   // --- 6. INITIALIZATION ---
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      state.wtrOfflineQueue = await offlineQueueStore.load();
+    } catch (error) {
+      console.error('Persistent offline queue could not be opened.', error);
+      document.documentElement.setAttribute('data-offline-queue-error', 'true');
+      showToast(`Kalıcı çevrimdışı kuyruk açılamadı: ${error.message}`, 'error');
+      return;
+    }
     document.documentElement.setAttribute('data-theme', state.theme);
     renderFloorSections();
     renderCashierTables();
@@ -2286,6 +2343,8 @@
     renderMenuManagement();
     renderOperations();
     renderWaiterSurface();
+    const queueCount = document.getElementById('waiter-queue-count');
+    if (queueCount) queueCount.textContent = state.wtrOfflineQueue.length;
     setupEvents();
   });
 

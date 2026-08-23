@@ -19,7 +19,16 @@ public static class ModuleRegistry
         typeof(ALKAROS.Orders.OrderAggregate.OrdersModule),
         typeof(ALKAROS.Billing.BillFoundation.BillingModule),
         typeof(ALKAROS.Catalog.ProductCatalog.CatalogModule),
-        typeof(ALKAROS.Tables.TableLifecycle.TablesModule)
+        typeof(ALKAROS.Tables.TableLifecycle.TablesModule),
+        typeof(ALKAROS.Audit.AuditModule),
+        typeof(ALKAROS.Cash.CashModule),
+        typeof(ALKAROS.Identity.IdentityModule),
+        typeof(ALKAROS.Kitchen.KitchenModule),
+        typeof(ALKAROS.Observability.ObservabilityModule),
+        typeof(ALKAROS.Operations.OperationsModule),
+        typeof(ALKAROS.Reconciliation.ReconciliationModule),
+        typeof(ALKAROS.Reporting.ReportingModule),
+        typeof(ALKAROS.Settings.SettingsModule)
     ];
 
     /// <summary>

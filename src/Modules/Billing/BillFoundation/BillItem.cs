@@ -71,9 +71,15 @@ public sealed class BillItem
         else
         {
             var lineSubtotal = BillMath.RoundCurrency(Quantity * UnitPrice);
+            if (DiscountAmount > lineSubtotal)
+                throw new ArgumentException(
+                    "Discount amount cannot exceed the bill item subtotal.",
+                    nameof(discountAmount));
             NetAmount = netAmount ?? BillMath.RoundCurrency(lineSubtotal - DiscountAmount);
             TaxAmount = taxAmount ?? BillMath.RoundCurrency(NetAmount * TaxRate / 100m);
             GrossAmount = grossAmount ?? BillMath.RoundCurrency(NetAmount + TaxAmount);
+            if (NetAmount < 0 || TaxAmount < 0 || GrossAmount < 0)
+                throw new ArgumentException("Persisted bill item amounts cannot be negative.");
         }
     }
 

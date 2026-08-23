@@ -123,14 +123,7 @@ public sealed class SubmitOrderHandler
             throw new StaleOrderVersionException(order.Id, command.ExpectedRowVersion, order.RowVersion);
         }
 
-        if (!order.CanTransitionTo(OrderState.Submitted))
-        {
-            throw new InvalidOperationException(
-                $"Order {order.Id} cannot transition from {order.Status} to {OrderState.Submitted}.");
-        }
-
-        var submitted = order.TransitionTo(
-            OrderState.Submitted,
+        var submitted = order.Submit(
             command.Reason,
             command.ChangedBy,
             command.SubmittedAt);

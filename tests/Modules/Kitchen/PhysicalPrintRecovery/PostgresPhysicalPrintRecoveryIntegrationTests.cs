@@ -91,6 +91,19 @@ public sealed class PostgresPhysicalPrintRecoveryIntegrationTests : IAsyncLifeti
         _testJob = await _queueRepo.EnqueueJobAsync(_testJob);
     }
 
+    [Fact]
+    public async Task StaleRecoveryMigrationRollsBackAndReapplies()
+    {
+        var sqlDirectory = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql");
+        var downSql = await File.ReadAllTextAsync(
+            Path.Combine(sqlDirectory, "037-physical-print-stale-recovery.down.sql"));
+        var upSql = await File.ReadAllTextAsync(
+            Path.Combine(sqlDirectory, "037-physical-print-stale-recovery.up.sql"));
+
+        await _db.ExecuteSqlAsync(downSql);
+        await _db.ExecuteSqlAsync(upSql);
+    }
+
     public async Task DisposeAsync()
     {
         await _db.DisposeAsync();
@@ -128,6 +141,21 @@ public sealed class PostgresPhysicalPrintRecoveryIntegrationTests : IAsyncLifeti
 
         var pendingList = await _recoveryService.GetPendingUnknownDeliveriesAsync();
         pendingList.Should().Contain(d => d.Id == delivery.Id);
+    }
+
+    [Fact]
+    public async Task StaleInFlightDeliveryIsRecoveredAsUnknownAfterWorkerCrash()
+    {
+        var delivery = await _recoveryService.StartInFlightDeliveryAsync(
+            _testJob.Id, _testTicket.Id, _testPrinterId, _testJob.Payload);
+        await _db.ExecuteSqlAsync(
+            $"UPDATE kitchen.physical_print_deliveries SET state_changed_at = now() - interval '10 minutes' WHERE id = '{delivery.Id}';");
+
+        var pending = await _recoveryService.GetPendingUnknownDeliveriesAsync();
+
+        var recovered = pending.Should().ContainSingle(item => item.Id == delivery.Id).Subject;
+        recovered.Status.Should().Be(PhysicalPrintDeliveryStatus.Unknown);
+        recovered.CrashWindowReason.Should().Contain("lease expired");
     }
 
     [Fact]

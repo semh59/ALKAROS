@@ -5,7 +5,8 @@ kimliği hash ile sabitlenmiştir.
 
 | Alan | Doğrulanan değer |
 | --- | --- |
-| Source file | `C:\Users\semih\Downloads\Telegram Desktop\restaurant_pos_master_v5.pdf` |
+| Source file | `External artifact; set ALKAROS_SOURCE_PDF when extraction is required` |
+| Filename | `restaurant_pos_master_v5.pdf` |
 | File size | `851285` bytes |
 | SHA-256 | `AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822` |
 | Page count | `94` |

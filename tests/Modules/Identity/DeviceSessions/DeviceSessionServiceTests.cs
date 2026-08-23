@@ -208,4 +208,41 @@ public sealed class DeviceSessionServiceTests : IClassFixture<DeviceSessionsTest
 
         await act.Should().ThrowAsync<InvalidSessionTokenException>();
     }
+
+    [Fact]
+    public async Task ReconnectCannotClaimAfterConcurrentRevocationLinearizesFirst()
+    {
+        var userId = await InsertUserAsync();
+        var (session, rawToken) = await _service.CreateSessionAsync(userId, DeviceA);
+        var operation = new PendingOperation(Guid.NewGuid(), DateTimeOffset.UtcNow);
+
+        await using var connection = await _database.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using (var lockCommand = connection.CreateCommand())
+        {
+            lockCommand.Transaction = transaction;
+            lockCommand.CommandText =
+                "SELECT session_id FROM identity.device_sessions WHERE session_id = @session_id FOR UPDATE;";
+            lockCommand.Parameters.AddWithValue("session_id", session.SessionId);
+            await lockCommand.ExecuteScalarAsync();
+        }
+
+        var reconnect = _service.ReconnectAsync(userId, DeviceA, rawToken, [operation]);
+
+        await using (var revokeCommand = connection.CreateCommand())
+        {
+            revokeCommand.Transaction = transaction;
+            revokeCommand.CommandText =
+                "UPDATE identity.device_sessions SET revoked_at = now() WHERE session_id = @session_id;";
+            revokeCommand.Parameters.AddWithValue("session_id", session.SessionId);
+            await revokeCommand.ExecuteNonQueryAsync();
+        }
+        await transaction.CommitAsync();
+
+        var act = async () => await reconnect;
+        await act.Should().ThrowAsync<DeviceSessionRevokedException>();
+        var count = await _database.ScalarAsync<long>(
+            $"SELECT count(*) FROM identity.session_operations WHERE operation_id = '{operation.OperationId}';");
+        count.Should().Be(0);
+    }
 }

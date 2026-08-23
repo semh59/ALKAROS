@@ -249,6 +249,23 @@ public class OrderItemStateTests
             kitchenState: kitchenState);
 
     [Fact]
+    public void DiscountCannotExceedLineSubtotal()
+    {
+        var act = () => new OrderItem(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Ayran",
+            1,
+            100m,
+            10m,
+            discountAmount: 150m);
+
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("*cannot exceed the order item subtotal*");
+    }
+
+    [Fact]
     public void DraftItemActivatesOnSubmit()
     {
         var item = NewItem(OrderItemState.Draft, KitchenState.NotSent);

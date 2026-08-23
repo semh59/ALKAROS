@@ -70,9 +70,15 @@ public sealed class OrderItem
         UpdatedAt = updatedAt ?? CreatedAt;
 
         var lineSubtotal = LineSubtotal();
+        if (DiscountAmount > lineSubtotal)
+            throw new ArgumentException(
+                "Discount amount cannot exceed the order item subtotal.",
+                nameof(discountAmount));
         NetAmount = netAmount ?? OrderMath.RoundCurrency(lineSubtotal - DiscountAmount);
         TaxAmount = taxAmount ?? OrderMath.RoundCurrency(NetAmount * TaxRate / 100m);
         GrossAmount = grossAmount ?? OrderMath.RoundCurrency(NetAmount + TaxAmount);
+        if (NetAmount < 0 || TaxAmount < 0 || GrossAmount < 0)
+            throw new ArgumentException("Persisted order item amounts cannot be negative.");
     }
 
     public Guid Id { get; }

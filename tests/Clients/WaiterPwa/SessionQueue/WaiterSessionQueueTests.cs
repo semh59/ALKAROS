@@ -10,6 +10,9 @@ public sealed class WaiterSessionQueueTests
     [Fact]
     public void BrowserRestartRetainsPersistedAllowableQueue()
     {
+        var directory = Path.Combine(Path.GetTempPath(), "alkaros-waiter-queue-tests", Guid.NewGuid().ToString("N"));
+        var storePath = Path.Combine(directory, "offline-queue.json");
+        var firstEngine = new WaiterOfflineQueueEngine(new JsonFileOfflineQueueStore(storePath));
         var session = new WaiterPwaSession(
             SessionId: Guid.NewGuid(),
             WaiterId: Guid.NewGuid(),
@@ -19,20 +22,54 @@ public sealed class WaiterSessionQueueTests
             IsActive: true,
             IsRevoked: false);
 
-        _engine.SetSession(session);
+        firstEngine.SetSession(session);
+        firstEngine.EnqueueOperation(
+            QueuedOperationType.SubmitOrder,
+            "{\"table\":\"M-03\",\"items\":[{\"id\":\"p1\",\"qty\":2}]}",
+            DateTimeOffset.UtcNow.AddMinutes(-5));
+        firstEngine.EnqueueOperation(
+            QueuedOperationType.AddOrderNote,
+            "{\"table\":\"M-03\",\"note\":\"Alerji uyarısı\"}",
+            DateTimeOffset.UtcNow.AddMinutes(-3));
 
-        // Simulate reading from IndexedDB / LocalStorage on PWA startup (Acceptance Evidence #1)
+        var restartedEngine = new WaiterOfflineQueueEngine(new JsonFileOfflineQueueStore(storePath));
+
+        restartedEngine.PendingOperations.Should().HaveCount(2);
+        restartedEngine.PendingOperations[0].OperationType.Should().Be(QueuedOperationType.SubmitOrder);
+        restartedEngine.PendingOperations[1].OperationType.Should().Be(QueuedOperationType.AddOrderNote);
+
+        Directory.Delete(directory, recursive: true);
+    }
+
+    [Fact]
+    public void CorruptPersistentQueueFailsClosed()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), "alkaros-waiter-queue-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        var storePath = Path.Combine(directory, "offline-queue.json");
+        File.WriteAllText(storePath, "not-json");
+
+        var act = () => new WaiterOfflineQueueEngine(new JsonFileOfflineQueueStore(storePath));
+
+        act.Should().Throw<InvalidDataException>();
+        Directory.Delete(directory, recursive: true);
+    }
+
+    [Fact]
+    public void ExplicitQueueImportPersistsAcrossRestart()
+    {
+        var store = new InMemoryOfflineQueueStore();
+        var engine = new WaiterOfflineQueueEngine(store);
         var persistedOps = new List<QueuedOperation>
         {
             new(Guid.NewGuid(), "idemp_1", QueuedOperationType.SubmitOrder, "{\"table\":\"M-03\",\"items\":[{\"id\":\"p1\",\"qty\":2}]}", DateTimeOffset.UtcNow.AddMinutes(-5)),
             new(Guid.NewGuid(), "idemp_2", QueuedOperationType.AddOrderNote, "{\"table\":\"M-03\",\"note\":\"Alerji uyarısı\"}", DateTimeOffset.UtcNow.AddMinutes(-3))
         };
 
-        _engine.LoadPersistedQueue(persistedOps);
+        engine.LoadPersistedQueue(persistedOps);
+        var restartedEngine = new WaiterOfflineQueueEngine(store);
 
-        _engine.PendingOperations.Should().HaveCount(2);
-        _engine.PendingOperations[0].OperationType.Should().Be(QueuedOperationType.SubmitOrder);
-        _engine.PendingOperations[1].OperationType.Should().Be(QueuedOperationType.AddOrderNote);
+        restartedEngine.PendingOperations.Should().HaveCount(2);
     }
 
     [Fact]

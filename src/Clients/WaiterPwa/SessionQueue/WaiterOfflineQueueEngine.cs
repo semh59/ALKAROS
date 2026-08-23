@@ -7,7 +7,14 @@ public sealed class WaiterOfflineQueueEngine
 {
     private WaiterPwaSession? _session;
     private readonly List<QueuedOperation> _queue = new();
+    private readonly IOfflineQueueStore _store;
     private bool _isOnline = true;
+
+    public WaiterOfflineQueueEngine(IOfflineQueueStore? store = null)
+    {
+        _store = store ?? new InMemoryOfflineQueueStore();
+        ReplaceQueue(_store.Load());
+    }
 
     public WaiterPwaSession? CurrentSession => _session;
     public bool IsOnline => _isOnline;
@@ -36,11 +43,9 @@ public sealed class WaiterOfflineQueueEngine
     /// </summary>
     public void LoadPersistedQueue(IEnumerable<QueuedOperation> operations)
     {
-        _queue.Clear();
-        if (operations is not null)
-        {
-            _queue.AddRange(operations);
-        }
+        ArgumentNullException.ThrowIfNull(operations);
+        ReplaceQueue(operations);
+        _store.Save(_queue);
     }
 
     /// <summary>
@@ -80,6 +85,8 @@ public sealed class WaiterOfflineQueueEngine
             now,
             0);
 
+        var persisted = _queue.Append(op).ToArray();
+        _store.Save(persisted);
         _queue.Add(op);
 
         return new QueueOperationResult(
@@ -163,6 +170,8 @@ public sealed class WaiterOfflineQueueEngine
                     ErrorMessage: null,
                     IsRejectedUnsupportedOffline: false));
 
+                var persisted = _queue.Where(item => item.OperationId != op.OperationId).ToArray();
+                _store.Save(persisted);
                 _queue.Remove(op);
             }
             else
@@ -179,5 +188,17 @@ public sealed class WaiterOfflineQueueEngine
         }
 
         return results;
+    }
+
+    private void ReplaceQueue(IEnumerable<QueuedOperation> operations)
+    {
+        var materialized = operations.ToArray();
+        if (materialized.Any(operation => operation.OperationId == Guid.Empty))
+            throw new InvalidDataException("Offline queue contains an operation with an empty id.");
+        if (materialized.Select(operation => operation.OperationId).Distinct().Count() != materialized.Length)
+            throw new InvalidDataException("Offline queue contains duplicate operation ids.");
+
+        _queue.Clear();
+        _queue.AddRange(materialized.OrderBy(operation => operation.QueuedAt).ThenBy(operation => operation.OperationId));
     }
 }

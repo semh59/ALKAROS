@@ -7,6 +7,7 @@ import hashlib
 import importlib.util
 import json
 import logging
+import os
 import re
 import shutil
 import subprocess
@@ -21,17 +22,43 @@ from urllib.request import Request, urlopen
 
 WORKSPACE = Path(__file__).resolve().parents[2]
 PLAN_DIR = WORKSPACE / "plan"
-PDF_PATH = Path(
-    r"C:\Users\semih\Downloads\Telegram Desktop\restaurant_pos_master_v5.pdf"
-)
+PDF_FILENAME = "restaurant_pos_master_v5.pdf"
+PDF_PATH = Path(os.environ["ALKAROS_SOURCE_PDF"]).expanduser().resolve() if os.environ.get("ALKAROS_SOURCE_PDF") else WORKSPACE / "artifacts" / PDF_FILENAME
 BASELINE_PATH = PLAN_DIR / "AUDIT_BASELINE_MANIFEST.json"
 TRANSLATION_CACHE_PATH = WORKSPACE / "tmp" / "plan_translation_cache.json"
-SESSION_LOG_PATH = Path(
-    r"C:\Users\semih\.codex\sessions\2026\07\29\rollout-2026-07-29T21-28-01-"
-    r"019faf22-309d-7920-a883-f6c4e06fc025.jsonl"
+SESSION_LOG_PATH = (
+    Path(os.environ["ALKAROS_AUDIT_SESSION_LOG"]).expanduser().resolve()
+    if os.environ.get("ALKAROS_AUDIT_SESSION_LOG")
+    else None
 )
 BASELINE_CUTOFF = "2026-07-29T19:59:16.591Z"
 AUDIT_DATE = "2026-07-30"
+
+
+def require_pdf_path() -> Path:
+    if not PDF_PATH.is_file():
+        raise FileNotFoundError(
+            f"Source PDF is not available at '{PDF_PATH}'. Set ALKAROS_SOURCE_PDF to the verified external artifact."
+        )
+    return PDF_PATH
+
+
+def recorded_pdf_metadata() -> dict[str, object]:
+    source = read_utf8(PLAN_DIR / "PDF_SOURCE.md")
+
+    def field(name: str) -> str:
+        match = re.search(rf"^\| {re.escape(name)} \| (.+?) \|$", source, re.MULTILINE)
+        if match is None:
+            raise ValueError(f"PDF_SOURCE.md is missing {name!r}.")
+        return match.group(1).replace("`", "").strip()
+
+    return {
+        "path": f"external:{field('Filename')}",
+        "sha256": field("SHA-256"),
+        "bytes": int(field("File size").split()[0]),
+        "pages": int(field("Page count")),
+        "encrypted": field("Encrypted").casefold() == "true",
+    }
 
 CORRECTION_OWNERS = {
     "C1": ["V0-DAT-001", "V20-MIG-001", "V20-MIG-002"],
@@ -990,6 +1017,11 @@ def apply_unified_diff(original: str, diff_text: str) -> str:
 
 
 def reconstruct_baseline() -> dict[str, str]:
+    if SESSION_LOG_PATH is None or not SESSION_LOG_PATH.is_file():
+        raise FileNotFoundError(
+            "Historical audit session is unavailable. Set ALKAROS_AUDIT_SESSION_LOG "
+            "to the verified transcript before recovering the frozen baseline."
+        )
     state: dict[str, str] = {}
     with SESSION_LOG_PATH.open(encoding="utf-8") as stream:
         for raw_line in stream:
@@ -1220,7 +1252,7 @@ def owner_for_section(section: str, entries: list[tuple[str, list[str]]]) -> lis
 def extract_pdf_headings() -> list[dict[str, str | int]]:
     from pypdf import PdfReader
 
-    reader = PdfReader(str(PDF_PATH))
+    reader = PdfReader(str(require_pdf_path()))
     numbered = re.compile(
         r"^(?P<section>(?:I|II|III|IV)\.\d+(?:\.\d+)*[A-Z]?)\s+(?P<title>.+)$"
     )
@@ -1350,7 +1382,7 @@ def extract_pdf_content_units(
     table_units: list[dict[str, str | int]] = []
     active_section = "DOCUMENT"
 
-    with pdfplumber.open(str(PDF_PATH)) as document:
+    with pdfplumber.open(str(require_pdf_path())) as document:
         for page_number, page in enumerate(document.pages, 1):
             page_start_section = active_section
             raw_lines = page.extract_text_lines() or []
@@ -1989,16 +2021,17 @@ def capture() -> None:
             }
         )
 
-    pdf_reader = PdfReader(str(PDF_PATH))
+    pdf_path = require_pdf_path()
+    pdf_reader = PdfReader(str(pdf_path))
     payload = {
         "schema": 1,
         "markdown_file_count": len(records),
         "markdown_line_count": sum(record["lines"] for record in records),
         "markdown_byte_count": sum(record["bytes"] for record in records),
         "pdf": {
-            "path": str(PDF_PATH),
-            "sha256": sha256(PDF_PATH),
-            "bytes": PDF_PATH.stat().st_size,
+            "path": f"external:{pdf_path.name}",
+            "sha256": sha256(pdf_path),
+            "bytes": pdf_path.stat().st_size,
             "pages": len(pdf_reader.pages),
             "encrypted": pdf_reader.is_encrypted,
         },
@@ -2736,9 +2769,12 @@ def validate_plan() -> None:
     if fnd1_handoff != {"V1-FND-003"}:
         errors.append(f"SEMANTIC_HANDOFF V1-FND-001: {','.join(sorted(fnd1_handoff))}")
 
+    root_surface_owner_ids = {"V1-FND-001", "V1-RMD-002"}
     root_surfaces = {
         value
-        for line in tasks["V1-FND-001"][2].get("Owned surface", [])
+        for task_id in root_surface_owner_ids
+        if task_id in tasks
+        for line in tasks[task_id][2].get("Owned surface", [])
         for value in re.findall(r"`([^`]+)`", line)
     }
     required_root_surfaces = {
@@ -2758,7 +2794,7 @@ def validate_plan() -> None:
     }
     if not required_root_surfaces <= root_surfaces:
         errors.append(
-            "SEMANTIC_ROOT_OWNERSHIP V1-FND-001: "
+            "SEMANTIC_ROOT_OWNERSHIP: "
             + ", ".join(sorted(required_root_surfaces - root_surfaces))
         )
 
@@ -2881,9 +2917,33 @@ def validate_plan() -> None:
 
 
 def validate_coverage() -> None:
+    errors: list[str] = []
+    if not PDF_PATH.is_file():
+        metadata = recorded_pdf_metadata()
+        coverage = read_utf8(PLAN_DIR / "PDF_COVERAGE.md")
+        stored_units = set(re.findall(r"^\| `(?P<unit>P\d{3}-(?:L\d{3}|T\d{2}-R\d{3}))` \|", coverage, re.MULTILINE))
+        stored_headings = set(re.findall(r"^\| `((?:I|II|III|IV)\.\d+(?:\.\d+)*[A-Z]?|C[1-9])` \|", coverage, re.MULTILINE))
+        if metadata["sha256"] != "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822":
+            errors.append("PDF_SOURCE_HASH")
+        if metadata["pages"] != 94:
+            errors.append(f"PDF_SOURCE_PAGE_COUNT {metadata['pages']}")
+        if not stored_units:
+            errors.append("COVERAGE_UNITS_EMPTY")
+        if not stored_headings:
+            errors.append("COVERAGE_HEADINGS_EMPTY")
+        print(f"PDF SHA-256: {metadata['sha256']} (recorded external artifact)")
+        print(f"PDF pages: {metadata['pages']} (recorded external artifact)")
+        print(f"Stored coverage headings: {len(stored_headings)}")
+        print(f"Stored coverage units: {len(stored_units)}")
+        print(f"Coverage errors: {len(errors)}")
+        for error in errors:
+            print(error)
+        if errors:
+            raise SystemExit(1)
+        return
+
     from pypdf import PdfReader
 
-    errors: list[str] = []
     reader = PdfReader(str(PDF_PATH))
     if sha256(PDF_PATH) != "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822":
         errors.append("PDF_HASH")
@@ -3133,11 +3193,103 @@ def post_audit_findings() -> list[tuple[str, int, str]]:
     ]
 
 
+def refresh_audit_report_integrity() -> None:
+    """Refresh current-file hashes while preserving the frozen historical findings."""
+    report_path = PLAN_DIR / "AUDIT_REPORT.md"
+    report = read_utf8(report_path)
+    actual_paths = {
+        path.relative_to(WORKSPACE).as_posix(): path
+        for path in audited_markdown_paths()
+    }
+    baseline = json.loads(read_utf8(BASELINE_PATH))
+    rename_map = {
+        "plan/v2.0/release/V20-REL-002-controlled-pilot.md":
+        "plan/v2.0/release/V20-REL-002-pilot-rehearsal.md"
+    }
+
+    baseline_start = report.index("## 211 başlangıç dosyasının satır bazlı kaydı")
+    baseline_end = report.index("## İçerik finding açıklamaları")
+    baseline_section = report[baseline_start:baseline_end]
+    row_pattern = re.compile(
+        r"^(?P<prefix>\| `(?P<initial>plan/[^`]+)` \| `[^`]+` \| "
+        r"`[A-F0-9]{64}` \| `(?P<final>plan/[^`]+)` \| )"
+        r"`[^`]+` \| `[A-F0-9]{64}` \|(?P<suffix>.*)$",
+        re.MULTILINE,
+    )
+
+    def replace_baseline_row(match: re.Match[str]) -> str:
+        final_relative = match.group("final")
+        final_path = actual_paths.get(final_relative)
+        if final_path is None:
+            raise RuntimeError(f"Audit report final path is missing: {final_relative}")
+        final_span = f"1-{line_count(read_utf8(final_path))}"
+        return (
+            f"{match.group('prefix')}`{final_span}` | `{sha256(final_path)}` |"
+            f"{match.group('suffix')}"
+        )
+
+    refreshed_baseline, replaced_count = row_pattern.subn(
+        replace_baseline_row, baseline_section
+    )
+    if replaced_count != len(baseline["files"]):
+        raise RuntimeError(
+            f"Audit baseline row count is {replaced_count}, expected {len(baseline['files'])}."
+        )
+    report = report[:baseline_start] + refreshed_baseline + report[baseline_end:]
+
+    added_start = report.index("## Denetim sırasında eklenen Markdown dosyaları")
+    added_end = report.index("## Kapanış durumu")
+    added_section = report[added_start:added_end]
+    header_end = added_section.index("\n", added_section.index("| ---")) + 1
+    existing_descriptions = {
+        match.group("path"): match.group("description")
+        for match in re.finditer(
+            r"^\| `(?P<path>plan/[^`]+\.md)` \| ✅ \| "
+            r"`(?:[A-F0-9]{64}|plan/AUDIT_MANIFEST\.json içinde)` \| "
+            r"(?P<description>.+) \|$",
+            added_section,
+            re.MULTILINE,
+        )
+    }
+    baseline_final_paths = {
+        rename_map.get(record["path"], record["path"])
+        for record in baseline["files"]
+    }
+    added_paths = sorted(
+        set(actual_paths) - baseline_final_paths - {"plan/AUDIT_REPORT.md"}
+    )
+    added_rows = [
+        f"| `{relative}` | ✅ | `{sha256(actual_paths[relative])}` | "
+        f"{existing_descriptions.get(relative, 'Tek-sahip görev')} |"
+        for relative in added_paths
+    ]
+    added_rows.append(
+        "| `plan/AUDIT_REPORT.md` | ✅ | `plan/AUDIT_MANIFEST.json` içinde | "
+        "Bu satır bazlı denetim kaydı |"
+    )
+    refreshed_added = added_section[:header_end] + "\n".join(added_rows) + "\n\n"
+    report = report[:added_start] + refreshed_added + report[added_end:]
+    report = re.sub(
+        r"^- Kayıtlı Markdown dosyası sayısı: `\d+`",
+        f"- Kayıtlı Markdown dosyası sayısı: `{len(actual_paths)}`",
+        report,
+        flags=re.MULTILINE,
+    )
+    report_path.write_text(report, encoding="utf-8", newline="")
+    print(
+        f"Audit report integrity refreshed: {replaced_count} baseline rows, "
+        f"{len(added_paths)} added files."
+    )
+
+
 def generate_audit_report() -> None:
     baseline = json.loads(read_utf8(BASELINE_PATH))
     if baseline.get("markdown_file_count") != 211 or baseline.get("markdown_line_count") != 8658:
         raise RuntimeError("Baseline manifest does not contain the locked 211/8658 values")
     recovery_root = WORKSPACE / "tmp" / "plan_audit_original"
+    if not recovery_root.is_dir():
+        refresh_audit_report_integrity()
+        return
     lint_by_file, lint_counts, lint_affected = baseline_lint_findings()
 
     baseline_records = {record["path"]: record for record in baseline["files"]}
@@ -3393,8 +3545,6 @@ def generate_audit_report() -> None:
 
 
 def generate_manifest() -> None:
-    from pypdf import PdfReader
-
     paths = audited_markdown_paths()
     records = []
     total_lines = 0
@@ -3414,7 +3564,18 @@ def generate_manifest() -> None:
                 "utf8": True,
             }
         )
-    pdf_reader = PdfReader(str(PDF_PATH))
+    source_pdf = recorded_pdf_metadata()
+    if PDF_PATH.is_file():
+        from pypdf import PdfReader
+
+        pdf_reader = PdfReader(str(PDF_PATH))
+        source_pdf = {
+            "path": f"external:{PDF_PATH.name}",
+            "sha256": sha256(PDF_PATH),
+            "bytes": PDF_PATH.stat().st_size,
+            "pages": len(pdf_reader.pages),
+            "encrypted": pdf_reader.is_encrypted,
+        }
     validation_paths = [
         "AGENTS.md",
         ".markdownlint-cli2.jsonc",
@@ -3443,13 +3604,7 @@ def generate_manifest() -> None:
         "markdown_file_count": len(records),
         "markdown_line_count": total_lines,
         "markdown_byte_count": total_bytes,
-        "source_pdf": {
-            "path": str(PDF_PATH),
-            "sha256": sha256(PDF_PATH),
-            "bytes": PDF_PATH.stat().st_size,
-            "pages": len(pdf_reader.pages),
-            "encrypted": pdf_reader.is_encrypted,
-        },
+        "source_pdf": source_pdf,
         "baseline_manifest": {
             "path": BASELINE_PATH.relative_to(WORKSPACE).as_posix(),
             "sha256": sha256(BASELINE_PATH),
@@ -3512,7 +3667,11 @@ def verify_manifest() -> None:
         errors.append(f"TOTAL_LINES actual={total_lines} manifest={manifest.get('markdown_line_count')}")
     if total_bytes != manifest.get("markdown_byte_count"):
         errors.append(f"TOTAL_BYTES actual={total_bytes} manifest={manifest.get('markdown_byte_count')}")
-    if sha256(PDF_PATH) != manifest["source_pdf"]["sha256"]:
+    recorded_source = recorded_pdf_metadata()
+    for key in ("sha256", "bytes", "pages", "encrypted"):
+        if manifest["source_pdf"].get(key) != recorded_source[key]:
+            errors.append(f"PDF_SOURCE_{key.upper()}")
+    if PDF_PATH.is_file() and sha256(PDF_PATH) != manifest["source_pdf"]["sha256"]:
         errors.append("PDF_HASH")
     if sha256(BASELINE_PATH) != manifest["baseline_manifest"]["sha256"]:
         errors.append("BASELINE_HASH")

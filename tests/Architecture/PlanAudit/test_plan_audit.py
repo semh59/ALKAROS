@@ -51,6 +51,21 @@ def _run_validate(workspace: Path) -> subprocess.CompletedProcess[str]:
     )
 
 
+def test_validate_coverage_does_not_require_personal_pdf_path(tmp_path: Path) -> None:
+    workspace = _copy_validation_workspace(tmp_path)
+
+    result = subprocess.run(
+        [sys.executable, "-B", "tools/plan-audit/plan_audit_tool.py", "validate-coverage"],
+        cwd=workspace,
+        check=False,
+        capture_output=True,
+        encoding="utf-8",
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "recorded external artifact" in result.stdout
+
+
 def _replace(path: Path, old: str, new: str) -> None:
     text = path.read_text(encoding="utf-8")
     assert old in text

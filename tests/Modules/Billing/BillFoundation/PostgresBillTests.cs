@@ -209,6 +209,52 @@ public sealed class PostgresBillTests : IClassFixture<BillingTestDatabase>
     }
 
     [Fact]
+    public async Task DatabaseRejectsInvalidPersistedLineAmounts()
+    {
+        var product = await SeedProduct("Constraint Product", 100m);
+        var order = await CreateAndSaveOrder(product, "Constraint Product", 100m);
+
+        await using (var invalidOrderItem = _dataSource.CreateCommand(
+            "UPDATE orders.order_items SET discount_amount = 101 WHERE order_item_id = @order_item_id;"))
+        {
+            invalidOrderItem.Parameters.AddWithValue("order_item_id", order.Items[0].Id);
+            var exception = await Assert.ThrowsAsync<PostgresException>(
+                () => invalidOrderItem.ExecuteNonQueryAsync());
+            Assert.Equal(CheckViolation, exception.SqlState);
+            Assert.Equal("ck_order_items_nonnegative_amounts", exception.ConstraintName);
+        }
+
+        var bill = new Bill(
+            Guid.NewGuid(),
+            UniqueBillNumber(),
+            new[] { BillItem.FromOrderItem(Guid.NewGuid(), order.Items[0]) });
+        await _bills.AddAsync(bill);
+
+        await using var invalidBillItem = _dataSource.CreateCommand(
+            "UPDATE billing.bill_items SET discount_amount = 101 WHERE bill_item_id = @bill_item_id;");
+        invalidBillItem.Parameters.AddWithValue("bill_item_id", bill.Items[0].Id);
+        var billException = await Assert.ThrowsAsync<PostgresException>(
+            () => invalidBillItem.ExecuteNonQueryAsync());
+        Assert.Equal(CheckViolation, billException.SqlState);
+        Assert.Equal("ck_bill_items_nonnegative_amounts", billException.ConstraintName);
+    }
+
+    [Fact]
+    public async Task NonnegativeLineAmountsMigrationRollsBackAndReapplies()
+    {
+        var sqlDirectory = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql");
+        var downSql = await File.ReadAllTextAsync(
+            Path.Combine(sqlDirectory, "036-nonnegative-line-amounts.down.sql"));
+        var upSql = await File.ReadAllTextAsync(
+            Path.Combine(sqlDirectory, "036-nonnegative-line-amounts.up.sql"));
+
+        await using (var down = _dataSource.CreateCommand(downSql))
+            await down.ExecuteNonQueryAsync();
+        await using (var up = _dataSource.CreateCommand(upSql))
+            await up.ExecuteNonQueryAsync();
+    }
+
+    [Fact]
     public async Task ForeignKeysEnforced()
     {
         var product = await SeedProduct("Ayran", 20m);

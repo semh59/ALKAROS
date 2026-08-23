@@ -4,6 +4,7 @@ using ALKAROS.Host.Composition.Modules;
 using ALKAROS.ModuleComposition;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using System.Data.Common;
 
 namespace ALKAROS.Host.Composition;
 
@@ -192,6 +193,7 @@ public static class HostComposition
             if (dataSource is not null)
             {
                 services.AddSingleton(dataSource);
+                services.AddSingleton<DbDataSource>(dataSource);
             }
 
             foreach (var descriptor in root.Services)

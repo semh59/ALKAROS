@@ -177,6 +177,32 @@ public sealed class PostgresSubmitOrderIntegrationTests : IClassFixture<SubmitOr
         reloaded.Should().NotBeNull();
         reloaded!.Status.Should().Be(OrderState.Submitted);
         reloaded.RowVersion.Should().Be(result.RowVersion);
+        reloaded.Items.Should().OnlyContain(item => item.Status == OrderItemState.Active);
+    }
+
+    [Fact]
+    public async Task HandleAsyncRejectsEmptyDraftOrder()
+    {
+        var order = new Order(
+            Guid.NewGuid(),
+            OrderSource.Waiter,
+            "ORD-" + Guid.NewGuid().ToString("N")[..8],
+            []);
+        await _repository.AddAsync(order);
+
+        var command = new SubmitOrderCommand(
+            "waiter-pwa-01",
+            "op-empty-order",
+            order.Id,
+            order.RowVersion);
+
+        var act = () => _handler.HandleAsync(command);
+
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("*has no items to submit*");
+
+        var reloaded = await _repository.GetByIdAsync(order.Id);
+        reloaded!.Status.Should().Be(OrderState.Draft);
     }
 
     [Fact]
@@ -263,7 +289,7 @@ public sealed class PostgresSubmitOrderIntegrationTests : IClassFixture<SubmitOr
         var act = () => _handler.HandleAsync(cmd);
 
         await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("*cannot transition from Submitted to Submitted*");
+            .WithMessage("*cannot be submitted from Submitted*");
     }
 
     [Fact]

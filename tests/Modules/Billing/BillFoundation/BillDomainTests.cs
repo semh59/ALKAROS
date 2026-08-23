@@ -106,6 +106,10 @@ public sealed class BillDomainTests
         Assert.Throws<ArgumentException>(() => new BillItem(Guid.NewGuid(), billId, orderItemId, productId, "P", 1, 10m, -1m));
         // Negative discount amount
         Assert.Throws<ArgumentException>(() => new BillItem(Guid.NewGuid(), billId, orderItemId, productId, "P", 1, 10m, 10m, discountAmount: -5m));
+        // Discount greater than the line subtotal
+        Assert.Throws<ArgumentException>(() => new BillItem(Guid.NewGuid(), billId, orderItemId, productId, "P", 1, 100m, 10m, discountAmount: 150m));
+        // Persisted negative monetary snapshots
+        Assert.Throws<ArgumentException>(() => new BillItem(Guid.NewGuid(), billId, orderItemId, productId, "P", 1, 100m, 10m, netAmount: -1m));
     }
 
     [Fact]

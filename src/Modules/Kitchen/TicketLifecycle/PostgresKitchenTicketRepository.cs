@@ -72,61 +72,22 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
     public async Task<IReadOnlyList<KitchenTicket>> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-
-        var ticketIds = new List<Guid>();
-        await using (var cmd = connection.CreateCommand())
-        {
-            cmd.CommandText = "SELECT id FROM kitchen.kitchen_tickets WHERE order_id = @order_id ORDER BY created_at;";
-            cmd.Parameters.AddWithValue("order_id", orderId);
-            await using var reader = await cmd.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-            {
-                ticketIds.Add(reader.GetGuid(0));
-            }
-        }
-
-        var results = new List<KitchenTicket>();
-        foreach (var ticketId in ticketIds)
-        {
-            var ticket = await GetByIdAsync(ticketId, cancellationToken).ConfigureAwait(false);
-            if (ticket != null)
-                results.Add(ticket);
-        }
-
-        return results;
+        return await LoadTicketGraphAsync(
+            connection,
+            "t.order_id = @filter",
+            orderId,
+            cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(string stationId, CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(stationId);
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-
-        var ticketIds = new List<Guid>();
-        await using (var cmd = connection.CreateCommand())
-        {
-            cmd.CommandText =
-                """
-                SELECT id
-                FROM kitchen.kitchen_tickets
-                WHERE station_id = @station_id AND status NOT IN ('Ready', 'Cancelled')
-                ORDER BY created_at;
-                """;
-            cmd.Parameters.AddWithValue("station_id", stationId);
-            await using var reader = await cmd.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-            {
-                ticketIds.Add(reader.GetGuid(0));
-            }
-        }
-
-        var results = new List<KitchenTicket>();
-        foreach (var ticketId in ticketIds)
-        {
-            var ticket = await GetByIdAsync(ticketId, cancellationToken).ConfigureAwait(false);
-            if (ticket != null)
-                results.Add(ticket);
-        }
-
-        return results;
+        return await LoadTicketGraphAsync(
+            connection,
+            "t.station_id = @filter AND t.status NOT IN ('Ready', 'Cancelled')",
+            stationId,
+            cancellationToken).ConfigureAwait(false);
     }
 
     public async Task AddAsync(KitchenTicket ticket, CancellationToken cancellationToken = default)
@@ -336,5 +297,112 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         }
 
         return list;
+    }
+
+    private static async Task<IReadOnlyList<KitchenTicket>> LoadTicketGraphAsync(
+        NpgsqlConnection connection,
+        string predicate,
+        object filter,
+        CancellationToken cancellationToken)
+    {
+        var allowedPredicates = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "t.order_id = @filter",
+            "t.station_id = @filter AND t.status NOT IN ('Ready', 'Cancelled')",
+        };
+        if (!allowedPredicates.Contains(predicate))
+            throw new ArgumentException("Unsupported kitchen ticket query predicate.", nameof(predicate));
+
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            $"""
+            SELECT t.id, t.order_id, t.ticket_number, t.station_id, t.status, t.row_version,
+                   t.created_at, t.updated_at, t.accepted_at, t.ready_at, t.cancelled_at, t.cancellation_reason,
+                   i.id, i.ticket_id, i.order_item_id, i.product_id, i.product_name_snapshot,
+                   i.quantity, i.modifiers_summary, i.notes, i.status, i.row_version,
+                   i.created_at, i.updated_at, i.ready_at, i.served_at, i.cancelled_at, i.cancellation_reason
+            FROM kitchen.kitchen_tickets AS t
+            LEFT JOIN kitchen.kitchen_ticket_items AS i ON i.ticket_id = t.id
+            WHERE {predicate}
+            ORDER BY t.created_at, i.created_at;
+            """;
+        command.Parameters.AddWithValue("filter", filter);
+
+        var rows = new Dictionary<Guid, TicketGraphRow>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var ticketId = reader.GetGuid(0);
+            if (!rows.TryGetValue(ticketId, out var row))
+            {
+                row = new TicketGraphRow(
+                    ticketId,
+                    reader.GetGuid(1),
+                    reader.GetString(2),
+                    reader.GetString(3),
+                    Enum.Parse<KitchenTicketState>(reader.GetString(4)),
+                    reader.GetInt64(5),
+                    reader.GetFieldValue<DateTimeOffset>(6),
+                    reader.IsDBNull(7) ? null : reader.GetFieldValue<DateTimeOffset>(7),
+                    reader.IsDBNull(8) ? null : reader.GetFieldValue<DateTimeOffset>(8),
+                    reader.IsDBNull(9) ? null : reader.GetFieldValue<DateTimeOffset>(9),
+                    reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10),
+                    reader.IsDBNull(11) ? null : reader.GetString(11));
+                rows.Add(ticketId, row);
+            }
+
+            if (!reader.IsDBNull(12))
+            {
+                row.Items.Add(new KitchenTicketItem(
+                    reader.GetGuid(12),
+                    reader.GetGuid(13),
+                    reader.GetGuid(14),
+                    reader.GetGuid(15),
+                    reader.GetString(16),
+                    reader.GetDecimal(17),
+                    reader.IsDBNull(18) ? null : reader.GetString(18),
+                    reader.IsDBNull(19) ? null : reader.GetString(19),
+                    Enum.Parse<KitchenTicketItemState>(reader.GetString(20)),
+                    reader.GetInt64(21),
+                    reader.GetFieldValue<DateTimeOffset>(22),
+                    reader.IsDBNull(23) ? null : reader.GetFieldValue<DateTimeOffset>(23),
+                    reader.IsDBNull(24) ? null : reader.GetFieldValue<DateTimeOffset>(24),
+                    reader.IsDBNull(25) ? null : reader.GetFieldValue<DateTimeOffset>(25),
+                    reader.IsDBNull(26) ? null : reader.GetFieldValue<DateTimeOffset>(26),
+                    reader.IsDBNull(27) ? null : reader.GetString(27)));
+            }
+        }
+
+        return rows.Values.Select(row => new KitchenTicket(
+            row.Id,
+            row.OrderId,
+            row.TicketNumber,
+            row.StationId,
+            row.Items,
+            row.Status,
+            row.RowVersion,
+            row.CreatedAt,
+            row.UpdatedAt,
+            row.AcceptedAt,
+            row.ReadyAt,
+            row.CancelledAt,
+            row.CancellationReason)).ToArray();
+    }
+
+    private sealed record TicketGraphRow(
+        Guid Id,
+        Guid OrderId,
+        string TicketNumber,
+        string StationId,
+        KitchenTicketState Status,
+        long RowVersion,
+        DateTimeOffset CreatedAt,
+        DateTimeOffset? UpdatedAt,
+        DateTimeOffset? AcceptedAt,
+        DateTimeOffset? ReadyAt,
+        DateTimeOffset? CancelledAt,
+        string? CancellationReason)
+    {
+        public List<KitchenTicketItem> Items { get; } = [];
     }
 }

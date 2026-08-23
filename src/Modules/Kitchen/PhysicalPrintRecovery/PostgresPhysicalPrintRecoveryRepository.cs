@@ -5,10 +5,16 @@ using Npgsql;
 public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintRecoveryRepository
 {
     private readonly NpgsqlDataSource _dataSource;
+    private readonly TimeSpan _staleInFlightAfter;
 
-    public PostgresPhysicalPrintRecoveryRepository(NpgsqlDataSource dataSource)
+    public PostgresPhysicalPrintRecoveryRepository(
+        NpgsqlDataSource dataSource,
+        TimeSpan? staleInFlightAfter = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _staleInFlightAfter = staleInFlightAfter ?? TimeSpan.FromMinutes(5);
+        if (_staleInFlightAfter <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(staleInFlightAfter), "Stale timeout must be positive.");
     }
 
     public async Task<PhysicalPrintDelivery?> GetByIdAsync(Guid id, CancellationToken ct = default)
@@ -88,7 +94,33 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
     public async Task<IReadOnlyList<PhysicalPrintDelivery>> GetPendingUnknownDeliveriesAsync(CancellationToken ct = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(ct).ConfigureAwait(false);
+        await using (var recoveryCommand = connection.CreateCommand())
+        {
+            recoveryCommand.Transaction = transaction;
+            recoveryCommand.CommandText =
+                """
+                UPDATE kitchen.physical_print_deliveries
+                SET status = 'Unknown',
+                    is_reprint = FALSE,
+                    crash_window_reason = CASE
+                        WHEN status = 'ReprintInFlight' THEN 'Reprint worker lease expired before acknowledgement.'
+                        ELSE 'Print worker lease expired before acknowledgement.'
+                    END,
+                    reprint_payload = NULL,
+                    delivered_at = NULL,
+                    resolved_at = NULL,
+                    state_changed_at = now(),
+                    row_version = row_version + 1
+                WHERE status IN ('InFlight', 'ReprintInFlight')
+                  AND state_changed_at <= now() - @stale_after;
+                """;
+            recoveryCommand.Parameters.AddWithValue("stale_after", _staleInFlightAfter);
+            await recoveryCommand.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
+        }
+
         await using var cmd = connection.CreateCommand();
+        cmd.Transaction = transaction;
         cmd.CommandText =
             """
             SELECT id, print_job_id, ticket_id, printer_id, status, attempt_number,
@@ -107,6 +139,8 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
             list.Add(MapDelivery(reader));
         }
 
+        await reader.DisposeAsync().ConfigureAwait(false);
+        await transaction.CommitAsync(ct).ConfigureAwait(false);
         return list;
     }
 
@@ -168,6 +202,7 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
                 reprint_payload = @reprint_payload,
                 delivered_at = @delivered_at,
                 resolved_at = @resolved_at,
+                state_changed_at = now(),
                 row_version = row_version + 1
             WHERE id = @id AND row_version = @row_version;
             """;

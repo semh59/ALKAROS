@@ -1,11 +1,11 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 537,
-  "markdown_line_count": 37911,
-  "markdown_byte_count": 2352324,
+  "markdown_file_count": 538,
+  "markdown_line_count": 37984,
+  "markdown_byte_count": 2355134,
   "source_pdf": {
-    "path": "C:\\Users\\semih\\Downloads\\Telegram Desktop\\restaurant_pos_master_v5.pdf",
+    "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
     "bytes": 851285,
     "pages": 94,
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "644CE52E6183CE8FE736E18DD4CA1B19F405BBA8573068C58A40970377EFD8FB",
-      "lines": 3686,
-      "bytes": 167924,
+      "sha256": "2C603D070A8821F894976E23DE1E08913F9F2B962FE124C7A3631C6072A42C3B",
+      "lines": 3845,
+      "bytes": 174750,
       "utf8": true
     }
   ],
@@ -1156,9 +1156,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "7138C87B4A38640EF249BAC1CBD9BA0195430A48FC02C451B7EB6AB916938D4B",
-      "lines": 1813,
-      "bytes": 251262,
+      "sha256": "1B37362F5BDDF7BC9A4703B08F21364DA36F0770F1E5CF17F9F0E4E5D84D2B79",
+      "lines": 1814,
+      "bytes": 250807,
       "utf8": true
     },
     {
@@ -1205,9 +1205,9 @@
     },
     {
       "path": "plan/PDF_SOURCE.md",
-      "sha256": "DD1BC2615483D60C43694C25A427D79AA752D2A11AB27B029AA2460162EDD9DF",
-      "lines": 45,
-      "bytes": 2050,
+      "sha256": "E5B27780407D46555B1D3BAE0896ED5BFBA33BB86439ADF9148BF026D6FF1781",
+      "lines": 46,
+      "bytes": 2095,
       "utf8": true
     },
     {
@@ -1814,9 +1814,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-063-defer-gov-041-042.md",
-      "sha256": "3562AFBFCD66310F144CCE7186219282058D51C1BF6FA6D41F1A76BE28051CE5",
+      "sha256": "34E49C1A68FF996297EC5B29D7752C062FDC616B043E6C418BCFB0374459F588",
       "lines": 101,
-      "bytes": 4173,
+      "bytes": 4205,
       "utf8": true
     },
     {
@@ -2164,9 +2164,9 @@
     },
     {
       "path": "plan/v1/billing/V1-BIL-001-bill-foundation.md",
-      "sha256": "F48B98E51777C67142434F5253E02D8F00FF6C1AE6D060F7C4E5160E79B9C08C",
+      "sha256": "00363F016A4FDF97EED11077DEB127A38DC9A4B1BDA9716EC5916C941716648F",
       "lines": 57,
-      "bytes": 1373,
+      "bytes": 1390,
       "utf8": true
     },
     {
@@ -2185,9 +2185,9 @@
     },
     {
       "path": "plan/v1/billing/V1-BIL-004-billing-composite-integrity.md",
-      "sha256": "A1648DD475E449A91CC493E3C72C9736F9C78DC7EFD4287336B45A62523466C7",
-      "lines": 37,
-      "bytes": 1244,
+      "sha256": "9ECFAF2A3247712CACC311ED4C8E67D1471E579C8B453E527E12E01C414B1935",
+      "lines": 36,
+      "bytes": 1242,
       "utf8": true
     },
     {
@@ -2248,9 +2248,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-001-module-skeleton.md",
-      "sha256": "85AC591B63E820309D43E23101A929D7AE7EFD3262E71D6983551CA76D1A8D9C",
+      "sha256": "2057307FAFDBF909199283F33CB6159D3E1B4CC3DA68CB61F459F3B1FCA27F7A",
       "lines": 67,
-      "bytes": 2811,
+      "bytes": 2847,
       "utf8": true
     },
     {
@@ -2360,9 +2360,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-017-host-data-source-bootstrap.md",
-      "sha256": "501BB6CB228AE97BA379307B01BF28FF48D7003FF2270F5A042E3FB297C8B3D5",
+      "sha256": "1A99CD026EBEAA1D80277655991B496CB1D9D4511C62FB6D87117ED88CEAAAE6",
       "lines": 55,
-      "bytes": 1751,
+      "bytes": 1772,
       "utf8": true
     },
     {
@@ -2416,9 +2416,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-025-host-fail-closed-bootstrap.md",
-      "sha256": "FCC0A22BFB8F2E03E9E8B5EF4E370AD8FD3F937090A993B6AC1CD278F6D7E9A3",
-      "lines": 34,
-      "bytes": 1175,
+      "sha256": "C46B03B3C02B3E30261837B3056EFB10E0D7FE9A3F17361839A4DC10ED1FD85F",
+      "lines": 32,
+      "bytes": 1123,
       "utf8": true
     },
     {
@@ -2528,16 +2528,16 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-015-session-concurrency-linearization.md",
-      "sha256": "0EC69353EC5DEE20A60146E1A9094DD537FBF2B084D7C2F6314D3819D3BD9AC8",
-      "lines": 35,
-      "bytes": 1179,
+      "sha256": "FB9251B9E0EFDDF82F5122746C2297E805F0051F3A277B9EEE07856574F967A0",
+      "lines": 32,
+      "bytes": 997,
       "utf8": true
     },
     {
       "path": "plan/v1/kitchen-printing/V1-KIT-001-kitchen-ticket-lifecycle.md",
-      "sha256": "CE279773B147C043633FAAD136D51277C6D89D6836AB9F05692B5F6192F15C46",
+      "sha256": "BFE2772773FB5CBF5DCC1097950B362530D5A9C5002C94268D7858CBAFECE4A2",
       "lines": 56,
-      "bytes": 1396,
+      "bytes": 1412,
       "utf8": true
     },
     {
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/v1/kitchen-printing/V1-KIT-004-physical-retry-semantics.md",
-      "sha256": "38E74CB8E83099F2B3C88D1384BC0BFD0E628093C8D1F03CCAB1D9E32EBB898D",
+      "sha256": "ACB546AB5DB4935582E33D19493C64A8DEDC8B7756549D12014E6DFACF8DC31B",
       "lines": 54,
-      "bytes": 1448,
+      "bytes": 1458,
       "utf8": true
     },
     {
@@ -2584,9 +2584,9 @@
     },
     {
       "path": "plan/v1/orders/V1-ORD-001-order-aggregate.md",
-      "sha256": "18CD4D7D479DD18D8CD5B30E6EA03F8CAA46AFC3C12585A1E481CA596DFDA54D",
+      "sha256": "9FF83D5DBEDEA1C0690BC311272E098E80626C38FAA9E9D508C31DD8B7F45307",
       "lines": 59,
-      "bytes": 1414,
+      "bytes": 1433,
       "utf8": true
     },
     {
@@ -2605,9 +2605,9 @@
     },
     {
       "path": "plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md",
-      "sha256": "6490D26A84C8839B5A89C14E0CEB6D42C6B51BEB2CA688E28CFFD1B75340A406",
-      "lines": 37,
-      "bytes": 1153,
+      "sha256": "A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26",
+      "lines": 36,
+      "bytes": 1175,
       "utf8": true
     },
     {
@@ -2629,6 +2629,13 @@
       "sha256": "611DEFF136119D042B549B4BFC64DFA388F18B116D37D80751D3CF3B41F7256A",
       "lines": 97,
       "bytes": 4731,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md",
+      "sha256": "968A459F046FCBECCA0E05EC11B7D1A32E95F2AC0E9603A72290E7EE07135D78",
+      "lines": 80,
+      "bytes": 3302,
       "utf8": true
     },
     {
@@ -2759,9 +2766,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-004-offline-queue-dispatch-acknowledgment.md",
-      "sha256": "C8B1A82BC207D3403883F10392FA21801B2C321E452FD30D9D53138BE23C5C69",
-      "lines": 32,
-      "bytes": 968,
+      "sha256": "C96EDAB905C3DE9447F18DA966D2E267CFF32CD56BD2D88F0809EFFF154601B9",
+      "lines": 30,
+      "bytes": 949,
       "utf8": true
     },
     {

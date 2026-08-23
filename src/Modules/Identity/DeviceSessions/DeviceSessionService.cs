@@ -61,19 +61,31 @@ public sealed class DeviceSessionService : IDeviceSessionService
     {
         ArgumentNullException.ThrowIfNull(pendingOperations);
 
-        var session = await ValidateAsync(userId, deviceId, rawToken, touchLastSeen: false, cancellationToken);
-        if (pendingOperations.Count == 0)
-        {
-            return new ReconnectResult(session, Array.Empty<PendingOperation>());
-        }
-
         var candidateOps = pendingOperations
             .OrderBy(op => op.QueuedAt)
             .ThenBy(op => op.OperationId)
             .ToList();
 
-        var insertedIds = (await _repository.AddProcessedOperationsAsync(session.SessionId, candidateOps, cancellationToken))
-            .ToHashSet();
+        ArgumentException.ThrowIfNullOrEmpty(deviceId);
+        ArgumentException.ThrowIfNullOrEmpty(rawToken);
+        var claim = await _repository.ClaimReconnectOperationsAsync(
+            DeviceSessionToken.Hash(rawToken),
+            userId,
+            deviceId,
+            candidateOps,
+            DateTimeOffset.UtcNow,
+            cancellationToken);
+
+        var session = claim.Status switch
+        {
+            ReconnectClaimStatus.Success when claim.Session is not null => claim.Session,
+            ReconnectClaimStatus.Revoked => throw new DeviceSessionRevokedException("Session was revoked."),
+            ReconnectClaimStatus.Expired => throw new DeviceSessionExpiredException("Session has expired."),
+            _ => throw new InvalidSessionTokenException(
+                "Session does not exist or the token does not belong to this user/device."),
+        };
+
+        var insertedIds = claim.InsertedOperationIds.ToHashSet();
 
         var applied = candidateOps
             .Where(op => insertedIds.Contains(op.OperationId))

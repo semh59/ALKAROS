@@ -101,43 +101,87 @@ public sealed class PostgresDeviceSessionRepository : IDeviceSessionRepository
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Guid>> AddProcessedOperationsAsync(Guid sessionId, IReadOnlyList<PendingOperation> operations, CancellationToken cancellationToken = default)
+    public async Task<ReconnectClaimResult> ClaimReconnectOperationsAsync(
+        string tokenHash,
+        Guid userId,
+        string deviceId,
+        IReadOnlyList<PendingOperation> operations,
+        DateTimeOffset utcNow,
+        CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrEmpty(tokenHash);
+        ArgumentException.ThrowIfNullOrEmpty(deviceId);
         ArgumentNullException.ThrowIfNull(operations);
-        if (operations.Count == 0)
-            return Array.Empty<Guid>();
 
-        var inserted = new List<Guid>();
-        await using var command = _dataSource.CreateCommand(
-            $"""
-            INSERT INTO {Operations} (operation_id, session_id, queued_at)
-            SELECT @operation_id, @session_id, @queued_at
-            WHERE EXISTS (
-                SELECT 1 FROM {Sessions}
-                WHERE session_id = @session_id
-                  AND revoked_at IS NULL
-                  AND expires_at > now()
-            )
-            ON CONFLICT (operation_id) DO NOTHING
-            RETURNING operation_id;
-            """);
-        command.Parameters.Add("operation_id", NpgsqlDbType.Uuid);
-        command.Parameters.Add("session_id", NpgsqlDbType.Uuid);
-        command.Parameters.Add("queued_at", NpgsqlDbType.TimestampTz);
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
-        foreach (var operation in operations)
+        DeviceSession? session;
+        await using (var lockCommand = connection.CreateCommand())
         {
-            command.Parameters["operation_id"].Value = operation.OperationId;
-            command.Parameters["session_id"].Value = sessionId;
-            command.Parameters["queued_at"].Value = operation.QueuedAt;
-            var result = await command.ExecuteScalarAsync(cancellationToken);
-            if (result is Guid returnedId)
-            {
-                inserted.Add(returnedId);
-            }
+            lockCommand.Transaction = transaction;
+            lockCommand.CommandText =
+                $"""
+                SELECT session_id, user_id, device_id, token_hash, created_at, expires_at, revoked_at, last_seen_at
+                FROM {Sessions}
+                WHERE token_hash = @token_hash
+                FOR UPDATE;
+                """;
+            lockCommand.Parameters.AddWithValue("token_hash", tokenHash);
+
+            await using var reader = await lockCommand.ExecuteReaderAsync(cancellationToken);
+            session = await reader.ReadAsync(cancellationToken) ? ReadSession(reader) : null;
         }
 
-        return inserted;
+        if (session is null || session.UserId != userId || session.DeviceId != deviceId)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return new ReconnectClaimResult(ReconnectClaimStatus.InvalidSession, null, []);
+        }
+
+        if (session.RevokedAt is not null)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return new ReconnectClaimResult(ReconnectClaimStatus.Revoked, session, []);
+        }
+
+        if (session.ExpiresAt <= utcNow)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return new ReconnectClaimResult(ReconnectClaimStatus.Expired, session, []);
+        }
+
+        var inserted = new List<Guid>();
+        if (operations.Count > 0)
+        {
+            await using var insertCommand = connection.CreateCommand();
+            insertCommand.Transaction = transaction;
+            insertCommand.CommandText =
+                $"""
+                INSERT INTO {Operations} (operation_id, session_id, queued_at)
+                SELECT operation_id, @session_id, queued_at
+                FROM unnest(@operation_ids::uuid[], @queued_at_values::timestamptz[])
+                    AS pending(operation_id, queued_at)
+                ON CONFLICT (operation_id) DO NOTHING
+                RETURNING operation_id;
+                """;
+            insertCommand.Parameters.AddWithValue("session_id", session.SessionId);
+            insertCommand.Parameters.AddWithValue(
+                "operation_ids",
+                NpgsqlDbType.Array | NpgsqlDbType.Uuid,
+                operations.Select(operation => operation.OperationId).ToArray());
+            insertCommand.Parameters.AddWithValue(
+                "queued_at_values",
+                NpgsqlDbType.Array | NpgsqlDbType.TimestampTz,
+                operations.Select(operation => operation.QueuedAt).ToArray());
+
+            await using var reader = await insertCommand.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                inserted.Add(reader.GetGuid(0));
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+        return new ReconnectClaimResult(ReconnectClaimStatus.Success, session, inserted);
     }
 
     public async Task<IReadOnlyList<Guid>> GetProcessedOperationIdsAsync(CancellationToken cancellationToken = default)

@@ -207,6 +207,18 @@
       "phase": "B",
       "tables": ["daily_business_days"],
       "deferredConstraints": []
+    },
+    {
+      "id": "036",
+      "phase": "B",
+      "tables": ["order_items", "bill_items"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "037",
+      "phase": "B",
+      "tables": ["physical_print_deliveries"],
+      "deferredConstraints": []
     }
   ]
 }
