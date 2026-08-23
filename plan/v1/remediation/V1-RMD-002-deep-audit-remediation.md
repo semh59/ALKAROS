@@ -1,8 +1,8 @@
 # V1-RMD-002 - Deep audit remediation
 
 - Task ID: V1-RMD-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: codex-root-v1-rmd-002
 - Work type: implementation
 - Surface state: Existing
 
@@ -16,6 +16,9 @@ konsolide remediasyon zincirinde kapatmak.
 
 - `global.json`
 - `src/Host/ALKAROS.Host.csproj`
+- `src/Host/packages.lock.json`
+- `tests/Host/MigrationComposition/packages.lock.json`
+- `tests/Architecture/ModuleBoundaries/packages.lock.json`
 - `src/Host/Composition/Modules/ModuleRegistry.cs`
 - `src/Modules/Audit/AuditModule.cs`
 - `src/Modules/Cash/CashModule.cs`
