@@ -20,6 +20,7 @@ konsolide remediasyon zincirinde kapatmak.
 - `tests/Host/MigrationComposition/packages.lock.json`
 - `tests/Architecture/ModuleBoundaries/**`
 - `src/Host/Composition/Modules/ModuleRegistry.cs`
+- `src/Host/Composition/HostComposition.cs`
 - `src/Modules/Audit/AuditModule.cs`
 - `src/Modules/Cash/CashModule.cs`
 - `src/Modules/Identity/IdentityModule.cs`

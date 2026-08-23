@@ -13,11 +13,10 @@ yapmak; ModuleRegistry ile V1 modüllerinin DI constructability ve reachability'
 
 ## Owned surface
 
-- `src/Host/Composition/HostComposition.cs`
 - `evidence/V1-FND-017/host_bootstrap_verification.txt`
 - `tests/Host/MigrationComposition/Composition/HostConstructabilityTests.cs`
 - `evidence/V1-FND-025/**`
-- C72 (2026-08-24): ModuleRegistry ve reachability test remediasyon sahipliği V1-RMD-002'ye devredildi.
+- C72 (2026-08-24): HostComposition, ModuleRegistry ve reachability test remediasyon sahipliği V1-RMD-002'ye devredildi.
 
 ## Dependencies
 
