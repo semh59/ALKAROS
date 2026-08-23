@@ -1789,7 +1789,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-015-session-concurrency-linearization.md` | ✅ | `FB9251B9E0EFDDF82F5122746C2297E805F0051F3A277B9EEE07856574F967A0` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-001-consolidated-remediation.md` | ✅ | `611DEFF136119D042B549B4BFC64DFA388F18B116D37D80751D3CF3B41F7256A` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md` | ✅ | `968A459F046FCBECCA0E05EC11B7D1A32E95F2AC0E9603A72290E7EE07135D78` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md` | ✅ | `C64190D740319BA6A237992606E1E81CD7C759ADC0B592FAB1EB0A2DE178973A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `24623A6E669EB2C9DF00914C529190C888D2B22D4282BE594200AB24F6FF362A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `E28E58E5E8A0CBC99B94E0339861C47E0C7F5FF6DC676F839585C10CD340AA0F` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |

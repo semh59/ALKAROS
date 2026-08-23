@@ -1,7 +1,7 @@
 # V1-RMD-002 - Deep audit remediation
 
 - Task ID: V1-RMD-002
-- Status: InProgress
+- Status: Done
 - Assignee: codex-root-v1-rmd-002
 - Work type: implementation
 - Surface state: Existing

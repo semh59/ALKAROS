@@ -1,0 +1,58 @@
+Task: V1-RMD-002
+Repository: D:\PROJECT\ALKAROS-remediation-20260824
+Implementation commit: 2f97d4d505e4ac7682e61fa03a61fed276793fb2
+Verification date: 2026-08-24
+
+COMMAND: dotnet restore ALKAROS.slnx --locked-mode
+EXIT CODE: 0
+RESULT: All projects restored from committed lock files.
+
+COMMAND: dotnet format ALKAROS.slnx --no-restore --verify-no-changes
+EXIT CODE: 0
+RESULT: No formatting changes required.
+
+COMMAND: dotnet build ALKAROS.slnx --no-restore
+EXIT CODE: 0
+RESULT: Build succeeded with 0 warnings and 0 errors.
+
+COMMAND: dotnet test ALKAROS.slnx --no-build
+EXIT CODE: 0
+RESULT: 1007 tests passed, 0 failed, 0 skipped across the complete solution.
+ENVIRONMENT: PostgreSQL 16 sandbox with real psql execution.
+
+COMMAND: python -m pytest tests/Architecture/PlanAudit/test_plan_audit.py -q
+EXIT CODE: 0
+RESULT: 26 tests passed.
+
+COMMAND: node --check src/Clients/WebPrototype/app.js
+EXIT CODE: 0
+RESULT: JavaScript syntax is valid.
+
+COMMAND: node --test src/Clients/WebPrototype/tests/app.security.test.js
+EXIT CODE: 0
+RESULT: 4 tests passed, covering HTML encoding and durable offline queue behavior.
+
+COMMAND: python -B tools/plan-audit/plan_audit_tool.py validate
+EXIT CODE: 0
+RESULT: 0 validation errors and 0 warnings.
+
+COMMAND: python -B tools/plan-audit/plan_audit_tool.py validate-coverage
+EXIT CODE: 0
+RESULT: 0 coverage errors using recorded external PDF metadata.
+
+COMMAND: python -B tools/plan-audit/plan_audit_tool.py verify-manifest
+EXIT CODE: 0
+RESULT: 0 manifest errors; 538 Markdown files fully read and hashed.
+
+COMMAND: python -B tools/task-scope/task_scope_tool.py --task-id V1-RMD-002 --format text
+EXIT CODE: 0
+RESULT: All changes are within the V1-RMD-002 allowlist.
+
+MIGRATION EVIDENCE:
+- 036 nonnegative line amounts: forward/down/forward integration test passed.
+- 037 stale physical print recovery: forward/down/forward integration test passed.
+
+INDEPENDENT AUDIT:
+- Changed production and test surfaces were searched for TODO, FIXME, HACK, NotImplemented*, empty catch/pass, and mock-success patterns.
+- No actionable stub, placeholder implementation, silent handler, or unsupported fallback was found.
+- Claimed build, test, migration, plan-audit, browser-security, and task-scope results are backed by commands above.
