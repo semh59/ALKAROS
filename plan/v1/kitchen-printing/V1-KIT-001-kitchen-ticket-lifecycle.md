@@ -21,8 +21,8 @@ Accepted Order'lardan station-scoped KitchenTicket üretmek ve KitchenTicketItem
 
 ## Owned surface
 
-- `src/Modules/Kitchen/TicketLifecycle/**`, `tests/Modules/Kitchen/TicketLifecycle/**`,
-  `database/migrations/V1/V1-KIT-001/**`
+- `database/migrations/V1/V1-KIT-001/**`
+- C72 (2026-08-24): TicketLifecycle production ve test remediasyon sahipliği V1-RMD-002'ye devredildi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

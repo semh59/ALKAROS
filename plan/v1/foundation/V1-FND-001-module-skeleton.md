@@ -19,14 +19,14 @@ oluşturmak.
 
 - `ALKAROS.slnx`, `global.json`, `Directory.Build.props`, `Directory.Build.targets`, `Directory.Packages.props`
 - `NuGet.config`, `.config/dotnet-tools.json`
-- `build/project-manifest.json`, `src/Host/ALKAROS.Host.csproj`
+- `build/project-manifest.json`
 - `src/Modules/**/ALKAROS.*.csproj`, `src/Clients/**/ALKAROS.*.csproj`
 - `src/Integrations/**/ALKAROS.*.csproj`
 - `tests/Modules/**/ALKAROS.*.Tests.csproj`, `tests/Clients/**/ALKAROS.*.Tests.csproj`
 - `tests/Integration/**/ALKAROS.*.Tests.csproj`, `tests/Host/**/ALKAROS.*.Tests.csproj`
 - `src/BuildingBlocks/ModuleComposition/IModule.cs`, `src/BuildingBlocks/ModuleComposition/ModuleContext.cs`
 - `src/BuildingBlocks/ModuleComposition/ModuleCompositionRoot.cs`
-- `tests/Architecture/ModuleBoundaries/**`
+- C72 (2026-08-24): Host project ve architecture package lock remediasyon sahipliği V1-RMD-002'ye devredildi.
 - `src/BuildingBlocks/**/ALKAROS.*.csproj`, `src/**/packages.lock.json`, `tests/**/packages.lock.json`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 

@@ -14,14 +14,13 @@ manifesti (`order.json`) ve `ManifestTests` ile doğrulamak.
 
 ## Owned surface
 
-- `database/MigrationComposition/order.json`
 - `database/migrations/V1/V1-BIL-004/**`
 - `src/Modules/Billing/Adjustments/**`
 - `src/Modules/Billing/SplitDesign/**`
 - `tests/Modules/Billing/Adjustments/**`
 - `tests/Modules/Billing/SplitDesign/**`
-- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `evidence/V1-BIL-004/**`
+- C72 (2026-08-24): Migration manifest ve manifest test remediasyon sahipliği V1-RMD-002'ye devredildi.
 
 ## Dependencies
 

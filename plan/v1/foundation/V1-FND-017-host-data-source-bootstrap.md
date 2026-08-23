@@ -18,10 +18,10 @@ dispose edildiğini bağımsız runtime probe ile doğrulamak.
 ## Owned surface
 
 - `tests/Host/MigrationComposition/Composition/HostServiceRegistrationTests.cs`
-- `tests/Host/MigrationComposition/Registry/ModuleRegistryTests.cs`
 - `evidence/V1-FND-017/**`
 - C71 (2026-08-19) konsolidasyonu: HostComposition.cs, ModuleRegistry.cs, HostConstructabilityTests.cs ve
   HostModuleReachabilityTests.cs V1-FND-025'e devredildi; bu historical task closed kalır.
+- C72 (2026-08-24): ModuleRegistryTests remediasyon sahipliği V1-RMD-002'ye devredildi.
 
 ## In scope
 

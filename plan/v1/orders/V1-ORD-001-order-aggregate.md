@@ -20,8 +20,8 @@ Order ve OrderItem lifecycle, price snapshot, modifier ve Table/customer context
 
 ## Owned surface
 
-- `src/Modules/Orders/OrderAggregate/**`, `tests/Modules/Orders/OrderAggregate/**`,
-  `database/migrations/V1/V1-ORD-001/**`
+- `database/migrations/V1/V1-ORD-001/**`
+- C72 (2026-08-24): OrderAggregate production ve test remediasyon sahipliği V1-RMD-002'ye devredildi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

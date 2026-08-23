@@ -14,11 +14,8 @@ claim verilmesini engellemek.
 
 ## Owned surface
 
-- `src/Modules/Identity/DeviceSessions/DeviceSessionService.cs`
-- `src/Modules/Identity/DeviceSessions/IDeviceSessionRepository.cs`
-- `src/Modules/Identity/DeviceSessions/PostgresDeviceSessionRepository.cs`
-- `tests/Modules/Identity/DeviceSessions/DeviceSessionServiceTests.cs`
 - `evidence/V1-IAM-015/**`
+- C72 (2026-08-24): Device session concurrency remediasyon sahipliği V1-RMD-002'ye devredildi.
 
 ## Dependencies
 

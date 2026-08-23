@@ -14,11 +14,10 @@ yönetmek.
 
 ## Owned surface
 
-- `src/Modules/Orders/SubmitOrder/**`
 - `src/Modules/Orders/ItemExceptions/**`
-- `tests/Modules/Orders/SubmitOrder/**`
 - `tests/Modules/Orders/ItemExceptions/**`
 - `evidence/V1-ORD-004/**`
+- C72 (2026-08-24): SubmitOrder production ve test remediasyon sahipliği V1-RMD-002'ye devredildi.
 
 ## Dependencies
 

@@ -21,8 +21,8 @@ Send/ack crash window'u explicit Unknown state ve operator-controlled reprint se
 
 ## Owned surface
 
-- `src/Modules/Kitchen/PhysicalPrintRecovery/**`, `tests/Modules/Kitchen/PhysicalPrintRecovery/**`,
-  `database/migrations/V1/V1-KIT-004/**`
+- `database/migrations/V1/V1-KIT-004/**`
+- C72 (2026-08-24): PhysicalPrintRecovery production ve test remediasyon sahipliği V1-RMD-002'ye devredildi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

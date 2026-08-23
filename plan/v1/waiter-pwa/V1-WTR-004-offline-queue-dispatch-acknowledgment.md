@@ -13,11 +13,9 @@ başarılı ack alındığında silinmesini sağlamak; dispatcher hatası veya e
 
 ## Owned surface
 
-- `src/Clients/WaiterPwa/SessionQueue/**`
-- `src/Clients/WebPrototype/**`
-- `tests/Clients/WaiterPwa/SessionQueue/**`
 - `tools/run_e2e_browser_test.js`
 - `evidence/V1-WTR-004/**`
+- C72 (2026-08-24): Offline queue ve WebPrototype remediasyon sahipliği V1-RMD-002'ye devredildi.
 
 ## Dependencies
 

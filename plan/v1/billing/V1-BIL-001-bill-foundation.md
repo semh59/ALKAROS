@@ -20,8 +20,8 @@ Bill, BillItem ve V0-DOM-002 tarafından seçilen referentially safe Order/Order
 
 ## Owned surface
 
-- `src/Modules/Billing/BillFoundation/**`, `tests/Modules/Billing/BillFoundation/**`,
-  `database/migrations/V1/V1-BIL-001/**`
+- `database/migrations/V1/V1-BIL-001/**`
+- C72 (2026-08-24): BillFoundation production ve test remediasyon sahipliği V1-RMD-002'ye devredildi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
