@@ -1,7 +1,7 @@
 # V1-WTR-005 - Browser E2E runner reliability
 
 - Task ID: V1-WTR-005
-- Status: InProgress
+- Status: Done
 - Assignee: Codex-/root
 - Work type: implementation
 - Surface state: Existing

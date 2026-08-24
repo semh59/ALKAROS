@@ -5,13 +5,129 @@
  */
 
 const { spawn } = require('child_process');
+const { existsSync } = require('fs');
+const { mkdtemp, readFile, rm } = require('fs/promises');
+const { tmpdir } = require('os');
+const { join } = require('path');
 
-async function getCDPTarget() {
-  const res = await fetch('http://127.0.0.1:9222/json');
+const STDERR_LIMIT = 8192;
+
+function appendBounded(current, chunk, limit = STDERR_LIMIT) {
+  const combined = current + chunk.toString('utf8');
+  return combined.length <= limit ? combined : combined.slice(-limit);
+}
+
+function chromeCandidates(env = process.env, platform = process.platform) {
+  if (platform === 'win32') {
+    return [
+      env.PROGRAMFILES && join(env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      env['PROGRAMFILES(X86)'] && join(env['PROGRAMFILES(X86)'], 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      env.LOCALAPPDATA && join(env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe')
+    ].filter(Boolean);
+  }
+
+  if (platform === 'darwin') {
+    return ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'];
+  }
+
+  return [
+    '/usr/bin/google-chrome',
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser'
+  ];
+}
+
+function resolveChromeExecutable({ env = process.env, platform = process.platform, pathExists = existsSync } = {}) {
+  const configuredPath = env.ALKAROS_CHROME_PATH && env.ALKAROS_CHROME_PATH.trim();
+  if (configuredPath) {
+    if (pathExists(configuredPath)) return configuredPath;
+    throw new Error(`ALKAROS_CHROME_PATH does not point to a file: ${configuredPath}`);
+  }
+
+  const detectedPath = chromeCandidates(env, platform).find(pathExists);
+  if (detectedPath) return detectedPath;
+
+  throw new Error('Google Chrome executable was not found. Set ALKAROS_CHROME_PATH to its absolute path.');
+}
+
+async function waitForDevToolsPort(
+  profileDirectory,
+  { attempts = 25, delayMs = 400, readText = path => readFile(path, 'utf8'), sleepFn = sleep } = {}
+) {
+  const portFile = join(profileDirectory, 'DevToolsActivePort');
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      const [portText] = (await readText(portFile)).split(/\r?\n/);
+      const port = Number(portText);
+      if (!Number.isInteger(port) || port < 1 || port > 65535) {
+        throw new Error(`Invalid DevTools port value: ${portText}`);
+      }
+      return port;
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) await sleepFn(delayMs);
+    }
+  }
+
+  const detail = lastError instanceof Error ? lastError.message : String(lastError);
+  throw new Error(`Chrome did not publish a DevTools port after ${attempts} attempts. Last error: ${detail}`);
+}
+
+async function getCDPTarget(port, fetchTarget = fetch) {
+  const res = await fetchTarget(`http://127.0.0.1:${port}/json`, { signal: AbortSignal.timeout(2000) });
+  if (!res.ok) throw new Error(`Chrome CDP target endpoint returned HTTP ${res.status}.`);
   const targets = await res.json();
+  if (!Array.isArray(targets)) throw new Error('Chrome CDP target endpoint returned an invalid payload.');
   const page = targets.find(t => t.type === 'page' && t.url.includes('5173'));
   if (!page) throw new Error('ALKAROS 5173 page target not found in Chrome!');
+  if (typeof page.webSocketDebuggerUrl !== 'string' || !page.webSocketDebuggerUrl.startsWith('ws')) {
+    throw new Error('Chrome page target did not provide a WebSocket debugger URL.');
+  }
   return page.webSocketDebuggerUrl;
+}
+
+async function waitForCDPTarget(
+  port,
+  { attempts = 10, delayMs = 800, loadTarget = getCDPTarget, sleepFn = sleep } = {}
+) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      return await loadTarget(port);
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) await sleepFn(delayMs);
+    }
+  }
+
+  const detail = lastError instanceof Error ? lastError.message : String(lastError);
+  throw new Error(`Chrome CDP target was unavailable after ${attempts} attempts. Last error: ${detail}`);
+}
+
+function waitForProcessExit(child, timeoutMs) {
+  if (child.exitCode !== null) return Promise.resolve(true);
+  return new Promise(resolve => {
+    const onExit = () => finish(true);
+    const timer = setTimeout(() => finish(false), timeoutMs);
+    const finish = exited => {
+      clearTimeout(timer);
+      child.removeListener('exit', onExit);
+      resolve(exited);
+    };
+    child.once('exit', onExit);
+  });
+}
+
+async function stopProcess(child, timeoutMs = 3000) {
+  if (!child || child.exitCode !== null) return;
+  if (!child.kill()) throw new Error('Chrome process did not accept the termination signal.');
+  if (await waitForProcessExit(child, timeoutMs)) return;
+  if (!child.kill('SIGKILL')) throw new Error('Chrome process did not accept the forced termination signal.');
+  if (!await waitForProcessExit(child, timeoutMs)) {
+    throw new Error(`Chrome process did not exit within ${timeoutMs} ms after forced termination.`);
+  }
 }
 
 class CDPClient {
@@ -23,18 +139,48 @@ class CDPClient {
     this.jsExceptions = [];
   }
 
-  async connect() {
+  rejectPending(error) {
+    for (const { reject, timer } of this.callbacks.values()) {
+      clearTimeout(timer);
+      reject(error);
+    }
+    this.callbacks.clear();
+  }
+
+  async connect(timeoutMs = 5000) {
     const WebSocket = globalThis.WebSocket;
+    if (typeof WebSocket !== 'function') throw new Error('This Node.js runtime does not provide WebSocket support.');
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(this.wsUrl);
-      this.ws.onopen = () => resolve();
-      this.ws.onerror = (e) => reject(e);
+      let settled = false;
+      const timer = setTimeout(() => finish(new Error(`CDP WebSocket connection timed out after ${timeoutMs} ms.`)), timeoutMs);
+      const finish = error => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        if (error) reject(error);
+        else resolve();
+      };
+      this.ws.onopen = () => finish();
+      this.ws.onerror = () => finish(new Error('CDP WebSocket connection failed.'));
+      this.ws.onclose = () => {
+        const error = new Error('CDP WebSocket connection closed.');
+        this.rejectPending(error);
+        finish(error);
+      };
       this.ws.onmessage = (msg) => {
-        const data = JSON.parse(msg.data);
+        let data;
+        try {
+          data = JSON.parse(msg.data);
+        } catch (error) {
+          this.rejectPending(new Error('Chrome returned an invalid CDP message.', { cause: error }));
+          return;
+        }
         if (data.id && this.callbacks.has(data.id)) {
-          const { resolve, reject } = this.callbacks.get(data.id);
+          const { resolve, reject, timer } = this.callbacks.get(data.id);
           this.callbacks.delete(data.id);
-          if (data.error) reject(data.error);
+          clearTimeout(timer);
+          if (data.error) reject(new Error(`CDP command failed: ${JSON.stringify(data.error)}`));
           else resolve(data.result);
         } else if (data.method === 'Runtime.consoleAPICalled' && data.params.type === 'error') {
           this.consoleErrors.push(data.params);
@@ -45,11 +191,21 @@ class CDPClient {
     });
   }
 
-  send(method, params = {}) {
+  send(method, params = {}, timeoutMs = 5000) {
     const id = this.id++;
     return new Promise((resolve, reject) => {
-      this.callbacks.set(id, { resolve, reject });
-      this.ws.send(JSON.stringify({ id, method, params }));
+      const timer = setTimeout(() => {
+        this.callbacks.delete(id);
+        reject(new Error(`CDP command ${method} timed out after ${timeoutMs} ms.`));
+      }, timeoutMs);
+      this.callbacks.set(id, { resolve, reject, timer });
+      try {
+        this.ws.send(JSON.stringify({ id, method, params }));
+      } catch (error) {
+        clearTimeout(timer);
+        this.callbacks.delete(id);
+        reject(error);
+      }
     });
   }
 
@@ -67,6 +223,7 @@ class CDPClient {
   }
 
   close() {
+    this.rejectPending(new Error('CDP client closed before the command completed.'));
     if (this.ws) this.ws.close();
   }
 }
@@ -77,35 +234,42 @@ async function sleep(ms) {
 
 async function runAllTests() {
   console.log('🚀 1. Google Chrome headless arka planda başlatılıyor...');
-  const chrome = spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', [
-    '--headless=new',
-    '--remote-debugging-port=9222',
-    '--user-data-dir=C:\\Users\\semih\\AppData\\Local\\Temp\\alkaros_chrome_e2e_full',
-    '--no-sandbox',
-    '--disable-gpu',
-    'http://localhost:5173/'
-  ]);
+  const chromePath = resolveChromeExecutable();
+  const profileDirectory = await mkdtemp(join(tmpdir(), 'alkaros-chrome-e2e-'));
+  let chrome = null;
+  let chromeStderr = '';
+  let launchError = null;
+  let client = null;
 
-  chrome.stderr.on('data', () => {});
+  try {
+    chrome = spawn(chromePath, [
+      '--headless=new',
+      '--remote-debugging-port=0',
+      `--user-data-dir=${profileDirectory}`,
+      '--no-sandbox',
+      '--disable-gpu',
+      'http://localhost:5173/'
+    ], { stdio: ['ignore', 'ignore', 'pipe'] });
 
-  let wsUrl = null;
-  for (let i = 0; i < 10; i++) {
-    await sleep(800);
-    try {
-      wsUrl = await getCDPTarget();
-      if (wsUrl) break;
-    } catch (e) {}
-  }
+    let rejectLaunch;
+    const launchFailure = new Promise((resolve, reject) => {
+      rejectLaunch = reject;
+    });
+    chrome.on('error', error => {
+      launchError = error;
+      rejectLaunch(error);
+    });
+    chrome.stderr.on('data', chunk => {
+      chromeStderr = appendBounded(chromeStderr, chunk);
+    });
 
-  if (!wsUrl) {
-    console.error('❌ Chrome CDP portuna bağlanılamadı!');
-    chrome.kill();
-    process.exit(1);
-  }
+    const port = await Promise.race([waitForDevToolsPort(profileDirectory), launchFailure]);
+    if (launchError) throw launchError;
+    const wsUrl = await waitForCDPTarget(port);
 
-  console.log('🔌 2. Chrome DevTools Protocol bağlantısı kuruldu:', wsUrl);
-  const client = new CDPClient(wsUrl);
-  await client.connect();
+    console.log('🔌 2. Chrome DevTools Protocol bağlantısı kuruldu:', wsUrl);
+    client = new CDPClient(wsUrl);
+    await client.connect();
 
   await client.send('Runtime.enable');
   await client.send('Page.enable');
@@ -267,12 +431,45 @@ async function runAllTests() {
   console.log(`📊 E2E TEST RAPORU: ${testResults.filter(r => r.status === 'PASS').length}/${testResults.length} BAŞARILI`);
   console.log('======================================================\n');
 
-  client.close();
-  chrome.kill();
-  process.exit(testResults.some(r => r.status === 'FAIL') ? 1 : 0);
+    return testResults.some(r => r.status === 'FAIL') ? 1 : 0;
+  } catch (error) {
+    const stderrDetail = chromeStderr.trim();
+    if (stderrDetail) {
+      throw new Error(`${error instanceof Error ? error.message : String(error)}\nChrome stderr:\n${stderrDetail}`, {
+        cause: error
+      });
+    }
+    throw error;
+  } finally {
+    try {
+      if (client) client.close();
+    } finally {
+      try {
+        await stopProcess(chrome);
+      } finally {
+        await rm(profileDirectory, { recursive: true, force: true });
+      }
+    }
+  }
 }
 
-runAllTests().catch(err => {
-  console.error('Test koşturulurken beklenmeyen hata:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  runAllTests()
+    .then(exitCode => {
+      process.exitCode = exitCode;
+    })
+    .catch(err => {
+      console.error('Test koşturulurken beklenmeyen hata:', err);
+      process.exitCode = 1;
+    });
+}
+
+module.exports = {
+  appendBounded,
+  chromeCandidates,
+  getCDPTarget,
+  resolveChromeExecutable,
+  stopProcess,
+  waitForCDPTarget,
+  waitForDevToolsPort
+};
