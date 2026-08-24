@@ -42,7 +42,8 @@ konsolide remediasyon zincirinde kapatmak.
 - `tests/Modules/Identity/DeviceSessions/DeviceSessionServiceTests.cs`
 - `src/Clients/WaiterPwa/SessionQueue/**`
 - `tests/Clients/WaiterPwa/SessionQueue/**`
-- `src/Clients/WebPrototype/**`
+- PO:2026-08-24 UI yeniden tasarım kararıyla src/Clients/WebPrototype yüzeyi V1-RMD-003'e devredildi; bu
+  historical task closed kalır.
 - `src/Modules/Billing/BillFoundation/**`
 - `tests/Modules/Billing/BillFoundation/**`
 - `src/Modules/Kitchen/PhysicalPrintRecovery/**`
