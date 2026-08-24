@@ -2,19 +2,20 @@
 <html lang="tr" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALKAROS V1 — Kurumsal Restoran Yönetimi ve Satış Noktası (POS)</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260824-rmd003">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+  <a class="skip-link" href="#app-viewport">Ana içeriğe geç</a>
   <!-- Top Prototype Control Bar (Simulator Controls) -->
   <aside class="prototype-nav" aria-label="Prototip Denetim Çubuğu">
     <div class="prototype-nav-brand">
       <span class="brand-badge">ALKAROS V1</span>
-      <span class="prototype-title">Kurumsal Restoran POS</span>
+      <span class="prototype-title">Demo ve cihaz araçları</span>
     </div>
     
     <div class="prototype-nav-controls">
@@ -51,7 +52,7 @@
       </div>
 
       <!-- Theme Toggle -->
-      <button type="button" class="proto-theme-btn" id="btn-theme-toggle" title="Açık/Koyu Tema Değiştir">
+      <button type="button" class="proto-theme-btn" id="btn-theme-toggle" title="Açık/Koyu Tema Değiştir" aria-label="Renk temasını değiştir">
         <svg class="icon icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
         <svg class="icon icon-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
       </button>
@@ -133,11 +134,11 @@
             </button>
           </div>
 
-          <div style="display:flex;align-items:center;gap:10px">
+          <div class="table-filter-actions">
             <div class="search-box">
               <svg class="icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input type="text" id="input-search-tables" placeholder="Masa No veya Garson Ara..." autocomplete="off">
-              <button type="button" class="search-clear-btn" id="btn-clear-table-search" style="display: none;">
+              <input type="text" id="input-search-tables" placeholder="Masa No veya Garson Ara..." aria-label="Masa veya garson ara" autocomplete="off">
+              <button type="button" class="search-clear-btn" id="btn-clear-table-search" style="display: none;" aria-label="Masa aramasını temizle">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
               </button>
             </div>
@@ -145,7 +146,7 @@
             <!-- İşletmeci Yeni Masa Ekle Butonu -->
             <button type="button" class="btn-primary-action" id="btn-open-add-table">
               <svg class="icon" viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
-              + Yeni Masa Ekle
+              Yeni Masa Ekle
             </button>
           </div>
         </div>
@@ -227,7 +228,7 @@
 
               <div class="catalog-search-box">
                 <svg class="icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="text" id="input-search-products" placeholder="Ürün Ara..." autocomplete="off">
+                <input type="text" id="input-search-products" placeholder="Ürün Ara..." aria-label="Ürün ara" autocomplete="off">
               </div>
             </div>
 
@@ -261,11 +262,11 @@
                 <h3>Sipariş Özeti (Taslak)</h3>
                 <span class="item-count-badge" id="cart-item-count">0 Kalem</span>
               </div>
-              <div style="display:flex;gap:6px">
+              <div class="cart-header-actions">
                 <button type="button" class="btn-action-pill" id="btn-cart-add-discount" title="Adisyona İndirim Ekle (V1-BIL-003)">
                   % İndirim
                 </button>
-                <button type="button" class="btn-clear-cart" id="btn-clear-cart" title="Sepeti Temizle">
+                <button type="button" class="btn-clear-cart" id="btn-clear-cart" title="Sepeti Temizle" aria-label="Sipariş taslağını temizle">
                   <svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                 </button>
               </div>
@@ -318,7 +319,7 @@
           </div>
           <button type="button" class="btn-primary-action" id="btn-open-add-product">
             <svg class="icon" viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
-            + Yeni Ürün Ekle
+            Yeni Ürün Ekle
           </button>
         </div>
 
@@ -399,7 +400,7 @@
           <div class="waiter-user">
             <span class="waiter-badge-avatar">MK</span>
             <span>Mehmet K.</span>
-            <button type="button" class="waiter-logout-btn" id="btn-waiter-lock" title="Oturumu Kilitle">
+            <button type="button" class="waiter-logout-btn" id="btn-waiter-lock" title="Oturumu Kilitle" aria-label="Garson oturumunu kilitle">
               <svg class="icon" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </button>
           </div>
@@ -422,7 +423,7 @@
               </div>
               <div class="wtr-search-box">
                 <svg class="icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <input type="text" id="input-wtr-search" placeholder="Masa No Ara...">
+                <input type="text" id="input-wtr-search" placeholder="Masa No Ara..." aria-label="Masa ara">
               </div>
             </div>
 
@@ -457,13 +458,13 @@
 
               <!-- Waiter Mobile Cart Tray -->
               <div class="wtr-cart-tray" id="wtr-cart-tray">
-                <div class="wtr-cart-header" id="wtr-cart-toggle">
-                  <div style="display:flex;align-items:center;gap:6px">
+                <button type="button" class="wtr-cart-header" id="wtr-cart-toggle" aria-expanded="false" aria-controls="wtr-cart-items">
+                  <span class="wtr-cart-title">
                     <svg class="icon" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
                     <span>Taslak (<span id="wtr-cart-count">0</span> Kalem)</span>
-                  </div>
+                  </span>
                   <span class="num-val" id="wtr-cart-total">0,00 TL</span>
-                </div>
+                </button>
                 <div class="wtr-cart-items" id="wtr-cart-items">
                   <!-- Items -->
                 </div>
@@ -493,8 +494,8 @@
         </div>
 
         <!-- Waiter Bottom Navigation Bar -->
-        <nav class="waiter-bottom-nav">
-          <button type="button" class="wtr-nav-item active" id="wtr-nav-tables" data-wtr-target="tables">
+        <nav class="waiter-bottom-nav" aria-label="Garson ana menüsü">
+          <button type="button" class="wtr-nav-item active" id="wtr-nav-tables" data-wtr-target="tables" aria-current="page">
             <svg class="icon" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
             <span>Masalar</span>
           </button>
@@ -1014,6 +1015,6 @@
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=20260824-rmd003"></script>
 </body>
 </html>

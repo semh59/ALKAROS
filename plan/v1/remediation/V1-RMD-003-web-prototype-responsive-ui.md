@@ -1,8 +1,8 @@
 # V1-RMD-003 - Web prototype responsive UI remediation
 
 - Task ID: V1-RMD-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: Codex-/root
 - Work type: implementation
 - Surface state: Existing
 

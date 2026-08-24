@@ -236,6 +236,125 @@
     }, 3200);
   };
 
+  const focusableSelector = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(',');
+
+  function setupAccessibility() {
+    const dialogs = Array.from(document.querySelectorAll('.modal-overlay[role="dialog"]'));
+    const returnFocus = new WeakMap();
+
+    document.querySelectorAll('button').forEach(button => {
+      if (!button.getAttribute('aria-label') && !button.textContent.trim()) {
+        button.setAttribute('aria-label', button.getAttribute('title') || 'İşlem');
+      }
+    });
+
+    document.querySelectorAll('input, select, textarea').forEach(control => {
+      const hasLabel = control.id && document.querySelector(`label[for="${control.id}"]`);
+      if (!hasLabel && !control.getAttribute('aria-label')) {
+        const fallback = control.getAttribute('placeholder') || control.getAttribute('name');
+        if (fallback) control.setAttribute('aria-label', fallback);
+      }
+    });
+
+    const toastContainer = document.getElementById('toast-container');
+    if (toastContainer) {
+      toastContainer.setAttribute('role', 'status');
+      toastContainer.setAttribute('aria-live', 'polite');
+      toastContainer.setAttribute('aria-atomic', 'true');
+    }
+
+    [
+      ['tab-cui-tables', 'cui-view-tables'],
+      ['tab-cui-menu', 'cui-view-menu'],
+      ['tab-cui-operations', 'cui-view-operations']
+    ].forEach(([tabId, panelId]) => {
+      const tab = document.getElementById(tabId);
+      const panel = document.getElementById(panelId);
+      if (!tab || !panel) return;
+      tab.setAttribute('aria-controls', panelId);
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', tabId);
+    });
+
+    const syncDialogState = dialog => {
+      const isOpen = dialog.style.display !== 'none';
+      const wasOpen = dialog.dataset.accessibilityOpen === 'true';
+
+      if (isOpen && !wasOpen) {
+        returnFocus.set(dialog, document.activeElement);
+        dialog.dataset.accessibilityOpen = 'true';
+        document.body.classList.add('dialog-open');
+        requestAnimationFrame(() => {
+          const visibleField = Array.from(dialog.querySelectorAll('input:not([type="hidden"]), select, textarea'))
+            .find(element => element.getClientRects().length > 0);
+          const autofocusTarget = dialog.querySelector('[autofocus]') || visibleField || dialog.querySelector('button:not([disabled])');
+          if (autofocusTarget) autofocusTarget.focus();
+        });
+      } else if (!isOpen && wasOpen) {
+        dialog.dataset.accessibilityOpen = 'false';
+        if (!dialogs.some(candidate => candidate.style.display !== 'none')) {
+          document.body.classList.remove('dialog-open');
+        }
+        const target = returnFocus.get(dialog);
+        if (target && target.isConnected) target.focus();
+      }
+    };
+
+    dialogs.forEach((dialog, index) => {
+      const heading = dialog.querySelector('.modal-header h2, .modal-header h3, .modal-header h4, .modal-card > h2, .modal-card > h3');
+      if (heading) {
+        if (!heading.id) heading.id = `dialog-title-${index + 1}`;
+        dialog.setAttribute('aria-labelledby', heading.id);
+      } else if (!dialog.getAttribute('aria-label')) {
+        dialog.setAttribute('aria-label', dialog.classList.contains('modal-lockout') ? 'Oturum kilidi' : 'İşlem penceresi');
+      }
+
+      dialog.querySelectorAll('.modal-close-btn').forEach(button => {
+        button.setAttribute('aria-label', 'Pencereyi kapat');
+      });
+
+      dialog.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !dialog.classList.contains('modal-lockout')) {
+          event.preventDefault();
+          dialog.style.display = 'none';
+          return;
+        }
+
+        if (event.key !== 'Tab') return;
+        const focusable = Array.from(dialog.querySelectorAll(focusableSelector)).filter(element => {
+          return element.getClientRects().length > 0 && element.getAttribute('aria-hidden') !== 'true';
+        });
+        if (focusable.length === 0) {
+          event.preventDefault();
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      });
+
+      new MutationObserver(() => syncDialogState(dialog)).observe(dialog, {
+        attributes: true,
+        attributeFilter: ['style']
+      });
+      syncDialogState(dialog);
+    });
+  }
+
   const getDistinctSections = () => {
     const set = new Set(['Tümü']);
     state.tables.forEach(t => set.add(t.section));
@@ -351,11 +470,11 @@
       const btnLabel = t.occupancy === 'available' 
         ? 'Sipariş Aç' 
         : t.occupancy === 'reserved' 
-          ? 'Misafiri Oturt >' 
-          : 'Masayı Aç >';
+          ? 'Misafiri Oturt'
+          : 'Masayı Aç';
 
       return `
-        <div class="table-card" data-table-id="${escapeHtml(t.id)}">
+        <button type="button" class="table-card" data-table-id="${escapeHtml(t.id)}" aria-label="Masa ${escapeHtml(t.number)}, ${occupText}, ${escapeHtml(t.section)}. ${btnLabel}">
           <div class="table-card-top">
             <span class="table-number">Masa ${escapeHtml(t.number)}</span>
             <span class="occupancy-pill ${occupClass}">${occupText}</span>
@@ -371,8 +490,8 @@
             }
             ${actionBadgeHtml}
           </div>
-          <button type="button" class="table-card-btn">${btnLabel}</button>
-        </div>
+          <span class="table-card-btn">${btnLabel}</span>
+        </button>
       `;
     }).join('');
 
@@ -431,17 +550,17 @@
     grid.innerHTML = filtered.map(p => {
       let allergenPill = '';
       if (p.allergen) {
-        allergenPill = `<span class="allergen-tag" style="font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active);color:var(--color-text-muted)">${escapeHtml(p.allergen)}</span>`;
+        allergenPill = `<span class="allergen-tag">${escapeHtml(p.allergen)}</span>`;
       }
 
       return `
-        <div class="product-card ${p.is86 ? 'is-86' : ''}" data-prod-id="${escapeHtml(p.id)}">
+        <button type="button" class="product-card ${p.is86 ? 'is-86' : ''}" data-prod-id="${escapeHtml(p.id)}" ${p.is86 ? 'aria-disabled="true"' : ''} aria-label="${escapeHtml(p.name)}, ${formatTL(p.price)}${p.is86 ? ', tükendi' : ', siparişe ekle'}">
           <div class="prod-name">${escapeHtml(p.name)}</div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
             <div class="prod-price num-val">${formatTL(p.price)}</div>
             ${allergenPill}
           </div>
-        </div>
+        </button>
       `;
     }).join('');
   }
@@ -474,15 +593,15 @@
 
       tbody.innerHTML = filtered.map((p, idx) => `
         <tr class="${p.is86 ? 'row-86' : ''}">
-          <td><strong>${escapeHtml(p.name)}</strong> ${p.is86 ? '<span style="color:#DC2626;font-size:11px;font-weight:700">[86\'d TÜKENDİ]</span>' : ''}</td>
+          <td><strong>${escapeHtml(p.name)}</strong> ${p.is86 ? '<span class="product-unavailable-label">Tükendi</span>' : ''}</td>
           <td><span class="occupancy-pill available">${escapeHtml(p.category)}</span></td>
           <td class="num-val"><strong>${formatTL(p.price)}</strong></td>
           <td>${p.station === 'hot' ? 'Sıcak Mutfak' : p.station === 'bar' ? 'Bar & İçecek' : 'Soğuk / Tatlı'}</td>
           <td>${escapeHtml(p.defaultCourse)}</td>
-          <td>${p.allergen ? `<span class="allergen-tag" style="font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--color-surface-active)">${escapeHtml(p.allergen)}</span>` : '—'}</td>
-          <td style="display:flex;gap:6px">
+          <td>${p.allergen ? `<span class="allergen-tag">${escapeHtml(p.allergen)}</span>` : '—'}</td>
+          <td class="menu-actions">
             <button type="button" class="cart-item-actions-btn btn-toggle-86" data-prod-id="${escapeHtml(p.id)}">${p.is86 ? 'Satışa Aç' : '86\'d (Tükendi)'}</button>
-            <button type="button" class="cart-item-actions-btn btn-delete-product" data-prod-idx="${idx}" style="color:var(--color-danger)">Sil</button>
+            <button type="button" class="cart-item-actions-btn btn-delete-product" data-prod-idx="${idx}">Sil</button>
           </td>
         </tr>
       `).join('');
@@ -891,9 +1010,9 @@
           <div class="ticket-items-list">
             ${ticket.items.map(i => {
               let badgeHtml = '';
-              if (i.status === 'cooking') badgeHtml = '<span class="occupancy-pill" style="background:var(--badge-cooking-bg);color:var(--badge-cooking-text)">Hazırlanıyor</span>';
-              else if (i.status === 'ready') badgeHtml = '<span class="occupancy-pill" style="background:var(--badge-ready-bg);color:var(--badge-ready-text)">Hazır</span>';
-              else badgeHtml = '<span class="occupancy-pill" style="background:var(--color-surface-active);color:var(--color-text-muted)">Bekliyor</span>';
+              if (i.status === 'cooking') badgeHtml = '<span class="occupancy-pill kitchen-cooking">Hazırlanıyor</span>';
+              else if (i.status === 'ready') badgeHtml = '<span class="occupancy-pill kitchen-ready">Hazır</span>';
+              else badgeHtml = '<span class="occupancy-pill kitchen-waiting">Bekliyor</span>';
               return `<div class="ticket-item-row"><span>${escapeHtml(i.name)}</span>${badgeHtml}</div>`;
             }).join('')}
           </div>
@@ -908,7 +1027,7 @@
             <span class="printer-name">${escapeHtml(p.name)}</span>
             <span class="printer-ip">IP: ${escapeHtml(p.ip)} • Durum: <strong>${escapeHtml(p.status === 'paper_out' ? p.issue : 'Çevrimiçi')}</strong></span>
           </div>
-          <div style="display:flex;gap:6px;align-items:center">
+          <div class="printer-actions">
             ${p.status === 'paper_out' 
               ? `<button type="button" class="btn-primary-sm btn-reroute-printer" data-prn-id="${escapeHtml(p.id)}">Kuyruğu Yönlendir</button>`
               : `<span class="occupancy-pill available">Normal</span>`
@@ -960,7 +1079,7 @@
         let occupClass = t.occupancy === 'occupied' ? 'occupied' : t.occupancy === 'reserved' ? 'reserved' : 'available';
         let occupText = t.occupancy === 'occupied' ? 'Dolu' : t.occupancy === 'reserved' ? 'Rezerve' : 'Boş';
         return `
-          <div class="table-card" data-wtr-table-id="${escapeHtml(t.id)}">
+          <button type="button" class="table-card" data-wtr-table-id="${escapeHtml(t.id)}" aria-label="Masa ${escapeHtml(t.number)}, ${occupText}, ${escapeHtml(t.section)}">
             <div class="table-card-top">
               <span class="table-number">Masa ${escapeHtml(t.number)}</span>
               <span class="occupancy-pill ${occupClass}">${occupText}</span>
@@ -968,8 +1087,8 @@
             <div class="table-card-body">
               ${t.occupancy === 'occupied' ? `<div class="table-amount num-val">${formatTL(t.billAmount)}</div>` : `<div class="meta-row">${t.capacity} Kişi (${escapeHtml(t.section)})</div>`}
             </div>
-            <button type="button" class="table-card-btn">${t.occupancy === 'available' ? 'Sipariş Aç' : t.occupancy === 'reserved' ? 'Misafiri Oturt >' : 'Masayı Aç >'}</button>
-          </div>
+            <span class="table-card-btn">${t.occupancy === 'available' ? 'Sipariş Aç' : t.occupancy === 'reserved' ? 'Misafiri Oturt' : 'Masayı Aç'}</span>
+          </button>
         `;
       }).join('');
     }
@@ -996,31 +1115,31 @@
       });
 
       productList.innerHTML = filteredProds.map(p => `
-        <div class="product-card ${p.is86 ? 'is-86' : ''}" data-wtr-prod-id="${escapeHtml(p.id)}">
+        <button type="button" class="product-card ${p.is86 ? 'is-86' : ''}" data-wtr-prod-id="${escapeHtml(p.id)}" ${p.is86 ? 'aria-disabled="true"' : ''} aria-label="${escapeHtml(p.name)}, ${formatTL(p.price)}${p.is86 ? ', tükendi' : ', sepete ekle'}">
           <div class="prod-name">${escapeHtml(p.name)}</div>
           <div class="prod-price num-val">${formatTL(p.price)}</div>
-        </div>
+        </button>
       `).join('');
     }
 
     if (cartContainer) {
       let total = 0;
       if (state.wtrCart.length === 0) {
-        cartContainer.innerHTML = '<span style="font-size:12px;color:var(--color-text-dim)">Sepet boş</span>';
+        cartContainer.innerHTML = '<p class="wtr-cart-empty">Sipariş taslağı boş</p>';
       } else {
         cartContainer.innerHTML = state.wtrCart.map((item, idx) => {
           total += item.unitPrice * item.quantity;
           return `
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;border-bottom:1px solid var(--color-border)">
-              <div>
+            <div class="wtr-cart-row">
+              <div class="wtr-cart-item-info">
                 <span>${escapeHtml(item.name)}</span>
-                <span class="num-val" style="display:block;font-size:11px;color:var(--color-text-dim)">${formatTL(item.unitPrice * item.quantity)}</span>
+                <span class="num-val wtr-cart-line-total">${formatTL(item.unitPrice * item.quantity)}</span>
               </div>
-              <div style="display:flex;align-items:center;gap:4px">
-                <button type="button" class="btn-qty btn-wtr-qty-dec" data-wtr-idx="${idx}">-</button>
-                <span style="font-weight:700;font-size:12px;min-width:18px;text-align:center">${item.quantity}</span>
-                <button type="button" class="btn-qty btn-wtr-qty-inc" data-wtr-idx="${idx}">+</button>
-                <button type="button" class="btn-clear-cart btn-wtr-remove" data-wtr-idx="${idx}" style="margin-left:4px">
+              <div class="wtr-cart-controls">
+                <button type="button" class="btn-qty btn-wtr-qty-dec" data-wtr-idx="${idx}" aria-label="${escapeHtml(item.name)} miktarını azalt">−</button>
+                <span class="wtr-cart-quantity" aria-label="Miktar ${item.quantity}">${item.quantity}</span>
+                <button type="button" class="btn-qty btn-wtr-qty-inc" data-wtr-idx="${idx}" aria-label="${escapeHtml(item.name)} miktarını artır">+</button>
+                <button type="button" class="btn-clear-cart btn-wtr-remove" data-wtr-idx="${idx}" aria-label="${escapeHtml(item.name)} ürününü kaldır">
                   <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>
               </div>
@@ -1066,7 +1185,7 @@
 
     if (statusFeed) {
       statusFeed.innerHTML = state.tickets.map(t => `
-        <div class="ticket-card" style="margin-bottom:10px">
+        <div class="ticket-card">
           <div class="ticket-top">
             <span>Fiş #${escapeHtml(t.id)} — ${escapeHtml(t.table)}</span>
             <span class="meta-row">${escapeHtml(t.time)}</span>
@@ -1075,7 +1194,7 @@
             ${t.items.map(i => `
               <div class="ticket-item-row">
                 <span>${escapeHtml(i.name)}</span>
-                <span class="occupancy-pill" style="background:${i.status === 'cooking' ? 'var(--badge-cooking-bg)' : i.status === 'ready' ? 'var(--badge-ready-bg)' : 'var(--color-surface-active)'};color:${i.status === 'cooking' ? 'var(--badge-cooking-text)' : i.status === 'ready' ? 'var(--badge-ready-text)' : 'var(--color-text-muted)'}">
+                <span class="occupancy-pill ${i.status === 'cooking' ? 'kitchen-cooking' : i.status === 'ready' ? 'kitchen-ready' : 'kitchen-waiting'}">
                   ${i.status === 'cooking' ? 'Hazırlanıyor' : i.status === 'ready' ? 'Servise Hazır' : 'Bekliyor'}
                 </span>
               </div>
@@ -1092,7 +1211,7 @@
       notifFeed.innerHTML = state.notifications.map((n, i) => `
         <div class="wtr-notif-card ${n.unread ? 'unread' : ''}">
           <div>
-            <div style="font-weight:600;font-size:13px">${escapeHtml(n.text)}</div>
+            <div class="wtr-notif-text">${escapeHtml(n.text)}</div>
             <div class="meta-row">${escapeHtml(n.time)}</div>
           </div>
           <button type="button" class="btn-secondary-sm btn-deliver-notif" data-notif-idx="${i}">Teslim Ettim</button>
@@ -1116,13 +1235,19 @@
 
     const resetViews = () => {
       [viewTables, viewOrder, viewMenu, viewOps].forEach(v => { if (v) v.style.display = 'none'; });
-      [tabTables, tabMenu, tabOps].forEach(t => { if (t) t.classList.remove('active'); });
+      [tabTables, tabMenu, tabOps].forEach(t => {
+        if (t) {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        }
+      });
     };
 
     if (tabTables) {
       tabTables.addEventListener('click', () => {
         resetViews();
         tabTables.classList.add('active');
+        tabTables.setAttribute('aria-selected', 'true');
         viewTables.style.display = 'flex';
         renderCashierTables();
       });
@@ -1132,6 +1257,7 @@
       tabMenu.addEventListener('click', () => {
         resetViews();
         tabMenu.classList.add('active');
+        tabMenu.setAttribute('aria-selected', 'true');
         viewMenu.style.display = 'flex';
         renderMenuManagement();
       });
@@ -1141,6 +1267,7 @@
       tabOps.addEventListener('click', () => {
         resetViews();
         tabOps.classList.add('active');
+        tabOps.setAttribute('aria-selected', 'true');
         viewOps.style.display = 'flex';
         renderOperations();
       });
@@ -2144,8 +2271,12 @@
     // 5.26 Waiter Surface Actions
     document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(item => {
       item.addEventListener('click', () => {
-        document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.waiter-bottom-nav .wtr-nav-item').forEach(i => {
+          i.classList.remove('active');
+          i.removeAttribute('aria-current');
+        });
         item.classList.add('active');
+        item.setAttribute('aria-current', 'page');
         const target = item.dataset.wtrTarget;
         
         document.getElementById('wtr-view-tables').style.display = target === 'tables' ? 'flex' : 'none';
@@ -2218,7 +2349,8 @@
     const wtrCartTray = document.getElementById('wtr-cart-tray');
     if (wtrCartToggle && wtrCartTray) {
       wtrCartToggle.addEventListener('click', () => {
-        wtrCartTray.classList.toggle('expanded');
+        const isExpanded = wtrCartTray.classList.toggle('expanded');
+        wtrCartToggle.setAttribute('aria-expanded', String(isExpanded));
       });
     }
 
@@ -2346,6 +2478,7 @@
     const queueCount = document.getElementById('waiter-queue-count');
     if (queueCount) queueCount.textContent = state.wtrOfflineQueue.length;
     setupEvents();
+    setupAccessibility();
   });
 
 })();
