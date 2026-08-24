@@ -474,7 +474,7 @@
           : 'Masayı Aç';
 
       return `
-        <button type="button" class="table-card" data-table-id="${escapeHtml(t.id)}" aria-label="Masa ${escapeHtml(t.number)}, ${occupText}, ${escapeHtml(t.section)}. ${btnLabel}">
+        <button type="button" class="table-card" data-table-id="${escapeHtml(t.id)}" data-occupancy="${occupClass}" aria-label="Masa ${escapeHtml(t.number)}, ${occupText}, ${escapeHtml(t.section)}. ${btnLabel}">
           <div class="table-card-top">
             <span class="table-number">Masa ${escapeHtml(t.number)}</span>
             <span class="occupancy-pill ${occupClass}">${occupText}</span>
@@ -554,11 +554,13 @@
       }
 
       return `
-        <button type="button" class="product-card ${p.is86 ? 'is-86' : ''}" data-prod-id="${escapeHtml(p.id)}" ${p.is86 ? 'aria-disabled="true"' : ''} aria-label="${escapeHtml(p.name)}, ${formatTL(p.price)}${p.is86 ? ', tükendi' : ', siparişe ekle'}">
+        <button type="button" class="product-card ${p.is86 ? 'is-86' : ''}" data-prod-id="${escapeHtml(p.id)}" data-category="${escapeHtml(p.category)}" ${p.is86 ? 'aria-disabled="true"' : ''} aria-label="${escapeHtml(p.name)}, ${formatTL(p.price)}${p.is86 ? ', tükendi' : ', siparişe ekle'}">
+          <span class="product-category">${escapeHtml(p.category)}</span>
           <div class="prod-name">${escapeHtml(p.name)}</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+          <div class="product-card-footer">
             <div class="prod-price num-val">${formatTL(p.price)}</div>
             ${allergenPill}
+            <span class="product-add-mark" aria-hidden="true">+</span>
           </div>
         </button>
       `;
@@ -1079,7 +1081,7 @@
         let occupClass = t.occupancy === 'occupied' ? 'occupied' : t.occupancy === 'reserved' ? 'reserved' : 'available';
         let occupText = t.occupancy === 'occupied' ? 'Dolu' : t.occupancy === 'reserved' ? 'Rezerve' : 'Boş';
         return `
-          <button type="button" class="table-card" data-wtr-table-id="${escapeHtml(t.id)}" aria-label="Masa ${escapeHtml(t.number)}, ${occupText}, ${escapeHtml(t.section)}">
+          <button type="button" class="table-card" data-wtr-table-id="${escapeHtml(t.id)}" data-occupancy="${occupClass}" aria-label="Masa ${escapeHtml(t.number)}, ${occupText}, ${escapeHtml(t.section)}">
             <div class="table-card-top">
               <span class="table-number">Masa ${escapeHtml(t.number)}</span>
               <span class="occupancy-pill ${occupClass}">${occupText}</span>
@@ -1115,9 +1117,10 @@
       });
 
       productList.innerHTML = filteredProds.map(p => `
-        <button type="button" class="product-card ${p.is86 ? 'is-86' : ''}" data-wtr-prod-id="${escapeHtml(p.id)}" ${p.is86 ? 'aria-disabled="true"' : ''} aria-label="${escapeHtml(p.name)}, ${formatTL(p.price)}${p.is86 ? ', tükendi' : ', sepete ekle'}">
+        <button type="button" class="product-card ${p.is86 ? 'is-86' : ''}" data-wtr-prod-id="${escapeHtml(p.id)}" data-category="${escapeHtml(p.category)}" ${p.is86 ? 'aria-disabled="true"' : ''} aria-label="${escapeHtml(p.name)}, ${formatTL(p.price)}${p.is86 ? ', tükendi' : ', sepete ekle'}">
+          <span class="product-category">${escapeHtml(p.category)}</span>
           <div class="prod-name">${escapeHtml(p.name)}</div>
-          <div class="prod-price num-val">${formatTL(p.price)}</div>
+          <div class="product-card-footer"><div class="prod-price num-val">${formatTL(p.price)}</div><span class="product-add-mark" aria-hidden="true">+</span></div>
         </button>
       `).join('');
     }
@@ -2128,18 +2131,33 @@
     }
 
     // 5.24 Simulator Controls (Görünüm, Tema, Ağ)
+    const prototypeDock = document.querySelector('.prototype-nav');
+    const prototypeToolsButton = document.getElementById('btn-prototype-tools');
+
+    if (prototypeDock && prototypeToolsButton) {
+      prototypeToolsButton.addEventListener('click', () => {
+        const isOpen = prototypeDock.classList.toggle('open');
+        prototypeToolsButton.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) {
+          const controls = prototypeDock.querySelector('.prototype-nav-controls');
+          if (controls) controls.scrollLeft = 0;
+        }
+      });
+    }
+
     document.querySelectorAll('.proto-btn[data-view]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.proto-btn[data-view]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.currentView = btn.dataset.view;
+        document.body.dataset.surface = state.currentView;
 
         const cashierSurf = document.getElementById('surface-cashier');
         const waiterSurf = document.getElementById('surface-waiter');
         const waiterFrame = document.getElementById('waiter-device-frame');
 
         if (state.currentView === 'cashier') {
-          cashierSurf.style.display = 'flex';
+          cashierSurf.style.display = 'grid';
           waiterSurf.style.display = 'none';
         } else if (state.currentView === 'waiter-phone') {
           cashierSurf.style.display = 'none';
@@ -2149,6 +2167,11 @@
           cashierSurf.style.display = 'none';
           waiterSurf.style.display = 'flex';
           waiterFrame.className = 'device-frame tablet-mode';
+        }
+
+        if (prototypeDock && prototypeToolsButton) {
+          prototypeDock.classList.remove('open');
+          prototypeToolsButton.setAttribute('aria-expanded', 'false');
         }
       });
     });
@@ -2469,6 +2492,7 @@
       return;
     }
     document.documentElement.setAttribute('data-theme', state.theme);
+    document.body.dataset.surface = state.currentView;
     renderFloorSections();
     renderCashierTables();
     renderPOSCatalog();
