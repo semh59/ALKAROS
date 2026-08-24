@@ -1,7 +1,7 @@
 # V1-RMD-004 - Mock runtime contract alignment
 
 - Task ID: V1-RMD-004
-- Status: Planned
+- Status: Done
 - Assignee: Codex-/root
 - Work type: implementation
 - Surface state: Existing

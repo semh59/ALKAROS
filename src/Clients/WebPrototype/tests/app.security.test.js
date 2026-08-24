@@ -8,6 +8,7 @@ const vm = require('node:vm');
 
 const appPath = path.resolve(__dirname, '..', 'app.js');
 const source = fs.readFileSync(appPath, 'utf8');
+const html = fs.readFileSync(path.resolve(__dirname, '..', 'index.html'), 'utf8');
 
 function loadEscapeHtml() {
   const match = source.match(/function escapeHtml\(str\) \{[\s\S]*?\n  \}/);
@@ -34,14 +35,21 @@ test('modifier templates do not interpolate unencoded catalog strings', () => {
 });
 
 test('offline reconnect preserves queued operations until server acknowledgement', () => {
-  const start = source.indexOf('const updateNetworkUI = () =>');
-  const end = source.indexOf('if (bannerRetryBtn)', start);
-  assert.ok(start >= 0 && end > start, 'Network update handler must be present.');
-  const reconnectHandler = source.slice(start, end);
+  const start = source.indexOf('const replayOfflineQueue = async () =>');
+  const end = source.indexOf('const updateNetworkUI = async () =>', start);
+  assert.ok(start >= 0 && end > start, 'Offline replay handler must be present.');
+  const replayHandler = source.slice(start, end);
 
-  assert.equal(reconnectHandler.includes('state.wtrOfflineQueue = []'), false);
-  assert.equal(reconnectHandler.includes('offlineQueueStore.save([])'), false);
-  assert.match(reconnectHandler, /sunucu onayı bekliyor/);
+  assert.equal(replayHandler.includes('state.wtrOfflineQueue = []'), false);
+  assert.equal(replayHandler.includes('offlineQueueStore.save([])'), false);
+  assert.match(replayHandler, /MockRuntime\.replayQueue/);
+  assert.match(replayHandler, /state\.wtrOfflineQueue = remaining/);
+});
+
+test('versioned mock runtime loads before the UI and queue uses the v2 store', () => {
+  assert.ok(html.indexOf('<script src="mock-runtime.js') < html.indexOf('<script src="app.js'));
+  assert.match(source, /indexedDB\.open\('alkaros-waiter-pwa', 2\)/);
+  assert.match(source, /objectStore\('operations-v2'\)/);
 });
 
 test('offline enqueue persists before clearing the visible cart', () => {

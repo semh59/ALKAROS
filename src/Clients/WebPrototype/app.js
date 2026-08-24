@@ -1,16 +1,13 @@
 /**
- * ALKAROS V1 — Kurumsal Restoran Yönetimi, Salon/Masa Düzeni ve POS Motoru
- * Kapsamlı ve Eksiksiz Event Entegrasyonu (Tüm Eksiklikler Giderildi):
- * 1. Station Filters (İstasyon Filtreleri: Sıcak, Bar, Soğuk) Dinleyicileri Bağlandı
- * 2. Mutfak Fiş Sayacı (#badge-kitchen-count & #stat-kitchen-pending) Dinamik Senkronize Edildi
- * 3. Garson Arama (#input-wtr-search) ve Oturum Kilitleme (#btn-waiter-lock) Bağlandı
- * 4. Garson Kategori Çipleri (#wtr-cat-chips) ve Fiş Durumu Akışı (#wtr-status-feed) Eklendi
- * 5. Garson Sepeti (+ / - / Sil) Mobil Kontrolleri Entegre Edildi
- * 6. Gerçek Hayat Stres ve Kaos Testleri (Concurrency, 86'd, Split Bill, Printer Failover, Offline Sync)
+ * ALKAROS V1 WebPrototype
+ * Local mock runtime only; it does not connect to a production backend or device.
  */
 
 (function () {
   'use strict';
+
+  const MockRuntime = window.AlkarosMockRuntime;
+  if (!MockRuntime) throw new Error('Alkaros mock runtime could not be loaded.');
 
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
@@ -26,7 +23,16 @@
 
   const INITIAL_TABLES = [
     { id: 'tbl-1', number: 'S-01', section: 'Salon', occupancy: 'available', opBadge: null, capacity: 4, billAmount: 0.00, waiter: null, minutes: null, previousDrinks: [] },
-    { id: 'tbl-2', number: 'S-02', section: 'Salon', occupancy: 'occupied', opBadge: 'cooking', capacity: 4, billAmount: 485.00, waiter: 'Mehmet K.', minutes: 35, previousDrinks: [{ name: 'Ayran 300ml', price: 30.00 }, { name: 'Coca Cola 330ml', price: 45.00 }] },
+    {
+      id: 'tbl-2', number: 'S-02', section: 'Salon', occupancy: 'occupied', opBadge: 'cooking', capacity: 4,
+      billAmount: 485.00, waiter: 'Mehmet K.', minutes: 35,
+      previousDrinks: [{ name: 'Ayran 300ml', price: 30.00 }, { name: 'Coca Cola 330ml', price: 45.00 }],
+      openOrderLines: [
+        { productId: 'p1', name: 'Alkaros Burger (200g)', quantity: 1, unitPrice: 240.00, seat: '1' },
+        { productId: 'p3', name: 'Bonfile Kısmi Porsiyon', quantity: 1, unitPrice: 160.00, seat: '2' },
+        { productId: 'p5', name: 'Patates Tava', quantity: 1, unitPrice: 85.00, seat: 'shared' }
+      ]
+    },
     { id: 'tbl-3', number: 'S-03', section: 'Salon', occupancy: 'occupied', opBadge: null, capacity: 6, billAmount: 1250.00, waiter: 'Can T.', minutes: 12, previousDrinks: [{ name: 'Ayran 300ml', price: 30.00 }] },
     { id: 'tbl-4', number: 'S-04', section: 'Salon', occupancy: 'occupied', opBadge: 'bill-requested', capacity: 4, billAmount: 820.00, waiter: 'Mehmet K.', minutes: 58, previousDrinks: [] },
     { id: 'tbl-5', number: 'S-05', section: 'Salon', occupancy: 'reserved', opBadge: null, capacity: 4, billAmount: 0.00, waiter: null, minutes: null, note: '19:30 - 4 Kişi' },
@@ -119,16 +125,33 @@
     currentView: 'cashier',
     isOnline: true,
     isLocked: false,
+    cashierSession: {
+      sessionId: MockRuntime.createId(),
+      userId: MockRuntime.createId(),
+      userName: 'Ahmet Yılmaz',
+      terminalId: 'POS-01',
+      expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
+      isActive: true
+    },
+    waiterSession: {
+      sessionId: MockRuntime.createId(),
+      waiterId: MockRuntime.createId(),
+      waiterName: 'Mehmet K.',
+      deviceFingerprint: 'mock-waiter-device-01',
+      expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
+      isActive: true,
+      isRevoked: false
+    },
 
     // Tables & Floor
-    tables: [...INITIAL_TABLES],
+    tables: INITIAL_TABLES.map(MockRuntime.createTable),
     selectedTable: null,
     activeSectionFilter: 'Tümü',
     activeStatusFilter: 'all',
     searchTableQuery: '',
 
     // Catalog & Menu Management
-    products: [...INITIAL_PRODUCTS],
+    products: INITIAL_PRODUCTS.map(MockRuntime.createProduct),
     activeCategory: 'Tümü',
     searchProductQuery: '',
     menuMgmtCatFilter: 'Tümü',
@@ -141,6 +164,8 @@
     editingCartIndex: null,
     selectedQuickTags: [],
     selectedCartItemIndex: null,
+    activeOrderIdempotencyKey: null,
+    activeOrderSignature: null,
 
     // Operations & Printers
     activeStationFilter: 'all',
@@ -161,22 +186,32 @@
     wtrActiveTable: null,
     wtrCart: [],
     wtrOfflineQueue: [],
+    waiterOrderIdempotencyKey: null,
+    waiterOrderSignature: null,
     notifications: [...INITIAL_NOTIFICATIONS],
 
     // PIN Lockout
-    enteredPin: '',
-    failedPinAttempts: 0,
-    cooldownRemaining: 0
+    enteredPin: ''
   };
+
+  const mockService = new MockRuntime.MockBackendService({
+    tables: state.tables,
+    latencyMs: 250
+  });
+  const mockSessionLock = new MockRuntime.MockSessionLock({
+    pin: '1234',
+    maxAttempts: 3,
+    cooldownMs: 30000
+  });
 
   const offlineQueueStore = {
     open() {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('alkaros-waiter-pwa', 1);
+        const request = indexedDB.open('alkaros-waiter-pwa', 2);
         request.onupgradeneeded = () => {
           const database = request.result;
-          if (!database.objectStoreNames.contains('queue')) {
-            database.createObjectStore('queue');
+          if (!database.objectStoreNames.contains('operations-v2')) {
+            database.createObjectStore('operations-v2');
           }
         };
         request.onsuccess = () => resolve(request.result);
@@ -188,7 +223,7 @@
       const database = await this.open();
       try {
         return await new Promise((resolve, reject) => {
-          const request = database.transaction('queue', 'readonly').objectStore('queue').get('operations');
+          const request = database.transaction('operations-v2', 'readonly').objectStore('operations-v2').get('fifo');
           request.onsuccess = () => resolve(Array.isArray(request.result) ? request.result : []);
           request.onerror = () => reject(request.error || new Error('Offline queue could not be read.'));
         });
@@ -201,8 +236,8 @@
       const database = await this.open();
       try {
         await new Promise((resolve, reject) => {
-          const transaction = database.transaction('queue', 'readwrite');
-          transaction.objectStore('queue').put(operations, 'operations');
+          const transaction = database.transaction('operations-v2', 'readwrite');
+          transaction.objectStore('operations-v2').put(operations, 'fifo');
           transaction.oncomplete = () => resolve();
           transaction.onerror = () => reject(transaction.error || new Error('Offline queue could not be persisted.'));
           transaction.onabort = () => reject(transaction.error || new Error('Offline queue persistence was aborted.'));
@@ -221,6 +256,65 @@
       maximumFractionDigits: 2
     }) + ' TL';
   };
+
+  function applyTableSnapshot(snapshot) {
+    const table = state.tables.find(candidate => candidate.id === snapshot.id);
+    if (!table) return;
+    Object.assign(table, snapshot);
+    if (state.selectedTable?.id === snapshot.id) state.selectedTable = table;
+    if (state.wtrActiveTable?.id === snapshot.id) state.wtrActiveTable = table;
+  }
+
+  function buildOrderRequest(table, cart, idempotencyKey, channel, actorName) {
+    return {
+      tableId: table.id,
+      expectedTableVersion: table.rowVersion,
+      idempotencyKey,
+      channel,
+      actorName,
+      lines: cart.map((item, index) => ({
+        lineId: MockRuntime.toDeterministicGuid(`${idempotencyKey}-line-${index}`),
+        productId: item.id || null,
+        name: item.name,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        seat: item.seat || 'shared',
+        course: item.course || 'Ana Yemek'
+      }))
+    };
+  }
+
+  function appendSubmittedOrder(order, table) {
+    state.tickets.unshift({
+      id: order.orderId.slice(0, 8).toUpperCase(),
+      table: `Masa ${table.number}`,
+      time: 'Yeni',
+      station: 'hot',
+      items: order.lines.map(item => ({
+        name: `${item.quantity}x ${item.name} [${item.course}]`,
+        status: 'cooking'
+      }))
+    });
+    state.notifications.unshift({
+      id: MockRuntime.createId(),
+      time: new Date().toLocaleTimeString('tr-TR').substring(0, 5),
+      text: `Masa ${table.number}: ${order.lines.length} kalem mock mutfağa iletildi.`,
+      unread: true
+    });
+  }
+
+  function openConflictDialog(serverTable) {
+    const dialog = document.getElementById('modal-concurrency-conflict');
+    if (!dialog || !serverTable) return;
+    dialog.dataset.serverTable = JSON.stringify(serverTable);
+    const localAmount = document.getElementById('conflict-local-amount');
+    const serverAmount = document.getElementById('conflict-server-amount');
+    const subtitle = document.getElementById('conflict-table-subtitle');
+    if (localAmount) localAmount.textContent = formatTL(state.selectedTable?.billAmount);
+    if (serverAmount) serverAmount.textContent = formatTL(serverTable.billAmount);
+    if (subtitle) subtitle.textContent = `Masa ${serverTable.number} (rowVersion ${state.selectedTable?.rowVersion} → ${serverTable.rowVersion})`;
+    dialog.style.display = 'flex';
+  }
 
   const showToast = (message, type = 'success') => {
     const container = document.getElementById('toast-container');
@@ -960,33 +1054,36 @@
     if (!state.selectedTable) return;
     if (titleEl) titleEl.textContent = `Masa ${state.selectedTable.number} (${formatTL(state.selectedTable.billAmount)})`;
 
-    let payAmount = 0;
-    let items = [];
+    const selection = MockRuntime.deriveSplitPayment(
+      state.selectedTable.openOrderLines,
+      state.splitActiveSeat,
+      state.selectedTable.billAmount
+    );
 
-    if (state.splitActiveSeat === '1') {
-      payAmount = 240.00;
-      items = [{ name: '1x Alkaros Burger (200g)', price: 240.00 }];
-    } else if (state.splitActiveSeat === '2') {
-      payAmount = 160.00;
-      items = [{ name: '1x Bonfile Kısmi Porsiyon', price: 160.00 }];
-    } else {
-      payAmount = 85.00;
-      items = [{ name: '1x Patates Tava (Ortaya)', price: 85.00 }];
-    }
-
-    const remaining = Math.max(0, (state.selectedTable.billAmount || 485.00) - payAmount);
+    document.querySelectorAll('.split-seat-btn').forEach(button => {
+      const seatSelection = MockRuntime.deriveSplitPayment(
+        state.selectedTable.openOrderLines,
+        button.dataset.splitSeat,
+        state.selectedTable.billAmount
+      );
+      const label = button.dataset.splitSeat === 'shared' ? 'Ortaya / Kalan' : `Koltuk ${button.dataset.splitSeat}`;
+      button.textContent = `${label} (${formatTL(seatSelection.amount)})`;
+      button.disabled = seatSelection.amount <= 0;
+    });
 
     if (list) {
-      list.innerHTML = items.map(i => `
+      list.innerHTML = selection.items.length > 0 ? selection.items.map(item => `
         <div class="split-item-row">
-            <span>${escapeHtml(i.name)}</span>
-          <span class="num-val">${formatTL(i.price)}</span>
+          <span>${item.quantity}x ${escapeHtml(item.name)}</span>
+          <span class="num-val">${formatTL(item.unitPrice * item.quantity)}</span>
         </div>
-      `).join('');
+      `).join('') : '<p class="modal-desc-text">Bu koltukta ödenmemiş kalem bulunmuyor.</p>';
     }
 
-    if (payEl) payEl.textContent = formatTL(payAmount);
-    if (remainEl) remainEl.textContent = formatTL(remaining);
+    if (payEl) payEl.textContent = formatTL(selection.amount);
+    if (remainEl) remainEl.textContent = formatTL(selection.remaining);
+    const confirmButton = document.getElementById('btn-confirm-split-payment');
+    if (confirmButton) confirmButton.disabled = selection.amount <= 0;
   }
 
   // 4.8 Operations & Printers
@@ -1315,8 +1412,8 @@
           return;
         }
 
-        const newTable = {
-          id: 'tbl-' + Date.now(),
+        const newTable = MockRuntime.createTable({
+          id: MockRuntime.createId(),
           number: number.toUpperCase(),
           section,
           occupancy: 'available',
@@ -1325,9 +1422,11 @@
           billAmount: 0.00,
           waiter: null,
           minutes: null,
-          previousDrinks: []
-        };
+          previousDrinks: [],
+          openOrderLines: []
+        });
 
+        mockService.registerTable(newTable);
         state.tables.push(newTable);
         state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Yeni Masa: Masa ${newTable.number} (${section} - ${capacity} Kişilik) eklendi.`);
         showToast(`Masa ${newTable.number} (${section}) başarıyla eklendi.`);
@@ -1371,8 +1470,8 @@
           return;
         }
 
-        const newProd = {
-          id: 'p_' + Date.now(),
+        const newProd = MockRuntime.createProduct({
+          id: MockRuntime.createId(),
           name,
           category,
           price,
@@ -1381,7 +1480,7 @@
           allergen,
           is86: false,
           modifierGroups: []
-        };
+        });
 
         state.products.push(newProd);
         state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Menü Ekleme: ${newProd.name} (${category} - ${formatTL(price)}) eklendi.`);
@@ -1513,7 +1612,7 @@
         if (!state.selectedTable) return;
         const drink = state.products.find(p => p.category.includes('İçecek')) || state.products[0];
         state.activeCart.push({
-          id: 'rep_' + Math.random().toString(36).substring(2, 7),
+          id: drink.id,
           name: drink.name,
           unitPrice: drink.price,
           quantity: 2,
@@ -1557,7 +1656,7 @@
         }
 
         const customItem = {
-          id: 'custom_' + Date.now(),
+          id: MockRuntime.createId(),
           name: `[Özel] ${name}`,
           unitPrice: price,
           quantity: 1,
@@ -1593,9 +1692,17 @@
     if (btnCloseThermal) btnCloseThermal.addEventListener('click', () => modalThermal.style.display = 'none');
     if (btnCloseThermalBtn) btnCloseThermalBtn.addEventListener('click', () => modalThermal.style.display = 'none');
     if (btnPrintHardware) {
-      btnPrintHardware.addEventListener('click', () => {
-        state.selectedTable.opBadge = 'bill-requested';
-        showToast(`Masa ${state.selectedTable.number} ön adisyon fişi yazıcıya iletildi.`);
+      btnPrintHardware.addEventListener('click', async () => {
+        if (!state.selectedTable) return;
+        btnPrintHardware.disabled = true;
+        const result = await mockService.printPrebill({ tableId: state.selectedTable.id });
+        btnPrintHardware.disabled = false;
+        if (!result.ok) {
+          showToast(`Mock yazdırma başarısız: ${result.error.message}`, 'error');
+          return;
+        }
+        applyTableSnapshot(result.value.table);
+        showToast(`Mock yazıcı ${result.value.printJobId.slice(0, 8)} işi onayladı.`);
         if (modalThermal) modalThermal.style.display = 'none';
         viewOrder.style.display = 'none';
         viewTables.style.display = 'flex';
@@ -1634,15 +1741,32 @@
     });
 
     if (btnConfirmSplitPayment) {
-      btnConfirmSplitPayment.addEventListener('click', () => {
-        const payAmount = state.splitActiveSeat === '1' ? 240.00 : state.splitActiveSeat === '2' ? 160.00 : 85.00;
+      btnConfirmSplitPayment.addEventListener('click', async () => {
+        if (!state.selectedTable) return;
+        const selection = MockRuntime.deriveSplitPayment(
+          state.selectedTable.openOrderLines,
+          state.splitActiveSeat,
+          state.selectedTable.billAmount
+        );
         const payMethod = document.querySelector('input[name="splitPaymentMethod"]:checked')?.value || 'Kredi Kartı';
 
-        if (state.selectedTable) {
-          state.selectedTable.billAmount = Math.max(0, (state.selectedTable.billAmount || 485.00) - payAmount);
-          state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Parçalı Tahsilat: Masa ${state.selectedTable.number} - Koltuk ${state.splitActiveSeat} için ${formatTL(payAmount)} ödendi (${payMethod}).`);
-          showToast(`Koltuk ${state.splitActiveSeat} tahsilatı alındı (${formatTL(payAmount)}). Kalan: ${formatTL(state.selectedTable.billAmount)}`);
+        btnConfirmSplitPayment.disabled = true;
+        const result = await mockService.takePayment({
+          tableId: state.selectedTable.id,
+          expectedTableVersion: state.selectedTable.rowVersion,
+          amount: selection.amount,
+          method: payMethod,
+          lineIds: selection.lineIds
+        });
+        if (!result.ok) {
+          btnConfirmSplitPayment.disabled = false;
+          showToast(`Mock tahsilat başarısız: ${result.error.message}`, 'error');
+          return;
         }
+
+        applyTableSnapshot(result.value.table);
+        state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Mock Tahsilat: Masa ${state.selectedTable.number} - ${state.splitActiveSeat} için ${formatTL(selection.amount)} ödendi (${payMethod}).`);
+        showToast(`Mock tahsilat onaylandı (${formatTL(selection.amount)}). Kalan: ${formatTL(state.selectedTable.billAmount)}`);
 
         if (modalSplitBill) modalSplitBill.style.display = 'none';
         renderCart();
@@ -1948,54 +2072,45 @@
     // 5.22 Submit POS Order
     const btnSubmit = document.getElementById('btn-pos-submit-order');
     if (btnSubmit) {
-      btnSubmit.addEventListener('click', () => {
+      const submitMarkup = btnSubmit.innerHTML;
+      btnSubmit.addEventListener('click', async () => {
         if (!state.isOnline) {
-          showToast('Sunucu bağlantısı olmadan sipariş iletilemez!', 'error');
+          showToast('Mock servis bağlantısı olmadan sipariş iletilemez.', 'error');
           return;
         }
-        if (state.activeCart.length === 0) return;
+        if (state.activeCart.length === 0 || !state.selectedTable) return;
 
-        const idempotencyKey = 'ord_' + Math.random().toString(36).substring(2, 11);
+        const signature = JSON.stringify(state.activeCart);
+        if (state.activeOrderSignature !== signature) {
+          state.activeOrderSignature = signature;
+          state.activeOrderIdempotencyKey = MockRuntime.createIdempotencyKey();
+        }
+        const idempotencyKey = state.activeOrderIdempotencyKey;
+        const request = buildOrderRequest(state.selectedTable, state.activeCart, idempotencyKey, 'Cashier', 'Ahmet Y.');
         btnSubmit.disabled = true;
         btnSubmit.innerHTML = `<span>⏳ İletiliyor (${idempotencyKey.substring(0, 8)})...</span>`;
-
-        setTimeout(() => {
-          if (state.selectedTable) {
-            const tbl = state.tables.find(t => t.id === state.selectedTable.id);
-            if (tbl) {
-              tbl.occupancy = 'occupied';
-              tbl.opBadge = 'cooking';
-              tbl.waiter = 'Ahmet Y.';
-              tbl.minutes = 1;
-              const cartSum = state.activeCart.reduce((sum, i) => sum + (i.unitPrice * i.quantity), 0);
-              tbl.billAmount = (tbl.billAmount || 0) + cartSum;
-            }
+        const result = await mockService.submitOrder(request);
+        btnSubmit.innerHTML = submitMarkup;
+        if (!result.ok) {
+          btnSubmit.disabled = false;
+          if (result.error.code === 'TABLE_VERSION_CONFLICT' && modalConflict) {
+            openConflictDialog(result.error.details.serverTable);
           }
+          showToast(`Mock sipariş reddedildi: ${result.error.message}`, 'error');
+          return;
+        }
 
-          state.tickets.unshift({
-            id: String(1045 + state.tickets.length),
-            table: `Masa ${state.selectedTable.number}`,
-            time: 'Yeni',
-            station: 'hot',
-            items: state.activeCart.map(i => ({ name: `${i.quantity}x ${i.name} [${i.course}]`, status: 'cooking' }))
-          });
-
-          state.notifications.unshift({
-            id: 'notif_' + Date.now(),
-            time: new Date().toLocaleTimeString('tr-TR').substring(0, 5),
-            text: `Masa ${state.selectedTable.number}: ${state.activeCart.length} Kalem mutfağa iletildi!`,
-            unread: true
-          });
-
-          state.activeCart = [];
-          state.activeDiscount = 0;
-          showToast(`Sipariş mutfağa iletildi! Masa ${state.selectedTable.number} güncellendi.`);
-          
-          viewOrder.style.display = 'none';
-          viewTables.style.display = 'flex';
-          renderCashierTables();
-          renderOperations();
-        }, 600);
+        applyTableSnapshot(result.value.table);
+        appendSubmittedOrder(result.value.order, result.value.table);
+        state.activeCart = [];
+        state.activeDiscount = 0;
+        state.activeOrderIdempotencyKey = null;
+        state.activeOrderSignature = null;
+        showToast(`Mock sipariş ${result.value.order.orderId.slice(0, 8)} mutfağa iletildi.`);
+        viewOrder.style.display = 'none';
+        viewTables.style.display = 'flex';
+        renderCashierTables();
+        renderOperations();
       });
     }
 
@@ -2022,26 +2137,48 @@
         const tbl = state.tables.find(t => t.number === 'S-02');
         if (tbl) {
           state.selectedTable = tbl;
+          const cola = state.products.find(product => product.name.startsWith('Coca Cola'));
+          const serverTable = mockService.bumpTableVersion(tbl.id, table => {
+            table.billAmount += 90;
+            table.openOrderLines.push({
+              lineId: MockRuntime.createId(),
+              productId: cola.id,
+              name: cola.name,
+              quantity: 2,
+              unitPrice: cola.price,
+              seat: 'shared',
+              course: cola.defaultCourse,
+              paymentStatus: 'Unpaid'
+            });
+          });
+          openConflictDialog(serverTable);
         }
-        if (modalConflict) modalConflict.style.display = 'flex';
       });
     }
     if (btnCloseConflict) btnCloseConflict.addEventListener('click', () => modalConflict.style.display = 'none');
+    const btnRunOrderFailure = document.getElementById('btn-run-chaos-order-failure');
+    if (btnRunOrderFailure) {
+      btnRunOrderFailure.addEventListener('click', () => {
+        mockService.failNext('order', 'MOCK_ORDER_REJECTED', 'Mock kitchen rejected the order.');
+        modalChaos.style.display = 'none';
+        showToast('Bir sonraki mock sipariş reddedilecek; taslak korunacak.', 'warning');
+      });
+    }
     if (btnConflictAbort) {
       btnConflictAbort.addEventListener('click', () => {
-        const tbl = state.tables.find(t => t.number === 'S-02');
-        if (tbl) tbl.billAmount = 575.00;
-        showToast('Masa S-02 güncel sunucu verisiyle (575 TL) yenilendi.');
+        const serverTable = JSON.parse(modalConflict.dataset.serverTable || 'null');
+        if (serverTable) applyTableSnapshot(serverTable);
+        showToast('Masa güncel mock servis verisiyle yenilendi.');
         modalConflict.style.display = 'none';
         renderCashierTables();
       });
     }
     if (btnConflictMerge) {
       btnConflictMerge.addEventListener('click', () => {
-        const tbl = state.tables.find(t => t.number === 'S-02');
-        if (tbl) tbl.billAmount = 575.00;
-        state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Concurrency Uzlaşması: Masa S-02 (575 TL) başarıyla senkronize edildi.`);
-        showToast('Eşzamanlı değişiklikler başarıyla birleştirildi.');
+        const serverTable = JSON.parse(modalConflict.dataset.serverTable || 'null');
+        if (serverTable) applyTableSnapshot(serverTable);
+        state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Mock concurrency uzlaşması: güncel rowVersion uygulandı.`);
+        showToast('Mock servis rowVersion verisi uygulandı; taslak korundu.');
         modalConflict.style.display = 'none';
         renderCashierTables();
       });
@@ -2052,7 +2189,7 @@
     if (btnRun86) {
       btnRun86.addEventListener('click', () => {
         modalChaos.style.display = 'none';
-        const bonfile = state.products.find(p => p.id === 'p3');
+        const bonfile = state.products.find(p => p.name.startsWith('Bonfile'));
         if (bonfile) {
           bonfile.is86 = !bonfile.is86;
           state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] ŞEF ALARMI: ${bonfile.name} durumu -> ${bonfile.is86 ? '86\'d (TÜKENDİ)' : 'Satışta'}.`);
@@ -2069,8 +2206,9 @@
     if (btnRunPrinter) {
       btnRunPrinter.addEventListener('click', () => {
         modalChaos.style.display = 'none';
-        const prn = state.printers.find(p => p.id === 'prn-2');
+        const prn = state.printers.find(p => p.name.includes('Bar'));
         if (prn) {
+          mockService.failNext('print', 'MOCK_PRINTER_PAPER_OUT', 'Mock printer reported paper-out.');
           prn.status = 'paper_out';
           prn.issue = 'Kağıt Bitti / Beklemede';
           state.auditLogs.unshift(`[${new Date().toLocaleTimeString('tr-TR')}] Donanım Uyarısı: Bar Yazıcısı kağıt sonu alarmı tetiklendi.`);
@@ -2088,6 +2226,7 @@
         const tbl = state.tables.find(t => t.number === 'S-02');
         if (tbl) {
           state.selectedTable = tbl;
+          mockService.failNext('payment', 'MOCK_PAYMENT_DECLINED', 'Mock payment was declined.');
           renderSplitBill();
           if (modalSplitBill) modalSplitBill.style.display = 'flex';
         }
@@ -2115,9 +2254,11 @@
         updateNetworkUI();
 
         state.wtrActiveTable = state.tables.find(t => t.number === 'B-01');
+        const burger = state.products.find(product => product.name.startsWith('Alkaros Burger'));
+        const ayran = state.products.find(product => product.name.startsWith('Ayran'));
         state.wtrCart = [
-          { id: 'p1', name: 'Alkaros Burger (200g)', unitPrice: 240.00, quantity: 1 },
-          { id: 'p7', name: 'Ayran 300ml', unitPrice: 30.00, quantity: 2 }
+          { id: burger.id, name: burger.name, unitPrice: burger.price, quantity: 1 },
+          { id: ayran.id, name: ayran.name, unitPrice: ayran.price, quantity: 2 }
         ];
 
         document.getElementById('wtr-view-tables').style.display = 'none';
@@ -2187,8 +2328,49 @@
 
     const netBtn = document.getElementById('btn-sim-network');
     const bannerRetryBtn = document.getElementById('btn-banner-retry');
+    let replayInProgress = false;
 
-      const updateNetworkUI = () => {
+    const updateQueueCount = () => {
+      const count = document.getElementById('waiter-queue-count');
+      if (count) count.textContent = state.wtrOfflineQueue.length;
+    };
+
+    const replayOfflineQueue = async () => {
+      if (replayInProgress || state.wtrOfflineQueue.length === 0) return;
+      replayInProgress = true;
+      const queuedCount = state.wtrOfflineQueue.length;
+      showToast(`${queuedCount} mock işlem FIFO sırasıyla yeniden gönderiliyor.`, 'warning');
+      try {
+        const result = await MockRuntime.replayQueue(
+          state.wtrOfflineQueue,
+          mockService,
+          async remaining => {
+            await offlineQueueStore.save(remaining);
+            state.wtrOfflineQueue = remaining;
+            updateQueueCount();
+          },
+          { session: state.waiterSession }
+        );
+        result.acknowledgements.forEach(acknowledgement => {
+          applyTableSnapshot(acknowledgement.table);
+          appendSubmittedOrder(acknowledgement.order, acknowledgement.table);
+        });
+        renderWaiterSurface();
+        renderCashierTables();
+        renderOperations();
+        if (result.ok) {
+          showToast(`${result.acknowledgements.length} mock işlem onaylandı; kuyruk boşaltıldı.`);
+        } else {
+          showToast(`Replay durdu: ${result.error.message}. Kalan kuyruk korundu.`, 'error');
+        }
+      } catch (error) {
+        showToast(`Replay kuyruğu kaydedilemedi: ${error.message}`, 'error');
+      } finally {
+        replayInProgress = false;
+      }
+    };
+
+    const updateNetworkUI = async () => {
       const banner = document.getElementById('network-outage-banner');
       const labelNet = document.getElementById('label-network');
       const cuiNetDot = document.getElementById('cashier-net-status');
@@ -2212,8 +2394,7 @@
         if (wtrOffBar) wtrOffBar.style.display = 'none';
 
         if (state.wtrOfflineQueue.length > 0) {
-          const count = state.wtrOfflineQueue.length;
-          showToast(`Ağ bağlantısı kuruldu. ${count} işlem sunucu onayı bekliyor.`, 'warning');
+          await replayOfflineQueue();
         } else {
           showToast('Ağ bağlantısı kuruldu.', 'success');
         }
@@ -2222,16 +2403,16 @@
     };
 
     if (netBtn) {
-      netBtn.addEventListener('click', () => {
+      netBtn.addEventListener('click', async () => {
         state.isOnline = !state.isOnline;
-        updateNetworkUI();
+        await updateNetworkUI();
       });
     }
 
     if (bannerRetryBtn) {
-      bannerRetryBtn.addEventListener('click', () => {
+      bannerRetryBtn.addEventListener('click', async () => {
         state.isOnline = true;
-        updateNetworkUI();
+        await updateNetworkUI();
       });
     }
 
@@ -2260,9 +2441,25 @@
       }
     };
 
+    const showPinCooldown = () => {
+      const box = document.getElementById('pin-cooldown-box');
+      const seconds = document.getElementById('pin-cooldown-sec');
+      const errorMessage = document.getElementById('pin-error-msg');
+      if (box) box.style.display = 'block';
+      if (errorMessage) errorMessage.style.display = 'none';
+      const timer = setInterval(() => {
+        const remainingSeconds = Math.ceil(mockSessionLock.remainingCooldownMs() / 1000);
+        if (seconds) seconds.textContent = String(remainingSeconds);
+        if (remainingSeconds <= 0) {
+          clearInterval(timer);
+          if (box) box.style.display = 'none';
+        }
+      }, 250);
+    };
+
     if (keypad) {
       keypad.addEventListener('click', (e) => {
-        if (state.cooldownRemaining > 0) return;
+        if (mockSessionLock.remainingCooldownMs() > 0) return;
         const keyBtn = e.target.closest('.key-btn');
         if (!keyBtn) return;
         const key = keyBtn.dataset.key;
@@ -2274,13 +2471,22 @@
           if (key !== 'OK') state.enteredPin += key;
           updatePinDots();
 
-          if (state.enteredPin === '1234') {
+          const result = mockSessionLock.submit(state.enteredPin);
+          if (result.ok) {
             state.isLocked = false;
-            state.failedPinAttempts = 0;
             if (lockModal) lockModal.style.display = 'none';
-            showToast('Oturum kilidi açıldı.');
+            showToast('Mock oturum kilidi açıldı.');
           } else {
-            showToast('Hatalı PIN! (Demo PIN: 1234)', 'error');
+            const errorMessage = document.getElementById('pin-error-msg');
+            const attempts = document.getElementById('pin-remaining-attempts');
+            if (result.error.code === 'PIN_COOLDOWN') {
+              showPinCooldown();
+              showToast('Mock oturum üç hatalı denemeden sonra 30 saniye kilitlendi.', 'error');
+            } else {
+              if (attempts) attempts.textContent = String(result.error.details.attemptsRemaining);
+              if (errorMessage) errorMessage.style.display = 'block';
+              showToast('Mock PIN hatalı.', 'error');
+            }
             state.enteredPin = '';
             setTimeout(updatePinDots, 300);
           }
@@ -2405,14 +2611,23 @@
     const btnWtrSubmit = document.getElementById('btn-wtr-submit-order');
     if (btnWtrSubmit) {
       btnWtrSubmit.addEventListener('click', async () => {
-        if (state.wtrCart.length === 0) return;
+        if (state.wtrCart.length === 0 || !state.wtrActiveTable) return;
+
+        const signature = JSON.stringify(state.wtrCart);
+        if (state.waiterOrderSignature !== signature) {
+          state.waiterOrderSignature = signature;
+          state.waiterOrderIdempotencyKey = MockRuntime.createIdempotencyKey();
+        }
+        const request = buildOrderRequest(
+          state.wtrActiveTable,
+          state.wtrCart,
+          state.waiterOrderIdempotencyKey,
+          'Waiter',
+          'Mehmet K.'
+        );
 
         if (!state.isOnline) {
-          const queueItem = {
-            opId: 'wtr_op_' + Math.random().toString(36).substring(2, 9),
-            table: state.wtrActiveTable.number,
-            items: [...state.wtrCart]
-          };
+          const queueItem = MockRuntime.createOperationEnvelope(request);
           const persistedQueue = [...state.wtrOfflineQueue, queueItem];
           try {
             await offlineQueueStore.save(persistedQueue);
@@ -2426,29 +2641,29 @@
 
           showToast('Çevrimdışı: Sipariş cihaz kuyruğuna alındı. Ağ gelince iletilecek.', 'warning');
           state.wtrCart = [];
+          state.waiterOrderIdempotencyKey = null;
+          state.waiterOrderSignature = null;
           wtrViewOrder.style.display = 'none';
           wtrViewTables.style.display = 'flex';
           renderWaiterSurface();
         } else {
-          if (state.wtrActiveTable) {
-            state.wtrActiveTable.occupancy = 'occupied';
-            state.wtrActiveTable.opBadge = 'cooking';
-            state.wtrActiveTable.waiter = 'Mehmet K.';
-            state.wtrActiveTable.minutes = 1;
-            const sum = state.wtrCart.reduce((s, i) => s + (i.unitPrice * i.quantity), 0);
-            state.wtrActiveTable.billAmount = (state.wtrActiveTable.billAmount || 0) + sum;
+          btnWtrSubmit.disabled = true;
+          const result = await mockService.submitOrder(request);
+          btnWtrSubmit.disabled = false;
+          if (!result.ok) {
+            if (result.error.code === 'TABLE_VERSION_CONFLICT' && modalConflict) {
+              openConflictDialog(result.error.details.serverTable);
+            }
+            showToast(`Mock garson siparişi reddedildi: ${result.error.message}`, 'error');
+            return;
           }
 
-          state.tickets.unshift({
-            id: String(1045 + state.tickets.length),
-            table: `Masa ${state.wtrActiveTable.number}`,
-            time: 'Yeni',
-            station: 'hot',
-            items: state.wtrCart.map(i => ({ name: `${i.quantity}x ${i.name}`, status: 'cooking' }))
-          });
-
-          showToast(`Masa ${state.wtrActiveTable.number} siparişi mutfağa gönderildi!`);
+          applyTableSnapshot(result.value.table);
+          appendSubmittedOrder(result.value.order, result.value.table);
+          showToast(`Mock garson siparişi ${result.value.order.orderId.slice(0, 8)} onaylandı.`);
           state.wtrCart = [];
+          state.waiterOrderIdempotencyKey = null;
+          state.waiterOrderSignature = null;
           wtrViewOrder.style.display = 'none';
           wtrViewTables.style.display = 'flex';
           renderWaiterSurface();
@@ -2468,6 +2683,10 @@
         showToast('Yemek teslim edildi olarak işaretlendi.');
         renderWaiterSurface();
       });
+    }
+
+    if (state.isOnline && state.wtrOfflineQueue.length > 0) {
+      void replayOfflineQueue();
     }
 
     // 5.27 Clock Loop
