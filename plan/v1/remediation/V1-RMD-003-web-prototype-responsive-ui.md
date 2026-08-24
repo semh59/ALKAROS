@@ -13,8 +13,9 @@ klavye ile kullanılabilir ve açık/koyu temada okunabilir tek bir ürün aray�
 
 ## Owned surface
 
-- `src/Clients/WebPrototype/**`
 - `evidence/V1-RMD-003/**`
+
+Production surface ownership was transferred to `V1-RMD-004` on 2026-08-24 after this task was completed.
 
 ## In scope
 
