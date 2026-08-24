@@ -12,9 +12,9 @@ public sealed class ManifestTests : IDisposable
         "001", "002", "003", "005", "006", "007", "008", "009", "010", "011",
         "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022",
         "023", "024", "025", "026", "027", "028", "029", "030", "031", "032", "033", "034", "035",
-        "036", "037"
+        "036", "037", "038"
     ];
-    private static readonly string[] LastEntryTables = ["physical_print_deliveries"];
+    private static readonly string[] LastEntryTables = ["terminals", "pairing_requests", "display_sessions"];
     private readonly string _directory = Path.Combine(
         Path.GetTempPath(), "alkaros-fnd004-" + Guid.NewGuid().ToString("N")[..8]);
 
@@ -33,7 +33,7 @@ public sealed class ManifestTests : IDisposable
     {
         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
 
-        Assert.Equal(36, manifest.Migrations.Count);
+        Assert.Equal(37, manifest.Migrations.Count);
         Assert.Equal(RuntimeManifestIds, manifest.Migrations.Select(entry => entry.Id));
         Assert.Equal(
             FirstEntryTables,

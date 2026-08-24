@@ -1,8 +1,8 @@
 # V1-RMD-006 - Implement production dual-screen POS vertical slice
 
 - Task ID: V1-RMD-006
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Codex-/root
 - Work type: integration
 - Surface state: Existing
 

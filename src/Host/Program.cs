@@ -1,5 +1,6 @@
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Migrations;
+using ALKAROS.Host.DualScreen;
 
 namespace ALKAROS.Host;
 
@@ -16,6 +17,19 @@ public static class Program
 
     public static int Main(string[] args)
     {
+        if (args.Length > 0 && string.Equals(args[0], "serve", StringComparison.Ordinal))
+        {
+            try
+            {
+                return DualScreenApplication.Run(args[1..]);
+            }
+            catch (DualScreenStartupException ex)
+            {
+                Console.Error.WriteLine($"STARTUP: {ex.Message}");
+                return (int)HostExitCode.StartupFailed;
+            }
+        }
+
         var options = ParseArguments(args);
         if (options is null)
         {

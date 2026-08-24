@@ -219,6 +219,12 @@
       "phase": "B",
       "tables": ["physical_print_deliveries"],
       "deferredConstraints": []
+    },
+    {
+      "id": "038",
+      "phase": "B",
+      "tables": ["terminals", "pairing_requests", "display_sessions"],
+      "deferredConstraints": []
     }
   ]
 }

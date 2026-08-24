@@ -1,0 +1,127 @@
+import type {
+  ApiErrorBody,
+  CatalogProduct,
+  DisplaySnapshot,
+  LoginResponse,
+  MutationResult,
+  PairingCompleted,
+  PairingCreated,
+} from "./contracts";
+
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly code: string,
+    message: string,
+  ) {
+    super(message);
+  }
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(path, {
+    ...init,
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Correlation-Id": crypto.randomUUID(),
+      ...init?.headers,
+    },
+  });
+  if (!response.ok) {
+    let body: ApiErrorBody | undefined;
+    try {
+      body = (await response.json()) as ApiErrorBody;
+    } catch {
+      body = undefined;
+    }
+    throw new ApiError(
+      response.status,
+      body?.error?.code ?? "REQUEST_FAILED",
+      body?.error?.message ?? "İşlem tamamlanamadı.",
+    );
+  }
+  if (response.status === 204) return undefined as T;
+  return (await response.json()) as T;
+}
+
+export const api = {
+  health: () => request<{ status: string }>("/health/ready"),
+  login: (username: string, password: string, terminalId: string) =>
+    request<LoginResponse>("/api/v1/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password, terminalId }),
+    }),
+  session: (terminalId: string) =>
+    request<LoginResponse>(`/api/v1/auth/session?terminalId=${terminalId}`),
+  logout: (terminalId: string) =>
+    request<void>(`/api/v1/auth/logout?terminalId=${terminalId}`, {
+      method: "POST",
+      body: "{}",
+    }),
+  catalog: (terminalId: string) =>
+    request<CatalogProduct[]>(`/api/v1/terminals/${terminalId}/catalog`),
+  activeOrder: (terminalId: string) =>
+    request<DisplaySnapshot>(`/api/v1/terminals/${terminalId}/orders/active`),
+  startOrder: (terminalId: string) =>
+    request<{ orderId: string; orderNumber: string; revision: number }>(
+      `/api/v1/terminals/${terminalId}/orders`,
+      { method: "POST", body: "{}" },
+    ),
+  addItem: (terminalId: string, orderId: string, productId: string, expectedRevision: number) =>
+    request<MutationResult>(`/api/v1/terminals/${terminalId}/orders/${orderId}/items`, {
+      method: "POST",
+      body: JSON.stringify({ productId, quantity: 1, expectedRevision }),
+    }),
+  changeQuantity: (
+    terminalId: string,
+    orderId: string,
+    itemId: string,
+    quantity: number,
+    expectedRevision: number,
+  ) =>
+    request<MutationResult>(
+      `/api/v1/terminals/${terminalId}/orders/${orderId}/items/${itemId}`,
+      { method: "PATCH", body: JSON.stringify({ quantity, expectedRevision }) },
+    ),
+  removeItem: (
+    terminalId: string,
+    orderId: string,
+    itemId: string,
+    expectedRevision: number,
+  ) =>
+    request<MutationResult>(
+      `/api/v1/terminals/${terminalId}/orders/${orderId}/items/${itemId}?expectedRevision=${expectedRevision}`,
+      { method: "DELETE" },
+    ),
+  submitOrder: (terminalId: string, orderId: string, expectedRevision: number) =>
+    request<{ rowVersion: number }>(
+      `/api/v1/terminals/${terminalId}/orders/${orderId}/submit`,
+      {
+        method: "POST",
+        body: JSON.stringify({ operationId: crypto.randomUUID(), expectedRevision }),
+      },
+    ),
+  createPairing: (displayId: string) =>
+    request<PairingCreated>("/api/v1/customer-displays/pairing-requests", {
+      method: "POST",
+      body: JSON.stringify({ displayId }),
+    }),
+  approvePairing: (terminalId: string, code: string) =>
+    request<void>(`/api/v1/terminals/${terminalId}/pairings/approve`, {
+      method: "POST",
+      body: JSON.stringify({ code }),
+    }),
+  completePairing: (requestId: string, secret: string) =>
+    request<PairingCompleted>(
+      `/api/v1/customer-displays/pairing-requests/${requestId}/complete`,
+      { method: "POST", body: JSON.stringify({ secret }) },
+    ),
+  snapshot: (displayId: string) =>
+    request<DisplaySnapshot>(`/api/v1/customer-displays/${displayId}/snapshot`),
+  revokeDisplay: (terminalId: string) =>
+    request<{ revoked: number }>(`/api/v1/terminals/${terminalId}/display-sessions/revoke`, {
+      method: "POST",
+      body: "{}",
+    }),
+};
