@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 538,
-  "markdown_line_count": 37984,
-  "markdown_byte_count": 2355128,
+  "markdown_file_count": 540,
+  "markdown_line_count": 38048,
+  "markdown_byte_count": 2353731,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -876,9 +876,9 @@
     },
     {
       "path": "evidence/v1/gate-v1-exit-closure.md",
-      "sha256": "CF8A7380A9B9ADE31EED783B3CF0CDDBA569498E00CD7318BE4F66E2EE373D18",
-      "lines": 77,
-      "bytes": 7064,
+      "sha256": "27B899DA90D0DB87C56CBC9C8EDC115E3BE48E0A663A37818F7F76935E7BB2EA",
+      "lines": 64,
+      "bytes": 2451,
       "utf8": true
     },
     {
@@ -1113,6 +1113,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-REM-001/remediation_evidence.md",
+      "sha256": "905031A571208DA8D0EBE7E6B57F5B88F76242EFD73B57447CCB5F197B487A37",
+      "lines": 33,
+      "bytes": 1473,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-001/consolidated_remediation_report.md",
       "sha256": "10765AFD8892C73558EEA8F9421D9EEF1B423B9AA7A4630542401D6D49696CCC",
       "lines": 39,
@@ -1156,9 +1163,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6BE7276E784AC5A7ACB7EDE943F29697024B23BD00503D11253DE3850F5DCDDF",
-      "lines": 1814,
-      "bytes": 250807,
+      "sha256": "EA71EBE0C4902D4FB3C1F113F01C9FD031CE820EC5CBB9B201875B182BCB344A",
+      "lines": 1816,
+      "bytes": 251121,
       "utf8": true
     },
     {
@@ -1177,9 +1184,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "F2AEB141418D452283D2863214C5735471CBDFD7C367399073DA53F110DC4B48",
-      "lines": 197,
-      "bytes": 14545,
+      "sha256": "FDACA74ECAB5F2D06A385BF6AC745CFE1B24B03BC346270D2D7265DAEC050366",
+      "lines": 199,
+      "bytes": 14637,
       "utf8": true
     },
     {
@@ -2423,9 +2430,9 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-001-v1-reconciliation-and-gate-closure.md",
-      "sha256": "42C2C1FFBAE4A61984489F3DA2E51F0B35DA2BEED584E8C6B9A2B16EFC1C4276",
+      "sha256": "23370D27834D78DE1A690737556A6BB77ECB08C415C64BBA06D2CB1AE8484A8E",
       "lines": 36,
-      "bytes": 1026,
+      "bytes": 1009,
       "utf8": true
     },
     {
@@ -2612,9 +2619,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "F80F5730A7AD8ED270DE6A491C91CD5EEF29E4BD9706DB4BD82BB2CC66BD3937",
-      "lines": 30,
-      "bytes": 1335,
+      "sha256": "48E6FF8EC66EE17CBAB5C96DBC64256BE570D29F1131F315445B3CEFD78268D4",
+      "lines": 32,
+      "bytes": 1351,
       "utf8": true
     },
     {
@@ -2622,6 +2629,13 @@
       "sha256": "EB917067A1CE02521C0D2B27ABCA2F95FCAFCFF30305022D847D9F3638E487A7",
       "lines": 59,
       "bytes": 1443,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md",
+      "sha256": "0426076A29BCE1C9ABC2A8E7112ADCE747DC1049BB9108C42F8D7AF96A0D992C",
+      "lines": 38,
+      "bytes": 1338,
       "utf8": true
     },
     {

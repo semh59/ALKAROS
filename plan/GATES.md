@@ -190,8 +190,10 @@ yapılan non-production pilot rehearsal görevidir.
 `TASK_SCOPE_REMEDIATION_EXCEPTIONS` devir/remediation tablolarını ve yukarıdaki
 gate kapanma koşullarını değiştirmez. Bu not PDF current authority değildir,
 gate kapanış kanıtı üretmez ve yeni product behavior başlatmaz.
-## GATE-V1-EXIT Faz 1 doğrulama notu (2026-08-19)
+## GATE-V1-EXIT nihai doğrulama notu (2026-08-24)
 
-C71 remediasyonu için hedefli testler geçti. Sahipsiz `PsqlScriptRunnerSecurityTests.cs` dosyası `V1-SEC-004` Owned surface'ine alındı; canlı `validate` ve `verify-manifest` artık 0 hata veriyor.
-
-Faz 2 bağımsız denetiminde `V1-FND-019`, `V1-SEC-006`, `V1-IAM-010` ve `V1-FND-018` için kaynak–kanıt uyumsuzlukları bulundu. Bu görevler yeniden doğrulanmadan GATE-V1-EXIT etkili olarak açık kalır.
+C71 sonrasında bulunan `V1-FND-019`, `V1-SEC-006`, `V1-IAM-010` ve `V1-FND-018` blocker'ları kendi tek
+sahipli remediasyonlarıyla kapatıldı. `V1-RMD-002` derin denetim bulgularını, `V1-REM-001` ise sahipsiz ve eski
+kanıt artifact'ini uzlaştırdı. V1 matrisi 84 `Done`, 4 onaylı `NotApplicable`, 0 `InProgress` ve 0 `Blocked`
+olarak kapandı; `validate`, `validate-coverage` ve `verify-manifest` sıfır hata verdi. Resmî komut ve sayım kaydı
+`evidence/v1/gate-v1-exit-closure.md` altındadır.

@@ -1,7 +1,7 @@
 # V1-GOV-001 - V1 reconciliation, audit report regen and gate closure
 
 - Task ID: V1-GOV-001
-- Status: InProgress
+- Status: Done
 - Assignee: Codex-/root
 - Work type: validation
 - Surface state: Existing
