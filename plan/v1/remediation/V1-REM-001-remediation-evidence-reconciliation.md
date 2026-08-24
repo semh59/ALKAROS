@@ -1,7 +1,7 @@
 # V1-REM-001 - Orphan remediation evidence reconciliation
 
 - Task ID: V1-REM-001
-- Status: InProgress
+- Status: Done
 - Assignee: Codex-/root
 - Work type: validation
 - Surface state: Existing
