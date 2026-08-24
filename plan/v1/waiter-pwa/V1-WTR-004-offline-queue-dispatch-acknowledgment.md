@@ -13,7 +13,7 @@ başarılı ack alındığında silinmesini sağlamak; dispatcher hatası veya e
 
 ## Owned surface
 
-- `tools/run_e2e_browser_test.js`
+- C73 (2026-08-24): Browser E2E runner reliability sahipliği V1-WTR-005'e devredildi.
 - `evidence/V1-WTR-004/**`
 - C72 (2026-08-24): Offline queue ve WebPrototype remediasyon sahipliği V1-RMD-002'ye devredildi.
 

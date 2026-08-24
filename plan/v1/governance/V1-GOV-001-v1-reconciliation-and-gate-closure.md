@@ -13,11 +13,7 @@ V1 remediasyon görevlerinin tamamlanması ardından audit raporunu ve manifesti
 
 ## Owned surface
 
-- `plan/v1/README.md`
-- `plan/GATES.md`
-- `plan/AUDIT_REPORT.md`
-- `plan/AUDIT_MANIFEST.json`
-- `evidence/v1/gate-v1-exit-closure.md`
+- C73 (2026-08-24): Post-audit gate reseal ve generated audit artifact sahipliği V1-GOV-002'ye devredildi.
 
 ## Dependencies
 
