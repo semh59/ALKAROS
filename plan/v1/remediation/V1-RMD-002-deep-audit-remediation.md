@@ -53,12 +53,12 @@ konsolide remediasyon zincirinde kapatmak.
 - `database/migrations/V1/V1-RMD-002/**`
 - `database/MigrationComposition/order.json`
 - `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
-- `tools/plan-audit/plan_audit_tool.py`
-- `tests/Architecture/PlanAudit/test_plan_audit.py`
 - `plan/PDF_SOURCE.md`
 - `plan/AUDIT_REPORT.md`
 - `plan/AUDIT_MANIFEST.json`
 - `evidence/V1-RMD-002/**`
+- PO:2026-08-24 production integration custody kararıyla tools/plan-audit/plan_audit_tool.py ve
+  tests/Architecture/PlanAudit/test_plan_audit.py V1-FND-026'ya devredildi; bu historical task closed kalır.
 
 ## Dependencies
 
