@@ -1,8 +1,8 @@
 # V1-RMD-005 - Define production dual-screen POS topology
 
 - Task ID: V1-RMD-005
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Codex-/root
 - Work type: decision
 - Surface state: Planned
 
