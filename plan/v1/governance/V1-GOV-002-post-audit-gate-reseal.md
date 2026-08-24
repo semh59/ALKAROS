@@ -1,7 +1,7 @@
 # V1-GOV-002 - Post-audit V1 gate reseal
 
 - Task ID: V1-GOV-002
-- Status: InProgress
+- Status: Done
 - Assignee: Codex-/root
 - Work type: validation
 - Surface state: Existing

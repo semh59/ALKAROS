@@ -194,6 +194,7 @@ gate kapanış kanıtı üretmez ve yeni product behavior başlatmaz.
 
 C71 sonrasında bulunan `V1-FND-019`, `V1-SEC-006`, `V1-IAM-010` ve `V1-FND-018` blocker'ları kendi tek
 sahipli remediasyonlarıyla kapatıldı. `V1-RMD-002` derin denetim bulgularını, `V1-REM-001` ise sahipsiz ve eski
-kanıt artifact'ini uzlaştırdı. V1 matrisi 84 `Done`, 4 onaylı `NotApplicable`, 0 `InProgress` ve 0 `Blocked`
+kanıt artifact'ini uzlaştırdı. `V1-WTR-005`, browser E2E runner'daki sessiz hata yutma, kişiye özel yol ve
+kaynak temizliği bulgularını kapattı. V1 matrisi 86 `Done`, 4 onaylı `NotApplicable`, 0 `InProgress` ve 0 `Blocked`
 olarak kapandı; `validate`, `validate-coverage` ve `verify-manifest` sıfır hata verdi. Resmî komut ve sayım kaydı
 `evidence/v1/gate-v1-exit-closure.md` altındadır.

@@ -8,9 +8,9 @@
 
 ## Terminal görev matrisi
 
-V1 altındaki 88 tek-sahip görevin tamamı terminal durumdadır:
+V1 altındaki 90 tek-sahip görevin tamamı terminal durumdadır:
 
-- `Done`: 84
+- `Done`: 86
 - Onaylı `NotApplicable`: 4 (`V1-CAT-003`, `V1-FND-020`, `V1-IAM-006`, `V1-IAM-011`)
 - `InProgress`: 0
 - `Blocked`: 0
@@ -24,6 +24,8 @@ sıfır hata ve sıfır uyarıyla doğruladı.
   financial invariants, stale physical print recovery, Kitchen N+1 ve plan-audit portability bulgularını kapattı.
 - `V1-REM-001`, task tanımı olmadan bırakılan ve eski SDK/commit iddiaları içeren kanıtı repository gerçeğiyle
   uzlaştırdı.
+- `V1-WTR-005`, Browser E2E runner'daki sessiz `catch`, boş stderr handler, sabit kullanıcı/profile yolu ve
+  temizlenmeyen Chrome process risklerini kapattı.
 - Daha önce bildirilen `V1-FND-019`, `V1-SEC-006`, `V1-IAM-010` ve `V1-FND-018` blocker'larının sahipli
   remediasyonları `Done` durumunda ve plan dependency denetiminde geçerlidir.
 
@@ -41,6 +43,9 @@ exit 0; 26 passed
 
 node --test src/Clients/WebPrototype/tests/app.security.test.js
 exit 0; 4 passed
+
+node --test tools/tests/run_e2e_browser_test.test.js
+exit 0; 7 passed
 
 python -B tools/plan-audit/plan_audit_tool.py validate
 exit 0; 0 error; 0 warning

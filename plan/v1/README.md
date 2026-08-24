@@ -11,7 +11,7 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altındaki 88 görev dosyasının 84'ü `Done`, 4'ü onaylı `NotApplicable` durumundadır;
+- Bu sürüm altındaki 90 görev dosyasının 86'sı `Done`, 4'ü onaylı `NotApplicable` durumundadır;
   açık `InProgress` veya `Blocked` görev yoktur.
 - `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` sıralı foundation kapısı geçmeden
@@ -28,5 +28,5 @@ uca çalıştıran çekirdek operasyon.
 `reconciliation`, `remediation`, `reporting`, `security-foundation`, `settings`,
 `table-management`, `waiter-pwa`.
 
-Doğrulanan plan hacmi: 18 modül/dizin, 88 tek-sahip görev (84 Done, 4 NotApplicable). Resmî kapanış kanıtı
+Doğrulanan plan hacmi: 18 modül/dizin, 90 tek-sahip görev (86 Done, 4 NotApplicable). Resmî kapanış kanıtı
 `evidence/v1/gate-v1-exit-closure.md` altındadır.
