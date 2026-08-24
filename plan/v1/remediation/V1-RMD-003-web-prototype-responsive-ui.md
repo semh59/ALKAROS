@@ -1,7 +1,7 @@
 # V1-RMD-003 - Web prototype responsive UI remediation
 
 - Task ID: V1-RMD-003
-- Status: InProgress
+- Status: Blocked
 - Assignee: Codex-/root
 - Work type: implementation
 - Surface state: Existing
@@ -34,6 +34,12 @@ klavye ile kullanılabilir ve açık/koyu temada okunabilir tek bir ürün aray�
 ## Dependencies
 
 - V1-RMD-002
+
+## Blocker
+
+- `dotnet build ALKAROS.slnx --no-restore` çalıştırılamıyor: yürütme ortamında `dotnet` ve MSBuild executable'ı
+  bulunmuyor. Görev ancak desteklenen .NET SDK erişimi sağlanıp solution build exit code `0` verdiğinde yeniden
+  `InProgress` durumuna alınabilir.
 
 ## Acceptance evidence
 
