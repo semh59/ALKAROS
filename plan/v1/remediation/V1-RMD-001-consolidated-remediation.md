@@ -23,7 +23,6 @@ yürütülür; V1-IAM-008 kendi kod sahibi olarak kalır ve bu görevin yüzeyin
 - `src/BuildingBlocks/Transactions/TransactionScope.cs`
 - `src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutbox.cs`
 - `src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutboxResource.cs`
-- `src/Host/Program.cs`
 - `src/Modules/Identity/Authentication/AuthenticationService.cs`
 - `src/Modules/Identity/Authentication/LoginResult.cs`
 - `src/Modules/Identity/Authentication/SessionTokenIssuer.cs`
@@ -40,6 +39,8 @@ yürütülür; V1-IAM-008 kendi kod sahibi olarak kalır ve bu görevin yüzeyin
 - `evidence/V1-RMD-001/**`
 - C71 (2026-08-19) konsolidasyonu: order.json V1-BIL-004'e, DeviceSessionService.cs ve DeviceSessionServiceTests.cs
   V1-IAM-015'e devredildi; bu historical task closed kalır.
+- PO:2026-08-24 production dual-screen kararıyla src/Host/Program.cs V1-RMD-006'ya devredildi; bu historical task
+  closed kalır.
 
 ## In scope
 

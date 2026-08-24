@@ -15,8 +15,6 @@ konsolide remediasyon zincirinde kapatmak.
 ## Owned surface
 
 - `global.json`
-- `src/Host/ALKAROS.Host.csproj`
-- `src/Host/packages.lock.json`
 - `tests/Host/MigrationComposition/packages.lock.json`
 - `tests/Architecture/ModuleBoundaries/**`
 - `src/Host/Composition/Modules/ModuleRegistry.cs`
@@ -51,14 +49,15 @@ konsolide remediasyon zincirinde kapatmak.
 - `src/Modules/Kitchen/TicketLifecycle/**`
 - `tests/Modules/Kitchen/TicketLifecycle/**`
 - `database/migrations/V1/V1-RMD-002/**`
-- `database/MigrationComposition/order.json`
-- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `plan/PDF_SOURCE.md`
 - `plan/AUDIT_REPORT.md`
 - `plan/AUDIT_MANIFEST.json`
 - `evidence/V1-RMD-002/**`
 - PO:2026-08-24 production integration custody kararıyla tools/plan-audit/plan_audit_tool.py ve
   tests/Architecture/PlanAudit/test_plan_audit.py V1-FND-026'ya devredildi; bu historical task closed kalır.
+- PO:2026-08-24 production dual-screen kararıyla src/Host/ALKAROS.Host.csproj, src/Host/packages.lock.json,
+  database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+  V1-RMD-006'ya devredildi; bu historical task closed kalır.
 
 ## Dependencies
 

@@ -58,4 +58,4 @@ sabitlemek.
 
 ## Handoff
 
-- None
+- V1-RMD-006
