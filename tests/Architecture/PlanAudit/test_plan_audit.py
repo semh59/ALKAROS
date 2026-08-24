@@ -36,8 +36,8 @@ def _copy_validation_workspace(tmp_path: Path) -> Path:
     shutil.copytree(
         REPOSITORY / "tools" / "evidence-envelope", workspace / "tools" / "evidence-envelope"
     )
-    subprocess.run(["git", "init", "-q"], cwd=workspace, check=True)
-    subprocess.run(["git", "add", "."], cwd=workspace, check=True)
+    subprocess.run(["git", "init", "-q"], cwd=workspace, check=True, capture_output=True)
+    subprocess.run(["git", "add", "."], cwd=workspace, check=True, capture_output=True)
     return workspace
 
 
@@ -129,6 +129,89 @@ def _commit_all(workspace: Path, message: str) -> str:
         )
         .stdout.strip()
     )
+
+
+def _admit_root_integration_task(
+    workspace: Path,
+    task_id: str,
+    owned_surface: str = "src/Host/ALKAROS.Host.csproj",
+) -> None:
+    _activate_fnd023(workspace)
+    previous_owner = _task_path(workspace, "V1-RMD-002")
+    previous_text = previous_owner.read_text(encoding="utf-8")
+    exact_surface_line = "- `src/Host/ALKAROS.Host.csproj`\n"
+    assert exact_surface_line in previous_text
+    previous_owner.write_text(
+        previous_text.replace(exact_surface_line, "", 1),
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    task_path = workspace / "plan" / "v1" / "remediation" / f"{task_id}-root-integration.md"
+    task_path.write_text(
+        f"""# {task_id} - Root integration fixture
+
+- Task ID: {task_id}
+- Status: Planned
+- Assignee: Unassigned
+- Work type: integration
+- Surface state: Existing
+
+## Goal
+
+Yalnız test için root integration sahipliği fixture'ı oluşturmak.
+
+## Owned surface
+
+- `{owned_surface}`
+
+## Dependencies
+
+- V1-RMD-005
+
+## Acceptance evidence
+
+- Root ownership validation is deterministic.
+
+## Handoff
+
+- None
+""",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
+class TestRootIntegrationCustody:
+    def test_named_integration_task_can_own_exact_host_project(self, tmp_path: Path) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        _admit_root_integration_task(workspace, "V1-RMD-006")
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "Validation errors: 0" in result.stdout
+
+    @pytest.mark.parametrize(
+        ("task_id", "owned_surface"),
+        [
+            ("V1-RMD-007", "src/Host/ALKAROS.Host.csproj"),
+            ("V1-RMD-006", "src/Host/**"),
+        ],
+    )
+    def test_unapproved_or_wildcard_root_owner_is_rejected(
+        self,
+        tmp_path: Path,
+        task_id: str,
+        owned_surface: str,
+    ) -> None:
+        workspace = _copy_validation_workspace(tmp_path)
+        _admit_root_integration_task(workspace, task_id, owned_surface)
+
+        result = _run_validate(workspace)
+
+        assert result.returncode == 1
+        assert "SEMANTIC_ROOT_OWNERSHIP: src/Host/ALKAROS.Host.csproj" in result.stdout
 
 
 class TestRemediationAdmissionSemanticValidation:

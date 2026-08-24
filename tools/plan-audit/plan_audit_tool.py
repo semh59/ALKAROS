@@ -2769,7 +2769,7 @@ def validate_plan() -> None:
     if fnd1_handoff != {"V1-FND-003"}:
         errors.append(f"SEMANTIC_HANDOFF V1-FND-001: {','.join(sorted(fnd1_handoff))}")
 
-    root_surface_owner_ids = {"V1-FND-001", "V1-RMD-002"}
+    root_surface_owner_ids = {"V1-FND-001", "V1-RMD-002", "V1-RMD-006"}
     root_surfaces = {
         value
         for task_id in root_surface_owner_ids

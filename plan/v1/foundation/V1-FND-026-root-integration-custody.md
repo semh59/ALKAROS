@@ -1,8 +1,8 @@
 # V1-FND-026 - Admit explicit root integration custody
 
 - Task ID: V1-FND-026
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Codex-/root
 - Work type: validation
 - Surface state: Existing
 
