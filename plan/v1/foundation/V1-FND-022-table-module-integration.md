@@ -17,12 +17,13 @@ eksiksizliğini ve transition invariant'ını bağımsız doğrulamak.
 
 ## Owned surface
 
-- `src/Modules/Tables/TableLifecycle/PostgresTableRepository.cs`
 - `tests/Modules/Tables/TableLifecycle/PostgresTableTests.cs`
 - `evidence/V1-FND-022/**`
 - C70 (2026-08-16) konsolidasyonu: MigrationComposition order.json dosyası konsolide remediasyon yüzeyine taşındı
   (V1-RMD-001).
 - C71 (2026-08-19) konsolidasyonu: ManifestTests.cs V1-BIL-004'e devredildi; bu historical task closed kalır.
+- PO:2026-08-28 desktop floor kararıyla PostgresTableRepository.cs V1-RMD-026'ya devredildi; bu historical task
+  closed kalır.
 
 ## In scope
 

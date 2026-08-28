@@ -1,0 +1,2003 @@
+{
+  "candidateCommit": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "authenticated": false,
+  "breakpointWidths": [
+    1022,
+    1023,
+    1024,
+    1249,
+    1250,
+    1251,
+    1278,
+    1279,
+    1280,
+    388,
+    389,
+    390,
+    429,
+    430,
+    431,
+    766,
+    767,
+    768,
+    899,
+    900,
+    901
+  ],
+  "items": [
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 966.34375,
+            "width": 318.6875,
+            "x": 647.65625,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 966.34375,
+            "width": 318.6875,
+            "x": 647.65625,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 966.34375,
+            "width": 318.6875,
+            "x": 647.65625,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1022,
+        "bodyScrollWidth": 1022,
+        "documentClientWidth": 1022,
+        "documentScrollWidth": 1022,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 966.34375,
+            "width": 318.6875,
+            "x": 647.65625,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 966.34375,
+            "width": 318.6875,
+            "x": 647.65625,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 966.34375,
+            "width": 318.6875,
+            "x": 647.65625,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1022
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1022x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 967.3125,
+            "width": 318.625,
+            "x": 648.6875,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 967.3125,
+            "width": 318.625,
+            "x": 648.6875,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 967.3125,
+            "width": 318.625,
+            "x": 648.6875,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1023,
+        "bodyScrollWidth": 1023,
+        "documentClientWidth": 1023,
+        "documentScrollWidth": 1023,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 967.3125,
+            "width": 318.625,
+            "x": 648.6875,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 967.3125,
+            "width": 318.625,
+            "x": 648.6875,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 967.3125,
+            "width": 318.625,
+            "x": 648.6875,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1023
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1023x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1024
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1024x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1186.53125,
+            "width": 305.0625,
+            "x": 881.46875,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1186.53125,
+            "width": 305.0625,
+            "x": 881.46875,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1186.53125,
+            "width": 305.0625,
+            "x": 881.46875,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1249,
+        "bodyScrollWidth": 1249,
+        "documentClientWidth": 1249,
+        "documentScrollWidth": 1249,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1186.53125,
+            "width": 305.0625,
+            "x": 881.46875,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1186.53125,
+            "width": 305.0625,
+            "x": 881.46875,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1186.53125,
+            "width": 305.0625,
+            "x": 881.46875,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1249
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1249x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1187.5,
+            "width": 305,
+            "x": 882.5,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1187.5,
+            "width": 305,
+            "x": 882.5,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1187.5,
+            "width": 305,
+            "x": 882.5,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1250,
+        "bodyScrollWidth": 1250,
+        "documentClientWidth": 1250,
+        "documentScrollWidth": 1250,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1187.5,
+            "width": 305,
+            "x": 882.5,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1187.5,
+            "width": 305,
+            "x": 882.5,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1187.5,
+            "width": 305,
+            "x": 882.5,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1250
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1250x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1188.4739990234375,
+            "width": 304.94793701171875,
+            "x": 883.5260620117188,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1188.4739990234375,
+            "width": 304.94793701171875,
+            "x": 883.5260620117188,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1188.4739990234375,
+            "width": 304.94793701171875,
+            "x": 883.5260620117188,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1251,
+        "bodyScrollWidth": 1251,
+        "documentClientWidth": 1251,
+        "documentScrollWidth": 1251,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1188.4739990234375,
+            "width": 304.94793701171875,
+            "x": 883.5260620117188,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1188.4739990234375,
+            "width": 304.94793701171875,
+            "x": 883.5260620117188,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1188.4739990234375,
+            "width": 304.94793701171875,
+            "x": 883.5260620117188,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1251
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1251x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1214.6614990234375,
+            "width": 307.83856201171875,
+            "x": 906.8229370117188,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1214.6614990234375,
+            "width": 307.83856201171875,
+            "x": 906.8229370117188,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1214.6614990234375,
+            "width": 307.83856201171875,
+            "x": 906.8229370117188,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1278,
+        "bodyScrollWidth": 1278,
+        "documentClientWidth": 1278,
+        "documentScrollWidth": 1278,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1214.6614990234375,
+            "width": 307.83856201171875,
+            "x": 906.8229370117188,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1214.6614990234375,
+            "width": 307.83856201171875,
+            "x": 906.8229370117188,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1214.6614990234375,
+            "width": 307.83856201171875,
+            "x": 906.8229370117188,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1278
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1278x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1215.6302490234375,
+            "width": 308.11981201171875,
+            "x": 907.5104370117188,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1215.6302490234375,
+            "width": 308.11981201171875,
+            "x": 907.5104370117188,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1215.6302490234375,
+            "width": 308.11981201171875,
+            "x": 907.5104370117188,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1279,
+        "bodyScrollWidth": 1279,
+        "documentClientWidth": 1279,
+        "documentScrollWidth": 1279,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1215.6302490234375,
+            "width": 308.11981201171875,
+            "x": 907.5104370117188,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1215.6302490234375,
+            "width": 308.11981201171875,
+            "x": 907.5104370117188,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1215.6302490234375,
+            "width": 308.11981201171875,
+            "x": 907.5104370117188,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1279
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1279x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1280,
+        "bodyScrollWidth": 1280,
+        "documentClientWidth": 1280,
+        "documentScrollWidth": 1280,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 1280
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-1280x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 347.7239799499512,
+            "width": 307.44793701171875,
+            "x": 40.27604293823242,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 347.7239799499512,
+            "width": 307.44793701171875,
+            "x": 40.27604293823242,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 347.7239799499512,
+            "width": 307.44793701171875,
+            "x": 40.27604293823242,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 388,
+        "bodyScrollWidth": 388,
+        "documentClientWidth": 388,
+        "documentScrollWidth": 388,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 347.7239799499512,
+            "width": 307.44793701171875,
+            "x": 40.27604293823242,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 347.7239799499512,
+            "width": 307.44793701171875,
+            "x": 40.27604293823242,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 347.7239799499512,
+            "width": 307.44793701171875,
+            "x": 40.27604293823242,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 844,
+        "width": 388
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-388x844-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 348.6614799499512,
+            "width": 308.32293701171875,
+            "x": 40.33854293823242,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 348.6614799499512,
+            "width": 308.32293701171875,
+            "x": 40.33854293823242,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 348.6614799499512,
+            "width": 308.32293701171875,
+            "x": 40.33854293823242,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 389,
+        "bodyScrollWidth": 389,
+        "documentClientWidth": 389,
+        "documentScrollWidth": 389,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 348.6614799499512,
+            "width": 308.32293701171875,
+            "x": 40.33854293823242,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 348.6614799499512,
+            "width": 308.32293701171875,
+            "x": 40.33854293823242,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 348.6614799499512,
+            "width": 308.32293701171875,
+            "x": 40.33854293823242,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 844,
+        "width": 389
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-389x844-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 390,
+        "bodyScrollWidth": 390,
+        "documentClientWidth": 390,
+        "documentScrollWidth": 390,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 844,
+        "width": 390
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-390x844-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 386.2604293823242,
+            "width": 343.5208435058594,
+            "x": 42.73958587646485,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 386.2604293823242,
+            "width": 343.5208435058594,
+            "x": 42.73958587646485,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 386.2604293823242,
+            "width": 343.5208435058594,
+            "x": 42.73958587646485,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 429,
+        "bodyScrollWidth": 429,
+        "documentClientWidth": 429,
+        "documentScrollWidth": 429,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 386.2604293823242,
+            "width": 343.5208435058594,
+            "x": 42.73958587646485,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 386.2604293823242,
+            "width": 343.5208435058594,
+            "x": 42.73958587646485,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 386.2604293823242,
+            "width": 343.5208435058594,
+            "x": 42.73958587646485,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 844,
+        "width": 429
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-429x844-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 430,
+        "bodyScrollWidth": 430,
+        "documentClientWidth": 430,
+        "documentScrollWidth": 430,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 844,
+        "width": 430
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-430x844-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 388.140625,
+            "width": 345.28125,
+            "x": 42.859375,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 388.140625,
+            "width": 345.28125,
+            "x": 42.859375,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 388.140625,
+            "width": 345.28125,
+            "x": 42.859375,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 431,
+        "bodyScrollWidth": 431,
+        "documentClientWidth": 431,
+        "documentScrollWidth": 431,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 388.140625,
+            "width": 345.28125,
+            "x": 42.859375,
+            "y": 401.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 388.140625,
+            "width": 345.28125,
+            "x": 42.859375,
+            "y": 493.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 388.140625,
+            "width": 345.28125,
+            "x": 42.859375,
+            "y": 563.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 844,
+        "width": 431
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-431x844-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 565,
+            "width": 364,
+            "x": 201,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 565,
+            "width": 364,
+            "x": 201,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 565,
+            "width": 364,
+            "x": 201,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 766,
+        "bodyScrollWidth": 766,
+        "documentClientWidth": 766,
+        "documentScrollWidth": 766,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 565,
+            "width": 364,
+            "x": 201,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 565,
+            "width": 364,
+            "x": 201,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 565,
+            "width": 364,
+            "x": 201,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 766
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-766x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 565.5,
+            "width": 364,
+            "x": 201.5,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 565.5,
+            "width": 364,
+            "x": 201.5,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 565.5,
+            "width": 364,
+            "x": 201.5,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 767,
+        "bodyScrollWidth": 767,
+        "documentClientWidth": 767,
+        "documentScrollWidth": 767,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 565.5,
+            "width": 364,
+            "x": 201.5,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 565.5,
+            "width": 364,
+            "x": 201.5,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 565.5,
+            "width": 364,
+            "x": 201.5,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 767
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-767x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 768
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-768x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 631.5,
+            "width": 364,
+            "x": 267.5,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 631.5,
+            "width": 364,
+            "x": 267.5,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 631.5,
+            "width": 364,
+            "x": 267.5,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 899,
+        "bodyScrollWidth": 899,
+        "documentClientWidth": 899,
+        "documentScrollWidth": 899,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 631.5,
+            "width": 364,
+            "x": 267.5,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 631.5,
+            "width": 364,
+            "x": 267.5,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 631.5,
+            "width": 364,
+            "x": 267.5,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 899
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-899x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 632,
+            "width": 364,
+            "x": 268,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 632,
+            "width": 364,
+            "x": 268,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 632,
+            "width": 364,
+            "x": 268,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 900,
+        "bodyScrollWidth": 900,
+        "documentClientWidth": 900,
+        "documentScrollWidth": 900,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 632,
+            "width": 364,
+            "x": 268,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 632,
+            "width": 364,
+            "x": 268,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 632,
+            "width": 364,
+            "x": 268,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 900
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-900x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 847.203125,
+            "width": 322.40625,
+            "x": 524.796875,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "index": 1,
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 847.203125,
+            "width": 322.40625,
+            "x": 524.796875,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "index": 2,
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 847.203125,
+            "width": 322.40625,
+            "x": 524.796875,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 901,
+        "bodyScrollWidth": 901,
+        "documentClientWidth": 901,
+        "documentScrollWidth": 901,
+        "horizontalOverflow": false
+      },
+      "rootClass": "login-shell",
+      "targets": [
+        {
+          "label": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 847.203125,
+            "width": 322.40625,
+            "x": 524.796875,
+            "y": 363.0989685058594
+          },
+          "tag": "input"
+        },
+        {
+          "label": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 847.203125,
+            "width": 322.40625,
+            "x": 524.796875,
+            "y": 455.4948120117187
+          },
+          "tag": "input"
+        },
+        {
+          "label": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 847.203125,
+            "width": 322.40625,
+            "x": 524.796875,
+            "y": 525.890625
+          },
+          "tag": "button"
+        }
+      ],
+      "viewport": {
+        "height": 768,
+        "width": 901
+      },
+      "screenshot": "evidence/V1-RMD-020/breakpoint-anonymous-901x768-2026-08-27.png"
+    }
+  ]
+}

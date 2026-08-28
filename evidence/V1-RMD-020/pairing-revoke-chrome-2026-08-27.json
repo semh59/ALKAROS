@@ -1,0 +1,28 @@
+{
+  "candidate": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "cashierBrowser": "in-app browser",
+  "customerBrowser": "Chrome extension independent storage area",
+  "pairing": {
+    "result": "success",
+    "cashierToast": "Müşteri ekranı eşleştirildi.",
+    "customerState": "submitted-order"
+  },
+  "revoke": {
+    "result": "success",
+    "cashierToast": "Ekran yetkisi kaldırıldı.",
+    "customerState": "pairing-required",
+    "newCodeVisible": true
+  },
+  "customerLayout": {
+    "body": "A\nALKAROS\nGÜVENLİ EKRAN BAĞLANTISI\nMüşteri ekranını\nkasaya bağlayın\n\nBu kodu kasa ekranındaki “Müşteri ekranı bağlantısı” alanına girin.\n\n4B3S5KMY\nKod iki dakika sonra otomatik olarak yenilenir.",
+    "clientWidth": 1265,
+    "overflowX": false,
+    "scrollWidth": 1265,
+    "viewport": {
+      "height": 551,
+      "width": 1280
+    }
+  },
+  "cashierConsole": [],
+  "customerConsole": []
+}

@@ -1,0 +1,9 @@
+{
+  "image": "postgres@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2",
+  "fresh_container": true,
+  "forward_001_038_exit": 0,
+  "down_exit": 1,
+  "down_failed_at": "012",
+  "reforward": "NOT_RUN_AFTER_DOWN_FAILURE",
+  "container_removed": true
+}

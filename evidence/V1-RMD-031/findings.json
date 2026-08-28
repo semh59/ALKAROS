@@ -1,0 +1,43 @@
+{
+  "taskId": "V1-RMD-031",
+  "candidateCommit": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "candidateTree": "39e9bb79d3d6f3e099e15a7ffafcc801f727843a",
+  "status": "Blocked",
+  "findings": [
+    {
+      "id": "V1-RMD-031-F001",
+      "severity": "P0",
+      "title": "Unresolved high and critical container vulnerabilities",
+      "evidence": "security-scan.txt",
+      "status": "Remediated",
+      "verification": "Docker Scout SBOM indexed 52 packages and reported no vulnerable package after the Alpine/OpenSSL patch.",
+      "remediation": "Retain the pinned Alpine/OpenSSL versions and enforce the scanner in CI."
+    },
+    {
+      "id": "V1-RMD-031-F002",
+      "severity": "P0",
+      "title": "External go-live trust and provider evidence absent",
+      "evidence": "verification.md",
+      "verification": "Local Caddy internal TLS and a persistent Docker Compose stack were verified; approved public trust, provider/device and signed go-live evidence were not available.",
+      "remediation": "Supply signed certificate, browser E2E, fiscal/printer/payment/provider, backup, licensing and security-assessment evidence."
+    },
+    {
+      "id": "V1-RMD-031-F003",
+      "severity": "P0",
+      "title": "Hostname-free Caddy site rejects every TLS handshake",
+      "evidence": "compose-transcript.txt",
+      "status": "Remediated",
+      "verification": "The localhost SAN/SNI site completed TLS 1.3 and returned HTTPS 200 for readiness and the UI root.",
+      "remediation": "Retain the explicit https://localhost identity and proxy HTTPS healthcheck until an approved deployment hostname and certificate replace local TLS."
+    },
+    {
+      "id": "V1-RMD-031-F004",
+      "severity": "P1",
+      "title": "Compose environment and Windows CRLF break mounted-secret startup",
+      "evidence": "compose-transcript.txt",
+      "status": "Remediated",
+      "verification": "Compose config and full restart succeeded without password environment interpolation; CRLF/LF normalization passed migration, Host, restart and persistence checks.",
+      "remediation": "Keep the password out of Compose Config.Env and retain the mounted-secret line-ending regression assertions."
+    }
+  ]
+}

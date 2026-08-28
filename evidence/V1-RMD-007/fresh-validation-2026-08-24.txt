@@ -1,0 +1,30 @@
+Task: V1-RMD-007
+Assignee: /root/rmd007_build_governance
+Candidate base: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+
+Disposable snapshot commit: b43fe58bb772c90f6746bc5bcec58926c6384e73
+Container: mcr.microsoft.com/dotnet/sdk:10.0.302
+Container digest: sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+
+dotnet --version: 10.0.302
+dotnet restore ALKAROS.slnx --locked-mode: exit 0
+dotnet build ALKAROS.slnx -c Release --no-restore: exit 0
+Build result: 0 warnings, 0 errors
+verify_build_provenance.py: exit 0, matched 34/34, missing 0, mismatched 0
+wrong candidate SHA: exit 1 as expected, mismatched 34/34
+wrong RepositoryCommit MSBuild override: exit 1 as expected
+MSBuild error: RepositoryCommit does not match checked-out Git HEAD
+
+pytest tests/Architecture/BuildProvenance/test_build_provenance.py -q: exit 0, 4 passed
+generic unrelated 40-hex extraction fixture: rejected
+Directory.Build.props XML parse: exit 0
+workflow YAML parse and required jobs assertion: exit 0
+owned code git diff --check: exit 0
+
+pnpm 11.19.0 dlx markdownlint-cli2 0.23.2: exit 1
+Summary: 10 issues in 5 files
+Owned plan/GATES.md MD022 issue was fixed.
+Nine remaining issues are in four pre-existing files outside the V1-RMD-007 allowlist.
+
+No full GitHub-hosted workflow run, coverage artifact, SBOM/license artifact or history-secret transcript is claimed.
+Task remains Blocked and no production-ready conclusion is made.

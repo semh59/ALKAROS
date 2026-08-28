@@ -15,6 +15,10 @@ public sealed record CatalogProductDto(
     decimal UnitPrice,
     decimal TaxRate);
 
+public sealed record CatalogPage(IReadOnlyList<CatalogProductDto> Items, string? NextCursor);
+
+public sealed record StartOrderRequest(Guid? TableId = null, long? ExpectedTableRowVersion = null);
+
 public sealed record StartOrderResponse(Guid OrderId, string OrderNumber, long Revision);
 
 public sealed record AddOrderItemRequest(Guid ProductId, decimal Quantity, long ExpectedRevision);

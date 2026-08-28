@@ -1,0 +1,26 @@
+- main:
+  - generic: A
+  - strong: ALKAROS
+  - generic: Sipariş
+  - strong: POS-20260828-110553-7B6C9E7483E5
+  - status: Sipariş kasadan gönderildi
+  - text: SİPARİŞİNİZ
+  - heading "Ürünler" [level=1]
+  - strong: 1 adet
+  - generic: Ürün
+  - generic: Adet
+  - generic: Tutar
+  - strong: ALKAROS Burger
+  - generic: ₺325,00 · KDV dahil
+  - generic: "1"
+  - strong: ₺325,00
+  - complementary:
+    - generic: ÖDENECEK TOPLAM
+    - strong: ₺325,00
+    - generic: Ara toplam
+    - generic: ₺325,00
+    - generic: KDV
+    - generic: ₺0,00
+    - generic: ✓
+    - paragraph: Siparişiniz alındı.
+    - generic: Canlı güncelleme · v4

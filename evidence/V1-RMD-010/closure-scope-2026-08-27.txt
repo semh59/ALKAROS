@@ -1,0 +1,25 @@
+V1-RMD-010 closure scope
+========================
+Repository root: D:/PROJECT/ALKAROS
+Task: V1-RMD-010
+Final status: Blocked (fail-closed)
+Final assignee: /root
+Candidate commit: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Candidate tree: 39e9bb79d3d6f3e099e15a7ffafcc801f727843a
+
+Write allowlist used:
+- evidence/V1-RMD-010/**
+- this task's Status, Assignee and Blocker metadata only
+
+No production source, API, database migration, lockfile, test source or other task file was changed by V1-RMD-010.
+Existing dirty-worktree changes were preserved.
+
+Required checks:
+- git diff --check: exit 0
+- plan validation: exit 0 (0 errors, 0 warnings)
+- markdownlint-cli2 0.23.2: exit 0
+- PosTerminal tests: exit 0 (10 files, 62 tests)
+- PosTerminal typecheck: exit 0
+- PosTerminal production build: exit 0
+
+Fail-closed closure reasons are listed in the task Blocker section and in a11y-focus-and-tooling-2026-08-27.md.

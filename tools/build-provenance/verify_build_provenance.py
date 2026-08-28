@@ -13,7 +13,6 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-HEX40_PATTERN = re.compile(rb"[0-9a-f]{40}")
 INFO_VER_PATTERN = re.compile(rb"\d+\.\d+\.\d+\+([0-9a-f]{40})")
 
 
@@ -43,16 +42,11 @@ def extract_embedded_commit(dll_path: Path) -> Optional[str]:
     if not dll_path.is_file():
         return None
     data = dll_path.read_bytes()
-    # 1. Search for informational version with +<sha>
+    # Only the SDK informational version is accepted. A generic 40-hex search
+    # can accidentally accept a dependency hash or unrelated embedded value.
     info_match = INFO_VER_PATTERN.search(data)
     if info_match:
         return info_match.group(1).decode("ascii").lower()
-
-    # 2. Search for any hex40
-    hex_matches = HEX40_PATTERN.findall(data)
-    if hex_matches:
-        return hex_matches[0].decode("ascii").lower()
-
     return None
 
 

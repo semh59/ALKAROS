@@ -1,0 +1,15 @@
+V1-GOV-013 verification
+Date: 2026-08-27
+
+Initial findings:
+- 3 x SURFACE_PREFIX_OVERLAP between V1-RMD-017 and V1-RMD-022
+- 4 x manifest/audit-report parity errors
+
+Correction:
+- V1-RMD-017 ownership narrowed from features/tables/** to index.ts, models.ts, tableApi.ts, and tableApi.test.ts.
+- V1-GOV-012 received exact plan/AUDIT_REPORT.md custody.
+- V1-RMD-022 source ownership remained unchanged.
+
+Pre-close validation:
+- plan validate: exit 0, errors 0, warnings 0
+- verify-manifest: exit 0, errors 0

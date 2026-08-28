@@ -1,0 +1,15 @@
+Repository root: D:\PROJECT\ALKAROS
+Task ID: V1-GOV-013
+Assignee: /root
+Date: 2026-08-27
+
+Write allowlist:
+- plan/v1/governance/V1-GOV-012-table-card-remediation-custody.md
+- plan/v1/remediation/V1-RMD-017-table-workspace-ui.md
+- plan/v1/README.md
+- plan/AUDIT_REPORT.md
+- plan/AUDIT_MANIFEST.json
+- evidence/V1-GOV-013/**
+
+V1-GOV-012 validation produced three SURFACE_PREFIX_OVERLAP errors and four manifest/report parity errors before
+this task's first write. Existing unrelated worktree changes are preserved.

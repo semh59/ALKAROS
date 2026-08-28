@@ -1,0 +1,61 @@
+{
+  "taskId": "V1-RMD-010",
+  "candidateCommit": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "candidateTree": "39e9bb79d3d6f3e099e15a7ffafcc801f727843a",
+  "capturedAt": "2026-08-27",
+  "host": "https://localhost:58299",
+  "browser": "Codex in-app browser",
+  "measurementNotes": [
+    "documentElement.clientWidth is reduced by the vertical scrollbar on narrow viewports; requested viewport dimensions remain the test dimensions.",
+    "scrollHeight greater than clientHeight is expected vertical page scrolling and is not horizontal overflow.",
+    "All screenshots were captured from the real PosTerminal build served by the real Host and disposable PostgreSQL database."
+  ],
+  "targetViewports": [
+    {"width":1920,"height":1080,"clientWidth":1920,"scrollWidth":1920,"clientHeight":1080,"scrollHeight":1080,"overflowX":"clip","controlCount":11,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}},
+    {"width":1440,"height":900,"clientWidth":1440,"scrollWidth":1440,"clientHeight":900,"scrollHeight":900,"overflowX":"clip","controlCount":11,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}},
+    {"width":1366,"height":768,"clientWidth":1366,"scrollWidth":1366,"clientHeight":768,"scrollHeight":768,"overflowX":"clip","controlCount":11,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}},
+    {"width":1280,"height":800,"clientWidth":1280,"scrollWidth":1280,"clientHeight":800,"scrollHeight":800,"overflowX":"clip","controlCount":11,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}},
+    {"width":1024,"height":768,"clientWidth":1024,"scrollWidth":1024,"clientHeight":768,"scrollHeight":768,"overflowX":"clip","controlCount":11,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}},
+    {"width":768,"height":1024,"clientWidth":753,"scrollWidth":753,"clientHeight":1024,"scrollHeight":1474,"overflowX":"clip","controlCount":12,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}},
+    {"width":430,"height":932,"clientWidth":415,"scrollWidth":415,"clientHeight":932,"scrollHeight":1474,"overflowX":"clip","controlCount":12,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}},
+    {"width":390,"height":844,"clientWidth":375,"scrollWidth":375,"clientHeight":844,"scrollHeight":1518,"overflowX":"clip","controlCount":12,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}},
+    {"width":320,"height":568,"clientWidth":305,"scrollWidth":305,"clientHeight":568,"scrollHeight":1518,"overflowX":"clip","controlCount":12,"minTargetPx":46,"below44":0,"criticalText":{"server":true,"orderCta":true,"total":false}}
+  ],
+  "activeOrder390": {
+    "width":390,
+    "height":844,
+    "clientWidth":375,
+    "scrollWidth":375,
+    "overflowX":"clip",
+    "total":"₺93,50",
+    "stickyCta":"Gönder",
+    "submitCta":"Siparişi gönder",
+    "submitState":"enabled",
+    "controlMinimum":"44x44"
+  },
+  "breakpoints": [
+    {"width":1249,"layoutWidth":1249,"media":{"1250":true,"900":false,"767":false,"430":false},"scrollWidth":1249,"overflowX":"clip","minTargetPx":44},
+    {"width":1250,"layoutWidth":1250,"media":{"1250":true,"900":false,"767":false,"430":false},"scrollWidth":1250,"overflowX":"clip","minTargetPx":44},
+    {"width":1251,"layoutWidth":1251,"media":{"1250":false,"900":false,"767":false,"430":false},"scrollWidth":1251,"overflowX":"clip","minTargetPx":44},
+    {"width":899,"layoutWidth":884,"media":{"1250":true,"900":true,"767":false,"430":false},"scrollWidth":884,"overflowX":"clip","minTargetPx":44},
+    {"width":900,"layoutWidth":885,"media":{"1250":true,"900":true,"767":false,"430":false},"scrollWidth":885,"overflowX":"clip","minTargetPx":44},
+    {"width":901,"layoutWidth":901,"media":{"1250":true,"900":false,"767":false,"430":false},"scrollWidth":901,"overflowX":"clip","minTargetPx":44},
+    {"width":766,"layoutWidth":751,"media":{"1250":true,"900":true,"767":true,"430":false},"scrollWidth":751,"overflowX":"clip","minTargetPx":44},
+    {"width":767,"layoutWidth":752,"media":{"1250":true,"900":true,"767":true,"430":false},"scrollWidth":752,"overflowX":"clip","minTargetPx":44},
+    {"width":768,"layoutWidth":753,"media":{"1250":true,"900":true,"767":false,"430":false},"scrollWidth":753,"overflowX":"clip","minTargetPx":44},
+    {"width":429,"layoutWidth":414,"media":{"1250":true,"900":true,"767":true,"430":true},"scrollWidth":414,"overflowX":"clip","minTargetPx":44},
+    {"width":430,"layoutWidth":415,"media":{"1250":true,"900":true,"767":true,"430":true},"scrollWidth":415,"overflowX":"clip","minTargetPx":44},
+    {"width":431,"layoutWidth":416,"media":{"1250":true,"900":true,"767":true,"430":false},"scrollWidth":416,"overflowX":"clip","minTargetPx":44},
+    {"width":1278,"layoutWidth":1278,"media":{"1250":false,"900":false,"767":false,"430":false},"scrollWidth":1278,"overflowX":"clip","minTargetPx":44},
+    {"width":1279,"layoutWidth":1279,"media":{"1250":false,"900":false,"767":false,"430":false},"scrollWidth":1279,"overflowX":"clip","minTargetPx":44},
+    {"width":1280,"layoutWidth":1280,"media":{"1250":false,"900":false,"767":false,"430":false},"scrollWidth":1280,"overflowX":"clip","minTargetPx":44},
+    {"width":1022,"layoutWidth":1022,"media":{"1250":true,"900":false,"767":false,"430":false},"scrollWidth":1022,"overflowX":"clip","minTargetPx":44},
+    {"width":1023,"layoutWidth":1023,"media":{"1250":true,"900":false,"767":false,"430":false},"scrollWidth":1023,"overflowX":"clip","minTargetPx":44},
+    {"width":1024,"layoutWidth":1024,"media":{"1250":true,"900":false,"767":false,"430":false},"scrollWidth":1024,"overflowX":"clip","minTargetPx":44}
+  ],
+  "surfaceBoundarySummary": {
+    "tables": {"widths":[1278,1279,1280,766,767,768,429,430,431],"allHorizontalOverflow":false,"minimumControlPx":44},
+    "kitchen": {"widths":[1022,1023,1024,766,767,768,429,430,431],"allHorizontalOverflow":false,"minimumControlPx":44},
+    "catalog": {"widths":[766,767,768,429,430,431],"allHorizontalOverflow":false,"minimumControlPx":44}
+  }
+}

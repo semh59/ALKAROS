@@ -1,0 +1,14 @@
+ALKAROS V1-RMD-007 Plan Validation Output
+Task ID: V1-RMD-007
+
+Command: python -B tools/plan-audit/plan_audit_tool.py validate
+Output:
+Markdown files: 399
+Task files: 377
+Registered gates: 18
+Registered EXT sources: 21
+Dependency edges: 1320
+Validation errors: 0
+Validation warnings: 0
+
+Exit Code: 0 (PASSED)

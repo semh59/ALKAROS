@@ -1,0 +1,23 @@
+$ vitest run
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+
+ Test Files  10 passed (10)
+      Tests  62 passed (62)
+   Start at  08:11:00
+   Duration  2.97s (transform 1.09s, setup 0ms, import 2.93s, tests 3.51s, environment 10.48s)
+
+$ tsc --noEmit
+$ tsc --noEmit && vite build
+vite v8.2.2 building client environment for production...
+transforming...
+✓ 67 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.44 kB │ gzip:  0.29 kB
+dist/assets/index-CU5PtVfT.css   64.39 kB │ gzip: 12.20 kB
+dist/assets/index-C8kZnmLP.js   335.48 kB │ gzip: 95.65 kB
+
+✓ built in 260ms
+RESULT test=0 typecheck=0 build=0

@@ -18,12 +18,15 @@ Local WebPrototype was served at `127.0.0.1` and verified in the in-app browser:
 
 - Cashier submit acknowledged by the mock service and updated table balance/ticket state; browser console had no errors.
 - Injected order rejection preserved the cashier cart; retry succeeded without duplicate-order or idempotency conflict.
-- Injected payment rejection kept the split-payment dialog and balance unchanged; retry used the selected order-line total and succeeded.
+- Injected payment rejection kept the split-payment dialog and balance unchanged; retry used the selected order-line
+  total and succeeded.
 - Injected printer paper-out kept the prebill dialog open and showed an error rather than success.
-- Waiter offline submit persisted one operation; reconnect replay acknowledged it, updated the table, and reduced the queue to zero.
+- Waiter offline submit persisted one operation; reconnect replay acknowledged it, updated the table, and reduced the
+  queue to zero.
 - A second offline operation survived page reload and was automatically replayed/acknowledged from IndexedDB.
 - Three incorrect mock PIN attempts activated cooldown; entering the correct PIN during cooldown did not unlock the dialog.
-- Row-version conflict displayed local/mock-service values and applied the current mock snapshot without discarding the draft.
+- Row-version conflict displayed local/mock-service values and applied the current mock snapshot without discarding
+  the draft.
 
 ## Artifact hashes (SHA-256)
 

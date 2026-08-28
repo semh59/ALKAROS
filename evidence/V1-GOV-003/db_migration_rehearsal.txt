@@ -1,0 +1,50 @@
+ALKAROS PostgreSQL 18 Migration Rehearsal Summary
+Audit Date: 2026-08-24
+Database Engine: PostgreSQL 18.6 (Alpine digest-pinned container)
+
+Rehearsal Cycle 1: Forward Migration (001 -> 038)
+- 001-idempotency-keys.up.sql: [PASS]
+- 002-inbox-messages.up.sql: [PASS]
+- 003-outbox-messages.up.sql: [PASS]
+- 005-users.up.sql: [PASS]
+- 006-catalog.up.sql: [PASS]
+- 007-catalog-pricing.up.sql: [PASS]
+- 008-identity-authorization.up.sql: [PASS]
+- 009-identity-device-sessions.up.sql: [PASS]
+- 010-tables.up.sql: [PASS]
+- 011-orders.up.sql: [PASS]
+- 012-btree-gist-ownership.up.sql: [PASS]
+- 013-device-session-lifetime.up.sql: [PASS]
+- 014-kitchen-tickets.up.sql: [PASS]
+- 015-audit-log.up.sql: [PASS]
+- 016-printer-routing.up.sql: [PASS]
+- 017-print-queue.up.sql: [PASS]
+- 018-physical-print-recovery.up.sql: [PASS]
+- 019-billing.up.sql: [PASS]
+- 020-split-design.up.sql: [PASS]
+- 021-bill-adjustments.up.sql: [PASS]
+- 022-catalog-current-price-bound.up.sql: [PASS]
+- 023-table-transfers.up.sql: [PASS]
+- 024-table-merges.up.sql: [PASS]
+- 025-table-reservations.up.sql: [PASS]
+- 026-typed-settings.up.sql: [PASS]
+- 027-alerts.up.sql: [PASS]
+- 028-health-checks.up.sql: [PASS]
+- 029-backup-health.up.sql: [PASS]
+- 030-reconciliation-cases.up.sql: [PASS]
+- 031-operational-reports.up.sql: [PASS]
+- 032-billing-composite-integrity.up.sql: [PASS]
+- 033-message-lease-generation.up.sql: [PASS]
+- 034-reprint-claim-state.up.sql: [PASS]
+- 035-single-open-business-day.up.sql: [PASS]
+- 036-nonnegative-line-amounts.up.sql: [PASS]
+- 037-physical-print-stale-recovery.up.sql: [PASS]
+- 038-dual-screen-pos.up.sql: [PASS]
+Forward Rehearsal: ALL 37 MIGRATIONS PASSED.
+
+Rehearsal Cycle 2: Reverse Down Migration (038 -> 001)
+- 038 down to 013: [PASS]
+- 012-btree-gist-ownership.down.sql: [FAILED]
+  Finding: AUD-005
+  Error: cannot drop extension btree_gist because constraint excl_product_prices_no_overlap on table catalog.product_prices depends on it.
+  Remediation Assigned: V1-RMD-009

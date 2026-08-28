@@ -1,0 +1,16 @@
+Repository root: D:\PROJECT\ALKAROS
+Task ID: V1-RMD-022
+Assignee: /root
+Date: 2026-08-27
+
+Dependency:
+- V1-RMD-020: Done
+
+Write allowlist:
+- src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+- src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+- src/Clients/PosTerminal/src/features/tables/tables.css
+- plan/v1/remediation/V1-RMD-022-table-card-keyboard-semantics.md (Status and Assignee only)
+- evidence/V1-RMD-022/**
+
+The pre-write git status and git diff snapshots contained unrelated existing changes. This task preserves all of them.

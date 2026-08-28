@@ -1,0 +1,30 @@
+V1-RMD-023 verification
+Date: 2026-08-27
+
+Source result
+-------------
+- Removed prohibited aria-label from visible ALKAROS brand text.
+- Added role=group to the named identity, table filters, and table stats containers.
+- Replaced nested aside/complementary table details with a named section/region.
+- Axe component tests now fail on serious/critical incomplete records as well as violations.
+
+Automated commands
+------------------
+- pnpm exec vitest run src/shell/ProductionShell.test.tsx src/features/tables/TableWorkspace.test.tsx:
+  exit 0, 2 files / 22 tests passed
+- pnpm test: exit 0, 10 files / 63 tests passed
+- pnpm run typecheck: exit 0
+- pnpm run build: exit 0, 67 modules transformed
+- git diff --check: exit 0
+
+Real HTTPS browser result
+-------------------------
+- Fresh Production Host and digest-pinned PostgreSQL 18 with 37 migrations.
+- Chrome accessibility snapshot exposed named group/region semantics and no nested complementary landmark.
+- Serialized live production DOM: 8460 bytes.
+- axe-core 4.10.3: 0 violations, 0 critical/serious violations, 0 critical/serious incomplete records.
+- Browser console warnings/errors: 0.
+
+Screenshot
+----------
+3437CBC7103F84351139D3AF7E50FC3FBC1600E3A4817B5F795CE34F733FFEBB  production-landmarks-390x844-2026-08-27.png

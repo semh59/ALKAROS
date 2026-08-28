@@ -6,6 +6,16 @@ export interface DisplayFreshness {
   connectionLost: boolean;
 }
 
+export type DisplayPresentation = "idle" | "active" | "paying" | "completed" | "unavailable";
+
+export function displayPresentation(snapshot: DisplaySnapshot): DisplayPresentation {
+  return snapshot.state.toLocaleLowerCase("en-US") as DisplayPresentation;
+}
+
+export function exposesMoney(presentation: DisplayPresentation): boolean {
+  return presentation === "active" || presentation === "paying";
+}
+
 export function afterSnapshot(snapshot: DisplaySnapshot, now: number): DisplayFreshness {
   return { snapshot, lastSuccessAt: now, connectionLost: false };
 }

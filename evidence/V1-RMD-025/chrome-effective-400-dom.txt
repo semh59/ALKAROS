@@ -1,0 +1,112 @@
+- link "Ana içeriğe geç":
+  - /url: "#_r_0_"
+- banner:
+  - generic: ALKAROS
+  - link "Müşteri ekranı":
+    - /url: /display
+  - button "Çıkış"
+- navigation "Ana navigasyon":
+  - link "Kasa":
+    - /url: /
+    - generic: ₺
+    - generic: Kasa
+  - link "Masalar":
+    - /url: /tables
+    - generic: ▦
+    - generic: Masalar
+  - link "Mutfak":
+    - /url: /kitchen
+    - generic: ◇
+    - generic: Mutfak
+  - link "Menü":
+    - /url: /catalog
+    - generic: ≡
+    - generic: Menü
+- main:
+  - heading "Masa yönetimi" [level=1]
+  - paragraph: Salon, masa durumu ve servis akışı
+  - region "Masa yönetimi":
+    - text: OPERASYON / MASALAR
+    - heading "Masa düzeni" [level=2]
+    - paragraph: Son güncelleme 2026-08-27T23:17:15.952Z
+    - button "+ Zone ekle"
+    - button "+ Masa ekle"
+    - button "Yenile"
+    - group "Masa filtreleri":
+      - generic: Zone
+      - combobox "Zone":
+        - option "Tüm zone'lar" [selected]
+        - option "Ana Salon"
+      - text: Masa ara
+      - textbox "Masa ara":
+        - /placeholder: Örn. S-09
+      - group "Masa durumuna göre filtrele":
+        - button "Tümü" [pressed]
+        - button "Müsait"
+        - button "Dolu"
+        - button "Rezerve"
+        - button "Temizlik"
+        - button "Servis dışı"
+      - group "Görünüm":
+        - button "Harita" [pressed]
+        - button "Liste"
+    - group "Masa özeti":
+      - generic: Toplam masa
+      - strong: "2"
+      - generic: Müsait
+      - strong: "2"
+      - generic: Dolu
+      - strong: "0"
+      - generic: Rezervasyon
+      - strong: "0"
+    - strong: Ana Salon
+    - generic: 2 masa
+    - text: Müsait
+    - text: Dolu
+    - text: Rezerve
+    - article:
+      - button "S-09 masasını seç, Müsait" [pressed]:
+        - strong: S-09
+        - generic: Müsait
+        - generic: ◉ 4 kişilik
+        - generic: Sipariş yok
+      - generic: v1
+      - 'button "S-09: Masayı aç"': Masayı aç
+    - article:
+      - button "S-10 masasını seç, Müsait":
+        - strong: S-10
+        - generic: Müsait
+        - generic: ◉ 6 kişilik
+        - generic: Sipariş yok
+      - generic: v1
+      - 'button "S-10: Masayı aç"': Masayı aç
+    - region "S-09 masa bağlamı":
+      - text: SEÇİLİ MASA
+      - heading "S-09" [level=3]
+      - text: Ana Salon
+      - generic: Müsait
+      - generic: Kapasite
+      - strong: 4 kişi
+      - generic: Satır sürümü
+      - strong: v1
+      - generic: Geçen süre
+      - strong: —
+      - generic: AKTİF BAĞLAM
+      - paragraph: Bu masada aktif sipariş yok.
+      - generic: İŞLEMLER
+      - button "Masayı aç" [active]
+      - button "Rezervasyon al"
+      - button "Servis dışı yap"
+      - paragraph: Sunucu yetkisi ve v1 kaynak gerçek. Çakışmada bu bağlam korunur.
+  - region "Masa sipariş bağlamı":
+    - generic: SİPARİŞ BAĞLAMI
+    - strong: S-09
+    - paragraph: Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır.
+    - button "Masada sipariş aç"
+- contentinfo "Sistem durumu":
+  - status:
+    - generic: ✓
+    - strong: Çevrimiçi
+  - status:
+    - generic: ✓
+    - time: Son doğrulama

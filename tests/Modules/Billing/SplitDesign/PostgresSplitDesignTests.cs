@@ -258,6 +258,126 @@ public sealed class PostgresSplitDesignTests : IClassFixture<SplitDesignTestData
         }
     }
 
+    [Fact]
+    public async Task OperationalReplaceRejectsStaleAllocationSetWithoutPartialMutation()
+    {
+        var (bill, _) = await CreateAndSaveBillWithItem("Operational split", 100m);
+        var owners = new[]
+        {
+            OperationalOwnerReference.Format(SplitMode.EqualByPerson, AllocationOwnerKind.Person, Guid.NewGuid()),
+            OperationalOwnerReference.Format(SplitMode.EqualByPerson, AllocationOwnerKind.Person, Guid.NewGuid()),
+        };
+        var initial = SplitEngine.CreateEqualSplit(bill, owners.Length, owners);
+
+        var saved = await _splitRepo.ReplaceOperationalSplitDesignAsync(bill.Id, bill.RowVersion, [], initial);
+        Assert.Equal(bill.RowVersion + 1, saved.BillRowVersion);
+        var persisted = await _splitRepo.GetAllocationsByBillIdAsync(bill.Id);
+        Assert.Equal(initial.Select(allocation => allocation.Id), persisted.Select(allocation => allocation.Id));
+
+        var replacement = SplitEngine.CreateEqualSplit(bill, owners.Length, owners);
+        await Assert.ThrowsAsync<SplitDesignConcurrencyException>(() =>
+            _splitRepo.ReplaceOperationalSplitDesignAsync(bill.Id, saved.BillRowVersion, [], replacement));
+        var afterConflict = await _splitRepo.GetAllocationsByBillIdAsync(bill.Id);
+        Assert.Equal(initial.Select(allocation => allocation.Id), afterConflict.Select(allocation => allocation.Id));
+
+        await Assert.ThrowsAsync<SplitDesignConcurrencyException>(() =>
+            _splitRepo.ReplaceOperationalSplitDesignAsync(
+                bill.Id,
+                bill.RowVersion,
+                persisted.Select(allocation => new AllocationVersion(allocation.Id, allocation.RowVersion)).ToList(),
+                replacement));
+    }
+
+    [Fact]
+    public async Task OperationalReplaceValidatesSeatAgainstBillTable()
+    {
+        var (bill, _) = await CreateAndSaveBillWithItem("Seat split", 100m);
+        var zoneId = Guid.NewGuid();
+        var tableId = Guid.NewGuid();
+        var otherTableId = Guid.NewGuid();
+        var seatId = Guid.NewGuid();
+        var otherSeatId = Guid.NewGuid();
+        await using (var command = _dataSource.CreateCommand(
+            """
+            INSERT INTO table_mgmt.zones (zone_id, code, name) VALUES (@zone_id, @code, 'Main');
+            INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+            VALUES (@table_id, @zone_id, 'A-01', 2, 'Occupied'),
+                   (@other_table_id, @zone_id, 'A-02', 2, 'Occupied');
+            INSERT INTO table_mgmt.table_seats (seat_id, table_id, seat_number, label, x, y)
+            VALUES (@seat_id, @table_id, 1, 'Seat 1', 0, 0),
+                   (@other_seat_id, @other_table_id, 1, 'Seat 1', 0, 0);
+            UPDATE billing.bills SET table_id = @table_id WHERE bill_id = @bill_id;
+            """))
+        {
+            command.Parameters.AddWithValue("zone_id", zoneId);
+            command.Parameters.AddWithValue("code", "ZONE-" + zoneId.ToString("N"));
+            command.Parameters.AddWithValue("table_id", tableId);
+            command.Parameters.AddWithValue("other_table_id", otherTableId);
+            command.Parameters.AddWithValue("seat_id", seatId);
+            command.Parameters.AddWithValue("other_seat_id", otherSeatId);
+            command.Parameters.AddWithValue("bill_id", bill.Id);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        var validOwners = new[]
+        {
+            OperationalOwnerReference.Format(SplitMode.EqualByPerson, AllocationOwnerKind.Seat, seatId),
+            OperationalOwnerReference.Format(SplitMode.EqualByPerson, AllocationOwnerKind.Person, Guid.NewGuid()),
+        };
+        var valid = SplitEngine.CreateEqualSplit(bill, 2, validOwners);
+        var saved = await _splitRepo.ReplaceOperationalSplitDesignAsync(bill.Id, bill.RowVersion, [], valid);
+
+        var expected = valid.Select(allocation => new AllocationVersion(allocation.Id, allocation.RowVersion)).ToList();
+        var invalidOwners = new[]
+        {
+            OperationalOwnerReference.Format(SplitMode.EqualByPerson, AllocationOwnerKind.Seat, otherSeatId),
+            OperationalOwnerReference.Format(SplitMode.EqualByPerson, AllocationOwnerKind.Person, Guid.NewGuid()),
+        };
+        var invalid = SplitEngine.CreateEqualSplit(bill, 2, invalidOwners);
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _splitRepo.ReplaceOperationalSplitDesignAsync(bill.Id, saved.BillRowVersion, expected, invalid));
+        Assert.Equal(valid.Select(allocation => allocation.Id),
+            (await _splitRepo.GetAllocationsByBillIdAsync(bill.Id)).Select(allocation => allocation.Id));
+    }
+
+    [Fact]
+    public async Task ConcurrentFirstWritersCannotBothCommit()
+    {
+        var (bill, _) = await CreateAndSaveBillWithItem("Concurrent split", 100m);
+        IReadOnlyList<BillAllocation> CreateDesign() => SplitEngine.CreateEqualSplit(
+            bill,
+            2,
+            [
+                OperationalOwnerReference.Format(SplitMode.EqualByPerson, AllocationOwnerKind.Person, Guid.NewGuid()),
+                OperationalOwnerReference.Format(SplitMode.EqualByPerson, AllocationOwnerKind.Person, Guid.NewGuid()),
+            ]);
+        var first = CreateDesign();
+        var second = CreateDesign();
+
+        async Task<Exception?> AttemptAsync(IReadOnlyList<BillAllocation> design)
+        {
+            try
+            {
+                await _splitRepo.ReplaceOperationalSplitDesignAsync(bill.Id, bill.RowVersion, [], design);
+                return null;
+            }
+            catch (Exception exception) when (exception is SplitDesignConcurrencyException
+                || exception is PostgresException { SqlState: PostgresErrorCodes.SerializationFailure })
+            {
+                return exception;
+            }
+        }
+
+        var outcomes = await Task.WhenAll(AttemptAsync(first), AttemptAsync(second));
+        Assert.Single(outcomes, outcome => outcome is null);
+        Assert.Single(outcomes, outcome => outcome is not null);
+        var persistedIds = (await _splitRepo.GetAllocationsByBillIdAsync(bill.Id))
+            .Select(allocation => allocation.Id)
+            .ToHashSet();
+        Assert.True(persistedIds.SetEquals(first.Select(allocation => allocation.Id))
+            || persistedIds.SetEquals(second.Select(allocation => allocation.Id)));
+    }
+
     private async Task<(Bill Bill, BillItem Item)> CreateAndSaveBillWithItem(string productName, decimal price)
     {
         var productId = Guid.NewGuid();

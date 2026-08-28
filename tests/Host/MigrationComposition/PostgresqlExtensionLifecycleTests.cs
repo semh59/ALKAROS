@@ -1,120 +1,169 @@
+using System.Security.Cryptography;
 using ALKAROS.Host.Composition.Migrations;
 using ALKAROS.Host.Tests.Fixtures;
 using Xunit;
 
 namespace ALKAROS.Host.Tests.Composition;
 
-/// <summary>
-/// Verifies the PostgreSQL 18 extension lifecycle and rollback policy defined by
-/// V0-DAT-007 and implemented by V1-FND-021:
-/// - Dedicated migration 012-btree-gist-ownership executes CREATE EXTENSION IF NOT EXISTS btree_gist;
-/// - Rollback executes DROP EXTENSION IF EXISTS btree_gist;
-/// - Verifies fresh DB, pre-existing extension, and forward-down-forward symmetry.
-/// </summary>
 [Collection("Host database password environment")]
 public sealed class PostgresqlExtensionLifecycleTests : IAsyncLifetime
 {
+    private const string CatalogUpChecksum = "DD632AB7C02A188374F5B6251388170045E496017D434E207B094BE5B7F0F0E8";
+    private const string OwnershipUpChecksum = "22BC242F56E99B116A0360D9C9DCE331097BB8F1BA6FEB22A1DD6E25A8C235CD";
     private readonly TestDatabase _database = new();
 
     public Task InitializeAsync() => _database.InitializeAsync();
 
     public Task DisposeAsync() => _database.DisposeAsync();
 
-    private async Task<bool> ExtensionExistsAsync(string extensionName)
+    [Fact]
+    public void ForwardMigrationIdentityRemainsCompatibleWithApplied007And012History()
     {
-        var result = await PsqlScriptRunner.RunCommandAsync(
-            $"SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = '{extensionName}');",
+        Assert.Equal(CatalogUpChecksum, Checksum(MigrationPath("V1-CAT-002", "007-catalog-pricing.up.sql")));
+        Assert.Equal(OwnershipUpChecksum, Checksum(MigrationPath("V1-FND-021", "012-btree-gist-ownership.up.sql")));
+    }
+
+    [Fact]
+    public async Task Partial012RollbackKeeps007ConstraintAndFull007RollbackDropsInDependencyOrder()
+    {
+        await ApplyAsync("V1-CAT-001", "006-catalog.up.sql");
+        await ApplyAsync("V1-CAT-002", "007-catalog-pricing.up.sql");
+        await ApplyAsync("V1-FND-021", "012-btree-gist-ownership.up.sql");
+
+        await ApplyAsync("V1-FND-021", "012-btree-gist-ownership.down.sql");
+
+        Assert.True(await ExtensionExistsAsync());
+        Assert.True(await ProductPricesExistsAsync());
+        Assert.True(await ExclusionConstraintExistsAsync());
+
+        await ApplyAsync("V1-CAT-002", "007-catalog-pricing.down.sql");
+
+        Assert.False(await ProductPricesExistsAsync());
+        Assert.False(await ExtensionExistsAsync());
+    }
+
+    [Fact]
+    public async Task PreExistingUnsharedExtensionIsKeptAtPartialRollbackAndRemovedOnlyAtFullRollback()
+    {
+        await ExecuteAsync("CREATE EXTENSION btree_gist;");
+        await ApplyAsync("V1-CAT-001", "006-catalog.up.sql");
+        await ApplyAsync("V1-CAT-002", "007-catalog-pricing.up.sql");
+        await ApplyAsync("V1-FND-021", "012-btree-gist-ownership.up.sql");
+
+        await ApplyAsync("V1-FND-021", "012-btree-gist-ownership.down.sql");
+        Assert.True(await ExtensionExistsAsync());
+
+        await ApplyAsync("V1-CAT-002", "007-catalog-pricing.down.sql");
+        Assert.False(await ExtensionExistsAsync());
+    }
+
+    [Fact]
+    public async Task ExternalExtensionDependencyMakesFullRollbackFailClosedWithoutPartialObjectLoss()
+    {
+        await ExecuteAsync(
+            """
+            CREATE EXTENSION btree_gist;
+            CREATE SCHEMA external_owner;
+            CREATE TABLE external_owner.ranges (
+                range_id integer NOT NULL,
+                valid_during int4range NOT NULL,
+                EXCLUDE USING gist (range_id WITH =, valid_during WITH &&)
+            );
+            """);
+        await ApplyAsync("V1-CAT-001", "006-catalog.up.sql");
+        await ApplyAsync("V1-CAT-002", "007-catalog-pricing.up.sql");
+        await ApplyAsync("V1-FND-021", "012-btree-gist-ownership.up.sql");
+        await ApplyAsync("V1-FND-021", "012-btree-gist-ownership.down.sql");
+
+        var rollback = await RunAsync("V1-CAT-002", "007-catalog-pricing.down.sql");
+
+        Assert.False(rollback.Success);
+        Assert.True(await ExtensionExistsAsync());
+        Assert.True(await ProductPricesExistsAsync());
+        Assert.True(await RelationExistsAsync("external_owner.ranges"));
+
+        await ExecuteAsync("DROP SCHEMA external_owner CASCADE;");
+        await ApplyAsync("V1-CAT-002", "007-catalog-pricing.down.sql");
+        Assert.False(await ExtensionExistsAsync());
+    }
+
+    [Fact]
+    public async Task PartialRollbackAssertionRejectsMissing007Dependency()
+    {
+        await ExecuteAsync("CREATE EXTENSION btree_gist;");
+
+        var rollback = await RunAsync("V1-FND-021", "012-btree-gist-ownership.down.sql");
+
+        Assert.False(rollback.Success);
+        Assert.True(await ExtensionExistsAsync());
+    }
+
+    private async Task ApplyAsync(string taskDirectory, string fileName)
+    {
+        var result = await RunAsync(taskDirectory, fileName);
+        Assert.True(result.Success, $"{fileName} failed: {result.ErrorSummary}");
+    }
+
+    private Task<ScriptExecutionResult> RunAsync(string taskDirectory, string fileName)
+        => PsqlScriptRunner.RunAsync(
+            MigrationPath(taskDirectory, fileName),
             _database.PsqlOptions,
             CancellationToken.None);
 
-        Assert.True(result.Success, $"Extension check query failed: {result.ErrorSummary}");
+    private async Task ExecuteAsync(string sql)
+    {
+        var result = await PsqlScriptRunner.RunCommandAsync(sql, _database.PsqlOptions, CancellationToken.None);
+        Assert.True(result.Success, result.ErrorSummary);
+    }
+
+    private async Task<bool> ExtensionExistsAsync()
+        => await ScalarBooleanAsync("SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'btree_gist');");
+
+    private async Task<bool> ProductPricesExistsAsync()
+        => await RelationExistsAsync("catalog.product_prices");
+
+    private async Task<bool> RelationExistsAsync(string relation)
+        => await ScalarBooleanAsync($"SELECT to_regclass('{relation}') IS NOT NULL;");
+
+    private async Task<bool> ExclusionConstraintExistsAsync()
+        => await ScalarBooleanAsync(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM pg_constraint
+                WHERE conrelid = 'catalog.product_prices'::regclass
+                  AND conname = 'excl_product_prices_no_overlap'
+            );
+            """);
+
+    private async Task<bool> ScalarBooleanAsync(string sql)
+    {
+        var result = await PsqlScriptRunner.RunCommandAsync(sql, _database.PsqlOptions, CancellationToken.None);
+        Assert.True(result.Success, result.ErrorSummary);
         return string.Equals(result.StandardOutput.Trim(), "t", StringComparison.Ordinal);
     }
 
-    private static string GetMigrationPath(string fileName)
+    private static string MigrationPath(string taskDirectory, string fileName)
     {
-        var dir = AppContext.BaseDirectory;
-        while (!string.IsNullOrEmpty(dir) && !File.Exists(Path.Combine(dir, "ALKAROS.slnx")))
-        {
-            var parent = Directory.GetParent(dir);
-            if (parent is null) break;
-            dir = parent.FullName;
-        }
-
-        var path = Path.Combine(dir, "database", "migrations", "V1", "V1-FND-021", fileName);
+        var root = FindRepositoryRoot();
+        var path = Path.Combine(root, "database", "migrations", "V1", taskDirectory, fileName);
         if (!File.Exists(path))
             throw new FileNotFoundException($"Migration file not found: {path}");
         return path;
     }
 
-    [Fact]
-    public async Task FreshEmptyDatabaseForwardAndRollbackLifecycle()
+    private static string Checksum(string path)
+        => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
+
+    private static string FindRepositoryRoot()
     {
-        // 1. Initial State: Fresh DB, extension must not exist
-        Assert.False(await ExtensionExistsAsync("btree_gist"));
-
-        // 2. Forward Migration 012
-        var upScriptPath = GetMigrationPath("012-btree-gist-ownership.up.sql");
-        var upResult = await PsqlScriptRunner.RunAsync(
-            upScriptPath,
-            _database.PsqlOptions,
-            CancellationToken.None);
-
-        Assert.True(upResult.Success, $"Forward migration failed: {upResult.ErrorSummary}");
-        Assert.True(await ExtensionExistsAsync("btree_gist"), "Extension must exist after forward migration");
-
-        // 3. Rollback Migration 012
-        var downScriptPath = GetMigrationPath("012-btree-gist-ownership.down.sql");
-        var downResult = await PsqlScriptRunner.RunAsync(
-            downScriptPath,
-            _database.PsqlOptions,
-            CancellationToken.None);
-
-        Assert.True(downResult.Success, $"Rollback migration failed: {downResult.ErrorSummary}");
-        Assert.False(await ExtensionExistsAsync("btree_gist"), "Extension must be absent after rollback on clean DB");
-    }
-
-    [Fact]
-    public async Task PreExistingExtensionIsHandledIdempotently()
-    {
-        // 1. Pre-provision extension
-        var preCreate = await PsqlScriptRunner.RunCommandAsync(
-            "CREATE EXTENSION IF NOT EXISTS btree_gist;",
-            _database.PsqlOptions,
-            CancellationToken.None);
-        Assert.True(preCreate.Success, $"Pre-creation failed: {preCreate.ErrorSummary}");
-        Assert.True(await ExtensionExistsAsync("btree_gist"));
-
-        // 2. Forward Migration 012 must succeed idempotently
-        var upScriptPath = GetMigrationPath("012-btree-gist-ownership.up.sql");
-        var upResult = await PsqlScriptRunner.RunAsync(
-            upScriptPath,
-            _database.PsqlOptions,
-            CancellationToken.None);
-
-        Assert.True(upResult.Success, $"Idempotent forward migration failed: {upResult.ErrorSummary}");
-        Assert.True(await ExtensionExistsAsync("btree_gist"));
-    }
-
-    [Fact]
-    public async Task ForwardDownForwardSymmetry()
-    {
-        var upScriptPath = GetMigrationPath("012-btree-gist-ownership.up.sql");
-        var downScriptPath = GetMigrationPath("012-btree-gist-ownership.down.sql");
-
-        // Forward
-        var up1 = await PsqlScriptRunner.RunAsync(upScriptPath, _database.PsqlOptions, CancellationToken.None);
-        Assert.True(up1.Success);
-        Assert.True(await ExtensionExistsAsync("btree_gist"));
-
-        // Down
-        var down1 = await PsqlScriptRunner.RunAsync(downScriptPath, _database.PsqlOptions, CancellationToken.None);
-        Assert.True(down1.Success);
-        Assert.False(await ExtensionExistsAsync("btree_gist"));
-
-        // Forward again
-        var up2 = await PsqlScriptRunner.RunAsync(upScriptPath, _database.PsqlOptions, CancellationToken.None);
-        Assert.True(up2.Success);
-        Assert.True(await ExtensionExistsAsync("btree_gist"));
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "ALKAROS.slnx")))
+                return directory.FullName;
+            directory = directory.Parent;
+        }
+        throw new DirectoryNotFoundException("Repository root was not found from the test output directory.");
     }
 }

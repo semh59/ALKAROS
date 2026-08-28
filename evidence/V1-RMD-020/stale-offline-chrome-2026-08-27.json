@@ -1,0 +1,92 @@
+{
+  "candidate": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "browser": "Chrome extension",
+  "route": "/display",
+  "pairedBeforeOutage": true,
+  "hostStoppedAt": "2026-08-27T04:35:14Z",
+  "observedAfterMs": 12000,
+  "state": "unavailable",
+  "monetaryDataPresent": false,
+  "visibleText": "Eski ürün ve tutarlar güvenlik nedeniyle ekrandan kaldırıldı. Bağlantıyı kontrol edip yeniden deneyin.",
+  "retryVisible": true,
+  "console": [
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:27.112Z] Error: Connection disconnected with error 'Error: WebSocket closed with status code: 1006 (no reason given).'.",
+      "timestamp": "2026-08-27T04:35:27.114Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "warn",
+      "message": "[2026-08-27T04:35:29.783Z] Warning: Error from HTTP request. TypeError: Failed to fetch.",
+      "timestamp": "2026-08-27T04:35:29.784Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:29.783Z] Error: Failed to complete negotiation with the server: TypeError: Failed to fetch",
+      "timestamp": "2026-08-27T04:35:29.784Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:29.784Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: TypeError: Failed to fetch",
+      "timestamp": "2026-08-27T04:35:29.785Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "warn",
+      "message": "[2026-08-27T04:35:33.135Z] Warning: Error from HTTP request. TypeError: Failed to fetch.",
+      "timestamp": "2026-08-27T04:35:33.136Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:33.135Z] Error: Failed to complete negotiation with the server: TypeError: Failed to fetch",
+      "timestamp": "2026-08-27T04:35:33.136Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:33.135Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: TypeError: Failed to fetch",
+      "timestamp": "2026-08-27T04:35:33.136Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "warn",
+      "message": "[2026-08-27T04:35:38.142Z] Warning: Error from HTTP request. TypeError: Failed to fetch.",
+      "timestamp": "2026-08-27T04:35:38.143Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:38.142Z] Error: Failed to complete negotiation with the server: TypeError: Failed to fetch",
+      "timestamp": "2026-08-27T04:35:38.143Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:38.143Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: TypeError: Failed to fetch",
+      "timestamp": "2026-08-27T04:35:38.144Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "warn",
+      "message": "[2026-08-27T04:35:45.512Z] Warning: Error from HTTP request. TypeError: Failed to fetch.",
+      "timestamp": "2026-08-27T04:35:45.514Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:45.512Z] Error: Failed to complete negotiation with the server: TypeError: Failed to fetch",
+      "timestamp": "2026-08-27T04:35:45.514Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    },
+    {
+      "level": "error",
+      "message": "[2026-08-27T04:35:45.513Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: TypeError: Failed to fetch",
+      "timestamp": "2026-08-27T04:35:45.514Z",
+      "url": "https://localhost:58299/assets/index-BYA-6YHc.js"
+    }
+  ]
+}

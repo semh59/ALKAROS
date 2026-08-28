@@ -2,7 +2,7 @@
 
 - Task ID: V1-OPS-002
 - Status: Done
-- Assignee: Antigravity-v1-ops-002
+- Assignee: /root
 - Work type: implementation
 - Surface state: Planned
 

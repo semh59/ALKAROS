@@ -1,0 +1,13 @@
+ALKAROS V1-RMD-008 Host Tests Summary
+Task ID: V1-RMD-008
+Auditor: fa82ea24-f52b-4613-bcba-f339ade70ca2
+
+Command: dotnet test tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj --configuration Release --filter "FullyQualifiedName~DualScreen"
+Output:
+Total Tests: 7
+Passed: 7
+Failed: 0
+Skipped: 0
+Duration: 122 ms
+
+Exit Code: 0 (PASSED)

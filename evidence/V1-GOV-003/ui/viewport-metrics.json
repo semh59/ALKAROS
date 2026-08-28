@@ -1,0 +1,227 @@
+[
+  {
+    "below44": [],
+    "doc": [
+      1920,
+      1080
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": false,
+    "media900": false,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      1440,
+      900
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": false,
+    "media900": false,
+    "viewport": [
+      1440,
+      900
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      1366,
+      768
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": false,
+    "media900": false,
+    "viewport": [
+      1366,
+      768
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      1280,
+      800
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": false,
+    "media900": false,
+    "viewport": [
+      1280,
+      800
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      1024,
+      768
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": false,
+    "viewport": [
+      1024,
+      768
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      768,
+      1024
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": true,
+    "viewport": [
+      768,
+      1024
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      430,
+      932
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": true,
+    "viewport": [
+      430,
+      932
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      390,
+      844
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": true,
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      320,
+      568
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": true,
+    "viewport": [
+      320,
+      568
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      1251,
+      800
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": false,
+    "media900": false,
+    "viewport": [
+      1251,
+      800
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      1250,
+      800
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": false,
+    "viewport": [
+      1250,
+      800
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      1249,
+      800
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": false,
+    "viewport": [
+      1249,
+      800
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      901,
+      800
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": false,
+    "viewport": [
+      901,
+      800
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      900,
+      800
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": true,
+    "viewport": [
+      900,
+      800
+    ]
+  },
+  {
+    "below44": [],
+    "doc": [
+      899,
+      800
+    ],
+    "focusable": 3,
+    "horizontalOverflow": false,
+    "media1250": true,
+    "media900": true,
+    "viewport": [
+      899,
+      800
+    ]
+  }
+]

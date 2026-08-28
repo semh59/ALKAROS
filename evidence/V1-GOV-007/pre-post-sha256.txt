@@ -1,0 +1,14 @@
+candidate_commit=a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+repository_root=D:/PROJECT/ALKAROS
+task_id=V1-GOV-007
+assignee=/root/migration_manifest_custody
+preflight_git_status_snapshot_sha256=448e85bab4c4c13f750eac8aceb155a4f08810e8a1c0c630d4f99e58c5db527c
+preflight_sha256=030555366d2b113dc424c361280a07962f54b0ec9c46b1658398903be0325b61  plan/v1/remediation/V1-RMD-006-production-dual-screen-pos.md
+preflight_sha256=67f077417ffa59b0a032944ee5b3c2c60f22774d5986e29a05bfb030ec80387e  plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md
+preflight_state=absent  plan/v1/governance/V1-GOV-007-migration-manifest-custody.md
+postflight_sha256=540bf7d972cdd9ab8c216a77eb913012ea42e1c0fff070c280c778261f5e392d  plan/v1/remediation/V1-RMD-006-production-dual-screen-pos.md
+postflight_sha256=75afdb3c69f190f8d1e92dd1324aaaa53b1b2f4379ea299b5b4a0c7405bcf290  plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md
+postflight_sha256=254f07d7dcf73606d6e2acc394b668fe031e51da6a208a30315eae768358c87a  plan/v1/governance/V1-GOV-007-migration-manifest-custody.md
+baseline_reference=evidence/V1-GOV-006/preflight-write-set.sha256
+baseline_reference_canonical_sha256=2a2cf8a323ee5fc723cf8b6816756530a3ced224a31ce0dc47b0e396cc65eda5
+note=V1-GOV-006 baseline and this task preflight separate pre-existing dirty/untracked paths; no production/test/config path was written by V1-GOV-007.

@@ -1,0 +1,21 @@
+{
+  "candidate": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "browser": "in-app browser",
+  "route": "/catalog",
+  "request": {
+    "sku": "MOCK-ESP-005",
+    "name": "Mocha Fixed",
+    "productType": "MenuItem",
+    "stockMode": "Untracked",
+    "currentPrice": 145
+  },
+  "response": {
+    "result": "created",
+    "uiMessage": "Ürünler kaydı oluşturuldu.",
+    "productCount": 3,
+    "visibleRow": "MOCK-ESP-005 · MenuItem",
+    "value": "145.00 TRY"
+  },
+  "compatibility": "String enum request accepted; legacy numeric enum compatibility covered by CatalogEnumWireContractTests.",
+  "console": []
+}

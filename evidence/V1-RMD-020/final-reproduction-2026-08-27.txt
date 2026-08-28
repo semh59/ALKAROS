@@ -1,0 +1,127 @@
+V1-RMD-020 final reproduction addendum
+Candidate: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Executor: /root
+Date: 2026-08-27
+
+Production composition checks
+-----------------------------
+- Host Experience composition tests: exit 0; 1 test passed, 0 failed, 0 skipped.
+- PosTerminal tests: exit 0; 10 files, 62 tests passed.
+- PosTerminal typecheck: exit 0.
+- PosTerminal production build: exit 0; Vite 8.2.2, 67 modules transformed.
+- Full locked Release test run under .NET SDK 10.0.302 with .NET 8.0.30, PostgreSQL 18 digest-pinned container,
+  libxml2 and PostgreSQL client: exit 0; 44 assemblies, 1,018 tests passed, 0 failed, 0 skipped.
+- Coverage from the same run: 67 packages, 2,369 classes, 32,553 instrumented lines; 28,779 covered (88.4066%);
+  4,451/6,331 branches covered (70.3048%). Artifact: evidence/V1-RMD-007/coverage-full-2026-08-27-final.cobertura.xml.
+- Coverage artifact SHA-256: 2D19DDF892B19A1F30B712F0BB78186648972847547AABA5BCEF0EFE48F64F35.
+- Coverage log SHA-256: 47938D300F53419BEB1982D280F1B95B37855B403F95897D0A5FDC2AEBA87D29.
+
+Browser gate
+------------
+- Current disposable endpoint check: 127.0.0.1:58299 TcpTestSucceeded=False after teardown.
+- Prior trusted-browser attempt remains fail-closed: in-app Browser rejected the disposable self-signed HTTPS
+  certificate with net::ERR_CERT_AUTHORITY_INVALID. Browser policy does not permit bypassing the certificate
+  interstitial or changing host trust state from this task.
+- Required browser evidence is therefore still missing: two storage areas, login, table/product/kitchen flow,
+  reconnect/restart, stale/conflict, revoke, nine viewport screenshots, DOM/accessibility snapshots and focus traces.
+
+Anonymous designer smoke evidence
+---------------------------------
+- The real production bundle was rendered by the live loopback Host at all nine required viewports. The generated
+  screenshots and DOM/bounds/focus JSON are under `evidence/V1-RMD-020/viewport-anonymous-2026-08-27.json` and nine
+  `viewport-anonymous-*-2026-08-27.png` files. Every viewport reported horizontalOverflow=false, three focusable
+  controls, and all visible controls at least 48px high (the CTA is 54px).
+- CSS breakpoint boundary probes were rendered at ±1px for 1023/1024, 1249/1250, 1278/1279/1280, 388/389/390,
+  429/430 and 766/767/768/899/900/901 thresholds. All 21 probes reported horizontalOverflow=false. JSON SHA-256:
+  `BF1178BFE2C45AC8E4A68234FC1E67C25CE28673119864B646E4BF88A545A08E`.
+- Anonymous viewport JSON SHA-256: `79763735F78D4EF898CB8B56DD185362FCD3EA7E1CA881D4E7CD330122450C75`.
+- These are authenticated=false, loopback HTTP visual checks. They do not claim login, role authorization, data
+  mutation, customer-display, stale/conflict, or trusted HTTPS acceptance.
+- Live Host smoke: `GET http://127.0.0.1:58299/` returned 200 with CSP, `nosniff` and `no-referrer`; `GET
+  http://127.0.0.1:58299/health/ready` returned 200 with `{"status":"Ready"}`.
+- Terminal-bound API smoke with a disposable seeded user (credential omitted): login returned 200, session returned
+  200, catalog returned 200, and two HttpOnly cookies were issued. No token values were recorded.
+- Temporary Host PID and PostgreSQL container were stopped/removed after inspection; port 58299 is intentionally free.
+
+Disposition: BLOCKED pending trusted disposable HTTPS certificate provisioning and browser E2E execution. The local
+HTTP/API transcript and automated tests prove server/build behavior only and do not replace the browser gate.
+
+Certificate trust recheck (2026-08-27)
+--------------------------------------
+- `dotnet dev-certs https --check --trust --verbose` found the valid localhost certificate
+  `1E08DAA13B5239FC8C07D9C13DB8EE6451DA6C5F` in `CurrentUser\\My`, but no trusted copy in `CurrentUser\\Root`.
+- The attempted `--trust` flow opened a platform confirmation prompt that is not exposed to this non-interactive task;
+  no certificate interstitial bypass or Windows security-setting change was performed.
+- The non-interactive trust check exited with code `7` (certificate present but not trusted).
+- Browser gate remains fail-closed until Semih provisions and confirms trust (or supplies an approved trusted chain).
+
+Repository gate recheck (2026-08-27)
+-----------------------------------
+- Plan validation: exit 0 (416 Markdown, 394 tasks, 18 gates, 1,351 dependencies; zero errors/warnings).
+- PDF trace coverage validation: exit 0 (94 pages, 2,903 stored coverage units).
+- Audit manifest verification: exit 0 (611 Markdown files, zero manifest errors).
+- Build provenance verification: exit 0 (34/34 projects matched candidate metadata).
+- `git diff --check`: exit 0.
+
+Final external-state recheck (2026-08-27)
+-----------------------------------------
+- `dotnet dev-certs https --check --trust --quiet`: exit `7`; the valid localhost certificate is still not trusted.
+- `Test-NetConnection 127.0.0.1 -Port 58299`: `TcpTestSucceeded=False`; no temporary Host is left running.
+- The browser gate is therefore fail-closed and requires Semih's manual trust confirmation before any authenticated
+  browser action can be attempted.
+
+Static interaction review (unresolved)
+--------------------------------------
+- `src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:276-280` renders the quick table action as a
+  click-only `<span>` nested inside the table card `<button>`. This is invalid interactive nesting and leaves the
+  quick action without its own keyboard/focus target. The same component also renders server-provided table actions
+  in the details panel when `canManage` is false, even though route callbacks are absent; this exposes a confusing
+  dead-end action modal to unauthorized users. No source change was made while V1-RMD-020 remains blocked; these
+  observations are a remediation input for the task's owned surface once the browser gate is cleared.
+AUTHENTICATED RESPONSIVE FINDING (2026-08-27)
+- Real HTTPS cashier session at 320x568 with a submitted order produced document clientWidth=305 and scrollWidth=320 (horizontalOverflow=true).
+- Root cause: src/Clients/PosTerminal/src/styles.css set html/body/#root min-width:320px; the vertical scrollbar reduced the available client width to 305px, creating a production horizontal overflow at the required 320px viewport.
+- The 1920, 1440, 1366, 1280, 1024, 768, 430 and 390 captures had horizontalOverflow=false.
+- Remediation is in the V1-RMD-020 owned styles.css surface; fix removes the hard minimum and is revalidated with the same real HTTPS flow.
+
+REAL HTTPS CUSTOMER DISPLAY AND CATALOG REPRODUCTION (2026-08-27)
+- In-app browser cashier and independent Chrome customer-display storage area completed pairing, submitted-order display, revoke, invalid-code retry, outage and restart/reconnect.
+- During outage, Chrome customer display changed to `GÜNCEL VERİ YOK` and removed all old product/price text after 12,000 ms; a visible `Tekrar dene` control remained.
+- Authenticated Manager catalog flow reproduced a server contract failure: POST `/api/v1/management/catalog/products` with `productType: "MenuItem"` and `stockMode: "Untracked"` returned HTTP 500. The UI left the dialog open and showed only `İşlem tamamlanamadı.`.
+- Host log records `BadHttpRequestException` / `JsonException` at `$.productType`; the server `CreateProductV1` enum binder expects numeric enum JSON by default while the V1-RMD-018 frontend sends strings.
+- This is a confirmed P1 production blocker. The involved frontend and endpoint files are outside V1-RMD-020's owned surface (V1-RMD-018 / Host catalog), so no out-of-scope edit was made. A new exact remediation task or approved plan change is required.
+- Remediation applied on the V1-RMD-020-owned composition surface: `DualScreenApplication.Build` now registers `JsonStringEnumConverter`, preserving legacy numeric enum input while accepting the frontend's named enum values and returning stable names.
+- The same HTTPS Manager flow was rerun with SKU `MOCK-ESP-005`; it returned success, closed the dialog, and displayed `MOCK-ESP-005 · MenuItem` at `145.00 TRY`.
+- The original 500 remains retained as historical reproduction; current production bundle behavior is fixed and covered by `CatalogEnumWireContractTests`.
+
+FINAL VALIDATION ADDENDUM (2026-08-27)
+-------------------------------------
+- The temporary PostgreSQL client proxy was rebuilt with repository and host-temp path mapping, and the exact
+  digest-pinned PostgreSQL 18 sidecar was removed after validation. No temporary Host listener remains on port 58299.
+- Host migration/composition suite, serialized with MSBuild max node 1 and the mapped psql proxy: exit 0; 93 passed,
+  0 failed, 0 skipped. Log SHA-256: D5114F86376A8FA57602DF4F8440EACD22286567459B41EC1C2AF196F9AE4FDA.
+- Full locked Release solution test run, serialized with MSBuild max node 1 and the same disposable PostgreSQL setup:
+  exit 0; 45 test assemblies, 1,046 passed, 0 failed, 0 skipped. Log SHA-256:
+  07A310418F68F9820147DAB95806B5700F93519D79D0D5B36D98FE35786BBFF8.
+- Host Release build: exit 0, 0 warnings, 0 errors. Log SHA-256:
+  4B6BA8A5160504629E5F16F18D683E17000905E94456B1DA2C2916D8ACB3ADAE.
+- PosTerminal validation: 10 files/62 tests passed, TypeScript typecheck exit 0, Vite production build exit 0.
+  Log SHA-256: 89596D1898D1C53620473F5C1A0719B22CAF30AD58251CBCF574F43B433645D4.
+- Experience composition wire-contract tests: 2 passed, 0 failed, 0 skipped. Log SHA-256:
+  EB362EC5B7258F7679FE2F89BD1409F725D5BAF7A6B578FB4CE671B1B73406C5.
+- Source changes in this task are limited to the owned composition/UI surfaces: enum JSON wire compatibility in
+  `DualScreenApplication.Build`, the 320px responsive overflow fix in `styles.css`, and the associated composition
+  contract test. No table/catalog feature-owned source was changed.
+- Repository checks after task closure: plan validation exit 0; PDF coverage validation exit 0; project-manifest
+  validation exit 0; build provenance exit 0; `git diff --check` exit 0. Combined log SHA-256:
+  6DB90CFFD594EBB94DF937110DF947110A037A4F2E60C2338EDC5A8379CBDC91.
+- Root markdownlint v0.23.2: exit 0, 611 files, 0 issues. Log SHA-256:
+  BA1EBCE89A03479BEE060349C31D249A3CAA013127197E5C3208458B82EA6BC0.
+- `verify-manifest` remains fail-closed (exit 1) because the active task's permitted Status/Assignee metadata change
+  is not re-minted in `plan/AUDIT_MANIFEST.json`; that manifest is outside V1-RMD-020 ownership and was not altered.
+- Production disposition remains `NOT PRODUCTION READY`: V1-RMD-021 independent designer acceptance is Planned;
+  V1-RMD-010 remains blocked; the historical gitleaks fixture findings, external fiscal/printer/provider/license/
+  backup/security/go-live evidence and signed acceptance are not available. No waiver was generated.
+- Cleanup completed: the temporary PostgreSQL containers and generated psql proxy were removed; port 58299 is free.
+- Earlier certificate/browser-block notes in this file are historical pre-trust observations; the later authenticated
+  HTTPS browser evidence and validation addendum are the current result.

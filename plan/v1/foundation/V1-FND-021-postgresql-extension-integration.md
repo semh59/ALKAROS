@@ -17,10 +17,11 @@ residue davranışını eski Catalog migration'larını yeniden yazmadan kanıtl
 
 ## Owned surface
 
-- `tests/Host/MigrationComposition/PostgresqlExtensionLifecycleTests.cs`
-- `database/migrations/V1/V1-FND-021/012-btree-gist-ownership.up.sql`
-- `database/migrations/V1/V1-FND-021/012-btree-gist-ownership.down.sql`
 - `evidence/V1-FND-021/**`
+
+PO:2026-08-24 tam production denetimi correction custody kararıyla 012 migration çifti ve
+`tests/Host/MigrationComposition/PostgresqlExtensionLifecycleTests.cs` yazma yetkisi exact path'lerle V1-RMD-009'a
+devredildi; bu tarihsel görev `Done` kalır ve devir wildcard veya başka foundation yüzeyi yetkisi üretmez.
 
 ## In scope
 
@@ -61,3 +62,4 @@ residue davranışını eski Catalog migration'larını yeniden yazmadan kanıtl
 ## Handoff
 
 - V1-FND-022
+- V1-RMD-009

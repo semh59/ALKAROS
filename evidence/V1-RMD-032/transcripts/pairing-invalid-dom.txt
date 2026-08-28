@@ -1,0 +1,75 @@
+- main:
+  - generic: A
+  - strong: ALKAROS
+  - generic: Kasa satış
+  - generic "Gerçek /health/ready sonucu": Sunucu hazır
+  - button "Müşteri ekranı"
+  - link "Masalar":
+    - /url: /tables
+  - link "Mutfak":
+    - /url: /kitchen
+  - link "Menü":
+    - /url: /catalog
+  - button "Ekranı eşleştir" [expanded]
+  - generic: ALKAROS Manager
+  - generic: Kasiyer
+  - button "Oturumu kapat": Çıkış
+  - alert:
+    - generic: İstenen kayıt bulunamadı.
+    - button "Mesajı kapat": ×
+  - navigation "Ürün kategorileri":
+    - button "⌂ Tümü 1":
+      - generic: ⌂
+      - text: Tümü
+      - generic: "1"
+    - button "01 Diğer 1":
+      - generic: "01"
+      - text: Diğer
+      - generic: "1"
+  - text: HIZLI SİPARİŞ
+  - heading "Tüm ürünler" [level=1]
+  - generic: ⌕
+  - textbox "Ürün ara":
+    - /placeholder: Ürün veya SKU ara
+  - button "Diğer ALKAROS Burger BURGER-01 ₺325,00 KDV dahil" [disabled]:
+    - generic: Diğer
+    - strong: ALKAROS Burger
+    - generic: BURGER-01
+    - generic: ₺325,00
+    - generic: KDV dahil
+  - complementary:
+    - text: AKTİF SİPARİŞ
+    - heading "POS-20260828-110553-7B6C9E7483E5" [level=2]
+    - strong: "1"
+    - generic: ürün
+    - strong: ALKAROS Burger
+    - generic: ₺325,00 × 1 · KDV dahil
+    - strong: ₺325,00
+    - button "ALKAROS Burger azalt" [disabled]: −
+    - generic: "1"
+    - button "ALKAROS Burger artır" [disabled]: +
+    - button "Kaldır" [disabled]
+    - generic: Ara toplam
+    - generic: ₺325,00
+    - generic: KDV
+    - generic: ₺0,00
+    - generic: Toplam
+    - strong: ₺325,00
+    - generic: ✓
+    - strong: Sipariş gönderildi
+    - generic: Revision 4
+    - button "Sonraki siparişi aç"
+  - dialog "Ekran bağlantısını yönetin":
+    - text: MÜŞTERİ EKRANI
+    - heading "Ekran bağlantısını yönetin" [level=2]
+    - button "Eşleştirme penceresini kapat": ×
+    - paragraph: Müşteri ekranındaki 8 karakterli kodu girin veya mevcut ekran yetkisini kaldırın.
+    - text: Eşleştirme kodu
+    - textbox "Eşleştirme kodu":
+      - /placeholder: Örn. A7K2M9P4
+      - text: AAAAAAAA
+    - button "Vazgeç"
+    - button "Ekranı eşleştir"
+    - strong: Bağlantıyı sonlandır
+    - generic: Yetki kaldırıldığında müşteri ekranı yeniden kod ister.
+    - button "Aktif ekran yetkisini kaldır"

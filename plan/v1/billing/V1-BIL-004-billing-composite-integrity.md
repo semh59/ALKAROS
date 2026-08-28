@@ -16,11 +16,11 @@ manifesti (`order.json`) ve `ManifestTests` ile doğrulamak.
 
 - `database/migrations/V1/V1-BIL-004/**`
 - `src/Modules/Billing/Adjustments/**`
-- `src/Modules/Billing/SplitDesign/**`
 - `tests/Modules/Billing/Adjustments/**`
-- `tests/Modules/Billing/SplitDesign/**`
 - `evidence/V1-BIL-004/**`
 - C72 (2026-08-24): Migration manifest ve manifest test remediasyon sahipliği V1-RMD-002'ye devredildi.
+- PO:2026-08-28 desktop POS kararıyla SplitDesign source/test yüzeyi V1-RMD-027'ye devredildi; bu historical task
+  closed kalır.
 
 ## Dependencies
 

@@ -1,0 +1,27 @@
+Telemetry
+---------
+The code coverage tools collect usage data in order to help us improve your experience. The data is collected by Microsoft. You can opt out of telemetry by setting the DOTNET_COVERAGE_TELEMETRY_OPTOUT environment variable to '1' using your favorite shell.
+
+This message is displayed only once. Set the DOTNET_COVERAGE_NOLOGO environment variable to '1' to suppress it in the future.
+dotnet-coverage v18.10.0.0 [linux-x64 - .NET 10.0.10]
+
+SessionId: 5490c326-c03f-4138-8073-7e451b1e9e91
+Test run for /src/tests/BuildingBlocks/Security/SensitiveData/bin/Release/net8.0/ALKAROS.SensitiveData.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Testhost process for source(s) '/src/tests/BuildingBlocks/Security/SensitiveData/bin/Release/net8.0/ALKAROS.SensitiveData.Tests.dll' exited with error: You must install or update .NET to run this application.
+App: /src/tests/BuildingBlocks/Security/SensitiveData/bin/Release/net8.0/testhost.dll
+Architecture: x64
+Framework: 'Microsoft.NETCore.App', version '8.0.0' (x64)
+.NET location: /usr/share/dotnet/
+The following frameworks were found:
+  10.0.10 at [/usr/share/dotnet/shared/Microsoft.NETCore.App]
+Learn more:
+https://aka.ms/dotnet/app-launch-failed
+To install missing framework, download:
+https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_version=8.0.0&arch=x64&rid=linux-x64&os=ubuntu.24.04
+. Please check the diagnostic logs for more information.
+Results File: /src/tests/BuildingBlocks/Security/SensitiveData/TestResults/_26cca53f86a7_2026-08-26_23_22_59_net8.0.trx
+
+Test Run Aborted.
+No code coverage data available. Profiler was not initialized. Verify that glibc (>=2.27), libxml2 and all .NET dependencies are installed.
+Code coverage results: /src/evidence/V1-RMD-007/coverage-smoke4.cobertura.xml.

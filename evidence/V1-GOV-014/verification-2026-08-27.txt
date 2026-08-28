@@ -1,0 +1,10 @@
+V1-GOV-014 verification
+Date: 2026-08-27
+
+- V1-RMD-016 shell wildcard narrowed to four non-transferred shell files plus its existing design-system ownership.
+- V1-RMD-022 retained tables.css and its evidence directory.
+- V1-RMD-023 received exact ProductionShell and TableWorkspace component/test paths.
+- plan validation: exit 0, errors 0, warnings 0
+- verify-manifest: exit 0, errors 0
+- root markdownlint-cli2 0.23.2: exit 0, 620 files, 0 issues
+- git diff --check: exit 0

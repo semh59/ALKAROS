@@ -1,0 +1,28 @@
+ALKAROS Client Test & Build Summary
+Audit Date: 2026-08-24
+
+1. PosTerminal (src/Clients/PosTerminal):
+Command: pnpm test
+Result:
+  ✓ src/stale.test.ts (2 tests)
+  Test Files: 1 passed (1)
+  Tests: 2 passed (2)
+
+Command: pnpm typecheck
+Result: tsc --noEmit (Exit 0)
+
+Command: pnpm build
+Result:
+  vite v8.2.2 building client environment for production...
+  dist/index.html                 0.44 kB │ gzip:  0.28 kB
+  dist/assets/index-d55nhC97.css 17.04 kB │ gzip:  4.66 kB
+  dist/assets/index-BjjdseuS.js 264.63 kB │ gzip: 78.88 kB
+  built in 375ms (Exit 0)
+
+2. WebPrototype (src/Clients/WebPrototype):
+Command: node --test src/Clients/WebPrototype/tests/*.test.js
+Result: 20/20 Passed (0 failed, 0 skipped, Duration: 177ms)
+
+3. Tools Test Suite (tools/tests):
+Command: node --test tools/tests/*.test.js
+Result: 7/7 Passed (0 failed, 0 skipped, Duration: 138ms)

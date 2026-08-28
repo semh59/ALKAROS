@@ -1,4 +1,4 @@
-﻿namespace ALKAROS.Audit.EventStore.Tests;
+namespace ALKAROS.Audit.EventStore.Tests;
 
 using ALKAROS.Audit.EventStore;
 using ALKAROS.TestHelpers;
@@ -110,6 +110,18 @@ public sealed class AuditSanitizerUnitTests
         sanitized.Should().Contain("\"Pin\":\"[REDACTED]\"");
         sanitized.Should().Contain("\"Password\":\"[REDACTED]\"");
         sanitized.Should().Contain("\"Role\":\"Waiter\"");
+    }
+
+    [Fact]
+    public void MalformedJsonRedactsSensitiveKeywordsAndReturnsValidJson()
+    {
+        var raw = "user: admin, password: SuperSecretPassword123!, pin: 4321";
+        var sanitized = _sanitizer.SanitizeJson(raw);
+
+        sanitized.Should().NotBeNull();
+        sanitized.Should().NotContain("SuperSecretPassword123!");
+        sanitized.Should().NotContain("4321");
+        sanitized.Should().Contain("[REDACTED]");
     }
 }
 

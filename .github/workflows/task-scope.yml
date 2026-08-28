@@ -1,13 +1,15 @@
-name: task-scope
+name: production-validation
 
 on:
   pull_request:
+  push:
+    branches: [master]
   workflow_dispatch:
     inputs:
       task-id:
         description: "Active Task ID to enforce"
         required: true
-        default: "V1-FND-007"
+        default: "V1-RMD-007"
       diff-base:
         description: "Base ref to diff against (default: repository default branch)"
         required: false
@@ -15,25 +17,34 @@ on:
 permissions:
   contents: read
 
+env:
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  POSTGRES_IMAGE: "postgres@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2"
+
 jobs:
   enforce:
     name: Task scope enforcement
+    if: github.event_name != 'push'
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.12.12"
       - name: Resolve diff base
         id: base
         shell: pwsh
         run: |
           $base = "${{ github.event.pull_request.base.sha }}"
           if (-not $base) {
+            $base = "${{ github.event.before }}"
+          }
+          if (-not $base -or $base -match '^0+$') {
             $base = "refs/remotes/origin/${{ github.event.repository.default_branch }}"
           }
           if ("${{ github.event.inputs.diff-base }}" -ne "") {
@@ -44,14 +55,14 @@ jobs:
         id: task
         shell: pwsh
         run: |
-          $taskId = "${{ github.event.inputs.task-id || 'V1-FND-007' }}"
+          $taskId = "${{ github.event.inputs.task-id || 'V1-RMD-007' }}"
           if ("${{ github.event_name }}" -eq "pull_request") {
             $candidates = @(
               "${{ github.event.pull_request.title }}",
               "${{ github.event.pull_request.body }}"
             )
-            foreach ($c in $candidates) {
-              if ($c -match "V\d+-[A-Z]+-\d+") {
+            foreach ($candidate in $candidates) {
+              if ($candidate -match "V\d+-[A-Z]+-\d+") {
                 $taskId = $matches[0]
                 break
               }
@@ -65,3 +76,193 @@ jobs:
             --task-id "${{ steps.task.outputs.task-id }}" `
             --diff-base "${{ steps.base.outputs.base }}" `
             --format text
+
+  validate:
+    name: Locked build, tests and supply chain
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout complete history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.419
+            10.0.302
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12.12"
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.10.7"
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: "11.19.0"
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: src/Clients/PosTerminal/pnpm-lock.yaml
+          package-manager-cache: false
+      - name: Verify exact toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(dotnet --version)" = "10.0.302"
+          test "$(python --version 2>&1)" = "Python 3.12.12"
+          test "$(pnpm --version)" = "11.19.0"
+          node --version | grep -E '^v24\.'
+          uv --version | grep -F 'uv 0.10.7'
+      - name: Validate plan, PDF trace and project manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run --python 3.12.12 --with-requirements plan/validation-requirements.lock \
+            python -B tools/plan-audit/plan_audit_tool.py validate
+          uv run --python 3.12.12 --with-requirements plan/validation-requirements.lock \
+            python -B tools/plan-audit/plan_audit_tool.py validate-coverage
+          uv run --python 3.12.12 --with-requirements plan/validation-requirements.lock \
+            python -B tools/plan-audit/plan_audit_tool.py verify-manifest
+          python -B tools/project-manifest/project_manifest_tool.py
+      - name: Root Markdown lint
+        shell: bash
+        run: pnpm dlx --package=markdownlint-cli2@0.23.2 markdownlint-cli2
+      - name: Locked frontend install, tests and production build
+        working-directory: src/Clients/PosTerminal
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm install --frozen-lockfile
+          pnpm typecheck
+          pnpm test
+          pnpm build
+      - name: Node contract and prototype tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test src/Clients/WebPrototype/tests/*.test.js
+          node --test tools/tests/run_e2e_browser_test.test.js
+      - name: Python architecture tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run --python 3.12.12 --with-requirements plan/validation-requirements.lock \
+            --with pytest python -m pytest tests/Architecture -q
+      - name: Locked .NET restore and Release build
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore ALKAROS.slnx --locked-mode
+          dotnet build ALKAROS.slnx --configuration Release --no-restore
+      - name: Verify build provenance positive and negative paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -B tools/build-provenance/verify_build_provenance.py
+          if python -B tools/build-provenance/verify_build_provenance.py \
+            --candidate-sha 0000000000000000000000000000000000000000; then
+            echo "Wrong candidate SHA was accepted" >&2
+            exit 1
+          fi
+          if dotnet build ALKAROS.slnx --configuration Release --no-restore \
+            -p:RepositoryCommit=0000000000000000000000000000000000000000; then
+            echo "Wrong RepositoryCommit override was accepted" >&2
+            exit 1
+          fi
+      - name: Start digest-pinned PostgreSQL 18
+        shell: bash
+        run: |
+          set -euo pipefail
+          password="$(openssl rand -hex 24)"
+          echo "::add-mask::$password"
+          echo "ALKAROS_TEST_PG_PASSWORD=$password" >> "$GITHUB_ENV"
+          docker run --detach --name alkaros-ci-postgres \
+            --publish 5432:5432 \
+            --env POSTGRES_PASSWORD="$password" \
+            "$POSTGRES_IMAGE"
+          for attempt in $(seq 1 60); do
+            if docker exec alkaros-ci-postgres pg_isready --username postgres --dbname postgres; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs alkaros-ci-postgres >&2
+          exit 1
+      - name: Install isolated psql 18 wrapper
+        shell: bash
+        run: |
+          sudo tee /usr/local/bin/psql >/dev/null <<'EOF'
+          #!/usr/bin/env bash
+          exec docker run --rm --network host \
+            -e PGPASSWORD \
+            -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE:ro" \
+            -w "$GITHUB_WORKSPACE" \
+            postgres@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2 \
+            psql "$@"
+          EOF
+          sudo chmod 0755 /usr/local/bin/psql
+          psql --version
+      - name: Full .NET tests with line and branch coverage measurement
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet tool install --global dotnet-coverage --version 18.10.0
+          dotnet-coverage collect \
+            "dotnet test ALKAROS.slnx --configuration Release --no-build --logger trx --results-directory $RUNNER_TEMP/test-results" \
+            --output "$RUNNER_TEMP/coverage.cobertura.xml" \
+            --output-format cobertura
+          test -s "$RUNNER_TEMP/coverage.cobertura.xml"
+          python - "$RUNNER_TEMP/coverage.cobertura.xml" <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse(sys.argv[1]).getroot()
+          print("line-rate=" + root.attrib["line-rate"])
+          print("branch-rate=" + root.attrib["branch-rate"])
+          PY
+      - name: Dependency vulnerability scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet list ALKAROS.slnx package --vulnerable --include-transitive
+          pnpm --dir src/Clients/PosTerminal audit --prod --audit-level high
+      - name: SBOM and license inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet tool install --global Microsoft.Sbom.DotNetTool --version 4.1.5
+          mkdir -p "$RUNNER_TEMP/sbom" "$RUNNER_TEMP/licenses"
+          sbom-tool generate \
+            -b . \
+            -bc . \
+            -pn ALKAROS \
+            -pv 1.0.0 \
+            -ps ALKAROS \
+            -nsb https://alkaros.invalid/sbom \
+            -m "$RUNNER_TEMP/sbom"
+          find "$RUNNER_TEMP/sbom" -type f -size +0c -print -quit | grep -q .
+          pnpm --dir src/Clients/PosTerminal licenses list --prod --json \
+            > "$RUNNER_TEMP/licenses/pnpm-production-licenses.json"
+          test -s "$RUNNER_TEMP/licenses/pnpm-production-licenses.json"
+      - name: Full Git history secret scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            --output "$RUNNER_TEMP/gitleaks.tar.gz" \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $RUNNER_TEMP/gitleaks.tar.gz" \
+            | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact --no-banner --exit-code 1 .
+      - name: Stop PostgreSQL
+        if: always()
+        shell: bash
+        run: docker rm --force alkaros-ci-postgres >/dev/null 2>&1 || true

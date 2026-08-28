@@ -1,0 +1,15 @@
+V1-RMD-020 resume preflight
+
+Repository root: D:/PROJECT/ALKAROS
+Task ID: V1-RMD-020
+Assignee: /root
+Candidate commit: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Candidate tree: 39e9bb79d3d6f3e099e15a7ffafcc801f727843a
+Observed status snapshot: 146 non-empty lines, SHA-256 5E191F3BA62C645AC7BD9E1AA9B2A9230B1F944DFD04863B12550B61F64B0ED1
+Observed tracked diff snapshot: 45 paths, SHA-256 04992C73A4CD2FAB314C0A8DB82B982A9D96730211172D68912A494377F5AF22
+
+Write allowlist: exact V1-RMD-020 owned surface plus evidence/V1-RMD-020/**.
+Existing dirty paths outside that allowlist are preserved and are not part of this resume.
+Dependencies V1-RMD-017, V1-RMD-018, V1-RMD-019 and V1-RMD-009 are Done.
+The task was Blocked by HTTPS certificate trust; user resumed it after trust provisioning and `dotnet dev-certs
+https --check --trust --quiet` returned exit 0 before implementation/testing resumed.

@@ -1,0 +1,99 @@
+name: alkaros
+
+services:
+  postgres:
+    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+    environment:
+      POSTGRES_DB: alkaros
+      POSTGRES_USER: alkaros
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets: [db_password]
+    volumes:
+      - alkaros-postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alkaros -d alkaros"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  migrate:
+    build:
+      context: .
+      target: runtime
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    secrets: [db_password]
+    depends_on:
+      postgres: { condition: service_healthy }
+    command:
+      - |
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        exec dotnet ALKAROS.Host.dll --order-manifest /app/database/MigrationComposition/order.json --migrations-dir /app/database/migrations/V1 --db-url postgresql://alkaros@postgres:5432/alkaros
+    restart: "no"
+
+  provision:
+    build:
+      context: .
+      target: runtime
+    environment:
+      ALKAROS_BOOTSTRAP_USERNAME: ${ALKAROS_BOOTSTRAP_USERNAME:-admin}
+      ALKAROS_BOOTSTRAP_DISPLAY_NAME: ${ALKAROS_BOOTSTRAP_DISPLAY_NAME:-ALKAROS Manager}
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    secrets: [db_password, admin_password]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    command:
+      - |
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        export ALKAROS_BOOTSTRAP_PASSWORD="$$(tr -d '\r\n' < /run/secrets/admin_password)"
+        exec dotnet ALKAROS.Host.dll provision-manager --db-url postgresql://alkaros@postgres:5432/alkaros
+    restart: "no"
+
+  host:
+    build:
+      context: .
+      target: runtime
+    environment:
+      ALKAROS_KITCHEN_STATION_ID: ${ALKAROS_KITCHEN_STATION_ID:-kitchen-main}
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    command:
+      - |
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --web-root /app/wwwroot --urls http://0.0.0.0:5080 --trusted-network 172.16.0.0/12
+    secrets: [db_password]
+    depends_on:
+      provision: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://127.0.0.1:5080/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  proxy:
+    image: caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+    ports:
+      - "8443:443"
+    volumes:
+      - ./deploy/docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      host: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "https://localhost/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+secrets:
+  db_password:
+    file: ./deploy/docker/db_password
+  admin_password:
+    file: ./deploy/docker/admin_password
+
+volumes:
+  alkaros-postgres:
+  caddy-data:
+  caddy-config:

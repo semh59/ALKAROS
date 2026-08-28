@@ -1,0 +1,36 @@
+Markdown files: 416
+Task files: 394
+Registered gates: 18
+Registered EXT sources: 21
+Dependency edges: 1351
+Validation errors: 0
+Validation warnings: 0
+PDF SHA-256: AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822 (recorded external artifact)
+PDF pages: 94 (recorded external artifact)
+Stored coverage headings: 383
+Stored coverage units: 2903
+Coverage errors: 0
+Manifest Markdown files: 611
+UTF-8 full reads: 611
+Markdown lines: 41836
+Markdown bytes: 2568032
+Audit baseline rows: 211
+Audit finding IDs: 1827
+Audit added-file hashes: 399
+Manifest errors: 6
+MANIFEST_HASH plan/v1/remediation/V1-RMD-020-production-experience-composition-and-e2e.md
+MANIFEST_LINES plan/v1/remediation/V1-RMD-020-production-experience-composition-and-e2e.md
+MANIFEST_BYTES plan/v1/remediation/V1-RMD-020-production-experience-composition-and-e2e.md
+TOTAL_LINES actual=41836 manifest=41844
+TOTAL_BYTES actual=2568032 manifest=2568586
+AUDIT_ADDED_HASH plan/v1/remediation/V1-RMD-020-production-experience-composition-and-e2e.md
+ALKAROS Project Manifest Validator
+Repository Root: D:\PROJECT\ALKAROS
+Solution: ALKAROS.slnx
+Status: VALID (0 differences across Solution, Disk, and ProjectReferences)
+Candidate SHA: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Projects checked: 34
+Matched: 34
+Missing: 0
+Mismatched: 0
+RESULT validate=0 coverage=0 manifest=1 project_manifest=0 provenance=0 diff_check=0

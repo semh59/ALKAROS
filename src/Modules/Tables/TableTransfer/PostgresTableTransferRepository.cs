@@ -120,6 +120,21 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
+        // 0. Canonical lock ordering: Lock both involved tables in deterministic Guid ascending order to prevent PostgreSQL 40P01 deadlocks
+        var tableIdsToLock = new[] { request.SourceTableId, request.TargetTableId }.Distinct().OrderBy(id => id).ToArray();
+        const string canonicalLockSql = $"""
+            SELECT table_id FROM {TablesTable}
+            WHERE table_id = ANY(@table_ids)
+            ORDER BY table_id
+            FOR UPDATE;
+            """;
+        await using (var lockCmd = new NpgsqlCommand(canonicalLockSql, connection, transaction))
+        {
+            lockCmd.Parameters.AddWithValue("table_ids", tableIdsToLock);
+            await using var lockReader = await lockCmd.ExecuteReaderAsync(cancellationToken);
+            while (await lockReader.ReadAsync(cancellationToken)) { }
+        }
+
         // 1. Lock and validate Source Table
         string sourceStatus;
         Guid? sourceCurrentOrderId;

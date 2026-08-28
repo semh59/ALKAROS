@@ -1,0 +1,210 @@
+Task: V1-RMD-020
+Candidate: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Allowed source/task paths changed by this task:
+src/Host/DualScreen/DualScreenApplication.cs
+src/Clients/PosTerminal/src/styles.css
+tests/Host/Experience/Composition/CatalogEnumWireContractTests.cs
+plan/v1/remediation/V1-RMD-020-production-experience-composition-and-e2e.md (Status/Assignee metadata only)
+evidence/V1-RMD-020/**
+
+Baseline tracked diff snapshot: 45 paths SHA256 04992C73A4CD2FAB314C0A8DB82B982A9D96730211172D68912A494377F5AF22
+Current tracked diff:
+.github/workflows/task-scope.yml
+ALKAROS.slnx
+Directory.Build.props
+build/project-manifest.json
+database/migrations/V1/V1-CAT-002/007-catalog-pricing.down.sql
+database/migrations/V1/V1-FND-021/012-btree-gist-ownership.down.sql
+evidence/V1-FND-001/verification.md
+evidence/V1-OPS-002/closure-evidence.txt
+evidence/V1-RMD-002/verification.txt
+evidence/V1-RMD-004/validation.md
+evidence/V1-RMD-005/validation.md
+plan/AUDIT_MANIFEST.json
+plan/AUDIT_REPORT.md
+plan/GATES.md
+plan/v1/README.md
+plan/v1/catalog/V1-CAT-002-effective-pricing.md
+plan/v1/foundation/V1-FND-021-postgresql-extension-integration.md
+plan/v1/operations/V1-OPS-002-backup-health-foundation.md
+plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md
+plan/v1/remediation/V1-RMD-004-mock-runtime-contract-alignment.md
+plan/v1/remediation/V1-RMD-006-production-dual-screen-pos.md
+src/Clients/PosTerminal/package.json
+src/Clients/PosTerminal/pnpm-lock.yaml
+src/Clients/PosTerminal/src/App.tsx
+src/Clients/PosTerminal/src/api.ts
+src/Clients/PosTerminal/src/contracts.ts
+src/Clients/PosTerminal/src/stale.test.ts
+src/Clients/PosTerminal/src/stale.ts
+src/Clients/PosTerminal/src/styles.css
+src/Clients/PosTerminal/vite.config.ts
+src/Host/DualScreen/DualScreenApplication.cs
+src/Host/DualScreen/DualScreenContracts.cs
+src/Host/DualScreen/DualScreenOptions.cs
+src/Host/DualScreen/DualScreenStore.cs
+src/Modules/Kitchen/TicketLifecycle/IKitchenTicketRepository.cs
+src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs
+src/Modules/Orders/SubmitOrder/SubmitOrderExceptions.cs
+src/Modules/Orders/SubmitOrder/SubmitOrderHandler.cs
+tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+tests/Host/MigrationComposition/PostgresqlExtensionLifecycleTests.cs
+tests/Modules/Kitchen/TicketLifecycle/KitchenTicketTests.cs
+tests/Modules/Operations/BackupHealth/BackupDomainTests.cs
+tests/Modules/Operations/BackupHealth/PostgresBackupHealthRepositoryTests.cs
+tests/Modules/Orders/SubmitOrder/SubmitOrderTests.cs
+tools/build-provenance/verify_build_provenance.py
+
+Current status:
+ M .github/workflows/task-scope.yml
+ M ALKAROS.slnx
+ M Directory.Build.props
+ M build/project-manifest.json
+ M database/migrations/V1/V1-CAT-002/007-catalog-pricing.down.sql
+ M database/migrations/V1/V1-FND-021/012-btree-gist-ownership.down.sql
+ M evidence/V1-FND-001/verification.md
+ M evidence/V1-OPS-002/closure-evidence.txt
+ M evidence/V1-RMD-002/verification.txt
+ M evidence/V1-RMD-004/validation.md
+ M evidence/V1-RMD-005/validation.md
+ M plan/AUDIT_MANIFEST.json
+ M plan/AUDIT_REPORT.md
+ M plan/GATES.md
+ M plan/v1/README.md
+ M plan/v1/catalog/V1-CAT-002-effective-pricing.md
+ M plan/v1/foundation/V1-FND-021-postgresql-extension-integration.md
+ M plan/v1/operations/V1-OPS-002-backup-health-foundation.md
+ M plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md
+ M plan/v1/remediation/V1-RMD-004-mock-runtime-contract-alignment.md
+ M plan/v1/remediation/V1-RMD-006-production-dual-screen-pos.md
+ M src/Clients/PosTerminal/package.json
+ M src/Clients/PosTerminal/pnpm-lock.yaml
+ M src/Clients/PosTerminal/src/App.tsx
+ M src/Clients/PosTerminal/src/api.ts
+ M src/Clients/PosTerminal/src/contracts.ts
+ M src/Clients/PosTerminal/src/stale.test.ts
+ M src/Clients/PosTerminal/src/stale.ts
+ M src/Clients/PosTerminal/src/styles.css
+ M src/Clients/PosTerminal/vite.config.ts
+ M src/Host/DualScreen/DualScreenApplication.cs
+ M src/Host/DualScreen/DualScreenContracts.cs
+ M src/Host/DualScreen/DualScreenOptions.cs
+ M src/Host/DualScreen/DualScreenStore.cs
+ M src/Modules/Kitchen/TicketLifecycle/IKitchenTicketRepository.cs
+ M src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs
+ M src/Modules/Orders/SubmitOrder/SubmitOrderExceptions.cs
+ M src/Modules/Orders/SubmitOrder/SubmitOrderHandler.cs
+ M tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+ M tests/Host/MigrationComposition/PostgresqlExtensionLifecycleTests.cs
+ M tests/Modules/Kitchen/TicketLifecycle/KitchenTicketTests.cs
+ M tests/Modules/Operations/BackupHealth/BackupDomainTests.cs
+ M tests/Modules/Operations/BackupHealth/PostgresBackupHealthRepositoryTests.cs
+ M tests/Modules/Orders/SubmitOrder/SubmitOrderTests.cs
+ M tools/build-provenance/verify_build_provenance.py
+?? docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_2026-08-24.md
+?? docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_FINDINGS.json
+?? docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_LEDGER.jsonl
+?? docs/product/
+?? evidence/V1-GOV-003/
+?? evidence/V1-GOV-004/
+?? evidence/V1-GOV-005/
+?? evidence/V1-GOV-006/
+?? evidence/V1-GOV-007/
+?? evidence/V1-GOV-008/
+?? evidence/V1-GOV-009/
+?? evidence/V1-GOV-010/
+?? evidence/V1-GOV-011/
+?? evidence/V1-RMD-007/
+?? evidence/V1-RMD-008/
+?? evidence/V1-RMD-009/
+?? evidence/V1-RMD-010/
+?? evidence/V1-RMD-011/
+?? evidence/V1-RMD-012/
+?? evidence/V1-RMD-013/
+?? evidence/V1-RMD-014/
+?? evidence/V1-RMD-015/
+?? evidence/V1-RMD-016/
+?? evidence/V1-RMD-017/
+?? evidence/V1-RMD-018/
+?? evidence/V1-RMD-019/
+?? evidence/V1-RMD-020/
+?? plan/v1/governance/V1-GOV-003-full-project-production-audit.md
+?? plan/v1/governance/V1-GOV-004-post-remediation-master-audit-reseal.md
+?? plan/v1/governance/V1-GOV-005-audit-custody-correction.md
+?? plan/v1/governance/V1-GOV-006-remediation-surface-custody.md
+?? plan/v1/governance/V1-GOV-007-migration-manifest-custody.md
+?? plan/v1/governance/V1-GOV-008-catalog-api-custody.md
+?? plan/v1/governance/V1-GOV-009-production-experience-realignment.md
+?? plan/v1/governance/V1-GOV-010-production-experience-task-custody.md
+?? plan/v1/governance/V1-GOV-011-production-experience-custody-correction.md
+?? plan/v1/remediation/V1-RMD-007-governance-manifest-and-build-provenance.md
+?? plan/v1/remediation/V1-RMD-008-host-api-auth-ratelimit-tls-and-telemetry.md
+?? plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md
+?? plan/v1/remediation/V1-RMD-010-pos-terminal-ui-responsive-and-a11y.md
+?? plan/v1/remediation/V1-RMD-011-web-prototype-hardening-and-touch-targets.md
+?? plan/v1/remediation/V1-RMD-012-root-markdownlint-cleanup.md
+?? plan/v1/remediation/V1-RMD-013-table-management-production-api.md
+?? plan/v1/remediation/V1-RMD-014-catalog-management-production-api.md
+?? plan/v1/remediation/V1-RMD-015-kitchen-operations-production-api.md
+?? plan/v1/remediation/V1-RMD-016-production-shell-and-design-system.md
+?? plan/v1/remediation/V1-RMD-017-table-workspace-ui.md
+?? plan/v1/remediation/V1-RMD-018-menu-catalog-workspace-ui.md
+?? plan/v1/remediation/V1-RMD-019-kitchen-operations-workspace-ui.md
+?? plan/v1/remediation/V1-RMD-020-production-experience-composition-and-e2e.md
+?? plan/v1/remediation/V1-RMD-021-independent-designer-acceptance.md
+?? src/Clients/PosTerminal/src/design-system/
+?? src/Clients/PosTerminal/src/features/
+?? src/Clients/PosTerminal/src/shell/
+?? src/Host/Experience/
+?? src/Modules/Kitchen/TicketLifecycle/KitchenOrderSubmissionDispatcher.cs
+?? src/Modules/Orders/SubmitOrder/IOrderSubmissionDispatcher.cs
+?? tests/Architecture/ModuleBoundaries/TestResults/
+?? tests/BuildingBlocks/Idempotency/TestResults/
+?? tests/BuildingBlocks/Security/Secrets/TestResults/
+?? tests/BuildingBlocks/Security/SensitiveData/TestResults/
+?? tests/BuildingBlocks/TransactionOutboxIntegration/TestResults/
+?? tests/BuildingBlocks/Transactions/TestResults/
+?? tests/Clients/Cashier/OperationsStatus/TestResults/
+?? tests/Clients/Cashier/OrderEntry/TestResults/
+?? tests/Clients/Cashier/TableShell/TestResults/
+?? tests/Clients/WaiterPwa/OrderEntry/TestResults/
+?? tests/Clients/WaiterPwa/OrderStatus/TestResults/
+?? tests/Clients/WaiterPwa/SessionQueue/TestResults/
+?? tests/Host/Experience/
+?? tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs
+?? tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+?? tests/Host/MigrationComposition/TestResults/
+?? tests/Modules/Audit/EventStore/TestResults/
+?? tests/Modules/Billing/Adjustments/TestResults/
+?? tests/Modules/Billing/BillFoundation/TestResults/
+?? tests/Modules/Billing/SplitDesign/TestResults/
+?? tests/Modules/Cash/Contracts/TestResults/
+?? tests/Modules/Catalog/Pricing/TestResults/
+?? tests/Modules/Catalog/ProductCatalog/TestResults/
+?? tests/Modules/Identity/Authentication/TestResults/
+?? tests/Modules/Identity/Authorization/TestResults/
+?? tests/Modules/Identity/DeviceSessions/TestResults/
+?? tests/Modules/Kitchen/PhysicalPrintRecovery/TestResults/
+?? tests/Modules/Kitchen/PrintQueue/TestResults/
+?? tests/Modules/Kitchen/Routing/TestResults/
+?? tests/Modules/Kitchen/TicketLifecycle/TestResults/
+?? tests/Modules/Observability/AlertFoundation/TestResults/
+?? tests/Modules/Observability/Foundation/TestResults/
+?? tests/Modules/Operations/BackupHealth/TestResults/
+?? tests/Modules/Orders/ItemExceptions/TestResults/
+?? tests/Modules/Orders/OrderAggregate/TestResults/
+?? tests/Modules/Orders/SubmitOrder/TestResults/
+?? tests/Modules/Reconciliation/CaseFoundation/TestResults/
+?? tests/Modules/Reporting/V1Operations/TestResults/
+?? tests/Modules/Settings/TypedSettings/TestResults/
+?? tests/Modules/Tables/CurrentPointers/TestResults/
+?? tests/Modules/Tables/Reservations/TestResults/
+?? tests/Modules/Tables/TableLifecycle/TestResults/
+?? tests/Modules/Tables/TableMerge/TestResults/
+?? tests/Modules/Tables/TableTransfer/TestResults/
+
+diff_check_exit=0
+
+External disposable resources:
+port58299=free
+alkaros-ui-e2e-containers=none

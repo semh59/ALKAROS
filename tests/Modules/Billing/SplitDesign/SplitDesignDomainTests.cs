@@ -443,4 +443,59 @@ public sealed class SplitDesignDomainTests
         Assert.Throws<ArgumentException>(() =>
             SplitEngine.CreateItemSplit(bill, new[] { new ItemSplitTarget(item.Id, "Person A", -1) }));
     }
+
+    [Fact]
+    public void OperationalOwnerReferenceRoundTripsStableSeatAndPersonIds()
+    {
+        var seatId = Guid.NewGuid();
+        var value = OperationalOwnerReference.Format(
+            SplitMode.ByItem,
+            AllocationOwnerKind.Seat,
+            seatId);
+
+        Assert.True(OperationalOwnerReference.TryParse(value, out var parsed));
+        Assert.Equal(SplitMode.ByItem, parsed!.Mode);
+        Assert.Equal(AllocationOwnerKind.Seat, parsed.Kind);
+        Assert.Equal(seatId, parsed.Id);
+        Assert.False(OperationalOwnerReference.TryParse("Seat 1", out _));
+    }
+
+    [Fact]
+    public void CustomSplitIsLosslessAndRejectsCumulativeQuantityOverflow()
+    {
+        var item = new BillItem(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Shared platter",
+            2m,
+            100m,
+            10m);
+        var bill = new Bill(item.BillId, "BILL-CUSTOM", [item]);
+        var firstOwner = OperationalOwnerReference.Format(
+            SplitMode.Custom,
+            AllocationOwnerKind.Person,
+            Guid.NewGuid());
+        var secondOwner = OperationalOwnerReference.Format(
+            SplitMode.Custom,
+            AllocationOwnerKind.Person,
+            Guid.NewGuid());
+
+        var allocations = SplitEngine.CreateCustomSplit(
+            bill,
+            [
+                new CustomSplitTarget(firstOwner, 100m, item.Id, 0.5m),
+                new CustomSplitTarget(secondOwner, 120m, item.Id, 1.5m),
+            ]);
+
+        Assert.Equal(bill.PayableAmount, allocations.Sum(allocation => allocation.AllocatedAmount));
+        Assert.Equal(bill.TaxTotal, allocations.Sum(allocation => allocation.TaxAmount));
+        Assert.Throws<InvalidOperationException>(() => SplitEngine.CreateCustomSplit(
+            bill,
+            [
+                new CustomSplitTarget(firstOwner, 100m, item.Id, 1.5m),
+                new CustomSplitTarget(secondOwner, 120m, item.Id, 1m),
+            ]));
+    }
 }

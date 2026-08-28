@@ -1,0 +1,10 @@
+.pytest_cache
+**/bin
+**/obj
+**/dist
+**/node_modules
+**/TestResults
+evidence/**
+docs/audit/**
+deploy/docker/db_password
+deploy/docker/admin_password

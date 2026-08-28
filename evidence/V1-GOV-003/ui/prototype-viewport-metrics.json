@@ -1,0 +1,205 @@
+[
+  {
+    "below44": [
+      {
+        "h": 42.5,
+        "id": "",
+        "label": "Ana içeriğe geç",
+        "tag": "A",
+        "w": 136.84
+      },
+      {
+        "h": 44,
+        "id": "btn-theme-toggle",
+        "label": "Renk temasını değiştir",
+        "tag": "BUTTON",
+        "w": 37.29
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Tümü (14)",
+        "tag": "BUTTON",
+        "w": 87.6
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Salon (8)",
+        "tag": "BUTTON",
+        "w": 83.09
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Bahçe (4)",
+        "tag": "BUTTON",
+        "w": 85.94
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Teras (2)",
+        "tag": "BUTTON",
+        "w": 81.54
+      }
+    ],
+    "doc": [
+      1920,
+      1080
+    ],
+    "overflow": false,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "visibleText": "Ana içeriğe geç\nALKAROS V1 · MOCK\nKasiyer POS\nGarson Telefon\nGarson Tablet\nAğ: Çevrimiçi\nOturumu Kilitle\n🧪 Kaos & Stres Testleri\nA\nALKAROS\nKasiyer / İşletmeci: Ahmet Yılmaz\nPOS-01 • Ana Kasa\nMasalar\nMenü Yönetimi\nMutfak ve Yazıcılar\n2\nÇevrimiçi\n24.08.2026 22:33:41\nKilitle\nCANLI SERVİS · AKŞAM VARDİYASI\nSalon kontrol merkezi\n\nMasa akışını, mutfak durumunu ve hesap taleplerini tek bakışta yönetin.\n\nServis akışı normal\nSon senkronizasyon şimdi\nTümü (14)\nSalon (8)\nBahçe (4)\nTeras (2)\nTüm Masalar\nHesap İstendi (\n2\n)\nMutfakta (\n2\n)\nYeni Masa Ekle\nMasa S-01\nBoş\nKapasite: 4 Kişi (Salon)\nSipariş Aç\nMasa S-02\nDolu\n35 dk • Garson: Mehmet K.\n485,00 TL\nHazırlanıyor\nMasayı Aç\nMasa S-03\nDolu\n12 dk • Garson: Can T.\n1.250,00 TL\nMasayı Aç\nMasa S-04\nDolu\n58 dk • Garson: Mehmet K.\n820,00 TL\nHesap İstendi\nMasayı Aç\nMasa S-05\nRezerve\n19:30 - 4 Kişi\nMisafiri Oturt\nMasa S-06\nDolu\n22 dk • Garson: Mehmet K.\n310,00 TL\nServise Hazır\nMasayı Aç\nMasa S-07\nBoş\nKapasite: 2 Kişi (Salon)\nSipariş Aç\nMasa S-08\nBoş\nKapasi"
+  },
+  {
+    "below44": [
+      {
+        "h": 42.5,
+        "id": "",
+        "label": "Ana içeriğe geç",
+        "tag": "A",
+        "w": 136.84
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Tümü (14)",
+        "tag": "BUTTON",
+        "w": 87.6
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Salon (8)",
+        "tag": "BUTTON",
+        "w": 83.09
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Bahçe (4)",
+        "tag": "BUTTON",
+        "w": 85.94
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Teras (2)",
+        "tag": "BUTTON",
+        "w": 81.54
+      }
+    ],
+    "doc": [
+      430,
+      932
+    ],
+    "overflow": false,
+    "viewport": [
+      430,
+      932
+    ],
+    "visibleText": "Ana içeriğe geç\nMasalar\nMenü Yönetimi\nMutfak ve Yazıcılar\n2\nCANLI SERVİS · AKŞAM VARDİYASI\nSalon kontrol merkezi\nTümü (14)\nSalon (8)\nBahçe (4)\nTeras (2)\nTüm Masalar\nHesap İstendi (\n2\n)\nMutfakta (\n2\n)\nYeni Masa Ekle\nMasa S-01\nBoş\nKapasite: 4 Kişi (Salon)\nSipariş Aç\nMasa S-02\nDolu\n35 dk • Garson: Mehmet K.\n485,00 TL\nHazırlanıyor\nMasayı Aç\nMasa S-03\nDolu\n12 dk • Garson: Can T.\n1.250,00 TL\nMasayı Aç\nMasa S-04\nDolu\n58 dk • Garson: Mehmet K.\n820,00 TL\nHesap İstendi\nMasayı Aç\nMasa S-05\nRezerve\n19:30 - 4 Kişi\nMisafiri Oturt\nMasa S-06\nDolu\n22 dk • Garson: Mehmet K.\n310,00 TL\nServise Hazır\nMasayı Aç\nMasa S-07\nBoş\nKapasite: 2 Kişi (Salon)\nSipariş Aç\nMasa S-08\nBoş\nKapasite: 6 Kişi (Salon)\nSipariş Aç\nMasa B-01\nDolu\n18 dk • Garson: Can T.\n290,00 TL\nHazırlanıyor\nMasayı Aç\nMasa B-02\nBoş\nKapasite: 4 Kişi (Bahçe)\nSipariş Aç\nMasa B-03\nBoş\nKapasite: 6 Kişi (Bahçe)\nSipariş Aç\nMasa B-04\nDolu\n40 dk • Garson: Mehmet K.\n175,00 TL\nMasayı Aç\nMasa T-01\nBoş\nKapasite: 4 Kişi (Teras)\nSipariş Aç\nMasa T-02\nDolu\n50 dk "
+  },
+  {
+    "below44": [
+      {
+        "h": 42.5,
+        "id": "",
+        "label": "Ana içeriğe geç",
+        "tag": "A",
+        "w": 136.84
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Tümü (14)",
+        "tag": "BUTTON",
+        "w": 87.6
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Salon (8)",
+        "tag": "BUTTON",
+        "w": 83.09
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Bahçe (4)",
+        "tag": "BUTTON",
+        "w": 85.94
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Teras (2)",
+        "tag": "BUTTON",
+        "w": 81.54
+      }
+    ],
+    "doc": [
+      390,
+      844
+    ],
+    "overflow": false,
+    "viewport": [
+      390,
+      844
+    ],
+    "visibleText": "Ana içeriğe geç\nMasalar\nMenü Yönetimi\nMutfak ve Yazıcılar\n2\nCANLI SERVİS · AKŞAM VARDİYASI\nSalon kontrol merkezi\nTümü (14)\nSalon (8)\nBahçe (4)\nTeras (2)\nTüm Masalar\nHesap İstendi (\n2\n)\nMutfakta (\n2\n)\nYeni Masa Ekle\nMasa S-01\nBoş\nKapasite: 4 Kişi (Salon)\nSipariş Aç\nMasa S-02\nDolu\n35 dk • Garson: Mehmet K.\n485,00 TL\nHazırlanıyor\nMasayı Aç\nMasa S-03\nDolu\n12 dk • Garson: Can T.\n1.250,00 TL\nMasayı Aç\nMasa S-04\nDolu\n58 dk • Garson: Mehmet K.\n820,00 TL\nHesap İstendi\nMasayı Aç\nMasa S-05\nRezerve\n19:30 - 4 Kişi\nMisafiri Oturt\nMasa S-06\nDolu\n22 dk • Garson: Mehmet K.\n310,00 TL\nServise Hazır\nMasayı Aç\nMasa S-07\nBoş\nKapasite: 2 Kişi (Salon)\nSipariş Aç\nMasa S-08\nBoş\nKapasite: 6 Kişi (Salon)\nSipariş Aç\nMasa B-01\nDolu\n18 dk • Garson: Can T.\n290,00 TL\nHazırlanıyor\nMasayı Aç\nMasa B-02\nBoş\nKapasite: 4 Kişi (Bahçe)\nSipariş Aç\nMasa B-03\nBoş\nKapasite: 6 Kişi (Bahçe)\nSipariş Aç\nMasa B-04\nDolu\n40 dk • Garson: Mehmet K.\n175,00 TL\nMasayı Aç\nMasa T-01\nBoş\nKapasite: 4 Kişi (Teras)\nSipariş Aç\nMasa T-02\nDolu\n50 dk "
+  },
+  {
+    "below44": [
+      {
+        "h": 42.5,
+        "id": "",
+        "label": "Ana içeriğe geç",
+        "tag": "A",
+        "w": 136.84
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Tümü (14)",
+        "tag": "BUTTON",
+        "w": 87.6
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Salon (8)",
+        "tag": "BUTTON",
+        "w": 83.09
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Bahçe (4)",
+        "tag": "BUTTON",
+        "w": 85.94
+      },
+      {
+        "h": 38,
+        "id": "",
+        "label": "Teras (2)",
+        "tag": "BUTTON",
+        "w": 81.54
+      }
+    ],
+    "doc": [
+      320,
+      568
+    ],
+    "overflow": false,
+    "viewport": [
+      320,
+      568
+    ],
+    "visibleText": "Ana içeriğe geç\nMasalar\nMenü Yönetimi\nMutfak ve Yazıcılar\n2\nCANLI SERVİS · AKŞAM VARDİYASI\nSalon kontrol merkezi\nTümü (14)\nSalon (8)\nBahçe (4)\nTeras (2)\nTüm Masalar\nHesap İstendi (\n2\n)\nMutfakta (\n2\n)\nYeni Masa Ekle\nMasa S-01\nBoş\nKapasite: 4 Kişi (Salon)\nSipariş Aç\nMasa S-02\nDolu\n35 dk • Garson: Mehmet K.\n485,00 TL\nHazırlanıyor\nMasayı Aç\nMasa S-03\nDolu\n12 dk • Garson: Can T.\n1.250,00 TL\nMasayı Aç\nMasa S-04\nDolu\n58 dk • Garson: Mehmet K.\n820,00 TL\nHesap İstendi\nMasayı Aç\nMasa S-05\nRezerve\n19:30 - 4 Kişi\nMisafiri Oturt\nMasa S-06\nDolu\n22 dk • Garson: Mehmet K.\n310,00 TL\nServise Hazır\nMasayı Aç\nMasa S-07\nBoş\nKapasite: 2 Kişi (Salon)\nSipariş Aç\nMasa S-08\nBoş\nKapasite: 6 Kişi (Salon)\nSipariş Aç\nMasa B-01\nDolu\n18 dk • Garson: Can T.\n290,00 TL\nHazırlanıyor\nMasayı Aç\nMasa B-02\nBoş\nKapasite: 4 Kişi (Bahçe)\nSipariş Aç\nMasa B-03\nBoş\nKapasite: 6 Kişi (Bahçe)\nSipariş Aç\nMasa B-04\nDolu\n40 dk • Garson: Mehmet K.\n175,00 TL\nMasayı Aç\nMasa T-01\nBoş\nKapasite: 4 Kişi (Teras)\nSipariş Aç\nMasa T-02\nDolu\n50 dk "
+  }
+]

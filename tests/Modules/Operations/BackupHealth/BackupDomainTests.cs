@@ -82,8 +82,10 @@ public sealed class BackupDomainTests : IDisposable
         var backupId = Guid.NewGuid();
         var rawData = "TEST_PAYLOAD"u8.ToArray();
 
-        // Invalid path with illegal characters on Windows
-        var invalidPath = "Z:\\non_existent_drive_alkaros_test\\sub\\";
+        // A path occupied by a regular file cannot be used as a destination on any OS.
+        Directory.CreateDirectory(_tempDirectory);
+        var invalidPath = Path.Combine(_tempDirectory, "destination-file");
+        await File.WriteAllTextAsync(invalidPath, "not a directory");
 
         var result = await _engine.CreateBackupFileAsync(
             backupId,

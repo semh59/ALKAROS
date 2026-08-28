@@ -190,6 +190,7 @@ yapılan non-production pilot rehearsal görevidir.
 `TASK_SCOPE_REMEDIATION_EXCEPTIONS` devir/remediation tablolarını ve yukarıdaki
 gate kapanma koşullarını değiştirmez. Bu not PDF current authority değildir,
 gate kapanış kanıtı üretmez ve yeni product behavior başlatmaz.
+
 ## GATE-V1-EXIT nihai doğrulama notu (2026-08-24)
 
 C71 sonrasında bulunan `V1-FND-019`, `V1-SEC-006`, `V1-IAM-010` ve `V1-FND-018` blocker'ları kendi tek
@@ -198,3 +199,9 @@ kanıt artifact'ini uzlaştırdı. `V1-WTR-005`, browser E2E runner'daki sessiz 
 kaynak temizliği bulgularını kapattı. V1 matrisi 86 `Done`, 4 onaylı `NotApplicable`, 0 `InProgress` ve 0 `Blocked`
 olarak kapandı; `validate`, `validate-coverage` ve `verify-manifest` sıfır hata verdi. Resmî komut ve sayım kaydı
 `evidence/v1/gate-v1-exit-closure.md` altındadır.
+
+## 2026-08-24 tam production denetimi sonrası yeniden açılış
+
+`V1-GOV-003` denetimi ve taze ajan custody görevleri sonrasında V1 matrisi 106 göreve yükseldi. Mevcut durum 95
+`Done`, 4 onaylı `NotApplicable`, 5 `Planned` ve 2 `Blocked` görevdir; `InProgress` görev yoktur. Tarihsel C71 kapanışı
+korunur fakat `V1-RMD-007..011` ile `V1-GOV-004` zinciri tamamlanmadan güncel production readiness kanıtı sayılmaz.

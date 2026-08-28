@@ -1,6 +1,7 @@
 namespace ALKAROS.Tables.TableLifecycle;
 
 using ALKAROS.ModuleComposition;
+using ALKAROS.Tables.FloorPlan;
 
 public sealed class TablesModule : IModule
 {
@@ -14,6 +15,7 @@ public sealed class TablesModule : IModule
     {
         context
             .RegisterTransient<ITableRepository, PostgresTableRepository>()
-            .RegisterTransient<IZoneRepository, PostgresZoneRepository>();
+            .RegisterTransient<IZoneRepository, PostgresZoneRepository>()
+            .RegisterTransient<ITableFloorPlanRepository, PostgresTableFloorPlanRepository>();
     }
 }

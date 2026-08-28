@@ -1,0 +1,20 @@
+Task: V1-RMD-007 continuation after V1-RMD-012
+Assignee: /root/rmd007_build_governance
+
+V1-RMD-012 status: Done
+Canonical markdownlint-cli2 0.23.2: exit 0, 570 files, 0 issues
+Plan validation before continuation: exit 0, 403 Markdown, 381 tasks, 1326 edges
+
+Disposable image: mcr.microsoft.com/dotnet/sdk:10.0.302
+dotnet restore ALKAROS.slnx --locked-mode: exit 0
+dotnet list ALKAROS.slnx package --vulnerable --include-transitive: exit 0
+Result: no vulnerable packages reported for all 34 production and 42 test projects.
+
+dotnet-coverage version: 18.10.0.0
+Coverage target: tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj
+Coverage result: aborted, no usable coverage data
+Cause: Microsoft.NETCore.App 8.0.0 runtime was absent; image contained only Microsoft.NETCore.App 10.0.10.
+
+Workflow correction: actions/setup-dotnet now installs exact SDK 8.0.419 and 10.0.302.
+SBOM/license, checksum-pinned history scan and PostgreSQL/psql wrapper were not reached after fail-fast coverage abort.
+No passing result is claimed for those controls. Task remains Blocked.

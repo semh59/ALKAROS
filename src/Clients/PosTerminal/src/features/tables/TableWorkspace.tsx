@@ -1,0 +1,330 @@
+import { useMemo, useState, type FormEvent } from "react";
+import {
+  Button,
+  ModalDialog,
+  SelectField,
+  StateMessage,
+  TextField,
+  ValidationSummary,
+} from "../../design-system";
+import {
+  actionNeedsReason,
+  isClientExecutableAction,
+  tableActionLabels,
+  tableStatusLabels,
+  type CreateTableInput,
+  type CreateZoneInput,
+  type TableAction,
+  type TableRecord,
+  type TableWorkspaceProps,
+  type TableView,
+} from "./models";
+import { FloorPlanWorkspace } from "./FloorPlanWorkspace";
+import "./tables.css";
+
+type Feedback = { tone: "success" | "error" | "conflict"; message: string } | null;
+
+const statusOptions = ["all", "Available", "Occupied", "Reserved", "Cleaning", "OutOfService"] as const;
+
+function elapsedLabel(occupiedSince?: string | null) {
+  if (!occupiedSince) return "—";
+  const elapsedMinutes = Math.max(0, Math.floor((Date.now() - Date.parse(occupiedSince)) / 60_000));
+  if (!Number.isFinite(elapsedMinutes)) return "—";
+  if (elapsedMinutes < 60) return `${elapsedMinutes} dk`;
+  return `${Math.floor(elapsedMinutes / 60)} sa ${elapsedMinutes % 60} dk`;
+}
+
+function errorMessage(reason: unknown) {
+  return reason instanceof Error ? reason.message : "İşlem tamamlanamadı. Tekrar deneyin.";
+}
+
+export function TableWorkspace({
+  state,
+  zones,
+  tables,
+  canManage,
+  selectedTableId,
+  onSelectTable,
+  onRefresh,
+  onCreateZone,
+  onCreateTable,
+  onAction,
+  floorPlan,
+  floorPlanBusy,
+  floorPlanError,
+  onSaveFloorPlan,
+  errorMessage: suppliedError,
+  lastUpdated,
+}: TableWorkspaceProps) {
+  const [view, setView] = useState<TableView>("map");
+  const [zoneFilter, setZoneFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<(typeof statusOptions)[number]>("all");
+  const [search, setSearch] = useState("");
+  const [zoneDialogOpen, setZoneDialogOpen] = useState(false);
+  const [tableDialogOpen, setTableDialogOpen] = useState(false);
+  const [action, setAction] = useState<TableAction | null>(null);
+  const [actionTableId, setActionTableId] = useState<string | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback>(null);
+  const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [zoneDraft, setZoneDraft] = useState<CreateZoneInput>({ code: "", name: "", sortOrder: 0 });
+  const [tableDraft, setTableDraft] = useState<CreateTableInput>({ tableNumber: "", zoneId: null, capacity: 2 });
+  const [reason, setReason] = useState("");
+  const [targetTableId, setTargetTableId] = useState("");
+  const [participantTableIds, setParticipantTableIds] = useState<string[]>([]);
+
+  const filteredTables = useMemo(() => {
+    const normalized = search.trim().toLocaleLowerCase("tr-TR");
+    return tables.filter((table) =>
+      (zoneFilter === "all" || table.zoneId === zoneFilter)
+      && (statusFilter === "all" || table.status === statusFilter)
+      && (!normalized || table.tableNumber.toLocaleLowerCase("tr-TR").includes(normalized)),
+    );
+  }, [search, statusFilter, tables, zoneFilter]);
+
+  const selectedTable = tables.find((table) => table.tableId === selectedTableId) ?? filteredTables[0] ?? null;
+  const selectedZone = selectedTable ? zones.find((zone) => zone.zoneId === selectedTable.zoneId) : undefined;
+  const actionTable = tables.find((table) => table.tableId === actionTableId) ?? selectedTable;
+  const availableTargets = tables.filter((table) => table.tableId !== actionTable?.tableId && table.active);
+  const canCreate = canManage && Boolean(onCreateZone && onCreateTable);
+
+  const openAction = (nextAction: TableAction, targetTable = selectedTable) => {
+    if (!targetTable) return;
+    setAction(nextAction);
+    setActionTableId(targetTable.tableId);
+    setReason("");
+    setTargetTableId("");
+    setParticipantTableIds([]);
+    setFormErrors([]);
+    setFeedback(null);
+  };
+
+  const submitZone = async (event: FormEvent) => {
+    event.preventDefault();
+    const errors = [
+      zoneDraft.code.trim() ? "" : "Kod gerekli.",
+      zoneDraft.name.trim() ? "" : "Zone adı gerekli.",
+    ].filter(Boolean);
+    if (errors.length || !onCreateZone) {
+      setFormErrors(errors.length ? errors : ["Bu işlem için yetkiniz yok."]);
+      return;
+    }
+    try {
+      await onCreateZone({ ...zoneDraft, code: zoneDraft.code.trim().toUpperCase(), name: zoneDraft.name.trim() });
+      setZoneDialogOpen(false);
+      setZoneDraft({ code: "", name: "", sortOrder: 0 });
+      setFeedback({ tone: "success", message: "Zone oluşturuldu." });
+    } catch (reason) {
+      setFormErrors([errorMessage(reason)]);
+    }
+  };
+
+  const submitTable = async (event: FormEvent) => {
+    event.preventDefault();
+    const errors = [
+      tableDraft.tableNumber.trim() ? "" : "Masa numarası gerekli.",
+      tableDraft.capacity > 0 ? "" : "Kapasite 1 veya daha büyük olmalı.",
+    ].filter(Boolean);
+    if (errors.length || !onCreateTable) {
+      setFormErrors(errors.length ? errors : ["Bu işlem için yetkiniz yok."]);
+      return;
+    }
+    try {
+      await onCreateTable({ ...tableDraft, tableNumber: tableDraft.tableNumber.trim() });
+      setTableDialogOpen(false);
+      setTableDraft({ tableNumber: "", zoneId: zoneFilter === "all" ? null : zoneFilter, capacity: 2 });
+      setFeedback({ tone: "success", message: "Masa oluşturuldu." });
+    } catch (reason) {
+      setFormErrors([errorMessage(reason)]);
+    }
+  };
+
+  const submitAction = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!actionTable || !action || !onAction) return;
+    const errors = [
+      actionNeedsReason(action) && !reason.trim() ? "Bu işlem için açıklama gerekli." : "",
+      action === "Transfer" && !targetTableId ? "Hedef masa seçin." : "",
+      action === "Merge" && participantTableIds.length === 0 ? "En az bir katılımcı masa seçin." : "",
+    ].filter(Boolean);
+    if (errors.length) {
+      setFormErrors(errors);
+      return;
+    }
+    setActionBusy(true);
+    setFormErrors([]);
+    try {
+      const floorTable = floorPlan?.tables.find((table) => table.tableId === actionTable.tableId);
+      const unmergeParticipants = action === "Unmerge" && floorTable?.mergeGroupId
+        ? floorPlan?.tables
+          .filter((table) => table.mergeGroupId === floorTable.mergeGroupId && table.tableId !== actionTable.tableId)
+          .map((table) => ({ tableId: table.tableId, rowVersion: table.tableRowVersion }))
+        : undefined;
+      await onAction({
+        table: actionTable,
+        action,
+        reason: reason.trim() || undefined,
+        targetTableId: targetTableId || undefined,
+        targetTableVersion: targetTableId ? tables.find((table) => table.tableId === targetTableId)?.rowVersion : undefined,
+        participantTableIds: participantTableIds.length ? participantTableIds : undefined,
+        participantTableVersions: unmergeParticipants ?? (participantTableIds.length
+          ? participantTableIds.map((tableId) => ({ tableId, rowVersion: tables.find((table) => table.tableId === tableId)?.rowVersion ?? 0 }))
+          : undefined),
+        mergeGroupId: action === "Unmerge" ? floorTable?.mergeGroupId ?? undefined : undefined,
+      });
+      setAction(null);
+      setActionTableId(null);
+      setFeedback({ tone: "success", message: `${tableActionLabels[action]} tamamlandı.` });
+    } catch (reasonValue) {
+      const message = errorMessage(reasonValue);
+      const conflict = reasonValue instanceof Error && /409|conflict|concurrent|version/i.test(message);
+      setFeedback({ tone: conflict ? "conflict" : "error", message: conflict ? "Masa güncellendi. Güncel durum yüklendi; işlem tekrarlanmadı." : message });
+    } finally {
+      setActionBusy(false);
+    }
+  };
+
+  if (state === "loading") {
+    return <div className="table-workspace table-workspace--state" aria-busy="true"><StateMessage tone="info" title="Masa düzeni yükleniyor"><p>Zone ve masa durumu güvenli biçimde alınıyor…</p></StateMessage></div>;
+  }
+  if (state === "unauthorized") {
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="unauthorized" title="Oturum gerekli"><p>Masa çalışma alanını görmek için yeniden giriş yapın.</p></StateMessage></div>;
+  }
+  if (state === "offline") {
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="offline" title="Bağlantı yok"><p>Sunucuya ulaşılamıyor; eski masa durumu işlem için kullanılmıyor.</p><Button onClick={onRefresh}>Tekrar dene</Button></StateMessage></div>;
+  }
+  if (state === "error") {
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="error" title="Masa düzeni alınamadı"><p>{suppliedError ?? "Beklenmeyen bir hata oluştu."}</p><Button onClick={onRefresh}>Yeniden yükle</Button></StateMessage></div>;
+  }
+  if (state === "stale") {
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="stale" title="Masa verisi güncel değil"><p>İşlem yapmadan önce güncel durumu alın.</p><Button onClick={onRefresh}>Güncelle</Button></StateMessage></div>;
+  }
+
+  return (
+    <section className="table-workspace" aria-label="Masa yönetimi">
+      <header className="table-workspace__toolbar">
+        <div className="table-workspace__heading">
+          <span className="table-workspace__kicker">OPERASYON / MASALAR</span>
+          <h2>Masa düzeni</h2>
+          <p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Canlı masa ve sipariş bağlamı"}</p>
+        </div>
+        <div className="table-workspace__toolbar-actions">
+          {canCreate && <><Button variant="secondary" onClick={() => { setFormErrors([]); setZoneDialogOpen(true); }}>+ Zone ekle</Button><Button onClick={() => { setFormErrors([]); setTableDialogOpen(true); }}>+ Masa ekle</Button></>}
+          <Button variant="secondary" onClick={() => void onRefresh()}>Yenile</Button>
+        </div>
+      </header>
+
+      {feedback && <div className={`table-workspace__feedback table-workspace__feedback--${feedback.tone}`} role={feedback.tone === "error" || feedback.tone === "conflict" ? "alert" : "status"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label="Mesajı kapat" onClick={() => setFeedback(null)}>×</button></div>}
+
+      <div className="table-workspace__filters" role="group" aria-label="Masa filtreleri">
+        <SelectField label="Zone" value={zoneFilter} onChange={(event) => setZoneFilter(event.target.value)}>
+          <option value="all">Tüm zone'lar</option>
+          {zones.filter((zone) => zone.active).map((zone) => <option key={zone.zoneId} value={zone.zoneId}>{zone.name}</option>)}
+        </SelectField>
+        <label className="table-workspace__search">Masa ara<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Örn. S-09" aria-label="Masa ara" /></label>
+        <div className="table-workspace__status-filter" role="group" aria-label="Masa durumuna göre filtrele">
+          {statusOptions.map((status) => <button key={status} type="button" className={statusFilter === status ? "is-active" : ""} aria-pressed={statusFilter === status} onClick={() => setStatusFilter(status)}>{status === "all" ? "Tümü" : tableStatusLabels[status]}</button>)}
+        </div>
+        <div className="table-workspace__view-toggle" role="group" aria-label="Görünüm">
+          <button type="button" className={view === "map" ? "is-active" : ""} aria-pressed={view === "map"} onClick={() => setView("map")}>Salon planı</button>
+          <button type="button" className={view === "list" ? "is-active" : ""} aria-pressed={view === "list"} onClick={() => setView("list")}>Liste</button>
+        </div>
+      </div>
+
+      <div className="table-workspace__stats" role="group" aria-label="Masa özeti">
+        <Stat label="Toplam masa" value={tables.length} />
+        <Stat label="Müsait" value={tables.filter((table) => table.status === "Available").length} tone="success" />
+        <Stat label="Dolu" value={tables.filter((table) => table.status === "Occupied").length} tone="accent" />
+        <Stat label="Rezervasyon" value={tables.filter((table) => table.status === "Reserved").length} tone="warning" />
+      </div>
+
+      {state === "empty" || filteredTables.length === 0 ? (
+        <div className="table-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Henüz masa yok" : "Filtreyle eşleşen masa yok"}><p>{state === "empty" ? "Manager olarak ilk zone ve masayı ekleyerek başlayın." : "Filtreyi değiştirin veya aramayı temizleyin."}</p>{state === "empty" && canCreate && <Button onClick={() => setTableDialogOpen(true)}>İlk masayı ekle</Button>}</StateMessage></div>
+      ) : (
+        <div className={`table-workspace__content table-workspace__content--${view}`}>
+          {view === "map" && floorPlan ? <div className="table-workspace__floor-plan">
+            <FloorPlanWorkspace
+              plan={floorPlan}
+              tables={tables}
+              selectedTableId={selectedTable?.tableId}
+              canManage={canManage}
+              busy={floorPlanBusy}
+              error={floorPlanError}
+              lastUpdated={lastUpdated}
+              onSelectTable={onSelectTable}
+              onOpenAction={(nextAction, table) => openAction(nextAction, table)}
+              onSave={onSaveFloorPlan}
+            />
+          </div> : <>
+            <div className="table-workspace__table-area">
+              <div className="table-workspace__area-heading"><div><strong>{selectedZone?.name ?? "Tüm zone'lar"}</strong><span>{filteredTables.length} masa</span></div><span className="table-workspace__legend"><i className="legend-dot legend-dot--available" /> Müsait <i className="legend-dot legend-dot--occupied" /> Dolu <i className="legend-dot legend-dot--reserved" /> Rezerve</span></div>
+              <div className="table-grid">
+                {filteredTables.map((table) => <TableCard key={table.tableId} table={table} selected={table.tableId === selectedTable?.tableId} onSelect={() => onSelectTable(table.tableId)} onAction={(nextAction) => openAction(nextAction, table)} />)}
+              </div>
+            </div>
+            {selectedTable && <TableDetails table={selectedTable} zoneName={selectedZone?.name} onAction={openAction} />}
+          </>}
+        </div>
+      )}
+
+      <ModalDialog open={zoneDialogOpen} title="Yeni zone" onClose={() => setZoneDialogOpen(false)}>
+        <form className="table-form" onSubmit={(event) => void submitZone(event)}>
+          <ValidationSummary title="Zone bilgilerini kontrol edin" errors={formErrors} />
+          <TextField label="Kod" value={zoneDraft.code} onChange={(event) => setZoneDraft({ ...zoneDraft, code: event.target.value })} placeholder="SALON" autoComplete="off" />
+          <TextField label="Zone adı" value={zoneDraft.name} onChange={(event) => setZoneDraft({ ...zoneDraft, name: event.target.value })} placeholder="Salon" autoComplete="off" />
+          <TextField label="Sıra" type="number" min={0} value={zoneDraft.sortOrder} onChange={(event) => setZoneDraft({ ...zoneDraft, sortOrder: Number(event.target.value) })} />
+          <div className="table-form__actions"><Button variant="secondary" onClick={() => setZoneDialogOpen(false)}>Vazgeç</Button><Button type="submit">Zone oluştur</Button></div>
+        </form>
+      </ModalDialog>
+
+      <ModalDialog open={tableDialogOpen} title="Yeni masa" onClose={() => setTableDialogOpen(false)}>
+        <form className="table-form" onSubmit={(event) => void submitTable(event)}>
+          <ValidationSummary title="Masa bilgilerini kontrol edin" errors={formErrors} />
+          <TextField label="Masa numarası" value={tableDraft.tableNumber} onChange={(event) => setTableDraft({ ...tableDraft, tableNumber: event.target.value })} placeholder="S-09" autoComplete="off" />
+          <SelectField label="Zone" value={tableDraft.zoneId ?? ""} onChange={(event) => setTableDraft({ ...tableDraft, zoneId: event.target.value || null })}><option value="">Zone seçin</option>{zones.filter((zone) => zone.active).map((zone) => <option key={zone.zoneId} value={zone.zoneId}>{zone.name}</option>)}</SelectField>
+          <TextField label="Kapasite" type="number" min={1} max={100} value={tableDraft.capacity} onChange={(event) => setTableDraft({ ...tableDraft, capacity: Number(event.target.value) })} />
+          <div className="table-form__actions"><Button variant="secondary" onClick={() => setTableDialogOpen(false)}>Vazgeç</Button><Button type="submit">Masa oluştur</Button></div>
+        </form>
+      </ModalDialog>
+
+      <ModalDialog open={action !== null} title={action ? tableActionLabels[action] ?? "Masa işlemi" : "Masa işlemi"} onClose={() => { if (!actionBusy) { setAction(null); setActionTableId(null); } }}>
+        <form className="table-form" onSubmit={(event) => void submitAction(event)}>
+          <ValidationSummary title="İşlem bilgilerini kontrol edin" errors={formErrors} />
+          {actionTable && <p className="table-form__context"><strong>{actionTable.tableNumber}</strong> · {tableStatusLabels[actionTable.status]} · v{actionTable.rowVersion}</p>}
+          {action === "Transfer" && <SelectField label="Hedef masa" value={targetTableId} onChange={(event) => setTargetTableId(event.target.value)}><option value="">Hedef seçin</option>{availableTargets.map((table) => <option key={table.tableId} value={table.tableId}>{table.tableNumber} · {tableStatusLabels[table.status]}</option>)}</SelectField>}
+          {action === "Merge" && <fieldset className="table-form__checklist"><legend>Birleştirilecek masalar</legend>{availableTargets.map((table) => <label key={table.tableId}><input type="checkbox" checked={participantTableIds.includes(table.tableId)} onChange={(event) => setParticipantTableIds(event.target.checked ? [...participantTableIds, table.tableId] : participantTableIds.filter((id) => id !== table.tableId))} /> <span>{table.tableNumber} · {tableStatusLabels[table.status]}</span></label>)}</fieldset>}
+          {action === "Unmerge" && <p className="table-form__context">Birleşimdeki tüm katılımcı masalar güncel satır sürümleriyle ayrılacaktır.</p>}
+          {(action && actionNeedsReason(action)) && <TextField label="Açıklama" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="İşlem gerekçesi" autoComplete="off" />}
+          <div className="table-form__actions"><Button variant="secondary" disabled={actionBusy} onClick={() => { setAction(null); setActionTableId(null); }}>Vazgeç</Button><Button type="submit" disabled={actionBusy}>{actionBusy ? "İşleniyor…" : "Onayla"}</Button></div>
+        </form>
+      </ModalDialog>
+    </section>
+  );
+}
+
+function Stat({ label, value, tone = "neutral" }: { label: string; value: number; tone?: string }) {
+  return <div className={`table-stat table-stat--${tone}`}><span>{label}</span><strong>{value}</strong></div>;
+}
+
+function TableCard({ table, selected, onSelect, onAction }: { table: TableRecord; selected: boolean; onSelect: () => void; onAction: (action: TableAction) => void }) {
+  const command = table.allowedCommands.find((value): value is TableAction => value in tableActionLabels && isClientExecutableAction(value as TableAction));
+  return <article className={`table-card table-card--${table.status.toLowerCase()} ${selected ? "is-selected" : ""}`}>
+    <button type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${tableStatusLabels[table.status]}`} aria-pressed={selected} onClick={onSelect}>
+      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-status">{tableStatusLabels[table.status]}</span></span>
+      <span className="table-card__capacity">◉ {table.capacity} kişilik</span>
+      <span className="table-card__context">{table.currentOrderId ? `Sipariş #${table.currentOrderId.slice(0, 8)}` : table.currentBillId ? `Hesap #${table.currentBillId.slice(0, 8)}` : "Sipariş yok"}</span>
+    </button>
+    <footer className="table-card__footer"><span>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : `v${table.rowVersion}`}</span>{command && <button type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
+  </article>;
+}
+
+function TableDetails({ table, zoneName, onAction }: { table: TableRecord; zoneName?: string; onAction: (action: TableAction) => void }) {
+  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels);
+  return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
+    <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h3>{table.tableNumber}</h3><span>{zoneName ?? "Zone atanmamış"}</span></div><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{tableStatusLabels[table.status]}</span></div>
+    <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Satır sürümü</span><strong>v{table.rowVersion}</strong></div><div><span>Geçen süre</span><strong>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
+    <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Sipariş</strong><code>{table.currentOrderId}</code></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Hesap</strong><code>{table.currentBillId}</code></p>}</div>
+    {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command)} title={isClientExecutableAction(command) ? undefined : "Rezervasyon satır sürümü sunucu yanıtında bulunmadığı için işlem güvenli biçimde kapalı."} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}
+    <p className="table-details__authority">Sunucu yetkisi ve v{table.rowVersion} kaynak gerçek. Çakışmada bu bağlam korunur.</p>
+  </section>;
+}

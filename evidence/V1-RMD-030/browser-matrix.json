@@ -1,0 +1,15 @@
+{
+  "taskId": "V1-RMD-030",
+  "browser": "Codex in-app browser",
+  "viewports": [
+    { "width": 1280, "height": 800, "overflow": false, "minTargetHeight": 44 },
+    { "width": 1024, "height": 768, "overflow": false, "minTargetHeight": 44 },
+    { "width": 768, "height": 1024, "overflow": false, "minTargetHeight": 44 },
+    { "width": 390, "height": 844, "overflow": false, "minTargetHeight": 44 },
+    { "width": 320, "height": 568, "overflow": false, "minTargetHeight": 44 }
+  ],
+  "consoleErrors": 0,
+  "undersizedTargets": 0,
+  "focusRestoration": "editor focus entered dialog and Escape returned focus to + Ürün ekle",
+  "authoritativeDetails": ["modifier assignments", "effective price timeline", "active/inactive state", "tax profile", "stock mode"]
+}

@@ -14,15 +14,18 @@ public sealed class SubmitOrderHandler
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _orderRepository;
+    private readonly IOrderSubmissionDispatcher? _dispatcher;
     private readonly TimeSpan _idempotencyRetention;
 
     public SubmitOrderHandler(
         NpgsqlDataSource dataSource,
         IOrderRepository orderRepository,
-        TimeSpan? idempotencyRetention = null)
+        TimeSpan? idempotencyRetention = null,
+        IOrderSubmissionDispatcher? dispatcher = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+        _dispatcher = dispatcher;
         _idempotencyRetention = idempotencyRetention ?? TimeSpan.FromHours(24);
         if (_idempotencyRetention <= TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(idempotencyRetention), "Retention must be positive.");
@@ -132,6 +135,11 @@ public sealed class SubmitOrderHandler
         {
             var newVersion = await _orderRepository.SaveAsync(submitted, command.ExpectedRowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
 
+            if (_dispatcher is not null)
+            {
+                await _dispatcher.DispatchAsync(submitted, connection, transaction, cancellationToken).ConfigureAwait(false);
+            }
+
             var result = new SubmitOrderResult(
                 submitted.Id,
                 submitted.OrderNumber,
@@ -178,13 +186,12 @@ public sealed class SubmitOrderHandler
         catch (InvalidOperationException)
         {
             // Check if concurrent thread with same (client_id, operation_id) registered the result first
-            await using var recheckCommand = connection.CreateCommand();
-            recheckCommand.CommandText =
+            await using var recheckCommand = _dataSource.CreateCommand(
                 """
                 SELECT request_hash, response_envelope, expires_at <= now() AS expired
                 FROM idempotency_keys
                 WHERE client_id = @client_id AND operation_id = @operation_id;
-                """;
+                """);
             recheckCommand.Parameters.AddWithValue("client_id", command.ClientId);
             recheckCommand.Parameters.AddWithValue("operation_id", command.OperationId);
 

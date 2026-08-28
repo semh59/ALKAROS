@@ -18,8 +18,13 @@ uygulamak.
 
 ## Owned surface
 
-- `src/Modules/Catalog/Pricing/**`, `tests/Modules/Catalog/Pricing/**`, `database/migrations/V1/V1-CAT-002/**`
+- `src/Modules/Catalog/Pricing/**`, `tests/Modules/Catalog/Pricing/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+
+PO:2026-08-24 tam production denetimi correction custody kararıyla yalnız
+`database/migrations/V1/V1-CAT-002/007-catalog-pricing.up.sql` ve
+`database/migrations/V1/V1-CAT-002/007-catalog-pricing.down.sql` yazma yetkisi V1-RMD-009'a devredildi; bu tarihsel
+görev `Done` kalır ve devir diğer Catalog migration'larına yetki vermez.
 
 ## In scope
 
@@ -51,3 +56,4 @@ uygulamak.
 
 - V1-ORD-001
 - V11-MNU-001
+- V1-RMD-009

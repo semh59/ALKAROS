@@ -1,0 +1,42 @@
+{
+  "taskId": "V1-RMD-010",
+  "date": "2026-08-27",
+  "browser": "connected Chrome extension",
+  "runtime": "Production HTTPS Host with fresh digest-pinned PostgreSQL 18 and 37 migrations",
+  "keyboard": {
+    "selectionEnter": "S-10 selected",
+    "quickActionEnter": "S-09 quick action opened S-09 · Müsait · v3 while S-10 remained selected",
+    "escape": "dialog closed",
+    "focusRestoration": "S-09 quick action restored as active element"
+  },
+  "reducedMotion": {
+    "mediaMatches": true,
+    "tableCardTransitionDuration": "1e-05s",
+    "transitionProperty": "transform, box-shadow, border-color",
+    "result": "pass"
+  },
+  "axe": {
+    "version": "4.10.3",
+    "source": "8599-byte serialized live production DOM",
+    "criticalOrSeriousViolations": 0,
+    "violations": [
+      { "id": "landmark-complementary-is-top-level", "impact": "moderate", "nodes": 1 }
+    ],
+    "incomplete": [
+      { "id": "aria-prohibited-attr", "impact": "serious", "nodes": 4 }
+    ],
+    "disposition": "fail-closed; serious incomplete nodes inspected as source findings"
+  },
+  "confirmedSourceFindings": [
+    "ProductionShell brand div has prohibited aria-label",
+    "ProductionShell identity div has prohibited aria-label without a valid role",
+    "TableWorkspace filters div has prohibited aria-label without a valid role",
+    "TableWorkspace stats div has prohibited aria-label without a valid role",
+    "TableDetails complementary landmark is nested within the Masa yönetimi region"
+  ],
+  "zoom": {
+    "baselineDevicePixelRatioAfterControlZero": 1.0000000298023224,
+    "controlPlusChangedZoom": false,
+    "result": "unproven"
+  }
+}

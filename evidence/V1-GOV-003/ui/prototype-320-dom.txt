@@ -1,0 +1,132 @@
+- link "Ana içeriğe geç":
+  - /url: "#app-viewport"
+- complementary "Prototip Denetim Çubuğu":
+  - button "Prototip araçlarını aç veya kapat":
+- main:
+  - tablist:
+    - tab "Masalar" [selected]:
+      - text: Masalar
+    - tab "Menü Yönetimi":
+      - text: Menü Yönetimi
+    - tab "Mutfak ve Yazıcılar 2":
+      - text: Mutfak ve Yazıcılar
+      - generic: "2"
+  - tabpanel "Masalar":
+    - generic: CANLI SERVİS · AKŞAM VARDİYASI
+    - heading "Salon kontrol merkezi" [level=1]
+    - group "Bölge Filtreleri":
+      - button "Tümü (14)"
+      - button "Salon (8)"
+      - button "Bahçe (4)"
+      - button "Teras (2)"
+    - button "Tüm Masalar"
+    - button "Hesap İstendi ( 2 )":
+      - text: Hesap İstendi (
+      - generic: "2"
+      - text: )
+    - button "Mutfakta ( 2 )":
+      - text: Mutfakta (
+      - generic: "2"
+      - text: )
+    - textbox "Masa veya garson ara":
+      - /placeholder: Masa No veya Garson Ara...
+    - button "Yeni Masa Ekle":
+      - text: Yeni Masa Ekle
+    - button "Masa S-01, Boş, Salon. Sipariş Aç":
+      - generic: Masa S-01
+      - generic: Boş
+      - text: "Kapasite: 4 Kişi (Salon)"
+      - generic: Sipariş Aç
+    - button "Masa S-02, Dolu, Salon. Masayı Aç":
+      - generic: Masa S-02
+      - generic: Dolu
+      - generic "35 dakikadır açık"
+      - text: "35 dk • Garson: Mehmet K."
+      - generic: 485,00 TL
+      - text: Hazırlanıyor
+      - generic: Masayı Aç
+    - button "Masa S-03, Dolu, Salon. Masayı Aç":
+      - generic: Masa S-03
+      - generic: Dolu
+      - generic "12 dakikadır açık"
+      - text: "12 dk • Garson: Can T."
+      - generic: 1.250,00 TL
+      - generic: Masayı Aç
+    - button "Masa S-04, Dolu, Salon. Masayı Aç":
+      - generic: Masa S-04
+      - generic: Dolu
+      - generic "58 dakikadır açık"
+      - text: "58 dk • Garson: Mehmet K."
+      - generic: 820,00 TL
+      - text: Hesap İstendi
+      - generic: Masayı Aç
+    - button "Masa S-05, Rezerve, Salon. Misafiri Oturt":
+      - generic: Masa S-05
+      - generic: Rezerve
+      - strong: 19:30 - 4 Kişi
+      - generic: Misafiri Oturt
+    - button "Masa S-06, Dolu, Salon. Masayı Aç":
+      - generic: Masa S-06
+      - generic: Dolu
+      - generic "22 dakikadır açık"
+      - text: "22 dk • Garson: Mehmet K."
+      - generic: 310,00 TL
+      - text: Servise Hazır
+      - generic: Masayı Aç
+    - button "Masa S-07, Boş, Salon. Sipariş Aç":
+      - generic: Masa S-07
+      - generic: Boş
+      - text: "Kapasite: 2 Kişi (Salon)"
+      - generic: Sipariş Aç
+    - button "Masa S-08, Boş, Salon. Sipariş Aç":
+      - generic: Masa S-08
+      - generic: Boş
+      - text: "Kapasite: 6 Kişi (Salon)"
+      - generic: Sipariş Aç
+    - button "Masa B-01, Dolu, Bahçe. Masayı Aç":
+      - generic: Masa B-01
+      - generic: Dolu
+      - generic "18 dakikadır açık"
+      - text: "18 dk • Garson: Can T."
+      - generic: 290,00 TL
+      - text: Hazırlanıyor
+      - generic: Masayı Aç
+    - button "Masa B-02, Boş, Bahçe. Sipariş Aç":
+      - generic: Masa B-02
+      - generic: Boş
+      - text: "Kapasite: 4 Kişi (Bahçe)"
+      - generic: Sipariş Aç
+    - button "Masa B-03, Boş, Bahçe. Sipariş Aç":
+      - generic: Masa B-03
+      - generic: Boş
+      - text: "Kapasite: 6 Kişi (Bahçe)"
+      - generic: Sipariş Aç
+    - button "Masa B-04, Dolu, Bahçe. Masayı Aç":
+      - generic: Masa B-04
+      - generic: Dolu
+      - generic "40 dakikadır açık"
+      - text: "40 dk • Garson: Mehmet K."
+      - generic: 175,00 TL
+      - generic: Masayı Aç
+    - button "Masa T-01, Boş, Teras. Sipariş Aç":
+      - generic: Masa T-01
+      - generic: Boş
+      - text: "Kapasite: 4 Kişi (Teras)"
+      - generic: Sipariş Aç
+    - button "Masa T-02, Dolu, Teras. Masayı Aç":
+      - generic: Masa T-02
+      - generic: Dolu
+      - generic "50 dakikadır açık"
+      - text: "50 dk • Garson: Can T."
+      - generic: 640,00 TL
+      - text: Hesap İstendi
+      - generic: Masayı Aç
+    - generic: "Toplam Masa:"
+    - strong: 14 Masa
+    - generic: "Açık Adisyon:"
+    - strong: 7 Masa
+    - generic: "Bekleyen Mutfak Fişi:"
+    - strong: 2 Fiş
+    - generic: "Yazıcı Durumu:"
+    - strong: 3 Cihaz Normal
+- status

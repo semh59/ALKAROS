@@ -1,0 +1,87 @@
+warning: could not open directory '.pytest_cache/': Permission denied
+candidate_commit=a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+captured_utc=2026-08-24T19:47:42.2187472Z
+entry_count=81
+canonical_sha256=2a2cf8a323ee5fc723cf8b6816756530a3ced224a31ce0dc47b0e396cc65eda5
+format=<git-status><TAB><sha256><two-spaces><path>
+ M	c96290ff5ee66c8612ee9030a3bb908b150baede9ef0c2f1b640ef38021e6357  database/migrations/V1/V1-FND-021/012-btree-gist-ownership.down.sql
+??	608317063b88d396fc195b1b6461cde402fc594c1a73c35eb51b967cafbaab33  docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_2026-08-24.md
+??	273ec0aabc29676225d71ed60c5985a7f906ef5f3d90e9b7666de42d206abd85  docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_FINDINGS.json
+??	e0d776d019fa4a5a0434ae429f825cc39c2b5f4fbad288c262a68e58adc0db21  docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_LEDGER.jsonl
+??	cb3f57a7f31186c05a55e911642f9e435f89493172ca11bd3f44630da8324d36  evidence/V1-GOV-003/audit_run_manifest.json
+??	630c5e050107cbb6932b04c41ae756f965e581883916c23a10e32c4551b64ec0  evidence/V1-GOV-003/build_provenance_verification.txt
+??	9607354b67fe0bb7de1e512b7891fa51f2034951f61e4006f9779725bf25dd08  evidence/V1-GOV-003/candidate.json
+??	47431acf9bb639ab890f61c2c8207a255ff0465c43039ea91fdd6051d77df6c1  evidence/V1-GOV-003/client_test_summary.txt
+??	24753068aa16b2e661ddeb9e916c4cc70d01da1a7b1b70a0fb38c49ec4bd11db  evidence/V1-GOV-003/command-transcript.txt
+??	070a510a092cdeeaa48748dc46b2d36034c18fc433136272d30fa43f72fd646d  evidence/V1-GOV-003/db_migration_rehearsal.txt
+??	0c6ee1a7f31ab4a16e3a2c39de2686ae5af858094d68de3baf9d379f3d9f4754  evidence/V1-GOV-003/dotnet_test_summary.txt
+??	9f21bd718502e4fdb992002028f8584bdc0a20164918a34d97163a9fb63ea038  evidence/V1-GOV-003/generate_audit_artifacts.py
+??	95dcd78550763182d1aa832bcbf67ac157cf972ab39ac7850296b97df7112875  evidence/V1-GOV-003/ledger-verification.json
+??	d6faf79691811f171a65d7c26495f6d59646a970c1f095b396e46b665f129bff  evidence/V1-GOV-003/plan_validation.txt
+??	4cebdc137ad7c50366aebf9f0e1d4e7eab1ae96812bbdf787711719005d901f8  evidence/V1-GOV-003/postgres-migration-summary.json
+??	e8e7ce844c7125f0054da03bc3987f665626ec7d8bd9692759990af5964499b4  evidence/V1-GOV-003/static-review.txt
+??	7de2056d596dfa9e09112045182ae8aa82606cc060c1a8285cad8a2802a409c6  evidence/V1-GOV-003/toolchain_verification.txt
+??	72416f4ee419b15f4d2c8bb1c329413a9b086d41702298884339a3835126af9e  evidence/V1-GOV-003/toolchain.json
+??	41b0894079236763935b43973c15e7768833c168a7f3aebaf67ff3a404fe3f13  evidence/V1-GOV-003/ui_ux_responsive_audit.txt
+??	9fbb825c419d27caa2fb93d988d801fac46c003c4765f4673c40daccbbf3fadb  evidence/V1-GOV-003/ui/cashier-login-1024x768.png
+??	d5aff1f1029e72b41310ba1b6651452f05d492c7df58ba3da3ed8905f17f8ebc  evidence/V1-GOV-003/ui/cashier-login-1280x800.png
+??	4b04550d28acc5d43e6473f4794e9d97aa3d9f477eaa13ac36c1960ccaa474e5  evidence/V1-GOV-003/ui/cashier-login-1366x768.png
+??	3396d82d1db05903af78eb24c9235d0c50a703f299ad89279e91603f9a8e92f4  evidence/V1-GOV-003/ui/cashier-login-1440x900.png
+??	4c9b627587e4ed91f4d4036f99c26e11d276325278903d1b3f5e97d696a28408  evidence/V1-GOV-003/ui/cashier-login-1920x1080.png
+??	6f58e4072033d8efbf120b3caa861295eb08906da70ca52f77b3860238559da9  evidence/V1-GOV-003/ui/cashier-login-320x568.png
+??	5dc8c59d95d17578a20ba79faf05ed56d396e4f2e5100a894a26bd8d805a27f0  evidence/V1-GOV-003/ui/cashier-login-390x844.png
+??	58579ded48ee8826102b2cc6a0a09c89d2bd54b0a485f267e041f194d766cbfa  evidence/V1-GOV-003/ui/cashier-login-430x932.png
+??	ab7ca5ee31275959171bb2e2bd5d8a9e14dc9feab593c4ad0fd96855c1c117a9  evidence/V1-GOV-003/ui/cashier-login-768x1024.png
+??	16331662114d1e08040855324c5cf7f28568b6271c1051d2d13e81ed3a85a499  evidence/V1-GOV-003/ui/cashier-login-focus-order.json
+??	d13b535cbd25421e9e37e0e4df63c2ed9f5e5472f49e91569b976bb65aa159cf  evidence/V1-GOV-003/ui/display-initial-failure-390x844.png
+??	4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945  evidence/V1-GOV-003/ui/display-initial-failure-console.json
+??	6a61af866752f6d520e1da2576df0d8018455211b722a15309fea010bc3b0b5f  evidence/V1-GOV-003/ui/display-initial-failure-dom.txt
+??	bef9d7328ccc0280e103b233da3839767c5f628d623d5a05a8e9870e4a9d8cb8  evidence/V1-GOV-003/ui/display-initial-failure-state.json
+??	aa6228dad916e89f086290851b22a7ef793ee33e929c31b8d8c5e14e57a718a8  evidence/V1-GOV-003/ui/prototype-1920x1080.png
+??	f72183acb3e62991403e9b675286be1489a8f12a9d4551935836e009e1268978  evidence/V1-GOV-003/ui/prototype-320-dom.txt
+??	789a88c2b890a2ee2d88adfd404d545fb51d886ad6f6f7f36e9ed1715e875df9  evidence/V1-GOV-003/ui/prototype-320x568.png
+??	cf49bbac5bc9e66f2933f3e4cfb9eb40295a5cffe5e52116e7e438c3d0ce411d  evidence/V1-GOV-003/ui/prototype-390x844.png
+??	f29d9bcf44434408a0a4ff98c441193a89097870e0bf0d0105bb8bb08a1b8094  evidence/V1-GOV-003/ui/prototype-430x932.png
+??	4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945  evidence/V1-GOV-003/ui/prototype-console.json
+??	0d2bcefd59db8aa119086a32bea8a052cfab7664e8f8aad94ded181e74ab3a3b  evidence/V1-GOV-003/ui/prototype-viewport-metrics.json
+??	80e77ce57ab0e1d0c7b9fade0f9021c8394704958e80041992c33afc2c67c667  evidence/V1-GOV-003/ui/viewport-metrics.json
+??	405667f50d13e368f129b232ac40d6a60b709c1b8d04f267bff1862c91c89cb3  evidence/V1-GOV-003/validation-summary.json
+??	c906577c447def59717bf3cc5efc74f7a1ee46536224c31a24a212ad248ad8f4  evidence/V1-GOV-003/verify_ledger.py
+??	dcecf0eae88bd97e59296f878fe125e9e0fdbd35d7231eb9fb8605387fd95c58  evidence/V1-GOV-004/manifest_verification.txt
+??	7a334f5e54ed27c66a12f58b048b4311ad47c344a0198b6315fd5c9d01e1a56b  evidence/V1-GOV-004/master_audit_reseal_summary.txt
+??	d9693bc03cf0dca5d5fe992a1bdb27105e81f798d319f4c32cc9f3a550652d1d  evidence/V1-GOV-004/plan_validation.txt
+??	2c220530cc65330c30876a275b5da2b29e07277db2f0ba2b9688fe242f0683ed  evidence/V1-GOV-004/provenance_verification.txt
+??	48cfcfccb19c8309fb5e91f34e4c13681b20b5db2c719b047d48e365b390092d  evidence/V1-GOV-005/preflight.md
+??	736317638c72b3bfbd91ccd157518c62f8de623d28c251e1b3e05a8c997e605f  evidence/V1-GOV-005/rejected-evidence-sha256.txt
+??	96ee9c11e4ed933d4f353a29cb05185f1e6bcc6c70bb1d1092a655f876f3962d  evidence/V1-GOV-005/validation-results.md
+??	4de016d28725c38bdaeee0621fe967573616aaf25d0ca5ce33ef9ce0172b4be2  evidence/V1-RMD-007/build_provenance_verification.txt
+??	1bb8a435232a6b300d9e3dfbcf792d13dfafa6d261180cfaaf81a2e932c8e400  evidence/V1-RMD-007/manifest_verification.txt
+??	a96dc984c9fd275c25011a165fabc14913b2490d5b7c45c5e9583fe4f8f39e6c  evidence/V1-RMD-007/plan_validation.txt
+??	f404ad4a7b4939e6dd307ed597793d1d8ae284507bb28b3ef9f7eaac09fef4de  evidence/V1-RMD-008/host_tests_summary.txt
+??	1636b69e1ce15ace637f1d63de8cf19dbaf859aab516c4240e34aea884cb7f62  evidence/V1-RMD-008/plan_validation.txt
+??	71c0cdc79850fd60dafb73b7486e30479b93fdc1730af71996f1a5d2888d6df0  evidence/V1-RMD-008/ratelimit_and_proxy_verification.txt
+??	1deaf2adb804300fa0f60740f68f1142d405cd8b08c0d9055497822242066eb5  evidence/V1-RMD-009/pg18_migration_rehearsal.txt
+??	cbe55b0061dbc42c221a83a8ef830a44df6de8d6c6e8fb4d423f3daa953b2e1b  evidence/V1-RMD-009/plan_validation.txt
+??	2528b5a3af0828f5adb9318cd96dd680aef2cfc8ece67268f1daa3cd14df6030  evidence/V1-RMD-009/store_invariants_verification.txt
+??	609a4dd4150c8d1ef51235eab6f456e6866171f593cd09a0d30a9322f742ca24  evidence/V1-RMD-010/client_test_and_build_summary.txt
+??	a24ce8b7b30c3fbda08958d4c6b12cf268f09794529e0066de727d47ac14a7ee  evidence/V1-RMD-010/plan_validation.txt
+??	6d49623a529bc13b7660fb34124adfc8b9226a4a13658f8eb7f009b47a7c0e8e  evidence/V1-RMD-010/touch_target_and_a11y_verification.txt
+??	e89c281af8c94e44a6a1b64a8f6cf921088e205c6a2199515b8b3b26df745f6e  evidence/V1-RMD-011/plan_validation.txt
+??	128c06b5841dac754b7109cea9de686ea5bee8ff784f95d9046ab9232afa1dc4  evidence/V1-RMD-011/prototype_tests_summary.txt
+??	8d19935a43c774af8274d8c21c5a1caad1d73195a80a250c12af19e40a47ff3c  evidence/V1-RMD-011/visual_quarantine_verification.txt
+ M	ac1fef6dd75d54a040990ec6dab65a8159cc5637d3c7cdc85880f707354e7a90  plan/AUDIT_MANIFEST.json
+ M	f54ed8db00d2587cd26c9b01c4beb57f5f0319b4d5557499898b2ac0ec0da1fd  plan/AUDIT_REPORT.md
+??	f398aa953cc684c224bc2743d02700e6d6d6d3258df2c8ea20f90d044e0f2af0  plan/v1/governance/V1-GOV-003-full-project-production-audit.md
+??	11068a31bbe43ad3709663a9d3de2df77a4fe5a0b730f675481e72580ec863c7  plan/v1/governance/V1-GOV-004-post-remediation-master-audit-reseal.md
+??	f759f16858eaa6ff1c7406fa51201d5971cdbec1db0ffa4fa01ae6a87f7ff60b  plan/v1/governance/V1-GOV-005-audit-custody-correction.md
+ M	030555366d2b113dc424c361280a07962f54b0ec9c46b1658398903be0325b61  plan/v1/remediation/V1-RMD-006-production-dual-screen-pos.md
+??	89cdf7e3f3a103a20684ba9261958b799e60d8ae505b8857d1ee1acf7f39e852  plan/v1/remediation/V1-RMD-007-governance-manifest-and-build-provenance.md
+??	7bcae09355eb97aa7ec1ff2a130373bf9a0167f6743ca6ef966342b18b356e30  plan/v1/remediation/V1-RMD-008-host-api-auth-ratelimit-tls-and-telemetry.md
+??	c9332738fe1486862f5cd95f0c398a18fc8c8a2b8872573bb45e0c5c9b51310a  plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md
+??	91a3b1e8f079fed7801072abbb9fe630aeb249eadd5978bbade31434f5d77331  plan/v1/remediation/V1-RMD-010-pos-terminal-ui-responsive-and-a11y.md
+??	8629910b2ef958d0843664f335e174bb3659a16a0282ef7c37216ee7d9bc9e5c  plan/v1/remediation/V1-RMD-011-web-prototype-hardening-and-touch-targets.md
+ M	282d0822b1bfdb26576cd5dc3c823e8f0f0ad5a8b7655f2d000e37d580e17bb8  src/Clients/PosTerminal/src/App.tsx
+ M	59ece72cfe628edec0ad58295513615ee804f10d07baf706f6a08d4060851348  src/Clients/PosTerminal/src/styles.css
+ M	61f8eb8d89ca4560c772e2ad227547c08bd3179894730289673ec1ca8c44354b  src/Host/DualScreen/DualScreenApplication.cs
+ M	5f7381daa7f3570f890721a74cbf48132af73999d1958ba40f137a1d1c5d9ed9  src/Host/DualScreen/DualScreenStore.cs
+??	a848044568f9ac678648c4ce274b4405bd2968025790ada4cf8b394474018b76  tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs

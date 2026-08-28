@@ -1,4 +1,6 @@
+using System.Net;
 using Npgsql;
+using ForwardedNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 
 namespace ALKAROS.Host.DualScreen;
 
@@ -10,7 +12,13 @@ public sealed class DualScreenStartupException : Exception
     }
 }
 
-public sealed record DualScreenOptions(string ConnectionString, string WebRoot, string Url)
+public sealed record DualScreenOptions(
+    string ConnectionString,
+    string WebRoot,
+    string Url,
+    IReadOnlyList<IPAddress>? TrustedProxies = null,
+    IReadOnlyList<ForwardedNetwork>? TrustedNetworks = null,
+    bool AllowInsecureLoopbackDevelopment = false)
 {
     private const string PasswordEnvironmentVariable = "ALKAROS_DB_PASSWORD";
 
@@ -19,6 +27,9 @@ public sealed record DualScreenOptions(string ConnectionString, string WebRoot, 
         string? databaseUrl = null;
         string? webRoot = null;
         var url = "http://127.0.0.1:5080";
+        var trustedProxies = new List<IPAddress>();
+        var trustedNetworks = new List<ForwardedNetwork>();
+        var allowInsecureLoopbackDevelopment = false;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -32,6 +43,15 @@ public sealed record DualScreenOptions(string ConnectionString, string WebRoot, 
                     break;
                 case "--urls" when index + 1 < args.Length:
                     url = args[++index];
+                    break;
+                case "--trusted-proxy" when index + 1 < args.Length:
+                    trustedProxies.Add(ParseTrustedProxy(args[++index]));
+                    break;
+                case "--trusted-network" when index + 1 < args.Length:
+                    trustedNetworks.Add(ParseTrustedNetwork(args[++index]));
+                    break;
+                case "--allow-insecure-loopback-development" when !allowInsecureLoopbackDevelopment:
+                    allowInsecureLoopbackDevelopment = true;
                     break;
                 default:
                     throw new DualScreenStartupException("Invalid dual-screen serve arguments.");
@@ -67,6 +87,13 @@ public sealed record DualScreenOptions(string ConnectionString, string WebRoot, 
             throw new DualScreenStartupException("--urls must contain one absolute HTTP or HTTPS URL.");
         }
 
+        if (allowInsecureLoopbackDevelopment
+            && (listenUri.Scheme != Uri.UriSchemeHttp || !IsLoopbackHost(listenUri.Host)))
+        {
+            throw new DualScreenStartupException(
+                "--allow-insecure-loopback-development requires an HTTP loopback --urls address.");
+        }
+
         var connectionString = new NpgsqlConnectionStringBuilder
         {
             Host = uri.Host,
@@ -78,6 +105,45 @@ public sealed record DualScreenOptions(string ConnectionString, string WebRoot, 
             Pooling = true,
         }.ConnectionString;
 
-        return new DualScreenOptions(connectionString, resolvedWebRoot, listenUri.ToString());
+        return new DualScreenOptions(
+            connectionString,
+            resolvedWebRoot,
+            listenUri.ToString(),
+            trustedProxies,
+            trustedNetworks,
+            allowInsecureLoopbackDevelopment);
     }
+
+    private static IPAddress ParseTrustedProxy(string value)
+    {
+        if (!IPAddress.TryParse(value, out var address))
+            throw new DualScreenStartupException("--trusted-proxy must contain an IP address.");
+        return address;
+    }
+
+    private static ForwardedNetwork ParseTrustedNetwork(string value)
+    {
+        var parts = value.Split('/', 2, StringSplitOptions.TrimEntries);
+        if (parts.Length != 2
+            || !IPAddress.TryParse(parts[0], out var prefix)
+            || !int.TryParse(parts[1], out var prefixLength)
+            || prefixLength < 0
+            || prefixLength > (prefix.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ? 32 : 128))
+        {
+            throw new DualScreenStartupException("--trusted-network must contain an IPv4 or IPv6 CIDR range.");
+        }
+
+        try
+        {
+            return new ForwardedNetwork(prefix, prefixLength);
+        }
+        catch (ArgumentException)
+        {
+            throw new DualScreenStartupException("--trusted-network must contain a canonical CIDR range.");
+        }
+    }
+
+    private static bool IsLoopbackHost(string host)
+        => string.Equals(host, "localhost", StringComparison.OrdinalIgnoreCase)
+            || (IPAddress.TryParse(host, out var address) && IPAddress.IsLoopback(address));
 }

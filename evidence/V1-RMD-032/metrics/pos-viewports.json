@@ -1,0 +1,1455 @@
+[
+  {
+    "boxes": [
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Müşteri ekranı",
+        "right": 1215.4,
+        "tag": "button",
+        "width": 148.7,
+        "x": 1066.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 1322.2,
+        "tag": "a",
+        "width": 96.3,
+        "x": 1225.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 1424.2,
+        "tag": "a",
+        "width": 91.7,
+        "x": 1332.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 1513.3,
+        "tag": "a",
+        "width": 78.7,
+        "x": 1434.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Ekranı eşleştir",
+        "right": 1668,
+        "tag": "button",
+        "width": 144.3,
+        "x": 1523.7,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 1902.4,
+        "tag": "button",
+        "width": 71,
+        "x": 1831.4,
+        "y": 11.7
+      },
+      {
+        "bottom": 178.4,
+        "height": 92,
+        "name": "⌂Tümü1",
+        "right": 115.8,
+        "tag": "button",
+        "width": 104.6,
+        "x": 11.2,
+        "y": 86.4
+      },
+      {
+        "bottom": 277.6,
+        "height": 92,
+        "name": "01Diğer1",
+        "right": 115.8,
+        "tag": "button",
+        "width": 104.6,
+        "x": 11.2,
+        "y": 185.6
+      },
+      {
+        "bottom": 156.3,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 1374.4,
+        "tag": "input",
+        "width": 340,
+        "x": 1034.4,
+        "y": 110.3
+      },
+      {
+        "bottom": 319.1,
+        "height": 142,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 346.9,
+        "tag": "button",
+        "width": 192.5,
+        "x": 154.4,
+        "y": 177.1
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 1464.2,
+        "tag": "button",
+        "width": 44,
+        "x": 1420.2,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 1557,
+        "tag": "button",
+        "width": 44,
+        "x": 1513,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 1900.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 1832.7,
+        "y": 222.8
+      },
+      {
+        "bottom": 1068,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 1900.8,
+        "tag": "button",
+        "width": 480.6,
+        "x": 1420.2,
+        "y": 1014
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 1080,
+      "clientWidth": 1920,
+      "horizontal": false,
+      "scrollHeight": 1080,
+      "scrollWidth": 1920
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 1080,
+      "width": 1920
+    }
+  },
+  {
+    "boxes": [
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Müşteri ekranı",
+        "right": 735.4,
+        "tag": "button",
+        "width": 148.7,
+        "x": 586.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 842.2,
+        "tag": "a",
+        "width": 96.3,
+        "x": 745.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 944.2,
+        "tag": "a",
+        "width": 91.7,
+        "x": 852.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 1033.3,
+        "tag": "a",
+        "width": 78.7,
+        "x": 954.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Ekranı eşleştir",
+        "right": 1188,
+        "tag": "button",
+        "width": 144.3,
+        "x": 1043.7,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 1422.4,
+        "tag": "button",
+        "width": 71,
+        "x": 1351.4,
+        "y": 11.7
+      },
+      {
+        "bottom": 178.4,
+        "height": 92,
+        "name": "⌂Tümü1",
+        "right": 115.8,
+        "tag": "button",
+        "width": 104.6,
+        "x": 11.2,
+        "y": 86.4
+      },
+      {
+        "bottom": 277.6,
+        "height": 92,
+        "name": "01Diğer1",
+        "right": 115.8,
+        "tag": "button",
+        "width": 104.6,
+        "x": 11.2,
+        "y": 185.6
+      },
+      {
+        "bottom": 156.3,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 968,
+        "tag": "input",
+        "width": 340,
+        "x": 628,
+        "y": 110.3
+      },
+      {
+        "bottom": 319.1,
+        "height": 142,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 348,
+        "tag": "button",
+        "width": 193.6,
+        "x": 154.4,
+        "y": 177.1
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 1057.8,
+        "tag": "button",
+        "width": 44,
+        "x": 1013.8,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 1150.6,
+        "tag": "button",
+        "width": 44,
+        "x": 1106.6,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 1420.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 1352.7,
+        "y": 222.8
+      },
+      {
+        "bottom": 888,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 1420.8,
+        "tag": "button",
+        "width": 407,
+        "x": 1013.8,
+        "y": 834
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 900,
+      "clientWidth": 1440,
+      "horizontal": false,
+      "scrollHeight": 900,
+      "scrollWidth": 1440
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    }
+  },
+  {
+    "boxes": [
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Müşteri ekranı",
+        "right": 661.4,
+        "tag": "button",
+        "width": 148.7,
+        "x": 512.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 768.2,
+        "tag": "a",
+        "width": 96.3,
+        "x": 671.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 870.2,
+        "tag": "a",
+        "width": 91.7,
+        "x": 778.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 959.3,
+        "tag": "a",
+        "width": 78.7,
+        "x": 880.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Ekranı eşleştir",
+        "right": 1114,
+        "tag": "button",
+        "width": 144.3,
+        "x": 969.7,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 1348.4,
+        "tag": "button",
+        "width": 71,
+        "x": 1277.4,
+        "y": 11.7
+      },
+      {
+        "bottom": 178.4,
+        "height": 92,
+        "name": "⌂Tümü1",
+        "right": 115.8,
+        "tag": "button",
+        "width": 104.6,
+        "x": 11.2,
+        "y": 86.4
+      },
+      {
+        "bottom": 277.6,
+        "height": 92,
+        "name": "01Diğer1",
+        "right": 115.8,
+        "tag": "button",
+        "width": 104.6,
+        "x": 11.2,
+        "y": 185.6
+      },
+      {
+        "bottom": 156.3,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 916.9,
+        "tag": "input",
+        "width": 320.6,
+        "x": 596.3,
+        "y": 110.3
+      },
+      {
+        "bottom": 319.1,
+        "height": 142,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 335.2,
+        "tag": "button",
+        "width": 180.8,
+        "x": 154.4,
+        "y": 177.1
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 1006.7,
+        "tag": "button",
+        "width": 44,
+        "x": 962.7,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 1099.5,
+        "tag": "button",
+        "width": 44,
+        "x": 1055.5,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 1346.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 1278.7,
+        "y": 222.8
+      },
+      {
+        "bottom": 756,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 1346.8,
+        "tag": "button",
+        "width": 384.1,
+        "x": 962.7,
+        "y": 702
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 768,
+      "clientWidth": 1366,
+      "horizontal": false,
+      "scrollHeight": 768,
+      "scrollWidth": 1366
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 768,
+      "width": 1366
+    }
+  },
+  {
+    "boxes": [
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Müşteri ekranı",
+        "right": 575.4,
+        "tag": "button",
+        "width": 148.7,
+        "x": 426.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 682.2,
+        "tag": "a",
+        "width": 96.3,
+        "x": 585.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 784.2,
+        "tag": "a",
+        "width": 91.7,
+        "x": 692.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 873.3,
+        "tag": "a",
+        "width": 78.7,
+        "x": 794.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Ekranı eşleştir",
+        "right": 1028,
+        "tag": "button",
+        "width": 144.3,
+        "x": 883.7,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 1262.4,
+        "tag": "button",
+        "width": 71,
+        "x": 1191.4,
+        "y": 11.7
+      },
+      {
+        "bottom": 178.4,
+        "height": 92,
+        "name": "⌂Tümü1",
+        "right": 115.8,
+        "tag": "button",
+        "width": 104.6,
+        "x": 11.2,
+        "y": 86.4
+      },
+      {
+        "bottom": 277.6,
+        "height": 92,
+        "name": "01Diğer1",
+        "right": 115.8,
+        "tag": "button",
+        "width": 104.6,
+        "x": 11.2,
+        "y": 185.6
+      },
+      {
+        "bottom": 156.3,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 844.4,
+        "tag": "input",
+        "width": 290.1,
+        "x": 554.3,
+        "y": 110.3
+      },
+      {
+        "bottom": 319.1,
+        "height": 142,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 375.6,
+        "tag": "button",
+        "width": 221.2,
+        "x": 154.4,
+        "y": 177.1
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 934.2,
+        "tag": "button",
+        "width": 44,
+        "x": 890.2,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 1027,
+        "tag": "button",
+        "width": 44,
+        "x": 983,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 1260.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 1192.7,
+        "y": 222.8
+      },
+      {
+        "bottom": 788,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 1260.8,
+        "tag": "button",
+        "width": 370.6,
+        "x": 890.2,
+        "y": 734
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 800,
+      "clientWidth": 1280,
+      "horizontal": false,
+      "scrollHeight": 800,
+      "scrollWidth": 1280
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 800,
+      "width": 1280
+    }
+  },
+  {
+    "boxes": [
+      {
+        "bottom": 70.2,
+        "height": 69.3,
+        "name": "Müşteri ekranı",
+        "right": 374.4,
+        "tag": "button",
+        "width": 121.9,
+        "x": 252.6,
+        "y": 0.8
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 481.2,
+        "tag": "a",
+        "width": 96.3,
+        "x": 384.8,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 583.2,
+        "tag": "a",
+        "width": 91.7,
+        "x": 491.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 672.3,
+        "tag": "a",
+        "width": 78.7,
+        "x": 593.6,
+        "y": 11.7
+      },
+      {
+        "bottom": 70.2,
+        "height": 69.3,
+        "name": "Ekranı eşleştir",
+        "right": 801.2,
+        "tag": "button",
+        "width": 118.5,
+        "x": 682.7,
+        "y": 0.8
+      },
+      {
+        "bottom": 59.3,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 1006.4,
+        "tag": "button",
+        "width": 71,
+        "x": 935.4,
+        "y": 11.7
+      },
+      {
+        "bottom": 168.4,
+        "height": 82,
+        "name": "⌂Tümü1",
+        "right": 95,
+        "tag": "button",
+        "width": 87,
+        "x": 8,
+        "y": 86.4
+      },
+      {
+        "bottom": 257.6,
+        "height": 82,
+        "name": "01Diğer1",
+        "right": 95,
+        "tag": "button",
+        "width": 87,
+        "x": 8,
+        "y": 175.6
+      },
+      {
+        "bottom": 156.3,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 608.4,
+        "tag": "input",
+        "width": 201.1,
+        "x": 407.3,
+        "y": 110.3
+      },
+      {
+        "bottom": 307.1,
+        "height": 130,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 280.9,
+        "tag": "button",
+        "width": 150.5,
+        "x": 130.4,
+        "y": 177.1
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 698.2,
+        "tag": "button",
+        "width": 44,
+        "x": 654.2,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 791,
+        "tag": "button",
+        "width": 44,
+        "x": 747,
+        "y": 222.8
+      },
+      {
+        "bottom": 266.8,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 1004.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 936.7,
+        "y": 222.8
+      },
+      {
+        "bottom": 756,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 1004.8,
+        "tag": "button",
+        "width": 350.6,
+        "x": 654.2,
+        "y": 702
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 768,
+      "clientWidth": 1024,
+      "horizontal": false,
+      "scrollHeight": 768,
+      "scrollWidth": 1024
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 768,
+      "width": 1024
+    }
+  },
+  {
+    "boxes": [
+      {
+        "bottom": 150.1,
+        "height": 47.7,
+        "name": "Müşteri ekranı",
+        "right": 328.3,
+        "tag": "button",
+        "width": 310.7,
+        "x": 17.6,
+        "y": 102.4
+      },
+      {
+        "bottom": 150.1,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 646.9,
+        "tag": "a",
+        "width": 310.7,
+        "x": 336.3,
+        "y": 102.4
+      },
+      {
+        "bottom": 150.1,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 735.4,
+        "tag": "a",
+        "width": 80.5,
+        "x": 654.9,
+        "y": 102.4
+      },
+      {
+        "bottom": 205.7,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 328.3,
+        "tag": "a",
+        "width": 310.7,
+        "x": 17.6,
+        "y": 158.1
+      },
+      {
+        "bottom": 205.7,
+        "height": 47.7,
+        "name": "Ekranı eşleştir",
+        "right": 646.9,
+        "tag": "button",
+        "width": 310.7,
+        "x": 336.3,
+        "y": 158.1
+      },
+      {
+        "bottom": 205.7,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 735.4,
+        "tag": "button",
+        "width": 80.5,
+        "x": 654.9,
+        "y": 158.1
+      },
+      {
+        "bottom": 1012.5,
+        "height": 48,
+        "name": "Sonraki sipariş",
+        "right": 740.2,
+        "tag": "button",
+        "width": 141.3,
+        "x": 598.9,
+        "y": 964.5
+      },
+      {
+        "bottom": 302.3,
+        "height": 70,
+        "name": "⌂Tümü1",
+        "right": 104,
+        "tag": "button",
+        "width": 96,
+        "x": 8,
+        "y": 232.3
+      },
+      {
+        "bottom": 302.3,
+        "height": 70,
+        "name": "01Diğer1",
+        "right": 207.2,
+        "tag": "button",
+        "width": 96,
+        "x": 111.2,
+        "y": 232.3
+      },
+      {
+        "bottom": 459.8,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 730.6,
+        "tag": "input",
+        "width": 708.2,
+        "x": 22.4,
+        "y": 413.8
+      },
+      {
+        "bottom": 612.6,
+        "height": 132,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 190.3,
+        "tag": "button",
+        "width": 167.1,
+        "x": 23.2,
+        "y": 480.6
+      },
+      {
+        "bottom": 1032.5,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 63.2,
+        "tag": "button",
+        "width": 44,
+        "x": 19.2,
+        "y": 988.5
+      },
+      {
+        "bottom": 1032.5,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 156,
+        "tag": "button",
+        "width": 44,
+        "x": 112,
+        "y": 988.5
+      },
+      {
+        "bottom": 1032.5,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 733.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 665.7,
+        "y": 988.5
+      },
+      {
+        "bottom": 1384.7,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 733.8,
+        "tag": "button",
+        "width": 714.6,
+        "x": 19.2,
+        "y": 1330.7
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 1024,
+      "clientWidth": 753,
+      "horizontal": false,
+      "scrollHeight": 1474,
+      "scrollWidth": 753
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 1024,
+      "width": 768
+    }
+  },
+  {
+    "boxes": [
+      {
+        "bottom": 150.1,
+        "height": 47.7,
+        "name": "Müşteri ekranı",
+        "right": 159.3,
+        "tag": "button",
+        "width": 141.7,
+        "x": 17.6,
+        "y": 102.4
+      },
+      {
+        "bottom": 150.1,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 308.9,
+        "tag": "a",
+        "width": 141.7,
+        "x": 167.3,
+        "y": 102.4
+      },
+      {
+        "bottom": 150.1,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 397.4,
+        "tag": "a",
+        "width": 80.5,
+        "x": 316.9,
+        "y": 102.4
+      },
+      {
+        "bottom": 205.7,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 159.3,
+        "tag": "a",
+        "width": 141.7,
+        "x": 17.6,
+        "y": 158.1
+      },
+      {
+        "bottom": 205.7,
+        "height": 47.7,
+        "name": "Ekranı eşleştir",
+        "right": 308.9,
+        "tag": "button",
+        "width": 141.7,
+        "x": 167.3,
+        "y": 158.1
+      },
+      {
+        "bottom": 205.7,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 397.4,
+        "tag": "button",
+        "width": 80.5,
+        "x": 316.9,
+        "y": 158.1
+      },
+      {
+        "bottom": 920.5,
+        "height": 48,
+        "name": "Sonraki sipariş",
+        "right": 402.2,
+        "tag": "button",
+        "width": 141.3,
+        "x": 260.9,
+        "y": 872.5
+      },
+      {
+        "bottom": 302.3,
+        "height": 70,
+        "name": "⌂Tümü1",
+        "right": 104,
+        "tag": "button",
+        "width": 96,
+        "x": 8,
+        "y": 232.3
+      },
+      {
+        "bottom": 302.3,
+        "height": 70,
+        "name": "01Diğer1",
+        "right": 207.2,
+        "tag": "button",
+        "width": 96,
+        "x": 111.2,
+        "y": 232.3
+      },
+      {
+        "bottom": 453.5,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 398.9,
+        "tag": "input",
+        "width": 382.8,
+        "x": 16.1,
+        "y": 407.5
+      },
+      {
+        "bottom": 606.3,
+        "height": 132,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 201.1,
+        "tag": "button",
+        "width": 184.2,
+        "x": 16.9,
+        "y": 474.3
+      },
+      {
+        "bottom": 1032.5,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 63.2,
+        "tag": "button",
+        "width": 44,
+        "x": 19.2,
+        "y": 988.5
+      },
+      {
+        "bottom": 1032.5,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 156,
+        "tag": "button",
+        "width": 44,
+        "x": 112,
+        "y": 988.5
+      },
+      {
+        "bottom": 1032.5,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 395.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 327.7,
+        "y": 988.5
+      },
+      {
+        "bottom": 1384.7,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 395.8,
+        "tag": "button",
+        "width": 376.6,
+        "x": 19.2,
+        "y": 1330.7
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 932,
+      "clientWidth": 415,
+      "horizontal": false,
+      "scrollHeight": 1474,
+      "scrollWidth": 415
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 932,
+      "width": 430
+    }
+  },
+  {
+    "boxes": [
+      {
+        "bottom": 171.7,
+        "height": 69.3,
+        "name": "Müşteri ekranı",
+        "right": 139.3,
+        "tag": "button",
+        "width": 121.7,
+        "x": 17.6,
+        "y": 102.4
+      },
+      {
+        "bottom": 160.9,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 268.9,
+        "tag": "a",
+        "width": 121.7,
+        "x": 147.3,
+        "y": 113.2
+      },
+      {
+        "bottom": 160.9,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 357.4,
+        "tag": "a",
+        "width": 80.5,
+        "x": 276.9,
+        "y": 113.2
+      },
+      {
+        "bottom": 238.2,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 139.3,
+        "tag": "a",
+        "width": 121.7,
+        "x": 17.6,
+        "y": 190.6
+      },
+      {
+        "bottom": 249.1,
+        "height": 69.3,
+        "name": "Ekranı eşleştir",
+        "right": 268.9,
+        "tag": "button",
+        "width": 121.7,
+        "x": 147.3,
+        "y": 179.7
+      },
+      {
+        "bottom": 238.2,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 357.4,
+        "tag": "button",
+        "width": 80.5,
+        "x": 276.9,
+        "y": 190.6
+      },
+      {
+        "bottom": 832.5,
+        "height": 48,
+        "name": "Sonraki sipariş",
+        "right": 362.2,
+        "tag": "button",
+        "width": 141.3,
+        "x": 220.9,
+        "y": 784.5
+      },
+      {
+        "bottom": 345.7,
+        "height": 70,
+        "name": "⌂Tümü1",
+        "right": 104,
+        "tag": "button",
+        "width": 96,
+        "x": 8,
+        "y": 275.7
+      },
+      {
+        "bottom": 345.7,
+        "height": 70,
+        "name": "01Diğer1",
+        "right": 207.2,
+        "tag": "button",
+        "width": 96,
+        "x": 111.2,
+        "y": 275.7
+      },
+      {
+        "bottom": 495.9,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 359.8,
+        "tag": "input",
+        "width": 344.6,
+        "x": 15.2,
+        "y": 449.9
+      },
+      {
+        "bottom": 648.7,
+        "height": 132,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 181.1,
+        "tag": "button",
+        "width": 165.1,
+        "x": 16,
+        "y": 516.7
+      },
+      {
+        "bottom": 1075.8,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 63.2,
+        "tag": "button",
+        "width": 44,
+        "x": 19.2,
+        "y": 1031.8
+      },
+      {
+        "bottom": 1075.8,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 156,
+        "tag": "button",
+        "width": 44,
+        "x": 112,
+        "y": 1031.8
+      },
+      {
+        "bottom": 1075.8,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 355.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 287.7,
+        "y": 1031.8
+      },
+      {
+        "bottom": 1428.1,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 355.8,
+        "tag": "button",
+        "width": 336.6,
+        "x": 19.2,
+        "y": 1374.1
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 844,
+      "clientWidth": 375,
+      "horizontal": false,
+      "scrollHeight": 1518,
+      "scrollWidth": 375
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  {
+    "boxes": [
+      {
+        "bottom": 171.7,
+        "height": 69.3,
+        "name": "Müşteri ekranı",
+        "right": 104.3,
+        "tag": "button",
+        "width": 86.7,
+        "x": 17.6,
+        "y": 102.4
+      },
+      {
+        "bottom": 160.9,
+        "height": 47.7,
+        "name": "Masalar",
+        "right": 198.9,
+        "tag": "a",
+        "width": 86.7,
+        "x": 112.3,
+        "y": 113.2
+      },
+      {
+        "bottom": 160.9,
+        "height": 47.7,
+        "name": "Mutfak",
+        "right": 287.4,
+        "tag": "a",
+        "width": 80.5,
+        "x": 206.9,
+        "y": 113.2
+      },
+      {
+        "bottom": 238.2,
+        "height": 47.7,
+        "name": "Menü",
+        "right": 104.3,
+        "tag": "a",
+        "width": 86.7,
+        "x": 17.6,
+        "y": 190.6
+      },
+      {
+        "bottom": 249.1,
+        "height": 69.3,
+        "name": "Ekranı eşleştir",
+        "right": 198.9,
+        "tag": "button",
+        "width": 86.7,
+        "x": 112.3,
+        "y": 179.7
+      },
+      {
+        "bottom": 238.2,
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 287.4,
+        "tag": "button",
+        "width": 80.5,
+        "x": 206.9,
+        "y": 190.6
+      },
+      {
+        "bottom": 556.5,
+        "height": 48,
+        "name": "Sonraki sipariş",
+        "right": 292.2,
+        "tag": "button",
+        "width": 141.3,
+        "x": 150.9,
+        "y": 508.5
+      },
+      {
+        "bottom": 345.7,
+        "height": 70,
+        "name": "⌂Tümü1",
+        "right": 104,
+        "tag": "button",
+        "width": 96,
+        "x": 8,
+        "y": 275.7
+      },
+      {
+        "bottom": 345.7,
+        "height": 70,
+        "name": "01Diğer1",
+        "right": 207.2,
+        "tag": "button",
+        "width": 96,
+        "x": 111.2,
+        "y": 275.7
+      },
+      {
+        "bottom": 495.9,
+        "height": 46,
+        "name": "Ürün ara",
+        "right": 289.8,
+        "tag": "input",
+        "width": 274.6,
+        "x": 15.2,
+        "y": 449.9
+      },
+      {
+        "bottom": 648.7,
+        "height": 132,
+        "name": "DiğerALKAROS BurgerBURGER-01₺325,00KDV dahil",
+        "right": 289,
+        "tag": "button",
+        "width": 273,
+        "x": 16,
+        "y": 516.7
+      },
+      {
+        "bottom": 1075.8,
+        "height": 44,
+        "name": "ALKAROS Burger azalt",
+        "right": 63.2,
+        "tag": "button",
+        "width": 44,
+        "x": 19.2,
+        "y": 1031.8
+      },
+      {
+        "bottom": 1075.8,
+        "height": 44,
+        "name": "ALKAROS Burger artır",
+        "right": 156,
+        "tag": "button",
+        "width": 44,
+        "x": 112,
+        "y": 1031.8
+      },
+      {
+        "bottom": 1075.8,
+        "height": 44,
+        "name": "Kaldır",
+        "right": 285.8,
+        "tag": "button",
+        "width": 68.1,
+        "x": 217.7,
+        "y": 1031.8
+      },
+      {
+        "bottom": 1428.1,
+        "height": 54,
+        "name": "Sonraki siparişi aç",
+        "right": 285.8,
+        "tag": "button",
+        "width": 266.6,
+        "x": 19.2,
+        "y": 1374.1
+      }
+    ],
+    "outOfBounds": [],
+    "scroll": {
+      "clientHeight": 568,
+      "clientWidth": 305,
+      "horizontal": false,
+      "scrollHeight": 1518,
+      "scrollWidth": 305
+    },
+    "smallTargets": [],
+    "viewport": {
+      "height": 568,
+      "width": 320
+    }
+  }
+]

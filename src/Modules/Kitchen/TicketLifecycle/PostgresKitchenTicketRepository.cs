@@ -97,9 +97,23 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var tx = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
+        await AddAsync(ticket, connection, tx, cancellationToken).ConfigureAwait(false);
+        await tx.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task AddAsync(
+        KitchenTicket ticket,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(ticket);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
         await using (var cmd = connection.CreateCommand())
         {
-            cmd.Transaction = tx;
+            cmd.Transaction = transaction;
             cmd.CommandText =
                 """
                 INSERT INTO kitchen.kitchen_tickets (
@@ -129,7 +143,7 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         foreach (var item in ticket.Items)
         {
             await using var itemCmd = connection.CreateCommand();
-            itemCmd.Transaction = tx;
+            itemCmd.Transaction = transaction;
             itemCmd.CommandText =
                 """
                 INSERT INTO kitchen.kitchen_ticket_items (
@@ -162,7 +176,6 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             await itemCmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        await tx.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<long> SaveAsync(KitchenTicket ticket, long expectedRowVersion, CancellationToken cancellationToken = default)

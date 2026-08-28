@@ -70,7 +70,9 @@ public sealed class BillItem
         }
         else
         {
-            var lineSubtotal = BillMath.RoundCurrency(Quantity * UnitPrice);
+            var lineSubtotal = netAmount.HasValue
+                ? BillMath.RoundCurrency(netAmount.Value + DiscountAmount)
+                : BillMath.RoundCurrency(Quantity * UnitPrice);
             if (DiscountAmount > lineSubtotal)
                 throw new ArgumentException(
                     "Discount amount cannot exceed the bill item subtotal.",
@@ -117,7 +119,7 @@ public sealed class BillItem
 
     public DateTimeOffset UpdatedAt { get; }
 
-    public decimal LineSubtotal => BillMath.RoundCurrency(Quantity * UnitPrice);
+    public decimal LineSubtotal => BillMath.RoundCurrency(NetAmount + DiscountAmount);
 
     /// <summary>
     /// Creates a BillItem instance bound to a target Bill from an active OrderItem.

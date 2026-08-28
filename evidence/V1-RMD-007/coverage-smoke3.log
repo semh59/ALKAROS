@@ -1,0 +1,12 @@
+Telemetry
+---------
+The code coverage tools collect usage data in order to help us improve your experience. The data is collected by Microsoft. You can opt out of telemetry by setting the DOTNET_COVERAGE_TELEMETRY_OPTOUT environment variable to '1' using your favorite shell.
+
+This message is displayed only once. Set the DOTNET_COVERAGE_NOLOGO environment variable to '1' to suppress it in the future.
+dotnet-coverage v18.10.0.0 [linux-x64 - .NET 10.0.10]
+
+SessionId: 9635e72d-5bec-4aa2-9707-5d4f6ed025b5
+MSBUILD : error MSB1009: Project file does not exist.
+Switch: tests/BuildingBlocks/Security/SensitiveData/SensitiveDataTests.csproj
+No code coverage data available. Profiler was not initialized. Verify that glibc (>=2.27), libxml2 and all .NET dependencies are installed.
+Code coverage results: /src/evidence/V1-RMD-007/coverage-smoke3.cobertura.xml.

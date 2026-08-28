@@ -19,7 +19,6 @@
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
-    <RepositoryCommit>8b7a4bf0a5f8dbec015780c9a616f225ee04c162</RepositoryCommit>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -27,5 +26,23 @@
     <ALKAROSSourceRoot>$(ALKAROSRoot)src\</ALKAROSSourceRoot>
     <ALKAROSTestsRoot>$(ALKAROSRoot)tests\</ALKAROSTestsRoot>
   </PropertyGroup>
+
+  <Target Name="ResolveAndValidateRepositoryCommit" BeforeTargets="GenerateAssemblyInfo">
+    <Exec Command="git rev-parse HEAD"
+          WorkingDirectory="$(MSBuildThisFileDirectory)"
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="Low">
+      <Output TaskParameter="ConsoleOutput" ItemName="_GitCommitOutput" />
+    </Exec>
+    <PropertyGroup>
+      <_DetectedRepositoryCommit>@(_GitCommitOutput)</_DetectedRepositoryCommit>
+      <RepositoryCommit Condition="'$(RepositoryCommit)' == ''">$(_DetectedRepositoryCommit)</RepositoryCommit>
+      <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">$(RepositoryCommit)</SourceRevisionId>
+    </PropertyGroup>
+    <Error Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(RepositoryCommit)', '^[0-9a-f]{40}$')) != 'True'"
+           Text="RepositoryCommit must be a lowercase 40-character Git SHA, but was '$(RepositoryCommit)'." />
+    <Error Condition="'$(RepositoryCommit)' != '$(_DetectedRepositoryCommit)'"
+           Text="RepositoryCommit '$(RepositoryCommit)' does not match checked-out Git HEAD '$(_DetectedRepositoryCommit)'." />
+  </Target>
 
 </Project>

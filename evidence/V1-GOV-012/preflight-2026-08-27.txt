@@ -1,0 +1,17 @@
+Repository root: D:\PROJECT\ALKAROS
+Task ID: V1-GOV-012
+Assignee: /root
+Date: 2026-08-27
+
+Write allowlist:
+- plan/v1/remediation/V1-RMD-022-table-card-keyboard-semantics.md
+- plan/v1/README.md
+- plan/AUDIT_MANIFEST.json
+- evidence/V1-GOV-012/**
+
+The initial git status and git diff snapshots were captured before the first write. The worktree already contained
+unrelated modified and untracked files; this task does not modify, delete, move, or reset those paths.
+
+Finding source:
+- V1-RMD-010 Blocker
+- src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:276-280

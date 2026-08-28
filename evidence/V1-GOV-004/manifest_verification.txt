@@ -1,0 +1,15 @@
+ALKAROS V1-GOV-004 Manifest Verification Output
+Task ID: V1-GOV-004
+
+Command: python -B tools/plan-audit/plan_audit_tool.py verify-manifest
+Output:
+Manifest Markdown files: 562
+UTF-8 full reads: 562
+Markdown lines: 39471
+Markdown bytes: 2430194
+Audit baseline rows: 211
+Audit finding IDs: 1827
+Audit added-file hashes: 350
+Manifest errors: 0
+
+Exit Code: 0 (PASSED)

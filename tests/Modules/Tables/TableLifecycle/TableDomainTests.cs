@@ -21,7 +21,7 @@ public class TableDomainTests
     [Theory]
     [InlineData(TableState.Reserved, true)]
     [InlineData(TableState.Available, true)]
-    [InlineData(TableState.Cleaning, false)]
+    [InlineData(TableState.Cleaning, true)]
     [InlineData(TableState.OutOfService, false)]
     [InlineData(TableState.Occupied, false)]
     public void OccupiedCanTransitionTo(TableState target, bool allowed)
@@ -29,7 +29,7 @@ public class TableDomainTests
 
     [Theory]
     [InlineData(TableState.Available, true)]
-    [InlineData(TableState.Occupied, false)]
+    [InlineData(TableState.Occupied, true)]
     [InlineData(TableState.Reserved, false)]
     [InlineData(TableState.Cleaning, false)]
     [InlineData(TableState.OutOfService, false)]
@@ -38,10 +38,10 @@ public class TableDomainTests
 
     [Theory]
     [InlineData(TableState.Available, true)]
+    [InlineData(TableState.OutOfService, true)]
     [InlineData(TableState.Occupied, false)]
     [InlineData(TableState.Reserved, false)]
     [InlineData(TableState.Cleaning, false)]
-    [InlineData(TableState.OutOfService, false)]
     public void CleaningCanTransitionTo(TableState target, bool allowed)
         => NewTable(TableState.Cleaning).CanTransitionTo(target).Should().Be(allowed);
 

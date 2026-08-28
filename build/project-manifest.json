@@ -348,6 +348,63 @@
       ]
     },
     {
+      "path": "tests/Host/Experience/Composition/ALKAROS.Host.Experience.Composition.Tests.csproj",
+      "kind": "test",
+      "module": "Host",
+      "references": [
+        "src/Host/ALKAROS.Host.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio"
+      ]
+    },
+    {
+      "path": "tests/Host/Experience/Catalog/ALKAROS.Host.Experience.Catalog.Tests.csproj",
+      "kind": "test",
+      "module": "Host",
+      "references": [
+        "src/Host/ALKAROS.Host.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "tests/Host/Experience/Tables/ALKAROS.Host.Experience.Tables.Tests.csproj",
+      "kind": "test",
+      "module": "Host",
+      "references": [
+        "src/Host/ALKAROS.Host.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "tests/Host/Experience/KitchenOperations/ALKAROS.Host.Experience.KitchenOperations.Tests.csproj",
+      "kind": "test",
+      "module": "Host",
+      "references": [
+        "src/Host/ALKAROS.Host.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "Npgsql"
+      ]
+    },
+    {
       "path": "tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj",
       "kind": "test",
       "module": "Transactions",

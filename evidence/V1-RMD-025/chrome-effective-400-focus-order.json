@@ -1,0 +1,296 @@
+{
+  "start": {
+    "cls": "",
+    "scrollY": 0,
+    "tag": "BODY",
+    "text": "Ana içeriğe geçALKAROSŞubeŞube bağlamıTerminalTerminal DD90A5B4KullanıcıRMD025 M"
+  },
+  "steps": [
+    {
+      "height": 45.66666793823242,
+      "href": "#_r_0_",
+      "index": 1,
+      "role": "",
+      "tag": "A",
+      "text": "Ana içeriğe geç",
+      "width": 140,
+      "x": 8,
+      "y": 8
+    },
+    {
+      "height": 44,
+      "href": "/display",
+      "index": 2,
+      "role": "",
+      "tag": "A",
+      "text": "Müşteri ekranı",
+      "width": 129.86459350585938,
+      "x": 97.27083587646484,
+      "y": 0
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 3,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Çıkış",
+      "width": 61.86458587646485,
+      "x": 231.1354217529297,
+      "y": 0
+    },
+    {
+      "height": 44,
+      "href": "/",
+      "index": 4,
+      "role": "",
+      "tag": "A",
+      "text": "₺Kasa",
+      "width": 76.25,
+      "x": 0,
+      "y": 46
+    },
+    {
+      "height": 44,
+      "href": "/tables",
+      "index": 5,
+      "role": "",
+      "tag": "A",
+      "text": "▦Masalar",
+      "width": 76.25,
+      "x": 76.25,
+      "y": 46
+    },
+    {
+      "height": 44,
+      "href": "/kitchen",
+      "index": 6,
+      "role": "",
+      "tag": "A",
+      "text": "◇Mutfak",
+      "width": 76.25,
+      "x": 152.5,
+      "y": 46
+    },
+    {
+      "height": 44,
+      "href": "/catalog",
+      "index": 7,
+      "role": "",
+      "tag": "A",
+      "text": "≡Menü",
+      "width": 76.25,
+      "x": 228.75,
+      "y": 46
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 8,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "+ Zone ekle",
+      "width": 132.5,
+      "x": 16,
+      "y": 40.046875
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 9,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "+ Masa ekle",
+      "width": 132.5,
+      "x": 156.5,
+      "y": 40.046875
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 10,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Yenile",
+      "width": 273,
+      "x": 16,
+      "y": 80.046875
+    },
+    {
+      "height": 45.66666793823242,
+      "href": "",
+      "index": 11,
+      "role": "",
+      "tag": "SELECT",
+      "text": "Tüm zone'larAna Salon",
+      "width": 239,
+      "x": 33,
+      "y": 39.24479293823242
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 12,
+      "role": "",
+      "tag": "INPUT",
+      "text": "Masa ara",
+      "width": 239,
+      "x": 33,
+      "y": 80.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 13,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Tümü",
+      "width": 60.39583587646485,
+      "x": 33,
+      "y": 40.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 14,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Müsait",
+      "width": 67.0625,
+      "x": 97.39583587646484,
+      "y": 40.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 15,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Dolu",
+      "width": 54.0625,
+      "x": 168.45834350585938,
+      "y": 40.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 16,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Rezerve",
+      "width": 73.39583587646484,
+      "x": 33,
+      "y": 80.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 17,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Temizlik",
+      "width": 77.39583587646484,
+      "x": 110.39583587646484,
+      "y": 80.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 18,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Servis dışı",
+      "width": 87.39583587646484,
+      "x": 33,
+      "y": 40.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 19,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Harita",
+      "width": 63.39583587646485,
+      "x": 33,
+      "y": 80.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 20,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Liste",
+      "width": 53.72916793823242,
+      "x": 100.39583587646484,
+      "y": 80.109375
+    },
+    {
+      "height": 77.26042175292969,
+      "href": "",
+      "index": 21,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "S-09 masasını seç, Müsait",
+      "width": 104.5,
+      "x": 30,
+      "y": 23.44270896911621
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 22,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "S-09: Masayı aç",
+      "width": 104.5,
+      "x": 30,
+      "y": 39.89583587646485
+    },
+    {
+      "height": 77.26042175292969,
+      "href": "",
+      "index": 23,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "S-10 masasını seç, Müsait",
+      "width": 104.5,
+      "x": 170.5,
+      "y": 0.109375
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 24,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "S-10: Masayı aç",
+      "width": 104.5,
+      "x": 170.5,
+      "y": 79.89583587646484
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 25,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Masayı aç",
+      "width": 239,
+      "x": 33,
+      "y": 40.15625
+    },
+    {
+      "height": 44,
+      "href": "",
+      "index": 26,
+      "role": "",
+      "tag": "BUTTON",
+      "text": "Rezervasyon al",
+      "width": 239,
+      "x": 33,
+      "y": 80.15625
+    }
+  ]
+}

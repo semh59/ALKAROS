@@ -1,4 +1,4 @@
-﻿namespace ALKAROS.Audit.EventStore;
+namespace ALKAROS.Audit.EventStore;
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -48,9 +48,22 @@ public sealed class AuditSanitizer : IAuditSanitizer
         }
         catch (JsonException)
         {
-            return rawJson;
+            var sanitized = FallbackSanitizeText(rawJson);
+            return JsonSerializer.Serialize(new { raw_payload = sanitized, unparsed = true });
         }
     }
+
+    private static string FallbackSanitizeText(string text)
+    {
+        var sanitized = text;
+        foreach (var pattern in SensitiveSubstrings)
+        {
+            var regex = new System.Text.RegularExpressions.Regex(
+                $@"(?i)({pattern}\s*[:=]\s*)([^,\s""}}\]]+)",
+                System.Text.RegularExpressions.RegexOptions.Compiled);
+            sanitized = regex.Replace(sanitized, "$1[REDACTED]");
+        }
+        return sanitized;
 
     public string? SerializeAndSanitize<T>(T? payload)
     {

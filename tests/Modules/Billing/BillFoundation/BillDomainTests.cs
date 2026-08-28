@@ -252,6 +252,41 @@ public sealed class BillDomainTests
         Assert.Throws<InvalidOperationException>(() => bill.TransitionTo(target));
     }
 
+    [Theory]
+    [InlineData(BillState.PartiallyAllocated)]
+    [InlineData(BillState.Allocated)]
+    [InlineData(BillState.Cancelled)]
+    public void ReopenedBillCanTransitionToActiveAndTerminalStates(BillState target)
+    {
+        var bill = new Bill(Guid.NewGuid(), "BILL-REOPENED", status: BillState.Reopened);
+        Assert.True(bill.CanTransitionTo(target));
+        var transitioned = bill.TransitionTo(target);
+        Assert.Equal(target, transitioned.Status);
+    }
+
+    [Fact]
+    public void BillItemFromOrderItemWithModifiersAndDiscountCalculatesAccurately()
+    {
+        var modifier = new OrderItemModifier(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Extra Cheese", priceDelta: 50m, quantity: 1);
+        var orderItem = new OrderItem(
+            id: Guid.NewGuid(),
+            orderId: Guid.NewGuid(),
+            productId: Guid.NewGuid(),
+            productNameSnapshot: "Burger",
+            quantity: 1,
+            unitPrice: 100m,
+            taxRate: 10m,
+            discountAmount: 30m,
+            modifiers: new[] { modifier });
+
+        var billItem = BillItem.FromOrderItem(Guid.NewGuid(), orderItem);
+
+        Assert.Equal(120m, billItem.NetAmount);
+        Assert.Equal(12m, billItem.TaxAmount);
+        Assert.Equal(132m, billItem.GrossAmount);
+        Assert.Equal(150m, billItem.LineSubtotal);
+    }
+
     [Fact]
     public void AddItemWhenOpenOrReopenedSucceeds()
     {

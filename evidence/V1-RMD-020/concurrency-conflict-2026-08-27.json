@@ -1,0 +1,15 @@
+{
+  "candidate": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "browser": "two in-app cashier tabs sharing terminal session",
+  "order": "POS-20260827-044347-034F4B2CCB8D",
+  "firstMutation": "Espresso add accepted; revision advanced",
+  "secondMutation": "Latte add from stale revision",
+  "result": {
+    "status": 409,
+    "uiAlert": "Kayıt başka bir işlem tarafından değiştirildi.",
+    "staleTabRetainedAuthoritativeLine": "Espresso × 1",
+    "retryAvailable": "active product buttons remain enabled"
+  },
+  "consoleA": [],
+  "consoleB": []
+}

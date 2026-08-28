@@ -1,0 +1,49 @@
+Candidate preflight
+HEAD=a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+TREE=39e9bb79d3d6f3e099e15a7ffafcc801f727843a
+TRACKED_PATHS=1727
+TRACKED_DIFF_EXIT=0
+
+Toolchain
+dotnet=MISSING
+psql=MISSING
+node=24.19.0
+pnpm=11.19.0
+python=3.12.13 (locked requirement 3.12.12)
+pytest=MISSING
+docker=29.7.2
+
+PosTerminal clean checkout
+pnpm install --frozen-lockfile: exit 0
+pnpm typecheck: exit 0
+pnpm test: exit 0, 2/2 tests
+pnpm build: exit 0, 45 modules, output produced in disposable checkout
+
+Node tests
+node --test src/Clients/WebPrototype/tests/*.test.js: exit 0, 20/20
+node --test tools/tests/*.test.js: exit 0, 7/7
+pnpm audit --prod: exit 0, no known vulnerabilities
+pnpm licenses list --prod --json: exit 0
+
+Governance validation at pinned candidate
+plan_audit_tool.py validate: exit 1, C54_APPLICATION_ADMISSION_V3_CLOSURE_INVALID
+plan_audit_tool.py validate-coverage: exit 0
+plan_audit_tool.py verify-manifest: exit 1, 1601 errors
+python -m pytest -q: exit 1, No module named pytest
+
+PostgreSQL 18 disposable container
+image=postgres@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
+forward 001..038: exit 0
+reverse 038..012: exit 1
+error=DROP EXTENSION btree_gist cannot run because catalog.product_prices.excl_product_prices_no_overlap depends on gist_uuid_ops
+reforward=not run after down failure
+container_removed=true
+
+Ledger
+expected_paths=1727
+ledger_rows=1727
+unique_paths=1727
+text_rows=1669
+binary_rows=58
+verification_errors=0
+verifier_exit=0

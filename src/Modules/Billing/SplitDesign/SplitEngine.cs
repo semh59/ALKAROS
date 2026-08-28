@@ -113,7 +113,7 @@ public static class SplitEngine
             else
             {
                 taxAmount = bill.PayableAmount > 0
-                    ? BillMath.RoundCurrency(totalTax * (roundedAmount / bill.PayableAmount))
+                    ? FloorCurrency(totalTax * (roundedAmount / bill.PayableAmount))
                     : 0m;
                 runningTax += taxAmount;
             }
@@ -229,6 +229,79 @@ public static class SplitEngine
 
         return allocations;
     }
+
+    /// <summary>
+    /// Creates a lossless custom allocation design with optional item quantities.
+    /// </summary>
+    public static IReadOnlyList<BillAllocation> CreateCustomSplit(
+        Bill bill,
+        IReadOnlyList<CustomSplitTarget> targets,
+        Guid? createdBy = null)
+    {
+        ArgumentNullException.ThrowIfNull(bill);
+        ArgumentNullException.ThrowIfNull(targets);
+
+        if (targets.Count < 2)
+            throw new ArgumentException("Custom split requires at least 2 allocation targets.", nameof(targets));
+
+        var itemsById = bill.Items.ToDictionary(item => item.Id);
+        foreach (var target in targets)
+        {
+            if (string.IsNullOrWhiteSpace(target.OwnerReference))
+                throw new ArgumentException("Custom target has an empty owner reference.", nameof(targets));
+            if (target.Amount <= 0m)
+                throw new ArgumentException("Custom target amount must be positive.", nameof(targets));
+            if (target.BillItemId.HasValue != target.Quantity.HasValue)
+                throw new ArgumentException("Custom item ID and quantity must be supplied together.", nameof(targets));
+            if (target.Quantity is <= 0m)
+                throw new ArgumentException("Custom item quantity must be positive.", nameof(targets));
+            if (target.BillItemId is { } itemId && !itemsById.ContainsKey(itemId))
+                throw new InvalidOperationException($"Bill item {itemId} does not exist in Bill {bill.Id}.");
+        }
+
+        foreach (var group in targets.Where(target => target.BillItemId.HasValue).GroupBy(target => target.BillItemId!.Value))
+        {
+            if (group.Sum(target => target.Quantity!.Value) > itemsById[group.Key].Quantity)
+            {
+                throw new InvalidOperationException(
+                    $"Total allocated quantity for item {group.Key} exceeds item quantity ({itemsById[group.Key].Quantity}).");
+            }
+        }
+
+        var roundedAmounts = targets.Select(target => BillMath.RoundCurrency(target.Amount)).ToArray();
+        if (roundedAmounts.Sum() != bill.PayableAmount)
+        {
+            throw new InvalidOperationException(
+                $"Sum of custom split amounts ({roundedAmounts.Sum()}) does not match Bill payable amount ({bill.PayableAmount}).");
+        }
+
+        var allocations = new List<BillAllocation>(targets.Count);
+        var runningTax = 0m;
+        for (var index = 0; index < targets.Count; index++)
+        {
+            var target = targets[index];
+            var tax = index == targets.Count - 1
+                ? BillMath.RoundCurrency(bill.TaxTotal - runningTax)
+                : FloorCurrency(bill.TaxTotal * (roundedAmounts[index] / bill.PayableAmount));
+            runningTax += tax;
+
+            allocations.Add(new BillAllocation(
+                Guid.NewGuid(),
+                bill.Id,
+                AllocationOwnerType.Person,
+                target.OwnerReference,
+                roundedAmounts[index],
+                tax,
+                target.BillItemId,
+                target.Quantity,
+                createdBy: createdBy));
+        }
+
+        return allocations;
+    }
+
+    private static decimal FloorCurrency(decimal value)
+        => BillMath.RoundCurrency(Math.Floor(value * 100m) / 100m);
 }
 
 /// <summary>

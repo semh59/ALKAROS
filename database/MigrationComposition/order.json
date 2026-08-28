@@ -225,6 +225,12 @@
       "phase": "B",
       "tables": ["terminals", "pairing_requests", "display_sessions"],
       "deferredConstraints": []
+    },
+    {
+      "id": "039",
+      "phase": "B",
+      "tables": ["zone_floor_plans", "table_layouts", "table_seats"],
+      "deferredConstraints": []
     }
   ]
 }

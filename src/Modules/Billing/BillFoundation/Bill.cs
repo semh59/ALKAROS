@@ -173,12 +173,12 @@ public sealed class Bill
     /// </summary>
     public bool CanTransitionTo(BillState target) => target switch
     {
-        BillState.PartiallyAllocated => Status is BillState.Open,
-        BillState.Allocated => Status is BillState.Open or BillState.PartiallyAllocated,
+        BillState.PartiallyAllocated => Status is BillState.Open or BillState.Reopened,
+        BillState.Allocated => Status is BillState.Open or BillState.PartiallyAllocated or BillState.Reopened,
         BillState.PartiallyPaid => Status is BillState.Allocated,
         BillState.Paid => Status is BillState.Allocated or BillState.PartiallyPaid,
         BillState.Cancelled => Status is BillState.Open or BillState.PartiallyAllocated
-            or BillState.Allocated or BillState.PartiallyPaid,
+            or BillState.Allocated or BillState.PartiallyPaid or BillState.Reopened,
         BillState.Reopened => Status is BillState.Paid or BillState.Cancelled,
         _ => false,
     };

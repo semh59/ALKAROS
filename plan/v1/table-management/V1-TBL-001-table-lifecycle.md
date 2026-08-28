@@ -20,16 +20,13 @@ Table identity, zone, canonical status transition ve optimistic concurrency davr
 
 ## Owned surface
 
-- `src/Modules/Tables/TableLifecycle/PostgresZoneRepository.cs`
-- `src/Modules/Tables/TableLifecycle/Table.cs`
-- `src/Modules/Tables/TableLifecycle/TableRepository.cs`
 - `src/Modules/Tables/TableLifecycle/TableState.cs`
-- `src/Modules/Tables/TableLifecycle/TablesModule.cs`
-- `src/Modules/Tables/TableLifecycle/Zone.cs`
 - `tests/Modules/Tables/TableLifecycle/Fixtures/TablesTestDatabase.cs`
 - `tests/Modules/Tables/TableLifecycle/TableDomainTests.cs`
 - `database/migrations/V1/V1-TBL-001/**`
 - C52 repository transition source/test surface is transferred to V1-FND-022; this historical task remains closed.
+- PO:2026-08-28 desktop floor kararıyla zone/table model, repository ve module registration yüzeyi V1-RMD-026'ya
+  devredildi; bu historical task closed kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

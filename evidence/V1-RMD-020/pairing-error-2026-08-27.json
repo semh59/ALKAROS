@@ -1,0 +1,10 @@
+{
+  "candidate": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "route": "/",
+  "invalidCode": "00000000",
+  "cashierAlert": "İstek doğrulanamadı.",
+  "dialogRemainsOpen": true,
+  "retryControlVisible": true,
+  "boundedMs": 500,
+  "console": []
+}

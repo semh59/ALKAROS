@@ -12,9 +12,9 @@ public sealed class ManifestTests : IDisposable
         "001", "002", "003", "005", "006", "007", "008", "009", "010", "011",
         "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022",
         "023", "024", "025", "026", "027", "028", "029", "030", "031", "032", "033", "034", "035",
-        "036", "037", "038"
+        "036", "037", "038", "039"
     ];
-    private static readonly string[] LastEntryTables = ["terminals", "pairing_requests", "display_sessions"];
+    private static readonly string[] LastEntryTables = ["zone_floor_plans", "table_layouts", "table_seats"];
     private readonly string _directory = Path.Combine(
         Path.GetTempPath(), "alkaros-fnd004-" + Guid.NewGuid().ToString("N")[..8]);
 
@@ -33,12 +33,25 @@ public sealed class ManifestTests : IDisposable
     {
         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
 
-        Assert.Equal(37, manifest.Migrations.Count);
+        Assert.Equal(38, manifest.Migrations.Count);
         Assert.Equal(RuntimeManifestIds, manifest.Migrations.Select(entry => entry.Id));
         Assert.Equal(
             FirstEntryTables,
             manifest.Migrations[0].Tables);
         Assert.Equal(LastEntryTables, manifest.Migrations[^1].Tables);
+    }
+
+    [Fact]
+    public void ExtensionConsumerAndOwnershipAssertionRemainStrictlyOrdered()
+    {
+        var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
+
+        var migrations = manifest.Migrations.ToList();
+        var catalogIndex = migrations.FindIndex(entry => entry.Id == "007");
+        var ownershipAssertionIndex = migrations.FindIndex(entry => entry.Id == "012");
+
+        Assert.True(catalogIndex >= 0);
+        Assert.True(ownershipAssertionIndex > catalogIndex);
     }
 
     [Fact]

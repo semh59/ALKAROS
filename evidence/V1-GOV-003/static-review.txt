@@ -1,0 +1,1 @@
+Candidate source reviewed independently; see structured findings and ledger. Prior evidence PASS claims were not reused.

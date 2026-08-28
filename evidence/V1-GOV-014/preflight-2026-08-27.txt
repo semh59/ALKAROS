@@ -1,0 +1,16 @@
+Repository root: D:\PROJECT\ALKAROS
+Task ID: V1-GOV-014
+Assignee: /root
+Date: 2026-08-27
+
+Write allowlist:
+- plan/v1/remediation/V1-RMD-016-production-shell-and-design-system.md
+- plan/v1/remediation/V1-RMD-022-table-card-keyboard-semantics.md
+- plan/v1/remediation/V1-RMD-023-production-landmark-and-aria-semantics.md
+- plan/v1/README.md
+- plan/AUDIT_REPORT.md
+- plan/AUDIT_MANIFEST.json
+- evidence/V1-GOV-014/**
+
+Finding source: evidence/V1-RMD-010/chrome-revalidation-2026-08-27.json.
+Existing unrelated modified and untracked paths are preserved.

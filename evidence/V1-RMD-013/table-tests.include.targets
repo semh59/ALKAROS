@@ -1,0 +1,6 @@
+<Project>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'ALKAROS.Host.Tests'">
+    <Compile Include="$(MSBuildThisFileDirectory)..\..\tests\Host\Experience\Tables\**\*.cs"
+             Link="Experience\Tables\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

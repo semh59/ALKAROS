@@ -1,0 +1,26 @@
+{
+  "candidate": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "browser": "in-app browser",
+  "route": "/catalog",
+  "authenticatedRole": "Manager",
+  "request": {
+    "method": "POST",
+    "path": "/api/v1/management/catalog/products",
+    "sku": "MOCK-ESP-004",
+    "productType": "MenuItem",
+    "stockMode": "Untracked"
+  },
+  "response": {
+    "status": 500,
+    "uiMessage": "İşlem tamamlanamadı."
+  },
+  "serverException": "BadHttpRequestException: Failed to read CreateProductV1 request; JsonException cannot convert $.productType",
+  "dialogRemainsOpen": true,
+  "sourceOwnership": {
+    "frontend": "src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx + catalogApi.ts (V1-RMD-018)",
+    "server": "src/Host/Experience/Catalog/CatalogManagementEndpoints.cs (not V1-RMD-020)"
+  },
+  "severity": "P1 high production blocker",
+  "requiredFollowup": "Exact new remediation task or plan change; do not edit RMD-018-owned surface here.",
+  "console": []
+}

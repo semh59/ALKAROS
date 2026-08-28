@@ -1,0 +1,1978 @@
+{
+  "candidateCommit": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "host": "http://127.0.0.1:58299",
+  "authenticated": false,
+  "viewports": [
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 567.0989990234375,
+            "height": 48,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 519.0989990234375
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 659.4948120117188,
+            "height": 48,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 611.4948120117188
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 735.890625,
+            "height": 54,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 681.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 1080,
+            "height": 1080,
+            "right": 1920,
+            "width": 1920,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 930.171875,
+            "height": 780.34375,
+            "right": 760,
+            "width": 760,
+            "x": 0,
+            "y": 149.828125
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 673.484375,
+            "height": 281.53125,
+            "right": 632,
+            "width": 504,
+            "x": 128,
+            "y": 391.953125
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 812.5521240234375,
+            "height": 545.1041870117188,
+            "right": 1808.5989990234375,
+            "width": 430,
+            "x": 1378.5989990234375,
+            "y": 267.44793701171875
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 378.6458435058594,
+            "height": 47,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 331.6458435058594
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 474.703125,
+            "height": 44,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 430.703125
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 567.0989990234375,
+            "height": 48,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 519.0989990234375
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 659.4948120117188,
+            "height": 48,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 611.4948120117188
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 735.890625,
+            "height": 54,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 681.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 567.0989990234375,
+            "height": 48,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 519.0989990234375
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 659.4948120117188,
+            "height": 48,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 611.4948120117188
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 735.890625,
+            "height": 54,
+            "right": 1766.0000915527344,
+            "width": 344.8020935058594,
+            "x": 1421.197998046875,
+            "y": 681.890625
+          },
+          "role": "button"
+        }
+      ],
+      "text": "A\nALKAROS RESTAURANT OS\nServis hızını\nkasada koruyun.\n\nSipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.\n\nKasa sunucusu hazır\nPERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 1080,
+        "width": 1920
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-1920x1080-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 477.0989685058594,
+            "height": 48,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 429.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 569.4948120117188,
+            "height": 48,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 521.4948120117188
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 645.890625,
+            "height": 54,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 591.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1440,
+        "bodyScrollWidth": 1440,
+        "documentClientWidth": 1440,
+        "documentScrollWidth": 1440,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 900,
+            "height": 900,
+            "right": 1440,
+            "width": 1440,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 756.9896087646484,
+            "height": 613.9791870117188,
+            "right": 760,
+            "width": 760,
+            "x": 0,
+            "y": 143.0104217529297
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 513.1041870117188,
+            "height": 140.77084350585938,
+            "right": 644.8021087646484,
+            "width": 529.6041870117188,
+            "x": 115.19792175292967,
+            "y": 372.3333435058594
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 722.5521087646484,
+            "height": 545.1041870117188,
+            "right": 1410.1979370117188,
+            "width": 430,
+            "x": 980.1979370117188,
+            "y": 177.4479217529297
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 288.6458435058594,
+            "height": 47,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 241.64584350585935
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 384.703125,
+            "height": 44,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 340.703125
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 477.0989685058594,
+            "height": 48,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 429.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 569.4948120117188,
+            "height": 48,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 521.4948120117188
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 645.890625,
+            "height": 54,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 591.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 477.0989685058594,
+            "height": 48,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 429.0989685058594
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 569.4948120117188,
+            "height": 48,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 521.4948120117188
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 645.890625,
+            "height": 54,
+            "right": 1367.5989685058594,
+            "width": 344.8020935058594,
+            "x": 1022.796875,
+            "y": 591.890625
+          },
+          "role": "button"
+        }
+      ],
+      "text": "A\nALKAROS RESTAURANT OS\nServis hızını\nkasada koruyun.\n\nSipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.\n\nKasa sunucusu hazır\nPERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-1440x900-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 363.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 455.4948120117187
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 525.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 768,
+            "height": 768,
+            "right": 1366,
+            "width": 1366,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 679.8542098999023,
+            "height": 591.7083740234375,
+            "right": 760,
+            "width": 760,
+            "x": 0,
+            "y": 88.14583587646484
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 445.078125,
+            "height": 133.53125,
+            "right": 650.7239837646484,
+            "width": 541.4479370117188,
+            "x": 109.27604675292967,
+            "y": 311.546875
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 655.9323348999023,
+            "height": 543.8646240234375,
+            "right": 1342,
+            "width": 416.4375,
+            "x": 925.5625,
+            "y": 112.06771087646484
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 222.64584350585935,
+            "height": 47,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 175.64584350585938
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 318.703125,
+            "height": 44,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 274.703125
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 363.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 455.4948120117187
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 525.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 363.0989685058594
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 455.4948120117187
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 1300.0208740234375,
+            "width": 332.47918701171875,
+            "x": 967.5416870117188,
+            "y": 525.890625
+          },
+          "role": "button"
+        }
+      ],
+      "text": "A\nALKAROS RESTAURANT OS\nServis hızını\nkasada koruyun.\n\nSipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.\n\nKasa sunucusu hazır\nPERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 768,
+        "width": 1366
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-1366x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 427.0989685058594,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 379.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 519.4948120117188,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 471.4948120117187
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 595.890625,
+            "height": 54,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 541.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1280,
+        "bodyScrollWidth": 1280,
+        "documentClientWidth": 1280,
+        "documentScrollWidth": 1280,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 800,
+            "height": 800,
+            "right": 1280,
+            "width": 1280,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 667.9375,
+            "height": 535.875,
+            "right": 760,
+            "width": 760,
+            "x": 0,
+            "y": 132.0625
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 473.71876525878906,
+            "height": 125.13542175292967,
+            "right": 657.6042098999023,
+            "width": 555.2083740234375,
+            "x": 102.39583587646484,
+            "y": 348.5833435058594
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 669.3489837646484,
+            "height": 538.6979370117188,
+            "right": 1256.0000610351562,
+            "width": 387.1979370117187,
+            "x": 868.8021240234375,
+            "y": 130.6510467529297
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 238.64584350585935,
+            "height": 47,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 191.64584350585935
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 334.703125,
+            "height": 44,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 290.703125
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 427.0989685058594,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 379.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 519.4948120117188,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 471.4948120117187
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 595.890625,
+            "height": 54,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 541.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 427.0989685058594,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 379.0989685058594
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 519.4948120117188,
+            "height": 48,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 471.4948120117187
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 595.890625,
+            "height": 54,
+            "right": 1216.6041870117188,
+            "width": 308.40625,
+            "x": 908.1979370117188,
+            "y": 541.890625
+          },
+          "role": "button"
+        }
+      ],
+      "text": "A\nALKAROS RESTAURANT OS\nServis hızını\nkasada koruyun.\n\nSipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.\n\nKasa sunucusu hazır\nPERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 800,
+        "width": 1280
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-1280x800-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 363.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 455.4948120117187
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 525.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 768,
+            "height": 768,
+            "right": 1024,
+            "width": 1024,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 629.6927337646484,
+            "height": 491.3854370117187,
+            "right": 594,
+            "width": 594,
+            "x": 0,
+            "y": 138.3072967529297
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 434.45314025878906,
+            "height": 100.10417175292967,
+            "right": 512.0833587646484,
+            "width": 430.1666870117187,
+            "x": 81.91667175292969,
+            "y": 334.3489685058594
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 645.671875,
+            "height": 523.34375,
+            "right": 1000,
+            "width": 382,
+            "x": 618,
+            "y": 122.328125
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 222.64584350585935,
+            "height": 47,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 175.64584350585938
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 318.703125,
+            "height": 44,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 274.703125
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 363.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 455.4948120117187
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 525.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 411.0989685058594,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 363.0989685058594
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 503.4948120117187,
+            "height": 48,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 455.4948120117187
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 579.890625,
+            "height": 54,
+            "right": 968.28125,
+            "width": 318.5625,
+            "x": 649.71875,
+            "y": 525.890625
+          },
+          "role": "button"
+        }
+      ],
+      "text": "A\nALKAROS RESTAURANT OS\nServis hızını\nkasada koruyun.\n\nSipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.\n\nKasa sunucusu hazır\nPERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 768,
+        "width": 1024
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-1024x768-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 539.0989685058594,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 491.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 631.4948120117188,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 583.4948120117188
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 707.890625,
+            "height": 54,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 653.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 1024,
+            "height": 1024,
+            "right": 768,
+            "width": 768,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 0,
+            "height": 0,
+            "right": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 0,
+            "height": 0,
+            "right": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 774.953125,
+            "height": 525.90625,
+            "right": 599,
+            "width": 430,
+            "x": 169,
+            "y": 249.046875
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 350.6458435058594,
+            "height": 47,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 303.6458435058594
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 446.703125,
+            "height": 44,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 402.703125
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 539.0989685058594,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 491.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 631.4948120117188,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 583.4948120117188
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 707.890625,
+            "height": 54,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 653.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 539.0989685058594,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 491.0989685058594
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 631.4948120117188,
+            "height": 48,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 583.4948120117188
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 707.890625,
+            "height": 54,
+            "right": 566,
+            "width": 364,
+            "x": 202,
+            "y": 653.890625
+          },
+          "role": "button"
+        }
+      ],
+      "text": "PERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 1024,
+        "width": 768
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-768x1024-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 493.0989685058594,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 445.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 585.4948120117188,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 537.4948120117188
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 661.890625,
+            "height": 54,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 607.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 430,
+        "bodyScrollWidth": 430,
+        "documentClientWidth": 430,
+        "documentScrollWidth": 430,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 932,
+            "height": 932,
+            "right": 430,
+            "width": 430,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 0,
+            "height": 0,
+            "right": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 0,
+            "height": 0,
+            "right": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 722.75,
+            "height": 513.5,
+            "right": 414,
+            "width": 398,
+            "x": 16,
+            "y": 209.25
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 304.6458435058594,
+            "height": 47,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 257.6458435058594
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 400.703125,
+            "height": 44,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 356.703125
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 493.0989685058594,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 445.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 585.4948120117188,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 537.4948120117188
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 661.890625,
+            "height": 54,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 607.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 493.0989685058594,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 445.0989685058594
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 585.4948120117188,
+            "height": 48,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 537.4948120117188
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 661.890625,
+            "height": 54,
+            "right": 387.203125,
+            "width": 344.40625,
+            "x": 42.796875,
+            "y": 607.890625
+          },
+          "role": "button"
+        }
+      ],
+      "text": "PERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 932,
+        "width": 430
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-430x932-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 401.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 493.4948120117187
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 563.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 390,
+        "bodyScrollWidth": 390,
+        "documentClientWidth": 390,
+        "documentScrollWidth": 390,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 844,
+            "height": 844,
+            "right": 390,
+            "width": 390,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 0,
+            "height": 0,
+            "right": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 0,
+            "height": 0,
+            "right": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 676.3489837646484,
+            "height": 508.6979370117187,
+            "right": 374,
+            "width": 358,
+            "x": 16,
+            "y": 167.6510467529297
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 260.6458435058594,
+            "height": 47,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 213.64584350585935
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 356.703125,
+            "height": 44,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 312.703125
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 401.0989685058594
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 493.4948120117187
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 563.890625
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 449.0989685058594,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 401.0989685058594
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 541.4948120117188,
+            "height": 48,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 493.4948120117187
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 617.890625,
+            "height": 54,
+            "right": 349.6041793823242,
+            "width": 309.2083435058594,
+            "x": 40.39583587646485,
+            "y": 563.890625
+          },
+          "role": "button"
+        }
+      ],
+      "text": "PERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 844,
+        "width": 390
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-390x844-2026-08-27.png"
+    },
+    {
+      "focusOrder": [
+        {
+          "index": 0,
+          "name": "",
+          "rect": {
+            "bottom": 321.93231201171875,
+            "height": 48,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 273.93231201171875
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 1,
+          "name": "",
+          "rect": {
+            "bottom": 414.328125,
+            "height": 48,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 366.328125
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "index": 2,
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 490.7239685058594,
+            "height": 54,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 436.7239685058594
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "overflow": {
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "horizontalOverflow": false
+      },
+      "semantic": [
+        {
+          "name": "AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.",
+          "rect": {
+            "bottom": 568,
+            "height": 568,
+            "right": 320,
+            "width": 320,
+            "x": 0,
+            "y": 0
+          },
+          "role": "main",
+          "tabIndex": -1
+        },
+        {
+          "name": "ALKAROS kasa",
+          "rect": {
+            "bottom": 0,
+            "height": 0,
+            "right": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "role": "generic",
+          "tabIndex": -1
+        },
+        {
+          "name": "Servis hızınıkasada koruyun.",
+          "rect": {
+            "bottom": 0,
+            "height": 0,
+            "right": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Personel girişiKasayı açYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerm",
+          "rect": {
+            "bottom": 544.984375,
+            "height": 521.96875,
+            "right": 304,
+            "width": 288,
+            "x": 16,
+            "y": 23.015625
+          },
+          "role": "form",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasayı aç",
+          "rect": {
+            "bottom": 111.8125,
+            "height": 47,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 64.8125
+          },
+          "role": "heading",
+          "tabIndex": -1
+        },
+        {
+          "name": "Kasa sunucusu çevrimiçi",
+          "rect": {
+            "bottom": 229.53646850585935,
+            "height": 44,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 185.53646850585935
+          },
+          "role": "status",
+          "tabIndex": -1
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 321.93231201171875,
+            "height": 48,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 273.93231201171875
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "",
+          "rect": {
+            "bottom": 414.328125,
+            "height": 48,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 366.328125
+          },
+          "role": "textbox",
+          "tabIndex": 0
+        },
+        {
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 490.7239685058594,
+            "height": 54,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 436.7239685058594
+          },
+          "role": "button",
+          "tabIndex": 0
+        }
+      ],
+      "targets": [
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 321.93231201171875,
+            "height": 48,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 273.93231201171875
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "48px",
+          "name": "",
+          "rect": {
+            "bottom": 414.328125,
+            "height": 48,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 366.328125
+          },
+          "role": "textbox"
+        },
+        {
+          "minimumHeight": "54px",
+          "name": "Giriş yap",
+          "rect": {
+            "bottom": 490.7239685058594,
+            "height": 54,
+            "right": 283.8020896911621,
+            "width": 247.6041717529297,
+            "x": 36.19791793823242,
+            "y": 436.7239685058594
+          },
+          "role": "button"
+        }
+      ],
+      "text": "PERSONEL GİRİŞİ\nKasayı aç\n\nYetkili kullanıcı hesabınızla devam edin.\n\nKasa sunucusu çevrimiçi\nKullanıcı adı\nParola\nGiriş yap\nTerminal · ED35D4F3",
+      "viewport": {
+        "height": 568,
+        "width": 320
+      },
+      "screenshot": "evidence/V1-RMD-020/viewport-anonymous-320x568-2026-08-27.png"
+    }
+  ]
+}

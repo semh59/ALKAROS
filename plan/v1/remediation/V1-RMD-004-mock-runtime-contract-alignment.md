@@ -14,8 +14,11 @@ bir mock runtime'a dönüştürmek.
 
 ## Owned surface
 
-- `src/Clients/WebPrototype/**`
 - `evidence/V1-RMD-004/**`
+
+PO:2026-08-24 tam production denetimi correction custody kararıyla mevcut yedi `src/Clients/WebPrototype` dosyasının
+yazma yetkisi exact path'lerle V1-RMD-011'e devredildi; bu tarihsel görev `Done` kalır ve devir yeni yazma yetkisi
+üretmez.
 
 ## In scope
 
@@ -52,3 +55,7 @@ bir mock runtime'a dönüştürmek.
 - Üç hatalı demo PIN denemesi cooldown başlatır; doğru PIN cooldown süresinde kilidi açmaz.
 - Semih; mock cashier submit, waiter offline enqueue/reconnect, conflict, payment failure, printer failure ve PIN lockout
   senaryolarını arayüzde elle doğrulayabilir.
+
+## Handoff
+
+- V1-RMD-011

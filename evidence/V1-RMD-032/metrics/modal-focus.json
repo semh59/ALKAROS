@@ -1,0 +1,44 @@
+{
+  "focusOrder": [
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    },
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    },
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    },
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    },
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    },
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    },
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    },
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    },
+    {
+      "name": "Pencereyi kapat",
+      "tag": "button"
+    }
+  ],
+  "afterEscape": {
+    "active": "+ Zone ekle",
+    "dialogs": 0
+  }
+}

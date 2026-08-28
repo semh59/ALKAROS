@@ -1,0 +1,33 @@
+{
+  "taskId": "V1-RMD-028",
+  "capturedAt": "2026-08-28T08:40:00+03:00",
+  "browser": "Codex in-app browser",
+  "url": "http://127.0.0.1:58328/",
+  "assertions": {
+    "horizontalOverflowCount": 0,
+    "undersizedInteractiveTargetCount": 0,
+    "consoleErrorCount": 0,
+    "minimumInteractiveTargetHeight": 44,
+    "desktopCanvasLastWidth": 768,
+    "denseListFirstWidth": 767
+  },
+  "viewports": [
+    { "width": 1920, "height": 1080, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false },
+    { "width": 1440, "height": 900, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false },
+    { "width": 1366, "height": 768, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false },
+    { "width": 1280, "height": 800, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false },
+    { "width": 1024, "height": 768, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false },
+    { "width": 1023, "height": 768, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false },
+    { "width": 1022, "height": 768, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false },
+    { "width": 960, "height": 540, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false, "reflow": "200-percent-equivalent" },
+    { "width": 768, "height": 1024, "overflow": false, "minimumTargetHeight": 44, "canvas": true, "denseList": false },
+    { "width": 767, "height": 1024, "overflow": false, "minimumTargetHeight": 44, "canvas": false, "denseList": true },
+    { "width": 766, "height": 1024, "overflow": false, "minimumTargetHeight": 44, "canvas": false, "denseList": true },
+    { "width": 480, "height": 270, "overflow": false, "minimumTargetHeight": 44, "canvas": false, "denseList": true, "reflow": "400-percent-equivalent" },
+    { "width": 431, "height": 932, "overflow": false, "minimumTargetHeight": 44, "canvas": false, "denseList": true },
+    { "width": 430, "height": 932, "overflow": false, "minimumTargetHeight": 44, "canvas": false, "denseList": true },
+    { "width": 429, "height": 932, "overflow": false, "minimumTargetHeight": 44, "canvas": false, "denseList": true },
+    { "width": 390, "height": 844, "overflow": false, "minimumTargetHeight": 44, "canvas": false, "denseList": true },
+    { "width": 320, "height": 568, "overflow": false, "minimumTargetHeight": 44, "canvas": false, "denseList": true }
+  ]
+}

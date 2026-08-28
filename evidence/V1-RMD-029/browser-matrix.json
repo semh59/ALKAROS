@@ -1,0 +1,18 @@
+{
+  "taskId": "V1-RMD-029",
+  "browser": "Codex in-app browser",
+  "url": "http://127.0.0.1:58329/",
+  "viewports": [
+    { "width": 1440, "height": 900, "overflow": false, "minTargetHeight": 44 },
+    { "width": 1280, "height": 800, "overflow": false, "minTargetHeight": 44 },
+    { "width": 1024, "height": 768, "overflow": false, "minTargetHeight": 44 },
+    { "width": 768, "height": 1024, "overflow": false, "minTargetHeight": 44 },
+    { "width": 767, "height": 1024, "overflow": false, "minTargetHeight": 44 },
+    { "width": 390, "height": 844, "overflow": false, "minTargetHeight": 44 },
+    { "width": 320, "height": 568, "overflow": false, "minTargetHeight": 44 }
+  ],
+  "consoleErrors": 0,
+  "undersizedTargets": 0,
+  "modesVerified": ["EqualByPerson", "ByItem", "ByAmount"],
+  "saveMessage": "Hesap dağıtım tasarımı sunucuda kaydedildi. Ödeme işlemi yapılmadı."
+}

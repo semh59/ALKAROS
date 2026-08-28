@@ -1,0 +1,99 @@
+- link "Ana içeriğe geç":
+  - /url: "#_r_0_"
+- banner:
+  - generic: ALKAROS
+  - group "Aktif çalışma bağlamı":
+    - generic: Şube
+    - strong: Şube bağlamı
+    - generic: Terminal
+    - strong: Terminal 16F9BD0C
+    - generic: Kullanıcı
+    - strong: ALKAROS Manager
+    - generic: Rol
+    - strong: Kasiyer / Operasyon
+  - link "Müşteri ekranı":
+    - /url: /display
+  - button "Çıkış"
+- navigation "Ana navigasyon":
+  - link "Kasa":
+    - /url: /
+    - generic: ₺
+    - generic: Kasa
+  - link "Masalar":
+    - /url: /tables
+    - generic: ▦
+    - generic: Masalar
+  - link "Mutfak":
+    - /url: /kitchen
+    - generic: ◇
+    - generic: Mutfak
+  - link "Menü":
+    - /url: /catalog
+    - generic: ≡
+    - generic: Menü
+- main:
+  - heading "Mutfak ve operasyon" [level=1]
+  - paragraph: Ticket, yazıcı kurtarma ve operasyon sağlığı
+  - region "Mutfak ve operasyon yönetimi":
+    - text: OPERASYON / MUTFAK
+    - heading "kitchen-main istasyonu" [level=2]
+    - paragraph: Son güncelleme 2026-08-28T16:48:29.179Z
+    - generic: "Kaynak: production API"
+    - button "Yenile"
+    - generic "Mutfak özeti":
+      - generic: Aktif ticket
+      - strong: "1"
+      - generic: Bekliyor
+      - strong: "1"
+      - generic: Hazırlanıyor
+      - strong: "0"
+      - generic: Unknown baskı
+      - strong: "0"
+    - text: Ticket ara
+    - textbox "Ticket ara":
+      - /placeholder: Ticket no veya ürün
+    - group "Ticket durumuna göre filtrele":
+      - button "Tümü1" [pressed]
+      - button "Bekliyor1"
+      - button "Kabul edildi0"
+      - button "Hazırlanıyor0"
+      - button "Hazır0"
+      - button "İptal0"
+    - article:
+      - generic: KT-POS-20260828-110553-7B6C9E7483E5-kitchen-main
+      - generic: Bekliyor
+      - generic: v1
+      - strong: 1× ALKAROS Burger
+      - generic: Bekliyor
+      - button "→ Hazırlanıyor"
+      - text: Order
+      - code: 7b6c9e74
+      - button "Kabul et"
+      - button "İptal"
+    - complementary "Mutfak operasyon uyarıları":
+      - region "Unknown teslimatlar":
+        - text: YAZICI KURTARMA
+        - heading "Unknown teslimatlar" [level=3]
+        - strong: "0"
+        - paragraph: Bekleyen belirsiz teslimat yok.
+      - region "Sağlık ve yedek":
+        - text: SİSTEM
+        - heading "Sağlık ve yedek" [level=3]
+        - img "Bilinmiyor"
+        - status:
+          - generic: ◷
+          - strong: Sağlık verisi yok
+          - paragraph: Son snapshot alınamadı.
+      - region "Yazıcı rotaları":
+        - text: DONANIM
+        - heading "Yazıcı rotaları" [level=3]
+        - generic: 0/0 aktif
+        - paragraph: Yapılandırılmış yazıcı yok.
+- contentinfo "Sistem durumu":
+  - status:
+    - generic: ✓
+    - strong: Çevrimiçi
+  - status:
+    - generic: ✓
+    - text: "Veri:"
+    - time: Son doğrulama

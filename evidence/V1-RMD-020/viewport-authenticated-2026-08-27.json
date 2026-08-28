@@ -1,0 +1,2403 @@
+{
+  "candidate": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "route": "/",
+  "authenticated": true,
+  "view": "cashier-home-submitted-order",
+  "fix": "Removed html/body/#root min-width:320px; revalidated with production bundle.",
+  "matrix": [
+    {
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-1920x1080-2026-08-27.png",
+      "bytes": 51897,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nDemo Kasiyer\nKasiyer\nÇıkış\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 148.6666717529297,
+              "x": 1102.0989990234375,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 96.33333587646484,
+              "x": 1261.1614990234375,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 91.66667175292967,
+              "x": 1367.890625,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 78.66667175292969,
+              "x": 1469.953125,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 144.33334350585938,
+              "x": 1559.015625,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 71,
+              "x": 1831.401123046875,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 0,
+              "width": 0,
+              "x": 0,
+              "y": 0
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": false
+          },
+          {
+            "box": {
+              "height": 92,
+              "width": 104.60417175292967,
+              "x": 11.197916984558104,
+              "y": 86.39583587646484
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 92,
+              "width": 104.60417175292967,
+              "x": 11.197916984558104,
+              "y": 185.59375
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 340,
+              "x": 1034.40625,
+              "y": 110.27083587646484
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 142,
+              "width": 192.53646850585935,
+              "x": 154.39584350585938,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 142,
+              "width": 192.53646850585935,
+              "x": 359.72918701171875,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 1420.197998046875,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 1512.9896240234375,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 1832.6771240234375,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 480.6041870117187,
+              "x": 1420.197998046875,
+              "y": 1014
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 1080,
+          "clientWidth": 1920,
+          "overflowX": false,
+          "overflowY": false,
+          "scrollHeight": 1080,
+          "scrollWidth": 1920
+        },
+        "viewport": {
+          "height": 1080,
+          "width": 1920
+        }
+      },
+      "console": []
+    },
+    {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-1440x900-2026-08-27.png",
+      "bytes": 51911,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nDemo Kasiyer\nKasiyer\nÇıkış\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 148.6666717529297,
+              "x": 622.0989990234375,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 96.33333587646484,
+              "x": 781.1614990234375,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 91.66667175292967,
+              "x": 887.890625,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 78.66667175292969,
+              "x": 989.953125,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 144.33334350585938,
+              "x": 1079.015625,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 71,
+              "x": 1351.401123046875,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 0,
+              "width": 0,
+              "x": 0,
+              "y": 0
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": false
+          },
+          {
+            "box": {
+              "height": 92,
+              "width": 104.60417175292967,
+              "x": 11.197916984558104,
+              "y": 86.39583587646484
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 92,
+              "width": 104.60417175292967,
+              "x": 11.197916984558104,
+              "y": 185.59375
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 340,
+              "x": 628.0104370117188,
+              "y": 110.27083587646484
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 142,
+              "width": 193.6041717529297,
+              "x": 154.39584350585938,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 142,
+              "width": 193.6041717529297,
+              "x": 360.796875,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 1013.8021240234376,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 1106.59375,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 1352.6771240234375,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 407,
+              "x": 1013.8021240234376,
+              "y": 834
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 900,
+          "clientWidth": 1440,
+          "overflowX": false,
+          "overflowY": false,
+          "scrollHeight": 900,
+          "scrollWidth": 1440
+        },
+        "viewport": {
+          "height": 900,
+          "width": 1440
+        }
+      },
+      "console": []
+    },
+    {
+      "viewport": {
+        "w": 1366,
+        "h": 768
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-1366x768-2026-08-27.png",
+      "bytes": 49660,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nDemo Kasiyer\nKasiyer\nÇıkış\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 148.6666717529297,
+              "x": 548.0989990234375,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 96.33333587646484,
+              "x": 707.1614990234375,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 91.66667175292967,
+              "x": 813.890625,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 78.66667175292969,
+              "x": 915.953125,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 144.33334350585938,
+              "x": 1005.015625,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 71,
+              "x": 1277.401123046875,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 0,
+              "width": 0,
+              "x": 0,
+              "y": 0
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": false
+          },
+          {
+            "box": {
+              "height": 92,
+              "width": 104.60417175292967,
+              "x": 11.197916984558104,
+              "y": 86.39583587646484
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 92,
+              "width": 104.60417175292967,
+              "x": 11.197916984558104,
+              "y": 185.59375
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 320.60418701171875,
+              "x": 596.34375,
+              "y": 110.27083587646484
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 142,
+              "width": 180.8385467529297,
+              "x": 154.39584350585938,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 142,
+              "width": 180.8385467529297,
+              "x": 348.03125,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 962.7396240234376,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 1055.53125,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 1278.6771240234375,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 384.0625,
+              "x": 962.7396240234376,
+              "y": 702
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 768,
+          "clientWidth": 1366,
+          "overflowX": false,
+          "overflowY": false,
+          "scrollHeight": 768,
+          "scrollWidth": 1366
+        },
+        "viewport": {
+          "height": 768,
+          "width": 1366
+        }
+      },
+      "console": []
+    },
+    {
+      "viewport": {
+        "w": 1280,
+        "h": 800
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-1280x800-2026-08-27.png",
+      "bytes": 49783,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nDemo Kasiyer\nKasiyer\nÇıkış\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 148.6666717529297,
+              "x": 462.0989685058594,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 96.33333587646484,
+              "x": 621.1614990234375,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 91.66667175292967,
+              "x": 727.890625,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 78.66667175292969,
+              "x": 829.953125,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 144.33334350585938,
+              "x": 919.015625,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 71,
+              "x": 1191.401123046875,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 0,
+              "width": 0,
+              "x": 0,
+              "y": 0
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": false
+          },
+          {
+            "box": {
+              "height": 92,
+              "width": 104.60417175292967,
+              "x": 11.197916984558104,
+              "y": 86.39583587646484
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 92,
+              "width": 104.60417175292967,
+              "x": 11.197916984558104,
+              "y": 185.59375
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 290.140625,
+              "x": 554.265625,
+              "y": 110.27083587646484
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 142,
+              "width": 221.203125,
+              "x": 154.39584350585938,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 142,
+              "width": 221.203125,
+              "x": 388.3958435058594,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 890.1979370117188,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 982.9896240234376,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 1192.6771240234375,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 370.6041870117187,
+              "x": 890.1979370117188,
+              "y": 734
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 800,
+          "clientWidth": 1280,
+          "overflowX": false,
+          "overflowY": false,
+          "scrollHeight": 800,
+          "scrollWidth": 1280
+        },
+        "viewport": {
+          "height": 800,
+          "width": 1280
+        }
+      },
+      "console": []
+    },
+    {
+      "viewport": {
+        "w": 1024,
+        "h": 768
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-1024x768-2026-08-27.png",
+      "bytes": 46286,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nDemo Kasiyer\nKasiyer\nÇıkış\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 69.33333587646484,
+              "width": 129.4479217529297,
+              "x": 258.84375,
+              "y": 0.8333333730697632
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 96.33333587646484,
+              "x": 398.6875,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 91.66667175292967,
+              "x": 505.4166870117187,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 78.66667175292969,
+              "x": 607.4791870117188,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 69.33333587646484,
+              "width": 125.83854675292967,
+              "x": 696.5416870117188,
+              "y": 0.8333333730697632
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 71,
+              "x": 935.4010620117188,
+              "y": 11.666666984558104
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 0,
+              "width": 0,
+              "x": 0,
+              "y": 0
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": false
+          },
+          {
+            "box": {
+              "height": 82,
+              "width": 87,
+              "x": 8,
+              "y": 86.39583587646484
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 82,
+              "width": 87,
+              "x": 8,
+              "y": 175.59375
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 201.09896850585935,
+              "x": 407.3073120117187,
+              "y": 110.27083587646484
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 130,
+              "width": 150.53646850585938,
+              "x": 130.39584350585938,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 130,
+              "width": 150.53646850585938,
+              "x": 293.72918701171875,
+              "y": 177.06771850585938
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 654.1979370117188,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 746.9896240234375,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 936.6771240234376,
+              "y": 222.796875
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 350.60418701171875,
+              "x": 654.1979370117188,
+              "y": 702
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 768,
+          "clientWidth": 1024,
+          "overflowX": false,
+          "overflowY": false,
+          "scrollHeight": 768,
+          "scrollWidth": 1024
+        },
+        "viewport": {
+          "height": 768,
+          "width": 1024
+        }
+      },
+      "console": []
+    },
+    {
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-768x1024-2026-08-27.png",
+      "bytes": 33451,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nÇıkış\nTOPLAM\n₺93,50\nSonraki sipariş\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 310.671875,
+              "x": 17.59895896911621,
+              "y": 102.39583587646484
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 310.671875,
+              "x": 336.2708435058594,
+              "y": 102.39583587646484
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 80.45833587646484,
+              "x": 654.9427490234375,
+              "y": 102.39583587646484
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 310.671875,
+              "x": 17.59895896911621,
+              "y": 158.0625
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 310.671875,
+              "x": 336.2708435058594,
+              "y": 158.0625
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 80.45833587646484,
+              "x": 654.9427490234375,
+              "y": 158.0625
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 48,
+              "width": 141.33334350585938,
+              "x": 598.8698120117188,
+              "y": 964.5
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 70,
+              "width": 96,
+              "x": 8,
+              "y": 232.3229217529297
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 70,
+              "width": 96,
+              "x": 111.19792175292967,
+              "y": 232.3229217529297
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 708.2083740234375,
+              "x": 22.39583396911621,
+              "y": 413.7916870117187
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 132,
+              "width": 167.05209350585938,
+              "x": 23.197917938232425,
+              "y": 480.5885620117187
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 132,
+              "width": 167.05209350585938,
+              "x": 203.046875,
+              "y": 480.5885620117187
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 19.197917938232425,
+              "y": 988.515625
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 111.98958587646484,
+              "y": 988.515625
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 665.6771240234375,
+              "y": 988.515625
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 714.6041870117188,
+              "x": 19.197917938232425,
+              "y": 1330.71875
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 1024,
+          "clientWidth": 753,
+          "overflowX": false,
+          "overflowY": true,
+          "scrollHeight": 1474,
+          "scrollWidth": 753
+        },
+        "viewport": {
+          "height": 1024,
+          "width": 768
+        }
+      },
+      "console": []
+    },
+    {
+      "viewport": {
+        "w": 430,
+        "h": 932
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-430x932-2026-08-27.png",
+      "bytes": 26760,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nÇıkış\nTOPLAM\n₺93,50\nSonraki sipariş\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 141.671875,
+              "x": 17.59895896911621,
+              "y": 102.39583587646484
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 141.671875,
+              "x": 167.27084350585938,
+              "y": 102.39583587646484
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 80.45833587646484,
+              "x": 316.9427185058594,
+              "y": 102.39583587646484
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 141.671875,
+              "x": 17.59895896911621,
+              "y": 158.0625
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 141.671875,
+              "x": 167.27084350585938,
+              "y": 158.0625
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 80.45833587646484,
+              "x": 316.9427185058594,
+              "y": 158.0625
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 48,
+              "width": 141.33334350585938,
+              "x": 260.86981201171875,
+              "y": 872.5
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 70,
+              "width": 96,
+              "x": 8,
+              "y": 232.3229217529297
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 70,
+              "width": 96,
+              "x": 111.19792175292967,
+              "y": 232.3229217529297
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 382.8125,
+              "x": 16.09375,
+              "y": 407.4895935058594
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 132,
+              "width": 184.203125,
+              "x": 16.89583396911621,
+              "y": 474.2864685058594
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 132,
+              "width": 184.20834350585935,
+              "x": 213.89584350585935,
+              "y": 474.2864685058594
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 19.197917938232425,
+              "y": 988.515625
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 111.98958587646484,
+              "y": 988.515625
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 327.6770935058594,
+              "y": 988.515625
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 376.6041870117187,
+              "x": 19.197917938232425,
+              "y": 1330.71875
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 932,
+          "clientWidth": 415,
+          "overflowX": false,
+          "overflowY": true,
+          "scrollHeight": 1474,
+          "scrollWidth": 415
+        },
+        "viewport": {
+          "height": 932,
+          "width": 430
+        }
+      },
+      "console": []
+    },
+    {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-390x844-2026-08-27.png",
+      "bytes": 28457,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nÇıkış\nTOPLAM\n₺93,50\nSonraki sipariş\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 69.33333587646484,
+              "width": 121.671875,
+              "x": 17.59895896911621,
+              "y": 102.39583587646484
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 121.671875,
+              "x": 147.27084350585938,
+              "y": 113.22917175292967
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 80.45833587646484,
+              "x": 276.9427185058594,
+              "y": 113.22917175292967
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 121.671875,
+              "x": 17.59895896911621,
+              "y": 190.5625
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 69.33333587646484,
+              "width": 121.671875,
+              "x": 147.27084350585938,
+              "y": 179.7291717529297
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 80.45833587646484,
+              "x": 276.9427185058594,
+              "y": 190.5625
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 48,
+              "width": 141.33334350585938,
+              "x": 220.8697967529297,
+              "y": 784.5
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 70,
+              "width": 96,
+              "x": 8,
+              "y": 275.65625
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 70,
+              "width": 96,
+              "x": 111.19792175292967,
+              "y": 275.65625
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 344.60418701171875,
+              "x": 15.197916984558104,
+              "y": 449.9270935058594
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 132,
+              "width": 165.09896850585938,
+              "x": 16,
+              "y": 516.7239990234375
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 132,
+              "width": 165.1041717529297,
+              "x": 193.89584350585935,
+              "y": 516.7239990234375
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 19.197917938232425,
+              "y": 1031.8489990234375
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 111.98958587646484,
+              "y": 1031.8489990234375
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 287.6770935058594,
+              "y": 1031.8489990234375
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 336.60418701171875,
+              "x": 19.197917938232425,
+              "y": 1374.0521240234375
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 844,
+          "clientWidth": 375,
+          "overflowX": false,
+          "overflowY": true,
+          "scrollHeight": 1518,
+          "scrollWidth": 375
+        },
+        "viewport": {
+          "height": 844,
+          "width": 390
+        }
+      },
+      "console": []
+    },
+    {
+      "viewport": {
+        "w": 320,
+        "h": 568
+      },
+      "screenshot": "D:/PROJECT/ALKAROS/evidence/V1-RMD-020/viewport-authenticated-320x568-2026-08-27.png",
+      "bytes": 21556,
+      "metrics": {
+        "body": "A\nALKAROS\nKasa satış\nSunucu hazır\nMüşteri ekranı\nMasalar\nMutfak\nMenü\nEkranı eşleştir\nÇıkış\nTOPLAM\n₺93,50\nSonraki sipariş\n⌂\nTümü\n2\n01\nKahveler\n2\nHIZLI SİPARİŞ\nTüm ürünler\n⌕\nKAHVELER\nEspresso\nESP-001\n₺93,50\nKDV dahil\nKAHVELER\nLatte\nLAT-001\n₺132,00\nKDV dahil\nAKTİF SİPARİŞ\nPOS-20260827-042653-326CAF6577A5\n1\nürün\nEspresso\n₺93,50 × 1 · KDV dahil\n₺93,50\n−\n1\n+\nKaldır\nAra toplam\n₺85,00\nKDV\n₺8,50\nToplam\n₺93,50\n✓\nSipariş gönderildi\nRevision 3\nSonraki siparişi aç",
+        "focusOrder": [
+          {
+            "box": {
+              "height": 69.33333587646484,
+              "width": 86.671875,
+              "x": 17.59895896911621,
+              "y": 102.39583587646484
+            },
+            "disabled": false,
+            "i": 0,
+            "name": "Müşteri ekranı",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 86.671875,
+              "x": 112.27083587646484,
+              "y": 113.22917175292967
+            },
+            "disabled": false,
+            "i": 1,
+            "name": "Masalar",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 80.45833587646484,
+              "x": 206.94271850585935,
+              "y": 113.22917175292967
+            },
+            "disabled": false,
+            "i": 2,
+            "name": "Mutfak",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 86.671875,
+              "x": 17.59895896911621,
+              "y": 190.5625
+            },
+            "disabled": false,
+            "i": 3,
+            "name": "Menü",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "A",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 69.33333587646484,
+              "width": 86.671875,
+              "x": 112.27083587646484,
+              "y": 179.7291717529297
+            },
+            "disabled": false,
+            "i": 4,
+            "name": "Ekranı eşleştir",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 47.66666793823242,
+              "width": 80.45833587646484,
+              "x": 206.94271850585935,
+              "y": 190.5625
+            },
+            "disabled": false,
+            "i": 5,
+            "name": "Oturumu kapat",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 48,
+              "width": 141.33334350585938,
+              "x": 150.8697967529297,
+              "y": 508.5
+            },
+            "disabled": false,
+            "i": 6,
+            "name": "Sonraki sipariş",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 70,
+              "width": 96,
+              "x": 8,
+              "y": 275.65625
+            },
+            "disabled": false,
+            "i": 7,
+            "name": "⌂Tümü2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 70,
+              "width": 96,
+              "x": 111.19792175292967,
+              "y": 275.65625
+            },
+            "disabled": false,
+            "i": 8,
+            "name": "01Kahveler2",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 46,
+              "width": 274.60418701171875,
+              "x": 15.197916984558104,
+              "y": 449.9270935058594
+            },
+            "disabled": false,
+            "i": 9,
+            "name": "Ürün ara",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "INPUT",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 132,
+              "width": 273,
+              "x": 16,
+              "y": 516.7239990234375
+            },
+            "disabled": true,
+            "i": 10,
+            "name": "KahvelerEspressoESP-001₺93,50KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 132,
+              "width": 273,
+              "x": 16,
+              "y": 661.5208740234375
+            },
+            "disabled": true,
+            "i": 11,
+            "name": "KahvelerLatteLAT-001₺132,00KDV dahil",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 19.197917938232425,
+              "y": 1031.8489990234375
+            },
+            "disabled": true,
+            "i": 12,
+            "name": "Espresso azalt",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 44,
+              "x": 111.98958587646484,
+              "y": 1031.8489990234375
+            },
+            "disabled": true,
+            "i": 13,
+            "name": "Espresso artır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 44,
+              "width": 68.125,
+              "x": 217.67709350585935,
+              "y": 1031.8489990234375
+            },
+            "disabled": true,
+            "i": 14,
+            "name": "Kaldır",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          },
+          {
+            "box": {
+              "height": 54,
+              "width": 266.60418701171875,
+              "x": 19.197917938232425,
+              "y": 1374.0521240234375
+            },
+            "disabled": false,
+            "i": 15,
+            "name": "Sonraki siparişi aç",
+            "role": null,
+            "tabIndex": 0,
+            "tag": "BUTTON",
+            "visible": true
+          }
+        ],
+        "layout": {
+          "clientHeight": 568,
+          "clientWidth": 305,
+          "overflowX": false,
+          "overflowY": true,
+          "scrollHeight": 1518,
+          "scrollWidth": 305
+        },
+        "viewport": {
+          "height": 568,
+          "width": 320
+        }
+      },
+      "console": []
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+Task: V1-RMD-010
+Host process sessions 94432, 96171 and 98335 were stopped after each controlled real-browser run.
+Disposable container removed: alkaros-rmd010-pg-20260827
+Final listener check: NO_LISTENERS_58299_55433
+Final container check: NO_RMD010_CONTAINERS
+No long-lived PostgreSQL container or Host process was reused.

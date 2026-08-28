@@ -1,0 +1,12 @@
+{
+  "dialog": {
+    "activeText": "Eşleştirme penceresini kapat",
+    "ariaModal": "true",
+    "height": 554.4583740234375,
+    "labelledBy": "pairing-title",
+    "width": 343
+  },
+  "shiftTabWrappedToLast": true,
+  "escapeClosed": true,
+  "triggerFocusRestored": true
+}

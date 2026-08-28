@@ -1,0 +1,18 @@
+Repository root: D:\PROJECT\ALKAROS
+Task ID: V1-RMD-023
+Assignee: /root
+Date: 2026-08-27
+
+Dependencies:
+- V1-RMD-016: Done
+- V1-RMD-022: Done
+
+Write allowlist:
+- src/Clients/PosTerminal/src/shell/ProductionShell.tsx
+- src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx
+- src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+- src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+- plan/v1/remediation/V1-RMD-023-production-landmark-and-aria-semantics.md (Status and Assignee only)
+- evidence/V1-RMD-023/**
+
+The starting worktree contains unrelated modified and untracked paths. This task preserves them.

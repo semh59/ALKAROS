@@ -137,12 +137,21 @@ def _admit_root_integration_task(
     owned_surface: str = "src/Host/ALKAROS.Host.csproj",
 ) -> None:
     _activate_fnd023(workspace)
-    previous_owner = _task_path(workspace, "V1-RMD-002")
-    previous_text = previous_owner.read_text(encoding="utf-8")
+    owner_rmd006 = _task_path(workspace, "V1-RMD-006")
+    text_rmd006 = owner_rmd006.read_text(encoding="utf-8")
     exact_surface_line = "- `src/Host/ALKAROS.Host.csproj`\n"
-    assert exact_surface_line in previous_text
-    previous_owner.write_text(
-        previous_text.replace(exact_surface_line, "", 1),
+    assert exact_surface_line in text_rmd006
+
+    if task_id == "V1-RMD-006":
+        owner_rmd006.write_text(
+            text_rmd006.replace(exact_surface_line, f"- `{owned_surface}`\n", 1),
+            encoding="utf-8",
+            newline="\n",
+        )
+        return
+
+    owner_rmd006.write_text(
+        text_rmd006.replace(exact_surface_line, "", 1),
         encoding="utf-8",
         newline="\n",
     )

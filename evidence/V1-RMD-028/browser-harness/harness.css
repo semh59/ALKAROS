@@ -1,0 +1,8 @@
+.audit-frame { min-height: 100vh; padding: 1.25rem; background: #dfe6e9; }
+.audit-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; border-radius: .6rem; padding: .85rem 1rem; color: #fff; background: #10232c; }
+.audit-header > div { display: flex; align-items: center; gap: .75rem; }
+.audit-header span { font-size: .75rem; }
+.audit-header strong { font-size: 1.1rem; }
+.audit-live { color: #75e0aa; font-weight: 900; }
+.audit-action { margin: .75rem 1.5rem 0; border: 1px solid #2b6f5c; border-radius: .6rem; padding: .7rem 1rem; color: #d9fff1; background: #143c32; font-weight: 750; }
+@media (max-width: 600px) { .audit-frame { padding: .5rem; } .audit-header { align-items: flex-start; flex-direction: column; } }

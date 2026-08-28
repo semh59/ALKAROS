@@ -1,0 +1,438 @@
+{
+  "candidate_commit": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "tree_sha": "39e9bb79d3d6f3e099e15a7ffafcc801f727843a",
+  "verdict": "NOT PRODUCTION READY",
+  "findings": [
+    {
+      "id": "AUD-001",
+      "severity": "P1 high",
+      "title": "Audit manifest and V1 closure claims are stale",
+      "locations": [
+        "plan/AUDIT_MANIFEST.json:1",
+        "plan/GATES.md:258",
+        "plan/AUDIT_REPORT.md:1"
+      ],
+      "reachable_call_chain": "plan_audit_tool.py -> validate/verify-manifest -> committed governance artifacts",
+      "trigger": "Run validators at the candidate commit.",
+      "impact": "A closed gate can be accepted from invalid counts and hashes.",
+      "reproduction": "validate exits 1; verify-manifest reports 1,601 errors.",
+      "evidence": "evidence/V1-GOV-003/validation-summary.json",
+      "remediation_task": "V1-RMD-007",
+      "validation_test": "All governance validators must exit 0 from a clean checkout.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-002",
+      "severity": "P1 high",
+      "title": "Assembly provenance is pinned to an older commit",
+      "locations": [
+        "Directory.Build.props:22"
+      ],
+      "reachable_call_chain": "MSBuild -> RepositoryCommit -> assembly metadata",
+      "trigger": "Build candidate a03d021 without overriding MSBuild properties.",
+      "impact": "Produced binaries can claim commit 8b7a4bf instead of the audited source.",
+      "reproduction": "Compare Directory.Build.props:22 with git rev-parse HEAD.",
+      "evidence": "evidence/V1-GOV-003/candidate.json",
+      "remediation_task": "V1-RMD-007",
+      "validation_test": "Build all projects and assert assembly RepositoryCommit equals the candidate.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-003",
+      "severity": "P1 high",
+      "title": "CI does not enforce clean restore/build/test/security/coverage",
+      "locations": [
+        ".github/workflows/task-scope.yml:18"
+      ],
+      "reachable_call_chain": "GitHub PR -> single task-scope job",
+      "trigger": "Open a PR with a compile, test, vulnerability, or coverage regression outside task metadata.",
+      "impact": "Production regressions can merge without an automated release-quality gate.",
+      "reproduction": "Only task-scope.yml is tracked under .github/workflows.",
+      "evidence": "evidence/V1-GOV-003/validation-summary.json",
+      "remediation_task": "V1-RMD-007",
+      "validation_test": "CI must run locked restore, Release build/test, coverage, provenance, SBOM and vulnerability gates.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-004",
+      "severity": "P1 high",
+      "title": "Cashier mutations authenticate but never authorize permissions",
+      "locations": [
+        "src/Host/DualScreen/DualScreenApplication.cs:209",
+        "src/Host/DualScreen/DualScreenApplication.cs:355",
+        "src/Modules/Identity/Authorization/PermissionCodes.cs:8"
+      ],
+      "reachable_call_chain": "HTTP mutation -> RequireCashierAsync -> token/device lookup -> store mutation",
+      "trigger": "Use any active cashier account without an assigned mutation permission.",
+      "impact": "Authenticated low-privilege users can create/change/submit orders and manage displays.",
+      "reproduction": "No IAuthorizationService call exists in Host/DualScreen.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-008",
+      "validation_test": "Real HTTP tests must prove authenticated unauthorized mutations return 403 and emit denial audit.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-005",
+      "severity": "P1 high",
+      "title": "Rate limits are global named windows rather than caller partitions",
+      "locations": [
+        "src/Host/DualScreen/DualScreenApplication.cs:45",
+        "src/Host/DualScreen/DualScreenApplication.cs:59"
+      ],
+      "reachable_call_chain": "All callers -> one named FixedWindowRateLimiter instance",
+      "trigger": "Send ten login or pairing requests from one caller, then request from another.",
+      "impact": "One actor can exhaust quota for all terminals/displays; 429 has no Retry-After metadata.",
+      "reproduction": "Static inspection of AddFixedWindowLimiter registrations and OnRejected response.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-008",
+      "validation_test": "HTTP tests must isolate terminal/display/principal/IP partitions and validate Retry-After.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-006",
+      "severity": "P1 high",
+      "title": "Plain HTTP and proxy/TLS boundaries are not fail-closed",
+      "locations": [
+        "src/Host/DualScreen/DualScreenOptions.cs:21",
+        "src/Host/DualScreen/DualScreenApplication.cs:35",
+        "src/Host/DualScreen/DualScreenApplication.cs:147",
+        "src/Host/DualScreen/DualScreenApplication.cs:407"
+      ],
+      "reachable_call_chain": "--urls -> Kestrel listener -> password login -> Secure cookie",
+      "trigger": "Configure a non-loopback http:// URL and submit credentials.",
+      "impact": "Credentials cross plaintext transport; Secure cookies then make the session unusable. No trusted-proxy contract exists.",
+      "reproduction": "Options accepts arbitrary URL and Host contains no HTTPS/proxy guard.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-008",
+      "validation_test": "Startup must reject non-loopback HTTP and tests must bind trusted proxies and secure cookies.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-007",
+      "severity": "P1 high",
+      "title": "Unhandled 500 failures are not logged",
+      "locations": [
+        "src/Host/DualScreen/DualScreenApplication.cs:103",
+        "src/Host/DualScreen/DualScreenApplication.cs:420"
+      ],
+      "reachable_call_chain": "endpoint -> catch Exception -> WriteErrorAsync/Abort",
+      "trigger": "Throw an unexpected exception before or after response start.",
+      "impact": "Operators receive a trace ID but no server-side exception/trace record; started responses are silently aborted.",
+      "reproduction": "No ILogger call exists in exception middleware or WriteErrorAsync.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-008",
+      "validation_test": "HTTP tests must assert sanitized 500 response and correlated structured error log in both paths.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-008",
+      "severity": "P2 medium",
+      "title": "Raw exception text is persisted into operational records",
+      "locations": [
+        "src/Host/Composition/Migrations/MigrationExecutor.cs:71",
+        "src/Host/Composition/Migrations/MigrationExecutor.cs:165",
+        "src/Modules/Operations/BackupHealth/LocalBackupEngine.cs:93"
+      ],
+      "reachable_call_chain": "provider/process exception -> ex.Message -> migration/backup result persistence",
+      "trigger": "Cause a connection/process error containing credentials, hostnames, or filesystem paths.",
+      "impact": "Secrets and infrastructure details can enter durable records and later UIs/logs.",
+      "reproduction": "Direct ex.Message assignments found by repository scan.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-008",
+      "validation_test": "Redaction tests must inject secret-bearing exceptions and prove durable payloads contain only safe codes.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-009",
+      "severity": "P1 high",
+      "title": "Production HTTP surface has no end-to-end integration tests",
+      "locations": [
+        "tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs:20",
+        "tests/Host/MigrationComposition/DualScreen/DualScreenOptionsTests.cs:25"
+      ],
+      "reachable_call_chain": "tests -> DTO/options/token units only; no WebApplication HTTP client",
+      "trigger": "Search Host tests for API paths, 403, 429, HTTPS, cookies and exception logging.",
+      "impact": "Authorization, transport, limiter, cookie and middleware ordering regressions remain untested.",
+      "reproduction": "No DualScreenApplication/WebApplicationFactory HTTP test exists.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-008",
+      "validation_test": "Real HTTPS Host tests must exercise login, pairing, mutations, revoke, reconnect and failures.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-010",
+      "severity": "P1 high",
+      "title": "PostgreSQL 001..038 rollback chain fails at migration 012",
+      "locations": [
+        "database/migrations/V1/V1-FND-021/012-btree-gist-ownership.down.sql:1",
+        "database/migrations/V1/V1-CAT-002/007-catalog-pricing.up.sql:1"
+      ],
+      "reachable_call_chain": "038 down ... 012 down -> DROP EXTENSION btree_gist -> catalog exclusion constraint",
+      "trigger": "Apply 001..038, then run downs in reverse in a fresh PostgreSQL 18 database.",
+      "impact": "Rollback/rehearsal cannot complete; emergency downgrade is not reproducible.",
+      "reproduction": "Digest-pinned PG18 forward passed; down failed at 012 with dependent constraint.",
+      "evidence": "evidence/V1-GOV-003/postgres-migration-summary.json",
+      "remediation_task": "V1-RMD-009",
+      "validation_test": "Fresh PG18 forward/down/forward must exit 0 without CASCADE dropping unrelated objects.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-011",
+      "severity": "P1 high",
+      "title": "Cumulative order quantity bypasses the 999 limit",
+      "locations": [
+        "src/Host/DualScreen/DualScreenStore.cs:208",
+        "src/Host/DualScreen/DualScreenStore.cs:258",
+        "database/migrations/V1/V1-ORD-001/011-orders.up.sql:39"
+      ],
+      "reachable_call_chain": "POST add item -> validate request quantity -> lock existing row -> add quantities -> update",
+      "trigger": "Add quantity 999, then add 1 for the same product and draft order.",
+      "impact": "Quantity becomes 1000; money calculations and downstream constraints accept an invalid domain value.",
+      "reproduction": "Only the increment is bounded; the summed value is not, and DB has no upper constraint.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-009",
+      "validation_test": "Concurrency and DB constraint tests must reject cumulative values above 999 atomically.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-012",
+      "severity": "P2 medium",
+      "title": "Catalog endpoint is unbounded and has no pagination contract",
+      "locations": [
+        "src/Host/DualScreen/DualScreenApplication.cs:199",
+        "src/Host/DualScreen/DualScreenStore.cs:114"
+      ],
+      "reachable_call_chain": "GET catalog -> unbounded ordered SELECT -> materialize entire catalog -> JSON",
+      "trigger": "Create a large active catalog and request /catalog.",
+      "impact": "Memory, latency and response size grow without a bounded dataset or cursor.",
+      "reproduction": "Query has neither LIMIT nor cursor/filter contract; no approved SLO exists.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-009",
+      "validation_test": "Approve dataset/SLO, add cursor pagination, and record representative EXPLAIN ANALYZE.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-013",
+      "severity": "P2 medium",
+      "title": "Customer display contract states collapse to generic active UI",
+      "locations": [
+        "src/Host/DualScreen/DualScreenStore.cs:553",
+        "src/Clients/PosTerminal/src/contracts.ts:30",
+        "src/Clients/PosTerminal/src/App.tsx:534",
+        "src/Clients/PosTerminal/src/App.tsx:549"
+      ],
+      "reachable_call_chain": "order status -> snapshot state -> CustomerDisplay render",
+      "trigger": "Return Paying, Completed or Unavailable snapshots.",
+      "impact": "Paying/Unavailable are never produced by the store and all non-Idle states render the same total screen.",
+      "reproduction": "Switches cover Idle specially and otherwise fall through to active rendering.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-010",
+      "validation_test": "Component/browser tests must assert distinct Paying, Completed and Unavailable content and actions.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-014",
+      "severity": "P1 high",
+      "title": "First non-401 display snapshot failure leaves infinite loading",
+      "locations": [
+        "src/Clients/PosTerminal/src/App.tsx:442",
+        "src/Clients/PosTerminal/src/App.tsx:449",
+        "src/Clients/PosTerminal/src/App.tsx:514"
+      ],
+      "reachable_call_chain": "initial refresh -> non-401 error -> afterFailure(null) -> paired remains false -> loading branch",
+      "trigger": "Open /display while snapshot returns 500/503 or malformed JSON.",
+      "impact": "Customer sees an endless preparation message with no error or retry.",
+      "reproduction": "Browser at 390x844 remained on loading after 5.5 seconds with unavailable backend.",
+      "evidence": "evidence/V1-GOV-003/ui/display-initial-failure-state.json",
+      "remediation_task": "V1-RMD-010",
+      "validation_test": "Bounded-time browser test must expose a named error and working retry for non-401 failures.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-015",
+      "severity": "P2 medium",
+      "title": "Pairing completion failures are hidden",
+      "locations": [
+        "src/Clients/PosTerminal/src/App.tsx:463",
+        "src/Clients/PosTerminal/src/App.tsx:471"
+      ],
+      "reachable_call_chain": "2s pairing poll -> non-409 failure -> freshness only",
+      "trigger": "Return 429/500/503 from pairing completion.",
+      "impact": "The code remains visible and polling continues without a clear failure/retry state.",
+      "reproduction": "Catch branch never sets pairingError or stops/restarts with bounded backoff.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-010",
+      "validation_test": "Browser tests must cover 409 pending, 429 Retry-After, 5xx error and successful retry.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-016",
+      "severity": "P2 medium",
+      "title": "Authenticated POS controls violate 44x44 touch targets",
+      "locations": [
+        "src/Clients/PosTerminal/src/styles.css:142",
+        "src/Clients/PosTerminal/src/styles.css:265",
+        "src/Clients/PosTerminal/src/styles.css:285"
+      ],
+      "reachable_call_chain": "authenticated cashier UI -> header/quantity/revoke controls",
+      "trigger": "Render cashier with an active order on a touch viewport.",
+      "impact": "Critical logout, quantity and revoke controls are harder to operate and miss the acceptance threshold.",
+      "reproduction": "CSS defines 40px header actions, 38px quantity buttons and auto-height danger text.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-010",
+      "validation_test": "Bounding-box test must prove every interactive target is at least 44x44 in all nine viewports.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-017",
+      "severity": "P2 medium",
+      "title": "Focus indicator contrast is below the non-text threshold",
+      "locations": [
+        "src/Clients/PosTerminal/src/styles.css:28"
+      ],
+      "reachable_call_chain": "keyboard focus -> rgba accent outline over light surfaces",
+      "trigger": "Focus controls on a white background.",
+      "impact": "The low-opacity outline can be imperceptible for keyboard users.",
+      "reproduction": "rgba(240,90,54,.35) composited on white is approximately 1.55:1, below 3:1.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-010",
+      "validation_test": "Automated color calculation and keyboard screenshots must prove >=3:1 focus contrast.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-018",
+      "severity": "P2 medium",
+      "title": "Authenticated UI/accessibility state matrix is unverified",
+      "locations": [
+        "src/Clients/PosTerminal/src/App.tsx:196",
+        "docs/compliance/accessibility-target.md:1"
+      ],
+      "reachable_call_chain": "real HTTPS login/pairing/order/reconnect -> nine viewport and accessibility matrix",
+      "trigger": "Attempt required states without .NET 10.0.302 Host and seeded identities.",
+      "impact": "Overflow, focus restoration, zoom, reduced motion, modal semantics and critical CTA visibility are unknown.",
+      "reproduction": "Only the unauthenticated login and initial display failure could be rendered.",
+      "evidence": "evidence/V1-GOV-003/ui/viewport-metrics.json",
+      "remediation_task": "V1-RMD-010",
+      "validation_test": "Real-host two-context E2E must archive screenshots, DOM/a11y, focus, console/network and bbox data.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-019",
+      "severity": "P2 medium",
+      "title": "WebPrototype loses its explicit MOCK identity on mobile",
+      "locations": [
+        "src/Clients/WebPrototype/index.html:15",
+        "src/Clients/WebPrototype/styles.css:3620"
+      ],
+      "reachable_call_chain": "viewport <=900 -> prototype dock hides every child except an icon toggle",
+      "trigger": "Open WebPrototype at 430, 390 or 320 pixels without opening the dock.",
+      "impact": "A production-like POS appears without visible mock/prototype quarantine text and can be shipped accidentally.",
+      "reproduction": "Browser visible text omitted ALKAROS V1 · MOCK on all mobile viewports.",
+      "evidence": "evidence/V1-GOV-003/ui/prototype-viewport-metrics.json",
+      "remediation_task": "V1-RMD-011",
+      "validation_test": "Mobile screenshots must show permanent, non-dismissible mock quarantine branding.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-020",
+      "severity": "P2 medium",
+      "title": "WebPrototype has no CSP shipping boundary",
+      "locations": [
+        "src/Clients/WebPrototype/index.html:1",
+        "src/Clients/WebPrototype/app.js:325"
+      ],
+      "reachable_call_chain": "static hosting -> inline/dynamic innerHTML-heavy mock UI",
+      "trigger": "Serve prototype from an ordinary static server.",
+      "impact": "If exposed, injected or future unescaped content has no browser policy backstop.",
+      "reproduction": "No CSP meta/header contract is present; app.js contains many innerHTML sinks.",
+      "evidence": "evidence/V1-GOV-003/static-review.txt",
+      "remediation_task": "V1-RMD-011",
+      "validation_test": "Quarantine hosting test must assert restrictive CSP and negative DOM injection cases.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-021",
+      "severity": "P2 medium",
+      "title": "WebPrototype touch targets are below 44x44",
+      "locations": [
+        "src/Clients/WebPrototype/styles.css:1"
+      ],
+      "reachable_call_chain": "prototype cashier filters/theme/skip link -> rendered controls",
+      "trigger": "Measure visible controls at 1920, 430, 390 and 320 widths.",
+      "impact": "Frequently used filters are 38px high; theme control is narrower than 44px.",
+      "reproduction": "Browser bbox evidence lists the exact failing controls.",
+      "evidence": "evidence/V1-GOV-003/ui/prototype-viewport-metrics.json",
+      "remediation_task": "V1-RMD-011",
+      "validation_test": "All visible interactive controls must measure at least 44x44 at the required viewports.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-022",
+      "severity": "P1 high",
+      "title": "Required .NET/psql/Python validation toolchain is unavailable",
+      "locations": [
+        "global.json:3",
+        "plan/validation-runtime.lock:1"
+      ],
+      "reachable_call_chain": "clean checkout -> exact toolchain -> locked restore/build/test/format/coverage",
+      "trigger": "Resolve .NET 10.0.302, psql client and Python 3.12.12 on the audit host.",
+      "impact": "Full solution and real Host acceptance cannot be certified.",
+      "reproduction": ".NET and psql are missing; bundled Python is 3.12.13 and has no pytest.",
+      "evidence": "evidence/V1-GOV-003/toolchain.json",
+      "remediation_task": "V1-GOV-004",
+      "validation_test": "Independent clean rerun must use exact versions and archive every exit code.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-023",
+      "severity": "P1 high",
+      "title": "Security/supply-chain closure is incomplete",
+      "locations": [
+        "Directory.Packages.props:1",
+        "src/Clients/PosTerminal/pnpm-lock.yaml:1"
+      ],
+      "reachable_call_chain": "dependency locks/history -> vulnerability, SBOM, license and secret scans",
+      "trigger": "Run .NET vulnerability scan, SBOM generator and full-history secret scanner.",
+      "impact": "Known vulnerable packages, incompatible licenses or historical secrets may remain undiscovered.",
+      "reproduction": "pnpm audit/license passed, but dotnet/gitleaks/trivy/syft/grype are unavailable and no SBOM is tracked.",
+      "evidence": "evidence/V1-GOV-003/toolchain.json",
+      "remediation_task": "V1-RMD-007",
+      "validation_test": "Clean CI must produce signed SBOM/license output and zero high-confidence history-secret findings.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-024",
+      "severity": "P1 high",
+      "title": "Database concurrency/restart/timeout/performance acceptance is incomplete",
+      "locations": [
+        "database/MigrationComposition/order.json:1",
+        "src/Host/DualScreen/DualScreenStore.cs:114"
+      ],
+      "reachable_call_chain": "fresh PG18 -> full tests/concurrency/lease/restart/timeouts -> EXPLAIN ANALYZE",
+      "trigger": "Attempt required suite without .NET/psql host tools and approved dataset/SLO.",
+      "impact": "Race, timeout and query-plan regressions are not production-certified.",
+      "reproduction": "Only SQL forward/down execution was independently reproduced.",
+      "evidence": "evidence/V1-GOV-003/postgres-migration-summary.json",
+      "remediation_task": "V1-RMD-009",
+      "validation_test": "Fresh PG18 suite must cover concurrency, idempotency, fencing, restart, timeout and representative plans.",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "AUD-025",
+      "severity": "P0 blocker",
+      "title": "External go-live evidence and signed approval are absent",
+      "locations": [
+        "plan/v2.0/release/V20-REL-003-go-live-decision.md:1",
+        "plan/v2.0/release/V20-REL-004-production-deployment.md:1"
+      ],
+      "reachable_call_chain": "device/provider/security/recovery evidence -> signed go-live -> production deployment",
+      "trigger": "Request current fiscal device, printer, QNB, Yemeksepeti, meal-card, QR, license, backup and assessment evidence.",
+      "impact": "Real money/customer deployment would proceed without required external proof.",
+      "reproduction": "Roadmap contains planned/blocked release evidence and no signed Approve artifact for this candidate.",
+      "evidence": "evidence/V1-GOV-003/candidate.json",
+      "remediation_task": "V1-GOV-004",
+      "validation_test": "Independent final audit must verify all external transcripts and a dated signed Approve decision.",
+      "status": "CONFIRMED"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "taskId": "V1-RMD-023",
+  "date": "2026-08-27",
+  "runtime": "Production HTTPS Host with fresh digest-pinned PostgreSQL 18 and 37 migrations",
+  "before": {
+    "liveHtmlBytes": 8599,
+    "violations": [
+      { "id": "landmark-complementary-is-top-level", "impact": "moderate", "nodes": 1 }
+    ],
+    "seriousIncomplete": [
+      { "id": "aria-prohibited-attr", "nodes": 4 }
+    ]
+  },
+  "after": {
+    "axeVersion": "4.10.3",
+    "liveHtmlBytes": 8460,
+    "violations": [],
+    "criticalOrSeriousViolations": 0,
+    "criticalOrSeriousIncomplete": [],
+    "consoleWarningsAndErrors": []
+  },
+  "accessibilitySnapshot": {
+    "brand": "visible text without prohibited aria-label",
+    "identity": "group Aktif çalışma bağlamı",
+    "filters": "group Masa filtreleri",
+    "stats": "group Masa özeti",
+    "tableDetails": "region S-09 masa bağlamı"
+  }
+}

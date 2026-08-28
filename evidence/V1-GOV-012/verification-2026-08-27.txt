@@ -1,0 +1,16 @@
+V1-GOV-012 verification
+Date: 2026-08-27
+
+Delivered task:
+- V1-RMD-022-table-card-keyboard-semantics.md
+
+Exact source ownership:
+- src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+- src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+- src/Clients/PosTerminal/src/features/tables/tables.css
+- evidence/V1-RMD-022/**
+
+Pre-close results:
+- plan validate: exit 0, errors 0, warnings 0
+- verify-manifest: exit 0, errors 0
+- git diff --check: exit 0

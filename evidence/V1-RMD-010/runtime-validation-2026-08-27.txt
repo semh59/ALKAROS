@@ -1,0 +1,42 @@
+Task: V1-RMD-010
+Candidate commit: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Candidate tree: 39e9bb79d3d6f3e099e15a7ffafcc801f727843a
+Host: https://localhost:58299
+Database: postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
+Migration evidence: migrations-up-2026-08-27.log (37 V1 migrations)
+
+Commands and results
+--------------------
+pnpm test       exit 0 — 10 files, 62 tests passed
+pnpm run typecheck  exit 0 — tsc --noEmit
+pnpm run build  exit 0 — Vite production build (67 modules)
+independent stub scan exit 0 — TODO/FIXME/NotImplemented/empty-catch hits: 0
+python -B tools/plan-audit/plan_audit_tool.py validate exit 0 — 0 validation errors, 0 warnings
+markdownlint-cli2 0.23.2 exit 0 — 614-file scan, 0 issues
+git diff --check exit 0
+
+Browser evidence
+----------------
+Target viewport screenshots: 9
+Root breakpoint screenshots: 18 (1250, 900, 767, 430 and the related boundary cases)
+Surface boundary screenshots: 24 (tables, kitchen and catalog)
+Flow screenshots: active order, pairing modal, pairing error, display active, display retry error/recovered, display after revoke
+All screenshot PNGs were exported from the browser screenshot buffers into this evidence directory.
+
+State outcomes
+--------------
+Login: pass
+Table management/menu/kitchen production surfaces: pass (real API data)
+Order add/submit: pass
+Pairing/revoke/invalid code/retry: pass
+Offline Host stop/restart: pass
+Horizontal overflow across measured cases: none
+Visible target minimum: >=44px
+200/400% zoom: unproven — bridge has no zoom emulation
+prefers-reduced-motion: unproven — bridge has no media emulation
+Automated axe run: unproven — bridge rejected script injection (`document.createElement is not a function`)
+Table card nested interactive span: P1 source finding, outside evidence-only surface
+
+Cleanup state
+-------------
+Host and database remained disposable during the run. Final process/container cleanup and closure hashes are recorded separately.

@@ -1,0 +1,20 @@
+ALKAROS PosTerminal UI/UX & Responsive Multi-Viewport Audit
+Audit Date: 2026-08-24
+Application: PosTerminal (React 19 + TypeScript + Vite)
+
+Evaluated Viewport Matrix:
+1. 1920x1080 (Full HD Desktop): PASSED - 3-column layout, zero horizontal overflow.
+2. 1440x900 (Standard Desktop): PASSED - 3-column layout, zero horizontal overflow.
+3. 1366x768 (Common POS Display): PASSED - 3-column layout, responsive scaling.
+4. 1280x800 (Compact POS Display): PASSED - 3-column compact mode.
+5. 1024x768 (4:3 Tablet / Legacy POS): PASSED - Category rail condensed.
+6. 768x1024 (Tablet Portrait): PASSED - Reflow into single column view.
+7. 430x932 (iPhone 16 Pro Max / Large Phone): PASSED - Mobile reflow.
+8. 390x844 (Standard Phone): PASSED - Mobile reflow.
+9. 320x568 (iPhone SE / Ultra-compact): FINDING AUD-014 - Requires explicit padding/wrapping rules.
+
+Accessibility & Design Violations Identified:
+- AUD-012: Quantity buttons (38x38px) violate WCAG 2.2 SC 2.5.8 (Target Size Minimum 44x44px).
+- AUD-013: Focus indicator outline contrast on dark navy backgrounds < 3:1; missing ARIA live region for live basket updates.
+- AUD-014: 320px ultra-compact overflow hardening required.
+Remediation Assigned: V1-RMD-010

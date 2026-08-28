@@ -1,0 +1,131 @@
+- link "Ana içeriğe geç":
+  - /url: "#_r_0_"
+- banner:
+  - generic: ALKAROS
+  - group "Aktif çalışma bağlamı":
+    - generic: Şube
+    - strong: Şube bağlamı
+    - generic: Terminal
+    - strong: Terminal 16F9BD0C
+    - generic: Kullanıcı
+    - strong: ALKAROS Manager
+    - generic: Rol
+    - strong: Kasiyer / Operasyon
+  - link "Müşteri ekranı":
+    - /url: /display
+  - button "Çıkış"
+- navigation "Ana navigasyon":
+  - link "Kasa":
+    - /url: /
+    - generic: ₺
+    - generic: Kasa
+  - link "Masalar":
+    - /url: /tables
+    - generic: ▦
+    - generic: Masalar
+  - link "Mutfak":
+    - /url: /kitchen
+    - generic: ◇
+    - generic: Mutfak
+  - link "Menü":
+    - /url: /catalog
+    - generic: ≡
+    - generic: Menü
+- main:
+  - heading "Masa yönetimi" [level=1]
+  - paragraph: Salon, masa durumu ve servis akışı
+  - region "Masa yönetimi":
+    - text: OPERASYON / MASALAR
+    - heading "Masa düzeni" [level=2]
+    - paragraph: Son güncelleme 2026-08-28T16:05:49.919Z
+    - button "+ Zone ekle" [active]
+    - button "+ Masa ekle"
+    - button "Yenile"
+    - group "Masa filtreleri":
+      - generic: Zone
+      - combobox "Zone":
+        - option "Tüm zone'lar" [selected]
+        - option "Ana Salon"
+      - text: Masa ara
+      - textbox "Masa ara":
+        - /placeholder: Örn. S-09
+      - group "Masa durumuna göre filtrele":
+        - button "Tümü" [pressed]
+        - button "Müsait"
+        - button "Dolu"
+        - button "Rezerve"
+        - button "Temizlik"
+        - button "Servis dışı"
+      - group "Görünüm":
+        - button "Salon planı" [pressed]
+        - button "Liste"
+    - group "Masa özeti":
+      - generic: Toplam masa
+      - strong: "3"
+      - generic: Müsait
+      - strong: "0"
+      - generic: Dolu
+      - strong: "2"
+      - generic: Rezervasyon
+      - strong: "1"
+    - strong: Ana Salon
+    - generic: 3 masa
+    - text: Müsait
+    - text: Dolu
+    - text: Rezerve
+    - article:
+      - button "A-01 masasını seç, Rezerve" [pressed]:
+        - strong: A-01
+        - generic: Rezerve
+        - generic: ◉ 4 kişilik
+        - generic: Sipariş yok
+      - generic: v4
+      - 'button "A-01: Müsait yap"': Müsait yap
+    - article:
+      - button "A-02 masasını seç, Dolu":
+        - strong: A-02
+        - generic: Dolu
+        - generic: ◉ 2 kişilik
+        - generic: "Sipariş #7b6c9e74"
+      - generic: —
+      - 'button "A-02: Müsait yap"': Müsait yap
+    - article:
+      - button "A-03 masasını seç, Dolu":
+        - strong: A-03
+        - generic: Dolu
+        - generic: ◉ 6 kişilik
+        - generic: Sipariş yok
+      - generic: —
+      - 'button "A-03: Müsait yap"': Müsait yap
+    - region "A-01 masa bağlamı":
+      - text: SEÇİLİ MASA
+      - heading "A-01" [level=3]
+      - text: Ana Salon
+      - generic: Rezerve
+      - generic: Kapasite
+      - strong: 4 kişi
+      - generic: Satır sürümü
+      - strong: v4
+      - generic: Geçen süre
+      - strong: —
+      - generic: AKTİF BAĞLAM
+      - paragraph: Bu masada aktif sipariş yok.
+      - generic: İŞLEMLER
+      - button "Müsait yap"
+      - button "Rezervasyonu sahiplen" [disabled]
+      - button "Rezervasyonu iptal et" [disabled]
+      - paragraph: Sunucu yetkisi ve v4 kaynak gerçek. Çakışmada bu bağlam korunur.
+  - region "Masa sipariş bağlamı":
+    - generic: SİPARİŞ BAĞLAMI
+    - strong: A-01
+    - paragraph: Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır.
+    - button "Masada sipariş aç" [disabled]
+    - generic: Masa şu anda sipariş almaya uygun değil; sunucu durumu değiştirilmeden işlem yapılamaz.
+- contentinfo "Sistem durumu":
+  - status:
+    - generic: ✓
+    - strong: Çevrimiçi
+  - status:
+    - generic: ✓
+    - text: "Veri:"
+    - time: Son doğrulama

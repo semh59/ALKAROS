@@ -2,6 +2,7 @@
 
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Orders.SubmitOrder;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
 using Npgsql;
@@ -325,6 +326,74 @@ public sealed class PostgresKitchenTicketIntegrationTests : IClassFixture<Kitche
 
         var activeTickets = await _ticketRepo.GetActiveByStationAsync("PastryStation");
         activeTickets.Should().ContainSingle(t => t.Id == ticket1.Id);
+    }
+
+    [Fact]
+    public async Task SubmitOrderDispatchesQueuedTicketAndReplaysWithoutDuplicates()
+    {
+        var order = await CreateAndPersistSampleOrderAsync();
+        var handler = new SubmitOrderHandler(
+            _dataSource,
+            _orderRepo,
+            dispatcher: new KitchenOrderSubmissionDispatcher(_ticketRepo, "MainKitchen"));
+        var command = new SubmitOrderCommand(
+            "cashier-integration",
+            "submit-ticket-" + Guid.NewGuid().ToString("N"),
+            order.Id,
+            order.RowVersion);
+
+        var first = await handler.HandleAsync(command);
+        var replay = await handler.HandleAsync(command);
+
+        first.IsReplay.Should().BeFalse();
+        replay.IsReplay.Should().BeTrue();
+        var tickets = await _ticketRepo.GetByOrderIdAsync(order.Id);
+        tickets.Should().ContainSingle();
+        tickets[0].Status.Should().Be(KitchenTicketState.Queued);
+        tickets[0].StationId.Should().Be("MainKitchen");
+        tickets[0].Items.Should().ContainSingle(item => item.OrderItemId == order.Items[0].Id);
+    }
+
+    [Fact]
+    public async Task SubmitOrderRollsBackOrderAndTicketWhenDispatchFails()
+    {
+        var order = await CreateAndPersistSampleOrderAsync();
+        var handler = new SubmitOrderHandler(
+            _dataSource,
+            _orderRepo,
+            dispatcher: new InsertThenFailDispatcher(_ticketRepo));
+        var command = new SubmitOrderCommand(
+            "cashier-integration",
+            "submit-ticket-failure-" + Guid.NewGuid().ToString("N"),
+            order.Id,
+            order.RowVersion);
+
+        var act = () => handler.HandleAsync(command);
+
+        await act.Should().ThrowAsync<OrderSubmissionDispatchException>();
+        (await _orderRepo.GetByIdAsync(order.Id))!.Status.Should().Be(OrderState.Draft);
+        (await _ticketRepo.GetByOrderIdAsync(order.Id)).Should().BeEmpty();
+    }
+
+    private sealed class InsertThenFailDispatcher : IOrderSubmissionDispatcher
+    {
+        private readonly PostgresKitchenTicketRepository _ticketRepository;
+
+        public InsertThenFailDispatcher(PostgresKitchenTicketRepository ticketRepository)
+        {
+            _ticketRepository = ticketRepository;
+        }
+
+        public async Task DispatchAsync(
+            Order order,
+            NpgsqlConnection connection,
+            NpgsqlTransaction transaction,
+            CancellationToken cancellationToken = default)
+        {
+            var ticket = KitchenTicket.CreateFromOrder(order, "MainKitchen");
+            await _ticketRepository.AddAsync(ticket, connection, transaction, cancellationToken);
+            throw new OrderSubmissionDispatchException("dispatch intentionally failed");
+        }
     }
 }
 

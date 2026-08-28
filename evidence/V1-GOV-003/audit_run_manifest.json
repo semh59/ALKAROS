@@ -1,0 +1,27 @@
+{
+  "task_id": "V1-GOV-003",
+  "candidate_commit": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "candidate_tree": "39e9bb79d3d6f3e099e15a7ffafcc801f727843a",
+  "audit_date": "2026-08-24",
+  "reviewer": "fa82ea24-f52b-4613-bcba-f339ade70ca2",
+  "total_files_audited": 1727,
+  "ledger_file": "docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_LEDGER.jsonl",
+  "findings_file": "docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_FINDINGS.json",
+  "report_file": "docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_2026-08-24.md",
+  "remediation_tasks": [
+    "V1-RMD-007",
+    "V1-RMD-008",
+    "V1-RMD-009",
+    "V1-RMD-010",
+    "V1-RMD-011",
+    "V1-GOV-004"
+  ],
+  "findings_summary": {
+    "total": 16,
+    "p0_blocker": 3,
+    "p1_high": 5,
+    "p2_medium": 7,
+    "p3_low": 1
+  },
+  "final_verdict": "NOT_PRODUCTION_READY"
+}

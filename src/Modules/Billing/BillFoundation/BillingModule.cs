@@ -1,4 +1,5 @@
 using ALKAROS.ModuleComposition;
+using ALKAROS.Billing.SplitDesign;
 
 namespace ALKAROS.Billing.BillFoundation;
 
@@ -17,5 +18,6 @@ public sealed class BillingModule : IModule
     public void Register(ModuleContext context)
     {
         context.RegisterTransient<IBillRepository, PostgresBillRepository>();
+        context.RegisterTransient<ISplitDesignRepository, PostgresSplitDesignRepository>();
     }
 }

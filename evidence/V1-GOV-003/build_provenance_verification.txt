@@ -1,0 +1,13 @@
+ALKAROS Build Provenance Verification Output
+Audit Date: 2026-08-24
+Candidate SHA: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+
+Command: python -B tools/build-provenance/verify_build_provenance.py
+Output:
+Candidate SHA: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Projects checked: 34
+Matched: 34
+Missing: 0
+Mismatched: 0
+
+Exit Code: 0 (PASSED)

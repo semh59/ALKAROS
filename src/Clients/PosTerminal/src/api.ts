@@ -19,15 +19,26 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
-    ...init,
-    credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Correlation-Id": crypto.randomUUID(),
-      ...init?.headers,
-    },
-  });
+  let response: Response;
+  try {
+    const timeout = AbortSignal.timeout(8_000);
+    response = await fetch(path, {
+      ...init,
+      signal: init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout,
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Correlation-Id": crypto.randomUUID(),
+        ...init?.headers,
+      },
+    });
+  } catch {
+    throw new ApiError(
+      0,
+      "NETWORK_UNAVAILABLE",
+      "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.",
+    );
+  }
   if (!response.ok) {
     let body: ApiErrorBody | undefined;
     try {
@@ -67,6 +78,14 @@ export const api = {
     request<{ orderId: string; orderNumber: string; revision: number }>(
       `/api/v1/terminals/${terminalId}/orders`,
       { method: "POST", body: "{}" },
+    ),
+  startTableOrder: (terminalId: string, tableId: string, expectedTableRowVersion: number) =>
+    request<{ orderId: string; orderNumber: string; revision: number }>(
+      `/api/v1/terminals/${terminalId}/orders/table`,
+      {
+        method: "POST",
+        body: JSON.stringify({ tableId, expectedTableRowVersion }),
+      },
     ),
   addItem: (terminalId: string, orderId: string, productId: string, expectedRevision: number) =>
     request<MutationResult>(`/api/v1/terminals/${terminalId}/orders/${orderId}/items`, {

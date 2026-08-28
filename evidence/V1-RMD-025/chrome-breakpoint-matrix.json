@@ -1,0 +1,367 @@
+[
+  {
+    "actual": {
+      "height": 568,
+      "width": 320
+    },
+    "display": "block",
+    "document": {
+      "clientWidth": 305,
+      "scrollHeight": 2069,
+      "scrollWidth": 305
+    },
+    "horizontalOverflow": false,
+    "offscreenHorizontal": [],
+    "regions": {
+      "header": {
+        "bottom": 68,
+        "cls": "production-shell__header",
+        "height": 68,
+        "position": "fixed",
+        "right": 305,
+        "tag": "HEADER",
+        "text": "ALKAROSŞubeŞube bağlamıTerminalTerminal DD90A5B4KullanıcıRMD025 ManagerRolKasiye",
+        "visible": true,
+        "width": 305,
+        "x": 0,
+        "y": 0
+      },
+      "main": {
+        "bottom": 1953.28125,
+        "cls": "production-shell__workspace",
+        "height": 1885.28125,
+        "position": "static",
+        "right": 305,
+        "tag": "MAIN",
+        "text": "Masa yönetimiSalon, masa durumu ve servis akışıOPERASYON / MASALARMasa düzeniSon",
+        "visible": true,
+        "width": 305,
+        "x": 0,
+        "y": 68
+      },
+      "nav": {
+        "bottom": 568,
+        "cls": "production-shell__nav",
+        "height": 68,
+        "position": "fixed",
+        "right": 305,
+        "tag": "NAV",
+        "text": "Ana navigasyon",
+        "visible": true,
+        "width": 305,
+        "x": 0,
+        "y": 500
+      },
+      "status": {
+        "bottom": 500,
+        "cls": "production-shell__status",
+        "height": 48,
+        "position": "fixed",
+        "right": 305,
+        "tag": "FOOTER",
+        "text": "Sistem durumu",
+        "visible": true,
+        "width": 305,
+        "x": 0,
+        "y": 452
+      }
+    },
+    "requested": {
+      "height": 568,
+      "width": 320
+    },
+    "undersized": []
+  },
+  {
+    "actual": {
+      "height": 768,
+      "width": 767
+    },
+    "display": "block",
+    "document": {
+      "clientWidth": 752,
+      "scrollHeight": 1854,
+      "scrollWidth": 752
+    },
+    "horizontalOverflow": false,
+    "offscreenHorizontal": [],
+    "regions": {
+      "header": {
+        "bottom": 68,
+        "cls": "production-shell__header",
+        "height": 68,
+        "position": "fixed",
+        "right": 752,
+        "tag": "HEADER",
+        "text": "ALKAROSŞubeŞube bağlamıTerminalTerminal DD90A5B4KullanıcıRMD025 ManagerRolKasiye",
+        "visible": true,
+        "width": 752,
+        "x": 0,
+        "y": 0
+      },
+      "main": {
+        "bottom": 1738.822998046875,
+        "cls": "production-shell__workspace",
+        "height": 1670.822998046875,
+        "position": "static",
+        "right": 752,
+        "tag": "MAIN",
+        "text": "Masa yönetimiSalon, masa durumu ve servis akışıOPERASYON / MASALARMasa düzeniSon",
+        "visible": true,
+        "width": 752,
+        "x": 0,
+        "y": 68
+      },
+      "nav": {
+        "bottom": 768,
+        "cls": "production-shell__nav",
+        "height": 68,
+        "position": "fixed",
+        "right": 752,
+        "tag": "NAV",
+        "text": "Ana navigasyon",
+        "visible": true,
+        "width": 752,
+        "x": 0,
+        "y": 700
+      },
+      "status": {
+        "bottom": 700,
+        "cls": "production-shell__status",
+        "height": 48,
+        "position": "fixed",
+        "right": 752,
+        "tag": "FOOTER",
+        "text": "Sistem durumu",
+        "visible": true,
+        "width": 752,
+        "x": 0,
+        "y": 652
+      }
+    },
+    "requested": {
+      "height": 768,
+      "width": 767
+    },
+    "undersized": []
+  },
+  {
+    "actual": {
+      "height": 768,
+      "width": 768
+    },
+    "display": "grid",
+    "document": {
+      "clientWidth": 753,
+      "scrollHeight": 1284,
+      "scrollWidth": 753
+    },
+    "horizontalOverflow": false,
+    "offscreenHorizontal": [],
+    "regions": {
+      "header": {
+        "bottom": 68,
+        "cls": "production-shell__header",
+        "height": 68,
+        "position": "static",
+        "right": 753,
+        "tag": "HEADER",
+        "text": "ALKAROSŞubeŞube bağlamıTerminalTerminal DD90A5B4KullanıcıRMD025 ManagerRolKasiye",
+        "visible": true,
+        "width": 753,
+        "x": 0,
+        "y": 0
+      },
+      "main": {
+        "bottom": 1236.296875,
+        "cls": "production-shell__workspace",
+        "height": 1168.296875,
+        "position": "static",
+        "right": 753,
+        "tag": "MAIN",
+        "text": "Masa yönetimiSalon, masa durumu ve servis akışıOPERASYON / MASALARMasa düzeniSon",
+        "visible": true,
+        "width": 677,
+        "x": 76,
+        "y": 68
+      },
+      "nav": {
+        "bottom": 1236.296875,
+        "cls": "production-shell__nav",
+        "height": 1168.296875,
+        "position": "static",
+        "right": 76,
+        "tag": "NAV",
+        "text": "Ana navigasyon",
+        "visible": true,
+        "width": 76,
+        "x": 0,
+        "y": 68
+      },
+      "status": {
+        "bottom": 1284.296875,
+        "cls": "production-shell__status",
+        "height": 48,
+        "position": "static",
+        "right": 753,
+        "tag": "FOOTER",
+        "text": "Sistem durumu",
+        "visible": true,
+        "width": 753,
+        "x": 0,
+        "y": 1236.296875
+      }
+    },
+    "requested": {
+      "height": 768,
+      "width": 768
+    },
+    "undersized": []
+  },
+  {
+    "actual": {
+      "height": 900,
+      "width": 1279
+    },
+    "display": "grid",
+    "document": {
+      "clientWidth": 1264,
+      "scrollHeight": 1275,
+      "scrollWidth": 1264
+    },
+    "horizontalOverflow": false,
+    "offscreenHorizontal": [],
+    "regions": {
+      "header": {
+        "bottom": 68,
+        "cls": "production-shell__header",
+        "height": 68,
+        "position": "static",
+        "right": 1264,
+        "tag": "HEADER",
+        "text": "ALKAROSŞubeŞube bağlamıTerminalTerminal DD90A5B4KullanıcıRMD025 ManagerRolKasiye",
+        "visible": true,
+        "width": 1264,
+        "x": 0,
+        "y": 0
+      },
+      "main": {
+        "bottom": 1227.072998046875,
+        "cls": "production-shell__workspace",
+        "height": 1159.072998046875,
+        "position": "static",
+        "right": 1264,
+        "tag": "MAIN",
+        "text": "Masa yönetimiSalon, masa durumu ve servis akışıOPERASYON / MASALARMasa düzeniSon",
+        "visible": true,
+        "width": 1188,
+        "x": 76,
+        "y": 68
+      },
+      "nav": {
+        "bottom": 1227.072998046875,
+        "cls": "production-shell__nav",
+        "height": 1159.072998046875,
+        "position": "static",
+        "right": 76,
+        "tag": "NAV",
+        "text": "Ana navigasyon",
+        "visible": true,
+        "width": 76,
+        "x": 0,
+        "y": 68
+      },
+      "status": {
+        "bottom": 1275.072998046875,
+        "cls": "production-shell__status",
+        "height": 48,
+        "position": "static",
+        "right": 1264,
+        "tag": "FOOTER",
+        "text": "Sistem durumu",
+        "visible": true,
+        "width": 1264,
+        "x": 0,
+        "y": 1227.072998046875
+      }
+    },
+    "requested": {
+      "height": 900,
+      "width": 1279
+    },
+    "undersized": []
+  },
+  {
+    "actual": {
+      "height": 900,
+      "width": 1280
+    },
+    "display": "grid",
+    "document": {
+      "clientWidth": 1265,
+      "scrollHeight": 1239,
+      "scrollWidth": 1265
+    },
+    "horizontalOverflow": false,
+    "offscreenHorizontal": [],
+    "regions": {
+      "header": {
+        "bottom": 68,
+        "cls": "production-shell__header",
+        "height": 68,
+        "position": "static",
+        "right": 1265,
+        "tag": "HEADER",
+        "text": "ALKAROSŞubeŞube bağlamıTerminalTerminal DD90A5B4KullanıcıRMD025 ManagerRolKasiye",
+        "visible": true,
+        "width": 1265,
+        "x": 0,
+        "y": 0
+      },
+      "main": {
+        "bottom": 1191.234375,
+        "cls": "production-shell__workspace",
+        "height": 1123.234375,
+        "position": "static",
+        "right": 1265,
+        "tag": "MAIN",
+        "text": "Masa yönetimiSalon, masa durumu ve servis akışıOPERASYON / MASALARMasa düzeniSon",
+        "visible": true,
+        "width": 1049,
+        "x": 216,
+        "y": 68
+      },
+      "nav": {
+        "bottom": 1191.234375,
+        "cls": "production-shell__nav",
+        "height": 1123.234375,
+        "position": "static",
+        "right": 216,
+        "tag": "NAV",
+        "text": "Ana navigasyon",
+        "visible": true,
+        "width": 216,
+        "x": 0,
+        "y": 68
+      },
+      "status": {
+        "bottom": 1239.234375,
+        "cls": "production-shell__status",
+        "height": 48,
+        "position": "static",
+        "right": 1265,
+        "tag": "FOOTER",
+        "text": "Sistem durumu",
+        "visible": true,
+        "width": 1265,
+        "x": 0,
+        "y": 1191.234375
+      }
+    },
+    "requested": {
+      "height": 900,
+      "width": 1280
+    },
+    "undersized": []
+  }
+]

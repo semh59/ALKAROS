@@ -1,0 +1,62 @@
+ALKAROS V1-RMD-007 Manifest Verification Output
+Task ID: V1-RMD-007
+Auditor: fa82ea24-f52b-4613-bcba-f339ade70ca2
+
+Command: python -B tools/plan-audit/plan_audit_tool.py verify-manifest
+Output:
+Manifest Markdown files: 562
+UTF-8 full reads: 562
+Markdown lines: 39471
+Markdown bytes: 2430085
+Audit baseline rows: 211
+Audit finding IDs: 1827
+Audit added-file hashes: 350
+Manifest errors: 0
+
+Exit Code: 0 (PASSED)
+
+Final reseal after evidence/status updates (2026-08-27):
+generate-audit-report exit 0; 211 baseline rows, 399 added files.
+generate-manifest exit 0; 611 Markdown files, 41808 lines, 2568610 bytes,
+SHA-256 BBF574D6CD82CF812821F6EB5D396B75504CAE5CB49D135EB1C132C5C859DB7C.
+verify-manifest exit 0; 611 UTF-8 reads, 211 baseline rows, 1827 finding IDs,
+399 added-file hashes, 0 errors.
+
+Post-status final seal (2026-08-27):
+generate-audit-report exit 0; generate-manifest exit 0; verify-manifest exit 0.
+Manifest: 611 Markdown files, 41844 lines, 2568586 bytes,
+SHA-256 44511E6E5757619EDABE466A8C68FDBDE3A1EA309116C463A61D2741484925FF;
+211 baseline rows, 1827 finding IDs, 399 added-file hashes, 0 errors.
+
+Final reseal after markdownlint cleanup (2026-08-27):
+generate-audit-report exit 0; 211 baseline rows, 399 added files.
+generate-manifest exit 0; 611 Markdown files, 41844 lines, 2568592 bytes,
+SHA-256 B194884FC7EF14B13B30D69F892FF4CD81B3FA85A33E57488EB48A6A92ABF72F.
+verify-manifest exit 0; 611 UTF-8 reads, 211 baseline rows, 1827 finding IDs,
+399 added-file hashes, 0 errors.
+
+Current reseal addendum (2026-08-27, after solution graph completion):
+
+Command: python -B tools/plan-audit/plan_audit_tool.py generate-audit-report
+Output: Audit report integrity refreshed: 211 baseline rows, 399 added files.
+Exit Code: 0 (PASSED)
+
+Command: python -B tools/plan-audit/plan_audit_tool.py generate-manifest
+Output:
+Manifest Markdown files: 611
+Manifest Markdown lines: 41796
+Manifest Markdown bytes: 2567918
+Manifest SHA-256: 9B64D03E44A7C9410DB4C8546F0E80356A9866D794E8307F67562CAAD34B6641
+Exit Code: 0 (PASSED)
+
+Command: python -B tools/plan-audit/plan_audit_tool.py verify-manifest
+Output:
+Manifest Markdown files: 611
+UTF-8 full reads: 611
+Markdown lines: 41796
+Markdown bytes: 2567918
+Audit baseline rows: 211
+Audit finding IDs: 1827
+Audit added-file hashes: 399
+Manifest errors: 0
+Exit Code: 0 (PASSED)

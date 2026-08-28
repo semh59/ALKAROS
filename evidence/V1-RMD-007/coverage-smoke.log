@@ -1,0 +1,67 @@
+2026-08-26 23:19:41.567 +00:00 [INF] ConfigurationFileUtility.ReadDataCollectorConfigurationFile: Coverage settings file not provided. Using default settings.
+2026-08-26 23:19:41.692 +00:00 [INF] Starting collection for session id: 3bf4c029-5a47-45d7-b230-60afd8139b1d
+2026-08-26 23:19:41.694 +00:00 [INF] ConsoleStaticNativeInstrumenterFactory.Create:  not found.
+2026-08-26 23:19:41.702 +00:00 [INF] ReportGenerator.LoadGenerators. OutputType: cobertura
+2026-08-26 23:19:41.740 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: acquired lock. Creating new connection.
+2026-08-26 23:19:41.772 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: Created new connection. Number of connections: 0
+2026-08-26 23:19:41.773 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: acquired lock. Creating new connection.
+2026-08-26 23:19:41.774 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: Created new connection. Number of connections: 0
+2026-08-26 23:19:41.774 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: acquired lock. Creating new connection.
+2026-08-26 23:19:41.775 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: Created new connection. Number of connections: 0
+2026-08-26 23:19:41.775 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: acquired lock. Creating new connection.
+2026-08-26 23:19:41.776 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: Created new connection. Number of connections: 0
+2026-08-26 23:19:41.776 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: acquired lock. Creating new connection.
+2026-08-26 23:19:41.777 +00:00 [INF] PipeConnectionsManager.OpenConnectionInternal: Created new connection. Number of connections: 0
+2026-08-26 23:19:41.788 +00:00 [VRB] Configuring environment variable key: CODE_COVERAGE_SESSION_NAME, value: 3bf4c029-5a47-45d7-b230-60afd8139b1d
+2026-08-26 23:19:41.790 +00:00 [VRB] Configuring environment variable key: CODE_COVERAGE_PIPE_COUNT, value: 1
+2026-08-26 23:19:41.791 +00:00 [VRB] Configuring environment variable key: CODE_COVERAGE_PIPE_PATH, value: /tmp/3bf4c029-5a47-45d7-b230-60afd8139b1d/.pipe
+2026-08-26 23:19:41.791 +00:00 [VRB] Configuring environment variable key: MicrosoftInstrumentationEngine_DisableCodeSignatureValidation, value: 1
+2026-08-26 23:19:41.792 +00:00 [VRB] Configuring environment variable key: CODE_COVERAGE_FLAGS, value: 7
+2026-08-26 23:19:41.793 +00:00 [VRB] Configuring environment variable key: CODE_COVERAGE_DATA_PREFIX, value: /tmp/CodeCoverage.3bf4c029-5a47-45d7-b230-60afd8139b1d.
+2026-08-26 23:19:41.793 +00:00 [VRB] Configuring environment variable key: MicrosoftInstrumentationEngine_ConfigPath64_VanguardInstrumentationProfiler, value: /root/.dotnet/tools/.store/dotnet-coverage/18.10.0/dotnet-coverage/18.10.0/tools/net8.0/any/ubuntu/x64/Cov_x64.config
+2026-08-26 23:19:41.795 +00:00 [VRB] Configuring environment variable key: CORECLR_ENABLE_PROFILING, value: 1
+2026-08-26 23:19:41.796 +00:00 [VRB] Configuring environment variable key: CORECLR_PROFILER_PATH_64, value: /root/.dotnet/tools/.store/dotnet-coverage/18.10.0/dotnet-coverage/18.10.0/tools/net8.0/any/ubuntu/x64/libInstrumentationEngine.so
+2026-08-26 23:19:41.796 +00:00 [VRB] Configuring environment variable key: CORECLR_PROFILER, value: {324F817A-7420-4E6D-B3C1-143FBED6D855}
+2026-08-26 23:19:41.802 +00:00 [VRB] ProcessFactory: Starting process: fileName: dotnet, arguments: test tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj --configuration Release --no-build
+2026-08-26 23:19:41.808 +00:00 [INF] Started process id: 77
+2026-08-26 23:19:45.073 +00:00 [INF] Process ID 77 exited.
+2026-08-26 23:19:45.077 +00:00 [VRB] PipeConnection.WaitForDisconnection: 7f39593f-47cf-4759-b276-6c1d0c58087c finished
+2026-08-26 23:19:45.078 +00:00 [VRB] PipeConnection.WaitForDisconnection: e50eb21a-453e-4da2-bd09-7a44e294e066 finished
+2026-08-26 23:19:45.079 +00:00 [VRB] PipeConnection.WaitForDisconnection: 4a3ecec1-6404-4b66-b2fa-12a9839492bc finished
+2026-08-26 23:19:45.080 +00:00 [VRB] PipeConnection.WaitForDisconnection: df5cc92d-34be-457c-8acd-3f630b9ea052 finished
+2026-08-26 23:19:45.081 +00:00 [VRB] PipeConnection.WaitForDisconnection: d07a7f94-ebdc-4d9b-8e57-e2d8e2488878 finished
+2026-08-26 23:19:45.083 +00:00 [VRB] PipeConnection.Stop: 7f39593f-47cf-4759-b276-6c1d0c58087c finished
+2026-08-26 23:19:45.084 +00:00 [VRB] PipeConnection.Stop: e50eb21a-453e-4da2-bd09-7a44e294e066 finished
+2026-08-26 23:19:45.084 +00:00 [VRB] PipeConnection.Stop: 4a3ecec1-6404-4b66-b2fa-12a9839492bc finished
+2026-08-26 23:19:45.085 +00:00 [VRB] PipeConnection.Stop: df5cc92d-34be-457c-8acd-3f630b9ea052 finished
+2026-08-26 23:19:45.086 +00:00 [VRB] PipeConnection.Stop: d07a7f94-ebdc-4d9b-8e57-e2d8e2488878 finished
+2026-08-26 23:19:45.090 +00:00 [INF] CoberturaReportGenerator.GenerateReport: number of packages: 0 modules: 0
+2026-08-26 23:19:45.100 +00:00 [INF] Report generator: CoberturaReportGenerator, output file: /src/evidence/V1-RMD-007/coverage-smoke2.cobertura.xml
+2026-08-26 23:19:45.102 +00:00 [VRB] PipeConnection.Stop: 7f39593f-47cf-4759-b276-6c1d0c58087c finished
+2026-08-26 23:19:45.103 +00:00 [VRB] PipeConnection.Stop: e50eb21a-453e-4da2-bd09-7a44e294e066 finished
+2026-08-26 23:19:45.104 +00:00 [VRB] PipeConnection.Stop: 4a3ecec1-6404-4b66-b2fa-12a9839492bc finished
+2026-08-26 23:19:45.104 +00:00 [VRB] PipeConnection.Stop: df5cc92d-34be-457c-8acd-3f630b9ea052 finished
+2026-08-26 23:19:45.105 +00:00 [VRB] PipeConnection.Stop: d07a7f94-ebdc-4d9b-8e57-e2d8e2488878 finished
+2026-08-26 23:19:45.107 +00:00 [INF] LoggerBase.OnShutdown: Logger is shutting down.
+2026-08-26 23:19:45.108 +00:00 [WRN] CollectCommandHandler.Collect: No code coverage data available. Profiler was not initialized. Verify that glibc (>=2.27), libxml2 and all .NET dependencies are installed.
+2026-08-26 23:19:45.110 +00:00 [VRB] PipeConnection.Stop: 7f39593f-47cf-4759-b276-6c1d0c58087c finished
+2026-08-26 23:19:45.111 +00:00 [VRB] PipeConnection.Stop: e50eb21a-453e-4da2-bd09-7a44e294e066 finished
+2026-08-26 23:19:45.112 +00:00 [VRB] PipeConnection.Stop: 4a3ecec1-6404-4b66-b2fa-12a9839492bc finished
+2026-08-26 23:19:45.113 +00:00 [VRB] PipeConnection.Stop: df5cc92d-34be-457c-8acd-3f630b9ea052 finished
+2026-08-26 23:19:45.113 +00:00 [VRB] PipeConnection.Stop: d07a7f94-ebdc-4d9b-8e57-e2d8e2488878 finished
+2026-08-26 23:19:45.114 +00:00 [VRB] PipeConnection.Stop: 7f39593f-47cf-4759-b276-6c1d0c58087c finished
+2026-08-26 23:19:45.117 +00:00 [VRB] PipeConnection.Stop: e50eb21a-453e-4da2-bd09-7a44e294e066 finished
+2026-08-26 23:19:45.118 +00:00 [VRB] PipeConnection.Stop: 4a3ecec1-6404-4b66-b2fa-12a9839492bc finished
+2026-08-26 23:19:45.119 +00:00 [VRB] PipeConnection.Stop: df5cc92d-34be-457c-8acd-3f630b9ea052 finished
+2026-08-26 23:19:45.120 +00:00 [VRB] PipeConnection.Stop: d07a7f94-ebdc-4d9b-8e57-e2d8e2488878 finished
+2026-08-26 23:19:45.125 +00:00 [INF] PipeConnection.OnClientConnected: 4a3ecec1-6404-4b66-b2fa-12a9839492bc connection was not made. Exception: Pipe is broken.
+2026-08-26 23:19:45.125 +00:00 [INF] PipeConnection.OnClientConnected: df5cc92d-34be-457c-8acd-3f630b9ea052 connection was not made. Exception: Pipe is broken.
+2026-08-26 23:19:45.125 +00:00 [INF] PipeConnection.OnClientConnected: e50eb21a-453e-4da2-bd09-7a44e294e066 connection was not made. Exception: Pipe is broken.
+2026-08-26 23:19:45.125 +00:00 [INF] PipeConnection.OnClientConnected: 7f39593f-47cf-4759-b276-6c1d0c58087c connection was not made. Exception: Pipe is broken.
+2026-08-26 23:19:45.126 +00:00 [VRB] PipeConnection.OnClientConnected: 4a3ecec1-6404-4b66-b2fa-12a9839492bc shutting down. Skipping connection handling.
+2026-08-26 23:19:45.126 +00:00 [VRB] PipeConnection.OnClientConnected: df5cc92d-34be-457c-8acd-3f630b9ea052 shutting down. Skipping connection handling.
+2026-08-26 23:19:45.126 +00:00 [INF] PipeConnection.OnClientConnected: d07a7f94-ebdc-4d9b-8e57-e2d8e2488878 connection was not made. Exception: Operation canceled
+2026-08-26 23:19:45.127 +00:00 [VRB] PipeConnection.OnClientConnected: e50eb21a-453e-4da2-bd09-7a44e294e066 shutting down. Skipping connection handling.
+2026-08-26 23:19:45.128 +00:00 [VRB] PipeConnection.OnClientConnected: 7f39593f-47cf-4759-b276-6c1d0c58087c shutting down. Skipping connection handling.
+2026-08-26 23:19:45.132 +00:00 [VRB] Cleanup session directory folder '/tmp/3bf4c029-5a47-45d7-b230-60afd8139b1d'
+2026-08-26 23:19:45.130 +00:00 [VRB] PipeConnection.OnClientConnected: d07a7f94-ebdc-4d9b-8e57-e2d8e2488878 shutting down. Skipping connection handling.

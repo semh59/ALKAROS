@@ -38,3 +38,16 @@ public sealed class SubmitOrderIdempotencyConflictException : Exception
     public string ClientId { get; }
     public string OperationId { get; }
 }
+
+public sealed class OrderSubmissionDispatchException : Exception
+{
+    public OrderSubmissionDispatchException(string message)
+        : base(message)
+    {
+    }
+
+    public OrderSubmissionDispatchException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
+}

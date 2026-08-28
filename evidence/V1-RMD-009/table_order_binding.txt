@@ -1,0 +1,14 @@
+V1-RMD-009 table-aware order binding evidence
+
+Candidate: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Environment: PostgreSQL 18 digest d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
+Command: dotnet test tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj --configuration Release --filter FullyQualifiedName~DualScreenStoreTests
+Exit: 0
+Result: 5 passed, 0 failed
+
+Coverage:
+- StartOrderRequest(tableId, expectedTableRowVersion) locks the table row and commits orders.orders.table_id,
+  table_mgmt.tables.current_order_id, Occupied status and row_version increment atomically.
+- Stale expected table row version and an already-bound order fail with DualScreenConflictException and no second order.
+- Concurrent starts against one Available table produce exactly one Draft order and one terminal pointer.
+- Existing bodyless POST /api/v1/terminals/{terminalId}/orders remains backward-compatible and creates a null table_id order.

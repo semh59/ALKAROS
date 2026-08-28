@@ -1,0 +1,70 @@
+{
+  "taskId": "V1-RMD-010",
+  "date": "2026-08-27",
+  "surface": "authenticated production PosTerminal /tables",
+  "runtime": {
+    "url": "https://localhost:58299/tables",
+    "environment": "Production",
+    "database": "fresh digest-pinned PostgreSQL 18",
+    "migrationCount": 37,
+    "consoleErrorWarningCount": 0
+  },
+  "zoom200": {
+    "baselineDevicePixelRatio": 1.0000000298023224,
+    "measuredDevicePixelRatio": 2.0000000596046448,
+    "ratio": 2,
+    "viewport": { "innerWidth": 195, "innerHeight": 422, "clientWidth": 187 },
+    "scrollWidth": 187,
+    "horizontalOverflow": false,
+    "minimumControlWidth": 54.0625,
+    "minimumControlHeight": 44,
+    "finding": {
+      "severity": "P1",
+      "verdict": "fail",
+      "description": "The production header clips critical controls without exposing horizontal scrolling.",
+      "customerDisplay": { "left": 113.84896087646484, "right": 196.38021087646484 },
+      "logout": { "left": 204.38021850585935, "right": 265.9114685058594 },
+      "visibleClientRight": 187
+    },
+    "screenshot": {
+      "path": "evidence/V1-RMD-010/chrome-real-zoom-200-header-clipping-2026-08-27.png",
+      "sha256": "10C4528D5870076E14176FEBAEDA2202EF52A7FEE56E9E622E524778F3B079A8"
+    }
+  },
+  "zoom400": {
+    "restoredBaselineDevicePixelRatio": 3,
+    "measuredDevicePixelRatio": 12,
+    "ratio": 4,
+    "viewport": { "innerWidth": 320, "innerHeight": 123, "clientWidth": 316 },
+    "scrollWidth": 316,
+    "horizontalOverflow": false,
+    "minimumControlWidth": 53.8984375,
+    "minimumControlHeight": 44,
+    "finding": {
+      "severity": "P1",
+      "verdict": "fail",
+      "description": "Fixed shell regions cover the full viewport and leave no visible main-content area.",
+      "banner": { "top": 0, "bottom": 68 },
+      "systemStatus": { "top": 7.75, "bottom": 55.75 },
+      "navigation": { "top": 55.75, "bottom": 123.75 }
+    },
+    "screenshot": {
+      "path": "evidence/V1-RMD-010/chrome-real-zoom-400-tables-2026-08-27.png",
+      "sha256": "EAEAED6B34401B63A50D03E0B6CC9C9A77155B30A0E530BBDC088D8FE2DED0DC"
+    }
+  },
+  "restoration": {
+    "devicePixelRatio": 3,
+    "innerWidth": 1280,
+    "innerHeight": 495,
+    "clientWidth": 1265,
+    "scrollWidth": 1265,
+    "horizontalOverflow": false,
+    "verdict": "temporary page zoom restored to 100 percent",
+    "screenshot": {
+      "path": "evidence/V1-RMD-010/chrome-real-zoom-100-restored-2026-08-27.png",
+      "sha256": "CA71A20F14639779668FB2B1A7A0D441EFE004395188263D204EB5421EF004B2"
+    }
+  },
+  "overallVerdict": "fail"
+}

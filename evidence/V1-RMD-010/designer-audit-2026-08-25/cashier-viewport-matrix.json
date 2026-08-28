@@ -1,0 +1,320 @@
+{
+  "source": "Explicit UI rendering fixture; not production backend proof.",
+  "results": [
+    {
+      "name": "1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "body": {
+        "clientWidth": 1920,
+        "overflowX": "clip",
+        "scrollWidth": 1920
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 1920,
+        "overflowX": "clip",
+        "scrollWidth": 1920
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    },
+    {
+      "name": "1440x900",
+      "width": 1440,
+      "height": 900,
+      "body": {
+        "clientWidth": 1440,
+        "overflowX": "clip",
+        "scrollWidth": 1440
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 1440,
+        "overflowX": "clip",
+        "scrollWidth": 1440
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    },
+    {
+      "name": "1366x768",
+      "width": 1366,
+      "height": 768,
+      "body": {
+        "clientWidth": 1366,
+        "overflowX": "clip",
+        "scrollWidth": 1366
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 1366,
+        "overflowX": "clip",
+        "scrollWidth": 1366
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    },
+    {
+      "name": "1280x800",
+      "width": 1280,
+      "height": 800,
+      "body": {
+        "clientWidth": 1280,
+        "overflowX": "clip",
+        "scrollWidth": 1280
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 1280,
+        "overflowX": "clip",
+        "scrollWidth": 1280
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    },
+    {
+      "name": "1024x768",
+      "width": 1024,
+      "height": 768,
+      "body": {
+        "clientWidth": 1024,
+        "overflowX": "clip",
+        "scrollWidth": 1024
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 1024,
+        "overflowX": "clip",
+        "scrollWidth": 1024
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    },
+    {
+      "name": "768x1024",
+      "width": 768,
+      "height": 1024,
+      "body": {
+        "clientWidth": 753,
+        "overflowX": "clip",
+        "scrollWidth": 753
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 753,
+        "overflowX": "clip",
+        "scrollWidth": 753
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 15
+    },
+    {
+      "name": "430x932",
+      "width": 430,
+      "height": 932,
+      "body": {
+        "clientWidth": 415,
+        "overflowX": "clip",
+        "scrollWidth": 415
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 46,
+      "root": {
+        "clientWidth": 415,
+        "overflowX": "clip",
+        "scrollWidth": 415
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 12
+    },
+    {
+      "name": "390x844",
+      "width": 390,
+      "height": 844,
+      "body": {
+        "clientWidth": 375,
+        "overflowX": "clip",
+        "scrollWidth": 375
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 46,
+      "root": {
+        "clientWidth": 375,
+        "overflowX": "clip",
+        "scrollWidth": 375
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 12
+    },
+    {
+      "name": "320x568",
+      "width": 320,
+      "height": 568,
+      "body": {
+        "clientWidth": 320,
+        "overflowX": "clip",
+        "scrollWidth": 320
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 46,
+      "root": {
+        "clientWidth": 305,
+        "overflowX": "clip",
+        "scrollWidth": 320
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 10
+    },
+    {
+      "name": "bp-1249",
+      "width": 1249,
+      "height": 900,
+      "body": {
+        "clientWidth": 1249,
+        "overflowX": "clip",
+        "scrollWidth": 1249
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 1249,
+        "overflowX": "clip",
+        "scrollWidth": 1249
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    },
+    {
+      "name": "bp-1250",
+      "width": 1250,
+      "height": 900,
+      "body": {
+        "clientWidth": 1250,
+        "overflowX": "clip",
+        "scrollWidth": 1250
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 1250,
+        "overflowX": "clip",
+        "scrollWidth": 1250
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    },
+    {
+      "name": "bp-1251",
+      "width": 1251,
+      "height": 900,
+      "body": {
+        "clientWidth": 1251,
+        "overflowX": "clip",
+        "scrollWidth": 1251
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 1251,
+        "overflowX": "clip",
+        "scrollWidth": 1251
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    },
+    {
+      "name": "bp-899",
+      "width": 899,
+      "height": 800,
+      "body": {
+        "clientWidth": 884,
+        "overflowX": "clip",
+        "scrollWidth": 884
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 46,
+      "root": {
+        "clientWidth": 884,
+        "overflowX": "clip",
+        "scrollWidth": 884
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 12
+    },
+    {
+      "name": "bp-900",
+      "width": 900,
+      "height": 800,
+      "body": {
+        "clientWidth": 885,
+        "overflowX": "clip",
+        "scrollWidth": 885
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 46,
+      "root": {
+        "clientWidth": 885,
+        "overflowX": "clip",
+        "scrollWidth": 885
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 12
+    },
+    {
+      "name": "bp-901",
+      "width": 901,
+      "height": 800,
+      "body": {
+        "clientWidth": 901,
+        "overflowX": "clip",
+        "scrollWidth": 901
+      },
+      "connectivityVisible": true,
+      "criticalCtaVisible": true,
+      "minimumControl": 44,
+      "root": {
+        "clientWidth": 901,
+        "overflowX": "clip",
+        "scrollWidth": 901
+      },
+      "totalVisible": true,
+      "undersized": [],
+      "visibleControlCount": 18
+    }
+  ]
+}

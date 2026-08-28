@@ -1,0 +1,68 @@
+{
+  "#root": {
+    "display": "block",
+    "height": 1282.744873046875,
+    "maxWidth": "none",
+    "overflowX": "visible",
+    "width": 1425,
+    "x": 0,
+    "y": 0
+  },
+  ".production-shell": {
+    "display": "grid",
+    "height": 1282.744873046875,
+    "maxWidth": "none",
+    "overflowX": "clip",
+    "width": 1425,
+    "x": 0,
+    "y": 0
+  },
+  ".table-route": {
+    "display": "grid",
+    "height": 1042.515625,
+    "maxWidth": "none",
+    "overflowX": "visible",
+    "width": 1161,
+    "x": 240,
+    "y": 168.2291717529297
+  },
+  ".table-workspace": {
+    "display": "block",
+    "height": 892.8489990234375,
+    "maxWidth": "none",
+    "overflowX": "visible",
+    "width": 1161,
+    "x": 240,
+    "y": 168.2291717529297
+  },
+  "body": {
+    "display": "block",
+    "height": 1282.744873046875,
+    "maxWidth": "none",
+    "overflowX": "clip",
+    "width": 1425,
+    "x": 0,
+    "y": 0
+  },
+  "devicePixelRatio": 1.0000000298023224,
+  "html": {
+    "display": "block",
+    "height": 1282.744873046875,
+    "maxWidth": "none",
+    "overflowX": "clip",
+    "width": 1425,
+    "x": 0,
+    "y": 0
+  },
+  "innerHeight": 900,
+  "innerWidth": 1440,
+  "main": {
+    "display": "block",
+    "height": 1166.744873046875,
+    "maxWidth": "none",
+    "overflowX": "auto",
+    "width": 1209,
+    "x": 216,
+    "y": 68
+  }
+}

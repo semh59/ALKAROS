@@ -1,0 +1,63 @@
+V1-GOV-010 validation evidence
+Date: 2026-08-25
+Agent: /root/gov010_task_custody
+Repository root: D:/PROJECT/ALKAROS
+
+Preflight
+- Dependency V1-GOV-009: Done
+- Product decision: docs/product/V1_PRODUCTION_EXPERIENCE_DECISION_2026-08-25.md
+- Initial worktree contained user/previous-task changes; none were reverted or moved.
+- Writes were limited to V1-GOV-010 exact owned plan/manifest paths, its metadata/blocker, and this evidence directory.
+
+Created task files
+- V1-RMD-013 through V1-RMD-021: 9 files
+- Dependency sequence: RMD013..016 -> RMD017..019 -> RMD020 -> RMD010 -> RMD011 -> RMD021 -> GOV004
+- RMD010 converted to integrated-shell validation-only ownership so RMD020 owns the preserved production client source.
+- RMD011 handoff changed to RMD021; GOV004 dependency changed to RMD021.
+- plan/v1/README.md final counts: 118 tasks; 99 Done, 4 NotApplicable, 11 Planned, 4 Blocked.
+
+Plan validation
+Command: python -B tools/plan-audit/plan_audit_tool.py validate
+Exit code: 1
+Summary: Markdown files 415; task files 393; dependency edges 1349; warnings 0; errors 1.
+Remaining exact error:
+SURFACE_DUPLICATE src/Host/DualScreen/DualScreenApplication.cs: V1-RMD-009, V1-RMD-020
+
+The existing Host has no separate extension seam that can map the new Experience endpoint groups without changing
+src/Host/DualScreen/DualScreenApplication.cs. The active task cannot edit the V1-RMD-009 task file to transfer custody.
+
+Manifest
+Command: python -B tools/plan-audit/plan_audit_tool.py generate-manifest
+Exit code: 0
+Summary: 592 Markdown files; 41239 lines; 2525275 bytes.
+Generated manifest SHA-256: 12472C71353295A4CF3B84E2E06F47626532F69FE0A28F8C4E56F3F887A5C1EB
+
+Command: python -B tools/plan-audit/plan_audit_tool.py verify-manifest
+Exit code: 1
+Errors:
+- AUDIT_FINAL_HASH plan/v1/README.md
+- AUDIT_ADDED_ROWS actual=359 expected=380
+- AUDIT_ADDED_HASH plan/v1/governance/V1-GOV-004-post-remediation-master-audit-reseal.md
+- AUDIT_ADDED_HASH plan/v1/remediation/V1-RMD-008-host-api-auth-ratelimit-tls-and-telemetry.md
+- AUDIT_ADDED_HASH plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md
+- AUDIT_ADDED_HASH plan/v1/remediation/V1-RMD-010-pos-terminal-ui-responsive-and-a11y.md
+- AUDIT_ADDED_HASH plan/v1/remediation/V1-RMD-011-web-prototype-hardening-and-touch-targets.md
+
+verify-manifest also validates plan/AUDIT_REPORT.md hash rows. That file is outside V1-GOV-010 owned surface.
+
+Diff check
+Command: git diff --check
+Exit code: 0
+
+Markdown lint
+The first root markdownlint attempt could not find node on PATH. A second attempt used the bundled Node/pnpm runtime,
+started markdownlint-cli2 0.23.2 over 1112 files, and was interrupted on parent instruction before completion. No pass
+claim is made.
+
+Final task status: Blocked
+Assignee: Unassigned
+Required custody correction:
+1. Add plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md to an approved governance task and
+   transfer src/Host/DualScreen/DualScreenApplication.cs ownership to V1-RMD-020.
+2. Add plan/AUDIT_REPORT.md to that governance task so generate-audit-report can reseal the final/added hashes before
+   verify-manifest.

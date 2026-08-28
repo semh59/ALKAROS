@@ -1,0 +1,50 @@
+[
+  {
+    "level": "error",
+    "message": "[2026-08-24T22:07:09.001Z] Error: Failed to complete negotiation with the server: Error: {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Fixture route not found.\"}}: Status code '404' Either this is not a SignalR endpoint or there is a proxy blocking the connection.",
+    "timestamp": "2026-08-24T22:07:09.003Z",
+    "url": "http://127.0.0.1:5183/@vite/client"
+  },
+  {
+    "level": "error",
+    "message": "[2026-08-24T22:07:09.003Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: Error: {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Fixture route not found.\"}}: Status code '404' Either this is not a SignalR endpoint or there is a proxy blocking the connection.",
+    "timestamp": "2026-08-24T22:07:09.003Z",
+    "url": "http://127.0.0.1:5183/@vite/client"
+  },
+  {
+    "level": "error",
+    "message": "[2026-08-24T22:07:52.188Z] Error: Failed to complete negotiation with the server: Error: {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Fixture route not found.\"}}: Status code '404' Either this is not a SignalR endpoint or there is a proxy blocking the connection.",
+    "timestamp": "2026-08-24T22:07:52.189Z",
+    "url": "http://127.0.0.1:5183/@vite/client"
+  },
+  {
+    "level": "error",
+    "message": "[2026-08-24T22:07:52.188Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: Error: {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Fixture route not found.\"}}: Status code '404' Either this is not a SignalR endpoint or there is a proxy blocking the connection.",
+    "timestamp": "2026-08-24T22:07:52.189Z",
+    "url": "http://127.0.0.1:5183/@vite/client"
+  },
+  {
+    "level": "error",
+    "message": "[2026-08-24T22:08:24.629Z] Error: Failed to complete negotiation with the server: Error: {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Fixture route not found.\"}}: Status code '404' Either this is not a SignalR endpoint or there is a proxy blocking the connection.",
+    "timestamp": "2026-08-24T22:08:24.630Z",
+    "url": "http://127.0.0.1:5183/@vite/client"
+  },
+  {
+    "level": "error",
+    "message": "[2026-08-24T22:08:24.630Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: Error: {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Fixture route not found.\"}}: Status code '404' Either this is not a SignalR endpoint or there is a proxy blocking the connection.",
+    "timestamp": "2026-08-24T22:08:24.630Z",
+    "url": "http://127.0.0.1:5183/@vite/client"
+  },
+  {
+    "level": "error",
+    "message": "[2026-08-24T22:09:04.642Z] Error: Failed to complete negotiation with the server: Error: {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Fixture route not found.\"}}: Status code '404' Either this is not a SignalR endpoint or there is a proxy blocking the connection.",
+    "timestamp": "2026-08-24T22:09:04.643Z",
+    "url": "http://127.0.0.1:5183/@vite/client"
+  },
+  {
+    "level": "error",
+    "message": "[2026-08-24T22:09:04.643Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: Error: {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"Fixture route not found.\"}}: Status code '404' Either this is not a SignalR endpoint or there is a proxy blocking the connection.",
+    "timestamp": "2026-08-24T22:09:04.643Z",
+    "url": "http://127.0.0.1:5183/@vite/client"
+  }
+]

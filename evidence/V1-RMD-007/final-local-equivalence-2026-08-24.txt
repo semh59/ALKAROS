@@ -1,0 +1,34 @@
+Task: V1-RMD-007 final local equivalence
+Assignee: /root/rmd007_build_governance
+
+Build/provenance environment:
+- mcr.microsoft.com/dotnet/sdk:10.0.302
+- image digest sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+- locked restore exit 0
+- Release build exit 0, 0 warnings, 0 errors
+- production assembly provenance 34/34, exit 0
+- wrong candidate and wrong RepositoryCommit rejected
+
+Coverage environment:
+- mcr.microsoft.com/dotnet/sdk:8.0.419
+- image digest sha256:dd09bcce84d9130e7f3e85c83a8ce9709e1d95e45c48c722a0d7923b38d8024c
+- SDK8 vstest direct execution: 5 passed, 0 failed
+- dotnet-coverage 18.10.0 static include collection exit 0
+- measured line-rate 0.9626168224299065
+- no unapproved coverage threshold was applied
+
+Supply chain:
+- dotnet vulnerable transitive scan exit 0, no vulnerable package in 76 projects
+- Microsoft.Sbom.DotNetTool 4.1.5 exit 0
+- SPDX 2.2 manifest and SHA-256 sidecar generated
+- 146 components detected, 64 explicitly referenced
+- pnpm production license inventory exit 0
+- Gitleaks 8.30.1 archive SHA-256 verified as 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+- Gitleaks full Git history scan with redaction exit 0
+
+Database tool boundary:
+- postgres@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
+- isolated Docker network and ephemeral PostgreSQL 18 container
+- same digest ephemeral psql client connection exit 0
+- server_version_num >= 180000 returned true
+- container and network removed after smoke test

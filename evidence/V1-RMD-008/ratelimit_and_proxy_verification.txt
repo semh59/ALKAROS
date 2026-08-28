@@ -1,0 +1,17 @@
+ALKAROS V1-RMD-008 Rate Limiting & Proxy Verification Output
+Task ID: V1-RMD-008
+
+Verified Features:
+1. Partitioned Rate Limiter:
+   - Login, pairing-create, pairing-approve, and pairing-complete partitioned by Client IP address.
+   - Remote client rate-limit exhaustion does not starve other distinct terminals.
+2. Rate Limit Rejection Envelope:
+   - HTTP 429 response contains Retry-After: 60 header.
+   - ApiError payload contains standardized RATE_LIMITED error code and trace identifier.
+3. Forwarded Headers & Reverse Proxy Support:
+   - ForwardedHeaders middleware added (XForwardedFor | XForwardedProto).
+   - Cookie secure policy respects request HTTPS and remote connection security.
+4. Structured 500 Error Logging:
+   - WriteErrorAsync logs 500+ exceptions via LoggerMessage.Define delegate with trace ID linkage.
+
+Exit Code: 0 (PASSED)

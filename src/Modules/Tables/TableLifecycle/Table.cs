@@ -61,10 +61,10 @@ public sealed class Table
     public bool CanTransitionTo(TableState target) => target switch
     {
         TableState.Available => State is TableState.Occupied or TableState.Reserved or TableState.Cleaning or TableState.OutOfService,
-        TableState.Occupied => State is TableState.Available,
+        TableState.Occupied => State is TableState.Available or TableState.Reserved,
         TableState.Reserved => State is TableState.Available or TableState.Occupied,
-        TableState.Cleaning => State is TableState.Available or TableState.OutOfService,
-        TableState.OutOfService => State is TableState.Available,
+        TableState.Cleaning => State is TableState.Available or TableState.Occupied or TableState.OutOfService,
+        TableState.OutOfService => State is TableState.Available or TableState.Cleaning,
         _ => false,
     };
 

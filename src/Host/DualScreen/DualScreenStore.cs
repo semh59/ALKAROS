@@ -1,5 +1,7 @@
 using System.Data;
 using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using ALKAROS.Identity.DeviceSessions;
 using Npgsql;
 using NpgsqlTypes;
@@ -28,7 +30,10 @@ public sealed class DualScreenForbiddenException : Exception
 
 public sealed class DualScreenStore
 {
+    public const int DefaultCatalogPageSize = 1000;
+    public const int MaximumCatalogPageSize = 1000;
     private const string CodeAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private const int MaximumCatalogCursorLength = 1024;
     private static readonly TimeSpan PairingLifetime = TimeSpan.FromMinutes(2);
     private static readonly TimeSpan DisplaySessionLifetime = TimeSpan.FromHours(12);
     private readonly NpgsqlDataSource _dataSource;
@@ -111,32 +116,106 @@ public sealed class DualScreenStore
         return new DisplayPrincipal(reader.GetGuid(1), reader.GetGuid(2), reader.GetGuid(0), reader.GetFieldValue<DateTimeOffset>(3));
     }
 
-    public async Task<IReadOnlyList<CatalogProductDto>> GetCatalogAsync(CancellationToken cancellationToken)
+    public static int ParseCatalogLimit(string? value)
     {
-        var products = new List<CatalogProductDto>();
+        if (value is null)
+            return DefaultCatalogPageSize;
+        if (!int.TryParse(value, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var limit)
+            || limit is < 1 or > MaximumCatalogPageSize)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(value), value, $"Catalog limit must be between 1 and {MaximumCatalogPageSize}.");
+        }
+        return limit;
+    }
+
+    public async Task<CatalogPage> GetCatalogAsync(
+        string? categoryCode,
+        int limit,
+        string? cursor,
+        CancellationToken cancellationToken)
+    {
+        if (limit is < 1 or > MaximumCatalogPageSize)
+            throw new ArgumentOutOfRangeException(nameof(limit), limit, $"Catalog limit must be between 1 and {MaximumCatalogPageSize}.");
+
+        var normalizedCategory = NormalizeCategoryCode(categoryCode);
+        var decodedCursor = DecodeCatalogCursor(cursor, normalizedCategory);
+        var rows = new List<CatalogRow>(limit + 1);
         await using var command = _dataSource.CreateCommand(
             """
             SELECT p.product_id, p.sku, p.name,
                    COALESCE(c.code, 'OTHER'), COALESCE(c.name, 'Diğer'),
-                   p.current_price, COALESCE(t.vat_rate, 0)
+                   p.current_price, COALESCE(t.vat_rate, 0),
+                   COALESCE(c.sort_order, 2147483647), p.display_order,
+                   p.name COLLATE "C", p.sku COLLATE "C"
             FROM catalog.products p
             LEFT JOIN catalog.categories c ON c.category_id = p.category_id AND c.active
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
-            WHERE p.active AND p.current_price IS NOT NULL
-            ORDER BY COALESCE(c.sort_order, 2147483647), p.display_order, p.name, p.sku;
+            WHERE p.active
+              AND p.current_price IS NOT NULL
+              AND (@category_code IS NULL OR c.code = @category_code)
+              AND (
+                  NOT @has_cursor
+                  OR (
+                      COALESCE(c.sort_order, 2147483647),
+                      p.display_order,
+                      p.name COLLATE "C",
+                      p.sku COLLATE "C",
+                      p.product_id
+                  ) > (
+                      @cursor_category_sort,
+                      @cursor_display_order,
+                      @cursor_name,
+                      @cursor_sku,
+                      @cursor_product_id
+                  )
+              )
+            ORDER BY COALESCE(c.sort_order, 2147483647),
+                     p.display_order,
+                     p.name COLLATE "C",
+                     p.sku COLLATE "C",
+                     p.product_id
+            LIMIT @fetch_limit;
             """);
+        command.Parameters.Add("category_code", NpgsqlDbType.Varchar).Value = normalizedCategory ?? (object)DBNull.Value;
+        command.Parameters.AddWithValue("has_cursor", decodedCursor is not null);
+        command.Parameters.AddWithValue("cursor_category_sort", decodedCursor?.CategorySort ?? int.MinValue);
+        command.Parameters.AddWithValue("cursor_display_order", decodedCursor?.DisplayOrder ?? int.MinValue);
+        command.Parameters.AddWithValue("cursor_name", decodedCursor?.Name ?? string.Empty);
+        command.Parameters.AddWithValue("cursor_sku", decodedCursor?.Sku ?? string.Empty);
+        command.Parameters.AddWithValue("cursor_product_id", decodedCursor?.ProductId ?? Guid.Empty);
+        command.Parameters.AddWithValue("fetch_limit", limit + 1);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
-            products.Add(new CatalogProductDto(
-                reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4),
-                reader.GetDecimal(5), reader.GetDecimal(6)));
+            rows.Add(new CatalogRow(
+                new CatalogProductDto(
+                    reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4),
+                    reader.GetDecimal(5), reader.GetDecimal(6)),
+                reader.GetInt32(7), reader.GetInt32(8), reader.GetString(9), reader.GetString(10)));
         }
-        return products;
+
+        var hasMore = rows.Count > limit;
+        if (hasMore)
+            rows.RemoveAt(rows.Count - 1);
+        var nextCursor = hasMore ? EncodeCatalogCursor(rows[^1], normalizedCategory) : null;
+        return new CatalogPage(rows.Select(row => row.Product).ToArray(), nextCursor);
     }
 
-    public async Task<StartOrderResponse> StartOrderAsync(Guid terminalId, CancellationToken cancellationToken)
+    public Task<StartOrderResponse> StartOrderAsync(Guid terminalId, CancellationToken cancellationToken)
+        => StartOrderAsync(terminalId, new StartOrderRequest(), cancellationToken);
+
+    public async Task<StartOrderResponse> StartOrderAsync(
+        Guid terminalId,
+        StartOrderRequest request,
+        CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(request);
+        if (request.TableId is null && request.ExpectedTableRowVersion is not null)
+            throw new ArgumentException("A table row version requires a table id.", nameof(request));
+        if (request.ExpectedTableRowVersion is <= 0)
+            throw new ArgumentOutOfRangeException(nameof(request), "Expected table row version must be positive.");
+
         await EnsureTerminalAsync(terminalId, cancellationToken);
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
@@ -160,6 +239,100 @@ public sealed class DualScreenStore
                 throw new DualScreenConflictException("Terminal already has an active order.");
         }
 
+        if (request.TableId is { } tableId)
+        {
+            string tableStatus;
+            bool tableActive;
+            Guid? tableOrderId;
+            Guid? tableBillId;
+            long tableRowVersion;
+            await using (var lockTable = CreateCommand(connection, transaction,
+                """
+                SELECT active, current_status, current_order_id, current_bill_id, row_version
+                FROM table_mgmt.tables
+                WHERE table_id = @table_id
+                FOR UPDATE;
+                """))
+            {
+                lockTable.Parameters.AddWithValue("table_id", tableId);
+                await using var reader = await lockTable.ExecuteReaderAsync(cancellationToken);
+                if (!await reader.ReadAsync(cancellationToken))
+                    throw new DualScreenNotFoundException("Table was not found.");
+                tableActive = reader.GetBoolean(0);
+                tableStatus = reader.GetString(1);
+                tableOrderId = reader.IsDBNull(2) ? null : reader.GetGuid(2);
+                tableBillId = reader.IsDBNull(3) ? null : reader.GetGuid(3);
+                tableRowVersion = reader.GetInt64(4);
+            }
+
+            if (request.ExpectedTableRowVersion is { } expected && expected != tableRowVersion)
+                throw new DualScreenConflictException("Table row version is stale.");
+            if (!tableActive)
+                throw new DualScreenConflictException("Inactive tables cannot receive an order.");
+            if (tableBillId is not null)
+                throw new DualScreenConflictException("Table already has an active bill.");
+
+            if (tableOrderId is { } existingTableOrderId)
+            {
+                string existingStatus;
+                string existingOrderNumber;
+                long existingRevision;
+                Guid? existingOrderTableId;
+                await using (var lockOrder = CreateCommand(connection, transaction,
+                    """
+                    SELECT status, order_number, row_version, table_id
+                    FROM orders.orders
+                    WHERE order_id = @order_id
+                    FOR UPDATE;
+                    """))
+                {
+                    lockOrder.Parameters.AddWithValue("order_id", existingTableOrderId);
+                    await using var reader = await lockOrder.ExecuteReaderAsync(cancellationToken);
+                    if (!await reader.ReadAsync(cancellationToken))
+                        throw new DualScreenConflictException("Table order pointer is stale.");
+                    existingStatus = reader.GetString(0);
+                    existingOrderNumber = reader.GetString(1);
+                    existingRevision = reader.GetInt64(2);
+                    existingOrderTableId = reader.IsDBNull(3) ? null : reader.GetGuid(3);
+                }
+
+                if (existingOrderTableId != tableId || existingStatus != "Draft")
+                    throw new DualScreenConflictException("Table already has a non-editable order.");
+
+                await using (var activeTerminal = CreateCommand(connection, transaction,
+                    """
+                    SELECT EXISTS(
+                        SELECT 1
+                        FROM customer_display.terminals
+                        WHERE active_order_id = @order_id AND terminal_id <> @terminal_id);
+                    """))
+                {
+                    activeTerminal.Parameters.AddWithValue("order_id", existingTableOrderId);
+                    activeTerminal.Parameters.AddWithValue("terminal_id", terminalId);
+                    if ((bool)(await activeTerminal.ExecuteScalarAsync(cancellationToken) ?? false))
+                        throw new DualScreenConflictException("Table order is active on another terminal.");
+                }
+
+                await using (var bindExisting = CreateCommand(connection, transaction,
+                    """
+                    UPDATE customer_display.terminals
+                    SET active_order_id = @order_id, row_version = row_version + 1, updated_at = now()
+                    WHERE terminal_id = @terminal_id;
+                    """))
+                {
+                    bindExisting.Parameters.AddWithValue("order_id", existingTableOrderId);
+                    bindExisting.Parameters.AddWithValue("terminal_id", terminalId);
+                    await bindExisting.ExecuteNonQueryAsync(cancellationToken);
+                }
+
+                await transaction.CommitAsync(cancellationToken);
+                return new StartOrderResponse(existingTableOrderId, existingOrderNumber, existingRevision);
+            }
+
+            if (tableStatus != "Available")
+                throw new DualScreenConflictException("Only an available table can receive a new order.");
+        }
+
         var orderId = Guid.NewGuid();
         var orderNumber = $"POS-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}-{orderId:N}"[..32].ToUpperInvariant();
         await using (var insertOrder = CreateCommand(connection, transaction,
@@ -171,7 +344,7 @@ public sealed class DualScreenStore
                 submitted_at, accepted_at, closed_at, cancelled_at,
                 created_at, updated_at, row_version)
             VALUES (
-                @order_id, 'Cashier', NULL, NULL, NULL, NULL,
+                @order_id, 'Cashier', NULL, NULL, @table_id, NULL,
                 'Draft', 'NotRequired', @order_number, NULL,
                 0, 0, 0, 0, 'TRY',
                 NULL, NULL, NULL, NULL,
@@ -180,7 +353,27 @@ public sealed class DualScreenStore
         {
             insertOrder.Parameters.AddWithValue("order_id", orderId);
             insertOrder.Parameters.AddWithValue("order_number", orderNumber);
+            insertOrder.Parameters.AddWithValue("table_id", request.TableId ?? (object)DBNull.Value);
             await insertOrder.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        if (request.TableId is { } createdTableId)
+        {
+            await using var bindTable = CreateCommand(connection, transaction,
+                """
+                UPDATE table_mgmt.tables
+                SET current_order_id = @order_id,
+                    current_status = 'Occupied',
+                    row_version = row_version + 1
+                WHERE table_id = @table_id
+                  AND current_status = 'Available'
+                  AND current_order_id IS NULL
+                  AND current_bill_id IS NULL;
+                """);
+            bindTable.Parameters.AddWithValue("order_id", orderId);
+            bindTable.Parameters.AddWithValue("table_id", createdTableId);
+            if (await bindTable.ExecuteNonQueryAsync(cancellationToken) != 1)
+                throw new DualScreenConflictException("Table changed before the order could be bound.");
         }
 
         await using (var bindTerminal = CreateCommand(connection, transaction,
@@ -256,6 +449,9 @@ public sealed class DualScreenStore
         }
 
         var quantity = existingQuantity + request.Quantity;
+        if (quantity > 999)
+            throw new ArgumentOutOfRangeException(nameof(request), quantity, "Cumulative quantity must not exceed 999.");
+
         var net = RoundCurrency(product.UnitPrice * quantity);
         var tax = RoundCurrency(net * product.TaxRate / 100m);
         var gross = RoundCurrency(net + tax);
@@ -614,7 +810,7 @@ public sealed class DualScreenStore
                 """
                 UPDATE orders.order_items
                 SET quantity = @quantity,
-                    net_amount = round(unit_price * @quantity, 2),
+                    net_amount = round(unit_price * @quantity - discount_amount, 2),
                     tax_amount = round((unit_price * @quantity - discount_amount) * tax_rate / 100, 2),
                     gross_amount = round(unit_price * @quantity - discount_amount, 2)
                         + round((unit_price * @quantity - discount_amount) * tax_rate / 100, 2),
@@ -712,6 +908,59 @@ public sealed class DualScreenStore
 
     private static decimal RoundCurrency(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
 
+    private static string? NormalizeCategoryCode(string? value)
+    {
+        if (value is null)
+            return null;
+        var normalized = value.Trim();
+        if (normalized.Length is < 1 or > 50)
+            throw new ArgumentException("Category code must contain between 1 and 50 characters.", nameof(value));
+        return normalized;
+    }
+
+    private static CatalogCursor? DecodeCatalogCursor(string? value, string? categoryCode)
+    {
+        if (value is null)
+            return null;
+        if (value.Length is < 1 or > MaximumCatalogCursorLength)
+            throw new ArgumentException("Catalog cursor length is invalid.", nameof(value));
+
+        try
+        {
+            var base64 = value.Replace('-', '+').Replace('_', '/');
+            base64 += (base64.Length % 4) switch
+            {
+                0 => string.Empty,
+                2 => "==",
+                3 => "=",
+                _ => throw new FormatException("Catalog cursor padding is invalid."),
+            };
+            var decoded = JsonSerializer.Deserialize<CatalogCursor>(Convert.FromBase64String(base64))
+                ?? throw new JsonException("Catalog cursor payload is empty.");
+            if (decoded.ProductId == Guid.Empty
+                || string.IsNullOrEmpty(decoded.Name)
+                || decoded.Name.Length > 300
+                || string.IsNullOrEmpty(decoded.Sku)
+                || decoded.Sku.Length > 100
+                || !string.Equals(decoded.CategoryCode, categoryCode, StringComparison.Ordinal))
+            {
+                throw new JsonException("Catalog cursor payload is invalid.");
+            }
+            return decoded;
+        }
+        catch (Exception exception) when (exception is FormatException or JsonException)
+        {
+            throw new ArgumentException("Catalog cursor is invalid.", nameof(value), exception);
+        }
+    }
+
+    private static string EncodeCatalogCursor(CatalogRow row, string? categoryCode)
+    {
+        var payload = JsonSerializer.SerializeToUtf8Bytes(new CatalogCursor(
+            row.CategorySort, row.DisplayOrder, row.Name, row.Sku, row.Product.ProductId, categoryCode));
+        return Convert.ToBase64String(payload).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+    }
+
     private static string CreatePairingCode()
     {
         Span<char> chars = stackalloc char[8];
@@ -742,6 +991,19 @@ public sealed class DualScreenStore
             DateTimeOffset.UtcNow, "Sıradaki işlem bekleniyor.");
 
     private sealed record ProductRow(string Sku, string Name, decimal UnitPrice, decimal TaxRate);
+    private sealed record CatalogRow(
+        CatalogProductDto Product,
+        int CategorySort,
+        int DisplayOrder,
+        string Name,
+        string Sku);
+    private sealed record CatalogCursor(
+        int CategorySort,
+        int DisplayOrder,
+        string Name,
+        string Sku,
+        Guid ProductId,
+        string? CategoryCode);
     private sealed record PairingRow(
         Guid DisplayId,
         Guid? TerminalId,

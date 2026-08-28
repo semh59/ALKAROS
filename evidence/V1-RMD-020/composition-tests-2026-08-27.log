@@ -1,0 +1,25 @@
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Release\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Notifications -> D:\PROJECT\ALKAROS\src\Modules\Notifications\bin\Release\net8.0\ALKAROS.Notifications.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Release\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Release\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Release\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Observability -> D:\PROJECT\ALKAROS\src\Modules\Observability\bin\Release\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Release\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Operations -> D:\PROJECT\ALKAROS\src\Modules\Operations\bin\Release\net8.0\ALKAROS.Operations.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Release\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Release\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Release\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Release\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Release\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Release\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Release\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Release\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Accounts -> D:\PROJECT\ALKAROS\src\Modules\Accounts\bin\Release\net8.0\ALKAROS.Accounts.dll
+  ALKAROS.Fiscal -> D:\PROJECT\ALKAROS\src\Modules\Fiscal\bin\Release\net8.0\ALKAROS.Fiscal.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Release\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Release\net8.0\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Composition.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\Composition\bin\Release\net8.0\ALKAROS.Host.Experience.Composition.Tests.dll
+D:\PROJECT\ALKAROS\tests\Host\Experience\Composition\bin\Release\net8.0\ALKAROS.Host.Experience.Composition.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:     2, Atlanan:     0, Toplam:     2, Süre: 662 ms - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)

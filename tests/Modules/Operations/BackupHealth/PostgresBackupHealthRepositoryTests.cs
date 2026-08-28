@@ -71,9 +71,13 @@ public sealed class PostgresBackupHealthRepositoryTests : IClassFixture<BackupHe
     [Fact]
     public async Task ExecuteBackupFailureRecordedAndThrowsException()
     {
+        Directory.CreateDirectory(_tempDirectory);
+        var invalidPath = Path.Combine(_tempDirectory, "destination-file");
+        await File.WriteAllTextAsync(invalidPath, "not a directory");
+
         var command = new StartBackupCommand(
             BackupType: BackupType.Incremental,
-            DestinationDirectory: "Z:\\invalid_unreachable_disk_drive\\",
+            DestinationDirectory: invalidPath,
             RetentionDays: 30);
 
         var payload = "FAILING_PAYLOAD"u8.ToArray();

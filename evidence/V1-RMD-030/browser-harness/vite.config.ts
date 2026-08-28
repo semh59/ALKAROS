@@ -1,0 +1,1 @@
+import path from "node:path"; const root="D:/PROJECT/ALKAROS"; export default { root:path.join(root,"evidence/V1-RMD-030/browser-harness"), resolve:{alias:{react:path.join(root,"src/Clients/PosTerminal/node_modules/react"),"react-dom":path.join(root,"src/Clients/PosTerminal/node_modules/react-dom")}}, server:{host:"127.0.0.1",port:58330,strictPort:true} };

@@ -1,0 +1,14 @@
+Telemetry
+---------
+The code coverage tools collect usage data in order to help us improve your experience. The data is collected by Microsoft. You can opt out of telemetry by setting the DOTNET_COVERAGE_TELEMETRY_OPTOUT environment variable to '1' using your favorite shell.
+
+This message is displayed only once. Set the DOTNET_COVERAGE_NOLOGO environment variable to '1' to suppress it in the future.
+dotnet-coverage v18.10.0.0 [linux-x64 - .NET 8.0.30]
+
+SessionId: b6cd9a0a-5e1e-4494-b0bc-633a3047f721
+Test run for /src/tests/BuildingBlocks/Security/SensitiveData/bin/Release/net8.0/ALKAROS.SensitiveData.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+Results File: /src/tests/BuildingBlocks/Security/SensitiveData/TestResults/_cadef84c08c2_2026-08-26_23_25_04_net8.0.trx
+
+Passed!  - Failed:     0, Passed:    23, Skipped:     0, Total:    23, Duration: 166 ms - ALKAROS.SensitiveData.Tests.dll (net8.0)
+Code coverage results: /src/evidence/V1-RMD-007/coverage-smoke6.cobertura.xml.

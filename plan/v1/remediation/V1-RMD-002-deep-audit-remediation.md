@@ -2,7 +2,7 @@
 
 - Task ID: V1-RMD-002
 - Status: Done
-- Assignee: codex-root-v1-rmd-002
+- Assignee: /root
 - Work type: implementation
 - Surface state: Existing
 
@@ -10,7 +10,8 @@
 
 PO:2026-08-24 kararıyla derin kod denetiminde doğrulanan build, composition, domain invariant, concurrency,
 offline persistence, print recovery, query performance, browser security ve audit portability kusurlarını tek
-konsolide remediasyon zincirinde kapatmak.
+konsolide remediasyon zincirinde kapatmak; gönderilen cashier siparişini station-scoped kitchen ticket'a aynı
+transaction içinde projekte etmek.
 
 ## Owned surface
 
@@ -42,7 +43,13 @@ konsolide remediasyon zincirinde kapatmak.
 - `tests/Clients/WaiterPwa/SessionQueue/**`
 - PO:2026-08-24 UI yeniden tasarım kararıyla src/Clients/WebPrototype yüzeyi V1-RMD-003'e devredildi; bu
   historical task closed kalır.
-- `src/Modules/Billing/BillFoundation/**`
+- `src/Modules/Billing/BillFoundation/Bill.cs`
+- `src/Modules/Billing/BillFoundation/BillEnums.cs`
+- `src/Modules/Billing/BillFoundation/BillItem.cs`
+- `src/Modules/Billing/BillFoundation/BillMath.cs`
+- `src/Modules/Billing/BillFoundation/BillSourceOperations.cs`
+- `src/Modules/Billing/BillFoundation/IBillRepository.cs`
+- `src/Modules/Billing/BillFoundation/PostgresBillRepository.cs`
 - `tests/Modules/Billing/BillFoundation/**`
 - `src/Modules/Kitchen/PhysicalPrintRecovery/**`
 - `tests/Modules/Kitchen/PhysicalPrintRecovery/**`
@@ -58,6 +65,13 @@ konsolide remediasyon zincirinde kapatmak.
 - PO:2026-08-24 production dual-screen kararıyla src/Host/ALKAROS.Host.csproj, src/Host/packages.lock.json,
   database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs
   V1-RMD-006'ya devredildi; bu historical task closed kalır.
+- PO:2026-08-28 operational split kararıyla BillingModule.cs V1-RMD-027'ye devredildi; bu historical task closed
+  kalır.
+
+## In scope
+
+- SubmitOrder ile KitchenTicket arasındaki transaction içi dispatch contract'ını kurmak; station-scoped ticket ve item
+  graph'ının ilk submit'te atomik yazımını, idempotent replay ve rollback yollarını doğrulamak.
 
 ## Dependencies
 
@@ -74,6 +88,10 @@ konsolide remediasyon zincirinde kapatmak.
 - `dotnet restore ALKAROS.slnx`, `dotnet build ALKAROS.slnx --no-restore` ve ilgili bütün test projeleri exit 0 verir.
 - Reconnect/revoke yarışı, restart sonrası offline kuyruk, negatif toplam reddi, stale print recovery, tek sorgulu aktif
   ticket yükleme ve DOM injection negatif yolları otomatik testlerle doğrulanır.
+- İçinde en az bir active item olan cashier submit işlemi aynı transaction'da bir `Queued` kitchen ticket ve ticket item
+  üretir; idempotent replay duplicate ticket üretmez, ticket insert hatası sipariş durumunu da rollback eder ve station
+  scope'u konfigüre edilmemişse başarı fallback'i vermez. Gerçek PostgreSQL integration testi order→ticket graph'ını
+  ve başarısız transaction yolunu doğrular.
 - Yeni migration çiftleri boş PostgreSQL üzerinde forward/down/forward uygulanır ve manifest testi exit 0 verir.
 - Plan audit doğrulaması makineye özel dosya yolu gerektirmeden çalışır; audit raporu ve manifest gerçek repository
   sayımlarıyla yeniden üretilir.

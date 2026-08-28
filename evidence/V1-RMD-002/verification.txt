@@ -56,3 +56,15 @@ INDEPENDENT AUDIT:
 - Changed production and test surfaces were searched for TODO, FIXME, HACK, NotImplemented*, empty catch/pass, and mock-success patterns.
 - No actionable stub, placeholder implementation, silent handler, or unsupported fallback was found.
 - Claimed build, test, migration, plan-audit, browser-security, and task-scope results are backed by commands above.
+
+POST-REMEDIATION DISPATCH EVIDENCE (2026-08-27):
+- Candidate commit: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+- Candidate tree: 39e9bb79d3d6f3e099e15a7ffafcc801f727843a
+- Disposable PostgreSQL: alkaros-rmd015-pg-20260827, host port 55432, PostgreSQL 18 digest-pinned test container.
+- COMMAND: dotnet test tests/Modules/Kitchen/TicketLifecycle/ALKAROS.Kitchen.TicketLifecycle.Tests.csproj -c Release
+  EXIT CODE: 0; RESULT: 12 passed, 0 failed, 0 skipped. Includes submit→Queued station ticket, idempotent replay, and transaction rollback.
+- COMMAND: dotnet test tests/Modules/Orders/SubmitOrder/ALKAROS.Orders.SubmitOrder.Tests.csproj -c Release
+  EXIT CODE: 0; RESULT: 15 passed, 0 failed, 0 skipped.
+- Dispatch contract: `IOrderSubmissionDispatcher` executes before idempotency commit; `KitchenOrderSubmissionDispatcher` uses a transaction advisory lock, rejects missing station configuration, and writes ticket plus ticket items through the caller transaction.
+- Full-solution command: `dotnet test ALKAROS.slnx -c Release` with SDK `10.0.302`, PostgreSQL 18 disposable server/client,
+  and `ALKAROS_KITCHEN_STATION_ID=MainKitchen`; exit code `0`, every .NET test project passed.

@@ -1,0 +1,103 @@
+V1-RMD-007 current production-gate reproduction
+Date: 2026-08-27
+Candidate commit: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+
+Dependency vulnerability gates
+--------------------------------
+Command: dotnet list ALKAROS.slnx package --vulnerable --include-transitive
+Environment: mcr.microsoft.com/dotnet/sdk:10.0.302
+Result: exit 0; all listed projects reported no vulnerable packages.
+
+Command: pnpm --dir src/Clients/PosTerminal audit --prod --audit-level high
+Toolchain: pnpm 11.19.0
+Result: exit 0; No known vulnerabilities found.
+
+SBOM and license gates
+----------------------
+Command: sbom-tool generate -b . -bc . -pn ALKAROS -pv 1.0.0 -ps ALKAROS -nsb https://alkaros.invalid/sbom -m /tmp/sbom
+Tool: Microsoft.Sbom.DotNetTool 4.1.5
+Result: exit 0; non-empty /tmp/sbom/_manifest/spdx_2.2/manifest.spdx.json.sha256 produced.
+Note: the disposable container reported non-fatal warnings for the local .pytest_cache and pnpm symlink layout; the
+generator still produced a non-empty SBOM and exit 0.
+
+Command: pnpm --dir src/Clients/PosTerminal licenses list --prod --json
+Toolchain: pnpm 11.19.0
+Result: exit 0; production inventory emitted (MIT, BSD-2-Clause, BSD-3-Clause and Unlicense entries).
+
+Full-history secret gate
+------------------------
+Command: gitleaks v8.30.1 git --redact --no-banner --report-format json --report-path /tmp/gitleaks.json --exit-code 1 .
+Result: exit 1; 473 commits scanned, 4 findings. All four are the same generic-api-key match in
+tests/BuildingBlocks/Security/SensitiveData/Fixtures/SensitiveDataFixtures.cs:16, seen in commits
+2ced55b30f3eb52b7818036ddf0d1bc3b09ad430 and 585d1fb04174744b409f855a11e27097900fe177. Secret and match values
+were redacted in this evidence. This remains a fail-closed blocker until the fixture value is proven non-secret or
+removed by its owning security task.
+
+Markdown gate
+-------------
+Command: pnpm dlx --package=markdownlint-cli2@0.23.2 markdownlint-cli2
+Result (initial run): exit 1; 45 issues in evidence/V1-RMD-015/validation.md, evidence/V1-RMD-019/validation.md and
+evidence/V1-RMD-020/{preflight,validation}.md. The owning tasks subsequently corrected those evidence files.
+
+Coverage gate
+-------------
+Command: dotnet-coverage collect "dotnet test ALKAROS.slnx --configuration Release --no-build --logger trx"
+  --output evidence/V1-RMD-007/coverage.cobertura.xml --output-format cobertura
+Tool: dotnet-coverage 18.10.0, .NET SDK 10.0.302, PostgreSQL 18 digest-pinned disposable container
+Result: test command exit 0 and all tests passed, but the tool reported "No code coverage data available. Profiler was
+not initialized"; generated Cobertura contains an empty packages array. Line/branch coverage is therefore not claimed
+and remains a release blocker pending a profiler-capable CI runner. (Superseded by the successful clean-runtime run
+recorded below.)
+
+Locked restore and Release build
+---------------------------------
+Command: dotnet restore ALKAROS.slnx --locked-mode
+         dotnet build ALKAROS.slnx -c Release --no-restore --verbosity minimal
+Environment: mcr.microsoft.com/dotnet/sdk:10.0.302 with .NET 8.0.30 reference/runtime packs mounted read-only.
+Result: restore exit 0; build exit 0; 0 warnings, 0 errors. All four Host Experience test projects were built.
+
+Build provenance
+----------------
+Command: python -B tools/build-provenance/verify_build_provenance.py
+Result: exit 0; 34 projects checked, 34 matched, 0 missing, 0 mismatched for candidate
+a03d02146961c29a8b847a7b0c472c6c8dd42c9f.
+
+Final governance checks
+-----------------------
+Command: pnpm dlx --package=markdownlint-cli2@0.23.2 markdownlint-cli2
+Result: exit 0; 611 Markdown files linted, 0 issues.
+Command: python -B tools/plan-audit/plan_audit_tool.py validate-coverage
+Result: exit 0; 383 headings, 2903 coverage units, 0 errors.
+Command: python -B tools/plan-audit/plan_audit_tool.py validate
+Result: exit 0; 416 Markdown files, 394 task files, 18 gates, 21 EXT sources, 1351 dependency edges, 0 errors.
+Command: python -B tools/project-manifest/project_manifest_tool.py
+Result: exit 0; VALID, 0 differences across Solution, Disk, and ProjectReferences.
+
+Coverage profiler remediation and final reproduction (2026-08-27)
+------------------------------------------------------------------
+The original empty coverage report was caused by the disposable SDK image lacking the .NET 8 runtime/ASP.NET runtime,
+the PostgreSQL client used by migration tests, and libxml2 required by the coverage profiler. A fresh disposable
+`mcr.microsoft.com/dotnet/sdk:10.0.302` container installed only those runtime dependencies; the toolchain remained
+.NET SDK 10.0.302 and dotnet-coverage 18.10.0. A separate disposable PostgreSQL 18 container was created from
+`postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2` on host port 55432.
+
+Command: dotnet-coverage collect --log-level Verbose --output coverage-full-2026-08-27-final.cobertura.xml
+         --output-format cobertura -- dotnet test ALKAROS.slnx --configuration Release --no-build --logger trx
+Result: exit 0; 44 test assemblies, 1,018 tests passed, 0 failed, 0 skipped. No aborted test hosts.
+Coverage artifact: `coverage-full-2026-08-27-final.cobertura.xml`, 67 packages, 2,369 classes, 32,553 instrumented
+lines; 28,779 covered (88.4066% line rate) and 4,451/6,331 branches covered (70.3048% branch rate).
+Profiler log: `coverage-full-2026-08-27-final.log` reports .NET 8.0.30 and a non-empty Cobertura result.
+The PostgreSQL container was removed after the run and the exact name was verified absent.
+
+Independent historical secret scan rerun (2026-08-27)
+-------------------------------------------------------
+Command: gitleaks v8.30.1 git --redact --no-banner --report-format json --report-path gitleaks-final-2026-08-27.json
+         --exit-code 1 .
+Container image: `zricethezav/gitleaks:v8.30.1`, digest
+`sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f`.
+Result: exit 1; 473 commits scanned, 4 findings. Every finding is the same `generic-api-key` match at line 16 of
+`tests/BuildingBlocks/Security/SensitiveData/Fixtures/SensitiveDataFixtures.cs`, duplicated across commits
+`2ced55b30f3eb52b7818036ddf0d1bc3b09ad430` and `585d1fb04174744b409f855a11e27097900fe177`. The JSON report is
+redacted and has SHA-256 `E5ED1B7B9A6438ACB5C56605B3CB07795892B085DD0E87C72992C0E794C432CE`.
+This remains a fail-closed blocker: the value appears to be a test fixture, but no owning security task has supplied
+an approved historical-secret disposition or history rewrite.

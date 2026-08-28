@@ -1,0 +1,13 @@
+V1-RMD-010 resume preflight
+Repository root: D:/PROJECT/ALKAROS
+Task ID: V1-RMD-010
+Assignee: /root
+Candidate commit: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Candidate tree: 39e9bb79d3d6f3e099e15a7ffafcc801f727843a
+Status snapshot SHA-256: 5E191F3BA62C645AC7BD9E1AA9B2A9230B1F944DFD04863B12550B61F64B0ED1
+Status snapshot lines: 146
+Tracked diff snapshot SHA-256: 04992C73A4CD2FAB314C0A8DB82B982A9D96730211172D68912A494377F5AF22
+Tracked diff paths: 45
+Write allowlist: evidence/V1-RMD-010/** and Status/Assignee/Blocker metadata of this task only.
+Dependency V1-RMD-020: Done.
+Previously blocked because user had stopped the original UI acceptance; current continuation explicitly resumes production work.

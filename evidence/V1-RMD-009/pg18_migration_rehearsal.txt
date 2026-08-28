@@ -1,0 +1,27 @@
+Task: V1-RMD-009
+Date: 2026-08-25
+Server image: postgres@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
+Client: PostgreSQL 18 psql from the same disposable container
+Database: synthetic disposable database; container removed in finally
+
+Forward scripts in database/MigrationComposition/order.json order:
+FORWARD_001_038_EXIT=0
+
+Down scripts in exact reverse order:
+REVERSE_038_001_EXIT=0
+
+Forward scripts applied again after the complete rollback:
+REFORWARD_001_038_EXIT=0
+
+Lifecycle-specific automated verification:
+Passed: 5, Failed: 0, Skipped: 0
+LIFECYCLE_TEST_EXIT=0
+
+The 007 and 012 forward SHA-256 identities remained unchanged:
+007: DD632AB7C02A188374F5B6251388170045E496017D434E207B094BE5B7F0F0E8
+012: 22BC242F56E99B116A0360D9C9DCE331097BB8F1BA6FEB22A1DD6E25A8C235CD
+
+No CASCADE is used to drop btree_gist. Migration 012 down verifies that the
+007 relation and exclusion constraint remain valid; migration 007 down removes
+the dependent relation before the extension. An external dependent object
+causes 007 down to fail transactionally without losing either object.

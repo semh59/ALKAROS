@@ -1,0 +1,21 @@
+{
+  "candidate": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "browser": "Chrome extension",
+  "authenticated": true,
+  "route": "/display",
+  "displayEvidence": {
+    "activeElement": "BODY",
+    "focusOrder": [],
+    "layout": {
+      "clientWidth": 1265,
+      "overflowX": false,
+      "scrollWidth": 1265
+    },
+    "snapshot": "A\nALKAROS\nSİPARİŞ\nPOS-20260827-042653-326CAF6577A5\nSipariş kasadan gönderildi\nSİPARİŞİNİZ\nÜrünler\n1 adet\nÜRÜN\nADET\nTUTAR\nEspresso\n₺93,50 · KDV dahil\n1\n₺93,50\nÖDENECEK TOPLAM\n₺93,50\nAra toplam\n₺85,00\nKDV\n₺8,50\n✓\n\nSiparişiniz alındı.\n\nCanlı güncelleme · v3",
+    "viewport": {
+      "height": 551,
+      "width": 1280
+    }
+  },
+  "console": []
+}

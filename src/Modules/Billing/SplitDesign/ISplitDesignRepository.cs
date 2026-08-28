@@ -16,6 +16,16 @@ public interface ISplitDesignRepository
     Task SaveSplitDesignAsync(Guid billId, IReadOnlyList<BillAllocation> allocations, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Atomically replaces an operational split after locking and validating the bill and current allocation versions.
+    /// </summary>
+    Task<OperationalSplitSaveResult> ReplaceOperationalSplitDesignAsync(
+        Guid billId,
+        long expectedBillRowVersion,
+        IReadOnlyList<AllocationVersion> expectedAllocations,
+        IReadOnlyList<BillAllocation> allocations,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Deletes all split allocations for a Bill.
     /// </summary>
     Task DeleteSplitDesignAsync(Guid billId, CancellationToken cancellationToken = default);

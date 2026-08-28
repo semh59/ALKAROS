@@ -1,0 +1,7 @@
+Command: docker scout cves alkaros:alpine-audit --only-severity critical,high --format sarif --output C:\Windows\Temp\alkaros-scout-alpine-fixed.sarif
+Final image: sha256:d2780e802c408f4b080f4a7d5185065ef4c0d8f2d1aa541f4e48a7c00c70bcfc
+Exit code: 0
+SBOM indexed: 52 packages
+Findings: no vulnerable package detected
+OpenSSL was pinned to Alpine 3.5.8-r0, the fixed version reported by the prior scan.
+The generated SARIF was written outside the repository because evidence must not contain unreviewed scanner output copied from a temporary host path.

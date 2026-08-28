@@ -11,3 +11,11 @@ V1-OPS-002 specific coverage:
 - Local backup execution with SHA-256 checksum calculation and integrity verification.
 - Check constraints enforced: chk_backup_type (Full, Incremental, SchemaOnly), chk_backup_status (InProgress, Completed, Failed), chk_snap_db_status, chk_snap_disk_status, chk_snap_backup_status.
 - Acceptance evidence: Source failure is explicitly recorded with Failed status and error message, never reporting fake success.
+
+Cross-platform validation (2026-08-27):
+- The invalid-destination scenarios now use a real file path (`destination-file`) as the requested directory, which is
+  deterministically rejected on Windows and Linux instead of relying on a Windows-only `Z:\` path.
+- Command: `dotnet test tests/Modules/Operations/BackupHealth/ALKAROS.Operations.BackupHealth.Tests.csproj -c Release`
+  with SDK `10.0.302` and PostgreSQL 18 disposable container; exit code `0`, 7 passed, 0 failed, 0 skipped.
+- Full-solution regression command: `dotnet test ALKAROS.slnx -c Release` with SDK `10.0.302` and PostgreSQL 18 disposable
+  server/client; exit code `0`.

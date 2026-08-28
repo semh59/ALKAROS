@@ -1,0 +1,12 @@
+ALKAROS V1-GOV-004 Build Provenance Verification Output
+Task ID: V1-GOV-004
+
+Command: python -B tools/build-provenance/verify_build_provenance.py
+Output:
+Candidate SHA: a03d02146961c29a8b847a7b0c472c6c8dd42c9f
+Projects checked: 34
+Matched: 34
+Missing: 0
+Mismatched: 0
+
+Exit Code: 0 (PASSED)

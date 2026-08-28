@@ -1,0 +1,10 @@
+- main:
+  - generic: A
+  - strong: ALKAROS
+  - generic: GÜVENLİ EKRAN BAĞLANTISI
+  - heading "Müşteri ekranını kasaya bağlayın" [level=1]:
+    - text: Müşteri ekranını
+    - text: kasaya bağlayın
+  - paragraph: Bu kodu kasa ekranındaki “Müşteri ekranı bağlantısı” alanına girin.
+  - generic: PK6FK4TE
+  - generic: Kod iki dakika sonra otomatik olarak yenilenir.

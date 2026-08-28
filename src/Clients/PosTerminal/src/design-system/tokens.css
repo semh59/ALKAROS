@@ -1,0 +1,39 @@
+:root {
+  color-scheme: light;
+  --ds-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ds-color-canvas: #f4f5f6;
+  --ds-color-surface: #ffffff;
+  --ds-color-surface-subtle: #eef1f3;
+  --ds-color-ink: #17212b;
+  --ds-color-muted: #52606d;
+  --ds-color-line: #c8d0d7;
+  --ds-color-brand: #283a4a;
+  --ds-color-brand-strong: #162532;
+  --ds-color-accent: #b73c20;
+  --ds-color-accent-hover: #922d17;
+  --ds-color-focus: #006cbd;
+  --ds-color-info: #0b5d8d;
+  --ds-color-info-soft: #e4f3fb;
+  --ds-color-success: #176548;
+  --ds-color-success-soft: #e3f4ec;
+  --ds-color-warning: #735400;
+  --ds-color-warning-soft: #fff2c7;
+  --ds-color-danger: #9a2530;
+  --ds-color-danger-soft: #fdecef;
+  --ds-shadow-raised: 0 10px 30px rgb(18 32 43 / 14%);
+  --ds-radius-sm: 0.5rem;
+  --ds-radius-md: 0.75rem;
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.5rem;
+  --ds-space-6: 2rem;
+  --ds-target-min: 44px;
+  --ds-shell-header-height: 68px;
+  --ds-shell-status-height: 48px;
+  --ds-shell-rail-width: 216px;
+  --ds-shell-compact-rail-width: 76px;
+  --ds-shell-drawer-width: 336px;
+}
+

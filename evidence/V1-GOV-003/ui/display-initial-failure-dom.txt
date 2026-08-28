@@ -1,0 +1,8 @@
+- main:
+  - generic: A
+  - strong: ALKAROS
+  - generic: GÜVENLİ EKRAN BAĞLANTISI
+  - heading "Müşteri ekranını kasaya bağlayın" [level=1]:
+    - text: Müşteri ekranını
+    - text: kasaya bağlayın
+  - paragraph: Güvenli eşleştirme kodu hazırlanıyor…

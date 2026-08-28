@@ -1,4 +1,6 @@
-﻿namespace ALKAROS.Kitchen.TicketLifecycle;
+namespace ALKAROS.Kitchen.TicketLifecycle;
+
+using Npgsql;
 
 public interface IKitchenTicketRepository
 {
@@ -6,5 +8,10 @@ public interface IKitchenTicketRepository
     Task<IReadOnlyList<KitchenTicket>> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(string stationId, CancellationToken cancellationToken = default);
     Task AddAsync(KitchenTicket ticket, CancellationToken cancellationToken = default);
+    Task AddAsync(
+        KitchenTicket ticket,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
     Task<long> SaveAsync(KitchenTicket ticket, long expectedRowVersion, CancellationToken cancellationToken = default);
 }

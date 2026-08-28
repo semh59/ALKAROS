@@ -178,6 +178,7 @@ public sealed class PostgresSubmitOrderIntegrationTests : IClassFixture<SubmitOr
         reloaded!.Status.Should().Be(OrderState.Submitted);
         reloaded.RowVersion.Should().Be(result.RowVersion);
         reloaded.Items.Should().OnlyContain(item => item.Status == OrderItemState.Active);
+
     }
 
     [Fact]

@@ -1,0 +1,11 @@
+{
+  "candidate_commit": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "tree_sha": "39e9bb79d3d6f3e099e15a7ffafcc801f727843a",
+  "expected_paths": 1727,
+  "ledger_rows": 1727,
+  "unique_paths": 1727,
+  "errors": 0,
+  "error_details": [],
+  "text_rows": 1669,
+  "binary_rows": 58
+}

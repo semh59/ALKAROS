@@ -1,0 +1,47 @@
+{
+  "taskId": "V1-RMD-022",
+  "date": "2026-08-27",
+  "runtime": {
+    "url": "https://localhost:58299/tables",
+    "environment": "Production",
+    "postgresImage": "postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2",
+    "migrationCount": 37,
+    "databaseSeed": "deterministic manager, Salon zone, S-09 and S-10 tables"
+  },
+  "viewport": {
+    "width": 320,
+    "height": 568,
+    "documentClientWidth": 305,
+    "documentScrollWidth": 305,
+    "horizontalOverflow": false
+  },
+  "cards": [
+    {
+      "name": "S-09",
+      "selectionControl": { "tag": "BUTTON", "width": 104.5, "height": 77.26042175292969 },
+      "quickActionControl": { "tag": "BUTTON", "width": 104.5, "height": 44 }
+    },
+    {
+      "name": "S-10",
+      "selectionControl": { "tag": "BUTTON", "width": 104.5, "height": 77.26042175292969 },
+      "quickActionControl": { "tag": "BUTTON", "width": 104.5, "height": 44 }
+    }
+  ],
+  "nestedInteractiveCount": 0,
+  "focusedSelectionStyle": {
+    "active": true,
+    "outlineStyle": "solid",
+    "outlineWidth": "3px",
+    "outlineColor": "rgb(0, 108, 189)",
+    "outlineOffset": "3px"
+  },
+  "independentActionContext": {
+    "selectedTable": "S-10",
+    "quickActionTable": "S-09",
+    "selectedS09": false,
+    "selectedS10": true,
+    "dialog": "S-09 · Müsait · v3"
+  },
+  "consoleWarningsAndErrors": [],
+  "cleanup": "Browser viewport reset; validation tab closed; Host stopped; PostgreSQL container removed; ports 58299 and 55434 free"
+}

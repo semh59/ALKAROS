@@ -1,0 +1,62 @@
+{
+  "viewport": "390x844",
+  "source": "Explicit UI rendering fixture; focus order only.",
+  "sequence": [
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    },
+    {
+      "name": "Ekranı eşleştir",
+      "tag": "BUTTON"
+    }
+  ]
+}

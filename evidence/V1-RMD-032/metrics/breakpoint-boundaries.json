@@ -1,0 +1,1024 @@
+[
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 318
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 319
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 320
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 359
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 360
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 361
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 388
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 389
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 390
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 429
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 430
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 431
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 766
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 767
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 768
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 899
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 900
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 47.7,
+        "name": "Oturumu kapat",
+        "right": 909.7,
+        "width": 71,
+        "x": 838.7
+      }
+    ],
+    "small": [],
+    "width": 901
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1022
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1023
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1024
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1249
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1250
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1251
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1278
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1279
+  },
+  {
+    "route": "pos",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1280
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 318
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 319
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 320
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 359
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 360
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 361
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 388
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 389
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 390
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 429
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 430
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 431
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 766
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 767
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 768
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 899
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 900
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 901
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1022
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1023
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1024
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1249
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1250
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1251
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1278
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1279
+  },
+  {
+    "route": "tables",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1280
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 318
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 319
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 320
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 359
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 360
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 361
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 388
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 389
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 414.8,
+        "width": 149.4,
+        "x": 265.4
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 567.6,
+        "width": 148.7,
+        "x": 418.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674,
+        "width": 102.4,
+        "x": 571.6
+      }
+    ],
+    "small": [],
+    "width": 390
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Vergi profilleri0",
+        "right": 415.7,
+        "width": 149.4,
+        "x": 266.3
+      },
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 568.4,
+        "width": 148.7,
+        "x": 419.7
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674.8,
+        "width": 102.4,
+        "x": 572.4
+      }
+    ],
+    "small": [],
+    "width": 429
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 568.5,
+        "width": 148.7,
+        "x": 419.7
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674.8,
+        "width": 102.4,
+        "x": 572.5
+      }
+    ],
+    "small": [],
+    "width": 430
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Modifikatörler0",
+        "right": 568.5,
+        "width": 148.7,
+        "x": 419.8
+      },
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 674.9,
+        "width": 102.4,
+        "x": 572.5
+      }
+    ],
+    "small": [],
+    "width": 431
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 766
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 767
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [
+      {
+        "height": 44,
+        "name": "Fiyatlar1",
+        "right": 765.2,
+        "width": 102.4,
+        "x": 662.8
+      }
+    ],
+    "small": [],
+    "width": 768
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 899
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 900
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 901
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1022
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1023
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1024
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1249
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1250
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1251
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1278
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1279
+  },
+  {
+    "route": "catalog",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1280
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 318
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 319
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 320
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 359
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 360
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 361
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 388
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 389
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 390
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 429
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 430
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 431
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 766
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 767
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 768
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 899
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 900
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 901
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1022
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1023
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1024
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1249
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1250
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1251
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1278
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1279
+  },
+  {
+    "route": "kitchen",
+    "horizontal": false,
+    "out": [],
+    "small": [],
+    "width": 1280
+  }
+]

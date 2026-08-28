@@ -1,0 +1,62 @@
+{
+  "taskId": "V1-RMD-032",
+  "reviewedAt": "2026-08-28",
+  "baseCommit": "a03d02146961c29a8b847a7b0c472c6c8dd42c9f",
+  "verdict": "NOT PRODUCTION READY",
+  "findings": [
+    {
+      "id": "RMD032-F001",
+      "severity": "P0",
+      "title": "Production kitchen UI queries hot-line while submitted tickets use kitchen-main",
+      "status": "confirmed"
+    },
+    {
+      "id": "RMD032-F002",
+      "severity": "P1",
+      "title": "Operational bill splitting is not connected to a production route",
+      "status": "confirmed"
+    },
+    {
+      "id": "RMD032-F003",
+      "severity": "P1",
+      "title": "Fresh-system floor-plan and chair setup is unreachable",
+      "status": "confirmed"
+    },
+    {
+      "id": "RMD032-F004",
+      "severity": "P1",
+      "title": "Table merge and subsequent unmerge cannot be completed",
+      "status": "confirmed"
+    },
+    {
+      "id": "RMD032-F005",
+      "severity": "P1",
+      "title": "Reservation UI does not persist typed party size or bounded reservation time",
+      "status": "confirmed"
+    },
+    {
+      "id": "RMD032-F006",
+      "severity": "P1",
+      "title": "Catalog tabs are clipped at narrow widths and 400 percent reflow",
+      "status": "confirmed"
+    },
+    {
+      "id": "RMD032-F007",
+      "severity": "P2",
+      "title": "Desktop composition fails the restaurant-operation designer quality bar",
+      "status": "confirmed"
+    },
+    {
+      "id": "RMD032-F008",
+      "severity": "P2",
+      "title": "Live accessibility, native zoom and complete focus-order evidence is incomplete",
+      "status": "confirmed"
+    },
+    {
+      "id": "RMD032-F009",
+      "severity": "P0",
+      "title": "Mandatory external device, provider, backup, security and signed go-live evidence is absent",
+      "status": "blocked-external"
+    }
+  ]
+}

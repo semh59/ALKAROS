@@ -34,3 +34,7 @@ __pycache__/
 
 # Temporary tool output (regenerable: recover-baseline, audit reports, PDF dumps)
 tmp/
+TestResults/
+[Tt]est[Rr]esults/
+node_modules/
+dist/

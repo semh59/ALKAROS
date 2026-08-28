@@ -1,0 +1,96 @@
+- link "Ana içeriğe geç":
+  - /url: "#_r_0_"
+- banner:
+  - generic: ALKAROS
+  - group "Aktif çalışma bağlamı":
+    - generic: Şube
+    - strong: Şube bağlamı
+    - generic: Terminal
+    - strong: Terminal 16F9BD0C
+    - generic: Kullanıcı
+    - strong: ALKAROS Manager
+    - generic: Rol
+    - strong: Manager
+  - link "Müşteri ekranı":
+    - /url: /display
+  - button "Çıkış"
+- navigation "Ana navigasyon":
+  - link "Kasa":
+    - /url: /
+    - generic: ₺
+    - generic: Kasa
+  - link "Masalar":
+    - /url: /tables
+    - generic: ▦
+    - generic: Masalar
+  - link "Mutfak":
+    - /url: /kitchen
+    - generic: ◇
+    - generic: Mutfak
+  - link "Menü":
+    - /url: /catalog
+    - generic: ≡
+    - generic: Menü
+- main:
+  - heading "Menü ve katalog" [level=1]
+  - paragraph: Fiyat, ürün ve modifier kayıtları
+  - region "Menü ve katalog yönetimi":
+    - text: YÖNETİM / KATALOG
+    - heading "Menü ve katalog" [level=2]
+    - paragraph: Son güncelleme 2026-08-28T16:18:49.585Z
+    - button "+ Ürün ekle"
+    - button "Yenile"
+    - navigation "Catalog kaynak türü":
+      - button "Ürünler 1":
+        - text: Ürünler
+        - generic: "1"
+      - button "Kategoriler 0":
+        - text: Kategoriler
+        - generic: "0"
+      - button "Vergi profilleri 0":
+        - text: Vergi profilleri
+        - generic: "0"
+      - button "Modifikatörler 0":
+        - text: Modifikatörler
+        - generic: "0"
+      - button "Fiyatlar 1":
+        - text: Fiyatlar
+        - generic: "1"
+    - text: Catalog ara
+    - textbox "Catalog ara":
+      - /placeholder: Kod, SKU veya ad
+    - generic: Yayınlama yok · yalnızca manager CRUD
+    - button "ALKAROS Burger Aktif BURGER-01 · MenuItem 325.00 TRY" [pressed]:
+      - strong: ALKAROS Burger
+      - generic: Aktif
+      - generic: BURGER-01 · MenuItem
+      - generic: 325.00 TRY
+    - complementary "ALKAROS Burger ayrıntıları":
+      - generic: SEÇİLİ KAYIT
+      - heading "ALKAROS Burger" [level=3]
+      - generic: Ürünler
+      - term: Kod / kimlik
+      - definition: BURGER-01 · MenuItem
+      - term: Durum
+      - definition: Aktif
+      - term: Değer
+      - definition: 325.00 TRY
+      - term: Stok modu
+      - definition: Untracked
+      - term: KDV profili
+      - definition: Atanmamış
+      - generic: MODIFIER ATAMALARI
+      - paragraph: Bu ürüne modifier atanmadı.
+      - generic: EFFECTIVE PRICE ZAMAN ÇİZELGESİ
+      - list:
+        - strong: 325.00 TRY
+        - generic: 28.08.2026 → açık uçlu
+      - paragraph: Bu ekran yalnız kayıt yönetir. Yayınlama veya cashier görünürlüğü, aktif ve effective fiyat kuralları sağlanmadan değişmez.
+- contentinfo "Sistem durumu":
+  - status:
+    - generic: ✓
+    - strong: Çevrimiçi
+  - status:
+    - generic: ✓
+    - text: "Veri:"
+    - time: Son doğrulama

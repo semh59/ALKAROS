@@ -1,0 +1,44 @@
+V1-RMD-022 verification
+Date: 2026-08-27
+
+Source result
+-------------
+- Table card root is a non-interactive article.
+- Table selection and quick action are separate native BUTTON controls with explicit accessible names.
+- No button is nested inside another interactive control.
+- Quick action carries its own table target into the modal and does not alter the selected table.
+- Both controls have visible 3px focus styling; quick action has a 44px minimum target.
+
+Automated commands
+------------------
+- pnpm exec vitest run src/features/tables/TableWorkspace.test.tsx: exit 0, 1 file / 10 tests passed
+- pnpm test: exit 0, 10 files / 63 tests passed
+- pnpm run typecheck: exit 0
+- pnpm run build: exit 0, 67 modules transformed
+- git diff --check on the owned surface: exit 0
+
+Real runtime/browser
+--------------------
+- Digest-pinned PostgreSQL 18: 37 migrations applied from empty database
+- HTTPS Host: Production environment at https://localhost:58299
+- Authenticated manager session rendered real table API data for S-09 and S-10
+- 320x568: clientWidth=305, scrollWidth=305, horizontal overflow=false
+- Four card controls measured: selection buttons 104.5x77.26px; quick-action buttons 104.5x44px
+- Focused selection outline: solid 3px rgb(0, 108, 189), offset 3px
+- Accessibility snapshot: separate named buttons; nested interactive count=0
+- Context regression: with S-10 selected, S-09 quick action opened S-09 · Müsait · v3 and left S-10 selected
+- Browser console warnings/errors: 0
+
+Screenshot SHA-256
+-----------------
+C74E6DBE82599F4E7F7A90F2EB6F710E4DB490A3B07B1A1CA86DE5430218FBC  table-cards-controls-320x568-2026-08-27.png
+55712216A379AE553BF0D0CC3A404FBE2B69B69009A9B2B6BD62A3D412BB4958  table-cards-final-320x568-2026-08-27.png
+10A32BBF97667EB4DA9E1E15FEA5B42A83321D69ABBDECBD40065533ED8F15B1  table-cards-focus-320x568-2026-08-27.png
+144B60A56D05483003A03D3A6475ADCFC93321DE56DA46825410D7902E356841  table-cards-keyboard-320x568-2026-08-27.png
+
+Cleanup
+-------
+- Browser viewport override reset and temporary tab closed.
+- Host stopped.
+- alkaros-rmd022-pg-20260827 removed after exact-name verification.
+- No listener remained on ports 58299 or 55434.

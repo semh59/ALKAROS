@@ -1,0 +1,17 @@
+{
+  "plan_validate_exit": 1,
+  "coverage_exit": 0,
+  "verify_manifest_exit": 1,
+  "verify_manifest_errors": 1601,
+  "pos_install_exit": 0,
+  "pos_typecheck_exit": 0,
+  "pos_test_exit": 0,
+  "pos_tests": "2/2",
+  "pos_build_exit": 0,
+  "webprototype_tests_exit": 0,
+  "webprototype_tests": "20/20",
+  "tools_node_tests_exit": 0,
+  "tools_node_tests": "7/7",
+  "python_pytest_exit": 1,
+  "python_pytest_reason": "No module named pytest"
+}

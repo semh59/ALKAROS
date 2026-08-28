@@ -2,6 +2,7 @@ export interface LoginResponse {
   userId: string;
   displayName: string;
   terminalId: string;
+  capabilities?: string[];
 }
 
 export interface CatalogProduct {

@@ -1,0 +1,13 @@
+ALKAROS Toolchain & Runtime Environment Verification
+Audit Date: 2026-08-24
+Auditor: fa82ea24-f52b-4613-bcba-f339ade70ca2
+
+Toolchain Versions:
+- Git: git version 2.55.0.windows.3 (Path: C:\Users\semih\PortableGit\cmd\git.exe)
+- .NET SDK: 10.0.302 (DOTNET_ROOT: C:\Users\semih\AppData\Local\Temp\alkaros-dotnet-10.0.302)
+- Target Frameworks: net8.0 (Microsoft.AspNetCore.App 8.0.0, Microsoft.NETCore.App 8.0.0)
+- Python: Python 3.12.13 (C:\Users\semih\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe)
+- Node.js: v24.19.0 (C:\Users\semih\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe)
+- pnpm: 11.19.0 (C:\Users\semih\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback\pnpm.cmd)
+- Docker: Docker version 29.7.2, build a7dcaa6
+- PostgreSQL Container: postgres:18-alpine (PG_VERSION=18.6)

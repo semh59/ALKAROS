@@ -96,3 +96,15 @@ exit=0
   (nominal sahipler V1-FND-008/V0-GOV-030); FIND-IA-0046 ve V0-GOV-031
   emsaliyle kayıt düşüldü.
 - Bu görevde üretim kodu değişmedi; yalnız doğrulama + evidence.
+
+## Solution graph completion addendum (2026-08-27)
+
+The solution/project manifest gap was closed by registering the four existing Host
+Experience test projects in `ALKAROS.slnx` and `build/project-manifest.json`:
+Composition, Catalog, Tables and KitchenOperations. The project-manifest validator
+now reports `VALID (0 differences across Solution, Disk, and ProjectReferences)`.
+
+Using the exact .NET SDK `10.0.302` in a disposable PostgreSQL 18 container, the
+full Release solution test run completed with exit code 0. The newly registered
+projects were executed and passed: Composition 1/1, Catalog 6/6, Tables 5/5,
+KitchenOperations 4/4, and Host 93/93. No test failures or skips were reported.

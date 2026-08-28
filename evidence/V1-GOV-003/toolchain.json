@@ -1,0 +1,9 @@
+{
+  "dotnet": "MISSING",
+  "psql": "MISSING",
+  "node": "24.19.0",
+  "pnpm": "11.19.0",
+  "python": "3.12.13 (locked requirement 3.12.12)",
+  "pytest": "MISSING",
+  "docker": "29.7.2"
+}

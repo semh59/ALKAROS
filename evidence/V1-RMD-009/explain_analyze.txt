@@ -1,0 +1,29 @@
+Task: V1-RMD-009
+Date: 2026-08-25
+Dataset: 10,000 synthetic active products, one active category, PostgreSQL 18
+Query: production catalog default ordering with LIMIT 1001
+Threshold: no approved SLO was supplied; these are measurements, not a pass/fail performance claim
+
+Limit  (cost=830.58..833.08 rows=1001 width=119) (actual time=9.816..9.941 rows=1001.00 loops=1)
+  Buffers: shared hit=153
+  ->  Sort  (cost=830.58..855.58 rows=10000 width=119) (actual time=9.815..9.866 rows=1001.00 loops=1)
+        Sort Key: (COALESCE(c.sort_order, 2147483647)), p.display_order, p.name, p.sku, p.product_id
+        Sort Method: top-N heapsort  Memory: 181kB
+        Buffers: shared hit=153
+        ->  Hash Left Join  (cost=12.11..282.22 rows=10000 width=119) (actual time=0.068..4.471 rows=10000.00 loops=1)
+              Hash Cond: (p.category_id = c.category_id)
+              Buffers: shared hit=144
+              ->  Seq Scan on products p  (cost=0.00..243.00 rows=10000 width=67) (actual time=0.025..2.202 rows=10000.00 loops=1)
+                    Filter: (active AND (current_price IS NOT NULL))
+                    Buffers: shared hit=143
+              ->  Hash  (cost=11.30..11.30 rows=65 width=556) (actual time=0.014..0.015 rows=1.00 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on categories c  (cost=0.00..11.30 rows=65 width=556) (actual time=0.006..0.006 rows=1.00 loops=1)
+                          Filter: active
+                          Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=240
+Planning Time: 2.450 ms
+Execution Time: 10.196 ms
+EXPLAIN_ANALYZE_EXIT=0

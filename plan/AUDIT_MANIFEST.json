@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 542,
-  "markdown_line_count": 38125,
-  "markdown_byte_count": 2356944,
+  "markdown_file_count": 663,
+  "markdown_line_count": 44418,
+  "markdown_byte_count": 2710708,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "2C603D070A8821F894976E23DE1E08913F9F2B962FE124C7A3631C6072A42C3B",
+      "sha256": "538F34A155737DF76A6CAD9DDAD443FD09E198BD3A7DAD68148E4761169E08E7",
       "lines": 3845,
-      "bytes": 174750,
+      "bytes": 174764,
       "utf8": true
     }
   ],
@@ -88,6 +88,13 @@
       "sha256": "47E5E3031E44EA06C947DB181842BF101D75F486FE184AFACDD28917EA3F4A25",
       "lines": 32,
       "bytes": 1180,
+      "utf8": true
+    },
+    {
+      "path": "docs/architecture/dual-screen-pos-topology.md",
+      "sha256": "1872F1A491C1E084E26681E91942E5BF21AB62BB655589CCDC34A91A5C5BFC2B",
+      "lines": 218,
+      "bytes": 15011,
       "utf8": true
     },
     {
@@ -144,6 +151,20 @@
       "sha256": "E7CF4B96B58EDEFB3AA2265D526675A9E5C32DB41D594886CCBAC73C8645FB9B",
       "lines": 179,
       "bytes": 12794,
+      "utf8": true
+    },
+    {
+      "path": "docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_2026-08-24.md",
+      "sha256": "8BD90477C1DE1F6AB9DD38F62FC47DAB1EE424B4DF378C1D09112530FA27E7B8",
+      "lines": 67,
+      "bytes": 4489,
+      "utf8": true
+    },
+    {
+      "path": "docs/audit/V1_DESKTOP_POS_AND_CONTAINER_ACCEPTANCE_2026-08-28.md",
+      "sha256": "011F618715054F7F0D611517985AB978885AF2189E49C2BF80BCFBD2F9469C1C",
+      "lines": 161,
+      "bytes": 12018,
       "utf8": true
     },
     {
@@ -326,6 +347,20 @@
       "sha256": "8A2AA58265B800F88B80033EA0119BD198FFB975BA205A8623F998DDE18A0730",
       "lines": 16,
       "bytes": 636,
+      "utf8": true
+    },
+    {
+      "path": "docs/product/V1_DESKTOP_POS_AND_CONTAINER_RELEASE_DECISION_2026-08-28.md",
+      "sha256": "B7687A36699D84896AD66E8CAB396CA3A8317B57A9D7E0669024EAD4C9374752",
+      "lines": 245,
+      "bytes": 16491,
+      "utf8": true
+    },
+    {
+      "path": "docs/product/V1_PRODUCTION_EXPERIENCE_DECISION_2026-08-25.md",
+      "sha256": "D427DD2E693B73CD281955ABC30012E1F31C68E5E1D0A0646BCB66F73F6AD56B",
+      "lines": 401,
+      "bytes": 30208,
       "utf8": true
     },
     {
@@ -925,9 +960,9 @@
     },
     {
       "path": "evidence/V1-FND-001/verification.md",
-      "sha256": "A30096958FEB4DF4049BA7DF88B060506AFA11787D76CCFC5C4EA6D660716D1A",
-      "lines": 98,
-      "bytes": 3270,
+      "sha256": "8F46CB93818DFDB76CB22876565E068C1E2ADB53A03C1138C013A349495C960F",
+      "lines": 110,
+      "bytes": 3968,
       "utf8": true
     },
     {
@@ -1050,6 +1085,146 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-FND-026/validation.md",
+      "sha256": "941480D667B0E6A9F1BC5679F6BCD6E6A95AF12EB1173E07E39F31F371393BC4",
+      "lines": 10,
+      "bytes": 578,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-005/preflight.md",
+      "sha256": "48CFCFCCB19C8309FB5E91F34E4C13681B20B5DB2C719B047D48E365B390092D",
+      "lines": 15,
+      "bytes": 806,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-005/validation-results.md",
+      "sha256": "96EE9C11E4ED933D4F353A29CB05185F1E6BCC6C70BB1D1092A655F876F3962D",
+      "lines": 21,
+      "bytes": 1316,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-006/validation-results.md",
+      "sha256": "F49161210D6F38FBD4EC95A25639B168FC9D643CE9FF93B039C3EE5180B5D4B3",
+      "lines": 98,
+      "bytes": 4158,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-007/validation-results.md",
+      "sha256": "B70BED7A3002117B0EC93FB39FA31B338A8EBEFA2DDE292B4AC29AB44E7EBB16",
+      "lines": 42,
+      "bytes": 1819,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-008/preflight.md",
+      "sha256": "98A1B0F41BA91BE6B5FA3FBB273DFDF9C4B27B7EAE0BF0A35EA9526B44A2BA67",
+      "lines": 27,
+      "bytes": 1300,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-008/validation-results.md",
+      "sha256": "1107C3618F5B9E4B81F809632C5A298A6F171B3B932A2C1DDF0896D82CCCB9C5",
+      "lines": 41,
+      "bytes": 2433,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-009/preflight.md",
+      "sha256": "8873C2D7CF720E9F68B3A0972AB1A358649847F1B38EF21EFF2F59092680157C",
+      "lines": 18,
+      "bytes": 714,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-009/source-hashes.md",
+      "sha256": "26B0C9BF71DD7249CEC41CA0530140945BFD23F51F3DB836EEC79E9D87532AEB",
+      "lines": 20,
+      "bytes": 1554,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-009/validation.md",
+      "sha256": "2A13E5AF704D882776753244289013C9DE1417BFB1D94CC47F157AAFAD74E34C",
+      "lines": 23,
+      "bytes": 999,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-010/final-validation.md",
+      "sha256": "4B830657FB04AA4C69DB8D99103D5B46956B3FF660D0D737610EC06E4D39C693",
+      "lines": 9,
+      "bytes": 526,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-011/preflight.md",
+      "sha256": "5A3EA03B35B7CAFBE64B98ADAE6023FEE192675627C64F16A5B3B4A54F2421E8",
+      "lines": 17,
+      "bytes": 822,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-011/validation.md",
+      "sha256": "737D26D8579A44737E7E55E8B7E7A6AB7459DF5B9B08A7279E445B5330B5F549",
+      "lines": 6,
+      "bytes": 326,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-015/verification-2026-08-27.md",
+      "sha256": "B54142633C74B5AF8A9EBA3BB6C6073633E4E02322D7568A89D21B69984C709C",
+      "lines": 27,
+      "bytes": 1350,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-016/verification-2026-08-27.md",
+      "sha256": "5BEC769B85F8F3DCE5E17D4AA5C76F6001A892D05EA4965A10C15F5FBC45ACF7",
+      "lines": 18,
+      "bytes": 789,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-019/verification-2026-08-28.md",
+      "sha256": "CA664A759A7FEDAC290B7A0E342CC61414EEE01E9143B511D2ACC41563B1D8A1",
+      "lines": 37,
+      "bytes": 2089,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-020/verification.md",
+      "sha256": "392D09C950805F5C431C5DC3EB0FFBE6218A04B7B5762B3D4F86F14B0CBCCEF6",
+      "lines": 9,
+      "bytes": 655,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-021/verification.md",
+      "sha256": "CFBBB6A81E159DFD9B17EEF851D06D7D33787E9D9FA84DA582C81A90DB57F19A",
+      "lines": 22,
+      "bytes": 1026,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-022/preflight.md",
+      "sha256": "665CB0F869B35F5983515BDC349E065FD7A5993AC34E02F6F59EFD0F4998045A",
+      "lines": 9,
+      "bytes": 422,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-022/verification.md",
+      "sha256": "CC5F6FA2B1A6C95698445291F300E1E4B180270320B2B9AC8B78F82677010383",
+      "lines": 6,
+      "bytes": 385,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
       "sha256": "63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC",
       "lines": 44,
@@ -1127,6 +1302,307 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-003/validation.md",
+      "sha256": "E8F2391E806272F46AA70A11CE2CFEC78423FD3DC28CA338512CBC411DC91014",
+      "lines": 49,
+      "bytes": 2599,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-004/validation.md",
+      "sha256": "454815D5CE0F2D2B78CEF42C7058671E86C999DA64B403E00D9AD604DBB0A7F9",
+      "lines": 41,
+      "bytes": 2342,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-005/validation.md",
+      "sha256": "8B46AF489E0E129215A39E8131E84863346D0AF514E21B7EBA98A3063EB6FB1B",
+      "lines": 21,
+      "bytes": 936,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-006/browser-e2e.md",
+      "sha256": "191F4339816C9B385D59BAFD8A44ED8B3F442745D322DC7B919B67F590477A69",
+      "lines": 55,
+      "bytes": 3057,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-006/validation.md",
+      "sha256": "BDB055C19CE50D9C83D794E78AAE994987514AE186A9E46C8CFB0569038DF49B",
+      "lines": 90,
+      "bytes": 3738,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-008/validation-2026-08-24.md",
+      "sha256": "3AE74828A2BB7DDFE3ABC3758DF19C597DBA20697160545E4BCEE1ED75082CA6",
+      "lines": 84,
+      "bytes": 3327,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-009/validation.md",
+      "sha256": "D0685DDC98ABF67FE8C24A35D6B8D9DCA0BA2B8D0573266712AA58461B7FCA0B",
+      "lines": 31,
+      "bytes": 2258,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-010/a11y-focus-and-tooling-2026-08-27.md",
+      "sha256": "D7202BC0177723550DE0BDB46DCF6E7AC778E1F7EB324505FEC1F476815B1826",
+      "lines": 41,
+      "bytes": 2814,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-010/chrome-real-zoom-validation-2026-08-27.md",
+      "sha256": "47428FD98D433FE28DCB30705B9458161B0FA8DB826392F0D4304B4E58E5842E",
+      "lines": 46,
+      "bytes": 2482,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-010/designer-audit-2026-08-25/validation.md",
+      "sha256": "8C8354ED68391AEB4A361FC6108BE1CF7538E9C2E7EA7B6C805ED3269330B54F",
+      "lines": 94,
+      "bytes": 7089,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-010/dom-a11y-snapshots-2026-08-27.md",
+      "sha256": "81BEB57418550E82427EC3AC0444954B1E43EB5F18C59A711A90E5852642052F",
+      "lines": 128,
+      "bytes": 3595,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-010/revalidation-after-rmd022-2026-08-27.md",
+      "sha256": "3F986A1618AFDBFD090A527B92E8EABF3AB8F1EB5C2B4ABE9DC5F61CF9677993",
+      "lines": 26,
+      "bytes": 1623,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-010/revalidation-after-rmd023-2026-08-27.md",
+      "sha256": "0633B0E59DA9EC7D2ED5665844063F0DCC4483823CBCC9A7B1F5DE1550564104",
+      "lines": 23,
+      "bytes": 1434,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-010/state-transcripts-2026-08-27.md",
+      "sha256": "8BC7381A6B3AC495BB0BFD52FD1876D3A06A187EDCEA5474031077FF7E9C9EA8",
+      "lines": 74,
+      "bytes": 4673,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-012/validation.md",
+      "sha256": "F13361B84EB1085DA90B8B0B6B8053FC5FC3C24B9B347F9BBFC22189A85B9835",
+      "lines": 64,
+      "bytes": 2475,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-013/blocker.md",
+      "sha256": "0959C3C3C80B6AC922263142E2944FFBE036B5479898DA441D482ECC8524737C",
+      "lines": 4,
+      "bytes": 246,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-013/preflight.md",
+      "sha256": "0D2B427C0C30BA7E28E48FA171617E83D2AE6AAB57C8F9ECF8104F4C2C9C84B5",
+      "lines": 10,
+      "bytes": 537,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-013/validation.md",
+      "sha256": "4DC15819CC102BB1F1CE32DE305FD60E5FAA996729D493EAE2DEB6920C2FB8EC",
+      "lines": 35,
+      "bytes": 2705,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-014/validation.md",
+      "sha256": "B0E582532CC2627EC54B54F6A60A9F1CEF7A04D4BAAA87028929BD8E24864EBA",
+      "lines": 54,
+      "bytes": 3432,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-015/preflight.md",
+      "sha256": "B461486D0CAF8E88C53346DBCD191AA32025764A0139BE7384D951B04B06EC7A",
+      "lines": 14,
+      "bytes": 666,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-015/validation.md",
+      "sha256": "88378BC4F523E8AA436971EBF3E6F5CDF1EA6E5CF78DCA5EE03882277D0E09DB",
+      "lines": 49,
+      "bytes": 3411,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-016/validation.md",
+      "sha256": "387724EFB27E66AE40DD1212F3F0B0E81F5C842B190557FE1F144AEDAF793AF7",
+      "lines": 60,
+      "bytes": 3985,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-017/preflight.md",
+      "sha256": "46A546BE9991F281D93B7C5954FA2DC618C21898C7EEEBC269E5B138D5CB4A16",
+      "lines": 10,
+      "bytes": 461,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-017/validation.md",
+      "sha256": "BA05574FAEE4864F19FCC23ECB518F4C23F57920C2D35262517B5BAF98F98501",
+      "lines": 26,
+      "bytes": 2193,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-018/preflight.md",
+      "sha256": "DAF696D67A627B381C448BED3CBA8F63A38B8EDB97D7A693D942F5978709B683",
+      "lines": 10,
+      "bytes": 462,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-018/validation.md",
+      "sha256": "D79B4444C2B2F3A837F9046CD9FDFF4AA9A08F083930312B4F676046992884A7",
+      "lines": 28,
+      "bytes": 2483,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-019/preflight.md",
+      "sha256": "165952B440FE82485843D785987142EFC5D000FDB82656CC8F8EF2547E7ECC0E",
+      "lines": 13,
+      "bytes": 628,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-019/validation.md",
+      "sha256": "240179AE6738951ED4C98E9AD61E646577E1917B49B7DB3B3B3D418EE0925963",
+      "lines": 48,
+      "bytes": 3252,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-020/preflight.md",
+      "sha256": "0B0CF2CAE1141FA24C9F397A0231789223E17D5A8AFD91BDC05AC55F2B357DA9",
+      "lines": 11,
+      "bytes": 668,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-020/validation.md",
+      "sha256": "96CE128780B2FF60A975896EA2215A7DFA42A3DF52E4667A8724B0A64FB412E0",
+      "lines": 92,
+      "bytes": 6880,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-024/scope-failure-2026-08-27.md",
+      "sha256": "6C171782FC6C4177F08710E7107426A5814A7A5EC30D96CD81BA5340C2DFD6BE",
+      "lines": 33,
+      "bytes": 1647,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-025/verification.md",
+      "sha256": "59DD31F95473AC043F3B553D3AC7A73DEDF731044E10D00899CBEE4B27C1F166",
+      "lines": 67,
+      "bytes": 3688,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-026/verification-2026-08-28.md",
+      "sha256": "16541572C0EDB0F1E1AFA865445A5B063FB743D70D5915E77C9B210ACD08082C",
+      "lines": 72,
+      "bytes": 4943,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-027/verification-2026-08-28.md",
+      "sha256": "8BC6BE4874541DA5BD62CDD23F61D380EDF70BE2BB5241F03E794331001B6455",
+      "lines": 84,
+      "bytes": 4437,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-028/browser-transcript.md",
+      "sha256": "B47BB38AA6BE0C4A1B0E0E47CF40FC728074E2E02C95DF4718A37EB67DEAE2E3",
+      "lines": 23,
+      "bytes": 1845,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-028/verification-2026-08-28.md",
+      "sha256": "AD0BDC68A4D75046472C296B3D6A1872000D87AA1ABD18840DC0CC2482817E01",
+      "lines": 41,
+      "bytes": 2403,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-029/browser-transcript.md",
+      "sha256": "4F041BF976B2B70FB1627B5E21F615C6D5F7311C0C97118DF8696139BCA471ED",
+      "lines": 11,
+      "bytes": 837,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-029/verification-2026-08-28.md",
+      "sha256": "97A7D5CD7448769BD0F626EFFB674C2E31A6E064FDEBAF34991CEAAE537D1EBE",
+      "lines": 28,
+      "bytes": 1320,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-030/browser-transcript.md",
+      "sha256": "9C9C94E44FA17A05CA6F9DF3C8D770D756BADDF098EA41F46B0836E5DD843034",
+      "lines": 8,
+      "bytes": 598,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-030/verification-2026-08-28.md",
+      "sha256": "4E9EA9E9573B014158584B066AA0AC54FEBCD50E7C065DFA83D33DA0A7685631",
+      "lines": 10,
+      "bytes": 633,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-031/verification.md",
+      "sha256": "DD0FD9AC38EE9806372FA9353CB68889EE4685C8B4759B52601BB91A6136A43B",
+      "lines": 34,
+      "bytes": 5193,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-032/verification.md",
+      "sha256": "AEEA12B6B622700FAF04BCAF11A5BA882F7387F8DB184C9BAA81DBFEE19831F3",
+      "lines": 53,
+      "bytes": 3185,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-033/verification.md",
+      "sha256": "65845E64E8C01B76E8D029D13AFC870E8AB58C0E6F4FFF1A3CE404960F9C745B",
+      "lines": 98,
+      "bytes": 6394,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -1163,9 +1639,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DC16F0CEEE03BBDF7C6782461EA84C47E21EFF90B43B9FF34B67EDB47708DE60",
-      "lines": 1818,
-      "bytes": 251441,
+      "sha256": "DE88C21EAF16F0D9E0C66FB0C3078854181057357B05B4E4AA2A2768533CD622",
+      "lines": 1939,
+      "bytes": 269864,
       "utf8": true
     },
     {
@@ -1184,9 +1660,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "03B68EA39643AD233DA465E5269827A0B6F95EADD887B93FB12221CEAD6659D5",
-      "lines": 200,
-      "bytes": 14757,
+      "sha256": "A5B9CCB18CC2E7049C89EB036A93440B048B91E42121B9885F174FCC8F9C14E4",
+      "lines": 207,
+      "bytes": 15187,
       "utf8": true
     },
     {
@@ -2192,9 +2668,9 @@
     },
     {
       "path": "plan/v1/billing/V1-BIL-004-billing-composite-integrity.md",
-      "sha256": "9ECFAF2A3247712CACC311ED4C8E67D1471E579C8B453E527E12E01C414B1935",
+      "sha256": "1237F1067119405718B2C0F90ED8EB37E4727B028D43C527DD79D0E51A63E15F",
       "lines": 36,
-      "bytes": 1242,
+      "bytes": 1295,
       "utf8": true
     },
     {
@@ -2234,9 +2710,9 @@
     },
     {
       "path": "plan/v1/catalog/V1-CAT-002-effective-pricing.md",
-      "sha256": "DBAB9ED922FACE718D9571E4E971AEFE44E7A63F8D36AB7EAD2442565B2CEE26",
-      "lines": 53,
-      "bytes": 1333,
+      "sha256": "C2BBD78E8C46164FDB81DE26571DD64D951CFB01A3E2BFFB37A7B0AB6032F453",
+      "lines": 59,
+      "bytes": 1642,
       "utf8": true
     },
     {
@@ -2395,16 +2871,16 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-021-postgresql-extension-integration.md",
-      "sha256": "BAB0526ED228998CC19DDF82805F2E82E95196147377A11F801C776CCBF440FC",
-      "lines": 63,
-      "bytes": 2133,
+      "sha256": "FDCD3E947305E52F70D2E2729BCE14B1F5A9CACF40ED13F512D27CC57C7305F5",
+      "lines": 65,
+      "bytes": 2251,
       "utf8": true
     },
     {
       "path": "plan/v1/foundation/V1-FND-022-table-module-integration.md",
-      "sha256": "5E8800691D261ACAD1111C4343D684120F0AA98018CE6752BEEA1F752323B63C",
-      "lines": 59,
-      "bytes": 1746,
+      "sha256": "4675CF92FF9F0E30DB8D60CB0B16579EAD23983ED67276AA04666965A2277B6C",
+      "lines": 60,
+      "bytes": 1811,
       "utf8": true
     },
     {
@@ -2429,6 +2905,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/foundation/V1-FND-026-root-integration-custody.md",
+      "sha256": "9CD20D26B6A3D14FDA43599DC39747E8BB9A9D339B510E1048F9D6C13F5764F8",
+      "lines": 50,
+      "bytes": 1740,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/governance/V1-GOV-001-v1-reconciliation-and-gate-closure.md",
       "sha256": "069925E4125CBB95DC55B4ADF6C144B2CB0A33B224B9D1F3B3D394ED8E1F8834",
       "lines": 32,
@@ -2440,6 +2923,146 @@
       "sha256": "0A31E2A1338B9BA936D268E0D9C069AB5DE33370C9D745F2336B0A71C2C5B0E6",
       "lines": 33,
       "bytes": 1032,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-003-full-project-production-audit.md",
+      "sha256": "F398AA953CC684C224BC2743D02700E6D6D6D3258DF2C8EA20F90D044E0F2AF0",
+      "lines": 68,
+      "bytes": 3085,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-004-post-remediation-master-audit-reseal.md",
+      "sha256": "1AF08F9D9727F916944544FCB3A356B796E9595D0317BD8DF34335EA74C4DB81",
+      "lines": 58,
+      "bytes": 2539,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-005-audit-custody-correction.md",
+      "sha256": "F759F16858EAA6FF1C7406FA51201D5971CDBEC1DB0FFA4FA01AE6A87F7FF60B",
+      "lines": 75,
+      "bytes": 4168,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-006-remediation-surface-custody.md",
+      "sha256": "9F65AA95D425D7F770D0B7DEC146A38B5D5076216B168145032CA3A258A5B63B",
+      "lines": 63,
+      "bytes": 2890,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-007-migration-manifest-custody.md",
+      "sha256": "3692A3704B2A045B06B894CD54180B151ED1BD7FF5B79FA78E12C8DF973BF4CB",
+      "lines": 57,
+      "bytes": 2300,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-008-catalog-api-custody.md",
+      "sha256": "FCE10D82D644972FEDEC19F7CF9CAC5C9CE8060974C86961238E7CE8E7403FA1",
+      "lines": 59,
+      "bytes": 2611,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-009-production-experience-realignment.md",
+      "sha256": "E976CDA6E76854EF54E76CCB5424ED2D3B510CD8A84513BC51E7928764E92FEE",
+      "lines": 41,
+      "bytes": 1786,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-010-production-experience-task-custody.md",
+      "sha256": "3FFB954364DD74E0BB8C536C16FC931665D077ED21B82B8F9B03C65670FF07F6",
+      "lines": 48,
+      "bytes": 2375,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-011-production-experience-custody-correction.md",
+      "sha256": "B9F1495B58037A63064EA9CAF6C19BF10B20308252294587CBC2F8FDF818B4F9",
+      "lines": 30,
+      "bytes": 1040,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-012-table-card-remediation-custody.md",
+      "sha256": "BF56BAD8171104E3DE48BB27261001898C1B0B17B4D0C70056131A0C6401931C",
+      "lines": 35,
+      "bytes": 1035,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-013-table-card-custody-correction.md",
+      "sha256": "0CAC506A7CC2D5AA06C75042F72FCEE579E4C7E4B97ED6609E5F322CD069D03D",
+      "lines": 37,
+      "bytes": 1129,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-014-a11y-landmark-remediation-custody.md",
+      "sha256": "AD7BE9C61DB4BC5B3767402B6C1B48B2499E0700B255DEF5011D64D8B69CC4A5",
+      "lines": 39,
+      "bytes": 1361,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-015-zoom-reflow-remediation-custody.md",
+      "sha256": "DC02ECE6559C99923ECB290CB60B542AD7FC0A79AEAEB7C4ECD91E2045459D22",
+      "lines": 40,
+      "bytes": 1452,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-016-zoom-reflow-scope-recovery.md",
+      "sha256": "EC2E0270376C02699FBA445BCDF7A419C47D80A017E653C1EB4076597DEB9838",
+      "lines": 39,
+      "bytes": 1329,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-017-desktop-pos-and-container-release-custody.md",
+      "sha256": "826FB259B1AE14C0F5366EB1CA05F205A363C55454C1815314AD176B1A845B73",
+      "lines": 66,
+      "bytes": 2985,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-018-desktop-pos-custody-correction.md",
+      "sha256": "2B966CC4A2AC1CB75E082BE393CB2E35449688E698EEA05FEB34137F1C240D54",
+      "lines": 67,
+      "bytes": 3254,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-019-desktop-pos-custody-recovery.md",
+      "sha256": "732433D99234D40DE1059CF9CB0CAB38ED6CD65B5939B1E95DEB3D92286AC8C3",
+      "lines": 60,
+      "bytes": 2686,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-020-first-run-provisioning-custody.md",
+      "sha256": "DB86313F9B80DBC1ECFFCD0FD13110B2B5F0E280E392357F36DBDAD9C6763226",
+      "lines": 32,
+      "bytes": 969,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-021-release-acceptance-dependency-correction.md",
+      "sha256": "BDE4803DF164E23BAD7E29CFB0943EF01346548D72AFB62EDCDDB59915D6F7F6",
+      "lines": 34,
+      "bytes": 1197,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-022-kitchen-station-remediation-custody.md",
+      "sha256": "25FE8F986DE2F44398E2A7BC356594D9FBE88AA29800E2EBFBF4981EE95006B9",
+      "lines": 41,
+      "bytes": 1557,
       "utf8": true
     },
     {
@@ -2591,9 +3214,9 @@
     },
     {
       "path": "plan/v1/operations/V1-OPS-002-backup-health-foundation.md",
-      "sha256": "71CE1F888511F542A4F5B9C161EF0F8F70C187F34039A1BF412DE838A812360E",
+      "sha256": "A4B4433DB2B08F614F526A274F76D876413F495A4CF186CE533C4D00E64E2A3C",
       "lines": 55,
-      "bytes": 1373,
+      "bytes": 1356,
       "utf8": true
     },
     {
@@ -2626,9 +3249,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "CB06A8388E803E7756B73C7DCF3A72B07B8A1313B49A77586F2D0006F1E4CDD4",
-      "lines": 32,
-      "bytes": 1352,
+      "sha256": "3392ED261387CD08F1EAEEA9FAFC1FB42E340180ECBF4D8581A2AC38798F4D91",
+      "lines": 34,
+      "bytes": 1574,
       "utf8": true
     },
     {
@@ -2647,16 +3270,240 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-001-consolidated-remediation.md",
-      "sha256": "611DEFF136119D042B549B4BFC64DFA388F18B116D37D80751D3CF3B41F7256A",
-      "lines": 97,
-      "bytes": 4731,
+      "sha256": "63D7C1B0C356249C1BD2AA6453C4D6198ABFFBE43B43AF9A15569BCCA18737A2",
+      "lines": 98,
+      "bytes": 4839,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md",
-      "sha256": "C64190D740319BA6A237992606E1E81CD7C759ADC0B592FAB1EB0A2DE178973A",
-      "lines": 80,
-      "bytes": 3296,
+      "sha256": "332A2C4B8252F0AA8815D46D98BADB44F8B83C40F2780644F134ECFC03C383D5",
+      "lines": 98,
+      "bytes": 4846,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-003-web-prototype-responsive-ui.md",
+      "sha256": "74242F89BA2952737F969799DFE7E279F54323DC88FB81BEF0B8429770ECF674",
+      "lines": 49,
+      "bytes": 2400,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-004-mock-runtime-contract-alignment.md",
+      "sha256": "742C893CDA9513CBEBD1454E192DBDBE670D5E5AE2CCC9481EAB2E75B762D23C",
+      "lines": 61,
+      "bytes": 3017,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-005-dual-screen-pos-topology.md",
+      "sha256": "11437C3BB99E11DB08BA98C31EEF642FF0CDC04C32C1DBB2457BD02ED0AEE0DC",
+      "lines": 61,
+      "bytes": 2644,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-006-production-dual-screen-pos.md",
+      "sha256": "4A8592749E981F1F0E5127E66B84F54605B968582A05AB15DAF3D17E76286522",
+      "lines": 87,
+      "bytes": 4590,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-007-governance-manifest-and-build-provenance.md",
+      "sha256": "780A217DDDB39C8F5534C553E728A54EDFA3888D4B4704D5C5BFBC3805C9D094",
+      "lines": 68,
+      "bytes": 2853,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-008-host-api-auth-ratelimit-tls-and-telemetry.md",
+      "sha256": "F2CF43760CC476491A35A366650731D1E16025E560B96E16C65A3DA3AB849FC7",
+      "lines": 65,
+      "bytes": 3077,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md",
+      "sha256": "E8A8C0E9D9CE5D4D5EC6919F9AE8830B1B597077C4DAD78520C88FA0B60A3E6C",
+      "lines": 84,
+      "bytes": 4752,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-010-pos-terminal-ui-responsive-and-a11y.md",
+      "sha256": "50575122606B27D9D100D230996D47FE1E9406C35B242E14C323639309BBB4B2",
+      "lines": 72,
+      "bytes": 3858,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-011-web-prototype-hardening-and-touch-targets.md",
+      "sha256": "43073715EAEEB9C629865AB911E105EDD096F6C8D6905159680DED81D67BDF6F",
+      "lines": 59,
+      "bytes": 2348,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-012-root-markdownlint-cleanup.md",
+      "sha256": "2A4AACF024E09EE5EE4CA1EC749413F5F887BDE3F82525A99215EEF9E18E48EF",
+      "lines": 48,
+      "bytes": 1574,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-013-table-management-production-api.md",
+      "sha256": "9AB75F86428C34813594D2162BB4C198C2946EA2FB878B24744ED9DDB230CBD2",
+      "lines": 46,
+      "bytes": 2228,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-014-catalog-management-production-api.md",
+      "sha256": "4ED282223E090CD8B134BB5DE407F0D49D263515AB174E9816676634A6694A78",
+      "lines": 40,
+      "bytes": 1591,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-015-kitchen-operations-production-api.md",
+      "sha256": "0678C29EC47F8702D71BE0082E1020F46BE5E65A1DF0E7EE267189139FB12E12",
+      "lines": 42,
+      "bytes": 1778,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-016-production-shell-and-design-system.md",
+      "sha256": "B04DA15D7B62C4C41A822F774D2FC8C7E0C22A8F2A39836BE068B784B3871860",
+      "lines": 42,
+      "bytes": 1731,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-017-table-workspace-ui.md",
+      "sha256": "744832417568740F577B41EB4E70AA28E17114B15B4DEE0C58DF80D9CC1C4A5D",
+      "lines": 39,
+      "bytes": 1647,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-018-menu-catalog-workspace-ui.md",
+      "sha256": "56F213FD3C25C32F04A164AF795FAA1BB5A1844B9CD03E4C35F8B8EED4546AD2",
+      "lines": 39,
+      "bytes": 1650,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-019-kitchen-operations-workspace-ui.md",
+      "sha256": "2DD21314A6133BCD07F657C8B72CE5B281ECB6CFDF2C55483DDDB560BAD86315",
+      "lines": 39,
+      "bytes": 1646,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-020-production-experience-composition-and-e2e.md",
+      "sha256": "746F1F6F1604F699C953526CA493835FE45B7F7C8E381F83F1347A5CFD1DF3DE",
+      "lines": 50,
+      "bytes": 2224,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-021-independent-designer-acceptance.md",
+      "sha256": "72C2F08CE49402735AF2F6D95960882A2357B20634FA37A8A64D637C6CFBEAB6",
+      "lines": 40,
+      "bytes": 1710,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-022-table-card-keyboard-semantics.md",
+      "sha256": "2289858AFAEE76C04E058DBE0417420EEDDBF8DFFDCBAF18FD309CCF596899B6",
+      "lines": 38,
+      "bytes": 1582,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-023-production-landmark-and-aria-semantics.md",
+      "sha256": "06012CD5F84B274280720D16404E4CFED2FF53C9022C7E5C028B8DEBE9F5A878",
+      "lines": 42,
+      "bytes": 1669,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-024-production-shell-zoom-reflow.md",
+      "sha256": "414CAABEAD69A70D0FF787873FEFEB5A1DB06186A5981964384CF003209C5E41",
+      "lines": 51,
+      "bytes": 2399,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-025-production-shell-zoom-reflow-recovery.md",
+      "sha256": "D791B8D1F3D0E0EDC52046F310B801BB23FFF4BDED944FE2D58B22B973EDB0E6",
+      "lines": 43,
+      "bytes": 1927,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-026-floor-plan-persistence-and-api.md",
+      "sha256": "B280BB38CD4D1826BB84EAFFB317D768AC5FAC565995E44EB434875992E2707C",
+      "lines": 54,
+      "bytes": 2435,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-027-operational-bill-splitting-api.md",
+      "sha256": "49C90D815F5EE8CE33C0CD20BC9FC6C8F366BBDB07E87332FCAD38B9CD3DCA8E",
+      "lines": 43,
+      "bytes": 1724,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-028-desktop-floor-plan-workspace.md",
+      "sha256": "65C46524C57D4D37DE8BB657D0D1CB9BBFC20673D255CF32DAF35BDEA89FA117",
+      "lines": 40,
+      "bytes": 1717,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-029-seat-aware-order-and-bill-split-workspace.md",
+      "sha256": "717C55354D6EEB34D3E5AF5E876E04E2C440D1A2F384DACA7F060B139EC6D66C",
+      "lines": 40,
+      "bytes": 1600,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-030-menu-management-desktop-quality.md",
+      "sha256": "E0C2BBC16520351FBCD78B9AA4BDF5DBD63A1360113F984BD49F3F1581B7BA66",
+      "lines": 38,
+      "bytes": 1552,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-031-complete-containerized-release.md",
+      "sha256": "5F3F9C67C895BAE721BC58EEFAF8C39F79470E38BA8CB31B3C6466E3DBC798E1",
+      "lines": 63,
+      "bytes": 2784,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-032-integrated-designer-and-release-acceptance.md",
+      "sha256": "A975B5581E59FC79F9189E05550AC897453A383A08DF7ECE608077B67117EC12",
+      "lines": 44,
+      "bytes": 1765,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-033-first-run-manager-provisioning.md",
+      "sha256": "07541EDC29080EF8228F2A090553E60322017656A66BF491E5506A775ABB1A82",
+      "lines": 47,
+      "bytes": 1893,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-034-authoritative-kitchen-station-contract.md",
+      "sha256": "114456D240F655F8393C36CB24DFFD166F2DB03A97C4499431FF25F5F2D29657",
+      "lines": 53,
+      "bytes": 2199,
       "utf8": true
     },
     {
@@ -2717,9 +3564,9 @@
     },
     {
       "path": "plan/v1/table-management/V1-TBL-001-table-lifecycle.md",
-      "sha256": "E46B97ADAAA7528A7B110522BF21A9E8B009E4C8C77A28D816E8E8986CC8D9F7",
-      "lines": 66,
-      "bytes": 1895,
+      "sha256": "B0D028488ABCFDB1FAA2EF170D02F0A1341F5E5BB4A7B0A5C92F832FFF7E94B6",
+      "lines": 63,
+      "bytes": 1790,
       "utf8": true
     },
     {

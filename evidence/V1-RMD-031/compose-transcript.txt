@@ -1,0 +1,24 @@
+Command: docker compose up -d --build
+Exit code: 0
+Observed: postgres healthy; migrate exited 0 after 38 migrations; host healthy; proxy started on 8443/tcp.
+Command: docker compose exec -T host curl --fail http://127.0.0.1:5080/health/ready
+Exit code: 0
+Output: {"status":"Ready"}
+Command: docker compose exec -T postgres psql -U alkaros -d alkaros -Atc 'select count(*) from public.alkaros_schema_migrations;'
+Output: 38
+Command: docker compose restart host
+Observed: host healthy after restart; readiness returned 200; migration count remained 38.
+Cleanup: docker compose down --volumes --remove-orphans (exit 0).
+Image security: Docker Scout SBOM for the Alpine/OpenSSL-pinned image indexed 52 packages and reported no vulnerable package.
+
+Runtime correction (2026-08-28):
+Observed before correction: hostname-free Caddy `:443` returned TLS alert `internal error`; browser reported ERR_SSL_PROTOCOL_ERROR.
+Change: Caddy site identity is `https://localhost`; proxy has an HTTPS healthcheck; Compose project name is fixed to `alkaros`.
+Observed after correction: TLS 1.3 completed and `/health/ready` plus `/` returned HTTP 200 through `https://localhost:8443` with certificate verification disabled for the local CA.
+Browser boundary: the in-app browser reports ERR_CERT_AUTHORITY_INVALID. No security interstitial was bypassed and the local CA was not installed into the Windows trust store.
+Secret regression: Windows CRLF produced a 65-character shell value while the trimmed secret was 64 characters; hashes were compared without printing the value. `tr -d '\r\n'` normalized the mounted secret for migration and Host.
+Command: docker compose up --detach --force-recreate --remove-orphans --wait
+Exit code: 0 with no ALKAROS_DB_PASSWORD or ALKAROS_KITCHEN_STATION_ID host environment.
+Observed: postgres healthy; migrate exited 0; host healthy; proxy healthy; 38 migration records.
+Restart: postgres, host and proxy returned healthy; migration count remained 38; HTTPS health and UI root returned 200.
+Cleanup of stale test runtime: removed only alkaros-rmd025-zoom-pg-20260827, alkaros-rmd020-http and alkaros-test-pg. Current `alkaros` Compose stack remains running.

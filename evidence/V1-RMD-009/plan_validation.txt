@@ -1,0 +1,9 @@
+Command: python -B tools/plan-audit/plan_audit_tool.py validate
+Markdown files: 404
+Task files: 382
+Registered gates: 18
+Registered EXT sources: 21
+Dependency edges: 1329
+Validation errors: 0
+Validation warnings: 0
+PLAN_EXIT=0
