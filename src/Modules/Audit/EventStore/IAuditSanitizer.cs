@@ -58,10 +58,15 @@ public sealed class AuditSanitizer : IAuditSanitizer
         var sanitized = text;
         foreach (var pattern in SensitiveSubstrings)
         {
-            var regex = new System.Text.RegularExpressions.Regex(
-                $@"(?i)({pattern}\s*[:=]\s*)([^,\s""}}\]]+)",
+            var quotedRegex = new System.Text.RegularExpressions.Regex(
+                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*[""'])([^""'\r\n]+)([""'])",
                 System.Text.RegularExpressions.RegexOptions.Compiled);
-            sanitized = regex.Replace(sanitized, "$1[REDACTED]");
+            sanitized = quotedRegex.Replace(sanitized, "$1[REDACTED]$3");
+
+            var unquotedRegex = new System.Text.RegularExpressions.Regex(
+                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*)([^,\s""}}\]]+)",
+                System.Text.RegularExpressions.RegexOptions.Compiled);
+            sanitized = unquotedRegex.Replace(sanitized, "$1[REDACTED]");
         }
         return sanitized;
     }

@@ -58,6 +58,23 @@ public sealed class AuditSanitizerTests
     }
 
     [Fact]
+    public void SanitizeJsonMalformedQuotedJsonRedactsQuotedSecretValues()
+    {
+        var malformed = """{"password": "secret123" broken""";
+
+        var sanitized = _sanitizer.SanitizeJson(malformed);
+
+        Assert.NotNull(sanitized);
+        var node = JsonNode.Parse(sanitized);
+        Assert.NotNull(node);
+        Assert.True(node["unparsed"]?.GetValue<bool>());
+        var rawPayload = node["raw_payload"]?.GetValue<string>();
+        Assert.NotNull(rawPayload);
+        Assert.DoesNotContain("secret123", rawPayload);
+        Assert.Contains("[REDACTED]", rawPayload);
+    }
+
+    [Fact]
     public void SerializeAndSanitizeComplexObjectProducesSanitizedJson()
     {
         var payload = new
