@@ -1,7 +1,7 @@
 # V1-RMD-044 - PosTerminal compile and floor plan freshness
 
 - Task ID: V1-RMD-044
-- Status: InProgress
+- Status: Done
 - Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: implementation
 - Surface state: Planned
