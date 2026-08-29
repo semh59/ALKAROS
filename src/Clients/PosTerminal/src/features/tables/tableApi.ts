@@ -61,13 +61,13 @@ function createRequest(terminalId: string, fetcher: typeof fetch): TableManageme
     createTable: (input) => request<TableRecord>("/tables", { method: "POST", body: { expectedRowVersion: 0, ...input } }),
     getFloorPlan: (zoneId) => request<FloorPlan>(`/floor-plans/${encodeURIComponent(zoneId)}`),
     saveFloorPlan: (zoneId, input) => request<SaveFloorPlanResult>(`/floor-plans/${encodeURIComponent(zoneId)}`, { method: "PUT", body: input }),
-    execute: async ({ table, action, reason, targetTableId, targetTableVersion, participantTableIds, participantTableVersions, mergeGroupId }) => {
+    execute: async ({ table, action, reason, partySize, targetTableId, targetTableVersion, participantTableIds, participantTableVersions, mergeGroupId }) => {
       if (action === "SetOccupied" || action === "SetAvailable" || action === "SetCleaning" || action === "SetOutOfService") {
         await request(`/tables/${table.tableId}/status`, { method: "POST", body: { expectedRowVersion: table.rowVersion, status: action.slice(3) } });
         return;
       }
       if (action === "Reserve") {
-        await request("/reservations", { method: "POST", body: { tableId: table.tableId, expectedTableRowVersion: table.rowVersion, reason } });
+        await request("/reservations", { method: "POST", body: { tableId: table.tableId, expectedTableRowVersion: table.rowVersion, partySize: partySize ?? table.capacity ?? 2, reason } });
         return;
       }
       if (action === "Transfer") {

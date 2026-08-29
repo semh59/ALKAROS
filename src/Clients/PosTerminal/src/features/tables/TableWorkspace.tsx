@@ -70,6 +70,7 @@ export function TableWorkspace({
   const [zoneDraft, setZoneDraft] = useState<CreateZoneInput>({ code: "", name: "", sortOrder: 0 });
   const [tableDraft, setTableDraft] = useState<CreateTableInput>({ tableNumber: "", zoneId: null, capacity: 2 });
   const [reason, setReason] = useState("");
+  const [partySize, setPartySize] = useState(2);
   const [targetTableId, setTargetTableId] = useState("");
   const [participantTableIds, setParticipantTableIds] = useState<string[]>([]);
 
@@ -93,6 +94,7 @@ export function TableWorkspace({
     setAction(nextAction);
     setActionTableId(targetTable.tableId);
     setReason("");
+    setPartySize(targetTable.capacity || 2);
     setTargetTableId("");
     setParticipantTableIds([]);
     setFormErrors([]);
@@ -164,6 +166,7 @@ export function TableWorkspace({
         table: actionTable,
         action,
         reason: reason.trim() || undefined,
+        partySize: action === "Reserve" ? partySize : undefined,
         targetTableId: targetTableId || undefined,
         targetTableVersion: targetTableId ? tables.find((table) => table.tableId === targetTableId)?.rowVersion : undefined,
         participantTableIds: participantTableIds.length ? participantTableIds : undefined,
@@ -292,6 +295,7 @@ export function TableWorkspace({
           <ValidationSummary title="İşlem bilgilerini kontrol edin" errors={formErrors} />
           {actionTable && <p className="table-form__context"><strong>{actionTable.tableNumber}</strong> · {tableStatusLabels[actionTable.status]} · v{actionTable.rowVersion}</p>}
           {action === "Transfer" && <SelectField label="Hedef masa" value={targetTableId} onChange={(event) => setTargetTableId(event.target.value)}><option value="">Hedef seçin</option>{availableTargets.map((table) => <option key={table.tableId} value={table.tableId}>{table.tableNumber} · {tableStatusLabels[table.status]}</option>)}</SelectField>}
+          {action === "Reserve" && <TextField label="Kişi sayısı" type="number" min={1} max={50} value={partySize} onChange={(event) => setPartySize(Math.max(1, Number(event.target.value)))} />}
           {action === "Merge" && <fieldset className="table-form__checklist"><legend>Birleştirilecek masalar</legend>{availableTargets.map((table) => <label key={table.tableId}><input type="checkbox" checked={participantTableIds.includes(table.tableId)} onChange={(event) => setParticipantTableIds(event.target.checked ? [...participantTableIds, table.tableId] : participantTableIds.filter((id) => id !== table.tableId))} /> <span>{table.tableNumber} · {tableStatusLabels[table.status]}</span></label>)}</fieldset>}
           {action === "Unmerge" && <p className="table-form__context">Birleşimdeki tüm katılımcı masalar güncel satır sürümleriyle ayrılacaktır.</p>}
           {(action && actionNeedsReason(action)) && <TextField label="Açıklama" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="İşlem gerekçesi" autoComplete="off" />}

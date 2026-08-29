@@ -147,6 +147,7 @@ export interface TableActionRequest {
   table: TableRecord;
   action: TableAction;
   reason?: string;
+  partySize?: number;
   targetTableId?: string;
   targetTableVersion?: number;
   participantTableIds?: readonly string[];
