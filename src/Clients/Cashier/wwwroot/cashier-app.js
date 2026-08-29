@@ -1,6 +1,18 @@
-// ALKAROS Cashier Quick Order Controller (V1-CUI-005)
+// ALKAROS Cashier Quick Order Controller (V1-CUI-005 / V1-RMD-051)
 (function () {
   'use strict';
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    const text = String(str);
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function formatMoney(amount) {
+    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
+  }
 
   // State
   const state = {
@@ -9,12 +21,12 @@
     registerNumber: 'KASA-01',
     shiftTotalOrders: 0,
     activeCategory: 'all',
-    
+
     // Active Ticket / Basket
     ticketItems: [],
     parkedTickets: JSON.parse(localStorage.getItem('alkaros_cashier_parked') || '[]'),
-    
-    // Catalog
+
+    // Catalog with standard Guid IDs
     categories: [
       { id: 'all', name: 'Tüm Ürünler' },
       { id: 'cat-fast', name: '⚡ Hızlı Satış' },
@@ -23,18 +35,18 @@
       { id: 'cat-dessert', name: 'Tatlılar' }
     ],
     products: [
-      { id: 'cp-1', categoryId: 'cat-fast', code: '101', name: 'Çay', price: 20 },
-      { id: 'cp-2', categoryId: 'cat-fast', code: '102', name: 'Filtre Kahve', price: 65 },
-      { id: 'cp-3', categoryId: 'cat-fast', code: '103', name: 'Su 0.5L', price: 15 },
-      { id: 'cp-4', categoryId: 'cat-drink', code: '201', name: 'Ayran', price: 40 },
-      { id: 'cp-5', categoryId: 'cat-drink', code: '202', name: 'Kola / Meşrubat', price: 55 },
-      { id: 'cp-6', categoryId: 'cat-drink', code: '203', name: 'Taze Portakal Suyu', price: 85 },
-      { id: 'cp-7', categoryId: 'cat-food', code: '301', name: 'Tost (Kaşarlı)', price: 110 },
-      { id: 'cp-8', categoryId: 'cat-food', code: '302', name: 'Tost (Karışık)', price: 130 },
-      { id: 'cp-9', categoryId: 'cat-food', code: '303', name: 'Günün Sandviçi', price: 140 },
-      { id: 'cp-10', categoryId: 'cat-food', code: '304', name: 'Hamburger Menü', price: 260 },
-      { id: 'cp-11', categoryId: 'cat-dessert', code: '401', name: 'Cheesecake', price: 140 },
-      { id: 'cp-12', categoryId: 'cat-dessert', code: '402', name: 'Kruvasan', price: 95 }
+      { id: '00000000-0000-0000-0000-000000000101', categoryId: 'cat-fast', code: '101', name: 'Çay', price: 20 },
+      { id: '00000000-0000-0000-0000-000000000102', categoryId: 'cat-fast', code: '102', name: 'Filtre Kahve', price: 65 },
+      { id: '00000000-0000-0000-0000-000000000103', categoryId: 'cat-fast', code: '103', name: 'Su 0.5L', price: 15 },
+      { id: '00000000-0000-0000-0000-000000000201', categoryId: 'cat-drink', code: '201', name: 'Ayran', price: 40 },
+      { id: '00000000-0000-0000-0000-000000000202', categoryId: 'cat-drink', code: '202', name: 'Kola / Meşrubat', price: 55 },
+      { id: '00000000-0000-0000-0000-000000000203', categoryId: 'cat-drink', code: '203', name: 'Taze Portakal Suyu', price: 85 },
+      { id: '00000000-0000-0000-0000-000000000301', categoryId: 'cat-food', code: '301', name: 'Tost (Kaşarlı)', price: 110 },
+      { id: '00000000-0000-0000-0000-000000000302', categoryId: 'cat-food', code: '302', name: 'Tost (Karışık)', price: 130 },
+      { id: '00000000-0000-0000-0000-000000000303', categoryId: 'cat-food', code: '303', name: 'Günün Sandviçi', price: 140 },
+      { id: '00000000-0000-0000-0000-000000000304', categoryId: 'cat-food', code: '304', name: 'Hamburger Menü', price: 260 },
+      { id: '00000000-0000-0000-0000-000000000401', categoryId: 'cat-dessert', code: '401', name: 'Cheesecake', price: 140 },
+      { id: '00000000-0000-0000-0000-000000000402', categoryId: 'cat-dessert', code: '402', name: 'Kruvasan', price: 95 }
     ]
   };
 
@@ -55,20 +67,53 @@
     btnCloseParkedModal: document.getElementById('btnCloseParkedModal')
   };
 
-  function init() {
+  async function init() {
     renderCategoryTabs();
     renderProducts();
     renderTicket();
     updateParkBadge();
     bindEvents();
+
+    // Try dynamic catalog loading
+    await loadDynamicCatalog();
   }
 
-  // Render Functions
+  async function loadDynamicCatalog() {
+    try {
+      const [catRes, prodRes] = await Promise.all([
+        fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/categories`, { credentials: 'include' }).catch(() => null),
+        fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/products`, { credentials: 'include' }).catch(() => null)
+      ]);
+
+      if (catRes && catRes.ok && prodRes && prodRes.ok) {
+        const catData = await catRes.json();
+        const prodData = await prodRes.json();
+        const cats = Array.isArray(catData) ? catData : catData.categories || [];
+        const prods = Array.isArray(prodData) ? prodData : prodData.products || [];
+
+        if (cats.length > 0 && prods.length > 0) {
+          state.categories = [{ id: 'all', name: 'Tüm Ürünler' }, ...cats.map(c => ({ id: c.categoryId || c.id, name: c.categoryName || c.name }))];
+          state.products = prods.map((p, idx) => ({
+            id: p.productId || p.id,
+            categoryId: p.categoryId,
+            code: String(100 + idx + 1),
+            name: p.productName || p.name,
+            price: p.currentPrice || p.price || 0
+          }));
+          renderCategoryTabs();
+          renderProducts();
+        }
+      }
+    } catch {
+      // Gracefully use default fallback catalog
+    }
+  }
+
   function renderCategoryTabs() {
     if (!el.categoryTabs) return;
-    el.categoryTabs.innerHTML = state.categories.map(cat => `
-      <button type="button" class="category-tab-btn ${state.activeCategory === cat.id ? 'active' : ''}" data-cat-id="${cat.id}">
-        ${cat.name}
+    el.categoryTabs.innerHTML = state.categories.map(c => `
+      <button type="button" class="tab-chip ${state.activeCategory === c.id ? 'active' : ''}" data-cat-id="${escapeHtml(c.id)}">
+        ${escapeHtml(c.name)}
       </button>
     `).join('');
   }
@@ -78,17 +123,15 @@
     const query = searchQuery.trim().toLowerCase();
     const filtered = state.products.filter(p => {
       const matchCat = state.activeCategory === 'all' || p.categoryId === state.activeCategory;
-      const matchSearch = !query || p.name.toLowerCase().includes(query) || p.code.includes(query);
+      const matchSearch = !query || p.name.toLowerCase().includes(query) || (p.code && p.code.includes(query));
       return matchCat && matchSearch;
     });
 
     el.productMatrix.innerHTML = filtered.map(prod => `
-      <div class="pos-product-card" data-product-id="${prod.id}" role="button" tabindex="0">
-        <div>
-          <span style="font-size: 0.7rem; color: var(--text-dim); font-family: var(--font-mono); font-weight: 700;">#${prod.code}</span>
-          <div class="pos-product-name">${prod.name}</div>
-        </div>
-        <div class="pos-product-price">${formatMoney(prod.price)}</div>
+      <div class="pos-product-card" data-product-id="${escapeHtml(prod.id)}" tabindex="0" role="button">
+        <div class="product-badge">${escapeHtml(prod.code || '')}</div>
+        <div class="product-name">${escapeHtml(prod.name)}</div>
+        <div class="product-price">${formatMoney(prod.price)}</div>
       </div>
     `).join('');
   }
@@ -96,57 +139,41 @@
   function renderTicket() {
     if (!el.ticketItemsStream) return;
     if (state.ticketItems.length === 0) {
-      el.ticketItemsStream.innerHTML = `
-        <div style="text-align: center; color: var(--text-dim); padding: 40px 0;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🧾</div>
-          <div>Sipariş için ürün seçin veya kod girin</div>
-        </div>
-      `;
-      updateTotals();
+      el.ticketItemsStream.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 32px 0;">Sepet boş. Ürün seçin.</div>';
+      updateTotal();
       return;
     }
 
-    el.ticketItemsStream.innerHTML = state.ticketItems.map(item => {
-      const itemTotal = item.isComplimentary ? 0 : (item.price * item.quantity);
-      return `
-        <div class="ticket-item-row ${item.isComplimentary ? 'complimentary' : ''}">
-          <div class="ticket-item-desc">
-            <div class="ticket-item-name">${item.name}</div>
-            <div class="ticket-item-qty">${item.quantity} x ${formatMoney(item.price)}</div>
-          </div>
-          <div class="ticket-item-total">${formatMoney(itemTotal)}</div>
-          <div class="ticket-item-controls">
-            <button type="button" class="btn-qty" data-action="dec" data-id="${item.id}">−</button>
-            <button type="button" class="btn-qty" data-action="inc" data-id="${item.id}">+</button>
-            <button type="button" class="btn-qty" data-action="ikram" data-id="${item.id}" title="İkram" style="font-size: 0.75rem;">🎁</button>
-          </div>
+    el.ticketItemsStream.innerHTML = state.ticketItems.map(item => `
+      <div class="ticket-row ${item.isComplimentary ? 'complimentary' : ''}">
+        <div class="item-meta">
+          <div class="item-title">${escapeHtml(item.name)} ${item.isComplimentary ? '<span class="badge-free">İKRAM</span>' : ''}</div>
+          <div class="item-sub">${formatMoney(item.price)} × ${item.quantity} = ${formatMoney(item.isComplimentary ? 0 : item.price * item.quantity)}</div>
         </div>
-      `;
-    }).join('');
+        <div class="item-actions">
+          <button type="button" class="btn-micro" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
+          <span style="font-weight: 800; min-width: 20px; text-align: center;">${item.quantity}</span>
+          <button type="button" class="btn-micro" data-action="inc" data-id="${escapeHtml(item.id)}">+</button>
+          <button type="button" class="btn-micro" data-action="comp" data-id="${escapeHtml(item.id)}" title="İkram">🎁</button>
+          <button type="button" class="btn-micro btn-del" data-action="del" data-id="${escapeHtml(item.id)}" title="Sil">✕</button>
+        </div>
+      </div>
+    `).join('');
 
-    updateTotals();
+    updateTotal();
   }
 
-  function updateTotals() {
-    const total = state.ticketItems.reduce((sum, item) => {
-      return item.isComplimentary ? sum : sum + (item.price * item.quantity);
-    }, 0);
-
-    if (el.grandTotalAmount) {
-      el.grandTotalAmount.textContent = formatMoney(total);
-    }
+  function updateTotal() {
+    const total = state.ticketItems.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
+    if (el.grandTotalAmount) el.grandTotalAmount.textContent = formatMoney(total);
   }
 
   function updateParkBadge() {
     if (!el.parkCountBadge) return;
-    el.parkCountBadge.textContent = state.parkedTickets.length > 0 ? `(${state.parkedTickets.length})` : '';
+    el.parkCountBadge.textContent = state.parkedTickets.length;
+    el.parkCountBadge.style.display = state.parkedTickets.length > 0 ? 'inline-block' : 'none';
   }
 
-  function formatMoney(amount) {
-    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount);
-  }
-
-  // Actions
   function addProductToTicket(product) {
     const existing = state.ticketItems.find(i => i.productId === product.id && !i.isComplimentary);
     if (existing) {
@@ -168,11 +195,13 @@
     if (state.ticketItems.length === 0) return;
 
     const orderPayload = {
+      id: crypto.randomUUID(),
       tableId: '00000000-0000-0000-0000-000000000001',
       tableNumber: 'KASA-1',
-      waiterName: state.currentCashier?.name || 'Kasiyer',
+      waiterName: state.cashierName || 'Kasiyer',
       items: state.ticketItems.map(item => ({
         productId: item.productId,
+        name: item.name,
         productName: item.name,
         quantity: item.quantity,
         unitPrice: item.price,
@@ -183,7 +212,11 @@
     try {
       const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Idempotency-Key': orderPayload.id
+        },
+        credentials: 'include',
         body: JSON.stringify(orderPayload)
       });
 
@@ -195,7 +228,7 @@
         renderTicket();
         alert(`Sipariş başarıyla sunucuya iletildi. (${itemCount} kalem, ${formatMoney(total)})`);
       } else {
-        alert('Sipariş sunucu tarafından reddedildi. Lütfen tekrar deneyin.');
+        alert(`Sipariş sunucu tarafından reddedildi (Hata: ${response.status}). Lütfen tekrar deneyin.`);
       }
     } catch {
       alert('Sunucuya ulaşılamadı. Sipariş iletilemedi.');
@@ -226,40 +259,62 @@
     if (el.parkedModal) el.parkedModal.style.display = 'none';
   }
 
-  // Event Listeners
+  function renderParkedModal() {
+    if (!el.parkedList) return;
+    if (state.parkedTickets.length === 0) {
+      el.parkedList.innerHTML = '<div style="text-align: center; color: var(--text-dim); padding: 24px;">Bekletilen fiş yok.</div>';
+      return;
+    }
+
+    el.parkedList.innerHTML = state.parkedTickets.map(p => {
+      const count = p.items.reduce((s, i) => s + i.quantity, 0);
+      const total = p.items.reduce((s, i) => i.isComplimentary ? s : s + (i.price * i.quantity), 0);
+      return `
+        <div class="parked-card" data-parked-id="${escapeHtml(p.id)}">
+          <div>
+            <div style="font-weight: 700;">Bekletme Saati: ${escapeHtml(p.parkedAt)}</div>
+            <div style="font-size: 0.85rem; color: var(--text-dim);">${count} Kalem • Toplam: ${formatMoney(total)}</div>
+          </div>
+          <button type="button" class="btn-micro" style="padding: 6px 12px; font-weight: 700;" data-action="recall" data-id="${escapeHtml(p.id)}">Geri Yükle</button>
+        </div>
+      `;
+    }).join('');
+  }
+
   function bindEvents() {
     // Category Tabs
     if (el.categoryTabs) {
       el.categoryTabs.addEventListener('click', (e) => {
-        const btn = e.target.closest('.category-tab-btn');
+        const btn = e.target.closest('.tab-chip');
         if (!btn) return;
         state.activeCategory = btn.dataset.catId;
         renderCategoryTabs();
-        renderProducts(el.searchInput?.value || '');
+        renderProducts(el.searchInput ? el.searchInput.value : '');
       });
     }
 
-    // Search
+    // Search Input
     if (el.searchInput) {
       el.searchInput.addEventListener('input', (e) => {
         renderProducts(e.target.value);
       });
     }
 
-    // Product Click
+    // Product Click -> Add to Ticket
     if (el.productMatrix) {
       el.productMatrix.addEventListener('click', (e) => {
         const card = e.target.closest('.pos-product-card');
         if (!card) return;
-        const prod = state.products.find(p => p.id === card.dataset.productId);
+        const prodId = card.dataset.productId;
+        const prod = state.products.find(p => p.id === prodId);
         if (prod) addProductToTicket(prod);
       });
     }
 
-    // Ticket Steppers & Ikram
+    // Ticket Actions (Inc / Dec / Free / Del)
     if (el.ticketItemsStream) {
       el.ticketItemsStream.addEventListener('click', (e) => {
-        const btn = e.target.closest('.btn-qty');
+        const btn = e.target.closest('.btn-micro');
         if (!btn) return;
         const action = btn.dataset.action;
         const itemId = btn.dataset.id;
@@ -273,8 +328,10 @@
           if (state.ticketItems[index].quantity <= 0) {
             state.ticketItems.splice(index, 1);
           }
-        } else if (action === 'ikram') {
+        } else if (action === 'comp') {
           state.ticketItems[index].isComplimentary = !state.ticketItems[index].isComplimentary;
+        } else if (action === 'del') {
+          state.ticketItems.splice(index, 1);
         }
         renderTicket();
       });
@@ -284,10 +341,15 @@
     if (el.btnClearTicket) {
       el.btnClearTicket.addEventListener('click', () => {
         if (state.ticketItems.length === 0) return;
-        if (confirm('Adisyon temizlensin mi?')) {
-          state.ticketItems = [];
-          renderTicket();
-        }
+        state.ticketItems = [];
+        renderTicket();
+      });
+    }
+
+    // Dispatch Order to Kitchen
+    if (el.btnDispatchOrder) {
+      el.btnDispatchOrder.addEventListener('click', () => {
+        void dispatchOrderToKitchen();
       });
     }
 
@@ -298,49 +360,27 @@
       });
     }
 
-    // Recall Modal
+    // Open Parked Modal
     if (el.btnRecallTicket) {
       el.btnRecallTicket.addEventListener('click', () => {
-        if (state.parkedTickets.length === 0) {
-          alert('Bekleyen fiş bulunmuyor.');
-          return;
-        }
-        if (el.parkedList) {
-          el.parkedList.innerHTML = state.parkedTickets.map(pt => {
-            const amount = pt.items.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
-            return `
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
-                <div>
-                  <div style="font-weight: 800;">Taslak (${pt.parkedAt})</div>
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">${pt.items.length} Kalem • ${formatMoney(amount)}</div>
-                </div>
-                <button type="button" class="btn-ticket-action" data-recall-id="${pt.id}" style="background: var(--accent-primary); color: white;">Aç</button>
-              </div>
-            `;
-          }).join('');
-        }
+        renderParkedModal();
         if (el.parkedModal) el.parkedModal.style.display = 'flex';
       });
     }
 
-    if (el.parkedList) {
-      el.parkedList.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-recall-id]');
-        if (!btn) return;
-        recallParkedTicket(btn.dataset.recallId);
-      });
-    }
-
+    // Close Parked Modal
     if (el.btnCloseParkedModal) {
       el.btnCloseParkedModal.addEventListener('click', () => {
         if (el.parkedModal) el.parkedModal.style.display = 'none';
       });
     }
 
-    // Dispatch Order
-    if (el.btnDispatchOrder) {
-      el.btnDispatchOrder.addEventListener('click', () => {
-        dispatchOrderToKitchen();
+    // Recall inside Modal
+    if (el.parkedList) {
+      el.parkedList.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="recall"]');
+        if (!btn) return;
+        recallParkedTicket(btn.dataset.id);
       });
     }
   }

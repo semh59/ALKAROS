@@ -1,6 +1,19 @@
-// ALKAROS Waiter PWA Controller (V1-WTR-008 - Real API & Reliable Queue)
+// ALKAROS Waiter PWA Controller (V1-WTR-008 / V1-RMD-051)
 (function () {
   'use strict';
+
+  // Utility: HTML escaping to prevent XSS injection
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    const text = String(str);
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function formatMoney(amount) {
+    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
+  }
 
   // State
   const state = {
@@ -47,10 +60,10 @@
     setupNetworkListeners();
     renderStatusRibbon();
     bindEvents();
-    
+
     // Fetch initial data from Host API
     await loadInitialData();
-    
+
     // Register Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(err => {
@@ -82,13 +95,15 @@
       el.statusRibbon.className = 'status-ribbon offline';
       el.statusText.textContent = 'Çevrimdışı • İşlemler Güvenli Kuyrukta';
     }
-    el.queueCount.textContent = state.offlineQueue.length > 0 ? `(${state.offlineQueue.length} bekleyen)` : '';
+    if (el.queueCount) {
+      el.queueCount.textContent = state.offlineQueue.length > 0 ? `(${state.offlineQueue.length} bekleyen)` : '';
+    }
   }
 
   function queueOrderAction(action) {
     state.offlineQueue.push({
       ...action,
-      id: crypto.randomUUID(),
+      id: action.id || crypto.randomUUID(),
       timestamp: new Date().toISOString()
     });
     localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
@@ -97,18 +112,23 @@
 
   async function flushOfflineQueue() {
     if (state.offlineQueue.length === 0 || !state.isOnline) return;
-    
+
     const itemsToSync = [...state.offlineQueue];
     for (const item of itemsToSync) {
       try {
-        const ok = await postOrderToBackend(item);
-        if (ok) {
-          // Authoritative 2xx acknowledgment: ONLY remove when actually succeeded!
+        const result = await postOrderToBackend(item);
+        if (result.success) {
+          // Authoritative 2xx acknowledgment: ONLY remove when actually succeeded
+          state.offlineQueue = state.offlineQueue.filter(q => q.id !== item.id);
+          localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
+        } else if (result.isClientError) {
+          // 4xx client errors should not block queue indefinitely
+          console.warn('Order rejected by server (client error):', item.id, result.status);
           state.offlineQueue = state.offlineQueue.filter(q => q.id !== item.id);
           localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
         } else {
-          // If server returned non-2xx, keep in queue and stop retry loop
-          console.warn('Server rejected order item, keeping in queue for review:', item.id);
+          // Server error 5xx or offline: keep in queue and stop retry loop
+          console.warn('Server temporary error during queue flush, keeping in queue:', item.id);
           break;
         }
       } catch (err) {
@@ -120,18 +140,28 @@
   }
 
   async function postOrderToBackend(orderPayload) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Idempotency-Key': orderPayload.id || crypto.randomUUID()
+    };
+    if (state.sessionToken) {
+      headers['Authorization'] = `Bearer ${state.sessionToken}`;
+    }
+
     try {
       const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Idempotency-Key': orderPayload.id
-        },
+        headers,
+        credentials: 'include',
         body: JSON.stringify(orderPayload)
       });
-      return response.ok;
+      return {
+        success: response.ok,
+        status: response.status,
+        isClientError: response.status >= 400 && response.status < 500
+      };
     } catch {
-      return false;
+      return { success: false, status: 0, isNetworkError: true };
     }
   }
 
@@ -139,21 +169,39 @@
   async function loadInitialData() {
     try {
       // 1. Fetch Zones
-      const zonesRes = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/zones`);
+      const zonesRes = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/zones`, { credentials: 'include' });
       if (zonesRes.ok) {
         const zonesData = await zonesRes.json();
-        state.zones = [{ id: 'all', name: 'Tüm Masalar' }, ...(zonesData.zones || zonesData || [])];
+        const list = Array.isArray(zonesData) ? zonesData : zonesData.zones || [];
+        state.zones = [{ id: 'all', name: 'Tüm Masalar' }, ...list.map(z => ({ id: z.zoneId || z.id, name: z.zoneName || z.name }))];
       } else {
         state.zones = [{ id: 'all', name: 'Tüm Masalar' }];
       }
 
-      // 2. Fetch Categories & Catalog
-      const catRes = await fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/categories`);
-      if (catRes.ok) {
+      // 2. Fetch Categories & Products
+      const [catRes, prodRes] = await Promise.all([
+        fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/categories`, { credentials: 'include' }).catch(() => null),
+        fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/products`, { credentials: 'include' }).catch(() => null)
+      ]);
+
+      if (catRes && catRes.ok) {
         const catData = await catRes.json();
-        state.categories = catData.categories || catData || [];
+        const list = Array.isArray(catData) ? catData : catData.categories || [];
+        state.categories = list.map(c => ({ id: c.categoryId || c.id, name: c.categoryName || c.name }));
       } else {
         state.categories = [];
+      }
+
+      if (prodRes && prodRes.ok) {
+        const prodData = await prodRes.json();
+        const list = Array.isArray(prodData) ? prodData : prodData.products || [];
+        state.products = list.map(p => ({
+          id: p.productId || p.id,
+          categoryId: p.categoryId,
+          name: p.productName || p.name,
+          price: p.currentPrice || p.price || 0
+        }));
+      } else {
         state.products = [];
       }
 
@@ -177,10 +225,18 @@
 
   async function loadTables() {
     try {
-      const res = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/tables`);
+      const res = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/tables`, { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
-        state.tables = data.tables || data || [];
+        const list = Array.isArray(data) ? data : data.tables || [];
+        state.tables = list.map(t => ({
+          id: t.tableId || t.id,
+          number: t.tableNumber || t.number,
+          seats: t.capacity || t.seats || 4,
+          zoneId: t.zoneId,
+          status: (t.currentStatus || t.status || 'available').toLowerCase(),
+          amount: t.currentAmount || t.amount || 0
+        }));
       } else {
         state.tables = [];
       }
@@ -194,8 +250,8 @@
   function renderZones() {
     if (!el.zoneList) return;
     el.zoneList.innerHTML = state.zones.map(zone => `
-      <button type="button" class="zone-chip ${state.activeZone === zone.id ? 'active' : ''}" data-zone-id="${zone.id}">
-        ${zone.name}
+      <button type="button" class="zone-chip ${state.activeZone === zone.id ? 'active' : ''}" data-zone-id="${escapeHtml(zone.id)}">
+        ${escapeHtml(zone.name)}
       </button>
     `).join('');
   }
@@ -209,12 +265,12 @@
     el.tablesGrid.innerHTML = filtered.map(table => {
       const isSelected = state.selectedTable?.id === table.id;
       return `
-        <div class="table-card ${table.status} ${isSelected ? 'selected' : ''}" data-table-id="${table.id}" tabindex="0" role="button">
+        <div class="table-card ${escapeHtml(table.status)} ${isSelected ? 'selected' : ''}" data-table-id="${escapeHtml(table.id)}" tabindex="0" role="button">
           <div class="table-header-row">
-            <span class="table-number">${table.number}</span>
-            <span class="table-capacity">👤 ${table.seats || 4}</span>
+            <span class="table-number">${escapeHtml(table.number)}</span>
+            <span class="table-capacity">👤 ${escapeHtml(table.seats || 4)}</span>
           </div>
-          <span class="table-status-tag ${table.status}">${getStatusLabel(table.status)}</span>
+          <span class="table-status-tag ${escapeHtml(table.status)}">${escapeHtml(getStatusLabel(table.status))}</span>
           <div class="table-amount">${table.amount > 0 ? formatMoney(table.amount) : 'Boş'}</div>
         </div>
       `;
@@ -235,8 +291,8 @@
     if (!el.categoryFilterBar) return;
     const allCategories = [{ id: 'all', name: 'Tümü' }, ...state.categories];
     el.categoryFilterBar.innerHTML = allCategories.map(cat => `
-      <button type="button" class="zone-chip ${state.activeCategory === cat.id ? 'active' : ''}" data-cat-id="${cat.id}">
-        ${cat.name}
+      <button type="button" class="zone-chip ${state.activeCategory === cat.id ? 'active' : ''}" data-cat-id="${escapeHtml(cat.id)}">
+        ${escapeHtml(cat.name)}
       </button>
     `).join('');
   }
@@ -251,9 +307,9 @@
     });
 
     el.productGrid.innerHTML = filtered.map(prod => `
-      <div class="product-card" data-product-id="${prod.id}" role="button" tabindex="0">
+      <div class="product-card" data-product-id="${escapeHtml(prod.id)}" role="button" tabindex="0">
         <div>
-          <div class="product-name">${prod.name}</div>
+          <div class="product-name">${escapeHtml(prod.name)}</div>
         </div>
         <div class="product-price">${formatMoney(prod.price)}</div>
       </div>
@@ -271,14 +327,14 @@
     el.cartItemsList.innerHTML = state.cart.map(item => `
       <div class="cart-item">
         <div class="cart-item-info">
-          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-name">${escapeHtml(item.name)}</div>
           <div style="font-size: 0.8rem; color: var(--text-muted);">${formatMoney(item.price)}</div>
-          ${item.note ? `<div class="cart-item-note">Not: ${item.note}</div>` : ''}
+          ${item.note ? `<div class="cart-item-note">Not: ${escapeHtml(item.note)}</div>` : ''}
         </div>
         <div class="quantity-stepper">
-          <button type="button" class="btn-step" data-action="dec" data-id="${item.id}">−</button>
+          <button type="button" class="btn-step" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
           <span style="font-weight: 800; min-width: 24px; text-align: center;">${item.quantity}</span>
-          <button type="button" class="btn-step" data-action="inc" data-id="${item.id}">+</button>
+          <button type="button" class="btn-step" data-action="inc" data-id="${escapeHtml(item.id)}">+</button>
         </div>
       </div>
     `).join('');
@@ -292,7 +348,7 @@
 
     if (el.cartItemCount) el.cartItemCount.textContent = `${totalItems} Ürün`;
     if (el.cartTotalAmount) el.cartTotalAmount.textContent = formatMoney(totalAmount);
-    
+
     if (el.orderDrawer) {
       if (state.selectedTable) {
         el.orderDrawer.style.display = 'flex';
@@ -303,20 +359,9 @@
     }
   }
 
-  function formatMoney(amount) {
-    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount);
-  }
-
-  // Event Handlers
+  // Event Handlers & Binding
   function bindEvents() {
-    // Refresh Tables Button
-    if (el.btnRefreshTables) {
-      el.btnRefreshTables.addEventListener('click', () => {
-        loadTables();
-      });
-    }
-
-    // Zone Selection
+    // Zone Filter Click
     if (el.zoneList) {
       el.zoneList.addEventListener('click', (e) => {
         const btn = e.target.closest('.zone-chip');
@@ -327,14 +372,23 @@
       });
     }
 
-    // Table Selection
+    // Refresh Tables Button
+    if (el.btnRefreshTables) {
+      el.btnRefreshTables.addEventListener('click', async () => {
+        await loadTables();
+      });
+    }
+
+    // Table Selection Click
     if (el.tablesGrid) {
       el.tablesGrid.addEventListener('click', (e) => {
         const card = e.target.closest('.table-card');
         if (!card) return;
         const tableId = card.dataset.tableId;
-        state.selectedTable = state.tables.find(t => t.id === tableId);
-        state.cart = [];
+        const table = state.tables.find(t => t.id === tableId);
+        if (!table) return;
+
+        state.selectedTable = table;
         renderTables();
         updateCartTotals();
       });
@@ -344,8 +398,10 @@
     if (el.btnOpenOrderModal) {
       el.btnOpenOrderModal.addEventListener('click', () => {
         if (!state.selectedTable) return;
-        el.modalTableTitle.textContent = `${state.selectedTable.number} Sipariş Ekle`;
+        el.modalTableTitle.textContent = `${state.selectedTable.number} — Sipariş Al`;
         el.orderModal.style.display = 'flex';
+        renderCategoryFilters();
+        renderProducts();
         renderCart();
       });
     }
@@ -357,6 +413,13 @@
       });
     }
 
+    // Product Search Input
+    if (el.modalProductSearch) {
+      el.modalProductSearch.addEventListener('input', (e) => {
+        renderProducts(e.target.value);
+      });
+    }
+
     // Category Filter in Modal
     if (el.categoryFilterBar) {
       el.categoryFilterBar.addEventListener('click', (e) => {
@@ -364,35 +427,28 @@
         if (!btn) return;
         state.activeCategory = btn.dataset.catId;
         renderCategoryFilters();
-        renderProducts(el.modalProductSearch?.value || '');
+        renderProducts(el.modalProductSearch ? el.modalProductSearch.value : '');
       });
     }
 
-    // Product Search
-    if (el.modalProductSearch) {
-      el.modalProductSearch.addEventListener('input', (e) => {
-        renderProducts(e.target.value);
-      });
-    }
-
-    // Add Product to Cart
+    // Product Select Click -> Add to Cart
     if (el.productGrid) {
       el.productGrid.addEventListener('click', (e) => {
         const card = e.target.closest('.product-card');
         if (!card) return;
-        const productId = card.dataset.productId;
-        const product = state.products.find(p => p.id === productId);
-        if (!product) return;
+        const prodId = card.dataset.productId;
+        const prod = state.products.find(p => p.id === prodId);
+        if (!prod) return;
 
-        const existing = state.cart.find(item => item.productId === productId);
+        const existing = state.cart.find(i => i.productId === prod.id);
         if (existing) {
           existing.quantity += 1;
         } else {
           state.cart.push({
             id: crypto.randomUUID(),
-            productId: product.id,
-            name: product.name,
-            price: product.price,
+            productId: prod.id,
+            name: prod.name,
+            price: prod.price,
             quantity: 1,
             note: ''
           });
@@ -428,13 +484,16 @@
       el.btnSendKitchen.addEventListener('click', async () => {
         if (state.cart.length === 0 || !state.selectedTable) return;
 
+        const orderId = crypto.randomUUID();
         const orderPayload = {
+          id: orderId,
           tableId: state.selectedTable.id,
           tableNumber: state.selectedTable.number,
           waiterName: state.currentUser?.name || 'Garson',
           items: state.cart.map(item => ({
             productId: item.productId,
             name: item.name,
+            productName: item.name,
             quantity: item.quantity,
             unitPrice: item.price,
             specialInstructions: item.note
@@ -443,8 +502,8 @@
         };
 
         if (state.isOnline) {
-          const ok = await postOrderToBackend(orderPayload);
-          if (ok) {
+          const res = await postOrderToBackend(orderPayload);
+          if (res.success) {
             // Authoritative server success
             state.selectedTable.status = 'occupied';
             state.selectedTable.amount += state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -453,8 +512,10 @@
             renderTables();
             updateCartTotals();
             alert(`Sipariş mutfağa iletildi! (${state.selectedTable.number})`);
+          } else if (res.isClientError) {
+            alert(`Sipariş iletilemedi (Hata: ${res.status}). Lütfen masa ve ürün bilgilerini kontrol edin.`);
           } else {
-            // Server error: queue order and notify without claiming success
+            // Server error / network failure: queue order and notify without claiming success
             queueOrderAction(orderPayload);
             state.cart = [];
             el.orderModal.style.display = 'none';
