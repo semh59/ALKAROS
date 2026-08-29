@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ALKAROS Garson">
+  <title>ALKAROS Garson El Terminali (Waiter PWA)</title>
+  
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./waiter-app.css">
+</head>
+<body>
+
+  <!-- Top Navigation / Header -->
+  <header class="app-header" role="banner">
+    <div class="header-brand">
+      <div class="header-logo">
+        <span>⚡ ALKAROS</span>
+      </div>
+      <span class="header-badge">Garson PWA</span>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-icon" id="btnRefreshTables" title="Yenile" aria-label="Yenile">🔄</button>
+      <button type="button" class="btn-icon" id="btnStaffProfile" title="Personel" aria-label="Personel">👤</button>
+    </div>
+  </header>
+
+  <!-- Network / Sync Ribbon -->
+  <aside id="statusRibbon" class="status-ribbon online" role="status" aria-live="polite">
+    <div>
+      <span class="pulse-dot"></span>
+      <span id="statusText">Çevrimiçi • Canlı Bağlantı</span>
+    </div>
+    <span id="queueCount"></span>
+  </aside>
+
+  <!-- Main View Container -->
+  <main class="main-container" role="main">
+    
+    <!-- Zone Selection Pills -->
+    <nav class="zone-scroll" id="zoneList" aria-label="Salon ve Bölge Seçimi">
+      <!-- Injected by waiter-app.js -->
+    </nav>
+
+    <!-- Tables Grid -->
+    <section class="tables-grid" id="tablesGrid" aria-label="Masalar">
+      <!-- Injected by waiter-app.js -->
+    </section>
+
+  </main>
+
+  <!-- Sticky Bottom Drawer (When Table Selected) -->
+  <aside class="bottom-bar" id="orderDrawer" style="display: none;" role="region" aria-label="Seçili Masa Özeti">
+    <div class="order-summary-pill">
+      <span class="order-summary-table" id="selectedTableLabel">Masa: M-01</span>
+      <span class="order-summary-items" id="cartItemCount">0 Ürün</span>
+    </div>
+    <button type="button" class="btn-primary" id="btnOpenOrderModal">
+      <span>➕ Sipariş Ekle</span>
+    </button>
+  </aside>
+
+  <!-- Modal: Order Entry & Catalog Picker -->
+  <div class="modal-overlay" id="orderModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modalTableTitle">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTableTitle">Masa Sipariş Ekle</h2>
+        <button type="button" class="btn-icon" id="btnCloseModal" aria-label="Kapat">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Search -->
+        <input type="search" class="search-input" id="modalProductSearch" placeholder="🔍 Ürün veya içecek ara..." autocomplete="off">
+
+        <!-- Category Filters -->
+        <div class="zone-scroll" id="categoryFilterBar">
+          <!-- Injected by waiter-app.js -->
+        </div>
+
+        <!-- Product Grid -->
+        <div class="product-grid" id="productGrid" style="margin-bottom: 20px;">
+          <!-- Injected by waiter-app.js -->
+        </div>
+
+        <!-- Active Cart Summary -->
+        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">Adisyon Kalemleri</h3>
+        <div id="cartItemsList">
+          <!-- Injected by waiter-app.js -->
+        </div>
+      </div>
+
+      <!-- Modal Footer Action -->
+      <div style="padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">Toplam Tutar</div>
+          <div id="cartTotalAmount" style="font-size: 1.15rem; font-weight: 800; color: #38bdf8;">0,00 ₺</div>
+        </div>
+        <button type="button" class="btn-success" id="btnSendKitchen">
+          <span>🚀 Mutfağa Gönder</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="./waiter-app.js"></script>
+</body>
+</html>
