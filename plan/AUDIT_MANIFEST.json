@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 730,
-  "markdown_line_count": 46645,
-  "markdown_byte_count": 2805307,
+  "markdown_file_count": 733,
+  "markdown_line_count": 46808,
+  "markdown_byte_count": 2810787,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -1898,9 +1898,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "01A236D7F1748B5B6C35CEDE4B8E623E8A7CEF894BB82CB114B619115986EC16",
-      "lines": 2006,
-      "bytes": 280121,
+      "sha256": "3F71C0AA793EB68C2657559E44EC36EF083D4E764174A7797A66D372CEEB6447",
+      "lines": 2009,
+      "bytes": 280648,
       "utf8": true
     },
     {
@@ -1919,9 +1919,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "16F2C3A831438AE4E06BAB4B0A81AE8ED5672195286BC8B021F6FBA1E171D468",
-      "lines": 235,
-      "bytes": 17766,
+      "sha256": "3350DA9EDB4CF69F965BAA8E84F5A98FDD92AAFFB43D594A363D45F026D0BEEA",
+      "lines": 241,
+      "bytes": 18033,
       "utf8": true
     },
     {
@@ -3388,6 +3388,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-030-master-custody-reopen-and-remediation-wave-4.md",
+      "sha256": "C170E26D6DE6C747C7DA5C65CDF34502295FC80FC9E8C6F20EEE2B06BF14D6DD",
+      "lines": 54,
+      "bytes": 1816,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-031-master-audit-reseal-and-gate-closure.md",
+      "sha256": "C8D1132FA62063BEB2E7FE16FA1811FB0489B5786E92DE837AE6305691D2AFCE",
+      "lines": 52,
+      "bytes": 1440,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -3571,9 +3585,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "CAB194C993262BFCFF2806C0F1E622154D9A9166D55A60C9AACCA438E4EFC4CD",
+      "sha256": "0B7E0A0B837F3E1DA859C71B8502376BB1FA4D1963EB0B391D15022FC073CF5B",
       "lines": 33,
-      "bytes": 1513,
+      "bytes": 1501,
       "utf8": true
     },
     {
@@ -3935,9 +3949,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-050-order-endpoint-and-dualscreen-unification.md",
-      "sha256": "51CFB9FE95DCC3D0DDFF87D206469BAF2734AB330968896CEBD166AB41D21C09",
-      "lines": 48,
-      "bytes": 1608,
+      "sha256": "F62529E46086397ADC5F40F63445F1A4161F81808A0F87332421CD70C965141B",
+      "lines": 50,
+      "bytes": 1837,
       "utf8": true
     },
     {
@@ -3952,6 +3966,13 @@
       "sha256": "FB9944E76E716D001B420E2EB8CF5EC828DD1C74F84C29D0B382A75131A103A2",
       "lines": 51,
       "bytes": 1974,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-053-order-management-store-compilation-alignment.md",
+      "sha256": "9E338BEBC650F373AB119BFD16D8D5B05BC9CE6E900DC7B7D54D7F08866ABAE5",
+      "lines": 46,
+      "bytes": 1213,
       "utf8": true
     },
     {
