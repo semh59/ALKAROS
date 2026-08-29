@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-045-audit-sanitizer-tests-analyzer-clean-build.md`
-- `tests/Modules/Audit/EventStore/AuditSanitizerTests.cs`
+- PO:2026-08-29 kararıyla tests/Modules/Audit/EventStore/AuditSanitizerTests.cs yüzeyi V1-RMD-049'a devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-045/**`
 
 ## In scope

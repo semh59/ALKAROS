@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-046-authoritative-postgresql-order-store.md`
-- `src/Host/Experience/Orders/**`
+- PO:2026-08-29 kararıyla src/Host/Experience/Orders/** yüzeyi V1-RMD-050'ye devredildi; bu historical task closed kalır.
 - `src/Host/Program.cs`
 - `evidence/V1-RMD-046/**`
 

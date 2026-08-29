@@ -13,7 +13,7 @@ Statik kod denetiminde tespit edilen 7 kritik kusuru (DualScreen indirimli ürü
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-035-deep-code-audit-remediation.md`
-- `src/Host/DualScreen/DualScreenStore.cs`
+- PO:2026-08-29 kararıyla src/Host/DualScreen/DualScreenStore.cs yüzeyi V1-RMD-050'ye devredildi; bu historical task closed kalır.
 - `src/Modules/Billing/BillFoundation/Bill.cs`
 - `src/Modules/Billing/BillFoundation/BillItem.cs`
 - `src/Modules/Tables/TableTransfer/PostgresTableTransferRepository.cs`

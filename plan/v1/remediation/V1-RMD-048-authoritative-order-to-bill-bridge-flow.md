@@ -17,8 +17,7 @@ Masadaki siparişten adisyon (`Order -> Bill`) üretimini yetkili backend endpoi
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-048-authoritative-order-to-bill-bridge-flow.md`
-- `src/Host/Experience/Billing/**`
-- `src/Clients/PosTerminal/src/features/billing/**`
+- PO:2026-08-29 kararıyla src/Host/Experience/Billing/** ve src/Clients/PosTerminal/src/features/billing/** yüzeyleri V1-RMD-052'ye devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-048/**`
 
 ## In scope

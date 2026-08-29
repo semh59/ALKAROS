@@ -12,7 +12,7 @@
 
 ## Owned surface
 
-- `src/Clients/PosTerminal/src/features/tables/**`
+- PO:2026-08-29 kararıyla src/Clients/PosTerminal/src/features/tables/** yüzeyi V1-RMD-052'ye devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-039/**`
 
 ## Dependencies

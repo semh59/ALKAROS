@@ -17,8 +17,7 @@ Kasiyer ve Garson PWA arayüzlerindeki sahte başarı, mock katalog/masa fallbac
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-047-cashier-waiter-fail-closed-mock-cleanup.md`
-- `src/Clients/Cashier/wwwroot/**`
-- `src/Clients/WaiterPwa/wwwroot/waiter-app.js`
+- PO:2026-08-29 kararıyla src/Clients/Cashier/wwwroot/** ve src/Clients/WaiterPwa/wwwroot/waiter-app.js yüzeyleri V1-RMD-051'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-047/**`
 
 ## In scope

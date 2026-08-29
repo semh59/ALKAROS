@@ -33,7 +33,7 @@
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
 | `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
-| `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. **2026-08-29 bağımsız doğrulama ve 6 kurtarma görevinin tamamlanmasıyla kesin olarak yeniden mühürlendi (V1-GOV-027).** |
+| `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. **2026-08-29 derin mimari denetim bulguları sonrası V1-GOV-028 ile yeniden açıldı.** |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
 | `GATE-V11-EXIT` | V1.1 görevleri ve stok/reçete invariant kanıtları tamamlanır. |
 | `GATE-V12-ENTRY` | `GATE-V11-EXIT` kapanır. |
@@ -218,7 +218,12 @@ Bağımsız doğrulamada tespit edilen PosTerminal TypeScript typecheck (`TS2322
 
 ## 2026-08-29 nihai kurtarma ve GATE-V1-EXIT kesin reseal mühürleme (V1-GOV-027)
 
-Tüm 6 kurtarma görevi (`V1-RMD-044..048`, `V1-GOV-027`) tamamlanmıştır: PosTerminal typecheck/derleme hataları çözülmüş, CA1707 analyzer kuralı sağlanmış, PostgreSQL authoritative sipariş ve adisyon köprüsü kurulmuş, istemci sahte mock ve fallback'leri fail-closed temizlenmiştir. V1 matrisi 163 `Done`, 4 onaylı `NotApplicable`, 0 `Planned`, 0 `InProgress` olarak `V1-GOV-027` ile kesin olarak mühürlenmiş ve `GATE-V1-EXIT` kapatılmıştır.
+Tüm 6 kurtarma görevi (`V1-RMD-044..048`, `V1-GOV-027`) tamamlanmıştır: PosTerminal typecheck/derleme hataları çözülmüş, CA1707 analyzer kuralı sağlanmış, PostgreSQL authoritative sipariş ve adisyon köprüsü kurulmuş, istemci sahte mock ve fallback'leri fail-closed temizlenmiştir.
+
+## 2026-08-29 derin mimari denetim bulguları ve GATE-V1-EXIT yeniden açılışı (V1-GOV-028)
+
+Bağımsız derin mimari denetimde tespit edilen malformed JSON audit regex açığı, OrderManagement/DualScreen ikinci yetkisiz sipariş hattı, Cashier ve Waiter PWA sözleşme/XSS uyumsuzlukları, Order-to-Bill domain köprüsü (`Bill.FromOrder`) ve PosTerminal dinamik bağlamı nedeniyle `GATE-V1-EXIT` kapısı yeniden açılmıştır. V1 matrisi 173 göreve yükselmiş olup, 5 adımlık sıralı nihai kurtarma dalgası (`V1-RMD-049..052`, `V1-GOV-029`) planlanmıştır. Nihai mühürleme `V1-GOV-029` ile yapılacaktır.
+
 
 
 

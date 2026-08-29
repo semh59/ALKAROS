@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-044-posterminal-compile-and-floor-plan-freshness.md`
-- `src/Clients/PosTerminal/src/App.tsx`
+- PO:2026-08-29 kararıyla src/Clients/PosTerminal/src/App.tsx yüzeyi V1-RMD-052'ye devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-044/**`
 
 ## In scope
