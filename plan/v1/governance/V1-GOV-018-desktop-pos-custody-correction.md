@@ -1,7 +1,7 @@
 # V1-GOV-018 - Desktop POS custody correction
 
 - Task ID: V1-GOV-018
-- Status: InProgress
+- Status: Done
 - Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: documentation
 - Surface state: Existing
