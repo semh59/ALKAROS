@@ -12,8 +12,9 @@
 
 ## Owned surface
 
-- `src/Clients/PosTerminal/src/features/billing/**`
-- `src/Clients/PosTerminal/src/App.tsx`
+- `plan/v1/remediation/V1-RMD-041-bill-split-production-navigation-and-flow.md`
+- PO:2026-08-29 kararıyla src/Clients/PosTerminal/src/App.tsx yüzeyi V1-RMD-044'e devredildi; bu historical task closed kalır.
+- PO:2026-08-29 kararıyla src/Clients/PosTerminal/src/features/billing yüzeyi V1-RMD-048'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-041/**`
 
 ## Dependencies

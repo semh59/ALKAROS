@@ -12,7 +12,8 @@ Cashier UI üzerindeki V1 sözleşmesine aykırı sahte para kabul etme ("Nakit 
 
 ## Owned surface
 
-- `src/Clients/Cashier/wwwroot/**`
+- `plan/v1/cashier-ui/V1-CUI-005-remove-fake-cashier-payment-and-align-v1.md`
+- PO:2026-08-29 kararıyla src/Clients/Cashier/wwwroot yüzeyi V1-RMD-047'ye devredildi; bu historical task closed kalır.
 - `tests/Clients/Cashier/Frontend/**`
 - `evidence/V1-CUI-005/**`
 

@@ -17,7 +17,7 @@ Waiter PWA uygulamasını Docker/Host içinde `/waiter/` gibi açık bir product
 - `src/Clients/WaiterPwa/wwwroot/sw.js`
 - `src/Clients/WaiterPwa/wwwroot/icon-192.png`
 - `src/Clients/WaiterPwa/wwwroot/icon-512.png`
-- `src/Host/Program.cs`
+- PO:2026-08-29 kararıyla src/Host/Program.cs yüzeyi V1-RMD-046'ya devredildi; bu historical task closed kalır.
 - `./Dockerfile`
 - `evidence/V1-RMD-038/**`
 

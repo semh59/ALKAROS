@@ -12,7 +12,8 @@ Gönderilmiş (submitted) bir masa siparişinden, ödeme yapmadan ve mali kayıt
 
 ## Owned surface
 
-- `src/Host/Experience/Billing/**`
+- `plan/v1/remediation/V1-RMD-040-authoritative-order-to-bill-bridge.md`
+- PO:2026-08-29 kararıyla src/Host/Experience/Billing yüzeyi V1-RMD-048'e devredildi; bu historical task closed kalır.
 - `tests/Host/Experience/Billing/**`
 - `evidence/V1-RMD-040/**`
 

@@ -12,7 +12,8 @@ Waiter PWA içindeki hardcoded verileri ve mock token'ı kaldırmak; gerçek Hos
 
 ## Owned surface
 
-- `src/Clients/WaiterPwa/wwwroot/waiter-app.js`
+- `plan/v1/waiter-pwa/V1-WTR-008-waiter-pwa-real-api-and-reliable-queue.md`
+- PO:2026-08-29 kararıyla src/Clients/WaiterPwa/wwwroot/waiter-app.js yüzeyi V1-RMD-047'ye devredildi; bu historical task closed kalır.
 - `tests/Clients/WaiterPwa/Frontend/**`
 - `evidence/V1-WTR-008/**`
 

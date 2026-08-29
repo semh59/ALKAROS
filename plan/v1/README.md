@@ -11,9 +11,9 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 160 görev tanımlıdır: 156 `Done`, 4 onaylı `NotApplicable`, 0 `Planned` ve
-  0 `InProgress` görev vardır. 2026-08-29 derin denetimi sonrası planlanan 11 kurtarma görevinin
-  tamamı başarıyla tamamlanmış ve `GATE-V1-EXIT` yeniden mühürlenmiştir.
+- Bu sürüm altında 167 görev tanımlıdır: 156 `Done`, 4 onaylı `NotApplicable`, 6 `Planned` ve
+  1 `InProgress` görev vardır. 2026-08-29 bağımsız doğrulama bulguları sonrası `V1-GOV-026` ile `GATE-V1-EXIT`
+  yeniden açılmış ve 6 adımlık sıralı kurtarma zinciri planlanmıştır.
 - `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` sıralı foundation kapısı geçmeden
   başka application görevi başlamaz.
@@ -29,5 +29,5 @@ uca çalıştıran çekirdek operasyon.
 `reconciliation`, `remediation`, `reporting`, `security-foundation`, `settings`,
 `table-management`, `waiter-pwa`.
 
-Doğrulanan plan hacmi: 18 modül/dizin, 160 tek-sahip görev.
-2026-08-29 derin denetimi ve 11 kurtarma görevi tamamlanarak `GATE-V1-EXIT` mühürlendi.
+Doğrulanan plan hacmi: 18 modül/dizin, 167 tek-sahip görev.
+2026-08-29 bağımsız doğrulama ve kurtarma zinciri `V1-GOV-026` ile açık kalır.

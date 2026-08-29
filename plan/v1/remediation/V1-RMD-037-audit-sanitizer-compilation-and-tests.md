@@ -13,7 +13,7 @@
 ## Owned surface
 
 - `src/Modules/Audit/EventStore/IAuditSanitizer.cs`
-- `tests/Modules/Audit/EventStore/AuditSanitizerTests.cs`
+- PO:2026-08-29 kararıyla tests/Modules/Audit/EventStore/AuditSanitizerTests.cs yüzeyi V1-RMD-045'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-037/**`
 
 ## Dependencies
