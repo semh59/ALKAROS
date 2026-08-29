@@ -113,7 +113,7 @@ function AccessContent({ session, authorization, children }: { session: ShellSes
 function SystemStatus({ connectivity, freshness }: { connectivity: Connectivity; freshness: Freshness }) {
   const connectionLabel = connectivity.status === "online" ? "Çevrimiçi" : connectivity.status === "reconnecting" ? "Yeniden bağlanıyor" : "Çevrimdışı";
   const connectionSymbol = connectivity.status === "online" ? "✓" : connectivity.status === "reconnecting" ? "↻" : "↯";
-  return <footer className="production-shell__status" aria-label="Sistem durumu">
+  return <footer className="production-shell__status" aria-label="Sistem durumu" aria-live="polite">
     <div className={`production-shell__status-item production-shell__status-item--${connectivity.status}`} role={connectivity.status === "offline" ? "alert" : "status"}>
       <span className="production-shell__status-symbol" aria-hidden="true">{connectionSymbol}</span><strong>{connectionLabel}</strong>
       {connectivity.status === "offline" && connectivity.onRetry && <button type="button" className="production-shell__status-action" onClick={connectivity.onRetry}>Tekrar dene</button>}
