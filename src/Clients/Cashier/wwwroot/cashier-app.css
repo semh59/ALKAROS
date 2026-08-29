@@ -1,4 +1,4 @@
-/* ALKAROS Cashier Quick POS Stylesheet (V1-CUI-004) */
+/* ALKAROS Cashier Order POS Stylesheet (V1-CUI-005) */
 :root {
   --bg-primary: #070a12;
   --bg-surface: #0f172a;
@@ -44,8 +44,6 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
 }
 
 /* Header */
@@ -113,7 +111,7 @@ body {
   overflow: hidden;
 }
 
-/* Left: Product Catalog & Quick Sale (60%) */
+/* Left: Product Catalog (60%) */
 .pos-catalog-panel {
   flex: 3;
   display: flex;
@@ -227,7 +225,7 @@ body {
   margin-top: 6px;
 }
 
-/* Right: Active Ticket & Payment (40%) */
+/* Right: Active Ticket & Order Dispatch (40%) */
 .pos-ticket-panel {
   flex: 2;
   min-width: 380px;
@@ -336,14 +334,14 @@ body {
   cursor: pointer;
 }
 
-/* Totals & Fast Cash Section */
+/* Totals & Dispatch Section */
 .pos-checkout-box {
   padding: 14px 16px;
   border-top: 1px solid var(--border-color);
   background-color: var(--bg-surface-elevated);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .totals-row {
@@ -365,73 +363,27 @@ body {
   font-family: var(--font-mono);
 }
 
-/* Quick Cash Banknote Chips */
-.quick-cash-row {
-  display: flex;
-  gap: 6px;
-}
-
-.btn-cash-chip {
-  flex: 1;
-  height: 40px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  color: var(--text-main);
-  font-size: 0.85rem;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.btn-cash-chip:active {
-  background: var(--accent-primary);
-  color: white;
-}
-
-/* Big Checkout Button */
-.btn-pay-cash {
+/* Big Dispatch Button */
+.btn-dispatch-order {
   height: 52px;
   background-color: var(--accent-success);
   border: none;
   border-radius: var(--radius-md);
   color: white;
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-size: 1.05rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
-.btn-pay-cash:active {
+.btn-dispatch-order:active {
   background-color: var(--accent-success-hover);
   transform: scale(0.98);
-}
-
-/* Change Due Callout */
-.change-due-box {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 10px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.change-due-title {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #34d399;
-}
-
-.change-due-val {
-  font-size: 1.35rem;
-  font-weight: 900;
-  color: #34d399;
-  font-family: var(--font-mono);
 }
 
 /* Modals */

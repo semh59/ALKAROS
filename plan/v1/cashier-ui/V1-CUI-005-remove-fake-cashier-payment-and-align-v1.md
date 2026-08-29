@@ -1,8 +1,8 @@
 # V1-CUI-005 - Remove fake cashier payment and align V1 contract
 
 - Task ID: V1-CUI-005
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: implementation
 - Surface state: Planned
 

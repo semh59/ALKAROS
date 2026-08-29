@@ -1,4 +1,4 @@
-// ALKAROS Cashier Quick POS Controller (V1-CUI-004)
+// ALKAROS Cashier Quick Order Controller (V1-CUI-005)
 (function () {
   'use strict';
 
@@ -7,14 +7,11 @@
     terminalId: '00000000-0000-0000-0000-000000000001',
     cashierName: 'Kasiyer Zeynep',
     registerNumber: 'KASA-01',
-    openingFloat: 1000.00,
-    shiftCashSales: 0.00,
-    shiftTotalTickets: 0,
+    shiftTotalOrders: 0,
     activeCategory: 'all',
     
     // Active Ticket / Basket
     ticketItems: [],
-    receivedCash: 0,
     parkedTickets: JSON.parse(localStorage.getItem('alkaros_cashier_parked') || '[]'),
     
     // Catalog
@@ -48,18 +45,14 @@
     ticketItemsStream: document.getElementById('ticketItemsStream'),
     grandTotalAmount: document.getElementById('grandTotalAmount'),
     searchInput: document.getElementById('searchInput'),
-    btnPayCash: document.getElementById('btnPayCash'),
+    btnDispatchOrder: document.getElementById('btnDispatchOrder'),
     btnClearTicket: document.getElementById('btnClearTicket'),
     btnParkTicket: document.getElementById('btnParkTicket'),
     btnRecallTicket: document.getElementById('btnRecallTicket'),
     parkCountBadge: document.getElementById('parkCountBadge'),
-    changeModal: document.getElementById('changeModal'),
-    changeDueText: document.getElementById('changeDueText'),
-    btnCloseChangeModal: document.getElementById('btnCloseChangeModal'),
     parkedModal: document.getElementById('parkedModal'),
     parkedList: document.getElementById('parkedList'),
-    btnCloseParkedModal: document.getElementById('btnCloseParkedModal'),
-    quickCashButtons: document.querySelectorAll('.btn-cash-chip')
+    btnCloseParkedModal: document.getElementById('btnCloseParkedModal')
   };
 
   function init() {
@@ -106,7 +99,7 @@
       el.ticketItemsStream.innerHTML = `
         <div style="text-align: center; color: var(--text-dim); padding: 40px 0;">
           <div style="font-size: 2rem; margin-bottom: 8px;">🧾</div>
-          <div>Satış için ürün seçin veya barkod girin</div>
+          <div>Sipariş için ürün seçin veya kod girin</div>
         </div>
       `;
       updateTotals();
@@ -171,24 +164,17 @@
     renderTicket();
   }
 
-  function completeCashSale(receivedAmount) {
+  function dispatchOrderToKitchen() {
+    if (state.ticketItems.length === 0) return;
+
     const total = state.ticketItems.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
-    if (total <= 0) return;
+    const itemCount = state.ticketItems.reduce((sum, item) => sum + item.quantity, 0);
 
-    const actualReceived = receivedAmount >= total ? receivedAmount : total;
-    const changeDue = actualReceived - total;
-
-    state.shiftCashSales += total;
-    state.shiftTotalTickets += 1;
+    state.shiftTotalOrders += 1;
     state.ticketItems = [];
-
     renderTicket();
 
-    // Show Change Modal
-    if (el.changeDueText && el.changeModal) {
-      el.changeDueText.textContent = formatMoney(changeDue);
-      el.changeModal.style.display = 'flex';
-    }
+    alert(`Sipariş onaylandı ve mutfağa iletildi! (${itemCount} kalem, ${formatMoney(total)})`);
   }
 
   function parkCurrentTicket() {
@@ -300,7 +286,7 @@
             return `
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
                 <div>
-                  <div style="font-weight: 800;">Fiş (${pt.parkedAt})</div>
+                  <div style="font-weight: 800;">Taslak (${pt.parkedAt})</div>
                   <div style="font-size: 0.8rem; color: var(--text-muted);">${pt.items.length} Kalem • ${formatMoney(amount)}</div>
                 </div>
                 <button type="button" class="btn-ticket-action" data-recall-id="${pt.id}" style="background: var(--accent-primary); color: white;">Aç</button>
@@ -326,34 +312,10 @@
       });
     }
 
-    // Quick Cash Bill Chips (50, 100, 200, 500, Tam)
-    el.quickCashButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const val = btn.dataset.cashValue;
-        const total = state.ticketItems.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
-        if (total <= 0) return;
-
-        if (val === 'exact') {
-          completeCashSale(total);
-        } else {
-          completeCashSale(parseFloat(val));
-        }
-      });
-    });
-
-    // Pay Full Cash
-    if (el.btnPayCash) {
-      el.btnPayCash.addEventListener('click', () => {
-        const total = state.ticketItems.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
-        if (total <= 0) return;
-        completeCashSale(total);
-      });
-    }
-
-    // Close Change Modal
-    if (el.btnCloseChangeModal) {
-      el.btnCloseChangeModal.addEventListener('click', () => {
-        if (el.changeModal) el.changeModal.style.display = 'none';
+    // Dispatch Order
+    if (el.btnDispatchOrder) {
+      el.btnDispatchOrder.addEventListener('click', () => {
+        dispatchOrderToKitchen();
       });
     }
   }

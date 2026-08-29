@@ -2,9 +2,9 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0f172a">
-  <title>ALKAROS Kasa ve Hızlı Satış Terminali (Cashier POS)</title>
+  <title>ALKAROS Hızlı Sipariş ve Kasa Terminali (Cashier POS)</title>
   
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./cashier-app.css">
@@ -17,7 +17,7 @@
       <div class="pos-logo">
         <span>⚡ ALKAROS</span>
       </div>
-      <span class="pos-badge">Hızlı Kasa POS</span>
+      <span class="pos-badge">Hızlı Sipariş Girişi</span>
     </div>
     <div class="session-info-bar">
       <div class="session-pill">
@@ -57,12 +57,12 @@
 
     </section>
 
-    <!-- Right: Active Ticket & Payment (40%) -->
-    <aside class="pos-ticket-panel" aria-label="Aktif Fiş ve Ödeme">
+    <!-- Right: Active Ticket & Order Dispatch (40%) -->
+    <aside class="pos-ticket-panel" aria-label="Aktif Fiş ve Sipariş İletimi">
       
       <!-- Ticket Header -->
       <div class="ticket-header">
-        <span class="ticket-title">Aktif Fiş</span>
+        <span class="ticket-title">Aktif Taslak Fiş</span>
         <div class="ticket-actions-row">
           <button type="button" class="btn-ticket-action" id="btnParkTicket" title="Fişi Beklemeye Al">⏸️ Beklet</button>
           <button type="button" class="btn-ticket-action" id="btnRecallTicket" title="Bekleyen Fişler">📂 Fişler <span id="parkCountBadge"></span></button>
@@ -75,49 +75,23 @@
         <!-- Injected by cashier-app.js -->
       </div>
 
-      <!-- Totals & Checkout Box -->
+      <!-- Totals & Dispatch Box -->
       <div class="pos-checkout-box">
         
         <div class="totals-row">
-          <span class="grand-total-label">ÖDENECEK TUTAR</span>
+          <span class="grand-total-label">TASLAK TUTARI</span>
           <span class="grand-total-amount" id="grandTotalAmount">0,00 ₺</span>
         </div>
 
-        <!-- Quick Cash Banknotes -->
-        <div class="quick-cash-row" aria-label="Hızlı Banknot Tuşları">
-          <button type="button" class="btn-cash-chip" data-cash-value="exact">TAM</button>
-          <button type="button" class="btn-cash-chip" data-cash-value="50">50 ₺</button>
-          <button type="button" class="btn-cash-chip" data-cash-value="100">100 ₺</button>
-          <button type="button" class="btn-cash-chip" data-cash-value="200">200 ₺</button>
-          <button type="button" class="btn-cash-chip" data-cash-value="500">500 ₺</button>
-        </div>
-
-        <!-- Fast Cash Pay Button -->
-        <button type="button" class="btn-pay-cash" id="btnPayCash">
-          <span>💵 NAKİT TAHSİLAT & FİŞ KES</span>
+        <!-- Confirm and Dispatch to Kitchen Button -->
+        <button type="button" class="btn-dispatch-order" id="btnDispatchOrder">
+          <span>🚀 SİPARİŞİ ONAYLA & MUTFAĞA İLET</span>
         </button>
 
       </div>
 
     </aside>
 
-  </div>
-
-  <!-- Change Due Modal -->
-  <div class="modal-overlay" id="changeModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="changeTitle">
-    <div class="modal-card" style="text-align: center;">
-      <div style="font-size: 3rem; margin-bottom: 8px;">💵</div>
-      <h2 id="changeTitle" style="font-size: 1.25rem; font-weight: 800; margin-bottom: 16px;">Tahsilat Başarılı</h2>
-      
-      <div class="change-due-box" style="justify-content: center; flex-direction: column; gap: 4px; padding: 16px; margin-bottom: 20px;">
-        <span class="change-due-title">VERİLECEK PARA ÜSTÜ</span>
-        <span class="change-due-val" id="changeDueText" style="font-size: 2.25rem;">0,00 ₺</span>
-      </div>
-
-      <button type="button" class="btn-pay-cash" id="btnCloseChangeModal" style="width: 100%;">
-        <span>Yeni Satışa Geç (Enter)</span>
-      </button>
-    </div>
   </div>
 
   <!-- Parked Tickets Modal -->

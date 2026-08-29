@@ -26,8 +26,8 @@ def test_cashier_manifest_validity():
     assert "background_color" in manifest
 
 
-def test_cashier_html_structure():
-    """Verify index.html contains split layout, search input, ticket stream, and quick cash buttons."""
+def test_cashier_html_structure_and_no_fake_payment():
+    """Verify index.html contains split layout, search input, ticket stream, and NO fake payment claims."""
     html = (WWWROOT / "index.html").read_text(encoding="utf-8")
 
     assert 'id="searchInput"' in html
@@ -35,21 +35,28 @@ def test_cashier_html_structure():
     assert 'id="productMatrix"' in html
     assert 'id="ticketItemsStream"' in html
     assert 'id="grandTotalAmount"' in html
-    assert 'id="btnPayCash"' in html
+    assert 'id="btnDispatchOrder"' in html
     assert 'id="btnParkTicket"' in html
     assert 'id="btnRecallTicket"' in html
-    assert 'id="changeModal"' in html
-    assert 'id="changeDueText"' in html
+
+    # V1 contract: No fake payment / tahsilat claims
+    assert "Tahsilat Başarılı" not in html
+    assert "Nakit Tahsilat & Fiş Kes" not in html
+    assert "changeModal" not in html
 
 
-def test_cashier_javascript_pos_engine():
-    """Verify cashier-app.js implements ticket calculations, quick cash chips, and park/recall logic."""
+def test_cashier_javascript_order_engine():
+    """Verify cashier-app.js implements ticket calculations, park/recall logic, and dispatch without fake payment."""
     app_code = (WWWROOT / "cashier-app.js").read_text(encoding="utf-8")
 
     assert "ticketItems" in app_code
     assert "addProductToTicket" in app_code
-    assert "completeCashSale" in app_code
+    assert "dispatchOrderToKitchen" in app_code
     assert "parkCurrentTicket" in app_code
     assert "recallParkedTicket" in app_code
     assert "isComplimentary" in app_code
     assert "formatMoney" in app_code
+
+    # V1 contract: No fake cash sale calculations
+    assert "completeCashSale" not in app_code
+    assert "changeDue" not in app_code
