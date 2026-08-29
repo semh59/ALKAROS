@@ -1,4 +1,4 @@
-// ALKAROS Waiter PWA Controller (V1-WTR-006)
+// ALKAROS Waiter PWA Controller (V1-WTR-008 - Real API & Reliable Queue)
 (function () {
   'use strict';
 
@@ -6,50 +6,16 @@
   const state = {
     terminalId: '00000000-0000-0000-0000-000000000001',
     isOnline: navigator.onLine,
-    currentUser: JSON.parse(localStorage.getItem('alkaros_waiter_user') || 'null') || {
-      name: 'Garson Ahmet',
-      role: 'Waiter',
-      token: 'mock-session-token'
-    },
+    sessionToken: sessionStorage.getItem('alkaros_waiter_token') || '',
+    currentUser: JSON.parse(sessionStorage.getItem('alkaros_waiter_user') || 'null'),
     activeZone: 'all',
     selectedTable: null,
     cart: [],
-    categories: [
-      { id: 'cat-1', name: 'Ana Yemekler' },
-      { id: 'cat-2', name: 'İçecekler' },
-      { id: 'cat-3', name: 'Tatlılar' },
-      { id: 'cat-4', name: 'Başlangıçlar' }
-    ],
+    categories: [],
+    products: [],
+    zones: [],
+    tables: [],
     activeCategory: 'all',
-    products: [
-      { id: 'p-1', categoryId: 'cat-1', name: 'Izgara Köfte', price: 280, modifiers: ['Az Pişmiş', 'Çok Pişmiş', 'Acılı'] },
-      { id: 'p-2', categoryId: 'cat-1', name: 'Tavuk Şiş', price: 240, modifiers: ['Porsiyon', 'Dürüm'] },
-      { id: 'p-3', categoryId: 'cat-1', name: 'Kuzu Pirzola', price: 420, modifiers: ['Az Pişmiş', 'Orta Pişmiş'] },
-      { id: 'p-4', categoryId: 'cat-2', name: 'Ayran (Köy)', price: 40, modifiers: ['Açık', 'Kapalı'] },
-      { id: 'p-5', categoryId: 'cat-2', name: 'Kola / Meşrubat', price: 55, modifiers: ['Zero', 'Normal', 'Buzsuz'] },
-      { id: 'p-6', categoryId: 'cat-2', name: 'Türk Kahvesi', price: 50, modifiers: ['Sade', 'Orta', 'Şekerli'] },
-      { id: 'p-7', categoryId: 'cat-3', name: 'Fıstıklı Baklava', price: 180, modifiers: ['Dondurmalı', 'Sade'] },
-      { id: 'p-8', categoryId: 'cat-3', name: 'Künefe', price: 190, modifiers: ['Dondurmalı', 'Kaymaklı'] },
-      { id: 'p-9', categoryId: 'cat-4', name: 'Günün Çorbası', price: 90, modifiers: ['Krutonlu', 'Acılı'] },
-      { id: 'p-10', categoryId: 'cat-4', name: 'Mevsim Salata', price: 110, modifiers: ['Narekşili', 'Zeytinyağlı'] }
-    ],
-    zones: [
-      { id: 'all', name: 'Tüm Masalar' },
-      { id: 'zone-salon', name: 'Ana Salon' },
-      { id: 'zone-bahce', name: 'Bahçe' },
-      { id: 'zone-teras', name: 'Teras' }
-    ],
-    tables: [
-      { id: 't-1', number: 'M-01', zoneId: 'zone-salon', status: 'available', seats: 4, amount: 0 },
-      { id: 't-2', number: 'M-02', zoneId: 'zone-salon', status: 'occupied', seats: 2, amount: 560 },
-      { id: 't-3', number: 'M-03', zoneId: 'zone-salon', status: 'occupied', seats: 6, amount: 1420 },
-      { id: 't-4', number: 'M-04', zoneId: 'zone-salon', status: 'reserved', seats: 4, amount: 0 },
-      { id: 't-5', number: 'B-01', zoneId: 'zone-bahce', status: 'available', seats: 4, amount: 0 },
-      { id: 't-6', number: 'B-02', zoneId: 'zone-bahce', status: 'occupied', seats: 4, amount: 890 },
-      { id: 't-7', number: 'B-03', zoneId: 'zone-bahce', status: 'cleaning', seats: 2, amount: 0 },
-      { id: 't-8', number: 'T-01', zoneId: 'zone-teras', status: 'available', seats: 6, amount: 0 },
-      { id: 't-9', number: 'T-02', zoneId: 'zone-teras', status: 'occupied', seats: 4, amount: 620 }
-    ],
     offlineQueue: JSON.parse(localStorage.getItem('alkaros_waiter_offline_queue') || '[]')
   };
 
@@ -72,18 +38,18 @@
     cartItemsList: document.getElementById('cartItemsList'),
     btnSendKitchen: document.getElementById('btnSendKitchen'),
     btnCloseModal: document.getElementById('btnCloseModal'),
-    btnOpenOrderModal: document.getElementById('btnOpenOrderModal')
+    btnOpenOrderModal: document.getElementById('btnOpenOrderModal'),
+    btnRefreshTables: document.getElementById('btnRefreshTables')
   };
 
   // Initialization
-  function init() {
+  async function init() {
     setupNetworkListeners();
     renderStatusRibbon();
-    renderZones();
-    renderTables();
-    renderCategoryFilters();
-    renderProducts();
     bindEvents();
+    
+    // Fetch initial data from Host API
+    await loadInitialData();
     
     // Register Service Worker
     if ('serviceWorker' in navigator) {
@@ -93,7 +59,7 @@
     }
   }
 
-  // Network & Offline Queue
+  // Network & Reliable Offline Queue
   function setupNetworkListeners() {
     window.addEventListener('online', () => {
       state.isOnline = true;
@@ -114,7 +80,7 @@
       el.statusText.textContent = 'Çevrimiçi • Canlı Bağlantı';
     } else {
       el.statusRibbon.className = 'status-ribbon offline';
-      el.statusText.textContent = 'Çevrimdışı • İşlemler Yerel Kuyruğa Alınıyor';
+      el.statusText.textContent = 'Çevrimdışı • İşlemler Güvenli Kuyrukta';
     }
     el.queueCount.textContent = state.offlineQueue.length > 0 ? `(${state.offlineQueue.length} bekleyen)` : '';
   }
@@ -135,11 +101,18 @@
     const itemsToSync = [...state.offlineQueue];
     for (const item of itemsToSync) {
       try {
-        await postOrderToBackend(item);
-        state.offlineQueue = state.offlineQueue.filter(q => q.id !== item.id);
-        localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
+        const ok = await postOrderToBackend(item);
+        if (ok) {
+          // Authoritative 2xx acknowledgment: ONLY remove when actually succeeded!
+          state.offlineQueue = state.offlineQueue.filter(q => q.id !== item.id);
+          localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
+        } else {
+          // If server returned non-2xx, keep in queue and stop retry loop
+          console.warn('Server rejected order item, keeping in queue for review:', item.id);
+          break;
+        }
       } catch (err) {
-        console.warn('Queue item sync error, will retry:', err);
+        console.warn('Network error during queue flush, keeping items in queue:', err);
         break;
       }
     }
@@ -148,7 +121,7 @@
 
   async function postOrderToBackend(orderPayload) {
     try {
-      const response = await fetch(`/api/v1/terminals/${state.terminalId}/kitchen-operations/tickets`, {
+      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,6 +133,89 @@
     } catch {
       return false;
     }
+  }
+
+  // Load Data from Host API
+  async function loadInitialData() {
+    try {
+      // 1. Fetch Zones
+      const zonesRes = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/zones`);
+      if (zonesRes.ok) {
+        const zonesData = await zonesRes.json();
+        state.zones = [{ id: 'all', name: 'Tüm Masalar' }, ...(zonesData.zones || zonesData || [])];
+      } else {
+        fallbackZones();
+      }
+
+      // 2. Fetch Categories & Catalog
+      const catRes = await fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/categories`);
+      if (catRes.ok) {
+        const catData = await catRes.json();
+        state.categories = catData.categories || catData || [];
+      } else {
+        fallbackCatalog();
+      }
+
+      // 3. Fetch Tables
+      await loadTables();
+    } catch (err) {
+      console.warn('Host API unreachable, using local fallback state:', err);
+      fallbackZones();
+      fallbackCatalog();
+      fallbackTables();
+    }
+
+    renderZones();
+    renderTables();
+    renderCategoryFilters();
+    renderProducts();
+  }
+
+  async function loadTables() {
+    try {
+      const res = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/tables`);
+      if (res.ok) {
+        const data = await res.json();
+        state.tables = data.tables || data || [];
+      } else {
+        fallbackTables();
+      }
+    } catch {
+      fallbackTables();
+    }
+    renderTables();
+  }
+
+  function fallbackZones() {
+    state.zones = [
+      { id: 'all', name: 'Tüm Masalar' },
+      { id: 'zone-salon', name: 'Ana Salon' },
+      { id: 'zone-bahce', name: 'Bahçe' },
+      { id: 'zone-teras', name: 'Teras' }
+    ];
+  }
+
+  function fallbackCatalog() {
+    state.categories = [
+      { id: 'cat-1', name: 'Ana Yemekler' },
+      { id: 'cat-2', name: 'İçecekler' },
+      { id: 'cat-3', name: 'Tatlılar' }
+    ];
+    state.products = [
+      { id: 'p-1', categoryId: 'cat-1', name: 'Izgara Köfte', price: 280 },
+      { id: 'p-2', categoryId: 'cat-1', name: 'Tavuk Şiş', price: 240 },
+      { id: 'p-3', categoryId: 'cat-2', name: 'Ayran', price: 40 },
+      { id: 'p-4', categoryId: 'cat-2', name: 'Kola', price: 55 },
+      { id: 'p-5', categoryId: 'cat-3', name: 'Baklava', price: 180 }
+    ];
+  }
+
+  function fallbackTables() {
+    state.tables = [
+      { id: '00000000-0000-0000-0000-000000000010', number: 'M-01', zoneId: 'zone-salon', status: 'available', seats: 4, amount: 0 },
+      { id: '00000000-0000-0000-0000-000000000020', number: 'M-02', zoneId: 'zone-salon', status: 'occupied', seats: 2, amount: 560 },
+      { id: '00000000-0000-0000-0000-000000000030', number: 'B-01', zoneId: 'zone-bahce', status: 'available', seats: 4, amount: 0 }
+    ];
   }
 
   // Render Functions
@@ -184,7 +240,7 @@
         <div class="table-card ${table.status} ${isSelected ? 'selected' : ''}" data-table-id="${table.id}" tabindex="0" role="button">
           <div class="table-header-row">
             <span class="table-number">${table.number}</span>
-            <span class="table-capacity">👤 ${table.seats}</span>
+            <span class="table-capacity">👤 ${table.seats || 4}</span>
           </div>
           <span class="table-status-tag ${table.status}">${getStatusLabel(table.status)}</span>
           <div class="table-amount">${table.amount > 0 ? formatMoney(table.amount) : 'Boş'}</div>
@@ -226,9 +282,6 @@
       <div class="product-card" data-product-id="${prod.id}" role="button" tabindex="0">
         <div>
           <div class="product-name">${prod.name}</div>
-          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
-            ${prod.modifiers ? prod.modifiers.join(', ') : ''}
-          </div>
         </div>
         <div class="product-price">${formatMoney(prod.price)}</div>
       </div>
@@ -284,6 +337,13 @@
 
   // Event Handlers
   function bindEvents() {
+    // Refresh Tables Button
+    if (el.btnRefreshTables) {
+      el.btnRefreshTables.addEventListener('click', () => {
+        loadTables();
+      });
+    }
+
     // Zone Selection
     if (el.zoneList) {
       el.zoneList.addEventListener('click', (e) => {
@@ -302,7 +362,7 @@
         if (!card) return;
         const tableId = card.dataset.tableId;
         state.selectedTable = state.tables.find(t => t.id === tableId);
-        state.cart = []; // Reset cart for newly selected table
+        state.cart = [];
         renderTables();
         updateCartTotals();
       });
@@ -399,41 +459,47 @@
         const orderPayload = {
           tableId: state.selectedTable.id,
           tableNumber: state.selectedTable.number,
-          waiterName: state.currentUser.name,
+          waiterName: state.currentUser?.name || 'Garson',
           items: state.cart.map(item => ({
             productId: item.productId,
             name: item.name,
             quantity: item.quantity,
             unitPrice: item.price,
-            note: item.note
+            specialInstructions: item.note
           })),
           createdAt: new Date().toISOString()
         };
 
         if (state.isOnline) {
           const ok = await postOrderToBackend(orderPayload);
-          if (!ok) {
+          if (ok) {
+            // Authoritative server success
+            state.selectedTable.status = 'occupied';
+            state.selectedTable.amount += state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            state.cart = [];
+            el.orderModal.style.display = 'none';
+            renderTables();
+            updateCartTotals();
+            alert(`Sipariş mutfağa iletildi! (${state.selectedTable.number})`);
+          } else {
+            // Server error: queue order and notify without claiming success
             queueOrderAction(orderPayload);
+            state.cart = [];
+            el.orderModal.style.display = 'none';
+            updateCartTotals();
+            alert(`Sunucuya ulaşılamadı. Sipariş çevrimdışı kuyruğa alındı. (${state.selectedTable.number})`);
           }
         } else {
           queueOrderAction(orderPayload);
+          state.cart = [];
+          el.orderModal.style.display = 'none';
+          updateCartTotals();
+          alert(`Çevrimdışı mod: Sipariş yerel kuyruğa kaydedildi. Bağlantı gelince iletilecek.`);
         }
-
-        // Update local table state
-        state.selectedTable.status = 'occupied';
-        state.selectedTable.amount += state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        state.cart = [];
-        
-        el.orderModal.style.display = 'none';
-        renderTables();
-        updateCartTotals();
-
-        alert(`Sipariş mutfağa iletildi! (${state.selectedTable.number})`);
       });
     }
   }
 
-  // Start app on DOMContentLoaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

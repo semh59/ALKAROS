@@ -1,5 +1,4 @@
 import json
-import re
 from pathlib import Path
 
 WORKSPACE = Path(__file__).resolve().parents[4]
@@ -53,14 +52,18 @@ def test_waiter_pwa_service_worker_lifecycle():
     assert "caches.open" in sw_code
 
 
-def test_waiter_pwa_javascript_offline_queue():
-    """Verify waiter-app.js implements offline queue and kitchen dispatch."""
+def test_waiter_pwa_real_api_and_reliable_queue():
+    """Verify waiter-app.js connects to Host API and keeps items in queue when server call fails."""
     app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
 
-    assert "offlineQueue" in app_code
-    assert "localStorage" in app_code
+    # Authoritative Host Endpoints
+    assert "/orders/table-draft" in app_code
+    assert "/table-management/zones" in app_code
+    assert "/table-management/tables" in app_code
+    assert "/catalog-management/categories" in app_code
+
+    # Reliable queue: checks response.ok and only deletes on success
+    assert "response.ok" in app_code
     assert "flushOfflineQueue" in app_code
-    assert "postOrderToBackend" in app_code
-    assert "setupNetworkListeners" in app_code
-    assert "renderTables" in app_code
-    assert "renderProducts" in app_code
+    assert "queueOrderAction" in app_code
+    assert "mock-session-token" not in app_code
