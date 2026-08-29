@@ -1,10 +1,10 @@
 # V1-RMD-021 - Independent designer acceptance
 
 - Task ID: V1-RMD-021
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: 2814a35e-cc66-4d6c-882c-1b1809271ab4
 - Work type: validation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Goal
 

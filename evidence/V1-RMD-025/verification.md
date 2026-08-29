@@ -1,7 +1,7 @@
 # V1-RMD-025 verification
 
-Date: 2026-08-28  
-Repository root: `D:/PROJECT/ALKAROS`  
+Date: 2026-08-28
+Repository root: `D:/PROJECT/ALKAROS`
 Candidate commit: `a03d02146961c29a8b847a7b0c472c6c8dd42c9f`
 
 ## Runtime

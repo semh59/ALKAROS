@@ -38,3 +38,7 @@ TestResults/
 [Tt]est[Rr]esults/
 node_modules/
 dist/
+
+# Logs / transient test output
+output*.txt
+test_output*.txt

@@ -17,9 +17,8 @@ probe ile yeniden üretmek ve atomiklik sonucunu bağımsız doğrulamak.
 
 ## Owned surface
 
-- `src/BuildingBlocks/Idempotency/IdempotencyKeyStore.cs`
-- `tests/BuildingBlocks/Idempotency/IdempotencyKeyStoreTests.cs`
 - `evidence/V1-FND-018/**`
+- PO:2026-08-28 deep code audit kararıyla IdempotencyKeyStore.cs ve test yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 
 ## In scope
 

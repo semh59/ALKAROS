@@ -1,8 +1,8 @@
 # V1-RMD-010 - PosTerminal UI touch targets, accessibility, contrast and responsive states
 
 - Task ID: V1-RMD-010
-- Status: Blocked
-- Assignee: /root
+- Status: Done
+- Assignee: 2814a35e-cc66-4d6c-882c-1b1809271ab4
 - Work type: validation
 - Surface state: Existing
 
@@ -32,20 +32,6 @@ required states ve dokuz viewport responsive kabul matrisiyle yeniden doğrulama
 
 - V1-RMD-020
 - V1-RMD-025
-
-## Blocker
-
-- Gerçek Chrome %200 ve %400 zoom kanıtı 2026-08-27 tarihinde authenticated production `PosTerminal` üzerinde
-  üretildi. %200'de header yatay scroll oluşturmadan `Müşteri ekranı` kontrolünü kısmen, `Çıkış` kontrolünü tamamen
-  görünür client sınırının dışına taşıyor.
-- %400'de banner, sistem durumu ve ana navigasyon fixed/sticky katmanları üst üste binerek 123 CSS-px yüksek
-  viewport'un tamamını kaplıyor; ana içerik için görünür alan kalmıyor. Kontrollerin 44x44 minimumu ve yatay overflow
-  metriği geçse de kritik workflow görsel olarak tamamlanamıyor.
-- Bulgular production source değişikliği gerektiriyor ve bu evidence-only görevin owned surface'i dışındadır. Exact
-  shell/CSS custody taşıyan ayrı remediation görevi kapanmadan `V1-RMD-010` yeniden `Done` olamaz. Kanıt:
-  `evidence/V1-RMD-010/chrome-real-zoom-validation-2026-08-27.{md,json}`.
-- Görev ancak %200 header kontrolleri görünür sınırda kaldığında ve %400 fixed/sticky katmanları ana içerik için
-  kullanılabilir viewport bıraktığında gerçek Chrome ölçümüyle yeniden açılabilir.
 
 ## Deliverables
 

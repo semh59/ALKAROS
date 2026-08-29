@@ -2564,7 +2564,11 @@ def validate_plan() -> None:
         task_id: str,
         dependency_id: str,
         path: list[str],
+        visited: set[str],
     ) -> None:
+        if dependency_id in visited:
+            return
+        visited.add(dependency_id)
         dependency_status = task_statuses[dependency_id]
         if dependency_status not in ("Done", "NotApplicable"):
             if c54_admitted_as_final and dependency_id == _C54_APPLICATION_TASK_ID:
@@ -2582,13 +2586,14 @@ def validate_plan() -> None:
             return
 
         for ancestor_id in dependency_graph[dependency_id]:
-            find_non_final_ancestors(task_id, ancestor_id, [*path, ancestor_id])
+            find_non_final_ancestors(task_id, ancestor_id, [*path, ancestor_id], visited)
 
     for task_id in sorted(task_ids):
         if task_statuses[task_id] != "Done":
             continue
+        visited: set[str] = set()
         for dependency_id in dependency_graph[task_id]:
-            find_non_final_ancestors(task_id, dependency_id, [task_id, dependency_id])
+            find_non_final_ancestors(task_id, dependency_id, [task_id, dependency_id], visited)
 
     for surface, owners in sorted(production_surfaces.items()):
         unique = sorted(set(owners))

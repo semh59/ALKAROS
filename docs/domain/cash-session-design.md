@@ -1,7 +1,7 @@
 # CashSession Architecture and Contract Design (V1-CSH-001)
 
-**Status:** Approved Architectural Decision Record  
-**Target Delivery:** V1.2 Cash Management (`V12-CSH-001`, `V12-CSH-002`, `V12-CSH-003`)  
+**Status:** Approved Architectural Decision Record
+**Target Delivery:** V1.2 Cash Management (`V12-CSH-001`, `V12-CSH-002`, `V12-CSH-003`)
 **Specification References:** PDF:I.38-I.44, PDF:II.2.7, PDF:II.5.9, PDF:III.9, V0-DOM-001, V0-CMP-002, V1-IAM-002
 
 ---

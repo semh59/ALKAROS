@@ -43,14 +43,16 @@ transaction içinde projekte etmek.
 - `tests/Clients/WaiterPwa/SessionQueue/**`
 - PO:2026-08-24 UI yeniden tasarım kararıyla src/Clients/WebPrototype yüzeyi V1-RMD-003'e devredildi; bu
   historical task closed kalır.
-- `src/Modules/Billing/BillFoundation/Bill.cs`
 - `src/Modules/Billing/BillFoundation/BillEnums.cs`
-- `src/Modules/Billing/BillFoundation/BillItem.cs`
 - `src/Modules/Billing/BillFoundation/BillMath.cs`
 - `src/Modules/Billing/BillFoundation/BillSourceOperations.cs`
 - `src/Modules/Billing/BillFoundation/IBillRepository.cs`
 - `src/Modules/Billing/BillFoundation/PostgresBillRepository.cs`
-- `tests/Modules/Billing/BillFoundation/**`
+- `tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj`
+- `tests/Modules/Billing/BillFoundation/packages.lock.json`
+- `tests/Modules/Billing/BillFoundation/Fixtures/**`
+- `tests/Modules/Billing/BillFoundation/PostgresBillTests.cs`
+- PO:2026-08-28 deep code audit kararıyla Bill.cs, BillItem.cs ve BillDomainTests.cs yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 - `src/Modules/Kitchen/PhysicalPrintRecovery/**`
 - `tests/Modules/Kitchen/PhysicalPrintRecovery/**`
 - `src/Modules/Kitchen/TicketLifecycle/**`

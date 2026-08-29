@@ -22,7 +22,7 @@ Table identity, zone, canonical status transition ve optimistic concurrency davr
 
 - `src/Modules/Tables/TableLifecycle/TableState.cs`
 - `tests/Modules/Tables/TableLifecycle/Fixtures/TablesTestDatabase.cs`
-- `tests/Modules/Tables/TableLifecycle/TableDomainTests.cs`
+- PO:2026-08-28 deep code audit kararıyla TableDomainTests.cs yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 - `database/migrations/V1/V1-TBL-001/**`
 - C52 repository transition source/test surface is transferred to V1-FND-022; this historical task remains closed.
 - PO:2026-08-28 desktop floor kararıyla zone/table model, repository ve module registration yüzeyi V1-RMD-026'ya

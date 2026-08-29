@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 663,
-  "markdown_line_count": 44418,
-  "markdown_byte_count": 2710708,
+  "markdown_file_count": 674,
+  "markdown_line_count": 44736,
+  "markdown_byte_count": 2728542,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "538F34A155737DF76A6CAD9DDAD443FD09E198BD3A7DAD68148E4761169E08E7",
-      "lines": 3845,
-      "bytes": 174764,
+      "sha256": "F926C4179347B5D61946F3705CC3C4EFD6E77DADE30134385BD6EDB2E4D87DA0",
+      "lines": 3850,
+      "bytes": 174934,
       "utf8": true
     }
   ],
@@ -148,16 +148,16 @@
     },
     {
       "path": "docs/audit/FULL_PROJECT_DEEP_AUDIT_REPORT.md",
-      "sha256": "E7CF4B96B58EDEFB3AA2265D526675A9E5C32DB41D594886CCBAC73C8645FB9B",
+      "sha256": "ADD9C4544A208AE9BF779C46528A0780A5F48D5EF4E0535B787C40229AD68D7E",
       "lines": 179,
-      "bytes": 12794,
+      "bytes": 12784,
       "utf8": true
     },
     {
       "path": "docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_2026-08-24.md",
-      "sha256": "8BD90477C1DE1F6AB9DD38F62FC47DAB1EE424B4DF378C1D09112530FA27E7B8",
+      "sha256": "86979B612E0471A055EEF6A2BD7F6EC35025013B3D70A4B0A7008261C430554F",
       "lines": 67,
-      "bytes": 4489,
+      "bytes": 4428,
       "utf8": true
     },
     {
@@ -165,6 +165,13 @@
       "sha256": "011F618715054F7F0D611517985AB978885AF2189E49C2BF80BCFBD2F9469C1C",
       "lines": 161,
       "bytes": 12018,
+      "utf8": true
+    },
+    {
+      "path": "docs/audit/V1_PRODUCTION_EXPERIENCE_DESIGN_ACCEPTANCE_2026-08-25.md",
+      "sha256": "5F87F369A26F466B288DAF21AAD843C0765051D6FC26E1DA4F26212273BE4A37",
+      "lines": 16,
+      "bytes": 970,
       "utf8": true
     },
     {
@@ -239,9 +246,9 @@
     },
     {
       "path": "docs/domain/cash-session-design.md",
-      "sha256": "80E4D90E453C1F43BBD59CB38654809D9ED4A7EF6423905ACD61B7C347E99000",
+      "sha256": "836C40D784800202EAFA8853A31A8A8B4A9B5344DB805EB5B5553AE6E536D6D9",
       "lines": 128,
-      "bytes": 6405,
+      "bytes": 6401,
       "utf8": true
     },
     {
@@ -372,7 +379,7 @@
     },
     {
       "path": "docs/security/security-verification-baseline.md",
-      "sha256": "B9B8AEACD4769658F0F046F26BE16C235E0C56B51F617CAFB251BFFA89E42CF7",
+      "sha256": "7B5343759D25FFE1C8E0FC87346C611C8BB1EDF0C43CD094663B60A4510540BE",
       "lines": 78,
       "bytes": 2946,
       "utf8": true
@@ -855,9 +862,9 @@
     },
     {
       "path": "evidence/V0-GOV-038/controls.md",
-      "sha256": "29BC12FFFFB703CD656BCA7B2C6E8511670D61B95EE764ECC577320DD90668C3",
+      "sha256": "61FBD689A39071D04465381281B860665E92CB1D2EB1EEE8D950F4C23FCA0B09",
       "lines": 63,
-      "bytes": 4539,
+      "bytes": 4476,
       "utf8": true
     },
     {
@@ -1092,6 +1099,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-004/reseal_evidence.md",
+      "sha256": "88406376B67E4F52BBC1C80E5BE2AF663CD8A175389DFFC20A8733C88ABA3882",
+      "lines": 15,
+      "bytes": 891,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-GOV-005/preflight.md",
       "sha256": "48CFCFCCB19C8309FB5E91F34E4C13681B20B5DB2C719B047D48E365B390092D",
       "lines": 15,
@@ -1222,6 +1236,13 @@
       "sha256": "CC5F6FA2B1A6C95698445291F300E1E4B180270320B2B9AC8B78F82677010383",
       "lines": 6,
       "bytes": 385,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-023/acceptance_evidence.md",
+      "sha256": "A6C01E848A883CE7558E3691C5061337209D59D8D1A62A216DF60784E2928880",
+      "lines": 16,
+      "bytes": 1071,
       "utf8": true
     },
     {
@@ -1379,6 +1400,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-010/reacceptance_evidence.md",
+      "sha256": "BFA28C575B19431E095217EF4900886A010A2EEC45C6C078CDE131467BFACE6B",
+      "lines": 16,
+      "bytes": 874,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-010/revalidation-after-rmd022-2026-08-27.md",
       "sha256": "3F986A1618AFDBFD090A527B92E8EABF3AB8F1EB5C2B4ABE9DC5F61CF9677993",
       "lines": 26,
@@ -1394,9 +1422,16 @@
     },
     {
       "path": "evidence/V1-RMD-010/state-transcripts-2026-08-27.md",
-      "sha256": "8BC7381A6B3AC495BB0BFD52FD1876D3A06A187EDCEA5474031077FF7E9C9EA8",
+      "sha256": "AC93CCFD7B8DB4274466B6080627F2943BF8EEE991E5404CE40D30BCB597B63E",
       "lines": 74,
-      "bytes": 4673,
+      "bytes": 4667,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-011/acceptance_evidence.md",
+      "sha256": "CB26D098AF200CE94E164C608DA46E186880A3063C93F586308C64D3CACFD8DA",
+      "lines": 11,
+      "bytes": 692,
       "utf8": true
     },
     {
@@ -1512,6 +1547,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-021/acceptance_evidence.md",
+      "sha256": "DA49FD5968245114442344BAFD5C622F87A8CD818AA9B90E622BDCFD76485F5C",
+      "lines": 8,
+      "bytes": 487,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-024/scope-failure-2026-08-27.md",
       "sha256": "6C171782FC6C4177F08710E7107426A5814A7A5EC30D96CD81BA5340C2DFD6BE",
       "lines": 33,
@@ -1520,9 +1562,9 @@
     },
     {
       "path": "evidence/V1-RMD-025/verification.md",
-      "sha256": "59DD31F95473AC043F3B553D3AC7A73DEDF731044E10D00899CBEE4B27C1F166",
+      "sha256": "8C0F2F4C1C1287FFDC01514188570CEE39D84B83B2E46C34111252871C0C8863",
       "lines": 67,
-      "bytes": 3688,
+      "bytes": 3684,
       "utf8": true
     },
     {
@@ -1603,6 +1645,27 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-034/preflight.md",
+      "sha256": "6971F8581A20F4CAF9EBDCD6BC75E2732AA7DC45421A7734D8EDE8BB43A1E1A6",
+      "lines": 11,
+      "bytes": 573,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-034/verification.md",
+      "sha256": "3C081A3840B169F119CDBC3D54FB006FD6E7A4B80B725B1109A29E297532417C",
+      "lines": 48,
+      "bytes": 3241,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-035/verification.md",
+      "sha256": "D39BB1A43A81BB0A69900B68BA5AE4B8A2C112AA014B23AC2D5869D78E889365",
+      "lines": 38,
+      "bytes": 2676,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -1639,9 +1702,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DE88C21EAF16F0D9E0C66FB0C3078854181057357B05B4E4AA2A2768533CD622",
-      "lines": 1939,
-      "bytes": 269864,
+      "sha256": "587F46CE37C7FA00F9548EAA0B60A7400C5F04095B92FFA9088DACD2ED385321",
+      "lines": 1950,
+      "bytes": 271476,
       "utf8": true
     },
     {
@@ -1660,9 +1723,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "A5B9CCB18CC2E7049C89EB036A93440B048B91E42121B9885F174FCC8F9C14E4",
+      "sha256": "41AE42AD194376DCC3CC8696C2B39C39E1DCC0BF95B9A286CC8D1AA38C0786B2",
       "lines": 207,
-      "bytes": 15187,
+      "bytes": 15018,
       "utf8": true
     },
     {
@@ -1702,9 +1765,9 @@
     },
     {
       "path": "plan/REMAINING_WORK_PLAN.md",
-      "sha256": "D3D87062AAFACE33A8D9A67E25CCABEC30787402933701F7BB1AF0AAA855BC3B",
+      "sha256": "409D88B1F864E175B5C3C5B09C0ADF8830A91C98E8DC327FD1FFFA4170F61407",
       "lines": 516,
-      "bytes": 39566,
+      "bytes": 39050,
       "utf8": true
     },
     {
@@ -1723,16 +1786,16 @@
     },
     {
       "path": "plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md",
-      "sha256": "226E7D20BD72FDB37E38AA8BEF45416CADA5462B411BF8AB6012EB180DB22971",
+      "sha256": "B38B506B6052D07E6E6931AAC14AF2728C5774249E8440C7EED6085C045068D8",
       "lines": 61,
-      "bytes": 1836,
+      "bytes": 1775,
       "utf8": true
     },
     {
       "path": "plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md",
-      "sha256": "04621622960EB9CC011BBD1E5CFFD4716D9398B2916314045229C0A06973AA31",
+      "sha256": "EF58481D5938842AC85A52ADE3816EFDF6B4010B71EE98507A2E64CE9FF933F2",
       "lines": 58,
-      "bytes": 1636,
+      "bytes": 1578,
       "utf8": true
     },
     {
@@ -1940,9 +2003,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-006-sec003-boundary-repair.md",
-      "sha256": "15DDDADE79BEBF77286F43FCFB3CBB4A89C7FA6219A17981BAEA69C9B54BAB80",
+      "sha256": "F18F1EAC9FC8D7B99EFBC5CC69E3C54A6858F50B594746CE688EE0787AC5C423",
       "lines": 50,
-      "bytes": 1181,
+      "bytes": 1136,
       "utf8": true
     },
     {
@@ -2745,9 +2808,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-003-agent-task-scope-enforcement.md",
-      "sha256": "3930AD5B39783A2C6965D8D528DAD1A8460516A8348FB2461FC24B2A55B7287C",
+      "sha256": "59A8A6415E2CA16507585E0E18B43ED22EC040303E88C7A4B625BA76370E8E60",
       "lines": 66,
-      "bytes": 2836,
+      "bytes": 2774,
       "utf8": true
     },
     {
@@ -2773,9 +2836,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-007-audit-remediation.md",
-      "sha256": "B26FD4DF2F7F3D0899747E945C08EDD5051EBB7018A43F823083299270553DE1",
+      "sha256": "2298A77C729298A0C7881EBD995FF6E6A0EE637C8CE1D0CC73D96C9DAF8BA86B",
       "lines": 94,
-      "bytes": 5308,
+      "bytes": 5217,
       "utf8": true
     },
     {
@@ -2787,23 +2850,23 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md",
-      "sha256": "987B9142F166B4DC0D14A81C8F4E8B19ABF48CA9E0F06BB0CFF58798DC295D34",
+      "sha256": "527AC5E7773B91B0B1EDB2FFB89A6A1A401E12184FFC487D11F931D53CB411C0",
       "lines": 97,
-      "bytes": 5234,
+      "bytes": 5137,
       "utf8": true
     },
     {
       "path": "plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md",
-      "sha256": "78F2C976BA22B9F17C6556DD380BB1A5C68CA24E57E8F7B7B8112DB3A3F40B68",
+      "sha256": "572804085F326046D6F0685A8649D92E592D78909EAC95148AADA80CB9D7B002",
       "lines": 58,
-      "bytes": 2098,
+      "bytes": 2040,
       "utf8": true
     },
     {
       "path": "plan/v1/foundation/V1-FND-011-transaction-outbox-atomicity.md",
-      "sha256": "E6FAC3ECD8891D798027976A1EA77D5432BD75715BF7989A6778A1AA2F70F959",
+      "sha256": "0DF4249C8B66377A90D0655C3CC0B8C21F2BA558A9FA9E883F23862742FAFBC0",
       "lines": 81,
-      "bytes": 3080,
+      "bytes": 3002,
       "utf8": true
     },
     {
@@ -2850,9 +2913,9 @@
     },
     {
       "path": "plan/v1/foundation/V1-FND-018-atomic-idempotency-execution.md",
-      "sha256": "CC890374F15A52BC6ED5E2AEEE0D99C68147186006301C59E592E562B523D4D3",
-      "lines": 51,
-      "bytes": 1367,
+      "sha256": "A255F520A46A4B5FA9187DE46BF813D4C077834432EF7816DF3784A81D3DA6A9",
+      "lines": 50,
+      "bytes": 1385,
       "utf8": true
     },
     {
@@ -2927,16 +2990,16 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-003-full-project-production-audit.md",
-      "sha256": "F398AA953CC684C224BC2743D02700E6D6D6D3258DF2C8EA20F90D044E0F2AF0",
+      "sha256": "5CA1BB1E67CAC2289E3019B0B3D04F705110C471543AA626B4532F96FAC4728E",
       "lines": 68,
-      "bytes": 3085,
+      "bytes": 3031,
       "utf8": true
     },
     {
       "path": "plan/v1/governance/V1-GOV-004-post-remediation-master-audit-reseal.md",
-      "sha256": "1AF08F9D9727F916944544FCB3A356B796E9595D0317BD8DF34335EA74C4DB81",
+      "sha256": "4BE9AF46BB54658EF053E78FC500B8A20C75CB2CCB1F5F27C05A77893597D9BD",
       "lines": 58,
-      "bytes": 2539,
+      "bytes": 2524,
       "utf8": true
     },
     {
@@ -3066,6 +3129,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-023-kitchen-and-code-audit-custody.md",
+      "sha256": "FDF8D0DA6D2B9264847E98BFD68FD32019FB99BF88ACA52775742738A97FF098",
+      "lines": 66,
+      "bytes": 2891,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -3088,9 +3158,9 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md",
-      "sha256": "EFC074826264CFFD48E6B7D6DB7C1E0B1CB4CD7C75C763BAF5A05615311A2769",
+      "sha256": "FD5A1B4A473897FF4F98445924E781D4629BA8BD4302D823D2FEA5488481AF5A",
       "lines": 65,
-      "bytes": 1760,
+      "bytes": 1699,
       "utf8": true
     },
     {
@@ -3207,9 +3277,9 @@
     },
     {
       "path": "plan/v1/operations/V1-OPS-001-audit-foundation.md",
-      "sha256": "8DCA22B5C2E5D079349839B291EAF06676C8A4C454F6488747AD53289B97123B",
-      "lines": 54,
-      "bytes": 1336,
+      "sha256": "7574324CC98AD941E83D16E218B65E7E21ACC61E585A611223673B26567791D8",
+      "lines": 59,
+      "bytes": 1624,
       "utf8": true
     },
     {
@@ -3249,7 +3319,7 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "3392ED261387CD08F1EAEEA9FAFC1FB42E340180ECBF4D8581A2AC38798F4D91",
+      "sha256": "78EC23985985D9BEAAC2922E79A19F457EAFD151328A5D45EE7B55B3090167F8",
       "lines": 34,
       "bytes": 1574,
       "utf8": true
@@ -3277,9 +3347,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md",
-      "sha256": "332A2C4B8252F0AA8815D46D98BADB44F8B83C40F2780644F134ECFC03C383D5",
-      "lines": 98,
-      "bytes": 4846,
+      "sha256": "89B3744E19C6598CE4CEB20BFE2E21E2EDCB3D5DA37A1FBEC4C9D59A9B74750D",
+      "lines": 100,
+      "bytes": 5117,
       "utf8": true
     },
     {
@@ -3312,37 +3382,37 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-007-governance-manifest-and-build-provenance.md",
-      "sha256": "780A217DDDB39C8F5534C553E728A54EDFA3888D4B4704D5C5BFBC3805C9D094",
+      "sha256": "FA49033731F2291982F20EACFFB8C12273A59061688E0153CC60302A8FBA7B0C",
       "lines": 68,
-      "bytes": 2853,
+      "bytes": 2815,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-008-host-api-auth-ratelimit-tls-and-telemetry.md",
-      "sha256": "F2CF43760CC476491A35A366650731D1E16025E560B96E16C65A3DA3AB849FC7",
+      "sha256": "10228E846C056EF830A990954E0BD4F78B6A96E6D7E3F5C187ED5651C321E0B5",
       "lines": 65,
-      "bytes": 3077,
+      "bytes": 3039,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md",
-      "sha256": "E8A8C0E9D9CE5D4D5EC6919F9AE8830B1B597077C4DAD78520C88FA0B60A3E6C",
-      "lines": 84,
-      "bytes": 4752,
+      "sha256": "76187F27EC5E6CEB2804EA6BA6A375F14ED2343F43736947C8EC17F3B2040685",
+      "lines": 83,
+      "bytes": 4764,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-010-pos-terminal-ui-responsive-and-a11y.md",
-      "sha256": "50575122606B27D9D100D230996D47FE1E9406C35B242E14C323639309BBB4B2",
-      "lines": 72,
-      "bytes": 3858,
+      "sha256": "3F3E6A369D6AEB4FF63DB80147F409E303F87E5BDDB12288AECC182F5CAC9D79",
+      "lines": 58,
+      "bytes": 2716,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-011-web-prototype-hardening-and-touch-targets.md",
-      "sha256": "43073715EAEEB9C629865AB911E105EDD096F6C8D6905159680DED81D67BDF6F",
+      "sha256": "43810DEA752BC8DBAEDE93F99F055C44237DEFF97D23970F4B035D98CD43EB25",
       "lines": 59,
-      "bytes": 2348,
+      "bytes": 2338,
       "utf8": true
     },
     {
@@ -3410,9 +3480,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-021-independent-designer-acceptance.md",
-      "sha256": "72C2F08CE49402735AF2F6D95960882A2357B20634FA37A8A64D637C6CFBEAB6",
+      "sha256": "87C98E1CBC49C68E8177FAF696463790445AF662099E380DF038B1E3AFD4843D",
       "lines": 40,
-      "bytes": 1710,
+      "bytes": 1734,
       "utf8": true
     },
     {
@@ -3445,9 +3515,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-026-floor-plan-persistence-and-api.md",
-      "sha256": "B280BB38CD4D1826BB84EAFFB317D768AC5FAC565995E44EB434875992E2707C",
+      "sha256": "5973AF0964A74653533AC81A97DE65E43C33E9B1EB917FFFE99103E9F098E63D",
       "lines": 54,
-      "bytes": 2435,
+      "bytes": 2507,
       "utf8": true
     },
     {
@@ -3501,9 +3571,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-034-authoritative-kitchen-station-contract.md",
-      "sha256": "114456D240F655F8393C36CB24DFFD166F2DB03A97C4499431FF25F5F2D29657",
-      "lines": 53,
-      "bytes": 2199,
+      "sha256": "791264754164615F0C5424814E49F96848B448501F0F6237834C7529555B6115",
+      "lines": 52,
+      "bytes": 2101,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-035-deep-code-audit-remediation.md",
+      "sha256": "F4FE7123FD44FFCF23736CBC1719BBAE7F605D8058A57FCD6E70A88B9D060353",
+      "lines": 62,
+      "bytes": 3302,
       "utf8": true
     },
     {
@@ -3564,9 +3641,9 @@
     },
     {
       "path": "plan/v1/table-management/V1-TBL-001-table-lifecycle.md",
-      "sha256": "B0D028488ABCFDB1FAA2EF170D02F0A1341F5E5BB4A7B0A5C92F832FFF7E94B6",
+      "sha256": "3306EA49714434F6B243732E2027CFEDB16C94C9AB4B3DE7B8744DB0DEF4955D",
       "lines": 63,
-      "bytes": 1790,
+      "bytes": 1860,
       "utf8": true
     },
     {
@@ -3606,9 +3683,9 @@
     },
     {
       "path": "plan/v1/table-management/V1-TBL-007-fail-closed-table-audit.md",
-      "sha256": "ABFF257A1043CF0779D9C79F0A20AE4A84C88E29FA4BF987C6AEA9F8C595FCB0",
-      "lines": 41,
-      "bytes": 1221,
+      "sha256": "F6800EA23217061EF2BFBBE74DDF88749F6489642472EBFB2FE4EE0FA975F471",
+      "lines": 51,
+      "bytes": 2007,
       "utf8": true
     },
     {
@@ -4705,9 +4782,9 @@
     },
     {
       "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "44AD6EA05CD553AB1CA01784BF1B966D113295B28499BC62A28800A581A84BD1",
+      "sha256": "1FC8C021390F2D1F6C779EF9A5AB91059DEF353D9EFA08701F02072E09B45BE7",
       "lines": 293,
-      "bytes": 20272,
+      "bytes": 20124,
       "utf8": true
     }
   ]

@@ -15,8 +15,7 @@ PosTerminal'e açmak ve production kitchen UI'ın aynı authoritative istasyonu 
 
 - `src/Host/DualScreen/DualScreenApplication.cs`
 - `src/Clients/PosTerminal/src/App.tsx`
-- `src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts`
-- `src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.test.ts`
+- `src/Clients/PosTerminal/src/features/kitchen-operations/**`
 - `tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs`
 - `evidence/V1-RMD-034/**`
 

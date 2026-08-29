@@ -1,8 +1,8 @@
 # V1-RMD-010 gerçek durum transcriptleri — 2026-08-27
 
-Candidate: `a03d02146961c29a8b847a7b0c472c6c8dd42c9f`  
-Tree: `39e9bb79d3d6f3e099e15a7ffafcc801f727843a`  
-Host: `https://localhost:58299`  
+Candidate: `a03d02146961c29a8b847a7b0c472c6c8dd42c9f`
+Tree: `39e9bb79d3d6f3e099e15a7ffafcc801f727843a`
+Host: `https://localhost:58299`
 Database: disposable PostgreSQL 18 digest-pinned container; 37 V1 migrations applied.
 
 ## Gerçek akışlar

@@ -19,8 +19,13 @@ Actor, reason, correlation ve before/after reference alanlarıyla V1 critical co
 
 ## Owned surface
 
-- `src/Modules/Audit/EventStore/**`, `tests/Modules/Audit/EventStore/**`, `database/migrations/V1/V1-OPS-001/**`
-- Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- `src/Modules/Audit/EventStore/AuditEvent.cs`
+- `src/Modules/Audit/EventStore/IAuditEventStore.cs`
+- `src/Modules/Audit/EventStore/PostgresAuditEventStore.cs`
+- `tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj`
+- `tests/Modules/Audit/EventStore/packages.lock.json`
+- `database/migrations/V1/V1-OPS-001/**`
+- PO:2026-08-28 deep code audit kararıyla IAuditSanitizer.cs ve AuditTests.cs yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 
 ## In scope
 

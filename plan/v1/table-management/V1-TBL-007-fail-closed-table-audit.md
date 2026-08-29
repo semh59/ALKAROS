@@ -17,8 +17,18 @@ sağlamak.
 - `src/Modules/Tables/CurrentPointers/**`
 - `src/Modules/Tables/Reservations/**`
 - `src/Modules/Tables/TableMerge/**`
-- `src/Modules/Tables/TableTransfer/**`
-- `tests/Modules/Tables/TableTransfer/**`
+- `src/Modules/Tables/TableTransfer/ITableTransferRepository.cs`
+- `src/Modules/Tables/TableTransfer/ITableTransferService.cs`
+- `src/Modules/Tables/TableTransfer/TableTransferExceptions.cs`
+- `src/Modules/Tables/TableTransfer/TableTransferRecord.cs`
+- `src/Modules/Tables/TableTransfer/TableTransferRequest.cs`
+- `src/Modules/Tables/TableTransfer/TableTransferResult.cs`
+- `src/Modules/Tables/TableTransfer/TableTransferService.cs`
+- `tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj`
+- `tests/Modules/Tables/TableTransfer/packages.lock.json`
+- `tests/Modules/Tables/TableTransfer/Fixtures/**`
+- `tests/Modules/Tables/TableTransfer/PostgresTableTransferTests.cs`
+- PO:2026-08-28 deep code audit kararıyla PostgresTableTransferRepository.cs ve TableTransferDomainTests.cs yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 - `tests/Modules/Tables/TableMerge/**`
 - `tests/Modules/Tables/Reservations/**`
 - `tests/Modules/Tables/CurrentPointers/**`

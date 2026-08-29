@@ -202,6 +202,6 @@ olarak kapandı; `validate`, `validate-coverage` ve `verify-manifest` sıfır ha
 
 ## 2026-08-24 tam production denetimi sonrası yeniden açılış
 
-`V1-GOV-003` denetimi ve taze ajan custody görevleri sonrasında V1 matrisi 106 göreve yükseldi. Mevcut durum 95
-`Done`, 4 onaylı `NotApplicable`, 5 `Planned` ve 2 `Blocked` görevdir; `InProgress` görev yoktur. Tarihsel C71 kapanışı
-korunur fakat `V1-RMD-007..011` ile `V1-GOV-004` zinciri tamamlanmadan güncel production readiness kanıtı sayılmaz.
+`V1-GOV-003` denetimi ve taze ajan custody görevleri sonrasında V1 matrisi 145 göreve yükseldi. Mevcut durum 135
+`Done`, 4 onaylı `NotApplicable`, 0 `Planned` ve 6 `Blocked` görevdir; `InProgress` görev yoktur. `V1-RMD-010..021` ile
+`V1-GOV-004` reseal zinciri tamamlanmıştır.

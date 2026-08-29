@@ -14,14 +14,13 @@ katalog sorgusuna bounded sayfalama/filtreleme eklemek ve cashier siparişini se
 ## Owned surface
 
 - `src/Host/DualScreen/DualScreenContracts.cs`
-- `src/Host/DualScreen/DualScreenStore.cs`
 - `database/migrations/V1/V1-CAT-002/007-catalog-pricing.up.sql`
 - `database/migrations/V1/V1-CAT-002/007-catalog-pricing.down.sql`
 - `database/migrations/V1/V1-FND-021/012-btree-gist-ownership.up.sql`
 - `database/migrations/V1/V1-FND-021/012-btree-gist-ownership.down.sql`
 - `tests/Host/MigrationComposition/PostgresqlExtensionLifecycleTests.cs`
-- `tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs`
 - `evidence/V1-RMD-009/**`
+- PO:2026-08-28 deep code audit kararıyla DualScreenStore.cs ve DualScreenStoreTests.cs yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 - PO:2026-08-28 additive floor migration kararıyla migration order ve ManifestTests.cs yüzeyi V1-RMD-026'ya
   devredildi; bu historical task closed kalır.
 - PO:2026-08-28 `RMD032-F001` kararıyla `DualScreenHostTests.cs` runtime kitchen station contract doğrulaması için

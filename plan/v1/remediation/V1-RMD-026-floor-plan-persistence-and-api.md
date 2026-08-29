@@ -17,12 +17,12 @@ sözleşmelerini açmak.
 - `database/migrations/V1/V1-RMD-026/**`
 - `database/MigrationComposition/order.json`
 - `src/Modules/Tables/FloorPlan/**`
-- `src/Modules/Tables/TableLifecycle/Table.cs`
 - `src/Modules/Tables/TableLifecycle/Zone.cs`
 - `src/Modules/Tables/TableLifecycle/TableRepository.cs`
 - `src/Modules/Tables/TableLifecycle/PostgresTableRepository.cs`
 - `src/Modules/Tables/TableLifecycle/PostgresZoneRepository.cs`
 - `src/Modules/Tables/TableLifecycle/TablesModule.cs`
+- PO:2026-08-28 deep code audit kararıyla Table.cs yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 - `src/Host/Experience/Tables/TableManagementApplication.cs`
 - `src/Host/Experience/Tables/TableManagementContracts.cs`
 - `src/Host/Experience/Tables/TableManagementStore.cs`
