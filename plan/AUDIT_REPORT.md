@@ -1640,6 +1640,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-GOV-022/verification.md` | ✅ | `CC5F6FA2B1A6C95698445291F300E1E4B180270320B2B9AC8B78F82677010383` | Tek-sahip görev |
 | `evidence/V1-GOV-023/acceptance_evidence.md` | ✅ | `A6C01E848A883CE7558E3691C5061337209D59D8D1A62A216DF60784E2928880` | Tek-sahip görev |
 | `evidence/V1-GOV-024/reopening_decision.md` | ✅ | `624B184F0DC84D3932A455A5A7162E69BF22F03DC3CBF50C435FC77B3E05FB55` | Tek-sahip görev |
+| `evidence/V1-GOV-025/verification.md` | ✅ | `650FECCB29E33C2FBAAEDE86EA0D66BE5F239752771DD16E781AA81F5094D052` | Tek-sahip görev |
 | `evidence/V1-IAM-001/closure-2026-08-05.md` | ✅ | `63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC` | Tek-sahip görev |
 | `evidence/V1-IAM-001/defect-7-closure.md` | ✅ | `301E2270BF794D2D5EFE378B75B3861E472AECACD94C6C9B08873C2041747F9D` | Tek-sahip görev |
 | `evidence/V1-IAM-002/closure-2026-08-08.md` | ✅ | `ED149FA25EC546FF1A1DE005768A88BBB62AE4BE118C004585E2575E5CD1B0D0` | Tek-sahip görev |
@@ -1893,7 +1894,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/governance/V1-GOV-022-kitchen-station-remediation-custody.md` | ✅ | `25FE8F986DE2F44398E2A7BC356594D9FBE88AA29800E2EBFBF4981EE95006B9` | Tek-sahip görev |
 | `plan/v1/governance/V1-GOV-023-kitchen-and-code-audit-custody.md` | ✅ | `FDF8D0DA6D2B9264847E98BFD68FD32019FB99BF88ACA52775742738A97FF098` | Tek-sahip görev |
 | `plan/v1/governance/V1-GOV-024-reopen-v1-gate-and-admit-final-remediation.md` | ✅ | `EA778C56E2FED4B8E45DD165BD86A29A6F43F4BEBD0512645192EACBEF6B68C7` | Tek-sahip görev |
-| `plan/v1/governance/V1-GOV-025-final-master-audit-reseal.md` | ✅ | `A744AFC24D94D22099512739C8649EB77C6F3AB9B6A21014883C12FA3B7686B9` | Tek-sahip görev |
+| `plan/v1/governance/V1-GOV-025-final-master-audit-reseal.md` | ✅ | `13BB615711FD8BE64671E4725A64B7DB396294D1957B07A7104C7EDAFB557B5D` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md` | ✅ | `FD5A1B4A473897FF4F98445924E781D4629BA8BD4302D823D2FEA5488481AF5A` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md` | ✅ | `29960A48FD68282E81699825B56A993BA04C78F56190FA18B1356E85AD43DC37` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-006-reconnect-operation-claiming.md` | ✅ | `630A1950558D73EF84B0D2FAA9D6A50C3E5E6CAD63A53668618BBC7AA0510BD0` | Tek-sahip görev |
@@ -1975,5 +1976,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `703` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `704` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 703,
-  "markdown_line_count": 45621,
-  "markdown_byte_count": 2761983,
+  "markdown_file_count": 704,
+  "markdown_line_count": 45677,
+  "markdown_byte_count": 2763593,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -1267,6 +1267,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-025/verification.md",
+      "sha256": "650FECCB29E33C2FBAAEDE86EA0D66BE5F239752771DD16E781AA81F5094D052",
+      "lines": 55,
+      "bytes": 1480,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
       "sha256": "63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC",
       "lines": 44,
@@ -1800,9 +1807,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3907C8906E4011B6751A53F59066DBEA55A307B16E1A62836DC31865B242BAE2",
-      "lines": 1979,
-      "bytes": 275947,
+      "sha256": "2DE07A585E60FDBFD0422DFEB4330DE6183EE10914696609546184A6683ECD37",
+      "lines": 1980,
+      "bytes": 276083,
       "utf8": true
     },
     {
@@ -3256,9 +3263,9 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-025-final-master-audit-reseal.md",
-      "sha256": "A744AFC24D94D22099512739C8649EB77C6F3AB9B6A21014883C12FA3B7686B9",
+      "sha256": "13BB615711FD8BE64671E4725A64B7DB396294D1957B07A7104C7EDAFB557B5D",
       "lines": 33,
-      "bytes": 921,
+      "bytes": 915,
       "utf8": true
     },
     {
