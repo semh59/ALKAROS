@@ -15,6 +15,7 @@ export interface BillingSplitClient {
   get: () => Promise<BillSplitDesign>;
   save: (request: SaveSplitRequest, design: BillSplitDesign) => Promise<BillSplitDesign>;
   clear: (design: BillSplitDesign) => Promise<BillSplitDesign>;
+  createFromOrder: (orderId: string) => Promise<BillSplitDesign>;
 }
 
 function versions(design: BillSplitDesign): AllocationVersionRequest[] {
@@ -54,5 +55,6 @@ export function createBillingSplitClient(terminalId: string, billId: string, fet
       return call("/amounts", "PUT", { ...common, targets: request.targets satisfies readonly AmountSplitTarget[] });
     },
     clear: (design) => call("/clear", "POST", { expectedBillRowVersion: design.billRowVersion, expectedAllocations: versions(design) }),
+    createFromOrder: (orderId: string) => call(`/from-order/${encodeURIComponent(orderId)}`, "POST"),
   };
 }

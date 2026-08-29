@@ -51,6 +51,19 @@ public static class BillingSplitApplication
             return Results.Ok(await store.GetAsync(billId, principal.CanMutate, cancellationToken));
         });
 
+        group.MapPost("/from-order/{orderId:guid}", async (
+            Guid terminalId,
+            Guid billId,
+            Guid orderId,
+            IBillingSplitSessionAuthorizer authorizer,
+            BillingSplitStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            return Results.Ok(await store.CreateBillFromOrderAsync(orderId, principal.CanMutate, cancellationToken));
+        });
+
         group.MapPut("/equal", async (
             Guid terminalId,
             Guid billId,

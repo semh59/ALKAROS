@@ -1,5 +1,6 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
+using ALKAROS.Orders.OrderAggregate;
 
 namespace ALKAROS.Host.Experience.Billing;
 
@@ -7,11 +8,51 @@ public sealed class BillingSplitStore
 {
     private readonly IBillRepository _bills;
     private readonly ISplitDesignRepository _splitDesigns;
+    private readonly IOrderRepository? _orders;
 
-    public BillingSplitStore(IBillRepository bills, ISplitDesignRepository splitDesigns)
+    public BillingSplitStore(IBillRepository bills, ISplitDesignRepository splitDesigns, IOrderRepository? orders = null)
     {
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
         _splitDesigns = splitDesigns ?? throw new ArgumentNullException(nameof(splitDesigns));
+        _orders = orders;
+    }
+
+    public async Task<BillSplitDesignDto> CreateBillFromOrderAsync(
+        Guid orderId,
+        bool canMutate,
+        CancellationToken cancellationToken = default)
+    {
+        if (_orders == null)
+            throw new InvalidOperationException("Order repository is not configured.");
+
+        var order = await _orders.GetByIdAsync(orderId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Order {orderId} was not found.");
+
+        var billId = Guid.NewGuid();
+        var billItems = order.Items.Select(item => new BillItem(
+            Guid.NewGuid(),
+            billId,
+            item.Id,
+            item.ProductId,
+            item.ProductNameSnapshot,
+            item.Quantity,
+            item.UnitPrice,
+            item.TaxRate,
+            item.DiscountAmount,
+            notes: item.Notes
+        )).ToList();
+
+        var bill = new Bill(
+            billId,
+            $"BILL-{order.OrderNumber}",
+            billItems,
+            tableId: order.TableId,
+            orderId: order.Id,
+            status: BillState.Open
+        );
+
+        await _bills.AddAsync(bill, cancellationToken);
+        return Map(bill, [], canMutate);
     }
 
     public async Task<BillSplitDesignDto> GetAsync(
