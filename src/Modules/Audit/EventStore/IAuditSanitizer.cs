@@ -64,6 +64,7 @@ public sealed class AuditSanitizer : IAuditSanitizer
             sanitized = regex.Replace(sanitized, "$1[REDACTED]");
         }
         return sanitized;
+    }
 
     public string? SerializeAndSanitize<T>(T? payload)
     {
