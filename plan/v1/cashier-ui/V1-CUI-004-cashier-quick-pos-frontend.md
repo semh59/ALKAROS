@@ -1,8 +1,8 @@
 # V1-CUI-004 - Cashier quick POS frontend implementation
 
 - Task ID: V1-CUI-004
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: implementation
 - Surface state: Planned
 

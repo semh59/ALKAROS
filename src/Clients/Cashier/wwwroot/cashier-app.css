@@ -1,0 +1,458 @@
+/* ALKAROS Cashier Quick POS Stylesheet (V1-CUI-004) */
+:root {
+  --bg-primary: #070a12;
+  --bg-surface: #0f172a;
+  --bg-surface-elevated: #1e293b;
+  --bg-surface-active: #334155;
+  --border-color: #27354f;
+  --border-focus: #38bdf8;
+  
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  
+  --accent-primary: #3b82f6;
+  --accent-primary-hover: #2563eb;
+  --accent-success: #10b981;
+  --accent-success-hover: #059669;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+  --accent-purple: #8b5cf6;
+  
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  
+  --touch-target: 44px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Header */
+.pos-header {
+  height: 52px;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.pos-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pos-logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pos-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.session-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.session-pill {
+  background: var(--bg-surface-elevated);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+/* Main Split View */
+.pos-main-split {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Left: Product Catalog & Quick Sale (60%) */
+.pos-catalog-panel {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  overflow: hidden;
+}
+
+.catalog-top-bar {
+  padding: 10px 16px;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  gap: 10px;
+}
+
+.search-input {
+  flex: 1;
+  height: 44px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  padding: 0 14px;
+  font-size: 0.95rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+/* Category Tabs */
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.category-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.category-tab-btn {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.category-tab-btn.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+/* Product Fast Grid */
+.product-matrix {
+  flex: 1;
+  padding: 14px 16px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  align-content: start;
+}
+
+.pos-product-card {
+  min-height: 90px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+
+.pos-product-card:active {
+  transform: scale(0.96);
+  border-color: #38bdf8;
+}
+
+.pos-product-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pos-product-price {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-top: 6px;
+}
+
+/* Right: Active Ticket & Payment (40%) */
+.pos-ticket-panel {
+  flex: 2;
+  min-width: 380px;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-surface);
+  overflow: hidden;
+}
+
+.ticket-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface-elevated);
+}
+
+.ticket-title {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.ticket-actions-row {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-ticket-action {
+  height: 32px;
+  padding: 0 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-ticket-action:active {
+  background: var(--bg-surface-active);
+  color: white;
+}
+
+/* Ticket Items Stream */
+.ticket-items-stream {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 16px;
+}
+
+.ticket-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.ticket-item-row.complimentary {
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+
+.ticket-item-desc {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.ticket-item-name {
+  font-weight: 700;
+}
+
+.ticket-item-qty {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.ticket-item-total {
+  font-weight: 800;
+  min-width: 70px;
+  text-align: right;
+}
+
+.ticket-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.btn-qty {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Totals & Fast Cash Section */
+.pos-checkout-box {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-surface-elevated);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.totals-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.grand-total-label {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.grand-total-amount {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #38bdf8;
+  font-family: var(--font-mono);
+}
+
+/* Quick Cash Banknote Chips */
+.quick-cash-row {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-cash-chip {
+  flex: 1;
+  height: 40px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-cash-chip:active {
+  background: var(--accent-primary);
+  color: white;
+}
+
+/* Big Checkout Button */
+.btn-pay-cash {
+  height: 52px;
+  background-color: var(--accent-success);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 1.15rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-pay-cash:active {
+  background-color: var(--accent-success-hover);
+  transform: scale(0.98);
+}
+
+/* Change Due Callout */
+.change-due-box {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.change-due-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #34d399;
+}
+
+.change-due-val {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #34d399;
+  font-family: var(--font-mono);
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 440px;
+  padding: 20px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+}

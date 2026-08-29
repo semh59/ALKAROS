@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <title>ALKAROS Kasa ve Hızlı Satış Terminali (Cashier POS)</title>
+  
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./cashier-app.css">
+</head>
+<body>
+
+  <!-- Top Header / Session Bar -->
+  <header class="pos-header" role="banner">
+    <div class="pos-brand">
+      <div class="pos-logo">
+        <span>⚡ ALKAROS</span>
+      </div>
+      <span class="pos-badge">Hızlı Kasa POS</span>
+    </div>
+    <div class="session-info-bar">
+      <div class="session-pill">
+        <span>👤</span>
+        <span id="cashierNameLabel">Kasiyer Zeynep</span>
+      </div>
+      <div class="session-pill">
+        <span>🏪</span>
+        <span id="registerLabel">KASA-01</span>
+      </div>
+      <div class="session-pill" style="color: #34d399;">
+        <span>🟢 Çevrimiçi</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Split Workspace -->
+  <div class="pos-main-split">
+
+    <!-- Left: Product Matrix (60%) -->
+    <section class="pos-catalog-panel" aria-label="Ürün Kataloğu ve Hızlı Satış">
+      
+      <!-- Top Search & Barcode -->
+      <div class="catalog-top-bar">
+        <input type="search" class="search-input" id="searchInput" placeholder="🔍 Barkod okutun veya ürün adı arayın..." autocomplete="off">
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <nav class="category-tabs" id="categoryTabs" aria-label="Ürün Kategorileri">
+        <!-- Injected by cashier-app.js -->
+      </nav>
+
+      <!-- Fast Grid -->
+      <div class="product-matrix" id="productMatrix" role="region" aria-label="Hızlı Ürünler">
+        <!-- Injected by cashier-app.js -->
+      </div>
+
+    </section>
+
+    <!-- Right: Active Ticket & Payment (40%) -->
+    <aside class="pos-ticket-panel" aria-label="Aktif Fiş ve Ödeme">
+      
+      <!-- Ticket Header -->
+      <div class="ticket-header">
+        <span class="ticket-title">Aktif Fiş</span>
+        <div class="ticket-actions-row">
+          <button type="button" class="btn-ticket-action" id="btnParkTicket" title="Fişi Beklemeye Al">⏸️ Beklet</button>
+          <button type="button" class="btn-ticket-action" id="btnRecallTicket" title="Bekleyen Fişler">📂 Fişler <span id="parkCountBadge"></span></button>
+          <button type="button" class="btn-ticket-action" id="btnClearTicket" style="color: var(--accent-danger);" title="Fişi Temizle">🗑️ İptal</button>
+        </div>
+      </div>
+
+      <!-- Ticket Items Stream -->
+      <div class="ticket-items-stream" id="ticketItemsStream" role="region" aria-label="Fiş Kalemleri">
+        <!-- Injected by cashier-app.js -->
+      </div>
+
+      <!-- Totals & Checkout Box -->
+      <div class="pos-checkout-box">
+        
+        <div class="totals-row">
+          <span class="grand-total-label">ÖDENECEK TUTAR</span>
+          <span class="grand-total-amount" id="grandTotalAmount">0,00 ₺</span>
+        </div>
+
+        <!-- Quick Cash Banknotes -->
+        <div class="quick-cash-row" aria-label="Hızlı Banknot Tuşları">
+          <button type="button" class="btn-cash-chip" data-cash-value="exact">TAM</button>
+          <button type="button" class="btn-cash-chip" data-cash-value="50">50 ₺</button>
+          <button type="button" class="btn-cash-chip" data-cash-value="100">100 ₺</button>
+          <button type="button" class="btn-cash-chip" data-cash-value="200">200 ₺</button>
+          <button type="button" class="btn-cash-chip" data-cash-value="500">500 ₺</button>
+        </div>
+
+        <!-- Fast Cash Pay Button -->
+        <button type="button" class="btn-pay-cash" id="btnPayCash">
+          <span>💵 NAKİT TAHSİLAT & FİŞ KES</span>
+        </button>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- Change Due Modal -->
+  <div class="modal-overlay" id="changeModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="changeTitle">
+    <div class="modal-card" style="text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 8px;">💵</div>
+      <h2 id="changeTitle" style="font-size: 1.25rem; font-weight: 800; margin-bottom: 16px;">Tahsilat Başarılı</h2>
+      
+      <div class="change-due-box" style="justify-content: center; flex-direction: column; gap: 4px; padding: 16px; margin-bottom: 20px;">
+        <span class="change-due-title">VERİLECEK PARA ÜSTÜ</span>
+        <span class="change-due-val" id="changeDueText" style="font-size: 2.25rem;">0,00 ₺</span>
+      </div>
+
+      <button type="button" class="btn-pay-cash" id="btnCloseChangeModal" style="width: 100%;">
+        <span>Yeni Satışa Geç (Enter)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Parked Tickets Modal -->
+  <div class="modal-overlay" id="parkedModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="parkedTitle">
+    <div class="modal-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <h2 id="parkedTitle" style="font-size: 1.15rem; font-weight: 800;">Bekleyen Fişler (Park)</h2>
+        <button type="button" class="btn-ticket-action" id="btnCloseParkedModal">✕</button>
+      </div>
+
+      <div id="parkedList" style="max-height: 280px; overflow-y: auto; margin-bottom: 16px;">
+        <!-- Injected by cashier-app.js -->
+      </div>
+    </div>
+  </div>
+
+  <script src="./cashier-app.js"></script>
+</body>
+</html>
