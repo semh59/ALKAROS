@@ -1,7 +1,7 @@
 # V1-GOV-005 - Correct audit custody and premature closure
 
 - Task ID: V1-GOV-005
-- Status: InProgress
+- Status: Done
 - Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: validation
 - Surface state: Existing
