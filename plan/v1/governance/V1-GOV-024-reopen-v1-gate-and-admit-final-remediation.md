@@ -1,7 +1,7 @@
 # V1-GOV-024 - Reopen V1 gate and admit final remediation
 
 - Task ID: V1-GOV-024
-- Status: InProgress
+- Status: Done
 - Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: decision
 - Surface state: Planned
