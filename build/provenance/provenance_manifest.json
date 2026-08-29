@@ -1,16 +1,26 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema",
   "version": 1,
-  "task": "V1-RMD-043",
-  "validatedAt": "2026-08-29T09:25:00+03:00",
+  "task": "V1-GOV-027",
+  "validatedAt": "2026-08-29T14:51:00+03:00",
   "provenance": {
     "planGraph": {
-      "markdownFiles": 457,
-      "taskFiles": 435,
+      "markdownFiles": 464,
+      "taskFiles": 442,
       "registeredGates": 18,
-      "dependencyEdges": 1429,
+      "dependencyEdges": 1436,
       "validationErrors": 0,
       "validationWarnings": 0
+    },
+    "auditManifest": {
+      "manifestMarkdownFiles": 717,
+      "markdownLines": 46169,
+      "markdownBytes": 2783450,
+      "auditBaselineRows": 211,
+      "auditFindingIds": 1827,
+      "auditAddedFileHashes": 505,
+      "manifestSha256": "201C7039BA1668437BA73CC8A782811CED3D59E73D70766FD0916CD5DDCB6E54",
+      "manifestErrors": 0
     },
     "testSuite": {
       "pythonTestSuites": [

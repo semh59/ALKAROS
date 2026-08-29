@@ -33,7 +33,7 @@
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
 | `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
-| `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. **2026-08-29 bağımsız doğrulama bulguları ve V1-GOV-026 ile yeniden açıldı.** |
+| `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. **2026-08-29 bağımsız doğrulama ve 6 kurtarma görevinin tamamlanmasıyla kesin olarak yeniden mühürlendi (V1-GOV-027).** |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
 | `GATE-V11-EXIT` | V1.1 görevleri ve stok/reçete invariant kanıtları tamamlanır. |
 | `GATE-V12-ENTRY` | `GATE-V11-EXIT` kapanır. |
@@ -214,7 +214,12 @@ olarak kapandı; `validate`, `validate-coverage` ve `verify-manifest` sıfır ha
 
 ## 2026-08-29 bağımsız doğrulama bulguları ve GATE-V1-EXIT yeniden açılışı (V1-GOV-026)
 
-Bağımsız doğrulamada tespit edilen PosTerminal TypeScript typecheck (`TS2322`) hataları, C# xUnit test `CA1707` analyzer uyarıları, in-memory `OrderManagementStore` eksiklikleri, Cashier/Waiter mock-fallback temizliği ve Order-to-Bill köprüsü nedeniyle `GATE-V1-EXIT` kapısı yeniden açılmıştır. V1 matrisi 167 göreve yükselmiş olup, 6 adımlık sıralı kurtarma zinciri (`V1-RMD-044..048`, `V1-GOV-027`) planlanmıştır. Nihai mühürleme `V1-GOV-027` ile yapılacaktır.
+Bağımsız doğrulamada tespit edilen PosTerminal TypeScript typecheck (`TS2322`) hataları, C# xUnit test `CA1707` analyzer uyarıları, in-memory `OrderManagementStore` eksiklikleri, Cashier/Waiter mock-fallback temizliği ve Order-to-Bill köprüsü nedeniyle `GATE-V1-EXIT` kapısı yeniden açılmıştır.
+
+## 2026-08-29 nihai kurtarma ve GATE-V1-EXIT kesin reseal mühürleme (V1-GOV-027)
+
+Tüm 6 kurtarma görevi (`V1-RMD-044..048`, `V1-GOV-027`) tamamlanmıştır: PosTerminal typecheck/derleme hataları çözülmüş, CA1707 analyzer kuralı sağlanmış, PostgreSQL authoritative sipariş ve adisyon köprüsü kurulmuş, istemci sahte mock ve fallback'leri fail-closed temizlenmiştir. V1 matrisi 163 `Done`, 4 onaylı `NotApplicable`, 0 `Planned`, 0 `InProgress` olarak `V1-GOV-027` ile kesin olarak mühürlenmiş ve `GATE-V1-EXIT` kapatılmıştır.
+
 
 
 
