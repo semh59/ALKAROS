@@ -1,7 +1,7 @@
 # V1-RMD-039 - Table floor plan integration and reservations
 
 - Task ID: V1-RMD-039
-- Status: InProgress
+- Status: Done
 - Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: implementation
 - Surface state: Planned
