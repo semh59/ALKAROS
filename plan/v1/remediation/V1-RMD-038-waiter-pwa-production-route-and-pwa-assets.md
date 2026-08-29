@@ -1,8 +1,8 @@
 # V1-RMD-038 - Waiter PWA production route and PWA assets
 
 - Task ID: V1-RMD-038
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: implementation
 - Surface state: Planned
 
@@ -18,7 +18,7 @@ Waiter PWA uygulamasını Docker/Host içinde `/waiter/` gibi açık bir product
 - `src/Clients/WaiterPwa/wwwroot/icon-192.png`
 - `src/Clients/WaiterPwa/wwwroot/icon-512.png`
 - `src/Host/Program.cs`
-- `Dockerfile`
+- `./Dockerfile`
 - `evidence/V1-RMD-038/**`
 
 ## Dependencies

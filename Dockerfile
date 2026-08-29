@@ -19,6 +19,8 @@ RUN apk update \
 WORKDIR /app
 COPY --from=host-build /out/host ./
 COPY --from=ui-build /src/dist ./wwwroot
+COPY src/Clients/WaiterPwa/wwwroot ./wwwroot/waiter
+COPY src/Clients/Cashier/wwwroot ./wwwroot/cashier
 COPY database ./database
 COPY build/project-manifest.json ./build/project-manifest.json
 ENV ASPNETCORE_ENVIRONMENT=Production
