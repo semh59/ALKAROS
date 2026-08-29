@@ -1,8 +1,8 @@
 # V1-RMD-036 - Solution manifest synchronization and repo hygiene
 
 - Task ID: V1-RMD-036
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: implementation
 - Surface state: Planned
 
