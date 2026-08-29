@@ -13,7 +13,7 @@ import { ApiError, api } from "./api";
 import type { CatalogProduct, DisplaySnapshot, PairingCreated } from "./contracts";
 import { ProductionShell } from "./shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "./shell/models";
-import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type TableActionRequest, type TableWorkspaceState } from "./features/tables";
+import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "./features/tables";
 import { BillSplitWorkspace, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "./features/billing";
 import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "./features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "./features/kitchen-operations";
@@ -629,11 +629,18 @@ function ExperiencePage({
     : backendStatus === "offline"
       ? { status: "offline", onRetry: () => window.location.reload() }
       : { status: "reconnecting" };
-  const freshness: Freshness = {
-    status: "fresh",
-    dateTime: new Date().toISOString(),
-    label: "Son doğrulama",
-  };
+  const freshness: Freshness = backendStatus === "online"
+    ? {
+        status: "fresh",
+        dateTime: new Date().toISOString(),
+        label: "Çevrimiçi doğrulandı",
+      }
+    : {
+        status: "stale",
+        dateTime: new Date().toISOString(),
+        label: "Bağlantı bekleniyor",
+        onRefresh: () => window.location.reload(),
+      };
   const navigation: readonly ShellNavigationItem[] = [
     { id: "sales", label: "Kasa", href: "/", symbol: "₺", requiredCapability: "pos.cashier.mutate" },
     { id: "tables", label: "Masalar", href: "/tables", symbol: "▦", requiredCapability: "pos.cashier.mutate" },
@@ -668,6 +675,9 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
   const [state, setState] = useState<TableWorkspaceState>("loading");
   const [zones, setZones] = useState<Awaited<ReturnType<typeof client.listZones>>>([]);
   const [tables, setTables] = useState<Awaited<ReturnType<typeof client.listTables>>>([]);
+  const [floorPlan, setFloorPlan] = useState<FloorPlan | undefined>();
+  const [floorPlanBusy, setFloorPlanBusy] = useState(false);
+  const [floorPlanError, setFloorPlanError] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string>();
   const [lastUpdated, setLastUpdated] = useState<string>();
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
@@ -682,6 +692,14 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
       setZones(nextZones);
       setTables(nextTables);
       setSelectedTableId((current) => current && nextTables.some((table) => table.tableId === current) ? current : nextTables[0]?.tableId ?? null);
+      if (nextZones.length > 0) {
+        try {
+          const plan = await client.getFloorPlan(nextZones[0].zoneId);
+          setFloorPlan(plan);
+        } catch {
+          setFloorPlan(undefined);
+        }
+      }
       setLastUpdated(new Date().toISOString());
       setState(nextTables.length ? "ready" : "empty");
     } catch (reason) {
@@ -692,6 +710,21 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
   }, [client]);
   useEffect(() => { void load(); }, [load]);
   const mutate = async (action: () => Promise<unknown>) => { await action(); await load(); };
+  const handleSaveFloorPlan = async (zoneId: string, input: SaveFloorPlanInput): Promise<SaveFloorPlanResult> => {
+    setFloorPlanBusy(true);
+    setFloorPlanError(undefined);
+    try {
+      const result = await client.saveFloorPlan(zoneId, input);
+      setFloorPlan(result.floorPlan);
+      return result;
+    } catch (reason) {
+      const msg = reason instanceof Error ? reason.message : "Kat planı kaydedilemedi.";
+      setFloorPlanError(msg);
+      throw reason;
+    } finally {
+      setFloorPlanBusy(false);
+    }
+  };
   const selectedTable = tables.find((table) => table.tableId === selectedTableId) ?? null;
   const canStartTableOrder = selectedTable?.active === true
     && (selectedTable.status === "Available" || (selectedTable.status === "Occupied" && selectedTable.currentOrderId !== null));
@@ -721,6 +754,10 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
       onCreateZone={canManage ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
       onCreateTable={canManage ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
       onAction={canManage ? (request: TableActionRequest) => mutate(() => client.execute(request)) : undefined}
+      floorPlan={floorPlan}
+      floorPlanBusy={floorPlanBusy}
+      floorPlanError={floorPlanError}
+      onSaveFloorPlan={canManage ? handleSaveFloorPlan : undefined}
       errorMessage={errorMessage}
       lastUpdated={lastUpdated}
     />
@@ -775,23 +812,23 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
     { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000004", label: "4. Kişi" },
   ], []);
 
-  const handleSave = async (request: SaveSplitRequest) => {
-    if (!design) return;
-    const updated = await client.save(request, design);
+  const handleSave = async (request: SaveSplitRequest, currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
+    const updated = await client.save(request, currentDesign);
     setDesign(updated);
+    return updated;
   };
 
-  const handleClear = async () => {
-    if (!design) return;
-    const cleared = await client.clear(design);
+  const handleClear = async (currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
+    const cleared = await client.clear(currentDesign);
     setDesign(cleared);
+    return cleared;
   };
 
   return (
     <div className="billing-route">
       <BillSplitWorkspace
         state={state}
-        design={design ?? undefined}
+        design={design}
         owners={owners}
         canMutate={canManage}
         onRefresh={load}
