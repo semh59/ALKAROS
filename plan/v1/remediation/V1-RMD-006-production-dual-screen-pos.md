@@ -1,8 +1,8 @@
 # V1-RMD-006 - Implement production dual-screen POS vertical slice
 
 - Task ID: V1-RMD-006
-- Status: Blocked
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: integration
 - Surface state: Existing
 
@@ -51,15 +51,6 @@ yetki ve stale durumları fail-closed çalışır.
 - V1-SEC-002
 - V1-OBS-001
 - V1-GOV-004
-
-## Blocker
-
-- Tek assignee ile topluca kapatılan V1-GOV-003/V1-RMD-007..011/V1-GOV-004 kanıtları V1-GOV-005 tarafından
-  reddedilmiştir. Owned production yüzeyindeki mevcut kirli değişiklikler bağımsız acceptance kanıtına sahip değildir.
-- Bu görev ancak V1-GOV-004 taze ajanla `Done` olduktan sonra yeniden açılabilir; devredilen Host, Store, PosTerminal ve
-  ilgili test dosyaları V1-RMD-008..010 dışında değiştirilemez.
-- V1-GOV-007 custody düzeltmesiyle migration order manifesti ve manifest testi V1-RMD-009'un exact remediation
-  sahipliğine devredilmiştir; bu devir görevin mevcut `Blocked` durumunu veya diğer blocker gerekçelerini değiştirmez.
 
 ## Acceptance evidence
 
