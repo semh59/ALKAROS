@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "version": 1,
+  "task": "V1-RMD-043",
+  "validatedAt": "2026-08-29T09:25:00+03:00",
+  "provenance": {
+    "planGraph": {
+      "markdownFiles": 457,
+      "taskFiles": 435,
+      "registeredGates": 18,
+      "dependencyEdges": 1429,
+      "validationErrors": 0,
+      "validationWarnings": 0
+    },
+    "testSuite": {
+      "pythonTestSuites": [
+        "tests/Clients/Cashier/Frontend/test_cashier_frontend.py",
+        "tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py",
+        "tests/Deployment/test_container_contract.py",
+        "tests/Architecture/BuildProvenance/test_build_provenance.py",
+        "tests/Architecture/EvidenceEnvelope/test_evidence_envelope.py",
+        "tests/Architecture/PlanAudit/test_plan_audit.py",
+        "tests/Architecture/ProjectManifest/test_project_manifest.py",
+        "tests/Architecture/TaskScope/test_task_scope.py",
+        "tests/Architecture/TaskScope/test_task_scope_continuation.py",
+        "tests/Architecture/TaskScope/test_task_scope_diff.py",
+        "tests/Architecture/TaskScope/test_task_scope_markdown_boundary.py",
+        "tests/Architecture/TaskScope/test_task_scope_root_path.py"
+      ],
+      "totalPassed": 220,
+      "frontendContractVerified": true,
+      "containerContractVerified": true
+    },
+    "status": "VALIDATED"
+  }
+}
