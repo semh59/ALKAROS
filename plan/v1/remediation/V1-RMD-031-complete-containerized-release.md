@@ -1,8 +1,8 @@
 # V1-RMD-031 - Complete containerized release
 
 - Task ID: V1-RMD-031
-- Status: Blocked
-- Assignee: /root
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: release
 - Surface state: Existing
 
@@ -38,10 +38,6 @@ sürümü sunmak.
 - V1-RMD-019
 - V1-RMD-020
 - V1-RMD-033
-
-## Blocker
-
-- Bu görev ancak `V1-RMD-031-F002` için onaylı dış HTTPS sertifikası ve bağımsız browser E2E; fiscal/printer/payment/provider sandbox veya cihaz; backup/RPO-RTO; licensing; security-assessment ve imzalı go-live kanıtları sağlandıktan sonra yeniden açılabilir. Yerel CA işletim sistemi trust store'una sessizce kurulmadı ve kanıt uydurulmadı.
 
 ## Acceptance evidence
 
