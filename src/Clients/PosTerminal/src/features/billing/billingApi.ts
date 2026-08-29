@@ -55,6 +55,32 @@ export function createBillingSplitClient(terminalId: string, billId: string, fet
       return call("/amounts", "PUT", { ...common, targets: request.targets satisfies readonly AmountSplitTarget[] });
     },
     clear: (design) => call("/clear", "POST", { expectedBillRowVersion: design.billRowVersion, expectedAllocations: versions(design) }),
-    createFromOrder: (orderId: string) => call(`/from-order/${encodeURIComponent(orderId)}`, "POST"),
+    createFromOrder: (orderId: string) => createBillFromOrder(terminalId, orderId, fetcher),
   };
+}
+
+export async function createBillFromOrder(
+  terminalId: string,
+  orderId: string,
+  fetcher: typeof fetch = fetch
+): Promise<BillSplitDesign> {
+  if (!terminalId.trim() || !orderId.trim()) throw new Error("terminalId and orderId are required");
+  const url = `/api/v1/terminals/${encodeURIComponent(terminalId)}/billing/bills/from-order/${encodeURIComponent(orderId)}`;
+
+  let response: Response;
+  try {
+    response = await fetcher(url, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
+      signal: AbortSignal.timeout(8_000),
+    });
+  } catch {
+    throw new BillingSplitApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Adisyon oluşturulamadı.");
+  }
+  if (!response.ok) {
+    const payload = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
+    throw new BillingSplitApiError(response.status, payload?.error?.code ?? "REQUEST_FAILED", payload?.error?.message ?? "Adisyon oluşturulamadı.");
+  }
+  return response.json() as Promise<BillSplitDesign>;
 }

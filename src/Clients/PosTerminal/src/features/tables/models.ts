@@ -162,6 +162,8 @@ export interface TableWorkspaceProps {
   canManage: boolean;
   selectedTableId?: string | null;
   onSelectTable: (tableId: string) => void;
+  selectedZoneId?: string;
+  onSelectZone?: (zoneId: string) => void;
   onRefresh: () => void | Promise<void>;
   onCreateZone?: (input: CreateZoneInput) => void | Promise<void>;
   onCreateTable?: (input: CreateTableInput) => void | Promise<void>;

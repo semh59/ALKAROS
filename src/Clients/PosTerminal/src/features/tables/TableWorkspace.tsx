@@ -45,6 +45,8 @@ export function TableWorkspace({
   canManage,
   selectedTableId,
   onSelectTable,
+  selectedZoneId,
+  onSelectZone,
   onRefresh,
   onCreateZone,
   onCreateTable,
@@ -57,7 +59,12 @@ export function TableWorkspace({
   lastUpdated,
 }: TableWorkspaceProps) {
   const [view, setView] = useState<TableView>("map");
-  const [zoneFilter, setZoneFilter] = useState("all");
+  const [internalZoneFilter, setInternalZoneFilter] = useState("all");
+  const zoneFilter = selectedZoneId !== undefined ? selectedZoneId : internalZoneFilter;
+  const setZoneFilter = (z: string) => {
+    setInternalZoneFilter(z);
+    onSelectZone?.(z);
+  };
   const [statusFilter, setStatusFilter] = useState<(typeof statusOptions)[number]>("all");
   const [search, setSearch] = useState("");
   const [zoneDialogOpen, setZoneDialogOpen] = useState(false);

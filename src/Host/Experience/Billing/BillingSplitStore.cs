@@ -25,31 +25,23 @@ public sealed class BillingSplitStore
         if (_orders == null)
             throw new InvalidOperationException("Order repository is not configured.");
 
+        var existingBills = await _bills.GetByOrderIdAsync(orderId, cancellationToken);
+        var activeBill = existingBills.FirstOrDefault(b => b.Status != BillState.Cancelled);
+        if (activeBill != null)
+        {
+            var existingAllocations = await _splitDesigns.GetAllocationsByBillIdAsync(activeBill.Id, cancellationToken);
+            return Map(activeBill, existingAllocations, canMutate);
+        }
+
         var order = await _orders.GetByIdAsync(orderId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Order {orderId} was not found.");
 
-        var billId = Guid.NewGuid();
-        var billItems = order.Items.Select(item => new BillItem(
-            Guid.NewGuid(),
-            billId,
-            item.Id,
-            item.ProductId,
-            item.ProductNameSnapshot,
-            item.Quantity,
-            item.UnitPrice,
-            item.TaxRate,
-            item.DiscountAmount,
-            notes: item.Notes
-        )).ToList();
+        if (order.Status is OrderState.Cancelled or OrderState.Rejected)
+            throw new InvalidOperationException($"Cannot create a bill from an order in '{order.Status}' state.");
 
-        var bill = new Bill(
-            billId,
-            $"BILL-{order.OrderNumber}",
-            billItems,
-            tableId: order.TableId,
-            orderId: order.Id,
-            status: BillState.Open
-        );
+        var billId = Guid.NewGuid();
+        var billNumber = $"BILL-{order.OrderNumber}";
+        var bill = Bill.FromOrder(billId, billNumber, order);
 
         await _bills.AddAsync(bill, cancellationToken);
         return Map(bill, [], canMutate);

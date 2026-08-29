@@ -624,6 +624,14 @@ function ExperiencePage({
     status: "forbidden",
     onReturn: () => { window.location.href = "/"; },
   };
+  const [lastOnlineSync, setLastOnlineSync] = useState<string | null>(() => backendStatus === "online" ? new Date().toISOString() : null);
+
+  useEffect(() => {
+    if (backendStatus === "online") {
+      setLastOnlineSync(new Date().toISOString());
+    }
+  }, [backendStatus]);
+
   const connectivity: Connectivity = backendStatus === "online"
     ? { status: "online" }
     : backendStatus === "offline"
@@ -632,13 +640,13 @@ function ExperiencePage({
   const freshness: Freshness = backendStatus === "online"
     ? {
         status: "fresh",
-        dateTime: new Date().toISOString(),
+        dateTime: lastOnlineSync ?? new Date().toISOString(),
         label: "Çevrimiçi doğrulandı",
       }
     : {
         status: "stale",
-        dateTime: new Date().toISOString(),
-        label: "Bağlantı bekleniyor",
+        dateTime: lastOnlineSync ?? "—",
+        label: lastOnlineSync ? "Bağlantı kesildi" : "Bağlantı bekleniyor",
         onRefresh: () => window.location.reload(),
       };
   const navigation: readonly ShellNavigationItem[] = [
@@ -675,6 +683,7 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
   const [state, setState] = useState<TableWorkspaceState>("loading");
   const [zones, setZones] = useState<Awaited<ReturnType<typeof client.listZones>>>([]);
   const [tables, setTables] = useState<Awaited<ReturnType<typeof client.listTables>>>([]);
+  const [selectedZoneId, setSelectedZoneId] = useState<string>("all");
   const [floorPlan, setFloorPlan] = useState<FloorPlan | undefined>();
   const [floorPlanBusy, setFloorPlanBusy] = useState(false);
   const [floorPlanError, setFloorPlanError] = useState<string>();
@@ -684,6 +693,20 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderError, setOrderError] = useState<string>();
 
+  const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones = zones) => {
+    const targetZoneId = (zoneId === "all" && currentZones.length > 0) ? currentZones[0].zoneId : zoneId;
+    if (targetZoneId && targetZoneId !== "all") {
+      try {
+        const plan = await client.getFloorPlan(targetZoneId);
+        setFloorPlan(plan);
+      } catch {
+        setFloorPlan(undefined);
+      }
+    } else {
+      setFloorPlan(undefined);
+    }
+  }, [client, zones]);
+
   const load = useCallback(async () => {
     setState("loading");
     setErrorMessage(undefined);
@@ -692,14 +715,7 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
       setZones(nextZones);
       setTables(nextTables);
       setSelectedTableId((current) => current && nextTables.some((table) => table.tableId === current) ? current : nextTables[0]?.tableId ?? null);
-      if (nextZones.length > 0) {
-        try {
-          const plan = await client.getFloorPlan(nextZones[0].zoneId);
-          setFloorPlan(plan);
-        } catch {
-          setFloorPlan(undefined);
-        }
-      }
+      await loadFloorPlanForZone(selectedZoneId, nextZones);
       setLastUpdated(new Date().toISOString());
       setState(nextTables.length ? "ready" : "empty");
     } catch (reason) {
@@ -707,8 +723,15 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
       setErrorMessage(reason instanceof Error ? reason.message : "Masa verisi alınamadı.");
     }
-  }, [client]);
+  }, [client, selectedZoneId, loadFloorPlanForZone]);
+
   useEffect(() => { void load(); }, [load]);
+
+  const handleSelectZone = (zoneId: string) => {
+    setSelectedZoneId(zoneId);
+    void loadFloorPlanForZone(zoneId, zones);
+  };
+
   const mutate = async (action: () => Promise<unknown>) => { await action(); await load(); };
   const handleSaveFloorPlan = async (zoneId: string, input: SaveFloorPlanInput): Promise<SaveFloorPlanResult> => {
     setFloorPlanBusy(true);
@@ -750,6 +773,8 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
       canManage={canManage}
       selectedTableId={selectedTableId}
       onSelectTable={(tableId) => { setSelectedTableId(tableId); setOrderError(undefined); }}
+      selectedZoneId={selectedZoneId}
+      onSelectZone={handleSelectZone}
       onRefresh={load}
       onCreateZone={canManage ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
       onCreateTable={canManage ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
@@ -781,7 +806,9 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
 }
 
 function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
-  const [billId] = useState<string>(() => localStorage.getItem("alkaros.current-bill-id") || "00000000-0000-0000-0000-000000000001");
+  const searchParams = useMemo(() => new URLSearchParams(window.location.search), []);
+  const initialBillId = searchParams.get("billId") || localStorage.getItem("alkaros.current-bill-id") || "00000000-0000-0000-0000-000000000001";
+  const [billId] = useState<string>(initialBillId);
   const client = useMemo(() => createBillingSplitClient(terminalId, billId), [terminalId, billId]);
   const [state, setState] = useState<BillSplitWorkspaceState>("loading");
   const [design, setDesign] = useState<BillSplitDesign | null>(null);
@@ -792,7 +819,13 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
     setState("loading");
     setErrorMessage(undefined);
     try {
-      const nextDesign = await client.get();
+      const orderParam = searchParams.get("orderId");
+      let nextDesign: BillSplitDesign;
+      if (orderParam) {
+        nextDesign = await client.createFromOrder(orderParam);
+      } else {
+        nextDesign = await client.get();
+      }
       setDesign(nextDesign);
       setLastUpdated(new Date().toISOString());
       setState("ready");
@@ -801,16 +834,29 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
       setErrorMessage(reason instanceof Error ? reason.message : "Hesap bölme verisi alınamadı.");
     }
-  }, [client]);
+  }, [client, searchParams]);
 
   useEffect(() => { void load(); }, [load]);
 
-  const owners: readonly SplitOwnerOption[] = useMemo(() => [
-    { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000001", label: "1. Kişi" },
-    { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000002", label: "2. Kişi" },
-    { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000003", label: "3. Kişi" },
-    { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000004", label: "4. Kişi" },
-  ], []);
+  const owners: readonly SplitOwnerOption[] = useMemo(() => {
+    const existingOwners = (design?.allocations || [])
+      .filter(a => a.ownerId && a.ownerKind === "Person")
+      .map((a, index) => ({
+        kind: "Person" as const,
+        ownerId: a.ownerId!,
+        label: `${index + 1}. Kişi`
+      }));
+
+    const count = Math.max(existingOwners.length, 4);
+    const result: SplitOwnerOption[] = [];
+    for (let i = 1; i <= count; i++) {
+      const hex = i.toString(16).padStart(12, '0');
+      const id = `00000000-0000-0000-0000-${hex}`;
+      const existing = existingOwners.find(o => o.ownerId === id);
+      result.push(existing || { kind: "Person", ownerId: id, label: `${i}. Kişi` });
+    }
+    return result;
+  }, [design]);
 
   const handleSave = async (request: SaveSplitRequest, currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
     const updated = await client.save(request, currentDesign);

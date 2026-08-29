@@ -16,6 +16,7 @@ public static class BillingSplitApplication
 {
     public const string MutationPermission = DualScreenApplication.CashierMutationPermission;
     public const string RoutePrefix = "/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design";
+    public const string BillsRoutePrefix = "/api/v1/terminals/{terminalId:guid}/billing/bills";
 
     public static IServiceCollection AddBillingSplitExperience(this IServiceCollection services)
     {
@@ -35,6 +36,23 @@ public static class BillingSplitApplication
     public static RouteGroupBuilder MapBillingSplitApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+
+        var billsGroup = endpoints.MapGroup(BillsRoutePrefix)
+            .WithTags("Billing")
+            .AddEndpointFilter<BillingSplitExceptionFilter>();
+
+        billsGroup.MapPost("/from-order/{orderId:guid}", async (
+            Guid terminalId,
+            Guid orderId,
+            IBillingSplitSessionAuthorizer authorizer,
+            BillingSplitStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            return Results.Ok(await store.CreateBillFromOrderAsync(orderId, principal.CanMutate, cancellationToken));
+        });
+
         var group = endpoints.MapGroup(RoutePrefix)
             .WithTags("BillingSplitDesign")
             .AddEndpointFilter<BillingSplitExceptionFilter>();
@@ -49,19 +67,6 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             return Results.Ok(await store.GetAsync(billId, principal.CanMutate, cancellationToken));
-        });
-
-        group.MapPost("/from-order/{orderId:guid}", async (
-            Guid terminalId,
-            Guid billId,
-            Guid orderId,
-            IBillingSplitSessionAuthorizer authorizer,
-            BillingSplitStore store,
-            HttpContext context,
-            CancellationToken cancellationToken) =>
-        {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
-            return Results.Ok(await store.CreateBillFromOrderAsync(orderId, principal.CanMutate, cancellationToken));
         });
 
         group.MapPut("/equal", async (
