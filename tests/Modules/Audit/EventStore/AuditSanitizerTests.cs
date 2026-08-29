@@ -10,7 +10,7 @@ public sealed class AuditSanitizerTests
     private readonly AuditSanitizer _sanitizer = new();
 
     [Fact]
-    public void SanitizeJson_ValidJsonWithSensitiveKeys_RedactsSensitiveValues()
+    public void SanitizeJsonValidJsonWithSensitiveKeysRedactsSensitiveValues()
     {
         var input = """
         {
@@ -37,7 +37,7 @@ public sealed class AuditSanitizerTests
     }
 
     [Fact]
-    public void SanitizeJson_MalformedJson_UsesFallbackSanitizationAndReturnsValidJson()
+    public void SanitizeJsonMalformedJsonUsesFallbackSanitizationAndReturnsValidJson()
     {
         var malformed = """
         NOT_VALID_JSON password: secret123, token=my_secret_token, user=john
@@ -58,7 +58,7 @@ public sealed class AuditSanitizerTests
     }
 
     [Fact]
-    public void SerializeAndSanitize_ComplexObject_ProducesSanitizedJson()
+    public void SerializeAndSanitizeComplexObjectProducesSanitizedJson()
     {
         var payload = new
         {
@@ -78,7 +78,7 @@ public sealed class AuditSanitizerTests
     }
 
     [Fact]
-    public void SanitizeJson_NullOrWhitespace_ReturnsNullOrEmpty()
+    public void SanitizeJsonNullOrWhitespaceReturnsNullOrEmpty()
     {
         Assert.Null(_sanitizer.SanitizeJson(null));
         Assert.Null(_sanitizer.SerializeAndSanitize<string>(null));
