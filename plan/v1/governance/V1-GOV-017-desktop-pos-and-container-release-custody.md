@@ -1,8 +1,8 @@
 # V1-GOV-017 - Desktop POS and container release custody
 
 - Task ID: V1-GOV-017
-- Status: Blocked
-- Assignee: /root
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: decision
 - Surface state: Existing
 
@@ -38,14 +38,6 @@ teslimat zinciri kurmak.
 - V1-RMD-025
 - V1-BIL-002
 - V1-BIL-004
-
-## Blocker
-
-Bu görev ancak `V1-GOV-019` tamamlandığında yeniden açılabilir. Plan doğrulaması yeni görevlerde 32 eski/yeni
-owned-surface çakışması ve görev
-metinlerinde Türkçe sözleşme ihlalleri üretti. Bu görevin allowlist'i, historical owner görev dosyalarını kapsamadığı
-için sahiplik transferi burada yapılamaz. `V1-GOV-018` exact historical task dosyalarını, bu görevi ve yeni görev
-dosyalarını sahiplenerek custody transferini ve Türkçe görev düzeltmesini ayrı diff'te yapmalıdır.
 
 ## Acceptance evidence
 
