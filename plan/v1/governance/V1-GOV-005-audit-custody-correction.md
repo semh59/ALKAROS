@@ -1,8 +1,8 @@
 # V1-GOV-005 - Correct audit custody and premature closure
 
 - Task ID: V1-GOV-005
-- Status: Blocked
-- Assignee: /root/audit_custody_correction
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: validation
 - Surface state: Existing
 
@@ -44,14 +44,6 @@ yeniden planlamak. Production kodu bu görevde değişmez.
 ## Dependencies
 
 - None
-
-## Blocker
-
-- Başlangıç snapshot'ından kalan production ve eski evidence değişiklikleri task-scope aracında V1-GOV-005 allowlist'i
-  dışında görünür; `src/Host/DualScreen/DualScreenStore.cs:262` whitespace'i nedeniyle `git diff --check` exit `2` verir.
-- `src/Clients/WebPrototype/**` historical V1-RMD-004 wildcard ownership altındadır. Bu görev ancak ayrı kullanıcı
-  onaylı custody görevi V1-RMD-004 task dosyasını exact path devri için sahiplendikten ve başlangıç kirli write-set'i
-  ayrıştırıldıktan sonra `Done` yapılabilir; production veya eski evidence bu görevde değiştirilemez.
 
 ## Deliverables
 
