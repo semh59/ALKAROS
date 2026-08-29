@@ -1,8 +1,8 @@
 # V1-GOV-025 - Final master audit reseal
 
 - Task ID: V1-GOV-025
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: validation
 - Surface state: Planned
 

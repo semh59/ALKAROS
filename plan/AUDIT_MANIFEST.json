@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 674,
-  "markdown_line_count": 44736,
-  "markdown_byte_count": 2728542,
+  "markdown_file_count": 703,
+  "markdown_line_count": 45621,
+  "markdown_byte_count": 2761983,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -924,6 +924,20 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-CUI-004/verification.md",
+      "sha256": "E1B2C6D9DD2403C8BDDAD018547E0C5D20ACA15F40FEE01E087E7AC3683A33CC",
+      "lines": 45,
+      "bytes": 1228,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-CUI-005/verification.md",
+      "sha256": "CEA7E111FD71D1C46EB3D900E950699808505EC31DEFBC95779E903CE55B0DCB",
+      "lines": 19,
+      "bytes": 780,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-FND-001/candidate-remediation-2026-08-03.md",
       "sha256": "0E2C3211B539FACC94A98B2AD7CAD5D922D9E1A15E6068641DAA5F77C87AD77E",
       "lines": 46,
@@ -1243,6 +1257,13 @@
       "sha256": "A6C01E848A883CE7558E3691C5061337209D59D8D1A62A216DF60784E2928880",
       "lines": 16,
       "bytes": 1071,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-024/reopening_decision.md",
+      "sha256": "624B184F0DC84D3932A455A5A7162E69BF22F03DC3CBF50C435FC77B3E05FB55",
+      "lines": 28,
+      "bytes": 1378,
       "utf8": true
     },
     {
@@ -1666,6 +1687,62 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-036/verification.md",
+      "sha256": "A5E7A2DA169F574AC38E022518542FF7B0E577808FDB603CDCDADC7C6A040892",
+      "lines": 59,
+      "bytes": 1100,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-037/verification.md",
+      "sha256": "B9FA84513339F75F315E2D44DE670C82C885D0FFE54A2814805BB6BA1B1C9CCF",
+      "lines": 17,
+      "bytes": 805,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-038/verification.md",
+      "sha256": "67A3B5199E225EADC9789AF992B9E4352ACDF29840BF78918EF3D22326048C6B",
+      "lines": 11,
+      "bytes": 520,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-039/verification.md",
+      "sha256": "E39F414636E2D6561D3A7CE965ABBB8CAB7C4BD289BFB33D61B196224BA4E500",
+      "lines": 12,
+      "bytes": 636,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-040/verification.md",
+      "sha256": "2DD8966640ADE93C1C9E8B90B4AD66F7B97FCB683635B5239A1330E62CDC07E9",
+      "lines": 11,
+      "bytes": 579,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-041/verification.md",
+      "sha256": "0F1646842F77FB71BCEF031277EA05E7B78C15618311798A63C43AEDE07FAFC4",
+      "lines": 11,
+      "bytes": 527,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-042/verification.md",
+      "sha256": "7A844E60BF6178746E1251D80A1FDF7D23A41CD9315F8325DF2749B99028756B",
+      "lines": 11,
+      "bytes": 514,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-043/verification.md",
+      "sha256": "37CF633E68F574EFB58A7339A5DB0E81166AA87E0DA01E550C77A8F673404884",
+      "lines": 28,
+      "bytes": 1217,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -1694,6 +1771,27 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-WTR-006/verification.md",
+      "sha256": "BA1747E5ED46D2797F82D129EE056D8F37359E53E3CDE798FE9898F3C682B581",
+      "lines": 45,
+      "bytes": 1204,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-WTR-007/verification.md",
+      "sha256": "8F1EE466C97F4D71A031A7008A9385577BC7BC8870C640387F5D6661C0FD94E9",
+      "lines": 13,
+      "bytes": 844,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-WTR-008/verification.md",
+      "sha256": "24409A29E031DB761F8E99E88410A3010B625D842D3C1E44CE5353CC37A9F6B3",
+      "lines": 23,
+      "bytes": 982,
+      "utf8": true
+    },
+    {
       "path": "plan/ASSUMPTION_POLICY.md",
       "sha256": "0C8AE929DBD8178F655E2E69DC48EB963255FA42B1222F8801594BFC940BE82C",
       "lines": 49,
@@ -1702,9 +1800,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "587F46CE37C7FA00F9548EAA0B60A7400C5F04095B92FFA9088DACD2ED385321",
-      "lines": 1950,
-      "bytes": 271476,
+      "sha256": "3907C8906E4011B6751A53F59066DBEA55A307B16E1A62836DC31865B242BAE2",
+      "lines": 1979,
+      "bytes": 275947,
       "utf8": true
     },
     {
@@ -1723,9 +1821,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "41AE42AD194376DCC3CC8696C2B39C39E1DCC0BF95B9A286CC8D1AA38C0786B2",
-      "lines": 207,
-      "bytes": 15018,
+      "sha256": "B34A716E28D77E19D0101C955D8B49EA00269F270B97ED382D7B3BE84476B933",
+      "lines": 215,
+      "bytes": 15943,
       "utf8": true
     },
     {
@@ -2765,6 +2863,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/cashier-ui/V1-CUI-004-cashier-quick-pos-frontend.md",
+      "sha256": "F1954A69FDBF39FD303FD3B25FED841D65C5B0B1E7D953292CC275154E436700",
+      "lines": 48,
+      "bytes": 2036,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/cashier-ui/V1-CUI-005-remove-fake-cashier-payment-and-align-v1.md",
+      "sha256": "79591C4CAC25AEFCA05583495A1D62E9356804CD04DC616AEEFC15555C4C5433",
+      "lines": 31,
+      "bytes": 891,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/catalog/V1-CAT-001-product-catalog.md",
       "sha256": "3E156837C5A89C3FEF8D61FAF19310CA4C05509CCFD5A90DEAC410B8088B06AB",
       "lines": 72,
@@ -3004,9 +3116,9 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-005-audit-custody-correction.md",
-      "sha256": "F759F16858EAA6FF1C7406FA51201D5971CDBEC1DB0FFA4FA01AE6A87F7FF60B",
-      "lines": 75,
-      "bytes": 4168,
+      "sha256": "9B5FF510B990242163E0246785CF31C71DAD3B8E6495EC7FA123288FABBECA4E",
+      "lines": 67,
+      "bytes": 3546,
       "utf8": true
     },
     {
@@ -3088,16 +3200,16 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-017-desktop-pos-and-container-release-custody.md",
-      "sha256": "826FB259B1AE14C0F5366EB1CA05F205A363C55454C1815314AD176B1A845B73",
-      "lines": 66,
-      "bytes": 2985,
+      "sha256": "89E440F08BF3BDD79AE269FA0674DB62ACA3AFF165499DD4CE687B6085885244",
+      "lines": 58,
+      "bytes": 2485,
       "utf8": true
     },
     {
       "path": "plan/v1/governance/V1-GOV-018-desktop-pos-custody-correction.md",
-      "sha256": "2B966CC4A2AC1CB75E082BE393CB2E35449688E698EEA05FEB34137F1C240D54",
-      "lines": 67,
-      "bytes": 3254,
+      "sha256": "17DB30F20BC5AB4B0890C5D9F2EDC6D1DF6ABD331549329D7E10CBD13051D7D1",
+      "lines": 59,
+      "bytes": 2741,
       "utf8": true
     },
     {
@@ -3133,6 +3245,20 @@
       "sha256": "FDF8D0DA6D2B9264847E98BFD68FD32019FB99BF88ACA52775742738A97FF098",
       "lines": 66,
       "bytes": 2891,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-024-reopen-v1-gate-and-admit-final-remediation.md",
+      "sha256": "EA778C56E2FED4B8E45DD165BD86A29A6F43F4BEBD0512645192EACBEF6B68C7",
+      "lines": 73,
+      "bytes": 2995,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-025-final-master-audit-reseal.md",
+      "sha256": "A744AFC24D94D22099512739C8649EB77C6F3AB9B6A21014883C12FA3B7686B9",
+      "lines": 33,
+      "bytes": 921,
       "utf8": true
     },
     {
@@ -3319,9 +3445,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "78EC23985985D9BEAAC2922E79A19F457EAFD151328A5D45EE7B55B3090167F8",
-      "lines": 34,
-      "bytes": 1574,
+      "sha256": "F846C7BBEA17178809050CCABB1CC1446939F75C3FAD559175C28D2C09A153C7",
+      "lines": 33,
+      "bytes": 1465,
       "utf8": true
     },
     {
@@ -3375,9 +3501,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-006-production-dual-screen-pos.md",
-      "sha256": "4A8592749E981F1F0E5127E66B84F54605B968582A05AB15DAF3D17E76286522",
-      "lines": 87,
-      "bytes": 4590,
+      "sha256": "B35663F398807D8F9773D0D1B39BCF136B38E2AC857F117A2F33EF1D78FA89E5",
+      "lines": 78,
+      "bytes": 3928,
       "utf8": true
     },
     {
@@ -3494,16 +3620,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-023-production-landmark-and-aria-semantics.md",
-      "sha256": "06012CD5F84B274280720D16404E4CFED2FF53C9022C7E5C028B8DEBE9F5A878",
+      "sha256": "EE8BB42250DB23595EDD6B7C7B3B7239CAABB7E6725E87A30312F368B174E010",
       "lines": 42,
-      "bytes": 1669,
+      "bytes": 1726,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-024-production-shell-zoom-reflow.md",
-      "sha256": "414CAABEAD69A70D0FF787873FEFEB5A1DB06186A5981964384CF003209C5E41",
-      "lines": 51,
-      "bytes": 2399,
+      "sha256": "DB42F6DCD77D15C20292C375E298D0DC1063243AE0ADB68B34998BA46032DC7D",
+      "lines": 38,
+      "bytes": 1412,
       "utf8": true
     },
     {
@@ -3522,23 +3648,23 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-027-operational-bill-splitting-api.md",
-      "sha256": "49C90D815F5EE8CE33C0CD20BC9FC6C8F366BBDB07E87332FCAD38B9CD3DCA8E",
-      "lines": 43,
-      "bytes": 1724,
+      "sha256": "A6A8C7AEF31205C5555DB4244312F01F8F914B5F2FFD6A05C9726353E8984281",
+      "lines": 42,
+      "bytes": 1773,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-028-desktop-floor-plan-workspace.md",
-      "sha256": "65C46524C57D4D37DE8BB657D0D1CB9BBFC20673D255CF32DAF35BDEA89FA117",
+      "sha256": "FC9FA94B30BDD2A935232A599B0225D83C3C3CFA0F907717837D3B2F6C75289D",
       "lines": 40,
-      "bytes": 1717,
+      "bytes": 1775,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-029-seat-aware-order-and-bill-split-workspace.md",
-      "sha256": "717C55354D6EEB34D3E5AF5E876E04E2C440D1A2F384DACA7F060B139EC6D66C",
+      "sha256": "DD0FFDA72544990B4A503FFFBBDD49039FE3330BC46C643FFD2BC44827DAB263",
       "lines": 40,
-      "bytes": 1600,
+      "bytes": 1659,
       "utf8": true
     },
     {
@@ -3550,9 +3676,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-031-complete-containerized-release.md",
-      "sha256": "5F3F9C67C895BAE721BC58EEFAF8C39F79470E38BA8CB31B3C6466E3DBC798E1",
-      "lines": 63,
-      "bytes": 2784,
+      "sha256": "7D09599C2480AB974C9BD6DEB97BD0345A5F739DCB398EEF2D09F00803E46AD9",
+      "lines": 59,
+      "bytes": 2590,
       "utf8": true
     },
     {
@@ -3564,23 +3690,79 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-033-first-run-manager-provisioning.md",
-      "sha256": "07541EDC29080EF8228F2A090553E60322017656A66BF491E5506A775ABB1A82",
+      "sha256": "DFA3A9033B3655B6213E564F835DA7E6D1AF41C5A978C9051515257E0B503B3B",
       "lines": 47,
-      "bytes": 1893,
+      "bytes": 1974,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-034-authoritative-kitchen-station-contract.md",
-      "sha256": "791264754164615F0C5424814E49F96848B448501F0F6237834C7529555B6115",
+      "sha256": "58E2D81EECB8EDF71060622A35934CD94BFF23E91FEE596956229BCFF9CD0402",
       "lines": 52,
-      "bytes": 2101,
+      "bytes": 2163,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-035-deep-code-audit-remediation.md",
-      "sha256": "F4FE7123FD44FFCF23736CBC1719BBAE7F605D8058A57FCD6E70A88B9D060353",
+      "sha256": "71CF18887259321CB67834C1B18987A7D7B8335C32A4B6EA4C5B88EED0CFE39F",
       "lines": 62,
-      "bytes": 3302,
+      "bytes": 3364,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-036-solution-manifest-and-repo-hygiene.md",
+      "sha256": "52EE2BC707D2E6FCC92349ADF7F6BCF268D1A6BF7B217BBAE8375EFF8742354E",
+      "lines": 49,
+      "bytes": 1780,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-037-audit-sanitizer-compilation-and-tests.md",
+      "sha256": "F95A97E6EFC419B86A8F0E58EF452B347EC62E5A3B8F9BFAB420F35717AF501E",
+      "lines": 33,
+      "bytes": 951,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-038-waiter-pwa-production-route-and-pwa-assets.md",
+      "sha256": "72A0A6F6EB850A0209E7F1889A76092DA37FA7513BF055FB4EEC897E7D398F4F",
+      "lines": 36,
+      "bytes": 975,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-039-table-floor-plan-integration-and-reservations.md",
+      "sha256": "561F4CDFA08551B30467621896080452AB9764F83F4464972C7A080533026C5A",
+      "lines": 30,
+      "bytes": 859,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-040-authoritative-order-to-bill-bridge.md",
+      "sha256": "0E8C48C86212CCA3587544AB211646BAD2349F9AC9B37B7A38FE921AD596B0B7",
+      "lines": 30,
+      "bytes": 758,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-041-bill-split-production-navigation-and-flow.md",
+      "sha256": "20D4129B0998E4A8140303545AAFCFA7C1630633945323E636EA932F7A21FD78",
+      "lines": 30,
+      "bytes": 883,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-042-shell-freshness-accessibility-and-wcag.md",
+      "sha256": "561D037438D24F1D08A2C2CDAA85319025B8F8D35E4C82AE543A6AE80693C53B",
+      "lines": 35,
+      "bytes": 1056,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-043-clean-build-test-migration-provenance.md",
+      "sha256": "A21A3C3CD07ED5AEA990F78C51F80B706827CA5E62E45C307D0B0E24C8542C4F",
+      "lines": 30,
+      "bytes": 836,
       "utf8": true
     },
     {
@@ -3721,6 +3903,27 @@
       "sha256": "171137DDBD6D1559F7C11474C63B35B2DDB9B73BD166525D2960225613F12820",
       "lines": 40,
       "bytes": 1479,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-WTR-006-waiter-pwa-mobile-frontend.md",
+      "sha256": "110B57716EDADA30E36FFACF517C45E264139E874C4FBE3A7DC151CA516C7118",
+      "lines": 48,
+      "bytes": 2105,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-WTR-007-waiter-host-order-and-session-contract.md",
+      "sha256": "023FE83ABE532F67C06188785652A23700024412613329B4E40D6E32952D8A91",
+      "lines": 30,
+      "bytes": 853,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-WTR-008-waiter-pwa-real-api-and-reliable-queue.md",
+      "sha256": "F9F7C6449F58468F6A3701E5507363C4FED0E6D593969AC53F85AD6E85F0F3C3",
+      "lines": 31,
+      "bytes": 991,
       "utf8": true
     },
     {

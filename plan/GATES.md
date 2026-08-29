@@ -33,7 +33,7 @@
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
 | `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
-| `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. **2026-08-19 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C71).** |
+| `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. **2026-08-29 bağımsız denetim ve 11 kurtarma görevinin tamamlanmasıyla kesin olarak mühürlendi.** |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
 | `GATE-V11-EXIT` | V1.1 görevleri ve stok/reçete invariant kanıtları tamamlanır. |
 | `GATE-V12-ENTRY` | `GATE-V11-EXIT` kapanır. |
@@ -206,5 +206,10 @@ olarak kapandı; `validate`, `validate-coverage` ve `verify-manifest` sıfır ha
 
 ## 2026-08-29 derin denetim ve nihai kurtarma planı (V1-GOV-024)
 
-2026-08-29 derin denetiminde tespit edilen `IAuditSanitizer.cs` derleme hatası, Cashier sahte ödeme akışı, Waiter PWA veri kaybı/sahte başarı ve eksik üretim entegrasyonları nedeniyle `GATE-V1-EXIT` kapısı yeniden açılmıştır. V1 matrisi 160 göreve yükselmiş olup, 11 adımlık sıralı kurtarma zinciri (`V1-RMD-037..043`, `V1-CUI-005`, `V1-WTR-007..008`, `V1-GOV-025`) planlanmıştır. Nihai mühürleme ancak tüm kontroller aynı commit üzerinde yeşil olduğunda `V1-GOV-025` ile yapılacaktır.
+2026-08-29 derin denetiminde tespit edilen `IAuditSanitizer.cs` derleme hatası, Cashier sahte ödeme akışı, Waiter PWA veri kaybı/sahte başarı ve eksik üretim entegrasyonları nedeniyle `GATE-V1-EXIT` kapısı yeniden açılmıştır. V1 matrisi 160 göreve yükselmiş olup, 11 adımlık sıralı kurtarma zinciri (`V1-RMD-037..043`, `V1-CUI-005`, `V1-WTR-007..008`, `V1-GOV-025`) planlanmıştır.
+
+## 2026-08-29 nihai kurtarma ve GATE-V1-EXIT kesin mühürleme (V1-GOV-025)
+
+2026-08-29 derin denetiminde tespit edilen tüm bulgular (P0 derleme hatası, P1 sahte ödeme akışı kaldırma, P1 garson sipariş API ve güvenli kuyruk, P1 rota entegrasyonu, P2 salon planı ve bill split UI) 11 adımlık sıralı kurtarma zinciri (`V1-RMD-037..043`, `V1-CUI-005`, `V1-WTR-007..008`, `V1-GOV-025`) ile eksiksiz olarak çözülmüştür. V1 matrisi 156 `Done`, 4 onaylı `NotApplicable`, 0 `Planned`, 0 `InProgress` olarak `V1-GOV-025` ile kesin olarak mühürlenmiş ve `GATE-V1-EXIT` kapatılmıştır.
+
 
