@@ -1,7 +1,7 @@
 # V1-RMD-051 - Waiter pwa and cashier ui contract alignment
 
 - Task ID: V1-RMD-051
-- Status: InProgress
+- Status: Done
 - Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: implementation
 - Surface state: Planned
