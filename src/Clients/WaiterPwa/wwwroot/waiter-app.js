@@ -144,7 +144,7 @@
         const zonesData = await zonesRes.json();
         state.zones = [{ id: 'all', name: 'Tüm Masalar' }, ...(zonesData.zones || zonesData || [])];
       } else {
-        fallbackZones();
+        state.zones = [{ id: 'all', name: 'Tüm Masalar' }];
       }
 
       // 2. Fetch Categories & Catalog
@@ -153,16 +153,20 @@
         const catData = await catRes.json();
         state.categories = catData.categories || catData || [];
       } else {
-        fallbackCatalog();
+        state.categories = [];
+        state.products = [];
       }
 
       // 3. Fetch Tables
       await loadTables();
     } catch (err) {
-      console.warn('Host API unreachable, using local fallback state:', err);
-      fallbackZones();
-      fallbackCatalog();
-      fallbackTables();
+      console.warn('Host API unreachable:', err);
+      state.zones = [{ id: 'all', name: 'Tüm Masalar' }];
+      state.categories = [];
+      state.products = [];
+      state.tables = [];
+      if (el.statusText) el.statusText.textContent = 'Bağlantı kesildi — Çevrimdışı';
+      if (el.statusRibbon) el.statusRibbon.className = 'status-ribbon offline';
     }
 
     renderZones();
@@ -178,44 +182,12 @@
         const data = await res.json();
         state.tables = data.tables || data || [];
       } else {
-        fallbackTables();
+        state.tables = [];
       }
     } catch {
-      fallbackTables();
+      state.tables = [];
     }
     renderTables();
-  }
-
-  function fallbackZones() {
-    state.zones = [
-      { id: 'all', name: 'Tüm Masalar' },
-      { id: 'zone-salon', name: 'Ana Salon' },
-      { id: 'zone-bahce', name: 'Bahçe' },
-      { id: 'zone-teras', name: 'Teras' }
-    ];
-  }
-
-  function fallbackCatalog() {
-    state.categories = [
-      { id: 'cat-1', name: 'Ana Yemekler' },
-      { id: 'cat-2', name: 'İçecekler' },
-      { id: 'cat-3', name: 'Tatlılar' }
-    ];
-    state.products = [
-      { id: 'p-1', categoryId: 'cat-1', name: 'Izgara Köfte', price: 280 },
-      { id: 'p-2', categoryId: 'cat-1', name: 'Tavuk Şiş', price: 240 },
-      { id: 'p-3', categoryId: 'cat-2', name: 'Ayran', price: 40 },
-      { id: 'p-4', categoryId: 'cat-2', name: 'Kola', price: 55 },
-      { id: 'p-5', categoryId: 'cat-3', name: 'Baklava', price: 180 }
-    ];
-  }
-
-  function fallbackTables() {
-    state.tables = [
-      { id: '00000000-0000-0000-0000-000000000010', number: 'M-01', zoneId: 'zone-salon', status: 'available', seats: 4, amount: 0 },
-      { id: '00000000-0000-0000-0000-000000000020', number: 'M-02', zoneId: 'zone-salon', status: 'occupied', seats: 2, amount: 560 },
-      { id: '00000000-0000-0000-0000-000000000030', number: 'B-01', zoneId: 'zone-bahce', status: 'available', seats: 4, amount: 0 }
-    ];
   }
 
   // Render Functions

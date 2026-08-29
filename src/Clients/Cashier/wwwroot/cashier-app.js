@@ -164,17 +164,42 @@
     renderTicket();
   }
 
-  function dispatchOrderToKitchen() {
+  async function dispatchOrderToKitchen() {
     if (state.ticketItems.length === 0) return;
 
-    const total = state.ticketItems.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
-    const itemCount = state.ticketItems.reduce((sum, item) => sum + item.quantity, 0);
+    const orderPayload = {
+      tableId: '00000000-0000-0000-0000-000000000001',
+      tableNumber: 'KASA-1',
+      waiterName: state.currentCashier?.name || 'Kasiyer',
+      items: state.ticketItems.map(item => ({
+        productId: item.productId,
+        productName: item.name,
+        quantity: item.quantity,
+        unitPrice: item.price,
+        specialInstructions: item.isComplimentary ? 'İkram' : null
+      }))
+    };
 
-    state.shiftTotalOrders += 1;
-    state.ticketItems = [];
-    renderTicket();
+    try {
+      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
 
-    alert(`Sipariş onaylandı ve mutfağa iletildi! (${itemCount} kalem, ${formatMoney(total)})`);
+      if (response.ok) {
+        const total = state.ticketItems.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
+        const itemCount = state.ticketItems.reduce((sum, item) => sum + item.quantity, 0);
+        state.shiftTotalOrders += 1;
+        state.ticketItems = [];
+        renderTicket();
+        alert(`Sipariş başarıyla sunucuya iletildi. (${itemCount} kalem, ${formatMoney(total)})`);
+      } else {
+        alert('Sipariş sunucu tarafından reddedildi. Lütfen tekrar deneyin.');
+      }
+    } catch {
+      alert('Sunucuya ulaşılamadı. Sipariş iletilemedi.');
+    }
   }
 
   function parkCurrentTicket() {
