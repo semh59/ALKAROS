@@ -14,6 +14,7 @@ import type { CatalogProduct, DisplaySnapshot, PairingCreated } from "./contract
 import { ProductionShell } from "./shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "./shell/models";
 import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type TableActionRequest, type TableWorkspaceState } from "./features/tables";
+import { BillSplitWorkspace, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "./features/billing";
 import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "./features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "./features/kitchen-operations";
 import {
@@ -636,11 +637,12 @@ function ExperiencePage({
   const navigation: readonly ShellNavigationItem[] = [
     { id: "sales", label: "Kasa", href: "/", symbol: "₺", requiredCapability: "pos.cashier.mutate" },
     { id: "tables", label: "Masalar", href: "/tables", symbol: "▦", requiredCapability: "pos.cashier.mutate" },
+    { id: "billing", label: "Hesap", href: "/billing", symbol: "÷", requiredCapability: "pos.cashier.mutate" },
     { id: "kitchen", label: "Mutfak", href: "/kitchen", symbol: "◇", requiredCapability: "pos.cashier.mutate" },
     { id: "catalog", label: "Menü", href: "/catalog", symbol: "≡", requiredCapability: "catalog.manage" },
   ];
-  const title = path === "/tables" ? "Masa yönetimi" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : "Kasa satış";
-  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : "Gerçek zamanlı sipariş ve müşteri ekranı";
+  const title = path === "/tables" ? "Masa yönetimi" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : "Kasa satış";
+  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : "Gerçek zamanlı sipariş ve müşteri ekranı";
 
   return <ProductionShell
     session={session}
@@ -648,15 +650,16 @@ function ExperiencePage({
     connectivity={connectivity}
     freshness={freshness}
     navigation={navigation}
-    activeNavigationId={path === "/tables" ? "tables" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : "sales"}
+    activeNavigationId={path === "/tables" ? "tables" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
     headerActions={<><a className="experience-header-link" href="/display" target="alkaros-customer-display">Müşteri ekranı</a><button className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
   >
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
+    {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/catalog" && <CatalogRoute canManage={canOpenRoute} />}
     {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canOperate={canOpenRoute} />}
-    {!(["/", "/tables", "/catalog", "/kitchen"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
+    {!(["/", "/tables", "/billing", "/catalog", "/kitchen"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
   </ProductionShell>;
 }
 
@@ -738,6 +741,67 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
       {orderError && <p className="table-order-bridge__error" role="alert">{orderError}</p>}
     </section>}
   </div>;
+}
+
+function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
+  const [billId] = useState<string>(() => localStorage.getItem("alkaros.current-bill-id") || "00000000-0000-0000-0000-000000000001");
+  const client = useMemo(() => createBillingSplitClient(terminalId, billId), [terminalId, billId]);
+  const [state, setState] = useState<BillSplitWorkspaceState>("loading");
+  const [design, setDesign] = useState<BillSplitDesign | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+
+  const load = useCallback(async () => {
+    setState("loading");
+    setErrorMessage(undefined);
+    try {
+      const nextDesign = await client.get();
+      setDesign(nextDesign);
+      setLastUpdated(new Date().toISOString());
+      setState("ready");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
+      setErrorMessage(reason instanceof Error ? reason.message : "Hesap bölme verisi alınamadı.");
+    }
+  }, [client]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const owners: readonly SplitOwnerOption[] = useMemo(() => [
+    { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000001", label: "1. Kişi" },
+    { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000002", label: "2. Kişi" },
+    { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000003", label: "3. Kişi" },
+    { kind: "Person", ownerId: "00000000-0000-0000-0000-000000000004", label: "4. Kişi" },
+  ], []);
+
+  const handleSave = async (request: SaveSplitRequest) => {
+    if (!design) return;
+    const updated = await client.save(request, design);
+    setDesign(updated);
+  };
+
+  const handleClear = async () => {
+    if (!design) return;
+    const cleared = await client.clear(design);
+    setDesign(cleared);
+  };
+
+  return (
+    <div className="billing-route">
+      <BillSplitWorkspace
+        state={state}
+        design={design ?? undefined}
+        owners={owners}
+        canMutate={canManage}
+        onRefresh={load}
+        onSave={handleSave}
+        onClear={handleClear}
+        errorMessage={errorMessage}
+        lastUpdated={lastUpdated}
+      />
+    </div>
+  );
 }
 
 const emptyCatalogData: CatalogData = {
