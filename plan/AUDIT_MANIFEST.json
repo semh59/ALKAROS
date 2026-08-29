@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 729,
-  "markdown_line_count": 46620,
-  "markdown_byte_count": 2803555,
+  "markdown_file_count": 730,
+  "markdown_line_count": 46645,
+  "markdown_byte_count": 2805307,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -1295,6 +1295,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-029/verification.md",
+      "sha256": "65032B857EED05A351B2BF17AF4F73DFA99F32EC51455D0E26A1176227FD3AE6",
+      "lines": 19,
+      "bytes": 1054,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
       "sha256": "63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC",
       "lines": 44,
@@ -1891,9 +1898,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "AD269BCBB340198C5C5E6B62280011E7A9F37FC2DAC4938927387ED68345EA46",
-      "lines": 2005,
-      "bytes": 279985,
+      "sha256": "01A236D7F1748B5B6C35CEDE4B8E623E8A7CEF894BB82CB114B619115986EC16",
+      "lines": 2006,
+      "bytes": 280121,
       "utf8": true
     },
     {
@@ -1912,9 +1919,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "52A5160092617B2AC81124A41DDC16009718D5D751CCD2E1519C80A6B87276CE",
-      "lines": 230,
-      "bytes": 17195,
+      "sha256": "16F2C3A831438AE4E06BAB4B0A81AE8ED5672195286BC8B021F6FBA1E171D468",
+      "lines": 235,
+      "bytes": 17766,
       "utf8": true
     },
     {
@@ -3375,9 +3382,9 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-029-master-audit-reseal-and-gate-closure.md",
-      "sha256": "822E84F3D6AC656C1F84BE60D5293A205388A06C64EFC196CDABDEAE802B7B6E",
+      "sha256": "0D8CA54E45717C664050307427C1C33A41BCCE99A522D897DCE83AD94F7C0FDB",
       "lines": 52,
-      "bytes": 1466,
+      "bytes": 1460,
       "utf8": true
     },
     {
@@ -3564,9 +3571,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "ED0893C2C44165473A660D14AE1710B336BFC1E6BCFECA01803B8E716661C268",
+      "sha256": "CAB194C993262BFCFF2806C0F1E622154D9A9166D55A60C9AACCA438E4EFC4CD",
       "lines": 33,
-      "bytes": 1516,
+      "bytes": 1513,
       "utf8": true
     },
     {
