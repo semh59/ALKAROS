@@ -124,7 +124,7 @@ public sealed class OrderManagementStore
         var order = await _repository.GetByIdAsync(orderId, cancellationToken)
             ?? throw new KeyNotFoundException($"Order {orderId} not found.");
 
-        order.Submit(DateTimeOffset.UtcNow);
+        order = order.Submit(changedAt: DateTimeOffset.UtcNow);
         var newVersion = await _repository.SaveAsync(order, expectedRowVersion, cancellationToken);
 
         var tableNumber = await GetTableNumberAsync(order.TableId, cancellationToken) ?? "—";

@@ -1,0 +1,7 @@
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+Geçen Süre 00:00:38.93
+ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+ALKAROS.Architecture.Tests -> D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll
+ALKAROS.Host.Tests -> D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll
