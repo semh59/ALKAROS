@@ -1,8 +1,8 @@
 # V1-GOV-018 - Desktop POS custody correction
 
 - Task ID: V1-GOV-018
-- Status: Blocked
-- Assignee: /root
+- Status: InProgress
+- Assignee: a04804b8-a15d-498a-9753-7b7c3a0e27b3
 - Work type: documentation
 - Surface state: Existing
 
@@ -43,14 +43,6 @@ ile gidermek; V1-RMD-026..032 görevlerini Türkçe plan sözleşmesine uygun ve
 
 - V1-GOV-009
 - V1-GOV-016
-
-## Blocker
-
-Bu görev ancak doğru exact yolları sahiplenen `V1-GOV-019` tamamlandığında yeniden açılabilir. Pre-write path
-doğrulaması, allowlist'teki `V1-FND-022-table-repository-concurrency.md` ve
-`V1-TBL-001-table-and-zone-lifecycle.md` yollarının repository'de bulunmadığını; gerçek historical görev yollarının
-`V1-FND-022-table-module-integration.md` ve `V1-TBL-001-table-lifecycle.md` olduğunu gösterdi. Aktif görev owned
-surface'i genişletilemeyeceği için hiçbir historical owner dosyası değiştirilmedi.
 
 ## Acceptance evidence
 
