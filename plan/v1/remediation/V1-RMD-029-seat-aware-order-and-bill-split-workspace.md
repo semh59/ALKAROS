@@ -13,7 +13,7 @@ tutar dağıtımını destekleyen kurtarılabilir hesap bölme çalışma alanı
 
 ## Owned surface
 
-- `src/Clients/PosTerminal/src/features/billing/**`
+- PO:2026-08-29 kararıyla Billing features yüzeyi V1-RMD-041'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-029/**`
 
 ## Dependencies

@@ -11,9 +11,9 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 145 görev vardır: 135 `Done`, 4 onaylı `NotApplicable`, 0 `Planned`, 6 `Blocked` ve
-  0 `InProgress` görev vardır. Tarihsel C71 kapanışı korunur, fakat tam production denetimi remediation zinciri
-  tamamlanmadan güncel production readiness kanıtı değildir.
+- Bu sürüm altında 160 görev tanımlıdır: 145 `Done`, 4 onaylı `NotApplicable`, 11 `Planned` ve
+  0 `InProgress` görev vardır. 2026-08-29 derin denetimi sonrası `V1-GOV-024` ile `GATE-V1-EXIT` yeniden açılmış
+  ve sıralı 11 kurtarma görevi planlanmıştır.
 - `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` sıralı foundation kapısı geçmeden
   başka application görevi başlamaz.
@@ -29,6 +29,5 @@ uca çalıştıran çekirdek operasyon.
 `reconciliation`, `remediation`, `reporting`, `security-foundation`, `settings`,
 `table-management`, `waiter-pwa`.
 
-Doğrulanan plan hacmi: 18 modül/dizin, 145 tek-sahip görev (135 Done, 4 NotApplicable, 0 Planned, 6 Blocked,
-0 InProgress).
-Tarihsel C71 kapanış kaydı `evidence/v1/gate-v1-exit-closure.md` altındadır; güncel yeniden denetim zinciri açık kalır.
+Doğrulanan plan hacmi: 18 modül/dizin, 160 tek-sahip görev.
+2026-08-29 derin denetimi ve kurtarma zinciri `V1-GOV-024` ile açık kalır.

@@ -202,6 +202,9 @@ olarak kapandı; `validate`, `validate-coverage` ve `verify-manifest` sıfır ha
 
 ## 2026-08-24 tam production denetimi sonrası yeniden açılış
 
-`V1-GOV-003` denetimi ve taze ajan custody görevleri sonrasında V1 matrisi 145 göreve yükseldi. Mevcut durum 135
-`Done`, 4 onaylı `NotApplicable`, 0 `Planned` ve 6 `Blocked` görevdir; `InProgress` görev yoktur. `V1-RMD-010..021` ile
-`V1-GOV-004` reseal zinciri tamamlanmıştır.
+`V1-GOV-003` denetimi ve taze ajan custody görevleri sonrasında V1 matrisi 145 göreve yükseldi.
+
+## 2026-08-29 derin denetim ve nihai kurtarma planı (V1-GOV-024)
+
+2026-08-29 derin denetiminde tespit edilen `IAuditSanitizer.cs` derleme hatası, Cashier sahte ödeme akışı, Waiter PWA veri kaybı/sahte başarı ve eksik üretim entegrasyonları nedeniyle `GATE-V1-EXIT` kapısı yeniden açılmıştır. V1 matrisi 160 göreve yükselmiş olup, 11 adımlık sıralı kurtarma zinciri (`V1-RMD-037..043`, `V1-CUI-005`, `V1-WTR-007..008`, `V1-GOV-025`) planlanmıştır. Nihai mühürleme ancak tüm kontroller aynı commit üzerinde yeşil olduğunda `V1-GOV-025` ile yapılacaktır.
+

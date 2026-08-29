@@ -17,7 +17,7 @@ Statik kod denetiminde tespit edilen 7 kritik kusuru (DualScreen indirimli ürü
 - `src/Modules/Billing/BillFoundation/Bill.cs`
 - `src/Modules/Billing/BillFoundation/BillItem.cs`
 - `src/Modules/Tables/TableTransfer/PostgresTableTransferRepository.cs`
-- `src/Modules/Audit/EventStore/IAuditSanitizer.cs`
+- PO:2026-08-29 kararıyla IAuditSanitizer.cs yüzeyi V1-RMD-037'ye devredildi; bu historical task closed kalır.
 - `src/BuildingBlocks/Idempotency/IdempotencyKeyStore.cs`
 - `src/Modules/Tables/TableLifecycle/Table.cs`
 - `tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs`

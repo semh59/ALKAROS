@@ -17,7 +17,7 @@ başlamadan provision etmek.
 - `.dockerignore`
 - `compose.yaml`
 - `deploy/docker/**`
-- `src/Host/Program.cs`
+- PO:2026-08-29 kararıyla Program.cs yüzeyi V1-RMD-038'e devredildi; bu historical task closed kalır.
 - `tests/Deployment/**`
 - `tests/Host/MigrationComposition/Program/FirstRunProvisioningTests.cs`
 - `evidence/V1-RMD-033/**`

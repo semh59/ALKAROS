@@ -14,7 +14,7 @@ sürümü sunmak.
 
 ## Owned surface
 
-- `Dockerfile`
+- PO:2026-08-29 kararıyla Dockerfile yüzeyi V1-RMD-038'e devredildi; bu historical task closed kalır.
 - `ALKAROS.slnx`
 - `build/project-manifest.json`
 - `src/Host/packages.lock.json`
@@ -23,7 +23,7 @@ sürümü sunmak.
 - `src/Clients/PosTerminal/src/api.ts`
 - `src/Clients/PosTerminal/src/contracts.ts`
 - `src/Clients/PosTerminal/src/main.tsx`
-- `src/Clients/PosTerminal/src/styles.css`
+- PO:2026-08-29 kararıyla styles.css yüzeyi V1-RMD-042'ye devredildi; bu historical task closed kalır.
 - `src/Clients/PosTerminal/vite.config.ts`
 - `tests/Clients/PosTerminal/Experience/**`
 - `evidence/V1-RMD-031/**`

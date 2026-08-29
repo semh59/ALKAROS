@@ -13,7 +13,7 @@ modlarıyla değiştirmek; tablet/mobil ve erişilebilirlik için yoğun liste a
 
 ## Owned surface
 
-- `src/Clients/PosTerminal/src/features/tables/**`
+- PO:2026-08-29 kararıyla Table features yüzeyi V1-RMD-039'a devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-028/**`
 
 ## Dependencies

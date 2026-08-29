@@ -16,9 +16,8 @@ kalır.
 
 - `src/Modules/Billing/SplitDesign/**`
 - `src/Modules/Billing/BillFoundation/BillingModule.cs`
-- `src/Host/Experience/Billing/**`
+- PO:2026-08-29 kararıyla Billing experience ve test yüzeyi V1-RMD-040'a devredildi; bu historical task closed kalır.
 - `tests/Modules/Billing/SplitDesign/**`
-- `tests/Host/Experience/Billing/**`
 - `evidence/V1-RMD-027/**`
 
 ## Dependencies

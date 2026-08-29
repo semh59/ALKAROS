@@ -13,8 +13,7 @@ Garsonların el terminali ve mobil cihazlarından masaları görüntülemesini, 
 ## Owned surface
 
 - `plan/v1/waiter-pwa/V1-WTR-006-waiter-pwa-mobile-frontend.md`
-- `src/Clients/WaiterPwa/wwwroot/**`
-- `tests/Clients/WaiterPwa/Frontend/**`
+- PO:2026-08-29 kararıyla Waiter PWA wwwroot ve test yüzeyi V1-WTR-008'e devredildi; bu historical task closed kalır.
 - `evidence/V1-WTR-006/**`
 
 ## In scope

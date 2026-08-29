@@ -13,7 +13,7 @@ complementary landmark'ı kaldırarak canlı production DOM taramasındaki serio
 
 ## Owned surface
 
-- `src/Clients/PosTerminal/src/shell/ProductionShell.tsx`
+- PO:2026-08-29 kararıyla ProductionShell.tsx yüzeyi V1-RMD-042'ye devredildi; bu historical task closed kalır.
 - `src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx`
 - `evidence/V1-RMD-023/**`
 - PO:2026-08-28 desktop floor kararıyla TableWorkspace source/test yüzeyi V1-RMD-028'e devredildi; shell ownership'i

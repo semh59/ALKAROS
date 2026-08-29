@@ -13,8 +13,7 @@ Kasiyerlerin tezgah üstü hızlı satış, doğrudan ürün/barkod okutma, adis
 ## Owned surface
 
 - `plan/v1/cashier-ui/V1-CUI-004-cashier-quick-pos-frontend.md`
-- `src/Clients/Cashier/wwwroot/**`
-- `tests/Clients/Cashier/Frontend/**`
+- PO:2026-08-29 kararıyla Cashier wwwroot ve test yüzeyi V1-CUI-005'e devredildi; bu historical task closed kalır.
 - `evidence/V1-CUI-004/**`
 
 ## In scope
