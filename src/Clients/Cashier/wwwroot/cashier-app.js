@@ -251,6 +251,14 @@
   function recallParkedTicket(parkedId) {
     const index = state.parkedTickets.findIndex(p => p.id === parkedId);
     if (index < 0) return;
+
+    if (state.ticketItems.length > 0) {
+      const confirmReplace = confirm(
+        'Mevcut sepette ürünler var. Bekletilen fişi yüklemek mevcut sepeti değiştirecektir. Devam etmek istiyor musunuz?'
+      );
+      if (!confirmReplace) return;
+    }
+
     state.ticketItems = state.parkedTickets[index].items;
     state.parkedTickets.splice(index, 1);
     localStorage.setItem('alkaros_cashier_parked', JSON.stringify(state.parkedTickets));

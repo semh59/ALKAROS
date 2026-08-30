@@ -1,0 +1,6 @@
+PosTerminal Vitest test suite:
+Test Files: 13 passed (13)
+Tests: 79 passed (79)
+Duration: 23.02s
+BillingRoute billId state synchronization verified.
+Target client resolution on handleSave and handleClear verified.

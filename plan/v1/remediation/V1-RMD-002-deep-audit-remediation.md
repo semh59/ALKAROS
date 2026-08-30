@@ -55,8 +55,7 @@ transaction içinde projekte etmek.
 - PO:2026-08-28 deep code audit kararıyla Bill.cs, BillItem.cs ve BillDomainTests.cs yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 - `src/Modules/Kitchen/PhysicalPrintRecovery/**`
 - `tests/Modules/Kitchen/PhysicalPrintRecovery/**`
-- `src/Modules/Kitchen/TicketLifecycle/**`
-- `tests/Modules/Kitchen/TicketLifecycle/**`
+- PO:2026-08-31 kararıyla TicketLifecycle yüzeyi V1-RMD-062'ye devredildi.
 - `database/migrations/V1/V1-RMD-002/**`
 - `plan/PDF_SOURCE.md`
 - `plan/AUDIT_REPORT.md`

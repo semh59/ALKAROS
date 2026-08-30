@@ -1,0 +1,3 @@
+dotnet build ALKAROS.slnx: 0 Uyarı, 0 Hata
+CatalogManagementStore.CreatePriceAsync synchronizes active SalePrice to catalog.products.current_price.
+Build status: SUCCESS

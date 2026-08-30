@@ -1,0 +1,6 @@
+KitchenTicket unit tests:
+Test run: KitchenTicketUnitTests
+Passed: 7, Failed: 0, Skipped: 0
+Duration: 98 ms
+AllItemsReadyAutoPromotesTicketToReady verified.
+Parent ticket automatically transitions to Ready when all non-cancelled items are Ready/Served.

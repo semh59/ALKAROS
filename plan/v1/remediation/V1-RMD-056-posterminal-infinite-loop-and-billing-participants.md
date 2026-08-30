@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-056-posterminal-infinite-loop-and-billing-participants.md`
-- `src/Clients/PosTerminal/src/App.tsx`
+- PO:2026-08-31 kararıyla App.tsx yüzeyi V1-RMD-058'e devredildi.
 - `evidence/V1-RMD-056/**`
 
 ## In scope

@@ -164,6 +164,24 @@ public sealed class CatalogManagementStore
             NormalizeCurrency(request.CurrencyCode),
             request.EffectiveTo);
         await _prices.AddAsync(price, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        if (request.PriceType == PriceType.SalePrice
+            && request.EffectiveFrom <= now
+            && (request.EffectiveTo == null || request.EffectiveTo > now))
+        {
+            await using var cmd = _dataSource.CreateCommand(
+                """
+                UPDATE catalog.products
+                SET current_price = @current_price,
+                    updated_at = now()
+                WHERE product_id = @product_id;
+                """);
+            cmd.Parameters.AddWithValue("current_price", request.Price);
+            cmd.Parameters.AddWithValue("product_id", request.ProductId);
+            await cmd.ExecuteNonQueryAsync(cancellationToken);
+        }
+
         return ToDto(price);
     }
 

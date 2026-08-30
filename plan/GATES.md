@@ -33,7 +33,7 @@
 | `GATE-V0-ENTRY` | PDF hash, başlangıç envanteri ve kaynak kayıtları doğrulanır. |
 | `GATE-V0-EXIT` | Tüm V0 karar, güvenlik, recovery ve dış-sözleşme görevleri gerçek kanıtla `Done` veya tarihli/onaylı `NotApplicable` olur; açık `Blocked` görev kalmaz. 2026-08-03 kullanıcı onaylı devir listesindeki (aşağıda) 11 görev bu kapanma koşulundan muaftır; kanıt koşuluyla ilgili aşamada kapanır. **2026-08-04 kullanıcı onayıyla kapatıldı (`TRACEABILITY.md` C41).** |
 | `GATE-V1-ENTRY` | `GATE-V0-EXIT` kapanır. |
-| `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. **2026-08-31 derin mimari denetim ve 5. dalga kurtarma görevlerinin tamamlanmasıyla kesin olarak yeniden mühürlendi (V1-GOV-033).** |
+| `GATE-V1-EXIT` | V1 görevleri, task-scope enforcement ve otomatik kanıtları tamamlanır. **2026-08-31 6. dalga derin sistem denetimi ve kurtarma görevlerinin tamamlanmasıyla kesin olarak yeniden mühürlendi (V1-GOV-035).** |
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
 | `GATE-V11-EXIT` | V1.1 görevleri ve stok/reçete invariant kanıtları tamamlanır. |
 | `GATE-V12-ENTRY` | `GATE-V11-EXIT` kapanır. |
@@ -239,6 +239,14 @@ Bağımsız derin mimari denetimde tespit edilen üretim kompozisyonu eksiklikle
 ## 2026-08-31 5. dalga kurtarma ve GATE-V1-EXIT kesin reseal mühürleme (V1-GOV-033)
 
 Tüm 5. dalga kurtarma görevleri (`V1-RMD-054..057`) tamamlanmıştır: Order ve Billing servis/route grupları üretim composition root'una (`DualScreenApplication.cs`) bağlanmış; sipariş yönetiminde kasiyer session yetkilendirmesi, katalog fiyat çözümlemesi ve atomik PostgreSQL transaction güvencesi sağlanmış; Cashier ve Waiter istemcileri doğru `/catalog` rotasına yönlendirilmiş; ikram ürünleri sunucu tarafında sıfır fiyatla iletilmiş; PosTerminal `TableRoute` sonsuz render döngüsü kırılmış; AuditSanitizer kapanış tırnağı olmayan malformed payload'larda secret maskeleme yeteneği kazanmıştır. V1 matrisi 180 görev, 176 `Done`, 4 onaylı `NotApplicable`, 0 `Planned`, 0 `InProgress` olarak `V1-GOV-033` ile kesin olarak mühürlenmiş ve `GATE-V1-EXIT` kapatılmıştır.
+
+## 2026-08-31 6. dalga derin denetim bulguları ve GATE-V1-EXIT yeniden açılışı (V1-GOV-034)
+
+Kapsamlı derin sistem denetiminde tespit edilen PosTerminal `BillingRoute` state kilitlenmesi, katalog fiyat güncellemelerinin `current_price` sütununa yansımaması, WaiterPwa çevrimdışı kuyrukta 4xx hatalarında sessiz veri kaybı, Cashier bekletilen fiş geri yüklemede sepet ezilmesi ve KitchenTicket otomatik `Ready` terfi eksikliği nedeniyle `GATE-V1-EXIT` kapısı yeniden açılmıştır. V1 matrisi 186 göreve yükselmiş olup, 5 adımlık kurtarma zinciri (`V1-RMD-058..062`, `V1-GOV-035`) planlanmıştır.
+
+## 2026-08-31 6. dalga kurtarma ve GATE-V1-EXIT kesin reseal mühürleme (V1-GOV-035)
+
+Tüm 6. dalga kurtarma görevleri (`V1-RMD-058..062`) tamamlanmıştır: PosTerminal `BillingRoute` adisyon oluşturma sonrası `billId` senkronizasyonu sağlanmış; katalog fiyat ekleme işlemlerinde `catalog.products.current_price` otomatik güncellenmesi temin edilmiş; WaiterPwa çevrimdışı kuyrukta 4xx hatalarında siparişlerin `failedOrders` içinde korunması sağlanmış; Cashier bekletilen fiş geri yüklemede aktif sepet onay koruması eklenmiş; KitchenTicket mutfak fişinde tüm kalemler tamamlandığında `Ready` durumuna otomatik geçiş garantilenmiştir. V1 matrisi 186 görev, 182 `Done`, 4 onaylı `NotApplicable`, 0 `Planned`, 0 `InProgress` olarak `V1-GOV-035` ile kesin olarak mühürlenmiş ve `GATE-V1-EXIT` kapatılmıştır.
 
 
 

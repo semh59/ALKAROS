@@ -808,7 +808,7 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
 function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
   const searchParams = useMemo(() => new URLSearchParams(window.location.search), []);
   const initialBillId = searchParams.get("billId") || localStorage.getItem("alkaros.current-bill-id") || "00000000-0000-0000-0000-000000000001";
-  const [billId] = useState<string>(initialBillId);
+  const [billId, setBillId] = useState<string>(initialBillId);
   const client = useMemo(() => createBillingSplitClient(terminalId, billId), [terminalId, billId]);
   const [state, setState] = useState<BillSplitWorkspaceState>("loading");
   const [design, setDesign] = useState<BillSplitDesign | null>(null);
@@ -827,6 +827,10 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
         nextDesign = await client.get();
       }
       setDesign(nextDesign);
+      if (nextDesign.billId && nextDesign.billId !== billId) {
+        setBillId(nextDesign.billId);
+        localStorage.setItem("alkaros.current-bill-id", nextDesign.billId);
+      }
       setLastUpdated(new Date().toISOString());
       setState("ready");
     } catch (reason) {
@@ -834,7 +838,7 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
       setErrorMessage(reason instanceof Error ? reason.message : "Hesap bölme verisi alınamadı.");
     }
-  }, [client, searchParams]);
+  }, [client, searchParams, billId]);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -859,13 +863,23 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
   }, [design]);
 
   const handleSave = async (request: SaveSplitRequest, currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
-    const updated = await client.save(request, currentDesign);
+    const targetClient = currentDesign.billId && currentDesign.billId !== billId
+      ? createBillingSplitClient(terminalId, currentDesign.billId)
+      : client;
+    const updated = await targetClient.save(request, currentDesign);
     setDesign(updated);
+    if (updated.billId && updated.billId !== billId) {
+      setBillId(updated.billId);
+      localStorage.setItem("alkaros.current-bill-id", updated.billId);
+    }
     return updated;
   };
 
   const handleClear = async (currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
-    const cleared = await client.clear(currentDesign);
+    const targetClient = currentDesign.billId && currentDesign.billId !== billId
+      ? createBillingSplitClient(terminalId, currentDesign.billId)
+      : client;
+    const cleared = await targetClient.clear(currentDesign);
     setDesign(cleared);
     return cleared;
   };

@@ -13,7 +13,7 @@ production HTTP yüzeyine açmak. V11 menu publication davranışı bu göreve d
 
 ## Owned surface
 
-- `src/Host/Experience/Catalog/**`
+- PO:2026-08-31 kararıyla Catalog experience yüzeyi V1-RMD-059'a devredildi.
 - `tests/Host/Experience/Catalog/**`
 - `evidence/V1-RMD-014/**`
 

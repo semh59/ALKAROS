@@ -29,7 +29,8 @@
     zones: [],
     tables: [],
     activeCategory: 'all',
-    offlineQueue: JSON.parse(localStorage.getItem('alkaros_waiter_offline_queue') || '[]')
+    offlineQueue: JSON.parse(localStorage.getItem('alkaros_waiter_offline_queue') || '[]'),
+    failedOrders: JSON.parse(localStorage.getItem('alkaros_waiter_failed_orders') || '[]')
   };
 
   // DOM Elements
@@ -96,7 +97,12 @@
       el.statusText.textContent = 'Çevrimdışı • İşlemler Güvenli Kuyrukta';
     }
     if (el.queueCount) {
-      el.queueCount.textContent = state.offlineQueue.length > 0 ? `(${state.offlineQueue.length} bekleyen)` : '';
+      const pending = state.offlineQueue.length;
+      const failed = state.failedOrders ? state.failedOrders.length : 0;
+      let text = '';
+      if (pending > 0) text += `(${pending} bekleyen)`;
+      if (failed > 0) text += ` [${failed} hatalı işlem]`;
+      el.queueCount.textContent = text;
     }
   }
 
@@ -122,10 +128,18 @@
           state.offlineQueue = state.offlineQueue.filter(q => q.id !== item.id);
           localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
         } else if (result.isClientError) {
-          // 4xx client errors should not block queue indefinitely
-          console.warn('Order rejected by server (client error):', item.id, result.status);
+          // 4xx client errors: preserve in failedOrders so unsubmitted orders are never destroyed
+          console.error('Order rejected by server (validation/client error):', item.id, result.status, result.errorMessage);
           state.offlineQueue = state.offlineQueue.filter(q => q.id !== item.id);
+          state.failedOrders = state.failedOrders || [];
+          state.failedOrders.push({
+            ...item,
+            rejectedAt: new Date().toISOString(),
+            status: result.status,
+            error: result.errorMessage || 'Sunucu doğrulama hatası (4xx)'
+          });
           localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
+          localStorage.setItem('alkaros_waiter_failed_orders', JSON.stringify(state.failedOrders));
         } else {
           // Server error 5xx or offline: keep in queue and stop retry loop
           console.warn('Server temporary error during queue flush, keeping in queue:', item.id);
@@ -155,13 +169,18 @@
         credentials: 'include',
         body: JSON.stringify(orderPayload)
       });
+      let errorData = null;
+      if (!response.ok) {
+        try { errorData = await response.json(); } catch { /* ignore non-json error */ }
+      }
       return {
         success: response.ok,
         status: response.status,
-        isClientError: response.status >= 400 && response.status < 500
+        isClientError: response.status >= 400 && response.status < 500,
+        errorMessage: errorData?.error?.message || errorData?.message || `HTTP ${response.status}`
       };
     } catch {
-      return { success: false, status: 0, isNetworkError: true };
+      return { success: false, status: 0, isNetworkError: true, errorMessage: 'Ağ bağlantısı kurulamadı.' };
     }
   }
 

@@ -1,0 +1,3 @@
+Cashier parked ticket recall confirmation verification:
+- When ticketItems contains active items, recallParkedTicket prompts the user with confirm() before replacing the active cart.
+- Data loss on active cart during parked ticket recall is prevented.

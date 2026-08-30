@@ -1,4 +1,4 @@
-﻿namespace ALKAROS.Kitchen.TicketLifecycle;
+namespace ALKAROS.Kitchen.TicketLifecycle;
 
 using ALKAROS.Orders.OrderAggregate;
 
@@ -175,6 +175,16 @@ public sealed class KitchenTicket
             newTicketStatus = KitchenTicketState.Preparing;
         }
 
+        // Auto-ready: If ticket is in Preparing or Accepted and all non-cancelled items are Ready or Served -> ticket becomes Ready
+        var nonCancelled = newItems.Where(i => i.Status != KitchenTicketItemState.Cancelled).ToList();
+        if (nonCancelled.Count > 0 && nonCancelled.All(i => i.Status == KitchenTicketItemState.Ready || i.Status == KitchenTicketItemState.Served))
+        {
+            if (newTicketStatus == KitchenTicketState.Preparing || newTicketStatus == KitchenTicketState.Accepted)
+            {
+                newTicketStatus = KitchenTicketState.Ready;
+            }
+        }
+
         // Auto-cancel: If every item on the ticket is now Cancelled -> ticket becomes Cancelled
         if (newItems.All(i => i.Status == KitchenTicketItemState.Cancelled))
         {
@@ -192,7 +202,7 @@ public sealed class KitchenTicket
             createdAt: CreatedAt,
             updatedAt: at,
             acceptedAt: AcceptedAt,
-            readyAt: ReadyAt,
+            readyAt: newTicketStatus == KitchenTicketState.Ready ? (ReadyAt ?? at) : ReadyAt,
             cancelledAt: newTicketStatus == KitchenTicketState.Cancelled ? at : CancelledAt,
             cancellationReason: newTicketStatus == KitchenTicketState.Cancelled ? (reason ?? "All items cancelled") : CancellationReason);
     }

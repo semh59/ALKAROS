@@ -1,0 +1,4 @@
+WaiterPwa offline queue 4xx error handling verification:
+- Failed 4xx orders are moved to failedOrders (localStorage: alkaros_waiter_failed_orders) instead of being deleted.
+- Exact error messages from server response bodies are preserved in item.error.
+- Status ribbon displays failed count alert for waiter awareness.

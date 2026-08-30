@@ -1,4 +1,4 @@
-﻿namespace ALKAROS.Kitchen.TicketLifecycle.Tests;
+namespace ALKAROS.Kitchen.TicketLifecycle.Tests;
 
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
@@ -111,11 +111,37 @@ public sealed class KitchenTicketUnitTests
         // Step 3: Item 2 is cancelled (e.g. out of stock)
         var t3 = t2.UpdateItemStatus(item2.Id, KitchenTicketItemState.Cancelled, "Out of potatoes");
 
-        // Now every non-cancelled item (item1) is Ready -> parent Ready is valid!
-        t3.CanTransitionTo(KitchenTicketState.Ready).Should().BeTrue();
-        var tReady = t3.TransitionTo(KitchenTicketState.Ready);
-        tReady.Status.Should().Be(KitchenTicketState.Ready);
-        tReady.ReadyAt.Should().NotBeNull();
+        // Auto-promote invariant: Since all remaining active items are Ready, parent ticket automatically becomes Ready!
+        t3.Status.Should().Be(KitchenTicketState.Ready);
+        t3.ReadyAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void AllItemsReadyAutoPromotesTicketToReady()
+    {
+        var ticketId = Guid.NewGuid();
+        var item1 = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Burger", 1);
+        var item2 = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Fries", 1);
+
+        var ticket = new KitchenTicket(
+            ticketId,
+            Guid.NewGuid(),
+            "KT-101",
+            "Grill",
+            [item1, item2],
+            status: KitchenTicketState.Accepted);
+
+        var t1 = ticket.UpdateItemStatus(item1.Id, KitchenTicketItemState.Preparing);
+        var t2 = t1.UpdateItemStatus(item2.Id, KitchenTicketItemState.Preparing);
+        t2.Status.Should().Be(KitchenTicketState.Preparing);
+
+        var t3 = t2.UpdateItemStatus(item1.Id, KitchenTicketItemState.Ready);
+        t3.Status.Should().Be(KitchenTicketState.Preparing);
+
+        // When the last preparing item becomes Ready, the ticket automatically becomes Ready
+        var t4 = t3.UpdateItemStatus(item2.Id, KitchenTicketItemState.Ready);
+        t4.Status.Should().Be(KitchenTicketState.Ready);
+        t4.ReadyAt.Should().NotBeNull();
     }
 
     [Fact]
