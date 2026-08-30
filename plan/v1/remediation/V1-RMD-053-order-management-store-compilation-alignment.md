@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-053-order-management-store-compilation-alignment.md`
-- `src/Host/Experience/Orders/OrderManagementStore.cs`
+- PO:2026-08-29 kararıyla src/Host/Experience/Orders/OrderManagementStore.cs yüzeyi V1-RMD-054'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-053/**`
 
 ## In scope

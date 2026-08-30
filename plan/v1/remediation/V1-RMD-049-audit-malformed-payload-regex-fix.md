@@ -17,8 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-049-audit-malformed-payload-regex-fix.md`
-- `src/Modules/Audit/EventStore/IAuditSanitizer.cs`
-- `tests/Modules/Audit/EventStore/AuditSanitizerTests.cs`
+- PO:2026-08-29 kararıyla src/Modules/Audit/EventStore/IAuditSanitizer.cs ve tests/Modules/Audit/EventStore/AuditSanitizerTests.cs yüzeyleri V1-RMD-057'ye devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-049/**`
 
 ## In scope

@@ -180,8 +180,8 @@
 
       // 2. Fetch Categories & Products
       const [catRes, prodRes] = await Promise.all([
-        fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/categories`, { credentials: 'include' }).catch(() => null),
-        fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/products`, { credentials: 'include' }).catch(() => null)
+        fetch(`/api/v1/terminals/${state.terminalId}/catalog?category=all`, { credentials: 'include' }).catch(() => null),
+        fetch(`/api/v1/terminals/${state.terminalId}/catalog`, { credentials: 'include' }).catch(() => null)
       ]);
 
       if (catRes && catRes.ok) {

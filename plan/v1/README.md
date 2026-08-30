@@ -11,9 +11,9 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 175 görev tanımlıdır: 171 `Done`, 4 onaylı `NotApplicable`, 0 `Planned` ve
-  0 `InProgress` görev vardır. 2026-08-29 canlı derleme doğrulaması sonrası planlanan 2 kurtarma görevi
-  (`V1-RMD-053`, `V1-GOV-031`) tamamlanmış ve `GATE-V1-EXIT` kesin olarak yeniden mühürlenmiştir.
+- Bu sürüm altında 180 görev tanımlıdır: 176 `Done`, 4 onaylı `NotApplicable`, 0 `Planned` ve
+  0 `InProgress` görev vardır. 2026-08-31 derin mimari denetim ve 5. dalga kurtarma görevleri
+  (`V1-RMD-054..057`, `V1-GOV-033`) tamamlanmış ve `GATE-V1-EXIT` kesin olarak yeniden mühürlenmiştir.
 - `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` sıralı foundation kapısı geçmeden
   başka application görevi başlamaz.
@@ -29,5 +29,5 @@ uca çalıştıran çekirdek operasyon.
 `reconciliation`, `remediation`, `reporting`, `security-foundation`, `settings`,
 `table-management`, `waiter-pwa`.
 
-Doğrulanan plan hacmi: 18 modül/dizin, 175 tek-sahip görev.
-2026-08-29 canlı derleme doğrulaması ve nihai kurtarma zinciri V1-GOV-031 ile mühürlendi.
+Doğrulanan plan hacmi: 18 modül/dizin, 180 tek-sahip görev.
+2026-08-31 derin mimari denetim ve nihai kurtarma zinciri V1-GOV-033 ile mühürlendi.

@@ -58,11 +58,19 @@ public sealed class AuditSanitizer : IAuditSanitizer
         var sanitized = text;
         foreach (var pattern in SensitiveSubstrings)
         {
+            // Quoted values with a closing quote present
             var quotedRegex = new System.Text.RegularExpressions.Regex(
                 $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*[""'])([^""'\r\n]+)([""'])",
                 System.Text.RegularExpressions.RegexOptions.Compiled);
             sanitized = quotedRegex.Replace(sanitized, "$1[REDACTED]$3");
 
+            // Truncated/malformed: opening quote present but no closing quote before end-of-string
+            var truncatedRegex = new System.Text.RegularExpressions.Regex(
+                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*[""'])([^""'\r\n]+)$",
+                System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Multiline);
+            sanitized = truncatedRegex.Replace(sanitized, "$1[REDACTED]");
+
+            // Unquoted values
             var unquotedRegex = new System.Text.RegularExpressions.Regex(
                 $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*)([^,\s""}}\]]+)",
                 System.Text.RegularExpressions.RegexOptions.Compiled);

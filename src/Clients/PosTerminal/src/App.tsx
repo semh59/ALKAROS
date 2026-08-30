@@ -693,7 +693,7 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderError, setOrderError] = useState<string>();
 
-  const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones = zones) => {
+  const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones: Awaited<ReturnType<typeof client.listZones>>) => {
     const targetZoneId = (zoneId === "all" && currentZones.length > 0) ? currentZones[0].zoneId : zoneId;
     if (targetZoneId && targetZoneId !== "all") {
       try {
@@ -705,7 +705,7 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
     } else {
       setFloorPlan(undefined);
     }
-  }, [client, zones]);
+  }, [client]);
 
   const load = useCallback(async () => {
     setState("loading");

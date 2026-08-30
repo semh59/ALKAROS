@@ -18,9 +18,7 @@
 
 - `plan/v1/remediation/V1-RMD-050-order-endpoint-and-dualscreen-unification.md`
 - `src/Host/Experience/Orders/OrderManagementContracts.cs`
-- `src/Host/Experience/Orders/OrderManagementEndpoints.cs`
-- PO:2026-08-29 kararıyla src/Host/Experience/Orders/OrderManagementStore.cs yüzeyi V1-RMD-053'e devredildi; bu historical task closed kalır.
-- `src/Host/DualScreen/DualScreenApplication.cs`
+- PO:2026-08-29 kararıyla src/Host/Experience/Orders/OrderManagementEndpoints.cs, src/Host/DualScreen/DualScreenApplication.cs ve src/Host/Experience/Orders/OrderManagementStore.cs yüzeyleri V1-RMD-054'e devredildi; bu historical task closed kalır.
 - `src/Host/DualScreen/DualScreenStore.cs`
 - `evidence/V1-RMD-050/**`
 

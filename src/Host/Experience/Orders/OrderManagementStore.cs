@@ -20,21 +20,27 @@ public sealed class OrderManagementStore
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var existingOrder = await GetActiveOrderByTableIdAsync(request.TableId, cancellationToken);
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+
+        var existingOrder = await GetActiveOrderByTableIdInternalAsync(connection, transaction, request.TableId, cancellationToken);
         var orderId = existingOrder?.OrderId ?? Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
 
         var items = new List<OrderItem>();
         foreach (var i in request.Items)
         {
+            var (productName, unitPrice, taxRate) = await ResolveCatalogProductAsync(
+                connection, transaction, i.ProductId, cancellationToken);
+
             items.Add(new OrderItem(
                 Guid.NewGuid(),
                 orderId,
                 i.ProductId,
-                i.ProductName,
+                productName,
                 i.Quantity,
-                i.UnitPrice,
-                10.00m,
+                unitPrice,
+                taxRate,
                 skuSnapshot: null,
                 discountAmount: 0,
                 modifiers: null,
@@ -68,14 +74,14 @@ public sealed class OrderManagementStore
         {
             await _repository.AddAsync(order, cancellationToken);
 
-            await using var cmd = _dataSource.CreateCommand(
+            await using var cmd = new NpgsqlCommand(
                 """
                 UPDATE table_mgmt.tables
                 SET current_order_id = @order_id,
                     current_status = 'Occupied',
                     row_version = row_version + 1
                 WHERE table_id = @table_id;
-                """);
+                """, connection, transaction);
             cmd.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
             cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = request.TableId;
             await cmd.ExecuteNonQueryAsync(cancellationToken);
@@ -84,6 +90,8 @@ public sealed class OrderManagementStore
         {
             await _repository.SaveAsync(order, existingOrder.RowVersion, cancellationToken);
         }
+
+        await transaction.CommitAsync(cancellationToken);
 
         return MapToDto(order, request.TableNumber);
     }
@@ -129,6 +137,53 @@ public sealed class OrderManagementStore
 
         var tableNumber = await GetTableNumberAsync(order.TableId, cancellationToken) ?? "—";
         return MapToDto(order, tableNumber);
+    }
+
+    private static async Task<(string Name, decimal Price, decimal TaxRate)> ResolveCatalogProductAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid productId, CancellationToken cancellationToken)
+    {
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT p.name, p.current_price, COALESCE(t.vat_rate, 0)
+            FROM catalog.products p
+            LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
+            WHERE p.product_id = @product_id AND p.active AND p.current_price IS NOT NULL;
+            """, connection, transaction);
+        cmd.Parameters.AddWithValue("product_id", productId);
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            throw new KeyNotFoundException($"Product {productId} was not found or has no active price.");
+
+        return (reader.GetString(0), reader.GetDecimal(1), reader.GetDecimal(2));
+    }
+
+    private static async Task<OrderDto?> GetActiveOrderByTableIdInternalAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid tableId, CancellationToken cancellationToken)
+    {
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT o.order_id, o.status, o.row_version, o.created_at
+            FROM orders.orders o
+            WHERE o.table_id = @table_id
+              AND o.status IN ('Draft', 'Submitted', 'PendingConfirmation', 'Accepted', 'Preparing', 'Ready')
+            ORDER BY o.created_at DESC
+            LIMIT 1
+            FOR UPDATE;
+            """, connection, transaction);
+        cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new OrderDto(
+            reader.GetGuid(0),
+            tableId,
+            "",
+            reader.GetString(1),
+            reader.GetInt64(2),
+            0,
+            [],
+            reader.GetFieldValue<DateTimeOffset>(3));
     }
 
     private async Task<string?> GetTableNumberAsync(Guid? tableId, CancellationToken cancellationToken)

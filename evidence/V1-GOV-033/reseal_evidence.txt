@@ -1,0 +1,7 @@
+dotnet build ALKAROS.slnx: 0 Uyarı, 0 Hata
+dotnet test AuditSanitizerTests: 7/7 Başarılı
+PosTerminal Vitest: 79/79 Başarılı (13 dosya)
+plan_audit_tool validate: 457 task, 0 error, 0 warning
+plan_audit_tool validate-coverage: 2903 units, 0 error
+plan_audit_tool verify-manifest: 739 Markdown, 0 error
+project_manifest_tool: VALID (0 differences)

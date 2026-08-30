@@ -17,8 +17,7 @@ Waiter PWA ve Cashier UI istemcilerini gerçek Host API sözleşmelerine (`/tabl
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-051-waiter-pwa-and-cashier-ui-contract-alignment.md`
-- `src/Clients/WaiterPwa/wwwroot/waiter-app.js`
-- `src/Clients/Cashier/wwwroot/**`
+- PO:2026-08-29 kararıyla src/Clients/WaiterPwa/wwwroot/waiter-app.js ve src/Clients/Cashier/wwwroot/** yüzeyleri V1-RMD-055'e devredildi; bu historical task closed kalır.
 - `tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py`
 - `evidence/V1-RMD-051/**`
 

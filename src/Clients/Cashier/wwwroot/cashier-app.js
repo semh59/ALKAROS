@@ -81,8 +81,8 @@
   async function loadDynamicCatalog() {
     try {
       const [catRes, prodRes] = await Promise.all([
-        fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/categories`, { credentials: 'include' }).catch(() => null),
-        fetch(`/api/v1/terminals/${state.terminalId}/catalog-management/products`, { credentials: 'include' }).catch(() => null)
+        fetch(`/api/v1/terminals/${state.terminalId}/catalog?category=all`, { credentials: 'include' }).catch(() => null),
+        fetch(`/api/v1/terminals/${state.terminalId}/catalog`, { credentials: 'include' }).catch(() => null)
       ]);
 
       if (catRes && catRes.ok && prodRes && prodRes.ok) {
@@ -204,8 +204,8 @@
         name: item.name,
         productName: item.name,
         quantity: item.quantity,
-        unitPrice: item.price,
-        specialInstructions: item.isComplimentary ? 'İkram' : null
+        unitPrice: item.isComplimentary ? 0 : item.price,
+        specialInstructions: item.isComplimentary ? 'İkram — kasiyer onaylı sıfır fiyat' : null
       }))
     };
 

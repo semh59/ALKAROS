@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -9,6 +10,7 @@ namespace ALKAROS.Host.Experience.Orders;
 public static class OrderManagementEndpoints
 {
     public const string RoutePrefix = "/api/v1/terminals/{terminalId:guid}/orders";
+    public const string CashierCookieName = DualScreenApplication.CashierCookieName;
 
     public static IServiceCollection AddOrderManagementExperience(this IServiceCollection services)
     {
@@ -22,14 +24,19 @@ public static class OrderManagementEndpoints
         ArgumentNullException.ThrowIfNull(endpoints);
 
         var group = endpoints.MapGroup(RoutePrefix)
-            .WithTags("Orders");
+            .WithTags("Orders")
+            .RequireRateLimiting("terminal-write");
 
         group.MapPost("/table-draft", async (
             Guid terminalId,
             CreateTableDraftRequest request,
             OrderManagementStore store,
+            DualScreenStore dualStore,
+            HttpContext context,
             CancellationToken cancellationToken) =>
         {
+            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+
             if (request.TableId == Guid.Empty)
                 return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "TableId cannot be empty." } });
 
@@ -44,8 +51,12 @@ public static class OrderManagementEndpoints
             Guid terminalId,
             Guid tableId,
             OrderManagementStore store,
+            DualScreenStore dualStore,
+            HttpContext context,
             CancellationToken cancellationToken) =>
         {
+            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+
             var order = await store.GetActiveOrderByTableIdAsync(tableId, cancellationToken);
             if (order == null)
                 return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "No active order for table." } });
@@ -57,8 +68,12 @@ public static class OrderManagementEndpoints
             Guid terminalId,
             Guid orderId,
             OrderManagementStore store,
+            DualScreenStore dualStore,
+            HttpContext context,
             CancellationToken cancellationToken) =>
         {
+            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+
             var order = await store.GetOrderByIdAsync(orderId, cancellationToken);
             if (order == null)
                 return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "Order not found." } });
@@ -71,8 +86,12 @@ public static class OrderManagementEndpoints
             Guid orderId,
             SubmitTableOrderRequest request,
             OrderManagementStore store,
+            DualScreenStore dualStore,
+            HttpContext context,
             CancellationToken cancellationToken) =>
         {
+            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+
             try
             {
                 var submitted = await store.SubmitOrderAsync(orderId, request.ExpectedRowVersion, cancellationToken);
@@ -89,5 +108,14 @@ public static class OrderManagementEndpoints
         });
 
         return group;
+    }
+
+    private static async Task RequireCashierSessionAsync(
+        HttpContext context, Guid terminalId, DualScreenStore store, CancellationToken cancellationToken)
+    {
+        var cashierToken = context.Request.Cookies[CashierCookieName];
+        var principal = await store.AuthenticateCashierAsync(cashierToken, terminalId, cancellationToken);
+        if (principal is null)
+            throw new DualScreenUnauthorizedException("Cashier authentication is required.");
     }
 }
