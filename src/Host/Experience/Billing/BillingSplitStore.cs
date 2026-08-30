@@ -1,6 +1,7 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.Orders.OrderAggregate;
+using Npgsql;
 
 namespace ALKAROS.Host.Experience.Billing;
 
@@ -9,12 +10,14 @@ public sealed class BillingSplitStore
     private readonly IBillRepository _bills;
     private readonly ISplitDesignRepository _splitDesigns;
     private readonly IOrderRepository? _orders;
+    private readonly NpgsqlDataSource? _dataSource;
 
-    public BillingSplitStore(IBillRepository bills, ISplitDesignRepository splitDesigns, IOrderRepository? orders = null)
+    public BillingSplitStore(IBillRepository bills, ISplitDesignRepository splitDesigns, IOrderRepository? orders = null, NpgsqlDataSource? dataSource = null)
     {
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
         _splitDesigns = splitDesigns ?? throw new ArgumentNullException(nameof(splitDesigns));
         _orders = orders;
+        _dataSource = dataSource;
     }
 
     public async Task<BillSplitDesignDto> CreateBillFromOrderAsync(
@@ -43,7 +46,44 @@ public sealed class BillingSplitStore
         var billNumber = $"BILL-{order.OrderNumber}";
         var bill = Bill.FromOrder(billId, billNumber, order);
 
-        await _bills.AddAsync(bill, cancellationToken);
+        try
+        {
+            await _bills.AddAsync(bill, cancellationToken);
+        }
+        catch (Exception)
+        {
+            // If another request concurrently inserted a bill for this order/number, recover gracefully
+            var retryBills = await _bills.GetByOrderIdAsync(orderId, cancellationToken);
+            var retryActive = retryBills.FirstOrDefault(b => b.Status != BillState.Cancelled);
+            if (retryActive != null)
+            {
+                var retryAllocations = await _splitDesigns.GetAllocationsByBillIdAsync(retryActive.Id, cancellationToken);
+                return Map(retryActive, retryAllocations, canMutate);
+            }
+            throw;
+        }
+
+        if (_dataSource != null && order.TableId.HasValue && order.TableId.Value != Guid.Empty)
+        {
+            try
+            {
+                await using var cmd = _dataSource.CreateCommand(
+                    """
+                    UPDATE table_mgmt.tables
+                    SET current_bill_id = @bill_id,
+                        row_version = row_version + 1
+                    WHERE table_id = @table_id;
+                    """);
+                cmd.Parameters.AddWithValue("bill_id", billId);
+                cmd.Parameters.AddWithValue("table_id", order.TableId.Value);
+                await cmd.ExecuteNonQueryAsync(cancellationToken);
+            }
+            catch
+            {
+                // Non-fatal table pointer sync
+            }
+        }
+
         return Map(bill, [], canMutate);
     }
 

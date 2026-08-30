@@ -3,7 +3,7 @@
   "audit_date": "2026-07-30",
   "markdown_file_count": 739,
   "markdown_line_count": 47122,
-  "markdown_byte_count": 2823722,
+  "markdown_byte_count": 2823716,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -1898,7 +1898,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "BA122F85E31FE35CAC81290E8213BDE57BCFA2EFDBC6FB59216E42534B76ADAC",
+      "sha256": "A2134EC83F742AD4F6F9F5D99338C117D4FFA6B17F07CD5B8E7524300417A350",
       "lines": 2015,
       "bytes": 281730,
       "utf8": true
@@ -3410,9 +3410,9 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-033-master-audit-reseal-and-gate-closure.md",
-      "sha256": "E6D2EC2A5185C1CB0AD3899010D0A0E12C353F0FDD6495AB57683B0066C3A2C9",
+      "sha256": "091001AD0D9D66F30D914C6A168F1BD02E769D24F6D43FDF7FF5346843F1F157",
       "lines": 52,
-      "bytes": 1437,
+      "bytes": 1431,
       "utf8": true
     },
     {

@@ -1915,7 +1915,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/governance/V1-GOV-030-master-custody-reopen-and-remediation-wave-4.md` | ✅ | `C170E26D6DE6C747C7DA5C65CDF34502295FC80FC9E8C6F20EEE2B06BF14D6DD` | Tek-sahip görev |
 | `plan/v1/governance/V1-GOV-031-master-audit-reseal-and-gate-closure.md` | ✅ | `C8D1132FA62063BEB2E7FE16FA1811FB0489B5786E92DE837AE6305691D2AFCE` | Tek-sahip görev |
 | `plan/v1/governance/V1-GOV-032-master-custody-reopen-and-remediation-wave-5.md` | ✅ | `99FA7785E82EA7D6A2567B3DCF011EFA1BA4BA1A1F39189D97CC9887528C4C79` | Tek-sahip görev |
-| `plan/v1/governance/V1-GOV-033-master-audit-reseal-and-gate-closure.md` | ✅ | `E6D2EC2A5185C1CB0AD3899010D0A0E12C353F0FDD6495AB57683B0066C3A2C9` | Tek-sahip görev |
+| `plan/v1/governance/V1-GOV-033-master-audit-reseal-and-gate-closure.md` | ✅ | `091001AD0D9D66F30D914C6A168F1BD02E769D24F6D43FDF7FF5346843F1F157` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md` | ✅ | `FD5A1B4A473897FF4F98445924E781D4629BA8BD4302D823D2FEA5488481AF5A` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md` | ✅ | `29960A48FD68282E81699825B56A993BA04C78F56190FA18B1356E85AD43DC37` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-006-reconnect-operation-claiming.md` | ✅ | `630A1950558D73EF84B0D2FAA9D6A50C3E5E6CAD63A53668618BBC7AA0510BD0` | Tek-sahip görev |
