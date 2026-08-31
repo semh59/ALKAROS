@@ -42,3 +42,4 @@ dist/
 # Logs / transient test output
 output*.txt
 test_output*.txt
+.pnpm-store/

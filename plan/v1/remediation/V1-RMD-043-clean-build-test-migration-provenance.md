@@ -12,7 +12,7 @@ Tüm C#, frontend ve Python testlerini sıfırdan çalıştırmak; 38 migration 
 
 ## Owned surface
 
-- `build/provenance/**`
+- PO:2026-08-31 kararıyla build/provenance/** yüzeyi V1-RMD-067'ye devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-043/**`
 
 ## Dependencies

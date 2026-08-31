@@ -65,6 +65,11 @@ public sealed class KitchenOperationsStore
             ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found.");
         EnsureVersion(ticket.RowVersion, request.ExpectedRowVersion, "kitchen ticket");
 
+        if (ticket.Status == target)
+        {
+            return ToDto(ticket);
+        }
+
         KitchenTicket transitioned;
         try
         {

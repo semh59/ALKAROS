@@ -102,6 +102,13 @@ public sealed class PostgresOrderRepository : IOrderRepository
         var newRowVersion = await UpdateOrderAsync(connection, transaction, order, expectedRowVersion, cancellationToken);
 
         var knownItemIds = (await ReadItemIdsAsync(connection, transaction, order.Id, cancellationToken)).ToHashSet();
+        var currentItemIds = order.Items.Select(i => i.Id).ToHashSet();
+
+        foreach (var removedId in knownItemIds.Except(currentItemIds))
+        {
+            await DeleteItemAsync(connection, transaction, removedId, cancellationToken);
+        }
+
         foreach (var item in order.Items)
         {
             if (knownItemIds.Contains(item.Id))
@@ -264,6 +271,21 @@ public sealed class PostgresOrderRepository : IOrderRepository
             throw new InvalidOperationException(
                 $"Order item {item.Id} not found or concurrent modification " +
                 $"(expected row version {item.RowVersion}).");
+    }
+
+    private static async Task DeleteItemAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        Guid itemId,
+        CancellationToken cancellationToken)
+    {
+        await using var command = CreateCommand(connection, transaction,
+            $"""
+            DELETE FROM {Items}
+            WHERE order_item_id = @order_item_id;
+            """);
+        command.Parameters.AddWithValue("order_item_id", itemId);
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     private static void BindItem(NpgsqlCommand command, OrderItem item)

@@ -1,4 +1,5 @@
-// ALKAROS Waiter PWA Controller (V1-WTR-008 / V1-RMD-051)
+// ALKAROS Waiter PWA Controller (V1-WTR-008 / V1-RMD-051 / V1-RMD-066)
+// Authoritative Endpoints: /orders/table-draft, /table-management/zones, /table-management/tables, /catalog-management/categories, /catalog
 (function () {
   'use strict';
 

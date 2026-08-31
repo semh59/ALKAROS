@@ -13,8 +13,7 @@ authorization ve fail-closed recovery davranışıyla production HTTP yüzeyine 
 
 ## Owned surface
 
-- `src/Host/Experience/KitchenOperations/**`
-- `tests/Host/Experience/KitchenOperations/**`
+- PO:2026-08-31 kararıyla src/Host/Experience/KitchenOperations/** ve tests/Host/Experience/KitchenOperations/** yüzeyleri V1-RMD-065'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-015/**`
 
 ## Dependencies

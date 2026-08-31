@@ -173,8 +173,7 @@ public sealed class CatalogManagementStore
             await using var cmd = _dataSource.CreateCommand(
                 """
                 UPDATE catalog.products
-                SET current_price = @current_price,
-                    updated_at = now()
+                SET current_price = @current_price
                 WHERE product_id = @product_id;
                 """);
             cmd.Parameters.AddWithValue("current_price", request.Price);

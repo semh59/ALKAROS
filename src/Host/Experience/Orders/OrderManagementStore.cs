@@ -165,7 +165,7 @@ public sealed class OrderManagementStore
             SELECT o.order_id, o.status, o.row_version, o.created_at
             FROM orders.orders o
             WHERE o.table_id = @table_id
-              AND o.status IN ('Draft', 'Submitted', 'PendingConfirmation', 'Accepted', 'Preparing', 'Ready')
+              AND o.status = 'Draft'
             ORDER BY o.created_at DESC
             LIMIT 1
             FOR UPDATE;

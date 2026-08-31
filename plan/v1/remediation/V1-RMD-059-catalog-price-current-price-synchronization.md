@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-059-catalog-price-current-price-synchronization.md`
-- `src/Host/Experience/Catalog/**`
+- PO:2026-08-31 kararıyla src/Host/Experience/Catalog/** yüzeyi V1-RMD-063'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-059/**`
 
 ## In scope

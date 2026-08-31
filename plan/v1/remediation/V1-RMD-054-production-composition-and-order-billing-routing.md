@@ -18,8 +18,7 @@
 
 - `plan/v1/remediation/V1-RMD-054-production-composition-and-order-billing-routing.md`
 - `src/Host/DualScreen/DualScreenApplication.cs`
-- `src/Host/Experience/Orders/OrderManagementStore.cs`
-- `src/Host/Experience/Orders/OrderManagementEndpoints.cs`
+- PO:2026-08-31 kararıyla src/Host/Experience/Orders/OrderManagementStore.cs yüzeyi V1-RMD-064'e, src/Host/Experience/Orders/OrderManagementEndpoints.cs yüzeyi V1-RMD-066'ya devredildi; bu historical task closed kalır.
 - `src/Host/Experience/Billing/BillingSplitApplication.cs`
 - `src/Host/Experience/Billing/BillingSplitContracts.cs`
 - `evidence/V1-RMD-054/**`

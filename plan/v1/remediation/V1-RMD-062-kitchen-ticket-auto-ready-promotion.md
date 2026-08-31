@@ -17,8 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-062-kitchen-ticket-auto-ready-promotion.md`
-- `src/Modules/Kitchen/TicketLifecycle/**`
-- `tests/Modules/Kitchen/TicketLifecycle/**`
+- PO:2026-08-31 kararıyla src/Modules/Kitchen/TicketLifecycle/** ve tests/Modules/Kitchen/TicketLifecycle/** yüzeyleri V1-RMD-065'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-062/**`
 
 ## In scope

@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-060-waiter-pwa-offline-queue-error-handling.md`
-- `src/Clients/WaiterPwa/wwwroot/waiter-app.js`
+- PO:2026-08-31 kararıyla src/Clients/WaiterPwa/wwwroot/waiter-app.js yüzeyi V1-RMD-066'ya devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-060/**`
 
 ## In scope

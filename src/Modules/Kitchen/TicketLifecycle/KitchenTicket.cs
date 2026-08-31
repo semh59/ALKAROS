@@ -101,6 +101,11 @@ public sealed class KitchenTicket
         string? reason = null,
         DateTimeOffset? timestamp = null)
     {
+        if (Status == newState)
+        {
+            return this;
+        }
+
         if (!CanTransitionTo(newState))
         {
             throw new InvalidKitchenTransitionException(

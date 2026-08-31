@@ -31,10 +31,7 @@ transaction içinde projekte etmek.
 - `src/Modules/Settings/SettingsModule.cs`
 - `tests/Host/MigrationComposition/Registry/ModuleRegistryTests.cs`
 - `tests/Host/MigrationComposition/Composition/HostModuleReachabilityTests.cs`
-- `src/Modules/Orders/SubmitOrder/**`
-- `src/Modules/Orders/OrderAggregate/**`
-- `tests/Modules/Orders/SubmitOrder/**`
-- `tests/Modules/Orders/OrderAggregate/**`
+- PO:2026-08-31 kararıyla src/Modules/Orders/SubmitOrder/**, src/Modules/Orders/OrderAggregate/**, tests/Modules/Orders/SubmitOrder/** ve tests/Modules/Orders/OrderAggregate/** yüzeyleri V1-RMD-064'e devredildi; bu historical task closed kalır.
 - `src/Modules/Identity/DeviceSessions/DeviceSessionService.cs`
 - `src/Modules/Identity/DeviceSessions/IDeviceSessionRepository.cs`
 - `src/Modules/Identity/DeviceSessions/PostgresDeviceSessionRepository.cs`

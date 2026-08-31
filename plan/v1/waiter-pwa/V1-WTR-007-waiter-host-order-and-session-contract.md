@@ -14,7 +14,7 @@ Garson mobil istemcisinin gerçek Host API üzerinden oturum doğrulaması yapab
 
 - `plan/v1/waiter-pwa/V1-WTR-007-waiter-host-order-and-session-contract.md`
 - PO:2026-08-29 kararıyla src/Host/Experience/Orders yüzeyi V1-RMD-046'ya devredildi; bu historical task closed kalır.
-- `tests/Host/Experience/Orders/**`
+- PO:2026-08-31 kararıyla tests/Host/Experience/Orders/** yüzeyi V1-RMD-064'e devredildi; bu historical task closed kalır.
 - `evidence/V1-WTR-007/**`
 
 ## Dependencies

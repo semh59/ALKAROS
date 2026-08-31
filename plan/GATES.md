@@ -248,6 +248,16 @@ Kapsamlı derin sistem denetiminde tespit edilen PosTerminal `BillingRoute` stat
 
 Tüm 6. dalga kurtarma görevleri (`V1-RMD-058..062`) tamamlanmıştır: PosTerminal `BillingRoute` adisyon oluşturma sonrası `billId` senkronizasyonu sağlanmış; katalog fiyat ekleme işlemlerinde `catalog.products.current_price` otomatik güncellenmesi temin edilmiş; WaiterPwa çevrimdışı kuyrukta 4xx hatalarında siparişlerin `failedOrders` içinde korunması sağlanmış; Cashier bekletilen fiş geri yüklemede aktif sepet onay koruması eklenmiş; KitchenTicket mutfak fişinde tüm kalemler tamamlandığında `Ready` durumuna otomatik geçiş garantilenmiştir. V1 matrisi 186 görev, 182 `Done`, 4 onaylı `NotApplicable`, 0 `Planned`, 0 `InProgress` olarak `V1-GOV-035` ile kesin olarak mühürlenmiş ve `GATE-V1-EXIT` kapatılmıştır.
 
+## 2026-08-31 7. dalga derin denetim bulguları ve GATE-V1-EXIT yeniden açılışı (V1-GOV-036)
+
+Bağımsız derin mimari ve kod denetiminde tespit edilen katalog fiyat `updated_at` sorgu çökmesi (HTTP 503), masa sipariş taslaklarında mükerrer kalem birikmesi, mutfak fişi otomatik `Ready` terfisi sonrasında durum geçişi çakışması (HTTP 409), garson PWA `Authorization: Bearer` başlık desteği eksikliği ve Docker derlemesinde `.pnpm-store` / provenance uyumsuzlukları nedeniyle `GATE-V1-EXIT` kapısı yeniden açılmıştır. V1 matrisi 193 göreve yükselmiş olup, 5 adımlık kurtarma zinciri (`V1-RMD-063..067`, `V1-GOV-037`) planlanmıştır.
+
+## 2026-08-31 7. dalga kurtarma ve GATE-V1-EXIT kesin reseal mühürleme (V1-GOV-037)
+
+Tüm 7. dalga kurtarma görevleri (`V1-RMD-063..067`) tamamlanmıştır: `CatalogManagementStore` içerisindeki tanımsız `updated_at` kolon sorgusu düzeltilerek fiyat ekleme ve katalog senkronizasyonu tam güvenceye alınmış; `PostgresOrderRepository.SaveAsync` içerisine silinen kalemleri temizleyen orphan-cleanup mekanizması eklenerek masa taslak güncellemelerinde mükerrer satır birikmesi önlenmiş; `KitchenTicket.TransitionTo` ve `KitchenOperationsStore` içinde bilet durumu geçişleri idempotent hale getirilerek otomatik `Ready` terfisi sonrası oluşan 409 çakışmaları giderilmiş; `OrderManagementEndpoints` içerisine `Authorization: Bearer` başlık desteği eklenerek Garson PWA isteklerinin 401 hatası alması engellenmiş; `.dockerignore` ve `.gitignore` dosyalarına `.pnpm-store` kuralı eklenerek build provenance ve Docker hijyeni mühürlenmiştir. V1 matrisi 193 görev, 189 `Done`, 4 onaylı `NotApplicable`, 0 `Planned`, 0 `InProgress` olarak `V1-GOV-037` ile kesin olarak mühürlenmiş ve `GATE-V1-EXIT` kapatılmıştır.
+
+
+
 
 
 

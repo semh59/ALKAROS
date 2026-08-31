@@ -114,6 +114,15 @@ public static class OrderManagementEndpoints
         HttpContext context, Guid terminalId, DualScreenStore store, CancellationToken cancellationToken)
     {
         var cashierToken = context.Request.Cookies[CashierCookieName];
+        if (string.IsNullOrWhiteSpace(cashierToken))
+        {
+            var authHeader = context.Request.Headers.Authorization.ToString();
+            if (authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                cashierToken = authHeader["Bearer ".Length..].Trim();
+            }
+        }
+
         var principal = await store.AuthenticateCashierAsync(cashierToken, terminalId, cancellationToken);
         if (principal is null)
             throw new DualScreenUnauthorizedException("Cashier authentication is required.");

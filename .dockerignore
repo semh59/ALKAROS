@@ -8,3 +8,4 @@ evidence/**
 docs/audit/**
 deploy/docker/db_password
 deploy/docker/admin_password
+**/.pnpm-store
