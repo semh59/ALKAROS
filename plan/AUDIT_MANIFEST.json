@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 842,
-  "markdown_line_count": 53314,
-  "markdown_byte_count": 3159464,
+  "markdown_line_count": 53361,
+  "markdown_byte_count": 3162945,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -379,9 +379,9 @@
     },
     {
       "path": "docs/operations/production-go-live-checklist.md",
-      "sha256": "80CE910E4DCF1A5CBD82D345B6490CD3164648404CB6B72D0A320A6313ACB2A2",
-      "lines": 145,
-      "bytes": 7829,
+      "sha256": "84B86A74746B52B30CE9FF5507361CD43DB8FFC6D780F831D6020D195966CCDB",
+      "lines": 192,
+      "bytes": 11310,
       "utf8": true
     },
     {
@@ -2136,7 +2136,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9D971A99E2F28D8711C300824AF07CBD6CC43CEE22EF4D23F626BC44B7FBEDDC",
+      "sha256": "3958ED7ED93FF9870CE1E5E87BF38319C55EE747FADA9E0BB639FF2733C701AF",
       "lines": 2118,
       "bytes": 298393,
       "utf8": true

@@ -83,8 +83,53 @@ Still MANUAL before go-live:
 - [ ] Schedule the hourly backup cron from `docs/recovery/backup-restore-runbook.md`
       and confirm artifacts land on **off-host** durable storage.
 - [ ] **DECISION** — `V0-BKP-002` numeric RPO/RTO targets still need a named
-      business approver. RPO=0 for fiscal/audit needs WAL streaming, which is a
-      `V15-BKP` item, not shipped in V1.
+      business approver; see the competitive calibration below.
+
+### 3a. Competitive calibration of the RPO/RTO targets
+
+The `V0-BKP-002` table was drafted before any competitor benchmark. What the
+market actually does (researched 2026-09):
+
+| Product | Offline / local resilience | Published DB RPO/RTO | Uptime |
+| --- | --- | --- | --- |
+| **Toast** | Local-sync hub buffers orders + encrypted card data on-device; offline mode after 40 s; card auth practically ~24 h | none published; design goal "no order loss" via device buffer | none public |
+| **Square for Restaurants** | Offline payments 24 h (declines after 72 h from first offline txn); $100 default cap; auto-sync | none published; states it may cover extended-outage losses | none public |
+| **Lightspeed Restaurant** | Full offline mode, sales stored locally, auto-sync + backup on reconnect | none published | 99.9% (Lightspeed Systems SaaS) |
+| **Oracle MICROS Simphony** | On-prem posting service + local DB per workstation | RTO/RPO + Target Availability defined for Production, **excluded for datacenter-loss / national emergencies** | Oracle SaaS 99.9% |
+| **Turkish SMB (Adisyo, Simpra, Menulux, GoPOS)** | "Çevrimdışı mod" + "otomatik yedekleme" advertised as table stakes | none published | none public |
+| **Industry guidance** | — | hourly backup "ideal", daily "acceptable"; PITR/WAL → ~5 min RPO; 3-2-1 rule | — |
+
+Takeaways:
+
+1. **The competitive differentiator is local-first offline resilience, not
+   database RPO.** ALKAROS already matches this: WaiterPwa offline queue +
+   `local-first-sync-contract` + idempotency inbox/outbox → in-progress order
+   RPO ≈ 0 while the network/cloud is down. This is the parity claim and it is
+   already shipped.
+2. **No SMB restaurant competitor publishes a numeric DB RPO.** "Automatic
+   backup" is the marketed bar. Hourly `pg_dump` (shipped) already meets or
+   beats that bar for orders/kitchen/inventory.
+3. **The recognised "better" tier is PITR (WAL archiving) → ~5 min RPO**, and
+   that is the right target for money + fiscal + audit rows.
+
+Recommended calibrated targets (supersede the draft once approved):
+
+| Data class | RPO | RTO | Mechanism | V1 status |
+| --- | --- | --- | --- | --- |
+| In-progress orders (client-side) | ~0 | n/a (keeps operating) | offline queue + local-first sync | **shipped** |
+| Financial (bills, payments), fiscal, audit | 5 min | 2 h | PostgreSQL PITR / WAL archiving to off-host target | **gap — not in V1** |
+| Orders, kitchen, inventory, customer | 1 h | 4 h | hourly `pg_dump` + off-host copy | **shipped (cron + off-host copy pending)** |
+| Settings, config | 24 h | 8 h | daily `pg_dump` | **shipped** |
+| Uptime aspiration | — | — | — | 99.9% north-star; single-node V1 cannot contract to it (needs warm standby, `V15-BKP`) |
+
+- [ ] **DECISION (Semih / financial advisor)** — adopt the calibrated table
+      above into `docs/recovery/rpo-rto-targets.md` with name + date, accepting
+      for the pilot that financial/fiscal/audit RPO is 1 h (the hourly dump)
+      **until** WAL archiving lands.
+- [ ] **DECISION** — pull WAL archiving (PITR, ~5 min RPO for money/fiscal/audit)
+      into V1 as a wave, or leave it to `V15-BKP`. It is a PostgreSQL
+      `archive_command` + off-host archive target + a restore-with-recovery
+      runbook — configuration and ops, no application code change.
 
 ## 4. Monitoring and alerting — PARTIAL
 
@@ -138,7 +183,9 @@ Still MANUAL before go-live:
 | Real TLS cert (if public) | **pending — decision** |
 | External uptime + backup-age alert | **pending — ops wiring** |
 | Production-sized restore timing | **pending — site** |
-| RPO/RTO numeric sign-off (`V0-BKP-002`) | **pending — business owner** |
+| RPO/RTO numeric sign-off (`V0-BKP-002`) | **pending — business owner** (competitively calibrated table in §3a) |
+| Local/offline order RPO ≈ 0 (competitor parity) | shipped |
+| PITR / WAL archiving (5 min RPO for money/fiscal/audit) | **gap — V1 wave or `V15-BKP` decision** |
 
 A LAN-only pilot at one location can go live once the four "pending — site / ops
 wiring" rows are walked. The two "decision" rows (public TLS, RPO/RTO sign-off)

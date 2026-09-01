@@ -1520,7 +1520,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/engineering/task-scope-contract.md` | ✅ | `CECE4919C0152F2B724D9E6730C4F5D380662883E1158DD44BDCDC93097D5CE4` | Tek-sahip görev |
 | `docs/licensing/licensing-contract.md` | ✅ | `8A2AA58265B800F88B80033EA0119BD198FFB975BA205A8623F998DDE18A0730` | Tek-sahip görev |
 | `docs/operations/data-housekeeping.md` | ✅ | `CA49078F530BA988B47943C2A782744A2D32BBBBA4C1480976C60F5A0E0D58CB` | Tek-sahip görev |
-| `docs/operations/production-go-live-checklist.md` | ✅ | `80CE910E4DCF1A5CBD82D345B6490CD3164648404CB6B72D0A320A6313ACB2A2` | Tek-sahip görev |
+| `docs/operations/production-go-live-checklist.md` | ✅ | `84B86A74746B52B30CE9FF5507361CD43DB8FFC6D780F831D6020D195966CCDB` | Tek-sahip görev |
 | `docs/performance/critical-path-load-v1.md` | ✅ | `355EE858A1EA0CA6E3EB37A79CE9E8CCADEF14130B9D5682DB6BC1C8BC459FD1` | Tek-sahip görev |
 | `docs/performance/infra-tuning.md` | ✅ | `9FAA4AA27A54E1B715645F013E7286FC824DEAE6E500599113846F3519566927` | Tek-sahip görev |
 | `docs/performance/load-baseline-v1.md` | ✅ | `A28B13C3EAB4D53557D7F4CBC98D596D87ADAD49B2AC621237A2A5D717A14688` | Tek-sahip görev |
