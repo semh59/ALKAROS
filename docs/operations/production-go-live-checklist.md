@@ -112,24 +112,27 @@ Takeaways:
 3. **The recognised "better" tier is PITR (WAL archiving) → ~5 min RPO**, and
    that is the right target for money + fiscal + audit rows.
 
-Recommended calibrated targets (supersede the draft once approved):
+Calibrated targets — **approved 2026-09-01 by Semih (Founder / Product Owner)**,
+now the authoritative table in `docs/recovery/rpo-rto-targets.md`:
 
 | Data class | RPO | RTO | Mechanism | V1 status |
 | --- | --- | --- | --- | --- |
 | In-progress orders (client-side) | ~0 | n/a (keeps operating) | offline queue + local-first sync | **shipped** |
-| Financial (bills, payments), fiscal, audit | 5 min | 2 h | PostgreSQL PITR / WAL archiving to off-host target | **gap — not in V1** |
-| Orders, kitchen, inventory, customer | 1 h | 4 h | hourly `pg_dump` + off-host copy | **shipped (cron + off-host copy pending)** |
+| Financial (bills, payments), fiscal, audit | 5 min | 2 h | PostgreSQL WAL archiving + physical base backup → PITR (`V1-RMD-095`) | **shipped** (cron + off-host copy pending) |
+| Orders, kitchen, inventory, customer | 1 h | 4 h | hourly `pg_dump` + off-host copy | **shipped** (cron + off-host copy pending) |
 | Settings, config | 24 h | 8 h | daily `pg_dump` | **shipped** |
 | Uptime aspiration | — | — | — | 99.9% north-star; single-node V1 cannot contract to it (needs warm standby, `V15-BKP`) |
 
-- [ ] **DECISION (Semih / financial advisor)** — adopt the calibrated table
-      above into `docs/recovery/rpo-rto-targets.md` with name + date, accepting
-      for the pilot that financial/fiscal/audit RPO is 1 h (the hourly dump)
-      **until** WAL archiving lands.
-- [ ] **DECISION** — pull WAL archiving (PITR, ~5 min RPO for money/fiscal/audit)
-      into V1 as a wave, or leave it to `V15-BKP`. It is a PostgreSQL
-      `archive_command` + off-host archive target + a restore-with-recovery
-      runbook — configuration and ops, no application code change.
+WAL archiving shipped in wave 22 (`V1-RMD-095`): `archive_mode = on` +
+`archive_timeout = 300` in `postgresql.tuned.conf`, `deploy/docker/basebackup.sh`,
+`deploy/docker/restore-pitr.sh`, `deploy/docker/pitr-selfcheck.sh` (proven
+end to end against the live schema — see `evidence/V1-RMD-095/`).
+
+- [ ] Schedule `docker compose --profile ops run --rm basebackup` after every
+      migration and daily; copy each base backup **and** the growing
+      `alkaros-wal-archive` volume to off-host storage (hourly for WAL).
+- [ ] Prune the off-host WAL archive after each verified base backup per
+      `docs/recovery/rpo-rto-targets.md` §3.
 
 ## 4. Monitoring and alerting — PARTIAL
 
@@ -183,10 +186,11 @@ Recommended calibrated targets (supersede the draft once approved):
 | Real TLS cert (if public) | **pending — decision** |
 | External uptime + backup-age alert | **pending — ops wiring** |
 | Production-sized restore timing | **pending — site** |
-| RPO/RTO numeric sign-off (`V0-BKP-002`) | **pending — business owner** (competitively calibrated table in §3a) |
+| RPO/RTO numeric sign-off (`V0-BKP-002`) | approved 2026-09-01 (Semih); table in §3a and `docs/recovery/rpo-rto-targets.md` |
 | Local/offline order RPO ≈ 0 (competitor parity) | shipped |
-| PITR / WAL archiving (5 min RPO for money/fiscal/audit) | **gap — V1 wave or `V15-BKP` decision** |
+| PITR / WAL archiving (5 min RPO for money/fiscal/audit) | shipped (`V1-RMD-095`); off-host copy + cron pending |
+| Off-host copy of base backups + WAL archive | **pending — ops wiring** |
 
-A LAN-only pilot at one location can go live once the four "pending — site / ops
-wiring" rows are walked. The two "decision" rows (public TLS, RPO/RTO sign-off)
-are only blocking for an external or multi-store deployment.
+A LAN-only pilot at one location can go live once the "pending — site / ops
+wiring" rows are walked. The "pending — decision" row (public TLS) is only
+blocking for an external or multi-store deployment.

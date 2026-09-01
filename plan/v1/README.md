@@ -11,14 +11,15 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 238 görev tanımlıdır: 233 `Done`, 5 onaylı `NotApplicable`, 0 `Planned` ve
-  0 `InProgress` görev vardır. 2026-09-01 21. dalga (KVKK saklama anonimleştirme fiili:
-  saklama süresi geçmiş personel/sipariş notu/rezervasyon serbest metni için
-  idempotent, dry-run varsayılanlı `kvkk-retention`, Semih onayıyla `V15-KVK-001` çekirdeği
-  V1'e çekildi, `V1-RMD-094`; `audit.audit_events` AUD-01 append-only olduğu için kapsam
-  dışı, `V15-KVK-002`) ile `GATE-V1-EXIT` kapısı yeniden açılıp `V1-GOV-065` ile kesin
-  olarak yeniden mühürlenmiştir. Fiscal/fatura verisi yasal saklama gereği hiç
-  dokunulmaz. 20. dalga (`V1-RMD-093`, `V1-GOV-063`) tamamlanmıştır; 1M sipariş satırında
+- Bu sürüm altında 241 görev tanımlıdır: 236 `Done`, 5 onaylı `NotApplicable`, 0 `Planned` ve
+  0 `InProgress` görev vardır. 2026-09-01 22. dalga (PostgreSQL WAL arşivleme /
+  point-in-time recovery ve rakiplere göre kalibre edilmiş RPO/RTO hedefleri: fiziksel
+  base backup + sürekli WAL arşivi + hedef zamana geri oynatma, para/mali/denetim RPO
+  ~5 dk, Semih onayıyla V1'e çekildi, `V1-RMD-095`; `V0-BKP-001`/`V0-BKP-002` `## Onay`
+  bloklu `Done`, devir listesi 11 → 9) ile `GATE-V1-EXIT` kapısı yeniden açılıp
+  `V1-GOV-067` ile kesin olarak yeniden mühürlenmiştir. 21. dalga (`V1-RMD-094`,
+  `V1-GOV-065`) KVKK saklama anonimleştirme fiili tamamlanmıştır; `audit.audit_events`
+  AUD-01 append-only olduğu için `V15-KVK-002`'ye devredildi. 20. dalga (`V1-RMD-093`, `V1-GOV-063`) tamamlanmıştır; 1M sipariş satırında
   20 terminalde sipariş gönderimi p95 45.9 ms / p99 73.9 ms, sıfır deadlock.
 - `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`,
   `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006` sıralı foundation kapısı geçmeden
@@ -35,7 +36,7 @@ uca çalıştıran çekirdek operasyon.
 `reconciliation`, `remediation`, `reporting`, `security-foundation`, `settings`,
 `table-management`, `waiter-pwa`.
 
-Doğrulanan plan hacmi: 18 modül/dizin, 238 tek-sahip görev.
+Doğrulanan plan hacmi: 18 modül/dizin, 241 tek-sahip görev.
 2026-09-01 12. dalga F bölümü modül domain incelemesi (`V1-RMD-084..085`, `V1-GOV-047`) V1-GOV-046 ile açıldı ve V1-GOV-047 ile kesin olarak mühürlendi.
 2026-09-01 13. dalga PostgreSQL yedekleme/geri yükleme mekanizması (`V1-RMD-086`, `V1-GOV-049`) V1-GOV-048 ile açıldı ve V1-GOV-049 ile kesin olarak mühürlendi.
 2026-09-01 14. dalga V1 go-live yük testi temel ölçümü (`V1-RMD-087`, `V1-GOV-051`) V1-GOV-050 ile açıldı ve V1-GOV-051 ile kesin olarak mühürlendi.
@@ -46,5 +47,6 @@ Doğrulanan plan hacmi: 18 modül/dizin, 238 tek-sahip görev.
 2026-09-01 19. dalga cihaz/tarayıcı test planı ve vanilla istemci a11y smoke (`V1-RMD-092`, `V1-GOV-061`) V1-GOV-060 ile açıldı ve V1-GOV-061 ile kesin olarak mühürlendi.
 2026-09-01 20. dalga yazma kritik yolu yük testi (`V1-RMD-093`, `V1-GOV-063`) V1-GOV-062 ile açıldı ve V1-GOV-063 ile kesin olarak mühürlendi.
 2026-09-01 21. dalga KVKK saklama anonimleştirme fiili (`V1-RMD-094`, `V1-GOV-065`) V1-GOV-064 ile açıldı ve V1-GOV-065 ile kesin olarak mühürlendi.
+2026-09-01 22. dalga WAL arşivleme / point-in-time recovery ve rakiplere göre kalibre RPO/RTO (`V1-RMD-095`, `V1-GOV-067`) V1-GOV-066 ile açıldı ve V1-GOV-067 ile kesin olarak mühürlendi.
 
 

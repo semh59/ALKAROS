@@ -6,6 +6,14 @@ services:
     # Load the tuned config (V1-RMD-088). See docs/performance/infra-tuning.md
     # for the rationale and how to resize shared_buffers / effective_cache_size
     # for the actual deployment host.
+    # The entrypoint wrapper runs as root (before the image drops to the postgres
+    # user) so it can give the named alkaros-wal-archive volume to postgres for
+    # the archive_command (V1-RMD-095); Docker creates named volumes root-owned.
+    entrypoint:
+      - "bash"
+      - "-c"
+      - 'install -d -o postgres -g postgres -m 750 /wal-archive && exec docker-entrypoint.sh "$@"'
+      - "--"
     command:
       - "postgres"
       - "-c"
@@ -19,7 +27,9 @@ services:
     shm_size: 512mb
     volumes:
       - alkaros-postgres:/var/lib/postgresql
+      - alkaros-wal-archive:/wal-archive
       - ./deploy/docker/postgresql.tuned.conf:/etc/postgresql/postgresql.conf:ro
+      - ./deploy/docker/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U alkaros -d alkaros"]
       interval: 5s
@@ -145,6 +155,32 @@ services:
     command: ["/repo/deploy/docker/backup.sh"]
     restart: "no"
 
+  # Operator physical base backup for point-in-time recovery (V1-RMD-095). Not
+  # started by `docker compose up`; run after every migration and on a daily
+  # schedule:
+  #   docker compose --profile ops run --rm basebackup
+  # Writes a tar.gz base backup to alkaros-backups:/backups/base. PITR then
+  # replays the alkaros-wal-archive segments on top:
+  #   docker compose --profile ops run --rm basebackup \
+  #     /repo/deploy/docker/restore-pitr.sh /backups/base/<dir> /restore/<datadir> "<target time>"
+  basebackup:
+    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+    profiles: ["ops"]
+    environment:
+      ALKAROS_DB_HOST: postgres
+      ALKAROS_DB_PORT: "5432"
+      ALKAROS_DB_USER: alkaros
+      ALKAROS_BASEBACKUP_DIR: /backups/base
+      ALKAROS_WAL_ARCHIVE_DIR: /wal-archive
+    secrets: [db_password]
+    volumes:
+      - ./deploy/docker:/repo/deploy/docker:ro
+      - alkaros-backups:/backups
+      - alkaros-wal-archive:/wal-archive
+    entrypoint: ["/bin/sh"]
+    command: ["/repo/deploy/docker/basebackup.sh"]
+    restart: "no"
+
   # Operator data-housekeeping sweep (V1-RMD-091). Not started by
   # `docker compose up`; schedule from cron:
   #   docker compose --profile ops run --rm housekeeping
@@ -173,5 +209,6 @@ secrets:
 volumes:
   alkaros-postgres:
   alkaros-backups:
+  alkaros-wal-archive:
   caddy-data:
   caddy-config:

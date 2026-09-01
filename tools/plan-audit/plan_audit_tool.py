@@ -161,6 +161,10 @@ DEPENDENCY_REMOVALS = {
 # ## Onay block and V0-GOV-041/042 closed as NotApplicable in phase 1.2 of the
 # remediation plan; their deferral entries were removed from GATES.md and so
 # are removed here to keep the registered set equal to the table.
+# 2026-09-01 (TRACEABILITY C73): V0-BKP-001 and V0-BKP-002 closed as Done with
+# an ## Onay block in remediation wave 22 (V1-RMD-095 shipped WAL archiving /
+# PITR and the competitively calibrated RPO/RTO targets); their deferral
+# entries were removed from GATES.md and so are removed here too.
 V0_DEFERRED_TASKS = {
     "V0-HUG-001",
     "V0-QNB-001",
@@ -171,8 +175,6 @@ V0_DEFERRED_TASKS = {
     "V0-CMP-001",
     "V0-SEC-001",
     "V0-LIC-001",
-    "V0-BKP-001",
-    "V0-BKP-002",
 }
 
 BROAD_HANDOFF_REPLACEMENTS = {

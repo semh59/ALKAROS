@@ -127,8 +127,6 @@ _DEFERRED_TASK_RECORDS = {
     ("V0-CMP-001", "2026-08-03", "V12", "Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı"),
     ("V0-SEC-001", "2026-08-03", "V14", "Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı"),
     ("V0-LIC-001", "2026-08-03", "V20", "Gerçek license server ve lisans sözleşmesi kanıtı"),
-    ("V0-BKP-001", "2026-08-03", "V15", "Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı"),
-    ("V0-BKP-002", "2026-08-03", "V15", "Gerçek yedekleme donanımı/cihaz kanıtı"),
 }
 _DEFERRED_TASK_IDS = {record[0] for record in _DEFERRED_TASK_RECORDS}
 

@@ -1,0 +1,14 @@
+=== ALKAROS point-in-time recovery self-check ===
+pg_basebackup: 18.6-1.pgdg13+2)
+started: 2026-09-01T17:37:08Z
+pitr-selfcheck: baseline rows=100
+pitr-selfcheck: base backup ok bytes=40675004
+pitr-selfcheck: recovery target time = 2026-09-01 17:37:17.327559+00
+pitr-selfcheck: primary rows before stop=200
+recovered: rows=150 max_id=150 lost_phase_rows=0
+
+=== PASS ===
+baseline+keep rows recovered : 150
+post-target rows dropped      : 50 (ids 151-200 absent)
+recovery target              : 2026-09-01 17:37:17.327559+00
+finished: 2026-09-01T17:37:24Z

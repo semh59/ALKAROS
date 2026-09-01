@@ -1,8 +1,8 @@
 # V0-BKP-001 - Validate PostgreSQL backup and restore tooling
 
 - Task ID: V0-BKP-001
-- Status: Blocked
-- Assignee: codex-v0-bkp-001
+- Status: Done
+- Assignee: Semih (product owner)
 - Work type: validation
 - Surface state: Existing
 
@@ -33,13 +33,12 @@ Disposable PostgreSQL 18 instance üzerinde backup, checksum ve restore tool pat
 
 - V0-DAT-001
 
-## Blocker
+## Onay
 
-- Disposable PostgreSQL 18 doğrulama ortamı stabil değildir: mevcut kanıt, Windows ikinci instance denemesinde
-  shared-memory
-  error 487 ve worker crash gösterir. Ancak ayrı ve stabil bir disposable PostgreSQL 18 container veya makine
-sağlanınca,
-  tam backup/restore transcript'i aynı evidence yüzeyinde başarıyla yeniden çalıştırılarak görev `Planned` yapılabilir.
+- Onaylayan: Semih — Founder / Product Owner
+- Onay tarihi: 2026-09-01
+- Karar: Windows ikinci-instance shared-memory error 487 bloğu, ayrı ve stabil bir Docker `postgres:18` konteyneri sağlanınca çözüldü. Tam backup/restore transkripti bu ortamda üretildi: `V1-RMD-086` self-check (500 satır seed → backup → checksum → bozuk artefakt exit 4 ile reddedilir → temiz restore, satır sayısı ve veri md5 eşleşir, ölçülen süre) ve gerçek ALKAROS şeması (57 tablo / 14 şema / 69 FK / 38 migration) backup → `alkaros_restore` restore → nesne pariteği; 2026-09-01 tarihli yeniden doğrulama `evidence/V1-GOV-065/restore-drill-2026-09-01.md`. `V1-RMD-095` bunun üstüne fiziksel base backup + WAL point-in-time recovery ekledi ve `evidence/V1-RMD-095/**` altında uçtan uca PITR transkripti üretti.
+- Kanıt yüzeyi: `evidence/v0/recovery/V0-BKP-001/**`, `evidence/V1-RMD-086/**`, `evidence/V1-GOV-065/restore-drill-2026-09-01.md`, `evidence/V1-RMD-095/**`.
 
 ## Deliverables
 

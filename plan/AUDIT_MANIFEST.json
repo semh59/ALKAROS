@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 842,
-  "markdown_line_count": 53361,
-  "markdown_byte_count": 3162945,
+  "markdown_file_count": 848,
+  "markdown_line_count": 53851,
+  "markdown_byte_count": 3196788,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "F926C4179347B5D61946F3705CC3C4EFD6E77DADE30134385BD6EDB2E4D87DA0",
-      "lines": 3850,
-      "bytes": 174934,
+      "sha256": "FB8E1F5AEB8E6FC5658131E6ABF680DB5D51E47B93356C1CF3F33C811D196F32",
+      "lines": 3852,
+      "bytes": 175194,
       "utf8": true
     }
   ],
@@ -379,9 +379,9 @@
     },
     {
       "path": "docs/operations/production-go-live-checklist.md",
-      "sha256": "84B86A74746B52B30CE9FF5507361CD43DB8FFC6D780F831D6020D195966CCDB",
-      "lines": 192,
-      "bytes": 11310,
+      "sha256": "7DC511CCA0286BEFDB7488666D3680EE653A98F699D3EC3B21A39B34743897EA",
+      "lines": 196,
+      "bytes": 11581,
       "utf8": true
     },
     {
@@ -435,9 +435,9 @@
     },
     {
       "path": "docs/recovery/rpo-rto-targets.md",
-      "sha256": "5A12FDB569E52A30057A68D6F99E70D8124A49B87D8FAC7592A80B4735E212FC",
-      "lines": 31,
-      "bytes": 1170,
+      "sha256": "EF3328DD0BD0885E764C4648779740B110F1E2F93F0AFF2D04290916004FAA50",
+      "lines": 133,
+      "bytes": 7290,
       "utf8": true
     },
     {
@@ -1456,6 +1456,20 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-066/result.md",
+      "sha256": "26374598BBCAC80FBBD57F4BFBA55AA2C287CE3089BD4E6D81B14D3CC3102C85",
+      "lines": 24,
+      "bytes": 1177,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-GOV-067/result.md",
+      "sha256": "2D30CC41C7234518C6344CBB8B7621931BAAB89DF36F1E77EFFFE51BC25C8102",
+      "lines": 52,
+      "bytes": 2819,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
       "sha256": "63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC",
       "lines": 44,
@@ -2079,6 +2093,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-095/result.md",
+      "sha256": "A0A34E41E0B93D27678B090889EC7263B70F19E6B5E7C7A2E6862E0C4867A310",
+      "lines": 103,
+      "bytes": 4133,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2136,9 +2157,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3958ED7ED93FF9870CE1E5E87BF38319C55EE747FADA9E0BB639FF2733C701AF",
-      "lines": 2118,
-      "bytes": 298393,
+      "sha256": "14AD08E09C38B2840BC21D51DD2F92BC9982297BE3531A31E50B980E2F95679D",
+      "lines": 2124,
+      "bytes": 299310,
       "utf8": true
     },
     {
@@ -2157,16 +2178,16 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "C45F1685A80CEC00BBB56771C520847D08F006588C462A39E9BA4A961FB14185",
-      "lines": 378,
-      "bytes": 66238,
+      "sha256": "64DD3C08B1BEBFD62A98973EEB35AAEAC23B1A0C1BC8D7FB47AFB052B81EAFCC",
+      "lines": 387,
+      "bytes": 70735,
       "utf8": true
     },
     {
       "path": "plan/OFFICIAL_SOURCE_REGISTER.md",
-      "sha256": "0C3033E1B2F89077D9FBFACD09C2BFBF19DCD09AB49DB69D67161ADCE6475D3B",
+      "sha256": "233CD2099C2031EB26A4E8594CE43CF831FF22D16C16F52ED1B1D3BD9C5E7F9E",
       "lines": 43,
-      "bytes": 6804,
+      "bytes": 6818,
       "utf8": true
     },
     {
@@ -2213,23 +2234,23 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "CC7A1E60BB0EE1F3AD7A96503F8E4E2D6A3066DC4A0FB2737DA16F61C441DEA5",
-      "lines": 174,
-      "bytes": 58743,
+      "sha256": "48563BC125DDCE3C8630AD31399A6D65DCA01A36C1B31E0755EE66CF8544D68C",
+      "lines": 175,
+      "bytes": 60666,
       "utf8": true
     },
     {
       "path": "plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md",
-      "sha256": "B38B506B6052D07E6E6931AAC14AF2728C5774249E8440C7EED6085C045068D8",
-      "lines": 61,
-      "bytes": 1775,
+      "sha256": "398787144354648F49A6E1AA4DAB348131FBCCC02A3E41B452F0C5BE0BC22451",
+      "lines": 60,
+      "bytes": 2375,
       "utf8": true
     },
     {
       "path": "plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md",
-      "sha256": "EF58481D5938842AC85A52ADE3816EFDF6B4010B71EE98507A2E64CE9FF933F2",
-      "lines": 58,
-      "bytes": 1578,
+      "sha256": "56D13C1A8451F9DFE94A0F9DDED0032ECE533E30F3B21302F75831CF96902DA4",
+      "lines": 60,
+      "bytes": 2679,
       "utf8": true
     },
     {
@@ -2794,9 +2815,9 @@
     },
     {
       "path": "plan/v0/governance/V0-GOV-063-defer-gov-041-042.md",
-      "sha256": "34E49C1A68FF996297EC5B29D7752C062FDC616B043E6C418BCFB0374459F588",
+      "sha256": "D1D640472005C7B30E3D96C2E33640D69262BC941ECE0452A309DBE4A20783C5",
       "lines": 101,
-      "bytes": 4205,
+      "bytes": 4379,
       "utf8": true
     },
     {
@@ -3878,6 +3899,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-066-master-custody-reopen-and-remediation-wave-22.md",
+      "sha256": "43AEECA5621D0F9F09EC041B5951791C943B40F2856E73A9A2B763B6E75D73D7",
+      "lines": 66,
+      "bytes": 3632,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-067-wave22-master-audit-reseal-and-gate-closure.md",
+      "sha256": "E722BBB16D3497C3973F72401FBD8391F87670548EC6E8A4C91B736E9AD234A9",
+      "lines": 54,
+      "bytes": 2061,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -4061,9 +4096,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "5C38D6265B14B9A855D7E3763029F2594D43B19D96E8BF3A28BEC969E5CC6BE2",
-      "lines": 50,
-      "bytes": 3549,
+      "sha256": "AF4672D3A479BA17E709B705B4226A54A37F0CA6773592AA0ECC14C3C36C7C7F",
+      "lines": 52,
+      "bytes": 3867,
       "utf8": true
     },
     {
@@ -4736,6 +4771,13 @@
       "sha256": "3AB9D57E80C8D00E4F42698EE6B7AE0B46FBC02DE18678B49221AF5260235D95",
       "lines": 61,
       "bytes": 4031,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-095-wal-archiving-point-in-time-recovery.md",
+      "sha256": "54C85F0B420CEFC73FA12A5BA36C5611AE4716876E97F37B394E4407DDEDE064",
+      "lines": 66,
+      "bytes": 4086,
       "utf8": true
     },
     {

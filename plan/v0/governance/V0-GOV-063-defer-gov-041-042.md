@@ -26,7 +26,7 @@ admin/onay kanıtı gerektirir; bu kanıt V0 gate kapanışından önce
 - `plan/VALIDATION_CONTRACT.md`
 - `tools/plan-audit/plan_audit_tool.py`
 - `tools/task-scope/task_scope_tool.py`
-- `tests/Architecture/TaskScope/test_task_scope.py`
+- PO:2026-09-01 kararıyla tests/Architecture/TaskScope/test_task_scope.py yüzeyi V1-GOV-066'ya devredildi; bu historical task closed kalır ve deferral seti güncellemeleri için dosyayı bundan sonra V1-GOV-066 sahiplenir.
 - `plan/v0/governance/V0-GOV-060-v3-b0-blob-alignment.md` (yalnız
   test_plan_audit.py sahiplik devir kaydı, C66)
 - `plan/v0/governance/V0-GOV-062-rev-deferral.md` (yalnız

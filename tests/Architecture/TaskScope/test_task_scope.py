@@ -386,13 +386,13 @@ DEFERRED_TASK_IDS = [
     "V0-CMP-001",
     "V0-SEC-001",
     "V0-LIC-001",
-    "V0-BKP-001",
-    "V0-BKP-002",
 ]
 
 # 2026-08-15 (TRACEABILITY C69): V0-REV-001..030 (Done, phase 1.1) and
 # V0-GOV-041/042 (NotApplicable, phase 1.2) were removed from the deferral
 # list in GATES.md; only the 2026-08-03 C40 entries remain.
+# 2026-09-01 (TRACEABILITY C73): V0-BKP-001 and V0-BKP-002 closed as Done in
+# remediation wave 22 (V1-RMD-095) and were removed from the deferral list.
 
 DEFERRED_ROWS = [
     "| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |",
@@ -404,8 +404,6 @@ DEFERRED_ROWS = [
     "| `V0-CMP-001` | `2026-08-03` | `V12` | Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı | Not V0 gate closure evidence |",
     "| `V0-SEC-001` | `2026-08-03` | `V14` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |",
     "| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |",
-    "| `V0-BKP-001` | `2026-08-03` | `V15` | Gerçek PostgreSQL 18 ikinci instance/cihaz kanıtı | Not V0 gate closure evidence |",
-    "| `V0-BKP-002` | `2026-08-03` | `V15` | Gerçek yedekleme donanımı/cihaz kanıtı | Not V0 gate closure evidence |",
 ]
 
 
