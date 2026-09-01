@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 828,
-  "markdown_line_count": 52366,
-  "markdown_byte_count": 3104669,
+  "markdown_file_count": 834,
+  "markdown_line_count": 52742,
+  "markdown_byte_count": 3125976,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -176,9 +176,9 @@
     },
     {
       "path": "docs/compliance/accessibility-target.md",
-      "sha256": "017DF62EE9D0674D10C3F5759E35048544989887F8B3117D2621681FFD10AC3E",
-      "lines": 121,
-      "bytes": 4276,
+      "sha256": "11146596232D48251790C13B27817AD95FD8ADD80D21AE2D4DB5B0CC20F853B1",
+      "lines": 124,
+      "bytes": 4644,
       "utf8": true
     },
     {
@@ -371,6 +371,13 @@
       "utf8": true
     },
     {
+      "path": "docs/performance/critical-path-load-v1.md",
+      "sha256": "355EE858A1EA0CA6E3EB37A79CE9E8CCADEF14130B9D5682DB6BC1C8BC459FD1",
+      "lines": 86,
+      "bytes": 4512,
+      "utf8": true
+    },
+    {
       "path": "docs/performance/infra-tuning.md",
       "sha256": "9FAA4AA27A54E1B715645F013E7286FC824DEAE6E500599113846F3519566927",
       "lines": 92,
@@ -400,9 +407,9 @@
     },
     {
       "path": "docs/qa/device-browser-test-plan.md",
-      "sha256": "DDA0A99B0AF54C14785BB75058009C199E5B70064FCD145DC963999EE30E79D5",
-      "lines": 94,
-      "bytes": 5108,
+      "sha256": "F12D625B3D5065A0E789E62C416FA9664F67B0F01F473AC6EA2957E3F9C3EA99",
+      "lines": 93,
+      "bytes": 5063,
       "utf8": true
     },
     {
@@ -1414,6 +1421,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-063/reseal.md",
+      "sha256": "20D696A5DD56736A20C10EEFF7D4F9346D0DE7B55A6625ED04085A6E6B7C4DBB",
+      "lines": 41,
+      "bytes": 1976,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
       "sha256": "63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC",
       "lines": 44,
@@ -2023,6 +2037,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-093/result.md",
+      "sha256": "922D5A40FD0AAB00235026D2CEB5EBACFB7BECEEFC79571C92084B89C4A48CB9",
+      "lines": 65,
+      "bytes": 2498,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2080,9 +2101,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "A1F224C7B32BA4D285C5B98A9FD6E973D7039C291BC93244A475CB150DABE7B9",
-      "lines": 2104,
-      "bytes": 296247,
+      "sha256": "819B4E7AD3BFFC79D40F99237570258773D997AD142E990CA7527CC719366E98",
+      "lines": 2110,
+      "bytes": 297172,
       "utf8": true
     },
     {
@@ -2101,9 +2122,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "12D1A40B7CE9C099BFD54A41E3D2ADE56A34322104227F563987C0FCED24CA54",
-      "lines": 362,
-      "bytes": 58543,
+      "sha256": "12184AE2F3D9A2650469F857B4F700F266ED690E8D2D805B10D390B1DF8DDAF0",
+      "lines": 370,
+      "bytes": 61678,
       "utf8": true
     },
     {
@@ -3794,6 +3815,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-062-master-custody-reopen-and-remediation-wave-20.md",
+      "sha256": "C975ED9EAD9B9367C4D286BE08D9D7916C06FAE110E0D2DCE3928789551511BF",
+      "lines": 55,
+      "bytes": 2538,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-063-wave20-master-audit-reseal-and-gate-closure.md",
+      "sha256": "071B1686AB0FB223E38AF4C39C0F0CBF5373BFF77ABEBA7901A5B9B695749E51",
+      "lines": 53,
+      "bytes": 1972,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -3977,9 +4012,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "36A030E4F6B062CE4FFDB29E430CBED0753D2A7FB74E0CFD2F483A65B6396A2A",
-      "lines": 46,
-      "bytes": 2955,
+      "sha256": "A3108D4CFC72ECE8FC4906BA6CED9A0444DED1C8F981A60DE31BBEF037F103B9",
+      "lines": 48,
+      "bytes": 3263,
       "utf8": true
     },
     {
@@ -4638,6 +4673,13 @@
       "sha256": "41C803A5F9F3795C45DCC2A75C40CA33A4F32772E0451F0264C00366125F6374",
       "lines": 57,
       "bytes": 2721,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-093-v1-critical-path-write-load-test.md",
+      "sha256": "146B490279D0474A8F2C56059C2610F13EB73F9A7BD7872A77ADBA7A32556773",
+      "lines": 58,
+      "bytes": 3120,
       "utf8": true
     },
     {

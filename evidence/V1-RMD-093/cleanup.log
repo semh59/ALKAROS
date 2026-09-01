@@ -1,0 +1,42 @@
+--- deleting write-test orders left on LT tables ---
+ERROR:  update or delete on table "orders" violates foreign key constraint "kitchen_tickets_order_id_fkey" on table "kitchen_tickets"
+DETAIL:  Key (order_id)=(d7fc69b1-b995-40b1-bf72-cf2775897448) is still referenced from table "kitchen_tickets".
+--- running seed --clean ---
+seed-loadtest: removing all LT- tagged rows
+seed-loadtest: clean done
+--- final counts ---
+LT tables=0 LT products=0 LT/POS orders on LT tables=0
+live tables=3
+live products=1
+(order_id)=(cdf94db6-adbd-4d2b-bad6-cdf7dd5ac2d8) is still referenced from table "tables".
+ERROR:  update or delete on table "tables" violates foreign key constraint "fk_orders_table" on table "orders"
+DETAIL:  Key (table_id)=(6750644f-f2fe-4108-99b4-35bf87aefe63) is still referenced from table "orders".
+ERROR:  canceling statement due to lock timeout
+CONTEXT:  while locking tuple (2,13) in relation "order_items"
+SQL statement "SELECT 1 FROM ONLY "orders"."order_items" x WHERE $1 OPERATOR(pg_catalog.=) "product_id" FOR KEY SHARE OF x"
+LT tables remaining=600 LT products remaining=400 LT orders remaining=1000000
+final tables=603 final products=401 final orders=1000522
+1) break table->order pointers
+2) delete kitchen tickets for orders on LT tables
+3) delete orders on LT tables (POS- test orders)
+ERROR:  update or delete on table "orders" violates foreign key constraint "fk_customer_display_terminal_order" on table "terminals"
+DETAIL:  Key (order_id)=(73c1eab3-3111-4f41-a9fb-19d2b7ba92e4) is still referenced from table "terminals".
+1) break table->order pointers
+2) delete kitchen tickets for orders on LT tables
+2b) unbind terminals pointing at orders on LT tables
+3) delete orders on LT tables (POS- test orders)
+4) delete tagged background orders (LT-%)
+ERROR:  canceling statement due to lock timeout
+CONTEXT:  while deleting tuple (0,1) in relation "orders"
+still running: 1
+still running: 1
+still running: 1
+still running: 1
+still running: 1
+still running: 1
+still running: 0
+=== proceed with remaining cleanup ===
+ERROR:  VACUUM cannot run inside a transaction block
+ERROR:  VACUUM cannot run inside a transaction block
+LT tables=0 LT products=0 LT orders=0
+total tables=3 total products=1 total orders=2

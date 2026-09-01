@@ -1,11 +1,14 @@
 # Accessibility Conformance Target
 
 > **Task:** V0-CMP-005
-> **Status:** Blocked
+> **Status:** Done
 > **Assignee:** codex-v0-cmp-005
 > **Work type:** decision
 > **Source basis:** EXT:WCAG-2.2, CORR:C19
 > **Date:** 2026-07-30
+> **Approved:** 2026-09-01 by Semih (Founder / Product Owner) — V0-CMP-005-D001
+> (WCAG 2.2 Level AA for all UI surfaces) and EXC-001 (Cashier POS waives 2.4.11
+> Focus Appearance for touch-only kiosk mode) are both accepted.
 
 ## 1. Decision Record
 
@@ -13,7 +16,7 @@
 | ------- | ------- |
 | **Decision ID** | V0-CMP-005-D001 |
 | **Date** | 2026-07-30 |
-| **Approver** | TBD (onay bekliyor) |
+| **Approver** | Semih — Founder / Product Owner |
 | **Selected result** | WCAG 2.2 Level AA for all UI surfaces |
 | **Rejected alternatives** | Level A only (insufficient for public-facing restaurant POS); Level AAA (impractical for cashier speed-critical UI) |
 
@@ -107,7 +110,7 @@
 
 | Exception ID | Surface | Criterion | Rationale | Approval Date | Approver |
 | ------------- | --------- | ----------- | ----------- | --------------- | ---------- |
-| EXC-001 | CUI | 2.4.11 Focus Appearance | Touch-only kiosk mode; no keyboard focus indicator needed | TBD (onay bekliyor) | TBD (onay bekliyor) |
+| EXC-001 | CUI | 2.4.11 Focus Appearance | Touch-only kiosk mode; no keyboard focus indicator needed | 2026-09-01 | Semih — Founder / Product Owner |
 
 ## 6. Affected Tasks
 

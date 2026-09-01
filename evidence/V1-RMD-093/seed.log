@@ -1,0 +1,4 @@
+seed-loadtest: 600 tables, 400 products, 1000000 background orders
+seed-loadtest: inserting 1000000 orders (this takes ~20-40s)
+seed-loadtest: inserting order items
+ERROR:  VACUUM cannot run inside a transaction block

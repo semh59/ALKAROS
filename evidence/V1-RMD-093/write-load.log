@@ -1,0 +1,31 @@
+bootstrapping 20 terminal session(s) against http://alkaros-host-1:5080
+  terminal 1/20 ready
+  terminal 2/20 ready
+  terminal 3/20 ready
+  terminal 4/20 ready
+  terminal 5/20 ready
+  terminal 6/20 ready
+  terminal 7/20 ready
+  terminal 8/20 ready
+  terminal 9/20 ready
+  login limiter: sleeping 61s after 9 logins
+  terminal 10/20 ready
+  terminal 11/20 ready
+  terminal 12/20 ready
+  terminal 13/20 ready
+  terminal 14/20 ready
+  terminal 15/20 ready
+  terminal 16/20 ready
+  terminal 17/20 ready
+  terminal 18/20 ready
+  login limiter: sleeping 61s after 18 logins
+  terminal 19/20 ready
+  terminal 20/20 ready
+--- level: 20 terminal(s), 40s ---
+  rps=24.0 err%=0.0 submit p50=25.8 p90=38.6 p95=45.9 p99=73.9 max=81.0 n=240 statuses={'201': 240, '200': 720}
+
+terminals     rps   err%     p50     p90     p95     p99      max
+       20    24.0    0.0    25.8    38.6    45.9    73.9     81.0
+
+V15-PER-001 target at 20 terminals (submit_latency_ms): MEETS (p95=45.9ms p99=73.9ms err%=0.0)
+wrote evidence/V1-RMD-093/write-load.json

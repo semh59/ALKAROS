@@ -18,9 +18,8 @@ be verified on:
 
 WCAG target: **2.2 Level AA** for every surface, with one approved exception
 (EXC-001: Cashier POS waives 2.4.11 Focus Appearance for touch-only kiosk mode).
-The level decision and EXC-001 approval in `docs/compliance/accessibility-target.md`
-are still marked *onay bekliyor* — Semih (product owner) must sign these before
-go-live; this plan does not change that.
+The level decision (V0-CMP-005-D001) and EXC-001 were approved on 2026-09-01 by
+Semih (Founder / Product Owner) — see `docs/compliance/accessibility-target.md`.
 
 ### Responsive breakpoints (PosTerminal shell)
 

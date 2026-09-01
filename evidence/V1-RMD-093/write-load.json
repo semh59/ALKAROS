@@ -1,0 +1,48 @@
+{
+  "base_url": "http://alkaros-host-1:5080",
+  "scenario": "write (seat -> 2 items -> submit)",
+  "per_terminal_rate": 0.3,
+  "target": "V15-PER-001: 20 terminals p95<500ms p99<1000ms (order submit)",
+  "generated_utc": "2026-09-01T15:40:48Z",
+  "levels": [
+    {
+      "terminals": 20,
+      "wall_seconds": 40.03,
+      "requests": 960,
+      "rps": 24.0,
+      "ok": 960,
+      "error_pct": 0.0,
+      "status_breakdown": {
+        "201": 240,
+        "200": 720
+      },
+      "latency_ms": {
+        "count": 960,
+        "ok": 960,
+        "p50": 19.3,
+        "p90": 33.3,
+        "p95": 42.6,
+        "p99": 73.0,
+        "max": 97.0
+      },
+      "submit_latency_ms": {
+        "count": 240,
+        "ok": 240,
+        "p50": 25.8,
+        "p90": 38.6,
+        "p95": 45.9,
+        "p99": 73.9,
+        "max": 81.0
+      },
+      "seat_latency_ms": {
+        "count": 240,
+        "ok": 240,
+        "p50": 16.7,
+        "p90": 30.6,
+        "p95": 56.0,
+        "p99": 79.8,
+        "max": 97.0
+      }
+    }
+  ]
+}
