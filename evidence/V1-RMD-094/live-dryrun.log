@@ -1,0 +1,26 @@
+=== live dry-run note ===
+
+A live `kvkk-retention` dry-run against the running Compose stack was attempted
+but not captured: the deployed/running Host image predates the wave-21 code, so
+the container falls through to the generic usage text instead of dispatching the
+new verb (it needs a Host image rebuilt from this commit).
+
+The verb's full behavior is proven instead by `KvkkRetentionTests` (see
+`kvkk-tests.log`, 3/3 passed) which exercises it end to end against a real
+migrated PostgreSQL test database:
+
+- dry-run (default): opens a transaction, counts each class
+  (`staff=1 order_notes=1 item_notes=1 reservation_reasons=1 apply=false`),
+  rolls back — DB unchanged.
+- `--apply`: anonymizes exactly the past-retention rows; recent / active /
+  wrong-status / legally-held (`--exclude-order-ids-file`) rows untouched.
+- second `--apply`: reports all zeros (idempotent).
+- missing `--db-url` / unknown argument: exit 2 (fail-closed).
+
+After the next Host image rebuild, run:
+
+    dotnet ALKAROS.Host.dll kvkk-retention --db-url postgresql://alkaros@postgres:5432/alkaros
+
+and expect `kvkk-retention: staff=0 order_notes=0 item_notes=0 reservation_reasons=0 ... apply=false`
+on the pilot database (every retention window is 1-5 years, so a fresh
+deployment reports zeros for years).

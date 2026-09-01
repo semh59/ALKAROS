@@ -18,7 +18,7 @@ Host'a `housekeeping` CLI fiili eklenir; süresi dolmuş `idempotency_keys` sat�
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-091-operational-data-housekeeping-sweep.md`
-- `src/Host/Program.cs`
+- PO:2026-09-01 kararıyla src/Host/Program.cs yüzeyi V1-RMD-094'e devredildi; bu historical task closed kalır ve kvkk-retention fiili 21. dalgada eklenir.
 - `tests/Host/MigrationComposition/Program/HousekeepingTests.cs`
 - `evidence/V1-RMD-091/**`
 

@@ -67,6 +67,19 @@ public static class Program
             }
         }
 
+        if (args.Length > 0 && string.Equals(args[0], "kvkk-retention", StringComparison.Ordinal))
+        {
+            try
+            {
+                return KvkkRetentionAsync(args[1..]).GetAwaiter().GetResult();
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NpgsqlException or FormatException or IOException)
+            {
+                Console.Error.WriteLine($"KVKK-RETENTION: {ex.Message}");
+                return (int)HostExitCode.StartupFailed;
+            }
+        }
+
         var options = ParseArguments(args);
         if (options is null)
         {
@@ -258,6 +271,153 @@ public static class Program
         return (int)HostExitCode.Success;
     }
 
+    /// <summary>
+    /// KVKK retention: anonymize personal data past its retention window
+    /// (V1-RMD-094, driven by the V0-CMP-003 inventory). Classes and windows:
+    ///   identity.users (inactive + 1 year)      -> mask username/display_name, null email/phone
+    ///   orders.orders.notes / order_items.notes (5 years, terminal order)  -> '[anonymized]'
+    ///   table_mgmt.table_reservations.reason    (5 years, closed reservation) -> '[anonymized]'
+    /// audit.audit_events is out of scope: it is enforced append-only by a
+    /// database trigger (AUD-01). Its 10-year anonymization needs a partition-
+    /// drop mechanism and is deferred to V15-KVK-002; IAuditSanitizer already
+    /// redacts secrets on write.
+    /// Fiscal receipts, Z reports, invoices and the financial columns are
+    /// legal-retention and are never touched. Default is a dry run; pass
+    /// --apply to write. Idempotent (an already-'[anonymized]' row is skipped).
+    /// Usage: kvkk-retention --db-url &lt;url&gt; [--apply] [--as-of &lt;ISO date&gt;]
+    ///        [--exclude-order-ids-file &lt;path&gt;]
+    /// </summary>
+    private static async Task<int> KvkkRetentionAsync(string[] args)
+    {
+        const string Marker = "[anonymized]";
+        string? databaseUrl = null;
+        var apply = false;
+        var asOf = DateTimeOffset.UtcNow;
+        string? excludeFile = null;
+        for (var i = 0; i < args.Length; i++)
+        {
+            switch (args[i])
+            {
+                case "--db-url" when i + 1 < args.Length:
+                    databaseUrl = args[++i];
+                    break;
+                case "--apply":
+                    apply = true;
+                    break;
+                case "--as-of" when i + 1 < args.Length:
+                    if (!DateTimeOffset.TryParse(args[++i], System.Globalization.CultureInfo.InvariantCulture,
+                            System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal,
+                            out asOf))
+                        throw new ArgumentException("--as-of must be an ISO date.");
+                    break;
+                case "--exclude-order-ids-file" when i + 1 < args.Length:
+                    excludeFile = args[++i];
+                    break;
+                default:
+                    throw new ArgumentException($"Unrecognized kvkk-retention argument '{args[i]}'.");
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(databaseUrl))
+            throw new ArgumentException("kvkk-retention requires a --db-url argument.");
+
+        var excludedOrderIds = new List<Guid>();
+        if (excludeFile is not null)
+        {
+            foreach (var line in await File.ReadAllLinesAsync(excludeFile))
+            {
+                var trimmed = line.Trim();
+                if (trimmed.Length == 0 || trimmed.StartsWith('#'))
+                    continue;
+                if (!Guid.TryParse(trimmed, out var held))
+                    throw new ArgumentException($"exclude-order-ids-file contains a non-GUID line: '{trimmed}'.");
+                excludedOrderIds.Add(held);
+            }
+        }
+
+        var databasePassword = RequiredEnvironmentValue(PasswordEnvironmentVariable, 1, 256, allowWhitespace: false);
+        var connectionString = BuildConnectionString(databaseUrl, databasePassword, "ALKAROS.KvkkRetention");
+
+        await using var connection = new NpgsqlConnection(connectionString);
+        await connection.OpenAsync();
+        await using var transaction = await connection.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+
+        // Dry run counts with the same predicate; --apply runs the UPDATE and
+        // reports the affected-row count. Both run inside the transaction; the
+        // dry run rolls back, so it can never change data.
+        async Task<int> RunAsync(string countSql, string updateSql, Action<NpgsqlParameterCollection> bind)
+        {
+            if (apply)
+            {
+                await using var update = new NpgsqlCommand(updateSql, connection, transaction);
+                bind(update.Parameters);
+                return await update.ExecuteNonQueryAsync();
+            }
+
+            await using var count = new NpgsqlCommand(countSql, connection, transaction);
+            bind(count.Parameters);
+            var result = await count.ExecuteScalarAsync();
+            return result is null or DBNull
+                ? 0
+                : Convert.ToInt32(result, System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        var cutStaff = asOf.AddYears(-1);
+        var cutNotes = asOf.AddYears(-5);
+        var excluded = excludedOrderIds.ToArray();
+
+        var staff = await RunAsync(
+            "SELECT count(*) FROM identity.users WHERE active = false AND updated_at < @cut AND display_name <> @m;",
+            """
+            UPDATE identity.users
+            SET username = 'anon-' || left(user_id::text, 8),
+                display_name = @m, email = NULL, phone = NULL,
+                password_hash = '!kvkk-retention-disabled', updated_at = now()
+            WHERE active = false AND updated_at < @cut AND display_name <> @m;
+            """,
+            p => { p.AddWithValue("cut", cutStaff); p.AddWithValue("m", Marker); });
+
+        var orderNotes = await RunAsync(
+            "SELECT count(*) FROM orders.orders WHERE notes IS NOT NULL AND notes <> @m AND status IN ('Completed','Cancelled','Rejected') AND created_at < @cut AND NOT (order_id = ANY(@ex));",
+            """
+            UPDATE orders.orders SET notes = @m, updated_at = now()
+            WHERE notes IS NOT NULL AND notes <> @m AND status IN ('Completed','Cancelled','Rejected')
+              AND created_at < @cut AND NOT (order_id = ANY(@ex));
+            """,
+            p => { p.AddWithValue("cut", cutNotes); p.AddWithValue("m", Marker); p.AddWithValue("ex", excluded); });
+
+        var itemNotes = await RunAsync(
+            "SELECT count(*) FROM orders.order_items oi JOIN orders.orders o USING (order_id) WHERE oi.notes IS NOT NULL AND oi.notes <> @m AND o.status IN ('Completed','Cancelled','Rejected') AND o.created_at < @cut AND NOT (o.order_id = ANY(@ex));",
+            """
+            UPDATE orders.order_items oi SET notes = @m, updated_at = now()
+            FROM orders.orders o
+            WHERE oi.order_id = o.order_id AND oi.notes IS NOT NULL AND oi.notes <> @m
+              AND o.status IN ('Completed','Cancelled','Rejected') AND o.created_at < @cut
+              AND NOT (o.order_id = ANY(@ex));
+            """,
+            p => { p.AddWithValue("cut", cutNotes); p.AddWithValue("m", Marker); p.AddWithValue("ex", excluded); });
+
+        var reservations = await RunAsync(
+            "SELECT count(*) FROM table_mgmt.table_reservations WHERE status IN ('Claimed','Cancelled','Expired') AND reserved_at < @cut AND reason <> @m;",
+            """
+            UPDATE table_mgmt.table_reservations
+            SET reason = @m, release_reason = CASE WHEN release_reason IS NOT NULL THEN @m END, row_version = row_version + 1
+            WHERE status IN ('Claimed','Cancelled','Expired') AND reserved_at < @cut AND reason <> @m;
+            """,
+            p => { p.AddWithValue("cut", cutNotes); p.AddWithValue("m", Marker); });
+
+        if (apply)
+            await transaction.CommitAsync();
+        else
+            await transaction.RollbackAsync();
+
+        Console.Out.WriteLine(
+            $"kvkk-retention: staff={staff} order_notes={orderNotes} item_notes={itemNotes} "
+            + $"reservation_reasons={reservations} "
+            + $"as_of={asOf:yyyy-MM-dd} excluded_orders={excludedOrderIds.Count} apply={apply.ToString().ToLowerInvariant()}");
+        return (int)HostExitCode.Success;
+    }
+
     private static string RequiredEnvironmentValue(
         string variable,
         int minimumLength,
@@ -424,7 +584,11 @@ public static class Program
         writer.WriteLine("  Database password is read from the ALKAROS_DB_PASSWORD environment variable.");
         writer.WriteLine();
         writer.WriteLine("Verbs: serve | provision-manager --db-url <url> | housekeeping --db-url <url> [--grace-days <N>]");
+        writer.WriteLine("       | kvkk-retention --db-url <url> [--apply] [--as-of <ISO date>] [--exclude-order-ids-file <path>]");
         writer.WriteLine("  housekeeping      Delete expired idempotency_keys and expired/long-revoked device_sessions");
         writer.WriteLine("                    (operational hygiene only; not KVKK personal-data retention).");
+        writer.WriteLine("  kvkk-retention    Anonymize personal data past its V0-CMP-003 retention window");
+        writer.WriteLine("                    (staff / order notes / reservation reasons). Dry run unless --apply.");
+        writer.WriteLine("                    Fiscal / invoice / financial data and append-only audit are never touched.");
     }
 }

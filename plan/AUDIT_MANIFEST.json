@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 834,
-  "markdown_line_count": 52742,
-  "markdown_byte_count": 3125976,
+  "markdown_file_count": 840,
+  "markdown_line_count": 53122,
+  "markdown_byte_count": 3149557,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -179,6 +179,13 @@
       "sha256": "11146596232D48251790C13B27817AD95FD8ADD80D21AE2D4DB5B0CC20F853B1",
       "lines": 124,
       "bytes": 4644,
+      "utf8": true
+    },
+    {
+      "path": "docs/compliance/kvkk-retention-runbook.md",
+      "sha256": "8C20B97C7F706C693B4AD863206DC808626DE074C2533E8569002AD3FE712108",
+      "lines": 89,
+      "bytes": 4231,
       "utf8": true
     },
     {
@@ -1428,6 +1435,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-065/result.md",
+      "sha256": "D8017CB4BDF6F37B2EC772326AD8EA13A2FB8D7AEC1A6B2B1747D37416BD3B73",
+      "lines": 37,
+      "bytes": 1993,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
       "sha256": "63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC",
       "lines": 44,
@@ -2044,6 +2058,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-094/result.md",
+      "sha256": "FAE952526B0FCA1DB5747E029C1935625C1001580C8F84589BCB59093A1C17CF",
+      "lines": 69,
+      "bytes": 3112,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2101,9 +2122,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "819B4E7AD3BFFC79D40F99237570258773D997AD142E990CA7527CC719366E98",
-      "lines": 2110,
-      "bytes": 297172,
+      "sha256": "98375B1BDCCDE42A72BC56B8FDC28B68AD64CB438C57DBE2D0F183C2632AE121",
+      "lines": 2116,
+      "bytes": 298097,
       "utf8": true
     },
     {
@@ -2122,9 +2143,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "12184AE2F3D9A2650469F857B4F700F266ED690E8D2D805B10D390B1DF8DDAF0",
-      "lines": 370,
-      "bytes": 61678,
+      "sha256": "C45F1685A80CEC00BBB56771C520847D08F006588C462A39E9BA4A961FB14185",
+      "lines": 378,
+      "bytes": 66238,
       "utf8": true
     },
     {
@@ -3829,6 +3850,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-064-master-custody-reopen-and-remediation-wave-21.md",
+      "sha256": "448C67377662020E6E1C0BC25EAFB7B9BC757C3575C468EA02562AC5DC18A709",
+      "lines": 55,
+      "bytes": 2331,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-065-wave21-master-audit-reseal-and-gate-closure.md",
+      "sha256": "CAC857FAF5F6165DCBA4B9434F40D0EB4CB8F4D786B2E4FE7BDCC2546A1C416B",
+      "lines": 53,
+      "bytes": 1978,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -4012,9 +4047,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "A3108D4CFC72ECE8FC4906BA6CED9A0444DED1C8F981A60DE31BBEF037F103B9",
-      "lines": 48,
-      "bytes": 3263,
+      "sha256": "5C38D6265B14B9A855D7E3763029F2594D43B19D96E8BF3A28BEC969E5CC6BE2",
+      "lines": 50,
+      "bytes": 3549,
       "utf8": true
     },
     {
@@ -4663,9 +4698,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-091-operational-data-housekeeping-sweep.md",
-      "sha256": "B6DDB049862A917017E775EC4C92D3EB2BE9C06BF7F20A3EECAD026256E879B2",
+      "sha256": "8817E7072638947FD06900DA90F29DADBEB745BBA35304C320F53AA67331B1E9",
       "lines": 58,
-      "bytes": 2874,
+      "bytes": 3008,
       "utf8": true
     },
     {
@@ -4680,6 +4715,13 @@
       "sha256": "146B490279D0474A8F2C56059C2610F13EB73F9A7BD7872A77ADBA7A32556773",
       "lines": 58,
       "bytes": 3120,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-094-kvkk-retention-anonymization-job.md",
+      "sha256": "3AB9D57E80C8D00E4F42698EE6B7AE0B46FBC02DE18678B49221AF5260235D95",
+      "lines": 61,
+      "bytes": 4031,
       "utf8": true
     },
     {
