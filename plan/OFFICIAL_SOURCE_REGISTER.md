@@ -25,7 +25,7 @@ gelmez.
 | `OWASP-AUTH` | OWASP Authentication Cheat Sheet | <https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html> | Authentication, throttling, lockout ve izleme rehberi. | 2026-07-29 | Public | `V0-SEC-001`, `V15-SEC-002` |
 | `OWASP-SESSION` | OWASP Session Management Cheat Sheet | <https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html> | Session token, lifecycle ve transport güvenliği rehberi. | 2026-07-29 | Public | `V0-SEC-001`, `V15-SEC-002` |
 | `OWASP-LOGGING` | OWASP Logging Cheat Sheet | <https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html> | Uygulama ve security event logging rehberi. | 2026-07-29 | Public | `V0-SEC-001`, `V15-OBS-001` |
-| `WCAG-2.2` | W3C WCAG 2.2 | <https://www.w3.org/WAI/standards-guidelines/wcag/> | Güncel erişilebilirlik standardı; conformance seviyesi V0 kararıdır. | 2026-07-29 | Public | `V0-CMP-005` |
+| `WCAG-2.2` | W3C WCAG 2.2 | <https://www.w3.org/WAI/standards-guidelines/wcag/> | Güncel erişilebilirlik standardı; conformance seviyesi V0 kararıdır. | 2026-07-29 | Public | `V0-CMP-005`, `V1-RMD-092` |
 | `CYCLONEDX-1.7` | CycloneDX 1.7 / ECMA-424 | <https://cyclonedx.org/specification/overview/> | Machine-readable SBOM formatı ve resmî media type bilgisi. | 2026-07-29 | Public | `V0-ARC-008`, `V20-REL-001` |
 | `SLSA-1.2` | SLSA specification 1.2 | <https://slsa.dev/spec/v1.2/> | Build/source provenance ve attestation çerçevesi; hedef seviye V0 kararıdır. | 2026-07-29 | Public | `V0-ARC-008`, `V20-REL-001` |
 

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 822,
-  "markdown_line_count": 51982,
-  "markdown_byte_count": 3082964,
+  "markdown_file_count": 828,
+  "markdown_line_count": 52366,
+  "markdown_byte_count": 3104669,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -396,6 +396,13 @@
       "sha256": "D427DD2E693B73CD281955ABC30012E1F31C68E5E1D0A0646BCB66F73F6AD56B",
       "lines": 401,
       "bytes": 30208,
+      "utf8": true
+    },
+    {
+      "path": "docs/qa/device-browser-test-plan.md",
+      "sha256": "DDA0A99B0AF54C14785BB75058009C199E5B70064FCD145DC963999EE30E79D5",
+      "lines": 94,
+      "bytes": 5108,
       "utf8": true
     },
     {
@@ -1400,6 +1407,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-061/reseal.md",
+      "sha256": "B387F68E504B54C9FCB5608204F84269866CF46ABE76F56B4DF5A836F4D9163B",
+      "lines": 46,
+      "bytes": 2100,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
       "sha256": "63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC",
       "lines": 44,
@@ -2002,6 +2016,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-092/result.md",
+      "sha256": "8F53427D30777419826023D9D62791C143E3826915A22B574C64891D3226B198",
+      "lines": 61,
+      "bytes": 2583,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2059,9 +2080,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "8A87E0999A1EFE42A28B188EB9487794541984692CB789E76B77872A3DEF7CB1",
-      "lines": 2098,
-      "bytes": 295306,
+      "sha256": "A1F224C7B32BA4D285C5B98A9FD6E973D7039C291BC93244A475CB150DABE7B9",
+      "lines": 2104,
+      "bytes": 296247,
       "utf8": true
     },
     {
@@ -2080,16 +2101,16 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "B48ECC5BCA2F32EA74C7AA7306471A0FC7B8FB7060FA5BA81FC6D35AA06446DF",
-      "lines": 354,
-      "bytes": 55430,
+      "sha256": "12D1A40B7CE9C099BFD54A41E3D2ADE56A34322104227F563987C0FCED24CA54",
+      "lines": 362,
+      "bytes": 58543,
       "utf8": true
     },
     {
       "path": "plan/OFFICIAL_SOURCE_REGISTER.md",
-      "sha256": "C841375341BB61B2735A4E5B0FDC6F75775E9E908C754E07B852D4461322332A",
+      "sha256": "0C3033E1B2F89077D9FBFACD09C2BFBF19DCD09AB49DB69D67161ADCE6475D3B",
       "lines": 43,
-      "bytes": 6790,
+      "bytes": 6804,
       "utf8": true
     },
     {
@@ -3759,6 +3780,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-060-master-custody-reopen-and-remediation-wave-19.md",
+      "sha256": "74219D9294481CFEFE3A8DF44284A821526672ED7456C0CAA02A330A356B8496",
+      "lines": 57,
+      "bytes": 2699,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-061-wave19-master-audit-reseal-and-gate-closure.md",
+      "sha256": "18C60C758733603B34AFC5678BECFB79797050EF29222F0620ADAFB91B781E17",
+      "lines": 53,
+      "bytes": 2041,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -3942,9 +3977,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "06DA674D17EE21FAFB4A21706C3AE748EF3F169A16F5FD24C18C788DF22873CB",
-      "lines": 44,
-      "bytes": 2724,
+      "sha256": "36A030E4F6B062CE4FFDB29E430CBED0753D2A7FB74E0CFD2F483A65B6396A2A",
+      "lines": 46,
+      "bytes": 2955,
       "utf8": true
     },
     {
@@ -4537,9 +4572,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-083-waiter-and-cashier-order-line-note-entry.md",
-      "sha256": "D5E5D3C15E3E737F137097DB985FE36A80B4547597C5C90E61E23B43B6D0F83D",
+      "sha256": "4BF79E85DF3B6FFDBDF9C6EECBCF1954EC84706A6214DF495109CA82F1398D27",
       "lines": 53,
-      "bytes": 2097,
+      "bytes": 2251,
       "utf8": true
     },
     {
@@ -4596,6 +4631,13 @@
       "sha256": "B6DDB049862A917017E775EC4C92D3EB2BE9C06BF7F20A3EECAD026256E879B2",
       "lines": 58,
       "bytes": 2874,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-092-device-browser-test-plan-and-vanilla-client-a11y-smoke.md",
+      "sha256": "41C803A5F9F3795C45DCC2A75C40CA33A4F32772E0451F0264C00366125F6374",
+      "lines": 57,
+      "bytes": 2721,
       "utf8": true
     },
     {
