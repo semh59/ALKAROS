@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 840,
-  "markdown_line_count": 53122,
-  "markdown_byte_count": 3149557,
+  "markdown_file_count": 842,
+  "markdown_line_count": 53314,
+  "markdown_byte_count": 3159464,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -375,6 +375,13 @@
       "sha256": "CA49078F530BA988B47943C2A782744A2D32BBBBA4C1480976C60F5A0E0D58CB",
       "lines": 63,
       "bytes": 2466,
+      "utf8": true
+    },
+    {
+      "path": "docs/operations/production-go-live-checklist.md",
+      "sha256": "80CE910E4DCF1A5CBD82D345B6490CD3164648404CB6B72D0A320A6313ACB2A2",
+      "lines": 145,
+      "bytes": 7829,
       "utf8": true
     },
     {
@@ -1435,6 +1442,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-065/restore-drill-2026-09-01.md",
+      "sha256": "FA485DA00D34446EC459D7155F53DED78271765120AD5EE92255587613FF9CEC",
+      "lines": 45,
+      "bytes": 1782,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-GOV-065/result.md",
       "sha256": "D8017CB4BDF6F37B2EC772326AD8EA13A2FB8D7AEC1A6B2B1747D37416BD3B73",
       "lines": 37,
@@ -2122,9 +2136,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "98375B1BDCCDE42A72BC56B8FDC28B68AD64CB438C57DBE2D0F183C2632AE121",
-      "lines": 2116,
-      "bytes": 298097,
+      "sha256": "9D971A99E2F28D8711C300824AF07CBD6CC43CEE22EF4D23F626BC44B7FBEDDC",
+      "lines": 2118,
+      "bytes": 298393,
       "utf8": true
     },
     {

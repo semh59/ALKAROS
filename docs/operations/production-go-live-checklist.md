@@ -1,0 +1,145 @@
+# V1 production go-live checklist
+
+> Source basis: PO:2026-09-01
+> Companion docs: `deploy/docker/README.md`, `docs/recovery/backup-restore-runbook.md`,
+> `docs/recovery/rpo-rto-targets.md`, `docs/qa/device-browser-test-plan.md`,
+> `docs/performance/critical-path-load-v1.md`, `docs/compliance/kvkk-retention-runbook.md`
+
+`GATE-V1-EXIT` is sealed: all 238 V1 tasks are `Done` or approved
+`NotApplicable`, the full test suite is green, and the deliberate V1 scope
+(no payment/fiscal) is complete. This checklist covers the operational steps
+that live **outside** the repository and must be walked once per deployment
+before a pilot location goes live.
+
+Legend: **DONE** — verified in-repo · **MANUAL** — needs the physical site /
+real infra · **DECISION** — needs a named business owner.
+
+---
+
+## 1. Physical device pass — MANUAL
+
+Automated coverage is in place (`vanilla-clients-a11y.test.ts`, PosTerminal axe +
+breakpoint tests, `device-browser-test-plan.md` matrix). The physical checklist
+in `docs/qa/device-browser-test-plan.md` still has to be walked on real hardware:
+
+- [ ] Cashier PC in kiosk mode, real receipt printer, real cash drawer kick
+- [ ] Kitchen display on the real panel, real kitchen printer, reprint recovery
+- [ ] Waiter phone on the site WiFi: install root CA, confirm padlock, seat a
+      table, disable WiFi, enter an order, confirm
+      `Çevrimdışı • İşlemler Güvenli Kuyrukta`, re-enable WiFi, confirm sync
+- [ ] Waiter phone over plain `http://<lan-ip>:5080` shows the
+      `Çevrimdışı mod kapalı • Güvenli bağlantı (HTTPS) gerekli` warning
+- [ ] Real screen reader smoke on Cashier + PosTerminal
+- [ ] 200% browser zoom reflow on every surface, no horizontal scroll
+- [ ] Touch targets >= 44 px on the tablet surfaces
+
+## 2. Secrets and TLS — DONE (repo) / MANUAL (site)
+
+Repository state, verified 2026-09-01:
+
+- `deploy/docker/db_password` and `deploy/docker/admin_password` are **not**
+  tracked and never appear in git history; `deploy/docker/.gitignore` allows
+  only the `*.example` files.
+- Compose passes both through Docker **secrets** (`/run/secrets/*`), read via the
+  `_FILE` convention; no secret is in the Compose environment or in logs.
+- PostgreSQL 18 and Caddy images are digest-pinned.
+
+Per-deployment, on the site host:
+
+- [ ] `deploy/docker/db_password` — a unique 32+ char random string, file mode
+      `600`, owned by the deploy user. Never reused from another environment.
+- [ ] `deploy/docker/admin_password` — a unique 12-256 non-whitespace manager
+      password; hand it to the manager out-of-band, then rotate after first login.
+- [ ] Set `ALKAROS_PROXY_HOST` to the LAN IP / hostname the devices use **before**
+      `docker compose up`, so Caddy's internal CA issues a cert with the right SAN.
+- [ ] Export the internal root CA
+      (`docker compose cp proxy:/data/caddy/pki/authorities/local/root.crt ...`)
+      and install it on every waiter device (steps in `deploy/docker/README.md`).
+- [ ] **DECISION** — external go-live (public domain) requires replacing
+      `tls internal` in `deploy/docker/Caddyfile` with an approved public
+      certificate + real domain. A LAN-only pilot may stay on the internal CA.
+- [ ] Rotation: re-write the secret file, then
+      `docker compose up -d --force-recreate migrate provision host`. The DB
+      password rotation also needs `ALTER ROLE alkaros WITH PASSWORD ...` on the
+      server in the same window.
+
+## 3. Restore drill — DONE (mechanism) / MANUAL (production-sized)
+
+Re-verified 2026-09-01 against the current schema (evidence:
+`evidence/V1-GOV-065/restore-drill-2026-09-01.md`):
+
+- Disposable 500-row round trip: backup -> corrupted artifact **refused (exit 4,
+  no target DB)** -> clean restore -> identical row count and data checksum.
+- Live ALKAROS schema (57 tables / 14 schemas / 69 FKs / AUD-01 append-only
+  trigger / 38 migrations): backup -> restore into `alkaros_restore` -> full
+  object parity, `pg_restore` exit 0, target dropped after compare.
+
+Still MANUAL before go-live:
+
+- [ ] One drill against **production-sized** data on the **real** site host, to
+      record actual `pg_dump` / `pg_restore` timings and confirm they fit the
+      RTO targets in `docs/recovery/rpo-rto-targets.md` (the ~165 KB dev dataset
+      restores in <1 s and proves nothing about a full restaurant's volume).
+- [ ] Schedule the hourly backup cron from `docs/recovery/backup-restore-runbook.md`
+      and confirm artifacts land on **off-host** durable storage.
+- [ ] **DECISION** — `V0-BKP-002` numeric RPO/RTO targets still need a named
+      business approver. RPO=0 for fiscal/audit needs WAL streaming, which is a
+      `V15-BKP` item, not shipped in V1.
+
+## 4. Monitoring and alerting — PARTIAL
+
+### What the stack already exposes
+
+| Signal | Where | Use |
+| --- | --- | --- |
+| Liveness/readiness | `GET /health/ready` (Host `:5080`, proxy `:8443`) — runs `SELECT 1` against PostgreSQL, returns `{"status":"Ready"}` / 503 | external uptime check |
+| Container health | Compose `healthcheck` on `postgres`, `host`, `proxy` (`restart: unless-stopped`) | `docker` self-heal + `docker events` |
+| Operational health snapshot | `GET /api/v1/kitchen/terminals/{id}/operations/health/latest` (auth) | staff-facing status |
+| Recent backups | `GET /api/v1/kitchen/terminals/{id}/operations/backups/recent` (auth) | backup freshness |
+| Alert records | `AlertService` + `alerts` table (`PostgresAlertRepository`) | in-app alert feed |
+| Structured logs | Host stdout, redacted by `ObservabilityRedactionHook` | `docker logs` / log shipper |
+
+### To wire before go-live
+
+- [ ] Point an external watchdog (UptimeKuma / Healthchecks.io / a cron + curl on
+      a second box) at `https://<ALKAROS_PROXY_HOST>:8443/health/ready`, interval
+      <= 1 min, alert to phone/email on 2 consecutive failures.
+- [ ] Ship `docker logs` to a file or collector with rotation; alert on
+      `ERROR`/`Unhandled` lines. Logs are already secret-redacted.
+- [ ] Add a daily check that the newest row in `operations/backups/recent` (or the
+      backup volume) is younger than 25 h; page if not.
+- [ ] Disk alert on the `alkaros-postgres` and `alkaros-backups` volumes at 80%.
+- [ ] Note the tuned Postgres logging already in `postgresql.tuned.conf`
+      (`log_min_duration_statement=500ms`, `log_checkpoints`, `log_lock_waits`) —
+      forward these to the same collector.
+- [ ] **DECISION** — a Prometheus/OTLP metrics exporter is **not** in V1. If the
+      operator needs dashboards/trends rather than up/down + log alerts, that is a
+      `V1-OBS-001` / `V15-RUN-001` follow-up.
+
+## 5. Load / soak — DONE (single-box) / DEFERRED (multi-node)
+
+- Write critical path at 1M orders / 3M items, 20 concurrent terminals: submit
+  p95 45.9 ms, p99 73.9 ms, 0 % errors, 0 deadlocks
+  (`docs/performance/critical-path-load-v1.md`).
+- [ ] **DEFERRED** — `V15-PER-001` full suite (multi-node, multi-hour soak) is
+      out of V1 scope. For a single pilot restaurant the single-box headroom
+      (~10x the RPO target) is sufficient; revisit before multi-store rollout.
+
+---
+
+## Go / no-go summary
+
+| Area | State |
+| --- | --- |
+| Code + governance (`GATE-V1-EXIT`) | sealed |
+| Backup/restore mechanism | verified |
+| Secrets hygiene (repo) | clean |
+| Physical device pass | **pending — site** |
+| Real TLS cert (if public) | **pending — decision** |
+| External uptime + backup-age alert | **pending — ops wiring** |
+| Production-sized restore timing | **pending — site** |
+| RPO/RTO numeric sign-off (`V0-BKP-002`) | **pending — business owner** |
+
+A LAN-only pilot at one location can go live once the four "pending — site / ops
+wiring" rows are walked. The two "decision" rows (public TLS, RPO/RTO sign-off)
+are only blocking for an external or multi-store deployment.

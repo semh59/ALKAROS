@@ -1520,6 +1520,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/engineering/task-scope-contract.md` | ✅ | `CECE4919C0152F2B724D9E6730C4F5D380662883E1158DD44BDCDC93097D5CE4` | Tek-sahip görev |
 | `docs/licensing/licensing-contract.md` | ✅ | `8A2AA58265B800F88B80033EA0119BD198FFB975BA205A8623F998DDE18A0730` | Tek-sahip görev |
 | `docs/operations/data-housekeeping.md` | ✅ | `CA49078F530BA988B47943C2A782744A2D32BBBBA4C1480976C60F5A0E0D58CB` | Tek-sahip görev |
+| `docs/operations/production-go-live-checklist.md` | ✅ | `80CE910E4DCF1A5CBD82D345B6490CD3164648404CB6B72D0A320A6313ACB2A2` | Tek-sahip görev |
 | `docs/performance/critical-path-load-v1.md` | ✅ | `355EE858A1EA0CA6E3EB37A79CE9E8CCADEF14130B9D5682DB6BC1C8BC459FD1` | Tek-sahip görev |
 | `docs/performance/infra-tuning.md` | ✅ | `9FAA4AA27A54E1B715645F013E7286FC824DEAE6E500599113846F3519566927` | Tek-sahip görev |
 | `docs/performance/load-baseline-v1.md` | ✅ | `A28B13C3EAB4D53557D7F4CBC98D596D87ADAD49B2AC621237A2A5D717A14688` | Tek-sahip görev |
@@ -1663,6 +1664,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-GOV-059/reseal.md` | ✅ | `427F248EFBF2E3A3C0FFACB978376CAD7337C8CDB0BEBF3EE925AA4E359615C9` | Tek-sahip görev |
 | `evidence/V1-GOV-061/reseal.md` | ✅ | `B387F68E504B54C9FCB5608204F84269866CF46ABE76F56B4DF5A836F4D9163B` | Tek-sahip görev |
 | `evidence/V1-GOV-063/reseal.md` | ✅ | `20D696A5DD56736A20C10EEFF7D4F9346D0DE7B55A6625ED04085A6E6B7C4DBB` | Tek-sahip görev |
+| `evidence/V1-GOV-065/restore-drill-2026-09-01.md` | ✅ | `FA485DA00D34446EC459D7155F53DED78271765120AD5EE92255587613FF9CEC` | Tek-sahip görev |
 | `evidence/V1-GOV-065/result.md` | ✅ | `D8017CB4BDF6F37B2EC772326AD8EA13A2FB8D7AEC1A6B2B1747D37416BD3B73` | Tek-sahip görev |
 | `evidence/V1-IAM-001/closure-2026-08-05.md` | ✅ | `63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC` | Tek-sahip görev |
 | `evidence/V1-IAM-001/defect-7-closure.md` | ✅ | `301E2270BF794D2D5EFE378B75B3861E472AECACD94C6C9B08873C2041747F9D` | Tek-sahip görev |
@@ -2112,5 +2114,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `840` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `842` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
