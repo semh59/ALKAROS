@@ -1,0 +1,259 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  ALKAROS.Secrets -> /src/src/BuildingBlocks/Security/Secrets/bin/Debug/net8.0/ALKAROS.Secrets.dll
+  ALKAROS.WaiterPwa.OrderStatus.Tests -> /src/tests/Clients/WaiterPwa/OrderStatus/bin/Debug/net8.0/ALKAROS.WaiterPwa.OrderStatus.Tests.dll
+  ALKAROS.WaiterPwa.OrderEntry.Tests -> /src/tests/Clients/WaiterPwa/OrderEntry/bin/Debug/net8.0/ALKAROS.WaiterPwa.OrderEntry.Tests.dll
+  ALKAROS.WaiterPwa.SessionQueue.Tests -> /src/tests/Clients/WaiterPwa/SessionQueue/bin/Debug/net8.0/ALKAROS.WaiterPwa.SessionQueue.Tests.dll
+  ALKAROS.Cashier.OperationsStatus.Tests -> /src/tests/Clients/Cashier/OperationsStatus/bin/Debug/net8.0/ALKAROS.Cashier.OperationsStatus.Tests.dll
+  ALKAROS.Cashier.OrderEntry.Tests -> /src/tests/Clients/Cashier/OrderEntry/bin/Debug/net8.0/ALKAROS.Cashier.OrderEntry.Tests.dll
+  ALKAROS.Cashier.TableShell.Tests -> /src/tests/Clients/Cashier/TableShell/bin/Debug/net8.0/ALKAROS.Cashier.TableShell.Tests.dll
+Test run for /src/tests/Clients/WaiterPwa/OrderStatus/bin/Debug/net8.0/ALKAROS.WaiterPwa.OrderStatus.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Clients/WaiterPwa/OrderEntry/bin/Debug/net8.0/ALKAROS.WaiterPwa.OrderEntry.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Clients/Cashier/OperationsStatus/bin/Debug/net8.0/ALKAROS.Cashier.OperationsStatus.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Clients/WaiterPwa/SessionQueue/bin/Debug/net8.0/ALKAROS.WaiterPwa.SessionQueue.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Clients/Cashier/TableShell/bin/Debug/net8.0/ALKAROS.Cashier.TableShell.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Clients/Cashier/OrderEntry/bin/Debug/net8.0/ALKAROS.Cashier.OrderEntry.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Secrets.Tests -> /src/tests/BuildingBlocks/Security/Secrets/bin/Debug/net8.0/ALKAROS.Secrets.Tests.dll
+Test run for /src/tests/BuildingBlocks/Security/Secrets/bin/Debug/net8.0/ALKAROS.Secrets.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 459 ms - ALKAROS.WaiterPwa.OrderStatus.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 501 ms - ALKAROS.WaiterPwa.OrderEntry.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 512 ms - ALKAROS.Cashier.TableShell.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 493 ms - ALKAROS.Cashier.OrderEntry.Tests.dll (net8.0)
+
+
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 623 ms - ALKAROS.WaiterPwa.SessionQueue.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 435 ms - ALKAROS.Cashier.OperationsStatus.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    21, Skipped:     0, Total:    21, Duration: 532 ms - ALKAROS.Secrets.Tests.dll (net8.0)
+  ALKAROS.ModuleComposition -> /src/src/BuildingBlocks/ModuleComposition/bin/Debug/net8.0/ALKAROS.ModuleComposition.dll
+  ALKAROS.SensitiveData -> /src/src/BuildingBlocks/Security/SensitiveData/bin/Debug/net8.0/ALKAROS.SensitiveData.dll
+  ALKAROS.Idempotency -> /src/src/BuildingBlocks/Idempotency/bin/Debug/net8.0/ALKAROS.Idempotency.dll
+  ALKAROS.Messaging -> /src/src/BuildingBlocks/Messaging/bin/Debug/net8.0/ALKAROS.Messaging.dll
+  ALKAROS.Transactions -> /src/src/BuildingBlocks/Transactions/bin/Debug/net8.0/ALKAROS.Transactions.dll
+  ALKAROS.Operations -> /src/src/Modules/Operations/bin/Debug/net8.0/ALKAROS.Operations.dll
+  ALKAROS.Identity -> /src/src/Modules/Identity/bin/Debug/net8.0/ALKAROS.Identity.dll
+  ALKAROS.Orders -> /src/src/Modules/Orders/bin/Debug/net8.0/ALKAROS.Orders.dll
+  ALKAROS.Reporting -> /src/src/Modules/Reporting/bin/Debug/net8.0/ALKAROS.Reporting.dll
+  ALKAROS.Settings -> /src/src/Modules/Settings/bin/Debug/net8.0/ALKAROS.Settings.dll
+  ALKAROS.Tables -> /src/src/Modules/Tables/bin/Debug/net8.0/ALKAROS.Tables.dll
+  ALKAROS.Notifications -> /src/src/Modules/Notifications/bin/Debug/net8.0/ALKAROS.Notifications.dll
+  ALKAROS.Observability -> /src/src/Modules/Observability/bin/Debug/net8.0/ALKAROS.Observability.dll
+  ALKAROS.Audit -> /src/src/Modules/Audit/bin/Debug/net8.0/ALKAROS.Audit.dll
+  ALKAROS.Billing -> /src/src/Modules/Billing/bin/Debug/net8.0/ALKAROS.Billing.dll
+  ALKAROS.Kitchen -> /src/src/Modules/Kitchen/bin/Debug/net8.0/ALKAROS.Kitchen.dll
+  ALKAROS.Catalog -> /src/src/Modules/Catalog/bin/Debug/net8.0/ALKAROS.Catalog.dll
+  ALKAROS.TransactionOutboxIntegration -> /src/src/BuildingBlocks/TransactionOutboxIntegration/bin/Debug/net8.0/ALKAROS.TransactionOutboxIntegration.dll
+  ALKAROS.Inventory -> /src/src/Modules/Inventory/bin/Debug/net8.0/ALKAROS.Inventory.dll
+  ALKAROS.TestHelpers -> /src/tests/BuildingBlocks/TestHelpers/bin/Debug/net8.0/ALKAROS.TestHelpers.dll
+  ALKAROS.Payments -> /src/src/Modules/Payments/bin/Debug/net8.0/ALKAROS.Payments.dll
+  ALKAROS.SensitiveData.Tests -> /src/tests/BuildingBlocks/Security/SensitiveData/bin/Debug/net8.0/ALKAROS.SensitiveData.Tests.dll
+Test run for /src/tests/BuildingBlocks/Security/SensitiveData/bin/Debug/net8.0/ALKAROS.SensitiveData.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Idempotency.Tests -> /src/tests/BuildingBlocks/Idempotency/bin/Debug/net8.0/ALKAROS.Idempotency.Tests.dll
+  ALKAROS.Billing.BillFoundation.Tests -> /src/tests/Modules/Billing/BillFoundation/bin/Debug/net8.0/ALKAROS.Billing.BillFoundation.Tests.dll
+Test run for /src/tests/BuildingBlocks/Idempotency/bin/Debug/net8.0/ALKAROS.Idempotency.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Modules/Billing/BillFoundation/bin/Debug/net8.0/ALKAROS.Billing.BillFoundation.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    23, Skipped:     0, Total:    23, Duration: 333 ms - ALKAROS.SensitiveData.Tests.dll (net8.0)
+  ALKAROS.Fiscal -> /src/src/Modules/Fiscal/bin/Debug/net8.0/ALKAROS.Fiscal.dll
+  ALKAROS.Accounts -> /src/src/Modules/Accounts/bin/Debug/net8.0/ALKAROS.Accounts.dll
+  ALKAROS.Cash -> /src/src/Modules/Cash/bin/Debug/net8.0/ALKAROS.Cash.dll
+  ALKAROS.Reconciliation -> /src/src/Modules/Reconciliation/bin/Debug/net8.0/ALKAROS.Reconciliation.dll
+  ALKAROS.TransactionOutboxIntegration.Tests -> /src/tests/BuildingBlocks/TransactionOutboxIntegration/bin/Debug/net8.0/ALKAROS.TransactionOutboxIntegration.Tests.dll
+Test run for /src/tests/BuildingBlocks/TransactionOutboxIntegration/bin/Debug/net8.0/ALKAROS.TransactionOutboxIntegration.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    86, Skipped:     0, Total:    86, Duration: 3 s - ALKAROS.Idempotency.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    40, Skipped:     0, Total:    40, Duration: 2 s - ALKAROS.Billing.BillFoundation.Tests.dll (net8.0)
+  ALKAROS.Transactions.Tests -> /src/tests/BuildingBlocks/Transactions/bin/Debug/net8.0/ALKAROS.Transactions.Tests.dll
+Test run for /src/tests/BuildingBlocks/Transactions/bin/Debug/net8.0/ALKAROS.Transactions.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12, Duration: 632 ms - ALKAROS.TransactionOutboxIntegration.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    26, Skipped:     0, Total:    26, Duration: 278 ms - ALKAROS.Transactions.Tests.dll (net8.0)
+  ALKAROS.Tables.TableTransfer.Tests -> /src/tests/Modules/Tables/TableTransfer/bin/Debug/net8.0/ALKAROS.Tables.TableTransfer.Tests.dll
+Test run for /src/tests/Modules/Tables/TableTransfer/bin/Debug/net8.0/ALKAROS.Tables.TableTransfer.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    33, Skipped:     0, Total:    33, Duration: 1 s - ALKAROS.Tables.TableTransfer.Tests.dll (net8.0)
+  ALKAROS.Kitchen.PrintQueue.Tests -> /src/tests/Modules/Kitchen/PrintQueue/bin/Debug/net8.0/ALKAROS.Kitchen.PrintQueue.Tests.dll
+Test run for /src/tests/Modules/Kitchen/PrintQueue/bin/Debug/net8.0/ALKAROS.Kitchen.PrintQueue.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    18, Skipped:     0, Total:    18, Duration: 2 s - ALKAROS.Kitchen.PrintQueue.Tests.dll (net8.0)
+  ALKAROS.Catalog.ProductCatalog.Tests -> /src/tests/Modules/Catalog/ProductCatalog/bin/Debug/net8.0/ALKAROS.Catalog.ProductCatalog.Tests.dll
+Test run for /src/tests/Modules/Catalog/ProductCatalog/bin/Debug/net8.0/ALKAROS.Catalog.ProductCatalog.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    80, Skipped:     0, Total:    80, Duration: 1 s - ALKAROS.Catalog.ProductCatalog.Tests.dll (net8.0)
+  ALKAROS.Operations.BackupHealth.Tests -> /src/tests/Modules/Operations/BackupHealth/bin/Debug/net8.0/ALKAROS.Operations.BackupHealth.Tests.dll
+Test run for /src/tests/Modules/Operations/BackupHealth/bin/Debug/net8.0/ALKAROS.Operations.BackupHealth.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7, Duration: 732 ms - ALKAROS.Operations.BackupHealth.Tests.dll (net8.0)
+  ALKAROS.Settings.TypedSettings.Tests -> /src/tests/Modules/Settings/TypedSettings/bin/Debug/net8.0/ALKAROS.Settings.TypedSettings.Tests.dll
+Test run for /src/tests/Modules/Settings/TypedSettings/bin/Debug/net8.0/ALKAROS.Settings.TypedSettings.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    33, Skipped:     0, Total:    33, Duration: 970 ms - ALKAROS.Settings.TypedSettings.Tests.dll (net8.0)
+  ALKAROS.Audit.EventStore.Tests -> /src/tests/Modules/Audit/EventStore/bin/Debug/net8.0/ALKAROS.Audit.EventStore.Tests.dll
+  ALKAROS.Kitchen.TicketLifecycle.Tests -> /src/tests/Modules/Kitchen/TicketLifecycle/bin/Debug/net8.0/ALKAROS.Kitchen.TicketLifecycle.Tests.dll
+  ALKAROS.Identity.DeviceSessions.Tests -> /src/tests/Modules/Identity/DeviceSessions/bin/Debug/net8.0/ALKAROS.Identity.DeviceSessions.Tests.dll
+Test run for /src/tests/Modules/Audit/EventStore/bin/Debug/net8.0/ALKAROS.Audit.EventStore.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Modules/Kitchen/TicketLifecycle/bin/Debug/net8.0/ALKAROS.Kitchen.TicketLifecycle.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Modules/Identity/DeviceSessions/bin/Debug/net8.0/ALKAROS.Identity.DeviceSessions.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Tables.TableLifecycle.Tests -> /src/tests/Modules/Tables/TableLifecycle/bin/Debug/net8.0/ALKAROS.Tables.TableLifecycle.Tests.dll
+Test run for /src/tests/Modules/Tables/TableLifecycle/bin/Debug/net8.0/ALKAROS.Tables.TableLifecycle.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20, Duration: 1 s - ALKAROS.Identity.DeviceSessions.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    15, Skipped:     0, Total:    15, Duration: 1 s - ALKAROS.Kitchen.TicketLifecycle.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20, Duration: 2 s - ALKAROS.Audit.EventStore.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    55, Skipped:     0, Total:    55, Duration: 1 s - ALKAROS.Tables.TableLifecycle.Tests.dll (net8.0)
+  ALKAROS.Orders.OrderAggregate.Tests -> /src/tests/Modules/Orders/OrderAggregate/bin/Debug/net8.0/ALKAROS.Orders.OrderAggregate.Tests.dll
+  ALKAROS.Tables.TableMerge.Tests -> /src/tests/Modules/Tables/TableMerge/bin/Debug/net8.0/ALKAROS.Tables.TableMerge.Tests.dll
+Test run for /src/tests/Modules/Orders/OrderAggregate/bin/Debug/net8.0/ALKAROS.Orders.OrderAggregate.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Modules/Tables/TableMerge/bin/Debug/net8.0/ALKAROS.Tables.TableMerge.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Catalog.Pricing.Tests -> /src/tests/Modules/Catalog/Pricing/bin/Debug/net8.0/ALKAROS.Catalog.Pricing.Tests.dll
+Test run for /src/tests/Modules/Catalog/Pricing/bin/Debug/net8.0/ALKAROS.Catalog.Pricing.Tests.dll (.NETCoreApp,Version=v8.0)
+  ALKAROS.Billing.SplitDesign.Tests -> /src/tests/Modules/Billing/SplitDesign/bin/Debug/net8.0/ALKAROS.Billing.SplitDesign.Tests.dll
+Test run for /src/tests/Modules/Billing/SplitDesign/bin/Debug/net8.0/ALKAROS.Billing.SplitDesign.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    27, Skipped:     0, Total:    27, Duration: 1 s - ALKAROS.Catalog.Pricing.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    84, Skipped:     0, Total:    84, Duration: 1 s - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    27, Skipped:     0, Total:    27, Duration: 1 s - ALKAROS.Billing.SplitDesign.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    29, Skipped:     0, Total:    29, Duration: 2 s - ALKAROS.Tables.TableMerge.Tests.dll (net8.0)
+  ALKAROS.Identity.Authorization.Tests -> /src/tests/Modules/Identity/Authorization/bin/Debug/net8.0/ALKAROS.Identity.Authorization.Tests.dll
+  ALKAROS.Kitchen.Routing.Tests -> /src/tests/Modules/Kitchen/Routing/bin/Debug/net8.0/ALKAROS.Kitchen.Routing.Tests.dll
+  ALKAROS.Reporting.V1Operations.Tests -> /src/tests/Modules/Reporting/V1Operations/bin/Debug/net8.0/ALKAROS.Reporting.V1Operations.Tests.dll
+Test run for /src/tests/Modules/Identity/Authorization/bin/Debug/net8.0/ALKAROS.Identity.Authorization.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Modules/Kitchen/Routing/bin/Debug/net8.0/ALKAROS.Kitchen.Routing.Tests.dll (.NETCoreApp,Version=v8.0)
+  ALKAROS.Kitchen.PhysicalPrintRecovery.Tests -> /src/tests/Modules/Kitchen/PhysicalPrintRecovery/bin/Debug/net8.0/ALKAROS.Kitchen.PhysicalPrintRecovery.Tests.dll
+Test run for /src/tests/Modules/Reporting/V1Operations/bin/Debug/net8.0/ALKAROS.Reporting.V1Operations.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Modules/Kitchen/PhysicalPrintRecovery/bin/Debug/net8.0/ALKAROS.Kitchen.PhysicalPrintRecovery.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20, Duration: 688 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+  ALKAROS.Tables.CurrentPointers.Tests -> /src/tests/Modules/Tables/CurrentPointers/bin/Debug/net8.0/ALKAROS.Tables.CurrentPointers.Tests.dll
+Test run for /src/tests/Modules/Tables/CurrentPointers/bin/Debug/net8.0/ALKAROS.Tables.CurrentPointers.Tests.dll (.NETCoreApp,Version=v8.0)
+
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22, Duration: 3 s - ALKAROS.Kitchen.Routing.Tests.dll (net8.0)
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Identity.Authentication.Tests -> /src/tests/Modules/Identity/Authentication/bin/Debug/net8.0/ALKAROS.Identity.Authentication.Tests.dll
+Test run for /src/tests/Modules/Identity/Authentication/bin/Debug/net8.0/ALKAROS.Identity.Authentication.Tests.dll (.NETCoreApp,Version=v8.0)
+
+Passed!  - Failed:     0, Passed:    17, Skipped:     0, Total:    17, Duration: 4 s - ALKAROS.Kitchen.PhysicalPrintRecovery.Tests.dll (net8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Tables.Reservations.Tests -> /src/tests/Modules/Tables/Reservations/bin/Debug/net8.0/ALKAROS.Tables.Reservations.Tests.dll
+Test run for /src/tests/Modules/Tables/Reservations/bin/Debug/net8.0/ALKAROS.Tables.Reservations.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 1 s - ALKAROS.Tables.CurrentPointers.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:     6, Skipped:     0, Total:     6, Duration: 1 s - ALKAROS.Reporting.V1Operations.Tests.dll (net8.0)
+  ALKAROS.Observability.AlertFoundation.Tests -> /src/tests/Modules/Observability/AlertFoundation/bin/Debug/net8.0/ALKAROS.Observability.AlertFoundation.Tests.dll
+Test run for /src/tests/Modules/Observability/AlertFoundation/bin/Debug/net8.0/ALKAROS.Observability.AlertFoundation.Tests.dll (.NETCoreApp,Version=v8.0)
+
+Passed!  - Failed:     0, Passed:    27, Skipped:     0, Total:    27, Duration: 1 s - ALKAROS.Tables.Reservations.Tests.dll (net8.0)
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Orders.SubmitOrder.Tests -> /src/tests/Modules/Orders/SubmitOrder/bin/Debug/net8.0/ALKAROS.Orders.SubmitOrder.Tests.dll
+Test run for /src/tests/Modules/Orders/SubmitOrder/bin/Debug/net8.0/ALKAROS.Orders.SubmitOrder.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12, Duration: 991 ms - ALKAROS.Observability.AlertFoundation.Tests.dll (net8.0)
+  ALKAROS.Billing.Adjustments.Tests -> /src/tests/Modules/Billing/Adjustments/bin/Debug/net8.0/ALKAROS.Billing.Adjustments.Tests.dll
+
+Passed!  - Failed:     0, Passed:    54, Skipped:     0, Total:    54, Duration: 11 s - ALKAROS.Identity.Authentication.Tests.dll (net8.0)
+Test run for /src/tests/Modules/Billing/Adjustments/bin/Debug/net8.0/ALKAROS.Billing.Adjustments.Tests.dll (.NETCoreApp,Version=v8.0)
+
+Passed!  - Failed:     0, Passed:    15, Skipped:     0, Total:    15, Duration: 1 s - ALKAROS.Orders.SubmitOrder.Tests.dll (net8.0)
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Orders.ItemExceptions.Tests -> /src/tests/Modules/Orders/ItemExceptions/bin/Debug/net8.0/ALKAROS.Orders.ItemExceptions.Tests.dll
+Test run for /src/tests/Modules/Orders/ItemExceptions/bin/Debug/net8.0/ALKAROS.Orders.ItemExceptions.Tests.dll (.NETCoreApp,Version=v8.0)
+  ALKAROS.Observability.Foundation.Tests -> /src/tests/Modules/Observability/Foundation/bin/Debug/net8.0/ALKAROS.Observability.Foundation.Tests.dll
+Test run for /src/tests/Modules/Observability/Foundation/bin/Debug/net8.0/ALKAROS.Observability.Foundation.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14, Duration: 1 s - ALKAROS.Billing.Adjustments.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22, Duration: 1 s - ALKAROS.Orders.ItemExceptions.Tests.dll (net8.0)
+  ALKAROS.Cash.Contracts.Tests -> /src/tests/Modules/Cash/Contracts/bin/Debug/net8.0/ALKAROS.Cash.Contracts.Tests.dll
+Test run for /src/tests/Modules/Cash/Contracts/bin/Debug/net8.0/ALKAROS.Cash.Contracts.Tests.dll (.NETCoreApp,Version=v8.0)
+
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22, Duration: 1 s - ALKAROS.Observability.Foundation.Tests.dll (net8.0)
+A total of 1 test files matched the specified pattern.
+  ALKAROS.Reconciliation.CaseFoundation.Tests -> /src/tests/Modules/Reconciliation/CaseFoundation/bin/Debug/net8.0/ALKAROS.Reconciliation.CaseFoundation.Tests.dll
+Test run for /src/tests/Modules/Reconciliation/CaseFoundation/bin/Debug/net8.0/ALKAROS.Reconciliation.CaseFoundation.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    13, Skipped:     0, Total:    13, Duration: 276 ms - ALKAROS.Cash.Contracts.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:     6, Skipped:     0, Total:     6, Duration: 824 ms - ALKAROS.Reconciliation.CaseFoundation.Tests.dll (net8.0)
+  ALKAROS.Host -> /src/src/Host/bin/Debug/net8.0/ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Tables.Tests -> /src/tests/Host/Experience/Tables/bin/Debug/net8.0/ALKAROS.Host.Experience.Tables.Tests.dll
+Test run for /src/tests/Host/Experience/Tables/bin/Debug/net8.0/ALKAROS.Host.Experience.Tables.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8, Duration: 31 s - ALKAROS.Host.Experience.Tables.Tests.dll (net8.0)
+  ALKAROS.Architecture.Tests -> /src/tests/Architecture/ModuleBoundaries/bin/Debug/net8.0/ALKAROS.Architecture.Tests.dll
+Test run for /src/tests/Architecture/ModuleBoundaries/bin/Debug/net8.0/ALKAROS.Architecture.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5, Duration: 514 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+  ALKAROS.Host.Experience.Composition.Tests -> /src/tests/Host/Experience/Composition/bin/Debug/net8.0/ALKAROS.Host.Experience.Composition.Tests.dll
+Test run for /src/tests/Host/Experience/Composition/bin/Debug/net8.0/ALKAROS.Host.Experience.Composition.Tests.dll (.NETCoreApp,Version=v8.0)
+  ALKAROS.Host.Experience.KitchenOperations.Tests -> /src/tests/Host/Experience/KitchenOperations/bin/Debug/net8.0/ALKAROS.Host.Experience.KitchenOperations.Tests.dll
+  ALKAROS.Host.Experience.Billing.Tests -> /src/tests/Host/Experience/Billing/bin/Debug/net8.0/ALKAROS.Host.Experience.Billing.Tests.dll
+Test run for /src/tests/Host/Experience/KitchenOperations/bin/Debug/net8.0/ALKAROS.Host.Experience.KitchenOperations.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for /src/tests/Host/Experience/Billing/bin/Debug/net8.0/ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0)
+  ALKAROS.Host.Experience.Catalog.Tests -> /src/tests/Host/Experience/Catalog/bin/Debug/net8.0/ALKAROS.Host.Experience.Catalog.Tests.dll
+Test run for /src/tests/Host/Experience/Catalog/bin/Debug/net8.0/ALKAROS.Host.Experience.Catalog.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 1 s - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:     6, Skipped:     0, Total:     6, Duration: 1 s - ALKAROS.Host.Experience.Catalog.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3, Duration: 10 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+  ALKAROS.Host.Tests -> /src/tests/Host/MigrationComposition/bin/Debug/net8.0/ALKAROS.Host.Tests.dll
+Test run for /src/tests/Host/MigrationComposition/bin/Debug/net8.0/ALKAROS.Host.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 17 s - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:   104, Skipped:     0, Total:   104, Duration: 1 m 9 s - ALKAROS.Host.Tests.dll (net8.0)

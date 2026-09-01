@@ -18,7 +18,7 @@
 
 - `plan/v1/remediation/V1-RMD-046-authoritative-postgresql-order-store.md`
 - PO:2026-08-29 kararıyla src/Host/Experience/Orders/** yüzeyi V1-RMD-050'ye devredildi; bu historical task closed kalır.
-- `src/Host/Program.cs`
+- PO:2026-09-01 kararıyla src/Host/Program.cs yüzeyi V1-RMD-091'e devredildi; bu historical task closed kalır ve housekeeping fiili 18. dalgada eklenir.
 - `evidence/V1-RMD-046/**`
 
 ## In scope

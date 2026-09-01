@@ -54,6 +54,19 @@ public static class Program
             }
         }
 
+        if (args.Length > 0 && string.Equals(args[0], "housekeeping", StringComparison.Ordinal))
+        {
+            try
+            {
+                return HousekeepingAsync(args[1..]).GetAwaiter().GetResult();
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NpgsqlException or FormatException)
+            {
+                Console.Error.WriteLine($"HOUSEKEEPING: {ex.Message}");
+                return (int)HostExitCode.StartupFailed;
+            }
+        }
+
         var options = ParseArguments(args);
         if (options is null)
         {
@@ -169,6 +182,79 @@ public static class Program
 
         await transaction.CommitAsync();
         Console.Out.WriteLine($"Manager provisioning verified for username '{username}'.");
+        return (int)HostExitCode.Success;
+    }
+
+    /// <summary>
+    /// One-shot operational data housekeeping: deletes expired ephemeral rows
+    /// that carry no value after expiry and would otherwise grow without bound
+    /// (V1-RMD-091). Not a KVKK personal-data retention job (that is V15-KVK-001,
+    /// with 5-10 year retention per the V0-CMP-003 inventory) and it never
+    /// touches orders, bills, fiscal or invoice records.
+    /// Usage: housekeeping --db-url &lt;url&gt; [--grace-days &lt;N&gt;]
+    /// </summary>
+    private static async Task<int> HousekeepingAsync(string[] args)
+    {
+        string? databaseUrl = null;
+        var graceDays = 7;
+        for (var i = 0; i < args.Length; i++)
+        {
+            switch (args[i])
+            {
+                case "--db-url" when i + 1 < args.Length:
+                    databaseUrl = args[++i];
+                    break;
+                case "--grace-days" when i + 1 < args.Length:
+                    if (!int.TryParse(args[++i], out graceDays) || graceDays < 0)
+                        throw new ArgumentException("--grace-days must be a non-negative integer.");
+                    break;
+                default:
+                    throw new ArgumentException($"Unrecognized housekeeping argument '{args[i]}'.");
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(databaseUrl))
+            throw new ArgumentException("housekeeping requires a --db-url argument.");
+
+        var databasePassword = RequiredEnvironmentValue(PasswordEnvironmentVariable, 1, 256, allowWhitespace: false);
+        var connectionString = BuildConnectionString(databaseUrl, databasePassword, "ALKAROS.Housekeeping");
+
+        await using var connection = new NpgsqlConnection(connectionString);
+        await connection.OpenAsync();
+        await using var transaction = await connection.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+
+        var started = DateTimeOffset.UtcNow;
+
+        int idempotencyDeleted;
+        await using (var command = new NpgsqlCommand(
+            "DELETE FROM idempotency_keys WHERE expires_at < now();",
+            connection,
+            transaction))
+        {
+            idempotencyDeleted = await command.ExecuteNonQueryAsync();
+        }
+
+        // identity.session_operations rows cascade with their parent session.
+        int sessionsDeleted;
+        await using (var command = new NpgsqlCommand(
+            """
+            DELETE FROM identity.device_sessions
+            WHERE expires_at < now() - make_interval(days => @grace)
+               OR (revoked_at IS NOT NULL AND revoked_at < now() - make_interval(days => @grace));
+            """,
+            connection,
+            transaction))
+        {
+            command.Parameters.AddWithValue("grace", graceDays);
+            sessionsDeleted = await command.ExecuteNonQueryAsync();
+        }
+
+        await transaction.CommitAsync();
+
+        var seconds = (DateTimeOffset.UtcNow - started).TotalSeconds;
+        Console.Out.WriteLine(
+            $"housekeeping: idempotency_keys={idempotencyDeleted} device_sessions={sessionsDeleted} "
+            + $"grace_days={graceDays} seconds={seconds:F2}");
         return (int)HostExitCode.Success;
     }
 
@@ -336,5 +422,9 @@ public static class Program
         writer.WriteLine("  --psql            psql executable path (default: psql from PATH)");
         writer.WriteLine("  --rollback        Run the rollback script of the given position instead of forward");
         writer.WriteLine("  Database password is read from the ALKAROS_DB_PASSWORD environment variable.");
+        writer.WriteLine();
+        writer.WriteLine("Verbs: serve | provision-manager --db-url <url> | housekeeping --db-url <url> [--grace-days <N>]");
+        writer.WriteLine("  housekeeping      Delete expired idempotency_keys and expired/long-revoked device_sessions");
+        writer.WriteLine("                    (operational hygiene only; not KVKK personal-data retention).");
     }
 }

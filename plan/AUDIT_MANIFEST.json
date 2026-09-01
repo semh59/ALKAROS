@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 816,
-  "markdown_line_count": 51623,
-  "markdown_byte_count": 3063849,
+  "markdown_file_count": 822,
+  "markdown_line_count": 51982,
+  "markdown_byte_count": 3082964,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -361,6 +361,13 @@
       "sha256": "8A2AA58265B800F88B80033EA0119BD198FFB975BA205A8623F998DDE18A0730",
       "lines": 16,
       "bytes": 636,
+      "utf8": true
+    },
+    {
+      "path": "docs/operations/data-housekeeping.md",
+      "sha256": "CA49078F530BA988B47943C2A782744A2D32BBBBA4C1480976C60F5A0E0D58CB",
+      "lines": 63,
+      "bytes": 2466,
       "utf8": true
     },
     {
@@ -1386,6 +1393,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-GOV-059/reseal.md",
+      "sha256": "427F248EFBF2E3A3C0FFACB978376CAD7337C8CDB0BEBF3EE925AA4E359615C9",
+      "lines": 43,
+      "bytes": 1920,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-IAM-001/closure-2026-08-05.md",
       "sha256": "63D422C2FCB44C2E75A39051E55DE072BBE278AF75735502CA229305F9CEE2BC",
       "lines": 44,
@@ -1981,6 +1995,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-091/result.md",
+      "sha256": "F9EA18D0AEA0D92B7034D762DA1BAAB4205DBB176B371A46808935A25BF85FBF",
+      "lines": 71,
+      "bytes": 2669,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2038,9 +2059,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2BBCCB3F29F90D0DB8CAF87FDA20E8DEE4F05C9301C95F1AA34F32FBC5FA069A",
-      "lines": 2092,
-      "bytes": 294383,
+      "sha256": "8A87E0999A1EFE42A28B188EB9487794541984692CB789E76B77872A3DEF7CB1",
+      "lines": 2098,
+      "bytes": 295306,
       "utf8": true
     },
     {
@@ -2059,16 +2080,16 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "898BF4A2D330A65FB26247949ED69D3499322C3E9739E8B9CDF31747D01BA2EF",
-      "lines": 346,
-      "bytes": 52100,
+      "sha256": "B48ECC5BCA2F32EA74C7AA7306471A0FC7B8FB7060FA5BA81FC6D35AA06446DF",
+      "lines": 354,
+      "bytes": 55430,
       "utf8": true
     },
     {
       "path": "plan/OFFICIAL_SOURCE_REGISTER.md",
-      "sha256": "14086DB21E3391DB800FFC562063F8F3D077D49FD794ACA9F473C449F5EC71F4",
+      "sha256": "C841375341BB61B2735A4E5B0FDC6F75775E9E908C754E07B852D4461322332A",
       "lines": 43,
-      "bytes": 6776,
+      "bytes": 6790,
       "utf8": true
     },
     {
@@ -3724,6 +3745,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-058-master-custody-reopen-and-remediation-wave-18.md",
+      "sha256": "4F99A3C5EB342B62CECABAFA386CC37F6206EF9A656304D13B25D7043C57887C",
+      "lines": 57,
+      "bytes": 2768,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-059-wave18-master-audit-reseal-and-gate-closure.md",
+      "sha256": "2845749E102362A4BDAC8379ABBD947C5CA7B77FE02CCF9E0F92C4C610A4CE72",
+      "lines": 53,
+      "bytes": 1973,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -3907,9 +3942,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "3A810B3D69C3B5FA0549B86EB27E12ABCD131D46CD408C11C8DC9B2501E4AFFB",
+      "sha256": "06DA674D17EE21FAFB4A21706C3AE748EF3F169A16F5FD24C18C788DF22873CB",
       "lines": 44,
-      "bytes": 2678,
+      "bytes": 2724,
       "utf8": true
     },
     {
@@ -4243,9 +4278,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-046-authoritative-postgresql-order-store.md",
-      "sha256": "5B569DE23F3F340EB8AD010B6DB0E31D2101B4D37A7948EE723F8CC4DA231BEF",
+      "sha256": "86EABBE9930986CE475B226DBE66D8492C68D705B6AE0403F5844D1AB4866887",
       "lines": 48,
-      "bytes": 1411,
+      "bytes": 1543,
       "utf8": true
     },
     {
@@ -4554,6 +4589,13 @@
       "sha256": "2520BDCED476205FA8F499D347D5B9B65E78FFE1AAC8FD7AF3ACAA1E7C784E49",
       "lines": 54,
       "bytes": 3079,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-091-operational-data-housekeeping-sweep.md",
+      "sha256": "B6DDB049862A917017E775EC4C92D3EB2BE9C06BF7F20A3EECAD026256E879B2",
+      "lines": 58,
+      "bytes": 2874,
       "utf8": true
     },
     {

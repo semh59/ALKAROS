@@ -145,6 +145,25 @@ services:
     command: ["/repo/deploy/docker/backup.sh"]
     restart: "no"
 
+  # Operator data-housekeeping sweep (V1-RMD-091). Not started by
+  # `docker compose up`; schedule from cron:
+  #   docker compose --profile ops run --rm housekeeping
+  # Deletes expired idempotency_keys and expired/long-revoked device_sessions
+  # only. Not a KVKK personal-data retention job (see docs/operations/
+  # data-housekeeping.md); never touches orders, bills, fiscal or invoice data.
+  housekeeping:
+    build:
+      context: .
+      target: runtime
+    profiles: ["ops"]
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    secrets: [db_password]
+    command:
+      - |
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        exec dotnet ALKAROS.Host.dll housekeeping --db-url postgresql://alkaros@postgres:5432/alkaros
+    restart: "no"
+
 secrets:
   db_password:
     file: ./deploy/docker/db_password
