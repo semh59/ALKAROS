@@ -79,10 +79,16 @@ public static class DualScreenTls
             critical: false));
 
         var sanBuilder = new SubjectAlternativeNameBuilder();
-        AddSan(sanBuilder, host);
-        AddSan(sanBuilder, "localhost");
-        sanBuilder.AddIpAddress(IPAddress.Loopback);
-        sanBuilder.AddIpAddress(IPAddress.IPv6Loopback);
+        var dnsNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var ipAddresses = new HashSet<IPAddress>();
+        AddSan(sanBuilder, host, dnsNames, ipAddresses);
+        AddSan(sanBuilder, "localhost", dnsNames, ipAddresses);
+        foreach (var loopback in new[] { IPAddress.Loopback, IPAddress.IPv6Loopback })
+        {
+            if (ipAddresses.Add(loopback))
+                sanBuilder.AddIpAddress(loopback);
+        }
+
         request.CertificateExtensions.Add(sanBuilder.Build());
 
         var now = DateTimeOffset.UtcNow;
@@ -129,11 +135,20 @@ public static class DualScreenTls
         }
     }
 
-    private static void AddSan(SubjectAlternativeNameBuilder builder, string host)
+    private static void AddSan(
+        SubjectAlternativeNameBuilder builder,
+        string host,
+        HashSet<string> dnsNames,
+        HashSet<IPAddress> ipAddresses)
     {
         if (IPAddress.TryParse(host, out var address))
-            builder.AddIpAddress(address);
-        else
+        {
+            if (ipAddresses.Add(address))
+                builder.AddIpAddress(address);
+        }
+        else if (dnsNames.Add(host))
+        {
             builder.AddDnsName(host);
+        }
     }
 }

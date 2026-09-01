@@ -40,7 +40,7 @@ resolved certificate via `ConfigureKestrel(ConfigureHttpsDefaults(...))`.
 ## Tests
 
 `tests/Host/MigrationComposition/DualScreen/` — `dotnet test` DualScreen filter
-**26 passed / 0 failed**:
+**27 passed / 0 failed**:
 
 - `DualScreenOptionsTests`: `HttpsUrlWithoutACertificateSourceIsRejected`,
   `SelfSignedHostRequiresAnHttpsUrl`, `TlsCertificateAndKeyMustBeSuppliedTogether`,
@@ -50,8 +50,11 @@ resolved certificate via `ConfigureKestrel(ConfigureHttpsDefaults(...))`.
   HTTPS `GET /` with **no** `X-Forwarded-Proto` header → 200 (the HTTPS_REQUIRED
   gate does not fire because the request is genuinely HTTPS), and the presented
   leaf certificate's SAN contains `pos.lan` and `localhost`.
+- `DualScreenHostTests.SelfSignedCertificateForLocalhostDoesNotDuplicateSubjectAlternativeNames`:
+  `--self-signed-host localhost` yields a SAN with `localhost` exactly once
+  (the DNS/IP SAN builder deduplicates).
 
-Full suite: `dotnet test ALKAROS.slnx` 46 projects / 1099 passed / 0 failed.
+Full suite: `dotnet test ALKAROS.slnx` 46 projects / 1100 passed / 0 failed.
 
 ## Live check (`https-live-check.log`)
 

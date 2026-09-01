@@ -11,8 +11,8 @@ self-signed fallback certificate, closing pre-go-live finding E1).
 
 | Suite | Command | Result |
 | --- | --- | --- |
-| C# full | `dotnet test ALKAROS.slnx` (Docker `alkaros-sdk10-rt8` + `alkaros-pg`, `--memory=4g`) | 46 test projects, 1099 passed, 0 failed (`FULLTEST_EXIT=0`) |
-| DualScreen (targeted) | `dotnet test --filter FullyQualifiedName~DualScreen` | 26 passed (5 new TLS tests) |
+| C# full | `dotnet test ALKAROS.slnx` (Docker `alkaros-sdk10-rt8` + `alkaros-pg`, `--memory=4g`) | 46 test projects, 1100 passed, 0 failed (`FULLTEST_EXIT=0`) |
+| DualScreen (targeted) | `dotnet test --filter FullyQualifiedName~DualScreen` | 27 passed (6 new TLS tests incl. SAN dedupe) |
 | PosTerminal vitest | `corepack pnpm run test` | 15 files, 96 passed |
 | PosTerminal types / build | `corepack pnpm run typecheck` / `build` | exit 0 |
 | Architecture | `python3 -m pytest tests/Architecture -q` (Docker) | 208 passed |

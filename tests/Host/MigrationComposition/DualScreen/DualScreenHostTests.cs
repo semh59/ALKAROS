@@ -204,6 +204,40 @@ public sealed class DualScreenHostTests : IDisposable
         }
     }
 
+    [Fact]
+    public void SelfSignedCertificateForLocalhostDoesNotDuplicateSubjectAlternativeNames()
+    {
+        var tlsCacheRoot = Path.Combine(Path.GetTempPath(), $"alkaros-tls-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tlsCacheRoot);
+        try
+        {
+            var certificate = DualScreenTls.Resolve(
+                new DualScreenOptions(
+                    "Host=localhost;Database=unused;Username=unused;Password=unused",
+                    _webRoot,
+                    "https://0.0.0.0:5443",
+                    SelfSignedTlsHost: "localhost"),
+                tlsCacheRoot)!;
+
+            using (certificate)
+            {
+                var rawSan = certificate.Extensions
+                    .Single(extension => extension.Oid?.Value == "2.5.29.17")
+                    .RawData;
+                var dnsNames = new System.Security.Cryptography.X509Certificates
+                    .X509SubjectAlternativeNameExtension(rawSan)
+                    .EnumerateDnsNames()
+                    .ToArray();
+
+                Assert.Equal("localhost", Assert.Single(dnsNames));
+            }
+        }
+        finally
+        {
+            Directory.Delete(tlsCacheRoot, recursive: true);
+        }
+    }
+
     private static HttpClient CreateClient(WebApplication app)
     {
         var server = app.Services.GetRequiredService<IServer>();
