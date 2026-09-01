@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-058-posterminal-billing-state-synchronization.md`
-- `src/Clients/PosTerminal/src/App.tsx`
+- PO:2026-08-31 kararıyla src/Clients/PosTerminal/src/App.tsx yüzeyi V1-RMD-075'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-058/**`
 
 ## In scope

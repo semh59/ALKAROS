@@ -1,0 +1,28 @@
+{
+  "base_url": "http://alkaros-host-1:5080",
+  "scenario": "read (0.75 catalog GET / 0.25 active GET)",
+  "per_terminal_rate": 0.0,
+  "target": "V15-PER-001: 20 terminals p95<500ms p99<1000ms",
+  "generated_utc": "2026-09-01T08:26:20Z",
+  "levels": [
+    {
+      "terminals": 20,
+      "wall_seconds": 15.01,
+      "requests": 36580,
+      "rps": 2437.5,
+      "ok": 4800,
+      "error_pct": 86.88,
+      "status_breakdown": {
+        "200": 4800,
+        "429": 31780
+      },
+      "latency_ms": {
+        "p50": 9.5,
+        "p90": 18.0,
+        "p95": 21.3,
+        "p99": 28.6,
+        "max": 65.4
+      }
+    }
+  ]
+}

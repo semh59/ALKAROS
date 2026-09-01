@@ -17,7 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-061-cashier-park-ticket-protection.md`
-- `src/Clients/Cashier/wwwroot/**`
+- PO:2026-08-31 kararıyla src/Clients/Cashier/wwwroot/** yüzeyi V1-RMD-073'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-061/**`
 
 ## In scope

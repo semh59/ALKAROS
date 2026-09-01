@@ -26,12 +26,31 @@ type Feedback = { tone: "success" | "error" | "conflict"; message: string } | nu
 
 const statusOptions = ["all", "Available", "Occupied", "Reserved", "Cleaning", "OutOfService"] as const;
 
+// Floor occupancy escalation windows: a table occupied longer than the warning
+// threshold needs attention; past the critical threshold it is flagged red.
+const OCCUPANCY_WARNING_MINUTES = 75;
+const OCCUPANCY_CRITICAL_MINUTES = 120;
+
+function occupiedMinutes(occupiedSince?: string | null): number | null {
+  if (!occupiedSince) return null;
+  const started = Date.parse(occupiedSince);
+  if (!Number.isFinite(started)) return null;
+  return Math.max(0, Math.floor((Date.now() - started) / 60_000));
+}
+
 function elapsedLabel(occupiedSince?: string | null) {
-  if (!occupiedSince) return "—";
-  const elapsedMinutes = Math.max(0, Math.floor((Date.now() - Date.parse(occupiedSince)) / 60_000));
-  if (!Number.isFinite(elapsedMinutes)) return "—";
+  const elapsedMinutes = occupiedMinutes(occupiedSince);
+  if (elapsedMinutes === null) return "—";
   if (elapsedMinutes < 60) return `${elapsedMinutes} dk`;
   return `${Math.floor(elapsedMinutes / 60)} sa ${elapsedMinutes % 60} dk`;
+}
+
+function occupancyTone(occupiedSince?: string | null): "ok" | "warn" | "crit" {
+  const elapsedMinutes = occupiedMinutes(occupiedSince);
+  if (elapsedMinutes === null) return "ok";
+  if (elapsedMinutes >= OCCUPANCY_CRITICAL_MINUTES) return "crit";
+  if (elapsedMinutes >= OCCUPANCY_WARNING_MINUTES) return "warn";
+  return "ok";
 }
 
 function errorMessage(reason: unknown) {
@@ -325,7 +344,7 @@ function TableCard({ table, selected, onSelect, onAction }: { table: TableRecord
       <span className="table-card__capacity">◉ {table.capacity} kişilik</span>
       <span className="table-card__context">{table.currentOrderId ? `Sipariş #${table.currentOrderId.slice(0, 8)}` : table.currentBillId ? `Hesap #${table.currentBillId.slice(0, 8)}` : "Sipariş yok"}</span>
     </button>
-    <footer className="table-card__footer"><span>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : `v${table.rowVersion}`}</span>{command && <button type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
+    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : `v${table.rowVersion}`}</span>{command && <button type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
   </article>;
 }
 
@@ -333,7 +352,7 @@ function TableDetails({ table, zoneName, onAction }: { table: TableRecord; zoneN
   const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels);
   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
     <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h3>{table.tableNumber}</h3><span>{zoneName ?? "Zone atanmamış"}</span></div><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{tableStatusLabels[table.status]}</span></div>
-    <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Satır sürümü</span><strong>v{table.rowVersion}</strong></div><div><span>Geçen süre</span><strong>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
+    <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Satır sürümü</span><strong>v{table.rowVersion}</strong></div><div><span>Geçen süre</span><strong className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
     <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Sipariş</strong><code>{table.currentOrderId}</code></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Hesap</strong><code>{table.currentBillId}</code></p>}</div>
     {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command)} title={isClientExecutableAction(command) ? undefined : "Rezervasyon satır sürümü sunucu yanıtında bulunmadığı için işlem güvenli biçimde kapalı."} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}
     <p className="table-details__authority">Sunucu yetkisi ve v{table.rowVersion} kaynak gerçek. Çakışmada bu bağlam korunur.</p>

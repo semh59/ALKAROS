@@ -408,3 +408,19 @@ body {
   padding: 20px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
 }
+
+/* Catalog fail-closed states (V1-RMD-073) */
+.pos-catalog-state {
+  grid-column: 1 / -1;
+  padding: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+.pos-catalog-state--error {
+  color: #fca5a5;
+  border-color: #7f1d1d;
+  background: rgba(127, 29, 29, 0.15);
+}

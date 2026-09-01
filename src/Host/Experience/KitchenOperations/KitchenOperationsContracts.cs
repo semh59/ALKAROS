@@ -9,6 +9,7 @@ public sealed record KitchenTicketItemV1(
     string ProductName,
     decimal Quantity,
     string? Modifiers,
+    string? Notes,
     string Status,
     long RowVersion,
     DateTimeOffset CreatedAt,
@@ -29,6 +30,7 @@ public sealed record KitchenTicketV1(
     DateTimeOffset? AcceptedAt,
     DateTimeOffset? ReadyAt,
     DateTimeOffset? CancelledAt,
+    int TargetPrepMinutes,
     IReadOnlyList<KitchenTicketItemV1> Items);
 
 public sealed record TransitionKitchenTicketV1(

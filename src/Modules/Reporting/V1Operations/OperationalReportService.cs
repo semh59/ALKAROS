@@ -49,38 +49,19 @@ public sealed class OperationalReportService : IOperationalReportService
         IReadOnlyList<PrintErrorSummaryRecord>? printSummaries = null,
         CancellationToken cancellationToken = default)
     {
-        // 1. Close Business Day
-        var closedDay = await _repository.CloseBusinessDayAsync(
+        // Business-day close plus waiter and print-error summaries are written in a single
+        // transaction; a mid-sequence failure never leaves the day closed with partial
+        // summaries (V1-RMD-085).
+        return await _repository.CloseBusinessDayWithSummariesAsync(
             businessDate,
             closedAt,
             totalRevenue,
             totalOrders,
             cancelledItems,
             printFailures,
+            waiterSummaries ?? Array.Empty<WaiterPerformanceRecord>(),
+            printSummaries ?? Array.Empty<PrintErrorSummaryRecord>(),
             cancellationToken);
-
-        // 2. Persist Waiter Summaries
-        if (waiterSummaries is not null)
-        {
-            foreach (var waiter in waiterSummaries)
-            {
-                await _repository.RecordWaiterSummaryAsync(waiter, cancellationToken);
-            }
-        }
-
-        // 3. Persist Print Summaries
-        if (printSummaries is not null)
-        {
-            foreach (var print in printSummaries)
-            {
-                await _repository.RecordPrintErrorSummaryAsync(print, cancellationToken);
-            }
-        }
-
-        var persistedWaiters = await _repository.GetWaiterSummariesByDateAsync(businessDate, cancellationToken);
-        var persistedPrints = await _repository.GetPrintErrorSummariesByDateAsync(businessDate, cancellationToken);
-
-        return new BusinessDayReportResult(closedDay, persistedWaiters, persistedPrints);
     }
 
     public Task<BusinessDayRecord?> GetBusinessDayByDateAsync(DateOnly businessDate, CancellationToken cancellationToken = default)

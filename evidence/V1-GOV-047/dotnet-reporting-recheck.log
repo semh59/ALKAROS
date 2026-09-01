@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  ALKAROS.ModuleComposition -> /src/src/BuildingBlocks/ModuleComposition/bin/Debug/net8.0/ALKAROS.ModuleComposition.dll
+  ALKAROS.Transactions -> /src/src/BuildingBlocks/Transactions/bin/Debug/net8.0/ALKAROS.Transactions.dll
+  ALKAROS.TestHelpers -> /src/tests/BuildingBlocks/TestHelpers/bin/Debug/net8.0/ALKAROS.TestHelpers.dll
+  ALKAROS.Reporting.V1Operations.Tests -> /src/tests/Modules/Reporting/V1Operations/bin/Debug/net8.0/ALKAROS.Reporting.V1Operations.Tests.dll
+Test run for /src/tests/Modules/Reporting/V1Operations/bin/Debug/net8.0/ALKAROS.Reporting.V1Operations.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     6, Skipped:     0, Total:     6, Duration: 1 s - ALKAROS.Reporting.V1Operations.Tests.dll (net8.0)

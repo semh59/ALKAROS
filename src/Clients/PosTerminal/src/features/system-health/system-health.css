@@ -1,0 +1,19 @@
+.system-health { display: grid; gap: var(--ds-space-4); }
+.system-health--state { padding: var(--ds-space-5); }
+.system-health__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ds-space-4); }
+.system-health__kicker { color: var(--ds-color-muted); font-size: .68rem; font-weight: 900; letter-spacing: .09em; }
+.system-health__header h2 { margin: .2rem 0 0; font-size: clamp(1.45rem, 2.5vw, 2rem); line-height: 1.15; }
+.system-health__header p { margin: .35rem 0 0; color: var(--ds-color-muted); }
+.system-health__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--ds-space-3); margin: 0; }
+.system-health__grid > div { display: grid; gap: .3rem; border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: .8rem 1rem; background: var(--ds-color-surface); }
+.system-health__grid dt { color: var(--ds-color-muted); font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.system-health__grid dd { margin: 0; font-size: 1.05rem; font-weight: 700; }
+.system-health__badge { display: inline-flex; align-items: center; border-radius: 999px; padding: .24rem .55rem; font-size: .8rem; font-weight: 900; }
+.system-health__badge--healthy { color: #126637; background: #d9f7e5; }
+.system-health__badge--degraded { color: #704b00; background: #fff1c7; }
+.system-health__badge--unhealthy { color: #8b2a24; background: #ffe0dc; }
+.system-health__backup { display: grid; gap: .2rem; border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: 1rem; background: var(--ds-color-surface); }
+.system-health__backup span { color: var(--ds-color-muted); font-size: .72rem; }
+.system-health__backup strong { font-size: .95rem; }
+.system-health__backup p { margin: 0; color: var(--ds-color-danger); font-size: .78rem; }
+.system-health__backup--failed strong { color: var(--ds-color-danger); }

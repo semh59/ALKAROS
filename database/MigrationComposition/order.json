@@ -2,7 +2,7 @@
   "version": 1,
   "source": ["V0-DAT-001"],
   "phaseARange": { "min": "001", "max": "030" },
-  "phaseBRange": { "min": "031", "max": "040" },
+  "phaseBRange": { "min": "031", "max": "041" },
   "migrations": [
     {
       "id": "001",
@@ -230,6 +230,18 @@
       "id": "039",
       "phase": "B",
       "tables": ["zone_floor_plans", "table_layouts", "table_seats"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "040",
+      "phase": "B",
+      "tables": ["products"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "041",
+      "phase": "B",
+      "tables": ["orders"],
       "deferredConstraints": []
     }
   ]

@@ -11,8 +11,8 @@ import { KitchenOperationsWorkspace, type KitchenData } from "./index";
 const data: KitchenData = {
   tickets: [{
     id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", stationId: "hot-line", status: "Preparing", rowVersion: 4,
-    createdAt: "2026-08-26T10:00:00Z", updatedAt: "2026-08-26T10:02:00Z", acceptedAt: "2026-08-26T10:01:00Z", readyAt: null, cancelledAt: null,
-    items: [{ id: "item-1", orderItemId: "order-item-1", productId: "product-1", productName: "Mercimek çorbası", quantity: 2, modifiers: "Ekmeği ayrı", status: "Preparing", rowVersion: 2, createdAt: "2026-08-26T10:00:00Z", updatedAt: null, readyAt: null, servedAt: null, cancelledAt: null }],
+    createdAt: "2026-08-26T10:00:00Z", updatedAt: "2026-08-26T10:02:00Z", acceptedAt: "2026-08-26T10:01:00Z", readyAt: null, cancelledAt: null, targetPrepMinutes: 15,
+    items: [{ id: "item-1", orderItemId: "order-item-1", productId: "product-1", productName: "Mercimek çorbası", quantity: 2, modifiers: "Ekmeği ayrı", notes: "az tuz", status: "Preparing", rowVersion: 2, createdAt: "2026-08-26T10:00:00Z", updatedAt: null, readyAt: null, servedAt: null, cancelledAt: null }],
   }],
   printers: [{ id: "printer-1", name: "Mutfak yazıcı", stationId: "hot-line", isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
   routes: [{ id: "route-1", routeLevel: "Default", printerId: "printer-1", itemId: null, productId: null, categoryId: null, specialDate: null, isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
@@ -45,12 +45,11 @@ describe("kitchen operations workspace", () => {
   }
   afterEach(async () => { if (root) await act(async () => root!.unmount()); root = null; vi.restoreAllMocks(); });
 
-  it("renders station tickets, item action and failed operational state without customer detail", async () => {
+  it("renders station tickets, item action without customer detail", async () => {
     const onTransitionItem = vi.fn();
     await render(<KitchenOperationsWorkspace {...baseProps({ onTransitionItem })} />);
     expect(document.body.textContent).toContain("KT-001");
     expect(document.body.textContent).toContain("Mercimek çorbası");
-    expect(document.body.textContent).toContain("Başarısız");
     expect(document.body.textContent).not.toContain("customer");
     await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("→ Hazır"))!);
     expect(onTransitionItem).toHaveBeenCalledWith(data.tickets[0], data.tickets[0].items[0], "Ready");
@@ -75,6 +74,38 @@ describe("kitchen operations workspace", () => {
   ] as const)("shows bounded %s state", async (state, title) => {
     await render(<KitchenOperationsWorkspace {...baseProps({ state, errorMessage: "API kapalı" })} />);
     expect(document.body.textContent).toContain(title);
+  });
+
+  it("does not leak the internal Unknown type name in visible text", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    expect(document.body.textContent).not.toContain("Unknown");
+    expect(document.body.textContent).toContain("Doğrulanamayan teslimatlar");
+    expect(document.body.textContent).toContain("Doğrulanamayan baskı");
+    expect(document.body.textContent).not.toContain("Healthy");
+    expect(document.body.textContent).not.toContain("Unhealthy");
+  });
+
+  it("shows the line special instruction on the ticket", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    const note = document.querySelector(".kitchen-ticket__item-note");
+    expect(note).not.toBeNull();
+    expect(note!.textContent).toContain("az tuz");
+  });
+
+  it("escalates ticket age colour past the station preparation threshold", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    const age = document.querySelector(".kitchen-ticket__age");
+    expect(age).not.toBeNull();
+    expect(age!.className).toContain("kitchen-ticket__age--crit");
+  });
+
+  it("keeps the detailed health panel out of the operator view but shows the top-bar dot", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ canManageReprints: false })} />);
+    expect(document.querySelector(".kitchen-workspace__admin-health")).toBeNull();
+    expect(document.body.textContent).not.toContain("Sağlık ve yedek");
+    const dot = document.querySelector(".kitchen-workspace__header-actions .kitchen-health-dot");
+    expect(dot).not.toBeNull();
+    expect(dot!.getAttribute("aria-label")).toContain("Sistem durumu");
   });
 
   it("has no critical or serious axe violations", async () => {

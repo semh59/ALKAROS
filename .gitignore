@@ -30,6 +30,7 @@ appsettings.*.local.json
 
 # Python
 __pycache__/
+.pytest_cache/
 *.pyc
 
 # Temporary tool output (regenerable: recover-baseline, audit reports, PDF dumps)

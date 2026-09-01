@@ -33,6 +33,24 @@ public sealed class OrderManagementExperienceTests
     }
 
     [Fact]
+    public async Task CreateOrUpdateTableDraftAsync_SpecialInstruction_IsPersistedAndReturned()
+    {
+        var request = new CreateTableDraftRequest(
+            Guid.NewGuid(),
+            "M-07",
+            "Garson Ada",
+            new List<OrderItemDraftDto>
+            {
+                new(Guid.NewGuid(), "Mercimek çorbası", 1, 90m, null, "az tuz, acısız")
+            });
+
+        var draft = await _store.CreateOrUpdateTableDraftAsync(request);
+
+        var item = Assert.Single(draft.Items);
+        Assert.Equal("az tuz, acısız", item.SpecialInstructions);
+    }
+
+    [Fact]
     public async Task SubmitOrderAsync_ValidVersion_TransitionsToSubmitted()
     {
         var tableId = Guid.NewGuid();

@@ -16,6 +16,7 @@ export interface KitchenTicketItem {
   productName: string;
   quantity: number;
   modifiers: string | null;
+  notes: string | null;
   status: "Queued" | "Preparing" | "Ready" | "Served" | "Cancelled";
   rowVersion: number;
   createdAt: string;
@@ -37,6 +38,7 @@ export interface KitchenTicket {
   acceptedAt: string | null;
   readyAt: string | null;
   cancelledAt: string | null;
+  targetPrepMinutes: number;
   items: readonly KitchenTicketItem[];
 }
 
@@ -138,3 +140,19 @@ export const itemStatusLabels: Record<KitchenTicketItem["status"], string> = {
   Served: "Servis edildi",
   Cancelled: "İptal",
 };
+
+export const healthStatusLabels: Record<KitchenHealthSnapshot["databaseStatus"], string> = {
+  Healthy: "Sağlıklı",
+  Degraded: "Sınırlı",
+  Unhealthy: "Sorunlu",
+};
+
+export const backupStatusLabels: Record<KitchenBackup["status"], string> = {
+  InProgress: "Sürüyor",
+  Completed: "Tamamlandı",
+  Failed: "Başarısız",
+};
+
+export function healthStatusLabel(status: KitchenHealthSnapshot["databaseStatus"] | null | undefined): string {
+  return status ? healthStatusLabels[status] : "Bilinmiyor";
+}

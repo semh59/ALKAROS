@@ -144,6 +144,9 @@
 .table-card__capacity, .table-card__context { color: var(--table-muted); font-size: .8rem; }
 .table-card__context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .table-card__footer { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem; margin-top: auto; color: var(--table-muted); font-size: .75rem; }
+.table-card__elapsed { font-variant-numeric: tabular-nums; }
+.table-card__elapsed--warn { color: var(--ds-color-warning); font-weight: 900; }
+.table-card__elapsed--crit { color: var(--ds-color-danger); font-weight: 900; }
 .table-card__quick-action { min-width: var(--ds-target-min); min-height: var(--ds-target-min); display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--ds-color-accent); border-radius: var(--ds-radius-sm); padding: .5rem .7rem; color: var(--ds-color-accent); background: var(--ds-color-surface); font: inherit; font-weight: 900; }
 .table-card__quick-action:hover { color: var(--ds-color-surface); background: var(--ds-color-accent); }
 

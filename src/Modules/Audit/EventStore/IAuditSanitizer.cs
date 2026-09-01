@@ -53,22 +53,33 @@ public sealed class AuditSanitizer : IAuditSanitizer
         }
     }
 
+    // An audit event payload is expected to be small. Beyond this bound a
+    // malformed blob cannot be redacted reliably token by token, so the whole
+    // body is replaced instead of risking a partial secret leak.
+    private const int MaxFallbackLength = 64 * 1024;
+    private const string FullyRedactedMarker = "[REDACTED_MALFORMED_PAYLOAD]";
+
     private static string FallbackSanitizeText(string text)
     {
+        if (text.Length > MaxFallbackLength)
+            return FullyRedactedMarker;
+
         var sanitized = text;
         foreach (var pattern in SensitiveSubstrings)
         {
-            // Quoted values with a closing quote present
+            // Quoted values: tolerate backslash-escaped quotes and embedded
+            // newlines, up to the matching closing quote.
             var quotedRegex = new System.Text.RegularExpressions.Regex(
-                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*[""'])([^""'\r\n]+)([""'])",
-                System.Text.RegularExpressions.RegexOptions.Compiled);
-            sanitized = quotedRegex.Replace(sanitized, "$1[REDACTED]$3");
+                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*)(?<q>[""'])((?:\\.|(?!\k<q>)[^\\])*)(\k<q>)",
+                System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Singleline);
+            sanitized = quotedRegex.Replace(sanitized, "$1${q}[REDACTED]$3");
 
-            // Truncated/malformed: opening quote present but no closing quote before end-of-string
+            // Truncated/malformed: opening quote present but no closing quote
+            // before end-of-input, including multi-line values.
             var truncatedRegex = new System.Text.RegularExpressions.Regex(
-                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*[""'])([^""'\r\n]+)$",
-                System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Multiline);
-            sanitized = truncatedRegex.Replace(sanitized, "$1[REDACTED]");
+                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*)(?<q>[""'])((?:\\.|(?!\k<q>)[^\\])+)$",
+                System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Singleline);
+            sanitized = truncatedRegex.Replace(sanitized, "$1${q}[REDACTED]");
 
             // Unquoted values
             var unquotedRegex = new System.Text.RegularExpressions.Regex(

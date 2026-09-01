@@ -12,7 +12,7 @@ Waiter PWA uygulamasını Docker/Host içinde `/waiter/` gibi açık bir product
 
 ## Owned surface
 
-- `src/Clients/WaiterPwa/wwwroot/index.html`
+- PO:2026-09-01 kararıyla src/Clients/WaiterPwa/wwwroot/index.html yüzeyi V1-RMD-083’e devredildi; bu historical task closed kalır.
 - `src/Clients/WaiterPwa/wwwroot/manifest.json`
 - `src/Clients/WaiterPwa/wwwroot/sw.js`
 - `src/Clients/WaiterPwa/wwwroot/icon-192.png`

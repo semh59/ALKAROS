@@ -39,7 +39,7 @@ const emptyDraft = (): Draft => ({
 const kindOrder: readonly CatalogEntityKind[] = ["products", "categories", "taxes", "modifiers", "prices"];
 const catalogAddLabels: Record<CatalogEntityKind, string> = { products: "Ürün", categories: "Kategori", taxes: "Vergi profili", modifiers: "Modifier", prices: "Fiyat" };
 
-export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, errorMessage: suppliedError, lastUpdated }: CatalogWorkspaceProps) {
+export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, onSetAvailability, errorMessage: suppliedError, lastUpdated }: CatalogWorkspaceProps) {
   const [kind, setKind] = useState<CatalogEntityKind>("products");
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -74,7 +74,7 @@ export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, 
     event.preventDefault();
     const errors = validate(kind, draft);
     if (errors.length || !onCreate) {
-      setFormErrors(errors.length ? errors : ["Bu işlem için catalog yönetimi yetkisi gerekli."]);
+      setFormErrors(errors.length ? errors : ["Bu işlem için katalog yönetimi yetkisi gerekli."]);
       return;
     }
     try {
@@ -88,18 +88,34 @@ export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, 
     }
   };
 
-  if (state === "loading" || state === "busy") return <div className="catalog-workspace catalog-workspace--state" aria-busy="true"><StateMessage tone="info" title={state === "busy" ? "Catalog kaydediliyor" : "Catalog yükleniyor"}><p>Yetkili katalog verisi alınıyor…</p></StateMessage></div>;
-  if (state === "unauthorized") return <div className="catalog-workspace catalog-workspace--state"><StateMessage tone="unauthorized" title="Manager oturumu gerekli"><p>Catalog düzenlemek için yetkili manager hesabıyla giriş yapın.</p></StateMessage></div>;
+  const [availabilityBusy, setAvailabilityBusy] = useState(false);
+  const toggleAvailability = async (product: CatalogProduct) => {
+    if (!onSetAvailability || availabilityBusy) return;
+    const next = !product.isAvailable;
+    setAvailabilityBusy(true);
+    setFeedback(null);
+    try {
+      await onSetAvailability(product.id, next);
+      setFeedback({ tone: "success", message: next ? `${product.name} yeniden satışa açıldı.` : `${product.name} menüden kaldırıldı ("86").` });
+    } catch (reason) {
+      setFeedback({ tone: "error", message: reason instanceof Error ? reason.message : "Kullanılabilirlik güncellenemedi." });
+    } finally {
+      setAvailabilityBusy(false);
+    }
+  };
+
+  if (state === "loading" || state === "busy") return <div className="catalog-workspace catalog-workspace--state" aria-busy="true"><StateMessage tone="info" title={state === "busy" ? "Katalog kaydediliyor" : "Katalog yükleniyor"}><p>Yetkili katalog verisi alınıyor…</p></StateMessage></div>;
+  if (state === "unauthorized") return <div className="catalog-workspace catalog-workspace--state"><StateMessage tone="unauthorized" title="Manager oturumu gerekli"><p>Katalog düzenlemek için yetkili manager hesabıyla giriş yapın.</p></StateMessage></div>;
   if (state === "offline") return <div className="catalog-workspace catalog-workspace--state"><StateMessage tone="offline" title="Bağlantı yok"><p>Eski katalog verisiyle değişiklik yapılamaz.</p><Button onClick={onRefresh}>Tekrar dene</Button></StateMessage></div>;
-  if (state === "error") return <div className="catalog-workspace catalog-workspace--state"><StateMessage tone="error" title="Catalog alınamadı"><p>{suppliedError ?? "Beklenmeyen bir hata oluştu."}</p><Button onClick={onRefresh}>Yeniden yükle</Button></StateMessage></div>;
-  if (state === "stale" || state === "conflict") return <div className="catalog-workspace catalog-workspace--state"><StateMessage tone="conflict" title={state === "stale" ? "Catalog güncel değil" : "Catalog çakışması"}><p>Satışa açık bilgiyi değiştirmeden önce sunucunun son halini alın.</p><Button onClick={onRefresh}>Güncel veriyi al</Button></StateMessage></div>;
+  if (state === "error") return <div className="catalog-workspace catalog-workspace--state"><StateMessage tone="error" title="Katalog alınamadı"><p>{suppliedError ?? "Beklenmeyen bir hata oluştu."}</p><Button onClick={onRefresh}>Yeniden yükle</Button></StateMessage></div>;
+  if (state === "stale" || state === "conflict") return <div className="catalog-workspace catalog-workspace--state"><StateMessage tone="conflict" title={state === "stale" ? "Katalog güncel değil" : "Katalog çakışması"}><p>Satışa açık bilgiyi değiştirmeden önce sunucunun son halini alın.</p><Button onClick={onRefresh}>Güncel veriyi al</Button></StateMessage></div>;
 
   return <section className="catalog-workspace" aria-label="Menü ve katalog yönetimi">
     <header className="catalog-workspace__header"><div><span className="catalog-workspace__kicker">YÖNETİM / KATALOG</span><h2>Menü ve katalog</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Fiyat, ürün ve modifier kayıtları"}</p></div><div className="catalog-workspace__header-actions">{canManage && onCreate && <Button onClick={openEditor}>+ {catalogAddLabels[kind]} ekle</Button>}<Button variant="secondary" onClick={() => void onRefresh()}>Yenile</Button></div></header>
     {feedback && <div className={`catalog-workspace__feedback catalog-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label="Mesajı kapat" onClick={() => setFeedback(null)}>×</button></div>}
-    <nav className="catalog-workspace__tabs" aria-label="Catalog kaynak türü">{kindOrder.map((item) => <button key={item} type="button" className={kind === item ? "is-active" : ""} aria-current={kind === item ? "page" : undefined} onClick={() => changeKind(item)}>{catalogEntityLabels[item]}<span>{catalogCount(item, data)}</span></button>)}</nav>
-    <div className="catalog-workspace__toolbar"><label>Catalog ara<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Kod, SKU veya ad" aria-label="Catalog ara" /></label><span className="catalog-workspace__authority">Yayınlama yok · yalnızca manager CRUD</span></div>
-    {state === "empty" || filteredRows.length === 0 ? <div className="catalog-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Catalog kaydı yok" : "Eşleşen kayıt yok"}><p>{state === "empty" ? "Bu kaynak türünde ilk kaydı oluşturarak başlayın." : "Arama ifadenizi değiştirin veya temizleyin."}</p>{canManage && onCreate && <Button onClick={openEditor}>İlk kaydı ekle</Button>}</StateMessage></div> : <div className="catalog-workspace__content"><div className="catalog-list">{filteredRows.map((row) => <button type="button" key={row.id} className={`catalog-row ${selected?.id === row.id ? "is-selected" : ""}`} aria-pressed={selected?.id === row.id} onClick={() => setSelectedId(row.id)}><span className="catalog-row__title"><strong>{row.title}</strong><span className={row.active ? "catalog-active" : "catalog-inactive"}>{row.active ? "Aktif" : "Pasif"}</span></span><span className="catalog-row__subtitle">{row.subtitle}</span><span className="catalog-row__value">{row.value}</span></button>)}</div>{selected && <CatalogDetails kind={kind} row={selected} product={selectedProduct} data={data} />}</div>}
+    <nav className="catalog-workspace__tabs" aria-label="Katalog kaynak türü">{kindOrder.map((item) => <button key={item} type="button" className={kind === item ? "is-active" : ""} aria-current={kind === item ? "page" : undefined} onClick={() => changeKind(item)}>{catalogEntityLabels[item]}<span>{catalogCount(item, data)}</span></button>)}</nav>
+    <div className="catalog-workspace__toolbar"><label>Katalog ara<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Kod, SKU veya ad" aria-label="Katalog ara" /></label><span className="catalog-workspace__authority">Yayınlama yok · yalnızca manager CRUD</span></div>
+    {state === "empty" || filteredRows.length === 0 ? <div className="catalog-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Katalog kaydı yok" : "Eşleşen kayıt yok"}><p>{state === "empty" ? "Bu kaynak türünde ilk kaydı oluşturarak başlayın." : "Arama ifadenizi değiştirin veya temizleyin."}</p>{canManage && onCreate && <Button onClick={openEditor}>İlk kaydı ekle</Button>}</StateMessage></div> : <div className="catalog-workspace__content"><div className="catalog-list">{filteredRows.map((row) => <button type="button" key={row.id} className={`catalog-row ${selected?.id === row.id ? "is-selected" : ""}`} aria-pressed={selected?.id === row.id} onClick={() => setSelectedId(row.id)}><span className="catalog-row__title"><strong>{row.title}</strong><span className={row.active ? "catalog-active" : "catalog-inactive"}>{row.active ? "Aktif" : "Pasif"}</span></span><span className="catalog-row__subtitle">{row.subtitle}</span><span className="catalog-row__value">{row.value}</span></button>)}</div>{selected && <CatalogDetails kind={kind} row={selected} product={selectedProduct} data={data} />}{kind === "products" && selectedProduct && canManage && onSetAvailability && <div className="catalog-availability" role="group" aria-label="Ürün kullanılabilirliği"><span className={selectedProduct.isAvailable ? "catalog-available" : "catalog-suspended"}>{selectedProduct.isAvailable ? "Satışa açık" : "Menüden kaldırıldı"}</span><Button variant={selectedProduct.isAvailable ? "secondary" : "primary"} disabled={availabilityBusy} onClick={() => void toggleAvailability(selectedProduct)}>{availabilityBusy ? "…" : selectedProduct.isAvailable ? "Menüden kaldır (86)" : "Menüye geri al"}</Button></div>}</div>}
     <CatalogEditor open={editorOpen} kind={kind} draft={draft} data={data} errors={formErrors} onDraft={setDraft} onClose={() => setEditorOpen(false)} onSubmit={submit} />
   </section>;
 }

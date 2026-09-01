@@ -1,4 +1,11 @@
-https://localhost {
+# TLS terminates here and forwards trusted proxy headers to Host.
+# Set ALKAROS_PROXY_HOST to the deployment host name or LAN IP that waiter
+# devices use (e.g. 192.168.1.50 or pos.local) so Caddy's internal CA issues a
+# certificate with a matching SAN. The localhost name is always kept so the
+# container healthcheck stays valid. Install the internal root CA on each
+# device (see deploy/docker/README.md) to get a valid secure context for the
+# WaiterPwa service worker.
+{$ALKAROS_PROXY_HOST:localhost}, localhost {
 	tls internal
 	encode gzip
 	reverse_proxy host:5080

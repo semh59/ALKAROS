@@ -28,6 +28,7 @@
     <None Include="..\..\..\..\database\migrations\V1\V1-IAM-003\009-identity-device-sessions.up.sql" Link="Fixtures\sql\009-identity-device-sessions.up.sql" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-IAM-012\013-device-session-lifetime.up.sql" Link="Fixtures\sql\013-device-session-lifetime.up.sql" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-CAT-003\022-catalog-current-price-bound.up.sql" Link="Fixtures\sql\022-catalog-current-price-bound.up.sql" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V1\V1-GOV-040\040-wave9-schema-additions.up.sql" Link="Fixtures\sql\040-wave9-schema-additions.up.sql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

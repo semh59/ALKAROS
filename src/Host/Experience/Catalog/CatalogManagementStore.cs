@@ -93,9 +93,25 @@ public sealed class CatalogManagementStore
             NormalizeOptional(request.PrinterRoutePolicy, 200, nameof(request.PrinterRoutePolicy)),
             request.DisplayOrder,
             request.CurrentPrice,
-            request.Active);
+            request.Active,
+            request.IsAvailable);
         await _products.AddAsync(product, cancellationToken);
         return ToDto(product);
+    }
+
+    public async Task<ProductV1?> SetProductAvailabilityAsync(
+        Guid productId,
+        SetProductAvailabilityV1 request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureIdentifier(productId, nameof(productId));
+        var product = await _products.GetByIdAsync(productId, cancellationToken);
+        if (product is null)
+            return null;
+        var updated = request.IsAvailable ? product.Restore() : product.Suspend();
+        await _products.UpdateAsync(updated, cancellationToken);
+        return ToDto(updated);
     }
 
     public async Task<ModifierGroupV1> CreateModifierGroupAsync(
@@ -262,7 +278,7 @@ public sealed class CatalogManagementStore
         await using var command = _dataSource.CreateCommand(
             """
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active
+                   description, printer_route_policy, display_order, current_price, active, is_available
             FROM catalog.products
             WHERE NOT @has_cursor
                OR (sku COLLATE "C", product_id) > (@cursor_code COLLATE "C", @cursor_id)
@@ -280,7 +296,8 @@ public sealed class CatalogManagementStore
                 reader.IsDBNull(6) ? null : reader.GetGuid(6),
                 reader.IsDBNull(7) ? null : reader.GetString(7),
                 reader.IsDBNull(8) ? null : reader.GetString(8),
-                reader.GetInt32(9), reader.IsDBNull(10) ? null : reader.GetDecimal(10), reader.GetBoolean(11)),
+                reader.GetInt32(9), reader.IsDBNull(10) ? null : reader.GetDecimal(10), reader.GetBoolean(11),
+                reader.GetBoolean(12)),
             item => EncodeCursor(new CursorPayload("products", item.Sku, null, item.Id)),
             cancellationToken);
     }
@@ -567,7 +584,8 @@ public sealed class CatalogManagementStore
             value.PrinterRoutePolicy,
             value.DisplayOrder,
             value.CurrentPrice,
-            value.Active);
+            value.Active,
+            value.IsAvailable);
 
     private static ModifierGroupV1 ToDto(ModifierGroup value)
         => new(

@@ -66,12 +66,24 @@
     // Fetch initial data from Host API
     await loadInitialData();
 
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(err => {
-        console.warn('Service worker registration failed:', err);
-      });
+    // Register Service Worker. Offline queueing depends on it, so a failure or
+    // an insecure context (plain HTTP over a LAN IP) is surfaced to the user
+    // rather than silently swallowed.
+    registerOfflineWorker();
+  }
+
+  function registerOfflineWorker() {
+    if (!window.isSecureContext || !('serviceWorker' in navigator)) {
+      state.offlineDisabled = true;
+      renderStatusRibbon();
+      console.warn('Offline mode disabled: a secure context (HTTPS or localhost) is required.');
+      return;
     }
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      state.offlineDisabled = true;
+      renderStatusRibbon();
+      console.warn('Service worker registration failed; offline mode is disabled:', err);
+    });
   }
 
   // Network & Reliable Offline Queue
@@ -90,7 +102,10 @@
 
   function renderStatusRibbon() {
     if (!el.statusRibbon) return;
-    if (state.isOnline) {
+    if (state.offlineDisabled) {
+      el.statusRibbon.className = 'status-ribbon offline';
+      el.statusText.textContent = 'Çevrimdışı mod kapalı • Güvenli bağlantı (HTTPS) gerekli';
+    } else if (state.isOnline) {
       el.statusRibbon.className = 'status-ribbon online';
       el.statusText.textContent = 'Çevrimiçi • Canlı Bağlantı';
     } else {
@@ -349,7 +364,7 @@
         <div class="cart-item-info">
           <div class="cart-item-name">${escapeHtml(item.name)}</div>
           <div style="font-size: 0.8rem; color: var(--text-muted);">${formatMoney(item.price)}</div>
-          ${item.note ? `<div class="cart-item-note">Not: ${escapeHtml(item.note)}</div>` : ''}
+          <input class="cart-item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız, ekmek ayrı)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" style="margin-top:6px;width:100%;padding:6px 8px;font-size:0.8rem;border:1px solid var(--border-color);border-radius:6px;background:var(--bg-surface);color:var(--text-main);" />
         </div>
         <div class="quantity-stepper">
           <button type="button" class="btn-step" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
@@ -479,6 +494,12 @@
 
     // Cart Item Stepper (Inc / Dec)
     if (el.cartItemsList) {
+      el.cartItemsList.addEventListener('input', (e) => {
+        const field = e.target.closest('.cart-item-note-input');
+        if (!field) return;
+        const index = state.cart.findIndex(i => i.id === field.dataset.id);
+        if (index >= 0) state.cart[index].note = field.value;
+      });
       el.cartItemsList.addEventListener('click', (e) => {
         const btn = e.target.closest('.btn-step');
         if (!btn) return;

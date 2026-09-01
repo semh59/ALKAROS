@@ -63,6 +63,25 @@ public sealed class ReportingDomainTests
             return Task.FromResult(closed);
         }
 
+        public async Task<BusinessDayReportResult> CloseBusinessDayWithSummariesAsync(
+            DateOnly businessDate,
+            DateTimeOffset closedAt,
+            decimal totalRevenue,
+            int totalOrders,
+            int cancelledItems,
+            int printFailures,
+            IReadOnlyList<WaiterPerformanceRecord> waiterSummaries,
+            IReadOnlyList<PrintErrorSummaryRecord> printSummaries,
+            CancellationToken cancellationToken = default)
+        {
+            var closed = await CloseBusinessDayAsync(businessDate, closedAt, totalRevenue, totalOrders, cancelledItems, printFailures, cancellationToken);
+            _waiterSummaries.AddRange(waiterSummaries);
+            _printSummaries.AddRange(printSummaries);
+            var waiters = await GetWaiterSummariesByDateAsync(businessDate, cancellationToken);
+            var prints = await GetPrintErrorSummariesByDateAsync(businessDate, cancellationToken);
+            return new BusinessDayReportResult(closed, waiters, prints);
+        }
+
         public Task<BusinessDayRecord?> GetBusinessDayByDateAsync(DateOnly businessDate, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

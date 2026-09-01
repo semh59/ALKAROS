@@ -1,6 +1,7 @@
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Tests.Fixtures;
+using ALKAROS.Identity.DeviceSessions;
 using Npgsql;
 using Xunit;
 
@@ -130,24 +131,28 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task TableBoundOrderRejectsStaleOrBusyTablesWithoutCreatingAnotherOrder()
+    public async Task StaleTableVersionStillSeatsAnAvailableTableButBusyTableIsRejected()
     {
         var firstTerminalId = Guid.NewGuid();
         var secondTerminalId = Guid.NewGuid();
         var tableId = await SeedTableAsync("S-CONFLICT", "Available", 1);
 
-        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store!.StartOrderAsync(
-            firstTerminalId,
-            new StartOrderRequest(tableId, 2),
-            CancellationToken.None));
-        Assert.Equal(0L, await ScalarAsync<long>(
-            "SELECT count(*) FROM orders.orders WHERE table_id = @table_id;",
-            ("table_id", tableId)));
-
+        // Stale ExpectedTableRowVersion (real version is 1) must NOT block a seat
+        // when the table is genuinely available: the waiter's screen being one
+        // version behind is not a real conflict (V1-RMD-090).
         var first = await _store!.StartOrderAsync(
             firstTerminalId,
-            new StartOrderRequest(tableId, 1),
+            new StartOrderRequest(tableId, 2),
             CancellationToken.None);
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.orders WHERE table_id = @table_id;",
+            ("table_id", tableId)));
+        Assert.Equal("Occupied", await ScalarAsync<string>(
+            "SELECT current_status FROM table_mgmt.tables WHERE table_id = @table_id;",
+            ("table_id", tableId)));
+
+        // A different terminal trying to seat the now-busy table is still a real
+        // conflict and is rejected without creating a second order.
         await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
             secondTerminalId,
             new StartOrderRequest(tableId, 2),
@@ -162,6 +167,23 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         Assert.Equal(0L, await ScalarAsync<long>(
             "SELECT count(*) FROM customer_display.terminals WHERE terminal_id = @terminal_id AND active_order_id IS NOT NULL;",
             ("terminal_id", secondTerminalId)));
+    }
+
+    [Fact]
+    public async Task NonAvailableTableIsRejectedEvenWithAMatchingVersion()
+    {
+        var terminalId = Guid.NewGuid();
+        var tableId = await SeedTableAsync("S-RESERVED", "Reserved", 1);
+
+        // A genuine blocker (table not Available) still rejects with a specific
+        // error even when the caller's version is exactly right.
+        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store!.StartOrderAsync(
+            terminalId,
+            new StartOrderRequest(tableId, 1),
+            CancellationToken.None));
+        Assert.Equal(0L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.orders WHERE table_id = @table_id;",
+            ("table_id", tableId)));
     }
 
     [Fact]
@@ -189,6 +211,54 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         Assert.Equal(1L, await ScalarAsync<long>(
             "SELECT count(*) FROM table_mgmt.tables WHERE table_id = @table_id AND current_status = 'Occupied' AND current_order_id IS NOT NULL;",
             ("table_id", tableId)));
+    }
+
+    [Fact]
+    public async Task AuthenticateCashierByCookieResolvesBoundTerminalFromDeviceId()
+    {
+        var terminalId = Guid.NewGuid();
+        await _store!.EnsureTerminalAsync(terminalId, CancellationToken.None);
+        await SeedCashierSessionAsync(terminalId, "raw-cookie-token", "Kasiyer Ada");
+
+        var principal = await _store.AuthenticateCashierByCookieAsync("raw-cookie-token", CancellationToken.None);
+
+        Assert.NotNull(principal);
+        Assert.Equal(terminalId, principal!.TerminalId);
+        Assert.Equal("Kasiyer Ada", principal.DisplayName);
+    }
+
+    [Fact]
+    public async Task AuthenticateCashierByCookieRejectsUnknownToken()
+    {
+        var principal = await _store!.AuthenticateCashierByCookieAsync("no-such-token", CancellationToken.None);
+        Assert.Null(principal);
+    }
+
+    private async Task SeedCashierSessionAsync(Guid terminalId, string rawToken, string displayName)
+    {
+        var userId = Guid.NewGuid();
+        await using (var userCommand = _dataSource!.CreateCommand(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'x', @display_name, true);
+            """))
+        {
+            userCommand.Parameters.AddWithValue("user_id", userId);
+            userCommand.Parameters.AddWithValue("username", $"cashier-{userId:N}");
+            userCommand.Parameters.AddWithValue("display_name", displayName);
+            await userCommand.ExecuteNonQueryAsync();
+        }
+
+        await using var sessionCommand = _dataSource!.CreateCommand(
+            """
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
+            VALUES (@session_id, @user_id, @device_id, @token_hash, now() + interval '1 hour');
+            """);
+        sessionCommand.Parameters.AddWithValue("session_id", Guid.NewGuid());
+        sessionCommand.Parameters.AddWithValue("user_id", userId);
+        sessionCommand.Parameters.AddWithValue("device_id", $"cashier:{terminalId:D}");
+        sessionCommand.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
+        await sessionCommand.ExecuteNonQueryAsync();
     }
 
     private static async Task<MutationAttempt<T>> CaptureAsync<T>(Func<Task<T>> action)

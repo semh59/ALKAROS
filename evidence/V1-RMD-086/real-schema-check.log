@@ -1,0 +1,11 @@
+backup: pg_dump alkaros@alkaros-postgres-1:5432/alkaros -> /tmp/bk/alkaros_alkaros_20260901T074314Z.dump
+backup: ok artifact=alkaros_alkaros_20260901T074314Z.dump bytes=169159 seconds=0 sha256=73c2375e5e69ba422f4e120ecc25ba6ac42b2ec04ab71e4a1968e3fcfecad75d
+--- real-schema restore into alkaros_restore ---
+restore: checksum verified sha256=73c2375e5e69ba422f4e120ecc25ba6ac42b2ec04ab71e4a1968e3fcfecad75d
+restore: recreating clean target database "alkaros_restore"
+NOTICE:  database "alkaros_restore" does not exist, skipping
+restore: pg_restore -> alkaros@alkaros-postgres-1:5432/alkaros_restore
+restore: ok target=alkaros_restore seconds=1
+--- table parity ---
+user tables: src=57 dst=57
+REAL_SCHEMA_PARITY_OK

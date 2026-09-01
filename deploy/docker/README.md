@@ -18,3 +18,41 @@ before external go-live. The stack does not claim fiscal, payment-provider, prin
 The Compose project name is fixed to `alkaros`, so rebuilds replace the same service set instead of creating a second
 project group when the checkout directory name changes. `--remove-orphans` removes services left by an older ALKAROS
 Compose definition; it intentionally does not delete unrelated standalone containers or their data.
+
+## HTTPS and WaiterPwa offline field readiness
+
+The WaiterPwa offline queue relies on a service worker, and browsers only register
+a service worker in a secure context: HTTPS with a certificate the device trusts,
+or `localhost`. A waiter phone reaching the stack over `http://<lan-ip>:5080`
+gets no offline mode, and the app now shows `Çevrimdışı mod kapalı` instead of
+failing silently.
+
+Certificate strategy for a LAN deployment (no public domain):
+
+1. Set `ALKAROS_PROXY_HOST` to the host name or LAN IP the devices use before
+   `docker compose up`, e.g. `ALKAROS_PROXY_HOST=192.168.1.50`. Caddy's internal
+   CA then issues a certificate whose SAN matches that address.
+2. Export the internal root CA and install it on every waiter device:
+
+   ```sh
+   docker compose cp proxy:/data/caddy/pki/authorities/local/root.crt ./alkaros-root.crt
+   ```
+
+   Transfer `alkaros-root.crt` to each phone and install it as a trusted CA
+   (Android: Settings → Security → Encryption & credentials → Install a certificate
+   → CA certificate; iOS: install the profile, then enable full trust under
+   Settings → General → About → Certificate Trust Settings).
+3. For an external go-live, replace `tls internal` with an approved public
+   certificate and a real domain.
+
+Field test before go-live:
+
+1. `docker compose up --detach --build --wait` with `ALKAROS_PROXY_HOST` set.
+2. On a waiter phone joined to the same network, open `https://<ALKAROS_PROXY_HOST>:8443`
+   after installing the root CA; confirm the padlock shows a trusted connection.
+3. Sign in, open a table, turn off WiFi, and enter an order. The status ribbon
+   must read `Çevrimdışı • İşlemler Güvenli Kuyrukta`, not `Çevrimdışı mod kapalı`.
+4. Turn WiFi back on and confirm the queued order reaches the server and the
+   ribbon returns to `Çevrimiçi`.
+5. Repeat step 2 over plain `http://<lan-ip>:5080` and confirm the app shows the
+   `Çevrimdışı mod kapalı • Güvenli bağlantı (HTTPS) gerekli` warning.

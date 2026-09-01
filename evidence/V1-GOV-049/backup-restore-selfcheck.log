@@ -1,0 +1,27 @@
+=== ALKAROS backup/restore round-trip self-check ===
+server: postgres@alkaros-pg:5432  pg_dump: 18.6-1.pgdg13+2)
+started: 2026-09-01T07:45:47Z
+source: rows=500 data_md5=3300c8dd42d812027651f65eaa007031
+--- backup ---
+backup: pg_dump postgres@alkaros-pg:5432/bkp_selfcheck_src -> /tmp/alkaros-selfcheck/alkaros_bkp_selfcheck_src_20260901T074548Z.dump
+backup: ok artifact=alkaros_bkp_selfcheck_src_20260901T074548Z.dump bytes=5644 seconds=1 sha256=60b7df6bfe20236c16f0816f2afd707689af6abe93991f8cb60e62f54265c0e6
+--- negative: corrupted artifact ---
+restore: CHECKSUM MISMATCH expected=60b7df6bfe20236c16f0816f2afd707689af6abe93991f8cb60e62f54265c0e6 actual=7cd70fa1ceeea9c9a1bed9164b1272b0540de2c11ef9b5e841498498787d7e22; refusing to restore
+negative: corrupted artifact correctly refused (exit 4, no target database)
+--- positive: clean restore ---
+restore: checksum verified sha256=60b7df6bfe20236c16f0816f2afd707689af6abe93991f8cb60e62f54265c0e6
+restore: recreating clean target database "bkp_selfcheck_dst"
+NOTICE:  database "bkp_selfcheck_dst" does not exist, skipping
+restore: pg_restore -> postgres@alkaros-pg:5432/bkp_selfcheck_dst
+restore: ok target=bkp_selfcheck_dst seconds=0
+target: rows=500 data_md5=3300c8dd42d812027651f65eaa007031
+
+=== PASS ===
+artifact         : alkaros_bkp_selfcheck_src_20260901T074548Z.dump
+artifact sha256  : 60b7df6bfe20236c16f0816f2afd707689af6abe93991f8cb60e62f54265c0e6
+artifact bytes   : 5644
+rows             : 500 (src) == 500 (dst)
+data md5         : 3300c8dd42d812027651f65eaa007031 (src) == 3300c8dd42d812027651f65eaa007031 (dst)
+restore seconds  : 0
+corrupted artifact: refused with exit 4, no target database created
+finished: 2026-09-01T07:45:50Z

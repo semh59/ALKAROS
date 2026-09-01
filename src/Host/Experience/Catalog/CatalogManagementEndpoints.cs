@@ -83,6 +83,15 @@ public static class CatalogManagementEndpoints
             var created = await store.CreateProductAsync(request, cancellationToken);
             return Results.Created($"/api/v1/management/catalog/products/{created.Id:D}", created);
         });
+        catalog.MapPost("/products/{productId:guid}/availability", async (
+            Guid productId,
+            SetProductAvailabilityV1 request,
+            CatalogManagementStore store,
+            CancellationToken cancellationToken) =>
+        {
+            var updated = await store.SetProductAvailabilityAsync(productId, request, cancellationToken);
+            return updated is null ? Results.NotFound() : Results.Ok(updated);
+        });
 
         catalog.MapGet("/modifier-groups", async (
             string? limit,

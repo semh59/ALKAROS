@@ -22,7 +22,7 @@
 - `src/Host/Experience/Orders/OrderManagementStore.cs`
 - `tests/Modules/Orders/OrderAggregate/**`
 - `tests/Modules/Orders/SubmitOrder/**`
-- `tests/Host/Experience/Orders/**`
+- PO:2026-09-01 kararıyla tests/Host/Experience/Orders/** yüzeyi V1-RMD-083’e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-064/**`
 
 ## In scope

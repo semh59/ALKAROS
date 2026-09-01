@@ -134,4 +134,49 @@ public sealed class AuditSanitizerTests
         Assert.DoesNotContain("jwt.eyJhbGciOi", rawPayload);
         Assert.Contains("[REDACTED]", rawPayload);
     }
+
+    [Fact]
+    public void SanitizeJsonMalformedValueWithEscapedQuoteRedactsWholeSecret()
+    {
+        // The value contains a backslash-escaped quote; redaction must not stop at it.
+        var malformed = """{"password": "A1\"B2C3D4", "user": "john" """;
+
+        var sanitized = _sanitizer.SanitizeJson(malformed);
+
+        Assert.NotNull(sanitized);
+        var rawPayload = JsonNode.Parse(sanitized)!["raw_payload"]?.GetValue<string>();
+        Assert.NotNull(rawPayload);
+        Assert.DoesNotContain("B2C3D4", rawPayload);
+        Assert.Contains("[REDACTED]", rawPayload);
+        Assert.Contains("john", rawPayload);
+    }
+
+    [Fact]
+    public void SanitizeJsonMalformedMultilineValueRedactsEveryLine()
+    {
+        var malformed = "{\"password\": \"line-one\nline-two-secret\nline-three\" trailing-garbage";
+
+        var sanitized = _sanitizer.SanitizeJson(malformed);
+
+        Assert.NotNull(sanitized);
+        var rawPayload = JsonNode.Parse(sanitized)!["raw_payload"]?.GetValue<string>();
+        Assert.NotNull(rawPayload);
+        Assert.DoesNotContain("line-two-secret", rawPayload);
+        Assert.DoesNotContain("line-one", rawPayload);
+        Assert.Contains("[REDACTED]", rawPayload);
+    }
+
+    [Fact]
+    public void SanitizeJsonOversizedMalformedPayloadIsFullyRedacted()
+    {
+        var malformed = new string('x', 70_000) + " password=leak-value token=leak-token";
+
+        var sanitized = _sanitizer.SanitizeJson(malformed);
+
+        Assert.NotNull(sanitized);
+        var rawPayload = JsonNode.Parse(sanitized)!["raw_payload"]?.GetValue<string>();
+        Assert.Equal("[REDACTED_MALFORMED_PAYLOAD]", rawPayload);
+        Assert.DoesNotContain("leak-value", rawPayload);
+        Assert.DoesNotContain("leak-token", rawPayload);
+    }
 }

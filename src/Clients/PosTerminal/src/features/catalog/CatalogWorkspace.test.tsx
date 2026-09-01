@@ -11,7 +11,7 @@ import { CatalogWorkspace, type CatalogData } from "./index";
 const data: CatalogData = {
   categories: [{ id: "cat-1", code: "HOT", name: "Sıcak içecek", parentId: null, sortOrder: 1, active: true }],
   taxes: [{ id: "tax-1", code: "VAT10", name: "KDV %10", vatRate: 10, active: true }],
-  products: [{ id: "product-1", sku: "ESP-01", name: "Espresso", productType: "MenuItem", stockMode: "Untracked", categoryId: "cat-1", taxProfileId: "tax-1", description: null, printerRoutePolicy: null, displayOrder: 1, currentPrice: 95, active: true }],
+  products: [{ id: "product-1", sku: "ESP-01", name: "Espresso", productType: "MenuItem", stockMode: "Untracked", categoryId: "cat-1", taxProfileId: "tax-1", description: null, printerRoutePolicy: null, displayOrder: 1, currentPrice: 95, active: true, isAvailable: true }],
   modifierGroups: [{ id: "group-1", code: "MILK", name: "Süt seçimi", selectionType: "SelectOne", minSelections: 0, maxSelections: 1, active: true }],
   modifiers: [{ id: "modifier-1", modifierGroupId: "group-1", code: "OAT", name: "Yulaf sütü", priceDelta: 15, productId: null, active: true }],
   prices: [{ id: "price-1", productId: "product-1", priceType: "SalePrice", price: 95, currencyCode: "TRY", effectiveFrom: "2026-01-01T00:00:00Z", effectiveTo: null }],
@@ -70,11 +70,36 @@ describe("catalog workspace", () => {
   });
 
   it.each([
-    ["loading", "Catalog yükleniyor"], ["busy", "Catalog kaydediliyor"], ["offline", "Bağlantı yok"],
-    ["unauthorized", "Manager oturumu gerekli"], ["error", "Catalog alınamadı"], ["stale", "Catalog güncel değil"], ["conflict", "Catalog çakışması"],
+    ["loading", "Katalog yükleniyor"], ["busy", "Katalog kaydediliyor"], ["offline", "Bağlantı yok"],
+    ["unauthorized", "Manager oturumu gerekli"], ["error", "Katalog alınamadı"], ["stale", "Katalog güncel değil"], ["conflict", "Katalog çakışması"],
   ] as const)("shows bounded %s state", async (state, title) => {
     await render(<CatalogWorkspace {...baseProps({ state, errorMessage: "API kapalı" })} />);
     expect(document.body.textContent).toContain(title);
+  });
+
+  it("suspends a product from the menu with a single action", async () => {
+    const onSetAvailability = vi.fn().mockResolvedValue(undefined);
+    await render(<CatalogWorkspace {...baseProps({ onSetAvailability })} />);
+    const toggle = [...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Menüden kaldır"))!;
+    expect(toggle).toBeTruthy();
+    await click(toggle);
+    expect(onSetAvailability).toHaveBeenCalledWith("product-1", false);
+  });
+
+  it("shows the restore action for an already suspended product", async () => {
+    const suspended = { ...data, products: [{ ...data.products[0], isAvailable: false }] };
+    await render(<CatalogWorkspace {...baseProps({ data: suspended, onSetAvailability: vi.fn() })} />);
+    expect(document.body.textContent).toContain("Menüden kaldırıldı");
+    expect([...document.querySelectorAll("button")].some((button) => button.textContent?.includes("Menüye geri al"))).toBe(true);
+  });
+
+  it("uses the Turkish term Katalog and never the English Catalog in visible text or labels", async () => {
+    await render(<CatalogWorkspace {...baseProps()} />);
+    expect(document.body.textContent).not.toContain("Catalog");
+    const searchInput = document.querySelector('input[aria-label]');
+    expect(searchInput!.getAttribute("aria-label")).toBe("Katalog ara");
+    const nav = document.querySelector(".catalog-workspace__tabs");
+    expect(nav!.getAttribute("aria-label")).toBe("Katalog kaynak türü");
   });
 
   it("has no critical or serious axe violations", async () => {

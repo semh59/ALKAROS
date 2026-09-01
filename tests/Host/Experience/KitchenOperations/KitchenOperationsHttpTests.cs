@@ -72,7 +72,12 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal("Queued", ticket.Status);
         var ticketJson = await GetStringAsync(
             client, Prefix(terminalId) + $"/tickets/{seed.TicketId:D}", cookie);
-        Assert.DoesNotContain("internal note must not leave DTO", ticketJson, StringComparison.Ordinal);
+        // The waiter-entered line note is a preparation instruction and is
+        // exposed to the kitchen (PO:2026-09-01, V1-RMD-082).
+        Assert.Contains("az tuz, acisiz", ticketJson, StringComparison.Ordinal);
+        Assert.Contains("Extra herbs", ticketJson, StringComparison.Ordinal);
+        // Sensitive kitchen resources still stay out of the ticket DTO.
+        Assert.DoesNotContain("secret-payload", ticketJson, StringComparison.Ordinal);
 
         var accepted = await PostAsync<KitchenTicketV1>(
             client,

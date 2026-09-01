@@ -207,4 +207,20 @@ describe("table workspace", () => {
     expect([...report.violations, ...report.incomplete].filter((item) => item.impact === "critical" || item.impact === "serious")).toEqual([]);
     expect(report.violations.some((violation) => violation.id === "landmark-complementary-is-top-level")).toBe(false);
   });
+
+  it("escalates the occupancy elapsed colour past the warning threshold", async () => {
+    await render(<TableWorkspace {...baseProps()} />);
+    const warned = document.querySelector(".table-card__elapsed--warn");
+    expect(warned).not.toBeNull();
+    expect(warned!.textContent).toContain("sa");
+  });
+
+  it("keeps the elapsed colour neutral for a freshly occupied table", async () => {
+    const fresh = tables.map((table) => table.status === "Occupied"
+      ? { ...table, occupiedSince: new Date(Date.now() - 5 * 60_000).toISOString() }
+      : table);
+    await render(<TableWorkspace {...baseProps({ tables: fresh })} />);
+    expect(document.querySelector(".table-card__elapsed--warn")).toBeNull();
+    expect(document.querySelector(".table-card__elapsed--crit")).toBeNull();
+  });
 });

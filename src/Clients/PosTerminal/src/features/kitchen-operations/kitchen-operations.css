@@ -39,6 +39,11 @@
 .kitchen-ticket__header > div { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
 .kitchen-ticket__number { font-weight: 900; letter-spacing: .02em; }
 .kitchen-ticket__version { color: var(--ds-color-muted); font-size: .72rem; font-variant-numeric: tabular-nums; }
+.kitchen-ticket__age { display: inline-flex; align-items: center; border-radius: 999px; padding: .22rem .5rem; font-size: .7rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.kitchen-ticket__age--ok { color: #126637; background: #d9f7e5; }
+.kitchen-ticket__age--warn { color: #704b00; background: #fff1c7; }
+.kitchen-ticket__age--crit { color: #fff; background: var(--ds-color-danger); }
+.kitchen-workspace__admin-health { margin-top: var(--ds-space-4); max-width: 32rem; }
 .kitchen-ticket__status, .kitchen-item-status, .kitchen-badge { display: inline-flex; align-items: center; border-radius: 999px; padding: .26rem .55rem; font-size: .7rem; font-weight: 900; }
 .kitchen-ticket__status--queued, .kitchen-item-status--queued { color: #704b00; background: #fff1c7; }
 .kitchen-ticket__status--accepted, .kitchen-ticket__status--preparing, .kitchen-item-status--preparing { color: #07557d; background: #d8f0ff; }
@@ -49,6 +54,7 @@
 .kitchen-ticket__item-main { min-width: 0; display: grid; gap: .2rem; }
 .kitchen-ticket__item-main strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kitchen-ticket__item-main span { overflow: hidden; color: var(--ds-color-muted); font-size: .78rem; text-overflow: ellipsis; white-space: nowrap; }
+.kitchen-ticket__item-main span.kitchen-ticket__item-note { color: var(--ds-color-warning); font-weight: 700; white-space: normal; }
 .kitchen-ticket__item-action { flex: 0 0 auto; display: flex; align-items: center; gap: .5rem; }
 .kitchen-ticket__item-action .ds-button { min-height: 44px; padding-inline: .65rem; }
 .kitchen-ticket__footer { color: var(--ds-color-muted); font-size: .76rem; }

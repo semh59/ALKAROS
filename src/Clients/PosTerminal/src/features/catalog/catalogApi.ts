@@ -7,6 +7,7 @@ export class CatalogApiError extends Error {
 export interface CatalogManagementClient {
   load: () => Promise<CatalogData>;
   create: (input: CatalogCreateInput) => Promise<unknown>;
+  setAvailability: (productId: string, isAvailable: boolean) => Promise<unknown>;
 }
 
 interface Page<T> { items: T[]; nextCursor: string | null }
@@ -23,11 +24,11 @@ export function createCatalogManagementClient(fetcher: typeof fetch = fetch): Ca
         signal: AbortSignal.timeout(8_000),
       });
     } catch {
-      throw new CatalogApiError(0, "NETWORK_UNAVAILABLE", "Catalog sunucusuna ulaşılamadı.");
+      throw new CatalogApiError(0, "NETWORK_UNAVAILABLE", "Katalog sunucusuna ulaşılamadı.");
     }
     if (!response.ok) {
       const body = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
-      throw new CatalogApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? "Catalog işlemi tamamlanamadı.");
+      throw new CatalogApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? "Katalog işlemi tamamlanamadı.");
     }
     return response.status === 204 ? undefined as T : response.json() as Promise<T>;
   }
@@ -43,5 +44,7 @@ export function createCatalogManagementClient(fetcher: typeof fetch = fetch): Ca
       const paths = { categories: "/categories", taxes: "/tax-profiles", products: "/products", modifiers: "/modifiers", prices: "/prices" } as const;
       return request(`${paths[input.kind]}`, { method: "POST", body: JSON.stringify(input.value) });
     },
+    setAvailability: (productId, isAvailable) =>
+      request(`/products/${productId}/availability`, { method: "POST", body: JSON.stringify({ isAvailable }) }),
   };
 }

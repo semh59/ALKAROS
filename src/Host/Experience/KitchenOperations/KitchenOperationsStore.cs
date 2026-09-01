@@ -333,6 +333,7 @@ public sealed class KitchenOperationsStore
             value.AcceptedAt,
             value.ReadyAt,
             value.CancelledAt,
+            value.TargetPrepMinutes,
             value.Items.Select(ToDto).ToArray());
 
     private static KitchenTicketItemV1 ToDto(KitchenTicketItem value)
@@ -343,6 +344,7 @@ public sealed class KitchenOperationsStore
             value.ProductNameSnapshot,
             value.Quantity,
             value.ModifiersSummary,
+            value.Notes,
             value.Status.ToString(),
             value.RowVersion,
             value.CreatedAt,

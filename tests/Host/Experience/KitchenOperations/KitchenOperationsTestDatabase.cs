@@ -108,7 +108,7 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
                 id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity,
                 modifiers_summary, notes, status, row_version, created_at)
             VALUES ('{{itemId:D}}', '{{ticketId:D}}', '{{Guid.NewGuid():D}}', '{{Guid.NewGuid():D}}',
-                    'Test soup', 2, 'Extra herbs', 'internal note must not leave DTO', 'Queued', 1, now());
+                    'Test soup', 2, 'Extra herbs', 'az tuz, acisiz', 'Queued', 1, now());
 
             INSERT INTO kitchen.printers (id, name, station_id, ip_address, port, is_active, created_at)
             VALUES ('{{printerId:D}}', 'Hot line printer', 'hot-line', '10.0.0.8', 9100, TRUE, now());

@@ -15,7 +15,7 @@ başlamadan provision etmek.
 ## Owned surface
 
 - `.dockerignore`
-- `compose.yaml`
+- PO:2026-08-31 kararıyla compose.yaml, deploy/docker/Caddyfile ve deploy/docker/README.md yüzeyleri V1-RMD-079'a devredildi; deploy/docker altındaki diğer yollar bu görevde kalır.
 - `deploy/docker/**`
 - PO:2026-08-29 kararıyla Program.cs yüzeyi V1-RMD-038'e devredildi; bu historical task closed kalır.
 - `tests/Deployment/**`

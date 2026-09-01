@@ -26,13 +26,10 @@ yürütülür; V1-IAM-008 kendi kod sahibi olarak kalır ve bu görevin yüzeyin
 - `src/Modules/Identity/Authentication/AuthenticationService.cs`
 - `src/Modules/Identity/Authentication/LoginResult.cs`
 - `src/Modules/Identity/Authentication/SessionTokenIssuer.cs`
-- `src/Modules/Catalog/ProductCatalog/Product.cs`
-- `src/Modules/Catalog/ProductCatalog/PostgresProductRepository.cs`
+- PO:2026-08-31 kararıyla src/Modules/Catalog/ProductCatalog/Product.cs, src/Modules/Catalog/ProductCatalog/PostgresProductRepository.cs, tests/Modules/Catalog/ProductCatalog/DomainTests.cs ve tests/Modules/Catalog/ProductCatalog/PostgresRepositoryTests.cs yüzeyleri V1-RMD-076'ya devredildi; bu historical task closed kalır.
 - `tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs`
 - `tests/Modules/Identity/Authentication/AuthenticationServiceTests.cs`
 - `tests/Modules/Identity/Authentication/AuthenticationTimingContractTests.cs`
-- `tests/Modules/Catalog/ProductCatalog/DomainTests.cs`
-- `tests/Modules/Catalog/ProductCatalog/PostgresRepositoryTests.cs`
 - `tests/BuildingBlocks/Transactions/Execution/TransactionExecutionTests.cs`
 - `database/migrations/V1/V1-CAT-003/022-catalog-current-price-bound.up.sql`
 - `database/migrations/V1/V1-CAT-003/022-catalog-current-price-bound.down.sql`

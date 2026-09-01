@@ -17,10 +17,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-065-kitchen-ticket-idempotency.md`
-- `src/Modules/Kitchen/TicketLifecycle/**`
-- `src/Host/Experience/KitchenOperations/**`
-- `tests/Modules/Kitchen/TicketLifecycle/**`
-- `tests/Host/Experience/KitchenOperations/**`
+- PO:2026-08-31 kararıyla src/Modules/Kitchen/TicketLifecycle/**, src/Host/Experience/KitchenOperations/**, tests/Modules/Kitchen/TicketLifecycle/** ve tests/Host/Experience/KitchenOperations/** yüzeyleri V1-RMD-074'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-065/**`
 
 ## In scope

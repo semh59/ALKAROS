@@ -1,0 +1,37 @@
+NOTICE:  database "alkaros_scale2" does not exist, skipping
+ set_config 
+------------
+ 
+(1 row)
+
+### seed 1,000,000 orders + 3,000,000 items
+
+===== BEFORE migration 041 =====
+-- Q5 business-day revenue --
+               ->  Parallel Seq Scan on orders  (cost=0.00..31374.67 rows=1078 width=6) (actual time=0.105..99.512 rows=558.00 loops=3)
+ Execution Time: 118.170 ms
+-- Q3 latest open order for table --
+               ->  Parallel Seq Scan on orders  (cost=0.00..29812.17 rows=83389 width=24) (actual time=0.032..110.061 rows=66505.67 loops=3)
+ Execution Time: 136.031 ms
+
+### apply migration 041
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+
+===== AFTER migration 041 =====
+-- Q5 business-day revenue --
+   ->  Bitmap Heap Scan on orders  (cost=61.31..4542.93 rows=2747 width=6) (actual time=0.890..13.462 rows=1674.00 loops=1)
+         ->  Bitmap Index Scan on ix_orders_created_at  (cost=0.00..60.62 rows=4589 width=0) (actual time=0.557..0.558 rows=2857.00 loops=1)
+               Index Cond: ((created_at >= (now() - '1 day'::interval)) AND (created_at < now()))
+               Index Searches: 1
+ Execution Time: 13.960 ms
+-- Q3 latest open order for table --
+   ->  Index Scan using ix_orders_table_open on orders  (cost=0.42..17036.49 rows=200167 width=24) (actual time=0.132..0.133 rows=1.00 loops=1)
+         Index Cond: (table_id = '11111111-1111-1111-1111-111111111111'::uuid)
+         Index Searches: 1
+ Execution Time: 0.155 ms
+-- Q1 point lookup by order_id (unchanged, control) --
+ Index Scan using orders_pkey on orders  (cost=0.42..2.64 rows=1 width=245) (actual time=0.034..0.035 rows=1.00 loops=1)
+ Execution Time: 0.099 ms
+done

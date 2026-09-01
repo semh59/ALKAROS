@@ -18,7 +18,7 @@
 
 - `plan/v1/remediation/V1-RMD-052-authoritative-order-to-bill-and-posterminal-flow.md`
 - PO:2026-08-29 kararıyla src/Host/Experience/Billing/** yüzeyleri V1-RMD-054 ve V1-RMD-057'ye, src/Clients/PosTerminal/src/App.tsx yüzeyi V1-RMD-056'ya devredildi; bu historical task closed kalır.
-- `src/Clients/PosTerminal/src/features/tables/**`
+- PO:2026-08-31 kararıyla src/Clients/PosTerminal/src/features/tables/** yüzeyi V1-RMD-071'e devredildi; bu historical task closed kalır.
 - `src/Clients/PosTerminal/src/features/billing/**`
 - `evidence/V1-RMD-052/**`
 

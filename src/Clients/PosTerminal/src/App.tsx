@@ -17,6 +17,7 @@ import { TableWorkspace, createTableManagementClient, type CreateTableInput, typ
 import { BillSplitWorkspace, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "./features/billing";
 import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "./features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "./features/kitchen-operations";
+import { SystemHealthWorkspace, type SystemHealthState } from "./features/system-health";
 import {
   afterFailure,
   afterSnapshot,
@@ -606,8 +607,8 @@ function ExperiencePage({
   onLogout: () => Promise<void>;
 }) {
   const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
-  const isCatalog = path === "/catalog";
-  const canOpenRoute = isCatalog
+  const isManagerRoute = path === "/catalog" || path === "/system-health";
+  const canOpenRoute = isManagerRoute
     ? capabilitySet.has("catalog.manage")
     : capabilitySet.has("pos.cashier.mutate");
   const session: ShellSession = {
@@ -616,7 +617,7 @@ function ExperiencePage({
       branchName: "Şube bağlamı",
       terminalName: `Terminal ${terminalId.slice(0, 8).toUpperCase()}`,
       userName: displayName,
-      roleLabel: isCatalog ? "Manager" : "Kasiyer / Operasyon",
+      roleLabel: isManagerRoute ? "Manager" : "Kasiyer / Operasyon",
       capabilities: capabilitySet,
     } satisfies ShellIdentity,
   };
@@ -655,9 +656,10 @@ function ExperiencePage({
     { id: "billing", label: "Hesap", href: "/billing", symbol: "÷", requiredCapability: "pos.cashier.mutate" },
     { id: "kitchen", label: "Mutfak", href: "/kitchen", symbol: "◇", requiredCapability: "pos.cashier.mutate" },
     { id: "catalog", label: "Menü", href: "/catalog", symbol: "≡", requiredCapability: "catalog.manage" },
+    { id: "system-health", label: "Sistem", href: "/system-health", symbol: "✚", requiredCapability: "catalog.manage" },
   ];
-  const title = path === "/tables" ? "Masa yönetimi" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : "Kasa satış";
-  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : "Gerçek zamanlı sipariş ve müşteri ekranı";
+  const title = path === "/tables" ? "Masa yönetimi" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : "Kasa satış";
+  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : "Gerçek zamanlı sipariş ve müşteri ekranı";
 
   return <ProductionShell
     session={session}
@@ -665,7 +667,7 @@ function ExperiencePage({
     connectivity={connectivity}
     freshness={freshness}
     navigation={navigation}
-    activeNavigationId={path === "/tables" ? "tables" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : "sales"}
+    activeNavigationId={path === "/tables" ? "tables" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
     headerActions={<><a className="experience-header-link" href="/display" target="alkaros-customer-display">Müşteri ekranı</a><button className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
@@ -674,7 +676,8 @@ function ExperiencePage({
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/catalog" && <CatalogRoute canManage={canOpenRoute} />}
     {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canOperate={canOpenRoute} />}
-    {!(["/", "/tables", "/billing", "/catalog", "/kitchen"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
+    {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
+    {!(["/", "/tables", "/billing", "/catalog", "/kitchen", "/system-health"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
   </ProductionShell>;
 }
 
@@ -922,12 +925,43 @@ function CatalogRoute({ canManage }: { canManage: boolean }) {
     } catch (reason) {
       const status = (reason as { status?: number }).status;
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");
-      setErrorMessage(reason instanceof Error ? reason.message : "Catalog verisi alınamadı.");
+      setErrorMessage(reason instanceof Error ? reason.message : "Katalog verisi alınamadı.");
     }
   }, [canManage, client]);
   useEffect(() => { void load(); }, [load]);
   const create = async (input: CatalogCreateInput) => { await client.create(input); await load(); };
-  return <CatalogWorkspace state={state} data={data} canManage={canManage} onRefresh={load} onCreate={canManage ? create : undefined} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
+  const setAvailability = async (productId: string, isAvailable: boolean) => { await client.setAvailability(productId, isAvailable); await load(); };
+  return <CatalogWorkspace state={state} data={data} canManage={canManage} onRefresh={load} onCreate={canManage ? create : undefined} onSetAvailability={canManage ? setAvailability : undefined} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
+}
+
+function SystemHealthRoute({ terminalId, canView }: { terminalId: string; canView: boolean }) {
+  const [state, setState] = useState<SystemHealthState>("loading");
+  const [health, setHealth] = useState<KitchenData["health"]>(null);
+  const [backups, setBackups] = useState<KitchenData["backups"]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+  const load = useCallback(async () => {
+    if (!canView) { setState("unauthorized"); return; }
+    setState("loading");
+    setErrorMessage(undefined);
+    try {
+      const configuration = await loadKitchenRuntimeConfiguration(terminalId);
+      const client = createKitchenOperationsClient(terminalId, configuration.kitchenStationId);
+      const next = await client.load();
+      setHealth(next.health);
+      setBackups(next.backups);
+      setLastUpdated(new Date().toISOString());
+      setState("ready");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      setHealth(null);
+      setBackups([]);
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : "error");
+      setErrorMessage(reason instanceof Error ? reason.message : "Sağlık verisi alınamadı.");
+    }
+  }, [canView, terminalId]);
+  useEffect(() => { void load(); }, [load]);
+  return <SystemHealthWorkspace state={state} health={health} backups={backups} onRefresh={load} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
 }
 
 const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], unknownDeliveries: [], health: null, backups: [] };

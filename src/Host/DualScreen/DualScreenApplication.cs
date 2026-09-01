@@ -314,6 +314,26 @@ public static class DualScreenApplication
             });
         }).RequireRateLimiting("terminal-read");
 
+        app.MapGet("/api/v1/auth/session/current", async (
+            HttpContext context,
+            DualScreenStore store,
+            IRoleRepository roles,
+            CancellationToken cancellationToken) =>
+        {
+            var cashierToken = context.Request.Cookies[CashierCookieName];
+            var principal = await store.AuthenticateCashierByCookieAsync(cashierToken, cancellationToken);
+            if (principal is null)
+                throw new DualScreenUnauthorizedException("Cashier authentication is required.");
+            var capabilities = await roles.GetPermissionCodesForUserAsync(principal.UserId, cancellationToken);
+            return Results.Ok(new
+            {
+                userId = principal.UserId,
+                displayName = principal.DisplayName,
+                terminalId = principal.TerminalId,
+                capabilities,
+            });
+        }).RequireRateLimiting("terminal-read");
+
         app.MapGet("/api/v1/terminals/{terminalId:guid}/runtime-configuration", async (
             Guid terminalId,
             HttpContext context,

@@ -1,0 +1,40 @@
+bootstrapping 20 terminal session(s) against http://alkaros-host-1:5080
+  terminal 1/20 ready
+  terminal 2/20 ready
+  terminal 3/20 ready
+  terminal 4/20 ready
+  terminal 5/20 ready
+  terminal 6/20 ready
+  terminal 7/20 ready
+  terminal 8/20 ready
+  terminal 9/20 ready
+  login limiter: sleeping 61s after 9 logins
+  terminal 10/20 ready
+  terminal 11/20 ready
+  terminal 12/20 ready
+  terminal 13/20 ready
+  terminal 14/20 ready
+  terminal 15/20 ready
+  terminal 16/20 ready
+  terminal 17/20 ready
+  terminal 18/20 ready
+  login limiter: sleeping 61s after 18 logins
+  terminal 19/20 ready
+  terminal 20/20 ready
+--- level: 1 terminal(s), 20s ---
+  rps=3.0 err%=0.0 p50=2.7 p90=3.2 p95=3.3 p99=6.4 max=8.4 statuses={'200': 60}
+--- level: 5 terminal(s), 20s ---
+  rps=15.0 err%=0.0 p50=2.5 p90=3.5 p95=4.3 p99=9.7 max=15.7 statuses={'200': 300}
+--- level: 10 terminal(s), 20s ---
+  rps=30.0 err%=0.0 p50=2.4 p90=3.1 p95=3.4 p99=6.8 max=21.0 statuses={'200': 600}
+--- level: 20 terminal(s), 20s ---
+  rps=59.9 err%=0.0 p50=2.4 p90=3.4 p95=4.3 p99=9.3 max=27.3 statuses={'200': 1200}
+
+terminals     rps   err%     p50     p90     p95     p99      max
+        1     3.0    0.0     2.7     3.2     3.3     6.4      8.4
+        5    15.0    0.0     2.5     3.5     4.3     9.7     15.7
+       10    30.0    0.0     2.4     3.1     3.4     6.8     21.0
+       20    59.9    0.0     2.4     3.4     4.3     9.3     27.3
+
+V15-PER-001 target at 20 terminals: MEETS (p95=4.3ms p99=9.3ms err%=0.0)
+wrote evidence/V1-RMD-088/before-tuning.json

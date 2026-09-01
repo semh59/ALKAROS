@@ -15,7 +15,7 @@ sözleşmelerini açmak.
 ## Owned surface
 
 - `database/migrations/V1/V1-RMD-026/**`
-- `database/MigrationComposition/order.json`
+- PO:2026-08-31 kararıyla database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs yüzeyleri V1-GOV-040'a devredildi; bu historical task closed kalır.
 - `src/Modules/Tables/FloorPlan/**`
 - `src/Modules/Tables/TableLifecycle/Zone.cs`
 - `src/Modules/Tables/TableLifecycle/TableRepository.cs`
@@ -28,7 +28,6 @@ sözleşmelerini açmak.
 - `src/Host/Experience/Tables/TableManagementStore.cs`
 - `tests/Modules/Tables/TableLifecycle/FloorPlan*.cs`
 - `tests/Host/Experience/Tables/FloorPlan*.cs`
-- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `evidence/V1-RMD-026/**`
 
 ## Dependencies

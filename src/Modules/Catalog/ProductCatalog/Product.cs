@@ -19,7 +19,8 @@ public sealed class Product
         string? printerRoutePolicy = null,
         int displayOrder = 0,
         decimal? currentPrice = null,
-        bool active = true)
+        bool active = true,
+        bool isAvailable = true)
     {
         if (string.IsNullOrWhiteSpace(sku))
             throw new ArgumentException("Product SKU cannot be empty.", nameof(sku));
@@ -40,6 +41,7 @@ public sealed class Product
         DisplayOrder = displayOrder;
         CurrentPrice = currentPrice;
         Active = active;
+        IsAvailable = isAvailable;
     }
 
     public Guid Id { get; }
@@ -54,4 +56,20 @@ public sealed class Product
     public int DisplayOrder { get; }
     public decimal? CurrentPrice { get; }
     public bool Active { get; }
+
+    /// <summary>
+    /// Whether the product is currently offered for sale. A suspended ("86'd")
+    /// product stays in the catalog but is hidden from sales clients.
+    /// </summary>
+    public bool IsAvailable { get; }
+
+    /// <summary>Hides the product from sales clients without deleting it.</summary>
+    public Product Suspend() => IsAvailable ? WithAvailability(false) : this;
+
+    /// <summary>Restores a suspended product to the sellable menu.</summary>
+    public Product Restore() => IsAvailable ? this : WithAvailability(true);
+
+    private Product WithAvailability(bool isAvailable) => new(
+        Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
+        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, isAvailable);
 }

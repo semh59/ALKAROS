@@ -4,7 +4,7 @@ public sealed record DenialEvent(Guid? UserId, string PermissionCode, string Rea
 
 /// <summary>
 /// Denial audit hook. Invoked whenever an authorization decision rejects an
-/// actor (V1-IAM-002 "reddetme denetimi kancası"). The hook is write-through:
+/// actor (V1-IAM-002 denial audit hook). The hook is write-through:
 /// a failure surfaces instead of being silently swallowed.
 /// </summary>
 public interface IDenialEventSink

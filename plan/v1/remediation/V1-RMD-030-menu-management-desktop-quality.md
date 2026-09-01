@@ -13,7 +13,7 @@ authoritative doğrulama ve tutarlı operasyon yoğunluğuyla masaüstü liste/d
 
 ## Owned surface
 
-- `src/Clients/PosTerminal/src/features/catalog/**`
+- PO:2026-08-31 kararıyla src/Clients/PosTerminal/src/features/catalog/** yüzeyi V1-RMD-070'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-030/**`
 
 ## Dependencies

@@ -18,7 +18,7 @@
 
 - `plan/v1/remediation/V1-RMD-066-order-management-auth-header.md`
 - `src/Host/Experience/Orders/OrderManagementEndpoints.cs`
-- `src/Clients/WaiterPwa/wwwroot/waiter-app.js`
+- PO:2026-08-31 kararıyla src/Clients/WaiterPwa/wwwroot/waiter-app.js yüzeyi V1-RMD-079'a devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-066/**`
 
 ## In scope

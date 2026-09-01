@@ -43,7 +43,8 @@ public sealed record ProductV1(
     string? PrinterRoutePolicy,
     int DisplayOrder,
     decimal? CurrentPrice,
-    bool Active);
+    bool Active,
+    bool IsAvailable = true);
 
 public sealed record CreateProductV1(
     Guid Id,
@@ -57,7 +58,10 @@ public sealed record CreateProductV1(
     string? PrinterRoutePolicy = null,
     int DisplayOrder = 0,
     decimal? CurrentPrice = null,
-    bool Active = true);
+    bool Active = true,
+    bool IsAvailable = true);
+
+public sealed record SetProductAvailabilityV1(bool IsAvailable);
 
 public sealed record ModifierGroupV1(
     Guid Id,

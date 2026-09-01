@@ -26,12 +26,23 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
     public PostgresRepositoryTests(CatalogTestDatabase database)
     {
         _database = database;
+        EnsureAvailabilityColumn(database.DataSource);
         _categories = new PostgresCategoryRepository(database.DataSource);
         _taxProfiles = new PostgresTaxProfileRepository(database.DataSource);
         _modifierGroups = new PostgresModifierGroupRepository(database.DataSource);
         _modifiers = new PostgresModifierRepository(database.DataSource);
         _products = new PostgresProductRepository(database.DataSource);
         _productModifierGroups = new PostgresProductModifierGroupRepository(database.DataSource);
+    }
+
+    // The shared CatalogTestDatabase fixture applies only V1-CAT-001 scripts.
+    // Apply the V1-GOV-040 additive availability column here (idempotent) so
+    // repository round-trips exercise the is_available projection.
+    private static void EnsureAvailabilityColumn(NpgsqlDataSource dataSource)
+    {
+        using var command = dataSource.CreateCommand(
+            "ALTER TABLE catalog.products ADD COLUMN IF NOT EXISTS is_available BOOLEAN NOT NULL DEFAULT TRUE;");
+        command.ExecuteNonQuery();
     }
 
     [Fact]

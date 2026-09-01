@@ -41,6 +41,7 @@ export interface CatalogProduct {
   displayOrder: number;
   currentPrice: number | null;
   active: boolean;
+  isAvailable: boolean;
 }
 
 export interface CatalogModifierGroup {
@@ -85,7 +86,7 @@ export interface CatalogData {
 export type CatalogCreateInput =
   | { kind: "categories"; value: Omit<CatalogCategory, "active" | "parentId"> & { parentId?: string | null; active?: boolean } }
   | { kind: "taxes"; value: Omit<CatalogTaxProfile, "active"> & { active?: boolean } }
-  | { kind: "products"; value: Omit<CatalogProduct, "active"> & { active?: boolean } }
+  | { kind: "products"; value: Omit<CatalogProduct, "active" | "isAvailable"> & { active?: boolean; isAvailable?: boolean } }
   | { kind: "modifiers"; value: Omit<CatalogModifier, "active"> & { active?: boolean } }
   | { kind: "prices"; value: Omit<CatalogPrice, "effectiveTo"> & { effectiveTo?: string | null } };
 
@@ -95,6 +96,7 @@ export interface CatalogWorkspaceProps {
   canManage: boolean;
   onRefresh: () => void | Promise<void>;
   onCreate?: (input: CatalogCreateInput) => void | Promise<void>;
+  onSetAvailability?: (productId: string, isAvailable: boolean) => void | Promise<void>;
   errorMessage?: string;
   lastUpdated?: string;
 }

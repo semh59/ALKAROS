@@ -3,7 +3,7 @@ namespace ALKAROS.Identity.Authorization;
 /// <summary>
 /// Canonical permission codes. Every protected command in the system maps to
 /// exactly one named permission from this catalog (V1-IAM-002 acceptance:
-/// "her korunan komutun adlandırılmış bir izni vardır").
+/// every protected command has a named permission).
 /// </summary>
 public static class PermissionCodes
 {

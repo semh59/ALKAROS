@@ -1,0 +1,81 @@
+{
+  "base_url": "http://alkaros-host-1:5080",
+  "scenario": "read (0.75 catalog GET / 0.25 active GET)",
+  "per_terminal_rate": 2.0,
+  "target": "V15-PER-001: 20 terminals p95<500ms p99<1000ms",
+  "generated_utc": "2026-09-01T08:23:44Z",
+  "levels": [
+    {
+      "terminals": 1,
+      "wall_seconds": 20.0,
+      "requests": 40,
+      "rps": 2.0,
+      "ok": 40,
+      "error_pct": 0.0,
+      "status_breakdown": {
+        "200": 40
+      },
+      "latency_ms": {
+        "p50": 2.8,
+        "p90": 3.6,
+        "p95": 4.3,
+        "p99": 4.7,
+        "max": 4.8
+      }
+    },
+    {
+      "terminals": 5,
+      "wall_seconds": 20.01,
+      "requests": 200,
+      "rps": 10.0,
+      "ok": 200,
+      "error_pct": 0.0,
+      "status_breakdown": {
+        "200": 200
+      },
+      "latency_ms": {
+        "p50": 2.8,
+        "p90": 4.2,
+        "p95": 4.5,
+        "p99": 17.0,
+        "max": 23.5
+      }
+    },
+    {
+      "terminals": 10,
+      "wall_seconds": 20.02,
+      "requests": 400,
+      "rps": 20.0,
+      "ok": 400,
+      "error_pct": 0.0,
+      "status_breakdown": {
+        "200": 400
+      },
+      "latency_ms": {
+        "p50": 2.5,
+        "p90": 3.7,
+        "p95": 4.1,
+        "p99": 7.2,
+        "max": 12.7
+      }
+    },
+    {
+      "terminals": 20,
+      "wall_seconds": 20.03,
+      "requests": 800,
+      "rps": 39.9,
+      "ok": 800,
+      "error_pct": 0.0,
+      "status_breakdown": {
+        "200": 800
+      },
+      "latency_ms": {
+        "p50": 2.5,
+        "p90": 3.5,
+        "p95": 4.2,
+        "p99": 18.7,
+        "max": 33.8
+      }
+    }
+  ]
+}

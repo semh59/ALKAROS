@@ -18,7 +18,7 @@ public sealed class PostgresProductRepository : IProductRepository
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active
+                   description, printer_route_policy, display_order, current_price, active, is_available
             FROM {Table}
             WHERE product_id = @id;
             """);
@@ -38,7 +38,7 @@ public sealed class PostgresProductRepository : IProductRepository
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active
+                   description, printer_route_policy, display_order, current_price, active, is_available
             FROM {Table}
             WHERE sku = @sku;
             """);
@@ -58,7 +58,7 @@ public sealed class PostgresProductRepository : IProductRepository
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active
+                   description, printer_route_policy, display_order, current_price, active, is_available
             FROM {Table}
             WHERE category_id = @category_id
             ORDER BY display_order, sku;
@@ -79,7 +79,7 @@ public sealed class PostgresProductRepository : IProductRepository
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active
+                   description, printer_route_policy, display_order, current_price, active, is_available
             FROM {Table}
             ORDER BY display_order, sku;
             """);
@@ -99,9 +99,9 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             INSERT INTO {Table} (
                 product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                description, printer_route_policy, display_order, current_price, active)
+                description, printer_route_policy, display_order, current_price, active, is_available)
             VALUES (@id, @sku, @name, @product_type, @stock_mode, @category_id, @tax_profile_id,
-                    @description, @printer_route_policy, @display_order, @current_price, @active);
+                    @description, @printer_route_policy, @display_order, @current_price, @active, @is_available);
             """);
         command.Parameters.AddWithValue("id", product.Id);
         command.Parameters.AddWithValue("sku", product.Sku);
@@ -115,6 +115,7 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("display_order", product.DisplayOrder);
         command.Parameters.AddWithValue("current_price", (object?)product.CurrentPrice ?? DBNull.Value);
         command.Parameters.AddWithValue("active", product.Active);
+        command.Parameters.AddWithValue("is_available", product.IsAvailable);
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -136,7 +137,8 @@ public sealed class PostgresProductRepository : IProductRepository
                 printer_route_policy = @printer_route_policy,
                 display_order = @display_order,
                 current_price = @current_price,
-                active = @active
+                active = @active,
+                is_available = @is_available
             WHERE product_id = @id;
             """);
         command.Parameters.AddWithValue("id", product.Id);
@@ -151,6 +153,7 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("display_order", product.DisplayOrder);
         command.Parameters.AddWithValue("current_price", (object?)product.CurrentPrice ?? DBNull.Value);
         command.Parameters.AddWithValue("active", product.Active);
+        command.Parameters.AddWithValue("is_available", product.IsAvailable);
 
         var affected = await command.ExecuteNonQueryAsync(cancellationToken);
         if (affected == 0)
@@ -182,6 +185,7 @@ public sealed class PostgresProductRepository : IProductRepository
             reader.IsDBNull(8) ? null : reader.GetString(8),
             reader.GetInt32(9),
             reader.IsDBNull(10) ? null : reader.GetDecimal(10),
-            reader.GetBoolean(11));
+            reader.GetBoolean(11),
+            reader.GetBoolean(12));
     }
 }

@@ -22,6 +22,22 @@ public interface IOperationalReportRepository
         int printFailures,
         CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Closes the business day and writes the waiter and print-error summaries inside a
+    /// single database transaction; a mid-sequence failure rolls back every write
+    /// (V1-RMD-085).
+    /// </summary>
+    Task<BusinessDayReportResult> CloseBusinessDayWithSummariesAsync(
+        DateOnly businessDate,
+        DateTimeOffset closedAt,
+        decimal totalRevenue,
+        int totalOrders,
+        int cancelledItems,
+        int printFailures,
+        IReadOnlyList<WaiterPerformanceRecord> waiterSummaries,
+        IReadOnlyList<PrintErrorSummaryRecord> printSummaries,
+        CancellationToken cancellationToken = default);
+
     Task<BusinessDayRecord?> GetBusinessDayByDateAsync(
         DateOnly businessDate,
         CancellationToken cancellationToken = default);
@@ -177,6 +193,208 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
             TotalCancelledItemsCount = cancelledItems,
             TotalPrintFailuresCount = printFailures
         };
+    }
+
+    public async Task<BusinessDayReportResult> CloseBusinessDayWithSummariesAsync(
+        DateOnly businessDate,
+        DateTimeOffset closedAt,
+        decimal totalRevenue,
+        int totalOrders,
+        int cancelledItems,
+        int printFailures,
+        IReadOnlyList<WaiterPerformanceRecord> waiterSummaries,
+        IReadOnlyList<PrintErrorSummaryRecord> printSummaries,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(waiterSummaries);
+        ArgumentNullException.ThrowIfNull(printSummaries);
+
+        var dateParam = businessDate.ToDateTime(TimeOnly.MinValue);
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        // Serialize against concurrent open/close on the business day.
+        await using (var lockCommand = connection.CreateCommand())
+        {
+            lockCommand.Transaction = transaction;
+            lockCommand.CommandText = "SELECT pg_advisory_xact_lock(hashtextextended('alkaros.reporting.business_day', 0));";
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        BusinessDayRecord existing;
+        await using (var readCommand = connection.CreateCommand())
+        {
+            readCommand.Transaction = transaction;
+            readCommand.CommandText = $"""
+                SELECT business_day_id, business_date, opened_at, closed_at, status, total_revenue, total_orders_count, total_cancelled_items_count, total_print_failures_count
+                FROM {BusinessDaysTable}
+                WHERE business_date = @date
+                FOR UPDATE;
+                """;
+            AddParameter(readCommand, "date", dateParam);
+            await using var reader = await readCommand.ExecuteReaderAsync(cancellationToken);
+            if (!await reader.ReadAsync(cancellationToken))
+            {
+                throw new BusinessDayNotFoundException(businessDate);
+            }
+
+            existing = ReadBusinessDay(reader);
+        }
+
+        if (existing.Status == BusinessDayStatus.Closed)
+        {
+            throw new InvalidBusinessDayOperationException($"Business day '{businessDate:yyyy-MM-dd}' is already closed.");
+        }
+
+        await using (var closeCommand = connection.CreateCommand())
+        {
+            closeCommand.Transaction = transaction;
+            closeCommand.CommandText = $"""
+                UPDATE {BusinessDaysTable}
+                SET status = 'Closed', closed_at = @closed, total_revenue = @revenue, total_orders_count = @orders, total_cancelled_items_count = @cancelled, total_print_failures_count = @prints
+                WHERE business_date = @date AND status = 'Open';
+                """;
+            AddParameter(closeCommand, "date", dateParam);
+            AddParameter(closeCommand, "closed", closedAt);
+            AddParameter(closeCommand, "revenue", totalRevenue);
+            AddParameter(closeCommand, "orders", totalOrders);
+            AddParameter(closeCommand, "cancelled", cancelledItems);
+            AddParameter(closeCommand, "prints", printFailures);
+
+            var affected = await closeCommand.ExecuteNonQueryAsync(cancellationToken);
+            if (affected == 0)
+            {
+                throw new InvalidBusinessDayOperationException($"Business day '{businessDate:yyyy-MM-dd}' was closed by another operation.");
+            }
+        }
+
+        foreach (var waiter in waiterSummaries)
+        {
+            await using var waiterCommand = connection.CreateCommand();
+            waiterCommand.Transaction = transaction;
+            waiterCommand.CommandText = $"""
+                INSERT INTO {WaiterSummariesTable} (
+                    summary_id, business_date, waiter_user_id, orders_served_count, total_sales_amount, cancellations_count, discounts_applied_amount, captured_at
+                ) VALUES (
+                    @id, @date, @waiter, @orders, @sales, @cancellations, @discounts, @captured
+                );
+                """;
+            AddParameter(waiterCommand, "id", waiter.SummaryId == Guid.Empty ? Guid.NewGuid() : waiter.SummaryId);
+            AddParameter(waiterCommand, "date", waiter.BusinessDate.ToDateTime(TimeOnly.MinValue));
+            AddParameter(waiterCommand, "waiter", waiter.WaiterUserId);
+            AddParameter(waiterCommand, "orders", waiter.OrdersServedCount);
+            AddParameter(waiterCommand, "sales", waiter.TotalSalesAmount);
+            AddParameter(waiterCommand, "cancellations", waiter.CancellationsCount);
+            AddParameter(waiterCommand, "discounts", waiter.DiscountsAppliedAmount);
+            AddParameter(waiterCommand, "captured", waiter.CapturedAt);
+            await waiterCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        foreach (var print in printSummaries)
+        {
+            await using var printCommand = connection.CreateCommand();
+            printCommand.Transaction = transaction;
+            printCommand.CommandText = $"""
+                INSERT INTO {PrintSummariesTable} (
+                    error_summary_id, business_date, station_name, total_print_jobs, failed_print_jobs, recovered_print_jobs, captured_at
+                ) VALUES (
+                    @id, @date, @station, @total, @failed, @recovered, @captured
+                );
+                """;
+            AddParameter(printCommand, "id", print.ErrorSummaryId == Guid.Empty ? Guid.NewGuid() : print.ErrorSummaryId);
+            AddParameter(printCommand, "date", print.BusinessDate.ToDateTime(TimeOnly.MinValue));
+            AddParameter(printCommand, "station", print.StationName);
+            AddParameter(printCommand, "total", print.TotalPrintJobs);
+            AddParameter(printCommand, "failed", print.FailedPrintJobs);
+            AddParameter(printCommand, "recovered", print.RecoveredPrintJobs);
+            AddParameter(printCommand, "captured", print.CapturedAt);
+            await printCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        var persistedWaiters = await ReadWaiterSummariesAsync(connection, transaction, dateParam, cancellationToken);
+        var persistedPrints = await ReadPrintErrorSummariesAsync(connection, transaction, dateParam, cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+
+        var closedDay = existing with
+        {
+            Status = BusinessDayStatus.Closed,
+            ClosedAt = closedAt,
+            TotalRevenue = totalRevenue,
+            TotalOrdersCount = totalOrders,
+            TotalCancelledItemsCount = cancelledItems,
+            TotalPrintFailuresCount = printFailures
+        };
+
+        return new BusinessDayReportResult(closedDay, persistedWaiters, persistedPrints);
+    }
+
+    private static async Task<IReadOnlyList<WaiterPerformanceRecord>> ReadWaiterSummariesAsync(
+        DbConnection connection,
+        DbTransaction transaction,
+        DateTime businessDate,
+        CancellationToken cancellationToken)
+    {
+        await using var cmd = connection.CreateCommand();
+        cmd.Transaction = transaction;
+        cmd.CommandText = $"""
+            SELECT summary_id, business_date, waiter_user_id, orders_served_count, total_sales_amount, cancellations_count, discounts_applied_amount, captured_at
+            FROM {WaiterSummariesTable}
+            WHERE business_date = @date
+            ORDER BY total_sales_amount DESC;
+            """;
+        AddParameter(cmd, "date", businessDate);
+
+        var list = new List<WaiterPerformanceRecord>();
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            list.Add(new WaiterPerformanceRecord(
+                reader.GetGuid(0),
+                DateOnly.FromDateTime(reader.GetDateTime(1)),
+                reader.GetGuid(2),
+                reader.GetInt32(3),
+                reader.GetDecimal(4),
+                reader.GetInt32(5),
+                reader.GetDecimal(6),
+                reader.GetFieldValue<DateTimeOffset>(7)));
+        }
+
+        return list;
+    }
+
+    private static async Task<IReadOnlyList<PrintErrorSummaryRecord>> ReadPrintErrorSummariesAsync(
+        DbConnection connection,
+        DbTransaction transaction,
+        DateTime businessDate,
+        CancellationToken cancellationToken)
+    {
+        await using var cmd = connection.CreateCommand();
+        cmd.Transaction = transaction;
+        cmd.CommandText = $"""
+            SELECT error_summary_id, business_date, station_name, total_print_jobs, failed_print_jobs, recovered_print_jobs, captured_at
+            FROM {PrintSummariesTable}
+            WHERE business_date = @date
+            ORDER BY station_name ASC;
+            """;
+        AddParameter(cmd, "date", businessDate);
+
+        var list = new List<PrintErrorSummaryRecord>();
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            list.Add(new PrintErrorSummaryRecord(
+                reader.GetGuid(0),
+                DateOnly.FromDateTime(reader.GetDateTime(1)),
+                reader.GetString(2),
+                reader.GetInt32(3),
+                reader.GetInt32(4),
+                reader.GetInt32(5),
+                reader.GetFieldValue<DateTimeOffset>(6)));
+        }
+
+        return list;
     }
 
     public async Task<BusinessDayRecord?> GetBusinessDayByDateAsync(

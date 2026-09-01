@@ -60,6 +60,31 @@ public sealed class KitchenTicketUnitTests
     }
 
     [Fact]
+    public void TargetPrepMinutesDefaultsToStationDefaultAndSurvivesTransitions()
+    {
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Toast", 1);
+        var ticket = new KitchenTicket(ticketId, Guid.NewGuid(), "KT-900", "Grill", [item]);
+
+        ticket.TargetPrepMinutes.Should().Be(KitchenTicket.DefaultTargetPrepMinutes);
+
+        var accepted = ticket.TransitionTo(KitchenTicketState.Accepted);
+        accepted.TargetPrepMinutes.Should().Be(ticket.TargetPrepMinutes);
+
+        var withItem = accepted.UpdateItemStatus(item.Id, KitchenTicketItemState.Preparing);
+        withItem.TargetPrepMinutes.Should().Be(ticket.TargetPrepMinutes);
+    }
+
+    [Fact]
+    public void TargetPrepMinutesMustBePositive()
+    {
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Toast", 1);
+        var act = () => new KitchenTicket(ticketId, Guid.NewGuid(), "KT-901", "Grill", [item], targetPrepMinutes: 0);
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
     public void ItemCancellationIsAllowedFromNonTerminalStates()
     {
         var item = new KitchenTicketItem(

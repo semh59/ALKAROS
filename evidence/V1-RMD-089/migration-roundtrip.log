@@ -1,0 +1,32 @@
+### fresh schema clone -> mig041_test
+NOTICE:  database "mig041_test" does not exist, skipping
+ set_config 
+------------
+ 
+(1 row)
+
+### apply 041 up
+CREATE INDEX
+CREATE INDEX
+--- indexes on orders.orders after up ---
+ix_orders_created_at
+ix_orders_table
+ix_orders_table_open
+orders_order_number_key
+orders_pkey
+new-index-count=2 (expect 2)
+### apply 041 up AGAIN (idempotent)
+CREATE INDEX
+psql:/up.sql:12: NOTICE:  relation "ix_orders_created_at" already exists, skipping
+CREATE INDEX
+psql:/up.sql:19: NOTICE:  relation "ix_orders_table_open" already exists, skipping
+re-apply ok (IF NOT EXISTS)
+### apply 041 down
+DROP INDEX
+DROP INDEX
+new-index-count-after-down=0 (expect 0)
+### re-apply up (down then up round-trip)
+CREATE INDEX
+CREATE INDEX
+final-index-count=2 (expect 2)
+MIGRATION_041_ROUNDTRIP_OK

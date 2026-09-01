@@ -18,8 +18,8 @@ Onaylanmış ölçüm sözleşmelerini kullanarak order, table, garson ve yazdı
 
 ## Owned surface
 
-- `src/Modules/Reporting/V1Operations/**`, `tests/Modules/Reporting/V1Operations/**`,
-  `database/migrations/V1/V1-RPT-001/**`
+- PO:2026-09-01 kararıyla src/Modules/Reporting/V1Operations/** ve tests/Modules/Reporting/V1Operations/** yüzeyleri V1-RMD-085'e devredildi; bu historical task closed kalır.
+- `database/migrations/V1/V1-RPT-001/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

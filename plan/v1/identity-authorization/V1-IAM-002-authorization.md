@@ -20,11 +20,11 @@ Role, permission, assignment ve server-side authorization check davranışların
 - `src/Modules/Identity/Authorization/AuthorizationDeniedException.cs`
 - `src/Modules/Identity/Authorization/AuthorizationService.cs`
 - `src/Modules/Identity/Authorization/IAuthorizationService.cs`
-- `src/Modules/Identity/Authorization/IDenialEventSink.cs`
+- PO:2026-08-31 kararıyla src/Modules/Identity/Authorization/IDenialEventSink.cs yüzeyi V1-RMD-080'e devredildi; bu historical task closed kalır.
 - `src/Modules/Identity/Authorization/IPermissionRepository.cs`
 - `src/Modules/Identity/Authorization/IRoleManagementService.cs`
 - `src/Modules/Identity/Authorization/IRoleRepository.cs`
-- `src/Modules/Identity/Authorization/PermissionCodes.cs`
+- PO:2026-08-31 kararıyla src/Modules/Identity/Authorization/PermissionCodes.cs yüzeyi V1-RMD-080'e devredildi; bu historical task closed kalır.
 - `src/Modules/Identity/Authorization/PostgresDenialEventSink.cs`
 - `src/Modules/Identity/Authorization/PostgresPermissionRepository.cs`
 - `src/Modules/Identity/Authorization/PostgresRoleRepository.cs`

@@ -8,6 +8,12 @@ using ALKAROS.Orders.OrderAggregate;
 /// </summary>
 public sealed class KitchenTicket
 {
+    /// <summary>
+    /// Station-level default preparation target in minutes, applied when a ticket
+    /// is created. A future station settings task can inject a configured value.
+    /// </summary>
+    public const int DefaultTargetPrepMinutes = 15;
+
     public KitchenTicket(
         Guid id,
         Guid orderId,
@@ -21,7 +27,8 @@ public sealed class KitchenTicket
         DateTimeOffset? acceptedAt = null,
         DateTimeOffset? readyAt = null,
         DateTimeOffset? cancelledAt = null,
-        string? cancellationReason = null)
+        string? cancellationReason = null,
+        int targetPrepMinutes = DefaultTargetPrepMinutes)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Ticket id cannot be empty.", nameof(id));
@@ -34,6 +41,8 @@ public sealed class KitchenTicket
         ArgumentNullException.ThrowIfNull(items);
         if (items.Count == 0)
             throw new ArgumentException("Kitchen ticket must contain at least one item.", nameof(items));
+        if (targetPrepMinutes <= 0)
+            throw new ArgumentOutOfRangeException(nameof(targetPrepMinutes), "Target preparation minutes must be positive.");
 
         Id = id;
         OrderId = orderId;
@@ -48,6 +57,7 @@ public sealed class KitchenTicket
         ReadyAt = readyAt;
         CancelledAt = cancelledAt;
         CancellationReason = cancellationReason;
+        TargetPrepMinutes = targetPrepMinutes;
     }
 
     public Guid Id { get; }
@@ -63,6 +73,7 @@ public sealed class KitchenTicket
     public DateTimeOffset? ReadyAt { get; private set; }
     public DateTimeOffset? CancelledAt { get; private set; }
     public string? CancellationReason { get; private set; }
+    public int TargetPrepMinutes { get; }
 
     public bool CanTransitionTo(KitchenTicketState targetState)
     {
@@ -141,7 +152,8 @@ public sealed class KitchenTicket
             acceptedAt: newState == KitchenTicketState.Accepted ? at : AcceptedAt,
             readyAt: newState == KitchenTicketState.Ready ? at : ReadyAt,
             cancelledAt: newState == KitchenTicketState.Cancelled ? at : CancelledAt,
-            cancellationReason: newState == KitchenTicketState.Cancelled ? reason : CancellationReason);
+            cancellationReason: newState == KitchenTicketState.Cancelled ? reason : CancellationReason,
+            targetPrepMinutes: TargetPrepMinutes);
     }
 
     public KitchenTicket UpdateItemStatus(
@@ -209,7 +221,8 @@ public sealed class KitchenTicket
             acceptedAt: AcceptedAt,
             readyAt: newTicketStatus == KitchenTicketState.Ready ? (ReadyAt ?? at) : ReadyAt,
             cancelledAt: newTicketStatus == KitchenTicketState.Cancelled ? at : CancelledAt,
-            cancellationReason: newTicketStatus == KitchenTicketState.Cancelled ? (reason ?? "All items cancelled") : CancellationReason);
+            cancellationReason: newTicketStatus == KitchenTicketState.Cancelled ? (reason ?? "All items cancelled") : CancellationReason,
+            targetPrepMinutes: TargetPrepMinutes);
     }
 
     public static KitchenTicket CreateFromOrder(
@@ -264,6 +277,7 @@ public sealed class KitchenTicket
             ticketItems,
             status: KitchenTicketState.Queued,
             rowVersion: 1,
-            createdAt: at);
+            createdAt: at,
+            targetPrepMinutes: DefaultTargetPrepMinutes);
     }
 }

@@ -85,6 +85,51 @@ public sealed class PostgresOperationalReportRepositoryTests : IClassFixture<Rep
     }
 
     [Fact]
+    public async Task CloseBusinessDayWithSummariesRollsBackWholeCloseWhenSummaryWriteFails()
+    {
+        // Aktif bir iş günü varsa kapat ki tek-açık-gün kuralına takılmayalım.
+        var active = await _repository.GetActiveBusinessDayAsync();
+        if (active is not null)
+            await _repository.CloseBusinessDayAsync(active.BusinessDate, DateTimeOffset.UtcNow, 0m, 0, 0, 0);
+
+        var date = new DateOnly(2037, 3, 14);
+        await _service.OpenBusinessDayAsync(date, DateTimeOffset.UtcNow.AddHours(-8));
+
+        // Sıra ortasında yapay hata: iki garson özeti aynı SummaryId ile gelir,
+        // ikinci INSERT birincil anahtar ihlali fırlatır.
+        var collidingId = Guid.NewGuid();
+        var waiterOne = new WaiterPerformanceRecord(collidingId, date, Guid.NewGuid(), 10, 1000m, 0, 0m, DateTimeOffset.UtcNow);
+        var waiterTwo = new WaiterPerformanceRecord(collidingId, date, Guid.NewGuid(), 5, 500m, 0, 0m, DateTimeOffset.UtcNow);
+        var print = new PrintErrorSummaryRecord(Guid.NewGuid(), date, "KitchenStation09", 20, 1, 1, DateTimeOffset.UtcNow);
+
+        var act = () => _service.CloseBusinessDayAsync(
+            businessDate: date,
+            closedAt: DateTimeOffset.UtcNow,
+            totalRevenue: 1500m,
+            totalOrders: 15,
+            cancelledItems: 0,
+            printFailures: 1,
+            waiterSummaries: new[] { waiterOne, waiterTwo },
+            printSummaries: new[] { print });
+
+        await act.Should().ThrowAsync<PostgresException>();
+
+        // Gün hala açık, hiçbir özet yazılmamış olmalı.
+        var day = await _repository.GetBusinessDayByDateAsync(date);
+        day.Should().NotBeNull();
+        day!.Status.Should().Be(BusinessDayStatus.Open);
+
+        var waiters = await _repository.GetWaiterSummariesByDateAsync(date);
+        waiters.Should().BeEmpty();
+
+        var prints = await _repository.GetPrintErrorSummariesByDateAsync(date);
+        prints.Should().BeEmpty();
+
+        // Temizlik.
+        await _repository.CloseBusinessDayAsync(date, DateTimeOffset.UtcNow, 0m, 0, 0, 0);
+    }
+
+    [Fact]
     public async Task OpeningSameDateTwiceThrowsException()
     {
         var date = new DateOnly(2026, 8, 19);

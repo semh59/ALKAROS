@@ -16,8 +16,11 @@
 
   // State
   const state = {
-    terminalId: '00000000-0000-0000-0000-000000000001',
-    cashierName: 'Kasiyer Zeynep',
+    // Terminal identity is resolved from the authenticated cashier session
+    // cookie at startup; there is no hardcoded terminal id.
+    terminalId: null,
+    sessionStatus: 'loading', // 'loading' | 'ready' | 'unauthorized'
+    cashierName: 'Kasiyer',
     registerNumber: 'KASA-01',
     shiftTotalOrders: 0,
     activeCategory: 'all',
@@ -26,28 +29,12 @@
     ticketItems: [],
     parkedTickets: JSON.parse(localStorage.getItem('alkaros_cashier_parked') || '[]'),
 
-    // Catalog with standard Guid IDs
-    categories: [
-      { id: 'all', name: 'Tüm Ürünler' },
-      { id: 'cat-fast', name: '⚡ Hızlı Satış' },
-      { id: 'cat-drink', name: 'İçecekler' },
-      { id: 'cat-food', name: 'Yiyecekler' },
-      { id: 'cat-dessert', name: 'Tatlılar' }
-    ],
-    products: [
-      { id: '00000000-0000-0000-0000-000000000101', categoryId: 'cat-fast', code: '101', name: 'Çay', price: 20 },
-      { id: '00000000-0000-0000-0000-000000000102', categoryId: 'cat-fast', code: '102', name: 'Filtre Kahve', price: 65 },
-      { id: '00000000-0000-0000-0000-000000000103', categoryId: 'cat-fast', code: '103', name: 'Su 0.5L', price: 15 },
-      { id: '00000000-0000-0000-0000-000000000201', categoryId: 'cat-drink', code: '201', name: 'Ayran', price: 40 },
-      { id: '00000000-0000-0000-0000-000000000202', categoryId: 'cat-drink', code: '202', name: 'Kola / Meşrubat', price: 55 },
-      { id: '00000000-0000-0000-0000-000000000203', categoryId: 'cat-drink', code: '203', name: 'Taze Portakal Suyu', price: 85 },
-      { id: '00000000-0000-0000-0000-000000000301', categoryId: 'cat-food', code: '301', name: 'Tost (Kaşarlı)', price: 110 },
-      { id: '00000000-0000-0000-0000-000000000302', categoryId: 'cat-food', code: '302', name: 'Tost (Karışık)', price: 130 },
-      { id: '00000000-0000-0000-0000-000000000303', categoryId: 'cat-food', code: '303', name: 'Günün Sandviçi', price: 140 },
-      { id: '00000000-0000-0000-0000-000000000304', categoryId: 'cat-food', code: '304', name: 'Hamburger Menü', price: 260 },
-      { id: '00000000-0000-0000-0000-000000000401', categoryId: 'cat-dessert', code: '401', name: 'Cheesecake', price: 140 },
-      { id: '00000000-0000-0000-0000-000000000402', categoryId: 'cat-dessert', code: '402', name: 'Kruvasan', price: 95 }
-    ]
+    // Catalog is loaded from the authoritative endpoint only. There is no
+    // hardcoded fallback: if the catalog cannot be loaded the terminal fails
+    // closed and order dispatch is disabled.
+    catalogStatus: 'loading', // 'loading' | 'ready' | 'error'
+    categories: [{ id: 'all', name: 'Tüm Ürünler' }],
+    products: []
   };
 
   // DOM Elements
@@ -73,40 +60,79 @@
     renderTicket();
     updateParkBadge();
     bindEvents();
+    updateDispatchAvailability();
 
-    // Try dynamic catalog loading
-    await loadDynamicCatalog();
+    const sessionOk = await bootstrapSession();
+    if (sessionOk) {
+      await loadCatalog();
+    } else {
+      state.catalogStatus = 'error';
+      renderProducts();
+      updateDispatchAvailability();
+    }
   }
 
-  async function loadDynamicCatalog() {
+  async function bootstrapSession() {
     try {
-      const [catRes, prodRes] = await Promise.all([
-        fetch(`/api/v1/terminals/${state.terminalId}/catalog?category=all`, { credentials: 'include' }).catch(() => null),
-        fetch(`/api/v1/terminals/${state.terminalId}/catalog`, { credentials: 'include' }).catch(() => null)
-      ]);
-
-      if (catRes && catRes.ok && prodRes && prodRes.ok) {
-        const catData = await catRes.json();
-        const prodData = await prodRes.json();
-        const cats = Array.isArray(catData) ? catData : catData.categories || [];
-        const prods = Array.isArray(prodData) ? prodData : prodData.products || [];
-
-        if (cats.length > 0 && prods.length > 0) {
-          state.categories = [{ id: 'all', name: 'Tüm Ürünler' }, ...cats.map(c => ({ id: c.categoryId || c.id, name: c.categoryName || c.name }))];
-          state.products = prods.map((p, idx) => ({
-            id: p.productId || p.id,
-            categoryId: p.categoryId,
-            code: String(100 + idx + 1),
-            name: p.productName || p.name,
-            price: p.currentPrice || p.price || 0
-          }));
-          renderCategoryTabs();
-          renderProducts();
-        }
+      const response = await fetch('/api/v1/auth/session/current', { credentials: 'include' });
+      if (!response.ok) throw new Error(`session ${response.status}`);
+      const session = await response.json();
+      if (!session || typeof session.terminalId !== 'string' || !session.terminalId) {
+        throw new Error('session missing terminal');
       }
+      state.terminalId = session.terminalId;
+      state.sessionStatus = 'ready';
+      if (typeof session.displayName === 'string' && session.displayName.trim()) {
+        state.cashierName = session.displayName.trim();
+      }
+      const label = document.getElementById('cashierNameLabel');
+      if (label) label.textContent = state.cashierName;
+      return true;
     } catch {
-      // Gracefully use default fallback catalog
+      state.sessionStatus = 'unauthorized';
+      const label = document.getElementById('cashierNameLabel');
+      if (label) label.textContent = 'Oturum gerekli';
+      return false;
     }
+  }
+
+  async function loadCatalog() {
+    try {
+      const response = await fetch(`/api/v1/terminals/${state.terminalId}/catalog`, { credentials: 'include' });
+      if (!response.ok) throw new Error(`catalog ${response.status}`);
+      const payload = await response.json();
+      const items = Array.isArray(payload) ? payload : payload.products || [];
+      const products = items
+        .map(p => ({
+          id: p.productId || p.id,
+          categoryId: p.categoryId || 'uncategorized',
+          categoryName: p.categoryName || 'Diğer',
+          code: p.sku || p.code || '',
+          name: p.productName || p.name || '',
+          price: Number(p.currentPrice ?? p.price ?? 0)
+        }))
+        .filter(p => p.id && p.name);
+      if (products.length === 0) throw new Error('catalog empty');
+
+      const categoryMap = new Map();
+      for (const product of products) {
+        if (!categoryMap.has(product.categoryId)) categoryMap.set(product.categoryId, product.categoryName);
+      }
+      state.products = products;
+      state.categories = [{ id: 'all', name: 'Tüm Ürünler' }, ...[...categoryMap].map(([id, name]) => ({ id, name }))];
+      state.catalogStatus = 'ready';
+    } catch {
+      state.catalogStatus = 'error';
+      state.products = [];
+    }
+    renderCategoryTabs();
+    renderProducts(el.searchInput ? el.searchInput.value : '');
+    updateDispatchAvailability();
+  }
+
+  function updateDispatchAvailability() {
+    if (!el.btnDispatchOrder) return;
+    el.btnDispatchOrder.disabled = state.catalogStatus !== 'ready';
   }
 
   function renderCategoryTabs() {
@@ -120,6 +146,18 @@
 
   function renderProducts(searchQuery = '') {
     if (!el.productMatrix) return;
+    if (state.sessionStatus === 'unauthorized') {
+      el.productMatrix.innerHTML = '<div class="pos-catalog-state pos-catalog-state--error">Kasiyer oturumu doğrulanamadı. Sipariş girişi kapalı; yeniden giriş yapın.</div>';
+      return;
+    }
+    if (state.catalogStatus === 'loading') {
+      el.productMatrix.innerHTML = '<div class="pos-catalog-state">Katalog yükleniyor…</div>';
+      return;
+    }
+    if (state.catalogStatus === 'error') {
+      el.productMatrix.innerHTML = '<div class="pos-catalog-state pos-catalog-state--error">Katalog sunucudan alınamadı. Sipariş girişi kapalı; bağlantıyı kontrol edip sayfayı yenileyin.</div>';
+      return;
+    }
     const query = searchQuery.trim().toLowerCase();
     const filtered = state.products.filter(p => {
       const matchCat = state.activeCategory === 'all' || p.categoryId === state.activeCategory;
@@ -149,6 +187,7 @@
         <div class="item-meta">
           <div class="item-title">${escapeHtml(item.name)} ${item.isComplimentary ? '<span class="badge-free">İKRAM</span>' : ''}</div>
           <div class="item-sub">${formatMoney(item.price)} × ${item.quantity} = ${formatMoney(item.isComplimentary ? 0 : item.price * item.quantity)}</div>
+          <input class="item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" style="margin-top:4px;width:100%;padding:4px 6px;font-size:0.8rem;border:1px solid var(--border-color);border-radius:6px;background:var(--bg-surface);color:var(--text-main);" />
         </div>
         <div class="item-actions">
           <button type="button" class="btn-micro" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
@@ -175,7 +214,7 @@
   }
 
   function addProductToTicket(product) {
-    const existing = state.ticketItems.find(i => i.productId === product.id && !i.isComplimentary);
+    const existing = state.ticketItems.find(i => i.productId === product.id && !i.isComplimentary && !i.note);
     if (existing) {
       existing.quantity += 1;
     } else {
@@ -185,7 +224,8 @@
         name: product.name,
         price: product.price,
         quantity: 1,
-        isComplimentary: false
+        isComplimentary: false,
+        note: ''
       });
     }
     renderTicket();
@@ -193,6 +233,10 @@
 
   async function dispatchOrderToKitchen() {
     if (state.ticketItems.length === 0) return;
+    if (state.catalogStatus !== 'ready') {
+      alert('Katalog sunucudan alınamadığı için sipariş gönderilemiyor.');
+      return;
+    }
 
     const orderPayload = {
       id: crypto.randomUUID(),
@@ -205,7 +249,7 @@
         productName: item.name,
         quantity: item.quantity,
         unitPrice: item.isComplimentary ? 0 : item.price,
-        specialInstructions: item.isComplimentary ? 'İkram — kasiyer onaylı sıfır fiyat' : null
+        specialInstructions: item.isComplimentary ? 'İkram — kasiyer onaylı sıfır fiyat' : (item.note && item.note.trim() ? item.note.trim() : null)
       }))
     };
 
@@ -321,6 +365,12 @@
 
     // Ticket Actions (Inc / Dec / Free / Del)
     if (el.ticketItemsStream) {
+      el.ticketItemsStream.addEventListener('input', (e) => {
+        const field = e.target.closest('.item-note-input');
+        if (!field) return;
+        const index = state.ticketItems.findIndex(i => i.id === field.dataset.id);
+        if (index >= 0) state.ticketItems[index].note = field.value;
+      });
       el.ticketItemsStream.addEventListener('click', (e) => {
         const btn = e.target.closest('.btn-micro');
         if (!btn) return;

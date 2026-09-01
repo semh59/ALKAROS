@@ -90,6 +90,41 @@ public sealed class DualScreenStore
         return new CashierPrincipal(reader.GetGuid(1), terminalId, reader.GetGuid(0), reader.GetString(2));
     }
 
+    /// <summary>
+    /// Resolves a cashier session from the raw cookie token alone, deriving the
+    /// bound terminal id from the session device id. Lets a client discover its
+    /// terminal without carrying a hardcoded terminal id.
+    /// </summary>
+    public async Task<CashierPrincipal?> AuthenticateCashierByCookieAsync(
+        string? rawToken,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(rawToken))
+            return null;
+
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT s.session_id, s.user_id, u.display_name, s.device_id
+            FROM identity.device_sessions s
+            JOIN identity.users u ON u.user_id = s.user_id AND u.active
+            WHERE s.token_hash = @token_hash
+              AND s.device_id LIKE 'cashier:%'
+              AND s.revoked_at IS NULL
+              AND s.expires_at > now()
+            LIMIT 1;
+            """);
+        command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        var deviceId = reader.GetString(3);
+        if (!Guid.TryParse(deviceId["cashier:".Length..], out var terminalId))
+            return null;
+
+        return new CashierPrincipal(reader.GetGuid(1), terminalId, reader.GetGuid(0), reader.GetString(2));
+    }
+
     public async Task<DisplayPrincipal?> AuthenticateDisplayAsync(
         string? rawToken,
         Guid? requiredDisplayId,
@@ -152,6 +187,7 @@ public sealed class DualScreenStore
             LEFT JOIN catalog.categories c ON c.category_id = p.category_id AND c.active
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
             WHERE p.active
+              AND p.is_available
               AND p.current_price IS NOT NULL
               AND (@category_code IS NULL OR c.code = @category_code)
               AND (
@@ -245,10 +281,9 @@ public sealed class DualScreenStore
             bool tableActive;
             Guid? tableOrderId;
             Guid? tableBillId;
-            long tableRowVersion;
             await using (var lockTable = CreateCommand(connection, transaction,
                 """
-                SELECT active, current_status, current_order_id, current_bill_id, row_version
+                SELECT active, current_status, current_order_id, current_bill_id
                 FROM table_mgmt.tables
                 WHERE table_id = @table_id
                 FOR UPDATE;
@@ -262,11 +297,17 @@ public sealed class DualScreenStore
                 tableStatus = reader.GetString(1);
                 tableOrderId = reader.IsDBNull(2) ? null : reader.GetGuid(2);
                 tableBillId = reader.IsDBNull(3) ? null : reader.GetGuid(3);
-                tableRowVersion = reader.GetInt64(4);
             }
 
-            if (request.ExpectedTableRowVersion is { } expected && expected != tableRowVersion)
-                throw new DualScreenConflictException("Table row version is stale.");
+            // ExpectedTableRowVersion is accepted for API compatibility but is no
+            // longer a gate (V1-RMD-090). The row is held FOR UPDATE and the
+            // decision to seat is made from the fresh state below: an inactive
+            // table, an open bill, an existing non-editable order, an order active
+            // on another terminal, or a non-Available status each reject with a
+            // specific error, and the final bind UPDATE re-checks
+            // (current_status = 'Available' AND current_order_id IS NULL AND
+            // current_bill_id IS NULL) atomically. A stale version on an otherwise
+            // seatable table no longer forces a spurious "refresh".
             if (!tableActive)
                 throw new DualScreenConflictException("Inactive tables cannot receive an order.");
             if (tableBillId is not null)
@@ -411,7 +452,7 @@ public sealed class DualScreenStore
             SELECT p.sku, p.name, p.current_price, COALESCE(t.vat_rate, 0)
             FROM catalog.products p
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
-            WHERE p.product_id = @product_id AND p.active AND p.current_price IS NOT NULL;
+            WHERE p.product_id = @product_id AND p.active AND p.is_available AND p.current_price IS NOT NULL;
             """))
         {
             productCommand.Parameters.AddWithValue("product_id", request.ProductId);
