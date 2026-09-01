@@ -18,9 +18,24 @@ public sealed record DualScreenOptions(
     string Url,
     IReadOnlyList<IPAddress>? TrustedProxies = null,
     IReadOnlyList<ForwardedNetwork>? TrustedNetworks = null,
-    bool AllowInsecureLoopbackDevelopment = false)
+    bool AllowInsecureLoopbackDevelopment = false,
+    string? TlsCertificatePath = null,
+    string? TlsCertificateKeyPath = null,
+    string? SelfSignedTlsHost = null)
 {
     private const string PasswordEnvironmentVariable = "ALKAROS_DB_PASSWORD";
+
+    /// <summary>
+    /// True when at least one <c>--urls</c> endpoint is <c>https://</c>. When set,
+    /// Kestrel terminates TLS itself using either the mounted certificate
+    /// (<see cref="TlsCertificatePath"/> / <see cref="TlsCertificateKeyPath"/>) or a
+    /// self-signed certificate generated for <see cref="SelfSignedTlsHost"/>. The
+    /// plain-HTTP endpoint stays available for a trusted TLS-terminating reverse
+    /// proxy (Caddy) that sets <c>X-Forwarded-Proto: https</c>.
+    /// </summary>
+    public bool ServesHttpsDirectly =>
+        Url.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Any(u => u.StartsWith("https://", StringComparison.OrdinalIgnoreCase));
 
     public static DualScreenOptions Parse(string[] args)
     {
@@ -30,6 +45,9 @@ public sealed record DualScreenOptions(
         var trustedProxies = new List<IPAddress>();
         var trustedNetworks = new List<ForwardedNetwork>();
         var allowInsecureLoopbackDevelopment = false;
+        string? tlsCertPath = null;
+        string? tlsKeyPath = null;
+        string? selfSignedHost = null;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -49,6 +67,15 @@ public sealed record DualScreenOptions(
                     break;
                 case "--trusted-network" when index + 1 < args.Length:
                     trustedNetworks.Add(ParseTrustedNetwork(args[++index]));
+                    break;
+                case "--tls-cert" when index + 1 < args.Length && tlsCertPath is null:
+                    tlsCertPath = args[++index];
+                    break;
+                case "--tls-key" when index + 1 < args.Length && tlsKeyPath is null:
+                    tlsKeyPath = args[++index];
+                    break;
+                case "--self-signed-host" when index + 1 < args.Length && selfSignedHost is null:
+                    selfSignedHost = args[++index].Trim();
                     break;
                 case "--allow-insecure-loopback-development" when !allowInsecureLoopbackDevelopment:
                     allowInsecureLoopbackDevelopment = true;
@@ -81,18 +108,32 @@ public sealed record DualScreenOptions(
         if (!File.Exists(Path.Combine(resolvedWebRoot, "index.html")))
             throw new DualScreenStartupException("--web-root must contain the built index.html file.");
 
-        if (!Uri.TryCreate(url, UriKind.Absolute, out var listenUri)
-            || (listenUri.Scheme != Uri.UriSchemeHttp && listenUri.Scheme != Uri.UriSchemeHttps))
-        {
-            throw new DualScreenStartupException("--urls must contain one absolute HTTP or HTTPS URL.");
-        }
+        var listenUris = ParseListenUrls(url);
+        var hasHttps = listenUris.Any(u => u.Scheme == Uri.UriSchemeHttps);
+        var hasHttp = listenUris.Any(u => u.Scheme == Uri.UriSchemeHttp);
 
         if (allowInsecureLoopbackDevelopment
-            && (listenUri.Scheme != Uri.UriSchemeHttp || !IsLoopbackHost(listenUri.Host)))
+            && listenUris.Any(u => u.Scheme != Uri.UriSchemeHttp || !IsLoopbackHost(u.Host)))
         {
             throw new DualScreenStartupException(
-                "--allow-insecure-loopback-development requires an HTTP loopback --urls address.");
+                "--allow-insecure-loopback-development requires only HTTP loopback --urls addresses.");
         }
+
+        var mountedCert = tlsCertPath is not null || tlsKeyPath is not null;
+        if (mountedCert && (tlsCertPath is null || tlsKeyPath is null))
+            throw new DualScreenStartupException("--tls-cert and --tls-key must be supplied together.");
+        if (mountedCert && !hasHttps)
+            throw new DualScreenStartupException("--tls-cert/--tls-key require an https:// --urls address.");
+        if (selfSignedHost is not null && !hasHttps)
+            throw new DualScreenStartupException("--self-signed-host requires an https:// --urls address.");
+        if (hasHttps && !mountedCert && string.IsNullOrWhiteSpace(selfSignedHost))
+        {
+            throw new DualScreenStartupException(
+                "an https:// --urls address requires either --tls-cert/--tls-key or --self-signed-host.");
+        }
+
+        if (!hasHttp && !hasHttps)
+            throw new DualScreenStartupException("--urls must contain at least one absolute HTTP or HTTPS URL.");
 
         var connectionString = new NpgsqlConnectionStringBuilder
         {
@@ -108,10 +149,34 @@ public sealed record DualScreenOptions(
         return new DualScreenOptions(
             connectionString,
             resolvedWebRoot,
-            listenUri.ToString(),
+            string.Join(';', listenUris.Select(u => u.ToString())),
             trustedProxies,
             trustedNetworks,
-            allowInsecureLoopbackDevelopment);
+            allowInsecureLoopbackDevelopment,
+            tlsCertPath,
+            tlsKeyPath,
+            string.IsNullOrWhiteSpace(selfSignedHost) ? null : selfSignedHost);
+    }
+
+    private static List<Uri> ParseListenUrls(string value)
+    {
+        var parts = value.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length == 0)
+            throw new DualScreenStartupException("--urls must contain at least one absolute HTTP or HTTPS URL.");
+
+        var result = new List<Uri>();
+        foreach (var part in parts)
+        {
+            if (!Uri.TryCreate(part, UriKind.Absolute, out var listenUri)
+                || (listenUri.Scheme != Uri.UriSchemeHttp && listenUri.Scheme != Uri.UriSchemeHttps))
+            {
+                throw new DualScreenStartupException("--urls must contain absolute HTTP or HTTPS URLs.");
+            }
+
+            result.Add(listenUri);
+        }
+
+        return result;
     }
 
     private static IPAddress ParseTrustedProxy(string value)

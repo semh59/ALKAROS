@@ -1,0 +1,13 @@
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://0.0.0.0:5080/;https://0.0.0.0:5443/'.
+      Now listening on: http://0.0.0.0:5080
+      Now listening on: https://0.0.0.0:5443
+      Application started. Press Ctrl+C to shut down.
+      Hosting environment: Production
+      Content root path: /src
+--- HTTPS (direct, no forwarded header) GET / ---
+http_code=200
+--- HTTP without forwarded proto GET / (expect 400 HTTPS_REQUIRED) ---
+http_code=400
+--- HTTPS cert SAN ---
+X509v3 Subject Alternative Name: 
+    DNS:pos.lan, DNS:localhost, IP Address:127.0.0.1, IP Address:0:0:0:0:0:0:0:1

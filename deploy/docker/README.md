@@ -11,9 +11,26 @@ required in the Compose environment. Windows CRLF and Unix LF line endings are n
 Migration and idempotent manager provisioning must complete before Host starts. Re-running provisioning never resets an
 existing password, and provisioning refuses takeover when another user exists without the configured manager. Both real
 secret files are ignored by Git and the Docker build context. PostgreSQL 18 is digest pinned and uses the named
-`alkaros-postgres` volume. Caddy terminates TLS on port 8443 and forwards the trusted proxy headers to Host. The
-certificate is Caddy's internal `localhost` certificate; replace the proxy certificate policy with an approved public certificate
-before external go-live. The stack does not claim fiscal, payment-provider, printer or signed go-live readiness.
+`alkaros-postgres` volume.
+
+TLS has two independent paths (V1-RMD-096):
+
+- **Caddy on `8443`** terminates TLS and forwards trusted proxy headers to Host on
+  the plain-HTTP port `5080`. This is the primary path. The certificate is Caddy's
+  internal CA certificate; replace `tls internal` in `deploy/docker/Caddyfile` with
+  an approved public certificate before an external (public-domain) go-live.
+- **Host on `8444`** — Host itself terminates HTTPS on `5443` with a self-signed
+  certificate whose SAN is `ALKAROS_PROXY_HOST` (plus `localhost` / `127.0.0.1`),
+  regenerated and cached in the `alkaros-host-tls` volume. This is a fallback so a
+  waiter phone keeps a secure context — and therefore a working service worker /
+  offline queue — even if Caddy is down or its `X-Forwarded-Proto` header is lost.
+  Mount an approved certificate instead with `--tls-cert` / `--tls-key`.
+
+The plain-HTTP port `5080` is not published by Compose and rejects any non-loopback
+request that does not arrive through a trusted proxy with `X-Forwarded-Proto: https`
+(HTTP 400 `HTTPS_REQUIRED`), so it cannot serve the app insecurely.
+
+The stack does not claim fiscal, payment-provider, printer or signed go-live readiness.
 
 The Compose project name is fixed to `alkaros`, so rebuilds replace the same service set instead of creating a second
 project group when the checkout directory name changes. `--remove-orphans` removes services left by an older ALKAROS
@@ -31,7 +48,8 @@ Certificate strategy for a LAN deployment (no public domain):
 
 1. Set `ALKAROS_PROXY_HOST` to the host name or LAN IP the devices use before
    `docker compose up`, e.g. `ALKAROS_PROXY_HOST=192.168.1.50`. Caddy's internal
-   CA then issues a certificate whose SAN matches that address.
+   CA then issues a certificate whose SAN matches that address, and the Host's
+   own self-signed fallback certificate (`8444`) gets the same SAN.
 2. Export the internal root CA and install it on every waiter device:
 
    ```sh
@@ -42,8 +60,15 @@ Certificate strategy for a LAN deployment (no public domain):
    (Android: Settings → Security → Encryption & credentials → Install a certificate
    → CA certificate; iOS: install the profile, then enable full trust under
    Settings → General → About → Certificate Trust Settings).
+   For the Host fallback on `8444`, export and install its self-signed leaf too:
+
+   ```sh
+   docker compose cp host:/app/tls/. ./host-tls/
+   ```
+
 3. For an external go-live, replace `tls internal` with an approved public
-   certificate and a real domain.
+   certificate and a real domain, or mount one into Host with `--tls-cert` /
+   `--tls-key`.
 
 Field test before go-live:
 
@@ -54,5 +79,9 @@ Field test before go-live:
    must read `Çevrimdışı • İşlemler Güvenli Kuyrukta`, not `Çevrimdışı mod kapalı`.
 4. Turn WiFi back on and confirm the queued order reaches the server and the
    ribbon returns to `Çevrimiçi`.
-5. Repeat step 2 over plain `http://<lan-ip>:5080` and confirm the app shows the
-   `Çevrimdışı mod kapalı • Güvenli bağlantı (HTTPS) gerekli` warning.
+5. Repeat step 2 over plain `http://<lan-ip>:5080` (not published by Compose) and
+   confirm the app shows the `Çevrimdışı mod kapalı • Güvenli bağlantı (HTTPS)
+   gerekli` warning.
+6. Open `https://<ALKAROS_PROXY_HOST>:8444` (Host's own HTTPS) and repeat step 3;
+   the offline flow must work there too, proving the app is not dependent on
+   Caddy for a secure context.

@@ -51,13 +51,22 @@ Per-deployment, on the site host:
 - [ ] `deploy/docker/admin_password` — a unique 12-256 non-whitespace manager
       password; hand it to the manager out-of-band, then rotate after first login.
 - [ ] Set `ALKAROS_PROXY_HOST` to the LAN IP / hostname the devices use **before**
-      `docker compose up`, so Caddy's internal CA issues a cert with the right SAN.
-- [ ] Export the internal root CA
-      (`docker compose cp proxy:/data/caddy/pki/authorities/local/root.crt ...`)
-      and install it on every waiter device (steps in `deploy/docker/README.md`).
-- [ ] **DECISION** — external go-live (public domain) requires replacing
-      `tls internal` in `deploy/docker/Caddyfile` with an approved public
-      certificate + real domain. A LAN-only pilot may stay on the internal CA.
+      `docker compose up`. It is the SAN of both Caddy's internal-CA cert and the
+      Host's own self-signed fallback cert (V1-RMD-096).
+- [ ] Export and install the trusted certs on every waiter device (steps in
+      `deploy/docker/README.md`): Caddy's internal root CA, and — if the `8444`
+      fallback will be used — the Host self-signed leaf from `host:/app/tls/`.
+- [ ] **DECISION** — external go-live (public domain) requires an approved public
+      certificate: replace `tls internal` in `deploy/docker/Caddyfile`, or mount
+      one into Host with `--tls-cert` / `--tls-key`. A LAN-only pilot may stay on
+      the internal / self-signed certs.
+
+**E1 (host listened only on plain HTTP) — resolved by V1-RMD-096.** The Host now
+also terminates HTTPS itself on `5443` (published as `8444`) with a self-signed
+certificate, so the waiter PWA keeps a secure context — and a working offline
+queue — even if Caddy is down or its `X-Forwarded-Proto` header is lost. The
+plain-HTTP `5080` port is unpublished and returns 400 `HTTPS_REQUIRED` to any
+non-loopback request without a trusted `X-Forwarded-Proto: https`.
 - [ ] Rotation: re-write the secret file, then
       `docker compose up -d --force-recreate migrate provision host`. The DB
       password rotation also needs `ALTER ROLE alkaros WITH PASSWORD ...` on the
@@ -183,7 +192,8 @@ end to end against the live schema — see `evidence/V1-RMD-095/`).
 | Backup/restore mechanism | verified |
 | Secrets hygiene (repo) | clean |
 | Physical device pass | **pending — site** |
-| Real TLS cert (if public) | **pending — decision** |
+| Host-terminated HTTPS (E1) | shipped (`V1-RMD-096`); self-signed on `8444`, `--tls-cert` for a real cert |
+| Public-domain TLS cert (if external go-live) | **pending — decision** |
 | External uptime + backup-age alert | **pending — ops wiring** |
 | Production-sized restore timing | **pending — site** |
 | RPO/RTO numeric sign-off (`V0-BKP-002`) | approved 2026-09-01 (Semih); table in §3a and `docs/recovery/rpo-rto-targets.md` |

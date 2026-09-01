@@ -16,7 +16,7 @@ PosTerminal'e açmak ve production kitchen UI'ın aynı authoritative istasyonu 
 - PO:2026-08-29 kararıyla src/Host/DualScreen/DualScreenApplication.cs yüzeyi V1-RMD-050'ye devredildi; bu historical task closed kalır.
 - PO:2026-08-29 kararıyla App.tsx yüzeyi V1-RMD-041'e devredildi; bu historical task closed kalır.
 - PO:2026-08-31 kararıyla src/Clients/PosTerminal/src/features/kitchen-operations/** yüzeyi V1-RMD-069'a devredildi; bu historical task closed kalır.
-- `tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs`
+- PO:2026-09-01 kararıyla tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs yüzeyi V1-RMD-096'ya devredildi (Host-terminated HTTPS); bu historical task closed kalır ve dosyayı bundan sonra V1-RMD-096 sahiplenir.
 - `evidence/V1-RMD-034/**`
 
 ## In scope

@@ -83,6 +83,9 @@ services:
       target: runtime
     environment:
       ALKAROS_KITCHEN_STATION_ID: ${ALKAROS_KITCHEN_STATION_ID:-kitchen-main}
+      # LAN hostname / IP the waiter devices use. Becomes the SAN of the host's
+      # self-signed TLS certificate (V1-RMD-096) and the Caddy certificate SAN.
+      ALKAROS_PROXY_HOST: ${ALKAROS_PROXY_HOST:-localhost}
       # .NET runtime tuning (V1-RMD-088). Server GC + a background thread per
       # core suits a throughput service; dynamic adaptation right-sizes the heap
       # when the container memory limit is small; TieredPGO improves hot-path
@@ -94,8 +97,15 @@ services:
     command:
       - |
         export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --web-root /app/wwwroot --urls http://0.0.0.0:5080 --trusted-network 172.16.0.0/12
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --web-root /app/wwwroot --urls 'http://0.0.0.0:5080;https://0.0.0.0:5443' --self-signed-host "$${ALKAROS_PROXY_HOST:-localhost}" --trusted-network 172.16.0.0/12
     secrets: [db_password]
+    volumes:
+      - alkaros-host-tls:/app/tls
+    # Direct host-terminated HTTPS (self-signed, V1-RMD-096). The proxy on 8443
+    # stays the primary path; 8444 is a fallback that keeps the waiter PWA in a
+    # secure context if Caddy is down or its trusted-proxy headers are lost.
+    ports:
+      - "8444:5443"
     depends_on:
       provision: { condition: service_completed_successfully }
     healthcheck:
@@ -210,5 +220,6 @@ volumes:
   alkaros-postgres:
   alkaros-backups:
   alkaros-wal-archive:
+  alkaros-host-tls:
   caddy-data:
   caddy-config:

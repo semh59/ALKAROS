@@ -142,6 +142,68 @@ public sealed class DualScreenHostTests : IDisposable
         return app;
     }
 
+    [Fact]
+    public async Task HostTerminatesHttpsWithASelfSignedCertificateAndNeedsNoForwardedProto()
+    {
+        var tlsCacheRoot = Path.Combine(Path.GetTempPath(), $"alkaros-tls-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tlsCacheRoot);
+        var previousDirectory = Directory.GetCurrentDirectory();
+        Directory.SetCurrentDirectory(tlsCacheRoot);
+        try
+        {
+            await using var app = DualScreenApplication.Build(new DualScreenOptions(
+                "Host=localhost;Database=unused;Username=unused;Password=unused",
+                _webRoot,
+                "https://127.0.0.1:0",
+                TrustedProxies: null,
+                TrustedNetworks: null,
+                AllowInsecureLoopbackDevelopment: false,
+                TlsCertificatePath: null,
+                TlsCertificateKeyPath: null,
+                SelfSignedTlsHost: "pos.lan"));
+            await app.StartAsync();
+
+            var address = app.Services.GetRequiredService<IServer>()
+                .Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+            Assert.StartsWith("https://", address, StringComparison.Ordinal);
+
+            System.Security.Cryptography.X509Certificates.X509Certificate2? presented = null;
+            using var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (_, certificate, _, _) =>
+                {
+                    presented = certificate is null
+                        ? null
+                        : new System.Security.Cryptography.X509Certificates.X509Certificate2(certificate);
+                    return true;
+                },
+            };
+            using var client = new HttpClient(handler) { BaseAddress = new Uri(address) };
+
+            // No X-Forwarded-Proto header: the request is genuinely HTTPS, so the
+            // HTTPS_REQUIRED gate must not fire and the static shell is served.
+            using var response = await client.GetAsync("/");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains("Test", await response.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+
+            Assert.NotNull(presented);
+            var rawSan = presented!.Extensions
+                .Single(extension => extension.Oid?.Value == "2.5.29.17")
+                .RawData;
+            var subjectAlternativeNames =
+                new System.Security.Cryptography.X509Certificates.X509SubjectAlternativeNameExtension(rawSan)
+                    .EnumerateDnsNames()
+                    .ToArray();
+            Assert.Contains("pos.lan", subjectAlternativeNames);
+            Assert.Contains("localhost", subjectAlternativeNames);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(previousDirectory);
+            Directory.Delete(tlsCacheRoot, recursive: true);
+        }
+    }
+
     private static HttpClient CreateClient(WebApplication app)
     {
         var server = app.Services.GetRequiredService<IServer>();

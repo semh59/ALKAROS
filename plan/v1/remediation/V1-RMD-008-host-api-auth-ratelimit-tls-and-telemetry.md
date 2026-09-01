@@ -13,10 +13,9 @@ uyumu, unhandled 500 exception loglaması ve Retry-After yanıt başlıklarını
 
 ## Owned surface
 
-- `src/Host/DualScreen/DualScreenOptions.cs`
 - `tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs`
-- `tests/Host/MigrationComposition/DualScreen/DualScreenOptionsTests.cs`
 - `evidence/V1-RMD-008/**`
+- PO:2026-09-01 kararıyla src/Host/DualScreen/DualScreenOptions.cs ve tests/Host/MigrationComposition/DualScreen/DualScreenOptionsTests.cs yüzeyleri V1-RMD-096'ya devredildi (Host-terminated HTTPS); bu historical task closed kalır ve bu iki dosyayı bundan sonra V1-RMD-096 sahiplenir.
 
 V1-GOV-008 custody correction: V1-RMD-008'in tamamlanmış güvenlik davranışı ve tarihsel uygulama kanıtı korunur;
 `src/Host/DualScreen/DualScreenApplication.cs` ile

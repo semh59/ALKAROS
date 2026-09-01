@@ -38,7 +38,7 @@ public static class DualScreenApplication
     {
         var options = DualScreenOptions.Parse(args);
         var app = Build(options);
-        app.Run(options.Url);
+        app.Run();
         return 0;
     }
 
@@ -46,7 +46,16 @@ public static class DualScreenApplication
     {
         ArgumentNullException.ThrowIfNull(options);
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
-        builder.WebHost.UseUrls(options.Url);
+        builder.WebHost.UseUrls(options.Url.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+        if (options.ServesHttpsDirectly)
+        {
+            var serverCertificate = DualScreenTls.Resolve(options, builder.Environment.ContentRootPath);
+            if (serverCertificate is not null)
+            {
+                builder.WebHost.ConfigureKestrel(kestrel =>
+                    kestrel.ConfigureHttpsDefaults(https => https.ServerCertificate = serverCertificate));
+            }
+        }
         builder.Services.ConfigureHttpJsonOptions(json =>
             json.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         builder.Services.AddSingleton(NpgsqlDataSource.Create(options.ConnectionString));

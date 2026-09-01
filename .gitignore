@@ -44,3 +44,6 @@ dist/
 output*.txt
 test_output*.txt
 .pnpm-store/
+# Host self-signed TLS cache (DualScreenTls, V1-RMD-096) - never commit private keys
+tls/
+*.pfx

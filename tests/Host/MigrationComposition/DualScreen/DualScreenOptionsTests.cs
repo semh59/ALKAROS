@@ -48,4 +48,59 @@ public sealed class DualScreenOptionsTests : IDisposable
 
         Assert.DoesNotContain("leaked", exception.Message, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void HttpsUrlWithoutACertificateSourceIsRejected()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "https://0.0.0.0:5443",
+        ]));
+
+        Assert.Contains("--self-signed-host", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void SelfSignedHostRequiresAnHttpsUrl()
+    {
+        Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--self-signed-host", "pos.lan",
+        ]));
+    }
+
+    [Fact]
+    public void TlsCertificateAndKeyMustBeSuppliedTogether()
+    {
+        Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "https://0.0.0.0:5443",
+            "--tls-cert", "/etc/alkaros/tls/fullchain.pem",
+        ]));
+    }
+
+    [Fact]
+    public void DualHttpAndHttpsBindingWithSelfSignedHostParses()
+    {
+        var options = DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080;https://0.0.0.0:5443",
+            "--self-signed-host", "pos.lan",
+            "--trusted-network", "172.16.0.0/12",
+        ]);
+
+        Assert.True(options.ServesHttpsDirectly);
+        Assert.Equal("pos.lan", options.SelfSignedTlsHost);
+        Assert.Contains("http://0.0.0.0:5080/", options.Url, StringComparison.Ordinal);
+        Assert.Contains("https://0.0.0.0:5443/", options.Url, StringComparison.Ordinal);
+    }
 }

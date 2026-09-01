@@ -24,6 +24,12 @@ COPY src/Clients/Cashier/wwwroot ./wwwroot/cashier
 COPY database ./database
 COPY build/project-manifest.json ./build/project-manifest.json
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV ASPNETCORE_URLS=http://0.0.0.0:5080
-EXPOSE 5080
-ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", "--db-url", "postgresql://alkaros@postgres:5432/alkaros", "--web-root", "/app/wwwroot", "--urls", "http://0.0.0.0:5080", "--trusted-network", "172.16.0.0/12"]
+# 5080/http is for a trusted TLS-terminating reverse proxy (Caddy) that sets
+# X-Forwarded-Proto: https. 5443/https is terminated by the host itself with a
+# self-signed certificate (regenerated + cached under /app/tls) so waiter phones
+# get a secure context - and therefore a working service worker / offline queue -
+# even when the reverse proxy is absent or misconfigured. Override
+# --self-signed-host with the LAN hostname/IP the devices use, or mount an
+# approved certificate with --tls-cert / --tls-key.
+EXPOSE 5080 5443
+ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", "--db-url", "postgresql://alkaros@postgres:5432/alkaros", "--web-root", "/app/wwwroot", "--urls", "http://0.0.0.0:5080;https://0.0.0.0:5443", "--self-signed-host", "localhost", "--trusted-network", "172.16.0.0/12"]
