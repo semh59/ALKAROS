@@ -78,9 +78,12 @@ public sealed class BillingSplitStore
                 cmd.Parameters.AddWithValue("table_id", order.TableId.Value);
                 await cmd.ExecuteNonQueryAsync(cancellationToken);
             }
-            catch
+            catch (Exception ex) when (ex is NpgsqlException or InvalidOperationException)
             {
-                // Non-fatal table pointer sync
+                // table_mgmt.tables.current_bill_id is a soft cache; a failed
+                // write here does not fail the bill creation and is repaired by
+                // PostgresTablePointerProjector's drift detection. Only expected
+                // transport/state faults are swallowed; nothing else.
             }
         }
 

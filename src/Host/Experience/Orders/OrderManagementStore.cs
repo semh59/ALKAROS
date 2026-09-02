@@ -27,11 +27,15 @@ public sealed class OrderManagementStore
         var orderId = existingOrder?.OrderId ?? Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
 
+        var catalog = await ResolveCatalogProductsAsync(
+            connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
+
         var items = new List<OrderItem>();
         foreach (var i in request.Items)
         {
-            var (productName, unitPrice, taxRate) = await ResolveCatalogProductAsync(
-                connection, transaction, i.ProductId, cancellationToken);
+            if (!catalog.TryGetValue(i.ProductId, out var product))
+                throw new KeyNotFoundException($"Product {i.ProductId} was not found or has no active price.");
+            var (productName, unitPrice, taxRate) = product;
 
             items.Add(new OrderItem(
                 Guid.NewGuid(),
@@ -139,22 +143,33 @@ public sealed class OrderManagementStore
         return MapToDto(order, tableNumber);
     }
 
-    private static async Task<(string Name, decimal Price, decimal TaxRate)> ResolveCatalogProductAsync(
-        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid productId, CancellationToken cancellationToken)
+    private static async Task<Dictionary<Guid, (string Name, decimal Price, decimal TaxRate)>> ResolveCatalogProductsAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        IEnumerable<Guid> productIds,
+        CancellationToken cancellationToken)
     {
+        var ids = productIds.Distinct().ToArray();
+        var result = new Dictionary<Guid, (string, decimal, decimal)>();
+        if (ids.Length == 0)
+            return result;
+
+        // One round trip for the whole draft instead of one per line.
         await using var cmd = new NpgsqlCommand(
             """
-            SELECT p.name, p.current_price, COALESCE(t.vat_rate, 0)
+            SELECT p.product_id, p.name, p.current_price, COALESCE(t.vat_rate, 0)
             FROM catalog.products p
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
-            WHERE p.product_id = @product_id AND p.active AND p.current_price IS NOT NULL;
+            WHERE p.product_id = ANY(@product_ids) AND p.active AND p.current_price IS NOT NULL;
             """, connection, transaction);
-        cmd.Parameters.AddWithValue("product_id", productId);
+        cmd.Parameters.AddWithValue("product_ids", ids);
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
-        if (!await reader.ReadAsync(cancellationToken))
-            throw new KeyNotFoundException($"Product {productId} was not found or has no active price.");
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            result[reader.GetGuid(0)] = (reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3));
+        }
 
-        return (reader.GetString(0), reader.GetDecimal(1), reader.GetDecimal(2));
+        return result;
     }
 
     private static async Task<OrderDto?> GetActiveOrderByTableIdInternalAsync(
