@@ -59,7 +59,7 @@ export function ProductionShell(props: ProductionShellProps) {
       <header className="production-shell__header">
         <div className="production-shell__brand">ALKAROS</div>
         {identity && <div className="production-shell__identity" role="group" aria-label="Aktif çalışma bağlamı">
-          <IdentityItem label="Şube" value={identity.branchName} />
+          {identity.branchName && <IdentityItem label="Şube" value={identity.branchName} />}
           <IdentityItem label="Terminal" value={identity.terminalName} />
           <IdentityItem label="Kullanıcı" value={identity.userName} />
           <IdentityItem label="Rol" value={identity.roleLabel} />

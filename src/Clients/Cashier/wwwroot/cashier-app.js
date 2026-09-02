@@ -177,7 +177,7 @@
   function renderTicket() {
     if (!el.ticketItemsStream) return;
     if (state.ticketItems.length === 0) {
-      el.ticketItemsStream.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 32px 0;">Sepet boş. Ürün seçin.</div>';
+      el.ticketItemsStream.innerHTML = '<div class="ticket-empty">Sepet boş. Ürün seçin.</div>';
       updateTotal();
       return;
     }
@@ -187,11 +187,11 @@
         <div class="item-meta">
           <div class="item-title">${escapeHtml(item.name)} ${item.isComplimentary ? '<span class="badge-free">İKRAM</span>' : ''}</div>
           <div class="item-sub">${formatMoney(item.price)} × ${item.quantity} = ${formatMoney(item.isComplimentary ? 0 : item.price * item.quantity)}</div>
-          <input class="item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" style="margin-top:4px;width:100%;padding:4px 6px;font-size:0.8rem;border:1px solid var(--border-color);border-radius:6px;background:var(--bg-surface);color:var(--text-main);" />
+          <input class="item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" />
         </div>
         <div class="item-actions">
           <button type="button" class="btn-micro" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
-          <span style="font-weight: 800; min-width: 20px; text-align: center;">${item.quantity}</span>
+          <span class="ticket-row-qty">${item.quantity}</span>
           <button type="button" class="btn-micro" data-action="inc" data-id="${escapeHtml(item.id)}">+</button>
           <button type="button" class="btn-micro" data-action="comp" data-id="${escapeHtml(item.id)}" title="İkram">🎁</button>
           <button type="button" class="btn-micro btn-del" data-action="del" data-id="${escapeHtml(item.id)}" title="Sil">✕</button>
@@ -308,13 +308,13 @@
     localStorage.setItem('alkaros_cashier_parked', JSON.stringify(state.parkedTickets));
     renderTicket();
     updateParkBadge();
-    if (el.parkedModal) el.parkedModal.style.display = 'none';
+    if (el.parkedModal) el.parkedModal.hidden = true;
   }
 
   function renderParkedModal() {
     if (!el.parkedList) return;
     if (state.parkedTickets.length === 0) {
-      el.parkedList.innerHTML = '<div style="text-align: center; color: var(--text-dim); padding: 24px;">Bekletilen fiş yok.</div>';
+      el.parkedList.innerHTML = '<div class="parked-empty">Bekletilen fiş yok.</div>';
       return;
     }
 
@@ -324,10 +324,10 @@
       return `
         <div class="parked-card" data-parked-id="${escapeHtml(p.id)}">
           <div>
-            <div style="font-weight: 700;">Bekletme Saati: ${escapeHtml(p.parkedAt)}</div>
-            <div style="font-size: 0.85rem; color: var(--text-dim);">${count} Kalem • Toplam: ${formatMoney(total)}</div>
+            <div class="parked-card__time">Bekletme Saati: ${escapeHtml(p.parkedAt)}</div>
+            <div class="parked-card__meta">${count} Kalem • Toplam: ${formatMoney(total)}</div>
           </div>
-          <button type="button" class="btn-micro" style="padding: 6px 12px; font-weight: 700;" data-action="recall" data-id="${escapeHtml(p.id)}">Geri Yükle</button>
+          <button type="button" class="btn-micro btn-micro--recall" data-action="recall" data-id="${escapeHtml(p.id)}">Geri Yükle</button>
         </div>
       `;
     }).join('');
@@ -422,14 +422,14 @@
     if (el.btnRecallTicket) {
       el.btnRecallTicket.addEventListener('click', () => {
         renderParkedModal();
-        if (el.parkedModal) el.parkedModal.style.display = 'flex';
+        if (el.parkedModal) el.parkedModal.hidden = false;
       });
     }
 
     // Close Parked Modal
     if (el.btnCloseParkedModal) {
       el.btnCloseParkedModal.addEventListener('click', () => {
-        if (el.parkedModal) el.parkedModal.style.display = 'none';
+        if (el.parkedModal) el.parkedModal.hidden = true;
       });
     }
 

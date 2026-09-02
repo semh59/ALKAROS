@@ -5,6 +5,19 @@
     <Company>ALKAROS</Company>
     <Copyright>Copyright (c) ALKAROS. All rights reserved.</Copyright>
     <Version>1.0.0</Version>
+    <!--
+      Target framework is deliberately pinned to net8.0 (LTS) so it matches the
+      mcr.microsoft.com/dotnet/aspnet:8.0-alpine runtime base image in the
+      Dockerfile. The build SDK in global.json intentionally rolls forward to
+      10.0.x: a newer SDK building an LTS target framework is a supported
+      configuration and keeps analyzers and build tooling current without
+      changing the deployed runtime contract. Do not raise this value without
+      also moving the runtime base image and re-running the deployment smoke
+      tests. Per-project files still declare <TargetFramework> explicitly with
+      the same value; this property is the single documented rationale.
+      (deep-analysis finding B-6)
+    -->
+    <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

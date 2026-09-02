@@ -48,6 +48,16 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
             Assert.Empty((await readable.Content.ReadFromJsonAsync<BillSplitDesignDto>())!.AllowedCommands);
         }
 
+        // Owner options come from the server (table seats), not client-fabricated
+        // GUIDs (deep-analysis finding F-2).
+        using (var ownersRequest = Request(HttpMethod.Get, path + "/owners", readOnlyCookie))
+        using (var owners = await client.SendAsync(ownersRequest))
+        {
+            Assert.Equal(HttpStatusCode.OK, owners.StatusCode);
+            var options = await owners.Content.ReadFromJsonAsync<IReadOnlyList<BillSplitOwnerOptionDto>>();
+            Assert.Contains(options!, option => option.Kind == "Seat" && option.Id == seeded.SeatId);
+        }
+
         var equalRequest = new SaveEqualSplitRequest(
             seeded.BillRowVersion,
             [],

@@ -20,10 +20,22 @@ public static class Program
     private const string BootstrapDisplayNameEnvironmentVariable = "ALKAROS_BOOTSTRAP_DISPLAY_NAME";
     private const string BootstrapPasswordEnvironmentVariable = "ALKAROS_BOOTSTRAP_PASSWORD";
     private const string ManagerRoleCode = "manager";
+
+    // The full set of application permission codes the "manager" role must hold.
+    // Migration 042 also seeds this catalog and grants it to the manager role;
+    // provisioning re-applies it idempotently so a fresh bootstrap and a
+    // migrated database converge on the same grants. Every code here is
+    // referenced by a RequirePermissionAsync call in the Experience endpoints -
+    // kitchen.routing.manage / kitchen.reprint / operations.backup used to be
+    // referenced but never seeded, which made those endpoints unreachable for
+    // every user. (deep-analysis finding B-1)
     private static readonly (string Code, string Name)[] ManagerPermissions =
     [
         ("pos.cashier.mutate", "Mutate cashier resources"),
         ("catalog.manage", "Manage catalog resources"),
+        ("kitchen.routing.manage", "Manage kitchen printer routing"),
+        ("kitchen.reprint", "Authorize kitchen ticket reprints"),
+        ("operations.backup", "Trigger and inspect operational backups"),
     ];
 
     public static int Main(string[] args)
@@ -458,6 +470,12 @@ public static class Program
             Username = Uri.UnescapeDataString(userInfo[0]),
             Password = password,
             ApplicationName = applicationName,
+            // Pooling is disabled on purpose: this builder is only for the
+            // one-shot CLI verbs (provision-manager, housekeeping,
+            // kvkk-retention) that open a single connection and exit. Do NOT
+            // reuse this helper on a long-lived service path (serve) - that
+            // path builds its own pooled connection string in
+            // DualScreenOptions. (deep-analysis finding B-5)
             Pooling = false,
         }.ConnectionString;
     }

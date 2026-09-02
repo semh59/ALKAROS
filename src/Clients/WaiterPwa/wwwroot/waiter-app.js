@@ -354,7 +354,7 @@
   function renderCart() {
     if (!el.cartItemsList) return;
     if (state.cart.length === 0) {
-      el.cartItemsList.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 24px 0;">Henüz ürün eklenmedi.</div>';
+      el.cartItemsList.innerHTML = '<div class="cart-empty">Henüz ürün eklenmedi.</div>';
       updateCartTotals();
       return;
     }
@@ -363,12 +363,12 @@
       <div class="cart-item">
         <div class="cart-item-info">
           <div class="cart-item-name">${escapeHtml(item.name)}</div>
-          <div style="font-size: 0.8rem; color: var(--text-muted);">${formatMoney(item.price)}</div>
-          <input class="cart-item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız, ekmek ayrı)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" style="margin-top:6px;width:100%;padding:6px 8px;font-size:0.8rem;border:1px solid var(--border-color);border-radius:6px;background:var(--bg-surface);color:var(--text-main);" />
+          <div class="cart-item-price">${formatMoney(item.price)}</div>
+          <input class="cart-item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız, ekmek ayrı)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" />
         </div>
         <div class="quantity-stepper">
           <button type="button" class="btn-step" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
-          <span style="font-weight: 800; min-width: 24px; text-align: center;">${item.quantity}</span>
+          <span class="cart-item-qty">${item.quantity}</span>
           <button type="button" class="btn-step" data-action="inc" data-id="${escapeHtml(item.id)}">+</button>
         </div>
       </div>
@@ -386,10 +386,10 @@
 
     if (el.orderDrawer) {
       if (state.selectedTable) {
-        el.orderDrawer.style.display = 'flex';
+        el.orderDrawer.hidden = false;
         el.selectedTableLabel.textContent = `Masa: ${state.selectedTable.number} (${getStatusLabel(state.selectedTable.status)})`;
       } else {
-        el.orderDrawer.style.display = 'none';
+        el.orderDrawer.hidden = true;
       }
     }
   }
@@ -434,7 +434,7 @@
       el.btnOpenOrderModal.addEventListener('click', () => {
         if (!state.selectedTable) return;
         el.modalTableTitle.textContent = `${state.selectedTable.number} — Sipariş Al`;
-        el.orderModal.style.display = 'flex';
+        el.orderModal.hidden = false;
         renderCategoryFilters();
         renderProducts();
         renderCart();
@@ -444,7 +444,7 @@
     // Close Order Modal
     if (el.btnCloseModal) {
       el.btnCloseModal.addEventListener('click', () => {
-        el.orderModal.style.display = 'none';
+        el.orderModal.hidden = true;
       });
     }
 
@@ -549,7 +549,7 @@
             state.selectedTable.status = 'occupied';
             state.selectedTable.amount += state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             state.cart = [];
-            el.orderModal.style.display = 'none';
+            el.orderModal.hidden = true;
             renderTables();
             updateCartTotals();
             alert(`Sipariş mutfağa iletildi! (${state.selectedTable.number})`);
@@ -559,14 +559,14 @@
             // Server error / network failure: queue order and notify without claiming success
             queueOrderAction(orderPayload);
             state.cart = [];
-            el.orderModal.style.display = 'none';
+            el.orderModal.hidden = true;
             updateCartTotals();
             alert(`Sunucuya ulaşılamadı. Sipariş çevrimdışı kuyruğa alındı. (${state.selectedTable.number})`);
           }
         } else {
           queueOrderAction(orderPayload);
           state.cart = [];
-          el.orderModal.style.display = 'none';
+          el.orderModal.hidden = true;
           updateCartTotals();
           alert(`Çevrimdışı mod: Sipariş yerel kuyruğa kaydedildi. Bağlantı gelince iletilecek.`);
         }

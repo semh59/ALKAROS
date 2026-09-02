@@ -63,6 +63,12 @@ public sealed record BillSplitAllocationDto(
     decimal TaxAmount,
     long RowVersion);
 
+public sealed record BillSplitOwnerOptionDto(
+    string Kind,
+    Guid Id,
+    string Label,
+    string? SecondaryLabel);
+
 public sealed record BillSplitDesignDto(
     Guid BillId,
     string BillNumber,

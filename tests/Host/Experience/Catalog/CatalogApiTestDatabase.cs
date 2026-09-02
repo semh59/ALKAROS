@@ -30,16 +30,18 @@ public sealed class CatalogApiTestDatabase : PgTestDatabase
                 ('{{DeniedUserId:D}}', 'catalog-denied', 'unused', 'Catalog Denied', TRUE);
 
             INSERT INTO identity.permissions (permission_id, code, name)
-            VALUES ('71000000-0000-0000-0000-000000000003', 'catalog.manage', 'Manage catalog');
+            VALUES ('71000000-0000-0000-0000-000000000003', 'catalog.manage', 'Manage catalog')
+            ON CONFLICT (code) DO NOTHING;
 
             INSERT INTO identity.roles (role_id, code, name)
             VALUES ('71000000-0000-0000-0000-000000000004', 'catalog-manager', 'Catalog Manager');
 
             INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
-            VALUES (
+            SELECT
                 '71000000-0000-0000-0000-000000000005',
                 '71000000-0000-0000-0000-000000000004',
-                '71000000-0000-0000-0000-000000000003');
+                permission_id
+            FROM identity.permissions WHERE code = 'catalog.manage';
 
             INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
             VALUES (

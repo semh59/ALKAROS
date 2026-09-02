@@ -12,6 +12,8 @@ RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install 
 COPY src/Clients/PosTerminal ./
 RUN pnpm build
 
+# Runtime base is aspnet:8.0-alpine to match <TargetFramework>net8.0</TargetFramework>
+# (see Directory.Build.props for the SDK-vs-target-vs-runtime rationale, finding B-6).
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23 AS runtime
 RUN apk update \
     && apk add --no-cache libcrypto3=3.5.8-r0 libssl3=3.5.8-r0 openssl=3.5.8-r0 postgresql-client ca-certificates curl \

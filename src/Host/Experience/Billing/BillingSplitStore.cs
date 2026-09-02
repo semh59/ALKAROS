@@ -207,6 +207,61 @@ public sealed class BillingSplitStore
         return Map(bill, saved.Allocations, canMutate: true, saved.BillRowVersion);
     }
 
+    /// <summary>
+    /// The owners a bill can be split between: the persistent seats of the
+    /// table behind the bill, plus any person owners that already hold an
+    /// allocation. The client used to synthesise placeholder GUIDs
+    /// (<c>00000000-0000-0000-0000-00000000000N</c>) for this list; those cannot
+    /// be reconciled with the seat-based allocation the server and V1-GOV-017
+    /// expect (deep-analysis finding F-2).
+    /// </summary>
+    public async Task<IReadOnlyList<BillSplitOwnerOptionDto>> GetOwnerOptionsAsync(
+        Guid billId,
+        CancellationToken cancellationToken = default)
+    {
+        var bill = await GetBillAsync(billId, cancellationToken);
+        var options = new List<BillSplitOwnerOptionDto>();
+
+        if (_dataSource is not null && bill.TableId.HasValue && bill.TableId.Value != Guid.Empty)
+        {
+            await using var command = _dataSource.CreateCommand(
+                """
+                SELECT seat_id, seat_number, label
+                FROM table_mgmt.table_seats
+                WHERE table_id = @table_id
+                ORDER BY seat_number;
+                """);
+            command.Parameters.AddWithValue("table_id", bill.TableId.Value);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                options.Add(new BillSplitOwnerOptionDto(
+                    "Seat",
+                    reader.GetGuid(0),
+                    $"Sandalye {reader.GetInt32(1)}",
+                    reader.GetString(2)));
+            }
+        }
+
+        var allocations = await _splitDesigns.GetAllocationsByBillIdAsync(billId, cancellationToken);
+        var seenPersons = new HashSet<Guid>();
+        var personIndex = 0;
+        foreach (var allocation in allocations)
+        {
+            if (!OperationalOwnerReference.TryParse(allocation.OwnerReference, out var owner)
+                || owner!.Kind != AllocationOwnerKind.Person
+                || !seenPersons.Add(owner.Id))
+            {
+                continue;
+            }
+
+            personIndex++;
+            options.Add(new BillSplitOwnerOptionDto("Person", owner.Id, $"{personIndex}. Kişi", null));
+        }
+
+        return options;
+    }
+
     private async Task<Bill> GetBillAsync(Guid billId, CancellationToken cancellationToken)
     {
         if (billId == Guid.Empty)

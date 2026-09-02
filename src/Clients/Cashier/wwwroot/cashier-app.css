@@ -386,6 +386,15 @@ body {
   transform: scale(0.98);
 }
 
+/* Session bar */
+.session-pill--online {
+  color: #34d399;
+}
+
+.btn-ticket-action--danger {
+  color: var(--accent-danger);
+}
+
 /* Modals */
 .modal-overlay {
   position: fixed;
@@ -399,6 +408,13 @@ body {
   padding: 16px;
 }
 
+/* The `hidden` attribute is toggled from JS instead of an inline
+   style="display:none", which a strict `style-src 'self'` CSP would drop
+   (deep-analysis finding F-1). This rule beats the flex display above. */
+.modal-overlay[hidden] {
+  display: none;
+}
+
 .modal-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
@@ -407,6 +423,72 @@ body {
   max-width: 440px;
   padding: 20px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+}
+
+.modal-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-card__title {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.modal-card__list {
+  max-height: 280px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+/* Classes for markup injected via innerHTML by cashier-app.js. These replace
+   inline style="..." attributes that a strict style-src 'self' CSP drops
+   (deep-analysis finding F-1). */
+.ticket-empty,
+.parked-empty {
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.ticket-empty {
+  padding: 32px 0;
+}
+
+.parked-empty {
+  padding: 24px;
+}
+
+.item-note-input {
+  margin-top: 4px;
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.ticket-row-qty {
+  font-weight: 800;
+  min-width: 20px;
+  text-align: center;
+}
+
+.parked-card__time {
+  font-weight: 700;
+}
+
+.parked-card__meta {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.btn-micro--recall {
+  padding: 6px 12px;
+  font-weight: 700;
 }
 
 /* Catalog fail-closed states (V1-RMD-073) */

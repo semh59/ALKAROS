@@ -71,7 +71,7 @@ describe("catalog workspace", () => {
 
   it.each([
     ["loading", "Katalog yükleniyor"], ["busy", "Katalog kaydediliyor"], ["offline", "Bağlantı yok"],
-    ["unauthorized", "Manager oturumu gerekli"], ["error", "Katalog alınamadı"], ["stale", "Katalog güncel değil"], ["conflict", "Katalog çakışması"],
+    ["unauthorized", "Yönetici oturumu gerekli"], ["error", "Katalog alınamadı"], ["stale", "Katalog güncel değil"], ["conflict", "Katalog çakışması"],
   ] as const)("shows bounded %s state", async (state, title) => {
     await render(<CatalogWorkspace {...baseProps({ state, errorMessage: "API kapalı" })} />);
     expect(document.body.textContent).toContain(title);

@@ -268,7 +268,7 @@ export function TableWorkspace({
       </div>
 
       {state === "empty" || filteredTables.length === 0 ? (
-        <div className="table-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Henüz masa yok" : "Filtreyle eşleşen masa yok"}><p>{state === "empty" ? "Manager olarak ilk zone ve masayı ekleyerek başlayın." : "Filtreyi değiştirin veya aramayı temizleyin."}</p>{state === "empty" && canCreate && <Button onClick={() => setTableDialogOpen(true)}>İlk masayı ekle</Button>}</StateMessage></div>
+        <div className="table-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Henüz masa yok" : "Filtreyle eşleşen masa yok"}><p>{state === "empty" ? "Yönetici olarak ilk zone ve masayı ekleyerek başlayın." : "Filtreyi değiştirin veya aramayı temizleyin."}</p>{state === "empty" && canCreate && <Button onClick={() => setTableDialogOpen(true)}>İlk masayı ekle</Button>}</StateMessage></div>
       ) : (
         <div className={`table-workspace__content table-workspace__content--${view}`}>
           {view === "map" && floorPlan ? <div className="table-workspace__floor-plan">

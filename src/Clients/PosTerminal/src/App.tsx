@@ -14,7 +14,7 @@ import type { CatalogProduct, DisplaySnapshot, PairingCreated } from "./contract
 import { ProductionShell } from "./shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "./shell/models";
 import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "./features/tables";
-import { BillSplitWorkspace, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "./features/billing";
+import { BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "./features/billing";
 import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "./features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "./features/kitchen-operations";
 import { SystemHealthWorkspace, type SystemHealthState } from "./features/system-health";
@@ -607,17 +607,26 @@ function ExperiencePage({
   onLogout: () => Promise<void>;
 }) {
   const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
-  const isManagerRoute = path === "/catalog" || path === "/system-health";
-  const canOpenRoute = isManagerRoute
+  // Which capability a route needs is a route->permission map, not a role guess.
+  const routeNeedsCatalogManage = path === "/catalog" || path === "/system-health";
+  const canOpenRoute = routeNeedsCatalogManage
     ? capabilitySet.has("catalog.manage")
     : capabilitySet.has("pos.cashier.mutate");
+  // Role label is derived from the session's capabilities, not from the current
+  // route. (deep-analysis finding F-4)
+  const roleLabel = capabilitySet.has("catalog.manage")
+    ? "Yönetici"
+    : capabilitySet.has("pos.cashier.mutate")
+      ? "Kasiyer / Operasyon"
+      : "Sınırlı erişim";
   const session: ShellSession = {
     status: "authenticated",
     identity: {
-      branchName: "Şube bağlamı",
+      // Branch (Sube) is omitted until there is a real multi-branch model;
+      // a placeholder string would read as data. (deep-analysis finding F-5)
       terminalName: `Terminal ${terminalId.slice(0, 8).toUpperCase()}`,
       userName: displayName,
-      roleLabel: isManagerRoute ? "Manager" : "Kasiyer / Operasyon",
+      roleLabel,
       capabilities: capabilitySet,
     } satisfies ShellIdentity,
   };
@@ -810,29 +819,46 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
 
 function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
   const searchParams = useMemo(() => new URLSearchParams(window.location.search), []);
-  const initialBillId = searchParams.get("billId") || localStorage.getItem("alkaros.current-bill-id") || "00000000-0000-0000-0000-000000000001";
-  const [billId, setBillId] = useState<string>(initialBillId);
-  const client = useMemo(() => createBillingSplitClient(terminalId, billId), [terminalId, billId]);
+  const orderParam = searchParams.get("orderId");
+  const [billId, setBillId] = useState<string>(
+    () => searchParams.get("billId") || localStorage.getItem("alkaros.current-bill-id") || "",
+  );
+  const client = useMemo(
+    () => (billId ? createBillingSplitClient(terminalId, billId) : null),
+    [terminalId, billId],
+  );
   const [state, setState] = useState<BillSplitWorkspaceState>("loading");
   const [design, setDesign] = useState<BillSplitDesign | null>(null);
+  // Owners come from the server (table seats + existing person allocations), not
+  // from client-fabricated placeholder GUIDs. (deep-analysis finding F-2)
+  const [owners, setOwners] = useState<readonly SplitOwnerOption[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [lastUpdated, setLastUpdated] = useState<string>();
 
   const load = useCallback(async () => {
     setState("loading");
     setErrorMessage(undefined);
+    if (!orderParam && !client) {
+      setState("error");
+      setErrorMessage("Aktif adisyon yok. Bir masa veya siparişten hesap açın.");
+      return;
+    }
     try {
-      const orderParam = searchParams.get("orderId");
-      let nextDesign: BillSplitDesign;
-      if (orderParam) {
-        nextDesign = await client.createFromOrder(orderParam);
-      } else {
-        nextDesign = await client.get();
-      }
+      const nextDesign = orderParam
+        ? await createBillFromOrder(terminalId, orderParam)
+        : await client!.get();
       setDesign(nextDesign);
       if (nextDesign.billId && nextDesign.billId !== billId) {
         setBillId(nextDesign.billId);
         localStorage.setItem("alkaros.current-bill-id", nextDesign.billId);
+      }
+      const ownerClient = nextDesign.billId && nextDesign.billId !== billId
+        ? createBillingSplitClient(terminalId, nextDesign.billId)
+        : client!;
+      try {
+        setOwners(await ownerClient.getOwners());
+      } catch {
+        setOwners([]);
       }
       setLastUpdated(new Date().toISOString());
       setState("ready");
@@ -841,34 +867,12 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
       setErrorMessage(reason instanceof Error ? reason.message : "Hesap bölme verisi alınamadı.");
     }
-  }, [client, searchParams, billId]);
+  }, [client, orderParam, terminalId, billId]);
 
   useEffect(() => { void load(); }, [load]);
 
-  const owners: readonly SplitOwnerOption[] = useMemo(() => {
-    const existingOwners = (design?.allocations || [])
-      .filter(a => a.ownerId && a.ownerKind === "Person")
-      .map((a, index) => ({
-        kind: "Person" as const,
-        ownerId: a.ownerId!,
-        label: `${index + 1}. Kişi`
-      }));
-
-    const count = Math.max(existingOwners.length, 4);
-    const result: SplitOwnerOption[] = [];
-    for (let i = 1; i <= count; i++) {
-      const hex = i.toString(16).padStart(12, '0');
-      const id = `00000000-0000-0000-0000-${hex}`;
-      const existing = existingOwners.find(o => o.ownerId === id);
-      result.push(existing || { kind: "Person", ownerId: id, label: `${i}. Kişi` });
-    }
-    return result;
-  }, [design]);
-
   const handleSave = async (request: SaveSplitRequest, currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
-    const targetClient = currentDesign.billId && currentDesign.billId !== billId
-      ? createBillingSplitClient(terminalId, currentDesign.billId)
-      : client;
+    const targetClient = createBillingSplitClient(terminalId, currentDesign.billId);
     const updated = await targetClient.save(request, currentDesign);
     setDesign(updated);
     if (updated.billId && updated.billId !== billId) {
@@ -879,9 +883,7 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
   };
 
   const handleClear = async (currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
-    const targetClient = currentDesign.billId && currentDesign.billId !== billId
-      ? createBillingSplitClient(terminalId, currentDesign.billId)
-      : client;
+    const targetClient = createBillingSplitClient(terminalId, currentDesign.billId);
     const cleared = await targetClient.clear(currentDesign);
     setDesign(cleared);
     return cleared;

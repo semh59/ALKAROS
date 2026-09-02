@@ -2,7 +2,7 @@
   "version": 1,
   "source": ["V0-DAT-001"],
   "phaseARange": { "min": "001", "max": "030" },
-  "phaseBRange": { "min": "031", "max": "041" },
+  "phaseBRange": { "min": "031", "max": "042" },
   "migrations": [
     {
       "id": "001",
@@ -242,6 +242,12 @@
       "id": "041",
       "phase": "B",
       "tables": ["orders"],
+      "deferredConstraints": []
+    },
+    {
+      "id": "042",
+      "phase": "B",
+      "tables": ["permissions", "roles", "role_permissions"],
       "deferredConstraints": []
     }
   ]

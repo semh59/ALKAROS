@@ -4,8 +4,16 @@ import type {
   BillSplitDesign,
   ItemSplitTarget,
   SaveSplitRequest,
+  SplitOwnerOption,
   SplitOwnerRequest,
 } from "./models";
+
+interface ServerOwnerOption {
+  kind: string;
+  id: string;
+  label: string;
+  secondaryLabel: string | null;
+}
 
 export class BillingSplitApiError extends Error {
   constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
@@ -13,6 +21,7 @@ export class BillingSplitApiError extends Error {
 
 export interface BillingSplitClient {
   get: () => Promise<BillSplitDesign>;
+  getOwners: () => Promise<SplitOwnerOption[]>;
   save: (request: SaveSplitRequest, design: BillSplitDesign) => Promise<BillSplitDesign>;
   clear: (design: BillSplitDesign) => Promise<BillSplitDesign>;
   createFromOrder: (orderId: string) => Promise<BillSplitDesign>;
@@ -48,6 +57,15 @@ export function createBillingSplitClient(terminalId: string, billId: string, fet
 
   return {
     get: () => call(),
+    getOwners: async () => {
+      const raw = (await call("/owners")) as unknown as readonly ServerOwnerOption[];
+      return raw.map((owner) => ({
+        kind: owner.kind === "Seat" ? "Seat" : "Person",
+        ownerId: owner.id,
+        label: owner.label,
+        secondaryLabel: owner.secondaryLabel ?? undefined,
+      }));
+    },
     save: (request, design) => {
       const common = { expectedBillRowVersion: design.billRowVersion, expectedAllocations: versions(design) };
       if (request.mode === "EqualByPerson") return call("/equal", "PUT", { ...common, owners: request.owners satisfies readonly SplitOwnerRequest[] });

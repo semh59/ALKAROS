@@ -28,7 +28,7 @@
         <span>🏪</span>
         <span id="registerLabel">KASA-01</span>
       </div>
-      <div class="session-pill" style="color: #34d399;">
+      <div class="session-pill session-pill--online">
         <span>🟢 Çevrimiçi</span>
       </div>
     </div>
@@ -66,7 +66,7 @@
         <div class="ticket-actions-row">
           <button type="button" class="btn-ticket-action" id="btnParkTicket" title="Fişi Beklemeye Al">⏸️ Beklet</button>
           <button type="button" class="btn-ticket-action" id="btnRecallTicket" title="Bekleyen Fişler">📂 Fişler <span id="parkCountBadge"></span></button>
-          <button type="button" class="btn-ticket-action" id="btnClearTicket" style="color: var(--accent-danger);" title="Fişi Temizle">🗑️ İptal</button>
+          <button type="button" class="btn-ticket-action btn-ticket-action--danger" id="btnClearTicket" title="Fişi Temizle">🗑️ İptal</button>
         </div>
       </div>
 
@@ -95,14 +95,14 @@
   </div>
 
   <!-- Parked Tickets Modal -->
-  <div class="modal-overlay" id="parkedModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="parkedTitle">
+  <div class="modal-overlay" id="parkedModal" hidden role="dialog" aria-modal="true" aria-labelledby="parkedTitle">
     <div class="modal-card">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-        <h2 id="parkedTitle" style="font-size: 1.15rem; font-weight: 800;">Bekleyen Fişler (Park)</h2>
+      <div class="modal-card__head">
+        <h2 id="parkedTitle" class="modal-card__title">Bekleyen Fişler (Park)</h2>
         <button type="button" class="btn-ticket-action" id="btnCloseParkedModal">✕</button>
       </div>
 
-      <div id="parkedList" style="max-height: 280px; overflow-y: auto; margin-bottom: 16px;">
+      <div id="parkedList" class="modal-card__list">
         <!-- Injected by cashier-app.js -->
       </div>
     </div>

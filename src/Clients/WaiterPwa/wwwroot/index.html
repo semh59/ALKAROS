@@ -53,7 +53,7 @@
   </main>
 
   <!-- Sticky Bottom Drawer (When Table Selected) -->
-  <aside class="bottom-bar" id="orderDrawer" style="display: none;" role="region" aria-label="Seçili Masa Özeti">
+  <aside class="bottom-bar" id="orderDrawer" hidden role="region" aria-label="Seçili Masa Özeti">
     <div class="order-summary-pill">
       <span class="order-summary-table" id="selectedTableLabel">Masa: M-01</span>
       <span class="order-summary-items" id="cartItemCount">0 Ürün</span>
@@ -64,7 +64,7 @@
   </aside>
 
   <!-- Modal: Order Entry & Catalog Picker -->
-  <div class="modal-overlay" id="orderModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modalTableTitle">
+  <div class="modal-overlay" id="orderModal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTableTitle">
     <div class="modal-content">
       
       <div class="modal-header">
@@ -82,22 +82,22 @@
         </div>
 
         <!-- Product Grid -->
-        <div class="product-grid" id="productGrid" style="margin-bottom: 20px;">
+        <div class="product-grid product-grid--modal" id="productGrid">
           <!-- Injected by waiter-app.js -->
         </div>
 
         <!-- Active Cart Summary -->
-        <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">Adisyon Kalemleri</h3>
+        <h3 class="modal-subhead">Adisyon Kalemleri</h3>
         <div id="cartItemsList">
           <!-- Injected by waiter-app.js -->
         </div>
       </div>
 
       <!-- Modal Footer Action -->
-      <div style="padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+      <div class="modal-foot">
         <div>
-          <div style="font-size: 0.75rem; color: var(--text-dim);">Toplam Tutar</div>
-          <div id="cartTotalAmount" style="font-size: 1.15rem; font-weight: 800; color: #38bdf8;">0,00 ₺</div>
+          <div class="modal-foot__label">Toplam Tutar</div>
+          <div id="cartTotalAmount" class="modal-foot__total">0,00 ₺</div>
         </div>
         <button type="button" class="btn-success" id="btnSendKitchen">
           <span>🚀 Mutfağa Gönder</span>

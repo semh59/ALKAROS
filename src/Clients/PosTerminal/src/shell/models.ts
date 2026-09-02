@@ -7,7 +7,8 @@ export function classifyViewport(width: number): ViewportMode {
 }
 
 export interface ShellIdentity {
-  branchName: string;
+  /** Omitted until a real multi-branch model exists (finding F-5). */
+  branchName?: string;
   terminalName: string;
   userName: string;
   roleLabel: string;

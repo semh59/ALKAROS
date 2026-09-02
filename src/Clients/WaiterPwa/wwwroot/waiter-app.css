@@ -376,6 +376,75 @@ body {
   justify-content: center;
 }
 
+/* `hidden` is toggled from JS instead of an inline style="display:none", which
+   a strict `style-src 'self'` CSP would drop (deep-analysis finding F-1).
+   These rules beat the flex/other display values above. */
+.modal-overlay[hidden],
+.bottom-bar[hidden] {
+  display: none;
+}
+
+.product-grid--modal {
+  margin-bottom: 20px;
+}
+
+.modal-subhead {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.modal-foot {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-foot__label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.modal-foot__total {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+/* Classes for markup injected via innerHTML by waiter-app.js. These replace
+   inline style="..." attributes that a strict style-src 'self' CSP drops
+   (deep-analysis finding F-1). */
+.cart-empty {
+  color: var(--text-dim);
+  text-align: center;
+  padding: 24px 0;
+}
+
+.cart-item-price {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.cart-item-note-input {
+  margin-top: 6px;
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.cart-item-qty {
+  font-weight: 800;
+  min-width: 24px;
+  text-align: center;
+}
+
 .modal-content {
   background: var(--bg-surface);
   border-top: 1px solid var(--border-color);
