@@ -101,10 +101,5 @@ export interface CatalogWorkspaceProps {
   lastUpdated?: string;
 }
 
-export const catalogEntityLabels: Record<CatalogEntityKind, string> = {
-  categories: "Kategoriler",
-  taxes: "Vergi profilleri",
-  products: "Ürünler",
-  modifiers: "Modifikatörler",
-  prices: "Fiyatlar",
-};
+// Enum label maps live in the central catalog (finding F-7).
+export { catalogAddLabels, catalogEntityLabels } from "../../strings";

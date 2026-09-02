@@ -1,6 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Button, ModalDialog, SelectField, StateMessage, TextField, ValidationSummary } from "../../design-system";
 import {
+  catalogAddLabels,
   catalogEntityLabels,
   type CatalogCategory,
   type CatalogCreateInput,
@@ -37,7 +38,6 @@ const emptyDraft = (): Draft => ({
 });
 
 const kindOrder: readonly CatalogEntityKind[] = ["products", "categories", "taxes", "modifiers", "prices"];
-const catalogAddLabels: Record<CatalogEntityKind, string> = { products: "Ürün", categories: "Kategori", taxes: "Vergi profili", modifiers: "Modifier", prices: "Fiyat" };
 
 export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, onSetAvailability, errorMessage: suppliedError, lastUpdated }: CatalogWorkspaceProps) {
   const [kind, setKind] = useState<CatalogEntityKind>("products");

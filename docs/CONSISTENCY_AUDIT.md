@@ -1,10 +1,11 @@
 # Consistency Audit
 
 `tools/consistency-audit/consistency_audit.py` is a zero-dependency scan that
-guards two invariants across the codebase:
+guards three invariants across the codebase:
 
 - Code and schema identities stay English-only.
 - Known English terms do not leak into user-facing Turkish UI text.
+- User-facing role text is sourced from the central catalog, not inline literals.
 
 It is deliberately narrow so it produces no false positives on a clean tree and
 can gate every remediation wave.
@@ -17,6 +18,7 @@ can gate every remediation wave.
 | Code identifiers | `src/**/*.{cs,ts,tsx}` (excludes `bin`, `obj`, `node_modules`, `dist`) | No Turkish characters right after `class`, `interface`, `record`, `enum`, `struct`, `namespace`, `func`, `function`, `const`, `let`, `var`, `type`, `def`. |
 | Code comments | `src/**/*.{cs,ts,tsx}` comment lines (`//`, `///`, `*`, `#`) | No Turkish characters, except the currency proper noun `kuruş` / `kurus`. |
 | UI term leaks | `src/Clients/**/*.{cs,ts,tsx}` non-comment lines | `Catalog` or `Unknown` must not appear inside `aria-label=`, `title=`, `placeholder=` attributes or as `Catalog ara` / `Unknown ara` visible text. |
+| Role noun leaks | `src/Clients/**/*.{ts,tsx}` non-comment lines, excluding `strings.ts` and `*.test.*` | `Manager`, `Supervisor` or `Cashier` must not appear as a whole word inside a quoted string literal. Role text comes from the central catalog `src/Clients/PosTerminal/src/strings.ts`. |
 
 User-facing Turkish string literals are **not** flagged; that is the desired
 state. See `docs/UI_STYLE_GUIDE.md` for the Turkish terminology dictionary the

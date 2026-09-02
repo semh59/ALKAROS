@@ -176,26 +176,8 @@ export interface TableWorkspaceProps {
   lastUpdated?: string;
 }
 
-export const tableStatusLabels: Record<TableStatus, string> = {
-  Available: "Müsait",
-  Occupied: "Dolu",
-  Reserved: "Rezerve",
-  Cleaning: "Temizlik",
-  OutOfService: "Servis dışı",
-};
-
-export const tableActionLabels: Partial<Record<TableAction, string>> = {
-  SetOccupied: "Masayı aç",
-  SetAvailable: "Müsait yap",
-  Reserve: "Rezervasyon al",
-  CancelReservation: "Rezervasyonu iptal et",
-  ClaimReservation: "Rezervasyonu sahiplen",
-  Transfer: "Masa değiştir",
-  Merge: "Masaları birleştir",
-  Unmerge: "Birleşimi ayır",
-  SetCleaning: "Temizliğe al",
-  SetOutOfService: "Servis dışı yap",
-};
+// Enum label maps live in the central catalog (finding F-7).
+export { tableActionLabels, tableStatusLabels } from "../../strings";
 
 export const actionNeedsReason = (action: TableAction) =>
   action === "Reserve" || action === "CancelReservation" || action === "Transfer" || action === "Merge" || action === "Unmerge";

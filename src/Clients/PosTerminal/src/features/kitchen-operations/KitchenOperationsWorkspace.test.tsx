@@ -61,7 +61,7 @@ describe("kitchen operations workspace", () => {
     await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Gerekçeli onay"))!);
     const dialog = document.querySelector('[role="dialog"]')!;
     await click([...dialog.querySelectorAll("button")].find((button) => button.textContent?.includes("Reprint'i onayla"))!);
-    expect(dialog.textContent).toContain("Supervisor gerekçesi zorunlu.");
+    expect(dialog.textContent).toContain("Süpervizör gerekçesi zorunlu.");
     const input = dialog.querySelector<HTMLInputElement>("input")!;
     await fill(input, "İstasyonda fiziksel kontrol yapıldı; ticket çıkmadı.");
     await click([...dialog.querySelectorAll("button")].find((button) => button.textContent?.includes("Reprint'i onayla"))!);

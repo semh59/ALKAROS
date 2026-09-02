@@ -1,3 +1,13 @@
+// Enum label maps live in the central catalog (finding F-7).
+import {
+  backupStatusLabels,
+  healthStatusLabels,
+  itemStatusLabels,
+  ticketStatusLabels,
+} from "../../strings";
+
+export { backupStatusLabels, healthStatusLabels, itemStatusLabels, ticketStatusLabels };
+
 export type KitchenWorkspaceState =
   | "loading"
   | "ready"
@@ -124,34 +134,6 @@ export interface KitchenWorkspaceProps {
   errorMessage?: string;
   lastUpdated?: string;
 }
-
-export const ticketStatusLabels: Record<KitchenTicket["status"], string> = {
-  Queued: "Bekliyor",
-  Accepted: "Kabul edildi",
-  Preparing: "Hazırlanıyor",
-  Ready: "Hazır",
-  Cancelled: "İptal",
-};
-
-export const itemStatusLabels: Record<KitchenTicketItem["status"], string> = {
-  Queued: "Bekliyor",
-  Preparing: "Hazırlanıyor",
-  Ready: "Hazır",
-  Served: "Servis edildi",
-  Cancelled: "İptal",
-};
-
-export const healthStatusLabels: Record<KitchenHealthSnapshot["databaseStatus"], string> = {
-  Healthy: "Sağlıklı",
-  Degraded: "Sınırlı",
-  Unhealthy: "Sorunlu",
-};
-
-export const backupStatusLabels: Record<KitchenBackup["status"], string> = {
-  InProgress: "Sürüyor",
-  Completed: "Tamamlandı",
-  Failed: "Başarısız",
-};
 
 export function healthStatusLabel(status: KitchenHealthSnapshot["databaseStatus"] | null | undefined): string {
   return status ? healthStatusLabels[status] : "Bilinmiyor";

@@ -68,8 +68,5 @@ export interface BillSplitWorkspaceProps {
   lastUpdated?: string;
 }
 
-export const modeLabels: Record<SplitMode, string> = {
-  EqualByPerson: "Eşit böl",
-  ByItem: "Ürün / miktar",
-  ByAmount: "Tutar gir",
-};
+// Enum label maps live in the central catalog (finding F-7).
+export { modeLabels } from "../../strings";

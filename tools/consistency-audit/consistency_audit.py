@@ -8,6 +8,10 @@ Zero-dependency scan that fails (exit code 1) when it finds:
    .tsx), except the allow-listed currency term "kurus"/"kuruş".
 3. The English words "Catalog" or "Unknown" inside a user-facing attribute
    (aria-label=, title=, placeholder=, label text) in src/Clients/**.
+4. An English role noun ("Manager", "Supervisor", "Cashier") inside a quoted
+   string literal in a src/Clients/** TypeScript file. User-facing role text
+   must come from the central catalog (strings.ts), which is the only file
+   exempt from this check (deep-analysis finding F-7). Test files are exempt.
 
 User-facing Turkish string literals are intentionally NOT flagged; only code
 identities and untranslated English leaks are.
@@ -40,6 +44,10 @@ LEAK_RE = re.compile(
     r"(aria-label|title|placeholder)\s*=\s*[\"'][^\"']*\b(Catalog|Unknown)\b"
     r"|>\s*(Catalog|Unknown)\s+ara\b"
 )
+
+# An English role noun inside a quoted string literal. Matched case-sensitively
+# so identifiers/JSX element names (function Cashier, <Cashier />) are not hit.
+ROLE_NOUN_RE = re.compile(r"[\"'][^\"'\n]*\b(Manager|Supervisor|Cashier)\b[^\"'\n]*[\"']")
 
 SKIP_DIR_PARTS = {"bin", "obj", "node_modules", "dist", ".git"}
 
@@ -84,6 +92,14 @@ def audit() -> list[str]:
                     violations.append(f"{_rel(path)}:{number}: Turkish character in identifier: {line.strip()}")
                 if is_client and LEAK_RE.search(line):
                     violations.append(f"{_rel(path)}:{number}: untranslated English term (Catalog/Unknown) in UI attribute: {line.strip()}")
+                if (
+                    is_client
+                    and path.suffix in (".ts", ".tsx")
+                    and path.name != "strings.ts"
+                    and not path.name.endswith((".test.ts", ".test.tsx"))
+                    and ROLE_NOUN_RE.search(line)
+                ):
+                    violations.append(f"{_rel(path)}:{number}: English role noun in a string literal; use strings.ts: {line.strip()}")
 
     return violations
 

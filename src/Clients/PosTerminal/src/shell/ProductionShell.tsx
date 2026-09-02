@@ -1,5 +1,6 @@
 import { useEffect, useId, useState, type ReactNode } from "react";
 import { Button, ContextDrawer, Icon, StateMessage } from "../design-system";
+import { commonActions, connectivityLabels } from "../strings";
 import {
   allowedNavigation,
   classifyViewport,
@@ -111,17 +112,17 @@ function AccessContent({ session, authorization, children }: { session: ShellSes
 }
 
 function SystemStatus({ connectivity, freshness }: { connectivity: Connectivity; freshness: Freshness }) {
-  const connectionLabel = connectivity.status === "online" ? "Çevrimiçi" : connectivity.status === "reconnecting" ? "Yeniden bağlanıyor" : "Çevrimdışı";
+  const connectionLabel = connectivity.status === "online" ? connectivityLabels.online : connectivity.status === "reconnecting" ? connectivityLabels.reconnecting : connectivityLabels.offline;
   const connectionIcon = connectivity.status === "online" ? "check" : connectivity.status === "reconnecting" ? "refresh" : "offline";
   return <footer className="production-shell__status" aria-label="Sistem durumu" aria-live="polite">
     <div className={`production-shell__status-item production-shell__status-item--${connectivity.status}`} role={connectivity.status === "offline" ? "alert" : "status"}>
       <span className="production-shell__status-symbol" aria-hidden="true"><Icon name={connectionIcon} /></span><strong>{connectionLabel}</strong>
-      {connectivity.status === "offline" && connectivity.onRetry && <button type="button" className="production-shell__status-action" onClick={connectivity.onRetry}>Tekrar dene</button>}
+      {connectivity.status === "offline" && connectivity.onRetry && <button type="button" className="production-shell__status-action" onClick={connectivity.onRetry}>{commonActions.retry}</button>}
     </div>
     <div className={`production-shell__status-item production-shell__status-item--${freshness.status}`} role={freshness.status === "stale" ? "alert" : "status"}>
       <span className="production-shell__status-symbol" aria-hidden="true"><Icon name={freshness.status === "fresh" ? "check" : "clock"} /></span>
       <span><span className="production-shell__status-label-prefix">Veri: </span><time dateTime={freshness.dateTime}>{freshness.label}</time></span>
-      {freshness.status === "stale" && <button type="button" className="production-shell__status-action" onClick={freshness.onRefresh}>Yenile</button>}
+      {freshness.status === "stale" && <button type="button" className="production-shell__status-action" onClick={freshness.onRefresh}>{commonActions.refresh}</button>}
     </div>
     <span className="production-shell__status-spacer" />
   </footer>;

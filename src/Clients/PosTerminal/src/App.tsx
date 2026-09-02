@@ -12,6 +12,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api } from "./api";
 import type { CatalogProduct, DisplaySnapshot, PairingCreated } from "./contracts";
 import { Icon, type IconName } from "./design-system";
+import { navLabels, roleLabels } from "./strings";
 import { ProductionShell } from "./shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "./shell/models";
 import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "./features/tables";
@@ -616,10 +617,10 @@ function ExperiencePage({
   // Role label is derived from the session's capabilities, not from the current
   // route. (deep-analysis finding F-4)
   const roleLabel = capabilitySet.has("catalog.manage")
-    ? "Yönetici"
+    ? roleLabels.manager
     : capabilitySet.has("pos.cashier.mutate")
-      ? "Kasiyer / Operasyon"
-      : "Sınırlı erişim";
+      ? roleLabels.cashierOps
+      : roleLabels.limited;
   const session: ShellSession = {
     status: "authenticated",
     identity: {
@@ -661,12 +662,12 @@ function ExperiencePage({
         onRefresh: () => window.location.reload(),
       };
   const navigation: readonly ShellNavigationItem[] = [
-    { id: "sales", label: "Kasa", href: "/", icon: "sales", requiredCapability: "pos.cashier.mutate" },
-    { id: "tables", label: "Masalar", href: "/tables", icon: "tables", requiredCapability: "pos.cashier.mutate" },
-    { id: "billing", label: "Hesap", href: "/billing", icon: "billing", requiredCapability: "pos.cashier.mutate" },
-    { id: "kitchen", label: "Mutfak", href: "/kitchen", icon: "kitchen", requiredCapability: "pos.cashier.mutate" },
-    { id: "catalog", label: "Menü", href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
-    { id: "system-health", label: "Sistem", href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
+    { id: "sales", label: navLabels.sales, href: "/", icon: "sales", requiredCapability: "pos.cashier.mutate" },
+    { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "pos.cashier.mutate" },
+    { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "pos.cashier.mutate" },
+    { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "pos.cashier.mutate" },
+    { id: "catalog", label: navLabels.catalog, href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
+    { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
   ];
   const title = path === "/tables" ? "Masa yönetimi" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : "Kasa satış";
   const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : "Gerçek zamanlı sipariş ve müşteri ekranı";

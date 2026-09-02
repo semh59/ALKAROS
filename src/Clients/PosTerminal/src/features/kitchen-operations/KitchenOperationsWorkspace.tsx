@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
+import { kitchenReprintText } from "../../strings";
 import {
   healthStatusLabel,
   itemStatusLabels,
@@ -144,7 +145,7 @@ export function KitchenOperationsWorkspace({
     event.preventDefault();
     if (!selectedDelivery || !decision) return;
     if (!reason.trim()) {
-      setFormErrors(["Supervisor gerekçesi zorunlu."]);
+      setFormErrors([kitchenReprintText.reasonRequired]);
       return;
     }
     const callback = decision === "approve" ? onApproveReprint : onRejectReprint;
@@ -211,7 +212,7 @@ export function KitchenOperationsWorkspace({
     </div>
 
     <ModalDialog open={decision !== null} title={decision === "approve" ? "Reprint onayı" : "Reprint reddi"} onClose={() => { if (!busyKey) { setDecision(null); setSelectedDelivery(null); } }}>
-      <form className="kitchen-decision-form" onSubmit={(event) => void submitDecision(event)}><ValidationSummary title="Gerekçeyi kontrol edin" errors={formErrors} />{selectedDelivery && <p className="kitchen-decision-form__context"><strong>Doğrulanamayan teslimat</strong> · {compactId(selectedDelivery.id)} · deneme {selectedDelivery.attemptNumber}</p>}<TextField label="Supervisor gerekçesi" hint="İstasyonda fiziksel kontrol yapıldı mı?" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Örn. Ticket yazıcıdan çıkmadı" autoComplete="off" /><div className="kitchen-decision-form__actions"><Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => { setDecision(null); setSelectedDelivery(null); }}>Vazgeç</Button><Button type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : decision === "approve" ? "Reprint'i onayla" : "Reprint'i reddet"}</Button></div></form>
+      <form className="kitchen-decision-form" onSubmit={(event) => void submitDecision(event)}><ValidationSummary title="Gerekçeyi kontrol edin" errors={formErrors} />{selectedDelivery && <p className="kitchen-decision-form__context"><strong>Doğrulanamayan teslimat</strong> · {compactId(selectedDelivery.id)} · deneme {selectedDelivery.attemptNumber}</p>}<TextField label={kitchenReprintText.reasonLabel} hint="İstasyonda fiziksel kontrol yapıldı mı?" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Örn. Ticket yazıcıdan çıkmadı" autoComplete="off" /><div className="kitchen-decision-form__actions"><Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => { setDecision(null); setSelectedDelivery(null); }}>Vazgeç</Button><Button type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : decision === "approve" ? "Reprint'i onayla" : "Reprint'i reddet"}</Button></div></form>
     </ModalDialog>
   </section>;
 }
