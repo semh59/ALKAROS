@@ -45,7 +45,7 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 | --- | --- | --- | --- | --- |
 | 1 | Identity & Authorization | none (cross-cutting; consumed by all modules for actor/role checks) | none | II.2.1 |
 | 2 | Catalog | none | ProductCatalogChanged → Menu, Order, OnlineOrdering | II.2.2 |
-| 3 | Table Management | none | TableOccupancyChanged → Order, Bill, QR Ordering | II.2.3, II.5.15 |
+| 3 | Table Management | Order, Bill (reparent active orders/bills on merge / transfer / unmerge, same transaction — amended v1-wave25 after V1-TBL-002/003) | TableOccupancyChanged → Order, Bill, QR Ordering | II.2.3, II.5.15 |
 | 4 | Order | Identity (actor validation), Catalog (item snapshot), Table Management (table association) | OrderStateChanged → Kitchen, Bill, QR Ordering, Online Ordering, Reporting, Reconciliation | II.5.1, II.7 |
 | 5 | Bill | Order (order items into bill), Identity | BillStateChanged → Payment, Fiscal, Reporting, Reconciliation | II.3.3, II.5.2, III.7 |
 | 6 | Payment | Bill (allocation target), Identity | PaymentStateChanged → Bill, Fiscal, Meal Card, Customer Account, Reconciliation | II.5.3, III.8 |
@@ -105,6 +105,21 @@ Negative:
   aynı değildir").
 - Reporting must never call domain modules to mutate state; it consumes
   projection-ready events only.
+
+## Enforcement
+
+Two automated gates keep code and this record in sync:
+
+- `tests/Architecture/ModuleBoundaries` asserts every module's actual compile
+  dependencies are declared in `IModule.DependsOn`, that `DependsOn` stays within
+  the direct-call edges above, and that no module/integration project is an
+  empty shell.
+- `tools/consistency-audit` (rule 5) fails when a module issues an `UPDATE` /
+  `INSERT` / `DELETE` against another module's PostgreSQL schema. A module may
+  **read** another module's relations for a same-transaction query or a
+  reconciliation projection; it changes another module's rows only through that
+  module's repository contract. The append-only `audit` schema (AUD-01) is
+  written by every module by design and is exempt.
 
 ## Affected tasks
 

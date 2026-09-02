@@ -1,3 +1,5 @@
+using System.Reflection;
+using ALKAROS.Host.Composition.Modules;
 using ALKAROS.ModuleComposition;
 using NetArchTest.Rules;
 using Xunit;
@@ -49,6 +51,94 @@ public static class ModuleBoundaryTests
         Assert.True(result.IsSuccessful,
             "ModuleComposition must not depend on any business module. Failures: " +
             string.Join(", ", result.FailingTypeNames ?? Array.Empty<string>()));
+    }
+
+    // Direct-call edges approved in docs/architecture/module-dependency-rules.md
+    // (V0-ARC-001). A module's IModule.DependsOn must be a subset of this; a new
+    // edge is added here and to the doc together, never silently in code.
+    private static readonly Dictionary<string, string[]> ApprovedEdges =
+        new(StringComparer.Ordinal)
+        {
+            ["Orders"] = ["Identity", "Catalog", "Tables"],
+            ["Billing"] = ["Orders", "Identity"],
+            ["Kitchen"] = ["Orders", "Identity"],
+            ["Tables"] = ["Orders", "Billing"],
+        };
+
+    private static List<(IModule Module, Assembly Assembly)> CatalogModules()
+        => ModuleRegistry.DefaultCatalog
+            .Select(t => ((IModule)Activator.CreateInstance(t)!, t.Assembly))
+            .ToList();
+
+    [Fact]
+    public static void DeclaredDependenciesStayWithinTheApprovedEdgeList()
+    {
+        foreach (var (module, _) in CatalogModules())
+        {
+            var approved = ApprovedEdges.TryGetValue(module.Id, out var e) ? e : [];
+            var extra = module.DependsOn.Except(approved, StringComparer.Ordinal).ToArray();
+            Assert.True(
+                extra.Length == 0,
+                $"Module '{module.Id}' declares dependency on [{string.Join(", ", extra)}] which is not in " +
+                "the approved edge list. Add the edge to docs/architecture/module-dependency-rules.md and " +
+                "ApprovedEdges together, or remove the dependency.");
+        }
+    }
+
+    [Fact]
+    public static void ActualAssemblyDependenciesAreDeclaredInDependsOn()
+    {
+        var idByAssemblyName = CatalogModules()
+            .ToDictionary(m => m.Assembly.GetName().Name!, m => m.Module.Id, StringComparer.Ordinal);
+
+        foreach (var (module, assembly) in CatalogModules())
+        {
+            var referencedModuleIds = assembly.GetReferencedAssemblies()
+                .Select(a => a.Name)
+                .Where(name => name is not null && idByAssemblyName.ContainsKey(name))
+                .Select(name => idByAssemblyName[name!])
+                .Where(id => id != module.Id)
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
+
+            var undeclared = referencedModuleIds.Except(module.DependsOn, StringComparer.Ordinal).ToArray();
+            Assert.True(
+                undeclared.Length == 0,
+                $"Module '{module.Id}' has a compile dependency on [{string.Join(", ", undeclared)}] " +
+                "(project reference) that is not declared in IModule.DependsOn. Declare it so the composition " +
+                "order and the boundary rules stay honest.");
+        }
+    }
+
+    [Fact]
+    public static void NoModuleOrIntegrationProjectIsAnEmptyShell()
+    {
+        var repoRoot = FindRepoRoot();
+        foreach (var area in new[] { "Modules", "Integrations" })
+        {
+            var areaDir = Path.Combine(repoRoot, "src", area);
+            if (!Directory.Exists(areaDir))
+                continue;
+
+            foreach (var projectDir in Directory.GetDirectories(areaDir))
+            {
+                var hasProject = Directory.GetFiles(projectDir, "*.csproj").Length > 0;
+                var hasSource = Directory.GetFiles(projectDir, "*.cs", SearchOption.AllDirectories)
+                    .Any(f => !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"));
+                Assert.False(
+                    hasProject && !hasSource,
+                    $"'{Path.GetRelativePath(repoRoot, projectDir)}' has a .csproj but no source. Create a module " +
+                    "or integration project together with its first implementation file, not before.");
+            }
+        }
+    }
+
+    private static string FindRepoRoot()
+    {
+        var dir = AppContext.BaseDirectory;
+        while (dir is not null && !File.Exists(Path.Combine(dir, "ALKAROS.slnx")))
+            dir = Path.GetDirectoryName(dir);
+        return dir ?? throw new InvalidOperationException("Could not locate the repository root.");
     }
 
     [Fact]
