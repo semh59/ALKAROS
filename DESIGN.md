@@ -87,6 +87,16 @@ Tüm renk eşleşmeleri matematiksel olarak doğrulanmıştır: $(L_1 + 0.05) / 
 }
 ```
 
+### 2.2 İkonografi (Iconography)
+
+Tek ikon seti: **line ikonlar, 24x24 grid, `currentColor` ile stroke.** Kaynak
+`src/Clients/PosTerminal/src/design-system/Icon.tsx` (`<Icon name="..." />`).
+Vanilla istemciler (`Cashier`, `WaiterPwa`) aynı yolları `index.html` içinde
+satır içi bir `<svg>` sprite olarak taşır — ikisi elle senkron tutulur.
+Bu belgedeki taslaklarda geçen `lucide:*` adları bu setteki en yakın isme
+eşlenir (ör. `lucide:clock-4` → `clock`, `lucide:rotate-cw` → `refresh`).
+Emoji ve tipografik glif ikon olarak **kullanılmaz** (finding F-8).
+
 ---
 
 ## 3. Mimari Bileşen Mimarisi (Component Architecture)

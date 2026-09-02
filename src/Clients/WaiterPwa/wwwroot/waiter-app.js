@@ -303,7 +303,7 @@
         <div class="table-card ${escapeHtml(table.status)} ${isSelected ? 'selected' : ''}" data-table-id="${escapeHtml(table.id)}" tabindex="0" role="button">
           <div class="table-header-row">
             <span class="table-number">${escapeHtml(table.number)}</span>
-            <span class="table-capacity">👤 ${escapeHtml(table.seats || 4)}</span>
+            <span class="table-capacity"><svg class="icon" aria-hidden="true"><use href="#ico-user"/></svg> ${escapeHtml(table.seats || 4)}</span>
           </div>
           <span class="table-status-tag ${escapeHtml(table.status)}">${escapeHtml(getStatusLabel(table.status))}</span>
           <div class="table-amount">${table.amount > 0 ? formatMoney(table.amount) : 'Boş'}</div>

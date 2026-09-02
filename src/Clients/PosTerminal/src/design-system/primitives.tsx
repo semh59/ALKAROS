@@ -10,6 +10,7 @@ import {
   type SelectHTMLAttributes,
 } from "react";
 import "./primitives.css";
+import { Icon, type IconName } from "./Icon";
 
 const focusableSelector = [
   "a[href]",
@@ -79,22 +80,22 @@ export function ValidationSummary({ title, errors }: { title: string; errors: re
   if (errors.length === 0) return null;
   return (
     <div className="ds-validation-summary" role="alert">
-      <span aria-hidden="true">!</span>
+      <span className="ds-validation-summary__icon" aria-hidden="true"><Icon name="warning" /></span>
       <div><strong>{title}</strong><ul>{errors.map((error) => <li key={error}>{error}</li>)}</ul></div>
     </div>
   );
 }
 
 export type StateTone = "info" | "success" | "warning" | "error" | "offline" | "stale" | "conflict" | "unauthorized" | "forbidden";
-const stateSymbols: Record<StateTone, string> = {
-  info: "i", success: "✓", warning: "!", error: "×", offline: "↯", stale: "◷", conflict: "⇄", unauthorized: "🔒", forbidden: "⊘",
+const stateIcons: Record<StateTone, IconName> = {
+  info: "info", success: "check", warning: "warning", error: "close", offline: "offline", stale: "clock", conflict: "conflict", unauthorized: "lock", forbidden: "forbidden",
 };
 
 export function StateMessage({ tone, title, children, actions }: { tone: StateTone; title: string; children?: ReactNode; actions?: ReactNode }) {
   const urgent = tone === "error" || tone === "offline" || tone === "unauthorized" || tone === "forbidden";
   return (
     <section className={`ds-state-message ds-state-message--${tone}`} role={urgent ? "alert" : "status"} aria-live={urgent ? "assertive" : "polite"}>
-      <span className="ds-state-message__symbol" aria-hidden="true">{stateSymbols[tone]}</span>
+      <span className="ds-state-message__symbol" aria-hidden="true"><Icon name={stateIcons[tone]} /></span>
       <div className="ds-state-message__content">
         <strong>{title}</strong>
         {children}

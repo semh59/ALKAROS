@@ -414,6 +414,19 @@ body {
   color: #38bdf8;
 }
 
+/* Icon set (mirrors PosTerminal design-system/Icon.tsx, finding F-8) */
+.icon {
+  width: 1.15em;
+  height: 1.15em;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: -0.2em;
+}
+
 /* Classes for markup injected via innerHTML by waiter-app.js. These replace
    inline style="..." attributes that a strict style-src 'self' CSP drops
    (deep-analysis finding F-1). */

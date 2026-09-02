@@ -78,7 +78,8 @@
 .production-shell__nav-link:focus-visible,
 .production-shell__context-trigger:focus-visible,
 .production-shell__status-action:focus-visible { outline: 3px solid #71c6ff; outline-offset: 2px; }
-.production-shell__nav-symbol { width: 1.5rem; flex: 0 0 auto; text-align: center; font-weight: 900; }
+.production-shell__nav-symbol { width: 1.5rem; flex: 0 0 auto; display: inline-flex; justify-content: center; }
+.production-shell__nav-symbol .ds-icon { width: 1.35rem; height: 1.35rem; }
 
 .production-shell__workspace {
   grid-area: workspace;
@@ -113,7 +114,8 @@
 .production-shell__status-item--reconnecting,
 .production-shell__status-item--stale { color: var(--ds-color-warning); }
 .production-shell__status-item--offline { color: var(--ds-color-danger); }
-.production-shell__status-symbol { font-weight: 900; }
+.production-shell__status-symbol { display: inline-flex; }
+.production-shell__status-symbol .ds-icon { width: 1.1rem; height: 1.1rem; }
 .production-shell__status-action { min-width: var(--ds-target-min); min-height: var(--ds-target-min); border: 0; padding: 0 var(--ds-space-2); color: currentColor; background: transparent; font-weight: 800; text-decoration: underline; cursor: pointer; }
 .production-shell__status-spacer { flex: 1; }
 

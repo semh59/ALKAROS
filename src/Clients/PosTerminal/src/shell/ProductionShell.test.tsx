@@ -9,9 +9,9 @@ import { ProductionShell, allowedNavigation, classifyViewport, type ProductionSh
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 const navigation = [
-  { id: "cash", label: "Kasa", href: "/cash", symbol: "K", requiredCapability: "cash.read" },
-  { id: "tables", label: "Masalar", href: "/tables", symbol: "M", requiredCapability: "tables.read" },
-  { id: "catalog", label: "Menü ve katalog", href: "/catalog", symbol: "Ü", requiredCapability: "catalog.manage" },
+  { id: "cash", label: "Kasa", href: "/cash", icon: "sales", requiredCapability: "cash.read" },
+  { id: "tables", label: "Masalar", href: "/tables", icon: "tables", requiredCapability: "tables.read" },
+  { id: "catalog", label: "Menü ve katalog", href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
 ] as const;
 
 const identity: ShellIdentity = {
@@ -58,7 +58,7 @@ describe("production shell", () => {
     await render(<ProductionShell {...baseProps} />);
 
     const links = [...document.querySelectorAll<HTMLAnchorElement>("nav a")];
-    expect(links.map((link) => link.textContent)).toEqual(["KKasa", "MMasalar"]);
+    expect(links.map((link) => link.textContent)).toEqual(["Kasa", "Masalar"]);
     expect(links[0].getAttribute("aria-current")).toBe("page");
     expect(document.body.textContent).toContain("Merkez");
     expect(document.body.textContent).toContain("Kasa 2");

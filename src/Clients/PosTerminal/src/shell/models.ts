@@ -1,3 +1,5 @@
+import type { IconName } from "../design-system";
+
 export type ViewportMode = "wide" | "compact" | "mobile";
 
 export function classifyViewport(width: number): ViewportMode {
@@ -36,7 +38,7 @@ export interface ShellNavigationItem {
   id: string;
   label: string;
   href: string;
-  symbol: string;
+  icon: IconName;
   requiredCapability: string;
 }
 

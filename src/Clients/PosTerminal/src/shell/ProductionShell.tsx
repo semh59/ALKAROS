@@ -1,5 +1,5 @@
 import { useEffect, useId, useState, type ReactNode } from "react";
-import { Button, ContextDrawer, StateMessage } from "../design-system";
+import { Button, ContextDrawer, Icon, StateMessage } from "../design-system";
 import {
   allowedNavigation,
   classifyViewport,
@@ -69,7 +69,7 @@ export function ProductionShell(props: ProductionShellProps) {
 
       <nav className="production-shell__nav" aria-label="Ana navigasyon">
         {allowedItems.map((item) => <a key={item.id} className="production-shell__nav-link" href={item.href} aria-current={item.id === activeNavigationId ? "page" : undefined}>
-          <span className="production-shell__nav-symbol" aria-hidden="true">{item.symbol}</span>
+          <span className="production-shell__nav-symbol" aria-hidden="true"><Icon name={item.icon} /></span>
           <span className="production-shell__nav-label">{item.label}</span>
         </a>)}
       </nav>
@@ -112,14 +112,14 @@ function AccessContent({ session, authorization, children }: { session: ShellSes
 
 function SystemStatus({ connectivity, freshness }: { connectivity: Connectivity; freshness: Freshness }) {
   const connectionLabel = connectivity.status === "online" ? "Çevrimiçi" : connectivity.status === "reconnecting" ? "Yeniden bağlanıyor" : "Çevrimdışı";
-  const connectionSymbol = connectivity.status === "online" ? "✓" : connectivity.status === "reconnecting" ? "↻" : "↯";
+  const connectionIcon = connectivity.status === "online" ? "check" : connectivity.status === "reconnecting" ? "refresh" : "offline";
   return <footer className="production-shell__status" aria-label="Sistem durumu" aria-live="polite">
     <div className={`production-shell__status-item production-shell__status-item--${connectivity.status}`} role={connectivity.status === "offline" ? "alert" : "status"}>
-      <span className="production-shell__status-symbol" aria-hidden="true">{connectionSymbol}</span><strong>{connectionLabel}</strong>
+      <span className="production-shell__status-symbol" aria-hidden="true"><Icon name={connectionIcon} /></span><strong>{connectionLabel}</strong>
       {connectivity.status === "offline" && connectivity.onRetry && <button type="button" className="production-shell__status-action" onClick={connectivity.onRetry}>Tekrar dene</button>}
     </div>
     <div className={`production-shell__status-item production-shell__status-item--${freshness.status}`} role={freshness.status === "stale" ? "alert" : "status"}>
-      <span className="production-shell__status-symbol" aria-hidden="true">{freshness.status === "fresh" ? "✓" : "◷"}</span>
+      <span className="production-shell__status-symbol" aria-hidden="true"><Icon name={freshness.status === "fresh" ? "check" : "clock"} /></span>
       <span><span className="production-shell__status-label-prefix">Veri: </span><time dateTime={freshness.dateTime}>{freshness.label}</time></span>
       {freshness.status === "stale" && <button type="button" className="production-shell__status-action" onClick={freshness.onRefresh}>Yenile</button>}
     </div>

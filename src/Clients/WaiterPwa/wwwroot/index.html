@@ -14,17 +14,31 @@
 </head>
 <body>
 
+  <!--
+    Icon sprite - line icons on a 24x24 grid, stroked with currentColor.
+    Mirror of src/Clients/PosTerminal/src/design-system/Icon.tsx (finding F-8).
+    Keep the two in sync. Used as <svg class="icon"><use href="#ico-NAME"/></svg>.
+  -->
+  <svg xmlns="http://www.w3.org/2000/svg" hidden aria-hidden="true">
+    <symbol id="ico-brand" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></symbol>
+    <symbol id="ico-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></symbol>
+    <symbol id="ico-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></symbol>
+    <symbol id="ico-add" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+    <symbol id="ico-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7Z"/></symbol>
+    <symbol id="ico-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  </svg>
+
   <!-- Top Navigation / Header -->
   <header class="app-header" role="banner">
     <div class="header-brand">
       <div class="header-logo">
-        <span>⚡ ALKAROS</span>
+        <span><svg class="icon" aria-hidden="true"><use href="#ico-brand"/></svg> ALKAROS</span>
       </div>
       <span class="header-badge">Garson PWA</span>
     </div>
     <div class="header-actions">
-      <button type="button" class="btn-icon" id="btnRefreshTables" title="Yenile" aria-label="Yenile">🔄</button>
-      <button type="button" class="btn-icon" id="btnStaffProfile" title="Personel" aria-label="Personel">👤</button>
+      <button type="button" class="btn-icon" id="btnRefreshTables" title="Yenile" aria-label="Yenile"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg></button>
+      <button type="button" class="btn-icon" id="btnStaffProfile" title="Personel" aria-label="Personel"><svg class="icon" aria-hidden="true"><use href="#ico-user"/></svg></button>
     </div>
   </header>
 
@@ -59,7 +73,7 @@
       <span class="order-summary-items" id="cartItemCount">0 Ürün</span>
     </div>
     <button type="button" class="btn-primary" id="btnOpenOrderModal">
-      <span>➕ Sipariş Ekle</span>
+      <span><svg class="icon" aria-hidden="true"><use href="#ico-add"/></svg> Sipariş Ekle</span>
     </button>
   </aside>
 
@@ -69,12 +83,12 @@
       
       <div class="modal-header">
         <h2 class="modal-title" id="modalTableTitle">Masa Sipariş Ekle</h2>
-        <button type="button" class="btn-icon" id="btnCloseModal" aria-label="Kapat">✕</button>
+        <button type="button" class="btn-icon" id="btnCloseModal" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
       </div>
 
       <div class="modal-body">
         <!-- Search -->
-        <input type="search" class="search-input" id="modalProductSearch" placeholder="🔍 Ürün veya içecek ara..." autocomplete="off">
+        <input type="search" class="search-input" id="modalProductSearch" placeholder="Ürün veya içecek ara..." autocomplete="off">
 
         <!-- Category Filters -->
         <div class="zone-scroll" id="categoryFilterBar">
@@ -100,7 +114,7 @@
           <div id="cartTotalAmount" class="modal-foot__total">0,00 ₺</div>
         </div>
         <button type="button" class="btn-success" id="btnSendKitchen">
-          <span>🚀 Mutfağa Gönder</span>
+          <span><svg class="icon" aria-hidden="true"><use href="#ico-send"/></svg> Mutfağa Gönder</span>
         </button>
       </div>
 

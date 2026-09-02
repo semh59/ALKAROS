@@ -11,6 +11,7 @@ import {
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api } from "./api";
 import type { CatalogProduct, DisplaySnapshot, PairingCreated } from "./contracts";
+import { Icon, type IconName } from "./design-system";
 import { ProductionShell } from "./shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "./shell/models";
 import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "./features/tables";
@@ -660,12 +661,12 @@ function ExperiencePage({
         onRefresh: () => window.location.reload(),
       };
   const navigation: readonly ShellNavigationItem[] = [
-    { id: "sales", label: "Kasa", href: "/", symbol: "₺", requiredCapability: "pos.cashier.mutate" },
-    { id: "tables", label: "Masalar", href: "/tables", symbol: "▦", requiredCapability: "pos.cashier.mutate" },
-    { id: "billing", label: "Hesap", href: "/billing", symbol: "÷", requiredCapability: "pos.cashier.mutate" },
-    { id: "kitchen", label: "Mutfak", href: "/kitchen", symbol: "◇", requiredCapability: "pos.cashier.mutate" },
-    { id: "catalog", label: "Menü", href: "/catalog", symbol: "≡", requiredCapability: "catalog.manage" },
-    { id: "system-health", label: "Sistem", href: "/system-health", symbol: "✚", requiredCapability: "catalog.manage" },
+    { id: "sales", label: "Kasa", href: "/", icon: "sales", requiredCapability: "pos.cashier.mutate" },
+    { id: "tables", label: "Masalar", href: "/tables", icon: "tables", requiredCapability: "pos.cashier.mutate" },
+    { id: "billing", label: "Hesap", href: "/billing", icon: "billing", requiredCapability: "pos.cashier.mutate" },
+    { id: "kitchen", label: "Mutfak", href: "/kitchen", icon: "kitchen", requiredCapability: "pos.cashier.mutate" },
+    { id: "catalog", label: "Menü", href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
+    { id: "system-health", label: "Sistem", href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
   ];
   const title = path === "/tables" ? "Masa yönetimi" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : "Kasa satış";
   const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : "Gerçek zamanlı sipariş ve müşteri ekranı";
@@ -1205,7 +1206,7 @@ function CustomerDisplay() {
         kicker="SİPARİŞ TAMAMLANDI"
         title="Teşekkür ederiz."
         description={snapshot.message || "Siparişiniz tamamlandı. Afiyet olsun."}
-        icon="✓"
+        icon="check"
       />
     );
   }
@@ -1294,7 +1295,7 @@ function DisplayMessageScreen({
   title: string;
   description: string;
   action?: ReactNode;
-  icon?: string;
+  icon?: IconName;
   busy?: boolean;
   alert?: boolean;
 }) {
@@ -1308,7 +1309,7 @@ function DisplayMessageScreen({
         aria-busy={busy}
       >
         {busy && <span className="loading-spinner" aria-hidden="true" />}
-        {icon && <span className="completion-icon" aria-hidden="true">{icon}</span>}
+        {icon && <span className="completion-icon" aria-hidden="true"><Icon name={icon} /></span>}
         <span className="display-kicker">{kicker}</span>
         <h1>{title}</h1>
         <p>{description}</p>
@@ -1326,7 +1327,7 @@ function DisplayUnavailable({ onRetry }: { onRetry: () => Promise<void> }) {
       title="Bilgi güncellenemiyor"
       description="Eski ürün ve tutarlar güvenlik nedeniyle ekrandan kaldırıldı. Bağlantıyı kontrol edip yeniden deneyin."
       action={<button className="display-retry" onClick={() => void onRetry()}>Tekrar dene</button>}
-      icon="!"
+      icon="warning"
       alert
     />
   );

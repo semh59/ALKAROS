@@ -193,8 +193,8 @@
           <button type="button" class="btn-micro" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
           <span class="ticket-row-qty">${item.quantity}</span>
           <button type="button" class="btn-micro" data-action="inc" data-id="${escapeHtml(item.id)}">+</button>
-          <button type="button" class="btn-micro" data-action="comp" data-id="${escapeHtml(item.id)}" title="İkram">🎁</button>
-          <button type="button" class="btn-micro btn-del" data-action="del" data-id="${escapeHtml(item.id)}" title="Sil">✕</button>
+          <button type="button" class="btn-micro" data-action="comp" data-id="${escapeHtml(item.id)}" title="İkram" aria-label="İkram"><svg class="icon" aria-hidden="true"><use href="#ico-gift"/></svg></button>
+          <button type="button" class="btn-micro btn-del" data-action="del" data-id="${escapeHtml(item.id)}" title="Sil" aria-label="Sil"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
         </div>
       </div>
     `).join('');
