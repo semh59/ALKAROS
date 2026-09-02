@@ -42,7 +42,7 @@ public sealed class KitchenPrinterRouter : IKitchenPrinterRouter
         }
 
         var reqDate = request.Date;
-        var matchingDailyRoutes = reqDate.HasValue
+        var matchingDailyRoutes = reqDate.HasValue && request.CategoryId.HasValue
             ? activeRoutes.Where(r => r.RouteLevel == RouteLevel.DailySpecial &&
                                       r.SpecialDate == reqDate.Value &&
                                       r.CategoryId == request.CategoryId).ToList()
@@ -54,9 +54,9 @@ public sealed class KitchenPrinterRouter : IKitchenPrinterRouter
                 $"Ambiguous routing: {matchingDailyRoutes.Count} active daily special routes found for category '{request.CategoryId}' on date '{reqDate}'.");
         }
 
-        var matchingCategoryRoutes = activeRoutes
-            .Where(r => r.RouteLevel == RouteLevel.Category && r.CategoryId == request.CategoryId)
-            .ToList();
+        var matchingCategoryRoutes = request.CategoryId.HasValue
+            ? activeRoutes.Where(r => r.RouteLevel == RouteLevel.Category && r.CategoryId == request.CategoryId).ToList()
+            : [];
 
         if (matchingCategoryRoutes.Count > 1)
         {

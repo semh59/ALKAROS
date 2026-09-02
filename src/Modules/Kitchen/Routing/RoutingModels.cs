@@ -7,14 +7,14 @@ public sealed class RoutingEvaluationRequest
 {
     public RoutingEvaluationRequest(
         Guid productId,
-        Guid categoryId,
+        Guid? categoryId = null,
         Guid? itemId = null,
         DateOnly? date = null)
     {
         if (productId == Guid.Empty)
             throw new ArgumentException("ProductId cannot be empty.", nameof(productId));
         if (categoryId == Guid.Empty)
-            throw new ArgumentException("CategoryId cannot be empty.", nameof(categoryId));
+            throw new ArgumentException("CategoryId cannot be empty when supplied.", nameof(categoryId));
 
         ProductId = productId;
         CategoryId = categoryId;
@@ -24,7 +24,14 @@ public sealed class RoutingEvaluationRequest
 
     public Guid? ItemId { get; }
     public Guid ProductId { get; }
-    public Guid CategoryId { get; }
+
+    /// <summary>
+    /// Product category. Optional: order submission has the product and item ids
+    /// but not the category, so a request without it is routed by the Item,
+    /// Product and Default levels only; Category / DailySpecial levels are
+    /// skipped (deep-analysis finding B-3).
+    /// </summary>
+    public Guid? CategoryId { get; }
     public DateOnly? Date { get; }
 }
 

@@ -5,6 +5,7 @@ using System.Threading.RateLimiting;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
@@ -90,9 +91,16 @@ public static class DualScreenApplication
                     $"{KitchenStationEnvironmentVariable} is required before cashier order submission is enabled.");
             }
 
+            // The env var is now the fallback station for items that no printer
+            // route resolves; configured routes drive per-item station
+            // assignment and produce one ticket per station
+            // (deep-analysis finding B-3).
             return new KitchenOrderSubmissionDispatcher(
                 services.GetRequiredService<IKitchenTicketRepository>(),
-                stationId);
+                stationId,
+                services.GetRequiredService<IKitchenPrinterRouter>(),
+                services.GetRequiredService<IPrinterRepository>(),
+                services.GetRequiredService<IPrinterRouteRepository>());
         });
         builder.Services.AddSignalR(options => options.EnableDetailedErrors = false);
         builder.Services.Configure<ForwardedHeadersOptions>(forwarded =>
