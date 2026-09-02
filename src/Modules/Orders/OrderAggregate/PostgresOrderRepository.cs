@@ -127,6 +127,60 @@ public sealed class PostgresOrderRepository : IOrderRepository
         return newRowVersion;
     }
 
+    public async Task<int> ReparentActiveOrdersToTableAsync(
+        Guid fromTableId,
+        Guid toTableId,
+        DateTimeOffset timestamp,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = CreateCommand(connection, transaction,
+            """
+            UPDATE orders.orders
+            SET table_id = @to_table_id,
+                updated_at = @timestamp,
+                row_version = row_version + 1
+            WHERE table_id = @from_table_id AND status NOT IN ('Completed', 'Cancelled');
+            """);
+        command.Parameters.AddWithValue("to_table_id", toTableId);
+        command.Parameters.AddWithValue("from_table_id", fromTableId);
+        command.Parameters.AddWithValue("timestamp", timestamp);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task<int> ReparentOrderToTableAsync(
+        Guid orderId,
+        Guid expectedFromTableId,
+        Guid toTableId,
+        DateTimeOffset timestamp,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = CreateCommand(connection, transaction,
+            """
+            UPDATE orders.orders
+            SET table_id = @to_table_id,
+                updated_at = @timestamp,
+                row_version = row_version + 1
+            WHERE order_id = @order_id
+              AND table_id = @from_table_id
+              AND status NOT IN ('Completed', 'Cancelled');
+            """);
+        command.Parameters.AddWithValue("to_table_id", toTableId);
+        command.Parameters.AddWithValue("from_table_id", expectedFromTableId);
+        command.Parameters.AddWithValue("order_id", orderId);
+        command.Parameters.AddWithValue("timestamp", timestamp);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     private static async Task InsertOrderAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,

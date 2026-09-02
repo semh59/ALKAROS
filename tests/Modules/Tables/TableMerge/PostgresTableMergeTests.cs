@@ -1,3 +1,5 @@
+using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Tables.TableMerge.Tests.Fixtures;
 using FluentAssertions;
 using Npgsql;
@@ -17,7 +19,7 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
     public PostgresTableMergeTests(TableMergeTestDatabase db)
     {
         _db = db;
-        _repository = new PostgresTableMergeRepository(_db.DataSource);
+        _repository = new PostgresTableMergeRepository(_db.DataSource, new PostgresOrderRepository(_db.DataSource), new PostgresBillRepository(_db.DataSource));
         _service = new TableMergeService(_repository);
     }
 

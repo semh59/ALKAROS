@@ -8,6 +8,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <!-- Table merge/transfer reparent active orders and bills in the same
+         transaction through the Order/Bill module contracts (V0-ARC-001). -->
+    <ProjectReference Include="..\Orders\ALKAROS.Orders.csproj" />
+    <ProjectReference Include="..\Billing\ALKAROS.Billing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,7 +9,10 @@ public sealed class TablesModule : IModule
 
     public string DisplayName => "Table Management";
 
-    public IReadOnlyCollection<string> DependsOn => Array.Empty<string>();
+    // Table merge/transfer/unmerge reparent active orders and bills to the new
+    // table inside the same transaction, through the Order and Bill module
+    // contracts (V0-ARC-001: Tables -> Order, Bill same-transaction reparent).
+    public IReadOnlyCollection<string> DependsOn => ["Orders", "Billing"];
 
     public void Register(ModuleContext context)
     {

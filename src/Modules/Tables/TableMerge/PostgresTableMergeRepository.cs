@@ -1,5 +1,7 @@
 using System.Data;
 using System.Text.Json;
+using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -13,16 +15,25 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
 {
     private const string TableMergesTable = "table_mgmt.table_merges";
     private const string TablesTable = "table_mgmt.tables";
+    // Read-only references for merge preconditions and participant discovery.
+    // Order/Bill state writes go through the injected module contracts.
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
     private const string BillAllocationsTable = "billing.bill_allocations";
     private const string AuditEventsTable = "audit.audit_events";
 
     private readonly NpgsqlDataSource _dataSource;
+    private readonly IOrderRepository _orderRepository;
+    private readonly IBillRepository _billRepository;
 
-    public PostgresTableMergeRepository(NpgsqlDataSource dataSource)
+    public PostgresTableMergeRepository(
+        NpgsqlDataSource dataSource,
+        IOrderRepository orderRepository,
+        IBillRepository billRepository)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+        _billRepository = billRepository ?? throw new ArgumentNullException(nameof(billRepository));
     }
 
     public async Task<TableMergeRecord?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -395,41 +406,19 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
             var origOrderId = pData.CurrentOrderId ?? participantOrderIds.FirstOrDefault();
             var origBillId = pData.CurrentBillId ?? participantBillIds.FirstOrDefault();
 
-            // Reparent participant orders to primary table
+            // Reparent participant orders/bills to the primary table through the
+            // owning module contracts (V0-ARC-001).
             if (participantOrderIds.Count > 0)
             {
-                const string updateOrdersSql = $"""
-                    UPDATE {OrdersTable}
-                    SET table_id = @primary_id,
-                        updated_at = @now,
-                        row_version = row_version + 1
-                    WHERE table_id = @part_id AND status NOT IN ('Completed', 'Cancelled');
-                    """;
-                await using var cmd = new NpgsqlCommand(updateOrdersSql, connection, transaction);
-                cmd.Parameters.AddWithValue("primary_id", request.PrimaryTableId);
-                cmd.Parameters.AddWithValue("now", now);
-                cmd.Parameters.AddWithValue("part_id", participant.TableId);
-                await cmd.ExecuteNonQueryAsync(cancellationToken);
-
+                await _orderRepository.ReparentActiveOrdersToTableAsync(
+                    participant.TableId, request.PrimaryTableId, now, connection, transaction, cancellationToken);
                 allConsolidatedOrderIds.AddRange(participantOrderIds);
             }
 
-            // Reparent participant bills to primary table
             if (participantBillIds.Count > 0)
             {
-                const string updateBillsSql = $"""
-                    UPDATE {BillsTable}
-                    SET table_id = @primary_id,
-                        updated_at = @now,
-                        row_version = row_version + 1
-                    WHERE table_id = @part_id AND status NOT IN ('Paid', 'Cancelled');
-                    """;
-                await using var cmd = new NpgsqlCommand(updateBillsSql, connection, transaction);
-                cmd.Parameters.AddWithValue("primary_id", request.PrimaryTableId);
-                cmd.Parameters.AddWithValue("now", now);
-                cmd.Parameters.AddWithValue("part_id", participant.TableId);
-                await cmd.ExecuteNonQueryAsync(cancellationToken);
-
+                await _billRepository.ReparentActiveBillsToTableAsync(
+                    participant.TableId, request.PrimaryTableId, now, connection, transaction, cancellationToken);
                 allConsolidatedBillIds.AddRange(participantBillIds);
             }
 
@@ -718,38 +707,28 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
 
             if (mergeRecord.OriginalOrderId.HasValue)
             {
-                const string restoreOrderSql = $"""
-                    UPDATE {OrdersTable}
-                    SET table_id = @part_id,
-                        updated_at = @now,
-                        row_version = row_version + 1
-                    WHERE order_id = @order_id AND table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled');
-                    """;
-                await using var cmd = new NpgsqlCommand(restoreOrderSql, connection, transaction);
-                cmd.Parameters.AddWithValue("part_id", mergeRecord.MergedTableId);
-                cmd.Parameters.AddWithValue("now", now);
-                cmd.Parameters.AddWithValue("order_id", mergeRecord.OriginalOrderId.Value);
-                cmd.Parameters.AddWithValue("primary_id", primaryTableId);
-                var rows = await cmd.ExecuteNonQueryAsync(cancellationToken);
+                var rows = await _orderRepository.ReparentOrderToTableAsync(
+                    mergeRecord.OriginalOrderId.Value,
+                    primaryTableId,
+                    mergeRecord.MergedTableId,
+                    now,
+                    connection,
+                    transaction,
+                    cancellationToken);
                 if (rows > 0)
                     restoredOrderIds.Add(mergeRecord.OriginalOrderId.Value);
             }
 
             if (mergeRecord.OriginalBillId.HasValue)
             {
-                const string restoreBillSql = $"""
-                    UPDATE {BillsTable}
-                    SET table_id = @part_id,
-                        updated_at = @now,
-                        row_version = row_version + 1
-                    WHERE bill_id = @bill_id AND table_id = @primary_id AND status NOT IN ('Paid', 'Cancelled');
-                    """;
-                await using var cmd = new NpgsqlCommand(restoreBillSql, connection, transaction);
-                cmd.Parameters.AddWithValue("part_id", mergeRecord.MergedTableId);
-                cmd.Parameters.AddWithValue("now", now);
-                cmd.Parameters.AddWithValue("bill_id", mergeRecord.OriginalBillId.Value);
-                cmd.Parameters.AddWithValue("primary_id", primaryTableId);
-                var rows = await cmd.ExecuteNonQueryAsync(cancellationToken);
+                var rows = await _billRepository.ReparentBillToTableAsync(
+                    mergeRecord.OriginalBillId.Value,
+                    primaryTableId,
+                    mergeRecord.MergedTableId,
+                    now,
+                    connection,
+                    transaction,
+                    cancellationToken);
                 if (rows > 0)
                     restoredBillIds.Add(mergeRecord.OriginalBillId.Value);
             }

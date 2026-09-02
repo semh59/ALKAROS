@@ -1,3 +1,5 @@
+using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Tables.TableTransfer.Tests.Fixtures;
 using FluentAssertions;
 using Npgsql;
@@ -17,7 +19,7 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
     public PostgresTableTransferTests(TableTransferTestDatabase db)
     {
         _db = db;
-        _repository = new PostgresTableTransferRepository(_db.DataSource);
+        _repository = new PostgresTableTransferRepository(_db.DataSource, new PostgresOrderRepository(_db.DataSource), new PostgresBillRepository(_db.DataSource));
         _service = new TableTransferService(_repository);
     }
 

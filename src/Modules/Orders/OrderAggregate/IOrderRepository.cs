@@ -34,4 +34,34 @@ public interface IOrderRepository
     /// Persists changes of an aggregate within an existing connection and transaction for atomic operations.
     /// </summary>
     Task<long> SaveAsync(Order order, long expectedRowVersion, Npgsql.NpgsqlConnection connection, Npgsql.NpgsqlTransaction transaction, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Moves every non-terminal order from <paramref name="fromTableId"/> to
+    /// <paramref name="toTableId"/> inside the caller's transaction and returns
+    /// the number of rows changed. Table Management uses this for merge and
+    /// transfer; the table association is Order's state to write, so it is
+    /// exposed here rather than mutated with raw SQL (V0-ARC-001; v1-wave25
+    /// boundary remediation).
+    /// </summary>
+    Task<int> ReparentActiveOrdersToTableAsync(
+        Guid fromTableId,
+        Guid toTableId,
+        DateTimeOffset timestamp,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Moves one non-terminal order back to <paramref name="toTableId"/> only
+    /// when it is currently on <paramref name="expectedFromTableId"/> (unmerge
+    /// restore). Returns the number of rows changed (0 or 1).
+    /// </summary>
+    Task<int> ReparentOrderToTableAsync(
+        Guid orderId,
+        Guid expectedFromTableId,
+        Guid toTableId,
+        DateTimeOffset timestamp,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 }

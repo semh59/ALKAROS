@@ -1,5 +1,7 @@
 using System.Data;
 using System.Text.Json;
+using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -20,10 +22,17 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
     private const string AuditEventsTable = "audit.audit_events";
 
     private readonly NpgsqlDataSource _dataSource;
+    private readonly IOrderRepository _orderRepository;
+    private readonly IBillRepository _billRepository;
 
-    public PostgresTableTransferRepository(NpgsqlDataSource dataSource)
+    public PostgresTableTransferRepository(
+        NpgsqlDataSource dataSource,
+        IOrderRepository orderRepository,
+        IBillRepository billRepository)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+        _billRepository = billRepository ?? throw new ArgumentNullException(nameof(billRepository));
     }
 
     public async Task<TableTransferRecord?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -292,40 +301,18 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             }
         }
 
-        // 5. Reparent Orders from Source Table to Target Table
+        // 5-6. Reparent active orders and bills from source to target through
+        // the owning module contracts (V0-ARC-001).
         if (activeOrderIds.Count > 0)
         {
-            const string updateOrdersSql = $"""
-                UPDATE {OrdersTable}
-                SET table_id = @target_id,
-                    updated_at = @now,
-                    row_version = row_version + 1
-                WHERE table_id = @source_id AND status NOT IN ('Completed', 'Cancelled');
-                """;
-
-            await using var cmd = new NpgsqlCommand(updateOrdersSql, connection, transaction);
-            cmd.Parameters.AddWithValue("target_id", request.TargetTableId);
-            cmd.Parameters.AddWithValue("now", now);
-            cmd.Parameters.AddWithValue("source_id", request.SourceTableId);
-            await cmd.ExecuteNonQueryAsync(cancellationToken);
+            await _orderRepository.ReparentActiveOrdersToTableAsync(
+                request.SourceTableId, request.TargetTableId, now, connection, transaction, cancellationToken);
         }
 
-        // 6. Reparent Bills from Source Table to Target Table
         if (activeBillIds.Count > 0)
         {
-            const string updateBillsSql = $"""
-                UPDATE {BillsTable}
-                SET table_id = @target_id,
-                    updated_at = @now,
-                    row_version = row_version + 1
-                WHERE table_id = @source_id AND status NOT IN ('Paid', 'Cancelled');
-                """;
-
-            await using var cmd = new NpgsqlCommand(updateBillsSql, connection, transaction);
-            cmd.Parameters.AddWithValue("target_id", request.TargetTableId);
-            cmd.Parameters.AddWithValue("now", now);
-            cmd.Parameters.AddWithValue("source_id", request.SourceTableId);
-            await cmd.ExecuteNonQueryAsync(cancellationToken);
+            await _billRepository.ReparentActiveBillsToTableAsync(
+                request.SourceTableId, request.TargetTableId, now, connection, transaction, cancellationToken);
         }
 
         // 7. Determine Target Table Primary Order & Bill Pointers

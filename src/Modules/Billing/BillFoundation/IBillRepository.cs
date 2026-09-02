@@ -48,4 +48,33 @@ public interface IBillRepository
     /// Returns the subset of given order item IDs that have already been billed.
     /// </summary>
     Task<IReadOnlySet<Guid>> GetBilledOrderItemIdsAsync(IEnumerable<Guid> orderItemIds, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Moves every non-terminal bill from <paramref name="fromTableId"/> to
+    /// <paramref name="toTableId"/> inside the caller's transaction and returns
+    /// the number of rows changed. Table Management uses this for merge and
+    /// transfer; the table association is Bill's state to write, so it is
+    /// exposed here rather than mutated with raw SQL (V0-ARC-001).
+    /// </summary>
+    Task<int> ReparentActiveBillsToTableAsync(
+        Guid fromTableId,
+        Guid toTableId,
+        DateTimeOffset timestamp,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Moves one non-terminal bill back to <paramref name="toTableId"/> only
+    /// when it is currently on <paramref name="expectedFromTableId"/> (unmerge
+    /// restore). Returns the number of rows changed (0 or 1).
+    /// </summary>
+    Task<int> ReparentBillToTableAsync(
+        Guid billId,
+        Guid expectedFromTableId,
+        Guid toTableId,
+        DateTimeOffset timestamp,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 }

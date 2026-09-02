@@ -103,6 +103,62 @@ public sealed class PostgresBillRepository : IBillRepository
         return newRowVersion;
     }
 
+    public async Task<int> ReparentActiveBillsToTableAsync(
+        Guid fromTableId,
+        Guid toTableId,
+        DateTimeOffset timestamp,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = $"""
+            UPDATE {BillsTable}
+            SET table_id = @to_table_id,
+                updated_at = @timestamp,
+                row_version = row_version + 1
+            WHERE table_id = @from_table_id AND status NOT IN ('Paid', 'Cancelled');
+            """;
+        command.Parameters.AddWithValue("to_table_id", toTableId);
+        command.Parameters.AddWithValue("from_table_id", fromTableId);
+        command.Parameters.AddWithValue("timestamp", timestamp);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task<int> ReparentBillToTableAsync(
+        Guid billId,
+        Guid expectedFromTableId,
+        Guid toTableId,
+        DateTimeOffset timestamp,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = $"""
+            UPDATE {BillsTable}
+            SET table_id = @to_table_id,
+                updated_at = @timestamp,
+                row_version = row_version + 1
+            WHERE bill_id = @bill_id
+              AND table_id = @from_table_id
+              AND status NOT IN ('Paid', 'Cancelled');
+            """;
+        command.Parameters.AddWithValue("to_table_id", toTableId);
+        command.Parameters.AddWithValue("from_table_id", expectedFromTableId);
+        command.Parameters.AddWithValue("bill_id", billId);
+        command.Parameters.AddWithValue("timestamp", timestamp);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task<bool> IsOrderItemBilledAsync(Guid orderItemId, CancellationToken cancellationToken = default)
     {
         if (orderItemId == Guid.Empty)

@@ -10,7 +10,10 @@ public sealed class KitchenModule : IModule
 {
     public string Id => "Kitchen";
     public string DisplayName => "Kitchen and Print Operations";
-    public IReadOnlyCollection<string> DependsOn => [];
+    // Kitchen consumes Orders' public contract (order items -> ticket) in the
+    // order-submission transaction; the ALKAROS.Orders project reference makes
+    // this a real compile dependency, so it is declared here (V0-ARC-001 row 13).
+    public IReadOnlyCollection<string> DependsOn => ["Orders"];
 
     public void Register(ModuleContext context)
     {
