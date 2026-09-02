@@ -49,7 +49,7 @@ public static class DualScreenApplication
     {
         ArgumentNullException.ThrowIfNull(options);
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
-        builder.WebHost.UseUrls(options.Url.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+        builder.WebHost.UseUrls(options.AllListenUrls.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
         if (options.ServesHttpsDirectly)
         {
             var serverCertificate = DualScreenTls.Resolve(options, builder.Environment.ContentRootPath);
@@ -182,6 +182,43 @@ public static class DualScreenApplication
             }
             await next();
         });
+
+        // Customer-display origin isolation (deep-analysis finding B-4). When
+        // --customer-display-urls is configured the display is served from its
+        // own port(s) so browsers partition its localStorage from the cashier's:
+        // the display origin only exposes the display API, the display hub and
+        // the static client shell; the main origin refuses the display-only
+        // routes. With no display port configured this middleware is not added
+        // and a single origin serves everything as before.
+        var customerDisplayPorts = options.CustomerDisplayPorts.ToHashSet();
+        if (customerDisplayPorts.Count > 0)
+        {
+            app.Use(async (context, next) =>
+            {
+                var onDisplayOrigin = customerDisplayPorts.Contains(context.Connection.LocalPort);
+                var path = context.Request.Path;
+                var isApi = path.StartsWithSegments("/api", StringComparison.Ordinal);
+                var isDisplayApi = path.StartsWithSegments("/api/v1/customer-displays", StringComparison.Ordinal);
+                var isDisplayHub = path.StartsWithSegments(CustomerDisplayHub.Route, StringComparison.Ordinal);
+
+                if (onDisplayOrigin && isApi && !isDisplayApi)
+                {
+                    await Error(context, StatusCodes.Status404NotFound, "NOT_FOUND",
+                        "Bu adres müşteri ekranı origin'inde sunulmuyor.").ExecuteAsync(context);
+                    return;
+                }
+
+                if (!onDisplayOrigin && (isDisplayApi || isDisplayHub))
+                {
+                    await Error(context, StatusCodes.Status404NotFound, "NOT_FOUND",
+                        "Müşteri ekranı adresleri yalnızca ayrı origin'den sunulur.").ExecuteAsync(context);
+                    return;
+                }
+
+                await next();
+            });
+        }
+
         app.UseRouting();
         app.UseRateLimiter();
         app.Use(async (context, next) =>

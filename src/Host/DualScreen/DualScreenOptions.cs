@@ -21,8 +21,29 @@ public sealed record DualScreenOptions(
     bool AllowInsecureLoopbackDevelopment = false,
     string? TlsCertificatePath = null,
     string? TlsCertificateKeyPath = null,
-    string? SelfSignedTlsHost = null)
+    string? SelfSignedTlsHost = null,
+    string? CustomerDisplayUrl = null)
 {
+    /// <summary>
+    /// Local TCP ports that belong to the customer-display origin. A request
+    /// arriving on one of these ports is restricted to the display route
+    /// allowlist; requests on the main ports are refused the display-only
+    /// routes. Empty when <see cref="CustomerDisplayUrl"/> is not configured, in
+    /// which case a single origin serves everything as before
+    /// (deep-analysis finding B-4).
+    /// </summary>
+    public IReadOnlyCollection<int> CustomerDisplayPorts =>
+        string.IsNullOrWhiteSpace(CustomerDisplayUrl)
+            ? Array.Empty<int>()
+            : CustomerDisplayUrl
+                .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(u => new Uri(u).Port)
+                .ToHashSet();
+
+    /// <summary>The main <c>--urls</c> plus any <c>--customer-display-urls</c>, the full Kestrel listen set.</summary>
+    public string AllListenUrls =>
+        string.IsNullOrWhiteSpace(CustomerDisplayUrl) ? Url : $"{Url};{CustomerDisplayUrl}";
+
     private const string PasswordEnvironmentVariable = "ALKAROS_DB_PASSWORD";
 
     /// <summary>
@@ -34,7 +55,7 @@ public sealed record DualScreenOptions(
     /// proxy (Caddy) that sets <c>X-Forwarded-Proto: https</c>.
     /// </summary>
     public bool ServesHttpsDirectly =>
-        Url.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        AllListenUrls.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Any(u => u.StartsWith("https://", StringComparison.OrdinalIgnoreCase));
 
     public static DualScreenOptions Parse(string[] args)
@@ -48,6 +69,7 @@ public sealed record DualScreenOptions(
         string? tlsCertPath = null;
         string? tlsKeyPath = null;
         string? selfSignedHost = null;
+        string? customerDisplayUrls = null;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -61,6 +83,9 @@ public sealed record DualScreenOptions(
                     break;
                 case "--urls" when index + 1 < args.Length:
                     url = args[++index];
+                    break;
+                case "--customer-display-urls" when index + 1 < args.Length && customerDisplayUrls is null:
+                    customerDisplayUrls = args[++index];
                     break;
                 case "--trusted-proxy" when index + 1 < args.Length:
                     trustedProxies.Add(ParseTrustedProxy(args[++index]));
@@ -109,11 +134,21 @@ public sealed record DualScreenOptions(
             throw new DualScreenStartupException("--web-root must contain the built index.html file.");
 
         var listenUris = ParseListenUrls(url);
-        var hasHttps = listenUris.Any(u => u.Scheme == Uri.UriSchemeHttps);
-        var hasHttp = listenUris.Any(u => u.Scheme == Uri.UriSchemeHttp);
+        var displayUris = string.IsNullOrWhiteSpace(customerDisplayUrls)
+            ? new List<Uri>()
+            : ParseListenUrls(customerDisplayUrls);
+        var allUris = listenUris.Concat(displayUris).ToList();
+        var hasHttps = allUris.Any(u => u.Scheme == Uri.UriSchemeHttps);
+        var hasHttp = allUris.Any(u => u.Scheme == Uri.UriSchemeHttp);
+
+        if (displayUris.Count > 0 && listenUris.Select(u => u.Port).Intersect(displayUris.Select(u => u.Port)).Any())
+        {
+            throw new DualScreenStartupException(
+                "--customer-display-urls must not reuse a --urls port; the display origin needs its own port.");
+        }
 
         if (allowInsecureLoopbackDevelopment
-            && listenUris.Any(u => u.Scheme != Uri.UriSchemeHttp || !IsLoopbackHost(u.Host)))
+            && allUris.Any(u => u.Scheme != Uri.UriSchemeHttp || !IsLoopbackHost(u.Host)))
         {
             throw new DualScreenStartupException(
                 "--allow-insecure-loopback-development requires only HTTP loopback --urls addresses.");
@@ -155,7 +190,8 @@ public sealed record DualScreenOptions(
             allowInsecureLoopbackDevelopment,
             tlsCertPath,
             tlsKeyPath,
-            string.IsNullOrWhiteSpace(selfSignedHost) ? null : selfSignedHost);
+            string.IsNullOrWhiteSpace(selfSignedHost) ? null : selfSignedHost,
+            displayUris.Count == 0 ? null : string.Join(';', displayUris.Select(u => u.ToString())));
     }
 
     private static List<Uri> ParseListenUrls(string value)

@@ -97,7 +97,10 @@ services:
     command:
       - |
         export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --web-root /app/wwwroot --urls 'http://0.0.0.0:5080;https://0.0.0.0:5443' --self-signed-host "$${ALKAROS_PROXY_HOST:-localhost}" --trusted-network 172.16.0.0/12
+        # --customer-display-urls binds the customer display on its own port so
+        # the proxy can serve it from a separate origin (display.<host>) and the
+        # browser partitions its localStorage from the cashier's (finding B-4).
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --web-root /app/wwwroot --urls 'http://0.0.0.0:5080;https://0.0.0.0:5443' --customer-display-urls 'http://0.0.0.0:5081' --self-signed-host "$${ALKAROS_PROXY_HOST:-localhost}" --trusted-network 172.16.0.0/12
     secrets: [db_password]
     volumes:
       - alkaros-host-tls:/app/tls

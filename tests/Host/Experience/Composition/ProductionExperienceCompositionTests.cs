@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Sockets;
 using ALKAROS.Host.Composition.Modules;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.ModuleComposition;
@@ -10,6 +12,83 @@ namespace ALKAROS.Host.Experience.Composition.Tests;
 
 public sealed class ProductionExperienceCompositionTests
 {
+    private static int FreeLoopbackPort()
+    {
+        var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        try
+        {
+            return ((IPEndPoint)listener.LocalEndpoint).Port;
+        }
+        finally
+        {
+            listener.Stop();
+        }
+    }
+
+    [Fact]
+    public async Task CustomerDisplayOriginOnlyExposesTheDisplayRoutesAndTheMainOriginRefusesThem()
+    {
+        // deep-analysis finding B-4: with --customer-display-urls the display is
+        // served from its own port so the browser partitions its localStorage
+        // from the cashier's. Route gating is the enforced half of that split.
+        var mainPort = FreeLoopbackPort();
+        var displayPort = FreeLoopbackPort();
+        var options = new DualScreenOptions(
+            "Host=127.0.0.1;Port=5432;Database=alkaros;Username=alkaros;Password=not-used",
+            BuildWebRoot(out var webRoot),
+            $"http://127.0.0.1:{mainPort}",
+            TrustedProxies: [IPAddress.Loopback],
+            CustomerDisplayUrl: $"http://127.0.0.1:{displayPort}");
+        var display = Guid.NewGuid().ToString("D");
+
+        try
+        {
+            await using var app = DualScreenApplication.Build(options);
+            await app.StartAsync();
+            using var client = new HttpClient();
+
+            // Main origin: the display API is not served here.
+            Assert.Equal(
+                HttpStatusCode.NotFound,
+                await GetAsync(client, mainPort, $"/api/v1/customer-displays/{display}/snapshot"));
+            // Main origin still serves the cashier API (401 = reached the endpoint).
+            Assert.Equal(
+                HttpStatusCode.Unauthorized,
+                await GetAsync(client, mainPort, $"/api/v1/terminals/{display}/catalog"));
+
+            // Display origin: the cashier API is not served here.
+            Assert.Equal(
+                HttpStatusCode.NotFound,
+                await GetAsync(client, displayPort, $"/api/v1/terminals/{display}/catalog"));
+            // Display origin serves the display API (401 = reached the endpoint).
+            Assert.Equal(
+                HttpStatusCode.Unauthorized,
+                await GetAsync(client, displayPort, $"/api/v1/customer-displays/{display}/snapshot"));
+        }
+        finally
+        {
+            Directory.Delete(webRoot, recursive: true);
+        }
+    }
+
+    private static async Task<HttpStatusCode> GetAsync(HttpClient client, int port, string path)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"http://127.0.0.1:{port}{path}");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-For", "127.0.0.1");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
+        using var response = await client.SendAsync(request);
+        return response.StatusCode;
+    }
+
+    private static string BuildWebRoot(out string webRoot)
+    {
+        webRoot = Path.Combine(Path.GetTempPath(), "alkaros-composition-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(webRoot);
+        File.WriteAllText(Path.Combine(webRoot, "index.html"), "<!doctype html><title>test</title>");
+        return webRoot;
+    }
+
     private static DualScreenOptions BuildOptions(out string webRoot)
     {
         webRoot = Path.Combine(Path.GetTempPath(), "alkaros-composition-tests", Guid.NewGuid().ToString("N"));

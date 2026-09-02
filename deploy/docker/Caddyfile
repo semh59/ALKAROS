@@ -10,3 +10,16 @@
 	encode gzip
 	reverse_proxy host:5080
 }
+
+# The customer display is served from its own subdomain so it is a distinct
+# browser origin from the cashier: localStorage, and therefore the cashier
+# terminal id and bill id, are not reachable from the display context
+# (deep-analysis finding B-4). The host binds this on :5081 and only exposes the
+# customer-display API + hub + static shell there. Point the customer displays
+# at https://display.<ALKAROS_PROXY_HOST>/display and install the internal root
+# CA on them the same way as the waiter devices.
+display.{$ALKAROS_PROXY_HOST:localhost} {
+	tls internal
+	encode gzip
+	reverse_proxy host:5081
+}

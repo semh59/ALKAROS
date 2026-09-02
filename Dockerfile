@@ -33,5 +33,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 # even when the reverse proxy is absent or misconfigured. Override
 # --self-signed-host with the LAN hostname/IP the devices use, or mount an
 # approved certificate with --tls-cert / --tls-key.
-EXPOSE 5080 5443
-ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", "--db-url", "postgresql://alkaros@postgres:5432/alkaros", "--web-root", "/app/wwwroot", "--urls", "http://0.0.0.0:5080;https://0.0.0.0:5443", "--self-signed-host", "localhost", "--trusted-network", "172.16.0.0/12"]
+# 5081 is the customer-display origin (finding B-4); the proxy serves it as
+# display.<host>. Enabled with `serve --customer-display-urls`.
+EXPOSE 5080 5081 5443
+ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", "--db-url", "postgresql://alkaros@postgres:5432/alkaros", "--web-root", "/app/wwwroot", "--urls", "http://0.0.0.0:5080;https://0.0.0.0:5443", "--customer-display-urls", "http://0.0.0.0:5081", "--self-signed-host", "localhost", "--trusted-network", "172.16.0.0/12"]
