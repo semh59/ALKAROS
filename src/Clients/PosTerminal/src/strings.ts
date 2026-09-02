@@ -46,12 +46,26 @@ export const navLabels = {
 } as const;
 
 /**
- * Cross-cutting shell actions. Per-workspace action copy (cancel / confirm /
+ * Cross-cutting actions. Per-workspace form action copy (cancel / confirm /
  * save labels) is migrated in a follow-up pass.
  */
 export const commonActions = {
   refresh: "Yenile",
   retry: "Tekrar dene",
+  reload: "Yeniden yükle",
+} as const;
+
+/**
+ * Shared workspace state chrome. Every workspace renders the same offline /
+ * unauthorized / error scaffolding; the titles and the generic fallbacks live
+ * here so the wording stays identical (finding F-7).
+ */
+export const stateText = {
+  offlineTitle: "Bağlantı yok",
+  unauthorizedTitle: "Oturum gerekli",
+  managerUnauthorizedTitle: "Yönetici oturumu gerekli",
+  unexpectedError: "Beklenmeyen bir hata oluştu.",
+  dismissMessage: "Mesajı kapat",
 } as const;
 
 /** Kitchen reprint decision flow. */

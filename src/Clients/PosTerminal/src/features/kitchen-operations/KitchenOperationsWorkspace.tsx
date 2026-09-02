@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
-import { kitchenReprintText } from "../../strings";
+import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
   healthStatusLabel,
   itemStatusLabels,
@@ -175,10 +175,10 @@ export function KitchenOperationsWorkspace({
     return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="unauthorized" title="Kasiyer oturumu gerekli"><p>Mutfak çalışma alanını görmek için terminal oturumunu yenileyin.</p></StateMessage></div>;
   }
   if (state === "offline") {
-    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="offline" title="Bağlantı yok"><p>Eski ticket veya sağlık verisiyle işlem yapılmıyor.</p><Button onClick={onRefresh}>Tekrar dene</Button></StateMessage></div>;
+    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Eski ticket veya sağlık verisiyle işlem yapılmıyor.</p><Button onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
   }
   if (state === "error") {
-    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="error" title="Mutfak verisi alınamadı"><p>{suppliedError ?? "Beklenmeyen bir hata oluştu."}</p><Button onClick={onRefresh}>Yeniden yükle</Button></StateMessage></div>;
+    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="error" title="Mutfak verisi alınamadı"><p>{suppliedError ?? stateText.unexpectedError}</p><Button onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
   }
   if (state === "stale" || state === "conflict") {
     return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="conflict" title={state === "stale" ? "Mutfak verisi güncel değil" : "Mutfak çakışması"}><p>Operasyon komutu göndermeden önce sunucunun son durumunu alın.</p><Button onClick={onRefresh}>Güncel veriyi al</Button></StateMessage></div>;
@@ -187,10 +187,10 @@ export function KitchenOperationsWorkspace({
   return <section className="kitchen-workspace" aria-label="Mutfak ve operasyon yönetimi">
     <header className="kitchen-workspace__header">
       <div><span className="kitchen-workspace__kicker">OPERASYON / MUTFAK</span><h2>{stationId} istasyonu</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Ticket akışı, yazıcı kurtarma ve sistem sağlığı"}</p></div>
-      <div className="kitchen-workspace__header-actions"><span className="kitchen-workspace__source">Kaynak: production API</span><span className={`kitchen-health-dot kitchen-health-dot--${(overallHealth ?? "unknown").toLowerCase()}`} role="img" aria-label={`Sistem durumu: ${healthStatusLabel(overallHealth)}`} /><Button variant="secondary" onClick={() => void onRefresh()}>Yenile</Button></div>
+      <div className="kitchen-workspace__header-actions"><span className="kitchen-workspace__source">Kaynak: production API</span><span className={`kitchen-health-dot kitchen-health-dot--${(overallHealth ?? "unknown").toLowerCase()}`} role="img" aria-label={`Sistem durumu: ${healthStatusLabel(overallHealth)}`} /><Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button></div>
     </header>
 
-    {feedback && <div className={`kitchen-workspace__feedback kitchen-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label="Mesajı kapat" onClick={() => setFeedback(null)}>×</button></div>}
+    {feedback && <div className={`kitchen-workspace__feedback kitchen-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
 
     <div className="kitchen-workspace__stats" aria-label="Mutfak özeti">
       <Stat label="Aktif ticket" value={data.tickets.length} />

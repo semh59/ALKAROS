@@ -12,7 +12,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api } from "./api";
 import type { CatalogProduct, DisplaySnapshot, PairingCreated } from "./contracts";
 import { Icon, type IconName } from "./design-system";
-import { navLabels, roleLabels } from "./strings";
+import { navLabels, roleLabels, stateText } from "./strings";
 import { ProductionShell } from "./shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "./shell/models";
 import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "./features/tables";
@@ -344,7 +344,7 @@ function Cashier() {
           aria-live={error ? "assertive" : "polite"}
         >
           <span>{error || notice}</span>
-          <button onClick={() => { setError(""); setNotice(""); }} aria-label="Mesajı kapat">×</button>
+          <button onClick={() => { setError(""); setNotice(""); }} aria-label={stateText.dismissMessage}>×</button>
         </div>
       )}
 

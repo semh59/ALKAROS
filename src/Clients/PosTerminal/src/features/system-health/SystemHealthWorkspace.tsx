@@ -1,4 +1,5 @@
 import { Button, StateMessage } from "../../design-system";
+import { commonActions, stateText } from "../../strings";
 import {
   backupStatusLabels,
   healthStatusLabel,
@@ -27,20 +28,20 @@ export function SystemHealthWorkspace({ state, health, backups, onRefresh, error
     return <div className="system-health system-health--state" aria-busy="true"><StateMessage tone="info" title="Sistem sağlığı yükleniyor"><p>Son snapshot ve yedek durumu alınıyor…</p></StateMessage></div>;
   }
   if (state === "unauthorized") {
-    return <div className="system-health system-health--state"><StateMessage tone="unauthorized" title="Yönetici oturumu gerekli"><p>Sistem sağlığı yalnızca yönetici rolüne açıktır.</p></StateMessage></div>;
+    return <div className="system-health system-health--state"><StateMessage tone="unauthorized" title={stateText.managerUnauthorizedTitle}><p>Sistem sağlığı yalnızca yönetici rolüne açıktır.</p></StateMessage></div>;
   }
   if (state === "offline") {
-    return <div className="system-health system-health--state"><StateMessage tone="offline" title="Bağlantı yok"><p>Güncel sağlık verisi alınamıyor.</p><Button onClick={onRefresh}>Tekrar dene</Button></StateMessage></div>;
+    return <div className="system-health system-health--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Güncel sağlık verisi alınamıyor.</p><Button onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
   }
   if (state === "error") {
-    return <div className="system-health system-health--state"><StateMessage tone="error" title="Sağlık verisi alınamadı"><p>{errorMessage ?? "Beklenmeyen bir hata oluştu."}</p><Button onClick={onRefresh}>Yeniden dene</Button></StateMessage></div>;
+    return <div className="system-health system-health--state"><StateMessage tone="error" title="Sağlık verisi alınamadı"><p>{errorMessage ?? stateText.unexpectedError}</p><Button onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
   }
 
   const latestBackup = backups[0];
   return <section className="system-health" aria-label="Sistem sağlığı ve yedek durumu">
     <header className="system-health__header">
       <div><span className="system-health__kicker">YÖNETİM / SİSTEM</span><h2>Sistem sağlığı</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Veritabanı, disk ve yedekleme durumu"}</p></div>
-      <Button variant="secondary" onClick={() => void onRefresh()}>Yenile</Button>
+      <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
     </header>
 
     {health ? <dl className="system-health__grid">

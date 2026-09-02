@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, StateMessage, ValidationSummary } from "../../design-system";
+import { commonActions, stateText } from "../../strings";
 import {
   modeLabels,
   type BillSplitDesign,
@@ -142,8 +143,8 @@ function AmountEditor({ design, owners, draft, onChange }: { design: BillSplitDe
 }
 
 function BoundedState({ state, message, onRefresh }: { state: BillSplitWorkspaceProps["state"]; message?: string; onRefresh: BillSplitWorkspaceProps["onRefresh"] }) {
-  const content = state === "loading" ? ["info", "Hesap yükleniyor", "Authoritative hesap ve dağıtımlar alınıyor…"] : state === "offline" ? ["offline", "Bağlantı yok", "Taslak gönderilmedi; sunucuya yeniden bağlanın."] : state === "stale" ? ["stale", "Hesap güncel değil", "Dağıtmadan önce güncel hesap sürümünü alın."] : state === "unauthorized" ? ["unauthorized", "Oturum gerekli", "Hesap dağıtımını görmek için yeniden giriş yapın."] : ["error", "Hesap alınamadı", message ?? "Beklenmeyen bir hata oluştu."];
-  return <div className="bill-split bill-split--state"><StateMessage tone={content[0] as "info" | "offline" | "stale" | "unauthorized" | "error"} title={content[1]} actions={state === "loading" || state === "unauthorized" ? undefined : <Button onClick={() => void onRefresh()}>Tekrar dene</Button>}><p>{content[2]}</p></StateMessage></div>;
+  const content = state === "loading" ? ["info", "Hesap yükleniyor", "Authoritative hesap ve dağıtımlar alınıyor…"] : state === "offline" ? ["offline", stateText.offlineTitle, "Taslak gönderilmedi; sunucuya yeniden bağlanın."] : state === "stale" ? ["stale", "Hesap güncel değil", "Dağıtmadan önce güncel hesap sürümünü alın."] : state === "unauthorized" ? ["unauthorized", stateText.unauthorizedTitle, "Hesap dağıtımını görmek için yeniden giriş yapın."] : ["error", "Hesap alınamadı", message ?? stateText.unexpectedError];
+  return <div className="bill-split bill-split--state"><StateMessage tone={content[0] as "info" | "offline" | "stale" | "unauthorized" | "error"} title={content[1]} actions={state === "loading" || state === "unauthorized" ? undefined : <Button onClick={() => void onRefresh()}>{commonActions.retry}</Button>}><p>{content[2]}</p></StateMessage></div>;
 }
 
 const emptyDesign: BillSplitDesign = { billId: "", billNumber: "", billStatus: "", currencyCode: "TRY", payableAmount: 0, taxTotal: 0, billRowVersion: 0, mode: "None", executionState: "DesignOnly", allowedCommands: [], items: [], allocations: [] };

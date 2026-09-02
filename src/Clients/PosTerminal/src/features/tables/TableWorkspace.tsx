@@ -7,6 +7,7 @@ import {
   TextField,
   ValidationSummary,
 } from "../../design-system";
+import { commonActions, stateText } from "../../strings";
 import {
   actionNeedsReason,
   isClientExecutableAction,
@@ -217,13 +218,13 @@ export function TableWorkspace({
     return <div className="table-workspace table-workspace--state" aria-busy="true"><StateMessage tone="info" title="Masa düzeni yükleniyor"><p>Zone ve masa durumu güvenli biçimde alınıyor…</p></StateMessage></div>;
   }
   if (state === "unauthorized") {
-    return <div className="table-workspace table-workspace--state"><StateMessage tone="unauthorized" title="Oturum gerekli"><p>Masa çalışma alanını görmek için yeniden giriş yapın.</p></StateMessage></div>;
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="unauthorized" title={stateText.unauthorizedTitle}><p>Masa çalışma alanını görmek için yeniden giriş yapın.</p></StateMessage></div>;
   }
   if (state === "offline") {
-    return <div className="table-workspace table-workspace--state"><StateMessage tone="offline" title="Bağlantı yok"><p>Sunucuya ulaşılamıyor; eski masa durumu işlem için kullanılmıyor.</p><Button onClick={onRefresh}>Tekrar dene</Button></StateMessage></div>;
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Sunucuya ulaşılamıyor; eski masa durumu işlem için kullanılmıyor.</p><Button onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
   }
   if (state === "error") {
-    return <div className="table-workspace table-workspace--state"><StateMessage tone="error" title="Masa düzeni alınamadı"><p>{suppliedError ?? "Beklenmeyen bir hata oluştu."}</p><Button onClick={onRefresh}>Yeniden yükle</Button></StateMessage></div>;
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="error" title="Masa düzeni alınamadı"><p>{suppliedError ?? stateText.unexpectedError}</p><Button onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
   }
   if (state === "stale") {
     return <div className="table-workspace table-workspace--state"><StateMessage tone="stale" title="Masa verisi güncel değil"><p>İşlem yapmadan önce güncel durumu alın.</p><Button onClick={onRefresh}>Güncelle</Button></StateMessage></div>;
@@ -239,11 +240,11 @@ export function TableWorkspace({
         </div>
         <div className="table-workspace__toolbar-actions">
           {canCreate && <><Button variant="secondary" onClick={() => { setFormErrors([]); setZoneDialogOpen(true); }}>+ Zone ekle</Button><Button onClick={() => { setFormErrors([]); setTableDialogOpen(true); }}>+ Masa ekle</Button></>}
-          <Button variant="secondary" onClick={() => void onRefresh()}>Yenile</Button>
+          <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
         </div>
       </header>
 
-      {feedback && <div className={`table-workspace__feedback table-workspace__feedback--${feedback.tone}`} role={feedback.tone === "error" || feedback.tone === "conflict" ? "alert" : "status"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label="Mesajı kapat" onClick={() => setFeedback(null)}>×</button></div>}
+      {feedback && <div className={`table-workspace__feedback table-workspace__feedback--${feedback.tone}`} role={feedback.tone === "error" || feedback.tone === "conflict" ? "alert" : "status"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
 
       <div className="table-workspace__filters" role="group" aria-label="Masa filtreleri">
         <SelectField label="Zone" value={zoneFilter} onChange={(event) => setZoneFilter(event.target.value)}>
