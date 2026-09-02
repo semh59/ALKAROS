@@ -196,8 +196,7 @@ public static class HostComposition
                 services.AddSingleton<DbDataSource>(dataSource);
             }
 
-            foreach (var descriptor in root.Services)
-                AddRegistration(services, descriptor);
+            ApplyComposedModuleServices(services, root.Services);
 
             var provider = services.BuildServiceProvider(
                 new ServiceProviderOptions
@@ -221,8 +220,27 @@ public static class HostComposition
         }
     }
 
+    /// <summary>
+    /// Applies the concrete service registrations produced by module
+    /// composition to an <see cref="IServiceCollection"/>. This is the single
+    /// path both the CLI composition surface and the <c>serve</c> host use, so
+    /// the module catalog is the one composition root rather than a startup
+    /// contract check that the hand-written <c>serve</c> registrations can
+    /// silently drift from (deep-analysis finding B-2).
+    /// </summary>
+    public static void ApplyComposedModuleServices(
+        IServiceCollection services,
+        IReadOnlyList<ModuleContext.ServiceDescriptor> descriptors)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(descriptors);
+
+        foreach (var descriptor in descriptors)
+            AddRegistration(services, descriptor);
+    }
+
     private static void AddRegistration(
-        ServiceCollection services,
+        IServiceCollection services,
         ModuleContext.ServiceDescriptor descriptor)
     {
         if (descriptor.ImplementationInstance is not null)

@@ -8,6 +8,8 @@ using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
+using ALKAROS.Host.Composition;
+using ALKAROS.Host.Composition.Modules;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.KitchenOperations;
@@ -58,16 +60,21 @@ public static class DualScreenApplication
         }
         builder.Services.ConfigureHttpJsonOptions(json =>
             json.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-        builder.Services.AddSingleton(NpgsqlDataSource.Create(options.ConnectionString));
+        var dataSource = NpgsqlDataSource.Create(options.ConnectionString);
+        builder.Services.AddSingleton(dataSource);
+        builder.Services.AddSingleton<System.Data.Common.DbDataSource>(dataSource);
+
+        // The bounded-context modules are the single composition root for the
+        // serve host: their repository/service registrations come straight from
+        // ModuleRegistry.DefaultCatalog instead of being hand-copied here where
+        // they could silently drift (deep-analysis finding B-2). Applied before
+        // the experience extensions so their TryAdd* calls defer to the module
+        // registrations. Only genuinely host-local services are registered by
+        // hand below.
+        var moduleComposition = ModuleRegistry.ComposeRoot(ModuleRegistry.DefaultCatalog);
+        HostComposition.ApplyComposedModuleServices(builder.Services, moduleComposition.Services);
+
         builder.Services.AddSingleton<DualScreenStore>();
-        builder.Services.AddSingleton<IUserStore, PostgresUserStore>();
-        builder.Services.AddSingleton<AuthenticationService>();
-        builder.Services.AddSingleton<IDeviceSessionRepository, PostgresDeviceSessionRepository>();
-        builder.Services.AddSingleton<IDeviceSessionService, DeviceSessionService>();
-        builder.Services.AddSingleton<IRoleRepository, PostgresRoleRepository>();
-        builder.Services.AddSingleton<IDenialEventSink, PostgresDenialEventSink>();
-        builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
-        builder.Services.AddSingleton<IOrderRepository, PostgresOrderRepository>();
         builder.Services.AddSingleton<SubmitOrderHandler>();
         builder.Services.AddTableManagementExperience();
         builder.Services.AddCatalogManagement();
