@@ -24,14 +24,6 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2"
         }
       },
-      "alkaros.accounts": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
-        }
-      },
       "alkaros.audit": {
         "type": "Project",
         "dependencies": {
@@ -49,8 +41,7 @@
       "alkaros.cash": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
         }
       },
       "alkaros.catalog": {
@@ -60,26 +51,11 @@
           "Npgsql": "[9.0.2, )"
         }
       },
-      "alkaros.fiscal": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
-        }
-      },
       "alkaros.identity": {
         "type": "Project",
         "dependencies": {
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
-        }
-      },
-      "alkaros.inventory": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Catalog": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
         }
       },
       "alkaros.kitchen": {
@@ -91,12 +67,6 @@
       },
       "alkaros.modulecomposition": {
         "type": "Project"
-      },
-      "alkaros.notifications": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
       },
       "alkaros.observability": {
         "type": "Project",
@@ -119,20 +89,10 @@
           "Npgsql": "[9.0.2, )"
         }
       },
-      "alkaros.payments": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
-      },
       "alkaros.reconciliation": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.Accounts": "[1.0.0, )",
-          "ALKAROS.Cash": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
         }
       },
       "alkaros.reporting": {

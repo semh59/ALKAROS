@@ -10,23 +10,25 @@ namespace ALKAROS.Architecture.Tests;
 /// </summary>
 public static class ModuleBoundaryTests
 {
+    // Only the modules that carry code and are in ModuleRegistry.DefaultCatalog.
+    // Modules from the domain model that are not implemented yet get their
+    // project created together with their first source file (enforced by
+    // NoEmptyModuleOrIntegrationProjects).
     private static readonly string[] ModuleAssemblies =
     {
         "ALKAROS.Orders",
         "ALKAROS.Billing",
-        "ALKAROS.Payments",
         "ALKAROS.Kitchen",
         "ALKAROS.Catalog",
         "ALKAROS.Tables",
         "ALKAROS.Cash",
-        "ALKAROS.Fiscal",
-        "ALKAROS.Inventory",
-        "ALKAROS.Accounts",
         "ALKAROS.Reporting",
         "ALKAROS.Reconciliation",
-        "ALKAROS.Notifications",
         "ALKAROS.Settings",
         "ALKAROS.Identity",
+        "ALKAROS.Audit",
+        "ALKAROS.Observability",
+        "ALKAROS.Operations",
     };
 
     private static readonly string[] EmptyDependencies = Array.Empty<string>();
