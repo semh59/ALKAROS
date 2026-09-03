@@ -391,6 +391,29 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
             cashierCookie);
         using var wrongTerminalResponse = await client.SendAsync(wrongTerminal);
         Assert.Equal(HttpStatusCode.Unauthorized, wrongTerminalResponse.StatusCode);
+
+        Environment.SetEnvironmentVariable(
+            DualScreenApplication.CustomerDisplayOriginUrlEnvironmentVariable,
+            "https://display.pos.local:8443");
+        try
+        {
+            using var withDisplay = CreateForwardedRequest(
+                HttpMethod.Get,
+                $"/api/v1/terminals/{terminalId:D}/runtime-configuration",
+                "198.51.100.42",
+                cashierCookie);
+            using var withDisplayResponse = await client.SendAsync(withDisplay);
+            Assert.Equal(HttpStatusCode.OK, withDisplayResponse.StatusCode);
+            using var withDisplayDoc = JsonDocument.Parse(await withDisplayResponse.Content.ReadAsStringAsync());
+            Assert.Equal(
+                "https://display.pos.local:8443",
+                withDisplayDoc.RootElement.GetProperty("customerDisplayUrl").GetString());
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(
+                DualScreenApplication.CustomerDisplayOriginUrlEnvironmentVariable, null);
+        }
     }
 
     [Fact]

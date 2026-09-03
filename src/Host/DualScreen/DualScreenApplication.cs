@@ -38,6 +38,13 @@ public static partial class DualScreenApplication
     public const string CashierMutationPermission = "pos.cashier.mutate";
     public const string KitchenStationEnvironmentVariable = "ALKAROS_KITCHEN_STATION_ID";
 
+    // Absolute origin the reverse proxy serves the customer display from
+    // (e.g. https://display.pos.local:8443). Returned by runtime-configuration
+    // so the cashier's "customer display" link opens the isolated display
+    // origin (finding B-4) instead of a same-origin /display that the api
+    // refuses. Unset -> the link stays relative (single-origin / legacy).
+    public const string CustomerDisplayOriginUrlEnvironmentVariable = "ALKAROS_CUSTOMER_DISPLAY_ORIGIN_URL";
+
     public static int Run(string[] args)
     {
         var options = DualScreenOptions.Parse(args);

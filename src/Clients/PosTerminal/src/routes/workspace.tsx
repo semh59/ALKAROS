@@ -18,6 +18,7 @@ export function ExperiencePage({
   capabilities,
   path,
   backendStatus,
+  customerDisplayUrl = "",
   onLogout,
 }: {
   terminalId: string;
@@ -25,6 +26,7 @@ export function ExperiencePage({
   capabilities: readonly string[];
   path: string;
   backendStatus: BackendStatus;
+  customerDisplayUrl?: string;
   onLogout: () => Promise<void>;
 }) {
   const { navigate } = useRouter();
@@ -102,7 +104,7 @@ export function ExperiencePage({
     activeNavigationId={path === "/tables" ? "tables" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
-    headerActions={<><a className="experience-header-link" href="/display" target="alkaros-customer-display">Müşteri ekranı</a><button className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
+    headerActions={<><a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
   >
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} />}

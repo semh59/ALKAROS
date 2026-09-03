@@ -6,6 +6,7 @@ import type {
   MutationResult,
   PairingCompleted,
   PairingCreated,
+  RuntimeConfiguration,
 } from "./contracts";
 
 export class ApiError extends Error {
@@ -65,6 +66,8 @@ export const api = {
     }),
   session: (terminalId: string) =>
     request<LoginResponse>(`/api/v1/auth/session?terminalId=${terminalId}`),
+  runtimeConfig: (terminalId: string) =>
+    request<RuntimeConfiguration>(`/api/v1/terminals/${terminalId}/runtime-configuration`),
   logout: (terminalId: string) =>
     request<void>(`/api/v1/auth/logout?terminalId=${terminalId}`, {
       method: "POST",

@@ -5,6 +5,13 @@ export interface LoginResponse {
   capabilities?: string[];
 }
 
+export interface RuntimeConfiguration {
+  kitchenStationId: string;
+  // Absolute origin the customer display is served from (finding B-4). Absent
+  // in single-origin / legacy deployments; the display link then stays relative.
+  customerDisplayUrl?: string;
+}
+
 export interface CatalogProduct {
   productId: string;
   sku: string;

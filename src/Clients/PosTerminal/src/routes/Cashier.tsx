@@ -25,6 +25,13 @@ const focusableSelector = [
   "[tabindex]:not([tabindex='-1'])",
 ].join(",");
 
+// The customer display must load from its own origin so the browser partitions
+// its storage from the cashier's (finding B-4). runtime-configuration provides
+// that origin; without it the link stays relative (single-origin / legacy).
+export function customerDisplayHref(originUrl: string): string {
+  return `${originUrl.replace(/\/+$/, "")}/display`;
+}
+
 export function Cashier() {
   const { path: currentPath, navigate } = useRouter();
   const [terminalId] = useState(() => savedId("alkaros.terminal-id"));
@@ -35,6 +42,7 @@ export function Cashier() {
   const [catalog, setCatalog] = useState<CatalogProduct[]>([]);
   const [order, setOrder] = useState<DisplaySnapshot | null>(null);
   const [pairingCode, setPairingCode] = useState("");
+  const [customerDisplayUrl, setCustomerDisplayUrl] = useState("");
   const [session, setSession] = useState<CashierSession>("checking");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -48,15 +56,18 @@ export function Cashier() {
   const pairingDialog = useRef<HTMLDivElement>(null);
 
   const reload = useCallback(async () => {
-    const [session, products, active] = await Promise.all([
+    const [session, products, active, config] = await Promise.all([
       api.session(terminalId),
       api.catalog(terminalId),
       api.activeOrder(terminalId),
+      // Non-fatal: an operator can run without a kitchen station and still sell.
+      api.runtimeConfig(terminalId).catch(() => null),
     ]);
     setDisplayName(session.displayName);
     setCapabilities(session.capabilities ?? []);
     setCatalog(products);
     setOrder(active);
+    setCustomerDisplayUrl(config?.customerDisplayUrl ?? "");
     setSession("ready");
     setBackendStatus("online");
   }, [terminalId]);
@@ -264,6 +275,7 @@ export function Cashier() {
       capabilities={capabilities}
       path={currentPath}
       backendStatus={backendStatus}
+      customerDisplayUrl={customerDisplayUrl}
       onLogout={logout}
     />;
   }
@@ -280,7 +292,10 @@ export function Cashier() {
             <span />
             {backendStatus === "online" ? "Sunucu hazır" : "Bağlantı sorunu"}
           </div>
-          <button className="header-action" onClick={() => window.open("/display", "alkaros-customer-display")}>
+          <button
+            className="header-action"
+            onClick={() => window.open(customerDisplayHref(customerDisplayUrl), "alkaros-customer-display")}
+          >
             Müşteri ekranı
           </button>
           <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>

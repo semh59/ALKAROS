@@ -101,6 +101,11 @@ services:
       target: api
     environment:
       ALKAROS_KITCHEN_STATION_ID: ${ALKAROS_KITCHEN_STATION_ID:-kitchen-main}
+      # Absolute origin the browser reaches the customer display on (the `web`
+      # display vhost, published on 8443). runtime-configuration hands this to
+      # the cashier so the "customer display" link opens the isolated origin
+      # (finding B-4). Update the :8443 if you remap the web port.
+      ALKAROS_CUSTOMER_DISPLAY_ORIGIN_URL: https://display.${ALKAROS_PROXY_HOST:-localhost}:8443
       # .NET runtime tuning (V1-RMD-088). Server GC + a background thread per
       # core suits a throughput service; dynamic adaptation right-sizes the heap
       # when the container memory limit is small; TieredPGO improves hot-path

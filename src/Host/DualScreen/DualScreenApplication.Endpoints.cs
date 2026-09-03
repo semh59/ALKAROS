@@ -142,7 +142,11 @@ public static partial class DualScreenApplication
                     $"{KitchenStationEnvironmentVariable} is required before kitchen operations are enabled.");
             }
 
-            return Results.Ok(new { kitchenStationId });
+            var customerDisplayUrl = Environment
+                .GetEnvironmentVariable(CustomerDisplayOriginUrlEnvironmentVariable)?.Trim();
+            return string.IsNullOrWhiteSpace(customerDisplayUrl)
+                ? Results.Ok(new { kitchenStationId })
+                : Results.Ok(new { kitchenStationId, customerDisplayUrl });
         }).RequireRateLimiting("terminal-read");
 
         app.MapPost("/api/v1/auth/logout", async (

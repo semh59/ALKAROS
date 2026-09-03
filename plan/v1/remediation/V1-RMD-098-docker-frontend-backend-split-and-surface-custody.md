@@ -88,6 +88,15 @@ yalnız `web` (Caddy) üzerinde sonlanır.
   `tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs`. Kök `./Dockerfile` kaldırıldı,
   yerine `deploy/docker/Dockerfile`. `tests/Deployment/test_container_contract.py` yeniden yazıldı ancak
   `V1-RMD-033`'ün `tests/Deployment` dizin yüzeyi altında kalır.
+- B-4 takip düzeltmesi (müşteri ekranı linki doğru origin'i açsın): `runtime-configuration` endpoint'i
+  `ALKAROS_CUSTOMER_DISPLAY_ORIGIN_URL` env değişkeni ayarlıysa `customerDisplayUrl` döndürür
+  (`src/Host/DualScreen/DualScreenApplication.cs` sabit, `.Endpoints.cs` handler — ikincisi `V1-RMD-097`
+  yüzeyi, çakışma yok). PosTerminal `api.runtimeConfig` ile bunu okur ve "Müşteri ekranı" butonu/linki
+  `<origin>/display` açar (`src/Clients/PosTerminal/src/{api.ts,contracts.ts}` — `V1-RMD-031` yüzeyi;
+  `src/Clients/PosTerminal/src/routes/{Cashier.tsx,workspace.tsx}` — `V1-RMD-097` yüzeyi). Ayarlı değilse
+  link göreli `/display` kalır (tek-origin/legacy). `compose.yaml` `api` env'i
+  `https://display.${ALKAROS_PROXY_HOST}:8443`, `compose.dev.yaml` `http://localhost:8091` verir. Bu
+  dosyaların custody'si mevcut sahiplerinde kalır; ayrı devir kaydı gerekmez (`validate` çakışmasız).
 - `GATE-V1-EXIT` bu iş için yeniden açılmıştır; resmi reseal ayrı bir governance görevine bırakılır.
 
 ## Out of scope
@@ -119,10 +128,12 @@ yalnız `web` (Caddy) üzerinde sonlanır.
   `api:5080` düz HTTP forwarded-proto'suz 400 `HTTPS_REQUIRED`, loopback readiness muaf;
   `-f compose.yaml -f compose.ops.yaml run --rm backup` artefakt + sha256 üretir; `restart api` sonrası
   sağlıklı, migration sayısı 41; `down --volumes` exit 0.
-- Dev HTTP overlay (`-f compose.yaml -f compose.dev.yaml up -d --wait`): `web` düz HTTP `:8090`'da
-  sağlıklı; `/`, `/waiter/`, `/cashier/`, SPA deep-link, `/health/ready` HTTP üzerinden 200; bir API
-  çağrısı 400 `HTTPS_REQUIRED` yerine B-4 izolasyon 404'ü döner (zorlanan `X-Forwarded-Proto: https`
-  geçidi geçti); `display.localhost` vhost'unda B-4 doğru.
+- Dev HTTP overlay (`-f compose.yaml -f compose.dev.yaml up -d --wait`): `web` `:8090` (ana) + `:8091`
+  (müşteri ekranı origin'i) düz HTTP'de sağlıklı; `/`, `/waiter/`, `/cashier/`, SPA deep-link,
+  `/health/ready` 200; giriş 200 → çerez `Secure` bayrağı olmadan saklanır → `/auth/session`,
+  `/catalog`, `/orders/active` 200; `runtime-configuration` `customerDisplayUrl: http://localhost:8091`
+  döndürür (bundle `runtime-configuration` çağrısını içerir); pairing-create `:8091`'de 201, `:8090`'da
+  404 "yalnızca ayrı origin" (B-4 sağlam).
 - `python -B tools/plan-audit/plan_audit_tool.py validate` ve `verify-manifest` exit 0.
 - `python -m pytest tests/Deployment tests/Architecture` 0 hata.
 - `tools/consistency-audit/consistency_audit.py` temiz.

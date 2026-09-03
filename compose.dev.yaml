@@ -26,6 +26,9 @@ services:
   api:
     ports:
       - "5080:5080"
+    environment:
+      # dev customer-display origin is the :81 listener published on 8091
+      ALKAROS_CUSTOMER_DISPLAY_ORIGIN_URL: http://localhost:8091
 
   web:
     ports: !override
