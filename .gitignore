@@ -40,6 +40,13 @@ TestResults/
 node_modules/
 dist/
 
+# design-sync (staged scripts, build output, machine state — durable inputs under .design-sync/ ARE committed)
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+
 # Logs / transient test output
 output*.txt
 test_output*.txt

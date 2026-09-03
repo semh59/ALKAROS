@@ -1,0 +1,17 @@
+{
+  "pkg": "@alkaros/pos-terminal",
+  "globalName": "AlkarosPos",
+  "projectId": "11e13b39-01da-4574-94ab-992beb343152",
+  "shape": "package",
+  "buildCmd": "node .design-sync/build-ds-dist.mjs",
+  "entry": "src/Clients/PosTerminal/dist/ds/index.js",
+  "srcDir": "../../src/design-system",
+  "tsconfig": "../../tsconfig.json",
+  "tokensGlob": "tokens.css",
+  "extraFonts": "fonts.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "ModalDialog": { "cardMode": "single", "primaryStory": "Open", "viewport": "880x520" },
+    "ContextDrawer": { "cardMode": "single", "primaryStory": "Persistent", "viewport": "440x460" }
+  }
+}
