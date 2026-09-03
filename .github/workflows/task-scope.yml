@@ -199,9 +199,13 @@ jobs:
         run: |
           sudo tee /usr/local/bin/psql >/dev/null <<'EOF'
           #!/usr/bin/env bash
+          # The migration/history tests write fixture .sql scripts to the host
+          # temp dir (Path.GetTempPath() -> /tmp) and pass absolute paths to
+          # `psql --file`, so the container has to see /tmp as well as the repo.
           exec docker run --rm --network host \
             -e PGPASSWORD \
             -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE:ro" \
+            -v "/tmp:/tmp:ro" \
             -w "$GITHUB_WORKSPACE" \
             postgres@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2 \
             psql "$@"

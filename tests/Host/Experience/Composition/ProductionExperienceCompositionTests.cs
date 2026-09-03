@@ -116,8 +116,27 @@ public sealed class ProductionExperienceCompositionTests
 
             Assert.NotEmpty(moduleServices);
             using var scope = app.Services.CreateScope();
+
+            // A service type registered by more than one module (e.g.
+            // IIntegrationEventConsumer, one implementation per module) is an
+            // enumerable: GetService returns only the last one, so those are
+            // checked through GetServices instead.
+            var multiRegistered = moduleServices
+                .Where(d => d.ImplementationInstance is null)
+                .GroupBy(d => d.ServiceType)
+                .Where(g => g.Select(d => d.ImplementationType).Distinct().Count() > 1)
+                .Select(g => g.Key)
+                .ToHashSet();
+
             foreach (var descriptor in moduleServices.Where(d => d.ImplementationInstance is null))
             {
+                if (multiRegistered.Contains(descriptor.ServiceType))
+                {
+                    var all = scope.ServiceProvider.GetServices(descriptor.ServiceType);
+                    Assert.Contains(all, r => r is not null && r.GetType() == descriptor.ImplementationType);
+                    continue;
+                }
+
                 var resolved = scope.ServiceProvider.GetService(descriptor.ServiceType);
                 Assert.True(
                     resolved is not null,
