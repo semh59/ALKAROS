@@ -6,6 +6,11 @@ public sealed class PostgresPermissionRepository : IPermissionRepository
 {
     private const string Table = "identity.permissions";
 
+    // Defensive ceiling for the unpaged GetAllAsync: the permission catalog is a
+    // small fixed set. Hitting this means something is wrong, and the caller
+    // needs a paginated query rather than a silently truncated list.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresPermissionRepository(NpgsqlDataSource dataSource)
@@ -40,12 +45,17 @@ public sealed class PostgresPermissionRepository : IPermissionRepository
             $"""
             SELECT permission_id, code, name
             FROM {Table}
-            ORDER BY code;
+            ORDER BY code
+            LIMIT {MaxUnpagedRows + 1};
             """);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(ReadPermission(reader));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"{Table} has more than {MaxUnpagedRows} rows; GetAllAsync must be replaced with a paginated query.");
 
         return result;
     }

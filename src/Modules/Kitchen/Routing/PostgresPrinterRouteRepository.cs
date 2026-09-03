@@ -4,6 +4,11 @@ using Npgsql;
 
 public sealed class PostgresPrinterRouteRepository : IPrinterRouteRepository
 {
+    // Defensive ceiling for the unpaged GetAllAsync: the routing table is a
+    // bounded configuration set. Hitting this means something is wrong and the
+    // caller needs a paginated query, not a silently truncated list.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresPrinterRouteRepository(NpgsqlDataSource dataSource)
@@ -35,10 +40,11 @@ public sealed class PostgresPrinterRouteRepository : IPrinterRouteRepository
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, route_level, printer_id, item_id, product_id, category_id, special_date, is_active, created_at, updated_at
             FROM kitchen.printer_routes
-            ORDER BY route_level, created_at;
+            ORDER BY route_level, created_at
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         var list = new List<PrinterRoute>();
@@ -47,6 +53,10 @@ public sealed class PostgresPrinterRouteRepository : IPrinterRouteRepository
         {
             list.Add(MapPrinterRoute(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"kitchen.printer_routes has more than {MaxUnpagedRows} rows; GetAllAsync must be replaced with a paginated query.");
 
         return list;
     }

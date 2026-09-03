@@ -19,6 +19,10 @@ Zero-dependency scan that fails (exit code 1) when it finds:
    that module's repository contract (V0-ARC-001). The append-only 'audit'
    schema (AUD-01, DB-trigger enforced) is written by every module by design
    and is exempt.
+6. An unbounded whole-table read in src/Modules/<M>/**: a
+   `Task<IReadOnlyList<...>> GetAll...(` method whose body has no `LIMIT`.
+   Every list query needs a bound so a table that outgrows its "small
+   reference set" assumption fails loud instead of loading unboundedly.
 
 User-facing Turkish string literals are intentionally NOT flagged; only code
 identities and untranslated English leaks are.
@@ -69,6 +73,16 @@ _SCHEMA_CONST_RE = re.compile(r'const\s+string\s+(\w+)\s*=\s*"(\w+)\.\w+"')
 _WRITE_TARGET_RE = re.compile(
     r"\b(?:UPDATE|INSERT\s+INTO|DELETE\s+FROM)\s+(?:\{(\w+)\}|(\w+)\.)", re.IGNORECASE)
 
+# A whole-table list read: `Task<IReadOnlyList<X>> GetAll{Async,Active...}(`.
+# Its body must carry a LIMIT so an outgrown table fails loud instead of
+# loading unboundedly. "GetAllocations"-style names (a different word) and
+# signature-only / expression-bodied forwarders are not matched.
+_GET_ALL_SIG_RE = re.compile(r"Task<IReadOnlyList<[^>]+>>\s+(GetAll(?:Async|Active\w*))\s*\(")
+_LIMIT_RE = re.compile(r"\bLIMIT\b", re.IGNORECASE)
+# Only a body that actually issues a SELECT (has a FROM clause) is in scope; a
+# one-line `return _repository.GetAll...()` forwarder is not.
+_SQL_FROM_RE = re.compile(r"\bFROM\b", re.IGNORECASE)
+
 SKIP_DIR_PARTS = {"bin", "obj", "node_modules", "dist", ".git"}
 
 
@@ -118,6 +132,40 @@ def audit() -> list[str]:
                         violations.append(
                             f"{_rel(path)}:{number}: {parts[0]} module writes the '{schema}' schema; "
                             f"state changes to another module's rows go through its contract: {line[:120]}")
+
+            # Rule 6: a GetAll* list read must carry a LIMIT.
+            module_lines = text.splitlines()
+            for index, raw in enumerate(module_lines):
+                signature = _GET_ALL_SIG_RE.search(raw)
+                if signature is None:
+                    continue
+                # Find where the method body opens. A ';' before any '{' means an
+                # interface declaration or expression-bodied forwarder — the
+                # bound belongs on the concrete block body, checked there.
+                start = None
+                joined = "\n".join(module_lines[index:index + 8])
+                brace_pos = joined.find("{")
+                semi_pos = joined.find(";")
+                if brace_pos == -1 or (semi_pos != -1 and semi_pos < brace_pos):
+                    continue
+                for probe in range(index, len(module_lines)):
+                    if "{" in module_lines[probe]:
+                        start = probe
+                        break
+                body: list[str] = []
+                depth = 0
+                for probe in range(start, len(module_lines)):
+                    segment = module_lines[probe]
+                    body.append(segment)
+                    depth += segment.count("{") - segment.count("}")
+                    if depth <= 0:
+                        break
+                body_text = "\n".join(body)
+                if _SQL_FROM_RE.search(body_text) and not _LIMIT_RE.search(body_text):
+                    violations.append(
+                        f"{_rel(path)}:{index + 1}: {parts[0]} module '{signature.group(1)}' reads a whole "
+                        f"table with no LIMIT; add a bound so an outgrown table fails loud instead of "
+                        f"loading unboundedly.")
 
     src = REPO_ROOT / "src"
     if src.is_dir():

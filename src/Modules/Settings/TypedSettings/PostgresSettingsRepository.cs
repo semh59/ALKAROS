@@ -12,6 +12,11 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
     private const string SettingsTable = "settings.settings";
     private const string HistoryTable = "settings.setting_history";
 
+    // Defensive ceiling for the unpaged GetAllActiveAsync: the settings catalog
+    // is a bounded, module-registered set. Hitting this means something is wrong
+    // and the caller needs a paginated query, not a silently truncated list.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly DbDataSource _dataSource;
     private readonly ISettingValidator _validator;
 
@@ -80,12 +85,13 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
     public async Task<IReadOnlyList<SettingRecord>> GetAllActiveAsync(
         CancellationToken cancellationToken = default)
     {
-        const string sql = $"""
+        var sql = $"""
             SELECT setting_id, setting_key, setting_value, data_type, scope,
                    module_owner, description, requires_restart, active, updated_at, row_version
             FROM {SettingsTable}
             WHERE active = true
-            ORDER BY module_owner ASC, setting_key ASC;
+            ORDER BY module_owner ASC, setting_key ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -98,6 +104,10 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
         {
             list.Add(ReadRecord(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"{SettingsTable} has more than {MaxUnpagedRows} active rows; GetAllActiveAsync must be replaced with a paginated query.");
 
         return list;
     }

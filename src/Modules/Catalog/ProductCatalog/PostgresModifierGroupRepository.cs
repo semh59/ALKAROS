@@ -6,6 +6,11 @@ public sealed class PostgresModifierGroupRepository : IModifierGroupRepository
 {
     private const string Table = "catalog.modifier_groups";
 
+    // Defensive ceiling for the unpaged GetAllAsync: a real deployment stays far
+    // below this. Hitting it means the table outgrew the "small reference set"
+    // assumption and the caller needs a paginated query, not a silent truncation.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresModifierGroupRepository(NpgsqlDataSource dataSource)
@@ -71,7 +76,8 @@ public sealed class PostgresModifierGroupRepository : IModifierGroupRepository
             $"""
             SELECT modifier_group_id, code, name, selection_type, min_selections, max_selections, active
             FROM {Table}
-            ORDER BY code;
+            ORDER BY code
+            LIMIT {MaxUnpagedRows + 1};
             """);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -86,6 +92,10 @@ public sealed class PostgresModifierGroupRepository : IModifierGroupRepository
                 reader.GetInt32(5),
                 reader.GetBoolean(6)));
         }
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"{Table} has more than {MaxUnpagedRows} rows; GetAllAsync must be replaced with a paginated query.");
 
         return result;
     }

@@ -4,6 +4,11 @@ using Npgsql;
 
 public sealed class PostgresPrinterRepository : IPrinterRepository
 {
+    // Defensive ceiling for the unpaged GetAllAsync: a venue has a bounded set
+    // of printers. Hitting this means something is wrong and the caller needs a
+    // paginated query, not a silently truncated list.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresPrinterRepository(NpgsqlDataSource dataSource)
@@ -35,10 +40,11 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, name, station_id, ip_address, port, is_active, created_at, updated_at
             FROM kitchen.printers
-            ORDER BY name;
+            ORDER BY name
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         var list = new List<Printer>();
@@ -47,6 +53,10 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         {
             list.Add(MapPrinter(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"kitchen.printers has more than {MaxUnpagedRows} rows; GetAllAsync must be replaced with a paginated query.");
 
         return list;
     }

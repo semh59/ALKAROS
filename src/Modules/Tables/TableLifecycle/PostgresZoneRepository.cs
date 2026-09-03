@@ -6,6 +6,11 @@ public sealed class PostgresZoneRepository : IZoneRepository
 {
     private const string Table = "table_mgmt.zones";
 
+    // Defensive ceiling for the unpaged GetAllAsync: a venue has a handful of
+    // zones. Hitting this means the table outgrew that assumption and the caller
+    // needs a paginated query, not a silently truncated list.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresZoneRepository(NpgsqlDataSource dataSource)
@@ -57,12 +62,17 @@ public sealed class PostgresZoneRepository : IZoneRepository
             $"""
             SELECT zone_id, code, name, sort_order, active
             FROM {Table}
-            ORDER BY sort_order, code;
+            ORDER BY sort_order, code
+            LIMIT {MaxUnpagedRows + 1};
             """);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(ReadZone(reader));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"{Table} has more than {MaxUnpagedRows} rows; GetAllAsync must be replaced with a paginated query.");
 
         return result;
     }

@@ -6,6 +6,11 @@ public sealed class PostgresProductRepository : IProductRepository
 {
     private const string Table = "catalog.products";
 
+    // Defensive ceiling for the unpaged GetAllAsync: a real deployment stays far
+    // below this. Hitting it means the table outgrew the "small reference set"
+    // assumption and the caller needs a paginated query, not a silent truncation.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresProductRepository(NpgsqlDataSource dataSource)
@@ -81,12 +86,17 @@ public sealed class PostgresProductRepository : IProductRepository
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available
             FROM {Table}
-            ORDER BY display_order, sku;
+            ORDER BY display_order, sku
+            LIMIT {MaxUnpagedRows + 1};
             """);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(ReadProduct(reader));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"{Table} has more than {MaxUnpagedRows} rows; GetAllAsync must be replaced with a paginated query.");
 
         return result;
     }

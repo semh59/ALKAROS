@@ -6,6 +6,11 @@ public sealed class PostgresTaxProfileRepository : ITaxProfileRepository
 {
     private const string Table = "catalog.tax_profiles";
 
+    // Defensive ceiling for the unpaged GetAllAsync: a real deployment stays far
+    // below this. Hitting it means the table outgrew the "small reference set"
+    // assumption and the caller needs a paginated query, not a silent truncation.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresTaxProfileRepository(NpgsqlDataSource dataSource)
@@ -67,7 +72,8 @@ public sealed class PostgresTaxProfileRepository : ITaxProfileRepository
             $"""
             SELECT tax_profile_id, code, name, vat_rate, active
             FROM {Table}
-            ORDER BY code;
+            ORDER BY code
+            LIMIT {MaxUnpagedRows + 1};
             """);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -80,6 +86,10 @@ public sealed class PostgresTaxProfileRepository : ITaxProfileRepository
                 reader.GetDecimal(3),
                 reader.GetBoolean(4)));
         }
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"{Table} has more than {MaxUnpagedRows} rows; GetAllAsync must be replaced with a paginated query.");
 
         return result;
     }
