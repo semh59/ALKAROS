@@ -39,11 +39,12 @@ for (const f of ['tokens.css', 'primitives.css', 'icon.css']) {
   copyFileSync(join(PKG, 'src/design-system', f), join(OUT, f));
 }
 
-// The design system's --ds-font-sans leads with "Inter" but the repo ships no
-// font files (the app falls back to system-ui in prod). For the Claude Design
-// pane we want the intended look, so wire Inter from the Fontsource CDN via
-// cfg.extraFonts -> fonts/fonts.css in the styles.css closure. Inter is SIL OFL.
-const FONTSOURCE = 'https://cdn.jsdelivr.net/npm/@fontsource/inter@5.1.1/files';
+// --ds-font-sans now leads with Manrope and --ds-font-mono is "DM Mono"
+// (handoff design_handoff_alkaros_v1). The repo ships no font files, so for the
+// Claude Design pane we wire both from the Fontsource CDN via
+// cfg.extraFonts -> fonts/fonts.css in the styles.css closure. Manrope is
+// SIL OFL, DM Mono is Apache-2.0. Inter stays only as a CSS fallback name and
+// is not shipped.
 // Two subsets: latin-ext carries the Turkish glyphs (ı ş ğ İ) the UI needs.
 const SUBSETS = {
   latin:
@@ -51,18 +52,22 @@ const SUBSETS = {
   'latin-ext':
     'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF',
 };
-const interFace = (w, sub) => `@font-face {
-  font-family: 'Inter';
+const FS_VER = '5.3.0'; // pinned @fontsource version for both families
+const face = (family, pkg, w, sub) => `@font-face {
+  font-family: '${family}';
   font-style: normal;
   font-weight: ${w};
   font-display: swap;
-  src: url('${FONTSOURCE}/inter-${sub}-${w}-normal.woff2') format('woff2');
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/${pkg}@${FS_VER}/files/${pkg}-${sub}-${w}-normal.woff2') format('woff2');
   unicode-range: ${SUBSETS[sub]};
 }`;
-writeFileSync(
-  join(OUT, 'fonts.css'),
-  [400, 500, 600, 700].flatMap((w) => Object.keys(SUBSETS).map((s) => interFace(w, s))).join('\n\n') + '\n',
-);
+const rules = [
+  ...[400, 500, 600, 700, 800].flatMap((w) =>
+    Object.keys(SUBSETS).map((s) => face('Manrope', 'manrope', w, s))),
+  ...[400, 500].flatMap((w) =>
+    Object.keys(SUBSETS).map((s) => face('DM Mono', 'dm-mono', w, s))),
+];
+writeFileSync(join(OUT, 'fonts.css'), rules.join('\n\n') + '\n');
 
 writeFileSync(join(OUT, 'package.json'), JSON.stringify({
   name: '@alkaros/pos-terminal',

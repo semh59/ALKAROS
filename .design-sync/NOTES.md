@@ -29,7 +29,7 @@ Repo-specific gotchas for future syncs.
 - ContextDrawer viewport 440×460; the `Sheet` story wraps the fixed panel in a `transform: translateZ(0)` container so it's a containing block.
 
 ## Known render warns
-- (none — `✓ bundle is complete` with 0 warnings after the overrides)
+- `[FONT_MISSING] "Inter"` — **accepted.** After the handoff `tokens.css`, `--ds-font-sans` is `Manrope, Inter, …`. `build-ds-dist.mjs` ships Manrope + DM Mono `@font-face` (Fontsource 5.3.0); Inter is only a fallback name and is deliberately not shipped. The pane renders Manrope.
 
 ## Gotchas hit this run
 - **`rm -rf ds-bundle` fails EPERM on Windows while `http-serve.mjs` is running** (it holds a dir handle). Kill the serve before any `package-build.mjs` / `resync.mjs`: `Get-CimInstance Win32_Process -Filter "Name='node.exe'" | ? { $_.CommandLine -like '*http-serve*' } | % { Stop-Process $_.ProcessId -Force }`.

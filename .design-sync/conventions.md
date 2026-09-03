@@ -41,12 +41,16 @@ them as `var(--name)`; never hard-code hexes or pixels that a token covers.
 | Surfaces | `--ds-color-canvas` (page), `--ds-color-surface` (card), `--ds-color-surface-subtle` |
 | Text | `--ds-color-ink` (body), `--ds-color-muted` (secondary), `--ds-color-line` (borders) |
 | Brand / action | `--ds-color-brand`, `--ds-color-brand-strong`, `--ds-color-accent`, `--ds-color-accent-hover`, `--ds-color-focus` (focus ring) |
-| Status (each with a `-soft` bg pair) | `--ds-color-info` / `--ds-color-info-soft`, `--ds-color-success` / `-soft`, `--ds-color-warning` / `-soft`, `--ds-color-danger` / `-soft` |
+| Status (each with a `-soft` bg pair) | `--ds-color-info` / `--ds-color-info-soft`, `--ds-color-success` / `-soft`, `--ds-color-warning` / `-soft`, `--ds-color-danger` / `-soft`, `--ds-color-dessert` / `-soft` (fourth "later course" pair) |
+| Disabled controls | `--ds-color-disabled-ink`, `--ds-color-disabled-track` (both pass the 3:1 non-text minimum) |
+| Coursing (3-stage) | `--ds-course-1` / `-1-soft` (starter), `--ds-course-2` / `-2-soft` (main), `--ds-course-3` / `-3-soft` (dessert) — one token per stage so POS/KDS/waiter cannot drift |
+| Table heat ring | `--ds-heat-fresh`, `--ds-heat-active`, `--ds-heat-stale` + the plain-number thresholds `--ds-heat-fresh-max-minutes` (20), `--ds-heat-active-max-minutes` (45) (read from JS — CSS has no minute unit) |
 | Spacing (0.25rem → 2rem) | `--ds-space-1`, `--ds-space-2`, `--ds-space-3`, `--ds-space-4`, `--ds-space-5`, `--ds-space-6` |
-| Radius | `--ds-radius-sm` (controls), `--ds-radius-md` (dialogs) |
-| Type | `--ds-font-sans` (Inter + system fallback) |
+| Radius | `--ds-radius-sm` (controls), `--ds-radius-md` (dialogs) — only two, by design |
+| Type | `--ds-font-sans` (Manrope, Inter fallback), `--ds-font-mono` ("DM Mono" — money, table ids, timers, ticket numbers: anything tabular) |
 | Elevation | `--ds-shadow-raised` |
-| Touch / shell | `--ds-target-min` (44px min tap target — honor it on any custom control), `--ds-shell-header-height`, `--ds-shell-status-height`, `--ds-shell-rail-width`, `--ds-shell-compact-rail-width`, `--ds-shell-drawer-width` |
+| Touch / shell | `--ds-target-min` (44px minimum), `--ds-target-primary` (48px — the one primary action on a screen), `--ds-target-touch` (52px — phone, one-handed/gloved), `--ds-shell-header-height`, `--ds-shell-status-height`, `--ds-shell-rail-width`, `--ds-shell-compact-rail-width`, `--ds-shell-drawer-width` |
+| Timing | `--ds-undo-window` (60s — the countdown for "reverting never waits for a manager", shared by POS and waiter PWA) |
 
 ### Per-component style hooks (there is no other theming surface)
 
