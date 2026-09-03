@@ -23,6 +23,9 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2"
         }
+      },
+      "alkaros.integrationcontracts": {
+        "type": "Project"
       }
     }
   }

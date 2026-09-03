@@ -4,6 +4,7 @@
   <Project Path="src/BuildingBlocks/TransactionOutboxIntegration/ALKAROS.TransactionOutboxIntegration.csproj" />
   <Project Path="src/BuildingBlocks/Idempotency/ALKAROS.Idempotency.csproj" />
   <Project Path="src/BuildingBlocks/Messaging/ALKAROS.Messaging.csproj" />
+  <Project Path="src/BuildingBlocks/IntegrationContracts/ALKAROS.IntegrationContracts.csproj" />
   <Project Path="src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj" />
   <Project Path="src/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.csproj" />
   <Project Path="src/Host/ALKAROS.Host.csproj" />

@@ -63,6 +63,38 @@ public sealed class OutboxStore
     }
 
     /// <summary>
+    /// Persists a domain event in the outbox on the caller's open connection
+    /// and transaction, so the outbox row commits together with the domain
+    /// write that produced the event (transactional outbox). The row is
+    /// invisible — and never delivered — until that transaction commits; a
+    /// rollback takes the row with it.
+    /// </summary>
+    public static async Task EnqueueAsync(
+        OutboxEnvelope envelope,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(envelope);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
+            """
+            INSERT INTO outbox_messages (event_type, aggregate_type, aggregate_id, payload_envelope)
+            VALUES ($1, $2, $3, $4);
+            """;
+        command.Parameters.AddWithValue(envelope.EventType);
+        command.Parameters.AddWithValue(envelope.AggregateType);
+        command.Parameters.AddWithValue(envelope.AggregateId);
+        command.Parameters.AddWithValue(envelope.PayloadEnvelope);
+
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Claims pending messages (due now, SKIP LOCKED) into a short in-flight
     /// lease and delivers each to <paramref name="handler"/> strictly after
     /// the claim transaction committed. Successful delivery marks the message
