@@ -119,6 +119,8 @@ def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
     assert "http://localhost:81" in caddy_dev
     assert "header_up X-Alkaros-Origin display" in caddy_dev
     assert "header_up -X-Alkaros-Origin" in caddy_dev
+    # plain-HTTP localhost must keep the session cookie
+    assert 'header_down Set-Cookie "(?i);\\s*secure" ""' in caddy_dev
 
 
 def test_services_load_the_password_from_the_mounted_secret() -> None:

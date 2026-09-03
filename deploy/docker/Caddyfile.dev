@@ -9,7 +9,9 @@
 # Port :80 is the main origin, :81 is the customer-display origin - the browser
 # treats them as distinct origins, which is what finding B-4 needs, without
 # depending on *.localhost DNS. It forces X-Forwarded-Proto: https upstream so
-# the api's HTTPS gate is satisfied. NEVER use this outside local development.
+# the api's HTTPS gate is satisfied, then strips "; Secure" off Set-Cookie on
+# the way back so the plain-HTTP page can actually keep the session cookie.
+# NEVER use this outside local development.
 
 {
 	admin off
@@ -31,18 +33,21 @@ http://localhost:80, http://127.0.0.1:80 {
 		reverse_proxy api:5080 {
 			header_up -X-Alkaros-Origin
 			header_up X-Forwarded-Proto https
+			header_down Set-Cookie "(?i);\s*secure" ""
 		}
 	}
 	handle /hubs/* {
 		reverse_proxy api:5080 {
 			header_up -X-Alkaros-Origin
 			header_up X-Forwarded-Proto https
+			header_down Set-Cookie "(?i);\s*secure" ""
 		}
 	}
 	handle /health/* {
 		reverse_proxy api:5080 {
 			header_up -X-Alkaros-Origin
 			header_up X-Forwarded-Proto https
+			header_down Set-Cookie "(?i);\s*secure" ""
 		}
 	}
 	import spa_static
@@ -54,12 +59,14 @@ http://localhost:81, http://127.0.0.1:81 {
 		reverse_proxy api:5080 {
 			header_up X-Alkaros-Origin display
 			header_up X-Forwarded-Proto https
+			header_down Set-Cookie "(?i);\s*secure" ""
 		}
 	}
 	handle /hubs/* {
 		reverse_proxy api:5080 {
 			header_up X-Alkaros-Origin display
 			header_up X-Forwarded-Proto https
+			header_down Set-Cookie "(?i);\s*secure" ""
 		}
 	}
 	import spa_static

@@ -68,9 +68,11 @@ yalnız `web` (Caddy) üzerinde sonlanır.
   `X-Forwarded-Proto: https` yukarı akışa zorlanır ki api'nin HTTPS geçidi geçsin). İki port: `8090:80`
   ana origin, `8091:81` müşteri ekranı origin'i — tarayıcı bunları ayrı origin sayar, `*.localhost` DNS'e
   gerek kalmadan B-4 izolasyonu korunur (`display.localhost` bazı çözücülerde loopback yerine ağ
-  geçidine çözülüyordu). `postgres` 5433, `api` 5080 host'a yayınlanır. `http://localhost` tarayıcı
-  güvenli bağlamı olduğundan WaiterPwa service worker / çevrimdışı kuyruğu burada çalışır; LAN IP
-  üzerinden erişim çalışmaz (saha testi için CA kurulu HTTPS 8443 yolu). Bu overlay asla deploy edilmez.
+  geçidine çözülüyordu). Dev Caddyfile ayrıca dönüş yolunda `Set-Cookie`'den `; Secure`'u siler
+  (`header_down`), yoksa düz HTTP sayfası oturum çerezini saklayamıyor ve giriş sonrası ekran
+  ilerlemiyordu. `postgres` 5433, `api` 5080 host'a yayınlanır. `http://localhost` tarayıcı güvenli
+  bağlamı olduğundan WaiterPwa service worker / çevrimdışı kuyruğu burada çalışır; LAN IP üzerinden
+  erişim çalışmaz (saha testi için CA kurulu HTTPS 8443 yolu). Bu overlay asla deploy edilmez.
 - `.dockerignore` daraltıldı (`plan/`, `docs/`, `evidence/`, `tools/`, `.github/`, `*.md` vs. build
   bağlamından çıkarıldı; `.git` build provenance için tutuldu).
 - E1 kararı: `V1-RMD-096` Host self-signed `8444` yedeği kaldırıldı. `docs/operations/
