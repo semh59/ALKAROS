@@ -182,11 +182,17 @@ def audit() -> list[str]:
                     violations.append(f"{_rel(path)}:{number}: Turkish character in identifier: {line.strip()}")
                 if is_client and LEAK_RE.search(line):
                     violations.append(f"{_rel(path)}:{number}: untranslated English term (Catalog/Unknown) in UI attribute: {line.strip()}")
+                stripped = line.lstrip()
+                is_module_specifier = (
+                    stripped.startswith(("import ", "export "))
+                    and (" from " in stripped or stripped.startswith(("import \"", "import '")))
+                )
                 if (
                     is_client
                     and path.suffix in (".ts", ".tsx")
                     and path.name != "strings.ts"
                     and not path.name.endswith((".test.ts", ".test.tsx"))
+                    and not is_module_specifier
                     and ROLE_NOUN_RE.search(line)
                 ):
                     violations.append(f"{_rel(path)}:{number}: English role noun in a string literal; use strings.ts: {line.strip()}")
