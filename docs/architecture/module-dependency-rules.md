@@ -45,7 +45,7 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 | --- | --- | --- | --- | --- |
 | 1 | Identity & Authorization | none (cross-cutting; consumed by all modules for actor/role checks) | none | II.2.1 |
 | 2 | Catalog | none | ProductCatalogChanged → Menu, Order, OnlineOrdering | II.2.2 |
-| 3 | Table Management | Order, Bill (reparent active orders/bills on merge / transfer / unmerge, same transaction — amended v1-wave25 after V1-TBL-002/003) | TableOccupancyChanged → Order, Bill, QR Ordering | II.2.3, II.5.15 |
+| 3 | Table Management | none | TableMerged / TableTransferred / TableUnmerged → Order, Bill (reparent still-active orders/bills after a merge / transfer / unmerge; v1-wave25 — via the transactional outbox, not a direct call); TableOccupancyChanged → Order, Bill, QR Ordering | II.2.3, II.5.15 |
 | 4 | Order | Identity (actor validation), Catalog (item snapshot), Table Management (table association) | OrderStateChanged → Kitchen, Bill, QR Ordering, Online Ordering, Reporting, Reconciliation | II.5.1, II.7 |
 | 5 | Bill | Order (order items into bill), Identity | BillStateChanged → Payment, Fiscal, Reporting, Reconciliation | II.3.3, II.5.2, III.7 |
 | 6 | Payment | Bill (allocation target), Identity | PaymentStateChanged → Bill, Fiscal, Meal Card, Customer Account, Reconciliation | II.5.3, III.8 |
@@ -75,7 +75,11 @@ Notes:
 - Reporting, Audit, Observability and Licensing are cross-cutting; they never
   appear as direct-call targets of domain flows.
 - Table state coupling to Order/Bill is an application-layer invariant, not a
-  database constraint (PDF:II.5.15).
+  database constraint (PDF:II.5.15). After a merge / transfer / unmerge, Table
+  Management writes one table event to the outbox in its own transaction;
+  Order and Bill move their own rows to the new table when the outbox delivers
+  it (eventually consistent, at-least-once, idempotent). Table Management holds
+  no compile-time or direct-call dependency on Order or Bill.
 - The full edge list is verified acyclic by V1-FND-001 (dependency graph
   validation); a future edge requires an approved plan change.
 
@@ -118,8 +122,17 @@ Two automated gates keep code and this record in sync:
   `INSERT` / `DELETE` against another module's PostgreSQL schema. A module may
   **read** another module's relations for a same-transaction query or a
   reconciliation projection; it changes another module's rows only through that
-  module's repository contract. The append-only `audit` schema (AUD-01) is
-  written by every module by design and is exempt.
+  module's repository contract, or by publishing an event the owning module
+  consumes. The append-only `audit` schema (AUD-01) is written by every module
+  by design and is exempt.
+
+The cross-module event path (row 3 today): a producer writes an
+`OutboxEnvelope` through `OutboxStore.EnqueueAsync` on its own connection and
+transaction (`ALKAROS.Messaging`), so the event row commits with the domain
+write. `OutboxDispatcherHostedService` drains `outbox_messages` and fans each
+message out through `OutboxFanoutSink` to the module
+`IIntegrationEventConsumer` registrations. A consumer changes only its own
+module's schema and must be idempotent (delivery is at-least-once).
 
 ## Affected tasks
 

@@ -8,10 +8,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
-    <!-- Table merge/transfer reparent active orders and bills in the same
-         transaction through the Order/Bill module contracts (V0-ARC-001). -->
-    <ProjectReference Include="..\Orders\ALKAROS.Orders.csproj" />
-    <ProjectReference Include="..\Billing\ALKAROS.Billing.csproj" />
+    <!-- Merge/transfer/unmerge publish a table event to the outbox in the same
+         transaction; Order and Bill reparent their own rows on delivery
+         (V0-ARC-001 row 3: Table → Order, Bill via integration event). -->
+    <ProjectReference Include="..\..\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

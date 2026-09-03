@@ -1,6 +1,10 @@
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Billing.Integration;
+using ALKAROS.IntegrationContracts;
+using ALKAROS.Orders.Integration;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Tables.TableMerge.Tests.Fixtures;
+using ALKAROS.TestHelpers;
 using FluentAssertions;
 using Npgsql;
 using Xunit;
@@ -19,9 +23,21 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
     public PostgresTableMergeTests(TableMergeTestDatabase db)
     {
         _db = db;
-        _repository = new PostgresTableMergeRepository(_db.DataSource, new PostgresOrderRepository(_db.DataSource), new PostgresBillRepository(_db.DataSource));
+        _repository = new PostgresTableMergeRepository(_db.DataSource);
         _service = new TableMergeService(_repository);
     }
+
+    // Runs the outbox dispatch loop the way the background worker would, so the
+    // Order/Bill reparent that a table event triggers has happened before the
+    // "orders/bills followed the table" assertions.
+    private Task<int> DrainTableEventsAsync()
+        => OutboxTestDrain.DrainAsync(
+            _db.DataSource,
+            new IIntegrationEventConsumer[]
+            {
+                new TableEventOrderConsumer(_db.DataSource, new PostgresOrderRepository(_db.DataSource)),
+                new TableEventBillConsumer(_db.DataSource, new PostgresBillRepository(_db.DataSource)),
+            });
 
     public async Task InitializeAsync()
     {
@@ -94,6 +110,7 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
             MergedBy: _userId);
 
         var mergeResult = await _service.MergeTablesAsync(mergeRequest);
+        (await DrainTableEventsAsync()).Should().BeGreaterThan(0);
 
         mergeResult.Should().NotBeNull();
         mergeResult.PrimaryTableId.Should().Be(primaryId);
@@ -156,6 +173,7 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
             UnmergedBy: _userId);
 
         var unmergeResult = await _service.UnmergeTablesAsync(unmergeRequest);
+        (await DrainTableEventsAsync()).Should().BeGreaterThan(0);
 
         unmergeResult.Should().NotBeNull();
         unmergeResult.PrimaryTableId.Should().Be(primaryId);

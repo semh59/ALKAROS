@@ -1,7 +1,7 @@
 using System.Data;
 using System.Text.Json;
-using ALKAROS.Billing.BillFoundation;
-using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.IntegrationContracts;
+using ALKAROS.Messaging;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -22,17 +22,10 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
     private const string AuditEventsTable = "audit.audit_events";
 
     private readonly NpgsqlDataSource _dataSource;
-    private readonly IOrderRepository _orderRepository;
-    private readonly IBillRepository _billRepository;
 
-    public PostgresTableTransferRepository(
-        NpgsqlDataSource dataSource,
-        IOrderRepository orderRepository,
-        IBillRepository billRepository)
+    public PostgresTableTransferRepository(NpgsqlDataSource dataSource)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-        _billRepository = billRepository ?? throw new ArgumentNullException(nameof(billRepository));
     }
 
     public async Task<TableTransferRecord?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -301,19 +294,20 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             }
         }
 
-        // 5-6. Reparent active orders and bills from source to target through
-        // the owning module contracts (V0-ARC-001).
-        if (activeOrderIds.Count > 0)
-        {
-            await _orderRepository.ReparentActiveOrdersToTableAsync(
-                request.SourceTableId, request.TargetTableId, now, connection, transaction, cancellationToken);
-        }
-
-        if (activeBillIds.Count > 0)
-        {
-            await _billRepository.ReparentActiveBillsToTableAsync(
-                request.SourceTableId, request.TargetTableId, now, connection, transaction, cancellationToken);
-        }
+        // 5-6. The source table's still-active orders and bills follow it to the
+        // target. One table event is written to the outbox in this transaction;
+        // Order and Bill move their own rows when the outbox delivers it
+        // (V0-ARC-001 row 3 — integration event, eventually consistent).
+        await OutboxStore.EnqueueAsync(
+            new OutboxEnvelope(
+                IntegrationEventTypes.TableTransferred,
+                "table_transfer",
+                transferId,
+                IntegrationEventSerializer.Serialize(new TableTransferred(
+                    transferId, request.SourceTableId, request.TargetTableId, now))),
+            connection,
+            transaction,
+            cancellationToken);
 
         // 7. Determine Target Table Primary Order & Bill Pointers
         var primaryOrderId = sourceCurrentOrderId ?? (activeOrderIds.Count > 0 ? activeOrderIds[0] : (Guid?)null);

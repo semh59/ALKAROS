@@ -1,7 +1,7 @@
 using System.Data;
 using System.Text.Json;
-using ALKAROS.Billing.BillFoundation;
-using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.IntegrationContracts;
+using ALKAROS.Messaging;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -16,24 +16,17 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
     private const string TableMergesTable = "table_mgmt.table_merges";
     private const string TablesTable = "table_mgmt.tables";
     // Read-only references for merge preconditions and participant discovery.
-    // Order/Bill state writes go through the injected module contracts.
+    // Order/Bill row moves are requested through a table integration event.
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
     private const string BillAllocationsTable = "billing.bill_allocations";
     private const string AuditEventsTable = "audit.audit_events";
 
     private readonly NpgsqlDataSource _dataSource;
-    private readonly IOrderRepository _orderRepository;
-    private readonly IBillRepository _billRepository;
 
-    public PostgresTableMergeRepository(
-        NpgsqlDataSource dataSource,
-        IOrderRepository orderRepository,
-        IBillRepository billRepository)
+    public PostgresTableMergeRepository(NpgsqlDataSource dataSource)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-        _billRepository = billRepository ?? throw new ArgumentNullException(nameof(billRepository));
     }
 
     public async Task<TableMergeRecord?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -406,21 +399,23 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
             var origOrderId = pData.CurrentOrderId ?? participantOrderIds.FirstOrDefault();
             var origBillId = pData.CurrentBillId ?? participantBillIds.FirstOrDefault();
 
-            // Reparent participant orders/bills to the primary table through the
-            // owning module contracts (V0-ARC-001).
-            if (participantOrderIds.Count > 0)
-            {
-                await _orderRepository.ReparentActiveOrdersToTableAsync(
-                    participant.TableId, request.PrimaryTableId, now, connection, transaction, cancellationToken);
-                allConsolidatedOrderIds.AddRange(participantOrderIds);
-            }
-
-            if (participantBillIds.Count > 0)
-            {
-                await _billRepository.ReparentActiveBillsToTableAsync(
-                    participant.TableId, request.PrimaryTableId, now, connection, transaction, cancellationToken);
-                allConsolidatedBillIds.AddRange(participantBillIds);
-            }
+            // The participant's still-active orders and bills follow the table
+            // to the primary. One table event is written to the outbox in this
+            // transaction; Order and Bill move their own rows when the outbox
+            // delivers it (V0-ARC-001 row 3 — integration event, eventually
+            // consistent). The ID lists below are the rows the event will move.
+            await OutboxStore.EnqueueAsync(
+                new OutboxEnvelope(
+                    IntegrationEventTypes.TableMerged,
+                    "table_merge",
+                    participant.TableId,
+                    IntegrationEventSerializer.Serialize(new TableMerged(
+                        mergeGroupId, participant.TableId, request.PrimaryTableId, now))),
+                connection,
+                transaction,
+                cancellationToken);
+            allConsolidatedOrderIds.AddRange(participantOrderIds);
+            allConsolidatedBillIds.AddRange(participantBillIds);
 
             // Update participant table state (marked Occupied, pointers cleared)
             const string updatePartTableSql = $"""
@@ -705,31 +700,32 @@ public sealed class PostgresTableMergeRepository : ITableMergeRepository
         {
             var expectedVersion = expectedVersionMap[mergeRecord.MergedTableId];
 
-            if (mergeRecord.OriginalOrderId.HasValue)
+            // The identified order/bill move back from the primary to the table
+            // they came from. One table event carries both; Order and Bill
+            // apply their own move when the outbox delivers it (V0-ARC-001
+            // row 3). The move is a no-op if the row is no longer on the
+            // primary, so the restored-id lists are optimistic.
+            if (mergeRecord.OriginalOrderId.HasValue || mergeRecord.OriginalBillId.HasValue)
             {
-                var rows = await _orderRepository.ReparentOrderToTableAsync(
-                    mergeRecord.OriginalOrderId.Value,
-                    primaryTableId,
-                    mergeRecord.MergedTableId,
-                    now,
+                await OutboxStore.EnqueueAsync(
+                    new OutboxEnvelope(
+                        IntegrationEventTypes.TableUnmerged,
+                        "table_merge",
+                        mergeRecord.MergedTableId,
+                        IntegrationEventSerializer.Serialize(new TableUnmerged(
+                            mergeRecord.MergeGroupId,
+                            mergeRecord.MergedTableId,
+                            primaryTableId,
+                            mergeRecord.OriginalOrderId,
+                            mergeRecord.OriginalBillId,
+                            now))),
                     connection,
                     transaction,
                     cancellationToken);
-                if (rows > 0)
-                    restoredOrderIds.Add(mergeRecord.OriginalOrderId.Value);
-            }
 
-            if (mergeRecord.OriginalBillId.HasValue)
-            {
-                var rows = await _billRepository.ReparentBillToTableAsync(
-                    mergeRecord.OriginalBillId.Value,
-                    primaryTableId,
-                    mergeRecord.MergedTableId,
-                    now,
-                    connection,
-                    transaction,
-                    cancellationToken);
-                if (rows > 0)
+                if (mergeRecord.OriginalOrderId.HasValue)
+                    restoredOrderIds.Add(mergeRecord.OriginalOrderId.Value);
+                if (mergeRecord.OriginalBillId.HasValue)
                     restoredBillIds.Add(mergeRecord.OriginalBillId.Value);
             }
 

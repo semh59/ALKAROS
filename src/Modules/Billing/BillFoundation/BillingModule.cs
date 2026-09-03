@@ -1,5 +1,7 @@
 using ALKAROS.ModuleComposition;
+using ALKAROS.Billing.Integration;
 using ALKAROS.Billing.SplitDesign;
+using ALKAROS.IntegrationContracts;
 
 namespace ALKAROS.Billing.BillFoundation;
 
@@ -19,5 +21,9 @@ public sealed class BillingModule : IModule
     {
         context.RegisterTransient<IBillRepository, PostgresBillRepository>();
         context.RegisterTransient<ISplitDesignRepository, PostgresSplitDesignRepository>();
+
+        // Reacts to Table Management merge/transfer/unmerge events by moving
+        // Bill's own rows to the new table (V0-ARC-001 row 3).
+        context.RegisterTransient<IIntegrationEventConsumer, TableEventBillConsumer>();
     }
 }

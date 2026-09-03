@@ -123,14 +123,6 @@
           "xunit.extensibility.core": "[2.9.2]"
         }
       },
-      "alkaros.accounts": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
-        }
-      },
       "alkaros.audit": {
         "type": "Project",
         "dependencies": {
@@ -141,6 +133,7 @@
       "alkaros.billing": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Orders": "[1.0.0, )"
         }
@@ -148,8 +141,7 @@
       "alkaros.cash": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
         }
       },
       "alkaros.catalog": {
@@ -159,31 +151,20 @@
           "Npgsql": "[9.0.2, )"
         }
       },
-      "alkaros.fiscal": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
-        }
-      },
       "alkaros.host": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.Accounts": "[1.0.0, )",
           "ALKAROS.Audit": "[1.0.0, )",
           "ALKAROS.Billing": "[1.0.0, )",
           "ALKAROS.Cash": "[1.0.0, )",
           "ALKAROS.Catalog": "[1.0.0, )",
-          "ALKAROS.Fiscal": "[1.0.0, )",
           "ALKAROS.Identity": "[1.0.0, )",
-          "ALKAROS.Inventory": "[1.0.0, )",
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.Kitchen": "[1.0.0, )",
-          "ALKAROS.Notifications": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.Observability": "[1.0.0, )",
           "ALKAROS.Operations": "[1.0.0, )",
           "ALKAROS.Orders": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )",
           "ALKAROS.Reconciliation": "[1.0.0, )",
           "ALKAROS.Reporting": "[1.0.0, )",
           "ALKAROS.Settings": "[1.0.0, )",
@@ -198,12 +179,8 @@
           "Npgsql": "[9.0.2, )"
         }
       },
-      "alkaros.inventory": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Catalog": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
-        }
+      "alkaros.integrationcontracts": {
+        "type": "Project"
       },
       "alkaros.kitchen": {
         "type": "Project",
@@ -212,14 +189,15 @@
           "ALKAROS.Orders": "[1.0.0, )"
         }
       },
-      "alkaros.modulecomposition": {
-        "type": "Project"
-      },
-      "alkaros.notifications": {
+      "alkaros.messaging": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
         }
+      },
+      "alkaros.modulecomposition": {
+        "type": "Project"
       },
       "alkaros.observability": {
         "type": "Project",
@@ -238,24 +216,15 @@
       "alkaros.orders": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
-        }
-      },
-      "alkaros.payments": {
-        "type": "Project",
-        "dependencies": {
-          "ALKAROS.Billing": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
         }
       },
       "alkaros.reconciliation": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.Accounts": "[1.0.0, )",
-          "ALKAROS.Cash": "[1.0.0, )",
-          "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Payments": "[1.0.0, )"
+          "ALKAROS.ModuleComposition": "[1.0.0, )"
         }
       },
       "alkaros.reporting": {
@@ -273,6 +242,8 @@
       "alkaros.tables": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
@@ -280,6 +251,8 @@
       "alkaros.testhelpers": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.Transactions": "[1.0.0, )",
           "Npgsql": "[9.0.2, )",
           "xunit": "[2.9.2, )"

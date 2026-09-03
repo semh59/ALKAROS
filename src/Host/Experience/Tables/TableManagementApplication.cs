@@ -1,7 +1,5 @@
-using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
-using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Tables.CurrentPointers;
 using ALKAROS.Tables.FloorPlan;
 using ALKAROS.Tables.Reservations;
@@ -31,12 +29,6 @@ public static class TableManagementApplication
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
-
-        // Merge/transfer reparent active orders and bills through these contracts
-        // in the same transaction. Under serve the modules register them first
-        // (B-2); these TryAdd calls are the fallback for the standalone host.
-        services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
-        services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
         services.TryAddSingleton<IZoneRepository, PostgresZoneRepository>();
         services.TryAddSingleton<ITableRepository, PostgresTableRepository>();
         services.TryAddSingleton<ITableFloorPlanRepository, PostgresTableFloorPlanRepository>();

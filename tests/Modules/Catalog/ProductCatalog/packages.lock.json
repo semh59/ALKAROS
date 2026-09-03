@@ -152,12 +152,24 @@
           "Npgsql": "[9.0.2, )"
         }
       },
+      "alkaros.integrationcontracts": {
+        "type": "Project"
+      },
+      "alkaros.messaging": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
       "alkaros.modulecomposition": {
         "type": "Project"
       },
       "alkaros.testhelpers": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.Transactions": "[1.0.0, )",
           "Npgsql": "[9.0.2, )",
           "xunit": "[2.9.2, )"

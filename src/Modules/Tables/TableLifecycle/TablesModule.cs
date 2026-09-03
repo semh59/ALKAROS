@@ -9,10 +9,11 @@ public sealed class TablesModule : IModule
 
     public string DisplayName => "Table Management";
 
-    // Table merge/transfer/unmerge reparent active orders and bills to the new
-    // table inside the same transaction, through the Order and Bill module
-    // contracts (V0-ARC-001: Tables -> Order, Bill same-transaction reparent).
-    public IReadOnlyCollection<string> DependsOn => ["Orders", "Billing"];
+    // Merge/transfer/unmerge write a table event to the outbox in their own
+    // transaction; Order and Bill reparent their rows on delivery. No
+    // direct-call edge — the coupling is an integration event (V0-ARC-001
+    // row 3), so nothing is declared here.
+    public IReadOnlyCollection<string> DependsOn => Array.Empty<string>();
 
     public void Register(ModuleContext context)
     {
