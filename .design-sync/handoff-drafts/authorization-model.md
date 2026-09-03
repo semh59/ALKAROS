@@ -1,7 +1,8 @@
 # Authorization Model — differentiated decision record (DRAFT)
 
-> **Proposed task:** V1-IAM-016 (decision) + V1-IAM-017..023 (implementation wave)
-> **Status:** DRAFT — awaiting Semih approval
+> **Proposed task:** V1-IAM-016 (decision) + V1-IAM-017..024 (implementation wave)
+> **Status:** DRAFT — awaiting Semih approval of the full record; the three
+> role-matrix product questions are resolved (Semih, 2026-09-04, see §3).
 > **Work type:** decision
 > **Approver:** Semih — pending
 > **Decision type:** Business + architecture decision
@@ -68,21 +69,27 @@ removed in the last wave task. New application permission codes:
 | `tables.transfer` / `tables.merge` | ❌ | ✅ | ✅ | ✅ |
 | `floorplan.manage` | ❌ | ❌ | ✅ | ✅ |
 | `bills.split` | ❌ | ✅ | ✅ | ✅ |
-| `bills.void` | grant | grant | ✅ | ✅ |
-| `bills.comp` | grant | grant | ✅ | ✅ |
-| `bills.discount` | grant | grant (ladder only ✅) | ✅ | ✅ |
+| `bills.void` | grant (own check) | grant | ✅ | ✅ |
+| `bills.comp` | grant (own check) | grant | ✅ | ✅ |
+| `bills.discount` | grant | grant | ✅ | ✅ |
 | `cash.drawer` | ❌ | ✅ | ✅ | ✅ |
 | `reports.view` | ❌ | ❌ | ✅ | ✅ |
 | `catalog.manage` | ❌ | ❌ | ❌ | ✅ |
 
 `grant` = the role does not hold the permission outright; the action raises an
-authorization request resolved by §4. `supervisor` = shift lead / şef garson.
+authorization request resolved by §4.
 
-**Open product questions for Semih:**
+**Resolved (Semih, 2026-09-04):**
 
-1. Can a waiter void/comp on **their own** check via a grant, or never?
-2. Does `cashier` get a standing `bills.discount` ladder (e.g. ≤ 10 %) without a grant?
-3. Is `supervisor` a floor role (şef garson) or a junior-manager role?
+1. A waiter **may** void/comp, but only on **their own** check and only through a
+   grant (`context.requester_user_id` must equal the order's serving user; a
+   grant on another server's check is auto-denied before it reaches a manager).
+2. There is **no standing discount ladder** — every `bills.discount`, including
+   from a `cashier`, is a grant. Only `supervisor` / `manager` hold it outright.
+3. `supervisor` is the **floor role (şef garson)**: a senior waiter who holds
+   `bills.void` / `bills.comp` / `bills.discount` / `floorplan.manage` /
+   `reports.view` outright so the rush keeps moving without a manager, but never
+   `catalog.manage` and never staff/finance settings.
 
 ## 4. Grant flow (`authorization_grants`)
 
