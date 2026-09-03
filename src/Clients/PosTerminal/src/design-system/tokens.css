@@ -1,6 +1,18 @@
+/* ALKAROS design tokens — V1 unified baseline.
+ * Changes vs the pre-handoff file are marked CHANGED / NEW; every other value
+ * is byte-identical. --ds-font-sans / --ds-font-mono require the font links in
+ * index.html (see the note at the bottom of this file). */
 :root {
   color-scheme: light;
-  --ds-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* CHANGED: Inter -> Manrope. Manrope is already the DESIGN.md/WebPrototype face;
+   * this is the single edit that stops PosTerminal and WebPrototype looking like
+   * two different products. Inter stays in the fallback chain for safety. */
+  --ds-font-sans: Manrope, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* NEW: money, table ids, timers and ticket numbers must be tabular.
+   * Every currency and countdown value in the design uses this face. */
+  --ds-font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
   --ds-color-canvas: #f4f5f6;
   --ds-color-surface: #ffffff;
   --ds-color-surface-subtle: #eef1f3;
@@ -20,20 +32,72 @@
   --ds-color-warning-soft: #fff2c7;
   --ds-color-danger: #9a2530;
   --ds-color-danger-soft: #fdecef;
+
+  /* NEW: fourth semantic pair. DESIGN.md used a pink for the dessert/bar course;
+   * pink failed contrast and clashed with the accent, so it is replaced by a
+   * desaturated brown that reads as "later course" without competing for attention. */
+  --ds-color-dessert: #7a3320;
+  --ds-color-dessert-soft: #f6e7e3;
+
+  /* NEW: disabled control surfaces. The old ad-hoc greys measured 1.91:1 and
+   * 2.30:1 against canvas — both below the 3:1 non-text minimum. These pass. */
+  --ds-color-disabled-ink: #52606d;
+  --ds-color-disabled-track: #78858e;
+
+  /* NEW: three-stage coursing. Course identity must be one token per stage so the
+   * POS, the KDS and the waiter PWA cannot drift apart. Maps onto the semantic
+   * pairs above rather than introducing new hues. */
+  --ds-course-1: var(--ds-color-info);
+  --ds-course-1-soft: var(--ds-color-info-soft);
+  --ds-course-2: var(--ds-color-warning);
+  --ds-course-2-soft: var(--ds-color-warning-soft);
+  --ds-course-3: var(--ds-color-dessert);
+  --ds-course-3-soft: var(--ds-color-dessert-soft);
+
+  /* NEW: table dwell-time heat ring. Thresholds are the product decision
+   * (0-20 fresh, 20-45 in service, 45+ needs a waiter), so they belong in tokens
+   * next to their colours — not hard-coded per screen. */
+  --ds-heat-fresh: var(--ds-color-info);
+  --ds-heat-active: var(--ds-color-warning);
+  --ds-heat-stale: var(--ds-color-danger);
+  /* Plain numbers, consumed by JS — CSS has no minute unit, so the name says so. */
+  --ds-heat-fresh-max-minutes: 20;
+  --ds-heat-active-max-minutes: 45;
+
   --ds-shadow-raised: 0 10px 30px rgb(18 32 43 / 14%);
   --ds-radius-sm: 0.5rem;
   --ds-radius-md: 0.75rem;
+  /* NOTE: DESIGN.md's third radius (18px) is deliberately absent. Two radii only. */
+
   --ds-space-1: 0.25rem;
   --ds-space-2: 0.5rem;
   --ds-space-3: 0.75rem;
   --ds-space-4: 1rem;
   --ds-space-5: 1.5rem;
   --ds-space-6: 2rem;
+
   --ds-target-min: 44px;
+  /* NEW: the primary action on a screen gets a larger target than the rest.
+   * Resolves the 44px (PosTerminal) vs 48px (DESIGN.md) conflict by scope
+   * instead of picking a winner. */
+  --ds-target-primary: 48px;
+  /* NEW: phone surfaces are used one-handed, mid-service, sometimes gloved. */
+  --ds-target-touch: 52px;
+
   --ds-shell-header-height: 68px;
   --ds-shell-status-height: 48px;
   --ds-shell-rail-width: 216px;
   --ds-shell-compact-rail-width: 76px;
   --ds-shell-drawer-width: 336px;
+
+  /* NEW: undo window for the "reverting never waits for a manager" principle.
+   * A single source for the countdown shown in the POS and the waiter PWA. */
+  --ds-undo-window: 60s;
 }
 
+/* index.html additions required by --ds-font-sans / --ds-font-mono:
+ *   <link rel="preconnect" href="https://fonts.googleapis.com">
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ *   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+ * For an offline-capable terminal, self-host both families and swap the link
+ * for local @font-face rules — the token values do not change. */

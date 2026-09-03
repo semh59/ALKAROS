@@ -225,6 +225,37 @@ public sealed class RoutingUnitTests
     }
 
     [Fact]
+    public void Rule2DisabledItemPrinterFallsToNextSpecificityNotDefault()
+    {
+        // printer-routing-precedence.md Rule 2: a disabled route falls to the
+        // NEXT specificity level, it does not jump straight to Default. Item is
+        // disabled while an active Product route exists -> resolve Product, not Default.
+        var itemId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var categoryId = Guid.NewGuid();
+
+        var disabledItemPrinter = _printerItem.SetActive(false);
+
+        var routes = new List<PrinterRoute>
+        {
+            PrinterRoute.CreateDefaultRoute(Guid.NewGuid(), _printerDefault.Id),
+            PrinterRoute.CreateCategoryRoute(Guid.NewGuid(), categoryId, _printerCategory.Id),
+            PrinterRoute.CreateProductRoute(Guid.NewGuid(), productId, _printerProduct.Id),
+            PrinterRoute.CreateItemRoute(Guid.NewGuid(), itemId, disabledItemPrinter.Id)
+        };
+
+        var request = new RoutingEvaluationRequest(productId, categoryId, itemId: itemId);
+        var result = _router.ResolveRoute(
+            request,
+            routes,
+            [disabledItemPrinter, _printerProduct, _printerCategory, _printerDefault]);
+
+        result.Resolved.Should().BeTrue();
+        result.PrinterId.Should().Be(_printerProduct.Id);
+        result.RouteLevel.Should().Be(RouteLevel.Product);
+    }
+
+    [Fact]
     public void Rule3AmbiguousCategoryRoutesReturnsAmbiguousRouteError()
     {
         // Example 3 from V0-DOM-011: Duplicate category routes
