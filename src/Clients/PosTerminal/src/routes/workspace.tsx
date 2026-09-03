@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "../api";
+import { useRouter } from "../router";
 import { navLabels, roleLabels } from "../strings";
 import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
@@ -26,6 +27,7 @@ export function ExperiencePage({
   backendStatus: BackendStatus;
   onLogout: () => Promise<void>;
 }) {
+  const { navigate } = useRouter();
   const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
   // Which capability a route needs is a route->permission map, not a role guess.
   const routeNeedsCatalogManage = path === "/catalog" || path === "/system-health";
@@ -52,7 +54,7 @@ export function ExperiencePage({
   };
   const authorization: RouteAuthorization = canOpenRoute ? { status: "authorized" } : {
     status: "forbidden",
-    onReturn: () => { window.location.href = "/"; },
+    onReturn: () => navigate("/"),
   };
   const [lastOnlineSync, setLastOnlineSync] = useState<string | null>(() => backendStatus === "online" ? new Date().toISOString() : null);
 
@@ -96,6 +98,7 @@ export function ExperiencePage({
     connectivity={connectivity}
     freshness={freshness}
     navigation={navigation}
+    onNavigate={navigate}
     activeNavigationId={path === "/tables" ? "tables" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
@@ -111,6 +114,7 @@ export function ExperiencePage({
 }
 
 function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
+  const { navigate } = useRouter();
   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
   const [state, setState] = useState<TableWorkspaceState>("loading");
   const [zones, setZones] = useState<Awaited<ReturnType<typeof client.listZones>>>([]);
@@ -189,7 +193,7 @@ function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: 
     setOrderError(undefined);
     try {
       await api.startTableOrder(terminalId, selectedTable.tableId, selectedTable.rowVersion);
-      window.location.assign("/");
+      navigate("/");
     } catch (reason) {
       setOrderError(reason instanceof Error ? reason.message : "Masa siparişi açılamadı.");
       await load().catch(() => undefined);

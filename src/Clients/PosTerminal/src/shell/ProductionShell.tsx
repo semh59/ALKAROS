@@ -1,5 +1,6 @@
-import { useEffect, useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type MouseEvent, type ReactNode } from "react";
 import { Button, ContextDrawer, Icon, StateMessage } from "../design-system";
+import { isPlainClick } from "../router";
 import { commonActions, connectivityLabels } from "../strings";
 import {
   allowedNavigation,
@@ -30,6 +31,12 @@ export interface ProductionShellProps {
   freshness: Freshness;
   navigation: readonly ShellNavigationItem[];
   activeNavigationId?: string;
+  /**
+   * When set, a plain left-click on a nav link is handled in-app instead of
+   * loading the document. The href is kept, so middle-click / modifier-click
+   * still open a new tab (F-6).
+   */
+  onNavigate?: (href: string) => void;
   workspaceTitle: string;
   workspaceDescription?: string;
   contextTitle?: string;
@@ -44,9 +51,15 @@ export interface ProductionShellProps {
 export function ProductionShell(props: ProductionShellProps) {
   const {
     session, authorization, connectivity, freshness, navigation, activeNavigationId,
-    workspaceTitle, workspaceDescription, contextTitle, context, contextOpen = false,
+    onNavigate, workspaceTitle, workspaceDescription, contextTitle, context, contextOpen = false,
     onContextOpen, onContextClose, headerActions, children,
   } = props;
+
+  const handleNavClick = (href: string) => (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!onNavigate || !isPlainClick(event)) return;
+    event.preventDefault();
+    onNavigate(href);
+  };
   const mode = useViewportMode();
   const workspaceId = useId();
   const identity = session.status === "authenticated" ? session.identity : null;
@@ -69,7 +82,7 @@ export function ProductionShell(props: ProductionShellProps) {
       </header>
 
       <nav className="production-shell__nav" aria-label="Ana navigasyon">
-        {allowedItems.map((item) => <a key={item.id} className="production-shell__nav-link" href={item.href} aria-current={item.id === activeNavigationId ? "page" : undefined}>
+        {allowedItems.map((item) => <a key={item.id} className="production-shell__nav-link" href={item.href} onClick={handleNavClick(item.href)} aria-current={item.id === activeNavigationId ? "page" : undefined}>
           <span className="production-shell__nav-symbol" aria-hidden="true"><Icon name={item.icon} /></span>
           <span className="production-shell__nav-label">{item.label}</span>
         </a>)}

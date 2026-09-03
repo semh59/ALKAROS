@@ -9,6 +9,7 @@ import {
 } from "react";
 import { ApiError, api } from "../api";
 import type { CatalogProduct, DisplaySnapshot } from "../contracts";
+import { isPlainClick, useRouter } from "../router";
 import { stateText } from "../strings";
 import { formatMoney, formatQuantity, grossUnitPrice } from "../format";
 import { savedId } from "../storage";
@@ -25,6 +26,7 @@ const focusableSelector = [
 ].join(",");
 
 export function Cashier() {
+  const { path: currentPath, navigate } = useRouter();
   const [terminalId] = useState(() => savedId("alkaros.terminal-id"));
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -255,7 +257,6 @@ export function Cashier() {
   const itemCount = activeOrder?.lines.reduce((sum, line) => sum + line.quantity, 0) ?? 0;
   const canStartNextOrder = !activeOrder || !activeOrder.editable;
 
-  const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
   if (currentPath !== "/") {
     return <ExperiencePage
       terminalId={terminalId}
@@ -282,9 +283,9 @@ export function Cashier() {
           <button className="header-action" onClick={() => window.open("/display", "alkaros-customer-display")}>
             Müşteri ekranı
           </button>
-          <a className="header-action" href="/tables">Masalar</a>
-          <a className="header-action" href="/kitchen">Mutfak</a>
-          {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog">Menü</a>}
+          <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
+          <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
+          {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Menü</a>}
           <button
             className="header-action"
             ref={pairingTrigger}
