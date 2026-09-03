@@ -42,6 +42,25 @@ def test_waiter_pwa_html_landmarks_and_meta():
     assert 'id="btnSendKitchen"' in html
 
 
+def test_waiter_pwa_has_a_staff_sign_in_flow():
+    """The PWA gates on a cashier session and offers sign-in / sign-out."""
+    html = (WWWROOT / "index.html").read_text(encoding="utf-8")
+    app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+
+    assert 'id="loginForm"' in html
+    assert 'id="loginUsername"' in html
+    assert 'id="loginPassword"' in html
+
+    # Signs in against the shared auth endpoint with this device's own terminal id.
+    assert "/api/v1/auth/login" in app_code
+    assert "alkaros_waiter_terminal_id" in app_code
+    assert "crypto.randomUUID()" in app_code
+    # Gates before loading, and re-prompts on a 401.
+    assert "hasValidSession" in app_code
+    assert "showLogin" in app_code
+    assert "/api/v1/auth/logout" in app_code
+
+
 def test_waiter_pwa_service_worker_lifecycle():
     """Verify sw.js registers standard caching and fetch lifecycle events."""
     sw_code = (WWWROOT / "sw.js").read_text(encoding="utf-8")

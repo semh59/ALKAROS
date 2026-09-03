@@ -121,6 +121,24 @@
     </div>
   </div>
 
+  <!-- Staff sign-in. Shown until the device holds a valid cashier session for
+       its own terminal id; the header "Personel" button signs out. -->
+  <div class="login-overlay" id="loginOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <form class="login-card" id="loginForm" novalidate>
+      <div class="login-brand"><svg class="icon" aria-hidden="true"><use href="#ico-brand"/></svg> ALKAROS</div>
+      <h1 id="loginTitle">Garson Girişi</h1>
+      <p class="login-hint">Bu cihazı kasaya bağlamak için personel bilgilerinizle giriş yapın.</p>
+      <label for="loginUsername">Kullanıcı adı
+        <input type="text" id="loginUsername" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+      </label>
+      <label for="loginPassword">Şifre
+        <input type="password" id="loginPassword" name="password" autocomplete="current-password" required>
+      </label>
+      <p class="login-error" id="loginError" role="alert" hidden></p>
+      <button type="submit" class="btn-primary" id="loginSubmit">Giriş yap</button>
+    </form>
+  </div>
+
   <script src="./waiter-app.js"></script>
 </body>
 </html>

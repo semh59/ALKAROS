@@ -16,9 +16,20 @@
     return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
   }
 
+  // Each device gets its own terminal id (persisted) so concurrent waiters do
+  // not share - and revoke - one cashier device session.
+  function deviceTerminalId() {
+    let id = localStorage.getItem('alkaros_waiter_terminal_id');
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem('alkaros_waiter_terminal_id', id);
+    }
+    return id;
+  }
+
   // State
   const state = {
-    terminalId: '00000000-0000-0000-0000-000000000001',
+    terminalId: deviceTerminalId(),
     isOnline: navigator.onLine,
     sessionToken: sessionStorage.getItem('alkaros_waiter_token') || '',
     currentUser: JSON.parse(sessionStorage.getItem('alkaros_waiter_user') || 'null'),
@@ -54,7 +65,14 @@
     btnSendKitchen: document.getElementById('btnSendKitchen'),
     btnCloseModal: document.getElementById('btnCloseModal'),
     btnOpenOrderModal: document.getElementById('btnOpenOrderModal'),
-    btnRefreshTables: document.getElementById('btnRefreshTables')
+    btnRefreshTables: document.getElementById('btnRefreshTables'),
+    btnStaffProfile: document.getElementById('btnStaffProfile'),
+    loginOverlay: document.getElementById('loginOverlay'),
+    loginForm: document.getElementById('loginForm'),
+    loginUsername: document.getElementById('loginUsername'),
+    loginPassword: document.getElementById('loginPassword'),
+    loginError: document.getElementById('loginError'),
+    loginSubmit: document.getElementById('loginSubmit')
   };
 
   // Initialization
@@ -62,6 +80,15 @@
     setupNetworkListeners();
     renderStatusRibbon();
     bindEvents();
+    bindAuthEvents();
+
+    // The tables/catalog/order endpoints are cashier-session scoped. Without a
+    // valid session for this device's terminal id, show the sign-in form and
+    // stop - loading would only 401.
+    if (!(await hasValidSession())) {
+      showLogin();
+      return;
+    }
 
     // Fetch initial data from Host API
     await loadInitialData();
@@ -70,6 +97,80 @@
     // an insecure context (plain HTTP over a LAN IP) is surfaced to the user
     // rather than silently swallowed.
     registerOfflineWorker();
+  }
+
+  // Staff sign-in
+  function bindAuthEvents() {
+    if (el.loginForm) el.loginForm.addEventListener('submit', submitLogin);
+    if (el.btnStaffProfile) {
+      el.btnStaffProfile.addEventListener('click', () => {
+        if (window.confirm('Oturumu kapatmak istiyor musunuz?')) void signOut();
+      });
+    }
+  }
+
+  function showLogin() {
+    if (!el.loginOverlay) return;
+    el.loginOverlay.hidden = false;
+    if (el.loginUsername) el.loginUsername.focus();
+  }
+
+  async function hasValidSession() {
+    try {
+      const res = await fetch(`/api/v1/auth/session?terminalId=${state.terminalId}`, { credentials: 'include' });
+      if (!res.ok) return false;
+      state.currentUser = await res.json();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function submitLogin(event) {
+    event.preventDefault();
+    const username = (el.loginUsername.value || '').trim();
+    const password = el.loginPassword.value || '';
+    if (!username || !password) return;
+
+    el.loginError.hidden = true;
+    el.loginSubmit.disabled = true;
+    el.loginSubmit.textContent = 'Giriş yapılıyor…';
+    try {
+      const res = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ terminalId: state.terminalId, username, password })
+      });
+      if (!res.ok) {
+        let message = 'Kullanıcı adı veya şifre hatalı.';
+        try { const body = await res.json(); message = body?.error?.message || message; } catch { /* non-json */ }
+        throw new Error(message);
+      }
+      state.currentUser = await res.json();
+      el.loginPassword.value = '';
+      el.loginOverlay.hidden = true;
+      await loadInitialData();
+      registerOfflineWorker();
+    } catch (err) {
+      el.loginError.textContent = err && err.message ? err.message : 'Giriş başarısız.';
+      el.loginError.hidden = false;
+    } finally {
+      el.loginSubmit.disabled = false;
+      el.loginSubmit.textContent = 'Giriş yap';
+    }
+  }
+
+  async function signOut() {
+    try {
+      await fetch(`/api/v1/auth/logout?terminalId=${state.terminalId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: '{}'
+      });
+    } catch { /* ignore - reload still clears the view */ }
+    window.location.reload();
   }
 
   function registerOfflineWorker() {
@@ -205,6 +306,10 @@
     try {
       // 1. Fetch Zones
       const zonesRes = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/zones`, { credentials: 'include' });
+      if (zonesRes.status === 401) {
+        showLogin();
+        return;
+      }
       if (zonesRes.ok) {
         const zonesData = await zonesRes.json();
         const list = Array.isArray(zonesData) ? zonesData : zonesData.zones || [];

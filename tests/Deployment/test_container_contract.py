@@ -150,7 +150,7 @@ def test_caddy_serves_statics_and_isolates_the_customer_display_origin() -> None
     assert "reverse_proxy api:5080" in caddyfile
     assert "reverse_proxy host:5080" not in caddyfile
     assert "root * /srv/app" in caddyfile
-    assert "try_files {path} /index.html" in caddyfile
+    assert "try_files {path} {path}/ /index.html" in caddyfile  # serves /waiter/ + /cashier/ index too
     assert "file_server" in caddyfile
     # B-4: the display vhost tags the origin; the main vhost strips any inbound copy.
     assert "header_up X-Alkaros-Origin display" in caddyfile
