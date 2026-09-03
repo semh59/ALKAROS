@@ -100,12 +100,21 @@ def test_operator_tools_are_split_into_an_ops_overlay() -> None:
     assert "/repo/deploy/docker/basebackup.sh" in ops
 
 
-def test_dev_overlay_publishes_datastore_and_api_ports() -> None:
+def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
     dev = (ROOT / "compose.dev.yaml").read_text(encoding="utf-8")
+    caddy_dev = (ROOT / "deploy" / "docker" / "Caddyfile.dev").read_text(encoding="utf-8")
 
     assert dev.startswith("name: alkaros\n")
-    assert '"5432:5432"' in dev
+    assert '"5433:5432"' in dev          # 5432 is often taken by a standalone test db
     assert '"5080:5080"' in dev
+    assert '"8090:80"' in dev
+    assert "ports: !override" in dev      # replace, not append to, the core 8443 mapping
+    assert "deploy/docker/Caddyfile.dev:/etc/caddy/Caddyfile" in dev
+
+    assert "auto_https off" in caddy_dev
+    assert "header_up X-Forwarded-Proto https" in caddy_dev
+    assert "reverse_proxy api:5080" in caddy_dev
+    assert "http://localhost" in caddy_dev
 
 
 def test_services_load_the_password_from_the_mounted_secret() -> None:

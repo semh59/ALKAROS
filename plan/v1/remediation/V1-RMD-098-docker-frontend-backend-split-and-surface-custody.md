@@ -25,6 +25,7 @@ yalnız `web` (Caddy) üzerinde sonlanır.
 - `compose.ops.yaml`
 - `compose.dev.yaml`
 - `deploy/docker/Caddyfile`
+- `deploy/docker/Caddyfile.dev`
 - `deploy/docker/README.md`
 - `.dockerignore`
 - `src/Host/DualScreen/DualScreenOptions.cs`
@@ -61,8 +62,13 @@ yalnız `web` (Caddy) üzerinde sonlanır.
 - `compose.yaml` çekirdek yığın: `postgres` + `migrate` + `provision` + `api` (eski `host`) + `web`
   (eski `proxy`, artık `web` build hedefiyle). `8444` yayını ve `alkaros-host-tls` hacmi kaldırıldı.
   Operatör araçları (`backup` / `basebackup` / `housekeeping`) `compose.ops.yaml`'a taşındı ve
-  `docker compose -f compose.yaml -f compose.ops.yaml run --rm <svc>` ile çağrılır; `compose.dev.yaml`
-  5432 + 5080'i yerel hata ayıklama için yayınlar.
+  `docker compose -f compose.yaml -f compose.ops.yaml run --rm <svc>` ile çağrılır.
+- `compose.dev.yaml` + `deploy/docker/Caddyfile.dev`: yerel geliştirme için `web`'i düz HTTP `8090:80`
+  üzerinde bind-mount edilmiş dev Caddyfile ile çalıştırır (`auto_https off`, sertifika yok,
+  `X-Forwarded-Proto: https` yukarı akışa zorlanır ki api'nin HTTPS geçidi geçsin); `postgres` 5433,
+  `api` 5080 host'a yayınlanır. `http://localhost` tarayıcı güvenli bağlamı olduğundan WaiterPwa service
+  worker / çevrimdışı kuyruğu burada çalışır; LAN IP üzerinden erişim çalışmaz (saha testi için CA kurulu
+  HTTPS 8443 yolu). Bu overlay asla deploy edilmez.
 - `.dockerignore` daraltıldı (`plan/`, `docs/`, `evidence/`, `tools/`, `.github/`, `*.md` vs. build
   bağlamından çıkarıldı; `.git` build provenance için tutuldu).
 - E1 kararı: `V1-RMD-096` Host self-signed `8444` yedeği kaldırıldı. `docs/operations/
@@ -109,6 +115,10 @@ yalnız `web` (Caddy) üzerinde sonlanır.
   `api:5080` düz HTTP forwarded-proto'suz 400 `HTTPS_REQUIRED`, loopback readiness muaf;
   `-f compose.yaml -f compose.ops.yaml run --rm backup` artefakt + sha256 üretir; `restart api` sonrası
   sağlıklı, migration sayısı 41; `down --volumes` exit 0.
+- Dev HTTP overlay (`-f compose.yaml -f compose.dev.yaml up -d --wait`): `web` düz HTTP `:8090`'da
+  sağlıklı; `/`, `/waiter/`, `/cashier/`, SPA deep-link, `/health/ready` HTTP üzerinden 200; bir API
+  çağrısı 400 `HTTPS_REQUIRED` yerine B-4 izolasyon 404'ü döner (zorlanan `X-Forwarded-Proto: https`
+  geçidi geçti); `display.localhost` vhost'unda B-4 doğru.
 - `python -B tools/plan-audit/plan_audit_tool.py validate` ve `verify-manifest` exit 0.
 - `python -m pytest tests/Deployment tests/Architecture` 0 hata.
 - `tools/consistency-audit/consistency_audit.py` temiz.

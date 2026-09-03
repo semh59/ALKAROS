@@ -1,0 +1,64 @@
+# Local-development Caddy config. Bind-mounted over /etc/caddy/Caddyfile by
+# compose.dev.yaml so the UI is reachable over plain HTTP with no certificate:
+#
+#   docker compose -f compose.yaml -f compose.dev.yaml up -d --build
+#   http://localhost:8090/          -> PosTerminal / /waiter / /cashier
+#   http://display.localhost:8090/  -> customer display (Chrome resolves
+#                                      *.localhost automatically; for Firefox
+#                                      add "127.0.0.1 display.localhost" to hosts)
+#
+# It forces X-Forwarded-Proto: https upstream so the api's HTTPS gate is
+# satisfied. NEVER use this outside local development - it tells the backend a
+# plain-HTTP request is secure.
+
+{
+	admin off
+	auto_https off
+}
+
+(spa_static) {
+	encode gzip
+	root * /srv/app
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+http://localhost, http://127.0.0.1 {
+	handle /api/* {
+		reverse_proxy api:5080 {
+			header_up -X-Alkaros-Origin
+			header_up X-Forwarded-Proto https
+		}
+	}
+	handle /hubs/* {
+		reverse_proxy api:5080 {
+			header_up -X-Alkaros-Origin
+			header_up X-Forwarded-Proto https
+		}
+	}
+	handle /health/* {
+		reverse_proxy api:5080 {
+			header_up -X-Alkaros-Origin
+			header_up X-Forwarded-Proto https
+		}
+	}
+	import spa_static
+}
+
+http://display.localhost {
+	handle /api/* {
+		reverse_proxy api:5080 {
+			header_up X-Alkaros-Origin display
+			header_up X-Forwarded-Proto https
+		}
+	}
+	handle /hubs/* {
+		reverse_proxy api:5080 {
+			header_up X-Alkaros-Origin display
+			header_up X-Forwarded-Proto https
+		}
+	}
+	import spa_static
+}

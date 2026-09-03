@@ -47,3 +47,5 @@ test_output*.txt
 # Host self-signed TLS cache (DualScreenTls, V1-RMD-096) - never commit private keys
 tls/
 *.pfx
+# Caddy internal root CA exported for local dev (docker compose cp web:/data/...)
+alkaros-root.crt

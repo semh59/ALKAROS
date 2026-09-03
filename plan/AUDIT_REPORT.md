@@ -2103,7 +2103,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-095-wal-archiving-point-in-time-recovery.md` | ✅ | `41F8AECC4D0AABCEA14F01178BAFA88E7C4B9759426C83F0C3F08DFB81719E7A` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-096-host-terminated-https.md` | ✅ | `32134068BBEC66B717A6232D929B9781EC3471BF544FBED3EE04DF5DB9A45944` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-097-deep-analysis-wave-24-25-surface-custody.md` | ✅ | `0EF1F98325FA6705C771284D137E7D2568030759937D42D9B1F8BE2E48532DFE` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-098-docker-frontend-backend-split-and-surface-custody.md` | ✅ | `D26B7DDDB2AF97452A07BC39613614F8883DB3015549BD5FEF76D4F7834210D7` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-098-docker-frontend-backend-split-and-surface-custody.md` | ✅ | `0CC1C2667BE4769D832FABC00A5FE3FABC51B658CB7B9B61960C5A61BAA85684` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `24623A6E669EB2C9DF00914C529190C888D2B22D4282BE594200AB24F6FF362A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `E28E58E5E8A0CBC99B94E0339861C47E0C7F5FF6DC676F839585C10CD340AA0F` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
