@@ -1,0 +1,81 @@
+name: alkaros
+
+# Operator maintenance tools. Never started by `docker compose up` - always
+# layered on the core stack and run on demand:
+#
+#   docker compose -f compose.yaml -f compose.ops.yaml run --rm backup
+#   docker compose -f compose.yaml -f compose.ops.yaml run --rm backup \
+#       /repo/deploy/docker/restore.sh <artifact> <db>
+#   docker compose -f compose.yaml -f compose.ops.yaml run --rm basebackup
+#   docker compose -f compose.yaml -f compose.ops.yaml run --rm basebackup \
+#       /repo/deploy/docker/restore-pitr.sh /backups/base/<dir> /restore/<datadir> "<target time>"
+#   docker compose -f compose.yaml -f compose.ops.yaml run --rm housekeeping
+#
+# The `ops` profile keeps them inert even if this file is passed to `up`.
+
+services:
+  # Logical backup (V1-RMD-086). Uses the digest-pinned postgres:18 image so
+  # pg_dump matches the server major version. Artifacts land in alkaros-backups.
+  backup:
+    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+    profiles: ["ops"]
+    environment:
+      ALKAROS_DB_HOST: postgres
+      ALKAROS_DB_PORT: "5432"
+      ALKAROS_DB_USER: alkaros
+      ALKAROS_DB_NAME: alkaros
+      ALKAROS_BACKUP_DIR: /backups
+    secrets: [db_password]
+    volumes:
+      - ./deploy/docker:/repo/deploy/docker:ro
+      - alkaros-backups:/backups
+    entrypoint: ["/bin/sh"]
+    command: ["/repo/deploy/docker/backup.sh"]
+    restart: "no"
+
+  # Physical base backup for point-in-time recovery (V1-RMD-095). Run after
+  # every migration and on a daily schedule. Writes a tar.gz to
+  # alkaros-backups:/backups/base; PITR replays alkaros-wal-archive on top.
+  basebackup:
+    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+    profiles: ["ops"]
+    environment:
+      ALKAROS_DB_HOST: postgres
+      ALKAROS_DB_PORT: "5432"
+      ALKAROS_DB_USER: alkaros
+      ALKAROS_BASEBACKUP_DIR: /backups/base
+      ALKAROS_WAL_ARCHIVE_DIR: /wal-archive
+    secrets: [db_password]
+    volumes:
+      - ./deploy/docker:/repo/deploy/docker:ro
+      - alkaros-backups:/backups
+      - alkaros-wal-archive:/wal-archive
+    entrypoint: ["/bin/sh"]
+    command: ["/repo/deploy/docker/basebackup.sh"]
+    restart: "no"
+
+  # Data-housekeeping sweep (V1-RMD-091). Schedule from cron. Deletes expired
+  # idempotency_keys and expired / long-revoked device_sessions only - never
+  # orders, bills, fiscal or invoice data (see docs/operations/
+  # data-housekeeping.md). Not a KVKK personal-data retention job.
+  housekeeping:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: api
+    profiles: ["ops"]
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    secrets: [db_password]
+    command:
+      - |
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        exec dotnet ALKAROS.Host.dll housekeeping --db-url postgresql://alkaros@postgres:5432/alkaros
+    restart: "no"
+
+secrets:
+  db_password:
+    file: ./deploy/docker/db_password
+
+volumes:
+  alkaros-backups:
+  alkaros-wal-archive:

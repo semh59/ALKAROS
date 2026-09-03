@@ -1,11 +1,30 @@
-.pytest_cache
+# Build context for deploy/docker/Dockerfile (referenced from Dockerfile at the
+# repo root). `dotnet restore ALKAROS.slnx --locked-mode` needs every csproj and
+# packages.lock.json in the solution - tests included - plus Directory.Build.*,
+# Directory.Packages.props, global.json, NuGet.config, database/ and
+# build/project-manifest.json. Everything below never reaches an image layer.
 **/bin
 **/obj
 **/dist
 **/node_modules
+**/.pnpm-store
 **/TestResults
-evidence/**
-docs/audit/**
+.pytest_cache
+.github
+.agents
+.claude
+.config
+raw
+tmp
+plan
+docs
+evidence
+tools
+*.md
+pytest.ini
+.gitleaks.toml
+.markdownlint-cli2.jsonc
+
+# Real deployment secrets - never in the build context.
 deploy/docker/db_password
 deploy/docker/admin_password
-**/.pnpm-store

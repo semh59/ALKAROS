@@ -1,0 +1,51 @@
+V1-RMD-098 - Docker rebuilt from scratch, frontend / backend split (A1-full)
+End-to-end live test, 2026-09-03, Docker Engine 29.7.2 / Compose v5.3.1, linux/x86_64.
+
+Topology
+  web   (deploy/docker/Dockerfile target web, caddy:2.9-alpine)  - static bundles + TLS + reverse proxy
+  api   (deploy/docker/Dockerfile target api, aspnet:8.0-alpine) - ALKAROS.Host serve --api-only, plain HTTP :5080
+  postgres / migrate / provision                                 - datastore + one-shot bootstrap
+  ops overlay compose.ops.yaml : backup / basebackup / housekeeping (never in `up`)
+  dev overlay compose.dev.yaml : publishes 5432 + 5080
+
+Command: docker compose config --quiet ; -f compose.yaml -f compose.ops.yaml config --quiet ; -f compose.yaml -f compose.dev.yaml config --quiet
+Result: all three valid.
+
+Command: ALKAROS_PROXY_HOST=localhost docker compose up --detach --build --wait --wait-timeout 900
+Result: exit 0. Images alkaros-api / alkaros-web / alkaros-migrate / alkaros-provision built.
+        postgres healthy; migrate applied 41 migrations and exited 0; provision "Manager provisioning verified for username 'admin'" exited 0;
+        api healthy; web healthy.
+Image sizes: alkaros-web 69.3 MB (no .NET), alkaros-api 191 MB (no static assets / no wwwroot).
+
+Readiness and schema
+  docker compose exec api curl -fs http://127.0.0.1:5080/health/ready      -> {"status":"Ready"}
+  docker compose exec postgres psql ... 'select count(*) ... migrations'   -> 41
+
+Static bundles via web (https://localhost:8443, Caddy internal CA, TLS 1.3 handshake completes; -k used locally because the CA is not in the host trust store, the web healthcheck's BusyBox wget verifies the chain from inside the container):
+  GET /                    -> 200 text/html   (PosTerminal SPA shell)
+  GET /waiter/             -> 200 text/html   (WaiterPwa)
+  GET /cashier/            -> 200 text/html   (Cashier)
+  GET /workspace/tables    -> 200 text/html   (SPA deep-link fallback -> index.html)
+  GET /health/ready        -> 200 {"status":"Ready"}   (proxied to api)
+  index.html references /assets/index-*.js and /assets/index-*.css (hashed).
+  Certificate SAN: DNS:localhost.
+
+Customer-display origin isolation (finding B-4) - Caddy sets X-Alkaros-Origin: display on the display vhost, strips any inbound copy on the main vhost; the api owns the allow/deny decision:
+  MAIN vhost   GET /api/v1/customer-displays/<guid>/snapshot -> 404 {"code":"NOT_FOUND","message":"Müşteri ekranı adresleri yalnızca ayrı origin'den sunulur."}
+  DISPLAY vhost GET /api/v1/customer-displays/<guid>/snapshot -> 401 UNAUTHORIZED  (passed the origin guard, rejected by the handler for a missing display session)
+  DISPLAY vhost GET /api/v1/auth/session                       -> 404 {"code":"NOT_FOUND","message":"Bu adres müşteri ekranı origin'inde sunulmuyor."}
+  DISPLAY vhost GET /display                                   -> 200 text/html   (display shell still served)
+
+Headless HTTP gate (E1 note: the V1-RMD-096 host self-signed fallback on 8444 is intentionally removed in this split; TLS terminates only at web)
+  From the web container: wget http://api:5080/api/v1/auth/session   -> HTTP/1.1 400 Bad Request (HTTPS_REQUIRED; non-loopback peer, no trusted X-Forwarded-Proto)
+  From the api container: curl http://127.0.0.1:5080/health/ready     -> 200 (loopback readiness probe still exempt)
+
+Operator overlay
+  docker compose -f compose.yaml -f compose.ops.yaml run --rm backup
+    -> backup: ok artifact=alkaros_alkaros_20260903T125131Z.dump bytes=164492 seconds=1 sha256=a388351aa0718eb6f7dd7a908516e255eafc4cce9c270fe7554f8b7125c7aaea
+
+Restart resilience
+  docker compose restart api  -> api healthy again; /health/ready 200 (in-container and via web); migration count still 41.
+
+Cleanup
+  docker compose down --volumes --remove-orphans -> exit 0.

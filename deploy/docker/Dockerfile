@@ -1,0 +1,67 @@
+# syntax=docker/dockerfile:1.7
+#
+# ALKAROS container build. Four stages, two publishable targets:
+#
+#   backend-build  ->  api   the .NET 8 host, JSON API + SignalR hubs only
+#   frontend-build ->  web   Caddy: static bundles + reverse proxy to the api
+#
+# Build context is the repo root (compose sets `context: .`).
+
+# ---------------------------------------------------------------------------
+# backend-build: restore the whole solution (locked) and publish the host.
+# ---------------------------------------------------------------------------
+FROM mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0 AS backend-build
+WORKDIR /src
+COPY . .
+RUN dotnet restore ALKAROS.slnx --locked-mode
+RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
+
+# ---------------------------------------------------------------------------
+# frontend-build: build PosTerminal and assemble one static tree with every
+# client shell - PosTerminal SPA at the root, the vanilla WaiterPwa and
+# Cashier shells under their own path prefixes.
+# ---------------------------------------------------------------------------
+FROM node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff AS frontend-build
+WORKDIR /src
+COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+COPY src/Clients/PosTerminal ./
+RUN pnpm build
+RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+COPY src/Clients/Cashier/wwwroot /out/app/cashier
+
+# ---------------------------------------------------------------------------
+# api: aspnet:8.0-alpine matches <TargetFramework>net8.0</TargetFramework>
+# (Directory.Build.props documents the SDK-vs-target-vs-runtime split, B-6).
+# Plain HTTP only - `web` terminates TLS and forwards X-Forwarded-Proto: https
+# from inside the trusted network. No static assets: `web` serves those.
+# ---------------------------------------------------------------------------
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23 AS api
+RUN apk update \
+    && apk add --no-cache libcrypto3=3.5.8-r0 libssl3=3.5.8-r0 openssl=3.5.8-r0 postgresql-client ca-certificates curl \
+    && rm -rf /var/cache/apk/*
+WORKDIR /app
+COPY --from=backend-build /out/api ./
+COPY database ./database
+COPY build/project-manifest.json ./build/project-manifest.json
+ENV ASPNETCORE_ENVIRONMENT=Production
+EXPOSE 5080
+# Compose overrides this entrypoint to inject ALKAROS_DB_PASSWORD from a mounted
+# secret; this form keeps a bare `docker run -e ALKAROS_DB_PASSWORD=... ` usable.
+ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
+    "--db-url", "postgresql://alkaros@postgres:5432/alkaros", \
+    "--urls", "http://0.0.0.0:5080", \
+    "--api-only", \
+    "--customer-display-origin-header", "X-Alkaros-Origin", \
+    "--trusted-network", "172.16.0.0/12"]
+
+# ---------------------------------------------------------------------------
+# web: Caddy serves the assembled static tree and reverse-proxies the dynamic
+# paths to the api. It owns TLS termination and the customer-display origin
+# split (finding B-4) - see deploy/docker/Caddyfile.
+# ---------------------------------------------------------------------------
+FROM caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0 AS web
+COPY deploy/docker/Caddyfile /etc/caddy/Caddyfile
+COPY --from=frontend-build /out/app /srv/app
+EXPOSE 80 443

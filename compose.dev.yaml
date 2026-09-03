@@ -1,0 +1,20 @@
+name: alkaros
+
+# Local debugging overlay. Publishes the database and api ports to the host so
+# they can be reached directly (psql, curl, a debugger) without going through
+# the web proxy:
+#
+#   docker compose -f compose.yaml -f compose.dev.yaml up --build --wait
+#
+# Never use this in a deployment - the core compose.yaml keeps 5432 and 5080
+# unpublished on purpose (the api rejects non-loopback plain-HTTP requests that
+# do not arrive through the trusted proxy).
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+
+  api:
+    ports:
+      - "5080:5080"

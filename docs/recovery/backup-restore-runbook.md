@@ -14,7 +14,7 @@ drills are out of scope here (`V15-BKP-001`, `V15-BKP-002`).
 | `deploy/docker/backup.sh` | `pg_dump --format=custom` of one database + a `.sha256` sidecar |
 | `deploy/docker/restore.sh` | Restore an artifact into a **clean side database**, refusing any artifact whose checksum does not match its sidecar |
 | `deploy/docker/backup-restore-selfcheck.sh` | Self-contained round-trip proof against a disposable database |
-| `compose.yaml` service `backup` (profile `ops`) | Runs the above inside the digest-pinned `postgres:18` image so the client major version matches the server |
+| `compose.ops.yaml` service `backup` (profile `ops`) | Runs the above inside the digest-pinned `postgres:18` image so the client major version matches the server |
 
 Backups use PostgreSQL's **custom format** (`-Fc`): compressed, and restorable
 selectively and in parallel with `pg_restore`.
@@ -24,7 +24,7 @@ selectively and in parallel with `pg_restore`.
 With the Compose stack running:
 
 ```sh
-docker compose --profile ops run --rm backup
+docker compose -f compose.yaml -f compose.ops.yaml run --rm backup
 ```
 
 The artifact and its `.sha256` sidecar are written to the named
@@ -55,7 +55,7 @@ A cron entry gives you the schedule:
 
 ```cron
 # every hour, on the hour
-0 * * * * cd /opt/alkaros && docker compose --profile ops run --rm backup >> /var/log/alkaros-backup.log 2>&1
+0 * * * * cd /opt/alkaros && docker compose -f compose.yaml -f compose.ops.yaml run --rm backup >> /var/log/alkaros-backup.log 2>&1
 ```
 
 RPO is then approximately the cron interval.
@@ -67,7 +67,7 @@ recreates a *separate* target database (default `alkaros_restore`) and loads the
 artifact there. Promotion of a restored copy to live is a deliberate manual step.
 
 ```sh
-docker compose --profile ops run --rm backup \
+docker compose -f compose.yaml -f compose.ops.yaml run --rm backup \
   /repo/deploy/docker/restore.sh /backups/alkaros_alkaros_<timestamp>.dump alkaros_restore
 ```
 
@@ -84,11 +84,11 @@ the most recent `orders` / `reporting.daily_business_days` timestamps.
 
 ### Promoting a restored copy to live
 
-1. Stop the `host` service: `docker compose stop host`.
+1. Stop the `api` service: `docker compose stop api`.
 2. Rename databases (psql as a superuser):
    `ALTER DATABASE alkaros RENAME TO alkaros_broken_<date>;`
    `ALTER DATABASE alkaros_restore RENAME TO alkaros;`
-3. Start `host`: `docker compose start host`.
+3. Start `api`: `docker compose start api`.
 4. Once confirmed healthy, drop `alkaros_broken_<date>`.
 
 ## Corruption rejection — why it matters

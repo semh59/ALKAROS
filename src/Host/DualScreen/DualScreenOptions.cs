@@ -22,8 +22,21 @@ public sealed record DualScreenOptions(
     string? TlsCertificatePath = null,
     string? TlsCertificateKeyPath = null,
     string? SelfSignedTlsHost = null,
-    string? CustomerDisplayUrl = null)
+    string? CustomerDisplayUrl = null,
+    // True when the host runs behind a static-serving reverse proxy and only
+    // exposes the JSON API + hubs (serve --api-only): the static-file pipeline
+    // and SPA fallback are not registered and --web-root is not required. The
+    // proxy serves the PosTerminal / WaiterPwa / Cashier bundles directly.
+    bool ApiOnly = false,
+    // Name of the request header the trusted reverse proxy sets to "display" on
+    // the customer-display virtual host. In --api-only mode this replaces the
+    // dedicated listen port as the customer-display origin signal, keeping the
+    // B-4 isolation (the display origin sees only display routes; the main
+    // origin refuses them). Honoured only from a --trusted-network / --trusted-
+    // proxy peer.
+    string? CustomerDisplayOriginHeader = null)
 {
+
     /// <summary>
     /// Local TCP ports that belong to the customer-display origin. A request
     /// arriving on one of these ports is restricted to the display route
@@ -70,6 +83,8 @@ public sealed record DualScreenOptions(
         string? tlsKeyPath = null;
         string? selfSignedHost = null;
         string? customerDisplayUrls = null;
+        var apiOnly = false;
+        string? customerDisplayOriginHeader = null;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -84,8 +99,14 @@ public sealed record DualScreenOptions(
                 case "--urls" when index + 1 < args.Length:
                     url = args[++index];
                     break;
+                case "--api-only" when !apiOnly:
+                    apiOnly = true;
+                    break;
                 case "--customer-display-urls" when index + 1 < args.Length && customerDisplayUrls is null:
                     customerDisplayUrls = args[++index];
+                    break;
+                case "--customer-display-origin-header" when index + 1 < args.Length && customerDisplayOriginHeader is null:
+                    customerDisplayOriginHeader = args[++index].Trim();
                     break;
                 case "--trusted-proxy" when index + 1 < args.Length:
                     trustedProxies.Add(ParseTrustedProxy(args[++index]));
@@ -110,8 +131,24 @@ public sealed record DualScreenOptions(
             }
         }
 
-        if (string.IsNullOrWhiteSpace(databaseUrl) || string.IsNullOrWhiteSpace(webRoot))
-            throw new DualScreenStartupException("Both --db-url and --web-root are required.");
+        if (string.IsNullOrWhiteSpace(databaseUrl))
+            throw new DualScreenStartupException("--db-url is required.");
+        if (!apiOnly && string.IsNullOrWhiteSpace(webRoot))
+            throw new DualScreenStartupException("--web-root is required unless --api-only is set.");
+        if (apiOnly && !string.IsNullOrWhiteSpace(webRoot))
+            throw new DualScreenStartupException("--web-root and --api-only are mutually exclusive; the reverse proxy serves the static bundles.");
+        if (apiOnly && !string.IsNullOrWhiteSpace(customerDisplayUrls))
+            throw new DualScreenStartupException("--customer-display-urls and --api-only are mutually exclusive; use --customer-display-origin-header instead.");
+        if (customerDisplayOriginHeader is not null)
+        {
+            if (!apiOnly)
+                throw new DualScreenStartupException("--customer-display-origin-header requires --api-only.");
+            if (customerDisplayOriginHeader.Length == 0
+                || !customerDisplayOriginHeader.All(c => char.IsAsciiLetterOrDigit(c) || c == '-'))
+            {
+                throw new DualScreenStartupException("--customer-display-origin-header must be a non-empty token of ASCII letters, digits and '-'.");
+            }
+        }
 
         var password = Environment.GetEnvironmentVariable(PasswordEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(password))
@@ -129,9 +166,13 @@ public sealed record DualScreenOptions(
         if (userInfo.Length != 1 || string.IsNullOrWhiteSpace(userInfo[0]))
             throw new DualScreenStartupException("--db-url must contain a username and must not contain a password.");
 
-        var resolvedWebRoot = Path.GetFullPath(webRoot);
-        if (!File.Exists(Path.Combine(resolvedWebRoot, "index.html")))
-            throw new DualScreenStartupException("--web-root must contain the built index.html file.");
+        var resolvedWebRoot = string.Empty;
+        if (!apiOnly)
+        {
+            resolvedWebRoot = Path.GetFullPath(webRoot!);
+            if (!File.Exists(Path.Combine(resolvedWebRoot, "index.html")))
+                throw new DualScreenStartupException("--web-root must contain the built index.html file.");
+        }
 
         var listenUris = ParseListenUrls(url);
         var displayUris = string.IsNullOrWhiteSpace(customerDisplayUrls)
@@ -191,7 +232,9 @@ public sealed record DualScreenOptions(
             tlsCertPath,
             tlsKeyPath,
             string.IsNullOrWhiteSpace(selfSignedHost) ? null : selfSignedHost,
-            displayUris.Count == 0 ? null : string.Join(';', displayUris.Select(u => u.ToString())));
+            displayUris.Count == 0 ? null : string.Join(';', displayUris.Select(u => u.ToString())),
+            apiOnly,
+            customerDisplayOriginHeader);
     }
 
     private static List<Uri> ParseListenUrls(string value)

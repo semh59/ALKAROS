@@ -669,3 +669,138 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
 
     private sealed record CatalogSeed(Guid CategoryAId, IReadOnlyList<Guid> CategoryA);
 }
+
+/// <summary>
+/// --api-only mode: the reverse proxy serves the static bundles and owns the
+/// customer-display origin split via a trusted header (deep-analysis finding
+/// B-4). These tests exercise the origin-isolation middleware alone; no
+/// database is required because the middleware runs before routing.
+/// </summary>
+[Collection("Host database password environment")]
+public sealed class DualScreenApiOnlyOriginTests : IDisposable
+{
+    private const string OriginHeader = "X-Alkaros-Origin";
+    private const string DisplayRoute = "/api/v1/customer-displays/00000000-0000-0000-0000-000000000000/snapshot";
+    private readonly string? _originalPassword = Environment.GetEnvironmentVariable("ALKAROS_DB_PASSWORD");
+
+    public DualScreenApiOnlyOriginTests()
+        => Environment.SetEnvironmentVariable("ALKAROS_DB_PASSWORD", "test-password");
+
+    public void Dispose()
+        => Environment.SetEnvironmentVariable("ALKAROS_DB_PASSWORD", _originalPassword);
+
+    [Fact]
+    public void ApiOnlyBuildsWithoutAWebRoot()
+    {
+        var options = DualScreenOptions.Parse([
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--urls", "http://0.0.0.0:5080",
+            "--api-only",
+            "--trusted-network", "172.16.0.0/12",
+            "--customer-display-origin-header", OriginHeader,
+        ]);
+
+        Assert.True(options.ApiOnly);
+        Assert.Equal(string.Empty, options.WebRoot);
+        Assert.Equal(OriginHeader, options.CustomerDisplayOriginHeader);
+    }
+
+    [Fact]
+    public async Task MainOriginRefusesDisplayOnlyRoutesWithoutTheHeader()
+    {
+        await using var app = await StartApiOnlyAsync([IPAddress.Loopback]);
+        using var client = CreateClient(app);
+
+        using var request = Forwarded(HttpMethod.Get, DisplayRoute, "198.51.100.5");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Contains(
+            "yalnızca ayrı origin",
+            await response.Content.ReadAsStringAsync(),
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task DisplayOriginRefusesNonDisplayApiEvenWithTheHeader()
+    {
+        await using var app = await StartApiOnlyAsync([IPAddress.Loopback]);
+        using var client = CreateClient(app);
+
+        using var request = Forwarded(HttpMethod.Get, "/api/v1/auth/session", "198.51.100.6");
+        request.Headers.TryAddWithoutValidation(OriginHeader, "display");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Contains(
+            "müşteri ekranı origin",
+            await response.Content.ReadAsStringAsync(),
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task DisplayOriginAdmitsDisplayApiWithTheHeader()
+    {
+        await using var app = await StartApiOnlyAsync([IPAddress.Loopback]);
+        using var client = CreateClient(app);
+
+        using var request = Forwarded(HttpMethod.Get, "/api/v1/customer-displays/not-a-guid", "198.51.100.7");
+        request.Headers.TryAddWithoutValidation(OriginHeader, "display");
+        using var response = await client.SendAsync(request);
+
+        // The isolation middleware let it through; no route matched the bad id,
+        // so the API catch-all - not the origin guard - produced the 404.
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("İstenen API adresi bulunamadı", body, StringComparison.Ordinal);
+        Assert.DoesNotContain("yalnızca ayrı origin", body, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AnUntrustedPeerCannotPresentAsTheDisplayOrigin()
+    {
+        // Loopback is not in the trusted set, so the proxy header - like
+        // X-Forwarded-Proto - carries no authority: the request is treated as
+        // plain HTTP and stopped at the scheme gate before it can claim an origin.
+        await using var app = await StartApiOnlyAsync([IPAddress.Parse("192.0.2.10")]);
+        using var client = CreateClient(app);
+
+        using var request = Forwarded(HttpMethod.Get, DisplayRoute, "198.51.100.8");
+        request.Headers.TryAddWithoutValidation(OriginHeader, "display");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Contains(
+            "HTTPS_REQUIRED",
+            await response.Content.ReadAsStringAsync(),
+            StringComparison.Ordinal);
+    }
+
+    private static async Task<WebApplication> StartApiOnlyAsync(IReadOnlyList<IPAddress> trustedProxies)
+    {
+        var app = DualScreenApplication.Build(new DualScreenOptions(
+            "Host=localhost;Database=unused;Username=unused;Password=unused",
+            WebRoot: string.Empty,
+            "http://127.0.0.1:0",
+            trustedProxies,
+            ApiOnly: true,
+            CustomerDisplayOriginHeader: OriginHeader));
+        await app.StartAsync();
+        return app;
+    }
+
+    private static HttpRequestMessage Forwarded(HttpMethod method, string path, string forwardedFor)
+    {
+        var request = new HttpRequestMessage(method, path);
+        request.Headers.TryAddWithoutValidation("X-Forwarded-For", forwardedFor);
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
+        return request;
+    }
+
+    private static HttpClient CreateClient(WebApplication app)
+    {
+        var server = app.Services.GetRequiredService<IServer>();
+        var address = server.Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+        return new HttpClient { BaseAddress = new Uri(address) };
+    }
+}

@@ -33,7 +33,7 @@ rows stay briefly visible for debugging.
 On demand / from cron, against the running stack:
 
 ```sh
-docker compose --profile ops run --rm housekeeping
+docker compose -f compose.yaml -f compose.ops.yaml run --rm housekeeping
 ```
 
 Directly:
@@ -56,7 +56,7 @@ non-zero exit and no partial deletion.
 
 ```cron
 # daily at 04:30, outside trading hours
-30 4 * * * cd /opt/alkaros && docker compose --profile ops run --rm housekeeping >> /var/log/alkaros-housekeeping.log 2>&1
+30 4 * * * cd /opt/alkaros && docker compose -f compose.yaml -f compose.ops.yaml run --rm housekeeping >> /var/log/alkaros-housekeeping.log 2>&1
 ```
 
 Daily is ample: `idempotency_keys` turns over in 24 h and device sessions expire

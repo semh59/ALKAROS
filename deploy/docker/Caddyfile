@@ -1,25 +1,75 @@
-# TLS terminates here and forwards trusted proxy headers to Host.
-# Set ALKAROS_PROXY_HOST to the deployment host name or LAN IP that waiter
-# devices use (e.g. 192.168.1.50 or pos.local) so Caddy's internal CA issues a
-# certificate with a matching SAN. The localhost name is always kept so the
-# container healthcheck stays valid. Install the internal root CA on each
-# device (see deploy/docker/README.md) to get a valid secure context for the
-# WaiterPwa service worker.
-{$ALKAROS_PROXY_HOST:localhost}, localhost {
-	tls internal
-	encode gzip
-	reverse_proxy host:5080
+# ALKAROS reverse proxy. Caddy serves the static client bundles and forwards
+# the dynamic paths (JSON API + SignalR hubs) to the `api` service on plain
+# HTTP inside the Compose network. TLS terminates here.
+#
+# Set ALKAROS_PROXY_HOST to the deployment host name or LAN IP that devices use
+# (e.g. 192.168.1.50 or pos.local) so Caddy's internal CA issues a certificate
+# with a matching SAN. `localhost` is always kept so the container healthcheck
+# stays valid. Install the internal root CA on each device (see
+# deploy/docker/README.md) for a valid secure context - the WaiterPwa service
+# worker and offline queue need it.
+
+{
+	admin off
 }
 
-# The customer display is served from its own subdomain so it is a distinct
-# browser origin from the cashier: localStorage, and therefore the cashier
-# terminal id and bill id, are not reachable from the display context
-# (deep-analysis finding B-4). The host binds this on :5081 and only exposes the
-# customer-display API + hub + static shell there. Point the customer displays
-# at https://display.<ALKAROS_PROXY_HOST>/display and install the internal root
-# CA on them the same way as the waiter devices.
+# Static SPA + client shells. try_files falls back to the app shell for deep
+# links; real files (hashed assets, /waiter/*, /cashier/*) are served directly.
+(spa_static) {
+	encode gzip
+	root * /srv/app
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+{$ALKAROS_PROXY_HOST:localhost}, localhost {
+	tls internal
+
+	# The customer-display origin signal (finding B-4) must originate here,
+	# never from a client - strip any inbound copy before proxying.
+	handle /api/* {
+		reverse_proxy api:5080 {
+			header_up -X-Alkaros-Origin
+		}
+	}
+	handle /hubs/* {
+		reverse_proxy api:5080 {
+			header_up -X-Alkaros-Origin
+		}
+	}
+	handle /health/* {
+		reverse_proxy api:5080 {
+			header_up -X-Alkaros-Origin
+		}
+	}
+	import spa_static
+}
+
+# The customer display is a distinct browser origin from the cashier, so its
+# localStorage - and the cashier terminal id / bill id - never leak across
+# (finding B-4). Only the customer-display API and hub are proxied here, each
+# tagged with X-Alkaros-Origin: display so the api restricts the request to the
+# display route allowlist. Point the displays at
+# https://display.<ALKAROS_PROXY_HOST>/display and install the same root CA.
 display.{$ALKAROS_PROXY_HOST:localhost} {
 	tls internal
-	encode gzip
-	reverse_proxy host:5081
+
+	# Every dynamic path is tagged as the display origin and proxied to the
+	# api; the api admits only the customer-display routes and answers any
+	# other /api or /hubs path here with a 404 (finding B-4). Keeping the
+	# allow/deny decision in the api - not split across Caddy - means one
+	# place owns the isolation contract.
+	handle /api/* {
+		reverse_proxy api:5080 {
+			header_up X-Alkaros-Origin display
+		}
+	}
+	handle /hubs/* {
+		reverse_proxy api:5080 {
+			header_up X-Alkaros-Origin display
+		}
+	}
+	import spa_static
 }

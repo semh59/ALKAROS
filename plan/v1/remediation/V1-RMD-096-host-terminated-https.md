@@ -18,13 +18,13 @@ Host `serve` fiili `--urls` içinde birden çok `;` ayrılmış adres kabul eder
 
 - `plan/v1/remediation/V1-RMD-096-host-terminated-https.md`
 - `src/Host/DualScreen/DualScreenTls.cs`
-- `src/Host/DualScreen/DualScreenOptions.cs`
-- `src/Host/DualScreen/DualScreenApplication.cs`
-- `Dockerfile`
-- `deploy/docker/README.md`
-- `tests/Host/MigrationComposition/DualScreen/DualScreenOptionsTests.cs`
-- `tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs`
 - `evidence/V1-RMD-096/**`
+
+> `src/Host/DualScreen/DualScreenOptions.cs`, `src/Host/DualScreen/DualScreenApplication.cs`,
+> `deploy/docker/README.md`, `tests/Host/MigrationComposition/DualScreen/DualScreenOptionsTests.cs` ve
+> `tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs` yüzeyleri `V1-RMD-098`'e devredildi
+> (Docker arayüz/backend ayrımı, 2026-09-03). Kök `./Dockerfile` kaldırıldı; yerine
+> `deploy/docker/Dockerfile` (`V1-RMD-098`).
 
 ## In scope
 

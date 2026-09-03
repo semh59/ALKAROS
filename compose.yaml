@@ -1,5 +1,20 @@
 name: alkaros
 
+# Core stack, brought up with:
+#   docker compose up --detach --build --wait
+#
+# Frontend / backend split (A1):
+#   web   - Caddy: static bundles (PosTerminal SPA, WaiterPwa, Cashier) + TLS +
+#           reverse proxy of /api, /hubs, /health to the api service
+#   api   - ALKAROS.Host serve --api-only: JSON API + SignalR hubs, plain HTTP
+#   postgres, migrate, provision - datastore and one-shot bootstrap jobs
+#
+# Operator maintenance tools (backup / PITR / housekeeping) live in
+# compose.ops.yaml and are never started by `up`:
+#   docker compose -f compose.yaml -f compose.ops.yaml run --rm backup
+# Local debugging (publish db + api ports) is compose.dev.yaml:
+#   docker compose -f compose.yaml -f compose.dev.yaml up
+
 services:
   postgres:
     image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
@@ -48,7 +63,8 @@ services:
   migrate:
     build:
       context: .
-      target: runtime
+      dockerfile: deploy/docker/Dockerfile
+      target: api
     entrypoint: ["/bin/sh", "-eu", "-c"]
     secrets: [db_password]
     depends_on:
@@ -62,7 +78,8 @@ services:
   provision:
     build:
       context: .
-      target: runtime
+      dockerfile: deploy/docker/Dockerfile
+      target: api
     environment:
       ALKAROS_BOOTSTRAP_USERNAME: ${ALKAROS_BOOTSTRAP_USERNAME:-admin}
       ALKAROS_BOOTSTRAP_DISPLAY_NAME: ${ALKAROS_BOOTSTRAP_DISPLAY_NAME:-ALKAROS Manager}
@@ -77,15 +94,13 @@ services:
         exec dotnet ALKAROS.Host.dll provision-manager --db-url postgresql://alkaros@postgres:5432/alkaros
     restart: "no"
 
-  host:
+  api:
     build:
       context: .
-      target: runtime
+      dockerfile: deploy/docker/Dockerfile
+      target: api
     environment:
       ALKAROS_KITCHEN_STATION_ID: ${ALKAROS_KITCHEN_STATION_ID:-kitchen-main}
-      # LAN hostname / IP the waiter devices use. Becomes the SAN of the host's
-      # self-signed TLS certificate (V1-RMD-096) and the Caddy certificate SAN.
-      ALKAROS_PROXY_HOST: ${ALKAROS_PROXY_HOST:-localhost}
       # .NET runtime tuning (V1-RMD-088). Server GC + a background thread per
       # core suits a throughput service; dynamic adaptation right-sizes the heap
       # when the container memory limit is small; TieredPGO improves hot-path
@@ -97,18 +112,11 @@ services:
     command:
       - |
         export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
-        # --customer-display-urls binds the customer display on its own port so
-        # the proxy can serve it from a separate origin (display.<host>) and the
-        # browser partitions its localStorage from the cashier's (finding B-4).
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --web-root /app/wwwroot --urls 'http://0.0.0.0:5080;https://0.0.0.0:5443' --customer-display-urls 'http://0.0.0.0:5081' --self-signed-host "$${ALKAROS_PROXY_HOST:-localhost}" --trusted-network 172.16.0.0/12
+        # --api-only: no static file pipeline, no --web-root; `web` serves the
+        # bundles. --customer-display-origin-header is the proxy-mode B-4 origin
+        # signal (Caddy sets X-Alkaros-Origin: display on the display vhost).
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --trusted-network 172.16.0.0/12
     secrets: [db_password]
-    volumes:
-      - alkaros-host-tls:/app/tls
-    # Direct host-terminated HTTPS (self-signed, V1-RMD-096). The proxy on 8443
-    # stays the primary path; 8444 is a fallback that keeps the waiter PWA in a
-    # secure context if Caddy is down or its trusted-proxy headers are lost.
-    ports:
-      - "8444:5443"
     depends_on:
       provision: { condition: service_completed_successfully }
     healthcheck:
@@ -126,92 +134,28 @@ services:
           cpus: "1.0"
           memory: 512m
 
-  proxy:
-    image: caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+  web:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: web
     environment:
+      # LAN hostname / IP the devices use. Becomes the SAN of Caddy's internal
+      # CA certificate for both the main and display virtual hosts.
       ALKAROS_PROXY_HOST: ${ALKAROS_PROXY_HOST:-localhost}
     ports:
       - "8443:443"
     volumes:
-      - ./deploy/docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
     depends_on:
-      host: { condition: service_healthy }
+      api: { condition: service_healthy }
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "https://localhost/health/ready"]
       interval: 10s
       timeout: 5s
       retries: 12
     restart: unless-stopped
-
-  # Operator backup helper (V1-RMD-086). Not started by `docker compose up`;
-  # run on demand:
-  #   docker compose --profile ops run --rm backup
-  #   docker compose --profile ops run --rm backup /repo/deploy/docker/restore.sh <artifact> <db>
-  # Uses the digest-pinned postgres:18 image so pg_dump matches the server major
-  # version. Artifacts land in the named alkaros-backups volume.
-  backup:
-    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
-    profiles: ["ops"]
-    environment:
-      ALKAROS_DB_HOST: postgres
-      ALKAROS_DB_PORT: "5432"
-      ALKAROS_DB_USER: alkaros
-      ALKAROS_DB_NAME: alkaros
-      ALKAROS_BACKUP_DIR: /backups
-    secrets: [db_password]
-    volumes:
-      - ./deploy/docker:/repo/deploy/docker:ro
-      - alkaros-backups:/backups
-    entrypoint: ["/bin/sh"]
-    command: ["/repo/deploy/docker/backup.sh"]
-    restart: "no"
-
-  # Operator physical base backup for point-in-time recovery (V1-RMD-095). Not
-  # started by `docker compose up`; run after every migration and on a daily
-  # schedule:
-  #   docker compose --profile ops run --rm basebackup
-  # Writes a tar.gz base backup to alkaros-backups:/backups/base. PITR then
-  # replays the alkaros-wal-archive segments on top:
-  #   docker compose --profile ops run --rm basebackup \
-  #     /repo/deploy/docker/restore-pitr.sh /backups/base/<dir> /restore/<datadir> "<target time>"
-  basebackup:
-    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
-    profiles: ["ops"]
-    environment:
-      ALKAROS_DB_HOST: postgres
-      ALKAROS_DB_PORT: "5432"
-      ALKAROS_DB_USER: alkaros
-      ALKAROS_BASEBACKUP_DIR: /backups/base
-      ALKAROS_WAL_ARCHIVE_DIR: /wal-archive
-    secrets: [db_password]
-    volumes:
-      - ./deploy/docker:/repo/deploy/docker:ro
-      - alkaros-backups:/backups
-      - alkaros-wal-archive:/wal-archive
-    entrypoint: ["/bin/sh"]
-    command: ["/repo/deploy/docker/basebackup.sh"]
-    restart: "no"
-
-  # Operator data-housekeeping sweep (V1-RMD-091). Not started by
-  # `docker compose up`; schedule from cron:
-  #   docker compose --profile ops run --rm housekeeping
-  # Deletes expired idempotency_keys and expired/long-revoked device_sessions
-  # only. Not a KVKK personal-data retention job (see docs/operations/
-  # data-housekeeping.md); never touches orders, bills, fiscal or invoice data.
-  housekeeping:
-    build:
-      context: .
-      target: runtime
-    profiles: ["ops"]
-    entrypoint: ["/bin/sh", "-eu", "-c"]
-    secrets: [db_password]
-    command:
-      - |
-        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
-        exec dotnet ALKAROS.Host.dll housekeeping --db-url postgresql://alkaros@postgres:5432/alkaros
-    restart: "no"
 
 secrets:
   db_password:
@@ -221,8 +165,6 @@ secrets:
 
 volumes:
   alkaros-postgres:
-  alkaros-backups:
   alkaros-wal-archive:
-  alkaros-host-tls:
   caddy-data:
   caddy-config:

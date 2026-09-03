@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 855,
-  "markdown_line_count": 54320,
-  "markdown_byte_count": 3225524,
+  "markdown_file_count": 856,
+  "markdown_line_count": 54446,
+  "markdown_byte_count": 3237832,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -162,9 +162,9 @@
     },
     {
       "path": "docs/audit/V1_DESKTOP_POS_AND_CONTAINER_ACCEPTANCE_2026-08-28.md",
-      "sha256": "011F618715054F7F0D611517985AB978885AF2189E49C2BF80BCFBD2F9469C1C",
-      "lines": 161,
-      "bytes": 12018,
+      "sha256": "0E56399BC69A229551673A549CD87D88BF42A9AA5D96020D19A4BD2949C90481",
+      "lines": 168,
+      "bytes": 12452,
       "utf8": true
     },
     {
@@ -372,16 +372,16 @@
     },
     {
       "path": "docs/operations/data-housekeeping.md",
-      "sha256": "EC2DE8D17B2A7E8F181AA1DA44ECC1A2AABB6DA28D59823BB53389B1AF8CCA10",
+      "sha256": "6C37A3044624B2087B0382085C025203C8BF8DF9F022C3116B4FA12F73DEBBA6",
       "lines": 63,
-      "bytes": 2470,
+      "bytes": 2514,
       "utf8": true
     },
     {
       "path": "docs/operations/production-go-live-checklist.md",
-      "sha256": "A6FFA87055859B6D58DAA7B5FD8EE4A0E156033C1BF7E9B8D35DD8A7E49A2D61",
+      "sha256": "87E8D15E44DE3C44F3AD9CB23525667BC04BF114C1C5492040F6D73B083707CE",
       "lines": 207,
-      "bytes": 12334,
+      "bytes": 12374,
       "utf8": true
     },
     {
@@ -393,9 +393,9 @@
     },
     {
       "path": "docs/performance/infra-tuning.md",
-      "sha256": "9FAA4AA27A54E1B715645F013E7286FC824DEAE6E500599113846F3519566927",
+      "sha256": "1F1687A92B88C41C0DA883F90B3926D743FC14B07BD9190AFE84743A698136BD",
       "lines": 92,
-      "bytes": 5599,
+      "bytes": 5596,
       "utf8": true
     },
     {
@@ -428,16 +428,16 @@
     },
     {
       "path": "docs/recovery/backup-restore-runbook.md",
-      "sha256": "E75E9A2E50C3EA9F715E6B45EC9DEDD9C009C797A061A32001A4385760CE7B51",
+      "sha256": "CE760C448E9BED3DEF503A9C1F1CFDD4E05AA40C92C17AC93017A77E12EE4078",
       "lines": 139,
-      "bytes": 5428,
+      "bytes": 5494,
       "utf8": true
     },
     {
       "path": "docs/recovery/rpo-rto-targets.md",
-      "sha256": "EF3328DD0BD0885E764C4648779740B110F1E2F93F0AFF2D04290916004FAA50",
+      "sha256": "A2720C4ADCCB46E2F3560C5375A5294EA2A85FD5A3A66BC521ED22E9E41EB81A",
       "lines": 133,
-      "bytes": 7290,
+      "bytes": 7334,
       "utf8": true
     },
     {
@@ -2178,9 +2178,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "FC6086F5B8E80B5CC7CB964CFCF7961FFC971DCD4D14772062D7A05EFAF5A211",
-      "lines": 2131,
-      "bytes": 300387,
+      "sha256": "B41162C0466B5BBB1977DA721D8DFC29A4E5D8E4116874F95AED9D0F7596DC07",
+      "lines": 2132,
+      "bytes": 300571,
       "utf8": true
     },
     {
@@ -2199,9 +2199,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "A4A5CBC8B7E5FB17366B4BD29295DDE0142C585FD9CA236334B40FE5C4506084",
-      "lines": 386,
-      "bytes": 74758,
+      "sha256": "32B72A5DD9BF571F14D71C0B5C63CBC903E8162D7695C44A18914EE7A783A80D",
+      "lines": 390,
+      "bytes": 78391,
       "utf8": true
     },
     {
@@ -4817,9 +4817,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-096-host-terminated-https.md",
-      "sha256": "74CDAD4C4630ACACFB949B4C46CD1E74A229575AB5DD8A019C533DED742D7625",
+      "sha256": "32134068BBEC66B717A6232D929B9781EC3471BF544FBED3EE04DF5DB9A45944",
       "lines": 62,
-      "bytes": 3613,
+      "bytes": 3774,
       "utf8": true
     },
     {
@@ -4827,6 +4827,13 @@
       "sha256": "0EF1F98325FA6705C771284D137E7D2568030759937D42D9B1F8BE2E48532DFE",
       "lines": 74,
       "bytes": 3870,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-098-docker-frontend-backend-split-and-surface-custody.md",
+      "sha256": "D26B7DDDB2AF97452A07BC39613614F8883DB3015549BD5FEF76D4F7834210D7",
+      "lines": 114,
+      "bytes": 7705,
       "utf8": true
     },
     {

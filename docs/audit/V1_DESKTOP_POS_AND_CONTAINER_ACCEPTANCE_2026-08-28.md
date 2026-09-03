@@ -1,5 +1,12 @@
 # ALKAROS V1 Desktop POS and Container Acceptance
 
+> **Superseded in part (2026-09-03, `V1-RMD-098`).** The single-container `host` +
+> `proxy` layout described here was replaced by the A1 frontend/backend split:
+> `web` (Caddy: static bundles + TLS + reverse proxy) and `api`
+> (`ALKAROS.Host serve --api-only`, plain HTTP). The `Dockerfile` moved to
+> `deploy/docker/Dockerfile`; ops services moved to `compose.ops.yaml`. See
+> `deploy/docker/README.md` and `evidence/V1-RMD-098/`.
+
 - Task: `V1-RMD-032`
 - Review date: 2026-08-28
 - Reviewer: `/root` (independent validation pass)

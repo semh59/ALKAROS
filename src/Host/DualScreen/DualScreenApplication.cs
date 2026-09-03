@@ -189,19 +189,39 @@ public static partial class DualScreenApplication
             await next();
         });
 
-        // Customer-display origin isolation (deep-analysis finding B-4). When
-        // --customer-display-urls is configured the display is served from its
-        // own port(s) so browsers partition its localStorage from the cashier's:
-        // the display origin only exposes the display API, the display hub and
-        // the static client shell; the main origin refuses the display-only
-        // routes. With no display port configured this middleware is not added
-        // and a single origin serves everything as before.
+        // Customer-display origin isolation (deep-analysis finding B-4). The
+        // display origin is a distinct browser origin from the cashier so their
+        // localStorage - and the cashier terminal id / bill id - do not leak
+        // across. It exposes only the display API, the display hub and the
+        // static client shell; the main origin refuses the display-only routes.
+        // Two ways to recognise the display origin:
+        //   * a dedicated listen port (--customer-display-urls), used when the
+        //     host serves the static bundles itself; or
+        //   * a header the trusted reverse proxy sets on the display virtual
+        //     host (--customer-display-origin-header), used in --api-only mode
+        //     where the proxy owns the origin split.
+        // With neither configured this middleware is not added and a single
+        // origin serves everything as before.
         var customerDisplayPorts = options.CustomerDisplayPorts.ToHashSet();
-        if (customerDisplayPorts.Count > 0)
+        var displayOriginHeader = options.CustomerDisplayOriginHeader;
+        if (customerDisplayPorts.Count > 0 || displayOriginHeader is not null)
         {
             app.Use(async (context, next) =>
             {
-                var onDisplayOrigin = customerDisplayPorts.Contains(context.Connection.LocalPort);
+                // The header is only trustworthy from the reverse proxy. Reaching
+                // this middleware with context.Request.IsHttps set means the
+                // forwarded-headers middleware honoured X-Forwarded-Proto, which
+                // it only does for a --trusted-proxy / --trusted-network peer -
+                // the same peer that sets the origin header. A direct client is
+                // plain HTTP here and was already stopped by the HTTPS gate, so
+                // it can neither reach this code nor forge the display origin.
+                var onDisplayOrigin = customerDisplayPorts.Contains(context.Connection.LocalPort)
+                    || (displayOriginHeader is not null
+                        && context.Request.IsHttps
+                        && string.Equals(
+                            context.Request.Headers[displayOriginHeader],
+                            "display",
+                            StringComparison.Ordinal));
                 var path = context.Request.Path;
                 var isApi = path.StartsWithSegments("/api", StringComparison.Ordinal);
                 var isDisplayApi = path.StartsWithSegments("/api/v1/customer-displays", StringComparison.Ordinal);
@@ -257,14 +277,28 @@ public static partial class DualScreenApplication
                 "NOT_FOUND",
                 "İstenen API adresi bulunamadı."));
 
-        var fileProvider = new PhysicalFileProvider(options.WebRoot);
-        app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
-        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
-        app.MapFallback(async context =>
+        if (options.ApiOnly)
         {
-            context.Response.ContentType = "text/html; charset=utf-8";
-            await context.Response.SendFileAsync(Path.Combine(options.WebRoot, "index.html"));
-        });
+            // The reverse proxy serves the PosTerminal / WaiterPwa / Cashier
+            // bundles and owns the SPA fallback; anything not matched by an API
+            // route or hub above is genuinely not found here.
+            app.MapFallback((HttpContext context) => Error(
+                context,
+                StatusCodes.Status404NotFound,
+                "NOT_FOUND",
+                "İstenen adres bu API sunucusunda bulunmuyor."));
+        }
+        else
+        {
+            var fileProvider = new PhysicalFileProvider(options.WebRoot);
+            app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
+            app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
+            app.MapFallback(async context =>
+            {
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.SendFileAsync(Path.Combine(options.WebRoot, "index.html"));
+            });
+        }
         return app;
     }
 

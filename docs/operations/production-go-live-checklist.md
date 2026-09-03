@@ -51,25 +51,25 @@ Per-deployment, on the site host:
 - [ ] `deploy/docker/admin_password` — a unique 12-256 non-whitespace manager
       password; hand it to the manager out-of-band, then rotate after first login.
 - [ ] Set `ALKAROS_PROXY_HOST` to the LAN IP / hostname the devices use **before**
-      `docker compose up`. It is the SAN of both Caddy's internal-CA cert and the
-      Host's own self-signed fallback cert (V1-RMD-096).
-- [ ] Export and install the trusted certs on every waiter device (steps in
-      `deploy/docker/README.md`): Caddy's internal root CA, and — if the `8444`
-      fallback will be used — the Host self-signed leaf from `host:/app/tls/`.
+      `docker compose up`. It is the SAN of Caddy's internal-CA cert for both the
+      main and `display.` virtual hosts (V1-RMD-098).
+- [ ] Export and install Caddy's internal root CA on every waiter device and
+      customer display (steps in `deploy/docker/README.md`).
 - [ ] **DECISION** — external go-live (public domain) requires an approved public
-      certificate: replace `tls internal` in `deploy/docker/Caddyfile`, or mount
-      one into Host with `--tls-cert` / `--tls-key`. A LAN-only pilot may stay on
-      the internal / self-signed certs.
+      certificate: replace `tls internal` in `deploy/docker/Caddyfile`. A LAN-only
+      pilot may stay on the internal cert.
 
-**E1 (host listened only on plain HTTP) — resolved by V1-RMD-096.** The Host now
-also terminates HTTPS itself on `5443` (published as `8444`) with a self-signed
-certificate, so the waiter PWA keeps a secure context — and a working offline
-queue — even if Caddy is down or its `X-Forwarded-Proto` header is lost. The
-plain-HTTP `5080` port is unpublished and returns 400 `HTTPS_REQUIRED` to any
-non-loopback request without a trusted `X-Forwarded-Proto: https`.
+**E1 (host listened only on plain HTTP).** After the A1 frontend/backend split
+(V1-RMD-098) TLS terminates only at `web` (Caddy). The `api` service is headless
+HTTP on `:5080`, unpublished, and returns 400 `HTTPS_REQUIRED` to any non-loopback
+request without a trusted `X-Forwarded-Proto: https`. The host-terminated HTTPS
+fallback on `8444` added by V1-RMD-096 was removed with the split — the container
+no longer runs a second TLS listener. **Operational consequence:** if Caddy is
+down the stack is down; run a standby proxy for HA rather than relying on the app
+to self-serve TLS.
 
 - [ ] Rotation: re-write the secret file, then
-      `docker compose up -d --force-recreate migrate provision host`. The DB
+      `docker compose up -d --force-recreate migrate provision api`. The DB
       password rotation also needs `ALTER ROLE alkaros WITH PASSWORD ...` on the
       server in the same window.
 
@@ -138,8 +138,8 @@ WAL archiving shipped in wave 22 (`V1-RMD-095`): `archive_mode = on` +
 `deploy/docker/restore-pitr.sh`, `deploy/docker/pitr-selfcheck.sh` (proven
 end to end against the live schema — see `evidence/V1-RMD-095/`).
 
-- [ ] Schedule `docker compose --profile ops run --rm basebackup` after every
-      migration and daily; copy each base backup **and** the growing
+- [ ] Schedule `docker compose -f compose.yaml -f compose.ops.yaml run --rm basebackup`
+      after every migration and daily; copy each base backup **and** the growing
       `alkaros-wal-archive` volume to off-host storage (hourly for WAL).
 - [ ] Prune the off-host WAL archive after each verified base backup per
       `docs/recovery/rpo-rto-targets.md` §3.
@@ -150,8 +150,8 @@ end to end against the live schema — see `evidence/V1-RMD-095/`).
 
 | Signal | Where | Use |
 | --- | --- | --- |
-| Liveness/readiness | `GET /health/ready` (Host `:5080`, proxy `:8443`) — runs `SELECT 1` against PostgreSQL, returns `{"status":"Ready"}` / 503 | external uptime check |
-| Container health | Compose `healthcheck` on `postgres`, `host`, `proxy` (`restart: unless-stopped`) | `docker` self-heal + `docker events` |
+| Liveness/readiness | `GET /health/ready` (`api` `:5080`, `web` `:8443`) — runs `SELECT 1` against PostgreSQL, returns `{"status":"Ready"}` / 503 | external uptime check |
+| Container health | Compose `healthcheck` on `postgres`, `api`, `web` (`restart: unless-stopped`) | `docker` self-heal + `docker events` |
 | Operational health snapshot | `GET /api/v1/kitchen/terminals/{id}/operations/health/latest` (auth) | staff-facing status |
 | Recent backups | `GET /api/v1/kitchen/terminals/{id}/operations/backups/recent` (auth) | backup freshness |
 | Alert records | `AlertService` + `alerts` table (`PostgresAlertRepository`) | in-app alert feed |
@@ -193,7 +193,7 @@ end to end against the live schema — see `evidence/V1-RMD-095/`).
 | Backup/restore mechanism | verified |
 | Secrets hygiene (repo) | clean |
 | Physical device pass | **pending — site** |
-| Host-terminated HTTPS (E1) | shipped (`V1-RMD-096`); self-signed on `8444`, `--tls-cert` for a real cert |
+| TLS termination (E1) | Caddy `web` only (`V1-RMD-098` A1 split); the `V1-RMD-096` host self-signed `8444` fallback was removed — Caddy outage = stack outage, run a standby proxy for HA |
 | Public-domain TLS cert (if external go-live) | **pending — decision** |
 | External uptime + backup-age alert | **pending — ops wiring** |
 | Production-sized restore timing | **pending — site** |

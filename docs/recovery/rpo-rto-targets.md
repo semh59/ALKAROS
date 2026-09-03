@@ -73,7 +73,7 @@ every 5 minutes). `deploy/docker/pg_hba.conf` allows the replication connection
 1. **Base backup** — after every schema migration and on a daily schedule:
 
    ```sh
-   docker compose --profile ops run --rm basebackup
+   docker compose -f compose.yaml -f compose.ops.yaml run --rm basebackup
    ```
 
    Writes `alkaros-backups:/backups/base/alkaros_base_<UTC>` (tar.gz +
@@ -82,7 +82,7 @@ every 5 minutes). `deploy/docker/pg_hba.conf` allows the replication connection
 2. **Recover to a point in time** — into a side data directory, never the live one:
 
    ```sh
-   docker compose --profile ops run --rm basebackup \
+   docker compose -f compose.yaml -f compose.ops.yaml run --rm basebackup \
      /repo/deploy/docker/restore-pitr.sh /backups/base/<dir> /restore/<datadir> "2026-09-01 17:30:00+00"
    ```
 

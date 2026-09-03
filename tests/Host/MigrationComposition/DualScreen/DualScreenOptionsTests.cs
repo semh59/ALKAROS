@@ -87,6 +87,46 @@ public sealed class DualScreenOptionsTests : IDisposable
     }
 
     [Fact]
+    public void ApiOnlyRejectsAWebRoot()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--api-only",
+        ]));
+
+        Assert.Contains("mutually exclusive", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void CustomerDisplayOriginHeaderRequiresApiOnly()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--customer-display-origin-header", "X-Alkaros-Origin",
+        ]));
+
+        Assert.Contains("--api-only", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ApiOnlyRejectsACustomerDisplayPort()
+    {
+        Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--urls", "http://0.0.0.0:5080",
+            "--api-only",
+            "--customer-display-urls", "http://0.0.0.0:5081",
+        ]));
+    }
+
+    [Fact]
     public void DualHttpAndHttpsBindingWithSelfSignedHostParses()
     {
         var options = DualScreenOptions.Parse(

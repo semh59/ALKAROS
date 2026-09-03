@@ -12,7 +12,7 @@ Files:
 - `deploy/docker/postgresql.tuned.conf` — the PostgreSQL config, loaded via
   `postgres -c config_file=...` in `compose.yaml`.
 - `compose.yaml` — mounts the config, sets `shm_size`, `.NET` runtime env vars
-  and `deploy.resources` limits on `postgres` and `host`.
+  and `deploy.resources` limits on `postgres` and `api`.
 
 ## PostgreSQL
 
@@ -54,7 +54,7 @@ The shipped file uses the smallest safe values (384 MB / 2 GB) so it starts on a
 shared or small box without OOM; a real single-restaurant mini-PC should use the
 row for its RAM.
 
-## .NET runtime (`host` service env)
+## .NET runtime (`api` service env)
 
 | Env var | Value | Why |
 | --- | --- | --- |
@@ -67,7 +67,7 @@ row for its RAM.
 | Service | CPU limit | Memory limit | Reservation |
 | --- | --- | --- | --- |
 | `postgres` | 4.0 | 2 GB | 1.0 CPU / 768 MB |
-| `host` | 4.0 | 1.5 GB | 1.0 CPU / 512 MB |
+| `api` | 4.0 | 1.5 GB | 1.0 CPU / 512 MB |
 
 Limits give a predictable ceiling and let `DOTNET_GCDynamicAdaptationMode` size
 the heap correctly. Raise both to match the deployment host; they are a safety
