@@ -11,6 +11,10 @@
 
 {
 	admin off
+	# Clients that connect to a bare IP send no TLS SNI, so Caddy cannot tell
+	# which site's certificate to present. Pin the default to ALKAROS_PROXY_HOST
+	# so `https://<lan-ip>:8443` completes its handshake.
+	default_sni {$ALKAROS_PROXY_HOST:localhost}
 }
 
 # Static SPA + client shells. try_files falls back to the app shell for deep

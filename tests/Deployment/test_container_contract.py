@@ -115,8 +115,8 @@ def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
     assert "auto_https off" in caddy_dev
     assert "header_up X-Forwarded-Proto https" in caddy_dev
     assert "reverse_proxy api:5080" in caddy_dev
-    assert "http://localhost:80" in caddy_dev
-    assert "http://localhost:81" in caddy_dev
+    assert "http://:80" in caddy_dev   # match any Host - a phone sends the LAN IP, not "localhost"
+    assert "http://:81" in caddy_dev
     assert "header_up X-Alkaros-Origin display" in caddy_dev
     assert "header_up -X-Alkaros-Origin" in caddy_dev
     # plain-HTTP localhost must keep the session cookie

@@ -28,7 +28,7 @@
 }
 
 # Main origin - :80.
-http://localhost:80, http://127.0.0.1:80 {
+http://:80 {
 	handle /api/* {
 		reverse_proxy api:5080 {
 			header_up -X-Alkaros-Origin
@@ -54,7 +54,7 @@ http://localhost:80, http://127.0.0.1:80 {
 }
 
 # Customer-display origin - :81.
-http://localhost:81, http://127.0.0.1:81 {
+http://:81 {
 	handle /api/* {
 		reverse_proxy api:5080 {
 			header_up X-Alkaros-Origin display

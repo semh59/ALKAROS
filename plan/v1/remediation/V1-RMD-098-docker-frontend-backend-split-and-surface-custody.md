@@ -59,7 +59,11 @@ yalnız `web` (Caddy) üzerinde sonlanır.
   `api:5080`'e proxy'ler ve gelen `X-Alkaros-Origin` başlığını siler; `display.` vhost aynı SPA kabuğunu
   sunar + tüm `/api` `/hubs`'ı `X-Alkaros-Origin: display` ekleyerek `api:5080`'e proxy'ler (izin/ret kararı
   tek yerde, api'de). `try_files {path} /index.html` → `try_files {path} {path}/ /index.html`: yoksa
-  `/waiter/` ve `/cashier/` kendi `index.html`'leri yerine PosTerminal SPA kabuğunu döndürüyordu.
+  `/waiter/` ve `/cashier/` kendi `index.html`'leri yerine PosTerminal SPA kabuğunu döndürüyordu. Global
+  `default_sni {$ALKAROS_PROXY_HOST:localhost}`: bir IP'ye bağlanan istemci TLS SNI göndermez, bunsuz
+  `https://<lan-ip>:8443` el sıkışması tamamlanmıyordu. `Caddyfile.dev` siteleri `http://localhost:80/:81`
+  → `http://:80/:81` (herhangi bir Host): telefon `Host: <lan-ip>` gönderdiğinden `localhost`-sabitli site
+  boş 200 dönüyordu.
 - WaiterPwa personel girişi (telefon kullanımı): `waiter-app.js` (`V1-GOV-042` yüzeyi) her cihaza kalıcı
   rastgele `alkaros_waiter_terminal_id` verir, `/api/v1/auth/session` ile oturumu doğrular, yoksa
   `index.html` (`V1-GOV-044` yüzeyi) içindeki `#loginForm` overlay'ini gösterir; form
