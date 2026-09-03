@@ -77,6 +77,11 @@ yalnız `web` (Caddy) üzerinde sonlanır.
   `waiter-app.css` (`V1-RMD-042` yüzeyi) overlay stili, `tests/Clients/WaiterPwa/Frontend/
   test_waiter_pwa_frontend.py` (`V1-RMD-051` yüzeyi) giriş akışı kapsaması. Bu dosyaların custody'si
   sahiplerinde kalır (`validate` çakışmasız).
+- `crypto.randomUUID()` yalnız güvenli bağlamda tanımlıdır; LAN IP üzerinden düz HTTP'de `undefined` →
+  `deviceTerminalId()` modül başlangıcında fırlatıyor, tüm `waiter-app.js` çöküyor, sadece statik başlık
+  render oluyordu (giriş formu görünmüyordu). `randomUUID()` yardımcısı eklendi: güvenli bağlamda
+  `crypto.randomUUID()`, değilse `crypto.getRandomValues()` ile RFC4122 v4 üretir (5 çağrı bu yardımcıya
+  geçti).
 - `compose.yaml` çekirdek yığın: `postgres` + `migrate` + `provision` + `api` (eski `host`) + `web`
   (eski `proxy`, artık `web` build hedefiyle). `8444` yayını ve `alkaros-host-tls` hacmi kaldırıldı.
   Operatör araçları (`backup` / `basebackup` / `housekeeping`) `compose.ops.yaml`'a taşındı ve

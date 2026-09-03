@@ -54,7 +54,11 @@ def test_waiter_pwa_has_a_staff_sign_in_flow():
     # Signs in against the shared auth endpoint with this device's own terminal id.
     assert "/api/v1/auth/login" in app_code
     assert "alkaros_waiter_terminal_id" in app_code
-    assert "crypto.randomUUID()" in app_code
+    # crypto.randomUUID() is secure-context only; a LAN-IP phone is plain HTTP,
+    # so there is a getRandomValues() fallback and every id goes through it.
+    assert "function randomUUID(" in app_code
+    assert "crypto.getRandomValues" in app_code
+    assert "id = randomUUID()" in app_code
     # Gates before loading, and re-prompts on a 401.
     assert "hasValidSession" in app_code
     assert "showLogin" in app_code

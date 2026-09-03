@@ -16,12 +16,26 @@
     return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
   }
 
+  // crypto.randomUUID() is secure-context only, so it is undefined over plain
+  // HTTP on a LAN IP - which is exactly how a waiter phone reaches the stack.
+  // crypto.getRandomValues() IS available there, so build a v4 UUID from it.
+  function randomUUID() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
+    const bytes = window.crypto.getRandomValues(new Uint8Array(16));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
+
   // Each device gets its own terminal id (persisted) so concurrent waiters do
   // not share - and revoke - one cashier device session.
   function deviceTerminalId() {
     let id = localStorage.getItem('alkaros_waiter_terminal_id');
     if (!id) {
-      id = crypto.randomUUID();
+      id = randomUUID();
       localStorage.setItem('alkaros_waiter_terminal_id', id);
     }
     return id;
@@ -226,7 +240,7 @@
   function queueOrderAction(action) {
     state.offlineQueue.push({
       ...action,
-      id: action.id || crypto.randomUUID(),
+      id: action.id || randomUUID(),
       timestamp: new Date().toISOString()
     });
     localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
@@ -273,7 +287,7 @@
   async function postOrderToBackend(orderPayload) {
     const headers = {
       'Content-Type': 'application/json',
-      'X-Idempotency-Key': orderPayload.id || crypto.randomUUID()
+      'X-Idempotency-Key': orderPayload.id || randomUUID()
     };
     if (state.sessionToken) {
       headers['Authorization'] = `Bearer ${state.sessionToken}`;
@@ -585,7 +599,7 @@
           existing.quantity += 1;
         } else {
           state.cart.push({
-            id: crypto.randomUUID(),
+            id: randomUUID(),
             productId: prod.id,
             name: prod.name,
             price: prod.price,
@@ -630,7 +644,7 @@
       el.btnSendKitchen.addEventListener('click', async () => {
         if (state.cart.length === 0 || !state.selectedTable) return;
 
-        const orderId = crypto.randomUUID();
+        const orderId = randomUUID();
         const orderPayload = {
           id: orderId,
           tableId: state.selectedTable.id,
