@@ -21,10 +21,9 @@
 
 - `plan/v1/remediation/V1-RMD-089-orders-scale-index-migration.md`
 - `database/migrations/V1/V1-RMD-089/**`
-- `database/MigrationComposition/order.json`
-- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `evidence/V1-RMD-089/**`
 - src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; 9. dalgadaki gibi bu dalgada yalnızca faz üst sınırı 041 değerine güncellenir.
+- PO:2026-09-04 kararıyla database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs yüzeyleri, migration 043 ekleyen V1-IAM-017'ye devredildi; bu historical task closed kalır.
 
 ## In scope
 

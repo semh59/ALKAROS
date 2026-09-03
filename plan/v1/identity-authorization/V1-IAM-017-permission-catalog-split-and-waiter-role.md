@@ -1,10 +1,10 @@
 # V1-IAM-017 - Permission catalog split and waiter role
 
 - Task ID: V1-IAM-017
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: claude-session-01XKRazppo9sW452rdbCZsgy
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Goal
 
@@ -17,9 +17,13 @@ geçiş takma adı olarak kalır; kaldırma işi `V1-IAM-024` görevine aittir.
 
 - `plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md`
 - `database/migrations/V1/V1-IAM-017/**`
+- `database/MigrationComposition/order.json`
+- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `src/Modules/Identity/Authorization/Catalog/**`
 - `tests/Modules/Identity/Authorization/Catalog/**`
 - `evidence/V1-IAM-017/**`
+- Yüzey devri: database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 043 için V1-RMD-089'dan bu göreve devredildi (PO:2026-09-04).
+- src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu dalgada yalnızca faz üst sınırı 043 değerine güncellenir (V1-RMD-089/9. dalga deseni).
 - `AuthorizationService` davranışı değişmez; izin kodu yalnız string olarak akar.
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
@@ -48,12 +52,22 @@ geçiş takma adı olarak kalır; kaldırma işi `V1-IAM-024` görevine aittir.
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Release` sıfır uyarı ile sıfır hata; ilgili
-  `dotnet test` süzgeci yeni katalog ile tohum testlerini geçer.
-- Migration ileri ile geri yönde boş veritabanında denenir.
+- `dotnet build ALKAROS.slnx -c Release --no-restore`: 0 uyarı / 0 hata.
+- `dotnet test` (yerel Postgres 18, `alkaros-test-pg`):
+  `ALKAROS.Identity.Authorization.Tests` 49/49 (31'i yeni `Catalog/**` —
+  `ApplicationPermissionsTests`, `PermissionSplitMigrationTests` metin
+  seviyesi, `PermissionSplitDatabaseTests` gerçek 005→008→042→043 zinciriyle);
+  `ALKAROS.Host.Tests` `Manifest.ManifestTests` 16/16 (`PhaseBMax` 043,
+  pozisyon sayısı 42).
+- Migration ileri: tüm 001..043 zinciri boş `alkaros_fullmig` veritabanına
+  sırayla uygulandı (`docker exec alkaros-test-pg psql -f`), `waiter` = tam 3
+  izin (`orders.create`, `orders.send`, `tables.status`), `pos.cashier.mutate`
+  içermez. Geri: `043-*.down.sql` uygulandı; 13 kod ve `waiter` rolü kalktı,
+  migration 042 satırları (`pos.cashier.mutate`, `catalog.manage`,
+  `kitchen.reprint`) yerinde kaldı.
 - Semih için gerçek senaryo: `waiter` rolünde bir kullanıcı oluşturulur, kasa
-  terminaline girer ve salon planında rezervasyon eyleminin görünmediğini,
-  `cashier` rolünde ise göründüğünü doğrular.
+  terminaline girer ve salon planında rezervasyon eyleminin görünmediğini
+  (`allowedCommands` boş), `cashier` rolünde ise göründüğünü doğrular.
 
 ## Handoff
 

@@ -1,10 +1,10 @@
 # V1-IAM-016 - Authorization model decision
 
 - Task ID: V1-IAM-016
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: claude-session-01XKRazppo9sW452rdbCZsgy
 - Work type: decision
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 

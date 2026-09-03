@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 869,
-  "markdown_line_count": 55340,
-  "markdown_byte_count": 3288305,
+  "markdown_line_count": 55353,
+  "markdown_byte_count": 3289684,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2192,7 +2192,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9844A1DD0739775BB558FE199CBCE4366C889B93D07023C295A02134A6717029",
+      "sha256": "66D5C465674AE81A78C1460E46DC72C73DC215CB558D9588F5991C0DE200A666",
       "lines": 2145,
       "bytes": 302753,
       "utf8": true
@@ -4075,16 +4075,16 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-016-authorization-model-decision.md",
-      "sha256": "630AEAB10593B6E8A2FA82C732F67AEF783C30264134F9A43437E4394CFA96D6",
+      "sha256": "040B3130B014092BA44D0A74BBFF5C1CB9620B2D067EE1098CD77C8A257D5095",
       "lines": 54,
-      "bytes": 1710,
+      "bytes": 1737,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md",
-      "sha256": "7661250137DACC3F703B74CAF5DDDF8097EC3574CB39EFF1F28E23B4F1D614A6",
-      "lines": 61,
-      "bytes": 2342,
+      "sha256": "4EDF1C96AA301AB61CB3B75A04B0B6957F3A62C5BE941127DEF28F58AF600F58",
+      "lines": 75,
+      "bytes": 3578,
       "utf8": true
     },
     {
@@ -4852,9 +4852,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-089-orders-scale-index-migration.md",
-      "sha256": "4E17388F120397949E4D51B720EA5E5EC7774571384A00B04E9C20095914A8AC",
-      "lines": 61,
-      "bytes": 2950,
+      "sha256": "8BEBF35A09B4007967ADC111C7780ED25CBFA8798889FC45CECAD09AA937C12F",
+      "lines": 60,
+      "bytes": 3066,
       "utf8": true
     },
     {

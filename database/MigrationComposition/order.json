@@ -1,253 +1,386 @@
 {
   "version": 1,
-  "source": ["V0-DAT-001"],
-  "phaseARange": { "min": "001", "max": "030" },
-  "phaseBRange": { "min": "031", "max": "042" },
+  "source": [
+    "V0-DAT-001"
+  ],
+  "phaseARange": {
+    "min": "001",
+    "max": "030"
+  },
+  "phaseBRange": {
+    "min": "031",
+    "max": "043"
+  },
   "migrations": [
     {
       "id": "001",
       "phase": "A",
-      "tables": ["idempotency_keys"],
+      "tables": [
+        "idempotency_keys"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "002",
       "phase": "A",
-      "tables": ["inbox_messages"],
+      "tables": [
+        "inbox_messages"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "003",
       "phase": "A",
-      "tables": ["outbox_messages"],
+      "tables": [
+        "outbox_messages"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "005",
       "phase": "A",
-      "tables": ["users"],
+      "tables": [
+        "users"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "006",
       "phase": "A",
-      "tables": ["categories", "tax_profiles", "products", "modifier_groups", "modifiers", "product_modifier_groups"],
+      "tables": [
+        "categories",
+        "tax_profiles",
+        "products",
+        "modifier_groups",
+        "modifiers",
+        "product_modifier_groups"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "007",
       "phase": "A",
-      "tables": ["product_prices"],
+      "tables": [
+        "product_prices"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "008",
       "phase": "A",
-      "tables": ["permissions", "roles", "role_permissions", "user_roles", "denial_events"],
+      "tables": [
+        "permissions",
+        "roles",
+        "role_permissions",
+        "user_roles",
+        "denial_events"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "009",
       "phase": "A",
-      "tables": ["device_sessions", "session_operations"],
+      "tables": [
+        "device_sessions",
+        "session_operations"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "010",
       "phase": "A",
-      "tables": ["zones", "tables"],
+      "tables": [
+        "zones",
+        "tables"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "011",
       "phase": "A",
-      "tables": ["orders", "order_items", "order_item_modifiers", "order_status_history"],
+      "tables": [
+        "orders",
+        "order_items",
+        "order_item_modifiers",
+        "order_status_history"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "012",
       "phase": "A",
-      "tables": ["btree_gist"],
+      "tables": [
+        "btree_gist"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "013",
       "phase": "A",
-      "tables": ["device_sessions"],
+      "tables": [
+        "device_sessions"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "014",
       "phase": "A",
-      "tables": ["kitchen_tickets", "kitchen_ticket_items"],
+      "tables": [
+        "kitchen_tickets",
+        "kitchen_ticket_items"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "015",
       "phase": "A",
-      "tables": ["audit_events"],
+      "tables": [
+        "audit_events"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "016",
       "phase": "A",
-      "tables": ["printers", "printer_routes"],
+      "tables": [
+        "printers",
+        "printer_routes"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "017",
       "phase": "A",
-      "tables": ["print_jobs"],
+      "tables": [
+        "print_jobs"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "018",
       "phase": "A",
-      "tables": ["physical_print_deliveries"],
+      "tables": [
+        "physical_print_deliveries"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "019",
       "phase": "A",
-      "tables": ["bills", "bill_items"],
+      "tables": [
+        "bills",
+        "bill_items"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "020",
       "phase": "A",
-      "tables": ["bill_allocations"],
+      "tables": [
+        "bill_allocations"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "021",
       "phase": "A",
-      "tables": ["bill_adjustments"],
+      "tables": [
+        "bill_adjustments"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "022",
       "phase": "A",
-      "tables": ["products"],
+      "tables": [
+        "products"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "023",
       "phase": "A",
-      "tables": ["table_transfers"],
+      "tables": [
+        "table_transfers"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "024",
       "phase": "A",
-      "tables": ["table_merges"],
+      "tables": [
+        "table_merges"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "025",
       "phase": "A",
-      "tables": ["table_reservations"],
+      "tables": [
+        "table_reservations"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "026",
       "phase": "A",
-      "tables": ["settings", "setting_history"],
+      "tables": [
+        "settings",
+        "setting_history"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "027",
       "phase": "A",
-      "tables": ["alerts", "alert_events"],
+      "tables": [
+        "alerts",
+        "alert_events"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "028",
       "phase": "A",
-      "tables": ["health_checks"],
+      "tables": [
+        "health_checks"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "029",
       "phase": "A",
-      "tables": ["backups", "system_health_snapshots"],
+      "tables": [
+        "backups",
+        "system_health_snapshots"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "030",
       "phase": "A",
-      "tables": ["cases", "case_actions"],
+      "tables": [
+        "cases",
+        "case_actions"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "031",
       "phase": "B",
-      "tables": ["daily_business_days", "waiter_performance_summaries", "print_error_summaries"],
+      "tables": [
+        "daily_business_days",
+        "waiter_performance_summaries",
+        "print_error_summaries"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "032",
       "phase": "B",
-      "tables": ["bill_items", "bill_allocations", "bill_adjustments"],
+      "tables": [
+        "bill_items",
+        "bill_allocations",
+        "bill_adjustments"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "033",
       "phase": "B",
-      "tables": ["inbox_messages", "outbox_messages"],
+      "tables": [
+        "inbox_messages",
+        "outbox_messages"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "034",
       "phase": "B",
-      "tables": ["physical_print_deliveries"],
+      "tables": [
+        "physical_print_deliveries"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "035",
       "phase": "B",
-      "tables": ["daily_business_days"],
+      "tables": [
+        "daily_business_days"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "036",
       "phase": "B",
-      "tables": ["order_items", "bill_items"],
+      "tables": [
+        "order_items",
+        "bill_items"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "037",
       "phase": "B",
-      "tables": ["physical_print_deliveries"],
+      "tables": [
+        "physical_print_deliveries"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "038",
       "phase": "B",
-      "tables": ["terminals", "pairing_requests", "display_sessions"],
+      "tables": [
+        "terminals",
+        "pairing_requests",
+        "display_sessions"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "039",
       "phase": "B",
-      "tables": ["zone_floor_plans", "table_layouts", "table_seats"],
+      "tables": [
+        "zone_floor_plans",
+        "table_layouts",
+        "table_seats"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "040",
       "phase": "B",
-      "tables": ["products"],
+      "tables": [
+        "products"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "041",
       "phase": "B",
-      "tables": ["orders"],
+      "tables": [
+        "orders"
+      ],
       "deferredConstraints": []
     },
     {
       "id": "042",
       "phase": "B",
-      "tables": ["permissions", "roles", "role_permissions"],
+      "tables": [
+        "permissions",
+        "roles",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "043",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "roles",
+        "role_permissions"
+      ],
       "deferredConstraints": []
     }
   ]
