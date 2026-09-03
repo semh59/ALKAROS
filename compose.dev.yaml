@@ -9,6 +9,9 @@ name: alkaros
 #   http://localhost:8090/health/ready
 #   psql / curl straight to the datastore and api on host ports 5433 / 5080
 #
+#   demo floor + menu (fresh stack has none):
+#     docker compose -f compose.yaml -f compose.dev.yaml --profile seed run --rm seed
+#
 # `web` runs deploy/docker/Caddyfile.dev (bind-mounted): plain HTTP, no
 # certificate, X-Forwarded-Proto forced to https upstream, :80 = main origin and
 # :81 = customer-display origin. Never deploy this - the core compose.yaml keeps
@@ -41,3 +44,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 12
+
+  # One-shot demo data (2 zones / 5 tables / 6 products). Idempotent.
+  seed:
+    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+    profiles: ["seed"]
+    secrets: [db_password]
+    depends_on:
+      postgres: { condition: service_healthy }
+    volumes:
+      - ./deploy/docker/seed-demo.sql:/seed-demo.sql:ro
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    command:
+      - |
+        export PGPASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        exec psql "postgresql://alkaros@postgres:5432/alkaros" -v ON_ERROR_STOP=1 -f /seed-demo.sql
+    restart: "no"

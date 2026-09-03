@@ -22,6 +22,8 @@
 	encode gzip
 	root * /srv/app
 	handle {
+		# dev: never let a phone hold a stale bundle between rebuilds
+		header Cache-Control "no-cache"
 		try_files {path} {path}/ /index.html
 		file_server
 	}

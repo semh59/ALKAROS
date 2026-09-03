@@ -111,8 +111,11 @@ def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
     assert '"8091:81"' in dev            # customer-display origin (B-4, no *.localhost DNS)
     assert "ports: !override" in dev      # replace, not append to, the core 8443 mapping
     assert "deploy/docker/Caddyfile.dev:/etc/caddy/Caddyfile" in dev
+    assert 'profiles: ["seed"]' in dev
+    assert "seed-demo.sql" in dev
 
     assert "auto_https off" in caddy_dev
+    assert 'header Cache-Control "no-cache"' in caddy_dev
     assert "header_up X-Forwarded-Proto https" in caddy_dev
     assert "reverse_proxy api:5080" in caddy_dev
     assert "http://:80" in caddy_dev   # match any Host - a phone sends the LAN IP, not "localhost"

@@ -26,6 +26,7 @@ yalnız `web` (Caddy) üzerinde sonlanır.
 - `compose.dev.yaml`
 - `deploy/docker/Caddyfile`
 - `deploy/docker/Caddyfile.dev`
+- `deploy/docker/seed-demo.sql`
 - `deploy/docker/README.md`
 - `.dockerignore`
 - `src/Host/DualScreen/DualScreenOptions.cs`
@@ -63,7 +64,11 @@ yalnız `web` (Caddy) üzerinde sonlanır.
   `default_sni {$ALKAROS_PROXY_HOST:localhost}`: bir IP'ye bağlanan istemci TLS SNI göndermez, bunsuz
   `https://<lan-ip>:8443` el sıkışması tamamlanmıyordu. `Caddyfile.dev` siteleri `http://localhost:80/:81`
   → `http://:80/:81` (herhangi bir Host): telefon `Host: <lan-ip>` gönderdiğinden `localhost`-sabitli site
-  boş 200 dönüyordu.
+  boş 200 dönüyordu. `Caddyfile.dev` `spa_static` snippet'ine `header Cache-Control "no-cache"`: telefon
+  yeniden derlemeler arası eski bundle'ı tutmasın.
+- `deploy/docker/seed-demo.sql` + `compose.dev.yaml` `seed` servisi (`--profile seed`): taze yığında
+  demo kat planı + menü (2 bölge / 5 masa / 6 ürün) — idempotent. Üretim yolu gerçek kataloğu manager
+  arayüzünden kurar; bu yalnız yerel test içindir.
 - WaiterPwa personel girişi (telefon kullanımı): `waiter-app.js` (`V1-GOV-042` yüzeyi) her cihaza kalıcı
   rastgele `alkaros_waiter_terminal_id` verir, `/api/v1/auth/session` ile oturumu doğrular, yoksa
   `index.html` (`V1-GOV-044` yüzeyi) içindeki `#loginForm` overlay'ini gösterir; form
