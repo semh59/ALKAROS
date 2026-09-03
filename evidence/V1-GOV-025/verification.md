@@ -6,7 +6,7 @@
 
 ## 1. Plan Graph Validation
 
-```
+```text
 Markdown files: 457
 Task files: 435
 Registered gates: 18
@@ -18,7 +18,7 @@ Validation warnings: 0
 
 ## 2. Manifest Verification
 
-```
+```text
 Manifest Markdown files: 703
 UTF-8 full reads: 703
 Markdown lines: 45621

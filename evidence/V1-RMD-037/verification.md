@@ -11,6 +11,7 @@ The missing closing brace `}` in `FallbackSanitizeText` method within `src/Modul
 ## 2. Unit Test Suite
 
 `tests/Modules/Audit/EventStore/AuditSanitizerTests.cs` added with test cases for:
+
 - Valid JSON with sensitive keys (`password`, `apiKey`, `creditCardPan`) -> values redacted to `[REDACTED]`.
 - Malformed / unparseable JSON text with sensitive keys -> fallback regex text sanitization returning valid JSON.
 - Object serialization and recursive sanitization.

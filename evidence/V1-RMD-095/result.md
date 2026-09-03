@@ -11,7 +11,7 @@ PostgreSQL WAL archiving + point-in-time recovery for the ALKAROS compose stack.
 
 ### Configuration — `deploy/docker/postgresql.tuned.conf`
 
-```
+```text
 wal_level = replica
 archive_mode = on
 archive_command = 'test ! -f /wal-archive/%f && cp %p /wal-archive/%f'
@@ -39,7 +39,7 @@ hba_file = '/etc/postgresql/pg_hba.conf'
 
 ### `pitr-selfcheck.sh` (disposable PostgreSQL 18) — `pitr-selfcheck.log`
 
-```
+```text
 === PASS ===
 baseline+keep rows recovered : 150
 post-target rows dropped      : 50 (ids 151-200 absent)
@@ -50,7 +50,7 @@ correctly excluded.
 
 ### Live compose stack, end to end — `live-stack-pitr-e2e.log`
 
-```
+```text
 basebackup: ok dir=alkaros_base_20260901T174716Z bytes=342125026 seconds=31
 restore-pitr: base backup checksum verified
 ... starting point-in-time recovery to <target>
@@ -67,7 +67,7 @@ cluster has the 2 pre-target rows and 0 post-target rows.
 
 ### WAL archiving live
 
-```
+```text
 SHOW archive_mode         -> on
 SHOW archive_timeout      -> 5min
 pg_stat_archiver          -> archived_count=3, failed_count=0

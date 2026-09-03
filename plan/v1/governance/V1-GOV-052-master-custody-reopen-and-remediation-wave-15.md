@@ -12,7 +12,7 @@
 
 ## Goal
 
-14. dalga yük testi temel ölçümü, veritabanı ve çalışma zamanının ayarlanmamış varsayılan değerlerle çalıştığını ortaya koymuştur (`shared_buffers` 128 MB, `work_mem` 4 MB, `random_page_cost` 4, `jit` açık, .NET GC modu doğrulanmamış). Lokantanın canlıya alınacağı adanmış donanımda bunların üretim seviyesine ayarlanması için `GATE-V1-EXIT` kapısı yeniden açılır. Gerekçeli bir PostgreSQL ayar dosyası, Compose çalışma zamanı ve kaynak sınırları, .NET server GC ve öncesi/sonrası ölçüm ile 1 kurtarma görevi (`V1-RMD-088`) ve kapanış görevi (`V1-GOV-053`) planlanır.
+ 1. dalga yük testi temel ölçümü, veritabanı ve çalışma zamanının ayarlanmamış varsayılan değerlerle çalıştığını ortaya koymuştur (`shared_buffers` 128 MB, `work_mem` 4 MB, `random_page_cost` 4, `jit` açık, .NET GC modu doğrulanmamış). Lokantanın canlıya alınacağı adanmış donanımda bunların üretim seviyesine ayarlanması için `GATE-V1-EXIT` kapısı yeniden açılır. Gerekçeli bir PostgreSQL ayar dosyası, Compose çalışma zamanı ve kaynak sınırları, .NET server GC ve öncesi/sonrası ölçüm ile 1 kurtarma görevi (`V1-RMD-088`) ve kapanış görevi (`V1-GOV-053`) planlanır.
 
 ## Owned surface
 

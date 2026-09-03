@@ -10,7 +10,7 @@
 ## Final artifacts
 
 | Path | SHA-256 |
-|---|---|
+| --- | --- |
 | `.dockerignore` | `8ac90c76fe0f51c2ed56b7047e57d7422b5c0a17372f886a2e312e2ffff2d852` |
 | `compose.yaml` | `7dc3986c49c803fa695236be8d6550d1a84c7bd4d15dbea4ccdbc73f0e7ef207` |
 | `deploy/docker/.gitignore` | `02e5e55883a7778854ba3c2af7e0ee508af88a9e59981fd33f215bfd01010841` |

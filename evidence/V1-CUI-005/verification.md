@@ -12,6 +12,7 @@ The Cashier UI is now aligned as a quick draft order entry and kitchen dispatch 
 ## 2. Test Suite
 
 `tests/Clients/Cashier/Frontend/test_cashier_frontend.py`:
+
 - Verified static files exist.
 - Verified manifest validity.
 - Verified HTML structure and ensured absence of fake payment strings.

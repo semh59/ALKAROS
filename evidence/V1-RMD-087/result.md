@@ -34,7 +34,7 @@ its budget and rejected the excess; the server did not degrade.
 
 ## Commands
 
-```
+```bash
 docker run --rm -v <repo>:/repo --network alkaros_default -w /repo python:3.12-slim \
   python tools/load-test/load_test.py --base-url http://alkaros-host-1:5080 \
   --login admin:*** --terminals 1,5,10,20 --duration 20 --rate 2 \

@@ -67,6 +67,7 @@ certificate, so the waiter PWA keeps a secure context — and a working offline
 queue — even if Caddy is down or its `X-Forwarded-Proto` header is lost. The
 plain-HTTP `5080` port is unpublished and returns 400 `HTTPS_REQUIRED` to any
 non-loopback request without a trusted `X-Forwarded-Proto: https`.
+
 - [ ] Rotation: re-write the secret file, then
       `docker compose up -d --force-recreate migrate provision host`. The DB
       password rotation also needs `ALTER ROLE alkaros WITH PASSWORD ...` on the

@@ -45,7 +45,7 @@ ALKAROS_DB_PASSWORD=... dotnet ALKAROS.Host.dll housekeeping \
 
 Output (exit code 0):
 
-```
+```text
 housekeeping: idempotency_keys=<n> device_sessions=<n> grace_days=7 seconds=<s>
 ```
 

@@ -7,6 +7,7 @@
 ## 1. Real Host API Integration
 
 `src/Clients/WaiterPwa/wwwroot/waiter-app.js` now dynamically loads:
+
 - Zones from `/api/v1/terminals/{terminalId}/table-management/zones`
 - Tables from `/api/v1/terminals/{terminalId}/table-management/tables`
 - Categories & Products from `/api/v1/terminals/{terminalId}/catalog-management/categories`

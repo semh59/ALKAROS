@@ -18,7 +18,7 @@
 
 Command:
 
-```
+```bash
 docker run --rm -v <repo>:/repo:ro --network alkaros-test \
   -e ALKAROS_DB_HOST=alkaros-pg -e ALKAROS_DB_USER=postgres -e ALKAROS_DB_PASSWORD=*** \
   postgres:18 sh /repo/deploy/docker/backup-restore-selfcheck.sh
@@ -26,7 +26,7 @@ docker run --rm -v <repo>:/repo:ro --network alkaros-test \
 
 Transcript:
 
-```
+```text
 === ALKAROS backup/restore round-trip self-check ===
 server: postgres@alkaros-pg:5432  pg_dump: 18.6-1.pgdg13+2)
 source: rows=500 data_md5=3300c8dd42d812027651f65eaa007031
@@ -63,7 +63,7 @@ Assertions proven:
 `backup.sh` + `restore.sh` run against the live migrated `alkaros` database
 (`alkaros-postgres-1`, PostgreSQL 18, 57 user tables across every module schema):
 
-```
+```text
 backup: ok artifact=alkaros_alkaros_20260901T074314Z.dump bytes=169159 seconds=0 \
         sha256=73c2375e5e69ba422f4e120ecc25ba6ac42b2ec04ab71e4a1968e3fcfecad75d
 restore: checksum verified sha256=73c2375e...
@@ -76,7 +76,7 @@ Exit code: `0`. `pg_restore` completed with `--exit-on-error` and no errors.
 
 ## 3. Compose `ops` profile end to end
 
-```
+```bash
 docker compose --profile ops run --rm backup
   -> backup: ok artifact=alkaros_alkaros_20260901T074342Z.dump bytes=169159 \
      sha256=2c99c6bebb1693509c1fb8d4030f5f20c71308d102b0d7c486feb51e10d0b892

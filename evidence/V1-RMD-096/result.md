@@ -61,7 +61,7 @@ Full suite: `dotnet test ALKAROS.slnx` 46 projects / 1100 passed / 0 failed.
 Host DLL run with `--urls http://0.0.0.0:5080;https://0.0.0.0:5443
 --self-signed-host pos.lan` against the composed database:
 
-```
+```text
 --- HTTPS (direct, no forwarded header) GET / ---   http_code=200
 --- HTTP without forwarded proto GET / ---          http_code=400   (HTTPS_REQUIRED)
 --- HTTPS cert SAN ---

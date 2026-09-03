@@ -16,7 +16,7 @@ infrastructure.
 
 `src/Host/Program.cs` — new `housekeeping` verb:
 
-```
+```text
 housekeeping --db-url <url> [--grace-days <N>]   (default grace 7 days)
 ```
 
@@ -33,7 +33,7 @@ DELETE FROM identity.device_sessions
 Password from `ALKAROS_DB_PASSWORD`; the URL must not carry a password (same
 guard as `provision-manager`). Output:
 
-```
+```text
 housekeeping: idempotency_keys=<n> device_sessions=<n> grace_days=<g> seconds=<s>
 ```
 
@@ -59,7 +59,7 @@ and that this job never touches orders/bills/fiscal/invoice data.
 
 Result (Docker `alkaros-sdk10-rt8` + `alkaros-pg`):
 
-```
+```bash
 dotnet test tests/Host/MigrationComposition --filter FullyQualifiedName~Housekeeping
 Passed!  - Failed: 0, Passed: 4, Skipped: 0, Total: 4
 ```

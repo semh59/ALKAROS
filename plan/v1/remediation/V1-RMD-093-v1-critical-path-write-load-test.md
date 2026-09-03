@@ -14,7 +14,7 @@
 
 ## Goal
 
-14. dalga yalnızca okuma yolunu ölçmüştü. Bu görev yazma kritik yolunu — masa oturt (`POST /orders/table`), kalem ekle (`POST /orders/{id}/items`), sipariş gönder (`POST /orders/{id}/submit`) — production boyutlu veri (yaklaşık 1.000.000 sipariş + 3.000.000 kalem arka plan verisi, yüzlerce boş masa, yüzlerce ürün) üzerinde eş zamanlı terminal yükü altında ölçer ve çalışırken veritabanı kilit/deadlock davranışını gözlemler. Sonuç `V15-PER-001` hedefine (20 terminal, sipariş gönderiminde p95 < 500 ms, p99 < 1 s) göre değerlendirilir.
+ 1. dalga yalnızca okuma yolunu ölçmüştü. Bu görev yazma kritik yolunu — masa oturt (`POST /orders/table`), kalem ekle (`POST /orders/{id}/items`), sipariş gönder (`POST /orders/{id}/submit`) — production boyutlu veri (yaklaşık 1.000.000 sipariş + 3.000.000 kalem arka plan verisi, yüzlerce boş masa, yüzlerce ürün) üzerinde eş zamanlı terminal yükü altında ölçer ve çalışırken veritabanı kilit/deadlock davranışını gözlemler. Sonuç `V15-PER-001` hedefine (20 terminal, sipariş gönderiminde p95 < 500 ms, p99 < 1 s) göre değerlendirilir.
 
 ## Owned surface
 

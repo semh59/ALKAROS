@@ -9,7 +9,7 @@
 
 `src/Host/Program.cs` — new `kvkk-retention` verb:
 
-```
+```text
 kvkk-retention --db-url <url> [--apply] [--as-of <ISO date>] [--exclude-order-ids-file <path>]
 ```
 
@@ -51,7 +51,7 @@ is the legal-hold list.
 
 Result (Docker `alkaros-sdk10-rt8` + `alkaros-pg`):
 
-```
+```bash
 dotnet test tests/Host/MigrationComposition --filter FullyQualifiedName~KvkkRetention
 Passed!  - Failed: 0, Passed: 3, Skipped: 0, Total: 3
 ```

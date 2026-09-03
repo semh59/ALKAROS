@@ -17,7 +17,7 @@ counts: `tables=600 products=400 orders=1000000 items=3000000`.
 Clean run: 20 terminals, 40 s, rate 0.3 cycles/s/terminal (seat -> 2 items ->
 submit), fresh 600-table pool.
 
-```
+```text
 --- level: 20 terminal(s), 40s ---
 rps=24.0 err%=0.0 submit p50=25.8 p90=38.6 p95=45.9 p99=73.9 max=81.0 n=240
 statuses={'201': 240, '200': 720}
@@ -51,7 +51,7 @@ All `LT-`/`LT-P` tagged rows, the kitchen tickets and terminal bindings the
 write test produced, and their cascaded children were deleted
 (`cleanup.log`). Verified restored to the exact pre-seed state:
 
-```
+```text
 LT tables=0 LT products=0 LT orders=0
 total tables=3 total products=1 total orders=2
 ```

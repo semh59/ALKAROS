@@ -7,7 +7,7 @@ schema.
 
 ## Disposable round trip (`backup-restore-selfcheck.sh`)
 
-```
+```text
 server: postgres@alkaros-pg:5432  pg_dump: 18.6
 source: rows=500 data_md5=3300c8dd42d812027651f65eaa007031
 backup: ok bytes=5628 sha256=e608e2aff50b28823ba83aa7a01ad6559818a216ca2e7cd5c165b51a61ac8954
@@ -25,7 +25,7 @@ artifact is refused with exit 4 and no target database is created.
 Backup of the composed `alkaros` database, restore into `alkaros_restore`,
 object-count comparison, target dropped:
 
-```
+```text
 backup: ok bytes=265924 sha256=91481e0b22db3b5f2307b65e5cd393f6db73dccffdb6178590ec624e22ec3193
 restore: checksum verified
 restore: ok target=alkaros_restore seconds=1

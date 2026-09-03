@@ -48,7 +48,7 @@ false positive is gone.
 
 Result (Docker `alkaros-sdk10-rt8` + `alkaros-pg`):
 
-```
+```bash
 dotnet test tests/Host/MigrationComposition --filter FullyQualifiedName~DualScreen
 Passed!  - Failed: 0, Passed: 21, Skipped: 0, Total: 21
 ```

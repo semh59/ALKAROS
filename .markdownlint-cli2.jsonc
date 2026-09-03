@@ -1,10 +1,14 @@
 {
+  // MD013 (line length): the plan / governance / evidence corpus was authored
+  // across 20+ waves without a hard wrap and holds lines that cannot comply —
+  // 64-char SHA-256 hashes, long paths, glob owned-surface entries. It is a
+  // style rule, not correctness, so it is off; wrap new prose by preference.
+  // MD037 (spaces inside emphasis): false-positives on `src/.../** word .../**`
+  // glob pairs in the "devredildi" owned-surface lines, and its autofix would
+  // corrupt those paths, so it is off.
   "config": {
-    "MD013": {
-      "line_length": 120,
-      "code_blocks": false,
-      "tables": false
-    },
+    "MD013": false,
+    "MD037": false,
     "MD060": {
       "style": "compact"
     }

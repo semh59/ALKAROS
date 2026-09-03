@@ -7,6 +7,7 @@
 ## 1. Waiter Host Order Experience Implementation
 
 Created:
+
 - `src/Host/Experience/Orders/OrderManagementContracts.cs`: DTO contracts for table draft orders and submission.
 - `src/Host/Experience/Orders/OrderManagementStore.cs`: Thread-safe in-memory/persistence store managing draft lifecycle and optimistic concurrency checks.
 - `src/Host/Experience/Orders/OrderManagementEndpoints.cs`: Authoritative REST endpoints under `/api/v1/terminals/{terminalId}/orders` (`/table-draft`, `/{orderId}/submit`, `/table/{tableId}`).

@@ -49,7 +49,7 @@ anahtar ihlali (`PostgresException`, SqlState 23505) fırlatır. Test şunları 
 
 Docker `alkaros-sdk10-rt8` + `alkaros-pg` üzerinde:
 
-```
+```bash
 dotnet test tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj
 Passed!  - Failed: 0, Passed: 6, Skipped: 0, Total: 6
 ```

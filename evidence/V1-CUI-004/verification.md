@@ -7,26 +7,31 @@
 ## 1. Cashier POS Frontend Test Suite
 
 Command:
-```
+
+```bash
 python -m pytest tests/Clients/Cashier/Frontend/test_cashier_frontend.py
 ```
 
 Output:
-```
+
+```text
 tests\Clients\Cashier\Frontend\test_cashier_frontend.py .... [100%]
 4 passed in 0.05s
 ```
+
 Exit Code: `0`
 
 ## 2. Plan Audit Validation
 
 Command:
-```
+
+```bash
 python tools/plan-audit/plan_audit_tool.py validate
 ```
 
 Output:
-```
+
+```text
 Markdown files: 445
 Task files: 423
 Registered gates: 18
@@ -35,6 +40,7 @@ Dependency edges: 1413
 Validation errors: 0
 Validation warnings: 0
 ```
+
 Exit Code: `0`
 
 ## 3. Implemented Capabilities

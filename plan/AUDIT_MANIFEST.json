@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 855,
-  "markdown_line_count": 54286,
-  "markdown_byte_count": 3224419,
+  "markdown_line_count": 54316,
+  "markdown_byte_count": 3224639,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -27,9 +27,9 @@
     },
     {
       "path": ".markdownlint-cli2.jsonc",
-      "sha256": "C168A666CD37AD7BF2BC1AC093338D31D559D0C394A1C11C267263A877196815",
-      "lines": 18,
-      "bytes": 264,
+      "sha256": "A4962CEF768BA8323816570421450EC37CC50A960BDF73F1B47BEA667AA91F14",
+      "lines": 22,
+      "bytes": 721,
       "utf8": true
     },
     {
@@ -169,9 +169,9 @@
     },
     {
       "path": "docs/audit/V1_PRODUCTION_EXPERIENCE_DESIGN_ACCEPTANCE_2026-08-25.md",
-      "sha256": "5F87F369A26F466B288DAF21AAD843C0765051D6FC26E1DA4F26212273BE4A37",
-      "lines": 16,
-      "bytes": 970,
+      "sha256": "C5CD734DC8EE14A5FAD63022BFE918653029BD0FD16F83099E07639E4B91A263",
+      "lines": 18,
+      "bytes": 972,
       "utf8": true
     },
     {
@@ -183,9 +183,9 @@
     },
     {
       "path": "docs/compliance/kvkk-retention-runbook.md",
-      "sha256": "8C20B97C7F706C693B4AD863206DC808626DE074C2533E8569002AD3FE712108",
+      "sha256": "ED99F2899E688272544A033EB2DAD155BD0A61E4197A26E572868505284A8A8C",
       "lines": 89,
-      "bytes": 4231,
+      "bytes": 4235,
       "utf8": true
     },
     {
@@ -372,16 +372,16 @@
     },
     {
       "path": "docs/operations/data-housekeeping.md",
-      "sha256": "CA49078F530BA988B47943C2A782744A2D32BBBBA4C1480976C60F5A0E0D58CB",
+      "sha256": "EC2DE8D17B2A7E8F181AA1DA44ECC1A2AABB6DA28D59823BB53389B1AF8CCA10",
       "lines": 63,
-      "bytes": 2466,
+      "bytes": 2470,
       "utf8": true
     },
     {
       "path": "docs/operations/production-go-live-checklist.md",
-      "sha256": "1877A4A40673C5015323AAC75C97BEE8214C3DFA9470A8EBD51ECD80FE322118",
-      "lines": 206,
-      "bytes": 12333,
+      "sha256": "A6FFA87055859B6D58DAA7B5FD8EE4A0E156033C1BF7E9B8D35DD8A7E49A2D61",
+      "lines": 207,
+      "bytes": 12334,
       "utf8": true
     },
     {
@@ -526,9 +526,9 @@
     },
     {
       "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
-      "sha256": "51ACA1CCC02812BBBB36FC938DEE90CA7DC00E63D8669AB4BCF100A1322AFE86",
+      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
       "lines": 112,
-      "bytes": 4892,
+      "bytes": 4908,
       "utf8": true
     },
     {
@@ -1002,16 +1002,16 @@
     },
     {
       "path": "evidence/V1-CUI-004/verification.md",
-      "sha256": "E1B2C6D9DD2403C8BDDAD018547E0C5D20ACA15F40FEE01E087E7AC3683A33CC",
-      "lines": 45,
-      "bytes": 1228,
+      "sha256": "4476394C2A56473F00B7F932EF41E6C2DCDE9B110527848B34E438FC79BB67BE",
+      "lines": 51,
+      "bytes": 1250,
       "utf8": true
     },
     {
       "path": "evidence/V1-CUI-005/verification.md",
-      "sha256": "CEA7E111FD71D1C46EB3D900E950699808505EC31DEFBC95779E903CE55B0DCB",
-      "lines": 19,
-      "bytes": 780,
+      "sha256": "1F7D2752A6CBD23A692FDD5284A9B6F5266F408FD146996607E5BB77B71D7B2F",
+      "lines": 20,
+      "bytes": 781,
       "utf8": true
     },
     {
@@ -1191,9 +1191,9 @@
     },
     {
       "path": "evidence/V1-GOV-004/reseal_evidence.md",
-      "sha256": "88406376B67E4F52BBC1C80E5BE2AF663CD8A175389DFFC20A8733C88ABA3882",
-      "lines": 15,
-      "bytes": 891,
+      "sha256": "0B7281B7439B2C5F2F556F260C9FA068F14F053338B31F9D6DA1BCAEA4E4EFD9",
+      "lines": 18,
+      "bytes": 894,
       "utf8": true
     },
     {
@@ -1331,9 +1331,9 @@
     },
     {
       "path": "evidence/V1-GOV-023/acceptance_evidence.md",
-      "sha256": "A6C01E848A883CE7558E3691C5061337209D59D8D1A62A216DF60784E2928880",
-      "lines": 16,
-      "bytes": 1071,
+      "sha256": "795A2DB2296E652F5C480972B130529604B83BCA95C673C7A9E86CE398C92ACE",
+      "lines": 19,
+      "bytes": 1074,
       "utf8": true
     },
     {
@@ -1345,9 +1345,9 @@
     },
     {
       "path": "evidence/V1-GOV-025/verification.md",
-      "sha256": "650FECCB29E33C2FBAAEDE86EA0D66BE5F239752771DD16E781AA81F5094D052",
+      "sha256": "FF10EA494491D2938F531CADC9A310F9F49E8673E750002937179B79EC70B9FA",
       "lines": 55,
-      "bytes": 1480,
+      "bytes": 1488,
       "utf8": true
     },
     {
@@ -1443,9 +1443,9 @@
     },
     {
       "path": "evidence/V1-GOV-065/restore-drill-2026-09-01.md",
-      "sha256": "FA485DA00D34446EC459D7155F53DED78271765120AD5EE92255587613FF9CEC",
+      "sha256": "F835EBDEEC5C732A83CD009FE4BED5F06CC4F21488393A5395EFB27234F06E2C",
       "lines": 45,
-      "bytes": 1782,
+      "bytes": 1790,
       "utf8": true
     },
     {
@@ -1478,9 +1478,9 @@
     },
     {
       "path": "evidence/V1-GOV-069/result.md",
-      "sha256": "963899D5F7116D0DC3CD9E99DA3C749C3B37BA6BD03A5E2BAE310F073208C510",
-      "lines": 42,
-      "bytes": 2028,
+      "sha256": "7E08A856F8D6B231A687C22B5A896DD1603AAD3529FB9059A096F44A8D809E96",
+      "lines": 43,
+      "bytes": 2029,
       "utf8": true
     },
     {
@@ -1639,9 +1639,9 @@
     },
     {
       "path": "evidence/V1-RMD-010/reacceptance_evidence.md",
-      "sha256": "BFA28C575B19431E095217EF4900886A010A2EEC45C6C078CDE131467BFACE6B",
-      "lines": 16,
-      "bytes": 874,
+      "sha256": "C9A7196A3CEF2DF9ECC551EEBB41CE6980B2E5BADBD48BE40EBCD20015988B46",
+      "lines": 19,
+      "bytes": 877,
       "utf8": true
     },
     {
@@ -1667,9 +1667,9 @@
     },
     {
       "path": "evidence/V1-RMD-011/acceptance_evidence.md",
-      "sha256": "CB26D098AF200CE94E164C608DA46E186880A3063C93F586308C64D3CACFD8DA",
-      "lines": 11,
-      "bytes": 692,
+      "sha256": "8DCE6FBE4E6965C3BE008C53F144849FA160C98E7C869424975929A0FE28B838",
+      "lines": 13,
+      "bytes": 694,
       "utf8": true
     },
     {
@@ -1786,9 +1786,9 @@
     },
     {
       "path": "evidence/V1-RMD-021/acceptance_evidence.md",
-      "sha256": "DA49FD5968245114442344BAFD5C622F87A8CD818AA9B90E622BDCFD76485F5C",
-      "lines": 8,
-      "bytes": 487,
+      "sha256": "C1334363E29F62A77C7845B1FA44B56018716F52F1FA3623874017AED5A8C828",
+      "lines": 9,
+      "bytes": 488,
       "utf8": true
     },
     {
@@ -1877,9 +1877,9 @@
     },
     {
       "path": "evidence/V1-RMD-033/verification.md",
-      "sha256": "65845E64E8C01B76E8D029D13AFC870E8AB58C0E6F4FFF1A3CE404960F9C745B",
+      "sha256": "598ED7AEACC997B8824AB0037609DC0B1F7848FCE0A73D02A34243C40905D26F",
       "lines": 98,
-      "bytes": 6394,
+      "bytes": 6398,
       "utf8": true
     },
     {
@@ -1905,16 +1905,16 @@
     },
     {
       "path": "evidence/V1-RMD-036/verification.md",
-      "sha256": "A5E7A2DA169F574AC38E022518542FF7B0E577808FDB603CDCDADC7C6A040892",
-      "lines": 59,
-      "bytes": 1100,
+      "sha256": "FA8EF9E05EEACDF3855D460547783D1417AC2FFEEE4A7E74C5EFBE612198C9BA",
+      "lines": 68,
+      "bytes": 1133,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-037/verification.md",
-      "sha256": "B9FA84513339F75F315E2D44DE670C82C885D0FFE54A2814805BB6BA1B1C9CCF",
-      "lines": 17,
-      "bytes": 805,
+      "sha256": "AE0519B02F1D2C0FB2DE62B83B0513B2027212DBCD5A9B67E893288B8EC249DE",
+      "lines": 18,
+      "bytes": 806,
       "utf8": true
     },
     {
@@ -2038,86 +2038,86 @@
     },
     {
       "path": "evidence/V1-RMD-085/close-transaction.md",
-      "sha256": "46B7AC61373F15A3A2029DA9A8939F9BCF4188D1D2BBE53D13927D578385EBBE",
+      "sha256": "15E9F5D61A1BEB8506E90A26E5586726C612959C9E46C33B20D2C5C8C97642C2",
       "lines": 58,
-      "bytes": 2734,
+      "bytes": 2738,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-086/roundtrip.md",
-      "sha256": "51ACA1CCC02812BBBB36FC938DEE90CA7DC00E63D8669AB4BCF100A1322AFE86",
+      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
       "lines": 112,
-      "bytes": 4892,
+      "bytes": 4908,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-087/result.md",
-      "sha256": "16D53BAF80A4A1D1FA29FE55D943B18F153715A9B9496A5C1B2A92428933EA5C",
+      "sha256": "13E5FF1357DBE06337B7B2BFAB2EB67313FB38803B3B0F339AE48C931EAC910B",
       "lines": 54,
-      "bytes": 2356,
+      "bytes": 2360,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-088/comparison.md",
-      "sha256": "08EE8723F3190AF4F293073CED3CA9B6A79FA7CD74FF5C160F0F9BC965BF0FFF",
+      "sha256": "92F027B840C9F59A1538050DA24D817CAFF3B1C518CFFEC08096FEBA0DCF2606",
       "lines": 60,
-      "bytes": 3154,
+      "bytes": 3152,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-089/result.md",
-      "sha256": "0F11C3182DF982C239ECDA12C6CC4C3EC158B1AA8DB6C95D144CBEFD713FD744",
+      "sha256": "0F2612A0573138BE5BB51CC7CC54390E51B79FA08721ABFFD205C8E06073FA57",
       "lines": 65,
-      "bytes": 3104,
+      "bytes": 3108,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-090/result.md",
-      "sha256": "A2092A1786BB29CA0DDFF5BFE306BDC9A27268838BCAB95ECD58BD4348E2F673",
+      "sha256": "6FF22D8EF495363611EDB202C2758D5328A24463ADE9E13C3A99E842C212AF0A",
       "lines": 61,
-      "bytes": 2984,
+      "bytes": 2988,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-091/result.md",
-      "sha256": "F9EA18D0AEA0D92B7034D762DA1BAAB4205DBB176B371A46808935A25BF85FBF",
+      "sha256": "8CE1C1A60FD87236F649C913DA954598AA699A377B61CF730AA83393EAFAB195",
       "lines": 71,
-      "bytes": 2669,
+      "bytes": 2681,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-092/result.md",
-      "sha256": "8F53427D30777419826023D9D62791C143E3826915A22B574C64891D3226B198",
+      "sha256": "1CBE93B77E4F5CDF93707DE17B7E754CD6436584C5C50D18AD5DB8EBDB6A3ACE",
       "lines": 61,
-      "bytes": 2583,
+      "bytes": 2595,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-093/result.md",
-      "sha256": "922D5A40FD0AAB00235026D2CEB5EBACFB7BECEEFC79571C92084B89C4A48CB9",
+      "sha256": "0258D56567832508C9ECE2DE878BFE897A6857BA152622E21769BD15A48AC42E",
       "lines": 65,
-      "bytes": 2498,
+      "bytes": 2506,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-094/result.md",
-      "sha256": "FAE952526B0FCA1DB5747E029C1935625C1001580C8F84589BCB59093A1C17CF",
+      "sha256": "8FC8A7BCA52A14D2BF168949F14B148004256A0F2833B00DBE9674A2639CEA6F",
       "lines": 69,
-      "bytes": 3112,
+      "bytes": 3120,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-095/result.md",
-      "sha256": "A0A34E41E0B93D27678B090889EC7263B70F19E6B5E7C7A2E6862E0C4867A310",
+      "sha256": "1E63168968442E6C37C35F3A01C4BD822AC58F1CE9041E980F5F1AEE2A63A85B",
       "lines": 103,
-      "bytes": 4133,
+      "bytes": 4149,
       "utf8": true
     },
     {
       "path": "evidence/V1-RMD-096/result.md",
-      "sha256": "D1E66FCB928FE1D9C13DE7231DB064C0E92370E282B121A925D2C46BFA615150",
+      "sha256": "62D071B03D9A2E9640007D82ABCDB5BBAE5929DC5E21FF4B64520AB114FF4A93",
       "lines": 74,
-      "bytes": 3531,
+      "bytes": 3535,
       "utf8": true
     },
     {
@@ -2150,23 +2150,23 @@
     },
     {
       "path": "evidence/V1-WTR-006/verification.md",
-      "sha256": "BA1747E5ED46D2797F82D129EE056D8F37359E53E3CDE798FE9898F3C682B581",
-      "lines": 45,
-      "bytes": 1204,
+      "sha256": "4828F3E729A85E43BB01F09A6F852DD306F401BDA617ED7D89A1E8D82F96EB8A",
+      "lines": 51,
+      "bytes": 1226,
       "utf8": true
     },
     {
       "path": "evidence/V1-WTR-007/verification.md",
-      "sha256": "8F1EE466C97F4D71A031A7008A9385577BC7BC8870C640387F5D6661C0FD94E9",
-      "lines": 13,
-      "bytes": 844,
+      "sha256": "B761667188DC394827B5B448B2DBF72FAC60BEB7BC7545E7064ADEBF10286DA9",
+      "lines": 14,
+      "bytes": 845,
       "utf8": true
     },
     {
       "path": "evidence/V1-WTR-008/verification.md",
-      "sha256": "24409A29E031DB761F8E99E88410A3010B625D842D3C1E44CE5353CC37A9F6B3",
-      "lines": 23,
-      "bytes": 982,
+      "sha256": "C313BAEAD16CB77842EE5209291B1DDDB7FB839E42E507FA13977E9DDCEF2E56",
+      "lines": 24,
+      "bytes": 983,
       "utf8": true
     },
     {
@@ -2178,7 +2178,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3288AF8ED6FFC06141D6AA56F35F04C93C2B9E7B4A96150504AF7236330EC847",
+      "sha256": "DBC2AD74C74802213E7A3BDD874CE09BFFE57BB57FDA798894AEECCFAEEB5EEF",
       "lines": 2131,
       "bytes": 300387,
       "utf8": true
@@ -2199,9 +2199,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "E09090E4985DF1ECC73C33C9149D80D0764A0A10666128A7307524BFA0B1AE00",
-      "lines": 395,
-      "bytes": 74767,
+      "sha256": "A4A5CBC8B7E5FB17366B4BD29295DDE0142C585FD9CA236334B40FE5C4506084",
+      "lines": 386,
+      "bytes": 74758,
       "utf8": true
     },
     {
@@ -3823,7 +3823,7 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-052-master-custody-reopen-and-remediation-wave-15.md",
-      "sha256": "3D9FAF51EF3DCB33A46605576A40FF3FEF5E534AA63C96E335991BD0BD191F2E",
+      "sha256": "1968AAA10FAD11247E5E2C56D179CF729139589B11E7F26277557DB15B5F008F",
       "lines": 56,
       "bytes": 2522,
       "utf8": true
@@ -4131,9 +4131,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "705E56275493FCF04BD67AA2C47812B175EE9C39E7FAB6726DEF7DF6B86FAF03",
-      "lines": 57,
-      "bytes": 4323,
+      "sha256": "EAB1EDD3E82084DCD98D9A3C714BBFBCEC075102D43F454FA247EC5BB7026850",
+      "lines": 55,
+      "bytes": 4321,
       "utf8": true
     },
     {
@@ -4796,7 +4796,7 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-093-v1-critical-path-write-load-test.md",
-      "sha256": "146B490279D0474A8F2C56059C2610F13EB73F9A7BD7872A77ADBA7A32556773",
+      "sha256": "978DB0AB712A0AF19611FBB4380F9667C7B8E580035147031904C46D80045342",
       "lines": 58,
       "bytes": 3120,
       "utf8": true
@@ -4810,7 +4810,7 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-095-wal-archiving-point-in-time-recovery.md",
-      "sha256": "54C85F0B420CEFC73FA12A5BA36C5611AE4716876E97F37B394E4407DDEDE064",
+      "sha256": "41F8AECC4D0AABCEA14F01178BAFA88E7C4B9759426C83F0C3F08DFB81719E7A",
       "lines": 66,
       "bytes": 4086,
       "utf8": true

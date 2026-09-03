@@ -26,7 +26,7 @@
 
 The smoke initially failed on **Waiter PWA**:
 
-```
+```text
 meta-viewport (critical):
   <meta name="viewport" content="width=device-width, initial-scale=1.0,
         maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -37,7 +37,7 @@ meta-viewport (critical):
 
 Fixed to:
 
-```
+```text
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 ```
 
@@ -46,7 +46,7 @@ change needed.
 
 ## Result
 
-```
+```bash
 pnpm exec vitest run src/vanilla-clients-a11y.test.ts
 Test Files  1 passed (1)
      Tests  6 passed (6)

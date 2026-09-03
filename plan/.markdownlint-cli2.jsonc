@@ -1,11 +1,9 @@
 {
+  // See the rationale in the repo-root .markdownlint-cli2.jsonc. MD013 and
+  // MD037 are off for the plan corpus for the same reasons.
   "config": {
     "default": true,
-    "MD013": {
-      "line_length": 120,
-      "code_blocks": false,
-      "tables": false,
-      "strict": false
-    }
+    "MD013": false,
+    "MD037": false
   }
 }

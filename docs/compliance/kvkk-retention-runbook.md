@@ -59,7 +59,7 @@ dotnet ALKAROS.Host.dll kvkk-retention --db-url postgresql://alkaros@postgres:54
 
 Output:
 
-```
+```text
 kvkk-retention: staff=<n> order_notes=<n> item_notes=<n> reservation_reasons=<n> \
                 as_of=<date> excluded_orders=<n> apply=false
 ```

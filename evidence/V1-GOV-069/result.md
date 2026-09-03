@@ -24,6 +24,7 @@ self-signed fallback certificate, closing pre-go-live finding E1).
 ## Functional evidence
 
 `evidence/V1-RMD-096/`:
+
 - `https-live-check.log`: `https://127.0.0.1:5443/` returns 200 with no
   `X-Forwarded-Proto`; `http://127.0.0.1:5080/` returns 400 `HTTPS_REQUIRED`;
   self-signed cert SAN `DNS:pos.lan, DNS:localhost, IP Address:127.0.0.1,

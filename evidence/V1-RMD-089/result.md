@@ -25,7 +25,7 @@ Composition wiring:
 
 ## Round-trip (migration-roundtrip.log)
 
-```
+```text
 apply up      -> ix_orders_created_at + ix_orders_table_open created (2)
 apply up again -> IF NOT EXISTS, no-op (idempotent)
 apply down    -> both dropped (0)

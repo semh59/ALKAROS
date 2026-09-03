@@ -7,26 +7,31 @@
 ## 1. Waiter PWA Frontend Test Suite
 
 Command:
-```
+
+```bash
 python -m pytest tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py
 ```
 
 Output:
-```
+
+```text
 tests\Clients\WaiterPwa\Frontend\test_waiter_pwa_frontend.py ..... [100%]
 5 passed in 0.06s
 ```
+
 Exit Code: `0`
 
 ## 2. Plan Audit Validation
 
 Command:
-```
+
+```bash
 python tools/plan-audit/plan_audit_tool.py validate
 ```
 
 Output:
-```
+
+```text
 Markdown files: 444
 Task files: 422
 Registered gates: 18
@@ -35,6 +40,7 @@ Dependency edges: 1411
 Validation errors: 0
 Validation warnings: 0
 ```
+
 Exit Code: `0`
 
 ## 3. Implemented Capabilities
