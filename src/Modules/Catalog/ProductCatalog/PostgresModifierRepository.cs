@@ -6,6 +6,11 @@ public sealed class PostgresModifierRepository : IModifierRepository
 {
     private const string Table = "catalog.modifiers";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresModifierRepository(NpgsqlDataSource dataSource)
@@ -46,7 +51,8 @@ public sealed class PostgresModifierRepository : IModifierRepository
             SELECT modifier_id, modifier_group_id, code, name, price_delta, product_id, active
             FROM {Table}
             WHERE modifier_group_id = @modifier_group_id
-            ORDER BY name, code;
+            ORDER BY name, code
+            LIMIT {MaxUnpagedRows + 1};
             """);
         command.Parameters.AddWithValue("modifier_group_id", modifierGroupId);
 
@@ -62,6 +68,10 @@ public sealed class PostgresModifierRepository : IModifierRepository
                 reader.IsDBNull(5) ? null : reader.GetGuid(5),
                 reader.GetBoolean(6)));
         }
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByModifierGroupAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
     }

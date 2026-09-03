@@ -9,6 +9,11 @@ using NpgsqlTypes;
 /// </summary>
 public sealed class PostgresAuditEventStore : IAuditEventStore
 {
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
     private readonly IAuditSanitizer _sanitizer;
 
@@ -135,13 +140,14 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
                    reason, correlation_id, causation_id, before_state_json, after_state_json,
                    metadata_json, occurred_at
             FROM audit.audit_events
             WHERE aggregate_type = @aggregate_type AND aggregate_id = @aggregate_id
-            ORDER BY occurred_at ASC;
+            ORDER BY occurred_at ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
         cmd.Parameters.AddWithValue("aggregate_type", aggregateType);
         cmd.Parameters.AddWithValue("aggregate_id", aggregateId);
@@ -152,6 +158,10 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
         {
             list.Add(ReadRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByAggregateAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }
@@ -166,13 +176,14 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
                    reason, correlation_id, causation_id, before_state_json, after_state_json,
                    metadata_json, occurred_at
             FROM audit.audit_events
             WHERE correlation_id = @correlation_id
-            ORDER BY occurred_at ASC;
+            ORDER BY occurred_at ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
         cmd.Parameters.AddWithValue("correlation_id", correlationId);
 
@@ -182,6 +193,10 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
         {
             list.Add(ReadRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByCorrelationIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

@@ -12,6 +12,11 @@ public sealed class PostgresSplitDesignRepository : ISplitDesignRepository
 {
     private const string AllocationsTable = "billing.bill_allocations";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresSplitDesignRepository(NpgsqlDataSource dataSource)
@@ -32,7 +37,8 @@ public sealed class PostgresSplitDesignRepository : ISplitDesignRepository
                    created_at, created_by, row_version
             FROM {AllocationsTable}
             WHERE bill_id = @bill_id
-            ORDER BY created_at ASC;
+            ORDER BY created_at ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -56,6 +62,10 @@ public sealed class PostgresSplitDesignRepository : ISplitDesignRepository
                 createdBy: reader.IsDBNull(9) ? null : reader.GetGuid(9),
                 rowVersion: reader.GetInt64(10)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetAllocationsByBillIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

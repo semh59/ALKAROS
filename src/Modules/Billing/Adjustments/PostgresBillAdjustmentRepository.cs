@@ -10,6 +10,11 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
 {
     private const string TableName = "billing.bill_adjustments";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresBillAdjustmentRepository(NpgsqlDataSource dataSource)
@@ -31,7 +36,8 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
                    notes, created_at, created_by, row_version
             FROM {TableName}
             WHERE bill_id = @bill_id
-            ORDER BY created_at ASC;
+            ORDER BY created_at ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -62,6 +68,10 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
                 createdBy: reader.IsDBNull(16) ? null : reader.GetGuid(16),
                 rowVersion: reader.GetInt64(17)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByBillIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

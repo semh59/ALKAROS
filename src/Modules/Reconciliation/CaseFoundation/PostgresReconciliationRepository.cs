@@ -46,6 +46,11 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
     private const string CasesTable = "reconciliation.cases";
     private const string ActionsTable = "reconciliation.case_actions";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly DbDataSource _dataSource;
 
     public PostgresReconciliationRepository(DbDataSource dataSource)
@@ -330,11 +335,12 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
         Guid caseId,
         CancellationToken cancellationToken = default)
     {
-        const string sql = $"""
+        var sql = $"""
             SELECT action_id, case_id, action_type, performed_by, performed_at, details::text
             FROM {ActionsTable}
             WHERE case_id = @caseId
-            ORDER BY performed_at ASC;
+            ORDER BY performed_at ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -354,6 +360,10 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
                 reader.GetFieldValue<DateTimeOffset>(4),
                 reader.IsDBNull(5) ? null : reader.GetString(5)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetCaseActionsAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

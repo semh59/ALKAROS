@@ -15,6 +15,11 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
     private const string TablesTable = "table_mgmt.tables";
     private const string AuditEventsTable = "audit.audit_events";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresTableReservationRepository(NpgsqlDataSource dataSource)
@@ -104,13 +109,14 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         if (tableId == Guid.Empty)
             throw new ArgumentException("Table ID cannot be empty.", nameof(tableId));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT table_reservation_id, table_id, order_id, actor_id, actor_type,
                    status, reason, party_size, reserved_at, expires_at, released_at,
                    released_by, release_reason, row_version
             FROM {ReservationsTable}
             WHERE table_id = @table_id
-            ORDER BY reserved_at DESC;
+            ORDER BY reserved_at DESC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -123,6 +129,10 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         {
             list.Add(ReadRecord(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetHistoryByTableIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

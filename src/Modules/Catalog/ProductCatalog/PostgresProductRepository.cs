@@ -66,13 +66,18 @@ public sealed class PostgresProductRepository : IProductRepository
                    description, printer_route_policy, display_order, current_price, active, is_available
             FROM {Table}
             WHERE category_id = @category_id
-            ORDER BY display_order, sku;
+            ORDER BY display_order, sku
+            LIMIT {MaxUnpagedRows + 1};
             """);
         command.Parameters.AddWithValue("category_id", categoryId);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(ReadProduct(reader));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByCategoryAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
     }

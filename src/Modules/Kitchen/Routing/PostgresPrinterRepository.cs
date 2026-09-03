@@ -66,11 +66,12 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, name, station_id, ip_address, port, is_active, created_at, updated_at
             FROM kitchen.printers
             WHERE is_active = TRUE
-            ORDER BY name;
+            ORDER BY name
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         var list = new List<Printer>();
@@ -79,6 +80,10 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         {
             list.Add(MapPrinter(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"kitchen.printers has more than {MaxUnpagedRows} active rows; GetActiveAsync must be replaced with a paginated query.");
 
         return list;
     }

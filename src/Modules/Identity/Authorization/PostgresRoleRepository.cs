@@ -9,6 +9,11 @@ public sealed class PostgresRoleRepository : IRoleRepository
     private const string UserRoles = "identity.user_roles";
     private const string PermissionTable = "identity.permissions";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresRoleRepository(NpgsqlDataSource dataSource)
@@ -163,13 +168,18 @@ public sealed class PostgresRoleRepository : IRoleRepository
             $"""
             SELECT role_id
             FROM {UserRoles}
-            WHERE user_id = @user_id;
+            WHERE user_id = @user_id
+            LIMIT {MaxUnpagedRows + 1};
             """);
         command.Parameters.AddWithValue("user_id", userId);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(reader.GetGuid(0));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetRoleIdsForUserAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
     }
@@ -185,13 +195,18 @@ public sealed class PostgresRoleRepository : IRoleRepository
             JOIN {RolePermissions} rp ON rp.role_id = ur.role_id
             JOIN {Roles} r ON r.role_id = ur.role_id
             JOIN {PermissionTable} p ON p.permission_id = rp.permission_id
-            WHERE ur.user_id = @user_id;
+            WHERE ur.user_id = @user_id
+            LIMIT {MaxUnpagedRows + 1};
             """);
         command.Parameters.AddWithValue("user_id", userId);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(reader.GetString(0));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetPermissionCodesForUserAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
     }

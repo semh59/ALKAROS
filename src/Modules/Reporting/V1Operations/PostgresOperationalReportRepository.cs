@@ -71,6 +71,11 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
     private const string WaiterSummariesTable = "reporting.waiter_performance_summaries";
     private const string PrintSummariesTable = "reporting.print_error_summaries";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly DbDataSource _dataSource;
 
     public PostgresOperationalReportRepository(DbDataSource dataSource)
@@ -474,11 +479,12 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         DateOnly businessDate,
         CancellationToken cancellationToken = default)
     {
-        const string sql = $"""
+        var sql = $"""
             SELECT summary_id, business_date, waiter_user_id, orders_served_count, total_sales_amount, cancellations_count, discounts_applied_amount, captured_at
             FROM {WaiterSummariesTable}
             WHERE business_date = @date
-            ORDER BY total_sales_amount DESC;
+            ORDER BY total_sales_amount DESC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -500,6 +506,10 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
                 reader.GetDecimal(6),
                 reader.GetFieldValue<DateTimeOffset>(7)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetWaiterSummariesByDateAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }
@@ -536,11 +546,12 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         DateOnly businessDate,
         CancellationToken cancellationToken = default)
     {
-        const string sql = $"""
+        var sql = $"""
             SELECT error_summary_id, business_date, station_name, total_print_jobs, failed_print_jobs, recovered_print_jobs, captured_at
             FROM {PrintSummariesTable}
             WHERE business_date = @date
-            ORDER BY station_name ASC;
+            ORDER BY station_name ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -561,6 +572,10 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
                 reader.GetInt32(5),
                 reader.GetFieldValue<DateTimeOffset>(6)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetPrintErrorSummariesByDateAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

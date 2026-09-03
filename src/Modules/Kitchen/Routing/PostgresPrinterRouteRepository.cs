@@ -66,11 +66,12 @@ public sealed class PostgresPrinterRouteRepository : IPrinterRouteRepository
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, route_level, printer_id, item_id, product_id, category_id, special_date, is_active, created_at, updated_at
             FROM kitchen.printer_routes
             WHERE is_active = TRUE
-            ORDER BY route_level, created_at;
+            ORDER BY route_level, created_at
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         var list = new List<PrinterRoute>();
@@ -79,6 +80,10 @@ public sealed class PostgresPrinterRouteRepository : IPrinterRouteRepository
         {
             list.Add(MapPrinterRoute(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"kitchen.printer_routes has more than {MaxUnpagedRows} active rows; GetActiveRoutesAsync must be replaced with a paginated query.");
 
         return list;
     }

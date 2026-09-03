@@ -4,6 +4,11 @@ using Npgsql;
 
 public sealed class PostgresPrintQueueRepository : IPrintQueueRepository
 {
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresPrintQueueRepository(NpgsqlDataSource dataSource)
@@ -60,13 +65,14 @@ public sealed class PostgresPrintQueueRepository : IPrintQueueRepository
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count,
                    max_attempts, next_attempt_at, leased_by, lease_expires_at, printed_at,
                    failed_at, last_error, row_version, created_at, updated_at
             FROM kitchen.print_jobs
             WHERE ticket_id = @ticket_id
-            ORDER BY created_at;
+            ORDER BY created_at
+            LIMIT {MaxUnpagedRows + 1};
             """;
         cmd.Parameters.AddWithValue("ticket_id", ticketId);
 
@@ -76,6 +82,10 @@ public sealed class PostgresPrintQueueRepository : IPrintQueueRepository
         {
             list.Add(MapPrintJob(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByTicketIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

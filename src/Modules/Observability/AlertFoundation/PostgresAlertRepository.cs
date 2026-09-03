@@ -12,6 +12,11 @@ public sealed class PostgresAlertRepository : IAlertRepository
     private const string AlertsTable = "observability.alerts";
     private const string EventsTable = "observability.alert_events";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly DbDataSource _dataSource;
 
     public PostgresAlertRepository(DbDataSource dataSource)
@@ -50,14 +55,15 @@ public sealed class PostgresAlertRepository : IAlertRepository
     public async Task<IReadOnlyList<AlertRecord>> GetActiveAlertsAsync(
         CancellationToken cancellationToken = default)
     {
-        const string sql = $"""
+        var sql = $"""
             SELECT alert_id, alert_type, severity, status, title, message,
                    deduplication_key, source_reference_type, source_reference_id,
                    opened_at, acknowledged_at, acknowledged_by, resolved_at, resolved_by,
                    resolution_reason, row_version
             FROM {AlertsTable}
             WHERE status IN ('Open', 'Acknowledged', 'Escalated')
-            ORDER BY opened_at DESC;
+            ORDER BY opened_at DESC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -70,6 +76,10 @@ public sealed class PostgresAlertRepository : IAlertRepository
         {
             list.Add(ReadAlertRecord(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetActiveAlertsAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }
@@ -85,14 +95,15 @@ public sealed class PostgresAlertRepository : IAlertRepository
         if (sourceReferenceId == Guid.Empty)
             throw new ArgumentException("Source reference ID cannot be empty.", nameof(sourceReferenceId));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT alert_id, alert_type, severity, status, title, message,
                    deduplication_key, source_reference_type, source_reference_id,
                    opened_at, acknowledged_at, acknowledged_by, resolved_at, resolved_by,
                    resolution_reason, row_version
             FROM {AlertsTable}
             WHERE source_reference_type = @type AND source_reference_id = @id
-            ORDER BY opened_at DESC;
+            ORDER BY opened_at DESC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -108,6 +119,10 @@ public sealed class PostgresAlertRepository : IAlertRepository
             list.Add(ReadAlertRecord(reader));
         }
 
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetBySourceReferenceAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
         return list;
     }
 
@@ -118,11 +133,12 @@ public sealed class PostgresAlertRepository : IAlertRepository
         if (alertId == Guid.Empty)
             throw new ArgumentException("Alert ID cannot be empty.", nameof(alertId));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT alert_event_id, alert_id, event_type, actor_id, payload::text, created_at
             FROM {EventsTable}
             WHERE alert_id = @alert_id
-            ORDER BY created_at ASC;
+            ORDER BY created_at ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -142,6 +158,10 @@ public sealed class PostgresAlertRepository : IAlertRepository
                 reader.GetString(4),
                 reader.GetFieldValue<DateTimeOffset>(5)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetEventsAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

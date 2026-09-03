@@ -4,6 +4,11 @@ using Npgsql;
 
 public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
 {
+    // Defensive ceiling for a filtered list read: a real filter returns far
+    // fewer rows. Hitting this means the filter is too broad, or the relation
+    // outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresKitchenTicketRepository(NpgsqlDataSource dataSource)
@@ -337,14 +342,17 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             FROM kitchen.kitchen_tickets AS t
             LEFT JOIN kitchen.kitchen_ticket_items AS i ON i.ticket_id = t.id
             WHERE {predicate}
-            ORDER BY t.created_at, i.created_at;
+            ORDER BY t.created_at, i.created_at
+            LIMIT {MaxUnpagedRows + 1};
             """;
         command.Parameters.AddWithValue("filter", filter);
 
+        var ticketItemRows = 0;
         var rows = new Dictionary<Guid, TicketGraphRow>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
+            ticketItemRows++;
             var ticketId = reader.GetGuid(0);
             if (!rows.TryGetValue(ticketId, out var row))
             {
@@ -385,6 +393,10 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
                     reader.IsDBNull(27) ? null : reader.GetString(27)));
             }
         }
+
+        if (ticketItemRows > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"Kitchen ticket query '{predicate}' returned more than {MaxUnpagedRows} ticket-item rows; narrow the filter or paginate.");
 
         return rows.Values.Select(row => new KitchenTicket(
             row.Id,

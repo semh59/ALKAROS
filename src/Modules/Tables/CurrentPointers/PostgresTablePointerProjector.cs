@@ -14,6 +14,12 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
     private const string TablesTable = "table_mgmt.tables";
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
+
+    // Defensive ceiling for an unpaged read: a full-table drift scan must page
+    // once the table catalog outgrows this. Hitting it is a signal to scan in
+    // pages, not a limit to silently raise.
+    private const int MaxUnpagedRows = 5000;
+
     private const string TableMergesTable = "table_mgmt.table_merges";
     private const string TableReservationsTable = "table_mgmt.table_reservations";
     private const string AuditEventsTable = "audit.audit_events";
@@ -41,10 +47,11 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
-        const string selectAllTablesSql = $"""
+        var selectAllTablesSql = $"""
             SELECT table_id
             FROM {TablesTable}
-            ORDER BY table_number ASC;
+            ORDER BY table_number ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         var tableIds = new List<Guid>();
@@ -56,6 +63,10 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
                 tableIds.Add(reader.GetGuid(0));
             }
         }
+
+        if (tableIds.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"{TablesTable} holds more than {MaxUnpagedRows} tables; DetectAllDriftAsync must scan in pages.");
 
         var discrepancies = new List<TablePointerDiscrepancy>();
         foreach (var id in tableIds)

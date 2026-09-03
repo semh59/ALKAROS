@@ -22,6 +22,11 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
     private const string BillAllocationsTable = "billing.bill_allocations";
     private const string AuditEventsTable = "audit.audit_events";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresTableMergeRepository(NpgsqlDataSource dataSource)
@@ -60,13 +65,14 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
         if (mergeGroupId == Guid.Empty)
             throw new ArgumentException("Merge group ID cannot be empty.", nameof(mergeGroupId));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT table_merge_id, merge_group_id, primary_table_id, merged_table_id,
                    original_order_id, original_bill_id, status, reason, merged_by,
                    merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version
             FROM {TableMergesTable}
             WHERE merge_group_id = @group_id
-            ORDER BY merged_at ASC;
+            ORDER BY merged_at ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -80,6 +86,10 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
             list.Add(ReadRecord(reader));
         }
 
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByGroupIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
         return list;
     }
 
@@ -90,13 +100,14 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
         if (primaryTableId == Guid.Empty)
             throw new ArgumentException("Primary table ID cannot be empty.", nameof(primaryTableId));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT table_merge_id, merge_group_id, primary_table_id, merged_table_id,
                    original_order_id, original_bill_id, status, reason, merged_by,
                    merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version
             FROM {TableMergesTable}
             WHERE primary_table_id = @primary_id AND status = 'Active'
-            ORDER BY merged_at ASC;
+            ORDER BY merged_at ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -109,6 +120,10 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
         {
             list.Add(ReadRecord(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetActiveByPrimaryTableAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

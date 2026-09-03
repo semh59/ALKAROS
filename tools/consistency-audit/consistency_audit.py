@@ -19,10 +19,15 @@ Zero-dependency scan that fails (exit code 1) when it finds:
    that module's repository contract (V0-ARC-001). The append-only 'audit'
    schema (AUD-01, DB-trigger enforced) is written by every module by design
    and is exempt.
-6. An unbounded whole-table read in src/Modules/<M>/**: a
-   `Task<IReadOnlyList<...>> GetAll...(` method whose body has no `LIMIT`.
-   Every list query needs a bound so a table that outgrows its "small
-   reference set" assumption fails loud instead of loading unboundedly.
+6. An unbounded list read on a module's repository contract surface: a
+   `public [async] Task<IReadOnlyList<...>> <Method>(` whose body issues a
+   SELECT (has a `FROM`) but carries no `LIMIT`. This covers both whole-table
+   `GetAll...` reads and filtered `GetByX` reads — a `WHERE` clause is not a
+   bound, and a filter that widens (or a relation that outgrows its assumption)
+   must fail loud instead of loading unboundedly. Signature-only interface
+   declarations, one-line forwarders (no `FROM` in the body), and private
+   `Read.../Load...` helpers that load one already-scoped aggregate's children
+   are not flagged.
 
 User-facing Turkish string literals are intentionally NOT flagged; only code
 identities and untranslated English leaks are.
@@ -73,11 +78,15 @@ _SCHEMA_CONST_RE = re.compile(r'const\s+string\s+(\w+)\s*=\s*"(\w+)\.\w+"')
 _WRITE_TARGET_RE = re.compile(
     r"\b(?:UPDATE|INSERT\s+INTO|DELETE\s+FROM)\s+(?:\{(\w+)\}|(\w+)\.)", re.IGNORECASE)
 
-# A whole-table list read: `Task<IReadOnlyList<X>> GetAll{Async,Active...}(`.
-# Its body must carry a LIMIT so an outgrown table fails loud instead of
-# loading unboundedly. "GetAllocations"-style names (a different word) and
-# signature-only / expression-bodied forwarders are not matched.
-_GET_ALL_SIG_RE = re.compile(r"Task<IReadOnlyList<[^>]+>>\s+(GetAll(?:Async|Active\w*))\s*\(")
+# Any list read on the repository contract surface:
+# `public [async] Task<IReadOnlyList<X>> <Method>(`. Its body must carry a LIMIT
+# so an outgrown table — or a filter that widens — fails loud instead of loading
+# unboundedly. Only bodies that actually issue a SELECT (have a FROM) are in
+# scope, so signature-only declarations and one-line forwarders drop out. The
+# `public` anchor keeps this on the contract boundary (a caller's filter is the
+# risk); a private `Read.../Load...` helper that loads one already-scoped
+# aggregate's children is bounded by that aggregate, not by a WHERE clause.
+_GET_ALL_SIG_RE = re.compile(r"public\s+(?:async\s+)?Task<IReadOnlyList<[^>]+>>\s+(\w+)\s*\(")
 _LIMIT_RE = re.compile(r"\bLIMIT\b", re.IGNORECASE)
 # Only a body that actually issues a SELECT (has a FROM clause) is in scope; a
 # one-line `return _repository.GetAll...()` forwarder is not.
@@ -133,7 +142,7 @@ def audit() -> list[str]:
                             f"{_rel(path)}:{number}: {parts[0]} module writes the '{schema}' schema; "
                             f"state changes to another module's rows go through its contract: {line[:120]}")
 
-            # Rule 6: a GetAll* list read must carry a LIMIT.
+            # Rule 6: every list read (GetAll* or GetByX) must carry a LIMIT.
             module_lines = text.splitlines()
             for index, raw in enumerate(module_lines):
                 signature = _GET_ALL_SIG_RE.search(raw)
@@ -163,9 +172,9 @@ def audit() -> list[str]:
                 body_text = "\n".join(body)
                 if _SQL_FROM_RE.search(body_text) and not _LIMIT_RE.search(body_text):
                     violations.append(
-                        f"{_rel(path)}:{index + 1}: {parts[0]} module '{signature.group(1)}' reads a whole "
-                        f"table with no LIMIT; add a bound so an outgrown table fails loud instead of "
-                        f"loading unboundedly.")
+                        f"{_rel(path)}:{index + 1}: {parts[0]} module '{signature.group(1)}' issues a SELECT "
+                        f"with no LIMIT; add a bound so an outgrown table (or a widening filter) fails loud "
+                        f"instead of loading unboundedly.")
 
     src = REPO_ROOT / "src"
     if src.is_dir():

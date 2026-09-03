@@ -1476,7 +1476,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | Yol | Tam okuma | SHA-256 kaydı | Amaç |
 | --- | :---: | --- | --- |
 | `AGENTS.md` | ✅ | `DE0D53C116B7EA5C889997C3A1C854A9E7A104234EA3C265927C108E0588F2C6` | Tek-sahip görev |
-| `docs/CONSISTENCY_AUDIT.md` | ✅ | `E22D4AADCD84F5CC60AF59686193B1E48C5004A80326B9E83DD7588BAEC4D36C` | Tek-sahip görev |
+| `docs/CONSISTENCY_AUDIT.md` | ✅ | `8CCEFA555D16D076E0FCA3F8490BB911E31E381E015551F340271A46C630FF1C` | Tek-sahip görev |
 | `docs/UI_STYLE_GUIDE.md` | ✅ | `48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79` | Tek-sahip görev |
 | `docs/architecture/api-contract-standard.md` | ✅ | `80933DAC51C4E09635AF4B5CE0FE5500184D00B223A4106B30E528AFE18760CA` | Tek-sahip görev |
 | `docs/architecture/deployment-compatibility-matrix.md` | ✅ | `47E5E3031E44EA06C947DB181842BF101D75F486FE184AFACDD28917EA3F4A25` | Tek-sahip görev |

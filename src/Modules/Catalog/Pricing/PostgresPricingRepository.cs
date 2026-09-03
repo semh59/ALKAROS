@@ -6,6 +6,11 @@ public sealed class PostgresPricingRepository : IPricingRepository
 {
     private const string Table = "catalog.product_prices";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresPricingRepository(NpgsqlDataSource dataSource)
@@ -77,13 +82,18 @@ public sealed class PostgresPricingRepository : IPricingRepository
                    effective_from, effective_to
             FROM {Table}
             WHERE product_id = @product_id
-            ORDER BY effective_from DESC, currency_code;
+            ORDER BY effective_from DESC, currency_code
+            LIMIT {MaxUnpagedRows + 1};
             """);
         command.Parameters.AddWithValue("product_id", productId);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(ReadProductPrice(reader));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByProductAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
     }

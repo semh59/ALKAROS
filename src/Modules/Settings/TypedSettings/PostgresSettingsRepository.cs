@@ -59,12 +59,13 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
         if (string.IsNullOrWhiteSpace(moduleOwner))
             throw new ArgumentException("Module owner cannot be null or whitespace.", nameof(moduleOwner));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT setting_id, setting_key, setting_value, data_type, scope,
                    module_owner, description, requires_restart, active, updated_at, row_version
             FROM {SettingsTable}
             WHERE module_owner = @module_owner
-            ORDER BY setting_key ASC;
+            ORDER BY setting_key ASC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -78,6 +79,10 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
         {
             list.Add(ReadRecord(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByModuleOwnerAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }
@@ -119,11 +124,12 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
         if (settingId == Guid.Empty)
             throw new ArgumentException("Setting ID cannot be empty.", nameof(settingId));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT setting_history_id, setting_id, old_value, new_value, reason, changed_by, changed_at
             FROM {HistoryTable}
             WHERE setting_id = @setting_id
-            ORDER BY changed_at DESC;
+            ORDER BY changed_at DESC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -144,6 +150,10 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
                 reader.IsDBNull(5) ? null : reader.GetGuid(5),
                 reader.GetFieldValue<DateTimeOffset>(6)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetHistoryAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }

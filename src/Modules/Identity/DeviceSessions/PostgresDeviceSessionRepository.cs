@@ -8,6 +8,11 @@ public sealed class PostgresDeviceSessionRepository : IDeviceSessionRepository
     private const string Sessions = "identity.device_sessions";
     private const string Operations = "identity.session_operations";
 
+    // Defensive ceiling for an unpaged read: hitting it means the operations
+    // ledger outgrew the "recent, bounded" assumption and the caller needs an
+    // existence check (WHERE operation_id = ANY(...)), not the whole set.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresDeviceSessionRepository(NpgsqlDataSource dataSource)
@@ -189,11 +194,15 @@ public sealed class PostgresDeviceSessionRepository : IDeviceSessionRepository
         var result = new List<Guid>();
 
         await using var command = _dataSource.CreateCommand(
-            $"SELECT operation_id FROM {Operations};");
+            $"SELECT operation_id FROM {Operations} LIMIT {MaxUnpagedRows + 1};");
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(reader.GetGuid(0));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"{Operations} holds more than {MaxUnpagedRows} rows; GetProcessedOperationIdsAsync must become an existence check.");
 
         return result;
     }

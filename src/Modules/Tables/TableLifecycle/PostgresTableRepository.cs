@@ -6,6 +6,11 @@ public sealed class PostgresTableRepository : ITableRepository
 {
     private const string Table = "table_mgmt.tables";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresTableRepository(NpgsqlDataSource dataSource)
@@ -47,13 +52,18 @@ public sealed class PostgresTableRepository : ITableRepository
                    current_order_id, current_bill_id, row_version
             FROM {Table}
             WHERE zone_id = @zone_id
-            ORDER BY table_number;
+            ORDER BY table_number
+            LIMIT {MaxUnpagedRows + 1};
             """);
         command.Parameters.AddWithValue("zone_id", zoneId);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(ReadTable(reader));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByZoneAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
     }
@@ -68,12 +78,17 @@ public sealed class PostgresTableRepository : ITableRepository
                    current_order_id, current_bill_id, row_version
             FROM {Table}
             WHERE zone_id IS NULL
-            ORDER BY table_number;
+            ORDER BY table_number
+            LIMIT {MaxUnpagedRows + 1};
             """);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(ReadTable(reader));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetUnzonedAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
     }

@@ -4,6 +4,11 @@ using Npgsql;
 
 public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintRecoveryRepository
 {
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
     private readonly TimeSpan _staleInFlightAfter;
 
@@ -44,14 +49,15 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, print_job_id, ticket_id, printer_id, status, attempt_number,
                    is_reprint, operator_id, operator_reason, crash_window_reason,
                    payload_snapshot, reprint_payload, created_at, delivered_at,
                    resolved_at, row_version
             FROM kitchen.physical_print_deliveries
             WHERE print_job_id = @print_job_id
-            ORDER BY created_at;
+            ORDER BY created_at
+            LIMIT {MaxUnpagedRows + 1};
             """;
         cmd.Parameters.AddWithValue("print_job_id", printJobId);
 
@@ -62,6 +68,10 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
             list.Add(MapDelivery(reader));
         }
 
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByPrintJobIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
         return list;
     }
 
@@ -70,14 +80,15 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
-            """
+            $"""
             SELECT id, print_job_id, ticket_id, printer_id, status, attempt_number,
                    is_reprint, operator_id, operator_reason, crash_window_reason,
                    payload_snapshot, reprint_payload, created_at, delivered_at,
                    resolved_at, row_version
             FROM kitchen.physical_print_deliveries
             WHERE ticket_id = @ticket_id
-            ORDER BY created_at;
+            ORDER BY created_at
+            LIMIT {MaxUnpagedRows + 1};
             """;
         cmd.Parameters.AddWithValue("ticket_id", ticketId);
 
@@ -87,6 +98,10 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
         {
             list.Add(MapDelivery(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByTicketIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }
@@ -122,14 +137,15 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
         await using var cmd = connection.CreateCommand();
         cmd.Transaction = transaction;
         cmd.CommandText =
-            """
+            $"""
             SELECT id, print_job_id, ticket_id, printer_id, status, attempt_number,
                    is_reprint, operator_id, operator_reason, crash_window_reason,
                    payload_snapshot, reprint_payload, created_at, delivered_at,
                    resolved_at, row_version
             FROM kitchen.physical_print_deliveries
             WHERE status = 'Unknown'
-            ORDER BY created_at;
+            ORDER BY created_at
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         var list = new List<PhysicalPrintDelivery>();
@@ -141,6 +157,10 @@ public sealed class PostgresPhysicalPrintRecoveryRepository : IPhysicalPrintReco
 
         await reader.DisposeAsync().ConfigureAwait(false);
         await transaction.CommitAsync(ct).ConfigureAwait(false);
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetPendingUnknownDeliveriesAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
         return list;
     }
 

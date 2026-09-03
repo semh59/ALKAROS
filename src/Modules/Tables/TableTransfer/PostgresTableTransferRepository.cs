@@ -21,6 +21,11 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
     private const string BillAllocationsTable = "billing.bill_allocations";
     private const string AuditEventsTable = "audit.audit_events";
 
+    // Defensive ceiling for a filtered list read: a real filter returns
+    // far fewer rows. Hitting this means the filter is too broad, or the
+    // relation outgrew its assumption — fail loud, do not load unboundedly.
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresTableTransferRepository(NpgsqlDataSource dataSource)
@@ -58,12 +63,13 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         if (sourceTableId == Guid.Empty)
             throw new ArgumentException("Source table ID cannot be empty.", nameof(sourceTableId));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT table_transfer_id, source_table_id, target_table_id, order_id, bill_id,
                    reason, transferred_by, transferred_at
             FROM {TableTransfersTable}
             WHERE source_table_id = @source_table_id
-            ORDER BY transferred_at DESC;
+            ORDER BY transferred_at DESC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -77,6 +83,10 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             list.Add(ReadRecord(reader));
         }
 
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetBySourceTableAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
         return list;
     }
 
@@ -87,12 +97,13 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         if (targetTableId == Guid.Empty)
             throw new ArgumentException("Target table ID cannot be empty.", nameof(targetTableId));
 
-        const string sql = $"""
+        var sql = $"""
             SELECT table_transfer_id, source_table_id, target_table_id, order_id, bill_id,
                    reason, transferred_by, transferred_at
             FROM {TableTransfersTable}
             WHERE target_table_id = @target_table_id
-            ORDER BY transferred_at DESC;
+            ORDER BY transferred_at DESC
+            LIMIT {MaxUnpagedRows + 1};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -105,6 +116,10 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         {
             list.Add(ReadRecord(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetByTargetTableAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }
