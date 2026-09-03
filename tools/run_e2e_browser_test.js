@@ -8,7 +8,7 @@ const { spawn } = require('child_process');
 const { existsSync } = require('fs');
 const { mkdtemp, readFile, rm } = require('fs/promises');
 const { tmpdir } = require('os');
-const { join } = require('path');
+const { join, win32: win32Path } = require('path');
 
 const STDERR_LIMIT = 8192;
 
@@ -19,10 +19,13 @@ function appendBounded(current, chunk, limit = STDERR_LIMIT) {
 
 function chromeCandidates(env = process.env, platform = process.platform) {
   if (platform === 'win32') {
+    // Always build Windows-shaped paths, even when this runs on a POSIX CI
+    // host (bare path.join would use "/" there and the candidates would never
+    // match a real chrome.exe or the test's expected string).
     return [
-      env.PROGRAMFILES && join(env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
-      env['PROGRAMFILES(X86)'] && join(env['PROGRAMFILES(X86)'], 'Google', 'Chrome', 'Application', 'chrome.exe'),
-      env.LOCALAPPDATA && join(env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe')
+      env.PROGRAMFILES && win32Path.join(env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      env['PROGRAMFILES(X86)'] && win32Path.join(env['PROGRAMFILES(X86)'], 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      env.LOCALAPPDATA && win32Path.join(env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe')
     ].filter(Boolean);
   }
 
