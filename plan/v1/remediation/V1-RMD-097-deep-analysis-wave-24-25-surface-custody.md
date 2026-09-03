@@ -16,8 +16,8 @@ kuralı yeniden sağlanır ve bu dosyalar yalnızca yeni bir plan görevi ile de
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-097-deep-analysis-wave-24-25-surface-custody.md`
-- `database/migrations/V1/V1-RMD-090/042-authorization-role-catalog.up.sql`
-- `database/migrations/V1/V1-RMD-090/042-authorization-role-catalog.down.sql`
+- `database/migrations/V1/V1-RMD-097/042-authorization-role-catalog.up.sql`
+- `database/migrations/V1/V1-RMD-097/042-authorization-role-catalog.down.sql`
 - `src/BuildingBlocks/IntegrationContracts/IIntegrationEventConsumer.cs`
 - `src/BuildingBlocks/IntegrationContracts/IntegrationEventSerializer.cs`
 - `src/BuildingBlocks/IntegrationContracts/TableIntegrationEvents.cs`
@@ -46,6 +46,9 @@ kuralı yeniden sağlanır ve bu dosyalar yalnızca yeni bir plan görevi ile de
 
 - Yukarıdaki dosyaların custody kaydını bu göreve almak ve `plan/AUDIT_MANIFEST.json` ile
   `plan/AUDIT_REPORT.md` bütünlük kayıtlarını mevcut ağaç durumuna göre yeniden üretmek.
+- Wave 24'te yanlışlıkla `V1-RMD-090` klasörüne yazılan `042-authorization-role-catalog` migration
+  dosyalarını, sahibi olan `V1-RMD-097` klasörüne taşımak; migration kimliği `042` ve
+  `order.json` kaydı değişmez, discovery `rglob` tabanlı olduğu için davranış aynıdır.
 - Kayıt, wave 24-25 remediasyonlarının davranışını değiştirmez; yalnızca yönetişim yüzey sahipliğini kapatır.
 
 ## Out of scope
