@@ -1476,14 +1476,14 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | Yol | Tam okuma | SHA-256 kaydı | Amaç |
 | --- | :---: | --- | --- |
 | `AGENTS.md` | ✅ | `DE0D53C116B7EA5C889997C3A1C854A9E7A104234EA3C265927C108E0588F2C6` | Tek-sahip görev |
-| `docs/CONSISTENCY_AUDIT.md` | ✅ | `BCB480B363850EBEDA62B1069D80DDC6E22D0EC0EE30F130E750BAE8B522F9A6` | Tek-sahip görev |
+| `docs/CONSISTENCY_AUDIT.md` | ✅ | `E22D4AADCD84F5CC60AF59686193B1E48C5004A80326B9E83DD7588BAEC4D36C` | Tek-sahip görev |
 | `docs/UI_STYLE_GUIDE.md` | ✅ | `48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79` | Tek-sahip görev |
 | `docs/architecture/api-contract-standard.md` | ✅ | `80933DAC51C4E09635AF4B5CE0FE5500184D00B223A4106B30E528AFE18760CA` | Tek-sahip görev |
 | `docs/architecture/deployment-compatibility-matrix.md` | ✅ | `47E5E3031E44EA06C947DB181842BF101D75F486FE184AFACDD28917EA3F4A25` | Tek-sahip görev |
 | `docs/architecture/dual-screen-pos-topology.md` | ✅ | `1872F1A491C1E084E26681E91942E5BF21AB62BB655589CCDC34A91A5C5BFC2B` | Tek-sahip görev |
 | `docs/architecture/idempotency-inbox-outbox.md` | ✅ | `F4D0F14703633F6CF015AAE9CB505E7BD7097FCFD87B1B41E145B5B8B8B82499` | Tek-sahip görev |
 | `docs/architecture/local-first-sync-contract.md` | ✅ | `0AB1382E141D087F181C73711B2A42ED4A738D30212A667B44C0DAA984B53C92` | Tek-sahip görev |
-| `docs/architecture/module-dependency-rules.md` | ✅ | `D200BCACA547520E135F565FE41DF02030D56148FBD95B24F63B00A387314878` | Tek-sahip görev |
+| `docs/architecture/module-dependency-rules.md` | ✅ | `B2DC47BDA0BF590FED5F82A13ADC34D007D3E758F1BBBA56160BCD9773FD0087` | Tek-sahip görev |
 | `docs/architecture/notification-delivery-matrix.md` | ✅ | `98972801E93FA0053B40FF2539DCC376D4B86CDFFE36399C6BC4AAF129556731` | Tek-sahip görev |
 | `docs/architecture/qr-relay-topology.md` | ✅ | `79FE340854746CEAF0FF93D613FA315523288D76B0F365B51083D9023F0AFFB0` | Tek-sahip görev |
 | `docs/architecture/release-evidence-contract.md` | ✅ | `19B37BDCE2965BD7CDFCF15378B393F3F28993457C50F5B98C02A26B7AA28EA7` | Tek-sahip görev |
@@ -2102,6 +2102,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-094-kvkk-retention-anonymization-job.md` | ✅ | `3AB9D57E80C8D00E4F42698EE6B7AE0B46FBC02DE18678B49221AF5260235D95` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-095-wal-archiving-point-in-time-recovery.md` | ✅ | `54C85F0B420CEFC73FA12A5BA36C5611AE4716876E97F37B394E4407DDEDE064` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-096-host-terminated-https.md` | ✅ | `74CDAD4C4630ACACFB949B4C46CD1E74A229575AB5DD8A019C533DED742D7625` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-097-deep-analysis-wave-24-25-surface-custody.md` | ✅ | `20495E082A7D22F2171355F40AAFA486C5078A0252B6EE788FC2B4FCC84EF8C1` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `24623A6E669EB2C9DF00914C529190C888D2B22D4282BE594200AB24F6FF362A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `E28E58E5E8A0CBC99B94E0339861C47E0C7F5FF6DC676F839585C10CD340AA0F` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2126,5 +2127,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `854` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `855` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 854,
-  "markdown_line_count": 54181,
-  "markdown_byte_count": 3218153,
+  "markdown_file_count": 855,
+  "markdown_line_count": 54283,
+  "markdown_byte_count": 3224124,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -113,9 +113,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "D200BCACA547520E135F565FE41DF02030D56148FBD95B24F63B00A387314878",
-      "lines": 123,
-      "bytes": 7506,
+      "sha256": "B2DC47BDA0BF590FED5F82A13ADC34D007D3E758F1BBBA56160BCD9773FD0087",
+      "lines": 151,
+      "bytes": 9350,
       "utf8": true
     },
     {
@@ -197,9 +197,9 @@
     },
     {
       "path": "docs/CONSISTENCY_AUDIT.md",
-      "sha256": "BCB480B363850EBEDA62B1069D80DDC6E22D0EC0EE30F130E750BAE8B522F9A6",
-      "lines": 45,
-      "bytes": 2100,
+      "sha256": "E22D4AADCD84F5CC60AF59686193B1E48C5004A80326B9E83DD7588BAEC4D36C",
+      "lines": 47,
+      "bytes": 2477,
       "utf8": true
     },
     {
@@ -2178,9 +2178,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "89C13B54979D2A0F0AEF1336963885C3FCEE1190A2887E1B263B0A096AFA8C85",
-      "lines": 2130,
-      "bytes": 300212,
+      "sha256": "72CA289C5F297B3FBFDB359692D44991C8A14FB91E140473EB50910B915C9572",
+      "lines": 2131,
+      "bytes": 300387,
       "utf8": true
     },
     {
@@ -4820,6 +4820,13 @@
       "sha256": "74CDAD4C4630ACACFB949B4C46CD1E74A229575AB5DD8A019C533DED742D7625",
       "lines": 62,
       "bytes": 3613,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-097-deep-analysis-wave-24-25-surface-custody.md",
+      "sha256": "20495E082A7D22F2171355F40AAFA486C5078A0252B6EE788FC2B4FCC84EF8C1",
+      "lines": 71,
+      "bytes": 3575,
       "utf8": true
     },
     {
