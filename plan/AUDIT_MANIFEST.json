@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 859,
-  "markdown_line_count": 54749,
-  "markdown_byte_count": 3261527,
+  "markdown_file_count": 869,
+  "markdown_line_count": 55340,
+  "markdown_byte_count": 3288305,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -249,6 +249,13 @@
       "sha256": "F484711A2BF18CBDCB7F2B259F5F9F153026B2A8841B141BA99F00619AD9153C",
       "lines": 36,
       "bytes": 1359,
+      "utf8": true
+    },
+    {
+      "path": "docs/domain/authorization-model.md",
+      "sha256": "70E7BA298B871F5F09E642CFEAB1517DCABCE7200455F6DE24855B4C8F303139",
+      "lines": 180,
+      "bytes": 9507,
       "utf8": true
     },
     {
@@ -2185,9 +2192,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "233DAA5EE81166DC47A897959AE6267E71C04C2CFBF117050D3C0BA3019C97D8",
-      "lines": 2135,
-      "bytes": 301050,
+      "sha256": "9844A1DD0739775BB558FE199CBCE4366C889B93D07023C295A02134A6717029",
+      "lines": 2145,
+      "bytes": 302753,
       "utf8": true
     },
     {
@@ -4064,6 +4071,69 @@
       "sha256": "FB9251B9E0EFDDF82F5122746C2297E805F0051F3A277B9EEE07856574F967A0",
       "lines": 32,
       "bytes": 997,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-016-authorization-model-decision.md",
+      "sha256": "630AEAB10593B6E8A2FA82C732F67AEF783C30264134F9A43437E4394CFA96D6",
+      "lines": 54,
+      "bytes": 1710,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md",
+      "sha256": "7661250137DACC3F703B74CAF5DDDF8097EC3574CB39EFF1F28E23B4F1D614A6",
+      "lines": 61,
+      "bytes": 2342,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-018-authorization-policy-engine.md",
+      "sha256": "50A5F30BEB055F19A32817430EB66C55705310C012770AC1466F69BFCA3674EC",
+      "lines": 35,
+      "bytes": 1290,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md",
+      "sha256": "0E90C571FD2D4A0D0CB84E0B749F8E41AD515F2BCCD7457AC87910F9A4539FDB",
+      "lines": 35,
+      "bytes": 1425,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md",
+      "sha256": "40499F1C283B93B633F0980569A16EDCFB9FDCB2CAE30374C42BA47574400889",
+      "lines": 34,
+      "bytes": 1267,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md",
+      "sha256": "FF41189A1E69539005618D3EF0AC3C87C4803411575011FBE69CD1BAAE5F3B78",
+      "lines": 34,
+      "bytes": 1257,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md",
+      "sha256": "B3887329FC3DBB512C2B9580F4A568570BC99862B0BCD25AF33F16899C2C9A8D",
+      "lines": 34,
+      "bytes": 1672,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md",
+      "sha256": "FF5C653FDDA82E6742690973B449F966AD41B00497303B56C7CB6822251632EA",
+      "lines": 34,
+      "bytes": 1416,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md",
+      "sha256": "62D2128A4D8078FA666B257E11D2409BB79A6E65377328B427E1352836A7E2A4",
+      "lines": 80,
+      "bytes": 3189,
       "utf8": true
     },
     {

@@ -1502,6 +1502,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/data/postgresql-extension-ownership.md` | ✅ | `A20DBFAEDE08CE090DF0B05FF42CBEE9AF47C4E4EACEF10CA84C92EBF89B3A5D` | Tek-sahip görev |
 | `docs/data/projection-ownership.md` | ✅ | `8BC5FD3BA4AE8B4B3F304276A5DEE825BE4863D0D1B3922640FFBE08FEDB218C` | Tek-sahip görev |
 | `docs/data/single-branch-key-strategy.md` | ✅ | `F484711A2BF18CBDCB7F2B259F5F9F153026B2A8841B141BA99F00619AD9153C` | Tek-sahip görev |
+| `docs/domain/authorization-model.md` | ✅ | `70E7BA298B871F5F09E642CFEAB1517DCABCE7200455F6DE24855B4C8F303139` | Tek-sahip görev |
 | `docs/domain/bill-order-cardinality.md` | ✅ | `E078D51310DF29AC2E4312D1021FE20F3EB20897DF59B665B44D525954954522` | Tek-sahip görev |
 | `docs/domain/cash-session-design.md` | ✅ | `836C40D784800202EAFA8853A31A8A8B4A9B5344DB805EB5B5553AE6E536D6D9` | Tek-sahip görev |
 | `docs/domain/customer-credit-invoice-semantics.md` | ✅ | `D89A4BB4A0D6BC015F7D40506FD24CED9D30181971E1AD9A5F319EE335963B26` | Tek-sahip görev |
@@ -2006,6 +2007,15 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md` | ✅ | `161C344577F8921B62E564304CFE2DB38CF0D9BCA34800F181B907E303F0A9A2` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-014-identity-baseline-reacceptance.md` | ✅ | `91F9877B1A4DAC453E6C9E81A1270352BE3DA4DA69BF839BC679B6E69017EA5E` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-015-session-concurrency-linearization.md` | ✅ | `FB9251B9E0EFDDF82F5122746C2297E805F0051F3A277B9EEE07856574F967A0` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-016-authorization-model-decision.md` | ✅ | `630AEAB10593B6E8A2FA82C732F67AEF783C30264134F9A43437E4394CFA96D6` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md` | ✅ | `7661250137DACC3F703B74CAF5DDDF8097EC3574CB39EFF1F28E23B4F1D614A6` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-018-authorization-policy-engine.md` | ✅ | `50A5F30BEB055F19A32817430EB66C55705310C012770AC1466F69BFCA3674EC` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md` | ✅ | `0E90C571FD2D4A0D0CB84E0B749F8E41AD515F2BCCD7457AC87910F9A4539FDB` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md` | ✅ | `40499F1C283B93B633F0980569A16EDCFB9FDCB2CAE30374C42BA47574400889` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md` | ✅ | `FF41189A1E69539005618D3EF0AC3C87C4803411575011FBE69CD1BAAE5F3B78` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md` | ✅ | `B3887329FC3DBB512C2B9580F4A568570BC99862B0BCD25AF33F16899C2C9A8D` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md` | ✅ | `FF5C653FDDA82E6742690973B449F966AD41B00497303B56C7CB6822251632EA` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md` | ✅ | `62D2128A4D8078FA666B257E11D2409BB79A6E65377328B427E1352836A7E2A4` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md` | ✅ | `0426076A29BCE1C9ABC2A8E7112ADCE747DC1049BB9108C42F8D7AF96A0D992C` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-001-consolidated-remediation.md` | ✅ | `D28F3FDD8A743C9082AF4C5B1537D4C2A91101669284175ECFD474EE96265AAC` | Tek-sahip görev |
@@ -2131,5 +2141,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `859` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `869` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

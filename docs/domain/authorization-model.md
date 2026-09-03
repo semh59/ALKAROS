@@ -1,12 +1,13 @@
-# Authorization Model — differentiated decision record (DRAFT)
+# Authorization Model — approved decision record
 
-> **Proposed task:** V1-IAM-016 (decision) + V1-IAM-017..024 (implementation wave)
-> **Status:** DRAFT — awaiting Semih approval of the full record; the three
-> role-matrix product questions are resolved (Semih, 2026-09-04, see §3).
+> **Task:** V1-IAM-016
+> **Status:** Planned
 > **Work type:** decision
-> **Approver:** Semih — pending
+> **Access date:** 2026-09-04
+> **Approver:** Semih — 2026-09-04
 > **Decision type:** Business + architecture decision
-> **Supersedes scope of:** the "deferred authorization wave" noted in
+> **Source basis:** PDF:II.2.1, PDF:III.3; PO:2026-09-04
+> **Supersedes scope of:** the deferred authorization wave noted in
 > `database/migrations/V1/V1-RMD-097/042-authorization-role-catalog.up.sql`
 
 ## 1. Why this exists
