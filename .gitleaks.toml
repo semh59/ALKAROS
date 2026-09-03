@@ -1,0 +1,25 @@
+# gitleaks configuration for the "Full Git history secret scan" CI step.
+# Keeps every default rule; the allowlist below covers a handful of history
+# matches that are demonstrably NOT secrets:
+#   - test fixtures that carry a deliberately fake key so the code under test
+#     has something key-shaped to redact / decrypt;
+#   - SHA-256 content hashes recorded in evidence markdown, which the
+#     generic-api-key regex reads as a 64-hex "key".
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Deliberate test fixtures and evidence content hashes (no real secret)"
+paths = [
+  '''tests/Modules/Audit/EventStore/AuditSanitizerTests\.cs''',
+  '''tests/BuildingBlocks/Security/SensitiveData/Fixtures/SensitiveDataFixtures\.cs''',
+  '''evidence/V1-RMD-0(17|18)/validation\.md''',
+]
+regexes = [
+  # AES-256 test key: "0123456789abcdef0123456789abcdef" and its base64.
+  '''0123456789abcdef0123456789abcdef''',
+  '''MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=''',
+  # Fake API key used only to exercise the audit sanitizer.
+  '''ak_live_abcdef123456''',
+]
