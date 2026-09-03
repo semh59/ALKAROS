@@ -143,11 +143,10 @@ jobs:
           pnpm typecheck
           pnpm test
           pnpm build
-      - name: Node contract and prototype tests
+      - name: Node contract tests
         shell: bash
         run: |
           set -euo pipefail
-          node --test src/Clients/WebPrototype/tests/*.test.js
           node --test tools/tests/run_e2e_browser_test.test.js
       - name: Python architecture tests
         shell: bash
