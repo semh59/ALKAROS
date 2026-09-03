@@ -16,6 +16,7 @@ using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Tables;
+using ALKAROS.Host.Outbox;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -74,6 +75,11 @@ public static class DualScreenApplication
         // hand below.
         var moduleComposition = ModuleRegistry.ComposeRoot(ModuleRegistry.DefaultCatalog);
         HostComposition.ApplyComposedModuleServices(builder.Services, moduleComposition.Services);
+
+        // Drains the transactional outbox and fans each table event out to the
+        // module IIntegrationEventConsumer registrations above (Order, Bill
+        // reparent their rows after a table merge/transfer/unmerge).
+        builder.Services.AddOutboxDispatch();
 
         builder.Services.AddSingleton<DualScreenStore>();
         builder.Services.AddSingleton<SubmitOrderHandler>();
