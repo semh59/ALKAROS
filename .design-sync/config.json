@@ -7,11 +7,25 @@
   "entry": "src/Clients/PosTerminal/dist/ds/index.js",
   "srcDir": "../../src/design-system",
   "tsconfig": "../../tsconfig.json",
-  "tokensGlob": "tokens.css",
   "extraFonts": "fonts.css",
   "readmeHeader": ".design-sync/conventions.md",
   "overrides": {
-    "ModalDialog": { "cardMode": "single", "primaryStory": "Open", "viewport": "880x520" },
-    "ContextDrawer": { "cardMode": "single", "primaryStory": "Persistent", "viewport": "440x460" }
+    "ModalDialog": {
+      "cardMode": "single",
+      "primaryStory": "Open",
+      "viewport": "880x520"
+    },
+    "ContextDrawer": {
+      "cardMode": "single",
+      "primaryStory": "Persistent",
+      "viewport": "440x460"
+    }
+  },
+  "dtsPropsFor": {
+    "Button": "/** Visual style. Default \"primary\". */\nvariant?: \"primary\" | \"secondary\" | \"quiet\";\nchildren?: React.ReactNode;\n/** Default \"button\"; use \"submit\" inside a form. */\ntype?: \"button\" | \"submit\" | \"reset\";\ndisabled?: boolean;\nonClick?: React.MouseEventHandler<HTMLButtonElement>;\nname?: string;\nvalue?: string | readonly string[] | number;\nform?: string;\nautoFocus?: boolean;\ntabIndex?: number;\ntitle?: string;\n\"aria-label\"?: string;\n\"aria-pressed\"?: boolean | \"true\" | \"false\" | \"mixed\";\n\"aria-expanded\"?: boolean | \"true\" | \"false\";\n\"aria-controls\"?: string;\n\"aria-haspopup\"?: boolean | \"menu\" | \"listbox\" | \"tree\" | \"grid\" | \"dialog\";\nclassName?: string;\nid?: string;\nstyle?: React.CSSProperties;\nref?: React.Ref<HTMLButtonElement>;",
+    "TextField": "/** Field label, rendered above the input (required). */\nlabel: string;\n/** Helper text below the label. */\nhint?: string;\n/** Error text; also applies the invalid styling and aria-invalid. */\nerror?: string;\nid?: string;\ntype?: React.HTMLInputTypeAttribute;\nvalue?: string | readonly string[] | number;\ndefaultValue?: string | readonly string[] | number;\nplaceholder?: string;\nonChange?: React.ChangeEventHandler<HTMLInputElement>;\nonBlur?: React.FocusEventHandler<HTMLInputElement>;\ndisabled?: boolean;\nreadOnly?: boolean;\nrequired?: boolean;\nname?: string;\nautoComplete?: string;\ninputMode?: \"none\" | \"text\" | \"decimal\" | \"numeric\" | \"tel\" | \"search\" | \"email\" | \"url\";\nmaxLength?: number;\nmin?: number | string;\nmax?: number | string;\nstep?: number | string;\npattern?: string;\nautoFocus?: boolean;\nclassName?: string;\nstyle?: React.CSSProperties;",
+    "SelectField": "/** Field label, rendered above the select (required). */\nlabel: string;\n/** Helper text below the label. */\nhint?: string;\n/** Error text; also applies the invalid styling and aria-invalid. */\nerror?: string;\n/** <option> / <optgroup> elements. */\nchildren: React.ReactNode;\nid?: string;\nvalue?: string | readonly string[] | number;\ndefaultValue?: string | readonly string[] | number;\nonChange?: React.ChangeEventHandler<HTMLSelectElement>;\ndisabled?: boolean;\nrequired?: boolean;\nname?: string;\nmultiple?: boolean;\nautoFocus?: boolean;\nclassName?: string;\nstyle?: React.CSSProperties;",
+    "Icon": "/** One of the 26 names in the fixed ALKAROS icon set. */\nname: \"sales\" | \"tables\" | \"billing\" | \"kitchen\" | \"catalog\" | \"system\" | \"check\" | \"refresh\" | \"offline\" | \"clock\" | \"info\" | \"warning\" | \"close\" | \"conflict\" | \"lock\" | \"forbidden\" | \"brand\" | \"user\" | \"register\" | \"add\" | \"send\" | \"trash\" | \"pause\" | \"recall\" | \"gift\" | \"search\";\n/** Accessible label. When omitted the icon is decorative (aria-hidden). */\nlabel?: string;\nclassName?: string;",
+    "ModalDialog": "open: boolean;\ntitle: string;\nonClose: () => void;\nchildren: React.ReactNode;\n/** Element to focus on open (defaults to the first focusable descendant). */\ninitialFocusRef?: React.RefObject<HTMLElement | null>;"
   }
 }
