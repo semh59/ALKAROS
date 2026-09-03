@@ -1,15 +1,15 @@
 # Local-development Caddy config. Bind-mounted over /etc/caddy/Caddyfile by
-# compose.dev.yaml so the UI is reachable over plain HTTP with no certificate:
+# compose.dev.yaml so the UI is reachable over plain HTTP with no certificate
+# and no hosts-file entry:
 #
 #   docker compose -f compose.yaml -f compose.dev.yaml up -d --build
-#   http://localhost:8090/          -> PosTerminal / /waiter / /cashier
-#   http://display.localhost:8090/  -> customer display (Chrome resolves
-#                                      *.localhost automatically; for Firefox
-#                                      add "127.0.0.1 display.localhost" to hosts)
+#   http://localhost:8090/         -> PosTerminal / /waiter / /cashier
+#   http://localhost:8091/display  -> customer display (separate origin for B-4)
 #
-# It forces X-Forwarded-Proto: https upstream so the api's HTTPS gate is
-# satisfied. NEVER use this outside local development - it tells the backend a
-# plain-HTTP request is secure.
+# Port :80 is the main origin, :81 is the customer-display origin - the browser
+# treats them as distinct origins, which is what finding B-4 needs, without
+# depending on *.localhost DNS. It forces X-Forwarded-Proto: https upstream so
+# the api's HTTPS gate is satisfied. NEVER use this outside local development.
 
 {
 	admin off
@@ -25,7 +25,8 @@
 	}
 }
 
-http://localhost, http://127.0.0.1 {
+# Main origin - :80.
+http://localhost:80, http://127.0.0.1:80 {
 	handle /api/* {
 		reverse_proxy api:5080 {
 			header_up -X-Alkaros-Origin
@@ -47,7 +48,8 @@ http://localhost, http://127.0.0.1 {
 	import spa_static
 }
 
-http://display.localhost {
+# Customer-display origin - :81.
+http://localhost:81, http://127.0.0.1:81 {
 	handle /api/* {
 		reverse_proxy api:5080 {
 			header_up X-Alkaros-Origin display

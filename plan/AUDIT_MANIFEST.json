@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 856,
-  "markdown_line_count": 54456,
-  "markdown_byte_count": 3238764,
+  "markdown_line_count": 54458,
+  "markdown_byte_count": 3239015,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2178,7 +2178,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D141830E944EE9962F5E67768CECDA801BB86B57ABC8B2B3724E68E1D2E7842C",
+      "sha256": "F0F89D38A309DAA3BFA3764D441BA42540F15BAD81F38DF330D29D5603FAC003",
       "lines": 2132,
       "bytes": 300571,
       "utf8": true
@@ -4831,9 +4831,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-098-docker-frontend-backend-split-and-surface-custody.md",
-      "sha256": "0CC1C2667BE4769D832FABC00A5FE3FABC51B658CB7B9B61960C5A61BAA85684",
-      "lines": 124,
-      "bytes": 8637,
+      "sha256": "39904D3D25F5BF81A01808F0E96F951415EAF7FBD6BCB3BBF257B8D97845CAA8",
+      "lines": 126,
+      "bytes": 8888,
       "utf8": true
     },
     {

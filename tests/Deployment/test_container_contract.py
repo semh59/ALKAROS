@@ -107,14 +107,18 @@ def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
     assert dev.startswith("name: alkaros\n")
     assert '"5433:5432"' in dev          # 5432 is often taken by a standalone test db
     assert '"5080:5080"' in dev
-    assert '"8090:80"' in dev
+    assert '"8090:80"' in dev            # main origin
+    assert '"8091:81"' in dev            # customer-display origin (B-4, no *.localhost DNS)
     assert "ports: !override" in dev      # replace, not append to, the core 8443 mapping
     assert "deploy/docker/Caddyfile.dev:/etc/caddy/Caddyfile" in dev
 
     assert "auto_https off" in caddy_dev
     assert "header_up X-Forwarded-Proto https" in caddy_dev
     assert "reverse_proxy api:5080" in caddy_dev
-    assert "http://localhost" in caddy_dev
+    assert "http://localhost:80" in caddy_dev
+    assert "http://localhost:81" in caddy_dev
+    assert "header_up X-Alkaros-Origin display" in caddy_dev
+    assert "header_up -X-Alkaros-Origin" in caddy_dev
 
 
 def test_services_load_the_password_from_the_mounted_secret() -> None:

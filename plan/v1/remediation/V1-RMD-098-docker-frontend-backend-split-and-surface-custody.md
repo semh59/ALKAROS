@@ -63,12 +63,14 @@ yalnız `web` (Caddy) üzerinde sonlanır.
   (eski `proxy`, artık `web` build hedefiyle). `8444` yayını ve `alkaros-host-tls` hacmi kaldırıldı.
   Operatör araçları (`backup` / `basebackup` / `housekeeping`) `compose.ops.yaml`'a taşındı ve
   `docker compose -f compose.yaml -f compose.ops.yaml run --rm <svc>` ile çağrılır.
-- `compose.dev.yaml` + `deploy/docker/Caddyfile.dev`: yerel geliştirme için `web`'i düz HTTP `8090:80`
-  üzerinde bind-mount edilmiş dev Caddyfile ile çalıştırır (`auto_https off`, sertifika yok,
-  `X-Forwarded-Proto: https` yukarı akışa zorlanır ki api'nin HTTPS geçidi geçsin); `postgres` 5433,
-  `api` 5080 host'a yayınlanır. `http://localhost` tarayıcı güvenli bağlamı olduğundan WaiterPwa service
-  worker / çevrimdışı kuyruğu burada çalışır; LAN IP üzerinden erişim çalışmaz (saha testi için CA kurulu
-  HTTPS 8443 yolu). Bu overlay asla deploy edilmez.
+- `compose.dev.yaml` + `deploy/docker/Caddyfile.dev`: yerel geliştirme için `web`'i düz HTTP ile
+  bind-mount edilmiş dev Caddyfile ile çalıştırır (`auto_https off`, sertifika yok,
+  `X-Forwarded-Proto: https` yukarı akışa zorlanır ki api'nin HTTPS geçidi geçsin). İki port: `8090:80`
+  ana origin, `8091:81` müşteri ekranı origin'i — tarayıcı bunları ayrı origin sayar, `*.localhost` DNS'e
+  gerek kalmadan B-4 izolasyonu korunur (`display.localhost` bazı çözücülerde loopback yerine ağ
+  geçidine çözülüyordu). `postgres` 5433, `api` 5080 host'a yayınlanır. `http://localhost` tarayıcı
+  güvenli bağlamı olduğundan WaiterPwa service worker / çevrimdışı kuyruğu burada çalışır; LAN IP
+  üzerinden erişim çalışmaz (saha testi için CA kurulu HTTPS 8443 yolu). Bu overlay asla deploy edilmez.
 - `.dockerignore` daraltıldı (`plan/`, `docs/`, `evidence/`, `tools/`, `.github/`, `*.md` vs. build
   bağlamından çıkarıldı; `.git` build provenance için tutuldu).
 - E1 kararı: `V1-RMD-096` Host self-signed `8444` yedeği kaldırıldı. `docs/operations/
