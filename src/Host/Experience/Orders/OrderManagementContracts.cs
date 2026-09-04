@@ -64,6 +64,33 @@ public sealed record ApplyComplimentaryResultV1(
     DateTimeOffset? AppliedAt,
     Guid? GrantId);
 
+/// <summary>
+/// V1-IAM-027: request body for voiding a sent-but-unserved item.
+/// IdempotencyKey plays the same role as in <see cref="ApplyComplimentaryRequestV1"/>
+/// — a retry after a manager approves a pending bills.void grant reuses it.
+/// </summary>
+public sealed record VoidSentItemRequestV1(
+    string IdempotencyKey,
+    long ExpectedRowVersion,
+    string ReasonCode,
+    string? Notes = null);
+
+/// <summary>
+/// V1-IAM-027: response for the sent-item void endpoint. "Applied" also
+/// reports whether a matching kitchen ticket item was found and cancelled,
+/// and whether a billed line was converted to BillLineType.Waste.
+/// </summary>
+public sealed record VoidSentItemResultV1(
+    string Status,
+    Guid OrderId,
+    Guid OrderItemId,
+    long? NewOrderRowVersion,
+    decimal? NewOrderTotal,
+    bool? KitchenTicketItemCancelled,
+    bool? BillLineConvertedToWaste,
+    DateTimeOffset? AppliedAt,
+    Guid? GrantId);
+
 public sealed record OrderDto(
     Guid OrderId,
     Guid TableId,

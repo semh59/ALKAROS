@@ -297,15 +297,33 @@ public class OrderItemStateTests
         cancelled.KitchenState.Should().Be(KitchenState.Cancelled);
     }
 
-    [Fact]
-    public void PreparedActiveItemCannotBeVoided()
+    [Theory]
+    [InlineData(KitchenState.Sent)]
+    [InlineData(KitchenState.Preparing)]
+    [InlineData(KitchenState.Ready)]
+    public void SentButUnservedActiveItemCanBeVoided(KitchenState kitchenState)
     {
-        var item = NewItem(OrderItemState.Active, KitchenState.Preparing);
+        // V0-DOM-006 amendment (2026-09-04, V1-IAM-027): sent-but-unserved is
+        // no longer a hard wall at the domain level — it is gated by the
+        // bills.void grant one layer up (Host.Experience), not here.
+        var item = NewItem(OrderItemState.Active, kitchenState);
+
+        var cancelled = item.Cancel();
+
+        cancelled.Status.Should().Be(OrderItemState.Cancelled);
+        cancelled.KitchenState.Should().Be(KitchenState.Cancelled);
+    }
+
+    [Fact]
+    public void ServedActiveItemCannotBeVoided()
+    {
+        // Served stays a hard wall: that is comp/refund territory, never void.
+        var item = NewItem(OrderItemState.Active, KitchenState.Served);
 
         var act = () => item.Cancel();
 
         act.Should().Throw<InvalidOperationException>()
-            .WithMessage($"Order item {item.Id} cannot be voided after preparation (Preparing).");
+            .WithMessage($"Order item {item.Id} cannot be voided once it reached kitchen state Served.");
     }
 
     [Fact]
@@ -465,13 +483,32 @@ public class OrderVoidTests
     }
 
     [Fact]
-    public void VoidIncompatibleItemThrows()
+    public void SentButUnservedItemCanNowBeVoidedAtTheOrderLevel()
     {
+        // V0-DOM-006 amendment (2026-09-04, V1-IAM-027): the domain no
+        // longer walls this off — it is gated by the bills.void grant one
+        // layer up (Host.Experience.Orders.SentItemVoid).
         var itemId = Guid.NewGuid();
         var item = new OrderItem(
             itemId, Guid.NewGuid(), Guid.NewGuid(), "Hamburger", 1, 80m, 10m,
             status: OrderItemState.Active, kitchenState: KitchenState.Preparing);
         var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-3002", [item], status: OrderState.Preparing);
+
+        var cancelled = order.CancelItem(itemId);
+
+        cancelled.Items.Single().Status.Should().Be(OrderItemState.Cancelled);
+        cancelled.Items.Single().KitchenState.Should().Be(KitchenState.Cancelled);
+    }
+
+    [Fact]
+    public void VoidOnATerminalOrderThrows()
+    {
+        var itemId = Guid.NewGuid();
+        var item = new OrderItem(
+            itemId, Guid.NewGuid(), Guid.NewGuid(), "Hamburger", 1, 80m, 10m,
+            status: OrderItemState.Active, kitchenState: KitchenState.Served);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-3002B", [item], status: OrderState.Served)
+            .TransitionTo(OrderState.Completed);
 
         var act = () => order.CancelItem(itemId);
 

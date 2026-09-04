@@ -1,10 +1,13 @@
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Orders.SentItemVoid;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Policies;
+using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
@@ -53,6 +56,15 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
         services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
         services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
+        // V1-IAM-027: codes the V0-DOM-006 amendment (Semih, 2026-09-04) — a
+        // sent-but-unserved item may now be voided under the bills.void
+        // grant. Lives at the Host layer (SentItemVoidStore) rather than
+        // inside Orders' ItemExceptionHandler so Orders/Kitchen/Billing stay
+        // decoupled from each other (V0-ARC-001); Host already depends on
+        // all three.
+        services.TryAddSingleton<IKitchenTicketRepository, PostgresKitchenTicketRepository>();
+        services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
+        services.TryAddSingleton<SentItemVoidStore>();
         // V1-ORD-005: every endpoint in this group calls RequireCashierSessionAsync
         // (or the permission variant), which throws DualScreenUnauthorizedException
         // on a missing/invalid session — with no filter that unwound as a bare 500,
@@ -330,6 +342,116 @@ public static class OrderManagementEndpoints
             }
         });
 
+        // V1-IAM-027: V0-DOM-006 amendment (Semih, 2026-09-04) — a sent-but-
+        // unserved item (KitchenState ∈ {Sent, Preparing, Ready}) may now be
+        // voided under the bills.void grant. Only reachable at all once
+        // kitchen.live_sync_enabled is on (V1-SET-002) and V1-KIT-005 is
+        // mirroring real kitchen state onto the order item — otherwise
+        // KitchenState never leaves NotSent and ItemNotYetSentException
+        // below always fires, same as today.
+        group.MapPost("/{orderId:guid}/items/{itemId:guid}/void-sent", async (
+            Guid terminalId,
+            Guid orderId,
+            Guid itemId,
+            VoidSentItemRequestV1 request,
+            SentItemVoidStore store,
+            IRoleRepository roles,
+            IAuthorizationGrantService grants,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+
+            if (!VoidReasonCatalog.IsValid(request.ReasonCode))
+                throw new InvalidItemReasonException(
+                    $"Reason '{request.ReasonCode}' is not a valid void catalog reason.");
+
+            var permissions = await roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
+            if (!permissions.Contains(ApplicationPermissions.BillsVoid, StringComparer.Ordinal))
+            {
+                var roleIds = await roles.GetRoleIdsForUserAsync(userId, cancellationToken);
+                var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+                if (role is null)
+                    throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsVoid, "Requester has no assigned role.");
+
+                var resolution = await grants.RequestAsync(
+                    new GrantRequest(
+                        request.IdempotencyKey,
+                        ApplicationPermissions.BillsVoid,
+                        userId,
+                        role.Code,
+                        request.ReasonCode,
+                        0m,
+                        SubjectType: "OrderItem",
+                        SubjectId: itemId,
+                        SubjectServingUserId: null),
+                    cancellationToken);
+
+                switch (resolution.Outcome)
+                {
+                    case GrantOutcome.Refused:
+                        return Results.Json(
+                            new { error = new { code = "GRANT_DENIED", message = "Void request was denied." } },
+                            statusCode: StatusCodes.Status403Forbidden);
+                    case GrantOutcome.Pending:
+                        return Results.Accepted(value: new VoidSentItemResultV1(
+                            "Pending", orderId, itemId, null, null, null, null, null, resolution.Grant.GrantId));
+                    case GrantOutcome.Authorized:
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Unhandled grant outcome '{resolution.Outcome}'.");
+                }
+            }
+
+            try
+            {
+                var command = new SentItemVoidCommand(
+                    orderId,
+                    itemId,
+                    request.ExpectedRowVersion,
+                    userId,
+                    request.ReasonCode,
+                    CorrelationId: context.TraceIdentifier,
+                    request.Notes);
+                var result = await store.VoidAsync(command, cancellationToken);
+                return Results.Ok(new VoidSentItemResultV1(
+                    "Applied",
+                    result.OrderId,
+                    result.OrderItemId,
+                    result.NewOrderRowVersion,
+                    result.NewOrderTotal,
+                    result.KitchenTicketItemCancelled,
+                    result.BillLineConvertedToWaste,
+                    result.AppliedAt,
+                    null));
+            }
+            catch (OrderItemNotFoundException)
+            {
+                return Results.NotFound(new { error = new { code = "ITEM_NOT_FOUND", message = "Order item not found." } });
+            }
+            catch (ItemNotYetSentException ex)
+            {
+                return Results.Conflict(new { error = new { code = "NOT_YET_SENT", message = ex.Message } });
+            }
+            catch (ItemAlreadyServedException ex)
+            {
+                return Results.Conflict(new { error = new { code = "ALREADY_SERVED", message = ex.Message } });
+            }
+            catch (BillNotModifiableForWasteException ex)
+            {
+                return Results.Conflict(new { error = new { code = "BILL_NOT_MODIFIABLE", message = ex.Message } });
+            }
+            catch (StaleOrderRowVersionException ex)
+            {
+                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
+            }
+        });
+
         return group;
     }
 
@@ -421,6 +543,9 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         KeyNotFoundException or OrderItemNotFoundException => (404, "NOT_FOUND", "İstenen kayıt bulunamadı."),
         InvalidItemReasonException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         LateVoidRejectedException => (409, "ALREADY_SENT", "Ürün zaten mutfağa gönderilmiş."),
+        ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
+        ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
+        BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
         StaleOrderRowVersionException or InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         ArgumentException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),

@@ -2027,7 +2027,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md` | ✅ | `50882B688CC81FA3F1DE82E8F888CCD3D098261E5B83A876433D4BD895E34B40` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md` | ✅ | `C154D86D0538B766601226408E5736890DDAAE7BEA80FA2210BFFE68DB8CD757` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-026-grant-class-bill-adjustment-surface.md` | ✅ | `0B74BB50B6AE28CCB773A642632397659B7B5CA5FD4B1D3C34A1A0F079E574D1` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-027-sent-unserved-void-with-waste.md` | ✅ | `502047E0D3C91A99AF3968FF9F87A9C9BA969B0100985E977D93589D5471BEC2` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-027-sent-unserved-void-with-waste.md` | ✅ | `F84876DD40F7C4847F2C3B83671FA6B857858F9B31DF8671BD420ACD49F37442` | Tek-sahip görev |
 | `plan/v1/kitchen-printing/V1-KIT-005-kitchen-order-item-state-sync.md` | ✅ | `9C46F419940603009F78FE737A198C26C52EECA8783ABCC25066B15FD6E2FCB1` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md` | ✅ | `C9A89A381179643B2DA7D2E4B3EB9CF62DC45B0A82CA5B3B0E488ED1CE1E1BBB` | Tek-sahip görev |

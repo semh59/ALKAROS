@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSTest>true</ALKAROSTest>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>ALKAROS.Host.Experience.Orders.VoidSent.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../../../src/Host/ALKAROS.Host.csproj" />
+    <ProjectReference Include="../../../../BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../../../../database/migrations/V1/V1-IAM-001/005-users.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-002/008-identity-authorization.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-003/009-identity-device-sessions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-CAT-001/006-catalog.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-OPS-001/015-audit-log.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-TBL-001/010-tables.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-ORD-001/011-orders.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-KIT-001/014-kitchen-tickets.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-BIL-001/019-billing.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-RMD-097/042-authorization-role-catalog.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-017/043-authorization-permission-split.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-018/044-authorization-policies.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-019/045-authorization-grants.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-021/046-authorization-delegations.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-023/048-behavioural-tightening.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-025/051-delegation-revoke-actor.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-IAM-025/052-authorization-grants-rate-index.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

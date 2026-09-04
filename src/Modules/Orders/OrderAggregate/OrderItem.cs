@@ -139,17 +139,20 @@ public sealed class OrderItem
     }
 
     /// <summary>
-    /// Cancels the item (V0-DOM-006 void policy): only a not-yet-prepared
-    /// (kitchen_state NotSent) Active item can be voided. Full Manager-role
-    /// and reason-catalog enforcement is owned by V1-ORD-003.
+    /// Cancels the item (V0-DOM-006 void policy, amended 2026-09-04): a
+    /// not-yet-prepared (kitchen_state NotSent) Active item voids for free
+    /// (V1-ORD-003/V1-ORD-005). A Sent/Preparing/Ready item may also be
+    /// voided once sent to the kitchen (V1-IAM-027) — that path is gated by
+    /// the bills.void grant one layer up, not by this method. Served is
+    /// still refused here: that is comp/refund territory, never void.
     /// </summary>
     public OrderItem Cancel()
     {
         if (Status is not OrderItemState.Active)
             throw new InvalidOperationException($"Order item {Id} cannot be cancelled from {Status}.");
-        if (KitchenState is not KitchenState.NotSent)
+        if (KitchenState is KitchenState.Served or KitchenState.Cancelled)
             throw new InvalidOperationException(
-                $"Order item {Id} cannot be voided after preparation ({KitchenState}).");
+                $"Order item {Id} cannot be voided once it reached kitchen state {KitchenState}.");
 
         return Mutate(status: OrderItemState.Cancelled, kitchenState: KitchenState.Cancelled);
     }
