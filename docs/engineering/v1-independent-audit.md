@@ -266,7 +266,61 @@ Fold into the Phase 0 `V1-GOV-071` cluster alongside the authz-wave work.
 9. **B5 [LOW]** — `SplitEngine.CreateItemSplit`: give the last target of a
    partially-allocated item the rounding remainder.
 
-## Rounds 4+ — not yet covered (the map)
+## Round 4 — Experience-layer atomicity — verified clean
+
+Every multi-table write goes through a transactional module repository:
+
+- `PostgresTableFloorPlanRepository.SaveAsync` — `Serializable` transaction over
+  floor plan + layouts + seats (delete-then-insert), with a version check.
+- `PostgresSplitDesignRepository.ReplaceOperationalSplitDesignAsync` —
+  transaction with `LockBillAsync` (row lock), quantity + seat-owner validation,
+  delete + insert allocations, commit.
+- `PostgresTableTransferRepository.ExecuteTransferAsync` — see Round 3.
+
+Single-row Experience writes (`KitchenOperationsStore` transitions,
+`ZoneConcurrencyStore` zone CRUD, `CatalogManagementStore` creates) are one
+statement each and carry optimistic concurrency (`row_version` /
+`ExpectedRowVersion`). The only non-atomic Experience write is
+`BillingSplitStore.CreateBillFromOrder` (bill insert then a separate
+`table_mgmt.tables` pointer update) — that is H1 plus a documented
+soft-cache-with-drift-repair design.
+
+## Round 5 — migrations 001-042 — mostly clean
+
+- 47 / 47 migrations have a `.down.sql`; the full chain applies forward and
+  reverses to empty.
+- All financial tables (`billing.bills`, `bill_items`, `bill_allocations`,
+  `bill_adjustments`) carry `row_version`; `audit.audit_events` has
+  `BEFORE UPDATE OR DELETE` immutability triggers; `orders.*`, `kitchen_tickets`,
+  `settings`, `reconciliation.*`, `table_mgmt.*` carry `row_version`.
+- **B6 [LOW]** `catalog.products` and `catalog.product_prices` (migrations 006,
+  007) have no `row_version` — concurrent manager edits to the same product or
+  price are silently last-write-wins with no conflict detection. Optimistic
+  concurrency on the catalog config tables would match the rest of the schema.
+- Config tables (`identity.permissions` / `roles` / `role_permissions`,
+  `printer_routes`, projection tables in `reporting.*`) without `row_version`
+  are acceptable — low concurrency, rebuildable, or intentionally last-write.
+
+## Audit status
+
+Rounds 1-5 complete: baseline, money / Billing / Cash / Orders, the
+unwired-interface sweep, Kitchen lifecycle, Tables transfer, messaging,
+vanilla-client XSS, Experience atomicity, migrations. Findings: H1-H4 (Round 1),
+B1-B6 (Rounds 2-5) — two HIGH (B1 adjustments unwired, B4 duplicate submit
+route), one MED-HIGH (B3 Orders permission gap), the rest MED / LOW. Everything
+else spot-checked across all 13 modules, the Host, the three clients and the
+migration set is sound — consistent with a surface already through ~25 audit
+cycles.
+
+Not yet done (would be Rounds 6+, lower expected yield): line-by-line review of
+each module's remaining domain code (Observability, Alerts, Operations,
+Reconciliation, Reporting, Settings internals), the PosTerminal React
+route / effect graph in full, every Experience endpoint's exception-path
+completeness, the `deploy/docker/**` TLS / proxy split, KVKK retention +
+housekeeping internals, and a formal per-endpoint threat model. These are
+follow-on passes; the high-risk classes are covered above.
+
+## Rounds 6+ — not yet covered (the map)
 
 Each is its own focused pass; suggested order by risk.
 
