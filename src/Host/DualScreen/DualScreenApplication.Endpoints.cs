@@ -5,6 +5,7 @@ using System.Threading.RateLimiting;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
@@ -49,6 +50,7 @@ public static partial class DualScreenApplication
             IDeviceSessionService sessions,
             DualScreenStore store,
             IRoleRepository roles,
+            IOfflineAuthorityBudgetService offlineBudgets,
             CancellationToken cancellationToken) =>
         {
             if (request.TerminalId == Guid.Empty
@@ -82,12 +84,41 @@ public static partial class DualScreenApplication
                 context.Response.Cookies.Delete(CatalogManagementEndpoints.ManagerCookieName);
             }
 
+            // V1-IAM-025 (C2): the device leaves the login exchange with its
+            // bounded offline authority budget already in hand — no separate
+            // round trip is needed before it can go offline (model §5). A
+            // user with no floor role (should not happen in practice) simply
+            // gets no offline budget; that is not a login failure.
+            object? offlineBudget = null;
+            var roleIds = await roles.GetRoleIdsForUserAsync(success.UserId, cancellationToken);
+            if (roleIds.Count > 0)
+            {
+                var role = await roles.GetByIdAsync(roleIds[0], cancellationToken);
+                if (role is not null)
+                {
+                    var budget = await offlineBudgets.IssueAsync(
+                        success.UserId, role.Code, session.SessionId, cancellationToken: cancellationToken);
+                    offlineBudget = new
+                    {
+                        budgetId = budget.BudgetId,
+                        expiresAt = budget.ExpiresAt,
+                        lines = budget.Lines.Select(line => new
+                        {
+                            permissionCode = line.PermissionCode,
+                            limitAmount = line.LimitAmount,
+                            maxCount = line.MaxCount,
+                        }),
+                    };
+                }
+            }
+
             return Results.Ok(new
             {
                 userId = success.UserId,
                 displayName = success.DisplayName,
                 terminalId = request.TerminalId,
                 capabilities,
+                offlineBudget,
             });
         }).RequireRateLimiting("login");
 
