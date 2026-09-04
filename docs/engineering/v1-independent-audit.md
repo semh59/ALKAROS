@@ -104,7 +104,116 @@ dead-letter path and nothing surfaced to the waiter beyond a generic error.
 Fix: `serverDispatcher` returns retryable-vs-permanent; permanent failures move
 to a dead-letter list the waiter can see and clear.
 
-## Rounds 2+ — not yet covered (the map)
+## Round 2 — money / Billing / Cash / Orders
+
+### B1 [HIGH] V1-BIL-003 bill adjustments are fully unwired
+
+`src/Modules/Billing/Adjustments/` ships the full domain — `AdjustmentCalculator`,
+`BillAdjustment`, `IBillAdjustmentRepository`, `PostgresBillAdjustmentRepository`,
+`AdjustmentEnums` — plus migration 021 `billing.bill_adjustments` and a passing
+`Billing.Adjustments.Tests` (14/14). None of it is connected:
+
+- `IBillAdjustmentRepository` / `PostgresBillAdjustmentRepository` are **not
+  DI-registered** — `BillingModule.Register` wires only `IBillRepository`,
+  `ISplitDesignRepository` and `TableEventBillConsumer`.
+- `AdjustmentCalculator.Calculate` has **zero callers** anywhere in `src/`.
+- **No Host endpoint** references adjustments — there is no way to create a
+  discount / fee / tip on a bill.
+- Migration 021 installs **no recalculation trigger**; no read path
+  (`SplitEngine`, bill GET, any settlement flow) incorporates adjustments.
+
+Net effect: a discount cannot be entered, and if a `bill_adjustments` row
+existed it would have zero effect on `bills.payable_amount`, on any split, or
+on what the customer pays. A core POS feature shipped as dead scaffolding while
+`GATE-V1-EXIT` is closed. Same class as the authz wave's C1-C5, but financial.
+
+### B2 [MED] V1-CSH-001 cash sessions are design-only
+
+`CashModule.Register` wires only `ICashSessionPolicy -> CashSessionPolicy` (a
+pure policy). There is no `ICashSessionRepository`, no aggregate, no
+persistence, no `cash_session` migration, and no Host endpoint. `cash.drawer`
+(authz vocabulary) has no endpoint either. The task is titled
+"cash-session-**design**", so this may be a deliberate scope cut — but
+`CashSessionExceptions` (`VarianceExceedsToleranceException`,
+`TerminalAlreadyHasActiveSessionException`, ...) describe a runtime that does
+not exist. Cash drawer / X-Z reporting / till reconciliation are non-functional
+in V1.
+
+### B3 [MED-HIGH] OrderManagement endpoints have no permission check
+
+`src/Host/Experience/Orders/OrderManagementEndpoints.cs` — `POST /table-draft`,
+`GET /table/{tableId}`, `GET /{orderId}`, `POST /{orderId}/submit` are gated by
+`RequireCashierSessionAsync` (a valid cashier **session** only). There is no
+`pos.cashier.mutate` / `orders.*` permission check, unlike the sibling
+DualScreen order endpoints which use `RequireCashierPermissionAsync`. A second
+order-creation and order-submit path that bypasses the permission model — the
+class V1-GOV-028 flagged; the V1-GOV-033 fix added session auth but not a
+permission gate.
+
+### B4 [HIGH, confirm at runtime] Duplicate `orders/{id}/submit` route
+
+`POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit` is
+registered twice in the production composition: `DualScreenApplication.Endpoints.cs`
+line ~285 (`MapApi`) and `OrderManagementEndpoints.MapOrderManagementApi`
+(group prefix `+ "/{orderId:guid}/submit"`). Both are mapped in
+`DualScreenApplication.cs` (`MapApi(app)` then `app.MapOrderManagementApi()`).
+The templates are byte-identical with equal precedence, so ASP.NET Core routing
+raises `AmbiguousMatchException` (HTTP 500) on any request to that path. No test
+exercises `/{orderId}/submit` through routing (`OrderManagementExperienceTests`
+calls the store method directly; `ProductionExperienceCompositionTests`
+de-dupes route patterns into a `HashSet`). Confirm with a live
+`POST .../orders/<guid>/submit`; the two handlers also take different request
+bodies (`SubmitOrderRequest` vs `SubmitTableOrderRequest`).
+
+### B5 [LOW] `SplitEngine.CreateItemSplit` — partial groups do not remainder-balance
+
+When an item group is not fully allocated (`totalAllocatedQty < billItem.Quantity`),
+the last target for that item uses `fraction = Quantity / billItem.Quantity`
+like the others instead of taking the rounding remainder. Per-target
+`RoundCurrency` can then leave the allocated portion up to ~1 kuruş per target
+short of the exact proportional value. The bill's own total is unaffected
+(item splits are not required to sum to `PayableAmount`); this is a design-time
+drift on partial item splits only.
+
+### Round 2 — verified clean
+
+- `BillMath.RoundCurrency` = `Math.Round(v, 2, MidpointRounding.AwayFromZero)`;
+  `RoundQuantity` = 3 dp away-from-zero. Consistent throughout `SplitEngine` /
+  `AdjustmentCalculator`.
+- `CreateEqualSplit` / `CreateAmountSplit` / `CreateCustomSplit` are lossless —
+  base amounts floored to kuruş, the remainder assigned to the last allocation,
+  tax distributed by floor with the residual to the last; each enforces
+  `sum == Bill.PayableAmount` (Amount / Custom) exactly.
+- `AdjustmentCalculator` guards `discountGross <= basePayable + feeGross` and
+  clamps adjusted tax at 0, so an adjusted payable can never go negative — the
+  math is sound; it is only unreachable (B1).
+- `decimal` used end to end for money and quantity; no `double` / `float` in the
+  Billing money paths.
+
+## Round 3 (partial) — wiring sweep + Kitchen
+
+### Unwired-interface sweep across all 13 modules
+
+Checked every `I*Repository` / `I*Service` / `I*Store` / `I*Projector` defined
+in each module against its `*Module.Register` body and the Host Experience
+`AddXxx` extensions. **The only genuinely unwired interface is
+`IBillAdjustmentRepository`** (B1). Tables (`ITableTransfer*`, `ITableMerge*`,
+`ITableReservation*`, `ITablePointerProjector`) are registered in
+`AddTableManagementExperience`; `IOrderSubmissionDispatcher` is registered via a
+factory in `DualScreenApplication`. Wiring discipline across the other 12
+modules is sound.
+
+### Kitchen ticket lifecycle — verified
+
+`KitchenTicket` has explicit transition validation, `CanBeMarkedReady()`
+(all non-cancelled items `Ready` / `Served`, and "all cancelled" cannot be
+`Ready`), idempotent `ReadyAt` stamping (`ReadyAt ?? at`), and the auto-`Ready`
+promotion (`Preparing` / `Accepted` + every non-cancelled item `Ready` /
+`Served` -> ticket `Ready`) — the V1-GOV-034 fix is in place. `TicketLifecycle`
+(18), `Routing` (23), `PrintQueue` (18), `PhysicalPrintRecovery` (17) tests all
+green.
+
+## Rounds 3 (rest) and 4+ — not yet covered (the map)
 
 Each is its own focused pass; suggested order by risk.
 
