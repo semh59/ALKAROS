@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 876,
-  "markdown_line_count": 56865,
-  "markdown_byte_count": 3382480,
+  "markdown_file_count": 877,
+  "markdown_line_count": 57024,
+  "markdown_byte_count": 3392669,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,9 +2220,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6897BA22FCF4DCA09DAE52D5BB72177B3C9C6A14B0757AC5A5524CE1553ACA6D",
-      "lines": 2152,
-      "bytes": 303879,
+      "sha256": "60175DCD39156D94EE0AEA77A07A1FD47F880CDE98A48DFF9845EA575AFA62AE",
+      "lines": 2153,
+      "bytes": 304060,
       "utf8": true
     },
     {
@@ -2241,9 +2241,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "8D200591A96AC6EB10478F2D9C65DA2AA6003C0E3C6F1BBC66EE183C0A49C3A7",
+      "sha256": "55B0936C3BA9B2F50B6B0CEAE29EF7B7768BFB392BD07BA938C6A4D8BF212B14",
       "lines": 394,
-      "bytes": 84530,
+      "bytes": 84921,
       "utf8": true
     },
     {
@@ -4005,9 +4005,9 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-072-wave25-master-audit-reseal-and-gate-closure.md",
-      "sha256": "384EA4D2C48FEA25F70537EF20E4B93CBF9B2D3D56643FE6957198C1AB12C5E2",
-      "lines": 62,
-      "bytes": 1769,
+      "sha256": "F43EE1318D81F646E351D9A892AAD57B56659DC34260B8315037B4D7715A7E5F",
+      "lines": 103,
+      "bytes": 4587,
       "utf8": true
     },
     {
@@ -4180,9 +4180,16 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md",
-      "sha256": "604A5181CB3DDF6702647A0CA9C874D6B5743E368013D56E32EDD5C29F2E228A",
-      "lines": 141,
-      "bytes": 7479,
+      "sha256": "DEC8E8D15D05052B93D0908C9AE26D35EEDBF3C8D81F59872F4D9269DF4302C8",
+      "lines": 168,
+      "bytes": 9540,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-026-grant-class-bill-adjustment-surface.md",
+      "sha256": "B5EFF23A04AA42D1235DD3F45D416C56D18E11B3350797B89423CEC176C67963",
+      "lines": 85,
+      "bytes": 4193,
       "utf8": true
     },
     {
@@ -4264,9 +4271,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "F9250FC9FDE999F07F36CB8D3BE21A7DB3CCF15C7A5F8F156A13DD36436D746C",
-      "lines": 71,
-      "bytes": 6135,
+      "sha256": "6A7175DF58C5BF57AE6F6E5FB4B5C082B39CA6CFFBA17513EDCDC768FCA7EA7F",
+      "lines": 76,
+      "bytes": 6680,
       "utf8": true
     },
     {
