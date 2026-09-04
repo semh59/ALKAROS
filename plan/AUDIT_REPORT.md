@@ -1901,7 +1901,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.4/qr-transport/V14-QRT-001-public-relay-transport.md` | ✅ | `C19D8FB09D016224C9C109F932C1B30C9713AF95B9B5B866D07896583896683D` | Tek-sahip görev |
 | `plan/v1.5/runbooks/V15-RUN-002-independent-runbook-execution.md` | ✅ | `395D4943279B9425D31A4FD811B61C6B6A93E35A43CF04FA4824C3F02B67E602` | Tek-sahip görev |
 | `plan/v1/billing/V1-BIL-004-billing-composite-integrity.md` | ✅ | `1237F1067119405718B2C0F90ED8EB37E4727B028D43C527DD79D0E51A63E15F` | Tek-sahip görev |
-| `plan/v1/billing/V1-BIL-005-post-serve-comp-endpoint.md` | ✅ | `9E4EE3E22CC32D574FAEE04908F7628C9FE88D933AD13EE347C3E272077DCFFC` | Tek-sahip görev |
+| `plan/v1/billing/V1-BIL-005-post-serve-comp-endpoint.md` | ✅ | `BD7047E884A9096750989ECA80D2C0DC488D7A3E74107B89B0D8701BB48EF13F` | Tek-sahip görev |
 | `plan/v1/cashier-ui/V1-CUI-004-cashier-quick-pos-frontend.md` | ✅ | `F1954A69FDBF39FD303FD3B25FED841D65C5B0B1E7D953292CC275154E436700` | Tek-sahip görev |
 | `plan/v1/cashier-ui/V1-CUI-005-remove-fake-cashier-payment-and-align-v1.md` | ✅ | `254A25E099F4C62213CB43B5D8DF3C39B849D741939D03190AFB6115A483FC3A` | Tek-sahip görev |
 | `plan/v1/catalog/V1-CAT-003-nonnegative-current-price.md` | ✅ | `6493F916CF8B1A4FB0BDD2E2476DACF386745807F252D0D688CCE75A4A65122A` | Tek-sahip görev |

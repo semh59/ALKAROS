@@ -1,6 +1,10 @@
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Identity.Authorization.Delegations;
+using ALKAROS.Identity.Authorization.Grants;
+using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +40,19 @@ public static class OrderManagementEndpoints
         // V1-ORD-005: wires the existing (previously unreachable)
         // ItemExceptionHandler.VoidItemAsync to the pre-send void endpoint.
         services.TryAddSingleton<ItemExceptionHandler>();
+        // V1-BIL-005: the grant-request flow (V1-IAM-019/020/021/023) worked
+        // end to end but had zero HTTP callers — IAuthorizationGrantService
+        // .RequestAsync was dead code. The comp endpoint is the first real
+        // caller; DelegationEscalationResolver and BehaviouralTighteningGate
+        // are registered so they actually run on this path, not stubbed out.
+        services.TryAddSingleton<IAuthorizationGrantRepository, PostgresAuthorizationGrantRepository>();
+        services.TryAddSingleton<IAuthorizationPolicyRepository, PostgresAuthorizationPolicyRepository>();
+        services.TryAddSingleton<IAuthorizationDelegationRepository, PostgresAuthorizationDelegationRepository>();
+        services.TryAddSingleton<IEscalationResolver, DelegationEscalationResolver>();
+        services.TryAddSingleton<IBehaviouralRateSource, PostgresBehaviouralRateSource>();
+        services.TryAddSingleton<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
+        services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
+        services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
         // V1-ORD-005: every endpoint in this group calls RequireCashierSessionAsync
         // (or the permission variant), which throws DualScreenUnauthorizedException
         // on a missing/invalid session — with no filter that unwound as a bare 500,
@@ -199,6 +216,116 @@ public static class OrderManagementEndpoints
                 // Order not found, or the item is no longer Active (already
                 // voided/comped) — both are "the world moved on", not a bad
                 // request.
+                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
+            }
+        });
+
+        // V1-BIL-005: ItemExceptionHandler.ApplyComplimentaryAsync already
+        // existed (V1-ORD-003) and works regardless of KitchenState — nothing
+        // called it. bills.comp is grant-class (model §3): a role that holds
+        // it outright (cashier/supervisor/manager, per ApplicationPermissions
+        // .RoleGrants) applies directly; a role that does not (waiter) raises
+        // an IAuthorizationGrantService request — the policy engine, an active
+        // delegation (DelegationEscalationResolver) or a manager decides.
+        // Own-check (a waiter may only comp a check they serve) is the model's
+        // rule, but no waiter/order serving-assignment exists anywhere in the
+        // domain yet (same gap V1-WTR-009 documented) — SubjectServingUserId
+        // is passed null, so the guard never actually restricts by server
+        // until that assignment model exists (tracked as future work, not a
+        // silent omission).
+        group.MapPost("/{orderId:guid}/items/{itemId:guid}/comp", async (
+            Guid terminalId,
+            Guid orderId,
+            Guid itemId,
+            ApplyComplimentaryRequestV1 request,
+            ItemExceptionHandler itemExceptions,
+            IOrderRepository orders,
+            IRoleRepository roles,
+            IAuthorizationGrantService grants,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+
+            if (!ComplimentaryReasonCatalog.IsValid(request.ReasonCode))
+                throw new InvalidItemReasonException(
+                    $"Reason '{request.ReasonCode}' is not a valid complimentary catalog reason.");
+
+            var permissions = await roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
+            if (!permissions.Contains(ApplicationPermissions.BillsComp, StringComparer.Ordinal))
+            {
+                var roleIds = await roles.GetRoleIdsForUserAsync(userId, cancellationToken);
+                var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+                if (role is null)
+                    throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsComp, "Requester has no assigned role.");
+
+                var order = await orders.GetByIdAsync(orderId, cancellationToken)
+                    ?? throw new OrderItemNotFoundException(orderId, itemId);
+                var item = order.Items.FirstOrDefault(i => i.Id == itemId)
+                    ?? throw new OrderItemNotFoundException(orderId, itemId);
+
+                var resolution = await grants.RequestAsync(
+                    new GrantRequest(
+                        request.IdempotencyKey,
+                        ApplicationPermissions.BillsComp,
+                        userId,
+                        role.Code,
+                        request.ReasonCode,
+                        item.GrossAmount,
+                        SubjectType: "OrderItem",
+                        SubjectId: itemId,
+                        SubjectServingUserId: null),
+                    cancellationToken);
+
+                switch (resolution.Outcome)
+                {
+                    case GrantOutcome.Refused:
+                        return Results.Json(
+                            new { error = new { code = "GRANT_DENIED", message = "Complimentary request was denied." } },
+                            statusCode: StatusCodes.Status403Forbidden);
+                    case GrantOutcome.Pending:
+                        return Results.Accepted(value: new ApplyComplimentaryResultV1(
+                            "Pending", orderId, itemId, null, null, null, null, resolution.Grant.GrantId));
+                    case GrantOutcome.Authorized:
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Unhandled grant outcome '{resolution.Outcome}'.");
+                }
+            }
+
+            try
+            {
+                var command = new ApplyComplimentaryCommand(
+                    orderId,
+                    itemId,
+                    request.ExpectedRowVersion,
+                    userId,
+                    IsManagerAuthorized: true,
+                    request.ReasonCode,
+                    CorrelationId: context.TraceIdentifier,
+                    request.Notes);
+                var result = await itemExceptions.ApplyComplimentaryAsync(command, cancellationToken);
+                return Results.Ok(new ApplyComplimentaryResultV1(
+                    "Applied",
+                    result.OrderId,
+                    result.OrderItemId,
+                    result.NewItemStatus.ToString(),
+                    result.NewOrderRowVersion,
+                    result.NewOrderTotal,
+                    result.AppliedAt,
+                    null));
+            }
+            catch (OrderItemNotFoundException)
+            {
+                return Results.NotFound(new { error = new { code = "ITEM_NOT_FOUND", message = "Order item not found." } });
+            }
+            catch (StaleOrderRowVersionException ex)
+            {
+                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
+            }
+            catch (InvalidOperationException ex)
+            {
                 return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
             }
         });

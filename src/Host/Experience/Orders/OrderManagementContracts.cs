@@ -36,6 +36,34 @@ public sealed record VoidOrderItemResultV1(
     decimal NewOrderTotal,
     DateTimeOffset AppliedAt);
 
+/// <summary>
+/// V1-BIL-005: request body for the comp endpoint. IdempotencyKey identifies
+/// one command instance across a pending-grant retry — the same key must be
+/// reused after a manager approves, so the second call resolves to the same
+/// grant row instead of raising a duplicate request.
+/// </summary>
+public sealed record ApplyComplimentaryRequestV1(
+    string IdempotencyKey,
+    long ExpectedRowVersion,
+    string ReasonCode,
+    string? Notes = null);
+
+/// <summary>
+/// V1-BIL-005: response for the comp endpoint. "Applied" carries the usual
+/// result fields; "Pending" carries only GrantId — the caller polls the
+/// authorization-decisions surface (V1-IAM-020) or retries this same request
+/// (same IdempotencyKey) once a manager resolves it.
+/// </summary>
+public sealed record ApplyComplimentaryResultV1(
+    string Status,
+    Guid OrderId,
+    Guid OrderItemId,
+    string? NewItemStatus,
+    long? NewOrderRowVersion,
+    decimal? NewOrderTotal,
+    DateTimeOffset? AppliedAt,
+    Guid? GrantId);
+
 public sealed record OrderDto(
     Guid OrderId,
     Guid TableId,
