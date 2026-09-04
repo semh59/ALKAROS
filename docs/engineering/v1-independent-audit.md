@@ -236,48 +236,47 @@ green.
 
 ## Consolidated remediation order (all rounds)
 
-Fold into the Phase 0 `V1-GOV-071` cluster alongside the authz-wave work. The
-integration-completeness items (B1, B7) are decisions before they are code:
-each module is either wired in this remediation wave or explicitly re-scoped to
-a later milestone with the closed gate acknowledged.
+Fold into the Phase 0 `V1-GOV-071` cluster alongside the authz-wave work.
+B7 and B2 are **not** on this list — they are V1.5 / V1.2 scope (recorded); the
+only decision they carry is a labelling note for the `V1-GOV-072` reseal (V1 =
+operational core, not a feature-complete POS).
 
 1. **B4 [HIGH]** — confirm the duplicate `orders/{id}/submit` route with a live
    `POST`, then remove one registration. Decide the single owner of the order
    HTTP surface (DualScreen vs `OrderManagementEndpoints`) and delete the other
    path; do not leave two front doors.
-2. **B3 [MED-HIGH]** — add a permission check to every `OrderManagementEndpoints`
-   mutating route (currently session-only), or retire the module in favour of
-   the DualScreen order endpoints per (1).
-3. **B7 [HIGH] — decision + wiring per module.** For each of Reporting,
-   Settings, Reconciliation, Alerts and the Observability health-check module:
-   either (a) add the Host endpoint(s) plus the producer / projector that makes
-   it functional (Reporting also needs a populate path for `reporting.*`), or
-   (b) re-scope to a named later task and record that `GATE-V1-EXIT` shipped it
-   inert. At minimum wire the health-check module so `/health/ready` and any
-   ops dashboard read real data.
-4. **B1 [HIGH]** — same decision for bill adjustments: DI-register
-   `IBillAdjustmentRepository`, add a create-adjustment endpoint, apply
-   `AdjustmentCalculator.Calculate` on read and persist / settle the adjusted
-   totals — or re-scope discounts out of V1 explicitly.
-5. **H1 [MED]** — narrow `BillingSplitStore.CreateBillFromOrder`'s
+2. **B1 [MED-HIGH]** — resolve the bill-adjustments scope: `V1-BIL-003` says
+   "persist" and has no V1.5 handoff, so either DI-register
+   `IBillAdjustmentRepository`, add a create-adjustment endpoint and apply
+   `AdjustmentCalculator.Calculate` to the bill / settlement, or add an explicit
+   V1.5 handoff and note the deferral like the other foundations.
+3. **B3 [MED]** — decide whether `OrderManagementEndpoints` mutating routes need
+   a permission gate on top of the session check (they are session-only today),
+   and remove the module in favour of the DualScreen order endpoints if (1)
+   makes it redundant.
+4. **H1 [MED]** — narrow `BillingSplitStore.CreateBillFromOrder`'s
    `catch (Exception)` to the unique-violation only, mirroring the sibling
    `catch`.
-6. **H4 [MED]** — `WaiterOfflineQueueEngine`: make `serverDispatcher` return
+5. **H4 [MED]** — `WaiterOfflineQueueEngine`: make `serverDispatcher` return
    retryable-vs-permanent; permanent (4xx) failures move to a visible
    dead-letter list instead of blocking the queue forever.
-7. **B2 [MED]** — decide scope for cash sessions (implement or confirm
-   design-only and remove the `cash.drawer` permission until then).
-8. **H2 [LOW-MED]** — `AuditSanitizer`: run the value-level regex over string
+6. **H2 [LOW-MED]** — `AuditSanitizer`: run the value-level regex over string
    leaves on the well-formed-JSON path, not only the malformed fallback.
-9. **H3 [LOW]** — `AuditSanitizer.IsSensitiveKey`: token-boundary match instead
+7. **H3 [LOW]** — `AuditSanitizer.IsSensitiveKey`: token-boundary match instead
    of raw `Contains` (stop redacting `shipping`, `company`, ...).
-10. **B5 [LOW]** — `SplitEngine.CreateItemSplit`: give the last target of a
-    partially-allocated item the rounding remainder.
-11. **B6 [LOW]** — add `row_version` to `catalog.products` /
-    `catalog.product_prices` and optimistic-concurrency checks in the catalog
-    repositories.
-12. **KVKK [process]** — schedule `kvkk-retention --apply` and `housekeeping`
+8. **B5 [LOW]** — `SplitEngine.CreateItemSplit`: give the last target of a
+   partially-allocated item the rounding remainder.
+9. **B6 [LOW]** — add `row_version` to `catalog.products` /
+   `catalog.product_prices` and optimistic-concurrency checks in the catalog
+   repositories.
+10. **KVKK [process]** — schedule `kvkk-retention --apply` and `housekeeping`
     (cron / systemd timer / operator runbook); they exist but are manual.
+
+Not on this list (recorded scope, no code owed in the V1 remediation wave):
+**B7** — the five foundation modules pick up in V1.5 (`V15-RPT-001`,
+`V15-OBS-002`, `V15-REC-001/002`, `V15-NOT-001`). **B2** — cash is `V1-CSH-001`
+"design for V1.2, without payment"; leave `cash.drawer` in the vocabulary or
+remove it in V1-IAM-024 — a one-line call, not a remediation task.
 
 ## Round 4 — Experience-layer atomicity — verified clean
 
@@ -335,7 +334,42 @@ follow-on passes; the high-risk classes are covered above.
 
 ## Round 6 — module reachability, KVKK, deploy
 
-### B7 [HIGH] Five V1 modules are domain-complete but fully inert
+### CORRECTION — B7 and B2 cross-referenced against the V1 -> V1.5 roadmap
+
+The initial B7 / B2 write-up below was drafted before cross-referencing the
+plan's own roadmap. That cross-reference materially changes them:
+
+- Every module in B7 is a task literally named **`*-foundation`**
+  (`V1-ALT-001` "Alert **foundation**", `V1-OBS-001` "observability ...
+  **foundation**", `V1-OPS-001` "audit **foundation**", `V1-REC-001`
+  "ReconciliationCase **foundation**", `V1-RPT-001` "operational-report
+  **foundation**", `V1-SET-001` "typed-settings"). Their `Handoff` targets are
+  all **V1.5** tasks, and those pickup tasks exist:
+  `plan/v1.5/reporting/V15-RPT-001-consolidated-reporting.md`,
+  `plan/v1.5/observability/V15-OBS-002-health-and-alerts.md`,
+  `plan/v1.5/reconciliation/V15-REC-001-unified-reconciliation-read-model.md`
+  (+ `V15-REC-002`), `plan/v1.5/notifications/V15-NOT-001-notification-delivery.md`.
+- `GATE-V1-EXIT` was deliberately closed by `V1-GOV-051` (2026-09-01) on the
+  **operational core** (login -> menu -> table draft -> order submit -> active
+  poll -> kitchen -> bill -> split), with a load-test baseline as the final
+  gate. The reporting / settings / alerts / reconciliation **surfaces** were
+  scoped to V1.5 by design.
+- `V1-CSH-001` is titled "Finalize CashSession **design for V1.2**" and is
+  scoped "without enabling payment".
+
+So **B7 and B2 are not defects** — they are recorded scope boundaries: V1 ships
+the domain foundations, V1.5 ships the API / dashboards / notifications, V1.2
+enables cash + payment. The one legitimate residual is **B1** (bill adjustments)
+— its task `V1-BIL-003` says "calculate **and persist**", has **no V1.5 handoff**
+and no pickup task, yet nothing applies an adjustment to a bill or exposes it.
+That is a genuine scope ambiguity, not a clean deferral.
+
+The pre-existing deferral roadmap is itself recorded in
+`plan/REMAINING_WORK_PLAN.md` (a 2026-08-12 snapshot — now stale, most of its
+"Planned" list is Done or belongs to V1.5-V20) and in the per-task V1.5
+`Handoff` chain.
+
+### B7 (as first drafted — now reframed) Five V1 modules are foundation-only
 
 Each is registered in `ModuleRegistry.DefaultCatalog`, wires its repositories
 and services in `*Module.Register`, has passing unit tests and a migration that
@@ -362,11 +396,12 @@ consumer / projector / other module consumes it.
   `IObservabilityService` are unused; `/health/ready` calls
   `DualScreenStore.CheckReadyAsync` directly, not this module.
 
-Combined with B1 (bill adjustments) and B2 (cash sessions), roughly seven of the
-~190 V1 tasks shipped as unwired scaffolding. `GATE-V1-EXIT` is closed with all
-of them "Done", where "Done" means domain + repository + passing unit tests, not
-"reachable" or "integrated". The systemic issue is an acceptance criterion that
-did not require an integration / reachability check.
+**Reframed (see the correction above):** this is the intended V1 -> V1.5 split,
+not an accident. The residual observation worth carrying to the reseal: closing
+`GATE-V1-EXIT` on the operational core while calling the matrix "219 Done" can
+read as "V1 is a complete POS" when reporting, runtime settings, alerting and
+reconciliation have no surface until V1.5. That is a labelling / expectations
+point for `V1-GOV-072`, not a code defect.
 
 ### KVKK retention — implemented, manual
 
@@ -396,16 +431,37 @@ All six `src/features/*` directories are routed in `workspace.tsx`
 exists (consistent with the inert backend modules — nothing broken, just
 absent).
 
-## Audit status (updated)
+## Audit status (updated, after the roadmap cross-reference)
 
-Rounds 1-6 complete. Findings: H1-H4, B1-B7. **Two HIGH clusters** — B1 (bill
-adjustments unwired) and B7 (five inert modules: Reporting, Settings,
-Reconciliation, Alerts, Observability health-check) — plus B4 (duplicate submit
-route, HIGH) and B3 (OrderManagement permission gap, MED-HIGH). The rest are
-MED / LOW. Everything spot-checked across the money paths, Tables, Kitchen,
-messaging, Experience atomicity, migrations, vanilla-client XSS and the Docker
-deploy is sound. The dominant theme is **integration completeness**, not
-correctness: several modules are correct in isolation and never wired in.
+Rounds 1-6 complete. **Genuine defects:**
+
+- **B4 [HIGH, confirm at runtime]** — duplicate `orders/{id}/submit` route ->
+  `AmbiguousMatchException`. Not a scope decision; the V1-GOV-051 load test
+  exercised `GET catalog` / `GET orders/active` / `POST table-draft`, never
+  `/{orderId}/submit` through routing, so it would not have caught this.
+- **B1 [MED-HIGH]** — bill adjustments: `V1-BIL-003` says "calculate and
+  persist", has no V1.5 handoff, yet no path applies an adjustment to a bill
+  or exposes it. Scope-ambiguous rather than a clean deferral.
+- **B3 [MED]** — `OrderManagementEndpoints` mutating routes are session-only.
+  V1-GOV-033 added the session check deliberately; whether a permission gate is
+  also required is the open question. Downgraded from MED-HIGH.
+- **H1 [MED]** — `BillingSplitStore.CreateBillFromOrder` broad `catch (Exception)`.
+- **H4 [MED]** — `WaiterOfflineQueueEngine` permanent-failure queue block.
+- **H2 [LOW-MED] / H3 [LOW]** — `AuditSanitizer` value-embedded secrets /
+  over-redaction.
+- **B5 [LOW]** — partial item-split rounding drift.
+- **B6 [LOW]** — `catalog.products` / `product_prices` have no `row_version`.
+
+**Not defects — recorded scope boundaries:** B7 (Reporting / Settings /
+Reconciliation / Alerts / health-check are V1 foundations; surfaces are V1.5 —
+`V15-RPT-001`, `V15-OBS-002`, `V15-REC-001/002`, `V15-NOT-001`), B2 (cash is
+`V1-CSH-001` "design for V1.2, without payment"). Carry the "V1 core vs full
+POS" labelling point to `V1-GOV-072`.
+
+Everything spot-checked across the money paths, Tables, Kitchen, messaging,
+Experience atomicity, migrations, vanilla-client XSS and the Docker deploy is
+sound — consistent with a surface through ~25 audit cycles plus a load-test
+gate.
 
 ## Rounds 7+ — not yet covered (the map)
 
