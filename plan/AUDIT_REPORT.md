@@ -2137,7 +2137,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/security-foundation/V1-SEC-004-migration-secret-redaction.md` | ✅ | `E92BB46036F37E72740D93BF0088F696322BEBB23CF615E07141498C31370CF4` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md` | ✅ | `595A7FD6A08C8D2B46CABAD3A4B8C4D5494341FDA9552EC62D26DE0EFAFAFAA1` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-006-sanitized-handler-errors.md` | ✅ | `8A14D11AE5FA220DA6858FA69567C9724344BF07A833AD1DCC8913BCDE28BBFF` | Tek-sahip görev |
-| `plan/v1/settings/V1-SET-002-kitchen-live-sync-toggle.md` | ✅ | `AA94D5FB711235D0A9403163E116FE8CABD28DA97A99890DC59EEE1D70C3C3EA` | Tek-sahip görev |
+| `plan/v1/settings/V1-SET-002-kitchen-live-sync-toggle.md` | ✅ | `7A8E270147F6F07B2D19C1DAEF236B9ABD59405E01E2244DEB83857F70523AB7` | Tek-sahip görev |
 | `plan/v1/table-management/V1-TBL-006-table-lifecycle-reacceptance.md` | ✅ | `BBDFADC66C4F08E3112B3C57FF18E5DD2F6F6AB3A51838C4EAC54822CC29DC8F` | Tek-sahip görev |
 | `plan/v1/table-management/V1-TBL-007-fail-closed-table-audit.md` | ✅ | `F6800EA23217061EF2BFBBE74DDF88749F6489642472EBFB2FE4EE0FA975F471` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-004-offline-queue-dispatch-acknowledgment.md` | ✅ | `2353E099020D45B20B009677B6D980173C8A7ADDCFB06D2A4274C981FDA8A127` | Tek-sahip görev |

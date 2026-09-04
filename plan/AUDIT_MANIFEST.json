@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 885,
-  "markdown_line_count": 57614,
-  "markdown_byte_count": 3416925,
+  "markdown_line_count": 57610,
+  "markdown_byte_count": 3416798,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,7 +2220,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "FA9C11E37F9ED13241DF5558830BFE0C40588A49C9CFCEE9B95FFE3E752C557B",
+      "sha256": "DFB79DF6F498F634BED68215C298F286EE9724C84B2CC8C059119D7A8B69EFAE",
       "lines": 2161,
       "bytes": 305381,
       "utf8": true
@@ -5083,9 +5083,9 @@
     },
     {
       "path": "plan/v1/settings/V1-SET-002-kitchen-live-sync-toggle.md",
-      "sha256": "AA94D5FB711235D0A9403163E116FE8CABD28DA97A99890DC59EEE1D70C3C3EA",
-      "lines": 71,
-      "bytes": 2960,
+      "sha256": "7A8E270147F6F07B2D19C1DAEF236B9ABD59405E01E2244DEB83857F70523AB7",
+      "lines": 67,
+      "bytes": 2833,
       "utf8": true
     },
     {

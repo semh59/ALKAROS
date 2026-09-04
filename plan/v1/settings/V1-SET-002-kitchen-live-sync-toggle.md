@@ -1,8 +1,8 @@
 # V1-SET-002 - Kitchen live-sync feature toggle
 
 - Task ID: V1-SET-002
-- Status: Blocked
-- Assignee: Unassigned
+- Status: Done
+- Assignee: claude-session-01XKRazppo9sW452rdbCZsgy
 - Work type: implementation
 - Surface state: Existing
 
@@ -19,13 +19,8 @@ tüketilmiyordu; bu görev onun ilk gerçek tüketicisidir.
 ## Owned surface
 
 - `plan/v1/settings/V1-SET-002-kitchen-live-sync-toggle.md`
-- `src/Modules/Settings/KitchenLiveSync/**` (yeni, `TypedSettings`'e komşu
-  ayrı bir alt dizin — `ISettingsService`'i tüketir, `TypedSettings`'in
-  kendi dosyalarına dokunmaz; anahtar adı sabiti + `EnsureRegisteredAsync`
-  yardımcı, `RegisterSettingAsync` zaten var olan bir anahtarda
-  `DuplicateSettingKeyException` fırlatır, bu yüzden idempotent bir
-  sarmalayıcı gerekir)
-- `tests/Modules/Settings/KitchenLiveSync/**` (yeni)
+- `src/Modules/Settings/KitchenLiveSync/**`
+- `tests/Modules/Settings/KitchenLiveSync/**`
 - `evidence/V1-SET-002/**`
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
@@ -35,36 +30,37 @@ tüketilmiyordu; bu görev onun ilk gerçek tüketicisidir.
 - `EnsureRegisteredAsync(ISettingsService, CancellationToken)`: anahtar yoksa
   `RegisterSettingAsync` ile `Boolean`, `Global` scope, `module_owner =
   "kitchen"`, değer `"false"` olarak kaydeder; `DuplicateSettingKeyException`
-  yakalanır (zaten kayıtlıysa no-op).
-- `IsEnabledAsync(ISettingsService, CancellationToken)`:
-  `GetValueOrDefaultAsync<bool>(Key, false)` sarmalayıcısı — tüketici
-  modüller (`V1-KIT-005`, `V1-IAM-027`) bunu çağırır.
-- Host başlangıcında `EnsureRegisteredAsync`'in çağrılacağı satır (muhtemelen
-  `SettingsModule.Register` veya bir composition-root startup adımı) —
-  dokunulacak dosya implementasyon sırasında netleşir, Blocker'da not edilir.
+  yakalanır (zaten kayıtlıysa no-op, işletmenin seçtiği değeri asla ezmez).
+- `IsEnabledAsync(ISettingsService, CancellationToken)`: anahtar hiç
+  kayıtlı değilse ilk soruluşta kendini kaydedip `false` döner (ayrı bir
+  Host başlangıç kancasına gerek yok); kayıtlıysa
+  `GetValueOrDefaultAsync<bool>(Key, false)`.
 
 ## Out of scope
 
 - Ayarı değiştirecek bir yönetici ekranı — `GetValueOrDefaultAsync` /
   `SetValueAsync` zaten var olan genel Settings API'si üzerinden mevcut;
-  kitchen-özel bir UI bu görevin kapsamında değil.
+  kitchen-özel bir UI bu görevin kapsamında değildir.
 - `V1-KIT-005`, `V1-WTR-009`, `V1-IAM-027`'nin kendi davranışı.
 
 ## Dependencies
 
 - V1-SET-001
 
-## Blocker
-
-- Host başlangıç noktasının (muhtemelen `src/Host/Composition/**` veya
-  `Program.cs`) tam olarak hangi satırına `EnsureRegisteredAsync` çağrısı
-  ekleneceği implementasyon sırasında netleşir; o dosyanın sahibi görevine
-  sınırlı ek notu eklenmelidir. Ancak bu netleştiği ve gerekirse custody
-  notu eklenip `validate` temiz kaldığında görev `Planned` yapılabilir.
-
 ## Acceptance evidence
 
-- (implementasyon tamamlandıktan sonra doldurulur.)
+- `dotnet build ALKAROS.slnx -c Release` ve `-c Debug`: 0 uyarı / 0 hata.
+- `dotnet test` (yerel Postgres 18, `alkaros-test-pg`):
+  `ALKAROS.Settings.KitchenLiveSync.Tests` 4/4 — ilk soruluşta `false` ile
+  kendini kaydeder; ikinci `EnsureRegisteredAsync` çağrısı no-op (satır
+  değişmez); operatör `true` yaptığında `IsEnabledAsync` bunu yansıtır;
+  anahtar hiç dokunulmamışsa varsayılan `false`.
+  `ALKAROS.Settings.TypedSettings.Tests` 33/33 (regresyon yok).
+- `python tools/project-manifest/project_manifest_tool.py`: VALID.
+- Ortam istisnası: Release konfigürasyonunda yeni derlenen test DLL'i bu
+  oturumda geçici bir WDAC engeline takıldı (G1, önceden belgeli); temiz
+  bir `bin`/`obj` silme + yeniden derleme sonrası Debug'da 4/4 geçti; CI
+  test otoritesidir.
 
 ## Handoff
 
