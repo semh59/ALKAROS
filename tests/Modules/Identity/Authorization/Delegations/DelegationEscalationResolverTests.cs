@@ -91,7 +91,7 @@ public sealed class DelegationEscalationResolverTests : IClassFixture<Delegation
         var waiter = Guid.NewGuid();
         var delegation = await _delegations.CreateAsync(
             new DelegationRequest("bills.comp", waiter, Guid.NewGuid(), 200m, _now.AddHours(2)), _now);
-        await _delegations.RevokeAsync(delegation.DelegationId, _now.AddMinutes(10));
+        await _delegations.RevokeAsync(delegation.DelegationId, _now.AddMinutes(10), Guid.NewGuid());
 
         var result = await ServiceWithDelegation().RequestAsync(Request("svc-deleg-revoked", waiter, 50m));
 

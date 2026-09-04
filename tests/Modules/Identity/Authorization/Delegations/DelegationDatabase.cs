@@ -2,7 +2,7 @@ using ALKAROS.TestHelpers;
 
 namespace ALKAROS.Identity.Authorization.Tests.Delegations;
 
-/// <summary>Identity database with the real chain through V1-IAM-021 (046).</summary>
+/// <summary>Identity database with the real chain through V1-IAM-025 (051).</summary>
 public sealed class DelegationDatabase : PgTestDatabase
 {
     private static readonly string RepoRoot = FindRepoRoot();
@@ -20,15 +20,21 @@ public sealed class DelegationDatabase : PgTestDatabase
             Mig("V1-IAM-018", "044-authorization-policies.up.sql"),
             Mig("V1-IAM-019", "045-authorization-grants.up.sql"),
             Mig("V1-IAM-021", "046-authorization-delegations.up.sql"),
+            Mig("V1-IAM-025", "051-delegation-revoke-actor.up.sql"),
         };
         foreach (var path in scripts)
             await RunAsync(DataSource, await File.ReadAllTextAsync(path));
     }
 
     public async Task ApplyDownAsync()
-        => await RunAsync(
+    {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-IAM-025", "051-delegation-revoke-actor.down.sql")));
+        await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-IAM-021", "046-authorization-delegations.down.sql")));
+    }
 
     public async Task<bool> RelationExistsAsync(string qualifiedName)
     {

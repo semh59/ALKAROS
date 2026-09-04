@@ -15,7 +15,8 @@ public sealed record AuthorizationDelegation(
     decimal LimitAmount,
     DateTimeOffset GrantedAt,
     DateTimeOffset ExpiresAt,
-    DateTimeOffset? RevokedAt)
+    DateTimeOffset? RevokedAt,
+    Guid? RevokedByUserId)
 {
     public bool IsActiveAt(DateTimeOffset instant)
         => RevokedAt is null && instant < ExpiresAt;

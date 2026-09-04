@@ -8,10 +8,11 @@ public interface IAuthorizationDelegationRepository
         DelegationRequest request, DateTimeOffset now, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Cancels a delegation early. Returns false when the id is unknown or the
-    /// delegation is already revoked.
+    /// Cancels a delegation early, recording who cancelled it. Returns false
+    /// when the id is unknown or the delegation is already revoked.
     /// </summary>
-    Task<bool> RevokeAsync(Guid delegationId, DateTimeOffset at, CancellationToken cancellationToken = default);
+    Task<bool> RevokeAsync(
+        Guid delegationId, DateTimeOffset at, Guid revokedByUserId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// The newest delegation that covers <paramref name="permissionCode"/> for

@@ -9,7 +9,7 @@ public sealed class PostgresAuthorizationDelegationRepository : IAuthorizationDe
 
     private const string SelectColumns =
         "delegation_id, permission_code, grantee_user_id, delegator_user_id, " +
-        "limit_amount, granted_at, expires_at, revoked_at";
+        "limit_amount, granted_at, expires_at, revoked_at, revoked_by_user_id";
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -44,12 +44,16 @@ public sealed class PostgresAuthorizationDelegationRepository : IAuthorizationDe
     }
 
     public async Task<bool> RevokeAsync(
-        Guid delegationId, DateTimeOffset at, CancellationToken cancellationToken = default)
+        Guid delegationId, DateTimeOffset at, Guid revokedByUserId, CancellationToken cancellationToken = default)
     {
         await using var command = _dataSource.CreateCommand(
-            $"UPDATE {Table} SET revoked_at = @at WHERE delegation_id = @id AND revoked_at IS NULL;");
+            $"""
+            UPDATE {Table} SET revoked_at = @at, revoked_by_user_id = @revoked_by
+            WHERE delegation_id = @id AND revoked_at IS NULL;
+            """);
         command.Parameters.AddWithValue("id", delegationId);
         command.Parameters.AddWithValue("at", at);
+        command.Parameters.AddWithValue("revoked_by", revokedByUserId);
 
         return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
     }
@@ -117,5 +121,6 @@ public sealed class PostgresAuthorizationDelegationRepository : IAuthorizationDe
         reader.GetDecimal(4),
         reader.GetFieldValue<DateTimeOffset>(5),
         reader.GetFieldValue<DateTimeOffset>(6),
-        reader.IsDBNull(7) ? null : reader.GetFieldValue<DateTimeOffset>(7));
+        reader.IsDBNull(7) ? null : reader.GetFieldValue<DateTimeOffset>(7),
+        reader.IsDBNull(8) ? null : reader.GetGuid(8));
 }

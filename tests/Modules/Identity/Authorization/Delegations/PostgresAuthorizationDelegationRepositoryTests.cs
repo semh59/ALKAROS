@@ -63,9 +63,23 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
         (await _repository.FindCoveringAsync(grantee, "bills.comp", 50m, _now.AddHours(2))).Should().BeNull("expired");
         (await _repository.FindCoveringAsync(grantee, "bills.void", 50m, _now)).Should().BeNull("other permission");
 
-        (await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(10))).Should().BeTrue();
+        var revoker = Guid.NewGuid();
+        (await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(10), revoker)).Should().BeTrue();
         (await _repository.FindCoveringAsync(grantee, "bills.comp", 50m, _now.AddMinutes(30))).Should().BeNull("revoked");
-        (await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(20))).Should().BeFalse("already revoked");
+        (await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(20), Guid.NewGuid())).Should().BeFalse("already revoked");
+    }
+
+    [Fact]
+    public async Task RevokeRecordsWhoRevokedIt()
+    {
+        var created = await _repository.CreateAsync(Request(), _now);
+        var manager = Guid.NewGuid();
+
+        await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(10), manager);
+
+        (await _db.ScalarAsync<Guid>(
+            $"SELECT revoked_by_user_id FROM identity.authorization_delegations WHERE delegation_id = '{created.DelegationId}';"))
+            .Should().Be(manager);
     }
 
     [Fact]
@@ -88,7 +102,7 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
     {
         var live = await _repository.CreateAsync(Request(permission: "cash.drawer", expiresInHours: 5), _now);
         var revoked = await _repository.CreateAsync(Request(permission: "cash.drawer", expiresInHours: 5), _now);
-        await _repository.RevokeAsync(revoked.DelegationId, _now.AddMinutes(1));
+        await _repository.RevokeAsync(revoked.DelegationId, _now.AddMinutes(1), Guid.NewGuid());
         var expired = await _repository.CreateAsync(Request(permission: "cash.drawer", expiresInHours: 1), _now);
 
         var active = await _repository.ListActiveAsync(_now.AddHours(2));

@@ -26,14 +26,13 @@ public sealed class PostgresOfflineAuthorityBudgetRepository : IOfflineAuthority
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
-        await using (var delete = new NpgsqlCommand(
-            "DELETE FROM identity.offline_authority_budgets WHERE session_id = @session;",
-            connection, transaction))
-        {
-            delete.Parameters.AddWithValue("session", sessionId);
-            await delete.ExecuteNonQueryAsync(cancellationToken);
-        }
-
+        // Re-issuing for a session no longer deletes the prior budget first
+        // (migration 050 drops uq_offline_authority_budgets_session): a prior
+        // budget can already have offline_authority_replays rows once
+        // reconciled, and that FK has no ON DELETE CASCADE, so the delete
+        // would throw on exactly the session that most needs a fresh budget.
+        // The prior row is left in place, undated; GetBySessionAsync /
+        // LoadAsync return the most recently issued one.
         Guid budgetId;
         await using (var insert = new NpgsqlCommand(
             """
@@ -94,7 +93,9 @@ public sealed class PostgresOfflineAuthorityBudgetRepository : IOfflineAuthority
             $"""
             SELECT budget_id, user_id, session_id, issued_at, expires_at
             FROM identity.offline_authority_budgets
-            WHERE {whereClause};
+            WHERE {whereClause}
+            ORDER BY issued_at DESC
+            LIMIT 1;
             """,
             connection))
         {

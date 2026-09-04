@@ -433,6 +433,30 @@
         "role_permissions"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "050",
+      "phase": "B",
+      "tables": [
+        "offline_authority_budgets"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "051",
+      "phase": "B",
+      "tables": [
+        "authorization_delegations"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "052",
+      "phase": "B",
+      "tables": [
+        "authorization_grants"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

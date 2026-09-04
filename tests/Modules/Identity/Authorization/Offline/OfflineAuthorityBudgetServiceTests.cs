@@ -68,14 +68,21 @@ public sealed class OfflineAuthorityBudgetServiceTests : IClassFixture<OfflineBu
     }
 
     [Fact]
-    public async Task IssueReplacesAnEarlierBudgetForTheSameSession()
+    public async Task IssueForTheSameSessionMakesTheSessionResolveToTheNewestBudget()
     {
+        // A1: re-issue no longer deletes the prior budget row (it can already
+        // carry offline_authority_replays with no ON DELETE CASCADE) — the
+        // session lookup just moves on to the newest one (ORDER BY issued_at
+        // DESC). A distinct issued_at per issue is what "newest" means; two
+        // real issues are never same-instant the way a fixed test clock is.
         var session = Guid.NewGuid();
         var first = await Service().IssueAsync(Guid.NewGuid(), "svc-reissue-role", session);
-        var second = await Service().IssueAsync(Guid.NewGuid(), "svc-reissue-role", session);
+        var second = await new OfflineAuthorityBudgetService(_policies, _budgets, () => _now.AddMinutes(5))
+            .IssueAsync(Guid.NewGuid(), "svc-reissue-role", session);
 
         second.BudgetId.Should().NotBe(first.BudgetId);
-        (await _budgets.GetAsync(first.BudgetId)).Should().BeNull();
+        (await _budgets.GetAsync(first.BudgetId)).Should().NotBeNull("the prior budget is superseded, not deleted");
+        (await _budgets.GetBySessionAsync(session))!.BudgetId.Should().Be(second.BudgetId);
     }
 
     [Fact]

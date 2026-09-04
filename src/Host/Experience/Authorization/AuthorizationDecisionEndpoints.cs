@@ -66,9 +66,9 @@ public static class AuthorizationDecisionEndpoints
             Results.Ok(await store.ListActiveDelegationsAsync(cancellationToken)));
 
         group.MapPost("/delegations/{delegationId:guid}/revoke", async (
-            Guid delegationId, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
+            Guid delegationId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
         {
-            var revoked = await store.RevokeDelegationAsync(delegationId, cancellationToken);
+            var revoked = await store.RevokeDelegationAsync(delegationId, ActorId(http), cancellationToken);
             return revoked ? Results.NoContent() : Results.NotFound();
         });
 

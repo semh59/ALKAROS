@@ -82,8 +82,8 @@ public sealed class AuthorizationDecisionStore
             .ToArray();
     }
 
-    public Task<bool> RevokeDelegationAsync(Guid delegationId, CancellationToken cancellationToken)
-        => _delegations.RevokeAsync(delegationId, _nowUtc(), cancellationToken);
+    public Task<bool> RevokeDelegationAsync(Guid delegationId, Guid actorUserId, CancellationToken cancellationToken)
+        => _delegations.RevokeAsync(delegationId, _nowUtc(), actorUserId, cancellationToken);
 
     public async Task<IReadOnlyList<OpenTighteningV1>> ListOpenTighteningsAsync(CancellationToken cancellationToken)
     {

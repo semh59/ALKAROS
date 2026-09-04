@@ -11,9 +11,9 @@
 `V1-IAM-016..024` dalgasını denetleyen
 `docs/engineering/authz-wave-remediation-plan.md` Phase 3 ve 5'in kapsamını
 tamamlar (Phase 2, D1-D3/D7/D8, ayrı `fix(v1-iam)` commit'i olarak zaten
-kapatıldı): (a) yeni bir migration ile şema sağlamlaştırması (A1 offline
-bütçe yeniden-ihraç FK çökmesi, D4 delegation revoke actor'ı, D5 davranışsal
-oran sorgusu indeksi); (b) inşa edilmiş ama hiçbir canlı istek yoluna
+kapatıldı): (a) üç migration (050/051/052) ile şema sağlamlaştırması (A1
+offline bütçe yeniden-ihraç FK çökmesi, D4 delegation revoke actor'ı, D5
+davranışsal oran sorgusu indeksi); (b) inşa edilmiş ama hiçbir canlı istek yoluna
 bağlanmamış yetkilendirme motorunun (grant request, offline bütçe ihracı,
 reconciliation) istemci tarafını bağlamak (C1-C5) ve `workspace.tsx`
 `/authorization` rota kablolaması testi (D6). Motor bileşenleri
@@ -58,6 +58,10 @@ tetiklemiyor — bu görev o boşluğu kapatır.
   `AllowedCommands` tutulan izin ∪ ulaşılabilir yetki isteği birleşimi.
   `src/Clients/PosTerminal/src/routes/workspace.tsx` ile ilgili test dosyası
   (`V1-RMD-097` sahipliğinde kalır) — D6: rota kablolaması testi.
+  `tests/Modules/Identity/Authorization/Grants/**` (`V1-IAM-021` sahipliğinde
+  kalır) — D5: yeni bir dosya,
+  `AuthorizationGrantsRateIndexMigrationTests.cs`, migration 052'nin metnini
+  doğrular; mevcut dosyalar değişmez.
   `src/Host/Composition/Migrations/MigrationManifest.cs` içindeki
   `PhaseBMax` sabiti (`V1-FND-004` sahipliğinde kalır) — yalnızca faz üst
   sınırı 050 değerine güncellenir.
@@ -66,17 +70,19 @@ tetiklemiyor — bu görev o boşluğu kapatır.
 
 ## In scope
 
-- **A1** Yeni migration: `uq_offline_authority_budgets_session` düşürülür;
+- **A1** Migration 050: `uq_offline_authority_budgets_session` düşürülür;
   `PostgresOfflineAuthorityBudgetRepository.CreateAsync` önceki bütçeyi
   silmeyi bırakır; `GetBySessionAsync` / `LoadAsync` `ORDER BY issued_at DESC
   LIMIT 1` alır; "reconciliation sonrası yeniden ihraç" DB testi eklenir.
-- **D4** Aynı migration: `identity.authorization_delegations`'a
+- **D4** Migration 051: `identity.authorization_delegations`'a
   `revoked_by_user_id UUID` eklenir; `RevokeAsync(id, at, revokedByUserId)`;
   `AuthorizationDecisionStore.RevokeDelegationAsync(id, actorId)`; endpoint
   `ActorId(http)`'yi geçirir; DB testi actor'ün saklandığını doğrular.
-- **D5** Aynı migration: `ix_authorization_grants_granted_rate` kısmi indeksi
+- **D5** Migration 052: `ix_authorization_grants_granted_rate` kısmi indeksi
   (`requester_user_id, permission_code, resolved_at) WHERE status = 'granted'`;
-  migration-metni testi indeksi doğrular.
+  migration-metni testi indeksi doğrular. Üç ayrı migration'a bölündü (050/051/052,
+  tek bir "Aynı migration" değil) çünkü her biri farklı bir dar-zincir test
+  fixture'ının (OfflineBudgetDatabase, DelegationDatabase) şemasına bağlanır.
 - **C1** Billing `bills.void`/`bills.comp` endpoint'i, çağıran doğrudan izne
   sahip değilse `IAuthorizationGrantService.RequestAsync` çağırır ve 403
   yerine grant id + idempotency key ile `pending` yanıt döner; aynı
@@ -121,8 +127,8 @@ tetiklemiyor — bu görev o boşluğu kapatır.
 
 - `dotnet build ALKAROS.slnx -c Release` sıfır uyarı / sıfır hata; tam
   `dotnet test` paketi geçer (yerel Postgres 18).
-- Yeni migration (050) ileri ile tam geri yönde boş veritabanında denenir;
-  `PhaseBMax` 050'ye güncellenir.
+- Üç yeni migration (050/051/052) ileri ile tam geri yönde boş veritabanında
+  denenir; `PhaseBMax` 052'ye güncellenir.
 - C1-C5 için en az bir uçtan uca entegrasyon testi: doğrudan izni olmayan bir
   çağıran 403 yerine `pending` grant yanıtı alır; onay sonrası aynı
   idempotency key ile eylem tamamlanır; davranışsal kapı ve devir çözücü bu

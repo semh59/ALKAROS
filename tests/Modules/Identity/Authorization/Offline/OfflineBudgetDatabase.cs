@@ -2,7 +2,7 @@ using ALKAROS.TestHelpers;
 
 namespace ALKAROS.Identity.Authorization.Tests.Offline;
 
-/// <summary>Identity database with the real chain through V1-IAM-022 (047).</summary>
+/// <summary>Identity database with the real chain through V1-IAM-025 (050).</summary>
 public sealed class OfflineBudgetDatabase : PgTestDatabase
 {
     private static readonly string RepoRoot = FindRepoRoot();
@@ -21,15 +21,21 @@ public sealed class OfflineBudgetDatabase : PgTestDatabase
             Mig("V1-IAM-019", "045-authorization-grants.up.sql"),
             Mig("V1-IAM-021", "046-authorization-delegations.up.sql"),
             Mig("V1-IAM-022", "047-offline-authority-budget.up.sql"),
+            Mig("V1-IAM-025", "050-offline-authority-reissue.up.sql"),
         };
         foreach (var path in scripts)
             await RunAsync(DataSource, await File.ReadAllTextAsync(path));
     }
 
     public async Task ApplyDownAsync()
-        => await RunAsync(
+    {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-IAM-025", "050-offline-authority-reissue.down.sql")));
+        await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-IAM-022", "047-offline-authority-budget.down.sql")));
+    }
 
     public async Task<bool> RelationExistsAsync(string qualifiedName)
     {

@@ -11,7 +11,8 @@ public sealed class AuthorizationDelegationModelTests
     private static AuthorizationDelegation Delegation(
         DateTimeOffset? expires = null, DateTimeOffset? revoked = null, decimal limit = 200m)
         => new(Guid.NewGuid(), "bills.comp", Guid.NewGuid(), Guid.NewGuid(),
-            limit, Now.AddHours(-1), expires ?? Now.AddHours(2), revoked);
+            limit, Now.AddHours(-1), expires ?? Now.AddHours(2), revoked,
+            revoked is null ? null : Guid.NewGuid());
 
     [Fact]
     public void IsActiveWhileNotRevokedAndBeforeExpiry()
