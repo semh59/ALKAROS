@@ -11,9 +11,8 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 282 görev tanımlıdır: 269 `Done`, 5 onaylı `NotApplicable`, 2 `Planned`
-  (`V1-RMD-100`, `V1-GOV-074`), 6 `Blocked` (`V1-SET-002`, `V1-KIT-005`, `V1-WTR-009`,
-  `V1-ORD-005`, `V1-BIL-005`, `V1-IAM-027`) ve 0 `InProgress` görev vardır.
+- Bu sürüm altında 282 görev tanımlıdır: 276 `Done`, 5 onaylı `NotApplicable`, 1 `Planned`
+  (`V1-RMD-100`, bu dalganın kapsamı dışında), 0 `Blocked` ve 0 `InProgress` görev vardır.
   2026-09-04 25. dalga differentiated-authorization (`V1-IAM-016..025`: `waiter` rolü, izin kodu
   granülerleştirmesi, policy/grant/delegation/offline-authority/behavioural-tightening motorları,
   her Experience endpoint'inin granüler koda bağlanması, `pos.cashier.mutate` takma adının
@@ -29,7 +28,24 @@ uca çalıştıran çekirdek operasyon.
   ayarlanabilir bir mutfak-senkronizasyon anahtarı arkasında) iptal edilebileceğini kaydetti. Bu,
   `GATE-V1-EXIT`'i `V1-GOV-072` sonrası altı yeni Blocked görevle (`V1-SET-002`, `V1-KIT-005`,
   `V1-WTR-009`, `V1-ORD-005`, `V1-BIL-005`, `V1-IAM-027`) 26. dalga olarak yeniden açtı;
-  `V1-GOV-073` ile resmen kaydedildi; kapanış `V1-GOV-074`'e bırakıldı. 2026-09-03 24. dalga (Docker arayüz/backend ayrımı A1-full: `web`
+  `V1-GOV-073` ile resmen kaydedildi. Altı görev tamamlandı: `V1-SET-002` `kitchen.live_sync_enabled`
+  anahtarını ekledi; `V1-KIT-005` mutfak bilet kalemi durumunu gerçek `OrderItem.KitchenState`'e
+  senkronladı (anahtar açıkken); `V1-WTR-009` kalem hazır olduğunda bağlı garson cihazlarına
+  SignalR bildirimi yayınladı; `V1-ORD-005` gönderilmemiş kalem için ücretsiz void uç noktasını
+  bağladı ve aynı zamanda `OrderManagementEndpoints.cs`'in iki önceden var olan kusurunu giderdi
+  (`DualScreenStore` hiç kayıtlı değildi, oturumsuz istekler 401 yerine 500 dönüyordu); `V1-BIL-005`
+  comp uç noktasını `IAuthorizationGrantService.RequestAsync`'e bağladı — bu, tüm grant-akışı
+  motorunun (policy/delegation/behavioural-tightening, `V1-IAM-019/020/021/023`) ilk gerçek HTTP
+  çağrısıydı; `V1-IAM-027` `OrderItem.Cancel()`'ın reddini gevşetip gönderilmiş-ama-servis-edilmemiş
+  bir kalemin `bills.void` grant'iyle iptalini, eşleşen mutfak bilet kalemi iptalini ve
+  `BillLineType.Waste` satırına (III.7.2, hiç üretilmemişti) dönüşümü ekledi. Üç görevde de model
+  §3'ün "own check" kuralı, hiçbir garson/sipariş servis-atama modeli olmadığından disclosure'lı
+  olarak uygulanamadı (`SubjectServingUserId: null`) — gelecek iş olarak kaydedildi. `V1-GOV-074`
+  ile 26. dalga kesin olarak yeniden mühürlendi: `dotnet build -c Release`/`-c Debug` 0 uyarı/0 hata;
+  `dotnet test ALKAROS.slnx` 55 test projesinin 54'ü tam yeşil, tek istisna önceden bilinen ve bu
+  dalgayla ilgisiz bir ortam boşluğu (`ALKAROS.Host.Tests`'in `psql` CLI'sinin bu makinede kurulu
+  olmaması — G1); `consistency_audit.py` temiz; `plan_audit_tool.py validate`/`validate-coverage`/
+  `verify-manifest` sıfır hata. 2026-09-03 24. dalga (Docker arayüz/backend ayrımı A1-full: `web`
   Caddy imajı statik istemci paketlerini sunar + TLS sonlandırır + `/api` `/hubs`'ı `api:5080`'e
   proxy'ler; `api` imajı `serve --api-only` ile yalnız JSON API + hub'ları düz HTTP çalıştırır;
   `Dockerfile` → `deploy/docker/Dockerfile` adlandırılmış aşamalarla; operatör araçları

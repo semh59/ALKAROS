@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 885,
-  "markdown_line_count": 57879,
-  "markdown_byte_count": 3436421,
+  "markdown_line_count": 57940,
+  "markdown_byte_count": 3445226,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,7 +2220,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "EEEAB2F2331C12497DEA9367EBBB8989655632C7101B1E2F42A1DEC5D271D27C",
+      "sha256": "FA92132A0FC0B61EAEB656332B3286803B4D938D7F77A2A2691E590EFDB590E3",
       "lines": 2161,
       "bytes": 305381,
       "utf8": true
@@ -2241,9 +2241,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "4A753E876361EE090DB20565A62D0FFC6F133DB4AB1104F36063E99A56F96BEF",
-      "lines": 394,
-      "bytes": 85484,
+      "sha256": "BB1B8D9C9E8736EACC5D3F5701111B8FE9BE11B6D49478D46DAF13AF58196608",
+      "lines": 398,
+      "bytes": 90012,
       "utf8": true
     },
     {
@@ -4026,9 +4026,9 @@
     },
     {
       "path": "plan/v1/governance/V1-GOV-074-wave26-master-audit-reseal-and-gate-closure.md",
-      "sha256": "7ADF2B5B51E40269D0CF271705EFE79F9A02759FF26DD59323718A5C83958124",
-      "lines": 64,
-      "bytes": 1697,
+      "sha256": "81A04AFDF5C89B82A917D6360C7C67A52E1C24E0189952EADEAA472D4508CB5E",
+      "lines": 105,
+      "bytes": 4334,
       "utf8": true
     },
     {
@@ -4313,9 +4313,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "7758BE553A39F8DC9E186B3108269D30B6639F94D26709FAF0B930D27264CC86",
-      "lines": 82,
-      "bytes": 7469,
+      "sha256": "00FAF7C28B21CB062432365C3C05411A435A6071F09265718C8C1B8943835713",
+      "lines": 98,
+      "bytes": 9109,
       "utf8": true
     },
     {
