@@ -117,3 +117,66 @@ describe("workspace /authorization route", () => {
     expect(approved).toBe(pendingGrant.grantId);
   });
 });
+
+/**
+ * Every route below used to gate on `pos.cashier.mutate`, which migration
+ * 049 (V1-IAM-024) removed from the permission catalog entirely — no
+ * session could ever hold it again, so canOpenRoute was always false and
+ * every one of these screens was unreachable in the shipped app. Fixed to
+ * the granular code each route's server endpoint actually requires;
+ * these tests pin that mapping so it cannot regress silently again.
+ */
+describe("workspace route gating uses granular permission codes, not the removed pos.cashier.mutate", () => {
+  let root: Root | null = null;
+
+  async function render(element: ReactElement) {
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(element));
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  const forbiddenText = "Bu alana erişim izniniz yok";
+
+  async function renderRoute(path: string, capabilities: readonly string[]) {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse([])));
+    window.history.replaceState({}, "", path);
+    await render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="33333333-3333-3333-3333-333333333333"
+          displayName="Test Kullanıcı"
+          capabilities={capabilities}
+          path={path}
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    );
+    await act(async () => Promise.resolve());
+  }
+
+  it.each([
+    ["/tables", "tables.status"],
+    ["/billing", "bills.split"],
+    ["/kitchen", "orders.send"],
+  ])("a session holding %s's real permission (%s) is not forbidden", async (path, permission) => {
+    await renderRoute(path, [permission]);
+    expect(document.body.textContent).not.toContain(forbiddenText);
+  });
+
+  it.each(["/tables", "/billing", "/kitchen"])(
+    "a session holding only the removed pos.cashier.mutate is forbidden from %s",
+    async (path) => {
+      await renderRoute(path, ["pos.cashier.mutate"]);
+      expect(document.body.textContent).toContain(forbiddenText);
+    },
+  );
+});

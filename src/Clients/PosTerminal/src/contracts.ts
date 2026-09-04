@@ -10,6 +10,10 @@ export interface RuntimeConfiguration {
   // Absolute origin the customer display is served from (finding B-4). Absent
   // in single-origin / legacy deployments; the display link then stays relative.
   customerDisplayUrl?: string;
+  // V1-SET-003: whether this deployment has a dedicated Reservation Station
+  // screen (/reservations). Off by default — reservation intake then stays
+  // on the cashier's own floor-plan screen, unchanged.
+  reservationStationEnabled: boolean;
 }
 
 export interface CatalogProduct {

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 885,
-  "markdown_line_count": 57940,
-  "markdown_byte_count": 3445226,
+  "markdown_file_count": 890,
+  "markdown_line_count": 58427,
+  "markdown_byte_count": 3471746,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -330,9 +330,9 @@
     },
     {
       "path": "docs/domain/table-reservation-policy.md",
-      "sha256": "C3486253DDF987515A59751613FC153863F84785F3805B4ED893B69DD72E8DD7",
-      "lines": 78,
-      "bytes": 5342,
+      "sha256": "E14ADCD2349F85B9C1EC86FE4C9ACDCB290905776FCCBB1A56E91A8CCC1C5B4F",
+      "lines": 116,
+      "bytes": 7643,
       "utf8": true
     },
     {
@@ -2220,9 +2220,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "FA92132A0FC0B61EAEB656332B3286803B4D938D7F77A2A2691E590EFDB590E3",
-      "lines": 2161,
-      "bytes": 305381,
+      "sha256": "9F3114B300791710D6B60747389ADBFDE3F970482444F32834FD38F48BFECC4A",
+      "lines": 2166,
+      "bytes": 306244,
       "utf8": true
     },
     {
@@ -2241,9 +2241,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "BB1B8D9C9E8736EACC5D3F5701111B8FE9BE11B6D49478D46DAF13AF58196608",
-      "lines": 398,
-      "bytes": 90012,
+      "sha256": "D26646E3043C1387D19097674A07C6AAD6711B7C4C5BEF5E46209443E0490898",
+      "lines": 402,
+      "bytes": 93539,
       "utf8": true
     },
     {
@@ -3304,6 +3304,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/cashier-ui/V1-CUI-006-dedicated-reservation-station-screen.md",
+      "sha256": "B00A9044604C796545D1510D21D6F3C3D496BF14D3BEB95FD905F15DCD8D6512",
+      "lines": 116,
+      "bytes": 6145,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/catalog/V1-CAT-001-product-catalog.md",
       "sha256": "3E156837C5A89C3FEF8D61FAF19310CA4C05509CCFD5A90DEAC410B8088B06AB",
       "lines": 72,
@@ -4032,6 +4039,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-075-master-custody-reopen-and-remediation-wave-27.md",
+      "sha256": "EE951284E37AFFCC0F088F8B79030B063A1CA341113FF0A19CDF7A1E9CD12356",
+      "lines": 59,
+      "bytes": 1731,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-076-wave27-master-audit-reseal-and-gate-closure.md",
+      "sha256": "E39E03AFE9127CD38C7FFFC9D629F102A4FBF5B8DB22A569A3D3460569F8E298",
+      "lines": 84,
+      "bytes": 3032,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -4313,9 +4334,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "00FAF7C28B21CB062432365C3C05411A435A6071F09265718C8C1B8943835713",
-      "lines": 98,
-      "bytes": 9109,
+      "sha256": "E7669FB86A29571794927E3FF7BB94273AF6A44E7B88ADA8FCCADA463BA68EA6",
+      "lines": 115,
+      "bytes": 10847,
       "utf8": true
     },
     {
@@ -5089,6 +5110,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/settings/V1-SET-003-reservation-station-toggle.md",
+      "sha256": "07369C8E135B1285C333A664AB20B2B4113FBD7DD6308FDCCCD98628D8AAF5D3",
+      "lines": 75,
+      "bytes": 3363,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/table-management/V1-TBL-001-table-lifecycle.md",
       "sha256": "3306EA49714434F6B243732E2027CFEDB16C94C9AB4B3DE7B8744DB0DEF4955D",
       "lines": 63,
@@ -5135,6 +5163,13 @@
       "sha256": "F6800EA23217061EF2BFBBE74DDF88749F6489642472EBFB2FE4EE0FA975F471",
       "lines": 51,
       "bytes": 2007,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/table-management/V1-TBL-008-dedicated-reservation-station-decision.md",
+      "sha256": "BEB02F5D87B75D36F0283E729B4B4C3BDABA0C59A1A3FCB4F1CD0C7229F33B58",
+      "lines": 89,
+      "bytes": 3820,
       "utf8": true
     },
     {

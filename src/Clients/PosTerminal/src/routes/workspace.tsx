@@ -33,18 +33,29 @@ export function ExperiencePage({
   const { navigate } = useRouter();
   const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
   // Which capability a route needs is a route->permission map, not a role guess.
+  // `pos.cashier.mutate` was dropped from the permission catalog in migration
+  // 049 (V1-IAM-024) — every check below used to key off it, so no session
+  // could ever open Sales/Tables/Billing/Kitchen once granular permissions
+  // shipped. Fixed to the granular codes each route's server endpoint
+  // actually requires.
   const routeNeedsCatalogManage = path === "/catalog" || path === "/system-health";
   const routeNeedsReportsView = path === "/authorization";
+  const routeNeedsBillsSplit = path === "/billing";
+  const routeNeedsOrdersSend = path === "/kitchen";
   const canOpenRoute = routeNeedsCatalogManage
     ? capabilitySet.has("catalog.manage")
     : routeNeedsReportsView
       ? capabilitySet.has("reports.view")
-      : capabilitySet.has("pos.cashier.mutate");
+      : routeNeedsBillsSplit
+        ? capabilitySet.has("bills.split")
+        : routeNeedsOrdersSend
+          ? capabilitySet.has("orders.send")
+          : capabilitySet.has("orders.create") || capabilitySet.has("tables.status");
   // Role label is derived from the session's capabilities, not from the current
   // route. (deep-analysis finding F-4)
   const roleLabel = capabilitySet.has("catalog.manage")
     ? roleLabels.manager
-    : capabilitySet.has("pos.cashier.mutate")
+    : capabilitySet.has("bills.split")
       ? roleLabels.cashierOps
       : roleLabels.limited;
   const session: ShellSession = {
@@ -88,10 +99,10 @@ export function ExperiencePage({
         onRefresh: () => window.location.reload(),
       };
   const navigation: readonly ShellNavigationItem[] = [
-    { id: "sales", label: navLabels.sales, href: "/", icon: "sales", requiredCapability: "pos.cashier.mutate" },
-    { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "pos.cashier.mutate" },
-    { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "pos.cashier.mutate" },
-    { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "pos.cashier.mutate" },
+    { id: "sales", label: navLabels.sales, href: "/", icon: "sales", requiredCapability: "orders.create" },
+    { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "tables.status" },
+    { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split" },
+    { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "orders.send" },
     { id: "catalog", label: navLabels.catalog, href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
     { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
     { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "system", requiredCapability: "reports.view" },
@@ -121,7 +132,10 @@ export function ExperiencePage({
   </ProductionShell>;
 }
 
-function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
+// Exported for the standalone Reservation Station screen (V1-CUI-006),
+// which reuses this exact table-fetching + floor-plan wiring rather than
+// duplicating it.
+export function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
   const { navigate } = useRouter();
   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
   const [state, setState] = useState<TableWorkspaceState>("loading");

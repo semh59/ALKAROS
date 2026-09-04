@@ -43,6 +43,7 @@ export function Cashier() {
   const [order, setOrder] = useState<DisplaySnapshot | null>(null);
   const [pairingCode, setPairingCode] = useState("");
   const [customerDisplayUrl, setCustomerDisplayUrl] = useState("");
+  const [reservationStationEnabled, setReservationStationEnabled] = useState(false);
   const [session, setSession] = useState<CashierSession>("checking");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -68,6 +69,7 @@ export function Cashier() {
     setCatalog(products);
     setOrder(active);
     setCustomerDisplayUrl(config?.customerDisplayUrl ?? "");
+    setReservationStationEnabled(config?.reservationStationEnabled ?? false);
     setSession("ready");
     setBackendStatus("online");
   }, [terminalId]);
@@ -298,6 +300,14 @@ export function Cashier() {
           >
             Müşteri ekranı
           </button>
+          {reservationStationEnabled && (
+            <button
+              className="header-action"
+              onClick={() => window.open("/reservations", "alkaros-reservation-station")}
+            >
+              Rezervasyon istasyonu
+            </button>
+          )}
           <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
           <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
           {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Menü</a>}

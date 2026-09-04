@@ -76,3 +76,41 @@ seating race: `PendingConfirmation` moves the table to `Reserved`,
 - **Not changed:** no `waiter` IAM role is introduced and `pos.cashier.mutate`
   is not split; a finer permission split remains deferred work noted in
   `V1-RMD-097`.
+- **Superseded note (2026-09-04):** the permission split this amendment
+  called deferred work landed in `V1-IAM-016..024` — `pos.cashier.mutate`
+  is gone from the catalog (migration 049) and the manual reservation
+  action is gated by the granular `tables.reserve` code instead. The
+  decision itself (cashier-authorized manual reservation is an accepted
+  `Reserved` creator) is unaffected; only the permission code name is dated.
+
+## Amendment (2026-09-04)
+
+- **Date:** 2026-09-04
+- **Approver:** Semih (named business approver)
+- **Change:** Reservation intake does not look the same at every
+  deployment. This amendment records a second, opt-in creator of the
+  cashier-gated manual reservation action from the previous amendment: a
+  business with dedicated reservation staff may turn on a per-deployment
+  setting (`reservations.dedicated_station_enabled`, `V1-SET-003`) that
+  offers a lean, standalone "Reservation Station" screen
+  (`/reservations` in the PosTerminal client, `V1-CUI-006`) — its own URL,
+  its own login, no billing/sales/kitchen chrome, showing only the
+  reservation actions the operator's role already holds. A deployment
+  without dedicated staff leaves the setting off and reservation intake
+  stays exactly where the previous amendment put it: the cashier's own
+  floor-plan screen.
+- **Rationale:** A small neighborhood restaurant, a cafe, a full-service
+  restaurant and a fast-food counter do not staff reservations the same
+  way; hard-coding one of them into the product would be wrong for the
+  others. The `tables.reserve` permission model already decides *who*
+  may reserve; this amendment only adds *where* that ability is offered,
+  gated by an explicit per-deployment choice rather than a guess.
+- **Not changed:** no new permission code was introduced — the dedicated
+  screen reuses `tables.reserve` (and the existing `AllowedCommands`
+  server-side computation) exactly as the cashier's own screen does; a
+  role that does not hold it sees no reservation actions on either
+  screen. `V1-IAM-027`'s same disclosed own-check gap (no waiter/order
+  serving-assignment model) does not apply here — reservations are not
+  gated by "who is serving this table."
+- **Affected tasks:** `V1-SET-003` (the toggle), `V1-CUI-006` (the
+  dedicated screen).

@@ -19,6 +19,8 @@ using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Tables;
 using ALKAROS.Host.Outbox;
+using ALKAROS.Settings.ReservationStation;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -164,6 +166,7 @@ public static partial class DualScreenApplication
             Guid terminalId,
             HttpContext context,
             DualScreenStore store,
+            ISettingsService settings,
             CancellationToken cancellationToken) =>
         {
             await RequireCashierAsync(context, terminalId, store, cancellationToken);
@@ -176,9 +179,15 @@ public static partial class DualScreenApplication
 
             var customerDisplayUrl = Environment
                 .GetEnvironmentVariable(CustomerDisplayOriginUrlEnvironmentVariable)?.Trim();
+            // V1-SET-003: whether this deployment has a dedicated Reservation
+            // Station screen — PosTerminal shows/hides the /reservations link
+            // accordingly. The underlying tables.reserve permission model is
+            // unaffected either way (the cashier's own floor-plan screen
+            // already gates its "Rezervasyon al" action on it regardless).
+            var reservationStationEnabled = await ReservationStationSetting.IsEnabledAsync(settings, cancellationToken);
             return string.IsNullOrWhiteSpace(customerDisplayUrl)
-                ? Results.Ok(new { kitchenStationId })
-                : Results.Ok(new { kitchenStationId, customerDisplayUrl });
+                ? Results.Ok(new { kitchenStationId, reservationStationEnabled })
+                : Results.Ok(new { kitchenStationId, customerDisplayUrl, reservationStationEnabled });
         }).RequireRateLimiting("terminal-read");
 
         app.MapPost("/api/v1/auth/logout", async (

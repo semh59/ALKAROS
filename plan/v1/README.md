@@ -11,9 +11,26 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 282 görev tanımlıdır: 276 `Done`, 5 onaylı `NotApplicable`, 1 `Planned`
+- Bu sürüm altında 287 görev tanımlıdır: 281 `Done`, 5 onaylı `NotApplicable`, 1 `Planned`
   (`V1-RMD-100`, bu dalganın kapsamı dışında), 0 `Blocked` ve 0 `InProgress` görev vardır.
-  2026-09-04 25. dalga differentiated-authorization (`V1-IAM-016..025`: `waiter` rolü, izin kodu
+  2026-09-04 27. dalga (Semih onayıyla `docs/domain/table-reservation-policy.md`'ye ikinci bir
+  Amendment: rezervasyon her işletmede aynı işlemez — işletme başına açılabilir bir ayar
+  (`reservations.dedicated_station_enabled`, `V1-SET-003`) arkasında, müşteri ekranı gibi kendi
+  URL'i olan ayrı bir "Rezervasyon İstasyonu" ekranı (PosTerminal `/reservations`, `V1-CUI-006`)
+  sunulabilir; kasiyerin kendi kat planındaki koşulsuz "Rezervasyon al" aksiyonu değişmeden sürer,
+  hiçbir yeni izin kodu eklenmedi — `V1-TBL-008`) `V1-GOV-074` sonrası iki yeni görevle kapıyı
+  fiilen yeniden açtı; `V1-GOV-075` ile resmen kaydedildi. `V1-CUI-006` sırasında gerçek, önceden
+  var olan bir kusur bulunup giderildi: PosTerminal'in `workspace.tsx`'i `/`, `/tables`, `/billing`,
+  `/kitchen` rota erişimini hâlâ migration 049'da (`V1-IAM-024`) kataloktan kaldırılmış
+  `pos.cashier.mutate`'e göre kontrol ediyordu — hiçbir oturum bu izni bir daha hiç tutamayacağından
+  Satış dışındaki HER ekran tüm kullanıcılar için sessizce erişilemezdi; granüler karşılıklarına
+  (`orders.create`/`tables.status`, `bills.split`, `orders.send`) düzeltildi, regresyonu önleyen 6
+  yeni test eklendi. `V1-GOV-076` ile 27. dalga kesin olarak yeniden mühürlendi:
+  `pnpm --dir src/Clients/PosTerminal typecheck`/`test`/`build` sıfır çıkış kodu (109 → 118 test);
+  `dotnet build -c Release`/`-c Debug` 0 uyarı/0 hata; ilgili tüm .NET regresyon testleri yeşil
+  (bir istisna dışında — aynı önceden bilinen `psql`-eksik ortam boşluğu, G2, bu dalgadan bağımsız);
+  `consistency_audit.py` temiz; `plan_audit_tool.py validate`/`validate-coverage`/`verify-manifest`
+  sıfır hata. 2026-09-04 25. dalga differentiated-authorization (`V1-IAM-016..025`: `waiter` rolü, izin kodu
   granülerleştirmesi, policy/grant/delegation/offline-authority/behavioural-tightening motorları,
   her Experience endpoint'inin granüler koda bağlanması, `pos.cashier.mutate` takma adının
   kaldırılması, migration 044-052 — offline bütçe yeniden-ihraç FK çökmesi, delegation revoke

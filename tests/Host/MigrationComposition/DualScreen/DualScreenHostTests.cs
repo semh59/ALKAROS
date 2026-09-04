@@ -7,6 +7,8 @@ using ALKAROS.Host.Composition;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Tests.Fixtures;
 using ALKAROS.Identity.Authentication;
+using ALKAROS.Settings.ReservationStation;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -329,7 +331,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task RuntimeConfigurationRequiresTheBoundTerminalAndReturnsOnlyTheKitchenStation()
+    public async Task RuntimeConfigurationRequiresTheBoundTerminalAndReturnsTheKitchenStationAndReservationStationFlag()
     {
         var userId = Guid.NewGuid();
         var terminalId = Guid.NewGuid();
@@ -354,9 +356,23 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         using var configuredResponse = await client.SendAsync(configured);
         Assert.Equal(HttpStatusCode.OK, configuredResponse.StatusCode);
         using var document = JsonDocument.Parse(await configuredResponse.Content.ReadAsStringAsync());
-        var property = Assert.Single(document.RootElement.EnumerateObject());
-        Assert.Equal("kitchenStationId", property.Name);
-        Assert.Equal(KitchenStationId, property.Value.GetString());
+        var properties = document.RootElement.EnumerateObject().ToDictionary(p => p.Name, p => p.Value);
+        Assert.Equal(2, properties.Count);
+        Assert.Equal(KitchenStationId, properties["kitchenStationId"].GetString());
+        // V1-SET-003: off by default — a fresh test database never turned it on.
+        Assert.False(properties["reservationStationEnabled"].GetBoolean());
+
+        var settings = app.Services.GetRequiredService<ISettingsService>();
+        var record = await settings.GetRecordAsync(ReservationStationSetting.Key);
+        await settings.SetValueAsync(ReservationStationSetting.Key, true, record!.RowVersion);
+        using var afterToggle = CreateForwardedRequest(
+            HttpMethod.Get,
+            $"/api/v1/terminals/{terminalId:D}/runtime-configuration",
+            "198.51.100.42",
+            cashierCookie);
+        using var afterToggleResponse = await client.SendAsync(afterToggle);
+        using var afterToggleDoc = JsonDocument.Parse(await afterToggleResponse.Content.ReadAsStringAsync());
+        Assert.True(afterToggleDoc.RootElement.GetProperty("reservationStationEnabled").GetBoolean());
 
         Environment.SetEnvironmentVariable(
             DualScreenApplication.KitchenStationEnvironmentVariable,
