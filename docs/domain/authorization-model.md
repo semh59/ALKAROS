@@ -1,7 +1,7 @@
 # Authorization Model — approved decision record
 
 > **Task:** V1-IAM-016
-> **Status:** Planned
+> **Status:** Done
 > **Work type:** decision
 > **Access date:** 2026-09-04
 > **Approver:** Semih — 2026-09-04
@@ -27,8 +27,8 @@ approved".** That model has four structural weaknesses this decision targets:
 | --- | --- |
 | Manager PIN-swipe is a physical bottleneck during a rush | **Asynchronous contextual grant** — request pops on any on-shift manager's device with full context; ~2s approve from where they stand |
 | The manager becomes a walking PIN; "approved" audit is theatre | **Policy engine + policy-path in every event** — routine cases auto-approve within a tunable limit and are logged, not interrupted; humans see only exceptions |
-| Roles are static; a senior server = a new hire | **Time-boxed delegation** — a manager grants "Ayşe holds `bills.comp` ≤ ₺200 until 22:00", auto-revoked, audited |
-| LAN outage forces all-or-nothing (lock the floor or open the vault) | **Bounded offline authority** — the device carries a signed, short-TTL self-approval budget; beyond it, blocked; on reconnect every offline grant is re-validated and queued for review |
+| Roles are static; a senior server = a new hire | **Time-boxed delegation** — a manager grants "Ayşe holds `bills.comp` ≤ ₺200 until 22:00"; it stops applying the moment it expires (query-filter enforced) or a manager cancels it early, either way audited |
+| LAN outage forces all-or-nothing (lock the floor or open the vault) | **Bounded offline authority** — the device carries a server-held, short-TTL self-approval budget; beyond it, blocked; on reconnect every offline grant is re-validated and queued for review |
 
 Plus one preventive layer no competitor ships:
 
@@ -122,18 +122,19 @@ Reuses `DenialEvent` sink shape for denies.
 
 ## 5. Bounded offline authority
 
-At session start the Host issues the device a signed **offline authority
-budget** (JWT-style, short TTL, per session):
+At session start the Host issues the device a server-held **offline authority
+budget** row (short TTL, per session, keyed by an unguessable `budget_id` —
+not a signed token; see the V1-IAM-022 task's "Tasarım sapması" note):
 
 ```text
-{ user, session, budget: { "bills.comp": {amount: 15000, count: 2},
-                            "bills.void": {count: 1} }, exp: session_start + 4h }
+{ budget_id, user, session, budget: { "bills.comp": {amount: 15000, count: 2},
+                                       "bills.void": {count: 1} }, exp: session_start + 4h }
 ```
 
 Offline:
 
 - Permissions the role holds outright → work, queued as today.
-- `grant` actions → allowed only while the signed budget has headroom;
+- `grant` actions → allowed only while the budget has headroom;
   each consumes budget locally. Beyond budget or expired → blocked with a
   "reconnect required" state.
 - On reconnect, every offline-authorized action is **re-validated server-side**
@@ -160,7 +161,7 @@ POS client can show "Void (needs approval)" instead of hiding it.
 | `V1-IAM-018` | `authorization_policies` table + evaluation (`auto_within`); manager UI to edit limits |
 | `V1-IAM-019` | `authorization_grants` request/resolve engine + append-only event + `reporting.*` projection |
 | `V1-IAM-020` | Manager push + approve/deny surface (PosTerminal + WaiterPwa manager view) |
-| `V1-IAM-021` | `authorization_delegations` (time-boxed) + auto-revoke job |
+| `V1-IAM-021` | `authorization_delegations` (time-boxed); expiry enforced by the read-path query filter, `revoked_at` for an early manager cancel |
 | `V1-IAM-022` | Bounded offline authority budget: issue at session start, local spend, reconnect re-validation + `offline_pending_review` |
 | `V1-IAM-023` | Behavioural tightening: rolling rate snapshot + auto `requires_grant` + manager clear |
 | `V1-IAM-024` | Re-point every Experience endpoint; remove `pos.cashier.mutate`; `AllowedCommands` = held ∪ reachable-grants |
@@ -174,7 +175,7 @@ superseded in effect once `V1-IAM-017` gives `tables.reserve` a real gate.
   role-held check + endpoint log).
 - A session's effective authority never increases mid-request; a grant
   authorizes exactly one command instance, identified by an idempotency key.
-- Offline authority is bounded by the signed budget; it cannot be replayed
-  (session-scoped `exp` + server-side single-use reconciliation).
+- Offline authority is bounded by the server-held budget row; it cannot be
+  replayed (session-scoped `exp` + server-side single-use reconciliation).
 - Removing a role or permission takes effect on the next request
   (`AuthorizationService` reads live, no session cache).
