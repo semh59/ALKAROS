@@ -111,6 +111,7 @@
     // an insecure context (plain HTTP over a LAN IP) is surfaced to the user
     // rather than silently swallowed.
     registerOfflineWorker();
+    connectOrderReadyHub();
   }
 
   // Staff sign-in
@@ -166,6 +167,7 @@
       el.loginOverlay.hidden = true;
       await loadInitialData();
       registerOfflineWorker();
+      connectOrderReadyHub();
     } catch (err) {
       el.loginError.textContent = err && err.message ? err.message : 'Giriş başarısız.';
       el.loginError.hidden = false;
@@ -690,6 +692,46 @@
           alert(`Çevrimdışı mod: Sipariş yerel kuyruğa kaydedildi. Bağlantı gelince iletilecek.`);
         }
       });
+    }
+  }
+
+  // Order-ready notifications (V1-WTR-009). Only reachable when a
+  // deployment has turned on kitchen live-sync (kitchen.live_sync_enabled,
+  // V1-SET-002); if it is off the hub connects but the server simply never
+  // sends anything. There is no waiter-to-table assignment tracked anywhere
+  // in this system, so every connected device gets every "ready" event —
+  // targeted delivery is a follow-on once that assignment exists.
+  let orderReadyConnection = null;
+
+  function connectOrderReadyHub() {
+    if (orderReadyConnection || typeof signalR === 'undefined') return;
+    orderReadyConnection = new signalR.HubConnectionBuilder()
+      .withUrl(`/hubs/waiter-order-status?terminalId=${state.terminalId}`)
+      .withAutomaticReconnect([0, 1000, 3000, 5000, 10000])
+      .configureLogging(signalR.LogLevel.Warning)
+      .build();
+    orderReadyConnection.on('OrderItemReady', showOrderReadyBanner);
+    orderReadyConnection.start().catch(() => {
+      // Best-effort: no live-sync deployment, or a transient network issue.
+      // Automatic reconnect (above) keeps trying; nothing to surface here
+      // that the existing offline ribbon does not already say.
+    });
+  }
+
+  function showOrderReadyBanner(payload) {
+    const productName = escapeHtml(payload && payload.productName || 'Bir ürün');
+    const banner = document.createElement('div');
+    banner.className = 'order-ready-banner';
+    banner.setAttribute('role', 'status');
+    banner.textContent = `${productName} hazır`;
+    document.body.appendChild(banner);
+    window.setTimeout(() => banner.remove(), 8000);
+
+    if (window.Notification && Notification.permission === 'granted') {
+      try { new Notification('Sipariş hazır', { body: `${productName} hazır`, tag: 'alkaros-order-ready' }); }
+      catch { /* Notification constructor can throw on some mobile browsers; the in-page banner already covers it. */ }
+    } else if (window.Notification && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => { /* ignore - stays in-page-only */ });
     }
   }
 

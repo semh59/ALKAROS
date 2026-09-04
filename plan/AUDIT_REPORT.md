@@ -2145,7 +2145,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/waiter-pwa/V1-WTR-006-waiter-pwa-mobile-frontend.md` | ✅ | `110B57716EDADA30E36FFACF517C45E264139E874C4FBE3A7DC151CA516C7118` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-007-waiter-host-order-and-session-contract.md` | ✅ | `EAD81156641DA1076C55AA3D8B1A579EBAEE8DB41A43D589200176CA8B25476D` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-008-waiter-pwa-real-api-and-reliable-queue.md` | ✅ | `2227A5E2F1F87664609C619A1614823058684CE507206FD9DEA36435E8D65CEE` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-009-order-ready-notification.md` | ✅ | `5E5146E693A895809B8677B6BF567947A4BAACECD2C8E320D2168F291037B185` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-009-order-ready-notification.md` | ✅ | `5C0BA63CA7DD11A922B93F5DE29B834D63064CA097AFE0006424AAA6A19EAB22` | Tek-sahip görev |
 | `plan/v2.0/release/V20-REL-004-production-deployment.md` | ✅ | `D87BE8B6ECF771AE9F0C10590041865AA61E91707F696EF86D12AE64921713B9` | Tek-sahip görev |
 | `plan/v2.0/release/V20-REL-005-post-go-live-observation.md` | ✅ | `18DA1BFFA21344C9EFEF7E8138B805503FE3376946A7AB35902339DFFC52C8EF` | Tek-sahip görev |
 | `plan/AUDIT_REPORT.md` | ✅ | `plan/AUDIT_MANIFEST.json` içinde | Bu satır bazlı denetim kaydı |

@@ -1,4 +1,5 @@
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Host.Experience.WaiterNotifications;
 using ALKAROS.Kitchen.OrderItemStateSync;
 using ALKAROS.Kitchen.PhysicalPrintRecovery;
 using ALKAROS.Kitchen.PrintQueue;
@@ -6,8 +7,10 @@ using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Messaging;
 using ALKAROS.Operations.BackupHealth;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.KitchenLiveSync;
 using ALKAROS.Settings.TypedSettings;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ALKAROS.Host.Experience.KitchenOperations;
 
@@ -22,6 +25,8 @@ public sealed class KitchenOperationsStore
     private readonly IAuditEventStore _audit;
     private readonly ISettingsService _settings;
     private readonly OutboxStore _outbox;
+    private readonly IOrderRepository _orders;
+    private readonly IHubContext<WaiterOrderStatusHub> _waiterHub;
 
     public KitchenOperationsStore(
         IKitchenTicketRepository tickets,
@@ -32,7 +37,9 @@ public sealed class KitchenOperationsStore
         IBackupHealthService backupHealth,
         IAuditEventStore audit,
         ISettingsService settings,
-        OutboxStore outbox)
+        OutboxStore outbox,
+        IOrderRepository orders,
+        IHubContext<WaiterOrderStatusHub> waiterHub)
     {
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _printers = printers ?? throw new ArgumentNullException(nameof(printers));
@@ -45,6 +52,10 @@ public sealed class KitchenOperationsStore
         // gated by kitchen.live_sync_enabled (V1-SET-002, default off).
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _outbox = outbox ?? throw new ArgumentNullException(nameof(outbox));
+        // V1-WTR-009: broadcasts "ready" to every connected waiter device,
+        // same gate.
+        _orders = orders ?? throw new ArgumentNullException(nameof(orders));
+        _waiterHub = waiterHub ?? throw new ArgumentNullException(nameof(waiterHub));
     }
 
     public async Task<IReadOnlyList<KitchenTicketV1>> GetActiveTicketsAsync(
@@ -130,6 +141,8 @@ public sealed class KitchenOperationsStore
             var liveSyncEnabled = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
             await KitchenOrderItemStateSyncPublisher.PublishAsync(
                 _outbox, transitioned.OrderId, transitionedItem, liveSyncEnabled, cancellationToken);
+            if (liveSyncEnabled && transitionedItem.Status == KitchenTicketItemState.Ready)
+                await NotifyWaitersItemIsReadyAsync(transitioned.OrderId, transitionedItem, cancellationToken);
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
             return ToDto(canonical);
@@ -143,6 +156,24 @@ public sealed class KitchenOperationsStore
             await ThrowConcurrencyOrNotFoundAsync(ticketId, request.ExpectedTicketRowVersion, exception, cancellationToken);
             throw;
         }
+    }
+
+    /// <summary>
+    /// V1-WTR-009: broadcasts to every connected waiter device — there is no
+    /// waiter-to-table assignment tracked anywhere in this system to target
+    /// one specific device (see <see cref="WaiterOrderStatusHub"/>). A
+    /// missing order is tolerated (the ticket/order pairing is normally
+    /// guaranteed, but a notification is best-effort, not a correctness
+    /// path — it must never fail the transition itself).
+    /// </summary>
+    private async Task NotifyWaitersItemIsReadyAsync(
+        Guid orderId, KitchenTicketItem item, CancellationToken cancellationToken)
+    {
+        var order = await _orders.GetByIdAsync(orderId, cancellationToken);
+        await _waiterHub.Clients.All.SendAsync(
+            WaiterOrderStatusHub.OrderItemReady,
+            new OrderItemReadyV1(orderId, order?.TableId, item.OrderItemId, item.ProductNameSnapshot),
+            cancellationToken);
     }
 
     public async Task<IReadOnlyList<PrinterV1>> GetPrintersAsync(CancellationToken cancellationToken)

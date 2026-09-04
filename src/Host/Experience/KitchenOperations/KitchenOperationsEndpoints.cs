@@ -1,5 +1,6 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.WaiterNotifications;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
@@ -9,6 +10,7 @@ using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Messaging;
 using ALKAROS.Operations.BackupHealth;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +55,9 @@ public static class KitchenOperationsEndpoints
         services.TryAddSingleton<ISettingValidator, SettingValidator>();
         services.TryAddSingleton<ISettingsService, SettingsService>();
         services.TryAddSingleton(sp => new OutboxStore(sp.GetRequiredService<NpgsqlDataSource>()));
+        // V1-WTR-009: broadcasts "ready" to every connected waiter device.
+        services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
+        services.AddWaiterNotificationsExperience();
         services.TryAddSingleton<KitchenOperationsStore>();
         services.TryAddSingleton<IKitchenOperationsSessionAuthorizer, KitchenOperationsSessionAuthorizer>();
         services.TryAddSingleton(_ => new ProductionBackupOptions(

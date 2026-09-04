@@ -1,11 +1,12 @@
 // ALKAROS Waiter PWA Service Worker (V1-WTR-006)
-const CACHE_NAME = 'alkaros-waiter-v1';
+const CACHE_NAME = 'alkaros-waiter-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './waiter-app.css',
   './waiter-app.js',
-  './manifest.json'
+  './manifest.json',
+  './vendor/signalr.min.js'
 ];
 
 self.addEventListener('install', (event) => {

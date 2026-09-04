@@ -706,3 +706,26 @@ body {
   font-weight: 600;
 }
 .login-card .btn-primary:disabled { opacity: 0.6; }
+
+/* Order-ready notification banner (V1-WTR-009) */
+.order-ready-banner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  max-width: calc(100vw - 32px);
+  padding: 10px 20px;
+  border-radius: 10px;
+  background-color: var(--accent-success);
+  color: #06281c;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  animation: order-ready-banner-in 0.2s ease-out;
+}
+
+@keyframes order-ready-banner-in {
+  from { opacity: 0; transform: translate(-50%, -8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}

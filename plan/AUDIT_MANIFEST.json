@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 885,
-  "markdown_line_count": 57665,
-  "markdown_byte_count": 3420664,
+  "markdown_line_count": 57708,
+  "markdown_byte_count": 3423804,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,7 +2220,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "50FD514B57BD5EE5A7E44CD497B5AE1D4444C27B8B7A140806C8BEBFD78C831B",
+      "sha256": "EA7CC7F3AE71DA0774A9251BC35AB3D247EDF6D81F887DDBC713E81502C622AF",
       "lines": 2161,
       "bytes": 305381,
       "utf8": true
@@ -5195,9 +5195,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-009-order-ready-notification.md",
-      "sha256": "5E5146E693A895809B8677B6BF567947A4BAACECD2C8E320D2168F291037B185",
-      "lines": 61,
-      "bytes": 2149,
+      "sha256": "5C0BA63CA7DD11A922B93F5DE29B834D63064CA097AFE0006424AAA6A19EAB22",
+      "lines": 104,
+      "bytes": 5289,
       "utf8": true
     },
     {
