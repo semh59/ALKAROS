@@ -8,11 +8,12 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
 {
     private const string UniqueViolation = "23505";
 
+    // Only void and comp carry the "(own check)" restriction in the model's §3
+    // role matrix; bills.discount is a plain grant for every role.
     private static readonly HashSet<string> OwnCheckOnly = new(StringComparer.Ordinal)
     {
         ApplicationPermissions.BillsVoid,
         ApplicationPermissions.BillsComp,
-        ApplicationPermissions.BillsDiscount,
     };
 
     private readonly IAuthorizationGrantRepository _grants;
@@ -60,10 +61,14 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
         if (replay is not null)
             return new GrantResolution(replay, OutcomeOf(replay.Status));
 
-        // Own-check guard (model §3, resolved decision #1): a waiter/cashier may
-        // only raise a void/comp/discount grant on a check they serve. A grant on
-        // someone else's check is refused before it reaches a manager.
+        // Own-check guard (authorization model §3, resolved decision #1): a
+        // *waiter* may raise a void/comp grant only on a check they serve — a
+        // grant on another server's check is refused before it reaches a
+        // manager. cashier/supervisor/manager void/comp is an unrestricted
+        // grant, so the guard is scoped to the waiter role.
         if (OwnCheckOnly.Contains(request.PermissionCode)
+            && string.Equals(
+                request.RequesterRoleCode, ApplicationPermissions.RoleWaiter, StringComparison.Ordinal)
             && request.SubjectServingUserId is { } serving
             && serving != request.RequesterUserId)
         {

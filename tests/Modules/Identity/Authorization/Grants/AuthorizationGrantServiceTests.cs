@@ -160,6 +160,44 @@ public sealed class AuthorizationGrantServiceTests : IClassFixture<GrantDatabase
     }
 
     [Fact]
+    public async Task OwnCheckGuardDoesNotApplyToACashierVoidingAnotherServersCheck()
+    {
+        // Model §3: cashier bills.void is a plain grant, not "(own check)".
+        var result = await Service().RequestAsync(new GrantRequest(
+            IdempotencyKey: "svc-guard-cashier",
+            PermissionCode: "bills.void",
+            RequesterUserId: Guid.NewGuid(),
+            RequesterRoleCode: "cashier",
+            ReasonCode: "OperatorError",
+            Amount: 20m,
+            SubjectType: "bill",
+            SubjectId: Guid.NewGuid(),
+            SubjectServingUserId: Guid.NewGuid()));
+
+        result.Outcome.Should().Be(GrantOutcome.Pending, "a cashier's void escalates to a manager, it is not auto-denied");
+    }
+
+    [Fact]
+    public async Task OwnCheckGuardDoesNotApplyToADiscountGrant()
+    {
+        // Model §3: bills.discount carries no "(own check)" annotation for any role.
+        var waiter = Guid.NewGuid();
+
+        var result = await Service().RequestAsync(new GrantRequest(
+            IdempotencyKey: "svc-guard-discount",
+            PermissionCode: "bills.discount",
+            RequesterUserId: waiter,
+            RequesterRoleCode: "waiter",
+            ReasonCode: "CustomerChange",
+            Amount: 15m,
+            SubjectType: "bill",
+            SubjectId: Guid.NewGuid(),
+            SubjectServingUserId: Guid.NewGuid()));
+
+        result.Outcome.Should().Be(GrantOutcome.Pending);
+    }
+
+    [Fact]
     public async Task OwnCheckGuardDoesNotApplyToNonBillPermissions()
     {
         var result = await Service().RequestAsync(new GrantRequest(
