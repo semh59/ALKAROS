@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "047"
+    "max": "048"
   },
   "migrations": [
     {
@@ -414,6 +414,14 @@
         "offline_authority_budgets",
         "offline_authority_budget_lines",
         "offline_authority_replays"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "048",
+      "phase": "B",
+      "tables": [
+        "behavioural_tightenings"
       ],
       "deferredConstraints": []
     }

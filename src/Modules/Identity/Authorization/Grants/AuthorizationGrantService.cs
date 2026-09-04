@@ -18,6 +18,7 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
     private readonly IAuthorizationGrantRepository _grants;
     private readonly IAuthorizationPolicyRepository _policies;
     private readonly IReadOnlyList<IEscalationResolver> _escalationResolvers;
+    private readonly IReadOnlyList<IPrePolicyGate> _prePolicyGates;
     private readonly Func<DateTimeOffset> _nowUtc;
 
     /// <param name="escalationResolvers">
@@ -25,6 +26,11 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
     /// <see cref="PolicyPath"/> authorizes the grant without a manager (e.g. an
     /// active delegation, V1-IAM-021). Empty by default — every escalation then
     /// waits for a manager.
+    /// </param>
+    /// <param name="prePolicyGates">
+    /// Consulted before the policy engine; if any forces escalation, a
+    /// would-be <c>auto</c> approval is downgraded to a pending manager decision
+    /// (e.g. behavioural tightening, V1-IAM-023). Empty by default.
     /// </param>
     /// <param name="nowUtc">
     /// UTC clock; defaults to <see cref="DateTimeOffset.UtcNow"/>. Injected so the
@@ -34,11 +40,13 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
         IAuthorizationGrantRepository grants,
         IAuthorizationPolicyRepository policies,
         IEnumerable<IEscalationResolver>? escalationResolvers = null,
+        IEnumerable<IPrePolicyGate>? prePolicyGates = null,
         Func<DateTimeOffset>? nowUtc = null)
     {
         _grants = grants ?? throw new ArgumentNullException(nameof(grants));
         _policies = policies ?? throw new ArgumentNullException(nameof(policies));
         _escalationResolvers = escalationResolvers?.ToArray() ?? [];
+        _prePolicyGates = prePolicyGates?.ToArray() ?? [];
         _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
     }
 
@@ -62,6 +70,16 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
             return await StoreAsync(request, GrantStatus.Denied, PolicyPath.Auto, cancellationToken);
         }
 
+        var forceEscalation = false;
+        foreach (var gate in _prePolicyGates)
+        {
+            if (await gate.ShouldForceEscalationAsync(request, _nowUtc(), cancellationToken))
+            {
+                forceEscalation = true;
+                break;
+            }
+        }
+
         var policy = await _policies.GetAsync(
             request.PermissionCode, request.RequesterRoleCode, cancellationToken);
 
@@ -74,6 +92,11 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
         }
 
         var outcome = AuthorizationPolicyEvaluator.Evaluate(policy, request.Amount, priorAutoGrants);
+
+        // A pre-policy gate never denies and never overrides always_deny; it only
+        // stops a routine auto-approval so a manager looks (model §1).
+        if (forceEscalation && outcome == PolicyOutcome.AutoApprove)
+            outcome = PolicyOutcome.Escalate;
 
         switch (outcome)
         {

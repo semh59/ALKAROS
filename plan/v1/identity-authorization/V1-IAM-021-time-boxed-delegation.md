@@ -23,13 +23,12 @@ zincirin ilk halkasıdır (`V1-IAM-022` ve `V1-IAM-023` yeni halkalar ekler).
 
 - `plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md`
 - `database/migrations/V1/V1-IAM-021/**`
-- `src/Modules/Identity/Authorization/Grants/**`
 - `tests/Modules/Identity/Authorization/Grants/**`
 - `src/Modules/Identity/Authorization/Delegations/**`
 - `tests/Modules/Identity/Authorization/Delegations/**`
 - `evidence/V1-IAM-021/**`
-- Yüzey devri (giriş): src/Modules/Identity/Authorization/Grants/** ile tests/Modules/Identity/Authorization/Grants/**, tırmanma çözücü kancası (IEscalationResolver) ve AuthorizationGrantService'in çözücü yürüyüşü için V1-IAM-019'dan bu göreve devredildi (PO:2026-09-04). database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs migration 046 için, src/Modules/Identity/IdentityModule.cs ise DI kayıt evi olarak V1-IAM-019'dan bu göreve devredildi ve iş kapandıktan sonra V1-IAM-022'ye geçti (PO:2026-09-04).
-- Yüzey devri (çıkış): database/MigrationComposition/order.json, tests/Host/MigrationComposition/Manifest/ManifestTests.cs (migration 047) ve src/Modules/Identity/IdentityModule.cs, bu görev kapandıktan sonra V1-IAM-022'ye devredildi (PO:2026-09-04).
+- Yüzey devri (giriş): src/Modules/Identity/Authorization/Grants/** ile tests/Modules/Identity/Authorization/Grants/**, tırmanma çözücü kancası (IEscalationResolver) ve AuthorizationGrantService'in çözücü yürüyüşü için V1-IAM-019'dan bu göreve devredildi (PO:2026-09-04). database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs migration 046 için, src/Modules/Identity/IdentityModule.cs ise DI kayıt evi olarak V1-IAM-019'dan bu göreve devredildi (PO:2026-09-04).
+- Yüzey devri (çıkış): database/MigrationComposition/order.json, tests/Host/MigrationComposition/Manifest/ManifestTests.cs ve src/Modules/Identity/IdentityModule.cs, bu görev kapandıktan sonra V1-IAM-022'ye devredildi; src/Modules/Identity/Authorization/Grants/** ise pre-policy kapı kancası (IPrePolicyGate) için V1-IAM-023'e devredildi (PO:2026-09-04).
 - src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 046 değerine güncellenmişti (V1-RMD-089/9. dalga deseni).
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 

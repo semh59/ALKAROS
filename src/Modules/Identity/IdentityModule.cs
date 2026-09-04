@@ -2,6 +2,7 @@ namespace ALKAROS.Identity;
 
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Offline;
@@ -28,6 +29,10 @@ public sealed class IdentityModule : IModule
         context.RegisterTransient<IAuthorizationGrantRepository, PostgresAuthorizationGrantRepository>();
         context.RegisterTransient<IAuthorizationDelegationRepository, PostgresAuthorizationDelegationRepository>();
         context.RegisterTransient<IEscalationResolver, DelegationEscalationResolver>();
+        context.RegisterTransient<IBehaviouralRateSource, PostgresBehaviouralRateSource>();
+        context.RegisterTransient<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
+        context.RegisterTransient<IPrePolicyGate, BehaviouralTighteningGate>();
+        context.RegisterTransient<IBehaviouralTighteningService, BehaviouralTighteningService>();
         context.RegisterTransient<IAuthorizationGrantService, AuthorizationGrantService>();
         context.RegisterTransient<IOfflineAuthorityBudgetRepository, PostgresOfflineAuthorityBudgetRepository>();
         context.RegisterTransient<IOfflineReplayLedger, PostgresOfflineReplayLedger>();

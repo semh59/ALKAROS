@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 869,
-  "markdown_line_count": 55496,
-  "markdown_byte_count": 3301136,
+  "markdown_line_count": 55545,
+  "markdown_byte_count": 3305241,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2192,7 +2192,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3DB9420C5FC32C3F7D735CEE5FB3651A5A973F56FCF2DCE2B9E79D19FC358BCC",
+      "sha256": "2032E3F4D4C77814429C79261A0C406DE86CE4AB2BC2D2BD4C4A9A43F443DF39",
       "lines": 2145,
       "bytes": 302753,
       "utf8": true
@@ -4110,23 +4110,23 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md",
-      "sha256": "98315D80471B467A4F5D12AFA044DEFB0D39AFB83A4C94D9DBAA2DBF43637A56",
-      "lines": 74,
-      "bytes": 4737,
+      "sha256": "04BE7C3607ED19D836BFF67B5E489D62D2E8B63F694FDD6A7134CB8DE91A2262",
+      "lines": 73,
+      "bytes": 4748,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md",
-      "sha256": "1EF92A890AAE0390302FAF92742581BB0DB8C405A8D71B68102A8AEA6F4DF329",
-      "lines": 93,
-      "bytes": 5685,
+      "sha256": "01D98F3140EBB1F95248CE89E09897EBFB8DBEC3D4263195E150B2AE818728D7",
+      "lines": 91,
+      "bytes": 5796,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md",
-      "sha256": "FF5C653FDDA82E6742690973B449F966AD41B00497303B56C7CB6822251632EA",
-      "lines": 34,
-      "bytes": 1416,
+      "sha256": "E386BD57C6EF6CCBB82D3CFF5F6CB5B864E492CDEF43105957D522EF9A05871E",
+      "lines": 86,
+      "bytes": 5399,
       "utf8": true
     },
     {
