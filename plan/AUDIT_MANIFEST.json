@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 877,
-  "markdown_line_count": 57022,
-  "markdown_byte_count": 3392499,
+  "markdown_file_count": 885,
+  "markdown_line_count": 57614,
+  "markdown_byte_count": 3416925,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -337,9 +337,9 @@
     },
     {
       "path": "docs/domain/void-complimentary-discount-policy.md",
-      "sha256": "938C4B7E46CF824B0B941EC814FCD8BC9DB6A7AA810B1F62F7D03C2E6FC26FD1",
-      "lines": 62,
-      "bytes": 4179,
+      "sha256": "95C03961E87A236C35877E3931AC0DE8C97224672252D1F6C350511E265BDE89",
+      "lines": 117,
+      "bytes": 7610,
       "utf8": true
     },
     {
@@ -2220,9 +2220,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "4C635F5ADFBCFE764413BEA68E46AC6DED14912B9BE4D9FCD82B33AA9E5E554A",
-      "lines": 2153,
-      "bytes": 304060,
+      "sha256": "FA9C11E37F9ED13241DF5558830BFE0C40588A49C9CFCEE9B95FFE3E752C557B",
+      "lines": 2161,
+      "bytes": 305381,
       "utf8": true
     },
     {
@@ -2241,9 +2241,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "55B0936C3BA9B2F50B6B0CEAE29EF7B7768BFB392BD07BA938C6A4D8BF212B14",
+      "sha256": "4A753E876361EE090DB20565A62D0FFC6F133DB4AB1104F36063E99A56F96BEF",
       "lines": 394,
-      "bytes": 84921,
+      "bytes": 85484,
       "utf8": true
     },
     {
@@ -3255,6 +3255,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/billing/V1-BIL-005-post-serve-comp-endpoint.md",
+      "sha256": "9E4EE3E22CC32D574FAEE04908F7628C9FE88D933AD13EE347C3E272077DCFFC",
+      "lines": 64,
+      "bytes": 2446,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/cash-design/V1-CSH-001-cash-session-design.md",
       "sha256": "FA2F9A45FDE25874F1647D783670FEFB74AC9DF4E830F64E5BF4E62FFFE6F4F2",
       "lines": 53,
@@ -4011,6 +4018,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-073-master-custody-reopen-and-remediation-wave-26.md",
+      "sha256": "38C524D45D42C34CE7ACAA98879DC727BE4EEEA502516DB04DEBC98009FAA056",
+      "lines": 64,
+      "bytes": 2043,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-074-wave26-master-audit-reseal-and-gate-closure.md",
+      "sha256": "7ADF2B5B51E40269D0CF271705EFE79F9A02759FF26DD59323718A5C83958124",
+      "lines": 64,
+      "bytes": 1697,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -4187,9 +4208,16 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-026-grant-class-bill-adjustment-surface.md",
-      "sha256": "B5EFF23A04AA42D1235DD3F45D416C56D18E11B3350797B89423CEC176C67963",
-      "lines": 85,
-      "bytes": 4193,
+      "sha256": "0B74BB50B6AE28CCB773A642632397659B7B5CA5FD4B1D3C34A1A0F079E574D1",
+      "lines": 82,
+      "bytes": 3796,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-027-sent-unserved-void-with-waste.md",
+      "sha256": "502047E0D3C91A99AF3968FF9F87A9C9BA969B0100985E977D93589D5471BEC2",
+      "lines": 71,
+      "bytes": 2569,
       "utf8": true
     },
     {
@@ -4218,6 +4246,13 @@
       "sha256": "ACB546AB5DB4935582E33D19493C64A8DEDC8B7756549D12014E6DFACF8DC31B",
       "lines": 54,
       "bytes": 1458,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-005-kitchen-order-item-state-sync.md",
+      "sha256": "FFCEC341193E8891E99CBFC54F3C9908EC4A4C950F52A070DFBB3A892B613143",
+      "lines": 72,
+      "bytes": 2845,
       "utf8": true
     },
     {
@@ -4270,10 +4305,17 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md",
+      "sha256": "61C61F411F0DCDA983481CED2B4E279AC73616B2E8E9CB58F22EF84E6C252788",
+      "lines": 59,
+      "bytes": 2010,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/README.md",
-      "sha256": "6A7175DF58C5BF57AE6F6E5FB4B5C082B39CA6CFFBA17513EDCDC768FCA7EA7F",
-      "lines": 76,
-      "bytes": 6680,
+      "sha256": "7758BE553A39F8DC9E186B3108269D30B6639F94D26709FAF0B930D27264CC86",
+      "lines": 82,
+      "bytes": 7469,
       "utf8": true
     },
     {
@@ -5040,6 +5082,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/settings/V1-SET-002-kitchen-live-sync-toggle.md",
+      "sha256": "AA94D5FB711235D0A9403163E116FE8CABD28DA97A99890DC59EEE1D70C3C3EA",
+      "lines": 71,
+      "bytes": 2960,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/table-management/V1-TBL-001-table-lifecycle.md",
       "sha256": "3306EA49714434F6B243732E2027CFEDB16C94C9AB4B3DE7B8744DB0DEF4955D",
       "lines": 63,
@@ -5142,6 +5191,13 @@
       "sha256": "2227A5E2F1F87664609C619A1614823058684CE507206FD9DEA36435E8D65CEE",
       "lines": 32,
       "bytes": 1248,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-WTR-009-order-ready-notification.md",
+      "sha256": "5E5146E693A895809B8677B6BF567947A4BAACECD2C8E320D2168F291037B185",
+      "lines": 61,
+      "bytes": 2149,
       "utf8": true
     },
     {

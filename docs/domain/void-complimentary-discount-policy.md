@@ -60,3 +60,58 @@ Adjustment`.
   `changed_by` with `Manager` authority and an `order_status_history` row.
 - A discount changes only `discount_amount`/`discount_total`; it never
   changes unit prices or tax rates.
+
+## Amendment
+
+- **Date:** 2026-09-04
+- **Approver:** Semih (named business approver)
+- **Change:** The original record's "Void eligibility" row (line 29) treats
+  "sent to kitchen" as an absolute wall: a not-yet-prepared item may be
+  voided outright, a sent item may not be voided at all (only refunded,
+  after fiscal issuance). Shipped V1 restaurants span esnaf lokantası, cafe,
+  fine dining and fast food, whose kitchens differ enormously in how
+  meaningful "already prepared" is (a lokanta's steam-table items are
+  effectively always "prepared"; a fast-food line voids sent items
+  routinely; a fine-dining kitchen treats it as exceptional). A single
+  hard-coded wall cannot fit all of them. This amendment keeps the wall as
+  the *default* (unchanged in-scope: `Active` + `KitchenState = NotSent` is
+  a free, unauthorized void) and adds a third state, gated by
+  `docs/domain/authorization-model.md`'s `bills.void` grant permission
+  rather than an unconditional block:
+  - **A sent-but-not-yet-served item may now be voided**, requiring the
+    `bills.void` permission (held outright by supervisor/manager; a grant
+    for waiter/cashier, resolved by the same policy-engine /
+    auto-within-limit machinery as every other grant-class permission —
+    so a fast-food deployment can tune its policy to auto-approve within a
+    limit, and a fine-dining deployment can require a manager every time,
+    without a code branch per venue type). Voiding at this stage cancels
+    the matching kitchen ticket item too (a kitchen that already started
+    preparing the item is told to stop) and, if the item was already
+    reflected on an open `Bill`, removes that `BillItem` and records a
+    `BillLineType.Waste` line instead of `Sale` (the enum value already
+    existed in the canonical `line_type` catalog per `III.7.2`; this is its
+    first real producer) — so reporting can distinguish "never made"
+    (void, no cost) from "made but not sold" (waste, real cost) from
+    "made, delivered, given away" (comp, `line_type Complimentary`,
+    unchanged).
+  - This entire path is inert unless a deployment has turned on kitchen
+    live-sync (a new Settings-module toggle, `Global` scope, default off —
+    see the requester-side wiring task cluster). With the toggle off,
+    `OrderItem.KitchenState` never leaves `NotSent`/`Cancelled` (as today),
+    so the original wall is the only reachable behaviour and existing
+    deployments see no change.
+  - A void after fiscal issuance remains a refund, not a void — unchanged
+    (line 33).
+- **Rationale:** The wall was correct as a *default* but wrong as a
+  universal constant — it assumed one kitchen-timing model. Gating the
+  exception behind the existing grant/policy engine (rather than a new
+  bespoke rule) means the authority question ("should this be allowed
+  right now") is answered the same way every other grant-class permission
+  in this system is answered: by policy, delegation, or a manager, tunable
+  per deployment — not by a fixed clock-based wall in code.
+- **Affected tasks:** the requester-side wiring task cluster spawned from
+  `V1-IAM-026` (Settings toggle, Kitchen→Orders state sync, waiter
+  ready-notification, and the three void/comp/discount endpoints).
+- **Not changed:** void reason catalog, void audit row shape, complimentary
+  rules, discount rules, and the refund boundary (all lines above except
+  29) are unchanged.
