@@ -234,9 +234,12 @@ green.
   V1-GOV-028 XSS hardening is complete. Non-escaped interpolations are all
   `fetch()` URLs / headers or `.textContent` / `alert` sinks.
 
-## Consolidated remediation order (Rounds 1-3 findings)
+## Consolidated remediation order (all rounds)
 
-Fold into the Phase 0 `V1-GOV-071` cluster alongside the authz-wave work.
+Fold into the Phase 0 `V1-GOV-071` cluster alongside the authz-wave work. The
+integration-completeness items (B1, B7) are decisions before they are code:
+each module is either wired in this remediation wave or explicitly re-scoped to
+a later milestone with the closed gate acknowledged.
 
 1. **B4 [HIGH]** — confirm the duplicate `orders/{id}/submit` route with a live
    `POST`, then remove one registration. Decide the single owner of the order
@@ -245,26 +248,36 @@ Fold into the Phase 0 `V1-GOV-071` cluster alongside the authz-wave work.
 2. **B3 [MED-HIGH]** — add a permission check to every `OrderManagementEndpoints`
    mutating route (currently session-only), or retire the module in favour of
    the DualScreen order endpoints per (1).
-3. **B1 [HIGH]** — decide: wire bill adjustments end to end (DI-register
-   `IBillAdjustmentRepository`, add a create-adjustment endpoint, call
-   `AdjustmentCalculator.Calculate` on read and persist the adjusted totals to
-   `bills.*` or apply them at settlement), **or** formally scope discounts out
-   of V1 and mark migration 021 / the module as staged for a later milestone.
-   The current "closed gate, dead feature" state is the problem.
-4. **H1 [MED]** — narrow `BillingSplitStore.CreateBillFromOrder`'s
+3. **B7 [HIGH] — decision + wiring per module.** For each of Reporting,
+   Settings, Reconciliation, Alerts and the Observability health-check module:
+   either (a) add the Host endpoint(s) plus the producer / projector that makes
+   it functional (Reporting also needs a populate path for `reporting.*`), or
+   (b) re-scope to a named later task and record that `GATE-V1-EXIT` shipped it
+   inert. At minimum wire the health-check module so `/health/ready` and any
+   ops dashboard read real data.
+4. **B1 [HIGH]** — same decision for bill adjustments: DI-register
+   `IBillAdjustmentRepository`, add a create-adjustment endpoint, apply
+   `AdjustmentCalculator.Calculate` on read and persist / settle the adjusted
+   totals — or re-scope discounts out of V1 explicitly.
+5. **H1 [MED]** — narrow `BillingSplitStore.CreateBillFromOrder`'s
    `catch (Exception)` to the unique-violation only, mirroring the sibling
    `catch`.
-5. **H4 [MED]** — `WaiterOfflineQueueEngine`: make `serverDispatcher` return
+6. **H4 [MED]** — `WaiterOfflineQueueEngine`: make `serverDispatcher` return
    retryable-vs-permanent; permanent (4xx) failures move to a visible
    dead-letter list instead of blocking the queue forever.
-6. **B2 [MED]** — decide scope for cash sessions (implement `V1-CSH-002+` or
-   confirm design-only and remove the `cash.drawer` permission until then).
-7. **H2 [LOW-MED]** — `AuditSanitizer`: run the value-level regex over string
+7. **B2 [MED]** — decide scope for cash sessions (implement or confirm
+   design-only and remove the `cash.drawer` permission until then).
+8. **H2 [LOW-MED]** — `AuditSanitizer`: run the value-level regex over string
    leaves on the well-formed-JSON path, not only the malformed fallback.
-8. **H3 [LOW]** — `AuditSanitizer.IsSensitiveKey`: token-boundary match instead
+9. **H3 [LOW]** — `AuditSanitizer.IsSensitiveKey`: token-boundary match instead
    of raw `Contains` (stop redacting `shipping`, `company`, ...).
-9. **B5 [LOW]** — `SplitEngine.CreateItemSplit`: give the last target of a
-   partially-allocated item the rounding remainder.
+10. **B5 [LOW]** — `SplitEngine.CreateItemSplit`: give the last target of a
+    partially-allocated item the rounding remainder.
+11. **B6 [LOW]** — add `row_version` to `catalog.products` /
+    `catalog.product_prices` and optimistic-concurrency checks in the catalog
+    repositories.
+12. **KVKK [process]** — schedule `kvkk-retention --apply` and `housekeeping`
+    (cron / systemd timer / operator runbook); they exist but are manual.
 
 ## Round 4 — Experience-layer atomicity — verified clean
 
@@ -320,7 +333,81 @@ completeness, the `deploy/docker/**` TLS / proxy split, KVKK retention +
 housekeeping internals, and a formal per-endpoint threat model. These are
 follow-on passes; the high-risk classes are covered above.
 
-## Rounds 6+ — not yet covered (the map)
+## Round 6 — module reachability, KVKK, deploy
+
+### B7 [HIGH] Five V1 modules are domain-complete but fully inert
+
+Each is registered in `ModuleRegistry.DefaultCatalog`, wires its repositories
+and services in `*Module.Register`, has passing unit tests and a migration that
+creates its tables — and **nothing calls it**: no Host endpoint references its
+services, and no hosted service / background service / integration-event
+consumer / projector / other module consumes it.
+
+- **V1-RPT-001 Reporting** — `OperationalReportService` +
+  `reporting.daily_business_days` / `waiter_performance_summaries` /
+  `print_error_summaries`. No endpoint reads a report; migration 031 installs
+  **no trigger, projector or job** to populate the tables. V1 ships with no
+  operational reporting — no X / Z, no daily business day, no waiter
+  performance.
+- **V1-SET-001 Settings** — `SettingsService` + `SettingValidator` +
+  `settings` / `setting_history`. No endpoint, and no module reads a setting
+  (`PasswordHasher` uses a hardcoded `DefaultIterations = 600_000`, not the
+  settings store). V1 has no runtime configuration surface.
+- **V1-REC-001 Reconciliation** — `ReconciliationService` +
+  `reconciliation.cases` / `case_actions`. Nothing creates a case; no endpoint
+  views one. Inert.
+- **V1-ALT-001 Alert foundation** — `AlertService` + `alerts` / `alert_events`.
+  Zero alert producers anywhere in `src/`; no endpoint. Inert.
+- **Observability health-check module** — `IHealthCheckRepository` /
+  `IObservabilityService` are unused; `/health/ready` calls
+  `DualScreenStore.CheckReadyAsync` directly, not this module.
+
+Combined with B1 (bill adjustments) and B2 (cash sessions), roughly seven of the
+~190 V1 tasks shipped as unwired scaffolding. `GATE-V1-EXIT` is closed with all
+of them "Done", where "Done" means domain + repository + passing unit tests, not
+"reachable" or "integrated". The systemic issue is an acceptance criterion that
+did not require an integration / reachability check.
+
+### KVKK retention — implemented, manual
+
+`Program.cs kvkk-retention --db-url <url> [--apply] [--as-of <date>]` anonymizes
+`orders.notes` / `order_items.notes` / `table_reservations.reason` and disables
+staff `password_hash` past the V0-CMP-003 retention windows; it is idempotent
+and defaults to a dry run. It is an **operator-invoked CLI verb**, not a
+scheduled job — KVKK compliance depends on ops running it (the full
+partition-aware version is deferred to `V15-KVK-001`). `housekeeping` (expired
+idempotency keys + long-revoked device sessions) is the same shape.
+
+### Deploy — verified clean
+
+`deploy/docker/` — Caddy terminates TLS with an internal CA, `default_sni`
+pinned to `ALKAROS_PROXY_HOST` for bare-IP LAN clients, strips the inbound
+`X-Alkaros-Origin` header before proxying (the customer-display origin signal
+must originate at the proxy), gzip, SPA deep-link fallback; `pg_hba.conf`,
+tuned `postgresql.conf`, PITR + basebackup + restore self-check scripts present;
+secrets are gitignored with `.example` templates. Hardened by V1-RMD-096 / 098,
+V1-GOV-069 / 070.
+
+### PosTerminal — consistent
+
+All six `src/features/*` directories are routed in `workspace.tsx`
+(`/tables`, `/billing`, `/catalog`, `/kitchen`, `/system-health`,
+`/authorization`). No dead feature directory; no reporting / settings screen
+exists (consistent with the inert backend modules — nothing broken, just
+absent).
+
+## Audit status (updated)
+
+Rounds 1-6 complete. Findings: H1-H4, B1-B7. **Two HIGH clusters** — B1 (bill
+adjustments unwired) and B7 (five inert modules: Reporting, Settings,
+Reconciliation, Alerts, Observability health-check) — plus B4 (duplicate submit
+route, HIGH) and B3 (OrderManagement permission gap, MED-HIGH). The rest are
+MED / LOW. Everything spot-checked across the money paths, Tables, Kitchen,
+messaging, Experience atomicity, migrations, vanilla-client XSS and the Docker
+deploy is sound. The dominant theme is **integration completeness**, not
+correctness: several modules are correct in isolation and never wired in.
+
+## Rounds 7+ — not yet covered (the map)
 
 Each is its own focused pass; suggested order by risk.
 
