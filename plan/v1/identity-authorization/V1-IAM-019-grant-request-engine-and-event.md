@@ -14,14 +14,10 @@ Asenkron yetki isteği motoru: `grant` sınıfı bir eylem, değişmez bir `auth
 
 - `plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md`
 - `database/migrations/V1/V1-IAM-019/**`
-- `database/MigrationComposition/order.json`
-- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
-- `src/Modules/Identity/IdentityModule.cs`
-- `src/Modules/Identity/Authorization/Grants/**`
-- `tests/Modules/Identity/Authorization/Grants/**`
 - `evidence/V1-IAM-019/**`
-- Yüzey devri: database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 045 için V1-IAM-018'den bu göreve devredildi (PO:2026-09-04). src/Modules/Identity/IdentityModule.cs, yetkilendirme dalgasının DI kayıt evi olarak V1-RMD-002'den bu göreve devredildi (PO:2026-09-04).
-- src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 045 değerine güncellenir (V1-RMD-089/9. dalga deseni).
+- Yüzey devri (giriş): database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 045 için V1-IAM-018'den bu göreve devredildi (PO:2026-09-04). src/Modules/Identity/IdentityModule.cs, yetkilendirme dalgasının DI kayıt evi olarak V1-RMD-002'den bu göreve devredildi (PO:2026-09-04).
+- Yüzey devri (çıkış): database/MigrationComposition/order.json, tests/Host/MigrationComposition/Manifest/ManifestTests.cs (migration 046), src/Modules/Identity/Authorization/Grants/** ile tests/Modules/Identity/Authorization/Grants/** (tırmanma çözücü kancası ve AuthorizationGrantService çözücü yürüyüşü) ve src/Modules/Identity/IdentityModule.cs, bu görev kapandıktan sonra V1-IAM-021'e devredildi (PO:2026-09-04).
+- src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 045 değerine güncellenmişti (V1-RMD-089/9. dalga deseni).
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## Dependencies

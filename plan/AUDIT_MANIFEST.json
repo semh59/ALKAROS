@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 869,
-  "markdown_line_count": 55401,
-  "markdown_byte_count": 3293440,
+  "markdown_line_count": 55439,
+  "markdown_byte_count": 3297042,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2192,7 +2192,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "003578EEEBCD67AD9C39B9242E1B5FCD31A2B282604D29E59061443EA399CCB2",
+      "sha256": "D5AE4ED891A149080BF526860928269E6F950B98BACB3211305988EFF3F6CE05",
       "lines": 2145,
       "bytes": 302753,
       "utf8": true
@@ -4096,9 +4096,9 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md",
-      "sha256": "E46F0B3FFB76C2523411867411FC3888A6C8F94626400666AD7435974371DB7D",
-      "lines": 63,
-      "bytes": 3569,
+      "sha256": "41223D6DC4620C6E8D10C4D50D02F420CB6E7D0DDB6C2A7E124263D234D0D39D",
+      "lines": 59,
+      "bytes": 3772,
       "utf8": true
     },
     {
@@ -4110,9 +4110,9 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md",
-      "sha256": "FF41189A1E69539005618D3EF0AC3C87C4803411575011FBE69CD1BAAE5F3B78",
-      "lines": 34,
-      "bytes": 1257,
+      "sha256": "818D0005B63309B3EF4CD39BFCB8D1F9837C71B54FCEE9F7E81E7EDD2C250D54",
+      "lines": 76,
+      "bytes": 4656,
       "utf8": true
     },
     {

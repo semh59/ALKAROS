@@ -24,7 +24,7 @@ public sealed class AuthorizationGrantServiceTests : IClassFixture<GrantDatabase
     }
 
     private AuthorizationGrantService Service()
-        => new(_grants, _policies, () => _now);
+        => new(_grants, _policies, nowUtc: () => _now);
 
     private static GrantRequest Request(
         string key, string permission = "bills.comp", string role = "waiter",

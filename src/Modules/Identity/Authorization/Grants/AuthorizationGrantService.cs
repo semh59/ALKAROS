@@ -17,8 +17,15 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
 
     private readonly IAuthorizationGrantRepository _grants;
     private readonly IAuthorizationPolicyRepository _policies;
+    private readonly IReadOnlyList<IEscalationResolver> _escalationResolvers;
     private readonly Func<DateTimeOffset> _nowUtc;
 
+    /// <param name="escalationResolvers">
+    /// Consulted in order when the policy engine escalates; the first to return a
+    /// <see cref="PolicyPath"/> authorizes the grant without a manager (e.g. an
+    /// active delegation, V1-IAM-021). Empty by default — every escalation then
+    /// waits for a manager.
+    /// </param>
     /// <param name="nowUtc">
     /// UTC clock; defaults to <see cref="DateTimeOffset.UtcNow"/>. Injected so the
     /// <c>auto_within</c> window boundary is deterministic in tests.
@@ -26,10 +33,12 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
     public AuthorizationGrantService(
         IAuthorizationGrantRepository grants,
         IAuthorizationPolicyRepository policies,
+        IEnumerable<IEscalationResolver>? escalationResolvers = null,
         Func<DateTimeOffset>? nowUtc = null)
     {
         _grants = grants ?? throw new ArgumentNullException(nameof(grants));
         _policies = policies ?? throw new ArgumentNullException(nameof(policies));
+        _escalationResolvers = escalationResolvers?.ToArray() ?? [];
         _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
     }
 
@@ -66,16 +75,26 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
 
         var outcome = AuthorizationPolicyEvaluator.Evaluate(policy, request.Amount, priorAutoGrants);
 
-        return outcome switch
+        switch (outcome)
         {
-            PolicyOutcome.AutoApprove =>
-                await StoreAsync(request, GrantStatus.Granted, PolicyPath.Auto, cancellationToken),
-            PolicyOutcome.Deny =>
-                await StoreAsync(request, GrantStatus.Denied, PolicyPath.Auto, cancellationToken),
-            PolicyOutcome.Escalate =>
-                await StoreAsync(request, GrantStatus.Pending, path: null, cancellationToken),
-            _ => throw new InvalidOperationException($"Unhandled policy outcome '{outcome}'."),
-        };
+            case PolicyOutcome.AutoApprove:
+                return await StoreAsync(request, GrantStatus.Granted, PolicyPath.Auto, cancellationToken);
+            case PolicyOutcome.Deny:
+                return await StoreAsync(request, GrantStatus.Denied, PolicyPath.Auto, cancellationToken);
+            case PolicyOutcome.Escalate:
+                break;
+            default:
+                throw new InvalidOperationException($"Unhandled policy outcome '{outcome}'.");
+        }
+
+        foreach (var resolver in _escalationResolvers)
+        {
+            var path = await resolver.TryResolveAsync(request, _nowUtc(), cancellationToken);
+            if (path is { } resolved)
+                return await StoreAsync(request, GrantStatus.Granted, resolved, cancellationToken);
+        }
+
+        return await StoreAsync(request, GrantStatus.Pending, path: null, cancellationToken);
     }
 
     private async Task<GrantResolution> StoreAsync(
