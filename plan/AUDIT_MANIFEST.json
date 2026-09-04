@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 873,
-  "markdown_line_count": 56559,
-  "markdown_byte_count": 3366825,
+  "markdown_file_count": 876,
+  "markdown_line_count": 56856,
+  "markdown_byte_count": 3381674,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -253,9 +253,9 @@
     },
     {
       "path": "docs/domain/authorization-model.md",
-      "sha256": "70E7BA298B871F5F09E642CFEAB1517DCABCE7200455F6DE24855B4C8F303139",
-      "lines": 180,
-      "bytes": 9507,
+      "sha256": "2DA884DFA9774E384C47A307C5742B270CE8B9E3F2EE67AC0950DA86AC07279A",
+      "lines": 181,
+      "bytes": 9806,
       "utf8": true
     },
     {
@@ -2220,9 +2220,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "510CCC15C664093B3BC9D04714B68A997921773AD124DBF5FF316B31AB5A1DB0",
-      "lines": 2149,
-      "bytes": 303328,
+      "sha256": "6096F31F54A84A4219E3AB2BCA79B09A3A29EC7BB158B5B2068FDE10988CAD06",
+      "lines": 2152,
+      "bytes": 303879,
       "utf8": true
     },
     {
@@ -2241,9 +2241,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "F28A98486A0DBED97F4F4C1CC3482AD3D749CACA6CE97D790657FCC01FF088B4",
+      "sha256": "8D200591A96AC6EB10478F2D9C65DA2AA6003C0E3C6F1BBC66EE183C0A49C3A7",
       "lines": 394,
-      "bytes": 83904,
+      "bytes": 84530,
       "utf8": true
     },
     {
@@ -3997,6 +3997,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-071-master-custody-reopen-and-remediation-wave-25.md",
+      "sha256": "4933A11DF387D11E142572BC7922B9EC3CF82E7B1BC1A1DE3DB13FF36C4632E1",
+      "lines": 92,
+      "bytes": 3902,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-072-wave25-master-audit-reseal-and-gate-closure.md",
+      "sha256": "384EA4D2C48FEA25F70537EF20E4B93CBF9B2D3D56643FE6957198C1AB12C5E2",
+      "lines": 62,
+      "bytes": 1769,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -4165,6 +4179,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md",
+      "sha256": "28552C66360535C49BC338151C1F522335D7128FE1C5D7159008B3F3E195BF49",
+      "lines": 131,
+      "bytes": 6758,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/kitchen-printing/V1-KIT-001-kitchen-ticket-lifecycle.md",
       "sha256": "BFE2772773FB5CBF5DCC1097950B362530D5A9C5002C94268D7858CBAFECE4A2",
       "lines": 56,
@@ -4243,9 +4264,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "A6DB35360BE6C406952C96951F4D546FA76993EF6E5BBCA00D3A2503A1F19362",
-      "lines": 63,
-      "bytes": 5191,
+      "sha256": "F9250FC9FDE999F07F36CB8D3BE21A7DB3CCF15C7A5F8F156A13DD36436D746C",
+      "lines": 71,
+      "bytes": 6135,
       "utf8": true
     },
     {
