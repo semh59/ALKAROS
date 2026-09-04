@@ -4,8 +4,9 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 
 /// <summary>
 /// A fresh identity database with the real migration chain applied up to and
-/// including V1-IAM-017 (043): base identity schema (005, 008), the V1-RMD-097
-/// role catalog (042), then the permission split (043). The SQL is read from the
+/// including V1-IAM-024 (049): base identity schema (005, 008), the V1-RMD-097
+/// role catalog (042), the permission split (043), then the drop of the
+/// transitional <c>pos.cashier.mutate</c> alias (049). The SQL is read from the
 /// repository tree so the test exercises exactly what ships.
 /// </summary>
 public sealed class PermissionSplitDatabase : PgTestDatabase
@@ -25,16 +26,27 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
             Mig("V1-IAM-002", "008-identity-authorization.up.sql"),
             Mig("V1-RMD-097", "042-authorization-role-catalog.up.sql"),
             Mig("V1-IAM-017", "043-authorization-permission-split.up.sql"),
+            Mig("V1-IAM-024", "049-authorization-drop-mutate-alias.up.sql"),
         };
 
         foreach (var path in scripts)
             await RunAsync(DataSource, await File.ReadAllTextAsync(path));
     }
 
+    /// <summary>
+    /// Reverses everything applied after migration 042, in strict descending
+    /// order: 049 down (restores the alias), then 043 down (drops the 13 granular
+    /// codes and the <c>waiter</c> role). Migration 042's rows are left in place.
+    /// </summary>
     public async Task ApplyDownSplitAsync()
-        => await RunAsync(
+    {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-IAM-024", "049-authorization-drop-mutate-alias.down.sql")));
+        await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-IAM-017", "043-authorization-permission-split.down.sql")));
+    }
 
     public async Task<IReadOnlyList<string>> PermissionCodesForRoleAsync(string roleCode)
     {

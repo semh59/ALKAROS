@@ -11,7 +11,7 @@ public sealed class ApplicationPermissionsTests
     {
         ApplicationPermissions.Codes.Should().HaveCount(13);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
-        ApplicationPermissions.Codes.Should().NotContain(ApplicationPermissions.PosCashierMutateAlias);
+        ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
 
     [Fact]
@@ -42,19 +42,6 @@ public sealed class ApplicationPermissionsTests
     {
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter]
             .Should().NotContain(code);
-    }
-
-    [Fact]
-    public void WaiterNeverHoldsTheTransitionalMutateAlias()
-    {
-        ApplicationPermissions.RolesWithMutateAlias
-            .Should().NotContain(ApplicationPermissions.RoleWaiter)
-            .And.BeEquivalentTo(new[]
-            {
-                ApplicationPermissions.RoleCashier,
-                ApplicationPermissions.RoleSupervisor,
-                ApplicationPermissions.RoleManager,
-            });
     }
 
     [Fact]

@@ -5,10 +5,9 @@ namespace ALKAROS.Identity.Authorization.Catalog;
 /// coarse <c>pos.cashier.mutate</c> grant into one code per protected command
 /// family, per <c>docs/domain/authorization-model.md</c> §2-3.
 ///
-/// This wave only seeds the vocabulary and the role grants. Experience endpoints
-/// keep checking <c>pos.cashier.mutate</c> until V1-IAM-024 re-points them; the
-/// grant map below is the single source both the migration and V1-IAM-024 read,
-/// so flipping an endpoint to a granular code cannot desync from the seed.
+/// Every Experience endpoint checks one of these codes (V1-IAM-024). The grant
+/// map below is the single source the seed migration and the endpoints share,
+/// so an endpoint's code cannot desync from what its role is granted.
 /// </summary>
 public static class ApplicationPermissions
 {
@@ -25,9 +24,6 @@ public static class ApplicationPermissions
     public const string BillsDiscount = "bills.discount";
     public const string CashDrawer = "cash.drawer";
     public const string ReportsView = "reports.view";
-
-    /// <summary>Retained transitional alias; removed in V1-IAM-024.</summary>
-    public const string PosCashierMutateAlias = "pos.cashier.mutate";
 
     public const string RoleWaiter = "waiter";
     public const string RoleCashier = "cashier";
@@ -54,8 +50,7 @@ public static class ApplicationPermissions
     /// <summary>
     /// Granular grants held OUTRIGHT by each role (model §3). Absence from a
     /// role's set means the action raises an authorization request (V1-IAM-019),
-    /// not that it is forbidden. <see cref="PosCashierMutateAlias"/> is granted
-    /// separately by the migration to every role except <see cref="RoleWaiter"/>.
+    /// not that it is forbidden.
     /// </summary>
     public static readonly IReadOnlyDictionary<string, IReadOnlySet<string>> RoleGrants =
         new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
@@ -70,12 +65,4 @@ public static class ApplicationPermissions
                 EveryRoleTakesOrders.Concat(CashierFloorSet).Concat(SupervisorEscalations),
                 StringComparer.Ordinal),
         };
-
-    /// <summary>
-    /// Roles that keep the <see cref="PosCashierMutateAlias"/> grant through the
-    /// transition. <see cref="RoleWaiter"/> never holds it — that is what stops a
-    /// waiter reserving a table at any terminal before V1-IAM-024 lands.
-    /// </summary>
-    public static readonly IReadOnlySet<string> RolesWithMutateAlias =
-        new HashSet<string>(new[] { RoleCashier, RoleSupervisor, RoleManager }, StringComparer.Ordinal);
 }

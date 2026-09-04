@@ -1,10 +1,10 @@
 # V1-IAM-024 - Endpoint re-pointing and alias removal
 
 - Task ID: V1-IAM-024
-- Status: Planned
+- Status: Done
 - Assignee: claude-session-01XKRazppo9sW452rdbCZsgy
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Goal
 
@@ -76,10 +76,44 @@ takma adını ve kodunu kaldırır.
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Release` sıfır uyarı ile sıfır hata; tam
-  `dotnet test` paketi geçer; `pos.cashier.mutate` dizgisi `src` ile `tests`
-  altında kalmaz.
-- Migration ileri ile geri yönde boş veritabanında denenir.
+- İki commit ile teslim edildi: (A) her Experience endpoint'ini granüler koda
+  bağlar, alias grant'i yerinde bırakır; (B) migration 049 ile alias'ı düşürür.
+  Master her iki commit sonrasında da tutarlı ve güvenli kalır.
+- `dotnet build ALKAROS.slnx -c Release`: 0 uyarı / 0 hata (her iki commit).
+- `dotnet test` (yerel Postgres 18):
+  - `ALKAROS.Identity.Authorization.Tests` 179/179 — `Catalog/**` split
+    testleri artık 005->008->042->043->049 zincirini uygular ve alias'ın
+    cashier/supervisor/manager rollerinden düştüğünü, 13 granüler kodun ve
+    `catalog.manage`'in kaldığını, 049-down + 043-down'un alias'ı geri getirip
+    granüler seti düşürdüğünü doğrular. Silinen tek test alias için ayrı bir
+    `RolesWithMutateAlias` iddiasıydı (sabit kaldırıldı).
+  - `ALKAROS.Host.Experience.Tables.Tests` 8/8 — mutasyon seed'i 5 granüler
+    masa kodunu verir, ret testi `denial_events.permission_code =
+    'floorplan.manage'` bekler.
+  - `ALKAROS.Host.Experience.Billing.Tests` 3/3 (Release) — seed `bills.split`
+    verir.
+  - `ALKAROS.Host.Experience.Orders.Tests` geçer (store düzeyi, HTTP yok).
+  - `ALKAROS.Host.Tests` `Manifest.ManifestTests` 16/16 — `PhaseBMax` 049,
+    48 pozisyon, son giriş tabloları `["permissions","role_permissions"]`;
+    `HostConstructabilityTests` 4/4 — `AddOrderManagementExperience` içindeki
+    yeni `IAuthorizationService` kaydıyla DI grafiği doğrulanır.
+- Migration: 001..049 ileri boş veritabanına uygulandı; alias satırı 0, granüler
+  10 satır, rol grant sayıları waiter 3 / cashier 8 / supervisor 14 / manager 17.
+  049-down alias'ı yeniden yaratıp cashier/supervisor/manager'a bağlar (waiter'a
+  değil); 049 re-up alias'ı yeniden düşürür.
+- `pos.cashier.mutate` dizgisi: aktif çalışma zamanı `.cs` kontrolü yok, gran't
+  grant veren test seed'i yok. Kalan atıflar tarihsel yorum (`ApplicationPermissions`
+  sınıf dokümanı, `Program.cs`), 042/043 migration metni (değişmez) ve 049
+  migration metni (kaldırma + down geri alma).
+- Gate'ler: `plan-audit validate` / `verify-manifest` / `validate-coverage` 0
+  hata; `project-manifest` VALID. `AUDIT_MANIFEST.json` + `AUDIT_REPORT.md`
+  yeniden üretildi; `GATE-V1-EXIT` reseal ayrı bir governance görevine bırakılır.
+- Ortam istisnaları: Kitchen HTTP ve Experience Composition testleri yerelde
+  koşmadı — WDAC (`FileLoadException 0x800711C7`) yeni derlenen modül DLL'lerini
+  engelliyor (G1). Kitchen değişikliği sabit değeri takasıdır (`pos.cashier.mutate`
+  -> `orders.send`) + eşleşen ret iddiası; Composition, `HostConstructabilityTests`
+  ile kapsanır. `MigrationExecutionTests` yerelde `psql` PATH'te olmadığı için
+  atlanır (CI Postgres bacağı koşar).
 - Semih için gerçek senaryo: `waiter` rolünde giriş yapılır ve salon planında
   void düğmesi onay gerektiren etiketiyle görünür ama doğrudan çalışmaz;
   `cashier` rolünde rezervasyon yapılabilir; `supervisor` rolünde void ile ikram

@@ -1683,6 +1683,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-IAM-004/closure-2026-08-08.md` | ✅ | `C73F82337CC7DC626FFA837AE636EEE712E36D8F3A6D9483619AFE36FAD5242D` | Tek-sahip görev |
 | `evidence/V1-IAM-004/closure-report.md` | ✅ | `860B7EC17F32B042A762F64D2D7DF3B58094248E54A1BBA3326AB936DAC202D4` | Tek-sahip görev |
 | `evidence/V1-IAM-005/verification.md` | ✅ | `7B5095FB4FF9A6550046FC6F3BF329E91CF21B78EFE5416809C1C9E9CB4FA3CB` | Tek-sahip görev |
+| `evidence/V1-IAM-024/commit-a-repoint.md` | ✅ | `5745AEE9826B33272738AE28FE620C6069BBA9A5444B09908E9FB416A475C18E` | Tek-sahip görev |
+| `evidence/V1-IAM-024/commit-b-alias-removal.md` | ✅ | `7EB35D01C8FCD43723895F45A30024955905BFC9FF021F909DDD43A720BBEF95` | Tek-sahip görev |
 | `evidence/V1-REM-001/remediation_evidence.md` | ✅ | `905031A571208DA8D0EBE7E6B57F5B88F76242EFD73B57447CCB5F197B487A37` | Tek-sahip görev |
 | `evidence/V1-RMD-001/consolidated_remediation_report.md` | ✅ | `10765AFD8892C73558EEA8F9421D9EEF1B423B9AA7A4630542401D6D49696CCC` | Tek-sahip görev |
 | `evidence/V1-RMD-003/validation.md` | ✅ | `E8F2391E806272F46AA70A11CE2CFEC78423FD3DC28CA338512CBC411DC91014` | Tek-sahip görev |
@@ -2017,7 +2019,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md` | ✅ | `04BE7C3607ED19D836BFF67B5E489D62D2E8B63F694FDD6A7134CB8DE91A2262` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md` | ✅ | `01D98F3140EBB1F95248CE89E09897EBFB8DBEC3D4263195E150B2AE818728D7` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md` | ✅ | `409FDD564799CB4579C19D0C1DC90B7B1B67602665E6BCDB7C607C401CE0CF84` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md` | ✅ | `5DBD099287C066301962C428499EF797DA9894699EBB93A9DF2464325D5B498F` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md` | ✅ | `810C4BD8DC2A6BE892FCF39ECA6322E6C7A938E63F17920933C8CBE7ADBACE08` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md` | ✅ | `0426076A29BCE1C9ABC2A8E7112ADCE747DC1049BB9108C42F8D7AF96A0D992C` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-001-consolidated-remediation.md` | ✅ | `D28F3FDD8A743C9082AF4C5B1537D4C2A91101669284175ECFD474EE96265AAC` | Tek-sahip görev |
@@ -2143,5 +2145,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `871` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `873` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

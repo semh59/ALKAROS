@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "048"
+    "max": "049"
   },
   "migrations": [
     {
@@ -422,6 +422,15 @@
       "phase": "B",
       "tables": [
         "behavioural_tightenings"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "049",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
       ],
       "deferredConstraints": []
     }

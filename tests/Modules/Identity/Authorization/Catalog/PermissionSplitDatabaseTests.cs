@@ -5,9 +5,11 @@ using Xunit;
 namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 
 /// <summary>
-/// Applies the real 005 -> 008 -> 042 -> 043 identity migration chain to a
-/// throw-away Postgres database and asserts the seeded rows match
-/// <see cref="ApplicationPermissions"/>. Needs Postgres (CI Postgres leg).
+/// Applies the real 005 -> 008 -> 042 -> 043 -> 049 identity migration chain to
+/// a throw-away Postgres database and asserts the seeded rows match
+/// <see cref="ApplicationPermissions"/> with the transitional
+/// <c>pos.cashier.mutate</c> alias already dropped. Needs Postgres (CI Postgres
+/// leg).
 /// </summary>
 public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplitDatabase>
 {
@@ -35,15 +37,15 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
             ApplicationPermissions.OrdersSend,
             ApplicationPermissions.TablesStatus,
         });
-        granted.Should().NotContain(ApplicationPermissions.PosCashierMutateAlias);
+        granted.Should().NotContain("pos.cashier.mutate");
     }
 
     [Fact]
-    public async Task CashierKeepsTheMutateAliasAndGetsReserveButNotVoid()
+    public async Task CashierNoLongerHoldsTheMutateAliasButKeepsReserveNotVoid()
     {
         var granted = await _db.PermissionCodesForRoleAsync(ApplicationPermissions.RoleCashier);
 
-        granted.Should().Contain(ApplicationPermissions.PosCashierMutateAlias);
+        granted.Should().NotContain("pos.cashier.mutate");
         granted.Should().Contain(ApplicationPermissions.TablesReserve);
         granted.Should().Contain(ApplicationPermissions.CashDrawer);
         granted.Should().NotContain(ApplicationPermissions.BillsVoid);
@@ -53,11 +55,11 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
     }
 
     [Fact]
-    public async Task SupervisorHoldsEscalationsAndTheMutateAliasButNotCatalog()
+    public async Task SupervisorHoldsEscalationsButNeitherTheAliasNorCatalog()
     {
         var granted = await _db.PermissionCodesForRoleAsync(ApplicationPermissions.RoleSupervisor);
 
-        granted.Should().Contain(ApplicationPermissions.PosCashierMutateAlias);
+        granted.Should().NotContain("pos.cashier.mutate");
         granted.Should().Contain(ApplicationPermissions.BillsVoid);
         granted.Should().Contain(ApplicationPermissions.BillsComp);
         granted.Should().Contain(ApplicationPermissions.BillsDiscount);
@@ -67,13 +69,13 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
     }
 
     [Fact]
-    public async Task ManagerKeepsCatalogManageFromMigration042()
+    public async Task ManagerKeepsCatalogManageFromMigration042ButNotTheAlias()
     {
         var granted = await _db.PermissionCodesForRoleAsync(ApplicationPermissions.RoleManager);
 
         granted.Should().Contain("catalog.manage");
         granted.Should().Contain(ApplicationPermissions.BillsVoid);
-        granted.Should().Contain(ApplicationPermissions.PosCashierMutateAlias);
+        granted.Should().NotContain("pos.cashier.mutate");
     }
 
     [Fact]
@@ -92,7 +94,7 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
 
 /// <summary>
 /// Own fixture instance: this class mutates the database by applying the down
-/// migration, so it must not share with <see cref="PermissionSplitDatabaseTests"/>.
+/// migrations, so it must not share with <see cref="PermissionSplitDatabaseTests"/>.
 /// </summary>
 public sealed class PermissionSplitDownMigrationTests : IClassFixture<PermissionSplitDatabase>
 {
@@ -101,17 +103,20 @@ public sealed class PermissionSplitDownMigrationTests : IClassFixture<Permission
     public PermissionSplitDownMigrationTests(PermissionSplitDatabase db) => _db = db;
 
     [Fact]
-    public async Task DownRemovesEverythingItAddedAndLeavesMigration042Alone()
+    public async Task Down049Then043RestoreTheAliasDropTheGranularSetAndLeave042Alone()
     {
         await _db.ApplyDownSplitAsync();
 
         foreach (var code in ApplicationPermissions.Codes)
-            (await _db.PermissionCountAsync(code)).Should().Be(0, "down must drop '{0}'", code);
+            (await _db.PermissionCountAsync(code)).Should().Be(0, "043 down must drop '{0}'", code);
 
         (await _db.RoleCountAsync(ApplicationPermissions.RoleWaiter)).Should().Be(0);
 
         (await _db.RoleCountAsync(ApplicationPermissions.RoleCashier)).Should().Be(1);
-        (await _db.PermissionCountAsync(ApplicationPermissions.PosCashierMutateAlias)).Should().Be(1);
+        // 049 down re-creates the alias and re-grants it to cashier/supervisor/manager.
+        (await _db.PermissionCountAsync("pos.cashier.mutate")).Should().Be(1);
+        (await _db.PermissionCodesForRoleAsync(ApplicationPermissions.RoleCashier))
+            .Should().Contain("pos.cashier.mutate");
         (await _db.PermissionCountAsync("catalog.manage")).Should().Be(1);
     }
 }

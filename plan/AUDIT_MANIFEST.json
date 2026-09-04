@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 871,
-  "markdown_line_count": 56406,
-  "markdown_byte_count": 3357091,
+  "markdown_file_count": 873,
+  "markdown_line_count": 56559,
+  "markdown_byte_count": 3366825,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -1575,6 +1575,20 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-IAM-024/commit-a-repoint.md",
+      "sha256": "5745AEE9826B33272738AE28FE620C6069BBA9A5444B09908E9FB416A475C18E",
+      "lines": 56,
+      "bytes": 3337,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-IAM-024/commit-b-alias-removal.md",
+      "sha256": "7EB35D01C8FCD43723895F45A30024955905BFC9FF021F909DDD43A720BBEF95",
+      "lines": 61,
+      "bytes": 3567,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-REM-001/remediation_evidence.md",
       "sha256": "905031A571208DA8D0EBE7E6B57F5B88F76242EFD73B57447CCB5F197B487A37",
       "lines": 33,
@@ -2206,9 +2220,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "A51A819E72CE4AB4C24E8A0630232AE0883382043987BE76328DF0705158F201",
-      "lines": 2147,
-      "bytes": 303042,
+      "sha256": "510CCC15C664093B3BC9D04714B68A997921773AD124DBF5FF316B31AB5A1DB0",
+      "lines": 2149,
+      "bytes": 303328,
       "utf8": true
     },
     {
@@ -4145,9 +4159,9 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md",
-      "sha256": "5DBD099287C066301962C428499EF797DA9894699EBB93A9DF2464325D5B498F",
-      "lines": 90,
-      "bytes": 5188,
+      "sha256": "810C4BD8DC2A6BE892FCF39ECA6322E6C7A938E63F17920933C8CBE7ADBACE08",
+      "lines": 124,
+      "bytes": 7732,
       "utf8": true
     },
     {

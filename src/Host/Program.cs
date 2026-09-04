@@ -21,17 +21,17 @@ public static class Program
     private const string BootstrapPasswordEnvironmentVariable = "ALKAROS_BOOTSTRAP_PASSWORD";
     private const string ManagerRoleCode = "manager";
 
-    // The full set of application permission codes the "manager" role must hold.
-    // Migration 042 also seeds this catalog and grants it to the manager role;
-    // provisioning re-applies it idempotently so a fresh bootstrap and a
-    // migrated database converge on the same grants. Every code here is
-    // referenced by a RequirePermissionAsync call in the Experience endpoints -
+    // The permission codes migration 042 grants the "manager" role that are NOT
+    // part of the granular §2-3 catalog. Provisioning re-applies them idempotently
+    // so a fresh bootstrap and a migrated database converge. The granular codes
+    // (orders.*, tables.*, bills.*, floorplan.manage, cash.drawer, reports.view)
+    // are granted to manager by migration 043 and are not repeated here.
     // kitchen.routing.manage / kitchen.reprint / operations.backup used to be
-    // referenced but never seeded, which made those endpoints unreachable for
-    // every user. (deep-analysis finding B-1)
+    // referenced by RequirePermissionAsync but never seeded, which made those
+    // endpoints unreachable for every user. (deep-analysis finding B-1)
+    // pos.cashier.mutate was dropped by migration 049 (V1-IAM-024).
     private static readonly (string Code, string Name)[] ManagerPermissions =
     [
-        ("pos.cashier.mutate", "Mutate cashier resources"),
         ("catalog.manage", "Manage catalog resources"),
         ("kitchen.routing.manage", "Manage kitchen printer routing"),
         ("kitchen.reprint", "Authorize kitchen ticket reprints"),

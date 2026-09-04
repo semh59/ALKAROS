@@ -16,7 +16,7 @@ now an unused grant removed by Commit B (migration 049).
 | Tables | /transfers | tables.transfer |
 | Tables | /merges, /merges/{groupId}/unmerge | tables.merge |
 | Billing | split-design (all 6 routes) | bills.split |
-| DualScreen | /orders, /orders/table, /orders/{id}/items add|patch|delete | orders.create |
+| DualScreen | /orders, /orders/table, /orders/{id}/items add / patch / delete | orders.create |
 | DualScreen | /orders/{id}/submit | orders.send |
 | DualScreen | /pairings/approve, /display-sessions/revoke | session only (RequireCashierAsync) — device ops, no floor code fits, effective access unchanged |
 | Kitchen | KitchenOperationsEndpoints.TicketMutationPermission (ticket + item transitions) | orders.send |
