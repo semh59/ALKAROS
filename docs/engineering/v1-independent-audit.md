@@ -213,7 +213,60 @@ promotion (`Preparing` / `Accepted` + every non-cancelled item `Ready` /
 (18), `Routing` (23), `PrintQueue` (18), `PhysicalPrintRecovery` (17) tests all
 green.
 
-## Rounds 3 (rest) and 4+ — not yet covered (the map)
+### Round 3 (rest) — verified clean
+
+- **Tables transfer** — `PostgresTableTransferRepository.ExecuteTransferAsync`
+  uses an explicit `ReadCommitted` transaction with canonical lock ordering
+  (deadlock-safe on concurrent transfers), writes the source/target/transfer/
+  audit rows and **one transactional-outbox event** in the same transaction;
+  Order and Bill reparent their own rows when the outbox delivers. The
+  V1-GOV-032 reparent finding is fixed.
+- **Messaging** — outbox and inbox are at-least-once with exponential backoff
+  and dead-letter after 3 attempts; `OutboxDispatcherHostedService` logs a
+  loud operator-triage warning (EventId 5301) when anything dead-letters; the
+  inbox is lease-based with lease-generation crash recovery and idempotency-key
+  de-dupe. Matches V0-ARC-003. (Note: a dead-lettered reparent event has no
+  automatic reconciliation beyond `PostgresTablePointerProjector` drift repair
+  — operator triage is the recovery path.)
+- **Vanilla-client XSS** — `cashier-app.js` and `waiter-app.js` route every
+  dynamic value in their `innerHTML` templates through `escapeHtml()` (a
+  `textContent` round-trip); numbers go through `Intl.NumberFormat`. The
+  V1-GOV-028 XSS hardening is complete. Non-escaped interpolations are all
+  `fetch()` URLs / headers or `.textContent` / `alert` sinks.
+
+## Consolidated remediation order (Rounds 1-3 findings)
+
+Fold into the Phase 0 `V1-GOV-071` cluster alongside the authz-wave work.
+
+1. **B4 [HIGH]** — confirm the duplicate `orders/{id}/submit` route with a live
+   `POST`, then remove one registration. Decide the single owner of the order
+   HTTP surface (DualScreen vs `OrderManagementEndpoints`) and delete the other
+   path; do not leave two front doors.
+2. **B3 [MED-HIGH]** — add a permission check to every `OrderManagementEndpoints`
+   mutating route (currently session-only), or retire the module in favour of
+   the DualScreen order endpoints per (1).
+3. **B1 [HIGH]** — decide: wire bill adjustments end to end (DI-register
+   `IBillAdjustmentRepository`, add a create-adjustment endpoint, call
+   `AdjustmentCalculator.Calculate` on read and persist the adjusted totals to
+   `bills.*` or apply them at settlement), **or** formally scope discounts out
+   of V1 and mark migration 021 / the module as staged for a later milestone.
+   The current "closed gate, dead feature" state is the problem.
+4. **H1 [MED]** — narrow `BillingSplitStore.CreateBillFromOrder`'s
+   `catch (Exception)` to the unique-violation only, mirroring the sibling
+   `catch`.
+5. **H4 [MED]** — `WaiterOfflineQueueEngine`: make `serverDispatcher` return
+   retryable-vs-permanent; permanent (4xx) failures move to a visible
+   dead-letter list instead of blocking the queue forever.
+6. **B2 [MED]** — decide scope for cash sessions (implement `V1-CSH-002+` or
+   confirm design-only and remove the `cash.drawer` permission until then).
+7. **H2 [LOW-MED]** — `AuditSanitizer`: run the value-level regex over string
+   leaves on the well-formed-JSON path, not only the malformed fallback.
+8. **H3 [LOW]** — `AuditSanitizer.IsSensitiveKey`: token-boundary match instead
+   of raw `Contains` (stop redacting `shipping`, `company`, ...).
+9. **B5 [LOW]** — `SplitEngine.CreateItemSplit`: give the last target of a
+   partially-allocated item the rounding remainder.
+
+## Rounds 4+ — not yet covered (the map)
 
 Each is its own focused pass; suggested order by risk.
 
