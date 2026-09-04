@@ -30,7 +30,7 @@ yalnız `web` (Caddy) üzerinde sonlanır.
 - `deploy/docker/README.md`
 - `.dockerignore`
 - `src/Host/DualScreen/DualScreenOptions.cs`
-- `src/Host/DualScreen/DualScreenApplication.cs`
+- PO:2026-09-05 kararıyla src/Host/DualScreen/DualScreenApplication.cs yüzeyi CashierMutationPermission sabiti ile Experience map çağrıları için V1-IAM-024'e devredildi; bu historical task closed kalır.
 - `tests/Host/MigrationComposition/DualScreen/DualScreenOptionsTests.cs`
 - `tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs`
 - `docs/operations/production-go-live-checklist.md`

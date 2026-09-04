@@ -23,8 +23,7 @@ sözleşmelerini açmak.
 - `src/Modules/Tables/TableLifecycle/PostgresZoneRepository.cs`
 - `src/Modules/Tables/TableLifecycle/TablesModule.cs`
 - PO:2026-08-28 deep code audit kararıyla Table.cs yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
-- `src/Host/Experience/Tables/TableManagementApplication.cs`
-- `src/Host/Experience/Tables/TableManagementContracts.cs`
+- PO:2026-09-05 kararıyla src/Host/Experience/Tables/TableManagementApplication.cs ve src/Host/Experience/Tables/TableManagementContracts.cs yüzeyleri izin kodu yeniden eşleme ile AllowedCommands dönüşümü için V1-IAM-024'e devredildi; bu historical task closed kalır.
 - `src/Host/Experience/Tables/TableManagementStore.cs`
 - `tests/Modules/Tables/TableLifecycle/FloorPlan*.cs`
 - `tests/Host/Experience/Tables/FloorPlan*.cs`

@@ -17,9 +17,8 @@ geçiş takma adı olarak kalır; kaldırma işi `V1-IAM-024` görevine aittir.
 
 - `plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md`
 - `database/migrations/V1/V1-IAM-017/**`
-- `src/Modules/Identity/Authorization/Catalog/**`
-- `tests/Modules/Identity/Authorization/Catalog/**`
 - `evidence/V1-IAM-017/**`
+- Yüzey devri (çıkış): src/Modules/Identity/Authorization/Catalog/** ve tests/Modules/Identity/Authorization/Catalog/** yüzeyleri, pos.cashier.mutate takma adının ve sabitinin kaldırılması için V1-IAM-024'e devredildi (PO:2026-09-05); bu historical task closed kalır.
 - Yüzey devri (giriş): database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 043 için V1-RMD-089'dan bu göreve devredildi (PO:2026-09-04); ardından migration 044 için V1-IAM-018'e devredildi (PO:2026-09-04).
 - src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 043 değerine güncellendi (V1-RMD-089/9. dalga deseni).
 - `AuthorizationService` davranışı değişmez; izin kodu yalnız string olarak akar.

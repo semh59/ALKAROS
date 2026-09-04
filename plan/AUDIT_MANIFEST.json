@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 869,
-  "markdown_line_count": 55582,
-  "markdown_byte_count": 3307997,
+  "markdown_file_count": 871,
+  "markdown_line_count": 56406,
+  "markdown_byte_count": 3357091,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -343,6 +343,13 @@
       "utf8": true
     },
     {
+      "path": "docs/engineering/authz-wave-remediation-plan.md",
+      "sha256": "CB32C35323CDA67E0D8997791A69C84B4BCEC843B7D6724EDC7DACC88CEAA5CB",
+      "lines": 305,
+      "bytes": 16716,
+      "utf8": true
+    },
+    {
       "path": "docs/engineering/closure-evidence-envelope.md",
       "sha256": "2B9B42220FD515D66146A6C75AA956CE52AAC061BE1D598733F1C9C3114D666E",
       "lines": 109,
@@ -368,6 +375,13 @@
       "sha256": "CECE4919C0152F2B724D9E6730C4F5D380662883E1158DD44BDCDC93097D5CE4",
       "lines": 132,
       "bytes": 8346,
+      "utf8": true
+    },
+    {
+      "path": "docs/engineering/v1-independent-audit.md",
+      "sha256": "E2FB115FB700D9F65B5D8AA5F315E3277055C983CE19C7A04EA331070F7B2CC5",
+      "lines": 510,
+      "bytes": 29082,
       "utf8": true
     },
     {
@@ -2192,9 +2206,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F5AD2D4096AA24A5BE41EA59096AB01F6642EF1ABE68CB6A4E8B9FAD21002268",
-      "lines": 2145,
-      "bytes": 302753,
+      "sha256": "A51A819E72CE4AB4C24E8A0630232AE0883382043987BE76328DF0705158F201",
+      "lines": 2147,
+      "bytes": 303042,
       "utf8": true
     },
     {
@@ -4082,9 +4096,9 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md",
-      "sha256": "841076CBAB92C2E52C17FB97C1562682DD524C80CD7920BD1B89A3FC10C3F9E3",
-      "lines": 73,
-      "bytes": 3552,
+      "sha256": "B759F922D0472B43C6B30FD94EAD2F3145D446093140B4AF25CBE77F4520AB17",
+      "lines": 72,
+      "bytes": 3731,
       "utf8": true
     },
     {
@@ -4124,16 +4138,16 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md",
-      "sha256": "E386BD57C6EF6CCBB82D3CFF5F6CB5B864E492CDEF43105957D522EF9A05871E",
-      "lines": 86,
-      "bytes": 5399,
+      "sha256": "409FDD564799CB4579C19D0C1DC90B7B1B67602665E6BCDB7C607C401CE0CF84",
+      "lines": 85,
+      "bytes": 5512,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md",
-      "sha256": "62D2128A4D8078FA666B257E11D2409BB79A6E65377328B427E1352836A7E2A4",
-      "lines": 80,
-      "bytes": 3189,
+      "sha256": "5DBD099287C066301962C428499EF797DA9894699EBB93A9DF2464325D5B498F",
+      "lines": 90,
+      "bytes": 5188,
       "utf8": true
     },
     {
@@ -4411,9 +4425,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-026-floor-plan-persistence-and-api.md",
-      "sha256": "923BB745D1596AB3198218E75A6683216F6D8E7648223F05FA0C6FF55B06436B",
-      "lines": 53,
-      "bytes": 2599,
+      "sha256": "C46D3BD1C84D7ED73ACE60129554A0F264A06F5C68A6F65B00A42D8E40CE2BF5",
+      "lines": 52,
+      "bytes": 2757,
       "utf8": true
     },
     {
@@ -4607,9 +4621,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-054-production-composition-and-order-billing-routing.md",
-      "sha256": "686A4C4D81E3F4D52993E2014A03CF4AD374ACDA3B2463F8BE882D7EB5C529C7",
+      "sha256": "CF626354EBFC07B7ECC8025C6BDC047AC784A4A9545498082275D3858B4E2B28",
       "lines": 51,
-      "bytes": 1984,
+      "bytes": 2106,
       "utf8": true
     },
     {
@@ -4691,9 +4705,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-066-order-management-auth-header.md",
-      "sha256": "9C5B45366D35F9E6051085D456820D5F600D1EBD021851E65C3DAFC01E125382",
+      "sha256": "FA464A73CDF1C056EC4743CE725207448D4CCE0AEBC6905122DD39C8ECDB2491",
       "lines": 47,
-      "bytes": 1321,
+      "bytes": 1443,
       "utf8": true
     },
     {
@@ -4908,16 +4922,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-097-deep-analysis-wave-24-25-surface-custody.md",
-      "sha256": "0EF1F98325FA6705C771284D137E7D2568030759937D42D9B1F8BE2E48532DFE",
+      "sha256": "F17830B677B6A4296B370BA0C89878376A00C248E68E516AF7FA4F4F0A8890F6",
       "lines": 74,
-      "bytes": 3870,
+      "bytes": 4022,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-098-docker-frontend-backend-split-and-surface-custody.md",
-      "sha256": "DB43AAD82EFD011D805C3CB12BFD746E617FFE292C1E8058C03AA75599ED1E1A",
+      "sha256": "3EFD2A2D2F30B2DE1912A29FC3789B8896F5513063B01F4C7D4637996541F79F",
       "lines": 162,
-      "bytes": 12420,
+      "bytes": 12582,
       "utf8": true
     },
     {

@@ -1,8 +1,8 @@
 # V1-IAM-024 - Endpoint re-pointing and alias removal
 
 - Task ID: V1-IAM-024
-- Status: Blocked
-- Assignee: Unassigned
+- Status: Planned
+- Assignee: claude-session-01XKRazppo9sW452rdbCZsgy
 - Work type: implementation
 - Surface state: Planned
 
@@ -19,21 +19,44 @@ takma adını ve kodunu kaldırır.
 
 - `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md`
 - `database/migrations/V1/V1-IAM-024/**`
-- `src/Modules/Identity/Authorization/024/**`
-- `tests/Modules/Identity/Authorization/024/**`
+- `src/Host/Experience/Tables/TableManagementApplication.cs`
+- `src/Host/Experience/Tables/TableManagementContracts.cs`
+- `src/Host/DualScreen/DualScreenApplication.cs`
+- `src/Host/DualScreen/DualScreenApplication.Endpoints.cs`
+- `src/Host/Experience/Orders/OrderManagementEndpoints.cs`
+- `src/Host/Experience/Billing/BillingSplitApplication.cs`
+- `src/Modules/Identity/Authorization/Catalog/**`
+- `tests/Modules/Identity/Authorization/Catalog/**`
+- `database/MigrationComposition/order.json`
+- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `evidence/V1-IAM-024/**`
+- Yüzey devri (giriş): src/Host/Experience/Tables/TableManagementApplication.cs ve src/Host/Experience/Tables/TableManagementContracts.cs V1-RMD-026'dan; src/Host/DualScreen/DualScreenApplication.cs V1-RMD-098'den; src/Host/DualScreen/DualScreenApplication.Endpoints.cs V1-RMD-097'den; src/Host/Experience/Orders/OrderManagementEndpoints.cs V1-RMD-066'dan; src/Host/Experience/Billing/BillingSplitApplication.cs V1-RMD-054'ten; src/Modules/Identity/Authorization/Catalog/** ile tests/Modules/Identity/Authorization/Catalog/** V1-IAM-017'den; database/MigrationComposition/order.json ile tests/Host/MigrationComposition/Manifest/ManifestTests.cs V1-IAM-023'ten bu göreve devredildi (PO:2026-09-05).
+- src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs V1-RMD-082 sahipliğinde kalır; bu görevde yalnızca TicketMutationPermission sabiti granüler koda (orders.send) eşlenir (V1-RMD-089/MigrationManifest.cs deseni).
+- src/Host/Program.cs V1-RMD-094 sahipliğinde kalır; bu görevde yalnızca ManagerPermissions listesinden pos.cashier.mutate satırı çıkarılır.
+- src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı alias-kaldırma migration'ının numarasına güncellenir (V1-RMD-089/9. dalga deseni).
+- src/Clients/PosTerminal/src/features/tables/** V1-RMD-071 sahipliğinde kalır; sunucu artık süzülmüş AllowedCommands gönderdiği için istemci süzgeci değişmez.
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## In scope
 
-- Şu dosyalarda tek satırlık izin kodu eşlemesi: `TableManagementContracts.cs`
-  ile `TableManagementApplication.cs` (`AllowedCommands` ve `MutationPermission`
-  çağrıları), `DualScreenApplication.cs` (`CashierMutationPermission` sabiti),
-  ilgili Orders, Billing ve Cash Experience endpoint'leri, PosTerminal
-  `features/tables` istemci süzgeci.
-- `pos.cashier.mutate` izin satırının ve sabitinin kaldırılması.
-- `AllowedCommands` sonucunun "sahip olunan izinler ile ulaşılabilir yetki
-  istekleri" birleşimine dönüştürülmesi.
+- Endpoint başına granüler izin kodu eşlemesi (kilitli kararlar,
+  `docs/engineering/authz-wave-remediation-plan.md`): Tables zones/floor-plan/
+  table create-edit -> `floorplan.manage`, status -> `tables.status`,
+  reservations -> `tables.reserve`, transfers -> `tables.transfer`, merges ->
+  `tables.merge`; Billing split -> `bills.split`; DualScreen order create/item
+  -> `orders.create`, submit -> `orders.send`; Kitchen ticket transition ->
+  `orders.send`; Orders Experience modülüne `orders.create`/`orders.send`
+  kontrolü eklenir (bugün yalnız oturum); customer-display pairing ile
+  display-session revoke yalnız oturuma (`RequireCashierAsync`) düşürülür; Cash
+  Experience endpoint'i yoktur (no-op).
+- `DualScreenApplication.cs` `CashierMutationPermission` sabiti,
+  `ApplicationPermissions.PosCashierMutateAlias` ile `RolesWithMutateAlias`
+  sabitleri, `Program.cs` ManagerPermissions satırı ve `pos.cashier.mutate`
+  izin satırı (alias-kaldırma migration'ı) kaldırılır.
+- `AllowedCommands`: `TableManagementPrincipal(Guid, bool CanMutate)` ->
+  `(Guid, IReadOnlySet<string> Permissions)`; `TableContractMapper.AllowedCommands`
+  her komutu tutulan izne göre süzer (Tables komutlarının hiçbiri grant-erişilebilir
+  değil, model §3).
 
 ## Out of scope
 
@@ -50,19 +73,6 @@ takma adını ve kodunu kaldırır.
 - V1-IAM-021
 - V1-IAM-022
 - V1-IAM-023
-
-## Blocker
-
-- Bu görev yürütmeye alınmadan önce, `In scope` altında sayılan mevcut sahipli
-  dosyalar için custody devri kayıtları ilgili görevlere eklenmelidir:
-  `TableManagementContracts.cs` ve `TableManagementApplication.cs` için
-  `V1-RMD-013` ile `V1-RMD-026`; `DualScreenApplication.cs` için `V1-RMD-098`;
-  `src/Clients/PosTerminal/src/features/tables/**` için `V1-RMD-017` ile
-  `V1-RMD-071`; Orders için `V1-RMD-050` ve `V1-RMD-066`; Billing için
-  `V1-RMD-054` ve `V1-RMD-057`. Ancak bu custody devri kayıtları `V1-RMD-098`
-  deseniyle eklenip `plan/AUDIT_MANIFEST.json` yeniden üretildiğinde ve
-  `validate` ile `verify-manifest` temiz kaldığında görev yeniden `Planned`
-  yapılabilir.
 
 ## Acceptance evidence
 

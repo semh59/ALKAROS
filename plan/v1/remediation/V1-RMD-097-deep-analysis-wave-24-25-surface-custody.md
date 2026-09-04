@@ -24,7 +24,7 @@ kuralı yeniden sağlanır ve bu dosyalar yalnızca yeni bir plan görevi ile de
 - `src/BuildingBlocks/Messaging/OutboxFanoutSink.cs`
 - `src/Host/Outbox/OutboxComposition.cs`
 - `src/Host/Outbox/OutboxDispatcherHostedService.cs`
-- `src/Host/DualScreen/DualScreenApplication.Endpoints.cs`
+- PO:2026-09-05 kararıyla src/Host/DualScreen/DualScreenApplication.Endpoints.cs yüzeyi RequireCashierPermissionAsync izin kodu yeniden eşleme için V1-IAM-024'e devredildi; bu historical task closed kalır.
 - `src/Host/DualScreen/DualScreenExceptions.cs`
 - `src/Host/DualScreen/DualScreenStore.Display.cs`
 - `src/Host/DualScreen/DualScreenStore.Orders.cs`
