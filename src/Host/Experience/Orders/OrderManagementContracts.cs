@@ -21,6 +21,21 @@ public sealed record SubmitTableOrderRequest(
     string? ClientId = null,
     string? OperationId = null);
 
+/// <summary>V1-ORD-005: request body for voiding a not-yet-sent item.</summary>
+public sealed record VoidOrderItemRequestV1(
+    long ExpectedRowVersion,
+    string ReasonCode,
+    string? Notes = null);
+
+/// <summary>V1-ORD-005: response for a completed void.</summary>
+public sealed record VoidOrderItemResultV1(
+    Guid OrderId,
+    Guid OrderItemId,
+    string NewItemStatus,
+    long NewOrderRowVersion,
+    decimal NewOrderTotal,
+    DateTimeOffset AppliedAt);
+
 public sealed record OrderDto(
     Guid OrderId,
     Guid TableId,

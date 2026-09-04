@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 885,
-  "markdown_line_count": 57708,
-  "markdown_byte_count": 3423804,
+  "markdown_line_count": 57759,
+  "markdown_byte_count": 3427518,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,7 +2220,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "EA7CC7F3AE71DA0774A9251BC35AB3D247EDF6D81F887DDBC713E81502C622AF",
+      "sha256": "44060FD40C5CD14DC068A951B8742E069634E9DED64201F5EB0827E9B7729DF3",
       "lines": 2161,
       "bytes": 305381,
       "utf8": true
@@ -4306,9 +4306,9 @@
     },
     {
       "path": "plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md",
-      "sha256": "61C61F411F0DCDA983481CED2B4E279AC73616B2E8E9CB58F22EF84E6C252788",
-      "lines": 59,
-      "bytes": 2010,
+      "sha256": "C9A89A381179643B2DA7D2E4B3EB9CF62DC45B0A82CA5B3B0E488ED1CE1E1BBB",
+      "lines": 104,
+      "bytes": 5338,
       "utf8": true
     },
     {
@@ -4908,9 +4908,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-083-waiter-and-cashier-order-line-note-entry.md",
-      "sha256": "4BF79E85DF3B6FFDBDF9C6EECBCF1954EC84706A6214DF495109CA82F1398D27",
-      "lines": 53,
-      "bytes": 2251,
+      "sha256": "0543B1226FB829A3590E5D4697AFC033942349617E5FE7F5D9BC6030A6662837",
+      "lines": 59,
+      "bytes": 2637,
       "utf8": true
     },
     {

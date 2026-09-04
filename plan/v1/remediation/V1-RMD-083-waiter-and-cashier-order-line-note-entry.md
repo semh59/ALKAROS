@@ -20,7 +20,13 @@ Garson PWA ve Cashier sipariş ekranlarında her sepet kalemine serbest metin ö
 - `src/Clients/WaiterPwa/wwwroot/waiter-app.js`
 - PO:2026-09-01 kararıyla src/Clients/WaiterPwa/wwwroot/index.html yüzeyi V1-RMD-092'ye devredildi; bu historical task closed kalır ve viewport erişilebilirlik düzeltmesi 19. dalgada yapılır.
 - `src/Clients/Cashier/wwwroot/**`
-- `tests/Host/Experience/Orders/**`
+- `tests/Host/Experience/Orders/OrderManagementExperienceTests.cs` (hiç
+  `.csproj`'u yok, derlenmiyor — ayrı, önceden var olan bir kusur olarak
+  not edilir)
+- 2026-09-04 kararıyla, bu bulletta daha önce yer alan
+  tests/Host/Experience/Orders/** joker yüzeyi yukarıdaki tek dosyayla
+  değiştirildi ve tests/Host/Experience/Orders/Void alt yüzeyi
+  V1-ORD-005'e devredildi (bu historical task closed kalır).
 - `evidence/V1-RMD-083/**`
 
 ## In scope

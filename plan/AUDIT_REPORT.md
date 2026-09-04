@@ -2030,7 +2030,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-027-sent-unserved-void-with-waste.md` | ✅ | `502047E0D3C91A99AF3968FF9F87A9C9BA969B0100985E977D93589D5471BEC2` | Tek-sahip görev |
 | `plan/v1/kitchen-printing/V1-KIT-005-kitchen-order-item-state-sync.md` | ✅ | `9C46F419940603009F78FE737A198C26C52EECA8783ABCC25066B15FD6E2FCB1` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
-| `plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md` | ✅ | `61C61F411F0DCDA983481CED2B4E279AC73616B2E8E9CB58F22EF84E6C252788` | Tek-sahip görev |
+| `plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md` | ✅ | `C9A89A381179643B2DA7D2E4B3EB9CF62DC45B0A82CA5B3B0E488ED1CE1E1BBB` | Tek-sahip görev |
 | `plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md` | ✅ | `0426076A29BCE1C9ABC2A8E7112ADCE747DC1049BB9108C42F8D7AF96A0D992C` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-001-consolidated-remediation.md` | ✅ | `D28F3FDD8A743C9082AF4C5B1537D4C2A91101669284175ECFD474EE96265AAC` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md` | ✅ | `0C417A5EBBF62BE5DA66123BD19D59856E50C732C106DA407B3EB5056189CD7B` | Tek-sahip görev |
@@ -2114,7 +2114,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-080-code-identity-english-only-audit.md` | ✅ | `21D7F4C41D1795AD212CBC384E02A04BED08B43F299628A62BD73DE983A28B54` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-081-recurring-consistency-audit-tooling.md` | ✅ | `F855079A37C1A80662B38F8FB738F478C4062BC003353B40B00897BC35C05FB1` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-082-kitchen-ticket-special-instruction-visibility.md` | ✅ | `A1CE8F30CD674099DC17B029AB0E2841C6A5826ABA0B79BA6E8ABA8E60F00CF8` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-083-waiter-and-cashier-order-line-note-entry.md` | ✅ | `4BF79E85DF3B6FFDBDF9C6EECBCF1954EC84706A6214DF495109CA82F1398D27` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-083-waiter-and-cashier-order-line-note-entry.md` | ✅ | `0543B1226FB829A3590E5D4697AFC033942349617E5FE7F5D9BC6030A6662837` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-084-f-section-module-domain-review.md` | ✅ | `8ABEE415B6E66756A03C4FA71DFE97CF2AD7FF729B843E783A86300791580E17` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-085-reporting-business-day-close-transactional-integrity.md` | ✅ | `A67C113CCFC7D1EF2E522E711B342F56E4CAB01C98349410F9F70EF0251168DC` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-086-postgresql-backup-restore-mechanism-and-runbook.md` | ✅ | `0399E3D35C2E479F6C3FE8E49FC732AD6811AB4918DE63F5728026D91ACADA29` | Tek-sahip görev |
