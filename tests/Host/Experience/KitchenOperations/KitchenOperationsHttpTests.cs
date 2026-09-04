@@ -51,7 +51,7 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(
             1L,
             await _database.ScalarAsync<long>(
-                "SELECT count(*) FROM identity.denial_events WHERE permission_code = 'pos.cashier.mutate';"));
+                "SELECT count(*) FROM identity.denial_events WHERE permission_code = 'orders.send';"));
     }
 
     [Fact]

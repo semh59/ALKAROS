@@ -1,6 +1,7 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Kitchen.PhysicalPrintRecovery;
 using ALKAROS.Kitchen.PrintQueue;
@@ -21,7 +22,7 @@ namespace ALKAROS.Host.Experience.KitchenOperations;
 public static class KitchenOperationsEndpoints
 {
     public const string RoutePrefix = "/api/v1/terminals/{terminalId:guid}/kitchen-operations";
-    public const string TicketMutationPermission = DualScreenApplication.CashierMutationPermission;
+    public const string TicketMutationPermission = ApplicationPermissions.OrdersSend;
     public const string RoutingMutationPermission = "kitchen.routing.manage";
     public const string ReprintPermission = "kitchen.reprint";
     public const string BackupPermission = "operations.backup";

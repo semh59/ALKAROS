@@ -1,4 +1,6 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -16,6 +18,9 @@ public static class OrderManagementEndpoints
     {
         ArgumentNullException.ThrowIfNull(services);
         services.TryAddSingleton<OrderManagementStore>();
+        services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
+        services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
+        services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
         return services;
     }
 
@@ -32,10 +37,12 @@ public static class OrderManagementEndpoints
             CreateTableDraftRequest request,
             OrderManagementStore store,
             DualScreenStore dualStore,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
 
             if (request.TableId == Guid.Empty)
                 return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "TableId cannot be empty." } });
@@ -87,10 +94,12 @@ public static class OrderManagementEndpoints
             SubmitTableOrderRequest request,
             OrderManagementStore store,
             DualScreenStore dualStore,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersSend, cancellationToken);
 
             try
             {
@@ -110,7 +119,7 @@ public static class OrderManagementEndpoints
         return group;
     }
 
-    private static async Task RequireCashierSessionAsync(
+    private static async Task<Guid> RequireCashierSessionAsync(
         HttpContext context, Guid terminalId, DualScreenStore store, CancellationToken cancellationToken)
     {
         var cashierToken = context.Request.Cookies[CashierCookieName];
@@ -126,5 +135,18 @@ public static class OrderManagementEndpoints
         var principal = await store.AuthenticateCashierAsync(cashierToken, terminalId, cancellationToken);
         if (principal is null)
             throw new DualScreenUnauthorizedException("Cashier authentication is required.");
+        return principal.UserId;
+    }
+
+    private static async Task RequireCashierPermissionAsync(
+        HttpContext context,
+        Guid terminalId,
+        DualScreenStore store,
+        IAuthorizationService authorization,
+        string permissionCode,
+        CancellationToken cancellationToken)
+    {
+        var userId = await RequireCashierSessionAsync(context, terminalId, store, cancellationToken);
+        await authorization.AuthorizeAsync(userId, permissionCode, cancellationToken);
     }
 }

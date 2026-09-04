@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
@@ -191,7 +192,7 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, cancellationToken);
+                context, terminalId, store, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
             var created = await store.StartOrderAsync(terminalId, cancellationToken);
             await NotifyAsync(hub, terminalId, created.OrderId, created.Revision, cancellationToken);
             return Results.Created($"/api/v1/terminals/{terminalId:D}/orders/{created.OrderId:D}", created);
@@ -207,7 +208,7 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, cancellationToken);
+                context, terminalId, store, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
             if (request.TableId is null)
                 throw new ArgumentException("TableId is required for a table order.", nameof(request));
             var created = await store.StartOrderAsync(terminalId, request, cancellationToken);
@@ -237,7 +238,7 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, cancellationToken);
+                context, terminalId, store, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
             var mutation = await store.AddItemAsync(terminalId, orderId, request, cancellationToken);
             await NotifyAsync(hub, terminalId, orderId, mutation.Revision, cancellationToken);
             return Results.Ok(mutation);
@@ -255,7 +256,7 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, cancellationToken);
+                context, terminalId, store, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
             var mutation = await store.ChangeItemQuantityAsync(
                 terminalId, orderId, itemId, request, cancellationToken);
             await NotifyAsync(hub, terminalId, orderId, mutation.Revision, cancellationToken);
@@ -274,7 +275,7 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, cancellationToken);
+                context, terminalId, store, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
             var mutation = await store.RemoveItemAsync(
                 terminalId, orderId, itemId, expectedRevision, cancellationToken);
             await NotifyAsync(hub, terminalId, orderId, mutation.Revision, cancellationToken);
@@ -293,7 +294,7 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, cancellationToken);
+                context, terminalId, store, authorization, ApplicationPermissions.OrdersSend, cancellationToken);
             var result = await handler.HandleAsync(new SubmitOrderCommand(
                 $"cashier:{terminalId:D}", request.OperationId, orderId, request.ExpectedRevision,
                 principal.UserId, DateTimeOffset.UtcNow, "Cashier submitted order"), cancellationToken);
@@ -315,11 +316,9 @@ public static partial class DualScreenApplication
             PairingApprovalRequest request,
             HttpContext context,
             DualScreenStore store,
-            IAuthorizationService authorization,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, cancellationToken);
+            await RequireCashierAsync(context, terminalId, store, cancellationToken);
             await store.ApprovePairingAsync(terminalId, request.Code, cancellationToken);
             return Results.NoContent();
         }).RequireRateLimiting("pairing-approve");
@@ -350,11 +349,9 @@ public static partial class DualScreenApplication
             Guid terminalId,
             HttpContext context,
             DualScreenStore store,
-            IAuthorizationService authorization,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, cancellationToken);
+            await RequireCashierAsync(context, terminalId, store, cancellationToken);
             var count = await store.RevokeDisplaySessionsAsync(terminalId, cancellationToken);
             return Results.Ok(new { revoked = count });
         }).RequireRateLimiting("terminal-write");
@@ -365,13 +362,11 @@ public static partial class DualScreenApplication
         Guid terminalId,
         DualScreenStore store,
         IAuthorizationService authorization,
+        string permissionCode,
         CancellationToken cancellationToken)
     {
         var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
-        await authorization.AuthorizeAsync(
-            principal.UserId,
-            CashierMutationPermission,
-            cancellationToken);
+        await authorization.AuthorizeAsync(principal.UserId, permissionCode, cancellationToken);
         return principal;
     }
 

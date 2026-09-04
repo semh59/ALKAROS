@@ -1,5 +1,7 @@
 using System.Globalization;
+using System.Linq;
 using System.Text.Json.Serialization;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Tables.CurrentPointers;
 using ALKAROS.Tables.FloorPlan;
 using ALKAROS.Tables.TableLifecycle;
@@ -195,11 +197,30 @@ public sealed record TableManagementErrorEnvelope(
 
 public sealed record TableManagementError(string Code, string Message, int Status, string TraceId);
 
-internal sealed record TableManagementPrincipal(Guid UserId, bool CanMutate);
+internal sealed record TableManagementPrincipal(Guid UserId, IReadOnlySet<string> Permissions);
 
 internal static class TableContractMapper
 {
-    public static TableDto ToDto(Table table, bool canMutate) => new(
+    // Which granular permission (model §3) each table command needs. A command
+    // absent from this map is always allowed. No table command is
+    // grant-reachable, so AllowedCommands is "held permissions" only.
+    private static readonly Dictionary<string, string> CommandPermission =
+        new(StringComparer.Ordinal)
+        {
+            ["Update"] = ApplicationPermissions.FloorplanManage,
+            ["SetOccupied"] = ApplicationPermissions.TablesStatus,
+            ["SetAvailable"] = ApplicationPermissions.TablesStatus,
+            ["SetCleaning"] = ApplicationPermissions.TablesStatus,
+            ["SetOutOfService"] = ApplicationPermissions.TablesStatus,
+            ["Reserve"] = ApplicationPermissions.TablesReserve,
+            ["ClaimReservation"] = ApplicationPermissions.TablesReserve,
+            ["CancelReservation"] = ApplicationPermissions.TablesReserve,
+            ["Transfer"] = ApplicationPermissions.TablesTransfer,
+            ["Merge"] = ApplicationPermissions.TablesMerge,
+            ["Unmerge"] = ApplicationPermissions.TablesMerge,
+        };
+
+    public static TableDto ToDto(Table table, IReadOnlySet<string> permissions) => new(
         table.Id,
         table.TableNumber,
         table.ZoneId,
@@ -209,22 +230,26 @@ internal static class TableContractMapper
         table.CurrentOrderId,
         table.CurrentBillId,
         table.RowVersion,
-        canMutate ? AllowedCommands(table) : []);
+        AllowedCommands(table, permissions));
 
-    public static IReadOnlyList<string> AllowedCommands(Table table)
+    public static IReadOnlyList<string> AllowedCommands(Table table, IReadOnlySet<string> permissions)
     {
-        if (!table.Active)
-            return ["Update"];
+        IReadOnlyList<string> candidates = !table.Active
+            ? ["Update"]
+            : table.State switch
+            {
+                TableState.Available => ["Update", "SetOccupied", "Reserve", "SetOutOfService"],
+                TableState.Occupied => ["Update", "SetAvailable", "Reserve", "Transfer", "Merge"],
+                TableState.Reserved => ["Update", "SetAvailable", "ClaimReservation", "CancelReservation"],
+                TableState.Cleaning => ["Update", "SetAvailable"],
+                TableState.OutOfService => ["Update", "SetAvailable", "SetCleaning"],
+                _ => [],
+            };
 
-        return table.State switch
-        {
-            TableState.Available => ["Update", "SetOccupied", "Reserve", "SetOutOfService"],
-            TableState.Occupied => ["Update", "SetAvailable", "Reserve", "Transfer", "Merge"],
-            TableState.Reserved => ["Update", "SetAvailable", "ClaimReservation", "CancelReservation"],
-            TableState.Cleaning => ["Update", "SetAvailable"],
-            TableState.OutOfService => ["Update", "SetAvailable", "SetCleaning"],
-            _ => [],
-        };
+        return candidates
+            .Where(command => !CommandPermission.TryGetValue(command, out var code)
+                              || permissions.Contains(code))
+            .ToArray();
     }
 
     public static SaveFloorPlan ToCommand(Guid zoneId, SaveFloorPlanRequest request)
@@ -258,7 +283,7 @@ internal static class TableContractMapper
                 .ToList());
     }
 
-    public static FloorPlanDto ToDto(FloorPlanSnapshot snapshot, bool canMutate) => new(
+    public static FloorPlanDto ToDto(FloorPlanSnapshot snapshot, IReadOnlySet<string> permissions) => new(
         snapshot.ZoneId,
         snapshot.ZoneCode,
         snapshot.ZoneName,
@@ -294,22 +319,21 @@ internal static class TableContractMapper
                 seat.X,
                 seat.Y,
                 seat.RowVersion)).ToList(),
-            canMutate
-                ? AllowedCommands(new Table(
-                    table.TableId,
-                    table.TableNumber,
-                    snapshot.ZoneId,
-                    table.Capacity,
-                    table.Active,
-                    table.State,
-                    table.CurrentOrderId,
-                    table.CurrentBillId,
-                    table.TableRowVersion))
-                : []))
+            AllowedCommands(new Table(
+                table.TableId,
+                table.TableNumber,
+                snapshot.ZoneId,
+                table.Capacity,
+                table.Active,
+                table.State,
+                table.CurrentOrderId,
+                table.CurrentBillId,
+                table.TableRowVersion),
+                permissions)))
             .ToList());
 
-    public static SaveFloorPlanResponse ToDto(FloorPlanSaveResult result, bool canMutate) => new(
-        ToDto(result.FloorPlan, canMutate),
+    public static SaveFloorPlanResponse ToDto(FloorPlanSaveResult result, IReadOnlySet<string> permissions) => new(
+        ToDto(result.FloorPlan, permissions),
         result.Warnings.Select(warning => new FloorPlanWarningDto(
             warning.Code,
             warning.TableId,

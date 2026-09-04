@@ -56,7 +56,7 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
         var envelope = await denied.Content.ReadFromJsonAsync<TableManagementErrorEnvelope>();
         Assert.Equal("FORBIDDEN", envelope!.Error.Code);
         Assert.Equal(1L, await _database.ScalarAsync<long>(
-            "SELECT count(*) FROM identity.denial_events WHERE permission_code = 'pos.cashier.mutate';"));
+            "SELECT count(*) FROM identity.denial_events WHERE permission_code = 'floorplan.manage';"));
     }
 
     [Fact]
@@ -452,29 +452,30 @@ internal sealed class TableManagementTestDatabase
 
         if (canMutate)
         {
-            var permissionId = Guid.NewGuid();
             var roleId = Guid.NewGuid();
             await ExecuteAsync(
                 DataSource,
                 """
                 INSERT INTO identity.permissions (permission_id, code, name)
-                VALUES (@permission_id, 'pos.cashier.mutate', 'Mutate cashier resources')
+                SELECT gen_random_uuid(), code, code FROM (VALUES
+                    ('floorplan.manage'), ('tables.status'), ('tables.reserve'),
+                    ('tables.transfer'), ('tables.merge')) AS c(code)
                 ON CONFLICT (code) DO NOTHING;
 
                 INSERT INTO identity.roles (role_id, code, name)
                 VALUES (@role_id, @role_code, 'Table API Test Role');
 
                 INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
-                SELECT @role_permission_id, @role_id, permission_id
-                FROM identity.permissions WHERE code = 'pos.cashier.mutate';
+                SELECT gen_random_uuid(), @role_id, permission_id
+                FROM identity.permissions
+                WHERE code IN ('floorplan.manage', 'tables.status', 'tables.reserve',
+                               'tables.transfer', 'tables.merge');
 
                 INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
                 VALUES (@user_role_id, @user_id, @role_id);
                 """,
-                ("permission_id", permissionId),
                 ("role_id", roleId),
                 ("role_code", "table-api-role-" + suffix),
-                ("role_permission_id", Guid.NewGuid()),
                 ("user_role_id", Guid.NewGuid()),
                 ("user_id", userId));
         }

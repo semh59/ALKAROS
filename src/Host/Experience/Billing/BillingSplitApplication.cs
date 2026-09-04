@@ -2,6 +2,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -14,7 +15,7 @@ namespace ALKAROS.Host.Experience.Billing;
 
 public static class BillingSplitApplication
 {
-    public const string MutationPermission = DualScreenApplication.CashierMutationPermission;
+    public const string MutationPermission = ApplicationPermissions.BillsSplit;
     public const string RoutePrefix = "/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design";
     public const string BillsRoutePrefix = "/api/v1/terminals/{terminalId:guid}/billing/bills";
 

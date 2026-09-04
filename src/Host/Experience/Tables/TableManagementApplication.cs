@@ -1,5 +1,6 @@
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Tables.CurrentPointers;
 using ALKAROS.Tables.FloorPlan;
 using ALKAROS.Tables.Reservations;
@@ -18,7 +19,6 @@ namespace ALKAROS.Host.Experience.Tables;
 
 public static class TableManagementApplication
 {
-    public const string MutationPermission = DualScreenApplication.CashierMutationPermission;
     public const string RoutePrefix = "/api/v1/terminals/{terminalId:guid}/table-management";
 
     public static IServiceCollection AddTableManagementExperience(this IServiceCollection services)
@@ -75,7 +75,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             var created = await store.CreateAsync(request, repository, cancellationToken);
             return Results.Created($"{Prefix(terminalId)}/zones/{created.ZoneId:D}", created);
         });
@@ -89,7 +89,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             return Results.Ok(await store.UpdateAsync(zoneId, request, cancellationToken));
         });
 
@@ -102,7 +102,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             await store.DeleteAsync(zoneId, expectedRowVersion, cancellationToken);
             return Results.NoContent();
         });
@@ -117,7 +117,7 @@ public static class TableManagementApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var tables = await store.GetAllAsync(zoneId, cancellationToken);
-            return Results.Ok(tables.Select(table => TableContractMapper.ToDto(table, principal.CanMutate)));
+            return Results.Ok(tables.Select(table => TableContractMapper.ToDto(table, principal.Permissions)));
         });
 
         group.MapGet("/tables/{tableId:guid}", async (
@@ -131,7 +131,7 @@ public static class TableManagementApplication
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var table = await store.GetAsync(tableId, cancellationToken)
                 ?? throw new TableManagementNotFoundException($"Table {tableId} was not found.");
-            return Results.Ok(TableContractMapper.ToDto(table, principal.CanMutate));
+            return Results.Ok(TableContractMapper.ToDto(table, principal.Permissions));
         });
 
         group.MapPost("/tables", async (
@@ -142,9 +142,9 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             var created = await store.CreateAsync(request, cancellationToken);
-            var dto = TableContractMapper.ToDto(created, principal.CanMutate);
+            var dto = TableContractMapper.ToDto(created, principal.Permissions);
             return Results.Created($"{Prefix(terminalId)}/tables/{created.Id:D}", dto);
         });
 
@@ -157,9 +157,9 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             var updated = await store.UpdateAsync(tableId, request, cancellationToken);
-            return Results.Ok(TableContractMapper.ToDto(updated, principal.CanMutate));
+            return Results.Ok(TableContractMapper.ToDto(updated, principal.Permissions));
         });
 
         group.MapPost("/tables/{tableId:guid}/status", async (
@@ -171,9 +171,9 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesStatus, cancellationToken);
             var updated = await store.ChangeStatusAsync(tableId, request, cancellationToken);
-            return Results.Ok(TableContractMapper.ToDto(updated, principal.CanMutate));
+            return Results.Ok(TableContractMapper.ToDto(updated, principal.Permissions));
         });
 
         group.MapGet("/tables/{tableId:guid}/current-pointer", async (
@@ -201,7 +201,7 @@ public static class TableManagementApplication
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var floorPlan = await repository.GetAsync(zoneId, cancellationToken)
                 ?? throw new FloorPlanNotFoundException($"Floor plan for zone {zoneId} was not found.");
-            return Results.Ok(TableContractMapper.ToDto(floorPlan, principal.CanMutate));
+            return Results.Ok(TableContractMapper.ToDto(floorPlan, principal.Permissions));
         });
 
         group.MapPut("/floor-plans/{zoneId:guid}", async (
@@ -213,11 +213,11 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             var result = await repository.SaveAsync(
                 TableContractMapper.ToCommand(zoneId, request),
                 cancellationToken);
-            return Results.Ok(TableContractMapper.ToDto(result, principal.CanMutate));
+            return Results.Ok(TableContractMapper.ToDto(result, principal.Permissions));
         });
 
         group.MapPost("/reservations", async (
@@ -228,7 +228,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesReserve, cancellationToken);
             var result = await service.CreateReservationAsync(new CreateReservationRequest(
                 request.TableId,
                 TableContractMapper.RequiredVersion(request.ExpectedTableRowVersion, nameof(request.ExpectedTableRowVersion)),
@@ -251,7 +251,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesReserve, cancellationToken);
             return Results.Ok(await service.ClaimReservationAsync(new ClaimReservationRequest(
                 reservationId,
                 TableContractMapper.RequiredVersion(request.ExpectedReservationRowVersion, nameof(request.ExpectedReservationRowVersion)),
@@ -270,7 +270,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesReserve, cancellationToken);
             return Results.Ok(await service.CancelReservationAsync(new CancelReservationRequest(
                 reservationId,
                 TableContractMapper.RequiredVersion(request.ExpectedReservationRowVersion, nameof(request.ExpectedReservationRowVersion)),
@@ -289,7 +289,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesReserve, cancellationToken);
             return Results.Ok(await service.ExpireReservationAsync(new ExpireReservationRequest(
                 reservationId,
                 TableContractMapper.RequiredVersion(request.ExpectedReservationRowVersion, nameof(request.ExpectedReservationRowVersion)),
@@ -307,7 +307,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesTransfer, cancellationToken);
             return Results.Ok(await service.TransferTableAsync(new TableTransferRequest(
                 request.SourceTableId,
                 TableContractMapper.RequiredVersion(request.ExpectedSourceRowVersion, nameof(request.ExpectedSourceRowVersion)),
@@ -326,7 +326,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesMerge, cancellationToken);
             return Results.Ok(await service.MergeTablesAsync(new TableMergeRequest(
                 request.PrimaryTableId,
                 TableContractMapper.RequiredVersion(request.ExpectedPrimaryRowVersion, nameof(request.ExpectedPrimaryRowVersion)),
@@ -345,7 +345,7 @@ public static class TableManagementApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesMerge, cancellationToken);
             return Results.Ok(await service.UnmergeTablesAsync(new TableUnmergeRequest(
                 mergeGroupId,
                 TableContractMapper.RequiredVersion(request.ExpectedPrimaryRowVersion, nameof(request.ExpectedPrimaryRowVersion)),
@@ -372,6 +372,7 @@ internal interface ITableManagementSessionAuthorizer
     Task<TableManagementPrincipal> RequireMutationAsync(
         HttpContext context,
         Guid terminalId,
+        string permissionCode,
         CancellationToken cancellationToken);
 }
 
@@ -412,20 +413,18 @@ internal sealed class TableManagementSessionAuthorizer : ITableManagementSession
         var permissions = await _roles.GetPermissionCodesForUserAsync(cashier.UserId, cancellationToken);
         return new TableManagementPrincipal(
             cashier.UserId,
-            permissions.Contains(TableManagementApplication.MutationPermission, StringComparer.Ordinal));
+            permissions.ToHashSet(StringComparer.Ordinal));
     }
 
     public async Task<TableManagementPrincipal> RequireMutationAsync(
         HttpContext context,
         Guid terminalId,
+        string permissionCode,
         CancellationToken cancellationToken)
     {
         var principal = await RequireReadAsync(context, terminalId, cancellationToken);
-        await _authorization.AuthorizeAsync(
-            principal.UserId,
-            TableManagementApplication.MutationPermission,
-            cancellationToken);
-        return principal with { CanMutate = true };
+        await _authorization.AuthorizeAsync(principal.UserId, permissionCode, cancellationToken);
+        return principal;
     }
 }
 

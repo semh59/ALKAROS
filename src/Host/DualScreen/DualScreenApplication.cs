@@ -36,7 +36,6 @@ public static partial class DualScreenApplication
 {
     public const string CashierCookieName = "alkaros.cashier";
     public const string DisplayCookieName = "alkaros.customer-display";
-    public const string CashierMutationPermission = "pos.cashier.mutate";
     public const string KitchenStationEnvironmentVariable = "ALKAROS_KITCHEN_STATION_ID";
 
     // Absolute origin the reverse proxy serves the customer display from

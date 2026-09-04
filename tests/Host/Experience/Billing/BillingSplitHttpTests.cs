@@ -380,10 +380,10 @@ internal sealed class BillingSplitTestDatabase
                 DataSource,
                 """
                 INSERT INTO identity.permissions (permission_id, code, name)
-                VALUES (@permission_id, 'pos.cashier.mutate', 'Mutate cashier resources') ON CONFLICT (code) DO NOTHING;
+                VALUES (@permission_id, 'bills.split', 'Operational bill splitting') ON CONFLICT (code) DO NOTHING;
                 INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'Billing API Test Role');
                 INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
-                SELECT @role_permission_id, @role_id, permission_id FROM identity.permissions WHERE code = 'pos.cashier.mutate';
+                SELECT @role_permission_id, @role_id, permission_id FROM identity.permissions WHERE code = 'bills.split';
                 INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
                 VALUES (@user_role_id, @user_id, @role_id);
                 """,
