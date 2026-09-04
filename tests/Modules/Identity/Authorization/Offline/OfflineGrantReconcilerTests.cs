@@ -164,6 +164,51 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
         => await FluentActions.Invoking(() => Reconciler().ReconcileAsync(
                 Guid.NewGuid(), new[] { Action("recon-no-budget") }))
             .Should().ThrowAsync<UnknownOfflineAuthorityBudgetException>();
+
+    [Fact]
+    public async Task ABudgetDeletedBetweenTheLookupAndTheReplayInsertIsRejectedNotCrashed()
+    {
+        // GetAsync succeeds (the caller's snapshot), but the row is gone by the
+        // time the replay insert runs — the same race a same-session re-issue
+        // can cause. The FK violation (23503) must surface as the typed
+        // exception, not an unhandled PostgresException.
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 2));
+        await using (var delete = _db.DataSource.CreateCommand(
+            "DELETE FROM identity.offline_authority_budgets WHERE budget_id = @id;"))
+        {
+            delete.Parameters.AddWithValue("id", budget.BudgetId);
+            (await delete.ExecuteNonQueryAsync()).Should().Be(1);
+        }
+
+        var reconciler = new OfflineGrantReconciler(
+            new StaleSnapshotBudgetRepository(budget), _grants, _policies, _replays, () => _reconnectAt);
+
+        await FluentActions
+            .Invoking(() => reconciler.ReconcileAsync(budget.BudgetId, new[] { Action("recon-vanished-budget") }))
+            .Should().ThrowAsync<UnknownOfflineAuthorityBudgetException>()
+            .Where(exception => exception.BudgetId == budget.BudgetId);
+    }
+
+    /// <summary>Always answers <see cref="GetAsync"/> from a fixed snapshot, regardless of DB state.</summary>
+    private sealed class StaleSnapshotBudgetRepository : IOfflineAuthorityBudgetRepository
+    {
+        private readonly OfflineAuthorityBudget _snapshot;
+
+        public StaleSnapshotBudgetRepository(OfflineAuthorityBudget snapshot) => _snapshot = snapshot;
+
+        public Task<OfflineAuthorityBudget> CreateAsync(
+            Guid userId, Guid sessionId, IReadOnlyList<OfflineAuthorityBudgetLine> lines,
+            DateTimeOffset issuedAt, DateTimeOffset expiresAt, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<OfflineAuthorityBudget?> GetAsync(Guid budgetId, CancellationToken cancellationToken = default)
+            => Task.FromResult<OfflineAuthorityBudget?>(_snapshot);
+
+        public Task<OfflineAuthorityBudget?> GetBySessionAsync(
+            Guid sessionId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+    }
 }
 
 /// <summary>Own fixture: mutates the schema with the down migration.</summary>

@@ -48,6 +48,8 @@ public sealed record GrantRequest(
             throw new ArgumentException("IdempotencyKey is required.", nameof(IdempotencyKey));
         if (string.IsNullOrWhiteSpace(PermissionCode))
             throw new ArgumentException("PermissionCode is required.", nameof(PermissionCode));
+        if (RequesterUserId == Guid.Empty)
+            throw new ArgumentException("RequesterUserId is required.", nameof(RequesterUserId));
         if (string.IsNullOrWhiteSpace(RequesterRoleCode))
             throw new ArgumentException("RequesterRoleCode is required.", nameof(RequesterRoleCode));
         if (string.IsNullOrWhiteSpace(ReasonCode))

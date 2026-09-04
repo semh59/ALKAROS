@@ -33,6 +33,8 @@ public sealed record OfflineAuthorizedAction(
             throw new ArgumentException("ReasonCode is required.", nameof(ReasonCode));
         if (Amount < 0m)
             throw new ArgumentException("Amount must not be negative.", nameof(Amount));
+        if (OfflineAuthorizedAt == default)
+            throw new ArgumentException("OfflineAuthorizedAt is required.", nameof(OfflineAuthorizedAt));
         if ((SubjectType is null) != (SubjectId is null))
             throw new ArgumentException("SubjectType and SubjectId must be provided together.");
     }

@@ -6,6 +6,7 @@ public sealed class PostgresAuthorizationPolicyRepository : IAuthorizationPolicy
 {
     private const string Table = "identity.authorization_policies";
     private const int MaxUnpagedRows = 5000;
+    private const string UniqueViolation = "23505";
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -67,8 +68,47 @@ public sealed class PostgresAuthorizationPolicyRepository : IAuthorizationPolicy
         ArgumentNullException.ThrowIfNull(policy);
         policy.Validate();
 
-        // One statement: insert on a new scope, or bump an existing row whose
-        // version matches. RETURNING lets us tell "changed nothing" from "wrote".
+        // A replace (expectedRowVersion given) and a create (null) are different
+        // statements, not one INSERT .. ON CONFLICT: with a single statement, a
+        // replace of a scope that was concurrently deleted has nothing to
+        // conflict with, so the INSERT branch runs unconditionally and silently
+        // re-creates the row at row_version 1 instead of raising the
+        // concurrency exception the caller's stale expectedRowVersion earned.
+        return expectedRowVersion is { } expected
+            ? await ReplaceAsync(policy, expected, actorUserId, cancellationToken)
+            : await CreateAsync(policy, actorUserId, cancellationToken);
+    }
+
+    private async Task<AuthorizationPolicy> ReplaceAsync(
+        AuthorizationPolicy policy, long expectedRowVersion, Guid actorUserId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            UPDATE {Table} SET
+                mode = @mode,
+                limit_amount = @limit,
+                max_count = @max_count,
+                window_seconds = @window,
+                row_version = row_version + 1,
+                updated_at = now(),
+                updated_by = @actor
+            WHERE permission_code = @permission AND role_code = @role AND row_version = @expected_version
+            RETURNING policy_id, permission_code, role_code, mode,
+                      limit_amount, max_count, window_seconds, row_version;
+            """);
+        AddPolicyParameters(command, policy, actorUserId);
+        command.Parameters.AddWithValue("expected_version", expectedRowVersion);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            throw new AuthorizationPolicyConcurrencyException(policy.PermissionCode, policy.RoleCode);
+
+        return Read(reader);
+    }
+
+    private async Task<AuthorizationPolicy> CreateAsync(
+        AuthorizationPolicy policy, Guid actorUserId, CancellationToken cancellationToken)
+    {
         await using var command = _dataSource.CreateCommand(
             $"""
             INSERT INTO {Table}
@@ -76,18 +116,27 @@ public sealed class PostgresAuthorizationPolicyRepository : IAuthorizationPolicy
                  row_version, updated_at, updated_by)
             VALUES
                 (@permission, @role, @mode, @limit, @max_count, @window, 1, now(), @actor)
-            ON CONFLICT (permission_code, role_code) DO UPDATE SET
-                mode = EXCLUDED.mode,
-                limit_amount = EXCLUDED.limit_amount,
-                max_count = EXCLUDED.max_count,
-                window_seconds = EXCLUDED.window_seconds,
-                row_version = {Table}.row_version + 1,
-                updated_at = now(),
-                updated_by = EXCLUDED.updated_by
-            WHERE {Table}.row_version = @expected_version
             RETURNING policy_id, permission_code, role_code, mode,
                       limit_amount, max_count, window_seconds, row_version;
             """);
+        AddPolicyParameters(command, policy, actorUserId);
+
+        try
+        {
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            await reader.ReadAsync(cancellationToken);
+            return Read(reader);
+        }
+        catch (PostgresException ex) when (ex.SqlState == UniqueViolation)
+        {
+            // Someone else created this scope first — the same "expected state
+            // no longer holds" case a stale-version replace raises.
+            throw new AuthorizationPolicyConcurrencyException(policy.PermissionCode, policy.RoleCode);
+        }
+    }
+
+    private static void AddPolicyParameters(NpgsqlCommand command, AuthorizationPolicy policy, Guid actorUserId)
+    {
         command.Parameters.AddWithValue("permission", policy.PermissionCode);
         command.Parameters.AddWithValue("role", policy.RoleCode);
         command.Parameters.AddWithValue("mode", PolicyModeText.ToText(policy.Mode));
@@ -95,15 +144,6 @@ public sealed class PostgresAuthorizationPolicyRepository : IAuthorizationPolicy
         command.Parameters.AddWithValue("max_count", (object?)policy.MaxCount ?? DBNull.Value);
         command.Parameters.AddWithValue("window", (object?)policy.WindowSeconds ?? DBNull.Value);
         command.Parameters.AddWithValue("actor", actorUserId);
-        // On a fresh insert the ON CONFLICT branch never runs, so the value is
-        // unused; on a replace it must equal the caller's last-read version.
-        command.Parameters.AddWithValue("expected_version", expectedRowVersion ?? -1L);
-
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        if (!await reader.ReadAsync(cancellationToken))
-            throw new AuthorizationPolicyConcurrencyException(policy.PermissionCode, policy.RoleCode);
-
-        return Read(reader);
     }
 
     public async Task<bool> DeleteAsync(

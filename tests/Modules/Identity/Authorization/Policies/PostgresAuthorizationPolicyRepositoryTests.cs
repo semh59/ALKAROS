@@ -73,6 +73,23 @@ public sealed class PostgresAuthorizationPolicyRepositoryTests : IClassFixture<P
     }
 
     [Fact]
+    public async Task UpsertReplaceOfADeletedPolicyThrowsInsteadOfSilentlyRecreatingIt()
+    {
+        var v1 = await _repository.UpsertAsync(
+            new AuthorizationPolicy(Guid.Empty, "bills.comp", "waiter", PolicyMode.AlwaysDeny, null, null, null, 1),
+            expectedRowVersion: null, _actor);
+
+        (await _repository.DeleteAsync("bills.comp", "waiter")).Should().BeTrue();
+
+        await FluentActions
+            .Invoking(() => _repository.UpsertAsync(
+                v1 with { Mode = PolicyMode.AlwaysAllow }, expectedRowVersion: v1.RowVersion, _actor))
+            .Should().ThrowAsync<AuthorizationPolicyConcurrencyException>();
+
+        (await _repository.GetAsync("bills.comp", "waiter")).Should().BeNull();
+    }
+
+    [Fact]
     public async Task UpsertRejectsAnInconsistentPolicyBeforeTouchingTheDatabase()
     {
         await FluentActions

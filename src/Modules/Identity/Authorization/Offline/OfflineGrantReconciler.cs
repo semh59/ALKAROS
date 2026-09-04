@@ -7,6 +7,7 @@ namespace ALKAROS.Identity.Authorization.Offline;
 public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
 {
     private const string UniqueViolation = "23505";
+    private const string ForeignKeyViolation = "23503";
 
     private readonly IOfflineAuthorityBudgetRepository _budgets;
     private readonly IAuthorizationGrantRepository _grants;
@@ -126,6 +127,12 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
             if (winner is null)
                 throw;
             return winner;
+        }
+        catch (PostgresException ex) when (ex.SqlState == ForeignKeyViolation)
+        {
+            // The budget was deleted between GetAsync and this insert (a
+            // same-session re-issue race, see PostgresOfflineAuthorityBudgetRepository).
+            throw new UnknownOfflineAuthorityBudgetException(budgetId);
         }
     }
 }

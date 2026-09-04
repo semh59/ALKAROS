@@ -173,6 +173,10 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
         {
             return MapError(http, exception);
         }
+        catch (ArgumentException exception)
+        {
+            return MapError(http, exception);
+        }
         catch (NpgsqlException exception)
         {
             return MapError(http, exception);
@@ -192,6 +196,8 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
             BehaviouralTighteningAlreadyClearedException =>
                 (StatusCodes.Status409Conflict, "ALREADY_CLEARED", "This tightening is already cleared."),
             BadHttpRequestException =>
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The request is invalid."),
+            ArgumentException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The request is invalid."),
             NpgsqlException =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "The decision could not be recorded."),
