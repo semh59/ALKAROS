@@ -11,6 +11,7 @@ using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Modules;
+using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.KitchenOperations;
@@ -95,6 +96,7 @@ public static partial class DualScreenApplication
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddBillingSplitExperience();
+        builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddSingleton<IOrderSubmissionDispatcher>(services =>
         {
             var stationId = Environment.GetEnvironmentVariable(KitchenStationEnvironmentVariable);
@@ -274,6 +276,7 @@ public static partial class DualScreenApplication
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();
         app.MapBillingSplitApi();
+        app.MapAuthorizationDecisionApi();
         app.MapHub<CustomerDisplayHub>(CustomerDisplayHub.Route);
         app.MapMethods(
             "/api/{**path}",

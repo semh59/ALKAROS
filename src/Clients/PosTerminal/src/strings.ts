@@ -43,6 +43,7 @@ export const navLabels = {
   kitchen: "Mutfak",
   catalog: "Menü",
   system: "Sistem",
+  authorization: "Yetki",
 } as const;
 
 /**

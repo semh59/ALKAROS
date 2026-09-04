@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 869,
-  "markdown_line_count": 55545,
-  "markdown_byte_count": 3305241,
+  "markdown_line_count": 55582,
+  "markdown_byte_count": 3307997,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2192,7 +2192,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2032E3F4D4C77814429C79261A0C406DE86CE4AB2BC2D2BD4C4A9A43F443DF39",
+      "sha256": "F5AD2D4096AA24A5BE41EA59096AB01F6642EF1ABE68CB6A4E8B9FAD21002268",
       "lines": 2145,
       "bytes": 302753,
       "utf8": true
@@ -4103,9 +4103,9 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md",
-      "sha256": "40499F1C283B93B633F0980569A16EDCFB9FDCB2CAE30374C42BA47574400889",
-      "lines": 34,
-      "bytes": 1267,
+      "sha256": "B3BF6D319FA12431AC1A03E8CBDF7E7F62892935C6B9A510735280389062CDF5",
+      "lines": 71,
+      "bytes": 4023,
       "utf8": true
     },
     {

@@ -9,6 +9,7 @@ import { BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type
 import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
 import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
+import { AuthorizationDecisionsWorkspace, createAuthorizationDecisionsClient, type AuthorizationDecisionState, type AuthorizationDecisionsData } from "../features/authorization-decisions";
 
 export type BackendStatus = "checking" | "online" | "offline";
 
@@ -33,9 +34,12 @@ export function ExperiencePage({
   const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
   // Which capability a route needs is a route->permission map, not a role guess.
   const routeNeedsCatalogManage = path === "/catalog" || path === "/system-health";
+  const routeNeedsReportsView = path === "/authorization";
   const canOpenRoute = routeNeedsCatalogManage
     ? capabilitySet.has("catalog.manage")
-    : capabilitySet.has("pos.cashier.mutate");
+    : routeNeedsReportsView
+      ? capabilitySet.has("reports.view")
+      : capabilitySet.has("pos.cashier.mutate");
   // Role label is derived from the session's capabilities, not from the current
   // route. (deep-analysis finding F-4)
   const roleLabel = capabilitySet.has("catalog.manage")
@@ -90,9 +94,10 @@ export function ExperiencePage({
     { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "pos.cashier.mutate" },
     { id: "catalog", label: navLabels.catalog, href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
     { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
+    { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "system", requiredCapability: "reports.view" },
   ];
-  const title = path === "/tables" ? "Masa yönetimi" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : "Kasa satış";
-  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : "Gerçek zamanlı sipariş ve müşteri ekranı";
+  const title = path === "/tables" ? "Masa yönetimi" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : "Kasa satış";
+  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : "Gerçek zamanlı sipariş ve müşteri ekranı";
 
   return <ProductionShell
     session={session}
@@ -101,7 +106,7 @@ export function ExperiencePage({
     freshness={freshness}
     navigation={navigation}
     onNavigate={navigate}
-    activeNavigationId={path === "/tables" ? "tables" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : "sales"}
+    activeNavigationId={path === "/tables" ? "tables" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
     headerActions={<><a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
@@ -111,7 +116,8 @@ export function ExperiencePage({
     {path === "/catalog" && <CatalogRoute canManage={canOpenRoute} />}
     {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canOperate={canOpenRoute} />}
     {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
-    {!(["/", "/tables", "/billing", "/catalog", "/kitchen", "/system-health"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
+    {path === "/authorization" && <AuthorizationDecisionsRoute canView={canOpenRoute} />}
+    {!(["/", "/tables", "/billing", "/catalog", "/kitchen", "/system-health", "/authorization"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
   </ProductionShell>;
 }
 
@@ -390,6 +396,47 @@ function SystemHealthRoute({ terminalId, canView }: { terminalId: string; canVie
   }, [canView, terminalId]);
   useEffect(() => { void load(); }, [load]);
   return <SystemHealthWorkspace state={state} health={health} backups={backups} onRefresh={load} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
+}
+
+const emptyAuthorizationDecisions: AuthorizationDecisionsData = { pendingGrants: [], delegations: [], tightenings: [] };
+
+function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
+  const client = useMemo(() => createAuthorizationDecisionsClient(), []);
+  const [state, setState] = useState<AuthorizationDecisionState>("loading");
+  const [data, setData] = useState<AuthorizationDecisionsData>(emptyAuthorizationDecisions);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+  const load = useCallback(async () => {
+    if (!canView) { setState("unauthorized"); return; }
+    setState("loading");
+    setErrorMessage(undefined);
+    try {
+      const next = await client.load();
+      setData(next);
+      setLastUpdated(new Date().toISOString());
+      setState("ready");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      setData(emptyAuthorizationDecisions);
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 403 ? "unauthorized" : "error");
+      setErrorMessage(reason instanceof Error ? reason.message : "Yetki verisi alınamadı.");
+    }
+  }, [canView, client]);
+  useEffect(() => { void load(); }, [load]);
+  const act = (run: () => Promise<void>) => async () => { await run(); await load(); };
+  return <AuthorizationDecisionsWorkspace
+    state={state}
+    pendingGrants={data.pendingGrants}
+    delegations={data.delegations}
+    tightenings={data.tightenings}
+    onApprove={(id) => act(() => client.approve(id))()}
+    onDeny={(id) => act(() => client.deny(id))()}
+    onRevokeDelegation={(id) => act(() => client.revokeDelegation(id))()}
+    onClearTightening={(id) => act(() => client.clearTightening(id))()}
+    onRefresh={load}
+    errorMessage={errorMessage}
+    lastUpdated={lastUpdated}
+  />;
 }
 
 const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], unknownDeliveries: [], health: null, backups: [] };
