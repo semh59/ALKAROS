@@ -4,6 +4,7 @@ using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
+using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.ModuleComposition;
@@ -28,6 +29,10 @@ public sealed class IdentityModule : IModule
         context.RegisterTransient<IAuthorizationDelegationRepository, PostgresAuthorizationDelegationRepository>();
         context.RegisterTransient<IEscalationResolver, DelegationEscalationResolver>();
         context.RegisterTransient<IAuthorizationGrantService, AuthorizationGrantService>();
+        context.RegisterTransient<IOfflineAuthorityBudgetRepository, PostgresOfflineAuthorityBudgetRepository>();
+        context.RegisterTransient<IOfflineReplayLedger, PostgresOfflineReplayLedger>();
+        context.RegisterTransient<IOfflineAuthorityBudgetService, OfflineAuthorityBudgetService>();
+        context.RegisterTransient<IOfflineGrantReconciler, OfflineGrantReconciler>();
         context.RegisterTransient<IDeviceSessionRepository, PostgresDeviceSessionRepository>();
         context.RegisterTransient<IDeviceSessionService, DeviceSessionService>();
     }

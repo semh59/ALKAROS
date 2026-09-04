@@ -2012,8 +2012,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-018-authorization-policy-engine.md` | ✅ | `B4C52CF0BBCA2DB508048E156440BBB4D1320F99E34D503218DA33075E9C5C01` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md` | ✅ | `41223D6DC4620C6E8D10C4D50D02F420CB6E7D0DDB6C2A7E124263D234D0D39D` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md` | ✅ | `40499F1C283B93B633F0980569A16EDCFB9FDCB2CAE30374C42BA47574400889` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md` | ✅ | `818D0005B63309B3EF4CD39BFCB8D1F9837C71B54FCEE9F7E81E7EDD2C250D54` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md` | ✅ | `B3887329FC3DBB512C2B9580F4A568570BC99862B0BCD25AF33F16899C2C9A8D` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md` | ✅ | `98315D80471B467A4F5D12AFA044DEFB0D39AFB83A4C94D9DBAA2DBF43637A56` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md` | ✅ | `1EF92A890AAE0390302FAF92742581BB0DB8C405A8D71B68102A8AEA6F4DF329` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md` | ✅ | `FF5C653FDDA82E6742690973B449F966AD41B00497303B56C7CB6822251632EA` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md` | ✅ | `62D2128A4D8078FA666B257E11D2409BB79A6E65377328B427E1352836A7E2A4` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |

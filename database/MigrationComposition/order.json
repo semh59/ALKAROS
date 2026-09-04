@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "046"
+    "max": "047"
   },
   "migrations": [
     {
@@ -404,6 +404,16 @@
       "phase": "B",
       "tables": [
         "authorization_delegations"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "047",
+      "phase": "B",
+      "tables": [
+        "offline_authority_budgets",
+        "offline_authority_budget_lines",
+        "offline_authority_replays"
       ],
       "deferredConstraints": []
     }
