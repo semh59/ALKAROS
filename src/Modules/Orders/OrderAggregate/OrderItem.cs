@@ -155,6 +155,24 @@ public sealed class OrderItem
     }
 
     /// <summary>
+    /// V1-KIT-005: advances the item's kitchen-side status mirror
+    /// (Sent/Preparing/Ready/Served) to match what the kitchen ticket item
+    /// it corresponds to actually reports. Does not touch <see cref="Status"/>
+    /// — the item stays Active while the kitchen works on it; only
+    /// <see cref="Cancel"/> and the (separate) complimentary path change
+    /// Status. Only reachable when a deployment turns on kitchen live-sync
+    /// (V1-SET-002); otherwise KitchenState never leaves NotSent/Cancelled.
+    /// </summary>
+    public OrderItem AdvanceKitchenState(KitchenState kitchenState)
+    {
+        if (Status is not OrderItemState.Active)
+            throw new InvalidOperationException(
+                $"Order item {Id} cannot advance kitchen state from item status {Status}.");
+
+        return Mutate(kitchenState: kitchenState);
+    }
+
+    /// <summary>
     /// Returns a copy with the row version advanced; used by repositories
     /// after a successful optimistic concurrency update.
     /// </summary>

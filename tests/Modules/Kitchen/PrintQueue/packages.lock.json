@@ -151,6 +151,7 @@
       "alkaros.kitchen": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Orders": "[1.0.0, )"
         }

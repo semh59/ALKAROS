@@ -1,9 +1,13 @@
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Kitchen.OrderItemStateSync;
 using ALKAROS.Kitchen.PhysicalPrintRecovery;
 using ALKAROS.Kitchen.PrintQueue;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
+using ALKAROS.Messaging;
 using ALKAROS.Operations.BackupHealth;
+using ALKAROS.Settings.KitchenLiveSync;
+using ALKAROS.Settings.TypedSettings;
 
 namespace ALKAROS.Host.Experience.KitchenOperations;
 
@@ -16,6 +20,8 @@ public sealed class KitchenOperationsStore
     private readonly IPhysicalPrintRecoveryRepository _deliveries;
     private readonly IBackupHealthService _backupHealth;
     private readonly IAuditEventStore _audit;
+    private readonly ISettingsService _settings;
+    private readonly OutboxStore _outbox;
 
     public KitchenOperationsStore(
         IKitchenTicketRepository tickets,
@@ -24,7 +30,9 @@ public sealed class KitchenOperationsStore
         IPrintQueueRepository printJobs,
         IPhysicalPrintRecoveryRepository deliveries,
         IBackupHealthService backupHealth,
-        IAuditEventStore audit)
+        IAuditEventStore audit,
+        ISettingsService settings,
+        OutboxStore outbox)
     {
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _printers = printers ?? throw new ArgumentNullException(nameof(printers));
@@ -33,6 +41,10 @@ public sealed class KitchenOperationsStore
         _deliveries = deliveries ?? throw new ArgumentNullException(nameof(deliveries));
         _backupHealth = backupHealth ?? throw new ArgumentNullException(nameof(backupHealth));
         _audit = audit ?? throw new ArgumentNullException(nameof(audit));
+        // V1-KIT-005: publishes the item's new state for Orders to mirror,
+        // gated by kitchen.live_sync_enabled (V1-SET-002, default off).
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+        _outbox = outbox ?? throw new ArgumentNullException(nameof(outbox));
     }
 
     public async Task<IReadOnlyList<KitchenTicketV1>> GetActiveTicketsAsync(
@@ -114,6 +126,10 @@ public sealed class KitchenOperationsStore
         {
             var transitioned = ticket.UpdateItemStatus(itemId, target, NormalizeReason(request.Reason));
             await _tickets.SaveAsync(transitioned, request.ExpectedTicketRowVersion, cancellationToken);
+            var transitionedItem = transitioned.Items.First(value => value.Id == itemId);
+            var liveSyncEnabled = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
+            await KitchenOrderItemStateSyncPublisher.PublishAsync(
+                _outbox, transitioned.OrderId, transitionedItem, liveSyncEnabled, cancellationToken);
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
             return ToDto(canonical);

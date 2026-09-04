@@ -303,6 +303,40 @@ public sealed class Order
     }
 
     /// <summary>
+    /// V1-KIT-005: mirrors a kitchen ticket item's state onto its order
+    /// item. A no-op — returns this same instance — when the item is no
+    /// longer Active (already voided/comped before the event arrived) or
+    /// already at that state, so an at-least-once redelivery of the same
+    /// event never produces a spurious write.
+    /// </summary>
+    public Order AdvanceItemKitchenState(Guid orderItemId, KitchenState kitchenState)
+    {
+        var items = new List<OrderItem>(_items.Count);
+        var changed = false;
+        var found = false;
+        foreach (var item in _items)
+        {
+            if (item.Id == orderItemId)
+            {
+                found = true;
+                if (item.Status == OrderItemState.Active && item.KitchenState != kitchenState)
+                {
+                    items.Add(item.AdvanceKitchenState(kitchenState));
+                    changed = true;
+                    continue;
+                }
+            }
+
+            items.Add(item);
+        }
+
+        if (!found)
+            throw new ArgumentException($"Order {Id} has no item {orderItemId}.", nameof(orderItemId));
+
+        return changed ? RebuildWith(items: items) : this;
+    }
+
+    /// <summary>
     /// Returns a copy with the row version advanced; used by repositories
     /// after a successful optimistic concurrency update.
     /// </summary>

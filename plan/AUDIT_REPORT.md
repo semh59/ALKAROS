@@ -2028,7 +2028,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md` | ✅ | `C154D86D0538B766601226408E5736890DDAAE7BEA80FA2210BFFE68DB8CD757` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-026-grant-class-bill-adjustment-surface.md` | ✅ | `0B74BB50B6AE28CCB773A642632397659B7B5CA5FD4B1D3C34A1A0F079E574D1` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-027-sent-unserved-void-with-waste.md` | ✅ | `502047E0D3C91A99AF3968FF9F87A9C9BA969B0100985E977D93589D5471BEC2` | Tek-sahip görev |
-| `plan/v1/kitchen-printing/V1-KIT-005-kitchen-order-item-state-sync.md` | ✅ | `FFCEC341193E8891E99CBFC54F3C9908EC4A4C950F52A070DFBB3A892B613143` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-005-kitchen-order-item-state-sync.md` | ✅ | `9C46F419940603009F78FE737A198C26C52EECA8783ABCC25066B15FD6E2FCB1` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md` | ✅ | `61C61F411F0DCDA983481CED2B4E279AC73616B2E8E9CB58F22EF84E6C252788` | Tek-sahip görev |
 | `plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md` | ✅ | `0426076A29BCE1C9ABC2A8E7112ADCE747DC1049BB9108C42F8D7AF96A0D992C` | Tek-sahip görev |

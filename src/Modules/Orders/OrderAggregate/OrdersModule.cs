@@ -19,5 +19,10 @@ public sealed class OrdersModule : IModule
         // Reacts to Table Management merge/transfer/unmerge events by moving
         // Order's own rows to the new table (V0-ARC-001 row 3).
         context.RegisterTransient<IIntegrationEventConsumer, TableEventOrderConsumer>();
+
+        // V1-KIT-005: mirrors a kitchen ticket item's state onto its order
+        // item (only published when a deployment turns on kitchen live-sync,
+        // V1-SET-002).
+        context.RegisterTransient<IIntegrationEventConsumer, KitchenEventOrderConsumer>();
     }
 }

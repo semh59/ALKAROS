@@ -493,3 +493,87 @@ public class OrderVoidTests
             Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "İskender", 1, 120m, 10m,
             status: OrderItemState.Active, kitchenState: KitchenState.NotSent);
 }
+
+/// <summary>V1-KIT-005: OrderItem/Order's side of the kitchen state mirror.</summary>
+public class OrderKitchenStateSyncTests
+{
+    [Fact]
+    public void AdvanceKitchenStateMovesAnActiveItemWithoutTouchingStatus()
+    {
+        var item = NewActiveItem(KitchenState.NotSent);
+
+        var advanced = item.AdvanceKitchenState(KitchenState.Sent);
+
+        advanced.KitchenState.Should().Be(KitchenState.Sent);
+        advanced.Status.Should().Be(OrderItemState.Active);
+    }
+
+    [Theory]
+    [InlineData(OrderItemState.Draft)]
+    [InlineData(OrderItemState.Cancelled)]
+    [InlineData(OrderItemState.Complimentary)]
+    public void AdvanceKitchenStateRejectsANonActiveItem(OrderItemState status)
+    {
+        var item = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Kunefe", 1, 60m, 10m,
+            status: status, kitchenState: KitchenState.NotSent);
+
+        var act = () => item.AdvanceKitchenState(KitchenState.Preparing);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void OrderAdvanceItemKitchenStateUpdatesTheMatchingItem()
+    {
+        var itemId = Guid.NewGuid();
+        var item = NewActiveItem(KitchenState.Sent, itemId);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4001", [item]);
+
+        var updated = order.AdvanceItemKitchenState(itemId, KitchenState.Preparing);
+
+        updated.Items.Single().KitchenState.Should().Be(KitchenState.Preparing);
+        updated.Items.Single().Status.Should().Be(OrderItemState.Active);
+    }
+
+    [Fact]
+    public void RedeliveryOfTheSameStateIsANoOpAndReturnsTheSameInstance()
+    {
+        var itemId = Guid.NewGuid();
+        var item = NewActiveItem(KitchenState.Preparing, itemId);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4002", [item]);
+
+        var result = order.AdvanceItemKitchenState(itemId, KitchenState.Preparing);
+
+        result.Should().BeSameAs(order, "an at-least-once redelivery of an already-applied state must not rewrite the row");
+    }
+
+    [Fact]
+    public void AVoidedItemNoLongerReceivesKitchenStateUpdates()
+    {
+        var itemId = Guid.NewGuid();
+        var item = new OrderItem(
+            itemId, Guid.NewGuid(), Guid.NewGuid(), "Mercimek Corbasi", 1, 30m, 10m,
+            status: OrderItemState.Cancelled, kitchenState: KitchenState.Cancelled);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4003", [item]);
+
+        var result = order.AdvanceItemKitchenState(itemId, KitchenState.Ready);
+
+        result.Should().BeSameAs(order, "a stale kitchen event for an item voided in the meantime must not resurrect it");
+    }
+
+    [Fact]
+    public void UnknownItemIdThrows()
+    {
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4004", [NewActiveItem(KitchenState.NotSent)]);
+
+        var act = () => order.AdvanceItemKitchenState(Guid.NewGuid(), KitchenState.Preparing);
+
+        act.Should().Throw<ArgumentException>().WithParameterName("orderItemId");
+    }
+
+    private static OrderItem NewActiveItem(KitchenState kitchenState, Guid? id = null)
+        => new(
+            id ?? Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1, 150m, 10m,
+            status: OrderItemState.Active, kitchenState: kitchenState);
+}

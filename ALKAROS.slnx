@@ -58,6 +58,7 @@
   <Project Path="tests/Modules/Kitchen/PhysicalPrintRecovery/ALKAROS.Kitchen.PhysicalPrintRecovery.Tests.csproj" />
   <Project Path="tests/Modules/Kitchen/PrintQueue/ALKAROS.Kitchen.PrintQueue.Tests.csproj" />
   <Project Path="tests/Modules/Kitchen/Routing/ALKAROS.Kitchen.Routing.Tests.csproj" />
+  <Project Path="tests/Modules/Kitchen/OrderItemStateSync/ALKAROS.Kitchen.OrderItemStateSync.Tests.csproj" />
   <Project Path="tests/Modules/Kitchen/TicketLifecycle/ALKAROS.Kitchen.TicketLifecycle.Tests.csproj" />
   <Project Path="tests/Modules/Observability/AlertFoundation/ALKAROS.Observability.AlertFoundation.Tests.csproj" />
   <Project Path="tests/Modules/Observability/Foundation/ALKAROS.Observability.Foundation.Tests.csproj" />

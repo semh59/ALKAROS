@@ -7,7 +7,9 @@ using ALKAROS.Kitchen.PhysicalPrintRecovery;
 using ALKAROS.Kitchen.PrintQueue;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
+using ALKAROS.Messaging;
 using ALKAROS.Operations.BackupHealth;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -45,6 +47,12 @@ public static class KitchenOperationsEndpoints
         services.TryAddSingleton<IBackupEngine, LocalBackupEngine>();
         services.TryAddSingleton<IBackupHealthService, BackupHealthService>();
         services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
+        // V1-KIT-005: KitchenOperationsStore publishes item state changes for
+        // Orders to mirror, gated by kitchen.live_sync_enabled.
+        services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
+        services.TryAddSingleton<ISettingValidator, SettingValidator>();
+        services.TryAddSingleton<ISettingsService, SettingsService>();
+        services.TryAddSingleton(sp => new OutboxStore(sp.GetRequiredService<NpgsqlDataSource>()));
         services.TryAddSingleton<KitchenOperationsStore>();
         services.TryAddSingleton<IKitchenOperationsSessionAuthorizer, KitchenOperationsSessionAuthorizer>();
         services.TryAddSingleton(_ => new ProductionBackupOptions(
