@@ -22,7 +22,7 @@ transaction içinde projekte etmek.
 - `src/Host/Composition/HostComposition.cs`
 - `src/Modules/Audit/AuditModule.cs`
 - `src/Modules/Cash/CashModule.cs`
-- `src/Modules/Identity/IdentityModule.cs`
+- PO:2026-09-04 kararıyla src/Modules/Identity/IdentityModule.cs yüzeyi, yetkilendirme dalgasının DI kayıt evi olarak V1-IAM-019'a devredildi; bu historical task closed kalır.
 - `src/Modules/Kitchen/KitchenModule.cs`
 - `src/Modules/Observability/ObservabilityModule.cs`
 - `src/Modules/Operations/OperationsModule.cs`

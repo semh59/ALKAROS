@@ -20,13 +20,11 @@ görev DI kaydı yapmaz (tüketici yoktur).
 
 - `plan/v1/identity-authorization/V1-IAM-018-authorization-policy-engine.md`
 - `database/migrations/V1/V1-IAM-018/**`
-- `database/MigrationComposition/order.json`
-- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `src/Modules/Identity/Authorization/Policies/**`
 - `tests/Modules/Identity/Authorization/Policies/**`
 - `evidence/V1-IAM-018/**`
-- Yüzey devri: database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 044 için V1-IAM-017'den bu göreve devredildi (PO:2026-09-04).
-- src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 044 değerine güncellenir (V1-RMD-089/9. dalga deseni).
+- Yüzey devri (giriş): database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 044 için V1-IAM-017'den bu göreve devredildi; ardından migration 045 için V1-IAM-019'a devredildi (PO:2026-09-04).
+- src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 044 değerine güncellendi (V1-RMD-089/9. dalga deseni).
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## Dependencies

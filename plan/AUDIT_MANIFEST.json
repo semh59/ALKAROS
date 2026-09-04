@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 869,
-  "markdown_line_count": 55375,
-  "markdown_byte_count": 3291200,
+  "markdown_line_count": 55401,
+  "markdown_byte_count": 3293440,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2192,7 +2192,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9ED99877A9BEB75E7D3EBB1C8AE75025B9050F4B926FA340180EF253EABB7CB0",
+      "sha256": "003578EEEBCD67AD9C39B9242E1B5FCD31A2B282604D29E59061443EA399CCB2",
       "lines": 2145,
       "bytes": 302753,
       "utf8": true
@@ -4089,16 +4089,16 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-018-authorization-policy-engine.md",
-      "sha256": "2A6B877690E0FB3113A43D8A80F36A607E375E318DC0E4E88C4DC173A3864002",
-      "lines": 59,
-      "bytes": 2832,
+      "sha256": "B4C52CF0BBCA2DB508048E156440BBB4D1320F99E34D503218DA33075E9C5C01",
+      "lines": 57,
+      "bytes": 2789,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md",
-      "sha256": "0E90C571FD2D4A0D0CB84E0B749F8E41AD515F2BCCD7457AC87910F9A4539FDB",
-      "lines": 35,
-      "bytes": 1425,
+      "sha256": "E46F0B3FFB76C2523411867411FC3888A6C8F94626400666AD7435974371DB7D",
+      "lines": 63,
+      "bytes": 3569,
       "utf8": true
     },
     {
@@ -4243,9 +4243,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md",
-      "sha256": "58FD9F1EDBCCC64D45809A308093A0490C69065FA4CE7A3DD02CC65FFD37E28A",
+      "sha256": "0C417A5EBBF62BE5DA66123BD19D59856E50C732C106DA407B3EB5056189CD7B",
       "lines": 96,
-      "bytes": 5192,
+      "bytes": 5331,
       "utf8": true
     },
     {

@@ -1,10 +1,10 @@
 # V1-IAM-019 - Grant Request Engine And Event
 
 - Task ID: V1-IAM-019
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: claude-session-01XKRazppo9sW452rdbCZsgy
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Goal
 
@@ -14,9 +14,14 @@ Asenkron yetki isteği motoru: `grant` sınıfı bir eylem, değişmez bir `auth
 
 - `plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md`
 - `database/migrations/V1/V1-IAM-019/**`
-- `src/Modules/Identity/Authorization/019/**`
-- `tests/Modules/Identity/Authorization/019/**`
+- `database/MigrationComposition/order.json`
+- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
+- `src/Modules/Identity/IdentityModule.cs`
+- `src/Modules/Identity/Authorization/Grants/**`
+- `tests/Modules/Identity/Authorization/Grants/**`
 - `evidence/V1-IAM-019/**`
+- Yüzey devri: database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 045 için V1-IAM-018'den bu göreve devredildi (PO:2026-09-04). src/Modules/Identity/IdentityModule.cs, yetkilendirme dalgasının DI kayıt evi olarak V1-RMD-002'den bu göreve devredildi (PO:2026-09-04).
+- src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 045 değerine güncellenir (V1-RMD-089/9. dalga deseni).
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## Dependencies
@@ -25,9 +30,32 @@ Asenkron yetki isteği motoru: `grant` sınıfı bir eylem, değişmez bir `auth
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Release` sıfır uyarı ile sıfır hata; bu görevin yeni testleriyle ilgili `dotnet test` süzgeci geçer.
-- Veri değişiyorsa migration ileri ile geri yönde boş veritabanında denenir.
-- Semih için gerçek senaryo: garson kendi çekinde ikram dener ve istek oluşur; başka garsonun çekinde denerse yöneticiye ulaşmadan kendiliğinden reddedilir; raporlama tarafında gün, garson ve gerekçe kırılımında ikram tutarı satırı üretilir.
+- `dotnet build ALKAROS.slnx -c Release`: 0 uyarı / 0 hata.
+- `dotnet test` (yerel Postgres 18): `ALKAROS.Identity.Authorization.Tests`
+  106/106 (yeni `Grants/**` 30 test — `GrantModelTests` saf;
+  `AuthorizationGrantsMigrationTests` metin; `AuthorizationGrantServiceTests`
+  gerçek repo + DB: no-policy → Pending, idempotent tekrar aynı satırı döner,
+  `always_allow`/`always_deny`, `auto_within` limit ile sayaç, own-check
+  guard'ın başka garsonun çekinde void'i reddetmesi ve kendi çekinde
+  reddetmemesi; `PostgresAuthorizationGrantRepositoryTests` ile
+  `...ShapeTests` ve `...DownMigrationTests`: pending→granted stamp, append-once trigger
+  (alan mutasyonu / DELETE / yeniden çözüm reddi), idempotency UNIQUE,
+  `CountAutoGrantsSince` yalnız granted+auto sayar, `reporting.authorization_grant_daily`
+  görünümü granted satırları gün/gerekçe/rol/policy_path kırılımında toplar);
+  `Host.Tests` `Manifest.ManifestTests` 16/16 (`PhaseBMax` 045, 44 pozisyon,
+  son giriş tabloları `["authorization_grants"]`).
+- Migration ileri: 001..045 zinciri boş `alkaros_fm3` veritabanına uygulandı;
+  `identity.authorization_grants` + `reporting.authorization_grant_daily`
+  oluştu. Geri: `045-*.down.sql` uygulandı; tablo, trigger, fonksiyon ve
+  görünüm düştü, `identity.authorization_policies` ile `reporting` şeması
+  yerinde kaldı (`CREATE SCHEMA IF NOT EXISTS reporting;` guard'ı yalnız
+  izole uygulamada devreye girer).
+- Semih için gerçek senaryo: garson kendi çekinde ikram (`bills.comp`) dener;
+  politika yoksa istek `pending` olur (yöneticiye düşer). Başka garsonun
+  çekinde denerse own-check guard yöneticiye ulaşmadan `denied` yazar.
+  Yönetici `('bills.comp','waiter')` için `auto_within` (≤ ₺150, ≤ 2 / 8 saat)
+  tanımlarsa limit içindeki ilk iki istek `granted`/`policy_path=auto`, üçüncü
+  yeniden `pending`.
 
 ## Handoff
 
