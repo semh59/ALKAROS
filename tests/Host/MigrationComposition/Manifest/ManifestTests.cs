@@ -14,8 +14,7 @@ public sealed class ManifestTests : IDisposable
         "023", "024", "025", "026", "027", "028", "029", "030", "031", "032", "033", "034", "035",
         "036", "037", "038", "039", "040", "041", "042", "043", "044", "045", "046", "047", "048"
     ];
-    private static readonly string[] LastEntryTables =
-        ["behavioural_tightenings"];
+    private static readonly string[] LastEntryTables = ["behavioural_tightenings"];
     private readonly string _directory = Path.Combine(
         Path.GetTempPath(), "alkaros-fnd004-" + Guid.NewGuid().ToString("N")[..8]);
 
