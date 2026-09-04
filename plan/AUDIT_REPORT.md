@@ -2022,7 +2022,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md` | ✅ | `01D98F3140EBB1F95248CE89E09897EBFB8DBEC3D4263195E150B2AE818728D7` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md` | ✅ | `409FDD564799CB4579C19D0C1DC90B7B1B67602665E6BCDB7C607C401CE0CF84` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md` | ✅ | `50882B688CC81FA3F1DE82E8F888CCD3D098261E5B83A876433D4BD895E34B40` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md` | ✅ | `DEC8E8D15D05052B93D0908C9AE26D35EEDBF3C8D81F59872F4D9269DF4302C8` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md` | ✅ | `C154D86D0538B766601226408E5736890DDAAE7BEA80FA2210BFFE68DB8CD757` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-026-grant-class-bill-adjustment-surface.md` | ✅ | `B5EFF23A04AA42D1235DD3F45D416C56D18E11B3350797B89423CEC176C67963` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md` | ✅ | `0426076A29BCE1C9ABC2A8E7112ADCE747DC1049BB9108C42F8D7AF96A0D992C` | Tek-sahip görev |

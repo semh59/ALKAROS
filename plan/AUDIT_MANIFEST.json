@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 877,
-  "markdown_line_count": 57024,
-  "markdown_byte_count": 3392669,
+  "markdown_line_count": 57022,
+  "markdown_byte_count": 3392499,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,7 +2220,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "60175DCD39156D94EE0AEA77A07A1FD47F880CDE98A48DFF9845EA575AFA62AE",
+      "sha256": "4C635F5ADFBCFE764413BEA68E46AC6DED14912B9BE4D9FCD82B33AA9E5E554A",
       "lines": 2153,
       "bytes": 304060,
       "utf8": true
@@ -4180,9 +4180,9 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md",
-      "sha256": "DEC8E8D15D05052B93D0908C9AE26D35EEDBF3C8D81F59872F4D9269DF4302C8",
-      "lines": 168,
-      "bytes": 9540,
+      "sha256": "C154D86D0538B766601226408E5736890DDAAE7BEA80FA2210BFFE68DB8CD757",
+      "lines": 166,
+      "bytes": 9370,
       "utf8": true
     },
     {

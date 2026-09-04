@@ -46,6 +46,7 @@ devredildi (bkz. Handoff).
 - `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `src/Host/Experience/OfflineReconciliation/**`
 - `tests/Host/Experience/OfflineReconciliation/**`
+- `src/Clients/PosTerminal/src/routes/workspace.test.tsx`
 - `evidence/V1-IAM-025/**`
 - Yüzey devri (giriş): `database/MigrationComposition/order.json` ve
   `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`, migration 050
@@ -67,9 +68,6 @@ devredildi (bkz. Handoff).
   (`V1-IAM-024` sahipliğinde kalır) — C2: login handler'ına offline bütçe
   ihracı; composition kökünde `AddOfflineReconciliationExperience()` /
   `MapOfflineReconciliationApi()` iki satırı.
-  `src/Clients/PosTerminal/src/routes/workspace.tsx` ile aynı dizindeki yeni
-  test dosyası (`workspace.test.tsx`) (`V1-RMD-097` sahipliğinde kalır) —
-  D6: rota kablolaması testi; `workspace.tsx`'in kendisi değişmedi.
   `tests/Modules/Identity/Authorization/Grants/**` (`V1-IAM-021` sahipliğinde
   kalır) — D5: yeni bir dosya,
   `AuthorizationGrantsRateIndexMigrationTests.cs`, migration 052'nin metnini
