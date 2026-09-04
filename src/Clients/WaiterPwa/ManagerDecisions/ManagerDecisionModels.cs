@@ -1,7 +1,7 @@
 namespace ALKAROS.Clients.WaiterPwa.ManagerDecisions;
 
 /// <summary>
-/// One pending authorization request as a floor supervisor (şef garson) sees it
+/// One pending authorization request as a floor supervisor (sef garson) sees it
 /// on the Waiter PWA (V1-IAM-020, authorization model §4 step 3). Read-only
 /// context: the supervisor approves or denies on the server; this app never
 /// mutates the grant itself.

@@ -1,6 +1,6 @@
 -- V1-IAM-021: time-boxed delegation (docs/domain/authorization-model.md §4
 -- step 2). A manager hands a bounded slice of a permission to another user for a
--- fixed window: "Ayşe holds bills.comp up to ₺200 until 22:00". The grant flow
+-- fixed window: "Ayse holds bills.comp up to 200 TRY until 22:00". The grant flow
 -- consults this table between the policy engine and a manager decision.
 --
 -- Expiry is automatic — a row stops covering grants the moment expires_at is
