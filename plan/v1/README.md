@@ -11,9 +11,13 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 287 görev tanımlıdır: 281 `Done`, 5 onaylı `NotApplicable`, 1 `Planned`
-  (`V1-RMD-100`, bu dalganın kapsamı dışında), 0 `Blocked` ve 0 `InProgress` görev vardır.
-  2026-09-04 27. dalga (Semih onayıyla `docs/domain/table-reservation-policy.md`'ye ikinci bir
+- Bu sürüm altında 287 görev tanımlıdır: 282 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+  0 `Blocked` ve 0 `InProgress` görev vardır. 2026-09-04 (Semih onayıyla, bu sohbette)
+  `V1-RMD-100` kapatıldı — `docs/domain/table-reservation-policy.md`'nin kendi 2026-09-03
+  tarihli Amendment'ı ve "Who creates `Reserved`" satırı shipped davranışla (kasiyer
+  rezerve eder, garson WaiterPwa'da edemez) örtüştüğü onaylanarak; kod/test/migration diff'i
+  yok. V1'in son açık görevi kapandı; `V1-GOV-077` kapıyı yeniden açtı, `V1-GOV-078` kesin
+  olarak yeniden mühürledi. 2026-09-04 27. dalga (Semih onayıyla `docs/domain/table-reservation-policy.md`'ye ikinci bir
   Amendment: rezervasyon her işletmede aynı işlemez — işletme başına açılabilir bir ayar
   (`reservations.dedicated_station_enabled`, `V1-SET-003`) arkasında, müşteri ekranı gibi kendi
   URL'i olan ayrı bir "Rezervasyon İstasyonu" ekranı (PosTerminal `/reservations`, `V1-CUI-006`)

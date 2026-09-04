@@ -1,10 +1,10 @@
 # V1-RMD-100 - Reservation policy doc reconciliation
 
 - Task ID: V1-RMD-100
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: claude-session-01XKRazppo9sW452rdbCZsgy
 - Work type: documentation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Goal
 
@@ -21,7 +21,10 @@ veya IAM değişikliği yok.
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-100-reserve-action-cashier-role-scope.md`
-- `docs/domain/table-reservation-policy.md`
+- `docs/domain/table-reservation-policy.md` (yalnız bu görevin kendi
+  2026-09-03 tarihli `## Amendment` bölümü ve ilgili satırlar için —
+  `V1-TBL-008`'in 2026-09-04 tarihli ikinci, ayrı `## Amendment` bölümü
+  kendi sahipliğinde kalır)
 - `plan/v1/table-management/V1-TBL-004-table-reservation-record.md`
 - `plan/AUDIT_MANIFEST.json`
 - `plan/AUDIT_REPORT.md`
@@ -59,7 +62,8 @@ veya IAM değişikliği yok.
 - Herhangi bir kod, test veya migration değişikliği; yürürlükteki davranış doğrudur.
 - Yeni `waiter` yetki rolü veya `pos.cashier.mutate` izninin bölünmesi
   (`V1-RMD-097` notundaki ertelenmiş ayrım) — ayrı bir yetkilendirme görevi
-  gerektirir; bu görev onu başlatmaz.
+  gerektirir; bu görev onu başlatmaz. (Bu ayrım oturumdan sonra `V1-IAM-016..024`
+  ile zaten gerçekleşti — bkz. amendment'e eklenen "Superseded note".)
 - QR sipariş durum makinesinin rezervasyon yolu (`V14-QRO-002` / `V14-QRO-003`).
 
 ## Dependencies
@@ -69,14 +73,18 @@ veya IAM değişikliği yok.
 
 ## Acceptance evidence
 
-- `python -B tools/plan-audit/plan_audit_tool.py validate` ve `verify-manifest`
-  exit 0; `markdownlint-cli2` (kök config globları) temiz.
-- Kod/test/migration diff yok (`git diff --stat` yalnız `docs/`, `plan/`,
-  `evidence/` gösterir).
-- Semih `docs/domain/table-reservation-policy.md` içindeki `## Amendment`
-  bölümünü ve güncel "Who creates `Reserved`" satırını okur ve onaylar; yürürlükteki
-  davranışla (Cashier rezerve eder, garson WaiterPwa'da edemez) örtüştüğünü
-  doğrular. Bu onay olmadan görev `Done` olamaz.
+- `python tools/plan-audit/plan_audit_tool.py validate` ve `verify-manifest`:
+  sıfır hata.
+- Kod/test/migration diff yok (bu görevin kendi değişikliği yalnız `docs/`,
+  `plan/`, `evidence/` içinde).
+- **Semih onayı (2026-09-04, bu sohbet):** `docs/domain/table-reservation-policy.md`
+  içindeki `## Amendment` bölümünü ve "Who creates `Reserved`" satırını
+  okudu ve yürürlükteki davranışla (kasiyer rezerve eder; garson WaiterPwa'da
+  edemez) örtüştüğünü doğruladı — "Garson rezervasyon yapamaz" (verbatim).
+  Amendment'teki izin kodu adının (`pos.cashier.mutate`) migration 049 ile
+  `tables.reserve`'e değiştiği ayrıca amendment'e eklenen bir "Superseded
+  note (2026-09-04)" ile kaydedildi (kararın kendisi değişmedi, yalnız kod
+  adı) — bu görevin kapsamına `V1-TBL-008` sınırlı-ek olarak eklendi.
 
 ## Handoff
 

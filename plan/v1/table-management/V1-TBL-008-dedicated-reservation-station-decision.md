@@ -49,8 +49,11 @@ Bu görev kararı kaydeder ve uygulama görev kümesini kayıt altına alır:
   ilgili görevde kalır): `docs/domain/table-reservation-policy.md`
   (`V1-RMD-100` sahipliğinde kalır, yalnız kendi 2026-09-03 tarihli
   Amendment bölümü ve ilgili satırlar için) — yeni, ayrı ve açıkça
-  tarihli ikinci bir `## Amendment (2026-09-04)` bölümü eklendi; V1-RMD-100'ün
-  kendi bölümüne dokunulmadı.
+  tarihli ikinci bir `## Amendment (2026-09-04)` bölümü eklendi.
+  V1-RMD-100'ün kendi 2026-09-03 tarihli bölümüne tek satırlık, açıkça
+  tarihli bir "Superseded note (2026-09-04)" eklendi (izin kodu adının
+  migration 049 ile değiştiğini kaydeder — kararın kendisi değişmedi);
+  bölümün geri kalan metni değişmedi.
 - Bu görev, başka bir task'in owned surface alanını başka şekilde
   değiştiremez.
 

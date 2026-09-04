@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 890,
-  "markdown_line_count": 58427,
-  "markdown_byte_count": 3471746,
+  "markdown_file_count": 892,
+  "markdown_line_count": 58573,
+  "markdown_byte_count": 3478075,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,9 +2220,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9F3114B300791710D6B60747389ADBFDE3F970482444F32834FD38F48BFECC4A",
-      "lines": 2166,
-      "bytes": 306244,
+      "sha256": "F5077763EB02BF7E5F75850FB4DBFF307144C607F0D83989407974951CE145CC",
+      "lines": 2168,
+      "bytes": 306600,
       "utf8": true
     },
     {
@@ -2241,9 +2241,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "D26646E3043C1387D19097674A07C6AAD6711B7C4C5BEF5E46209443E0490898",
+      "sha256": "40CD7AD0806301C9ED38522637ABDDB578ED6C51FC300CFE69AFC0712FE1F4EC",
       "lines": 402,
-      "bytes": 93539,
+      "bytes": 94045,
       "utf8": true
     },
     {
@@ -4053,6 +4053,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-077-master-custody-reopen-and-remediation-wave-28.md",
+      "sha256": "07D369B53D392B0843BDF6E16ADC1C6243E214369FE8EEDB90E76F132B01DBDB",
+      "lines": 58,
+      "bytes": 1630,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-078-wave28-master-audit-reseal-and-gate-closure.md",
+      "sha256": "F3A64CBB26612232F1BEB658154E832F6745CFA9F8135892B15A5BE21D47AF1E",
+      "lines": 71,
+      "bytes": 2546,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -4334,9 +4348,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "E7669FB86A29571794927E3FF7BB94273AF6A44E7B88ADA8FCCADA463BA68EA6",
-      "lines": 115,
-      "bytes": 10847,
+      "sha256": "9E5E735827ECDCF48DAFC9AE757E25553608FD269B10141F2CA6A75E25ECF5BB",
+      "lines": 119,
+      "bytes": 11250,
       "utf8": true
     },
     {
@@ -5041,9 +5055,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-100-reserve-action-cashier-role-scope.md",
-      "sha256": "7923CF6CE6D99F218E95404CB6C410DA33812C8BC578892185894D8E84117FF8",
-      "lines": 83,
-      "bytes": 3899,
+      "sha256": "5CC911EA4FA6E88D9F6987B0772D4F418AA0D3D0196420FCF3F4DC5E6DE8112F",
+      "lines": 91,
+      "bytes": 4561,
       "utf8": true
     },
     {
@@ -5167,9 +5181,9 @@
     },
     {
       "path": "plan/v1/table-management/V1-TBL-008-dedicated-reservation-station-decision.md",
-      "sha256": "BEB02F5D87B75D36F0283E729B4B4C3BDABA0C59A1A3FCB4F1CD0C7229F33B58",
-      "lines": 89,
-      "bytes": 3820,
+      "sha256": "FF3505BF5D617BF8DC27CC0AD2C715817BBB91B024E788171B085E69E69DC356",
+      "lines": 92,
+      "bytes": 4046,
       "utf8": true
     },
     {
