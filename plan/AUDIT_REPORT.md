@@ -2008,8 +2008,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-014-identity-baseline-reacceptance.md` | ✅ | `91F9877B1A4DAC453E6C9E81A1270352BE3DA4DA69BF839BC679B6E69017EA5E` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-015-session-concurrency-linearization.md` | ✅ | `FB9251B9E0EFDDF82F5122746C2297E805F0051F3A277B9EEE07856574F967A0` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-016-authorization-model-decision.md` | ✅ | `040B3130B014092BA44D0A74BBFF5C1CB9620B2D067EE1098CD77C8A257D5095` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md` | ✅ | `4EDF1C96AA301AB61CB3B75A04B0B6957F3A62C5BE941127DEF28F58AF600F58` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-018-authorization-policy-engine.md` | ✅ | `50A5F30BEB055F19A32817430EB66C55705310C012770AC1466F69BFCA3674EC` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md` | ✅ | `841076CBAB92C2E52C17FB97C1562682DD524C80CD7920BD1B89A3FC10C3F9E3` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-018-authorization-policy-engine.md` | ✅ | `2A6B877690E0FB3113A43D8A80F36A607E375E318DC0E4E88C4DC173A3864002` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md` | ✅ | `0E90C571FD2D4A0D0CB84E0B749F8E41AD515F2BCCD7457AC87910F9A4539FDB` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md` | ✅ | `40499F1C283B93B633F0980569A16EDCFB9FDCB2CAE30374C42BA47574400889` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md` | ✅ | `FF41189A1E69539005618D3EF0AC3C87C4803411575011FBE69CD1BAAE5F3B78` | Tek-sahip görev |
