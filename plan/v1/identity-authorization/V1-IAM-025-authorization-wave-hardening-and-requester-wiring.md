@@ -1,7 +1,7 @@
 # V1-IAM-025 - Authorization wave hardening and requester-side wiring
 
 - Task ID: V1-IAM-025
-- Status: Blocked
+- Status: Planned
 - Assignee: Unassigned
 - Work type: implementation
 - Surface state: Planned
@@ -9,15 +9,16 @@
 ## Goal
 
 `V1-IAM-016..024` dalgasını denetleyen
-`docs/engineering/authz-wave-remediation-plan.md` Phase 2, 3 ve 5'in kapsamını
-tamamlar: (a) düşük riskli kod sağlamlaştırmaları (D1-D3, D7, D8); (b) yeni bir
-migration ile şema sağlamlaştırması (A1 offline bütçe yeniden-ihraç FK çökmesi,
-D4 delegation revoke actor'ı, D5 davranışsal oran sorgusu indeksi); (c) inşa
-edilmiş ama hiçbir canlı istek yoluna bağlanmamış yetkilendirme motorunun
-(grant request, offline bütçe ihracı, reconciliation) istemci tarafını
-bağlamak (C1-C5) ve `workspace.tsx` `/authorization` rota kablolaması testi
-(D6). Motor bileşenleri `V1-IAM-018`..`V1-IAM-023` ile teslim edildi ve
-DI-kayıtlı + birim/entegrasyon test edildi, ama hiçbir Experience endpoint'i
+`docs/engineering/authz-wave-remediation-plan.md` Phase 3 ve 5'in kapsamını
+tamamlar (Phase 2, D1-D3/D7/D8, ayrı `fix(v1-iam)` commit'i olarak zaten
+kapatıldı): (a) yeni bir migration ile şema sağlamlaştırması (A1 offline
+bütçe yeniden-ihraç FK çökmesi, D4 delegation revoke actor'ı, D5 davranışsal
+oran sorgusu indeksi); (b) inşa edilmiş ama hiçbir canlı istek yoluna
+bağlanmamış yetkilendirme motorunun (grant request, offline bütçe ihracı,
+reconciliation) istemci tarafını bağlamak (C1-C5) ve `workspace.tsx`
+`/authorization` rota kablolaması testi (D6). Motor bileşenleri
+`V1-IAM-018`..`V1-IAM-023` ile teslim edildi ve DI-kayıtlı + birim/entegrasyon
+test edildi, ama hiçbir Experience endpoint'i
 `IAuthorizationGrantService.RequestAsync` çağırmıyor, login hiçbir offline
 bütçe ihraç etmiyor ve hiçbir reconnect endpoint'i reconciliation'ı
 tetiklemiyor — bu görev o boşluğu kapatır.
@@ -26,26 +27,45 @@ tetiklemiyor — bu görev o boşluğu kapatır.
 
 - `plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md`
 - `database/migrations/V1/V1-IAM-025/**`
-- `src/Modules/Identity/Authorization/025/**`
-- `tests/Modules/Identity/Authorization/025/**`
+- `database/MigrationComposition/order.json`
+- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
+- `src/Host/Experience/OfflineReconciliation/**`
+- `tests/Host/Experience/OfflineReconciliation/**`
 - `evidence/V1-IAM-025/**`
-- Bu görev, başka bir task'in owned surface alanını değiştiremez.
+- Yüzey devri (giriş): `database/MigrationComposition/order.json` ve
+  `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`, migration 050
+  için `V1-IAM-024`'ten bu göreve devredildi (PO:2026-09-04).
+- Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
+  ilgili görevde kalır, bu görevde yalnızca sayılan değişiklik yapılır):
+  `src/Modules/Identity/Authorization/Offline/PostgresOfflineAuthorityBudgetRepository.cs`
+  (`V1-IAM-022` sahipliğinde kalır) — A1: yeniden-ihraçta önceki bütçeyi
+  silme yerine `ORDER BY issued_at DESC LIMIT 1` okuma.
+  `src/Modules/Identity/Authorization/Delegations/**`
+  (`V1-IAM-021` sahipliğinde kalır) — D4: `RevokeAsync`'e
+  `revokedByUserId` parametresi.
+  `src/Host/Experience/Authorization/**` (`V1-IAM-020` sahipliğinde kalır) —
+  D4: `AuthorizationDecisionStore.RevokeDelegationAsync` aktör parametresi
+  alır, revoke endpoint'i `ActorId(http)`'yi geçirir; C3 ile aynı dizine
+  eklenmez, yeni reconnect endpoint'i kendi dizininde yaşar.
+  `src/Host/Experience/Billing/BillingSplitApplication.cs`
+  (`V1-IAM-024` sahipliğinde kalır) — C1: doğrudan izni olmayan çağıran için
+  `IAuthorizationGrantService.RequestAsync` dalı.
+  `src/Host/DualScreen/DualScreenApplication.Endpoints.cs`
+  (`V1-IAM-024` sahipliğinde kalır) — C2: login handler'ına offline bütçe
+  ihracı.
+  `src/Host/Experience/Tables/TableManagementApplication.cs` +
+  `TableManagementContracts.cs` (`V1-IAM-024` sahipliğinde kalır) — C4:
+  `AllowedCommands` tutulan izin ∪ ulaşılabilir yetki isteği birleşimi.
+  `src/Clients/PosTerminal/src/routes/workspace.tsx` ile ilgili test dosyası
+  (`V1-RMD-097` sahipliğinde kalır) — D6: rota kablolaması testi.
+  `src/Host/Composition/Migrations/MigrationManifest.cs` içindeki
+  `PhaseBMax` sabiti (`V1-FND-004` sahipliğinde kalır) — yalnızca faz üst
+  sınırı 050 değerine güncellenir.
+- Bu görev, başka bir task'in owned surface alanını başka şekilde
+  değiştiremez.
 
 ## In scope
 
-- **D1** `GrantRequest.Validate()` `RequesterUserId == Guid.Empty` durumunu
-  reddeder (`OfflineAuthorizedAction.Validate()` ile tutarlı hale gelir).
-- **D2** `PostgresAuthorizationPolicyRepository.UpsertAsync`: `expectedRowVersion`
-  non-null iken `UPDATE ... WHERE row_version = @expected RETURNING`; sıfır
-  satır -> `AuthorizationPolicyConcurrencyException`; `expectedRowVersion` null
-  iken yalnız `INSERT`.
-- **D3** `AuthorizationDecisionEndpointFilter.MapError`'a `ArgumentException` ->
-  400 dalı eklenir (Catalog'un filtresiyle tutarlı).
-- **D7** `OfflineGrantReconciler.StoreAsync` PostgreSQL `23503`'ü de yakalar ve
-  tipli bir `UnknownOfflineAuthorityBudgetException` yüzeyler (bütçe
-  reconcile ortasında silinmişse).
-- **D8** `OfflineAuthorizedAction.Validate()` `OfflineAuthorizedAt == default`
-  durumunu reddeder.
 - **A1** Yeni migration: `uq_offline_authority_budgets_session` düşürülür;
   `PostgresOfflineAuthorityBudgetRepository.CreateAsync` önceki bütçeyi
   silmeyi bırakır; `GetBySessionAsync` / `LoadAsync` `ORDER BY issued_at DESC
@@ -57,31 +77,35 @@ tetiklemiyor — bu görev o boşluğu kapatır.
 - **D5** Aynı migration: `ix_authorization_grants_granted_rate` kısmi indeksi
   (`requester_user_id, permission_code, resolved_at) WHERE status = 'granted'`;
   migration-metni testi indeksi doğrular.
-- **C1** En az bir mutasyon endpoint'i (Billing `bills.void`/`bills.comp`),
-  çağıran doğrudan izne sahip değilse `IAuthorizationGrantService.RequestAsync`
-  çağırır ve 403 yerine grant id + idempotency key ile `pending` yanıt döner;
-  aynı idempotency key ile onay sonrası yeniden gönderim işlemi tamamlar.
-- **C2** `DualScreenApplication.cs` login handler'ı
+- **C1** Billing `bills.void`/`bills.comp` endpoint'i, çağıran doğrudan izne
+  sahip değilse `IAuthorizationGrantService.RequestAsync` çağırır ve 403
+  yerine grant id + idempotency key ile `pending` yanıt döner; aynı
+  idempotency key ile onay sonrası yeniden gönderim işlemi tamamlar.
+- **C2** `DualScreenApplication.Endpoints.cs` login handler'ı
   `IOfflineAuthorityBudgetService.IssueAsync(userId, roleCode, sessionId)`
   çağırır ve bütçeyi istemciye döner.
 - **C3** Yeni `POST /api/v1/terminals/{id}/offline-reconciliation` endpoint'i
-  `IOfflineGrantReconciler.ReconcileAsync` çağırır.
+  (`src/Host/Experience/OfflineReconciliation/**`, bu göreve ait yeni bir
+  Experience modülü) `IOfflineGrantReconciler.ReconcileAsync` çağırır.
 - **C4** `TableContractMapper.AllowedCommands` "tutulan izinler ∪ ulaşılabilir
   yetki istekleri" olarak hesaplanır (model §6); istemci "Void (onay
   gerekiyor)" gösterebilir.
 - **C5** C1'in sonucu: `BehaviouralTighteningGate` ile
   `DelegationEscalationResolver`'ın gerçek bir `RequestAsync` HTTP yolunda
-  tetiklendiğini kanıtlayan entegrasyon testleri.
+  tetiklendiğini kanıtlayan entegrasyon testleri
+  (`tests/Host/Experience/Billing/**`, mevcut sahibinde).
 - **D6** `workspace.tsx`'e `/authorization` rotasını bir `reports.view`
   yetenek kümesiyle render eden ve fetch sarmalayıcısının store
   callback'lerini bağladığını doğrulayan bir test eklenir.
 
 ## Out of scope
 
+- D1-D3, D7, D8 (Phase 2 düşük riskli sağlamlaştırma) — ayrı `fix(v1-iam)`
+  commit'i ile zaten kapatıldı.
 - E1-E3 model doküman düzeltmeleri — `fix(v1-iam-016)` ile ayrıca kapatıldı.
 - P1 (personel provisioning bootstrap) — ayrı bir karar/görev; bu görevin
   kapsamına yalnız implementasyon sırasında açıkça genişletilirse girer.
-- Yeni iş kuralı veya izin kodu; yalnız sağlamlaştırma + kablolama.
+- Yeni izin kodu; yalnız şema sağlamlaştırma + mevcut motorun kablolanması.
 
 ## Dependencies
 
@@ -93,32 +117,12 @@ tetiklemiyor — bu görev o boşluğu kapatır.
 - V1-IAM-023
 - V1-IAM-024
 
-## Blocker
-
-- Bu görev yürütmeye alınmadan önce, `In scope` altında sayılan mevcut sahipli
-  dosyalar için custody devri kayıtları ilgili görevlere eklenmelidir:
-  `src/Modules/Identity/Authorization/Grants/GrantRequest.cs` için
-  `V1-IAM-023` (production), `tests/Modules/Identity/Authorization/Grants/**`
-  için `V1-IAM-021` (test); `src/Modules/Identity/Authorization/Policies/**`
-  için `V1-IAM-018`; `src/Host/Experience/Authorization/**` (endpoint filtresi
-  + `AuthorizationDecisionStore` + `workspace.tsx` rota kablolaması) için
-  `V1-IAM-020`; `src/Modules/Identity/Authorization/Delegations/**` için
-  `V1-IAM-021`; `src/Modules/Identity/Authorization/Offline/**` için
-  `V1-IAM-022`; `src/Modules/Identity/Authorization/Behavioural/**` için
-  `V1-IAM-023`; `src/Host/Experience/Billing/BillingSplitApplication.cs`,
-  `src/Host/Experience/Tables/TableManagementApplication.cs` +
-  `TableManagementContracts.cs`, `src/Host/DualScreen/DualScreenApplication.cs`
-  + `DualScreenApplication.Endpoints.cs` için `V1-IAM-024`. Ancak bu custody
-  devri kayıtları `V1-IAM-024` deseniyle eklenip `plan/AUDIT_MANIFEST.json`
-  yeniden üretildiğinde ve `validate` ile `verify-manifest` temiz kaldığında
-  görev yeniden `Planned` yapılabilir.
-
 ## Acceptance evidence
 
 - `dotnet build ALKAROS.slnx -c Release` sıfır uyarı / sıfır hata; tam
   `dotnet test` paketi geçer (yerel Postgres 18).
-- Yeni migration ileri ile tam geri yönde boş veritabanında denenir;
-  `PhaseBMax` güncellenir.
+- Yeni migration (050) ileri ile tam geri yönde boş veritabanında denenir;
+  `PhaseBMax` 050'ye güncellenir.
 - C1-C5 için en az bir uçtan uca entegrasyon testi: doğrudan izni olmayan bir
   çağıran 403 yerine `pending` grant yanıtı alır; onay sonrası aynı
   idempotency key ile eylem tamamlanır; davranışsal kapı ve devir çözücü bu

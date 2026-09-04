@@ -27,10 +27,9 @@ takma adını ve kodunu kaldırır.
 - `src/Host/Experience/Billing/BillingSplitApplication.cs`
 - `src/Modules/Identity/Authorization/Catalog/**`
 - `tests/Modules/Identity/Authorization/Catalog/**`
-- `database/MigrationComposition/order.json`
-- `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`
 - `evidence/V1-IAM-024/**`
 - Yüzey devri (giriş): src/Host/Experience/Tables/TableManagementApplication.cs ve src/Host/Experience/Tables/TableManagementContracts.cs V1-RMD-026'dan; src/Host/DualScreen/DualScreenApplication.cs V1-RMD-098'den; src/Host/DualScreen/DualScreenApplication.Endpoints.cs V1-RMD-097'den; src/Host/Experience/Orders/OrderManagementEndpoints.cs V1-RMD-066'dan; src/Host/Experience/Billing/BillingSplitApplication.cs V1-RMD-054'ten; src/Modules/Identity/Authorization/Catalog/** ile tests/Modules/Identity/Authorization/Catalog/** V1-IAM-017'den; database/MigrationComposition/order.json ile tests/Host/MigrationComposition/Manifest/ManifestTests.cs V1-IAM-023'ten bu göreve devredildi (PO:2026-09-05).
+- Yüzey devri (çıkış): database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 050 için V1-IAM-025'e devredildi (PO:2026-09-04).
 - src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs V1-RMD-082 sahipliğinde kalır; bu görevde yalnızca TicketMutationPermission sabiti granüler koda (orders.send) eşlenir (V1-RMD-089/MigrationManifest.cs deseni).
 - src/Host/Program.cs V1-RMD-094 sahipliğinde kalır; bu görevde yalnızca ManagerPermissions listesinden pos.cashier.mutate satırı çıkarılır.
 - src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı alias-kaldırma migration'ının numarasına güncellenir (V1-RMD-089/9. dalga deseni).

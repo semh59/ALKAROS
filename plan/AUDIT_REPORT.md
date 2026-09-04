@@ -2021,8 +2021,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md` | ✅ | `04BE7C3607ED19D836BFF67B5E489D62D2E8B63F694FDD6A7134CB8DE91A2262` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md` | ✅ | `01D98F3140EBB1F95248CE89E09897EBFB8DBEC3D4263195E150B2AE818728D7` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md` | ✅ | `409FDD564799CB4579C19D0C1DC90B7B1B67602665E6BCDB7C607C401CE0CF84` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md` | ✅ | `810C4BD8DC2A6BE892FCF39ECA6322E6C7A938E63F17920933C8CBE7ADBACE08` | Tek-sahip görev |
-| `plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md` | ✅ | `28552C66360535C49BC338151C1F522335D7128FE1C5D7159008B3F3E195BF49` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md` | ✅ | `50882B688CC81FA3F1DE82E8F888CCD3D098261E5B83A876433D4BD895E34B40` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md` | ✅ | `37E86C20CD41ADA51CCAA08E5252289C8E09384C6B52C48A6A783E8733A09782` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md` | ✅ | `0426076A29BCE1C9ABC2A8E7112ADCE747DC1049BB9108C42F8D7AF96A0D992C` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-001-consolidated-remediation.md` | ✅ | `D28F3FDD8A743C9082AF4C5B1537D4C2A91101669284175ECFD474EE96265AAC` | Tek-sahip görev |

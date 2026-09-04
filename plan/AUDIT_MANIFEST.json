@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 876,
-  "markdown_line_count": 56856,
-  "markdown_byte_count": 3381674,
+  "markdown_line_count": 56859,
+  "markdown_byte_count": 3382017,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,7 +2220,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6096F31F54A84A4219E3AB2BCA79B09A3A29EC7BB158B5B2068FDE10988CAD06",
+      "sha256": "4BC16108AA4B822866D3CB396FCADD01C4D3E01BA2D53B731BF0FDD4A379691C",
       "lines": 2152,
       "bytes": 303879,
       "utf8": true
@@ -4173,16 +4173,16 @@
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md",
-      "sha256": "810C4BD8DC2A6BE892FCF39ECA6322E6C7A938E63F17920933C8CBE7ADBACE08",
-      "lines": 124,
-      "bytes": 7732,
+      "sha256": "50882B688CC81FA3F1DE82E8F888CCD3D098261E5B83A876433D4BD895E34B40",
+      "lines": 123,
+      "bytes": 7817,
       "utf8": true
     },
     {
       "path": "plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md",
-      "sha256": "28552C66360535C49BC338151C1F522335D7128FE1C5D7159008B3F3E195BF49",
-      "lines": 131,
-      "bytes": 6758,
+      "sha256": "37E86C20CD41ADA51CCAA08E5252289C8E09384C6B52C48A6A783E8733A09782",
+      "lines": 135,
+      "bytes": 7016,
       "utf8": true
     },
     {
