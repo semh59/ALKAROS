@@ -1,7 +1,7 @@
 # V11-RCP-002 - Implement reproducible recipe cost snapshots
 
 - Task ID: V11-RCP-002
-- Status: InProgress
+- Status: Done
 - Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
 - Work type: implementation
 - Surface state: Planned

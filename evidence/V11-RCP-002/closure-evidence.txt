@@ -1,0 +1,53 @@
+=== V11-RCP-002 Closure Evidence ===
+Date: 2026-09-06
+Task ID: V11-RCP-002
+Status: Done
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+Diff Base: 880646f
+
+1. Test Execution Command:
+$env:ALKAROS_TEST_PG_PORT="55432"; $env:ALKAROS_TEST_PG_USER="postgres"; $env:ALKAROS_TEST_PG_PASSWORD="postgres"; & "C:\Users\semih\.dotnet\dotnet.exe" test tests/Modules/Recipes/CostSnapshots/ALKAROS.Recipes.CostSnapshots.Tests.csproj -c Release
+
+Exit code: 0
+Output:
+Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 670 ms - ALKAROS.Recipes.CostSnapshots.Tests.dll (net8.0)
+
+2. Recipes Suite Complete Verification:
+$env:ALKAROS_TEST_PG_PORT="55432"; $env:ALKAROS_TEST_PG_USER="postgres"; $env:ALKAROS_TEST_PG_PASSWORD="postgres"; & "C:\Users\semih\.dotnet\dotnet.exe" test tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj -c Release; & "C:\Users\semih\.dotnet\dotnet.exe" test tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj -c Release
+
+Exit code: 0
+
+3. Architecture Boundary Tests:
+& "C:\Users\semih\.dotnet\dotnet.exe" test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+Exit code: 0
+Output:
+Başarılı!  - Başarısız:     0, Başarılı:     8, Atlanan:     0, Toplam:     8, Süre: 173 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+
+4. Project Manifest Validation:
+python tools/project-manifest/project_manifest_tool.py
+Exit code: 0
+Output:
+ALKAROS Project Manifest Validator
+Repository Root: D:\PROJECT\ALKAROS
+Solution: ALKAROS.slnx
+Status: VALID (0 differences across Solution, Disk, and ProjectReferences)
+
+5. Task Scope Validation:
+python tools/task-scope/task_scope_tool.py --task-id V11-RCP-002 --diff-base 880646f
+Exit code: 0
+Output:
+{
+  "task_id": "V11-RCP-002",
+  "valid": true,
+  "metadata_errors": [],
+  "findings": []
+}
+
+6. Verification Summary:
+- Implemented reproducible recipe cost snapshots per V0-DOM-010 decision (PDF:I.22.1, PDF:II.2.10, PDF:III.12, CORR:C9, CORR:C12).
+- Order-of-operations: effective native consumption = quantity * (1 + waste_factor), converted to stock unit via unit_conversions as the final step.
+- Moving average cost valuation resolved from purchasing goods receipts.
+- Rounding: quantities numeric(18,4), line and total costs numeric(18,2) round-half-up.
+- Effective snapshot lookup logic: latest snapshot with cost_basis_date <= asOfDate.
+- Immutability: snapshots are historical records and are never rewritten.
+- Database migration 067 (up/down) with schema recipe verified.
