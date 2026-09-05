@@ -80,9 +80,31 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
         BillAdjustment adjustment,
         CancellationToken cancellationToken = default)
     {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = BuildInsertCommand(adjustment, connection, transaction: null);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task AddAsync(
+        BillAdjustment adjustment,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = BuildInsertCommand(adjustment, connection, transaction);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private static NpgsqlCommand BuildInsertCommand(
+        BillAdjustment adjustment, NpgsqlConnection connection, NpgsqlTransaction? transaction)
+    {
         ArgumentNullException.ThrowIfNull(adjustment);
 
-        var sql = $"""
+        var command = new NpgsqlCommand(
+            $"""
             INSERT INTO {TableName} (
                 bill_adjustment_id, bill_id, bill_item_id, adjustment_type,
                 calculation_type, rate, amount, tax_rate, tax_amount,
@@ -93,10 +115,9 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
                 @calculation_type, @rate, @amount, @tax_rate, @tax_amount,
                 @net_amount, @gross_amount, @is_deduction, @reason, @authorized_by,
                 @notes, @created_at, @created_by, @row_version);
-            """;
-
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        await using var command = new NpgsqlCommand(sql, connection);
+            """,
+            connection,
+            transaction);
         command.Parameters.AddWithValue("bill_adjustment_id", adjustment.Id);
         command.Parameters.AddWithValue("bill_id", adjustment.BillId);
         command.Parameters.AddWithValue("bill_item_id", (object?)adjustment.BillItemId ?? DBNull.Value);
@@ -115,8 +136,7 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
         command.Parameters.AddWithValue("created_at", adjustment.CreatedAt);
         command.Parameters.AddWithValue("created_by", (object?)adjustment.CreatedBy ?? DBNull.Value);
         command.Parameters.AddWithValue("row_version", adjustment.RowVersion);
-
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        return command;
     }
 
     public async Task RemoveAsync(

@@ -16,6 +16,17 @@
     return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
   }
 
+  // UI_STYLE_GUIDE §3: raw HTTP status codes are never shown to the user.
+  function describeHttpFailure(status) {
+    if (status === 400) return 'İstek doğrulanamadı. Lütfen masa ve ürün bilgilerini kontrol edin.';
+    if (status === 401) return 'Oturum geçersiz veya süresi doldu. Lütfen yeniden giriş yapın.';
+    if (status === 403) return 'Bu işlem için yetkiniz yok.';
+    if (status === 404) return 'İlgili kayıt bulunamadı.';
+    if (status === 409) return 'Sipariş başka bir işlem tarafından değiştirildi. Lütfen tekrar deneyin.';
+    if (status >= 500) return 'Sunucu hatası oluştu. Lütfen tekrar deneyin.';
+    return 'İstek sunucu tarafından reddedildi. Lütfen tekrar deneyin.';
+  }
+
   // crypto.randomUUID() is secure-context only, so it is undefined over plain
   // HTTP on a LAN IP - which is exactly how a waiter phone reaches the stack.
   // crypto.getRandomValues() IS available there, so build a v4 UUID from it.
@@ -152,12 +163,21 @@
     el.loginSubmit.disabled = true;
     el.loginSubmit.textContent = 'Giriş yapılıyor…';
     try {
-      const res = await fetch('/api/v1/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ terminalId: state.terminalId, username, password })
-      });
+      let res;
+      try {
+        res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ terminalId: state.terminalId, username, password })
+        });
+      } catch {
+        // Found by an independent audit (2026-09-06): a network-level
+        // failure (offline, DNS, TLS) throws before a response exists, and
+        // its message is the browser's own English text (e.g. "Failed to
+        // fetch") - that must never reach the user directly.
+        throw new Error('Sunucuya ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.');
+      }
       if (!res.ok) {
         let message = 'Kullanıcı adı veya şifre hatalı.';
         try { const body = await res.json(); message = body?.error?.message || message; } catch { /* non-json */ }
@@ -297,22 +317,46 @@
     }
 
     try {
-      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
+      const draftResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
         method: 'POST',
         headers,
         credentials: 'include',
         body: JSON.stringify(orderPayload)
       });
-      let errorData = null;
-      if (!response.ok) {
-        try { errorData = await response.json(); } catch { /* ignore non-json error */ }
+      if (!draftResponse.ok) {
+        let errorData = null;
+        try { errorData = await draftResponse.json(); } catch { /* ignore non-json error */ }
+        return {
+          success: false,
+          status: draftResponse.status,
+          isClientError: draftResponse.status >= 400 && draftResponse.status < 500,
+          errorMessage: errorData?.error?.message || errorData?.message || describeHttpFailure(draftResponse.status)
+        };
       }
-      return {
-        success: response.ok,
-        status: response.status,
-        isClientError: response.status >= 400 && response.status < 500,
-        errorMessage: errorData?.error?.message || errorData?.message || `HTTP ${response.status}`
-      };
+
+      const draft = await draftResponse.json();
+      // Found by an independent audit (2026-09-06): the draft above was
+      // never followed by a submit call, so the order stayed in Draft
+      // forever and was never dispatched to the kitchen even though the
+      // user was told it had been sent.
+      const submitResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/submit-draft`, {
+        method: 'POST',
+        headers,
+        credentials: 'include',
+        body: JSON.stringify({ orderId: draft.orderId, expectedRowVersion: draft.rowVersion })
+      });
+      if (!submitResponse.ok) {
+        let errorData = null;
+        try { errorData = await submitResponse.json(); } catch { /* ignore non-json error */ }
+        return {
+          success: false,
+          status: submitResponse.status,
+          isClientError: submitResponse.status >= 400 && submitResponse.status < 500,
+          errorMessage: errorData?.error?.message || errorData?.message || describeHttpFailure(submitResponse.status)
+        };
+      }
+
+      return { success: true, status: submitResponse.status, isClientError: false, errorMessage: null };
     } catch {
       return { success: false, status: 0, isNetworkError: true, errorMessage: 'Ağ bağlantısı kurulamadı.' };
     }
@@ -684,7 +728,7 @@
               updateCartTotals();
               alert(`Sipariş mutfağa iletildi! (${state.selectedTable.number})`);
             } else if (res.isClientError) {
-              alert(`Sipariş iletilemedi (Hata: ${res.status}). Lütfen masa ve ürün bilgilerini kontrol edin.`);
+              alert(res.errorMessage || describeHttpFailure(res.status));
             } else {
               // Server error / network failure: queue order and notify without claiming success
               queueOrderAction(orderPayload);

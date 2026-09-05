@@ -45,10 +45,20 @@ public sealed class BillingSplitStore
     {
         if (_adjustments == null)
             throw new InvalidOperationException("Bill adjustment repository is not configured.");
+        if (_dataSource == null)
+            throw new InvalidOperationException("Data source is not configured.");
         ArgumentNullException.ThrowIfNull(request);
 
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+
+        // Found by an independent audit (2026-09-06): nothing stopped a
+        // discount from being applied to a Paid/PartiallyPaid/Cancelled
+        // bill — money already collected could be discounted after the
+        // fact. Same mutable-state set SplitDesign already enforces (see
+        // BillingSplitDesignDto.Map's `mutable` check).
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
 
         if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
             throw new ArgumentException(
@@ -73,15 +83,41 @@ public sealed class BillingSplitStore
                 $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
         };
 
+        // Found by an independent audit (2026-09-06): a bare read-validate-
+        // write here let two concurrent discount requests both read the
+        // same (empty) adjustment set and both pass validation, letting
+        // total discounts exceed the payable amount. A FOR UPDATE lock on
+        // the bill row serializes the read-validate-write window across
+        // concurrent callers for the same bill; AddAsync still commits on
+        // its own connection, but by the time this lock releases that
+        // insert is already visible to the next caller's read.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var lockTransaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using (var lockCommand = new NpgsqlCommand(
+            "SELECT bill_id FROM billing.bills WHERE bill_id = @bill_id FOR UPDATE;", connection, lockTransaction))
+        {
+            lockCommand.Parameters.AddWithValue("bill_id", billId);
+            await lockCommand.ExecuteScalarAsync(cancellationToken);
+        }
+
         var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
         // Validate against the full candidate set BEFORE writing anything —
         // AdjustmentCalculator throws if the total discount would exceed the
         // bill's payable amount.
         var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
 
-        await _adjustments.AddAsync(adjustment, cancellationToken);
+        // Must use the lock's own connection/transaction: the insert's FK
+        // reference to billing.bills otherwise waits on the very lock this
+        // method holds, from a second, uncommitted connection — a
+        // self-deadlock (found while testing this fix).
+        await _adjustments.AddAsync(adjustment, connection, lockTransaction, cancellationToken);
+        await lockTransaction.CommitAsync(cancellationToken);
+
         return (adjustment, summary);
     }
+
+    private static bool IsDiscountable(BillState status) => status
+        is BillState.Open or BillState.PartiallyAllocated or BillState.Allocated or BillState.Reopened;
 
     public async Task<(IReadOnlyList<BillAdjustment> Adjustments, AdjustedBillSummary Summary)> GetAdjustmentsAsync(
         Guid billId,
@@ -447,4 +483,17 @@ public sealed class BillingSplitStore
 public sealed class BillingSplitNotFoundException : Exception
 {
     public BillingSplitNotFoundException(string message) : base(message) { }
+}
+
+public sealed class BillDiscountUnsupportedBillStateException : Exception
+{
+    public BillDiscountUnsupportedBillStateException(Guid billId, string state)
+        : base($"Bill {billId} is in state '{state}' and does not accept new discounts.")
+    {
+        BillId = billId;
+        State = state;
+    }
+
+    public Guid BillId { get; }
+    public string State { get; }
 }

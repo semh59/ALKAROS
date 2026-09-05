@@ -352,6 +352,69 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
     }
 
+    [Fact]
+    public async Task ADiscountOnAPaidBillIsRejected()
+    {
+        // Regression test for an independent audit finding (2026-09-06):
+        // ApplyDiscountAsync never checked bill.Status, so money already
+        // collected could be discounted after the fact.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await _database.SetBillStatusAsync(seeded.BillId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal(
+            "UNSUPPORTED_BILL_STATE",
+            (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ConcurrentDiscountsOnTheSameBillDoNotExceedThePayableAmount()
+    {
+        // Regression test for an independent audit finding (2026-09-06): a
+        // bare read-validate-write let two concurrent discount requests both
+        // read the same (empty) adjustment set and both pass validation,
+        // letting total discounts exceed the payable amount. Two requests
+        // each individually valid (60% + 60%) but jointly invalid (120%)
+        // must yield exactly one success and one rejection.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var firstClient = CreateClient(app);
+        using var secondClient = CreateClient(app);
+        var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount";
+
+        var responses = await Task.WhenAll(
+            firstClient.SendAsync(JsonRequest(HttpMethod.Post, path, cookie,
+                new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 60m, "PromotionalOffer"))),
+            secondClient.SendAsync(JsonRequest(HttpMethod.Post, path, cookie,
+                new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 60m, "PromotionalOffer"))));
+        try
+        {
+            Assert.Single(responses, response => response.StatusCode == HttpStatusCode.OK);
+            Assert.Single(responses, response => response.StatusCode == HttpStatusCode.BadRequest);
+        }
+        finally
+        {
+            foreach (var response in responses)
+                response.Dispose();
+        }
+
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });

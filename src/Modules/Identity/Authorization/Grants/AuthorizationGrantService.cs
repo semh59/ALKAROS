@@ -59,7 +59,21 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
 
         var replay = await _grants.FindByIdempotencyKeyAsync(request.IdempotencyKey, cancellationToken);
         if (replay is not null)
+        {
+            // Found by an independent audit (2026-09-06): a bare key lookup
+            // trusted whatever grant a prior request stored under this key,
+            // with no check that this request's permission/subject/requester
+            // match it. A reused or replayed key against a *different*
+            // command instance would then hand back that command's own
+            // resolution — skipping the policy engine entirely for the new
+            // one. Endpoints that intentionally replay the same command
+            // (V1-BIL-005, V1-IAM-027) always resend identical field values,
+            // so this rejects only genuine key collisions across distinct
+            // commands.
+            if (!MatchesReplay(replay, request))
+                throw new IdempotencyKeyReusedException(request.IdempotencyKey);
             return new GrantResolution(replay, OutcomeOf(replay.Status));
+        }
 
         // Own-check guard (authorization model §3, resolved decision #1): a
         // *waiter* may raise a void/comp grant only on a check they serve — a
@@ -168,4 +182,26 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
         GrantStatus.Pending => GrantOutcome.Pending,
         _ => throw new ArgumentOutOfRangeException(nameof(status), status, null),
     };
+
+    private static bool MatchesReplay(AuthorizationGrant replay, GrantRequest request) =>
+        string.Equals(replay.PermissionCode, request.PermissionCode, StringComparison.Ordinal)
+        && replay.RequesterUserId == request.RequesterUserId
+        && string.Equals(replay.SubjectType, request.SubjectType, StringComparison.Ordinal)
+        && replay.SubjectId == request.SubjectId;
+}
+
+/// <summary>
+/// Raised when an idempotency key already resolved to a grant for a different
+/// permission, subject or requester — a genuine key collision across distinct
+/// command instances, not a legitimate retry of the same one.
+/// </summary>
+public sealed class IdempotencyKeyReusedException : Exception
+{
+    public IdempotencyKeyReusedException(string idempotencyKey)
+        : base($"Idempotency key '{idempotencyKey}' was already used for a different request.")
+    {
+        IdempotencyKey = idempotencyKey;
+    }
+
+    public string IdempotencyKey { get; }
 }

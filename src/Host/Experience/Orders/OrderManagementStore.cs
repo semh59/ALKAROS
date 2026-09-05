@@ -30,14 +30,14 @@ public sealed class OrderManagementStore
         var catalog = await ResolveCatalogProductsAsync(
             connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
 
-        var items = new List<OrderItem>();
+        var newItems = new List<OrderItem>();
         foreach (var i in request.Items)
         {
             if (!catalog.TryGetValue(i.ProductId, out var product))
                 throw new KeyNotFoundException($"Product {i.ProductId} was not found or has no active price.");
             var (productName, unitPrice, taxRate) = product;
 
-            items.Add(new OrderItem(
+            newItems.Add(new OrderItem(
                 Guid.NewGuid(),
                 orderId,
                 i.ProductId,
@@ -57,25 +57,23 @@ public sealed class OrderManagementStore
             ));
         }
 
-        var orderNumber = existingOrder != null
-            ? $"TBL-{request.TableNumber}-{orderId.ToString("N")[..6].ToUpperInvariant()}"
-            : $"TBL-{request.TableNumber}-{now:HHmmssff}";
-
-        var order = new Order(
-            orderId,
-            OrderSource.Waiter,
-            orderNumber,
-            items,
-            tableId: request.TableId,
-            notes: request.OrderNote,
-            status: OrderState.Draft,
-            createdAt: existingOrder?.CreatedAt ?? now,
-            updatedAt: now,
-            rowVersion: existingOrder?.RowVersion ?? 1
-        );
-
+        Order order;
         if (existingOrder == null)
         {
+            var orderNumber = $"TBL-{request.TableNumber}-{now:HHmmssff}";
+            order = new Order(
+                orderId,
+                OrderSource.Waiter,
+                orderNumber,
+                newItems,
+                tableId: request.TableId,
+                notes: request.OrderNote,
+                status: OrderState.Draft,
+                createdAt: now,
+                updatedAt: now,
+                rowVersion: 1
+            );
+
             await _repository.AddAsync(order, cancellationToken);
 
             await using var cmd = new NpgsqlCommand(
@@ -92,7 +90,35 @@ public sealed class OrderManagementStore
         }
         else
         {
-            await _repository.SaveAsync(order, existingOrder.RowVersion, cancellationToken);
+            // A second round of items sent to a table that already has a
+            // Draft order (e.g. a dessert order after starters) must be
+            // appended to that order, not replace it — the previous code
+            // rebuilt the item list solely from this request and silently
+            // dropped everything already there (found by an independent
+            // audit, 2026-09-06).
+            var currentOrder = await _repository.GetByIdAsync(existingOrder.OrderId, cancellationToken)
+                ?? throw new InvalidOperationException($"Order {existingOrder.OrderId} was not found during draft merge.");
+            var mergedItems = currentOrder.Items.Concat(newItems).ToList();
+            var orderNumber = $"TBL-{request.TableNumber}-{orderId.ToString("N")[..6].ToUpperInvariant()}";
+
+            order = new Order(
+                orderId,
+                OrderSource.Waiter,
+                orderNumber,
+                mergedItems,
+                tableId: request.TableId,
+                notes: request.OrderNote,
+                status: OrderState.Draft,
+                createdAt: existingOrder.CreatedAt,
+                updatedAt: now,
+                rowVersion: existingOrder.RowVersion
+            );
+
+            // Saved through the connection/transaction already holding the
+            // FOR UPDATE lock acquired above, instead of the store's other
+            // connection — a separate connection would block on that lock
+            // until this method returns, which never happens (self-deadlock).
+            await _repository.SaveAsync(order, existingOrder.RowVersion, connection, transaction, cancellationToken);
         }
 
         await transaction.CommitAsync(cancellationToken);

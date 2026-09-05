@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace ALKAROS.Billing.Adjustments;
 
 /// <summary>
@@ -14,6 +16,20 @@ public interface IBillAdjustmentRepository
     /// Adds a new adjustment line to a Bill.
     /// </summary>
     Task AddAsync(BillAdjustment adjustment, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Adds a new adjustment line within an existing connection and
+    /// transaction — required when the caller already holds a lock on the
+    /// parent bill row (e.g. a FOR UPDATE serializing concurrent discounts):
+    /// this insert's implicit FK reference to billing.bills would otherwise
+    /// wait on that same lock from a second, uncommitted connection and
+    /// never return.
+    /// </summary>
+    Task AddAsync(
+        BillAdjustment adjustment,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes an adjustment line by its ID.

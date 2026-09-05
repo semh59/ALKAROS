@@ -69,4 +69,4 @@ export interface BillSplitWorkspaceProps {
 }
 
 // Enum label maps live in the central catalog (finding F-7).
-export { modeLabels } from "../../strings";
+export { modeLabels, billStatusLabels } from "../../strings";

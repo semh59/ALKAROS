@@ -83,6 +83,22 @@ export const modeLabels: Record<SplitMode, string> = {
   ByAmount: "Tutar gir",
 };
 
+/**
+ * Bill lifecycle status labels. `billStatus` arrives from the server as a
+ * plain string (ALKAROS.Billing.BillFoundation.BillState.ToString()), not a
+ * narrow union, so this is a lookup with a neutral fallback (UI_STYLE_GUIDE
+ * §3) rather than an exhaustive Record.
+ */
+export const billStatusLabels: Record<string, string> = {
+  Open: "Açık",
+  PartiallyAllocated: "Kısmen paylaştırıldı",
+  Allocated: "Paylaştırıldı",
+  PartiallyPaid: "Kısmen ödendi",
+  Paid: "Ödendi",
+  Cancelled: "İptal",
+  Reopened: "Yeniden açıldı",
+};
+
 export const catalogEntityLabels: Record<CatalogEntityKind, string> = {
   categories: "Kategoriler",
   taxes: "Vergi profilleri",

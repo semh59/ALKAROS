@@ -397,6 +397,8 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         BillingSplitNotFoundException or KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
         SplitDesignConcurrencyException => (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),
         SplitDesignUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda bölme tasarımı değiştirilemez."),
+        BillDiscountUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim uygulanamaz."),
+        IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         ArgumentException or InvalidOperationException => (400, "VALIDATION_FAILED", "Hesap bölme isteği doğrulanamadı."),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.SerializationFailure =>
             (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),

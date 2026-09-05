@@ -96,6 +96,41 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         Assert.Contains("offline_pending_review", result.Detail);
     }
 
+    [Fact]
+    public async Task AnotherAuthenticatedCashierCannotReconcileSomeoneElsesBudget()
+    {
+        // Found by an independent audit (2026-09-06): the authenticated
+        // principal was discarded, so any cashier who learned another
+        // employee's budgetId could reconcile offline actions attributed to
+        // that employee.
+        var terminalId = Guid.NewGuid();
+        var (ownerId, _) = await _database.SeedCashierSessionAsync(terminalId);
+        var (_, attackerCookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var issuedAt = DateTimeOffset.UtcNow.AddHours(-2);
+        var budget = await _database.SeedOfflineBudgetAsync(
+            ownerId, issuedAt, issuedAt.AddHours(4),
+            new OfflineAuthorityBudgetLine("bills.comp", 150m, 2));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var action = new OfflineAuthorizedActionV1(
+            IdempotencyKey: "http-recon-mismatch-" + Guid.NewGuid().ToString("N"),
+            PermissionCode: "bills.comp",
+            RequesterUserId: ownerId,
+            RequesterRoleCode: "waiter",
+            ReasonCode: "CustomerChange",
+            Amount: 40m,
+            OfflineAuthorizedAt: issuedAt.AddMinutes(30));
+
+        using var request = JsonRequest(
+            Path(terminalId), attackerCookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [action]));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<OfflineReconciliationErrorV1>();
+        Assert.Equal("IDENTITY_MISMATCH", body!.Code);
+    }
+
     private static string Path(Guid terminalId)
         => OfflineReconciliationEndpoints.RoutePrefix.Replace("{terminalId:guid}", terminalId.ToString("D"));
 

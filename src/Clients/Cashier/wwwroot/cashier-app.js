@@ -14,6 +14,17 @@
     return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
   }
 
+  // UI_STYLE_GUIDE §3: raw HTTP status codes are never shown to the user.
+  function describeHttpFailure(status) {
+    if (status === 400) return 'İstek doğrulanamadı. Lütfen ürün ve masa bilgilerini kontrol edin.';
+    if (status === 401) return 'Oturum geçersiz veya süresi doldu. Lütfen yeniden giriş yapın.';
+    if (status === 403) return 'Bu işlem için yetkiniz yok.';
+    if (status === 404) return 'İlgili kayıt bulunamadı.';
+    if (status === 409) return 'Sipariş başka bir işlem tarafından değiştirildi. Lütfen tekrar deneyin.';
+    if (status >= 500) return 'Sunucu hatası oluştu. Lütfen tekrar deneyin.';
+    return 'İstek sunucu tarafından reddedildi. Lütfen tekrar deneyin.';
+  }
+
   // State
   const state = {
     // Terminal identity is resolved from the authenticated cashier session
@@ -271,7 +282,7 @@
     };
 
     try {
-      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
+      const draftResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -281,16 +292,34 @@
         body: JSON.stringify(orderPayload)
       });
 
-      if (response.ok) {
-        const total = state.ticketItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const itemCount = state.ticketItems.reduce((sum, item) => sum + item.quantity, 0);
-        state.shiftTotalOrders += 1;
-        state.ticketItems = [];
-        renderTicket();
-        alert(`Sipariş başarıyla sunucuya iletildi. (${itemCount} kalem, ${formatMoney(total)})`);
-      } else {
-        alert(`Sipariş sunucu tarafından reddedildi (Hata: ${response.status}). Lütfen tekrar deneyin.`);
+      if (!draftResponse.ok) {
+        alert(describeHttpFailure(draftResponse.status));
+        return;
       }
+
+      const draft = await draftResponse.json();
+      // Found by an independent audit (2026-09-06): the draft above was
+      // never followed by a submit call, so the order stayed in Draft
+      // forever and was never dispatched to the kitchen even though the
+      // user was told it had been sent.
+      const submitResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/submit-draft`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ orderId: draft.orderId, expectedRowVersion: draft.rowVersion })
+      });
+
+      if (!submitResponse.ok) {
+        alert(describeHttpFailure(submitResponse.status));
+        return;
+      }
+
+      const total = state.ticketItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const itemCount = state.ticketItems.reduce((sum, item) => sum + item.quantity, 0);
+      state.shiftTotalOrders += 1;
+      state.ticketItems = [];
+      renderTicket();
+      alert(`Sipariş mutfağa iletildi. (${itemCount} kalem, ${formatMoney(total)})`);
     } catch {
       alert('Sunucuya ulaşılamadı. Sipariş iletilemedi.');
     } finally {

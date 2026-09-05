@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, StateMessage, ValidationSummary } from "../../design-system";
 import { commonActions, stateText } from "../../strings";
 import {
+  billStatusLabels,
   modeLabels,
   type BillSplitDesign,
   type BillSplitWorkspaceProps,
@@ -65,7 +66,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   const command = mode === "EqualByPerson" ? "SaveEqual" : mode === "ByItem" ? "SaveItems" : "SaveAmounts";
   const validation = (() => {
     const errors: string[] = [];
-    if (!mutableState) errors.push(`${design.billStatus} durumundaki hesap değiştirilemez.`);
+    if (!mutableState) errors.push(`${billStatusLabels[design.billStatus] ?? "Bilinmiyor"} durumundaki hesap değiştirilemez.`);
     if (mode === "EqualByPerson" && selectedOwners.length < 2) errors.push("Eşit bölme için en az iki sandalye veya kişi seçin.");
     if (mode === "ByAmount" && Object.values(amountDraft).some((amount) => amount <= 0)) errors.push("Girilen her tutar sıfırdan büyük olmalı.");
     if (mode === "ByAmount" && round(allocated) !== round(design.payableAmount)) errors.push("Dağıtılan tutar, ödenecek tutara tam eşit olmalı.");
@@ -110,7 +111,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   };
 
   return <section className="bill-split" aria-label="Hesap bölme çalışma alanı">
-    <header className="bill-split__header"><div><span>HESAP / DAĞITIM TASARIMI</span><h2>{design.billNumber}</h2><p>{design.billStatus} · v{design.billRowVersion} · {lastUpdated ?? "sunucu durumu"}</p></div><div className="bill-split__totals"><span>Ödenecek<strong>{money(design.payableAmount, design.currencyCode)}</strong></span><span>Vergi<strong>{money(design.taxTotal, design.currencyCode)}</strong></span></div></header>
+    <header className="bill-split__header"><div><span>HESAP / DAĞITIM TASARIMI</span><h2>{design.billNumber}</h2><p>{billStatusLabels[design.billStatus] ?? "Bilinmiyor"} · v{design.billRowVersion} · {lastUpdated ?? "sunucu durumu"}</p></div><div className="bill-split__totals"><span>Ödenecek<strong>{money(design.payableAmount, design.currencyCode)}</strong></span><span>Vergi<strong>{money(design.taxTotal, design.currencyCode)}</strong></span></div></header>
     {feedback && <div className={`bill-split__feedback bill-split__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"}>{feedback.message}</div>}
     <div className="bill-split__modes" role="tablist" aria-label="Dağıtım modu">{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button key={option} type="button" role="tab" aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
     <div className="bill-split__layout">

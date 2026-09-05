@@ -11,9 +11,23 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 304 görev tanımlıdır: 299 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 307 görev tanımlıdır: 302 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 34. dalga (Semih onayıyla, "Sıfırdan bağımsız ajanlarla ... tam ve eksiksiz
+  denetle" ardından "Hepsini düzelt" — 6 bağımsız ajanla (arayüz, backend, mimari sınırlar,
+  veritabanı, roller/yetkilendirme, API endpoint'leri) sıfırdan yapılan yeni bir tam denetim,
+  `V1-RMD-106`) `V1-GOV-088` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-089` ile resmen
+  kaydedildi; V1 kapsamındaki bulgular giderildi: 3 Critical (aynı masaya ikinci siparişte
+  `OrderManagementStore`'un mevcut kalemleri silmesi; ne Cashier ne WaiterPwa'nın
+  `submit-draft`'ı hiç çağırmaması — sipariş mutfağa asla ulaşmıyordu; `AuthorizationGrantService`
+  idempotency-key tekrarının izin/subject/requester eşleşmesi olmadan kabul edilmesi), 2 High
+  (offline reconciliation'ın kimliği doğrulanmış çağıranı atması; `BillingSplitStore.ApplyDiscountAsync`'in
+  bill durumu/eşzamanlılık kontrolü yapmaması), 2 Medium (Cashier/WaiterPwa'da ham HTTP durum
+  kodları; PosTerminal'de ham İngilizce `billStatus`) ve 1 Low (WaiterPwa girişinde ham ağ hatası
+  mesajı) bulgusu. V1.1 (Inventory/Recipes) kapsamındaki bulgular depoda eşzamanlı ilerleyen
+  başka bir oturumla çakışmayı önlemek için bilerek ayrı bir göreve bırakıldı. `V1-GOV-090` ile
+  34. dalga kesin olarak yeniden mühürlendi.
   2026-09-05 33. dalga (Semih onayıyla, "Hepsini çöz" — her iki denetimin geri kalan
   Low / kod-kalite maddeleri, `V1-RMD-105`) `V1-GOV-086` sonrası kapıyı fiilen yeniden açtı;
   `V1-GOV-087` ile resmen kaydedildi; üç madde temizlendi: (1) ölü OrderEntry C# istemci

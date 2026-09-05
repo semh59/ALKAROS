@@ -51,13 +51,29 @@ public static class OfflineReconciliationEndpoints
             ReconcileOfflineActionsRequest request,
             HttpContext context,
             DualScreenStore sessions,
+            IOfflineAuthorityBudgetRepository budgets,
             IOfflineGrantReconciler reconciler,
             CancellationToken cancellationToken) =>
         {
             ArgumentNullException.ThrowIfNull(request);
             var cashierToken = context.Request.Cookies[DualScreenApplication.CashierCookieName];
-            _ = await sessions.AuthenticateCashierAsync(cashierToken, terminalId, cancellationToken)
+            var principal = await sessions.AuthenticateCashierAsync(cashierToken, terminalId, cancellationToken)
                 ?? throw new OfflineReconciliationUnauthorizedException();
+
+            // Found by an independent audit (2026-09-06): the authenticated
+            // principal was discarded, so a request's BudgetId and every
+            // action's RequesterUserId/RequesterRoleCode (all client-
+            // supplied) flowed straight into the reconciler unchecked — a
+            // cashier who learned another employee's budgetId could inject
+            // offline actions attributed to that employee. The reconciled
+            // budget and every action's requester must belong to the
+            // authenticated caller.
+            var budget = await budgets.GetAsync(request.BudgetId, cancellationToken)
+                ?? throw new UnknownOfflineAuthorityBudgetException(request.BudgetId);
+            if (budget.UserId != principal.UserId)
+                throw new OfflineReconciliationIdentityMismatchException();
+            if (request.Actions.Any(action => action.RequesterUserId != principal.UserId))
+                throw new OfflineReconciliationIdentityMismatchException();
 
             var actions = request.Actions
                 .Select(action => new OfflineAuthorizedAction(
@@ -145,6 +161,8 @@ internal sealed class OfflineReconciliationExceptionFilter : IEndpointFilter
             (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Geçerli bir terminal oturumu gerekiyor."),
         UnknownOfflineAuthorityBudgetException =>
             (StatusCodes.Status404NotFound, "UNKNOWN_BUDGET", "Çevrimdışı yetki bütçesi bulunamadı; yeniden bağlanın."),
+        OfflineReconciliationIdentityMismatchException =>
+            (StatusCodes.Status403Forbidden, "IDENTITY_MISMATCH", "Bu çevrimdışı bütçe veya işlem başka bir kullanıcıya ait."),
         ArgumentException or ArgumentNullException =>
             (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "Uzlaştırma isteği doğrulanamadı."),
         PostgresException or NpgsqlException =>
@@ -159,6 +177,14 @@ public sealed class OfflineReconciliationUnauthorizedException : Exception
 {
     public OfflineReconciliationUnauthorizedException()
         : base("A valid terminal-bound cashier session is required.")
+    {
+    }
+}
+
+public sealed class OfflineReconciliationIdentityMismatchException : Exception
+{
+    public OfflineReconciliationIdentityMismatchException()
+        : base("The reconciled budget or one of its actions does not belong to the authenticated caller.")
     {
     }
 }

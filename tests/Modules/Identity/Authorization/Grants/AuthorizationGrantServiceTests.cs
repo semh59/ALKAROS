@@ -55,13 +55,43 @@ public sealed class AuthorizationGrantServiceTests : IClassFixture<GrantDatabase
     [Fact]
     public async Task ReplayingTheSameIdempotencyKeyReturnsTheFirstGrantWithoutANewRow()
     {
-        var first = await Service().RequestAsync(Request("svc-replay"));
+        // A legitimate replay (e.g. a client retry) resends the identical
+        // command instance, so every field besides the key itself matches.
+        var user = Guid.NewGuid();
+        var request = Request("svc-replay", requester: user, serving: user);
+        var first = await Service().RequestAsync(request);
         var before = await _db.GrantCountAsync();
 
-        var replay = await Service().RequestAsync(Request("svc-replay"));
+        var replay = await Service().RequestAsync(request);
 
         replay.Grant.GrantId.Should().Be(first.Grant.GrantId);
         (await _db.GrantCountAsync()).Should().Be(before);
+    }
+
+    [Fact]
+    public async Task ReplayingAnIdempotencyKeyForADifferentSubjectThrows()
+    {
+        // Found by an independent audit (2026-09-06): a bare key lookup used
+        // to trust whatever grant a prior request stored under a key with no
+        // check that permission/subject/requester matched — a reused key
+        // against a different command instance would silently hand back
+        // that command's own resolution, skipping the policy engine for the
+        // new one.
+        var user = Guid.NewGuid();
+        await Service().RequestAsync(Request("svc-reuse", requester: user, serving: user));
+
+        var act = () => Service().RequestAsync(new GrantRequest(
+            IdempotencyKey: "svc-reuse",
+            PermissionCode: "bills.comp",
+            RequesterUserId: user,
+            RequesterRoleCode: "waiter",
+            ReasonCode: "CustomerChange",
+            Amount: 500m,
+            SubjectType: "bill",
+            SubjectId: Guid.NewGuid(),
+            SubjectServingUserId: user));
+
+        await act.Should().ThrowAsync<IdempotencyKeyReusedException>();
     }
 
     [Fact]
