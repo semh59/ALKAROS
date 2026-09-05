@@ -121,45 +121,6 @@ public sealed class PostgresPricingRepository : IPricingRepository
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(ProductPrice price, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(price);
-
-        await using var command = _dataSource.CreateCommand(
-            $"""
-            UPDATE {Table}
-            SET product_id = @product_id,
-                price_type = @price_type,
-                price = @price,
-                currency_code = @currency_code,
-                effective_from = @effective_from,
-                effective_to = @effective_to
-            WHERE product_price_id = @id;
-            """);
-        command.Parameters.AddWithValue("id", price.Id);
-        command.Parameters.AddWithValue("product_id", price.ProductId);
-        command.Parameters.AddWithValue("price_type", (int)price.PriceType);
-        command.Parameters.AddWithValue("price", price.Price);
-        command.Parameters.AddWithValue("currency_code", price.CurrencyCode);
-        command.Parameters.AddWithValue("effective_from", price.EffectiveFrom);
-        command.Parameters.AddWithValue("effective_to", (object?)price.EffectiveTo ?? DBNull.Value);
-
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken);
-        if (affected == 0)
-            throw new InvalidOperationException($"Product price {price.Id} not found.");
-    }
-
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        await using var command = _dataSource.CreateCommand(
-            $"""
-            DELETE FROM {Table} WHERE product_price_id = @id;
-            """);
-        command.Parameters.AddWithValue("id", id);
-
-        await command.ExecuteNonQueryAsync(cancellationToken);
-    }
-
     private static ProductPrice ReadProductPrice(NpgsqlDataReader reader)
     {
         return new ProductPrice(

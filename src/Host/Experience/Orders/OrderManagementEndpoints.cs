@@ -208,7 +208,6 @@ public static class OrderManagementEndpoints
                     itemId,
                     request.ExpectedRowVersion,
                     userId,
-                    IsManagerAuthorized: true,
                     request.ReasonCode,
                     CorrelationId: context.TraceIdentifier,
                     request.Notes);
@@ -327,7 +326,6 @@ public static class OrderManagementEndpoints
                     itemId,
                     request.ExpectedRowVersion,
                     userId,
-                    IsManagerAuthorized: true,
                     request.ReasonCode,
                     CorrelationId: context.TraceIdentifier,
                     request.Notes);

@@ -75,7 +75,6 @@ public sealed class ItemExceptionCommandUnitTests
             Guid.NewGuid(),
             1,
             Guid.NewGuid(),
-            IsManagerAuthorized: true,
             ReasonCode: "NotARealReason",
             CorrelationId: "corr-1");
 
@@ -91,7 +90,6 @@ public sealed class ItemExceptionCommandUnitTests
             Guid.NewGuid(),
             1,
             Guid.NewGuid(),
-            IsManagerAuthorized: true,
             ReasonCode: "InvalidCompReason",
             CorrelationId: "corr-2");
 
@@ -184,7 +182,6 @@ public sealed class PostgresItemExceptionsIntegrationTests : IClassFixture<ItemE
             item1.Id,
             order.RowVersion,
             managerId,
-            IsManagerAuthorized: true,
             ReasonCode: VoidReasonCatalog.CustomerChange,
             CorrelationId: "corr-void-1",
             Notes: "Customer changed to salad");
@@ -219,7 +216,6 @@ public sealed class PostgresItemExceptionsIntegrationTests : IClassFixture<ItemE
             item1.Id,
             order.RowVersion,
             managerId,
-            IsManagerAuthorized: true,
             ReasonCode: VoidReasonCatalog.CustomerChange,
             CorrelationId: "corr-late-void");
 
@@ -234,27 +230,6 @@ public sealed class PostgresItemExceptionsIntegrationTests : IClassFixture<ItemE
     }
 
     [Fact]
-    public async Task VoidItemAsyncFailsClosedWhenNotManagerAuthorized()
-    {
-        var (order, item1, _) = await CreateAndSeedSubmittedOrderAsync(KitchenState.NotSent);
-        var waiterId = Guid.NewGuid();
-
-        var cmd = new VoidOrderItemCommand(
-            order.Id,
-            item1.Id,
-            order.RowVersion,
-            waiterId,
-            IsManagerAuthorized: false,
-            ReasonCode: VoidReasonCatalog.OperatorError,
-            CorrelationId: "corr-unauth-void");
-
-        var act = () => _handler.VoidItemAsync(cmd);
-
-        await act.Should().ThrowAsync<UnauthorizedItemOperationException>()
-            .WithMessage("*Manager authority is required*");
-    }
-
-    [Fact]
     public async Task ApplyComplimentaryAsyncReducesTotalToZeroWhilePreservingQuantityAndTaxSnapshots()
     {
         var (order, item1, item2) = await CreateAndSeedSubmittedOrderAsync(KitchenState.Preparing);
@@ -265,7 +240,6 @@ public sealed class PostgresItemExceptionsIntegrationTests : IClassFixture<ItemE
             item1.Id,
             order.RowVersion,
             managerId,
-            IsManagerAuthorized: true,
             ReasonCode: ComplimentaryReasonCatalog.ServiceApology,
             CorrelationId: "corr-comp-1",
             Notes: "Complimentary burger due to 30 min kitchen delay");
@@ -294,26 +268,6 @@ public sealed class PostgresItemExceptionsIntegrationTests : IClassFixture<ItemE
     }
 
     [Fact]
-    public async Task ApplyComplimentaryAsyncFailsClosedWhenNotManagerAuthorized()
-    {
-        var (order, item1, _) = await CreateAndSeedSubmittedOrderAsync(KitchenState.NotSent);
-        var actorId = Guid.NewGuid();
-
-        var cmd = new ApplyComplimentaryCommand(
-            order.Id,
-            item1.Id,
-            order.RowVersion,
-            actorId,
-            IsManagerAuthorized: false,
-            ReasonCode: ComplimentaryReasonCatalog.VIPGuest,
-            CorrelationId: "corr-unauth-comp");
-
-        var act = () => _handler.ApplyComplimentaryAsync(cmd);
-
-        await act.Should().ThrowAsync<UnauthorizedItemOperationException>();
-    }
-
-    [Fact]
     public async Task OperationFailsOnStaleRowVersion()
     {
         var (order, item1, _) = await CreateAndSeedSubmittedOrderAsync(KitchenState.NotSent);
@@ -324,7 +278,6 @@ public sealed class PostgresItemExceptionsIntegrationTests : IClassFixture<ItemE
             item1.Id,
             order.RowVersion + 99,
             managerId,
-            IsManagerAuthorized: true,
             ReasonCode: VoidReasonCatalog.OperatorError,
             CorrelationId: "corr-stale");
 

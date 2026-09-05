@@ -134,46 +134,6 @@ public sealed class PostgresPricingRepositoryTests : IClassFixture<PricingTestDa
     }
 
     [Fact]
-    public async Task UpdatePersistsPriceAndBounds()
-    {
-        var productId = await InsertProductAsync("SKU-UPD");
-        var id = Guid.NewGuid();
-        await _prices.AddAsync(new ProductPrice(id, productId, PriceType.SalePrice, 100m, Start, effectiveTo: End));
-
-        var updated = new ProductPrice(id, productId, PriceType.SalePrice, 155m, Ts(2026, 8, 2, 0, 0));
-        await _prices.UpdateAsync(updated);
-
-        var byId = await _prices.GetByIdAsync(id);
-        Assert.NotNull(byId);
-        Assert.Equal(155m, byId.Price);
-        Assert.Equal(updated.EffectiveFrom, byId.EffectiveFrom);
-        Assert.Null(byId.EffectiveTo);
-    }
-
-    [Fact]
-    public async Task UpdateOfMissingRowThrowsInvalidOperationException()
-    {
-        var act = () => _prices.UpdateAsync(new ProductPrice(
-            Guid.NewGuid(), Guid.NewGuid(), PriceType.SalePrice, 100m, Start));
-
-        await Assert.ThrowsAsync<InvalidOperationException>(act);
-    }
-
-    [Fact]
-    public async Task DeleteRemovesPriceRecord()
-    {
-        var productId = await InsertProductAsync("SKU-DEL");
-        var id = Guid.NewGuid();
-        await _prices.AddAsync(new ProductPrice(id, productId, PriceType.SalePrice, 100m, Start));
-
-        await _prices.DeleteAsync(id);
-
-        Assert.Null(await _prices.GetByIdAsync(id));
-        var byProduct = await _prices.GetByProductAsync(productId);
-        Assert.DoesNotContain(byProduct, p => p.Id == id);
-    }
-
-    [Fact]
     public async Task PriceForUnknownProductIsRejectedByForeignKeyConstraint()
     {
         var ex = await Assert.ThrowsAsync<PostgresException>(() =>

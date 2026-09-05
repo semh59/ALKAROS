@@ -2,14 +2,18 @@
 
 /// <summary>
 /// Command to void an un-prepared order item (PDF:I.24, PDF:I.28.1, V0-DOM-006).
-/// Requires Manager authority and a recognized reason code.
+/// Authorization is enforced entirely at the HTTP boundary
+/// (OrderManagementEndpoints, via the grant flow); this command is a pure
+/// state-transition. A former `IsManagerAuthorized` flag + guard was
+/// removed as dead, misleading defense-in-depth — every real caller
+/// hardcoded it true and the paired exception was never mapped (independent
+/// audit, 2026-09-05).
 /// </summary>
 public sealed record VoidOrderItemCommand(
     Guid OrderId,
     Guid OrderItemId,
     long ExpectedRowVersion,
     Guid ActorId,
-    bool IsManagerAuthorized,
     string ReasonCode,
     string CorrelationId,
     string? Notes = null)
@@ -36,13 +40,14 @@ public sealed record VoidOrderItemCommand(
 /// <summary>
 /// Command to mark an active order item as complimentary (PDF:I.28.1, V0-DOM-006).
 /// Preserves delivered quantity while reducing customer payable amount to 0.
+/// Authorization is enforced at the HTTP boundary (see
+/// <see cref="VoidOrderItemCommand"/> for the removed IsManagerAuthorized flag).
 /// </summary>
 public sealed record ApplyComplimentaryCommand(
     Guid OrderId,
     Guid OrderItemId,
     long ExpectedRowVersion,
     Guid ActorId,
-    bool IsManagerAuthorized,
     string ReasonCode,
     string CorrelationId,
     string? Notes = null)

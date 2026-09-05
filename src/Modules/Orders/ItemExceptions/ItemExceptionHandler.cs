@@ -29,11 +29,6 @@ public sealed class ItemExceptionHandler
         ArgumentNullException.ThrowIfNull(command);
         command.Validate();
 
-        if (!command.IsManagerAuthorized)
-        {
-            throw new UnauthorizedItemOperationException("Void", command.ActorId);
-        }
-
         var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken).ConfigureAwait(false)
             ?? throw new InvalidOperationException($"Order '{command.OrderId}' was not found.");
 
@@ -141,11 +136,6 @@ public sealed class ItemExceptionHandler
     {
         ArgumentNullException.ThrowIfNull(command);
         command.Validate();
-
-        if (!command.IsManagerAuthorized)
-        {
-            throw new UnauthorizedItemOperationException("Complimentary", command.ActorId);
-        }
 
         var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken).ConfigureAwait(false)
             ?? throw new InvalidOperationException($"Order '{command.OrderId}' was not found.");

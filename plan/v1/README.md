@@ -11,9 +11,20 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 301 görev tanımlıdır: 296 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 304 görev tanımlıdır: 299 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-05 33. dalga (Semih onayıyla, "Hepsini çöz" — her iki denetimin geri kalan
+  Low / kod-kalite maddeleri, `V1-RMD-105`) `V1-GOV-086` sonrası kapıyı fiilen yeniden açtı;
+  `V1-GOV-087` ile resmen kaydedildi; üç madde temizlendi: (1) ölü OrderEntry C# istemci
+  motorları (`OrderEntryEngine.BeginSubmission()` — `SessionQueue` ile aynı sınıf, 4 kaynak +
+  2 test projesi silindi; gerçek JS istemcileri kendi korumasını kullanıyor); (2)
+  `ItemExceptionHandler.IsManagerAuthorized` yanıltıcı defense-in-depth katmanı (iki HTTP
+  çağıranı da sabit `true` geçiyor, istisna eşlenmemiş — bayrak/guard/istisna tipi/iki test
+  kaldırıldı, yetkilendirme zaten HTTP sınırında grant akışıyla yapılıyor); (3) ölü
+  `IPricingRepository.UpdateAsync`/`DeleteAsync` (hiç çağrılmıyordu; fiyat değişikliği yeni
+  tarihli satır = append). `V1-GOV-088` ile 33. dalga kesin olarak yeniden mühürlendi. Her
+  iki bağımsız denetimde de açık Critical/High/Medium/Low bulgu kalmadı.
   2026-09-05 32. dalga (Semih onayıyla — eski denetimin H4 bulgusu araştırılırken tüm
   `src/Clients/WaiterPwa/SessionQueue/**` modülünün (`WaiterOfflineQueueEngine` dahil) kendi
   test dosyasından başka hiçbir yerden hiç referans edilmediği bulundu; gerçek üretim

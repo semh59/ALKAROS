@@ -13,19 +13,6 @@ public sealed class LateVoidRejectedException : Exception
     public string KitchenState { get; }
 }
 
-public sealed class UnauthorizedItemOperationException : Exception
-{
-    public UnauthorizedItemOperationException(string operation, Guid actorId)
-        : base($"Actor '{actorId}' is not authorized to perform '{operation}'. Manager authority is required.")
-    {
-        Operation = operation;
-        ActorId = actorId;
-    }
-
-    public string Operation { get; }
-    public Guid ActorId { get; }
-}
-
 public sealed class InvalidItemReasonException : Exception
 {
     public InvalidItemReasonException(string message)
