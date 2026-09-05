@@ -23,6 +23,8 @@ Açık mutfak durumunu kullanarak mutfak öncesi iptali Release'ye ve hazırlık
 
 - `src/Modules/Inventory/PortionReservations/CancellationEffects/**`,
   `tests/Modules/Inventory/PortionReservations/CancellationEffects/**`
+- `tests/Modules/Inventory/PortionReservations/CancellationEffects/ALKAROS.Inventory.PortionReservations.CancellationEffects.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
