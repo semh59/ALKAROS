@@ -21,6 +21,8 @@ Geçmiş tarif maliyetini yeniden oluşturmak için gereken içerik düzeyindeki
 
 - `src/Modules/Recipes/CostSnapshots/**`, `tests/Modules/Recipes/CostSnapshots/**`,
   `database/migrations/V11/V11-RCP-002/**`
+- `tests/Modules/Recipes/CostSnapshots/ALKAROS.Recipes.CostSnapshots.Tests.csproj`, `tests/Modules/Recipes/CostSnapshots/packages.lock.json`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
