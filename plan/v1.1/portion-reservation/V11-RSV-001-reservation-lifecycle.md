@@ -24,6 +24,8 @@ Bir OrderItem ve StockBalance'a bağlı `Reserved`, `Released`, `Consumed` ve `W
 
 - `src/Modules/Inventory/PortionReservations/Lifecycle/**`, `tests/Modules/Inventory/PortionReservations/Lifecycle/**`,
   `database/migrations/V11/V11-RSV-001/**`
+- `tests/Modules/Inventory/PortionReservations/Lifecycle/ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
