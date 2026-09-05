@@ -1,0 +1,65 @@
+﻿V11-INV-003 closure evidence
+Date: 2026-09-06
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+
+## Scope executed
+- Domain models and services in src/Modules/Inventory/MovementReversal/:
+  - Exceptions: StockMovementReversalException, ReversalNotEligibleException, DuplicateReversalException, InvalidReversalReasonException
+  - Request/Result models: StockMovementReversalRequest, StockMovementReversalResult
+  - Service:
+    - IStockMovementReversalService / StockMovementReversalService:
+      - ReverseMovementAsync:
+        - Invariant checks: mandatory non-empty reason, valid movement GUID, cannot reverse a reversal (ReversalNotEligibleException), cannot reverse already-reversed movement (DuplicateReversalException), stock item and location active verification
+        - Reversal creation: exact quantity and tracking unit preserved, direction inverted (In <-> Out, Reserve <-> Release), source_type = 'StockMovement', source_reference_id = original.id, reason and audit actor tracked
+        - Ledger persistence: appended to stock_movements ledger (concurrent race protection via database unique index)
+        - Projection restoration: applies reversal delta to authoritative stock balance projection via IStockBalanceProjector, restoring on-hand and available quantity
+        - Original ledger immutability: original movement row in database remains strictly untouched and unmodified
+      - CanReverseAsync: checks whether a movement exists and is eligible for reversal
+      - GetReversalForMovementAsync: retrieves existing reversal movement by original movement ID
+- Migration:
+  - database/migrations/V11/V11-INV-003/059-stock-reversals.up.sql: Partial unique index uq_stock_movements_single_reversal on inventory.stock_movements (source_reference_id) WHERE movement_type = 'Reversal' AND source_type = 'StockMovement'. Guarantees PostgreSQL engine-level mutual exclusion against concurrent double-reversal races (SQLState 23505).
+  - database/migrations/V11/V11-INV-003/059-stock-reversals.down.sql: Rollback index.
+- Automated Tests in 	ests/Modules/Inventory/MovementReversal/:
+  - StockMovementReversalDomainTests: 11 unit tests covering exact quantity and inverted direction for In and Out movements, reservation release reversal, mandatory reason, GUID validation, reversal of reversal rejection, duplicate reversal rejection, original movement immutability, CanReverseAsync, and GetReversalForMovementAsync.
+  - StockMovementReversalDatabaseTests: 5 PostgreSQL 18 database/integration tests covering end-to-end reversal with balance restoration, ledger immutability of original record, concurrent double-reversal race condition stress test (10 parallel tasks -> 1 succeeds, 9 fail with DuplicateReversalException, row count exactly 1), foreign key deletion restrictions (23503/23001), and migration 059 rollback/reapply idempotency.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Release
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Inventory/MovementReversal/ALKAROS.Inventory.MovementReversal.Tests.csproj -c Release --no-build
+   Result: 16 passed, 0 failed, 0 skipped (exit code: 0)
+
+3. dotnet test tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj -c Release --no-build
+   Result: 12 passed, 0 failed, 0 skipped (exit code: 0)
+
+4. dotnet test tests/Modules/Inventory/MovementLedger/ALKAROS.Inventory.MovementLedger.Tests.csproj -c Release --no-build
+   Result: 18 passed, 0 failed, 0 skipped (exit code: 0)
+
+5. dotnet test tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj -c Release --no-build
+   Result: 14 passed, 0 failed, 0 skipped (exit code: 0)
+
+6. dotnet test tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj -c Release --no-build
+   Result: 24 passed, 0 failed, 0 skipped (exit code: 0)
+
+7. dotnet test tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj -c Release --no-build
+   Result: 16 passed, 0 failed, 0 skipped (exit code: 0)
+
+8. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release --no-build
+   Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+3. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+4. python tools/task-scope/task_scope_tool.py --task-id V11-INV-003 --diff-base 8e94a6d
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+All modified/created files are within the task allowlist (src/Modules/Inventory/MovementReversal/**, tests/Modules/Inventory/MovementReversal/**, database/migrations/V11/V11-INV-003/**, evidence/V11-INV-003/**, and ALKAROS.slnx under C79).
