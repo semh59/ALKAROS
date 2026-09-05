@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.Orders.OrderAggregate;
@@ -11,13 +12,89 @@ public sealed class BillingSplitStore
     private readonly ISplitDesignRepository _splitDesigns;
     private readonly IOrderRepository? _orders;
     private readonly NpgsqlDataSource? _dataSource;
+    private readonly IBillAdjustmentRepository? _adjustments;
 
-    public BillingSplitStore(IBillRepository bills, ISplitDesignRepository splitDesigns, IOrderRepository? orders = null, NpgsqlDataSource? dataSource = null)
+    public BillingSplitStore(
+        IBillRepository bills,
+        ISplitDesignRepository splitDesigns,
+        IOrderRepository? orders = null,
+        NpgsqlDataSource? dataSource = null,
+        IBillAdjustmentRepository? adjustments = null)
     {
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
         _splitDesigns = splitDesigns ?? throw new ArgumentNullException(nameof(splitDesigns));
         _orders = orders;
         _dataSource = dataSource;
+        _adjustments = adjustments;
+    }
+
+    /// <summary>
+    /// V1-RMD-103 (B1): applies a bill-level discount. Domain-complete since
+    /// V1-BIL-003 (AdjustmentCalculator, BillAdjustment, migration 021) but
+    /// found by an independent audit (2026-09-05) to have zero DI
+    /// registration, zero callers, and no HTTP endpoint — a discount could
+    /// not be entered anywhere. Validated against
+    /// <see cref="AdjustmentCalculator"/> before persisting (check-before-
+    /// write), not after.
+    /// </summary>
+    public async Task<(BillAdjustment Adjustment, AdjustedBillSummary Summary)> ApplyDiscountAsync(
+        Guid billId,
+        ApplyBillDiscountRequestV1 request,
+        Guid actorId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_adjustments == null)
+            throw new InvalidOperationException("Bill adjustment repository is not configured.");
+        ArgumentNullException.ThrowIfNull(request);
+
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+
+        if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
+            throw new ArgumentException(
+                $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.", nameof(request));
+
+        // A bill's items can carry different tax rates; the discount is
+        // split net/tax using the bill's own effective (weighted-average)
+        // rate rather than an arbitrary single item's rate.
+        var netBase = bill.PayableAmount - bill.TaxTotal;
+        var effectiveTaxRate = netBase > 0 ? BillMath.RoundCurrency(bill.TaxTotal / netBase * 100m) : 0m;
+
+        var adjustmentId = Guid.NewGuid();
+        var adjustment = request.CalculationType switch
+        {
+            "Percentage" => BillAdjustment.CreateDiscountPercentage(
+                adjustmentId, billId, request.Value, bill.PayableAmount, effectiveTaxRate,
+                request.ReasonCode, actorId, notes: request.Notes, createdBy: actorId),
+            "FixedAmount" => BillAdjustment.CreateDiscountAmount(
+                adjustmentId, billId, request.Value, effectiveTaxRate,
+                request.ReasonCode, actorId, notes: request.Notes, createdBy: actorId),
+            _ => throw new ArgumentException(
+                $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
+        };
+
+        var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
+        // Validate against the full candidate set BEFORE writing anything —
+        // AdjustmentCalculator throws if the total discount would exceed the
+        // bill's payable amount.
+        var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
+
+        await _adjustments.AddAsync(adjustment, cancellationToken);
+        return (adjustment, summary);
+    }
+
+    public async Task<(IReadOnlyList<BillAdjustment> Adjustments, AdjustedBillSummary Summary)> GetAdjustmentsAsync(
+        Guid billId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_adjustments == null)
+            throw new InvalidOperationException("Bill adjustment repository is not configured.");
+
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        var adjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
+        var summary = AdjustmentCalculator.Calculate(bill, adjustments);
+        return (adjustments, summary);
     }
 
     public async Task<BillSplitDesignDto> CreateBillFromOrderAsync(
@@ -50,7 +127,16 @@ public sealed class BillingSplitStore
         {
             await _bills.AddAsync(bill, cancellationToken);
         }
-        catch (Exception)
+        // Narrowed from a bare catch (Exception) — found by an independent
+        // audit (2026-09-05, H1): this used to swallow ANY exception
+        // (validation bugs, connection faults, a defect in AddAsync) on a
+        // financial write path and silently hand back whatever bill already
+        // existed for the order as if the request had succeeded. bill_number
+        // is deterministic per order ($"BILL-{order.OrderNumber}"), so the
+        // only expected concurrent failure here is two requests racing to
+        // insert the same bill_number for the same order.
+        catch (PostgresException ex)
+            when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "bills_bill_number_key")
         {
             // If another request concurrently inserted a bill for this order/number, recover gracefully
             var retryBills = await _bills.GetByOrderIdAsync(orderId, cancellationToken);

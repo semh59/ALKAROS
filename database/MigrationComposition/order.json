@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "052"
+    "max": "053"
   },
   "migrations": [
     {
@@ -455,6 +455,14 @@
       "phase": "B",
       "tables": [
         "authorization_grants"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "053",
+      "phase": "B",
+      "tables": [
+        "products"
       ],
       "deferredConstraints": []
     }

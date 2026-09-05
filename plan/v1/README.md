@@ -11,9 +11,22 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 295 görev tanımlıdır: 290 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 298 görev tanımlıdır: 293 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-05 31. dalga (Semih onayıyla, "tümünü düzelt" — daha eski, ayrı bir denetim turunun
+  hâlâ açık altı bulgusu: B1 [HIGH] bill adjustments (indirim) tamamen bağlanmamıştı, H1 [MED]
+  `BillingSplitStore`'un finansal yolda geniş `catch (Exception)` kullanması, H2/H3
+  `AuditSanitizer`'ın anahtar-tabanlı redaksiyon kusurları, B5 `SplitEngine`'in kısmi kalem
+  bölmesinde kalan-dengeleme eksikliği, B6 `catalog.products`'ta hiç `row_version` olmaması —
+  `V1-RMD-103`) `V1-GOV-082` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-083` ile resmen
+  kaydedildi. B1 için `bills.discount` grant-class izni (zaten var, hiç kullanılmamıştı)
+  üzerinden `POST .../bills/{billId}/discount` ve `GET .../bills/{billId}/adjustments`
+  eklendi — `V1-BIL-005`'in `bills.comp` için yaptığı ilk gerçek HTTP çağrısıyla aynı desen;
+  indirimin `SplitEngine`/ödeme akışına tam entegrasyonu ayrı bir tasarım kararı olarak
+  kapsam dışı bırakıldı. H1'in regresyon testi yazılırken `AddBillingSplitExperience()`'ın
+  hiç `IOrderRepository` kaydetmediği (Catalog'un daha önce bulunan DI boşluğuyla aynı sınıf)
+  ayrıca bulunup düzeltildi. `V1-GOV-084` ile 31. dalga kesin olarak yeniden mühürlendi.
   2026-09-05 30. dalga (Semih onayıyla, "Hepsi" — 29. dalganın bilerek kapsam dışı bıraktığı
   High/Medium/Low bulgular — `V1-RMD-102`) `V1-GOV-080` sonrası kapıyı fiilen yeniden açtı;
   `V1-GOV-081` ile resmen kaydedildi. 9 bulgu giderildi: `PostgresBillRepository

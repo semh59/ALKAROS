@@ -353,6 +353,49 @@ public sealed class SplitDesignDomainTests
     }
 
     [Fact]
+    public void PartiallyAllocatedItemSplitRemainderBalancesTheLastTarget()
+    {
+        // Regression test for an independent audit finding (2026-09-05, B5):
+        // a partially allocated group (fewer units assigned than the item's
+        // full quantity) used to apply the plain per-target fraction to
+        // every target, including the last, instead of remainder-balancing
+        // against the group's own allocated share — leaving the group's sum
+        // up to ~1 kuruş short of the exact proportional value.
+        var billId = Guid.NewGuid();
+        var item = new BillItem(
+            id: Guid.NewGuid(),
+            billId: billId,
+            orderItemId: Guid.NewGuid(),
+            productId: Guid.NewGuid(),
+            productNameSnapshot: "Uc Kisilik Kebap Tepsisi",
+            quantity: 3,
+            unitPrice: 33.34m,
+            taxRate: 0m,
+            netAmount: 100.00m,
+            taxAmount: 0m,
+            grossAmount: 100.00m);
+        var bill = new Bill(billId, "BILL-PARTIAL", new[] { item });
+
+        // Only 2 of the item's 3 units are allocated here (the third is
+        // billed separately later) — a partial group.
+        var targets = new[]
+        {
+            new ItemSplitTarget(item.Id, "Person A", 1),
+            new ItemSplitTarget(item.Id, "Person B", 1)
+        };
+
+        var allocations = SplitEngine.CreateItemSplit(bill, targets);
+
+        Assert.Equal(2, allocations.Count);
+        Assert.Equal(33.33m, allocations[0].AllocatedAmount);
+        Assert.Equal(33.34m, allocations[1].AllocatedAmount);
+        // The group's allocated share (2/3 of the 100.00 item) is exact —
+        // not short by a kuruş the way two plain 1/3 fractions would be
+        // (33.33 + 33.33 = 66.66, one kuruş short of 66.67).
+        Assert.Equal(66.67m, allocations.Sum(a => a.AllocatedAmount));
+    }
+
+    [Fact]
     public void ItemSplitRejectsComplimentaryZeroAmountItem()
     {
         var billId = Guid.NewGuid();

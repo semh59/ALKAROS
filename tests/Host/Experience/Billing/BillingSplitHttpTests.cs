@@ -207,6 +207,151 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         }
     }
 
+    [Fact]
+    public async Task ConcurrentBillCreationForTheSameOrderHasOneWinnerAndNoDuplicateBill()
+    {
+        // Regression test for an independent audit finding (2026-09-05, H1):
+        // CreateBillFromOrderAsync used to catch (Exception) around the bill
+        // insert, swallowing any failure (not just the expected concurrent
+        // unique-violation) and handing back whatever bill already existed
+        // as if the caller's own request had succeeded. The catch is now
+        // narrowed to the specific bills_bill_number_key race; this proves
+        // the narrowed catch still recovers correctly and that exactly one
+        // bill row is created when two requests race for the same order.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true);
+        var orderId = await _database.SeedOrderWithoutBillAsync();
+        await using var app = await StartAsync();
+        using var firstClient = CreateClient(app);
+        using var secondClient = CreateClient(app);
+        var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/from-order/{orderId:D}";
+
+        var responses = await Task.WhenAll(
+            firstClient.SendAsync(Request(HttpMethod.Post, path, cookie)),
+            secondClient.SendAsync(Request(HttpMethod.Post, path, cookie)));
+        try
+        {
+            Assert.All(responses, response => Assert.Equal(HttpStatusCode.OK, response.StatusCode));
+            var bills = await Task.WhenAll(responses.Select(response => response.Content.ReadFromJsonAsync<BillSplitDesignDto>()));
+            Assert.Equal(bills[0]!.BillId, bills[1]!.BillId);
+        }
+        finally
+        {
+            foreach (var response in responses)
+                response.Dispose();
+        }
+
+        Assert.Equal(1L, await _database.BillCountForOrderAsync(orderId));
+    }
+
+    /// <summary>
+    /// V1-RMD-103 (B1): `AdjustmentCalculator`/`BillAdjustment`/
+    /// `IBillAdjustmentRepository` (V1-BIL-003) were domain-complete and
+    /// unit-tested but had zero DI registration, zero callers, and no HTTP
+    /// endpoint — a discount could not be entered anywhere, found by an
+    /// independent audit (2026-09-05). This is the first real caller,
+    /// mirroring V1-BIL-005's bills.comp pattern for the sibling
+    /// bills.discount grant-class permission.
+    /// </summary>
+    [Fact]
+    public async Task ARoleThatHoldsBillsDiscountAppliesDirectly()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal("Applied", body!.Status);
+        Assert.NotNull(body.AdjustmentId);
+        Assert.NotNull(body.Summary);
+        Assert.Equal(
+            body.Summary!.OriginalPayableAmount - body.Summary.TotalDiscounts,
+            body.Summary.AdjustedPayableAmount);
+        Assert.True(body.Summary.TotalDiscounts > 0);
+
+        using var adjustmentsResponse = await client.SendAsync(Request(
+            HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/adjustments", cookie));
+        Assert.Equal(HttpStatusCode.OK, adjustmentsResponse.StatusCode);
+        using var adjustmentsDoc = JsonDocument.Parse(await adjustmentsResponse.Content.ReadAsStringAsync());
+        Assert.Equal(1, adjustmentsDoc.RootElement.GetProperty("adjustments").GetArrayLength());
+        Assert.Equal(
+            body.Summary.AdjustedPayableAmount,
+            adjustmentsDoc.RootElement.GetProperty("summary").GetProperty("adjustedPayableAmount").GetDecimal());
+    }
+
+    [Fact]
+    public async Task ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal("Pending", body!.Status);
+        Assert.NotNull(body.GrantId);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task AnInvalidDiscountReasonCodeIsRejected()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "NotARealReason"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ADiscountExceedingThePayableAmountIsRejectedAndNotPersisted()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 100000m, "PromotionalOffer"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -398,6 +543,57 @@ internal sealed class BillingSplitTestDatabase
         return $"{DualScreenApplication.CashierCookieName}={raw}";
     }
 
+    /// <summary>Seeds a cashier device session under the given role, with the given permission codes granted outright (mirrors OrderManagementCompTestDatabase's helper for V1-BIL-005).</summary>
+    public async Task<(Guid UserId, string Cookie)> SeedSessionWithPermissionsAsync(
+        Guid terminalId, string roleCode, params string[] permissionCodes)
+    {
+        var userId = Guid.NewGuid();
+        var suffix = userId.ToString("N");
+        var (raw, hash) = DeviceSessionToken.Create();
+
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', 'Billing API Test', true);
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, created_at, expires_at)
+            VALUES (@session_id, @user_id, @device_id, @token_hash, now(), now() + interval '1 hour');
+            """,
+            ("user_id", userId),
+            ("username", "rmd103-api-" + suffix),
+            ("session_id", Guid.NewGuid()),
+            ("device_id", $"cashier:{terminalId:D}"),
+            ("token_hash", hash));
+
+        var roleId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            "INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'Billing API Test Role');",
+            ("role_id", roleId),
+            ("role_code", roleCode + "-" + suffix));
+        await ExecuteAsync(
+            DataSource,
+            "INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (@id, @user_id, @role_id);",
+            ("id", Guid.NewGuid()),
+            ("user_id", userId),
+            ("role_id", roleId));
+
+        foreach (var code in permissionCodes)
+        {
+            await ExecuteAsync(
+                DataSource,
+                """
+                INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+                SELECT @id, @role_id, permission_id FROM identity.permissions WHERE code = @code;
+                """,
+                ("id", Guid.NewGuid()),
+                ("role_id", roleId),
+                ("code", code));
+        }
+
+        return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
+    }
+
     public async Task<SeededBill> SeedBillAsync()
     {
         var zoneId = Guid.NewGuid();
@@ -441,6 +637,41 @@ internal sealed class BillingSplitTestDatabase
         var bill = Bill.FromOrder(Guid.NewGuid(), "BIL-" + orderId.ToString("N"), order);
         await new PostgresBillRepository(DataSource).AddAsync(bill);
         return new SeededBill(bill.Id, bill.RowVersion, seatId, bill.Items[0].Id, bill.Items[1].Id);
+    }
+
+    public async Task<Guid> SeedOrderWithoutBillAsync()
+    {
+        var productId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES (@product_id, @sku, 'Main course', 1, 1, 100);
+            """,
+            ("product_id", productId),
+            ("sku", "SKU-" + productId.ToString("N")[..8]));
+
+        var orderId = Guid.NewGuid();
+        var orderItem = new OrderItem(Guid.NewGuid(), orderId, productId, "Main course", 1m, 100m, 10m);
+        var order = new Order(orderId, OrderSource.Cashier, "ORD-" + orderId.ToString("N"), [orderItem]);
+        await new PostgresOrderRepository(DataSource).AddAsync(order);
+        return orderId;
+    }
+
+    public async Task<long> BillCountForOrderAsync(Guid orderId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT count(*) FROM billing.bills WHERE order_id = @order_id;");
+        command.Parameters.AddWithValue("order_id", orderId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<long> BillAdjustmentCountAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT count(*) FROM billing.bill_adjustments WHERE bill_id = @bill_id;");
+        command.Parameters.AddWithValue("bill_id", billId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<IReadOnlyList<Guid>> AllocationIdsAsync(Guid billId)

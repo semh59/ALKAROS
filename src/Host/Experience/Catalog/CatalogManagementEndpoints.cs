@@ -286,6 +286,10 @@ public sealed class CatalogManagerEndpointFilter : IEndpointFilter
         {
             return MapError(context.HttpContext, exception);
         }
+        catch (InvalidOperationException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
     }
 
     private static IResult MapError(HttpContext context, Exception exception)
@@ -308,6 +312,8 @@ public sealed class CatalogManagerEndpointFilter : IEndpointFilter
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The catalog request violates a data constraint."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The catalog request is invalid."),
+            InvalidOperationException =>
+                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "The catalog record was concurrently modified."),
             NpgsqlException =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "The catalog operation could not be completed."),
             _ => throw exception,

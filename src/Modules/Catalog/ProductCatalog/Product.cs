@@ -20,7 +20,8 @@ public sealed class Product
         int displayOrder = 0,
         decimal? currentPrice = null,
         bool active = true,
-        bool isAvailable = true)
+        bool isAvailable = true,
+        long rowVersion = 1)
     {
         if (string.IsNullOrWhiteSpace(sku))
             throw new ArgumentException("Product SKU cannot be empty.", nameof(sku));
@@ -42,6 +43,7 @@ public sealed class Product
         CurrentPrice = currentPrice;
         Active = active;
         IsAvailable = isAvailable;
+        RowVersion = rowVersion;
     }
 
     public Guid Id { get; }
@@ -63,6 +65,14 @@ public sealed class Product
     /// </summary>
     public bool IsAvailable { get; }
 
+    /// <summary>
+    /// Optimistic concurrency token (catalog.products.row_version). Found
+    /// missing by an independent audit (2026-09-05, B6): concurrent updates
+    /// to the same product (e.g. two suspend/restore calls, or a suspend
+    /// racing a future price edit) used to silently last-write-wins.
+    /// </summary>
+    public long RowVersion { get; }
+
     /// <summary>Hides the product from sales clients without deleting it.</summary>
     public Product Suspend() => IsAvailable ? WithAvailability(false) : this;
 
@@ -71,5 +81,5 @@ public sealed class Product
 
     private Product WithAvailability(bool isAvailable) => new(
         Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
-        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, isAvailable);
+        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, isAvailable, RowVersion);
 }

@@ -37,6 +37,60 @@ public sealed class AuditSanitizerTests
     }
 
     [Fact]
+    public void SanitizeJsonDoesNotFalselyRedactWordsThatSubstringMatchASensitivePattern()
+    {
+        // Regression test for an independent audit finding (2026-09-05, H3):
+        // IsSensitiveKey used to do a raw substring match, so "pin" matched
+        // inside "shipping" and "pan" matched inside "company"/"expansion",
+        // wrongly redacting unrelated fields and destroying audit-trail
+        // usefulness.
+        var input = """
+        {
+            "shipping_address": "123 Main St",
+            "company_name": "Acme Corp",
+            "expansion_plan": "grow to Izmir",
+            "mapping_table": "sku-to-category",
+            "spinner_color": "blue"
+        }
+        """;
+
+        var sanitized = _sanitizer.SanitizeJson(input);
+
+        Assert.NotNull(sanitized);
+        var node = JsonNode.Parse(sanitized);
+        Assert.NotNull(node);
+        Assert.Equal("123 Main St", node["shipping_address"]?.GetValue<string>());
+        Assert.Equal("Acme Corp", node["company_name"]?.GetValue<string>());
+        Assert.Equal("grow to Izmir", node["expansion_plan"]?.GetValue<string>());
+        Assert.Equal("sku-to-category", node["mapping_table"]?.GetValue<string>());
+        Assert.Equal("blue", node["spinner_color"]?.GetValue<string>());
+    }
+
+    [Fact]
+    public void SanitizeJsonRedactsASecretEmbeddedInAStringValueUnderANonSensitiveKey()
+    {
+        // Regression test for an independent audit finding (2026-09-05, H2):
+        // SanitizeNode used to redact by property name only, so a secret
+        // embedded in a string VALUE under an innocuous key (free text like
+        // an exception message) passed into the audit store verbatim on
+        // well-formed JSON.
+        var input = """
+        {
+            "detail": "auth failed for token=eyJhbGciOiJIUzI1NiJ9.secret",
+            "note": "pin: 4821 was rejected"
+        }
+        """;
+
+        var sanitized = _sanitizer.SanitizeJson(input);
+
+        Assert.NotNull(sanitized);
+        var node = JsonNode.Parse(sanitized);
+        Assert.NotNull(node);
+        Assert.DoesNotContain("eyJhbGciOiJIUzI1NiJ9", node["detail"]?.GetValue<string>());
+        Assert.DoesNotContain("4821", node["note"]?.GetValue<string>());
+    }
+
+    [Fact]
     public void SanitizeJsonMalformedJsonUsesFallbackSanitizationAndReturnsValidJson()
     {
         var malformed = """

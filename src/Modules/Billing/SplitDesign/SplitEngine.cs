@@ -186,7 +186,18 @@ public static class SplitEngine
                     $"Total allocated quantity ({totalAllocatedQty}) for item '{billItem.ProductNameSnapshot}' exceeds item quantity ({billItem.Quantity}).");
             }
 
-            var isFullyAllocated = totalAllocatedQty == billItem.Quantity;
+            // Found by an independent audit (2026-09-05, B5): a partially
+            // allocated group (totalAllocatedQty < billItem.Quantity) used to
+            // give its last target the plain per-target fraction instead of
+            // the group's own remainder, leaving that target up to ~1 kuruş
+            // short of its exact proportional share. allocatedGross/Tax is
+            // the group's total share of the item (the whole item when fully
+            // allocated, the proportional partial share otherwise); the last
+            // target in every group now absorbs the remainder against that
+            // share, not just when the group happens to be fully allocated.
+            var allocatedFraction = totalAllocatedQty / billItem.Quantity;
+            var allocatedGross = BillMath.RoundCurrency(billItem.GrossAmount * allocatedFraction);
+            var allocatedTax = BillMath.RoundCurrency(billItem.TaxAmount * allocatedFraction);
             var runningItemGross = 0m;
             var runningItemTax = 0m;
 
@@ -198,11 +209,11 @@ public static class SplitEngine
                 decimal targetGross;
                 decimal targetTax;
 
-                if (isLastTargetForThisItem && isFullyAllocated)
+                if (isLastTargetForThisItem)
                 {
-                    // Remainder distribution so sum of targets equals exact item totals
-                    targetGross = BillMath.RoundCurrency(billItem.GrossAmount - runningItemGross);
-                    targetTax = BillMath.RoundCurrency(billItem.TaxAmount - runningItemTax);
+                    // Remainder distribution so sum of targets equals the group's allocated share exactly
+                    targetGross = BillMath.RoundCurrency(allocatedGross - runningItemGross);
+                    targetTax = BillMath.RoundCurrency(allocatedTax - runningItemTax);
                 }
                 else
                 {

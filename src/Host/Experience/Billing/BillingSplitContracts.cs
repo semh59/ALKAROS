@@ -98,3 +98,44 @@ public sealed record BillingSplitConflict(
     Guid ResourceId,
     long? ExpectedRowVersion,
     long? ActualRowVersion);
+
+/// <summary>
+/// V1-RMD-103 (B1): applies a bill-level discount via the existing
+/// bills.discount grant-class permission. CalculationType is "Percentage"
+/// (Value 0-100) or "FixedAmount" (Value is a currency amount).
+/// </summary>
+public sealed record ApplyBillDiscountRequestV1(
+    string IdempotencyKey,
+    string CalculationType,
+    decimal Value,
+    string ReasonCode,
+    string? Notes = null);
+
+/// <summary>
+/// "Applied" carries Adjustment/Summary; "Pending" carries only GrantId —
+/// mirrors <c>ApplyComplimentaryResultV1</c>'s Applied/Pending shape.
+/// </summary>
+public sealed record ApplyBillDiscountResultV1(
+    string Status,
+    Guid BillId,
+    Guid? AdjustmentId,
+    AdjustedBillSummaryV1? Summary,
+    Guid? GrantId);
+
+public sealed record AdjustedBillSummaryV1(
+    decimal OriginalPayableAmount,
+    decimal TotalDiscounts,
+    decimal TotalFees,
+    decimal TotalTips,
+    decimal AdjustedPayableAmount);
+
+public sealed record BillAdjustmentDto(
+    Guid AdjustmentId,
+    string AdjustmentType,
+    string CalculationType,
+    decimal? Rate,
+    decimal Amount,
+    bool IsDeduction,
+    string Reason,
+    string? Notes,
+    DateTimeOffset CreatedAt);

@@ -27,6 +27,7 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
     {
         _database = database;
         EnsureAvailabilityColumn(database.DataSource);
+        EnsureRowVersionColumn(database.DataSource);
         _categories = new PostgresCategoryRepository(database.DataSource);
         _taxProfiles = new PostgresTaxProfileRepository(database.DataSource);
         _modifierGroups = new PostgresModifierGroupRepository(database.DataSource);
@@ -42,6 +43,16 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
     {
         using var command = dataSource.CreateCommand(
             "ALTER TABLE catalog.products ADD COLUMN IF NOT EXISTS is_available BOOLEAN NOT NULL DEFAULT TRUE;");
+        command.ExecuteNonQuery();
+    }
+
+    // Same pattern as EnsureAvailabilityColumn above: the shared fixture only
+    // applies V1-CAT-001, so the V1-RMD-103 row_version column (B6, found by
+    // an independent audit, 2026-09-05) is added here idempotently.
+    private static void EnsureRowVersionColumn(NpgsqlDataSource dataSource)
+    {
+        using var command = dataSource.CreateCommand(
+            "ALTER TABLE catalog.products ADD COLUMN IF NOT EXISTS row_version BIGINT NOT NULL DEFAULT 1;");
         command.ExecuteNonQuery();
     }
 
@@ -285,6 +296,32 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
         Assert.NotNull(byId);
         Assert.Null(byId.CategoryId);
         Assert.Null(byId.TaxProfileId);
+    }
+
+    [Fact]
+    public async Task UpdateAsyncThrowsWhenTheProductWasConcurrentlyModified()
+    {
+        // Regression test for an independent audit finding (2026-09-05, B6):
+        // catalog.products had no row_version at all, so UpdateAsync used to
+        // silently last-write-wins on a concurrent edit. Simulates a
+        // concurrent writer bumping the row directly via SQL between a
+        // caller's read and its write.
+        var id = Guid.NewGuid();
+        await _products.AddAsync(new Product(id, "SKU-CONC", "Concurrent", ProductType.MenuItem, StockMode.Untracked));
+        var loaded = await _products.GetByIdAsync(id);
+        Assert.NotNull(loaded);
+
+        Assert.Equal(1, await _database.ExecuteAsync(
+            "UPDATE catalog.products SET row_version = row_version + 1 WHERE product_id = @id;",
+            ("id", id)));
+
+        var staleUpdate = loaded.Suspend();
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _products.UpdateAsync(staleUpdate, loaded.RowVersion));
+        Assert.Contains(id.ToString(), ex.Message);
+
+        var reloaded = await _products.GetByIdAsync(id);
+        Assert.True(reloaded!.IsAvailable);
     }
 
     [Fact]

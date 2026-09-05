@@ -23,7 +23,8 @@ public sealed class PostgresProductRepository : IProductRepository
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active, is_available
+                   description, printer_route_policy, display_order, current_price, active, is_available,
+                   row_version
             FROM {Table}
             WHERE product_id = @id;
             """);
@@ -43,7 +44,8 @@ public sealed class PostgresProductRepository : IProductRepository
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active, is_available
+                   description, printer_route_policy, display_order, current_price, active, is_available,
+                   row_version
             FROM {Table}
             WHERE sku = @sku;
             """);
@@ -63,7 +65,8 @@ public sealed class PostgresProductRepository : IProductRepository
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active, is_available
+                   description, printer_route_policy, display_order, current_price, active, is_available,
+                   row_version
             FROM {Table}
             WHERE category_id = @category_id
             ORDER BY display_order, sku
@@ -89,7 +92,8 @@ public sealed class PostgresProductRepository : IProductRepository
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                   description, printer_route_policy, display_order, current_price, active, is_available
+                   description, printer_route_policy, display_order, current_price, active, is_available,
+                   row_version
             FROM {Table}
             ORDER BY display_order, sku
             LIMIT {MaxUnpagedRows + 1};
@@ -114,9 +118,11 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             INSERT INTO {Table} (
                 product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
-                description, printer_route_policy, display_order, current_price, active, is_available)
+                description, printer_route_policy, display_order, current_price, active, is_available,
+                row_version)
             VALUES (@id, @sku, @name, @product_type, @stock_mode, @category_id, @tax_profile_id,
-                    @description, @printer_route_policy, @display_order, @current_price, @active, @is_available);
+                    @description, @printer_route_policy, @display_order, @current_price, @active, @is_available,
+                    @row_version);
             """);
         command.Parameters.AddWithValue("id", product.Id);
         command.Parameters.AddWithValue("sku", product.Sku);
@@ -131,14 +137,18 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("current_price", (object?)product.CurrentPrice ?? DBNull.Value);
         command.Parameters.AddWithValue("active", product.Active);
         command.Parameters.AddWithValue("is_available", product.IsAvailable);
+        command.Parameters.AddWithValue("row_version", product.RowVersion);
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Product product, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Product product, long expectedRowVersion, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(product);
 
+        // row_version check added (found by an independent audit, 2026-09-05,
+        // B6): concurrent updates to the same product used to silently
+        // last-write-wins, with no optimistic concurrency at all.
         await using var command = _dataSource.CreateCommand(
             $"""
             UPDATE {Table}
@@ -153,8 +163,10 @@ public sealed class PostgresProductRepository : IProductRepository
                 display_order = @display_order,
                 current_price = @current_price,
                 active = @active,
-                is_available = @is_available
-            WHERE product_id = @id;
+                is_available = @is_available,
+                row_version = row_version + 1
+            WHERE product_id = @id AND row_version = @expected_row_version
+            RETURNING product_id;
             """);
         command.Parameters.AddWithValue("id", product.Id);
         command.Parameters.AddWithValue("sku", product.Sku);
@@ -169,10 +181,12 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("current_price", (object?)product.CurrentPrice ?? DBNull.Value);
         command.Parameters.AddWithValue("active", product.Active);
         command.Parameters.AddWithValue("is_available", product.IsAvailable);
+        command.Parameters.AddWithValue("expected_row_version", expectedRowVersion);
 
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken);
-        if (affected == 0)
-            throw new InvalidOperationException($"Product {product.Id} not found.");
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        if (result is null)
+            throw new InvalidOperationException(
+                $"Product '{product.Id}' not found or concurrent modification (expected row version {expectedRowVersion}).");
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
@@ -201,6 +215,7 @@ public sealed class PostgresProductRepository : IProductRepository
             reader.GetInt32(9),
             reader.IsDBNull(10) ? null : reader.GetDecimal(10),
             reader.GetBoolean(11),
-            reader.GetBoolean(12));
+            reader.GetBoolean(12),
+            reader.GetInt64(13));
     }
 }

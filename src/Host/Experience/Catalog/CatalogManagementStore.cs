@@ -110,7 +110,7 @@ public sealed class CatalogManagementStore
         if (product is null)
             return null;
         var updated = request.IsAvailable ? product.Restore() : product.Suspend();
-        await _products.UpdateAsync(updated, cancellationToken);
+        await _products.UpdateAsync(updated, product.RowVersion, cancellationToken);
         return ToDto(updated);
     }
 

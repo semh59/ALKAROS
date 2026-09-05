@@ -32,6 +32,27 @@ public sealed class AuditSanitizer : IAuditSanitizer
         "apikey"
     ];
 
+    // IsSensitiveKey matches these as whole identifier tokens (split on `_`,
+    // `-`, and camelCase boundaries), not a raw substring — found by an
+    // independent audit (2026-09-05, H3): the old Contains()-based check
+    // falsely redacted shipping_address ("pin" inside "shiPINg"),
+    // company_name / expansion_plan ("pan" inside "comPANy" / "exPANsion").
+    private static readonly HashSet<string> SensitiveKeyTokens =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            "password", "passphrase", "pin", "secret", "token", "cvv", "cvc", "pan", "salt", "jwt"
+        };
+
+    // These are two real words concatenated, so they stay substring-matched
+    // (separators stripped) rather than whole-token — token-splitting would
+    // separate "card"+"number" or "api"+"key", and neither half alone is
+    // sensitive on its own.
+    private static readonly string[] SensitiveCompoundKeySubstrings =
+        ["cardnumber", "creditcard", "apikey"];
+
+    private static readonly System.Text.RegularExpressions.Regex CamelCaseBoundary =
+        new(@"(?<=[a-z0-9])(?=[A-Z])", System.Text.RegularExpressions.RegexOptions.Compiled);
+
     public string? SanitizeJson(string? rawJson)
     {
         if (string.IsNullOrWhiteSpace(rawJson))
@@ -64,6 +85,18 @@ public sealed class AuditSanitizer : IAuditSanitizer
         if (text.Length > MaxFallbackLength)
             return FullyRedactedMarker;
 
+        return RedactEmbeddedSecrets(text);
+    }
+
+    // Extracted so well-formed JSON's structured path (SanitizeNode) can run
+    // the same value-level regex scrubbing that used to run only on the
+    // JSON-parse-failure fallback — found by an independent audit
+    // (2026-09-05, H2): a secret embedded in a string VALUE under a
+    // non-sensitive KEY (e.g. {"detail": "auth failed for token=eyJ..."})
+    // passed into the audit store verbatim on well-formed JSON, since
+    // IsSensitiveKey only ever inspected property names.
+    private static string RedactEmbeddedSecrets(string text)
+    {
         var sanitized = text;
         foreach (var pattern in SensitiveSubstrings)
         {
@@ -110,6 +143,12 @@ public sealed class AuditSanitizer : IAuditSanitizer
                 {
                     obj[propName] = "[REDACTED]";
                 }
+                else if (obj[propName] is JsonValue value && value.TryGetValue(out string? text))
+                {
+                    var redacted = RedactEmbeddedSecrets(text);
+                    if (!string.Equals(redacted, text, StringComparison.Ordinal))
+                        obj[propName] = redacted;
+                }
                 else
                 {
                     SanitizeNode(obj[propName]);
@@ -118,9 +157,18 @@ public sealed class AuditSanitizer : IAuditSanitizer
         }
         else if (node is JsonArray arr)
         {
-            foreach (var item in arr)
+            for (var i = 0; i < arr.Count; i++)
             {
-                SanitizeNode(item);
+                if (arr[i] is JsonValue value && value.TryGetValue(out string? text))
+                {
+                    var redacted = RedactEmbeddedSecrets(text);
+                    if (!string.Equals(redacted, text, StringComparison.Ordinal))
+                        arr[i] = redacted;
+                }
+                else
+                {
+                    SanitizeNode(arr[i]);
+                }
             }
         }
     }
@@ -128,10 +176,19 @@ public sealed class AuditSanitizer : IAuditSanitizer
     private static bool IsSensitiveKey(string key)
     {
         var normalized = key.Replace("-", "").Replace("_", "").ToLowerInvariant();
-        foreach (var pattern in SensitiveSubstrings)
+        foreach (var pattern in SensitiveCompoundKeySubstrings)
         {
             if (normalized.Contains(pattern, StringComparison.OrdinalIgnoreCase))
                 return true;
+        }
+
+        foreach (var part in key.Split('_', '-'))
+        {
+            foreach (var token in CamelCaseBoundary.Split(part))
+            {
+                if (SensitiveKeyTokens.Contains(token))
+                    return true;
+            }
         }
         return false;
     }

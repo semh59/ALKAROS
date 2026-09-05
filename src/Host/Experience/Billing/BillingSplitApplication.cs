@@ -1,8 +1,14 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Identity.Authorization.Delegations;
+using ALKAROS.Identity.Authorization.Grants;
+using ALKAROS.Identity.Authorization.Policies;
+using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -28,6 +34,31 @@ public static class BillingSplitApplication
         services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
         services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
         services.TryAddSingleton<ISplitDesignRepository, PostgresSplitDesignRepository>();
+        // Found while adding a regression test for H1 (independent audit,
+        // 2026-09-05): AddBillingSplitExperience never registered
+        // IOrderRepository, even though BillingSplitStore.
+        // CreateBillFromOrderAsync (POST .../bills/from-order/{orderId})
+        // requires it — the constructor's `IOrderRepository? orders = null`
+        // silently resolves to null in a standalone composition, and every
+        // call throws "Order repository is not configured." This endpoint
+        // only ever worked in the full Host composition, where the Orders
+        // module happens to register it first — the same class of gap
+        // already found and fixed for Catalog.
+        services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
+        // V1-RMD-103 (B1): the grant-request flow (V1-IAM-019/020/021/023)
+        // already had a first real caller (V1-BIL-005's comp endpoint); the
+        // bills.discount permission it was built for had none until now.
+        // Same registration set as AddOrderManagementExperience so this
+        // module's standalone composition can resolve the filter chain.
+        services.TryAddSingleton<IBillAdjustmentRepository, PostgresBillAdjustmentRepository>();
+        services.TryAddSingleton<IAuthorizationGrantRepository, PostgresAuthorizationGrantRepository>();
+        services.TryAddSingleton<IAuthorizationPolicyRepository, PostgresAuthorizationPolicyRepository>();
+        services.TryAddSingleton<IAuthorizationDelegationRepository, PostgresAuthorizationDelegationRepository>();
+        services.TryAddSingleton<IEscalationResolver, DelegationEscalationResolver>();
+        services.TryAddSingleton<IBehaviouralRateSource, PostgresBehaviouralRateSource>();
+        services.TryAddSingleton<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
+        services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
+        services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
         services.TryAddSingleton<BillingSplitStore>();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
         services.TryAddTransient<BillingSplitExceptionFilter>();
@@ -52,6 +83,111 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
             return Results.Ok(await store.CreateBillFromOrderAsync(orderId, principal.CanMutate, cancellationToken));
+        });
+
+        // V1-RMD-103 (B1): bills.discount is grant-class (model §3), same
+        // pattern as V1-BIL-005's bills.comp — a role that holds it outright
+        // applies directly; a role that does not raises an
+        // IAuthorizationGrantService request and the policy engine, an
+        // active delegation, or a manager decides.
+        billsGroup.MapPost("/{billId:guid}/discount", async (
+            Guid terminalId,
+            Guid billId,
+            ApplyBillDiscountRequestV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            BillingSplitStore store,
+            IRoleRepository roles,
+            IAuthorizationGrantService grants,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+
+            if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
+                throw new ArgumentException(
+                    $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.", nameof(request));
+
+            var permissions = await roles.GetPermissionCodesForUserAsync(principal.UserId, cancellationToken);
+            if (!permissions.Contains(ApplicationPermissions.BillsDiscount, StringComparer.Ordinal))
+            {
+                var roleIds = await roles.GetRoleIdsForUserAsync(principal.UserId, cancellationToken);
+                var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+                if (role is null)
+                    throw new AuthorizationDeniedException(
+                        principal.UserId, ApplicationPermissions.BillsDiscount, "Requester has no assigned role.");
+
+                var resolution = await grants.RequestAsync(
+                    new GrantRequest(
+                        request.IdempotencyKey,
+                        ApplicationPermissions.BillsDiscount,
+                        principal.UserId,
+                        role.Code,
+                        request.ReasonCode,
+                        request.Value,
+                        SubjectType: "Bill",
+                        SubjectId: billId,
+                        SubjectServingUserId: null),
+                    cancellationToken);
+
+                switch (resolution.Outcome)
+                {
+                    case GrantOutcome.Refused:
+                        return Results.Json(
+                            new { error = new { code = "GRANT_DENIED", message = "Discount request was denied." } },
+                            statusCode: StatusCodes.Status403Forbidden);
+                    case GrantOutcome.Pending:
+                        return Results.Accepted(value: new ApplyBillDiscountResultV1(
+                            "Pending", billId, null, null, resolution.Grant.GrantId));
+                    case GrantOutcome.Authorized:
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Unhandled grant outcome '{resolution.Outcome}'.");
+                }
+            }
+
+            var (adjustment, summary) = await store.ApplyDiscountAsync(billId, request, principal.UserId, cancellationToken);
+            return Results.Ok(new ApplyBillDiscountResultV1(
+                "Applied",
+                billId,
+                adjustment.Id,
+                new AdjustedBillSummaryV1(
+                    summary.OriginalPayableAmount,
+                    summary.TotalDiscounts,
+                    summary.TotalFees,
+                    summary.TotalTips,
+                    summary.AdjustedPayableAmount),
+                null));
+        });
+
+        billsGroup.MapGet("/{billId:guid}/adjustments", async (
+            Guid terminalId,
+            Guid billId,
+            IBillingSplitSessionAuthorizer authorizer,
+            BillingSplitStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            var (adjustments, summary) = await store.GetAdjustmentsAsync(billId, cancellationToken);
+            return Results.Ok(new
+            {
+                Adjustments = adjustments.Select(a => new BillAdjustmentDto(
+                    a.Id,
+                    a.AdjustmentType.ToString(),
+                    a.CalculationType.ToString(),
+                    a.Rate,
+                    a.Amount,
+                    a.IsDeduction,
+                    a.Reason,
+                    a.Notes,
+                    a.CreatedAt)).ToList(),
+                Summary = new AdjustedBillSummaryV1(
+                    summary.OriginalPayableAmount,
+                    summary.TotalDiscounts,
+                    summary.TotalFees,
+                    summary.TotalTips,
+                    summary.AdjustedPayableAmount),
+            });
         });
 
         var group = endpoints.MapGroup(RoutePrefix)

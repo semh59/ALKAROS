@@ -285,6 +285,36 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
     }
 
     [Fact]
+    public async Task SettingAvailabilityChangesRowVersionAndReturnsTheProduct()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        var sku = "AVAIL-" + Guid.NewGuid().ToString("N")[..8];
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(productId, sku, "Suspendable", ProductType.MenuItem, StockMode.Untracked));
+
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/availability",
+            new SetProductAvailabilityV1(false));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var updated = await response.Content.ReadFromJsonAsync<ProductV1>();
+        Assert.NotNull(updated);
+        Assert.False(updated.IsAvailable);
+        // Regression coverage for an independent audit finding (2026-09-05,
+        // B6): catalog.products had no row_version at all. The genuine
+        // concurrency race (a second writer racing between this endpoint's
+        // internal read and write) is exercised at the repository level in
+        // PostgresRepositoryTests — an HTTP-level Task.WhenAll race is not
+        // reliable here since both requests would need to land their reads
+        // before either write, which two independent HttpClient calls
+        // cannot guarantee.
+        Assert.Equal(
+            2L,
+            await ScalarAsync<long>("SELECT row_version FROM catalog.products WHERE product_id = @value;", productId));
+    }
+
+    [Fact]
     public async Task MissingForeignKeyIsStableValidationAndDoesNotInsertProduct()
     {
         using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
