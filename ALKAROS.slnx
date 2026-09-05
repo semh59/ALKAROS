@@ -95,4 +95,5 @@
   <Project Path="tests/Modules/Inventory/PortionReservations/Concurrency/ALKAROS.Inventory.PortionReservations.Concurrency.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/PortionReservations/CancellationEffects/ALKAROS.Inventory.PortionReservations.CancellationEffects.Tests.csproj" />
   <Project Path="tests/Modules/Menu/StaticMenu/ALKAROS.Menu.StaticMenu.Tests.csproj" />
+  <Project Path="tests/Modules/Menu/DailyMenuLifecycle/ALKAROS.Menu.DailyMenuLifecycle.Tests.csproj" />
 </Solution>
