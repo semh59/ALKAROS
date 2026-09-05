@@ -21,6 +21,8 @@
 
 - `src/Modules/Menu/DailyMenuLifecycle/**`, `tests/Modules/Menu/DailyMenuLifecycle/**`,
   `database/migrations/V11/V11-MNU-001/**`
+- `tests/Modules/Menu/DailyMenuLifecycle/ALKAROS.Menu.DailyMenuLifecycle.Tests.csproj`, `tests/Modules/Menu/DailyMenuLifecycle/packages.lock.json`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
