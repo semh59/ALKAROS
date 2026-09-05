@@ -22,6 +22,8 @@ Tam original movement'a bağlı tek bir idempotent `Reversal` movement oluşturm
 
 - `src/Modules/Inventory/MovementReversal/**`, `tests/Modules/Inventory/MovementReversal/**`,
   `database/migrations/V11/V11-INV-003/**`
+- `tests/Modules/Inventory/MovementReversal/ALKAROS.Inventory.MovementReversal.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
