@@ -90,4 +90,5 @@
   <Project Path="tests/Modules/Inventory/ManualAdjustments/ALKAROS.Inventory.ManualAdjustments.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/WasteRecording/ALKAROS.Inventory.WasteRecording.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/PortionReservations/Lifecycle/ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.csproj" />
+  <Project Path="tests/Modules/Inventory/ReservationBalanceProjection/ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj" />
 </Solution>
