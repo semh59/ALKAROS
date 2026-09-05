@@ -23,6 +23,8 @@ Rakip kanalların aşırı satış yapmaması için satır kilitleme/sürüm kon
 
 - `src/Modules/Inventory/PortionReservations/Concurrency/**`,
   `tests/Modules/Inventory/PortionReservations/Concurrency/**`
+- `tests/Modules/Inventory/PortionReservations/Concurrency/ALKAROS.Inventory.PortionReservations.Concurrency.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
