@@ -92,4 +92,5 @@
   <Project Path="tests/Modules/Inventory/PortionReservations/Lifecycle/ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/ReservationBalanceProjection/ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/PortionReservations/Concurrency/ALKAROS.Inventory.PortionReservations.Concurrency.Tests.csproj" />
+  <Project Path="tests/Modules/Inventory/PortionReservations/CancellationEffects/ALKAROS.Inventory.PortionReservations.CancellationEffects.Tests.csproj" />
 </Solution>
