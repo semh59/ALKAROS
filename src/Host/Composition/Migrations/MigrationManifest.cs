@@ -5,7 +5,7 @@ namespace ALKAROS.Host.Composition.Migrations;
 /// <summary>
 /// One position of the verified global migration order. Positions are
 /// zero-padded three-digit ids inside the phase ranges defined by
-/// V0-DAT-001 (phase A: 001-030, phase B: 031-049).
+/// V0-DAT-001 (phase A: 001-030, phase B: 031-052).
 /// </summary>
 public sealed record MigrationManifestEntry(
     string Id,

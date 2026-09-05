@@ -22,7 +22,6 @@
 - `plan/GATES.md`
 - `plan/v1/README.md`
 - `plan/OFFICIAL_SOURCE_REGISTER.md`
-- `evidence/V1-GOV-054/**`
 
 ## In scope
 

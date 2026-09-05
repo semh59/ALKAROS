@@ -85,15 +85,22 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
             cookie,
             new TransitionKitchenTicketV1("Accepted", 1));
         Assert.Equal(2, accepted.RowVersion);
-        Assert.Equal(2, Assert.Single(accepted.Items).RowVersion);
+        // Regression assertion for an independent audit finding (2026-09-05):
+        // a pure ticket-level transition does not touch any item, so the
+        // item's own row_version must stay unchanged (was 1, not bumped to
+        // 2) — PostgresKitchenTicketRepository.SaveAsync used to bump every
+        // item's row_version on every save regardless of whether that item
+        // actually changed.
+        Assert.Equal(1, Assert.Single(accepted.Items).RowVersion);
 
         var preparing = await PostAsync<KitchenTicketV1>(
             client,
             $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition",
             cookie,
-            new TransitionKitchenItemV1("Preparing", 2, 2));
+            new TransitionKitchenItemV1("Preparing", 2, 1));
         Assert.Equal(3, preparing.RowVersion);
         Assert.Equal("Preparing", Assert.Single(preparing.Items).Status);
+        Assert.Equal(2, Assert.Single(preparing.Items).RowVersion);
 
         using var staleRequest = JsonRequest(
             HttpMethod.Post,
@@ -110,7 +117,7 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
             client,
             $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition",
             cookie,
-            new TransitionKitchenItemV1("Ready", 3, 3));
+            new TransitionKitchenItemV1("Ready", 3, 2));
         Assert.Equal(4, readyItem.RowVersion);
 
         var readyTicket = await PostAsync<KitchenTicketV1>(

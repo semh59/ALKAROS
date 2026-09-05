@@ -30,6 +30,16 @@ public static class CatalogManagementEndpoints
         services.TryAddScoped<IPricingRepository, PostgresPricingRepository>();
         services.TryAddScoped<CatalogManagerAuthentication>();
         services.TryAddScoped<CatalogManagementStore>();
+        // Found by an independent audit (2026-09-05): CatalogManagerEndpointFilter
+        // requires IAuthorizationService in its constructor, but this method never
+        // registered it (or the IRoleRepository/IDenialEventSink it needs) — it
+        // only ever worked because the full Host composition happened to register
+        // these from another module first. A standalone host for this module alone
+        // could never resolve the filter. Every other module's Add*Experience
+        // registers its own filter dependencies; Catalog was the one exception.
+        services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
+        services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
+        services.TryAddScoped<IAuthorizationService, AuthorizationService>();
         return services;
     }
 

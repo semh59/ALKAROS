@@ -22,7 +22,6 @@ Aylarca çalışan bir lokantada `idempotency_keys` (her yazımda bir BYTEA yan�
 - `plan/GATES.md`
 - `plan/v1/README.md`
 - `plan/OFFICIAL_SOURCE_REGISTER.md`
-- `evidence/V1-GOV-058/**`
 
 ## In scope
 

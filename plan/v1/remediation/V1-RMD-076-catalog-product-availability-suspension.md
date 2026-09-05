@@ -24,7 +24,6 @@ Katalog ürününe silmeden hızlıca "menüden kaldır" imkanı veren kullanıl
 - `tests/Modules/Catalog/ProductCatalog/DomainTests.cs`
 - `tests/Modules/Catalog/ProductCatalog/PostgresRepositoryTests.cs`
 - `tests/Host/Experience/Catalog/**`
-- `evidence/V1-RMD-076/**`
 
 ## In scope
 

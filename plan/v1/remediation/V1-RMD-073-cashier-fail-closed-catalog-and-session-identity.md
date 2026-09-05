@@ -18,7 +18,6 @@ Cashier istemcisinde katalog sunucudan alınamadığında sessizce sabit sahte �
 
 - `plan/v1/remediation/V1-RMD-073-cashier-fail-closed-catalog-and-session-identity.md`
 - PO:2026-08-31 kararıyla src/Clients/Cashier/wwwroot/** yüzeyi V1-RMD-077'ye devredildi; bu historical task closed kalır.
-- `evidence/V1-RMD-073/**`
 
 ## In scope
 

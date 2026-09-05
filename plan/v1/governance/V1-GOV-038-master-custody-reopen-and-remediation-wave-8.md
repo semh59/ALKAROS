@@ -31,7 +31,6 @@
 - `plan/v1/remediation/V1-RMD-061-cashier-park-ticket-protection.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-038/**`
 
 ## In scope
 

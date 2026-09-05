@@ -44,7 +44,6 @@ Bu görev kararı kaydeder ve uygulama görev kümesini kayıt altına alır:
 - `plan/v1/table-management/V1-TBL-008-dedicated-reservation-station-decision.md`
 - `plan/v1/settings/V1-SET-003-reservation-station-toggle.md`
 - `plan/v1/cashier-ui/V1-CUI-006-dedicated-reservation-station-screen.md`
-- `evidence/V1-TBL-008/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır): `docs/domain/table-reservation-policy.md`
   (`V1-RMD-100` sahipliğinde kalır, yalnız kendi 2026-09-03 tarihli

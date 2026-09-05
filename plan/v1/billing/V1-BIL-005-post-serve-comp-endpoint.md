@@ -21,7 +21,6 @@ aynı idempotency key ile tamamlanır.
 - `plan/v1/billing/V1-BIL-005-post-serve-comp-endpoint.md`
 - `tests/Host/Experience/Orders/Comp/**` (yeni proje — üst dizinde
   `V1-RMD-083`/`V1-ORD-005`'in sahip olduğu yollarla çakışmıyor)
-- `evidence/V1-BIL-005/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır):
   `src/Host/Experience/Orders/OrderManagementContracts.cs` (`V1-IAM-024`

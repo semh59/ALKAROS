@@ -47,7 +47,6 @@ devredildi (bkz. Handoff).
 - `src/Host/Experience/OfflineReconciliation/**`
 - `tests/Host/Experience/OfflineReconciliation/**`
 - `src/Clients/PosTerminal/src/routes/workspace.test.tsx`
-- `evidence/V1-IAM-025/**`
 - Yüzey devri (giriş): `database/MigrationComposition/order.json` ve
   `tests/Host/MigrationComposition/Manifest/ManifestTests.cs`, migration 050
   için `V1-IAM-024`'ten bu göreve devredildi (PO:2026-09-04).

@@ -21,7 +21,6 @@ tüketilmiyordu; bu görev onun ilk gerçek tüketicisidir.
 - `plan/v1/settings/V1-SET-002-kitchen-live-sync-toggle.md`
 - `src/Modules/Settings/KitchenLiveSync/**`
 - `tests/Modules/Settings/KitchenLiveSync/**`
-- `evidence/V1-SET-002/**`
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## In scope

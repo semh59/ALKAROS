@@ -25,7 +25,6 @@ açılışı resmen kaydeder ve kapanışı `V1-GOV-076`'ya bırakır.
 - `plan/v1/governance/V1-GOV-076-wave27-master-audit-reseal-and-gate-closure.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-075/**`
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## In scope

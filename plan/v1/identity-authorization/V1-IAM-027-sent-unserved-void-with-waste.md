@@ -28,7 +28,6 @@ kataloğunda vardı, hiç üretilmemişti).
 - `tests/Host/Experience/Orders/VoidSent/**` (yeni proje — üst dizinde
   `V1-RMD-083`/`V1-ORD-005`/`V1-BIL-005`'in sahip olduğu yollarla
   çakışmıyor)
-- `evidence/V1-IAM-027/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır):
   `src/Modules/Orders/OrderAggregate/OrderItem.cs` (`V1-RMD-064` sahipliğinde

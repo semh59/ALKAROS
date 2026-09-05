@@ -23,7 +23,6 @@
 - `tests/Modules/Orders/OrderAggregate/**`
 - `tests/Modules/Orders/SubmitOrder/**`
 - PO:2026-09-01 kararıyla tests/Host/Experience/Orders/** yüzeyi V1-RMD-083’e devredildi; bu historical task closed kalır.
-- `evidence/V1-RMD-064/**`
 
 ## In scope
 

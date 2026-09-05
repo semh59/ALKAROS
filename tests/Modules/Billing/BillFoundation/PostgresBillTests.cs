@@ -209,6 +209,48 @@ public sealed class PostgresBillTests : IClassFixture<BillingTestDatabase>
     }
 
     [Fact]
+    public async Task SaveAsyncThrowsWhenAnItemWasConcurrentlyModifiedEvenIfTheBillRowVersionIsCurrent()
+    {
+        // Regression test for the independent audit finding (2026-09-05):
+        // UpdateBillItemAsync's WHERE clause used to omit the row_version
+        // check entirely, so a concurrent writer's change to a single
+        // bill_item row could be silently overwritten as long as the
+        // parent Bill's own row_version was still current. Simulates that
+        // "another writer" by bumping the item's row_version directly via
+        // SQL, bypassing the Bill aggregate's own concurrency check.
+        var product = await SeedProduct("Iskender", 220m);
+        var order = await CreateAndSaveOrder(product, "Iskender", 220m);
+
+        var bill = new Bill(
+            Guid.NewGuid(),
+            UniqueBillNumber(),
+            new[] { BillItem.FromOrderItem(Guid.NewGuid(), order.Items[0]) });
+        await _bills.AddAsync(bill);
+
+        var loaded = await _bills.GetByIdAsync(bill.Id);
+        Assert.NotNull(loaded);
+        var loadedItem = loaded.Items[0];
+
+        // Simulate a concurrent writer bumping only this bill_item's row
+        // version, leaving the parent Bill row untouched.
+        await using (var command = _dataSource.CreateCommand(
+            "UPDATE billing.bill_items SET row_version = row_version + 1 WHERE bill_item_id = @bill_item_id;"))
+        {
+            command.Parameters.AddWithValue("bill_item_id", loadedItem.Id);
+            var affected = await command.ExecuteNonQueryAsync();
+            Assert.Equal(1, affected);
+        }
+
+        // Re-add the same item unchanged so SaveAsync's item loop treats it
+        // as an update (existingItemIds already contains its id) rather
+        // than an insert or delete, exercising UpdateBillItemAsync with the
+        // now-stale in-memory row_version.
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _bills.SaveAsync(loaded, expectedRowVersion: loaded.RowVersion));
+        Assert.Contains(loadedItem.Id.ToString(), exception.Message);
+    }
+
+    [Fact]
     public async Task DatabaseRejectsInvalidPersistedLineAmounts()
     {
         var product = await SeedProduct("Constraint Product", 100m);

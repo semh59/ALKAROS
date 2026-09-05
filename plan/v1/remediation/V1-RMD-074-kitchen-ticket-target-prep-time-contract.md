@@ -20,7 +20,6 @@ Mutfak biletine hedef hazırlık süresini domain alanı olarak eklemek. Bilet o
 - `src/Modules/Kitchen/TicketLifecycle/**`
 - PO:2026-09-01 kararıyla src/Host/Experience/KitchenOperations/** ve tests/Host/Experience/KitchenOperations/** yüzeyleri V1-RMD-082’ye devredildi; bu historical task closed kalır.
 - `tests/Modules/Kitchen/TicketLifecycle/**`
-- `evidence/V1-RMD-074/**`
 
 ## In scope
 

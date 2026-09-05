@@ -21,7 +21,6 @@ Semih onayÄ±yla (2026-09-01) `V15-KVK-001`/`V15-KVK-002` KVKK saklama uygulamasÄ
 - `plan/v1/governance/V1-GOV-065-wave21-master-audit-reseal-and-gate-closure.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-064/**`
 
 ## In scope
 

@@ -28,7 +28,6 @@ Lokanta operasyonunda sık gereken kalem bazlı özel talimat girişini uçtan u
 - `plan/v1/remediation/V1-RMD-064-order-items-orphan-deletion.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-044/**`
 
 ## In scope
 

@@ -68,3 +68,11 @@ def test_cashier_javascript_order_engine():
     # uç nokta) ve bu ekranın tek-seferlik sipariş oluşturma modeliyle
     # uyumlu değil, ileride ayrı bir görevle bağlanabilir.
     assert "isComplimentary" not in app_code
+
+    # Bağımsız denetimde bulundu (2026-09-05): dispatchOrderToKitchen'de
+    # çift tıklamaya (veya yavaş bir istek sürerken ikinci bir tıklamaya)
+    # karşı hiçbir koruma yoktu; her tıklama sepeti sunucuya ayrı bir
+    # siparişmiş gibi gönderirdi. Sunucu X-Idempotency-Key'i kabul eder
+    # ama zorunlu kılmaz, bu yüzden istemci tarafı koruma gerekliydi.
+    assert "dispatchInFlight" in app_code
+    assert "btnDispatchOrder.disabled = true" in app_code

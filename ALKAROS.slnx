@@ -39,6 +39,7 @@
   <Project Path="tests/Clients/WaiterPwa/SessionQueue/ALKAROS.WaiterPwa.SessionQueue.Tests.csproj" />
   <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
   <Project Path="tests/Host/Experience/Authorization/ALKAROS.Host.Experience.Authorization.Tests.csproj" />
+  <Project Path="tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj" />
   <Project Path="tests/Host/Experience/Composition/ALKAROS.Host.Experience.Composition.Tests.csproj" />
   <Project Path="tests/Host/Experience/Catalog/ALKAROS.Host.Experience.Catalog.Tests.csproj" />
   <Project Path="tests/Host/Experience/Tables/ALKAROS.Host.Experience.Tables.Tests.csproj" />

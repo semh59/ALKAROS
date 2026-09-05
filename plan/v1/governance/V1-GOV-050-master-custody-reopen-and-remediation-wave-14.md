@@ -21,7 +21,6 @@ Lokantanın canlıya alınmadan önce eş zamanlı yük altındaki davranışın
 - `plan/v1/governance/V1-GOV-051-wave14-master-audit-reseal-and-gate-closure.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-050/**`
 
 ## In scope
 

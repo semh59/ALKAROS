@@ -20,7 +20,6 @@ kapsamında değildir.
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-101-independent-audit-critical-fixes.md`
-- `evidence/V1-RMD-101/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır):
   `src/Host/Experience/Orders/OrderManagementEndpoints.cs` (`V1-IAM-024`

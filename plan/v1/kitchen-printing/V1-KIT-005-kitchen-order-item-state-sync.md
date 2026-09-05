@@ -28,7 +28,6 @@ bir alan yerine gerçek bir veriye bakabilir.
 - `src/BuildingBlocks/IntegrationContracts/KitchenIntegrationEvents.cs`
   (yeni dosya — `TableIntegrationEvents.cs`'e komşu, kendi olay sözleşmesi;
   o dosyaya dokunulmadı)
-- `evidence/V1-KIT-005/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır):
   `src/Modules/Orders/OrderAggregate/OrderItem.cs` (`V1-RMD-064` sahipliğinde

@@ -299,7 +299,19 @@ public sealed class Order
         if (!found)
             throw new ArgumentException($"Order {Id} has no item {orderItemId}.", nameof(orderItemId));
 
-        return RebuildWith(items: items);
+        // Found by an independent audit (2026-09-05): reason/changedBy/
+        // changedAt were accepted but silently dropped — an item-level void
+        // never appended an OrderStatusHistoryEntry, unlike every
+        // order-level TransitionTo. The order's own Status does not change
+        // for an item void, so OldStatus and NewStatus are both the
+        // current Status; this entry exists purely to record the reason
+        // and actor (V0-DOM-006 void audit requirement).
+        var at = changedAt ?? DateTimeOffset.UtcNow;
+        var history = _history
+            .Append(new OrderStatusHistoryEntry(Guid.NewGuid(), Id, Status, Status, reason, changedBy, at))
+            .ToList();
+
+        return RebuildWith(items: items, history: history);
     }
 
     /// <summary>
@@ -345,7 +357,8 @@ public sealed class Order
 
     private Order RebuildWith(
         IReadOnlyList<OrderItem>? items = null,
-        long? rowVersion = null)
+        long? rowVersion = null,
+        IReadOnlyList<OrderStatusHistoryEntry>? history = null)
         => new(
             Id,
             Source,
@@ -363,7 +376,7 @@ public sealed class Order
             AcceptedAt,
             ClosedAt,
             CancelledAt,
-            _history,
+            history ?? _history,
             rowVersion ?? RowVersion,
             CreatedAt,
             UpdatedAt);

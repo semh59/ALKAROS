@@ -19,7 +19,6 @@
 - `plan/v1/remediation/V1-RMD-057-audit-sanitizer-unclosed-quotes-and-session-invariants.md`
 - PO:2026-08-31 kararıyla src/Modules/Audit/EventStore/IAuditSanitizer.cs ve tests/Modules/Audit/EventStore/AuditSanitizerTests.cs yüzeyleri V1-RMD-072'ye devredildi; bu historical task closed kalır.
 - `src/Host/Experience/Billing/BillingSplitStore.cs`
-- `evidence/V1-RMD-057/**`
 
 ## In scope
 

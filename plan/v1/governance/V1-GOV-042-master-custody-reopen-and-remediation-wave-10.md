@@ -26,7 +26,6 @@
 - `plan/v1/identity-authorization/V1-IAM-002-authorization.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-042/**`
 
 ## In scope
 

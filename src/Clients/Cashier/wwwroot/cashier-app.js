@@ -34,7 +34,8 @@
     // closed and order dispatch is disabled.
     catalogStatus: 'loading', // 'loading' | 'ready' | 'error'
     categories: [{ id: 'all', name: 'Tüm Ürünler' }],
-    products: []
+    products: [],
+    dispatchInFlight: false
   };
 
   // DOM Elements
@@ -245,6 +246,14 @@
       alert('Katalog sunucudan alınamadığı için sipariş gönderilemiyor.');
       return;
     }
+    // Found by an independent audit (2026-09-05): nothing stopped a second
+    // click (double-tap, or a click while a slow request is still in
+    // flight) from sending the same ticket twice. The server accepts an
+    // X-Idempotency-Key but does not currently enforce it on this route, so
+    // the only real protection today is preventing the second click here.
+    if (state.dispatchInFlight) return;
+    state.dispatchInFlight = true;
+    if (el.btnDispatchOrder) el.btnDispatchOrder.disabled = true;
 
     const orderPayload = {
       id: crypto.randomUUID(),
@@ -284,6 +293,9 @@
       }
     } catch {
       alert('Sunucuya ulaşılamadı. Sipariş iletilemedi.');
+    } finally {
+      state.dispatchInFlight = false;
+      if (el.btnDispatchOrder) el.btnDispatchOrder.disabled = state.catalogStatus !== 'ready';
     }
   }
 

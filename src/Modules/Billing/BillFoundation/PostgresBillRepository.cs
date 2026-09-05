@@ -470,6 +470,14 @@ public sealed class PostgresBillRepository : IBillRepository
         BillItem item,
         CancellationToken cancellationToken)
     {
+        // WHERE ... AND row_version = @row_version added (found by an
+        // independent audit, 2026-09-05): this class's own doc comment
+        // claims item-level optimistic concurrency, but the WHERE clause
+        // never actually checked it, unlike PostgresOrderRepository
+        // .UpdateItemAsync's equivalent. Harmless today (Bill's own
+        // aggregate-root row_version already serializes the only writer
+        // this table has), but a latent lost-update risk if a second
+        // writer (e.g. adjustments/split) is ever added to bill_items.
         var sql = $"""
             UPDATE {BillItemsTable}
             SET product_name_snapshot = @product_name_snapshot,
@@ -484,12 +492,17 @@ public sealed class PostgresBillRepository : IBillRepository
                 notes = @notes,
                 updated_at = @updated_at,
                 row_version = row_version + 1
-            WHERE bill_item_id = @bill_item_id;
+            WHERE bill_item_id = @bill_item_id AND row_version = @row_version
+            RETURNING bill_item_id;
             """;
 
         await using var command = new NpgsqlCommand(sql, connection, transaction);
         BindBillItemParameters(command, item);
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        if (result is null)
+            throw new InvalidOperationException(
+                $"Bill item '{item.Id}' not found or concurrent modification " +
+                $"(expected row version {item.RowVersion}).");
     }
 
     private static async Task DeleteBillItemAsync(

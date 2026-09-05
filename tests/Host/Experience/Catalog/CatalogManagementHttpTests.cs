@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using ALKAROS.Catalog.Pricing;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Host.Experience.Catalog;
-using ALKAROS.Identity.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -29,9 +28,10 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseKestrel().UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton(_database.DataSource);
-        builder.Services.AddScoped<IRoleRepository, PostgresRoleRepository>();
-        builder.Services.AddScoped<IDenialEventSink, PostgresDenialEventSink>();
-        builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+        // AddCatalogManagement() now registers its own filter dependencies
+        // (IRoleRepository/IDenialEventSink/IAuthorizationService) — found
+        // missing by an independent audit (2026-09-05); this test used to
+        // paper over the gap by registering them here by hand.
         builder.Services.AddCatalogManagement();
 
         _application = builder.Build();

@@ -19,7 +19,6 @@ sürer. `V1-SET-002`'nin (`kitchen.live_sync_enabled`) birebir aynı deseni.
 - `plan/v1/settings/V1-SET-003-reservation-station-toggle.md`
 - `src/Modules/Settings/ReservationStation/**`
 - `tests/Modules/Settings/ReservationStation/**`
-- `evidence/V1-SET-003/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır): src/Host/DualScreen/DualScreenApplication.Endpoints.cs
   (mevcut sahiplikte kalır — bkz. dosya geçmişi) — `runtime-configuration`

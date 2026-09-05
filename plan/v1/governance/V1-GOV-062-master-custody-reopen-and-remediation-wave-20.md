@@ -21,7 +21,6 @@ Semih onayıyla (2026-09-01) `V15-PER-001` tam kritik-yol yük testinin V1 için
 - `plan/v1/governance/V1-GOV-063-wave20-master-audit-reseal-and-gate-closure.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-062/**`
 
 ## In scope
 

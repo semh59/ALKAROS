@@ -27,7 +27,6 @@ Garson PWA ve Cashier sipariş ekranlarında her sepet kalemine serbest metin ö
   tests/Host/Experience/Orders/** joker yüzeyi yukarıdaki tek dosyayla
   değiştirildi ve tests/Host/Experience/Orders/Void alt yüzeyi
   V1-ORD-005'e devredildi (bu historical task closed kalır).
-- `evidence/V1-RMD-083/**`
 
 ## In scope
 

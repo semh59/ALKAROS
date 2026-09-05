@@ -90,3 +90,9 @@ def test_waiter_pwa_real_api_and_reliable_queue():
     assert "flushOfflineQueue" in app_code
     assert "queueOrderAction" in app_code
     assert "mock-session-token" not in app_code
+
+    # Bağımsız denetimde bulundu (2026-09-05): btnSendKitchen'in click
+    # handler'ı async'ti ama yeniden girişe (çift tıklama, ya da istek
+    # sürerken ikinci bir tıklama) karşı korunmuyordu.
+    assert "dispatchInFlight" in app_code
+    assert "btnSendKitchen.disabled = true" in app_code

@@ -39,7 +39,6 @@
 - PO:2026-09-01 kararıyla tests/Host/MigrationComposition/Manifest/ManifestTests.cs yüzeyi V1-RMD-089'a devredildi; bu historical task closed kalır ve manifest testleri 16. dalgada güncellenir.
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-040/**`
 
 ## In scope
 

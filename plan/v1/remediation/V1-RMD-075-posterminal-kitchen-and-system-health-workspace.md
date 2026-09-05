@@ -20,7 +20,6 @@ Mutfak sağlık ve yedek panelini mutfak operasyon görünümünden tamamen çı
 - PO:2026-09-01 kararıyla src/Clients/PosTerminal/src/features/kitchen-operations/** yüzeyi V1-RMD-082’ye devredildi; bu historical task closed kalır.
 - `src/Clients/PosTerminal/src/features/system-health/**`
 - `src/Clients/PosTerminal/src/App.tsx`
-- `evidence/V1-RMD-075/**`
 
 ## In scope
 

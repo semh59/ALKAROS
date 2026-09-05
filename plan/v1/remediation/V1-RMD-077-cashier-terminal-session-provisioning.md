@@ -21,7 +21,6 @@ Cashier istemcisindeki sabit terminal kimliğini kaldırmak. Host, kasiyer oturu
 - PO:2026-09-01 kararıyla src/Host/DualScreen/DualScreenStore.cs yüzeyi V1-RMD-090'a devredildi; bu historical task closed kalır ve oturtma sürüm toleransı 17. dalgada uygulanır.
 - PO:2026-09-01 kararıyla src/Clients/Cashier/wwwroot/** yüzeyi V1-RMD-083’e devredildi; bu historical task closed kalır.
 - PO:2026-09-01 kararıyla tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs yüzeyi V1-RMD-090'a devredildi; bu historical task closed kalır ve oturtma testleri 17. dalgada güncellenir.
-- `evidence/V1-RMD-077/**`
 
 ## In scope
 

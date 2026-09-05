@@ -22,7 +22,6 @@ Lokantanın tek başına canlıya alınabilmesi için en kritik eksik olan Postg
 - `plan/GATES.md`
 - `plan/v1/README.md`
 - `plan/OFFICIAL_SOURCE_REGISTER.md`
-- `evidence/V1-GOV-048/**`
 
 ## In scope
 

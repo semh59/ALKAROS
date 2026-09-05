@@ -24,7 +24,6 @@ olarak yeniden mühürlenmesi.
 - `plan/AUDIT_REPORT.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-076/**`
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## In scope

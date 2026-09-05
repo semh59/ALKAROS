@@ -362,6 +362,53 @@ public sealed class PostgresKitchenTicketIntegrationTests : IClassFixture<Kitche
     }
 
     [Fact]
+    public async Task SaveAsyncDoesNotBumpRowVersionOfAnUntouchedItem()
+    {
+        // Regression test for an independent audit finding (2026-09-05):
+        // SaveAsync re-sends every item on the ticket on every save, and
+        // its ON CONFLICT DO UPDATE used to unconditionally bump
+        // row_version for all of them, not just the one actually
+        // transitioned — producing spurious concurrency conflicts for a
+        // caller holding a correct, unchanged item row_version.
+        var productId = Guid.NewGuid();
+        await using (var cmd = _dataSource.CreateCommand(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES (@product_id, @sku, @name, @product_type, @stock_mode, @current_price);
+            """))
+        {
+            cmd.Parameters.AddWithValue("product_id", productId);
+            cmd.Parameters.AddWithValue("sku", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("name", "Salata");
+            cmd.Parameters.AddWithValue("product_type", 1);
+            cmd.Parameters.AddWithValue("stock_mode", 1);
+            cmd.Parameters.AddWithValue("current_price", 90m);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var orderId = Guid.NewGuid();
+        var item1 = new OrderItem(Guid.NewGuid(), orderId, productId, "Salata", 1, 90m, 10m, skuSnapshot: "SALATA-01");
+        var item2 = new OrderItem(Guid.NewGuid(), orderId, productId, "Salata", 1, 90m, 10m, skuSnapshot: "SALATA-01");
+        var order = new Order(orderId, OrderSource.Waiter, "ORD-" + Guid.NewGuid().ToString("N")[..8], [item1, item2]);
+        await _orderRepo.AddAsync(order);
+
+        var ticket = KitchenTicket.CreateFromOrder(order, "Grill");
+        await _ticketRepo.AddAsync(ticket);
+        var loaded = await _ticketRepo.GetByIdAsync(ticket.Id);
+        loaded!.Items.Should().HaveCount(2);
+        var untouchedItemId = loaded.Items[1].Id;
+        var untouchedItemRowVersionBefore = loaded.Items[1].RowVersion;
+
+        var transitioned = loaded.UpdateItemStatus(loaded.Items[0].Id, KitchenTicketItemState.Preparing);
+        await _ticketRepo.SaveAsync(transitioned, loaded.RowVersion);
+
+        var reloaded = await _ticketRepo.GetByIdAsync(ticket.Id);
+        var untouchedItem = reloaded!.Items.Single(i => i.Id == untouchedItemId);
+        untouchedItem.Status.Should().Be(KitchenTicketItemState.Queued);
+        untouchedItem.RowVersion.Should().Be(untouchedItemRowVersionBefore);
+    }
+
+    [Fact]
     public async Task GetActiveByStationFiltersNonTerminalTickets()
     {
         var order = await CreateAndPersistSampleOrderAsync();

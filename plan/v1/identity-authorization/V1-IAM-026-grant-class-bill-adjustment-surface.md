@@ -45,7 +45,6 @@ Bu görev kararı kaydeder ve uygulama görev kümesini kayıt altına alır:
 - `plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md`
 - `plan/v1/billing/V1-BIL-005-post-serve-comp-endpoint.md`
 - `plan/v1/identity-authorization/V1-IAM-027-sent-unserved-void-with-waste.md`
-- `evidence/V1-IAM-026/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır): `docs/domain/void-complimentary-discount-policy.md`
   (`V0-DOM-006` sahipliğinde kalır) — `## Amendment` bölümü eklendi, mevcut

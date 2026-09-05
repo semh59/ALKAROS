@@ -23,7 +23,6 @@ gerçekleşen durum) çalışır.
   `V1-RMD-083`'ten devralındı — bkz. o görevin Owned surface notu; üst
   dizin tests/Host/Experience/Orders/** genel olarak V1-RMD-083
   sahipliğinde kalmaya devam eder)
-- `evidence/V1-ORD-005/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır):
   `src/Host/Experience/Orders/OrderManagementContracts.cs` (`V1-IAM-024`

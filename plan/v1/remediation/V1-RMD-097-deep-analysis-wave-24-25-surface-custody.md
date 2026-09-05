@@ -40,7 +40,6 @@ kuralı yeniden sağlanır ve bu dosyalar yalnızca yeni bir plan görevi ile de
 - `src/Clients/PosTerminal/src/routes/workspace.tsx`
 - `tests/BuildingBlocks/Idempotency/OutboxFanoutSinkTests.cs`
 - `tests/BuildingBlocks/TestHelpers/OutboxTestDrain.cs`
-- `evidence/V1-RMD-097/**`
 
 ## In scope
 

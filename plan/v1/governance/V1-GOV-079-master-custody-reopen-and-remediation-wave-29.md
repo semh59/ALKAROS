@@ -23,7 +23,6 @@ Bu görev o kaydı resmen yapar; kapanışı `V1-GOV-080`'e bırakır.
 - `plan/v1/governance/V1-GOV-080-wave29-master-audit-reseal-and-gate-closure.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-079/**`
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## In scope

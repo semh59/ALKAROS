@@ -19,7 +19,6 @@
 - `plan/v1/remediation/V1-RMD-055-client-catalog-and-complimentary-alignment.md`
 - PO:2026-08-31 kararıyla Cashier wwwroot yüzeyi V1-RMD-061'e devredildi.
 - PO:2026-08-31 kararıyla waiter-app.js yüzeyi V1-RMD-060'a devredildi.
-- `evidence/V1-RMD-055/**`
 
 ## In scope
 

@@ -33,7 +33,6 @@ entegrasyonuna aittir.
 - `src/Modules/Identity/Authorization/Grants/**`
 - `src/Modules/Identity/Authorization/Behavioural/**`
 - `tests/Modules/Identity/Authorization/Behavioural/**`
-- `evidence/V1-IAM-023/**`
 - Yüzey devri (giriş): database/MigrationComposition/order.json, tests/Host/MigrationComposition/Manifest/ManifestTests.cs ve src/Modules/Identity/IdentityModule.cs, migration 048 ile dalga DI evi için V1-IAM-022'den bu göreve devredildi (PO:2026-09-04). src/Modules/Identity/Authorization/Grants/**, pre-policy kapı kancası (IPrePolicyGate) ve AuthorizationGrantService'in kapı yürüyüşü için V1-IAM-021'den bu göreve devredildi (PO:2026-09-04); tests/Modules/Identity/Authorization/Grants/** V1-IAM-021'de kalır.
 - Yüzey devri (çıkış): database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, pos.cashier.mutate kaldırma migration'ı için V1-IAM-024'e devredildi (PO:2026-09-05).
 - src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 048 değerine güncellenir (V1-RMD-089/9. dalga deseni).

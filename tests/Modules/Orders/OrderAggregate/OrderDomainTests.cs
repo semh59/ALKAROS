@@ -483,6 +483,32 @@ public class OrderVoidTests
     }
 
     [Fact]
+    public void CancelItemAppendsAHistoryEntryRecordingReasonActorAndTimestamp()
+    {
+        // Regression test for an independent audit finding (2026-09-05):
+        // reason/changedBy/changedAt were accepted by CancelItem's
+        // signature but silently dropped — no OrderStatusHistoryEntry was
+        // ever appended for an item-level void, unlike every order-level
+        // TransitionTo.
+        var itemId = Guid.NewGuid();
+        var item = new OrderItem(
+            itemId, Guid.NewGuid(), Guid.NewGuid(), "Kazandibi", 1, 40m, 10m,
+            status: OrderItemState.Active, kitchenState: KitchenState.NotSent);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-3001B", [item]);
+        var actorId = Guid.NewGuid();
+        var changedAt = DateTimeOffset.UtcNow;
+
+        var cancelled = order.CancelItem(itemId, reason: "customer changed mind", changedBy: actorId, changedAt: changedAt);
+
+        var entry = cancelled.History.Should().ContainSingle().Subject;
+        entry.Reason.Should().Be("customer changed mind");
+        entry.ChangedBy.Should().Be(actorId);
+        entry.ChangedAt.Should().Be(changedAt);
+        entry.OldStatus.Should().Be(order.Status);
+        entry.NewStatus.Should().Be(order.Status);
+    }
+
+    [Fact]
     public void SentButUnservedItemCanNowBeVoidedAtTheOrderLevel()
     {
         // V0-DOM-006 amendment (2026-09-04, V1-IAM-027): the domain no

@@ -20,7 +20,6 @@ Sipariş kaleminin serbest metin özel talimatını (örn. "az", "acısız", "ek
 - `src/Host/Experience/KitchenOperations/**`
 - `src/Clients/PosTerminal/src/features/kitchen-operations/**`
 - `tests/Host/Experience/KitchenOperations/**`
-- `evidence/V1-RMD-082/**`
 
 ## In scope
 

@@ -229,6 +229,18 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         {
             await using var itemCmd = connection.CreateCommand();
             itemCmd.Transaction = tx;
+            // The WHERE clause on the ON CONFLICT action below (found by an
+            // independent audit, 2026-09-05) is required: SaveAsync
+            // re-sends every item on the ticket on every save, not just the
+            // one a caller transitioned. Without it, this ON CONFLICT DO
+            // UPDATE unconditionally bumped row_version for every untouched
+            // item too, even though KitchenOperationsStore promises
+            // item-level optimistic concurrency (ExpectedItemRowVersion) —
+            // a client holding a correct, unchanged item row_version could
+            // still be told its version was stale. Status is the only
+            // field TransitionTo ever changes together with every other
+            // mutable column, so "status unchanged" reliably means "this
+            // item was not touched by this save."
             itemCmd.CommandText =
                 """
                 INSERT INTO kitchen.kitchen_ticket_items (
@@ -247,7 +259,8 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
                     ready_at = EXCLUDED.ready_at,
                     served_at = EXCLUDED.served_at,
                     cancelled_at = EXCLUDED.cancelled_at,
-                    cancellation_reason = EXCLUDED.cancellation_reason;
+                    cancellation_reason = EXCLUDED.cancellation_reason
+                WHERE kitchen.kitchen_ticket_items.status IS DISTINCT FROM EXCLUDED.status;
                 """;
             itemCmd.Parameters.AddWithValue("id", item.Id);
             itemCmd.Parameters.AddWithValue("ticket_id", ticket.Id);

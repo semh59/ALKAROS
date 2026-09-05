@@ -25,7 +25,6 @@ Derin mimari denetimde tespit edilen katalog fiyat `updated_at` sorgu çökmesi,
 - `plan/v1/governance/V1-GOV-037-wave7-master-audit-reseal-and-gate-closure.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-036/**`
 
 ## In scope
 

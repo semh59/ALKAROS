@@ -19,7 +19,6 @@ Farklı araç ve oturumların gelecekte yeni İngilizce string sızıntısı vey
 - `plan/v1/remediation/V1-RMD-081-recurring-consistency-audit-tooling.md`
 - `tools/consistency-audit/**`
 - `docs/CONSISTENCY_AUDIT.md`
-- `evidence/V1-RMD-081/**`
 
 ## In scope
 

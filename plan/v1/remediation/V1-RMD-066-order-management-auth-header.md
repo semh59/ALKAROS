@@ -19,7 +19,6 @@
 - `plan/v1/remediation/V1-RMD-066-order-management-auth-header.md`
 - PO:2026-09-05 kararıyla src/Host/Experience/Orders/OrderManagementEndpoints.cs yüzeyi izin kodu yeniden eşleme için V1-IAM-024'e devredildi; bu historical task closed kalır.
 - PO:2026-08-31 kararıyla src/Clients/WaiterPwa/wwwroot/waiter-app.js yüzeyi V1-RMD-079'a devredildi; bu historical task closed kalır.
-- `evidence/V1-RMD-066/**`
 
 ## In scope
 

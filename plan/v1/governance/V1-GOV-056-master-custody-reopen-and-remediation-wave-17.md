@@ -22,7 +22,6 @@ Masaya oturtma akışında (`StartOrderAsync`), istemci güncelliğini yitirmiş
 - `plan/v1/remediation/V1-RMD-078-table-metadata-field-level-merge.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-056/**`
 
 ## In scope
 

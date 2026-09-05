@@ -38,7 +38,6 @@ arayüz içindir.
 - `database/migrations/V1/V1-IAM-022/**`
 - `src/Modules/Identity/Authorization/Offline/**`
 - `tests/Modules/Identity/Authorization/Offline/**`
-- `evidence/V1-IAM-022/**`
 - Yüzey devri (giriş): database/MigrationComposition/order.json ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs, migration 047 için V1-IAM-021'den bu göreve devredildi (PO:2026-09-04). src/Modules/Identity/IdentityModule.cs, yetkilendirme dalgasının DI kayıt evi olarak V1-IAM-021'den bu göreve devredildi (PO:2026-09-04).
 - Yüzey devri (çıkış): database/MigrationComposition/order.json, tests/Host/MigrationComposition/Manifest/ManifestTests.cs (migration 048) ve src/Modules/Identity/IdentityModule.cs, bu görev kapandıktan sonra V1-IAM-023'e devredildi (PO:2026-09-04).
 - src/Host/Composition/Migrations/MigrationManifest.cs içindeki PhaseBMax sabiti V1-FND-004 sahipliğinde kalır; bu görevde yalnızca faz üst sınırı 047 değerine güncellenmişti (V1-RMD-089/9. dalga deseni).

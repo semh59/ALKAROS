@@ -18,7 +18,6 @@ PosTerminal katalog çalışma alanında kullanıcıya görünen ve erişilebili
 
 - `plan/v1/remediation/V1-RMD-070-catalog-workspace-turkish-string-remediation.md`
 - PO:2026-08-31 kararıyla src/Clients/PosTerminal/src/features/catalog/** yüzeyi V1-RMD-076'ya devredildi; bu historical task closed kalır.
-- `evidence/V1-RMD-070/**`
 
 ## In scope
 

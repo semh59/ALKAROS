@@ -37,7 +37,6 @@ gerçekte istediği kodlarla birebir).
 - `plan/v1/cashier-ui/V1-CUI-006-dedicated-reservation-station-screen.md`
 - `src/Clients/PosTerminal/src/routes/ReservationStation.tsx`
 - `src/Clients/PosTerminal/src/routes/ReservationStation.test.tsx`
-- `evidence/V1-CUI-006/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır):
   `src/Clients/PosTerminal/src/routes/workspace.tsx` (mevcut sahiplikte

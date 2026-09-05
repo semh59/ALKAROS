@@ -23,7 +23,6 @@ betiğinin, plan bütünlüğünün ve manifest hash'lerinin doğrulanması ve
 - `plan/AUDIT_REPORT.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-080/**`
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## In scope

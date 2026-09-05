@@ -28,7 +28,6 @@ veya IAM değişikliği yok.
 - `plan/v1/table-management/V1-TBL-004-table-reservation-record.md`
 - `plan/AUDIT_MANIFEST.json`
 - `plan/AUDIT_REPORT.md`
-- `evidence/V1-RMD-100/**`
 - Yüzey devri: `docs/domain/table-reservation-policy.md` custody'si `V0-DOM-005`'ten
   bu göreve geçer (yalnız amendment bölümü + ilgili satırlar); `V0-DOM-005`
   historical `Done` kalır. `V1-TBL-004` yalnız `Out of scope` satırında

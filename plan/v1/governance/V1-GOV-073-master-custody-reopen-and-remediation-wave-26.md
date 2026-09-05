@@ -26,7 +26,6 @@ yeniden açar. Bu görev bu açılışı `plan/GATES.md` ve `plan/v1/README.md`
 - `plan/v1/governance/V1-GOV-074-wave26-master-audit-reseal-and-gate-closure.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-073/**`
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## In scope

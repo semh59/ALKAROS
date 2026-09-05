@@ -18,7 +18,6 @@
 
 - `plan/v1/remediation/V1-RMD-063-catalog-price-schema-alignment.md`
 - PO:2026-08-31 kararıyla src/Host/Experience/Catalog/** ve tests/Host/Experience/Catalog/** yüzeyleri V1-RMD-076'ya devredildi; bu historical task closed kalır.
-- `evidence/V1-RMD-063/**`
 
 ## In scope
 

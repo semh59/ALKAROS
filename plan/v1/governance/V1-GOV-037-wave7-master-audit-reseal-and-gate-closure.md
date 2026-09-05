@@ -21,7 +21,6 @@
 - `plan/AUDIT_REPORT.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-037/**`
 
 ## In scope
 

@@ -28,7 +28,6 @@ yakınsama, çözülen isteği bir sonraki anlık görüntüye kadar gizleme).
 - `src/Clients/PosTerminal/src/features/authorization-decisions/**`
 - `src/Clients/WaiterPwa/ManagerDecisions/**`
 - `tests/Clients/WaiterPwa/ManagerDecisions/**`
-- `evidence/V1-IAM-020/**`
 - Paylaşılan dosyalarda sınırlı ek: ALKAROS.slnx sahipliği foundation'da kalır, bu görevde yalnızca iki yeni test proje girişi eklendi (V1-FND-002 deseni). src/Host/DualScreen/DualScreenApplication.cs sahipliği V1-RMD-098'de kalır, bu görevde yalnızca AddAuthorizationDecisionExperience ile MapAuthorizationDecisionApi satırları eklendi. src/Clients/PosTerminal/src/routes/workspace.tsx ile src/Clients/PosTerminal/src/strings.ts sahipliği V1-RMD-097'de kalır, bu görevde yalnızca /authorization rotası, navigasyon girişi ve etiket eklendi (V1-RMD-089/9. dalga deseni, PO:2026-09-04).
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 

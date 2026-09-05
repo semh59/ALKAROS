@@ -32,7 +32,6 @@ böyle bir atama modeli var olduğunda ayrı bir görev olarak eklenebilir.
   `@microsoft/signalr` 10.0.0 tarayıcı paketi; bu proje bundler kullanmıyor,
   CDN yerine yereldeki `node_modules`'tan kopyalandı, teslim-durumu felsefesi
   gereği)
-- `evidence/V1-WTR-009/**`
 - Paylaşılan dosyalarda sınırlı ek (V1-RMD-089/9. dalga deseni — sahiplik
   ilgili görevde kalır):
   `src/Host/DualScreen/DualScreenApplication.cs` (`V1-IAM-024` sahipliğinde

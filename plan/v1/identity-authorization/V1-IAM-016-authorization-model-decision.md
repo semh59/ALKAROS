@@ -24,7 +24,6 @@ reddedilir.
 
 - `plan/v1/identity-authorization/V1-IAM-016-authorization-model-decision.md`
 - `docs/domain/authorization-model.md`
-- `evidence/V1-IAM-016/**`
 - `docs/domain/authorization-model.md` yeni dosyadır; sahibi bu görevdir.
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 

@@ -4,7 +4,6 @@ import { commonActions, stateText } from "../../strings";
 import {
   catalogAddLabels,
   catalogEntityLabels,
-  type CatalogCategory,
   type CatalogCreateInput,
   type CatalogData,
   type CatalogEntityKind,

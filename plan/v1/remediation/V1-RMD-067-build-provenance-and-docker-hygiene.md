@@ -20,7 +20,6 @@
 - `.dockerignore`
 - `.gitignore`
 - `build/provenance/**`
-- `evidence/V1-RMD-067/**`
 
 ## In scope
 

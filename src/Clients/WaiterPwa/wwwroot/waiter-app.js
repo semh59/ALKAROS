@@ -56,7 +56,8 @@
     tables: [],
     activeCategory: 'all',
     offlineQueue: JSON.parse(localStorage.getItem('alkaros_waiter_offline_queue') || '[]'),
-    failedOrders: JSON.parse(localStorage.getItem('alkaros_waiter_failed_orders') || '[]')
+    failedOrders: JSON.parse(localStorage.getItem('alkaros_waiter_failed_orders') || '[]'),
+    dispatchInFlight: false
   };
 
   // DOM Elements
@@ -645,51 +646,63 @@
     if (el.btnSendKitchen) {
       el.btnSendKitchen.addEventListener('click', async () => {
         if (state.cart.length === 0 || !state.selectedTable) return;
+        // Found by an independent audit (2026-09-05): nothing stopped a
+        // second click (double-tap, or a click while the fetch above is
+        // still in flight) from sending the same cart twice. This handler
+        // is async but was never guarded against re-entrancy.
+        if (state.dispatchInFlight) return;
+        state.dispatchInFlight = true;
+        el.btnSendKitchen.disabled = true;
 
-        const orderId = randomUUID();
-        const orderPayload = {
-          id: orderId,
-          tableId: state.selectedTable.id,
-          tableNumber: state.selectedTable.number,
-          waiterName: state.currentUser?.name || 'Garson',
-          items: state.cart.map(item => ({
-            productId: item.productId,
-            name: item.name,
-            productName: item.name,
-            quantity: item.quantity,
-            unitPrice: item.price,
-            specialInstructions: item.note
-          })),
-          createdAt: new Date().toISOString()
-        };
+        try {
+          const orderId = randomUUID();
+          const orderPayload = {
+            id: orderId,
+            tableId: state.selectedTable.id,
+            tableNumber: state.selectedTable.number,
+            waiterName: state.currentUser?.name || 'Garson',
+            items: state.cart.map(item => ({
+              productId: item.productId,
+              name: item.name,
+              productName: item.name,
+              quantity: item.quantity,
+              unitPrice: item.price,
+              specialInstructions: item.note
+            })),
+            createdAt: new Date().toISOString()
+          };
 
-        if (state.isOnline) {
-          const res = await postOrderToBackend(orderPayload);
-          if (res.success) {
-            // Authoritative server success
-            state.selectedTable.status = 'occupied';
-            state.selectedTable.amount += state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            state.cart = [];
-            el.orderModal.hidden = true;
-            renderTables();
-            updateCartTotals();
-            alert(`Sipariş mutfağa iletildi! (${state.selectedTable.number})`);
-          } else if (res.isClientError) {
-            alert(`Sipariş iletilemedi (Hata: ${res.status}). Lütfen masa ve ürün bilgilerini kontrol edin.`);
+          if (state.isOnline) {
+            const res = await postOrderToBackend(orderPayload);
+            if (res.success) {
+              // Authoritative server success
+              state.selectedTable.status = 'occupied';
+              state.selectedTable.amount += state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+              state.cart = [];
+              el.orderModal.hidden = true;
+              renderTables();
+              updateCartTotals();
+              alert(`Sipariş mutfağa iletildi! (${state.selectedTable.number})`);
+            } else if (res.isClientError) {
+              alert(`Sipariş iletilemedi (Hata: ${res.status}). Lütfen masa ve ürün bilgilerini kontrol edin.`);
+            } else {
+              // Server error / network failure: queue order and notify without claiming success
+              queueOrderAction(orderPayload);
+              state.cart = [];
+              el.orderModal.hidden = true;
+              updateCartTotals();
+              alert(`Sunucuya ulaşılamadı. Sipariş çevrimdışı kuyruğa alındı. (${state.selectedTable.number})`);
+            }
           } else {
-            // Server error / network failure: queue order and notify without claiming success
             queueOrderAction(orderPayload);
             state.cart = [];
             el.orderModal.hidden = true;
             updateCartTotals();
-            alert(`Sunucuya ulaşılamadı. Sipariş çevrimdışı kuyruğa alındı. (${state.selectedTable.number})`);
+            alert(`Çevrimdışı mod: Sipariş yerel kuyruğa kaydedildi. Bağlantı gelince iletilecek.`);
           }
-        } else {
-          queueOrderAction(orderPayload);
-          state.cart = [];
-          el.orderModal.hidden = true;
-          updateCartTotals();
-          alert(`Çevrimdışı mod: Sipariş yerel kuyruğa kaydedildi. Bağlantı gelince iletilecek.`);
+        } finally {
+          state.dispatchInFlight = false;
+          el.btnSendKitchen.disabled = false;
         }
       });
     }

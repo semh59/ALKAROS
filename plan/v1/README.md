@@ -11,12 +11,27 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 292 görev tanımlıdır: 287 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
-  0 `Blocked` ve 0 `InProgress` görev vardır. (Bağımsız denetimde bulundu, 2026-09-05: bu
-  satır önceki kapanışta — V1-GOV-077/078'i ekleyen commit — kendi eklediği iki görevi
-  sayıma katmayı unutup 287/282 yerine gerçek 289/284 olması gerekirken yanlış rakam
-  veriyordu; şimdiki 292/287 doğrudan `find plan/v1 -name "V1-*.md" | xargs grep "^- Status:"
-  | sort | uniq -c` ile doğrulanmıştır.) 2026-09-05 29. dalga (Semih'in isteğiyle 4 bağımsız
+- Bu sürüm altında 295 görev tanımlıdır: 290 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+  0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
+  "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-05 30. dalga (Semih onayıyla, "Hepsi" — 29. dalganın bilerek kapsam dışı bıraktığı
+  High/Medium/Low bulgular — `V1-RMD-102`) `V1-GOV-080` sonrası kapıyı fiilen yeniden açtı;
+  `V1-GOV-081` ile resmen kaydedildi. 9 bulgu giderildi: `PostgresBillRepository
+  .UpdateBillItemAsync`'e eksik item-seviyesi `row_version` kontrolü eklendi;
+  `CatalogManagementEndpoints.AddCatalogManagement()`'a eksik filter bağımlılık kaydı
+  eklendi; `IRoleManagementService` için `/api/v1/management/roles` altında 6 endpoint'lik
+  yeni bir HTTP yüzeyi eklendi (önceden yalnız ham SQL ile yönetilebiliyordu); Cashier ve
+  WaiterPwa üretim JS'ine çift-tıklama/yeniden-giriş koruması eklendi; `Order.CancelItem`
+  artık sessizce attığı reason/actor/timestamp'i bir `OrderStatusHistoryEntry` olarak
+  kaydediyor; `PostgresKitchenTicketRepository.SaveAsync`'in her save'de TÜM kalemlerin
+  row_version'ını (yalnız dönüştürüleni değil) artıran sahte-concurrency kusuru
+  `WHERE status IS DISTINCT FROM EXCLUDED.status` ile düzeltildi; `order.json`/
+  `MigrationManifest.cs`'teki stale "031-049" faz aralığı gerçek "031-052"ye düzeltildi;
+  `Done` görevlerin 73'ünün "Owned surface" bölümündeki hiç var olmamış `evidence/V1-XXX/**`
+  iddiası mekanik olarak kaldırıldı; iki kullanılmayan TS import'u temizlendi. İki bulgu
+  için (item-level row_version, kitchen ticket row_version) düzeltme geçici geri alınıp
+  yeni regresyon testinin gerçekten kırıldığı doğrulandı, sonra geri getirildi. `V1-GOV-082`
+  ile 30. dalga kesin olarak yeniden mühürlendi. 2026-09-05 29. dalga (Semih'in isteğiyle 4 bağımsız
   ajanla sıfırdan tam denetim taraması; her Critical bulgu bizzat doğrulandı — `V1-RMD-101`)
   `V1-GOV-078` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-079` ile resmen kaydedildi. 3
   Critical defekt giderildi: submit rotası çakışması (PosTerminal'in asıl sipariş gönderme
@@ -28,7 +43,7 @@ uca çalıştıran çekirdek operasyon.
   bulgular (Catalog'un eksik DI kaydı, çift-tıklama koruması, `IRoleManagementService`'in
   endpoint'siz kalması, `Order.CancelItem`'ın parametrelerini yok sayması, Kitchen'ın sahte
   concurrency çakışması, eksik `evidence/` dizinleri) ayrı bir remediasyon dalgasına
-  bırakıldı, Semih onayı bekliyor. 2026-09-04 (Semih onayıyla, bu sohbette)
+  bırakılmıştı — 30. dalga (`V1-RMD-102`, yukarıda) hepsini giderdi. 2026-09-04 (Semih onayıyla, bu sohbette)
   `V1-RMD-100` kapatıldı — `docs/domain/table-reservation-policy.md`'nin kendi 2026-09-03
   tarihli Amendment'ı ve "Who creates `Reserved`" satırı shipped davranışla (kasiyer
   rezerve eder, garson WaiterPwa'da edemez) örtüştüğü onaylanarak; kod/test/migration diff'i

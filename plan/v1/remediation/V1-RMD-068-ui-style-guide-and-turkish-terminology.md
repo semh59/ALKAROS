@@ -18,7 +18,6 @@ Farklı ajan oturumlarının ürettiği çeviri ve hata mesajı tutarsızlıklar
 
 - `plan/v1/remediation/V1-RMD-068-ui-style-guide-and-turkish-terminology.md`
 - `docs/UI_STYLE_GUIDE.md`
-- `evidence/V1-RMD-068/**`
 
 ## In scope
 

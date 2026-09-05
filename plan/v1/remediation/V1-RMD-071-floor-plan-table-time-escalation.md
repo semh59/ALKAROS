@@ -18,7 +18,6 @@ PosTerminal masa çalışma alanında dolu masalar için geçen süreyi yalnızc
 
 - `plan/v1/remediation/V1-RMD-071-floor-plan-table-time-escalation.md`
 - `src/Clients/PosTerminal/src/features/tables/**`
-- `evidence/V1-RMD-071/**`
 
 ## In scope
 

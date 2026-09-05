@@ -23,7 +23,6 @@ Görev listesinin F bölümündeki incelenmemiş modül domain risklerini kapatm
 - `plan/v1/reporting/V1-RPT-001-operational-report-foundation.md`
 - `plan/GATES.md`
 - `plan/v1/README.md`
-- `evidence/V1-GOV-046/**`
 
 ## In scope
 

@@ -21,7 +21,6 @@ Sahaya çıkmadan önce HTTPS ve WaiterPwa çevrimdışı kuyruğunun gerçek ko
 - `deploy/docker/Caddyfile`
 - PO:2026-09-01 kararıyla deploy/docker/README.md yüzeyi V1-RMD-096'ya devredildi (Host-terminated HTTPS iki-yollu TLS anlatımı); bu historical task closed kalır ve dosyayı bundan sonra V1-RMD-096 sahiplenir.
 - PO:2026-09-01 kararıyla src/Clients/WaiterPwa/wwwroot/waiter-app.js yüzeyi V1-RMD-083’e devredildi; bu historical task closed kalır.
-- `evidence/V1-RMD-079/**`
 
 ## In scope
 

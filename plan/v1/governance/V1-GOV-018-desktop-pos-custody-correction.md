@@ -37,7 +37,6 @@ ile gidermek; V1-RMD-026..032 görevlerini Türkçe plan sözleşmesine uygun ve
 - `plan/v1/README.md`
 - `plan/AUDIT_MANIFEST.json`
 - `plan/AUDIT_REPORT.md`
-- `evidence/V1-GOV-018/**`
 
 ## Dependencies
 

@@ -19,7 +19,6 @@
 - `plan/v1/remediation/V1-RMD-072-audit-sanitizer-malformed-payload-guard.md`
 - `src/Modules/Audit/EventStore/IAuditSanitizer.cs`
 - `tests/Modules/Audit/EventStore/AuditSanitizerTests.cs`
-- `evidence/V1-RMD-072/**`
 
 ## In scope
 

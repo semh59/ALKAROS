@@ -18,7 +18,6 @@ PosTerminal mutfak çalışma alanında kullanıcıya sızan `Unknown` kod tipi 
 
 - `plan/v1/remediation/V1-RMD-069-kitchen-workspace-turkish-remediation-and-health-relocation.md`
 - PO:2026-08-31 kararıyla src/Clients/PosTerminal/src/features/kitchen-operations/** yüzeyi V1-RMD-075'e devredildi; bu historical task closed kalır.
-- `evidence/V1-RMD-069/**`
 
 ## In scope
 
