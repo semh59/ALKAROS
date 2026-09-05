@@ -1,0 +1,62 @@
+V11-RSV-003 closure evidence
+Date: 2026-09-06
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+
+## Scope executed
+- Domain models and services in src/Modules/Inventory/PortionReservations/CancellationEffects/:
+  - Models: CancellationAction (Release, Waste), KitchenItemPreparationStatus (NotStarted, InProgress, Completed), ProcessCancellationCommand, CancellationDecisionResult.
+  - Exceptions: CancellationDecisionException, InvalidCancellationCommandException.
+  - Kitchen State Provider:
+    - IKitchenItemStateProvider: contract for retrieving preparation status for an order item.
+    - PostgresKitchenItemStateProvider: executes PostgreSQL query against kitchen.kitchen_ticket_items table without introducing project-level coupling.
+  - Cancellation Decision Service:
+    - IPortionCancellationDecisionService / PortionCancellationDecisionService:
+      - Validates command parameters (non-empty ReservationId, OrderItemId, ActorId).
+      - Checks reservation status for terminal states (Released, Waste, Expired, Consumed). Returns idempotent replay for existing Released/Waste transitions; rejects Consumed/Expired cancellations with InvalidCancellationCommandException.
+      - Queries preparation status:
+        - If NotStarted / Queued -> transitions reservation to Released, calls IReservationBalanceProjector.ApplyReservationTransitionAsync to decrement ReservedQuantity and restore AvailableQuantity.
+        - If InProgress / Completed -> transitions reservation to Waste, calls IReservationBalanceProjector.ApplyReservationTransitionAsync, records waste via IWasteRecordingService (WasteSources.PortionReservation) decrementing OnHandQuantity via StockMovement (Waste), leaving AvailableQuantity unrestored.
+- Automated Tests in tests/Modules/Inventory/PortionReservations/CancellationEffects/:
+  - PortionReservationCancellationEffectsDomainTests: 6 domain unit tests covering:
+    - Pre-preparation release restoring available quantity.
+    - In-progress preparation wasting portion and decrementing on-hand stock without restoring available.
+    - Completed preparation wasting portion.
+    - Idempotent replay on duplicate cancellation calls.
+    - InvalidCancellationCommandException on consumed reservation.
+    - InvalidCancellationCommandException on empty reservation ID.
+  - PortionReservationCancellationEffectsDatabaseTests: 3 PostgreSQL 18 integration tests covering:
+    - Full persistence pre-kitchen cancellation flow (Release & available restore).
+    - Full persistence post-preparation cancellation flow (Waste & on-hand decrement via movement).
+    - Projection rebuild matching cancellation effects exactly across balances and ledger.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Release
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Inventory/PortionReservations/CancellationEffects/ALKAROS.Inventory.PortionReservations.CancellationEffects.Tests.csproj -c Release
+   Result: 9 passed, 0 failed, 0 skipped (exit code: 0)
+
+3. dotnet test tests/Modules/Inventory/PortionReservations/Concurrency/ALKAROS.Inventory.PortionReservations.Concurrency.Tests.csproj -c Release
+   Result: 9 passed, 0 failed, 0 skipped (exit code: 0)
+
+4. dotnet test tests/Modules/Inventory/ReservationBalanceProjection/ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj -c Release
+   Result: 13 passed, 0 failed, 0 skipped (exit code: 0)
+
+5. dotnet test tests/Modules/Inventory/PortionReservations/Lifecycle/ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.csproj -c Release
+   Result: 9 passed, 0 failed, 0 skipped (exit code: 0)
+
+6. dotnet test tests/Modules/Inventory/WasteRecording/ALKAROS.Inventory.WasteRecording.Tests.csproj -c Release
+   Result: 11 passed, 0 failed, 0 skipped (exit code: 0)
+
+7. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+   Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/task-scope/task_scope_tool.py --task-id V11-RSV-003 --diff-base e8339e5
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+All modified/created files are within the task allowlist (src/Modules/Inventory/PortionReservations/CancellationEffects/**, tests/Modules/Inventory/PortionReservations/CancellationEffects/**, evidence/V11-RSV-003/**, and ALKAROS.slnx under C85).
