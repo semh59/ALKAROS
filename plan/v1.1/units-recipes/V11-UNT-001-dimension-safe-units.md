@@ -20,6 +20,8 @@ Boyutlar arası ve tutarsız döngüleri reddeden birim tanımlarını, boyutlar
 ## Owned surface
 
 - `src/Modules/Recipes/Units/**`, `tests/Modules/Recipes/Units/**`, `database/migrations/V11/V11-UNT-001/**`
+- `src/Modules/Recipes/ALKAROS.Recipes.csproj`, `src/Modules/Recipes/packages.lock.json`, `tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-05 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
