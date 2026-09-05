@@ -67,6 +67,28 @@ public sealed class SentItemVoidStore
         if (item.KitchenState is KitchenState.Served or KitchenState.Cancelled)
             throw new ItemAlreadyServedException(item.Id);
 
+        // Check whether a billed line can even be converted to waste BEFORE
+        // touching Order or Kitchen (found by an independent audit,
+        // 2026-09-05): this used to run AFTER the Order was already saved
+        // and the kitchen ticket item already cancelled — both irreversible
+        // — so a Bill that happened to already be Paid/Allocated (a common,
+        // not a rare state, for a bill by the time someone asks to void one
+        // of its items) deterministically threw here, and the 409 the
+        // caller got back ("bill cannot be changed in this state") read as
+        // "nothing happened", while in fact the item was already void and
+        // the kitchen would
+        // never prepare it — the customer was left paying full price for an
+        // item that was never coming. Failing fast here, before any write,
+        // means a genuinely non-waivable Bill state stops the whole
+        // operation with nothing yet mutated. A Bill changing state in the
+        // narrow window between this check and the actual write below is a
+        // real but far narrower race than the one this replaces — the
+        // Bill's own row_version check in ApplyBillWasteConversionAsync
+        // still catches that and surfaces it as the usual 409
+        // CONCURRENCY_CONFLICT, not a silent inconsistency.
+        var billContext = await FindBillLineForWasteAsync(
+            command.OrderId, command.OrderItemId, cancellationToken).ConfigureAwait(false);
+
         var now = DateTimeOffset.UtcNow;
         var historyReason = string.IsNullOrWhiteSpace(command.Notes)
             ? $"VoidSent:{command.ReasonCode}"
@@ -78,8 +100,11 @@ public sealed class SentItemVoidStore
 
         var kitchenCancelled = await CancelKitchenTicketItemAsync(
             command.OrderId, command.OrderItemId, historyReason, now, cancellationToken).ConfigureAwait(false);
-        var wasteConverted = await ConvertBillLineToWasteAsync(
-            command.OrderId, command.OrderItemId, item, command.ReasonCode, cancellationToken).ConfigureAwait(false);
+        var wasteConverted = billContext is not null
+            ? await ApplyBillWasteConversionAsync(
+                billContext.Value.Bill, billContext.Value.BillItem, item, command.ReasonCode, cancellationToken)
+                .ConfigureAwait(false)
+            : false;
 
         await AppendAuditAsync(
             order.Id, item, command, kitchenCancelled, wasteConverted, now, cancellationToken).ConfigureAwait(false);
@@ -114,13 +139,15 @@ public sealed class SentItemVoidStore
     }
 
     /// <summary>
-    /// If the order item is on an Open/Reopened Bill, removes the Sale line
-    /// and replaces it with a zero-value BillLineType.Waste line — the
-    /// customer owes nothing for it, but the waste is on record (III.7.2's
-    /// Waste value, never produced before this task).
+    /// Locates the Bill/BillItem pair for this order item, if any is
+    /// billed, and validates up front that it can actually be converted to
+    /// waste — throws <see cref="BillNotModifiableForWasteException"/>
+    /// immediately (before Order or Kitchen are touched) if a matching
+    /// line exists on a Bill that is not Open/Reopened. Returns null when
+    /// the item was never billed at all (nothing to convert).
     /// </summary>
-    private async Task<bool> ConvertBillLineToWasteAsync(
-        Guid orderId, Guid orderItemId, OrderItem item, string reasonCode, CancellationToken cancellationToken)
+    private async Task<(Bill Bill, BillItem BillItem)?> FindBillLineForWasteAsync(
+        Guid orderId, Guid orderItemId, CancellationToken cancellationToken)
     {
         var bills = await _bills.GetByOrderIdAsync(orderId, cancellationToken).ConfigureAwait(false);
         foreach (var bill in bills)
@@ -132,28 +159,43 @@ public sealed class SentItemVoidStore
             if (bill.Status is not (BillState.Open or BillState.Reopened))
                 throw new BillNotModifiableForWasteException(bill.Id, bill.Status.ToString());
 
-            var wasteItem = new BillItem(
-                Guid.NewGuid(),
-                bill.Id,
-                orderItemId,
-                item.ProductId,
-                item.ProductNameSnapshot,
-                item.Quantity,
-                item.UnitPrice,
-                item.TaxRate,
-                discountAmount: 0m,
-                netAmount: 0m,
-                taxAmount: 0m,
-                grossAmount: 0m,
-                lineType: BillLineType.Waste,
-                notes: $"Void:{reasonCode}");
-
-            var updatedBill = bill.RemoveItem(billItem.Id).AddItem(wasteItem);
-            await _bills.SaveAsync(updatedBill, bill.RowVersion, cancellationToken).ConfigureAwait(false);
-            return true;
+            return (bill, billItem);
         }
 
-        return false;
+        return null;
+    }
+
+    /// <summary>
+    /// Removes the billed Sale line and replaces it with a zero-value
+    /// BillLineType.Waste line — the customer owes nothing for it, but the
+    /// waste is on record (III.7.2's Waste value, never produced before
+    /// this task). Called only after <see cref="FindBillLineForWasteAsync"/>
+    /// already confirmed the Bill was modifiable; the Bill's own
+    /// row_version check here still catches a concurrent change in the
+    /// meantime.
+    /// </summary>
+    private async Task<bool> ApplyBillWasteConversionAsync(
+        Bill bill, BillItem billItem, OrderItem item, string reasonCode, CancellationToken cancellationToken)
+    {
+        var wasteItem = new BillItem(
+            Guid.NewGuid(),
+            bill.Id,
+            item.Id,
+            item.ProductId,
+            item.ProductNameSnapshot,
+            item.Quantity,
+            item.UnitPrice,
+            item.TaxRate,
+            discountAmount: 0m,
+            netAmount: 0m,
+            taxAmount: 0m,
+            grossAmount: 0m,
+            lineType: BillLineType.Waste,
+            notes: $"Void:{reasonCode}");
+
+        var updatedBill = bill.RemoveItem(billItem.Id).AddItem(wasteItem);
+        await _bills.SaveAsync(updatedBill, bill.RowVersion, cancellationToken).ConfigureAwait(false);
+        return true;
     }
 
     private async Task AppendAuditAsync(

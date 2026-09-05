@@ -183,17 +183,16 @@
     }
 
     el.ticketItemsStream.innerHTML = state.ticketItems.map(item => `
-      <div class="ticket-row ${item.isComplimentary ? 'complimentary' : ''}">
+      <div class="ticket-row">
         <div class="item-meta">
-          <div class="item-title">${escapeHtml(item.name)} ${item.isComplimentary ? '<span class="badge-free">İKRAM</span>' : ''}</div>
-          <div class="item-sub">${formatMoney(item.price)} × ${item.quantity} = ${formatMoney(item.isComplimentary ? 0 : item.price * item.quantity)}</div>
+          <div class="item-title">${escapeHtml(item.name)}</div>
+          <div class="item-sub">${formatMoney(item.price)} × ${item.quantity} = ${formatMoney(item.price * item.quantity)}</div>
           <input class="item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" />
         </div>
         <div class="item-actions">
           <button type="button" class="btn-micro" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
           <span class="ticket-row-qty">${item.quantity}</span>
           <button type="button" class="btn-micro" data-action="inc" data-id="${escapeHtml(item.id)}">+</button>
-          <button type="button" class="btn-micro" data-action="comp" data-id="${escapeHtml(item.id)}" title="İkram" aria-label="İkram"><svg class="icon" aria-hidden="true"><use href="#ico-gift"/></svg></button>
           <button type="button" class="btn-micro btn-del" data-action="del" data-id="${escapeHtml(item.id)}" title="Sil" aria-label="Sil"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
         </div>
       </div>
@@ -203,7 +202,17 @@
   }
 
   function updateTotal() {
-    const total = state.ticketItems.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
+    // İkram/comp düğmesi kaldırıldı (bağımsız denetimde bulundu, 2026-09-05):
+    // burada işaretlenen bir kalem ekranda ₺0 gösteriliyordu ama sunucu
+    // (OrderManagementStore.CreateOrUpdateTableDraftAsync) kalıcı fiyatı her
+    // zaman katalogdan hesaplıyor — istemcinin gönderdiği unitPrice hiç
+    // okunmuyor. Sonuç: müşteri her zaman tam fiyattan faturalanıyordu,
+    // ekran "ücretsiz" derken. Gerçek, yetkilendirilmiş ikram akışı
+    // (bills.comp grant'i, POST .../items/{itemId}/comp) yalnızca zaten
+    // gönderilmiş bir sipariş üzerinde çalışır; bu ekran siparişi tek
+    // seferde oluşturduğu için o akışa bağlanamaz. Toplam artık her zaman
+    // gerçekte faturalanacak tutarı gösterir.
+    const total = state.ticketItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     if (el.grandTotalAmount) el.grandTotalAmount.textContent = formatMoney(total);
   }
 
@@ -214,7 +223,7 @@
   }
 
   function addProductToTicket(product) {
-    const existing = state.ticketItems.find(i => i.productId === product.id && !i.isComplimentary && !i.note);
+    const existing = state.ticketItems.find(i => i.productId === product.id && !i.note);
     if (existing) {
       existing.quantity += 1;
     } else {
@@ -224,7 +233,6 @@
         name: product.name,
         price: product.price,
         quantity: 1,
-        isComplimentary: false,
         note: ''
       });
     }
@@ -248,8 +256,8 @@
         name: item.name,
         productName: item.name,
         quantity: item.quantity,
-        unitPrice: item.isComplimentary ? 0 : item.price,
-        specialInstructions: item.isComplimentary ? 'İkram — kasiyer onaylı sıfır fiyat' : (item.note && item.note.trim() ? item.note.trim() : null)
+        unitPrice: item.price,
+        specialInstructions: item.note && item.note.trim() ? item.note.trim() : null
       }))
     };
 
@@ -265,7 +273,7 @@
       });
 
       if (response.ok) {
-        const total = state.ticketItems.reduce((sum, item) => item.isComplimentary ? sum : sum + (item.price * item.quantity), 0);
+        const total = state.ticketItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const itemCount = state.ticketItems.reduce((sum, item) => sum + item.quantity, 0);
         state.shiftTotalOrders += 1;
         state.ticketItems = [];
@@ -320,7 +328,7 @@
 
     el.parkedList.innerHTML = state.parkedTickets.map(p => {
       const count = p.items.reduce((s, i) => s + i.quantity, 0);
-      const total = p.items.reduce((s, i) => i.isComplimentary ? s : s + (i.price * i.quantity), 0);
+      const total = p.items.reduce((s, i) => s + (i.price * i.quantity), 0);
       return `
         <div class="parked-card" data-parked-id="${escapeHtml(p.id)}">
           <div>
@@ -386,8 +394,6 @@
           if (state.ticketItems[index].quantity <= 0) {
             state.ticketItems.splice(index, 1);
           }
-        } else if (action === 'comp') {
-          state.ticketItems[index].isComplimentary = !state.ticketItems[index].isComplimentary;
         } else if (action === 'del') {
           state.ticketItems.splice(index, 1);
         }

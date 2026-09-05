@@ -126,17 +126,26 @@ public sealed class OrderManagementVoidSentTestDatabase : PgTestDatabase
         await repository.AddAsync(ticket);
     }
 
-    /// <summary>Seeds an Open Bill with a single Sale line for the given order item.</summary>
-    public async Task<Guid> SeedOpenBillAsync(Guid orderId, OrderItem orderItem)
+    /// <summary>Seeds a Bill with a single Sale line for the given order item, at the given status (default Open).</summary>
+    public async Task<Guid> SeedOpenBillAsync(Guid orderId, OrderItem orderItem, BillState status = BillState.Open)
     {
         var billId = Guid.NewGuid();
         var billItem = BillItem.FromOrderItem(billId, orderItem);
         var bill = new Bill(
             billId, "BILL-" + billId.ToString("N")[..8], new[] { billItem },
-            orderId: orderId, status: BillState.Open);
+            orderId: orderId, status: status);
 
         var repository = new PostgresBillRepository(DataSource);
         await repository.AddAsync(bill);
         return billId;
+    }
+
+    /// <summary>Reloads the order and returns the given item's current Status/KitchenState — for asserting nothing was mutated after a rejected void.</summary>
+    public async Task<(OrderItemState Status, KitchenState KitchenState)> ReloadItemStateAsync(Guid orderId, Guid itemId)
+    {
+        var repository = new PostgresOrderRepository(DataSource);
+        var order = await repository.GetByIdAsync(orderId) ?? throw new InvalidOperationException("Order not found.");
+        var item = order.Items.First(i => i.Id == itemId);
+        return (item.Status, item.KitchenState);
     }
 }

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
@@ -109,6 +110,39 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         Assert.Equal(2, body.NewOrderRowVersion);
         Assert.True(body.KitchenTicketItemCancelled);
         Assert.True(body.BillLineConvertedToWaste);
+    }
+
+    /// <summary>
+    /// Bağımsız denetimde bulundu (2026-09-05): önceki sıralamada Order ve
+    /// Kitchen zaten kalıcı olarak yazılıyordu, Bill kapalıysa (Paid/
+    /// Allocated) SONRA 409 dönülüyordu — ama Order/Kitchen mutasyonu geri
+    /// alınmıyordu. Bu test tam o senaryoyu kurar (Bill Allocated) ve iki
+    /// şeyi doğrular: istek 409 BILL_NOT_MODIFIABLE döner VE sipariş kalemi
+    /// tamamen dokunulmamış kalır (hâlâ Active/Preparing) — yani düzeltme
+    /// sonrası hiçbir şey kısmen uygulanmıyor, ya hepsi ya hiçbiri.
+    /// </summary>
+    [Fact]
+    public async Task WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, productId, item) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing);
+        await _database.SeedKitchenTicketAsync(orderId, itemId, productId, KitchenTicketItemState.Preparing);
+        await _database.SeedOpenBillAsync(orderId, item, BillState.Allocated);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("BILL_NOT_MODIFIABLE", body);
+
+        var (status, kitchenState) = await _database.ReloadItemStateAsync(orderId, itemId);
+        Assert.Equal(OrderItemState.Active, status);
+        Assert.Equal(KitchenState.Preparing, kitchenState);
     }
 
     [Fact]

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 892,
-  "markdown_line_count": 58573,
-  "markdown_byte_count": 3478075,
+  "markdown_file_count": 895,
+  "markdown_line_count": 58875,
+  "markdown_byte_count": 3496884,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2220,9 +2220,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F5077763EB02BF7E5F75850FB4DBFF307144C607F0D83989407974951CE145CC",
-      "lines": 2168,
-      "bytes": 306600,
+      "sha256": "68CEC7AAD3D634B599D3B962EE9B072886E90E25D785208161DF005F8EFBF162",
+      "lines": 2171,
+      "bytes": 307123,
       "utf8": true
     },
     {
@@ -2241,9 +2241,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "40CD7AD0806301C9ED38522637ABDDB578ED6C51FC300CFE69AFC0712FE1F4EC",
-      "lines": 402,
-      "bytes": 94045,
+      "sha256": "EC2D3D03CD11C2657173C1AD8AF97EC6A8C4334F2E45CAA8B861B84134997865",
+      "lines": 406,
+      "bytes": 98051,
       "utf8": true
     },
     {
@@ -4067,6 +4067,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/governance/V1-GOV-079-master-custody-reopen-and-remediation-wave-29.md",
+      "sha256": "4B10A6203B13C2691C6FC295CB9E36BB7956018352C490F66B63B50BD14B8B85",
+      "lines": 56,
+      "bytes": 1521,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/governance/V1-GOV-080-wave29-master-audit-reseal-and-gate-closure.md",
+      "sha256": "136EE779042967BB1891B22EAE069AC55CD822C22EE89B1C9CDB533335CC868F",
+      "lines": 69,
+      "bytes": 2369,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/identity-authorization/V1-IAM-001-authentication.md",
       "sha256": "D7DEBAD6DDFC05CBD0C7AE1E4B5637D63FA824905DB38DFE952DCE3ED05968E3",
       "lines": 57,
@@ -4348,9 +4362,9 @@
     },
     {
       "path": "plan/v1/README.md",
-      "sha256": "9E5E735827ECDCF48DAFC9AE757E25553608FD269B10141F2CA6A75E25ECF5BB",
-      "lines": 119,
-      "bytes": 11250,
+      "sha256": "E385A208AE5E1FEBE0A7A6DAC4E4465762FB9298832A16CD1940089D35AF3E6D",
+      "lines": 135,
+      "bytes": 12786,
       "utf8": true
     },
     {
@@ -5058,6 +5072,13 @@
       "sha256": "5CC911EA4FA6E88D9F6987B0772D4F418AA0D3D0196420FCF3F4DC5E6DE8112F",
       "lines": 91,
       "bytes": 4561,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-101-independent-audit-critical-fixes.md",
+      "sha256": "545D58944B2B1927515BFFEF7E8311EA7020F926CEFDB49B738D8486CE75BC0F",
+      "lines": 154,
+      "bytes": 8854,
       "utf8": true
     },
     {

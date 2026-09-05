@@ -54,9 +54,17 @@ def test_cashier_javascript_order_engine():
     assert "dispatchOrderToKitchen" in app_code
     assert "parkCurrentTicket" in app_code
     assert "recallParkedTicket" in app_code
-    assert "isComplimentary" in app_code
     assert "formatMoney" in app_code
 
     # V1 contract: No fake cash sale calculations
     assert "completeCashSale" not in app_code
     assert "changeDue" not in app_code
+
+    # Bağımsız denetimde bulundu (2026-09-05): isComplimentary bir istemci-
+    # taraflı gösterim numarasıydı — ekranda ₺0 gösteriyordu ama sunucu
+    # (OrderManagementStore) kalıcı fiyatı her zaman katalogdan hesapladığı
+    # için müşteri gerçekte tam fiyattan faturalanıyordu. Kaldırıldı; gerçek
+    # yetkilendirilmiş ikram akışı zaten var (bills.comp grant'i, ayrı bir
+    # uç nokta) ve bu ekranın tek-seferlik sipariş oluşturma modeliyle
+    # uyumlu değil, ileride ayrı bir görevle bağlanabilir.
+    assert "isComplimentary" not in app_code

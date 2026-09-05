@@ -139,7 +139,21 @@ public static class OrderManagementEndpoints
             return Results.Ok(order);
         });
 
-        group.MapPost("/{orderId:guid}/submit", async (
+        // Renamed from "/{orderId}/submit" (found by an independent audit,
+        // 2026-09-05): that exact path was ALSO mapped unconditionally in
+        // DualScreenApplication.Endpoints.cs (the terminal-wide quick-sale
+        // submit, which PosTerminal's real "submit order" button actually
+        // calls — SubmitOrderRequest{operationId, expectedRevision} matches
+        // that handler's contract, not this one's SubmitTableOrderRequest).
+        // Both were mapped on the same WebApplication (DualScreenApplication
+        // .Build: MapApi(app) then app.MapOrderManagementApi()), so every
+        // request to that path threw AmbiguousMatchException — the core
+        // "submit order" flow returned a bare 500 on every attempt. This
+        // route has zero real client callers (grep confirmed — only the
+        // orphaned, non-compiling OrderManagementExperienceTests.cs calls
+        // OrderManagementStore.SubmitOrderAsync directly, bypassing HTTP),
+        // so renaming it is safe; the terminal-wide route is unchanged.
+        group.MapPost("/{orderId:guid}/submit-draft", async (
             Guid terminalId,
             Guid orderId,
             SubmitTableOrderRequest request,

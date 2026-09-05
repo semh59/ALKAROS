@@ -11,8 +11,24 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 287 görev tanımlıdır: 282 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
-  0 `Blocked` ve 0 `InProgress` görev vardır. 2026-09-04 (Semih onayıyla, bu sohbette)
+- Bu sürüm altında 292 görev tanımlıdır: 287 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+  0 `Blocked` ve 0 `InProgress` görev vardır. (Bağımsız denetimde bulundu, 2026-09-05: bu
+  satır önceki kapanışta — V1-GOV-077/078'i ekleyen commit — kendi eklediği iki görevi
+  sayıma katmayı unutup 287/282 yerine gerçek 289/284 olması gerekirken yanlış rakam
+  veriyordu; şimdiki 292/287 doğrudan `find plan/v1 -name "V1-*.md" | xargs grep "^- Status:"
+  | sort | uniq -c` ile doğrulanmıştır.) 2026-09-05 29. dalga (Semih'in isteğiyle 4 bağımsız
+  ajanla sıfırdan tam denetim taraması; her Critical bulgu bizzat doğrulandı — `V1-RMD-101`)
+  `V1-GOV-078` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-079` ile resmen kaydedildi. 3
+  Critical defekt giderildi: submit rotası çakışması (PosTerminal'in asıl sipariş gönderme
+  akışı her istekte 500 veriyordu), Cashier hızlı-satış istemcisinde sahte "İkram" (ekranda
+  ₺0 gösterip müşteriyi tam fiyattan faturalayan bir para/güvenlik açığı — kaldırıldı), ve
+  `SentItemVoidStore`'un Order/Kitchen'ı Bill kontrolünden önce kalıcı hale getirmesi
+  (müşteriyi teslim edilmeyecek bir ürün için ödemeye zorluyordu, iz bırakmadan — sıra
+  değiştirildi). `V1-GOV-080` ile 29. dalga kesin olarak yeniden mühürlendi. High/Medium/Low
+  bulgular (Catalog'un eksik DI kaydı, çift-tıklama koruması, `IRoleManagementService`'in
+  endpoint'siz kalması, `Order.CancelItem`'ın parametrelerini yok sayması, Kitchen'ın sahte
+  concurrency çakışması, eksik `evidence/` dizinleri) ayrı bir remediasyon dalgasına
+  bırakıldı, Semih onayı bekliyor. 2026-09-04 (Semih onayıyla, bu sohbette)
   `V1-RMD-100` kapatıldı — `docs/domain/table-reservation-policy.md`'nin kendi 2026-09-03
   tarihli Amendment'ı ve "Who creates `Reserved`" satırı shipped davranışla (kasiyer
   rezerve eder, garson WaiterPwa'da edemez) örtüştüğü onaylanarak; kod/test/migration diff'i

@@ -175,4 +175,54 @@ public sealed class ProductionExperienceCompositionTests
             Directory.Delete(webRoot, recursive: true);
         }
     }
+
+    /// <summary>
+    /// Bağımsız denetimde bulundu (2026-09-05): "/{terminalId}/orders/{orderId}/submit"
+    /// hem DualScreenApplication.Endpoints.cs'te (MapApi) hem
+    /// OrderManagementEndpoints.cs'te (aynı grup öneki + "/submit") koşulsuz
+    /// map ediliyordu — ikisi de aynı WebApplication üzerinde. Sonuç: her
+    /// gerçek istek AmbiguousMatchException ile 500'e düşüyordu; PosTerminal'in
+    /// asıl "Sipariş gönder" akışı üretimde hiç çalışmıyordu. ASP.NET Core bu
+    /// çakışmayı derleme zamanında değil, ilk eşleştirme denemesinde fırlatır —
+    /// bu yüzden bunu yakalayacak tek yol, gerçek bir HTTP isteği veya (burada
+    /// yapıldığı gibi) tüm endpoint tablosunun aynı (metot, route şablonu)
+    /// çiftini iki kez içermediğini doğrulamaktır. Bu test bu SINIFIN
+    /// TAMAMINI kapsar — yalnız bu bir örneği değil, gelecekte eklenecek her
+    /// yeni endpoint için de aynı korumayı sağlar.
+    /// </summary>
+    [Fact]
+    public async Task NoTwoEndpointsShareTheSameHttpMethodAndRoutePattern()
+    {
+        var options = BuildOptions(out var webRoot);
+
+        try
+        {
+            await using var app = DualScreenApplication.Build(options);
+            await app.StartAsync();
+            var endpoints = app.Services.GetRequiredService<EndpointDataSource>().Endpoints
+                .OfType<RouteEndpoint>()
+                .Where(endpoint => endpoint.RoutePattern.RawText is not null)
+                .ToList();
+
+            var duplicates = endpoints
+                .SelectMany(endpoint => endpoint.Metadata
+                    .GetMetadata<Microsoft.AspNetCore.Routing.HttpMethodMetadata>()?.HttpMethods
+                        .Select(method => (Method: method, Pattern: endpoint.RoutePattern.RawText!))
+                    ?? [(Method: "*", Pattern: endpoint.RoutePattern.RawText!)])
+                .GroupBy(pair => pair)
+                .Where(group => group.Count() > 1)
+                .Select(group => group.Key)
+                .ToList();
+
+            Assert.True(
+                duplicates.Count == 0,
+                "Duplicate (HTTP method, route pattern) registrations found — every request to these " +
+                "would throw AmbiguousMatchException: " +
+                string.Join(", ", duplicates.Select(d => $"{d.Method} {d.Pattern}")));
+        }
+        finally
+        {
+            Directory.Delete(webRoot, recursive: true);
+        }
+    }
 }
