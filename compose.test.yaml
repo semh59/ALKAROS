@@ -1,0 +1,50 @@
+name: alkaros
+
+# Containerized test execution:
+#
+#   docker compose -f compose.yaml -f compose.test.yaml run --build --rm test
+#
+# Runs the full .NET test suite inside the same Debian/Linux image production
+# uses (real `psql` on PATH — PsqlScriptRunner shells out to it for every
+# migration) against an ephemeral, disposable PostgreSQL. This exists so a
+# host machine's own environment (a broken native psql install, a port
+# already bound by another Postgres, etc.) can never cause a false test
+# failure or block development — `test-postgres` is a throwaway instance
+# with tmpfs storage, isolated from `postgres` (the compose.yaml service) by
+# its own service name/port.
+#
+# Not started by `docker compose up` — `test` and `test-postgres` are inert
+# unless explicitly run as above.
+
+services:
+  test-postgres:
+    image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    # No named volume: every test run starts from an empty database, and
+    # nothing here is worth persisting across runs. postgres:18 keeps its
+    # data directly under /var/lib/postgresql (not .../data — see
+    # compose.yaml's own postgres service for the same convention).
+    tmpfs:
+      - /var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  test:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: test
+    environment:
+      ALKAROS_TEST_PG_HOST: test-postgres
+      ALKAROS_TEST_PG_PORT: "5432"
+      ALKAROS_TEST_PG_USER: postgres
+      ALKAROS_TEST_PG_PASSWORD: postgres
+    depends_on:
+      test-postgres: { condition: service_healthy }
+    command: ["dotnet", "test", "ALKAROS.slnx", "--configuration", "Release"]

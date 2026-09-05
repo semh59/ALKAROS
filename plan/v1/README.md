@@ -11,9 +11,20 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 307 görev tanımlıdır: 302 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 310 görev tanımlıdır: 305 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 35. dalga (Semih onayıyla, "Docker zaten düzgün değil ... Tüm önerilerini yap" —
+  konteynerize test yürütme: `deploy/docker/Dockerfile`'a `test` stage'i + `compose.test.yaml`,
+  gerçek `psql` ve tek kullanımlık Postgres ile; bu makinenin bozuk Windows `psql.exe`'sinin
+  (G2) `tests/Host/MigrationComposition`'ı hep kısmen başarısız göstermesi artık ortadan
+  kalktı — 121/121 konteyner içinde geçiyor, toplam 60/60 test projesi sıfır başarısız.
+  11 referanssız Docker imajı silindi (~7GB). Ayrıca table-draft'ın kendi merge düzeltmesinin
+  (34. dalga) ortaya çıkardığı bir risk kapatıldı: koşulsuz ekleme, ağ hatası sonrası bir
+  istemci tekrarında (WaiterPwa çevrimdışı kuyruğu dahil) kalemi ikiye katlardı — kalem
+  kimliği artık istemcinin zaten ürettiği kararlı sepet-satırı id'si olarak sunucuya
+  gönderiliyor. `V1-RMD-107`) `V1-GOV-090` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-091`
+  ile resmen kaydedildi; `V1-GOV-092` ile 35. dalga kesin olarak yeniden mühürlendi.
   2026-09-06 34. dalga (Semih onayıyla, "Sıfırdan bağımsız ajanlarla ... tam ve eksiksiz
   denetle" ardından "Hepsini düzelt" — 6 bağımsız ajanla (arayüz, backend, mimari sınırlar,
   veritabanı, roller/yetkilendirme, API endpoint'leri) sıfırdan yapılan yeni bir tam denetim,

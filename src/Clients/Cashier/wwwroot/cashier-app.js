@@ -272,6 +272,10 @@
       tableNumber: 'KASA-1',
       waiterName: state.cashierName || 'Kasiyer',
       items: state.ticketItems.map(item => ({
+        // Stable per-line id (already used for local cart tracking) makes a
+        // retried draft submission idempotent server-side instead of
+        // appending a duplicate line on every retry.
+        id: item.id,
         productId: item.productId,
         name: item.name,
         productName: item.name,

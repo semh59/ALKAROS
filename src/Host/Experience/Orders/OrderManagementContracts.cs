@@ -7,7 +7,18 @@ public sealed record CreateTableDraftRequest(
     IReadOnlyList<OrderItemDraftDto> Items,
     string? OrderNote = null);
 
+/// <summary>
+/// <paramref name="Id"/> is the client-generated cart-line id (both PWAs
+/// already assign one per line for their own rendering). Reusing it as the
+/// resulting OrderItem's id makes a retried draft submission idempotent —
+/// SaveAsync's own known-vs-new-id diffing updates the existing row in
+/// place instead of inserting a duplicate line (found while fixing the
+/// table-draft merge defect, 2026-09-06: appending on every call, safe for
+/// a genuinely new round of items, would otherwise double an item whose
+/// request was retried after an ambiguous network failure).
+/// </summary>
 public sealed record OrderItemDraftDto(
+    Guid Id,
     Guid ProductId,
     string ProductName,
     int Quantity,

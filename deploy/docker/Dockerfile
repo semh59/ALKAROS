@@ -17,6 +17,28 @@ RUN dotnet restore ALKAROS.slnx --locked-mode
 RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
 
 # ---------------------------------------------------------------------------
+# test: runs the .NET test suite in the same Debian/Linux environment
+# production uses, with a real `psql` client on PATH. PsqlScriptRunner
+# (src/Host/Composition/Migrations) shells out to `psql` for every migration,
+# so the MigrationComposition test suite depends on a working native psql
+# binary; a host machine's own psql (e.g. a broken Windows install) is not
+# part of this contract and must never cause a false failure. Never
+# published — run on demand via compose.test.yaml.
+# ---------------------------------------------------------------------------
+FROM backend-build AS test
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+# Test projects target net8.0 (Directory.Build.props keeps that as the
+# published runtime target, B-6) but this stage's SDK is 10.0, which only
+# bundles its own 10.x shared runtime — `dotnet test` cannot launch a net8.0
+# test host without the actual 8.0 shared frameworks alongside it.
+COPY --from=mcr.microsoft.com/dotnet/aspnet:8.0@sha256:787c228ea85457bec43c8b084e6ac360b26ea43b5c2fcbe861f721f2e8670dd3 \
+    /usr/share/dotnet/shared/Microsoft.NETCore.App /usr/share/dotnet/shared/Microsoft.NETCore.App
+COPY --from=mcr.microsoft.com/dotnet/aspnet:8.0@sha256:787c228ea85457bec43c8b084e6ac360b26ea43b5c2fcbe861f721f2e8670dd3 \
+    /usr/share/dotnet/shared/Microsoft.AspNetCore.App /usr/share/dotnet/shared/Microsoft.AspNetCore.App
+
+# ---------------------------------------------------------------------------
 # frontend-build: build PosTerminal and assemble one static tree with every
 # client shell - PosTerminal SPA at the root, the vanilla WaiterPwa and
 # Cashier shells under their own path prefixes.

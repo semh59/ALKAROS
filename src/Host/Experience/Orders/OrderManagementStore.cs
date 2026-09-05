@@ -38,7 +38,7 @@ public sealed class OrderManagementStore
             var (productName, unitPrice, taxRate) = product;
 
             newItems.Add(new OrderItem(
-                Guid.NewGuid(),
+                i.Id,
                 orderId,
                 i.ProductId,
                 productName,
@@ -98,7 +98,14 @@ public sealed class OrderManagementStore
             // audit, 2026-09-06).
             var currentOrder = await _repository.GetByIdAsync(existingOrder.OrderId, cancellationToken)
                 ?? throw new InvalidOperationException($"Order {existingOrder.OrderId} was not found during draft merge.");
-            var mergedItems = currentOrder.Items.Concat(newItems).ToList();
+            // A retried request (e.g. the offline queue resending a call whose
+            // response was lost to a dropped connection) carries the same
+            // client-generated item ids as the round it already applied —
+            // drop those from newItems instead of appending a duplicate line.
+            var alreadyPersistedIds = currentOrder.Items.Select(item => item.Id).ToHashSet();
+            var mergedItems = currentOrder.Items
+                .Concat(newItems.Where(item => !alreadyPersistedIds.Contains(item.Id)))
+                .ToList();
             var orderNumber = $"TBL-{request.TableNumber}-{orderId.ToString("N")[..6].ToUpperInvariant()}";
 
             order = new Order(

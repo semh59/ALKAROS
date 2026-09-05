@@ -706,6 +706,12 @@
             tableNumber: state.selectedTable.number,
             waiterName: state.currentUser?.name || 'Garson',
             items: state.cart.map(item => ({
+              // Stable per-line id (already used for local cart tracking)
+              // makes a retried draft submission idempotent server-side
+              // instead of appending a duplicate line on every retry — the
+              // offline queue in particular resends on an ambiguous
+              // (dropped-connection) failure.
+              id: item.id,
               productId: item.productId,
               name: item.name,
               productName: item.name,

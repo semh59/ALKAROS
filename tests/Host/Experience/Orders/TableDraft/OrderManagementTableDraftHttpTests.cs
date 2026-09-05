@@ -54,14 +54,14 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         using var firstResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
             new CreateTableDraftRequest(tableId, "M-05", "Garson Ahmet",
-                [new OrderItemDraftDto(starter, "Çorba", 1, 60m)])));
+                [new OrderItemDraftDto(Guid.NewGuid(), starter, "Çorba", 1, 60m)])));
         Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
         var firstDraft = await firstResponse.Content.ReadFromJsonAsync<OrderDto>();
 
         using var secondResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
             new CreateTableDraftRequest(tableId, "M-05", "Garson Ahmet",
-                [new OrderItemDraftDto(dessert, "Baklava", 1, 90m)])));
+                [new OrderItemDraftDto(Guid.NewGuid(), dessert, "Baklava", 1, 90m)])));
         Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
         var secondDraft = await secondResponse.Content.ReadFromJsonAsync<OrderDto>();
 
@@ -85,7 +85,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
             new CreateTableDraftRequest(tableId, "M-07", "Garson Ahmet",
-                [new OrderItemDraftDto(product, "Köfte", 2, 280m)])));
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 2, 280m)])));
         Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
 
@@ -96,6 +96,38 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
         var submitted = await submitResponse.Content.ReadFromJsonAsync<OrderDto>();
         Assert.Equal("Submitted", submitted!.Status);
+    }
+
+    [Fact]
+    public async Task RetryingAnIdenticalDraftRequestDoesNotDuplicateItems()
+    {
+        // A client-generated, stable per-item id makes a retried draft
+        // submission idempotent: the offline queue (WaiterPwa) or a plain
+        // network retry resends the exact same payload after an ambiguous
+        // (dropped-connection) failure, and that must update the existing
+        // line in place rather than double it (found while verifying the
+        // table-draft merge fix, 2026-09-06 — appending unconditionally on
+        // every call is only safe for a genuinely new round of items).
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Kola", 45m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var payload = new CreateTableDraftRequest(tableId, "M-09", "Garson Ahmet",
+            [new OrderItemDraftDto(Guid.NewGuid(), product, "Kola", 2, 45m)]);
+
+        using var firstResponse = await client.SendAsync(JsonRequest(DraftPath(terminalId), cookie, payload));
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        var firstDraft = await firstResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var retryResponse = await client.SendAsync(JsonRequest(DraftPath(terminalId), cookie, payload));
+        Assert.Equal(HttpStatusCode.OK, retryResponse.StatusCode);
+        var retryDraft = await retryResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        Assert.Equal(firstDraft!.OrderId, retryDraft!.OrderId);
+        Assert.Single(retryDraft.Items);
+        Assert.Equal(90m, retryDraft.TotalAmount);
     }
 
     private static string DraftPath(Guid terminalId)
