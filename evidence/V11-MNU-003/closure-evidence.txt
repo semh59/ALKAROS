@@ -1,0 +1,41 @@
+V11-MNU-003 closure evidence
+Date: 2026-09-06
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+
+## Scope executed
+- Database migrations:
+  - database/migrations/V11/V11-MNU-003/063-static-menu.up.sql: creates schema 'menu', tables 'menu.menus' and 'menu.menu_items' with foreign keys, indexes, and unique constraint uq_menu_items_menu_product.
+  - database/migrations/V11/V11-MNU-003/063-static-menu.down.sql: cleanly drops tables.
+- Domain models and services in src/Modules/Menu/StaticMenu/:
+  - Models: Menu, MenuItem, CreateMenuCommand, UpdateMenuCommand, AddMenuItemCommand, UpdateMenuItemCommand, ReorderMenuItemsCommand, MenuItemDetail, MenuComposition, CatalogProductInfo.
+  - Exceptions: MenuException, MenuNotFoundException, MenuItemNotFoundException, DuplicateMenuCodeException, DuplicateMenuItemProductException, InvalidMenuCommandException, CatalogProductNotFoundException.
+  - Repositories:
+    - IMenuRepository / PostgresMenuRepository: handles CRUD on menu.menus.
+    - IMenuItemRepository / PostgresMenuItemRepository: handles items and transactional reordering on menu.menu_items.
+  - Catalog Reader:
+    - ICatalogProductReader / PostgresCatalogProductReader: reads catalog.products without circular project references.
+  - Service:
+    - IStaticMenuService / StaticMenuService: enforces no price/stock ownership, rejects duplicate product in menu, ensures display order, and keeps historical menu items visible with clear IsProductActiveInCatalog status when catalog product is deactivated.
+- Automated Tests in tests/Modules/Menu/StaticMenu/:
+  - StaticMenuDomainTests: 10 unit tests covering validation, duplicate rejection, display ordering, catalog deactivation retention without deletion.
+  - StaticMenuDatabaseTests: 8 PostgreSQL 18 integration tests covering full persistence, schema constraints, catalog product deactivation flag preservation, transactional reordering, and migration rollback.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Release
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Menu/StaticMenu/ALKAROS.Menu.StaticMenu.Tests.csproj -c Release
+   Result: 18 passed, 0 failed, 0 skipped (exit code: 0)
+
+3. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+   Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/task-scope/task_scope_tool.py --task-id V11-MNU-003 --diff-base e3cbd7e
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+All modified/created files are within the task allowlist (src/Modules/Menu/StaticMenu/**, tests/Modules/Menu/StaticMenu/**, database/migrations/V11/V11-MNU-003/**, src/Modules/Menu/ALKAROS.Menu.csproj, tests/Modules/Menu/StaticMenu/ALKAROS.Menu.StaticMenu.Tests.csproj, packages.lock.json, ALKAROS.slnx under C86, and evidence/V11-MNU-003/**).
