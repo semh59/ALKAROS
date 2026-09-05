@@ -1,10 +1,10 @@
 # V11-INV-003 - Implement compensating StockMovement reversal
 
 - Task ID: V11-INV-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
