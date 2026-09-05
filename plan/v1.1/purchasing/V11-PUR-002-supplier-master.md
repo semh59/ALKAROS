@@ -19,6 +19,8 @@ benzersizliği uygulayın.
 
 - `src/Modules/Purchasing/Suppliers/**`, `tests/Modules/Purchasing/Suppliers/**`,
   `database/migrations/V11/V11-PUR-002/**`
+- `src/Modules/Purchasing/ALKAROS.Purchasing.csproj`, `src/Modules/Purchasing/packages.lock.json`, `tests/Modules/Purchasing/Suppliers/ALKAROS.Purchasing.Suppliers.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
