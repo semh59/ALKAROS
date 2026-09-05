@@ -1,0 +1,50 @@
+﻿V11-RSV-002 closure evidence
+Date: 2026-09-06
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+
+## Scope executed
+- Domain models and services in src/Modules/Inventory/PortionReservations/Concurrency/:
+  - Models: ArbitrationStatus (Reserved, OutOfStock, IdempotentReplay), ArbitrateReservationCommand, ReservationArbitrationResult (with factory methods Success, Replay, OutOfStock).
+  - Exceptions: PortionReservationArbitrationException, InsufficientPortionStockException, InvalidArbitrationCommandException.
+  - Repositories: IPortionReservationArbitratorRepository, PostgresPortionReservationArbitratorRepository utilizing PostgreSQL row-level locking (SELECT ... FOR UPDATE on inventory.stock_balances) within transactional boundary to atomically check available quantity, update reserved and available quantities, insert PortionReservation in Reserved status, and record applied projection event.
+  - Arbitrator Service:
+    - IPortionReservationArbitrator / PortionReservationArbitrator:
+      - Validates command invariants (strictly positive quantity, non-empty OrderId, OrderItemId, StockItemId, StockLocationId, ActorId, UnitCode).
+      - Executes atomic reservation arbitration preventing overselling across competing channels.
+      - Returns OutOfStock with exact non-negative remaining quantity when requested exceeds available.
+      - Provides idempotent replay guarantee when duplicate idempotency key is submitted.
+- Automated Tests in tests/Modules/Inventory/PortionReservations/Concurrency/:
+  - PortionReservationConcurrencyDomainTests: 6 unit tests covering single reservation success, out of stock rejection, duplicate idempotency replay, invalid quantity rejection, empty actor rejection, and parallel arbitration for single remaining portion allowing exactly one winner with non-negative available balance.
+  - PortionReservationConcurrencyDatabaseTests: 3 PostgreSQL 18 integration tests covering full persistence arbitration (success, out of stock, exact balance depletion), parallel arbitration for the last remaining portion under PostgreSQL row locking (verifying exactly one Reserved, one OutOfStock, and zero negative balance), and idempotency replay under PostgreSQL.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Release
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Inventory/PortionReservations/Concurrency/ALKAROS.Inventory.PortionReservations.Concurrency.Tests.csproj -c Release --no-build
+   Result: 9 passed, 0 failed, 0 skipped (exit code: 0)
+
+3. dotnet test tests/Modules/Inventory/ReservationBalanceProjection/ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj -c Release --no-build
+   Result: 13 passed, 0 failed, 0 skipped (exit code: 0)
+
+4. dotnet test tests/Modules/Inventory/PortionReservations/Lifecycle/ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.csproj -c Release --no-build
+   Result: 9 passed, 0 failed, 0 skipped (exit code: 0)
+
+5. dotnet test tests/Modules/Inventory/WasteRecording/ALKAROS.Inventory.WasteRecording.Tests.csproj -c Release --no-build
+   Result: 11 passed, 0 failed, 0 skipped (exit code: 0)
+
+6. dotnet test tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj -c Release --no-build
+   Result: 12 passed, 0 failed, 0 skipped (exit code: 0)
+
+7. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release --no-build
+   Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/task-scope/task_scope_tool.py --task-id V11-RSV-002 --diff-base c76bcde
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+All modified/created files are within the task allowlist (src/Modules/Inventory/PortionReservations/Concurrency/**, tests/Modules/Inventory/PortionReservations/Concurrency/**, evidence/V11-RSV-002/**, and ALKAROS.slnx under C84).
