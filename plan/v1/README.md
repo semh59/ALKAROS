@@ -11,9 +11,17 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 298 görev tanımlıdır: 293 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 301 görev tanımlıdır: 296 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-05 32. dalga (Semih onayıyla — eski denetimin H4 bulgusu araştırılırken tüm
+  `src/Clients/WaiterPwa/SessionQueue/**` modülünün (`WaiterOfflineQueueEngine` dahil) kendi
+  test dosyasından başka hiçbir yerden hiç referans edilmediği bulundu; gerçek üretim
+  istemcisi (`waiter-app.js`) ayrı ve zaten doğru bir çevrimdışı kuyruk mantığı içeriyordu —
+  `V1-RMD-104`) `V1-GOV-084` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-085` ile resmen
+  kaydedildi; modül (4 kaynak dosyası + test projesi, 9 test) tamamen kaldırıldı, `V1-GOV-086`
+  ile 32. dalga kesin olarak yeniden mühürlendi. Aynı sınıftaki bir diğer aday
+  (`OrderEntryEngine.BeginSubmission()`) kasıtlı olarak dokunulmadan bırakıldı.
   2026-09-05 31. dalga (Semih onayıyla, "tümünü düzelt" — daha eski, ayrı bir denetim turunun
   hâlâ açık altı bulgusu: B1 [HIGH] bill adjustments (indirim) tamamen bağlanmamıştı, H1 [MED]
   `BillingSplitStore`'un finansal yolda geniş `catch (Exception)` kullanması, H2/H3

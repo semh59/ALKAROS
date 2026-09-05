@@ -36,7 +36,6 @@
   <Project Path="tests/Clients/WaiterPwa/ManagerDecisions/ALKAROS.WaiterPwa.ManagerDecisions.Tests.csproj" />
   <Project Path="tests/Clients/WaiterPwa/OrderEntry/ALKAROS.WaiterPwa.OrderEntry.Tests.csproj" />
   <Project Path="tests/Clients/WaiterPwa/OrderStatus/ALKAROS.WaiterPwa.OrderStatus.Tests.csproj" />
-  <Project Path="tests/Clients/WaiterPwa/SessionQueue/ALKAROS.WaiterPwa.SessionQueue.Tests.csproj" />
   <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
   <Project Path="tests/Host/Experience/Authorization/ALKAROS.Host.Experience.Authorization.Tests.csproj" />
   <Project Path="tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj" />

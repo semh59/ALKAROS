@@ -36,8 +36,12 @@ transaction içinde projekte etmek.
 - `src/Modules/Identity/DeviceSessions/IDeviceSessionRepository.cs`
 - `src/Modules/Identity/DeviceSessions/PostgresDeviceSessionRepository.cs`
 - `tests/Modules/Identity/DeviceSessions/DeviceSessionServiceTests.cs`
-- `src/Clients/WaiterPwa/SessionQueue/**`
-- `tests/Clients/WaiterPwa/SessionQueue/**`
+- PO:2026-09-05 kararıyla (Semih onayıyla, H4 bulgusu) `src/Clients/WaiterPwa/SessionQueue/**`
+  ve `tests/Clients/WaiterPwa/SessionQueue/**` kaldırıldı — hiçbir yerden
+  referans edilmiyordu (yalnız kendi test dosyası çağırıyordu), gerçek
+  üretim istemcisi (`waiter-app.js`) ayrı ve zaten doğru bir çevrimdışı
+  kuyruk mantığı içeriyordu; bkz. `V1-RMD-104`. Bu tarihten sonra bu iki
+  yol diskte yoktur.
 - PO:2026-08-24 UI yeniden tasarım kararıyla src/Clients/WebPrototype yüzeyi V1-RMD-003'e devredildi; bu
   historical task closed kalır.
 - `src/Modules/Billing/BillFoundation/BillEnums.cs`
