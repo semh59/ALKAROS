@@ -1,7 +1,7 @@
 # V11-INV-004 - Implement StockItem and StockLocation master data
 
 - Task ID: V11-INV-004
-- Status: InProgress
+- Status: Done
 - Assignee: antigravity-session-v11-inv-004
 - Work type: implementation
 - Surface state: Planned

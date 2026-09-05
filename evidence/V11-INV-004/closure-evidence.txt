@@ -1,0 +1,81 @@
+V11-INV-004 closure evidence
+Date: 2026-09-06
+Assignee: antigravity-session-v11-inv-004
+
+## Scope executed
+- Inventory module foundation: src/Modules/Inventory/ALKAROS.Inventory.csproj, src/Modules/Inventory/packages.lock.json, and tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj.
+- Core StockMaster Domain (src/Modules/Inventory/StockMaster/):
+  - StockItemType (RawMaterial, Portion, Packaging, ServiceItem)
+  - StockLocationType (Warehouse, Kitchen, Bar, ColdStorage, DryStorage, Counter)
+  - StockLocation entity (Id, Code, Name, LocationType, IsActive, CreatedAt, RowVersion)
+  - StockItem entity (Id, Code, Name, ItemType, TrackingUnitCode, DefaultLocationId, IsActive, CreatedAt, RowVersion)
+  - ProductStockMapping entity (ProductId, StockItemId, QuantityMultiplier, Notes, CreatedAt)
+  - Inactive movement validation: InactiveStockItemException and InactiveStockLocationException prevent movements to inactive items/locations.
+  - Repositories:
+    - IStockLocationRepository & PostgresStockLocationRepository
+    - IStockItemRepository & PostgresStockItemRepository
+    - IProductStockMappingRepository & PostgresProductStockMappingRepository
+  - Domain Service:
+    - IStockMasterService & StockMasterService (validates tracking unit with IUnitConverter, validates active default location, enforces uppercase code normalization, validates movement target).
+- Migration:
+  - database/migrations/V11/V11-INV-004/056-stock-master.up.sql
+  - database/migrations/V11/V11-INV-004/056-stock-master.down.sql
+- Automated Tests (tests/Modules/Inventory/StockMaster/):
+  - StockMasterDomainTests: 7 unit tests covering normalization, inactive movement rejection, positive multiplier constraint, unit converter integration, and inactive default location rejection.
+  - StockMasterDatabaseTests: 7 tests on PostgreSQL 18 container covering CRUD, duplicate code constraint (23505), foreign key deletion restriction (23503/23001), movement validation, and migration 056 rollback/reapply lifecycle.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj -c Release
+   Result: 14 passed, 0 failed, 0 skipped (exit code: 0)
+   - CreateStockLocationWithValidParametersNormalizesCode: PASSED
+   - InactiveStockLocationThrowsInactiveStockLocationExceptionOnMovement: PASSED
+   - CreateStockItemWithValidParametersNormalizesCodeAndUnit: PASSED
+   - InactiveStockItemThrowsInactiveStockItemExceptionOnMovement: PASSED
+   - ProductStockMappingRequiresPositiveMultiplier: PASSED
+   - StockMasterServiceRejectsUnknownTrackingUnit: PASSED
+   - StockMasterServiceRejectsInactiveDefaultLocation: PASSED
+   - CreateLocationAndRetrievePersistsCorrectly: PASSED
+   - DuplicateLocationCodeThrowsDuplicateStockLocationException: PASSED
+   - CreateStockItemWithDefaultLocationPersistsAndLoadsCorrectly: PASSED
+   - ValidateMovementTargetRejectsInactiveItemOrLocation: PASSED
+   - ProductStockMappingPersistsAndLoadsCorrectly: PASSED
+   - DeletingStockItemReferencedByProductMappingThrowsForeignKeyRestriction: PASSED
+   - Migration056RollbackAndReapplyWorksCleanly: PASSED
+
+3. dotnet test tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj
+   Result: 16 passed, 0 failed, 0 skipped (exit code: 0)
+
+4. dotnet test tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj -c Release
+   Result: 24 passed, 0 failed, 0 skipped (exit code: 0)
+
+5. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj
+   Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+3. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+4. python tools/task-scope/task_scope_tool.py --task-id V11-INV-004
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+- ALKAROS.slnx (C76 scope extension)
+- database/migrations/V11/V11-INV-004/056-stock-master.up.sql
+- database/migrations/V11/V11-INV-004/056-stock-master.down.sql
+- src/Modules/Inventory/ALKAROS.Inventory.csproj
+- src/Modules/Inventory/packages.lock.json
+- src/Modules/Inventory/StockMaster/*
+- tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj
+- tests/Modules/Inventory/StockMaster/packages.lock.json
+- tests/Modules/Inventory/StockMaster/*
+- evidence/V11-INV-004/closure-evidence.txt
+- plan/v1.1/inventory/V11-INV-004-stock-master-and-locations.md (Status: InProgress -> Done)
