@@ -22,6 +22,8 @@ Immutable RecipeVersion'a bağlı Planned, InProgress, Completed ve Cancelled Pr
 
 - `src/Modules/Production/BatchLifecycle/**`, `tests/Modules/Production/BatchLifecycle/**`,
   `database/migrations/V11/V11-PRD-001/**`
+- `src/Modules/Production/ALKAROS.Production.csproj`, `src/Modules/Production/packages.lock.json`, `tests/Modules/Production/BatchLifecycle/ALKAROS.Production.BatchLifecycle.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
