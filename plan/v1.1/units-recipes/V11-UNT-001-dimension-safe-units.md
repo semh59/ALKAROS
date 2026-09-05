@@ -1,7 +1,7 @@
 # V11-UNT-001 - Implement dimension-safe units and conversions
 
 - Task ID: V11-UNT-001
-- Status: InProgress
+- Status: Done
 - Assignee: antigravity-session-v11-unt-001
 - Work type: implementation
 - Surface state: Planned

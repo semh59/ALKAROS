@@ -21,6 +21,7 @@
   <Project Path="src/Modules/Reporting/ALKAROS.Reporting.csproj" />
   <Project Path="src/Modules/Settings/ALKAROS.Settings.csproj" />
   <Project Path="src/Modules/Tables/ALKAROS.Tables.csproj" />
+  <Project Path="src/Modules/Recipes/ALKAROS.Recipes.csproj" />
   <Project Path="src/Clients/Cashier/ALKAROS.Cashier.csproj" />
   <Project Path="src/Clients/WaiterPwa/ALKAROS.WaiterPwa.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
@@ -78,4 +79,5 @@
   <Project Path="tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableMerge/ALKAROS.Tables.TableMerge.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj" />
+  <Project Path="tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj" />
 </Solution>
