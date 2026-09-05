@@ -23,6 +23,7 @@
   <Project Path="src/Modules/Tables/ALKAROS.Tables.csproj" />
   <Project Path="src/Modules/Recipes/ALKAROS.Recipes.csproj" />
   <Project Path="src/Modules/Inventory/ALKAROS.Inventory.csproj" />
+  <Project Path="src/Modules/Menu/ALKAROS.Menu.csproj" />
   <Project Path="src/Clients/Cashier/ALKAROS.Cashier.csproj" />
   <Project Path="src/Clients/WaiterPwa/ALKAROS.WaiterPwa.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
@@ -93,4 +94,5 @@
   <Project Path="tests/Modules/Inventory/ReservationBalanceProjection/ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/PortionReservations/Concurrency/ALKAROS.Inventory.PortionReservations.Concurrency.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/PortionReservations/CancellationEffects/ALKAROS.Inventory.PortionReservations.CancellationEffects.Tests.csproj" />
+  <Project Path="tests/Modules/Menu/StaticMenu/ALKAROS.Menu.StaticMenu.Tests.csproj" />
 </Solution>
