@@ -22,6 +22,8 @@ Stok kimliklerini, stok türlerini, takip edilen birim ve konum yapılandırmas�
 
 - `src/Modules/Inventory/StockMaster/**`, `tests/Modules/Inventory/StockMaster/**`,
   `database/migrations/V11/V11-INV-004/**`
+- `src/Modules/Inventory/ALKAROS.Inventory.csproj`, `src/Modules/Inventory/packages.lock.json`, `tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
