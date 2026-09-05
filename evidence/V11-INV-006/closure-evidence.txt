@@ -1,0 +1,67 @@
+V11-INV-006 closure evidence
+Date: 2026-09-06
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+
+## Scope executed
+- Migration 060 under database/migrations/V11/V11-INV-006/:
+  - 060-waste-records.up.sql: creates inventory.waste_records table with foreign keys to stock_movements, stock_items, stock_locations, unique index on idempotency_key, and DB immutability trigger prohibiting UPDATE or DELETE.
+  - 060-waste-records.down.sql: drops trigger, function, and table cleanly.
+- Domain models and services in src/Modules/Inventory/WasteRecording/:
+  - Exceptions: WasteRecordingException, InvalidWasteQuantityException, InvalidWasteReasonException, UnauthorizedWasteRecorderException, IncompatibleWasteUnitException, InsufficientStockForWasteException, WasteItemNotFoundException, WasteLocationNotFoundException
+  - Models: WasteSources (Production, PortionReservation, Manual, Spoilage, Expiration, PreparationDamage), RecordWasteRequest, WasteRecord, WasteRecordingResult
+  - Repositories: IWasteRecordRepository, PostgresWasteRecordRepository
+  - Service:
+    - IWasteRecordingService / WasteRecordingService:
+      - Validates mandatory non-empty reason
+      - Validates mandatory authorized staff/manager GUID
+      - Validates positive quantity (> 0)
+      - Validates waste source against valid source catalogue
+      - Enforces dimension safety and unit conversion via IUnitConverter
+      - Enforces non-negative on-hand invariant (rejects waste exceeding current on-hand)
+      - Guarantees idempotency replay: duplicate submissions with the same idempotency key return existing record and movement without duplicate ledger entries or dual stock decrements
+      - Records append-only StockMovement (movement_type = 'Waste', direction = 'Out', source_type = 'WasteRecord', source_reference_id = waste_record_id)
+      - Applies movement to IStockBalanceProjector to authoritative decrements
+- Automated Tests in tests/Modules/Inventory/WasteRecording/:
+  - WasteRecordingDomainTests: 9 unit tests covering valid waste creation, unit conversion (g to kg), dimension mismatch rejection, non-positive quantity rejection, empty reason rejection, unauthorized staff rejection, insufficient stock rejection, idempotency deduplication replay, and source querying.
+  - WasteRecordingDatabaseTests: 2 PostgreSQL 18 integration tests covering full persistence lifecycle with balance projection and immutability trigger verification, and idempotency deduplication in database.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Release
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Inventory/WasteRecording/ALKAROS.Inventory.WasteRecording.Tests.csproj -c Release --no-build
+   Result: 11 passed, 0 failed, 0 skipped (exit code: 0)
+
+3. dotnet test tests/Modules/Inventory/ManualAdjustments/ALKAROS.Inventory.ManualAdjustments.Tests.csproj -c Release --no-build
+   Result: 9 passed, 0 failed, 0 skipped (exit code: 0)
+
+4. dotnet test tests/Modules/Inventory/MovementReversal/ALKAROS.Inventory.MovementReversal.Tests.csproj -c Release --no-build
+   Result: 16 passed, 0 failed, 0 skipped (exit code: 0)
+
+5. dotnet test tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj -c Release --no-build
+   Result: 12 passed, 0 failed, 0 skipped (exit code: 0)
+
+6. dotnet test tests/Modules/Inventory/MovementLedger/ALKAROS.Inventory.MovementLedger.Tests.csproj -c Release --no-build
+   Result: 18 passed, 0 failed, 0 skipped (exit code: 0)
+
+7. dotnet test tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj -c Release --no-build
+   Result: 14 passed, 0 failed, 0 skipped (exit code: 0)
+
+8. dotnet test tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj -c Release --no-build
+   Result: 24 passed, 0 failed, 0 skipped (exit code: 0)
+
+9. dotnet test tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj -c Release --no-build
+   Result: 16 passed, 0 failed, 0 skipped (exit code: 0)
+
+10. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release --no-build
+    Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/task-scope/task_scope_tool.py --task-id V11-INV-006 --diff-base 528a201
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+All modified/created files are within the task allowlist (src/Modules/Inventory/WasteRecording/**, tests/Modules/Inventory/WasteRecording/**, database/migrations/V11/V11-INV-006/**, evidence/V11-INV-006/**, and ALKAROS.slnx under C81).\n
