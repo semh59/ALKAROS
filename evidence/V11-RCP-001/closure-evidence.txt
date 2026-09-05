@@ -1,0 +1,88 @@
+V11-RCP-001 closure evidence
+Date: 2026-09-05
+Assignee: antigravity-session-v11-rcp-001
+
+## Scope executed
+- Domain models and immutable lifecycle in `src/Modules/Recipes/Versioning/`:
+  - RecipeVersionStatus enum: Draft, Active, Archived, Deprecated
+  - Recipe entity: Code, Name, Description, CreatedAt, RowVersion
+  - RecipeIngredientItem: IngredientItemId, Quantity, UnitCode, LossPercentage, SortOrder, Notes
+  - RecipeVersion: VersionNumber, Status, YieldQuantity, YieldUnitCode, PreparationMinutes, Instructions, IsLocked, EffectiveFrom, EffectiveTo, ActivatedAt, RowVersion, Ingredients
+  - Strict immutability guards: mutating (AddIngredient, RemoveIngredient, UpdateIngredient, UpdateYield) throws RecipeVersionImmutableException when status is Active/Archived/Deprecated or IsLocked is true.
+  - CloneAsDraft: clones existing active/historical version into a new editable Draft with monotonic version number (v+1) without modifying original historical entries.
+  - Repositories:
+    - IRecipeRepository / PostgresRecipeRepository
+    - IRecipeVersionRepository / PostgresRecipeVersionRepository (transactional activation with partial unique index, archiving previous active version)
+  - Lifecycle service: IRecipeLifecycleService / RecipeLifecycleService
+- Migration:
+  - database/migrations/V11/V11-RCP-001/055-recipe-versions.up.sql (recipes, recipe_versions with uq_recipe_single_active partial index, recipe_ingredients)
+  - database/migrations/V11/V11-RCP-001/055-recipe-versions.down.sql
+- Automated Tests in `tests/Modules/Recipes/Versioning/`:
+  - RecipeVersionDomainTests: 17 unit tests covering draft creation, ingredient manipulation, duplicate ingredient rejection, zero ingredient activation rejection, active/archived/deprecated/locked immutability guards, idempotent activation, deprecation, and historical version preservation upon cloning.
+  - RecipeVersionDatabaseTests: 7 database/migration tests covering PostgreSQL 18 CRUD, ingredient persistence, optimistic concurrency (row_version), transactional activation (auto-archiving previous active version), database-level single active version constraint (23505), foreign key deletion restriction (23001/23503), and migration 055 rollback/reapply idempotency.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj -c Release
+   Result: 24 passed, 0 failed, 0 skipped (exit code: 0)
+   - DeprecateSetsDeprecatedAndIsLocked: PASSED
+   - AddIngredientDuplicateIngredientItemThrowsInvalidRecipeVersionException: PASSED
+   - UpdateYieldInActiveVersionThrowsRecipeVersionImmutableException: PASSED
+   - CloneAsDraftMutatingNewDraftDoesNotMutateOriginalHistoricalVersion: PASSED
+   - AddIngredientToLockedVersionThrowsRecipeVersionImmutableException: PASSED
+   - ActivateDraftWithIngredientsSetsActiveAndIsLocked: PASSED
+   - CreateDraftWithValidParametersSetsInitialProperties: PASSED
+   - ArchiveActiveVersionSetsArchivedAndEffectiveTo: PASSED
+   - AddIngredientToDraftAddsIngredientCorrectly: PASSED
+   - AddIngredientToActiveVersionThrowsRecipeVersionImmutableException: PASSED
+   - UpdateIngredientInDraftUpdatesValues: PASSED
+   - ArchiveDraftVersionThrowsInvalidRecipeVersionException: PASSED
+   - ActivateDraftWithZeroIngredientsThrowsInvalidRecipeVersionException: PASSED
+   - RemoveIngredientFromActiveVersionThrowsRecipeVersionImmutableException: PASSED
+   - CloneAsDraftIncrementsVersionNumberAndClonesIngredients: PASSED
+   - UpdateYieldAndPreparationInDraftUpdatesValues: PASSED
+   - RemoveIngredientFromDraftRemovesIngredient: PASSED
+   - OptimisticConcurrencyThrowsWhenRowVersionMismatches: PASSED
+   - Migration055RollbackAndReapplyWorksCleanly: PASSED
+   - DatabaseForeignKeyRestrictsDeletionOfReferencedRecipe: PASSED
+   - AddAndRetrieveRecipeWithVersionsPersistsAndLoadsCorrectly: PASSED
+   - ActivateVersionTransactionallyArchivesPreviousAndActivatesTarget: PASSED
+   - UpdateDraftVersionPersistsIngredientChanges: PASSED
+   - DatabaseUniqueConstraintEnforcesSingleActiveVersionPerRecipe: PASSED
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+3. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+4. python tools/task-scope/task_scope_tool.py --task V11-RCP-001
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+- ALKAROS.slnx (C75 scope extension)
+- database/migrations/V11/V11-RCP-001/055-recipe-versions.up.sql
+- database/migrations/V11/V11-RCP-001/055-recipe-versions.down.sql
+- src/Modules/Recipes/Versioning/RecipeVersionStatus.cs
+- src/Modules/Recipes/Versioning/Exceptions.cs
+- src/Modules/Recipes/Versioning/Recipe.cs
+- src/Modules/Recipes/Versioning/RecipeIngredientItem.cs
+- src/Modules/Recipes/Versioning/RecipeVersion.cs
+- src/Modules/Recipes/Versioning/IRecipeRepository.cs
+- src/Modules/Recipes/Versioning/IRecipeVersionRepository.cs
+- src/Modules/Recipes/Versioning/PostgresRecipeRepository.cs
+- src/Modules/Recipes/Versioning/PostgresRecipeVersionRepository.cs
+- src/Modules/Recipes/Versioning/IRecipeLifecycleService.cs
+- src/Modules/Recipes/Versioning/RecipeLifecycleService.cs
+- tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj
+- tests/Modules/Recipes/Versioning/packages.lock.json
+- tests/Modules/Recipes/Versioning/RecipeVersionDomainTests.cs
+- tests/Modules/Recipes/Versioning/RecipeVersionDatabaseTests.cs
+- evidence/V11-RCP-001/closure-evidence.txt
+- plan/v1.1/units-recipes/V11-RCP-001-immutable-recipe-versions.md (Status: InProgress -> Done)

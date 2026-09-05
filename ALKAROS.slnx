@@ -80,4 +80,5 @@
   <Project Path="tests/Modules/Tables/TableMerge/ALKAROS.Tables.TableMerge.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj" />
+  <Project Path="tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj" />
 </Solution>

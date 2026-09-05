@@ -1,7 +1,7 @@
 # V11-RCP-001 - Implement immutable RecipeVersion lifecycle
 
 - Task ID: V11-RCP-001
-- Status: InProgress
+- Status: Done
 - Assignee: antigravity-session-v11-rcp-001
 - Work type: implementation
 - Surface state: Planned
