@@ -1,7 +1,7 @@
 # V11-INV-002 - Implement rebuildable on-hand stock projection
 
 - Task ID: V11-INV-002
-- Status: InProgress
+- Status: Done
 - Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
 - Work type: implementation
 - Surface state: Planned

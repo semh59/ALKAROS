@@ -1,0 +1,75 @@
+V11-INV-002 closure evidence
+Date: 2026-09-06
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+
+## Scope executed
+- Domain models and projection logic in `src/Modules/Inventory/BalanceProjection/`:
+  - StockBalance aggregate: StockItemId, StockLocationId, OnHandQuantity, ReservedQuantity, AvailableQuantity, UpdatedAt, RowVersion
+  - Non-null invariant: StockItemId and StockLocationId must be valid non-empty GUIDs
+  - Delta updates: ApplyOnHandDelta accurately adjusts on-hand and available while preserving reserved
+  - Rebuild/replay: SetOnHand overrides balance accurately
+  - Repositories:
+    - IStockBalanceRepository / PostgresStockBalanceRepository: atomic UPSERT using PostgreSQL ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE with row_version increments, preventing race conditions or lost updates; lookups by item and location, and bulk reset
+  - Projection and Rebuild:
+    - IStockBalanceProjector / StockBalanceProjector:
+      - ApplyMovementAsync: applies on-hand delta from ledger movements directly into stock_balances projection
+      - RebuildAllBalancesAsync: full ledger replay across all locations, resetting balances and computing exact sums of OnHandDelta from stock_movements
+      - ReplayBalanceForItemAndLocationAsync: authoritative single item/location balance calculation by replaying ledger movements
+- Migration:
+  - database/migrations/V11/V11-INV-002/058-stock-balances.up.sql: stock_balances table with UNIQUE(stock_item_id, stock_location_id), FK RESTRICT to items and locations, row_version, and indices.
+  - database/migrations/V11/V11-INV-002/058-stock-balances.down.sql: rollback table.
+- Automated Tests in `tests/Modules/Inventory/BalanceProjection/`:
+  - StockBalanceDomainTests: 7 unit tests covering initialization, delta updates, exact set preserving reserved, null policy, projector delta application, single item/location deterministic replay, and multi-location rebuild clearing drift.
+  - StockBalanceDatabaseTests: 5 database/migration tests covering PostgreSQL 18 persistence, atomic concurrency stress test (10 parallel tasks applying deltas with zero lost updates and exact final balance and row_version), full database ledger rebuild reconciling artificial drift back to exact movement sums, foreign key deletion restriction (23503/23001), and migration 058 rollback/reapply idempotency.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Release
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj -c Release --no-build
+   Result: 12 passed, 0 failed, 0 skipped (exit code: 0)
+
+3. dotnet test tests/Modules/Inventory/MovementLedger/ALKAROS.Inventory.MovementLedger.Tests.csproj -c Release --no-build
+   Result: 18 passed, 0 failed, 0 skipped (exit code: 0)
+
+4. dotnet test tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj -c Release --no-build
+   Result: 14 passed, 0 failed, 0 skipped (exit code: 0)
+
+5. dotnet test tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj -c Release --no-build
+   Result: 24 passed, 0 failed, 0 skipped (exit code: 0)
+
+6. dotnet test tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj -c Release --no-build
+   Result: 16 passed, 0 failed, 0 skipped (exit code: 0)
+
+7. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release --no-build
+   Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+3. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+4. python tools/task-scope/task_scope_tool.py --task-id V11-INV-002
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+- ALKAROS.slnx (C78 scope extension)
+- database/migrations/V11/V11-INV-002/058-stock-balances.up.sql
+- database/migrations/V11/V11-INV-002/058-stock-balances.down.sql
+- src/Modules/Inventory/BalanceProjection/Exceptions.cs
+- src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs
+- src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs
+- src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs
+- src/Modules/Inventory/BalanceProjection/StockBalance.cs
+- src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs
+- tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj
+- tests/Modules/Inventory/BalanceProjection/packages.lock.json
+- tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs
+- tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs
+- evidence/V11-INV-002/closure-evidence.txt
+- plan/v1.1/inventory/V11-INV-002-stock-balance-projection.md (Status: InProgress -> Done)
