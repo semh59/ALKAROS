@@ -1,0 +1,50 @@
+﻿V11-INV-007 closure evidence
+Date: 2026-09-06
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+
+## Scope executed
+- Migration 062 under database/migrations/V11/V11-INV-007/:
+  - 062-reservation-balance-projection.up.sql: creates inventory.reservation_balance_applied_events table with unique constraint on (reservation_id, event_type) to track applied reservation lifecycle effects for projection idempotency, and partial index idx_portion_reservations_active_agg on inventory.portion_reservations (stock_item_id, stock_location_id, quantity) WHERE status = 'Reserved'.
+  - 062-reservation-balance-projection.down.sql: cleanly drops indexes and table.
+- Domain models and services in src/Modules/Inventory/ReservationBalanceProjection/:
+  - Models: ReservationAppliedEventType (Reserved, Terminal), ReservationAppliedEvent, ApplyReservationResult, ReservationBalanceRebuildReport, ReservationBalanceDrift, ReservationBalanceDriftReport.
+  - Exceptions: ReservationBalanceException, ReservationBalanceNotFoundException, InvalidReservationBalanceDeltaException.
+  - Repositories: IReservationBalanceRepository, PostgresReservationBalanceRepository with atomic transactions ensuring idempotency and bounding reserved quantity at 0.
+  - Projector:
+    - IReservationBalanceProjector / ReservationBalanceProjector:
+      - ApplyReservationCreatedAsync: Increases reserved quantity and decreases available quantity atomically, idempotent replay handling.
+      - ApplyReservationTransitionAsync: Releases reserved quantity and restores available quantity upon terminal transitions (Released, Consumed, Waste). Idempotent replay guarantee ensures concurrent or replayed terminal transitions never double-decrement reserved or double-restore available.
+      - RebuildReservationBalancesAsync: Re-aggregates authoritative active reservations from inventory.portion_reservations, restores exact reserved and available balances, and synchronizes applied projection events.
+      - DetectDriftAsync: Compares projected reserved and available balances against actual active reservations, reporting quantified drift per stock item and location.
+- Automated Tests in tests/Modules/Inventory/ReservationBalanceProjection/:
+  - ReservationBalanceProjectionDomainTests: 10 unit tests covering reservation creation, duplicate creation replay idempotency, transitions to Released, Consumed, and Waste, duplicate transition replay idempotency, non-reserved transition handling, drift detection when matching vs drifted, and full rebuild restoring balances and clearing drift.
+  - ReservationBalanceProjectionDatabaseTests: 3 PostgreSQL 18 integration tests covering full persistence lifecycle with database state updates, concurrent terminal transitions race condition verifying exactly one terminal winner, and rebuild projection from ledger movements and reservation history.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Release
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Inventory/ReservationBalanceProjection/ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj -c Release --no-build
+   Result: 13 passed, 0 failed, 0 skipped (exit code: 0)
+
+3. dotnet test tests/Modules/Inventory/PortionReservations/Lifecycle/ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.csproj -c Release --no-build
+   Result: 9 passed, 0 failed, 0 skipped (exit code: 0)
+
+4. dotnet test tests/Modules/Inventory/WasteRecording/ALKAROS.Inventory.WasteRecording.Tests.csproj -c Release --no-build
+   Result: 11 passed, 0 failed, 0 skipped (exit code: 0)
+
+5. dotnet test tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj -c Release --no-build
+   Result: 12 passed, 0 failed, 0 skipped (exit code: 0)
+
+6. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release --no-build
+   Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/task-scope/task_scope_tool.py --task-id V11-INV-007 --diff-base 287ac32
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+All modified/created files are within the task allowlist (src/Modules/Inventory/ReservationBalanceProjection/**, tests/Modules/Inventory/ReservationBalanceProjection/**, database/migrations/V11/V11-INV-007/**, evidence/V11-INV-007/**, and ALKAROS.slnx under C83).
