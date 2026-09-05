@@ -1,0 +1,62 @@
+=== V11-PUR-001 Closure Evidence ===
+Date: 2026-09-06
+Task ID: V11-PUR-001
+Status: Done
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+Diff Base: 865d5c1
+
+1. Test Execution Command:
+$env:ALKAROS_TEST_PG_PORT="55432"; $env:ALKAROS_TEST_PG_USER="postgres"; $env:ALKAROS_TEST_PG_PASSWORD="postgres"; & "C:\Users\semih\.dotnet\dotnet.exe" test tests/Modules/Purchasing/OrdersAndReceipts/ALKAROS.Purchasing.OrdersAndReceipts.Tests.csproj -c Release
+
+Exit code: 0
+Output:
+Başarılı!  - Başarısız:     0, Başarılı:    22, Atlanan:     0, Toplam:    22, Süre: 900 ms - ALKAROS.Purchasing.OrdersAndReceipts.Tests.dll (net8.0)
+
+2. Supplier Master Suite Verification:
+$env:ALKAROS_TEST_PG_PORT="55432"; $env:ALKAROS_TEST_PG_USER="postgres"; $env:ALKAROS_TEST_PG_PASSWORD="postgres"; & "C:\Users\semih\.dotnet\dotnet.exe" test tests/Modules/Purchasing/Suppliers/ALKAROS.Purchasing.Suppliers.Tests.csproj -c Release
+
+Exit code: 0
+Output:
+Başarılı!  - Başarısız:     0, Başarılı:    29, Atlanan:     0, Toplam:    29, Süre: 392 ms - ALKAROS.Purchasing.Suppliers.Tests.dll (net8.0)
+
+3. Architecture Boundary Tests:
+& "C:\Users\semih\.dotnet\dotnet.exe" test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+Exit code: 0
+Output:
+Başarılı!  - Başarısız:     0, Başarılı:     8, Atlanan:     0, Toplam:     8, Süre: 245 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+
+4. Project Manifest Validation:
+python tools/project-manifest/project_manifest_tool.py
+Exit code: 0
+Output:
+ALKAROS Project Manifest Validator
+Repository Root: D:\PROJECT\ALKAROS
+Solution: ALKAROS.slnx
+Status: VALID (0 differences across Solution, Disk, and ProjectReferences)
+
+5. Task Scope Validation:
+python tools/task-scope/task_scope_tool.py --task-id V11-PUR-001 --diff-base 865d5c1
+Exit code: 0
+Output:
+{
+  "task_id": "V11-PUR-001",
+  "valid": true,
+  "metadata_errors": [],
+  "findings": []
+}
+
+6. Verification Summary:
+- PurchaseOrder and PurchaseOrderLine lifecycle (Draft, Submitted, PartiallyReceived, Completed, Cancelled).
+- Database migration 066 (up/down) creating purchase_orders, purchase_order_lines, goods_receipts, and goods_receipt_items.
+- Implemented Receipt Variance Policy (PDF:III.15, CORR:C11, V0-DOM-009):
+  * Short delivery: auto-accepts actual delivered quantity, mandatory reason, no approval required.
+  * Within-tolerance over-receipt (excess <= 5%): auto-accepts full quantity, mandatory reason, no approval required.
+  * Above-tolerance over-receipt (excess > 5%):
+    - With Manager approval: posts full delivered quantity.
+    - Without Manager approval: posts capped ordered quantity to stock, rejects excess quantity into receipt line (no stock posting).
+  * Every variance requires a mandatory non-empty reason.
+- GoodsReceipt posts immutable PurchaseReceipt movements into inventory.stock_movements with exact quantities and costs.
+- Partial receipts accumulate into line received_quantity, updating order status.
+- Inactive supplier order rejection verified.
+- Receipt idempotency verified.
+- Database rollback and reapply verified.
