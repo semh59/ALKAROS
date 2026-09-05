@@ -25,6 +25,8 @@ On-hand projection ve authoritative PortionReservation lifecycle'ından reserved
 
 - `src/Modules/Inventory/ReservationBalanceProjection/**`,
   `tests/Modules/Inventory/ReservationBalanceProjection/**`, `database/migrations/V11/V11-INV-007/**`
+- `tests/Modules/Inventory/ReservationBalanceProjection/ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
