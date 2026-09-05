@@ -1,0 +1,46 @@
+V11-MNU-001 closure evidence
+Date: 2026-09-06
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+
+## Scope executed
+- Database migrations:
+  - database/migrations/V11/V11-MNU-001/064-daily-menus.up.sql: creates schema 'menu', tables 'menu.daily_menus', 'menu.daily_menu_items' (with foreign keys and unique constraint on (daily_menu_id, product_id)), and 'menu.daily_menu_item_history'.
+  - database/migrations/V11/V11-MNU-001/064-daily-menus.down.sql: cleanly drops tables in dependency order.
+- Domain models and services in src/Modules/Menu/DailyMenuLifecycle/:
+  - Models: DailyMenuStatus (Draft, Open, PartiallyConsumed, Closed), DailyMenu (lifecycle transitions, closed immutability assertions), DailyMenuItem (price, portions, active status), DailyMenuItemHistory (JSON audit logging), BusinessDateProvider (Europe/Istanbul timezone and 23:59:59 cutoff per V0-CMP-002).
+  - Exceptions: DailyMenuException, DailyMenuNotFoundException, DailyMenuItemNotFoundException, DuplicateDailyMenuBusinessDateException, DuplicateDailyMenuItemException, DailyMenuClosedException, InvalidDailyMenuOperationException, InvalidDailyMenuTransitionException.
+  - Repositories:
+    - IDailyMenuRepository / PostgresDailyMenuRepository: handles CRUD on menu.daily_menus.
+    - IDailyMenuItemRepository / PostgresDailyMenuItemRepository: handles items on menu.daily_menu_items.
+    - IDailyMenuItemHistoryRepository / PostgresDailyMenuItemHistoryRepository: handles JSON audit logs on menu.daily_menu_item_history.
+  - Integration Readers:
+    - ICatalogProductPriceReader / PostgresCatalogProductPriceReader: reads product snapshot name and current price from catalog without circular reference.
+    - IRecipeVersionValidator / PostgresRecipeVersionValidator: validates recipe version active status from recipe schema.
+  - Service:
+    - IDailyMenuService / DailyMenuService: creates daily menu adhering to business date uniqueness, manages Open/Closed lifecycle, validates and auto-populates product prices, and strictly prevents addition or modification of items once menu is Closed.
+- Automated Tests in tests/Modules/Menu/DailyMenuLifecycle/:
+  - DailyMenuLifecycleDomainTests: 10 unit tests covering service day uniqueness, Draft/Open/Closed transitions, duplicate item rejection, closed menu immutability, recipe validation, and history logging.
+  - DailyMenuLifecycleDatabaseTests: 4 PostgreSQL 18 integration tests covering full persistence, unique service date constraint, unique daily menu product constraint, and migration rollback.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Release
+   Result: 0 warnings, 0 errors (exit code: 0)
+
+2. dotnet test tests/Modules/Menu/DailyMenuLifecycle/ALKAROS.Menu.DailyMenuLifecycle.Tests.csproj -c Release
+   Result: 14 passed, 0 failed, 0 skipped (exit code: 0)
+
+3. dotnet test tests/Modules/Menu/StaticMenu/ALKAROS.Menu.StaticMenu.Tests.csproj -c Release
+   Result: 18 passed, 0 failed, 0 skipped (exit code: 0)
+
+4. dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+   Result: 8 passed, 0 failed, 0 skipped (exit code: 0)
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and ProjectReferences) (exit code: 0)
+
+2. python tools/task-scope/task_scope_tool.py --task-id V11-MNU-001 --diff-base 915d2c8
+   Result: valid: true, findings: [] (exit code: 0)
+
+## Write-set vs Allowlist
+All modified/created files are within the task allowlist (src/Modules/Menu/DailyMenuLifecycle/**, tests/Modules/Menu/DailyMenuLifecycle/**, database/migrations/V11/V11-MNU-001/**, ALKAROS.slnx under C87, and evidence/V11-MNU-001/**).
