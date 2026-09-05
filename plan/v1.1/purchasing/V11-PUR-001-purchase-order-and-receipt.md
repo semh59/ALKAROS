@@ -18,6 +18,8 @@ Supplier PurchaseOrder ve line item'ları, StockLedger'a kayıtlı receipt movem
 
 - `src/Modules/Purchasing/OrdersAndReceipts/**`, `tests/Modules/Purchasing/OrdersAndReceipts/**`,
   `database/migrations/V11/V11-PUR-001/**`
+- `tests/Modules/Purchasing/OrdersAndReceipts/ALKAROS.Purchasing.OrdersAndReceipts.Tests.csproj`, `tests/Modules/Purchasing/OrdersAndReceipts/packages.lock.json`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
