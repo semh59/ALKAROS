@@ -21,6 +21,8 @@ Bakiyeleri doğrudan düzenlemeden, zorunlu gerekçeyle izin verilen Ayarlama ha
 ## Owned surface
 
 - `src/Modules/Inventory/ManualAdjustments/**`, `tests/Modules/Inventory/ManualAdjustments/**`
+- `tests/Modules/Inventory/ManualAdjustments/ALKAROS.Inventory.ManualAdjustments.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
