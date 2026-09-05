@@ -84,4 +84,5 @@
   <Project Path="tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj" />
   <Project Path="tests/Modules/Inventory/MovementLedger/ALKAROS.Inventory.MovementLedger.Tests.csproj" />
+  <Project Path="tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj" />
 </Solution>
