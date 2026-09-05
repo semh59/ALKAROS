@@ -21,6 +21,8 @@ uygulayın.
 ## Owned surface
 
 - `src/Modules/Recipes/Versioning/**`, `tests/Modules/Recipes/Versioning/**`, `database/migrations/V11/V11-RCP-001/**`
+- `tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-05 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
