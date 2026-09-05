@@ -22,6 +22,8 @@ production'den, porsiyon rezervasyonundan veya manuel onaylı kaynaktan izlenebi
 
 - `src/Modules/Inventory/WasteRecording/**`, `tests/Modules/Inventory/WasteRecording/**`,
   `database/migrations/V11/V11-INV-006/**`
+- `tests/Modules/Inventory/WasteRecording/ALKAROS.Inventory.WasteRecording.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
