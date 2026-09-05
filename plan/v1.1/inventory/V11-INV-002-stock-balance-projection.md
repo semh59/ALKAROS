@@ -23,6 +23,8 @@ StockMovement ledger'dan location/item bazında authoritative on-hand balance pr
 
 - `src/Modules/Inventory/BalanceProjection/**`, `tests/Modules/Inventory/BalanceProjection/**`,
   `database/migrations/V11/V11-INV-002/**`
+- `tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
