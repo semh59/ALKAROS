@@ -1,0 +1,36 @@
+=== V11-UI-002 Closure Evidence ===
+Date: 2026-09-06
+Task ID: V11-UI-002
+Status: Done
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+Diff Base: af2775c
+
+1. Test Execution Command:
+& "C:\Users\semih\.dotnet\dotnet.exe" test tests/Clients/Cashier/Production/ALKAROS.Cashier.Production.Tests.csproj -c Release
+
+Exit code: 0
+Output:
+Basarili!  - Basarisiz:     0, Basarili:     6, Atlanan:     0, Toplam:     6, Sure: 337 ms - ALKAROS.Cashier.Production.Tests.dll (net8.0)
+
+2. Architecture Boundary Tests:
+& "C:\Users\semih\.dotnet\dotnet.exe" test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+Exit code: 0
+Output:
+Basarili!  - Basarisiz:     0, Basarili:     8, Atlanan:     0, Toplam:     8, Sure: 1 s - ALKAROS.Architecture.Tests.dll (net8.0)
+
+3. Project Manifest Validation:
+python tools/project-manifest/project_manifest_tool.py
+Exit code: 0
+Output:
+ALKAROS Project Manifest Validator
+Repository Root: D:\PROJECT\ALKAROS
+Solution: ALKAROS.slnx
+Status: VALID (0 differences across Solution, Disk, and ProjectReferences)
+
+4. Scope & Invariants Verification:
+- Duplicate complete idempotency: attempting to complete an already completed ProductionBatch returns the completed record idempotently without generating extra output or duplicating stock consumptions.
+- Read-only referenced RecipeVersion immutability: RecipeVersion referenced in a production batch is strictly read-only and immutable; UI rejects any edit attempts with explicit Turkish error ("Üretim partisinde referans verilen tarif versiyonları salt okunurdur (değiştirilemez).").
+- Recoverable shortfall reporting: when stock is insufficient, UI details missing stock items with required quantity, available quantity, and shortfall quantity per ingredient, keeping the batch in recoverable Planned state rather than corrupting data.
+- Permission enforcement: unauthorized operators lacking Production.Execute permission cannot execute production lifecycle commands.
+- Batch lifecycle transitions: planned, started, completed, and cancelled workflows operate with full state transition validation.
+- Operations UI accessibility criteria (V0-CMP-005 / WCAG 2.2 Level AA): interactive controls provide minimum 44px touch targets, accessible Turkish labels, keyboard focusability, and high contrast compliance.
