@@ -11,9 +11,18 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 325 görev tanımlıdır: 320 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 328 görev tanımlıdır: 323 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 41. dalga (Semih onayıyla, düzeltme planının 2. dalgası — WaiterPwa/Cashier'ın
+  masa siparişi gönderdiği tek yol hiç mutfak bileti oluşturmuyordu, idempotency kontrolü
+  yoktu, müşteri ekranına bildirim göndermiyordu; `OrderManagementStore.SubmitOrderAsync`
+  artık terminal-geneli yolun kullandığı aynı `SubmitOrderHandler`'a devrediyor. Doğrulama
+  sırasında `SubmitOrderRequestHash`'in `SubmittedAt`'i hash'e dahil ettiği (gerçek bir
+  tekrarı sahte çakışmaya çeviren, terminal-geneli yolu da etkileyen paylaşılan bir kusur)
+  bulunup düzeltildi — 79/79 test projesi (konteynerde) sıfır başarısız, revert-and-confirm
+  ile doğrulandı, `V1-RMD-113`) `V1-GOV-102` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-103`
+  ile resmen kaydedildi; `V1-GOV-104` ile 41. dalga kesin olarak yeniden mühürlendi.
   2026-09-06 40. dalga (Semih onayıyla, "Düzeltme planı yapalım ve sırayla yapalım... bana
   sormadan bitir" — bağımsız denetim raporunun bizzat doğrulanan bulgularının ilk dalgası:
   `inbox_messages` claim indeksi eksikliği, `identity.denial_events`'in `ON DELETE CASCADE`

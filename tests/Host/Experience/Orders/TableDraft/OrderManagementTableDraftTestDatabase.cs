@@ -14,6 +14,13 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
     public OrderManagementTableDraftTestDatabase()
         : base("alkaros_ordtd_")
     {
+        // V1-RMD-113: submit-draft now dispatches a kitchen ticket exactly
+        // like the terminal-wide quick-sale submit route, which has always
+        // required this station id at the point an order is actually
+        // submitted (DualScreenApplication.KitchenStationEnvironmentVariable).
+        // Process-wide, but this test project runs in its own test host
+        // process, so it does not leak into any other project's tests.
+        Environment.SetEnvironmentVariable("ALKAROS_KITCHEN_STATION_ID", "grill-1");
     }
 
     protected override async Task ApplySqlAsync()
@@ -22,6 +29,10 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         foreach (var file in Directory.GetFiles(sqlDirectory, "*.up.sql").OrderBy(f => f))
             await RunAsync(DataSource, await File.ReadAllTextAsync(file));
     }
+
+    /// <summary>V1-RMD-113: counts kitchen tickets dispatched for an order.</summary>
+    public Task<long> KitchenTicketCountAsync(Guid orderId)
+        => ScalarAsync<long>($"SELECT count(*) FROM kitchen.kitchen_tickets WHERE order_id = '{orderId:D}';");
 
     /// <summary>Seeds a cashier device session whose user holds orders.create and orders.send.</summary>
     public async Task<string> SeedCashierSessionAsync(Guid terminalId)

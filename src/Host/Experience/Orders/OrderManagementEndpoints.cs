@@ -10,9 +10,11 @@ using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Orders.SubmitOrder;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -65,6 +67,33 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IKitchenTicketRepository, PostgresKitchenTicketRepository>();
         services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
         services.TryAddSingleton<SentItemVoidStore>();
+        // V1-RMD-113: found by an independent audit (2026-09-06) —
+        // table-draft's own submit-draft endpoint had a completely separate,
+        // thinner submit path (OrderManagementStore.SubmitOrderAsync) that
+        // never created a kitchen ticket, never checked idempotency, and
+        // never notified the customer display, unlike the terminal-wide
+        // quick-sale "/submit" route (DualScreenApplication.Endpoints.cs),
+        // which already had all three via SubmitOrderHandler. Same station
+        // configuration contract as that route: ALKAROS_KITCHEN_STATION_ID
+        // is required once an order is actually submitted (resolved lazily,
+        // so a standalone composition that never calls submit-draft is
+        // unaffected). No per-item printer routing collaborators are passed
+        // here (kept minimal) — the dispatcher falls back to a single
+        // ticket at the configured default station, its own documented
+        // behaviour with no router.
+        services.TryAddSingleton<SubmitOrderHandler>();
+        services.TryAddSingleton<IOrderSubmissionDispatcher>(sp =>
+        {
+            var stationId = Environment.GetEnvironmentVariable(DualScreenApplication.KitchenStationEnvironmentVariable);
+            if (string.IsNullOrWhiteSpace(stationId))
+            {
+                throw new InvalidOperationException(
+                    $"{DualScreenApplication.KitchenStationEnvironmentVariable} is required before order submission is enabled.");
+            }
+
+            return new KitchenOrderSubmissionDispatcher(sp.GetRequiredService<IKitchenTicketRepository>(), stationId);
+        });
+        services.AddSignalR(options => options.EnableDetailedErrors = false);
         // V1-ORD-005: every endpoint in this group calls RequireCashierSessionAsync
         // (or the permission variant), which throws DualScreenUnauthorizedException
         // on a missing/invalid session — with no filter that unwound as a bare 500,
@@ -153,6 +182,12 @@ public static class OrderManagementEndpoints
         // orphaned, non-compiling OrderManagementExperienceTests.cs calls
         // OrderManagementStore.SubmitOrderAsync directly, bypassing HTTP),
         // so renaming it is safe; the terminal-wide route is unchanged.
+        //
+        // V1-RMD-113: now delegates to the same SubmitOrderHandler the
+        // terminal-wide route uses (see that handler's own doc comment) and
+        // notifies the customer display exactly as that route does —
+        // previously this endpoint neither created a kitchen ticket nor
+        // told anyone the order changed.
         group.MapPost("/{orderId:guid}/submit-draft", async (
             Guid terminalId,
             Guid orderId,
@@ -160,25 +195,22 @@ public static class OrderManagementEndpoints
             OrderManagementStore store,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
+            IHubContext<CustomerDisplayHub> hub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierPermissionAsync(
+            var userId = await RequireCashierPermissionAsync(
                 context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersSend, cancellationToken);
 
-            try
-            {
-                var submitted = await store.SubmitOrderAsync(orderId, request.ExpectedRowVersion, cancellationToken);
-                return Results.Ok(submitted);
-            }
-            catch (KeyNotFoundException)
-            {
-                return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "Order not found." } });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
-            }
+            var submitted = await store.SubmitOrderAsync(
+                terminalId, orderId, request.ExpectedRowVersion, request.OperationId, userId, cancellationToken);
+
+            await hub.Clients.Group(DualScreenApplication.TerminalGroup(terminalId)).SendAsync(
+                CustomerDisplayHub.SnapshotChanged,
+                new { orderId, revision = submitted.RowVersion, kind = "OrderChanged" },
+                cancellationToken);
+
+            return Results.Ok(submitted);
         });
 
         // V1-ORD-005: ItemExceptionHandler.VoidItemAsync already existed
@@ -585,14 +617,15 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
     {
         DualScreenUnauthorizedException => (401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
-        KeyNotFoundException or OrderItemNotFoundException => (404, "NOT_FOUND", "İstenen kayıt bulunamadı."),
+        KeyNotFoundException or OrderItemNotFoundException or OrderNotFoundException => (404, "NOT_FOUND", "İstenen kayıt bulunamadı."),
         InvalidItemReasonException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         LateVoidRejectedException => (409, "ALREADY_SENT", "Ürün zaten mutfağa gönderilmiş."),
         ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
-        StaleOrderRowVersionException or InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
-        IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
+        StaleOrderRowVersionException or StaleOrderVersionException or InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
+        IdempotencyKeyReusedException or SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
+        OrderSubmissionDispatchException => (503, "KITCHEN_DISPATCH_FAILED", "Sipariş mutfağa iletilemedi."),
         InvalidTransferTargetException => (400, "INVALID_TRANSFER_TARGET", "Devir hedefi geçersiz."),
         ArgumentException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),

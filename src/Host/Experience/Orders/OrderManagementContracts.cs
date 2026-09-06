@@ -26,11 +26,17 @@ public sealed record OrderItemDraftDto(
     IReadOnlyList<string>? Modifiers = null,
     string? SpecialInstructions = null);
 
+/// <summary>
+/// V1-RMD-113: OperationId is now load-bearing — it is this request's
+/// idempotency key (<see cref="ALKAROS.Orders.SubmitOrder.SubmitOrderCommand"/>.
+/// OperationId), no longer accepted and discarded. ClientId is dropped: the
+/// server derives it from the authenticated terminal, matching the
+/// terminal-wide quick-sale submit endpoint's own convention.
+/// </summary>
 public sealed record SubmitTableOrderRequest(
     Guid OrderId,
     long ExpectedRowVersion,
-    string? ClientId = null,
-    string? OperationId = null);
+    string OperationId);
 
 /// <summary>V1-ORD-005: request body for voiding a not-yet-sent item.</summary>
 public sealed record VoidOrderItemRequestV1(

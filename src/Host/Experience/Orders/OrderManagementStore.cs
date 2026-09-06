@@ -1,6 +1,7 @@
 using System.Data;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Orders.SubmitOrder;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -11,12 +12,15 @@ public sealed class OrderManagementStore
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
     private readonly IRoleRepository _roles;
+    private readonly SubmitOrderHandler _submitHandler;
 
-    public OrderManagementStore(NpgsqlDataSource dataSource, IOrderRepository repository, IRoleRepository roles)
+    public OrderManagementStore(
+        NpgsqlDataSource dataSource, IOrderRepository repository, IRoleRepository roles, SubmitOrderHandler submitHandler)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _roles = roles ?? throw new ArgumentNullException(nameof(roles));
+        _submitHandler = submitHandler ?? throw new ArgumentNullException(nameof(submitHandler));
     }
 
     /// <summary>
@@ -199,16 +203,29 @@ public sealed class OrderManagementStore
         return await _repository.ReassignServingUserAsync(fromUserId, toUserId, cancellationToken);
     }
 
-    public async Task<OrderDto> SubmitOrderAsync(Guid orderId, long expectedRowVersion, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// V1-RMD-113: found by an independent audit (2026-09-06) to be a
+    /// completely separate, ad-hoc submit path that never created a
+    /// kitchen ticket, never checked idempotency (despite the endpoint
+    /// already accepting and discarding an OperationId), and never
+    /// notified the customer display — unlike the terminal-wide quick-sale
+    /// "/submit" route, which had all three via <see cref="SubmitOrderHandler"/>
+    /// from day one. This now delegates to that same handler instead of
+    /// reimplementing a thinner version of it, so a table order gets the
+    /// identical guarantees a quick-sale order already had.
+    /// </summary>
+    public async Task<OrderDto> SubmitOrderAsync(
+        Guid terminalId, Guid orderId, long expectedRowVersion, string operationId, Guid actorId,
+        CancellationToken cancellationToken = default)
     {
-        var order = await _repository.GetByIdAsync(orderId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Order {orderId} not found.");
+        await _submitHandler.HandleAsync(
+            new SubmitOrderCommand(
+                $"cashier:{terminalId:D}", operationId, orderId, expectedRowVersion,
+                actorId, DateTimeOffset.UtcNow, "Masa siparişi mutfağa gönderildi."),
+            cancellationToken);
 
-        order = order.Submit(changedAt: DateTimeOffset.UtcNow);
-        var newVersion = await _repository.SaveAsync(order, expectedRowVersion, cancellationToken);
-
-        var tableNumber = await GetTableNumberAsync(order.TableId, cancellationToken) ?? "—";
-        return MapToDto(order, tableNumber);
+        return await GetOrderByIdAsync(orderId, cancellationToken)
+            ?? throw new InvalidOperationException($"Order {orderId} was submitted but could not be reloaded.");
     }
 
     private static async Task<Dictionary<Guid, (string Name, decimal Price, decimal TaxRate)>> ResolveCatalogProductsAsync(

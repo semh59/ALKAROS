@@ -80,6 +80,26 @@ public sealed class SubmitOrderUnitTests
     }
 
     [Fact]
+    public void RequestHashIgnoresSubmittedAtSoAGenuineRetryReplaysCleanly()
+    {
+        // V1-RMD-113: a real HTTP retry (the first response was lost to a
+        // dropped connection, say) always carries a freshly-computed
+        // DateTimeOffset.UtcNow, never the exact same instant as the first
+        // attempt. Hashing SubmittedAt made every genuine retry look like a
+        // "different request reusing the same operation id" and fail with
+        // IDEMPOTENCY_KEY_CONFLICT instead of replaying — found while
+        // writing the first end-to-end regression test that ever actually
+        // retried this handler.
+        var orderId = Guid.NewGuid();
+        var cmd1 = new SubmitOrderCommand(
+            "client-1", "op-1", orderId, 1, Reason: "submit", SubmittedAt: DateTimeOffset.UtcNow);
+        var cmd2 = new SubmitOrderCommand(
+            "client-1", "op-1", orderId, 1, Reason: "submit", SubmittedAt: DateTimeOffset.UtcNow.AddMinutes(5));
+
+        SubmitOrderRequestHash.Compute(cmd1).Should().Be(SubmitOrderRequestHash.Compute(cmd2));
+    }
+
+    [Fact]
     public void SerializationRoundTripPreservesData()
     {
         var orderId = Guid.NewGuid();

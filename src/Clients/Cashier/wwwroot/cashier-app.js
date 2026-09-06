@@ -306,11 +306,20 @@
       // never followed by a submit call, so the order stayed in Draft
       // forever and was never dispatched to the kitchen even though the
       // user was told it had been sent.
+      //
+      // operationId is deterministic (not a fresh UUID per attempt): a
+      // retry of submitting this exact order (e.g. the response was lost
+      // to a dropped connection) must reuse the same idempotency key so
+      // the server replays instead of rejecting it as a duplicate.
       const submitResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/submit-draft`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ orderId: draft.orderId, expectedRowVersion: draft.rowVersion })
+        body: JSON.stringify({
+          orderId: draft.orderId,
+          expectedRowVersion: draft.rowVersion,
+          operationId: `${draft.orderId}:submit`
+        })
       });
 
       if (!submitResponse.ok) {

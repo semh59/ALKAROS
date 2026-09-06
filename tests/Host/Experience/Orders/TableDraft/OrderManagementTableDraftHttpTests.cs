@@ -91,11 +91,44 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var submitResponse = await client.SendAsync(JsonRequest(
             SubmitPath(terminalId, draft!.OrderId), cookie,
-            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion)));
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
 
         Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
         var submitted = await submitResponse.Content.ReadFromJsonAsync<OrderDto>();
         Assert.Equal("Submitted", submitted!.Status);
+        Assert.Equal(1, await _database.KitchenTicketCountAsync(draft.OrderId));
+    }
+
+    [Fact]
+    public async Task RetryingASubmitWithTheSameOperationIdReplaysWithoutASecondKitchenTicket()
+    {
+        // V1-RMD-113: found by an independent audit (2026-09-06) — this
+        // endpoint used to be a thin, separate submit path that never
+        // created a kitchen ticket and never checked idempotency at all
+        // (the OperationId field was accepted and silently discarded). It
+        // now delegates to the same SubmitOrderHandler the terminal-wide
+        // quick-sale route uses.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Köfte", 280m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-15", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 2, 280m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        var submitBody = new SubmitTableOrderRequest(draft!.OrderId, draft.RowVersion, Guid.NewGuid().ToString());
+
+        using var first = await client.SendAsync(JsonRequest(SubmitPath(terminalId, draft.OrderId), cookie, submitBody));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        using var retry = await client.SendAsync(JsonRequest(SubmitPath(terminalId, draft.OrderId), cookie, submitBody));
+        Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
+
+        Assert.Equal(1, await _database.KitchenTicketCountAsync(draft.OrderId));
     }
 
     [Fact]
