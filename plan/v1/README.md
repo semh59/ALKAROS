@@ -11,9 +11,20 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 331 görev tanımlıdır: 326 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 334 görev tanımlıdır: 329 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 43. dalga (Semih onayıyla, düzeltme planının dördüncü ve son dalgası — 5
+  Host/Experience modülünün hata haritalamasına eksik `BadHttpRequestException` case'i
+  eklendi (Catalog/Kitchen/Roles/Authorization'ın zaten sahip olduğu desenle tutarlı);
+  gerçek bir HTTP testiyle denetimin "bozuk JSON 500 üretir" iddiasının yanlış olduğu
+  kanıtlandı (ASP.NET Core kendi 400'ünü endpoint filtresine hiç ulaşmadan yazıyor); 22
+  cross-schema FK iddiası da yanlış bulundu (V0-ARC-001'in paylaşılan tek-Postgres
+  modelinde bir FK kısıtı hangi modülün kodunun yazdığını değiştirmez), `V1-RMD-115`)
+  `V1-GOV-106` sonrası kapıyı yeniden açtı; `V1-GOV-108` ile kesin olarak yeniden
+  mühürlendi. Bağımsız denetim raporunun (`docs/audit/INDEPENDENT_DEEP_AUDIT_2026-09-06.md`)
+  V1 kapsamındaki tüm maddeleri artık düzeltildi, yanlış bulunarak kapatıldı ya da yeni
+  özellik olarak ayrı bir karara bırakıldı.
   2026-09-06 42. dalga (Semih onayıyla, düzeltme planının 3. dalgası — dokunmatik hedef
   boyutu (48px spesifikasyonuna eşitlendi, daha önce hiç uygulanmamış ölü token'lar
   kaldırıldı), ısı haritası eşiği (75/120 dk → DESIGN.md'nin 20/45'i, zaten tanımlı ama hiç

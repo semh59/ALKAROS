@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
@@ -101,6 +102,32 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(
             equal.Allocations.Select(allocation => allocation.AllocationId),
             await _database.AllocationIdsAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task MalformedJsonBodyReturns400WithoutReachingTheEndpointFilter()
+    {
+        // An independent audit (2026-09-06) claimed BadHttpRequestException
+        // fell through this module's Map() to 500 INTERNAL_ERROR. Verified
+        // false: ASP.NET Core's minimal-API JSON body binder catches a parse
+        // failure and writes its own empty-bodied 400 before the request
+        // delegate (and so this module's IEndpointFilter) ever runs — proven
+        // by temporarily reverting the BadHttpRequestException switch arm in
+        // BillingSplitApplication.Map() and confirming this test's outcome
+        // was unchanged. The switch arm stays for defensive consistency with
+        // the same case already present in Catalog/Kitchen/Roles/Authorization,
+        // not because this scenario reaches it.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true);
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var request = Request(HttpMethod.Put, Path(terminalId, seeded.BillId) + "/equal", cookie);
+        request.Content = new StringContent("{ not valid json", Encoding.UTF8, "application/json");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]

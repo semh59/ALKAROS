@@ -381,7 +381,7 @@ public static partial class DualScreenApplication
             SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış."),
             StaleOrderVersionException => (409, "CONCURRENT_MODIFICATION", "Sipariş başka bir işlem tarafından değiştirildi."),
             OrderNotFoundException => (404, "ORDER_NOT_FOUND", "Sipariş bulunamadı."),
-            ArgumentException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+            ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             PostgresException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
         };

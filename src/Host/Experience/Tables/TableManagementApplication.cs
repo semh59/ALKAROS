@@ -507,7 +507,7 @@ internal sealed class TableManagementExceptionFilter : IEndpointFilter
             (409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir masa kaydı zaten var."),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.ForeignKeyViolation =>
             (409, "RESOURCE_IN_USE", "Bağlı kayıtlar nedeniyle işlem tamamlanamadı."),
-        ArgumentException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException =>
             (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

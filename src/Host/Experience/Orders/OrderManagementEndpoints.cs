@@ -627,7 +627,7 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         IdempotencyKeyReusedException or SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         OrderSubmissionDispatchException => (503, "KITCHEN_DISPATCH_FAILED", "Sipariş mutfağa iletilemedi."),
         InvalidTransferTargetException => (400, "INVALID_TRANSFER_TARGET", "Devir hedefi geçersiz."),
-        ArgumentException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };

@@ -163,7 +163,7 @@ internal sealed class OfflineReconciliationExceptionFilter : IEndpointFilter
             (StatusCodes.Status404NotFound, "UNKNOWN_BUDGET", "Çevrimdışı yetki bütçesi bulunamadı; yeniden bağlanın."),
         OfflineReconciliationIdentityMismatchException =>
             (StatusCodes.Status403Forbidden, "IDENTITY_MISMATCH", "Bu çevrimdışı bütçe veya işlem başka bir kullanıcıya ait."),
-        ArgumentException or ArgumentNullException =>
+        ArgumentException or ArgumentNullException or BadHttpRequestException =>
             (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "Uzlaştırma isteği doğrulanamadı."),
         PostgresException or NpgsqlException =>
             (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Uzlaştırma tamamlanamadı."),
