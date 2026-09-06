@@ -17,6 +17,8 @@ Tarif ve stok etkisi önizlemesi ile planned/start/complete/cancel production wo
 ## Owned surface
 
 - `src/Clients/Cashier/Production/**`, `tests/Clients/Cashier/Production/**`
+- `tests/Clients/Cashier/Production/ALKAROS.Cashier.Production.Tests.csproj`, `tests/Clients/Cashier/Production/packages.lock.json`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
