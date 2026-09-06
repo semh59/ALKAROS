@@ -19,6 +19,15 @@ namespace ALKAROS.Host.Experience.Roles;
 /// its own <c>identity.roles.manage</c> / <c>identity.permissions.manage</c>
 /// authorization decision (CODE-008 linearization), so the endpoint filter
 /// here only authenticates — it does not itself gate on a single permission.
+///
+/// Found while designing waiter-table ownership tracking (2026-09-06,
+/// V1-RMD-110): this entire surface was reachable by session but denied by
+/// permission for every actor, including the bootstrap manager —
+/// `identity.users.manage`/`identity.roles.manage`/etc. (migration 008) were
+/// never granted to any role anywhere (migration 054 fixes this). Combined
+/// with there being no way at all to create a second user account
+/// (provision-manager refuses once any user exists), a real deployment could
+/// never actually reach any command here.
 /// </summary>
 public static class RoleManagementEndpoints
 {
@@ -106,6 +115,27 @@ public static class RoleManagementEndpoints
             return Results.NoContent();
         });
 
+        // V1-RMD-110: found while designing waiter-table ownership tracking —
+        // there was no way, anywhere in the system, to create a second user
+        // account. provision-manager refuses to run once any user exists, and
+        // this whole role-management surface was itself unreachable in
+        // practice (see AddRoleManagementExperience's identity.users.manage /
+        // identity.roles.manage grant note). Creates the account only; the
+        // caller assigns a role separately via the existing
+        // POST /roles/{roleId}/users/{userId}.
+        var usersGroup = endpoints.MapGroup("/api/v1/management/users");
+        usersGroup.AddEndpointFilter<RoleManagementEndpointFilter>();
+        usersGroup.MapPost("", async (
+            CreateUserRequestV1 request,
+            HttpContext http,
+            IRoleManagementService roles,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await roles.CreateUserAsync(
+                ActorId(http), request.Username, request.Password, request.DisplayName, cancellationToken);
+            return Results.Ok(new CreateUserResultV1(userId));
+        });
+
         return group;
     }
 
@@ -122,6 +152,10 @@ public sealed record AddPermissionRequestV1(string Code, string Name);
 public sealed record CreateRoleRequestV1(string Code, string Name);
 
 public sealed record AssignPermissionRequestV1(string PermissionCode);
+
+public sealed record CreateUserRequestV1(string Username, string Password, string DisplayName);
+
+public sealed record CreateUserResultV1(Guid UserId);
 
 public sealed class RoleManagementAuthentication
 {

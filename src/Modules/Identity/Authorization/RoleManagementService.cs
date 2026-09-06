@@ -1,3 +1,5 @@
+using ALKAROS.Identity.Authentication;
+
 namespace ALKAROS.Identity.Authorization;
 
 /// <summary>
@@ -14,6 +16,13 @@ namespace ALKAROS.Identity.Authorization;
 /// </summary>
 public sealed class RoleManagementService : IRoleManagementService
 {
+    /// <summary>
+    /// Minimum password length for a new staff account. No prior policy
+    /// existed anywhere in the codebase (checked); this is a baseline
+    /// judgment call, not a re-derivation of an existing decision.
+    /// </summary>
+    private const int MinimumPasswordLength = 8;
+
     private readonly IAuthorizationService _authorization;
     private readonly IRoleRepository _roleRepository;
     private readonly IPermissionRepository _permissionRepository;
@@ -95,5 +104,27 @@ public sealed class RoleManagementService : IRoleManagementService
         await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.RolesManage, cancellationToken);
 
         await _roleRepository.RevokeUserAsync(userId, roleId, cancellationToken);
+    }
+
+    public async Task<Guid> CreateUserAsync(
+        Guid actorUserId, string username, string password, string displayName, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(username);
+        ArgumentException.ThrowIfNullOrWhiteSpace(password);
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
+        if (username.Length > 100)
+            throw new ArgumentException("Username must be at most 100 characters.", nameof(username));
+        if (displayName.Length > 200)
+            throw new ArgumentException("Display name must be at most 200 characters.", nameof(displayName));
+        if (password.Length < MinimumPasswordLength)
+            throw new ArgumentException($"Password must be at least {MinimumPasswordLength} characters.", nameof(password));
+
+        await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.UsersManage, cancellationToken);
+
+        if (await _roleRepository.UsernameExistsAsync(username, cancellationToken))
+            throw new InvalidOperationException($"Username '{username}' already exists.");
+
+        var passwordHash = new PasswordHasher().Hash(password);
+        return await _roleRepository.CreateUserAsync(username, passwordHash, displayName, cancellationToken);
     }
 }

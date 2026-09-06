@@ -194,6 +194,67 @@ public sealed class RoleManagementServiceTests : IClassFixture<AuthorizationTest
     }
 
     [Fact]
+    public async Task AllowedActorCreatesAUserAndItPersistsWithAHashedPassword()
+    {
+        // Regression coverage for V1-RMD-110: found while designing waiter-
+        // table ownership tracking that there was no way anywhere in the
+        // system to create a second user account.
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        var manager = await _database.InsertUserAsync("usermgr_" + suffix);
+        await _database.SeedRoleWithPermissionAsync("admin_" + suffix, manager, PermissionCodes.UsersManage);
+        var username = "waiter_" + suffix;
+
+        var userId = await _service.CreateUserAsync(manager, username, "correct-horse-battery", "Garson Ahmet");
+
+        userId.Should().NotBe(Guid.Empty);
+        (await _roles.UsernameExistsAsync(username)).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeniedActorCannotCreateUserAndStateIsUnchanged()
+    {
+        var (_, staff) = await InsertActorsAsync();
+        var before = await _database.CountAsync("identity.users");
+        var username = "nobody_" + Guid.NewGuid().ToString("N")[..8];
+
+        var act = () => _service.CreateUserAsync(staff, username, "correct-horse-battery", "Nobody");
+
+        await act.Should().ThrowAsync<AuthorizationDeniedException>();
+        (await _database.CountAsync("identity.users")).Should().Be(before);
+        (await _roles.UsernameExistsAsync(username)).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task CreatingAUserWithAnAlreadyTakenUsernameThrowsAndDoesNotDuplicate()
+    {
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        var manager = await _database.InsertUserAsync("usermgr2_" + suffix);
+        await _database.SeedRoleWithPermissionAsync("admin2_" + suffix, manager, PermissionCodes.UsersManage);
+        var username = "waiter_" + suffix;
+        await _service.CreateUserAsync(manager, username, "correct-horse-battery", "Garson Ahmet");
+        var before = await _database.CountAsync("identity.users");
+
+        var act = () => _service.CreateUserAsync(manager, username, "another-password", "Garson İkinci");
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+        (await _database.CountAsync("identity.users")).Should().Be(before);
+    }
+
+    [Fact]
+    public async Task CreatingAUserWithATooShortPasswordThrowsAndPersistsNothing()
+    {
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        var manager = await _database.InsertUserAsync("usermgr3_" + suffix);
+        await _database.SeedRoleWithPermissionAsync("admin3_" + suffix, manager, PermissionCodes.UsersManage);
+        var username = "waiter_" + suffix;
+
+        var act = () => _service.CreateUserAsync(manager, username, "short", "Garson Ahmet");
+
+        await act.Should().ThrowAsync<ArgumentException>();
+        (await _roles.UsernameExistsAsync(username)).Should().BeFalse();
+    }
+
+    [Fact]
     public async Task CommandStartedBeforeRevokeCommitCompletesUnderCommandStartRule()
     {
         var (manager, staff) = await InsertActorsAsync();

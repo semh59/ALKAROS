@@ -226,6 +226,42 @@ public sealed class PostgresRoleRepository : IRoleRepository
         return (true, reader.GetBoolean(0));
     }
 
+    public async Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "SELECT EXISTS(SELECT 1 FROM identity.users WHERE username = @username);");
+        command.Parameters.AddWithValue("username", username);
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken) ?? false);
+    }
+
+    public async Task<Guid> CreateUserAsync(
+        string username, string passwordHash, string displayName, CancellationToken cancellationToken = default)
+    {
+        var userId = Guid.NewGuid();
+        await using var command = _dataSource.CreateCommand(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, @password_hash, @display_name, true);
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+        command.Parameters.AddWithValue("username", username);
+        command.Parameters.AddWithValue("password_hash", passwordHash);
+        command.Parameters.AddWithValue("display_name", displayName);
+
+        try
+        {
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch (PostgresException ex)
+            when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "ux_users_username")
+        {
+            // A concurrent create for the same username won the insert.
+            throw new InvalidOperationException($"Username '{username}' already exists.");
+        }
+
+        return userId;
+    }
+
     private static Role ReadRole(NpgsqlDataReader reader)
         => new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2));
 }

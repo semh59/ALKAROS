@@ -120,6 +120,59 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         Assert.False(await _database.UserHasRoleAsync(userId, roleId));
     }
 
+    [Fact]
+    public async Task ManagerCanCreateANewStaffAccount()
+    {
+        // Regression coverage for migration 054 (V1-RMD-110): before this
+        // migration the seeded `manager` role held none of the identity.*
+        // admin permissions, so this whole endpoint group was unreachable by
+        // anyone — including the one bootstrap manager account — and there
+        // was no way at all to create a second user.
+        var cookie = await _database.SeedRealManagerRoleSessionAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var username = "waiter-" + Guid.NewGuid().ToString("N")[..8];
+
+        using var response = await client.SendAsync(Request(
+            HttpMethod.Post, "/api/v1/management/users", cookie,
+            new CreateUserRequestV1(username, "correct-horse-battery", "Garson Ahmet")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<CreateUserResultV1>();
+        Assert.NotEqual(Guid.Empty, body!.UserId);
+        Assert.True(await _database.UsernameExistsAndActiveAsync(username));
+    }
+
+    [Fact]
+    public async Task CreatingAUserWithAnAlreadyTakenUsernameIsRejected()
+    {
+        var cookie = await _database.SeedRealManagerRoleSessionAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var username = "waiter-" + Guid.NewGuid().ToString("N")[..8];
+        var request = new CreateUserRequestV1(username, "correct-horse-battery", "Garson Ahmet");
+
+        using (var first = await client.SendAsync(Request(HttpMethod.Post, "/api/v1/management/users", cookie, request)))
+            Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        using var duplicate = await client.SendAsync(Request(HttpMethod.Post, "/api/v1/management/users", cookie, request));
+        Assert.Equal(HttpStatusCode.Conflict, duplicate.StatusCode);
+    }
+
+    [Fact]
+    public async Task ActorWithoutUsersManagePermissionIsForbiddenFromCreatingAUser()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: true, withPermissionsManage: true);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(Request(
+            HttpMethod.Post, "/api/v1/management/users", cookie,
+            new CreateUserRequestV1("nobody-" + Guid.NewGuid().ToString("N")[..8], "correct-horse-battery", "Nobody")));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -177,6 +230,7 @@ public sealed class RoleManagementRegistrationTests
         AssertRoute(routes, "DELETE", prefix + "/roles/{roleId:guid}/permissions/{permissionCode}");
         AssertRoute(routes, "POST", prefix + "/roles/{roleId:guid}/users/{userId:guid}");
         AssertRoute(routes, "DELETE", prefix + "/roles/{roleId:guid}/users/{userId:guid}");
+        AssertRoute(routes, "POST", "/api/v1/management/users");
     }
 
     private static void AssertRoute(IEnumerable<dynamic> routes, string method, string pattern)
@@ -292,6 +346,50 @@ internal sealed class RoleManagementTestDatabase
         }
 
         return $"{CatalogManagementEndpoints.ManagerCookieName}={raw}";
+    }
+
+    /// <summary>
+    /// Assigns the session's user to the real `manager` role seeded by
+    /// migration 042 — not the ad-hoc test role SeedManagerSessionAsync
+    /// builds — so tests here exercise the actual grants migration 054
+    /// adds, not a synthetic stand-in.
+    /// </summary>
+    public async Task<string> SeedRealManagerRoleSessionAsync()
+    {
+        var userId = Guid.NewGuid();
+        var suffix = userId.ToString("N");
+        var (raw, hash) = DeviceSessionToken.Create();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', 'Role Management Test Manager', true);
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, created_at, expires_at)
+            VALUES (@session_id, @user_id, @device_id, @token_hash, now(), now() + interval '1 hour');
+            """,
+            ("user_id", userId),
+            ("username", "role-mgmt-real-manager-" + suffix),
+            ("session_id", Guid.NewGuid()),
+            ("device_id", $"manager:{Guid.NewGuid():D}"),
+            ("token_hash", hash));
+
+        var roleId = await GetRoleIdAsync("manager");
+        await ExecuteAsync(
+            DataSource,
+            "INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (@user_role_id, @user_id, @role_id);",
+            ("user_role_id", Guid.NewGuid()),
+            ("user_id", userId),
+            ("role_id", roleId));
+
+        return $"{CatalogManagementEndpoints.ManagerCookieName}={raw}";
+    }
+
+    public async Task<bool> UsernameExistsAndActiveAsync(string username)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT active FROM identity.users WHERE username = @username;");
+        command.Parameters.AddWithValue("username", username);
+        return await command.ExecuteScalarAsync() is true;
     }
 
     public async Task<Guid> SeedPlainUserAsync()

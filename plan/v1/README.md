@@ -11,9 +11,19 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 316 görev tanımlıdır: 311 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 319 görev tanımlıdır: 314 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 38. dalga (Semih onayıyla, "Evet" — garson-masa servis atama tasarımı
+  konuşulurken bulunan iki iç içe kök bulgu: (1) sistemde ikinci bir kullanıcı hesabı
+  oluşturmanın hiçbir yolu yoktu; (2) `RoleManagementEndpoints.cs`'in tamamı
+  V1-RMD-102'den beri fiilen kullanılamıyordu çünkü `identity.*.manage` izinleri
+  hiçbir role (bootstrap yöneticisi dahil) hiç verilmemişti. Migration 054 bu izinleri
+  `manager` rolüne veriyor; yeni `POST /api/v1/management/users` artık gerçek bir
+  personel hesabı oluşturabiliyor — 79/79 test projesi (konteynerde) sıfır başarısız,
+  revert-and-confirm ile migration'ın gerçekten gerekli olduğu doğrulandı, `V1-RMD-110`)
+  `V1-GOV-096` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-097` ile resmen kaydedildi;
+  `V1-GOV-098` ile 38. dalga kesin olarak yeniden mühürlendi.
   2026-09-06 37. dalga (Semih onayıyla, "JS test altyapısından başla" — `cashier-app.js` ve
   `waiter-app.js`'in (bugünkü iki Critical bulgunun tam olarak içinde yaşadığı, hiç otomatik
   testi olmayan iki dosya) artık üretim koduna dokunmadan gerçek `index.html`/gerçek

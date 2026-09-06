@@ -19,4 +19,11 @@ public interface IRoleManagementService
     Task AssignUserAsync(Guid actorUserId, Guid userId, Guid roleId, CancellationToken cancellationToken = default);
 
     Task RevokeUserAsync(Guid actorUserId, Guid userId, Guid roleId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Creates a new staff account (no role attached — assign one separately
+    /// via <see cref="AssignUserAsync"/>). Requires <c>identity.users.manage</c>.
+    /// </summary>
+    Task<Guid> CreateUserAsync(
+        Guid actorUserId, string username, string password, string displayName, CancellationToken cancellationToken = default);
 }
