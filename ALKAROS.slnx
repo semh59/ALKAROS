@@ -102,4 +102,5 @@
   <Project Path="tests/Modules/Purchasing/OrdersAndReceipts/ALKAROS.Purchasing.OrdersAndReceipts.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/CostSnapshots/ALKAROS.Recipes.CostSnapshots.Tests.csproj" />
   <Project Path="tests/Modules/Production/BatchLifecycle/ALKAROS.Production.BatchLifecycle.Tests.csproj" />
+  <Project Path="tests/Modules/Production/StockEffects/ALKAROS.Production.StockEffects.Tests.csproj" />
 </Solution>
