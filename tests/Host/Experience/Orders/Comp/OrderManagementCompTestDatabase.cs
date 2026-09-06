@@ -74,8 +74,50 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
         return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
     }
 
+    /// <summary>
+    /// V1-RMD-111: assigns the REAL, canonically-coded 'waiter' role seeded
+    /// by migration 043 — not a per-test throwaway role with a uniquifying
+    /// suffix like <see cref="SeedCashierSessionAsync"/> above. The own-check
+    /// guard in AuthorizationGrantService keys off the literal role code
+    /// "waiter" (ApplicationPermissions.RoleWaiter), so an own-check
+    /// regression test needs the genuine row.
+    /// </summary>
+    public async Task<(Guid UserId, string Cookie)> SeedRealWaiterSessionAsync(Guid terminalId)
+    {
+        var userId = Guid.NewGuid();
+        var suffix = userId.ToString("N");
+        var (raw, hash) = DeviceSessionToken.Create();
+
+        await ExecuteAsync(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', 'Comp API Test Waiter', true);
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, created_at, expires_at)
+            VALUES (@session_id, @user_id, @device_id, @token_hash, now(), now() + interval '1 hour');
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
+            SELECT @user_role_id, @user_id, role_id FROM identity.roles WHERE code = 'waiter';
+            """,
+            ("user_id", userId),
+            ("username", "bil005-waiter-" + suffix),
+            ("session_id", Guid.NewGuid()),
+            ("device_id", $"cashier:{terminalId:D}"),
+            ("token_hash", hash),
+            ("user_role_id", Guid.NewGuid()));
+
+        return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
+    }
+
     /// <summary>Seeds a catalog product and an Active order with a single Active item (unit price 100, tax 10% -> gross 110).</summary>
-    public async Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithOneItemAsync()
+    public Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithOneItemAsync()
+        => SeedActiveOrderWithOneItemAsync(servingUserId: null);
+
+    /// <summary>
+    /// V1-RMD-111: same seed, but the order is attributed to
+    /// <paramref name="servingUserId"/> — needed to exercise the own-check
+    /// guard, which reads Order.ServingUserId end to end from here through
+    /// the comp endpoint.
+    /// </summary>
+    public async Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithOneItemAsync(Guid? servingUserId)
     {
         var productId = Guid.NewGuid();
         await ExecuteAsync(
@@ -101,7 +143,8 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
             OrderSource.Cashier,
             "BIL-005-" + orderItem.Id.ToString("N")[..8],
             new[] { orderItem },
-            status: OrderState.Submitted);
+            status: OrderState.Submitted,
+            servingUserId: servingUserId);
 
         var repository = new PostgresOrderRepository(DataSource);
         await repository.AddAsync(order);

@@ -18,14 +18,14 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
     public PermissionSplitDatabaseTests(PermissionSplitDatabase db) => _db = db;
 
     [Fact]
-    public async Task AllThirteenCodesAreSeeded()
+    public async Task AllFifteenCodesAreSeeded()
     {
         foreach (var code in ApplicationPermissions.Codes)
             (await _db.PermissionCountAsync(code)).Should().Be(1, "'{0}' must be seeded once", code);
     }
 
     [Fact]
-    public async Task WaiterRoleExistsAndHoldsExactlyOrderTakingPlusTableStatus()
+    public async Task WaiterRoleExistsAndHoldsExactlyOrderTakingTableStatusAndSelfTransfer()
     {
         (await _db.RoleCountAsync(ApplicationPermissions.RoleWaiter)).Should().Be(1);
 
@@ -36,6 +36,7 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
             ApplicationPermissions.OrdersCreate,
             ApplicationPermissions.OrdersSend,
             ApplicationPermissions.TablesStatus,
+            ApplicationPermissions.OrdersTransferServer,
         });
         granted.Should().NotContain("pos.cashier.mutate");
     }
@@ -48,6 +49,7 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
         granted.Should().NotContain("pos.cashier.mutate");
         granted.Should().Contain(ApplicationPermissions.TablesReserve);
         granted.Should().Contain(ApplicationPermissions.CashDrawer);
+        granted.Should().Contain(ApplicationPermissions.OrdersTransferServerAny);
         granted.Should().NotContain(ApplicationPermissions.BillsVoid);
         granted.Should().NotContain(ApplicationPermissions.BillsComp);
         granted.Should().NotContain(ApplicationPermissions.BillsDiscount);

@@ -27,6 +27,8 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
             Mig("V1-RMD-097", "042-authorization-role-catalog.up.sql"),
             Mig("V1-IAM-017", "043-authorization-permission-split.up.sql"),
             Mig("V1-IAM-024", "049-authorization-drop-mutate-alias.up.sql"),
+            Mig("V1-RMD-110", "054-grant-identity-admin-permissions-to-manager.up.sql"),
+            Mig("V1-RMD-111", "055-orders-transfer-server-permissions.up.sql"),
         };
 
         foreach (var path in scripts)
@@ -35,11 +37,17 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
 
     /// <summary>
     /// Reverses everything applied after migration 042, in strict descending
-    /// order: 049 down (restores the alias), then 043 down (drops the 13 granular
-    /// codes and the <c>waiter</c> role). Migration 042's rows are left in place.
+    /// order: 055 down (drops the two transfer-server codes), 049 down
+    /// (restores the alias), then 043 down (drops the 13 granular codes and
+    /// the <c>waiter</c> role). Migration 042's and 054's rows are left in
+    /// place (054 grants identity.*.manage codes, which are not part of
+    /// ApplicationPermissions.Codes and are not asserted here).
     /// </summary>
     public async Task ApplyDownSplitAsync()
     {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-RMD-111", "055-orders-transfer-server-permissions.down.sql")));
         await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-IAM-024", "049-authorization-drop-mutate-alias.down.sql")));

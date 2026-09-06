@@ -92,7 +92,7 @@ public static class OrderManagementEndpoints
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierPermissionAsync(
+            var actingUserId = await RequireCashierPermissionAsync(
                 context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
 
             if (request.TableId == Guid.Empty)
@@ -101,7 +101,7 @@ public static class OrderManagementEndpoints
             if (request.Items == null || request.Items.Count == 0)
                 return Results.BadRequest(new { error = new { code = "EMPTY_ITEMS", message = "Order items cannot be empty." } });
 
-            var draft = await store.CreateOrUpdateTableDraftAsync(request, cancellationToken);
+            var draft = await store.CreateOrUpdateTableDraftAsync(request, actingUserId, cancellationToken);
             return Results.Ok(draft);
         });
 
@@ -253,11 +253,9 @@ public static class OrderManagementEndpoints
         // an IAuthorizationGrantService request — the policy engine, an active
         // delegation (DelegationEscalationResolver) or a manager decides.
         // Own-check (a waiter may only comp a check they serve) is the model's
-        // rule, but no waiter/order serving-assignment exists anywhere in the
-        // domain yet (same gap V1-WTR-009 documented) — SubjectServingUserId
-        // is passed null, so the guard never actually restricts by server
-        // until that assignment model exists (tracked as future work, not a
-        // silent omission).
+        // rule; Order.ServingUserId (V1-RMD-111, garson-masa design) now
+        // carries that assignment, so SubjectServingUserId below is the
+        // order's real server, not a permanently-dormant null.
         group.MapPost("/{orderId:guid}/items/{itemId:guid}/comp", async (
             Guid terminalId,
             Guid orderId,
@@ -300,7 +298,7 @@ public static class OrderManagementEndpoints
                         item.GrossAmount,
                         SubjectType: "OrderItem",
                         SubjectId: itemId,
-                        SubjectServingUserId: null),
+                        SubjectServingUserId: order.ServingUserId),
                     cancellationToken);
 
                 switch (resolution.Outcome)
@@ -367,6 +365,7 @@ public static class OrderManagementEndpoints
             Guid itemId,
             VoidSentItemRequestV1 request,
             SentItemVoidStore store,
+            IOrderRepository orders,
             IRoleRepository roles,
             IAuthorizationGrantService grants,
             DualScreenStore dualStore,
@@ -387,6 +386,11 @@ public static class OrderManagementEndpoints
                 if (role is null)
                     throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsVoid, "Requester has no assigned role.");
 
+                // Own-check (V1-RMD-111, garson-masa design): the guard reads
+                // the order's real server via ServingUserId, same as /comp.
+                var order = await orders.GetByIdAsync(orderId, cancellationToken)
+                    ?? throw new OrderItemNotFoundException(orderId, itemId);
+
                 var resolution = await grants.RequestAsync(
                     new GrantRequest(
                         request.IdempotencyKey,
@@ -397,7 +401,7 @@ public static class OrderManagementEndpoints
                         0m,
                         SubjectType: "OrderItem",
                         SubjectId: itemId,
-                        SubjectServingUserId: null),
+                        SubjectServingUserId: order.ServingUserId),
                     cancellationToken);
 
                 switch (resolution.Outcome)
@@ -462,6 +466,35 @@ public static class OrderManagementEndpoints
             {
                 return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
             }
+        });
+
+        // V1-RMD-111: the garson-masa hand-off. Two-tier permission model
+        // (Toast "Change Server" / Lightspeed "Table Ownership" precedent,
+        // researched 2026-09-06): a server handing off their OWN open checks
+        // needs only orders.transfer-server (every role holds it); handing
+        // off ANOTHER server's checks needs orders.transfer-server-any
+        // (cashier and up). This is a bulk, unconditional reassignment of
+        // every non-terminal order currently attributed to FromUserId — not
+        // itself grant-class; the own-check *guard* on void/comp is what
+        // actually depends on the result.
+        group.MapPost("/transfer-server", async (
+            Guid terminalId,
+            TransferServingUserRequestV1 request,
+            OrderManagementStore store,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actingUserId = await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+
+            var permissionCode = actingUserId == request.FromUserId
+                ? ApplicationPermissions.OrdersTransferServer
+                : ApplicationPermissions.OrdersTransferServerAny;
+            await authorization.AuthorizeAsync(actingUserId, permissionCode, cancellationToken);
+
+            var count = await store.TransferServingUserAsync(request.FromUserId, request.ToUserId, cancellationToken);
+            return Results.Ok(new TransferServingUserResultV1(count));
         });
 
         return group;
@@ -560,6 +593,7 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
         StaleOrderRowVersionException or InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
+        InvalidTransferTargetException => (400, "INVALID_TRANSFER_TARGET", "Devir hedefi geçersiz."),
         ArgumentException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

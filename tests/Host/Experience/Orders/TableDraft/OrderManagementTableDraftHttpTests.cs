@@ -130,11 +130,165 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(90m, retryDraft.TotalAmount);
     }
 
+    [Fact]
+    public async Task ANewDraftIsAttributedToTheCreatingWaiterAsServingUser()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterUserId, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create", "orders.send");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-11", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var draft = await response.Content.ReadFromJsonAsync<OrderDto>();
+
+        Assert.Equal(waiterUserId, await _database.GetServingUserIdAsync(draft!.OrderId));
+    }
+
+    [Fact]
+    public async Task ASecondRoundOfItemsFromADifferentTerminalDoesNotReassignTheServer()
+    {
+        var openingTerminalId = Guid.NewGuid();
+        var (openingWaiterId, openingCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            openingTerminalId, "waiter", "orders.create", "orders.send");
+        var secondTerminalId = Guid.NewGuid();
+        var (_, secondCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            secondTerminalId, "waiter", "orders.create", "orders.send");
+        var tableId = await _database.SeedTableAsync();
+        var starter = await _database.SeedProductAsync("Çorba", 60m);
+        var dessert = await _database.SeedProductAsync("Baklava", 90m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var firstResponse = await client.SendAsync(JsonRequest(
+            DraftPath(openingTerminalId), openingCookie,
+            new CreateTableDraftRequest(tableId, "M-12", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), starter, "Çorba", 1, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+
+        using var secondResponse = await client.SendAsync(JsonRequest(
+            DraftPath(secondTerminalId), secondCookie,
+            new CreateTableDraftRequest(tableId, "M-12", "Garson Mehmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), dessert, "Baklava", 1, 90m)])));
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+        var secondDraft = await secondResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        // The table's check is still attributed to whoever opened it — a
+        // second terminal appending a dessert round does not silently steal
+        // ownership of the check (V1-RMD-111, garson-masa design).
+        Assert.Equal(openingWaiterId, await _database.GetServingUserIdAsync(secondDraft!.OrderId));
+    }
+
+    [Fact]
+    public async Task ASelfTransferMovesTheWaitersOwnOpenOrdersToTheTarget()
+    {
+        var terminalId = Guid.NewGuid();
+        var (fromWaiterId, fromCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create", "orders.send", "orders.transfer-server");
+        var (toWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "waiter", "orders.create");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), fromCookie,
+            new CreateTableDraftRequest(tableId, "M-13", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var transferResponse = await client.SendAsync(JsonRequest(
+            TransferPath(terminalId), fromCookie,
+            new TransferServingUserRequestV1(fromWaiterId, toWaiterId)));
+
+        Assert.Equal(HttpStatusCode.OK, transferResponse.StatusCode);
+        var result = await transferResponse.Content.ReadFromJsonAsync<TransferServingUserResultV1>();
+        Assert.Equal(1, result!.OrdersReassigned);
+        Assert.Equal(toWaiterId, await _database.GetServingUserIdAsync(draft!.OrderId));
+    }
+
+    [Fact]
+    public async Task AWaiterWithOnlySelfTransferCannotMoveAnotherServersOrders()
+    {
+        var terminalId = Guid.NewGuid();
+        var (actingWaiterId, actingCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.transfer-server");
+        var otherWaiterId = Guid.NewGuid();
+        var targetWaiterId = Guid.NewGuid();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            TransferPath(terminalId), actingCookie,
+            new TransferServingUserRequestV1(otherWaiterId, targetWaiterId)));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        _ = actingWaiterId;
+    }
+
+    [Fact]
+    public async Task ACashierWithAnyTransferCanMoveAnotherServersOrders()
+    {
+        var terminalId = Guid.NewGuid();
+        var (fromWaiterId, fromCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create", "orders.send");
+        var (toWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "waiter", "orders.create");
+        var cashierTerminalId = Guid.NewGuid();
+        var (_, cashierCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            cashierTerminalId, "cashier", "orders.transfer-server-any");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), fromCookie,
+            new CreateTableDraftRequest(tableId, "M-14", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var transferResponse = await client.SendAsync(JsonRequest(
+            TransferPath(cashierTerminalId), cashierCookie,
+            new TransferServingUserRequestV1(fromWaiterId, toWaiterId)));
+
+        Assert.Equal(HttpStatusCode.OK, transferResponse.StatusCode);
+        Assert.Equal(toWaiterId, await _database.GetServingUserIdAsync(draft!.OrderId));
+    }
+
+    [Fact]
+    public async Task TransferringToANonexistentUserIsRejected()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.transfer-server");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            TransferPath(terminalId), cookie,
+            new TransferServingUserRequestV1(waiterId, Guid.NewGuid())));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     private static string DraftPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/table-draft";
 
     private static string SubmitPath(Guid terminalId, Guid orderId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/submit-draft";
+
+    private static string TransferPath(Guid terminalId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/transfer-server";
 
     private static HttpRequestMessage JsonRequest<T>(string path, string cookie, T body)
     {

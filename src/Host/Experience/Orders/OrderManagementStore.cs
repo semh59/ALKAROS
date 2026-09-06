@@ -1,4 +1,5 @@
 using System.Data;
+using ALKAROS.Identity.Authorization;
 using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
 using NpgsqlTypes;
@@ -9,14 +10,25 @@ public sealed class OrderManagementStore
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
+    private readonly IRoleRepository _roles;
 
-    public OrderManagementStore(NpgsqlDataSource dataSource, IOrderRepository repository)
+    public OrderManagementStore(NpgsqlDataSource dataSource, IOrderRepository repository, IRoleRepository roles)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _roles = roles ?? throw new ArgumentNullException(nameof(roles));
     }
 
-    public async Task<OrderDto> CreateOrUpdateTableDraftAsync(CreateTableDraftRequest request, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// <paramref name="actingUserId"/> becomes <see cref="Order.ServingUserId"/>
+    /// on a brand-new order (V1-RMD-111, garson-masa design) — the server who
+    /// opens a table's tab is attributed as serving it until an explicit
+    /// <see cref="TransferServingUserAsync"/> hand-off says otherwise. An
+    /// existing draft keeps whoever already opened it; a second round of
+    /// items from a different terminal/session does not silently reassign
+    /// the check.
+    /// </summary>
+    public async Task<OrderDto> CreateOrUpdateTableDraftAsync(CreateTableDraftRequest request, Guid actingUserId, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -71,7 +83,8 @@ public sealed class OrderManagementStore
                 status: OrderState.Draft,
                 createdAt: now,
                 updatedAt: now,
-                rowVersion: 1
+                rowVersion: 1,
+                servingUserId: actingUserId
             );
 
             await _repository.AddAsync(order, cancellationToken);
@@ -118,7 +131,8 @@ public sealed class OrderManagementStore
                 status: OrderState.Draft,
                 createdAt: existingOrder.CreatedAt,
                 updatedAt: now,
-                rowVersion: existingOrder.RowVersion
+                rowVersion: existingOrder.RowVersion,
+                servingUserId: currentOrder.ServingUserId
             );
 
             // Saved through the connection/transaction already holding the
@@ -162,6 +176,27 @@ public sealed class OrderManagementStore
 
         var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
         return MapToDto(order, tableNumber);
+    }
+
+    /// <summary>
+    /// The garson-masa hand-off (V1-RMD-111): reassigns every non-terminal
+    /// order currently attributed to <paramref name="fromUserId"/> to
+    /// <paramref name="toUserId"/>. Callers must already have authorized
+    /// orders.transfer-server (self, fromUserId == the acting user) or
+    /// orders.transfer-server-any (broad) before calling this — that
+    /// decision is not this method's job. Guards only against a no-op
+    /// transfer and a target who cannot actually serve.
+    /// </summary>
+    public async Task<int> TransferServingUserAsync(Guid fromUserId, Guid toUserId, CancellationToken cancellationToken = default)
+    {
+        if (fromUserId == toUserId)
+            throw new InvalidTransferTargetException("A server cannot transfer their own checks to themselves.");
+
+        var (exists, active) = await _roles.GetUserStateAsync(toUserId, cancellationToken);
+        if (!exists || !active)
+            throw new InvalidTransferTargetException($"Target user {toUserId} does not exist or is not active.");
+
+        return await _repository.ReassignServingUserAsync(fromUserId, toUserId, cancellationToken);
     }
 
     public async Task<OrderDto> SubmitOrderAsync(Guid orderId, long expectedRowVersion, CancellationToken cancellationToken = default)
@@ -267,4 +302,10 @@ public sealed class OrderManagementStore
             order.CreatedAt
         );
     }
+}
+
+/// <summary>V1-RMD-111: the requested server hand-off target is invalid.</summary>
+public sealed class InvalidTransferTargetException : Exception
+{
+    public InvalidTransferTargetException(string message) : base(message) { }
 }

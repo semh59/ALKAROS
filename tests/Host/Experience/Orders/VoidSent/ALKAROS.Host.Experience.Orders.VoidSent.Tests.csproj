@@ -37,6 +37,7 @@
     <None Include="../../../../../database/migrations/V1/V1-IAM-023/048-behavioural-tightening.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-IAM-025/051-delegation-revoke-actor.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-IAM-025/052-authorization-grants-rate-index.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-RMD-111/056-orders-serving-user-id.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

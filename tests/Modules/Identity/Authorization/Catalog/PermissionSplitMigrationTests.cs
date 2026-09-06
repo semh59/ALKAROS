@@ -21,10 +21,28 @@ public sealed class PermissionSplitMigrationTests
     private static readonly string Down =
         File.ReadAllText(Path.Combine(MigrationDir, "043-authorization-permission-split.down.sql"));
 
+    /// <summary>
+    /// The exact codes migration 043 itself introduces — fixed, not
+    /// <see cref="ApplicationPermissions.Codes"/>, because that catalog grew
+    /// again in migration 055 (V1-RMD-111, orders.transfer-server[-any]).
+    /// This test only owns what 043 added; 055's own text-level checks live
+    /// in OrdersTransferServerPermissionMigrationTests.
+    /// </summary>
+    private static readonly string[] CodesIntroducedByThisMigration =
+    {
+        ApplicationPermissions.OrdersCreate, ApplicationPermissions.OrdersSend,
+        ApplicationPermissions.TablesStatus, ApplicationPermissions.TablesReserve,
+        ApplicationPermissions.TablesTransfer, ApplicationPermissions.TablesMerge,
+        ApplicationPermissions.FloorplanManage, ApplicationPermissions.BillsSplit,
+        ApplicationPermissions.BillsVoid, ApplicationPermissions.BillsComp,
+        ApplicationPermissions.BillsDiscount, ApplicationPermissions.CashDrawer,
+        ApplicationPermissions.ReportsView,
+    };
+
     [Fact]
     public void UpInsertsEveryCatalogCodeExactlyOnce()
     {
-        foreach (var code in ApplicationPermissions.Codes)
+        foreach (var code in CodesIntroducedByThisMigration)
         {
             Regex.Count(Up, $"'{Regex.Escape(code)}'")
                 .Should().BeGreaterThanOrEqualTo(1, "'{0}' must be inserted", code);
@@ -66,7 +84,7 @@ public sealed class PermissionSplitMigrationTests
     [Fact]
     public void DownRemovesExactlyWhatUpAddedAndLeaves042Alone()
     {
-        foreach (var code in ApplicationPermissions.Codes)
+        foreach (var code in CodesIntroducedByThisMigration)
             Down.Should().Contain($"'{code}'", "down must drop '{0}'", code);
 
         Down.Should().Contain("DELETE FROM identity.roles");

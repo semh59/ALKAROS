@@ -7,15 +7,15 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 public sealed class ApplicationPermissionsTests
 {
     [Fact]
-    public void CatalogHasThirteenDistinctCodes()
+    public void CatalogHasFifteenDistinctCodes()
     {
-        ApplicationPermissions.Codes.Should().HaveCount(13);
+        ApplicationPermissions.Codes.Should().HaveCount(15);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
 
     [Fact]
-    public void WaiterHoldsOnlyOrderTakingAndTableStatus()
+    public void WaiterHoldsOrderTakingTableStatusAndSelfTransferOnly()
     {
         var waiter = ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter];
 
@@ -24,6 +24,7 @@ public sealed class ApplicationPermissionsTests
             ApplicationPermissions.OrdersCreate,
             ApplicationPermissions.OrdersSend,
             ApplicationPermissions.TablesStatus,
+            ApplicationPermissions.OrdersTransferServer,
         });
     }
 
@@ -38,6 +39,7 @@ public sealed class ApplicationPermissionsTests
     [InlineData("floorplan.manage")]
     [InlineData("cash.drawer")]
     [InlineData("reports.view")]
+    [InlineData("orders.transfer-server-any")]
     public void WaiterDoesNotHoldAnyEscalatedGrant(string code)
     {
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter]
@@ -51,6 +53,7 @@ public sealed class ApplicationPermissionsTests
 
         cashier.Should().Contain(ApplicationPermissions.TablesReserve);
         cashier.Should().Contain(ApplicationPermissions.CashDrawer);
+        cashier.Should().Contain(ApplicationPermissions.OrdersTransferServerAny);
         cashier.Should().NotContain(ApplicationPermissions.BillsVoid);
         cashier.Should().NotContain(ApplicationPermissions.BillsComp);
         cashier.Should().NotContain(ApplicationPermissions.BillsDiscount);

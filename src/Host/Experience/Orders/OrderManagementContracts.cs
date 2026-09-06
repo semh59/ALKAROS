@@ -102,6 +102,17 @@ public sealed record VoidSentItemResultV1(
     DateTimeOffset? AppliedAt,
     Guid? GrantId);
 
+/// <summary>
+/// V1-RMD-111: request body for the garson-masa hand-off endpoint. The
+/// caller needs orders.transfer-server when FromUserId is their own user id,
+/// orders.transfer-server-any otherwise (docs/domain/authorization-model.md
+/// §3).
+/// </summary>
+public sealed record TransferServingUserRequestV1(Guid FromUserId, Guid ToUserId);
+
+/// <summary>V1-RMD-111: response for the garson-masa hand-off endpoint.</summary>
+public sealed record TransferServingUserResultV1(int OrdersReassigned);
+
 public sealed record OrderDto(
     Guid OrderId,
     Guid TableId,

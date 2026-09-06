@@ -162,6 +162,48 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
         Assert.Equal("Applied", applied!.Status);
     }
 
+    [Fact]
+    public async Task AWaiterCompingAnotherServersCheckIsRefusedByTheOwnCheckGuard()
+    {
+        // V1-RMD-111: proves the wiring end to end, not just the guard's own
+        // unit tests (AuthorizationGrantServiceTests already cover the guard
+        // logic in isolation) — before this task, every HTTP caller passed
+        // SubjectServingUserId: null, so this 403 never actually happened.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var otherServerId = Guid.NewGuid();
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(otherServerId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AWaiterCompingTheirOwnCheckIsNotBlockedByTheOwnCheckGuard()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterUserId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(waiterUserId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var response = await client.SendAsync(request);
+
+        // The guard only refuses a mismatch; on a match, the request falls
+        // through to the normal policy path, same as before ServingUserId
+        // existed (no policy seeded here -> escalates to pending).
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        Assert.Equal("Pending", body!.Status);
+    }
+
     private static string CompPath(Guid terminalId, Guid orderId, Guid itemId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/items/{itemId:D}/comp";
 

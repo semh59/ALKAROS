@@ -39,7 +39,8 @@ public sealed class Order
         IReadOnlyList<OrderStatusHistoryEntry>? history = null,
         long rowVersion = 1,
         DateTimeOffset? createdAt = null,
-        DateTimeOffset? updatedAt = null)
+        DateTimeOffset? updatedAt = null,
+        Guid? servingUserId = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Order id cannot be empty.", nameof(id));
@@ -70,6 +71,7 @@ public sealed class Order
         ClosedAt = closedAt;
         CancelledAt = cancelledAt;
         RowVersion = rowVersion;
+        ServingUserId = servingUserId;
 
         _items = items is null
             ? new List<OrderItem>()
@@ -110,6 +112,16 @@ public sealed class Order
     public DateTimeOffset? CancelledAt { get; }
 
     public long RowVersion { get; }
+
+    /// <summary>
+    /// The user this order is attributed to for the authorization model's
+    /// own-check rule (docs/domain/authorization-model.md §3, resolved
+    /// decision #1: a waiter may raise a void/comp grant only on a check
+    /// they serve). Set once at creation (V1-RMD-111) and changed only by
+    /// <see cref="ReassignServer"/> — an explicit hand-off, never an
+    /// implicit side effect of any other transition.
+    /// </summary>
+    public Guid? ServingUserId { get; }
 
     public IReadOnlyList<OrderItem> Items => _items;
 
@@ -228,7 +240,8 @@ public sealed class Order
             _history.Append(new OrderStatusHistoryEntry(Guid.NewGuid(), Id, Status, target, reason, changedBy, at)).ToList(),
             RowVersion,
             CreatedAt,
-            at);
+            at,
+            ServingUserId);
         return result;
     }
 
@@ -355,10 +368,26 @@ public sealed class Order
     public Order WithRowVersion(long rowVersion)
         => RebuildWith(rowVersion: rowVersion);
 
+    /// <summary>
+    /// Hands the order off to a different serving user (V1-RMD-111) — the
+    /// only way <see cref="ServingUserId"/> ever changes after creation.
+    /// The caller (Host/Experience layer) is responsible for authorizing
+    /// the hand-off (self vs. any, orders.transfer-server[-any]) before
+    /// calling this.
+    /// </summary>
+    public Order ReassignServer(Guid toUserId)
+    {
+        if (toUserId == Guid.Empty)
+            throw new ArgumentException("Serving user id cannot be empty.", nameof(toUserId));
+
+        return RebuildWith(servingUserId: toUserId);
+    }
+
     private Order RebuildWith(
         IReadOnlyList<OrderItem>? items = null,
         long? rowVersion = null,
-        IReadOnlyList<OrderStatusHistoryEntry>? history = null)
+        IReadOnlyList<OrderStatusHistoryEntry>? history = null,
+        Guid? servingUserId = null)
         => new(
             Id,
             Source,
@@ -379,5 +408,6 @@ public sealed class Order
             history ?? _history,
             rowVersion ?? RowVersion,
             CreatedAt,
-            UpdatedAt);
+            UpdatedAt,
+            servingUserId ?? ServingUserId);
 }

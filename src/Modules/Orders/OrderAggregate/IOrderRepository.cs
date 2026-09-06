@@ -64,4 +64,15 @@ public interface IOrderRepository
         Npgsql.NpgsqlConnection connection,
         Npgsql.NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Reassigns every non-terminal order currently attributed to
+    /// <paramref name="fromUserId"/> to <paramref name="toUserId"/> — the
+    /// explicit hand-off operation (V1-RMD-111) behind
+    /// orders.transfer-server[-any]. Returns the number of orders changed.
+    /// </summary>
+    Task<int> ReassignServingUserAsync(
+        Guid fromUserId,
+        Guid toUserId,
+        CancellationToken cancellationToken = default);
 }

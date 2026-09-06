@@ -64,6 +64,69 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         return $"{DualScreenApplication.CashierCookieName}={raw}";
     }
 
+    /// <summary>
+    /// V1-RMD-111: seeds a session under the given role, with the given
+    /// permission codes granted outright, and returns the user id — needed
+    /// for the garson-masa (ServingUserId / transfer-server) tests, which
+    /// assert on who the acting user actually is, not just that a request
+    /// succeeded. Mirrors OrderManagementCompTestDatabase's helper.
+    /// </summary>
+    public async Task<(Guid UserId, string Cookie)> SeedCashierSessionWithPermissionsAsync(
+        Guid terminalId, string roleCode, params string[] permissionCodes)
+    {
+        var userId = Guid.NewGuid();
+        var suffix = userId.ToString("N");
+        var (raw, hash) = DeviceSessionToken.Create();
+
+        await ExecuteAsync(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', 'Table Draft API Test', true);
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, created_at, expires_at)
+            VALUES (@session_id, @user_id, @device_id, @token_hash, now(), now() + interval '1 hour');
+            """,
+            ("user_id", userId),
+            ("username", "ordtd-api-" + suffix),
+            ("session_id", Guid.NewGuid()),
+            ("device_id", $"cashier:{terminalId:D}"),
+            ("token_hash", hash));
+
+        var roleId = Guid.NewGuid();
+        await ExecuteAsync(
+            "INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'Table Draft API Test Role');",
+            ("role_id", roleId),
+            ("role_code", roleCode + "-" + suffix));
+        await ExecuteAsync(
+            "INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (@id, @user_id, @role_id);",
+            ("id", Guid.NewGuid()),
+            ("user_id", userId),
+            ("role_id", roleId));
+
+        foreach (var code in permissionCodes)
+        {
+            await ExecuteAsync(
+                """
+                INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+                SELECT @id, @role_id, permission_id FROM identity.permissions WHERE code = @code;
+                """,
+                ("id", Guid.NewGuid()),
+                ("role_id", roleId),
+                ("code", code));
+        }
+
+        return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
+    }
+
+    /// <summary>V1-RMD-111: reads the order's current serving_user_id column directly (no DTO exposes it).</summary>
+    public async Task<Guid?> GetServingUserIdAsync(Guid orderId)
+    {
+        await using var cmd = DataSource.CreateCommand(
+            "SELECT serving_user_id FROM orders.orders WHERE order_id = @order_id;");
+        cmd.Parameters.Add("order_id", NpgsqlTypes.NpgsqlDbType.Uuid).Value = orderId;
+        var result = await cmd.ExecuteScalarAsync();
+        return result as Guid?;
+    }
+
     /// <summary>Seeds a zone and a table (orders.orders.table_id has an FK to table_mgmt.tables) and returns the table id.</summary>
     public async Task<Guid> SeedTableAsync()
     {

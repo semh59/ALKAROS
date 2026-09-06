@@ -184,6 +184,44 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         Assert.NotNull(body.GrantId);
     }
 
+    [Fact]
+    public async Task AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard()
+    {
+        // V1-RMD-111: same wiring proof as the /comp sibling test — before
+        // this task the endpoint fetched no order and always passed
+        // SubjectServingUserId: null, so this 403 never actually happened.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var otherServerId = Guid.NewGuid();
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing, otherServerId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterUserId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing, waiterUserId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        Assert.Equal("Pending", body!.Status);
+    }
+
     private static string VoidSentPath(Guid terminalId, Guid orderId, Guid itemId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/items/{itemId:D}/void-sent";
 

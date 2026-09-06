@@ -13,6 +13,8 @@ public static class ApplicationPermissions
 {
     public const string OrdersCreate = "orders.create";
     public const string OrdersSend = "orders.send";
+    public const string OrdersTransferServer = "orders.transfer-server";
+    public const string OrdersTransferServerAny = "orders.transfer-server-any";
     public const string TablesStatus = "tables.status";
     public const string TablesReserve = "tables.reserve";
     public const string TablesTransfer = "tables.transfer";
@@ -36,13 +38,20 @@ public static class ApplicationPermissions
         OrdersCreate, OrdersSend, TablesStatus, TablesReserve, TablesTransfer,
         TablesMerge, FloorplanManage, BillsSplit, BillsVoid, BillsComp,
         BillsDiscount, CashDrawer, ReportsView,
+        OrdersTransferServer, OrdersTransferServerAny,
     };
 
+    // orders.transfer-server (self hand-off) sits alongside orders.create/
+    // send in every role's outright grant — the same two-tier model
+    // competitor POS systems use (Toast's "Change Server", Lightspeed's
+    // "Table Ownership": self-transfer needs no manager, transferring
+    // someone else's tables does). orders.transfer-server-any is the
+    // broader tier, granted only at the CashierFloorSet level and up.
     private static readonly string[] EveryRoleTakesOrders =
-        { OrdersCreate, OrdersSend, TablesStatus };
+        { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer };
 
     private static readonly string[] CashierFloorSet =
-        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer };
+        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny };
 
     private static readonly string[] SupervisorEscalations =
         { FloorplanManage, ReportsView, BillsVoid, BillsComp, BillsDiscount };

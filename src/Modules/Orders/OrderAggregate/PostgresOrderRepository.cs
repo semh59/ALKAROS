@@ -54,7 +54,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
             history.Select(h => h.ToDomain()).ToList(),
             order.RowVersion,
             order.CreatedAt,
-            order.UpdatedAt);
+            order.UpdatedAt,
+            order.ServingUserId);
     }
 
     public async Task AddAsync(Order order, CancellationToken cancellationToken = default)
@@ -192,6 +193,22 @@ public sealed class PostgresOrderRepository : IOrderRepository
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task<int> ReassignServingUserAsync(
+        Guid fromUserId, Guid toUserId, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            UPDATE {Orders}
+            SET serving_user_id = @to_user_id,
+                updated_at = now()
+            WHERE serving_user_id = @from_user_id
+              AND status NOT IN ('Completed', 'Cancelled', 'Rejected');
+            """);
+        command.Parameters.AddWithValue("to_user_id", toUserId);
+        command.Parameters.AddWithValue("from_user_id", fromUserId);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     private static async Task InsertOrderAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
@@ -205,12 +222,12 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 status, confirmation_status, order_number, notes,
                 subtotal, discount_total, tax_total, total, currency_code,
                 submitted_at, accepted_at, closed_at, cancelled_at,
-                created_at, updated_at, row_version)
+                created_at, updated_at, row_version, serving_user_id)
             VALUES (@order_id, @source, @source_reference_id, @source_external_id, @table_id, @customer_id,
                     @status, @confirmation_status, @order_number, @notes,
                     @subtotal, @discount_total, @tax_total, @total, @currency_code,
                     @submitted_at, @accepted_at, @closed_at, @cancelled_at,
-                    @created_at, @updated_at, @row_version);
+                    @created_at, @updated_at, @row_version, @serving_user_id);
             """);
         BindOrder(command, order);
         await command.ExecuteNonQueryAsync(cancellationToken);
@@ -240,7 +257,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 closed_at = @closed_at,
                 cancelled_at = @cancelled_at,
                 updated_at = @updated_at,
-                row_version = row_version + 1
+                row_version = row_version + 1,
+                serving_user_id = @serving_user_id
             WHERE order_id = @order_id AND row_version = @expected_row_version
             RETURNING row_version;
             """);
@@ -280,6 +298,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
         command.Parameters.AddWithValue("created_at", order.CreatedAt);
         command.Parameters.AddWithValue("updated_at", order.UpdatedAt);
         command.Parameters.AddWithValue("row_version", order.RowVersion);
+        command.Parameters.AddWithValue("serving_user_id", (object?)order.ServingUserId ?? DBNull.Value);
     }
 
     private static async Task InsertItemAsync(
@@ -429,7 +448,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
                    status, confirmation_status, order_number, notes,
                    subtotal, discount_total, tax_total, total, currency_code,
                    submitted_at, accepted_at, closed_at, cancelled_at,
-                   created_at, updated_at, row_version
+                   created_at, updated_at, row_version, serving_user_id
             FROM {Orders}
             WHERE order_id = @id;
             """);
@@ -457,7 +476,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
             reader.IsDBNull(18) ? null : reader.GetDateTime(18),
             reader.GetDateTime(19),
             reader.GetDateTime(20),
-            reader.GetInt64(21));
+            reader.GetInt64(21),
+            reader.IsDBNull(22) ? null : reader.GetGuid(22));
     }
 
     private async Task<IReadOnlyList<ItemRow>> ReadItemsAsync(Guid orderId, CancellationToken cancellationToken)
@@ -676,7 +696,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
         DateTimeOffset? CancelledAt,
         DateTimeOffset CreatedAt,
         DateTimeOffset UpdatedAt,
-        long RowVersion);
+        long RowVersion,
+        Guid? ServingUserId);
 
     private sealed record ItemRow(
         Guid Id,

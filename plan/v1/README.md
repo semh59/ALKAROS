@@ -11,9 +11,20 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 319 görev tanımlıdır: 314 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 322 görev tanımlıdır: 317 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 39. dalga (Semih onayıyla, "Başla" — garson-masa (hangi garson hangi siparişe
+  bakıyor) servis sahipliği tasarımı, Toast "Change Server"/Lightspeed "Table Ownership"
+  rakip araştırmasıyla desteklenen iki-katmanlı devir izniyle: `Order.ServingUserId` yeni
+  siparişte oluşturan garsona damgalanıyor ve yalnızca açık bir `ReassignServer` ile
+  değişiyor; `AuthorizationGrantService`'teki daha önce hiç tetiklenmeyen own-check guard
+  artık `/comp` ve `/void-sent`'in taşıdığı gerçek `ServingUserId` ile uçtan uca çalışıyor;
+  yeni `orders.transfer-server`/`orders.transfer-server-any` izinleri ve
+  `POST .../orders/transfer-server` toplu devir uç noktası eklendi — 79/79 test projesi
+  (konteynerde) sıfır başarısız, own-check wiring'i revert-and-confirm ile doğrulandı,
+  `V1-RMD-111`) `V1-GOV-098` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-099` ile resmen
+  kaydedildi; `V1-GOV-100` ile 39. dalga kesin olarak yeniden mühürlendi.
   2026-09-06 38. dalga (Semih onayıyla, "Evet" — garson-masa servis atama tasarımı
   konuşulurken bulunan iki iç içe kök bulgu: (1) sistemde ikinci bir kullanıcı hesabı
   oluşturmanın hiçbir yolu yoktu; (2) `RoleManagementEndpoints.cs`'in tamamı
