@@ -290,6 +290,37 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RetryingADiscountWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment()
+    {
+        // V1-RMD-112 (independent audit, 2026-09-06): unlike /comp and
+        // /void-sent (protected "by accident" by their own
+        // ExpectedRowVersion), ApplyBillDiscountRequestV1 carries no row
+        // version and a fresh Guid.NewGuid() was used for every adjustment
+        // id regardless of the caller's own idempotency key — a network
+        // retry of an identical request appended a second discount line.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var body = new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer");
+
+        using var first = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount", cookie, body));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var firstResult = await first.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+
+        using var retry = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount", cookie, body));
+        Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
+        var retryResult = await retry.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+
+        Assert.Equal("Applied", retryResult!.Status);
+        Assert.Equal(firstResult!.AdjustmentId, retryResult.AdjustmentId);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
     public async Task ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending()
     {
         var terminalId = Guid.NewGuid();

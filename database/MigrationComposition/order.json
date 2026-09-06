@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "073"
+    "max": "075"
   },
   "migrations": [
     {
@@ -635,6 +635,22 @@
       "phase": "B",
       "tables": [
         "daily_menu_counter_applied_events"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "074",
+      "phase": "B",
+      "tables": [
+        "denial_events"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "075",
+      "phase": "B",
+      "tables": [
+        "bill_adjustments"
       ],
       "deferredConstraints": []
     }

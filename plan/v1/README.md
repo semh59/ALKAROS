@@ -11,9 +11,18 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 322 görev tanımlıdır: 317 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 325 görev tanımlıdır: 320 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 40. dalga (Semih onayıyla, "Düzeltme planı yapalım ve sırayla yapalım... bana
+  sormadan bitir" — bağımsız denetim raporunun bizzat doğrulanan bulgularının ilk dalgası:
+  `inbox_messages` claim indeksi eksikliği, `identity.denial_events`'in `ON DELETE CASCADE`
+  taşıması, `billing.bill_adjustments`'ta discount uç noktasının hiç idempotency koruması
+  olmaması (`/comp`/`/void-sent`'in aksine kendi row-version korumasına sahip değildi) —
+  79/79 test projesi (konteynerde) sıfır başarısız, discount idempotency düzeltmesi
+  revert-and-confirm ile doğrulandı, `V1-RMD-112`) `V1-GOV-100` sonrası kapıyı fiilen
+  yeniden açtı; `V1-GOV-101` ile resmen kaydedildi; `V1-GOV-102` ile 40. dalga kesin olarak
+  yeniden mühürlendi.
   2026-09-06 39. dalga (Semih onayıyla, "Başla" — garson-masa (hangi garson hangi siparişe
   bakıyor) servis sahipliği tasarımı, Toast "Change Server"/Lightspeed "Table Ownership"
   rakip araştırmasıyla desteklenen iki-katmanlı devir izniyle: `Order.ServingUserId` yeni

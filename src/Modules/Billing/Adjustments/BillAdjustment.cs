@@ -26,7 +26,8 @@ public sealed class BillAdjustment
         string? notes = null,
         DateTimeOffset? createdAt = null,
         Guid? createdBy = null,
-        long rowVersion = 1)
+        long rowVersion = 1,
+        string? idempotencyKey = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Adjustment id cannot be empty.", nameof(id));
@@ -76,6 +77,7 @@ public sealed class BillAdjustment
         CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
         CreatedBy = createdBy;
         RowVersion = rowVersion;
+        IdempotencyKey = idempotencyKey;
     }
 
     public Guid Id { get; }
@@ -115,6 +117,17 @@ public sealed class BillAdjustment
     public long RowVersion { get; }
 
     /// <summary>
+    /// V1-RMD-112: the caller-supplied idempotency key that produced this
+    /// adjustment, when the creating endpoint carries one (currently only
+    /// the discount endpoint — <c>POST .../bills/{billId}/discount</c>).
+    /// <see cref="BillAdjustment"/> is append-only (unlike Order items, a
+    /// retry has no natural row-version guard to fall back on), so this is
+    /// the only protection against a network retry inserting a second,
+    /// identical adjustment line.
+    /// </summary>
+    public string? IdempotencyKey { get; }
+
+    /// <summary>
     /// Creates a percentage discount adjustment.
     /// </summary>
     public static BillAdjustment CreateDiscountPercentage(
@@ -127,7 +140,8 @@ public sealed class BillAdjustment
         Guid authorizedBy,
         Guid? billItemId = null,
         string? notes = null,
-        Guid? createdBy = null)
+        Guid? createdBy = null,
+        string? idempotencyKey = null)
     {
         if (rate <= 0 || rate > 100)
             throw new ArgumentException("Discount percentage rate must be between 0 and 100.", nameof(rate));
@@ -156,7 +170,8 @@ public sealed class BillAdjustment
             isDeduction: true,
             billItemId: billItemId,
             notes: notes,
-            createdBy: createdBy);
+            createdBy: createdBy,
+            idempotencyKey: idempotencyKey);
     }
 
     /// <summary>
@@ -171,7 +186,8 @@ public sealed class BillAdjustment
         Guid authorizedBy,
         Guid? billItemId = null,
         string? notes = null,
-        Guid? createdBy = null)
+        Guid? createdBy = null,
+        string? idempotencyKey = null)
     {
         if (discountAmount <= 0)
             throw new ArgumentException("Discount amount must be positive.", nameof(discountAmount));
@@ -197,7 +213,8 @@ public sealed class BillAdjustment
             isDeduction: true,
             billItemId: billItemId,
             notes: notes,
-            createdBy: createdBy);
+            createdBy: createdBy,
+            idempotencyKey: idempotencyKey);
     }
 
     /// <summary>

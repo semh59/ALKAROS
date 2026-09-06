@@ -83,6 +83,48 @@ public sealed class PostgresAdjustmentsTests : IClassFixture<AdjustmentsTestData
     }
 
     [Fact]
+    public async Task IdempotencyKeyRoundTripsAndSecondAdjustmentWithoutAKeyIsUnaffected()
+    {
+        var (bill, _) = await CreateAndSaveBillWithItem("Karisik Izgara", 350m);
+        var managerId = Guid.NewGuid();
+
+        var keyed = BillAdjustment.CreateDiscountAmount(
+            Guid.NewGuid(), bill.Id, 20m, taxRate: 10m, reason: "PromotionalOffer",
+            authorizedBy: managerId, idempotencyKey: "retry-key-1");
+        var unkeyed = BillAdjustment.CreateTip(
+            Guid.NewGuid(), bill.Id, 15m, "Service Tip", managerId);
+
+        await _adjRepo.AddAsync(keyed);
+        await _adjRepo.AddAsync(unkeyed);
+
+        var loaded = await _adjRepo.GetByBillIdAsync(bill.Id);
+        Assert.Equal("retry-key-1", loaded.Single(a => a.Id == keyed.Id).IdempotencyKey);
+        Assert.Null(loaded.Single(a => a.Id == unkeyed.Id).IdempotencyKey);
+    }
+
+    [Fact]
+    public async Task TwoAdjustmentsOnTheSameBillWithTheSameIdempotencyKeyViolateTheUniqueIndex()
+    {
+        // V1-RMD-112: the database-level guarantee behind
+        // BillingSplitStore.ApplyDiscountAsync's own in-memory replay
+        // check — belt and suspenders against a race the FOR UPDATE lock
+        // should already prevent.
+        var (bill, _) = await CreateAndSaveBillWithItem("Karisik Izgara", 350m);
+        var managerId = Guid.NewGuid();
+
+        var first = BillAdjustment.CreateDiscountAmount(
+            Guid.NewGuid(), bill.Id, 20m, taxRate: 10m, reason: "PromotionalOffer",
+            authorizedBy: managerId, idempotencyKey: "same-key");
+        var second = BillAdjustment.CreateDiscountAmount(
+            Guid.NewGuid(), bill.Id, 20m, taxRate: 10m, reason: "PromotionalOffer",
+            authorizedBy: managerId, idempotencyKey: "same-key");
+
+        await _adjRepo.AddAsync(first);
+        var ex = await Assert.ThrowsAsync<PostgresException>(() => _adjRepo.AddAsync(second));
+        Assert.Equal("23505", ex.SqlState);
+    }
+
+    [Fact]
     public async Task RemoveAdjustmentDeletesFromDatabase()
     {
         var (bill, _) = await CreateAndSaveBillWithItem("Pide", 150m);

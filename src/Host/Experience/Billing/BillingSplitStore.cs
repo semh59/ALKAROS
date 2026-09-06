@@ -64,25 +64,6 @@ public sealed class BillingSplitStore
             throw new ArgumentException(
                 $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.", nameof(request));
 
-        // A bill's items can carry different tax rates; the discount is
-        // split net/tax using the bill's own effective (weighted-average)
-        // rate rather than an arbitrary single item's rate.
-        var netBase = bill.PayableAmount - bill.TaxTotal;
-        var effectiveTaxRate = netBase > 0 ? BillMath.RoundCurrency(bill.TaxTotal / netBase * 100m) : 0m;
-
-        var adjustmentId = Guid.NewGuid();
-        var adjustment = request.CalculationType switch
-        {
-            "Percentage" => BillAdjustment.CreateDiscountPercentage(
-                adjustmentId, billId, request.Value, bill.PayableAmount, effectiveTaxRate,
-                request.ReasonCode, actorId, notes: request.Notes, createdBy: actorId),
-            "FixedAmount" => BillAdjustment.CreateDiscountAmount(
-                adjustmentId, billId, request.Value, effectiveTaxRate,
-                request.ReasonCode, actorId, notes: request.Notes, createdBy: actorId),
-            _ => throw new ArgumentException(
-                $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
-        };
-
         // Found by an independent audit (2026-09-06): a bare read-validate-
         // write here let two concurrent discount requests both read the
         // same (empty) adjustment set and both pass validation, letting
@@ -101,6 +82,44 @@ public sealed class BillingSplitStore
         }
 
         var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
+
+        // V1-RMD-112: a retried request (network timeout, double-submit)
+        // with the same IdempotencyKey must not append a second discount
+        // line. Unlike Order items, an adjustment row has no natural
+        // row-version guard to fall back on — /comp and /void-sent are
+        // "accidentally" safe on retry only because their commands carry
+        // an ExpectedRowVersion, which this endpoint's request never did.
+        // The FOR UPDATE lock already held above serializes this check
+        // against a concurrent identical retry for the same bill.
+        var replay = existingAdjustments.FirstOrDefault(
+            a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal));
+        if (replay is not null)
+        {
+            await lockTransaction.CommitAsync(cancellationToken);
+            return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
+        }
+
+        // A bill's items can carry different tax rates; the discount is
+        // split net/tax using the bill's own effective (weighted-average)
+        // rate rather than an arbitrary single item's rate.
+        var netBase = bill.PayableAmount - bill.TaxTotal;
+        var effectiveTaxRate = netBase > 0 ? BillMath.RoundCurrency(bill.TaxTotal / netBase * 100m) : 0m;
+
+        var adjustmentId = Guid.NewGuid();
+        var adjustment = request.CalculationType switch
+        {
+            "Percentage" => BillAdjustment.CreateDiscountPercentage(
+                adjustmentId, billId, request.Value, bill.PayableAmount, effectiveTaxRate,
+                request.ReasonCode, actorId, notes: request.Notes, createdBy: actorId,
+                idempotencyKey: request.IdempotencyKey),
+            "FixedAmount" => BillAdjustment.CreateDiscountAmount(
+                adjustmentId, billId, request.Value, effectiveTaxRate,
+                request.ReasonCode, actorId, notes: request.Notes, createdBy: actorId,
+                idempotencyKey: request.IdempotencyKey),
+            _ => throw new ArgumentException(
+                $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
+        };
+
         // Validate against the full candidate set BEFORE writing anything —
         // AdjustmentCalculator throws if the total discount would exceed the
         // bill's payable amount.

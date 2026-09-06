@@ -33,7 +33,7 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
             SELECT bill_adjustment_id, bill_id, bill_item_id, adjustment_type,
                    calculation_type, rate, amount, tax_rate, tax_amount,
                    net_amount, gross_amount, is_deduction, reason, authorized_by,
-                   notes, created_at, created_by, row_version
+                   notes, created_at, created_by, row_version, idempotency_key
             FROM {TableName}
             WHERE bill_id = @bill_id
             ORDER BY created_at ASC
@@ -66,7 +66,8 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
                 notes: reader.IsDBNull(14) ? null : reader.GetString(14),
                 createdAt: reader.GetFieldValue<DateTimeOffset>(15),
                 createdBy: reader.IsDBNull(16) ? null : reader.GetGuid(16),
-                rowVersion: reader.GetInt64(17)));
+                rowVersion: reader.GetInt64(17),
+                idempotencyKey: reader.IsDBNull(18) ? null : reader.GetString(18)));
         }
 
         if (list.Count > MaxUnpagedRows)
@@ -109,12 +110,12 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
                 bill_adjustment_id, bill_id, bill_item_id, adjustment_type,
                 calculation_type, rate, amount, tax_rate, tax_amount,
                 net_amount, gross_amount, is_deduction, reason, authorized_by,
-                notes, created_at, created_by, row_version)
+                notes, created_at, created_by, row_version, idempotency_key)
             VALUES (
                 @bill_adjustment_id, @bill_id, @bill_item_id, @adjustment_type,
                 @calculation_type, @rate, @amount, @tax_rate, @tax_amount,
                 @net_amount, @gross_amount, @is_deduction, @reason, @authorized_by,
-                @notes, @created_at, @created_by, @row_version);
+                @notes, @created_at, @created_by, @row_version, @idempotency_key);
             """,
             connection,
             transaction);
@@ -136,6 +137,7 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
         command.Parameters.AddWithValue("created_at", adjustment.CreatedAt);
         command.Parameters.AddWithValue("created_by", (object?)adjustment.CreatedBy ?? DBNull.Value);
         command.Parameters.AddWithValue("row_version", adjustment.RowVersion);
+        command.Parameters.AddWithValue("idempotency_key", (object?)adjustment.IdempotencyKey ?? DBNull.Value);
         return command;
     }
 
