@@ -11,9 +11,18 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 313 görev tanımlıdır: 308 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 316 görev tanımlıdır: 311 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 37. dalga (Semih onayıyla, "JS test altyapısından başla" — `cashier-app.js` ve
+  `waiter-app.js`'in (bugünkü iki Critical bulgunun tam olarak içinde yaşadığı, hiç otomatik
+  testi olmayan iki dosya) artık üretim koduna dokunmadan gerçek `index.html`/gerçek
+  script'i jsdom'da çalıştıran bir vitest paketi var (`tests/Clients/StaticApps/**`, 7 test,
+  submit-draft'ın table-draft'tan sonra çağrıldığını, çift-tıklama korumasını ve ham HTTP
+  kodu sızıntısı olmadığını doğruluyor); revert-and-confirm ile testlerin gerçekten
+  yakaladığı doğrulandı, `V1-RMD-109`) `V1-GOV-094` sonrası kapıyı fiilen yeniden açtı;
+  `V1-GOV-095` ile resmen kaydedildi; `V1-GOV-096` ile 37. dalga kesin olarak yeniden
+  mühürlendi.
   2026-09-06 36. dalga (Semih onayıyla, "devam" — `PostgresOrderRepository.SaveAsync`'in
   bilinen her kalem için hiçbir alanı değişmemiş olsa bile UPDATE çağırması düzeltildi
   (Kitchen ticket'ta daha önce düzeltilen sahte-concurrency kusurunun aynısı); ayrıca
