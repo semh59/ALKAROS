@@ -101,20 +101,31 @@ public sealed class PostgresOrderRepository : IOrderRepository
 
         var newRowVersion = await UpdateOrderAsync(connection, transaction, order, expectedRowVersion, cancellationToken);
 
-        var knownItemIds = (await ReadItemIdsAsync(connection, transaction, order.Id, cancellationToken)).ToHashSet();
+        // Found while fixing table-draft merge idempotency (V1-RMD-107):
+        // this used to call UpdateItemAsync for every known item on every
+        // save regardless of whether anything about it had actually
+        // changed, bumping row_version for no reason — the same
+        // false-concurrency shape already fixed once for kitchen tickets
+        // (PostgresKitchenTicketRepository.SaveAsync). A snapshot of the
+        // comparable fields lets an unchanged item be skipped entirely.
+        var knownItems = await ReadItemSnapshotsAsync(connection, transaction, order.Id, cancellationToken);
         var currentItemIds = order.Items.Select(i => i.Id).ToHashSet();
 
-        foreach (var removedId in knownItemIds.Except(currentItemIds))
+        foreach (var removedId in knownItems.Keys.Except(currentItemIds))
         {
             await DeleteItemAsync(connection, transaction, removedId, cancellationToken);
         }
 
         foreach (var item in order.Items)
         {
-            if (knownItemIds.Contains(item.Id))
-                await UpdateItemAsync(connection, transaction, item, cancellationToken);
-            else
+            if (!knownItems.TryGetValue(item.Id, out var snapshot))
+            {
                 await InsertItemAsync(connection, transaction, item, cancellationToken);
+            }
+            else if (!snapshot.Matches(item))
+            {
+                await UpdateItemAsync(connection, transaction, item, cancellationToken);
+            }
         }
 
         var knownHistoryIds = (await ReadHistoryIdsAsync(connection, transaction, order.Id, cancellationToken)).ToHashSet();
@@ -554,23 +565,67 @@ public sealed class PostgresOrderRepository : IOrderRepository
         return result;
     }
 
-    private static async Task<IReadOnlyList<Guid>> ReadItemIdsAsync(
+    private static async Task<Dictionary<Guid, ItemSnapshot>> ReadItemSnapshotsAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         Guid orderId,
         CancellationToken cancellationToken)
     {
-        var result = new List<Guid>();
+        var result = new Dictionary<Guid, ItemSnapshot>();
 
         await using var command = CreateCommand(connection, transaction,
-            $"SELECT order_item_id FROM {Items} WHERE order_id = @order_id;");
+            $"""
+            SELECT order_item_id, quantity, discount_amount, tax_amount, net_amount, gross_amount,
+                   status, kitchen_state, portion_reservation_status, notes
+            FROM {Items}
+            WHERE order_id = @order_id;
+            """);
         command.Parameters.AddWithValue("order_id", orderId);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
-            result.Add(reader.GetGuid(0));
+        {
+            result[reader.GetGuid(0)] = new ItemSnapshot(
+                reader.GetDecimal(1),
+                reader.GetDecimal(2),
+                reader.GetDecimal(3),
+                reader.GetDecimal(4),
+                reader.GetDecimal(5),
+                reader.GetString(6),
+                reader.GetString(7),
+                reader.GetString(8),
+                reader.IsDBNull(9) ? null : reader.GetString(9));
+        }
 
         return result;
+    }
+
+    /// <summary>
+    /// The subset of an item's persisted fields SaveAsync's UPDATE touches.
+    /// Comparing against a freshly-built <see cref="OrderItem"/> lets an
+    /// unchanged item skip the UPDATE (and its row_version bump) entirely.
+    /// </summary>
+    private sealed record ItemSnapshot(
+        decimal Quantity,
+        decimal DiscountAmount,
+        decimal TaxAmount,
+        decimal NetAmount,
+        decimal GrossAmount,
+        string Status,
+        string KitchenState,
+        string PortionReservationStatus,
+        string? Notes)
+    {
+        public bool Matches(OrderItem item) =>
+            Quantity == item.Quantity
+            && DiscountAmount == item.DiscountAmount
+            && TaxAmount == item.TaxAmount
+            && NetAmount == item.NetAmount
+            && GrossAmount == item.GrossAmount
+            && Status == item.Status.ToString()
+            && KitchenState == item.KitchenState.ToString()
+            && PortionReservationStatus == item.PortionReservationStatus.ToString()
+            && Notes == item.Notes;
     }
 
     private static async Task<IReadOnlyList<Guid>> ReadHistoryIdsAsync(

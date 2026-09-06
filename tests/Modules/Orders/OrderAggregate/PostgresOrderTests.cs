@@ -242,6 +242,38 @@ public sealed class PostgresOrderTests : IClassFixture<OrdersTestDatabase>
         Assert.Equal(newVersion, reloaded.RowVersion);
     }
 
+    [Fact]
+    public async Task SaveAsyncDoesNotBumpAnItemsRowVersionWhenNothingAboutItChanged()
+    {
+        // Found while fixing table-draft merge idempotency (V1-RMD-107):
+        // SaveAsync used to call UpdateItemAsync for every known item on
+        // every save regardless of whether anything about it had actually
+        // changed — the same false-concurrency shape already fixed once
+        // for kitchen tickets. A resave that only adds a second item must
+        // leave the first item's row_version untouched.
+        var product = await SeedProduct();
+        var order = NewOrder(product);
+        await _orders.AddAsync(order);
+        var loaded = await _orders.GetByIdAsync(order.Id);
+        Assert.NotNull(loaded);
+        var untouchedItem = Assert.Single(loaded.Items);
+        Assert.Equal(1, untouchedItem.RowVersion);
+
+        var secondItem = new OrderItem(
+            Guid.NewGuid(), order.Id, product, "Lahmacun", 1, 120m, 10m, skuSnapshot: "LAH-001");
+        var withSecondItem = new Order(
+            loaded.Id, loaded.Source, loaded.OrderNumber, [loaded.Items[0], secondItem],
+            status: loaded.Status, rowVersion: loaded.RowVersion);
+
+        await _orders.SaveAsync(withSecondItem, loaded.RowVersion);
+
+        var reloaded = await _orders.GetByIdAsync(order.Id);
+        Assert.NotNull(reloaded);
+        Assert.Equal(2, reloaded.Items.Count);
+        var stillUntouched = reloaded.Items.Single(i => i.Id == untouchedItem.Id);
+        Assert.Equal(1, stillUntouched.RowVersion);
+    }
+
     private async Task<Guid> SeedProduct()
     {
         var productId = Guid.NewGuid();

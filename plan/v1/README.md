@@ -11,9 +11,17 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 310 görev tanımlıdır: 305 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 313 görev tanımlıdır: 308 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 36. dalga (Semih onayıyla, "devam" — `PostgresOrderRepository.SaveAsync`'in
+  bilinen her kalem için hiçbir alanı değişmemiş olsa bile UPDATE çağırması düzeltildi
+  (Kitchen ticket'ta daha önce düzeltilen sahte-concurrency kusurunun aynısı); ayrıca
+  `V1-RMD-106`/`107`'nin bulduğu self-deadlock sınıfının başka yerlerde olup olmadığı
+  tarandı (`SubmitOrderHandler`, `DualScreenStore.Orders.cs`/`.Display.cs`,
+  `PostgresSplitDesignRepository`) — hepsi zaten doğru, başka bir örnek bulunmadı,
+  `V1-RMD-108`) `V1-GOV-092` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-093` ile resmen
+  kaydedildi; `V1-GOV-094` ile 36. dalga kesin olarak yeniden mühürlendi.
   2026-09-06 35. dalga (Semih onayıyla, "Docker zaten düzgün değil ... Tüm önerilerini yap" —
   konteynerize test yürütme: `deploy/docker/Dockerfile`'a `test` stage'i + `compose.test.yaml`,
   gerçek `psql` ve tek kullanımlık Postgres ile; bu makinenin bozuk Windows `psql.exe`'sinin
