@@ -37,6 +37,7 @@
   <Project Path="tests/BuildingBlocks/Transactions/ALKAROS.Transactions.Tests.csproj" />
   <Project Path="tests/Clients/Cashier/OperationsStatus/ALKAROS.Cashier.OperationsStatus.Tests.csproj" />
   <Project Path="tests/Clients/Cashier/TableShell/ALKAROS.Cashier.TableShell.Tests.csproj" />
+  <Project Path="tests/Clients/Cashier/MenuRecipeAdmin/ALKAROS.Cashier.MenuRecipeAdmin.Tests.csproj" />
   <Project Path="tests/Clients/WaiterPwa/ManagerDecisions/ALKAROS.WaiterPwa.ManagerDecisions.Tests.csproj" />
   <Project Path="tests/Clients/WaiterPwa/OrderStatus/ALKAROS.WaiterPwa.OrderStatus.Tests.csproj" />
   <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
