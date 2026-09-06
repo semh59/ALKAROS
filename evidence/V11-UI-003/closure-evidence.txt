@@ -1,0 +1,37 @@
+=== V11-UI-003 Closure Evidence ===
+Date: 2026-09-06
+Task ID: V11-UI-003
+Status: Done
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+Diff Base: 2d96fd4
+
+1. Test Execution Command:
+& "C:\Users\semih\.dotnet\dotnet.exe" test tests/Clients/Cashier/InventoryPurchasing/ALKAROS.Cashier.InventoryPurchasing.Tests.csproj -c Release
+
+Exit code: 0
+Output:
+Basarili!  - Basarisiz:     0, Basarili:     9, Atlanan:     0, Toplam:     9, Sure: 248 ms - ALKAROS.Cashier.InventoryPurchasing.Tests.dll (net8.0)
+
+2. Architecture Boundary Tests:
+& "C:\Users\semih\.dotnet\dotnet.exe" test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+Exit code: 0
+Output:
+Basarili!  - Basarisiz:     0, Basarili:     8, Atlanan:     0, Toplam:     8, Sure: 1 s - ALKAROS.Architecture.Tests.dll (net8.0)
+
+3. Project Manifest Validation:
+python tools/project-manifest/project_manifest_tool.py
+Exit code: 0
+Output:
+ALKAROS Project Manifest Validator
+Repository Root: D:\PROJECT\ALKAROS
+Solution: ALKAROS.slnx
+Status: VALID (0 differences across Solution, Disk, and ProjectReferences)
+
+4. Scope & Invariants Verification:
+- Direct balance mutation prohibited: UI strictly presents projected read-only stock balances; attempts to mutate or directly set balances are rejected ("Stok bakiyeleri doğrudan düzenlenemez; yalnızca denetimli hareketler (alım, ayarlama, atık) ile güncellenebilir.").
+- Idempotency of receipts and adjustments: duplicate submissions with identical idempotency key return cached results without generating duplicate stock ledger movements or crediting stock twice.
+- Stale row version rejection (optimistic concurrency control): submissions referencing stale or mismatched row versions are rejected with explicit Turkish concurrency conflict error ("Kayıt başka bir kullanıcı veya terminal tarafından güncellendi. Lütfen güncel veriyi yükleyiniz.").
+- Mandatory audit reason: manual adjustments and waste records require explicit Turkish justification.
+- Available stock validation: waste recording verifies that requested waste quantity does not exceed available balance.
+- Permission enforcement: operators lacking Inventory.Adjust or Purchasing.Receive permissions are rejected with localized error messages.
+- Operations UI accessibility criteria (V0-CMP-005 / WCAG 2.2 Level AA): interactive controls provide minimum 44px touch targets, accessible Turkish labels, keyboard navigation, and high contrast compliance.
