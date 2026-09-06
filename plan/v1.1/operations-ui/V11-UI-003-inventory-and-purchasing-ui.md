@@ -17,6 +17,8 @@
 ## Owned surface
 
 - `src/Clients/Cashier/InventoryPurchasing/**`, `tests/Clients/Cashier/InventoryPurchasing/**`
+- `tests/Clients/Cashier/InventoryPurchasing/ALKAROS.Cashier.InventoryPurchasing.Tests.csproj`, `tests/Clients/Cashier/InventoryPurchasing/packages.lock.json`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
