@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSTest>true</ALKAROSTest>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>ALKAROS.Menu.CounterProjection.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../../src/Modules/Menu/ALKAROS.Menu.csproj" />
+    <ProjectReference Include="../../../../tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../../../database/migrations/V11/V11-RCP-001/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-004/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-001/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-002/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-RSV-001/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-MNU-001/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-PRD-001/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-PRD-002/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-MNU-002/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-MNU-002/*.down.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
