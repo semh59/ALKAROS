@@ -134,7 +134,8 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
                 si.tracking_unit_code
             FROM recipe.recipe_ingredients ri
             JOIN inventory.stock_items si ON ri.ingredient_item_id = si.id
-            WHERE ri.recipe_version_id = @id;
+            WHERE ri.recipe_version_id = @id
+            ORDER BY ri.sort_order, ri.created_at, ri.id;
             """;
 
         var ingredients = new List<IngredientRequirement>();

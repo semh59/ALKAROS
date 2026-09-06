@@ -343,6 +343,14 @@ public sealed class ProductionStockEffectsDatabaseTests : IClassFixture<Producti
         var (_, versionId, tomatoId, bayLeafId, locationId) = await SeedRecipeAndStockAsync();
         var batchId = await CreateBatchAsync(versionId, locationId, plannedQuantity: 1000.0m);
 
+        // Ensure bay leaves has enough stock (500 pieces) so only tomatoes (needs 52.5 kg, has 50 kg) is insufficient
+        await using (var upConn = await _db.DataSource.OpenConnectionAsync())
+        {
+            await using var upCmd = new NpgsqlCommand("UPDATE inventory.stock_balances SET on_hand_quantity = 500, available_quantity = 500 WHERE stock_item_id = $1;", upConn);
+            upCmd.Parameters.AddWithValue(bayLeafId);
+            await upCmd.ExecuteNonQueryAsync();
+        }
+
         // Huge batch: 1000 portions
         // Requires: 200 g * 250 * 1.05 = 52.5 kg tomatoes (we only seeded 50 kg)
         var cmd = new ExecuteBatchStockEffectsCommand(
