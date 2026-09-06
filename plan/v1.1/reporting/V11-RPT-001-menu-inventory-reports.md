@@ -19,6 +19,8 @@ Satış oranı, porsiyon tüketimi, production, atık ve kritik stok raporların
 ## Owned surface
 
 - `src/Modules/Reporting/MenuInventory/**`, `tests/Modules/Reporting/MenuInventory/**`
+- `tests/Modules/Reporting/MenuInventory/ALKAROS.Reporting.MenuInventory.Tests.csproj`, `tests/Modules/Reporting/MenuInventory/packages.lock.json`
+- Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
