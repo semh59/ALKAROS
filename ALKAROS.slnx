@@ -104,4 +104,5 @@
   <Project Path="tests/Modules/Production/BatchLifecycle/ALKAROS.Production.BatchLifecycle.Tests.csproj" />
   <Project Path="tests/Modules/Production/StockEffects/ALKAROS.Production.StockEffects.Tests.csproj" />
   <Project Path="tests/Modules/Menu/CounterProjection/ALKAROS.Menu.CounterProjection.Tests.csproj" />
+  <Project Path="tests/Modules/Reporting/MenuInventory/ALKAROS.Reporting.MenuInventory.Tests.csproj" />
 </Solution>
