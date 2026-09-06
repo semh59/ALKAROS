@@ -4,6 +4,8 @@ namespace ALKAROS.Menu.StaticMenu;
 
 public sealed class PostgresMenuRepository : IMenuRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresMenuRepository(NpgsqlDataSource dataSource)
@@ -100,7 +102,7 @@ public sealed class PostgresMenuRepository : IMenuRepository
             SELECT menu_id, code, name, active, created_at, updated_at
             FROM menu.menus" +
             (activeOnly ? " WHERE active = true" : "") +
-            " ORDER BY code ASC;";
+            $" ORDER BY code ASC LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
@@ -109,6 +111,12 @@ public sealed class PostgresMenuRepository : IMenuRepository
         while (await reader.ReadAsync(ct))
         {
             list.Add(MapMenu(reader));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetAllAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
         }
 
         return list;

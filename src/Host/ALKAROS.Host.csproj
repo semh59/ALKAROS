@@ -28,6 +28,11 @@
     <ProjectReference Include="..\Modules\Audit\ALKAROS.Audit.csproj" />
     <ProjectReference Include="..\Modules\Observability\ALKAROS.Observability.csproj" />
     <ProjectReference Include="..\Modules\Operations\ALKAROS.Operations.csproj" />
+    <ProjectReference Include="..\Modules\Recipes\ALKAROS.Recipes.csproj" />
+    <ProjectReference Include="..\Modules\Inventory\ALKAROS.Inventory.csproj" />
+    <ProjectReference Include="..\Modules\Menu\ALKAROS.Menu.csproj" />
+    <ProjectReference Include="..\Modules\Purchasing\ALKAROS.Purchasing.csproj" />
+    <ProjectReference Include="..\Modules\Production\ALKAROS.Production.csproj" />
   </ItemGroup>
 
 </Project>

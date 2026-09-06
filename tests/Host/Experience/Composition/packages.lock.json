@@ -151,11 +151,16 @@
           "ALKAROS.Catalog": "[1.0.0, )",
           "ALKAROS.Identity": "[1.0.0, )",
           "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Inventory": "[1.0.0, )",
           "ALKAROS.Kitchen": "[1.0.0, )",
+          "ALKAROS.Menu": "[1.0.0, )",
           "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.Observability": "[1.0.0, )",
           "ALKAROS.Operations": "[1.0.0, )",
           "ALKAROS.Orders": "[1.0.0, )",
+          "ALKAROS.Production": "[1.0.0, )",
+          "ALKAROS.Purchasing": "[1.0.0, )",
+          "ALKAROS.Recipes": "[1.0.0, )",
           "ALKAROS.Reconciliation": "[1.0.0, )",
           "ALKAROS.Reporting": "[1.0.0, )",
           "ALKAROS.Settings": "[1.0.0, )",
@@ -173,12 +178,30 @@
       "alkaros.integrationcontracts": {
         "type": "Project"
       },
+      "alkaros.inventory": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Measurements": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
       "alkaros.kitchen": {
         "type": "Project",
         "dependencies": {
           "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Orders": "[1.0.0, )"
+        }
+      },
+      "alkaros.measurements": {
+        "type": "Project"
+      },
+      "alkaros.menu": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "alkaros.messaging": {
@@ -209,6 +232,30 @@
         "type": "Project",
         "dependencies": {
           "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.production": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Inventory": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.purchasing": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Inventory": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.recipes": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Measurements": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }

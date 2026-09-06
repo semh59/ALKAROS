@@ -5,6 +5,8 @@ namespace ALKAROS.Menu.DailyMenuLifecycle;
 
 public sealed class PostgresDailyMenuRepository : IDailyMenuRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresDailyMenuRepository(NpgsqlDataSource dataSource)
@@ -105,10 +107,11 @@ public sealed class PostgresDailyMenuRepository : IDailyMenuRepository
 
     public async Task<IReadOnlyList<DailyMenu>> GetAllAsync(CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT daily_menu_id, business_date, status, opened_at, closed_at, closed_by, note, row_version, created_at, updated_at
             FROM menu.daily_menus
-            ORDER BY business_date DESC;";
+            ORDER BY business_date DESC
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
@@ -117,6 +120,12 @@ public sealed class PostgresDailyMenuRepository : IDailyMenuRepository
         while (await reader.ReadAsync(ct))
         {
             list.Add(MapMenu(reader));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetAllAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
         }
 
         return list;
@@ -138,6 +147,8 @@ public sealed class PostgresDailyMenuRepository : IDailyMenuRepository
 
 public sealed class PostgresDailyMenuItemRepository : IDailyMenuItemRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresDailyMenuItemRepository(NpgsqlDataSource dataSource)
@@ -243,7 +254,7 @@ public sealed class PostgresDailyMenuItemRepository : IDailyMenuItemRepository
             FROM menu.daily_menu_items
             WHERE daily_menu_id = $1" +
             (activeOnly ? " AND active = true" : "") +
-            " ORDER BY created_at ASC;";
+            $" ORDER BY created_at ASC LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(dailyMenuId);
@@ -253,6 +264,12 @@ public sealed class PostgresDailyMenuItemRepository : IDailyMenuItemRepository
         while (await reader.ReadAsync(ct))
         {
             list.Add(MapItem(reader));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByDailyMenuIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
         }
 
         return list;
@@ -302,6 +319,8 @@ public sealed class PostgresDailyMenuItemRepository : IDailyMenuItemRepository
 
 public sealed class PostgresDailyMenuItemHistoryRepository : IDailyMenuItemHistoryRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresDailyMenuItemHistoryRepository(NpgsqlDataSource dataSource)
@@ -333,11 +352,12 @@ public sealed class PostgresDailyMenuItemHistoryRepository : IDailyMenuItemHisto
 
     public async Task<IReadOnlyList<DailyMenuItemHistory>> GetByDailyMenuItemIdAsync(Guid dailyMenuItemId, CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT daily_menu_item_history_id, daily_menu_item_id, old_value, new_value, changed_by, changed_at
             FROM menu.daily_menu_item_history
             WHERE daily_menu_item_id = $1
-            ORDER BY changed_at ASC;";
+            ORDER BY changed_at ASC
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(dailyMenuItemId);
@@ -353,6 +373,12 @@ public sealed class PostgresDailyMenuItemHistoryRepository : IDailyMenuItemHisto
                 reader.GetString(3),
                 reader.IsDBNull(4) ? null : reader.GetGuid(4),
                 reader.GetFieldValue<DateTimeOffset>(5)));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByDailyMenuItemIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
         }
 
         return list;

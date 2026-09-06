@@ -1,4 +1,4 @@
-namespace ALKAROS.Recipes.Units;
+namespace ALKAROS.Measurements;
 
 /// <summary>
 /// Immutable definition of a measurement unit.

@@ -18,6 +18,8 @@ public interface IPurchaseOrderRepository
 
 public sealed class PostgresPurchaseOrderRepository : IPurchaseOrderRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresPurchaseOrderRepository(NpgsqlDataSource dataSource)
@@ -106,7 +108,7 @@ WHERE 1=1";
 
         if (supplierId.HasValue) sql += " AND supplier_id = @supplierId";
         if (status.HasValue) sql += " AND status = @status";
-        sql += " ORDER BY created_at DESC;";
+        sql += $" ORDER BY created_at DESC LIMIT {MaxUnpagedRows + 1};";
 
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var cmd = new NpgsqlCommand(sql, conn);
@@ -120,6 +122,12 @@ WHERE 1=1";
             list.Add(MapOrderHeader(reader));
         }
         await reader.CloseAsync();
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"ListAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
 
         var result = new List<PurchaseOrder>();
         foreach (var po in list)

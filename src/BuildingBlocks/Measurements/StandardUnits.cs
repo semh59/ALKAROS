@@ -1,6 +1,6 @@
 using System.Collections.Frozen;
 
-namespace ALKAROS.Recipes.Units;
+namespace ALKAROS.Measurements;
 
 /// <summary>
 /// Canonical standard units and dimensions supported natively.

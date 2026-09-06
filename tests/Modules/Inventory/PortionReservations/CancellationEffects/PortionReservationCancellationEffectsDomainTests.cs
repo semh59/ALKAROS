@@ -4,8 +4,9 @@ using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Inventory.WasteRecording;
-using ALKAROS.Recipes.Units;
+using ALKAROS.Measurements;
 using FluentAssertions;
+using Npgsql;
 using Xunit;
 
 namespace ALKAROS.Inventory.PortionReservations.CancellationEffects.Tests;
@@ -117,6 +118,8 @@ public sealed class FakeStockMovementRepository : IStockMovementRepository
         _movements.Add(movement);
         return Task.CompletedTask;
     }
+    public Task AppendAsync(StockMovement movement, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default) =>
+        AppendAsync(movement, ct);
     public Task<StockMovement?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         Task.FromResult(_movements.FirstOrDefault(m => m.Id == id));
     public Task<IReadOnlyList<StockMovement>> GetByStockItemAsync(Guid stockItemId, CancellationToken ct = default) =>
@@ -151,6 +154,8 @@ public sealed class FakeStockBalanceRepository : IStockBalanceRepository
         _balances[key] = b;
         return Task.FromResult(b);
     }
+    public Task<StockBalance> ApplyOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default) =>
+        ApplyOnHandDeltaAsync(stockItemId, stockLocationId, onHandDelta, ct);
     public Task SetExactBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, CancellationToken ct = default)
     {
         var key = (stockItemId, stockLocationId);

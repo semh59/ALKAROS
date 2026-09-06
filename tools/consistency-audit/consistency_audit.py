@@ -73,6 +73,8 @@ MODULE_SCHEMA = {
     "Cash": "cash", "Audit": "audit", "Reconciliation": "reconciliation",
     "Reporting": "reporting", "Settings": "settings",
     "Observability": "observability", "Operations": "operations",
+    "Recipes": "recipe", "Inventory": "inventory", "Menu": "menu",
+    "Purchasing": "purchasing", "Production": "production",
 }
 _SCHEMA_CONST_RE = re.compile(r'const\s+string\s+(\w+)\s*=\s*"(\w+)\.\w+"')
 _WRITE_TARGET_RE = re.compile(

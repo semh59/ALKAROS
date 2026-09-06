@@ -4,6 +4,8 @@ namespace ALKAROS.Inventory.BalanceProjection;
 
 public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresStockBalanceRepository(NpgsqlDataSource dataSource)
@@ -38,12 +40,13 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         Guid stockItemId,
         CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
                    reserved_quantity, available_quantity, updated_at, row_version
             FROM inventory.stock_balances
             WHERE stock_item_id = $1
-            ORDER BY stock_location_id;";
+            ORDER BY stock_location_id
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(stockItemId);
@@ -54,6 +57,13 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByStockItemAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 
@@ -61,12 +71,13 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         Guid stockLocationId,
         CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
                    reserved_quantity, available_quantity, updated_at, row_version
             FROM inventory.stock_balances
             WHERE stock_location_id = $1
-            ORDER BY stock_item_id;";
+            ORDER BY stock_item_id
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(stockLocationId);
@@ -77,16 +88,24 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByLocationAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 
     public async Task<IReadOnlyList<StockBalance>> GetAllAsync(CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
                    reserved_quantity, available_quantity, updated_at, row_version
             FROM inventory.stock_balances
-            ORDER BY stock_item_id, stock_location_id;";
+            ORDER BY stock_item_id, stock_location_id
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
@@ -95,6 +114,13 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetAllAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 
@@ -104,27 +130,52 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         decimal onHandDelta,
         CancellationToken ct = default)
     {
-        const string sql = @"
-            INSERT INTO inventory.stock_balances (
-                stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
-                reserved_quantity, available_quantity, updated_at, row_version
-            ) VALUES (
-                $1, $2, $3, $4, 0, $4, NOW(), 1
-            )
-            ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE
-            SET on_hand_quantity = inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity,
-                available_quantity = (inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity) - inventory.stock_balances.reserved_quantity,
-                updated_at = NOW(),
-                row_version = inventory.stock_balances.row_version + 1
-            RETURNING stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
-                      reserved_quantity, available_quantity, updated_at, row_version;";
+        await using var cmd = _dataSource.CreateCommand(ApplyOnHandDeltaSql);
+        BindApplyOnHandDeltaParameters(cmd, stockItemId, stockLocationId, onHandDelta);
+        return await ReadAppliedBalanceAsync(cmd, ct);
+    }
 
-        await using var cmd = _dataSource.CreateCommand(sql);
+    public async Task<StockBalance> ApplyOnHandDeltaAsync(
+        Guid stockItemId,
+        Guid stockLocationId,
+        decimal onHandDelta,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var cmd = new NpgsqlCommand(ApplyOnHandDeltaSql, connection, transaction);
+        BindApplyOnHandDeltaParameters(cmd, stockItemId, stockLocationId, onHandDelta);
+        return await ReadAppliedBalanceAsync(cmd, ct);
+    }
+
+    private const string ApplyOnHandDeltaSql = @"
+        INSERT INTO inventory.stock_balances (
+            stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+            reserved_quantity, available_quantity, updated_at, row_version
+        ) VALUES (
+            $1, $2, $3, $4, 0, $4, NOW(), 1
+        )
+        ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE
+        SET on_hand_quantity = inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity,
+            available_quantity = (inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity) - inventory.stock_balances.reserved_quantity,
+            updated_at = NOW(),
+            row_version = inventory.stock_balances.row_version + 1
+        RETURNING stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                  reserved_quantity, available_quantity, updated_at, row_version;";
+
+    private static void BindApplyOnHandDeltaParameters(NpgsqlCommand cmd, Guid stockItemId, Guid stockLocationId, decimal onHandDelta)
+    {
         cmd.Parameters.AddWithValue(Guid.NewGuid());
         cmd.Parameters.AddWithValue(stockItemId);
         cmd.Parameters.AddWithValue(stockLocationId);
         cmd.Parameters.AddWithValue(onHandDelta);
+    }
 
+    private static async Task<StockBalance> ReadAppliedBalanceAsync(NpgsqlCommand cmd, CancellationToken ct)
+    {
         await using var reader = await cmd.ExecuteReaderAsync(ct);
         if (await reader.ReadAsync(ct))
         {

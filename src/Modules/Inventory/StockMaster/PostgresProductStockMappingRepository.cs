@@ -4,6 +4,8 @@ namespace ALKAROS.Inventory.StockMaster;
 
 public sealed class PostgresProductStockMappingRepository : IProductStockMappingRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresProductStockMappingRepository(NpgsqlDataSource dataSource)
@@ -34,11 +36,12 @@ public sealed class PostgresProductStockMappingRepository : IProductStockMapping
 
     public async Task<IReadOnlyList<ProductStockMapping>> GetByProductIdAsync(Guid productId, CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT product_id, stock_item_id, quantity_multiplier, notes, created_at
             FROM inventory.product_stock_mappings
             WHERE product_id = $1
-            ORDER BY stock_item_id;";
+            ORDER BY stock_item_id
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(productId);
@@ -54,16 +57,24 @@ public sealed class PostgresProductStockMappingRepository : IProductStockMapping
                 notes: reader.IsDBNull(3) ? null : reader.GetString(3),
                 createdAt: reader.GetFieldValue<DateTimeOffset>(4)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByProductIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 
     public async Task<IReadOnlyList<ProductStockMapping>> GetByStockItemIdAsync(Guid stockItemId, CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT product_id, stock_item_id, quantity_multiplier, notes, created_at
             FROM inventory.product_stock_mappings
             WHERE stock_item_id = $1
-            ORDER BY product_id;";
+            ORDER BY product_id
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(stockItemId);
@@ -79,6 +90,13 @@ public sealed class PostgresProductStockMappingRepository : IProductStockMapping
                 notes: reader.IsDBNull(3) ? null : reader.GetString(3),
                 createdAt: reader.GetFieldValue<DateTimeOffset>(4)));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByStockItemIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 

@@ -6,6 +6,8 @@ namespace ALKAROS.Inventory.ReservationBalanceProjection;
 
 public sealed class PostgresReservationBalanceRepository : IReservationBalanceRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresReservationBalanceRepository(NpgsqlDataSource dataSource)
@@ -35,11 +37,12 @@ public sealed class PostgresReservationBalanceRepository : IReservationBalanceRe
 
     public async Task<IReadOnlyList<StockBalance>> GetAllBalancesAsync(CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
                    reserved_quantity, available_quantity, updated_at, row_version
             FROM inventory.stock_balances
-            ORDER BY stock_item_id, stock_location_id;";
+            ORDER BY stock_item_id, stock_location_id
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
@@ -48,6 +51,13 @@ public sealed class PostgresReservationBalanceRepository : IReservationBalanceRe
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetAllBalancesAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 

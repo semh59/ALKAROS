@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Purchasing.Suppliers;
 using Npgsql;
 
@@ -50,17 +52,23 @@ public sealed class PurchasingService : IPurchasingService
     private readonly IGoodsReceiptRepository _grRepo;
     private readonly ISupplierRepository _supplierRepo;
     private readonly NpgsqlDataSource _dataSource;
+    private readonly IStockBalanceRepository _balanceRepo;
+    private readonly IStockMovementRepository _movementRepo;
 
     public PurchasingService(
         IPurchaseOrderRepository poRepo,
         IGoodsReceiptRepository grRepo,
         ISupplierRepository supplierRepo,
-        NpgsqlDataSource dataSource)
+        NpgsqlDataSource dataSource,
+        IStockBalanceRepository balanceRepo,
+        IStockMovementRepository movementRepo)
     {
         _poRepo = poRepo ?? throw new ArgumentNullException(nameof(poRepo));
         _grRepo = grRepo ?? throw new ArgumentNullException(nameof(grRepo));
         _supplierRepo = supplierRepo ?? throw new ArgumentNullException(nameof(supplierRepo));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _balanceRepo = balanceRepo ?? throw new ArgumentNullException(nameof(balanceRepo));
+        _movementRepo = movementRepo ?? throw new ArgumentNullException(nameof(movementRepo));
     }
 
     public async Task<PurchaseOrder> CreatePurchaseOrderAsync(CreatePOCommand command, CancellationToken ct = default)
@@ -212,31 +220,29 @@ public sealed class PurchasingService : IPurchasingService
         // 2. Update purchase order and lines
         await _poRepo.UpdateAsync(order, ct);
 
-        // 3. Post stock movements to inventory.stock_movements ledger (V11-INV-001)
+        // 3. Post stock movements and their balance effect through Inventory's
+        // own contract, using this receipt's connection and transaction so
+        // both commit or roll back with the receipt (V0-ARC-001 row 27:
+        // Purchasing → Inventory, goods receipt stock movement).
         foreach (var item in itemsToPostToStock)
         {
-            const string stockMovementSql = @"
-INSERT INTO inventory.stock_movements (
-    stock_movement_id, stock_item_id, stock_location_id, movement_type, direction,
-    quantity, unit_code, source_type, source_reference_id, reason, created_at
-) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);";
+            await _balanceRepo.ApplyOnHandDeltaAsync(
+                item.StockItemId, receipt.DestinationLocationId, item.AcceptedQuantity, conn, tx, ct);
 
-            await using var stockCmd = new NpgsqlCommand(stockMovementSql, conn, tx);
-            var movementId = Guid.NewGuid();
-
-            stockCmd.Parameters.AddWithValue(movementId);
-            stockCmd.Parameters.AddWithValue(item.StockItemId);
-            stockCmd.Parameters.AddWithValue(receipt.DestinationLocationId);
-            stockCmd.Parameters.AddWithValue("PurchaseReceipt");
-            stockCmd.Parameters.AddWithValue("In");
-            stockCmd.Parameters.AddWithValue(item.AcceptedQuantity);
-            stockCmd.Parameters.AddWithValue(item.UnitCode);
-            stockCmd.Parameters.AddWithValue("GoodsReceipt");
-            stockCmd.Parameters.AddWithValue(receipt.Id);
-            stockCmd.Parameters.AddWithValue((object?)receipt.ReceiptNumber ?? DBNull.Value);
-            stockCmd.Parameters.AddWithValue(receipt.ReceivedAt);
-
-            await stockCmd.ExecuteNonQueryAsync(ct);
+            var movement = new StockMovement(
+                id: Guid.NewGuid(),
+                stockItemId: item.StockItemId,
+                stockLocationId: receipt.DestinationLocationId,
+                movementType: StockMovementType.PurchaseReceipt,
+                direction: MovementDirection.In,
+                quantity: item.AcceptedQuantity,
+                unitCode: item.UnitCode,
+                sourceType: StockMovementSourceType.GoodsReceipt,
+                sourceReferenceId: receipt.Id,
+                reason: receipt.ReceiptNumber,
+                createdBy: null,
+                createdAt: receipt.ReceivedAt);
+            await _movementRepo.AppendAsync(movement, conn, tx, ct);
         }
 
         await tx.CommitAsync(ct);

@@ -9,6 +9,8 @@ namespace ALKAROS.Purchasing.Suppliers;
 
 public sealed class PostgresSupplierRepository : ISupplierRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresSupplierRepository(NpgsqlDataSource dataSource)
@@ -88,11 +90,11 @@ FROM purchasing.suppliers";
 
         if (activeOnly.HasValue)
         {
-            sql += " WHERE active = $1 ORDER BY code ASC;";
+            sql += $" WHERE active = $1 ORDER BY code ASC LIMIT {MaxUnpagedRows + 1};";
         }
         else
         {
-            sql += " ORDER BY code ASC;";
+            sql += $" ORDER BY code ASC LIMIT {MaxUnpagedRows + 1};";
         }
 
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
@@ -107,6 +109,12 @@ FROM purchasing.suppliers";
         while (await reader.ReadAsync(ct))
         {
             list.Add(MapFromReader(reader));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"ListAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
         }
 
         return list;

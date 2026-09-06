@@ -5,6 +5,8 @@ namespace ALKAROS.Inventory.StockMaster;
 
 public sealed class PostgresStockLocationRepository : IStockLocationRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresStockLocationRepository(NpgsqlDataSource dataSource)
@@ -77,7 +79,7 @@ public sealed class PostgresStockLocationRepository : IStockLocationRepository
         if (activeOnly)
             sql += " WHERE is_active = true";
 
-        sql += " ORDER BY code ASC;";
+        sql += $" ORDER BY code ASC LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
@@ -87,6 +89,13 @@ public sealed class PostgresStockLocationRepository : IStockLocationRepository
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetAllAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 

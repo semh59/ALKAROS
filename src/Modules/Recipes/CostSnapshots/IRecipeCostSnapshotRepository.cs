@@ -18,6 +18,8 @@ public interface IRecipeCostSnapshotRepository
 
 public sealed class PostgresRecipeCostSnapshotRepository : IRecipeCostSnapshotRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresRecipeCostSnapshotRepository(NpgsqlDataSource dataSource)
@@ -124,11 +126,12 @@ LIMIT 1;";
 
     public async Task<IReadOnlyList<RecipeCostSnapshot>> ListByVersionAsync(Guid recipeVersionId, CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
 SELECT snapshot_id, recipe_version_id, cost_basis_date, calculated_cost, currency, created_at
 FROM recipe.recipe_cost_snapshots
 WHERE recipe_version_id = $1
-ORDER BY cost_basis_date DESC;";
+ORDER BY cost_basis_date DESC
+LIMIT {MaxUnpagedRows + 1};";
 
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var cmd = new NpgsqlCommand(sql, conn);
@@ -141,6 +144,12 @@ ORDER BY cost_basis_date DESC;";
             list.Add(MapHeader(reader));
         }
         await reader.CloseAsync();
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"ListByVersionAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
 
         var result = new List<RecipeCostSnapshot>();
         foreach (var h in list)

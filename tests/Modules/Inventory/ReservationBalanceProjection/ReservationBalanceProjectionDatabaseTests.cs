@@ -2,7 +2,7 @@ using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.StockMaster;
-using ALKAROS.Recipes.Units;
+using ALKAROS.Measurements;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
 using Xunit;

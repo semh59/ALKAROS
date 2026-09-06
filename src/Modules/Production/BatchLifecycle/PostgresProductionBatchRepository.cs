@@ -9,6 +9,8 @@ namespace ALKAROS.Production.BatchLifecycle;
 
 public sealed class PostgresProductionBatchRepository : IProductionBatchRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresProductionBatchRepository(NpgsqlDataSource dataSource)
@@ -303,7 +305,7 @@ public sealed class PostgresProductionBatchRepository : IProductionBatchReposito
             parameters.Add(new NpgsqlParameter("to_date", filter.ToDate.Value));
         }
 
-        sql += " ORDER BY created_at DESC;";
+        sql += $" ORDER BY created_at DESC LIMIT {MaxUnpagedRows + 1};";
 
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var cmd = new NpgsqlCommand(sql, conn);
@@ -317,6 +319,12 @@ public sealed class PostgresProductionBatchRepository : IProductionBatchReposito
         while (await reader.ReadAsync(ct))
         {
             results.Add(MapFromReader(reader));
+        }
+
+        if (results.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"ListAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
         }
 
         return results;

@@ -151,10 +151,13 @@
       "alkaros.inventory": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.Measurements": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Recipes": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
+      },
+      "alkaros.measurements": {
+        "type": "Project"
       },
       "alkaros.menu": {
         "type": "Project",
@@ -176,6 +179,7 @@
       "alkaros.production": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.Inventory": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
@@ -183,6 +187,7 @@
       "alkaros.recipes": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.Measurements": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }

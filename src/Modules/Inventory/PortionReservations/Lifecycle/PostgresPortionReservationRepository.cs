@@ -4,6 +4,8 @@ namespace ALKAROS.Inventory.PortionReservations.Lifecycle;
 
 public sealed class PostgresPortionReservationRepository : IPortionReservationRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresPortionReservationRepository(NpgsqlDataSource dataSource)
@@ -96,14 +98,15 @@ public sealed class PostgresPortionReservationRepository : IPortionReservationRe
 
     public async Task<IReadOnlyList<PortionReservation>> GetByOrderItemIdAsync(Guid orderItemId, CancellationToken cancellationToken = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT id, order_id, order_item_id, stock_item_id, stock_location_id,
                    quantity, unit_code, status, version, idempotency_key,
                    reserved_at, transitioned_at, transition_reason,
                    created_by, transitioned_by, metadata::text
             FROM inventory.portion_reservations
             WHERE order_item_id = $1
-            ORDER BY reserved_at ASC;";
+            ORDER BY reserved_at ASC
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(orderItemId);
@@ -114,19 +117,27 @@ public sealed class PostgresPortionReservationRepository : IPortionReservationRe
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByOrderItemIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 
     public async Task<IReadOnlyList<PortionReservation>> GetActiveByStockItemAndLocationAsync(Guid stockItemId, Guid stockLocationId, CancellationToken cancellationToken = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT id, order_id, order_item_id, stock_item_id, stock_location_id,
                    quantity, unit_code, status, version, idempotency_key,
                    reserved_at, transitioned_at, transition_reason,
                    created_by, transitioned_by, metadata::text
             FROM inventory.portion_reservations
             WHERE stock_item_id = $1 AND stock_location_id = $2 AND status = 'Reserved'
-            ORDER BY reserved_at ASC;";
+            ORDER BY reserved_at ASC
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(stockItemId);
@@ -138,6 +149,13 @@ public sealed class PostgresPortionReservationRepository : IPortionReservationRe
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetActiveByStockItemAndLocationAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 

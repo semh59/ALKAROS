@@ -69,9 +69,24 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 | 24 | Backup | none (infrastructure) | BackupJobStateChanged → Observability | II.2.23 |
 | 25 | Licensing | none (cross-cutting validation; consumed by composition) | none | II.2.24 |
 | 26 | Observability | none (cross-cutting consumer) | none | II.2.25 |
+| 27 | Purchasing | Inventory (goods receipt stock movement) | none yet | 2026-09-06 addition |
 
 Notes:
 
+- Row 27 (Purchasing) was added 2026-09-06 when Purchasing's goods-receipt
+  posting was found writing `inventory.stock_movements` directly with no
+  declared dependency (a real V0-ARC-001 violation, not merely undeclared) —
+  fixed by adding the project reference and `IModule.DependsOn` edge together
+  with this row, per the edge-addition rule below.
+- Row 11 (Production → Inventory) was approved 2026-08-03 but unbuilt until
+  2026-09-06: `ProductionStockEffectService` posted directly to
+  `inventory.stock_balances`/`inventory.stock_movements` via raw SQL instead
+  of the declared edge. Fixed the same way as row 27 — Production now calls
+  `IStockBalanceRepository`/`IStockMovementRepository` through the caller's
+  own connection and transaction (new overloads on both interfaces), so the
+  batch's atomic stock-sufficiency check and its effects still commit or roll
+  back as one unit; the sufficiency check itself stays a same-transaction
+  read of `inventory.stock_balances`, which V0-ARC-001 already allows.
 - Reporting, Audit, Observability and Licensing are cross-cutting; they never
   appear as direct-call targets of domain flows.
 - Table state coupling to Order/Bill is an application-layer invariant, not a

@@ -1,4 +1,4 @@
-namespace ALKAROS.Recipes.Units;
+namespace ALKAROS.Measurements;
 
 /// <summary>
 /// Dimension-safe unit conversion service interface.

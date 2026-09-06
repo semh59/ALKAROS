@@ -1,5 +1,5 @@
 using ALKAROS.Inventory.StockMaster;
-using ALKAROS.Recipes.Units;
+using ALKAROS.Measurements;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
 using Xunit;

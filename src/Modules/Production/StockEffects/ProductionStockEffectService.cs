@@ -4,6 +4,8 @@ using System.Data;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Production.BatchLifecycle;
 using Npgsql;
 
@@ -12,10 +14,17 @@ namespace ALKAROS.Production.StockEffects;
 public sealed class ProductionStockEffectService : IProductionStockEffectService
 {
     private readonly NpgsqlDataSource _dataSource;
+    private readonly IStockBalanceRepository _balanceRepo;
+    private readonly IStockMovementRepository _movementRepo;
 
-    public ProductionStockEffectService(NpgsqlDataSource dataSource)
+    public ProductionStockEffectService(
+        NpgsqlDataSource dataSource,
+        IStockBalanceRepository balanceRepo,
+        IStockMovementRepository movementRepo)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _balanceRepo = balanceRepo ?? throw new ArgumentNullException(nameof(balanceRepo));
+        _movementRepo = movementRepo ?? throw new ArgumentNullException(nameof(movementRepo));
     }
 
     public async Task<ProductionStockEffectResult> ExecuteBatchStockEffectsAsync(
@@ -221,70 +230,28 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
 
         foreach (var pc in plannedConsumptions)
         {
-            // Deduct stock balance
-            const string deductBalanceSql = """
-                UPDATE inventory.stock_balances
-                SET
-                    on_hand_quantity = on_hand_quantity - @qty,
-                    available_quantity = available_quantity - @qty,
-                    updated_at = @now
-                WHERE stock_item_id = @item_id AND stock_location_id = @loc_id;
-                """;
+            // Deduct stock balance and post the consumption movement through
+            // Inventory's own contract, using this batch's connection and
+            // transaction so the stock effect commits or rolls back with the
+            // rest of the batch completion (V0-ARC-001 row 11).
+            await _balanceRepo.ApplyOnHandDeltaAsync(
+                pc.StockItemId, command.SourceLocationId, -pc.StockQuantity, conn, tx, ct);
 
-            await using (var dedCmd = new NpgsqlCommand(deductBalanceSql, conn, tx))
-            {
-                dedCmd.Parameters.AddWithValue("qty", pc.StockQuantity);
-                dedCmd.Parameters.AddWithValue("now", now);
-                dedCmd.Parameters.AddWithValue("item_id", pc.StockItemId);
-                dedCmd.Parameters.AddWithValue("loc_id", command.SourceLocationId);
-                await dedCmd.ExecuteNonQueryAsync(ct);
-            }
-
-            // Insert stock movement ledger row
             var movementId = Guid.NewGuid();
-            const string movementSql = """
-                INSERT INTO inventory.stock_movements (
-                    stock_movement_id,
-                    stock_item_id,
-                    stock_location_id,
-                    movement_type,
-                    direction,
-                    quantity,
-                    unit_code,
-                    source_type,
-                    source_reference_id,
-                    reason,
-                    created_by,
-                    created_at
-                ) VALUES (
-                    @movement_id,
-                    @item_id,
-                    @loc_id,
-                    'Consumption',
-                    'Out',
-                    @qty,
-                    @unit_code,
-                    'ProductionOrder',
-                    @batch_id,
-                    @reason,
-                    @created_by,
-                    @now
-                );
-                """;
-
-            await using (var mCmd = new NpgsqlCommand(movementSql, conn, tx))
-            {
-                mCmd.Parameters.AddWithValue("movement_id", movementId);
-                mCmd.Parameters.AddWithValue("item_id", pc.StockItemId);
-                mCmd.Parameters.AddWithValue("loc_id", command.SourceLocationId);
-                mCmd.Parameters.AddWithValue("qty", pc.StockQuantity);
-                mCmd.Parameters.AddWithValue("unit_code", pc.StockUnitCode);
-                mCmd.Parameters.AddWithValue("batch_id", command.BatchId);
-                mCmd.Parameters.AddWithValue("reason", $"Production consumption for batch {batchNumber}");
-                mCmd.Parameters.AddWithValue("created_by", (object?)command.ExecutedBy ?? DBNull.Value);
-                mCmd.Parameters.AddWithValue("now", now);
-                await mCmd.ExecuteNonQueryAsync(ct);
-            }
+            var consumptionMovement = new StockMovement(
+                id: movementId,
+                stockItemId: pc.StockItemId,
+                stockLocationId: command.SourceLocationId,
+                movementType: StockMovementType.Consumption,
+                direction: MovementDirection.Out,
+                quantity: pc.StockQuantity,
+                unitCode: pc.StockUnitCode,
+                sourceType: StockMovementSourceType.ProductionOrder,
+                sourceReferenceId: command.BatchId,
+                reason: $"Production consumption for batch {batchNumber}",
+                createdBy: command.ExecutedBy,
+                createdAt: now);
+            await _movementRepo.AppendAsync(consumptionMovement, conn, tx, ct);
 
             // Insert production.production_consumptions
             var consumptionId = Guid.NewGuid();
@@ -353,87 +320,27 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
 
         if (command.OutputStockItemId.HasValue)
         {
-            // Upsert stock balance for produced stock item
-            const string upsertOutputBalSql = """
-                INSERT INTO inventory.stock_balances (
-                    stock_balance_id,
-                    stock_item_id,
-                    stock_location_id,
-                    on_hand_quantity,
-                    reserved_quantity,
-                    available_quantity,
-                    updated_at,
-                    row_version
-                ) VALUES (
-                    @id,
-                    @item_id,
-                    @loc_id,
-                    @qty,
-                    0,
-                    @qty,
-                    @now,
-                    1
-                ) ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE SET
-                    on_hand_quantity = inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity,
-                    available_quantity = inventory.stock_balances.available_quantity + EXCLUDED.available_quantity,
-                    updated_at = EXCLUDED.updated_at;
-                """;
+            // Increment stock balance and post the output movement through
+            // Inventory's own contract, same connection/transaction as the
+            // rest of this batch completion (V0-ARC-001 row 11).
+            await _balanceRepo.ApplyOnHandDeltaAsync(
+                command.OutputStockItemId.Value, destinationLocationId, command.ActualQuantity, conn, tx, ct);
 
-            await using (var upCmd = new NpgsqlCommand(upsertOutputBalSql, conn, tx))
-            {
-                upCmd.Parameters.AddWithValue("id", Guid.NewGuid());
-                upCmd.Parameters.AddWithValue("item_id", command.OutputStockItemId.Value);
-                upCmd.Parameters.AddWithValue("loc_id", destinationLocationId);
-                upCmd.Parameters.AddWithValue("qty", command.ActualQuantity);
-                upCmd.Parameters.AddWithValue("now", now);
-                await upCmd.ExecuteNonQueryAsync(ct);
-            }
-
-            // Insert stock movement for output
             outputMovementId = Guid.NewGuid();
-            const string outMovementSql = """
-                INSERT INTO inventory.stock_movements (
-                    stock_movement_id,
-                    stock_item_id,
-                    stock_location_id,
-                    movement_type,
-                    direction,
-                    quantity,
-                    unit_code,
-                    source_type,
-                    source_reference_id,
-                    reason,
-                    created_by,
-                    created_at
-                ) VALUES (
-                    @movement_id,
-                    @item_id,
-                    @loc_id,
-                    'ProductionOutput',
-                    'In',
-                    @qty,
-                    @unit_code,
-                    'ProductionOrder',
-                    @batch_id,
-                    @reason,
-                    @created_by,
-                    @now
-                );
-                """;
-
-            await using (var outMCmd = new NpgsqlCommand(outMovementSql, conn, tx))
-            {
-                outMCmd.Parameters.AddWithValue("movement_id", outputMovementId.Value);
-                outMCmd.Parameters.AddWithValue("item_id", command.OutputStockItemId.Value);
-                outMCmd.Parameters.AddWithValue("loc_id", destinationLocationId);
-                outMCmd.Parameters.AddWithValue("qty", command.ActualQuantity);
-                outMCmd.Parameters.AddWithValue("unit_code", portionUnitCode);
-                outMCmd.Parameters.AddWithValue("batch_id", command.BatchId);
-                outMCmd.Parameters.AddWithValue("reason", $"Production output for batch {batchNumber}");
-                outMCmd.Parameters.AddWithValue("created_by", (object?)command.ExecutedBy ?? DBNull.Value);
-                outMCmd.Parameters.AddWithValue("now", now);
-                await outMCmd.ExecuteNonQueryAsync(ct);
-            }
+            var outputMovement = new StockMovement(
+                id: outputMovementId.Value,
+                stockItemId: command.OutputStockItemId.Value,
+                stockLocationId: destinationLocationId,
+                movementType: StockMovementType.ProductionOutput,
+                direction: MovementDirection.In,
+                quantity: command.ActualQuantity,
+                unitCode: portionUnitCode,
+                sourceType: StockMovementSourceType.ProductionOrder,
+                sourceReferenceId: command.BatchId,
+                reason: $"Production output for batch {batchNumber}",
+                createdBy: command.ExecutedBy,
+                createdAt: now);
+            await _movementRepo.AppendAsync(outputMovement, conn, tx, ct);
         }
 
         var outputId = Guid.NewGuid();

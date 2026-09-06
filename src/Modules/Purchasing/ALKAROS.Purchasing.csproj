@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj" />
+    <ProjectReference Include="../Inventory/ALKAROS.Inventory.csproj" />
   </ItemGroup>
 
   <ItemGroup>

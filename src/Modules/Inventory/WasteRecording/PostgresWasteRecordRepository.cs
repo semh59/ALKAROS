@@ -4,6 +4,8 @@ namespace ALKAROS.Inventory.WasteRecording;
 
 public sealed class PostgresWasteRecordRepository : IWasteRecordRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresWasteRecordRepository(NpgsqlDataSource dataSource)
@@ -95,14 +97,15 @@ public sealed class PostgresWasteRecordRepository : IWasteRecordRepository
 
     public async Task<IReadOnlyList<WasteRecord>> GetBySourceAsync(string wasteSource, Guid sourceReferenceId, CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT id, stock_movement_id, stock_item_id, stock_location_id,
                    waste_source, source_reference_id, idempotency_key,
                    quantity, unit_code, normalized_quantity, tracking_unit_code,
                    waste_reason, recorded_by, recorded_at, metadata::text
             FROM inventory.waste_records
             WHERE waste_source = $1 AND source_reference_id = $2
-            ORDER BY recorded_at ASC;";
+            ORDER BY recorded_at ASC
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(wasteSource.Trim());
@@ -114,6 +117,13 @@ public sealed class PostgresWasteRecordRepository : IWasteRecordRepository
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetBySourceAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 

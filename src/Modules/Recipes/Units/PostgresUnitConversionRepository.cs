@@ -4,6 +4,8 @@ namespace ALKAROS.Recipes.Units;
 
 public sealed class PostgresUnitConversionRepository : IUnitConversionRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresUnitConversionRepository(NpgsqlDataSource dataSource)
@@ -35,11 +37,12 @@ public sealed class PostgresUnitConversionRepository : IUnitConversionRepository
 
     public async Task<IReadOnlyList<UnitConversion>> GetActiveConversionsAsync(CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT unit_conversion_id, from_unit_code, to_unit_code, factor, active, created_at
             FROM recipe.unit_conversions
             WHERE active = true
-            ORDER BY from_unit_code, to_unit_code;";
+            ORDER BY from_unit_code, to_unit_code
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
@@ -55,6 +58,12 @@ public sealed class PostgresUnitConversionRepository : IUnitConversionRepository
                 reader.GetBoolean(4),
                 reader.GetFieldValue<DateTimeOffset>(5)
             ));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetActiveConversionsAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
         }
 
         return list;

@@ -1,4 +1,4 @@
-namespace ALKAROS.Recipes.Units;
+namespace ALKAROS.Measurements;
 
 /// <summary>
 /// Physical dimensions for dimension-safe units. Conversions between different

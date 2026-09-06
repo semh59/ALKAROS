@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Production.BatchLifecycle;
 using ALKAROS.Production.StockEffects;
 using ALKAROS.TestHelpers;
@@ -86,7 +88,10 @@ public sealed class ProductionStockEffectsDatabaseTests : IClassFixture<Producti
     public ProductionStockEffectsDatabaseTests(ProductionStockEffectsTestDb db)
     {
         _db = db;
-        _service = new ProductionStockEffectService(db.DataSource);
+        _service = new ProductionStockEffectService(
+            db.DataSource,
+            new PostgresStockBalanceRepository(db.DataSource),
+            new PostgresStockMovementRepository(db.DataSource));
     }
 
     [Fact]

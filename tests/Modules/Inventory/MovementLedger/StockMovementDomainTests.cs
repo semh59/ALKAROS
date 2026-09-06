@@ -1,6 +1,7 @@
 using ALKAROS.Inventory.StockMaster;
-using ALKAROS.Recipes.Units;
+using ALKAROS.Measurements;
 using FluentAssertions;
+using Npgsql;
 using Xunit;
 
 namespace ALKAROS.Inventory.MovementLedger.Tests;
@@ -233,6 +234,12 @@ public sealed class StockMovementDomainTests
         private readonly List<StockMovement> _movements = new();
 
         public Task AppendAsync(StockMovement movement, CancellationToken ct = default)
+        {
+            _movements.Add(movement);
+            return Task.CompletedTask;
+        }
+
+        public Task AppendAsync(StockMovement movement, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
         {
             _movements.Add(movement);
             return Task.CompletedTask;

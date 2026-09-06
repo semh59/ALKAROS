@@ -1,4 +1,4 @@
-using ALKAROS.Recipes.Units;
+using ALKAROS.Measurements;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
 using Npgsql;

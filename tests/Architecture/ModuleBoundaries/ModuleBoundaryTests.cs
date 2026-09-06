@@ -31,6 +31,11 @@ public static class ModuleBoundaryTests
         "ALKAROS.Audit",
         "ALKAROS.Observability",
         "ALKAROS.Operations",
+        "ALKAROS.Recipes",
+        "ALKAROS.Inventory",
+        "ALKAROS.Menu",
+        "ALKAROS.Purchasing",
+        "ALKAROS.Production",
     };
 
     private static readonly string[] EmptyDependencies = Array.Empty<string>();
@@ -62,6 +67,8 @@ public static class ModuleBoundaryTests
             ["Orders"] = ["Identity", "Catalog", "Tables"],
             ["Billing"] = ["Orders", "Identity"],
             ["Kitchen"] = ["Orders", "Identity"],
+            ["Production"] = ["Inventory"],
+            ["Purchasing"] = ["Inventory"],
             // Table Management has no direct-call edge: it reparents orders and
             // bills after a merge/transfer/unmerge by publishing a table event
             // to the outbox, which Order and Bill consume (V0-ARC-001 row 3).

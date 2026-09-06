@@ -1,4 +1,4 @@
-namespace ALKAROS.Recipes.Units;
+namespace ALKAROS.Measurements;
 
 public class UnitException : Exception
 {

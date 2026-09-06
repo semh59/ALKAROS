@@ -5,6 +5,8 @@ namespace ALKAROS.Recipes.Versioning;
 
 public sealed class PostgresRecipeRepository : IRecipeRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresRecipeRepository(NpgsqlDataSource dataSource)
@@ -74,10 +76,11 @@ public sealed class PostgresRecipeRepository : IRecipeRepository
 
     public async Task<IReadOnlyList<Recipe>> GetAllAsync(CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
             SELECT id, code, name, description, created_at, row_version
             FROM recipe.recipes
-            ORDER BY code ASC;";
+            ORDER BY code ASC
+            LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
@@ -86,6 +89,12 @@ public sealed class PostgresRecipeRepository : IRecipeRepository
         while (await reader.ReadAsync(ct))
         {
             list.Add(MapRecipe(reader));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetAllAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
         }
 
         return list;

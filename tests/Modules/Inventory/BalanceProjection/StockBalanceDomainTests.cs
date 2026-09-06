@@ -1,5 +1,6 @@
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
+using Npgsql;
 using FluentAssertions;
 using Xunit;
 
@@ -206,6 +207,9 @@ public sealed class StockBalanceDomainTests
             return Task.FromResult(bal);
         }
 
+        public Task<StockBalance> ApplyOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+            => ApplyOnHandDeltaAsync(stockItemId, stockLocationId, onHandDelta, ct);
+
         public Task SetExactBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, CancellationToken ct = default)
         {
             if (!_balances.TryGetValue((stockItemId, stockLocationId), out var bal))
@@ -234,6 +238,12 @@ public sealed class StockBalanceDomainTests
         private readonly List<StockMovement> _movements = new();
 
         public Task AppendAsync(StockMovement movement, CancellationToken ct = default)
+        {
+            _movements.Add(movement);
+            return Task.CompletedTask;
+        }
+
+        public Task AppendAsync(StockMovement movement, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
         {
             _movements.Add(movement);
             return Task.CompletedTask;

@@ -5,6 +5,8 @@ namespace ALKAROS.Inventory.StockMaster;
 
 public sealed class PostgresStockItemRepository : IStockItemRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresStockItemRepository(NpgsqlDataSource dataSource)
@@ -82,7 +84,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
         if (activeOnly)
             sql += " WHERE is_active = true";
 
-        sql += " ORDER BY code ASC;";
+        sql += $" ORDER BY code ASC LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
@@ -92,6 +94,13 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetAllAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 
@@ -105,7 +114,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
         if (activeOnly)
             sql += " AND is_active = true";
 
-        sql += " ORDER BY code ASC;";
+        sql += $" ORDER BY code ASC LIMIT {MaxUnpagedRows + 1};";
 
         await using var cmd = _dataSource.CreateCommand(sql);
         cmd.Parameters.AddWithValue(itemType.ToString());
@@ -117,6 +126,13 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
         {
             list.Add(MapRow(reader));
         }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByTypeAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
         return list;
     }
 

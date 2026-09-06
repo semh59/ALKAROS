@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Purchasing.Suppliers;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
@@ -21,6 +23,9 @@ public sealed class OrdersAndReceiptsTestDb : PgTestDatabase
 
         var sql060 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql"));
         await RunAsync(DataSource, sql060);
+
+        var sql061 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-stock-balances.up.sql"));
+        await RunAsync(DataSource, sql061);
 
         var sql068 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-suppliers.up.sql"));
         await RunAsync(DataSource, sql068);
@@ -56,7 +61,13 @@ public sealed class OrdersAndReceiptsDatabaseTests : IClassFixture<OrdersAndRece
         _poRepo = new PostgresPurchaseOrderRepository(db.DataSource);
         _grRepo = new PostgresGoodsReceiptRepository(db.DataSource);
         _supplierRepo = new PostgresSupplierRepository(db.DataSource);
-        _service = new PurchasingService(_poRepo, _grRepo, _supplierRepo, db.DataSource);
+        _service = new PurchasingService(
+            _poRepo,
+            _grRepo,
+            _supplierRepo,
+            db.DataSource,
+            new PostgresStockBalanceRepository(db.DataSource),
+            new PostgresStockMovementRepository(db.DataSource));
     }
 
     private async Task<(Guid supplierId, Guid locationId, Guid itemId)> SeedPrerequisitesAsync(bool supplierActive = true)

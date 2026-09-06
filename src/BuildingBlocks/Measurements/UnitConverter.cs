@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace ALKAROS.Recipes.Units;
+namespace ALKAROS.Measurements;
 
 /// <summary>
 /// Dimension-safe, deterministic unit converter.

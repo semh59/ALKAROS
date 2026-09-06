@@ -17,6 +17,8 @@ public interface IGoodsReceiptRepository
 
 public sealed class PostgresGoodsReceiptRepository : IGoodsReceiptRepository
 {
+    private const int MaxUnpagedRows = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresGoodsReceiptRepository(NpgsqlDataSource dataSource)
@@ -98,11 +100,12 @@ WHERE receipt_number = $1;";
 
     public async Task<IReadOnlyList<GoodsReceipt>> ListByOrderAsync(Guid orderId, CancellationToken ct = default)
     {
-        const string sql = @"
+        string sql = $@"
 SELECT receipt_id, receipt_number, order_id, supplier_id, destination_location_id, received_at, received_by, approved_by, notes, created_at
 FROM purchasing.goods_receipts
 WHERE order_id = $1
-ORDER BY received_at ASC;";
+ORDER BY received_at ASC
+LIMIT {MaxUnpagedRows + 1};";
 
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var cmd = new NpgsqlCommand(sql, conn);
@@ -115,6 +118,12 @@ ORDER BY received_at ASC;";
             list.Add(MapReceiptHeader(reader));
         }
         await reader.CloseAsync();
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"ListByOrderAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
 
         var result = new List<GoodsReceipt>();
         foreach (var r in list)

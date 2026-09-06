@@ -4,7 +4,7 @@ using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Inventory.WasteRecording;
-using ALKAROS.Recipes.Units;
+using ALKAROS.Measurements;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
 using Xunit;

@@ -1,7 +1,7 @@
 using FluentAssertions;
 using Xunit;
 
-namespace ALKAROS.Recipes.Units.Tests;
+namespace ALKAROS.Measurements.Tests;
 
 public sealed class DimensionSafeUnitTests
 {
