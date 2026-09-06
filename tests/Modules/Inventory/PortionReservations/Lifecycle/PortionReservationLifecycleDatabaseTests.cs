@@ -12,13 +12,13 @@ public sealed class PortionReservationTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var migration056 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql");
-        var sql056 = await File.ReadAllTextAsync(migration056);
-        await RunAsync(DataSource, sql056);
+        var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
+        var sql059 = await File.ReadAllTextAsync(migration059);
+        await RunAsync(DataSource, sql059);
 
-        var migration061 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-portion-reservations.up.sql");
-        var sql061 = await File.ReadAllTextAsync(migration061);
-        await RunAsync(DataSource, sql061);
+        var migration064 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-portion-reservations.up.sql");
+        var sql064 = await File.ReadAllTextAsync(migration064);
+        await RunAsync(DataSource, sql064);
     }
 }
 

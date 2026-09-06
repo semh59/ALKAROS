@@ -15,17 +15,17 @@ public sealed class ProductionBatchTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        // 054: Unit conversions
-        var sql054 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "054-unit-conversions.up.sql"));
-        await RunAsync(DataSource, sql054);
+        // 057: Unit conversions
+        var sql057 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-unit-conversions.up.sql"));
+        await RunAsync(DataSource, sql057);
 
-        // 055: Recipe versions
-        var sql055 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "055-recipe-versions.up.sql"));
-        await RunAsync(DataSource, sql055);
+        // 058: Recipe versions
+        var sql058 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-recipe-versions.up.sql"));
+        await RunAsync(DataSource, sql058);
 
-        // 056: Stock master
-        var sql056 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql"));
-        await RunAsync(DataSource, sql056);
+        // 059: Stock master
+        var sql059 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql"));
+        await RunAsync(DataSource, sql059);
 
         // Catalog products for daily menu items FK
         const string catalogSql = """
@@ -43,24 +43,24 @@ public sealed class ProductionBatchTestDb : PgTestDatabase
             """;
         await RunAsync(DataSource, catalogSql);
 
-        // 064: Daily menus
-        var sql064 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-daily-menus.up.sql"));
-        await RunAsync(DataSource, sql064);
+        // 067: Daily menus
+        var sql067 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-daily-menus.up.sql"));
+        await RunAsync(DataSource, sql067);
 
-        // 068: Production batches
-        var sql068 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-production-batches.up.sql"));
-        await RunAsync(DataSource, sql068);
+        // 071: Production batches
+        var sql071 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "071-production-batches.up.sql"));
+        await RunAsync(DataSource, sql071);
     }
 
-    public async Task RollbackMigration068Async()
+    public async Task RollbackMigration071Async()
     {
-        var downSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-production-batches.down.sql"));
+        var downSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "071-production-batches.down.sql"));
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration068Async()
+    public async Task ReapplyMigration071Async()
     {
-        var upSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-production-batches.up.sql"));
+        var upSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "071-production-batches.up.sql"));
         await RunAsync(DataSource, upSql);
     }
 }
@@ -121,10 +121,10 @@ public sealed class ProductionBatchDatabaseTests : IClassFixture<ProductionBatch
     }
 
     [Fact]
-    public async Task RollbackAndReapplyMigration068SucceedsWithoutErrors()
+    public async Task RollbackAndReapplyMigration071SucceedsWithoutErrors()
     {
-        await _db.RollbackMigration068Async();
-        await _db.ReapplyMigration068Async();
+        await _db.RollbackMigration071Async();
+        await _db.ReapplyMigration071Async();
     }
 
     [Fact]

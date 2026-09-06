@@ -14,31 +14,31 @@ public sealed class StockBalanceTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var migration056 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql");
-        var sql056 = await File.ReadAllTextAsync(migration056);
-        await RunAsync(DataSource, sql056);
+        var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
+        var sql059 = await File.ReadAllTextAsync(migration059);
+        await RunAsync(DataSource, sql059);
 
-        var migration057 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql");
-        var sql057 = await File.ReadAllTextAsync(migration057);
-        await RunAsync(DataSource, sql057);
+        var migration060 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql");
+        var sql060 = await File.ReadAllTextAsync(migration060);
+        await RunAsync(DataSource, sql060);
 
-        var migration058 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-stock-balances.up.sql");
-        var sql058 = await File.ReadAllTextAsync(migration058);
-        await RunAsync(DataSource, sql058);
+        var migration061 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-stock-balances.up.sql");
+        var sql061 = await File.ReadAllTextAsync(migration061);
+        await RunAsync(DataSource, sql061);
     }
 
-    public async Task RollbackMigration058Async()
+    public async Task RollbackMigration061Async()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-stock-balances.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-stock-balances.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration058Async()
+    public async Task ReapplyMigration061Async()
     {
-        var migration058 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-stock-balances.up.sql");
-        var sql058 = await File.ReadAllTextAsync(migration058);
-        await RunAsync(DataSource, sql058);
+        var migration061 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-stock-balances.up.sql");
+        var sql061 = await File.ReadAllTextAsync(migration061);
+        await RunAsync(DataSource, sql061);
     }
 }
 
@@ -174,10 +174,10 @@ public sealed class StockBalanceDatabaseTests : IClassFixture<StockBalanceTestDb
     }
 
     [Fact]
-    public async Task Migration058RollbackAndReapplyWorksCleanly()
+    public async Task Migration061RollbackAndReapplyWorksCleanly()
     {
-        await _db.RollbackMigration058Async();
-        await _db.ReapplyMigration058Async();
+        await _db.RollbackMigration061Async();
+        await _db.ReapplyMigration061Async();
 
         await using var cmd = _db.DataSource.CreateCommand("SELECT count(*) FROM inventory.stock_balances;");
         var count = await cmd.ExecuteScalarAsync();

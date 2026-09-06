@@ -1,5 +1,5 @@
--- Migration 055: Recipe and RecipeVersion lifecycle (V11-RCP-001)
--- Requires schema recipe (created in migration 054)
+-- Migration 058: Recipe and RecipeVersion lifecycle (V11-RCP-001)
+-- Requires schema recipe (created in migration 057)
 
 CREATE TABLE IF NOT EXISTS recipe.recipes (
     id UUID PRIMARY KEY,

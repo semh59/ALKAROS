@@ -764,7 +764,7 @@ internal sealed class BillingSplitTestDatabase
         var root = FindRepositoryRoot();
         using var manifest = JsonDocument.Parse(await File.ReadAllTextAsync(
             System.IO.Path.Combine(root, "database", "MigrationComposition", "order.json")));
-        var migrationRoot = System.IO.Path.Combine(root, "database", "migrations", "V1");
+        var migrationRoot = System.IO.Path.Combine(root, "database", "migrations");
         foreach (var migration in manifest.RootElement.GetProperty("migrations").EnumerateArray())
         {
             var id = migration.GetProperty("id").GetString() ?? throw new InvalidOperationException("Migration ID is missing.");

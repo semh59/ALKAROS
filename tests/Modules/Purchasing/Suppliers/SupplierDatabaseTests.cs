@@ -13,23 +13,23 @@ public sealed class SupplierTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var migration065 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "065-suppliers.up.sql");
-        var sql065 = await File.ReadAllTextAsync(migration065);
-        await RunAsync(DataSource, sql065);
+        var migration068 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-suppliers.up.sql");
+        var sql068 = await File.ReadAllTextAsync(migration068);
+        await RunAsync(DataSource, sql068);
     }
 
-    public async Task RollbackMigration065Async()
+    public async Task RollbackMigration068Async()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "065-suppliers.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-suppliers.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration065Async()
+    public async Task ReapplyMigration068Async()
     {
-        var migration065 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "065-suppliers.up.sql");
-        var sql065 = await File.ReadAllTextAsync(migration065);
-        await RunAsync(DataSource, sql065);
+        var migration068 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-suppliers.up.sql");
+        var sql068 = await File.ReadAllTextAsync(migration068);
+        await RunAsync(DataSource, sql068);
     }
 }
 
@@ -177,10 +177,10 @@ public sealed class SupplierDatabaseTests : IClassFixture<SupplierTestDb>
     }
 
     [Fact]
-    public async Task Migration065RollbackAndReapplyWorksCleanly()
+    public async Task Migration068RollbackAndReapplyWorksCleanly()
     {
-        await _db.RollbackMigration065Async();
-        await _db.ReapplyMigration065Async();
+        await _db.RollbackMigration068Async();
+        await _db.ReapplyMigration068Async();
 
         var code = "SUP-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
         var supplier = await _service.CreateSupplierAsync(new CreateSupplierCommand(code, "Reapply Test"));

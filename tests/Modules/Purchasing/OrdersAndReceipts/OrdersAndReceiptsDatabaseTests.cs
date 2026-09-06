@@ -16,29 +16,29 @@ public sealed class OrdersAndReceiptsTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var sql056 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql"));
-        await RunAsync(DataSource, sql056);
+        var sql059 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql"));
+        await RunAsync(DataSource, sql059);
 
-        var sql057 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql"));
-        await RunAsync(DataSource, sql057);
+        var sql060 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql"));
+        await RunAsync(DataSource, sql060);
 
-        var sql065 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "065-suppliers.up.sql"));
-        await RunAsync(DataSource, sql065);
+        var sql068 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-suppliers.up.sql"));
+        await RunAsync(DataSource, sql068);
 
-        var sql066 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "066-purchase-orders-receipts.up.sql"));
-        await RunAsync(DataSource, sql066);
+        var sql069 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "069-purchase-orders-receipts.up.sql"));
+        await RunAsync(DataSource, sql069);
     }
 
-    public async Task RollbackMigration066Async()
+    public async Task RollbackMigration069Async()
     {
-        var downSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "066-purchase-orders-receipts.down.sql"));
+        var downSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "069-purchase-orders-receipts.down.sql"));
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration066Async()
+    public async Task ReapplyMigration069Async()
     {
-        var sql066 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "066-purchase-orders-receipts.up.sql"));
-        await RunAsync(DataSource, sql066);
+        var sql069 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "069-purchase-orders-receipts.up.sql"));
+        await RunAsync(DataSource, sql069);
     }
 }
 
@@ -317,10 +317,10 @@ WHERE source_reference_id = $1;";
     }
 
     [Fact]
-    public async Task Migration066RollbackAndReapplyWorksCleanly()
+    public async Task Migration069RollbackAndReapplyWorksCleanly()
     {
-        await _db.RollbackMigration066Async();
-        await _db.ReapplyMigration066Async();
+        await _db.RollbackMigration069Async();
+        await _db.ReapplyMigration069Async();
 
         var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
         var po = await _service.CreatePurchaseOrderAsync(new CreatePOCommand(

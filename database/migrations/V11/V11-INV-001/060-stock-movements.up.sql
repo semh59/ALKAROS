@@ -1,4 +1,4 @@
--- Migration 057: Immutable Stock Movements Ledger (V11-INV-001)
+-- Migration 060: Immutable Stock Movements Ledger (V11-INV-001)
 CREATE SCHEMA IF NOT EXISTS inventory;
 
 CREATE TABLE IF NOT EXISTS inventory.stock_movements (

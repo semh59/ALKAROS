@@ -76,7 +76,7 @@ services:
     command:
       - |
         export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
-        exec dotnet ALKAROS.Host.dll --order-manifest /app/database/MigrationComposition/order.json --migrations-dir /app/database/migrations/V1 --db-url postgresql://alkaros@postgres:5432/alkaros
+        exec dotnet ALKAROS.Host.dll --order-manifest /app/database/MigrationComposition/order.json --migrations-dir /app/database/migrations --db-url postgresql://alkaros@postgres:5432/alkaros
     restart: "no"
 
   provision:

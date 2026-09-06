@@ -12,23 +12,23 @@ public sealed class StockMasterTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var migration056 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql");
-        var sql056 = await File.ReadAllTextAsync(migration056);
-        await RunAsync(DataSource, sql056);
+        var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
+        var sql059 = await File.ReadAllTextAsync(migration059);
+        await RunAsync(DataSource, sql059);
     }
 
-    public async Task RollbackMigration056Async()
+    public async Task RollbackMigration059Async()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration056Async()
+    public async Task ReapplyMigration059Async()
     {
-        var migration056 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql");
-        var sql056 = await File.ReadAllTextAsync(migration056);
-        await RunAsync(DataSource, sql056);
+        var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
+        var sql059 = await File.ReadAllTextAsync(migration059);
+        await RunAsync(DataSource, sql059);
     }
 }
 
@@ -142,10 +142,10 @@ public sealed class StockMasterDatabaseTests : IClassFixture<StockMasterTestDb>
     }
 
     [Fact]
-    public async Task Migration056RollbackAndReapplyWorksCleanly()
+    public async Task Migration059RollbackAndReapplyWorksCleanly()
     {
-        await _db.RollbackMigration056Async();
-        await _db.ReapplyMigration056Async();
+        await _db.RollbackMigration059Async();
+        await _db.ReapplyMigration059Async();
 
         await using var cmd = _db.DataSource.CreateCommand("SELECT count(*) FROM inventory.stock_items;");
         var count = await cmd.ExecuteScalarAsync();

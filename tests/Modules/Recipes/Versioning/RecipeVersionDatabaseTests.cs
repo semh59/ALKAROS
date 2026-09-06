@@ -12,27 +12,27 @@ public sealed class RecipeVersioningTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var migration054 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "054-unit-conversions.up.sql");
-        var sql054 = await File.ReadAllTextAsync(migration054);
-        await RunAsync(DataSource, sql054);
+        var migration057 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-unit-conversions.up.sql");
+        var sql057 = await File.ReadAllTextAsync(migration057);
+        await RunAsync(DataSource, sql057);
 
-        var migration055 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "055-recipe-versions.up.sql");
-        var sql055 = await File.ReadAllTextAsync(migration055);
-        await RunAsync(DataSource, sql055);
+        var migration058 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-recipe-versions.up.sql");
+        var sql058 = await File.ReadAllTextAsync(migration058);
+        await RunAsync(DataSource, sql058);
     }
 
-    public async Task RollbackMigration055Async()
+    public async Task RollbackMigration058Async()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "055-recipe-versions.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-recipe-versions.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration055Async()
+    public async Task ReapplyMigration058Async()
     {
-        var migration055 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "055-recipe-versions.up.sql");
-        var sql055 = await File.ReadAllTextAsync(migration055);
-        await RunAsync(DataSource, sql055);
+        var migration058 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-recipe-versions.up.sql");
+        var sql058 = await File.ReadAllTextAsync(migration058);
+        await RunAsync(DataSource, sql058);
     }
 }
 
@@ -206,13 +206,13 @@ public sealed class RecipeVersionDatabaseTests : IClassFixture<RecipeVersioningT
     }
 
     [Fact]
-    public async Task Migration055RollbackAndReapplyWorksCleanly()
+    public async Task Migration058RollbackAndReapplyWorksCleanly()
     {
-        // Rollback migration 055
-        await _db.RollbackMigration055Async();
+        // Rollback migration 058
+        await _db.RollbackMigration058Async();
 
-        // Reapply migration 055
-        await _db.ReapplyMigration055Async();
+        // Reapply migration 058
+        await _db.ReapplyMigration058Async();
 
         // Check tables exist by executing a simple query
         await using var cmd = _db.DataSource.CreateCommand("SELECT count(*) FROM recipe.recipes;");

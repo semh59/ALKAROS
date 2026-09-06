@@ -18,11 +18,11 @@ public sealed class DailyMenuLifecycleTestDb : PgTestDatabase
         const string recipeSchemaSql = "CREATE SCHEMA IF NOT EXISTS recipe;";
         await RunAsync(DataSource, recipeSchemaSql);
 
-        var recipeUp = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "055-recipe-versions.up.sql");
+        var recipeUp = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-recipe-versions.up.sql");
         var sqlRecipe = await File.ReadAllTextAsync(recipeUp);
         await RunAsync(DataSource, sqlRecipe);
 
-        var dailyMenuUp = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-daily-menus.up.sql");
+        var dailyMenuUp = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-daily-menus.up.sql");
         var sqlDailyMenu = await File.ReadAllTextAsync(dailyMenuUp);
         await RunAsync(DataSource, sqlDailyMenu);
     }
@@ -120,7 +120,7 @@ public sealed class DailyMenuLifecycleDatabaseTests : IClassFixture<DailyMenuLif
     [Fact]
     public async Task DownMigrationDropsDailyMenuTablesCleanly()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-daily-menus.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-daily-menus.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await using (var cmd = _db.DataSource.CreateCommand(downSql))
         {
@@ -137,7 +137,7 @@ public sealed class DailyMenuLifecycleDatabaseTests : IClassFixture<DailyMenuLif
         }
 
         // Re-apply up SQL
-        var upSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-daily-menus.up.sql");
+        var upSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-daily-menus.up.sql");
         var upSql = await File.ReadAllTextAsync(upSqlPath);
         await using (var upCmd = _db.DataSource.CreateCommand(upSql))
         {

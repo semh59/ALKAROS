@@ -17,45 +17,45 @@ public sealed class CostSnapshotsTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        // 054: unit conversions
-        var sql054 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "054-unit-conversions.up.sql"));
-        await RunAsync(DataSource, sql054);
-
-        // 055: recipe versions
-        var sql055 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "055-recipe-versions.up.sql"));
-        await RunAsync(DataSource, sql055);
-
-        // 056: stock master
-        var sql056 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql"));
-        await RunAsync(DataSource, sql056);
-
-        // 057: stock movements
-        var sql057 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql"));
+        // 057: unit conversions
+        var sql057 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-unit-conversions.up.sql"));
         await RunAsync(DataSource, sql057);
 
-        // 065: suppliers
-        var sql065 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "065-suppliers.up.sql"));
-        await RunAsync(DataSource, sql065);
+        // 058: recipe versions
+        var sql058 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-recipe-versions.up.sql"));
+        await RunAsync(DataSource, sql058);
 
-        // 066: purchase orders and goods receipts
-        var sql066 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "066-purchase-orders-receipts.up.sql"));
-        await RunAsync(DataSource, sql066);
+        // 059: stock master
+        var sql059 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql"));
+        await RunAsync(DataSource, sql059);
 
-        // 067: recipe cost snapshots
-        var sql067 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-recipe-cost-snapshots.up.sql"));
-        await RunAsync(DataSource, sql067);
+        // 060: stock movements
+        var sql060 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql"));
+        await RunAsync(DataSource, sql060);
+
+        // 068: suppliers
+        var sql068 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-suppliers.up.sql"));
+        await RunAsync(DataSource, sql068);
+
+        // 069: purchase orders and goods receipts
+        var sql069 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "069-purchase-orders-receipts.up.sql"));
+        await RunAsync(DataSource, sql069);
+
+        // 070: recipe cost snapshots
+        var sql070 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "070-recipe-cost-snapshots.up.sql"));
+        await RunAsync(DataSource, sql070);
     }
 
-    public async Task RollbackMigration067Async()
+    public async Task RollbackMigration070Async()
     {
-        var downSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-recipe-cost-snapshots.down.sql"));
+        var downSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "070-recipe-cost-snapshots.down.sql"));
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration067Async()
+    public async Task ReapplyMigration070Async()
     {
-        var sql067 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-recipe-cost-snapshots.up.sql"));
-        await RunAsync(DataSource, sql067);
+        var sql070 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "070-recipe-cost-snapshots.up.sql"));
+        await RunAsync(DataSource, sql070);
     }
 }
 
@@ -335,10 +335,10 @@ VALUES ($1, $2, $3, $4, 10.00, 10.00, 'kg', 100.00);";
     }
 
     [Fact]
-    public async Task Migration067RollbackAndReapplyWorksCleanly()
+    public async Task Migration070RollbackAndReapplyWorksCleanly()
     {
-        await _db.RollbackMigration067Async();
-        await _db.ReapplyMigration067Async();
+        await _db.RollbackMigration070Async();
+        await _db.ReapplyMigration070Async();
 
         var (_, versionId, stockItemId) = await SeedRecipeAndItemAsync();
         var snapshot = await _service.CreateSnapshotAsync(new CreateSnapshotCommand(

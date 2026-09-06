@@ -15,21 +15,21 @@ public sealed class ManualAdjustmentTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var migration056 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql");
-        var sql056 = await File.ReadAllTextAsync(migration056);
-        await RunAsync(DataSource, sql056);
-
-        var migration057 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql");
-        var sql057 = await File.ReadAllTextAsync(migration057);
-        await RunAsync(DataSource, sql057);
-
-        var migration058 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-stock-balances.up.sql");
-        var sql058 = await File.ReadAllTextAsync(migration058);
-        await RunAsync(DataSource, sql058);
-
-        var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-reversals.up.sql");
+        var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
         var sql059 = await File.ReadAllTextAsync(migration059);
         await RunAsync(DataSource, sql059);
+
+        var migration060 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql");
+        var sql060 = await File.ReadAllTextAsync(migration060);
+        await RunAsync(DataSource, sql060);
+
+        var migration061 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-stock-balances.up.sql");
+        var sql061 = await File.ReadAllTextAsync(migration061);
+        await RunAsync(DataSource, sql061);
+
+        var migration062 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "062-stock-reversals.up.sql");
+        var sql062 = await File.ReadAllTextAsync(migration062);
+        await RunAsync(DataSource, sql062);
     }
 }
 

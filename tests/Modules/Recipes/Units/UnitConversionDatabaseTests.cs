@@ -11,14 +11,14 @@ public sealed class RecipeTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var upSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "054-unit-conversions.up.sql");
+        var upSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-unit-conversions.up.sql");
         var upSql = await File.ReadAllTextAsync(upSqlPath);
         await RunAsync(DataSource, upSql);
     }
 
     public async Task RollbackSqlAsync()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "054-unit-conversions.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-unit-conversions.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await RunAsync(DataSource, downSql);
     }
@@ -91,14 +91,14 @@ public sealed class RecipeMigrationTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var upSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "054-unit-conversions.up.sql");
+        var upSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-unit-conversions.up.sql");
         var upSql = await File.ReadAllTextAsync(upSqlPath);
         await RunAsync(DataSource, upSql);
     }
 
     public async Task RollbackSqlAsync()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "054-unit-conversions.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-unit-conversions.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await RunAsync(DataSource, downSql);
     }

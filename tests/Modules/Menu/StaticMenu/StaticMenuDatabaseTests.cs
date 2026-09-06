@@ -14,7 +14,7 @@ public sealed class StaticMenuTestDb : PgTestDatabase
         var sqlCatalog = await File.ReadAllTextAsync(catalogUp);
         await RunAsync(DataSource, sqlCatalog);
 
-        var menuUp = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "063-static-menu.up.sql");
+        var menuUp = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "066-static-menu.up.sql");
         var sqlMenu = await File.ReadAllTextAsync(menuUp);
         await RunAsync(DataSource, sqlMenu);
     }
@@ -130,7 +130,7 @@ public sealed class StaticMenuDatabaseTests : IClassFixture<StaticMenuTestDb>
     [Fact]
     public async Task DownMigrationDropsStaticMenuTablesCleanly()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "063-static-menu.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "066-static-menu.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await using (var cmd = _db.DataSource.CreateCommand(downSql))
         {
@@ -147,7 +147,7 @@ public sealed class StaticMenuDatabaseTests : IClassFixture<StaticMenuTestDb>
         }
 
         // Re-apply up SQL so other tests/fixtures remain functional
-        var upSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "063-static-menu.up.sql");
+        var upSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "066-static-menu.up.sql");
         var upSql = await File.ReadAllTextAsync(upSqlPath);
         await using (var upCmd = _db.DataSource.CreateCommand(upSql))
         {

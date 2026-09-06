@@ -13,27 +13,27 @@ public sealed class StockMovementTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var migration056 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql");
-        var sql056 = await File.ReadAllTextAsync(migration056);
-        await RunAsync(DataSource, sql056);
+        var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
+        var sql059 = await File.ReadAllTextAsync(migration059);
+        await RunAsync(DataSource, sql059);
 
-        var migration057 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql");
-        var sql057 = await File.ReadAllTextAsync(migration057);
-        await RunAsync(DataSource, sql057);
+        var migration060 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql");
+        var sql060 = await File.ReadAllTextAsync(migration060);
+        await RunAsync(DataSource, sql060);
     }
 
-    public async Task RollbackMigration057Async()
+    public async Task RollbackMigration060Async()
     {
-        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.down.sql");
+        var downSqlPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.down.sql");
         var downSql = await File.ReadAllTextAsync(downSqlPath);
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration057Async()
+    public async Task ReapplyMigration060Async()
     {
-        var migration057 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql");
-        var sql057 = await File.ReadAllTextAsync(migration057);
-        await RunAsync(DataSource, sql057);
+        var migration060 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql");
+        var sql060 = await File.ReadAllTextAsync(migration060);
+        await RunAsync(DataSource, sql060);
     }
 }
 
@@ -202,10 +202,10 @@ public sealed class StockMovementDatabaseTests : IClassFixture<StockMovementTest
     }
 
     [Fact]
-    public async Task Migration057RollbackAndReapplyWorksCleanly()
+    public async Task Migration060RollbackAndReapplyWorksCleanly()
     {
-        await _db.RollbackMigration057Async();
-        await _db.ReapplyMigration057Async();
+        await _db.RollbackMigration060Async();
+        await _db.ReapplyMigration060Async();
 
         await using var cmd = _db.DataSource.CreateCommand("SELECT count(*) FROM inventory.stock_movements;");
         var count = await cmd.ExecuteScalarAsync();

@@ -370,7 +370,7 @@ internal sealed class AuthorizationDecisionTestDatabase
         var root = FindRepositoryRoot();
         using var manifest = JsonDocument.Parse(await File.ReadAllTextAsync(
             Path.Combine(root, "database", "MigrationComposition", "order.json")));
-        var migrationRoot = Path.Combine(root, "database", "migrations", "V1");
+        var migrationRoot = Path.Combine(root, "database", "migrations");
         foreach (var migration in manifest.RootElement.GetProperty("migrations").EnumerateArray())
         {
             var id = migration.GetProperty("id").GetString()

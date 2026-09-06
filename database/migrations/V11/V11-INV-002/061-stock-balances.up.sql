@@ -1,4 +1,4 @@
--- Migration 058: Authoritative On-Hand Stock Balances Projection (V11-INV-002)
+-- Migration 061: Authoritative On-Hand Stock Balances Projection (V11-INV-002)
 CREATE SCHEMA IF NOT EXISTS inventory;
 
 CREATE TABLE IF NOT EXISTS inventory.stock_balances (

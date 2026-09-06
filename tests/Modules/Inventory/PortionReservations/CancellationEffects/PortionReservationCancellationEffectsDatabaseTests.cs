@@ -17,29 +17,29 @@ public sealed class PortionCancellationEffectsTestDb : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        var migration056 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql");
-        var sql056 = await File.ReadAllTextAsync(migration056);
-        await RunAsync(DataSource, sql056);
+        var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
+        var sql059 = await File.ReadAllTextAsync(migration059);
+        await RunAsync(DataSource, sql059);
 
-        var migration057 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql");
-        var sql057 = await File.ReadAllTextAsync(migration057);
-        await RunAsync(DataSource, sql057);
-
-        var migration058 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-stock-balances.up.sql");
-        var sql058 = await File.ReadAllTextAsync(migration058);
-        await RunAsync(DataSource, sql058);
-
-        var migration060 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-waste-records.up.sql");
+        var migration060 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql");
         var sql060 = await File.ReadAllTextAsync(migration060);
         await RunAsync(DataSource, sql060);
 
-        var migration061 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-portion-reservations.up.sql");
+        var migration061 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-stock-balances.up.sql");
         var sql061 = await File.ReadAllTextAsync(migration061);
         await RunAsync(DataSource, sql061);
 
-        var migration062 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "062-reservation-balance-projection.up.sql");
-        var sql062 = await File.ReadAllTextAsync(migration062);
-        await RunAsync(DataSource, sql062);
+        var migration063 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "063-waste-records.up.sql");
+        var sql063 = await File.ReadAllTextAsync(migration063);
+        await RunAsync(DataSource, sql063);
+
+        var migration064 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-portion-reservations.up.sql");
+        var sql064 = await File.ReadAllTextAsync(migration064);
+        await RunAsync(DataSource, sql064);
+
+        var migration065 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "065-reservation-balance-projection.up.sql");
+        var sql065 = await File.ReadAllTextAsync(migration065);
+        await RunAsync(DataSource, sql065);
 
         const string kitchenSql = @"
             CREATE SCHEMA IF NOT EXISTS kitchen;

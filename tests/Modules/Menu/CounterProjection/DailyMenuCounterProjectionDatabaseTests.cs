@@ -31,51 +31,51 @@ public sealed class CounterProjectionTestDb : PgTestDatabase
         await RunAsync(DataSource, catalogSql);
 
         // 2. Recipe versions
-        var sql055 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "055-recipe-versions.up.sql"));
-        await RunAsync(DataSource, sql055);
-
-        // 3. Stock master (items & locations)
-        var sql056 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql"));
-        await RunAsync(DataSource, sql056);
-
-        // 4. Stock movements
-        var sql057 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql"));
-        await RunAsync(DataSource, sql057);
-
-        // 5. Stock balances
-        var sql058 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-stock-balances.up.sql"));
+        var sql058 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-recipe-versions.up.sql"));
         await RunAsync(DataSource, sql058);
 
-        // 6. Portion reservations
-        var sql061 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-portion-reservations.up.sql"));
+        // 3. Stock master (items & locations)
+        var sql059 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql"));
+        await RunAsync(DataSource, sql059);
+
+        // 4. Stock movements
+        var sql060 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql"));
+        await RunAsync(DataSource, sql060);
+
+        // 5. Stock balances
+        var sql061 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-stock-balances.up.sql"));
         await RunAsync(DataSource, sql061);
 
-        // 7. Daily menus
-        var sql064 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-daily-menus.up.sql"));
+        // 6. Portion reservations
+        var sql064 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-portion-reservations.up.sql"));
         await RunAsync(DataSource, sql064);
 
+        // 7. Daily menus
+        var sql067 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-daily-menus.up.sql"));
+        await RunAsync(DataSource, sql067);
+
         // 8. Production batches
-        var sql068 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-production-batches.up.sql"));
-        await RunAsync(DataSource, sql068);
+        var sql071 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "071-production-batches.up.sql"));
+        await RunAsync(DataSource, sql071);
 
         // 9. Production outputs and consumptions
-        var sql069 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "069-production-outputs-consumptions.up.sql"));
-        await RunAsync(DataSource, sql069);
+        var sql072 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "072-production-outputs-consumptions.up.sql"));
+        await RunAsync(DataSource, sql072);
 
-        // 10. Migration 070: daily menu counter applied events
-        var sql070 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "070-daily-menu-counter-applied-events.up.sql"));
-        await RunAsync(DataSource, sql070);
+        // 10. Migration 073: daily menu counter applied events
+        var sql073 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "073-daily-menu-counter-applied-events.up.sql"));
+        await RunAsync(DataSource, sql073);
     }
 
-    public async Task RollbackMigration070Async()
+    public async Task RollbackMigration073Async()
     {
-        var downSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "070-daily-menu-counter-applied-events.down.sql"));
+        var downSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "073-daily-menu-counter-applied-events.down.sql"));
         await RunAsync(DataSource, downSql);
     }
 
-    public async Task ReapplyMigration070Async()
+    public async Task ReapplyMigration073Async()
     {
-        var upSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "070-daily-menu-counter-applied-events.up.sql"));
+        var upSql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "073-daily-menu-counter-applied-events.up.sql"));
         await RunAsync(DataSource, upSql);
     }
 }
@@ -92,10 +92,10 @@ public sealed class DailyMenuCounterProjectionDatabaseTests : IClassFixture<Coun
     }
 
     [Fact]
-    public async Task RollbackAndReapplyMigration070SucceedsWithoutErrors()
+    public async Task RollbackAndReapplyMigration073SucceedsWithoutErrors()
     {
-        await _db.RollbackMigration070Async();
-        await _db.ReapplyMigration070Async();
+        await _db.RollbackMigration073Async();
+        await _db.ReapplyMigration073Async();
     }
 
     private async Task<(Guid menuId, Guid itemId, Guid productId, Guid locationId, Guid recipeVersionId)> SeedDailyMenuItemAsync()

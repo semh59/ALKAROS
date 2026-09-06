@@ -312,7 +312,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         var exit = HostComposition.Run(
             new HostCompositionOptions(
                 Path.Combine(root, "database", "MigrationComposition", "order.json"),
-                Path.Combine(root, "database", "migrations", "V1"),
+                Path.Combine(root, "database", "migrations"),
                 _database.PsqlOptions),
             TextWriter.Null);
         Assert.Equal(HostExitCode.Success, exit);

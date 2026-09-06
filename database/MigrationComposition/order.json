@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "056"
+    "max": "073"
   },
   "migrations": [
     {
@@ -487,6 +487,154 @@
       "phase": "B",
       "tables": [
         "orders"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "057",
+      "phase": "B",
+      "tables": [
+        "unit_conversions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "058",
+      "phase": "B",
+      "tables": [
+        "recipes",
+        "recipe_versions",
+        "recipe_ingredients"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "059",
+      "phase": "B",
+      "tables": [
+        "stock_locations",
+        "stock_items",
+        "product_stock_mappings"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "060",
+      "phase": "B",
+      "tables": [
+        "stock_movements"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "061",
+      "phase": "B",
+      "tables": [
+        "stock_balances"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "062",
+      "phase": "B",
+      "tables": [
+        "stock_movements"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "063",
+      "phase": "B",
+      "tables": [
+        "waste_records"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "064",
+      "phase": "B",
+      "tables": [
+        "portion_reservations"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "065",
+      "phase": "B",
+      "tables": [
+        "reservation_balance_applied_events"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "066",
+      "phase": "B",
+      "tables": [
+        "menus",
+        "menu_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "067",
+      "phase": "B",
+      "tables": [
+        "daily_menus",
+        "daily_menu_items",
+        "daily_menu_item_history"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "068",
+      "phase": "B",
+      "tables": [
+        "suppliers"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "069",
+      "phase": "B",
+      "tables": [
+        "purchase_orders",
+        "purchase_order_lines",
+        "goods_receipts",
+        "goods_receipt_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "070",
+      "phase": "B",
+      "tables": [
+        "recipe_cost_snapshots",
+        "recipe_cost_snapshot_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "071",
+      "phase": "B",
+      "tables": [
+        "production_batches"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "072",
+      "phase": "B",
+      "tables": [
+        "production_outputs",
+        "production_consumptions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "073",
+      "phase": "B",
+      "tables": [
+        "daily_menu_counter_applied_events"
       ],
       "deferredConstraints": []
     }

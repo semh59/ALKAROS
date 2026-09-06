@@ -31,40 +31,40 @@ public sealed class MenuInventoryReportingTestDb : PgTestDatabase
         await RunAsync(DataSource, catalogSql);
 
         // 2. Recipe versions
-        var sql055 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "055-recipe-versions.up.sql"));
-        await RunAsync(DataSource, sql055);
-
-        // 3. Stock master (items & locations)
-        var sql056 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "056-stock-master.up.sql"));
-        await RunAsync(DataSource, sql056);
-
-        // 4. Stock movements
-        var sql057 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "057-stock-movements.up.sql"));
-        await RunAsync(DataSource, sql057);
-
-        // 5. Stock balances
-        var sql058 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-stock-balances.up.sql"));
+        var sql058 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "058-recipe-versions.up.sql"));
         await RunAsync(DataSource, sql058);
 
-        // 6. Inventory waste
-        var sql060 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-waste-records.up.sql"));
+        // 3. Stock master (items & locations)
+        var sql059 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql"));
+        await RunAsync(DataSource, sql059);
+
+        // 4. Stock movements
+        var sql060 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql"));
         await RunAsync(DataSource, sql060);
 
-        // 7. Portion reservations
-        var sql061 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-portion-reservations.up.sql"));
+        // 5. Stock balances
+        var sql061 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "061-stock-balances.up.sql"));
         await RunAsync(DataSource, sql061);
 
-        // 8. Daily menus
-        var sql064 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-daily-menus.up.sql"));
+        // 6. Inventory waste
+        var sql063 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "063-waste-records.up.sql"));
+        await RunAsync(DataSource, sql063);
+
+        // 7. Portion reservations
+        var sql064 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-portion-reservations.up.sql"));
         await RunAsync(DataSource, sql064);
 
+        // 8. Daily menus
+        var sql067 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "067-daily-menus.up.sql"));
+        await RunAsync(DataSource, sql067);
+
         // 9. Production batches
-        var sql068 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "068-production-batches.up.sql"));
-        await RunAsync(DataSource, sql068);
+        var sql071 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "071-production-batches.up.sql"));
+        await RunAsync(DataSource, sql071);
 
         // 10. Production outputs and consumptions
-        var sql069 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "069-production-outputs-consumptions.up.sql"));
-        await RunAsync(DataSource, sql069);
+        var sql072 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "072-production-outputs-consumptions.up.sql"));
+        await RunAsync(DataSource, sql072);
     }
 }
 
