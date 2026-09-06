@@ -76,13 +76,15 @@
   --ds-space-5: 1.5rem;
   --ds-space-6: 2rem;
 
-  --ds-target-min: 44px;
-  /* NEW: the primary action on a screen gets a larger target than the rest.
-   * Resolves the 44px (PosTerminal) vs 48px (DESIGN.md) conflict by scope
-   * instead of picking a winner. */
-  --ds-target-primary: 48px;
-  /* NEW: phone surfaces are used one-handed, mid-service, sometimes gloved. */
-  --ds-target-touch: 52px;
+  /* Found by an independent audit (2026-09-06): this was 44px against
+     DESIGN.md's --touch-target-min: 48px. A prior attempt at resolving the
+     conflict "by scope instead of picking a winner" added
+     --ds-target-primary/--ds-target-touch, but neither token was ever
+     actually applied anywhere (grep confirmed zero consumers) — the
+     scoping was declared, never implemented, and every control still used
+     this one value. Matching the spec directly, with no dead tokens left
+     behind. */
+  --ds-target-min: 48px;
 
   --ds-shell-header-height: 68px;
   --ds-shell-status-height: 48px;

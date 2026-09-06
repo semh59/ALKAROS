@@ -256,7 +256,8 @@ body {
 }
 
 .btn-ticket-action {
-  height: 32px;
+  /* DESIGN.md --touch-target-min: 48px (independent audit, 2026-09-06). */
+  min-height: 48px;
   padding: 0 10px;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
@@ -498,6 +499,40 @@ body {
   font-weight: 800;
   min-width: 20px;
   text-align: center;
+}
+
+/* Found by an independent audit (2026-09-06): cashier-app.js renders
+   .btn-micro (and its .btn-del variant) for every cart line's
+   decrease/increase/delete controls, and .item-actions for their
+   container, but neither class was ever defined here — the buttons fell
+   back to the browser's unstyled default (a tiny grey box), and
+   .btn-micro--recall below had no base to build on. 48px matches
+   DESIGN.md's --touch-target-min. */
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-micro {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 10px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-micro:active {
+  background: var(--bg-surface-active);
+}
+
+.btn-del {
+  color: var(--accent-danger);
 }
 
 .parked-card__time {

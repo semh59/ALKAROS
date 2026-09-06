@@ -153,7 +153,13 @@ export function Cashier() {
       } else {
         setFeedbackKind("error");
       }
-      setError(reason instanceof Error ? reason.message : "İşlem tamamlanamadı.");
+      // V1-RMD-114: an independent audit (2026-09-06) found this trusted
+      // reason.message for ANY Error, not just ApiError — a raw network
+      // failure (fetch() itself throwing, e.g. "Failed to fetch") is a
+      // native, English, browser-generated message, not a server-mapped
+      // Turkish one. Only ApiError's message is guaranteed to come from
+      // the backend's own Turkish-mapped exception filter.
+      setError(reason instanceof ApiError ? reason.message : "İşlem tamamlanamadı.");
       return false;
     } finally {
       setBusy(false);
@@ -174,7 +180,7 @@ export function Cashier() {
     } catch (reason) {
       setSession("anonymous");
       setFeedbackKind(reason instanceof ApiError && reason.status === 401 ? "unauthorized" : "error");
-      setError(reason instanceof Error ? reason.message : "Giriş yapılamadı.");
+      setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
     } finally {
       setBusy(false);
     }
@@ -192,7 +198,7 @@ export function Cashier() {
       setOrder(null);
       setNotice("");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Oturum kapatılamadı.");
+      setError(reason instanceof ApiError ? reason.message : "Oturum kapatılamadı.");
     } finally {
       setBusy(false);
     }
@@ -508,7 +514,7 @@ export function Cashier() {
               ) : (
                 <div className="submitted-state">
                   <span>✓</span>
-                  <div><strong>Sipariş gönderildi</strong><small>Revision {activeOrder.revision}</small></div>
+                  <div><strong>Sipariş gönderildi</strong><small>Sürüm {activeOrder.revision}</small></div>
                 </div>
               )}
               {canStartNextOrder && (

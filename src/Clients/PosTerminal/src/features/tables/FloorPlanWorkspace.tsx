@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { ApiError } from "../../api";
 import { Button, SelectField, TextField } from "../../design-system";
 import {
   tableStatusLabels,
@@ -234,7 +235,7 @@ export function FloorPlanWorkspace({
         : "Salon planı atomik olarak kaydedildi.");
       setMode("operation");
     } catch (reason) {
-      const message = reason instanceof Error ? reason.message : "Salon planı kaydedilemedi.";
+      const message = reason instanceof ApiError ? reason.message : "Salon planı kaydedilemedi.";
       const conflict = /409|conflict|concurrent|version/i.test(message);
       setSaveState(conflict ? "conflict" : "error");
       setSaveMessage(conflict

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api } from "../api";
+import { ApiError, api } from "../api";
 import { useRouter } from "../router";
 import { navLabels, roleLabels } from "../strings";
 import { ProductionShell } from "../shell";
@@ -108,7 +108,7 @@ export function ExperiencePage({
     { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "system", requiredCapability: "reports.view" },
   ];
   const title = path === "/tables" ? "Masa yönetimi" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : "Kasa satış";
-  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifier kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : "Gerçek zamanlı sipariş ve müşteri ekranı";
+  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : "Gerçek zamanlı sipariş ve müşteri ekranı";
 
   return <ProductionShell
     session={session}
@@ -179,7 +179,7 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
     } catch (reason) {
       const status = (reason as { status?: number }).status;
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
-      setErrorMessage(reason instanceof Error ? reason.message : "Masa verisi alınamadı.");
+      setErrorMessage(reason instanceof ApiError ? reason.message : "Masa verisi alınamadı.");
     }
   }, [client, selectedZoneId, loadFloorPlanForZone]);
 
@@ -199,7 +199,7 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
       setFloorPlan(result.floorPlan);
       return result;
     } catch (reason) {
-      const msg = reason instanceof Error ? reason.message : "Kat planı kaydedilemedi.";
+      const msg = reason instanceof ApiError ? reason.message : "Kat planı kaydedilemedi.";
       setFloorPlanError(msg);
       throw reason;
     } finally {
@@ -217,7 +217,7 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
       await api.startTableOrder(terminalId, selectedTable.tableId, selectedTable.rowVersion);
       navigate("/");
     } catch (reason) {
-      setOrderError(reason instanceof Error ? reason.message : "Masa siparişi açılamadı.");
+      setOrderError(reason instanceof ApiError ? reason.message : "Masa siparişi açılamadı.");
       await load().catch(() => undefined);
     } finally {
       setOrderBusy(false);
@@ -311,7 +311,7 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
     } catch (reason) {
       const status = (reason as { status?: number }).status;
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
-      setErrorMessage(reason instanceof Error ? reason.message : "Hesap bölme verisi alınamadı.");
+      setErrorMessage(reason instanceof ApiError ? reason.message : "Hesap bölme verisi alınamadı.");
     }
   }, [client, orderParam, terminalId, billId]);
 
@@ -373,7 +373,7 @@ function CatalogRoute({ canManage }: { canManage: boolean }) {
     } catch (reason) {
       const status = (reason as { status?: number }).status;
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");
-      setErrorMessage(reason instanceof Error ? reason.message : "Katalog verisi alınamadı.");
+      setErrorMessage(reason instanceof ApiError ? reason.message : "Katalog verisi alınamadı.");
     }
   }, [canManage, client]);
   useEffect(() => { void load(); }, [load]);
@@ -405,7 +405,7 @@ function SystemHealthRoute({ terminalId, canView }: { terminalId: string; canVie
       setHealth(null);
       setBackups([]);
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : "error");
-      setErrorMessage(reason instanceof Error ? reason.message : "Sağlık verisi alınamadı.");
+      setErrorMessage(reason instanceof ApiError ? reason.message : "Sağlık verisi alınamadı.");
     }
   }, [canView, terminalId]);
   useEffect(() => { void load(); }, [load]);
@@ -433,7 +433,7 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
       const status = (reason as { status?: number }).status;
       setData(emptyAuthorizationDecisions);
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 403 ? "unauthorized" : "error");
-      setErrorMessage(reason instanceof Error ? reason.message : "Yetki verisi alınamadı.");
+      setErrorMessage(reason instanceof ApiError ? reason.message : "Yetki verisi alınamadı.");
     }
   }, [canView, client]);
   useEffect(() => { void load(); }, [load]);
@@ -481,7 +481,7 @@ function KitchenRoute({ terminalId, canOperate }: { terminalId: string; canOpera
       setClient(null);
       setData(emptyKitchenData);
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");
-      setErrorMessage(reason instanceof Error ? reason.message : "Mutfak verisi alınamadı.");
+      setErrorMessage(reason instanceof ApiError ? reason.message : "Mutfak verisi alınamadı.");
     }
   }, [canOperate, terminalId]);
   useEffect(() => { void load(); }, [load]);

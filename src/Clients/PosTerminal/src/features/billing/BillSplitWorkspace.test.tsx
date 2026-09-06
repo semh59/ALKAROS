@@ -4,6 +4,7 @@ import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ApiError } from "../../api";
 import { BillSplitWorkspace } from "./BillSplitWorkspace";
 import type { BillSplitDesign, BillSplitWorkspaceProps, SplitOwnerOption } from "./models";
 
@@ -62,7 +63,10 @@ describe("bill split workspace", () => {
   });
 
   it("preserves a dirty draft after a concurrency conflict", async () => {
-    await render(<BillSplitWorkspace {...props({ onSave: vi.fn().mockRejectedValue(new Error("409 concurrent version")) })} />);
+    // V1-RMD-114: a real conflict always reaches this component as an
+    // ApiError; a plain Error is now correctly treated as an untrusted
+    // client-side/network failure instead.
+    await render(<BillSplitWorkspace {...props({ onSave: vi.fn().mockRejectedValue(new ApiError(409, "CONCURRENCY_CONFLICT", "409 concurrent version")) })} />);
     const checks = [...document.querySelectorAll<HTMLInputElement>('.bill-split__owner-picker input')];
     await click(checks[0]); await click(checks[1]);
     await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Dağıtımı kaydet")!);

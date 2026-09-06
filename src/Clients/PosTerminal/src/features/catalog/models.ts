@@ -102,4 +102,4 @@ export interface CatalogWorkspaceProps {
 }
 
 // Enum label maps live in the central catalog (finding F-7).
-export { catalogAddLabels, catalogEntityLabels } from "../../strings";
+export { catalogAddLabels, catalogEntityLabels, productTypeLabels } from "../../strings";

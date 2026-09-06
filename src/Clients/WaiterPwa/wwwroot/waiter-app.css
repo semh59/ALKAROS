@@ -582,8 +582,9 @@ body {
 }
 
 .btn-step {
-  width: 36px;
-  height: 36px;
+  /* DESIGN.md --touch-target-min: 48px (independent audit, 2026-09-06). */
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-sm);
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);

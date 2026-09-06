@@ -145,8 +145,14 @@
 .table-card__context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .table-card__footer { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem; margin-top: auto; color: var(--table-muted); font-size: .75rem; }
 .table-card__elapsed { font-variant-numeric: tabular-nums; }
-.table-card__elapsed--warn { color: var(--ds-color-warning); font-weight: 900; }
-.table-card__elapsed--crit { color: var(--ds-color-danger); font-weight: 900; }
+/* V1-RMD-114: tokens.css already defined --ds-heat-fresh/-active/-stale for
+   exactly this dwell-time heat ring (independent audit, 2026-09-06: "3
+   renkli durum halkası görselleştirilmemiştir") — declared, never
+   consumed. --ok is new; --warn/--crit now reference the semantic heat
+   token instead of the generic warning/danger one. */
+.table-card__elapsed--ok { color: var(--ds-heat-fresh); }
+.table-card__elapsed--warn { color: var(--ds-heat-active); font-weight: 900; }
+.table-card__elapsed--crit { color: var(--ds-heat-stale); font-weight: 900; }
 .table-card__quick-action { min-width: var(--ds-target-min); min-height: var(--ds-target-min); display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--ds-color-accent); border-radius: var(--ds-radius-sm); padding: .5rem .7rem; color: var(--ds-color-accent); background: var(--ds-color-surface); font: inherit; font-weight: 900; }
 .table-card__quick-action:hover { color: var(--ds-color-surface); background: var(--ds-color-accent); }
 

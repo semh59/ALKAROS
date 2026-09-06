@@ -111,8 +111,23 @@ export const catalogAddLabels: Record<CatalogEntityKind, string> = {
   products: "Ürün",
   categories: "Kategori",
   taxes: "Vergi profili",
-  modifiers: "Modifier",
+  modifiers: "Modifikatör",
   prices: "Fiyat",
+};
+
+/**
+ * Found by an independent audit (2026-09-06): CatalogWorkspace.tsx's product
+ * type <option> labels and two section headers were left untranslated (a
+ * modifier-assignments heading and an effective-price-timeline heading) --
+ * the <option value="..."> stays the wire enum (correctly English), but the
+ * visible text must not.
+ */
+export const productTypeLabels: Record<string, string> = {
+  MenuItem: "Menü ürünü",
+  Modifier: "Modifikatör",
+  AddOn: "Ek ürün",
+  Packaging: "Ambalaj",
+  ServiceItem: "Hizmet kalemi",
 };
 
 export const ticketStatusLabels: Record<KitchenTicket["status"], string> = {

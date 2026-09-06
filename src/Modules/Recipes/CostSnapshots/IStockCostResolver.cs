@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace ALKAROS.Recipes.CostSnapshots;
@@ -13,11 +14,20 @@ public interface IStockCostResolver
 
 public sealed class PostgresStockCostResolver : IStockCostResolver
 {
-    private readonly NpgsqlDataSource _dataSource;
+    private static readonly Action<ILogger, Guid, Exception?> LogUndefinedGoodsReceiptTable =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning,
+            new EventId(1, nameof(LogUndefinedGoodsReceiptTable)),
+            "Moving average cost lookup for stock item {StockItemId} found purchasing.goods_receipt_items " +
+            "undefined; returning null cost. This is expected if Purchasing has not been migrated yet.");
 
-    public PostgresStockCostResolver(NpgsqlDataSource dataSource)
+    private readonly NpgsqlDataSource _dataSource;
+    private readonly ILogger<PostgresStockCostResolver>? _logger;
+
+    public PostgresStockCostResolver(NpgsqlDataSource dataSource, ILogger<PostgresStockCostResolver>? logger = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _logger = logger;
     }
 
     public async Task<decimal?> ResolveMovingAverageCostAsync(Guid stockItemId, DateOnly asOfDate, CancellationToken ct = default)
@@ -50,6 +60,15 @@ WHERE gri.stock_item_id = $1
         }
         catch (PostgresException ex) when (ex.SqlState == "42P01")
         {
+            // Found by an independent audit (2026-09-06): this swallowed
+            // "undefined_table" completely silently. purchasing.goods_receipt_items
+            // only exists once Purchasing's own migrations have run (V11-PUR-001);
+            // treating "no purchase history yet" as "no cost data" is a
+            // reasonable business default, but a genuinely misconfigured
+            // deployment (a schema that should exist but doesn't) deserves a
+            // visible trace, not silence.
+            if (_logger is not null)
+                LogUndefinedGoodsReceiptTable(_logger, stockItemId, ex);
             return null;
         }
 

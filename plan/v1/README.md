@@ -11,9 +11,19 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 328 görev tanımlıdır: 323 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 331 görev tanımlıdır: 326 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-06 42. dalga (Semih onayıyla, düzeltme planının 3. dalgası — dokunmatik hedef
+  boyutu (48px spesifikasyonuna eşitlendi, daha önce hiç uygulanmamış ölü token'lar
+  kaldırıldı), ısı haritası eşiği (75/120 dk → DESIGN.md'nin 20/45'i, zaten tanımlı ama hiç
+  tüketilmeyen 3 renk token'ı artık kullanılıyor), 15+ dil sızıntısı ("Zone"→Bölge,
+  "Revision"→Sürüm, "Modifier"/"Supervisor"/"Reprint" vb.), ve 8 PosTerminal dosyasında 21
+  yerde ham `error.message` güvenlik açığı (`instanceof ApiError` ile düzeltildi — gerçek
+  bir ağ hatası artık tarayıcının İngilizce mesajını sızdırmıyor) — 79/79 test projesi
+  (konteynerde) sıfır başarısız, PosTerminal 119/119 vitest, revert-and-confirm ile
+  doğrulandı, `V1-RMD-114`) `V1-GOV-104` sonrası kapıyı fiilen yeniden açtı; `V1-GOV-105`
+  ile resmen kaydedildi; `V1-GOV-106` ile 42. dalga kesin olarak yeniden mühürlendi.
   2026-09-06 41. dalga (Semih onayıyla, düzeltme planının 2. dalgası — WaiterPwa/Cashier'ın
   masa siparişi gönderdiği tek yol hiç mutfak bileti oluşturmuyordu, idempotency kontrolü
   yoktu, müşteri ekranına bildirim göndermiyordu; `OrderManagementStore.SubmitOrderAsync`

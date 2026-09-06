@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { ApiError } from "../../api";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
 import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
@@ -112,7 +113,7 @@ export function KitchenOperationsWorkspace({
       await onTransitionItem(ticket, item, target);
       setFeedback({ tone: "success", message: `${item.productName} → ${itemStatusLabels[target]}.` });
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Mutfak verisi değişti. Güncel kartı alın; işlem tekrarlanmadı." : error instanceof Error ? error.message : "Ürün durumu güncellenemedi." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Mutfak verisi değişti. Güncel kartı alın; işlem tekrarlanmadı." : error instanceof ApiError ? error.message : "Ürün durumu güncellenemedi." });
     } finally {
       setBusyKey(null);
     }
@@ -127,7 +128,7 @@ export function KitchenOperationsWorkspace({
       await onTransitionTicket(ticket, target, transitionReason);
       setFeedback({ tone: "success", message: `${ticket.ticketNumber} → ${ticketStatusLabels[target]}.` });
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ticket değişti veya hazır olma kuralı sağlanmıyor." : error instanceof Error ? error.message : "Ticket güncellenemedi." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ticket değişti veya hazır olma kuralı sağlanmıyor." : error instanceof ApiError ? error.message : "Ticket güncellenemedi." });
     } finally {
       setBusyKey(null);
     }
@@ -150,7 +151,7 @@ export function KitchenOperationsWorkspace({
     }
     const callback = decision === "approve" ? onApproveReprint : onRejectReprint;
     if (!callback) {
-      setFormErrors(["Bu işlem için supervisor yetkisi gerekli."]);
+      setFormErrors(["Bu işlem için süpervizör yetkisi gerekli."]);
       return;
     }
     const key = `delivery:${selectedDelivery.id}`;
@@ -160,9 +161,9 @@ export function KitchenOperationsWorkspace({
       await callback(selectedDelivery, reason.trim());
       setDecision(null);
       setSelectedDelivery(null);
-      setFeedback({ tone: "success", message: decision === "approve" ? "Reprint onaylandı; fiziksel gönderim ayrı worker tarafından yapılacak." : "Reprint reddedildi." });
+      setFeedback({ tone: "success", message: decision === "approve" ? "Yeniden yazdırma onaylandı; fiziksel gönderim ayrı bir arka plan işlemi tarafından yapılacak." : "Yeniden yazdırma reddedildi." });
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Kayıt değişti; listeyi yenileyin." : error instanceof Error ? error.message : "Reprint kararı kaydedilemedi." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Kayıt değişti; listeyi yenileyin." : error instanceof ApiError ? error.message : "Yeniden yazdırma kararı kaydedilemedi." });
     } finally {
       setBusyKey(null);
     }
@@ -230,12 +231,12 @@ function TicketCard({ ticket, now, canOperate, busyKey, onItemTransition, onTick
   return <article className={`kitchen-ticket kitchen-ticket--${ticket.status.toLowerCase()}`}>
     <header className="kitchen-ticket__header"><div><span className="kitchen-ticket__number">{ticket.ticketNumber}</span><span className={`kitchen-ticket__status kitchen-ticket__status--${ticket.status.toLowerCase()}`}>{ticketStatusLabels[ticket.status]}</span>{open && <span className={`kitchen-ticket__age kitchen-ticket__age--${tone}`} title={tone === "crit" ? "Hedef hazırlık süresi aşıldı" : tone === "warn" ? "Hedef hazırlık süresine yaklaşıldı" : "Hedef süre içinde"}>{ageLabel(minutes)}</span>}</div><span className="kitchen-ticket__version">v{ticket.rowVersion}</span></header>
     <div className="kitchen-ticket__items">{ticket.items.map((item) => { const next = nextItemState(item.status); const itemBusy = busyKey === `item:${item.id}`; return <div className="kitchen-ticket__item" key={item.id}><div className="kitchen-ticket__item-main"><strong>{item.quantity}× {item.productName}</strong>{item.modifiers && <span>{item.modifiers}</span>}{item.notes && <span className="kitchen-ticket__item-note">Not: {item.notes}</span>}</div><div className="kitchen-ticket__item-action"><span className={`kitchen-item-status kitchen-item-status--${item.status.toLowerCase()}`}>{itemStatusLabels[item.status]}</span>{canOperate && next && <Button variant="quiet" disabled={itemBusy || ticketBusy} onClick={() => onItemTransition(item)}>{itemBusy ? "…" : `→ ${itemStatusLabels[next]}`}</Button>}</div></div>; })}</div>
-    <footer className="kitchen-ticket__footer"><span>Order <code>{compactId(ticket.orderId)}</code></span><div>{canOperate && ticket.status === "Queued" && <Button variant="secondary" disabled={ticketBusy} onClick={() => onTicketTransition("Accepted")}>{ticketBusy ? "…" : "Kabul et"}</Button>}{canOperate && ticket.status === "Preparing" && allReady && <Button disabled={ticketBusy} onClick={() => onTicketTransition("Ready")}>{ticketBusy ? "…" : "Hazır"}</Button>}{canOperate && ticket.status !== "Cancelled" && ticket.status !== "Ready" && <Button variant="quiet" disabled={ticketBusy} onClick={() => onTicketTransition("Cancelled", "Kitchen operator cancelled ticket")}>İptal</Button>}</div></footer>
+    <footer className="kitchen-ticket__footer"><span>Sipariş <code>{compactId(ticket.orderId)}</code></span><div>{canOperate && ticket.status === "Queued" && <Button variant="secondary" disabled={ticketBusy} onClick={() => onTicketTransition("Accepted")}>{ticketBusy ? "…" : "Kabul et"}</Button>}{canOperate && ticket.status === "Preparing" && allReady && <Button disabled={ticketBusy} onClick={() => onTicketTransition("Ready")}>{ticketBusy ? "…" : "Hazır"}</Button>}{canOperate && ticket.status !== "Cancelled" && ticket.status !== "Ready" && <Button variant="quiet" disabled={ticketBusy} onClick={() => onTicketTransition("Cancelled", "Kitchen operator cancelled ticket")}>İptal</Button>}</div></footer>
   </article>;
 }
 
 function UnknownPanel({ deliveries, canManage, busyKey, onDecision }: { deliveries: readonly KitchenUnknownDelivery[]; canManage: boolean; busyKey: string | null; onDecision: (delivery: KitchenUnknownDelivery, decision: "approve" | "reject") => void }) {
-  return <section className={`kitchen-panel kitchen-panel--unknown ${deliveries.length ? "has-alert" : ""}`} aria-labelledby="unknown-heading"><header><div><span className="kitchen-panel__eyebrow">YAZICI KURTARMA</span><h3 id="unknown-heading">Doğrulanamayan teslimatlar</h3></div><strong>{deliveries.length}</strong></header>{deliveries.length === 0 ? <p className="kitchen-panel__muted">Bekleyen belirsiz teslimat yok.</p> : <div className="kitchen-unknown-list">{deliveries.map((delivery) => <div className="kitchen-unknown" key={delivery.id}><div><strong>{compactId(delivery.ticketId)}</strong><span>{delivery.crashReason ?? "ACK alınamadı"}</span></div>{canManage ? <div className="kitchen-unknown__actions"><Button variant="secondary" disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "reject")}>Reddet</Button><Button disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "approve")}>Gerekçeli onay</Button></div> : <span className="kitchen-panel__muted">Supervisor gerekli</span>}</div>)}</div>}</section>;
+  return <section className={`kitchen-panel kitchen-panel--unknown ${deliveries.length ? "has-alert" : ""}`} aria-labelledby="unknown-heading"><header><div><span className="kitchen-panel__eyebrow">YAZICI KURTARMA</span><h3 id="unknown-heading">Doğrulanamayan teslimatlar</h3></div><strong>{deliveries.length}</strong></header>{deliveries.length === 0 ? <p className="kitchen-panel__muted">Bekleyen belirsiz teslimat yok.</p> : <div className="kitchen-unknown-list">{deliveries.map((delivery) => <div className="kitchen-unknown" key={delivery.id}><div><strong>{compactId(delivery.ticketId)}</strong><span>{delivery.crashReason ?? "ACK alınamadı"}</span></div>{canManage ? <div className="kitchen-unknown__actions"><Button variant="secondary" disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "reject")}>Reddet</Button><Button disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "approve")}>Gerekçeli onay</Button></div> : <span className="kitchen-panel__muted">Süpervizör gerekli</span>}</div>)}</div>}</section>;
 }
 
 function PrinterPanel({ printers, routes }: { printers: readonly KitchenWorkspaceProps["data"]["printers"][number][]; routes: readonly KitchenWorkspaceProps["data"]["routes"][number][] }) {

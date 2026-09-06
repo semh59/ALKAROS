@@ -4,6 +4,7 @@ import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ApiError } from "../../api";
 import { FloorPlanWorkspace, type FloorPlan, type TableRecord } from "./index";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -147,7 +148,11 @@ describe("floor plan workspace", () => {
   });
 
   it("keeps the edited draft and setup mode after a conflict", async () => {
-    const onSave = vi.fn().mockRejectedValue(new Error("409 concurrent version"));
+    // V1-RMD-114: a real conflict always reaches this component as an
+    // ApiError (produced by api.ts's own response-mapping); a plain Error
+    // would now correctly be treated as an untrusted client-side/network
+    // failure and not have its message surfaced.
+    const onSave = vi.fn().mockRejectedValue(new ApiError(409, "CONCURRENCY_CONFLICT", "409 concurrent version"));
     await render(<FloorPlanWorkspace plan={plan} tables={tables} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onSave={onSave} />);
     await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Planı düzenle")!);
     const table = document.querySelector<HTMLButtonElement>('.floor-plan-table[aria-label^="A-01"]')!;

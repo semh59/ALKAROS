@@ -4,6 +4,7 @@ import { act, type ComponentProps, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ApiError } from "../../api";
 import { TableWorkspace, type TableRecord, type TableZone } from "./index";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -36,7 +37,9 @@ const tables: TableRecord[] = [
     currentOrderId: "order-12345678",
     currentBillId: "bill-12345678",
     rowVersion: 9,
-    occupiedSince: new Date(Date.now() - 95 * 60_000).toISOString(),
+    // V1-RMD-114: 30 minutes falls in the "warn" band under DESIGN.md's
+    // 20/45-minute heatmap thresholds (previously a hardcoded 75/120).
+    occupiedSince: new Date(Date.now() - 30 * 60_000).toISOString(),
     allowedCommands: ["SetAvailable", "Transfer", "Merge"],
   },
 ];
@@ -95,7 +98,7 @@ describe("table workspace", () => {
     expect(document.body.textContent).toContain("S-09");
     expect(document.body.textContent).toContain("S-10");
     expect(document.body.textContent).toContain("Sipariş #order-12");
-    expect(document.body.textContent).toContain("1 sa 35 dk");
+    expect(document.body.textContent).toContain("30 dk");
     expect(document.body.textContent).toContain("Satır sürümü");
     expect(document.querySelectorAll(".table-card")).toHaveLength(2);
     expect(document.querySelector('.table-workspace__filters[role="group"][aria-label="Masa filtreleri"]')).not.toBeNull();
@@ -147,9 +150,9 @@ describe("table workspace", () => {
     const onCreateTable = vi.fn().mockResolvedValue(undefined);
     await render(<TableWorkspace {...baseProps({ onCreateZone, onCreateTable })} />);
 
-    await click([...document.querySelectorAll("button")].find((button) => button.textContent === "+ Zone ekle")!);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent === "+ Bölge ekle")!);
     const dialog = document.querySelector('[role="dialog"]')!;
-    const zoneSubmit = [...dialog.querySelectorAll("button")].find((button) => button.textContent === "Zone oluştur")!;
+    const zoneSubmit = [...dialog.querySelectorAll("button")].find((button) => button.textContent === "Bölge oluştur")!;
     await click(zoneSubmit);
     expect(dialog.textContent).toContain("Kod gerekli.");
     const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
@@ -169,7 +172,10 @@ describe("table workspace", () => {
   });
 
   it("requires transfer target and reason, then preserves context after a stale conflict", async () => {
-    const onAction = vi.fn().mockRejectedValue(new Error("409 concurrent modification"));
+    // V1-RMD-114: a real conflict always reaches this component as an
+    // ApiError; a plain Error is now correctly treated as an untrusted
+    // client-side/network failure instead.
+    const onAction = vi.fn().mockRejectedValue(new ApiError(409, "CONCURRENCY_CONFLICT", "409 concurrent modification"));
     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
     await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
     const dialog = document.querySelector('[role="dialog"]')!;
@@ -212,7 +218,18 @@ describe("table workspace", () => {
     await render(<TableWorkspace {...baseProps()} />);
     const warned = document.querySelector(".table-card__elapsed--warn");
     expect(warned).not.toBeNull();
-    expect(warned!.textContent).toContain("sa");
+    expect(warned!.textContent).toContain("dk");
+  });
+
+  it("flags a table past the critical threshold in red", async () => {
+    // DESIGN.md's 45-minute critical boundary.
+    const stale = tables.map((table) => table.status === "Occupied"
+      ? { ...table, occupiedSince: new Date(Date.now() - 95 * 60_000).toISOString() }
+      : table);
+    await render(<TableWorkspace {...baseProps({ tables: stale })} />);
+    const critical = document.querySelector(".table-card__elapsed--crit");
+    expect(critical).not.toBeNull();
+    expect(critical!.textContent).toContain("sa");
   });
 
   it("keeps the elapsed colour neutral for a freshly occupied table", async () => {

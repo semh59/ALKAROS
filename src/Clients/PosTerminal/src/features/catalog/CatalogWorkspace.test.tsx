@@ -4,6 +4,7 @@ import { act, type ComponentProps, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ApiError } from "../../api";
 import { CatalogWorkspace, type CatalogData } from "./index";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -54,7 +55,10 @@ describe("catalog workspace", () => {
   });
 
   it("validates manager product price and keeps the form on a conflict", async () => {
-    const onCreate = vi.fn().mockRejectedValue(new Error("409 duplicate SKU"));
+    // V1-RMD-114: a real conflict always reaches this component as an
+    // ApiError; a plain Error is now correctly treated as an untrusted
+    // client-side/network failure instead.
+    const onCreate = vi.fn().mockRejectedValue(new ApiError(409, "CONCURRENCY_CONFLICT", "409 duplicate SKU"));
     await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
     await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Ürün ekle"))!);
     const dialog = document.querySelector('[role="dialog"]')!;

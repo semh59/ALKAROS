@@ -14,8 +14,10 @@ describe("responsive and interaction style contract", () => {
     expect(primitiveCss).toContain("width: 100%");
   });
 
-  it("uses a shared 44px minimum target for interactive primitives", () => {
-    expect(tokenCss).toContain("--ds-target-min: 44px");
+  it("uses a shared 48px minimum target for interactive primitives", () => {
+    // V1-RMD-114: was 44px against DESIGN.md's own --touch-target-min: 48px
+    // (independent audit, 2026-09-06).
+    expect(tokenCss).toContain("--ds-target-min: 48px");
     expect(shellCss).toContain("min-height: var(--ds-target-min)");
     expect(primitiveCss).toContain("min-height: var(--ds-target-min)");
   });
