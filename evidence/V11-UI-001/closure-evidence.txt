@@ -1,0 +1,38 @@
+=== V11-UI-001 Closure Evidence ===
+Date: 2026-09-06
+Task ID: V11-UI-001
+Status: Done
+Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
+Diff Base: ede7754
+
+1. Test Execution Command:
+& "C:\Users\semih\.dotnet\dotnet.exe" test tests/Clients/Cashier/MenuRecipeAdmin/ALKAROS.Cashier.MenuRecipeAdmin.Tests.csproj -c Release
+
+Exit code: 0
+Output:
+Basarili!  - Basarisiz:     0, Basarili:    12, Atlanan:     0, Toplam:    12, Sure: 469 ms - ALKAROS.Cashier.MenuRecipeAdmin.Tests.dll (net8.0)
+
+2. Architecture Boundary Tests:
+& "C:\Users\semih\.dotnet\dotnet.exe" test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+Exit code: 0
+Output:
+Basarili!  - Basarisiz:     0, Basarili:     8, Atlanan:     0, Toplam:     8, Sure: 2 s - ALKAROS.Architecture.Tests.dll (net8.0)
+
+3. Project Manifest Validation:
+python tools/project-manifest/project_manifest_tool.py
+Exit code: 0
+Output:
+ALKAROS Project Manifest Validator
+Repository Root: D:\PROJECT\ALKAROS
+Solution: ALKAROS.slnx
+Status: VALID (0 differences across Solution, Disk, and ProjectReferences)
+
+4. Scope & Invariants Verification:
+- Active/referenced recipe version immutability: attempts to edit an Active or referenced recipe version fail with explicit localized Turkish error ("Aktif veya referans verilmiş tarif versiyonları değiştirilemez; yeni bir versiyon oluşturulmalıdır.").
+- Editable draft version modification: unreferenced Draft versions can be freely edited and modified.
+- Ingredient unit dimension validation: dimension mismatch between ingredient and inventory stock item (e.g. Mass vs Volume) fails with explicit Turkish error ("Birim boyutu uyumsuz: Malzeme birim boyutu '{0}' ile stok kartı birim boyutu '{1}' eşleşmelidir.").
+- Loss percentage validation: values outside 0 to 99.99% fail with explicit error ("Fire oranı geçersiz: Fire oranı %0 ile %99.99 arasında olmalıdır.").
+- Permission enforcement: operators lacking Menu.Admin or Recipe.Admin permissions receive explicit Turkish rejection messages ("Menü yönetimi için yetkiniz bulunmamaktadır.", "Reçete yönetimi için yetkiniz bulunmamaktadır.").
+- Static and daily menu lifecycle: menu composition, pricing, daily meal periods, portion targets, and publishing flows operate accurately.
+- Server roundtrip integrity: static menu, daily menu, and recipe records reloaded from server maintain deep equality without mutation.
+- Operations UI accessibility criteria (V0-CMP-005 / WCAG 2.2 Level AA): interactive controls provide minimum 44px target size, ARIA labeling, keyboard focusability, high contrast compliance, and explicit Turkish validation guidance.

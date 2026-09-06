@@ -1,10 +1,10 @@
 # V11-UI-001 - Implement menu and recipe administration UI
 
 - Task ID: V11-UI-001
-- Status: InProgress
+- Status: Done
 - Assignee: f2f02a8c-1e37-451a-b2c8-e6543e3fdf89
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
