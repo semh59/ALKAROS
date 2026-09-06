@@ -25,6 +25,7 @@
   <Project Path="src/Modules/Inventory/ALKAROS.Inventory.csproj" />
   <Project Path="src/Modules/Menu/ALKAROS.Menu.csproj" />
   <Project Path="src/Modules/Purchasing/ALKAROS.Purchasing.csproj" />
+  <Project Path="src/Modules/Production/ALKAROS.Production.csproj" />
   <Project Path="src/Clients/Cashier/ALKAROS.Cashier.csproj" />
   <Project Path="src/Clients/WaiterPwa/ALKAROS.WaiterPwa.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
@@ -100,4 +101,5 @@
   <Project Path="tests/Modules/Purchasing/Suppliers/ALKAROS.Purchasing.Suppliers.Tests.csproj" />
   <Project Path="tests/Modules/Purchasing/OrdersAndReceipts/ALKAROS.Purchasing.OrdersAndReceipts.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/CostSnapshots/ALKAROS.Recipes.CostSnapshots.Tests.csproj" />
+  <Project Path="tests/Modules/Production/BatchLifecycle/ALKAROS.Production.BatchLifecycle.Tests.csproj" />
 </Solution>
