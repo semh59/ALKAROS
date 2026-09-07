@@ -20,4 +20,15 @@ describe("catalog management client", () => {
     expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/management/catalog/products", expect.objectContaining({ method: "POST", body: expect.stringContaining("ESP-01") }));
     await expect(client.create({ kind: "products", value: { id: "p-2", sku: "ESP-01", name: "Duplicate", productType: "MenuItem", stockMode: "Untracked", categoryId: null, taxProfileId: null, description: null, printerRoutePolicy: null, displayOrder: 0, currentPrice: 95 } })).rejects.toMatchObject({ status: 409, code: "DUPLICATE_SKU" } satisfies Partial<CatalogApiError>);
   });
+
+  it("posts a typed modifier group create to its own resource", async () => {
+    // Found by an independent audit (2026-09-07): modifierGroups had no
+    // create() branch at all — an operator could create individual
+    // modifiers but never the group their mandatory ModifierGroupId must
+    // reference, since /modifier-groups was unreachable from this client.
+    const fetcher = vi.fn().mockResolvedValueOnce(response({ id: "g-1" }));
+    const client = createCatalogManagementClient(fetcher);
+    await client.create({ kind: "modifierGroups", value: { id: "g-1", code: "MILK", name: "Süt seçimi", selectionType: "SelectOne", minSelections: 0, maxSelections: 1 } });
+    expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/management/catalog/modifier-groups", expect.objectContaining({ method: "POST", body: expect.stringContaining("MILK") }));
+  });
 });

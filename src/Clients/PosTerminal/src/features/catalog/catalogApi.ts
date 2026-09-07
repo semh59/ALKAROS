@@ -41,7 +41,7 @@ export function createCatalogManagementClient(fetcher: typeof fetch = fetch): Ca
       return { categories, taxes, products, modifierGroups, modifiers, prices } as CatalogData;
     },
     create: (input) => {
-      const paths = { categories: "/categories", taxes: "/tax-profiles", products: "/products", modifiers: "/modifiers", prices: "/prices" } as const;
+      const paths = { categories: "/categories", taxes: "/tax-profiles", products: "/products", modifierGroups: "/modifier-groups", modifiers: "/modifiers", prices: "/prices" } as const;
       return request(`${paths[input.kind]}`, { method: "POST", body: JSON.stringify(input.value) });
     },
     setAvailability: (productId, isAvailable) =>

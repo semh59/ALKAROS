@@ -40,6 +40,10 @@ public static class CatalogManagementEndpoints
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddScoped<IAuthorizationService, AuthorizationService>();
+        // Found by an independent audit (2026-09-07): current_price never
+        // advanced or retreated on its own — see
+        // CatalogPriceRecomputeHostedService's own doc comment.
+        services.AddHostedService<CatalogPriceRecomputeHostedService>();
         return services;
     }
 

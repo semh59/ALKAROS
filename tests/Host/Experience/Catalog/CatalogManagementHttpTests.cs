@@ -315,6 +315,120 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
     }
 
     [Fact]
+    public async Task CreatingAScheduledFuturePriceClearsAnAlreadyExpiredCurrentPrice()
+    {
+        // Found by an independent audit (2026-09-07): CreatePriceAsync only
+        // ever set current_price when the JUST-INSERTED row itself was
+        // already effective at that instant — inserting a future price left
+        // whatever stale value was already cached untouched, even when that
+        // cached value belonged to a price that had since expired with no
+        // compensating write. Regression: an expired price is cached as
+        // current_price (simulating a product nobody has touched since its
+        // price window closed); inserting a scheduled future price for the
+        // same product must now clear it to null, not leave the expired
+        // amount silently charging.
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        var sku = "STALE-" + Guid.NewGuid().ToString("N")[..8];
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(productId, sku, "Stale price product", ProductType.MenuItem, StockMode.Untracked));
+
+        var expiredFrom = DateTimeOffset.UtcNow.AddHours(-2);
+        var expiredTo = DateTimeOffset.UtcNow.AddHours(-1);
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO catalog.product_prices (product_price_id, product_id, price_type, price, currency_code, effective_from, effective_to)
+            VALUES (@id, @product_id, 1, 100, 'TRY', @from, @to);
+            """,
+            ("id", Guid.NewGuid()), ("product_id", productId), ("from", expiredFrom), ("to", expiredTo));
+        // Simulates the real bug's end state directly: this expired price's
+        // amount is still cached, exactly as if nobody had called POST
+        // /prices since it lapsed.
+        await _database.ExecuteAsync(
+            "UPDATE catalog.products SET current_price = 100 WHERE product_id = @product_id;",
+            ("product_id", productId));
+
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(
+                Guid.NewGuid(), productId, PriceType.SalePrice, 150, DateTimeOffset.UtcNow.AddHours(1)));
+
+        Assert.Null(await CurrentPriceAsync(productId));
+    }
+
+    [Fact]
+    public async Task RecomputeAllAsyncActivatesScheduledPricesAndClearsExpiredOnesWithNoAccompanyingWrite()
+    {
+        // Regression coverage for the half CreatePriceAsync's own write-time
+        // fix cannot reach: a scheduled/expiry boundary crossed with NOTHING
+        // ever written again for that product. CatalogPriceRecomputeHostedService's
+        // periodic sweep is the only thing that revisits current_price on
+        // its own; this calls its static recompute pass directly rather than
+        // waiting on the real interval.
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+
+        var activatingProductId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(activatingProductId, $"ACT-{suffix}", "Now-active product", ProductType.MenuItem, StockMode.Untracked));
+        // A price whose window already started, inserted directly (bypassing
+        // the HTTP endpoint's own instant recompute) to simulate a price that
+        // was scheduled well ahead of time and simply crossed into effect
+        // with no one calling POST /prices at that moment.
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO catalog.product_prices (product_price_id, product_id, price_type, price, currency_code, effective_from, effective_to)
+            VALUES (@id, @product_id, 1, 250, 'TRY', @from, NULL);
+            """,
+            ("id", Guid.NewGuid()), ("product_id", activatingProductId), ("from", DateTimeOffset.UtcNow.AddHours(-1)));
+        Assert.Null(await CurrentPriceAsync(activatingProductId));
+
+        var expiringProductId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(expiringProductId, $"EXP-{suffix}", "Newly-expired product", ProductType.MenuItem, StockMode.Untracked));
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO catalog.product_prices (product_price_id, product_id, price_type, price, currency_code, effective_from, effective_to)
+            VALUES (@id, @product_id, 1, 75, 'TRY', @from, @to);
+            """,
+            ("id", Guid.NewGuid()), ("product_id", expiringProductId),
+            ("from", DateTimeOffset.UtcNow.AddHours(-2)), ("to", DateTimeOffset.UtcNow.AddMinutes(-1)));
+        await _database.ExecuteAsync(
+            "UPDATE catalog.products SET current_price = 75 WHERE product_id = @product_id;",
+            ("product_id", expiringProductId));
+
+        await CatalogPriceRecomputeHostedService.RecomputeAllAsync(_database.DataSource, CancellationToken.None);
+
+        Assert.Equal(250m, await CurrentPriceAsync(activatingProductId));
+        Assert.Null(await CurrentPriceAsync(expiringProductId));
+    }
+
+    [Fact]
+    public async Task RecomputeAllAsyncNeverClearsASeedPriceForAProductWithNoPricingHistoryRow()
+    {
+        // Caught by a real regression while verifying this same wave: the
+        // first version of RecomputeAllAsync's "expire" pass nulled out
+        // EVERY product with no currently-effective product_prices row —
+        // including a product that has NEVER had one at all, whose
+        // current_price is a plain seed value set directly on the product
+        // record (CreateProductV1.CurrentPrice, deep-catalog's own H-3
+        // finding: creating a product this way never creates a
+        // product_prices row). That is a legitimate, currently-supported
+        // way to price a product; the sweep must only clear current_price
+        // for a product that has actually entered the dated pricing system.
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(
+                productId, "SEED-" + Guid.NewGuid().ToString("N")[..8], "Seed-priced product",
+                ProductType.MenuItem, StockMode.Untracked, CurrentPrice: 42m));
+        Assert.Equal(42m, await CurrentPriceAsync(productId));
+
+        await CatalogPriceRecomputeHostedService.RecomputeAllAsync(_database.DataSource, CancellationToken.None);
+
+        Assert.Equal(42m, await CurrentPriceAsync(productId));
+    }
+
+    [Fact]
     public async Task MissingForeignKeyIsStableValidationAndDoesNotInsertProduct()
     {
         using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
@@ -373,5 +487,14 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         await using var command = _database.DataSource.CreateCommand(sql);
         command.Parameters.AddWithValue("value", value);
         return (T)(await command.ExecuteScalarAsync() ?? throw new InvalidOperationException("Scalar result was null."));
+    }
+
+    private async Task<decimal?> CurrentPriceAsync(Guid productId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT current_price FROM catalog.products WHERE product_id = @product_id;");
+        command.Parameters.AddWithValue("product_id", productId);
+        var result = await command.ExecuteScalarAsync();
+        return result is null or DBNull ? null : (decimal)result;
     }
 }

@@ -73,6 +73,29 @@ describe("catalog workspace", () => {
     expect(dialog.querySelector<HTMLInputElement>("input")?.value).toBe("ESP-01");
   });
 
+  it("creates a modifier group — the create surface that was entirely unreachable before this fix", async () => {
+    // Found by an independent audit (2026-09-07): an operator could create
+    // individual modifiers via this same screen but never the group their
+    // mandatory ModifierGroupId must reference — this tab/form did not
+    // exist at all.
+    const onCreate = vi.fn().mockResolvedValue(undefined);
+    await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
+    await click([...document.querySelectorAll(".catalog-workspace__tabs button")].find((button) => button.textContent?.includes("Modifikatör grupları"))!);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Modifikatör grubu ekle"))!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
+    await fill(inputs[0], "SIZE");
+    await fill(inputs[1], "Boy seçimi");
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydı oluştur")!);
+
+    expect(onCreate).toHaveBeenCalledWith({
+      kind: "modifierGroups",
+      value: expect.objectContaining({
+        code: "SIZE", name: "Boy seçimi", selectionType: "SelectOne", minSelections: 0, maxSelections: 1,
+      }),
+    });
+  });
+
   it.each([
     ["loading", "Katalog yükleniyor"], ["busy", "Katalog kaydediliyor"], ["offline", "Bağlantı yok"],
     ["unauthorized", "Yönetici oturumu gerekli"], ["error", "Katalog alınamadı"], ["stale", "Katalog güncel değil"], ["conflict", "Katalog çakışması"],

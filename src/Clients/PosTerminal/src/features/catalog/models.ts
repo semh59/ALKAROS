@@ -9,7 +9,7 @@ export type CatalogWorkspaceState =
   | "unauthorized"
   | "conflict";
 
-export type CatalogEntityKind = "categories" | "taxes" | "products" | "modifiers" | "prices";
+export type CatalogEntityKind = "categories" | "taxes" | "products" | "modifierGroups" | "modifiers" | "prices";
 
 export interface CatalogCategory {
   id: string;
@@ -87,6 +87,7 @@ export type CatalogCreateInput =
   | { kind: "categories"; value: Omit<CatalogCategory, "active" | "parentId"> & { parentId?: string | null; active?: boolean } }
   | { kind: "taxes"; value: Omit<CatalogTaxProfile, "active"> & { active?: boolean } }
   | { kind: "products"; value: Omit<CatalogProduct, "active" | "isAvailable"> & { active?: boolean; isAvailable?: boolean } }
+  | { kind: "modifierGroups"; value: Omit<CatalogModifierGroup, "active"> & { active?: boolean } }
   | { kind: "modifiers"; value: Omit<CatalogModifier, "active"> & { active?: boolean } }
   | { kind: "prices"; value: Omit<CatalogPrice, "effectiveTo"> & { effectiveTo?: string | null } };
 
@@ -102,4 +103,4 @@ export interface CatalogWorkspaceProps {
 }
 
 // Enum label maps live in the central catalog (finding F-7).
-export { catalogAddLabels, catalogEntityLabels, productTypeLabels } from "../../strings";
+export { catalogAddLabels, catalogEntityLabels, productTypeLabels, selectionTypeLabels } from "../../strings";

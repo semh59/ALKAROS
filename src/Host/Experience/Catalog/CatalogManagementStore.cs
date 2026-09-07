@@ -181,23 +181,44 @@ public sealed class CatalogManagementStore
             request.EffectiveTo);
         await _prices.AddAsync(price, cancellationToken);
 
-        var now = DateTimeOffset.UtcNow;
-        if (request.PriceType == PriceType.SalePrice
-            && request.EffectiveFrom <= now
-            && (request.EffectiveTo == null || request.EffectiveTo > now))
+        // Found by an independent audit (2026-09-07): this used to set
+        // current_price to the just-inserted request.Price whenever that row
+        // happened to already be effective at this exact instant — never
+        // re-evaluated otherwise. A price inserted for the future left the
+        // OLD price (or none) in current_price until some unrelated later
+        // write happened to touch this product again; an inserted correction
+        // to a past window could stomp current_price with a value that was
+        // never actually the live one. Recomputing from the same query
+        // GetEffectivePriceAsync/effective-price uses makes this write path
+        // agree with that read path immediately, for every price type this
+        // catalog allows (only SalePrice today per the product_prices CHECK
+        // constraint). CatalogPriceRecomputeHostedService covers the
+        // remaining case this alone cannot: a scheduled/expiring boundary
+        // crossed with no accompanying write at all.
+        if (request.PriceType == PriceType.SalePrice)
         {
-            await using var cmd = _dataSource.CreateCommand(
-                """
-                UPDATE catalog.products
-                SET current_price = @current_price
-                WHERE product_id = @product_id;
-                """);
-            cmd.Parameters.AddWithValue("current_price", request.Price);
-            cmd.Parameters.AddWithValue("product_id", request.ProductId);
-            await cmd.ExecuteNonQueryAsync(cancellationToken);
+            await RecomputeCurrentPriceAsync(
+                request.ProductId, price.CurrencyCode, DateTimeOffset.UtcNow, cancellationToken);
         }
 
         return ToDto(price);
+    }
+
+    private async Task RecomputeCurrentPriceAsync(
+        Guid productId, string currencyCode, DateTimeOffset at, CancellationToken cancellationToken)
+    {
+        var effective = await _prices.GetEffectivePriceAsync(
+            productId, PriceType.SalePrice, currencyCode, at, cancellationToken);
+
+        await using var cmd = _dataSource.CreateCommand(
+            """
+            UPDATE catalog.products
+            SET current_price = @current_price
+            WHERE product_id = @product_id;
+            """);
+        cmd.Parameters.AddWithValue("current_price", (object?)effective?.Price ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("product_id", productId);
+        await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task<ProductPriceV1?> GetEffectivePriceAsync(

@@ -103,6 +103,7 @@ export const catalogEntityLabels: Record<CatalogEntityKind, string> = {
   categories: "Kategoriler",
   taxes: "Vergi profilleri",
   products: "Ürünler",
+  modifierGroups: "Modifikatör grupları",
   modifiers: "Modifikatörler",
   prices: "Fiyatlar",
 };
@@ -111,6 +112,7 @@ export const catalogAddLabels: Record<CatalogEntityKind, string> = {
   products: "Ürün",
   categories: "Kategori",
   taxes: "Vergi profili",
+  modifierGroups: "Modifikatör grubu",
   modifiers: "Modifikatör",
   prices: "Fiyat",
 };
@@ -128,6 +130,11 @@ export const productTypeLabels: Record<string, string> = {
   AddOn: "Ek ürün",
   Packaging: "Ambalaj",
   ServiceItem: "Hizmet kalemi",
+};
+
+export const selectionTypeLabels: Record<string, string> = {
+  SelectOne: "Tek seçim",
+  SelectMany: "Çoklu seçim",
 };
 
 export const ticketStatusLabels: Record<KitchenTicket["status"], string> = {
