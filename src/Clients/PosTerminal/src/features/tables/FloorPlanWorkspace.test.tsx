@@ -81,6 +81,8 @@ const tables: TableRecord[] = plan.tables.map((table) => ({
   currentBillId: table.currentBillId,
   rowVersion: table.tableRowVersion,
   allowedCommands: table.allowedCommands,
+  activeReservationId: table.activeReservationId,
+  reservationRowVersion: null,
 }));
 
 describe("floor plan workspace", () => {

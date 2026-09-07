@@ -112,12 +112,19 @@ public static class TableManagementApplication
             Guid? zoneId,
             ITableManagementSessionAuthorizer authorizer,
             TableManagementStore store,
+            ITableReservationRepository reservations,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var tables = await store.GetAllAsync(zoneId, cancellationToken);
-            return Results.Ok(tables.Select(table => TableContractMapper.ToDto(table, principal.Permissions)));
+            var dtos = new List<TableDto>(tables.Count);
+            foreach (var table in tables)
+            {
+                var activeReservation = await ActiveReservationOrNullAsync(table, reservations, cancellationToken);
+                dtos.Add(TableContractMapper.ToDto(table, principal.Permissions, activeReservation));
+            }
+            return Results.Ok(dtos);
         });
 
         group.MapGet("/tables/{tableId:guid}", async (
@@ -125,13 +132,15 @@ public static class TableManagementApplication
             Guid tableId,
             ITableManagementSessionAuthorizer authorizer,
             TableManagementStore store,
+            ITableReservationRepository reservations,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var table = await store.GetAsync(tableId, cancellationToken)
                 ?? throw new TableManagementNotFoundException($"Table {tableId} was not found.");
-            return Results.Ok(TableContractMapper.ToDto(table, principal.Permissions));
+            var activeReservation = await ActiveReservationOrNullAsync(table, reservations, cancellationToken);
+            return Results.Ok(TableContractMapper.ToDto(table, principal.Permissions, activeReservation));
         });
 
         group.MapPost("/tables", async (
@@ -168,12 +177,14 @@ public static class TableManagementApplication
             ChangeTableStatusRequest request,
             ITableManagementSessionAuthorizer authorizer,
             TableManagementStore store,
+            ITableReservationRepository reservations,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesStatus, cancellationToken);
             var updated = await store.ChangeStatusAsync(tableId, request, principal.UserId, cancellationToken);
-            return Results.Ok(TableContractMapper.ToDto(updated, principal.Permissions));
+            var activeReservation = await ActiveReservationOrNullAsync(updated, reservations, cancellationToken);
+            return Results.Ok(TableContractMapper.ToDto(updated, principal.Permissions, activeReservation));
         });
 
         group.MapGet("/tables/{tableId:guid}/current-pointer", async (
@@ -373,6 +384,15 @@ public static class TableManagementApplication
 
     private static string Prefix(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/table-management";
+
+    // V1-RMD-118: only a Reserved table can have an Active reservation row
+    // (the invariant V1-RMD-117 enforces), so this skips a lookup for every
+    // other status instead of querying unconditionally per table.
+    private static Task<TableReservationRecord?> ActiveReservationOrNullAsync(
+        Table table, ITableReservationRepository reservations, CancellationToken cancellationToken)
+        => table.State == TableState.Reserved
+            ? reservations.GetActiveByTableIdAsync(table.Id, cancellationToken)
+            : Task.FromResult<TableReservationRecord?>(null);
 }
 
 internal interface ITableManagementSessionAuthorizer

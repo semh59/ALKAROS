@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Tables.CurrentPointers;
 using ALKAROS.Tables.FloorPlan;
+using ALKAROS.Tables.Reservations;
 using ALKAROS.Tables.TableLifecycle;
 using ALKAROS.Tables.TableMerge;
 
@@ -115,7 +116,15 @@ public sealed record TableDto(
     Guid? CurrentOrderId,
     Guid? CurrentBillId,
     long RowVersion,
-    IReadOnlyList<string> AllowedCommands);
+    IReadOnlyList<string> AllowedCommands,
+    // V1-RMD-118: the plain table list/detail view (unlike FloorPlanTableDto)
+    // never carried the active reservation's own id/row version, so
+    // ClaimReservation/CancelReservation were unreachable from here even
+    // after V1-RMD-117 made the backend itself reachable — no client
+    // request could ever be built without them. Both are null unless
+    // Status is "Reserved" and an Active reservation row actually exists.
+    Guid? ActiveReservationId = null,
+    long? ReservationRowVersion = null);
 
 public sealed record CreateTableReservationRequest(
     Guid TableId,
@@ -220,7 +229,8 @@ internal static class TableContractMapper
             ["Unmerge"] = ApplicationPermissions.TablesMerge,
         };
 
-    public static TableDto ToDto(Table table, IReadOnlySet<string> permissions) => new(
+    public static TableDto ToDto(
+        Table table, IReadOnlySet<string> permissions, TableReservationRecord? activeReservation = null) => new(
         table.Id,
         table.TableNumber,
         table.ZoneId,
@@ -230,7 +240,9 @@ internal static class TableContractMapper
         table.CurrentOrderId,
         table.CurrentBillId,
         table.RowVersion,
-        AllowedCommands(table, permissions));
+        AllowedCommands(table, permissions),
+        activeReservation?.Id,
+        activeReservation?.RowVersion);
 
     public static IReadOnlyList<string> AllowedCommands(Table table, IReadOnlySet<string> permissions)
     {

@@ -400,29 +400,31 @@ export function FloorPlanWorkspace({
               <div><dt>Rezervasyon</dt><dd>{selected.activeReservationId ? `${selected.reservationPartySize ?? "?"} kişi` : "Yok"}</dd></div>
               <div><dt>Birleşim</dt><dd>{selected.mergeGroupId ? selected.isMergePrimary ? "Lider" : "Katılımcı" : "Yok"}</dd></div>
             </dl>
-            {mode === "setup" ? <SetupFields table={selected} plan={draft} update={(mutate) => updateTable(selected.tableId, mutate)} /> : <>
-              <div className="floor-plan-inspector__commands">
-                <span>Sunucunun izin verdiği işlemler</span>
-                {selected.allowedCommands.some((command): command is TableAction => command in tableActionLabels)
-                  ? <div className="floor-plan-inspector__command-buttons">{selected.allowedCommands
-                    .filter((command): command is TableAction => command in tableActionLabels)
-                    .map((command) => <Button
-                      key={command}
-                      variant={command === "SetOutOfService" ? "secondary" : "primary"}
-                      disabled={!onOpenAction || !tableRecords.has(selected.tableId) || !isClientExecutableAction(command)}
-                      title={isClientExecutableAction(command) ? undefined : "Rezervasyon satır sürümü sunucu yanıtında bulunmadığı için işlem güvenli biçimde kapalı."}
-                      onClick={() => {
-                        const record = tableRecords.get(selected.tableId);
-                        if (record) onOpenAction?.(command, record);
-                      }}
-                    >{tableActionLabels[command]}</Button>)}</div>
-                  : <p>Bu durumda kullanılabilir işlem yok.</p>}
-                {selected.isMergePrimary && !selected.allowedCommands.includes("Unmerge") && <div className="floor-plan-inspector__command-buttons">
-                  <Button variant="secondary" disabled title="Sunucu bu birleşim için ayırma komutunu henüz yayınlamadı.">Birleşimi ayır</Button>
-                </div>}
-              </div>
-              <p className="floor-plan-inspector__hint">Operasyon modunda geometri kilitlidir. İşlemler yalnız sunucunun bu masa için döndürdüğü komutlardan açılır.</p>
-            </>}
+            {mode === "setup" ? <SetupFields table={selected} plan={draft} update={(mutate) => updateTable(selected.tableId, mutate)} /> : (() => {
+              const selectedRecord = tableRecords.get(selected.tableId);
+              return <>
+                <div className="floor-plan-inspector__commands">
+                  <span>Sunucunun izin verdiği işlemler</span>
+                  {selected.allowedCommands.some((command): command is TableAction => command in tableActionLabels)
+                    ? <div className="floor-plan-inspector__command-buttons">{selected.allowedCommands
+                      .filter((command): command is TableAction => command in tableActionLabels)
+                      .map((command) => <Button
+                        key={command}
+                        variant={command === "SetOutOfService" ? "secondary" : "primary"}
+                        disabled={!onOpenAction || !selectedRecord || !isClientExecutableAction(command, selectedRecord)}
+                        title={!selectedRecord || isClientExecutableAction(command, selectedRecord) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."}
+                        onClick={() => {
+                          if (selectedRecord) onOpenAction?.(command, selectedRecord);
+                        }}
+                      >{tableActionLabels[command]}</Button>)}</div>
+                    : <p>Bu durumda kullanılabilir işlem yok.</p>}
+                  {selected.isMergePrimary && !selected.allowedCommands.includes("Unmerge") && <div className="floor-plan-inspector__command-buttons">
+                    <Button variant="secondary" disabled title="Sunucu bu birleşim için ayırma komutunu henüz yayınlamadı.">Birleşimi ayır</Button>
+                  </div>}
+                </div>
+                <p className="floor-plan-inspector__hint">Operasyon modunda geometri kilitlidir. İşlemler yalnız sunucunun bu masa için döndürdüğü komutlardan açılır.</p>
+              </>;
+            })()}
           </> : <p>Denetlemek için bir masa seçin.</p>}
 
           {mode === "setup" && <section className="floor-plan-review" aria-label="Plan doğrulama incelemesi">

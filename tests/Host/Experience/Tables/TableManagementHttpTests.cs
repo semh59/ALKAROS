@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -211,6 +212,28 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
             Assert.Equal(TableReservationStatus.Active, fetched.Status);
         }
 
+        // Found by an independent audit (2026-09-07): the plain table
+        // list/detail DTO (unlike FloorPlanTableDto) never carried the
+        // active reservation's id/row version either, so PosTerminal's
+        // Claim/Cancel buttons stayed permanently disabled even after the
+        // backend became reachable — no client request could ever be built.
+        using (var tableGetRequest = Request(
+            HttpMethod.Get, $"{Prefix(terminalId)}/tables/{reservationTable.TableId:D}", cookie))
+        using (var tableGetResponse = await client.SendAsync(tableGetRequest))
+        {
+            var fetchedTable = await tableGetResponse.Content.ReadFromJsonAsync<TableDto>();
+            Assert.Equal(reservation.ReservationId, fetchedTable!.ActiveReservationId);
+            Assert.Equal(reservation.ReservationRowVersion, fetchedTable.ReservationRowVersion);
+        }
+        using (var tableListRequest = Request(HttpMethod.Get, $"{Prefix(terminalId)}/tables", cookie))
+        using (var tableListResponse = await client.SendAsync(tableListRequest))
+        {
+            var listed = (await tableListResponse.Content.ReadFromJsonAsync<TableDto[]>())!
+                .Single(t => t.TableId == reservationTable.TableId);
+            Assert.Equal(reservation.ReservationId, listed.ActiveReservationId);
+            Assert.Equal(reservation.ReservationRowVersion, listed.ReservationRowVersion);
+        }
+
         using (var staleCancelRequest = JsonRequest(
             HttpMethod.Post,
             $"{Prefix(terminalId)}/reservations/{reservation.ReservationId:D}/cancel",
@@ -329,6 +352,8 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
             table with { RowVersion = reservation.NewTableRowVersion },
             "Available");
         Assert.Equal("Available", released.Status);
+        Assert.Null(released.ActiveReservationId);
+        Assert.Null(released.ReservationRowVersion);
 
         Assert.Equal("Cancelled", await _database.ScalarAsync<string>(
             $"SELECT status FROM table_mgmt.table_reservations WHERE table_reservation_id = '{reservation.ReservationId:D}';"));

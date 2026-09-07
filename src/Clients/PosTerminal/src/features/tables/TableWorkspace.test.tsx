@@ -26,6 +26,8 @@ const tables: TableRecord[] = [
     currentBillId: null,
     rowVersion: 3,
     allowedCommands: ["Update", "SetOccupied", "Reserve"],
+    activeReservationId: null,
+    reservationRowVersion: null,
   },
   {
     tableId: "table-10",
@@ -41,6 +43,8 @@ const tables: TableRecord[] = [
     // 20/45-minute heatmap thresholds (previously a hardcoded 75/120).
     occupiedSince: new Date(Date.now() - 30 * 60_000).toISOString(),
     allowedCommands: ["SetAvailable", "Transfer", "Merge"],
+    activeReservationId: null,
+    reservationRowVersion: null,
   },
 ];
 

@@ -70,6 +70,22 @@ function createRequest(terminalId: string, fetcher: typeof fetch): TableManageme
         await request("/reservations", { method: "POST", body: { tableId: table.tableId, expectedTableRowVersion: table.rowVersion, partySize: partySize ?? table.capacity ?? 2, reason } });
         return;
       }
+      if (action === "ClaimReservation" || action === "CancelReservation") {
+        // Found by an independent audit (2026-09-07): unreachable until
+        // TableRecord carried the reservation's own id/row version
+        // (V1-RMD-117/118) — there was nowhere to route this request to.
+        if (!table.activeReservationId) {
+          throw new TableManagementApiError(409, "RESERVATION_MISSING", "Bu masa için aktif rezervasyon bulunamadı.");
+        }
+        const path = `/reservations/${encodeURIComponent(table.activeReservationId)}/${action === "ClaimReservation" ? "claim" : "cancel"}`;
+        const body: Record<string, unknown> = {
+          expectedReservationRowVersion: table.reservationRowVersion,
+          expectedTableRowVersion: table.rowVersion,
+        };
+        if (action === "CancelReservation") body.reason = reason;
+        await request(path, { method: "POST", body });
+        return;
+      }
       if (action === "Transfer") {
         if (!targetTableId) throw new TableManagementApiError(400, "TARGET_REQUIRED", "Hedef masa gerekli.");
         if (targetTableVersion === undefined) throw new TableManagementApiError(400, "TARGET_VERSION_REQUIRED", "Hedef masanın güncel sürümü gerekli.");

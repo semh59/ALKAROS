@@ -28,6 +28,7 @@ describe("table management client", () => {
       tableId: "table-10", tableNumber: "S-10", zoneId: null, capacity: 2, active: true,
       status: "Occupied" as const, currentOrderId: "order-1", currentBillId: null, rowVersion: 9,
       allowedCommands: ["Transfer", "Merge"],
+      activeReservationId: null, reservationRowVersion: null,
     };
 
     await client.execute({ table, action: "SetAvailable" });
@@ -57,5 +58,39 @@ describe("table management client", () => {
 
     expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/terminals/terminal-1/table-management/floor-plans/zone%2F1", expect.objectContaining({ method: "GET" }));
     expect(fetcher).toHaveBeenNthCalledWith(2, "/api/v1/terminals/terminal-1/table-management/floor-plans/zone%2F1", expect.objectContaining({ method: "PUT", body: JSON.stringify({ expectedRowVersion: 2, canvasWidth: 1000, canvasHeight: 600, tables: [] }) }));
+  });
+
+  it("claims and cancels a reservation using the table's own reservation id/row version", async () => {
+    // Found by an independent audit (2026-09-07): unreachable before
+    // TableRecord carried activeReservationId/reservationRowVersion
+    // (V1-RMD-117/118) — execute() had no branch for either action at all.
+    const fetcher = vi.fn().mockResolvedValue(response(undefined, { status: 204 }));
+    const client = createTableManagementClient("terminal-1", fetcher);
+    const reservedTable = {
+      tableId: "table-20", tableNumber: "S-20", zoneId: null, capacity: 4, active: true,
+      status: "Reserved" as const, currentOrderId: null, currentBillId: null, rowVersion: 5,
+      allowedCommands: ["ClaimReservation", "CancelReservation"],
+      activeReservationId: "res-01", reservationRowVersion: 1,
+    };
+
+    await client.execute({ table: reservedTable, action: "ClaimReservation" });
+    await client.execute({ table: reservedTable, action: "CancelReservation", reason: "Müşteri iptal etti" });
+
+    expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/terminals/terminal-1/table-management/reservations/res-01/claim", expect.objectContaining({ body: JSON.stringify({ expectedReservationRowVersion: 1, expectedTableRowVersion: 5 }) }));
+    expect(fetcher).toHaveBeenNthCalledWith(2, "/api/v1/terminals/terminal-1/table-management/reservations/res-01/cancel", expect.objectContaining({ body: JSON.stringify({ expectedReservationRowVersion: 1, expectedTableRowVersion: 5, reason: "Müşteri iptal etti" }) }));
+  });
+
+  it("refuses to claim/cancel when the table carries no active reservation id", async () => {
+    const fetcher = vi.fn();
+    const client = createTableManagementClient("terminal-1", fetcher);
+    const table = {
+      tableId: "table-21", tableNumber: "S-21", zoneId: null, capacity: 4, active: true,
+      status: "Reserved" as const, currentOrderId: null, currentBillId: null, rowVersion: 5,
+      allowedCommands: ["ClaimReservation", "CancelReservation"],
+      activeReservationId: null, reservationRowVersion: null,
+    };
+
+    await expect(client.execute({ table, action: "ClaimReservation" })).rejects.toMatchObject({ code: "RESERVATION_MISSING" } satisfies Partial<TableManagementApiError>);
+    expect(fetcher).not.toHaveBeenCalled();
   });
 });

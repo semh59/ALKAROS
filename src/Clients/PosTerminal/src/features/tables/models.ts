@@ -32,6 +32,12 @@ export interface TableRecord {
   rowVersion: number;
   allowedCommands: readonly string[];
   occupiedSince?: string | null;
+  // Found by an independent audit (2026-09-07): missing here, so
+  // ClaimReservation/CancelReservation could never carry a request body —
+  // isClientExecutableAction disabled both unconditionally. Non-null only
+  // while status is "Reserved" and an Active reservation actually exists.
+  activeReservationId: string | null;
+  reservationRowVersion: number | null;
 }
 
 export interface FloorPlanSeat {
@@ -182,5 +188,15 @@ export { tableActionLabels, tableStatusLabels } from "../../strings";
 export const actionNeedsReason = (action: TableAction) =>
   action === "Reserve" || action === "CancelReservation" || action === "Transfer" || action === "Merge" || action === "Unmerge";
 
-export const isClientExecutableAction = (action: TableAction) =>
-  action !== "CancelReservation" && action !== "ClaimReservation";
+// Found by an independent audit (2026-09-07): unconditionally excluded
+// Claim/Cancel because the backend never returned a reservation row version
+// to build the request with (V1-RMD-117/118 fixed both the backend gap and
+// this DTO). Still requires activeReservationId defensively — the server
+// only ever lists these two commands when status is Reserved, which (per
+// the same fix) now always implies an Active reservation row exists, but a
+// stale/partial table snapshot should not enable an action with nothing to
+// act on.
+export const isClientExecutableAction = (action: TableAction, table?: TableRecord) =>
+  action !== "CancelReservation" && action !== "ClaimReservation"
+    ? true
+    : Boolean(table?.activeReservationId);
