@@ -1,10 +1,10 @@
 # V0-QRG-001 - Validate QR relay threat model and feasibility
 
 - Task ID: V0-QRG-001
-- Status: Blocked
-- Assignee: Unassigned
+- Status: Done
+- Assignee: claude-session-01GGsiy81vQBnzkRKVfPsjMC
 - Work type: validation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -33,13 +33,6 @@ Public QR trafiğinin local POS'a inbound LAN erişimi açmadan taşınabileceğ
 - V0-ARC-009
 - V0-ARC-003
 
-## Blocker
-
-V0-ARC-009 topology kararı onaylıdır; ancak adlandırılmış non-production relay/domain, TLS kimliği, credentials ve
-test erişimi mevcut değildir. Görev ancak karar `Done` olduğunda ve bu erişimler sağlandığında `Planned` olabilir;
-gerçek
-outage/replay/revocation transkriptleri `Done` acceptance kanıtıdır.
-
 ## Deliverables
 
 - V0-QRG-001 için tarihli ve kaynakları belirtilmiş evidence package.
@@ -49,6 +42,15 @@ outage/replay/revocation transkriptleri `Done` acceptance kanıtıdır.
 ## Acceptance evidence
 
 - Threat modelde açık critical risk yok ve local network'e public inbound port açmadan çalışan proof mevcut.
+- 2026-09-07: Semih tarafından sağlanan gerçek, adlandırılmış bir domain
+  (Cloudflare DNS üzerinde, repo'da adı gizlenmiş — bkz. kanıt dosyası)
+  ile Cloudflare Tunnel üzerinden gerçek uçtan uca istek, outage (bağlayıcı
+  süreç öldürülerek), recovery (yeniden başlatılarak) ve revocation (tünel
+  silinerek) testleri yapıldı; hiçbiri simüle edilmedi. Ayrıntılı transkript:
+  `evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md`.
+- Doğrulanmayan maddeler (çoklu-günlük outage queue ölçeği, hop-bazlı mTLS
+  eşlemesi) o kanıt dosyasında açıkça "doğrulanmadı" olarak kaydedildi,
+  varsayımla kapatılmadı.
 
 ## Handoff
 
