@@ -110,6 +110,12 @@ services:
       # the cashier so the "customer display" link opens the isolated origin
       # (finding B-4). Update the :8443 if you remap the web port.
       ALKAROS_CUSTOMER_DISPLAY_ORIGIN_URL: https://display.${ALKAROS_PROXY_HOST:-localhost}:8443
+      # V12-QRT-003: AES-256-GCM envelope master key (`ALKAROS.Secrets.
+      # EnvironmentVariableSecretProvider`) for the relay credential/tunnel
+      # stores. Never a literal value here — set it in a local, gitignored
+      # `.env` file (`openssl rand -base64 32`). Losing it makes any
+      # already-saved relay credential unreadable.
+      ALKAROS_SECRET_ENVELOPE_MASTER_KEY: ${ALKAROS_SECRET_ENVELOPE_MASTER_KEY:?Set ALKAROS_SECRET_ENVELOPE_MASTER_KEY in a local .env file (openssl rand -base64 32)}
       # .NET runtime tuning (V1-RMD-088). Server GC + a background thread per
       # core suits a throughput service; dynamic adaptation right-sizes the heap
       # when the container memory limit is small; TieredPGO improves hot-path

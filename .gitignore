@@ -56,3 +56,5 @@ tls/
 *.pfx
 # Caddy internal root CA exported for local dev (docker compose cp web:/data/...)
 alkaros-root.crt
+# Local docker compose secrets (ALKAROS_SECRET_ENVELOPE_MASTER_KEY etc.) - never commit
+.env
