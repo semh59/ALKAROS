@@ -2,6 +2,7 @@ using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.QrOrdering.RelayCredential;
+using ALKAROS.QrRelay.PublicGateway;
 using ALKAROS.SensitiveData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +30,7 @@ public static class RelaySettingsEndpoints
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
+        services.TryAddSingleton<IRelayProviderConfigStore, PostgresRelayProviderConfigStore>();
         services.TryAddTransient<RelaySettingsExceptionFilter>();
         return services;
     }
@@ -45,7 +47,8 @@ public static class RelaySettingsEndpoints
         group.MapPost("/", async (
             Guid terminalId,
             SaveRelayCredentialRequest request,
-            IRelayCredentialStore store,
+            IRelayCredentialStore credentialStore,
+            IRelayProviderConfigStore configStore,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -54,16 +57,23 @@ public static class RelaySettingsEndpoints
             var userId = await RequireCashierPermissionAsync(
                 context, terminalId, dualStore, authorization, ApplicationPermissions.IntegrationsManage, cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(request.CloudflareApiToken))
-                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Token cannot be empty." } });
+            if (string.IsNullOrWhiteSpace(request.CloudflareApiToken)
+                || string.IsNullOrWhiteSpace(request.AccountId)
+                || string.IsNullOrWhiteSpace(request.ZoneId)
+                || string.IsNullOrWhiteSpace(request.BaseDomain))
+            {
+                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Alanların tamamı doldurulmalıdır." } });
+            }
 
-            await store.SaveCloudflareApiTokenAsync(request.CloudflareApiToken, userId, cancellationToken);
+            await credentialStore.SaveCloudflareApiTokenAsync(request.CloudflareApiToken, userId, cancellationToken);
+            await configStore.SaveAsync(request.AccountId, request.ZoneId, request.BaseDomain, cancellationToken);
             return Results.NoContent();
         });
 
         group.MapGet("/status", async (
             Guid terminalId,
-            IRelayCredentialStore store,
+            IRelayCredentialStore credentialStore,
+            IRelayProviderConfigStore configStore,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -72,8 +82,10 @@ public static class RelaySettingsEndpoints
             await RequireCashierPermissionAsync(
                 context, terminalId, dualStore, authorization, ApplicationPermissions.IntegrationsManage, cancellationToken);
 
-            var status = await store.GetStatusAsync(cancellationToken);
-            return Results.Ok(new RelayCredentialStatusResponse(status.Configured, status.UpdatedAt));
+            var status = await credentialStore.GetStatusAsync(cancellationToken);
+            var config = await configStore.GetAsync(cancellationToken);
+            return Results.Ok(new RelayCredentialStatusResponse(
+                status.Configured, status.UpdatedAt, config?.AccountId, config?.ZoneId, config?.BaseDomain));
         });
 
         return group;

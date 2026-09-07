@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ApiError, api } from "../api";
+import type { RelayCredentialStatus } from "../contracts";
 import { savedId } from "../storage";
 
 type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
@@ -7,13 +8,15 @@ type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
 const IntegrationsManage = "integrations.manage";
 
 /**
- * V14-QRT-003. `/settings/relay` — its own URL for now, the same pattern as
- * `/reservations` and `/display`; it moves into the real back-office
- * navigation once that module is built. Lets a manager configure the relay
- * provider's API token entirely from the interface — no domain, no
- * Cloudflare account, no codebase — matching the "kolay B" model
- * (V14-QRT-002) and Semih's explicit request that the credential itself be
- * settable from here rather than baked into an installer.
+ * V14-QRT-003 (token, encrypted, never shown again) + V14-QRT-001
+ * (Cloudflare account id/zone id/base domain — not secret, so these do
+ * come back and stay editable). `/settings/relay` — its own URL for now,
+ * the same pattern as `/reservations` and `/display`; it moves into the
+ * real back-office navigation once that module is built. Lets a manager
+ * configure the whole relay connection entirely from the interface — no
+ * codebase, no terminal — matching the "kolay B" model (V14-QRT-002) and
+ * Semih's explicit request that the credential itself be settable from
+ * here rather than baked into an installer.
  */
 export function RelaySettings() {
   const [terminalId] = useState(() => savedId("alkaros.terminal-id"));
@@ -22,13 +25,20 @@ export function RelaySettings() {
   const [session, setSession] = useState<StationSession>("checking");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [status, setStatus] = useState<{ configured: boolean; updatedAt: string | null } | null>(null);
+  const [status, setStatus] = useState<RelayCredentialStatus | null>(null);
   const [tokenInput, setTokenInput] = useState("");
+  const [accountIdInput, setAccountIdInput] = useState("");
+  const [zoneIdInput, setZoneIdInput] = useState("");
+  const [baseDomainInput, setBaseDomainInput] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
 
   const loadStatus = useCallback(async () => {
     try {
-      setStatus(await api.relayCredentialStatus(terminalId));
+      const result = await api.relayCredentialStatus(terminalId);
+      setStatus(result);
+      setAccountIdInput(result.accountId ?? "");
+      setZoneIdInput(result.zoneId ?? "");
+      setBaseDomainInput(result.baseDomain ?? "");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Durum alınamadı.");
     }
@@ -73,14 +83,22 @@ export function RelaySettings() {
     }
   };
 
+  const canSave = tokenInput.trim() && accountIdInput.trim() && zoneIdInput.trim() && baseDomainInput.trim();
+
   const save = async (event: FormEvent) => {
     event.preventDefault();
-    if (!tokenInput.trim()) return;
+    if (!canSave) return;
     setBusy(true);
     setError("");
     setSaveMessage("");
     try {
-      await api.saveRelayCredential(terminalId, tokenInput.trim());
+      await api.saveRelayCredential(
+        terminalId,
+        tokenInput.trim(),
+        accountIdInput.trim(),
+        zoneIdInput.trim(),
+        baseDomainInput.trim(),
+      );
       setTokenInput("");
       setSaveMessage("Bağlantı bilgisi kaydedildi.");
       await loadStatus();
@@ -161,9 +179,26 @@ export function RelaySettings() {
               placeholder={status?.configured ? "Değiştirmek için yeni anahtarı girin" : "Anahtarı buraya yapıştırın"}
             />
           </label>
+          <label>
+            Hesap kimliği (Account ID)
+            <input value={accountIdInput} onChange={(event) => setAccountIdInput(event.target.value)} autoComplete="off" />
+          </label>
+          <label>
+            Bölge kimliği (Zone ID)
+            <input value={zoneIdInput} onChange={(event) => setZoneIdInput(event.target.value)} autoComplete="off" />
+          </label>
+          <label>
+            Ana alan adı
+            <input
+              value={baseDomainInput}
+              onChange={(event) => setBaseDomainInput(event.target.value)}
+              autoComplete="off"
+              placeholder="alkaros.app"
+            />
+          </label>
           {error && <div className="alert error" role="alert">{error}</div>}
           {saveMessage && <div className="alert information" role="status">{saveMessage}</div>}
-          <button className="primary login-submit" disabled={busy || !tokenInput.trim()}>
+          <button className="primary login-submit" disabled={busy || !canSave}>
             {busy ? "Kaydediliyor…" : "Kaydet"}
           </button>
         </form>

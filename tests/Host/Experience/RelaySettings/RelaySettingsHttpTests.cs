@@ -34,7 +34,7 @@ public sealed class RelaySettingsHttpTests : IAsyncLifetime
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
-        using var response = await client.PostAsJsonAsync(CredentialPath(Guid.NewGuid()), new SaveRelayCredentialRequest("cf-token"));
+        using var response = await client.PostAsJsonAsync(CredentialPath(Guid.NewGuid()), new SaveRelayCredentialRequest("cf-token", "acc", "zone", "example.com"));
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -48,7 +48,7 @@ public sealed class RelaySettingsHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
 
         using var response = await client.SendAsync(JsonRequest(
-            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest("cf-token")));
+            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest("cf-token", "acc", "zone", "example.com")));
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
@@ -62,7 +62,7 @@ public sealed class RelaySettingsHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
 
         using var response = await client.SendAsync(JsonRequest(
-            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest("cf-token")));
+            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest("cf-token", "acc", "zone", "example.com")));
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
@@ -80,13 +80,16 @@ public sealed class RelaySettingsHttpTests : IAsyncLifetime
         Assert.False(before!.Configured);
 
         using var saveResponse = await client.SendAsync(JsonRequest(
-            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest("cf-real-token-value")));
+            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest("cf-real-token-value", "account-abc", "zone-xyz", "alkaros.app")));
         Assert.Equal(HttpStatusCode.NoContent, saveResponse.StatusCode);
 
         using var afterStatus = await client.SendAsync(JsonRequest(StatusPath(terminalId), cookie, method: HttpMethod.Get));
         var after = await afterStatus.Content.ReadFromJsonAsync<RelayCredentialStatusResponse>();
         Assert.True(after!.Configured);
         Assert.NotNull(after.UpdatedAt);
+        Assert.Equal("account-abc", after.AccountId);
+        Assert.Equal("zone-xyz", after.ZoneId);
+        Assert.Equal("alkaros.app", after.BaseDomain);
     }
 
     [Fact]
@@ -98,7 +101,7 @@ public sealed class RelaySettingsHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
 
         using var response = await client.SendAsync(JsonRequest(
-            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest("")));
+            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest("", "acc", "zone", "example.com")));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -113,7 +116,7 @@ public sealed class RelaySettingsHttpTests : IAsyncLifetime
         const string secretValue = "cf-must-never-be-echoed-back";
 
         using var saveResponse = await client.SendAsync(JsonRequest(
-            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest(secretValue)));
+            CredentialPath(terminalId), cookie, new SaveRelayCredentialRequest(secretValue, "acc", "zone", "example.com")));
         var saveBody = await saveResponse.Content.ReadAsStringAsync();
         Assert.DoesNotContain(secretValue, saveBody, StringComparison.Ordinal);
 

@@ -28,6 +28,7 @@
   <Project Path="src/Modules/Purchasing/ALKAROS.Purchasing.csproj" />
   <Project Path="src/Modules/Production/ALKAROS.Production.csproj" />
   <Project Path="src/Modules/QrOrdering/ALKAROS.QrOrdering.csproj" />
+  <Project Path="src/Integrations/QrRelay/ALKAROS.QrRelay.csproj" />
   <Project Path="src/Clients/Cashier/ALKAROS.Cashier.csproj" />
   <Project Path="src/Clients/WaiterPwa/ALKAROS.WaiterPwa.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
@@ -93,6 +94,7 @@
   <Project Path="tests/Modules/QrOrdering/TokenLifecycle/ALKAROS.QrOrdering.TokenLifecycle.Tests.csproj" />
   <Project Path="tests/Modules/QrOrdering/RelayCredential/ALKAROS.QrOrdering.RelayCredential.Tests.csproj" />
   <Project Path="tests/Modules/QrOrdering/RelaySecurity/ALKAROS.QrOrdering.RelaySecurity.Tests.csproj" />
+  <Project Path="tests/Integrations/QrRelay/PublicGateway/ALKAROS.QrRelay.PublicGateway.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableMerge/ALKAROS.Tables.TableMerge.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj" />

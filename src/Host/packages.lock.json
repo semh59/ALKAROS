@@ -145,6 +145,13 @@
           "Npgsql": "[9.0.2, )"
         }
       },
+      "alkaros.qrrelay": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.QrOrdering": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
       "alkaros.recipes": {
         "type": "Project",
         "dependencies": {

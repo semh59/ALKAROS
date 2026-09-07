@@ -163,10 +163,16 @@ export const api = {
     }),
   // V14-QRT-003: manager-only. saveRelayCredential never returns the value
   // back; relayCredentialStatus reports only configured/updatedAt.
-  saveRelayCredential: (terminalId: string, cloudflareApiToken: string) =>
+  saveRelayCredential: (
+    terminalId: string,
+    cloudflareApiToken: string,
+    accountId: string,
+    zoneId: string,
+    baseDomain: string,
+  ) =>
     request<void>(`/api/v1/terminals/${terminalId}/relay-credential/`, {
       method: "POST",
-      body: JSON.stringify({ cloudflareApiToken }),
+      body: JSON.stringify({ cloudflareApiToken, accountId, zoneId, baseDomain }),
     }),
   relayCredentialStatus: (terminalId: string) =>
     request<RelayCredentialStatus>(`/api/v1/terminals/${terminalId}/relay-credential/status`),

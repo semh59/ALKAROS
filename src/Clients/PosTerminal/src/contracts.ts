@@ -29,11 +29,14 @@ export interface LoginResponse {
   capabilities?: string[];
 }
 
-// V14-QRT-003: never carries the credential value itself — only whether one
-// is configured, and when it was last set.
+// V14-QRT-003 (configured/updatedAt) + V14-QRT-001 (accountId/zoneId/
+// baseDomain — not secret, so these round-trip back; the token never does).
 export interface RelayCredentialStatus {
   configured: boolean;
   updatedAt: string | null;
+  accountId: string | null;
+  zoneId: string | null;
+  baseDomain: string | null;
 }
 
 export interface RuntimeConfiguration {

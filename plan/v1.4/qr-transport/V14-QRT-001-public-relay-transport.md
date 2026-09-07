@@ -23,7 +23,8 @@ local connector implementasyonu `cloudflared` servis kaydı ve Cloudflare Tunnel
 ## Owned surface
 
 - `src/Integrations/QrRelay/PublicGateway/**`, `src/Integrations/QrRelay/LocalConnector/**`
-- `tests/Integration/QrRelay/**`, `deploy/qr-relay/**`, `database/migrations/V14/V14-QRT-001/**`
+- `tests/Integrations/QrRelay/**`, `deploy/qr-relay/**`, `database/migrations/V14/V14-QRT-001/**`
+- Sınırlı ek (var olan başka task'ların dosyalarına küçük, tanımlayıcı dokunuşlar — sahiplik iddiası değil): src/Host/ALKAROS.Host.csproj (yeni proje referansı), src/Host/Experience/RelaySettings alanı (V14-QRT-003; account/zone/domain alanları eklendi), src/Clients/PosTerminal/src altında api.ts, contracts.ts, routes/RelaySettings.tsx, routes/RelaySettings.test.tsx (V14-QRT-003), tests/Host/Experience/RelaySettings alanı (V14-QRT-003), ALKAROS.slnx, database/MigrationComposition/order.json, src/Host/Composition/Migrations/MigrationManifest.cs, tests/Host/MigrationComposition/Manifest/ManifestTests.cs.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

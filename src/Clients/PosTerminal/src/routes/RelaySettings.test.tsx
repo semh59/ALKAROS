@@ -68,7 +68,7 @@ describe("RelaySettings", () => {
         return jsonResponse({ userId: "u1", displayName: "Zeynep", terminalId: "t1", capabilities: ["integrations.manage"] });
       }
       if (path.endsWith("/relay-credential/status")) {
-        return jsonResponse({ configured: false, updatedAt: null });
+        return jsonResponse({ configured: false, updatedAt: null, accountId: null, zoneId: null, baseDomain: null });
       }
       if (path.endsWith("/relay-credential/") && init?.method === "POST") {
         savedBody = String(init.body);
@@ -82,17 +82,25 @@ describe("RelaySettings", () => {
 
     expect(document.body.textContent).toContain("Henüz yapılandırılmadı");
 
-    const input = document.querySelector<HTMLInputElement>('input[type="password"]')!;
     const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
-    await act(async () => {
-      nativeSetter.call(input, "cf-super-secret-token");
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-    });
+    const setValue = async (input: HTMLInputElement, value: string) => {
+      await act(async () => {
+        nativeSetter.call(input, value);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+    };
+    const [tokenField, accountField, zoneField, domainField] = document.querySelectorAll<HTMLInputElement>("form input");
+    await setValue(tokenField, "cf-super-secret-token");
+    await setValue(accountField, "account-abc");
+    await setValue(zoneField, "zone-xyz");
+    await setValue(domainField, "alkaros.app");
+
     const submitButton = document.querySelector<HTMLButtonElement>('button[type="submit"], form button')!;
     await act(async () => submitButton.click());
     await act(async () => Promise.resolve());
 
     expect(savedBody).toContain("cf-super-secret-token");
+    expect(savedBody).toContain("account-abc");
     expect(document.body.textContent).not.toContain("cf-super-secret-token");
     expect(document.body.textContent).toContain("kaydedildi");
   });
