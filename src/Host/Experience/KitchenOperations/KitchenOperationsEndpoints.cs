@@ -303,7 +303,12 @@ public static class KitchenOperationsEndpoints
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            // V1-RMD-116: the system-wide audit trail crosses every module's
+            // aggregates (void/comp/discount decisions included), so it needs
+            // the same reports.view gate as AuthorizationDecisionEndpoints —
+            // any authenticated read (RequireReadAsync) was too broad.
+            await authorizer.RequirePermissionAsync(
+                context, terminalId, ApplicationPermissions.ReportsView, cancellationToken);
             return Results.Ok(await store.GetAuditByAggregateAsync(aggregateType, aggregateId, cancellationToken));
         });
 
@@ -315,7 +320,8 @@ public static class KitchenOperationsEndpoints
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorizer.RequirePermissionAsync(
+                context, terminalId, ApplicationPermissions.ReportsView, cancellationToken);
             return Results.Ok(await store.GetAuditByCorrelationAsync(correlationId, cancellationToken));
         });
 

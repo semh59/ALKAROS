@@ -76,3 +76,11 @@ def test_cashier_javascript_order_engine():
     # ama zorunlu kılmaz, bu yüzden istemci tarafı koruma gerekliydi.
     assert "dispatchInFlight" in app_code
     assert "btnDispatchOrder.disabled = true" in app_code
+
+    # Bağımsız denetimde bulundu (2026-09-07): "Çevrimiçi" rozeti tamamen
+    # ölü markup'tı — navigator.onLine kontrolü veya online/offline
+    # dinleyicisi hiç yoktu, LAN kesintisinde bile hep "Çevrimiçi" gösterirdi.
+    assert "navigator.onLine" in app_code
+    assert "updateConnectivityBadge" in app_code
+    assert "addEventListener('online'" in app_code
+    assert "addEventListener('offline'" in app_code

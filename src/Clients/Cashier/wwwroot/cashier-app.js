@@ -63,8 +63,26 @@
     parkCountBadge: document.getElementById('parkCountBadge'),
     parkedModal: document.getElementById('parkedModal'),
     parkedList: document.getElementById('parkedList'),
-    btnCloseParkedModal: document.getElementById('btnCloseParkedModal')
+    btnCloseParkedModal: document.getElementById('btnCloseParkedModal'),
+    connectivityPill: document.getElementById('connectivityPill'),
+    connectivityLabel: document.getElementById('connectivityLabel')
   };
+
+  // Found by an independent audit (2026-09-07): this badge was static
+  // markup — always "Çevrimiçi" regardless of the terminal's actual
+  // connection, with no navigator.onLine check or online/offline listener
+  // anywhere in this file (unlike WaiterPwa's status ribbon). A LAN outage
+  // left the kiosk falsely reporting itself online. This only makes the
+  // badge truthful; DESIGN.md's "kiosk goes read-only on LAN outage"
+  // protocol is a separate, larger product decision, not addressed here.
+  function updateConnectivityBadge() {
+    const online = navigator.onLine;
+    if (el.connectivityPill) {
+      el.connectivityPill.classList.toggle('session-pill--online', online);
+      el.connectivityPill.classList.toggle('session-pill--offline', !online);
+    }
+    if (el.connectivityLabel) el.connectivityLabel.textContent = online ? 'Çevrimiçi' : 'Çevrimdışı';
+  }
 
   async function init() {
     renderCategoryTabs();
@@ -73,6 +91,9 @@
     updateParkBadge();
     bindEvents();
     updateDispatchAvailability();
+    updateConnectivityBadge();
+    window.addEventListener('online', updateConnectivityBadge);
+    window.addEventListener('offline', updateConnectivityBadge);
 
     const sessionOk = await bootstrapSession();
     if (sessionOk) {

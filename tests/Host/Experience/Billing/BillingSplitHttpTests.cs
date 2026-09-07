@@ -371,6 +371,50 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied()
+    {
+        // Found by an independent audit (2026-09-07): AuthorizationGrantService.
+        // MatchesReplay compared permission/subject/requester only. A manager
+        // approves the requested 10% here, but if the client (or an attacker
+        // with the same key) resent the identical idempotency key carrying a
+        // different Value, the replay lookup matched anyway and the endpoint
+        // applied the *new*, never-reviewed amount below — not the 10% a
+        // manager actually approved. It must now be refused outright.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var idempotencyKey = Guid.NewGuid().ToString();
+        var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount";
+
+        using var pendingResponse = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, path, cookie,
+            new ApplyBillDiscountRequestV1(idempotencyKey, "Percentage", 10m, "PromotionalOffer")));
+        var pendingBody = await pendingResponse.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal("Pending", pendingBody!.Status);
+        await _database.ApproveGrantAsync(pendingBody.GrantId!.Value);
+
+        using var tamperedResponse = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, path, cookie,
+            new ApplyBillDiscountRequestV1(idempotencyKey, "Percentage", 95m, "PromotionalOffer")));
+
+        Assert.Equal(HttpStatusCode.Conflict, tamperedResponse.StatusCode);
+        var tamperedError = await tamperedResponse.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>();
+        Assert.Equal("IDEMPOTENCY_KEY_REUSED", tamperedError!.Error.Code);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+
+        using var genuineRetry = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, path, cookie,
+            new ApplyBillDiscountRequestV1(idempotencyKey, "Percentage", 10m, "PromotionalOffer")));
+
+        Assert.Equal(HttpStatusCode.OK, genuineRetry.StatusCode);
+        var genuineBody = await genuineRetry.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal("Applied", genuineBody!.Status);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
     public async Task AnInvalidDiscountReasonCodeIsRejected()
     {
         var terminalId = Guid.NewGuid();
@@ -813,6 +857,24 @@ internal sealed class BillingSplitTestDatabase
             "UPDATE billing.bills SET status = @status WHERE bill_id = @bill_id;",
             ("status", status),
             ("bill_id", billId));
+
+    /// <summary>
+    /// Stands in for a manager approving a pending grant via
+    /// AuthorizationDecisionEndpoints — only the resolution fields move
+    /// (identity.authorization_grants' own trigger forbids changing
+    /// amount/reason_code once inserted, so this cannot itself introduce
+    /// the tampering the caller is testing against).
+    /// </summary>
+    public Task ApproveGrantAsync(Guid grantId)
+        => ExecuteAsync(
+            DataSource,
+            """
+            UPDATE identity.authorization_grants
+            SET status = 'granted', policy_path = 'manual',
+                approver_user_id = gen_random_uuid(), resolved_at = now()
+            WHERE grant_id = @grant_id;
+            """,
+            ("grant_id", grantId));
 
     private NpgsqlDataSource DataSource
         => _dataSource ?? throw new InvalidOperationException("Test database is not initialized.");

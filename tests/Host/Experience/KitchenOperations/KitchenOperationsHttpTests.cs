@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.KitchenOperations;
+using ALKAROS.Identity.Authorization.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -176,7 +177,12 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedSessionAsync(
             terminalId,
-            [KitchenOperationsEndpoints.RoutingMutationPermission, KitchenOperationsEndpoints.BackupPermission]);
+            [
+                KitchenOperationsEndpoints.RoutingMutationPermission,
+                KitchenOperationsEndpoints.BackupPermission,
+                ApplicationPermissions.ReportsView,
+            ]);
+        var readOnlyCookie = await _database.SeedSessionAsync(terminalId, []);
         var seed = await _database.SeedKitchenGraphAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
@@ -213,6 +219,16 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
             client, Prefix(terminalId) + "/routes", cookie);
         Assert.Contains(routes!, route => route.Id == seed.RouteId);
 
+        // V1-RMD-116: the audit trail crosses every module's aggregates
+        // (void/comp/discount decisions included), so a plain authenticated
+        // read (no permission at all) must not reach it.
+        using var deniedAggregateRequest = Request(
+            HttpMethod.Get,
+            Prefix(terminalId) + $"/audit/aggregate/KitchenTicket/{seed.TicketId:D}",
+            readOnlyCookie);
+        using var deniedAggregate = await client.SendAsync(deniedAggregateRequest);
+        Assert.Equal(HttpStatusCode.Forbidden, deniedAggregate.StatusCode);
+
         var audit = await GetAsync<AuditEventV1[]>(
             client, Prefix(terminalId) + $"/audit/aggregate/KitchenTicket/{seed.TicketId:D}", cookie);
         var auditEvent = Assert.Single(audit!);
@@ -221,6 +237,17 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
             client, Prefix(terminalId) + $"/audit/aggregate/KitchenTicket/{seed.TicketId:D}", cookie);
         Assert.DoesNotContain("beforeStateJson", auditJson, StringComparison.Ordinal);
         Assert.DoesNotContain("secret", auditJson, StringComparison.Ordinal);
+
+        using var deniedCorrelationRequest = Request(
+            HttpMethod.Get,
+            Prefix(terminalId) + $"/audit/correlation/{auditEvent.CorrelationId}",
+            readOnlyCookie);
+        using var deniedCorrelation = await client.SendAsync(deniedCorrelationRequest);
+        Assert.Equal(HttpStatusCode.Forbidden, deniedCorrelation.StatusCode);
+
+        var byCorrelation = await GetAsync<AuditEventV1[]>(
+            client, Prefix(terminalId) + $"/audit/correlation/{auditEvent.CorrelationId}", cookie);
+        Assert.Contains(byCorrelation!, e => e.Id == auditEvent.Id);
     }
 
     private async Task<WebApplication> StartAsync()

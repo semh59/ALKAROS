@@ -405,6 +405,10 @@ body {
   color: #34d399;
 }
 
+.session-pill--offline {
+  color: var(--accent-danger);
+}
+
 .status-dot {
   display: inline-block;
   width: 0.6em;
@@ -413,6 +417,10 @@ body {
   border-radius: 50%;
   background: #34d399;
   vertical-align: middle;
+}
+
+.session-pill--offline .status-dot {
+  background: var(--accent-danger);
 }
 
 .btn-ticket-action--danger {

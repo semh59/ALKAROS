@@ -187,7 +187,17 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
         string.Equals(replay.PermissionCode, request.PermissionCode, StringComparison.Ordinal)
         && replay.RequesterUserId == request.RequesterUserId
         && string.Equals(replay.SubjectType, request.SubjectType, StringComparison.Ordinal)
-        && replay.SubjectId == request.SubjectId;
+        && replay.SubjectId == request.SubjectId
+        // Found by an independent audit (2026-09-07): Amount/ReasonCode were
+        // missing from this comparison, so a resent idempotency key whose
+        // body had been tampered with (e.g. a manager approves a 5% discount,
+        // the client then resends the same key with Value=95) matched on
+        // permission/subject/requester alone and handed back the earlier
+        // Authorized outcome — the caller (e.g. BillingSplitApplication)
+        // then applies the *new*, never-reviewed Amount/ReasonCode from the
+        // current request body, not the one a manager actually approved.
+        && replay.Amount == request.Amount
+        && string.Equals(replay.ReasonCode, request.ReasonCode, StringComparison.Ordinal);
 }
 
 /// <summary>

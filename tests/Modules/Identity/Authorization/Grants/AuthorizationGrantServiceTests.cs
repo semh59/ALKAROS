@@ -95,6 +95,56 @@ public sealed class AuthorizationGrantServiceTests : IClassFixture<GrantDatabase
     }
 
     [Fact]
+    public async Task ReplayingAnIdempotencyKeyWithADifferentAmountThrows()
+    {
+        // Found by an independent audit (2026-09-07): Amount/ReasonCode were
+        // missing from MatchesReplay, so a resent key whose body carried a
+        // different amount than the one actually reviewed (e.g. a manager
+        // approves 5%, the client then resends the same key with 95%) came
+        // back as the earlier Authorized outcome instead of a rejection —
+        // the caller would then apply the tampered amount, not the approved one.
+        var user = Guid.NewGuid();
+        var subjectId = Guid.NewGuid();
+        GrantRequest Discount(decimal amount) => new(
+            IdempotencyKey: "svc-amount-tamper",
+            PermissionCode: "bills.comp",
+            RequesterUserId: user,
+            RequesterRoleCode: "waiter",
+            ReasonCode: "CustomerChange",
+            Amount: amount,
+            SubjectType: "bill",
+            SubjectId: subjectId,
+            SubjectServingUserId: user);
+        await Service().RequestAsync(Discount(5m));
+
+        var act = () => Service().RequestAsync(Discount(95m));
+
+        await act.Should().ThrowAsync<IdempotencyKeyReusedException>();
+    }
+
+    [Fact]
+    public async Task ReplayingAnIdempotencyKeyWithADifferentReasonCodeThrows()
+    {
+        var user = Guid.NewGuid();
+        var subjectId = Guid.NewGuid();
+        GrantRequest Discount(string reasonCode) => new(
+            IdempotencyKey: "svc-reason-tamper",
+            PermissionCode: "bills.comp",
+            RequesterUserId: user,
+            RequesterRoleCode: "waiter",
+            ReasonCode: reasonCode,
+            Amount: 0m,
+            SubjectType: "bill",
+            SubjectId: subjectId,
+            SubjectServingUserId: user);
+        await Service().RequestAsync(Discount("CustomerChange"));
+
+        var act = () => Service().RequestAsync(Discount("PromotionalOffer"));
+
+        await act.Should().ThrowAsync<IdempotencyKeyReusedException>();
+    }
+
+    [Fact]
     public async Task AlwaysAllowPolicyAutoApproves()
     {
         await _policies.UpsertAsync(

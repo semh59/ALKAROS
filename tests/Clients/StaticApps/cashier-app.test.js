@@ -127,4 +127,31 @@ describe("cashier-app.js", () => {
     expect(message).not.toMatch(/\b409\b/);
     expect(message).not.toMatch(/Hata:/);
   });
+
+  it("reflects the terminal's real connectivity instead of a static badge", async () => {
+    // Regression coverage for a Critical finding (2026-09-07): the badge
+    // was static markup always reading "Çevrimiçi" with no navigator.onLine
+    // check and no online/offline listener anywhere in the script.
+    installFetchRouter(standardRoutes());
+    vi.stubGlobal('navigator', { ...navigator, onLine: false });
+    await loadApp(htmlPath, scriptPath);
+
+    const pill = document.getElementById('connectivityPill');
+    expect(pill.classList.contains('session-pill--offline')).toBe(true);
+    expect(pill.classList.contains('session-pill--online')).toBe(false);
+    expect(document.getElementById('connectivityLabel').textContent).toBe('Çevrimdışı');
+
+    vi.stubGlobal('navigator', { ...navigator, onLine: true });
+    window.dispatchEvent(new Event('online'));
+
+    expect(pill.classList.contains('session-pill--online')).toBe(true);
+    expect(pill.classList.contains('session-pill--offline')).toBe(false);
+    expect(document.getElementById('connectivityLabel').textContent).toBe('Çevrimiçi');
+
+    vi.stubGlobal('navigator', { ...navigator, onLine: false });
+    window.dispatchEvent(new Event('offline'));
+
+    expect(pill.classList.contains('session-pill--offline')).toBe(true);
+    expect(document.getElementById('connectivityLabel').textContent).toBe('Çevrimdışı');
+  });
 });

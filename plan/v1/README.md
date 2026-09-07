@@ -11,9 +11,14 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 334 görev tanımlıdır: 329 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 337 görev tanımlıdır: 332 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-07 44. dalga (Semih onayıyla, "V1.1 kadar sıfır context ajanlar ile derin ve
+  detaylı denetleme yap" turunun ilk düzeltme dalgası — grant-replay tekrar oynatmasının
+  Amount/ReasonCode'u atlaması, kitchen-operations audit uç noktalarının izin kontrolsüz
+  olması, Cashier'ın ölü "Çevrimiçi" rozeti, `V1-RMD-116`) `V1-GOV-108` sonrası kapıyı
+  yeniden açtı; `V1-GOV-110` ile kesin olarak yeniden mühürlendi.
   2026-09-06 43. dalga (Semih onayıyla, düzeltme planının dördüncü ve son dalgası — 5
   Host/Experience modülünün hata haritalamasına eksik `BadHttpRequestException` case'i
   eklendi (Catalog/Kitchen/Roles/Authorization'ın zaten sahip olduğu desenle tutarlı);
