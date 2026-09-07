@@ -28,6 +28,9 @@ public enum OrderSource
     Waiter,
     Qr,
     Online,
+    /// <summary>V14-NFC-001: a trusted NFC-tap self-service order — unlike
+    /// <see cref="Qr"/>, never routes through PendingConfirmation.</summary>
+    Nfc,
 }
 
 /// <summary>

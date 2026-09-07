@@ -15,6 +15,7 @@ using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.KitchenOperations;
+using ALKAROS.Host.Experience.NfcOrdering;
 using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Roles;
@@ -97,6 +98,7 @@ public static partial class DualScreenApplication
         builder.Services.AddCatalogManagement();
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
+        builder.Services.AddNfcOrderingExperience();
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddRoleManagementExperience();
@@ -176,6 +178,13 @@ public static partial class DualScreenApplication
                 FixedWindow(RoutePartition(context, "terminalId", "terminal-read"), 240));
             rateLimiter.AddPolicy("terminal-write", context =>
                 FixedWindow(RoutePartition(context, "terminalId", "terminal-write"), 120));
+            // V14-NFC-001: unauthenticated customer-facing surface — unlike
+            // every other write policy above (partitioned by an
+            // authenticated terminal/display id), this partitions by table
+            // id since there is no session to key on. A generous-but-bounded
+            // limit: several guests at one table placing a few rounds each.
+            rateLimiter.AddPolicy("nfc-order", context =>
+                FixedWindow(RoutePartition(context, "tableId", "nfc-order"), 30));
             rateLimiter.AddPolicy("display-read", context =>
                 FixedWindow(RoutePartition(context, "displayId", "display-read"), 240));
         });
@@ -280,6 +289,7 @@ public static partial class DualScreenApplication
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();
+        app.MapNfcOrderingApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
         app.MapRoleManagementApi();

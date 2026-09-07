@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "076"
+    "max": "077"
   },
   "migrations": [
     {
@@ -656,6 +656,14 @@
     },
     {
       "id": "076",
+      "phase": "B",
+      "tables": [
+        "orders"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "077",
       "phase": "B",
       "tables": [
         "orders"

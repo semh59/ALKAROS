@@ -16,7 +16,9 @@
 ## Goal
 
 `V0-ARC-009` tarafından seçilen public gateway, local outbound connector ve durable outage queue topology'sini,
-`V14-QRS-002` security contract'ını tekrar uygulamadan transport katmanına bağlamak.
+`V14-QRS-002` security contract'ını tekrar uygulamadan transport katmanına bağlamak. Provider ve restoran-başına
+onboarding modeli `V14-QRT-002` ile Cloudflare Tunnel ve ALKAROS'un tek wildcard domain'i olarak somutlaştırıldı;
+local connector implementasyonu `cloudflared` servis kaydı ve Cloudflare Tunnel API entegrasyonudur.
 
 ## Owned surface
 
@@ -36,6 +38,7 @@
 ## Dependencies
 
 - V0-ARC-009
+- V14-QRT-002
 - V0-QRG-001
 - V1-FND-002
 - V1-FND-005

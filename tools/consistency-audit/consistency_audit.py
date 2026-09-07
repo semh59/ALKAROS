@@ -108,6 +108,7 @@ HOST_AREA_SCHEMA = {
     "Experience/Billing": "billing",
     "Experience/Catalog": "catalog",
     "Experience/KitchenOperations": "kitchen",
+    "Experience/NfcOrdering": "orders",
     "Experience/Orders": "orders",
     "Experience/Roles": "identity",
     "Experience/Tables": "table_mgmt",
@@ -120,8 +121,12 @@ HOST_AREA_SCHEMA = {
 # directly for read-path speed, with PostgresTablePointerProjector (Tables
 # module) independently detecting and repairing any drift — a known,
 # deliberate pattern (V1-RMD-078/V1-TBL-007), not the domain-logic-duplication
-# class of defect this rule exists to catch (V1-RMD-120).
+# class of defect this rule exists to catch (V1-RMD-120). NfcOrdering's
+# self-check-in (V14-NFC-001) is the exact same soft-cache-pointer write as
+# Orders' table-draft flow, just from the unauthenticated NFC endpoint
+# instead of the cashier-authenticated one.
 HOST_AREA_EXTRA_SCHEMAS = {
+    "Experience/NfcOrdering": {"table_mgmt"},
     "Experience/Orders": {"table_mgmt"},
     "Experience/Billing": {"table_mgmt"},
     "DualScreen": {"table_mgmt"},
