@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -148,27 +149,17 @@ public sealed partial class DualScreenStore
 
         var orderId = Guid.NewGuid();
         var orderNumber = $"POS-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}-{orderId:N}"[..32].ToUpperInvariant();
-        await using (var insertOrder = CreateCommand(connection, transaction,
-            """
-            INSERT INTO orders.orders (
-                order_id, source, source_reference_id, source_external_id, table_id, customer_id,
-                status, confirmation_status, order_number, notes,
-                subtotal, discount_total, tax_total, total, currency_code,
-                submitted_at, accepted_at, closed_at, cancelled_at,
-                created_at, updated_at, row_version)
-            VALUES (
-                @order_id, 'Cashier', NULL, NULL, @table_id, NULL,
-                'Draft', 'NotRequired', @order_number, NULL,
-                0, 0, 0, 0, 'TRY',
-                NULL, NULL, NULL, NULL,
-                now(), now(), 1);
-            """))
-        {
-            insertOrder.Parameters.AddWithValue("order_id", orderId);
-            insertOrder.Parameters.AddWithValue("order_number", orderNumber);
-            insertOrder.Parameters.AddWithValue("table_id", request.TableId ?? (object)DBNull.Value);
-            await insertOrder.ExecuteNonQueryAsync(cancellationToken);
-        }
+        // V1-RMD-120: was a raw INSERT hand-duplicating the Order aggregate's
+        // own defaults (Draft/NotRequired/TRY/zeroed totals/row_version 1)
+        // instead of going through it — found by an independent audit
+        // (2026-09-07, boundary wave) alongside AddItemAsync/MutateExistingItemAsync
+        // below: this channel's order-write path never touched Order/OrderItem
+        // at all, so a future domain rule change (tax, rounding, state guards)
+        // would silently apply to the Waiter/table-draft channel
+        // (OrderManagementStore) but not this one. The connection/transaction
+        // overload keeps the insert inside this method's existing lock/commit.
+        var order = new Order(orderId, OrderSource.Cashier, orderNumber, Array.Empty<OrderItem>(), tableId: request.TableId);
+        await _orderRepository.AddAsync(order, connection, transaction, cancellationToken);
 
         if (request.TableId is { } createdTableId)
         {
@@ -234,79 +225,35 @@ public sealed partial class DualScreenStore
             product = new ProductRow(reader.GetString(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3));
         }
 
-        Guid? existingItemId;
-        decimal existingQuantity;
-        await using (var existingCommand = CreateCommand(connection, transaction,
-            """
-            SELECT order_item_id, quantity
-            FROM orders.order_items
-            WHERE order_id = @order_id AND product_id = @product_id AND status = 'Draft'
-            ORDER BY created_at
-            LIMIT 1
-            FOR UPDATE;
-            """))
+        // V1-RMD-120: was a raw SELECT ... FOR UPDATE on the single
+        // order_items row plus a hand-computed net/tax/gross and either an
+        // UPDATE or INSERT — a second, independent implementation of
+        // Order.AddItem/OrderItem's own amount computation. The row-level
+        // FOR UPDATE was redundant once LockDraftOrderAsync above already
+        // serializes every mutation of this order (a concurrent racer blocks
+        // on that lock, not this one) — the two concurrency tests in
+        // DualScreenStoreTests cover exactly this.
+        var order = await _orderRepository.GetByIdAsync(orderId, cancellationToken)
+            ?? throw new DualScreenNotFoundException("Active order was not found for this terminal.");
+        var existing = order.Items.FirstOrDefault(i => i.ProductId == request.ProductId && i.Status == OrderItemState.Draft);
+
+        Order updated;
+        if (existing is not null)
         {
-            existingCommand.Parameters.AddWithValue("order_id", orderId);
-            existingCommand.Parameters.AddWithValue("product_id", request.ProductId);
-            await using var reader = await existingCommand.ExecuteReaderAsync(cancellationToken);
-            if (await reader.ReadAsync(cancellationToken))
-            {
-                existingItemId = reader.GetGuid(0);
-                existingQuantity = reader.GetDecimal(1);
-            }
-            else
-            {
-                existingItemId = null;
-                existingQuantity = 0;
-            }
-        }
-
-        var quantity = existingQuantity + request.Quantity;
-        if (quantity > 999)
-            throw new ArgumentOutOfRangeException(nameof(request), quantity, "Cumulative quantity must not exceed 999.");
-
-        var net = RoundCurrency(product.UnitPrice * quantity);
-        var tax = RoundCurrency(net * product.TaxRate / 100m);
-        var gross = RoundCurrency(net + tax);
-
-        if (existingItemId is { } itemId)
-        {
-            await using var update = CreateCommand(connection, transaction,
-                """
-                UPDATE orders.order_items
-                SET quantity = @quantity, net_amount = @net, tax_amount = @tax, gross_amount = @gross,
-                    updated_at = now(), row_version = row_version + 1
-                WHERE order_item_id = @item_id;
-                """);
-            update.Parameters.AddWithValue("item_id", itemId);
-            BindAmounts(update, quantity, net, tax, gross);
-            await update.ExecuteNonQueryAsync(cancellationToken);
+            var quantity = existing.Quantity + request.Quantity;
+            if (quantity > 999)
+                throw new ArgumentOutOfRangeException(nameof(request), quantity, "Cumulative quantity must not exceed 999.");
+            updated = order.ChangeItemQuantity(existing.Id, quantity);
         }
         else
         {
-            await using var insert = CreateCommand(connection, transaction,
-                """
-                INSERT INTO orders.order_items (
-                    order_item_id, order_id, product_id, product_name_snapshot, sku_snapshot,
-                    quantity, unit_price, discount_amount, tax_rate, tax_amount, net_amount, gross_amount,
-                    status, kitchen_state, portion_reservation_status, notes, created_at, updated_at, row_version)
-                VALUES (
-                    @item_id, @order_id, @product_id, @name, @sku,
-                    @quantity, @unit_price, 0, @tax_rate, @tax, @net, @gross,
-                    'Draft', 'NotSent', 'NotApplicable', NULL, now(), now(), 1);
-                """);
-            insert.Parameters.AddWithValue("item_id", Guid.NewGuid());
-            insert.Parameters.AddWithValue("order_id", orderId);
-            insert.Parameters.AddWithValue("product_id", request.ProductId);
-            insert.Parameters.AddWithValue("name", product.Name);
-            insert.Parameters.AddWithValue("sku", product.Sku);
-            insert.Parameters.AddWithValue("unit_price", product.UnitPrice);
-            insert.Parameters.AddWithValue("tax_rate", product.TaxRate);
-            BindAmounts(insert, quantity, net, tax, gross);
-            await insert.ExecuteNonQueryAsync(cancellationToken);
+            var newItem = new OrderItem(
+                Guid.NewGuid(), orderId, request.ProductId, product.Name, request.Quantity, product.UnitPrice, product.TaxRate,
+                skuSnapshot: product.Sku);
+            updated = order.AddItem(newItem);
         }
 
-        var revision = await RecalculateOrderAsync(connection, transaction, orderId, cancellationToken);
+        var revision = await _orderRepository.SaveAsync(updated, order.RowVersion, connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return new OrderMutationResult(orderId, revision);
     }

@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -17,10 +18,20 @@ public sealed partial class DualScreenStore
     private static readonly TimeSpan PairingLifetime = TimeSpan.FromMinutes(2);
     private static readonly TimeSpan DisplaySessionLifetime = TimeSpan.FromHours(12);
     private readonly NpgsqlDataSource _dataSource;
+    private readonly PostgresOrderRepository _orderRepository;
 
     public DualScreenStore(NpgsqlDataSource dataSource)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        // Not DI-injected: DualScreenStore is registered by five different
+        // Experience areas (Tables, Orders, Billing, Kitchen, OfflineReconciliation
+        // — see their AddXxxExperience() TryAddSingleton<DualScreenStore>() calls)
+        // purely for its cashier/display session authentication, none of which
+        // compose the Orders module or its IOrderRepository registration. Building
+        // the repository from the same NpgsqlDataSource this store already holds
+        // (rather than requiring a fifth DI registration everywhere) keeps those
+        // four unrelated compositions working unchanged.
+        _orderRepository = new PostgresOrderRepository(dataSource);
     }
 
     public async Task CheckReadyAsync(CancellationToken cancellationToken)
@@ -234,38 +245,31 @@ public sealed partial class DualScreenStore
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         await LockDraftOrderAsync(connection, transaction, terminalId, orderId, expectedRevision, cancellationToken);
 
-        int affected;
-        if (remove)
-        {
-            await using var delete = CreateCommand(connection, transaction,
-                "DELETE FROM orders.order_items WHERE order_item_id = @item_id AND order_id = @order_id AND status = 'Draft';");
-            delete.Parameters.AddWithValue("item_id", itemId);
-            delete.Parameters.AddWithValue("order_id", orderId);
-            affected = await delete.ExecuteNonQueryAsync(cancellationToken);
-        }
-        else
-        {
-            await using var update = CreateCommand(connection, transaction,
-                """
-                UPDATE orders.order_items
-                SET quantity = @quantity,
-                    net_amount = round(unit_price * @quantity - discount_amount, 2),
-                    tax_amount = round((unit_price * @quantity - discount_amount) * tax_rate / 100, 2),
-                    gross_amount = round(unit_price * @quantity - discount_amount, 2)
-                        + round((unit_price * @quantity - discount_amount) * tax_rate / 100, 2),
-                    updated_at = now(), row_version = row_version + 1
-                WHERE order_item_id = @item_id AND order_id = @order_id AND status = 'Draft';
-                """);
-            update.Parameters.AddWithValue("quantity", quantity);
-            update.Parameters.AddWithValue("item_id", itemId);
-            update.Parameters.AddWithValue("order_id", orderId);
-            affected = await update.ExecuteNonQueryAsync(cancellationToken);
-        }
+        // V1-RMD-120: was a raw DELETE/UPDATE against orders.order_items plus
+        // a hand-written net/tax/gross recompute and a separate
+        // RecalculateOrderAsync that re-summed every item into orders.orders
+        // — a second, independent implementation of Order.RemoveItem/
+        // ChangeItemQuantity and the aggregate's own Subtotal/TaxTotal/Total
+        // properties (found by an independent audit, 2026-09-07, boundary
+        // wave). LockDraftOrderAsync above already holds the order's lock, so
+        // this plain read cannot race with another mutator of the same order.
+        var order = await _orderRepository.GetByIdAsync(orderId, cancellationToken)
+            ?? throw new DualScreenNotFoundException("Active order was not found for this terminal.");
 
-        if (affected == 0)
+        Order updated;
+        try
+        {
+            updated = remove ? order.RemoveItem(itemId) : order.ChangeItemQuantity(itemId, quantity);
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            // Unknown item, or an item no longer Draft (already Active/void) —
+            // the raw SQL this replaces made no such distinction either
+            // (DELETE/UPDATE affecting 0 rows for either reason).
             throw new DualScreenNotFoundException("Draft order item was not found.");
+        }
 
-        var revision = await RecalculateOrderAsync(connection, transaction, orderId, cancellationToken);
+        var revision = await _orderRepository.SaveAsync(updated, order.RowVersion, connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return new OrderMutationResult(orderId, revision);
     }
@@ -298,37 +302,6 @@ public sealed partial class DualScreenStore
             throw new DualScreenConflictException($"Order revision is stale. Expected {expectedRevision}, actual {actualRevision}.");
     }
 
-    private static async Task<long> RecalculateOrderAsync(
-        NpgsqlConnection connection,
-        NpgsqlTransaction transaction,
-        Guid orderId,
-        CancellationToken cancellationToken)
-    {
-        await using var command = CreateCommand(connection, transaction,
-            """
-            UPDATE orders.orders o
-            SET subtotal = totals.subtotal,
-                discount_total = totals.discount_total,
-                tax_total = totals.tax_total,
-                total = totals.total,
-                updated_at = now(),
-                row_version = o.row_version + 1
-            FROM (
-                SELECT COALESCE(sum(net_amount + discount_amount), 0) AS subtotal,
-                       COALESCE(sum(discount_amount), 0) AS discount_total,
-                       COALESCE(sum(tax_amount), 0) AS tax_total,
-                       COALESCE(sum(gross_amount), 0) AS total
-                FROM orders.order_items
-                WHERE order_id = @order_id AND status IN ('Draft', 'Active')
-            ) totals
-            WHERE o.order_id = @order_id
-            RETURNING o.row_version;
-            """);
-        command.Parameters.AddWithValue("order_id", orderId);
-        return (long)(await command.ExecuteScalarAsync(cancellationToken)
-            ?? throw new DualScreenNotFoundException("Order was not found."));
-    }
-
     private static NpgsqlCommand CreateCommand(NpgsqlConnection connection, NpgsqlTransaction transaction, string sql)
     {
         var command = connection.CreateCommand();
@@ -336,16 +309,6 @@ public sealed partial class DualScreenStore
         command.CommandText = sql;
         return command;
     }
-
-    private static void BindAmounts(NpgsqlCommand command, decimal quantity, decimal net, decimal tax, decimal gross)
-    {
-        command.Parameters.AddWithValue("quantity", quantity);
-        command.Parameters.AddWithValue("net", net);
-        command.Parameters.AddWithValue("tax", tax);
-        command.Parameters.AddWithValue("gross", gross);
-    }
-
-    private static decimal RoundCurrency(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
 
     private static string? NormalizeCategoryCode(string? value)
     {

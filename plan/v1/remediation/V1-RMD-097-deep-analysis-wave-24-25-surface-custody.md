@@ -27,7 +27,7 @@ kuralı yeniden sağlanır ve bu dosyalar yalnızca yeni bir plan görevi ile de
 - PO:2026-09-05 kararıyla src/Host/DualScreen/DualScreenApplication.Endpoints.cs yüzeyi RequireCashierPermissionAsync izin kodu yeniden eşleme için V1-IAM-024'e devredildi; bu historical task closed kalır.
 - `src/Host/DualScreen/DualScreenExceptions.cs`
 - `src/Host/DualScreen/DualScreenStore.Display.cs`
-- `src/Host/DualScreen/DualScreenStore.Orders.cs`
+- PO:2026-09-07 kararıyla src/Host/DualScreen/DualScreenStore.Orders.cs yüzeyi V1-RMD-120'ye devredildi; bu historical task closed kalır.
 - `src/Modules/Billing/Integration/TableEventBillConsumer.cs`
 - `src/Modules/Orders/Integration/TableEventOrderConsumer.cs`
 - `src/Clients/PosTerminal/src/format.ts`

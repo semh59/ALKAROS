@@ -20,6 +20,13 @@ public interface IOrderRepository
     Task AddAsync(Order order, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Inserts a new order graph within an existing connection and
+    /// transaction for atomic operations (mirrors
+    /// <see cref="SaveAsync(Order, long, Npgsql.NpgsqlConnection, Npgsql.NpgsqlTransaction, CancellationToken)"/>).
+    /// </summary>
+    Task AddAsync(Order order, Npgsql.NpgsqlConnection connection, Npgsql.NpgsqlTransaction transaction, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Persists changes of an aggregate produced by a transition, guarded by
     /// the optimistic row version: the order row is updated only when its
     /// current version equals <paramref name="expectedRowVersion"/>. New items

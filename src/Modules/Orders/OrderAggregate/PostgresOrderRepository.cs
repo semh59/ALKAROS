@@ -65,6 +65,21 @@ public sealed class PostgresOrderRepository : IOrderRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
+        await AddAsync(order, connection, transaction, cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task AddAsync(
+        Order order,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
         await InsertOrderAsync(connection, transaction, order, cancellationToken);
 
         foreach (var item in order.Items)
@@ -72,8 +87,6 @@ public sealed class PostgresOrderRepository : IOrderRepository
 
         foreach (var row in order.History)
             await InsertHistoryAsync(connection, transaction, row, cancellationToken);
-
-        await transaction.CommitAsync(cancellationToken);
     }
 
     public async Task<long> SaveAsync(Order order, long expectedRowVersion, CancellationToken cancellationToken = default)

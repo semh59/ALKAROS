@@ -11,9 +11,14 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 346 görev tanımlıdır: 341 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 349 görev tanımlıdır: 344 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-07 48. dalga (Semih onayıyla, taze bir sınır [module boundary] denetimi ve
+  "Tam düzelt" — Host/DualScreen'in Orders yazma yolu `Order`/`OrderItem` aggregate'ini
+  hiç kullanmadan ham SQL ile ikinci bir domain mantığı kopyası taşıyordu, `V1-RMD-120`)
+  `V1-GOV-116` sonrası kapıyı yeniden açtı; `V1-GOV-118` ile kesin olarak yeniden
+  mühürlendi.
   2026-09-07 47. dalga (Semih onayıyla, "Dalga 2 den devam edelim" — Catalog `current_price`
   bayatlaması + modifier-group çıkmaz sokağı Critical çifti, `V1-RMD-119`) `V1-GOV-114`
   sonrası kapıyı yeniden açtı; `V1-GOV-116` ile kesin olarak yeniden mühürlendi.

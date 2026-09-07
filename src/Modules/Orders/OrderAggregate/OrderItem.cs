@@ -176,6 +176,41 @@ public sealed class OrderItem
     }
 
     /// <summary>
+    /// Changes a Draft item's quantity, recomputing net/tax/gross from
+    /// scratch (V1-RMD-120: previously a channel-specific concern
+    /// hand-duplicated in Host/DualScreen raw SQL instead of going through
+    /// this aggregate). An Active item's quantity is frozen — <see cref="Cancel"/>
+    /// is the only way to remove its contribution once submitted. Returns a
+    /// new immutable instance.
+    /// </summary>
+    public OrderItem ChangeQuantity(decimal quantity)
+    {
+        if (Status is not OrderItemState.Draft)
+            throw new InvalidOperationException($"Order item {Id} cannot change quantity from {Status}.");
+        if (quantity <= 0)
+            throw new ArgumentException("Quantity must be positive.", nameof(quantity));
+
+        return new OrderItem(
+            Id,
+            OrderId,
+            ProductId,
+            ProductNameSnapshot,
+            quantity,
+            UnitPrice,
+            TaxRate,
+            SkuSnapshot,
+            DiscountAmount,
+            Modifiers,
+            Status,
+            KitchenState,
+            PortionReservationStatus,
+            notes: Notes,
+            rowVersion: RowVersion,
+            createdAt: CreatedAt,
+            updatedAt: DateTimeOffset.UtcNow);
+    }
+
+    /// <summary>
     /// Returns a copy with the row version advanced; used by repositories
     /// after a successful optimistic concurrency update.
     /// </summary>

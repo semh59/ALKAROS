@@ -274,6 +274,40 @@ public sealed class PostgresOrderTests : IClassFixture<OrdersTestDatabase>
         Assert.Equal(1, stillUntouched.RowVersion);
     }
 
+    [Fact]
+    public async Task ConnectionScopedAddAsyncPersistsWithinTheCallersTransactionOnly()
+    {
+        // V1-RMD-120: the connection/transaction overload lets a Host caller
+        // (Host/DualScreen's StartOrderAsync) insert the order graph inside
+        // its own already-open transaction alongside other writes (the
+        // terminal/table pointer binds), instead of AddAsync opening and
+        // committing its own separate connection first. A rollback of the
+        // caller's transaction must discard the order entirely.
+        var product = await SeedProduct();
+        var order = NewOrder(product);
+
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _orders.AddAsync(order, connection, transaction);
+            await transaction.RollbackAsync();
+        }
+
+        Assert.Null(await _orders.GetByIdAsync(order.Id));
+
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _orders.AddAsync(order, connection, transaction);
+            await transaction.CommitAsync();
+        }
+
+        var loaded = await _orders.GetByIdAsync(order.Id);
+        Assert.NotNull(loaded);
+        Assert.Equal(order.OrderNumber, loaded.OrderNumber);
+        Assert.Single(loaded.Items);
+    }
+
     private async Task<Guid> SeedProduct()
     {
         var productId = Guid.NewGuid();

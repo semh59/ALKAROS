@@ -18,7 +18,7 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-090-seating-tolerates-stale-table-version.md`
-- `src/Host/DualScreen/DualScreenStore.cs`
+- PO:2026-09-07 kararıyla src/Host/DualScreen/DualScreenStore.cs yüzeyi V1-RMD-120'ye devredildi; bu historical task closed kalır.
 - `tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs`
 - `evidence/V1-RMD-090/**`
 

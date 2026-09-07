@@ -362,6 +362,60 @@ public sealed class Order
     }
 
     /// <summary>
+    /// Changes a Draft item's quantity in place (V1-RMD-120: the line-quantity
+    /// stepper a channel like Host/DualScreen's quick-sale cart needs before
+    /// submission). The order itself must still be Draft; the target item
+    /// must be Draft too — an Active item's quantity is frozen, only
+    /// <see cref="CancelItem"/> removes its contribution. Returns a new
+    /// instance.
+    /// </summary>
+    public Order ChangeItemQuantity(Guid orderItemId, decimal quantity)
+    {
+        if (Status is not OrderState.Draft)
+            throw new InvalidOperationException($"Order {Id} cannot change an item quantity in state {Status}.");
+
+        var items = new List<OrderItem>(_items.Count);
+        var found = false;
+        foreach (var item in _items)
+        {
+            if (item.Id == orderItemId)
+            {
+                items.Add(item.ChangeQuantity(quantity));
+                found = true;
+            }
+            else
+            {
+                items.Add(item);
+            }
+        }
+
+        if (!found)
+            throw new ArgumentException($"Order {Id} has no item {orderItemId}.", nameof(orderItemId));
+
+        return RebuildWith(items: items);
+    }
+
+    /// <summary>
+    /// Removes a Draft item from the order entirely (V1-RMD-120: the
+    /// line-delete action a pre-submission cart needs — distinct from
+    /// <see cref="CancelItem"/>, which voids an already-Active line and keeps
+    /// it for audit). The order must still be Draft; the target item must be
+    /// Draft too. Returns a new instance.
+    /// </summary>
+    public Order RemoveItem(Guid orderItemId)
+    {
+        if (Status is not OrderState.Draft)
+            throw new InvalidOperationException($"Order {Id} cannot remove an item in state {Status}.");
+
+        var item = _items.FirstOrDefault(i => i.Id == orderItemId)
+            ?? throw new ArgumentException($"Order {Id} has no item {orderItemId}.", nameof(orderItemId));
+        if (item.Status is not OrderItemState.Draft)
+            throw new InvalidOperationException($"Order item {orderItemId} cannot be removed from state {item.Status}.");
+
+        return RebuildWith(items: _items.Where(i => i.Id != orderItemId).ToList());
+    }
+
+    /// <summary>
     /// Returns a copy with the row version advanced; used by repositories
     /// after a successful optimistic concurrency update.
     /// </summary>

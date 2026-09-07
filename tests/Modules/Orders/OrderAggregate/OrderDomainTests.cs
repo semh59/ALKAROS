@@ -234,6 +234,143 @@ public class OrderDomainTests
     }
 }
 
+/// <summary>
+/// V1-RMD-120: Order/OrderItem's own line-quantity-change and line-removal
+/// operations, added so Host/DualScreen's cart could stop re-implementing
+/// them in raw SQL outside the aggregate (an independent audit, 2026-09-07,
+/// found this channel's writes to orders.orders/order_items never touched
+/// Order/OrderItem at all).
+/// </summary>
+public class OrderItemQuantityAndRemovalTests
+{
+    private static OrderItem NewDraftItem(Guid? id = null, decimal unitPrice = 100m, decimal quantity = 1)
+        => new(id ?? Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Lahmacun", quantity, unitPrice, 10m);
+
+    [Fact]
+    public void ChangeQuantityRecomputesNetTaxAndGrossFromScratch()
+    {
+        var item = NewDraftItem(unitPrice: 50m, quantity: 1);
+
+        var changed = item.ChangeQuantity(3);
+
+        changed.Quantity.Should().Be(3);
+        changed.NetAmount.Should().Be(150m);
+        changed.TaxAmount.Should().Be(15m);
+        changed.GrossAmount.Should().Be(165m);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void ChangeQuantityRejectsNonPositiveQuantity(decimal quantity)
+    {
+        var item = NewDraftItem();
+
+        var act = () => item.ChangeQuantity(quantity);
+
+        act.Should().Throw<ArgumentException>().WithParameterName(nameof(quantity));
+    }
+
+    [Fact]
+    public void ChangeQuantityRejectsANonDraftItem()
+    {
+        var item = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Lahmacun", 1, 100m, 10m,
+            status: OrderItemState.Active);
+
+        var act = () => item.ChangeQuantity(2);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void OrderChangeItemQuantityUpdatesTheMatchingItemAndRecomputesOrderTotals()
+    {
+        var itemId = Guid.NewGuid();
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5001", [NewDraftItem(itemId, unitPrice: 20m, quantity: 1)]);
+
+        var updated = order.ChangeItemQuantity(itemId, 5);
+
+        updated.Items.Single().Quantity.Should().Be(5);
+        updated.Subtotal.Should().Be(100m);
+        updated.Total.Should().Be(110m);
+    }
+
+    [Fact]
+    public void OrderChangeItemQuantityRejectsAfterSubmission()
+    {
+        var itemId = Guid.NewGuid();
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5002", [NewDraftItem(itemId)]).Submit();
+
+        var act = () => order.ChangeItemQuantity(itemId, 2);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void OrderChangeItemQuantityRejectsAnUnknownItem()
+    {
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5003", [NewDraftItem()]);
+
+        var act = () => order.ChangeItemQuantity(Guid.NewGuid(), 2);
+
+        act.Should().Throw<ArgumentException>().WithParameterName("orderItemId");
+    }
+
+    [Fact]
+    public void OrderRemoveItemDropsTheItemAndRecomputesOrderTotals()
+    {
+        var keepId = Guid.NewGuid();
+        var removeId = Guid.NewGuid();
+        var order = new Order(
+            Guid.NewGuid(), OrderSource.Cashier, "ORD-5004",
+            [NewDraftItem(keepId, unitPrice: 30m), NewDraftItem(removeId, unitPrice: 70m)]);
+
+        var updated = order.RemoveItem(removeId);
+
+        updated.Items.Should().ContainSingle(i => i.Id == keepId);
+        updated.Subtotal.Should().Be(30m);
+    }
+
+    [Fact]
+    public void OrderRemoveItemRejectsAfterSubmission()
+    {
+        var itemId = Guid.NewGuid();
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5005", [NewDraftItem(itemId)]).Submit();
+
+        var act = () => order.RemoveItem(itemId);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void OrderRemoveItemRejectsAnAlreadyActiveItem()
+    {
+        // Draft order with one Active item cannot happen through Submit (which
+        // activates every item at once), but AdvanceItemKitchenState/CancelItem
+        // never touch Status back to Draft either — this guards RemoveItem's
+        // own invariant directly regardless of how such a state is reached.
+        var itemId = Guid.NewGuid();
+        var activeItem = new OrderItem(
+            itemId, Guid.NewGuid(), Guid.NewGuid(), "Lahmacun", 1, 100m, 10m, status: OrderItemState.Active);
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5006", [activeItem]);
+
+        var act = () => order.RemoveItem(itemId);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void OrderRemoveItemRejectsAnUnknownItem()
+    {
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5007", [NewDraftItem()]);
+
+        var act = () => order.RemoveItem(Guid.NewGuid());
+
+        act.Should().Throw<ArgumentException>().WithParameterName("orderItemId");
+    }
+}
+
 public class OrderItemStateTests
 {
     private static OrderItem NewItem(OrderItemState state, KitchenState kitchenState)
