@@ -1,5 +1,6 @@
 using ALKAROS.ModuleComposition;
 using ALKAROS.QrOrdering.CustomerSession;
+using ALKAROS.QrOrdering.PendingOrders;
 using ALKAROS.QrOrdering.RelayCredential;
 using ALKAROS.QrOrdering.RelaySecurity;
 using ALKAROS.Secrets;
@@ -38,5 +39,7 @@ public sealed class QrOrderingModule : IModule
             .RegisterTransient<RelayRequestValidator, RelayRequestValidator>()
             // V12-QRS-003.
             .RegisterTransient<ICustomerSessionRepository, PostgresCustomerSessionRepository>()
-            .RegisterTransient<CustomerSessionService, CustomerSessionService>();
+            .RegisterTransient<CustomerSessionService, CustomerSessionService>()
+            // V12-QRO-001.
+            .RegisterTransient<QrPendingOrderStore, QrPendingOrderStore>();
 }

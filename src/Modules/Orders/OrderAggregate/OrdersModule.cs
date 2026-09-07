@@ -24,5 +24,14 @@ public sealed class OrdersModule : IModule
         // item (only published when a deployment turns on kitchen live-sync,
         // V1-SET-002).
         context.RegisterTransient<IIntegrationEventConsumer, KitchenEventOrderConsumer>();
+
+        // V12-QRO-001: materializes the actual Order from a QR Ordering
+        // submission (V0-ARC-001 row 19 — QR Ordering has no direct-call
+        // edge to Order, only an integration event). SubmitOrderHandler
+        // itself is registered by Host's AddOrderManagementExperience
+        // (src/Host/Experience/Orders/OrderManagementEndpoints.cs), not
+        // here — same TryAddSingleton the DualScreen quick-sale route and
+        // NFC ordering already share.
+        context.RegisterTransient<IIntegrationEventConsumer, QrOrderSubmittedConsumer>();
     }
 }

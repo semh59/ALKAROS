@@ -10,6 +10,12 @@
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj" />
+    <!-- V12-QRO-001: QrPendingOrderStore publishes QrOrderSubmitted through
+         the transactional outbox (V0-ARC-001 row 19 - QR Ordering has no
+         direct-call edge to Order, event-only). Both are shared building
+         blocks, not gated by the module ApprovedEdges list. -->
+    <ProjectReference Include="..\..\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

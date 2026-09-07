@@ -16,6 +16,16 @@
         "resolved": "8.0.2",
         "contentHash": "3iE7UF7MQkCv1cxzCahz+Y/guQbTqieyxyaWKhrRO91itI9cOKO76OHeQDahqG4MmW5umr3CcCvGmK92lWNlbg=="
       },
+      "alkaros.integrationcontracts": {
+        "type": "Project"
+      },
+      "alkaros.messaging": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
       "alkaros.modulecomposition": {
         "type": "Project"
       },
