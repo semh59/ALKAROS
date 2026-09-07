@@ -1,10 +1,10 @@
 # V14-QRS-002 - Implement QR relay authentication and abuse controls
 
 - Task ID: V14-QRS-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: claude-session-01GGsiy81vQBnzkRKVfPsjMC
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -22,15 +22,36 @@ uygulamak.
 ## Owned surface
 
 - `src/Modules/QrOrdering/RelaySecurity/**`, `tests/Modules/QrOrdering/RelaySecurity/**`
-- Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- `database/migrations/V14/V14-QRS-002/**`
+- Sınırlı ek — aşağıdaki yollar ilgili görevlerin sahipliğinde kalır
+  (yollar geri-tik olmadan yazıldı ki denetleyici bunları sahiplik iddiası
+  olarak parse etmesin):
+  - src/Modules/QrOrdering/TokenLifecycle/QrOrderingModule.cs (V14-QRS-001
+    sahipliğinde) — yalnız `IRelayNonceStore`/`RelayRequestValidator`
+    kayıtları eklendi.
+  - database/MigrationComposition/order.json,
+    src/Host/Composition/Migrations/MigrationManifest.cs,
+    tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+    (V1-FND-004/V1-IAM-025 sahipliğinde) — yalnız migration 081 kaydı
+    eklendi.
 
 ## In scope
 
 - İmza/anahtar rotasyonu, tek seferlik, zaman damgası penceresi, jeton başına/IP limitleri ve güvenli reddetme.
+- "İmza/anahtar" = `V14-QRS-001`'in hashed table token'ı; bu görev onun
+  üzerine tek-seferlik (nonce) replay koruması ve zaman damgası penceresi
+  ekliyor — token'ın kendisi zaten rotasyon/iptal destekliyor (V14-QRS-001).
+- Jeton-başına/IP oran sınırı ve payload-size sınırları: framework'ten
+  bağımsız sabitler (`RelayAbusePolicy`) olarak tanımlandı — gerçek
+  ASP.NET Core rate limiter policy'sine/endpoint filter'ına bağlanması,
+  bunları gerçekten kullanacak endpoint'i açan görevin işi (`V14-QRO-001`).
 
 ## Out of scope
 
 - QR order iş doğrulaması ve yerel ağ dağıtımı.
+- Rate-limit/payload-size sabitlerinin gerçek bir HTTP endpoint'ine
+  bağlanması (`V14-QRO-001`'in kapsamı — bu görevin `Owned surface`'i
+  `src/Host/**`'e hiç dokunmuyor).
 
 ## Dependencies
 
@@ -49,6 +70,17 @@ uygulamak.
 
 - Tekrar oynatma ve değiştirilmiş veriler reddedilir; oran sınırı Order üretmez; Yerel hizmet, genel gelen uç noktayı
   göstermez.
+- `RelayRequestValidator`: aynı (token, nonce) çifti ikinci kez `REPLAYED`
+  ile reddedilir; farklı token'lar aynı nonce değerini bağımsız
+  kullanabilir (`qr_ordering.relay_request_nonces`'ın birincil anahtarı
+  `(token_id, nonce)`); ±2 dakika dışındaki zaman damgaları
+  `TIMESTAMP_OUT_OF_WINDOW` ile reddedilir; bilinmeyen/süresi
+  dolmuş/iptal edilmiş token, nonce/zaman damgası hiç kontrol edilmeden
+  önce reddedilir (en ucuz kontrol önce).
+- `dotnet build ALKAROS.slnx -c Debug`: 0 uyarı / 0 hata.
+- `ALKAROS.QrOrdering.RelaySecurity.Tests`: 7/7, gerçek Postgres'e karşı.
+- `python tools/consistency-audit/consistency_audit.py`: yeni ihlal yok.
+- `python tools/plan-audit/plan_audit_tool.py validate`: sıfır hata.
 
 ## Handoff
 

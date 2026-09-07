@@ -1,5 +1,6 @@
 using ALKAROS.ModuleComposition;
 using ALKAROS.QrOrdering.RelayCredential;
+using ALKAROS.QrOrdering.RelaySecurity;
 using ALKAROS.Secrets;
 using ALKAROS.SensitiveData;
 
@@ -31,5 +32,7 @@ public sealed class QrOrderingModule : IModule
             .RegisterTransient<ISecretResolver, SecretResolver>()
             .RegisterTransient<IEnvelopeCipher, AesGcmEnvelopeCipher>()
             .RegisterTransient<SensitivePayloadProtector, SensitivePayloadProtector>()
-            .RegisterTransient<IRelayCredentialStore, PostgresRelayCredentialStore>();
+            .RegisterTransient<IRelayCredentialStore, PostgresRelayCredentialStore>()
+            .RegisterTransient<IRelayNonceStore, PostgresRelayNonceStore>()
+            .RegisterTransient<RelayRequestValidator, RelayRequestValidator>();
 }
