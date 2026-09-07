@@ -34,7 +34,6 @@ Reusable raw secret saklamadan hashed, revocable ve time/policy-bound Table toke
 
 ## Dependencies
 
-- GATE-V14-ENTRY
 - V0-QRG-001
 
 ## Deliverables

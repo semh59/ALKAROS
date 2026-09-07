@@ -7,13 +7,30 @@ PortionInventory domain'ine bağlamak.
 
 ## Giriş koşulu
 
-`GATE-V14-ENTRY` koşulu plan/GATES.md'de tanımlıdır; dış sözleşme sahipleri (V0-YSP-001, V0-QRG-001) açık Blocked
-olduğu sürece giriş koşulu sağlanmaz. **Bu blok koşulu yalnız o dış sözleşmelere gerçekten bağımlı modülleri kapsar**
-(`qr-ordering`, `qr-security`, `qr-transport`, `online-ordering`, `channel-mapping`, `customer-web`,
-`reconciliation`, `reporting`, `shared-stock`). `nfc-ordering` modülü bu dış sözleşmelerin hiçbirine bağımlı değildir
-(yalnız `Done` olan `V1-ORD-*`/`V1-TBL-*`'ye bağımlıdır, restoranın kendi yerel ağı üzerinden çalışır, public relay
-veya ödeme provider'ı gerektirmez) — bu istisna `V14-GOV-001` ile kaydedildi ve `nfc-ordering` görevleri
-`GATE-V14-ENTRY` beklemeden başlayabilir.
+`GATE-V14-ENTRY`, `plan/GATES.md`'de resmi olarak `GATE-V13-EXIT`
+kapanmasına bağlıdır — V1.3 (cari hesap/dönemsel faturalama/QNB
+e-fatura, 25 görev) bugün hâlâ tamamen `Planned`. Ayrıca bu README daha
+önce, dış sözleşme sahipleri `V0-YSP-001`/`V0-QRG-001` açık `Blocked`
+olduğu sürece hiçbir v1.4 modülünün ilerleyemeyeceğini yazıyordu — bu
+yanlıştı: `qr-ordering`/`qr-security`/`qr-transport`'un `V0-YSP-001`
+(Yemeksepeti) ile hiçbir bağı yok, yalnız `V0-QRG-001`'e bağımlılar.
+
+Bugünkü gerçek durum:
+
+- `V0-QRG-001` **2026-09-07'de `Done`** oldu (gerçek Cloudflare Tunnel
+  kanıtı, `evidence/v0/integrations/V0-QRG-001/**`).
+- `nfc-ordering`: `GATE-V13-EXIT`'e veya herhangi bir dış sözleşmeye hiç
+  bağımlı değil (yalnız `Done` olan `V1-ORD-*`/`V1-TBL-*`, yerel ağ
+  üzerinden çalışır) — istisna `V14-GOV-001` ile kaydedildi.
+- `qr-ordering`/`qr-security`/`qr-transport` (ve bunlara bağımlı
+  `customer-web`'in QR görevleri): artık yalnız `Done` olan
+  `V0-QRG-001`'e bağımlı; `GATE-V13-EXIT`'i beklemeden ilerleyebilmeleri
+  Semih'in açık iş kararıyla `V14-GOV-002`'de kaydedildi (`V14-QRS-001`'in
+  `Dependencies`'inden `GATE-V14-ENTRY` çıkarıldı).
+- `online-ordering`, `channel-mapping`, `reconciliation`, `reporting`,
+  `shared-stock`: hâlâ `V0-YSP-001`'e (Yemeksepeti partner API, hâlâ
+  `Blocked`) bağımlı **ve** hiçbir istisnaları yok — `GATE-V13-EXIT`
+  kapanmadan ilerleyemezler.
 
 ## Çıkış kapısı
 
@@ -33,9 +50,12 @@ veya ödeme provider'ı gerektirmez) — bu istisna `V14-GOV-001` ile kaydedildi
 `online-operations-ui`, `online-ordering`, `qr-ordering`, `qr-security`,
 `qr-transport`, `reconciliation`, `reporting`, `shared-stock`.
 
-Doğrulanan plan hacmi: 12 modül, 24 tek-sahip görev dosyası. 2026-09-07:
-`V14-GOV-001` (NFC kanalının kabulü ve giriş koşulu netleştirmesi) ve
-`V14-QRT-002` (relay provider/onboarding kararı) `Done`; `V14-NFC-001`
-(NFC self-check-in + güvenilir sipariş, gerçek Docker test kanıtıyla)
-`Done`; `V14-NFC-002` (yaş kısıtlı ürün istisnası) `Planned`. Kalan 20
-orijinal görev hâlâ `Planned`, `GATE-V14-ENTRY`ye tabi.
+Doğrulanan plan hacmi: 12 modül, 25 tek-sahip görev dosyası. 2026-09-07:
+`V14-GOV-001` (NFC kanalının kabulü), `V14-GOV-002` (QR'ın `GATE-V13-EXIT`
+beklemeden kabulü) ve `V14-QRT-002` (relay provider/onboarding kararı)
+`Done`; `V14-NFC-001` (NFC self-check-in + güvenilir sipariş) ve
+`V14-NFC-003` (anonim menü + sipariş sayfası) gerçek Docker test kanıtıyla
+`Done`; `V14-NFC-002` (yaş kısıtlı ürün istisnası) `Planned`.
+`qr-ordering`/`qr-security`/`qr-transport` artık yalnız `Done` olan
+`V0-QRG-001`'e bağımlı, çalışmaya hazır. `online-ordering`/
+`channel-mapping` hâlâ `V0-YSP-001`'e (Blocked) ve `GATE-V13-EXIT`'e tabi.
