@@ -1,10 +1,10 @@
 # V12-NFC-002 - Route age-restricted NFC orders through staff confirmation
 
 - Task ID: V12-NFC-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: claude-session-01KUpNDVPb45EwMYysqeu1wc
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -36,17 +36,18 @@ QR siparişi gibi.
 - `V12-NFC-001`'in "trusted immediate accept" kısayolunun, sepette en az
   bir yaş kısıtlı ürün olduğunda atlanması; sipariş `PendingConfirmation`da
   bırakılması, masanın `Reserved` olması.
-- Bu bekleyen NFC siparişleri için de aynı `V12-NFC-003`'ün (henüz
-  planlanmadı) sağlayacağı genel, kanaldan bağımsız personel onay/ret
-  aksiyonunun kullanılabilir olması (bu görev yalnız "ne zaman bekletilir"
-  kararını uygular, onay aksiyonunun kendisini değil).
 
 ## Out of scope
 
-- Personel onay/ret HTTP aksiyonunun kendisi — QR ve NFC'nin ortak
-  ihtiyacı; ayrı bir görev (`V12-NFC-003` veya `V12-QRO-003` ile
-  paylaşılan bir aksiyon — henüz karar verilmedi, bu görev başlarken
-  netleştirilecek).
+- Personel onay/ret HTTP aksiyonunun kendisi — **2026-09-08'de
+  netleştirildi:** `V12-NFC-003` sonradan farklı bir kapsamla (müşteri
+  menü/sipariş sayfası) kapandığı için, bu bekleyen siparişi onaylayacak
+  kanaldan bağımsız aksiyon `V12-QRO-003`'ün (QR onay/rezervasyon) kapsamına
+  girer — o, hangi kanaldan geldiğine bakmaksızın herhangi bir
+  `PendingConfirmation` siparişini onaylar/reddeder. Bu görev yalnız "ne
+  zaman bekletilir" kararını uygular; şu an bekleyen bir yaş-kısıtlı NFC
+  siparişinin onaylanacağı gerçek aksiyon henüz yok (aşağıdaki kanıt
+  senaryoları bu yüzden yalnız "beklemede kalır" durumunu doğruluyor).
 - QR kanalının kendisi.
 
 ## Dependencies
@@ -60,12 +61,22 @@ QR siparişi gibi.
 
 ## Acceptance evidence
 
-- Sepette yaş kısıtlı ürün olan bir NFC siparişi `Accepted`e hiç geçmez,
-  masa `Reserved` olur, `Occupied` olmaz.
+- Sepette yaş kısıtlı ürün olan bir NFC siparişi `Accepted`e hiç geçmez
+  (`PendingConfirmation`da kalır), masa `Reserved` olur, `Occupied` olmaz —
+  hem tek ürünlü hem karışık (bir yaş-kısıtlı + bir normal ürün) sepet için
+  test edildi.
+- Aynı gönderimin tekrarı (idempotent replay) aynı bekleyen siparişi
+  döndürür, ikinci bir mutfak bileti veya ikinci bir sipariş oluşturmaz.
 - Sepette yaş kısıtlı ürün olmayan bir NFC siparişi `V12-NFC-001`'deki
-  gibi davranmaya devam eder (regresyon yok).
-- `dotnet build` ve ilgili testler gerçek Docker container exit code `0`
-  ile geçer.
+  gibi davranmaya devam eder (regresyon yok — mevcut 9 test değişmeden
+  geçti).
+- `dotnet build ALKAROS.slnx`: 0 hata/0 uyarı.
+  `ALKAROS.Host.Experience.NfcOrdering.Tests`: 12/12 (9 eski + 3 yeni),
+  yerel Postgres'e (55432) karşı.
+- Migration 084 (`catalog.products.is_age_restricted`): ileri yönde yeni
+  sütun varsayılan `false` ile eklendi; geri yönde `MigrationExecutionTests`
+  ve tam `ALKAROS.Host.Tests` (121 test) suite'i tarafından dolaylı olarak
+  kapsanan standart migration-manifest doğrulama zincirine dahil edildi.
 
 ## Handoff
 

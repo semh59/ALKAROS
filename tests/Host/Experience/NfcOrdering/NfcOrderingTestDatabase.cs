@@ -47,18 +47,19 @@ public sealed class NfcOrderingTestDatabase : PgTestDatabase
     }
 
     /// <summary>Seeds one purchasable catalog product and returns its id.</summary>
-    public async Task<Guid> SeedProductAsync(string name, decimal price)
+    public async Task<Guid> SeedProductAsync(string name, decimal price, bool isAgeRestricted = false)
     {
         var productId = Guid.NewGuid();
         await ExecuteAsync(
             """
-            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, current_price)
-            VALUES (@product_id, @sku, @name, 1, 1, true, @price);
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, current_price, is_age_restricted)
+            VALUES (@product_id, @sku, @name, 1, 1, true, @price, @is_age_restricted);
             """,
             ("product_id", productId),
             ("sku", "nfc-" + productId.ToString("N")[..8]),
             ("name", name),
-            ("price", price));
+            ("price", price),
+            ("is_age_restricted", isAgeRestricted));
 
         return productId;
     }

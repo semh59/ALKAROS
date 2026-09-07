@@ -149,6 +149,68 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnAgeRestrictedItemWithholdsTheTrustedShortcutAndReservesTheTable()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var beer = await _database.SeedProductAsync("Bira", 120m, isAgeRestricted: true);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), beer, 1)], Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var order = await response.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal("PendingConfirmation", order!.Status);
+
+        var (status, currentOrderId, _) = await _database.GetTableStateAsync(tableId);
+        Assert.Equal("Reserved", status);
+        Assert.Equal(order.OrderId, currentOrderId);
+    }
+
+    [Fact]
+    public async Task AMixedCartWithOneAgeRestrictedItemStillWithholdsTheWholeOrder()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var soup = await _database.SeedProductAsync("Çorba", 60m);
+        var wine = await _database.SeedProductAsync("Şarap", 350m, isAgeRestricted: true);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest(
+                [new NfcOrderItemRequestDto(Guid.NewGuid(), soup, 1), new NfcOrderItemRequestDto(Guid.NewGuid(), wine, 1)],
+                Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var order = await response.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal("PendingConfirmation", order!.Status);
+        Assert.Equal(410m, order.TotalAmount);
+    }
+
+    [Fact]
+    public async Task RetryingAnAgeRestrictedSubmissionReplaysTheSamePendingOrder()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var beer = await _database.SeedProductAsync("Bira", 120m, isAgeRestricted: true);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var payload = new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), beer, 1)], Guid.NewGuid());
+
+        using var first = await client.PostAsJsonAsync(OrdersPath(tableId), payload);
+        var firstOrder = await first.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var retry = await client.PostAsJsonAsync(OrdersPath(tableId), payload);
+        var retryOrder = await retry.Content.ReadFromJsonAsync<OrderDto>();
+
+        Assert.Equal(firstOrder!.OrderId, retryOrder!.OrderId);
+        Assert.Equal("PendingConfirmation", retryOrder.Status);
+        Assert.Equal(1, await _database.KitchenTicketCountAsync(firstOrder.OrderId));
+    }
+
+    [Fact]
     public async Task AReservedTableRefusesNfcSelfService()
     {
         var tableId = await _database.SeedTableAsync(status: "Reserved");

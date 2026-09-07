@@ -11,10 +11,18 @@ namespace ALKAROS.Host.Experience.NfcOrdering;
 /// V12-NFC-001. A customer tapping a table's NFC tag reaches this store
 /// directly — there is no cashier/waiter session, no permission check, and
 /// no relay (this only ever runs over the restaurant's own local network,
-/// see `docs/architecture/qr-relay-provider-decision.md`). Unlike the QR
-/// channel (`V12-QRO-*`, still blocked on the relay), an NFC tap is treated
-/// as a trusted, physically-present order: it walks the order straight to
-/// `Accepted` instead of waiting in `PendingConfirmation` for a waiter.
+/// see `docs/architecture/qr-relay-provider-decision.md`). An NFC tap is
+/// treated as a trusted, physically-present order: it walks the order
+/// straight to `Accepted` instead of waiting in `PendingConfirmation` for a
+/// waiter — <b>unless</b> the cart contains an age-restricted item
+/// (`V12-NFC-002`, `catalog.products.is_age_restricted`), in which case the
+/// "trusted immediate accept" shortcut is withheld the same way a QR order
+/// is: the order stops at `PendingConfirmation` and the table becomes
+/// `Reserved`, per `docs/domain/table-reservation-policy.md`'s
+/// "PendingConfirmation moves the table to Reserved" rule — the order's own
+/// PendingConfirmation state is what owns the hold; no separate
+/// `table_mgmt.table_reservations` row is created (that record is the
+/// cashier-scheduled-reservation concept, a different one).
 /// </summary>
 public sealed class NfcOrderingStore
 {
@@ -56,13 +64,15 @@ public sealed class NfcOrderingStore
             var catalog = await ResolveCatalogProductsAsync(connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
             var now = DateTimeOffset.UtcNow;
             var orderId = Guid.NewGuid();
+            var hasAgeRestrictedItem = request.Items.Any(line =>
+                catalog.TryGetValue(line.ProductId, out var product) && product.IsAgeRestricted);
 
             var items = new List<OrderItem>();
             foreach (var line in request.Items)
             {
                 if (!catalog.TryGetValue(line.ProductId, out var product))
                     throw new KeyNotFoundException($"Product {line.ProductId} was not found or has no active price.");
-                var (productName, unitPrice, taxRate) = product;
+                var (productName, unitPrice, taxRate, _) = product;
 
                 items.Add(new OrderItem(
                     line.Id,
@@ -116,15 +126,20 @@ public sealed class NfcOrderingStore
 
             if (selfCheckIn)
             {
+                // An age-restricted cart never gets the trusted-channel
+                // shortcut, so the table must not look freely occupied
+                // either — it holds as `Reserved`, exactly like an
+                // unconfirmed QR order (table-reservation-policy.md).
                 await using var checkInCommand = new NpgsqlCommand(
                     """
                     UPDATE table_mgmt.tables
                     SET current_order_id = @order_id,
-                        current_status = 'Occupied',
+                        current_status = @status,
                         row_version = row_version + 1
                     WHERE table_id = @table_id;
                     """, connection, transaction);
                 checkInCommand.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+                checkInCommand.Parameters.Add("status", NpgsqlDbType.Text).Value = hasAgeRestrictedItem ? "Reserved" : "Occupied";
                 checkInCommand.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
                 await checkInCommand.ExecuteNonQueryAsync(cancellationToken);
             }
@@ -142,11 +157,17 @@ public sealed class NfcOrderingStore
     /// PendingConfirmation -&gt; Accepted. No new transition is invented
     /// (<see cref="Order.CanTransitionTo"/> is unchanged); this only
     /// chooses, for the trusted NFC channel, to walk the existing chain
-    /// immediately instead of stopping at PendingConfirmation for a waiter.
-    /// Safe to call again on an order that already reached (or passed)
-    /// Accepted — every step is a no-op once the order is past it, which is
-    /// what makes an idempotent submission replay correct even if a
-    /// previous attempt crashed partway through this walk.
+    /// immediately instead of stopping at PendingConfirmation for a waiter —
+    /// unless the order's own items include an age-restricted product
+    /// (`V12-NFC-002`), in which case the walk deliberately stops at
+    /// PendingConfirmation, same as any other channel would. Re-checked
+    /// against the order's persisted items on every call (including a
+    /// replay) rather than threaded through as a parameter, so a replay
+    /// after a crash mid-walk makes the exact same decision the original
+    /// attempt did. Safe to call again on an order that already reached (or
+    /// passed) Accepted, or that is deliberately parked at
+    /// PendingConfirmation — every step is a no-op once the order is past
+    /// it (or not meant to go further).
     /// </summary>
     private async Task<OrderDto> LoadDtoAfterEnsuringAcceptedAsync(
         Guid orderId, Guid tableId, Guid submissionId, CancellationToken cancellationToken)
@@ -170,10 +191,28 @@ public sealed class NfcOrderingStore
         }
 
         order = await TryTransitionAsync(order, OrderState.PendingConfirmation, "NFC güvenilir kanal.", cancellationToken);
-        order = await TryTransitionAsync(order, OrderState.Accepted, "NFC güvenilir kanal - onay gerekmez.", cancellationToken);
+
+        var hasAgeRestrictedItem = await AnyItemIsAgeRestrictedAsync(order, cancellationToken);
+        if (!hasAgeRestrictedItem)
+        {
+            order = await TryTransitionAsync(order, OrderState.Accepted, "NFC güvenilir kanal - onay gerekmez.", cancellationToken);
+        }
 
         var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
         return MapToDto(order, tableNumber);
+    }
+
+    private async Task<bool> AnyItemIsAgeRestrictedAsync(Order order, CancellationToken cancellationToken)
+    {
+        var productIds = order.Items.Select(i => i.ProductId).Distinct().ToArray();
+        if (productIds.Length == 0)
+            return false;
+
+        await using var cmd = _dataSource.CreateCommand(
+            "SELECT 1 FROM catalog.products WHERE product_id = ANY(@product_ids) AND is_age_restricted LIMIT 1;");
+        cmd.Parameters.AddWithValue("product_ids", productIds);
+        var result = await cmd.ExecuteScalarAsync(cancellationToken);
+        return result is not null;
     }
 
     /// <summary>
@@ -228,17 +267,17 @@ public sealed class NfcOrderingStore
         return (reader.GetString(0), reader.GetString(1), reader.GetBoolean(2));
     }
 
-    private static async Task<Dictionary<Guid, (string Name, decimal Price, decimal TaxRate)>> ResolveCatalogProductsAsync(
+    private static async Task<Dictionary<Guid, (string Name, decimal Price, decimal TaxRate, bool IsAgeRestricted)>> ResolveCatalogProductsAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, IEnumerable<Guid> productIds, CancellationToken cancellationToken)
     {
         var ids = productIds.Distinct().ToArray();
-        var result = new Dictionary<Guid, (string, decimal, decimal)>();
+        var result = new Dictionary<Guid, (string, decimal, decimal, bool)>();
         if (ids.Length == 0)
             return result;
 
         await using var cmd = new NpgsqlCommand(
             """
-            SELECT p.product_id, p.name, p.current_price, COALESCE(t.vat_rate, 0)
+            SELECT p.product_id, p.name, p.current_price, COALESCE(t.vat_rate, 0), p.is_age_restricted
             FROM catalog.products p
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
             WHERE p.product_id = ANY(@product_ids) AND p.active AND p.current_price IS NOT NULL;
@@ -247,7 +286,7 @@ public sealed class NfcOrderingStore
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
-            result[reader.GetGuid(0)] = (reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3));
+            result[reader.GetGuid(0)] = (reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3), reader.GetBoolean(4));
         }
 
         return result;

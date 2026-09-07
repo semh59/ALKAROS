@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "083"
+    "max": "084"
   },
   "migrations": [
     {
@@ -716,6 +716,14 @@
       "phase": "B",
       "tables": [
         "relay_tunnel"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "084",
+      "phase": "B",
+      "tables": [
+        "products"
       ],
       "deferredConstraints": []
     }
