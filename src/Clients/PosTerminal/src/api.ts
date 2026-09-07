@@ -148,7 +148,7 @@ export const api = {
       method: "POST",
       body: "{}",
     }),
-  // V14-NFC-001/004: no terminalId, no session — the tapped table's own id
+  // V12-NFC-001/004: no terminalId, no session — the tapped table's own id
   // is the only context this unauthenticated surface has.
   nfcCatalog: (tableId: string) =>
     request<CatalogProduct[]>(`/api/v1/nfc/tables/${tableId}/catalog`),
@@ -161,7 +161,7 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ items, id: submissionId }),
     }),
-  // V14-QRT-003: manager-only. saveRelayCredential never returns the value
+  // V12-QRT-003: manager-only. saveRelayCredential never returns the value
   // back; relayCredentialStatus reports only configured/updatedAt.
   saveRelayCredential: (
     terminalId: string,

@@ -47,7 +47,7 @@ geldiklerinde ve o kanalın güven seviyesine göre uygulanan kuralda.
 - QR'dan gelen bir sipariş, masayı **hemen `Reserved`** yapar (`Available`
   ise) — "dolu" değil ama "başka bir misafire verilebilir" de değil; stok/
   porsiyon rezervasyonu **henüz yapılmaz** (yalnız onay anında, bkz.
-  `V14-QRO-003`). Sipariş `PendingConfirmation` durumunda garsonun onay
+  `V12-QRO-003`). Sipariş `PendingConfirmation` durumunda garsonun onay
   kuyruğuna düşer.
 - Garson müşteriyle **sözlü teyit** eder (kim, ne, kaç kişi) ve sistemde
   onaylar → bu anda: masa `Reserved → Occupied` olur, sipariş `Accepted`'a

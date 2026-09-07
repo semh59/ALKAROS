@@ -137,7 +137,7 @@ Deterministic semantics:
 ## Affected tasks
 
 - Dependencies: V0-ARC-001 (plan change C38, 2026-08-03: V0-ARC-003 removed).
-- Consumers: V0-ARC-006, V0-ARC-008, V0-SEC-001, V0-DOC-001, V12-PAY-002,
+- Consumers: V0-ARC-006, V0-ARC-008, V0-SEC-001, V0-DOC-001, V13-PAY-002,
   V20-DOC-002.
 - Handoff: None.
 

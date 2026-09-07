@@ -26,7 +26,7 @@ public static class ApplicationPermissions
     public const string BillsDiscount = "bills.discount";
     public const string CashDrawer = "cash.drawer";
     public const string ReportsView = "reports.view";
-    /// <summary>V14-QRT-003: configuring a third-party integration credential (e.g. the QR relay provider token) — manager-only, no escalation path.</summary>
+    /// <summary>V12-QRT-003: configuring a third-party integration credential (e.g. the QR relay provider token) — manager-only, no escalation path.</summary>
     public const string IntegrationsManage = "integrations.manage";
 
     public const string RoleWaiter = "waiter";
@@ -73,7 +73,7 @@ public static class ApplicationPermissions
             [RoleSupervisor] = new HashSet<string>(
                 EveryRoleTakesOrders.Concat(CashierFloorSet).Concat(SupervisorEscalations),
                 StringComparer.Ordinal),
-            // V14-QRT-003: the first manager-exclusive grant — every prior
+            // V12-QRT-003: the first manager-exclusive grant — every prior
             // tier here was identical to supervisor's. Configuring a
             // third-party relay credential is a one-time setup action with
             // no requester/approver dynamic (unlike bills.void/comp, which

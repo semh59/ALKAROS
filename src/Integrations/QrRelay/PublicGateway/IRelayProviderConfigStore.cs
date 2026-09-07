@@ -2,7 +2,7 @@ namespace ALKAROS.QrRelay.PublicGateway;
 
 /// <summary>
 /// Non-secret Cloudflare configuration a tunnel/DNS API call needs
-/// alongside the credential V14-QRT-003 already stores encrypted
+/// alongside the credential V12-QRT-003 already stores encrypted
 /// (account/zone ids are not sensitive — Cloudflare treats them as public
 /// identifiers, unlike the API token itself).
 /// </summary>

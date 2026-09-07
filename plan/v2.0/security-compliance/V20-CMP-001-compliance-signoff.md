@@ -43,8 +43,8 @@ adlandırılmış, tarihli onayı toplayın.
 - V1-BIL-001
 - V1-BIL-003
 - V1-CAT-002
-- V13-INV-002
-- V12-FSC-003
+- V14-INV-002
+- V13-FSC-003
 - V15-KVK-001
 - V15-KVK-002
 - V20-INT-001
@@ -60,7 +60,7 @@ adlandırılmış, tarihli onayı toplayın.
 
 - Uygulanabilir her yükümlülüğe, onay ve uygulama kanıtları adı verilmiştir; çözülmemiş veya süresi dolmuş herhangi bir
   onay kapıyı bloke eder.
-- `V12-FSC-003` kanıtlı `NotApplicable` ise adisyon lifecycle yükümlülüğü sign-off'ta adlandırılmış dated decision ile
+- `V13-FSC-003` kanıtlı `NotApplicable` ise adisyon lifecycle yükümlülüğü sign-off'ta adlandırılmış dated decision ile
   kapanır; `V20-INT-001` veya `V20-INT-002` kanıtlı `NotApplicable` ise ilgili provider certification yükümlülüğü
   benzer şekilde ele alınır; kalan yükümlülükler onay ve uygulama kanıtlarıyla yine doğrulanır.
 - `V20-UAT-002` kanıtlı `NotApplicable` ise finance/inventory acceptance onayı sign-off'ta adlandırılmış dated decision

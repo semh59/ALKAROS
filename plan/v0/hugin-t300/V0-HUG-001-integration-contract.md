@@ -69,8 +69,8 @@ model, firmware ve topology düzeyinde gerçek doküman ve erişimle doğrulamak
 
 ## Handoff
 
-- V12-HUG-001
-- V12-HUG-002
-- V12-HUG-003
-- V12-HUG-004
-- V12-FSC-004
+- V13-HUG-001
+- V13-HUG-002
+- V13-HUG-003
+- V13-HUG-004
+- V13-FSC-004

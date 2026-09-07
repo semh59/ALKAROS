@@ -32,7 +32,7 @@ History'yi koruyarak open operational Order/Bill ilişkisini Table'lar arasında
 
 ## Out of scope
 
-- Çoklu table birleştirme ile pending, unknown veya partially-paid payment politikası; bunların sahibi `V12-TBL-001`dir.
+- Çoklu table birleştirme ile pending, unknown veya partially-paid payment politikası; bunların sahibi `V13-TBL-001`dir.
 
 ## Dependencies
 
@@ -59,4 +59,4 @@ History'yi koruyarak open operational Order/Bill ilişkisini Table'lar arasında
 
 - V1-TBL-003
 - V1-TBL-005
-- V12-TBL-001
+- V13-TBL-001

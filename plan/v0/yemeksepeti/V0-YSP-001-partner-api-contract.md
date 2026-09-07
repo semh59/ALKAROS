@@ -52,6 +52,6 @@ Partner erişimi, webhook kimliği, retry, order status, cancellation ve catalog
 
 ## Handoff
 
-- V14-ONL-001
-- V14-ONL-002
-- V14-MAP-002
+- V12-ONL-001
+- V12-ONL-002
+- V12-MAP-002

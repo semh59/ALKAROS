@@ -69,7 +69,7 @@ uniqueness, double-billing risk; rejected.
 
 - Handoff: V1-BIL-001, V1-BIL-002.
 - Consumers: V1-TBL-001 (table merge), V0-DOM-003 (refund ledger), V0-DAT-002
-  (catalog), V12-PAY-001 (payment allocation on Bill payable).
+  (catalog), V13-PAY-001 (payment allocation on Bill payable).
 
 ## Acceptance evidence
 

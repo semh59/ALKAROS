@@ -8,7 +8,7 @@ using ALKAROS.SensitiveData;
 using Xunit;
 
 /// <summary>
-/// V14-QRT-003, against a real Postgres database. `relay_credentials` holds
+/// V12-QRT-003, against a real Postgres database. `relay_credentials` holds
 /// a single well-known row, so — unlike the table-token tests — each test
 /// here gets its own fresh database (xUnit constructs a new instance of
 /// this class, and so a new <see cref="RelayCredentialTestDatabase"/>, per

@@ -287,7 +287,7 @@ yalnız değişmez başlangıç arşividir ve aktif kapsam değildir.
 
 Mevcut koşullu Markdown sayısı artık sabit değil: `verify-manifest` sayıyı
 diskteki `plan/**/*.md` dosyalarından türetir; meal-card provider kararı
-eklendikçe `V12-MCD-1xx` dosyaları diskte göründüğünde sayı otomatik artar.
+eklendikçe `V13-MCD-1xx` dosyaları diskte göründüğünde sayı otomatik artar.
 Plan dosyası eklemek/çıkarmak için plan-audit aracında hard-code düzenlemesi
 gerekmez. Licensing task dosyaları `NotApplicable` sonucunda da korunur;
 bilinmeyen karar için sayı uydurulmaz.

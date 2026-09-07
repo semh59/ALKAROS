@@ -53,7 +53,7 @@ Outgoing/incoming e-belge, registered-user query, idempotency, status query ve t
 
 ## Handoff
 
-- V13-QNB-001
-- V13-QNB-002
-- V13-QNB-003
-- V13-QNB-004
+- V14-QNB-001
+- V14-QNB-002
+- V14-QNB-003
+- V14-QNB-004

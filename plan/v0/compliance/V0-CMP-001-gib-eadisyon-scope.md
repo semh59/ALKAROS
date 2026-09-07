@@ -62,4 +62,4 @@ doğrulamak.
 
 - V0-HUG-001
 - V0-QNB-001
-- V12-FSC-001
+- V13-FSC-001

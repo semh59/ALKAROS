@@ -6,7 +6,7 @@ namespace ALKAROS.Host.Experience.NfcOrdering.Tests;
 /// <summary>
 /// Isolated database with catalog, tables and orders — everything the
 /// unauthenticated NFC ordering endpoint touches. No identity/authorization
-/// tables: this surface has no session of any kind (V14-NFC-001).
+/// tables: this surface has no session of any kind (V12-NFC-001).
 /// </summary>
 public sealed class NfcOrderingTestDatabase : PgTestDatabase
 {

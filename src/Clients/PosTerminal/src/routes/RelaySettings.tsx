@@ -8,13 +8,13 @@ type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
 const IntegrationsManage = "integrations.manage";
 
 /**
- * V14-QRT-003 (token, encrypted, never shown again) + V14-QRT-001
+ * V12-QRT-003 (token, encrypted, never shown again) + V12-QRT-001
  * (Cloudflare account id/zone id/base domain — not secret, so these do
  * come back and stay editable). `/settings/relay` — its own URL for now,
  * the same pattern as `/reservations` and `/display`; it moves into the
  * real back-office navigation once that module is built. Lets a manager
  * configure the whole relay connection entirely from the interface — no
- * codebase, no terminal — matching the "kolay B" model (V14-QRT-002) and
+ * codebase, no terminal — matching the "kolay B" model (V12-QRT-002) and
  * Semih's explicit request that the credential itself be settable from
  * here rather than baked into an installer.
  */

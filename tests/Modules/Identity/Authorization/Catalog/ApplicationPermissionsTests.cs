@@ -80,7 +80,7 @@ public sealed class ApplicationPermissionsTests
     [Fact]
     public void ManagerHoldsEverySupervisorGrantPlusIntegrationsManageOnly()
     {
-        // V14-QRT-003: the first manager-exclusive grant — every tier before
+        // V12-QRT-003: the first manager-exclusive grant — every tier before
         // it was identical to supervisor's. integrations.manage (configuring
         // a third-party relay credential) is a one-time setup action with no
         // requester/approver dynamic, unlike bills.void/comp/discount, which

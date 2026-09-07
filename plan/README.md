@@ -10,9 +10,9 @@ teslimatın tamamlanma kanıtıdır; bağımsız ikinci bir özellik değildir.
 1. `v0` - Domain kapanışı, dış bağımlılık doğrulaması ve uygulanabilirlik kapısı
 2. `v1` - Temel restoran operasyonu
 3. `v1.1` - Menü, reçete, üretim ve stok
-4. `v1.2` - Ödeme, mali belge, kasa ve meal card
-5. `v1.3` - Cari hesap, periyodik faturalama, QNB ve gelen fatura
-6. `v1.4` - QR ve online sipariş kanalları
+4. `v1.2` - QR ve online sipariş kanalları
+5. `v1.3` - Ödeme, mali belge, kasa ve meal card
+6. `v1.4` - Cari hesap, periyodik faturalama, QNB ve gelen fatura
 7. `v1.5` - Güvenlik, dayanıklılık, mutabakat ve operasyonel olgunluk
 8. `v2.0` - Üretim kabulü ve kontrollü canlıya geçiş
 
@@ -33,7 +33,7 @@ teslimatın tamamlanma kanıtıdır; bağımsız ikinci bir özellik değildir.
 - `Blocked`: Somut dış bağımlılık veya karara bağlı engel var.
 - `NotApplicable`: Yalnız koşullu bir görev için; tamamlanmış ve tarihli decision
   kanıtı capability/policy'nin uygulanmadığını açıkça gösteriyorsa kullanılır
-  (ör. `GATE-V12-MEAL-CARD-ADAPTERS` altında boş provider listesi). Dosya
+  (ör. `GATE-V13-MEAL-CARD-ADAPTERS` altında boş provider listesi). Dosya
   silinmez; `Acceptance evidence`, karar kimliği, tarih, approver ve neden
   kod/artifact üretilmediğini kaydeder. `Blocked` kısaltması değildir.
 - `Done`: Kabul kanıtı gerçek komut, test, migration veya imzalı entegrasyon

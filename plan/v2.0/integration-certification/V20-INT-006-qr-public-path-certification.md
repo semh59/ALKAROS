@@ -32,13 +32,13 @@ sertifikalandırmak.
 
 ## Dependencies
 
-- V14-QRS-001
-- V14-QRS-002
-- V14-QRS-003
-- V14-QRT-001
-- V14-CWB-001
-- V14-CWB-002
-- V14-QRO-001
+- V12-QRS-001
+- V12-QRS-002
+- V12-QRS-003
+- V12-QRT-001
+- V12-CWB-001
+- V12-CWB-002
+- V12-QRO-001
 - V0-CMP-005
 
 ## Deliverables

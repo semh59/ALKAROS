@@ -54,4 +54,4 @@ Yalnız onaylanmış discount, fee ve tip line type'larını tax ve authorizatio
 
 ## Handoff
 
-- V12-ALC-002
+- V13-ALC-002

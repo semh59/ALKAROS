@@ -37,13 +37,13 @@
 | `GATE-V11-ENTRY` | `GATE-V1-EXIT` kapanır. |
 | `GATE-V11-EXIT` | V1.1 görevleri ve stok/reçete invariant kanıtları tamamlanır. **2026-09-06 (Semih onayıyla, "V1.1 bitti mi bir kontrol et... onu kontrollü düzelterek maine alalım" — `docs/audit/INDEPENDENT_DEEP_AUDIT_2026-09-06.md`'nin KRİTİK bulduğu migration ID çakışması — V1'in 054-056'sı ile V1.1'in bağımsız numaralandırdığı 054-056'sı aynı pozisyonları paylaşıyordu — ve V1.1'in 17 migrasyonunun canlı kompozisyona (`order.json`/`compose.yaml`) hiç bağlı olmaması, `V11-RMD-001`) kapatıldı: V1.1 057-073'e kaydırıldı, tam 001-073 zinciri gerçek Postgres'e karşı uçtan uca doğrulandı, 79/79 test projesi sıfır başarısız. Kapı `V11-GOV-001` ile henüz mühürlenmeden bırakıldı — 5 modülün (`Inventory`/`Recipes`/`Production`/`Purchasing`/`Menu`) mimariden (`IModule`/`ModuleRegistry`/Host) tamamen görünmez olması ve doğrulanmamış cross-schema yazma iddiaları açıktı.** **2026-09-06 (Semih onayıyla, düzeltme planının devamı — bu 5 modül `IModule` uygulayıp `ModuleRegistry.DefaultCatalog`'a (13→18) ve `ALKAROS.Host.csproj`'a eklendi; `Inventory→Recipes` tek gerçek proje-referans ihlali `IUnitConverter` ailesinin yeni bir `ALKAROS.Measurements` building block'una taşınmasıyla kalktı; `tools/consistency-audit`'in `MODULE_SCHEMA` sözlüğü bu 5 modülü hiç içermediği için cross-schema yazma denetimi onları tamamen atlıyordu — sözlüğe eklenince `ProductionStockEffectService`'in 4, `PurchasingService.ReceiveGoodsAsync`'in 1 yerde `inventory.*`'a ham SQL yazdığı gerçekten doğrulandı (V0-ARC-001'in 2026-08-03'te onaylayıp hiç inşa etmediği Production→Inventory kenarı ve yeni eklenen Purchasing→Inventory kenarı üzerinden) ve `IStockBalanceRepository`/`IStockMovementRepository`'nin çağıranın kendi connection/transaction'ını alan yeni overload'larıyla düzeltildi; aynı tarama 21 yerde LIMIT eksikliği de buldu, hepsi düzeltildi, `V11-RMD-002`) `V11-GOV-002` ile kaydedildi; `V11-GOV-003` ile KESİN OLARAK MÜHÜRLENDİ — V1.1'in 25 görevinin tamamı `Done`, mimari görünürlük ve cross-schema yazma bulguları giderildi. `master`'a birleştirme kararı ayrı, Semih'i bekliyor.** |
 | `GATE-V12-ENTRY` | `GATE-V11-EXIT` kapanır. |
-| `GATE-V12-MEAL-CARD-ADAPTERS` | V0-MCD approved provider listesi ve her provider için generated adapter Done olur; liste boşsa downstream task'lar tarihli NotApplicable olur. |
-| `GATE-V12-FSC-STRATEGY` | V0-CMP-001 strategy kararı ve yalnız seçilen Hugin veya QNB contract kanıtı Done olur; uygulanmayan branch tarihli NotApplicable olur. |
-| `GATE-V12-EXIT` | V1.2 ödeme, fiscal ve cash görevlerinin uygulanabilir kapsamı tamamlanır. |
+| `GATE-V12-EXIT` | V1.2 public channel, stock race ve reconciliation kanıtları tamamlanır. |
 | `GATE-V13-ENTRY` | `GATE-V12-EXIT` kapanır. |
-| `GATE-V13-EXIT` | V1.3 hesap ve invoicing görevlerinin uygulanabilir kapsamı tamamlanır. |
+| `GATE-V13-MEAL-CARD-ADAPTERS` | V0-MCD approved provider listesi ve her provider için generated adapter Done olur; liste boşsa downstream task'lar tarihli NotApplicable olur. |
+| `GATE-V13-FSC-STRATEGY` | V0-CMP-001 strategy kararı ve yalnız seçilen Hugin veya QNB contract kanıtı Done olur; uygulanmayan branch tarihli NotApplicable olur. |
+| `GATE-V13-EXIT` | V1.3 ödeme, fiscal ve cash görevlerinin uygulanabilir kapsamı tamamlanır. |
 | `GATE-V14-ENTRY` | `GATE-V13-EXIT` kapanır. |
-| `GATE-V14-EXIT` | V1.4 public channel, stock race ve reconciliation kanıtları tamamlanır. |
+| `GATE-V14-EXIT` | V1.4 hesap ve invoicing görevlerinin uygulanabilir kapsamı tamamlanır. |
 | `GATE-V15-ENTRY` | `GATE-V14-EXIT` kapanır. |
 | `GATE-V15-EXIT` | V1.5 hardening, recovery ve runbook doğrulamaları tamamlanır. |
 | `GATE-V20-ENTRY` | `GATE-V15-EXIT` kapanır. |
@@ -151,14 +151,14 @@ behavior başlatmaz; Aşama 3 kabul zinciri sırası değişmez.
 <!-- V0_DEFERRED_TASKS:START -->
 | Task ID | Approval date | Reopen stage | Required evidence | Gate closure evidence |
 | --- | --- | --- | --- | --- |
-| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |
-| `V0-QNB-001` | `2026-08-03` | `V13` | Gerçek QNB provider contract/erişim kanıtı | Not V0 gate closure evidence |
-| `V0-YSP-001` | `2026-08-03` | `V12` | Gerçek Yapı Kredi provider contract/erişim kanıtı | Not V0 gate closure evidence |
-| `V0-MCD-001` | `2026-08-03` | `V12` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |
-| `V0-PRN-001` | `2026-08-03` | `V14` | Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı | Not V0 gate closure evidence |
-| `V0-QRG-001` | `2026-08-03` | `V14` | Gerçek QR relay public kanal onay kanıtı | Not V0 gate closure evidence |
-| `V0-CMP-001` | `2026-08-03` | `V12` | Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı | Not V0 gate closure evidence |
-| `V0-SEC-001` | `2026-08-03` | `V14` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |
+| `V0-HUG-001` | `2026-08-03` | `V13` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |
+| `V0-QNB-001` | `2026-08-03` | `V14` | Gerçek QNB provider contract/erişim kanıtı | Not V0 gate closure evidence |
+| `V0-YSP-001` | `2026-08-03` | `V12` | Gerçek Yemeksepeti partner API erişim kanıtı | Not V0 gate closure evidence |
+| `V0-MCD-001` | `2026-08-03` | `V13` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |
+| `V0-PRN-001` | `2026-08-03` | `V12` | Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı | Not V0 gate closure evidence |
+| `V0-QRG-001` | `2026-08-03` | `V12` | Gerçek QR relay public kanal onay kanıtı | Not V0 gate closure evidence |
+| `V0-CMP-001` | `2026-08-03` | `V13` | Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı | Not V0 gate closure evidence |
+| `V0-SEC-001` | `2026-08-03` | `V12` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |
 | `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |
 <!-- V0_DEFERRED_TASKS:END -->
 

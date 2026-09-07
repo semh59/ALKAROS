@@ -72,9 +72,9 @@ row.
 
 ## Affected tasks
 
-- Handoff: V12-ALC-001, V12-ALC-002.
+- Handoff: V13-ALC-001, V13-ALC-002.
 - Consumers: V0-DOM-001 (Payment states), V0-DOM-003 (reversals),
-  V12-PAY-001, V12-PAY-002, V1-BIL-001.
+  V13-PAY-001, V13-PAY-002, V1-BIL-001.
 
 ## Acceptance evidence
 

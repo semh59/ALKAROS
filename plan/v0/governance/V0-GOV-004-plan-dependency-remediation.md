@@ -20,13 +20,13 @@ ile duzeltmek.
 
 - `plan/v0/domain-contracts/V0-DOM-011-printer-routing-precedence.md`
 - `plan/v1.1/portion-reservation/V11-RSV-003-cancellation-and-waste.md`
-- `plan/v1.2/fiscal/V12-FSC-003-adisyon-strategy.md`
-- `plan/v1.3/customer-account/V13-ACC-004-account-payment-posting.md`
-- `plan/v1.3/customer-account/V13-ACC-009-independent-account-receipt.md`
-- `plan/v1.3/customer-data/V13-CST-001-customer-pii-schema.md`
-- `plan/v1.4/online-ordering/V14-ONL-003-status-and-cancellation-sync.md`
-- `plan/v1.4/shared-stock/V14-STK-001-cross-channel-last-portion.md`
-- `plan/v1.4/online-operations-ui/V14-OUI-001-online-order-operations.md`
+- `plan/v1.3/fiscal/V13-FSC-003-adisyon-strategy.md`
+- `plan/v1.4/customer-account/V14-ACC-004-account-payment-posting.md`
+- `plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md`
+- `plan/v1.4/customer-data/V14-CST-001-customer-pii-schema.md`
+- `plan/v1.2/online-ordering/V12-ONL-003-status-and-cancellation-sync.md`
+- `plan/v1.2/shared-stock/V12-STK-001-cross-channel-last-portion.md`
+- `plan/v1.2/online-operations-ui/V12-OUI-001-online-order-operations.md`
 - `plan/v1.5/backup-recovery/V15-BKP-001-encrypted-offsite-backup.md`
 - `plan/v1.5/backup-recovery/V15-BKP-002-restore-automation.md`
 - `plan/v2.0/acceptance/V20-UAT-001-service-flow-acceptance.md`

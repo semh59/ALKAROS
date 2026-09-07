@@ -53,7 +53,7 @@ yapısını uygulamak.
 
 ## Handoff
 
+- V13-REC-001
+- V14-QNB-004
 - V12-REC-001
-- V13-QNB-004
-- V14-REC-001
 - V15-REC-001

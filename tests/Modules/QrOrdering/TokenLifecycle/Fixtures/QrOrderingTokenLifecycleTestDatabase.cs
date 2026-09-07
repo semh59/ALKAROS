@@ -4,7 +4,7 @@ using NpgsqlTypes;
 namespace ALKAROS.QrOrdering.TokenLifecycle.Tests.Fixtures;
 
 /// <summary>
-/// A table_mgmt + qr_ordering test database for V14-QRS-001: table_tokens
+/// A table_mgmt + qr_ordering test database for V12-QRS-001: table_tokens
 /// FK-references table_mgmt.tables, so both migrations are applied.
 /// </summary>
 public sealed class QrOrderingTokenLifecycleTestDatabase : PgTestDatabase

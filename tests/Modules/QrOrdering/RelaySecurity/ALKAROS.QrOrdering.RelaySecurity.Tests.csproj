@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <None Include="..\..\..\..\database\migrations\V1\V1-TBL-001\010-tables.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="..\..\..\..\database\migrations\V14\V14-QRS-001\078-qr-ordering-table-tokens.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="..\..\..\..\database\migrations\V14\V14-QRS-002\081-qr-ordering-relay-request-nonces.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V12\V12-QRS-001\078-qr-ordering-table-tokens.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V12\V12-QRS-002\081-qr-ordering-relay-request-nonces.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

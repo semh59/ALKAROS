@@ -180,7 +180,7 @@ public static partial class DualScreenApplication
                 FixedWindow(RoutePartition(context, "terminalId", "terminal-read"), 240));
             rateLimiter.AddPolicy("terminal-write", context =>
                 FixedWindow(RoutePartition(context, "terminalId", "terminal-write"), 120));
-            // V14-NFC-001: unauthenticated customer-facing surface — unlike
+            // V12-NFC-001: unauthenticated customer-facing surface — unlike
             // every other write policy above (partitioned by an
             // authenticated terminal/display id), this partitions by table
             // id since there is no session to key on. A generous-but-bounded

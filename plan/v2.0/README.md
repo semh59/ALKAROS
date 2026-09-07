@@ -16,7 +16,7 @@ hazırlamak.
 - Tüm release gate görevleri `Done`; koşullu task yalnız kanıtlı `NotApplicable` olabilir.
 - Migration, rollback, restore, security ve compliance onayları mevcut.
 - `INT-001`/`INT-002` görevleri ya gerçek sandbox/cihaz kanıtıyla `Done` ya da
-  `GATE-V12-FSC-STRATEGY` kararına dayanan tarihli `NotApplicable` olarak kapanır.
+  `GATE-V13-FSC-STRATEGY` kararına dayanan tarihli `NotApplicable` olarak kapanır.
 - Yemeksepeti, meal-card, printer ve QR public path certification görevleri gerçek
   sandbox/cihaz/ağ kanıtıyla `Done`.
 - Non-production pilot rehearsal ölçümleri kabul sınırları içinde.

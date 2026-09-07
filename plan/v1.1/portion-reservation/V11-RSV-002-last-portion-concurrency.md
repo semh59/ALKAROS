@@ -53,4 +53,4 @@ Rakip kanalların aşırı satış yapmaması için satır kilitleme/sürüm kon
 
 ## Handoff
 
-- V14-STK-001
+- V12-STK-001

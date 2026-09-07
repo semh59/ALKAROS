@@ -35,9 +35,9 @@ yayınlayın.
 - V1-CUI-003
 - V1-WTR-003
 - V11-UI-003
-- V12-PUI-003
-- V13-UI-003
-- V14-OUI-001
+- V13-PUI-003
+- V14-UI-003
+- V12-OUI-001
 
 ## Deliverables
 
@@ -47,7 +47,7 @@ yayınlayın.
 
 - Belgelenen her eylem release adayında başarıyla yeniden oynatılır; hiçbir talimat o rol için mevcut olmayan bir izni
   gerektirmez.
-- `V12-PUI-003` kanıtlı `NotApplicable` ise refund/exception UI talimatları kılavuza dahil edilmez; belgelenen kalan
+- `V13-PUI-003` kanıtlı `NotApplicable` ise refund/exception UI talimatları kılavuza dahil edilmez; belgelenen kalan
   eylemler release adayında yine yeniden oynatılır.
 
 ## Handoff

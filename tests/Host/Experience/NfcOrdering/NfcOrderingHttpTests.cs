@@ -13,7 +13,7 @@ using Xunit;
 namespace ALKAROS.Host.Experience.NfcOrdering.Tests;
 
 /// <summary>
-/// V14-NFC-001: an NFC tap has no session of any kind — every request here
+/// V12-NFC-001: an NFC tap has no session of any kind — every request here
 /// is anonymous, unlike the cashier/waiter-authenticated table-draft tests
 /// it otherwise mirrors (V1-RMD-123's idempotency pattern).
 /// </summary>

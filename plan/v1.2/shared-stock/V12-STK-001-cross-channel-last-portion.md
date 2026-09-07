@@ -1,0 +1,58 @@
+# V12-STK-001 - Implement cross-channel last-portion arbitration
+
+- Task ID: V12-STK-001
+- Status: Planned
+- Assignee: Unassigned (exactly one person)
+- Work type: implementation
+- Surface state: Planned
+
+## Source basis
+
+- PDF:I.34-I.37
+- PDF:II.2.19
+- PDF:II.7.4
+- PDF:III.22
+
+## Goal
+
+Cashier, waiter, QR ve online channel için tek channel-neutral reservation command ve ortak last-portion arbitration
+sonucu sağlamak.
+
+## Owned surface
+
+- `src/Modules/Inventory/CrossChannelReservation/**`, `tests/Modules/Inventory/CrossChannelReservation/**`
+- Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+
+## In scope
+
+- Kanaldan bağımsız komut, eşzamanlılık sonuç eşlemesi ve provider reddetme telafisi.
+- Kanal reddi/iptal telafisi V12-ONL-003 status sync sözleşmesi üzerinden yapılır; bu task yalnız rezervasyon sonucunu
+  üretir.
+
+## Out of scope
+
+- Rezervasyon yaşam döngüsü dahili bileşenleri ve provider status aktarımı.
+
+## Dependencies
+
+- V11-RSV-002
+- V11-RSV-003
+- V0-YSP-001
+
+## Deliverables
+
+- `src/Modules/Inventory/CrossChannelReservation/**` altında Goal kapsamını uygulayan production code ve task-specific
+  automated test assets.
+- Başarı, ret, replay/race ve güvenlik testleri.
+- Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.
+
+## Acceptance evidence
+
+- Tek bölümlü paralel dört kanallı test, bir rezervasyon ve üç açık OutOfStock/red sonucu verir.
+- Online iptal sonucu V12-ONL-003 üzerinden tüketilir; Release/Waste yaşam döngüsü kararı yalnız V11-RSV-003
+  kanıtıyla doğrulanır ve bu task aynı etkileri yeniden üretmez.
+
+## Handoff
+
+- V12-QRO-003
+- V12-ONL-002

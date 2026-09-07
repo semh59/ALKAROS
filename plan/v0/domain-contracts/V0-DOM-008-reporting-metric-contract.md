@@ -52,7 +52,7 @@ tanımlamak.
 
 - V1-RPT-001
 - V11-RPT-001
-- V12-RPT-001
 - V13-RPT-001
 - V14-RPT-001
+- V12-RPT-001
 - V15-RPT-001

@@ -1,6 +1,6 @@
 # QR Relay Provider and Onboarding Ownership Model
 
-> **Task:** V14-QRT-002
+> **Task:** V12-QRT-002
 > **Status:** Done
 > **Source basis:** PO:2026-09-07
 > **Approver:** Semih — 2026-09-07
@@ -52,7 +52,7 @@ domain altında, restoran başına otomatik alt-alan adı ve tünel kaydıyla.
 
 ## 4. Etkilenen task ID'leri
 
-- `V14-QRT-001` — bu kararın somutlaştırdığı provider/model ile, connector
+- `V12-QRT-001` — bu kararın somutlaştırdığı provider/model ile, connector
   implementasyonunu `cloudflared` servis kaydı + Cloudflare Tunnel API
   entegrasyonu olarak uygular (görev dosyası buna göre güncellendi).
 - `V0-QRG-001` — bu karardaki provider/model ile test edilecek; gerçek

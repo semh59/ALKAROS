@@ -61,5 +61,5 @@ Açık mutfak durumunu kullanarak mutfak öncesi iptali Release'ye ve hazırlık
 ## Handoff
 
 - V11-MNU-002
-- V14-STK-001
-- V12-ALC-003
+- V12-STK-001
+- V13-ALC-003

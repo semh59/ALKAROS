@@ -5,7 +5,7 @@
 `<VERSION>-<MODULE>-<NUMBER>`
 
 Sürüm kodları: `V0`, `V1`, `V11`, `V12`, `V13`, `V14`, `V15`, `V20`.
-Örnek: `V12-ALC-002`.
+Örnek: `V13-ALC-002`.
 
 ## Tek sorumluluk kuralı
 
@@ -80,7 +80,7 @@ eki olabilir; bağımsız ikinci karar üretilemez.
 
 `V0-MCD-001` approved provider listesi ve legal provider code üretmeden
 provider-specific görev oluşturulmaz. Sonuç üretildiğinde provider'lar legal
-code'a göre sıralanır; aynı sıra için tek `V12-MCD-1xx` adapter görevi ve tek
+code'a göre sıralanır; aynı sıra için tek `V13-MCD-1xx` adapter görevi ve tek
 `V20-INT-1xx` certification görevi açılır. Bir dosya birden fazla provider
 uygulayamaz veya sertifikalandıramaz.
 

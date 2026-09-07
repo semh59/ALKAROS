@@ -51,4 +51,4 @@ tanımlamak.
 ## Handoff
 
 - V1-TBL-004
-- V14-QRO-002
+- V12-QRO-002

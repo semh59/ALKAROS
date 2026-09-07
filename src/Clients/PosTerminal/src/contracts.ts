@@ -1,4 +1,4 @@
-// V14-NFC-001/004: the NFC self-service order surface has no session of any
+// V12-NFC-001/004: the NFC self-service order surface has no session of any
 // kind, so its result mirrors the server's OrderDto directly — the client
 // never re-derives status/total, only displays what the API returned.
 export interface NfcOrderResultItem {
@@ -29,7 +29,7 @@ export interface LoginResponse {
   capabilities?: string[];
 }
 
-// V14-QRT-003 (configured/updatedAt) + V14-QRT-001 (accountId/zoneId/
+// V12-QRT-003 (configured/updatedAt) + V12-QRT-001 (accountId/zoneId/
 // baseDomain — not secret, so these round-trip back; the token never does).
 export interface RelayCredentialStatus {
   configured: boolean;

@@ -55,4 +55,4 @@ kararla tanımlamak.
 
 - V0-QRG-001
 - V1-FND-001
-- V14-QRT-001
+- V12-QRT-001

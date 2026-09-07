@@ -5,7 +5,7 @@ using Xunit;
 
 /// <summary>
 /// `relay_provider_config` holds a single well-known row — like
-/// `V14-QRT-003`'s `relay_credentials`, each test here gets its own fresh
+/// `V12-QRT-003`'s `relay_credentials`, each test here gets its own fresh
 /// database (xUnit constructs a new instance of this class, and so a new
 /// <see cref="RelayProviderConfigTestDatabase"/>, per [Fact]) rather than a
 /// shared `IClassFixture`.

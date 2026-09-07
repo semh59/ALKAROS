@@ -44,7 +44,7 @@ invoice_balance    = SUM(charges_in_period) - SUM(payments_in_period)
   rows are the authoritative ledger. Snapshots (`III.18.4`) store the
   balance per `snapshot_date`.
 
-## 3. Invariants (consumers V13-ACC-001, V13-ACC-003, V13-INV-001)
+## 3. Invariants (consumers V14-ACC-001, V14-ACC-003, V14-INV-001)
 
 1. **No double count**: a charge appears in exactly one invoice period;
    `Invoice` transactions never re-create the underlying charges.
@@ -61,7 +61,7 @@ invoice_balance    = SUM(charges_in_period) - SUM(payments_in_period)
    effect; an `Adjustment` with negative `amount` requires a note and
    `created_by`.
 6. **Handler registration (C26)**: the customer-account handler is
-   registered in the V1.3 module registry and participates in the fiscal
+   registered in the V1.4 module registry and participates in the fiscal
    closure chain before any fiscal document is finalized.
 
 ## 4. Examples

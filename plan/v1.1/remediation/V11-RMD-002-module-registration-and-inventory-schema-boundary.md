@@ -165,7 +165,7 @@ Purchasing tabloda hiç yoktu (2026-09-06 eklendi, satır 27).
   çağrılamıyor — bu `IModule` kaydından tamamen ayrı bir karar
   (`V11-RMD-001`'in de belirttiği gibi, V1'in kendi tarihinde izlenen sıra:
   domain katmanı önce, Host kablolaması ayrı bir dalgada). `V11-PUR-001`'in
-  kendi Handoff'u zaten bunu `V13-PUR-001`'e bırakmıştı.
+  kendi Handoff'u zaten bunu `V14-PUR-001`'e bırakmıştı.
 - **Menu'nün Catalog'u okuma şekli** (`PostgresCatalogProductReader`,
   `PostgresCatalogProductPriceReader` — proje referansı olmadan
   `catalog.products`'ı doğrudan SQL ile okuyor). V0-ARC-001 okumaya izin

@@ -33,11 +33,11 @@ onaylayın.
 
 ## Dependencies
 
-- V12-HUG-001
-- V12-HUG-002
-- V12-HUG-003
-- V12-HUG-004
-- V12-FSC-003
+- V13-HUG-001
+- V13-HUG-002
+- V13-HUG-003
+- V13-HUG-004
+- V13-FSC-003
 
 ## Deliverables
 
@@ -47,13 +47,13 @@ onaylayın.
 
 - Onaylanan her zorunlu senaryo, adı geçen fiziksel cihazı/ürün yazılımını aktarır; hiçbir retry açıklanamayan yinelenen
   bir mali işlem üretmez.
-- `V12-FSC-003` tarihli `NotApplicable` ise adisyon lifecycle bu certification'a dahil edilmez; Hugin payment ve
+- `V13-FSC-003` tarihli `NotApplicable` ise adisyon lifecycle bu certification'a dahil edilmez; Hugin payment ve
   terminal
   total senaryoları yine kanıtlanır.
-- `V12-HUG-004` kanıtlı `NotApplicable` ise terminal totals senaryoları certification kapsamına dahil edilmez; Hugin
+- `V13-HUG-004` kanıtlı `NotApplicable` ise terminal totals senaryoları certification kapsamına dahil edilmez; Hugin
   payment senaryoları yine kanıtlanır.
-- NotApplicable koşulu: `GATE-V12-FSC-STRATEGY` tarihli branch kararı Hugin'i dışlarsa bu task kanıtlı `NotApplicable`
-  olarak kapanır (karar kaydı + `V12-FSC-003`/`V12-FSC-004` durum kanıtıyla).
+- NotApplicable koşulu: `GATE-V13-FSC-STRATEGY` tarihli branch kararı Hugin'i dışlarsa bu task kanıtlı `NotApplicable`
+  olarak kapanır (karar kaydı + `V13-FSC-003`/`V13-FSC-004` durum kanıtıyla).
 
 ## Handoff
 

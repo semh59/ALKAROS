@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace ALKAROS.QrRelay.PublicGateway;
 
 /// <summary>
-/// V14-QRT-001. Every request/response shape here was verified against
+/// V12-QRT-001. Every request/response shape here was verified against
 /// Cloudflare's own current API reference (developers.cloudflare.com/api,
 /// the cfd_tunnel and dns_records resources), not guessed:
 /// - POST /accounts/{account_id}/cfd_tunnel — name, config_src ("cloudflare"

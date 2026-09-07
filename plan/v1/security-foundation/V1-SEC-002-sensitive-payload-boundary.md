@@ -68,7 +68,7 @@ Payment, fiscal, invoice ve webhook payload'larının saklama, şifreleme, maske
 ## Handoff
 
 - V1-FND-002
-- V12-HUG-001
-- V13-QNB-002
-- V14-ONL-001
+- V13-HUG-001
+- V14-QNB-002
+- V12-ONL-001
 - V15-SEC-003

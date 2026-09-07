@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Reads the relay credential the QrOrdering module owns (V14-QRT-003);
+    <!-- Reads the relay credential the QrOrdering module owns (V12-QRT-003);
          does not write to or otherwise reach into that module's schema. -->
     <ProjectReference Include="..\..\Modules\QrOrdering\ALKAROS.QrOrdering.csproj" />
   </ItemGroup>

@@ -23,7 +23,7 @@ gate olarak toplamak.
 
 ## In scope
 
-- Approved provider listesi ile V12-MCD-1xx/V20-INT-1xx bire bir eşleşmesi, task sonucu ve evidence link doğrulaması.
+- Approved provider listesi ile V13-MCD-1xx/V20-INT-1xx bire bir eşleşmesi, task sonucu ve evidence link doğrulaması.
 
 ## Out of scope
 
@@ -32,10 +32,10 @@ gate olarak toplamak.
 ## Dependencies
 
 - V0-MCD-001
-- V12-MCD-001
-- V12-MCD-002
-- V12-MCD-003
-- V12-MCD-004
+- V13-MCD-001
+- V13-MCD-002
+- V13-MCD-003
+- V13-MCD-004
 
 ## Blocker
 
@@ -49,10 +49,10 @@ gate olarak toplamak.
 
 ## Acceptance evidence
 
-- Her approved provider tam bir V12-MCD-1xx ve V20-INT-1xx çifti taşır; missing, failed veya ambiguous provider gate'i
+- Her approved provider tam bir V13-MCD-1xx ve V20-INT-1xx çifti taşır; missing, failed veya ambiguous provider gate'i
   kapatır.
-- `V0-MCD-001` onaylı provider listesini boş kapatır ve `V12-MCD-001`, `V12-MCD-002`, `V12-MCD-003` aynı evidence ile
-  `NotApplicable` olursa `V12-MCD-004` de `NotApplicable` olur; bu task da named approver evidence ile
+- `V0-MCD-001` onaylı provider listesini boş kapatır ve `V13-MCD-001`, `V13-MCD-002`, `V13-MCD-003` aynı evidence ile
+  `NotApplicable` olursa `V13-MCD-004` de `NotApplicable` olur; bu task da named approver evidence ile
   `NotApplicable` olur ve başarı iddiası üretilmez.
 
 ## Handoff

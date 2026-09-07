@@ -37,7 +37,7 @@ Yalnız signed Approve kararı verilen exact release artifact'ını kontrollü p
 - V15-BKP-002
 - V20-MIG-002
 - V20-SEC-001
-- V14-QRT-001
+- V12-QRT-001
 - V0-ARC-009
 
 ## Deliverables

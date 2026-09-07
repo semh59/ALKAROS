@@ -8,12 +8,12 @@ import "./nfc-order.css";
 type PageState = "loading" | "browsing" | "submitting" | "placed" | "blocked" | "error";
 
 /**
- * V14-NFC-003. The customer-facing screen an NFC tap opens
+ * V12-NFC-003. The customer-facing screen an NFC tap opens
  * (`/nfc/{tableId}`) — no login, no cashier/waiter session, table id comes
  * only from the URL the physical tag encodes. Per the "thin frontend"
  * principle (docs/design/foundations.md, section 0): this component holds
  * only UI-local state (the cart before it is ever sent); once submitted,
- * the confirmation screen shows exactly what `V14-NFC-001`'s API returned,
+ * the confirmation screen shows exactly what `V12-NFC-001`'s API returned,
  * nothing re-derived.
  */
 function tableIdFromPath(pathname: string): string {
@@ -30,7 +30,7 @@ export function NfcOrder() {
   const [result, setResult] = useState<NfcOrderResult | null>(null);
   // Stable for the lifetime of one in-flight submission attempt so a retry
   // after a dropped connection replays the same order instead of starting a
-  // second one (V14-NFC-001's ux_orders_table_submission index); reset once
+  // second one (V12-NFC-001's ux_orders_table_submission index); reset once
   // that attempt either succeeds or the customer starts a fresh round.
   const submissionIdRef = useRef<string | null>(null);
 

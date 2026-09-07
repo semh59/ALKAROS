@@ -45,5 +45,5 @@ Tüm modüllerdeki kişisel veriyi, hukuki amacı, saklama süresini ve imha/ano
 
 ## Handoff
 
-- V13-CST-001
+- V14-CST-001
 - V15-KVK-001

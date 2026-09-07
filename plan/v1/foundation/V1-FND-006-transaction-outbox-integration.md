@@ -51,8 +51,8 @@ Transaction commit ile durable Outbox enqueue/dispatch sınırını tek crash-sa
 
 - V1-ORD-002
 - V1-KIT-003
-- V14-ONL-001
-- V14-QRT-001
-- V12-PAY-004
-- V12-MCD-004
-- V13-ACC-006
+- V12-ONL-001
+- V12-QRT-001
+- V13-PAY-004
+- V13-MCD-004
+- V14-ACC-006

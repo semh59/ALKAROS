@@ -46,9 +46,9 @@ veya IAM değişikliği yok.
     rejected" maddesi kaldırılır; yerine kısa bir kabul notu.
   - Yeni `## Amendment` bölümü: tarih (2026-09-03), approver (Semih), ne değişti,
     neden (kasiyer telefon/yüz yüze rezervasyon alır — standart POS yeteneği),
-    etkilenen task ID'leri (`V1-TBL-004`, `V1-RMD-013`, `V14-QRO-003`).
+    etkilenen task ID'leri (`V1-TBL-004`, `V1-RMD-013`, `V12-QRO-003`).
 - `V1-TBL-004` `Out of scope`: "Rezervasyon UI beklemede" → "QR-güdümlü rezervasyon
-  politikası (`V14-QRO-003`) beklemede; kasiyer istemcisi manuel rezervasyon UI'si
+  politikası (`V12-QRO-003`) beklemede; kasiyer istemcisi manuel rezervasyon UI'si
   V1-RMD-017/028 istemci yüzeylerinde teslim edilmiştir" olarak uzlaştırılır.
 - `plan/AUDIT_MANIFEST.json` + `plan/AUDIT_REPORT.md`:
   `python -B tools/plan-audit/plan_audit_tool.py generate-audit-report` ardından
@@ -63,7 +63,7 @@ veya IAM değişikliği yok.
   (`V1-RMD-097` notundaki ertelenmiş ayrım) — ayrı bir yetkilendirme görevi
   gerektirir; bu görev onu başlatmaz. (Bu ayrım oturumdan sonra `V1-IAM-016..024`
   ile zaten gerçekleşti — bkz. amendment'e eklenen "Superseded note".)
-- QR sipariş durum makinesinin rezervasyon yolu (`V14-QRO-002` / `V14-QRO-003`).
+- QR sipariş durum makinesinin rezervasyon yolu (`V12-QRO-002` / `V12-QRO-003`).
 
 ## Dependencies
 
@@ -87,4 +87,4 @@ veya IAM değişikliği yok.
 
 ## Handoff
 
-- V14-QRO-003
+- V12-QRO-003

@@ -1,27 +1,29 @@
-# V1.3 - Customer Account and Invoicing
+# V1.3 - Payment, Fiscal, Cash and Meal Card
 
 ## Hedef
 
-Cari hesap, dönemsel faturalama, QNB e-belge ve gelen fatura/satın alma akışını
-tamamlamak.
+Para hareketlerini, allocation ledger'ını, Hugin T300 mali akışını, kasayı ve
+meal card mutabakatını güvenli biçimde çalıştırmak.
 
 ## Giriş koşulu
 
-`GATE-V13-ENTRY` ve uygulanacak QNB capability'leri için `V0-QNB-001`
-sözleşmesi kapanmış olmalıdır.
+`GATE-V13-ENTRY` ve uygulanacak Hugin/meal-card private sözleşmeleri kapanmış
+olmalıdır.
 
 ## Çıkış kapısı
 
-- Bu sürüm altındaki 24 görev dosyası `Done` veya onaylı koşullu kapsam için `NotApplicable`.
-- Cari bakiye transaction ledger'dan yeniden üretilebilir.
-- Faturalama charge değerini ikinci kez borç yazmaz.
-- QNB outgoing/incoming ve timeout reconciliation akışları geçer.
-- KVKK veri yaşam döngüsü; müşteri tabloları dışındaki PII alanlarının yaşam döngüsü `V15-KVK-001/002` görevleriyle
-  kapanır.
+- Bu sürümdeki 30 sabit görev ve her approved meal-card provider için türetilen
+  bir `V13-MCD-1xx` görevi `Done` veya tarihli/onaylı koşullu kapsam için
+  `NotApplicable` olmalıdır.
+- Split payment ve bill closure invariant'ları otomatik testlerle kanıtlanır.
+- Timeout/unknown/refund yolları gerçek T300 sandbox veya cihaz çıktısıyla geçer.
+- Kısmi iade allocation seviyesinde izlenebilir.
+- CashSession ve meal card settlement farkları reconciliation üretir.
 
 ## Modüller
 
-`accounts-ui`, `customer-account`, `customer-data`, `invoicing`, `purchasing`,
-`qnb-esolutions`, `reporting`.
+`cash`, `fiscal`, `hugin-t300`, `meal-card`, `payment-allocation`, `payments`,
+`payments-ui`, `reconciliation`, `reporting`, `table-payment`.
 
-Doğrulanan plan hacmi: 7 modül, 24 tek-sahip görev.
+Doğrulanan plan hacmi: 10 modül, `30 + approved meal-card provider count`
+tek-sahip görev.

@@ -54,5 +54,5 @@ V0-ARC-001 ve V0-ARC-003 kararlarını tek transaction, rollback ve retry yürü
 - V1-SEC-001
 - V1-FND-006
 - V1-TBL-002
-- V12-PAY-004
-- V12-ALC-004
+- V13-PAY-004
+- V13-ALC-004

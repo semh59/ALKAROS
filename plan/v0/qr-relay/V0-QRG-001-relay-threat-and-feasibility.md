@@ -54,6 +54,6 @@ Public QR trafiğinin local POS'a inbound LAN erişimi açmadan taşınabileceğ
 
 ## Handoff
 
-- V14-QRT-001
-- V14-QRS-001
-- V14-QRS-002
+- V12-QRT-001
+- V12-QRS-001
+- V12-QRS-002

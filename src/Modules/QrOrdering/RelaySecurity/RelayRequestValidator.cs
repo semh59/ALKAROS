@@ -10,9 +10,9 @@ public sealed record RelayRequestValidationResult(bool IsValid, Guid? TableId, s
 }
 
 /// <summary>
-/// V14-QRS-002: authenticates a request arriving through the public relay
+/// V12-QRS-002: authenticates a request arriving through the public relay
 /// before it ever reaches order business logic. Layers on top of
-/// `V14-QRS-001`'s table token — the token itself is the "key"; this adds
+/// `V12-QRS-001`'s table token — the token itself is the "key"; this adds
 /// the two properties a bare token check does not give you: a captured and
 /// resent request must fail (replay), and a request timestamped far from
 /// now must fail (bounds how long a captured request stays exploitable and

@@ -35,7 +35,7 @@ workflow'ları için named user acceptance toplamak.
 - V20-INT-005
 - V20-INT-006
 - V20-INT-003
-- V14-OUI-001
+- V12-OUI-001
 - V0-CMP-005
 
 ## Deliverables

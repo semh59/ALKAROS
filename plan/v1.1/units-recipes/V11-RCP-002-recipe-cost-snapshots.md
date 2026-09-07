@@ -55,4 +55,4 @@ Geçmiş tarif maliyetini yeniden oluşturmak için gereken içerik düzeyindeki
 ## Handoff
 
 - V11-PRD-001
-- V13-PUR-001
+- V14-PUR-001

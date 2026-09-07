@@ -1,4 +1,4 @@
-# V1-CSH-001 - Finalize CashSession design for V1.2
+# V1-CSH-001 - Finalize CashSession design for V1.3
 
 - Task ID: V1-CSH-001
 - Status: Done
@@ -45,9 +45,9 @@ kesinleştirmek.
 
 ## Acceptance evidence
 
-- Contract testleri geçersiz geçişi/izni reddediyor ve uygulamanın neden V1.2 payment'yi beklediğini belgeliyor.
+- Contract testleri geçersiz geçişi/izni reddediyor ve uygulamanın neden V1.3 payment'yi beklediğini belgeliyor.
 
 ## Handoff
 
-- V12-CSH-001
-- V12-CSH-002
+- V13-CSH-001
+- V13-CSH-002

@@ -33,11 +33,11 @@ onaylayın.
 
 ## Dependencies
 
-- V13-QNB-001
-- V13-QNB-002
-- V13-QNB-003
-- V13-QNB-004
-- V13-QNB-005
+- V14-QNB-001
+- V14-QNB-002
+- V14-QNB-003
+- V14-QNB-004
+- V14-QNB-005
 
 ## Deliverables
 
@@ -47,10 +47,10 @@ onaylayın.
 
 - Public ve private evidence ile applicable olduğu kanıtlanan senaryolar tek traceable sonuç üretir; doğrulanmayan
   cancellation/webhook satırları tarihli `NotApplicable` evidence veya açık blocker taşır.
-- `V13-QNB-004` veya `V13-QNB-005` kanıtlı `NotApplicable` ise ilgili reconciliation/cancellation senaryosu sertifika
+- `V14-QNB-004` veya `V14-QNB-005` kanıtlı `NotApplicable` ise ilgili reconciliation/cancellation senaryosu sertifika
   matrisine dahil edilmez; kalan senaryolar gerçek sandbox yanıtlarıyla yine doğrulanır.
-- NotApplicable koşulu: `GATE-V12-FSC-STRATEGY` tarihli branch kararı QNB'yi dışlarsa bu task kanıtlı `NotApplicable`
-  olarak kapanır (karar kaydı + `V12-FSC-003`/`V12-FSC-005` durum kanıtıyla).
+- NotApplicable koşulu: `GATE-V13-FSC-STRATEGY` tarihli branch kararı QNB'yi dışlarsa bu task kanıtlı `NotApplicable`
+  olarak kapanır (karar kaydı + `V13-FSC-003`/`V13-FSC-005` durum kanıtıyla).
 
 ## Handoff
 

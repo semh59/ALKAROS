@@ -91,4 +91,4 @@ uygulamak.
 - V1-FND-006
 - V1-ORD-002
 - V1-KIT-003
-- V14-ONL-001
+- V12-ONL-001

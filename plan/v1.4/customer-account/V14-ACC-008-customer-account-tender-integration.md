@@ -1,0 +1,66 @@
+# V14-ACC-008 - Integrate CustomerAccount tender routing
+
+- Task ID: V14-ACC-008
+- Status: Planned
+- Assignee: Unassigned (exactly one person)
+- Work type: integration
+- Surface state: Planned
+
+## Source basis
+
+- PDF:I.26-I.33
+- PDF:II.2.6
+- PDF:II.2.15
+- PDF:II.5.3
+- PDF:III.8
+- CORR:C26
+
+## Goal
+
+V1.3'de fail-closed kalan CustomerAccount tender handler'ını V1.4 composition extension üzerinden kaydetmek ve approved
+allocation sonucunu fiscal Bill closure gate'ine bağlamak.
+
+## Owned surface
+
+- `src/Modules/CustomerAccounts/TenderIntegration/**`, `tests/Integration/CustomerAccounts/TenderIntegration/**`
+- Bu görev, `V13-PAY-003` veya `V13-FSC-002` owned surface'ini değiştiremez.
+
+## In scope
+
+- Module registration extension, CustomerAccount route enablement, duplicate/missing registration rejection,
+  AccountCharge/PaymentAllocation result dispatch ve fiscal closure integration.
+
+## Out of scope
+
+- AccountCharge business rules, generic tender registry, fiscal policy, cash/card account receipt ve invoice issuance.
+
+## Dependencies
+
+- V14-ACC-003
+- V13-PAY-002
+- V13-PAY-003
+- V13-FSC-001
+- V13-FSC-002
+- V1-FND-002
+- V1-FND-005
+
+## Deliverables
+
+- CustomerAccount tender composition extension ve end-to-end routing/fiscal closure integration tests.
+
+## Acceptance evidence
+
+- V1.4 host'ta CustomerAccount request tam olarak bir registered handler'a çözülür; V1.3 host aynı request'i typed
+  version-not-enabled sonucu ile reddetmeye devam eder.
+- Retry tek AccountCharge, Payment ve PaymentAllocation üretir; CustomerAccount allocation Bill'in final closed'a
+  geçişini tetikler; final closed status'ünü yalnız `V13-FSC-002` yazar (FSC-002 policy kuralı).
+- Missing/duplicate registration startup'ı fail-closed durdurur; bu task cash/card/meal-card handler'larını değiştirmez.
+- `V13-PAY-003` kanıtlı `NotApplicable` ise MealCard tender handler'ı V1.4 composition'a kaydedilmez; Cash/BankCard
+  routing ve fail-closed registration testleri yine doğrulanır. `V13-FSC-002` kanıtlı `NotApplicable` ise
+  CustomerAccount allocation'un Bill'i final closed yapma yolu kapsam dışı kalır; kalan routing ve registration
+  davranışı yine doğrulanır.
+
+## Handoff
+
+- V14-UI-001
+- V20-UAT-002

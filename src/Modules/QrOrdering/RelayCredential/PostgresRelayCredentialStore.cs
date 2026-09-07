@@ -6,7 +6,7 @@ using NpgsqlTypes;
 namespace ALKAROS.QrOrdering.RelayCredential;
 
 /// <summary>
-/// V14-QRT-003. Stores the relay provider's API token (e.g. a Cloudflare
+/// V12-QRT-003. Stores the relay provider's API token (e.g. a Cloudflare
 /// Tunnel API token) as an AES-256-GCM envelope (`ALKAROS.SensitiveData`) —
 /// only ciphertext ever reaches `qr_ordering.relay_credentials`. The
 /// envelope's master key comes from the environment

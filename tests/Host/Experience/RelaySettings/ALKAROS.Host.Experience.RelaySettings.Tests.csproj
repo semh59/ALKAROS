@@ -27,10 +27,10 @@
     <None Include="../../../../database/migrations/V1/V1-IAM-017/043-authorization-permission-split.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- table_mgmt.tables is needed transitively: 078's table_tokens has an FK to it. -->
     <None Include="../../../../database/migrations/V1/V1-TBL-001/010-tables.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="../../../../database/migrations/V14/V14-QRS-001/078-qr-ordering-table-tokens.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="../../../../database/migrations/V14/V14-QRT-003/079-integrations-manage-permission.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="../../../../database/migrations/V14/V14-QRT-003/080-qr-ordering-relay-credentials.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="../../../../database/migrations/V14/V14-QRT-001/082-qr-ordering-relay-provider-config.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-QRS-001/078-qr-ordering-table-tokens.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-QRT-003/079-integrations-manage-permission.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-QRT-003/080-qr-ordering-relay-credentials.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-QRT-001/082-qr-ordering-relay-provider-config.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

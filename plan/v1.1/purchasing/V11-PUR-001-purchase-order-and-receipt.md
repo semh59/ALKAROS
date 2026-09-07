@@ -52,4 +52,4 @@ Supplier PurchaseOrder ve line item'ları, StockLedger'a kayıtlı receipt movem
 
 ## Handoff
 
-- V13-PUR-001
+- V14-PUR-001

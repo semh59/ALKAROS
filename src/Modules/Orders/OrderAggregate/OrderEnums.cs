@@ -28,7 +28,7 @@ public enum OrderSource
     Waiter,
     Qr,
     Online,
-    /// <summary>V14-NFC-001: a trusted NFC-tap self-service order — unlike
+    /// <summary>V12-NFC-001: a trusted NFC-tap self-service order — unlike
     /// <see cref="Qr"/>, never routes through PendingConfirmation.</summary>
     Nfc,
 }
@@ -36,7 +36,7 @@ public enum OrderSource
 /// <summary>
 /// Open/closed status of a single path on the confirmation flow (PDF:III.6.1
 /// 'confirmation_status not null'). Value set is scope-owned by V1-ORD-001;
-/// the QR channel (V14-QRO-001/002) reconciles its PendingConfirmation
+/// the QR channel (V12-QRO-001/002) reconciles its PendingConfirmation
 /// workflow against these values.
 /// </summary>
 public enum ConfirmationStatus

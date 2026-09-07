@@ -2,7 +2,7 @@ namespace ALKAROS.QrOrdering.TokenLifecycle;
 
 /// <summary>
 /// A hashed, time/policy-bound credential bound to exactly one table
-/// (qr_ordering.table_tokens, V14-QRS-001). The raw token is never
+/// (qr_ordering.table_tokens, V12-QRS-001). The raw token is never
 /// persisted or reconstructable from this record — only its hash. A
 /// database leak of this table exposes no usable raw token
 /// (docs/architecture/qr-relay-topology.md rule 2: tokens expire after
@@ -65,14 +65,14 @@ public sealed class TableToken
     }
 }
 
-/// <summary>V14-QRS-001: Issue was called for a table that already has an active token.</summary>
+/// <summary>V12-QRS-001: Issue was called for a table that already has an active token.</summary>
 public sealed class TableTokenAlreadyActiveException : Exception
 {
     public TableTokenAlreadyActiveException(Guid tableId)
         : base($"Table {tableId} already has an active token; use Rotate instead of Issue.") { }
 }
 
-/// <summary>V14-QRS-001: Rotate/Revoke was called for a table/token that has no active token.</summary>
+/// <summary>V12-QRS-001: Rotate/Revoke was called for a table/token that has no active token.</summary>
 public sealed class TableTokenNotFoundException : Exception
 {
     public TableTokenNotFoundException(string message) : base(message) { }

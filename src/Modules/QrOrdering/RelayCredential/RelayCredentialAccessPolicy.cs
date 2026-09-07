@@ -4,7 +4,7 @@ using ALKAROS.SensitiveData;
 namespace ALKAROS.QrOrdering.RelayCredential;
 
 /// <summary>
-/// V14-QRT-003: the only component allowed to resolve the envelope master
+/// V12-QRT-003: the only component allowed to resolve the envelope master
 /// key or decrypt the stored relay credential is
 /// <see cref="PostgresRelayCredentialStore"/> itself, identified by
 /// <see cref="Accessor"/> — a second line of defense behind the HTTP-level

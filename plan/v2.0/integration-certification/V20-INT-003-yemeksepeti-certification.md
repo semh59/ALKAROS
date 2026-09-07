@@ -32,11 +32,11 @@ onaylayın.
 ## Dependencies
 
 - V0-YSP-001
-- V14-ONL-001
-- V14-ONL-002
-- V14-ONL-003
-- V14-ONL-004
-- V14-ONL-005
+- V12-ONL-001
+- V12-ONL-002
+- V12-ONL-003
+- V12-ONL-004
+- V12-ONL-005
 
 ## Deliverables
 

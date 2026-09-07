@@ -1,7 +1,7 @@
 # CashSession Architecture and Contract Design (V1-CSH-001)
 
 **Status:** Approved Architectural Decision Record
-**Target Delivery:** V1.2 Cash Management (`V12-CSH-001`, `V12-CSH-002`, `V12-CSH-003`)
+**Target Delivery:** V1.3 Cash Management (`V13-CSH-001`, `V13-CSH-002`, `V13-CSH-003`)
 **Specification References:** PDF:I.38-I.44, PDF:II.2.7, PDF:II.5.9, PDF:III.9, V0-DOM-001, V0-CMP-002, V1-IAM-002
 
 ---
@@ -11,7 +11,7 @@
 In POS restaurant operations, cash drawer management requires strict physical and logical controls to prevent unrecorded
 transactions, cash variance leakage, and unauthorized register drawer operations.
 
-Prior to implementing physical database persistence and payment integration in **V1.2**, this document formalizes the
+Prior to implementing physical database persistence and payment integration in **V1.3**, this document formalizes the
 binding contracts, state machines, terminal ownership models, variance formulas, and permission boundaries for
 `CashSession`.
 
@@ -110,19 +110,19 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
 
 ---
 
-## 7. Downstream Dependency Roadmap (Why Implementation Waits for V1.2)
+## 7. Downstream Dependency Roadmap (Why Implementation Waits for V1.3)
 
 ```text
 V1-CSH-001 (Design & Contracts) [Current Task]
        │
        ▼
-V1.2 Implementation Milestone:
-       ├── V12-CSH-001: Cash Session Table & Repository Persistence
-       ├── V12-CSH-002: Cash Transaction Immutable Ledger
-       ├── V12-CSH-003: Cash Tender Command Handler
-       └── V12-PAY-001: Integration with Multi-Tender Payment Aggregate
+V1.3 Implementation Milestone:
+       ├── V13-CSH-001: Cash Session Table & Repository Persistence
+       ├── V13-CSH-002: Cash Transaction Immutable Ledger
+       ├── V13-CSH-003: Cash Tender Command Handler
+       └── V13-PAY-001: Integration with Multi-Tender Payment Aggregate
 ```
 
 **Rationale:** The execution of cash transactions requires atomic coordination with the **Payments Aggregate**
-(`V12-PAY-001`) and fiscal printer closure gates (`V12-FSC-002`). Implementing database tables prematurely in V1 without
+(`V13-PAY-001`) and fiscal printer closure gates (`V13-FSC-002`). Implementing database tables prematurely in V1 without
 the payment executor would create orphan state and risk divergence.

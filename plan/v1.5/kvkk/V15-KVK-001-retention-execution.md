@@ -34,7 +34,7 @@ Onaylanan veri envanterini değerlendirin ve tüm mağazalarda uygun silme/anoni
 ## Dependencies
 
 - V0-CMP-003
-- V13-CST-002
+- V14-CST-002
 - V15-SEC-003
 
 ## Deliverables

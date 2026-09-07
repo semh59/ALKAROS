@@ -31,7 +31,7 @@
 4. Drift detection runs nightly; detected drift triggers automatic rebuild.
 
 > QR `PendingConfirmation` ile ilgili confirmation-status projeksiyonu CORR:C2/C5 çözümüyle tanımlanacaktır
-> (V14-QRO-001/002 kapsamı).
+> (V12-QRO-001/002 kapsamı).
 
 ## 3. Affected Tasks
 

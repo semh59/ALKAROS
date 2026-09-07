@@ -35,9 +35,9 @@ giriş noktası gösterin.
 
 - V1-RPT-001
 - V11-RPT-001
-- V12-RPT-001
 - V13-RPT-001
 - V14-RPT-001
+- V12-RPT-001
 - V15-REC-001
 
 ## Deliverables
@@ -48,11 +48,11 @@ giriş noktası gösterin.
 ## Acceptance evidence
 
 - Aynı onaylı filtre, izlenebilir kaynak tanımlayıcıları ve özet ve ayrıntılı raporlarda tutarlı toplamlar sağlar.
-- `V12-RPT-001` kanıtlı `NotApplicable` ise meal-card settlement bölümü raporlarda disabled olarak gösterilir; kalan
+- `V13-RPT-001` kanıtlı `NotApplicable` ise meal-card settlement bölümü raporlarda disabled olarak gösterilir; kalan
   rapor sözleşmeleri aynı acceptance ile yine doğrulanır.
 - `V15-REC-001` kanıtlı `NotApplicable` ise reconciliation vaka toplamları birleşik rapora dahil edilmez; kalan rapor
   sözleşmeleri aynı acceptance ile yine doğrulanır.
-- `V14-RPT-001` kanıtlı `NotApplicable` ise kanal raporu kaynakları birleşik rapora dahil edilmez; kalan rapor
+- `V12-RPT-001` kanıtlı `NotApplicable` ise kanal raporu kaynakları birleşik rapora dahil edilmez; kalan rapor
   sözleşmeleri aynı acceptance ile yine doğrulanır.
 
 ## Handoff

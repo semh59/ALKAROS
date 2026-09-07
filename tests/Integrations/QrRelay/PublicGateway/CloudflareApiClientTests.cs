@@ -6,7 +6,7 @@ using ALKAROS.QrRelay.PublicGateway;
 using Xunit;
 
 /// <summary>
-/// V14-QRT-001. No network call ever leaves this process — a fake handler
+/// V12-QRT-001. No network call ever leaves this process — a fake handler
 /// captures exactly what CloudflareApiClient sends and returns a canned
 /// Cloudflare-shaped response, so these tests prove the request/response
 /// shapes verified against Cloudflare's own API reference are what the

@@ -51,5 +51,5 @@ kapatmak.
 
 ## Handoff
 
-- V12-ALC-001
-- V12-ALC-002
+- V13-ALC-001
+- V13-ALC-002

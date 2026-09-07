@@ -14,7 +14,7 @@ const jsonResponse = (body: unknown, status = 200) =>
   });
 
 /**
- * V14-QRT-003: the `/settings/relay` screen — manager-only, per
+ * V12-QRT-003: the `/settings/relay` screen — manager-only, per
  * `integrations.manage`, and the saved token must never come back from
  * either the save call's own response or a later status read.
  */

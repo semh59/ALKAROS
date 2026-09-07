@@ -48,5 +48,5 @@ tanımlamak.
 
 ## Handoff
 
-- V12-ALC-003
-- V12-HUG-003
+- V13-ALC-003
+- V13-HUG-003

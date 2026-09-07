@@ -1,7 +1,7 @@
 namespace ALKAROS.Host.Experience.NfcOrdering;
 
 /// <summary>
-/// V14-NFC-001. <paramref name="Id"/> is the client-generated correlation id
+/// V12-NFC-001. <paramref name="Id"/> is the client-generated correlation id
 /// for this whole "tap and order" submission — the customer's browser
 /// generates it once and resends the identical value on every retry (page
 /// reload after a dropped connection, double tap). Persisted as the

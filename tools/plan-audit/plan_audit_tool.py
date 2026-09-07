@@ -62,11 +62,11 @@ def recorded_pdf_metadata() -> dict[str, object]:
 
 CORRECTION_OWNERS = {
     "C1": ["V0-DAT-001", "V20-MIG-001", "V20-MIG-002"],
-    "C2": ["V0-DAT-002", "V11-RSV-001", "V14-QRO-001"],
-    "C3": ["V0-DOM-007", "V13-ACC-001"],
-    "C4": ["V0-DOM-004", "V1-FND-002", "V12-ALC-001"],
-    "C5": ["V0-DOM-005", "V14-QRO-002"],
-    "C6": ["V0-DAT-004", "V12-MCD-002"],
+    "C2": ["V0-DAT-002", "V11-RSV-001", "V12-QRO-001"],
+    "C3": ["V0-DOM-007", "V14-ACC-001"],
+    "C4": ["V0-DOM-004", "V1-FND-002", "V13-ALC-001"],
+    "C5": ["V0-DOM-005", "V12-QRO-002"],
+    "C6": ["V0-DAT-004", "V13-MCD-002"],
     "C7": ["V0-DAT-002", "V20-GAT-001"],
     "C8": ["V0-DOC-001", "V20-GAT-001"],
     "C9": ["V0-DOM-010", "V11-PRD-002"],
@@ -107,22 +107,22 @@ BLOCKERS = {
 DEPENDENCY_REPLACEMENTS = {
     "V1-FND-001": ["GATE-V0-EXIT"],
     "V11-UNT-001": ["GATE-V11-ENTRY"],
-    "V12-PAY-001": ["GATE-V12-ENTRY"],
-    "V13-CST-001": ["GATE-V13-ENTRY"],
-    "V14-QRS-001": ["GATE-V14-ENTRY"],
+    "V13-PAY-001": ["GATE-V13-ENTRY"],
+    "V14-CST-001": ["GATE-V14-ENTRY"],
+    "V12-QRS-001": ["GATE-V12-ENTRY"],
     "V15-PER-001": ["GATE-V14-EXIT"],
     "V15-SEC-001": ["GATE-V15-ENTRY"],
     "V20-GAT-001": ["GATE-V15-EXIT"],
 }
 
 DEPENDENCY_ADDITIONS = {
-    "V12-PAY-002": ["V0-ARC-004"],
-    "V12-CSH-001": ["V1-CSH-001"],
-    "V13-ACC-001": ["V0-DOM-007"],
-    "V14-QRO-001": ["V14-QRS-003"],
-    "V14-QRO-002": ["V0-DOM-005"],
-    "V14-QRO-003": ["V14-STK-001"],
-    "V14-ONL-002": ["V14-STK-001"],
+    "V13-PAY-002": ["V0-ARC-004"],
+    "V13-CSH-001": ["V1-CSH-001"],
+    "V14-ACC-001": ["V0-DOM-007"],
+    "V12-QRO-001": ["V12-QRS-003"],
+    "V12-QRO-002": ["V0-DOM-005"],
+    "V12-QRO-003": ["V12-STK-001"],
+    "V12-ONL-002": ["V12-STK-001"],
     "V11-PUR-001": ["V0-DOM-009"],
     "V11-RCP-002": ["V0-DOM-010"],
     "V1-KIT-002": ["V0-DOM-011"],
@@ -133,16 +133,16 @@ DEPENDENCY_ADDITIONS = {
     "V20-MIG-001": ["V0-DAT-006"],
     "V20-SEC-001": [
         "V0-SEC-001",
-        "V14-QRS-003",
-        "V14-CWB-001",
-        "V14-CWB-002",
-        "V14-ONL-001",
+        "V12-QRS-003",
+        "V12-CWB-001",
+        "V12-CWB-002",
+        "V12-ONL-001",
     ],
 }
 
 DEPENDENCY_REMOVALS = {
-    "V14-QRO-002": ["V0-CMP-001"],
-    "V14-STK-001": ["V14-QRO-003", "V14-ONL-002"],
+    "V12-QRO-002": ["V0-CMP-001"],
+    "V12-STK-001": ["V12-QRO-003", "V12-ONL-002"],
     "V0-ARC-009": ["V0-SEC-001"],
     "V0-CMP-002": ["V0-CMP-001"],
     "V0-CMP-004": ["V0-CMP-001"],
@@ -212,12 +212,12 @@ FALLBACK_SOURCES = {
     "V11-UI-001": ["PDF:I.21.1-I.21.4"],
     "V11-UI-002": ["PDF:I.22-I.23"],
     "V11-UI-003": ["PDF:I.23-I.25"],
-    "V12-PUI-001": ["PDF:I.26-I.26A"],
-    "V12-PUI-002": ["PDF:I.44"],
-    "V12-PUI-003": ["PDF:I.26-I.29"],
-    "V13-UI-001": ["PDF:I.30"],
-    "V13-UI-002": ["PDF:I.31-I.32"],
-    "V13-UI-003": ["PDF:I.32.1"],
+    "V13-PUI-001": ["PDF:I.26-I.26A"],
+    "V13-PUI-002": ["PDF:I.44"],
+    "V13-PUI-003": ["PDF:I.26-I.29"],
+    "V14-UI-001": ["PDF:I.30"],
+    "V14-UI-002": ["PDF:I.31-I.32"],
+    "V14-UI-003": ["PDF:I.32.1"],
     "V20-INS-001": ["PDF:I.45.1", "PDF:I.50", "CORR:C15"],
     "V20-INS-002": ["PDF:I.45.1", "PDF:I.50", "CORR:C15"],
     "V20-INT-004": ["PDF:I.29", "CORR:C20"],
@@ -327,7 +327,7 @@ TECHNICAL_TERMS = (
 
 HEADER_OVERRIDES = {
     "V0-BKP-001": "# V0-BKP-001 - Validate PostgreSQL backup and restore tooling",
-    "V12-MCD-003": "# V12-MCD-003 - Implement meal-card adapter SPI and registry",
+    "V13-MCD-003": "# V13-MCD-003 - Implement meal-card adapter SPI and registry",
     "V15-RUN-001": "# V15-RUN-001 - Write executable operational runbooks",
     "V20-INT-004": "# V20-INT-004 - Aggregate meal-card certification gate",
     "V20-REL-002": "# V20-REL-002 - Execute non-production pilot rehearsal",
@@ -351,10 +351,10 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "corrupted artifact application kanıtı sayılmadan reddedilir."
         ],
     },
-    "V12-PAY-002": {
+    "V13-PAY-002": {
         "Goal": [
             "Cash, BankCard ve MealCard payment komutlarını typed handler'lara yönlendirmek; "
-            "CustomerAccount yöntemini V1.3'e kadar typed version-not-enabled sonucu ile reddetmek."
+            "CustomerAccount yöntemini V1.4'e kadar typed version-not-enabled sonucu ile reddetmek."
         ],
         "In scope": [
             "- Typed tender request contract'ları, handler registry, unknown method rejection "
@@ -364,11 +364,11 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "- Tender-specific provider logic, allocation persistence ve CustomerAccount handler implementation."
         ],
         "Acceptance evidence": [
-            "- Cash, BankCard ve MealCard tek handler'a çözülür; CustomerAccount V1.2'de veri "
+            "- Cash, BankCard ve MealCard tek handler'a çözülür; CustomerAccount V1.3'de veri "
             "değiştirmeden typed version-not-enabled sonucu verir; SplitPayment ve unknown text reddedilir."
         ],
     },
-    "V12-HUG-002": {
+    "V13-HUG-002": {
         "Goal": [
             "Timeout veya connection loss sonucunu Unknown olarak saklamak, terminal status'ünü "
             "sorgulamak ve çözümlenemeyen divergence evidence event'i üretmek."
@@ -384,7 +384,7 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "divergence için idempotent evidence event üretilir."
         ],
     },
-    "V12-MCD-002": {
+    "V13-MCD-002": {
         "Goal": [
             "Meal-card payment'larını provider settlement dönemlerinde gruplamak, parent/child "
             "durumunu atomik güncellemek ve mismatch evidence event'i üretmek."
@@ -401,7 +401,7 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "mismatch aynı evidence event'i idempotent olarak yayınlar."
         ],
     },
-    "V12-MCD-003": {
+    "V13-MCD-003": {
         "Goal": [
             "Provider-neutral meal-card adapter SPI, registry ve capability rejection contract'ını oluşturmak."
         ],
@@ -425,7 +425,7 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "registry içinde provider-specific success stub bulunmaz."
         ],
     },
-    "V14-ONL-003": {
+    "V12-ONL-003": {
         "Goal": [
             "Provider status/cancellation değişikliklerini race-safe local transition ile işlemek "
             "ve çözümlenemeyen divergence evidence event'i üretmek."
@@ -441,7 +441,7 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "çözümlenemeyen fark aynı evidence event'i idempotent olarak üretir."
         ],
     },
-    "V14-MAP-002": {
+    "V12-MAP-002": {
         "Goal": [
             "Doğrulanan her Yemeksepeti status'ünü izinli internal command, explicit no-op "
             "veya typed unknown-status evidence sonucuna eşlemek."
@@ -458,12 +458,12 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "değiştirmez ve idempotent evidence event üretir."
         ],
     },
-    "V14-STK-001": {
+    "V12-STK-001": {
         "Goal": [
             "Cashier, waiter, QR ve online channel için tek channel-neutral reservation command "
             "ve ortak last-portion arbitration sonucu sağlamak."
         ],
-        "Handoff": ["- V14-QRO-003", "- V14-ONL-002"],
+        "Handoff": ["- V12-QRO-003", "- V12-ONL-002"],
     },
     "V15-RUN-001": {
         "Goal": [
@@ -544,7 +544,7 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "task'larının eksiksizliğini ve sonuçlarını gate olarak toplamak."
         ],
         "In scope": [
-            "- Approved provider listesi ile V12-MCD-1xx/V20-INT-1xx bire bir eşleşmesi, "
+            "- Approved provider listesi ile V13-MCD-1xx/V20-INT-1xx bire bir eşleşmesi, "
             "task sonucu ve evidence link doğrulaması."
         ],
         "Out of scope": [
@@ -557,7 +557,7 @@ SECTION_OVERRIDES: dict[str, dict[str, list[str]]] = {
             "- Provider-to-task certification manifest ve missing/failed provider listesi."
         ],
         "Acceptance evidence": [
-            "- Her approved provider tam bir V12-MCD-1xx ve V20-INT-1xx çifti taşır; "
+            "- Her approved provider tam bir V13-MCD-1xx ve V20-INT-1xx çifti taşır; "
             "missing, failed veya ambiguous provider gate'i kapatır."
         ],
     },
@@ -622,11 +622,11 @@ GOAL_POLISH = {
     "V11-MNU-002": "Authoritative production/inventory kayıtlarından prepared, reserved, consumed, waste ve available counter projection'larını üretmek.",
     "V11-INV-003": "Tam original movement'a bağlı tek bir idempotent `Reversal` movement oluşturmak.",
     "V11-RSV-001": "Bir OrderItem ve StockBalance'a bağlı `Reserved`, `Released`, `Consumed` ve `Wasted` geçişlerini uygulamak.",
-    "V12-MCD-001": "Onaylanmış bir MealCard payment için provider, gross, commission, deduction ve net receivable alanlarını kalıcılaştırmak.",
-    "V13-ACC-003": "Onaylanmış bir CustomerAccount tender'ını çift kayıt oluşturmadan tek AccountCharge ve PaymentAllocation kaydına dönüştürmek.",
-    "V13-ACC-004": "Bir restaurant Bill'den bağımsız CustomerAccount payment/credit kaydı oluşturmak ve balance projection'ı bir kez güncellemek.",
-    "V13-CST-001": "Field-level access policy ile PII sahibi boundary içinde minimum customer identity, tax ve contact alanlarını kalıcılaştırmak.",
-    "V14-REC-001": "Local/provider Order, status, cancellation ve stock outcome farklılıklarını tespit etmek ve izlemek.",
+    "V13-MCD-001": "Onaylanmış bir MealCard payment için provider, gross, commission, deduction ve net receivable alanlarını kalıcılaştırmak.",
+    "V14-ACC-003": "Onaylanmış bir CustomerAccount tender'ını çift kayıt oluşturmadan tek AccountCharge ve PaymentAllocation kaydına dönüştürmek.",
+    "V14-ACC-004": "Bir restaurant Bill'den bağımsız CustomerAccount payment/credit kaydı oluşturmak ve balance projection'ı bir kez güncellemek.",
+    "V14-CST-001": "Field-level access policy ile PII sahibi boundary içinde minimum customer identity, tax ve contact alanlarını kalıcılaştırmak.",
+    "V12-REC-001": "Local/provider Order, status, cancellation ve stock outcome farklılıklarını tespit etmek ve izlemek.",
     "V15-OBS-001": "Critical flow'larda correlation, request, user/device ve provider reference alanlarını redaction kurallarıyla structured log olarak yayınlamak.",
     "V15-OBS-003": "Korunan kayıtları silmeden health, alert-event, inbox/outbox ve high-volume audit support verisinin büyümesini retention/partition kurallarıyla sınırlamak.",
     "V15-BKP-002": "Isolated PostgreSQL instance'a restore işlemini otomatikleştirmek ve integrity/application smoke kontrollerini çalıştırmak.",
@@ -672,21 +672,21 @@ GOAL_POLISH = {
     "V11-PRD-001": "Immutable RecipeVersion'a bağlı Planned, InProgress, Completed ve Cancelled ProductionBatch lifecycle'ını uygulamak.",
     "V11-PRD-002": "ProductionBatch transaction'ında IngredientConsumption ve prepared-portion ProductionOutput movement'larını oluşturmak.",
     "V11-PUR-001": "Supplier PurchaseOrder ve line item'ları, StockLedger'a kayıtlı receipt movement'larıyla uygulamak.",
-    "V12-CSH-001": "Terminal/cashier bağlı Open, Counting, Closing, Closed ve Reconciled CashSession geçişlerini uygulamak.",
-    "V12-CSH-002": "Cash sale/refund/in/out entry'lerini kaydetmek ve expected/actual close variance değerini hesaplamak.",
-    "V12-FSC-001": "Provider/device reference ve immutable request history ile sale, cancellation ve refund FiscalDocument kayıtlarını kalıcılaştırmak.",
-    "V12-FSC-002": "Fiscal kapsamındaki bir Bill'in ne zaman close edilebileceğine veya reconciliation gerektirdiğine onaylı legal/device policy ile karar vermek.",
-    "V12-FSC-003": "QNB veya T300 ownership almadan V0-CMP-001 tarafından seçilen document open/update/close stratejisini uygulamak.",
-    "V12-ALC-001": "Payment/Bill/segment identity, currency, amount ve idempotency için PaymentAllocation row'larını ve database enforcement'ı uygulamak.",
-    "V12-ALC-002": "Allocated, paid ve change total değerlerini hesaplamak ve Bill status'ünü authoritative Payment kayıtlarından atomik üretmek.",
-    "V12-ALC-003": "Immutable compensating PaymentAllocation kayıtlarıyla full/partial refund sonrası net-paid amount değerini yeniden hesaplamak.",
-    "V13-CST-002": "Legal olarak korunan financial reference'ları silmeden Requested, RetentionBlocked, Pending ve Anonymized durumlarını uygulamak.",
-    "V13-INV-004": "Issued Invoice'ı silmeden veya Account balance'ı iki kez değiştirmeden izinli cancellation/correction işlemini yeni provider/domain action olarak temsil etmek.",
-    "V14-CWB-001": "Authenticated QR customer session için available sellable menu'yü internal management verisini açmadan sunmak.",
-    "V14-CWB-002": "QR customer'ın açık final summary ile Order oluşturup PendingConfirmation workflow'una göndermesini sağlamak.",
-    "V14-QRS-001": "Reusable raw secret saklamadan hashed, revocable ve time/policy-bound Table token yayımlamak.",
-    "V14-QRS-002": "Relay message authentication yapmak ve local command dispatch öncesi replay, rate-limit ve payload-size kontrollerini uygulamak.",
-    "V14-QRS-003": "Raw Table token'ı reusable browser credential'a çevirmeden QR token validation sonrası revocable customer session oluşturmak.",
+    "V13-CSH-001": "Terminal/cashier bağlı Open, Counting, Closing, Closed ve Reconciled CashSession geçişlerini uygulamak.",
+    "V13-CSH-002": "Cash sale/refund/in/out entry'lerini kaydetmek ve expected/actual close variance değerini hesaplamak.",
+    "V13-FSC-001": "Provider/device reference ve immutable request history ile sale, cancellation ve refund FiscalDocument kayıtlarını kalıcılaştırmak.",
+    "V13-FSC-002": "Fiscal kapsamındaki bir Bill'in ne zaman close edilebileceğine veya reconciliation gerektirdiğine onaylı legal/device policy ile karar vermek.",
+    "V13-FSC-003": "QNB veya T300 ownership almadan V0-CMP-001 tarafından seçilen document open/update/close stratejisini uygulamak.",
+    "V13-ALC-001": "Payment/Bill/segment identity, currency, amount ve idempotency için PaymentAllocation row'larını ve database enforcement'ı uygulamak.",
+    "V13-ALC-002": "Allocated, paid ve change total değerlerini hesaplamak ve Bill status'ünü authoritative Payment kayıtlarından atomik üretmek.",
+    "V13-ALC-003": "Immutable compensating PaymentAllocation kayıtlarıyla full/partial refund sonrası net-paid amount değerini yeniden hesaplamak.",
+    "V14-CST-002": "Legal olarak korunan financial reference'ları silmeden Requested, RetentionBlocked, Pending ve Anonymized durumlarını uygulamak.",
+    "V14-INV-004": "Issued Invoice'ı silmeden veya Account balance'ı iki kez değiştirmeden izinli cancellation/correction işlemini yeni provider/domain action olarak temsil etmek.",
+    "V12-CWB-001": "Authenticated QR customer session için available sellable menu'yü internal management verisini açmadan sunmak.",
+    "V12-CWB-002": "QR customer'ın açık final summary ile Order oluşturup PendingConfirmation workflow'una göndermesini sağlamak.",
+    "V12-QRS-001": "Reusable raw secret saklamadan hashed, revocable ve time/policy-bound Table token yayımlamak.",
+    "V12-QRS-002": "Relay message authentication yapmak ve local command dispatch öncesi replay, rate-limit ve payload-size kontrollerini uygulamak.",
+    "V12-QRS-003": "Raw Table token'ı reusable browser credential'a çevirmeden QR token validation sonrası revocable customer session oluşturmak.",
     "V15-REC-002": "İzinli retry, accept-provider, accept-local, compensate, reject ve escalate action'larını permission ve audit ile yürütmek.",
     "V20-UAT-001": "Release candidate üzerinde cashier, waiter, Table, Order, kitchen, QR ve printing workflow'ları için named user acceptance toplamak.",
     "V20-UAT-002": "Billing, Payment, refund, CashSession, CustomerAccount, Invoice, purchasing, stock ve reporting workflow'ları için named user acceptance toplamak.",
@@ -714,12 +714,12 @@ SECTION_POLISH = {
             "- İş tarihi filtreleri, order/table/waiter granularity, print status ve reconciliation toplamları."
         ]
     },
-    "V12-PUI-001": {
+    "V13-PUI-001": {
         "Acceptance evidence": [
             "- UI over-allocation gönderemez; Unknown payment duplicate tender'ı engeller; mixed payment yalnız server doğrulamasıyla kapanır."
         ]
     },
-    "V13-ACC-003": {
+    "V14-ACC-003": {
         "In scope": [
             "- Eligibility, credit-policy sonucu, AccountCharge source, Payment approval ve allocation transaction boundary."
         ],
@@ -1214,19 +1214,19 @@ def owner_for_section(section: str, entries: list[tuple[str, list[str]]]) -> lis
         "II.3.1": ["V1-CAT-001"],
         "II.4": ["V0-ARC-001", "V0-DOC-001"],
         "II.5": ["V0-DOM-001", "V0-ARC-004"],
-        "II.5.10A": ["V12-MCD-001", "V0-DOM-001"],
+        "II.5.10A": ["V13-MCD-001", "V0-DOM-001"],
         "II.6": ["V0-DOM-001", "V0-DOC-001"],
         "II.6.1": ["V1-TBL-002"],
         "II.6.2": ["V1-TBL-003"],
         "II.6.3": ["V1-BIL-002"],
-        "II.6.4": ["V12-ALC-002"],
-        "II.6.5": ["V12-PAY-001", "V12-ALC-002"],
-        "II.6.6": ["V0-DOM-004", "V12-ALC-001"],
+        "II.6.4": ["V13-ALC-002"],
+        "II.6.5": ["V13-PAY-001", "V13-ALC-002"],
+        "II.6.6": ["V0-DOM-004", "V13-ALC-001"],
         "II.6.7": ["V11-RCP-001"],
         "II.6.9": ["V11-RSV-001", "V11-RSV-002"],
         "II.6.10": ["V1-KIT-003", "V1-KIT-004"],
-        "II.6.12": ["V1-CSH-001", "V12-CSH-001"],
-        "II.6.13": ["V12-MCD-001", "V13-ACC-003"],
+        "II.6.12": ["V1-CSH-001", "V13-CSH-001"],
+        "II.6.13": ["V13-MCD-001", "V14-ACC-003"],
         "II.7": ["V0-ARC-001", "V0-DOC-001"],
         "II.7.1": ["V1-CUI-001", "V1-CUI-002"],
         "II.7.2": ["V1-WTR-001", "V1-WTR-002"],
@@ -1571,11 +1571,11 @@ def generate_coverage() -> None:
             "| `C19` | Accessibility conformance target yok. | V0-CMP-005 |",
             "| `C20` | Meal-card task'ı birden fazla provider'ı tek işte topluyor. | V0-MCD-001, V20-INT-004 |",
             "| `C21` | QNB cancellation/webhook public contract'ta doğrulanmıyor. | V0-QNB-001, V20-INT-002, V20-CMP-001 |",
-            "| `C22` | QR relay production topology/transport/deployment sahibi yoktu. | V0-ARC-009, V0-QRG-001, V14-QRT-001 |",
-            "| `C23` | Bill-independent account receipt source ve reconciliation zinciri yoktu. | V0-DOM-007, V13-ACC-004, V13-ACC-007 |",
-            "| `C24` | Meal-card result allocation/fiscal workflow'a bağlanmıyordu. | V0-MCD-001, V12-MCD-004 |",
-            "| `C25` | T300 ve QNB adisyon branch'leri koşulsuz birlikte zorunluydu. | V0-CMP-001, V12-FSC-003 |",
-            "| `C26` | CustomerAccount handler registry/fiscal closure integration sahibi yoktu. | V13-ACC-008 |",
+            "| `C22` | QR relay production topology/transport/deployment sahibi yoktu. | V0-ARC-009, V0-QRG-001, V12-QRT-001 |",
+            "| `C23` | Bill-independent account receipt source ve reconciliation zinciri yoktu. | V0-DOM-007, V14-ACC-004, V14-ACC-007 |",
+            "| `C24` | Meal-card result allocation/fiscal workflow'a bağlanmıyordu. | V0-MCD-001, V13-MCD-004 |",
+            "| `C25` | T300 ve QNB adisyon branch'leri koşulsuz birlikte zorunluydu. | V0-CMP-001, V13-FSC-003 |",
+            "| `C26` | CustomerAccount handler registry/fiscal closure integration sahibi yoktu. | V14-ACC-008 |",
             "| `C27` | On-hand ve reservation balance projection sırası producer cycle üretiyordu. | V11-INV-002, V11-INV-007 |",
             "| `C28` | Transaction primitive Outbox oluşmadan post-commit handoff sahipleniyordu. | V1-FND-006 |",
             "| `C29` | Provider timeout Unknown/ReconciliationRequired durumu olmadan modellenmişti. | V0-DOM-001 |",
@@ -2654,59 +2654,59 @@ def validate_plan() -> None:
         "V11-MNU-002": {"V11-INV-007", "V11-PRD-002", "V11-RSV-001", "V11-RSV-003"},
         "V11-UI-003": {"V11-INV-002", "V11-INV-007"},
         "V11-PUR-001": {"V0-DOM-009", "V11-INV-004", "V11-PUR-002"},
-        "V12-PAY-002": {"V0-ARC-004"},
-        "V12-PAY-003": {"V12-CSH-003", "V12-PAY-004", "V12-MCD-004"},
-        "V12-PAY-004": {"V12-HUG-001", "V12-ALC-001", "V12-FSC-001", "V1-FND-005", "V1-FND-006"},
-        "V12-CSH-001": {"V1-CSH-001"},
-        "V12-CSH-003": {"V12-CSH-001", "V12-CSH-002", "V12-ALC-001", "V1-FND-005"},
-        "V12-ALC-004": {"V12-ALC-003", "V12-HUG-003", "V12-FSC-001", "V1-FND-005"},
-        "V12-FSC-002": {"V12-ALC-002", "V12-CSH-003", "V12-MCD-004", "V1-FND-005"},
-        "V12-FSC-003": {"V12-FSC-004", "V12-FSC-005"},
-        "V12-MCD-004": {"V12-MCD-001", "V12-MCD-003", "V12-ALC-001", "V12-FSC-001", "V1-FND-005", "V1-FND-006"},
-        "V12-TBL-001": {"V1-TBL-002", "V1-TBL-003", "V12-PAY-004", "V12-ALC-002"},
-        "V13-ACC-001": {"V0-DOM-007"},
-        "V13-ACC-003": {"V1-FND-005"},
-        "V13-ACC-004": {"V13-ACC-001", "V0-DOM-007", "V0-DAT-002"},
-        "V13-ACC-005": {"V13-ACC-001", "V13-ACC-002", "V13-ACC-004", "V12-CSH-001", "V12-CSH-002", "V1-FND-005"},
-        "V13-ACC-006": {"V13-ACC-001", "V13-ACC-002", "V13-ACC-004", "V12-HUG-001", "V12-HUG-002", "V1-FND-005", "V1-FND-006"},
-        "V13-ACC-007": {"V13-ACC-005", "V13-ACC-006"},
-        "V13-ACC-008": {"V13-ACC-003", "V12-PAY-002", "V12-PAY-003", "V12-FSC-002", "V1-FND-002", "V1-FND-005"},
-        "V13-CST-001": {"V0-CMP-003"},
-        "V13-QNB-004": {"V13-QNB-005"},
-        "V14-QRO-001": {"V14-QRS-003"},
-        "V14-QRO-002": {"V0-DOM-005"},
-        "V14-QRO-003": {"V14-STK-001", "V1-FND-005"},
-        "V14-ONL-002": {"V14-STK-001", "V1-FND-005"},
-        "V14-ONL-003": {"V11-RSV-003"},
-        "V14-STK-001": {"V11-RSV-003"},
-        "V14-QRT-001": {"V0-ARC-009", "V0-QRG-001", "V14-QRS-002", "V1-FND-006"},
-        "V14-REC-001": {"V14-ONL-002", "V14-ONL-003"},
+        "V13-PAY-002": {"V0-ARC-004"},
+        "V13-PAY-003": {"V13-CSH-003", "V13-PAY-004", "V13-MCD-004"},
+        "V13-PAY-004": {"V13-HUG-001", "V13-ALC-001", "V13-FSC-001", "V1-FND-005", "V1-FND-006"},
+        "V13-CSH-001": {"V1-CSH-001"},
+        "V13-CSH-003": {"V13-CSH-001", "V13-CSH-002", "V13-ALC-001", "V1-FND-005"},
+        "V13-ALC-004": {"V13-ALC-003", "V13-HUG-003", "V13-FSC-001", "V1-FND-005"},
+        "V13-FSC-002": {"V13-ALC-002", "V13-CSH-003", "V13-MCD-004", "V1-FND-005"},
+        "V13-FSC-003": {"V13-FSC-004", "V13-FSC-005"},
+        "V13-MCD-004": {"V13-MCD-001", "V13-MCD-003", "V13-ALC-001", "V13-FSC-001", "V1-FND-005", "V1-FND-006"},
+        "V13-TBL-001": {"V1-TBL-002", "V1-TBL-003", "V13-PAY-004", "V13-ALC-002"},
+        "V14-ACC-001": {"V0-DOM-007"},
+        "V14-ACC-003": {"V1-FND-005"},
+        "V14-ACC-004": {"V14-ACC-001", "V0-DOM-007", "V0-DAT-002"},
+        "V14-ACC-005": {"V14-ACC-001", "V14-ACC-002", "V14-ACC-004", "V13-CSH-001", "V13-CSH-002", "V1-FND-005"},
+        "V14-ACC-006": {"V14-ACC-001", "V14-ACC-002", "V14-ACC-004", "V13-HUG-001", "V13-HUG-002", "V1-FND-005", "V1-FND-006"},
+        "V14-ACC-007": {"V14-ACC-005", "V14-ACC-006"},
+        "V14-ACC-008": {"V14-ACC-003", "V13-PAY-002", "V13-PAY-003", "V13-FSC-002", "V1-FND-002", "V1-FND-005"},
+        "V14-CST-001": {"V0-CMP-003"},
+        "V14-QNB-004": {"V14-QNB-005"},
+        "V12-QRO-001": {"V12-QRS-003"},
+        "V12-QRO-002": {"V0-DOM-005"},
+        "V12-QRO-003": {"V12-STK-001", "V1-FND-005"},
+        "V12-ONL-002": {"V12-STK-001", "V1-FND-005"},
+        "V12-ONL-003": {"V11-RSV-003"},
+        "V12-STK-001": {"V11-RSV-003"},
+        "V12-QRT-001": {"V0-ARC-009", "V0-QRG-001", "V12-QRS-002", "V1-FND-006"},
+        "V12-REC-001": {"V12-ONL-002", "V12-ONL-003"},
         "V11-RCP-002": {"V0-DOM-010"},
         "V11-PRD-002": {"V0-DOM-010", "V1-FND-005"},
-        "V12-ALC-002": {"V1-FND-005"},
+        "V13-ALC-002": {"V1-FND-005"},
         "V1-KIT-002": {"V0-DOM-011"},
         "V15-NOT-001": {"V0-ARC-006"},
-        "V20-INS-001": {"V0-ARC-007", "V14-QRT-001"},
+        "V20-INS-001": {"V0-ARC-007", "V12-QRT-001"},
         "V20-INS-002": {"V0-ARC-007"},
         "V20-REL-001": {"V0-ARC-008"},
         "V20-GAT-001": {"V20-REL-001"},
         "V20-CMP-001": {"V0-CMP-002", "V0-CMP-004", "V20-UAT-001", "V20-UAT-002"},
-        "V20-REL-004": {"V20-REL-003", "V15-BKP-002", "V20-MIG-002", "V20-SEC-001", "V14-QRT-001"},
+        "V20-REL-004": {"V20-REL-003", "V15-BKP-002", "V20-MIG-002", "V20-SEC-001", "V12-QRT-001"},
         "V20-REL-005": {"V20-REL-004", "V15-OBS-001", "V15-REC-002"},
         "V20-MIG-001": {"V0-DAT-006", "V20-INS-002", "V1-FND-004"},
         "V15-BKP-001": {"V0-BKP-002"},
         "V15-BKP-002": {"V0-BKP-002"},
-        "V20-UAT-001": {"V14-OUI-001", "V20-INT-003", "V0-CMP-005"},
+        "V20-UAT-001": {"V12-OUI-001", "V20-INT-003", "V0-CMP-005"},
         "V20-SEC-001": {
             "V0-SEC-001",
-            "V14-QRS-003",
-            "V14-CWB-001",
-            "V14-CWB-002",
-            "V14-QRO-001",
-            "V14-QRO-002",
-            "V14-QRO-003",
-            "V14-QRT-001",
-            "V14-ONL-001",
+            "V12-QRS-003",
+            "V12-CWB-001",
+            "V12-CWB-002",
+            "V12-QRO-001",
+            "V12-QRO-002",
+            "V12-QRO-003",
+            "V12-QRT-001",
+            "V12-ONL-001",
         },
     }
     for task_id, required in required_dependencies.items():
@@ -2718,9 +2718,9 @@ def validate_plan() -> None:
         "V1-CUI-001", "V1-CUI-002", "V1-CUI-003",
         "V1-WTR-001", "V1-WTR-002", "V1-WTR-003",
         "V11-UI-001", "V11-UI-002", "V11-UI-003",
-        "V12-PUI-001", "V12-PUI-002", "V12-PUI-003",
-        "V13-UI-001", "V13-UI-002", "V13-UI-003",
-        "V14-CWB-001", "V14-CWB-002", "V14-OUI-001",
+        "V13-PUI-001", "V13-PUI-002", "V13-PUI-003",
+        "V14-UI-001", "V14-UI-002", "V14-UI-003",
+        "V12-CWB-001", "V12-CWB-002", "V12-OUI-001",
         "V20-INT-006", "V20-UAT-001",
     }
     for task_id in sorted(accessibility_consumers):
@@ -2728,23 +2728,23 @@ def validate_plan() -> None:
             errors.append(f"ACCESSIBILITY_DEPENDENCY {task_id}: V0-CMP-005")
 
     secret_consumers = {
-        "V12-HUG-001",
-        "V12-HUG-002",
-        "V12-HUG-003",
-        "V12-HUG-004",
-        "V12-MCD-003",
-        "V13-QNB-001",
-        "V13-QNB-002",
-        "V13-QNB-003",
-        "V13-QNB-005",
-        "V14-ONL-001",
-        "V14-ONL-003",
+        "V13-HUG-001",
+        "V13-HUG-002",
+        "V13-HUG-003",
+        "V13-HUG-004",
+        "V13-MCD-003",
+        "V14-QNB-001",
+        "V14-QNB-002",
+        "V14-QNB-003",
+        "V14-QNB-005",
+        "V12-ONL-001",
+        "V12-ONL-003",
     }
     sensitive_consumers = secret_consumers | {
-        "V12-MCD-001",
-        "V12-MCD-002",
-        "V13-QNB-004",
-        "V12-FSC-001",
+        "V13-MCD-001",
+        "V13-MCD-002",
+        "V14-QNB-004",
+        "V13-FSC-001",
     }
     for task_id in secret_consumers:
         if "V1-SEC-001" not in dependency_graph.get(task_id, []):
@@ -2754,7 +2754,7 @@ def validate_plan() -> None:
             errors.append(f"SEMANTIC_PAYLOAD_DEPENDENCY {task_id}: V1-SEC-002")
 
     conditional_dependency_consumers = {
-        "V13-QNB-005": {"V13-QNB-004", "V13-UI-002", "V20-INT-002"},
+        "V14-QNB-005": {"V14-QNB-004", "V14-UI-002", "V20-INT-002"},
         "V20-LIC-001": {"V20-LIC-002"},
         "V20-LIC-002": {"V20-GAT-002"},
     }
@@ -2820,8 +2820,8 @@ def validate_plan() -> None:
             if required_phrase not in agents_text:
                 errors.append(f"AGENT_BOUNDARY_AGENTS_CONTENT {required_phrase}")
     forbidden_dependencies = {
-        "V14-QRO-002": {"V0-CMP-001"},
-        "V14-STK-001": {"V14-QRO-003", "V14-ONL-002"},
+        "V12-QRO-002": {"V0-CMP-001"},
+        "V12-STK-001": {"V12-QRO-003", "V12-ONL-002"},
         "V0-ARC-009": {"V0-SEC-001"},
         "V0-CMP-002": {"V0-CMP-001"},
         "V0-CMP-004": {"V0-CMP-001"},
@@ -2868,7 +2868,7 @@ def validate_plan() -> None:
 
     source_requirements = {
         "V0-QNB-001": "CORR:C21",
-        "V13-QNB-005": "CORR:C21",
+        "V14-QNB-005": "CORR:C21",
         "V20-INT-002": "CORR:C21",
         "V20-CMP-001": "CORR:C21",
     }
@@ -2877,7 +2877,7 @@ def validate_plan() -> None:
         if source not in values:
             errors.append(f"SEMANTIC_SOURCE {task_id}: missing {source}")
 
-    no_case_creation = {"V12-HUG-002", "V12-MCD-002", "V14-ONL-003", "V14-MAP-002"}
+    no_case_creation = {"V13-HUG-002", "V13-MCD-002", "V12-ONL-003", "V12-MAP-002"}
     for task_id in no_case_creation:
         scope = " ".join(tasks[task_id][2].get("Out of scope", []))
         if "ReconciliationCase oluşturma" not in scope:
@@ -3136,18 +3136,18 @@ def manual_audit_findings() -> list[tuple[str, str, str, str]]:
         ("plan/TASK_STANDARD.md", "SCHEMA", "Görev satırı alanları", "Standard, görev dosyalarının gerçek metadata ve bölüm sözleşmesiyle eşleşmiyordu."),
         ("plan/GATES.md", "GATE", "Sürüm zinciri", "Entry ve exit kapıları sabit gate kimliklerine sahip değildi."),
         ("plan/TRACEABILITY.md", "DECISION", "Audit Traceability", "On karar/validation boşluğu tek kişilik karar görevlerine ayrılmamıştı."),
-        ("plan/v1.2/payments/V12-PAY-002-tender-command-routing.md", "VERSIONING", "Goal", "CustomerAccount yöntemi V1.3 handler öncesi typed version-not-enabled sonucu tanımlamıyordu."),
-        ("plan/v1.2/cash/V12-CSH-001-cash-session-lifecycle.md", "DEPENDENCY", "Dependencies", "Cash posting görevi V1-CSH-001 lifecycle sözleşmesine bağlı değildi."),
-        ("plan/v1.3/customer-account/V13-ACC-001-account-transaction-ledger.md", "DEPENDENCY", "Dependencies", "Account ledger görevi V0-DOM-007 kararına bağlı değildi."),
-        ("plan/v1.4/qr-ordering/V14-QRO-002-pending-table-policy.md", "DEPENDENCY", "Dependencies", "QR masa geçişi yanlış V0-CMP-001 görevine bağlıydı; V0-DOM-005 gerekliydi."),
-        ("plan/v1.4/qr-ordering/V14-QRO-001-pending-qr-order.md", "DEPENDENCY", "Dependencies", "QR draft görevi session lifecycle sahibi V14-QRS-003'e bağlı değildi."),
-        ("plan/v1.4/shared-stock/V14-STK-001-cross-channel-last-portion.md", "OWNERSHIP", "Owned surface", "Ortak stok rezervasyon komutunun tek sahibi belirlenmemişti."),
-        ("plan/v1.4/qr-ordering/V14-QRO-003-confirmation-and-reservation.md", "OWNERSHIP", "Owned surface", "QR görevi ortak stok rezervasyon yüzeyini sahipleniyordu."),
-        ("plan/v1.4/online-ordering/V14-ONL-002-external-order-normalization.md", "OWNERSHIP", "Owned surface", "Online görev ortak stok rezervasyon yüzeyini sahipleniyordu."),
-        ("plan/v1.2/hugin-t300/V12-HUG-002-unknown-reconciliation.md", "RECONCILIATION", "In scope", "Adapter görevi reconciliation case açma yetkisini REC sahibinden alıyordu."),
-        ("plan/v1.2/meal-card/V12-MCD-002-settlement-lifecycle.md", "RECONCILIATION", "In scope", "Settlement görevi divergence kanıtı yerine reconciliation case davranışı sahipleniyordu."),
-        ("plan/v1.4/online-ordering/V14-ONL-003-status-and-cancellation-sync.md", "RECONCILIATION", "In scope", "Online adapter görevi reconciliation case açma yetkisini REC sahibinden alıyordu."),
-        ("plan/v1.4/channel-mapping/V14-MAP-002-status-mapping.md", "RECONCILIATION", "In scope", "Mapping görevi reconciliation case açma yetkisini REC sahibinden alıyordu."),
+        ("plan/v1.3/payments/V13-PAY-002-tender-command-routing.md", "VERSIONING", "Goal", "CustomerAccount yöntemi V1.4 handler öncesi typed version-not-enabled sonucu tanımlamıyordu."),
+        ("plan/v1.3/cash/V13-CSH-001-cash-session-lifecycle.md", "DEPENDENCY", "Dependencies", "Cash posting görevi V1-CSH-001 lifecycle sözleşmesine bağlı değildi."),
+        ("plan/v1.4/customer-account/V14-ACC-001-account-transaction-ledger.md", "DEPENDENCY", "Dependencies", "Account ledger görevi V0-DOM-007 kararına bağlı değildi."),
+        ("plan/v1.2/qr-ordering/V12-QRO-002-pending-table-policy.md", "DEPENDENCY", "Dependencies", "QR masa geçişi yanlış V0-CMP-001 görevine bağlıydı; V0-DOM-005 gerekliydi."),
+        ("plan/v1.2/qr-ordering/V12-QRO-001-pending-qr-order.md", "DEPENDENCY", "Dependencies", "QR draft görevi session lifecycle sahibi V12-QRS-003'e bağlı değildi."),
+        ("plan/v1.2/shared-stock/V12-STK-001-cross-channel-last-portion.md", "OWNERSHIP", "Owned surface", "Ortak stok rezervasyon komutunun tek sahibi belirlenmemişti."),
+        ("plan/v1.2/qr-ordering/V12-QRO-003-confirmation-and-reservation.md", "OWNERSHIP", "Owned surface", "QR görevi ortak stok rezervasyon yüzeyini sahipleniyordu."),
+        ("plan/v1.2/online-ordering/V12-ONL-002-external-order-normalization.md", "OWNERSHIP", "Owned surface", "Online görev ortak stok rezervasyon yüzeyini sahipleniyordu."),
+        ("plan/v1.3/hugin-t300/V13-HUG-002-unknown-reconciliation.md", "RECONCILIATION", "In scope", "Adapter görevi reconciliation case açma yetkisini REC sahibinden alıyordu."),
+        ("plan/v1.3/meal-card/V13-MCD-002-settlement-lifecycle.md", "RECONCILIATION", "In scope", "Settlement görevi divergence kanıtı yerine reconciliation case davranışı sahipleniyordu."),
+        ("plan/v1.2/online-ordering/V12-ONL-003-status-and-cancellation-sync.md", "RECONCILIATION", "In scope", "Online adapter görevi reconciliation case açma yetkisini REC sahibinden alıyordu."),
+        ("plan/v1.2/channel-mapping/V12-MAP-002-status-mapping.md", "RECONCILIATION", "In scope", "Mapping görevi reconciliation case açma yetkisini REC sahibinden alıyordu."),
         ("plan/v1.5/performance/V15-PER-001-critical-load-tests.md", "WORKTYPE", "Goal", "Performans görevi implementation olarak sınıflanmıştı; çıktı validation kanıtıdır."),
         ("plan/v1.5/performance/V15-PER-002-failure-injection.md", "WORKTYPE", "Goal", "Offline dayanıklılık görevi implementation olarak sınıflanmıştı; çıktı validation kanıtıdır."),
         ("plan/v1.5/runbooks/V15-RUN-001-operational-runbooks.md", "SPLIT", "In scope", "Runbook yazımı ile bağımsız operatör uygulaması aynı görevdeydi."),
@@ -3156,7 +3156,7 @@ def manual_audit_findings() -> list[tuple[str, str, str, str]]:
         ("plan/v2.0/release/V20-REL-003-go-live-decision.md", "SCOPE", "Goal", "Go-live karar görevi production deployment yaptığı izlenimi veriyordu."),
         ("plan/v2.0/security-compliance/V20-CMP-001-compliance-signoff.md", "SOURCE", "In scope", "QNB iptal kapsamı kamuya açık API kanıtını aşıyordu."),
         ("plan/v2.0/licensing/V20-LIC-001-approved-license-enforcement.md", "CONDITIONAL", "Goal", "Lisans uygulaması V0-LIC-001 sonucu bilinmeden koşulsuz planlanmıştı."),
-        ("plan/v1.2/meal-card/V12-MCD-003-provider-adapter.md", "SPLIT", "Goal", "Tek görev birden çok olası meal-card provider adapter'ını kapsayabiliyordu."),
+        ("plan/v1.3/meal-card/V13-MCD-003-provider-adapter.md", "SPLIT", "Goal", "Tek görev birden çok olası meal-card provider adapter'ını kapsayabiliyordu."),
         ("plan/v0/hugin-t300/V0-HUG-001-integration-contract.md", "BLOCKER", "Goal", "Özel SDK/protokol ve cihaz transcript kanıtı yokken görev Planned durumundaydı."),
         ("plan/v0/qnb-esolutions/V0-QNB-001-integration-contract.md", "BLOCKER", "Goal", "Özel tenant/contract ve lifecycle transcript kanıtı yokken görev Planned durumundaydı."),
         ("plan/v0/yemeksepeti/V0-YSP-001-partner-api-contract.md", "BLOCKER", "Goal", "Credential/sandbox ve gerçek webhook transcript kanıtı yokken görev Planned durumundaydı."),
@@ -3178,22 +3178,22 @@ def post_audit_findings() -> list[tuple[str, int, str]]:
         ("plan/ASSUMPTION_POLICY.md", 25, "Dört DEC referansı tamamlanmış ve tarihli decision kanıtı değildi."),
         ("plan/v0/document-baseline/V0-DOC-001-correct-master-specification.md", 11, "Source basis, C1-C9 ve II.16 kapsamını karşılamıyordu."),
         ("plan/v1/foundation/V1-FND-001-module-skeleton.md", 19, "Root solution/project ve migration composition yüzeylerinin kesin sahibi yoktu."),
-        ("plan/v1.2/payments/V12-PAY-002-tender-command-routing.md", 51, "Router acceptance, henüz uygulanmamış handler'ları zorunlu tutuyordu."),
+        ("plan/v1.3/payments/V13-PAY-002-tender-command-routing.md", 51, "Router acceptance, henüz uygulanmamış handler'ları zorunlu tutuyordu."),
         ("plan/TASK_STANDARD.md", 44, "Koşullu NotApplicable sonucu status/dependency modelinde temsil edilmiyordu."),
         ("plan/v0/platform-architecture/V0-ARC-005-settings-and-secret-classification.md", 26, "Secret ve payload protection dış entegrasyonlardan sonra planlanmıştı."),
         ("plan/v1/orders/V1-ORD-001-order-aggregate.md", 35, "Order, inventory ve purchasing producer dependency'leri eksikti."),
         ("plan/v0/platform-architecture/V0-ARC-001-module-dependency-rules.md", 19, "Cross-module atomik workflow'ların ortak execution sahibi yoktu."),
         ("plan/v2.0/release-gates/V20-GAT-001-requirement-trace-verification.md", 35, "Trace gate exact release candidate oluşmadan çalışabiliyordu."),
-        ("plan/v1.4/online-ordering/V14-ONL-002-external-order-normalization.md", 55, "İki handoff doğrudan kendi dependency'sine geri dönüyordu."),
+        ("plan/v1.2/online-ordering/V12-ONL-002-external-order-normalization.md", 55, "İki handoff doğrudan kendi dependency'sine geri dönüyordu."),
         ("tmp/plan_audit_tool.py", 19, "PDF importları nedeniyle PDF dışı validator komutları da bağımlılık yokken açılamıyordu."),
         ("AGENTS.md", 3, "Kök Markdown belgesi proje lint sözleşmesiyle tekrarlanabilir biçimde yapılandırılmamıştı."),
-        ("plan/v1.2/payment-allocation/V12-ALC-003-partial-refund-allocation.md", 30, "Refund allocation provider Approved sonucundan önce finalize edilebiliyordu."),
-        ("plan/v1.2/hugin-t300/V12-HUG-001-payment-request-path.md", 28, "Approved card result ile allocation/fiscal arasında crash-safe owner yoktu."),
+        ("plan/v1.3/payment-allocation/V13-ALC-003-partial-refund-allocation.md", 30, "Refund allocation provider Approved sonucundan önce finalize edilebiliyordu."),
+        ("plan/v1.3/hugin-t300/V13-HUG-001-payment-request-path.md", 28, "Approved card result ile allocation/fiscal arasında crash-safe owner yoktu."),
         ("plan/v1/table-management/V1-TBL-002-table-transfer.md", 33, "Payment sırasında transfer/merge ve bill mutation politikası sahipsizdi."),
-        ("plan/v1.2/payments/V12-PAY-002-tender-command-routing.md", 51, "Gerçek Cash tender handler görevi yoktu."),
-        ("plan/v1.4/online-ordering/V14-ONL-002-external-order-normalization.md", 28, "Online Accepted Order ile son porsiyon reservation atomik değildi."),
-        ("plan/v1.3/customer-account/V13-ACC-004-account-payment-posting.md", 28, "Cari bakiye gerçek approved payment/cash kanıtı olmadan azaltılabiliyordu."),
-        ("plan/v1.3/qnb-esolutions/V13-QNB-004-invoice-reconciliation.md", 36, "QNB cancellation reconciliation transporttan önce çalışabiliyordu."),
+        ("plan/v1.3/payments/V13-PAY-002-tender-command-routing.md", 51, "Gerçek Cash tender handler görevi yoktu."),
+        ("plan/v1.2/online-ordering/V12-ONL-002-external-order-normalization.md", 28, "Online Accepted Order ile son porsiyon reservation atomik değildi."),
+        ("plan/v1.4/customer-account/V14-ACC-004-account-payment-posting.md", 28, "Cari bakiye gerçek approved payment/cash kanıtı olmadan azaltılabiliyordu."),
+        ("plan/v1.4/qnb-esolutions/V14-QNB-004-invoice-reconciliation.md", 36, "QNB cancellation reconciliation transporttan önce çalışabiliyordu."),
         ("plan/v2.0/security-compliance/V20-CMP-001-compliance-signoff.md", 39, "Compliance sign-off tax/money ve fee/tip karar zincirini tüketmiyordu."),
         ("plan/v2.0/release/V20-REL-003-go-live-decision.md", 48, "Production deployment ve post-go-live observation sahibi yoktu."),
         ("plan/PDF_COVERAGE.md", 1181, "Edge-case coverage yalnız validation owner'larıyla false-positive üretebiliyordu."),
@@ -3534,7 +3534,7 @@ def generate_audit_report() -> None:
             "",
             f"- Kayıtlı finding toplamı: `{sum(counters.values()) + len(post_audit_findings())}`.",
             "- Açık finding: `31` decision record revalidation blocker'ı; ayrıntı `plan/DECISION_REVALIDATION.md` içindedir.",
-            "- Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.",
+            "- Provider kararı: `0 approved provider`; provider-specific `V13-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.",
             "- Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.",
             "- Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.",
             f"- Kayıtlı Markdown dosyası sayısı: `{len(current_paths) + 1}` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).",

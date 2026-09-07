@@ -1,11 +1,11 @@
 namespace ALKAROS.QrOrdering.RelaySecurity;
 
 /// <summary>
-/// V14-QRS-002: the rate-limit and payload-size bounds a relay-facing
+/// V12-QRS-002: the rate-limit and payload-size bounds a relay-facing
 /// endpoint must enforce. Framework-agnostic constants — deliberately not
 /// an ASP.NET Core rate limiter policy or endpoint filter: wiring these
 /// into a concrete route is the job of whichever Host endpoint task
-/// actually exposes one (`V14-QRO-001`), which is out of this task's
+/// actually exposes one (`V12-QRO-001`), which is out of this task's
 /// declared Owned surface. Defining the numbers once here means every
 /// future relay-facing endpoint applies the same bounds instead of each
 /// inventing its own.

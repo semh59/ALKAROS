@@ -31,7 +31,7 @@
 
 ## Out of scope
 
-- QR-güdümlü rezervasyon politikası (`V14-QRO-003`) beklemededir. Kasiyer
+- QR-güdümlü rezervasyon politikası (`V12-QRO-003`) beklemededir. Kasiyer
   istemcisinin manuel rezervasyon UI'si `V1-RMD-017` / `V1-RMD-028` istemci
   yüzeylerinde teslim edilmiştir (bkz. `docs/domain/table-reservation-policy.md`
   Amendment 2026-09-03, `V1-RMD-100` ile uzlaştırıldı).
@@ -55,4 +55,4 @@
 
 ## Handoff
 
-- V14-QRO-002
+- V12-QRO-002

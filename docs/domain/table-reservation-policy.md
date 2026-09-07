@@ -44,7 +44,7 @@ seating race: `PendingConfirmation` moves the table to `Reserved`,
 
 ## Invariants (consumers)
 
-- `V1-TBL-004`, `V14-QRO-002`: `Reserved` has one persistent owner (the
+- `V1-TBL-004`, `V12-QRO-002`: `Reserved` has one persistent owner (the
   pending order or the active manual reservation record), one exit path per
   result, and no time-based expiry.
 - The QR flow never invents reservation semantics beyond the
@@ -71,7 +71,7 @@ seating race: `PendingConfirmation` moves the table to `Reserved`,
   owner per `Reserved` table, no second timer model — is unchanged, because
   the manual reservation record is itself the single owner.
 - **Affected tasks:** `V1-TBL-004` (scope text reconciled), `V1-RMD-013`
-  (Host `POST /reservations` surface), `V14-QRO-003` (QR reservation path,
+  (Host `POST /reservations` surface), `V12-QRO-003` (QR reservation path,
   still deferred).
 - **Not changed:** no `waiter` IAM role is introduced and `pos.cashier.mutate`
   is not split; a finer permission split remains deferred work noted in

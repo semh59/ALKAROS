@@ -3,7 +3,7 @@ using Npgsql;
 namespace ALKAROS.QrOrdering.TokenLifecycle;
 
 /// <summary>
-/// V14-QRS-001: issuance, rotation, validation and revocation of a table's
+/// V12-QRS-001: issuance, rotation, validation and revocation of a table's
 /// QR token. A table has at most one non-revoked token at a time (enforced
 /// by `ux_table_tokens_active_per_table`, a hard cutover — this
 /// implementation deliberately has no overlapping-validity grace period:

@@ -78,4 +78,4 @@ baglamak; tek commit veya tam rollback disinda kalici sonuc birakmamak.
 
 - V1-IAM-004
 - V1-ORD-002
-- V12-PAY-004
+- V13-PAY-004

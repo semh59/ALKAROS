@@ -33,7 +33,7 @@ Source Table veya Order silmeden multi-table merge membership ve explicit undo m
 ## Out of scope
 
 - Fiziksel oturma rezervasyonu, şubeler arası table hareketi ve payment verisi bulunan merge; sonuncunun sahibi
-  `V12-TBL-001`dir.
+  `V13-TBL-001`dir.
 
 ## Dependencies
 
@@ -60,4 +60,4 @@ Source Table veya Order silmeden multi-table merge membership ve explicit undo m
 ## Handoff
 
 - V1-TBL-005
-- V12-TBL-001
+- V13-TBL-001

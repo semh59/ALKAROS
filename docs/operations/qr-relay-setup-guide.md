@@ -2,17 +2,17 @@
 
 > Source basis: PO:2026-09-07
 > Companion docs: `docs/architecture/qr-relay-topology.md` (V0-ARC-009),
-> `docs/architecture/qr-relay-provider-decision.md` (V14-QRT-002),
-> `plan/v1.4/qr-transport/V14-QRT-003-relay-credential-configuration-ui.md`
+> `docs/architecture/qr-relay-provider-decision.md` (V12-QRT-002),
+> `plan/v1.2/qr-transport/V12-QRT-003-relay-credential-configuration-ui.md`
 
 Bu rehber, uzaktan (QR/NFC) sipariş bağlantısının çalışması için **bir kez**
 yapılması gereken adımları tarif eder. Bu adımlar **restoran başına değil,
 ALKAROS için bir kez** yapılır — hiçbir restoranın kendi domain'ine ya da
-Cloudflare hesabına ihtiyacı yoktur (`V14-QRT-002` kararı).
+Cloudflare hesabına ihtiyacı yoktur (`V12-QRT-002` kararı).
 
 Legend: **DONE** — repo'da hazır ve bugün kullanılabilir · **MANUAL** —
 repo dışında, gerçek bir kaynak/hesap gerektirir · **BEKLIYOR** — henüz
-kodlanmadı, ayrı bir görev (`V14-QRT-001`).
+kodlanmadı, ayrı bir görev (`V12-QRT-001`).
 
 ---
 
@@ -65,7 +65,7 @@ sertifika, hiçbiri sorulmaz.
 
 Bugün elle yaptığım kurulum (tünel oluşturma, DNS kaydı, bağlayıcının
 sunucuya servis olarak kurulması) henüz arayüzden otomatik tetiklenmiyor —
-bu, `V14-QRT-001` görevinin kapsamı. O tamamlandığında, adım 2'deki
+bu, `V12-QRT-001` görevinin kapsamı. O tamamlandığında, adım 2'deki
 "Kaydet" sonrası (ya da her yeni restoran kurulumunda) tek bir "Bağlantıyı
 Etkinleştir" tıklaması yetecek; bugün anlattığım Cloudflare Tunnel
 komutlarının hiçbiri elle çalıştırılmayacak.

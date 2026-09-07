@@ -8,11 +8,11 @@ using NpgsqlTypes;
 namespace ALKAROS.Host.Experience.NfcOrdering;
 
 /// <summary>
-/// V14-NFC-001. A customer tapping a table's NFC tag reaches this store
+/// V12-NFC-001. A customer tapping a table's NFC tag reaches this store
 /// directly — there is no cashier/waiter session, no permission check, and
 /// no relay (this only ever runs over the restaurant's own local network,
 /// see `docs/architecture/qr-relay-provider-decision.md`). Unlike the QR
-/// channel (`V14-QRO-*`, still blocked on the relay), an NFC tap is treated
+/// channel (`V12-QRO-*`, still blocked on the relay), an NFC tap is treated
 /// as a trusted, physically-present order: it walks the order straight to
 /// `Accepted` instead of waiting in `PendingConfirmation` for a waiter.
 /// </summary>
@@ -319,14 +319,14 @@ public sealed class NfcOrderingStore
     }
 }
 
-/// <summary>V14-NFC-001: the tapped table does not exist, or is disabled.</summary>
+/// <summary>V12-NFC-001: the tapped table does not exist, or is disabled.</summary>
 public sealed class NfcTableNotFoundException : Exception
 {
     public NfcTableNotFoundException(Guid tableId) : base($"Table {tableId} was not found.") { }
 }
 
 /// <summary>
-/// V14-NFC-001: the table is Reserved, Cleaning or OutOfService — a manual
+/// V12-NFC-001: the table is Reserved, Cleaning or OutOfService — a manual
 /// reservation or a pending QR order may own it with no Order of its own
 /// (table-reservation-policy.md), so appending to "the open order" is not a
 /// safe assumption. NFC self-service is refused; a customer in this state

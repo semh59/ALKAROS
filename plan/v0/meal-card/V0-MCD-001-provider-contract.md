@@ -59,6 +59,6 @@ contract'larını doğrulamak.
 
 ## Handoff
 
-- V12-MCD-001
-- V12-MCD-002
-- V12-MCD-003
+- V13-MCD-001
+- V13-MCD-002
+- V13-MCD-003

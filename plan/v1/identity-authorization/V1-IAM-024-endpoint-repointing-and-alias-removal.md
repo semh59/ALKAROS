@@ -120,4 +120,4 @@ takma adını ve kodunu kaldırır.
 
 ## Handoff
 
-- V14-QRO-003
+- V12-QRO-003

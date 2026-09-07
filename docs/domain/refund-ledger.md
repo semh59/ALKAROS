@@ -75,13 +75,13 @@ returns the existing row via idempotency key.
   `Approved`); no refund on `Unknown`/`ReconciliationRequired`.
 - One idempotency key per refund operation.
 - Fiscal refund/cancel linkage per PDF:I.28.1 (provider-specific to
-  V12-HUG-003).
+  V13-HUG-003).
 
 ## Affected tasks
 
-- Handoff: V12-ALC-003, V12-HUG-003.
-- Consumers: V0-DOM-001 (PartiallyRefunded state), V12-PAY-002,
-  V12-FSC-001 (fiscal refund), V1-BIL-001 (net paid computation).
+- Handoff: V13-ALC-003, V13-HUG-003.
+- Consumers: V0-DOM-001 (PartiallyRefunded state), V13-PAY-002,
+  V13-FSC-001 (fiscal refund), V1-BIL-001 (net paid computation).
 
 ## Acceptance evidence
 

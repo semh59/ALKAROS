@@ -52,4 +52,4 @@ Payment execution'ı etkinleştirmeden item, quantity ve amount ownership segmen
 
 ## Handoff
 
-- V12-ALC-001
+- V13-ALC-001

@@ -55,4 +55,4 @@ Waiter/cashier submit akışını response replay içeren version-controlled con
 ## Handoff
 
 - V1-KIT-001
-- V14-QRO-001
+- V12-QRO-001

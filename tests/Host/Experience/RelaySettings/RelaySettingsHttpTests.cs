@@ -14,7 +14,7 @@ using Xunit;
 namespace ALKAROS.Host.Experience.RelaySettings.Tests;
 
 /// <summary>
-/// V14-QRT-003: only a manager may configure the relay provider credential
+/// V12-QRT-003: only a manager may configure the relay provider credential
 /// from the interface — supervisor/cashier/waiter are all refused, matching
 /// `ApplicationPermissions.IntegrationsManage` being the first
 /// manager-exclusive grant in the catalog.

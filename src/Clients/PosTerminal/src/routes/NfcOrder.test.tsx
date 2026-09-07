@@ -16,9 +16,9 @@ const CATALOG = [
 ];
 
 /**
- * V14-NFC-003: the customer-facing NFC order page (`/nfc/{tableId}`). No
+ * V12-NFC-003: the customer-facing NFC order page (`/nfc/{tableId}`). No
  * login of any kind — every fetch here is anonymous, matching the real
- * `V14-NFC-001` API it calls.
+ * `V12-NFC-001` API it calls.
  */
 describe("NfcOrder", () => {
   let root: Root | null = null;

@@ -63,7 +63,7 @@ ReconciliationCase) → `Approved / Declined / Cancelled`.
    ("Payment → Fiscal strategy → FiscalDocument"); payment cancellation or
    refund triggers the fiscal refund/cancel pathway (PDF:I.28.1) per the
    verified Hugin contract. Provider-specific ordering beyond this direction
-   is delegated to V12-FSC-*/V12-HUG-* tasks.
+   is delegated to V13-FSC-*/V13-HUG-* tasks.
 3. **Reopen policy:** only `Bill.Reopened` exists in the canonical set; the
    Bill transitions `Paid/Cancelled → Reopened` only through an explicit,
    audited domain action. All other terminal states (`Completed`, `Cancelled`,
@@ -122,10 +122,10 @@ Negative:
 ## Affected tasks
 
 - Handoff: V0-DAT-002.
-- CORR:C29 consumers: V12-HUG-001, V12-HUG-002, V12-PAY-003, V12-PAY-004,
-  V12-FSC-001, V12-REC-001.
+- CORR:C29 consumers: V13-HUG-001, V13-HUG-002, V13-PAY-003, V13-PAY-004,
+  V13-FSC-001, V13-REC-001.
 - Consumers (dependency rows): V0-ARC-001, V0-DOC-001, V0-DOM-004, V0-DOM-005,
-  V11-RCP-001, V12-CSH-001, V12-MCD-002, V14-MAP-002, V1-TBL-001, V1-REC-001.
+  V11-RCP-001, V13-CSH-001, V13-MCD-002, V12-MAP-002, V1-TBL-001, V1-REC-001.
 
 ## Acceptance evidence
 

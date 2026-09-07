@@ -15,7 +15,7 @@ using Npgsql;
 namespace ALKAROS.Host.Experience.RelaySettings;
 
 /// <summary>
-/// V14-QRT-003: lets a manager configure the relay provider's API token
+/// V12-QRT-003: lets a manager configure the relay provider's API token
 /// from the interface instead of ever touching the codebase or a terminal —
 /// the token is written once, encrypted at rest, and never read back.
 /// </summary>

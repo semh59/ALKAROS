@@ -70,7 +70,7 @@ public sealed class InvalidTargetTableStateException : TableTransferException
 
 /// <summary>
 /// Thrown when a Bill associated with the source table has payment data (allocations, partial payments, or non-Open status).
-/// Moving partially-paid or allocated bills is deferred to V1.2 payment-aware table topology (V12-TBL-001).
+/// Moving partially-paid or allocated bills is deferred to V1.3 payment-aware table topology (V13-TBL-001).
 /// </summary>
 public sealed class PaymentPolicyRequiredException : TableTransferException
 {

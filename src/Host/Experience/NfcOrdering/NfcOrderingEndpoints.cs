@@ -13,7 +13,7 @@ using Npgsql;
 namespace ALKAROS.Host.Experience.NfcOrdering;
 
 /// <summary>
-/// V14-NFC-001. Deliberately unauthenticated — a customer's phone has no
+/// V12-NFC-001. Deliberately unauthenticated — a customer's phone has no
 /// cashier/waiter session and none is asked for; the tapped NFC tag's
 /// stable per-table link is the only credential, and it only ever resolves
 /// on the restaurant's own local network (no relay, see
@@ -60,7 +60,7 @@ public static class NfcOrderingEndpoints
             .RequireRateLimiting("nfc-order")
             .AddEndpointFilter<NfcOrderingExceptionFilter>();
 
-        // V14-NFC-003: the same read-only projection the (authenticated)
+        // V12-NFC-003: the same read-only projection the (authenticated)
         // terminal catalog endpoint already serves
         // (DualScreenApplication.Endpoints.cs) — reused as-is rather than
         // reimplemented, just without the cashier-session requirement. A

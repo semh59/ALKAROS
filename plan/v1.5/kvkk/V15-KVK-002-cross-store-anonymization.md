@@ -31,7 +31,7 @@ Onaylı PII anonymization işlemini idempotent, resumable ve store-checkpoint ta
 ## Dependencies
 
 - V15-KVK-001
-- V13-CST-002
+- V14-CST-002
 - V15-SEC-003
 - V1-OPS-001
 

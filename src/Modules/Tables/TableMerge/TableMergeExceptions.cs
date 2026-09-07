@@ -83,7 +83,7 @@ public sealed class InvalidTableMergeStateException : TableMergeException
 
 /// <summary>
 /// Thrown when an active bill on any participating table has payment progress (allocated, partially paid, paid, or non-Open status).
-/// Merging tables with payment data requires V1.2 payment-aware table topology (V12-TBL-001).
+/// Merging tables with payment data requires V1.3 payment-aware table topology (V13-TBL-001).
 /// </summary>
 public sealed class PaymentPolicyRequiredException : TableMergeException
 {

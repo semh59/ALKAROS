@@ -5,7 +5,7 @@ using NpgsqlTypes;
 using Xunit;
 
 /// <summary>
-/// V14-QRS-001, against a real Postgres database created from
+/// V12-QRS-001, against a real Postgres database created from
 /// 010-tables.up.sql + 078-qr-ordering-table-tokens.up.sql.
 /// </summary>
 public sealed class TableTokenServiceTests : IClassFixture<QrOrderingTokenLifecycleTestDatabase>

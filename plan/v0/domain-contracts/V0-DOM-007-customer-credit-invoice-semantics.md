@@ -50,6 +50,6 @@ oluşturmadan nasıl etkilediğini tanımlamak.
 
 ## Handoff
 
-- V13-ACC-001
-- V13-ACC-003
-- V13-INV-001
+- V14-ACC-001
+- V14-ACC-003
+- V14-INV-001

@@ -5,9 +5,9 @@ using ALKAROS.QrOrdering.TokenLifecycle;
 using Xunit;
 
 /// <summary>
-/// V14-QRS-002, against a real Postgres database. Every scenario goes
+/// V12-QRS-002, against a real Postgres database. Every scenario goes
 /// through the same table token a real QR/relay request would carry
-/// (V14-QRS-001), so this exercises the full "token → nonce → timestamp"
+/// (V12-QRS-001), so this exercises the full "token → nonce → timestamp"
 /// chain, not each piece in isolation.
 /// </summary>
 public sealed class RelayRequestValidatorTests : IClassFixture<RelaySecurityTestDatabase>

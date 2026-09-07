@@ -47,4 +47,4 @@ KDV, indirim dağıtımı, kuruş yuvarlama, currency ve gece yarısını aşan 
 
 - V1-CAT-001
 - V1-BIL-001
-- V12-PAY-001
+- V13-PAY-001

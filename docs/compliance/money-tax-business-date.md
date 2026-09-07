@@ -47,7 +47,7 @@ timezone, service-day cutoff or bill-splitting policy.
 
 ## Invariants (consumers)
 
-- `V1-CAT-001`, `V1-BIL-001`, `V12-PAY-001`: the same basket must produce the
+- `V1-CAT-001`, `V1-BIL-001`, `V13-PAY-001`: the same basket must produce the
   same payable/tax result on every channel, closed at kuruş level.
 - Tax codes are data (`tax_code` values `1`, `10`, `20`), selectable per
   `line_type`; a code change does not change the rounding rules.
