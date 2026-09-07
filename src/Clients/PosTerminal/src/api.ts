@@ -21,6 +21,32 @@ export class ApiError extends Error {
   }
 }
 
+// V12-QRT-001: Cloudflare Tunnel has no server-side outage queue — a
+// customer's request that arrives while the local connector is restarting
+// (or the Host itself is mid-deploy) gets a bare 502/503/504 immediately,
+// nothing is held or retried on the transport's behalf. Durability instead
+// comes from here: a bounded, backed-off retry on the CLIENT, safe only
+// because the caller passes an idempotent request (a stable, client-
+// generated submission id the server treats as a dedupe key — see
+// `NfcOrderingStore`'s `ux_orders_table_submission`) so a retry after a
+// dropped response replays the same order instead of creating a second one.
+// A definitive rejection (validation, conflict, business rule) is never in
+// this set and always surfaces on the first attempt.
+const RetryableStatuses = new Set([0, 502, 503, 504]);
+const RetryDelaysMs = [500, 1_000, 2_000];
+
+async function withIdempotentRetry<T>(attempt: () => Promise<T>): Promise<T> {
+  for (let retriesLeft = RetryDelaysMs.length; ; retriesLeft--) {
+    try {
+      return await attempt();
+    } catch (reason) {
+      const retryable = reason instanceof ApiError && RetryableStatuses.has(reason.status);
+      if (!retryable || retriesLeft === 0) throw reason;
+      await new Promise((resolve) => setTimeout(resolve, RetryDelaysMs[RetryDelaysMs.length - retriesLeft]));
+    }
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
@@ -157,10 +183,12 @@ export const api = {
     items: { id: string; productId: string; quantity: number }[],
     submissionId: string,
   ) =>
-    request<NfcOrderResult>(`/api/v1/nfc/tables/${tableId}/orders`, {
-      method: "POST",
-      body: JSON.stringify({ items, id: submissionId }),
-    }),
+    withIdempotentRetry(() =>
+      request<NfcOrderResult>(`/api/v1/nfc/tables/${tableId}/orders`, {
+        method: "POST",
+        body: JSON.stringify({ items, id: submissionId }),
+      }),
+    ),
   // V12-QRT-003: manager-only. saveRelayCredential never returns the value
   // back; relayCredentialStatus reports only configured/updatedAt.
   saveRelayCredential: (
