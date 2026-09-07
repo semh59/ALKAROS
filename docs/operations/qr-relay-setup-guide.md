@@ -48,24 +48,38 @@ Bunlar restoranın değil, **ALKAROS'un** (işletmenin) sahip olacağı şeyler.
    token okunamaz hâle gelir — yedeğini güvenli bir yerde (parola
    kasası) tut.
 
-## 2. Arayüzden token'ı gir — DONE (bugün kullanılabilir)
+## 2. Arayüzden bilgileri gir — DONE (bugün kullanılabilir)
 
-Adım 1 tamamlandıktan sonra:
+Adım 1 tamamlandıktan sonra, Cloudflare panelinde şu üç bilgiyi de not al
+(hiçbiri gizli değildir, token gibi korunması gerekmez):
+
+- **Account ID** — panelin sağ alt köşesinde, herhangi bir domain
+  sayfasında görünür.
+- **Zone ID** — domain'i seçip Overview sayfasına gidince sağ tarafta
+  görünür (aynı sayfada Account ID de tekrar görünür).
+- **Ana alan adı** — adım 1.1'de aldığın domain'in kendisi (örn. `alkaros.app`).
+
+Sonra:
 
 1. ALKAROS'a **yönetici** hesabıyla giriş yap.
 2. `/settings/relay` adresine git.
-3. Adım 1.3'te oluşturduğun API token'ı yapıştır, **Kaydet**'e bas.
+3. Adım 1.3'te oluşturduğun API token'ı ve yukarıdaki üç bilgiyi doldurup
+   **Kaydet**'e bas.
 4. Ekranda "Yapılandırıldı" durumunu göreceksin — token bir daha hiçbir
-   ekranda görünmez, yalnızca şifreli olarak saklanır.
+   ekranda görünmez, yalnızca şifreli olarak saklanır; Account ID/Zone
+   ID/ana alan adı geri okunabilir (gizli değiller).
 
-Bunun dışında hiçbir şey girmen gerekmiyor — domain adı, alt-alan adı,
-sertifika, hiçbiri sorulmaz.
+## 3. Restoran başına — DONE (bugün kullanılabilir)
 
-## 3. Restoran başına — BEKLIYOR
+Adım 2 tamamlandıktan sonra, aynı ekranda ikinci bir kart belirir:
 
-Bugün elle yaptığım kurulum (tünel oluşturma, DNS kaydı, bağlayıcının
-sunucuya servis olarak kurulması) henüz arayüzden otomatik tetiklenmiyor —
-bu, `V12-QRT-001` görevinin kapsamı. O tamamlandığında, adım 2'deki
-"Kaydet" sonrası (ya da her yeni restoran kurulumunda) tek bir "Bağlantıyı
-Etkinleştir" tıklaması yetecek; bugün anlattığım Cloudflare Tunnel
-komutlarının hiçbiri elle çalıştırılmayacak.
+1. Restoranı tanımlayan kısa bir **alt alan adı etiketi** yaz (örn. `sube1`
+   — sonuç `sube1.<ana alan adı>` olur).
+2. **Bağlantıyı Etkinleştir**'e bas. Backend, Cloudflare Tunnel'ı oluşturur,
+   DNS kaydını ekler ve sonucu (`sube1.alkaros.app` gibi) ekranda gösterir.
+
+Bundan sonra kalan tek adım — bu tünelin **restoranın kendi
+bilgisayarında** bir arka plan servisi olarak (`cloudflared`) çalıştırılması
+— henüz otomatik değil; bu, ayrı bir görevin kapsamı (LocalConnector,
+`V12-QRT-001`'in tamamlanmamış kısmı). O tamamlandığında bu adım da
+elle bir komut çalıştırmadan, arayüzden yapılabilecek.
