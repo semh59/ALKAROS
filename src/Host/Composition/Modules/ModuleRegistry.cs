@@ -33,7 +33,8 @@ public static class ModuleRegistry
         typeof(ALKAROS.Inventory.InventoryModule),
         typeof(ALKAROS.Menu.MenuModule),
         typeof(ALKAROS.Purchasing.PurchasingModule),
-        typeof(ALKAROS.Production.ProductionModule)
+        typeof(ALKAROS.Production.ProductionModule),
+        typeof(ALKAROS.QrOrdering.TokenLifecycle.QrOrderingModule)
     ];
 
     /// <summary>

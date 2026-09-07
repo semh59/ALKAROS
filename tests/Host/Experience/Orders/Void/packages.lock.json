@@ -169,6 +169,7 @@
           "ALKAROS.Orders": "[1.0.0, )",
           "ALKAROS.Production": "[1.0.0, )",
           "ALKAROS.Purchasing": "[1.0.0, )",
+          "ALKAROS.QrOrdering": "[1.0.0, )",
           "ALKAROS.Recipes": "[1.0.0, )",
           "ALKAROS.Reconciliation": "[1.0.0, )",
           "ALKAROS.Reporting": "[1.0.0, )",
@@ -257,6 +258,13 @@
         "type": "Project",
         "dependencies": {
           "ALKAROS.Inventory": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.qrordering": {
+        "type": "Project",
+        "dependencies": {
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
