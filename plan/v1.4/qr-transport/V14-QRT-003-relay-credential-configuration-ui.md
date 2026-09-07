@@ -24,7 +24,7 @@ endpoint onu geri döndürmez.
 - `src/Host/Experience/RelaySettings/**` (yeni)
 - `tests/Modules/QrOrdering/RelayCredential/**`, `tests/Host/Experience/RelaySettings/**` (yeni)
 - `src/Clients/PosTerminal/src/routes/RelaySettings.tsx`,
-  `RelaySettings.test.tsx` (yeni)
+  `src/Clients/PosTerminal/src/routes/RelaySettings.test.tsx` (yeni)
 - `database/migrations/V14/V14-QRT-003/**` (yeni)
 - Sınırlı ek — aşağıdaki yollar ilgili görevlerin sahipliğinde kalır
   (yollar geri-tik olmadan yazıldı ki denetleyici bunları sahiplik iddiası
