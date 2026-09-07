@@ -1,6 +1,7 @@
 import { RouterProvider } from "./router";
 import { Cashier } from "./routes/Cashier";
 import { CustomerDisplay } from "./routes/CustomerDisplay";
+import { NfcOrder } from "./routes/NfcOrder";
 import { ReservationStation } from "./routes/ReservationStation";
 
 export function App() {
@@ -9,6 +10,9 @@ export function App() {
   }
   if (window.location.pathname.startsWith("/reservations")) {
     return <ReservationStation />;
+  }
+  if (window.location.pathname.startsWith("/nfc/")) {
+    return <NfcOrder />;
   }
   return (
     <RouterProvider>

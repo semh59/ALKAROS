@@ -26,6 +26,7 @@ public static class NfcOrderingEndpoints
     public static IServiceCollection AddNfcOrderingExperience(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
+        services.TryAddSingleton<DualScreenStore>();
         services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
         services.TryAddSingleton<SubmitOrderHandler>();
         // Same factory OrderManagementEndpoints registers (V1-RMD-113) —
@@ -58,6 +59,30 @@ public static class NfcOrderingEndpoints
             .WithTags("NfcOrdering")
             .RequireRateLimiting("nfc-order")
             .AddEndpointFilter<NfcOrderingExceptionFilter>();
+
+        // V14-NFC-003: the same read-only projection the (authenticated)
+        // terminal catalog endpoint already serves
+        // (DualScreenApplication.Endpoints.cs) — reused as-is rather than
+        // reimplemented, just without the cashier-session requirement. A
+        // product listing carries nothing sensitive; tableId is unused by
+        // the query itself but kept in the path so this stays under the
+        // same nfc-order rate-limit partition as the order endpoint.
+        group.MapGet("/catalog", async (
+            Guid tableId,
+            string? category,
+            string? limit,
+            string? cursor,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            _ = tableId;
+            var pageSize = DualScreenStore.ParseCatalogLimit(limit);
+            var page = await store.GetCatalogAsync(category, pageSize, cursor, cancellationToken);
+            if (page.NextCursor is not null)
+                context.Response.Headers["X-Next-Cursor"] = page.NextCursor;
+            return Results.Ok(page.Items);
+        });
 
         group.MapPost("/orders", async (
             Guid tableId,

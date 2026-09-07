@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,24 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
     public Task InitializeAsync() => _database.InitializeAsync();
 
     public Task DisposeAsync() => _database.DisposeAsync();
+
+    [Fact]
+    public async Task TheCatalogEndpointListsAvailableProductsWithoutAnySession()
+    {
+        var tableId = await _database.SeedTableAsync();
+        await _database.SeedProductAsync("Çorba", 60m);
+        await _database.SeedProductAsync("Köfte", 280m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync($"/api/v1/nfc/tables/{tableId:D}/catalog");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var products = await response.Content.ReadFromJsonAsync<List<CatalogProductDto>>();
+        Assert.Equal(2, products!.Count);
+        Assert.Contains(products, p => p.Name == "Çorba" && p.UnitPrice == 60m);
+        Assert.Contains(products, p => p.Name == "Köfte" && p.UnitPrice == 280m);
+    }
 
     [Fact]
     public async Task AnAvailableTableSelfChecksInAndTheOrderIsAcceptedWithAKitchenTicket()

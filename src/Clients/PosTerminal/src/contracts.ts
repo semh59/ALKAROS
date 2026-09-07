@@ -1,3 +1,27 @@
+// V14-NFC-001/004: the NFC self-service order surface has no session of any
+// kind, so its result mirrors the server's OrderDto directly — the client
+// never re-derives status/total, only displays what the API returned.
+export interface NfcOrderResultItem {
+  itemId: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  specialInstructions: string | null;
+}
+
+export interface NfcOrderResult {
+  orderId: string;
+  tableId: string;
+  tableNumber: string;
+  status: string;
+  rowVersion: number;
+  totalAmount: number;
+  items: NfcOrderResultItem[];
+  createdAt: string;
+}
+
 export interface LoginResponse {
   userId: string;
   displayName: string;

@@ -4,6 +4,7 @@ import type {
   DisplaySnapshot,
   LoginResponse,
   MutationResult,
+  NfcOrderResult,
   PairingCompleted,
   PairingCreated,
   RuntimeConfiguration,
@@ -145,5 +146,18 @@ export const api = {
     request<{ revoked: number }>(`/api/v1/terminals/${terminalId}/display-sessions/revoke`, {
       method: "POST",
       body: "{}",
+    }),
+  // V14-NFC-001/004: no terminalId, no session — the tapped table's own id
+  // is the only context this unauthenticated surface has.
+  nfcCatalog: (tableId: string) =>
+    request<CatalogProduct[]>(`/api/v1/nfc/tables/${tableId}/catalog`),
+  placeNfcOrder: (
+    tableId: string,
+    items: { id: string; productId: string; quantity: number }[],
+    submissionId: string,
+  ) =>
+    request<NfcOrderResult>(`/api/v1/nfc/tables/${tableId}/orders`, {
+      method: "POST",
+      body: JSON.stringify({ items, id: submissionId }),
     }),
 };
