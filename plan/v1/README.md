@@ -11,9 +11,14 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 356 görev tanımlıdır: 351 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 359 görev tanımlıdır: 354 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-07 51. dalga (Semih onayıyla, "Evet önce denetim sonra düzeltme" — Dalga 5,
+  `ReceiveGoodsAsync`'in fiş kaydı + PO güncellemesi + stok gönderimi artık tek bir
+  paylaşılan transaction'da [önceden ilk ikisi kendi ayrı transaction'larını hemen
+  commit ediyordu], `V1-RMD-124`) `V1-GOV-122` sonrası kapıyı yeniden açtı; `V1-GOV-124`
+  ile kesin olarak yeniden mühürlendi.
   2026-09-07 50. dalga (Semih onayıyla, "Taze denetim yap, sonra düzeltmeleri yap" — Dalga 4,
   table-draft'ın submission idempotency'si [aynı `orderPayload.id` ile tekrar deneme artık
   yeni bir sipariş yaratmak yerine mevcut siparişi replay ediyor], `V1-RMD-123`) `V1-GOV-120`

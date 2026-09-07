@@ -188,6 +188,59 @@ WHERE source_reference_id = $1;";
     }
 
     [Fact]
+    public async Task AFailureDuringStockPostingRollsBackTheReceiptAndOrderUpdateToo()
+    {
+        // V1-RMD-124: found by an independent audit (2026-09-07) — the
+        // "Atomic PostgreSQL persistence" comment above was false. GoodsReceipt
+        // save and PurchaseOrder update each opened and committed their own
+        // separate transaction, only the stock movement posting after them
+        // shared one. If stock posting then failed for any reason, the receipt
+        // and the order's received quantity were already permanently
+        // committed with no stock ever posted — and worse, no way to retry,
+        // since the receipt-number idempotency check would reject a retry as
+        // a duplicate of the half-applied attempt. Deleting the destination
+        // stock_locations row after creating the order (no FK from
+        // purchasing.purchase_orders/goods_receipts to inventory.stock_locations,
+        // by design — cross-schema FKs are not used) forces exactly that: the
+        // receipt and order update would succeed, but posting the stock
+        // movement/balance (which does carry a real FK to stock_locations)
+        // fails.
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var po = await _service.CreatePurchaseOrderAsync(new CreatePOCommand(
+            OrderNumber: "PO-" + Guid.NewGuid().ToString("N")[..8],
+            SupplierId: supplierId,
+            DestinationLocationId: locationId,
+            Lines: new[] { new CreatePOLineDto(itemId, 100m, "kg", 20m) }));
+        await _service.SubmitPurchaseOrderAsync(po.Id);
+
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        await using (var cmd = new NpgsqlCommand("DELETE FROM inventory.stock_locations WHERE id = $1;", conn))
+        {
+            cmd.Parameters.AddWithValue(locationId);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var rcptNum = "GR-" + Guid.NewGuid().ToString("N")[..8];
+        var act = async () => await _service.ReceiveGoodsAsync(new ReceiveGoodsCommand(
+            ReceiptNumber: rcptNum,
+            OrderId: po.Id,
+            ReceivedBy: "Warehouse Clerk",
+            DeliveredItems: new[]
+            {
+                new ReceiveLineItemDto(po.Lines[0].Id, DeliveredQuantity: 100m)
+            }));
+
+        await act.Should().ThrowAsync<PostgresException>();
+
+        (await _grRepo.GetByReceiptNumberAsync(rcptNum)).Should().BeNull(
+            "the receipt must not survive a rolled-back stock posting");
+        var unchangedPo = await _poRepo.GetByIdAsync(po.Id);
+        unchangedPo!.Status.Should().Be(PurchaseOrderStatus.Submitted);
+        unchangedPo.Lines[0].ReceivedQuantity.Should().Be(0m,
+            "the order's received quantity must not advance when the same attempt's stock posting failed");
+    }
+
+    [Fact]
     public async Task PartialReceiptFollowedByRemainderCompletesOrder()
     {
         var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();

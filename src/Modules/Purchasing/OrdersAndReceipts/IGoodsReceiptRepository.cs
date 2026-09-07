@@ -13,6 +13,12 @@ public interface IGoodsReceiptRepository
     Task<GoodsReceipt?> GetByReceiptNumberAsync(string receiptNumber, CancellationToken ct = default);
     Task<IReadOnlyList<GoodsReceipt>> ListByOrderAsync(Guid orderId, CancellationToken ct = default);
     Task SaveAsync(GoodsReceipt receipt, CancellationToken ct = default);
+
+    /// <summary>
+    /// Saves within an existing connection and transaction for atomic
+    /// operations (mirrors <see cref="IPurchaseOrderRepository.UpdateAsync(PurchaseOrder, NpgsqlConnection, NpgsqlTransaction, CancellationToken)"/>).
+    /// </summary>
+    Task SaveAsync(GoodsReceipt receipt, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
 }
 
 public sealed class PostgresGoodsReceiptRepository : IGoodsReceiptRepository
@@ -148,16 +154,25 @@ LIMIT {MaxUnpagedRows + 1};";
 
     public async Task SaveAsync(GoodsReceipt receipt, CancellationToken ct = default)
     {
-        ArgumentNullException.ThrowIfNull(receipt);
-
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var tx = await conn.BeginTransactionAsync(ct);
+
+        await SaveAsync(receipt, conn, tx, ct);
+
+        await tx.CommitAsync(ct);
+    }
+
+    public async Task SaveAsync(GoodsReceipt receipt, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(receipt);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
 
         const string headerSql = @"
 INSERT INTO purchasing.goods_receipts (receipt_id, receipt_number, order_id, supplier_id, destination_location_id, received_at, received_by, approved_by, notes, created_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 
-        await using var cmd = new NpgsqlCommand(headerSql, conn, tx);
+        await using var cmd = new NpgsqlCommand(headerSql, connection, transaction);
         cmd.Parameters.AddWithValue(receipt.Id);
         cmd.Parameters.AddWithValue(receipt.ReceiptNumber);
         cmd.Parameters.AddWithValue(receipt.OrderId);
@@ -184,7 +199,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 INSERT INTO purchasing.goods_receipt_items (item_id, receipt_id, order_line_id, stock_item_id, delivered_quantity, accepted_quantity, rejected_quantity, unit_code, unit_price, variance_quantity, variance_reason, is_approved_by_manager, created_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);";
 
-            await using var itemCmd = new NpgsqlCommand(itemSql, conn, tx);
+            await using var itemCmd = new NpgsqlCommand(itemSql, connection, transaction);
             itemCmd.Parameters.AddWithValue(item.Id);
             itemCmd.Parameters.AddWithValue(item.ReceiptId);
             itemCmd.Parameters.AddWithValue(item.OrderLineId);
@@ -200,8 +215,6 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);";
             itemCmd.Parameters.AddWithValue(item.CreatedAt);
             await itemCmd.ExecuteNonQueryAsync(ct);
         }
-
-        await tx.CommitAsync(ct);
     }
 
     private static async Task<List<GoodsReceiptItem>> LoadItemsAsync(NpgsqlConnection conn, Guid receiptId, CancellationToken ct)

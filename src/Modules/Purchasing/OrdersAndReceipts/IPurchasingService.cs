@@ -210,15 +210,22 @@ public sealed class PurchasingService : IPurchasingService
         // Update order status based on remaining open lines
         order.UpdateStatusFromLines();
 
-        // Atomic PostgreSQL persistence: GoodsReceipt + Order update + StockLedger movements
+        // Atomic PostgreSQL persistence: GoodsReceipt + Order update + StockLedger
+        // movements. Found by an independent audit (2026-09-07): this comment used
+        // to be false — steps 1 and 2 each opened and committed their own separate
+        // transaction, so a receipt could persist while the order's received
+        // quantity (or the stock movement posted in step 3) never did, with no
+        // way to retry (the idempotency check on ReceiptNumber above would reject
+        // the retry as a duplicate of the half-applied attempt). All three steps
+        // now share this one connection/transaction.
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var tx = await conn.BeginTransactionAsync(ct);
 
         // 1. Save goods receipt
-        await _grRepo.SaveAsync(receipt, ct);
+        await _grRepo.SaveAsync(receipt, conn, tx, ct);
 
         // 2. Update purchase order and lines
-        await _poRepo.UpdateAsync(order, ct);
+        await _poRepo.UpdateAsync(order, conn, tx, ct);
 
         // 3. Post stock movements and their balance effect through Inventory's
         // own contract, using this receipt's connection and transaction so

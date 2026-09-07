@@ -14,6 +14,17 @@ public interface IPurchaseOrderRepository
     Task<IReadOnlyList<PurchaseOrder>> ListAsync(Guid? supplierId = null, PurchaseOrderStatus? status = null, CancellationToken ct = default);
     Task SaveAsync(PurchaseOrder order, CancellationToken ct = default);
     Task UpdateAsync(PurchaseOrder order, CancellationToken ct = default);
+
+    /// <summary>
+    /// Updates within an existing connection and transaction for atomic
+    /// operations (V1-RMD-124: found by an independent audit, 2026-09-07 —
+    /// PurchasingService.ReceiveGoodsAsync's "Atomic PostgreSQL persistence"
+    /// comment was false; this and <see cref="IGoodsReceiptRepository.SaveAsync(GoodsReceipt, NpgsqlConnection, NpgsqlTransaction, CancellationToken)"/>
+    /// each opened and committed their own separate transaction, so a goods
+    /// receipt could commit while the purchase order's received quantity —
+    /// or the stock movement posted after both — never did).
+    /// </summary>
+    Task UpdateAsync(PurchaseOrder order, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
 }
 
 public sealed class PostgresPurchaseOrderRepository : IPurchaseOrderRepository
@@ -184,10 +195,19 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 
     public async Task UpdateAsync(PurchaseOrder order, CancellationToken ct = default)
     {
-        ArgumentNullException.ThrowIfNull(order);
-
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var tx = await conn.BeginTransactionAsync(ct);
+
+        await UpdateAsync(order, conn, tx, ct);
+
+        await tx.CommitAsync(ct);
+    }
+
+    public async Task UpdateAsync(PurchaseOrder order, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
 
         const string headerSql = @"
 UPDATE purchasing.purchase_orders
@@ -196,7 +216,7 @@ SET status = $2,
     updated_at = $4
 WHERE order_id = $1;";
 
-        await using var cmd = new NpgsqlCommand(headerSql, conn, tx);
+        await using var cmd = new NpgsqlCommand(headerSql, connection, transaction);
         cmd.Parameters.AddWithValue(order.Id);
         cmd.Parameters.AddWithValue(order.Status.ToString());
         cmd.Parameters.AddWithValue(order.TotalAmount);
@@ -216,14 +236,12 @@ SET received_quantity = $2,
     status = $3
 WHERE line_id = $1;";
 
-            await using var lineCmd = new NpgsqlCommand(lineSql, conn, tx);
+            await using var lineCmd = new NpgsqlCommand(lineSql, connection, transaction);
             lineCmd.Parameters.AddWithValue(line.Id);
             lineCmd.Parameters.AddWithValue(line.ReceivedQuantity);
             lineCmd.Parameters.AddWithValue(line.Status.ToString());
             await lineCmd.ExecuteNonQueryAsync(ct);
         }
-
-        await tx.CommitAsync(ct);
     }
 
     private static async Task InsertLineAsync(NpgsqlConnection conn, NpgsqlTransaction tx, PurchaseOrderLine line, CancellationToken ct)
