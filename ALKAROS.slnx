@@ -95,6 +95,7 @@
   <Project Path="tests/Modules/QrOrdering/RelayCredential/ALKAROS.QrOrdering.RelayCredential.Tests.csproj" />
   <Project Path="tests/Modules/QrOrdering/RelaySecurity/ALKAROS.QrOrdering.RelaySecurity.Tests.csproj" />
   <Project Path="tests/Integrations/QrRelay/PublicGateway/ALKAROS.QrRelay.PublicGateway.Tests.csproj" />
+  <Project Path="tests/Integrations/QrRelay/LocalConnector/ALKAROS.QrRelay.LocalConnector.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableMerge/ALKAROS.Tables.TableMerge.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj" />

@@ -7,6 +7,14 @@ type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
 
 const IntegrationsManage = "integrations.manage";
 
+// Raw server enum names (ALKAROS.QrRelay.LocalConnector.RelayConnectorState)
+// -> Turkish, per docs/UI_STYLE_GUIDE.md (no raw enum name reaches the screen).
+const ConnectorStateLabels: Record<string, string> = {
+  NotConfigured: "Bağlayıcı henüz kurulmadı",
+  Running: "Bağlayıcı çalışıyor",
+  Restarting: "Bağlayıcı yeniden başlatılıyor",
+};
+
 /**
  * V12-QRT-003 (token, encrypted, never shown again) + V12-QRT-001
  * (Cloudflare account id/zone id/base domain — not secret, so these do
@@ -235,6 +243,9 @@ export function RelaySettings() {
                   + (status.tunnelUpdatedAt ? ` (son güncelleme: ${new Date(status.tunnelUpdatedAt).toLocaleString("tr-TR")})` : "")
                 : "● Henüz etkinleştirilmedi"}
             </p>
+            {status.tunnelHostname && (
+              <p>{ConnectorStateLabels[status.connectorState] ?? status.connectorState}</p>
+            )}
           </div>
           <form onSubmit={provision}>
             <label>

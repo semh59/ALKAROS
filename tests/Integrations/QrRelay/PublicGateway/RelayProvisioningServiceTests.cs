@@ -4,8 +4,8 @@ using Xunit;
 namespace ALKAROS.QrRelay.PublicGateway.Tests;
 
 /// <summary>
-/// V12-QRT-001: the CreateTunnel -&gt; GetTunnelToken -&gt; CreateDnsRecord
-/// orchestration, exercised against a fake <see cref="ICloudflareApiClient"/>
+/// V12-QRT-001: the CreateTunnel -&gt; GetTunnelToken -&gt; CreateDnsRecord -&gt;
+/// SetTunnelConfiguration orchestration, exercised against a fake <see cref="ICloudflareApiClient"/>
 /// (no real network call, no real Cloudflare token needed) and in-memory
 /// fakes of the two config stores it reads. Persistence into
 /// <see cref="IRelayTunnelStore"/> is exercised with a real fake too — the
@@ -34,6 +34,9 @@ public sealed class RelayProvisioningServiceTests
         Assert.Equal("zone-xyz", client.LastZoneId);
         Assert.Equal("sube1.alkaros.app", client.LastDnsName);
         Assert.Equal("tunnel-id-1.cfargotunnel.com", client.LastDnsTarget);
+        Assert.Equal("tunnel-id-1", client.LastConfiguredTunnelId);
+        Assert.Equal("sube1.alkaros.app", client.LastConfiguredHostname);
+        Assert.Equal("http://localhost:5080", client.LastConfiguredOriginService);
         Assert.Equal(("tunnel-id-1", "tunnel-run-token", "sube1.alkaros.app"), tunnelStore.Saved);
     }
 
@@ -123,6 +126,9 @@ public sealed class RelayProvisioningServiceTests
         public string? LastZoneId { get; private set; }
         public string? LastDnsName { get; private set; }
         public string? LastDnsTarget { get; private set; }
+        public string? LastConfiguredTunnelId { get; private set; }
+        public string? LastConfiguredHostname { get; private set; }
+        public string? LastConfiguredOriginService { get; private set; }
 
         public Task<CloudflareTunnel> CreateTunnelAsync(string apiToken, string accountId, string name, CancellationToken cancellationToken = default)
         {
@@ -143,6 +149,14 @@ public sealed class RelayProvisioningServiceTests
             LastZoneId = zoneId;
             LastDnsName = subdomainLabel;
             LastDnsTarget = target;
+            return Task.CompletedTask;
+        }
+
+        public Task SetTunnelConfigurationAsync(string apiToken, string accountId, string tunnelId, string hostname, string originService, CancellationToken cancellationToken = default)
+        {
+            LastConfiguredTunnelId = tunnelId;
+            LastConfiguredHostname = hostname;
+            LastConfiguredOriginService = originService;
             return Task.CompletedTask;
         }
 

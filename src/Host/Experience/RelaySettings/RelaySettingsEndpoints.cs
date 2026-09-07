@@ -2,6 +2,7 @@ using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.QrOrdering.RelayCredential;
+using ALKAROS.QrRelay.LocalConnector;
 using ALKAROS.QrRelay.PublicGateway;
 using ALKAROS.SensitiveData;
 using Microsoft.AspNetCore.Builder;
@@ -34,6 +35,10 @@ public static class RelaySettingsEndpoints
         services.TryAddSingleton<IRelayTunnelStore, PostgresRelayTunnelStore>();
         services.AddHttpClient<ICloudflareApiClient, CloudflareApiClient>();
         services.TryAddScoped<IRelayProvisioningService, RelayProvisioningService>();
+        services.TryAddSingleton<ICloudflaredProcessFactory, CloudflaredProcessFactory>();
+        services.TryAddSingleton<RelayConnectorSupervisor>();
+        services.AddHostedService<RelayConnectorSupervisor>(sp => sp.GetRequiredService<RelayConnectorSupervisor>());
+        services.TryAddSingleton<IRelayConnectorStatusReporter>(sp => sp.GetRequiredService<RelayConnectorSupervisor>());
         services.TryAddTransient<RelaySettingsExceptionFilter>();
         return services;
     }
@@ -78,6 +83,7 @@ public static class RelaySettingsEndpoints
             IRelayCredentialStore credentialStore,
             IRelayProviderConfigStore configStore,
             IRelayTunnelStore tunnelStore,
+            IRelayConnectorStatusReporter connectorStatus,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -91,7 +97,7 @@ public static class RelaySettingsEndpoints
             var tunnel = await tunnelStore.GetInfoAsync(cancellationToken);
             return Results.Ok(new RelayCredentialStatusResponse(
                 status.Configured, status.UpdatedAt, config?.AccountId, config?.ZoneId, config?.BaseDomain,
-                tunnel?.Hostname, tunnel?.UpdatedAt));
+                tunnel?.Hostname, tunnel?.UpdatedAt, connectorStatus.CurrentStatus.State.ToString()));
         });
 
         group.MapPost("/provision", async (

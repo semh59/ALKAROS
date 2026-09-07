@@ -13,6 +13,12 @@ public sealed record SaveRelayCredentialRequest(string CloudflareApiToken, strin
 /// already-provisioned tunnel (null until the "enable connection" action
 /// succeeds at least once) — never the tunnel run-token itself.
 /// </summary>
+/// <summary>
+/// ConnectorState is one of <see cref="ALKAROS.QrRelay.LocalConnector.RelayConnectorState"/>'s
+/// names ("NotConfigured"/"Running"/"Restarting") — the client maps it to
+/// Turkish text, per `docs/UI_STYLE_GUIDE.md` (a raw enum name is never
+/// shown to a user directly).
+/// </summary>
 public sealed record RelayCredentialStatusResponse(
     bool Configured,
     DateTimeOffset? UpdatedAt,
@@ -20,7 +26,8 @@ public sealed record RelayCredentialStatusResponse(
     string? ZoneId,
     string? BaseDomain,
     string? TunnelHostname,
-    DateTimeOffset? TunnelUpdatedAt);
+    DateTimeOffset? TunnelUpdatedAt,
+    string ConnectorState);
 
 /// <summary>V12-QRT-001: a short, URL-safe label identifying this restaurant's subdomain (e.g. "sube1" -&gt; sube1.&lt;BaseDomain&gt;).</summary>
 public sealed record ProvisionRelayTunnelRequest(string SubdomainLabel);

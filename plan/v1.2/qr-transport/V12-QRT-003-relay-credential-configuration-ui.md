@@ -57,6 +57,13 @@ endpoint onu geri döndürmez.
     olarak birçok görevin sahipliğinde) — yalnız yeni relay-credential
     çağrıları, tip ve `/settings/relay` route'u eklendi.
   - ALKAROS.slnx (yalnız yeni proje kayıtları için).
+  - compose.yaml, .gitignore (paylaşılan dağıtım dosyaları, tek bir görevin
+    sahipliğinde değil) — production'a karşı gerçek testte bulunan bir
+    eksiklik giderildi: `api` servisi `ALKAROS_SECRET_ENVELOPE_MASTER_KEY`
+    ortam değişkenini hiç tanımlamıyordu, bu yüzden her kayıt denemesi
+    `SecretNotFoundException` ile 500 veriyordu; artık zorunlu kılınıyor
+    (Compose'un `${VAR:?message}` sözdizimiyle) ve gerçek değeri yalnız
+    yerel, commit edilmeyen bir `.env` dosyasında tutuluyor.
 
 ## In scope
 

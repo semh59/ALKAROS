@@ -14,6 +14,11 @@
 
   <ItemGroup>
     <PackageReference Include="Npgsql" />
+    <!-- V12-QRT-001 LocalConnector: BackgroundService/IHostedService (Hosting)
+         and ILogger<T>/LoggerMessage (Logging) — this project has no
+         ASP.NET Core framework reference to bring these in transitively. -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
 </Project>

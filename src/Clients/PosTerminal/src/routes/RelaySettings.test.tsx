@@ -70,7 +70,7 @@ describe("RelaySettings", () => {
       if (path.endsWith("/relay-credential/status")) {
         return jsonResponse({
           configured: false, updatedAt: null, accountId: null, zoneId: null, baseDomain: null,
-          tunnelHostname: null, tunnelUpdatedAt: null,
+          tunnelHostname: null, tunnelUpdatedAt: null, connectorState: "NotConfigured",
         });
       }
       if (path.endsWith("/relay-credential/") && init?.method === "POST") {
@@ -119,7 +119,7 @@ describe("RelaySettings", () => {
       if (path.endsWith("/relay-credential/status")) {
         return jsonResponse({
           configured: true, updatedAt: "2026-09-07T10:00:00Z", accountId: "account-abc", zoneId: "zone-xyz", baseDomain: "alkaros.app",
-          tunnelHostname: null, tunnelUpdatedAt: null,
+          tunnelHostname: null, tunnelUpdatedAt: null, connectorState: "NotConfigured",
         });
       }
       if (path.endsWith("/relay-credential/provision") && init?.method === "POST") {
@@ -149,5 +149,27 @@ describe("RelaySettings", () => {
 
     expect(provisionedBody).toContain("sube1");
     expect(document.body.textContent).toContain("sube1.alkaros.app");
+  });
+
+  it("shows the Turkish connector-state label, never the raw server enum name", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) {
+        return jsonResponse({ userId: "u1", displayName: "Zeynep", terminalId: "t1", capabilities: ["integrations.manage"] });
+      }
+      if (path.endsWith("/relay-credential/status")) {
+        return jsonResponse({
+          configured: true, updatedAt: "2026-09-07T10:00:00Z", accountId: "account-abc", zoneId: "zone-xyz", baseDomain: "alkaros.app",
+          tunnelHostname: "sube1.alkaros.app", tunnelUpdatedAt: "2026-09-07T10:05:00Z", connectorState: "Running",
+        });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render(<RelaySettings />);
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Bağlayıcı çalışıyor");
+    expect(document.body.textContent).not.toContain("Running");
   });
 });

@@ -76,6 +76,25 @@ public sealed class CloudflareApiClientTests
     }
 
     [Fact]
+    public async Task SetTunnelConfigurationSendsAHostnameRuleAndTheMandatoryCatchAll()
+    {
+        var handler = new FakeHandler((request, _) =>
+        {
+            Assert.Equal(HttpMethod.Put, request.Method);
+            Assert.Equal("https://api.cloudflare.com/client/v4/accounts/acc-1/cfd_tunnel/tunnel-123/configurations", request.RequestUri!.ToString());
+            return JsonResponse(new { success = true, errors = Array.Empty<object>(), result = new { tunnel_id = "tunnel-123" } });
+        });
+        var client = new CloudflareApiClient(new HttpClient(handler));
+
+        await client.SetTunnelConfigurationAsync("test-token", "acc-1", "tunnel-123", "restaurant-42.alkaros.app", "http://localhost:5080");
+
+        Assert.Contains("\"hostname\":\"restaurant-42.alkaros.app\"", handler.LastRequestBody);
+        Assert.Contains("\"service\":\"http://localhost:5080\"", handler.LastRequestBody);
+        // The mandatory final catch-all rule — no hostname, service only.
+        Assert.Contains("\"service\":\"http_status:404\"", handler.LastRequestBody);
+    }
+
+    [Fact]
     public async Task DeleteTunnelSendsADeleteToTheTunnelResource()
     {
         var handler = new FakeHandler((request, _) =>

@@ -63,6 +63,14 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc
 RUN apk update \
     && apk add --no-cache libcrypto3=3.5.8-r0 libssl3=3.5.8-r0 openssl=3.5.8-r0 postgresql-client ca-certificates curl \
     && rm -rf /var/cache/apk/*
+# V12-QRT-001 LocalConnector: cloudflared is a statically-linked Go binary
+# (CGO_ENABLED=0 release build) — verified to run unmodified on Alpine/musl,
+# no glibc compat layer needed. Pinned by exact release + checksum, same
+# convention as the base image digests above.
+RUN curl -fsSL -o /usr/local/bin/cloudflared \
+        https://github.com/cloudflare/cloudflared/releases/download/2026.8.3/cloudflared-linux-amd64 \
+    && echo "f29324fe934d1e100617484c78deef803c4dc2cd351d645bbde42e96b4fccc5e  /usr/local/bin/cloudflared" | sha256sum -c - \
+    && chmod +x /usr/local/bin/cloudflared
 WORKDIR /app
 COPY --from=backend-build /out/api ./
 COPY database ./database

@@ -30,8 +30,8 @@ export interface LoginResponse {
 }
 
 // V12-QRT-003 (configured/updatedAt) + V12-QRT-001 (accountId/zoneId/
-// baseDomain, tunnelHostname/tunnelUpdatedAt — none of these are secret, so
-// they round-trip back; the token and tunnel run-token never do).
+// baseDomain, tunnelHostname/tunnelUpdatedAt, connectorState — none of these
+// are secret, so they round-trip back; the token and tunnel run-token never do).
 export interface RelayCredentialStatus {
   configured: boolean;
   updatedAt: string | null;
@@ -40,6 +40,9 @@ export interface RelayCredentialStatus {
   baseDomain: string | null;
   tunnelHostname: string | null;
   tunnelUpdatedAt: string | null;
+  // Raw server enum name ("NotConfigured" | "Running" | "Restarting") — the
+  // UI never shows this directly, see RelaySettings.tsx's Turkish mapping.
+  connectorState: string;
 }
 
 export interface RuntimeConfiguration {

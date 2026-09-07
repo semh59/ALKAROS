@@ -12,6 +12,17 @@ public interface ICloudflareApiClient
 
     Task CreateDnsRecordAsync(string apiToken, string zoneId, string subdomainLabel, string target, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Tells Cloudflare's edge where to route requests for <paramref name="hostname"/>
+    /// once they arrive over the tunnel: to <paramref name="originService"/>
+    /// (e.g. <c>http://localhost:5080</c> — the LocalConnector runs `cloudflared`
+    /// alongside the API process in the same container, so "localhost" is
+    /// correct). Without this, a tunnel can be healthy and connected yet still
+    /// answer every request with cloudflared's own 404 — a connected tunnel is
+    /// not the same as a configured one.
+    /// </summary>
+    Task SetTunnelConfigurationAsync(string apiToken, string accountId, string tunnelId, string hostname, string originService, CancellationToken cancellationToken = default);
+
     /// <summary>Cloudflare refuses this while the tunnel has an active connection — the caller must stop the local connector first.</summary>
     Task DeleteTunnelAsync(string apiToken, string accountId, string tunnelId, CancellationToken cancellationToken = default);
 }

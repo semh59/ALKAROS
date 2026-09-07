@@ -16,6 +16,10 @@ namespace ALKAROS.QrRelay.PublicGateway;
 /// - POST /zones/{zone_id}/dns_records — type/name/content required;
 ///   proxied: false is required here (V0-ARC-009: Cloudflare terminates
 ///   public TLS, but must not additionally proxy/cache tunnel traffic).
+/// - PUT /accounts/{account_id}/cfd_tunnel/{tunnel_id}/configurations —
+///   config.ingress: a hostname/service rule per public hostname plus a
+///   mandatory final catch-all ({"service": "http_status:404"}, no
+///   hostname) — Cloudflare rejects a config missing it.
 /// - DELETE /accounts/{account_id}/cfd_tunnel/{tunnel_id} — Cloudflare
 ///   itself refuses this while the tunnel has an active connection.
 /// </summary>
@@ -59,6 +63,29 @@ public sealed class CloudflareApiClient : ICloudflareApiClient
         return SendAsync<DnsRecordResult>(
             apiToken, HttpMethod.Post, $"/zones/{zoneId}/dns_records",
             new { type = "CNAME", name = subdomainLabel, content = target, ttl = 3600, proxied = false },
+            cancellationToken);
+    }
+
+    public Task SetTunnelConfigurationAsync(string apiToken, string accountId, string tunnelId, string hostname, string originService, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(accountId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(tunnelId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(hostname);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originService);
+
+        return SendAsync<TunnelConfigurationResult>(
+            apiToken, HttpMethod.Put, $"/accounts/{accountId}/cfd_tunnel/{tunnelId}/configurations",
+            new
+            {
+                config = new
+                {
+                    ingress = new object[]
+                    {
+                        new { hostname, service = originService },
+                        new { service = "http_status:404" },
+                    },
+                },
+            },
             cancellationToken);
     }
 
@@ -117,6 +144,8 @@ public sealed class CloudflareApiClient : ICloudflareApiClient
         [property: JsonPropertyName("name")] string Name);
 
     private sealed record DnsRecordResult([property: JsonPropertyName("id")] string Id);
+
+    private sealed record TunnelConfigurationResult([property: JsonPropertyName("tunnel_id")] string TunnelId);
 
     private sealed record DeleteTunnelResult([property: JsonPropertyName("id")] string Id);
 }

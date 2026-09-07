@@ -13,19 +13,29 @@ public sealed class RelayProvisioningException : Exception
 public interface IRelayProvisioningService
 {
     /// <summary>
-    /// Chains CreateTunnel -&gt; GetTunnelToken -&gt; CreateDnsRecord using the
-    /// already-saved API token and account/zone/base-domain config, then
-    /// persists the resulting tunnel id/token/hostname. Idempotent in the
-    /// sense that calling it again creates a brand new Cloudflare tunnel and
-    /// replaces the stored one — Cloudflare itself refuses to delete a
-    /// tunnel with an active connection, but nothing here manages that
-    /// lifecycle; that is the (not yet built) LocalConnector's job.
+    /// Chains CreateTunnel -&gt; GetTunnelToken -&gt; CreateDnsRecord -&gt;
+    /// SetTunnelConfiguration using the already-saved API token and
+    /// account/zone/base-domain config, then persists the resulting tunnel
+    /// id/token/hostname. Idempotent in the sense that calling it again
+    /// creates a brand new Cloudflare tunnel and replaces the stored one —
+    /// Cloudflare itself refuses to delete a tunnel with an active
+    /// connection, but nothing here manages that lifecycle or cleans up the
+    /// orphaned previous tunnel.
     /// </summary>
     Task<RelayProvisioningResult> ProvisionAsync(string subdomainLabel, CancellationToken cancellationToken = default);
 }
 
 public sealed class RelayProvisioningService : IRelayProvisioningService
 {
+    /// <summary>
+    /// The LocalConnector runs `cloudflared` alongside the API process in
+    /// the same container (see `deploy/docker/Dockerfile`'s `api` stage and
+    /// `ALKAROS.QrRelay.LocalConnector.CloudflaredProcessFactory`) — so
+    /// "localhost" is the API's own listen address (compose.yaml's
+    /// `--urls http://0.0.0.0:5080`), not a different host.
+    /// </summary>
+    private const string LocalOriginService = "http://localhost:5080";
+
     private readonly ICloudflareApiClient _client;
     private readonly IRelayCredentialStore _credentialStore;
     private readonly IRelayProviderConfigStore _configStore;
@@ -63,6 +73,7 @@ public sealed class RelayProvisioningService : IRelayProvisioningService
             tunnel = await _client.CreateTunnelAsync(apiToken, config.AccountId, $"alkaros-{subdomainLabel}", cancellationToken);
             tunnelToken = await _client.GetTunnelTokenAsync(apiToken, config.AccountId, tunnel.Id, cancellationToken);
             await _client.CreateDnsRecordAsync(apiToken, config.ZoneId, hostname, $"{tunnel.Id}.cfargotunnel.com", cancellationToken);
+            await _client.SetTunnelConfigurationAsync(apiToken, config.AccountId, tunnel.Id, hostname, LocalOriginService, cancellationToken);
         }
         catch (CloudflareApiException exception)
         {
