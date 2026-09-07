@@ -194,11 +194,29 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
                 "Dinner reservation",
                 2));
 
+        // Found by an independent audit (2026-09-07): TableReservationResult
+        // never carried the reservation's own row version, so no real client
+        // could ever populate Claim/Cancel/Expire's ExpectedReservationRowVersion
+        // — this test itself used to hardcode the literal 1 below, the exact
+        // same unfounded assumption a real client could not make. There was
+        // also no GET to recover it later; both are fixed and exercised here.
+        Assert.True(reservation.ReservationRowVersion > 0);
+        using (var getRequest = Request(
+            HttpMethod.Get, $"{Prefix(terminalId)}/reservations/{reservation.ReservationId:D}", cookie))
+        using (var getResponse = await client.SendAsync(getRequest))
+        {
+            Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
+            var fetched = await getResponse.Content.ReadFromJsonAsync<TableReservationDto>();
+            Assert.Equal(reservation.ReservationRowVersion, fetched!.RowVersion);
+            Assert.Equal(TableReservationStatus.Active, fetched.Status);
+        }
+
         using (var staleCancelRequest = JsonRequest(
             HttpMethod.Post,
             $"{Prefix(terminalId)}/reservations/{reservation.ReservationId:D}/cancel",
             cookie,
-            new CancelTableReservationRequest(1, reservationTable.RowVersion, "Stale cancellation")))
+            new CancelTableReservationRequest(
+                reservation.ReservationRowVersion + 1, reservationTable.RowVersion, "Stale cancellation")))
         using (var staleCancel = await client.SendAsync(staleCancelRequest))
         {
             Assert.Equal(HttpStatusCode.Conflict, staleCancel.StatusCode);
@@ -210,7 +228,7 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
             client,
             $"{Prefix(terminalId)}/reservations/{reservation.ReservationId:D}/cancel",
             cookie,
-            new CancelTableReservationRequest(1, reservation.NewTableRowVersion, "Guest cancelled"));
+            new CancelTableReservationRequest(reservation.ReservationRowVersion, reservation.NewTableRowVersion, "Guest cancelled"));
         Assert.Equal(TableReservationStatus.Cancelled, cancelled.NewStatus);
 
         var claimTable = await CreateTableAsync(client, terminalId, cookie, "R-02");
@@ -223,7 +241,7 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
             client,
             $"{Prefix(terminalId)}/reservations/{claimReservation.ReservationId:D}/claim",
             cookie,
-            new ClaimTableReservationRequest(1, claimReservation.NewTableRowVersion, null));
+            new ClaimTableReservationRequest(claimReservation.ReservationRowVersion, claimReservation.NewTableRowVersion, null));
         Assert.Equal(TableReservationStatus.Claimed, claimed.NewStatus);
 
         var expireTable = await CreateTableAsync(client, terminalId, cookie, "R-03");
@@ -236,7 +254,7 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
             client,
             $"{Prefix(terminalId)}/reservations/{expireReservation.ReservationId:D}/expire",
             cookie,
-            new ExpireTableReservationRequest(1, expireReservation.NewTableRowVersion, "Hold expired"));
+            new ExpireTableReservationRequest(expireReservation.ReservationRowVersion, expireReservation.NewTableRowVersion, "Hold expired"));
         Assert.Equal(TableReservationStatus.Expired, expired.NewStatus);
 
         var source = await CreateTableAsync(client, terminalId, cookie, "T-01");
@@ -282,6 +300,47 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
                     merge.NewParticipantRowVersions[participant.TableId])],
                 "Separate tables"));
         Assert.Equal(merge.MergeGroupId, unmerge.MergeGroupId);
+    }
+
+    [Fact]
+    public async Task ChangingStatusOffAReservedTableReleasesTheReservationAndAllowsReReservation()
+    {
+        // Found by an independent audit (2026-09-07): the generic status
+        // endpoint was the ONLY UI-reachable way to release a Reserved table
+        // (Claim/Cancel/Expire needed a reservation row version no client
+        // could ever supply before this same wave) but it never touched
+        // table_mgmt.table_reservations, so the Active row stayed behind and
+        // CreateReservationAsync's own guard permanently blocked the table
+        // from ever being reserved again.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var table = await CreateTableAsync(client, terminalId, cookie, "R-04");
+        var reservation = await PostAsync<TableReservationResult>(
+            client,
+            Prefix(terminalId) + "/reservations",
+            cookie,
+            new CreateTableReservationRequest(table.TableId, table.RowVersion, null, "No-show risk", 2));
+
+        var released = await ChangeStatusAsync(
+            client, terminalId, cookie,
+            table with { RowVersion = reservation.NewTableRowVersion },
+            "Available");
+        Assert.Equal("Available", released.Status);
+
+        Assert.Equal("Cancelled", await _database.ScalarAsync<string>(
+            $"SELECT status FROM table_mgmt.table_reservations WHERE table_reservation_id = '{reservation.ReservationId:D}';"));
+
+        // The table can be reserved again — before this fix, CreateReservationAsync
+        // would reject this with "table already has an active reservation".
+        var secondReservation = await PostAsync<TableReservationResult>(
+            client,
+            Prefix(terminalId) + "/reservations",
+            cookie,
+            new CreateTableReservationRequest(table.TableId, released.RowVersion, null, "Retry booking", 2));
+        Assert.NotEqual(reservation.ReservationId, secondReservation.ReservationId);
     }
 
     private async Task<WebApplication> StartAsync()

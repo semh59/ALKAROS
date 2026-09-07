@@ -81,6 +81,10 @@ public sealed class PostgresTableReservationTests : IClassFixture<TableReservati
 
         reserveResult.Should().NotBeNull();
         reserveResult.TableId.Should().Be(tableId);
+        // Found by an independent audit (2026-09-07): this field did not
+        // exist — no client could ever populate Claim/Cancel/Expire's own
+        // ExpectedReservationRowVersion, making them structurally unreachable.
+        reserveResult.ReservationRowVersion.Should().Be(1);
         reserveResult.NewTableRowVersion.Should().Be(2);
         reserveResult.Status.Should().Be(TableReservationStatus.Active);
 
@@ -109,10 +113,12 @@ public sealed class PostgresTableReservationTests : IClassFixture<TableReservati
         auditReserved!.EventName.Should().Be("Table.Reserved");
         auditReserved.ActorId.Should().Be(_userId);
 
-        // 3. Claim Reservation (Customer seated -> Occupied)
+        // 3. Claim Reservation (Customer seated -> Occupied). Uses the row
+        // version the create response itself returned (V1-RMD-117) — the
+        // only value any real client could ever have supplied here.
         var claimRequest = new ClaimReservationRequest(
             reserveResult.ReservationId,
-            ExpectedReservationRowVersion: 1,
+            ExpectedReservationRowVersion: reserveResult.ReservationRowVersion,
             ExpectedTableRowVersion: 2,
             OrderId: orderId,
             ClaimedBy: _userId);
@@ -165,7 +171,7 @@ public sealed class PostgresTableReservationTests : IClassFixture<TableReservati
 
         var cancelRequest = new CancelReservationRequest(
             reserveResult.ReservationId,
-            ExpectedReservationRowVersion: 1,
+            ExpectedReservationRowVersion: reserveResult.ReservationRowVersion,
             ExpectedTableRowVersion: 2,
             CancelledBy: _userId,
             Reason: "Customer called to cancel");
@@ -207,7 +213,7 @@ public sealed class PostgresTableReservationTests : IClassFixture<TableReservati
 
         var expireRequest = new ExpireReservationRequest(
             reserveResult.ReservationId,
-            ExpectedReservationRowVersion: 1,
+            ExpectedReservationRowVersion: reserveResult.ReservationRowVersion,
             ExpectedTableRowVersion: 2,
             ExpiredBy: null,
             Reason: "QR order timeout expired");

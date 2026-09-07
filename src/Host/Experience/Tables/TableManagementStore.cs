@@ -1,3 +1,4 @@
+using ALKAROS.Tables.Reservations;
 using ALKAROS.Tables.TableLifecycle;
 using Npgsql;
 using NpgsqlTypes;
@@ -8,11 +9,16 @@ public sealed class TableManagementStore
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly ITableRepository _repository;
+    private readonly ITableReservationRepository _reservationRepository;
 
-    public TableManagementStore(NpgsqlDataSource dataSource, ITableRepository repository)
+    public TableManagementStore(
+        NpgsqlDataSource dataSource,
+        ITableRepository repository,
+        ITableReservationRepository reservationRepository)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _reservationRepository = reservationRepository ?? throw new ArgumentNullException(nameof(reservationRepository));
     }
 
     public Task<Table?> GetAsync(Guid tableId, CancellationToken cancellationToken = default)
@@ -93,6 +99,7 @@ public sealed class TableManagementStore
     public async Task<Table> ChangeStatusAsync(
         Guid tableId,
         ChangeTableStatusRequest request,
+        Guid actorId,
         CancellationToken cancellationToken = default)
     {
         EnsureId(tableId);
@@ -117,6 +124,41 @@ public sealed class TableManagementStore
         {
             throw new TableManagementConflictException(exception.Message, exception);
         }
+
+        // Found by an independent audit (2026-09-07): this generic status
+        // change was the ONLY UI-reachable way to release a Reserved table
+        // (Claim/Cancel/Expire all require a reservation row version no
+        // client could ever obtain before V1-RMD-117) but it never touched
+        // table_mgmt.table_reservations — leaving the Active row in place
+        // permanently blocked CreateReservationAsync's own "table already
+        // has an active reservation" guard from ever reserving that table
+        // again. Route Reserved -> Available/Occupied through the same
+        // atomic release the dedicated endpoints use instead of a bare
+        // table-row update, so the invariant (Reserved iff an Active
+        // reservation exists) never desyncs regardless of which path a
+        // client used to leave it.
+        if (current.State == TableState.Reserved)
+        {
+            var reservation = await _reservationRepository.GetActiveByTableIdAsync(tableId, cancellationToken);
+            if (reservation is not null)
+            {
+                if (target == TableState.Occupied)
+                {
+                    await _reservationRepository.ClaimReservationAsync(new ClaimReservationRequest(
+                        reservation.Id, reservation.RowVersion, expected, OrderId: null, actorId), cancellationToken);
+                }
+                else
+                {
+                    await _reservationRepository.CancelReservationAsync(new CancelReservationRequest(
+                        reservation.Id, reservation.RowVersion, expected, actorId,
+                        "Released via table status change"), cancellationToken);
+                }
+
+                return await _repository.GetByIdAsync(tableId, cancellationToken)
+                    ?? throw new TableManagementNotFoundException($"Table {tableId} was not found after status update.");
+            }
+        }
+
         try
         {
             await _repository.UpdateStatusAsync(tableId, target, expected, cancellationToken);

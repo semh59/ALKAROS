@@ -220,6 +220,7 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         }
 
         // 4. Insert Reservation record into table_mgmt.table_reservations
+        long newReservationRowVersion;
         const string insertResSql = $"""
             INSERT INTO {ReservationsTable} (
                 table_reservation_id, table_id, order_id, actor_id, actor_type,
@@ -227,7 +228,8 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             ) VALUES (
                 @id, @table_id, @order_id, @actor_id, @actor_type,
                 'Active', @reason, @party_size, @reserved_at, @expires_at, 1
-            );
+            )
+            RETURNING row_version;
             """;
 
         await using (var cmd = new NpgsqlCommand(insertResSql, connection, transaction))
@@ -241,7 +243,7 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             cmd.Parameters.AddWithValue("party_size", request.PartySize);
             cmd.Parameters.AddWithValue("reserved_at", now);
             cmd.Parameters.AddWithValue("expires_at", (object?)request.ExpiresAt ?? DBNull.Value);
-            await cmd.ExecuteNonQueryAsync(cancellationToken);
+            newReservationRowVersion = (long)(await cmd.ExecuteScalarAsync(cancellationToken))!;
         }
 
         // 5. Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
@@ -289,6 +291,7 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         return new TableReservationResult(
             reservationId,
             request.TableId,
+            newReservationRowVersion,
             newTableRowVersion,
             TableReservationStatus.Active,
             now,

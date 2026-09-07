@@ -172,7 +172,7 @@ public static class TableManagementApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesStatus, cancellationToken);
-            var updated = await store.ChangeStatusAsync(tableId, request, cancellationToken);
+            var updated = await store.ChangeStatusAsync(tableId, request, principal.UserId, cancellationToken);
             return Results.Ok(TableContractMapper.ToDto(updated, principal.Permissions));
         });
 
@@ -218,6 +218,19 @@ public static class TableManagementApplication
                 TableContractMapper.ToCommand(zoneId, request),
                 cancellationToken);
             return Results.Ok(TableContractMapper.ToDto(result, principal.Permissions));
+        });
+
+        group.MapGet("/reservations/{reservationId:guid}", async (
+            Guid terminalId,
+            Guid reservationId,
+            ITableManagementSessionAuthorizer authorizer,
+            ITableReservationService service,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            var record = await service.GetByIdAsync(reservationId, cancellationToken);
+            return Results.Ok(TableReservationDto.From(record));
         });
 
         group.MapPost("/reservations", async (

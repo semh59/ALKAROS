@@ -5,6 +5,14 @@ namespace ALKAROS.Tables.Reservations;
 /// </summary>
 public interface ITableReservationService
 {
+    /// <summary>
+    /// Retrieves a single reservation by ID — the GET counterpart clients
+    /// need to recover a reservation's current row version (V1-RMD-117).
+    /// </summary>
+    Task<TableReservationRecord> GetByIdAsync(
+        Guid reservationId,
+        CancellationToken cancellationToken = default);
+
     Task<TableReservationResult> CreateReservationAsync(
         CreateReservationRequest request,
         CancellationToken cancellationToken = default);
@@ -32,6 +40,17 @@ public sealed class TableReservationService : ITableReservationService
     public TableReservationService(ITableReservationRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+
+    public async Task<TableReservationRecord> GetByIdAsync(
+        Guid reservationId,
+        CancellationToken cancellationToken = default)
+    {
+        if (reservationId == Guid.Empty)
+            throw new ArgumentException("Reservation ID cannot be empty.", nameof(reservationId));
+
+        return await _repository.GetByIdAsync(reservationId, cancellationToken)
+            ?? throw new ReservationNotFoundException(reservationId);
     }
 
     public Task<TableReservationResult> CreateReservationAsync(
