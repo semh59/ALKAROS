@@ -8,9 +8,21 @@ namespace ALKAROS.Host.Experience.RelaySettings;
 /// </summary>
 public sealed record SaveRelayCredentialRequest(string CloudflareApiToken, string AccountId, string ZoneId, string BaseDomain);
 
+/// <summary>
+/// V12-QRT-001: TunnelHostname/TunnelUpdatedAt are non-secret facts about an
+/// already-provisioned tunnel (null until the "enable connection" action
+/// succeeds at least once) — never the tunnel run-token itself.
+/// </summary>
 public sealed record RelayCredentialStatusResponse(
     bool Configured,
     DateTimeOffset? UpdatedAt,
     string? AccountId,
     string? ZoneId,
-    string? BaseDomain);
+    string? BaseDomain,
+    string? TunnelHostname,
+    DateTimeOffset? TunnelUpdatedAt);
+
+/// <summary>V12-QRT-001: a short, URL-safe label identifying this restaurant's subdomain (e.g. "sube1" -&gt; sube1.&lt;BaseDomain&gt;).</summary>
+public sealed record ProvisionRelayTunnelRequest(string SubdomainLabel);
+
+public sealed record ProvisionRelayTunnelResponse(string Hostname);

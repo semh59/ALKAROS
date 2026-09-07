@@ -176,4 +176,12 @@ export const api = {
     }),
   relayCredentialStatus: (terminalId: string) =>
     request<RelayCredentialStatus>(`/api/v1/terminals/${terminalId}/relay-credential/status`),
+  // V12-QRT-001: chains CreateTunnel -> GetTunnelToken -> CreateDnsRecord on
+  // the backend; returns only the resulting hostname, never the tunnel
+  // run-token.
+  provisionRelayTunnel: (terminalId: string, subdomainLabel: string) =>
+    request<{ hostname: string }>(`/api/v1/terminals/${terminalId}/relay-credential/provision`, {
+      method: "POST",
+      body: JSON.stringify({ subdomainLabel }),
+    }),
 };

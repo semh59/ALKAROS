@@ -68,7 +68,10 @@ describe("RelaySettings", () => {
         return jsonResponse({ userId: "u1", displayName: "Zeynep", terminalId: "t1", capabilities: ["integrations.manage"] });
       }
       if (path.endsWith("/relay-credential/status")) {
-        return jsonResponse({ configured: false, updatedAt: null, accountId: null, zoneId: null, baseDomain: null });
+        return jsonResponse({
+          configured: false, updatedAt: null, accountId: null, zoneId: null, baseDomain: null,
+          tunnelHostname: null, tunnelUpdatedAt: null,
+        });
       }
       if (path.endsWith("/relay-credential/") && init?.method === "POST") {
         savedBody = String(init.body);
@@ -81,6 +84,7 @@ describe("RelaySettings", () => {
     await act(async () => Promise.resolve());
 
     expect(document.body.textContent).toContain("Henüz yapılandırılmadı");
+    expect(document.body.textContent).not.toContain("Bağlantıyı Etkinleştir");
 
     const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
     const setValue = async (input: HTMLInputElement, value: string) => {
@@ -103,5 +107,47 @@ describe("RelaySettings", () => {
     expect(savedBody).toContain("account-abc");
     expect(document.body.textContent).not.toContain("cf-super-secret-token");
     expect(document.body.textContent).toContain("kaydedildi");
+  });
+
+  it("once configured, a manager can enable the connection and sees the resulting hostname", async () => {
+    let provisionedBody: string | undefined;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) {
+        return jsonResponse({ userId: "u1", displayName: "Zeynep", terminalId: "t1", capabilities: ["integrations.manage"] });
+      }
+      if (path.endsWith("/relay-credential/status")) {
+        return jsonResponse({
+          configured: true, updatedAt: "2026-09-07T10:00:00Z", accountId: "account-abc", zoneId: "zone-xyz", baseDomain: "alkaros.app",
+          tunnelHostname: null, tunnelUpdatedAt: null,
+        });
+      }
+      if (path.endsWith("/relay-credential/provision") && init?.method === "POST") {
+        provisionedBody = String(init.body);
+        return jsonResponse({ hostname: "sube1.alkaros.app" });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render(<RelaySettings />);
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Bağlantıyı Etkinleştir");
+    expect(document.body.textContent).toContain("Henüz etkinleştirilmedi");
+
+    const provisionForm = document.querySelectorAll("form")[1] as HTMLFormElement;
+    const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
+    const subdomainField = provisionForm.querySelector<HTMLInputElement>("input")!;
+    await act(async () => {
+      nativeSetter.call(subdomainField, "sube1");
+      subdomainField.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    const provisionButton = provisionForm.querySelector<HTMLButtonElement>("button")!;
+    await act(async () => provisionButton.click());
+    await act(async () => Promise.resolve());
+
+    expect(provisionedBody).toContain("sube1");
+    expect(document.body.textContent).toContain("sube1.alkaros.app");
   });
 });

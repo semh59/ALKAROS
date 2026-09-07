@@ -125,9 +125,53 @@ public sealed class RelaySettingsHttpTests : IAsyncLifetime
         Assert.DoesNotContain(secretValue, statusBody, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task ProvisioningWithoutASavedCredentialFailsWithAProvisioningError()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "manager", "integrations.manage");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            ProvisionPath(terminalId), cookie, new ProvisionRelayTunnelRequest("sube1")));
+
+        Assert.Equal((HttpStatusCode)422, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AnEmptySubdomainLabelIsRejected()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "manager", "integrations.manage");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            ProvisionPath(terminalId), cookie, new ProvisionRelayTunnelRequest("")));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ProvisioningWithoutIntegrationsManageIsForbidden()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "cashier", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            ProvisionPath(terminalId), cookie, new ProvisionRelayTunnelRequest("sube1")));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
     private static string CredentialPath(Guid terminalId) => $"/api/v1/terminals/{terminalId:D}/relay-credential/";
 
     private static string StatusPath(Guid terminalId) => $"/api/v1/terminals/{terminalId:D}/relay-credential/status";
+
+    private static string ProvisionPath(Guid terminalId) => $"/api/v1/terminals/{terminalId:D}/relay-credential/provision";
 
     private static HttpRequestMessage JsonRequest<T>(string path, string cookie, T body)
     {

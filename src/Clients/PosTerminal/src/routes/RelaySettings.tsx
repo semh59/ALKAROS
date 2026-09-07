@@ -31,6 +31,10 @@ export function RelaySettings() {
   const [zoneIdInput, setZoneIdInput] = useState("");
   const [baseDomainInput, setBaseDomainInput] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
+  const [subdomainInput, setSubdomainInput] = useState("");
+  const [provisionBusy, setProvisionBusy] = useState(false);
+  const [provisionError, setProvisionError] = useState("");
+  const [provisionMessage, setProvisionMessage] = useState("");
 
   const loadStatus = useCallback(async () => {
     try {
@@ -106,6 +110,23 @@ export function RelaySettings() {
       setError(reason instanceof Error ? reason.message : "Kaydedilemedi.");
     } finally {
       setBusy(false);
+    }
+  };
+
+  const provision = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!subdomainInput.trim()) return;
+    setProvisionBusy(true);
+    setProvisionError("");
+    setProvisionMessage("");
+    try {
+      const result = await api.provisionRelayTunnel(terminalId, subdomainInput.trim());
+      setProvisionMessage(`Bağlantı etkinleştirildi: ${result.hostname}`);
+      await loadStatus();
+    } catch (reason) {
+      setProvisionError(reason instanceof Error ? reason.message : "Bağlantı etkinleştirilemedi.");
+    } finally {
+      setProvisionBusy(false);
     }
   };
 
@@ -203,6 +224,36 @@ export function RelaySettings() {
           </button>
         </form>
       </section>
+      {status?.configured && (
+        <section className="login-card" aria-busy={provisionBusy}>
+          <div className="login-card-heading">
+            <span>Bağlantıyı etkinleştir</span>
+            <h2>Restoran Bağlantısı</h2>
+            <p>
+              {status.tunnelHostname
+                ? "● Etkin — " + status.tunnelHostname
+                  + (status.tunnelUpdatedAt ? ` (son güncelleme: ${new Date(status.tunnelUpdatedAt).toLocaleString("tr-TR")})` : "")
+                : "● Henüz etkinleştirilmedi"}
+            </p>
+          </div>
+          <form onSubmit={provision}>
+            <label>
+              Restoran alt alan adı
+              <input
+                value={subdomainInput}
+                onChange={(event) => setSubdomainInput(event.target.value)}
+                autoComplete="off"
+                placeholder="sube1"
+              />
+            </label>
+            {provisionError && <div className="alert error" role="alert">{provisionError}</div>}
+            {provisionMessage && <div className="alert information" role="status">{provisionMessage}</div>}
+            <button className="primary login-submit" disabled={provisionBusy || !subdomainInput.trim()}>
+              {provisionBusy ? "Etkinleştiriliyor…" : "Bağlantıyı Etkinleştir"}
+            </button>
+          </form>
+        </section>
+      )}
     </main>
   );
 }

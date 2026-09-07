@@ -31,6 +31,9 @@ public static class RelaySettingsEndpoints
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
         services.TryAddSingleton<IRelayProviderConfigStore, PostgresRelayProviderConfigStore>();
+        services.TryAddSingleton<IRelayTunnelStore, PostgresRelayTunnelStore>();
+        services.AddHttpClient<ICloudflareApiClient, CloudflareApiClient>();
+        services.TryAddScoped<IRelayProvisioningService, RelayProvisioningService>();
         services.TryAddTransient<RelaySettingsExceptionFilter>();
         return services;
     }
@@ -74,6 +77,7 @@ public static class RelaySettingsEndpoints
             Guid terminalId,
             IRelayCredentialStore credentialStore,
             IRelayProviderConfigStore configStore,
+            IRelayTunnelStore tunnelStore,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -84,8 +88,31 @@ public static class RelaySettingsEndpoints
 
             var status = await credentialStore.GetStatusAsync(cancellationToken);
             var config = await configStore.GetAsync(cancellationToken);
+            var tunnel = await tunnelStore.GetInfoAsync(cancellationToken);
             return Results.Ok(new RelayCredentialStatusResponse(
-                status.Configured, status.UpdatedAt, config?.AccountId, config?.ZoneId, config?.BaseDomain));
+                status.Configured, status.UpdatedAt, config?.AccountId, config?.ZoneId, config?.BaseDomain,
+                tunnel?.Hostname, tunnel?.UpdatedAt));
+        });
+
+        group.MapPost("/provision", async (
+            Guid terminalId,
+            ProvisionRelayTunnelRequest request,
+            IRelayProvisioningService provisioningService,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.IntegrationsManage, cancellationToken);
+
+            if (string.IsNullOrWhiteSpace(request.SubdomainLabel))
+            {
+                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Alt alan adı etiketi doldurulmalıdır." } });
+            }
+
+            var result = await provisioningService.ProvisionAsync(request.SubdomainLabel, cancellationToken);
+            return Results.Ok(new ProvisionRelayTunnelResponse(result.Hostname));
         });
 
         return group;
@@ -158,6 +185,7 @@ public sealed class RelaySettingsExceptionFilter : IEndpointFilter
     {
         DualScreenUnauthorizedException => (401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
+        RelayProvisioningException provisioning => (422, "PROVISIONING_FAILED", provisioning.Message),
         SensitiveDataEncryptionException => (503, "ENCRYPTION_UNAVAILABLE", "Güvenli depolama şu anda kullanılamıyor."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),

@@ -30,13 +30,16 @@ export interface LoginResponse {
 }
 
 // V12-QRT-003 (configured/updatedAt) + V12-QRT-001 (accountId/zoneId/
-// baseDomain — not secret, so these round-trip back; the token never does).
+// baseDomain, tunnelHostname/tunnelUpdatedAt — none of these are secret, so
+// they round-trip back; the token and tunnel run-token never do).
 export interface RelayCredentialStatus {
   configured: boolean;
   updatedAt: string | null;
   accountId: string | null;
   zoneId: string | null;
   baseDomain: string | null;
+  tunnelHostname: string | null;
+  tunnelUpdatedAt: string | null;
 }
 
 export interface RuntimeConfiguration {
