@@ -36,8 +36,29 @@ public sealed class OrderManagementStore
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        var submissionId = request.Id is { } id && id != Guid.Empty ? id : (Guid?)null;
+
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+
+        if (submissionId is { } sid)
+        {
+            // V1-RMD-123: found by an independent audit (2026-09-07) — a
+            // retry of this exact submission (the offline queue resending a
+            // call whose response was lost to a dropped connection) must
+            // replay the order it already created, EVEN IF that order has
+            // since moved past Draft (already Submitted, already dispatched
+            // to the kitchen). The Draft-only lookup below cannot see it —
+            // that gap used to make a retry start a second, duplicate order.
+            var existingBySubmission = await FindOrderIdBySubmissionAsync(connection, transaction, request.TableId, sid, cancellationToken);
+            if (existingBySubmission is { } existingOrderId)
+            {
+                var replay = await LoadOrderDtoAsync(existingOrderId, request.TableId, cancellationToken)
+                    ?? throw new InvalidOperationException($"Order {existingOrderId} was not found replaying submission {sid}.");
+                await transaction.CommitAsync(cancellationToken);
+                return replay;
+            }
+        }
 
         var existingOrder = await GetActiveOrderByTableIdInternalAsync(connection, transaction, request.TableId, cancellationToken);
         var orderId = existingOrder?.OrderId ?? Guid.NewGuid();
@@ -83,6 +104,7 @@ public sealed class OrderManagementStore
                 orderNumber,
                 newItems,
                 tableId: request.TableId,
+                sourceReferenceId: submissionId,
                 notes: request.OrderNote,
                 status: OrderState.Draft,
                 createdAt: now,
@@ -91,7 +113,32 @@ public sealed class OrderManagementStore
                 servingUserId: actingUserId
             );
 
-            await _repository.AddAsync(order, cancellationToken);
+            try
+            {
+                // Through the outer connection/transaction (not the
+                // store's own separate one): a concurrent duplicate insert
+                // must abort THIS transaction for the catch below to see it.
+                await _repository.AddAsync(order, connection, transaction, cancellationToken);
+            }
+            catch (PostgresException ex)
+                when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "ux_orders_table_submission")
+            {
+                // A concurrent identical retry (two near-simultaneous requests
+                // carrying the same client-generated submission id) won this
+                // race — the failed transaction cannot be reused, so a fresh
+                // connection reads the winner instead of erroring the caller.
+                await transaction.RollbackAsync(cancellationToken);
+                if (submissionId is { } concurrentSubmissionId)
+                {
+                    var concurrentOrderId = await FindOrderIdBySubmissionAsync(request.TableId, concurrentSubmissionId, cancellationToken);
+                    if (concurrentOrderId is { } foundOrderId)
+                    {
+                        return await LoadOrderDtoAsync(foundOrderId, request.TableId, cancellationToken)
+                            ?? throw new InvalidOperationException($"Order {foundOrderId} was not found replaying submission {concurrentSubmissionId}.");
+                    }
+                }
+                throw;
+            }
 
             await using var cmd = new NpgsqlCommand(
                 """
@@ -131,6 +178,12 @@ public sealed class OrderManagementStore
                 orderNumber,
                 mergedItems,
                 tableId: request.TableId,
+                // Preserves whatever submission id the order was originally
+                // created with — not request.Id, which on a genuinely new
+                // round of items (not a retry) legitimately differs and must
+                // not overwrite the original (rebuilding an Order without an
+                // explicit sourceReferenceId would otherwise silently null it).
+                sourceReferenceId: currentOrder.SourceReferenceId,
                 notes: request.OrderNote,
                 status: OrderState.Draft,
                 createdAt: existingOrder.CreatedAt,
@@ -175,11 +228,7 @@ public sealed class OrderManagementStore
         var result = await cmd.ExecuteScalarAsync(cancellationToken);
         if (result is not Guid orderId) return null;
 
-        var order = await _repository.GetByIdAsync(orderId, cancellationToken);
-        if (order == null) return null;
-
-        var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
-        return MapToDto(order, tableNumber);
+        return await LoadOrderDtoAsync(orderId, tableId, cancellationToken);
     }
 
     /// <summary>
@@ -284,6 +333,55 @@ public sealed class OrderManagementStore
             0,
             [],
             reader.GetFieldValue<DateTimeOffset>(3));
+    }
+
+    /// <summary>
+    /// V1-RMD-123: looks up an existing order for the table by its
+    /// client-generated submission id (see <see cref="CreateTableDraftRequest.Id"/>),
+    /// regardless of the order's current status — a plain read, not FOR
+    /// UPDATE, since the real serialization guard against a concurrent
+    /// duplicate is the database's own partial unique index, not this check.
+    /// </summary>
+    private static async Task<Guid?> FindOrderIdBySubmissionAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid tableId, Guid submissionId, CancellationToken cancellationToken)
+    {
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT order_id
+            FROM orders.orders
+            WHERE table_id = @table_id AND source_reference_id = @submission_id
+            LIMIT 1;
+            """, connection, transaction);
+        cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+        cmd.Parameters.Add("submission_id", NpgsqlDbType.Uuid).Value = submissionId;
+        var result = await cmd.ExecuteScalarAsync(cancellationToken);
+        return result is Guid orderId ? orderId : null;
+    }
+
+    /// <summary>Same lookup as above, on the store's own connection — used after
+    /// a failed transaction has already been rolled back and cannot be reused.</summary>
+    private async Task<Guid?> FindOrderIdBySubmissionAsync(Guid tableId, Guid submissionId, CancellationToken cancellationToken)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            """
+            SELECT order_id
+            FROM orders.orders
+            WHERE table_id = @table_id AND source_reference_id = @submission_id
+            LIMIT 1;
+            """);
+        cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+        cmd.Parameters.Add("submission_id", NpgsqlDbType.Uuid).Value = submissionId;
+        var result = await cmd.ExecuteScalarAsync(cancellationToken);
+        return result is Guid orderId ? orderId : null;
+    }
+
+    private async Task<OrderDto?> LoadOrderDtoAsync(Guid orderId, Guid tableId, CancellationToken cancellationToken)
+    {
+        var order = await _repository.GetByIdAsync(orderId, cancellationToken);
+        if (order == null) return null;
+
+        var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
+        return MapToDto(order, tableNumber);
     }
 
     private async Task<string?> GetTableNumberAsync(Guid? tableId, CancellationToken cancellationToken)

@@ -280,9 +280,11 @@
     }
     // Found by an independent audit (2026-09-05): nothing stopped a second
     // click (double-tap, or a click while a slow request is still in
-    // flight) from sending the same ticket twice. The server accepts an
-    // X-Idempotency-Key but does not currently enforce it on this route, so
-    // the only real protection today is preventing the second click here.
+    // flight) from sending the same ticket twice. table-draft now checks
+    // the body's own `id` for a resend of the SAME payload (V1-RMD-123),
+    // but this click builds a fresh orderPayload — and a fresh id — every
+    // time, so that check cannot help a second click; this guard remains
+    // the only real protection against one.
     if (state.dispatchInFlight) return;
     state.dispatchInFlight = true;
     if (el.btnDispatchOrder) el.btnDispatchOrder.disabled = true;

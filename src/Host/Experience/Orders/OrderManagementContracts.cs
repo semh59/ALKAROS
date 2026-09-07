@@ -1,11 +1,27 @@
 namespace ALKAROS.Host.Experience.Orders;
 
+/// <summary>
+/// <paramref name="Id"/> (V1-RMD-123) is the client-generated correlation id
+/// for this whole "send to kitchen" submission — both production clients
+/// (waiter-app.js, cashier-app.js) already generate it once and resend the
+/// identical value on every retry of the same draft+submit attempt, but the
+/// server used to ignore it entirely. Persisted as the resulting order's
+/// <see cref="ALKAROS.Orders.OrderAggregate.Order.SourceReferenceId"/> and
+/// enforced by a partial unique index on (table_id, source_reference_id):
+/// a retry that arrives after the order was already fully submitted (the
+/// response was merely lost) now replays the existing order instead of
+/// starting a second, duplicate one that gets dispatched to the kitchen
+/// twice. Optional for backward compatibility with a caller that omits it —
+/// such a call gets no retry protection beyond the existing per-item id
+/// dedup, exactly like before this fix.
+/// </summary>
 public sealed record CreateTableDraftRequest(
     Guid TableId,
     string TableNumber,
     string WaiterName,
     IReadOnlyList<OrderItemDraftDto> Items,
-    string? OrderNote = null);
+    string? OrderNote = null,
+    Guid? Id = null);
 
 /// <summary>
 /// <paramref name="Id"/> is the client-generated cart-line id (both PWAs
