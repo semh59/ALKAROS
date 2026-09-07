@@ -3,7 +3,7 @@ using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
-using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Host.Experience;
 using ALKAROS.Host.Experience.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -107,25 +107,8 @@ public sealed class AuthorizationDecisionAuthentication
     {
         ArgumentNullException.ThrowIfNull(context);
         var rawToken = context.Request.Cookies[CatalogManagementEndpoints.ManagerCookieName];
-        if (string.IsNullOrWhiteSpace(rawToken))
-            throw new AuthorizationDecisionUnauthorizedException();
-
-        await using var command = _dataSource.CreateCommand(
-            """
-            UPDATE identity.device_sessions AS session
-            SET last_seen_at = now()
-            FROM identity.users AS actor
-            WHERE session.user_id = actor.user_id
-              AND actor.active
-              AND session.token_hash = @token_hash
-              AND (session.device_id LIKE 'manager:%' OR session.device_id LIKE 'supervisor:%')
-              AND session.revoked_at IS NULL
-              AND session.expires_at > now()
-            RETURNING session.user_id;
-            """);
-        command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
-        var actorId = await command.ExecuteScalarAsync(cancellationToken);
-        return actorId is Guid value ? value : throw new AuthorizationDecisionUnauthorizedException();
+        var actorId = await ManagementSessionLookup.ResolveActorAsync(_dataSource, rawToken, allowSupervisor: true, cancellationToken);
+        return actorId ?? throw new AuthorizationDecisionUnauthorizedException();
     }
 }
 

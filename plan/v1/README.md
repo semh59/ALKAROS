@@ -11,9 +11,14 @@ uca çalıştıran çekirdek operasyon.
 
 ## Çıkış kapısı
 
-- Bu sürüm altında 349 görev tanımlıdır: 344 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
+- Bu sürüm altında 353 görev tanımlıdır: 348 `Done`, 5 onaylı `NotApplicable`, 0 `Planned`,
   0 `Blocked` ve 0 `InProgress` görev vardır (`find plan/v1 -name "V1-*.md" -not -path
   "*/README.md" | xargs grep -h "^- Status:" | sort | uniq -c` ile doğrulanmıştır).
+  2026-09-07 49. dalga (Semih onayıyla, 48. dalganın kapsam dışı bıraktığı iki madde —
+  `identity.device_sessions` oturum doğrulama tekrarı `ManagementSessionLookup`'a
+  çıkarıldı [`V1-RMD-121`]; `consistency-audit`'in `src/Host/**` kör noktası yeni
+  rule 7 ile kapatıldı [`V1-RMD-122`]) `V1-GOV-118` sonrası kapıyı yeniden açtı;
+  `V1-GOV-120` ile kesin olarak yeniden mühürlendi.
   2026-09-07 48. dalga (Semih onayıyla, taze bir sınır [module boundary] denetimi ve
   "Tam düzelt" — Host/DualScreen'in Orders yazma yolu `Order`/`OrderItem` aggregate'ini
   hiç kullanmadan ham SQL ile ikinci bir domain mantığı kopyası taşıyordu, `V1-RMD-120`)

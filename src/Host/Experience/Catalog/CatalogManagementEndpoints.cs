@@ -1,7 +1,7 @@
 using ALKAROS.Catalog.Pricing;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Identity.Authorization;
-using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Host.Experience;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -216,25 +216,8 @@ public sealed class CatalogManagerAuthentication
     {
         ArgumentNullException.ThrowIfNull(context);
         var rawToken = context.Request.Cookies[CatalogManagementEndpoints.ManagerCookieName];
-        if (string.IsNullOrWhiteSpace(rawToken))
-            throw new CatalogUnauthorizedException();
-
-        await using var command = _dataSource.CreateCommand(
-            """
-            UPDATE identity.device_sessions AS session
-            SET last_seen_at = now()
-            FROM identity.users AS actor
-            WHERE session.user_id = actor.user_id
-              AND actor.active
-              AND session.token_hash = @token_hash
-              AND session.device_id LIKE 'manager:%'
-              AND session.revoked_at IS NULL
-              AND session.expires_at > now()
-            RETURNING session.user_id;
-            """);
-        command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
-        var actorId = await command.ExecuteScalarAsync(cancellationToken);
-        return actorId is Guid value ? value : throw new CatalogUnauthorizedException();
+        var actorId = await ManagementSessionLookup.ResolveActorAsync(_dataSource, rawToken, allowSupervisor: false, cancellationToken);
+        return actorId ?? throw new CatalogUnauthorizedException();
     }
 }
 

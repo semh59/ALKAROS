@@ -8,6 +8,8 @@ guards a handful of invariants across the codebase:
 - User-facing role text is sourced from the central catalog, not inline literals.
 - A module writes only its own PostgreSQL schema (`audit` excepted).
 - A module's `public` list-read repository methods carry a row bound (`LIMIT`).
+- A Host Experience area writes only its own bounded context's schema (`audit`
+  and the documented `table_mgmt` pointer exception excepted).
 
 It is deliberately narrow so it produces no false positives on a clean tree and
 can gate every remediation wave.
@@ -23,6 +25,7 @@ can gate every remediation wave.
 | Role noun leaks | `src/Clients/**/*.{ts,tsx}` non-comment lines, excluding `strings.ts` and `*.test.*` | `Manager`, `Supervisor` or `Cashier` must not appear as a whole word inside a quoted string literal. Role text comes from the central catalog `src/Clients/PosTerminal/src/strings.ts`. |
 | Cross-schema writes | `src/Modules/<M>/**/*.cs` | `UPDATE` / `INSERT INTO` / `DELETE FROM` may target only the module's own schema. State changes to another module's rows go through that module's repository contract (V0-ARC-001). The append-only `audit` schema is exempt (DB-trigger enforced, written by every module by design). |
 | Unbounded list reads | `src/Modules/<M>/**/*.cs` | A `public [async] Task<IReadOnlyList<...>> <Method>(` whose body issues a SELECT (has a `FROM`) must also carry a `LIMIT`. Covers whole-table `GetAll...` and filtered `GetByX` reads alike — a `WHERE` clause is not a bound. Interface declarations, one-line forwarders, and private `Read.../Load...` aggregate-child helpers are not flagged. |
+| Host cross-schema writes | `src/Host/**/*.cs` (excludes `Program.cs`, the CLI/bootstrap entry point) | Same rule as module cross-schema writes, applied per Experience area (`HOST_AREA_SCHEMA` in the script: Orders→`orders`, Billing→`billing`, Catalog→`catalog`, Tables→`table_mgmt`, KitchenOperations→`kitchen`, Roles/Authorization/bare `Experience/`→`identity`, `DualScreen`→`customer_display`). The `table_mgmt.tables` "soft cache pointer" (`current_order_id`/`current_bill_id`, reconciled by `PostgresTablePointerProjector`) is an explicit, documented exception for Orders/Billing/DualScreen (`HOST_AREA_EXTRA_SCHEMAS`), not a blind spot. |
 
 User-facing Turkish string literals are **not** flagged; that is the desired
 state. See `docs/UI_STYLE_GUIDE.md` for the Turkish terminology dictionary the

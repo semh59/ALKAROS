@@ -28,6 +28,18 @@ Zero-dependency scan that fails (exit code 1) when it finds:
    declarations, one-line forwarders (no `FROM` in the body), and private
    `Read.../Load...` helpers that load one already-scoped aggregate's children
    are not flagged.
+7. The same cross-schema WRITE check as rule 5, but for src/Host/** (the
+   composition root has no per-module schema, but each Experience area —
+   Orders, Billing, Catalog, Tables, KitchenOperations, Roles, Authorization,
+   DualScreen — is still expected to write only its own bounded context's
+   schema; see HOST_AREA_SCHEMA). Found missing by an independent boundary
+   audit (2026-09-07): rule 5 only ever looked at src/Modules/**, so a Host
+   store writing a schema it doesn't own went uncaught the same way the
+   5-module MODULE_SCHEMA gap did before V11-RMD-002. The already-reconciled
+   table_mgmt.tables "soft cache pointer" pattern (Orders/Billing/DualScreen
+   writing a denormalized current_order_id/current_bill_id, independently
+   repaired by PostgresTablePointerProjector) and the CLI/bootstrap entry
+   point (Program.cs) are explicit, documented exceptions, not blind spots.
 
 User-facing Turkish string literals are intentionally NOT flagged; only code
 identities and untranslated English leaks are.
@@ -79,6 +91,47 @@ MODULE_SCHEMA = {
 _SCHEMA_CONST_RE = re.compile(r'const\s+string\s+(\w+)\s*=\s*"(\w+)\.\w+"')
 _WRITE_TARGET_RE = re.compile(
     r"\b(?:UPDATE|INSERT\s+INTO|DELETE\s+FROM)\s+(?:\{(\w+)\}|(\w+)\.)", re.IGNORECASE)
+
+# src/Host/** has no per-module schema (it's the composition root), but each
+# Experience area is still expected to write only its own bounded context's
+# schema through ham SQL rather than another area's. Found by an independent
+# boundary audit (2026-09-07): the original rule 5 never looked at src/Host/**
+# at all (same class of blind spot as the pre-V11-RMD-002 5-module gap), so a
+# Host store writing a schema it doesn't own would never be caught. Keyed by
+# the first path segment under src/Host/Experience (a lone file directly under
+# Experience/, e.g. a shared cross-cutting helper, maps to "Experience" itself
+# and is treated as identity's cross-cutting surface, V0-ARC-001 row 1); the
+# top-level DualScreen/ folder is its own area.
+HOST_AREA_SCHEMA = {
+    "Experience": "identity",
+    "Experience/Authorization": "identity",
+    "Experience/Billing": "billing",
+    "Experience/Catalog": "catalog",
+    "Experience/KitchenOperations": "kitchen",
+    "Experience/Orders": "orders",
+    "Experience/Roles": "identity",
+    "Experience/Tables": "table_mgmt",
+    "DualScreen": "customer_display",
+}
+
+# Deliberate, already-reconciled exceptions to the one-area/one-schema rule
+# above: table_mgmt.tables carries a denormalized current_order_id/
+# current_bill_id "soft cache" pointer that Orders/Billing/DualScreen update
+# directly for read-path speed, with PostgresTablePointerProjector (Tables
+# module) independently detecting and repairing any drift — a known,
+# deliberate pattern (V1-RMD-078/V1-TBL-007), not the domain-logic-duplication
+# class of defect this rule exists to catch (V1-RMD-120).
+HOST_AREA_EXTRA_SCHEMAS = {
+    "Experience/Orders": {"table_mgmt"},
+    "Experience/Billing": {"table_mgmt"},
+    "DualScreen": {"table_mgmt"},
+}
+
+# The CLI/bootstrap entry point (provisioning, session revocation, migration
+# commands) is the composition root itself, not a per-request Experience
+# store — it legitimately touches several schemas for one-off admin
+# operations. Out of this rule's scope by design, not an oversight.
+HOST_EXEMPT_FILES = {"Program.cs"}
 
 # Any list read on the repository contract surface:
 # `public [async] Task<IReadOnlyList<X>> <Method>(`. Its body must carry a LIMIT
@@ -177,6 +230,37 @@ def audit() -> list[str]:
                         f"{_rel(path)}:{index + 1}: {parts[0]} module '{signature.group(1)}' issues a SELECT "
                         f"with no LIMIT; add a bound so an outgrown table (or a widening filter) fails loud "
                         f"instead of loading unboundedly.")
+
+    host_root = REPO_ROOT / "src" / "Host"
+    if host_root.is_dir():
+        for path in _iter_files(host_root, (".cs",)):
+            if path.name in HOST_EXEMPT_FILES:
+                continue
+            parts = path.relative_to(host_root).parts
+            if not parts:
+                continue
+            if parts[0] == "Experience":
+                area = "Experience" if len(parts) == 2 else f"Experience/{parts[1]}"
+            elif parts[0] == "DualScreen":
+                area = "DualScreen"
+            else:
+                area = parts[0]
+            own_schema = HOST_AREA_SCHEMA.get(area)
+            allowed_extra = HOST_AREA_EXTRA_SCHEMAS.get(area, frozenset())
+            text = path.read_text(encoding="utf-8")
+            for number, raw in enumerate(text.splitlines(), 1):
+                line = raw.strip()
+                if line.startswith(("//", "///", "*", "#")):
+                    continue
+                for _const_name, literal_schema in _WRITE_TARGET_RE.findall(raw):
+                    schema = literal_schema
+                    if not schema or schema == "audit" or schema == own_schema or schema in allowed_extra:
+                        continue
+                    violations.append(
+                        f"{_rel(path)}:{number}: Host area '{area}' writes the '{schema}' schema "
+                        f"(expected '{own_schema or 'none mapped — update HOST_AREA_SCHEMA'}'); "
+                        f"an Experience store changes another area's rows only through its module "
+                        f"contract, or the documented table_mgmt pointer exception: {line[:120]}")
 
     src = REPO_ROOT / "src"
     if src.is_dir():
