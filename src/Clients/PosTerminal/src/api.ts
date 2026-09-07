@@ -7,6 +7,7 @@ import type {
   NfcOrderResult,
   PairingCompleted,
   PairingCreated,
+  RelayCredentialStatus,
   RuntimeConfiguration,
 } from "./contracts";
 
@@ -160,4 +161,13 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ items, id: submissionId }),
     }),
+  // V14-QRT-003: manager-only. saveRelayCredential never returns the value
+  // back; relayCredentialStatus reports only configured/updatedAt.
+  saveRelayCredential: (terminalId: string, cloudflareApiToken: string) =>
+    request<void>(`/api/v1/terminals/${terminalId}/relay-credential/`, {
+      method: "POST",
+      body: JSON.stringify({ cloudflareApiToken }),
+    }),
+  relayCredentialStatus: (terminalId: string) =>
+    request<RelayCredentialStatus>(`/api/v1/terminals/${terminalId}/relay-credential/status`),
 };

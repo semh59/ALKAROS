@@ -29,6 +29,7 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
             Mig("V1-IAM-024", "049-authorization-drop-mutate-alias.up.sql"),
             Mig("V1-RMD-110", "054-grant-identity-admin-permissions-to-manager.up.sql"),
             Mig("V1-RMD-111", "055-orders-transfer-server-permissions.up.sql"),
+            MigVersioned("V14", "V14-QRT-003", "079-integrations-manage-permission.up.sql"),
         };
 
         foreach (var path in scripts)
@@ -45,6 +46,9 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
     /// </summary>
     public async Task ApplyDownSplitAsync()
     {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(MigVersioned("V14", "V14-QRT-003", "079-integrations-manage-permission.down.sql")));
         await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-RMD-111", "055-orders-transfer-server-permissions.down.sql")));
@@ -89,7 +93,10 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
     }
 
     private static string Mig(string task, string file)
-        => Path.Combine(RepoRoot, "database", "migrations", "V1", task, file);
+        => MigVersioned("V1", task, file);
+
+    private static string MigVersioned(string version, string task, string file)
+        => Path.Combine(RepoRoot, "database", "migrations", version, task, file);
 
     private static string FindRepoRoot()
     {

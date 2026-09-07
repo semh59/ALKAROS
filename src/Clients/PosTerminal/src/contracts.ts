@@ -29,6 +29,13 @@ export interface LoginResponse {
   capabilities?: string[];
 }
 
+// V14-QRT-003: never carries the credential value itself — only whether one
+// is configured, and when it was last set.
+export interface RelayCredentialStatus {
+  configured: boolean;
+  updatedAt: string | null;
+}
+
 export interface RuntimeConfiguration {
   kitchenStationId: string;
   // Absolute origin the customer display is served from (finding B-4). Absent

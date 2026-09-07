@@ -7,9 +7,9 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 public sealed class ApplicationPermissionsTests
 {
     [Fact]
-    public void CatalogHasFifteenDistinctCodes()
+    public void CatalogHasSixteenDistinctCodes()
     {
-        ApplicationPermissions.Codes.Should().HaveCount(15);
+        ApplicationPermissions.Codes.Should().HaveCount(16);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
@@ -78,10 +78,18 @@ public sealed class ApplicationPermissionsTests
     }
 
     [Fact]
-    public void SupervisorAndManagerHoldTheSameGranularSet()
+    public void ManagerHoldsEverySupervisorGrantPlusIntegrationsManageOnly()
     {
-        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor]
-            .Should().BeEquivalentTo(ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager]);
+        // V14-QRT-003: the first manager-exclusive grant — every tier before
+        // it was identical to supervisor's. integrations.manage (configuring
+        // a third-party relay credential) is a one-time setup action with no
+        // requester/approver dynamic, unlike bills.void/comp/discount, which
+        // are per-transaction exceptions supervisor can already resolve.
+        var supervisor = ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor];
+        var manager = ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager];
+
+        manager.Should().BeEquivalentTo(supervisor.Append(ApplicationPermissions.IntegrationsManage));
+        supervisor.Should().NotContain(ApplicationPermissions.IntegrationsManage);
     }
 
     [Fact]

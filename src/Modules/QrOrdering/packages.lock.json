@@ -26,6 +26,15 @@
       },
       "alkaros.modulecomposition": {
         "type": "Project"
+      },
+      "alkaros.secrets": {
+        "type": "Project"
+      },
+      "alkaros.sensitivedata": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Secrets": "[1.0.0, )"
+        }
       }
     }
   }

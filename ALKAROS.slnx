@@ -60,6 +60,7 @@
   <Project Path="tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj" />
   <Project Path="tests/Host/Experience/WaiterNotifications/ALKAROS.Host.Experience.WaiterNotifications.Tests.csproj" />
   <Project Path="tests/Host/Experience/NfcOrdering/ALKAROS.Host.Experience.NfcOrdering.Tests.csproj" />
+  <Project Path="tests/Host/Experience/RelaySettings/ALKAROS.Host.Experience.RelaySettings.Tests.csproj" />
   <Project Path="tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj" />
   <Project Path="tests/Modules/Billing/Adjustments/ALKAROS.Billing.Adjustments.Tests.csproj" />
   <Project Path="tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj" />
@@ -90,6 +91,7 @@
   <Project Path="tests/Modules/Tables/Reservations/ALKAROS.Tables.Reservations.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj" />
   <Project Path="tests/Modules/QrOrdering/TokenLifecycle/ALKAROS.QrOrdering.TokenLifecycle.Tests.csproj" />
+  <Project Path="tests/Modules/QrOrdering/RelayCredential/ALKAROS.QrOrdering.RelayCredential.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableMerge/ALKAROS.Tables.TableMerge.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj" />

@@ -266,6 +266,8 @@
         "type": "Project",
         "dependencies": {
           "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
       },
@@ -287,6 +289,15 @@
         "type": "Project",
         "dependencies": {
           "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.secrets": {
+        "type": "Project"
+      },
+      "alkaros.sensitivedata": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Secrets": "[1.0.0, )"
         }
       },
       "alkaros.settings": {

@@ -1,4 +1,7 @@
 using ALKAROS.ModuleComposition;
+using ALKAROS.QrOrdering.RelayCredential;
+using ALKAROS.Secrets;
+using ALKAROS.SensitiveData;
 
 namespace ALKAROS.QrOrdering.TokenLifecycle;
 
@@ -16,5 +19,17 @@ public sealed class QrOrderingModule : IModule
     public void Register(ModuleContext context)
         => context
             .RegisterTransient<ITableTokenRepository, PostgresTableTokenRepository>()
-            .RegisterTransient<TableTokenService, TableTokenService>();
+            .RegisterTransient<TableTokenService, TableTokenService>()
+            // V14-QRT-003: this module is the first real consumer of the
+            // Secrets/SensitiveData building blocks — registered here rather
+            // than at Host startup because nothing else uses them yet; a
+            // later second consumer would promote these to a shared
+            // registration point instead of duplicating them.
+            .RegisterTransient<ISecretProvider, EnvironmentVariableSecretProvider>()
+            .RegisterTransient<ISecretAccessPolicy, RelayCredentialAccessPolicy>()
+            .RegisterTransient<ISensitiveDataAccessPolicy, RelayCredentialAccessPolicy>()
+            .RegisterTransient<ISecretResolver, SecretResolver>()
+            .RegisterTransient<IEnvelopeCipher, AesGcmEnvelopeCipher>()
+            .RegisterTransient<SensitivePayloadProtector, SensitivePayloadProtector>()
+            .RegisterTransient<IRelayCredentialStore, PostgresRelayCredentialStore>();
 }

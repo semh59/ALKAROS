@@ -17,6 +17,7 @@ using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Host.Experience.NfcOrdering;
 using ALKAROS.Host.Experience.OfflineReconciliation;
+using ALKAROS.Host.Experience.RelaySettings;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Roles;
 using ALKAROS.Host.Experience.Tables;
@@ -99,6 +100,7 @@ public static partial class DualScreenApplication
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
+        builder.Services.AddRelaySettingsExperience();
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddRoleManagementExperience();
@@ -290,6 +292,7 @@ public static partial class DualScreenApplication
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();
         app.MapNfcOrderingApi();
+        app.MapRelaySettingsApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
         app.MapRoleManagementApi();

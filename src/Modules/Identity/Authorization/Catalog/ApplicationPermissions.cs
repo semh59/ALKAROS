@@ -26,6 +26,8 @@ public static class ApplicationPermissions
     public const string BillsDiscount = "bills.discount";
     public const string CashDrawer = "cash.drawer";
     public const string ReportsView = "reports.view";
+    /// <summary>V14-QRT-003: configuring a third-party integration credential (e.g. the QR relay provider token) — manager-only, no escalation path.</summary>
+    public const string IntegrationsManage = "integrations.manage";
 
     public const string RoleWaiter = "waiter";
     public const string RoleCashier = "cashier";
@@ -39,6 +41,7 @@ public static class ApplicationPermissions
         TablesMerge, FloorplanManage, BillsSplit, BillsVoid, BillsComp,
         BillsDiscount, CashDrawer, ReportsView,
         OrdersTransferServer, OrdersTransferServerAny,
+        IntegrationsManage,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -70,8 +73,15 @@ public static class ApplicationPermissions
             [RoleSupervisor] = new HashSet<string>(
                 EveryRoleTakesOrders.Concat(CashierFloorSet).Concat(SupervisorEscalations),
                 StringComparer.Ordinal),
+            // V14-QRT-003: the first manager-exclusive grant — every prior
+            // tier here was identical to supervisor's. Configuring a
+            // third-party relay credential is a one-time setup action with
+            // no requester/approver dynamic (unlike bills.void/comp, which
+            // are per-transaction exceptions a supervisor can already
+            // resolve), so it sits a level above supervisor rather than
+            // going through the grant-request escalation path.
             [RoleManager] = new HashSet<string>(
-                EveryRoleTakesOrders.Concat(CashierFloorSet).Concat(SupervisorEscalations),
+                EveryRoleTakesOrders.Concat(CashierFloorSet).Concat(SupervisorEscalations).Append(IntegrationsManage),
                 StringComparer.Ordinal),
         };
 }
