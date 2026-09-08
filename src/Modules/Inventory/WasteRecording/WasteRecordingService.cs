@@ -1,35 +1,37 @@
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Measurements;
+using Npgsql;
 
 namespace ALKAROS.Inventory.WasteRecording;
 
 public sealed class WasteRecordingService : IWasteRecordingService
 {
+    private readonly IInventoryTransactionRunner _transactionRunner;
     private readonly IWasteRecordRepository _wasteRepo;
     private readonly IStockMovementRepository _movementRepo;
     private readonly IStockItemRepository _itemRepo;
     private readonly IStockLocationRepository _locationRepo;
     private readonly IStockBalanceRepository _balanceRepo;
-    private readonly IStockBalanceProjector _balanceProjector;
     private readonly IUnitConverter _unitConverter;
 
     public WasteRecordingService(
+        IInventoryTransactionRunner transactionRunner,
         IWasteRecordRepository wasteRepo,
         IStockMovementRepository movementRepo,
         IStockItemRepository itemRepo,
         IStockLocationRepository locationRepo,
         IStockBalanceRepository balanceRepo,
-        IStockBalanceProjector balanceProjector,
         IUnitConverter unitConverter)
     {
+        _transactionRunner = transactionRunner ?? throw new ArgumentNullException(nameof(transactionRunner));
         _wasteRepo = wasteRepo ?? throw new ArgumentNullException(nameof(wasteRepo));
         _movementRepo = movementRepo ?? throw new ArgumentNullException(nameof(movementRepo));
         _itemRepo = itemRepo ?? throw new ArgumentNullException(nameof(itemRepo));
         _locationRepo = locationRepo ?? throw new ArgumentNullException(nameof(locationRepo));
         _balanceRepo = balanceRepo ?? throw new ArgumentNullException(nameof(balanceRepo));
-        _balanceProjector = balanceProjector ?? throw new ArgumentNullException(nameof(balanceProjector));
         _unitConverter = unitConverter ?? throw new ArgumentNullException(nameof(unitConverter));
     }
 
@@ -95,7 +97,10 @@ public sealed class WasteRecordingService : IWasteRecordingService
             normalizedQuantity = _unitConverter.Convert(request.Quantity, requestedUnit, item.TrackingUnitCode);
         }
 
-        // Check on-hand balance to enforce non-negative on-hand invariant
+        // Fast, friendly pre-check — NOT the final authority. Two concurrent
+        // waste recordings could both read the same stale balance here and
+        // both pass; the guarded transactional apply below (V1-RMD-125) is
+        // what actually prevents a negative outcome under a race.
         var balance = await _balanceRepo.GetByItemAndLocationAsync(item.Id, location.Id, cancellationToken);
         var currentOnHand = balance?.OnHandQuantity ?? 0m;
         if (currentOnHand < normalizedQuantity)
@@ -137,11 +142,53 @@ public sealed class WasteRecordingService : IWasteRecordingService
             idempotencyKey: request.IdempotencyKey,
             metadataJson: request.MetadataJson);
 
-        await _movementRepo.AppendAsync(movement, cancellationToken);
-        await _wasteRepo.InsertAsync(wasteRecord, cancellationToken);
-        await _balanceProjector.ApplyMovementAsync(movement, cancellationToken);
+        // The ledger append, the waste record insert, and the guarded
+        // balance apply commit as one unit (V1-RMD-125) — previously these
+        // were three independent round trips, so a failure between them
+        // could leave an orphaned, immutable ledger row with no matching
+        // WasteRecord, and the non-negative check was a separate, unlocked
+        // read that a concurrent request could race past. A guard failure
+        // throws BalanceGuardFailedException so the transaction runner
+        // rolls back the ledger append and waste record insert too.
+        try
+        {
+            await _transactionRunner.RunAsync(async (connection, transaction) =>
+            {
+                await _movementRepo.AppendAsync(movement, connection, transaction, cancellationToken);
+                await _wasteRepo.InsertAsync(wasteRecord, connection, transaction, cancellationToken);
 
-        return new WasteRecordingResult(wasteRecord, movement, IsIdempotentReplay: false);
+                return await _balanceRepo.TryApplyGuardedOnHandDeltaAsync(
+                    item.Id, location.Id, -normalizedQuantity, connection, transaction, cancellationToken)
+                    ?? throw new BalanceGuardFailedException();
+            }, cancellationToken);
+
+            return new WasteRecordingResult(wasteRecord, movement, IsIdempotentReplay: false);
+        }
+        catch (BalanceGuardFailedException)
+        {
+            var latest = await _balanceRepo.GetByItemAndLocationAsync(item.Id, location.Id, cancellationToken);
+            var latestOnHand = latest?.OnHandQuantity ?? 0m;
+            throw new InsufficientStockForWasteException(
+                $"Insufficient stock for waste recording. Available on-hand: {latestOnHand} {item.TrackingUnitCode}, requested waste: {normalizedQuantity} {item.TrackingUnitCode}.");
+        }
+        catch (PostgresException ex)
+            when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "uq_waste_records_idempotency")
+        {
+            // A concurrent request with the identical idempotency key won
+            // the race between our own pre-check (above) and this insert —
+            // replay its result instead of surfacing a raw DB exception.
+            if (!string.IsNullOrWhiteSpace(request.IdempotencyKey))
+            {
+                var existing = await _wasteRepo.GetByIdempotencyKeyAsync(request.IdempotencyKey, cancellationToken);
+                if (existing is not null)
+                {
+                    var existingMovement = await _movementRepo.GetByIdAsync(existing.StockMovementId, cancellationToken);
+                    return new WasteRecordingResult(existing, existingMovement!, IsIdempotentReplay: true);
+                }
+            }
+
+            throw;
+        }
     }
 
     public Task<WasteRecord?> GetWasteRecordByIdAsync(Guid id, CancellationToken cancellationToken = default)

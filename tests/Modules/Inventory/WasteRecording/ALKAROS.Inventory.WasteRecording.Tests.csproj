@@ -32,6 +32,10 @@
     <None Include="../../../../database/migrations/V11/V11-INV-003/*.down.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V11/V11-INV-006/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V11/V11-INV-006/*.down.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- V1-RMD-125: ck_stock_balances_on_hand_non_negative — the guarded-apply
+         race-fix tests assert against this real DB-level CHECK constraint. -->
+    <None Include="../../../../database/migrations/V1/V1-RMD-125/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-RMD-125/*.down.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

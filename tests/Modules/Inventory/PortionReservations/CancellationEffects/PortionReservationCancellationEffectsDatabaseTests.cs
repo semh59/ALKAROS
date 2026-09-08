@@ -3,6 +3,7 @@ using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Measurements;
 using ALKAROS.TestHelpers;
@@ -40,6 +41,10 @@ public sealed class PortionCancellationEffectsTestDb : PgTestDatabase
         var migration065 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "065-reservation-balance-projection.up.sql");
         var sql065 = await File.ReadAllTextAsync(migration065);
         await RunAsync(DataSource, sql065);
+
+        var migration087 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "087-inventory-stock-balances-non-negative.up.sql");
+        var sql087 = await File.ReadAllTextAsync(migration087);
+        await RunAsync(DataSource, sql087);
 
         const string kitchenSql = @"
             CREATE SCHEMA IF NOT EXISTS kitchen;
@@ -94,7 +99,8 @@ public sealed class PortionReservationCancellationEffectsDatabaseTests : IClassF
         _lifecycleService = new PortionReservationLifecycleService(_reservationRepo, _itemRepo, _locationRepo);
         _balanceProjector = new ReservationBalanceProjector(_resBalanceRepo);
         _stockProjector = new StockBalanceProjector(_stockBalanceRepo, _movementRepo, _locationRepo);
-        _wasteService = new WasteRecordingService(_wasteRepo, _movementRepo, _itemRepo, _locationRepo, _stockBalanceRepo, _stockProjector, unitConverter);
+        var transactionRunner = new PostgresInventoryTransactionRunner(db.DataSource);
+        _wasteService = new WasteRecordingService(transactionRunner, _wasteRepo, _movementRepo, _itemRepo, _locationRepo, _stockBalanceRepo, unitConverter);
 
         _decisionService = new PortionCancellationDecisionService(
             _reservationRepo, _lifecycleService, _balanceProjector, _wasteService, _kitchenProvider);

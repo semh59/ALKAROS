@@ -3,6 +3,7 @@ using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Measurements;
 using FluentAssertions;
@@ -103,6 +104,8 @@ public sealed class FakeWasteRecordRepository : IWasteRecordRepository
         _records[record.Id] = record;
         return Task.CompletedTask;
     }
+    public Task InsertAsync(WasteRecord record, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default) =>
+        InsertAsync(record, ct);
     public Task<WasteRecord?> GetByIdAsync(Guid id, CancellationToken ct = default) => Task.FromResult(_records.GetValueOrDefault(id));
     public Task<WasteRecord?> GetByIdempotencyKeyAsync(string idempotencyKey, CancellationToken ct = default) =>
         Task.FromResult(_records.Values.FirstOrDefault(r => r.IdempotencyKey == idempotencyKey));
@@ -156,6 +159,15 @@ public sealed class FakeStockBalanceRepository : IStockBalanceRepository
     }
     public Task<StockBalance> ApplyOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default) =>
         ApplyOnHandDeltaAsync(stockItemId, stockLocationId, onHandDelta, ct);
+    public Task<StockBalance?> TryApplyGuardedOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        var current = _balances.TryGetValue((stockItemId, stockLocationId), out var existing) ? existing.OnHandQuantity : 0m;
+        if (current + onHandDelta < 0m)
+            return Task.FromResult<StockBalance?>(null);
+
+        return ApplyOnHandDeltaAsync(stockItemId, stockLocationId, onHandDelta, ct)
+            .ContinueWith(t => (StockBalance?)t.Result, ct);
+    }
     public Task SetExactBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, CancellationToken ct = default)
     {
         var key = (stockItemId, stockLocationId);
@@ -170,6 +182,18 @@ public sealed class FakeStockBalanceRepository : IStockBalanceRepository
         _balances.Clear();
         return Task.CompletedTask;
     }
+}
+
+/// <summary>
+/// Runs the operation directly against the fakes, no real connection/
+/// transaction needed — the fakes' own (connection, transaction)
+/// overloads already ignore those parameters and delegate to their plain
+/// in-memory implementation.
+/// </summary>
+public sealed class FakeInventoryTransactionRunner : IInventoryTransactionRunner
+{
+    public Task<T> RunAsync<T>(Func<NpgsqlConnection, NpgsqlTransaction, Task<T>> operation, CancellationToken ct = default)
+        => operation(null!, null!);
 }
 
 public sealed class FakeReservationBalanceRepository : IReservationBalanceRepository
@@ -264,7 +288,8 @@ public sealed class PortionReservationCancellationEffectsDomainTests
 
         var movementRepo = new FakeStockMovementRepository();
         var stockProjector = new StockBalanceProjector(_stockBalanceRepo, movementRepo, _locationRepo);
-        _wasteService = new WasteRecordingService(_wasteRepo, movementRepo, _itemRepo, _locationRepo, _stockBalanceRepo, stockProjector, unitConverter);
+        var transactionRunner = new FakeInventoryTransactionRunner();
+        _wasteService = new WasteRecordingService(transactionRunner, _wasteRepo, movementRepo, _itemRepo, _locationRepo, _stockBalanceRepo, unitConverter);
 
         _decisionService = new PortionCancellationDecisionService(
             _reservationRepo, _lifecycleService, _balanceProjector, _wasteService, _kitchenProvider);

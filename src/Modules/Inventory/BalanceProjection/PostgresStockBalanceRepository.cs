@@ -174,6 +174,56 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         cmd.Parameters.AddWithValue(onHandDelta);
     }
 
+    public async Task<StockBalance?> TryApplyGuardedOnHandDeltaAsync(
+        Guid stockItemId,
+        Guid stockLocationId,
+        decimal onHandDelta,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var cmd = new NpgsqlCommand(TryApplyGuardedOnHandDeltaSql, connection, transaction);
+        BindApplyOnHandDeltaParameters(cmd, stockItemId, stockLocationId, onHandDelta);
+
+        try
+        {
+            await using var reader = await cmd.ExecuteReaderAsync(ct);
+            return await reader.ReadAsync(ct) ? MapRow(reader) : null;
+        }
+        catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.CheckViolation)
+        {
+            // A first-ever call for this item/location with a negative
+            // delta (no existing row for the WHERE guard to protect) hits
+            // the table's own ck_stock_balances_on_hand_non_negative CHECK
+            // instead — the guard's final line of defense, not just the
+            // read-then-write race this method exists to close.
+            return null;
+        }
+    }
+
+    // Same atomic UPSERT as ApplyOnHandDeltaSql, but the UPDATE branch only
+    // fires when the resulting on-hand quantity would stay non-negative —
+    // if the guard fails, ON CONFLICT leaves the existing row untouched and
+    // RETURNING yields no row (V1-RMD-125).
+    private const string TryApplyGuardedOnHandDeltaSql = @"
+        INSERT INTO inventory.stock_balances (
+            stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+            reserved_quantity, available_quantity, updated_at, row_version
+        ) VALUES (
+            $1, $2, $3, $4, 0, $4, NOW(), 1
+        )
+        ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE
+        SET on_hand_quantity = inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity,
+            available_quantity = (inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity) - inventory.stock_balances.reserved_quantity,
+            updated_at = NOW(),
+            row_version = inventory.stock_balances.row_version + 1
+        WHERE inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity >= 0
+        RETURNING stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                  reserved_quantity, available_quantity, updated_at, row_version;";
+
     private static async Task<StockBalance> ReadAppliedBalanceAsync(NpgsqlCommand cmd, CancellationToken ct)
     {
         await using var reader = await cmd.ExecuteReaderAsync(ct);

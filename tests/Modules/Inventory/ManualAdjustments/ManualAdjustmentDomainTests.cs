@@ -1,6 +1,7 @@
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Measurements;
 using Npgsql;
 using FluentAssertions;
@@ -227,9 +228,10 @@ public sealed class ManualAdjustmentDomainTests
         var balanceRepo = new FakeStockBalanceRepository();
         var projector = new StockBalanceProjector(balanceRepo, movementRepo, locRepo);
         var unitConverter = new UnitConverter();
+        var transactionRunner = new FakeInventoryTransactionRunner();
 
         var service = new InventoryAdjustmentService(
-            movementRepo, itemRepo, locRepo, balanceRepo, projector, unitConverter);
+            transactionRunner, movementRepo, itemRepo, locRepo, balanceRepo, unitConverter);
 
         return (service, movementRepo, itemRepo, locRepo, balanceRepo, projector);
     }
@@ -372,6 +374,16 @@ public sealed class ManualAdjustmentDomainTests
         public Task<StockBalance> ApplyOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
             => ApplyOnHandDeltaAsync(stockItemId, stockLocationId, onHandDelta, ct);
 
+        public Task<StockBalance?> TryApplyGuardedOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+        {
+            var current = _balances.TryGetValue((stockItemId, stockLocationId), out var existing) ? existing.OnHandQuantity : 0m;
+            if (current + onHandDelta < 0m)
+                return Task.FromResult<StockBalance?>(null);
+
+            return ApplyOnHandDeltaAsync(stockItemId, stockLocationId, onHandDelta, ct)
+                .ContinueWith(t => (StockBalance?)t.Result, ct);
+        }
+
         public Task SetExactBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, CancellationToken ct = default)
         {
             if (!_balances.TryGetValue((stockItemId, stockLocationId), out var bal))
@@ -393,5 +405,17 @@ public sealed class ManualAdjustmentDomainTests
             _balances.Clear();
             return Task.CompletedTask;
         }
+    }
+
+    /// <summary>
+    /// Runs the operation directly against the fakes, no real connection/
+    /// transaction needed — the fakes' own (connection, transaction)
+    /// overloads already ignore those parameters and delegate to their
+    /// plain in-memory implementation.
+    /// </summary>
+    private sealed class FakeInventoryTransactionRunner : IInventoryTransactionRunner
+    {
+        public Task<T> RunAsync<T>(Func<NpgsqlConnection, NpgsqlTransaction, Task<T>> operation, CancellationToken ct = default)
+            => operation(null!, null!);
     }
 }

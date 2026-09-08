@@ -7,6 +7,7 @@ using ALKAROS.Inventory.PortionReservations.Concurrency;
 using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Measurements;
 using ALKAROS.ModuleComposition;
@@ -32,6 +33,9 @@ public sealed class InventoryModule : IModule
     public void Register(ModuleContext context)
     {
         context.RegisterTransient<IUnitConverter, UnitConverter>();
+        // V1-RMD-125: shared atomic-transaction seam for InventoryAdjustmentService/
+        // WasteRecordingService — see IInventoryTransactionRunner's own doc-comment.
+        context.RegisterTransient<IInventoryTransactionRunner, PostgresInventoryTransactionRunner>();
 
         context.RegisterTransient<IStockItemRepository, PostgresStockItemRepository>();
         context.RegisterTransient<IStockLocationRepository, PostgresStockLocationRepository>();

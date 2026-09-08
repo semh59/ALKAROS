@@ -18,6 +18,22 @@ public interface IStockBalanceRepository
     /// </summary>
     Task<StockBalance> ApplyOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
 
+    /// <summary>
+    /// V1-RMD-125: applies onHandDelta only if the resulting on-hand
+    /// quantity would not go negative — atomically, in a single statement,
+    /// so a caller that first read the balance for a friendly pre-check and
+    /// then calls this to actually apply the movement cannot lose a race to
+    /// another concurrent decrease (the read-then-write gap that let two
+    /// requests each pass a stale check and together drive on-hand
+    /// negative). Returns null when the guard fails (insufficient stock,
+    /// or a same-call check-constraint violation) instead of throwing, so
+    /// the caller can re-read the real current balance for an accurate
+    /// domain exception message. Runs on the caller's own connection and
+    /// transaction so it commits atomically with the caller's other writes
+    /// (e.g. the ledger movement).
+    /// </summary>
+    Task<StockBalance?> TryApplyGuardedOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
+
     Task SetExactBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, CancellationToken ct = default);
     Task ResetAllBalancesAsync(CancellationToken ct = default);
 }

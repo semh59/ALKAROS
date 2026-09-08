@@ -45,6 +45,15 @@ services:
       ALKAROS_TEST_PG_PORT: "5432"
       ALKAROS_TEST_PG_USER: postgres
       ALKAROS_TEST_PG_PASSWORD: postgres
+      # V1-RMD-125: ProductionExperienceCompositionTests.
+      # ServeContainerResolvesEveryModuleServiceFromTheModuleCatalog builds
+      # the real "serve" container and resolves every module-registered
+      # service, including every IIntegrationEventConsumer (V12-QRO-001's
+      # QrOrderSubmittedConsumer is the first one that needs SubmitOrderHandler,
+      # whose IOrderSubmissionDispatcher factory throws without this var) —
+      # matches compose.yaml's own app service default so this test container
+      # exercises the same composition path.
+      ALKAROS_KITCHEN_STATION_ID: kitchen-main
     depends_on:
       test-postgres: { condition: service_healthy }
     command: ["dotnet", "test", "ALKAROS.slnx", "--configuration", "Release"]

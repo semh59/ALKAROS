@@ -17,20 +17,37 @@ public sealed class PostgresWasteRecordRepository : IWasteRecordRepository
     {
         ArgumentNullException.ThrowIfNull(record);
 
-        const string sql = @"
-            INSERT INTO inventory.waste_records (
-                id, stock_movement_id, stock_item_id, stock_location_id,
-                waste_source, source_reference_id, idempotency_key,
-                quantity, unit_code, normalized_quantity, tracking_unit_code,
-                waste_reason, recorded_by, recorded_at, metadata
-            ) VALUES (
-                $1, $2, $3, $4,
-                $5, $6, $7,
-                $8, $9, $10, $11,
-                $12, $13, $14, $15::jsonb
-            );";
+        await using var cmd = _dataSource.CreateCommand(InsertSql);
+        BindInsertParameters(cmd, record);
+        await cmd.ExecuteNonQueryAsync(ct);
+    }
 
-        await using var cmd = _dataSource.CreateCommand(sql);
+    public async Task InsertAsync(WasteRecord record, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var cmd = new NpgsqlCommand(InsertSql, connection, transaction);
+        BindInsertParameters(cmd, record);
+        await cmd.ExecuteNonQueryAsync(ct);
+    }
+
+    private const string InsertSql = @"
+        INSERT INTO inventory.waste_records (
+            id, stock_movement_id, stock_item_id, stock_location_id,
+            waste_source, source_reference_id, idempotency_key,
+            quantity, unit_code, normalized_quantity, tracking_unit_code,
+            waste_reason, recorded_by, recorded_at, metadata
+        ) VALUES (
+            $1, $2, $3, $4,
+            $5, $6, $7,
+            $8, $9, $10, $11,
+            $12, $13, $14, $15::jsonb
+        );";
+
+    private static void BindInsertParameters(NpgsqlCommand cmd, WasteRecord record)
+    {
         cmd.Parameters.AddWithValue(record.Id);
         cmd.Parameters.AddWithValue(record.StockMovementId);
         cmd.Parameters.AddWithValue(record.StockItemId);
@@ -46,8 +63,6 @@ public sealed class PostgresWasteRecordRepository : IWasteRecordRepository
         cmd.Parameters.AddWithValue(record.RecordedBy);
         cmd.Parameters.AddWithValue(record.RecordedAt);
         cmd.Parameters.AddWithValue((object?)record.MetadataJson ?? DBNull.Value);
-
-        await cmd.ExecuteNonQueryAsync(ct);
     }
 
     public async Task<WasteRecord?> GetByIdAsync(Guid id, CancellationToken ct = default)

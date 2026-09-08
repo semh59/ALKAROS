@@ -407,6 +407,16 @@ public sealed class StockMovementReversalDomainTests
         public Task<StockBalance> ApplyOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
             => ApplyOnHandDeltaAsync(stockItemId, stockLocationId, onHandDelta, ct);
 
+        public Task<StockBalance?> TryApplyGuardedOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+        {
+            var current = _balances.TryGetValue((stockItemId, stockLocationId), out var existing) ? existing.OnHandQuantity : 0m;
+            if (current + onHandDelta < 0m)
+                return Task.FromResult<StockBalance?>(null);
+
+            return ApplyOnHandDeltaAsync(stockItemId, stockLocationId, onHandDelta, ct)
+                .ContinueWith(t => (StockBalance?)t.Result, ct);
+        }
+
         public Task SetExactBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, CancellationToken ct = default)
         {
             if (!_balances.TryGetValue((stockItemId, stockLocationId), out var bal))

@@ -34,7 +34,7 @@ public sealed class MigrationManifest
     public const string PhaseAMin = "001";
     public const string PhaseAMax = "030";
     public const string PhaseBMin = "031";
-    public const string PhaseBMax = "086";
+    public const string PhaseBMax = "087";
 
     private MigrationManifest(IReadOnlyList<MigrationManifestEntry> migrations)
     {

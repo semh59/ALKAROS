@@ -1,32 +1,33 @@
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Measurements;
 
 namespace ALKAROS.Inventory.ManualAdjustments;
 
 public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
 {
+    private readonly IInventoryTransactionRunner _transactionRunner;
     private readonly IStockMovementRepository _movementRepo;
     private readonly IStockItemRepository _itemRepo;
     private readonly IStockLocationRepository _locationRepo;
     private readonly IStockBalanceRepository _balanceRepo;
-    private readonly IStockBalanceProjector _balanceProjector;
     private readonly IUnitConverter _unitConverter;
 
     public InventoryAdjustmentService(
+        IInventoryTransactionRunner transactionRunner,
         IStockMovementRepository movementRepo,
         IStockItemRepository itemRepo,
         IStockLocationRepository locationRepo,
         IStockBalanceRepository balanceRepo,
-        IStockBalanceProjector balanceProjector,
         IUnitConverter unitConverter)
     {
+        _transactionRunner = transactionRunner ?? throw new ArgumentNullException(nameof(transactionRunner));
         _movementRepo = movementRepo ?? throw new ArgumentNullException(nameof(movementRepo));
         _itemRepo = itemRepo ?? throw new ArgumentNullException(nameof(itemRepo));
         _locationRepo = locationRepo ?? throw new ArgumentNullException(nameof(locationRepo));
         _balanceRepo = balanceRepo ?? throw new ArgumentNullException(nameof(balanceRepo));
-        _balanceProjector = balanceProjector ?? throw new ArgumentNullException(nameof(balanceProjector));
         _unitConverter = unitConverter ?? throw new ArgumentNullException(nameof(unitConverter));
     }
 
@@ -79,25 +80,26 @@ public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
             quantityInTrackingUnit = _unitConverter.Convert(request.Quantity, requestedUnit, item.TrackingUnitCode);
         }
 
-        // Fetch current on-hand balance to check non-negative constraint
+        // Fast, friendly pre-check against the current on-hand balance — NOT
+        // the final authority. Two concurrent decreases could both read the
+        // same stale balance here and both pass; the guarded transactional
+        // apply below (V1-RMD-125) is what actually prevents a negative
+        // outcome under a race.
         var currentBalance = await _balanceRepo.GetByItemAndLocationAsync(item.Id, location.Id, ct);
         var currentOnHand = currentBalance?.OnHandQuantity ?? 0m;
 
         var movementDirection = request.Direction == AdjustmentDirection.Increase
             ? MovementDirection.In
             : MovementDirection.Out;
+        var signedDelta = movementDirection == MovementDirection.In ? quantityInTrackingUnit : -quantityInTrackingUnit;
 
         // Non-negative outcome invariant ("olumsuz olmayan sonuç")
-        if (movementDirection == MovementDirection.Out)
+        if (movementDirection == MovementDirection.Out && currentOnHand - quantityInTrackingUnit < 0m)
         {
-            if (currentOnHand - quantityInTrackingUnit < 0m)
-            {
-                throw new NegativeInventoryResultException(
-                    $"Adjustment decrease of {quantityInTrackingUnit} {item.TrackingUnitCode} would result in negative on-hand balance ({currentOnHand - quantityInTrackingUnit}). Current on-hand is {currentOnHand} {item.TrackingUnitCode}.");
-            }
+            throw new NegativeInventoryResultException(
+                $"Adjustment decrease of {quantityInTrackingUnit} {item.TrackingUnitCode} would result in negative on-hand balance ({currentOnHand - quantityInTrackingUnit}). Current on-hand is {currentOnHand} {item.TrackingUnitCode}.");
         }
 
-        // Record adjustment movement in ledger
         var movement = StockMovement.Create(
             stockItemId: item.Id,
             stockLocationId: location.Id,
@@ -109,14 +111,30 @@ public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
             reason: request.Reason.Trim(),
             createdBy: request.AuthorizedBy);
 
-        await _movementRepo.AppendAsync(movement, ct);
-
-        // Project balance update
-        var updatedBalance = await _balanceProjector.ApplyMovementAsync(movement, ct);
-        if (updatedBalance == null)
+        // Ledger append and the guarded balance apply commit as one unit:
+        // the movement is appended, then TryApplyGuardedOnHandDeltaAsync
+        // (V1-RMD-125) atomically re-checks the non-negative invariant
+        // against the row's real, current value — closing the
+        // read-then-write gap the fast pre-check above cannot. A guard
+        // failure throws BalanceGuardFailedException so the transaction
+        // runner rolls back the (otherwise orphaned) ledger append too.
+        StockBalance updatedBalance;
+        try
         {
-            updatedBalance = await _balanceRepo.GetByItemAndLocationAsync(item.Id, location.Id, ct)
-                ?? throw new InvalidOperationException("Failed to retrieve updated balance after adjustment.");
+            updatedBalance = await _transactionRunner.RunAsync(async (connection, transaction) =>
+            {
+                await _movementRepo.AppendAsync(movement, connection, transaction, ct);
+                return await _balanceRepo.TryApplyGuardedOnHandDeltaAsync(
+                    item.Id, location.Id, signedDelta, connection, transaction, ct)
+                    ?? throw new BalanceGuardFailedException();
+            }, ct);
+        }
+        catch (BalanceGuardFailedException)
+        {
+            var latest = await _balanceRepo.GetByItemAndLocationAsync(item.Id, location.Id, ct);
+            var latestOnHand = latest?.OnHandQuantity ?? 0m;
+            throw new NegativeInventoryResultException(
+                $"Adjustment decrease of {quantityInTrackingUnit} {item.TrackingUnitCode} would result in negative on-hand balance ({latestOnHand - quantityInTrackingUnit}). Current on-hand is {latestOnHand} {item.TrackingUnitCode}.");
         }
 
         return new InventoryAdjustmentResult(

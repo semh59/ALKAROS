@@ -1,6 +1,7 @@
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Measurements;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
@@ -30,6 +31,10 @@ public sealed class ManualAdjustmentTestDb : PgTestDatabase
         var migration062 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "062-stock-reversals.up.sql");
         var sql062 = await File.ReadAllTextAsync(migration062);
         await RunAsync(DataSource, sql062);
+
+        var migration087 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "087-inventory-stock-balances-non-negative.up.sql");
+        var sql087 = await File.ReadAllTextAsync(migration087);
+        await RunAsync(DataSource, sql087);
     }
 }
 
@@ -56,8 +61,9 @@ public sealed class ManualAdjustmentDatabaseTests : IClassFixture<ManualAdjustme
         var unitConverter = new UnitConverter();
         var mappingRepo = new PostgresProductStockMappingRepository(db.DataSource);
         _masterService = new StockMasterService(_locationRepo, _itemRepo, mappingRepo, unitConverter);
+        var transactionRunner = new PostgresInventoryTransactionRunner(db.DataSource);
         _adjustmentService = new InventoryAdjustmentService(
-            _movementRepo, _itemRepo, _locationRepo, _balanceRepo, _projector, unitConverter);
+            transactionRunner, _movementRepo, _itemRepo, _locationRepo, _balanceRepo, unitConverter);
     }
 
     [Fact]

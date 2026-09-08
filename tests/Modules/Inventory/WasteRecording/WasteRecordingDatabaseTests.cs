@@ -1,6 +1,7 @@
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Measurements;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
@@ -30,6 +31,10 @@ public sealed class WasteRecordingTestDb : PgTestDatabase
         var migration063 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "063-waste-records.up.sql");
         var sql063 = await File.ReadAllTextAsync(migration063);
         await RunAsync(DataSource, sql063);
+
+        var migration087 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "087-inventory-stock-balances-non-negative.up.sql");
+        var sql087 = await File.ReadAllTextAsync(migration087);
+        await RunAsync(DataSource, sql087);
     }
 }
 
@@ -58,8 +63,9 @@ public sealed class WasteRecordingDatabaseTests : IClassFixture<WasteRecordingTe
         var unitConverter = new UnitConverter();
         var mappingRepo = new PostgresProductStockMappingRepository(db.DataSource);
         _masterService = new StockMasterService(_locationRepo, _itemRepo, mappingRepo, unitConverter);
+        var transactionRunner = new PostgresInventoryTransactionRunner(db.DataSource);
         _wasteService = new WasteRecordingService(
-            _wasteRepo, _movementRepo, _itemRepo, _locationRepo, _balanceRepo, _projector, unitConverter);
+            transactionRunner, _wasteRepo, _movementRepo, _itemRepo, _locationRepo, _balanceRepo, unitConverter);
     }
 
     [Fact]
