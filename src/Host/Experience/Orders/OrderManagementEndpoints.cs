@@ -124,11 +124,15 @@ public static class OrderManagementEndpoints
             var actingUserId = await RequireCashierPermissionAsync(
                 context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
 
+            // V1-RMD-127: found by an independent audit (2026-09-09) — these
+            // four literals and the two GRANT_DENIED messages below were
+            // hardcoded in English, a docs/UI_STYLE_GUIDE.md violation (every
+            // user-visible string must be Turkish).
             if (request.TableId == Guid.Empty)
-                return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "TableId cannot be empty." } });
+                return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "Masa kimliği boş olamaz." } });
 
             if (request.Items == null || request.Items.Count == 0)
-                return Results.BadRequest(new { error = new { code = "EMPTY_ITEMS", message = "Order items cannot be empty." } });
+                return Results.BadRequest(new { error = new { code = "EMPTY_ITEMS", message = "Sipariş kalemleri boş olamaz." } });
 
             var draft = await store.CreateOrUpdateTableDraftAsync(request, actingUserId, cancellationToken);
             return Results.Ok(draft);
@@ -146,7 +150,7 @@ public static class OrderManagementEndpoints
 
             var order = await store.GetActiveOrderByTableIdAsync(tableId, cancellationToken);
             if (order == null)
-                return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "No active order for table." } });
+                return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "Bu masa için aktif sipariş bulunamadı." } });
 
             return Results.Ok(order);
         });
@@ -163,7 +167,7 @@ public static class OrderManagementEndpoints
 
             var order = await store.GetOrderByIdAsync(orderId, cancellationToken);
             if (order == null)
-                return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "Order not found." } });
+                return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "Sipariş bulunamadı." } });
 
             return Results.Ok(order);
         });
@@ -233,48 +237,33 @@ public static class OrderManagementEndpoints
             var userId = await RequireCashierPermissionAsync(
                 context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
 
-            try
-            {
-                var command = new VoidOrderItemCommand(
-                    orderId,
-                    itemId,
-                    request.ExpectedRowVersion,
-                    userId,
-                    request.ReasonCode,
-                    CorrelationId: context.TraceIdentifier,
-                    request.Notes);
-                var result = await itemExceptions.VoidItemAsync(command, cancellationToken);
-                return Results.Ok(new VoidOrderItemResultV1(
-                    result.OrderId,
-                    result.OrderItemId,
-                    result.NewItemStatus.ToString(),
-                    result.NewOrderRowVersion,
-                    result.NewOrderTotal,
-                    result.AppliedAt));
-            }
-            catch (OrderItemNotFoundException)
-            {
-                return Results.NotFound(new { error = new { code = "ITEM_NOT_FOUND", message = "Order item not found." } });
-            }
-            catch (InvalidItemReasonException ex)
-            {
-                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = ex.Message } });
-            }
-            catch (LateVoidRejectedException ex)
-            {
-                return Results.Conflict(new { error = new { code = "ALREADY_SENT", message = ex.Message } });
-            }
-            catch (StaleOrderRowVersionException ex)
-            {
-                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
-            }
-            catch (InvalidOperationException ex)
-            {
-                // Order not found, or the item is no longer Active (already
-                // voided/comped) — both are "the world moved on", not a bad
-                // request.
-                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
-            }
+            // V1-RMD-127: found by an independent audit (2026-09-09) — these
+            // inline catches returned the raw English ex.Message straight to
+            // the client (docs/UI_STYLE_GUIDE.md violation) for exceptions
+            // OrderManagementExceptionFilter (registered on this whole group)
+            // already maps to the correct Turkish text and the exact same
+            // status code / error code. Order not found or the item no
+            // longer Active (already voided/comped) surfaces as
+            // InvalidOperationException — the filter treats that as "the
+            // world moved on" too (409 CONCURRENCY_CONFLICT), not a bad
+            // request. Let every one of these bubble to the filter instead
+            // of duplicating its mapping here.
+            var command = new VoidOrderItemCommand(
+                orderId,
+                itemId,
+                request.ExpectedRowVersion,
+                userId,
+                request.ReasonCode,
+                CorrelationId: context.TraceIdentifier,
+                request.Notes);
+            var result = await itemExceptions.VoidItemAsync(command, cancellationToken);
+            return Results.Ok(new VoidOrderItemResultV1(
+                result.OrderId,
+                result.OrderItemId,
+                result.NewItemStatus.ToString(),
+                result.NewOrderRowVersion,
+                result.NewOrderTotal,
+                result.AppliedAt));
         });
 
         // V1-BIL-005: ItemExceptionHandler.ApplyComplimentaryAsync already
@@ -337,7 +326,7 @@ public static class OrderManagementEndpoints
                 {
                     case GrantOutcome.Refused:
                         return Results.Json(
-                            new { error = new { code = "GRANT_DENIED", message = "Complimentary request was denied." } },
+                            new { error = new { code = "GRANT_DENIED", message = "İkram talebi reddedildi." } },
                             statusCode: StatusCodes.Status403Forbidden);
                     case GrantOutcome.Pending:
                         return Results.Accepted(value: new ApplyComplimentaryResultV1(
@@ -349,39 +338,27 @@ public static class OrderManagementEndpoints
                 }
             }
 
-            try
-            {
-                var command = new ApplyComplimentaryCommand(
-                    orderId,
-                    itemId,
-                    request.ExpectedRowVersion,
-                    userId,
-                    request.ReasonCode,
-                    CorrelationId: context.TraceIdentifier,
-                    request.Notes);
-                var result = await itemExceptions.ApplyComplimentaryAsync(command, cancellationToken);
-                return Results.Ok(new ApplyComplimentaryResultV1(
-                    "Applied",
-                    result.OrderId,
-                    result.OrderItemId,
-                    result.NewItemStatus.ToString(),
-                    result.NewOrderRowVersion,
-                    result.NewOrderTotal,
-                    result.AppliedAt,
-                    null));
-            }
-            catch (OrderItemNotFoundException)
-            {
-                return Results.NotFound(new { error = new { code = "ITEM_NOT_FOUND", message = "Order item not found." } });
-            }
-            catch (StaleOrderRowVersionException ex)
-            {
-                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
-            }
+            // V1-RMD-127: see the matching note on the /void endpoint above —
+            // OrderManagementExceptionFilter already maps every one of these
+            // to the same status/error code with the correct Turkish text.
+            var command = new ApplyComplimentaryCommand(
+                orderId,
+                itemId,
+                request.ExpectedRowVersion,
+                userId,
+                request.ReasonCode,
+                CorrelationId: context.TraceIdentifier,
+                request.Notes);
+            var result = await itemExceptions.ApplyComplimentaryAsync(command, cancellationToken);
+            return Results.Ok(new ApplyComplimentaryResultV1(
+                "Applied",
+                result.OrderId,
+                result.OrderItemId,
+                result.NewItemStatus.ToString(),
+                result.NewOrderRowVersion,
+                result.NewOrderTotal,
+                result.AppliedAt,
+                null));
         });
 
         // V1-IAM-027: V0-DOM-006 amendment (Semih, 2026-09-04) — a sent-but-
@@ -440,7 +417,7 @@ public static class OrderManagementEndpoints
                 {
                     case GrantOutcome.Refused:
                         return Results.Json(
-                            new { error = new { code = "GRANT_DENIED", message = "Void request was denied." } },
+                            new { error = new { code = "GRANT_DENIED", message = "İptal talebi reddedildi." } },
                             statusCode: StatusCodes.Status403Forbidden);
                     case GrantOutcome.Pending:
                         return Results.Accepted(value: new VoidSentItemResultV1(
@@ -452,52 +429,28 @@ public static class OrderManagementEndpoints
                 }
             }
 
-            try
-            {
-                var command = new SentItemVoidCommand(
-                    orderId,
-                    itemId,
-                    request.ExpectedRowVersion,
-                    userId,
-                    request.ReasonCode,
-                    CorrelationId: context.TraceIdentifier,
-                    request.Notes);
-                var result = await store.VoidAsync(command, cancellationToken);
-                return Results.Ok(new VoidSentItemResultV1(
-                    "Applied",
-                    result.OrderId,
-                    result.OrderItemId,
-                    result.NewOrderRowVersion,
-                    result.NewOrderTotal,
-                    result.KitchenTicketItemCancelled,
-                    result.BillLineConvertedToWaste,
-                    result.AppliedAt,
-                    null));
-            }
-            catch (OrderItemNotFoundException)
-            {
-                return Results.NotFound(new { error = new { code = "ITEM_NOT_FOUND", message = "Order item not found." } });
-            }
-            catch (ItemNotYetSentException ex)
-            {
-                return Results.Conflict(new { error = new { code = "NOT_YET_SENT", message = ex.Message } });
-            }
-            catch (ItemAlreadyServedException ex)
-            {
-                return Results.Conflict(new { error = new { code = "ALREADY_SERVED", message = ex.Message } });
-            }
-            catch (BillNotModifiableForWasteException ex)
-            {
-                return Results.Conflict(new { error = new { code = "BILL_NOT_MODIFIABLE", message = ex.Message } });
-            }
-            catch (StaleOrderRowVersionException ex)
-            {
-                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Results.Conflict(new { error = new { code = "CONCURRENCY_CONFLICT", message = ex.Message } });
-            }
+            // V1-RMD-127: see the matching note on the /void endpoint above —
+            // OrderManagementExceptionFilter already maps every one of these
+            // to the same status/error code with the correct Turkish text.
+            var command = new SentItemVoidCommand(
+                orderId,
+                itemId,
+                request.ExpectedRowVersion,
+                userId,
+                request.ReasonCode,
+                CorrelationId: context.TraceIdentifier,
+                request.Notes);
+            var result = await store.VoidAsync(command, cancellationToken);
+            return Results.Ok(new VoidSentItemResultV1(
+                "Applied",
+                result.OrderId,
+                result.OrderItemId,
+                result.NewOrderRowVersion,
+                result.NewOrderTotal,
+                result.KitchenTicketItemCancelled,
+                result.BillLineConvertedToWaste,
+                result.AppliedAt,
+                null));
         });
 
         // V1-RMD-111: the garson-masa hand-off. Two-tier permission model
@@ -566,11 +519,15 @@ public static class OrderManagementEndpoints
 }
 
 /// <summary>
-/// V1-ORD-005: catches what each endpoint's own inline catches don't —
+/// V1-ORD-005: catches every domain exception this group's endpoints throw —
 /// principally <see cref="DualScreenUnauthorizedException"/> from the shared
 /// session helpers, so a missing/invalid cashier session maps to 401 rather
 /// than an unhandled 500. Mirrors the per-module filter already present on
 /// Billing/Catalog/Kitchen/Tables/Authorization (e.g. KitchenOperationsExceptionFilter).
+/// V1-RMD-127: the void/comp/void-sent endpoints used to shadow this with
+/// their own inline try/catch blocks that returned raw English ex.Message
+/// text instead of the Turkish strings below — removed, so this Map is now
+/// the single place those exceptions turn into a response.
 /// </summary>
 public sealed class OrderManagementExceptionFilter : IEndpointFilter
 {
