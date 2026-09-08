@@ -111,6 +111,24 @@ public sealed class TableManagementStore
             throw new ArgumentException("Status is not a supported table state.", nameof(request));
         }
 
+        // Found by an independent audit (2026-09-09): this generic endpoint
+        // only requires ApplicationPermissions.TablesStatus, so setting
+        // target=Reserved here bypassed the dedicated
+        // ApplicationPermissions.TablesReserve permission entirely — anyone
+        // who could change a table's status at all could reserve it. Worse,
+        // a bare table-row update never created a matching
+        // table_mgmt.table_reservations row, breaking the invariant every
+        // other reservation code path relies on (Reserved iff an Active
+        // reservation exists — see the Reserved-release comment below).
+        // Reserving a table is only ever valid through POST .../reservations,
+        // which enforces the right permission and creates the reservation
+        // record atomically with the table's status change.
+        if (target == TableState.Reserved)
+        {
+            throw new TableManagementConflictException(
+                "Reserved status cannot be set through the generic status endpoint; use POST .../reservations instead.");
+        }
+
         var current = await _repository.GetByIdAsync(tableId, cancellationToken)
             ?? throw new TableManagementNotFoundException($"Table {tableId} was not found.");
         if (current.RowVersion != expected)

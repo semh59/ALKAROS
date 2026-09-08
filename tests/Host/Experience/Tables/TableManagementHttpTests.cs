@@ -368,6 +368,37 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
         Assert.NotEqual(reservation.ReservationId, secondReservation.ReservationId);
     }
 
+    [Fact]
+    public async Task ChangingStatusToReservedThroughTheGenericEndpointIsRejected()
+    {
+        // Found by an independent audit (2026-09-09): this generic endpoint
+        // only requires tables.status, not tables.reserve, so setting
+        // status=Reserved here bypassed the dedicated reservation permission
+        // and never created a table_mgmt.table_reservations row — leaving a
+        // sourceless Reserved table no dedicated endpoint could ever release.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var table = await CreateTableAsync(client, terminalId, cookie, "R-05");
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/tables/{table.TableId:D}/status",
+            cookie,
+            new ChangeTableStatusRequest(table.RowVersion, "Reserved"));
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var envelope = await response.Content.ReadFromJsonAsync<TableManagementErrorEnvelope>();
+        Assert.Equal("DOMAIN_CONFLICT", envelope!.Error.Code);
+
+        Assert.Equal("Available", await _database.ScalarAsync<string>(
+            $"SELECT current_status FROM table_mgmt.tables WHERE table_id = '{table.TableId:D}';"));
+        Assert.Equal(0L, await _database.ScalarAsync<long>(
+            $"SELECT count(*) FROM table_mgmt.table_reservations WHERE table_id = '{table.TableId:D}';"));
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
