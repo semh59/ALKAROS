@@ -5,9 +5,11 @@
 #   docker compose -f compose.yaml -f compose.dev.yaml up -d --build
 #   http://localhost:8090/         -> PosTerminal / /waiter / /cashier
 #   http://localhost:8091/display  -> customer display (separate origin for B-4)
+#   http://localhost:8092/nfc/{tableId}, /qr/  -> NFC/QR customer origin (V1-RMD-142)
 #
-# Port :80 is the main origin, :81 is the customer-display origin - the browser
-# treats them as distinct origins, which is what finding B-4 needs, without
+# Port :80 is the main origin, :81 is the customer-display origin, :82 is the
+# NFC/QR customer origin - the browser treats each as a distinct origin, which
+# is what finding B-4 (and V1-RMD-139/142's NFC/QR isolation) needs, without
 # depending on *.localhost DNS. It forces X-Forwarded-Proto: https upstream so
 # the api's HTTPS gate is satisfied, then strips "; Secure" off Set-Cookie on
 # the way back so the plain-HTTP page can actually keep the session cookie.
@@ -72,4 +74,38 @@ http://:81 {
 		}
 	}
 	import spa_static
+}
+
+# NFC/QR customer origin - :82 (V1-RMD-142's LAN vhost, dev port instead of
+# nfc.<host>). Serves the same isolated bundles the production vhost does.
+http://:82 {
+	handle /api/v1/nfc/* {
+		reverse_proxy api:5080 {
+			header_up X-Alkaros-Origin nfc
+			header_up X-Forwarded-Proto https
+			header_down Set-Cookie "(?i);\s*secure" ""
+		}
+	}
+	handle /api/v1/qr/* {
+		reverse_proxy api:5080 {
+			header_up X-Alkaros-Origin nfc
+			header_up X-Forwarded-Proto https
+			header_down Set-Cookie "(?i);\s*secure" ""
+		}
+	}
+	handle_path /nfc/* {
+		header Cache-Control "no-cache"
+		root * /srv/nfc-app
+		try_files {path} /index.html
+		file_server
+	}
+	handle_path /qr/* {
+		header Cache-Control "no-cache"
+		root * /srv/qr-app
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+	handle {
+		respond 404
+	}
 }

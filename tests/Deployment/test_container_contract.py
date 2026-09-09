@@ -41,11 +41,18 @@ def test_api_image_is_headless_http_only() -> None:
     assert "5443" not in api_stage and "8444" not in api_stage
     assert '"--api-only"' in api_stage
     assert '"--customer-display-origin-header", "X-Alkaros-Origin"' in api_stage
+    assert '"--nfc-origin-header", "X-Alkaros-Origin"' in api_stage  # V1-RMD-142
     assert "--web-root" not in api_stage
     assert "--self-signed-host" not in api_stage
-    # no static assets in the backend image
-    assert "wwwroot" not in api_stage
+    # No STAFF-facing static assets in the backend image - the customer-
+    # facing NFC/QR bundles (V12-CWB-001/V1-RMD-141) are a deliberate
+    # exception, served over loopback for the relay path, so this checks
+    # the specific staff wwwroot sources rather than the bare word.
+    assert "WaiterPwa/wwwroot" not in api_stage
+    assert "Cashier/wwwroot" not in api_stage
     assert "/srv/app" not in api_stage
+    assert "./qr-web" in api_stage
+    assert "./nfc-web" in api_stage
 
 
 def test_compose_core_has_web_and_api_and_no_published_datastore() -> None:
@@ -109,6 +116,7 @@ def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
     assert '"5080:5080"' in dev
     assert '"8090:80"' in dev            # main origin
     assert '"8091:81"' in dev            # customer-display origin (B-4, no *.localhost DNS)
+    assert '"8092:82"' in dev            # NFC/QR customer origin (V1-RMD-142)
     assert "ports: !override" in dev      # replace, not append to, the core 8443 mapping
     assert "deploy/docker/Caddyfile.dev:/etc/caddy/Caddyfile" in dev
     assert 'profiles: ["seed"]' in dev
@@ -120,10 +128,16 @@ def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
     assert "reverse_proxy api:5080" in caddy_dev
     assert "http://:80" in caddy_dev   # match any Host - a phone sends the LAN IP, not "localhost"
     assert "http://:81" in caddy_dev
+    assert "http://:82" in caddy_dev
     assert "header_up X-Alkaros-Origin display" in caddy_dev
+    assert "header_up X-Alkaros-Origin nfc" in caddy_dev
     assert "header_up -X-Alkaros-Origin" in caddy_dev
     # plain-HTTP localhost must keep the session cookie
     assert 'header_down Set-Cookie "(?i);\\s*secure" ""' in caddy_dev
+    # V1-RMD-142: the :82 vhost has no spa_static import, so an unmatched
+    # path (any Cashier/manager API path above all) must be an explicit
+    # 404, not Caddy's own unmatched-request default (an empty 200).
+    assert "respond 404" in caddy_dev
 
 
 def test_services_load_the_password_from_the_mounted_secret() -> None:
@@ -160,3 +174,18 @@ def test_caddy_serves_statics_and_isolates_the_customer_display_origin() -> None
     assert "header_up -X-Alkaros-Origin" in caddyfile
     assert "display.{$ALKAROS_PROXY_HOST:localhost}" in caddyfile
     assert not caddyfile.lstrip().startswith(":443")
+
+    # V1-RMD-142: the LAN counterpart to --nfc-loopback-origin/--nfc-web-root/
+    # --qr-web-root - a customer on the restaurant's own WiFi reaches the same
+    # isolated NFC/QR surface a relay-connected customer does.
+    assert "nfc.{$ALKAROS_PROXY_HOST:localhost}" in caddyfile
+    assert "header_up X-Alkaros-Origin nfc" in caddyfile
+    assert "root * /srv/nfc-app" in caddyfile
+    assert "root * /srv/qr-app" in caddyfile
+    assert "handle_path /nfc/*" in caddyfile
+    assert "handle_path /qr/*" in caddyfile
+    # No spa_static import on this vhost (it must never fall back to the main
+    # PosTerminal shell) - an unmatched path (any Cashier/manager API path
+    # above all) must be an explicit 404, not Caddy's own unmatched-request
+    # default (found while first testing this vhost: an empty 200).
+    assert "respond 404" in caddyfile

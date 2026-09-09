@@ -143,7 +143,12 @@ services:
         # at /app/qr-web and /app/nfc-web - the tunnel above never reaches
         # `web` (Caddy) at all, so this process is the only thing that can
         # ever serve either to a relay-connected customer.
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --qr-web-root /app/qr-web --nfc-web-root /app/nfc-web --trusted-network 172.16.0.0/12
+        # --nfc-origin-header (V1-RMD-142): the LAN counterpart to
+        # --nfc-loopback-origin - Caddy's own nfc.<ALKAROS_PROXY_HOST> vhost
+        # tags its proxied /api/v1/nfc|qr/* requests X-Alkaros-Origin: nfc,
+        # so a customer on the restaurant's own WiFi reaches the same
+        # isolated surface a relay-connected customer does.
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --nfc-origin-header X-Alkaros-Origin --qr-web-root /app/qr-web --nfc-web-root /app/nfc-web --trusted-network 172.16.0.0/12
     secrets: [db_password]
     depends_on:
       provision: { condition: service_completed_successfully }

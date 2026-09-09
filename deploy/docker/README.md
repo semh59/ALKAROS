@@ -120,6 +120,33 @@ set (same unspoofable reasoning: no port is published). Verified against the
 real containers: before the fix every loopback NFC/QR request was `400`,
 after it a full session-issue + menu-read round trip returned `200`.
 
+## NFC/QR LAN origin (V1-RMD-142)
+
+Everything above covers the *public relay* path. `web` also exposes the exact
+same isolated surface for a customer on the restaurant's own WiFi, so an NFC
+tap or QR scan works identically whether the tag/code encodes the tunnel
+hostname or the LAN one:
+
+- `nfc.<ALKAROS_PROXY_HOST>` proxies only `/api/v1/nfc/*` and `/api/v1/qr/*` to
+  `api`, each tagged `X-Alkaros-Origin: nfc` — the same trusted-header
+  mechanism the display vhost above already uses, and the same value
+  `--nfc-origin-header`'s own origin gate checks for (NFC and QR share one
+  combined "customer ordering" category there, `isNfcApi`).
+- It serves `/nfc/*` and `/qr/*` from `/srv/nfc-app` and `/srv/qr-app` — the
+  *same* isolated bundles the relay path serves (`dist-nfc`, `CustomerWeb`),
+  never the main PosTerminal SPA, so this origin never carries Cashier/
+  RelaySettings/ReservationStation's own code or route names either.
+- Every other path is an explicit 404: this vhost has no `spa_static`
+  import, so (unlike the main/display vhosts) an unmatched request needs its
+  own `respond 404` — found the hard way while first testing it, Caddy's own
+  default for an unmatched request is an empty `200`, not a 404.
+
+Point NFC tags/QR codes at `https://nfc.<ALKAROS_PROXY_HOST>:8443/nfc/{tableId}`
+or `/qr/?t=<token>` and install the same root CA. Local development
+(`compose.dev.yaml`) gets the same thing on plain-HTTP port `:82`
+(published as `8092`) instead of a subdomain, matching how `:81`/`8091`
+already stands in for the display vhost there.
+
 ## HTTPS and WaiterPwa offline field readiness
 
 The WaiterPwa offline queue relies on a service worker, and browsers only register a service worker in a secure

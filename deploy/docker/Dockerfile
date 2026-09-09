@@ -59,15 +59,16 @@ RUN pnpm build:nfc-standalone
 RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
 COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
 COPY src/Clients/Cashier/wwwroot /out/app/cashier
-# V12-CWB-001: the QR customer bundle is deliberately NOT copied here. Its
-# own API calls (/api/v1/qr/*) are only ever admitted on the NFC/QR-gated
-# origin (DualScreenApplication.cs's origin gate — same pre-existing rule
-# NFC's own /api/v1/nfc/* already lives under), which this `web` image's
-# Caddy-proxied path never satisfies (no --nfc-origin-header is configured
-# for it). Serving the static page here would silently half-work: the page
-# loads, every API call it makes 404s. The `api` stage below (--qr-web-root)
-# is QR's one real, functional path - the same public relay hostname a
-# customer reaches over WiFi or mobile data alike.
+# V12-CWB-001/V1-RMD-142: the QR (and NFC) customer bundles are NOT copied
+# into the main /srv/app tree above - their own API calls
+# (/api/v1/qr/*, /api/v1/nfc/*) are only ever admitted on the NFC/QR-gated
+# origin (DualScreenApplication.cs's origin gate), which the MAIN vhost
+# does not satisfy. They are instead copied into their own dedicated
+# location in the `web` stage below, served from the separate
+# nfc.<ALKAROS_PROXY_HOST> vhost (Caddyfile) that DOES tag its proxied
+# requests with the trusted origin header - and into the `api` stage
+# further below for the public relay path, which never reaches this `web`
+# image at all regardless of vhost.
 
 # ---------------------------------------------------------------------------
 # api: aspnet:8.0-alpine matches <TargetFramework>net8.0</TargetFramework>
@@ -116,6 +117,7 @@ ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
     "--api-only", \
     "--customer-display-origin-header", "X-Alkaros-Origin", \
     "--nfc-loopback-origin", \
+    "--nfc-origin-header", "X-Alkaros-Origin", \
     "--qr-web-root", "/app/qr-web", \
     "--nfc-web-root", "/app/nfc-web", \
     "--trusted-network", "172.16.0.0/12"]
@@ -128,4 +130,12 @@ ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
 FROM caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0 AS web
 COPY deploy/docker/Caddyfile /etc/caddy/Caddyfile
 COPY --from=frontend-build /out/app /srv/app
+# V1-RMD-142: the same isolated NFC/QR bundles the api container serves
+# over loopback (V1-RMD-141/V12-CWB-001), also served here for the LAN
+# path (nfc.<ALKAROS_PROXY_HOST> in Caddyfile) - deliberately NOT the main
+# /srv/app tree, so this origin never carries Cashier/RelaySettings/
+# ReservationStation's own code or route names either.
+COPY --from=frontend-build /src/dist-nfc /srv/nfc-app
+COPY src/Apps/CustomerWeb/Menu/wwwroot /srv/qr-app
+COPY src/Apps/CustomerWeb/OrderEntry/wwwroot /srv/qr-app
 EXPOSE 80 443

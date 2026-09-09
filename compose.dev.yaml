@@ -6,6 +6,7 @@ name: alkaros
 #
 #   http://localhost:8090/         - PosTerminal / WaiterPwa (/waiter) / Cashier (/cashier)
 #   http://localhost:8091/display  - customer display (separate origin for B-4)
+#   http://localhost:8092/nfc/{tableId}, /qr/ - NFC/QR customer origin (V1-RMD-142)
 #   http://localhost:8090/health/ready
 #   psql / curl straight to the datastore and api on host ports 5433 / 5080
 #
@@ -13,12 +14,13 @@ name: alkaros
 #     docker compose -f compose.yaml -f compose.dev.yaml --profile seed run --rm seed
 #
 # `web` runs deploy/docker/Caddyfile.dev (bind-mounted): plain HTTP, no
-# certificate, X-Forwarded-Proto forced to https upstream, :80 = main origin and
-# :81 = customer-display origin. Never deploy this - the core compose.yaml keeps
-# everything TLS-only and the ports unpublished on purpose. `http://localhost` is
-# still a browser secure context, so the WaiterPwa service worker and offline
-# queue work here; reaching this over a LAN IP does not (use the HTTPS 8443 path
-# with the CA installed for field tests).
+# certificate, X-Forwarded-Proto forced to https upstream, :80 = main origin,
+# :81 = customer-display origin, :82 = NFC/QR customer origin. Never deploy
+# this - the core compose.yaml keeps everything TLS-only and the ports
+# unpublished on purpose. `http://localhost` is still a browser secure
+# context, so the WaiterPwa service worker and offline queue work here;
+# reaching this over a LAN IP does not (use the HTTPS 8443 path with the CA
+# installed for field tests).
 
 services:
   postgres:
@@ -37,6 +39,7 @@ services:
     ports: !override
       - "8090:80"
       - "8091:81"
+      - "8092:82"
     volumes:
       - ./deploy/docker/Caddyfile.dev:/etc/caddy/Caddyfile:ro
     healthcheck:

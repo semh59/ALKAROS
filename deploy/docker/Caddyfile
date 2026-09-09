@@ -77,3 +77,55 @@ display.{$ALKAROS_PROXY_HOST:localhost} {
 	}
 	import spa_static
 }
+
+# V1-RMD-142: the LAN counterpart to the public relay's own NFC/QR origin
+# (V1-RMD-140/141's --nfc-loopback-origin, --nfc-web-root, --qr-web-root) -
+# a customer on the restaurant's own WiFi reaches the exact same isolated
+# surface a relay-connected customer does, just through this vhost instead
+# of the tunnel. `/api/v1/nfc/*` and `/api/v1/qr/*` are both tagged
+# X-Alkaros-Origin: nfc (the api's own origin gate treats NFC and QR as one
+# combined customer-ordering category, isNfcApi - see
+# DualScreenApplication.cs), so this vhost never reaches any Cashier/
+# manager route either. The two static bundles are the SAME isolated
+# builds the relay path serves - not the full PosTerminal SPA - so this
+# origin never carries Cashier/RelaySettings/ReservationStation's own code
+# or route names, on the LAN any more than through the tunnel. Point NFC
+# tags/QR codes at https://nfc.<ALKAROS_PROXY_HOST>/nfc/{tableId} or
+# /qr/?t=<token> and install the same root CA.
+nfc.{$ALKAROS_PROXY_HOST:localhost} {
+	tls internal
+
+	handle /api/v1/nfc/* {
+		reverse_proxy api:5080 {
+			header_up X-Alkaros-Origin nfc
+		}
+	}
+	handle /api/v1/qr/* {
+		reverse_proxy api:5080 {
+			header_up X-Alkaros-Origin nfc
+		}
+	}
+	# handle_path strips the matched prefix before the file root below sees
+	# it - neither bundle's own files are nested under an /nfc or /qr
+	# directory on disk (Vite's own base:"/nfc/" only affects the HTML's
+	# asset *references*, not dist-nfc/'s own layout).
+	handle_path /nfc/* {
+		root * /srv/nfc-app
+		try_files {path} /index.html
+		file_server
+	}
+	handle_path /qr/* {
+		root * /srv/qr-app
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+	# Everything else - Cashier/manager API paths above all - must be a real
+	# 404, not Caddy's own unmatched-request default (an empty 200): found
+	# while testing this vhost for the first time, no handler here matched
+	# /api/v1/terminals/* and Caddy answered 200 itself without ever
+	# reaching `api` at all. The other vhosts get this for free from
+	# spa_static's own catch-all `handle {}`; this vhost has no such import.
+	handle {
+		respond 404
+	}
+}
