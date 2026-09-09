@@ -81,10 +81,23 @@ describe("PosTerminal accessibility states", () => {
     document.title = "ALKAROS POS";
     document.body.innerHTML = '<div id="root"></div>';
     root = createRoot(document.getElementById("root")!);
+    // V1-RMD-139: App's routes are now React.lazy() (code-splitting, so an
+    // NFC visitor's browser never downloads Cashier/admin code). The lazy
+    // import must resolve and the Suspense boundary must re-render BEFORE
+    // the resolved route's own effects (its fetch calls, etc.) can even
+    // start — a plain synchronous component never needed that extra round
+    // trip. Each settle() round runs in its OWN act() call (rather than
+    // one act() wrapping all of them) so React actually commits and flushes
+    // to the DOM between rounds instead of batching every intermediate
+    // state change until the whole loop finishes.
     await act(async () => {
       root!.render(createElement(App));
-      await settle();
     });
+    for (let round = 0; round < 10; round += 1) {
+      await act(async () => {
+        await settle();
+      });
+    }
   }
 
   afterEach(async () => {

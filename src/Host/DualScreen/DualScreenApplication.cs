@@ -284,6 +284,50 @@ public static partial class DualScreenApplication
             });
         }
 
+        // V1-RMD-139: found by an independent audit (2026-09-09) — the NFC
+        // customer ordering page shared the exact same origin as the
+        // cashier/admin bundle, so an anonymous customer's phone could reach
+        // every non-NFC API too (server-side authorization already refused
+        // those calls; this closes the origin itself, defense in depth).
+        // Same two recognition mechanisms as the customer-display gate right
+        // above — a dedicated port (--nfc-urls) or a trusted-proxy header
+        // (--nfc-origin-header) — and not added at all when neither is
+        // configured.
+        var nfcOriginPorts = options.NfcOriginPorts.ToHashSet();
+        var nfcOriginHeader = options.NfcOriginHeader;
+        if (nfcOriginPorts.Count > 0 || nfcOriginHeader is not null)
+        {
+            app.Use(async (context, next) =>
+            {
+                var onNfcOrigin = nfcOriginPorts.Contains(context.Connection.LocalPort)
+                    || (nfcOriginHeader is not null
+                        && context.Request.IsHttps
+                        && string.Equals(
+                            context.Request.Headers[nfcOriginHeader],
+                            "nfc",
+                            StringComparison.Ordinal));
+                var path = context.Request.Path;
+                var isApi = path.StartsWithSegments("/api", StringComparison.Ordinal);
+                var isNfcApi = path.StartsWithSegments("/api/v1/nfc", StringComparison.Ordinal);
+
+                if (onNfcOrigin && isApi && !isNfcApi)
+                {
+                    await Error(context, StatusCodes.Status404NotFound, "NOT_FOUND",
+                        "Bu adres NFC origin'inde sunulmuyor.").ExecuteAsync(context);
+                    return;
+                }
+
+                if (!onNfcOrigin && isNfcApi)
+                {
+                    await Error(context, StatusCodes.Status404NotFound, "NOT_FOUND",
+                        "NFC sipariş adresleri yalnızca ayrı origin'den sunulur.").ExecuteAsync(context);
+                    return;
+                }
+
+                await next();
+            });
+        }
+
         app.UseRouting();
         app.UseRateLimiter();
         app.Use(async (context, next) =>

@@ -72,6 +72,64 @@ public sealed class ProductionExperienceCompositionTests
         }
     }
 
+    /// <summary>
+    /// V1-RMD-139: found by an independent audit (2026-09-09) — the NFC
+    /// customer ordering page shared the exact same origin as the cashier
+    /// API, so an anonymous customer's phone could reach every non-NFC
+    /// route too. Mirrors
+    /// CustomerDisplayOriginOnlyExposesTheDisplayRoutesAndTheMainOriginRefusesThem
+    /// exactly, for the NFC origin instead.
+    /// </summary>
+    [Fact]
+    public async Task NfcOriginOnlyExposesTheNfcRoutesAndTheMainOriginRefusesThem()
+    {
+        var mainPort = FreeLoopbackPort();
+        var nfcPort = FreeLoopbackPort();
+        var options = new DualScreenOptions(
+            "Host=127.0.0.1;Port=5432;Database=alkaros;Username=alkaros;Password=not-used",
+            BuildWebRoot(out var webRoot),
+            $"http://127.0.0.1:{mainPort}",
+            TrustedProxies: [IPAddress.Loopback],
+            NfcOriginUrl: $"http://127.0.0.1:{nfcPort}");
+        var tableId = Guid.NewGuid().ToString("D");
+
+        try
+        {
+            await using var app = DualScreenApplication.Build(options);
+            await app.StartAsync();
+            using var client = new HttpClient();
+
+            // Main origin: the NFC API is not served here.
+            Assert.Equal(
+                HttpStatusCode.NotFound,
+                await GetAsync(client, mainPort, $"/api/v1/nfc/tables/{tableId}/catalog"));
+            // Main origin still serves the cashier API (401 = reached the endpoint).
+            Assert.Equal(
+                HttpStatusCode.Unauthorized,
+                await GetAsync(client, mainPort, $"/api/v1/terminals/{tableId}/catalog"));
+
+            // NFC origin: the cashier API is not served here.
+            Assert.Equal(
+                HttpStatusCode.NotFound,
+                await GetAsync(client, nfcPort, $"/api/v1/terminals/{tableId}/catalog"));
+            // NFC origin serves the NFC API. The catalog endpoint is
+            // anonymous by design (no auth check to fail before reaching
+            // it) and this test's connection string is a placeholder no
+            // real Postgres answers, so the actual outcome is whatever
+            // NfcOrderingExceptionFilter maps a database failure to — not
+            // NotFound, which is the only status the origin gate itself
+            // ever produces. That absence is what proves the gate let the
+            // request through to the real endpoint.
+            Assert.NotEqual(
+                HttpStatusCode.NotFound,
+                await GetAsync(client, nfcPort, $"/api/v1/nfc/tables/{tableId}/catalog"));
+        }
+        finally
+        {
+            Directory.Delete(webRoot, recursive: true);
+        }
+    }
+
     private static async Task<HttpStatusCode> GetAsync(HttpClient client, int port, string path)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, $"http://127.0.0.1:{port}{path}");

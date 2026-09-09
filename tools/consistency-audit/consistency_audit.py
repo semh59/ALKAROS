@@ -11,7 +11,10 @@ Zero-dependency scan that fails (exit code 1) when it finds:
 4. An English role noun ("Manager", "Supervisor", "Cashier") inside a quoted
    string literal in a src/Clients/** TypeScript file. User-facing role text
    must come from the central catalog (strings.ts), which is the only file
-   exempt from this check (deep-analysis finding F-7). Test files are exempt.
+   exempt from this check (deep-analysis finding F-7). Test files are exempt,
+   as is a module path — a static `import ... from "..."` specifier or a
+   dynamic `import("...")` call argument (V1-RMD-139) — since a file path is
+   not user-facing text.
 5. A cross-schema WRITE (UPDATE / INSERT INTO / DELETE FROM another module's
    PostgreSQL schema) inside src/Modules/<M>/**. A module owns exactly one
    schema; it may READ another module's relations for same-transaction queries
@@ -76,6 +79,12 @@ LEAK_RE = re.compile(
 # An English role noun inside a quoted string literal. Matched case-sensitively
 # so identifiers/JSX element names (function Cashier, <Cashier />) are not hit.
 ROLE_NOUN_RE = re.compile(r"[\"'][^\"'\n]*\b(Manager|Supervisor|Cashier)\b[^\"'\n]*[\"']")
+# V1-RMD-139: a dynamic import() call's argument is a module path (e.g.
+# React.lazy(() => import("./routes/Cashier"))), the exact same category the
+# plain `import ... from "..."` exemption above already covers — it just
+# wasn't written to recognise the dynamic call form. Exempts the whole line
+# from the role-noun check the same way a static import specifier already is.
+DYNAMIC_IMPORT_RE = re.compile(r"\bimport\s*\(")
 
 # One PostgreSQL schema per module. A module writing another module's schema is
 # a boundary violation; reads are allowed (V0-ARC-001).
@@ -286,7 +295,7 @@ def audit() -> list[str]:
                 is_module_specifier = (
                     stripped.startswith(("import ", "export "))
                     and (" from " in stripped or stripped.startswith(("import \"", "import '")))
-                )
+                ) or DYNAMIC_IMPORT_RE.search(line) is not None
                 if (
                     is_client
                     and path.suffix in (".ts", ".tsx")

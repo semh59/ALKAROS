@@ -34,7 +34,17 @@ public sealed record DualScreenOptions(
     // B-4 isolation (the display origin sees only display routes; the main
     // origin refuses them). Honoured only from a --trusted-network / --trusted-
     // proxy peer.
-    string? CustomerDisplayOriginHeader = null)
+    string? CustomerDisplayOriginHeader = null,
+    // V1-RMD-139: found by an independent audit (2026-09-09) — the NFC
+    // customer ordering page (/nfc/{tableId}) shared the exact same origin
+    // as the cashier/admin bundle, so an anonymous customer's phone could
+    // reach every non-NFC API too (server-side authorization still refused
+    // those calls, but the origin gave a false sense that "the NFC surface"
+    // was contained). Mirrors CustomerDisplayUrl/CustomerDisplayOriginHeader
+    // (deep-analysis finding B-4) exactly, one origin-isolation mechanism
+    // per anonymous/single-purpose surface.
+    string? NfcOriginUrl = null,
+    string? NfcOriginHeader = null)
 {
 
     /// <summary>
@@ -53,9 +63,19 @@ public sealed record DualScreenOptions(
                 .Select(u => new Uri(u).Port)
                 .ToHashSet();
 
-    /// <summary>The main <c>--urls</c> plus any <c>--customer-display-urls</c>, the full Kestrel listen set.</summary>
-    public string AllListenUrls =>
-        string.IsNullOrWhiteSpace(CustomerDisplayUrl) ? Url : $"{Url};{CustomerDisplayUrl}";
+    /// <summary>V1-RMD-139: same shape as <see cref="CustomerDisplayPorts"/>, for the NFC origin.</summary>
+    public IReadOnlyCollection<int> NfcOriginPorts =>
+        string.IsNullOrWhiteSpace(NfcOriginUrl)
+            ? Array.Empty<int>()
+            : NfcOriginUrl
+                .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(u => new Uri(u).Port)
+                .ToHashSet();
+
+    /// <summary>The main <c>--urls</c> plus any <c>--customer-display-urls</c>/<c>--nfc-urls</c>, the full Kestrel listen set.</summary>
+    public string AllListenUrls => string.Join(
+        ';',
+        new[] { Url, CustomerDisplayUrl, NfcOriginUrl }.Where(u => !string.IsNullOrWhiteSpace(u)));
 
     private const string PasswordEnvironmentVariable = "ALKAROS_DB_PASSWORD";
 
@@ -85,6 +105,8 @@ public sealed record DualScreenOptions(
         string? customerDisplayUrls = null;
         var apiOnly = false;
         string? customerDisplayOriginHeader = null;
+        string? nfcUrls = null;
+        string? nfcOriginHeader = null;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -107,6 +129,12 @@ public sealed record DualScreenOptions(
                     break;
                 case "--customer-display-origin-header" when index + 1 < args.Length && customerDisplayOriginHeader is null:
                     customerDisplayOriginHeader = args[++index].Trim();
+                    break;
+                case "--nfc-urls" when index + 1 < args.Length && nfcUrls is null:
+                    nfcUrls = args[++index];
+                    break;
+                case "--nfc-origin-header" when index + 1 < args.Length && nfcOriginHeader is null:
+                    nfcOriginHeader = args[++index].Trim();
                     break;
                 case "--trusted-proxy" when index + 1 < args.Length:
                     trustedProxies.Add(ParseTrustedProxy(args[++index]));
@@ -149,6 +177,18 @@ public sealed record DualScreenOptions(
                 throw new DualScreenStartupException("--customer-display-origin-header must be a non-empty token of ASCII letters, digits and '-'.");
             }
         }
+        if (apiOnly && !string.IsNullOrWhiteSpace(nfcUrls))
+            throw new DualScreenStartupException("--nfc-urls and --api-only are mutually exclusive; use --nfc-origin-header instead.");
+        if (nfcOriginHeader is not null)
+        {
+            if (!apiOnly)
+                throw new DualScreenStartupException("--nfc-origin-header requires --api-only.");
+            if (nfcOriginHeader.Length == 0
+                || !nfcOriginHeader.All(c => char.IsAsciiLetterOrDigit(c) || c == '-'))
+            {
+                throw new DualScreenStartupException("--nfc-origin-header must be a non-empty token of ASCII letters, digits and '-'.");
+            }
+        }
 
         var password = Environment.GetEnvironmentVariable(PasswordEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(password))
@@ -178,7 +218,10 @@ public sealed record DualScreenOptions(
         var displayUris = string.IsNullOrWhiteSpace(customerDisplayUrls)
             ? new List<Uri>()
             : ParseListenUrls(customerDisplayUrls);
-        var allUris = listenUris.Concat(displayUris).ToList();
+        var nfcUris = string.IsNullOrWhiteSpace(nfcUrls)
+            ? new List<Uri>()
+            : ParseListenUrls(nfcUrls);
+        var allUris = listenUris.Concat(displayUris).Concat(nfcUris).ToList();
         var hasHttps = allUris.Any(u => u.Scheme == Uri.UriSchemeHttps);
         var hasHttp = allUris.Any(u => u.Scheme == Uri.UriSchemeHttp);
 
@@ -186,6 +229,16 @@ public sealed record DualScreenOptions(
         {
             throw new DualScreenStartupException(
                 "--customer-display-urls must not reuse a --urls port; the display origin needs its own port.");
+        }
+        if (nfcUris.Count > 0 && listenUris.Select(u => u.Port).Intersect(nfcUris.Select(u => u.Port)).Any())
+        {
+            throw new DualScreenStartupException(
+                "--nfc-urls must not reuse a --urls port; the NFC origin needs its own port.");
+        }
+        if (nfcUris.Count > 0 && displayUris.Select(u => u.Port).Intersect(nfcUris.Select(u => u.Port)).Any())
+        {
+            throw new DualScreenStartupException(
+                "--nfc-urls must not reuse a --customer-display-urls port; each origin needs its own port.");
         }
 
         if (allowInsecureLoopbackDevelopment
@@ -234,7 +287,9 @@ public sealed record DualScreenOptions(
             string.IsNullOrWhiteSpace(selfSignedHost) ? null : selfSignedHost,
             displayUris.Count == 0 ? null : string.Join(';', displayUris.Select(u => u.ToString())),
             apiOnly,
-            customerDisplayOriginHeader);
+            customerDisplayOriginHeader,
+            nfcUris.Count == 0 ? null : string.Join(';', nfcUris.Select(u => u.ToString())),
+            nfcOriginHeader);
     }
 
     private static List<Uri> ParseListenUrls(string value)

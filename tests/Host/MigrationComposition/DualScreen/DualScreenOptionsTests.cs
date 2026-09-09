@@ -126,6 +126,79 @@ public sealed class DualScreenOptionsTests : IDisposable
         ]));
     }
 
+    /// <summary>V1-RMD-139: mirrors CustomerDisplayOriginHeaderRequiresApiOnly for the NFC origin.</summary>
+    [Fact]
+    public void NfcOriginHeaderRequiresApiOnly()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--nfc-origin-header", "X-Alkaros-Origin",
+        ]));
+
+        Assert.Contains("--api-only", exception.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>V1-RMD-139: mirrors ApiOnlyRejectsACustomerDisplayPort for the NFC origin.</summary>
+    [Fact]
+    public void ApiOnlyRejectsAnNfcOriginPort()
+    {
+        Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--urls", "http://0.0.0.0:5080",
+            "--api-only",
+            "--nfc-urls", "http://0.0.0.0:5082",
+        ]));
+    }
+
+    [Fact]
+    public void NfcUrlsMustNotReuseTheMainPort()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--nfc-urls", "http://0.0.0.0:5080",
+        ]));
+
+        Assert.Contains("--nfc-urls", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void NfcUrlsMustNotReuseTheCustomerDisplayPort()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--customer-display-urls", "http://0.0.0.0:5081",
+            "--nfc-urls", "http://0.0.0.0:5081",
+        ]));
+
+        Assert.Contains("--customer-display-urls", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ValidNfcUrlsParseIntoTheirOwnPortsAndTheFullListenSet()
+    {
+        var options = DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--nfc-urls", "http://0.0.0.0:5082",
+        ]);
+
+        Assert.Equal(5082, Assert.Single(options.NfcOriginPorts));
+        Assert.Contains("http://0.0.0.0:5080", options.AllListenUrls, StringComparison.Ordinal);
+        Assert.Contains("http://0.0.0.0:5082", options.AllListenUrls, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void DualHttpAndHttpsBindingWithSelfSignedHostParses()
     {
