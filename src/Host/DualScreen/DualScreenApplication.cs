@@ -17,6 +17,8 @@ using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Host.Experience.Menu;
 using ALKAROS.Host.Experience.NfcOrdering;
+using ALKAROS.Host.Experience.Production;
+using ALKAROS.Host.Experience.Purchasing;
 using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.RelaySettings;
 using ALKAROS.Host.Experience.Orders;
@@ -103,6 +105,12 @@ public static partial class DualScreenApplication
         // fully registered by MenuModule above but had zero HTTP surface;
         // nothing could ever reach it.
         builder.Services.AddMenuManagementExperience();
+        // V1-RMD-132/V1-RMD-133: same rationale — Purchasing (suppliers,
+        // purchase orders, goods receipt) and Production (batch lifecycle +
+        // stock effects) were both fully registered by their own modules
+        // above but had zero HTTP surface.
+        builder.Services.AddPurchasingManagementExperience();
+        builder.Services.AddProductionManagementExperience();
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
@@ -295,6 +303,8 @@ public static partial class DualScreenApplication
         MapApi(app);
         app.MapCatalogManagement();
         app.MapMenuManagement();
+        app.MapPurchasingManagement();
+        app.MapProductionManagement();
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();

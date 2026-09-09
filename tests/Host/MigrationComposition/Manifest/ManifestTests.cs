@@ -15,7 +15,7 @@ public sealed class ManifestTests : IDisposable
         "036", "037", "038", "039", "040", "041", "042", "043", "044", "045", "046", "047", "048", "049",
         "050", "051", "052", "053", "054", "055", "056", "057", "058", "059", "060", "061", "062", "063",
         "064", "065", "066", "067", "068", "069", "070", "071", "072", "073", "074", "075", "076", "077", "078",
-        "079", "080", "081", "082", "083", "084", "085", "086", "087", "088", "089"
+        "079", "080", "081", "082", "083", "084", "085", "086", "087", "088", "089", "090", "091"
     ];
     private static readonly string[] LastEntryTables = ["permissions", "role_permissions"];
     private readonly string _directory = Path.Combine(
@@ -36,7 +36,7 @@ public sealed class ManifestTests : IDisposable
     {
         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
 
-        Assert.Equal(88, manifest.Migrations.Count);
+        Assert.Equal(90, manifest.Migrations.Count);
         Assert.Equal(RuntimeManifestIds, manifest.Migrations.Select(entry => entry.Id));
         Assert.Equal(
             FirstEntryTables,
@@ -94,7 +94,7 @@ public sealed class ManifestTests : IDisposable
     public void ManifestRejectsPhaseBIdOutsideItsRange()
     {
         var path = TestMigrationSet.WriteManifest(_directory,
-            Entry("090", MigrationManifest.PhaseB, "invoices"));
+            Entry("092", MigrationManifest.PhaseB, "invoices"));
 
         var ex = Assert.Throws<MigrationManifestException>(() => MigrationManifest.Load(path));
         Assert.Contains("outside range", ex.Message, StringComparison.Ordinal);
