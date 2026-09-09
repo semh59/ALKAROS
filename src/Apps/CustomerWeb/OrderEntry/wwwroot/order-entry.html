@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ALKAROS Sepetim</title>
+  <link rel="stylesheet" href="./order-entry.css" />
+</head>
+<body>
+  <header class="order-header">
+    <a class="back-link" href="./index.html">‹ Menüye dön</a>
+    <h1>Sepetim</h1>
+  </header>
+
+  <main id="orderMain">
+    <p id="errorState" class="state-message state-error" hidden></p>
+    <p id="emptyCartState" class="state-message" hidden>
+      Sepetiniz boş. <a href="./index.html">Menüden ürün ekleyin.</a>
+    </p>
+
+    <ul id="cartList" class="cart-list" hidden></ul>
+
+    <div id="cartSummary" class="cart-summary" hidden>
+      <span>Toplam</span>
+      <span id="cartGrandTotal"></span>
+    </div>
+
+    <button id="btnSubmitOrder" type="button" class="submit-button" hidden>Siparişi Gönder</button>
+
+    <section id="orderStatus" class="order-status" hidden>
+      <p id="orderStatusMessage"></p>
+    </section>
+  </main>
+
+  <script src="./order-entry.js"></script>
+</body>
+</html>

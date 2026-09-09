@@ -123,4 +123,10 @@ public sealed class QrOrderingTestDatabase : PgTestDatabase
 
     public async Task<long> NonceCountAsync()
         => await ScalarAsync<long>("SELECT count(*) FROM qr_ordering.relay_request_nonces;");
+
+    public async Task<string> GetTableStatusAsync(Guid tableId)
+        => await ScalarAsync<string>($"SELECT current_status FROM table_mgmt.tables WHERE table_id = '{tableId:D}';");
+
+    public async Task<long> OutboxCountAsync()
+        => await ScalarAsync<long>("SELECT count(*) FROM outbox_messages;");
 }

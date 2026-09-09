@@ -9,6 +9,50 @@ const SESSION_STORAGE_KEY = "alkaros.qr.sessionToken";
 const TABLE_TOKEN_STORAGE_KEY = "alkaros.qr.tableToken";
 const GENERIC_ERROR_MESSAGE = "Menü şu anda yüklenemedi, lütfen daha sonra tekrar deneyin.";
 
+// V12-CWB-002: the cart contract OrderEntry's own page (order-entry.js)
+// reads and writes too — sessionStorage is the entire integration surface
+// between the two pages, deliberately: no shared JS module, just one
+// documented array shape (each line: productId, name, unitPrice, quantity,
+// notes). Kept here since this is the page that first creates it.
+const CART_STORAGE_KEY = "alkaros.qr.cart";
+
+const CartStore = {
+  read() {
+    try {
+      const raw = sessionStorage.getItem(CART_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  },
+  write(lines) {
+    try {
+      sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(lines));
+    } catch {
+      // Private browsing / storage disabled — the cart just does not
+      // survive a page reload; adding to it in the same page view still
+      // works since CartStore.read() falls back to an empty array either way.
+    }
+  },
+  addItem(product, quantity) {
+    const lines = CartStore.read();
+    const existing = lines.find((line) => line.productId === product.productId);
+    if (existing) {
+      existing.quantity += quantity;
+    } else {
+      lines.push({
+        productId: product.productId,
+        name: product.name,
+        unitPrice: product.unitPrice,
+        quantity,
+        notes: null,
+      });
+    }
+    CartStore.write(lines);
+    return lines;
+  },
+};
+
 function getTableTokenFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get("t");
@@ -173,17 +217,38 @@ function renderProducts(products) {
     const item = document.createElement("li");
     item.className = "product-card";
     item.innerHTML = `
-      <span>
+      <span class="product-info">
         <span class="product-name"></span>
         <span class="product-category"></span>
       </span>
       <span class="product-price"></span>
+      <button type="button" class="add-to-cart-button">Sepete ekle</button>
     `;
     item.querySelector(".product-name").textContent = product.name;
     item.querySelector(".product-category").textContent = product.categoryName;
     item.querySelector(".product-price").textContent = formatPrice(product.unitPrice);
+    item.querySelector(".add-to-cart-button").addEventListener("click", () => {
+      CartStore.addItem(product, 1);
+      updateCartBar();
+    });
     list.appendChild(item);
   }
+}
+
+function updateCartBar() {
+  const cartBar = document.getElementById("cartBar");
+  const lines = CartStore.read();
+  const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
+
+  if (itemCount === 0) {
+    cartBar.hidden = true;
+    return;
+  }
+
+  const total = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+  document.getElementById("cartBarCount").textContent = `${itemCount} ürün`;
+  document.getElementById("cartBarTotal").textContent = formatPrice(total);
+  cartBar.hidden = false;
 }
 
 function showError(message) {
@@ -224,6 +289,7 @@ async function init() {
 
     document.getElementById("loadingState").hidden = true;
     renderActive();
+    updateCartBar();
   } catch (error) {
     showError(error instanceof Error ? error.message : GENERIC_ERROR_MESSAGE);
   }

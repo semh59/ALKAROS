@@ -109,8 +109,47 @@ main {
   margin-top: 0.15rem;
 }
 
+.product-info {
+  flex: 1 1 auto;
+}
+
 .product-price {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.add-to-cart-button {
+  flex: 0 0 auto;
+  border: 1px solid var(--cw-accent);
+  background: var(--cw-surface);
+  color: var(--cw-accent);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* V12-CWB-002: hidden (via the [hidden] attribute) until the cart holds at
+   least one line — see menu-app.js's updateCartBar(). */
+.cart-bar {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--cw-accent);
+  color: var(--cw-accent-contrast);
+  border-radius: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+}
+
+.cart-bar-action {
+  margin-left: auto;
 }

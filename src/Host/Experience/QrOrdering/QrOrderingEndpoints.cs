@@ -2,7 +2,9 @@ using ALKAROS.Host.DualScreen;
 using ALKAROS.QrOrdering.CustomerSession;
 using ALKAROS.QrOrdering.PendingOrders;
 using ALKAROS.QrOrdering.RelaySecurity;
+using ALKAROS.QrOrdering.TablePolicy;
 using ALKAROS.QrOrdering.TokenLifecycle;
+using ALKAROS.Tables.TableLifecycle;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -14,15 +16,16 @@ using Npgsql;
 namespace ALKAROS.Host.Experience.QrOrdering;
 
 /// <summary>
-/// V12-CWB-001. Deliberately public/relay-facing (docs/architecture/
-/// qr-relay-provider-decision.md) — there is no LAN-only assumption here the
-/// way NFC's own endpoints get to make. The scanned table token is exchanged
-/// for a customer session exactly once (<c>/sessions</c>); every other route
-/// requires that session token instead of ever resending the raw table
-/// token. QR order submission itself (<c>V12-CWB-002</c>) is a later,
-/// separate addition to this same route group — this task only opens the
-/// "browse the menu" half of the flow (cart submission is explicitly out of
-/// CWB-001's own scope).
+/// V12-CWB-001/V12-CWB-002. Deliberately public/relay-facing (docs/
+/// architecture/qr-relay-provider-decision.md) — there is no LAN-only
+/// assumption here the way NFC's own endpoints get to make. The scanned
+/// table token is exchanged for a customer session exactly once
+/// (<c>/sessions</c>); every other route requires that session token instead
+/// of ever resending the raw table token. <c>/sessions</c> and
+/// <c>/menu</c> are V12-CWB-001's own "browse the menu" half of the flow;
+/// <c>/orders</c> (submit and poll) is V12-CWB-002's later addition to the
+/// same route group — cart submission was explicitly out of CWB-001's own
+/// scope.
 /// </summary>
 public static class QrOrderingEndpoints
 {
@@ -53,6 +56,15 @@ public static class QrOrderingEndpoints
         services.TryAddSingleton<CustomerSessionService>();
         services.TryAddSingleton<IRelayNonceStore, PostgresRelayNonceStore>();
         services.TryAddSingleton<RelayRequestValidator>();
+        // V12-CWB-002: order submission's own chain — ITableRepository is
+        // Table Management's own service (already registered by
+        // AddTableManagementExperience/TablesModule in the real Host; TryAdd
+        // defers to that), consumed through the approved QrOrdering ->
+        // Tables edge (V0-ARC-001 row 19), same as QrOrderingModule.Register
+        // itself does not re-register it.
+        services.TryAddSingleton<ITableRepository, PostgresTableRepository>();
+        services.TryAddSingleton<QrTableReservationPolicy>();
+        services.TryAddSingleton<QrPendingOrderStore>();
         services.TryAddTransient<QrOrderingExceptionFilter>();
         return services;
     }
@@ -119,6 +131,53 @@ public static class QrOrderingEndpoints
             return Results.Ok(page.Items);
         }).RequireRateLimiting("qr-order");
 
+        // V12-CWB-002. Accepted, not Ok: the real Order does not exist yet —
+        // QrPendingOrderStore only queues a QrOrderSubmitted integration
+        // event; Order's own QrOrderSubmittedConsumer materializes it
+        // asynchronously (V0-ARC-001 row 19, the only approved QR->Order
+        // integration event). Idempotent on request.SubmissionId, the same
+        // client-generated-correlation-id pattern NfcOrderRequest uses — a
+        // retry after a dropped connection or a double tap replays the
+        // original queued result instead of submitting twice.
+        group.MapPost("/orders", async (
+            QrOrderSubmissionRequest request,
+            HttpContext context,
+            QrPendingOrderStore store,
+            CancellationToken cancellationToken) =>
+        {
+            if (request.Items is null || request.Items.Count == 0)
+                return Results.BadRequest(new { error = new { code = "EMPTY_ITEMS", message = "Sipariş kalemleri boş olamaz." } });
+            if (request.SubmissionId == Guid.Empty)
+                return Results.BadRequest(new { error = new { code = "INVALID_SUBMISSION_ID", message = "Gönderim kimliği boş olamaz." } });
+
+            var rawSession = context.Request.Headers[SessionHeaderName].ToString();
+            var result = await store.SubmitAsync(rawSession, request, cancellationToken);
+            return Results.Accepted(value: new QrOrderSubmissionResponse(result.SubmissionId, result.TableId, result.SubmittedAt));
+        }).RequireRateLimiting("qr-order");
+
+        // Polled by the customer's browser after a 202 while the outbox
+        // delivery to Order's consumer is still in flight — re-validates the
+        // session on every call (sliding its idle window, same as /menu)
+        // rather than trusting a tableId the client could otherwise supply
+        // directly.
+        group.MapGet("/orders/{submissionId:guid}", async (
+            Guid submissionId,
+            HttpContext context,
+            CustomerSessionService sessionService,
+            QrPendingOrderStore store,
+            CancellationToken cancellationToken) =>
+        {
+            var rawSession = context.Request.Headers[SessionHeaderName].ToString();
+            var validation = await sessionService.ValidateAsync(rawSession, cancellationToken);
+            if (!validation.IsValid)
+                throw new QrCustomerSessionInvalidException(validation.FailureReason!);
+
+            var outcome = await store.FindResultingOrderAsync(validation.TableId!.Value, submissionId, cancellationToken);
+            return Results.Ok(outcome is null
+                ? new QrOrderPollResponse(submissionId, "Pending", null)
+                : new QrOrderPollResponse(submissionId, outcome.Status, outcome.OrderId));
+        }).RequireRateLimiting("qr-order");
+
         return group;
     }
 }
@@ -163,6 +222,9 @@ public sealed class QrOrderingExceptionFilter : IEndpointFilter
     {
         QrTableTokenInvalidException tokenException => MapTableTokenReason(tokenException.Reason),
         QrCustomerSessionInvalidException sessionException => MapSessionReason(sessionException.Reason),
+        QrTableNotFoundException => (404, "TABLE_NOT_FOUND", "Masa bulunamadı."),
+        QrTableNotAvailableException => (409, "TABLE_NOT_AVAILABLE", "Bu masada şu anda kendi kendine sipariş verilemiyor, lütfen garsonu çağırın."),
+        QrOrderInvalidProductException => (400, "PRODUCT_NOT_FOUND", "Seçilen ürün bulunamadı veya artık satışta değil."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

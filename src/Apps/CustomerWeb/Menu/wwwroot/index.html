@@ -19,6 +19,15 @@
     <ul id="productList" class="product-list" hidden></ul>
   </main>
 
+  <!-- V12-CWB-002: cart summary bar - hidden until the cart holds at least
+       one line (menu-app.js's own CartStore). Navigates to OrderEntry's own
+       page, which reads the same sessionStorage cart. -->
+  <a id="cartBar" class="cart-bar" href="./order-entry.html" hidden>
+    <span id="cartBarCount"></span>
+    <span id="cartBarTotal"></span>
+    <span class="cart-bar-action">Sepetim</span>
+  </a>
+
   <script src="./menu-app.js"></script>
 </body>
 </html>

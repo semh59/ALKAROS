@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.QrOrdering.PendingOrders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -212,6 +213,138 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SubmittingAnOrderQueuesItAndReservesTheTable()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Izgara Köfte", 320m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+        var submissionId = Guid.NewGuid();
+
+        using var response = await PostOrderAsync(client, sessionToken, submissionId, product, 2);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<QrOrderSubmissionResponse>();
+        Assert.Equal(submissionId, body!.SubmissionId);
+        Assert.Equal(tableId, body.TableId);
+        Assert.Equal("Reserved", await _database.GetTableStatusAsync(tableId));
+        Assert.Equal(1, await _database.OutboxCountAsync());
+    }
+
+    [Fact]
+    public async Task RetryingTheSameSubmissionReplaysTheExistingResultInsteadOfQueuingTwice()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Ayran", 20m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+        var submissionId = Guid.NewGuid();
+
+        using var first = await PostOrderAsync(client, sessionToken, submissionId, product, 1);
+        var firstBody = await first.Content.ReadFromJsonAsync<QrOrderSubmissionResponse>();
+
+        using var retry = await PostOrderAsync(client, sessionToken, submissionId, product, 1);
+        var retryBody = await retry.Content.ReadFromJsonAsync<QrOrderSubmissionResponse>();
+
+        Assert.Equal(HttpStatusCode.Accepted, retry.StatusCode);
+        Assert.Equal(firstBody!.TableId, retryBody!.TableId);
+        // Postgres timestamptz truncates to microsecond precision; the first
+        // response's own in-memory value (bound before the insert) keeps
+        // .NET's full tick precision, so an exact comparison is fragile —
+        // the real idempotency guarantee this test cares about is the
+        // single outbox row below, not bit-identical timestamps.
+        Assert.True((firstBody.SubmittedAt - retryBody.SubmittedAt).Duration() < TimeSpan.FromMilliseconds(1));
+        Assert.Equal(1, await _database.OutboxCountAsync());
+    }
+
+    [Fact]
+    public async Task AnEmptyOrderIsRejectedWithATurkishMessage()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/qr/orders");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        request.Content = JsonContent.Create(new QrOrderSubmissionRequest([], Guid.NewGuid()));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var text = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Sipariş kalemleri boş olamaz.", text);
+        Assert.DoesNotContain("cannot be", text);
+    }
+
+    [Fact]
+    public async Task AnOccupiedTableRefusesTheSubmission()
+    {
+        var tableId = await _database.SeedTableAsync(status: "Occupied");
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Kola", 45m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var response = await PostOrderAsync(client, sessionToken, Guid.NewGuid(), product, 1);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var text = await response.Content.ReadAsStringAsync();
+        Assert.Contains("garsonu çağırın", text);
+    }
+
+    [Fact]
+    public async Task PollingAnUnmaterializedSubmissionReturnsPending()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Baklava", 90m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+        var submissionId = Guid.NewGuid();
+        using var submit = await PostOrderAsync(client, sessionToken, submissionId, product, 1);
+        Assert.Equal(HttpStatusCode.Accepted, submit.StatusCode);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/qr/orders/{submissionId:D}");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<QrOrderPollResponse>();
+        Assert.Equal("Pending", body!.Status);
+        Assert.Null(body.OrderId);
+    }
+
+    [Fact]
+    public async Task PollingWithAnInvalidSessionIsRejected()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/qr/orders/{Guid.NewGuid():D}");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, "does-not-exist");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    private static Task<HttpResponseMessage> PostOrderAsync(
+        HttpClient client, string sessionToken, Guid submissionId, Guid productId, int quantity)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/qr/orders");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        request.Content = JsonContent.Create(new QrOrderSubmissionRequest(
+            [new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, quantity)], submissionId));
+        return client.SendAsync(request);
     }
 
     private static async Task<string> IssueSessionAsync(HttpClient client, string rawToken)

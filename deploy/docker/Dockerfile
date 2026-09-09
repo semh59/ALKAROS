@@ -84,11 +84,15 @@ WORKDIR /app
 COPY --from=backend-build /out/api ./
 COPY database ./database
 COPY build/project-manifest.json ./build/project-manifest.json
-# V12-CWB-001: the QR customer page's static bundle, read directly by this
-# process (not `web`) - the public relay's tunnel reaches this container
-# over loopback and never goes through `web` at all. See
-# DualScreenOptions.QrWebRoot's own doc comment for why.
+# V12-CWB-001/V12-CWB-002: the QR customer app's static bundle, read
+# directly by this process (not `web`) - the public relay's tunnel reaches
+# this container over loopback and never goes through `web` at all. See
+# DualScreenOptions.QrWebRoot's own doc comment for why. Menu and OrderEntry
+# are separate owned-surface source directories that merge into one served
+# tree - OrderEntry's own order-entry.html/js/css sit alongside Menu's
+# index.html/menu-app.js, linked from there (Menu's own cart bar).
 COPY src/Apps/CustomerWeb/Menu/wwwroot ./qr-web
+COPY src/Apps/CustomerWeb/OrderEntry/wwwroot ./qr-web
 ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 5080
 # Compose overrides this entrypoint to inject ALKAROS_DB_PASSWORD from a mounted

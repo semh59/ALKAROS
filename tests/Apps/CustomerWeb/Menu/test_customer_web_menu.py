@@ -53,15 +53,17 @@ def test_customer_web_menu_javascript_session_and_menu_flow():
     assert "message" in app_code
 
 
-def test_customer_web_menu_out_of_scope_features_are_not_faked():
-    """CWB-001's own Out of scope: sepet gönderimi (cart submission),
-    payment, QR token issuance and menu management. None of those should be
-    faked client-side here — they belong to later tasks (V12-CWB-002 for
-    submission) or a staff-facing surface that does not exist yet."""
+def test_customer_web_menu_cart_accumulates_but_never_submits():
+    """CWB-001's own Out of scope is cart SUBMISSION (sending the order),
+    payment, QR token issuance and menu management — not cart accumulation
+    itself: a "Sepete ekle" button and a real Turkish "Sepetim" cart bar are
+    in scope (V12-CWB-002 adds OrderEntry's own page, linked from here, which
+    is what actually calls /api/v1/qr/orders)."""
     app_code = (WWWROOT / "menu-app.js").read_text(encoding="utf-8")
     html = (WWWROOT / "index.html").read_text(encoding="utf-8")
 
     assert "/api/v1/qr/orders" not in app_code
-    assert "addToCart" not in app_code
-    assert "cartItems" not in app_code
-    assert "sepet" not in html.lower()
+    assert "CartStore" in app_code
+    assert "alkaros.qr.cart" in app_code
+    assert "Sepete ekle" in html or "Sepete ekle" in app_code
+    assert 'href="./order-entry.html"' in html

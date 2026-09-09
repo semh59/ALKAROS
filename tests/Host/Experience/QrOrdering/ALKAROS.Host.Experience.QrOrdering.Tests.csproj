@@ -27,6 +27,13 @@
     <None Include="../../../../database/migrations/V12/V12-QRS-001/078-qr-ordering-table-tokens.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V12/V12-QRS-002/081-qr-ordering-relay-request-nonces.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V12/V12-QRS-003/085-qr-ordering-customer-sessions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- V12-CWB-002: order submission needs orders.orders (read-only poll)
+         and the outbox the queued QrOrderSubmitted event is enqueued into. -->
+    <None Include="../../../../database/migrations/V1/V1-ORD-001/011-orders.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-FND-002/002-inbox-messages.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-FND-002/003-outbox-messages.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-FND-019/033-message-lease-generation.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-QRO-001/086-qr-ordering-pending-order-submissions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

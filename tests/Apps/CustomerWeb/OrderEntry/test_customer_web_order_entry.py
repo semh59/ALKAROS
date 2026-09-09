@@ -1,0 +1,72 @@
+"""V12-CWB-002: static-asset checks for the QR order-entry (cart) page.
+
+Same convention as tests/Apps/CustomerWeb/Menu/test_customer_web_menu.py.
+"""
+
+from pathlib import Path
+
+WORKSPACE = Path(__file__).resolve().parents[4]
+WWWROOT = WORKSPACE / "src" / "Apps" / "CustomerWeb" / "OrderEntry" / "wwwroot"
+
+
+def test_customer_web_order_entry_static_files_exist():
+    assert (WWWROOT / "order-entry.html").is_file()
+    assert (WWWROOT / "order-entry.css").is_file()
+    assert (WWWROOT / "order-entry.js").is_file()
+
+
+def test_customer_web_order_entry_html_structure():
+    html = (WWWROOT / "order-entry.html").read_text(encoding="utf-8")
+
+    assert 'id="cartList"' in html
+    assert 'id="cartGrandTotal"' in html
+    assert 'id="btnSubmitOrder"' in html
+    assert 'id="orderStatus"' in html
+    assert 'id="emptyCartState"' in html
+    assert 'lang="tr"' in html
+    assert "Siparişi Gönder" in html
+
+
+def test_customer_web_order_entry_javascript_submission_flow():
+    app_code = (WWWROOT / "order-entry.js").read_text(encoding="utf-8")
+
+    # Shares the exact cart contract Menu's own CartStore writes.
+    assert "alkaros.qr.cart" in app_code
+    assert "/api/v1/qr/orders" in app_code
+    assert "X-Alkaros-Qr-Session" in app_code
+
+    # Duplicate-submission protection (CWB-002's own "yinelenen gönderim
+    # koruması" scope item): a persisted submission id survives a reload
+    # mid-submit instead of generating a new one on every attempt.
+    assert "alkaros.qr.submissionId" in app_code
+    assert "readOrCreateSubmissionId" in app_code
+
+    # Pending-order status polling (CWB-002's own "beklemede-order status"
+    # scope item) — the Order is materialized asynchronously, never assumed
+    # to exist right after the 202.
+    assert "pollUntilMaterialized" in app_code
+    assert "Pending" in app_code
+    # Found via real end-to-end Docker verification (2026-09-09): the walk
+    # from queued to PendingConfirmation passes through Draft/Submitted for
+    # a brief moment (Order's own QrOrderSubmittedConsumer) - polling must
+    # not stop there, only "Pending" (no orders.orders row at all yet) and
+    # a real terminal status should end the loop.
+    assert "isStillMaterializing" in app_code
+    assert '"Draft"' in app_code
+    assert '"Submitted"' in app_code
+
+    # Double-click guard, same shape as Cashier's own dispatchInFlight.
+    assert "submissionInFlight" in app_code
+
+
+def test_customer_web_order_entry_out_of_scope_features_are_not_faked():
+    """CWB-002's own Out of scope: doğrudan mutfağa gönderim (direct kitchen
+    dispatch), müşteri payment, personel onayı (staff confirmation — that is
+    PendingOrderConfirmationStore's own Accept/Reject HTTP surface, a
+    manager-facing screen this page never calls) and menü yönetimi."""
+    app_code = (WWWROOT / "order-entry.js").read_text(encoding="utf-8")
+
+    assert "/accept" not in app_code
+    assert "/reject" not in app_code
+    assert "payment" not in app_code.lower()
+    assert "kitchenTicket" not in app_code
