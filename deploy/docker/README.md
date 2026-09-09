@@ -93,6 +93,21 @@ is deliberately not also copied into the `web` image; a LAN/Caddy request to
 page there too would silently half-work. QR and NFC customers reach the app
 through the relay hostname either way, over WiFi or mobile data alike.
 
+`--nfc-web-root /app/nfc-web` (V1-RMD-141) is the symmetric fix for NFC,
+found while checking QR/NFC parity: NFC's own customer page
+(`/nfc/{tableId}`) is normally built as part of the PosTerminal SPA and
+served only by `web`, which — same as above — the tunnel never reaches.
+Rather than serving the whole PosTerminal bundle here (which would also
+expose Cashier/RelaySettings/ReservationStation's own code and route names
+on this origin), `frontend-build`'s `pnpm build:nfc-standalone` step
+(`src/Clients/PosTerminal/vite.nfc.config.ts`) produces a small, isolated
+build of just the NFC page (`nfc.html` -> `src/nfc-entry.tsx` -> `NfcOrder`
+directly, no `App.tsx` route dispatch), copied here instead. Since
+`/nfc/{tableId}`'s table id is a variable path segment with no literal file
+to match, this needs a small SPA-fallback middleware alongside
+`UseStaticFiles` (serves `index.html` for any unmatched `/nfc/*` GET) —
+`--qr-web-root`'s own paths are all fixed names, so it does not need one.
+
 **Found while first exercising the real loopback relay path end-to-end
 (2026-09-09):** the HTTPS-required gate only recognised `/health/ready` as a
 loopback exception, so every NFC/QR request forwarded over loopback was

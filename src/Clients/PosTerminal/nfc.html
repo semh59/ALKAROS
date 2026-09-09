@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b2135" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>ALKAROS Masa Siparişi</title>
+    <!--
+      V1-RMD-141: this is a dedicated build entry (vite.nfc.config.ts), NOT
+      the main index.html - it imports only ./src/nfc-entry.tsx, which
+      mounts NfcOrder.tsx directly with no App.tsx route dispatch, so
+      Cashier/RelaySettings/ReservationStation never enter this bundle's
+      module graph at all. Built with `base: "/nfc/"` so its own asset
+      references match the path DualScreenOptions.NfcWebRoot serves them
+      from - see that option's own doc comment for why this exists.
+    -->
+    <style>
+      body { margin: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/nfc-entry.tsx"></script>
+  </body>
+</html>

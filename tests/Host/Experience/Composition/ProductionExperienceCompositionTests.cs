@@ -243,6 +243,40 @@ public sealed class ProductionExperienceCompositionTests
         Assert.Equal(HttpStatusCode.NotFound, await GetAsync(client, port, "/somewhere-else"));
     }
 
+    [Fact]
+    public async Task NfcWebRootIsServedInApiOnlyModeWithASpaFallbackForTheTableIdSegment()
+    {
+        // V1-RMD-141: symmetric with the QR test above, but NFC's own URL
+        // carries a variable {tableId} segment (/nfc/{tableId}) that no
+        // literal file matches — UseStaticFiles alone would 404 it, so the
+        // fallback middleware must serve index.html for that case while
+        // still serving a real asset file directly when one exists.
+        var nfcWebRoot = Path.Combine(Path.GetTempPath(), "alkaros-composition-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(Path.Combine(nfcWebRoot, "assets"));
+        File.WriteAllText(Path.Combine(nfcWebRoot, "index.html"), "<!doctype html><title>nfc</title>");
+        File.WriteAllText(Path.Combine(nfcWebRoot, "assets", "nfc.js"), "// nfc bundle");
+        var port = FreeLoopbackPort();
+        var options = new DualScreenOptions(
+            "Host=127.0.0.1;Port=5432;Database=alkaros;Username=alkaros;Password=not-used",
+            WebRoot: string.Empty,
+            $"http://127.0.0.1:{port}",
+            TrustedProxies: [IPAddress.Loopback],
+            ApiOnly: true,
+            NfcWebRoot: nfcWebRoot);
+
+        await using var app = DualScreenApplication.Build(options);
+        await app.StartAsync();
+        using var client = new HttpClient();
+
+        // A real asset file is served directly.
+        Assert.Equal(HttpStatusCode.OK, await GetAsync(client, port, "/nfc/assets/nfc.js"));
+        // A table id no literal file matches falls back to the SPA shell —
+        // NfcOrder.tsx itself reads the id back out of window.location.
+        Assert.Equal(HttpStatusCode.OK, await GetAsync(client, port, $"/nfc/{Guid.NewGuid():D}"));
+        // Everything outside /nfc is unaffected — still the api-only fallback.
+        Assert.Equal(HttpStatusCode.NotFound, await GetAsync(client, port, "/somewhere-else"));
+    }
+
     private static async Task<HttpStatusCode> GetAsync(HttpClient client, int port, string path)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, $"http://127.0.0.1:{port}{path}");

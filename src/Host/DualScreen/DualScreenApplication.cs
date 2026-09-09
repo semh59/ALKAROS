@@ -420,6 +420,34 @@ public static partial class DualScreenApplication
             app.UseStaticFiles(new StaticFileOptions { FileProvider = qrFileProvider, RequestPath = "/qr" });
         }
 
+        // V1-RMD-141: the symmetric gap for NFC (see DualScreenOptions.
+        // NfcWebRoot's own doc comment) — unlike QrWebRoot's fixed-name
+        // paths (/qr, /qr/menu-app.js, …), the NFC page's own URL carries a
+        // variable {tableId} segment (/nfc/{tableId}), which UseStaticFiles/
+        // UseDefaultFiles alone cannot resolve to index.html (there is no
+        // literal file by that name). The fallback below serves it for any
+        // GET under /nfc that UseStaticFiles did not already resolve to a
+        // real asset file — the same SPA-shell behaviour the non-api-only
+        // branch's own MapFallback gives the main bundle, just positioned
+        // ahead of routing like QrWebRoot's own registration above.
+        if (options.NfcWebRoot is { } nfcWebRoot)
+        {
+            var nfcFileProvider = new PhysicalFileProvider(nfcWebRoot);
+            app.UseStaticFiles(new StaticFileOptions { FileProvider = nfcFileProvider, RequestPath = "/nfc" });
+            app.Use(async (context, next) =>
+            {
+                if (HttpMethods.IsGet(context.Request.Method)
+                    && context.Request.Path.StartsWithSegments("/nfc", StringComparison.Ordinal))
+                {
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.SendFileAsync(Path.Combine(nfcWebRoot, "index.html"));
+                    return;
+                }
+
+                await next();
+            });
+        }
+
         app.UseRouting();
         app.UseRateLimiter();
         app.Use(async (context, next) =>

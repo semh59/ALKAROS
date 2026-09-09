@@ -10,6 +10,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit && vite build",
+    "build:nfc-standalone": "vite build --config vite.nfc.config.ts && node -e \"require('fs').renameSync('dist-nfc/nfc.html','dist-nfc/index.html')\"",
     "test": "vitest run"
   },
   "dependencies": {

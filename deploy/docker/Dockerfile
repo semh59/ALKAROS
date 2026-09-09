@@ -49,6 +49,13 @@ COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml
 RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
 COPY src/Clients/PosTerminal ./
 RUN pnpm build
+# V1-RMD-141: a second, standalone build of just the NFC customer page
+# (nfc.html/vite.nfc.config.ts) - its own isolated dist-nfc/ output, copied
+# into the `api` stage below (not here), since the Cloudflare Tunnel
+# connector reaches that process over loopback and never goes through this
+# `web` image at all (same reasoning V12-CWB-001 already established for
+# QR's own --qr-web-root).
+RUN pnpm build:nfc-standalone
 RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
 COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
 COPY src/Clients/Cashier/wwwroot /out/app/cashier
@@ -93,6 +100,12 @@ COPY build/project-manifest.json ./build/project-manifest.json
 # index.html/menu-app.js, linked from there (Menu's own cart bar).
 COPY src/Apps/CustomerWeb/Menu/wwwroot ./qr-web
 COPY src/Apps/CustomerWeb/OrderEntry/wwwroot ./qr-web
+# V1-RMD-141: NFC's own customer page, symmetric with QR's above - built by
+# frontend-build's separate `pnpm build:nfc-standalone` step (nfc.html,
+# base "/nfc/"), served directly by this process so a relay-connected
+# customer's phone can actually load it (see DualScreenOptions.NfcWebRoot's
+# own doc comment for the gap this closes).
+COPY --from=frontend-build /src/dist-nfc ./nfc-web
 ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 5080
 # Compose overrides this entrypoint to inject ALKAROS_DB_PASSWORD from a mounted
@@ -104,6 +117,7 @@ ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
     "--customer-display-origin-header", "X-Alkaros-Origin", \
     "--nfc-loopback-origin", \
     "--qr-web-root", "/app/qr-web", \
+    "--nfc-web-root", "/app/nfc-web", \
     "--trusted-network", "172.16.0.0/12"]
 
 # ---------------------------------------------------------------------------

@@ -138,11 +138,12 @@ services:
         # nothing but the app's own auth. This restricts a loopback-sourced
         # request to the NFC/QR customer route allowlist, the same way the
         # display vhost is already restricted above.
-        # --qr-web-root (V12-CWB-001): the QR customer page's own static
-        # bundle, baked into this image at /app/qr-web - the tunnel above
-        # never reaches `web` (Caddy) at all, so this process is the only
-        # thing that can ever serve it to a relay-connected customer.
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --qr-web-root /app/qr-web --trusted-network 172.16.0.0/12
+        # --qr-web-root (V12-CWB-001) / --nfc-web-root (V1-RMD-141): the QR
+        # and NFC customer pages' own static bundles, baked into this image
+        # at /app/qr-web and /app/nfc-web - the tunnel above never reaches
+        # `web` (Caddy) at all, so this process is the only thing that can
+        # ever serve either to a relay-connected customer.
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --qr-web-root /app/qr-web --nfc-web-root /app/nfc-web --trusted-network 172.16.0.0/12
     secrets: [db_password]
     depends_on:
       provision: { condition: service_completed_successfully }

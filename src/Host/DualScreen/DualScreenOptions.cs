@@ -69,7 +69,19 @@ public sealed record DualScreenOptions(
     // API was reachable. Requires --api-only, same reasoning as the origin
     // header flags above; unset, this process serves no static files at
     // all, exactly as before.
-    string? QrWebRoot = null)
+    string? QrWebRoot = null,
+    // V1-RMD-141: the symmetric gap for NFC, found while checking QR/NFC
+    // parity after V12-CWB-001/002 shipped — NFC's own customer page
+    // (`/nfc/{tableId}`) is built as part of PosTerminal's bundle, served
+    // only by the reverse proxy (`web`), which the Cloudflare Tunnel
+    // connector's loopback connection never reaches either. Unlike
+    // QrWebRoot, this serves a small dedicated build (nfc.html/
+    // vite.nfc.config.ts) rather than the whole PosTerminal SPA, so a
+    // relay-connected customer's origin never carries Cashier/
+    // RelaySettings/ReservationStation's own code or route names at all —
+    // the same isolation goal V1-RMD-139's origin gate already protects at
+    // the API layer, now also true of the static bundle itself.
+    string? NfcWebRoot = null)
 {
 
     /// <summary>
@@ -134,6 +146,7 @@ public sealed record DualScreenOptions(
         string? nfcOriginHeader = null;
         var nfcLoopbackOriginTrusted = false;
         string? qrWebRoot = null;
+        string? nfcWebRoot = null;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -168,6 +181,9 @@ public sealed record DualScreenOptions(
                     break;
                 case "--qr-web-root" when index + 1 < args.Length && qrWebRoot is null:
                     qrWebRoot = args[++index];
+                    break;
+                case "--nfc-web-root" when index + 1 < args.Length && nfcWebRoot is null:
+                    nfcWebRoot = args[++index];
                     break;
                 case "--trusted-proxy" when index + 1 < args.Length:
                     trustedProxies.Add(ParseTrustedProxy(args[++index]));
@@ -226,6 +242,8 @@ public sealed record DualScreenOptions(
             throw new DualScreenStartupException("--nfc-loopback-origin requires --api-only.");
         if (qrWebRoot is not null && !apiOnly)
             throw new DualScreenStartupException("--qr-web-root requires --api-only.");
+        if (nfcWebRoot is not null && !apiOnly)
+            throw new DualScreenStartupException("--nfc-web-root requires --api-only.");
 
         var password = Environment.GetEnvironmentVariable(PasswordEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(password))
@@ -257,6 +275,14 @@ public sealed record DualScreenOptions(
             resolvedQrWebRoot = Path.GetFullPath(qrWebRoot);
             if (!File.Exists(Path.Combine(resolvedQrWebRoot, "index.html")))
                 throw new DualScreenStartupException("--qr-web-root must contain the built index.html file.");
+        }
+
+        string? resolvedNfcWebRoot = null;
+        if (nfcWebRoot is not null)
+        {
+            resolvedNfcWebRoot = Path.GetFullPath(nfcWebRoot);
+            if (!File.Exists(Path.Combine(resolvedNfcWebRoot, "index.html")))
+                throw new DualScreenStartupException("--nfc-web-root must contain the built index.html file.");
         }
 
         var listenUris = ParseListenUrls(url);
@@ -336,7 +362,8 @@ public sealed record DualScreenOptions(
             nfcUris.Count == 0 ? null : string.Join(';', nfcUris.Select(u => u.ToString())),
             nfcOriginHeader,
             nfcLoopbackOriginTrusted,
-            resolvedQrWebRoot);
+            resolvedQrWebRoot,
+            resolvedNfcWebRoot);
     }
 
     private static List<Uri> ParseListenUrls(string value)

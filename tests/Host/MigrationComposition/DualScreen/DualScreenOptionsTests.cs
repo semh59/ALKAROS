@@ -250,6 +250,58 @@ public sealed class DualScreenOptionsTests : IDisposable
         Assert.Equal(Path.GetFullPath(_webRoot), options.QrWebRoot);
     }
 
+    /// <summary>V1-RMD-141: the symmetric NFC gap — same reasoning and same validation shape as --qr-web-root.</summary>
+    [Fact]
+    public void NfcWebRootRequiresApiOnly()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--nfc-web-root", _webRoot,
+        ]));
+
+        Assert.Contains("--api-only", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void NfcWebRootMustContainIndexHtml()
+    {
+        var emptyDirectory = Path.Combine(Path.GetTempPath(), $"alkaros-nfc-empty-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(emptyDirectory);
+        try
+        {
+            var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+            [
+                "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+                "--urls", "http://0.0.0.0:5080",
+                "--api-only",
+                "--nfc-web-root", emptyDirectory,
+            ]));
+
+            Assert.Contains("index.html", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(emptyDirectory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void AValidNfcWebRootIsResolvedToAFullPath()
+    {
+        var options = DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--urls", "http://0.0.0.0:5080",
+            "--api-only",
+            "--nfc-web-root", _webRoot,
+        ]);
+
+        Assert.Equal(Path.GetFullPath(_webRoot), options.NfcWebRoot);
+    }
+
     [Fact]
     public void ValidNfcUrlsParseIntoTheirOwnPortsAndTheFullListenSet()
     {
