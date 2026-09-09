@@ -1,5 +1,9 @@
-// ALKAROS Waiter PWA Controller (V1-WTR-008 / V1-RMD-051 / V1-RMD-066)
-// Authoritative Endpoints: /orders/table-draft, /table-management/zones, /table-management/tables, /catalog-management/categories, /catalog
+// ALKAROS Waiter PWA Controller (V1-WTR-008 / V1-RMD-051 / V1-RMD-066 / V1-RMD-129)
+// Authoritative Endpoints: /orders/table-draft, /table-management/zones, /table-management/tables, /catalog
+// V1-RMD-129: /catalog-management/categories dropped from this list — it requires the
+// manager cookie (CatalogManagerEndpointFilter), which a plain waiter session never
+// has, and was never actually called correctly anyway. Categories are derived from
+// the /catalog product response's own categoryCode/categoryName instead.
 (function () {
   'use strict';
 
@@ -388,31 +392,42 @@
         state.zones = [{ id: 'all', name: 'Tüm Masalar' }];
       }
 
-      // 2. Fetch Categories & Products
-      const [catRes, prodRes] = await Promise.all([
-        fetch(`/api/v1/terminals/${state.terminalId}/catalog?category=all`, { credentials: 'include' }).catch(() => null),
-        fetch(`/api/v1/terminals/${state.terminalId}/catalog`, { credentials: 'include' }).catch(() => null)
-      ]);
-
-      if (catRes && catRes.ok) {
-        const catData = await catRes.json();
-        const list = Array.isArray(catData) ? catData : catData.categories || [];
-        state.categories = list.map(c => ({ id: c.categoryId || c.id, name: c.categoryName || c.name }));
-      } else {
-        state.categories = [];
-      }
+      // 2. Fetch Products — categories are derived from this same response.
+      // V1-RMD-129: found by an independent audit (2026-09-09) — the old
+      // code called catalog?category=all as if it were a distinct
+      // categories endpoint and parsed a "{ categories: [...] }" shape
+      // /catalog never returns (it returns CatalogPage: { items,
+      // nextCursor }, the same shape as the real product fetch below), so
+      // state.categories was always empty and the category filter bar
+      // never rendered. It also read products as p.productName/p.currentPrice/
+      // p.categoryId, none of which exist on the real CatalogProductDto
+      // (productId/name/unitPrice/categoryCode) — prices always showed
+      // 0,00₺ and the category filter matched nothing. Categories now come
+      // straight from the one products response's own categoryCode/
+      // categoryName fields, so there is no second endpoint to drift out
+      // of sync with the real contract.
+      const prodRes = await fetch(`/api/v1/terminals/${state.terminalId}/catalog`, { credentials: 'include' }).catch(() => null);
 
       if (prodRes && prodRes.ok) {
         const prodData = await prodRes.json();
-        const list = Array.isArray(prodData) ? prodData : prodData.products || [];
+        const list = Array.isArray(prodData) ? prodData : prodData.items || [];
         state.products = list.map(p => ({
           id: p.productId || p.id,
-          categoryId: p.categoryId,
-          name: p.productName || p.name,
-          price: p.currentPrice || p.price || 0
+          categoryCode: p.categoryCode,
+          name: p.name,
+          price: p.unitPrice || 0
         }));
+
+        const seenCategories = new Map();
+        for (const p of list) {
+          if (p.categoryCode && !seenCategories.has(p.categoryCode)) {
+            seenCategories.set(p.categoryCode, p.categoryName || p.categoryCode);
+          }
+        }
+        state.categories = [...seenCategories].map(([id, name]) => ({ id, name }));
       } else {
         state.products = [];
+        state.categories = [];
       }
 
       // 3. Fetch Tables
@@ -511,7 +526,7 @@
     if (!el.productGrid) return;
     const query = searchQuery.trim().toLowerCase();
     const filtered = state.products.filter(p => {
-      const matchCat = state.activeCategory === 'all' || p.categoryId === state.activeCategory;
+      const matchCat = state.activeCategory === 'all' || p.categoryCode === state.activeCategory;
       const matchSearch = !query || p.name.toLowerCase().includes(query);
       return matchCat && matchSearch;
     });
