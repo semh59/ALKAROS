@@ -84,6 +84,7 @@ ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
     "--urls", "http://0.0.0.0:5080", \
     "--api-only", \
     "--customer-display-origin-header", "X-Alkaros-Origin", \
+    "--nfc-loopback-origin", \
     "--trusted-network", "172.16.0.0/12"]
 
 # ---------------------------------------------------------------------------

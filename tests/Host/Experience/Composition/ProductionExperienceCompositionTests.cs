@@ -130,6 +130,51 @@ public sealed class ProductionExperienceCompositionTests
         }
     }
 
+    /// <summary>
+    /// Relay scope hardening (2026-09-09): the Cloudflare Tunnel connector
+    /// reaches this process over loopback (RelayProvisioningService's own
+    /// LocalOriginService, "http://localhost:5080") — --nfc-loopback-origin
+    /// treats that connection the same as the dedicated-port/header signals
+    /// above. This test's HttpClient necessarily connects via 127.0.0.1
+    /// too (an in-process test has no second machine to call from), which
+    /// is exactly what proves the mechanism itself works: a loopback caller
+    /// really is restricted to the NFC route allowlist once the flag is on.
+    /// The negative case (a non-loopback caller is NOT restricted) is not
+    /// re-tested here — IPAddress.IsLoopback is a documented BCL contract,
+    /// not this codebase's own logic, and every other composition test
+    /// above (which never sets this flag) already proves normal callers see
+    /// the unrestricted main origin.
+    /// </summary>
+    [Fact]
+    public async Task LoopbackOriginTrustedRestrictsALoopbackCallerToTheNfcRouteAllowlist()
+    {
+        var port = FreeLoopbackPort();
+        var options = new DualScreenOptions(
+            "Host=127.0.0.1;Port=5432;Database=alkaros;Username=alkaros;Password=not-used",
+            WebRoot: string.Empty,
+            $"http://127.0.0.1:{port}",
+            TrustedProxies: [IPAddress.Loopback],
+            ApiOnly: true,
+            NfcLoopbackOriginTrusted: true);
+        var tableId = Guid.NewGuid().ToString("D");
+
+        await using var app = DualScreenApplication.Build(options);
+        await app.StartAsync();
+        using var client = new HttpClient();
+
+        // The main/cashier API is refused on what the loopback caller now
+        // is treated as: the NFC-only origin.
+        Assert.Equal(
+            HttpStatusCode.NotFound,
+            await GetAsync(client, port, $"/api/v1/terminals/{tableId}/catalog"));
+        // The NFC API is still reached (not the gate's own NotFound —
+        // whatever NfcOrderingExceptionFilter maps a database failure to,
+        // same reasoning as the port-based test above).
+        Assert.NotEqual(
+            HttpStatusCode.NotFound,
+            await GetAsync(client, port, $"/api/v1/nfc/tables/{tableId}/catalog"));
+    }
+
     private static async Task<HttpStatusCode> GetAsync(HttpClient client, int port, string path)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, $"http://127.0.0.1:{port}{path}");

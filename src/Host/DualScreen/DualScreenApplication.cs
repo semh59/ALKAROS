@@ -289,13 +289,17 @@ public static partial class DualScreenApplication
         // cashier/admin bundle, so an anonymous customer's phone could reach
         // every non-NFC API too (server-side authorization already refused
         // those calls; this closes the origin itself, defense in depth).
-        // Same two recognition mechanisms as the customer-display gate right
-        // above — a dedicated port (--nfc-urls) or a trusted-proxy header
-        // (--nfc-origin-header) — and not added at all when neither is
-        // configured.
+        // Three recognition mechanisms — a dedicated port (--nfc-urls), a
+        // trusted-proxy header (--nfc-origin-header), or a loopback source
+        // (--nfc-loopback-origin, relay scope hardening 2026-09-09: the
+        // co-located Cloudflare Tunnel connector reaches this process over
+        // loopback — see DualScreenOptions.NfcLoopbackOriginTrusted's own
+        // doc comment for why that is a safe signal in compose.yaml's
+        // topology) — and not added at all when none is configured.
         var nfcOriginPorts = options.NfcOriginPorts.ToHashSet();
         var nfcOriginHeader = options.NfcOriginHeader;
-        if (nfcOriginPorts.Count > 0 || nfcOriginHeader is not null)
+        var nfcLoopbackOriginTrusted = options.NfcLoopbackOriginTrusted;
+        if (nfcOriginPorts.Count > 0 || nfcOriginHeader is not null || nfcLoopbackOriginTrusted)
         {
             app.Use(async (context, next) =>
             {
@@ -305,7 +309,10 @@ public static partial class DualScreenApplication
                         && string.Equals(
                             context.Request.Headers[nfcOriginHeader],
                             "nfc",
-                            StringComparison.Ordinal));
+                            StringComparison.Ordinal))
+                    || (nfcLoopbackOriginTrusted
+                        && context.Connection.RemoteIpAddress is { } remoteAddress
+                        && IPAddress.IsLoopback(remoteAddress));
                 var path = context.Request.Path;
                 var isApi = path.StartsWithSegments("/api", StringComparison.Ordinal);
                 var isNfcApi = path.StartsWithSegments("/api/v1/nfc", StringComparison.Ordinal);

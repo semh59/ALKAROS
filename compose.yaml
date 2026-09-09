@@ -130,7 +130,15 @@ services:
         # --api-only: no static file pipeline, no --web-root; `web` serves the
         # bundles. --customer-display-origin-header is the proxy-mode B-4 origin
         # signal (Caddy sets X-Alkaros-Origin: display on the display vhost).
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --trusted-network 172.16.0.0/12
+        # --nfc-loopback-origin (relay scope hardening, 2026-09-09): the
+        # Cloudflare Tunnel connector (ALKAROS.QrRelay.LocalConnector) runs in
+        # this same container and reaches this port over loopback - without
+        # this flag, a provisioned tunnel exposed the ENTIRE app (every
+        # Cashier/manager API included) to the public internet, protected by
+        # nothing but the app's own auth. This restricts a loopback-sourced
+        # request to the NFC (and, once built, QR) customer route allowlist,
+        # the same way the display vhost is already restricted above.
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --trusted-network 172.16.0.0/12
     secrets: [db_password]
     depends_on:
       provision: { condition: service_completed_successfully }

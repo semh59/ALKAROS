@@ -63,6 +63,25 @@ id / bill id — never leak across. `web` enforces this at the proxy:
 
 Point the customer displays at `https://display.<ALKAROS_PROXY_HOST>:8443/display`.
 
+## QR/NFC public relay origin scope (relay scope hardening, 2026-09-09)
+
+The Cloudflare Tunnel connector (`ALKAROS.QrRelay.LocalConnector`, provisioned
+from Settings → Relay) runs in the same container as `api` and reaches it over
+loopback (`RelayProvisioningService`'s own tunnel configuration points at
+`http://localhost:5080`) — it never goes through `web`/Caddy at all. Before
+this flag, a provisioned tunnel exposed the **entire** application (every
+Cashier and manager API included) to the public internet, protected only by
+the app's own authentication — a much larger blast radius than intended for a
+surface meant to carry only anonymous customer ordering traffic.
+
+`--nfc-loopback-origin` closes that: a loopback-sourced request is now treated
+the same as the dedicated-port/header signals above and restricted to the NFC
+(and, once built, QR) customer route allowlist. `compose.yaml`'s `api` service
+already passes this flag; nothing else needs to change to pick it up. No
+inbound port is published for `api` (`compose.yaml` publishes only `web`'s
+`8443:443`), so nothing outside this container can reach `5080` at all, let
+alone forge a loopback-looking connection to it.
+
 ## HTTPS and WaiterPwa offline field readiness
 
 The WaiterPwa offline queue relies on a service worker, and browsers only register a service worker in a secure

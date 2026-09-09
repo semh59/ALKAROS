@@ -44,7 +44,21 @@ public sealed record DualScreenOptions(
     // (deep-analysis finding B-4) exactly, one origin-isolation mechanism
     // per anonymous/single-purpose surface.
     string? NfcOriginUrl = null,
-    string? NfcOriginHeader = null)
+    string? NfcOriginHeader = null,
+    // V12-QRO-002/relay scope hardening (2026-09-09): the Cloudflare Tunnel
+    // connector (cloudflared, ALKAROS.QrRelay.LocalConnector) runs alongside
+    // this process in the same container and reaches it over loopback
+    // (RelayProvisioningService's own LocalOriginService is literally
+    // "http://localhost:5080") — a real, structural signal distinct from
+    // every other caller: Caddy (the LAN-facing reverse proxy) always
+    // arrives over the Docker network, on the container's own interface,
+    // never loopback, because it runs in a different container. The `api`
+    // service publishes no port at all (compose.yaml) so nothing outside
+    // this container can reach 5080 to forge a loopback-looking connection.
+    // Opt-in and requires --api-only, same as the header-based signals
+    // above, since the whole reasoning is specific to that deployment
+    // topology (compose.yaml's actual `api` service).
+    bool NfcLoopbackOriginTrusted = false)
 {
 
     /// <summary>
@@ -107,6 +121,7 @@ public sealed record DualScreenOptions(
         string? customerDisplayOriginHeader = null;
         string? nfcUrls = null;
         string? nfcOriginHeader = null;
+        var nfcLoopbackOriginTrusted = false;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -135,6 +150,9 @@ public sealed record DualScreenOptions(
                     break;
                 case "--nfc-origin-header" when index + 1 < args.Length && nfcOriginHeader is null:
                     nfcOriginHeader = args[++index].Trim();
+                    break;
+                case "--nfc-loopback-origin" when !nfcLoopbackOriginTrusted:
+                    nfcLoopbackOriginTrusted = true;
                     break;
                 case "--trusted-proxy" when index + 1 < args.Length:
                     trustedProxies.Add(ParseTrustedProxy(args[++index]));
@@ -189,6 +207,8 @@ public sealed record DualScreenOptions(
                 throw new DualScreenStartupException("--nfc-origin-header must be a non-empty token of ASCII letters, digits and '-'.");
             }
         }
+        if (nfcLoopbackOriginTrusted && !apiOnly)
+            throw new DualScreenStartupException("--nfc-loopback-origin requires --api-only.");
 
         var password = Environment.GetEnvironmentVariable(PasswordEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(password))
@@ -289,7 +309,8 @@ public sealed record DualScreenOptions(
             apiOnly,
             customerDisplayOriginHeader,
             nfcUris.Count == 0 ? null : string.Join(';', nfcUris.Select(u => u.ToString())),
-            nfcOriginHeader);
+            nfcOriginHeader,
+            nfcLoopbackOriginTrusted);
     }
 
     private static List<Uri> ParseListenUrls(string value)

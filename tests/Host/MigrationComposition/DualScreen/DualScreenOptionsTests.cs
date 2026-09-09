@@ -183,6 +183,21 @@ public sealed class DualScreenOptionsTests : IDisposable
         Assert.Contains("--customer-display-urls", exception.Message, StringComparison.Ordinal);
     }
 
+    /// <summary>Relay scope hardening (2026-09-09): --nfc-loopback-origin's reasoning is specific to the --api-only/compose.yaml deployment topology, so it requires --api-only same as the header-based signals.</summary>
+    [Fact]
+    public void NfcLoopbackOriginRequiresApiOnly()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--nfc-loopback-origin",
+        ]));
+
+        Assert.Contains("--api-only", exception.Message, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void ValidNfcUrlsParseIntoTheirOwnPortsAndTheFullListenSet()
     {
