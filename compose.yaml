@@ -136,9 +136,13 @@ services:
         # this flag, a provisioned tunnel exposed the ENTIRE app (every
         # Cashier/manager API included) to the public internet, protected by
         # nothing but the app's own auth. This restricts a loopback-sourced
-        # request to the NFC (and, once built, QR) customer route allowlist,
-        # the same way the display vhost is already restricted above.
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --trusted-network 172.16.0.0/12
+        # request to the NFC/QR customer route allowlist, the same way the
+        # display vhost is already restricted above.
+        # --qr-web-root (V12-CWB-001): the QR customer page's own static
+        # bundle, baked into this image at /app/qr-web - the tunnel above
+        # never reaches `web` (Caddy) at all, so this process is the only
+        # thing that can ever serve it to a relay-connected customer.
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --qr-web-root /app/qr-web --trusted-network 172.16.0.0/12
     secrets: [db_password]
     depends_on:
       provision: { condition: service_completed_successfully }

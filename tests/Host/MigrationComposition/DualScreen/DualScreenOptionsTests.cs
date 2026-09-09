@@ -198,6 +198,58 @@ public sealed class DualScreenOptionsTests : IDisposable
         Assert.Contains("--api-only", exception.Message, StringComparison.Ordinal);
     }
 
+    /// <summary>V12-CWB-001: same reasoning as --nfc-loopback-origin — this flag only makes sense in --api-only mode (the non-api-only pipeline already serves everything from --web-root).</summary>
+    [Fact]
+    public void QrWebRootRequiresApiOnly()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--qr-web-root", _webRoot,
+        ]));
+
+        Assert.Contains("--api-only", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void QrWebRootMustContainIndexHtml()
+    {
+        var emptyDirectory = Path.Combine(Path.GetTempPath(), $"alkaros-qr-empty-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(emptyDirectory);
+        try
+        {
+            var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+            [
+                "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+                "--urls", "http://0.0.0.0:5080",
+                "--api-only",
+                "--qr-web-root", emptyDirectory,
+            ]));
+
+            Assert.Contains("index.html", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(emptyDirectory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void AValidQrWebRootIsResolvedToAFullPath()
+    {
+        var options = DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--urls", "http://0.0.0.0:5080",
+            "--api-only",
+            "--qr-web-root", _webRoot,
+        ]);
+
+        Assert.Equal(Path.GetFullPath(_webRoot), options.QrWebRoot);
+    }
+
     [Fact]
     public void ValidNfcUrlsParseIntoTheirOwnPortsAndTheFullListenSet()
     {

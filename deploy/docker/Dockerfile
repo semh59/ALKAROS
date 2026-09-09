@@ -52,6 +52,15 @@ RUN pnpm build
 RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
 COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
 COPY src/Clients/Cashier/wwwroot /out/app/cashier
+# V12-CWB-001: the QR customer bundle is deliberately NOT copied here. Its
+# own API calls (/api/v1/qr/*) are only ever admitted on the NFC/QR-gated
+# origin (DualScreenApplication.cs's origin gate — same pre-existing rule
+# NFC's own /api/v1/nfc/* already lives under), which this `web` image's
+# Caddy-proxied path never satisfies (no --nfc-origin-header is configured
+# for it). Serving the static page here would silently half-work: the page
+# loads, every API call it makes 404s. The `api` stage below (--qr-web-root)
+# is QR's one real, functional path - the same public relay hostname a
+# customer reaches over WiFi or mobile data alike.
 
 # ---------------------------------------------------------------------------
 # api: aspnet:8.0-alpine matches <TargetFramework>net8.0</TargetFramework>
@@ -75,6 +84,11 @@ WORKDIR /app
 COPY --from=backend-build /out/api ./
 COPY database ./database
 COPY build/project-manifest.json ./build/project-manifest.json
+# V12-CWB-001: the QR customer page's static bundle, read directly by this
+# process (not `web`) - the public relay's tunnel reaches this container
+# over loopback and never goes through `web` at all. See
+# DualScreenOptions.QrWebRoot's own doc comment for why.
+COPY src/Apps/CustomerWeb/Menu/wwwroot ./qr-web
 ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 5080
 # Compose overrides this entrypoint to inject ALKAROS_DB_PASSWORD from a mounted
@@ -85,6 +99,7 @@ ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
     "--api-only", \
     "--customer-display-origin-header", "X-Alkaros-Origin", \
     "--nfc-loopback-origin", \
+    "--qr-web-root", "/app/qr-web", \
     "--trusted-network", "172.16.0.0/12"]
 
 # ---------------------------------------------------------------------------

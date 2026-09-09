@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSTest>true</ALKAROSTest>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>ALKAROS.Host.Experience.QrOrdering.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../../src/Host/ALKAROS.Host.csproj" />
+    <ProjectReference Include="../../../BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../../../database/migrations/V1/V1-TBL-001/010-tables.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-CAT-001/006-catalog.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- V1-RMD-128: catalog.products.is_available, checked by DualScreenStore.GetCatalogAsync -->
+    <None Include="../../../../database/migrations/V1/V1-GOV-040/040-wave9-schema-additions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-QRS-001/078-qr-ordering-table-tokens.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-QRS-002/081-qr-ordering-relay-request-nonces.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-QRS-003/085-qr-ordering-customer-sessions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

@@ -58,7 +58,18 @@ public sealed record DualScreenOptions(
     // Opt-in and requires --api-only, same as the header-based signals
     // above, since the whole reasoning is specific to that deployment
     // topology (compose.yaml's actual `api` service).
-    bool NfcLoopbackOriginTrusted = false)
+    bool NfcLoopbackOriginTrusted = false,
+    // V12-CWB-001: found while wiring the QR customer page — in --api-only
+    // mode this process serves no static files at all (the reverse proxy
+    // does, per ApiOnly's own doc comment), but the Cloudflare Tunnel
+    // connector reaches this process directly over loopback and never goes
+    // through that proxy (RelayProvisioningService.LocalOriginService).
+    // Without this, a QR customer's phone had no way to ever load the menu
+    // page's HTML/CSS/JS through the actual public relay — only the JSON
+    // API was reachable. Requires --api-only, same reasoning as the origin
+    // header flags above; unset, this process serves no static files at
+    // all, exactly as before.
+    string? QrWebRoot = null)
 {
 
     /// <summary>
@@ -122,6 +133,7 @@ public sealed record DualScreenOptions(
         string? nfcUrls = null;
         string? nfcOriginHeader = null;
         var nfcLoopbackOriginTrusted = false;
+        string? qrWebRoot = null;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -153,6 +165,9 @@ public sealed record DualScreenOptions(
                     break;
                 case "--nfc-loopback-origin" when !nfcLoopbackOriginTrusted:
                     nfcLoopbackOriginTrusted = true;
+                    break;
+                case "--qr-web-root" when index + 1 < args.Length && qrWebRoot is null:
+                    qrWebRoot = args[++index];
                     break;
                 case "--trusted-proxy" when index + 1 < args.Length:
                     trustedProxies.Add(ParseTrustedProxy(args[++index]));
@@ -209,6 +224,8 @@ public sealed record DualScreenOptions(
         }
         if (nfcLoopbackOriginTrusted && !apiOnly)
             throw new DualScreenStartupException("--nfc-loopback-origin requires --api-only.");
+        if (qrWebRoot is not null && !apiOnly)
+            throw new DualScreenStartupException("--qr-web-root requires --api-only.");
 
         var password = Environment.GetEnvironmentVariable(PasswordEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(password))
@@ -232,6 +249,14 @@ public sealed record DualScreenOptions(
             resolvedWebRoot = Path.GetFullPath(webRoot!);
             if (!File.Exists(Path.Combine(resolvedWebRoot, "index.html")))
                 throw new DualScreenStartupException("--web-root must contain the built index.html file.");
+        }
+
+        string? resolvedQrWebRoot = null;
+        if (qrWebRoot is not null)
+        {
+            resolvedQrWebRoot = Path.GetFullPath(qrWebRoot);
+            if (!File.Exists(Path.Combine(resolvedQrWebRoot, "index.html")))
+                throw new DualScreenStartupException("--qr-web-root must contain the built index.html file.");
         }
 
         var listenUris = ParseListenUrls(url);
@@ -310,7 +335,8 @@ public sealed record DualScreenOptions(
             customerDisplayOriginHeader,
             nfcUris.Count == 0 ? null : string.Join(';', nfcUris.Select(u => u.ToString())),
             nfcOriginHeader,
-            nfcLoopbackOriginTrusted);
+            nfcLoopbackOriginTrusted,
+            resolvedQrWebRoot);
     }
 
     private static List<Uri> ParseListenUrls(string value)

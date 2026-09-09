@@ -1,0 +1,116 @@
+:root {
+  color-scheme: light;
+  --cw-bg: #faf7f2;
+  --cw-surface: #ffffff;
+  --cw-border: #e7ddcd;
+  --cw-text: #241c10;
+  --cw-text-muted: #6b6152;
+  --cw-accent: #b5772f;
+  --cw-accent-contrast: #ffffff;
+  --cw-error: #b3261e;
+  --cw-error-bg: #fbeae9;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--cw-bg);
+  color: var(--cw-text);
+  min-height: 100vh;
+}
+
+.menu-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--cw-surface);
+  border-bottom: 1px solid var(--cw-border);
+  padding: 1rem 1rem 0;
+}
+
+.menu-header h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-tab {
+  flex: 0 0 auto;
+  border: 1px solid var(--cw-border);
+  background: var(--cw-surface);
+  color: var(--cw-text);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.category-tab[aria-pressed="true"] {
+  background: var(--cw-accent);
+  border-color: var(--cw-accent);
+  color: var(--cw-accent-contrast);
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.state-message {
+  text-align: center;
+  color: var(--cw-text-muted);
+  padding: 2rem 1rem;
+}
+
+.state-error {
+  color: var(--cw-error);
+  background: var(--cw-error-bg);
+  border-radius: 0.5rem;
+}
+
+.product-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.product-card {
+  background: var(--cw-surface);
+  border: 1px solid var(--cw-border);
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.product-name {
+  font-weight: 600;
+}
+
+.product-category {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--cw-text-muted);
+  margin-top: 0.15rem;
+}
+
+.product-price {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}

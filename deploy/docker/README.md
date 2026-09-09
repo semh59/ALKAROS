@@ -76,11 +76,34 @@ surface meant to carry only anonymous customer ordering traffic.
 
 `--nfc-loopback-origin` closes that: a loopback-sourced request is now treated
 the same as the dedicated-port/header signals above and restricted to the NFC
-(and, once built, QR) customer route allowlist. `compose.yaml`'s `api` service
-already passes this flag; nothing else needs to change to pick it up. No
-inbound port is published for `api` (`compose.yaml` publishes only `web`'s
-`8443:443`), so nothing outside this container can reach `5080` at all, let
-alone forge a loopback-looking connection to it.
+and QR customer route allowlist (`/api/v1/nfc/*`, `/api/v1/qr/*`). `compose.
+yaml`'s `api` service already passes this flag; nothing else needs to change
+to pick it up. No inbound port is published for `api` (`compose.yaml`
+publishes only `web`'s `8443:443`), so nothing outside this container can
+reach `5080` at all, let alone forge a loopback-looking connection to it.
+
+`--qr-web-root /app/qr-web` (V12-CWB-001) serves the QR customer page's own
+static bundle directly from this process — the one exception to `--api-only`
+serving no static files at all. The Cloudflare Tunnel connector reaches this
+container over loopback and never goes through `web` (Caddy), so `api` is the
+only thing that can ever serve that bundle to a relay-connected customer; it
+is deliberately not also copied into the `web` image; a LAN/Caddy request to
+`/api/v1/qr/*` gets the same 404 `/api/v1/nfc/*` already does (no
+`--nfc-origin-header` is configured for that path), so serving the static
+page there too would silently half-work. QR and NFC customers reach the app
+through the relay hostname either way, over WiFi or mobile data alike.
+
+**Found while first exercising the real loopback relay path end-to-end
+(2026-09-09):** the HTTPS-required gate only recognised `/health/ready` as a
+loopback exception, so every NFC/QR request forwarded over loopback was
+rejected with `HTTPS_REQUIRED` before the origin gate above ever ran —
+`compose.yaml` never adds loopback as a `--trusted-proxy`, only
+`--trusted-network 172.16.0.0/12` (the Docker bridge range), so a plain-HTTP
+loopback request was never treated as having arrived over HTTPS. Fixed by
+trusting a loopback connection the same way when `--nfc-loopback-origin` is
+set (same unspoofable reasoning: no port is published). Verified against the
+real containers: before the fix every loopback NFC/QR request was `400`,
+after it a full session-issue + menu-read round trip returned `200`.
 
 ## HTTPS and WaiterPwa offline field readiness
 

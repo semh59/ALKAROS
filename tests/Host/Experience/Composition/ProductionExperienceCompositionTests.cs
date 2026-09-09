@@ -173,6 +173,74 @@ public sealed class ProductionExperienceCompositionTests
         Assert.NotEqual(
             HttpStatusCode.NotFound,
             await GetAsync(client, port, $"/api/v1/nfc/tables/{tableId}/catalog"));
+        // V12-CWB-001: the same gate now covers QR's own routes too — the
+        // one-line follow-up V1-RMD-140's "Out of scope" flagged for once
+        // QR's HTTP surface shipped.
+        Assert.NotEqual(
+            HttpStatusCode.NotFound,
+            await GetAsync(client, port, "/api/v1/qr/menu"));
+    }
+
+    [Fact]
+    public async Task AnOversizedQrRequestIsRefusedBeforeItIsEverParsed()
+    {
+        // V12-CWB-001: RelayAbusePolicy.MaxPayloadBytes (8 KiB), checked
+        // against the declared Content-Length before the QR route group's
+        // own model binding ever runs.
+        var port = FreeLoopbackPort();
+        var options = new DualScreenOptions(
+            "Host=127.0.0.1;Port=5432;Database=alkaros;Username=alkaros;Password=not-used",
+            WebRoot: string.Empty,
+            $"http://127.0.0.1:{port}",
+            TrustedProxies: [IPAddress.Loopback],
+            ApiOnly: true);
+
+        await using var app = DualScreenApplication.Build(options);
+        await app.StartAsync();
+        using var client = new HttpClient();
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, $"http://127.0.0.1:{port}/api/v1/qr/sessions")
+        {
+            Content = new StringContent(new string('a', 9 * 1024), System.Text.Encoding.UTF8, "application/json"),
+        };
+        request.Headers.TryAddWithoutValidation("X-Forwarded-For", "127.0.0.1");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.RequestEntityTooLarge, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task QrWebRootIsServedInApiOnlyModeSoTheRelayCanReachTheMenuPage()
+    {
+        // V12-CWB-001: found while wiring the QR customer page — in
+        // --api-only mode (production's actual mode) this process serves no
+        // static files at all, but the Cloudflare Tunnel connector reaches
+        // it directly over loopback and never goes through the reverse
+        // proxy that serves every other bundle. --qr-web-root is the one
+        // static-file exception to that rule, scoped to this one bundle.
+        var qrWebRoot = Path.Combine(Path.GetTempPath(), "alkaros-composition-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(qrWebRoot);
+        File.WriteAllText(Path.Combine(qrWebRoot, "index.html"), "<!doctype html><title>qr</title>");
+        var port = FreeLoopbackPort();
+        var options = new DualScreenOptions(
+            "Host=127.0.0.1;Port=5432;Database=alkaros;Username=alkaros;Password=not-used",
+            WebRoot: string.Empty,
+            $"http://127.0.0.1:{port}",
+            TrustedProxies: [IPAddress.Loopback],
+            ApiOnly: true,
+            QrWebRoot: qrWebRoot);
+
+        await using var app = DualScreenApplication.Build(options);
+        await app.StartAsync();
+        using var client = new HttpClient();
+
+        Assert.Equal(HttpStatusCode.OK, await GetAsync(client, port, "/qr/"));
+        // A path the QR bundle does not have is still genuinely not found —
+        // this is real static-file serving, not a wildcard passthrough.
+        Assert.Equal(HttpStatusCode.NotFound, await GetAsync(client, port, "/qr/does-not-exist.js"));
+        // Everything outside /qr is unaffected — still the api-only fallback.
+        Assert.Equal(HttpStatusCode.NotFound, await GetAsync(client, port, "/somewhere-else"));
     }
 
     private static async Task<HttpStatusCode> GetAsync(HttpClient client, int port, string path)

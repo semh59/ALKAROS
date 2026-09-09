@@ -20,12 +20,14 @@ using ALKAROS.Host.Experience.NfcOrdering;
 using ALKAROS.Host.Experience.Production;
 using ALKAROS.Host.Experience.Purchasing;
 using ALKAROS.Host.Experience.OfflineReconciliation;
+using ALKAROS.Host.Experience.QrOrdering;
 using ALKAROS.Host.Experience.RelaySettings;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Roles;
 using ALKAROS.Host.Experience.Tables;
 using ALKAROS.Host.Experience.WaiterNotifications;
 using ALKAROS.Host.Outbox;
+using ALKAROS.QrOrdering.RelaySecurity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -114,6 +116,10 @@ public static partial class DualScreenApplication
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
+        // V12-CWB-001: the public-relay counterpart to NFC's own trusted-LAN
+        // customer ordering surface — see QrOrderingEndpoints.cs's own doc
+        // comment for why it needs a session-exchange step NFC does not.
+        builder.Services.AddQrOrderingExperience();
         builder.Services.AddRelaySettingsExperience();
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
@@ -201,6 +207,20 @@ public static partial class DualScreenApplication
             // limit: several guests at one table placing a few rounds each.
             rateLimiter.AddPolicy("nfc-order", context =>
                 FixedWindow(RoutePartition(context, "tableId", "nfc-order"), 30));
+            // V12-CWB-001: relay-facing, so unlike every other unauthenticated
+            // policy above there is no table id to partition on yet at this
+            // route (a session does not exist until it succeeds) — keyed by
+            // source IP alone, per RelayAbusePolicy.PerIpRequestLimit
+            // (V12-QRS-002's own declared bound for exactly this endpoint).
+            rateLimiter.AddPolicy("qr-session", context =>
+                FixedWindow(ClientPartition(context), RelayAbusePolicy.PerIpRequestLimit));
+            // Every QR customer action after session issuance shares this
+            // cap, partitioned by the customer's own session token
+            // (RelayAbusePolicy.PerTokenRequestLimit) rather than by IP —
+            // several customers at one table share a NAT'd/mobile IP, but
+            // each holds a distinct session.
+            rateLimiter.AddPolicy("qr-order", context =>
+                FixedWindow(HeaderPartition(context, QrOrderingEndpoints.SessionHeaderName, "qr-order"), RelayAbusePolicy.PerTokenRequestLimit));
             rateLimiter.AddPolicy("display-read", context =>
                 FixedWindow(RoutePartition(context, "displayId", "display-read"), 240));
         });
@@ -216,7 +236,26 @@ public static partial class DualScreenApplication
             var loopbackReadinessProbe = context.Request.Path.Equals("/health/ready", StringComparison.Ordinal)
                 && IPAddress.IsLoopback(context.Connection.LocalIpAddress ?? IPAddress.None)
                 && IPAddress.IsLoopback(context.Connection.RemoteIpAddress ?? IPAddress.None);
-            if (!context.Request.IsHttps && !insecureDevelopmentLoopback && !loopbackReadinessProbe)
+            // V12-CWB-001: found while first exercising the real loopback
+            // relay path end-to-end (V1-RMD-140 shipped with only container-
+            // topology reasoning + a test that trusted loopback as a
+            // forwarded-header proxy — compose.yaml never does that, since
+            // --trusted-network only covers the Docker bridge range). Without
+            // this, every single NFC/QR request the Cloudflare Tunnel
+            // connector forwards over loopback was rejected here with
+            // HTTPS_REQUIRED before the origin gate below even ran — the
+            // whole relay path was silently non-functional. Cloudflare's own
+            // edge already terminated real TLS from the customer's browser;
+            // the tunnel's loopback hop to this process is the same kind of
+            // internal, unencrypted last leg Caddy's own trusted-proxy
+            // forwarding already represents for the LAN path. Same
+            // unspoofable signal as the origin gate's own reasoning: no port
+            // is published, so nothing outside this container can present
+            // itself as a loopback peer.
+            var nfcRelayRequest = options.NfcLoopbackOriginTrusted
+                && IPAddress.IsLoopback(context.Connection.LocalIpAddress ?? IPAddress.None)
+                && IPAddress.IsLoopback(context.Connection.RemoteIpAddress ?? IPAddress.None);
+            if (!context.Request.IsHttps && !insecureDevelopmentLoopback && !loopbackReadinessProbe && !nfcRelayRequest)
             {
                 await Error(
                     context,
@@ -296,6 +335,12 @@ public static partial class DualScreenApplication
         // loopback — see DualScreenOptions.NfcLoopbackOriginTrusted's own
         // doc comment for why that is a safe signal in compose.yaml's
         // topology) — and not added at all when none is configured.
+        // V12-CWB-001: QR's own endpoints (`/api/v1/qr/*`) now exist and are
+        // just as customer-facing as NFC's, so this same gate covers both —
+        // V1-RMD-140's own "Out of scope" flagged this exact one-line
+        // extension as the follow-up once QR's HTTP surface shipped. The
+        // CLI flag names stay NFC-prefixed (they predate QR and nothing
+        // depends on renaming them); only the route allowlist grows.
         var nfcOriginPorts = options.NfcOriginPorts.ToHashSet();
         var nfcOriginHeader = options.NfcOriginHeader;
         var nfcLoopbackOriginTrusted = options.NfcLoopbackOriginTrusted;
@@ -315,24 +360,64 @@ public static partial class DualScreenApplication
                         && IPAddress.IsLoopback(remoteAddress));
                 var path = context.Request.Path;
                 var isApi = path.StartsWithSegments("/api", StringComparison.Ordinal);
-                var isNfcApi = path.StartsWithSegments("/api/v1/nfc", StringComparison.Ordinal);
+                var isNfcApi = path.StartsWithSegments("/api/v1/nfc", StringComparison.Ordinal)
+                    || path.StartsWithSegments("/api/v1/qr", StringComparison.Ordinal);
 
                 if (onNfcOrigin && isApi && !isNfcApi)
                 {
                     await Error(context, StatusCodes.Status404NotFound, "NOT_FOUND",
-                        "Bu adres NFC origin'inde sunulmuyor.").ExecuteAsync(context);
+                        "Bu adres NFC/QR origin'inde sunulmuyor.").ExecuteAsync(context);
                     return;
                 }
 
                 if (!onNfcOrigin && isNfcApi)
                 {
                     await Error(context, StatusCodes.Status404NotFound, "NOT_FOUND",
-                        "NFC sipariş adresleri yalnızca ayrı origin'den sunulur.").ExecuteAsync(context);
+                        "NFC/QR sipariş adresleri yalnızca ayrı origin'den sunulur.").ExecuteAsync(context);
                     return;
                 }
 
                 await next();
             });
+        }
+
+        // V12-CWB-001: RelayAbusePolicy.MaxPayloadBytes bounds a relay-facing
+        // QR request's body before it is ever parsed — the relay's public
+        // internet exposure has no other body-size backstop the way the
+        // LAN-only NFC/cashier surfaces implicitly have. Checked against the
+        // declared Content-Length only (Kestrel's own default request-body
+        // ceiling remains the backstop for a client that omits or lies about
+        // it); QR's own per-item/per-line bounds (QrPendingOrderStore) are
+        // the primary defense for order submission itself.
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Path.StartsWithSegments("/api/v1/qr", StringComparison.Ordinal)
+                && context.Request.ContentLength is { } contentLength
+                && contentLength > RelayAbusePolicy.MaxPayloadBytes)
+            {
+                await Error(context, StatusCodes.Status413PayloadTooLarge, "PAYLOAD_TOO_LARGE",
+                    "İstek çok büyük.").ExecuteAsync(context);
+                return;
+            }
+
+            await next();
+        });
+
+        // V12-CWB-001: the Cloudflare Tunnel connector reaches this process
+        // directly over loopback and never goes through the reverse proxy
+        // that normally serves every other static bundle (see
+        // DualScreenOptions.QrWebRoot's own doc comment) — this is the one
+        // static-file exception to "api-only serves nothing but JSON/hubs",
+        // scoped to exactly the QR customer page's own small bundle.
+        // Registered before UseRouting so it serves a match directly rather
+        // than depending on falling through the endpoint-selection order
+        // below (this content needs no origin gating either way — it is
+        // public HTML/CSS/JS with no secrets in it, not an API boundary).
+        if (options.QrWebRoot is { } qrWebRoot)
+        {
+            var qrFileProvider = new PhysicalFileProvider(qrWebRoot);
+            app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = qrFileProvider, RequestPath = "/qr" });
+            app.UseStaticFiles(new StaticFileOptions { FileProvider = qrFileProvider, RequestPath = "/qr" });
         }
 
         app.UseRouting();
@@ -360,6 +445,7 @@ public static partial class DualScreenApplication
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();
         app.MapNfcOrderingApi();
+        app.MapQrOrderingApi();
         app.MapRelaySettingsApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
@@ -380,7 +466,8 @@ public static partial class DualScreenApplication
         {
             // The reverse proxy serves the PosTerminal / WaiterPwa / Cashier
             // bundles and owns the SPA fallback; anything not matched by an API
-            // route or hub above is genuinely not found here.
+            // route, hub or the QR static files (registered earlier, before
+            // routing) is genuinely not found here.
             app.MapFallback((HttpContext context) => Error(
                 context,
                 StatusCodes.Status404NotFound,
@@ -437,6 +524,19 @@ public static partial class DualScreenApplication
             ? Convert.ToString(value, CultureInfo.InvariantCulture)
             : null;
         return $"{ClientPartition(context)}:{operation}:{routeValue ?? "missing"}";
+    }
+
+    /// <summary>
+    /// V12-CWB-001: same partitioning idea as <see cref="RoutePartition"/>
+    /// but keyed by a request header instead of a route value — a QR
+    /// customer's session token has no route segment of its own to key on.
+    /// Headers (unlike the request body) are available before rate limiting
+    /// runs, so this needs no special handler-side wiring.
+    /// </summary>
+    private static string HeaderPartition(HttpContext context, string headerName, string operation)
+    {
+        var headerValue = context.Request.Headers[headerName].ToString();
+        return $"{operation}:{(string.IsNullOrEmpty(headerValue) ? "missing" : headerValue)}";
     }
 
     private static readonly Action<ILogger, string, string, Exception?> LogServerError =

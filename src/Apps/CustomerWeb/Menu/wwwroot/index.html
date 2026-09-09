@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ALKAROS Menü</title>
+  <link rel="stylesheet" href="./menu-app.css" />
+</head>
+<body>
+  <header class="menu-header">
+    <h1>Menü</h1>
+    <nav id="categoryTabs" class="category-tabs" aria-label="Kategoriler"></nav>
+  </header>
+
+  <main id="menuMain">
+    <p id="loadingState" class="state-message">Menü yükleniyor…</p>
+    <p id="errorState" class="state-message state-error" hidden></p>
+    <p id="emptyState" class="state-message" hidden>Şu anda listelenecek ürün bulunmuyor.</p>
+    <ul id="productList" class="product-list" hidden></ul>
+  </main>
+
+  <script src="./menu-app.js"></script>
+</body>
+</html>
