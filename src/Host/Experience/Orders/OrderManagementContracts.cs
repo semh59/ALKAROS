@@ -145,6 +145,15 @@ public sealed record OrderDto(
     IReadOnlyList<OrderItemDto> Items,
     DateTimeOffset CreatedAt);
 
+/// <summary>
+/// <paramref name="AvailableStockQuantity"/> (V1-RMD-143, Semih's own
+/// "kalan stok bilgisi ver garsona") is populated only by
+/// <c>OrderManagementStore.GetOrderByIdAsync</c> — how many more units of
+/// this product the mapped stock item(s) could still cover right now, or
+/// null when the product has no stock mapping configured at all (not
+/// tracked, not "zero left"). Purely informational: OrderStockConsumption
+/// Service's own check at Accept time is the real, authoritative gate.
+/// </summary>
 public sealed record OrderItemDto(
     Guid ItemId,
     Guid ProductId,
@@ -152,4 +161,5 @@ public sealed record OrderItemDto(
     int Quantity,
     decimal UnitPrice,
     decimal TotalPrice,
-    string? SpecialInstructions);
+    string? SpecialInstructions,
+    decimal? AvailableStockQuantity = null);

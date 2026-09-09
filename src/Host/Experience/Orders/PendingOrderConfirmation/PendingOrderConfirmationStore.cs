@@ -1,4 +1,5 @@
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
@@ -29,23 +30,34 @@ public sealed class PendingOrderConfirmationStore
     private readonly IKitchenTicketRepository _tickets;
     private readonly IBillRepository _bills;
     private readonly NpgsqlDataSource _dataSource;
+    private readonly OrderStockConsumptionService _stockConsumption;
 
     public PendingOrderConfirmationStore(
         IOrderRepository orders,
         IKitchenTicketRepository tickets,
         IBillRepository bills,
-        NpgsqlDataSource dataSource)
+        NpgsqlDataSource dataSource,
+        OrderStockConsumptionService stockConsumption)
     {
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _stockConsumption = stockConsumption ?? throw new ArgumentNullException(nameof(stockConsumption));
     }
 
     /// <summary>
     /// The staff member confirms the ID check passed (or otherwise clears
     /// the order for service): PendingConfirmation -&gt; Accepted, and a
-    /// table the order still holds as Reserved becomes Occupied.
+    /// table the order still holds as Reserved becomes Occupied. Semih's
+    /// decision (2026-09-09): stock is consumed here, for every item on
+    /// every channel this store serves (Cashier/Waiter/NFC age-restricted/
+    /// QR all reach Accepted only through this one method — see
+    /// OrderStockConsumptionService's own doc comment). Runs before the
+    /// order's own state is ever saved, so a missing product mapping or
+    /// insufficient stock refuses the whole Accept outright with nothing
+    /// changed yet, rather than leaving an Accepted order with stock never
+    /// consumed.
     /// </summary>
     public async Task<PendingOrderConfirmationResultV1> AcceptAsync(
         Guid orderId, long expectedRowVersion, Guid actorId, string? notes, CancellationToken cancellationToken = default)
@@ -56,6 +68,14 @@ public sealed class PendingOrderConfirmationStore
             throw new StaleOrderRowVersionException(order.Id, expectedRowVersion, order.RowVersion);
         if (order.Status != OrderState.PendingConfirmation)
             throw new OrderNotAwaitingConfirmationException(order.Id, order.Status.ToString());
+
+        await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
+        await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
+        {
+            await _stockConsumption.ConsumeForAcceptedOrderAsync(order, actorId, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
 
         var now = DateTimeOffset.UtcNow;
         var accepted = order.TransitionTo(OrderState.Accepted, notes, actorId, now);

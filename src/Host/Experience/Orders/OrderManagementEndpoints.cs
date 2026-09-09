@@ -1,7 +1,11 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Host.Experience.Orders.SentItemVoid;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
@@ -69,6 +73,17 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IKitchenTicketRepository, PostgresKitchenTicketRepository>();
         services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
         services.TryAddSingleton<SentItemVoidStore>();
+        // V1-RMD-143: Semih's decision (2026-09-09) that Accept should really
+        // consume stock — see OrderStockConsumptionService's own doc comment.
+        // ITableRepository-style same-module ownership: these are Inventory's
+        // own registrations (already made by InventoryModule in the real
+        // Host), TryAdd defers to that; a standalone composition of just this
+        // experience still resolves the whole chain.
+        services.TryAddSingleton<IProductStockMappingRepository, PostgresProductStockMappingRepository>();
+        services.TryAddSingleton<IStockItemRepository, PostgresStockItemRepository>();
+        services.TryAddSingleton<IStockBalanceRepository, PostgresStockBalanceRepository>();
+        services.TryAddSingleton<IStockMovementRepository, PostgresStockMovementRepository>();
+        services.TryAddSingleton<OrderStockConsumptionService>();
         // V1-RMD-137: found by an independent audit (2026-09-09) — no HTTP
         // action anywhere could ever move an order out of PendingConfirmation
         // (see PendingOrderConfirmationStore's own doc comment for the full
@@ -639,6 +654,16 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
         OrderNotAwaitingConfirmationException => (409, "ORDER_NOT_PENDING_CONFIRMATION", "Sipariş onay bekleyen durumda değil."),
+        // V1-RMD-143: Semih's decision (2026-09-09) — Accept refuses outright
+        // rather than silently skipping stock consumption, either because a
+        // sold product has no stock mapping configured at all, or because
+        // the mapped stock item does not have enough on hand right now.
+        ProductStockNotConfiguredException stockNotConfigured =>
+            (409, "PRODUCT_STOCK_NOT_CONFIGURED", $"'{stockNotConfigured.ProductName}' için stok tanımlanmamış, lütfen yöneticiye bildirin."),
+        InsufficientOrderStockException insufficientStock =>
+            (409, "INSUFFICIENT_STOCK", $"'{insufficientStock.ProductName}' için yeterli stok yok."),
+        StockItemHasNoDefaultLocationException =>
+            (409, "STOCK_ITEM_MISCONFIGURED", "Bu ürünün stok kalemi için bir konum tanımlanmamış, lütfen yöneticiye bildirin."),
         OrderAlreadyBilledException => (409, "ORDER_ALREADY_BILLED", "Sipariş zaten faturalandırılmış, bu işlemle reddedilemez."),
         StaleOrderRowVersionException or StaleOrderVersionException or InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         IdempotencyKeyReusedException or SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),

@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "092"
+    "max": "093"
   },
   "migrations": [
     {
@@ -791,6 +791,15 @@
       "phase": "B",
       "tables": [
         "kitchen_ticket_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "093",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
       ],
       "deferredConstraints": []
     }

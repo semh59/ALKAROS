@@ -1,5 +1,7 @@
 using System.Data;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using Npgsql;
@@ -13,14 +15,26 @@ public sealed class OrderManagementStore
     private readonly IOrderRepository _repository;
     private readonly IRoleRepository _roles;
     private readonly SubmitOrderHandler _submitHandler;
+    private readonly IProductStockMappingRepository _stockMappings;
+    private readonly IStockItemRepository _stockItems;
+    private readonly IStockBalanceRepository _stockBalances;
 
     public OrderManagementStore(
-        NpgsqlDataSource dataSource, IOrderRepository repository, IRoleRepository roles, SubmitOrderHandler submitHandler)
+        NpgsqlDataSource dataSource,
+        IOrderRepository repository,
+        IRoleRepository roles,
+        SubmitOrderHandler submitHandler,
+        IProductStockMappingRepository stockMappings,
+        IStockItemRepository stockItems,
+        IStockBalanceRepository stockBalances)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _roles = roles ?? throw new ArgumentNullException(nameof(roles));
         _submitHandler = submitHandler ?? throw new ArgumentNullException(nameof(submitHandler));
+        _stockMappings = stockMappings ?? throw new ArgumentNullException(nameof(stockMappings));
+        _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
+        _stockBalances = stockBalances ?? throw new ArgumentNullException(nameof(stockBalances));
     }
 
     /// <summary>
@@ -210,7 +224,51 @@ public sealed class OrderManagementStore
         if (order == null) return null;
 
         var tableNumber = await GetTableNumberAsync(order.TableId, cancellationToken) ?? "—";
-        return MapToDto(order, tableNumber);
+        var dto = MapToDto(order, tableNumber);
+        return await WithAvailableStockAsync(dto, cancellationToken);
+    }
+
+    /// <summary>
+    /// Semih's own "kalan stok bilgisi ver garsona" (2026-09-09): a staff
+    /// member viewing an order — typically a PendingConfirmation one, right
+    /// before deciding Accept/Reject — sees how many more units of each item
+    /// the mapped stock item(s) could still cover, the exact same
+    /// availableQuantity/quantityMultiplier arithmetic
+    /// StockMasterEndpoints exposes per product. Null when the product has
+    /// no stock mapping at all yet (not tracked) rather than a misleading
+    /// zero; this is purely a display aid, it does not gate anything —
+    /// OrderStockConsumptionService is the real, authoritative check that
+    /// runs at Accept time.
+    /// </summary>
+    private async Task<OrderDto> WithAvailableStockAsync(OrderDto dto, CancellationToken cancellationToken)
+    {
+        var enrichedItems = new List<OrderItemDto>(dto.Items.Count);
+        foreach (var item in dto.Items)
+        {
+            var mappings = await _stockMappings.GetByProductIdAsync(item.ProductId, cancellationToken);
+            decimal? availableStockQuantity = null;
+            foreach (var mapping in mappings)
+            {
+                var stockItem = await _stockItems.GetByIdAsync(mapping.StockItemId, cancellationToken);
+                if (stockItem?.DefaultLocationId is not { } locationId)
+                    continue;
+
+                var balance = await _stockBalances.GetByItemAndLocationAsync(mapping.StockItemId, locationId, cancellationToken);
+                if (balance is null)
+                    continue;
+
+                // The limiting stock item decides how many more units of the
+                // product can still be made — same reasoning as a real BOM.
+                var unitsFromThisMapping = balance.AvailableQuantity / mapping.QuantityMultiplier;
+                availableStockQuantity = availableStockQuantity is null
+                    ? unitsFromThisMapping
+                    : Math.Min(availableStockQuantity.Value, unitsFromThisMapping);
+            }
+
+            enrichedItems.Add(item with { AvailableStockQuantity = availableStockQuantity });
+        }
+
+        return dto with { Items = enrichedItems };
     }
 
     public async Task<OrderDto?> GetActiveOrderByTableIdAsync(Guid tableId, CancellationToken cancellationToken = default)

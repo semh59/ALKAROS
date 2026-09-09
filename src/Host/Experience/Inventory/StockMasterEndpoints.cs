@@ -1,0 +1,239 @@
+using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Measurements;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Npgsql;
+
+namespace ALKAROS.Host.Experience.Inventory;
+
+/// <summary>
+/// V1-RMD-143: if accepting an order is going to consume real stock,
+/// someone first needs to be able to define which product corresponds to
+/// which stock item. `inventory.product_stock_mappings` and
+/// `StockMasterService` have existed since V1.1 but never had any HTTP
+/// surface — the same "built but never called" pattern as the
+/// Menu/Purchasing/Production remediations. Manager-only, exactly like the
+/// Menu/Purchasing/Production management surfaces.
+/// </summary>
+public static class StockMasterEndpoints
+{
+    public const string ManagerCookieName = "alkaros.manager";
+    public const string ManagePermission = "inventory.manage";
+
+    public static IServiceCollection AddStockMasterExperience(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        services.TryAddScoped<IStockLocationRepository, PostgresStockLocationRepository>();
+        services.TryAddScoped<IStockItemRepository, PostgresStockItemRepository>();
+        services.TryAddScoped<IProductStockMappingRepository, PostgresProductStockMappingRepository>();
+        // StockMasterService's own constructor needs a unit converter for
+        // cross-unit BOM validation — the full production host gets this
+        // from InventoryModule/RecipesModule, but this self-contained
+        // registration set must resolve it standalone too (same reasoning
+        // as ProductionManagementExperience's own repository registrations).
+        services.TryAddTransient<IUnitConverter, UnitConverter>();
+        services.TryAddScoped<IStockMasterService, StockMasterService>();
+        // Read-only here (available-quantity display on a product's own
+        // mappings) — the same contract OrderStockConsumptionService writes
+        // through on Accept.
+        services.TryAddScoped<IStockBalanceRepository, PostgresStockBalanceRepository>();
+
+        services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
+        services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
+        services.TryAddScoped<IAuthorizationService, AuthorizationService>();
+        services.TryAddScoped<StockMasterAuthentication>();
+        return services;
+    }
+
+    public static RouteGroupBuilder MapStockMasterApi(this IEndpointRouteBuilder endpoints)
+    {
+        ArgumentNullException.ThrowIfNull(endpoints);
+        var group = endpoints.MapGroup("/api/v1/management/inventory");
+        group.AddEndpointFilter<StockMasterEndpointFilter>();
+
+        group.MapGet("/stock-locations", async (
+            bool? activeOnly,
+            IStockLocationRepository repository,
+            CancellationToken cancellationToken) =>
+        {
+            var locations = await repository.GetAllAsync(activeOnly ?? false, cancellationToken);
+            return Results.Ok(locations.Select(StockLocationV1.From).ToArray());
+        });
+
+        group.MapPost("/stock-locations", async (
+            CreateStockLocationV1 request,
+            IStockMasterService service,
+            CancellationToken cancellationToken) =>
+        {
+            var locationType = Enum.Parse<StockLocationType>(request.LocationType, ignoreCase: true);
+            var created = await service.CreateLocationAsync(
+                request.Code, request.Name, locationType, request.IsActive, cancellationToken);
+            return Results.Created(
+                $"/api/v1/management/inventory/stock-locations/{created.Id:D}", StockLocationV1.From(created));
+        });
+
+        group.MapGet("/stock-items", async (
+            bool? activeOnly,
+            IStockItemRepository repository,
+            CancellationToken cancellationToken) =>
+        {
+            var items = await repository.GetAllAsync(activeOnly ?? false, cancellationToken);
+            return Results.Ok(items.Select(StockItemV1.From).ToArray());
+        });
+
+        group.MapPost("/stock-items", async (
+            CreateStockItemV1 request,
+            IStockMasterService service,
+            CancellationToken cancellationToken) =>
+        {
+            var itemType = Enum.Parse<StockItemType>(request.ItemType, ignoreCase: true);
+            var created = await service.CreateStockItemAsync(
+                request.Code, request.Name, itemType, request.TrackingUnitCode,
+                request.DefaultLocationId, request.IsActive, cancellationToken);
+            return Results.Created(
+                $"/api/v1/management/inventory/stock-items/{created.Id:D}", StockItemV1.From(created));
+        });
+
+        group.MapPost("/products/{productId:guid}/stock-mappings", async (
+            Guid productId,
+            AssignProductStockMappingV1 request,
+            IStockMasterService service,
+            CancellationToken cancellationToken) =>
+        {
+            var mapping = await service.AssignProductToStockItemAsync(
+                productId, request.StockItemId, request.QuantityMultiplier, request.Notes, cancellationToken);
+            return Results.Ok(mapping);
+        });
+
+        // Semih's own "kalan stok bilgisi ver garsona" (2026-09-09): the
+        // per-item AvailableStockQuantity a staff member sees on a pending
+        // order (OrderManagementContracts.OrderItemDto) is this exact same
+        // query, run per order item instead of per product here — a manager
+        // uses this route to check/configure it directly.
+        group.MapGet("/products/{productId:guid}/stock-mappings", async (
+            Guid productId,
+            IProductStockMappingRepository mappings,
+            IStockItemRepository items,
+            IStockBalanceRepository balances,
+            CancellationToken cancellationToken) =>
+        {
+            var productMappings = await mappings.GetByProductIdAsync(productId, cancellationToken);
+            var results = new List<ProductStockMappingV1>(productMappings.Count);
+            foreach (var mapping in productMappings)
+            {
+                var stockItem = await items.GetByIdAsync(mapping.StockItemId, cancellationToken);
+                var stockItemName = stockItem?.Name ?? "?";
+                decimal? availableQuantity = null;
+                if (stockItem?.DefaultLocationId is { } locationId)
+                {
+                    var balance = await balances.GetByItemAndLocationAsync(mapping.StockItemId, locationId, cancellationToken);
+                    if (balance is not null)
+                        availableQuantity = balance.AvailableQuantity / mapping.QuantityMultiplier;
+                }
+
+                results.Add(new ProductStockMappingV1(
+                    mapping.ProductId, mapping.StockItemId, stockItemName, mapping.QuantityMultiplier,
+                    mapping.Notes, availableQuantity));
+            }
+
+            return Results.Ok(results);
+        });
+
+        return group;
+    }
+}
+
+public sealed class StockMasterAuthentication
+{
+    private readonly NpgsqlDataSource _dataSource;
+
+    public StockMasterAuthentication(NpgsqlDataSource dataSource)
+    {
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+    }
+
+    public async Task<Guid> AuthenticateAsync(HttpContext context, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        var rawToken = context.Request.Cookies[StockMasterEndpoints.ManagerCookieName];
+        var actorId = await ManagementSessionLookup.ResolveActorAsync(_dataSource, rawToken, allowSupervisor: false, cancellationToken);
+        return actorId ?? throw new StockMasterUnauthorizedException();
+    }
+}
+
+public sealed class StockMasterEndpointFilter : IEndpointFilter
+{
+    private static readonly Action<ILogger, string, string, Exception?> LogRequestFailure =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Error,
+            new EventId(5600, nameof(LogRequestFailure)),
+            "Stock master request failed on {Path} ({TraceIdentifier}).");
+
+    private readonly StockMasterAuthentication _authentication;
+    private readonly IAuthorizationService _authorization;
+    private readonly ILogger<StockMasterEndpointFilter> _logger;
+
+    public StockMasterEndpointFilter(
+        StockMasterAuthentication authentication, IAuthorizationService authorization, ILogger<StockMasterEndpointFilter> logger)
+    {
+        _authentication = authentication ?? throw new ArgumentNullException(nameof(authentication));
+        _authorization = authorization ?? throw new ArgumentNullException(nameof(authorization));
+        _logger = logger;
+    }
+
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    {
+        try
+        {
+            var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
+            await _authorization.AuthorizeAsync(actorId, StockMasterEndpoints.ManagePermission, context.HttpContext.RequestAborted);
+            return await next(context);
+        }
+        catch (Exception exception)
+        {
+            var mapped = Map(exception);
+            if (mapped.Status >= StatusCodes.Status500InternalServerError)
+            {
+                LogRequestFailure(_logger, context.HttpContext.Request.Path, context.HttpContext.TraceIdentifier, exception);
+            }
+
+            return Results.Json(
+                new StockMasterApiErrorEnvelopeV1(new StockMasterApiErrorV1(mapped.Code, mapped.Message, mapped.Status, context.HttpContext.TraceIdentifier)),
+                statusCode: mapped.Status);
+        }
+    }
+
+    private static (int Status, string Code, string Message) Map(Exception exception) => exception switch
+    {
+        StockMasterUnauthorizedException => (401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
+        AuthorizationDeniedException => (403, "FORBIDDEN", "Stok yönetimi izni gerekiyor."),
+        StockItemNotFoundException => (404, "NOT_FOUND", "İstenen stok kalemi bulunamadı."),
+        StockLocationNotFoundException => (404, "NOT_FOUND", "İstenen stok konumu bulunamadı."),
+        DuplicateStockItemException => (409, "DUPLICATE_RESOURCE", "Bu kodla bir stok kalemi zaten var."),
+        DuplicateStockLocationException => (409, "DUPLICATE_RESOURCE", "Bu kodla bir stok konumu zaten var."),
+        InactiveStockItemException or InactiveStockLocationException => (409, "INACTIVE_RESOURCE", "Bu kayıt pasif durumda."),
+        InvalidStockItemException or InvalidStockLocationException or InvalidProductStockMappingException =>
+            (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        StockMasterConcurrencyException => (409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi."),
+        PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } => (409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
+        PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } => (400, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
+        ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
+        _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
+    };
+}
+
+public sealed class StockMasterUnauthorizedException : Exception
+{
+    public StockMasterUnauthorizedException() : base("A valid inventory manager session is required.")
+    {
+    }
+}

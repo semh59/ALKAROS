@@ -1,5 +1,9 @@
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -74,9 +78,18 @@ public sealed class QrOrderExpiryHostedServiceTests : IAsyncLifetime
         Assert.Equal(OrderState.PendingConfirmation, order.Status);
     }
 
+    // V1-RMD-143: only RejectAsync is exercised by this file's own tests
+    // (via ExpireOverdueOrdersAsync) — OrderStockConsumptionService is never
+    // actually invoked (that only happens on AcceptAsync), but the
+    // constructor still needs a real instance.
     private PendingOrderConfirmationStore CreateStore() => new(
         new PostgresOrderRepository(_database.DataSource),
         new PostgresKitchenTicketRepository(_database.DataSource),
         new PostgresBillRepository(_database.DataSource),
-        _database.DataSource);
+        _database.DataSource,
+        new OrderStockConsumptionService(
+            new PostgresProductStockMappingRepository(_database.DataSource),
+            new PostgresStockItemRepository(_database.DataSource),
+            new PostgresStockBalanceRepository(_database.DataSource),
+            new PostgresStockMovementRepository(_database.DataSource)));
 }

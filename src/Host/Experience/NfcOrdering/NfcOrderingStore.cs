@@ -1,5 +1,7 @@
 using System.Data;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
+using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using Npgsql;
@@ -43,12 +45,18 @@ public sealed class NfcOrderingStore
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
     private readonly SubmitOrderHandler _submitHandler;
+    private readonly OrderStockConsumptionService _stockConsumption;
 
-    public NfcOrderingStore(NpgsqlDataSource dataSource, IOrderRepository repository, SubmitOrderHandler submitHandler)
+    public NfcOrderingStore(
+        NpgsqlDataSource dataSource,
+        IOrderRepository repository,
+        SubmitOrderHandler submitHandler,
+        OrderStockConsumptionService stockConsumption)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _submitHandler = submitHandler ?? throw new ArgumentNullException(nameof(submitHandler));
+        _stockConsumption = stockConsumption ?? throw new ArgumentNullException(nameof(stockConsumption));
     }
 
     public async Task<OrderDto> PlaceOrderAsync(Guid tableId, NfcOrderRequest request, CancellationToken cancellationToken = default)
@@ -215,13 +223,61 @@ public sealed class NfcOrderingStore
         order = await TryTransitionAsync(order, OrderState.PendingConfirmation, "NFC güvenilir kanal.", cancellationToken);
 
         var hasAgeRestrictedItem = await AnyItemIsAgeRestrictedAsync(order, cancellationToken);
-        if (!hasAgeRestrictedItem)
+        // Semih's decision (2026-09-09): Accept consumes stock here too — the
+        // exact same gate PendingOrderConfirmationStore.AcceptAsync applies,
+        // since a missing product mapping or insufficient stock is just as
+        // real for a trusted NFC tap as for a staff-confirmed order. Treated
+        // the same way an age-restricted cart already is: the "trusted
+        // immediate accept" shortcut is withheld, not the whole request
+        // failed — the order simply stays at PendingConfirmation for a
+        // waiter to resolve (who reaches the exact same check again through
+        // PendingOrderConfirmationStore.AcceptAsync, and sees a real Turkish
+        // reason if it is still refused).
+        // order.CanTransitionTo guards against a replay (a retried identical
+        // submission, or two concurrent identical requests) re-consuming
+        // stock for an order that already reached Accepted on an earlier
+        // attempt — TryTransitionAsync's own no-op-if-already-there check
+        // happens too late for that, it runs after stock would already have
+        // been double-consumed.
+        if (!hasAgeRestrictedItem
+            && order.CanTransitionTo(OrderState.Accepted)
+            && await TryConsumeStockAsync(order, cancellationToken))
         {
             order = await TryTransitionAsync(order, OrderState.Accepted, "NFC güvenilir kanal - onay gerekmez.", cancellationToken);
         }
 
         var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
         return MapToDto(order, tableNumber);
+    }
+
+    /// <summary>
+    /// True if stock was actually consumed (safe to proceed to Accepted);
+    /// false on the two routine, expected refusals
+    /// (<see cref="ProductStockNotConfiguredException"/>,
+    /// <see cref="InsufficientOrderStockException"/>) — every other
+    /// exception (a real database failure, a misconfigured stock item with
+    /// no default location) still propagates as a genuine error, since
+    /// those are not "just wait for a waiter" situations.
+    /// </summary>
+    private async Task<bool> TryConsumeStockAsync(Order order, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+            await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+            await _stockConsumption.ConsumeForAcceptedOrderAsync(
+                order, QrOrderExpiryHostedService.SystemActorId, connection, transaction, cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return true;
+        }
+        catch (ProductStockNotConfiguredException)
+        {
+            return false;
+        }
+        catch (InsufficientOrderStockException)
+        {
+            return false;
+        }
     }
 
     private async Task<bool> AnyItemIsAgeRestrictedAsync(Order order, CancellationToken cancellationToken)

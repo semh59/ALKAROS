@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
@@ -65,6 +66,89 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
         var (status, currentOrderId) = await _database.GetTableStateAsync(tableId);
         Assert.Equal("Occupied", status);
         Assert.Equal(orderId, currentOrderId);
+    }
+
+    /// <summary>Semih's decision (2026-09-09): Accept should really decrement stock, for every channel this store serves.</summary>
+    [Fact]
+    public async Task AcceptingAPendingOrderConsumesTheMappedStock()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, productId) = await _database.SeedPendingConfirmationOrderAsync(stockOnHandQuantity: 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        // The seeded order has exactly one item at quantity 1.
+        Assert.Equal(9m, await _database.GetOnHandQuantityForProductAsync(productId));
+    }
+
+    /// <summary>Semih's decision (2026-09-09): a sold product with no stock mapping at all refuses Accept outright, it is never silently skipped.</summary>
+    [Fact]
+    public async Task AcceptingAnOrderForAnUnmappedProductIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, _) = await _database.SeedPendingConfirmationOrderAsync(seedStockMapping: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("PRODUCT_STOCK_NOT_CONFIGURED", body);
+        Assert.Contains("stok tanımlanmamış", body);
+
+        var order = await _database.ReloadOrderAsync(orderId);
+        Assert.Equal(OrderState.PendingConfirmation, order.Status);
+    }
+
+    /// <summary>Semih's decision (2026-09-09): insufficient stock at Accept time is a clear, real refusal, never a silent negative.</summary>
+    [Fact]
+    public async Task AcceptingAnOrderWithInsufficientStockIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, productId) = await _database.SeedPendingConfirmationOrderAsync(stockOnHandQuantity: 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("INSUFFICIENT_STOCK", body);
+
+        var order = await _database.ReloadOrderAsync(orderId);
+        Assert.Equal(OrderState.PendingConfirmation, order.Status);
+        // Nothing applied — the guarded delta refused the whole thing.
+        Assert.Equal(0m, await _database.GetOnHandQuantityForProductAsync(productId));
+    }
+
+    /// <summary>Semih's own "kalan stok bilgisi ver garsona" (2026-09-09): viewing a pending order shows how much stock is left for each item.</summary>
+    [Fact]
+    public async Task ViewingAnOrderShowsTheAvailableStockForEachItem()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, _) = await _database.SeedPendingConfirmationOrderAsync(stockOnHandQuantity: 7m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}");
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var order = await response.Content.ReadFromJsonAsync<OrderDto>();
+        var item = Assert.Single(order!.Items);
+        Assert.Equal(7m, item.AvailableStockQuantity);
     }
 
     [Fact]

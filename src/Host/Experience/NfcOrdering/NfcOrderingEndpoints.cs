@@ -1,4 +1,8 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
@@ -46,6 +50,15 @@ public static class NfcOrderingEndpoints
 
             return new KitchenOrderSubmissionDispatcher(sp.GetRequiredService<IKitchenTicketRepository>(), stationId);
         });
+        // V1-RMD-143: Semih's decision (2026-09-09) — NFC's own trusted
+        // immediate-accept also consumes stock now (see NfcOrderingStore's
+        // own TryConsumeStockAsync and OrderStockConsumptionService's doc
+        // comment).
+        services.TryAddSingleton<IProductStockMappingRepository, PostgresProductStockMappingRepository>();
+        services.TryAddSingleton<IStockItemRepository, PostgresStockItemRepository>();
+        services.TryAddSingleton<IStockBalanceRepository, PostgresStockBalanceRepository>();
+        services.TryAddSingleton<IStockMovementRepository, PostgresStockMovementRepository>();
+        services.TryAddSingleton<OrderStockConsumptionService>();
         services.TryAddSingleton<NfcOrderingStore>();
         services.TryAddTransient<NfcOrderingExceptionFilter>();
         return services;

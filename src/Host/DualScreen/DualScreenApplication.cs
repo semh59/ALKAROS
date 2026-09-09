@@ -14,6 +14,7 @@ using ALKAROS.Host.Composition.Modules;
 using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Catalog;
+using ALKAROS.Host.Experience.Inventory;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Host.Experience.Menu;
 using ALKAROS.Host.Experience.NfcOrdering;
@@ -113,6 +114,10 @@ public static partial class DualScreenApplication
         // above but had zero HTTP surface.
         builder.Services.AddPurchasingManagementExperience();
         builder.Services.AddProductionManagementExperience();
+        // V1-RMD-143: Semih's decision (2026-09-09) that order acceptance
+        // should really decrement stock needed this first — nothing could
+        // ever configure which product maps to which stock item before now.
+        builder.Services.AddStockMasterExperience();
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
@@ -469,6 +474,7 @@ public static partial class DualScreenApplication
         app.MapMenuManagement();
         app.MapPurchasingManagement();
         app.MapProductionManagement();
+        app.MapStockMasterApi();
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();

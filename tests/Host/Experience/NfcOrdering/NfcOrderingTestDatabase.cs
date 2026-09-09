@@ -67,6 +67,33 @@ public sealed class NfcOrderingTestDatabase : PgTestDatabase
             ("price", price),
             ("is_age_restricted", isAgeRestricted));
 
+        // V1-RMD-143: NFC's own trusted immediate-accept now also consumes
+        // stock (OrderStockConsumptionService) — every seeded product needs
+        // a real mapping with abundant on-hand quantity so existing
+        // "the order reaches Accepted" tests keep representing that outcome
+        // (a million units is comfortably above every quantity this suite
+        // ever orders, including V1-RMD-138's own MaxQuantityPerItem tests).
+        var locationId = Guid.NewGuid();
+        var stockItemId = Guid.NewGuid();
+        var suffix = stockItemId.ToString("N")[..8];
+        await ExecuteAsync(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@location_id, @location_code, 'NFC Test Location', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@stock_item_id, @stock_item_code, 'NFC Test Stock Item', 'Portion', 'adet', @location_id);
+            INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier)
+            VALUES (@product_id, @stock_item_id, 1.0);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES (@balance_id, @stock_item_id, @location_id, 1000000, 0, 1000000);
+            """,
+            ("location_id", locationId),
+            ("location_code", "NFC-" + suffix),
+            ("stock_item_id", stockItemId),
+            ("stock_item_code", "NFC-" + suffix),
+            ("product_id", productId),
+            ("balance_id", Guid.NewGuid()));
+
         return productId;
     }
 

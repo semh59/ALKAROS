@@ -19,6 +19,15 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     public OrderManagementConfirmationTestDatabase()
         : base("alkaros_rmd137_")
     {
+        // V1-RMD-143: OrderManagementStore's own IOrderSubmissionDispatcher
+        // factory (OrderManagementEndpoints.AddOrderManagementExperience)
+        // requires this the moment anything constructs OrderManagementStore
+        // at all — this file's own GET /{orderId} tests are the first ones
+        // in this harness to actually exercise that path (accept/reject go
+        // through PendingOrderConfirmationStore instead, which never
+        // touches OrderManagementStore), same reasoning as
+        // NfcOrderingTestDatabase's own constructor.
+        Environment.SetEnvironmentVariable("ALKAROS_KITCHEN_STATION_ID", "grill-1");
     }
 
     protected override async Task ApplySqlAsync()
@@ -80,7 +89,8 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     /// current_order_id at it — the exact state NfcOrderingStore leaves an
     /// age-restricted self-check-in order in.
     /// </summary>
-    public async Task<(Guid OrderId, Guid TableId, Guid ProductId)> SeedPendingConfirmationOrderAsync()
+    public async Task<(Guid OrderId, Guid TableId, Guid ProductId)> SeedPendingConfirmationOrderAsync(
+        bool seedStockMapping = true, decimal stockOnHandQuantity = 100m)
     {
         var tableId = Guid.NewGuid();
         await ExecuteAsync(
@@ -99,6 +109,13 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
             """,
             ("product_id", productId),
             ("sku", "rmd137-" + productId.ToString("N")[..8]));
+
+        // V1-RMD-143: OrderStockConsumptionService refuses Accept outright
+        // for a product with no stock mapping at all (Semih's own decision)
+        // — every test that expects a real, successful Accept needs one,
+        // hence the default true; a test of that refusal itself passes false.
+        if (seedStockMapping)
+            await SeedStockMappingWithBalanceAsync(productId, stockOnHandQuantity);
 
         var orderItem = new OrderItem(
             Guid.NewGuid(),
@@ -134,6 +151,32 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
             ("table_id", tableId));
 
         return (order.Id, tableId, productId);
+    }
+
+    /// <summary>V1-RMD-143: a stock location + item + product mapping + real on-hand balance, so Accept's own stock consumption succeeds.</summary>
+    public async Task SeedStockMappingWithBalanceAsync(Guid productId, decimal onHandQuantity)
+    {
+        var locationId = Guid.NewGuid();
+        var stockItemId = Guid.NewGuid();
+        var suffix = stockItemId.ToString("N")[..8];
+        await ExecuteAsync(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@location_id, @location_code, 'Confirmation Test Location', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@stock_item_id, @stock_item_code, 'Confirmation Test Stock Item', 'Portion', 'adet', @location_id);
+            INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier)
+            VALUES (@product_id, @stock_item_id, 1.0);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES (@balance_id, @stock_item_id, @location_id, @on_hand, 0, @on_hand);
+            """,
+            ("location_id", locationId),
+            ("location_code", "RMD143-" + suffix),
+            ("stock_item_id", stockItemId),
+            ("stock_item_code", "RMD143-" + suffix),
+            ("product_id", productId),
+            ("balance_id", Guid.NewGuid()),
+            ("on_hand", onHandQuantity));
     }
 
     /// <summary>
@@ -228,6 +271,21 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         if (!await reader.ReadAsync())
             throw new InvalidOperationException("Table not found.");
         return (reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetGuid(1));
+    }
+
+    /// <summary>V1-RMD-143: the on-hand quantity for a product's own (single, test-seeded) stock mapping — null if the product has none.</summary>
+    public async Task<decimal?> GetOnHandQuantityForProductAsync(Guid productId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            SELECT b.on_hand_quantity
+            FROM inventory.product_stock_mappings m
+            JOIN inventory.stock_balances b ON b.stock_item_id = m.stock_item_id
+            WHERE m.product_id = @product_id;
+            """);
+        command.Parameters.AddWithValue("product_id", productId);
+        var result = await command.ExecuteScalarAsync();
+        return result is decimal value ? value : null;
     }
 
     public async Task<IReadOnlyList<string>> GetKitchenTicketItemStatusesAsync(Guid orderId)
