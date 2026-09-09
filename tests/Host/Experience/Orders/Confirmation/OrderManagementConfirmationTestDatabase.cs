@@ -153,6 +153,77 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         return (order.Id, tableId, productId);
     }
 
+    /// <summary>
+    /// V1-RMD-143: a PendingConfirmation order with one Active item (mapped,
+    /// funded) and one already-Cancelled item whose product has NO stock
+    /// mapping at all — reproducing what a waiter's void
+    /// (ItemExceptionHandler.VoidItemAsync, ungated on order.Status) can
+    /// leave behind before Accept ever runs. If OrderStockConsumptionService
+    /// ever iterated the cancelled item too, this order could never Accept
+    /// (PRODUCT_STOCK_NOT_CONFIGURED) even though the customer no longer has
+    /// that item at all.
+    /// </summary>
+    public async Task<(Guid OrderId, Guid ActiveProductId, Guid CancelledProductId)> SeedPendingConfirmationOrderWithACancelledItemAsync(
+        decimal stockOnHandQuantity = 10m)
+    {
+        var tableId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status)
+            VALUES (@table_id, @table_number, 4, true, 'Reserved');
+            """,
+            ("table_id", tableId),
+            ("table_number", "RMD143V-" + tableId.ToString("N")[..8]));
+
+        var activeProductId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
+            VALUES (@product_id, @sku, 'Confirmation Active Product', 1, 1, true);
+            """,
+            ("product_id", activeProductId),
+            ("sku", "rmd143v-active-" + activeProductId.ToString("N")[..8]));
+        await SeedStockMappingWithBalanceAsync(activeProductId, stockOnHandQuantity);
+
+        var cancelledProductId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
+            VALUES (@product_id, @sku, 'Confirmation Cancelled Product', 1, 1, true);
+            """,
+            ("product_id", cancelledProductId),
+            ("sku", "rmd143v-cancelled-" + cancelledProductId.ToString("N")[..8]));
+        // Deliberately no stock mapping for this one — the point of the test.
+
+        var activeItem = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), activeProductId, "Confirmation Active Product",
+            quantity: 1, unitPrice: 120m, taxRate: 10m,
+            status: OrderItemState.Active, kitchenState: KitchenState.Sent);
+        var cancelledItem = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), cancelledProductId, "Confirmation Cancelled Product",
+            quantity: 1, unitPrice: 80m, taxRate: 10m,
+            status: OrderItemState.Cancelled, kitchenState: KitchenState.Cancelled);
+
+        var order = new Order(
+            Guid.NewGuid(),
+            OrderSource.Waiter,
+            "RMD143V-" + activeItem.Id.ToString("N")[..8],
+            new[] { activeItem, cancelledItem },
+            tableId: tableId,
+            status: OrderState.PendingConfirmation,
+            confirmationStatus: ConfirmationStatus.Pending);
+
+        var repository = new PostgresOrderRepository(DataSource);
+        await repository.AddAsync(order);
+
+        await ExecuteAsync(
+            "UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;",
+            ("order_id", order.Id),
+            ("table_id", tableId));
+
+        return (order.Id, activeProductId, cancelledProductId);
+    }
+
     /// <summary>V1-RMD-143: a stock location + item + product mapping + real on-hand balance, so Accept's own stock consumption succeeds.</summary>
     public async Task SeedStockMappingWithBalanceAsync(Guid productId, decimal onHandQuantity)
     {

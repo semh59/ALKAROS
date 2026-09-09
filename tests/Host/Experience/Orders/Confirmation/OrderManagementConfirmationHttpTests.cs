@@ -131,6 +131,38 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
         Assert.Equal(0m, await _database.GetOnHandQuantityForProductAsync(productId));
     }
 
+    /// <summary>
+    /// V1-RMD-143 regression: a waiter can void an item off a
+    /// PendingConfirmation order before Accept (ItemExceptionHandler
+    /// .VoidItemAsync is never gated on order.Status) — the resulting
+    /// Cancelled line must not be charged against inventory, even when its
+    /// product has no stock mapping at all (which would otherwise refuse
+    /// the whole Accept for an item the customer no longer has).
+    /// </summary>
+    [Fact]
+    public async Task AcceptingAnOrderWithACancelledItemNeverConsumesItsStock()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, activeProductId, cancelledProductId) =
+            await _database.SeedPendingConfirmationOrderWithACancelledItemAsync(stockOnHandQuantity: 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var order = await _database.ReloadOrderAsync(orderId);
+        Assert.Equal(OrderState.Accepted, order.Status);
+        // The active item's own mapped stock really decreased...
+        Assert.Equal(9m, await _database.GetOnHandQuantityForProductAsync(activeProductId));
+        // ...and the cancelled item's (unmapped) product was never even
+        // looked at for a mapping — proven indirectly: Accept succeeded at
+        // all, since a lookup would have thrown PRODUCT_STOCK_NOT_CONFIGURED.
+        Assert.Null(await _database.GetOnHandQuantityForProductAsync(cancelledProductId));
+    }
+
     /// <summary>Semih's own "kalan stok bilgisi ver garsona" (2026-09-09): viewing a pending order shows how much stock is left for each item.</summary>
     [Fact]
     public async Task ViewingAnOrderShowsTheAvailableStockForEachItem()

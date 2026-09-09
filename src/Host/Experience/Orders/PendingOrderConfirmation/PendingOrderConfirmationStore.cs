@@ -53,11 +53,18 @@ public sealed class PendingOrderConfirmationStore
     /// decision (2026-09-09): stock is consumed here, for every item on
     /// every channel this store serves (Cashier/Waiter/NFC age-restricted/
     /// QR all reach Accepted only through this one method — see
-    /// OrderStockConsumptionService's own doc comment). Runs before the
-    /// order's own state is ever saved, so a missing product mapping or
-    /// insufficient stock refuses the whole Accept outright with nothing
-    /// changed yet, rather than leaving an Accepted order with stock never
-    /// consumed.
+    /// OrderStockConsumptionService's own doc comment). Stock consumption
+    /// and the order's own Accepted write share one connection/transaction
+    /// (the repository's own connection-carrying SaveAsync overload) — the
+    /// same "two independent writes with no shared optimistic-concurrency
+    /// check between them" shape V1-RMD-133 found and fixed for Production's
+    /// batch completion. Splitting them across two commits would let stock
+    /// consumption succeed and then the Accepted write fail on a stale
+    /// RowVersion (e.g. a concurrent void changed the order in between),
+    /// leaving stock permanently decremented for an order that never
+    /// actually reached Accepted. One transaction means a missing product
+    /// mapping, insufficient stock, or a stale row version all refuse the
+    /// whole Accept with nothing changed at all.
     /// </summary>
     public async Task<PendingOrderConfirmationResultV1> AcceptAsync(
         Guid orderId, long expectedRowVersion, Guid actorId, string? notes, CancellationToken cancellationToken = default)
@@ -69,17 +76,19 @@ public sealed class PendingOrderConfirmationStore
         if (order.Status != OrderState.PendingConfirmation)
             throw new OrderNotAwaitingConfirmationException(order.Id, order.Status.ToString());
 
+        var now = DateTimeOffset.UtcNow;
+        var accepted = order.TransitionTo(OrderState.Accepted, notes, actorId, now);
+
+        long newVersion;
         await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
         await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
         {
             await _stockConsumption.ConsumeForAcceptedOrderAsync(order, actorId, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
+            newVersion = await _orders.SaveAsync(accepted, expectedRowVersion, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
-
-        var now = DateTimeOffset.UtcNow;
-        var accepted = order.TransitionTo(OrderState.Accepted, notes, actorId, now);
-        var newVersion = await _orders.SaveAsync(accepted, expectedRowVersion, cancellationToken).ConfigureAwait(false);
 
         var tableReleased = await ReleaseTableAsync(order, releaseToOccupied: true, cancellationToken).ConfigureAwait(false);
         await AppendAuditAsync(order.Id, "Order.Accepted", actorId, notes, now, cancellationToken).ConfigureAwait(false);

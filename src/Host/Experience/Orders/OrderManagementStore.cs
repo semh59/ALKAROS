@@ -215,7 +215,10 @@ public sealed class OrderManagementStore
 
         await transaction.CommitAsync(cancellationToken);
 
-        return MapToDto(order, request.TableNumber);
+        // V1-RMD-143: same enrichment as every other order-viewing path
+        // (GetOrderByIdAsync, LoadOrderDtoAsync) — a waiter building up a
+        // table's cart sees the same "kalan stok" as one reviewing it later.
+        return await WithAvailableStockAsync(MapToDto(order, request.TableNumber), cancellationToken);
     }
 
     public async Task<OrderDto?> GetOrderByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
@@ -448,7 +451,13 @@ public sealed class OrderManagementStore
         if (order == null) return null;
 
         var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
-        return MapToDto(order, tableNumber);
+        var dto = MapToDto(order, tableNumber);
+        // V1-RMD-143: shared with GetOrderByIdAsync so every order-viewing
+        // route (GET /table/{tableId}, the table-draft create/replay
+        // responses, and GET /{orderId}) shows the same "kalan stok" —
+        // a waiter looking up an order by its table, the far more common
+        // path on the floor, must not be the one view left without it.
+        return await WithAvailableStockAsync(dto, cancellationToken);
     }
 
     private async Task<string?> GetTableNumberAsync(Guid? tableId, CancellationToken cancellationToken)

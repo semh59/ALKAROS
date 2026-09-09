@@ -233,17 +233,9 @@ public sealed class NfcOrderingStore
         // waiter to resolve (who reaches the exact same check again through
         // PendingOrderConfirmationStore.AcceptAsync, and sees a real Turkish
         // reason if it is still refused).
-        // order.CanTransitionTo guards against a replay (a retried identical
-        // submission, or two concurrent identical requests) re-consuming
-        // stock for an order that already reached Accepted on an earlier
-        // attempt — TryTransitionAsync's own no-op-if-already-there check
-        // happens too late for that, it runs after stock would already have
-        // been double-consumed.
-        if (!hasAgeRestrictedItem
-            && order.CanTransitionTo(OrderState.Accepted)
-            && await TryConsumeStockAsync(order, cancellationToken))
+        if (!hasAgeRestrictedItem && order.CanTransitionTo(OrderState.Accepted))
         {
-            order = await TryTransitionAsync(order, OrderState.Accepted, "NFC güvenilir kanal - onay gerekmez.", cancellationToken);
+            order = await TryConsumeStockAndAcceptAsync(order, cancellationToken);
         }
 
         var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
@@ -251,33 +243,52 @@ public sealed class NfcOrderingStore
     }
 
     /// <summary>
-    /// True if stock was actually consumed (safe to proceed to Accepted);
-    /// false on the two routine, expected refusals
-    /// (<see cref="ProductStockNotConfiguredException"/>,
-    /// <see cref="InsufficientOrderStockException"/>) — every other
-    /// exception (a real database failure, a misconfigured stock item with
-    /// no default location) still propagates as a genuine error, since
-    /// those are not "just wait for a waiter" situations.
+    /// Consumes stock and saves the order's own Accepted transition inside
+    /// ONE shared transaction — not two separate commits. This is what
+    /// actually closes the double-consumption race a split-transaction
+    /// version could not: two concurrent identical requests both reading
+    /// the same PendingConfirmation order would otherwise both pass
+    /// <see cref="Order.CanTransitionTo"/> and both commit a stock delta
+    /// before either one's order-state write could catch the other (the
+    /// row-version-guarded UPDATE is the only thing serializing them).
+    /// Sharing one transaction means the loser's row-locked UPDATE ...
+    /// WHERE row_version = @expected blocks until the winner commits, then
+    /// affects zero rows and throws — rolling back that transaction's own
+    /// stock consumption right along with it, so only the winner's delta
+    /// survives. Falls through to a fresh read on any of: a routine stock
+    /// refusal (order stays at PendingConfirmation for a waiter), or losing
+    /// that race (the winner's Accepted state is what gets returned).
     /// </summary>
-    private async Task<bool> TryConsumeStockAsync(Order order, CancellationToken cancellationToken)
+    private async Task<Order> TryConsumeStockAndAcceptAsync(Order order, CancellationToken cancellationToken)
     {
         try
         {
+            var accepted = order.TransitionTo(
+                OrderState.Accepted, reason: "NFC güvenilir kanal - onay gerekmez.", changedAt: DateTimeOffset.UtcNow);
+
             await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
             await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
             await _stockConsumption.ConsumeForAcceptedOrderAsync(
                 order, QrOrderExpiryHostedService.SystemActorId, connection, transaction, cancellationToken);
+            await _repository.SaveAsync(accepted, order.RowVersion, connection, transaction, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
-            return true;
         }
         catch (ProductStockNotConfiguredException)
         {
-            return false;
+            // Stays at PendingConfirmation; a waiter resolves it later.
         }
         catch (InsufficientOrderStockException)
         {
-            return false;
+            // Stays at PendingConfirmation; a waiter resolves it later.
         }
+        catch (InvalidOperationException)
+        {
+            // Lost the race: a concurrent identical request already saved
+            // this exact transition first. Fall through to the re-read.
+        }
+
+        return await _repository.GetByIdAsync(order.Id, cancellationToken)
+            ?? throw new InvalidOperationException($"Order {order.Id} disappeared mid-transition.");
     }
 
     private async Task<bool> AnyItemIsAgeRestrictedAsync(Order order, CancellationToken cancellationToken)

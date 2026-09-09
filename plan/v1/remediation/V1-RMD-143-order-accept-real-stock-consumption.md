@@ -113,6 +113,16 @@ stoğu da görsün ("Kalan stok bilgisi ver garsona").
 - Docker Compose üzerinden manuel uçtan uca doğrulama — Semih'in kendi
   eliyle deneyebileceği senaryo aşağıda tarif edildi, ayrı bir çalıştırma
   bu görevin kapanışını beklemedi.
+- `OrderItemModifier` (bir sipariş kaleminin modifier'ları, ör. "ekstra
+  peynir" — kendisi de `catalog.products` (`ProductType.Modifier`)
+  içinde ayrı bir ürün) hiç stok tüketmiyor —
+  `OrderStockConsumptionService` yalnız `item.ProductId`'ye bakıyor,
+  `item.Modifiers`'a hiç bakmıyor. Bulundu (2026-09-09 derin inceleme)
+  ama kasıtlı olarak bu görevin kapsamına alınmadı: modifier'ların kendi
+  BOM'u olup olmayacağı, eşlenmemiş bir modifier'ın tüm Accept'i
+  reddedip reddetmeyeceği gibi sorular Semih'in ayrı kararını gerektirir
+  — "kataloğdaki tüm satılabilir ürünler" kapsamı yorumlanırken bu görev
+  boyunca hep `OrderItem.ProductId` (ana ürün) anlamında kullanıldı.
 
 ## Dependencies
 
@@ -198,6 +208,71 @@ stoğu da görsün ("Kalan stok bilgisi ver garsona").
   dokunulmadı), yeni ihlal yok — bu görev sırasında `StockMasterEndpoints.
   cs` ve `OrderStockConsumptionService.cs`'deki Türkçe yorum bloklarının
   ürettiği 22 yeni ihlal İngilizceye çevrilerek giderildi.
+
+### Derin gözden geçirme (Semih'in isteğiyle, ilk commit'ten sonra, 2026-09-09)
+
+İlk commit (`6cddb32e`) sonrası Semih'in "yapılanları detaylı ve derin
+kontrol et" isteği üzerine kod tekrar satır satır incelendi. İki gerçek
+kusur bulundu ve düzeltildi (üçüncüsü kasıtlı olarak "Out of scope"a
+eklendi, dördüncüsü ayrı, bu görevden bağımsız bir kusur olarak
+raporlandı):
+
+1. **İptal edilmiş kalem yine de stok tüketiyordu.** Bir garson,
+   sipariş hâlâ `PendingConfirmation`'dayken bir kalemi iptal
+   edebiliyor (`ItemExceptionHandler.VoidItemAsync` / `SentItemVoidStore`
+   — ikisi de `order.Status`'a değil yalnız kalemin kendi
+   Status/KitchenState'ine bakıyor; `PendingConfirmation` siparişlerin
+   kalemleri genelde zaten `KitchenState.Sent` olduğundan "void-sent"
+   yolu gerçekçi bir senaryo). `OrderStockConsumptionService` `order.
+  Items`'ı hiç filtrelemeden geziyordu — iptal edilen kalem hâlâ listede
+   kalıyor ve Accept'te onun için de stok aranıyordu; ürünün eşlemesi
+   yoksa (artık siparişte olmayan bir ürün için) TÜM Accept haksız yere
+   reddediliyordu. Düzeltme: `item.Status == OrderItemState.Cancelled`
+   olan kalemler atlanıyor (Complimentary kalemler hâlâ tüketiyor —
+   onlar gerçekten hazırlanıp servis ediliyor). Yeni regresyon testi
+   (`AcceptingAnOrderWithACancelledItemNeverConsumesItsStock`) düzeltme
+   olmadan gerçekten kırmızı olduğu doğrulanarak eklendi.
+2. **Accept iki ayrı transaction'a bölünmüştü — Production'ın V1-RMD-133
+   ile kendi kapattığı aynı hata sınıfı.** `PendingOrderConfirmationStore.
+   AcceptAsync` stok tüketimini kendi transaction'ında commit ediyor,
+   SONRA siparişin `Accepted` yazısını AYRI bir transaction'da
+   kaydediyordu. Aradaki optimistic-concurrency kontrolü paylaşılmadığı
+   için, stok tüketimi commit olduktan sonra sipariş yazısı eski row
+   version yüzünden başarısız olursa (ör. o sırada başka biri kalemi
+   iptal ettiyse), stok kalıcı olarak düşmüş ama sipariş hiç Accepted'e
+   geçmemiş oluyordu. Düzeltme: ikisi artık TEK transaction'da,
+   `IOrderRepository.SaveAsync`'in connection/transaction taşıyan
+   overload'ı üzerinden. Aynı kusur `NfcOrderingStore`'un kendi
+   "TryConsumeStockAsync" + ayrı `TryTransitionAsync(Accepted)"
+   ikilisinde de vardı — üstelik orada bunu tek transaction'da
+   birleştirmek, önceki oturumda "tam olarak teorik kapatılmadı" diye
+   not düşülen NFC eşzamanlı çifte-tüketim yarışını da gerçekten
+   kapatıyor (kaybeden isteğin row-version korumalı UPDATE'i satır
+   kilidine takılıp sıfır satır etkiler ve o transaction'ın kendi stok
+   tüketimini de birlikte geri alır). `TryConsumeStockAsync` bu yüzden
+   `TryConsumeStockAndAcceptAsync` olarak yeniden yazıldı. Regresyon:
+   Confirmation 15/15 (yeni test dahil), NfcOrdering 17/17 (3 ardışık
+   koşuda kararlı).
+3. Modifier'ların stok tüketmemesi — yukarıdaki "Out of scope"a eklendi.
+4. **Bu görevden bağımsız, önceden var olan bir kusur bulundu (bu görev
+   sırasında düzeltilmedi — kapsam dışı):**
+   `OrderManagementTableDraftHttpTests.
+   ConcurrentIdenticalFirstSubmissionsForATableResolveToTheSameOrder`
+   bu makinede %100 tekrarlanan bir gerçek yarış koşulu ortaya çıkardı:
+   `OrderManagementStore.CreateOrUpdateTableDraftAsync`'in
+   `orderNumber = $"TBL-{tableNumber}-{now:HHmmssff}"` üretimi, iki
+   gerçekten eşzamanlı (`Task.WhenAll`) istek Windows'un kaba saat
+   çözünürlüğü yüzünden aynı `HHmmssff` değerini üretince
+   `orders_order_number_key` tekilliğini ihlal ediyor — kod yalnız
+   `ux_orders_table_submission` ihlalini yakalıyor, bu farklı kısıtı
+   yakalamıyor, 503'e düşüyor. `git stash` ile bu görevin TÜM
+   değişiklikleri geri alınıp son commit'teki (`6cddb32e`) hal üzerinde
+   3 kez tekrar çalıştırılarak doğrulandı: hata aynı şekilde ORADA DA
+   var — bu görevin bir regresyonu değil, `OrderManagementStore`'un
+   (V1-RMD-107/123 kökenli) kendi önceden var olan kusuru. Ayrı bir
+   Task ID gerektirir (order_number üretimine gerçek bir çakışmasızlık
+   garantisi — ör. bir sequence veya rastgele son ek — eklemek);
+   Semih'e ayrıca bildirildi.
 
 ## Handoff
 

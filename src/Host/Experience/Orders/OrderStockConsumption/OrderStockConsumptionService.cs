@@ -67,6 +67,25 @@ public sealed class OrderStockConsumptionService
 
         foreach (var item in order.Items)
         {
+            // A waiter can void an item (ItemExceptionHandler.VoidItemAsync)
+            // while the order still sits at PendingConfirmation — nothing
+            // gates that on order.Status, only the item's own Status/
+            // KitchenState — so a Cancelled line can reach here in the same
+            // `order.Items` list. It was never sent to the kitchen and never
+            // will be; consuming stock for it would charge inventory for a
+            // product the customer no longer gets. Complimentary items are
+            // still prepared and served for free, so they still consume.
+            // A waiter can void an item (ItemExceptionHandler.VoidItemAsync)
+            // while the order still sits at PendingConfirmation — nothing
+            // gates that on order.Status, only the item's own Status/
+            // KitchenState — so a Cancelled line can reach here in the same
+            // `order.Items` list. It was never sent to the kitchen and never
+            // will be; consuming stock for it would charge inventory for a
+            // product the customer no longer gets. Complimentary items are
+            // still prepared and served for free, so they still consume.
+            if (item.Status == OrderItemState.Cancelled)
+                continue;
+
             var productMappings = await _mappings.GetByProductIdAsync(item.ProductId, cancellationToken);
             if (productMappings.Count == 0)
                 throw new ProductStockNotConfiguredException(item.ProductId, item.ProductNameSnapshot);

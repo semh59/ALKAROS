@@ -52,8 +52,8 @@ public static class NfcOrderingEndpoints
         });
         // V1-RMD-143: Semih's decision (2026-09-09) — NFC's own trusted
         // immediate-accept also consumes stock now (see NfcOrderingStore's
-        // own TryConsumeStockAsync and OrderStockConsumptionService's doc
-        // comment).
+        // own TryConsumeStockAndAcceptAsync and OrderStockConsumptionService's
+        // doc comment).
         services.TryAddSingleton<IProductStockMappingRepository, PostgresProductStockMappingRepository>();
         services.TryAddSingleton<IStockItemRepository, PostgresStockItemRepository>();
         services.TryAddSingleton<IStockBalanceRepository, PostgresStockBalanceRepository>();
