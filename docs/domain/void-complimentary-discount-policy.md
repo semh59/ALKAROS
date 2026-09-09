@@ -115,3 +115,46 @@ Adjustment`.
 - **Not changed:** void reason catalog, void audit row shape, complimentary
   rules, discount rules, and the refund boundary (all lines above except
   29) are unchanged.
+
+## Amendment (2026-09-09)
+
+- **Date:** 2026-09-09
+- **Approver:** Semih (named business approver)
+- **Change:** The original record's Waste definition (line 16, "hazırlanmış
+  ancak satılamayan ürünün stoktan çıkması") and the 2026-09-04 amendment's
+  own "waste" handling for a sent-but-unserved void both implicitly assumed
+  a sent item had already been *prepared* by the time anyone would void it.
+  `V1-RMD-143` (2026-09-09) started actually decrementing real inventory at
+  Order Accept — not at kitchen prep start — which broke that assumption:
+  `KitchenState.Sent` only means the ticket reached the kitchen, not that
+  an ingredient was ever touched. Voiding a `Sent` item and still calling
+  its stock cost "Waste" would permanently lose inventory for food that was
+  never made. This amendment splits the sent-but-unserved void's stock
+  effect by `KitchenState`:
+  - **`Sent`** (ticket dispatched, kitchen has not started): the item's own
+    Accept-time stock consumption is reversed — a real `StockMovementType.
+    Reversal` movement, found by the exact order item id
+    (`OrderStockConsumptionService`'s own movements are keyed per item, not
+    per order, precisely so this lookup is unambiguous) — restoring
+    `on_hand_quantity` to what it was before Accept. The bill line (if any)
+    is still converted to `Waste` for billing purposes (the customer owes
+    nothing), even though nothing was actually wasted physically — no
+    canonical `line_type` exists for "voided after being billed but before
+    prep started", and reusing `Waste` there is a labeling compromise, not
+    a claim that ingredients were lost.
+  - **`Preparing`/`Ready`** (kitchen has started or finished): unchanged —
+    stock stays consumed, matching the original Waste definition for a
+    genuinely prepared item.
+- **Rationale:** The original amendment's "waste" framing predates real
+  stock consumption existing at all (Accept had no inventory effect before
+  V1-RMD-143) — it could not have anticipated this distinction. Reversing a
+  Sent item's stock is strictly more accurate than leaving it consumed, and
+  costs nothing the domain does not already support: `StockMovementType.
+  Reversal` and `IStockMovementReversalService` (`V11-INV-003`) already
+  existed, fully built and tested, with zero callers until this amendment.
+- **Affected tasks:** `V1-RMD-143` (`SentItemVoidStore`'s own restore step;
+  `OrderStockConsumptionService`'s movements now key `sourceReferenceId` on
+  the order item, not the order, specifically to make this lookup exact).
+- **Not changed:** everything else in this document, including the
+  `Preparing`/`Ready` void path's own existing Waste/bill-conversion
+  behaviour and every rule not about stock.

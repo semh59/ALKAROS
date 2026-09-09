@@ -251,6 +251,143 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     }
 
     /// <summary>
+    /// V1-RMD-143 (2026-09-09 deep review): a PendingConfirmation order for
+    /// a product whose BOM is TWO stock items — one abundantly funded, the
+    /// other with none at all — proving OrderStockConsumptionService's own
+    /// documented claim that a multi-mapping product's consumption is
+    /// all-or-nothing within one transaction: if the second mapping is
+    /// insufficient, the FIRST mapping's already-applied delta (same
+    /// transaction, not yet committed) must roll back too, not just refuse
+    /// the second one.
+    /// </summary>
+    public async Task<(Guid OrderId, Guid ProductId, Guid FundedStockItemId, Guid EmptyStockItemId)> SeedPendingConfirmationOrderWithATwoIngredientBomAsync()
+    {
+        var tableId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status)
+            VALUES (@table_id, @table_number, 4, true, 'Reserved');
+            """,
+            ("table_id", tableId),
+            ("table_number", "RMD143B-" + tableId.ToString("N")[..8]));
+
+        var productId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
+            VALUES (@product_id, @sku, 'Confirmation Two-Ingredient Product', 1, 1, true);
+            """,
+            ("product_id", productId),
+            ("sku", "rmd143b-" + productId.ToString("N")[..8]));
+
+        var locationId = Guid.NewGuid();
+        var fundedStockItemId = Guid.NewGuid();
+        var emptyStockItemId = Guid.NewGuid();
+        var suffix = productId.ToString("N")[..8];
+        await ExecuteAsync(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@location_id, @location_code, 'Confirmation Bom Test Location', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@funded_id, @funded_code, 'Confirmation Bom Funded Item', 'RawMaterial', 'adet', @location_id);
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@empty_id, @empty_code, 'Confirmation Bom Empty Item', 'RawMaterial', 'adet', @location_id);
+            INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier)
+            VALUES (@product_id, @funded_id, 1.0), (@product_id, @empty_id, 1.0);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES
+                (@funded_balance_id, @funded_id, @location_id, 10, 0, 10),
+                (@empty_balance_id, @empty_id, @location_id, 0, 0, 0);
+            """,
+            ("location_id", locationId),
+            ("location_code", "RMD143B-" + suffix),
+            ("funded_id", fundedStockItemId),
+            ("funded_code", "RMD143B-FUNDED-" + suffix),
+            ("empty_id", emptyStockItemId),
+            ("empty_code", "RMD143B-EMPTY-" + suffix),
+            ("product_id", productId),
+            ("funded_balance_id", Guid.NewGuid()),
+            ("empty_balance_id", Guid.NewGuid()));
+
+        var item = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), productId, "Confirmation Two-Ingredient Product",
+            quantity: 1, unitPrice: 150m, taxRate: 10m,
+            status: OrderItemState.Active, kitchenState: KitchenState.Sent);
+        var order = new Order(
+            Guid.NewGuid(),
+            OrderSource.Waiter,
+            "RMD143B-" + item.Id.ToString("N")[..8],
+            new[] { item },
+            tableId: tableId,
+            status: OrderState.PendingConfirmation,
+            confirmationStatus: ConfirmationStatus.Pending);
+
+        var repository = new PostgresOrderRepository(DataSource);
+        await repository.AddAsync(order);
+
+        await ExecuteAsync(
+            "UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;",
+            ("order_id", order.Id),
+            ("table_id", tableId));
+
+        return (order.Id, productId, fundedStockItemId, emptyStockItemId);
+    }
+
+    /// <summary>
+    /// V1-RMD-143 (2026-09-09 deep review): a PendingConfirmation order
+    /// whose only item is already Complimentary (a manager can comp an
+    /// item before Accept too — ItemExceptionHandler.ApplyComplimentaryAsync
+    /// is likewise never gated on order.Status). Complimentary items are
+    /// still really prepared and served for free, so unlike a Cancelled
+    /// line they must still consume stock at Accept.
+    /// </summary>
+    public async Task<(Guid OrderId, Guid ProductId)> SeedPendingConfirmationOrderWithAComplimentaryItemAsync(decimal stockOnHandQuantity = 10m)
+    {
+        var tableId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status)
+            VALUES (@table_id, @table_number, 4, true, 'Reserved');
+            """,
+            ("table_id", tableId),
+            ("table_number", "RMD143C-" + tableId.ToString("N")[..8]));
+
+        var productId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
+            VALUES (@product_id, @sku, 'Confirmation Complimentary Product', 1, 1, true);
+            """,
+            ("product_id", productId),
+            ("sku", "rmd143c-" + productId.ToString("N")[..8]));
+        await SeedStockMappingWithBalanceAsync(productId, stockOnHandQuantity);
+
+        var item = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), productId, "Confirmation Complimentary Product",
+            quantity: 1, unitPrice: 90m, taxRate: 10m,
+            status: OrderItemState.Complimentary, kitchenState: KitchenState.Sent,
+            netAmount: 0m, taxAmount: 0m, grossAmount: 0m);
+        var order = new Order(
+            Guid.NewGuid(),
+            OrderSource.Waiter,
+            "RMD143C-" + item.Id.ToString("N")[..8],
+            new[] { item },
+            tableId: tableId,
+            status: OrderState.PendingConfirmation,
+            confirmationStatus: ConfirmationStatus.Pending);
+
+        var repository = new PostgresOrderRepository(DataSource);
+        await repository.AddAsync(order);
+
+        await ExecuteAsync(
+            "UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;",
+            ("order_id", order.Id),
+            ("table_id", tableId));
+
+        return (order.Id, productId);
+    }
+
+    /// <summary>
     /// V12-QRO-002: a QR-sourced PendingConfirmation order whose updated_at
     /// is backdated by <paramref name="age"/> — for QrOrderExpiryHostedService's
     /// own tests. OrderSource.Qr is used deliberately (unlike
@@ -357,6 +494,16 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         command.Parameters.AddWithValue("product_id", productId);
         var result = await command.ExecuteScalarAsync();
         return result is decimal value ? value : null;
+    }
+
+    /// <summary>V1-RMD-143: on-hand quantity for one specific stock item — for a product with more than one mapping, where the by-product lookup above is ambiguous.</summary>
+    public async Task<decimal> GetOnHandQuantityForStockItemAsync(Guid stockItemId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = @stock_item_id;");
+        command.Parameters.AddWithValue("stock_item_id", stockItemId);
+        var result = await command.ExecuteScalarAsync();
+        return result is decimal value ? value : 0m;
     }
 
     public async Task<IReadOnlyList<string>> GetKitchenTicketItemStatusesAsync(Guid orderId)

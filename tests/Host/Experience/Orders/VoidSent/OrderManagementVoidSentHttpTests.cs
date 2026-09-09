@@ -163,6 +163,65 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         Assert.Equal("Applied", body!.Status);
         Assert.False(body.KitchenTicketItemCancelled);
         Assert.False(body.BillLineConvertedToWaste);
+        // Nothing was ever seeded as consumed for this item — nothing to
+        // restore, and that is not an error (V1-RMD-143 follow-up).
+        Assert.False(body.StockRestored);
+    }
+
+    /// <summary>
+    /// V1-RMD-143 follow-up (2026-09-09 deep review): docs/domain/
+    /// void-complimentary-discount-policy.md's own Waste definition
+    /// ("hazırlanmış ancak satılamayan ürünün stoktan çıkması") assumes the
+    /// kitchen had actually started — Semih's revision: a merely-Sent item
+    /// (ticket dispatched, nothing physically used yet) gets its stock back
+    /// on void instead of staying a permanent, unearned Waste deduction.
+    /// </summary>
+    [Fact]
+    public async Task VoidingASentItemBeforeTheKitchenStartedRestoresItsStock()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        var (stockItemId, _) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        Assert.Equal("Applied", body!.Status);
+        Assert.True(body.StockRestored);
+        Assert.Equal(10m, await _database.GetOnHandQuantityAsync(stockItemId));
+    }
+
+    /// <summary>
+    /// The mirror case: once the kitchen has actually started (Preparing or
+    /// Ready), the ingredients are genuinely gone — the void still applies
+    /// (Order/Kitchen/Bill unchanged from the existing behaviour), but stock
+    /// stays consumed, matching the documented Waste policy.
+    /// </summary>
+    [Fact]
+    public async Task VoidingAPreparingItemDoesNotRestoreItsStock()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing);
+        var (stockItemId, _) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        Assert.Equal("Applied", body!.Status);
+        Assert.False(body.StockRestored);
+        Assert.Equal(9m, await _database.GetOnHandQuantityAsync(stockItemId));
     }
 
     [Fact]

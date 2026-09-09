@@ -86,6 +86,61 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
         Assert.Equal(9m, await _database.GetOnHandQuantityForProductAsync(productId));
     }
 
+    /// <summary>
+    /// V1-RMD-143 (2026-09-09 deep review): a product's BOM can be more than
+    /// one stock item — if the second mapping is insufficient, the first
+    /// mapping's already-applied delta (same transaction) must roll back
+    /// too, not leave a partial consumption behind.
+    /// </summary>
+    [Fact]
+    public async Task AcceptingAnOrderWithATwoIngredientBomAppliesNeitherDeltaWhenOneIsInsufficient()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, fundedStockItemId, emptyStockItemId) =
+            await _database.SeedPendingConfirmationOrderWithATwoIngredientBomAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("INSUFFICIENT_STOCK", body);
+
+        var order = await _database.ReloadOrderAsync(orderId);
+        Assert.Equal(OrderState.PendingConfirmation, order.Status);
+        // The FIRST (funded) mapping's delta must be rolled back along with
+        // the second's refusal — still exactly 10, not 9.
+        Assert.Equal(10m, await _database.GetOnHandQuantityForStockItemAsync(fundedStockItemId));
+        Assert.Equal(0m, await _database.GetOnHandQuantityForStockItemAsync(emptyStockItemId));
+    }
+
+    /// <summary>
+    /// V1-RMD-143 (2026-09-09 deep review): a Complimentary item (a manager
+    /// can comp an item before Accept too, same as a void) is still really
+    /// prepared and served for free — unlike a Cancelled line, it must
+    /// still consume stock.
+    /// </summary>
+    [Fact]
+    public async Task AcceptingAnOrderWithAComplimentaryItemStillConsumesItsStock()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, productId) = await _database.SeedPendingConfirmationOrderWithAComplimentaryItemAsync(stockOnHandQuantity: 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var order = await _database.ReloadOrderAsync(orderId);
+        Assert.Equal(OrderState.Accepted, order.Status);
+        Assert.Equal(9m, await _database.GetOnHandQuantityForProductAsync(productId));
+    }
+
     /// <summary>Semih's decision (2026-09-09): a sold product with no stock mapping at all refuses Accept outright, it is never silently skipped.</summary>
     [Fact]
     public async Task AcceptingAnOrderForAnUnmappedProductIsRefused()

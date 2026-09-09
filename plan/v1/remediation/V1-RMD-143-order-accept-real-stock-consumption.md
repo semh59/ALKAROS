@@ -71,6 +71,21 @@ stoğu da görsün ("Kalan stok bilgisi ver garsona").
     testleri eklendi, Confirmation'ın kendi önceden var olan
     `ALKAROS_KITCHEN_STATION_ID` ortam değişkeni eksikliği (bu görevden
     önce hiç GET /{orderId} yolu ile tetiklenmemişti) giderildi.
+  - src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs,
+    src/Host/Experience/Orders/SentItemVoid/SentItemVoidContracts.cs
+    (V1-IAM-027 sahipliğinde) — 2026-09-09 derin inceleme sonrası: kalem
+    hâlâ `KitchenState.Sent`iken (mutfak hiç başlamamışken) `void-sent`
+    ile iptal edilirse, Accept anında düşülen stoğu artık gerçekten geri
+    veriyor (`IStockMovementReversalService`, V11-INV-003, önceden sıfır
+    çağıranı olan hazır bir modül); `Preparing`/`Ready` değişmedi (stok
+    tüketilmiş kalıyor, `docs/domain/void-complimentary-discount-policy.
+    md`'nin Waste tanımına uyuyor).
+  - docs/domain/void-complimentary-discount-policy.md (V0-DOM-006
+    sahipliğinde) — yeni "## Amendment (2026-09-09)" bölümü, yukarıdaki
+    kararı Semih'in onaylı karar kaydı olarak dokümante ediyor.
+  - tests/Host/Experience/Orders/VoidSent/** (V1-IAM-027 sahipliğinde) —
+    stok geri verme senaryoları için 2 yeni test + gerçek tüketim
+    hareketi + bakiye tohumlayan yeni fixture yardımcıları.
 
 ## In scope
 
@@ -95,12 +110,31 @@ stoğu da görsün ("Kalan stok bilgisi ver garsona").
    erişilemiyordu; birinin ürün↔stok kalemi eşlemesini gerçekten
    tanımlayabilmesi için `/api/v1/management/inventory/**` eklendi
    (stok konumu/kalem CRUD-lite, ürün-stok eşleme atama+listeleme).
-4. **Garsona kalan stok görünürlüğü.** `OrderManagementStore.GetOrderByIdAsync`
-   (bekleyen siparişi görüntüleme uç noktası) artık her kalem için gerçek
-   BOM aritmetiğiyle (`Math.Min` üzerinden çoklu eşleme sınırlayıcı
-   faktörü) `AvailableStockQuantity` döndürüyor; eşlenmemiş ürün için
-   `null` (yanıltıcı sıfır değil). Salt bilgilendirme — tek yetkili kapı
-   hâlâ Accept anındaki `OrderStockConsumptionService`.
+4. **Garsona kalan stok görünürlüğü.** `OrderManagementStore`'un sipariş
+   döndüren HER yolu (`GetOrderByIdAsync`, masaya göre görüntüleme, taslak
+   oluşturma/ekleme yanıtı) artık her kalem için gerçek BOM aritmetiğiyle
+   (`Math.Min` üzerinden çoklu eşleme sınırlayıcı faktörü)
+   `AvailableStockQuantity` döndürüyor; eşlenmemiş ürün için `null`
+   (yanıltıcı sıfır değil). Salt bilgilendirme — tek yetkili kapı hâlâ
+   Accept anındaki `OrderStockConsumptionService`.
+5. **Ürün-stok eşlemesini kaldırma** (2026-09-09 derin inceleme).
+   `IProductStockMappingRepository.RemoveAsync` V1.1'den beri vardı ama
+   hiç çağrılmıyordu — yanlış yapılandırılmış bir eşlemeyi düzeltmenin
+   hiçbir yolu yoktu. `DELETE /api/v1/management/inventory/products/
+   {productId}/stock-mappings/{stockItemId}` eklendi; eşleme yoksa 404.
+6. **Accept-sonrası "sent" bir kalemin iptalinde stok iadesi** (2026-09-09
+   derin inceleme, Semih'in kararı). `SentItemVoidStore`, mutfak henüz
+   başlamamışken (`KitchenState.Sent`) iptal edilen bir kalemin Accept
+   anında düşülen stoğunu artık gerçekten geri veriyor — hazır,
+   önceden hiç çağrılmayan `IStockMovementReversalService`
+   (V11-INV-003) üzerinden gerçek bir `Reversal` hareketi kaydederek.
+   `Preparing`/`Ready` değişmedi (stok tüketilmiş kalıyor).
+   `docs/domain/void-complimentary-discount-policy.md`'ye bu kararı
+   belgeleyen "## Amendment (2026-09-09)" eklendi. Bunu doğru
+   hedefleyebilmek için `OrderStockConsumptionService`'in kendi
+   `StockMovement.sourceReferenceId`'i artık `order.Id` değil
+   `item.Id` — bir siparişin başka bir kaleminin tüketimi hiç
+   etkilenmiyor.
 
 ## Out of scope
 
@@ -108,8 +142,9 @@ stoğu da görsün ("Kalan stok bilgisi ver garsona").
   `on_hand_quantity`'e hiç dokunmaması — bağımsız, daha derin bir
   bulgu (V11-RSV-001/002/003, hâlâ sıfır çağıranı var); ayrı karar.
 - StockMaster HTTP yüzeyinin konum/kalem güncelleme veya pasifleştirme
-  uç noktaları — yalnız oluşturma+listeleme+eşleme, bu görevin gerçek
-  ihtiyacı (bir ürünü bir stok kalemine bağlayabilmek).
+  uç noktaları — yalnız oluşturma+listeleme+eşleme+eşleme kaldırma, bu
+  görevin gerçek ihtiyacı (bir ürünü bir stok kalemine bağlayıp
+  düzeltebilmek).
 - Docker Compose üzerinden manuel uçtan uca doğrulama — Semih'in kendi
   eliyle deneyebileceği senaryo aşağıda tarif edildi, ayrı bir çalıştırma
   bu görevin kapanışını beklemedi.
@@ -273,6 +308,60 @@ raporlandı):
    Task ID gerektirir (order_number üretimine gerçek bir çakışmasızlık
    garantisi — ör. bir sequence veya rastgele son ek — eklemek);
    Semih'e ayrıca bildirildi.
+
+### "Başka ne eksikler var" turu (Semih'in isteğiyle, 2026-09-09)
+
+Semih'in "başka ne eksikler var" sorusu üzerine dört yeni bulgu
+raporlandı; Semih üçünü şimdi kapatmayı seçti (eksik test kanıtları,
+eşleme kaldırma uç noktası, Accept-sonrası stok iadesi), dördüncüsü
+(modifier'lar) "Out of scope"a eklendi (yukarıda).
+
+- **Eksik test kanıtları kapatıldı**: çoklu-BOM (2 stok kalemli bir
+  ürün, biri yetersiz) atomik geri alma testi
+  (`AcceptingAnOrderWithATwoIngredientBomAppliesNeitherDeltaWhenOneIsInsufficient`)
+  ve Complimentary kalemin stok tüketmeye devam ettiği test
+  (`AcceptingAnOrderWithAComplimentaryItemStillConsumesItsStock`) —
+  `ALKAROS.Host.Experience.Orders.Confirmation.Tests`: 17/17 (15'ten).
+- **Eşleme kaldırma**: `DELETE /api/v1/management/inventory/products/
+  {productId}/stock-mappings/{stockItemId}`, gerçek 404 (eşleme yoksa)
+  + 204 (varsa, yalnız hedeflenen çift silinir, aynı ürünün diğer
+  eşlemeleri dokunulmadan kalır) — `ALKAROS.Host.Experience.Inventory.
+  Tests`: 9/9 (7'den).
+- **Accept-sonrası stok iadesi**: `docs/domain/void-complimentary-
+  discount-policy.md`'ye "## Amendment (2026-09-09)" eklendi (Semih'in
+  onayıyla, resmi karar kaydı formatında). `SentItemVoidStore.VoidAsync`
+  artık `KitchenState.Sent`ken iptal edilen bir kalemin Accept'te
+  düşülen stoğunu `IStockMovementReversalService.ReverseMovementAsync`
+  ile gerçekten geri veriyor; `Preparing`/`Ready` değişmedi. İki yeni
+  regresyon testi (`VoidingASentItemBeforeTheKitchenStartedRestoresItsStock`,
+  `VoidingAPreparingItemDoesNotRestoreItsStock`) — ilki, geri verme
+  çağrısı devre dışı bırakılınca gerçekten kırmızı olduğu doğrulanarak
+  eklendi — `ALKAROS.Host.Experience.Orders.VoidSent.Tests`: 12/12
+  (10'dan).
+- Regresyon (gerçek Postgres'e karşı, ayrı ayrı): NfcOrdering 17/17,
+  TableDraft 14/14, Production 4/4, Void 5/5, Comp 9/9,
+  `ALKAROS.Inventory.StockMaster.Tests` 14/14,
+  `ALKAROS.Inventory.MovementReversal.Tests` 16/16,
+  `ALKAROS.Inventory.MovementLedger.Tests` 18/18,
+  `ALKAROS.Inventory.BalanceProjection.Tests` 12/12,
+  `ALKAROS.Host.Tests` (Manifest+Reachability+Composition) 133/133 —
+  hepsi değişmeden geçti. `dotnet build ALKAROS.slnx`: 0/0.
+- `python tools/plan-audit/plan_audit_tool.py validate`: 0 hata,
+  0 uyarı. `python tools/consistency-audit/consistency_audit.py`: bu
+  turda `SentItemVoidStore.cs`'nin yorumunda alıntılanan Türkçe politika
+  metninin ürettiği 2 yeni ihlal İngilizceye çevrilerek giderildi;
+  geriye yalnız önceden var olan, ilgisiz 1 ihlal kaldı.
+- Gerçek Docker Compose uçtan uca doğrulama (aynı ortam, `docker compose
+  build api` + `up -d --wait --force-recreate api`, yeni migration
+  gerekmedi): gerçek bir NFC siparişi kabul edilip stok gerçekten 10'dan
+  9'a düştü; kalem `Sent` durumuna zorlanıp `void-sent` çağrıldığında
+  `stockRestored: true` döndü ve `inventory.stock_movements`'ta gerçek
+  bir `Reversal` satırı (`source_type=StockMovement`,
+  `source_reference_id=<orijinal Consumption hareketinin id'si>`)
+  oluştu, bakiye gerçekten 10'a döndü; ikinci bir sipariş `Preparing`e
+  zorlanıp aynı şekilde iptal edildiğinde `stockRestored: false` döndü
+  ve bakiye 9'da değişmeden kaldı; yeni eşleme `DELETE` uç noktası gerçek
+  204/404 döndürdü ve yalnız hedeflenen (ürün, stok kalemi) çiftini sildi.
 
 ## Handoff
 

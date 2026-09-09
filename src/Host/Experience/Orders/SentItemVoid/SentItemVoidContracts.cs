@@ -15,6 +15,14 @@ public sealed record SentItemVoidCommand(
     string CorrelationId,
     string? Notes = null);
 
+/// <summary>
+/// <c>StockRestored</c> (V1-RMD-143 follow-up, 2026-09-09): true when the
+/// item's own stock consumption was reversed because the kitchen had not
+/// started on it yet (KitchenState was still Sent) — false either because
+/// it had already reached Preparing/Ready (stays Waste, matching
+/// docs/domain/void-complimentary-discount-policy.md's own Waste
+/// definition) or because there was nothing to reverse.
+/// </summary>
 public sealed record SentItemVoidResult(
     Guid OrderId,
     Guid OrderItemId,
@@ -22,6 +30,7 @@ public sealed record SentItemVoidResult(
     decimal NewOrderTotal,
     bool KitchenTicketItemCancelled,
     bool BillLineConvertedToWaste,
+    bool StockRestored,
     DateTimeOffset AppliedAt);
 
 /// <summary>The item is still KitchenState.NotSent — the free pre-send void endpoint applies instead (V1-ORD-005).</summary>

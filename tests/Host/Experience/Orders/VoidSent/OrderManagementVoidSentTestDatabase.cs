@@ -1,6 +1,7 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.TestHelpers;
@@ -182,6 +183,63 @@ public sealed class OrderManagementVoidSentTestDatabase : PgTestDatabase
         var repository = new PostgresBillRepository(DataSource);
         await repository.AddAsync(bill);
         return billId;
+    }
+
+    /// <summary>
+    /// V1-RMD-143 follow-up (2026-09-09): seeds a stock item/location/balance
+    /// already decremented by <paramref name="consumedQuantity"/> and the
+    /// real Consumption movement OrderStockConsumptionService would have
+    /// recorded for this exact order item at Accept time (`sourceReferenceId
+    /// = orderItemId`) — the same movement SentItemVoidStore's own restore
+    /// step looks up and reverses.
+    /// </summary>
+    public async Task<(Guid StockItemId, Guid LocationId)> SeedConsumedStockForItemAsync(
+        Guid orderItemId, decimal onHandAfterConsumption, decimal consumedQuantity)
+    {
+        var locationId = Guid.NewGuid();
+        var stockItemId = Guid.NewGuid();
+        var suffix = stockItemId.ToString("N")[..8];
+        await ExecuteAsync(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@location_id, @location_code, 'VoidSent Test Location', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@stock_item_id, @stock_item_code, 'VoidSent Test Stock Item', 'Portion', 'adet', @location_id);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES (@balance_id, @stock_item_id, @location_id, @on_hand, 0, @on_hand);
+            """,
+            ("location_id", locationId),
+            ("location_code", "IAM027-" + suffix),
+            ("stock_item_id", stockItemId),
+            ("stock_item_code", "IAM027-" + suffix),
+            ("balance_id", Guid.NewGuid()),
+            ("on_hand", onHandAfterConsumption));
+
+        var movement = new StockMovement(
+            id: Guid.NewGuid(),
+            stockItemId: stockItemId,
+            stockLocationId: locationId,
+            movementType: StockMovementType.Consumption,
+            direction: MovementDirection.Out,
+            quantity: consumedQuantity,
+            unitCode: "adet",
+            sourceType: StockMovementSourceType.Order,
+            sourceReferenceId: orderItemId,
+            reason: "Test seed: order item accepted");
+        var repository = new PostgresStockMovementRepository(DataSource);
+        await repository.AppendAsync(movement);
+
+        return (stockItemId, locationId);
+    }
+
+    /// <summary>V1-RMD-143 follow-up: the real on-hand quantity for one stock item — for asserting a reversal actually restored it.</summary>
+    public async Task<decimal> GetOnHandQuantityAsync(Guid stockItemId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = @stock_item_id;");
+        command.Parameters.AddWithValue("stock_item_id", stockItemId);
+        var result = await command.ExecuteScalarAsync();
+        return result is decimal value ? value : 0m;
     }
 
     /// <summary>Reloads the order and returns the given item's current Status/KitchenState — for asserting nothing was mutated after a rejected void.</summary>

@@ -111,7 +111,9 @@ public sealed record VoidSentItemRequestV1(
 /// <summary>
 /// V1-IAM-027: response for the sent-item void endpoint. "Applied" also
 /// reports whether a matching kitchen ticket item was found and cancelled,
-/// and whether a billed line was converted to BillLineType.Waste.
+/// whether a billed line was converted to BillLineType.Waste, and
+/// (V1-RMD-143 follow-up, 2026-09-09) whether the item's own consumed stock
+/// was given back — only when the kitchen had not started on it yet.
 /// </summary>
 public sealed record VoidSentItemResultV1(
     string Status,
@@ -121,6 +123,7 @@ public sealed record VoidSentItemResultV1(
     decimal? NewOrderTotal,
     bool? KitchenTicketItemCancelled,
     bool? BillLineConvertedToWaste,
+    bool? StockRestored,
     DateTimeOffset? AppliedAt,
     Guid? GrantId);
 

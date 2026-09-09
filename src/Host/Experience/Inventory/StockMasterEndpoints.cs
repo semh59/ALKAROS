@@ -147,6 +147,28 @@ public static class StockMasterEndpoints
             return Results.Ok(results);
         });
 
+        // V1-RMD-143 follow-up (Semih, 2026-09-09 deep review): a manager
+        // who mapped a product to the wrong stock item had no way to undo
+        // it — AssignProductToStockItemAsync only ever upserts, and
+        // IProductStockMappingRepository.RemoveAsync already existed but
+        // had zero callers anywhere (same "built but never wired" pattern
+        // this whole file exists to close). Checks the mapping actually
+        // exists first so a caller gets a real 404 instead of a silent
+        // no-op DELETE.
+        group.MapDelete("/products/{productId:guid}/stock-mappings/{stockItemId:guid}", async (
+            Guid productId,
+            Guid stockItemId,
+            IProductStockMappingRepository mappings,
+            CancellationToken cancellationToken) =>
+        {
+            var productMappings = await mappings.GetByProductIdAsync(productId, cancellationToken);
+            if (!productMappings.Any(m => m.StockItemId == stockItemId))
+                throw new ProductStockMappingNotFoundException(productId, stockItemId);
+
+            await mappings.RemoveAsync(productId, stockItemId, cancellationToken);
+            return Results.NoContent();
+        });
+
         return group;
     }
 }
@@ -217,6 +239,7 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         AuthorizationDeniedException => (403, "FORBIDDEN", "Stok yönetimi izni gerekiyor."),
         StockItemNotFoundException => (404, "NOT_FOUND", "İstenen stok kalemi bulunamadı."),
         StockLocationNotFoundException => (404, "NOT_FOUND", "İstenen stok konumu bulunamadı."),
+        ProductStockMappingNotFoundException => (404, "NOT_FOUND", "Bu ürün için böyle bir stok eşlemesi bulunamadı."),
         DuplicateStockItemException => (409, "DUPLICATE_RESOURCE", "Bu kodla bir stok kalemi zaten var."),
         DuplicateStockLocationException => (409, "DUPLICATE_RESOURCE", "Bu kodla bir stok konumu zaten var."),
         InactiveStockItemException or InactiveStockLocationException => (409, "INACTIVE_RESOURCE", "Bu kayıt pasif durumda."),
@@ -235,5 +258,19 @@ public sealed class StockMasterUnauthorizedException : Exception
 {
     public StockMasterUnauthorizedException() : base("A valid inventory manager session is required.")
     {
+    }
+}
+
+/// <summary>No `inventory.product_stock_mappings` row exists for this exact (productId, stockItemId) pair — nothing to remove.</summary>
+public sealed class ProductStockMappingNotFoundException : Exception
+{
+    public Guid ProductId { get; }
+    public Guid StockItemId { get; }
+
+    public ProductStockMappingNotFoundException(Guid productId, Guid stockItemId)
+        : base($"Product '{productId}' has no stock mapping to stock item '{stockItemId}'.")
+    {
+        ProductId = productId;
+        StockItemId = stockItemId;
     }
 }

@@ -25,6 +25,14 @@ namespace ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 /// Semih's decision: if a product has no mapping at all, the accept is
 /// rejected outright (never silently skipped) — no channel can accept an
 /// order until a manager has mapped every product it sells.
+///
+/// Each movement's <c>sourceReferenceId</c> is the ORDER ITEM's own id, not
+/// the order's — deliberately, so a later per-item reversal (a post-Accept
+/// void that hasn't reached the kitchen yet, see `SentItemVoidStore`'s own
+/// doc comment, V1-RMD-143 2026-09-09 follow-up) can find exactly the
+/// movement(s) one specific line produced via
+/// <see cref="IStockMovementRepository.GetBySourceAsync"/> without also
+/// pulling in every other item's movements on the same order.
 /// </summary>
 public sealed class OrderStockConsumptionService
 {
@@ -75,14 +83,6 @@ public sealed class OrderStockConsumptionService
             // will be; consuming stock for it would charge inventory for a
             // product the customer no longer gets. Complimentary items are
             // still prepared and served for free, so they still consume.
-            // A waiter can void an item (ItemExceptionHandler.VoidItemAsync)
-            // while the order still sits at PendingConfirmation — nothing
-            // gates that on order.Status, only the item's own Status/
-            // KitchenState — so a Cancelled line can reach here in the same
-            // `order.Items` list. It was never sent to the kitchen and never
-            // will be; consuming stock for it would charge inventory for a
-            // product the customer no longer gets. Complimentary items are
-            // still prepared and served for free, so they still consume.
             if (item.Status == OrderItemState.Cancelled)
                 continue;
 
@@ -115,7 +115,7 @@ public sealed class OrderStockConsumptionService
                     quantity: consumeQuantity,
                     unitCode: stockItem.TrackingUnitCode,
                     sourceType: StockMovementSourceType.Order,
-                    sourceReferenceId: order.Id,
+                    sourceReferenceId: item.Id,
                     reason: $"Order {order.OrderNumber}, item {item.Id:D} ({item.ProductNameSnapshot}) accepted",
                     createdBy: actorId);
                 await _movements.AppendAsync(movement, connection, transaction, cancellationToken);

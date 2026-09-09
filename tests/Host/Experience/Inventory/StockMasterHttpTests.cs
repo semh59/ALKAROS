@@ -177,6 +177,51 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
         Assert.Equal(0, await _database.CountProductStockMappingsAsync(productId));
     }
 
+    /// <summary>
+    /// V1-RMD-143 follow-up (2026-09-09 deep review): a manager mapping a
+    /// product to the wrong stock item had no way to undo it —
+    /// IProductStockMappingRepository.RemoveAsync existed but nothing ever
+    /// called it.
+    /// </summary>
+    [Fact]
+    public async Task RemovingAProductStockMappingDeletesItAndOnlyIt()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8]);
+        var otherStockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8]);
+        var productId = Guid.NewGuid();
+        await client.PostAsJsonAsync(
+            $"/api/v1/management/inventory/products/{productId:D}/stock-mappings",
+            new AssignProductStockMappingV1(stockItemId));
+        await client.PostAsJsonAsync(
+            $"/api/v1/management/inventory/products/{productId:D}/stock-mappings",
+            new AssignProductStockMappingV1(otherStockItemId));
+        Assert.Equal(2, await _database.CountProductStockMappingsAsync(productId));
+
+        using var delete = await client.DeleteAsync(
+            $"/api/v1/management/inventory/products/{productId:D}/stock-mappings/{stockItemId:D}");
+        Assert.Equal(HttpStatusCode.NoContent, delete.StatusCode);
+
+        // Only the targeted (product, stockItem) pair is gone — the other
+        // mapping for the same product survives untouched.
+        Assert.Equal(1, await _database.CountProductStockMappingsAsync(productId));
+        using var list = await client.GetAsync($"/api/v1/management/inventory/products/{productId:D}/stock-mappings");
+        var remaining = Assert.Single((await list.Content.ReadFromJsonAsync<List<ProductStockMappingV1>>())!);
+        Assert.Equal(otherStockItemId, remaining.StockItemId);
+    }
+
+    [Fact]
+    public async Task RemovingANonExistentMappingIsRefusedWithNotFound()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+
+        using var delete = await client.DeleteAsync(
+            $"/api/v1/management/inventory/products/{Guid.NewGuid():D}/stock-mappings/{Guid.NewGuid():D}");
+
+        Assert.Equal(HttpStatusCode.NotFound, delete.StatusCode);
+        Assert.Equal("NOT_FOUND", (await ReadErrorAsync(delete)).Error.Code);
+    }
+
     private HttpClient CreateClient(string? token)
     {
         var client = new HttpClient { BaseAddress = _baseAddress };

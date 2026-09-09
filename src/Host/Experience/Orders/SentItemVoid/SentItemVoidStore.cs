@@ -1,5 +1,7 @@
 using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
@@ -23,23 +25,41 @@ namespace ALKAROS.Host.Experience.Orders.SentItemVoid;
 /// consumer of this state is already at-least-once/out-of-order tolerant,
 /// and the Order write (the money-bearing one) always happens first and
 /// alone decides whether the item is voided.
+///
+/// V1-RMD-143 follow-up (Semih, 2026-09-09): the policy doc's own
+/// definition of Waste (docs/domain/void-complimentary-discount-policy.md
+/// line 16: a PREPARED item's cost leaving stock) assumed the kitchen had
+/// actually started on the item by the time anyone would void it. Once
+/// Accept started really consuming stock (V1-RMD-143), that assumption
+/// stopped holding for the earliest of the three KitchenStates this store
+/// accepts: `Sent` means the ticket reached the kitchen, not that anyone
+/// touched an ingredient yet. Semih's revision (2026-09-09): a `Sent`
+/// item's stock IS given back (nothing was physically used); `Preparing`/
+/// `Ready` still convert to Waste with no stock returned, matching the
+/// documented policy for a genuinely prepared item.
 /// </summary>
 public sealed class SentItemVoidStore
 {
     private readonly IOrderRepository _orders;
     private readonly IKitchenTicketRepository _tickets;
     private readonly IBillRepository _bills;
+    private readonly IStockMovementRepository _stockMovements;
+    private readonly IStockMovementReversalService _stockReversal;
     private readonly NpgsqlDataSource _dataSource;
 
     public SentItemVoidStore(
         IOrderRepository orders,
         IKitchenTicketRepository tickets,
         IBillRepository bills,
+        IStockMovementRepository stockMovements,
+        IStockMovementReversalService stockReversal,
         NpgsqlDataSource dataSource)
     {
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
+        _stockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
+        _stockReversal = stockReversal ?? throw new ArgumentNullException(nameof(stockReversal));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
@@ -105,12 +125,60 @@ public sealed class SentItemVoidStore
                 billContext.Value.Bill, billContext.Value.BillItem, item, command.ReasonCode, cancellationToken)
                 .ConfigureAwait(false)
             : false;
+        // Best-effort, same as the two steps above: the Order write already
+        // decided the item is void regardless of whether this succeeds.
+        // Deliberately keys off `item.KitchenState` captured BEFORE
+        // CancelItem() above, not the voided copy — this store's own
+        // precondition already guarantees it is Sent, Preparing, or Ready.
+        var stockRestored = item.KitchenState == KitchenState.Sent
+            && await RestoreStockForVoidedItemAsync(item, command, now, cancellationToken).ConfigureAwait(false);
 
         await AppendAuditAsync(
-            order.Id, item, command, kitchenCancelled, wasteConverted, now, cancellationToken).ConfigureAwait(false);
+            order.Id, item, command, kitchenCancelled, wasteConverted, stockRestored, now, cancellationToken).ConfigureAwait(false);
 
         return new SentItemVoidResult(
-            order.Id, item.Id, newOrderRowVersion, voidedOrder.Total, kitchenCancelled, wasteConverted, now);
+            order.Id, item.Id, newOrderRowVersion, voidedOrder.Total, kitchenCancelled, wasteConverted, stockRestored, now);
+    }
+
+    /// <summary>
+    /// Reverses every Consumption movement OrderStockConsumptionService
+    /// recorded for this exact order item at Accept time (found via
+    /// `sourceReferenceId = item.Id` — deliberately per-item, not
+    /// per-order, so a sibling item's own consumption on the same order is
+    /// never touched). Only reached when the item never left `Sent`
+    /// (nothing was physically used yet); a movement already reversed by
+    /// some other path (should not happen — a stock movement source item id
+    /// is unique to one void attempt) is skipped rather than double-applied.
+    /// Returns false (not an error) if there was nothing to reverse — e.g.
+    /// the mapping existed at Accept time but was since removed and the
+    /// ledger genuinely has no Consumption row, which the immutable ledger
+    /// would still show even then, so this is a defensive fallback rather
+    /// than an expected outcome.
+    /// </summary>
+    private async Task<bool> RestoreStockForVoidedItemAsync(
+        OrderItem item, SentItemVoidCommand command, DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        var movements = await _stockMovements.GetBySourceAsync(StockMovementSourceType.Order, item.Id, cancellationToken)
+            .ConfigureAwait(false);
+
+        var restoredAny = false;
+        foreach (var movement in movements)
+        {
+            if (movement.MovementType != StockMovementType.Consumption)
+                continue;
+            if (!await _stockReversal.CanReverseAsync(movement.Id, cancellationToken).ConfigureAwait(false))
+                continue;
+
+            await _stockReversal.ReverseMovementAsync(
+                new StockMovementReversalRequest(
+                    movement.Id,
+                    Reason: $"VoidSent:{command.ReasonCode} — kitchen had not started (item {item.Id:D})",
+                    ActorId: command.ActorId),
+                cancellationToken).ConfigureAwait(false);
+            restoredAny = true;
+        }
+
+        return restoredAny;
     }
 
     /// <summary>
@@ -204,6 +272,7 @@ public sealed class SentItemVoidStore
         SentItemVoidCommand command,
         bool kitchenTicketItemCancelled,
         bool billLineConvertedToWaste,
+        bool stockRestored,
         DateTimeOffset now,
         CancellationToken cancellationToken)
     {
@@ -245,6 +314,7 @@ public sealed class SentItemVoidStore
             KitchenState = KitchenState.Cancelled.ToString(),
             KitchenTicketItemCancelled = kitchenTicketItemCancelled,
             BillLineConvertedToWaste = billLineConvertedToWaste,
+            StockRestored = stockRestored,
         };
 
         var pBefore = cmd.Parameters.AddWithValue("before_state_json", JsonSerializer.Serialize(before));

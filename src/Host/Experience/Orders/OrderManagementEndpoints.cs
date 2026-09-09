@@ -5,6 +5,7 @@ using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Host.Experience.Orders.SentItemVoid;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Identity.Authorization;
@@ -84,6 +85,14 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IStockBalanceRepository, PostgresStockBalanceRepository>();
         services.TryAddSingleton<IStockMovementRepository, PostgresStockMovementRepository>();
         services.TryAddSingleton<OrderStockConsumptionService>();
+        // V1-RMD-143 follow-up (2026-09-09): SentItemVoidStore restores an
+        // item's own consumed stock when it is voided before the kitchen
+        // ever started on it — reuses Inventory's own, already-built (and
+        // already-tested at the module level) MovementReversal service
+        // rather than hand-rolling a second "undo a Consumption" primitive.
+        services.TryAddSingleton<IStockLocationRepository, PostgresStockLocationRepository>();
+        services.TryAddSingleton<IStockBalanceProjector, StockBalanceProjector>();
+        services.TryAddSingleton<IStockMovementReversalService, StockMovementReversalService>();
         // V1-RMD-137: found by an independent audit (2026-09-09) — no HTTP
         // action anywhere could ever move an order out of PendingConfirmation
         // (see PendingOrderConfirmationStore's own doc comment for the full
@@ -452,7 +461,7 @@ public static class OrderManagementEndpoints
                             statusCode: StatusCodes.Status403Forbidden);
                     case GrantOutcome.Pending:
                         return Results.Accepted(value: new VoidSentItemResultV1(
-                            "Pending", orderId, itemId, null, null, null, null, null, resolution.Grant.GrantId));
+                            "Pending", orderId, itemId, null, null, null, null, null, null, resolution.Grant.GrantId));
                     case GrantOutcome.Authorized:
                         break;
                     default:
@@ -480,6 +489,7 @@ public static class OrderManagementEndpoints
                 result.NewOrderTotal,
                 result.KitchenTicketItemCancelled,
                 result.BillLineConvertedToWaste,
+                result.StockRestored,
                 result.AppliedAt,
                 null));
         });
