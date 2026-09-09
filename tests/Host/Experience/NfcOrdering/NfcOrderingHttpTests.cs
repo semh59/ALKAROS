@@ -239,8 +239,14 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task EmptyItemsIsRejected()
+    public async Task EmptyItemsIsRejectedWithATurkishMessage()
     {
+        // V1-RMD-136: found by an independent audit (2026-09-09) — this and
+        // the two validation branches below ran ahead of
+        // NfcOrderingExceptionFilter and returned raw English literals
+        // straight to the customer's phone (NfcOrder.tsx renders the
+        // message verbatim) — the same class of leak V1-RMD-127 fixed the
+        // same day in OrderManagementEndpoints.cs, just missed here.
         var tableId = await _database.SeedTableAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
@@ -250,6 +256,43 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
             new NfcOrderRequest([], Guid.NewGuid()));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Sipariş kalemleri boş olamaz.", body);
+        Assert.DoesNotContain("cannot be empty", body);
+    }
+
+    [Fact]
+    public async Task AnEmptyTableIdIsRejectedWithATurkishMessage()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(Guid.Empty),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), Guid.NewGuid(), 1)], Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Masa kimliği boş olamaz.", body);
+        Assert.DoesNotContain("cannot be empty", body);
+    }
+
+    [Fact]
+    public async Task AnEmptySubmissionIdIsRejectedWithATurkishMessage()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1)], Guid.Empty));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Gönderim kimliği boş olamaz.", body);
+        Assert.DoesNotContain("cannot be empty", body);
     }
 
     [Fact]

@@ -90,14 +90,21 @@ public static class NfcOrderingEndpoints
             NfcOrderingStore store,
             CancellationToken cancellationToken) =>
         {
+            // V1-RMD-136: found by an independent audit (2026-09-09) — these
+            // three inline BadRequest branches ran before
+            // NfcOrderingExceptionFilter and returned raw English literals
+            // straight to the customer's phone screen (NfcOrder.tsx renders
+            // `message` verbatim), the same class of leak V1-RMD-127 fixed
+            // in OrderManagementEndpoints.cs the same day — that pass simply
+            // never looked at this file.
             if (tableId == Guid.Empty)
-                return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "TableId cannot be empty." } });
+                return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "Masa kimliği boş olamaz." } });
 
             if (request.Items == null || request.Items.Count == 0)
-                return Results.BadRequest(new { error = new { code = "EMPTY_ITEMS", message = "Order items cannot be empty." } });
+                return Results.BadRequest(new { error = new { code = "EMPTY_ITEMS", message = "Sipariş kalemleri boş olamaz." } });
 
             if (request.Id == Guid.Empty)
-                return Results.BadRequest(new { error = new { code = "INVALID_SUBMISSION_ID", message = "Id cannot be empty." } });
+                return Results.BadRequest(new { error = new { code = "INVALID_SUBMISSION_ID", message = "Gönderim kimliği boş olamaz." } });
 
             var order = await store.PlaceOrderAsync(tableId, request, cancellationToken);
             return Results.Ok(order);
