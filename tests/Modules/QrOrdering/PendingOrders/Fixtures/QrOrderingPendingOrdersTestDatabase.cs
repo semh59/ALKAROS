@@ -40,16 +40,22 @@ public sealed class QrOrderingPendingOrdersTestDatabase : PgTestDatabase
         return tableId;
     }
 
-    public async Task<Guid> SeedProductAsync(decimal price = 120m)
+    /// <summary>
+    /// <paramref name="isAvailable"/> defaults to true (matches the
+    /// column's own DEFAULT); pass false to seed a manager-suspended
+    /// ("86'd") product for V1-RMD-128 regression coverage.
+    /// </summary>
+    public async Task<Guid> SeedProductAsync(decimal price = 120m, bool isAvailable = true)
     {
         var productId = Guid.NewGuid();
         await ExecuteAsync(
             """
-            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
-            VALUES (@product_id, @sku, 'Lahmacun', 1, 1, @price);
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, is_available, current_price)
+            VALUES (@product_id, @sku, 'Lahmacun', 1, 1, @is_available, @price);
             """,
             ("product_id", productId),
             ("sku", "QR-" + productId.ToString("N")[..8]),
+            ("is_available", isAvailable),
             ("price", price));
 
         return productId;

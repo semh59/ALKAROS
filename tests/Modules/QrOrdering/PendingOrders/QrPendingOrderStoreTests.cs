@@ -115,6 +115,27 @@ public sealed class QrPendingOrderStoreTests : IClassFixture<QrOrderingPendingOr
     }
 
     [Fact]
+    public async Task AnUnavailableProductFails()
+    {
+        // V1-RMD-128: found by an independent audit (2026-09-09) — this
+        // store checked catalog.products.active but not is_available (the
+        // real-time 86/suspend toggle a manager flips through
+        // CatalogManagementStore.SetProductAvailabilityV1). This is the QR
+        // customer self-ordering path — no staff member is in the loop at
+        // all, so a suspended item could still be submitted straight
+        // through to the kitchen.
+        var tableId = await _database.SeedTableAsync();
+        var productId = await _database.SeedProductAsync(isAvailable: false);
+        var rawSession = await IssueSessionAsync(tableId);
+
+        var act = () => _store.SubmitAsync(
+            rawSession,
+            new QrOrderSubmissionRequest([new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1, null)], Guid.NewGuid()));
+
+        await act.Should().ThrowAsync<QrOrderInvalidProductException>();
+    }
+
+    [Fact]
     public async Task AZeroQuantityFails()
     {
         var tableId = await _database.SeedTableAsync();

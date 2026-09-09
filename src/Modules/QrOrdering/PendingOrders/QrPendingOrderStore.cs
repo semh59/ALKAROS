@@ -191,12 +191,21 @@ public sealed class QrPendingOrderStore
         if (ids.Length == 0)
             return result;
 
+        // V1-RMD-128: found by an independent audit (2026-09-09) — this
+        // query checked p.active (master-data existence) but not
+        // p.is_available (the real-time 86/suspend toggle
+        // CatalogManagementStore.SetProductAvailabilityV1 flips), unlike
+        // the terminal-wide quick-sale path (DualScreenStore.Orders.cs)
+        // which already checks both. This is the QR customer self-ordering
+        // path — no staff member is in the loop at all, so a manager
+        // marking an item unavailable had zero effect here: a customer
+        // could still submit it straight through to the kitchen.
         await using var cmd = new NpgsqlCommand(
             """
             SELECT p.product_id, p.name, p.current_price, COALESCE(t.vat_rate, 0)
             FROM catalog.products p
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
-            WHERE p.product_id = ANY(@product_ids) AND p.active AND p.current_price IS NOT NULL;
+            WHERE p.product_id = ANY(@product_ids) AND p.active AND p.is_available AND p.current_price IS NOT NULL;
             """, connection, transaction);
         cmd.Parameters.AddWithValue("product_ids", ids);
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
@@ -221,13 +230,13 @@ public sealed class QrCustomerSessionInvalidException : Exception
     }
 }
 
-/// <summary>V12-QRO-001: a requested product does not exist, is inactive, or has no current price.</summary>
+/// <summary>V12-QRO-001: a requested product does not exist, is inactive, is not available, or has no current price.</summary>
 public sealed class QrOrderInvalidProductException : Exception
 {
     public Guid ProductId { get; }
 
     public QrOrderInvalidProductException(Guid productId)
-        : base($"Product {productId} was not found or has no active price.")
+        : base($"Product {productId} was not found, is not available, or has no active price.")
     {
         ProductId = productId;
     }

@@ -389,6 +389,30 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    [Fact]
+    public async Task DraftingAnUnavailableProductIsRejected()
+    {
+        // V1-RMD-128: found by an independent audit (2026-09-09) — this
+        // endpoint checked catalog.products.active but not is_available
+        // (the real-time 86/suspend toggle a manager flips through
+        // CatalogManagementStore.SetProductAvailabilityV1), so a suspended
+        // item could still be added to a table draft and reach the
+        // kitchen.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var suspended = await _database.SeedProductAsync("86'd Ürün", 100m, isAvailable: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-20", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), suspended, "86'd Ürün", 1, 100m)])));
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
     private static string DraftPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/table-draft";
 

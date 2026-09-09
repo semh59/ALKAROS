@@ -71,7 +71,7 @@ public sealed class OrderManagementStore
         foreach (var i in request.Items)
         {
             if (!catalog.TryGetValue(i.ProductId, out var product))
-                throw new KeyNotFoundException($"Product {i.ProductId} was not found or has no active price.");
+                throw new KeyNotFoundException($"Product {i.ProductId} was not found, is not available, or has no active price.");
             var (productName, unitPrice, taxRate) = product;
 
             newItems.Add(new OrderItem(
@@ -288,13 +288,22 @@ public sealed class OrderManagementStore
         if (ids.Length == 0)
             return result;
 
+        // V1-RMD-128: found by an independent audit (2026-09-09) — this
+        // query checked p.active (master-data existence) but not
+        // p.is_available (the real-time 86/suspend toggle
+        // CatalogManagementStore.SetProductAvailabilityV1 flips), unlike
+        // the terminal-wide quick-sale path (DualScreenStore.Orders.cs)
+        // which already checks both. A manager marking an item unavailable
+        // had no effect on table-draft orders — a waiter could still add
+        // it, and it would still reach the kitchen.
+        //
         // One round trip for the whole draft instead of one per line.
         await using var cmd = new NpgsqlCommand(
             """
             SELECT p.product_id, p.name, p.current_price, COALESCE(t.vat_rate, 0)
             FROM catalog.products p
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
-            WHERE p.product_id = ANY(@product_ids) AND p.active AND p.current_price IS NOT NULL;
+            WHERE p.product_id = ANY(@product_ids) AND p.active AND p.is_available AND p.current_price IS NOT NULL;
             """, connection, transaction);
         cmd.Parameters.AddWithValue("product_ids", ids);
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);

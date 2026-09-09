@@ -266,6 +266,27 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    [Fact]
+    public async Task AnUnavailableProductIsRejected()
+    {
+        // V1-RMD-128: found by an independent audit (2026-09-09) — this
+        // endpoint checked catalog.products.active but not is_available
+        // (the real-time 86/suspend toggle a manager flips through
+        // CatalogManagementStore.SetProductAvailabilityV1). No staff
+        // member is in the loop on this self-service path, so a suspended
+        // item could still be ordered straight through to the kitchen.
+        var tableId = await _database.SeedTableAsync();
+        var suspended = await _database.SeedProductAsync("Tükendi", 60m, isAvailable: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), suspended, 1)], Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     private static string OrdersPath(Guid tableId) => $"/api/v1/nfc/tables/{tableId:D}/orders";
 
     private async Task<WebApplication> StartAsync()

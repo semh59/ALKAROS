@@ -46,18 +46,24 @@ public sealed class NfcOrderingTestDatabase : PgTestDatabase
         return tableId;
     }
 
-    /// <summary>Seeds one purchasable catalog product and returns its id.</summary>
-    public async Task<Guid> SeedProductAsync(string name, decimal price, bool isAgeRestricted = false)
+    /// <summary>
+    /// Seeds one purchasable catalog product and returns its id.
+    /// <paramref name="isAvailable"/> defaults to true (matches the
+    /// column's own DEFAULT); pass false to seed a manager-suspended
+    /// ("86'd") product for V1-RMD-128 regression coverage.
+    /// </summary>
+    public async Task<Guid> SeedProductAsync(string name, decimal price, bool isAgeRestricted = false, bool isAvailable = true)
     {
         var productId = Guid.NewGuid();
         await ExecuteAsync(
             """
-            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, current_price, is_age_restricted)
-            VALUES (@product_id, @sku, @name, 1, 1, true, @price, @is_age_restricted);
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, is_available, current_price, is_age_restricted)
+            VALUES (@product_id, @sku, @name, 1, 1, true, @is_available, @price, @is_age_restricted);
             """,
             ("product_id", productId),
             ("sku", "nfc-" + productId.ToString("N")[..8]),
             ("name", name),
+            ("is_available", isAvailable),
             ("price", price),
             ("is_age_restricted", isAgeRestricted));
 
