@@ -26,5 +26,8 @@ public sealed class KitchenModule : IModule
         context.RegisterTransient<IPrintQueueService, PrintQueueService>();
         context.RegisterTransient<IPhysicalPrintRecoveryRepository, PostgresPhysicalPrintRecoveryRepository>();
         context.RegisterTransient<IPhysicalPrintRecoveryService, PhysicalPrintRecoveryService>();
+        // V1-RMD-130: the real network transport (everything above this line
+        // was already registered but never reached a physical printer).
+        context.RegisterTransient<IPrinterTransport, TcpEscPosPrinterTransport>();
     }
 }

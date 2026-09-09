@@ -44,7 +44,14 @@ public static class KitchenOperationsEndpoints
         services.TryAddSingleton<IPrinterRepository, PostgresPrinterRepository>();
         services.TryAddSingleton<IPrinterRouteRepository, PostgresPrinterRouteRepository>();
         services.TryAddSingleton<IPrintQueueRepository, PostgresPrintQueueRepository>();
+        services.TryAddSingleton<IPrintQueueService, PrintQueueService>();
         services.TryAddSingleton<IPhysicalPrintRecoveryRepository, PostgresPhysicalPrintRecoveryRepository>();
+        services.TryAddSingleton<IPhysicalPrintRecoveryService, PhysicalPrintRecoveryService>();
+        // V1-RMD-130: found by an independent audit (2026-09-09) — every
+        // collaborator above this line already existed, well-tested, but
+        // nothing ever actually dispatched a print job to a real printer.
+        services.TryAddSingleton<IPrinterTransport, TcpEscPosPrinterTransport>();
+        services.AddHostedService<KitchenPrintDispatchHostedService>();
         services.TryAddSingleton<IBackupHealthRepository, PostgresBackupHealthRepository>();
         services.TryAddSingleton<IBackupEngine, LocalBackupEngine>();
         services.TryAddSingleton<IBackupHealthService, BackupHealthService>();

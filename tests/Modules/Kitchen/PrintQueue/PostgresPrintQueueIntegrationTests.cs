@@ -175,6 +175,33 @@ public sealed class PostgresPrintQueueIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ProcessEligibleJobsRoutesAnUncertainTransmissionToOperatorReviewInsteadOfRetrying()
+    {
+        // V1-RMD-130: a PrinterTransmissionUncertainException means the
+        // transport connected and may have already transmitted before
+        // failing — retrying automatically would risk a duplicate physical
+        // print, so this must land on the terminal AwaitingOperatorReview
+        // status, never a normal Failed-with-backoff.
+        var job = PrintJob.Create(_testTicket.Id, _testPrinterId, "Payload", idempotencyKey: "key-uncertain-1", maxAttempts: 3);
+        await _queueRepo.EnqueueJobAsync(job);
+
+        var processedCount = await _queueService.ProcessEligibleJobsAsync(
+            "Worker-1",
+            batchSize: 5,
+            leaseDuration: TimeSpan.FromMinutes(1),
+            printerExecutor: _ => throw new PrinterTransmissionUncertainException("Connection reset mid-write."));
+
+        processedCount.Should().Be(1);
+
+        var loadedJob = await _queueRepo.GetByIdAsync(job.Id);
+        loadedJob.Should().NotBeNull();
+        loadedJob!.Status.Should().Be(PrintJobStatus.AwaitingOperatorReview);
+        loadedJob.LastError.Should().Be("Connection reset mid-write.");
+        loadedJob.NextAttemptAt.Should().BeNull();
+        loadedJob.AttemptCount.Should().Be(0);
+    }
+
+    [Fact]
     public async Task RecoverExpiredLeasesResetsStaleJobsToPending()
     {
         var job = PrintJob.Create(_testTicket.Id, _testPrinterId, "Payload", idempotencyKey: "key-recover-1");

@@ -38,5 +38,18 @@ public enum PrintJobStatus
     /// <summary>
     /// Job cancelled due to ticket cancellation (Terminal Cancelled).
     /// </summary>
-    Cancelled = 7
+    Cancelled = 7,
+
+    /// <summary>
+    /// V1-RMD-130: the transport connected and may have transmitted some or
+    /// all of the payload before failing — whether the printer actually
+    /// produced a ticket is unknown. Unlike <see cref="Failed"/>, this is
+    /// never auto-retried (a duplicate physical print in the kitchen is
+    /// worse than a missing one); a
+    /// <c>PhysicalPrintDelivery</c> record in <c>Unknown</c> status is
+    /// always created alongside this transition, and only an operator's
+    /// explicit reprint approval (PDF:I.16-I.20, V1-KIT-004) can move the
+    /// ticket forward (Terminal, pending operator action).
+    /// </summary>
+    AwaitingOperatorReview = 8
 }

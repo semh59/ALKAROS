@@ -30,6 +30,9 @@
     <None Include="..\..\..\..\database\migrations\V1\V1-KIT-002\016-printer-routing.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-KIT-003\017-print-queue.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-KIT-003\017-print-queue.down.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- V1-RMD-130: PrintJobStatus.AwaitingOperatorReview -->
+    <None Include="..\..\..\..\database\migrations\V1\V1-RMD-130\088-print-jobs-awaiting-operator-review-status.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V1\V1-RMD-130\088-print-jobs-awaiting-operator-review-status.down.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

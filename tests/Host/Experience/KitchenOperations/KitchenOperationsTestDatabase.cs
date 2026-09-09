@@ -152,6 +152,57 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
         return new KitchenSeed(orderId, ticketId, itemId, printerId, routeId, printJobId, deliveryId);
     }
 
+    /// <summary>
+    /// V1-RMD-130: an order + kitchen ticket + active printer at the same
+    /// station, deliberately with NO print_jobs row yet — the exact scenario
+    /// <c>KitchenPrintDispatchHostedService.BridgeUnprintedTicketsAsync</c>
+    /// must detect and act on. Distinct from <see cref="SeedKitchenGraphAsync"/>,
+    /// which always seeds a pre-existing print job for its ticket.
+    /// </summary>
+    public async Task<(Guid TicketId, Guid PrinterId, string StationId)> SeedTicketAwaitingPrintJobAsync(
+        Guid? tableId = null, string? tableNumber = null)
+    {
+        var orderId = Guid.NewGuid();
+        var ticketId = Guid.NewGuid();
+        var printerId = Guid.NewGuid();
+        var stationId = "bridge-station-" + ticketId.ToString("N")[..8];
+
+        if (tableId is { } id)
+        {
+            await RunAsync(
+                DataSource,
+                $$"""
+                INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status)
+                VALUES ('{{id:D}}', '{{tableNumber}}', 4, TRUE, 'Occupied');
+                """);
+        }
+
+        await RunAsync(
+            DataSource,
+            $$"""
+            INSERT INTO orders.orders (
+                order_id, source, table_id, status, confirmation_status, order_number, created_at, updated_at)
+            VALUES ('{{orderId:D}}', 'Cashier', {{(tableId is { } t ? $"'{t:D}'" : "NULL")}}, 'Submitted',
+                    'NotRequired', 'ORD-{{orderId:N}}', now(), now());
+
+            INSERT INTO kitchen.kitchen_tickets (
+                id, order_id, ticket_number, station_id, status, row_version, created_at)
+            VALUES ('{{ticketId:D}}', '{{orderId:D}}', 'KT-{{ticketId:N}}', '{{stationId}}', 'Queued', 1, now());
+
+            INSERT INTO kitchen.kitchen_ticket_items (
+                id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity,
+                status, row_version, created_at)
+            VALUES ('{{Guid.NewGuid():D}}', '{{ticketId:D}}', '{{Guid.NewGuid():D}}', '{{Guid.NewGuid():D}}',
+                    'Bridge test item', 1, 'Queued', 1, now());
+
+            INSERT INTO kitchen.printers (id, name, station_id, ip_address, port, is_active, created_at)
+            VALUES ('{{printerId:D}}', 'Bridge test printer {{printerId:N}}', '{{stationId}}',
+                    '10.0.0.9', 9100, TRUE, now());
+            """);
+
+        return (ticketId, printerId, stationId);
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

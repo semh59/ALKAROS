@@ -119,6 +119,38 @@ public sealed class PrintQueueUnitTests
     }
 
     [Fact]
+    public void MarkAwaitingOperatorReviewSetsTerminalStatusWithoutSchedulingARetry()
+    {
+        // V1-RMD-130: an ambiguous transport failure (the connection opened
+        // and may have transmitted before failing) must never schedule an
+        // automatic retry — that would risk a duplicate physical print.
+        var job = PrintJob.Create(_ticketId, _printerId, Payload, maxAttempts: 3);
+        var now = DateTimeOffset.UtcNow;
+        var leased = job.ClaimLease("Worker-1", TimeSpan.FromMinutes(2), now);
+        var printing = leased.MarkPrinting("Worker-1", now.AddSeconds(5));
+
+        var awaitingReview = printing.MarkAwaitingOperatorReview("Connection lost mid-transmission", now.AddSeconds(10));
+
+        awaitingReview.Status.Should().Be(PrintJobStatus.AwaitingOperatorReview);
+        awaitingReview.LastError.Should().Be("Connection lost mid-transmission");
+        awaitingReview.NextAttemptAt.Should().BeNull();
+        awaitingReview.AttemptCount.Should().Be(0);
+        awaitingReview.LeasedBy.Should().BeNull();
+        awaitingReview.LeaseExpiresAt.Should().BeNull();
+        awaitingReview.IsEligibleForClaim(now.AddDays(1)).Should().BeFalse();
+    }
+
+    [Fact]
+    public void MarkAwaitingOperatorReviewRequiresActivePrintingOrLeasedState()
+    {
+        var job = PrintJob.Create(_ticketId, _printerId, Payload);
+
+        var act = () => job.MarkAwaitingOperatorReview("Connection lost", DateTimeOffset.UtcNow);
+
+        act.Should().Throw<InvalidPrintJobTransitionException>();
+    }
+
+    [Fact]
     public void ResetExpiredLeaseResetsStaleLeaseToPending()
     {
         var now = DateTimeOffset.UtcNow;

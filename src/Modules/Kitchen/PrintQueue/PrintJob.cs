@@ -233,6 +233,48 @@ public sealed class PrintJob
             updatedAt: now);
     }
 
+    /// <summary>
+    /// V1-RMD-130: transitions straight to a terminal, never-auto-retried
+    /// state after an ambiguous transport failure (the connection opened
+    /// and may have transmitted before failing) — unlike
+    /// <see cref="RecordFailure"/>, this never sets <see cref="NextAttemptAt"/>
+    /// and never advances toward <see cref="PrintJobStatus.DeadLetter"/>
+    /// regardless of <see cref="AttemptCount"/>, because an automatic retry
+    /// here risks a duplicate physical print. The caller is expected to have
+    /// already recorded a <c>PhysicalPrintDelivery</c> in <c>Unknown</c>
+    /// status describing the same ambiguity; only an operator's reprint
+    /// decision on that record can move this ticket forward.
+    /// </summary>
+    public PrintJob MarkAwaitingOperatorReview(string reason, DateTimeOffset now)
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+            throw new ArgumentException("Reason cannot be empty.", nameof(reason));
+        if (Status != PrintJobStatus.Printing && Status != PrintJobStatus.Leased)
+        {
+            throw new InvalidPrintJobTransitionException(
+                $"Cannot transition to AwaitingOperatorReview from {Status}. Must be Leased or Printing.");
+        }
+
+        return new PrintJob(
+            Id,
+            TicketId,
+            PrinterId,
+            IdempotencyKey,
+            Payload,
+            status: PrintJobStatus.AwaitingOperatorReview,
+            attemptCount: AttemptCount,
+            maxAttempts: MaxAttempts,
+            nextAttemptAt: null,
+            leasedBy: null,
+            leaseExpiresAt: null,
+            printedAt: null,
+            failedAt: now,
+            lastError: reason,
+            rowVersion: RowVersion,
+            createdAt: CreatedAt,
+            updatedAt: now);
+    }
+
     public PrintJob Cancel(string reason, DateTimeOffset now)
     {
         if (Status == PrintJobStatus.Printed)

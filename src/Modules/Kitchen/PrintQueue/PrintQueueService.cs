@@ -79,10 +79,23 @@ public sealed class PrintQueueService : IPrintQueueService
 
             bool success;
             string? errorMessage = null;
+            var uncertain = false;
 
             try
             {
                 success = await printerExecutor(inFlight).ConfigureAwait(false);
+            }
+            catch (PrinterTransmissionUncertainException ex)
+            {
+                // V1-RMD-130: the transport connected and may have already
+                // transmitted before failing — automatic retry here risks a
+                // duplicate physical print, so this must never re-enter the
+                // normal backoff path below. The executor is expected to have
+                // already recorded the ambiguity as a PhysicalPrintDelivery in
+                // Unknown status before this exception reaches here.
+                success = false;
+                errorMessage = ex.Message;
+                uncertain = true;
             }
             catch (Exception ex)
             {
@@ -95,6 +108,12 @@ public sealed class PrintQueueService : IPrintQueueService
             {
                 var succeeded = inFlight.MarkSucceeded(executionTimestamp);
                 await _repository.SaveAsync(succeeded, ct).ConfigureAwait(false);
+            }
+            else if (uncertain)
+            {
+                var awaitingReview = inFlight.MarkAwaitingOperatorReview(
+                    errorMessage ?? "Printer transmission outcome is unknown.", executionTimestamp);
+                await _repository.SaveAsync(awaitingReview, ct).ConfigureAwait(false);
             }
             else
             {
