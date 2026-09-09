@@ -176,6 +176,51 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TableListAndDetailReportTheCurrentOrdersRealRunningTotal()
+    {
+        // V1-RMD-135: found by an independent audit (2026-09-09) — TableDto
+        // never carried a table's running total at all; WaiterPwa read a
+        // field that never existed on the real contract and the UI always
+        // rendered it as empty. CurrentOrderTotal must match Order.Total's own formula:
+        // the sum of Draft/Active items' gross_amount — a Cancelled item
+        // must not count.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var table = await PostAsync<TableDto>(
+            client,
+            Prefix(terminalId) + "/tables",
+            cookie,
+            new CreateTableRequest(0, "T-AMT", null, 4));
+        Assert.Equal(0m, table.CurrentOrderTotal);
+
+        await _database.SeedCurrentOrderWithItemsAsync(
+            table.TableId,
+            (60.00m, "Active"),
+            (90.00m, "Draft"),
+            (500.00m, "Cancelled")); // Must be excluded.
+
+        using (var listRequest = Request(HttpMethod.Get, Prefix(terminalId) + "/tables", cookie))
+        using (var list = await client.SendAsync(listRequest))
+        {
+            Assert.Equal(HttpStatusCode.OK, list.StatusCode);
+            var listed = Assert.Single(
+                (await list.Content.ReadFromJsonAsync<TableDto[]>())!,
+                candidate => candidate.TableId == table.TableId);
+            Assert.Equal(150.00m, listed.CurrentOrderTotal);
+        }
+
+        using (var readRequest = Request(HttpMethod.Get, $"{Prefix(terminalId)}/tables/{table.TableId:D}", cookie))
+        using (var read = await client.SendAsync(readRequest))
+        {
+            Assert.Equal(HttpStatusCode.OK, read.StatusCode);
+            Assert.Equal(150.00m, (await read.Content.ReadFromJsonAsync<TableDto>())!.CurrentOrderTotal);
+        }
+    }
+
+    [Fact]
     public async Task ReservationTransferMergeAndUnmergeExecuteThroughRealPostgresqlServices()
     {
         var terminalId = Guid.NewGuid();
@@ -621,6 +666,62 @@ internal sealed class TableManagementTestDatabase
             ("order_number", "ORD-" + orderId.ToString("N")),
             ("bill_id", Guid.NewGuid()),
             ("bill_number", "BIL-" + orderId.ToString("N")));
+    }
+
+    /// <summary>
+    /// Seeds a new order with the given (grossAmount, status) items, wires
+    /// it as the table's current order (table_mgmt.tables.current_order_id
+    /// — the column TableManagementStore's own CurrentOrderTotal query
+    /// reads), and returns the order id.
+    /// </summary>
+    public async Task<Guid> SeedCurrentOrderWithItemsAsync(
+        Guid tableId, params (decimal GrossAmount, string Status)[] items)
+    {
+        var orderId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, is_available, current_price)
+            VALUES (@product_id, @sku, 'Amount Test Item', 1, 1, true, true, 10.00);
+
+            INSERT INTO orders.orders (
+                order_id, source, table_id, status, confirmation_status, order_number,
+                created_at, updated_at)
+            VALUES (
+                @order_id, 'Cashier', @table_id, 'Draft', 'NotRequired', @order_number,
+                now(), now());
+
+            UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;
+            """,
+            ("product_id", productId),
+            ("sku", "amt-" + productId.ToString("N")[..8]),
+            ("order_id", orderId),
+            ("table_id", tableId),
+            ("order_number", "ORD-" + orderId.ToString("N")));
+
+        foreach (var (grossAmount, status) in items)
+        {
+            await ExecuteAsync(
+                DataSource,
+                """
+                INSERT INTO orders.order_items (
+                    order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price,
+                    discount_amount, tax_rate, tax_amount, net_amount, gross_amount, status, kitchen_state,
+                    portion_reservation_status, created_at, updated_at)
+                VALUES (
+                    @item_id, @order_id, @product_id, 'Amount Test Item', 1, @gross_amount,
+                    0, 0, 0, @gross_amount, @gross_amount, @status, 'NotSent',
+                    'NotApplicable', now(), now());
+                """,
+                ("item_id", Guid.NewGuid()),
+                ("order_id", orderId),
+                ("product_id", productId),
+                ("gross_amount", grossAmount),
+                ("status", status));
+        }
+
+        return orderId;
     }
 
     public async Task<T> ScalarAsync<T>(string sql)

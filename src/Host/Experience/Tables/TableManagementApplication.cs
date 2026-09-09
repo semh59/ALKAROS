@@ -119,10 +119,10 @@ public static class TableManagementApplication
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var tables = await store.GetAllAsync(zoneId, cancellationToken);
             var dtos = new List<TableDto>(tables.Count);
-            foreach (var table in tables)
+            foreach (var (table, currentOrderTotal) in tables)
             {
                 var activeReservation = await ActiveReservationOrNullAsync(table, reservations, cancellationToken);
-                dtos.Add(TableContractMapper.ToDto(table, principal.Permissions, activeReservation));
+                dtos.Add(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal));
             }
             return Results.Ok(dtos);
         });
@@ -137,10 +137,10 @@ public static class TableManagementApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
-            var table = await store.GetAsync(tableId, cancellationToken)
+            var (table, currentOrderTotal) = await store.GetAsync(tableId, cancellationToken)
                 ?? throw new TableManagementNotFoundException($"Table {tableId} was not found.");
             var activeReservation = await ActiveReservationOrNullAsync(table, reservations, cancellationToken);
-            return Results.Ok(TableContractMapper.ToDto(table, principal.Permissions, activeReservation));
+            return Results.Ok(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal));
         });
 
         group.MapPost("/tables", async (

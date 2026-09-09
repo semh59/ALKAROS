@@ -21,26 +21,59 @@ public sealed class TableManagementStore
         _reservationRepository = reservationRepository ?? throw new ArgumentNullException(nameof(reservationRepository));
     }
 
-    public Task<Table?> GetAsync(Guid tableId, CancellationToken cancellationToken = default)
-        => _repository.GetByIdAsync(tableId, cancellationToken);
+    // V1-RMD-135: found by an independent audit (2026-09-09) — WaiterPwa's
+    // table list always rendered every table's running total as empty
+    // because TableDto never carried one at all; the client was
+    // reading fields ("amount"/"currentAmount") that simply don't exist on
+    // the real contract. CurrentOrderTotal closes that gap: the same
+    // formula Order.Total itself uses (SUM of active — Draft or Active —
+    // items' persisted gross_amount), read directly here rather than
+    // loading a full Order aggregate per table row. A table with no
+    // current order (or an order with no items yet) reports 0m, matching
+    // how the client already treats "nothing to show".
+    private const string CurrentOrderTotalSql =
+        """
+        COALESCE((
+            SELECT SUM(oi.gross_amount)
+            FROM orders.order_items oi
+            WHERE oi.order_id = t.current_order_id AND oi.status IN ('Draft', 'Active')
+        ), 0)
+        """;
 
-    public async Task<IReadOnlyList<Table>> GetAllAsync(
+    public async Task<(Table Table, decimal CurrentOrderTotal)?> GetAsync(
+        Guid tableId, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT t.table_id, t.table_number, t.zone_id, t.capacity, t.active, t.current_status,
+                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}
+            FROM table_mgmt.tables t
+            WHERE t.table_id = @table_id;
+            """);
+        command.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+        return (Read(reader), reader.GetDecimal(9));
+    }
+
+    public async Task<IReadOnlyList<(Table Table, decimal CurrentOrderTotal)>> GetAllAsync(
         Guid? zoneId,
         CancellationToken cancellationToken = default)
     {
-        var tables = new List<Table>();
+        var tables = new List<(Table, decimal)>();
         await using var command = _dataSource.CreateCommand(
-            """
-            SELECT table_id, table_number, zone_id, capacity, active, current_status,
-                   current_order_id, current_bill_id, row_version
-            FROM table_mgmt.tables
-            WHERE @zone_id IS NULL OR zone_id = @zone_id
-            ORDER BY table_number, table_id;
+            $"""
+            SELECT t.table_id, t.table_number, t.zone_id, t.capacity, t.active, t.current_status,
+                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}
+            FROM table_mgmt.tables t
+            WHERE @zone_id IS NULL OR t.zone_id = @zone_id
+            ORDER BY t.table_number, t.table_id;
             """);
         command.Parameters.Add("zone_id", NpgsqlDbType.Uuid).Value = zoneId ?? (object)DBNull.Value;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
-            tables.Add(Read(reader));
+            tables.Add((Read(reader), reader.GetDecimal(9)));
         return tables;
     }
 

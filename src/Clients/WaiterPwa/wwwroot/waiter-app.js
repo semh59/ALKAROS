@@ -460,7 +460,12 @@
           seats: t.capacity || t.seats || 4,
           zoneId: t.zoneId,
           status: (t.currentStatus || t.status || 'available').toLowerCase(),
-          amount: t.currentAmount || t.amount || 0
+          // V1-RMD-135: found by an independent audit (2026-09-09) — TableDto
+          // never carried a table's running total at all ("currentAmount"/
+          // "amount" never existed on the real contract, always falling
+          // through to 0), so the UI always rendered it as empty. The backend
+          // now computes and returns the real value as currentOrderTotal.
+          amount: t.currentOrderTotal || 0
         }));
       } else {
         state.tables = [];

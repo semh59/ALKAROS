@@ -124,7 +124,13 @@ public sealed record TableDto(
     // request could ever be built without them. Both are null unless
     // Status is "Reserved" and an Active reservation row actually exists.
     Guid? ActiveReservationId = null,
-    long? ReservationRowVersion = null);
+    long? ReservationRowVersion = null,
+    // V1-RMD-135: the running total of the table's current order (Draft/
+    // Active items only, same formula as Order.Total) — 0 when there is no
+    // current order or it has no items yet. Was missing entirely before
+    // this; WaiterPwa read a field ("amount"/"currentAmount") that never
+    // existed on this contract and the client always rendered it as empty.
+    decimal CurrentOrderTotal = 0m);
 
 public sealed record CreateTableReservationRequest(
     Guid TableId,
@@ -230,7 +236,10 @@ internal static class TableContractMapper
         };
 
     public static TableDto ToDto(
-        Table table, IReadOnlySet<string> permissions, TableReservationRecord? activeReservation = null) => new(
+        Table table,
+        IReadOnlySet<string> permissions,
+        TableReservationRecord? activeReservation = null,
+        decimal currentOrderTotal = 0m) => new(
         table.Id,
         table.TableNumber,
         table.ZoneId,
@@ -242,7 +251,8 @@ internal static class TableContractMapper
         table.RowVersion,
         AllowedCommands(table, permissions),
         activeReservation?.Id,
-        activeReservation?.RowVersion);
+        activeReservation?.RowVersion,
+        currentOrderTotal);
 
     public static IReadOnlyList<string> AllowedCommands(Table table, IReadOnlySet<string> permissions)
     {
