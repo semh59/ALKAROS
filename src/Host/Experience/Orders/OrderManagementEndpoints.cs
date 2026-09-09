@@ -2,6 +2,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Host.Experience.Orders.SentItemVoid;
+using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
@@ -74,6 +75,14 @@ public static class OrderManagementEndpoints
         // story). Reuses the same IOrderRepository/IKitchenTicketRepository/
         // IBillRepository already registered above.
         services.TryAddSingleton<PendingOrderConfirmationStore>();
+        // V12-QRO-002: the background half of "no remote QR service denial"
+        // (see QrOrderExpiryHostedService's own doc comment) — an
+        // unconfirmed QR order auto-rejects (reusing the exact same
+        // PendingOrderConfirmationStore.RejectAsync above) once it exceeds
+        // the configured timeout.
+        services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
+        services.TryAddSingleton<ISettingsService, SettingsService>();
+        services.AddHostedService<QrOrderExpiryHostedService>();
         // V1-RMD-113: found by an independent audit (2026-09-06) —
         // table-draft's own submit-draft endpoint had a completely separate,
         // thinner submit path (OrderManagementStore.SubmitOrderAsync) that

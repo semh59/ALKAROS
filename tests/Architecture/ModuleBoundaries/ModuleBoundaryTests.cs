@@ -69,6 +69,10 @@ public static class ModuleBoundaryTests
             ["Kitchen"] = ["Orders", "Identity"],
             ["Production"] = ["Inventory"],
             ["Purchasing"] = ["Inventory"],
+            // V12-QRO-002: module-dependency-rules.md row 19, approved
+            // 2026-08-03, exercised in code for the first time now (same
+            // situation as rows 11/27's own notes describe).
+            ["QrOrdering"] = ["Tables"],
             // Table Management has no direct-call edge: it reparents orders and
             // bills after a merge/transfer/unmerge by publishing a table event
             // to the outbox, which Order and Bill consume (V0-ARC-001 row 3).

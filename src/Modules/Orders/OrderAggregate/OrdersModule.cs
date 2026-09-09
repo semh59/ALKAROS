@@ -10,7 +10,12 @@ public sealed class OrdersModule : IModule
 
     public string DisplayName => "Orders";
 
-    public IReadOnlyCollection<string> DependsOn => Array.Empty<string>();
+    // V12-QRO-002: module-dependency-rules.md row 4 approves Order ->
+    // Table Management ("table association") — approved 2026-08-03,
+    // exercised in code for the first time here
+    // (QrOrderSubmittedConsumer backfills the current_order_id cache
+    // pointer in the same transaction it materializes the Order).
+    public IReadOnlyCollection<string> DependsOn => ["Tables"];
 
     public void Register(ModuleContext context)
     {

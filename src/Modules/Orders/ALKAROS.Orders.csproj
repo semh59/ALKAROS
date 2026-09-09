@@ -9,6 +9,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj" />
+    <!-- V12-QRO-002: module-dependency-rules.md row 4 approves a direct-call
+         edge from Order to Table Management ("table association") — approved
+         2026-08-03 but never exercised in code until now: QrOrderSubmittedConsumer
+         backfills table_mgmt.tables.current_order_id in the same transaction
+         it inserts the materialized Order. -->
+    <ProjectReference Include="..\Tables\ALKAROS.Tables.csproj" />
   </ItemGroup>
 
   <ItemGroup>

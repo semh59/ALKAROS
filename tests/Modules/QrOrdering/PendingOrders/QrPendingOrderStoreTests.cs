@@ -3,7 +3,9 @@ namespace ALKAROS.QrOrdering.PendingOrders.Tests;
 using ALKAROS.IntegrationContracts;
 using ALKAROS.QrOrdering.CustomerSession;
 using ALKAROS.QrOrdering.PendingOrders.Tests.Fixtures;
+using ALKAROS.QrOrdering.TablePolicy;
 using ALKAROS.QrOrdering.TokenLifecycle;
+using ALKAROS.Tables.TableLifecycle;
 using FluentAssertions;
 using NpgsqlTypes;
 using Xunit;
@@ -26,7 +28,8 @@ public sealed class QrPendingOrderStoreTests : IClassFixture<QrOrderingPendingOr
         _tableTokenService = new TableTokenService(new PostgresTableTokenRepository(database.DataSource));
         _customerSessionService = new CustomerSessionService(
             new PostgresCustomerSessionRepository(database.DataSource), _tableTokenService);
-        _store = new QrPendingOrderStore(database.DataSource, _customerSessionService);
+        var tableReservationPolicy = new QrTableReservationPolicy(new PostgresTableRepository(database.DataSource));
+        _store = new QrPendingOrderStore(database.DataSource, _customerSessionService, tableReservationPolicy);
     }
 
     private async Task<string> IssueSessionAsync(Guid tableId)
@@ -52,6 +55,11 @@ public sealed class QrPendingOrderStoreTests : IClassFixture<QrOrderingPendingOr
 
         result.SubmissionId.Should().Be(submissionId);
         result.TableId.Should().Be(tableId);
+
+        // V12-QRO-002: a successful submission reserves the table — the
+        // actual anti-remote-abuse mechanism this task exists for.
+        var (status, _) = await _database.GetTableStateAsync(tableId);
+        status.Should().Be("Reserved");
 
         var envelope = await ReadOutboxEnvelope(submissionId);
         envelope.Should().NotBeNull();
@@ -133,6 +141,63 @@ public sealed class QrPendingOrderStoreTests : IClassFixture<QrOrderingPendingOr
             new QrOrderSubmissionRequest([new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1, null)], Guid.NewGuid()));
 
         await act.Should().ThrowAsync<QrOrderInvalidProductException>();
+    }
+
+    /// <summary>
+    /// V12-QRO-002: the actual anti-remote-abuse mechanism the task exists
+    /// for — a QR code can be photographed and reused from anywhere
+    /// (unlike NFC's physical-proximity requirement), so a submission
+    /// against a table someone else is already genuinely using must be
+    /// refused outright, not silently create a competing/confusing order.
+    /// </summary>
+    [Fact]
+    public async Task ASubmissionAgainstAnOccupiedTableIsRefusedAndTheTableIsUnchanged()
+    {
+        var tableId = await _database.SeedTableAsync(status: "Occupied");
+        var productId = await _database.SeedProductAsync();
+        var rawSession = await IssueSessionAsync(tableId);
+        var (_, rowVersionBefore) = await _database.GetTableStateAsync(tableId);
+
+        var act = () => _store.SubmitAsync(
+            rawSession,
+            new QrOrderSubmissionRequest([new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1, null)], Guid.NewGuid()));
+
+        await act.Should().ThrowAsync<QrTableNotAvailableException>();
+        var (status, rowVersionAfter) = await _database.GetTableStateAsync(tableId);
+        status.Should().Be("Occupied");
+        rowVersionAfter.Should().Be(rowVersionBefore);
+    }
+
+    /// <summary>V12-QRO-002: same refusal for a table already Reserved (by another pending QR order or a manual reservation) — the single-owner invariant (table-reservation-policy.md).</summary>
+    [Fact]
+    public async Task ASubmissionAgainstAnAlreadyReservedTableIsRefused()
+    {
+        var tableId = await _database.SeedTableAsync(status: "Reserved");
+        var productId = await _database.SeedProductAsync();
+        var rawSession = await IssueSessionAsync(tableId);
+
+        var act = () => _store.SubmitAsync(
+            rawSession,
+            new QrOrderSubmissionRequest([new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1, null)], Guid.NewGuid()));
+
+        await act.Should().ThrowAsync<QrTableNotAvailableException>();
+    }
+
+    /// <summary>V12-QRO-002: a refused submission never queues a QrOrderSubmitted event or records a ledger entry — the whole transaction rolls back.</summary>
+    [Fact]
+    public async Task ARefusedSubmissionQueuesNoEventAndRecordsNoLedgerEntry()
+    {
+        var tableId = await _database.SeedTableAsync(status: "Cleaning");
+        var productId = await _database.SeedProductAsync();
+        var rawSession = await IssueSessionAsync(tableId);
+        var submissionId = Guid.NewGuid();
+
+        var act = () => _store.SubmitAsync(
+            rawSession,
+            new QrOrderSubmissionRequest([new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1, null)], submissionId));
+
+        await act.Should().ThrowAsync<QrTableNotAvailableException>();
+        (await CountOutboxMessages(submissionId)).Should().Be(0);
     }
 
     [Fact]

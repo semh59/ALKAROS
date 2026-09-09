@@ -3,6 +3,7 @@ using ALKAROS.QrOrdering.CustomerSession;
 using ALKAROS.QrOrdering.PendingOrders;
 using ALKAROS.QrOrdering.RelayCredential;
 using ALKAROS.QrOrdering.RelaySecurity;
+using ALKAROS.QrOrdering.TablePolicy;
 using ALKAROS.Secrets;
 using ALKAROS.SensitiveData;
 
@@ -14,10 +15,10 @@ public sealed class QrOrderingModule : IModule
 
     public string DisplayName => "QR Ordering";
 
-    // Table binding is a read of table_mgmt.tables' existence, not a write —
-    // no direct-call edge is declared (V0-ARC-001 row 1: reads across
-    // schemas are always allowed without a dependency declaration).
-    public IReadOnlyCollection<string> DependsOn => [];
+    // V12-QRO-002: module-dependency-rules.md row 19 approves QR Ordering ->
+    // Table Management (same-transaction table reservation on submission) —
+    // approved 2026-08-03, exercised in code for the first time here.
+    public IReadOnlyCollection<string> DependsOn => ["Tables"];
 
     public void Register(ModuleContext context)
         => context
@@ -40,6 +41,13 @@ public sealed class QrOrderingModule : IModule
             // V12-QRS-003.
             .RegisterTransient<ICustomerSessionRepository, PostgresCustomerSessionRepository>()
             .RegisterTransient<CustomerSessionService, CustomerSessionService>()
+            // V12-QRO-002: ITableRepository itself is not registered here —
+            // it is Table Management's own service (already registered by
+            // TablesModule; the DependsOn edge above guarantees that module
+            // is present in the same composition), consumed directly through
+            // the approved edge, same pattern as Production consuming
+            // Inventory's IStockBalanceRepository without re-registering it.
+            .RegisterTransient<QrTableReservationPolicy, QrTableReservationPolicy>()
             // V12-QRO-001.
             .RegisterTransient<QrPendingOrderStore, QrPendingOrderStore>();
 }

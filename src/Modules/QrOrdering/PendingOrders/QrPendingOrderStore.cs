@@ -3,6 +3,7 @@ using System.Text.Json;
 using ALKAROS.IntegrationContracts;
 using ALKAROS.Messaging;
 using ALKAROS.QrOrdering.CustomerSession;
+using ALKAROS.QrOrdering.TablePolicy;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -39,11 +40,16 @@ public sealed class QrPendingOrderStore
 
     private readonly NpgsqlDataSource _dataSource;
     private readonly CustomerSessionService _customerSessionService;
+    private readonly QrTableReservationPolicy _tableReservationPolicy;
 
-    public QrPendingOrderStore(NpgsqlDataSource dataSource, CustomerSessionService customerSessionService)
+    public QrPendingOrderStore(
+        NpgsqlDataSource dataSource,
+        CustomerSessionService customerSessionService,
+        QrTableReservationPolicy tableReservationPolicy)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _customerSessionService = customerSessionService ?? throw new ArgumentNullException(nameof(customerSessionService));
+        _tableReservationPolicy = tableReservationPolicy ?? throw new ArgumentNullException(nameof(tableReservationPolicy));
     }
 
     public async Task<QrOrderSubmissionResult> SubmitAsync(
@@ -95,6 +101,11 @@ public sealed class QrPendingOrderStore
 
             try
             {
+                // V12-QRO-002: refuses outright (and rolls back below) unless
+                // the table is Available — the anti-remote-abuse gate. Runs
+                // before the ledger insert/outbox enqueue so a refused table
+                // never queues a QrOrderSubmitted event at all.
+                await _tableReservationPolicy.ReserveForSubmissionAsync(tableId, connection, transaction, cancellationToken);
                 await InsertSubmissionAsync(connection, transaction, request.SubmissionId, tableId, sessionId, items, submittedAt, cancellationToken);
                 await OutboxStore.EnqueueAsync(
                     new OutboxEnvelope(

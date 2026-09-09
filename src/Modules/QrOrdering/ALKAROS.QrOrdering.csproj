@@ -16,6 +16,11 @@
          blocks, not gated by the module ApprovedEdges list. -->
     <ProjectReference Include="..\..\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj" />
+    <!-- V12-QRO-002: module-dependency-rules.md row 19 approves a direct-call
+         edge from QR Ordering to Table Management (same-transaction table
+         reservation on submission) - approved 2026-08-03 but never exercised
+         in code until now (same situation rows 11/27's own notes describe). -->
+    <ProjectReference Include="..\Tables\ALKAROS.Tables.csproj" />
   </ItemGroup>
 
   <ItemGroup>

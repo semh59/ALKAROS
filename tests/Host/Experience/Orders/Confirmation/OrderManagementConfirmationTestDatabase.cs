@@ -136,6 +136,62 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         return (order.Id, tableId, productId);
     }
 
+    /// <summary>
+    /// V12-QRO-002: a QR-sourced PendingConfirmation order whose updated_at
+    /// is backdated by <paramref name="age"/> — for QrOrderExpiryHostedService's
+    /// own tests. OrderSource.Qr is used deliberately (unlike
+    /// SeedPendingConfirmationOrderAsync's channel-agnostic OrderSource.Waiter
+    /// above) since the expiry query filters on source = 'Qr'.
+    /// </summary>
+    public async Task<(Guid OrderId, Guid TableId)> SeedOverdueQrPendingOrderAsync(TimeSpan age)
+    {
+        var tableId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status)
+            VALUES (@table_id, @table_number, 4, true, 'Reserved');
+            """,
+            ("table_id", tableId),
+            ("table_number", "QRO002-" + tableId.ToString("N")[..8]));
+
+        var productId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
+            VALUES (@product_id, @sku, 'Expiry Test Product', 1, 1, true);
+            """,
+            ("product_id", productId),
+            ("sku", "qro002-" + productId.ToString("N")[..8]));
+
+        var orderItem = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), productId, "Expiry Test Product",
+            quantity: 1, unitPrice: 90m, taxRate: 10m,
+            status: OrderItemState.Active, kitchenState: KitchenState.Sent);
+
+        var order = new Order(
+            Guid.NewGuid(),
+            OrderSource.Qr,
+            "QRO002-" + orderItem.Id.ToString("N")[..8],
+            new[] { orderItem },
+            tableId: tableId,
+            status: OrderState.PendingConfirmation,
+            confirmationStatus: ConfirmationStatus.Pending);
+
+        var repository = new PostgresOrderRepository(DataSource);
+        await repository.AddAsync(order);
+
+        await ExecuteAsync(
+            """
+            UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;
+            UPDATE orders.orders SET updated_at = now() - @age WHERE order_id = @order_id;
+            """,
+            ("order_id", order.Id),
+            ("table_id", tableId),
+            ("age", age));
+
+        return (order.Id, tableId);
+    }
+
     /// <summary>Seeds a single-item kitchen ticket (Preparing) matching the order's own item, mirroring what NfcOrderingStore's immediate dispatch already created.</summary>
     public async Task SeedKitchenTicketAsync(Guid orderId, Guid orderItemId, Guid productId)
     {

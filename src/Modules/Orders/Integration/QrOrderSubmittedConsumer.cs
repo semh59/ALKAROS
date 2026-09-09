@@ -1,6 +1,7 @@
 using ALKAROS.IntegrationContracts;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
+using ALKAROS.Tables.TableLifecycle;
 using Npgsql;
 
 namespace ALKAROS.Orders.Integration;
@@ -28,6 +29,7 @@ public sealed class QrOrderSubmittedConsumer : IIntegrationEventConsumer
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _orders;
+    private readonly ITableRepository _tables;
     private readonly SubmitOrderHandler? _submitHandler;
 
     /// <summary>
@@ -40,10 +42,12 @@ public sealed class QrOrderSubmittedConsumer : IIntegrationEventConsumer
     /// ValidateOnBuild. A real deployment always registers it, so
     /// <see cref="HandleAsync"/> never actually sees null there.
     /// </summary>
-    public QrOrderSubmittedConsumer(NpgsqlDataSource dataSource, IOrderRepository orders, SubmitOrderHandler? submitHandler = null)
+    public QrOrderSubmittedConsumer(
+        NpgsqlDataSource dataSource, IOrderRepository orders, ITableRepository tables, SubmitOrderHandler? submitHandler = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
+        _tables = tables ?? throw new ArgumentNullException(nameof(tables));
         _submitHandler = submitHandler;
     }
 
@@ -99,6 +103,14 @@ public sealed class QrOrderSubmittedConsumer : IIntegrationEventConsumer
             try
             {
                 await _orders.AddAsync(order, connection, transaction, cancellationToken).ConfigureAwait(false);
+                // V12-QRO-002: backfills the current_order_id cache pointer
+                // in the SAME transaction as the Order insert — the table's
+                // current_status was already set Reserved by QrOrdering's
+                // own reservation policy at submission time (before this
+                // consumer ever ran), so this only converges the pointer,
+                // it never changes the status.
+                await _tables.LinkCurrentOrderAsync(e.TableId, newOrderId, connection, transaction, cancellationToken)
+                    .ConfigureAwait(false);
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
                 orderId = newOrderId;
             }

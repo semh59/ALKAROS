@@ -175,6 +175,7 @@
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Secrets": "[1.0.0, )",
           "ALKAROS.SensitiveData": "[1.0.0, )",
+          "ALKAROS.Tables": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
       },
@@ -194,6 +195,15 @@
         "type": "Project",
         "dependencies": {
           "ALKAROS.Secrets": "[1.0.0, )"
+        }
+      },
+      "alkaros.tables": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "Microsoft.Extensions.Hosting.Abstractions": {

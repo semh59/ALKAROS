@@ -4,6 +4,7 @@ using ALKAROS.IntegrationContracts;
 using ALKAROS.Orders.Integration;
 using ALKAROS.Orders.OrderAggregate.Tests.Fixtures;
 using ALKAROS.Orders.SubmitOrder;
+using ALKAROS.Tables.TableLifecycle;
 using FluentAssertions;
 using Npgsql;
 using NpgsqlTypes;
@@ -18,14 +19,16 @@ public sealed class QrOrderSubmittedConsumerTests : IClassFixture<OrdersTestData
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly PostgresOrderRepository _orders;
+    private readonly PostgresTableRepository _tables;
     private readonly QrOrderSubmittedConsumer _consumer;
 
     public QrOrderSubmittedConsumerTests(OrdersTestDatabase database)
     {
         _dataSource = database.DataSource;
         _orders = new PostgresOrderRepository(database.DataSource);
+        _tables = new PostgresTableRepository(database.DataSource);
         var submitHandler = new SubmitOrderHandler(database.DataSource, _orders);
-        _consumer = new QrOrderSubmittedConsumer(database.DataSource, _orders, submitHandler);
+        _consumer = new QrOrderSubmittedConsumer(database.DataSource, _orders, _tables, submitHandler);
     }
 
     [Fact]
@@ -63,6 +66,38 @@ public sealed class QrOrderSubmittedConsumerTests : IClassFixture<OrdersTestData
         item.Quantity.Should().Be(2);
         item.UnitPrice.Should().Be(120m);
         item.Notes.Should().Be("az acılı");
+    }
+
+    /// <summary>
+    /// V12-QRO-002: the table's current_status is already Reserved by QR
+    /// Ordering's own reservation policy at submission time (not this
+    /// consumer's concern); this consumer only backfills the
+    /// current_order_id cache pointer once the real Order exists.
+    /// </summary>
+    [Fact]
+    public async Task BackfillsTheTablesCurrentOrderIdPointer()
+    {
+        var tableId = await SeedTable();
+        var submissionId = Guid.NewGuid();
+        var productId = await SeedProduct();
+
+        await DeliverAsync(new QrOrderSubmitted(
+            submissionId, tableId, Guid.NewGuid(),
+            [new QrOrderSubmittedItem(Guid.NewGuid(), productId, "Lahmacun", 1, 120m, 10m, null)],
+            DateTimeOffset.UtcNow));
+
+        var orderId = await FindOrderId(tableId, submissionId);
+        var currentOrderId = await GetTableCurrentOrderId(tableId);
+        currentOrderId.Should().Be(orderId);
+    }
+
+    private async Task<Guid?> GetTableCurrentOrderId(Guid tableId)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            "SELECT current_order_id FROM table_mgmt.tables WHERE table_id = @table_id;");
+        cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+        var result = await cmd.ExecuteScalarAsync();
+        return result is Guid id ? id : null;
     }
 
     [Fact]

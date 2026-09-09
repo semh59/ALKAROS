@@ -188,6 +188,106 @@ public sealed class PostgresTableTests : IClassFixture<TablesTestDatabase>
             () => _tables.UpdateStatusAsync(table.Id, TableState.Available, expectedRowVersion: 1));
     }
 
+    /// <summary>
+    /// V12-QRO-002: the same-transaction overloads QR Ordering's table
+    /// reservation policy relies on — GetByIdForUpdateAsync locks the row,
+    /// the transaction-accepting UpdateStatusAsync commits with the
+    /// caller's own domain write as one atomic unit.
+    /// </summary>
+    [Fact]
+    public async Task SameTransactionOverloadsLockAndUpdateAtomically()
+    {
+        var table = new Table(Guid.NewGuid(), "20");
+        await _tables.AddAsync(table);
+
+        await using var connection = await _dataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+
+        var locked = await _tables.GetByIdForUpdateAsync(table.Id, connection, transaction);
+        Assert.NotNull(locked);
+        Assert.Equal(TableState.Available, locked.State);
+
+        var newVersion = await _tables.UpdateStatusAsync(
+            table.Id, TableState.Reserved, locked.RowVersion, connection, transaction);
+        await transaction.CommitAsync();
+
+        Assert.Equal(table.RowVersion + 1, newVersion);
+        var loaded = await _tables.GetByIdAsync(table.Id);
+        Assert.NotNull(loaded);
+        Assert.Equal(TableState.Reserved, loaded.State);
+    }
+
+    [Fact]
+    public async Task SameTransactionOverloadRollsBackWithTheCallerSTransaction()
+    {
+        var table = new Table(Guid.NewGuid(), "21");
+        await _tables.AddAsync(table);
+
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            var locked = await _tables.GetByIdForUpdateAsync(table.Id, connection, transaction);
+            await _tables.UpdateStatusAsync(table.Id, TableState.Reserved, locked!.RowVersion, connection, transaction);
+            await transaction.RollbackAsync();
+        }
+
+        var loaded = await _tables.GetByIdAsync(table.Id);
+        Assert.NotNull(loaded);
+        Assert.Equal(TableState.Available, loaded.State);
+        Assert.Equal(table.RowVersion, loaded.RowVersion);
+    }
+
+    /// <summary>V12-QRO-002: backfills the cache pointer once, and tolerates an at-least-once replay pointing at the same order.</summary>
+    [Fact]
+    public async Task LinkCurrentOrderAsyncSetsThePointerAndTheReplayIsANoOp()
+    {
+        var table = new Table(Guid.NewGuid(), "22");
+        await _tables.AddAsync(table);
+        var orderId = Guid.NewGuid();
+
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _tables.LinkCurrentOrderAsync(table.Id, orderId, connection, transaction);
+            await transaction.CommitAsync();
+        }
+
+        var loaded = await _tables.GetByIdAsync(table.Id);
+        Assert.Equal(orderId, loaded!.CurrentOrderId);
+
+        // Replay with the same order id must not fail or clobber anything.
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _tables.LinkCurrentOrderAsync(table.Id, orderId, connection, transaction);
+            await transaction.CommitAsync();
+        }
+
+        var reloaded = await _tables.GetByIdAsync(table.Id);
+        Assert.Equal(orderId, reloaded!.CurrentOrderId);
+    }
+
+    /// <summary>V12-QRO-002: never overwrites a DIFFERENT order's existing pointer — the ownership truth is orders.orders.table_id, this is just a best-effort cache.</summary>
+    [Fact]
+    public async Task LinkCurrentOrderAsyncNeverOverwritesADifferentExistingOrder()
+    {
+        var table = new Table(Guid.NewGuid(), "23");
+        await _tables.AddAsync(table);
+        var firstOrderId = Guid.NewGuid();
+        var secondOrderId = Guid.NewGuid();
+
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _tables.LinkCurrentOrderAsync(table.Id, firstOrderId, connection, transaction);
+            await _tables.LinkCurrentOrderAsync(table.Id, secondOrderId, connection, transaction);
+            await transaction.CommitAsync();
+        }
+
+        var loaded = await _tables.GetByIdAsync(table.Id);
+        Assert.Equal(firstOrderId, loaded!.CurrentOrderId);
+    }
+
     [Fact]
     public async Task GetByZoneAndGetUnzonedSeparateTables()
     {

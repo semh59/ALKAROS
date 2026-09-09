@@ -143,6 +143,78 @@ public sealed class PostgresTableRepository : ITableRepository
         return (long)result;
     }
 
+    public async Task<Table?> GetByIdForUpdateAsync(
+        Guid id, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        if (id == Guid.Empty)
+            throw new ArgumentException("Table id cannot be empty.", nameof(id));
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
+            $"""
+            SELECT table_id, table_number, zone_id, capacity, active, current_status,
+                   current_order_id, current_bill_id, row_version
+            FROM {Table}
+            WHERE table_id = @id
+            FOR UPDATE;
+            """;
+        command.Parameters.AddWithValue("id", id);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        return await reader.ReadAsync(cancellationToken) ? ReadTable(reader) : null;
+    }
+
+    public async Task<long> UpdateStatusAsync(
+        Guid id,
+        TableState target,
+        long expectedRowVersion,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
+            $"""
+            UPDATE {Table}
+            SET current_status = @target,
+                row_version = row_version + 1
+            WHERE table_id = @id AND row_version = @expected_row_version
+            RETURNING row_version;
+            """;
+        command.Parameters.AddWithValue("id", id);
+        command.Parameters.AddWithValue("target", target.ToString());
+        command.Parameters.AddWithValue("expected_row_version", expectedRowVersion);
+
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        if (result is null)
+            throw new InvalidOperationException(
+                $"Table {id} not found or concurrent modification (expected row version {expectedRowVersion}).");
+
+        return (long)result;
+    }
+
+    public async Task LinkCurrentOrderAsync(
+        Guid tableId,
+        Guid orderId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
+            $"""
+            UPDATE {Table}
+            SET current_order_id = @order_id
+            WHERE table_id = @table_id AND (current_order_id IS NULL OR current_order_id = @order_id);
+            """;
+        command.Parameters.AddWithValue("table_id", tableId);
+        command.Parameters.AddWithValue("order_id", orderId);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     private static Table ReadTable(NpgsqlDataReader reader)
         => new(
             reader.GetGuid(0),

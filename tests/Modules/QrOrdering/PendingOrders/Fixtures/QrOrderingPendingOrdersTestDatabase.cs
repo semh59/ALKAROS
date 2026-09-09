@@ -22,7 +22,10 @@ public sealed class QrOrderingPendingOrdersTestDatabase : PgTestDatabase
             await RunAsync(DataSource, await File.ReadAllTextAsync(file));
     }
 
-    public async Task<Guid> SeedTableAsync()
+    public Task<Guid> SeedTableAsync() => SeedTableAsync(status: "Available");
+
+    /// <summary>V12-QRO-002: lets a test seed a table that is not Available, to prove a QR submission refuses it.</summary>
+    public async Task<Guid> SeedTableAsync(string status)
     {
         var zoneId = Guid.NewGuid();
         var tableId = Guid.NewGuid();
@@ -30,14 +33,27 @@ public sealed class QrOrderingPendingOrdersTestDatabase : PgTestDatabase
             """
             INSERT INTO table_mgmt.zones (zone_id, code, name) VALUES (@zone_id, @zone_code, 'Main Floor');
             INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
-            VALUES (@table_id, @zone_id, @table_number, 4, 'Available');
+            VALUES (@table_id, @zone_id, @table_number, 4, @status);
             """,
             ("zone_id", zoneId),
             ("zone_code", "ZONE-" + zoneId.ToString("N")[..8]),
             ("table_id", tableId),
-            ("table_number", "T-" + tableId.ToString("N")[..6]));
+            ("table_number", "T-" + tableId.ToString("N")[..6]),
+            ("status", status));
 
         return tableId;
+    }
+
+    /// <summary>V12-QRO-002: reads back a table's current_status/row_version for assertions.</summary>
+    public async Task<(string Status, long RowVersion)> GetTableStateAsync(Guid tableId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT current_status, row_version FROM table_mgmt.tables WHERE table_id = @table_id;");
+        command.Parameters.AddWithValue("table_id", tableId);
+        await using var reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+            throw new InvalidOperationException("Table not found.");
+        return (reader.GetString(0), reader.GetInt64(1));
     }
 
     /// <summary>

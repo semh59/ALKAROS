@@ -73,6 +73,19 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 
 Notes:
 
+- Row 19 (QR Ordering → Table Management) was approved 2026-08-03 but
+  unexercised in code until V12-QRO-002 (2026-09-09): a QR submission now
+  locks the table row (`ITableRepository.GetByIdForUpdateAsync`) and
+  transitions `Available → Reserved` in the same transaction as its own
+  idempotency-ledger insert and outbox enqueue — refusing outright when the
+  table is anything else, which is the actual anti-remote-abuse mechanism
+  (an already-Occupied/Reserved/Cleaning/OutOfService table cannot be
+  claimed by a QR submission). Row 4 (Order → Table Management) backfills
+  the `current_order_id` cache pointer once `QrOrderSubmittedConsumer`
+  materializes the real Order, via a new same-transaction
+  `ITableRepository.LinkCurrentOrderAsync` overload — the table's
+  `current_status` does not change again there, it was already set
+  `Reserved` at submission time.
 - Row 27 (Purchasing) was added 2026-09-06 when Purchasing's goods-receipt
   posting was found writing `inventory.stock_movements` directly with no
   declared dependency (a real V0-ARC-001 violation, not merely undeclared) —
