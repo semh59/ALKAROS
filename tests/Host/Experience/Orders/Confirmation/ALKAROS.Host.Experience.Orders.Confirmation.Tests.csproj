@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ALKAROSTest>true</ALKAROSTest>
     <IsPackable>false</IsPackable>
-    <RootNamespace>ALKAROS.Host.Experience.Orders.VoidSent.Tests</RootNamespace>
+    <RootNamespace>ALKAROS.Host.Experience.Orders.Confirmation.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

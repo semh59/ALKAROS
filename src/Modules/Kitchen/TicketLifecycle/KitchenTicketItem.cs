@@ -22,7 +22,8 @@ public sealed class KitchenTicketItem
         DateTimeOffset? readyAt = null,
         DateTimeOffset? servedAt = null,
         DateTimeOffset? cancelledAt = null,
-        string? cancellationReason = null)
+        string? cancellationReason = null,
+        bool isAgeRestricted = false)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Item id cannot be empty.", nameof(id));
@@ -53,6 +54,7 @@ public sealed class KitchenTicketItem
         ServedAt = servedAt;
         CancelledAt = cancelledAt;
         CancellationReason = cancellationReason;
+        IsAgeRestricted = isAgeRestricted;
     }
 
     public Guid Id { get; }
@@ -71,6 +73,14 @@ public sealed class KitchenTicketItem
     public DateTimeOffset? ServedAt { get; private set; }
     public DateTimeOffset? CancelledAt { get; private set; }
     public string? CancellationReason { get; private set; }
+    /// <summary>
+    /// V1-RMD-137: a point-in-time snapshot of catalog.products.is_age_restricted
+    /// taken when the ticket was created (same rationale as ProductNameSnapshot) —
+    /// prompts whoever serves the item to check ID before handing it over. Does
+    /// not gate preparation itself; see NfcOrderingStore's own documentation for
+    /// why the kitchen ticket dispatches immediately regardless.
+    /// </summary>
+    public bool IsAgeRestricted { get; }
 
     public bool CanTransitionTo(KitchenTicketItemState targetState)
     {
@@ -118,6 +128,7 @@ public sealed class KitchenTicketItem
             readyAt: newState == KitchenTicketItemState.Ready ? at : ReadyAt,
             servedAt: newState == KitchenTicketItemState.Served ? at : ServedAt,
             cancelledAt: newState == KitchenTicketItemState.Cancelled ? at : CancelledAt,
-            cancellationReason: newState == KitchenTicketItemState.Cancelled ? reason : CancellationReason);
+            cancellationReason: newState == KitchenTicketItemState.Cancelled ? reason : CancellationReason,
+            isAgeRestricted: IsAgeRestricted);
     }
 }

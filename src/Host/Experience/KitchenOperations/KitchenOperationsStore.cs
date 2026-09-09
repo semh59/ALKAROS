@@ -398,7 +398,8 @@ public sealed class KitchenOperationsStore
             value.UpdatedAt,
             value.ReadyAt,
             value.ServedAt,
-            value.CancelledAt);
+            value.CancelledAt,
+            value.IsAgeRestricted);
 
     private static PrinterV1 ToDto(Printer value)
         => new(value.Id, value.Name, value.StationId, value.IsActive, value.CreatedAt, value.UpdatedAt);

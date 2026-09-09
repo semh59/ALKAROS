@@ -4,6 +4,7 @@ using ALKAROS.Kitchen.Routing;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using Npgsql;
+using NpgsqlTypes;
 
 /// <summary>
 /// Creates the station-scoped kitchen ticket(s) for a submitted order in the
@@ -58,6 +59,15 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
             return;
 
         var stationByItemId = await ResolveStationsAsync(activeItems, cancellationToken).ConfigureAwait(false);
+        // V1-RMD-137: found by an independent audit (2026-09-09) — an
+        // age-restricted item's kitchen ticket looked identical to any
+        // other, so whoever served it had no system prompt to check ID.
+        // Resolved fresh from catalog.products (not a field on OrderItem
+        // itself) in the same transaction the ticket is written in, so the
+        // snapshot below is exactly what was true the moment the ticket
+        // was created.
+        var ageRestrictedProductIds = await ResolveAgeRestrictedProductIdsAsync(
+            connection, transaction, activeItems, cancellationToken).ConfigureAwait(false);
 
         if (stationByItemId.Values.Any(string.IsNullOrWhiteSpace))
         {
@@ -96,7 +106,8 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
                     order,
                     stationScope,
                     itemFilter: item => stationByItemId.TryGetValue(item.Id, out var resolved)
-                        && string.Equals(resolved, stationScope, StringComparison.Ordinal));
+                        && string.Equals(resolved, stationScope, StringComparison.Ordinal),
+                    isAgeRestricted: item => ageRestrictedProductIds.Contains(item.ProductId));
 
                 await _ticketRepository.AddAsync(ticket, connection, transaction, cancellationToken).ConfigureAwait(false);
             }
@@ -115,6 +126,30 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
                 $"Kitchen ticket dispatch failed for order '{order.Id}'.",
                 exception);
         }
+    }
+
+    private static async Task<HashSet<Guid>> ResolveAgeRestrictedProductIdsAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        IReadOnlyList<OrderItem> activeItems,
+        CancellationToken cancellationToken)
+    {
+        var productIds = activeItems.Select(item => item.ProductId).Distinct().ToArray();
+        var result = new HashSet<Guid>();
+        if (productIds.Length == 0)
+            return result;
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
+            "SELECT product_id FROM catalog.products WHERE product_id = ANY(@product_ids) AND is_age_restricted;";
+        command.Parameters.Add("product_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = productIds;
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            result.Add(reader.GetGuid(0));
+
+        return result;
     }
 
     private async Task<Dictionary<Guid, string>> ResolveStationsAsync(

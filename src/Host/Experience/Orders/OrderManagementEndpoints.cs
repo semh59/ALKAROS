@@ -1,5 +1,6 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Host.Experience.Orders.SentItemVoid;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
@@ -67,6 +68,12 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IKitchenTicketRepository, PostgresKitchenTicketRepository>();
         services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
         services.TryAddSingleton<SentItemVoidStore>();
+        // V1-RMD-137: found by an independent audit (2026-09-09) — no HTTP
+        // action anywhere could ever move an order out of PendingConfirmation
+        // (see PendingOrderConfirmationStore's own doc comment for the full
+        // story). Reuses the same IOrderRepository/IKitchenTicketRepository/
+        // IBillRepository already registered above.
+        services.TryAddSingleton<PendingOrderConfirmationStore>();
         // V1-RMD-113: found by an independent audit (2026-09-06) —
         // table-draft's own submit-draft endpoint had a completely separate,
         // thinner submit path (OrderManagementStore.SubmitOrderAsync) that
@@ -453,6 +460,48 @@ public static class OrderManagementEndpoints
                 null));
         });
 
+        // V1-RMD-137: found by an independent audit (2026-09-09) — an
+        // age-restricted order (V12-NFC-002) is deliberately parked at
+        // PendingConfirmation for a staff ID check at the point of service,
+        // but nothing could ever move it out of that state. Gated by
+        // orders.create, same as /void above — routine order-lifecycle
+        // action every staff role holds, not a grant-class money decision.
+        group.MapPost("/{orderId:guid}/accept", async (
+            Guid terminalId,
+            Guid orderId,
+            AcceptPendingOrderRequestV1 request,
+            PendingOrderConfirmationStore store,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
+
+            var result = await store.AcceptAsync(
+                orderId, request.ExpectedRowVersion, userId, request.Notes, cancellationToken);
+            return Results.Ok(result);
+        });
+
+        group.MapPost("/{orderId:guid}/reject", async (
+            Guid terminalId,
+            Guid orderId,
+            RejectPendingOrderRequestV1 request,
+            PendingOrderConfirmationStore store,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
+
+            var result = await store.RejectAsync(
+                orderId, request.ExpectedRowVersion, userId, request.Reason, cancellationToken);
+            return Results.Ok(result);
+        });
+
         // V1-RMD-111: the garson-masa hand-off. Two-tier permission model
         // (Toast "Change Server" / Lightspeed "Table Ownership" precedent,
         // researched 2026-09-06): a server handing off their OWN open checks
@@ -580,6 +629,8 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
+        OrderNotAwaitingConfirmationException => (409, "ORDER_NOT_PENDING_CONFIRMATION", "Sipariş onay bekleyen durumda değil."),
+        OrderAlreadyBilledException => (409, "ORDER_ALREADY_BILLED", "Sipariş zaten faturalandırılmış, bu işlemle reddedilemez."),
         StaleOrderRowVersionException or StaleOrderVersionException or InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         IdempotencyKeyReusedException or SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         OrderSubmissionDispatchException => (503, "KITCHEN_DISPATCH_FAILED", "Sipariş mutfağa iletilemedi."),

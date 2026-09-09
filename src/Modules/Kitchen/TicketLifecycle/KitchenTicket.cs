@@ -230,13 +230,22 @@ public sealed class KitchenTicket
         string stationId,
         Func<OrderItem, bool>? itemFilter = null,
         string? ticketNumber = null,
-        DateTimeOffset? timestamp = null)
+        DateTimeOffset? timestamp = null,
+        Func<OrderItem, bool>? isAgeRestricted = null)
     {
         ArgumentNullException.ThrowIfNull(order);
         if (string.IsNullOrWhiteSpace(stationId))
             throw new ArgumentException("Station id cannot be empty.", nameof(stationId));
 
         var filter = itemFilter ?? (_ => true);
+        // V1-RMD-137: found by an independent audit (2026-09-09) — an
+        // age-restricted item's kitchen ticket looked identical to any
+        // other, giving whoever serves it no prompt to check ID. Callers
+        // that can resolve catalog.products.is_age_restricted (see
+        // KitchenOrderSubmissionDispatcher) pass it here; callers that
+        // cannot (tests, or a future dispatcher without catalog access)
+        // default to "not age restricted" rather than failing.
+        var ageRestricted = isAgeRestricted ?? (_ => false);
         var activeOrderItems = order.Items.Where(i => i.IsActive && filter(i)).ToList();
 
         if (activeOrderItems.Count == 0)
@@ -266,7 +275,8 @@ public sealed class KitchenTicket
                 notes: orderItem.Notes,
                 status: KitchenTicketItemState.Queued,
                 rowVersion: 1,
-                createdAt: at);
+                createdAt: at,
+                isAgeRestricted: ageRestricted(orderItem));
         }).ToList();
 
         return new KitchenTicket(

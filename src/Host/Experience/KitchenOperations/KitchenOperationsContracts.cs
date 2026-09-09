@@ -16,7 +16,12 @@ public sealed record KitchenTicketItemV1(
     DateTimeOffset? UpdatedAt,
     DateTimeOffset? ReadyAt,
     DateTimeOffset? ServedAt,
-    DateTimeOffset? CancelledAt);
+    DateTimeOffset? CancelledAt,
+    // V1-RMD-137: found by an independent audit (2026-09-09) — surfaces the
+    // ticket item's own point-in-time age-restriction snapshot so a kitchen
+    // screen can prompt an ID check before the item is served, same as the
+    // printed ticket's own marker (EscPosTicketFormatter).
+    bool IsAgeRestricted = false);
 
 public sealed record KitchenTicketV1(
     Guid Id,

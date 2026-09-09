@@ -73,6 +73,18 @@ public static class EscPosTicketFormatter
             {
                 sb.AppendLine(CultureInfo.InvariantCulture, $"      NOT: {item.Notes}");
             }
+
+            // V1-RMD-137: found by an independent audit (2026-09-09) — an
+            // age-restricted item's printed ticket looked identical to any
+            // other, giving whoever hands it to the customer no prompt to
+            // check ID. This marker is the only enforcement point: the
+            // kitchen still dispatches/prepares the item immediately (see
+            // NfcOrderingStore's own documentation for why), so the actual
+            // ID check happens here, at service, not before preparation.
+            if (item.IsAgeRestricted)
+            {
+                sb.AppendLine("      *** YAS KONTROLU GEREKLI ***");
+            }
         }
 
         sb.AppendLine(new string('-', LineWidth));
