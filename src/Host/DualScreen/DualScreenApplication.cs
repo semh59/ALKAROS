@@ -15,6 +15,7 @@ using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.KitchenOperations;
+using ALKAROS.Host.Experience.Menu;
 using ALKAROS.Host.Experience.NfcOrdering;
 using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.RelaySettings;
@@ -97,6 +98,11 @@ public static partial class DualScreenApplication
         builder.Services.AddSingleton<SubmitOrderHandler>();
         builder.Services.AddTableManagementExperience();
         builder.Services.AddCatalogManagement();
+        // V1-RMD-131: found by an independent audit (2026-09-09) — the Menu
+        // module (persistent named menus + the daily-specials lifecycle) was
+        // fully registered by MenuModule above but had zero HTTP surface;
+        // nothing could ever reach it.
+        builder.Services.AddMenuManagementExperience();
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
@@ -288,6 +294,7 @@ public static partial class DualScreenApplication
 
         MapApi(app);
         app.MapCatalogManagement();
+        app.MapMenuManagement();
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();

@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "088"
+    "max": "089"
   },
   "migrations": [
     {
@@ -756,6 +756,15 @@
       "phase": "B",
       "tables": [
         "print_jobs"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "089",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
       ],
       "deferredConstraints": []
     }
