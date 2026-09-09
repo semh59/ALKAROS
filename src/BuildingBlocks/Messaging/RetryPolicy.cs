@@ -16,9 +16,16 @@ public static class RetryPolicy
     /// The only table identifiers accepted by <see cref="RecordFailureAsync"/>.
     /// The SQL surface is closed to these registered constants; any other
     /// value is rejected before a command is built.
+    /// V1-RMD-134: found by an independent audit (2026-09-09) — this used to
+    /// also register "inbox_messages" for the generic consumer-side Inbox
+    /// pattern (InboxStore/IInboxHandler), which nothing in the codebase
+    /// ever implemented or called; every real IIntegrationEventConsumer
+    /// dedupes through its own domain-specific mechanism instead. Removed
+    /// along with the rest of that dead surface — outbox_messages is this
+    /// policy's only real caller (OutboxDispatcherHostedService).
     /// </summary>
     public static readonly IReadOnlySet<string> AllowedTableNames = new HashSet<string>(
-        ["inbox_messages", "outbox_messages"],
+        ["outbox_messages"],
         StringComparer.Ordinal);
 
     /// <summary>

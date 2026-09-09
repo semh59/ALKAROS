@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using ALKAROS.Idempotency.Tests.Fixtures;
+using ALKAROS.Messaging.Tests.Fixtures;
 using ALKAROS.Messaging;
 using Xunit;
 
-namespace ALKAROS.Idempotency.Tests;
+namespace ALKAROS.Messaging.Tests;
 
 public sealed class OutboxStoreTests : IClassFixture<StoreTestDatabase>
 {

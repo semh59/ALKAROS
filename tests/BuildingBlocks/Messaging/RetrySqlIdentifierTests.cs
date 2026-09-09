@@ -2,18 +2,19 @@ using ALKAROS.Messaging;
 using Npgsql;
 using Xunit;
 
-namespace ALKAROS.Idempotency.Tests;
+namespace ALKAROS.Messaging.Tests;
 
 /// <summary>
 /// Verifies the retry SQL surface is closed to registered constant table
-/// identifiers: only <c>inbox_messages</c> and <c>outbox_messages</c> pass
-/// the guard, every other value fails closed with an
-/// <see cref="ArgumentException"/> before any command is built.
+/// identifiers: only <c>outbox_messages</c> passes the guard, every other
+/// value fails closed with an <see cref="ArgumentException"/> before any
+/// command is built. V1-RMD-134: "inbox_messages" was dropped from the
+/// registry along with the rest of the dead Inbox pattern (Messaging's own
+/// RetryPolicy.AllowedTableNames doc comment has the full story).
 /// </summary>
 public sealed class RetrySqlIdentifierTests
 {
-    private static readonly string[] ExpectedIdentifiers =
-        ["inbox_messages", "outbox_messages"];
+    private static readonly string[] ExpectedIdentifiers = ["outbox_messages"];
 
     [Fact]
     public void AllowedTableNamesContainExactlyTheRegisteredIdentifiers()
@@ -23,10 +24,8 @@ public sealed class RetrySqlIdentifierTests
             RetryPolicy.AllowedTableNames.OrderBy(name => name, StringComparer.Ordinal));
     }
 
-    [Theory]
-    [InlineData("inbox_messages")]
-    [InlineData("outbox_messages")]
-    public async Task RegisteredIdentifiersPassTheGuardAndReachCommandExecution(string tableName)
+    [Fact]
+    public async Task TheRegisteredIdentifierPassesTheGuardAndReachesCommandExecution()
     {
         using var connection = new NpgsqlConnection(
             "Host=localhost;Port=5432;Username=postgres;Database=postgres");
@@ -34,7 +33,7 @@ public sealed class RetrySqlIdentifierTests
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             RetryPolicy.RecordFailureAsync(
                 connection,
-                tableName,
+                "outbox_messages",
                 Guid.NewGuid(),
                 1,
                 "boom",
@@ -43,9 +42,10 @@ public sealed class RetrySqlIdentifierTests
 
     [Theory]
     [InlineData("user_payload")]
-    [InlineData("inbox_messages; DROP TABLE inbox_messages;--")]
+    [InlineData("inbox_messages")]
+    [InlineData("outbox_messages; DROP TABLE outbox_messages;--")]
     [InlineData("OUTBOX_MESSAGES")]
-    [InlineData("inbox_messages ")]
+    [InlineData("outbox_messages ")]
     public async Task UnregisteredIdentifiersFailClosedBeforeAnyCommand(string tableName)
     {
         using var connection = new NpgsqlConnection(

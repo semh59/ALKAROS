@@ -115,12 +115,6 @@
           "xunit.extensibility.core": "[2.9.2]"
         }
       },
-      "alkaros.idempotency": {
-        "type": "Project",
-        "dependencies": {
-          "Npgsql": "[9.0.2, )"
-        }
-      },
       "alkaros.integrationcontracts": {
         "type": "Project"
       },
@@ -136,13 +130,9 @@
         "dependencies": {
           "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.Messaging": "[1.0.0, )",
-          "ALKAROS.Transactions": "[1.0.0, )",
           "Npgsql": "[9.0.2, )",
           "xunit": "[2.9.2, )"
         }
-      },
-      "alkaros.transactions": {
-        "type": "Project"
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "CentralTransitive",

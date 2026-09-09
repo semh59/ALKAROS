@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ALKAROSTest>true</ALKAROSTest>
     <IsPackable>false</IsPackable>
-    <RootNamespace>ALKAROS.TransactionOutboxIntegration.Tests</RootNamespace>
+    <RootNamespace>ALKAROS.Messaging.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,13 +15,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\BuildingBlocks\TransactionOutboxIntegration\ALKAROS.TransactionOutboxIntegration.csproj" />
+    <ProjectReference Include="..\..\..\src\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj" />
     <ProjectReference Include="..\..\..\src\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
-    <ProjectReference Include="..\..\..\src\BuildingBlocks\Transactions\ALKAROS.Transactions.csproj" />
     <ProjectReference Include="..\TestHelpers\ALKAROS.TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <!--
+      V1-RMD-134: still applies the full V1-FND-002 migration set
+      (idempotency_keys, inbox_messages included) because
+      033-message-lease-generation ALTERs inbox_messages directly and
+      requires it to already exist — see StoreTestDatabase's own doc
+      comment. This project itself no longer tests either table.
+    -->
     <None Include="..\..\..\database\migrations\V1\V1-FND-002\*.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\database\migrations\V1\V1-FND-019\*.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

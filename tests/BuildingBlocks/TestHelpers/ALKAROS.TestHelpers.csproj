@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\BuildingBlocks\Transactions\ALKAROS.Transactions.csproj" />
     <ProjectReference Include="..\..\..\src\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
     <ProjectReference Include="..\..\..\src\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj" />
   </ItemGroup>

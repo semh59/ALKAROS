@@ -1,7 +1,7 @@
 ﻿using ALKAROS.Messaging;
 using Xunit;
 
-namespace ALKAROS.Idempotency.Tests;
+namespace ALKAROS.Messaging.Tests;
 
 public sealed class RetryPolicyTests
 {
