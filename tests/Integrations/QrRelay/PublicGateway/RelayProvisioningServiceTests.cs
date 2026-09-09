@@ -1,4 +1,5 @@
 using ALKAROS.QrOrdering.RelayCredential;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace ALKAROS.QrRelay.PublicGateway.Tests;
@@ -23,7 +24,7 @@ public sealed class RelayProvisioningServiceTests
         var credentials = new FakeCredentialStore("cf-real-token");
         var configStore = new FakeConfigStore(Config);
         var tunnelStore = new FakeTunnelStore();
-        var service = new RelayProvisioningService(client, credentials, configStore, tunnelStore);
+        var service = new RelayProvisioningService(client, credentials, configStore, tunnelStore, NullLogger<RelayProvisioningService>.Instance);
 
         var result = await service.ProvisionAsync("sube1");
 
@@ -44,7 +45,7 @@ public sealed class RelayProvisioningServiceTests
     public async Task WithNoApiTokenConfiguredThrowsARecognizableError()
     {
         var service = new RelayProvisioningService(
-            new FakeCloudflareApiClient(), new FakeCredentialStore(null), new FakeConfigStore(Config), new FakeTunnelStore());
+            new FakeCloudflareApiClient(), new FakeCredentialStore(null), new FakeConfigStore(Config), new FakeTunnelStore(), NullLogger<RelayProvisioningService>.Instance);
 
         var exception = await Assert.ThrowsAsync<RelayProvisioningException>(() => service.ProvisionAsync("sube1"));
         Assert.Contains("bağlantı anahtarı", exception.Message, StringComparison.OrdinalIgnoreCase);
@@ -54,21 +55,31 @@ public sealed class RelayProvisioningServiceTests
     public async Task WithNoAccountConfigConfiguredThrowsARecognizableError()
     {
         var service = new RelayProvisioningService(
-            new FakeCloudflareApiClient(), new FakeCredentialStore("cf-real-token"), new FakeConfigStore(null), new FakeTunnelStore());
+            new FakeCloudflareApiClient(), new FakeCredentialStore("cf-real-token"), new FakeConfigStore(null), new FakeTunnelStore(), NullLogger<RelayProvisioningService>.Instance);
 
         var exception = await Assert.ThrowsAsync<RelayProvisioningException>(() => service.ProvisionAsync("sube1"));
         Assert.Contains("hesap kimliği", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// V1-RMD-138: found by an independent audit (2026-09-09) — this test
+    /// used to assert the exact opposite of what RelayProvisioningException's
+    /// own doc comment promises ("never a raw Cloudflare error"): it
+    /// required Cloudflare's raw English message to appear verbatim in the
+    /// manager-facing exception. Now asserts the fix instead: a generic,
+    /// actionable Turkish message that never contains the raw detail.
+    /// </summary>
     [Fact]
-    public async Task ACloudflareApiFailureSurfacesAsARelayProvisioningException()
+    public async Task ACloudflareApiFailureSurfacesAsAGenericTurkishMessageNeverTheRawDetail()
     {
         var client = new FakeCloudflareApiClient { FailWith = "Invalid access token" };
         var service = new RelayProvisioningService(
-            client, new FakeCredentialStore("cf-real-token"), new FakeConfigStore(Config), new FakeTunnelStore());
+            client, new FakeCredentialStore("cf-real-token"), new FakeConfigStore(Config), new FakeTunnelStore(),
+            NullLogger<RelayProvisioningService>.Instance);
 
         var exception = await Assert.ThrowsAsync<RelayProvisioningException>(() => service.ProvisionAsync("sube1"));
-        Assert.Contains("Invalid access token", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("Cloudflare tünel kurulumu başarısız oldu", exception.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain("Invalid access token", exception.Message, StringComparison.Ordinal);
     }
 
     private sealed class FakeCredentialStore : IRelayCredentialStore

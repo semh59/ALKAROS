@@ -26,6 +26,20 @@ namespace ALKAROS.Host.Experience.NfcOrdering;
 /// </summary>
 public sealed class NfcOrderingStore
 {
+    // V1-RMD-138: found by an independent audit (2026-09-09) — this
+    // anonymous, unauthenticated endpoint had no upper bound on either a
+    // line's quantity or how many line items a single submission could
+    // carry (only the domain's own quantity > 0 lower bound applied). With
+    // no staff member in the loop, a malicious or buggy client could submit
+    // an absurd order (a huge quantity, or thousands of lines) straight to
+    // the kitchen. MaxQuantityPerItem mirrors the exact bound the
+    // cashier-facing DualScreenStore.Orders.cs.AddItemAsync already
+    // enforces (request.Quantity > 999); MaxItemsPerSubmission has no
+    // existing precedent to mirror, chosen as a generous but finite cap no
+    // real single-table order could plausibly exceed.
+    private const int MaxQuantityPerItem = 999;
+    private const int MaxItemsPerSubmission = 50;
+
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
     private readonly SubmitOrderHandler _submitHandler;
@@ -42,6 +56,14 @@ public sealed class NfcOrderingStore
         ArgumentNullException.ThrowIfNull(request);
         if (request.Items.Count == 0)
             throw new ArgumentException("Order items cannot be empty.", nameof(request));
+        if (request.Items.Count > MaxItemsPerSubmission)
+            throw new ArgumentException($"Order cannot contain more than {MaxItemsPerSubmission} item lines.", nameof(request));
+        foreach (var line in request.Items)
+        {
+            if (line.Quantity > MaxQuantityPerItem)
+                throw new ArgumentException(
+                    $"Quantity for product {line.ProductId} cannot exceed {MaxQuantityPerItem}.", nameof(request));
+        }
 
         await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken))
         await using (var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken))

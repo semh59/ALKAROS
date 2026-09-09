@@ -21,6 +21,20 @@ public sealed class RelayConnectorSupervisor : BackgroundService, IRelayConnecto
     private static readonly TimeSpan DefaultPollInterval = TimeSpan.FromSeconds(10);
     private static readonly TimeSpan DefaultRestartBackoff = TimeSpan.FromSeconds(5);
 
+    // V1-RMD-138: found by an independent audit (2026-09-09) — a genuinely
+    // crash-looping cloudflared (bad token, network unreachable, etc.) used
+    // to be retried forever on the same fixed 5s backoff with no ceiling and
+    // no distinct log signal beyond the per-exit Warning already below —
+    // easy to miss in a noisy log stream. A process that keeps exiting
+    // faster than FastFailureThreshold after each start now backs off
+    // exponentially (capped at MaxRestartBackoff) and, past
+    // CrashLoopWarningThreshold consecutive fast failures, logs once at
+    // Error. A process that stays up past FastFailureThreshold resets the
+    // streak — a connector that runs fine for hours and drops once is not a
+    // crash loop.
+    private static readonly TimeSpan MaxRestartBackoff = TimeSpan.FromMinutes(5);
+    private const int CrashLoopWarningThreshold = 5;
+
     private static readonly Action<ILogger, Exception?> LogTickFault =
         LoggerMessage.Define(
             LogLevel.Error,
@@ -39,6 +53,13 @@ public sealed class RelayConnectorSupervisor : BackgroundService, IRelayConnecto
             new EventId(5502, nameof(LogTokenChanged)),
             "Relay tunnel was reprovisioned with a new token; restarting cloudflared with it.");
 
+    private static readonly Action<ILogger, int, TimeSpan, Exception?> LogPossibleCrashLoop =
+        LoggerMessage.Define<int, TimeSpan>(
+            LogLevel.Error,
+            new EventId(5503, nameof(LogPossibleCrashLoop)),
+            "cloudflared has failed {ConsecutiveFastFailures} times in a row shortly after starting; " +
+            "this looks like a crash loop (bad tunnel token, unreachable network?). Backing off to {Backoff}.");
+
     private readonly IRelayTunnelStore _tunnelStore;
     private readonly ICloudflaredProcessFactory _processFactory;
     private readonly ILogger<RelayConnectorSupervisor> _logger;
@@ -49,6 +70,7 @@ public sealed class RelayConnectorSupervisor : BackgroundService, IRelayConnecto
     private ICloudflaredProcess? _process;
     private string? _runningToken;
     private RelayConnectorStatus _status = new(RelayConnectorState.NotConfigured, null, 0, null);
+    private int _consecutiveFastFailures;
 
     public RelayConnectorSupervisor(
         IRelayTunnelStore tunnelStore,
@@ -134,15 +156,48 @@ public sealed class RelayConnectorSupervisor : BackgroundService, IRelayConnecto
         if (_process.HasExited)
         {
             var exitCode = _process.ExitCode;
+            var ranFor = CurrentStatus.LastStartedAt is { } startedAt
+                ? DateTimeOffset.UtcNow - startedAt
+                : TimeSpan.Zero;
             LogUnexpectedExit(_logger, exitCode, null);
             _process.Dispose();
             _process = null;
             _runningToken = null;
             SetStatus(CurrentStatus with { State = RelayConnectorState.Restarting, RestartCount = CurrentStatus.RestartCount + 1, LastExitCode = exitCode });
 
-            await Task.Delay(_restartBackoff, cancellationToken).ConfigureAwait(false);
+            var backoff = ComputeBackoff(ranFor);
+            await Task.Delay(backoff, cancellationToken).ConfigureAwait(false);
             StartProcess(token);
         }
+    }
+
+    /// <summary>
+    /// Doubles the base backoff for every consecutive failure that happened
+    /// "fast" (the process didn't stay up for at least 3 poll intervals —
+    /// long enough that a genuine, momentary blip wouldn't trip it), capped
+    /// at <see cref="MaxRestartBackoff"/>. A failure that wasn't fast resets
+    /// the streak: an otherwise-healthy connector that drops once is not
+    /// treated as a crash loop.
+    /// </summary>
+    private TimeSpan ComputeBackoff(TimeSpan ranFor)
+    {
+        var wasFastFailure = ranFor < _pollInterval * 3;
+        _consecutiveFastFailures = wasFastFailure ? _consecutiveFastFailures + 1 : 0;
+
+        if (_consecutiveFastFailures == 0)
+            return _restartBackoff;
+
+        if (_consecutiveFastFailures >= CrashLoopWarningThreshold)
+            LogPossibleCrashLoop(_logger, _consecutiveFastFailures, _restartBackoff, null);
+
+        // The first fast failure keeps the plain base backoff (matches the
+        // pre-existing, always-5s-in-production behaviour exactly); only
+        // the SECOND and later consecutive fast failures actually scale up.
+        var multiplier = Math.Pow(2, Math.Min(_consecutiveFastFailures - 1, 10));
+        var scaled = _restartBackoff.TotalMilliseconds * multiplier;
+        return scaled >= MaxRestartBackoff.TotalMilliseconds
+            ? MaxRestartBackoff
+            : TimeSpan.FromMilliseconds(scaled);
     }
 
     private void StartProcess(string token)

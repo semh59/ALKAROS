@@ -1,4 +1,5 @@
 using ALKAROS.QrOrdering.RelayCredential;
+using Microsoft.Extensions.Logging;
 
 namespace ALKAROS.QrRelay.PublicGateway;
 
@@ -27,6 +28,13 @@ public interface IRelayProvisioningService
 
 public sealed class RelayProvisioningService : IRelayProvisioningService
 {
+    private static readonly Action<ILogger, string, Exception?> LogProvisioningFailed =
+        LoggerMessage.Define<string>(
+            LogLevel.Error,
+            new EventId(5510, nameof(LogProvisioningFailed)),
+            "Cloudflare tunnel provisioning failed for subdomain '{SubdomainLabel}'.");
+
+
     /// <summary>
     /// The LocalConnector runs `cloudflared` alongside the API process in
     /// the same container (see `deploy/docker/Dockerfile`'s `api` stage and
@@ -40,17 +48,20 @@ public sealed class RelayProvisioningService : IRelayProvisioningService
     private readonly IRelayCredentialStore _credentialStore;
     private readonly IRelayProviderConfigStore _configStore;
     private readonly IRelayTunnelStore _tunnelStore;
+    private readonly ILogger<RelayProvisioningService> _logger;
 
     public RelayProvisioningService(
         ICloudflareApiClient client,
         IRelayCredentialStore credentialStore,
         IRelayProviderConfigStore configStore,
-        IRelayTunnelStore tunnelStore)
+        IRelayTunnelStore tunnelStore,
+        ILogger<RelayProvisioningService> logger)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _credentialStore = credentialStore ?? throw new ArgumentNullException(nameof(credentialStore));
         _configStore = configStore ?? throw new ArgumentNullException(nameof(configStore));
         _tunnelStore = tunnelStore ?? throw new ArgumentNullException(nameof(tunnelStore));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<RelayProvisioningResult> ProvisionAsync(string subdomainLabel, CancellationToken cancellationToken = default)
@@ -77,7 +88,17 @@ public sealed class RelayProvisioningService : IRelayProvisioningService
         }
         catch (CloudflareApiException exception)
         {
-            throw new RelayProvisioningException($"Cloudflare tünel kurulumu başarısız oldu: {exception.Message}");
+            // V1-RMD-138: found by an independent audit (2026-09-09) — this
+            // class's own doc comment above promises the message is "always
+            // safe to show a manager (never a raw Cloudflare error)", but
+            // this line interpolated exception.Message — Cloudflare's own,
+            // usually-English API error text — directly into it, breaking
+            // that promise. The raw detail is still available, just logged
+            // server-side instead of shown in the response
+            // (docs/UI_STYLE_GUIDE.md: no raw external error text on screen).
+            LogProvisioningFailed(_logger, subdomainLabel, exception);
+            throw new RelayProvisioningException(
+                "Cloudflare tünel kurulumu başarısız oldu. Cloudflare hesap ayarlarınızı (API anahtarı, hesap/bölge kimliği) kontrol edip tekrar deneyin.");
         }
 
         await _tunnelStore.SaveAsync(tunnel.Id, tunnelToken, hostname, cancellationToken);

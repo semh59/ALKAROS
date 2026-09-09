@@ -83,6 +83,92 @@ public sealed class RelayConnectorSupervisorTests
         }
     }
 
+    /// <summary>
+    /// V1-RMD-138: found by an independent audit (2026-09-09) — a genuinely
+    /// crash-looping cloudflared used to be retried forever on the exact
+    /// same fixed backoff. Two fast failures in a row must now wait
+    /// noticeably longer the second time. Uses a larger base backoff
+    /// (200ms, not the shared 20ms ShortInterval) so the doubling is
+    /// comfortably bigger than ordinary scheduler jitter.
+    /// </summary>
+    [Fact]
+    public async Task ConsecutiveFastFailuresBackOffExponentially()
+    {
+        var baseBackoff = TimeSpan.FromMilliseconds(200);
+        var factory = new FakeProcessFactory();
+        var supervisor = new RelayConnectorSupervisor(
+            new FakeTunnelStore(() => "token-abc"), factory, NullLogger<RelayConnectorSupervisor>.Instance,
+            ShortInterval, baseBackoff);
+
+        await supervisor.StartAsync(CancellationToken.None);
+        try
+        {
+            Assert.True(await factory.StartSignal.WaitAsync(SignalTimeout));
+            var firstStartedAt = DateTimeOffset.UtcNow;
+
+            // First fast failure: restart happens after ~baseBackoff.
+            factory.Starts[0].Process.SimulateExit(exitCode: 1);
+            Assert.True(await factory.StartSignal.WaitAsync(SignalTimeout));
+            var firstGap = DateTimeOffset.UtcNow - firstStartedAt;
+
+            // Second fast failure right away: restart must wait noticeably
+            // longer than the first (2x the base backoff, not just ~baseBackoff).
+            var secondStartedAt = DateTimeOffset.UtcNow;
+            factory.Starts[1].Process.SimulateExit(exitCode: 1);
+            Assert.True(await factory.StartSignal.WaitAsync(SignalTimeout));
+            var secondGap = DateTimeOffset.UtcNow - secondStartedAt;
+
+            Assert.Equal(3, factory.Starts.Count);
+            Assert.True(
+                secondGap > firstGap + TimeSpan.FromMilliseconds(100),
+                $"Expected the second restart to back off noticeably longer than the first (first={firstGap}, second={secondGap}).");
+        }
+        finally
+        {
+            await supervisor.StopAsync(CancellationToken.None);
+        }
+    }
+
+    /// <summary>
+    /// A connector that stays up well past the "fast failure" window before
+    /// dropping is not a crash loop — the very next failure must still use
+    /// the plain base backoff, not an escalated one left over from an
+    /// unrelated, much earlier fast failure.
+    /// </summary>
+    [Fact]
+    public async Task ARunThatStaysUpResetsTheFastFailureStreak()
+    {
+        var baseBackoff = TimeSpan.FromMilliseconds(200);
+        var factory = new FakeProcessFactory();
+        var supervisor = new RelayConnectorSupervisor(
+            new FakeTunnelStore(() => "token-abc"), factory, NullLogger<RelayConnectorSupervisor>.Instance,
+            ShortInterval, baseBackoff);
+
+        await supervisor.StartAsync(CancellationToken.None);
+        try
+        {
+            Assert.True(await factory.StartSignal.WaitAsync(SignalTimeout));
+            factory.Starts[0].Process.SimulateExit(exitCode: 1);
+            Assert.True(await factory.StartSignal.WaitAsync(SignalTimeout));
+
+            // Let the second run stay up well past the "fast failure" window
+            // (3 * ShortInterval) before it also drops.
+            await Task.Delay(ShortInterval * 10);
+            var thirdStartedAt = DateTimeOffset.UtcNow;
+            factory.Starts[1].Process.SimulateExit(exitCode: 1);
+            Assert.True(await factory.StartSignal.WaitAsync(SignalTimeout));
+            var gap = DateTimeOffset.UtcNow - thirdStartedAt;
+
+            Assert.True(
+                gap < baseBackoff + TimeSpan.FromMilliseconds(100),
+                $"Expected the streak to have reset to the plain base backoff, got {gap}.");
+        }
+        finally
+        {
+            await supervisor.StopAsync(CancellationToken.None);
+        }
+    }
+
     [Fact]
     public async Task ReprovisioningWithANewTokenStopsTheOldProcessAndStartsTheNewOne()
     {

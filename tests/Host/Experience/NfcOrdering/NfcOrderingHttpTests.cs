@@ -330,6 +330,46 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    /// <summary>
+    /// V1-RMD-138: found by an independent audit (2026-09-09) — this
+    /// anonymous, unauthenticated endpoint had no upper bound on a line's
+    /// quantity; with no staff member in the loop, a malicious or buggy
+    /// client could submit an absurd quantity straight through to the
+    /// kitchen.
+    /// </summary>
+    [Fact]
+    public async Task AQuantityOverTheLimitIsRejected()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1000)], Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    /// <summary>V1-RMD-138: same finding as AQuantityOverTheLimitIsRejected, for the item-line-count cap instead of per-line quantity.</summary>
+    [Fact]
+    public async Task TooManyItemLinesIsRejected()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var items = Enumerable.Range(0, 51)
+            .Select(_ => new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1))
+            .ToArray();
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId), new NfcOrderRequest(items, Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     private static string OrdersPath(Guid tableId) => $"/api/v1/nfc/tables/{tableId:D}/orders";
 
     private async Task<WebApplication> StartAsync()

@@ -25,6 +25,16 @@ namespace ALKAROS.QrOrdering.PendingOrders;
 /// </summary>
 public sealed class QrPendingOrderStore
 {
+    // V1-RMD-138: found by an independent audit (2026-09-09) — same gap as
+    // NfcOrderingStore (no upper bound on either a line's quantity or how
+    // many item lines a single submission could carry, only the lower
+    // bound below). This store has no HTTP endpoint yet (QR's own customer
+    // page is still Planned — 2026-09-09 audit finding #0), so today this
+    // is purely defensive; kept in sync with NfcOrderingStore's exact
+    // bounds so the two anonymous ordering channels don't drift apart.
+    private const int MaxQuantityPerItem = 999;
+    private const int MaxItemsPerSubmission = 50;
+
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     private readonly NpgsqlDataSource _dataSource;
@@ -42,6 +52,8 @@ public sealed class QrPendingOrderStore
         ArgumentNullException.ThrowIfNull(request);
         if (request.Items.Count == 0)
             throw new ArgumentException("Order items cannot be empty.", nameof(request));
+        if (request.Items.Count > MaxItemsPerSubmission)
+            throw new ArgumentException($"Order cannot contain more than {MaxItemsPerSubmission} item lines.", nameof(request));
 
         var session = await _customerSessionService.ValidateAsync(rawSessionToken, cancellationToken);
         if (!session.IsValid)
@@ -68,6 +80,9 @@ public sealed class QrPendingOrderStore
             {
                 if (line.Quantity <= 0)
                     throw new ArgumentException($"Quantity for product {line.ProductId} must be positive.", nameof(request));
+                if (line.Quantity > MaxQuantityPerItem)
+                    throw new ArgumentException(
+                        $"Quantity for product {line.ProductId} cannot exceed {MaxQuantityPerItem}.", nameof(request));
                 if (!catalog.TryGetValue(line.ProductId, out var product))
                     throw new QrOrderInvalidProductException(line.ProductId);
 

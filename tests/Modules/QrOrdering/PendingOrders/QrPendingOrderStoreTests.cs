@@ -160,6 +160,46 @@ public sealed class QrPendingOrderStoreTests : IClassFixture<QrOrderingPendingOr
         await act.Should().ThrowAsync<ArgumentException>();
     }
 
+    /// <summary>
+    /// V1-RMD-138: found by an independent audit (2026-09-09) — this
+    /// anonymous, unauthenticated submission path had a lower bound on
+    /// quantity (see AZeroQuantityFails above) but no upper bound at all;
+    /// with no staff member in the loop, a malicious or buggy client could
+    /// submit an absurd quantity straight through. This store has no HTTP
+    /// endpoint yet (QR's own customer page is still Planned), so today
+    /// this is purely defensive — kept in sync with NfcOrderingStore's
+    /// identical bound.
+    /// </summary>
+    [Fact]
+    public async Task AQuantityOverTheLimitFails()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var productId = await _database.SeedProductAsync();
+        var rawSession = await IssueSessionAsync(tableId);
+
+        var act = () => _store.SubmitAsync(
+            rawSession,
+            new QrOrderSubmissionRequest([new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1000, null)], Guid.NewGuid()));
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    /// <summary>V1-RMD-138: same finding as AQuantityOverTheLimitFails, for the item-line-count cap instead of per-line quantity.</summary>
+    [Fact]
+    public async Task TooManyItemLinesFails()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var productId = await _database.SeedProductAsync();
+        var rawSession = await IssueSessionAsync(tableId);
+        var items = Enumerable.Range(0, 51)
+            .Select(_ => new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1, null))
+            .ToArray();
+
+        var act = () => _store.SubmitAsync(rawSession, new QrOrderSubmissionRequest(items, Guid.NewGuid()));
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
     [Fact]
     public async Task FindResultingOrderReturnsNullBeforeTheOutboxIsDelivered()
     {
