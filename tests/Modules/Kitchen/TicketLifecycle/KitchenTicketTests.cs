@@ -215,6 +215,29 @@ public sealed class KitchenTicketUnitTests
     }
 
     [Fact]
+    public void ModifierSummaryShowsHowManyOfEachExtraTheKitchenMustPrepare()
+    {
+        // V1-RMD-150: the same number that prices a modifier decides how many
+        // the kitchen prepares. Summarising by name alone let a line be
+        // charged for two helpings while the ticket asked for one.
+        var orderId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        var item = new OrderItem(
+            itemId, orderId, Guid.NewGuid(), "Adana kebap", 2, 520m, 10m, "ADANA-01",
+            modifiers:
+            [
+                new OrderItemModifier(Guid.NewGuid(), itemId, Guid.NewGuid(), "Ekstra pilav", 120m, quantity: 2),
+                new OrderItemModifier(Guid.NewGuid(), itemId, Guid.NewGuid(), "Az acılı", 0m),
+            ]);
+
+        var ticket = KitchenTicket.CreateFromOrder(
+            new Order(orderId, OrderSource.Waiter, "ORD-99950", [item]), "GrillStation");
+
+        // Two of one, one of the other — the single case keeps its plain form.
+        ticket.Items.Single().ModifiersSummary.Should().Be("2× Ekstra pilav, Az acılı");
+    }
+
+    [Fact]
     public void CreateFromOrderAccuratelyConstructsKitchenTicket()
     {
         var orderId = Guid.NewGuid();

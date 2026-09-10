@@ -47,8 +47,21 @@ public sealed record OrderItemDraftDto(
     string ProductName,
     decimal Quantity,
     decimal UnitPrice,
-    IReadOnlyList<Guid>? Modifiers = null,
+    IReadOnlyList<OrderItemModifierSelectionDto>? Modifiers = null,
     string? SpecialInstructions = null);
+
+/// <summary>
+/// V1-RMD-150: one chosen modifier and how many of it. <paramref name="Quantity"/>
+/// is optional — left out, the server uses the ceiling of the line's own
+/// quantity, so two portions carry two of the extra and half a portion still
+/// carries one. The same number drives both the price and what the kitchen
+/// ticket prints, so it is a real order input rather than a catalog setting:
+/// whether a second plate wants the extra too is known when the order is
+/// taken, not when the menu is configured.
+/// </summary>
+public sealed record OrderItemModifierSelectionDto(
+    Guid ModifierId,
+    decimal? Quantity = null);
 
 /// <summary>
 /// V1-RMD-147: one modifier as it was actually recorded on an order line.
@@ -58,7 +71,8 @@ public sealed record OrderItemDraftDto(
 public sealed record OrderItemModifierDto(
     Guid ModifierId,
     string Name,
-    decimal PriceDelta);
+    decimal PriceDelta,
+    decimal Quantity = 1);
 
 /// <summary>
 /// V1-RMD-113: OperationId is now load-bearing — it is this request's

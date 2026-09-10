@@ -688,7 +688,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
             new CreateTableDraftRequest(tableId, "M-50", "Garson Ahmet",
-                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m, [extraRice])])));
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m, [new OrderItemModifierSelectionDto(extraRice)])])));
 
         Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -720,7 +720,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
             new CreateTableDraftRequest(tableId, "M-51", "Garson Ahmet",
-                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m, [foreign])])));
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m, [new OrderItemModifierSelectionDto(foreign)])])));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -741,7 +741,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
             new CreateTableDraftRequest(tableId, "M-52", "Garson Ahmet",
-                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m, [retired])])));
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m, [new OrderItemModifierSelectionDto(retired)])])));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -762,7 +762,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
             new CreateTableDraftRequest(tableId, "M-53", "Garson Ahmet",
-                [new OrderItemDraftDto(Guid.NewGuid(), product, "Kuzu şiş", 1, 620m, [wellDone])])));
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Kuzu şiş", 1, 620m, [new OrderItemModifierSelectionDto(wellDone)])])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
 
         using var submitResponse = await client.SendAsync(JsonRequest(
@@ -773,6 +773,82 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var submitted = await submitResponse.Content.ReadFromJsonAsync<OrderDto>();
         var modifier = Assert.Single(submitted!.Items.Single().Modifiers!);
         Assert.Equal("İyi pişmiş", modifier.Name);
+    }
+
+    [Fact]
+    public async Task AModifierOnATwoPortionLineIsChargedTwice()
+    {
+        // V1-RMD-150: Semih's question — two portions of Adana with extra
+        // rice. Two plates go out, so two portions of rice are prepared and
+        // charged. The quantity was hard-coded to 1 before this.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        var extraRice = await _database.SeedModifierAsync(product, "Ekstra pilav", 120m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-60", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m,
+                    [new OrderItemModifierSelectionDto(extraRice)])])));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var item = (await response.Content.ReadFromJsonAsync<OrderDto>())!.Items.Single();
+        Assert.Equal(2m, Assert.Single(item.Modifiers!).Quantity);
+        // 520*2 + 120*2 = 1280, not 1160 as it was when quantity was pinned to 1.
+        Assert.True(item.TotalPrice >= 1280m, $"TotalPrice was {item.TotalPrice}");
+    }
+
+    [Fact]
+    public async Task AModifierOnAHalfPortionIsStillChargedOnce()
+    {
+        // V1-RMD-150: half a portion is still one plate, and the rice on it
+        // is not half. Scaling the modifier by the raw quantity would have
+        // produced 0,5 — which is why the default is the ceiling.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        var extraRice = await _database.SeedModifierAsync(product, "Ekstra pilav", 120m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-61", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 0.5m, 520m,
+                    [new OrderItemModifierSelectionDto(extraRice)])])));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var item = (await response.Content.ReadFromJsonAsync<OrderDto>())!.Items.Single();
+        Assert.Equal(1m, Assert.Single(item.Modifiers!).Quantity);
+    }
+
+    [Fact]
+    public async Task AnExplicitModifierQuantityOverridesTheDefault()
+    {
+        // V1-RMD-150: the default is a default, not a rule — one plate can
+        // want two helpings, and the waiter decides that at order time.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        var extraRice = await _database.SeedModifierAsync(product, "Ekstra pilav", 120m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-62", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m,
+                    [new OrderItemModifierSelectionDto(extraRice, 3m)])])));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var item = (await response.Content.ReadFromJsonAsync<OrderDto>())!.Items.Single();
+        Assert.Equal(3m, Assert.Single(item.Modifiers!).Quantity);
     }
 
     private static string DraftPath(Guid terminalId)

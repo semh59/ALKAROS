@@ -1,5 +1,6 @@
 namespace ALKAROS.Kitchen.TicketLifecycle;
 
+using System.Globalization;
 using ALKAROS.Orders.OrderAggregate;
 
 /// <summary>
@@ -260,8 +261,14 @@ public sealed class KitchenTicket
 
         var ticketItems = activeOrderItems.Select(orderItem =>
         {
+            // V1-RMD-150: the same number that prices a modifier decides how
+            // many the kitchen prepares, so it has to be on the ticket. Only
+            // shown above one — "Ekstra pilav" stays as it was for the single
+            // case, "2× Ekstra pilav" appears when a line really wants two.
             var modSummary = orderItem.Modifiers.Count > 0
-                ? string.Join(", ", orderItem.Modifiers.Select(m => m.ModifierNameSnapshot))
+                ? string.Join(", ", orderItem.Modifiers.Select(m => m.Quantity > 1
+                    ? $"{m.Quantity.ToString("0.###", CultureInfo.InvariantCulture)}× {m.ModifierNameSnapshot}"
+                    : m.ModifierNameSnapshot))
                 : null;
 
             return new KitchenTicketItem(

@@ -406,7 +406,7 @@ public sealed class OrderManagementStore
         => item.Modifiers.Count == 0
             ? null
             : item.Modifiers
-                .Select(m => new OrderItemModifierDto(m.ModifierId, m.ModifierNameSnapshot, m.PriceDelta))
+                .Select(m => new OrderItemModifierDto(m.ModifierId, m.ModifierNameSnapshot, m.PriceDelta, m.Quantity))
                 .ToList();
 
     /// <summary>
@@ -431,10 +431,10 @@ public sealed class OrderManagementStore
         foreach (var item in items)
         {
             if (item.Modifiers is not { Count: > 0 }) continue;
-            foreach (var modifierId in item.Modifiers)
+            foreach (var selection in item.Modifiers)
             {
                 productIds.Add(item.ProductId);
-                modifierIds.Add(modifierId);
+                modifierIds.Add(selection.ModifierId);
             }
         }
 
@@ -479,21 +479,35 @@ public sealed class OrderManagementStore
         if (item.Modifiers is not { Count: > 0 })
             return null;
 
+        // V1-RMD-150: a fractional portion is still at least one plate, and
+        // the extra that goes on it is not fractional — so the default is the
+        // ceiling of the line's quantity, not the quantity itself.
+        var defaultQuantity = Math.Max(1m, Math.Ceiling(item.Quantity));
+
         var modifiers = new List<OrderItemModifier>(item.Modifiers.Count);
-        foreach (var modifierId in item.Modifiers)
+        foreach (var selection in item.Modifiers)
         {
-            if (!catalog.TryGetValue((item.ProductId, modifierId), out var resolved))
+            if (!catalog.TryGetValue((item.ProductId, selection.ModifierId), out var resolved))
             {
                 throw new KeyNotFoundException(
-                    $"Modifier {modifierId} was not found, is not active, or does not belong to product {item.ProductId}.");
+                    $"Modifier {selection.ModifierId} was not found, is not active, or does not belong to product {item.ProductId}.");
+            }
+
+            var quantity = selection.Quantity ?? defaultQuantity;
+            if (quantity < MinimumOrderQuantity)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(item),
+                    $"Quantity for modifier {selection.ModifierId} must be at least {MinimumOrderQuantity}.");
             }
 
             modifiers.Add(new OrderItemModifier(
                 id: Guid.NewGuid(),
                 orderItemId: item.Id,
-                modifierId: modifierId,
+                modifierId: selection.ModifierId,
                 modifierNameSnapshot: resolved.Name,
-                priceDelta: resolved.PriceDelta));
+                priceDelta: resolved.PriceDelta,
+                quantity: quantity));
         }
 
         return modifiers;
