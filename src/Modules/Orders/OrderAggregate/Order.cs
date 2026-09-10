@@ -261,6 +261,88 @@ public sealed class Order
     }
 
     /// <summary>
+    /// V1-ORD-006: whether this order is still an open check that can take
+    /// another round. A party orders starters, then mains, then dessert on
+    /// one check; only <see cref="AddItem"/>'s Draft-only rule stopped that
+    /// from being expressible, which is why every round used to become its
+    /// own order and only the last one was ever billed.
+    /// </summary>
+    public bool IsOpenCheck => Status is OrderState.Draft or OrderState.Submitted;
+
+    /// <summary>
+    /// V1-ORD-006: appends a round of not-yet-fired items to an open check.
+    /// The items arrive Draft and stay Draft until <see cref="FireRound"/>
+    /// activates them, so an order that is already Submitted keeps its state
+    /// and its earlier rounds untouched.
+    /// </summary>
+    public Order AddRound(IReadOnlyList<OrderItem> newItems)
+    {
+        ArgumentNullException.ThrowIfNull(newItems);
+        if (!IsOpenCheck)
+            throw new InvalidOperationException($"Order {Id} cannot accept items in state {Status}.");
+        if (newItems.Any(item => item.Status is not OrderItemState.Draft))
+            throw new ArgumentException("A new round may only carry Draft items.", nameof(newItems));
+
+        return RebuildWith(items: _items.Concat(newItems).ToList());
+    }
+
+    /// <summary>
+    /// V1-ORD-006: activates the Draft items — and only those — returning the
+    /// order together with the round that was actually fired. The caller
+    /// hands that list to <see cref="IOrderSubmissionDispatcher"/> so the
+    /// kitchen and the stock ledger see the new round alone; deriving it from
+    /// the order's active items would fire every earlier round again.
+    ///
+    /// A Draft order also moves to Submitted, which is what
+    /// <see cref="Submit"/> always did. An order that is already Submitted
+    /// stays Submitted: the check was opened by the first round and the
+    /// second one does not reopen it.
+    /// </summary>
+    public (Order Order, IReadOnlyList<OrderItem> FiredItems) FireRound(
+        string? reason = null, Guid? changedBy = null, DateTimeOffset? changedAt = null)
+    {
+        if (!IsOpenCheck)
+            throw new InvalidOperationException($"Order {Id} cannot be submitted from {Status}.");
+
+        var items = new List<OrderItem>(_items.Count);
+        var fired = new List<OrderItem>();
+        foreach (var item in _items)
+        {
+            if (item.Status is OrderItemState.Draft)
+            {
+                // V1-RMD-154: firing IS sending to the kitchen — the kitchen
+                // ticket for this round is written in the same transaction, so
+                // if the dispatch fails this state rolls back with it.
+                //
+                // Nothing used to set KitchenState here, and the only other
+                // thing that advances it is the KDS live-sync path, which is
+                // off by default (kitchen.live_sync_enabled). So a plated,
+                // eaten dish still read NotSent, VoidItemAsync's "already sent
+                // to the kitchen" wall never fired, and a waiter could void it
+                // under orders.create — skipping the bills.void approval,
+                // leaving the kitchen ticket standing, and never giving the
+                // consumed stock back.
+                var activated = item.Activate().AdvanceKitchenState(KitchenState.Sent);
+                items.Add(activated);
+                fired.Add(activated);
+            }
+            else
+            {
+                items.Add(item);
+            }
+        }
+
+        if (fired.Count == 0)
+            throw new InvalidOperationException($"Order {Id} has no items to submit.");
+
+        var updated = RebuildWith(items: items);
+        if (Status is OrderState.Draft)
+            updated = updated.TransitionTo(OrderState.Submitted, reason, changedBy, changedAt);
+
+        return (updated, fired);
+    }
+
+    /// <summary>
     /// Submits a Draft order: every remaining Draft item activates and the
     /// order moves to Submitted. A Draft order with no active-capable items
     /// cannot be submitted (empty order guard).
@@ -270,16 +352,7 @@ public sealed class Order
         if (Status is not OrderState.Draft)
             throw new InvalidOperationException($"Order {Id} cannot be submitted from {Status}.");
 
-        var items = new List<OrderItem>(_items.Count);
-        foreach (var item in _items)
-        {
-            items.Add(item.Status is OrderItemState.Draft ? item.Activate() : item);
-        }
-
-        if (items.All(i => i.Status is not OrderItemState.Active))
-            throw new InvalidOperationException($"Order {Id} has no items to submit.");
-
-        return RebuildWith(items: items).TransitionTo(OrderState.Submitted, reason, changedBy, changedAt);
+        return FireRound(reason, changedBy, changedAt).Order;
     }
 
     /// <summary>

@@ -99,6 +99,35 @@ public sealed record PendingOrderSummaryV1(
     decimal Total,
     DateTimeOffset CreatedAt);
 
+/// <summary>
+/// V1-ORD-006: which table the check is leaving. Sent explicitly rather than
+/// read from the order so the caller and the server agree on what is being
+/// released — a check that moved table since the screen was drawn releases
+/// the table the waiter is actually looking at, or nothing.
+/// </summary>
+public sealed record SendCheckToCashierRequestV1(Guid TableId);
+
+/// <summary>
+/// V1-ORD-006: result of sending a check to the cashier.
+/// <paramref name="AlreadySent"/> means the check had already left the table —
+/// a double tap, or another device got there first. It is reported rather than
+/// treated as an error: the outcome the caller wanted is already true.
+/// </summary>
+public sealed record SendCheckToCashierResultV1(Guid OrderId, Guid TableId, bool AlreadySent);
+
+/// <summary>
+/// V1-ORD-006: one check waiting to be settled at the till. Carries its own
+/// number because by the time the guest reaches the cashier the table has
+/// usually been re-seated, so the table number identifies nothing.
+/// </summary>
+public sealed record PendingCheckSummaryV1(
+    Guid OrderId,
+    string OrderNumber,
+    string TableNumber,
+    int ItemCount,
+    decimal Total,
+    DateTimeOffset CreatedAt);
+
 /// <summary>V1-ORD-005: request body for voiding a not-yet-sent item.</summary>
 public sealed record VoidOrderItemRequestV1(
     long ExpectedRowVersion,

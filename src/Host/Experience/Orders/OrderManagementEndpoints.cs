@@ -203,6 +203,40 @@ public static class OrderManagementEndpoints
             return Results.Ok(await store.GetPendingOrdersAsync(cancellationToken));
         });
 
+        // V1-ORD-006: the party has left the table and is paying at the till.
+        // Same permission as taking the order — a routine floor action every
+        // staff role holds, not a money decision.
+        group.MapPost("/{orderId:guid}/send-to-cashier", async (
+            Guid terminalId,
+            Guid orderId,
+            SendCheckToCashierRequestV1 request,
+            OrderManagementStore store,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
+
+            if (request is null || request.TableId == Guid.Empty)
+                return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "Masa kimliği boş olamaz." } });
+
+            return Results.Ok(await store.SendCheckToCashierAsync(request.TableId, orderId, cancellationToken));
+        });
+
+        // V1-ORD-006: the cashier's queue of checks that left their table.
+        group.MapGet("/awaiting-payment", async (
+            Guid terminalId,
+            OrderManagementStore store,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            return Results.Ok(await store.GetChecksAwaitingPaymentAsync(cancellationToken));
+        });
+
         group.MapGet("/table/{tableId:guid}", async (
             Guid terminalId,
             Guid tableId,
@@ -704,6 +738,10 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         IdempotencyKeyReusedException or SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         OrderSubmissionDispatchException => (503, "KITCHEN_DISPATCH_FAILED", "Sipariş mutfağa iletilemedi."),
         InvalidTransferTargetException => (400, "INVALID_TRANSFER_TARGET", "Devir hedefi geçersiz."),
+        // V1-ORD-006: the waiter is asked what happened at the table rather
+        // than having the previous party's unpaid check silently orphaned.
+        TableCheckAlreadyOpenException => (409, "TABLE_CHECK_ALREADY_OPEN",
+            "Bu masada kapanmamış bir hesap var. Önce hesabı kasaya gönderin."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

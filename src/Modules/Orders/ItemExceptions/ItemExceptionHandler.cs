@@ -53,7 +53,13 @@ public sealed class ItemExceptionHandler
         }
 
         var targetItem = order.Items[itemIndex];
-        if (targetItem.Status != OrderItemState.Active)
+        // V1-RMD-154: a Draft line is one added to an open check but not yet
+        // fired — the commonest thing a waiter wants to take back, and until
+        // now the only status this endpoint refused outright. The refusal
+        // surfaced as a 409 concurrency conflict, which is both the wrong
+        // answer and one no retry could ever fix. Such a line has consumed no
+        // stock and printed no ticket, so it is the cheapest possible void.
+        if (targetItem.Status is not (OrderItemState.Active or OrderItemState.Draft))
         {
             throw new InvalidOperationException(
                 $"Order item '{targetItem.Id}' cannot be voided from status {targetItem.Status}.");
@@ -105,7 +111,16 @@ public sealed class ItemExceptionHandler
             updatedHistory,
             order.RowVersion,
             order.CreatedAt,
-            now);
+            now,
+            // V1-RMD-154: the 22nd parameter. Stopping at the 21st let it
+            // default to null, and UpdateOrderAsync persists the column — so
+            // every void and every comp silently erased which waiter was
+            // serving the table. Two things then broke quietly: the own-check
+            // guard on the bills.void / bills.comp grants stopped firing (any
+            // waiter could raise one on a table that was not theirs), and
+            // transfer-server, which matches on serving_user_id, skipped the
+            // order entirely.
+            order.ServingUserId);
 
         var newVersion = await _orderRepository.SaveAsync(updatedOrder, command.ExpectedRowVersion, cancellationToken).ConfigureAwait(false);
 
@@ -231,7 +246,16 @@ public sealed class ItemExceptionHandler
             updatedHistory,
             order.RowVersion,
             order.CreatedAt,
-            now);
+            now,
+            // V1-RMD-154: the 22nd parameter. Stopping at the 21st let it
+            // default to null, and UpdateOrderAsync persists the column — so
+            // every void and every comp silently erased which waiter was
+            // serving the table. Two things then broke quietly: the own-check
+            // guard on the bills.void / bills.comp grants stopped firing (any
+            // waiter could raise one on a table that was not theirs), and
+            // transfer-server, which matches on serving_user_id, skipped the
+            // order entirely.
+            order.ServingUserId);
 
         var newVersion = await _orderRepository.SaveAsync(updatedOrder, command.ExpectedRowVersion, cancellationToken).ConfigureAwait(false);
 

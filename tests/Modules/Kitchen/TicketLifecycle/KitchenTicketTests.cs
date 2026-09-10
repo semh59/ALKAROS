@@ -507,6 +507,7 @@ public sealed class PostgresKitchenTicketIntegrationTests : IClassFixture<Kitche
 
         public async Task DispatchAsync(
             Order order,
+            IReadOnlyList<OrderItem> firedItems,
             NpgsqlConnection connection,
             NpgsqlTransaction transaction,
             CancellationToken cancellationToken = default)

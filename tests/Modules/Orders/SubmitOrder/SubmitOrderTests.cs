@@ -297,20 +297,24 @@ public sealed class PostgresSubmitOrderIntegrationTests : IClassFixture<SubmitOr
     }
 
     [Fact]
-    public async Task HandleAsyncInvalidTransitionWhenOrderNotInDraftStateThrowsInvalidOperationException()
+    public async Task HandleAsyncOnACheckWithNothingLeftToFireThrows()
     {
+        // V1-ORD-006 deliberately changed the rule this test was written for.
+        // A Submitted order is an OPEN CHECK and accepts another round — a
+        // party orders starters, then mains, on one check — so "not in Draft"
+        // is no longer by itself a reason to refuse. What must still throw is
+        // a submit with nothing left to fire.
         var order = await CreateSampleDraftOrderAsync();
 
-        // First transition to Submitted
-        var submitted = order.TransitionTo(OrderState.Submitted);
+        // Fire everything, so the order is Submitted with no Draft lines left.
+        var submitted = order.Submit();
         var newVersion = await _repository.SaveAsync(submitted, order.RowVersion);
 
-        // Try submitting again with fresh idempotency key
-        var cmd = new SubmitOrderCommand("waiter-pwa-01", "op-already-submitted", order.Id, newVersion);
+        var cmd = new SubmitOrderCommand("waiter-pwa-01", "op-nothing-to-fire", order.Id, newVersion);
         var act = () => _handler.HandleAsync(cmd);
 
         await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("*cannot be submitted from Submitted*");
+            .WithMessage("*has no items to submit*");
     }
 
     [Fact]

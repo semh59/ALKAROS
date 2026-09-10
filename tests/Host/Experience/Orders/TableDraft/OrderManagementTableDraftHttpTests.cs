@@ -667,7 +667,15 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         var item = submitted!.Items.Single();
         Assert.Equal("Active", item.Status);
-        Assert.Equal("NotSent", item.KitchenState);
+        // V1-RMD-154: this used to expect "NotSent", which was the defect
+        // rather than the contract — the line had just been sent to the
+        // kitchen and a ticket printed for it, and it still claimed otherwise.
+        // Nothing advanced KitchenState except the KDS live-sync path, which
+        // is off by default, so the "already sent" wall on the cheap void
+        // endpoint never fired and a plated dish could be voided without the
+        // bills.void approval, without cancelling the ticket and without
+        // giving its stock back.
+        Assert.Equal("Sent", item.KitchenState);
         Assert.True(item.CreatedAt > before, $"CreatedAt was {item.CreatedAt}");
     }
 

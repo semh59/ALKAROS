@@ -46,15 +46,20 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
 
     public async Task DispatchAsync(
         Order order,
+        IReadOnlyList<OrderItem> firedItems,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(order);
+        ArgumentNullException.ThrowIfNull(firedItems);
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(transaction);
 
-        var activeItems = order.Items.Where(item => item.IsActive).ToList();
+        // V1-ORD-006: only the round just fired gets a ticket. Deriving this
+        // from the order's active lines would reprint every earlier round to
+        // the kitchen the moment a check takes a second round.
+        var activeItems = firedItems.Where(item => item.IsActive).ToList();
         if (activeItems.Count == 0)
             return;
 
@@ -90,22 +95,53 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
                     await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 }
 
+                var firedIds = activeItems.Select(item => item.Id).ToArray();
+
+                // V1-ORD-006: this used to ask "does a ticket already exist for
+                // this order and station?", which was a correct retry guard only
+                // while one order meant one submission. Now that a check takes a
+                // second round, that question answers yes for round one and the
+                // new round was skipped outright — the food never reached the
+                // kitchen at all. The retry it is actually guarding against
+                // resends the same order items, so ask about those instead.
+                int ticketedRounds;
                 await using (var existingCommand = connection.CreateCommand())
                 {
                     existingCommand.Transaction = transaction;
                     existingCommand.CommandText =
-                        "SELECT 1 FROM kitchen.kitchen_tickets WHERE order_id = @order_id AND station_id = @station_id LIMIT 1;";
+                        """
+                        SELECT count(*) FILTER (WHERE ti.order_item_id = ANY(@item_ids)) AS already_ticketed,
+                               count(DISTINCT t.id) AS rounds
+                        FROM kitchen.kitchen_tickets t
+                        LEFT JOIN kitchen.kitchen_ticket_items ti ON ti.ticket_id = t.id
+                        WHERE t.order_id = @order_id AND t.station_id = @station_id;
+                        """;
                     existingCommand.Parameters.AddWithValue("order_id", order.Id);
                     existingCommand.Parameters.AddWithValue("station_id", station);
-                    if (await existingCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is not null)
+                    existingCommand.Parameters.AddWithValue("item_ids", firedIds);
+                    await using var reader = await existingCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                    await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+                    var alreadyTicketed = reader.GetInt64(0);
+                    ticketedRounds = (int)reader.GetInt64(1);
+                    if (alreadyTicketed > 0)
                         continue;
                 }
 
                 var stationScope = station;
+                var firedIdSet = firedIds.ToHashSet();
+                // Each fired round is its own chit, the way a kitchen printer
+                // works. Round one keeps the number it always had so nothing
+                // that already refers to it changes.
+                var ticketNumber = ticketedRounds == 0
+                    ? $"KT-{order.OrderNumber}-{stationScope}"
+                    : $"KT-{order.OrderNumber}-{stationScope}-{ticketedRounds + 1}";
+
                 var ticket = KitchenTicket.CreateFromOrder(
                     order,
                     stationScope,
-                    itemFilter: item => stationByItemId.TryGetValue(item.Id, out var resolved)
+                    ticketNumber: ticketNumber,
+                    itemFilter: item => firedIdSet.Contains(item.Id)
+                        && stationByItemId.TryGetValue(item.Id, out var resolved)
                         && string.Equals(resolved, stationScope, StringComparison.Ordinal),
                     isAgeRestricted: item => ageRestrictedProductIds.Contains(item.ProductId));
 

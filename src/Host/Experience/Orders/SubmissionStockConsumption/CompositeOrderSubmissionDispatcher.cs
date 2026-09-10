@@ -32,13 +32,14 @@ public sealed class CompositeOrderSubmissionDispatcher : IOrderSubmissionDispatc
 
     public async Task DispatchAsync(
         Order order,
+        IReadOnlyList<OrderItem> firedItems,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
     {
         foreach (var dispatcher in _dispatchers)
         {
-            await dispatcher.DispatchAsync(order, connection, transaction, cancellationToken).ConfigureAwait(false);
+            await dispatcher.DispatchAsync(order, firedItems, connection, transaction, cancellationToken).ConfigureAwait(false);
         }
     }
 }

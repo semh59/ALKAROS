@@ -123,10 +123,19 @@ public sealed class PostgresTableRepository : ITableRepository
         long expectedRowVersion,
         CancellationToken cancellationToken = default)
     {
+        // V1-ORD-006: freeing a table also drops whatever check it was
+        // pointing at. This used to change current_status alone, so a table
+        // set back to Available kept a stale current_order_id — and since
+        // that pointer is what says "this check is still on this table", the
+        // next party's order could be refused because of a check nobody was
+        // looking at any more. Only Available clears it: Cleaning is the step
+        // between sending a check to the cashier and re-seating, and the
+        // pointer is already NULL by then.
         await using var command = _dataSource.CreateCommand(
             $"""
             UPDATE {Table}
             SET current_status = @target,
+                current_order_id = CASE WHEN @target = 'Available' THEN NULL ELSE current_order_id END,
                 row_version = row_version + 1
             WHERE table_id = @id AND row_version = @expected_row_version
             RETURNING row_version;

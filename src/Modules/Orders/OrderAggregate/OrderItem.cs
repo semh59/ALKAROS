@@ -148,7 +148,10 @@ public sealed class OrderItem
     /// </summary>
     public OrderItem Cancel()
     {
-        if (Status is not OrderItemState.Active)
+        // V1-RMD-154: a Draft line — added to an open check but not yet fired
+        // — cancels too. It has consumed no stock and printed no ticket, so it
+        // is strictly cheaper to void than an Active one.
+        if (Status is not (OrderItemState.Active or OrderItemState.Draft))
             throw new InvalidOperationException($"Order item {Id} cannot be cancelled from {Status}.");
         if (KitchenState is KitchenState.Served or KitchenState.Cancelled)
             throw new InvalidOperationException(

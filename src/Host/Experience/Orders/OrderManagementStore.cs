@@ -175,17 +175,41 @@ public sealed class OrderManagementStore
                 throw;
             }
 
+            // V1-ORD-006: the pointer is only claimed when the table has no
+            // open check on it.
+            //
+            // On the ordinary path this branch is only reached when there was
+            // no attached check to begin with, so the condition holds by
+            // construction. What it actually guards is the race: two waiters
+            // opening the same empty table at the same moment both find no
+            // check and both try to claim the pointer. Unconditionally, the
+            // second UPDATE won the row and the first waiter's order was left
+            // attached to nothing — invisible on every screen. Now the second
+            // one matches no row and is told so.
+            //
+            // Note this is deliberately NOT how a new party is distinguished
+            // from the same party's next round: nothing on the server can tell
+            // those apart. The waiter says which it is by sending the previous
+            // check to the cashier (SendCheckToCashierAsync), and until they
+            // do, further items join the open check rather than orphaning it.
             await using var cmd = new NpgsqlCommand(
                 """
-                UPDATE table_mgmt.tables
+                UPDATE table_mgmt.tables t
                 SET current_order_id = @order_id,
                     current_status = 'Occupied',
                     row_version = row_version + 1
-                WHERE table_id = @table_id;
+                WHERE t.table_id = @table_id
+                  AND (t.current_order_id IS NULL
+                       OR NOT EXISTS (
+                            SELECT 1
+                            FROM orders.orders o
+                            WHERE o.order_id = t.current_order_id
+                              AND o.status IN ('Draft', 'Submitted')));
                 """, connection, transaction);
             cmd.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
             cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = request.TableId;
-            await cmd.ExecuteNonQueryAsync(cancellationToken);
+            if (await cmd.ExecuteNonQueryAsync(cancellationToken) == 0)
+                throw new TableCheckAlreadyOpenException(request.TableId);
         }
         else
         {
@@ -202,36 +226,39 @@ public sealed class OrderManagementStore
             // client-generated item ids as the round it already applied —
             // drop those from newItems instead of appending a duplicate line.
             var alreadyPersistedIds = currentOrder.Items.Select(item => item.Id).ToHashSet();
-            var mergedItems = currentOrder.Items
-                .Concat(newItems.Where(item => !alreadyPersistedIds.Contains(item.Id)))
-                .ToList();
-            var orderNumber = $"TBL-{request.TableNumber}-{orderId.ToString("N")[..6].ToUpperInvariant()}";
+            var roundToAdd = newItems.Where(item => !alreadyPersistedIds.Contains(item.Id)).ToList();
 
-            order = new Order(
-                orderId,
-                OrderSource.Waiter,
-                orderNumber,
-                mergedItems,
-                tableId: request.TableId,
-                // Preserves whatever submission id the order was originally
-                // created with — not request.Id, which on a genuinely new
-                // round of items (not a retry) legitimately differs and must
-                // not overwrite the original (rebuilding an Order without an
-                // explicit sourceReferenceId would otherwise silently null it).
-                sourceReferenceId: currentOrder.SourceReferenceId,
-                notes: request.OrderNote,
-                status: OrderState.Draft,
-                createdAt: existingOrder.CreatedAt,
-                updatedAt: now,
-                rowVersion: existingOrder.RowVersion,
-                servingUserId: currentOrder.ServingUserId
-            );
+            if (roundToAdd.Count == 0)
+            {
+                // A pure retry: every line was already applied. Saving would
+                // only bump the row version and hand the caller a number the
+                // database no longer agrees with.
+                await transaction.CommitAsync(cancellationToken);
+                return await WithAvailableStockAsync(MapToDto(currentOrder, request.TableNumber), cancellationToken);
+            }
+
+            // V1-ORD-006: the aggregate appends the round itself, which keeps
+            // everything the old hand-rebuilt `new Order(...)` had to restate
+            // and got wrong: it hardcoded `status: Draft` (which would now
+            // silently reopen a Submitted check), overwrote `notes` with this
+            // request's OrderNote (erasing an allergy note left on round one
+            // when round two carried none) and rewrote `order_number` into a
+            // second format.
+            order = currentOrder.AddRound(roundToAdd);
 
             // Saved through the connection/transaction already holding the
             // FOR UPDATE lock acquired above, instead of the store's other
             // connection — a separate connection would block on that lock
             // until this method returns, which never happens (self-deadlock).
-            await _repository.SaveAsync(order, existingOrder.RowVersion, connection, transaction, cancellationToken);
+            //
+            // SaveAsync returns the post-increment row version. Discarding it
+            // left the response carrying the pre-increment number, so the
+            // client's next call — the submit that immediately follows —
+            // failed its optimistic-concurrency check with a 409 and the
+            // round could never be sent.
+            var mergedRowVersion = await _repository.SaveAsync(
+                order, currentOrder.RowVersion, connection, transaction, cancellationToken);
+            order = order.WithRowVersion(mergedRowVersion);
         }
 
         await transaction.CommitAsync(cancellationToken);
@@ -240,6 +267,92 @@ public sealed class OrderManagementStore
         // (GetOrderByIdAsync, LoadOrderDtoAsync) — a waiter building up a
         // table's cart sees the same "kalan stok" as one reviewing it later.
         return await WithAvailableStockAsync(MapToDto(order, request.TableNumber), cancellationToken);
+    }
+
+    /// <summary>
+    /// V1-ORD-006: detaches an open check from its table — Semih's scenario
+    /// (2026-09-10): the party has eaten, got up, and is queueing at the till
+    /// while new guests are already waiting for the table.
+    ///
+    /// The check keeps its own identity and stays open for the cashier; the
+    /// table stops pointing at it and goes to Cleaning, so the next party can
+    /// be seated immediately. Both halves happen in one transaction: a check
+    /// that left the table but was not released, or a table released while
+    /// still pointing at the check, are each worse than not doing it at all.
+    /// </summary>
+    public async Task<SendCheckToCashierResultV1> SendCheckToCashierAsync(
+        Guid tableId, Guid orderId, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+
+        await using (var detach = new NpgsqlCommand(
+            """
+            UPDATE table_mgmt.tables
+            SET current_order_id = NULL,
+                current_status = 'Cleaning',
+                row_version = row_version + 1
+            WHERE table_id = @table_id
+              AND current_order_id = @order_id;
+            """, connection, transaction))
+        {
+            detach.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+            detach.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+            if (await detach.ExecuteNonQueryAsync(cancellationToken) == 0)
+            {
+                // Either this check was already sent (a double tap, or the
+                // other waiter got there first) or it never belonged to this
+                // table. Both are "the world moved on", not a failure to
+                // report as an error the waiter must act on.
+                await transaction.RollbackAsync(cancellationToken);
+                return new SendCheckToCashierResultV1(orderId, tableId, AlreadySent: true);
+            }
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+        return new SendCheckToCashierResultV1(orderId, tableId, AlreadySent: false);
+    }
+
+    /// <summary>
+    /// V1-ORD-006: the cashier's queue — checks that left their table and are
+    /// waiting to be settled. Keyed by check, not by table: the table has
+    /// already been re-seated by the time the guest reaches the till.
+    /// </summary>
+    public async Task<IReadOnlyList<PendingCheckSummaryV1>> GetChecksAwaitingPaymentAsync(
+        CancellationToken cancellationToken = default)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            """
+            SELECT o.order_id,
+                   o.order_number,
+                   COALESCE(t.table_number, '—') AS table_number,
+                   COUNT(i.order_item_id) FILTER (WHERE i.status = 'Active') AS item_count,
+                   o.total,
+                   o.created_at
+            FROM orders.orders o
+            LEFT JOIN orders.order_items i ON i.order_id = o.order_id
+            LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
+            WHERE o.status = 'Submitted'
+              AND NOT EXISTS (
+                    SELECT 1 FROM table_mgmt.tables ct
+                    WHERE ct.current_order_id = o.order_id)
+            GROUP BY o.order_id, o.order_number, t.table_number, o.total, o.created_at
+            ORDER BY o.created_at;
+            """);
+
+        var results = new List<PendingCheckSummaryV1>();
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            results.Add(new PendingCheckSummaryV1(
+                reader.GetGuid(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                (int)reader.GetInt64(3),
+                reader.GetDecimal(4),
+                reader.GetFieldValue<DateTimeOffset>(5)));
+        }
+        return results;
     }
 
     public async Task<OrderDto?> GetOrderByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
@@ -551,6 +664,21 @@ public sealed class OrderManagementStore
         return result;
     }
 
+    /// <summary>
+    /// V1-ORD-006: the check currently attached to this table, which is
+    /// exactly what <c>table_mgmt.tables.current_order_id</c> points at.
+    /// Sending a check to the cashier clears that pointer, so "attached" and
+    /// "not yet sent to the cashier" are the same condition and need no extra
+    /// column.
+    /// </summary>
+    /// <remarks>
+    /// This used to match <c>status = 'Draft'</c>. The waiter client never
+    /// leaves an order in Draft — it always draft-then-submits in one go — so
+    /// every round after the first missed this lookup and opened a *second*
+    /// order on the table, while the read path returned only the newest one.
+    /// A party ordering ₺400 of starters and then ₺900 of mains showed ₺900
+    /// on the bill and on the table tile, and the ₺400 was never billed.
+    /// </remarks>
     private static async Task<OrderDto?> GetActiveOrderByTableIdInternalAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid tableId, CancellationToken cancellationToken)
     {
@@ -558,11 +686,10 @@ public sealed class OrderManagementStore
             """
             SELECT o.order_id, o.status, o.row_version, o.created_at
             FROM orders.orders o
-            WHERE o.table_id = @table_id
-              AND o.status = 'Draft'
-            ORDER BY o.created_at DESC
-            LIMIT 1
-            FOR UPDATE;
+            JOIN table_mgmt.tables t ON t.current_order_id = o.order_id
+            WHERE t.table_id = @table_id
+              AND o.status IN ('Draft', 'Submitted')
+            FOR UPDATE OF o;
             """, connection, transaction);
         cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
@@ -679,4 +806,20 @@ public sealed class OrderManagementStore
 public sealed class InvalidTransferTargetException : Exception
 {
     public InvalidTransferTargetException(string message) : base(message) { }
+}
+
+/// <summary>
+/// V1-ORD-006: the table still carries an open check that has not been sent
+/// to the cashier, so a new party cannot be opened on it yet. Raised instead
+/// of silently repointing the table and orphaning the unpaid check.
+/// </summary>
+public sealed class TableCheckAlreadyOpenException : Exception
+{
+    public TableCheckAlreadyOpenException(Guid tableId)
+        : base($"Table {tableId} still has an open check that was not sent to the cashier.")
+    {
+        TableId = tableId;
+    }
+
+    public Guid TableId { get; }
 }

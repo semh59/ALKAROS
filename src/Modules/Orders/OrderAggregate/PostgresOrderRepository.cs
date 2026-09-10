@@ -22,17 +22,37 @@ public sealed class PostgresOrderRepository : IOrderRepository
         if (id == Guid.Empty)
             throw new ArgumentException("Order id cannot be empty.", nameof(id));
 
-        var order = await ReadOrderAsync(id, cancellationToken);
+        // V1-RMD-155: one snapshot for the whole aggregate.
+        //
+        // These four reads used to run as four independent statements outside
+        // any transaction. Under READ COMMITTED each takes its own snapshot,
+        // so a concurrent writer could commit between them and this method
+        // would compose a TORN order: the order row from before the commit and
+        // its items from after. Repeatable read pins one snapshot for all four.
+        //
+        // It went unnoticed because the only reader that mattered looked at
+        // the order's status alone, and the row-version check on save caught
+        // the conflict a moment later. V1-ORD-006's FireRound reads the items
+        // too, so the torn view stopped being harmless: an order that still
+        // said Draft with items another worker had already fired threw
+        // "no items to submit" — a hard failure where the previous code
+        // retried and replayed. Reproduced 1-in-5, and 0-in-8 on the baseline.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(
+            System.Data.IsolationLevel.RepeatableRead, cancellationToken);
+
+        var order = await ReadOrderAsync(connection, transaction, id, cancellationToken);
         if (order is null)
             return null;
 
-        var items = await ReadItemsAsync(id, cancellationToken);
+        var items = await ReadItemsAsync(connection, transaction, id, cancellationToken);
 
-        var modifierRows = await ReadModifierRowsAsync(items.Select(i => i.Id).ToArray(), cancellationToken);
+        var modifierRows = await ReadModifierRowsAsync(
+            connection, transaction, items.Select(i => i.Id).ToArray(), cancellationToken);
         foreach (var item in items)
             item.AttachModifiers(modifierRows.Where(m => m.ItemId == item.Id));
 
-        var history = await ReadHistoryAsync(id, cancellationToken);
+        var history = await ReadHistoryAsync(connection, transaction, id, cancellationToken);
 
         return new Order(
             order.Id,
@@ -453,9 +473,18 @@ public sealed class PostgresOrderRepository : IOrderRepository
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    private async Task<OrderRow?> ReadOrderAsync(Guid id, CancellationToken cancellationToken)
+    /// <summary>
+    /// A command bound to the caller's connection and transaction, so every
+    /// read of one aggregate shares a single snapshot (see GetByIdAsync).
+    /// </summary>
+    private static NpgsqlCommand NewCommand(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, string sql)
+        => new(sql, connection, transaction);
+
+    private static async Task<OrderRow?> ReadOrderAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid id, CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
+        await using var command = NewCommand(connection, transaction,
             $"""
             SELECT order_id, source, source_reference_id, source_external_id, table_id, customer_id,
                    status, confirmation_status, order_number, notes,
@@ -493,11 +522,12 @@ public sealed class PostgresOrderRepository : IOrderRepository
             reader.IsDBNull(22) ? null : reader.GetGuid(22));
     }
 
-    private async Task<IReadOnlyList<ItemRow>> ReadItemsAsync(Guid orderId, CancellationToken cancellationToken)
+    private static async Task<IReadOnlyList<ItemRow>> ReadItemsAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
     {
         var result = new List<ItemRow>();
 
-        await using var command = _dataSource.CreateCommand(
+        await using var command = NewCommand(connection, transaction,
             $"""
             SELECT order_item_id, order_id, product_id, product_name_snapshot, sku_snapshot,
                    quantity, unit_price, discount_amount, tax_rate, tax_amount, net_amount, gross_amount,
@@ -537,7 +567,9 @@ public sealed class PostgresOrderRepository : IOrderRepository
         return result;
     }
 
-    private async Task<IReadOnlyList<ModifierRow>> ReadModifierRowsAsync(
+    private static async Task<IReadOnlyList<ModifierRow>> ReadModifierRowsAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         Guid[] itemIds,
         CancellationToken cancellationToken)
     {
@@ -545,7 +577,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
         if (itemIds.Length == 0)
             return result;
 
-        await using var command = _dataSource.CreateCommand(
+        await using var command = NewCommand(connection, transaction,
             $"""
             SELECT order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot,
                    price_delta, quantity
@@ -569,11 +601,12 @@ public sealed class PostgresOrderRepository : IOrderRepository
         return result;
     }
 
-    private async Task<IReadOnlyList<HistoryRow>> ReadHistoryAsync(Guid orderId, CancellationToken cancellationToken)
+    private static async Task<IReadOnlyList<HistoryRow>> ReadHistoryAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
     {
         var result = new List<HistoryRow>();
 
-        await using var command = _dataSource.CreateCommand(
+        await using var command = NewCommand(connection, transaction,
             $"""
             SELECT order_status_history_id, order_id, old_status, new_status, reason, changed_by, changed_at
             FROM {History}

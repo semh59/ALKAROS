@@ -126,7 +126,11 @@ public sealed class SubmitOrderHandler
             throw new StaleOrderVersionException(order.Id, command.ExpectedRowVersion, order.RowVersion);
         }
 
-        var submitted = order.Submit(
+        // V1-ORD-006: FireRound activates only the Draft items and hands back
+        // exactly that round, so a check on its second round dispatches the
+        // new lines alone. Submit() is now a thin wrapper over it and keeps
+        // the Draft-only rule for callers that still mean "open this order".
+        var (submitted, firedItems) = order.FireRound(
             command.Reason,
             command.ChangedBy,
             command.SubmittedAt);
@@ -137,7 +141,7 @@ public sealed class SubmitOrderHandler
 
             if (_dispatcher is not null)
             {
-                await _dispatcher.DispatchAsync(submitted, connection, transaction, cancellationToken).ConfigureAwait(false);
+                await _dispatcher.DispatchAsync(submitted, firedItems, connection, transaction, cancellationToken).ConfigureAwait(false);
             }
 
             var result = new SubmitOrderResult(

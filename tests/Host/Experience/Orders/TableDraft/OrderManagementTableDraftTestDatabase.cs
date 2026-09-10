@@ -301,6 +301,30 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
     }
 
     /// <summary>Current on-hand quantity of a stock item, for asserting a real decrement.</summary>
+    /// <summary>V1-ORD-006: whether the table still points at this check.</summary>
+    public Task<bool> TablePointsAtAsync(Guid tableId, Guid orderId)
+        => ScalarAsync<bool>(
+            $"SELECT EXISTS(SELECT 1 FROM table_mgmt.tables WHERE table_id = '{tableId:D}' AND current_order_id = '{orderId:D}');");
+
+    /// <summary>V1-ORD-006: whether any check is attached to the table.</summary>
+    public Task<bool> TableHasOpenCheckAsync(Guid tableId)
+        => ScalarAsync<bool>(
+            $"SELECT current_order_id IS NOT NULL FROM table_mgmt.tables WHERE table_id = '{tableId:D}';");
+
+    /// <summary>V1-ORD-006: the table's own status column.</summary>
+    public Task<string> TableStatusAsync(Guid tableId)
+        => ScalarAsync<string>($"SELECT current_status FROM table_mgmt.tables WHERE table_id = '{tableId:D}';");
+
+    /// <summary>V1-ORD-006: how many kitchen ticket lines exist for an order.</summary>
+    public Task<long> KitchenTicketItemCountAsync(Guid orderId)
+        => ScalarAsync<long>(
+            $"""
+            SELECT count(*)
+            FROM kitchen.kitchen_ticket_items ti
+            JOIN kitchen.kitchen_tickets t ON t.id = ti.ticket_id
+            WHERE t.order_id = '{orderId:D}';
+            """);
+
     public Task<decimal> OnHandQuantityAsync(Guid stockItemId)
         => ScalarAsync<decimal>($"SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = '{stockItemId:D}';");
 

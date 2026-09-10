@@ -32,26 +32,31 @@ public sealed class OrderSubmissionStockDispatcher : IOrderSubmissionDispatcher
 
     public async Task DispatchAsync(
         Order order,
+        IReadOnlyList<OrderItem> firedItems,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(order);
+        ArgumentNullException.ThrowIfNull(firedItems);
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(transaction);
 
         if (order.Source is not (OrderSource.Cashier or OrderSource.Waiter))
             return;
 
-        // Cancelled lines never reach the kitchen, so they must not consume
-        // either — the same reasoning the Accept path documents. Every
-        // remaining line is consuming for the first time here: an order can
-        // only be submitted out of Draft, a Draft order's lines are all still
-        // Draft, and a table whose order already left Draft starts a new order
-        // rather than re-submitting the old one
-        // (OrderManagementStore.GetActiveOrderByTableIdInternalAsync only ever
-        // matches status = 'Draft').
-        var pending = order.Items.Where(item => item.IsActive).ToList();
+        // V1-ORD-006: the round FireRound just activated, handed over rather
+        // than derived. It used to read `order.Items.Where(IsActive)`, which
+        // was only correct because a table whose order had left Draft started
+        // a *new* order instead of adding to the open one. Now that a check
+        // takes a second round, that derivation would consume round one's
+        // stock again on every later round.
+        //
+        // Cancelled lines never reach the kitchen and so must not consume
+        // either — the same reasoning the Accept path documents; a line that
+        // was just fired is Active by construction, so this filter is a
+        // belt-and-braces guard rather than a load-bearing one.
+        var pending = firedItems.Where(item => item.IsActive).ToList();
         if (pending.Count == 0)
             return;
 
