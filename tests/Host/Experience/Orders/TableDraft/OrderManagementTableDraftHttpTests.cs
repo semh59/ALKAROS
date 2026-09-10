@@ -78,7 +78,10 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedCashierSessionAsync(terminalId);
         var tableId = await _database.SeedTableAsync();
-        var product = await _database.SeedProductAsync("Köfte", 280m);
+        // V1-RMD-144: submitting consumes stock, and an unmapped product
+        // refuses the whole submission — every submit-draft test's product
+        // must therefore be mapped to real stock.
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 10m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
@@ -111,7 +114,10 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedCashierSessionAsync(terminalId);
         var tableId = await _database.SeedTableAsync();
-        var product = await _database.SeedProductAsync("Köfte", 280m);
+        // V1-RMD-144: submitting consumes stock, and an unmapped product
+        // refuses the whole submission — every submit-draft test's product
+        // must therefore be mapped to real stock.
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 10m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
@@ -176,7 +182,10 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedCashierSessionAsync(terminalId);
         var tableId = await _database.SeedTableAsync();
-        var product = await _database.SeedProductAsync("Köfte", 280m);
+        // V1-RMD-144: submitting consumes stock, and an unmapped product
+        // refuses the whole submission — every submit-draft test's product
+        // must therefore be mapped to real stock.
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 10m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var payload = new CreateTableDraftRequest(tableId, "M-16", "Garson Ahmet",
@@ -411,6 +420,172 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
                 [new OrderItemDraftDto(Guid.NewGuid(), suspended, "86'd Ürün", 1, 100m)])));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SubmittingAWaiterOrderReallyConsumesItsStock()
+    {
+        // V1-RMD-144: Semih's decision (2026-09-10) — an order the staff take
+        // themselves consumes stock the moment it is sent to the kitchen.
+        // V1-RMD-143 had attached consumption to Accepted, which a waiter
+        // order never reaches (it stops at Submitted), so nothing moved.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Adana", 520m);
+        var stockItemId = await _database.SeedStockForProductAsync(product, 5m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var itemId = Guid.NewGuid();
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-31", "Garson Ahmet",
+                [new OrderItemDraftDto(itemId, product, "Adana", 2, 520m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        Assert.Equal(5m, await _database.OnHandQuantityAsync(stockItemId));
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        Assert.Equal(3m, await _database.OnHandQuantityAsync(stockItemId));
+        Assert.Equal(1, await _database.ConsumptionMovementCountAsync(itemId));
+    }
+
+    [Fact]
+    public async Task ASecondRoundOfItemsOnlyConsumesTheNewLine()
+    {
+        // V1-RMD-144: a dessert round after the starters were already sent
+        // must not charge inventory for the starters a second time. What keeps
+        // that true is that CreateOrUpdateTableDraftAsync only appends to an
+        // order still in Draft, so a table whose order already left Draft
+        // starts a NEW order carrying only the new lines. This test pins that
+        // behaviour: widen that lookup past 'Draft' and the first round's
+        // stock is consumed twice.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Adana", 520m);
+        var stockItemId = await _database.SeedStockForProductAsync(product, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var firstItemId = Guid.NewGuid();
+        using var firstDraft = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-32", "Garson Ahmet",
+                [new OrderItemDraftDto(firstItemId, product, "Adana", 2, 520m)])));
+        var first = await firstDraft.Content.ReadFromJsonAsync<OrderDto>();
+        using var firstSubmit = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, first!.OrderId), cookie,
+            new SubmitTableOrderRequest(first.OrderId, first.RowVersion, Guid.NewGuid().ToString())));
+        Assert.Equal(HttpStatusCode.OK, firstSubmit.StatusCode);
+        Assert.Equal(8m, await _database.OnHandQuantityAsync(stockItemId));
+
+        var secondItemId = Guid.NewGuid();
+        using var secondDraft = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-32", "Garson Ahmet",
+                [new OrderItemDraftDto(secondItemId, product, "Adana", 1, 520m)])));
+        var second = await secondDraft.Content.ReadFromJsonAsync<OrderDto>();
+        using var secondSubmit = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, second!.OrderId), cookie,
+            new SubmitTableOrderRequest(second.OrderId, second.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, secondSubmit.StatusCode);
+        // 10 - 2 (first round) - 1 (second round only), not - 2 again.
+        Assert.Equal(7m, await _database.OnHandQuantityAsync(stockItemId));
+        Assert.Equal(1, await _database.ConsumptionMovementCountAsync(firstItemId));
+        Assert.Equal(1, await _database.ConsumptionMovementCountAsync(secondItemId));
+    }
+
+    [Fact]
+    public async Task RetryingASubmitWithTheSameOperationIdDoesNotConsumeStockTwice()
+    {
+        // V1-RMD-144: the offline queue resends a submit whose response was
+        // lost. SubmitOrderHandler replays the stored response without
+        // re-running the dispatcher at all, so no second consumption happens.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Adana", 520m);
+        var stockItemId = await _database.SeedStockForProductAsync(product, 5m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var itemId = Guid.NewGuid();
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-33", "Garson Ahmet",
+                [new OrderItemDraftDto(itemId, product, "Adana", 2, 520m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        var submitBody = new SubmitTableOrderRequest(draft!.OrderId, draft.RowVersion, Guid.NewGuid().ToString());
+
+        using var first = await client.SendAsync(JsonRequest(SubmitPath(terminalId, draft.OrderId), cookie, submitBody));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        using var retry = await client.SendAsync(JsonRequest(SubmitPath(terminalId, draft.OrderId), cookie, submitBody));
+        Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
+
+        Assert.Equal(3m, await _database.OnHandQuantityAsync(stockItemId));
+        Assert.Equal(1, await _database.ConsumptionMovementCountAsync(itemId));
+    }
+
+    [Fact]
+    public async Task SubmittingMoreThanTheRemainingStockIsRejectedAndChangesNothing()
+    {
+        // V1-RMD-144: same all-or-nothing rule as the Accept path — the order
+        // stays Draft, no stock moves, and no kitchen ticket is written.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Adana", 520m);
+        var stockItemId = await _database.SeedStockForProductAsync(product, 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-34", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana", 3, 520m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.Conflict, submitResponse.StatusCode);
+        Assert.Equal(1m, await _database.OnHandQuantityAsync(stockItemId));
+        Assert.Equal(0, await _database.KitchenTicketCountAsync(draft.OrderId));
+    }
+
+    [Fact]
+    public async Task SubmittingAProductWithNoStockMappingIsRejected()
+    {
+        // V1-RMD-144: Semih's decision (2026-09-10) — an unmapped product
+        // refuses the whole submission rather than being treated as
+        // "not stock-tracked". A product must be mapped before it can sell.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var unmapped = await _database.SeedProductAsync("Eşlenmemiş Ürün", 120m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-35", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), unmapped, "Eşlenmemiş Ürün", 1, 120m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.Conflict, submitResponse.StatusCode);
+        Assert.Equal(0, await _database.KitchenTicketCountAsync(draft.OrderId));
     }
 
     private static string DraftPath(Guid terminalId)

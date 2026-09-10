@@ -3,6 +3,7 @@ using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Host.Experience.Orders.SentItemVoid;
+using ALKAROS.Host.Experience.Orders.SubmissionStockConsumption;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
@@ -131,7 +132,13 @@ public static class OrderManagementEndpoints
                     $"{DualScreenApplication.KitchenStationEnvironmentVariable} is required before order submission is enabled.");
             }
 
-            return new KitchenOrderSubmissionDispatcher(sp.GetRequiredService<IKitchenTicketRepository>(), stationId);
+            // V1-RMD-144: a Cashier/Waiter order consumes its stock on submit
+            // (QR/NFC still consume on Accept — the dispatcher checks
+            // Order.Source). Stock runs before the kitchen dispatcher so an
+            // order stock cannot cover never produces a ticket row.
+            return new CompositeOrderSubmissionDispatcher(
+                new OrderSubmissionStockDispatcher(sp.GetRequiredService<OrderStockConsumptionService>()),
+                new KitchenOrderSubmissionDispatcher(sp.GetRequiredService<IKitchenTicketRepository>(), stationId));
         });
         services.AddSignalR(options => options.EnableDetailedErrors = false);
         // V1-ORD-005: every endpoint in this group calls RequireCashierSessionAsync

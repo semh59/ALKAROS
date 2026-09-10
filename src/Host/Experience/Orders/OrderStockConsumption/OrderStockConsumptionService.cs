@@ -64,7 +64,7 @@ public sealed class OrderStockConsumptionService
     /// touching any balance, so a failure on item 2 of 3 leaves item 1's
     /// (already-applied, same-transaction) delta rolled back along with it.
     /// </summary>
-    public async Task ConsumeForAcceptedOrderAsync(
+    public Task ConsumeForAcceptedOrderAsync(
         Order order,
         Guid actorId,
         NpgsqlConnection connection,
@@ -72,8 +72,32 @@ public sealed class OrderStockConsumptionService
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(order);
+        return ConsumeItemsAsync(order, order.Items, "accepted", actorId, connection, transaction, cancellationToken);
+    }
 
-        foreach (var item in order.Items)
+    /// <summary>
+    /// V1-RMD-144: same consumption for an explicit subset of an order's
+    /// items, used by the Cashier/Waiter submit path where only the lines
+    /// activated by this particular submission may consume — a second round
+    /// of items on the same table re-enters <see cref="Order.Submit"/> with
+    /// the earlier lines already Active and already consumed.
+    /// <paramref name="trigger"/> only names the moment in the movement's
+    /// audit reason.
+    /// </summary>
+    public async Task ConsumeItemsAsync(
+        Order order,
+        IReadOnlyCollection<OrderItem> items,
+        string trigger,
+        Guid actorId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+        ArgumentNullException.ThrowIfNull(items);
+        ArgumentException.ThrowIfNullOrWhiteSpace(trigger);
+
+        foreach (var item in items)
         {
             // A waiter can void an item (ItemExceptionHandler.VoidItemAsync)
             // while the order still sits at PendingConfirmation — nothing
@@ -116,7 +140,7 @@ public sealed class OrderStockConsumptionService
                     unitCode: stockItem.TrackingUnitCode,
                     sourceType: StockMovementSourceType.Order,
                     sourceReferenceId: item.Id,
-                    reason: $"Order {order.OrderNumber}, item {item.Id:D} ({item.ProductNameSnapshot}) accepted",
+                    reason: $"Order {order.OrderNumber}, item {item.Id:D} ({item.ProductNameSnapshot}) {trigger}",
                     createdBy: actorId);
                 await _movements.AppendAsync(movement, connection, transaction, cancellationToken);
             }

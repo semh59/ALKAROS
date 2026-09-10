@@ -179,4 +179,58 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
 
         return productId;
     }
+
+    /// <summary>
+    /// V1-RMD-144: maps a product to a freshly seeded stock item holding
+    /// <paramref name="onHandQuantity"/> units. Submitting a waiter order now
+    /// consumes stock, and Semih's decision (2026-09-10) is that a product
+    /// with no mapping at all refuses the whole submission — so every product
+    /// a submit-draft test sends must be mapped. Returns the stock item id so
+    /// a test can assert the balance afterwards.
+    /// </summary>
+    public async Task<Guid> SeedStockForProductAsync(Guid productId, decimal onHandQuantity)
+    {
+        var locationId = Guid.NewGuid();
+        var stockItemId = Guid.NewGuid();
+        var suffix = stockItemId.ToString("N")[..8];
+
+        await ExecuteAsync(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@location_id, @location_code, 'Table Draft Test Location', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@stock_item_id, @stock_item_code, 'Table Draft Test Stock Item', 'Portion', 'adet', @location_id);
+            INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier)
+            VALUES (@product_id, @stock_item_id, 1.0);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES (@balance_id, @stock_item_id, @location_id, @on_hand, 0, @on_hand);
+            """,
+            ("location_id", locationId),
+            ("location_code", "RMD144-" + suffix),
+            ("stock_item_id", stockItemId),
+            ("stock_item_code", "RMD144-" + suffix),
+            ("product_id", productId),
+            ("balance_id", Guid.NewGuid()),
+            ("on_hand", onHandQuantity));
+
+        return stockItemId;
+    }
+
+    /// <summary>Seeds a product already mapped to stock — the common case for a submit-draft test.</summary>
+    public async Task<Guid> SeedStockedProductAsync(string name, decimal price, decimal onHandQuantity)
+    {
+        var productId = await SeedProductAsync(name, price);
+        await SeedStockForProductAsync(productId, onHandQuantity);
+        return productId;
+    }
+
+    /// <summary>Current on-hand quantity of a stock item, for asserting a real decrement.</summary>
+    public Task<decimal> OnHandQuantityAsync(Guid stockItemId)
+        => ScalarAsync<decimal>($"SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = '{stockItemId:D}';");
+
+    /// <summary>Counts the Consumption movements written against one order item.</summary>
+    public Task<long> ConsumptionMovementCountAsync(Guid orderItemId)
+        => ScalarAsync<long>(
+            "SELECT count(*) FROM inventory.stock_movements " +
+            $"WHERE source_type = 'Order' AND source_reference_id = '{orderItemId:D}' AND movement_type = 'Consumption';");
 }

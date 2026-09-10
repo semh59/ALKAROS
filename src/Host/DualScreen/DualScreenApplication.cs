@@ -5,6 +5,7 @@ using System.Threading.RateLimiting;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
@@ -24,6 +25,8 @@ using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.QrOrdering;
 using ALKAROS.Host.Experience.RelaySettings;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
+using ALKAROS.Host.Experience.Orders.SubmissionStockConsumption;
 using ALKAROS.Host.Experience.Roles;
 using ALKAROS.Host.Experience.Tables;
 using ALKAROS.Host.Experience.WaiterNotifications;
@@ -144,12 +147,20 @@ public static partial class DualScreenApplication
             // route resolves; configured routes drive per-item station
             // assignment and produce one ticket per station
             // (deep-analysis finding B-3).
-            return new KitchenOrderSubmissionDispatcher(
+            var kitchen = new KitchenOrderSubmissionDispatcher(
                 services.GetRequiredService<IKitchenTicketRepository>(),
                 stationId,
                 services.GetRequiredService<IKitchenPrinterRouter>(),
                 services.GetRequiredService<IPrinterRepository>(),
                 services.GetRequiredService<IPrinterRouteRepository>());
+
+            // V1-RMD-144: a Cashier/Waiter order consumes its stock the moment
+            // it is sent to the kitchen (QR/NFC still consume on Accept). Stock
+            // runs first so an order stock cannot cover throws before any
+            // kitchen ticket row exists, and the whole submission rolls back.
+            return new CompositeOrderSubmissionDispatcher(
+                new OrderSubmissionStockDispatcher(services.GetRequiredService<OrderStockConsumptionService>()),
+                kitchen);
         });
         builder.Services.AddSignalR(options => options.EnableDetailedErrors = false);
         builder.Services.Configure<ForwardedHeadersOptions>(forwarded =>
