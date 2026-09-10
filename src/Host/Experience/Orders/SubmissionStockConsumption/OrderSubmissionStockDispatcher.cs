@@ -60,8 +60,22 @@ public sealed class OrderSubmissionStockDispatcher : IOrderSubmissionDispatcher
         if (pending.Count == 0)
             return;
 
+        // V1-RMD-158: this used to fall back to Guid.Empty when
+        // ServingUserId was null, silently attributing the resulting stock
+        // movement to nobody. OrderManagementStore.CreateOrUpdateTableDraftAsync
+        // is the only place that creates a Cashier/Waiter order, and it
+        // always sets servingUserId to the authenticated staff member who
+        // opened the check — so a null here means that invariant broke
+        // somewhere, not a legitimate "no one did this" state. Failing
+        // loudly beats a stock ledger entry with an unreadable actor.
+        var actorId = order.ServingUserId
+            ?? throw new InvalidOperationException(
+                $"Order {order.OrderNumber} ({order.Id}) has no ServingUserId at submission-time stock " +
+                "consumption. Every Cashier/Waiter order is created with one; a null here means an order " +
+                "was constructed outside that path.");
+
         await _consumption.ConsumeItemsAsync(
-            order, pending, "submitted", order.ServingUserId ?? Guid.Empty, connection, transaction, cancellationToken)
+            order, pending, "submitted", actorId, connection, transaction, cancellationToken)
             .ConfigureAwait(false);
     }
 }

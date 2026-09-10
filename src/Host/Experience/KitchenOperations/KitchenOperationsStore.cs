@@ -101,15 +101,22 @@ public sealed class KitchenOperationsStore
             return ToDto(ticket);
         }
 
+        // V1-RMD-158: InvalidKitchenTransitionException comes from
+        // ticket.TransitionTo itself, above SaveAsync, and means the target
+        // state is unreachable from the current one (e.g. Ready -> Accepted)
+        // — a domain rule violation, not a race. It used to be caught here
+        // and rethrown as KitchenOperationsConcurrencyException, which told
+        // the client "someone else changed this, re-fetch and retry" even
+        // though a retry can never succeed: the transition is simply
+        // illegal. The endpoint filter already has its own correct mapping
+        // for InvalidKitchenTransitionException (DOMAIN_CONFLICT, distinct
+        // from CONCURRENT_MODIFICATION) — letting it propagate reaches that
+        // mapping instead of being masked here.
         KitchenTicket transitioned;
         try
         {
             transitioned = ticket.TransitionTo(target, NormalizeReason(request.Reason));
             await _tickets.SaveAsync(transitioned, request.ExpectedRowVersion, cancellationToken);
-        }
-        catch (InvalidKitchenTransitionException exception)
-        {
-            throw new KitchenOperationsConcurrencyException(exception.Message);
         }
         catch (InvalidOperationException exception)
         {
@@ -154,10 +161,6 @@ public sealed class KitchenOperationsStore
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
             return ToDto(canonical);
-        }
-        catch (InvalidKitchenTransitionException exception)
-        {
-            throw new KitchenOperationsConcurrencyException(exception.Message);
         }
         catch (InvalidOperationException exception)
         {

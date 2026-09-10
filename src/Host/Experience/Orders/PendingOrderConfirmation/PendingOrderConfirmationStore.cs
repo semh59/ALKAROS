@@ -51,9 +51,19 @@ public sealed class PendingOrderConfirmationStore
     /// the order for service): PendingConfirmation -&gt; Accepted, and a
     /// table the order still holds as Reserved becomes Occupied. Semih's
     /// decision (2026-09-09): stock is consumed here, for every item on
-    /// every channel this store serves (Cashier/Waiter/NFC age-restricted/
-    /// QR all reach Accepted only through this one method — see
-    /// OrderStockConsumptionService's own doc comment). Stock consumption
+    /// every channel this store serves.
+    ///
+    /// V1-RMD-158: that channel list used to read "Cashier/Waiter/NFC
+    /// age-restricted/QR", claiming all four reach Accepted only through
+    /// this method. They don't — a Cashier or Waiter order never enters
+    /// PendingConfirmation at all; it goes straight Draft -&gt; Submitted and
+    /// consumes stock there instead, through
+    /// <c>OrderSubmissionStockDispatcher</c> (see that class's own doc
+    /// comment for why). The staff member who accepts here can hold either
+    /// role, but the ORDER's own channel reaching this method is always
+    /// NFC (age-restricted) or QR — see
+    /// <see cref="OrderStockConsumptionService"/>'s own doc comment for
+    /// the shared consumption primitive both paths call. Stock consumption
     /// and the order's own Accepted write share one connection/transaction
     /// (the repository's own connection-carrying SaveAsync overload) — the
     /// same "two independent writes with no shared optimistic-concurrency

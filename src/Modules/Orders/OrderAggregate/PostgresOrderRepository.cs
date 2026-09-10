@@ -535,7 +535,16 @@ public sealed class PostgresOrderRepository : IOrderRepository
                    created_at, updated_at, row_version
             FROM {Items}
             WHERE order_id = @order_id
-            ORDER BY created_at;
+            -- V1-RMD-158: every item added in the same round shares the
+            -- same `now` timestamp (OrderManagementStore builds the whole
+            -- round from one DateTimeOffset.UtcNow), so `created_at` alone
+            -- ties constantly and Postgres's tie-break order is whatever
+            -- the plan happens to produce — the ticket/bill could show a
+            -- different line order on every read of the same order.
+            -- order_item_id is arbitrary but stable, matching the same
+            -- tiebreak DualScreenStore.Display.cs already uses for this
+            -- table.
+            ORDER BY created_at, order_item_id;
             """);
         command.Parameters.AddWithValue("order_id", orderId);
 

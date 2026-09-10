@@ -40,7 +40,13 @@ public sealed class OrderItem
             throw new ArgumentException("Product id cannot be empty.", nameof(productId));
         if (string.IsNullOrWhiteSpace(productNameSnapshot))
             throw new ArgumentException("Product name snapshot cannot be empty.", nameof(productNameSnapshot));
-        if (quantity <= 0)
+        // V1-RMD-158: rounded before the positivity check, not after — a
+        // caller-supplied value finer than the column's NUMERIC(18,3)
+        // precision (e.g. 0.0004) must be refused here rather than silently
+        // rounding down to a stored 0 after already having passed the
+        // check on the raw value.
+        var roundedQuantity = OrderMath.RoundQuantity(quantity);
+        if (roundedQuantity <= 0)
             throw new ArgumentException("Quantity must be positive.", nameof(quantity));
         if (unitPrice < 0)
             throw new ArgumentException("Unit price cannot be negative.", nameof(unitPrice));
@@ -54,7 +60,18 @@ public sealed class OrderItem
         ProductId = productId;
         ProductNameSnapshot = productNameSnapshot;
         SkuSnapshot = skuSnapshot;
-        Quantity = quantity;
+        // Postgres rounds quantity to NUMERIC(18,3) on write regardless, so
+        // a caller that passed a finer value (e.g. 2.00005) always came
+        // back from a reload strictly unequal to what was in memory.
+        // PostgresOrderRepository's own ItemSnapshot.Matches does a plain
+        // decimal == comparison to decide whether an item actually changed
+        // before writing it — with that mismatch, every single save of a
+        // beyond-3-decimal quantity looked like a real change and bumped
+        // row_version for nothing. Storing the already-rounded value, the
+        // same way OrderMath.RoundCurrency already rounds every money field
+        // just below, makes the in-memory value match what actually
+        // round-trips through the database.
+        Quantity = roundedQuantity;
         UnitPrice = unitPrice;
         DiscountAmount = discountAmount;
         TaxRate = taxRate;
