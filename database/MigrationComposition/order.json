@@ -818,6 +818,15 @@
         "modifier_stock_mappings"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "096",
+      "phase": "B",
+      "tables": [
+        "push_subscriptions",
+        "vapid_keys"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

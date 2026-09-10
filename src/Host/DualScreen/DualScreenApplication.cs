@@ -30,6 +30,7 @@ using ALKAROS.Host.Experience.Orders.SubmissionStockConsumption;
 using ALKAROS.Host.Experience.Roles;
 using ALKAROS.Host.Experience.Tables;
 using ALKAROS.Host.Experience.WaiterNotifications;
+using ALKAROS.Host.Experience.WebPush;
 using ALKAROS.Host.Outbox;
 using ALKAROS.QrOrdering.RelaySecurity;
 using Microsoft.AspNetCore.Builder;
@@ -134,6 +135,7 @@ public static partial class DualScreenApplication
         builder.Services.AddRoleManagementExperience();
         builder.Services.AddOfflineReconciliationExperience();
         builder.Services.AddWaiterNotificationsExperience();
+        builder.Services.AddWebPushExperience();
         builder.Services.AddSingleton<IOrderSubmissionDispatcher>(services =>
         {
             var stationId = Environment.GetEnvironmentVariable(KitchenStationEnvironmentVariable);
@@ -497,6 +499,7 @@ public static partial class DualScreenApplication
         app.MapRoleManagementApi();
         app.MapOfflineReconciliationApi();
         app.MapWaiterNotificationsApi();
+        app.MapWebPushApi();
         app.MapHub<CustomerDisplayHub>(CustomerDisplayHub.Route);
         app.MapMethods(
             "/api/{**path}",

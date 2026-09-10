@@ -1,5 +1,6 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.Experience.WaiterNotifications;
+using ALKAROS.Host.Experience.WebPush;
 using ALKAROS.Kitchen.OrderItemStateSync;
 using ALKAROS.Kitchen.PhysicalPrintRecovery;
 using ALKAROS.Kitchen.PrintQueue;
@@ -27,6 +28,7 @@ public sealed class KitchenOperationsStore
     private readonly OutboxStore _outbox;
     private readonly IOrderRepository _orders;
     private readonly IHubContext<WaiterOrderStatusHub> _waiterHub;
+    private readonly WebPushSender? _push;
 
     public KitchenOperationsStore(
         IKitchenTicketRepository tickets,
@@ -39,7 +41,8 @@ public sealed class KitchenOperationsStore
         ISettingsService settings,
         OutboxStore outbox,
         IOrderRepository orders,
-        IHubContext<WaiterOrderStatusHub> waiterHub)
+        IHubContext<WaiterOrderStatusHub> waiterHub,
+        WebPushSender? push = null)
     {
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _printers = printers ?? throw new ArgumentNullException(nameof(printers));
@@ -56,6 +59,11 @@ public sealed class KitchenOperationsStore
         // same gate.
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _waiterHub = waiterHub ?? throw new ArgumentNullException(nameof(waiterHub));
+        // V1-WTR-011: the same "ready" announcement, for a device whose app is
+        // closed. Optional so the standalone KitchenOperations test harness
+        // keeps constructing this store without a push stack — the same shape
+        // NfcOrderingStore already uses for IPendingOrderAnnouncer.
+        _push = push;
     }
 
     public async Task<IReadOnlyList<KitchenTicketV1>> GetActiveTicketsAsync(
@@ -174,6 +182,19 @@ public sealed class KitchenOperationsStore
             WaiterOrderStatusHub.OrderItemReady,
             new OrderItemReadyV1(orderId, order?.TableId, item.OrderItemId, item.ProductNameSnapshot),
             cancellationToken);
+
+        // V1-WTR-011: SignalR only reaches a device whose app is open, which
+        // is exactly the case a plated dish is not in — the waiter is on the
+        // floor with the phone pocketed. The sender swallows its own failures.
+        if (_push is not null)
+        {
+            await _push.BroadcastAsync(
+                new WebPushMessage(
+                    "Sipariş hazır",
+                    $"{item.ProductNameSnapshot} hazır",
+                    "alkaros-order-ready"),
+                cancellationToken);
+        }
     }
 
     public async Task<IReadOnlyList<PrinterV1>> GetPrintersAsync(CancellationToken cancellationToken)

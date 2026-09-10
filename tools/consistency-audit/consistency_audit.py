@@ -121,6 +121,10 @@ HOST_AREA_SCHEMA = {
     "Experience/Orders": "orders",
     "Experience/Roles": "identity",
     "Experience/Tables": "table_mgmt",
+    # V1-WTR-011: push subscriptions and the deployment's VAPID identity are
+    # owned outright by this area - no module owns them, which is why the
+    # migration gives them their own schema rather than borrowing identity's.
+    "Experience/WebPush": "notifications",
     "DualScreen": "customer_display",
 }
 
