@@ -33,6 +33,35 @@ public interface IUserStore
         string expectedCurrentHash,
         string upgradedHash,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-RMD-151: reads a user by id — the unlock path already knows who is
+    /// asking (it requires a valid device session), so it never looks anyone
+    /// up by name.
+    /// </summary>
+    Task<StoredUser?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-RMD-151: stores the user's own unlock PIN, or clears it when
+    /// <paramref name="encodedPinHash"/> is null. Clearing also resets the
+    /// PIN attempt counters, so removing and re-adding a PIN never starts
+    /// from a locked state.
+    /// </summary>
+    Task<bool> SetPinAsync(Guid userId, string? encodedPinHash, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-RMD-151: mirrors <see cref="RecordLoginFailureAsync"/> for the PIN's
+    /// own counters. A null result means the PIN is currently locked.
+    /// </summary>
+    Task<LoginFailureUpdate?> RecordPinFailureAsync(
+        Guid userId,
+        DateTimeOffset now,
+        int maxFailedAttempts,
+        TimeSpan lockoutDuration,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>V1-RMD-151: clears the PIN attempt counters after a correct PIN.</summary>
+    Task<bool> RecordPinSuccessAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
 public sealed record LoginFailureUpdate(int FailedLoginAttempts, DateTimeOffset? LockedUntil);

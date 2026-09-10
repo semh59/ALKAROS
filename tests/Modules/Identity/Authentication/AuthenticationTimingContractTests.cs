@@ -31,6 +31,25 @@ public sealed class AuthenticationTimingContractTests
             return Task.FromResult(User);
         }
 
+        // V1-RMD-151: these tests are about login timing only; the PIN
+        // surface is exercised by its own tests against real Postgres.
+        public Task<StoredUser?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default)
+            => Task.FromResult(User);
+
+        public Task<bool> SetPinAsync(Guid userId, string? encodedPinHash, CancellationToken cancellationToken = default)
+            => Task.FromResult(true);
+
+        public Task<LoginFailureUpdate?> RecordPinFailureAsync(
+            Guid userId,
+            DateTimeOffset now,
+            int maxFailedAttempts,
+            TimeSpan lockoutDuration,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult<LoginFailureUpdate?>(new LoginFailureUpdate(1, null));
+
+        public Task<bool> RecordPinSuccessAsync(Guid userId, CancellationToken cancellationToken = default)
+            => Task.FromResult(true);
+
         public Task<LoginFailureUpdate?> RecordLoginFailureAsync(
             Guid userId,
             DateTimeOffset now,

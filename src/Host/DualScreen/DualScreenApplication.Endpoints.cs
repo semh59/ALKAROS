@@ -142,6 +142,67 @@ public static partial class DualScreenApplication
             });
         }).RequireRateLimiting("terminal-read");
 
+        // V1-RMD-151: unlocking an idle device. Requires a valid session
+        // already — the PIN is not a credential, it only proves the same
+        // person is still holding the device. Without a session this is a
+        // plain 401 and the client falls back to a full sign-in.
+        app.MapPost("/api/v1/auth/unlock", async (
+            Guid terminalId,
+            UnlockRequest request,
+            HttpContext context,
+            DualScreenStore store,
+            AuthenticationService authentication,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            if (request is null || string.IsNullOrWhiteSpace(request.Pin))
+                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "PIN boş olamaz." } });
+
+            var result = await authentication.UnlockAsync(
+                principal.UserId, request.Pin, DateTimeOffset.UtcNow, cancellationToken);
+
+            return result switch
+            {
+                UnlockSuccess success => Results.Ok(new { userId = success.UserId, displayName = success.DisplayName }),
+                UnlockFailure { Reason: UnlockFailureReason.LockedOut } => Results.Json(
+                    new { error = new { code = "PIN_LOCKED", message = "Çok fazla hatalı deneme. Kullanıcı adı ve şifreyle giriş yapın." } },
+                    statusCode: StatusCodes.Status423Locked),
+                UnlockFailure { Reason: UnlockFailureReason.PinNotSet } => Results.Json(
+                    new { error = new { code = "PIN_NOT_SET", message = "Bu kullanıcı için PIN tanımlı değil." } },
+                    statusCode: StatusCodes.Status409Conflict),
+                _ => Results.Json(
+                    new { error = new { code = "INVALID_PIN", message = "PIN hatalı." } },
+                    statusCode: StatusCodes.Status401Unauthorized),
+            };
+        }).RequireRateLimiting("terminal-read");
+
+        // V1-RMD-151: setting or clearing one's own PIN. The current password
+        // is required on top of the session, so a device someone left unlocked
+        // is not enough to plant a PIN on that account.
+        app.MapPost("/api/v1/auth/pin", async (
+            Guid terminalId,
+            SetPinRequest request,
+            HttpContext context,
+            DualScreenStore store,
+            AuthenticationService authentication,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            if (request is null || string.IsNullOrWhiteSpace(request.CurrentPassword))
+                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Mevcut şifre gereklidir." } });
+            if (request.Pin is not null && (request.Pin.Length < 4 || !request.Pin.All(char.IsDigit)))
+                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "PIN en az 4 rakamdan oluşmalıdır." } });
+
+            var applied = await authentication.SetPinAsync(
+                principal.UserId, request.CurrentPassword, request.Pin, cancellationToken);
+
+            return applied
+                ? Results.Ok(new { pinSet = request.Pin is not null })
+                : Results.Json(
+                    new { error = new { code = "INVALID_CREDENTIALS", message = "Şifre hatalı." } },
+                    statusCode: StatusCodes.Status401Unauthorized);
+        }).RequireRateLimiting("terminal-read");
+
         app.MapGet("/api/v1/auth/session/current", async (
             HttpContext context,
             DualScreenStore store,

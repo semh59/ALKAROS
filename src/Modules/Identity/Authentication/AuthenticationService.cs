@@ -92,4 +92,71 @@ public sealed class AuthenticationService
         var session = SessionTokenIssuer.Issue(now);
         return new LoginSuccess(user.UserId, user.DisplayName, session);
     }
+
+    /// <summary>
+    /// V1-RMD-151: verifies the unlock PIN of a user who already holds a valid
+    /// device session. This is not authentication — the caller has already
+    /// proved which session it is; the PIN only proves the same person is
+    /// still holding the device after it sat idle.
+    ///
+    /// The PIN's own counters are used, so five wrong PINs lock the PIN for
+    /// the lockout window without touching the password lockout: someone who
+    /// forgot their PIN signs in with username and password as usual, and PIN
+    /// guessing cannot lock a colleague out of the account.
+    /// </summary>
+    public async Task<UnlockResult> UnlockAsync(
+        Guid userId,
+        string pin,
+        DateTimeOffset now,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(pin);
+
+        var user = await _store.GetByIdAsync(userId, cancellationToken);
+        if (user is null || !user.Active)
+            return new UnlockFailure(UnlockFailureReason.InvalidPin);
+
+        if (user.PinHash is null)
+            return new UnlockFailure(UnlockFailureReason.PinNotSet);
+
+        if (user.PinLockedUntil is { } lockedUntil && lockedUntil > now)
+            return new UnlockFailure(UnlockFailureReason.LockedOut);
+
+        if (!_verify(pin, user.PinHash))
+        {
+            var update = await _store.RecordPinFailureAsync(
+                user.UserId, now, _maxFailedAttempts, _lockoutDuration, cancellationToken);
+            return update is null
+                ? new UnlockFailure(UnlockFailureReason.LockedOut)
+                : new UnlockFailure(UnlockFailureReason.InvalidPin);
+        }
+
+        if (!await _store.RecordPinSuccessAsync(user.UserId, cancellationToken))
+            return new UnlockFailure(UnlockFailureReason.LockedOut);
+
+        return new UnlockSuccess(user.UserId, user.DisplayName);
+    }
+
+    /// <summary>
+    /// V1-RMD-151: sets or clears a user's own unlock PIN. The current
+    /// password is required even though a session already exists — a device
+    /// left unlocked must not be enough to plant a PIN on someone's account.
+    /// Passing null for <paramref name="pin"/> removes it, which is how a user
+    /// turns the PIN prompt back off.
+    /// </summary>
+    public async Task<bool> SetPinAsync(
+        Guid userId,
+        string currentPassword,
+        string? pin,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(currentPassword);
+
+        var user = await _store.GetByIdAsync(userId, cancellationToken);
+        if (user is null || !user.Active || !_verify(currentPassword, user.PasswordHash))
+            return false;
+
+        var encoded = pin is null ? null : new PasswordHasher().Hash(pin);
+        return await _store.SetPinAsync(userId, encoded, cancellationToken);
+    }
 }

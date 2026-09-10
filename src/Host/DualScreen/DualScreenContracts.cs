@@ -4,6 +4,22 @@ namespace ALKAROS.Host.DualScreen;
 
 public sealed record LoginRequest(string Username, string Password, Guid TerminalId);
 
+/// <summary>
+/// V1-RMD-151: unlocking a device that sat idle. Carries no username — the
+/// session already says who this is; the PIN only proves the same person is
+/// still holding it.
+/// </summary>
+public sealed record UnlockRequest(string Pin);
+
+/// <summary>
+/// V1-RMD-151: setting or clearing one's own unlock PIN. A null
+/// <paramref name="Pin"/> removes it, which is how a user turns the PIN
+/// prompt back off. <paramref name="CurrentPassword"/> is required even
+/// though a session exists — an unlocked device left on a table must not be
+/// enough to plant a PIN on that account.
+/// </summary>
+public sealed record SetPinRequest(string CurrentPassword, string? Pin);
+
 public sealed record LoginResponse(Guid UserId, string DisplayName, Guid TerminalId);
 
 /// <remarks>

@@ -205,4 +205,79 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
         Assert.True(await _database.ScalarAsync<bool>(
             "SELECT locked_until IS NOT NULL FROM identity.users WHERE user_id = '" + userId + "';"));
     }
+
+    // V1-RMD-151: a device session lives 30 days and nothing asked who was
+    // holding the device. These cover the PIN that now guards an idle one.
+
+    [Fact]
+    public async Task ACorrectPinUnlocksAndClearsTheAttemptCounter()
+    {
+        var userId = await _database.InsertUserAsync("pin-ok", _hasher.Hash("s3cret-Pass"));
+        var service = new AuthenticationService(_store);
+        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234"));
+
+        Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "9999", Now));
+        var result = await service.UnlockAsync(userId, "1234", Now);
+
+        Assert.IsType<UnlockSuccess>(result);
+        Assert.Equal(0, await _database.ScalarAsync<int>(
+            "SELECT pin_failed_attempts FROM identity.users WHERE user_id = '" + userId + "';"));
+    }
+
+    [Fact]
+    public async Task FiveWrongPinsLockThePinButLeaveTheAccountSignInWorking()
+    {
+        // The whole point of separate counters: a forgotten PIN must not stop
+        // the waiter from working, and PIN guesses must not lock the account.
+        var userId = await _database.InsertUserAsync("pin-lock", _hasher.Hash("s3cret-Pass"));
+        var service = new AuthenticationService(_store, maxFailedAttempts: 5);
+        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234"));
+
+        for (var attempt = 0; attempt < 5; attempt++)
+            Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "0000", Now));
+
+        var locked = Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "1234", Now));
+        Assert.Equal(UnlockFailureReason.LockedOut, locked.Reason);
+
+        // The password path is untouched.
+        Assert.Equal(0, await _database.ScalarAsync<int>(
+            "SELECT failed_login_attempts FROM identity.users WHERE user_id = '" + userId + "';"));
+        Assert.IsType<LoginSuccess>(await service.LoginAsync("pin-lock", "s3cret-Pass", Now));
+    }
+
+    [Fact]
+    public async Task UnlockingIsRefusedWhenNoPinWasEverSet()
+    {
+        var userId = await _database.InsertUserAsync("pin-none", _hasher.Hash("s3cret-Pass"));
+        var service = new AuthenticationService(_store);
+
+        var result = Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "1234", Now));
+
+        Assert.Equal(UnlockFailureReason.PinNotSet, result.Reason);
+    }
+
+    [Fact]
+    public async Task SettingAPinRequiresTheCurrentPassword()
+    {
+        // A device left unlocked on a table must not be enough to plant a PIN.
+        var userId = await _database.InsertUserAsync("pin-guard", _hasher.Hash("s3cret-Pass"));
+        var service = new AuthenticationService(_store);
+
+        Assert.False(await service.SetPinAsync(userId, "wrong-password", "1234"));
+        Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "1234", Now));
+    }
+
+    [Fact]
+    public async Task ClearingThePinTurnsUnlockingOffAgain()
+    {
+        // Semih's decision (2026-09-10): the PIN is optional and removable.
+        var userId = await _database.InsertUserAsync("pin-clear", _hasher.Hash("s3cret-Pass"));
+        var service = new AuthenticationService(_store);
+        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234"));
+        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", null));
+
+        var result = Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "1234", Now));
+
+        Assert.Equal(UnlockFailureReason.PinNotSet, result.Reason);
+    }
 }

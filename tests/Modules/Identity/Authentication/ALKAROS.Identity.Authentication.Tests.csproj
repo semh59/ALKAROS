@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <None Include="..\..\..\..\database\migrations\V1\V1-IAM-001\*.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- V1-RMD-151: identity.users gains the unlock PIN columns. -->
+    <None Include="..\..\..\..\database\migrations\V1\V1-RMD-151\*.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
