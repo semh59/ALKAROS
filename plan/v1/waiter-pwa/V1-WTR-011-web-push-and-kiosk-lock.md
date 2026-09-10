@@ -30,13 +30,16 @@ P-256, `HKDF`, `AesGcm` ve ES256 için `ECDsa` .NET 8'de kutudan geliyor.
 - `database/migrations/V1/V1-WTR-011/**` (yeni)
 - `src/Host/Experience/WebPush/**` (yeni — `WaiterNotifications/` V1-WTR-009'un
   sahipliğinde, oraya dosya eklenmez)
+- `tests/Host/Experience/WebPush/**` (yeni — bu görevin test projesi)
+- `src/Clients/WaiterPwa/wwwroot/brand/**` (yeni — üst barın ve kilit
+  perdesinin koyu zemininde kullanılan logo, kaynağı `docs/design/brand/`)
 - Sınırlı ek — aşağıdaki yollar ilgili görevlerin sahipliğinde kalır (yollar
   geri-tik olmadan yazıldı ki denetleyici bunları sahiplik iddiası olarak
   parse etmesin):
   - database/migrations/order.json — 096 kaydı.
   - src/Host/Composition/Migrations/MigrationManifest.cs — PhaseBMax.
   - tests/Host/MigrationComposition/** — manifest testinin sınır değerleri.
-  - tests/Host/Experience/WebPush/** (yeni) ve ALKAROS.slnx — test projesi.
+  - ALKAROS.slnx — test projesinin çözüme eklenmesi.
   - tools/consistency-audit/consistency_audit.py — HOST_AREA_SCHEMA'ya yeni
     alanın şema sahipliği eklenir (denetim atlanmaz, doğru cevap yazılır).
   - src/Host/Experience/WaiterNotifications/WaiterNotificationsExperience.cs,
