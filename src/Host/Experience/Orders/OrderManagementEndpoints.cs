@@ -254,15 +254,26 @@ public static class OrderManagementEndpoints
             return Results.Ok(order);
         });
 
+        // V1-RMD-160: found by the 2026-09-10 Garson audit — this used to
+        // call RequireCashierSessionAsync (any authenticated session, no
+        // permission check at all), unlike its sibling endpoints in this
+        // group. terminalId is not a data boundary anywhere in this store
+        // (it is used only for session/idempotency-key context — a routine
+        // staff member on any terminal legitimately needs to read any
+        // table's order), so the real gap is the missing permission check,
+        // not a missing terminal filter. OrdersCreate matches /pending's own
+        // reasoning: whoever may take/resolve an order may read one.
         group.MapGet("/{orderId:guid}", async (
             Guid terminalId,
             Guid orderId,
             OrderManagementStore store,
             DualScreenStore dualStore,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
 
             var order = await store.GetOrderByIdAsync(orderId, cancellationToken);
             if (order == null)

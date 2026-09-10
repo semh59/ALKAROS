@@ -35,7 +35,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.PostAsJsonAsync(
             DraftPath(Guid.NewGuid()),
-            new CreateTableDraftRequest(Guid.NewGuid(), "M-01", "Garson", []));
+            new CreateTableDraftRequest(Guid.NewGuid(), "M-01", []));
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -53,14 +53,14 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var firstResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-05", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-05",
                 [new OrderItemDraftDto(Guid.NewGuid(), starter, "Çorba", 1, 60m)])));
         Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
         var firstDraft = await firstResponse.Content.ReadFromJsonAsync<OrderDto>();
 
         using var secondResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-05", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-05",
                 [new OrderItemDraftDto(Guid.NewGuid(), dessert, "Baklava", 1, 90m)])));
         Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
         var secondDraft = await secondResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -87,7 +87,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-07", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-07",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 2, 280m)])));
         Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -123,7 +123,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-15", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-15",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 2, 280m)])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
         var submitBody = new SubmitTableOrderRequest(draft!.OrderId, draft.RowVersion, Guid.NewGuid().ToString());
@@ -153,7 +153,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var product = await _database.SeedProductAsync("Kola", 45m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
-        var payload = new CreateTableDraftRequest(tableId, "M-09", "Garson Ahmet",
+        var payload = new CreateTableDraftRequest(tableId, "M-09",
             [new OrderItemDraftDto(Guid.NewGuid(), product, "Kola", 2, 45m)]);
 
         using var firstResponse = await client.SendAsync(JsonRequest(DraftPath(terminalId), cookie, payload));
@@ -188,7 +188,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var product = await _database.SeedStockedProductAsync("Köfte", 280m, 10m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
-        var payload = new CreateTableDraftRequest(tableId, "M-16", "Garson Ahmet",
+        var payload = new CreateTableDraftRequest(tableId, "M-16",
             [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 2, 280m)], Id: Guid.NewGuid());
 
         using var draftResponse = await client.SendAsync(JsonRequest(DraftPath(terminalId), cookie, payload));
@@ -226,7 +226,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var product = await _database.SeedProductAsync("Ayran", 20m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
-        var payload = new CreateTableDraftRequest(tableId, "M-17", "Garson Ahmet",
+        var payload = new CreateTableDraftRequest(tableId, "M-17",
             [new OrderItemDraftDto(Guid.NewGuid(), product, "Ayran", 1, 20m)], Id: Guid.NewGuid());
 
         var first = client.SendAsync(JsonRequest(DraftPath(terminalId), cookie, payload));
@@ -260,7 +260,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-11", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-11",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var draft = await response.Content.ReadFromJsonAsync<OrderDto>();
@@ -285,13 +285,13 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var firstResponse = await client.SendAsync(JsonRequest(
             DraftPath(openingTerminalId), openingCookie,
-            new CreateTableDraftRequest(tableId, "M-12", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-12",
                 [new OrderItemDraftDto(Guid.NewGuid(), starter, "Çorba", 1, 60m)])));
         Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
 
         using var secondResponse = await client.SendAsync(JsonRequest(
             DraftPath(secondTerminalId), secondCookie,
-            new CreateTableDraftRequest(tableId, "M-12", "Garson Mehmet",
+            new CreateTableDraftRequest(tableId, "M-12",
                 [new OrderItemDraftDto(Guid.NewGuid(), dessert, "Baklava", 1, 90m)])));
         Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
         var secondDraft = await secondResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -317,7 +317,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), fromCookie,
-            new CreateTableDraftRequest(tableId, "M-13", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-13",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
         Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -369,7 +369,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), fromCookie,
-            new CreateTableDraftRequest(tableId, "M-14", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-14",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
         Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -416,7 +416,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-20", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-20",
                 [new OrderItemDraftDto(Guid.NewGuid(), suspended, "86'd Ürün", 1, 100m)])));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -440,7 +440,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var itemId = Guid.NewGuid();
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-31", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-31",
                 [new OrderItemDraftDto(itemId, product, "Adana", 2, 520m)])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
 
@@ -476,7 +476,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var firstItemId = Guid.NewGuid();
         using var firstDraft = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-32", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-32",
                 [new OrderItemDraftDto(firstItemId, product, "Adana", 2, 520m)])));
         var first = await firstDraft.Content.ReadFromJsonAsync<OrderDto>();
         using var firstSubmit = await client.SendAsync(JsonRequest(
@@ -488,7 +488,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var secondItemId = Guid.NewGuid();
         using var secondDraft = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-32", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-32",
                 [new OrderItemDraftDto(secondItemId, product, "Adana", 1, 520m)])));
         var second = await secondDraft.Content.ReadFromJsonAsync<OrderDto>();
         using var secondSubmit = await client.SendAsync(JsonRequest(
@@ -519,7 +519,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var itemId = Guid.NewGuid();
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-33", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-33",
                 [new OrderItemDraftDto(itemId, product, "Adana", 2, 520m)])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
         var submitBody = new SubmitTableOrderRequest(draft!.OrderId, draft.RowVersion, Guid.NewGuid().ToString());
@@ -548,7 +548,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-34", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-34",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana", 3, 520m)])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
 
@@ -576,7 +576,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-35", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-35",
                 [new OrderItemDraftDto(Guid.NewGuid(), unmapped, "Eşlenmemiş Ürün", 1, 120m)])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
 
@@ -603,7 +603,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-40", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-40",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Tavuk şiş", 0.5m, 420m)])));
         Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -633,7 +633,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-41", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-41",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Tavuk şiş", 0.0001m, 420m)])));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -655,7 +655,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var before = DateTimeOffset.UtcNow.AddMinutes(-1);
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-42", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-42",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m)])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
         Assert.Equal("Draft", draft!.Items.Single().Status);
@@ -695,7 +695,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-50", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-50",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m, [new OrderItemModifierSelectionDto(extraRice)])])));
 
         Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
@@ -727,7 +727,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-51", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-51",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m, [new OrderItemModifierSelectionDto(foreign)])])));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -748,7 +748,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-52", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-52",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m, [new OrderItemModifierSelectionDto(retired)])])));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -769,7 +769,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-53", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-53",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Kuzu şiş", 1, 620m, [new OrderItemModifierSelectionDto(wellDone)])])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
 
@@ -799,7 +799,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-60", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-60",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m,
                     [new OrderItemModifierSelectionDto(extraRice)])])));
 
@@ -826,7 +826,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-61", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-61",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 0.5m, 520m,
                     [new OrderItemModifierSelectionDto(extraRice)])])));
 
@@ -850,7 +850,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-62", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-62",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m,
                     [new OrderItemModifierSelectionDto(extraRice, 3m)])])));
 
@@ -875,7 +875,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-70", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-70",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m,
                     [new OrderItemModifierSelectionDto(extraCheese)])])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -908,7 +908,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-71", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-71",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Kuzu şiş", 1, 620m,
                     [new OrderItemModifierSelectionDto(wellDone)])])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
@@ -937,7 +937,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-72", "Garson Ahmet",
+            new CreateTableDraftRequest(tableId, "M-72",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 3, 520m,
                     [new OrderItemModifierSelectionDto(extraCheese)])])));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();

@@ -15,10 +15,17 @@ namespace ALKAROS.Host.Experience.Orders;
 /// such a call gets no retry protection beyond the existing per-item id
 /// dedup, exactly like before this fix.
 /// </summary>
+// V1-RMD-160: found by the 2026-09-10 Garson audit — this record used to
+// also carry a client-supplied WaiterName that nothing on the server ever
+// read (grep confirmed: zero consumers). It was worse than merely dead:
+// Order.ServingUserId already carries the real, authenticated actor for
+// exactly this purpose, so a free-text field a client could set to
+// anything was a redundant, spoofable stand-in for data the server already
+// has correctly. Removed here and from both real clients' payloads
+// (cashier-app.js, waiter-app.js) rather than wired in.
 public sealed record CreateTableDraftRequest(
     Guid TableId,
     string TableNumber,
-    string WaiterName,
     IReadOnlyList<OrderItemDraftDto> Items,
     string? OrderNote = null,
     Guid? Id = null);

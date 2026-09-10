@@ -100,6 +100,11 @@ public static class WebPushExperience
             return Results.NoContent();
         });
 
+        // V1-RMD-160: found by the 2026-09-10 Garson audit — this used to
+        // call DeleteByEndpointAsync, which deletes any row with that
+        // endpoint string, no owner check. Scoped to the caller's own
+        // user_id now, so a session can only ever remove its own device's
+        // subscription.
         group.MapDelete("/subscriptions", async (
             Guid terminalId,
             string endpoint,
@@ -108,8 +113,8 @@ public static class WebPushExperience
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierAsync(context, terminalId, sessions, cancellationToken);
-            await store.DeleteByEndpointAsync(endpoint, cancellationToken);
+            var principal = await RequireCashierAsync(context, terminalId, sessions, cancellationToken);
+            await store.DeleteByEndpointForUserAsync(endpoint, principal.UserId, cancellationToken);
             return Results.NoContent();
         });
 

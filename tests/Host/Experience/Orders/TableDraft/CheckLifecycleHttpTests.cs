@@ -255,7 +255,7 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         // Draft only — no submit, so nothing was fired.
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-05", "Garson",
+            new CreateTableDraftRequest(tableId, "M-05",
                 [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m)], Id: Guid.NewGuid())));
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
         Assert.Equal("Draft", draft!.Items.Single().Status);
@@ -288,7 +288,7 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
 
         var submissionId = Guid.NewGuid();
         var lineId = Guid.NewGuid();
-        var body = new CreateTableDraftRequest(tableId, "M-05", "Garson",
+        var body = new CreateTableDraftRequest(tableId, "M-05",
             [new OrderItemDraftDto(lineId, product, "Köfte", 1, 280m)], Id: submissionId);
 
         using var firstDraft = await client.SendAsync(JsonRequest(DraftPath(terminalId), cookie, body));
@@ -361,7 +361,7 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
 
         using var draftResponse = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
-            new CreateTableDraftRequest(tableId, "M-05", "Garson", items, Id: submissionId)));
+            new CreateTableDraftRequest(tableId, "M-05", items, Id: submissionId)));
         Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
         var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
 

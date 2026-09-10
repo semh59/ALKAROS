@@ -938,12 +938,19 @@
 
   // ══ Sending ════════════════════════════════════════════════════════
 
+  // V1-RMD-160: waiterName and createdAt used to be sent here but nothing
+  // on the server ever read either (found by the 2026-09-10 Garson audit).
+  // The real actor is already attributed server-side via
+  // Order.ServingUserId, from the session this request already carries;
+  // the real timestamp is server-authoritative (DateTimeOffset.UtcNow at
+  // the point the draft is created), same as everywhere else in this
+  // system — a client clock is never the source of truth for it. Removed
+  // rather than wired in.
   function draftToPayload() {
     return {
       id: randomUUID(),
       tableId: state.table.id,
       tableNumber: state.table.number,
-      waiterName: (state.user && state.user.displayName) || 'Garson',
       items: state.draft.map((line) => ({
         // A stable per-line id makes a retried draft submission idempotent
         // server-side instead of appending a duplicate line.
@@ -958,8 +965,7 @@
         // assert.
         modifiers: line.modifiers.map((modifier) => ({ modifierId: modifier.modifierId })),
         specialInstructions: line.note || null
-      })),
-      createdAt: new Date().toISOString()
+      }))
     };
   }
 

@@ -142,6 +142,39 @@ public sealed class WebPushHttpTests : IAsyncLifetime
         Assert.Equal(0, await _database.SubscriptionCountAsync());
     }
 
+    // V1-RMD-160: found by the 2026-09-10 Garson audit — the delete
+    // endpoint used to remove whatever row matched the endpoint string with
+    // no owner check, so any authenticated session could unsubscribe any
+    // other device by guessing/observing its endpoint URL.
+    [Fact]
+    public async Task DeletingAnotherUsersSubscriptionDoesNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId);
+        var attackerCookie = await _database.SeedCashierSessionAsync(terminalId);
+        const string endpoint = "https://push.example.net/owned-by-someone-else";
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var saved = await client.SendAsync(JsonRequest(
+            SubscriptionsPath(terminalId), ownerCookie,
+            new SavePushSubscriptionRequestV1(endpoint, ValidP256dh, ValidAuth)));
+        Assert.Equal(HttpStatusCode.NoContent, saved.StatusCode);
+        Assert.Equal(1, await _database.SubscriptionCountAsync());
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Delete,
+            $"{SubscriptionsPath(terminalId)}?endpoint={Uri.EscapeDataString(endpoint)}");
+        request.Headers.Add("Cookie", attackerCookie);
+        using var response = await client.SendAsync(request);
+
+        // The request itself still succeeds (no ownership leak in the
+        // response — the caller cannot distinguish "not yours" from "never
+        // existed"), but the row survives untouched.
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(1, await _database.SubscriptionCountAsync());
+    }
+
     private static byte[] NewPoint()
     {
         var point = new byte[65];

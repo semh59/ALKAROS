@@ -289,11 +289,16 @@
     state.dispatchInFlight = true;
     if (el.btnDispatchOrder) el.btnDispatchOrder.disabled = true;
 
+    // V1-RMD-160: waiterName used to be sent here but nothing on the
+    // server ever read it (found by the 2026-09-10 Garson audit) — the
+    // real, authenticated actor is already attributed server-side via
+    // Order.ServingUserId, from the session this request already carries.
+    // Removed rather than wired in; a free-text field the client could set
+    // to anything would only be a weaker, spoofable duplicate of that.
     const orderPayload = {
       id: crypto.randomUUID(),
       tableId: '00000000-0000-0000-0000-000000000001',
       tableNumber: 'KASA-1',
-      waiterName: state.cashierName || 'Kasiyer',
       items: state.ticketItems.map(item => ({
         // Stable per-line id (already used for local cart tracking) makes a
         // retried draft submission idempotent server-side instead of

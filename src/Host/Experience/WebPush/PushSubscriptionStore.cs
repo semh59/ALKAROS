@@ -94,6 +94,27 @@ public sealed class PushSubscriptionStore
         await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// V1-RMD-160: found by the 2026-09-10 Garson audit — the HTTP delete
+    /// endpoint used to call <see cref="DeleteByEndpointAsync"/> directly,
+    /// which deletes whatever row matches that endpoint string with no
+    /// owner check at all. Any authenticated cashier session (any terminal,
+    /// any staff member) that knew or guessed another device's endpoint URL
+    /// could unsubscribe it. This overload is for that caller only —
+    /// <see cref="DeleteByEndpointAsync"/> stays as-is for the two internal,
+    /// no-user-context callers (<c>WebPushSender</c>'s own permanent-failure
+    /// cleanup, RFC 8030 §7.3), which have no principal to scope by and are
+    /// cleaning up a dead subscription regardless of who it belonged to.
+    /// </summary>
+    public async Task DeleteByEndpointForUserAsync(string endpoint, Guid userId, CancellationToken cancellationToken = default)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            "DELETE FROM notifications.push_subscriptions WHERE endpoint = @endpoint AND user_id = @user_id;");
+        cmd.Parameters.Add("endpoint", NpgsqlDbType.Text).Value = endpoint;
+        cmd.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = userId;
+        await cmd.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task MarkSuccessAsync(string endpoint, CancellationToken cancellationToken = default)
     {
         await using var cmd = _dataSource.CreateCommand(
