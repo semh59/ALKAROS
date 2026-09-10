@@ -3,13 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#0B2135">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ALKAROS Garson">
-  <title>ALKAROS Garson El Terminali (Waiter PWA)</title>
-  
+  <title>ALKAROS Garson</title>
+
   <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <!-- Inter is the one family (foundations.md §2). Same loader the PosTerminal
+       already uses; the fallback stack in waiter-app.css covers a service area
+       with no internet. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="./waiter-app.css">
 </head>
 <body>
@@ -20,123 +27,194 @@
     Keep the two in sync. Used as <svg class="icon"><use href="#ico-NAME"/></svg>.
   -->
   <svg xmlns="http://www.w3.org/2000/svg" hidden aria-hidden="true">
-    <symbol id="ico-brand" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></symbol>
-    <symbol id="ico-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></symbol>
-    <symbol id="ico-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></symbol>
+    <symbol id="ico-back" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
     <symbol id="ico-add" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
     <symbol id="ico-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7Z"/></symbol>
     <symbol id="ico-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="ico-check" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></symbol>
+    <symbol id="ico-search" viewBox="0 0 24 24"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.3-4.3"/></symbol>
+    <symbol id="ico-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></symbol>
+    <symbol id="ico-seats" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.9"/></symbol>
+    <symbol id="ico-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+    <symbol id="ico-lock" viewBox="0 0 24 24"><path d="M5 11h14v10H5V11ZM8 11V7a4 4 0 1 1 8 0v4"/></symbol>
+    <symbol id="ico-alert" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></symbol>
+    <symbol id="ico-move" viewBox="0 0 24 24"><path d="M5 9 2 12l3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></symbol>
+    <symbol id="ico-expand" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="ico-cashier" viewBox="0 0 24 24"><path d="M3 10h18M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4M5 10v10h14V10M9 15h6"/></symbol>
   </svg>
 
-  <!-- Top Navigation / Header -->
   <header class="app-header" role="banner">
     <div class="header-brand">
-      <div class="header-logo">
-        <span><svg class="icon" aria-hidden="true"><use href="#ico-brand"/></svg> ALKAROS</span>
-      </div>
-      <span class="header-badge">Garson PWA</span>
+      <img class="brand-mark" src="./brand/alkaros-logo-on-dark.png" alt="ALKAROS">
+      <span>Garson</span>
     </div>
-    <div class="header-actions">
-      <button type="button" class="btn-icon" id="btnRefreshTables" title="Yenile" aria-label="Yenile"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg></button>
-      <button type="button" class="btn-icon" id="btnStaffProfile" title="Personel" aria-label="Personel"><svg class="icon" aria-hidden="true"><use href="#ico-user"/></svg></button>
+    <div class="header-user">
+      <div>
+        <span id="userRole">Garson</span>
+        <b id="userName">—</b>
+      </div>
+      <button type="button" class="avatar" id="btnProfile" aria-label="Personel ve kilit">
+        <span id="userInitials">?</span>
+      </button>
     </div>
   </header>
 
-  <!-- Network / Sync Ribbon -->
-  <aside id="statusRibbon" class="status-ribbon online" role="status" aria-live="polite">
-    <div>
-      <span class="pulse-dot"></span>
-      <span id="statusText">Çevrimiçi • Canlı Bağlantı</span>
-    </div>
-    <span id="queueCount"></span>
-  </aside>
-
-  <!-- Main View Container -->
-  <main class="main-container" role="main">
-    
-    <!-- Zone Selection Pills -->
-    <nav class="zone-scroll" id="zoneList" aria-label="Salon ve Bölge Seçimi">
-      <!-- Injected by waiter-app.js -->
-    </nav>
-
-    <!-- Tables Grid -->
-    <section class="tables-grid" id="tablesGrid" aria-label="Masalar">
-      <!-- Injected by waiter-app.js -->
-    </section>
-
-  </main>
-
-  <!-- Sticky Bottom Drawer (When Table Selected) -->
-  <aside class="bottom-bar" id="orderDrawer" hidden role="region" aria-label="Seçili Masa Özeti">
-    <div class="order-summary-pill">
-      <span class="order-summary-table" id="selectedTableLabel">Masa: M-01</span>
-      <span class="order-summary-items" id="cartItemCount">0 Ürün</span>
-    </div>
-    <button type="button" class="btn-primary" id="btnOpenOrderModal">
-      <span><svg class="icon" aria-hidden="true"><use href="#ico-add"/></svg> Sipariş Ekle</span>
-    </button>
-  </aside>
-
-  <!-- Modal: Order Entry & Catalog Picker -->
-  <div class="modal-overlay" id="orderModal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTableTitle">
-    <div class="modal-content">
-      
-      <div class="modal-header">
-        <h2 class="modal-title" id="modalTableTitle">Masa Sipariş Ekle</h2>
-        <button type="button" class="btn-icon" id="btnCloseModal" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
-      </div>
-
-      <div class="modal-body">
-        <!-- Search -->
-        <input type="search" class="search-input" id="modalProductSearch" placeholder="Ürün veya içecek ara..." autocomplete="off">
-
-        <!-- Category Filters -->
-        <div class="zone-scroll" id="categoryFilterBar">
-          <!-- Injected by waiter-app.js -->
-        </div>
-
-        <!-- Product Grid -->
-        <div class="product-grid product-grid--modal" id="productGrid">
-          <!-- Injected by waiter-app.js -->
-        </div>
-
-        <!-- Active Cart Summary -->
-        <h3 class="modal-subhead">Adisyon Kalemleri</h3>
-        <div id="cartItemsList">
-          <!-- Injected by waiter-app.js -->
-        </div>
-      </div>
-
-      <!-- Modal Footer Action -->
-      <div class="modal-foot">
-        <div>
-          <div class="modal-foot__label">Toplam Tutar</div>
-          <div id="cartTotalAmount" class="modal-foot__total">0,00 ₺</div>
-        </div>
-        <button type="button" class="btn-success" id="btnSendKitchen">
-          <span><svg class="icon" aria-hidden="true"><use href="#ico-send"/></svg> Mutfağa Gönder</span>
-        </button>
-      </div>
-
-    </div>
+  <div id="ribbon" class="ribbon" role="status" aria-live="polite">
+    <span class="dot"></span>
+    <span id="ribbonText">Bağlanıyor…</span>
+    <span class="queue" id="ribbonQueue"></span>
   </div>
 
-  <!-- Staff sign-in. Shown until the device holds a valid cashier session for
-       its own terminal id; the header "Personel" button signs out. -->
-  <div class="login-overlay" id="loginOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <!-- Guest order banner. Stays until the waiter acts on it (foundations §5.3). -->
+  <button type="button" class="pending-banner" id="pendingBanner" hidden>
+    <svg class="icon" aria-hidden="true"><use href="#ico-bell"/></svg>
+    <span class="pending-text">
+      <b id="pendingTitle">Misafir siparişi</b>
+      <span id="pendingSub"></span>
+    </span>
+    <span class="pending-go">Göster</span>
+  </button>
+
+  <div class="screens" id="screens">
+
+    <!-- ── Masalar ─────────────────────────────────────────────── -->
+    <section class="screen" id="tablesScreen" data-state="on" aria-label="Masalar">
+      <nav class="chiprow" id="zoneChips" aria-label="Bölgeler"></nav>
+      <div class="scroll">
+        <div class="tables" id="tablesGrid"></div>
+      </div>
+    </section>
+
+    <!-- ── Menü ────────────────────────────────────────────────── -->
+    <section class="screen" id="menuScreen" data-state="off" aria-label="Menü">
+      <div class="subhead">
+        <button type="button" class="btn-icon" id="btnMenuBack" aria-label="Masalara dön">
+          <svg class="icon" aria-hidden="true"><use href="#ico-back"/></svg>
+        </button>
+        <div class="subhead-mid">
+          <div class="subhead-title" id="menuTableName">—</div>
+          <div class="subhead-sub" id="menuTableSub"></div>
+        </div>
+      </div>
+      <div class="searchbar">
+        <div class="search">
+          <svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg>
+          <input type="search" id="productSearch" placeholder="Ürün ara" autocomplete="off"
+                 autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="Ürün ara">
+        </div>
+      </div>
+      <nav class="chiprow" id="categoryChips" aria-label="Kategoriler"></nav>
+      <div class="scroll">
+        <div class="products" id="productList"></div>
+      </div>
+      <div class="cartbar" id="cartBar">
+        <button type="button" class="cartbar-open" id="btnOpenBill">
+          <span class="cartbar-count" id="cartCount">0</span>
+          <span class="cartbar-label">Adisyon</span>
+          <span class="cartbar-total" id="cartTotal">0,00 ₺</span>
+        </button>
+        <button type="button" class="btn btn-send" id="btnSendFromMenu" disabled>
+          <svg class="icon" aria-hidden="true"><use href="#ico-send"/></svg>
+          Gönder
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ── Adisyon ───────────────────────────────────────────────── -->
+  <div class="backdrop" id="billBackdrop"></div>
+  <aside class="sheet" id="billSheet" aria-label="Adisyon">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <div>
+        <h2 id="billTitle">Adisyon</h2>
+        <div class="sub" id="billSub"></div>
+      </div>
+      <div class="sheet-actions">
+        <button type="button" class="btn-icon" id="btnAddItems" aria-label="Ürün ekle">
+          <svg class="icon" aria-hidden="true"><use href="#ico-add"/></svg>
+        </button>
+        <button type="button" class="btn-icon" id="btnMoveTable" aria-label="Masa değiştir">
+          <svg class="icon" aria-hidden="true"><use href="#ico-move"/></svg>
+        </button>
+        <button type="button" class="btn-icon" id="btnSendToCashier" aria-label="Hesabı kasaya gönder">
+          <svg class="icon" aria-hidden="true"><use href="#ico-cashier"/></svg>
+        </button>
+        <button type="button" class="btn-icon" id="billClose" aria-label="Kapat">
+          <svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="sheet-body" id="billBody"></div>
+    <div class="sheet-foot">
+      <div class="sheet-total">
+        <div class="label">Toplam</div>
+        <div class="value" id="billTotal">0,00 ₺</div>
+      </div>
+      <button type="button" class="btn btn-send" id="btnSendFromBill" disabled>
+        <svg class="icon" aria-hidden="true"><use href="#ico-send"/></svg>
+        Gönder
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── İkinci katman: miktar, eklenti, iptal gerekçesi ───────── -->
+  <div class="backdrop" id="optionsBackdrop"></div>
+  <aside class="sheet" id="optionsSheet" aria-label="Seçenekler">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <div>
+        <h2 id="optionsTitle">—</h2>
+        <div class="sub" id="optionsSub"></div>
+      </div>
+      <button type="button" class="btn-icon" id="optionsClose" aria-label="Kapat">
+        <svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body" id="optionsBody"></div>
+    <div class="sheet-foot">
+      <div class="sheet-total">
+        <div class="label" id="optionsFootLabel">Tutar</div>
+        <div class="value" id="optionsFootValue">0,00 ₺</div>
+      </div>
+      <button type="button" class="btn btn-primary" id="optionsConfirm">Ekle</button>
+    </div>
+  </aside>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <!-- Staff sign-in. Shown until the device holds a valid session for its own
+       terminal id. -->
+  <div class="overlay" id="loginOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="login-stack">
+    <img class="lock-mark" src="./brand/alkaros-logo-on-dark.png" alt="ALKAROS">
     <form class="login-card" id="loginForm" novalidate>
-      <div class="login-brand"><svg class="icon" aria-hidden="true"><use href="#ico-brand"/></svg> ALKAROS</div>
-      <h1 id="loginTitle">Garson Girişi</h1>
-      <p class="login-hint">Bu cihazı kasaya bağlamak için personel bilgilerinizle giriş yapın.</p>
+      <h1 id="loginTitle">Garson girişi</h1>
+      <p class="hint">Bu cihazı kasaya bağlamak için personel bilgilerinizle giriş yapın.</p>
       <label for="loginUsername">Kullanıcı adı
-        <input type="text" id="loginUsername" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+        <input type="text" id="loginUsername" name="username" autocomplete="username"
+               autocapitalize="none" autocorrect="off" spellcheck="false" required>
       </label>
       <label for="loginPassword">Şifre
         <input type="password" id="loginPassword" name="password" autocomplete="current-password" required>
       </label>
-      <p class="login-error" id="loginError" role="alert" hidden></p>
-      <button type="submit" class="btn-primary" id="loginSubmit">Giriş yap</button>
+      <p class="form-error" id="loginError" role="alert" hidden></p>
+      <button type="submit" class="btn btn-primary" id="loginSubmit">Giriş yap</button>
     </form>
+    </div>
+  </div>
+
+  <!-- Kiosk lock. The session stays open; the PIN only proves who is holding
+       the device (V1-RMD-151). -->
+  <div class="overlay lock" id="lockOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+    <div class="lock-card">
+      <img class="lock-mark" src="./brand/alkaros-logo-on-dark.png" alt="ALKAROS">
+      <div class="lock-title" id="lockTitle">Ekran kilitli</div>
+      <div class="lock-sub" id="lockSub">PIN kodunuzu girin</div>
+      <div class="pin-dots" id="pinDots" aria-hidden="true"></div>
+      <div class="pin-keys" id="pinKeys"></div>
+    </div>
   </div>
 
   <script src="./vendor/signalr.min.js"></script>

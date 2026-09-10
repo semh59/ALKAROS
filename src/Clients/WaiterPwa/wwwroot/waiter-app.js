@@ -1,34 +1,76 @@
-// ALKAROS Waiter PWA Controller (V1-WTR-008 / V1-RMD-051 / V1-RMD-066 / V1-RMD-129)
-// Authoritative Endpoints: /orders/table-draft, /table-management/zones, /table-management/tables, /catalog
-// V1-RMD-129: /catalog-management/categories dropped from this list — it requires the
-// manager cookie (CatalogManagerEndpointFilter), which a plain waiter session never
-// has, and was never actually called correctly anyway. Categories are derived from
-// the /catalog product response's own categoryCode/categoryName instead.
+// ALKAROS Waiter PWA (V1-WTR-010 rewrite of V1-WTR-008 / V1-RMD-051 / -066 / -129)
+//
+// Rewritten against docs/design/foundations.md. Its §0 rule - "backend akilli,
+// frontend aptal" - is what shapes this file: the client keeps no order state
+// of its own. Every line, price, kitchen state and remaining-stock figure on
+// screen is the server's own DTO rendered back; the only local state is the
+// round the waiter is still composing and has not sent yet.
+//
+// Endpoints this screen speaks to:
+//   GET  /api/v1/auth/session?terminalId=
+//   POST /api/v1/auth/login | /logout | /unlock | /pin
+//   GET  /api/v1/terminals/{t}/table-management/zones
+//   GET  /api/v1/terminals/{t}/table-management/tables
+//   POST /api/v1/terminals/{t}/table-management/transfers
+//   GET  /api/v1/terminals/{t}/catalog
+//   GET  /api/v1/terminals/{t}/orders/table/{tableId}
+//   GET  /api/v1/terminals/{t}/orders/pending
+//   POST /api/v1/terminals/{t}/orders/table-draft
+//   POST /api/v1/terminals/{t}/orders/{o}/submit-draft
+//   POST /api/v1/terminals/{t}/orders/{o}/items/{i}/void
+//   POST /api/v1/terminals/{t}/orders/{o}/accept | /reject
 (function () {
   'use strict';
 
-  // Utility: HTML escaping to prevent XSS injection
-  function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    const text = String(str);
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  // ══ Utilities ══════════════════════════════════════════════════════
+
+  // Escapes for BOTH text and double-quoted attribute contexts.
+  //
+  // This used to serialize a text node (`div.textContent = …; return
+  // div.innerHTML`), which escapes only & < > — a quote passed through
+  // untouched. Every attribute in this file is double-quoted and several
+  // carry human-entered text (a product name, a table number, a line note),
+  // so a product called `Kola" onmouseover="…` closed the attribute and
+  // injected an event handler that ran in the app's own origin with the
+  // waiter's session. The stored variant needed no menu access at all: a QR
+  // guest typed a quote into a special instruction and *Turu tekrarla*
+  // copied it into the note field's value attribute.
+  const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+  function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value).replace(/[&<>"']/g, (character) => HTML_ESCAPES[character]);
   }
+
+  const moneyFormat = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
+  const quantityFormat = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 3 });
+  const clockFormat = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
   function formatMoney(amount) {
-    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
+    return moneyFormat.format(Number(amount) || 0);
   }
 
-  // UI_STYLE_GUIDE §3: raw HTTP status codes are never shown to the user.
+  // A half portion is 0,5 - the quantity itself, never a separate product or
+  // a priced option (V1-RMD-146).
+  function formatQuantity(quantity) {
+    return quantityFormat.format(Number(quantity) || 0);
+  }
+
+  function formatClock(value) {
+    const date = value ? new Date(value) : null;
+    return date && !Number.isNaN(date.getTime()) ? clockFormat.format(date) : '';
+  }
+
+  // docs/UI_STYLE_GUIDE.md §3: a raw status code never reaches the screen.
   function describeHttpFailure(status) {
-    if (status === 400) return 'İstek doğrulanamadı. Lütfen masa ve ürün bilgilerini kontrol edin.';
-    if (status === 401) return 'Oturum geçersiz veya süresi doldu. Lütfen yeniden giriş yapın.';
+    if (status === 400) return 'İstek doğrulanamadı. Masa ve ürün bilgilerini kontrol edin.';
+    if (status === 401) return 'Oturum geçersiz veya süresi doldu. Yeniden giriş yapın.';
     if (status === 403) return 'Bu işlem için yetkiniz yok.';
     if (status === 404) return 'İlgili kayıt bulunamadı.';
-    if (status === 409) return 'Sipariş başka bir işlem tarafından değiştirildi. Lütfen tekrar deneyin.';
-    if (status >= 500) return 'Sunucu hatası oluştu. Lütfen tekrar deneyin.';
-    return 'İstek sunucu tarafından reddedildi. Lütfen tekrar deneyin.';
+    if (status === 409) return 'Kayıt başka bir işlem tarafından değiştirildi. Tekrar deneyin.';
+    if (status === 423) return 'Çok fazla hatalı deneme yapıldı.';
+    if (status >= 500) return 'Sunucu hatası oluştu. Tekrar deneyin.';
+    return 'İstek sunucu tarafından reddedildi. Tekrar deneyin.';
   }
 
   // crypto.randomUUID() is secure-context only, so it is undefined over plain
@@ -56,105 +98,239 @@
     return id;
   }
 
-  // State
+  // ══ Turkish dictionaries ═══════════════════════════════════════════
+  // Enum values arrive from the server in English and are never printed raw.
+
+  const TABLE_STATUS = {
+    available: { label: 'Boş', cls: 'is-available' },
+    occupied: { label: 'Dolu', cls: 'is-occupied' },
+    reserved: { label: 'Rezerve', cls: 'is-reserved' },
+    cleaning: { label: 'Temizlik', cls: 'is-cleaning' },
+    outofservice: { label: 'Servis dışı', cls: 'is-cleaning' }
+  };
+
+  const KITCHEN_STATE = {
+    notsent: { label: 'Gönderilmedi', cls: '' },
+    sent: { label: 'Mutfakta', cls: 'is-sent' },
+    preparing: { label: 'Hazırlanıyor', cls: 'is-preparing' },
+    ready: { label: 'Hazır', cls: 'is-ready' },
+    served: { label: 'Servis edildi', cls: 'is-ready' },
+    cancelled: { label: 'İptal', cls: '' }
+  };
+
+  // VoidReasonCatalog (src/Modules/Orders/ItemExceptions/ReasonCatalogs.cs).
+  // The codes are the server's; only the wording is ours.
+  const VOID_REASONS = [
+    { code: 'CustomerChange', label: 'Müşteri vazgeçti' },
+    { code: 'OperatorError', label: 'Yanlış girdim' },
+    { code: 'ProductUnavailable', label: 'Ürün kalmadı' },
+    { code: 'DuplicateEntry', label: 'İki kez girilmiş' }
+  ];
+
+  const IDLE_LOCK_MS = 3 * 60 * 1000;
+
+  // ══ State ══════════════════════════════════════════════════════════
+  // Everything under `server` is a copy of a DTO. Everything under `draft` is
+  // the round being composed on this device and not yet sent.
+
   const state = {
     terminalId: deviceTerminalId(),
     isOnline: navigator.onLine,
-    sessionToken: sessionStorage.getItem('alkaros_waiter_token') || '',
-    currentUser: JSON.parse(sessionStorage.getItem('alkaros_waiter_user') || 'null'),
-    activeZone: 'all',
-    selectedTable: null,
-    cart: [],
-    categories: [],
-    products: [],
+    offlineDisabled: false,
+    user: null,
+    capabilities: [],
+
     zones: [],
     tables: [],
+    products: [],
+    categories: [],
+
+    activeZone: 'all',
     activeCategory: 'all',
+    search: '',
+
+    table: null,
+    order: null,
+    draft: [],
+    // Unsent rounds for tables the waiter stepped away from, keyed by table
+    // id. A waiter checking another table mid-order is ordinary; losing what
+    // they typed is not.
+    draftsByTable: new Map(),
+    // Bumped whenever the current round is cleared or sent, so a stale undo
+    // cannot resurrect a line into a round that no longer exists.
+    draftEpoch: 0,
+
+    pending: [],
     offlineQueue: JSON.parse(localStorage.getItem('alkaros_waiter_offline_queue') || '[]'),
     failedOrders: JSON.parse(localStorage.getItem('alkaros_waiter_failed_orders') || '[]'),
-    dispatchInFlight: false
+
+    sendInFlight: false,
+    optionsMode: null,
+    optionsContext: null,
+    pinArmed: localStorage.getItem('alkaros_waiter_pin_armed') === '1',
+    locked: false,
+    pinBuffer: '',
+    pushEnabled: false,
+    wakeLock: null
   };
 
-  // DOM Elements
-  const el = {
-    statusRibbon: document.getElementById('statusRibbon'),
-    statusText: document.getElementById('statusText'),
-    queueCount: document.getElementById('queueCount'),
-    zoneList: document.getElementById('zoneList'),
-    tablesGrid: document.getElementById('tablesGrid'),
-    orderDrawer: document.getElementById('orderDrawer'),
-    selectedTableLabel: document.getElementById('selectedTableLabel'),
-    cartItemCount: document.getElementById('cartItemCount'),
-    cartTotalAmount: document.getElementById('cartTotalAmount'),
-    orderModal: document.getElementById('orderModal'),
-    modalTableTitle: document.getElementById('modalTableTitle'),
-    modalProductSearch: document.getElementById('modalProductSearch'),
-    categoryFilterBar: document.getElementById('categoryFilterBar'),
-    productGrid: document.getElementById('productGrid'),
-    cartItemsList: document.getElementById('cartItemsList'),
-    btnSendKitchen: document.getElementById('btnSendKitchen'),
-    btnCloseModal: document.getElementById('btnCloseModal'),
-    btnOpenOrderModal: document.getElementById('btnOpenOrderModal'),
-    btnRefreshTables: document.getElementById('btnRefreshTables'),
-    btnStaffProfile: document.getElementById('btnStaffProfile'),
-    loginOverlay: document.getElementById('loginOverlay'),
-    loginForm: document.getElementById('loginForm'),
-    loginUsername: document.getElementById('loginUsername'),
-    loginPassword: document.getElementById('loginPassword'),
-    loginError: document.getElementById('loginError'),
-    loginSubmit: document.getElementById('loginSubmit')
-  };
+  const el = {};
+  [
+    'ribbon', 'ribbonText', 'ribbonQueue', 'userName', 'userRole', 'userInitials', 'btnProfile',
+    'pendingBanner', 'pendingTitle', 'pendingSub',
+    'tablesScreen', 'menuScreen', 'zoneChips', 'tablesGrid',
+    'btnMenuBack', 'menuTableName', 'menuTableSub', 'productSearch', 'categoryChips', 'productList',
+    'cartBar', 'cartCount', 'cartTotal', 'btnOpenBill', 'btnSendFromMenu',
+    'billBackdrop', 'billSheet', 'billTitle', 'billSub', 'billBody', 'billTotal',
+    'btnAddItems', 'btnMoveTable', 'btnSendToCashier', 'billClose', 'btnSendFromBill',
+    'optionsBackdrop', 'optionsSheet', 'optionsTitle', 'optionsSub', 'optionsBody',
+    'optionsClose', 'optionsConfirm', 'optionsFootLabel', 'optionsFootValue',
+    'toasts', 'loginOverlay', 'loginForm', 'loginUsername', 'loginPassword', 'loginError', 'loginSubmit',
+    'lockOverlay', 'lockSub', 'pinDots', 'pinKeys'
+  ].forEach((id) => { el[id] = document.getElementById(id); });
 
-  // Initialization
-  async function init() {
-    setupNetworkListeners();
-    renderStatusRibbon();
-    bindEvents();
-    bindAuthEvents();
+  // ══ API ════════════════════════════════════════════════════════════
 
-    // The tables/catalog/order endpoints are cashier-session scoped. Without a
-    // valid session for this device's terminal id, show the sign-in form and
-    // stop - loading would only 401.
-    if (!(await hasValidSession())) {
-      showLogin();
-      return;
-    }
-
-    // Fetch initial data from Host API
-    await loadInitialData();
-
-    // Register Service Worker. Offline queueing depends on it, so a failure or
-    // an insecure context (plain HTTP over a LAN IP) is surfaced to the user
-    // rather than silently swallowed.
-    registerOfflineWorker();
-    connectOrderReadyHub();
+  function apiUrl(path) {
+    return `/api/v1/terminals/${state.terminalId}${path}`;
   }
 
-  // Staff sign-in
-  function bindAuthEvents() {
-    if (el.loginForm) el.loginForm.addEventListener('submit', submitLogin);
-    if (el.btnStaffProfile) {
-      el.btnStaffProfile.addEventListener('click', () => {
-        if (window.confirm('Oturumu kapatmak istiyor musunuz?')) void signOut();
-      });
+  // One shape for every call: never throws, never leaks a browser message.
+  async function api(path, options) {
+    const config = Object.assign({ credentials: 'include' }, options || {});
+    if (config.body !== undefined && typeof config.body !== 'string') {
+      config.headers = Object.assign({ 'Content-Type': 'application/json' }, config.headers || {});
+      config.body = JSON.stringify(config.body);
     }
+
+    let response;
+    try {
+      response = await fetch(path, config);
+    } catch {
+      // A network-level failure throws before a response exists and its
+      // message is the browser's own English text ("Failed to fetch").
+      return { ok: false, status: 0, offline: true, message: 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edin.' };
+    }
+
+    let data = null;
+    if (response.status !== 204) {
+      try { data = await response.json(); } catch { data = null; }
+    }
+
+    if (response.ok) return { ok: true, status: response.status, data };
+
+    if (response.status === 401) showLogin();
+    return {
+      ok: false,
+      status: response.status,
+      data,
+      // The server's own error.message is already Turkish everywhere this
+      // client calls (V1-RMD-127); the dictionary covers anything that is not.
+      message: (data && data.error && data.error.message) || describeHttpFailure(response.status)
+    };
+  }
+
+  // ══ Toasts ═════════════════════════════════════════════════════════
+
+  function toast(text, options) {
+    const settings = options || {};
+    const node = document.createElement('div');
+    node.className = 'toast';
+    node.innerHTML = `
+      <span class="toast-mark${settings.warning ? ' is-warning' : ''}">
+        <svg class="icon" aria-hidden="true"><use href="#ico-${settings.warning ? 'alert' : 'check'}"/></svg>
+      </span>
+      <span class="toast-text">${escapeHtml(text)}</span>
+      ${settings.undo ? '<button type="button" class="toast-undo">Geri al</button>' : ''}`;
+
+    const close = () => { window.clearTimeout(timer); node.remove(); };
+    const timer = window.setTimeout(close, settings.warning ? 6000 : 5000);
+    if (settings.undo) {
+      node.querySelector('.toast-undo').addEventListener('click', () => { close(); settings.undo(); });
+    }
+    el.toasts.appendChild(node);
+  }
+
+  // ══ Screens and sheets ═════════════════════════════════════════════
+
+  function showScreen(name) {
+    const onMenu = name === 'menu';
+    el.tablesScreen.dataset.state = onMenu ? 'behind' : 'on';
+    el.menuScreen.dataset.state = onMenu ? 'on' : 'off';
+    if (onMenu) window.setTimeout(() => el.productSearch.focus({ preventScroll: true }), 300);
+  }
+
+  // On a tablet the bill is a fixed column, so these calls are no-ops there -
+  // the sheet ignores its own transform under the wide media query.
+  function openBill() {
+    el.billSheet.classList.add('is-open');
+    el.billBackdrop.classList.add('is-open');
+  }
+
+  function closeBill() {
+    el.billSheet.classList.remove('is-open');
+    el.billBackdrop.classList.remove('is-open');
+  }
+
+  function closeOptions() {
+    el.optionsSheet.classList.remove('is-open');
+    el.optionsBackdrop.classList.remove('is-open');
+    state.optionsMode = null;
+    state.optionsContext = null;
+  }
+
+  function openOptions(mode, title, subtitle, bodyHtml, confirmLabel, footLabel, footValue) {
+    state.optionsMode = mode;
+    el.optionsTitle.textContent = title;
+    el.optionsSub.textContent = subtitle || '';
+    el.optionsBody.innerHTML = bodyHtml;
+    el.optionsFootLabel.textContent = footLabel || '';
+    el.optionsFootValue.textContent = footValue || '';
+    el.optionsConfirm.textContent = confirmLabel;
+    el.optionsConfirm.hidden = !confirmLabel;
+    // Reset what the previous caller may have changed, so a danger-styled or
+    // disabled button never leaks into the next sheet.
+    el.optionsConfirm.className = 'btn btn-primary';
+    el.optionsConfirm.disabled = false;
+    el.optionsSheet.classList.add('is-open');
+    el.optionsBackdrop.classList.add('is-open');
+  }
+
+  // The tablet bill column starts below whatever chrome is currently showing;
+  // the guest banner appears and disappears, so this is measured, not assumed.
+  function measureChrome() {
+    const header = document.querySelector('.app-header');
+    let height = (header ? header.offsetHeight : 0) + (el.ribbon ? el.ribbon.offsetHeight : 0);
+    if (!el.pendingBanner.hidden) height += el.pendingBanner.offsetHeight;
+    document.documentElement.style.setProperty('--chrome-height', `${height}px`);
+  }
+
+  // ══ Sign-in and session ════════════════════════════════════════════
+
+  async function hasValidSession() {
+    const result = await api(`/api/v1/auth/session?terminalId=${state.terminalId}`);
+    if (!result.ok) return false;
+    applyUser(result.data);
+    return true;
+  }
+
+  function applyUser(user) {
+    state.user = user;
+    state.capabilities = (user && user.capabilities) || [];
+    const name = (user && user.displayName) || 'Garson';
+    el.userName.textContent = name;
+    el.userInitials.textContent = name.trim().charAt(0).toLocaleUpperCase('tr-TR') || '?';
+  }
+
+  function can(permission) {
+    return state.capabilities.indexOf(permission) >= 0;
   }
 
   function showLogin() {
-    if (!el.loginOverlay) return;
     el.loginOverlay.hidden = false;
-    if (el.loginUsername) el.loginUsername.focus();
-  }
-
-  async function hasValidSession() {
-    try {
-      const res = await fetch(`/api/v1/auth/session?terminalId=${state.terminalId}`, { credentials: 'include' });
-      if (!res.ok) return false;
-      state.currentUser = await res.json();
-      return true;
-    } catch {
-      return false;
-    }
+    el.lockOverlay.hidden = true;
+    state.locked = false;
+    el.loginUsername.focus();
   }
 
   async function submitLogin(event) {
@@ -167,35 +343,21 @@
     el.loginSubmit.disabled = true;
     el.loginSubmit.textContent = 'Giriş yapılıyor…';
     try {
-      let res;
-      try {
-        res = await fetch('/api/v1/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ terminalId: state.terminalId, username, password })
-        });
-      } catch {
-        // Found by an independent audit (2026-09-06): a network-level
-        // failure (offline, DNS, TLS) throws before a response exists, and
-        // its message is the browser's own English text (e.g. "Failed to
-        // fetch") - that must never reach the user directly.
-        throw new Error('Sunucuya ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.');
+      const result = await api('/api/v1/auth/login', {
+        method: 'POST',
+        body: { terminalId: state.terminalId, username, password }
+      });
+      if (!result.ok) {
+        el.loginError.textContent = result.status === 401
+          ? 'Kullanıcı adı veya şifre hatalı.'
+          : result.message;
+        el.loginError.hidden = false;
+        return;
       }
-      if (!res.ok) {
-        let message = 'Kullanıcı adı veya şifre hatalı.';
-        try { const body = await res.json(); message = body?.error?.message || message; } catch { /* non-json */ }
-        throw new Error(message);
-      }
-      state.currentUser = await res.json();
+      applyUser(result.data);
       el.loginPassword.value = '';
       el.loginOverlay.hidden = true;
-      await loadInitialData();
-      registerOfflineWorker();
-      connectOrderReadyHub();
-    } catch (err) {
-      el.loginError.textContent = err && err.message ? err.message : 'Giriş başarısız.';
-      el.loginError.hidden = false;
+      await start();
     } finally {
       el.loginSubmit.disabled = false;
       el.loginSubmit.textContent = 'Giriş yap';
@@ -203,628 +365,1766 @@
   }
 
   async function signOut() {
-    try {
-      await fetch(`/api/v1/auth/logout?terminalId=${state.terminalId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: '{}'
-      });
-    } catch { /* ignore - reload still clears the view */ }
+    // The subscription is attributed to whoever signed in, so it goes with
+    // them - the next waiter on this device subscribes as themselves.
+    await unsubscribePush();
+    await api(`/api/v1/auth/logout?terminalId=${state.terminalId}`, { method: 'POST', body: {} });
+    localStorage.removeItem('alkaros_waiter_pin_armed');
     window.location.reload();
+  }
+
+  // ══ Connection ribbon ══════════════════════════════════════════════
+
+  function renderRibbon() {
+    const offline = state.offlineDisabled || !state.isOnline;
+    el.ribbon.classList.toggle('is-offline', offline);
+    if (state.offlineDisabled) {
+      el.ribbonText.textContent = 'Çevrimdışı mod kapalı — güvenli bağlantı (HTTPS) gerekli';
+    } else if (state.isOnline) {
+      el.ribbonText.textContent = 'Bağlı';
+    } else {
+      el.ribbonText.textContent = 'Bağlantı yok — siparişler kuyrukta bekliyor';
+    }
+
+    const waiting = state.offlineQueue.length;
+    const failed = state.failedOrders.length;
+    const parts = [];
+    if (waiting > 0) parts.push(`${waiting} bekleyen`);
+    if (failed > 0) parts.push(`${failed} hatalı`);
+    el.ribbonQueue.textContent = parts.join(' • ');
+    measureChrome();
   }
 
   function registerOfflineWorker() {
     if (!window.isSecureContext || !('serviceWorker' in navigator)) {
       state.offlineDisabled = true;
-      renderStatusRibbon();
+      renderRibbon();
       console.warn('Offline mode disabled: a secure context (HTTPS or localhost) is required.');
       return;
     }
-    navigator.serviceWorker.register('./sw.js').catch(err => {
+    navigator.serviceWorker.register('./sw.js').catch((err) => {
       state.offlineDisabled = true;
-      renderStatusRibbon();
+      renderRibbon();
       console.warn('Service worker registration failed; offline mode is disabled:', err);
     });
   }
 
-  // Network & Reliable Offline Queue
-  function setupNetworkListeners() {
-    window.addEventListener('online', () => {
-      state.isOnline = true;
-      renderStatusRibbon();
-      flushOfflineQueue();
-    });
+  // ══ Loading ════════════════════════════════════════════════════════
 
-    window.addEventListener('offline', () => {
-      state.isOnline = false;
-      renderStatusRibbon();
-    });
+  async function loadZones() {
+    const result = await api(apiUrl('/table-management/zones'));
+    const list = result.ok ? (Array.isArray(result.data) ? result.data : result.data.zones || []) : [];
+    state.zones = [{ id: 'all', name: 'Tümü' }].concat(
+      list.map((zone) => ({ id: zone.zoneId || zone.id, name: zone.zoneName || zone.name })));
   }
 
-  function renderStatusRibbon() {
-    if (!el.statusRibbon) return;
-    if (state.offlineDisabled) {
-      el.statusRibbon.className = 'status-ribbon offline';
-      el.statusText.textContent = 'Çevrimdışı mod kapalı • Güvenli bağlantı (HTTPS) gerekli';
-    } else if (state.isOnline) {
-      el.statusRibbon.className = 'status-ribbon online';
-      el.statusText.textContent = 'Çevrimiçi • Canlı Bağlantı';
-    } else {
-      el.statusRibbon.className = 'status-ribbon offline';
-      el.statusText.textContent = 'Çevrimdışı • İşlemler Güvenli Kuyrukta';
-    }
-    if (el.queueCount) {
-      const pending = state.offlineQueue.length;
-      const failed = state.failedOrders ? state.failedOrders.length : 0;
-      let text = '';
-      if (pending > 0) text += `(${pending} bekleyen)`;
-      if (failed > 0) text += ` [${failed} hatalı işlem]`;
-      el.queueCount.textContent = text;
-    }
-  }
-
-  function queueOrderAction(action) {
-    state.offlineQueue.push({
-      ...action,
-      id: action.id || randomUUID(),
-      timestamp: new Date().toISOString()
-    });
-    localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
-    renderStatusRibbon();
-  }
-
-  async function flushOfflineQueue() {
-    if (state.offlineQueue.length === 0 || !state.isOnline) return;
-
-    const itemsToSync = [...state.offlineQueue];
-    for (const item of itemsToSync) {
-      try {
-        const result = await postOrderToBackend(item);
-        if (result.success) {
-          // Authoritative 2xx acknowledgment: ONLY remove when actually succeeded
-          state.offlineQueue = state.offlineQueue.filter(q => q.id !== item.id);
-          localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
-        } else if (result.isClientError) {
-          // 4xx client errors: preserve in failedOrders so unsubmitted orders are never destroyed
-          console.error('Order rejected by server (validation/client error):', item.id, result.status, result.errorMessage);
-          state.offlineQueue = state.offlineQueue.filter(q => q.id !== item.id);
-          state.failedOrders = state.failedOrders || [];
-          state.failedOrders.push({
-            ...item,
-            rejectedAt: new Date().toISOString(),
-            status: result.status,
-            error: result.errorMessage || 'Sunucu doğrulama hatası (4xx)'
-          });
-          localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
-          localStorage.setItem('alkaros_waiter_failed_orders', JSON.stringify(state.failedOrders));
-        } else {
-          // Server error 5xx or offline: keep in queue and stop retry loop
-          console.warn('Server temporary error during queue flush, keeping in queue:', item.id);
-          break;
-        }
-      } catch (err) {
-        console.warn('Network error during queue flush, keeping items in queue:', err);
-        break;
-      }
-    }
-    renderStatusRibbon();
-  }
-
-  async function postOrderToBackend(orderPayload) {
-    const headers = {
-      'Content-Type': 'application/json',
-      'X-Idempotency-Key': orderPayload.id || randomUUID()
-    };
-    if (state.sessionToken) {
-      headers['Authorization'] = `Bearer ${state.sessionToken}`;
-    }
-
-    try {
-      const draftResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
-        method: 'POST',
-        headers,
-        credentials: 'include',
-        body: JSON.stringify(orderPayload)
-      });
-      if (!draftResponse.ok) {
-        let errorData = null;
-        try { errorData = await draftResponse.json(); } catch { /* ignore non-json error */ }
-        return {
-          success: false,
-          status: draftResponse.status,
-          isClientError: draftResponse.status >= 400 && draftResponse.status < 500,
-          errorMessage: errorData?.error?.message || errorData?.message || describeHttpFailure(draftResponse.status)
-        };
-      }
-
-      const draft = await draftResponse.json();
-      // Found by an independent audit (2026-09-06): the draft above was
-      // never followed by a submit call, so the order stayed in Draft
-      // forever and was never dispatched to the kitchen even though the
-      // user was told it had been sent.
-      //
-      // operationId is deterministic (not a fresh UUID per attempt): a
-      // retry of submitting this exact order (e.g. the response was lost
-      // to a dropped connection) must reuse the same idempotency key so
-      // the server replays instead of rejecting it as a duplicate.
-      const submitResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/submit-draft`, {
-        method: 'POST',
-        headers,
-        credentials: 'include',
-        body: JSON.stringify({
-          orderId: draft.orderId,
-          expectedRowVersion: draft.rowVersion,
-          operationId: `${draft.orderId}:submit`
-        })
-      });
-      if (!submitResponse.ok) {
-        let errorData = null;
-        try { errorData = await submitResponse.json(); } catch { /* ignore non-json error */ }
-        return {
-          success: false,
-          status: submitResponse.status,
-          isClientError: submitResponse.status >= 400 && submitResponse.status < 500,
-          errorMessage: errorData?.error?.message || errorData?.message || describeHttpFailure(submitResponse.status)
-        };
-      }
-
-      return { success: true, status: submitResponse.status, isClientError: false, errorMessage: null };
-    } catch {
-      return { success: false, status: 0, isNetworkError: true, errorMessage: 'Ağ bağlantısı kurulamadı.' };
-    }
-  }
-
-  // Load Data from Host API
-  async function loadInitialData() {
-    try {
-      // 1. Fetch Zones
-      const zonesRes = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/zones`, { credentials: 'include' });
-      if (zonesRes.status === 401) {
-        showLogin();
-        return;
-      }
-      if (zonesRes.ok) {
-        const zonesData = await zonesRes.json();
-        const list = Array.isArray(zonesData) ? zonesData : zonesData.zones || [];
-        state.zones = [{ id: 'all', name: 'Tüm Masalar' }, ...list.map(z => ({ id: z.zoneId || z.id, name: z.zoneName || z.name }))];
-      } else {
-        state.zones = [{ id: 'all', name: 'Tüm Masalar' }];
-      }
-
-      // 2. Fetch Products — categories are derived from this same response.
-      // V1-RMD-129: found by an independent audit (2026-09-09) — the old
-      // code called catalog?category=all as if it were a distinct
-      // categories endpoint and parsed a "{ categories: [...] }" shape
-      // /catalog never returns (it returns CatalogPage: { items,
-      // nextCursor }, the same shape as the real product fetch below), so
-      // state.categories was always empty and the category filter bar
-      // never rendered. It also read products as p.productName/p.currentPrice/
-      // p.categoryId, none of which exist on the real CatalogProductDto
-      // (productId/name/unitPrice/categoryCode) — prices always showed
-      // 0,00₺ and the category filter matched nothing. Categories now come
-      // straight from the one products response's own categoryCode/
-      // categoryName fields, so there is no second endpoint to drift out
-      // of sync with the real contract.
-      const prodRes = await fetch(`/api/v1/terminals/${state.terminalId}/catalog`, { credentials: 'include' }).catch(() => null);
-
-      if (prodRes && prodRes.ok) {
-        const prodData = await prodRes.json();
-        const list = Array.isArray(prodData) ? prodData : prodData.items || [];
-        state.products = list.map(p => ({
-          id: p.productId || p.id,
-          categoryCode: p.categoryCode,
-          name: p.name,
-          price: p.unitPrice || 0
-        }));
-
-        const seenCategories = new Map();
-        for (const p of list) {
-          if (p.categoryCode && !seenCategories.has(p.categoryCode)) {
-            seenCategories.set(p.categoryCode, p.categoryName || p.categoryCode);
-          }
-        }
-        state.categories = [...seenCategories].map(([id, name]) => ({ id, name }));
-      } else {
-        state.products = [];
-        state.categories = [];
-      }
-
-      // 3. Fetch Tables
-      await loadTables();
-    } catch (err) {
-      console.warn('Host API unreachable:', err);
-      state.zones = [{ id: 'all', name: 'Tüm Masalar' }];
-      state.categories = [];
+  async function loadCatalog() {
+    // V1-RMD-129: categories are derived from this one response's own
+    // categoryCode/categoryName. There is no separate categories endpoint a
+    // waiter session may call.
+    const result = await api(apiUrl('/catalog'));
+    if (!result.ok) {
       state.products = [];
-      state.tables = [];
-      if (el.statusText) el.statusText.textContent = 'Bağlantı kesildi — Çevrimdışı';
-      if (el.statusRibbon) el.statusRibbon.className = 'status-ribbon offline';
+      state.categories = [];
+      return;
     }
+    const list = Array.isArray(result.data) ? result.data : result.data.items || [];
+    state.products = list.map((product) => ({
+      id: product.productId,
+      name: product.name,
+      price: product.unitPrice || 0,
+      categoryCode: product.categoryCode,
+      categoryName: product.categoryName,
+      // V1-RMD-148: the option groups the server says this product has. The
+      // client never invents one and never prices one.
+      modifierGroups: product.modifierGroups || []
+    }));
 
-    renderZones();
-    renderTables();
-    renderCategoryFilters();
-    renderProducts();
+    const seen = new Map();
+    for (const product of list) {
+      if (product.categoryCode && !seen.has(product.categoryCode)) {
+        seen.set(product.categoryCode, product.categoryName || product.categoryCode);
+      }
+    }
+    state.categories = Array.from(seen, ([id, name]) => ({ id, name }));
   }
 
   async function loadTables() {
-    try {
-      const res = await fetch(`/api/v1/terminals/${state.terminalId}/table-management/tables`, { credentials: 'include' });
-      if (res.ok) {
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : data.tables || [];
-        state.tables = list.map(t => ({
-          id: t.tableId || t.id,
-          number: t.tableNumber || t.number,
-          seats: t.capacity || t.seats || 4,
-          zoneId: t.zoneId,
-          status: (t.currentStatus || t.status || 'available').toLowerCase(),
-          // V1-RMD-135: found by an independent audit (2026-09-09) — TableDto
-          // never carried a table's running total at all ("currentAmount"/
-          // "amount" never existed on the real contract, always falling
-          // through to 0), so the UI always rendered it as empty. The backend
-          // now computes and returns the real value as currentOrderTotal.
-          amount: t.currentOrderTotal || 0
-        }));
-      } else {
-        state.tables = [];
-      }
-    } catch {
-      state.tables = [];
-    }
+    const result = await api(apiUrl('/table-management/tables'));
+    const list = result.ok ? (Array.isArray(result.data) ? result.data : result.data.tables || []) : [];
+    state.tables = list.map((table) => ({
+      id: table.tableId,
+      number: table.tableNumber,
+      seats: table.capacity || 0,
+      zoneId: table.zoneId,
+      status: (table.status || 'Available').toLowerCase(),
+      rowVersion: table.rowVersion,
+      // V1-RMD-135: the table's real running total.
+      amount: table.currentOrderTotal || 0,
+      // foundations §0.2: which actions are valid is the server's answer.
+      allowedCommands: table.allowedCommands || []
+    }));
     renderTables();
   }
 
-  // Render Functions
+  // The bill is always the server's answer, never a local accumulation.
+  async function loadOrder(tableId) {
+    const result = await api(apiUrl(`/orders/table/${tableId}`));
+    state.order = result.ok ? result.data : null;
+    return result;
+  }
+
+  async function loadPending() {
+    const result = await api(apiUrl('/orders/pending'));
+    state.pending = result.ok && Array.isArray(result.data) ? result.data : [];
+    renderPendingBanner();
+  }
+
+  // ══ Tables ═════════════════════════════════════════════════════════
+
   function renderZones() {
-    if (!el.zoneList) return;
-    el.zoneList.innerHTML = state.zones.map(zone => `
-      <button type="button" class="zone-chip ${state.activeZone === zone.id ? 'active' : ''}" data-zone-id="${escapeHtml(zone.id)}">
-        ${escapeHtml(zone.name)}
-      </button>
-    `).join('');
+    el.zoneChips.innerHTML = state.zones.map((zone) => `
+      <button type="button" class="chip" data-zone="${escapeHtml(zone.id)}"
+              aria-pressed="${state.activeZone === zone.id}">${escapeHtml(zone.name)}</button>`).join('');
   }
 
   function renderTables() {
-    if (!el.tablesGrid) return;
-    const filtered = state.activeZone === 'all'
+    const visible = state.activeZone === 'all'
       ? state.tables
-      : state.tables.filter(t => t.zoneId === state.activeZone);
+      : state.tables.filter((table) => table.zoneId === state.activeZone);
 
-    el.tablesGrid.innerHTML = filtered.map(table => {
-      const isSelected = state.selectedTable?.id === table.id;
-      return `
-        <div class="table-card ${escapeHtml(table.status)} ${isSelected ? 'selected' : ''}" data-table-id="${escapeHtml(table.id)}" tabindex="0" role="button">
-          <div class="table-header-row">
-            <span class="table-number">${escapeHtml(table.number)}</span>
-            <span class="table-capacity"><svg class="icon" aria-hidden="true"><use href="#ico-user"/></svg> ${escapeHtml(table.seats || 4)}</span>
-          </div>
-          <span class="table-status-tag ${escapeHtml(table.status)}">${escapeHtml(getStatusLabel(table.status))}</span>
-          <div class="table-amount">${table.amount > 0 ? formatMoney(table.amount) : 'Boş'}</div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  function getStatusLabel(status) {
-    switch (status) {
-      case 'available': return 'Boş';
-      case 'occupied': return 'Dolu';
-      case 'reserved': return 'Rezerve';
-      case 'cleaning': return 'Temizlik';
-      default: return status;
-    }
-  }
-
-  function renderCategoryFilters() {
-    if (!el.categoryFilterBar) return;
-    const allCategories = [{ id: 'all', name: 'Tümü' }, ...state.categories];
-    el.categoryFilterBar.innerHTML = allCategories.map(cat => `
-      <button type="button" class="zone-chip ${state.activeCategory === cat.id ? 'active' : ''}" data-cat-id="${escapeHtml(cat.id)}">
-        ${escapeHtml(cat.name)}
-      </button>
-    `).join('');
-  }
-
-  function renderProducts(searchQuery = '') {
-    if (!el.productGrid) return;
-    const query = searchQuery.trim().toLowerCase();
-    const filtered = state.products.filter(p => {
-      const matchCat = state.activeCategory === 'all' || p.categoryCode === state.activeCategory;
-      const matchSearch = !query || p.name.toLowerCase().includes(query);
-      return matchCat && matchSearch;
-    });
-
-    el.productGrid.innerHTML = filtered.map(prod => `
-      <div class="product-card" data-product-id="${escapeHtml(prod.id)}" role="button" tabindex="0">
-        <div>
-          <div class="product-name">${escapeHtml(prod.name)}</div>
-        </div>
-        <div class="product-price">${formatMoney(prod.price)}</div>
-      </div>
-    `).join('');
-  }
-
-  function renderCart() {
-    if (!el.cartItemsList) return;
-    if (state.cart.length === 0) {
-      el.cartItemsList.innerHTML = '<div class="cart-empty">Henüz ürün eklenmedi.</div>';
-      updateCartTotals();
+    if (visible.length === 0) {
+      el.tablesGrid.innerHTML = '<div class="empty">Bu bölgede masa yok.</div>';
       return;
     }
 
-    el.cartItemsList.innerHTML = state.cart.map(item => `
-      <div class="cart-item">
-        <div class="cart-item-info">
-          <div class="cart-item-name">${escapeHtml(item.name)}</div>
-          <div class="cart-item-price">${formatMoney(item.price)}</div>
-          <input class="cart-item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız, ekmek ayrı)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" />
-        </div>
-        <div class="quantity-stepper">
-          <button type="button" class="btn-step" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
-          <span class="cart-item-qty">${item.quantity}</span>
-          <button type="button" class="btn-step" data-action="inc" data-id="${escapeHtml(item.id)}">+</button>
-        </div>
-      </div>
-    `).join('');
-
-    updateCartTotals();
+    el.tablesGrid.innerHTML = visible.map((table) => {
+      const status = TABLE_STATUS[table.status] || { label: table.status, cls: '' };
+      const busy = table.amount > 0;
+      // A table already carrying an order gets a shortcut straight to the
+      // menu; tapping the table itself opens its bill.
+      const quick = busy
+        ? `<button type="button" class="table-quick" data-quick="${escapeHtml(table.id)}"
+                   aria-label="${escapeHtml(table.number)} masasına ürün ekle">
+             <svg class="icon" aria-hidden="true"><use href="#ico-add"/></svg>
+           </button>`
+        : '';
+      return `
+        <div class="table-cell${busy ? ' has-quick' : ''}">
+          <button type="button" class="table ${status.cls}" data-table="${escapeHtml(table.id)}">
+            <span class="table-top">
+              <span class="table-number">${escapeHtml(table.number)}</span>
+              <span class="table-seats">
+                <svg class="icon" aria-hidden="true"><use href="#ico-seats"/></svg>${escapeHtml(table.seats)}
+              </span>
+            </span>
+            <span class="tagrow"><span class="tag tag-status">${escapeHtml(status.label)}</span></span>
+            <span class="table-amount${busy ? '' : ' is-empty'}">${busy ? formatMoney(table.amount) : 'Boş'}</span>
+          </button>
+          ${quick}
+        </div>`;
+    }).join('');
   }
 
-  function updateCartTotals() {
-    const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
-    const totalAmount = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  // ══ Opening a table ════════════════════════════════════════════════
 
-    if (el.cartItemCount) el.cartItemCount.textContent = `${totalItems} Ürün`;
-    if (el.cartTotalAmount) el.cartTotalAmount.textContent = formatMoney(totalAmount);
+  async function openTable(tableId, goStraightToMenu) {
+    const table = state.tables.find((candidate) => candidate.id === tableId);
+    if (!table) return;
 
-    if (el.orderDrawer) {
-      if (state.selectedTable) {
-        el.orderDrawer.hidden = false;
-        el.selectedTableLabel.textContent = `Masa: ${state.selectedTable.number} (${getStatusLabel(state.selectedTable.status)})`;
+    // An unsent round belongs to the table it was composed for, and it is
+    // kept there. The previous version showed a toast saying the round was
+    // still held and then deleted it on the very next line — nine items
+    // typed for table 5 vanished the moment the waiter glanced at table 7,
+    // while the screen claimed otherwise.
+    if (state.table && state.table.id !== tableId) {
+      if (state.draft.length > 0) {
+        state.draftsByTable.set(state.table.id, {
+          number: state.table.number,
+          lines: state.draft
+        });
+        toast(`${state.table.number} masasının gönderilmemiş turu saklandı.`, { warning: true });
       } else {
-        el.orderDrawer.hidden = true;
+        state.draftsByTable.delete(state.table.id);
       }
     }
+    if (!state.table || state.table.id !== tableId) {
+      const held = state.draftsByTable.get(tableId);
+      state.draft = held ? held.lines : [];
+      state.draftsByTable.delete(tableId);
+    }
+
+    state.table = table;
+    el.menuTableName.textContent = `${table.number} masası`;
+    el.billTitle.textContent = `${table.number} masası`;
+
+    await loadOrder(tableId);
+    renderBill();
+
+    // The locked flow: an occupied table opens its bill, an empty one opens
+    // the menu. The bill sheet is never raised over the menu - that covers the
+    // very screen the waiter came to use.
+    const empty = !state.order || activeItems().length === 0;
+    if (empty || goStraightToMenu) {
+      closeBill();
+      showScreen('menu');
+      renderProducts();
+    } else {
+      showScreen('tables');
+      openBill();
+    }
   }
 
-  // Event Handlers & Binding
-  function bindEvents() {
-    // Zone Filter Click
-    if (el.zoneList) {
-      el.zoneList.addEventListener('click', (e) => {
-        const btn = e.target.closest('.zone-chip');
-        if (!btn) return;
-        state.activeZone = btn.dataset.zoneId;
-        renderZones();
-        renderTables();
-      });
+  function activeItems() {
+    if (!state.order || !state.order.items) return [];
+    // A cancelled or wasted line stays in the DTO; it is history, not a bill
+    // line the waiter can still act on.
+    return state.order.items.filter((item) => item.status !== 'Cancelled' && item.status !== 'Waste');
+  }
+
+  // ══ Menu ═══════════════════════════════════════════════════════════
+
+  function renderCategories() {
+    const all = [{ id: 'all', name: 'Tümü' }].concat(state.categories);
+    el.categoryChips.innerHTML = all.map((category) => `
+      <button type="button" class="chip" data-category="${escapeHtml(category.id)}"
+              aria-pressed="${state.activeCategory === category.id}">${escapeHtml(category.name)}</button>`).join('');
+  }
+
+  function draftQuantityOf(productId) {
+    return state.draft
+      .filter((line) => line.productId === productId)
+      .reduce((sum, line) => sum + line.quantity, 0);
+  }
+
+  function renderProducts() {
+    const query = state.search.trim().toLocaleLowerCase('tr-TR');
+    const visible = state.products.filter((product) => {
+      const matchesCategory = state.activeCategory === 'all' || product.categoryCode === state.activeCategory;
+      const matchesQuery = !query || product.name.toLocaleLowerCase('tr-TR').includes(query);
+      return matchesCategory && matchesQuery;
+    });
+
+    if (visible.length === 0) {
+      el.productList.innerHTML = '<div class="empty">Aramanıza uyan ürün yok.</div>';
+      return;
     }
 
-    // Refresh Tables Button
-    if (el.btnRefreshTables) {
-      el.btnRefreshTables.addEventListener('click', async () => {
+    let html = '';
+    let lastCategory = null;
+    const grouped = state.activeCategory === 'all' && !query;
+    for (const product of visible) {
+      if (grouped && product.categoryCode !== lastCategory) {
+        lastCategory = product.categoryCode;
+        html += `<div class="cat-label">${escapeHtml(product.categoryName || product.categoryCode)}</div>`;
+      }
+      const inDraft = draftQuantityOf(product.id);
+      const hasOptions = product.modifierGroups.length > 0;
+      html += `
+        <div class="product-row">
+          <button type="button" class="product" data-product="${escapeHtml(product.id)}">
+            <span class="product-main">
+              <span class="product-name">${escapeHtml(product.name)}</span>
+              ${hasOptions ? '<span class="product-meta"><span class="product-options">Seçenekli</span></span>' : ''}
+            </span>
+            <span class="product-price">${formatMoney(product.price)}</span>
+            ${inDraft > 0 ? `<span class="product-count">${escapeHtml(formatQuantity(inDraft))}</span>` : ''}
+          </button>
+          <button type="button" class="product-half" data-half="${escapeHtml(product.id)}"
+                  aria-label="${escapeHtml(product.name)} — miktar seç">½</button>
+        </div>`;
+    }
+    el.productList.innerHTML = html;
+  }
+
+  // ══ The draft round ════════════════════════════════════════════════
+
+  function addToDraft(product, quantity, modifiers, note) {
+    // Lines that are identical in every respect merge; anything with its own
+    // options or note stays its own line so the kitchen ticket reads right.
+    const plain = (!modifiers || modifiers.length === 0) && !note;
+    if (plain) {
+      const existing = state.draft.find((line) =>
+        line.productId === product.id && line.modifiers.length === 0 && !line.note);
+      if (existing) {
+        existing.quantity = Math.round((existing.quantity + quantity) * 1000) / 1000;
+        afterDraftChange();
+        return;
+      }
+    }
+    state.draft.push({
+      id: randomUUID(),
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      modifiers: modifiers || [],
+      note: note || ''
+    });
+    afterDraftChange();
+  }
+
+  // How many of each chosen option the server will record for a line of this
+  // size (V1-RMD-150's own rule, applied when the request carries no count).
+  // Used only to show a total before sending; the sent line always renders
+  // the server's own numbers.
+  function modifierCountFor(quantity) {
+    return Math.max(1, Math.ceil(quantity));
+  }
+
+  function lineExtras(line) {
+    const count = modifierCountFor(line.quantity);
+    return line.modifiers.reduce((sum, modifier) => sum + modifier.priceDelta * count, 0);
+  }
+
+  function draftTotal() {
+    return state.draft.reduce((sum, line) => sum + line.price * line.quantity + lineExtras(line), 0);
+  }
+
+  function afterDraftChange() {
+    const count = state.draft.reduce((sum, line) => sum + line.quantity, 0);
+    el.cartCount.textContent = formatQuantity(count);
+    el.cartTotal.textContent = formatMoney(draftTotal());
+    const empty = state.draft.length === 0;
+    el.btnSendFromMenu.disabled = empty;
+    el.btnSendFromBill.disabled = empty;
+    renderProducts();
+    renderBill();
+  }
+
+  // ══ The bill ═══════════════════════════════════════════════════════
+
+  // "Turu tekrarla" is the last round the server itself recorded, grouped by
+  // the createdAt the DTO now carries (V1-RMD-146) - not a guess kept on this
+  // device.
+  function lastRound() {
+    const items = activeItems();
+    if (items.length === 0) return null;
+    const newest = items.reduce((latest, item) =>
+      (!latest || item.createdAt > latest ? item.createdAt : latest), null);
+    if (!newest) return null;
+    const round = items.filter((item) => item.createdAt === newest);
+    return round.length > 0 ? round : null;
+  }
+
+  function renderQuickSend() {
+    if (state.draft.length > 0) return '';
+    const round = lastRound();
+    if (!round) return '';
+    const total = round.reduce((sum, item) => sum + item.totalPrice, 0);
+    const names = round.map((item) => `${formatQuantity(item.quantity)}× ${item.productName}`).join(', ');
+    return `
+      <div class="group-label">Hızlı gönder</div>
+      <div class="quick">
+        <button type="button" class="quick-btn is-primary" data-quick-repeat="1">
+          <span class="title">Turu tekrarla</span>
+          <span class="sub">${escapeHtml(formatMoney(total))}</span>
+        </button>
+        <div class="quick-detail">${escapeHtml(names)}</div>
+      </div>`;
+  }
+
+  function renderBill() {
+    if (!state.table) {
+      el.billBody.innerHTML = '<div class="empty">Bir masaya dokunun.</div>';
+      el.billTotal.textContent = formatMoney(0);
+      el.billSub.textContent = '';
+      el.btnAddItems.hidden = true;
+      el.btnMoveTable.hidden = true;
+      el.btnSendToCashier.hidden = true;
+      return;
+    }
+    el.btnAddItems.hidden = false;
+
+    const sent = activeItems();
+    // foundations §0.1: the money on screen is the server's own figure, not a
+    // sum this client recomputes. Adding up the line prices ignored anything
+    // applied at order level — a comped line or a bill discount — so the
+    // table tile (which does use the server's number) and the bill footer
+    // disagreed, and the waiter quoted the wrong one to the guest. Only the
+    // unsent round, which the server has not seen yet, is estimated here.
+    const sentTotal = state.order ? state.order.totalAmount : 0;
+    el.billTotal.textContent = formatMoney(sentTotal + draftTotal());
+    el.billSub.textContent = state.order
+      ? `${sent.length} kalem • ${formatClock(state.order.createdAt)}`
+      : 'Açık sipariş yok';
+    el.menuTableSub.textContent = el.billSub.textContent;
+
+    // Transfer is offered only when the server's own AllowedCommands says so.
+    el.btnMoveTable.hidden = state.table.allowedCommands.indexOf('Transfer') < 0;
+    // V1-ORD-006: only an open check that has actually been ordered can go to
+    // the till — there is nothing to send from an empty table, and an unsent
+    // round would be left behind.
+    el.btnSendToCashier.hidden = !state.order || sent.length === 0 || state.draft.length > 0;
+
+    let html = renderQuickSend();
+
+    if (state.draft.length > 0) {
+      html += '<div class="group-label"><span>Yeni tur</span><span>gönderilmedi</span></div>';
+      html += state.draft.map(renderDraftLine).join('');
+    }
+
+    if (sent.length > 0) {
+      html += `<div class="group-label"><span>Gönderildi</span><span>${escapeHtml(formatMoney(sentTotal))}</span></div>`;
+      html += sent.map(renderSentLine).join('');
+    }
+
+    if (!html) html = '<div class="empty">Bu masada henüz sipariş yok.<br>Ürün ekleyerek başlayın.</div>';
+    el.billBody.innerHTML = html;
+  }
+
+  function renderDraftLine(line) {
+    const extras = lineExtras(line);
+    const count = modifierCountFor(line.quantity);
+    // A count is shown only where it changes what is charged. A free
+    // instruction ("az pişmiş") never reads as "2× az pişmiş".
+    const chips = line.modifiers.map((modifier) => `
+      <span class="chip-mod${modifier.priceDelta > 0 ? ' is-paid' : ''}">
+        ${modifier.priceDelta > 0 && count > 1 ? `${escapeHtml(formatQuantity(count))}× ` : ''}${escapeHtml(modifier.name)}
+      </span>`).join('');
+    return `
+      <div class="line">
+        <div class="line-main">
+          <div class="line-top">
+            <span class="line-name">${escapeHtml(line.name)}</span>
+            <span class="line-total">${escapeHtml(formatMoney(line.price * line.quantity + extras))}</span>
+          </div>
+          <div class="line-unit">${escapeHtml(formatQuantity(line.quantity))} × ${escapeHtml(formatMoney(line.price))}</div>
+          ${chips ? `<div class="line-chips">${chips}</div>` : ''}
+          <input class="note" type="text" maxlength="200" data-note="${escapeHtml(line.id)}"
+                 value="${escapeHtml(line.note)}" placeholder="Not (az pişmiş, acısız…)"
+                 aria-label="${escapeHtml(line.name)} için not">
+        </div>
+        <div class="line-side">
+          <div class="stepper">
+            <button type="button" data-step="-" data-line="${escapeHtml(line.id)}" aria-label="Azalt">−</button>
+            <span class="qty">${escapeHtml(formatQuantity(line.quantity))}</span>
+            <button type="button" data-step="+" data-line="${escapeHtml(line.id)}" aria-label="Artır">+</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderSentLine(item) {
+    const kitchen = KITCHEN_STATE[(item.kitchenState || '').toLowerCase()] || null;
+    const chips = (item.modifiers || []).map((modifier) => `
+      <span class="chip-mod${modifier.priceDelta > 0 ? ' is-paid' : ''}">
+        ${modifier.quantity > 1 ? `${escapeHtml(formatQuantity(modifier.quantity))}× ` : ''}${escapeHtml(modifier.name)}
+      </span>`).join('');
+
+    // V1-RMD-143: how many more of this product the mapped stock could still
+    // cover. Null means the product is not stock-tracked at all - which is not
+    // the same as none left, so nothing is shown.
+    const stock = item.availableStockQuantity !== null && item.availableStockQuantity !== undefined
+      ? `<span class="product-stock${item.availableStockQuantity <= 0 ? ' is-out' : (item.availableStockQuantity < 5 ? ' is-low' : '')}">
+           Kalan ${escapeHtml(formatQuantity(item.availableStockQuantity))}
+         </span>`
+      : '';
+
+    // V1-RMD-154/155: which of the two void paths this line belongs to, read
+    // off the state the server reports.
+    //
+    // A line that has not gone to the kitchen voids for free. One that has
+    // needs the grant-gated path, which cancels the kitchen ticket and gives
+    // the stock back — and for a waiter raises a manager approval. Offering
+    // no button at all (which is what V1-RMD-154 left, because that endpoint
+    // had no client) meant a wrongly-sent dish could not be cancelled at all.
+    const kitchenSent = (item.kitchenState || 'NotSent') !== 'NotSent';
+    const canVoid = !kitchenSent;
+    // Served and Cancelled are past the point of no return; the aggregate
+    // refuses both, so the screen does not offer them either.
+    const canVoidSent = kitchenSent
+      && item.kitchenState !== 'Served'
+      && item.kitchenState !== 'Cancelled';
+
+    return `
+      <div class="line">
+        <div class="line-main">
+          <div class="line-top">
+            <span class="line-name">${escapeHtml(item.productName)}</span>
+            <span class="line-total">${escapeHtml(formatMoney(item.totalPrice))}</span>
+          </div>
+          <div class="line-unit">${escapeHtml(formatQuantity(item.quantity))} × ${escapeHtml(formatMoney(item.unitPrice))}${
+            item.createdAt ? ` • ${escapeHtml(formatClock(item.createdAt))}` : ''}</div>
+          ${chips ? `<div class="line-chips">${chips}</div>` : ''}
+          <div class="line-chips">
+            ${kitchen ? `<span class="kitchen-state ${kitchen.cls}"><span class="dot"></span>${escapeHtml(kitchen.label)}</span>` : ''}
+            ${stock}
+          </div>
+          ${item.specialInstructions ? `<div class="line-unit">${escapeHtml(item.specialInstructions)}</div>` : ''}
+        </div>
+        <div class="line-side">
+          ${canVoid ? `<button type="button" class="btn-void" data-void="${escapeHtml(item.itemId)}">İptal</button>` : ''}
+          ${canVoidSent ? `<button type="button" class="btn-void" data-void-sent="${escapeHtml(item.itemId)}">İptal iste</button>` : ''}
+        </div>
+      </div>`;
+  }
+
+  // ══ Quantity and options sheet ═════════════════════════════════════
+
+  function openProductSheet(product, presetQuantity) {
+    state.optionsContext = {
+      product,
+      quantity: presetQuantity || 1,
+      chosen: new Map()
+    };
+
+    openOptions('product', product.name, '', productSheetHtml(), 'Adisyona ekle', 'Tutar', '');
+    updateProductSheetTotal();
+  }
+
+  function productSheetHtml() {
+    const context = state.optionsContext;
+    const quantities = [0.5, 1, 1.5, 2, 3];
+    let html = `
+      <div class="optgroup">
+        <div class="optgroup-head"><span class="optgroup-name">Miktar</span>
+          <span class="optgroup-rule">yarım porsiyon 0,5</span></div>
+        <div class="qty-row">
+          ${quantities.map((quantity) => `
+            <button type="button" class="qty-quick" data-qty="${quantity}"
+                    aria-pressed="${context.quantity === quantity}">${escapeHtml(formatQuantity(quantity))}</button>`).join('')}
+        </div>
+      </div>`;
+
+    for (const group of context.product.modifierGroups) {
+      const single = group.selectionType === 'Single';
+      const required = group.minSelections > 0;
+      const rule = required
+        ? (single ? 'zorunlu — bir tane seçin' : `zorunlu — en az ${group.minSelections}`)
+        : (single ? 'bir tane seçilebilir' : `en fazla ${group.maxSelections}`);
+      html += `
+        <div class="optgroup" data-group="${escapeHtml(group.modifierGroupId)}">
+          <div class="optgroup-head">
+            <span class="optgroup-name">${escapeHtml(group.name)}</span>
+            <span class="optgroup-rule${required ? ' is-required' : ''}">${escapeHtml(rule)}</span>
+          </div>
+          <div class="opts">
+            ${group.modifiers.map((modifier) => `
+              <button type="button" class="opt" data-modifier="${escapeHtml(modifier.modifierId)}"
+                      data-group="${escapeHtml(group.modifierGroupId)}" data-single="${single}"
+                      aria-pressed="${context.chosen.has(modifier.modifierId)}">
+                <span class="opt-box${single ? ' is-round' : ''}">
+                  <svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg>
+                </span>
+                <span class="opt-name">${escapeHtml(modifier.name)}</span>
+                <span class="opt-delta${modifier.priceDelta ? '' : ' is-free'}">${
+                  modifier.priceDelta ? `+${escapeHtml(formatMoney(modifier.priceDelta))}` : 'ücretsiz'}</span>
+              </button>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    html += `
+      <div class="optgroup">
+        <div class="optgroup-head"><span class="optgroup-name">Not</span></div>
+        <input class="note" type="text" maxlength="200" data-product-note
+               placeholder="Mutfağa not (az pişmiş, soğansız…)" aria-label="Mutfağa not">
+      </div>`;
+    return html;
+  }
+
+  function chosenModifiers() {
+    const context = state.optionsContext;
+    return Array.from(context.chosen.values());
+  }
+
+  function updateProductSheetTotal() {
+    const context = state.optionsContext;
+    const count = modifierCountFor(context.quantity);
+    const extras = chosenModifiers().reduce((sum, modifier) => sum + modifier.priceDelta * count, 0);
+    el.optionsFootValue.textContent = formatMoney(context.product.price * context.quantity + extras);
+  }
+
+  // ══ Sending ════════════════════════════════════════════════════════
+
+  function draftToPayload() {
+    return {
+      id: randomUUID(),
+      tableId: state.table.id,
+      tableNumber: state.table.number,
+      waiterName: (state.user && state.user.displayName) || 'Garson',
+      items: state.draft.map((line) => ({
+        // A stable per-line id makes a retried draft submission idempotent
+        // server-side instead of appending a duplicate line.
+        id: line.id,
+        productId: line.productId,
+        productName: line.name,
+        quantity: line.quantity,
+        unitPrice: line.price,
+        // V1-RMD-147: ids only. The price of an option is the catalog's
+        // answer and the count is the server's own rule (V1-RMD-150 leaves
+        // the field optional for exactly that) - neither is this client's to
+        // assert.
+        modifiers: line.modifiers.map((modifier) => ({ modifierId: modifier.modifierId })),
+        specialInstructions: line.note || null
+      })),
+      createdAt: new Date().toISOString()
+    };
+  }
+
+  async function postOrder(payload) {
+    const headers = { 'X-Idempotency-Key': payload.id };
+
+    const draft = await api(apiUrl('/orders/table-draft'), { method: 'POST', headers, body: payload });
+    if (!draft.ok) return draft;
+
+    // The draft alone never reaches the kitchen; the submit is what dispatches
+    // it. The operation id identifies THIS ROUND: `payload.id` is generated
+    // once per round and resent unchanged on every retry of it, so a retry
+    // replays and the next round is a new operation.
+    //
+    // It used to be `${orderId}:submit`, which was right only while one order
+    // meant one submission. Once a check started taking a second round
+    // (V1-ORD-006) every round on that check reused the same key, and the
+    // second one came back 409 IDEMPOTENCY_KEY_REUSED — the food never
+    // reached the kitchen.
+    return api(apiUrl(`/orders/${draft.data.orderId}/submit-draft`), {
+      method: 'POST',
+      headers,
+      body: {
+        orderId: draft.data.orderId,
+        expectedRowVersion: draft.data.rowVersion,
+        operationId: `${draft.data.orderId}:${payload.id}`
+      }
+    });
+  }
+
+  async function sendDraft() {
+    if (state.draft.length === 0 || !state.table || state.sendInFlight) return;
+    state.sendInFlight = true;
+    el.btnSendFromMenu.disabled = true;
+    el.btnSendFromBill.disabled = true;
+
+    const payload = draftToPayload();
+    const tableNumber = state.table.number;
+    try {
+      if (!state.isOnline) {
+        queueOrder(payload);
+        state.draft = [];
+        state.draftEpoch += 1;
+        afterDraftChange();
+        toast(`Bağlantı yok — ${tableNumber} siparişi kuyruğa alındı.`, { warning: true });
+        return;
+      }
+
+      const result = await postOrder(payload);
+      if (result.ok) {
+        state.draft = [];
+        state.draftEpoch += 1;
+        await loadOrder(state.table.id);
         await loadTables();
-      });
+        afterDraftChange();
+        showScreen('tables');
+        toast(`${tableNumber} siparişi mutfağa gönderildi.`);
+      } else if (result.status >= 400 && result.status < 500) {
+        // A rejected order is kept on screen so nothing typed is lost.
+        toast(result.message, { warning: true });
+      } else {
+        queueOrder(payload);
+        state.draft = [];
+        state.draftEpoch += 1;
+        afterDraftChange();
+        toast(`Sunucuya ulaşılamadı — ${tableNumber} siparişi kuyruğa alındı.`, { warning: true });
+      }
+    } finally {
+      state.sendInFlight = false;
+      afterDraftChange();
     }
+  }
 
-    // Table Selection Click
-    if (el.tablesGrid) {
-      el.tablesGrid.addEventListener('click', (e) => {
-        const card = e.target.closest('.table-card');
-        if (!card) return;
-        const tableId = card.dataset.tableId;
-        const table = state.tables.find(t => t.id === tableId);
-        if (!table) return;
+  // ══ Offline queue ══════════════════════════════════════════════════
 
-        state.selectedTable = table;
-        renderTables();
-        updateCartTotals();
-      });
+  function persistQueue() {
+    localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
+    localStorage.setItem('alkaros_waiter_failed_orders', JSON.stringify(state.failedOrders));
+    renderRibbon();
+  }
+
+  function queueOrder(payload) {
+    state.offlineQueue.push(Object.assign({}, payload, { queuedAt: new Date().toISOString() }));
+    persistQueue();
+    scheduleQueueRetry();
+  }
+
+  // The queue used to be flushed only by the browser's `online` event and by
+  // start(). But the commonest way into the queue is not going offline at
+  // all — it is the server answering 5xx while the network is perfectly up,
+  // and in that state `online` never fires. A round queued that way sat in
+  // localStorage for the rest of the shift and the kitchen never saw it.
+  //
+  // So the queue now retries itself, backing off so a server that is down
+  // does not get hammered, and stops as soon as the queue empties.
+  const QUEUE_RETRY_MIN_MS = 15000;
+  const QUEUE_RETRY_MAX_MS = 5 * 60 * 1000;
+  let queueRetryTimer = null;
+  let queueRetryDelay = QUEUE_RETRY_MIN_MS;
+  let flushInFlight = false;
+
+  function scheduleQueueRetry() {
+    window.clearTimeout(queueRetryTimer);
+    if (state.offlineQueue.length === 0) {
+      queueRetryDelay = QUEUE_RETRY_MIN_MS;
+      return;
     }
+    queueRetryTimer = window.setTimeout(() => {
+      queueRetryDelay = Math.min(queueRetryDelay * 2, QUEUE_RETRY_MAX_MS);
+      void flushQueue();
+    }, queueRetryDelay);
+  }
 
-    // Open Order Modal
-    if (el.btnOpenOrderModal) {
-      el.btnOpenOrderModal.addEventListener('click', () => {
-        if (!state.selectedTable) return;
-        el.modalTableTitle.textContent = `${state.selectedTable.number} — Sipariş Al`;
-        el.orderModal.hidden = false;
-        renderCategoryFilters();
-        renderProducts();
-        renderCart();
-      });
-    }
+  async function flushQueue() {
+    if (state.offlineQueue.length === 0 || !state.isOnline) return;
+    // Two overlapping flushes would send the same payload twice. The server
+    // is idempotent on the submission id, so this is a courtesy rather than
+    // the last line of defence — but it also keeps the ribbon honest.
+    if (flushInFlight) return;
+    flushInFlight = true;
 
-    // Close Order Modal
-    if (el.btnCloseModal) {
-      el.btnCloseModal.addEventListener('click', () => {
-        el.orderModal.hidden = true;
-      });
-    }
-
-    // Product Search Input
-    if (el.modalProductSearch) {
-      el.modalProductSearch.addEventListener('input', (e) => {
-        renderProducts(e.target.value);
-      });
-    }
-
-    // Category Filter in Modal
-    if (el.categoryFilterBar) {
-      el.categoryFilterBar.addEventListener('click', (e) => {
-        const btn = e.target.closest('.zone-chip');
-        if (!btn) return;
-        state.activeCategory = btn.dataset.catId;
-        renderCategoryFilters();
-        renderProducts(el.modalProductSearch ? el.modalProductSearch.value : '');
-      });
-    }
-
-    // Product Select Click -> Add to Cart
-    if (el.productGrid) {
-      el.productGrid.addEventListener('click', (e) => {
-        const card = e.target.closest('.product-card');
-        if (!card) return;
-        const prodId = card.dataset.productId;
-        const prod = state.products.find(p => p.id === prodId);
-        if (!prod) return;
-
-        const existing = state.cart.find(i => i.productId === prod.id);
-        if (existing) {
-          existing.quantity += 1;
+    try {
+      for (const payload of state.offlineQueue.slice()) {
+        const result = await postOrder(payload);
+        if (result.ok) {
+          state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);
+          // A success means the server is back; drop the backoff.
+          queueRetryDelay = QUEUE_RETRY_MIN_MS;
+        } else if (result.status === 429) {
+          // Rate limited while draining a long queue. Retryable, and filing
+          // it as permanently failed would destroy the round.
+          break;
+        } else if (result.status >= 400 && result.status < 500) {
+          // A 4xx will never succeed on retry, but the order is never destroyed:
+          // it moves to the failed list and the ribbon keeps saying so.
+          state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);
+          state.failedOrders.push(Object.assign({}, payload, { rejectedAt: new Date().toISOString(), error: result.message }));
+          console.error('Order rejected by server:', payload.id, result.status, result.message);
         } else {
-          state.cart.push({
-            id: randomUUID(),
-            productId: prod.id,
-            name: prod.name,
-            price: prod.price,
-            quantity: 1,
-            note: ''
+          // Temporary failure: keep the rest queued and stop trying for now.
+          break;
+        }
+      }
+      persistQueue();
+      if (state.table) { await loadOrder(state.table.id); renderBill(); }
+      await loadTables();
+    } finally {
+      flushInFlight = false;
+      scheduleQueueRetry();
+    }
+  }
+
+  // ══ Voiding a line ═════════════════════════════════════════════════
+
+  // Keyed by item id so a retry after approval reuses the same request.
+  const pendingVoidKeys = new Map();
+
+  // V1-RMD-155: the grant-gated path for a line the kitchen already has.
+  // Unlike the free void it may not resolve immediately — a waiter's request
+  // goes to a manager and comes back 202 Pending. The idempotency key is
+  // generated once per attempt and kept, so retrying after the manager
+  // approves resolves to that same request instead of opening a second one.
+  function openVoidSentSheet(itemId) {
+    const item = activeItems().find((candidate) => candidate.itemId === itemId);
+    if (!item || !state.order) return;
+
+    state.optionsContext = {
+      itemId,
+      reason: null,
+      idempotencyKey: pendingVoidKeys.get(itemId) || randomUUID()
+    };
+
+    const kitchen = KITCHEN_STATE[(item.kitchenState || '').toLowerCase()];
+    const body = `
+      <div class="callout">
+        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
+        <span>Bu ürün mutfağa gitti${kitchen ? ` (${escapeHtml(kitchen.label)})` : ''}.
+        İptali yönetici onayına gidebilir. Onaylanırsa mutfak bileti de iptal edilir
+        ve stok geri alınır.</span>
+      </div>
+      <div class="opts">
+        ${VOID_REASONS.map((reason) => `
+          <button type="button" class="opt" data-reason="${escapeHtml(reason.code)}" aria-pressed="false">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
+            <span class="opt-name">${escapeHtml(reason.label)}</span>
+          </button>`).join('')}
+      </div>`;
+
+    openOptions('void-sent', 'Mutfaktaki ürünü iptal et',
+      `${formatQuantity(item.quantity)} × ${item.productName}`, body, 'İptal iste', '', '');
+    el.optionsConfirm.className = 'btn btn-danger';
+    el.optionsConfirm.disabled = true;
+  }
+
+  async function confirmVoidSent() {
+    const context = state.optionsContext;
+    if (!context || !context.reason || !state.order) return;
+    el.optionsConfirm.disabled = true;
+
+    const result = await api(
+      apiUrl(`/orders/${state.order.orderId}/items/${context.itemId}/void-sent`),
+      {
+        method: 'POST',
+        body: {
+          idempotencyKey: context.idempotencyKey,
+          expectedRowVersion: state.order.rowVersion,
+          reasonCode: context.reason
+        }
+      });
+
+    if (!result.ok) {
+      toast(result.message, { warning: true });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+
+    closeOptions();
+    if (result.data && result.data.status === 'Pending') {
+      // Keep the key: the same request has to be resent once a manager
+      // resolves it, or a second grant would be raised for one decision.
+      pendingVoidKeys.set(context.itemId, context.idempotencyKey);
+      toast('İptal yönetici onayına gönderildi.', { warning: true });
+      return;
+    }
+
+    pendingVoidKeys.delete(context.itemId);
+    await loadOrder(state.table.id);
+    await loadTables();
+    renderBill();
+    const restored = result.data && result.data.stockRestored;
+    toast(restored ? 'Ürün iptal edildi, stok geri alındı.' : 'Ürün iptal edildi.');
+  }
+
+  function openVoidSheet(itemId) {
+    const item = activeItems().find((candidate) => candidate.itemId === itemId);
+    if (!item || !state.order) return;
+
+    state.optionsContext = { itemId, reason: null };
+    const body = `
+      <div class="callout">
+        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
+        <span>İptal geri alınamaz ve kaydı tutulur. Bir gerekçe seçin.</span>
+      </div>
+      <div class="opts">
+        ${VOID_REASONS.map((reason) => `
+          <button type="button" class="opt" data-reason="${escapeHtml(reason.code)}" aria-pressed="false">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
+            <span class="opt-name">${escapeHtml(reason.label)}</span>
+          </button>`).join('')}
+      </div>`;
+    openOptions('void', 'Kalemi iptal et', `${formatQuantity(item.quantity)} × ${item.productName}`,
+      body, 'İptal et', '', '');
+    el.optionsConfirm.className = 'btn btn-danger';
+    el.optionsConfirm.disabled = true;
+  }
+
+  async function confirmVoid() {
+    const context = state.optionsContext;
+    if (!context || !context.reason || !state.order) return;
+    el.optionsConfirm.disabled = true;
+    const result = await api(
+      apiUrl(`/orders/${state.order.orderId}/items/${context.itemId}/void`),
+      { method: 'POST', body: { expectedRowVersion: state.order.rowVersion, reasonCode: context.reason } });
+
+    if (!result.ok) {
+      toast(result.message, { warning: true });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+    closeOptions();
+    await loadOrder(state.table.id);
+    await loadTables();
+    renderBill();
+    toast('Kalem iptal edildi.');
+  }
+
+  // ══ Guest orders waiting for confirmation ══════════════════════════
+
+  function renderPendingBanner() {
+    const count = state.pending.length;
+    el.pendingBanner.hidden = count === 0;
+    if (count > 0) {
+      const first = state.pending[0];
+      el.pendingTitle.textContent = count === 1
+        ? `${first.tableNumber} masası sipariş verdi`
+        : `${count} masa sipariş verdi`;
+      el.pendingSub.textContent = count === 1
+        ? `${first.itemCount} kalem • ${formatMoney(first.total)} • onayınızı bekliyor`
+        : 'Onayınızı bekliyor';
+    }
+    measureChrome();
+  }
+
+  function openPendingSheet() {
+    if (state.pending.length === 0) return;
+    const body = state.pending.map((order) => `
+      <div class="line">
+        <div class="line-main">
+          <div class="line-top">
+            <span class="line-name">${escapeHtml(order.tableNumber)} masası</span>
+            <span class="line-total">${escapeHtml(formatMoney(order.total))}</span>
+          </div>
+          <div class="line-unit">${escapeHtml(order.itemCount)} kalem • ${escapeHtml(formatClock(order.createdAt))}</div>
+        </div>
+        <div class="line-side">
+          <button type="button" class="btn btn-send btn-compact" data-accept="${escapeHtml(order.orderId)}">Onayla</button>
+          <button type="button" class="btn-void" data-reject="${escapeHtml(order.orderId)}">Reddet</button>
+        </div>
+      </div>`).join('');
+    openOptions('pending', 'Misafir siparişi', 'QR ile verilen siparişler onayınızı bekliyor', body, '', '', '');
+    el.optionsConfirm.hidden = true;
+  }
+
+  // Accept and reject both need the order's current row version, which the
+  // summary does not carry - so it is read first rather than guessed.
+  async function resolvePending(orderId, accept) {
+    const detail = await api(apiUrl(`/orders/${orderId}`));
+    if (!detail.ok) { toast(detail.message, { warning: true }); return; }
+
+    const body = accept
+      ? { expectedRowVersion: detail.data.rowVersion, notes: null }
+      : { expectedRowVersion: detail.data.rowVersion, reason: 'Garson reddetti' };
+    const result = await api(apiUrl(`/orders/${orderId}/${accept ? 'accept' : 'reject'}`), { method: 'POST', body });
+
+    if (!result.ok) { toast(result.message, { warning: true }); return; }
+    toast(accept
+      ? `${detail.data.tableNumber} siparişi mutfağa gönderildi.`
+      : `${detail.data.tableNumber} siparişi reddedildi.`);
+
+    await loadPending();
+    await loadTables();
+    if (state.pending.length === 0) closeOptions(); else openPendingSheet();
+    if (state.table) { await loadOrder(state.table.id); renderBill(); }
+  }
+
+  // ══ Sending the check to the cashier ═══════════════════════════════
+  // V1-ORD-006. The party has eaten and is walking to the till; the table has
+  // to be free for the next one before they get there. The check keeps its own
+  // identity and waits at the cashier — it is not closed and nothing is paid
+  // here.
+
+  function openSendToCashierSheet() {
+    if (!state.table || !state.order) return;
+
+    const total = activeItems().reduce((sum, item) => sum + item.totalPrice, 0);
+    const body = `
+      <div class="callout">
+        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
+        <span>Hesap kasaya gider ve masa yeni müşteriye açılır. Bu adım ödeme almaz.</span>
+      </div>
+      <div class="line">
+        <div class="line-main">
+          <div class="line-top">
+            <span class="line-name">${escapeHtml(state.table.number)} masası</span>
+            <span class="line-total">${escapeHtml(formatMoney(total))}</span>
+          </div>
+          <div class="line-unit">${escapeHtml(activeItems().length)} kalem</div>
+        </div>
+      </div>`;
+
+    state.optionsContext = { orderId: state.order.orderId, tableId: state.table.id };
+    openOptions('cashier', 'Hesabı kasaya gönder', '', body, 'Kasaya gönder', '', '');
+  }
+
+  async function confirmSendToCashier() {
+    const context = state.optionsContext;
+    if (!context) return;
+    el.optionsConfirm.disabled = true;
+
+    const result = await api(apiUrl(`/orders/${context.orderId}/send-to-cashier`), {
+      method: 'POST',
+      body: { tableId: context.tableId }
+    });
+    if (!result.ok) {
+      toast(result.message, { warning: true });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+
+    const tableNumber = state.table.number;
+    closeOptions();
+    closeBill();
+    state.table = null;
+    state.order = null;
+    state.draft = [];
+    state.draftEpoch += 1;
+    await loadTables();
+    afterDraftChange();
+    showScreen('tables');
+    toast(result.data.alreadySent
+      ? `${tableNumber} hesabı zaten kasaya gönderilmişti.`
+      : `${tableNumber} hesabı kasaya gönderildi, masa boşaldı.`);
+  }
+
+  // ══ Moving a table ═════════════════════════════════════════════════
+
+  function openTransferSheet() {
+    if (!state.table) return;
+    const targets = state.tables.filter((table) =>
+      table.id !== state.table.id && table.status === 'available');
+
+    const body = targets.length === 0
+      ? '<div class="empty">Şu anda boş masa yok.</div>'
+      : `<div class="opts">${targets.map((table) => `
+          <button type="button" class="opt" data-target="${escapeHtml(table.id)}" aria-pressed="false">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
+            <span class="opt-name">${escapeHtml(table.number)} masası</span>
+            <span class="opt-code">${escapeHtml(table.seats)} kişilik</span>
+          </button>`).join('')}</div>`;
+
+    state.optionsContext = { targetId: null };
+    openOptions('transfer', 'Masa değiştir',
+      `${state.table.number} masasındaki sipariş ve hesap taşınır`, body, 'Taşı', '', '');
+    el.optionsConfirm.className = 'btn btn-primary';
+    el.optionsConfirm.disabled = true;
+  }
+
+  async function confirmTransfer() {
+    const context = state.optionsContext;
+    if (!context || !context.targetId) return;
+    const target = state.tables.find((table) => table.id === context.targetId);
+    if (!target) return;
+
+    el.optionsConfirm.disabled = true;
+    const result = await api(apiUrl('/table-management/transfers'), {
+      method: 'POST',
+      body: {
+        sourceTableId: state.table.id,
+        expectedSourceRowVersion: state.table.rowVersion,
+        targetTableId: target.id,
+        expectedTargetRowVersion: target.rowVersion,
+        reason: 'Misafir masa değiştirdi'
+      }
+    });
+
+    if (!result.ok) {
+      toast(result.message, { warning: true });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+    const from = state.table.number;
+    closeOptions();
+    await loadTables();
+    const moved = state.tables.find((table) => table.id === target.id);
+    if (moved) await openTable(moved.id, false);
+    toast(`${from} masası ${target.number} masasına taşındı.`);
+  }
+
+  // ══ Web Push ═══════════════════════════════════════════════════════
+  // V1-WTR-011. SignalR only reaches a device whose app is open; a plated
+  // dish is announced exactly when it is not. The server does the encryption
+  // (RFC 8291), so all this side does is subscribe and hand the browser's own
+  // subscription over.
+
+  function pushSupported() {
+    return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  }
+
+  // iOS grants Web Push only to a PWA installed on the home screen. Detecting
+  // it lets the screen say why instead of failing silently.
+  function iosNeedsInstall() {
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const standalone = window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true;
+    return isIos && !standalone;
+  }
+
+  async function currentPushSubscription() {
+    if (!pushSupported() || !navigator.serviceWorker.controller) {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) return null;
+      return registration.pushManager.getSubscription();
+    }
+    const registration = await navigator.serviceWorker.ready;
+    return registration.pushManager.getSubscription();
+  }
+
+  async function refreshPushState() {
+    try {
+      state.pushEnabled = (await currentPushSubscription()) !== null;
+    } catch {
+      state.pushEnabled = false;
+    }
+  }
+
+  async function enablePush() {
+    if (!pushSupported()) {
+      toast('Bu tarayıcı arka plan bildirimini desteklemiyor.', { warning: true });
+      return;
+    }
+    if (iosNeedsInstall()) {
+      toast('Önce uygulamayı ana ekrana ekleyin; iPhone bildirimi yalnız öyle veriyor.', { warning: true });
+      return;
+    }
+    if (!window.isSecureContext) {
+      toast('Arka plan bildirimi için güvenli bağlantı (HTTPS) gerekli.', { warning: true });
+      return;
+    }
+
+    // The browser requires this to come from a user gesture, which is why it
+    // lives behind a button in the profile sheet and not in start().
+    let permission;
+    try {
+      permission = await Notification.requestPermission();
+    } catch {
+      permission = 'denied';
+    }
+    if (permission !== 'granted') {
+      toast('Bildirim izni verilmedi.', { warning: true });
+      return;
+    }
+
+    const key = await api(apiUrl('/push/public-key'));
+    if (!key.ok) { toast(key.message, { warning: true }); return; }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        // Chrome refuses a subscription that could be silent, and every
+        // notification this app sends is shown anyway.
+        userVisibleOnly: true,
+        applicationServerKey: base64UrlToBytes(key.data.publicKey)
+      });
+
+      const payload = subscription.toJSON();
+      const saved = await api(apiUrl('/push/subscriptions'), {
+        method: 'POST',
+        body: {
+          endpoint: payload.endpoint,
+          p256dh: payload.keys.p256dh,
+          auth: payload.keys.auth
+        }
+      });
+      if (!saved.ok) {
+        // Registering the subscription is what makes it reachable; a browser
+        // subscription the server does not know about is worse than none.
+        await subscription.unsubscribe();
+        toast(saved.message, { warning: true });
+        return;
+      }
+      state.pushEnabled = true;
+      toast('Uygulama kapalıyken de bildirim gelecek.');
+    } catch {
+      toast('Bildirim aboneliği kurulamadı.', { warning: true });
+    }
+  }
+
+  async function unsubscribePush() {
+    try {
+      const subscription = await currentPushSubscription();
+      if (subscription) {
+        await api(apiUrl(`/push/subscriptions?endpoint=${encodeURIComponent(subscription.endpoint)}`),
+          { method: 'DELETE' });
+        await subscription.unsubscribe();
+      }
+    } catch {
+      // Nothing to undo beyond the local flag; the server drops a dead
+      // endpoint on its own the next time it sends (RFC 8030 §7.3).
+    }
+    state.pushEnabled = false;
+  }
+
+  async function disablePush() {
+    await unsubscribePush();
+    toast('Arka plan bildirimi kapatıldı.');
+  }
+
+  function base64UrlToBytes(value) {
+    const padded = (value + '='.repeat((4 - (value.length % 4)) % 4))
+      .replace(/-/g, '+').replace(/_/g, '/');
+    const binary = window.atob(padded);
+    return Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  }
+
+  // ══ Full screen ════════════════════════════════════════════════════
+  // Semih's own "tam ekranda çıkmayı zorlaştırmak". A web page cannot pin
+  // itself the way Android Ekran Sabitleme or iOS Rehberli Erişim can - that
+  // is an operating-system setting. What it can do is take the whole screen,
+  // keep it awake, and make leaving cost something: if a PIN is set, dropping
+  // out of full screen locks the device.
+
+  function isFullscreen() {
+    return document.fullscreenElement !== null && document.fullscreenElement !== undefined;
+  }
+
+  async function requestWakeLock() {
+    if (!('wakeLock' in navigator)) return;
+    try {
+      state.wakeLock = await navigator.wakeLock.request('screen');
+    } catch {
+      // Denied, or the tab is not visible. The screen simply dims as usual.
+      state.wakeLock = null;
+    }
+  }
+
+  async function releaseWakeLock() {
+    try { if (state.wakeLock) await state.wakeLock.release(); }
+    catch { /* already gone */ }
+    state.wakeLock = null;
+  }
+
+  async function toggleFullscreen() {
+    try {
+      if (isFullscreen()) {
+        await document.exitFullscreen();
+        await releaseWakeLock();
+        return;
+      }
+      await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+      await requestWakeLock();
+      // Landscape and portrait are both legitimate on a tablet, so the
+      // orientation is deliberately left unlocked (V1-RMD-145 removed the
+      // lock from the manifest for the same reason).
+    } catch {
+      toast('Tam ekrana geçilemedi.', { warning: true });
+    }
+  }
+
+  function onFullscreenChange() {
+    if (isFullscreen()) return;
+    void releaseWakeLock();
+    // Leaving full screen is how someone gets out of the app. With a PIN set
+    // that hands them the lock screen instead of the order list.
+    if (state.pinArmed && !state.locked) lockScreen();
+  }
+
+  // ══ Profile, PIN and the kiosk lock ════════════════════════════════
+
+  function openProfileSheet() {
+    void refreshPushState().then(() => {
+      const body = `
+        <div class="opts">
+          <button type="button" class="opt" data-profile="fullscreen">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-expand"/></svg></span>
+            <span class="opt-name">${isFullscreen() ? 'Tam ekrandan çık' : 'Tam ekran'}</span>
+          </button>
+          <button type="button" class="opt" data-profile="push">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-bell"/></svg></span>
+            <span class="opt-name">${state.pushEnabled
+              ? 'Arka plan bildirimini kapat'
+              : 'Uygulama kapalıyken de bildir'}</span>
+          </button>
+          <button type="button" class="opt" data-profile="lock">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg></span>
+            <span class="opt-name">${state.pinArmed ? 'Ekranı şimdi kilitle' : 'Ekran kilidini kur'}</span>
+          </button>
+          ${state.pinArmed ? `
+          <button type="button" class="opt" data-profile="pin-off">
+            <span class="opt-box is-round"></span>
+            <span class="opt-name">Ekran kilidini kaldır</span>
+          </button>` : ''}
+          <button type="button" class="opt" data-profile="signout">
+            <span class="opt-box is-round"></span>
+            <span class="opt-name">Oturumu kapat</span>
+          </button>
+        </div>`;
+      openOptions('profile', (state.user && state.user.displayName) || 'Personel',
+        'Bu cihaz için ayarlar', body, '', '', '');
+      el.optionsConfirm.hidden = true;
+    });
+  }
+
+  // Setting a PIN needs the current password on top of the session, so a
+  // device left unlocked on a table cannot have one planted on it.
+  function openPinSheet(removing) {
+    state.optionsContext = { removing: !!removing };
+    const body = `
+      <div class="callout">
+        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
+        <span>${removing
+          ? 'Kilidi kaldırmak için şifrenizi doğrulayın.'
+          : 'Ekran 3 dakika boştayken kilitlenir. Açmak için bu PIN yeterlidir; şifreniz istenmez.'}</span>
+      </div>
+      <div class="optgroup">
+        <div class="optgroup-head"><span class="optgroup-name">Şifreniz</span></div>
+        <input class="note" type="password" data-pin-password autocomplete="current-password" aria-label="Şifreniz">
+      </div>
+      ${removing ? '' : `
+      <div class="optgroup">
+        <div class="optgroup-head"><span class="optgroup-name">Yeni PIN</span>
+          <span class="optgroup-rule">en az 4 rakam</span></div>
+        <input class="note" type="password" inputmode="numeric" data-pin-code
+               autocomplete="one-time-code" aria-label="Yeni PIN">
+      </div>`}`;
+    openOptions('pin', removing ? 'Kilidi kaldır' : 'Ekran kilidi', '', body,
+      removing ? 'Kaldır' : 'Kur', '', '');
+    el.optionsConfirm.className = removing ? 'btn btn-danger' : 'btn btn-primary';
+    el.optionsConfirm.disabled = false;
+  }
+
+  async function confirmPin() {
+    const removing = state.optionsContext && state.optionsContext.removing;
+    const password = el.optionsBody.querySelector('[data-pin-password]').value || '';
+    const codeField = el.optionsBody.querySelector('[data-pin-code]');
+    const code = codeField ? (codeField.value || '') : null;
+
+    if (!password) { toast('Şifrenizi girin.', { warning: true }); return; }
+    if (!removing && (code.length < 4 || !/^\d+$/.test(code))) {
+      toast('PIN en az 4 rakam olmalı.', { warning: true });
+      return;
+    }
+
+    el.optionsConfirm.disabled = true;
+    const result = await api(`/api/v1/auth/pin?terminalId=${state.terminalId}`, {
+      method: 'POST',
+      body: { currentPassword: password, pin: removing ? null : code }
+    });
+    if (!result.ok) {
+      toast(result.message, { warning: true });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+
+    // A local flag only decides whether this device arms its idle timer; the
+    // server stays the authority on whether the PIN itself is valid.
+    state.pinArmed = !removing;
+    localStorage.setItem('alkaros_waiter_pin_armed', state.pinArmed ? '1' : '0');
+    closeOptions();
+    toast(removing ? 'Ekran kilidi kaldırıldı.' : 'Ekran kilidi kuruldu.');
+  }
+
+  let idleTimer = null;
+
+  function resetIdleTimer() {
+    window.clearTimeout(idleTimer);
+    if (!state.pinArmed || state.locked || el.loginOverlay.hidden === false) return;
+    idleTimer = window.setTimeout(lockScreen, IDLE_LOCK_MS);
+  }
+
+  function lockScreen() {
+    if (!state.pinArmed || state.locked) return;
+    state.locked = true;
+    state.pinBuffer = '';
+    el.lockSub.textContent = 'PIN kodunuzu girin';
+    el.pinDots.classList.remove('is-wrong');
+    renderPinDots();
+    el.lockOverlay.hidden = false;
+  }
+
+  function renderPinDots() {
+    el.pinDots.innerHTML = Array.from({ length: Math.max(4, state.pinBuffer.length) },
+      (unused, index) => `<span class="${index < state.pinBuffer.length ? 'is-filled' : ''}"></span>`).join('');
+  }
+
+  function renderPinPad() {
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    el.pinKeys.innerHTML = keys.map((key) =>
+      `<button type="button" class="pin-key" data-pin="${key}">${key}</button>`).join('')
+      + '<button type="button" class="pin-key" data-pin="del" aria-label="Sil">⌫</button>'
+      + '<button type="button" class="pin-key" data-pin="0">0</button>'
+      + '<button type="button" class="pin-key" data-pin="ok" aria-label="Aç">✓</button>';
+  }
+
+  async function submitPin() {
+    if (state.pinBuffer.length < 4) return;
+    const result = await api(`/api/v1/auth/unlock?terminalId=${state.terminalId}`, {
+      method: 'POST',
+      body: { pin: state.pinBuffer }
+    });
+
+    if (result.ok) {
+      state.locked = false;
+      state.pinBuffer = '';
+      el.lockOverlay.hidden = true;
+      resetIdleTimer();
+      return;
+    }
+
+    if (result.status === 409) {
+      // The server says this account has no PIN, so the flag on this device
+      // is stale - drop the lock rather than trapping the waiter behind it.
+      state.pinArmed = false;
+      localStorage.setItem('alkaros_waiter_pin_armed', '0');
+      state.locked = false;
+      el.lockOverlay.hidden = true;
+      toast('Bu hesapta PIN tanımlı değil, kilit kaldırıldı.', { warning: true });
+      return;
+    }
+
+    state.pinBuffer = '';
+    renderPinDots();
+    el.pinDots.classList.add('is-wrong');
+    window.setTimeout(() => el.pinDots.classList.remove('is-wrong'), 400);
+    el.lockSub.textContent = result.status === 423
+      ? 'Çok fazla deneme. Kullanıcı adı ve şifreyle girin.'
+      : 'PIN hatalı, tekrar deneyin.';
+    if (result.status === 423) showLogin();
+  }
+
+  // ══ Events ═════════════════════════════════════════════════════════
+
+  function bindEvents() {
+    el.loginForm.addEventListener('submit', submitLogin);
+    el.btnProfile.addEventListener('click', openProfileSheet);
+
+    window.addEventListener('online', () => { state.isOnline = true; renderRibbon(); void flushQueue(); });
+    window.addEventListener('offline', () => { state.isOnline = false; renderRibbon(); });
+    window.addEventListener('resize', measureChrome);
+
+    ['pointerdown', 'keydown'].forEach((event) =>
+      document.addEventListener(event, resetIdleTimer, { passive: true }));
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    // A screen wake lock is dropped whenever the tab is hidden and is not
+    // restored on its own, so it is re-taken when the app comes back.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return;
+      if (isFullscreen() && !state.wakeLock) void requestWakeLock();
+      // Coming back to the app is the moment a waiter would expect a stuck
+      // round to go out, and a backgrounded PWA's timers may have been
+      // throttled to nothing while it was away.
+      void flushQueue();
+    });
+
+    el.zoneChips.addEventListener('click', (event) => {
+      const chip = event.target.closest('[data-zone]');
+      if (!chip) return;
+      state.activeZone = chip.dataset.zone;
+      renderZones();
+      renderTables();
+    });
+
+    el.tablesGrid.addEventListener('click', (event) => {
+      const quick = event.target.closest('[data-quick]');
+      if (quick) { void openTable(quick.dataset.quick, true); return; }
+      const table = event.target.closest('[data-table]');
+      if (table) void openTable(table.dataset.table, false);
+    });
+
+    el.btnMenuBack.addEventListener('click', () => { showScreen('tables'); });
+    el.btnOpenBill.addEventListener('click', openBill);
+    el.billClose.addEventListener('click', closeBill);
+    el.billBackdrop.addEventListener('click', closeBill);
+    el.optionsBackdrop.addEventListener('click', closeOptions);
+    el.optionsClose.addEventListener('click', closeOptions);
+
+    el.btnAddItems.addEventListener('click', () => {
+      if (!state.table) return;
+      showScreen('menu');
+      renderProducts();
+      closeBill();
+    });
+    el.btnMoveTable.addEventListener('click', openTransferSheet);
+    el.btnSendToCashier.addEventListener('click', openSendToCashierSheet);
+    el.btnSendFromMenu.addEventListener('click', sendDraft);
+    el.btnSendFromBill.addEventListener('click', sendDraft);
+    el.pendingBanner.addEventListener('click', openPendingSheet);
+
+    el.productSearch.addEventListener('input', (event) => {
+      state.search = event.target.value;
+      renderProducts();
+    });
+
+    el.categoryChips.addEventListener('click', (event) => {
+      const chip = event.target.closest('[data-category]');
+      if (!chip) return;
+      state.activeCategory = chip.dataset.category;
+      renderCategories();
+      renderProducts();
+    });
+
+    el.productList.addEventListener('click', (event) => {
+      const half = event.target.closest('[data-half]');
+      if (half) {
+        const product = state.products.find((candidate) => candidate.id === half.dataset.half);
+        if (product) openProductSheet(product, 0.5);
+        return;
+      }
+      const button = event.target.closest('[data-product]');
+      if (!button) return;
+      const product = state.products.find((candidate) => candidate.id === button.dataset.product);
+      if (!product) return;
+
+      // A product with options cannot be added blind - the sheet asks first.
+      if (product.modifierGroups.length > 0) { openProductSheet(product, 1); return; }
+      addToDraft(product, 1, [], '');
+      button.classList.add('just-added');
+      window.setTimeout(() => button.classList.remove('just-added'), 400);
+    });
+
+    el.billBody.addEventListener('click', (event) => {
+      const repeat = event.target.closest('[data-quick-repeat]');
+      if (repeat) { repeatLastRound(); return; }
+
+      const step = event.target.closest('[data-step]');
+      if (step) {
+        const line = state.draft.find((candidate) => candidate.id === step.dataset.line);
+        if (!line) return;
+        const delta = step.dataset.step === '+' ? 0.5 : -0.5;
+        line.quantity = Math.round((line.quantity + delta) * 1000) / 1000;
+        if (line.quantity <= 0) {
+          const removed = line;
+          const index = state.draft.indexOf(line);
+          // The undo has to remember which table it belonged to. The toast
+          // lives five seconds — long enough to send the round or walk to
+          // another table — and the closure used to read state.draft at click
+          // time, so a late tap dropped the line into whatever round was on
+          // screen by then, or resurrected it after the round had been sent.
+          const ownerTableId = state.table.id;
+          const epoch = state.draftEpoch;
+          state.draft.splice(index, 1);
+          toast(`${removed.name} çıkarıldı.`, {
+            undo: () => {
+              if (!state.table || state.table.id !== ownerTableId || state.draftEpoch !== epoch) {
+                toast(`${removed.name} geri alınamadı, masa değişti.`, { warning: true });
+                return;
+              }
+              removed.quantity = 0.5;
+              state.draft.splice(Math.min(index, state.draft.length), 0, removed);
+              afterDraftChange();
+            }
           });
         }
-        renderCart();
+        afterDraftChange();
+        return;
+      }
+
+      const voidButton = event.target.closest('[data-void]');
+      if (voidButton) { openVoidSheet(voidButton.dataset.void); return; }
+
+      const voidSentButton = event.target.closest('[data-void-sent]');
+      if (voidSentButton) openVoidSentSheet(voidSentButton.dataset.voidSent);
+    });
+
+    el.billBody.addEventListener('input', (event) => {
+      const field = event.target.closest('[data-note]');
+      if (!field) return;
+      const line = state.draft.find((candidate) => candidate.id === field.dataset.note);
+      if (line) line.note = field.value;
+    });
+
+    el.optionsBody.addEventListener('click', onOptionsBodyClick);
+    el.optionsConfirm.addEventListener('click', onOptionsConfirm);
+
+    el.pinKeys.addEventListener('click', (event) => {
+      const key = event.target.closest('[data-pin]');
+      if (!key) return;
+      const value = key.dataset.pin;
+      if (value === 'del') state.pinBuffer = state.pinBuffer.slice(0, -1);
+      else if (value === 'ok') { void submitPin(); return; }
+      else if (state.pinBuffer.length < 12) state.pinBuffer += value;
+      renderPinDots();
+    });
+  }
+
+  function onOptionsBodyClick(event) {
+    const quantity = event.target.closest('[data-qty]');
+    if (quantity && state.optionsMode === 'product') {
+      state.optionsContext.quantity = Number(quantity.dataset.qty);
+      el.optionsBody.querySelectorAll('[data-qty]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(Number(button.dataset.qty) === state.optionsContext.quantity));
       });
+      updateProductSheetTotal();
+      return;
     }
 
-    // Cart Item Stepper (Inc / Dec)
-    if (el.cartItemsList) {
-      el.cartItemsList.addEventListener('input', (e) => {
-        const field = e.target.closest('.cart-item-note-input');
-        if (!field) return;
-        const index = state.cart.findIndex(i => i.id === field.dataset.id);
-        if (index >= 0) state.cart[index].note = field.value;
-      });
-      el.cartItemsList.addEventListener('click', (e) => {
-        const btn = e.target.closest('.btn-step');
-        if (!btn) return;
-        const action = btn.dataset.action;
-        const itemId = btn.dataset.id;
-        const index = state.cart.findIndex(i => i.id === itemId);
-        if (index < 0) return;
-
-        if (action === 'inc') {
-          state.cart[index].quantity += 1;
-        } else if (action === 'dec') {
-          state.cart[index].quantity -= 1;
-          if (state.cart[index].quantity <= 0) {
-            state.cart.splice(index, 1);
-          }
-        }
-        renderCart();
-      });
+    const modifier = event.target.closest('[data-modifier]');
+    if (modifier && state.optionsMode === 'product') {
+      toggleModifier(modifier);
+      return;
     }
 
-    // Submit Order to Kitchen
-    if (el.btnSendKitchen) {
-      el.btnSendKitchen.addEventListener('click', async () => {
-        if (state.cart.length === 0 || !state.selectedTable) return;
-        // Found by an independent audit (2026-09-05): nothing stopped a
-        // second click (double-tap, or a click while the fetch above is
-        // still in flight) from sending the same cart twice. This handler
-        // is async but was never guarded against re-entrancy.
-        if (state.dispatchInFlight) return;
-        state.dispatchInFlight = true;
-        el.btnSendKitchen.disabled = true;
-
-        try {
-          const orderId = randomUUID();
-          const orderPayload = {
-            id: orderId,
-            tableId: state.selectedTable.id,
-            tableNumber: state.selectedTable.number,
-            waiterName: state.currentUser?.name || 'Garson',
-            items: state.cart.map(item => ({
-              // Stable per-line id (already used for local cart tracking)
-              // makes a retried draft submission idempotent server-side
-              // instead of appending a duplicate line on every retry — the
-              // offline queue in particular resends on an ambiguous
-              // (dropped-connection) failure.
-              id: item.id,
-              productId: item.productId,
-              name: item.name,
-              productName: item.name,
-              quantity: item.quantity,
-              unitPrice: item.price,
-              specialInstructions: item.note
-            })),
-            createdAt: new Date().toISOString()
-          };
-
-          if (state.isOnline) {
-            const res = await postOrderToBackend(orderPayload);
-            if (res.success) {
-              // Authoritative server success
-              state.selectedTable.status = 'occupied';
-              state.selectedTable.amount += state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-              state.cart = [];
-              el.orderModal.hidden = true;
-              renderTables();
-              updateCartTotals();
-              alert(`Sipariş mutfağa iletildi! (${state.selectedTable.number})`);
-            } else if (res.isClientError) {
-              alert(res.errorMessage || describeHttpFailure(res.status));
-            } else {
-              // Server error / network failure: queue order and notify without claiming success
-              queueOrderAction(orderPayload);
-              state.cart = [];
-              el.orderModal.hidden = true;
-              updateCartTotals();
-              alert(`Sunucuya ulaşılamadı. Sipariş çevrimdışı kuyruğa alındı. (${state.selectedTable.number})`);
-            }
-          } else {
-            queueOrderAction(orderPayload);
-            state.cart = [];
-            el.orderModal.hidden = true;
-            updateCartTotals();
-            alert(`Çevrimdışı mod: Sipariş yerel kuyruğa kaydedildi. Bağlantı gelince iletilecek.`);
-          }
-        } finally {
-          state.dispatchInFlight = false;
-          el.btnSendKitchen.disabled = false;
-        }
+    const reason = event.target.closest('[data-reason]');
+    if (reason && (state.optionsMode === 'void' || state.optionsMode === 'void-sent')) {
+      state.optionsContext.reason = reason.dataset.reason;
+      el.optionsBody.querySelectorAll('[data-reason]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button === reason));
       });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+
+    const target = event.target.closest('[data-target]');
+    if (target && state.optionsMode === 'transfer') {
+      state.optionsContext.targetId = target.dataset.target;
+      el.optionsBody.querySelectorAll('[data-target]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button === target));
+      });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+
+    const accept = event.target.closest('[data-accept]');
+    if (accept) { void resolvePending(accept.dataset.accept, true); return; }
+    const reject = event.target.closest('[data-reject]');
+    if (reject) { void resolvePending(reject.dataset.reject, false); return; }
+
+    const profile = event.target.closest('[data-profile]');
+    if (profile) {
+      const action = profile.dataset.profile;
+      if (action === 'signout') { closeOptions(); void signOut(); }
+      else if (action === 'fullscreen') { closeOptions(); void toggleFullscreen(); }
+      else if (action === 'push') { closeOptions(); void (state.pushEnabled ? disablePush() : enablePush()); }
+      else if (action === 'pin-off') openPinSheet(true);
+      else if (state.pinArmed) { closeOptions(); lockScreen(); }
+      else openPinSheet(false);
     }
   }
 
-  // Order-ready notifications (V1-WTR-009). Only reachable when a
-  // deployment has turned on kitchen live-sync (kitchen.live_sync_enabled,
-  // V1-SET-002); if it is off the hub connects but the server simply never
-  // sends anything. There is no waiter-to-table assignment tracked anywhere
-  // in this system, so every connected device gets every "ready" event —
-  // targeted delivery is a follow-on once that assignment exists.
-  let orderReadyConnection = null;
+  function toggleModifier(button) {
+    const context = state.optionsContext;
+    const modifierId = button.dataset.modifier;
+    const groupId = button.dataset.group;
+    const group = context.product.modifierGroups.find((candidate) => candidate.modifierGroupId === groupId);
+    const modifier = group.modifiers.find((candidate) => candidate.modifierId === modifierId);
 
-  function connectOrderReadyHub() {
-    if (orderReadyConnection || typeof signalR === 'undefined') return;
-    orderReadyConnection = new signalR.HubConnectionBuilder()
+    if (context.chosen.has(modifierId)) {
+      context.chosen.delete(modifierId);
+    } else {
+      if (button.dataset.single === 'true') {
+        for (const other of group.modifiers) context.chosen.delete(other.modifierId);
+      } else if (group.maxSelections > 0) {
+        const chosenInGroup = group.modifiers.filter((candidate) => context.chosen.has(candidate.modifierId)).length;
+        if (chosenInGroup >= group.maxSelections) {
+          toast(`${group.name} için en fazla ${group.maxSelections} seçim yapılabilir.`, { warning: true });
+          return;
+        }
+      }
+      // No quantity is stored or sent. V1-RMD-150 makes it optional exactly so
+      // the server can apply its own rule - the ceiling of the line quantity -
+      // and this screen has no reason to override it: the waiter never asked
+      // for a specific count. The sent line then renders the count the server
+      // actually recorded.
+      context.chosen.set(modifierId, {
+        modifierId,
+        name: modifier.name,
+        priceDelta: modifier.priceDelta
+      });
+    }
+
+    el.optionsBody.querySelectorAll('[data-modifier]').forEach((candidate) => {
+      candidate.setAttribute('aria-pressed', String(context.chosen.has(candidate.dataset.modifier)));
+    });
+    updateProductSheetTotal();
+  }
+
+  function onOptionsConfirm() {
+    if (state.optionsMode === 'product') {
+      const context = state.optionsContext;
+      // A mandatory group with nothing chosen is a UX check only - the server
+      // stays the authority (foundations §0.4).
+      for (const group of context.product.modifierGroups) {
+        if (group.minSelections > 0) {
+          const chosen = group.modifiers.filter((modifier) => context.chosen.has(modifier.modifierId)).length;
+          if (chosen < group.minSelections) {
+            toast(`${group.name} seçimi zorunlu.`, { warning: true });
+            return;
+          }
+        }
+      }
+      const noteField = el.optionsBody.querySelector('[data-product-note]');
+      addToDraft(context.product, context.quantity, chosenModifiers(), noteField ? noteField.value.trim() : '');
+      closeOptions();
+      return;
+    }
+    if (state.optionsMode === 'void') { void confirmVoid(); return; }
+    if (state.optionsMode === 'void-sent') { void confirmVoidSent(); return; }
+    if (state.optionsMode === 'cashier') { void confirmSendToCashier(); return; }
+    if (state.optionsMode === 'transfer') { void confirmTransfer(); return; }
+    if (state.optionsMode === 'pin') { void confirmPin(); }
+  }
+
+  function repeatLastRound() {
+    const round = lastRound();
+    if (!round) return;
+    for (const item of round) {
+      const product = state.products.find((candidate) => candidate.id === item.productId);
+      if (!product) {
+        toast(`${item.productName} artık menüde yok, atlandı.`, { warning: true });
+        continue;
+      }
+      const modifiers = (item.modifiers || []).map((modifier) => ({
+        modifierId: modifier.modifierId,
+        name: modifier.name,
+        priceDelta: modifier.priceDelta
+      }));
+      addToDraft(product, item.quantity, modifiers, item.specialInstructions || '');
+    }
+    openBill();
+  }
+
+  // ══ Live updates ═══════════════════════════════════════════════════
+
+  let hub = null;
+
+  function connectHub() {
+    if (hub || typeof signalR === 'undefined') return;
+    hub = new signalR.HubConnectionBuilder()
       .withUrl(`/hubs/waiter-order-status?terminalId=${state.terminalId}`)
       .withAutomaticReconnect([0, 1000, 3000, 5000, 10000])
       .configureLogging(signalR.LogLevel.Warning)
       .build();
-    orderReadyConnection.on('OrderItemReady', showOrderReadyBanner);
-    orderReadyConnection.start().catch(() => {
-      // Best-effort: no live-sync deployment, or a transient network issue.
-      // Automatic reconnect (above) keeps trying; nothing to surface here
-      // that the existing offline ribbon does not already say.
+
+    // V1-WTR-009. Nothing in this system records which waiter serves which
+    // table, so the hub broadcasts to every device; the payload carries the
+    // table and each device decides what to show.
+    hub.on('OrderItemReady', (payload) => {
+      const name = (payload && payload.productName) || 'Bir ürün';
+      toast(`${name} hazır.`);
+      // Same tag the service worker's push handler uses, so an online device
+      // that receives both channels shows one notification, not two.
+      notify('Sipariş hazır', `${name} hazır`, 'alkaros-order-ready');
     });
+
+    // V1-RMD-149: before this existed a guest could order from the QR menu and
+    // nobody found out.
+    hub.on('OrderPendingConfirmation', (payload) => {
+      if (!payload) return;
+      if (!state.pending.some((order) => order.orderId === payload.orderId)) {
+        state.pending.push({
+          orderId: payload.orderId,
+          tableId: payload.tableId,
+          tableNumber: payload.tableNumber,
+          itemCount: payload.itemCount,
+          total: payload.total,
+          createdAt: payload.submittedAt
+        });
+      }
+      renderPendingBanner();
+      notify('Misafir siparişi', `${payload.tableNumber} masası sipariş verdi`, 'alkaros-pending-order');
+    });
+
+    // Best effort: a deployment without kitchen live-sync simply never sends
+    // anything, and automatic reconnect covers a transient failure.
+    hub.start().catch(() => {});
   }
 
-  function showOrderReadyBanner(payload) {
-    const productName = escapeHtml(payload && payload.productName || 'Bir ürün');
-    const banner = document.createElement('div');
-    banner.className = 'order-ready-banner';
-    banner.setAttribute('role', 'status');
-    banner.textContent = `${productName} hazır`;
-    document.body.appendChild(banner);
-    window.setTimeout(() => banner.remove(), 8000);
+  function notify(title, body, tag) {
+    if (!window.Notification || Notification.permission !== 'granted') return;
+    try { new Notification(title, { body, tag: tag || 'alkaros-waiter', lang: 'tr' }); }
+    catch { /* some mobile browsers throw here; the in-page toast covers it */ }
+  }
 
-    if (window.Notification && Notification.permission === 'granted') {
-      try { new Notification('Sipariş hazır', { body: `${productName} hazır`, tag: 'alkaros-order-ready' }); }
-      catch { /* Notification constructor can throw on some mobile browsers; the in-page banner already covers it. */ }
-    } else if (window.Notification && Notification.permission === 'default') {
-      Notification.requestPermission().catch(() => { /* ignore - stays in-page-only */ });
+  // ══ Start ══════════════════════════════════════════════════════════
+
+  async function start() {
+    renderRibbon();
+    await loadZones();
+    await loadCatalog();
+    await loadTables();
+    await loadPending();
+    renderZones();
+    renderCategories();
+    renderProducts();
+    renderBill();
+    afterDraftChange();
+    registerOfflineWorker();
+    connectHub();
+    resetIdleTimer();
+    void refreshPushState();
+    void flushQueue();
+  }
+
+  async function init() {
+    bindEvents();
+    renderPinPad();
+    renderRibbon();
+
+    // Tables, catalog and orders are all session-scoped: without one there is
+    // nothing to load, only a wall of 401s.
+    if (!(await hasValidSession())) {
+      showLogin();
+      return;
     }
+    await start();
   }
 
   if (document.readyState === 'loading') {
