@@ -345,6 +345,27 @@
         })
       });
 
+      // V1-RMD-157: KASA-1 is a fixed, shared endpoint for unrelated
+      // walk-up customers, not a real table — draft above just attached
+      // this order to it. Whether the submit above just succeeded (the
+      // check now belongs to the cashier, table-side is done with it) or
+      // failed (a half-finished Draft would otherwise sit attached to
+      // KASA-1 forever), release the table now so the next customer's
+      // dispatch never merges into this one (the exact cross-customer
+      // merge the audit found). A failed release here is logged only —
+      // it must never block telling the cashier the real outcome of their
+      // dispatch.
+      try {
+        await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/send-to-cashier`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ tableId: orderPayload.tableId })
+        });
+      } catch (releaseError) {
+        console.error('KASA-1 serbest bırakılamadı:', releaseError);
+      }
+
       if (!submitResponse.ok) {
         alert(describeHttpFailure(submitResponse.status));
         return;
