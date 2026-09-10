@@ -97,13 +97,27 @@ dokunma hedefi için yukarı genişletiliyor:
 | `--target-min` | 48px | Mutlak minimum (DESIGN.md kararı, değişmedi) |
 | `--target-primary` | 56-64px | Birincil/hızlı-dokunulan aksiyon (ör. mutfak "hazır" kaydırma alanı) |
 
-## 4. Açık karar bekleyen konu
+## 4. Tema: tek ve açık
 
-Mutfak KDS ekranının koyu (dark-first) tema mı yoksa diğer ekranlarla aynı
-açık tema mı olacağı henüz karara bağlanmadı — Mutfak modülü konuşulurken
-netleştirilecek. Not: bugünkü `tokens.css` yalnız `color-scheme: light`
-tanımlıyor; koyu tema seçilirse bu ayrı bir altyapı eklemesi gerektirir,
-mevcut token'ların basit bir renk değişimi değil.
+**Onaylandı (Semih, 2026-09-10): Mutfak KDS de dahil olmak üzere hiçbir ekran
+koyu tema kullanmaz.** Faz 0'da açık bırakılan tek soru buydu ve kapandı.
+
+Sonuçları:
+
+- Tüm modüller §1'in aynı paletini kullanır; `--color-canvas` `#F4F6F8`
+  zemin, `--color-surface` `#FFFFFF` kart, `--color-ink` `#0B2135` üst bar.
+  Koyu zemin yalnız üst bar, kilit perdesi gibi *yüzey* rollerinde kalır —
+  ekranın kendisi hiçbir yerde koyuya dönmez.
+- `tokens.css`'in bugünkü `color-scheme: light` tanımı doğru ve yeterli;
+  ikinci bir token seti, `prefers-color-scheme` dalı ya da tema anahtarı
+  yazılmaz. Faz 0'ın notu bunun ayrı bir altyapı işi olacağını söylüyordu —
+  o iş artık hiç yapılmayacak.
+- Bir ekran koyu görünmek isterse cevap hayırdır; istisna gerekirse önce bu
+  bölüm güncellenir.
+
+Gerekçe: mutfak ekranı da servis alanının aydınlık ışığında okunur ve tek
+tema, aynı bileşenlerin her modülde birebir aynı davranmasını sağlar —
+"backend akıllı, frontend aptal" ilkesinin görsel karşılığı.
 
 ## 5. Etkileşim ilkeleri (Faz 0.4)
 
@@ -142,7 +156,12 @@ atlayarak tetiklenmemesi için.
 | --- | --- | --- |
 | Toast (kendiliğinden kapanır) | Başarılı işlem, undo seçeneği | 3-5 sn |
 | Banner (kalıcı, aksiyon gerektirir) | Onay bekleyen QR siparişi, çözülmemiş sorun bildirimi | Aksiyon alınana kadar |
-| Push (uygulama kapalı/arka planda) | Mutfak "hazır" — SignalR (açıkken) + Web Push (kapalıyken) ikilisi | — |
+| Push (uygulama kapalı/arka planda) | Mutfak "hazır" ve misafir siparişi — SignalR (açıkken) + Web Push (kapalıyken) ikilisi | — |
+
+Web Push V1-WTR-011'de gerçekten yazıldı (RFC 8291 + RFC 8292, ek paket
+olmadan). İki kanal birlikte kullanılır, biri seçilmez: SignalR anında ama
+yalnız açık uygulamaya ulaşır, push kilitli ekranı da geçer. Aynı bildirimi
+iki kez göstermemek için ikisi de aynı `tag`'i taşır.
 
 ### 5.4 Hata gösterimi
 
