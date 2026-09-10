@@ -6,6 +6,13 @@ public sealed record LoginRequest(string Username, string Password, Guid Termina
 
 public sealed record LoginResponse(Guid UserId, string DisplayName, Guid TerminalId);
 
+/// <remarks>
+/// V1-RMD-148: <paramref name="ModifierGroups"/> is what lets a client ask
+/// "half portion or extra rice?" at all. The set listed here is exactly the
+/// set V1-RMD-147's order path accepts — a modifier reaches a product either
+/// directly or through a group assigned to it, and inactive ones appear in
+/// neither. Null when the product has no options.
+/// </remarks>
 public sealed record CatalogProductDto(
     Guid ProductId,
     string Sku,
@@ -13,7 +20,30 @@ public sealed record CatalogProductDto(
     string CategoryCode,
     string CategoryName,
     decimal UnitPrice,
-    decimal TaxRate);
+    decimal TaxRate,
+    IReadOnlyList<CatalogModifierGroupDto>? ModifierGroups = null);
+
+/// <summary>
+/// V1-RMD-148: one option group of a product. <paramref name="SelectionType"/>
+/// is "Single" or "Multiple" (catalog.modifier_groups.selection_type 1 or 2);
+/// the selection bounds are reported so a client can require a mandatory
+/// group, but the server does not enforce them yet.
+/// </summary>
+public sealed record CatalogModifierGroupDto(
+    Guid ModifierGroupId,
+    string Code,
+    string Name,
+    string SelectionType,
+    int MinSelections,
+    int MaxSelections,
+    IReadOnlyList<CatalogModifierDto> Modifiers);
+
+/// <summary>V1-RMD-148: one selectable option and what it adds to the line.</summary>
+public sealed record CatalogModifierDto(
+    Guid ModifierId,
+    string Code,
+    string Name,
+    decimal PriceDelta);
 
 public sealed record CatalogPage(IReadOnlyList<CatalogProductDto> Items, string? NextCursor);
 

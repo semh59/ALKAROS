@@ -570,6 +570,76 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, mismatchedCursorResponse.StatusCode);
     }
 
+    [Fact]
+    public async Task CatalogReportsAProductsModifierGroupsAndHidesInactiveOnes()
+    {
+        // V1-RMD-148: the catalog said nothing about options, so a client had
+        // no way to offer "extra rice" even though the order path (V1-RMD-147)
+        // would have accepted it. What is listed here must be exactly what the
+        // order path accepts, so inactive modifiers and groups stay hidden.
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        var catalog = await SeedCatalogAsync();
+        var productWithOptions = catalog.CategoryA[0];
+        var productWithout = catalog.CategoryA[1];
+
+        var liveGroup = Guid.NewGuid();
+        var retiredGroup = Guid.NewGuid();
+        var liveModifier = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
+            VALUES (@live_group, 'RMD148-EKSTRA', 'Ekstralar', 2, 0, 3, true),
+                   (@retired_group, 'RMD148-ESKI', 'Kaldırılmış grup', 1, 1, 1, false);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@live_modifier, @live_group, 'RMD148-PILAV', 'Ekstra pilav', 120.00, true),
+                   (@retired_modifier, @live_group, 'RMD148-KALDIRILDI', 'Kaldırılmış eklenti', 40.00, false),
+                   (@hidden_modifier, @retired_group, 'RMD148-GIZLI', 'Gizli eklenti', 10.00, true);
+            INSERT INTO catalog.product_modifier_groups (product_modifier_group_id, product_id, modifier_group_id)
+            VALUES (@pmg_live, @product_id, @live_group),
+                   (@pmg_retired, @product_id, @retired_group);
+            """,
+            ("live_group", liveGroup),
+            ("retired_group", retiredGroup),
+            ("live_modifier", liveModifier),
+            ("retired_modifier", Guid.NewGuid()),
+            ("hidden_modifier", Guid.NewGuid()),
+            ("pmg_live", Guid.NewGuid()),
+            ("pmg_retired", Guid.NewGuid()),
+            ("product_id", productWithOptions));
+
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashierCookie = await LoginAsync(client, terminalId, "198.51.100.41");
+
+        using var request = CreateForwardedRequest(
+            HttpMethod.Get,
+            $"/api/v1/terminals/{terminalId:D}/catalog",
+            "198.51.100.41",
+            cashierCookie);
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var products = await response.Content.ReadFromJsonAsync<CatalogProductDto[]>();
+        var withOptions = products!.Single(p => p.ProductId == productWithOptions);
+
+        var group = Assert.Single(withOptions.ModifierGroups!);
+        Assert.Equal(liveGroup, group.ModifierGroupId);
+        Assert.Equal("Ekstralar", group.Name);
+        Assert.Equal("Multiple", group.SelectionType);
+        Assert.Equal(0, group.MinSelections);
+        Assert.Equal(3, group.MaxSelections);
+
+        var modifier = Assert.Single(group.Modifiers);
+        Assert.Equal(liveModifier, modifier.ModifierId);
+        Assert.Equal("Ekstra pilav", modifier.Name);
+        Assert.Equal(120.00m, modifier.PriceDelta);
+
+        // A product nobody assigned a group to reports nothing at all.
+        Assert.Null(products!.Single(p => p.ProductId == productWithout).ModifierGroups);
+    }
+
     private static async Task<string> LoginAsync(HttpClient client, Guid terminalId, string forwardedFor)
     {
         using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")

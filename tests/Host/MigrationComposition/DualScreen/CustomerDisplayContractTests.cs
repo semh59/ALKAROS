@@ -7,9 +7,13 @@ namespace ALKAROS.Host.Tests.DualScreen;
 public sealed class CustomerDisplayContractTests
 {
     private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
+    // V1-RMD-148: modifierGroups joins the catalog contract so a client can
+    // offer a product's options at all. It is null for a product that has
+    // none, and this list is asserted exactly — a field appearing here
+    // without a deliberate change is what this test is for.
     private static readonly string[] ExpectedCatalogProperties =
     [
-        "categoryCode", "categoryName", "name", "productId", "sku", "taxRate", "unitPrice",
+        "categoryCode", "categoryName", "modifierGroups", "name", "productId", "sku", "taxRate", "unitPrice",
     ];
     private static readonly string[] ExpectedProperties =
     [

@@ -226,7 +226,97 @@ public sealed partial class DualScreenStore
         if (hasMore)
             rows.RemoveAt(rows.Count - 1);
         var nextCursor = hasMore ? EncodeCatalogCursor(rows[^1], normalizedCategory) : null;
-        return new CatalogPage(rows.Select(row => row.Product).ToArray(), nextCursor);
+
+        // V1-RMD-148: one query for the whole page's options, after the page
+        // itself is settled — never one per product.
+        var groups = await LoadModifierGroupsAsync(
+            rows.Select(row => row.Product.ProductId).ToArray(), cancellationToken);
+        var products = rows
+            .Select(row => groups.TryGetValue(row.Product.ProductId, out var productGroups)
+                ? row.Product with { ModifierGroups = productGroups }
+                : row.Product)
+            .ToArray();
+
+        return new CatalogPage(products, nextCursor);
+    }
+
+    /// <summary>
+    /// V1-RMD-148: every active option group of the given products, with the
+    /// options inside them. A modifier belongs to a product either directly
+    /// (<c>catalog.modifiers.product_id</c>) or through a group assigned to it
+    /// (<c>catalog.product_modifier_groups</c>) — the same rule
+    /// <c>OrderManagementStore.ResolveModifiersAsync</c> accepts on the way
+    /// in, so a client can never be shown an option the order path would
+    /// refuse.
+    /// </summary>
+    private async Task<Dictionary<Guid, List<CatalogModifierGroupDto>>> LoadModifierGroupsAsync(
+        Guid[] productIds,
+        CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<Guid, List<CatalogModifierGroupDto>>();
+        if (productIds.Length == 0)
+            return result;
+
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT owner.product_id,
+                   g.modifier_group_id, g.code, g.name, g.selection_type,
+                   g.min_selections, g.max_selections,
+                   m.modifier_id, m.code, m.name, m.price_delta
+            FROM catalog.modifiers m
+            JOIN catalog.modifier_groups g
+              ON g.modifier_group_id = m.modifier_group_id AND g.active
+            JOIN LATERAL (
+                SELECT pmg.product_id
+                FROM catalog.product_modifier_groups pmg
+                WHERE pmg.modifier_group_id = g.modifier_group_id
+                  AND pmg.product_id = ANY(@product_ids)
+                UNION
+                SELECT m.product_id
+                WHERE m.product_id = ANY(@product_ids)
+            ) AS owner ON TRUE
+            WHERE m.active
+            ORDER BY owner.product_id, g.code, m.code;
+            """);
+        command.Parameters.AddWithValue("product_ids", productIds);
+
+        var builders = new Dictionary<(Guid ProductId, Guid GroupId), (CatalogModifierGroupDto Group, List<CatalogModifierDto> Modifiers)>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            var productId = reader.GetGuid(0);
+            var groupId = reader.GetGuid(1);
+            if (!builders.TryGetValue((productId, groupId), out var builder))
+            {
+                var modifiers = new List<CatalogModifierDto>();
+                var group = new CatalogModifierGroupDto(
+                    groupId,
+                    reader.GetString(2),
+                    reader.GetString(3),
+                    reader.GetInt16(4) == 1 ? "Single" : "Multiple",
+                    reader.GetInt16(5),
+                    reader.GetInt16(6),
+                    modifiers);
+                builder = (group, modifiers);
+                builders[(productId, groupId)] = builder;
+
+                if (!result.TryGetValue(productId, out var groupList))
+                {
+                    groupList = [];
+                    result[productId] = groupList;
+                }
+
+                groupList.Add(group);
+            }
+
+            builder.Modifiers.Add(new CatalogModifierDto(
+                reader.GetGuid(7),
+                reader.GetString(8),
+                reader.GetString(9),
+                reader.GetDecimal(10)));
+        }
+
+        return result;
     }
 
     private async Task<OrderMutationResult> MutateExistingItemAsync(
