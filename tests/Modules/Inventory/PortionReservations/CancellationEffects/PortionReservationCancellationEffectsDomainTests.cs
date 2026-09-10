@@ -89,6 +89,7 @@ public sealed class FakeStockItemRepository : IStockItemRepository
     public void Add(StockItem item) => _items[item.Id] = item;
     public Task AddAsync(StockItem item, CancellationToken ct = default) { Add(item); return Task.CompletedTask; }
     public Task<StockItem?> GetByIdAsync(Guid id, CancellationToken ct = default) => Task.FromResult(_items.GetValueOrDefault(id));
+    public Task<IReadOnlyList<StockItem>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<StockItem>>(_items.Values.Where(i => ids.Contains(i.Id)).ToList());
     public Task<StockItem?> GetByCodeAsync(string code, CancellationToken ct = default) => Task.FromResult(_items.Values.FirstOrDefault(i => i.Code == code));
     public Task<IReadOnlyList<StockItem>> GetAllAsync(bool activeOnly = false, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<StockItem>>(_items.Values.ToList());
     public Task<IReadOnlyList<StockItem>> GetByTypeAsync(StockItemType itemType, bool activeOnly = false, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<StockItem>>(_items.Values.Where(i => i.ItemType == itemType).ToList());
@@ -144,6 +145,8 @@ public sealed class FakeStockBalanceRepository : IStockBalanceRepository
         Task.FromResult(_balances.GetValueOrDefault((stockItemId, stockLocationId)));
     public Task<IReadOnlyList<StockBalance>> GetByStockItemAsync(Guid stockItemId, CancellationToken ct = default) =>
         Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => b.StockItemId == stockItemId).ToList());
+    public Task<IReadOnlyList<StockBalance>> GetByStockItemsAsync(IReadOnlyCollection<Guid> stockItemIds, CancellationToken ct = default) =>
+        Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => stockItemIds.Contains(b.StockItemId)).ToList());
     public Task<IReadOnlyList<StockBalance>> GetByLocationAsync(Guid stockLocationId, CancellationToken ct = default) =>
         Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => b.StockLocationId == stockLocationId).ToList());
     public Task<IReadOnlyList<StockBalance>> GetAllAsync(CancellationToken ct = default) =>

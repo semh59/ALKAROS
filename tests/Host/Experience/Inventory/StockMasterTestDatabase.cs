@@ -103,6 +103,38 @@ public sealed class StockMasterTestDatabase : PgTestDatabase
     public async Task<long> CountProductStockMappingsAsync(Guid productId)
         => await ScalarAsync<long>($"SELECT count(*) FROM inventory.product_stock_mappings WHERE product_id = '{productId:D}';");
 
+    /// <summary>
+    /// V1-RMD-156: product_stock_mappings.product_id is now FK'd to
+    /// catalog.products, so a mapping needs a real product to point at.
+    /// </summary>
+    public async Task<Guid> SeedProductAsync(string sku)
+    {
+        var id = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES (@id, @sku, @sku, 1, 1, 10.00);
+            """,
+            ("id", id), ("sku", sku));
+        return id;
+    }
+
+    /// <summary>V1-RMD-156: same for modifier_stock_mappings.modifier_id.</summary>
+    public async Task<Guid> SeedModifierAsync(string code)
+    {
+        var groupId = Guid.NewGuid();
+        var id = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type)
+            VALUES (@groupId, @code, @code, 1);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta)
+            VALUES (@id, @groupId, @code, @code, 0);
+            """,
+            ("groupId", groupId), ("id", id), ("code", code));
+        return id;
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

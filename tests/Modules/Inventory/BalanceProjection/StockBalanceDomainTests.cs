@@ -185,6 +185,9 @@ public sealed class StockBalanceDomainTests
         public Task<IReadOnlyList<StockBalance>> GetByStockItemAsync(Guid stockItemId, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => b.StockItemId == stockItemId).ToList());
 
+        public Task<IReadOnlyList<StockBalance>> GetByStockItemsAsync(IReadOnlyCollection<Guid> stockItemIds, CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => stockItemIds.Contains(b.StockItemId)).ToList());
+
         public Task<IReadOnlyList<StockBalance>> GetByLocationAsync(Guid stockLocationId, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => b.StockLocationId == stockLocationId).ToList());
 

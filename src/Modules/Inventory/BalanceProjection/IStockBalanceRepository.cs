@@ -6,6 +6,16 @@ public interface IStockBalanceRepository
 {
     Task<StockBalance?> GetByItemAndLocationAsync(Guid stockItemId, Guid stockLocationId, CancellationToken ct = default);
     Task<IReadOnlyList<StockBalance>> GetByStockItemAsync(Guid stockItemId, CancellationToken ct = default);
+
+    /// <summary>
+    /// V1-RMD-156: every balance row for any of the given stock items, in one
+    /// round trip — see IProductStockMappingRepository.GetByProductIdsAsync's
+    /// own note. A caller that needs one (item, location) pair per item
+    /// filters the result in memory instead of issuing a query per pair,
+    /// which sidesteps needing a composite-key ANY() query.
+    /// </summary>
+    Task<IReadOnlyList<StockBalance>> GetByStockItemsAsync(IReadOnlyCollection<Guid> stockItemIds, CancellationToken ct = default);
+
     Task<IReadOnlyList<StockBalance>> GetByLocationAsync(Guid stockLocationId, CancellationToken ct = default);
     Task<IReadOnlyList<StockBalance>> GetAllAsync(CancellationToken ct = default);
     Task<StockBalance> ApplyOnHandDeltaAsync(Guid stockItemId, Guid stockLocationId, decimal onHandDelta, CancellationToken ct = default);

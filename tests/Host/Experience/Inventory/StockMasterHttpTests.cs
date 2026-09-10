@@ -132,10 +132,14 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
         var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
         var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId, "adet");
         await _database.SeedStockBalanceAsync(stockItemId, locationId, onHandQuantity: 40m);
-        // No catalog FK on product_stock_mappings.product_id (BOM assignment
-        // works before a product even exists in the catalog) — a bare Guid
-        // stands in for the product here.
-        var productId = Guid.NewGuid();
+        // V1-RMD-156: product_stock_mappings.product_id is FK'd to
+        // catalog.products now — a mapping pointing at a product that never
+        // existed (a typo, or one since deleted) used to insert cleanly and
+        // then silently never match at Accept time, so stock quietly stopped
+        // being consumed for that product with no error anywhere. A bare Guid
+        // standing in for "a product not created yet" was the same failure
+        // mode by another name; the product has to exist first.
+        var productId = await _database.SeedProductAsync("SKU-" + Guid.NewGuid().ToString("N")[..8]);
 
         using var assign = await client.PostAsJsonAsync(
             $"/api/v1/management/inventory/products/{productId:D}/stock-mappings",
@@ -163,7 +167,9 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
         var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
         var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId, "adet");
         await _database.SeedStockBalanceAsync(stockItemId, locationId, onHandQuantity: 30m);
-        var modifierId = Guid.NewGuid();
+        // V1-RMD-156: modifier_stock_mappings.modifier_id is FK'd to
+        // catalog.modifiers now, same reasoning as the product mapping above.
+        var modifierId = await _database.SeedModifierAsync("MOD-" + Guid.NewGuid().ToString("N")[..8]);
 
         using var assign = await client.PostAsJsonAsync(
             $"/api/v1/management/inventory/modifiers/{modifierId:D}/stock-mappings",
@@ -233,13 +239,17 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
         using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
         var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8]);
         var otherStockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8]);
-        var productId = Guid.NewGuid();
-        await client.PostAsJsonAsync(
+        // V1-RMD-156: needs a real product now — see the note on
+        // AssigningAndListingAProductStockMappingComputesAvailableQuantity.
+        var productId = await _database.SeedProductAsync("SKU-" + Guid.NewGuid().ToString("N")[..8]);
+        using var first = await client.PostAsJsonAsync(
             $"/api/v1/management/inventory/products/{productId:D}/stock-mappings",
             new AssignProductStockMappingV1(stockItemId));
-        await client.PostAsJsonAsync(
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        using var second = await client.PostAsJsonAsync(
             $"/api/v1/management/inventory/products/{productId:D}/stock-mappings",
             new AssignProductStockMappingV1(otherStockItemId));
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
         Assert.Equal(2, await _database.CountProductStockMappingsAsync(productId));
 
         using var delete = await client.DeleteAsync(

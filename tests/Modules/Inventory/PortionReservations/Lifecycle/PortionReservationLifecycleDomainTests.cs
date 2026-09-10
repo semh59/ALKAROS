@@ -272,6 +272,9 @@ public sealed class PortionReservationLifecycleDomainTests
         public Task<StockItem?> GetByIdAsync(Guid id, CancellationToken ct = default)
             => Task.FromResult(_items.TryGetValue(id, out var it) ? it : null);
 
+        public Task<IReadOnlyList<StockItem>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<StockItem>>(_items.Values.Where(i => ids.Contains(i.Id)).ToList());
+
         public Task<StockItem?> GetByCodeAsync(string code, CancellationToken ct = default)
             => Task.FromResult(_items.Values.FirstOrDefault(i => string.Equals(i.Code, code, StringComparison.OrdinalIgnoreCase)));
 

@@ -67,6 +67,43 @@ public sealed class PostgresProductStockMappingRepository : IProductStockMapping
         return list;
     }
 
+    public async Task<IReadOnlyList<ProductStockMapping>> GetByProductIdsAsync(
+        IReadOnlyCollection<Guid> productIds, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(productIds);
+        if (productIds.Count == 0) return [];
+
+        string sql = $@"
+            SELECT product_id, stock_item_id, quantity_multiplier, notes, created_at
+            FROM inventory.product_stock_mappings
+            WHERE product_id = ANY($1)
+            ORDER BY product_id, stock_item_id
+            LIMIT {MaxUnpagedRows + 1};";
+
+        await using var cmd = _dataSource.CreateCommand(sql);
+        cmd.Parameters.AddWithValue(productIds.ToArray());
+
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        var list = new List<ProductStockMapping>();
+        while (await reader.ReadAsync(ct))
+        {
+            list.Add(new ProductStockMapping(
+                productId: reader.GetGuid(0),
+                stockItemId: reader.GetGuid(1),
+                quantityMultiplier: reader.GetDecimal(2),
+                notes: reader.IsDBNull(3) ? null : reader.GetString(3),
+                createdAt: reader.GetFieldValue<DateTimeOffset>(4)));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByProductIdsAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
+        return list;
+    }
+
     public async Task<IReadOnlyList<ProductStockMapping>> GetByStockItemIdAsync(Guid stockItemId, CancellationToken ct = default)
     {
         string sql = $@"

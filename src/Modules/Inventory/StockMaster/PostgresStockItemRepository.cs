@@ -57,6 +57,36 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
         return null;
     }
 
+    public async Task<IReadOnlyList<StockItem>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(ids);
+        if (ids.Count == 0) return [];
+
+        string sql = $@"
+            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version
+            FROM inventory.stock_items
+            WHERE id = ANY($1)
+            LIMIT {MaxUnpagedRows + 1};";
+
+        await using var cmd = _dataSource.CreateCommand(sql);
+        cmd.Parameters.AddWithValue(ids.ToArray());
+
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        var list = new List<StockItem>();
+        while (await reader.ReadAsync(ct))
+        {
+            list.Add(MapRow(reader));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByIdsAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
+        return list;
+    }
+
     public async Task<StockItem?> GetByCodeAsync(string code, CancellationToken ct = default)
     {
         const string sql = @"

@@ -159,6 +159,9 @@ public sealed class StockMasterDomainTests
         public Task<StockItem?> GetByIdAsync(Guid id, CancellationToken ct = default)
             => Task.FromResult(Items.TryGetValue(id, out var item) ? item : null);
 
+        public Task<IReadOnlyList<StockItem>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<StockItem>>(Items.Values.Where(i => ids.Contains(i.Id)).ToList());
+
         public Task<StockItem?> GetByCodeAsync(string code, CancellationToken ct = default)
             => Task.FromResult(ItemsByCode.TryGetValue(code, out var item) ? item : null);
 
@@ -196,6 +199,9 @@ public sealed class StockMasterDomainTests
 
         public Task<IReadOnlyList<ProductStockMapping>> GetByProductIdAsync(Guid productId, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<ProductStockMapping>>(Mappings.Where(m => m.ProductId == productId).ToList());
+
+        public Task<IReadOnlyList<ProductStockMapping>> GetByProductIdsAsync(IReadOnlyCollection<Guid> productIds, CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<ProductStockMapping>>(Mappings.Where(m => productIds.Contains(m.ProductId)).ToList());
 
         public Task<IReadOnlyList<ProductStockMapping>> GetByStockItemIdAsync(Guid stockItemId, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<ProductStockMapping>>(Mappings.Where(m => m.StockItemId == stockItemId).ToList());

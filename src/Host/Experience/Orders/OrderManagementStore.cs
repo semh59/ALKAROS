@@ -379,27 +379,66 @@ public sealed class OrderManagementStore
     /// </summary>
     private async Task<OrderDto> WithAvailableStockAsync(OrderDto dto, CancellationToken cancellationToken)
     {
+        // V1-RMD-156: this used to issue up to three round trips PER LINE
+        // (mappings, then the stock item, then the balance, for every mapping
+        // a line had) on a path every order-viewing call goes through —
+        // GetOrderByIdAsync, table-draft's own response, and this same
+        // method reused for GetOrderByIdAsync too. Three batched queries
+        // now cover every line in the order regardless of how many it has.
+        if (dto.Items.Count == 0) return dto;
+
+        var productIds = dto.Items.Select(i => i.ProductId).Distinct().ToArray();
+        var mappings = await _stockMappings.GetByProductIdsAsync(productIds, cancellationToken);
+        if (mappings.Count == 0) return dto;
+
+        var mappingsByProduct = mappings
+            .GroupBy(m => m.ProductId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var stockItemIds = mappings.Select(m => m.StockItemId).Distinct().ToArray();
+        var stockItems = await _stockItems.GetByIdsAsync(stockItemIds, cancellationToken);
+        var stockItemsById = stockItems.ToDictionary(s => s.Id);
+
+        var locatedStockItemIds = stockItems
+            .Where(s => s.DefaultLocationId is not null)
+            .Select(s => s.Id)
+            .ToArray();
+        var balances = locatedStockItemIds.Length == 0
+            ? []
+            : await _stockBalances.GetByStockItemsAsync(locatedStockItemIds, cancellationToken);
+        // stock_balances is unique per (stock_item_id, stock_location_id), not
+        // per stock_item_id alone — a stock item CAN carry balance rows at
+        // several locations. The single-pair lookup this replaces only ever
+        // asked about one location, the item's own default, so the batch
+        // result is keyed the same way: (item, its default location).
+        var balanceByStockItem = balances
+            .Where(b => stockItemsById.TryGetValue(b.StockItemId, out var stockItem)
+                        && stockItem.DefaultLocationId == b.StockLocationId)
+            .ToDictionary(b => b.StockItemId);
+
         var enrichedItems = new List<OrderItemDto>(dto.Items.Count);
         foreach (var item in dto.Items)
         {
-            var mappings = await _stockMappings.GetByProductIdAsync(item.ProductId, cancellationToken);
             decimal? availableStockQuantity = null;
-            foreach (var mapping in mappings)
+            if (mappingsByProduct.TryGetValue(item.ProductId, out var productMappings))
             {
-                var stockItem = await _stockItems.GetByIdAsync(mapping.StockItemId, cancellationToken);
-                if (stockItem?.DefaultLocationId is not { } locationId)
-                    continue;
+                foreach (var mapping in productMappings)
+                {
+                    if (!stockItemsById.TryGetValue(mapping.StockItemId, out var stockItem)
+                        || stockItem.DefaultLocationId is null)
+                        continue;
 
-                var balance = await _stockBalances.GetByItemAndLocationAsync(mapping.StockItemId, locationId, cancellationToken);
-                if (balance is null)
-                    continue;
+                    if (!balanceByStockItem.TryGetValue(mapping.StockItemId, out var balance))
+                        continue;
 
-                // The limiting stock item decides how many more units of the
-                // product can still be made — same reasoning as a real BOM.
-                var unitsFromThisMapping = balance.AvailableQuantity / mapping.QuantityMultiplier;
-                availableStockQuantity = availableStockQuantity is null
-                    ? unitsFromThisMapping
-                    : Math.Min(availableStockQuantity.Value, unitsFromThisMapping);
+                    // The limiting stock item decides how many more units of
+                    // the product can still be made — same reasoning as a
+                    // real BOM.
+                    var unitsFromThisMapping = balance.AvailableQuantity / mapping.QuantityMultiplier;
+                    availableStockQuantity = availableStockQuantity is null
+                        ? unitsFromThisMapping
+                        : Math.Min(availableStockQuantity.Value, unitsFromThisMapping);
+                }
             }
 
             enrichedItems.Add(item with { AvailableStockQuantity = availableStockQuantity });

@@ -67,6 +67,39 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         return list;
     }
 
+    public async Task<IReadOnlyList<StockBalance>> GetByStockItemsAsync(
+        IReadOnlyCollection<Guid> stockItemIds, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(stockItemIds);
+        if (stockItemIds.Count == 0) return [];
+
+        string sql = $@"
+            SELECT stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                   reserved_quantity, available_quantity, updated_at, row_version
+            FROM inventory.stock_balances
+            WHERE stock_item_id = ANY($1)
+            ORDER BY stock_item_id, stock_location_id
+            LIMIT {MaxUnpagedRows + 1};";
+
+        await using var cmd = _dataSource.CreateCommand(sql);
+        cmd.Parameters.AddWithValue(stockItemIds.ToArray());
+
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        var list = new List<StockBalance>();
+        while (await reader.ReadAsync(ct))
+        {
+            list.Add(MapRow(reader));
+        }
+
+        if (list.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"GetByStockItemsAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
+        return list;
+    }
+
     public async Task<IReadOnlyList<StockBalance>> GetByLocationAsync(
         Guid stockLocationId,
         CancellationToken ct = default)

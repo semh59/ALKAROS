@@ -93,12 +93,28 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
         var routeId = Guid.NewGuid();
         var printJobId = Guid.NewGuid();
         var deliveryId = Guid.NewGuid();
+        // V1-RMD-156: kitchen_ticket_items.order_item_id/.product_id now FK
+        // orders.order_items/catalog.products, so the ticket item below needs
+        // a real product and a real order line to reference instead of a
+        // fabricated id.
+        var productId = Guid.NewGuid();
+        var orderItemId = Guid.NewGuid();
         await RunAsync(
             DataSource,
             $$"""
             INSERT INTO orders.orders (
                 order_id, source, status, confirmation_status, order_number, created_at, updated_at)
             VALUES ('{{orderId:D}}', 'Cashier', 'Submitted', 'NotRequired', 'ORD-{{orderId:N}}', now(), now());
+
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES ('{{productId:D}}', 'SKU-{{productId:N}}', 'Test soup', 1, 1, 55.00);
+
+            INSERT INTO orders.order_items (
+                order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price,
+                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status,
+                created_at, updated_at)
+            VALUES ('{{orderItemId:D}}', '{{orderId:D}}', '{{productId:D}}', 'Test soup', 2, 55.00,
+                    10, 110.00, 110.00, 'Active', 'Sent', 'NotApplicable', now(), now());
 
             INSERT INTO kitchen.kitchen_tickets (
                 id, order_id, ticket_number, station_id, status, row_version, created_at)
@@ -107,7 +123,7 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
             INSERT INTO kitchen.kitchen_ticket_items (
                 id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity,
                 modifiers_summary, notes, status, row_version, created_at)
-            VALUES ('{{itemId:D}}', '{{ticketId:D}}', '{{Guid.NewGuid():D}}', '{{Guid.NewGuid():D}}',
+            VALUES ('{{itemId:D}}', '{{ticketId:D}}', '{{orderItemId:D}}', '{{productId:D}}',
                     'Test soup', 2, 'Extra herbs', 'az tuz, acisiz', 'Queued', 1, now());
 
             INSERT INTO kitchen.printers (id, name, station_id, ip_address, port, is_active, created_at)
@@ -177,6 +193,10 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
                 """);
         }
 
+        // V1-RMD-156: same FK requirement as SeedKitchenGraphAsync — the
+        // ticket item needs a real product and order line to point at.
+        var productId = Guid.NewGuid();
+        var orderItemId = Guid.NewGuid();
         await RunAsync(
             DataSource,
             $$"""
@@ -185,6 +205,16 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
             VALUES ('{{orderId:D}}', 'Cashier', {{(tableId is { } t ? $"'{t:D}'" : "NULL")}}, 'Submitted',
                     'NotRequired', 'ORD-{{orderId:N}}', now(), now());
 
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES ('{{productId:D}}', 'SKU-{{productId:N}}', 'Bridge test item', 1, 1, 40.00);
+
+            INSERT INTO orders.order_items (
+                order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price,
+                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status,
+                created_at, updated_at)
+            VALUES ('{{orderItemId:D}}', '{{orderId:D}}', '{{productId:D}}', 'Bridge test item', 1, 40.00,
+                    10, 40.00, 40.00, 'Active', 'Sent', 'NotApplicable', now(), now());
+
             INSERT INTO kitchen.kitchen_tickets (
                 id, order_id, ticket_number, station_id, status, row_version, created_at)
             VALUES ('{{ticketId:D}}', '{{orderId:D}}', 'KT-{{ticketId:N}}', '{{stationId}}', 'Queued', 1, now());
@@ -192,7 +222,7 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
             INSERT INTO kitchen.kitchen_ticket_items (
                 id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity,
                 status, row_version, created_at)
-            VALUES ('{{Guid.NewGuid():D}}', '{{ticketId:D}}', '{{Guid.NewGuid():D}}', '{{Guid.NewGuid():D}}',
+            VALUES ('{{Guid.NewGuid():D}}', '{{ticketId:D}}', '{{orderItemId:D}}', '{{productId:D}}',
                     'Bridge test item', 1, 'Queued', 1, now());
 
             INSERT INTO kitchen.printers (id, name, station_id, ip_address, port, is_active, created_at)

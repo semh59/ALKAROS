@@ -315,6 +315,9 @@ public sealed class StockMovementReversalDomainTests
         public Task<StockItem?> GetByIdAsync(Guid id, CancellationToken ct = default)
             => Task.FromResult(_items.TryGetValue(id, out var it) ? it : null);
 
+        public Task<IReadOnlyList<StockItem>> GetByIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<StockItem>>(_items.Values.Where(i => ids.Contains(i.Id)).ToList());
+
         public Task<StockItem?> GetByCodeAsync(string code, CancellationToken ct = default)
             => Task.FromResult(_items.Values.FirstOrDefault(i => string.Equals(i.Code, code, StringComparison.OrdinalIgnoreCase)));
 
@@ -381,6 +384,9 @@ public sealed class StockMovementReversalDomainTests
 
         public Task<IReadOnlyList<StockBalance>> GetByStockItemAsync(Guid stockItemId, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => b.StockItemId == stockItemId).ToList());
+
+        public Task<IReadOnlyList<StockBalance>> GetByStockItemsAsync(IReadOnlyCollection<Guid> stockItemIds, CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => stockItemIds.Contains(b.StockItemId)).ToList());
 
         public Task<IReadOnlyList<StockBalance>> GetByLocationAsync(Guid stockLocationId, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<StockBalance>>(_balances.Values.Where(b => b.StockLocationId == stockLocationId).ToList());

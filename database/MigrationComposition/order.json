@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "095"
+    "max": "097"
   },
   "migrations": [
     {
@@ -825,6 +825,21 @@
       "tables": [
         "push_subscriptions",
         "vapid_keys"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "097",
+      "phase": "B",
+      "tables": [
+        "order_items",
+        "order_item_modifiers",
+        "product_prices",
+        "stock_movements",
+        "product_stock_mappings",
+        "modifier_stock_mappings",
+        "kitchen_ticket_items",
+        "orders"
       ],
       "deferredConstraints": []
     }
