@@ -4,9 +4,9 @@
   "description": "ALKAROS Tezgah Üstü Hızlı Satış ve Kasa Yönetim Terminali",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#0f172a",
-  "orientation": "landscape-primary",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#0B2135",
+  "theme_color": "#0B2135",
   "icons": [
     {
       "src": "./icon-192.png",

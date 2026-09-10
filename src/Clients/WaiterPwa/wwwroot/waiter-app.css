@@ -180,7 +180,7 @@ body {
 }
 
 .zone-chip {
-  min-height: 40px;
+  min-height: var(--touch-target);
   padding: 0 16px;
   border-radius: var(--radius-full);
   background-color: var(--bg-surface);

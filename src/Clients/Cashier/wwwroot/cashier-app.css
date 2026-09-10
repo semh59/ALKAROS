@@ -22,7 +22,10 @@
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
-  --touch-target: 44px;
+  /* DESIGN.md --touch-target-min. Was 44px and, worse, nothing referenced
+     it — the one control sized off a raw number (.search-input) sat below
+     the minimum while the token quietly claimed otherwise. */
+  --touch-target: 48px;
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
@@ -131,7 +134,7 @@ body {
 
 .search-input {
   flex: 1;
-  height: 44px;
+  height: var(--touch-target);
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -161,7 +164,7 @@ body {
 }
 
 .category-tab-btn {
-  height: 38px;
+  height: var(--touch-target);
   padding: 0 16px;
   border-radius: var(--radius-sm);
   background: var(--bg-surface-elevated);
@@ -322,8 +325,8 @@ body {
 }
 
 .btn-qty {
-  width: 28px;
-  height: 28px;
+  width: var(--touch-target);
+  height: var(--touch-target);
   border-radius: var(--radius-sm);
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
