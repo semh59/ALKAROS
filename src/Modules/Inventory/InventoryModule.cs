@@ -6,6 +6,7 @@ using ALKAROS.Inventory.PortionReservations.CancellationEffects;
 using ALKAROS.Inventory.PortionReservations.Concurrency;
 using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
+using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
@@ -40,6 +41,8 @@ public sealed class InventoryModule : IModule
         context.RegisterTransient<IStockItemRepository, PostgresStockItemRepository>();
         context.RegisterTransient<IStockLocationRepository, PostgresStockLocationRepository>();
         context.RegisterTransient<IProductStockMappingRepository, PostgresProductStockMappingRepository>();
+        // V1-RMD-152: what a modifier draws from the store room.
+        context.RegisterTransient<IModifierStockMappingRepository, PostgresModifierStockMappingRepository>();
         context.RegisterTransient<IStockMasterService, StockMasterService>();
 
         context.RegisterTransient<IStockMovementRepository, PostgresStockMovementRepository>();

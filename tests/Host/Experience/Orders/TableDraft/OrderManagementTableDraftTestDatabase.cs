@@ -267,6 +267,39 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         return modifierId;
     }
 
+    /// <summary>
+    /// V1-RMD-152: maps a modifier to its own freshly seeded stock item, so a
+    /// test can assert that an extra really leaves the store room. Returns the
+    /// stock item id.
+    /// </summary>
+    public async Task<Guid> SeedStockForModifierAsync(Guid modifierId, decimal onHandQuantity)
+    {
+        var locationId = Guid.NewGuid();
+        var stockItemId = Guid.NewGuid();
+        var suffix = stockItemId.ToString("N")[..8];
+
+        await ExecuteAsync(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@location_id, @location_code, 'Modifier Stock Test Location', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@stock_item_id, @stock_item_code, 'Modifier Stock Test Item', 'RawMaterial', 'adet', @location_id);
+            INSERT INTO inventory.modifier_stock_mappings (modifier_id, stock_item_id, quantity_multiplier)
+            VALUES (@modifier_id, @stock_item_id, 1.0);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES (@balance_id, @stock_item_id, @location_id, @on_hand, 0, @on_hand);
+            """,
+            ("location_id", locationId),
+            ("location_code", "RMD152-" + suffix),
+            ("stock_item_id", stockItemId),
+            ("stock_item_code", "RMD152-" + suffix),
+            ("modifier_id", modifierId),
+            ("balance_id", Guid.NewGuid()),
+            ("on_hand", onHandQuantity));
+
+        return stockItemId;
+    }
+
     /// <summary>Current on-hand quantity of a stock item, for asserting a real decrement.</summary>
     public Task<decimal> OnHandQuantityAsync(Guid stockItemId)
         => ScalarAsync<decimal>($"SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = '{stockItemId:D}';");

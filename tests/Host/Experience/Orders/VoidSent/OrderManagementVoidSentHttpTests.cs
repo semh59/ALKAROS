@@ -198,6 +198,37 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
     }
 
     /// <summary>
+    /// V1-RMD-152: a line's extras consume their own stock, and their
+    /// movements are written against the SAME order item id as the product's.
+    /// That is what lets this restore path give them back with the rest of
+    /// the line instead of needing its own code — this pins that a line
+    /// carrying more than one consumption gets all of it back.
+    /// </summary>
+    [Fact]
+    public async Task VoidingASentItemRestoresItsModifierStockToo()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        var (productStockId, _) = await _database.SeedConsumedStockForItemAsync(
+            itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        var (modifierStockId, _) = await _database.SeedConsumedStockForItemAsync(
+            itemId, onHandAfterConsumption: 8m, consumedQuantity: 2m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        Assert.True(body!.StockRestored);
+        Assert.Equal(10m, await _database.GetOnHandQuantityAsync(productStockId));
+        Assert.Equal(10m, await _database.GetOnHandQuantityAsync(modifierStockId));
+    }
+
+    /// <summary>
     /// The mirror case: once the kitchen has actually started (Preparing or
     /// Ready), the ingredients are genuinely gone — the void still applies
     /// (Order/Kitchen/Bill unchanged from the existing behaviour), but stock

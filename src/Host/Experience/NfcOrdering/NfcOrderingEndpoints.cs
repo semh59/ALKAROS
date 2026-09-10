@@ -2,6 +2,7 @@ using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
@@ -55,6 +56,7 @@ public static class NfcOrderingEndpoints
         // own TryConsumeStockAndAcceptAsync and OrderStockConsumptionService's
         // doc comment).
         services.TryAddSingleton<IProductStockMappingRepository, PostgresProductStockMappingRepository>();
+        services.TryAddSingleton<IModifierStockMappingRepository, PostgresModifierStockMappingRepository>();
         services.TryAddSingleton<IStockItemRepository, PostgresStockItemRepository>();
         services.TryAddSingleton<IStockBalanceRepository, PostgresStockBalanceRepository>();
         services.TryAddSingleton<IStockMovementRepository, PostgresStockMovementRepository>();

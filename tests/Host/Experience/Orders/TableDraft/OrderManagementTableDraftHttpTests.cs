@@ -851,6 +851,99 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(3m, Assert.Single(item.Modifiers!).Quantity);
     }
 
+    [Fact]
+    public async Task AMappedModifierLeavesTheStoreRoomWhenTheOrderIsSent()
+    {
+        // V1-RMD-152: extra cheese is real cheese. V1-RMD-143 left this open
+        // and the consumption service only ever looked at item.ProductId.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        var extraCheese = await _database.SeedModifierAsync(product, "Ekstra peynir", 85m);
+        var cheeseStock = await _database.SeedStockForModifierAsync(extraCheese, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-70", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m,
+                    [new OrderItemModifierSelectionDto(extraCheese)])])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        Assert.Equal(10m, await _database.OnHandQuantityAsync(cheeseStock));
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        // Two plates, two helpings of cheese — the same number V1-RMD-150
+        // charges for and the kitchen ticket prints.
+        Assert.Equal(8m, await _database.OnHandQuantityAsync(cheeseStock));
+    }
+
+    [Fact]
+    public async Task AModifierWithNoStockMappingDoesNotBlockTheOrder()
+    {
+        // V1-RMD-152: deliberately unlike a product. Most modifiers are an
+        // instruction (a cooking preference), not an ingredient, and demanding a stock
+        // item for every free choice would bloat configuration for nothing.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Kuzu şiş", 620m, 10m);
+        var wellDone = await _database.SeedModifierAsync(product, "İyi pişmiş", 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-71", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Kuzu şiş", 1, 620m,
+                    [new OrderItemModifierSelectionDto(wellDone)])])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task AModifierWhoseStockIsShortRefusesTheWholeSubmission()
+    {
+        // V1-RMD-152: all-or-nothing, exactly like the product side — the
+        // product's own delta must roll back with the modifier's refusal.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Adana kebap", 520m);
+        var productStock = await _database.SeedStockForProductAsync(product, 10m);
+        var extraCheese = await _database.SeedModifierAsync(product, "Ekstra peynir", 85m);
+        var cheeseStock = await _database.SeedStockForModifierAsync(extraCheese, 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-72", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 3, 520m,
+                    [new OrderItemModifierSelectionDto(extraCheese)])])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.Conflict, submitResponse.StatusCode);
+        Assert.Equal(10m, await _database.OnHandQuantityAsync(productStock));
+        Assert.Equal(1m, await _database.OnHandQuantityAsync(cheeseStock));
+        Assert.Equal(0, await _database.KitchenTicketCountAsync(draft.OrderId));
+    }
+
     private static string DraftPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/table-draft";
 

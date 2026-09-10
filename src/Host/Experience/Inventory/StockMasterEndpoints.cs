@@ -2,6 +2,7 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Measurements;
 using Microsoft.AspNetCore.Builder;
@@ -34,6 +35,7 @@ public static class StockMasterEndpoints
         services.TryAddScoped<IStockLocationRepository, PostgresStockLocationRepository>();
         services.TryAddScoped<IStockItemRepository, PostgresStockItemRepository>();
         services.TryAddScoped<IProductStockMappingRepository, PostgresProductStockMappingRepository>();
+        services.TryAddScoped<IModifierStockMappingRepository, PostgresModifierStockMappingRepository>();
         // StockMasterService's own constructor needs a unit converter for
         // cross-unit BOM validation — the full production host gets this
         // from InventoryModule/RecipesModule, but this self-contained
@@ -111,6 +113,67 @@ public static class StockMasterEndpoints
             var mapping = await service.AssignProductToStockItemAsync(
                 productId, request.StockItemId, request.QuantityMultiplier, request.Notes, cancellationToken);
             return Results.Ok(mapping);
+        });
+
+        // V1-RMD-152: the same three routes for a modifier. Extras draw on
+        // the store room too (an extra portion is real food), and a modifier
+        // is not a catalog.products row so the product mapping above cannot
+        // express it. A modifier with no mapping simply consumes nothing —
+        // most modifiers are an instruction, not an ingredient.
+        group.MapPost("/modifiers/{modifierId:guid}/stock-mappings", async (
+            Guid modifierId,
+            AssignModifierStockMappingV1 request,
+            IModifierStockMappingRepository mappings,
+            IStockItemRepository items,
+            CancellationToken cancellationToken) =>
+        {
+            if (await items.GetByIdAsync(request.StockItemId, cancellationToken) is null)
+                return Results.NotFound(new { error = new { code = "NOT_FOUND", message = "Stok kalemi bulunamadı." } });
+
+            var mapping = new ModifierStockMapping(
+                modifierId, request.StockItemId, request.QuantityMultiplier, request.Notes);
+            await mappings.AddOrUpdateAsync(mapping, cancellationToken);
+            return Results.Ok(new ModifierStockMappingV1(
+                mapping.ModifierId, mapping.StockItemId, mapping.QuantityMultiplier, mapping.Notes, null));
+        });
+
+        group.MapGet("/modifiers/{modifierId:guid}/stock-mappings", async (
+            Guid modifierId,
+            IModifierStockMappingRepository mappings,
+            IStockItemRepository items,
+            IStockBalanceRepository balances,
+            CancellationToken cancellationToken) =>
+        {
+            var modifierMappings = await mappings.GetByModifierIdAsync(modifierId, cancellationToken);
+            var results = new List<ModifierStockMappingV1>(modifierMappings.Count);
+            foreach (var mapping in modifierMappings)
+            {
+                var stockItem = await items.GetByIdAsync(mapping.StockItemId, cancellationToken);
+                decimal? available = null;
+                if (stockItem?.DefaultLocationId is { } locationId)
+                {
+                    var balance = await balances.GetByItemAndLocationAsync(mapping.StockItemId, locationId, cancellationToken);
+                    if (balance is not null)
+                        available = balance.AvailableQuantity / mapping.QuantityMultiplier;
+                }
+
+                results.Add(new ModifierStockMappingV1(
+                    mapping.ModifierId, mapping.StockItemId, mapping.QuantityMultiplier, mapping.Notes, available));
+            }
+
+            return Results.Ok(results);
+        });
+
+        group.MapDelete("/modifiers/{modifierId:guid}/stock-mappings/{stockItemId:guid}", async (
+            Guid modifierId,
+            Guid stockItemId,
+            IModifierStockMappingRepository mappings,
+            CancellationToken cancellationToken) =>
+        {
+            var removed = await mappings.RemoveAsync(modifierId, stockItemId, cancellationToken);
+            return removed
+                ? Results.NoContent()
+                : Results.NotFound(new { error = new { code = "NOT_FOUND", message = "Eşleme bulunamadı." } });
         });
 
         // Semih's own "kalan stok bilgisi ver garsona" (2026-09-09): the

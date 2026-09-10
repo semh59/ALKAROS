@@ -3,6 +3,7 @@ using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
@@ -91,5 +92,6 @@ public sealed class QrOrderExpiryHostedServiceTests : IAsyncLifetime
             new PostgresProductStockMappingRepository(_database.DataSource),
             new PostgresStockItemRepository(_database.DataSource),
             new PostgresStockBalanceRepository(_database.DataSource),
-            new PostgresStockMovementRepository(_database.DataSource)));
+            new PostgresStockMovementRepository(_database.DataSource),
+            new PostgresModifierStockMappingRepository(_database.DataSource)));
 }

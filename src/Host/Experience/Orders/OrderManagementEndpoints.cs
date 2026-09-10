@@ -7,6 +7,7 @@ using ALKAROS.Host.Experience.Orders.SubmissionStockConsumption;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
+using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Identity.Authorization;
@@ -82,6 +83,7 @@ public static class OrderManagementEndpoints
         // Host), TryAdd defers to that; a standalone composition of just this
         // experience still resolves the whole chain.
         services.TryAddSingleton<IProductStockMappingRepository, PostgresProductStockMappingRepository>();
+        services.TryAddSingleton<IModifierStockMappingRepository, PostgresModifierStockMappingRepository>();
         services.TryAddSingleton<IStockItemRepository, PostgresStockItemRepository>();
         services.TryAddSingleton<IStockBalanceRepository, PostgresStockBalanceRepository>();
         services.TryAddSingleton<IStockMovementRepository, PostgresStockMovementRepository>();

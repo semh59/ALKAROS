@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "094"
+    "max": "095"
   },
   "migrations": [
     {
@@ -808,6 +808,14 @@
       "phase": "B",
       "tables": [
         "users"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "095",
+      "phase": "B",
+      "tables": [
+        "modifier_stock_mappings"
       ],
       "deferredConstraints": []
     }

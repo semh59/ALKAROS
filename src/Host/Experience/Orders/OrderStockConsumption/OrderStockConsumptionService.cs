@@ -1,4 +1,5 @@
 using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Orders.OrderAggregate;
@@ -40,17 +41,20 @@ public sealed class OrderStockConsumptionService
     private readonly IStockItemRepository _stockItems;
     private readonly IStockBalanceRepository _balances;
     private readonly IStockMovementRepository _movements;
+    private readonly IModifierStockMappingRepository _modifierMappings;
 
     public OrderStockConsumptionService(
         IProductStockMappingRepository mappings,
         IStockItemRepository stockItems,
         IStockBalanceRepository balances,
-        IStockMovementRepository movements)
+        IStockMovementRepository movements,
+        IModifierStockMappingRepository modifierMappings)
     {
         _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
         _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
         _balances = balances ?? throw new ArgumentNullException(nameof(balances));
         _movements = movements ?? throw new ArgumentNullException(nameof(movements));
+        _modifierMappings = modifierMappings ?? throw new ArgumentNullException(nameof(modifierMappings));
     }
 
     /// <summary>
@@ -141,6 +145,79 @@ public sealed class OrderStockConsumptionService
                     sourceType: StockMovementSourceType.Order,
                     sourceReferenceId: item.Id,
                     reason: $"Order {order.OrderNumber}, item {item.Id:D} ({item.ProductNameSnapshot}) {trigger}",
+                    createdBy: actorId);
+                await _movements.AppendAsync(movement, connection, transaction, cancellationToken);
+            }
+
+            await ConsumeModifiersAsync(order, item, trigger, actorId, connection, transaction, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// V1-RMD-152: extras draw on the store room too — "ekstra peynir" is
+    /// real cheese. The amount is V1-RMD-150's modifier quantity times the
+    /// mapping multiplier, so the charge, the kitchen ticket and the depot
+    /// all use one number.
+    ///
+    /// Unlike a product, a modifier with no mapping does NOT refuse the
+    /// order. Most modifiers are an instruction rather than an ingredient
+    /// (a cooking preference, an omission), and demanding a stock item for
+    /// every free choice would bloat configuration for nothing. This is a
+    /// deliberate business rule, not a swallowed failure.
+    ///
+    /// The movement's sourceReferenceId is the ORDER ITEM's id, exactly like
+    /// the product's, so SentItemVoidStore's existing restore path gives
+    /// these back with the rest of the line and needs no separate code.
+    /// </summary>
+    private async Task ConsumeModifiersAsync(
+        Order order,
+        OrderItem item,
+        string trigger,
+        Guid actorId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        if (item.Modifiers.Count == 0)
+            return;
+
+        var modifierIds = item.Modifiers.Select(m => m.ModifierId).Distinct().ToArray();
+        var mappings = await _modifierMappings.GetByModifierIdsAsync(modifierIds, cancellationToken);
+        if (mappings.Count == 0)
+            return;
+
+        foreach (var modifier in item.Modifiers)
+        {
+            foreach (var mapping in mappings)
+            {
+                if (mapping.ModifierId != modifier.ModifierId)
+                    continue;
+
+                var stockItem = await _stockItems.GetByIdAsync(mapping.StockItemId, cancellationToken)
+                    ?? throw new StockItemNotFoundException(mapping.StockItemId);
+                var locationId = stockItem.DefaultLocationId
+                    ?? throw new StockItemHasNoDefaultLocationException(stockItem.Id, stockItem.Name);
+
+                var consumeQuantity = modifier.Quantity * mapping.QuantityMultiplier;
+                var applied = await _balances.TryApplyGuardedOnHandDeltaAsync(
+                    mapping.StockItemId, locationId, -consumeQuantity, connection, transaction, cancellationToken);
+                if (applied is null)
+                {
+                    throw new InsufficientOrderStockException(
+                        item.ProductId, modifier.ModifierNameSnapshot, stockItem.Name);
+                }
+
+                var movement = new StockMovement(
+                    id: Guid.NewGuid(),
+                    stockItemId: mapping.StockItemId,
+                    stockLocationId: locationId,
+                    movementType: StockMovementType.Consumption,
+                    direction: MovementDirection.Out,
+                    quantity: consumeQuantity,
+                    unitCode: stockItem.TrackingUnitCode,
+                    sourceType: StockMovementSourceType.Order,
+                    sourceReferenceId: item.Id,
+                    reason: $"Order {order.OrderNumber}, item {item.Id:D} modifier {modifier.ModifierNameSnapshot} {trigger}",
                     createdBy: actorId);
                 await _movements.AppendAsync(movement, connection, transaction, cancellationToken);
             }

@@ -154,6 +154,50 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AModifierStockMappingCanBeAssignedListedAndRemoved()
+    {
+        // V1-RMD-152: a modifier is not a catalog.products row, so the
+        // product route above cannot express what an extra consumes. Same
+        // three operations, its own table.
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId, "adet");
+        await _database.SeedStockBalanceAsync(stockItemId, locationId, onHandQuantity: 30m);
+        var modifierId = Guid.NewGuid();
+
+        using var assign = await client.PostAsJsonAsync(
+            $"/api/v1/management/inventory/modifiers/{modifierId:D}/stock-mappings",
+            new AssignModifierStockMappingV1(stockItemId, QuantityMultiplier: 3m));
+        Assert.Equal(HttpStatusCode.OK, assign.StatusCode);
+
+        using var list = await client.GetAsync($"/api/v1/management/inventory/modifiers/{modifierId:D}/stock-mappings");
+        var mappings = await list.Content.ReadFromJsonAsync<List<ModifierStockMappingV1>>();
+        var mapping = Assert.Single(mappings!);
+        Assert.Equal(stockItemId, mapping.StockItemId);
+        Assert.Equal(3m, mapping.QuantityMultiplier);
+        // 30 on hand / multiplier 3 -> 10 helpings of this extra.
+        Assert.Equal(10m, mapping.AvailableQuantity);
+
+        using var remove = await client.DeleteAsync(
+            $"/api/v1/management/inventory/modifiers/{modifierId:D}/stock-mappings/{stockItemId:D}");
+        Assert.Equal(HttpStatusCode.NoContent, remove.StatusCode);
+
+        using var afterRemoval = await client.GetAsync($"/api/v1/management/inventory/modifiers/{modifierId:D}/stock-mappings");
+        Assert.Empty((await afterRemoval.Content.ReadFromJsonAsync<List<ModifierStockMappingV1>>())!);
+    }
+
+    [Fact]
+    public async Task RemovingAModifierMappingThatDoesNotExistIsNotFound()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+
+        using var remove = await client.DeleteAsync(
+            $"/api/v1/management/inventory/modifiers/{Guid.NewGuid():D}/stock-mappings/{Guid.NewGuid():D}");
+
+        Assert.Equal(HttpStatusCode.NotFound, remove.StatusCode);
+    }
+
+    [Fact]
     public async Task UnmappedProductHasAnEmptyMappingList()
     {
         using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
