@@ -123,6 +123,57 @@ public static class ModuleBoundaryTests
         }
     }
 
+    // V1-RMD-159: found by the 2026-09-10 Garson audit — the two checks
+    // above only ever see modules registered in ModuleRegistry.DefaultCatalog,
+    // so a new cross-module edge written under src/Host/Experience/** (a
+    // Host orchestrator calling straight into several modules' public
+    // contracts for one same-transaction flow, same shape docs/architecture/
+    // module-dependency-rules.md's Enforcement section already describes for
+    // Production's own edges) was never checked by anything. The writes
+    // still go through each module's own repository contract, so this was
+    // never a correctness bug — but an edge could be added or widened here
+    // completely silently. Each entry is one deliberate orchestrator
+    // namespace and the module assemblies its own doc comment says it
+    // calls (docs/architecture/module-dependency-rules.md, Enforcement);
+    // add a new orchestrator here in the same diff that introduces it.
+    private static readonly Dictionary<string, string[]> ApprovedHostOrchestrationEdges =
+        new(StringComparer.Ordinal)
+        {
+            ["ALKAROS.Host.Experience.Orders.OrderStockConsumption"] =
+                ["ALKAROS.Inventory", "ALKAROS.Orders"],
+            ["ALKAROS.Host.Experience.Orders.SentItemVoid"] =
+                ["ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
+        };
+
+    [Fact]
+    public static void HostOrchestrationEdgesStayWithinTheApprovedList()
+    {
+        var hostAssembly = typeof(ALKAROS.Host.Experience.Orders.OrderStockConsumption.OrderStockConsumptionService).Assembly;
+        var failures = new List<string>();
+
+        foreach (var (ns, approved) in ApprovedHostOrchestrationEdges)
+        {
+            var disallowed = ModuleAssemblies.Except(approved, StringComparer.Ordinal).ToArray();
+            var result = Types.InAssembly(hostAssembly)
+                .That().ResideInNamespaceStartingWith(ns)
+                .Should().NotHaveDependencyOnAny(disallowed)
+                .GetResult();
+
+            if (!result.IsSuccessful)
+            {
+                failures.Add(
+                    $"'{ns}' has an undeclared dependency. Failing types: " +
+                    string.Join(", ", result.FailingTypeNames ?? Array.Empty<string>()));
+            }
+        }
+
+        Assert.True(
+            failures.Count == 0,
+            "A Host/Experience orchestrator references a module assembly outside its approved edge list. " +
+            "Add the edge to ApprovedHostOrchestrationEdges and docs/architecture/module-dependency-rules.md " +
+            "together, or remove the dependency. Failures: " + string.Join("; ", failures));
+    }
+
     [Fact]
     public static void NoModuleOrIntegrationProjectIsAnEmptyShell()
     {

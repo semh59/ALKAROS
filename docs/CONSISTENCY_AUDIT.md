@@ -31,6 +31,33 @@ User-facing Turkish string literals are **not** flagged; that is the desired
 state. See `docs/UI_STYLE_GUIDE.md` for the Turkish terminology dictionary the
 UI-leak check is derived from.
 
+## Known blind spot: repository-mediated cross-module writes
+
+Found by the 2026-09-10 Garson audit (Architecture section). The
+cross-schema-write checks above (both rows) are a **text scan for raw SQL**:
+they look for `UPDATE` / `INSERT INTO` / `DELETE FROM` naming a schema the
+scanned file doesn't own. They cannot see a cross-module write made the
+*approved* way — a caller in one module/area holding another module's
+repository interface and calling its method, e.g.
+`IStockBalanceRepository.TryApplyGuardedOnHandDeltaAsync(...)` invoked from
+`src/Host/Experience/Orders/**`. That call ends up issuing exactly the same
+`UPDATE inventory.stock_balances` the raw-SQL rule would flag — it is simply
+issued from inside Inventory's own repository implementation, one call frame
+away from the scanner's view, so nothing here ever sees it.
+
+This is not a gap in what's *allowed* — a repository call is precisely
+V0-ARC-001's own definition of a legitimate direct-call edge
+(`docs/architecture/module-dependency-rules.md`) — it is a gap in what's
+**recorded and checked**. A brand-new repository-mediated edge from
+`src/Host/Experience/**` into several modules at once could be added or
+widened with nothing here noticing. `tests/Architecture/ModuleBoundaries`'s
+`HostOrchestrationEdgesStayWithinTheApprovedList` (added alongside this note,
+V1-RMD-159) is what actually closes that hole for Host orchestrators — see
+`docs/architecture/module-dependency-rules.md`'s "Host/Experience
+orchestration edges" section for the approved list it enforces. This script
+stays a text scan by design (zero-dependency, no build required to run it);
+it is not the tool meant to catch this class of edge.
+
 ## How to run
 
 ```sh

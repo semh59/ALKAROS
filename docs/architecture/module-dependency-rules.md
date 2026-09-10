@@ -138,21 +138,52 @@ Negative:
 - Reporting must never call domain modules to mutate state; it consumes
   projection-ready events only.
 
+## Host/Experience orchestration edges
+
+The edges above are module-to-module. A second, smaller class of edge exists
+under `src/Host/Experience/**`: a Host orchestrator that calls straight into
+several modules' public contracts for one same-transaction flow, rather than
+one module calling another. The writes still go through each target module's
+own repository contract (never raw cross-schema SQL), so this was never a
+V0-ARC-001 violation in substance — but until V1-RMD-159 (2026-09-11, found
+by the 2026-09-10 Garson audit) nothing checked or recorded these edges, so
+a new one could be added or widened completely silently.
+
+| Orchestrator | Namespace | Calls | Why |
+| --- | --- | --- | --- |
+| `OrderStockConsumptionService` | `ALKAROS.Host.Experience.Orders.OrderStockConsumption` | Inventory, Orders | V1-RMD-143/144: decrements stock in the same transaction as an order's Accept/submit write, through `IStockBalanceRepository`/`IStockMovementRepository`/`IProductStockMappingRepository`/etc. |
+| `SentItemVoidStore` | `ALKAROS.Host.Experience.Orders.SentItemVoid` | Billing, Inventory, Kitchen, Orders | V1-RMD-154: voiding a line already sent to the kitchen reverses its stock consumption, cancels its kitchen ticket item, and updates the order — one transaction, four modules' contracts. |
+
+`tests/Architecture/ModuleBoundaries`'s `HostOrchestrationEdgesStayWithinTheApprovedList`
+enforces this table now (see Enforcement below); add a new orchestrator to
+both the test's `ApprovedHostOrchestrationEdges` and this table in the same
+diff that introduces it.
+
 ## Enforcement
 
-Two automated gates keep code and this record in sync:
+Three automated gates keep code and this record in sync:
 
 - `tests/Architecture/ModuleBoundaries` asserts every module's actual compile
   dependencies are declared in `IModule.DependsOn`, that `DependsOn` stays within
   the direct-call edges above, and that no module/integration project is an
   empty shell.
+- `tests/Architecture/ModuleBoundaries`'s `HostOrchestrationEdgesStayWithinTheApprovedList`
+  checks the Host/Experience orchestration edges above the same way, scoped
+  to each orchestrator's own namespace (the module-level checks never see
+  Host code at all, since Host isn't itself a registered module).
 - `tools/consistency-audit` (rule 5) fails when a module issues an `UPDATE` /
-  `INSERT` / `DELETE` against another module's PostgreSQL schema. A module may
-  **read** another module's relations for a same-transaction query or a
-  reconciliation projection; it changes another module's rows only through that
-  module's repository contract, or by publishing an event the owning module
-  consumes. The append-only `audit` schema (AUD-01) is written by every module
-  by design and is exempt.
+  `INSERT` / `DELETE` against another module's PostgreSQL schema **as raw SQL
+  naming that schema**. A module may **read** another module's relations for a
+  same-transaction query or a reconciliation projection; it changes another
+  module's rows only through that module's repository contract, or by
+  publishing an event the owning module consumes. The append-only `audit`
+  schema (AUD-01) is written by every module by design and is exempt. This
+  rule is a text scan over raw SQL strings — it cannot see a cross-module
+  write made *through* a repository call (exactly the shape the Host
+  orchestration edges above use), so it depends on
+  `HostOrchestrationEdgesStayWithinTheApprovedList` to catch a new edge of
+  that kind; see `docs/CONSISTENCY_AUDIT.md` for the blind spot written out
+  in full.
 
 The cross-module event path (row 3 today): a producer writes an
 `OutboxEnvelope` through `OutboxStore.EnqueueAsync` on its own connection and
