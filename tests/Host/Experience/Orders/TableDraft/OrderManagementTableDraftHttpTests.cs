@@ -671,6 +671,110 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.True(item.CreatedAt > before, $"CreatedAt was {item.CreatedAt}");
     }
 
+    [Fact]
+    public async Task ModifiersSurviveTheDraftAndAreResolvedFromTheCatalog()
+    {
+        // V1-RMD-147: the store built every item with modifiers: null, so an
+        // extra a waiter picked never reached the order at all. The name and
+        // price must come from the catalog, not from whatever the client sent.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        var extraRice = await _database.SeedModifierAsync(product, "Ekstra pilav", 120m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-50", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m, [extraRice])])));
+
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        var item = draft!.Items.Single();
+
+        var modifier = Assert.Single(item.Modifiers!);
+        Assert.Equal(extraRice, modifier.ModifierId);
+        Assert.Equal("Ekstra pilav", modifier.Name);
+        Assert.Equal(120m, modifier.PriceDelta);
+
+        // OrderItem.LineSubtotal(): UnitPrice * Quantity + the modifier's own
+        // total, so 520*2 + 120. TotalPrice is gross, so it is at least that.
+        Assert.True(item.TotalPrice >= 1160m, $"TotalPrice was {item.TotalPrice}");
+    }
+
+    [Fact]
+    public async Task AModifierThatDoesNotBelongToTheProductIsRejected()
+    {
+        // V1-RMD-147: silently dropping an unknown id is exactly the defect
+        // this closed, so an id the product does not own must be loud.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        var foreign = await _database.SeedModifierAsync(product, "Başka ürünün eklentisi", 50m, assignToProduct: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-51", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m, [foreign])])));
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AnInactiveModifierIsRejected()
+    {
+        // V1-RMD-147: a manager retiring a modifier must stop it being ordered,
+        // the same way catalog.products.is_available already stops a product.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        var retired = await _database.SeedModifierAsync(product, "Kaldırılmış eklenti", 30m, active: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-52", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 1, 520m, [retired])])));
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ModifiersStillReadBackAfterSubmit()
+    {
+        // V1-RMD-147: the repository already persisted order_item_modifiers;
+        // this pins that the round trip through submit keeps them.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Kuzu şiş", 620m, 10m);
+        var wellDone = await _database.SeedModifierAsync(product, "İyi pişmiş", 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-53", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Kuzu şiş", 1, 620m, [wellDone])])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        var submitted = await submitResponse.Content.ReadFromJsonAsync<OrderDto>();
+        var modifier = Assert.Single(submitted!.Items.Single().Modifiers!);
+        Assert.Equal("İyi pişmiş", modifier.Name);
+    }
+
     private static string DraftPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/table-draft";
 

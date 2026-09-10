@@ -47,8 +47,18 @@ public sealed record OrderItemDraftDto(
     string ProductName,
     decimal Quantity,
     decimal UnitPrice,
-    IReadOnlyList<string>? Modifiers = null,
+    IReadOnlyList<Guid>? Modifiers = null,
     string? SpecialInstructions = null);
+
+/// <summary>
+/// V1-RMD-147: one modifier as it was actually recorded on an order line.
+/// Name and price delta are the catalog's values at order time, never the
+/// client's — the same rule the product's own name and price already follow.
+/// </summary>
+public sealed record OrderItemModifierDto(
+    Guid ModifierId,
+    string Name,
+    decimal PriceDelta);
 
 /// <summary>
 /// V1-RMD-113: OperationId is now load-bearing — it is this request's
@@ -184,4 +194,5 @@ public sealed record OrderItemDto(
     decimal? AvailableStockQuantity = null,
     string Status = "",
     string KitchenState = "",
-    DateTimeOffset CreatedAt = default);
+    DateTimeOffset CreatedAt = default,
+    IReadOnlyList<OrderItemModifierDto>? Modifiers = null);

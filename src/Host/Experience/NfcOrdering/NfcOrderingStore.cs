@@ -445,7 +445,8 @@ public sealed class NfcOrderingStore
             AvailableStockQuantity: null,
             Status: i.Status.ToString(),
             KitchenState: i.KitchenState.ToString(),
-            CreatedAt: i.CreatedAt
+            CreatedAt: i.CreatedAt,
+            Modifiers: OrderManagementStore.MapModifiers(i)
         )).ToList();
 
         return new OrderDto(

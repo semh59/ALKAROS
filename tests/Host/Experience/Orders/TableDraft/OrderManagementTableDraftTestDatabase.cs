@@ -224,6 +224,49 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         return productId;
     }
 
+    /// <summary>
+    /// V1-RMD-147: seeds a modifier group, assigns it to <paramref name="productId"/>
+    /// and puts one modifier in it. Returns the modifier id. Pass
+    /// <paramref name="assignToProduct"/> false to seed a modifier that exists but
+    /// belongs to no group of this product — the "not yours" rejection case.
+    /// </summary>
+    public async Task<Guid> SeedModifierAsync(
+        Guid productId, string name, decimal priceDelta, bool active = true, bool assignToProduct = true)
+    {
+        var groupId = Guid.NewGuid();
+        var modifierId = Guid.NewGuid();
+        var suffix = modifierId.ToString("N")[..8];
+
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
+            VALUES (@group_id, @group_code, 'Table Draft Test Group', 2, 0, 5, true);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@modifier_id, @group_id, @modifier_code, @name, @price_delta, @active);
+            """,
+            ("group_id", groupId),
+            ("group_code", "RMD147G-" + suffix),
+            ("modifier_id", modifierId),
+            ("modifier_code", "RMD147M-" + suffix),
+            ("name", name),
+            ("price_delta", priceDelta),
+            ("active", active));
+
+        if (assignToProduct)
+        {
+            await ExecuteAsync(
+                """
+                INSERT INTO catalog.product_modifier_groups (product_modifier_group_id, product_id, modifier_group_id)
+                VALUES (@id, @product_id, @group_id);
+                """,
+                ("id", Guid.NewGuid()),
+                ("product_id", productId),
+                ("group_id", groupId));
+        }
+
+        return modifierId;
+    }
+
     /// <summary>Current on-hand quantity of a stock item, for asserting a real decrement.</summary>
     public Task<decimal> OnHandQuantityAsync(Guid stockItemId)
         => ScalarAsync<decimal>($"SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = '{stockItemId:D}';");

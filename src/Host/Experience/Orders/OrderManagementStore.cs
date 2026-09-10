@@ -88,6 +88,8 @@ public sealed class OrderManagementStore
 
         var catalog = await ResolveCatalogProductsAsync(
             connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
+        var modifierCatalog = await ResolveModifiersAsync(
+            connection, transaction, request.Items, cancellationToken);
 
         var newItems = new List<OrderItem>();
         foreach (var i in request.Items)
@@ -102,6 +104,10 @@ public sealed class OrderManagementStore
                     nameof(request),
                     $"Quantity for product {i.ProductId} must be at least {MinimumOrderQuantity}.");
             var (productName, unitPrice, taxRate) = product;
+            // V1-RMD-147: the contract carried a Modifiers field all along and
+            // this constructor was hard-coded to null, so every extra a waiter
+            // picked was silently dropped.
+            var modifiers = BuildModifiers(i, modifierCatalog);
 
             newItems.Add(new OrderItem(
                 i.Id,
@@ -113,7 +119,7 @@ public sealed class OrderManagementStore
                 taxRate,
                 skuSnapshot: null,
                 discountAmount: 0,
-                modifiers: null,
+                modifiers: modifiers,
                 status: OrderItemState.Draft,
                 kitchenState: KitchenState.NotSent,
                 portionReservationStatus: PortionReservationStatus.NotApplicable,
@@ -353,6 +359,107 @@ public sealed class OrderManagementStore
             ?? throw new InvalidOperationException($"Order {orderId} was submitted but could not be reloaded.");
     }
 
+    /// <summary>
+    /// V1-RMD-147: projects an item's recorded modifiers. Shared by the two
+    /// order-reading surfaces so a line looks the same whichever one served it.
+    /// </summary>
+    internal static IReadOnlyList<OrderItemModifierDto>? MapModifiers(OrderItem item)
+        => item.Modifiers.Count == 0
+            ? null
+            : item.Modifiers
+                .Select(m => new OrderItemModifierDto(m.ModifierId, m.ModifierNameSnapshot, m.PriceDelta))
+                .ToList();
+
+    /// <summary>
+    /// V1-RMD-147: resolves every requested modifier from the catalog, keyed
+    /// by (productId, modifierId). A modifier only resolves for a product it
+    /// actually belongs to — either directly (<c>catalog.modifiers.product_id</c>)
+    /// or through a group assigned to that product
+    /// (<c>catalog.product_modifier_groups</c>) — and inactive modifiers and
+    /// groups are excluded. The name and price delta come from here, never
+    /// from the request, exactly as the product's own name and price already do.
+    /// One round trip for the whole draft.
+    /// </summary>
+    private static async Task<Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta)>> ResolveModifiersAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        IReadOnlyList<OrderItemDraftDto> items,
+        CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<(Guid, Guid), (string, decimal)>();
+        var productIds = new List<Guid>();
+        var modifierIds = new List<Guid>();
+        foreach (var item in items)
+        {
+            if (item.Modifiers is not { Count: > 0 }) continue;
+            foreach (var modifierId in item.Modifiers)
+            {
+                productIds.Add(item.ProductId);
+                modifierIds.Add(modifierId);
+            }
+        }
+
+        if (modifierIds.Count == 0)
+            return result;
+
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT p.product_id, m.modifier_id, m.name, m.price_delta
+            FROM unnest(@product_ids, @modifier_ids) AS p(product_id, modifier_id)
+            JOIN catalog.modifiers m
+              ON m.modifier_id = p.modifier_id AND m.active
+            JOIN catalog.modifier_groups g
+              ON g.modifier_group_id = m.modifier_group_id AND g.active
+            LEFT JOIN catalog.product_modifier_groups pmg
+              ON pmg.modifier_group_id = m.modifier_group_id
+             AND pmg.product_id = p.product_id
+            WHERE m.product_id = p.product_id OR pmg.product_modifier_group_id IS NOT NULL;
+            """, connection, transaction);
+        cmd.Parameters.AddWithValue("product_ids", productIds.ToArray());
+        cmd.Parameters.AddWithValue("modifier_ids", modifierIds.ToArray());
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            result[(reader.GetGuid(0), reader.GetGuid(1))] = (reader.GetString(2), reader.GetDecimal(3));
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// V1-RMD-147: turns one draft line's modifier ids into domain modifiers,
+    /// refusing the whole submission if any id does not belong to the product.
+    /// Silently dropping it is the defect this task closes, so an unresolved
+    /// id must be loud.
+    /// </summary>
+    private static List<OrderItemModifier>? BuildModifiers(
+        OrderItemDraftDto item,
+        Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta)> catalog)
+    {
+        if (item.Modifiers is not { Count: > 0 })
+            return null;
+
+        var modifiers = new List<OrderItemModifier>(item.Modifiers.Count);
+        foreach (var modifierId in item.Modifiers)
+        {
+            if (!catalog.TryGetValue((item.ProductId, modifierId), out var resolved))
+            {
+                throw new KeyNotFoundException(
+                    $"Modifier {modifierId} was not found, is not active, or does not belong to product {item.ProductId}.");
+            }
+
+            modifiers.Add(new OrderItemModifier(
+                id: Guid.NewGuid(),
+                orderItemId: item.Id,
+                modifierId: modifierId,
+                modifierNameSnapshot: resolved.Name,
+                priceDelta: resolved.PriceDelta));
+        }
+
+        return modifiers;
+    }
+
     private static async Task<Dictionary<Guid, (string Name, decimal Price, decimal TaxRate)>> ResolveCatalogProductsAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
@@ -498,7 +605,8 @@ public sealed class OrderManagementStore
             AvailableStockQuantity: null,
             Status: i.Status.ToString(),
             KitchenState: i.KitchenState.ToString(),
-            CreatedAt: i.CreatedAt
+            CreatedAt: i.CreatedAt,
+            Modifiers: MapModifiers(i)
         )).ToList();
 
         return new OrderDto(
