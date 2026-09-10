@@ -360,6 +360,45 @@ public sealed class OrderManagementStore
     }
 
     /// <summary>
+    /// V1-RMD-149: orders sitting in PendingConfirmation, oldest first. The
+    /// live SignalR announcement can be missed — the app was closed, the
+    /// network dropped, the device just connected — and without this a
+    /// waiter had no way back to a guest order that is already waiting.
+    /// Reads the aggregate's own rows rather than a projection so the totals
+    /// match what the confirmation screen will show.
+    /// </summary>
+    public async Task<IReadOnlyList<PendingOrderSummaryV1>> GetPendingOrdersAsync(CancellationToken cancellationToken = default)
+    {
+        var results = new List<PendingOrderSummaryV1>();
+        await using var cmd = _dataSource.CreateCommand(
+            """
+            SELECT o.order_id, o.table_id, COALESCE(t.table_number, ''),
+                   count(i.order_item_id), o.total, o.created_at
+            FROM orders.orders o
+            LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
+            LEFT JOIN orders.order_items i
+              ON i.order_id = o.order_id AND i.status <> 'Cancelled'
+            WHERE o.status = 'PendingConfirmation'
+            GROUP BY o.order_id, o.table_id, t.table_number, o.total, o.created_at
+            ORDER BY o.created_at;
+            """);
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            results.Add(new PendingOrderSummaryV1(
+                reader.GetGuid(0),
+                reader.IsDBNull(1) ? null : reader.GetGuid(1),
+                reader.GetString(2),
+                (int)reader.GetInt64(3),
+                reader.GetDecimal(4),
+                reader.GetFieldValue<DateTimeOffset>(5)));
+        }
+
+        return results;
+    }
+
+    /// <summary>
     /// V1-RMD-147: projects an item's recorded modifiers. Shared by the two
     /// order-reading surfaces so a line looks the same whichever one served it.
     /// </summary>

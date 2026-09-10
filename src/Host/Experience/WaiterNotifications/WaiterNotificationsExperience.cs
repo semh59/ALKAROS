@@ -1,3 +1,5 @@
+using ALKAROS.Host.Experience.PendingOrderNotifications;
+using ALKAROS.Orders.Integration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,9 @@ public static class WaiterNotificationsExperience
         // this codebase each register their own dependencies defensively —
         // see OfflineReconciliation/AddOfflineReconciliationExperience).
         services.AddSignalR(options => options.EnableDetailedErrors = false);
+        // V1-RMD-149: lets Orders announce a guest order waiting for
+        // confirmation without depending on SignalR or on Host at all.
+        services.TryAddSingleton<IPendingOrderAnnouncer, SignalRPendingOrderAnnouncer>();
         return services;
     }
 

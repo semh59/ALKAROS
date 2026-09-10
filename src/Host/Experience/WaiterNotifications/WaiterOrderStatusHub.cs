@@ -20,6 +20,13 @@ public sealed class WaiterOrderStatusHub : Hub
     public const string Route = "/hubs/waiter-order-status";
     public const string OrderItemReady = "OrderItemReady";
 
+    /// <summary>
+    /// V1-RMD-149: a guest-entered order is waiting for staff confirmation.
+    /// The hub used to carry only <see cref="OrderItemReady"/>, so a QR order
+    /// reached PendingConfirmation with nobody told.
+    /// </summary>
+    public const string OrderPendingConfirmation = "OrderPendingConfirmation";
+
     private readonly DualScreenStore _store;
 
     public WaiterOrderStatusHub(DualScreenStore store)

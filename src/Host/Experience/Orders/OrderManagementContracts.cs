@@ -72,6 +72,19 @@ public sealed record SubmitTableOrderRequest(
     long ExpectedRowVersion,
     string OperationId);
 
+/// <summary>
+/// V1-RMD-149: one order waiting for staff confirmation. Carries what a
+/// waiter device needs to draw its banner directly, so the list and the live
+/// SignalR announcement say the same thing without a follow-up call.
+/// </summary>
+public sealed record PendingOrderSummaryV1(
+    Guid OrderId,
+    Guid? TableId,
+    string TableNumber,
+    int ItemCount,
+    decimal Total,
+    DateTimeOffset CreatedAt);
+
 /// <summary>V1-ORD-005: request body for voiding a not-yet-sent item.</summary>
 public sealed record VoidOrderItemRequestV1(
     long ExpectedRowVersion,

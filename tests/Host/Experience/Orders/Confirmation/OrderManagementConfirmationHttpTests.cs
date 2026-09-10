@@ -346,6 +346,54 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
         Assert.Contains("CONCURRENCY_CONFLICT", body);
     }
 
+    [Fact]
+    public async Task PendingOrdersAreListedUntilTheyAreResolved()
+    {
+        // V1-RMD-149: the live announcement can be missed — app closed,
+        // network dropped, device just connected — and before this a waiter
+        // had no way back to a guest order already waiting.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, _) = await _database.SeedPendingConfirmationOrderAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var listRequest = new HttpRequestMessage(HttpMethod.Get, PendingPath(terminalId));
+        listRequest.Headers.Add("Cookie", cookie);
+        using var listResponse = await client.SendAsync(listRequest);
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+
+        var pending = await listResponse.Content.ReadFromJsonAsync<PendingOrderSummaryV1[]>();
+        var waiting = Assert.Single(pending!, p => p.OrderId == orderId);
+        Assert.True(waiting.ItemCount > 0, "a pending order with no lines would tell a waiter nothing");
+        Assert.True(waiting.Total > 0m, $"Total was {waiting.Total}");
+
+        using var accept = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+        Assert.Equal(HttpStatusCode.OK, accept.StatusCode);
+
+        using var afterRequest = new HttpRequestMessage(HttpMethod.Get, PendingPath(terminalId));
+        afterRequest.Headers.Add("Cookie", cookie);
+        using var afterResponse = await client.SendAsync(afterRequest);
+        var after = await afterResponse.Content.ReadFromJsonAsync<PendingOrderSummaryV1[]>();
+        Assert.DoesNotContain(after!, p => p.OrderId == orderId);
+    }
+
+    [Fact]
+    public async Task ListingPendingOrdersWithoutASessionIsUnauthorized()
+    {
+        var terminalId = Guid.NewGuid();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync(PendingPath(terminalId));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    private static string PendingPath(Guid terminalId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/pending";
+
     private static string AcceptPath(Guid terminalId, Guid orderId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/accept";
 

@@ -185,6 +185,22 @@ public static class OrderManagementEndpoints
             return Results.Ok(draft);
         });
 
+        // V1-RMD-149: what a waiter falls back to when the live announcement
+        // was missed. Same permission as accepting one — whoever may resolve
+        // a pending order may see the queue of them.
+        group.MapGet("/pending", async (
+            Guid terminalId,
+            OrderManagementStore store,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
+            return Results.Ok(await store.GetPendingOrdersAsync(cancellationToken));
+        });
+
         group.MapGet("/table/{tableId:guid}", async (
             Guid terminalId,
             Guid tableId,

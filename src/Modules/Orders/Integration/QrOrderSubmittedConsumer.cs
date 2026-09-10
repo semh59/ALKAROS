@@ -31,6 +31,12 @@ public sealed class QrOrderSubmittedConsumer : IIntegrationEventConsumer
     private readonly IOrderRepository _orders;
     private readonly ITableRepository _tables;
     private readonly SubmitOrderHandler? _submitHandler;
+    /// <summary>
+    /// V1-RMD-149: optional for the same reason as <see cref="_submitHandler"/>
+    /// — a pure module composition has no Host registration for it. A missing
+    /// announcer only means nobody is told; the order itself is unaffected.
+    /// </summary>
+    private readonly IPendingOrderAnnouncer? _announcer;
 
     /// <summary>
     /// <paramref name="submitHandler"/> is optional (unlike every other
@@ -43,12 +49,17 @@ public sealed class QrOrderSubmittedConsumer : IIntegrationEventConsumer
     /// <see cref="HandleAsync"/> never actually sees null there.
     /// </summary>
     public QrOrderSubmittedConsumer(
-        NpgsqlDataSource dataSource, IOrderRepository orders, ITableRepository tables, SubmitOrderHandler? submitHandler = null)
+        NpgsqlDataSource dataSource,
+        IOrderRepository orders,
+        ITableRepository tables,
+        SubmitOrderHandler? submitHandler = null,
+        IPendingOrderAnnouncer? announcer = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _tables = tables ?? throw new ArgumentNullException(nameof(tables));
         _submitHandler = submitHandler;
+        _announcer = announcer;
     }
 
     public bool CanHandle(string eventType) => eventType == QrOrderingIntegrationEventTypes.QrOrderSubmitted;
@@ -159,8 +170,37 @@ public sealed class QrOrderSubmittedConsumer : IIntegrationEventConsumer
                 ?? throw new InvalidOperationException($"Order {orderId} was not found after submission.");
         }
 
-        await TryTransitionAsync(order, OrderState.PendingConfirmation, "QR siparişi - personel onayı bekleniyor.", cancellationToken)
+        order = await TryTransitionAsync(order, OrderState.PendingConfirmation, "QR siparişi - personel onayı bekleniyor.", cancellationToken)
             .ConfigureAwait(false);
+
+        // V1-RMD-149: until this existed the order stopped here and nobody
+        // was told. Announced only when it actually reached the waiting
+        // state — a redelivery that found the order already past
+        // PendingConfirmation must not raise the banner a second time.
+        if (_announcer is not null && order.Status == OrderState.PendingConfirmation)
+        {
+            await _announcer.AnnounceAsync(
+                new PendingOrderAnnouncement(
+                    order.Id,
+                    order.TableId,
+                    await ResolveTableNumberAsync(order.TableId, cancellationToken).ConfigureAwait(false),
+                    order.Items.Count,
+                    order.Total,
+                    order.SubmittedAt ?? order.CreatedAt),
+                cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// V1-RMD-149: the announcement carries the table number so a waiter
+    /// device can draw its banner without a second call.
+    /// </summary>
+    private async Task<string> ResolveTableNumberAsync(Guid? tableId, CancellationToken cancellationToken)
+    {
+        if (tableId is not { } id)
+            return string.Empty;
+        var table = await _tables.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
+        return table?.TableNumber ?? string.Empty;
     }
 
     /// <summary>

@@ -2,6 +2,7 @@ using System.Data;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
+using ALKAROS.Orders.Integration;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using Npgsql;
@@ -46,17 +47,24 @@ public sealed class NfcOrderingStore
     private readonly IOrderRepository _repository;
     private readonly SubmitOrderHandler _submitHandler;
     private readonly OrderStockConsumptionService _stockConsumption;
+    /// <summary>
+    /// V1-RMD-149: optional so a standalone NFC composition still builds; a
+    /// missing announcer only means nobody is told, the order is unaffected.
+    /// </summary>
+    private readonly IPendingOrderAnnouncer? _announcer;
 
     public NfcOrderingStore(
         NpgsqlDataSource dataSource,
         IOrderRepository repository,
         SubmitOrderHandler submitHandler,
-        OrderStockConsumptionService stockConsumption)
+        OrderStockConsumptionService stockConsumption,
+        IPendingOrderAnnouncer? announcer = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _submitHandler = submitHandler ?? throw new ArgumentNullException(nameof(submitHandler));
         _stockConsumption = stockConsumption ?? throw new ArgumentNullException(nameof(stockConsumption));
+        _announcer = announcer;
     }
 
     public async Task<OrderDto> PlaceOrderAsync(Guid tableId, NfcOrderRequest request, CancellationToken cancellationToken = default)
@@ -239,6 +247,19 @@ public sealed class NfcOrderingStore
         }
 
         var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
+
+        // V1-RMD-149: an NFC order that could not take the trusted shortcut
+        // (age-restricted cart, or stock refused it) is now waiting for a
+        // waiter exactly like a QR order — and until this existed nobody was
+        // told about either.
+        if (_announcer is not null && order.Status == OrderState.PendingConfirmation)
+        {
+            await _announcer.AnnounceAsync(
+                new PendingOrderAnnouncement(
+                    order.Id, order.TableId, tableNumber, order.Items.Count, order.Total, DateTimeOffset.UtcNow),
+                cancellationToken).ConfigureAwait(false);
+        }
+
         return MapToDto(order, tableNumber);
     }
 
