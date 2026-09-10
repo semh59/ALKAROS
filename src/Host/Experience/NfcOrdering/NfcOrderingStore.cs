@@ -438,10 +438,14 @@ public sealed class NfcOrderingStore
             i.Id,
             i.ProductId,
             i.ProductNameSnapshot,
-            (int)i.Quantity,
+            i.Quantity,
             i.UnitPrice,
             i.GrossAmount,
-            i.Notes
+            i.Notes,
+            AvailableStockQuantity: null,
+            Status: i.Status.ToString(),
+            KitchenState: i.KitchenState.ToString(),
+            CreatedAt: i.CreatedAt
         )).ToList();
 
         return new OrderDto(

@@ -588,6 +588,89 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(0, await _database.KitchenTicketCountAsync(draft.OrderId));
     }
 
+    [Fact]
+    public async Task AHalfPortionSurvivesDraftSubmitAndReadBack()
+    {
+        // V1-RMD-146: the projection used to write (int)i.Quantity, so a half
+        // portion came back as 0 even though the column is NUMERIC(18,3) and
+        // the aggregate holds a decimal.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Tavuk şiş", 420m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-40", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Tavuk şiş", 0.5m, 420m)])));
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(0.5m, draft!.Items.Single().Quantity);
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+
+        var submitted = await submitResponse.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(0.5m, submitted!.Items.Single().Quantity);
+    }
+
+    [Fact]
+    public async Task AQuantityThatWouldRoundAwayToZeroIsRejected()
+    {
+        // V1-RMD-146: opening the contract to decimal also opens the door to
+        // a value below the column's own precision, which would round to zero
+        // before the aggregate's quantity > 0 rule ever ran.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Tavuk şiş", 420m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-41", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Tavuk şiş", 0.0001m, 420m)])));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ASubmittedItemReportsItsStatusKitchenStateAndCreationTime()
+    {
+        // V1-RMD-146: the projection dropped all three, so a waiter could not
+        // tell a cancelled line from a live one, could not see what the
+        // kitchen was doing, and could not tell one round from the next.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var before = DateTimeOffset.UtcNow.AddMinutes(-1);
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-42", "Garson Ahmet",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal("Draft", draft!.Items.Single().Status);
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+        var submitted = await submitResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        var item = submitted!.Items.Single();
+        Assert.Equal("Active", item.Status);
+        Assert.Equal("NotSent", item.KitchenState);
+        Assert.True(item.CreatedAt > before, $"CreatedAt was {item.CreatedAt}");
+    }
+
     private static string DraftPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/table-draft";
 

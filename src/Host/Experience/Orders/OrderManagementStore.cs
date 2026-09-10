@@ -11,6 +11,14 @@ namespace ALKAROS.Host.Experience.Orders;
 
 public sealed class OrderManagementStore
 {
+    /// <summary>
+    /// V1-RMD-146: the smallest quantity <c>orders.order_items.quantity</c>
+    /// NUMERIC(18,3) can hold without rounding away to zero. Half and
+    /// one-and-a-half portions are well above it; this only stops a value
+    /// that would silently become nothing.
+    /// </summary>
+    private const decimal MinimumOrderQuantity = 0.001m;
+
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
     private readonly IRoleRepository _roles;
@@ -86,6 +94,13 @@ public sealed class OrderManagementStore
         {
             if (!catalog.TryGetValue(i.ProductId, out var product))
                 throw new KeyNotFoundException($"Product {i.ProductId} was not found, is not available, or has no active price.");
+            // V1-RMD-146: the contract is decimal now, so a quantity smaller
+            // than the column's own precision would round to zero on the way
+            // in and the aggregate's quantity > 0 rule would never see it.
+            if (i.Quantity < MinimumOrderQuantity)
+                throw new ArgumentOutOfRangeException(
+                    nameof(request),
+                    $"Quantity for product {i.ProductId} must be at least {MinimumOrderQuantity}.");
             var (productName, unitPrice, taxRate) = product;
 
             newItems.Add(new OrderItem(
@@ -476,10 +491,14 @@ public sealed class OrderManagementStore
             i.Id,
             i.ProductId,
             i.ProductNameSnapshot,
-            (int)i.Quantity,
+            i.Quantity,
             i.UnitPrice,
             i.GrossAmount,
-            i.Notes
+            i.Notes,
+            AvailableStockQuantity: null,
+            Status: i.Status.ToString(),
+            KitchenState: i.KitchenState.ToString(),
+            CreatedAt: i.CreatedAt
         )).ToList();
 
         return new OrderDto(

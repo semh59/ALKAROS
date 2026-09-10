@@ -33,11 +33,19 @@ public sealed record CreateTableDraftRequest(
 /// a genuinely new round of items, would otherwise double an item whose
 /// request was retried after an ambiguous network failure).
 /// </summary>
+/// <remarks>
+/// V1-RMD-146: <paramref name="Quantity"/> is decimal, not int — a half
+/// portion is quantity 0,5, not a separate product or a negative-price
+/// modifier. <c>orders.order_items.quantity</c> has always been
+/// NUMERIC(18,3) and <see cref="ALKAROS.Orders.OrderAggregate.OrderItem"/>.
+/// Quantity has always been decimal; only this contract and the read-side
+/// projection were pinned to whole numbers.
+/// </remarks>
 public sealed record OrderItemDraftDto(
     Guid Id,
     Guid ProductId,
     string ProductName,
-    int Quantity,
+    decimal Quantity,
     decimal UnitPrice,
     IReadOnlyList<string>? Modifiers = null,
     string? SpecialInstructions = null);
@@ -157,12 +165,23 @@ public sealed record OrderDto(
 /// tracked, not "zero left"). Purely informational: OrderStockConsumption
 /// Service's own check at Accept time is the real, authoritative gate.
 /// </summary>
+/// <remarks>
+/// V1-RMD-146: <paramref name="Status"/>, <paramref name="KitchenState"/> and
+/// <paramref name="CreatedAt"/> come straight off the aggregate's own item and
+/// used to be dropped by the projection. Without Status a cancelled line looks
+/// identical to a live one; without KitchenState a waiter can only learn what
+/// the kitchen is doing by querying the KDS ticket surface separately; without
+/// CreatedAt there is no way to tell one round of items from the next.
+/// </remarks>
 public sealed record OrderItemDto(
     Guid ItemId,
     Guid ProductId,
     string ProductName,
-    int Quantity,
+    decimal Quantity,
     decimal UnitPrice,
     decimal TotalPrice,
     string? SpecialInstructions,
-    decimal? AvailableStockQuantity = null);
+    decimal? AvailableStockQuantity = null,
+    string Status = "",
+    string KitchenState = "",
+    DateTimeOffset CreatedAt = default);
