@@ -416,6 +416,12 @@
     if (waiting > 0) parts.push(`${waiting} bekleyen`);
     if (failed > 0) parts.push(`${failed} hatalı`);
     el.ribbonQueue.textContent = parts.join(' • ');
+    // V1-RMD-171: found by the 2026-09-10 Garson audit — the count used
+    // to be the whole story; nothing said which table, what was in it, or
+    // gave a way to clear it. Now a real button into a real list.
+    el.ribbonQueue.hidden = waiting === 0 && failed === 0;
+    el.ribbonQueue.setAttribute('aria-label',
+      `${parts.join(', ')} - sipariş kuyruğunu göster`);
     measureChrome();
   }
 
@@ -1498,6 +1504,69 @@
       : `${tableNumber} hesabı kasaya gönderildi, masa boşaldı.`);
   }
 
+  // ══ Failed / queued orders ═══════════════════════════════════════════
+
+  // V1-RMD-171: found by the 2026-09-10 Garson audit — the ribbon's own
+  // "N hatalı" count was the whole story: no table, no content, and no
+  // way to clear it. This opens a real, reachable list of both the still-
+  // retrying (offline queue) and the permanently rejected (failed) rounds,
+  // with what each one actually contained and a way to dismiss a
+  // permanently-failed one once the waiter has dealt with it by hand
+  // (re-entering it, or telling the guest).
+  function openFailedOrdersSheet() {
+    const queued = state.offlineQueue.map((payload) => queuedOrderRow(payload, false));
+    const failed = state.failedOrders.map((payload) => queuedOrderRow(payload, true));
+    const rows = queued.concat(failed);
+
+    const body = rows.length === 0
+      ? '<div class="empty">Bekleyen veya hatalı sipariş yok.</div>'
+      : `<div class="opts">${rows.join('')}</div>`;
+
+    openOptions(
+      'failed-orders',
+      'Bekleyen ve hatalı siparişler',
+      queued.length > 0
+        ? `${queued.length} sunucuya ulaşmayı bekliyor, gönderilmemiş değil.`
+        : '',
+      body,
+      failed.length > 0 ? 'Hatalı olanların tümünü temizle' : '',
+      '', '');
+    el.optionsConfirm.className = 'btn btn-danger';
+    el.optionsConfirm.hidden = failed.length === 0;
+  }
+
+  function queuedOrderRow(payload, isFailed) {
+    const itemCount = (payload.items || []).reduce((sum, item) => sum + (item.quantity || 0), 0);
+    const itemNames = (payload.items || []).map((item) => item.name || item.productName).join(', ');
+    return `
+      <div class="opt" style="cursor:default">
+        <span class="opt-box is-round">
+          <svg class="icon" aria-hidden="true"><use href="#ico-${isFailed ? 'alert' : 'bell'}"/></svg>
+        </span>
+        <span class="opt-name">
+          ${escapeHtml(payload.tableNumber || '?')} masası — ${escapeHtml(formatQuantity(itemCount))} kalem
+          <span class="line-unit">${escapeHtml(itemNames)}</span>
+          ${isFailed && payload.error ? `<span class="line-unit">${escapeHtml(payload.error)}</span>` : ''}
+        </span>
+        ${isFailed
+          ? `<button type="button" class="btn-void" data-dismiss-failed="${escapeHtml(payload.id)}">Sil</button>`
+          : ''}
+      </div>`;
+  }
+
+  function dismissFailedOrder(payloadId) {
+    state.failedOrders = state.failedOrders.filter((payload) => payload.id !== payloadId);
+    persistQueue();
+    openFailedOrdersSheet();
+  }
+
+  function clearAllFailedOrders() {
+    state.failedOrders = [];
+    persistQueue();
+    closeOptions();
+    toast('Hatalı siparişler temizlendi.');
+  }
+
   // ══ Moving a table ═════════════════════════════════════════════════
 
   function openTransferSheet() {
@@ -1971,6 +2040,7 @@
     el.btnSendFromMenu.addEventListener('click', sendDraft);
     el.btnSendFromBill.addEventListener('click', sendDraft);
     el.pendingBanner.addEventListener('click', openPendingSheet);
+    el.ribbonQueue.addEventListener('click', openFailedOrdersSheet);
 
     el.productSearch.addEventListener('input', (event) => {
       state.search = event.target.value;
@@ -2096,6 +2166,12 @@
       return;
     }
 
+    const dismissFailed = event.target.closest('[data-dismiss-failed]');
+    if (dismissFailed && state.optionsMode === 'failed-orders') {
+      dismissFailedOrder(dismissFailed.dataset.dismissFailed);
+      return;
+    }
+
     const target = event.target.closest('[data-target]');
     if (target && state.optionsMode === 'transfer') {
       state.optionsContext.targetId = target.dataset.target;
@@ -2183,7 +2259,8 @@
     if (state.optionsMode === 'void-sent') { void confirmVoidSent(); return; }
     if (state.optionsMode === 'cashier') { void confirmSendToCashier(); return; }
     if (state.optionsMode === 'transfer') { void confirmTransfer(); return; }
-    if (state.optionsMode === 'pin') { void confirmPin(); }
+    if (state.optionsMode === 'pin') { void confirmPin(); return; }
+    if (state.optionsMode === 'failed-orders') { clearAllFailedOrders(); }
   }
 
   function repeatLastRound() {

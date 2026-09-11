@@ -62,7 +62,10 @@
   <div id="ribbon" class="ribbon" role="status" aria-live="polite">
     <span class="dot"></span>
     <span id="ribbonText">Bağlanıyor…</span>
-    <span class="queue" id="ribbonQueue"></span>
+    <!-- V1-RMD-171: found by the 2026-09-10 Garson audit — this was a
+         plain, unclickable span; a hatalı ("failed") count had nowhere to
+         go and nothing telling the waiter which table or what was lost. -->
+    <button type="button" class="queue" id="ribbonQueue" hidden></button>
   </div>
 
   <!-- Guest order banner. Stays until the waiter acts on it (foundations §5.3). -->
