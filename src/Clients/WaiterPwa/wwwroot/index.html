@@ -69,7 +69,11 @@
   </div>
 
   <!-- Guest order banner. Stays until the waiter acts on it (foundations §5.3). -->
-  <button type="button" class="pending-banner" id="pendingBanner" hidden>
+  <!-- V1-RMD-175: found by the 2026-09-10 Garson audit ("canlı bölge
+       eksikleri") — this banner can appear with no waiter action at all
+       (a guest orders while the waiter is elsewhere on screen), so without
+       a live region a screen reader user never learns it showed up. -->
+  <button type="button" class="pending-banner" id="pendingBanner" hidden role="status" aria-live="polite">
     <svg class="icon" aria-hidden="true"><use href="#ico-bell"/></svg>
     <span class="pending-text">
       <b id="pendingTitle">Misafir siparişi</b>
@@ -214,7 +218,12 @@
     <div class="lock-card">
       <img class="lock-mark" src="./brand/alkaros-logo-on-dark.png" alt="ALKAROS">
       <div class="lock-title" id="lockTitle">Ekran kilitli</div>
-      <div class="lock-sub" id="lockSub">PIN kodunuzu girin</div>
+      <!-- V1-RMD-175: found by the 2026-09-10 Garson audit ("canlı bölge
+           eksikleri") — this text swaps to a PIN-hatalı error after a
+           failed attempt, but focus stays on the keypad button just
+           pressed, so without a live region the error was silent for a
+           screen reader user. -->
+      <div class="lock-sub" id="lockSub" role="status" aria-live="polite">PIN kodunuzu girin</div>
       <div class="pin-dots" id="pinDots" aria-hidden="true"></div>
       <div class="pin-keys" id="pinKeys"></div>
     </div>

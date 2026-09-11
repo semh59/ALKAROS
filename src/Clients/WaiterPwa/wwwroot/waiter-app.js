@@ -282,7 +282,11 @@
     const onMenu = name === 'menu';
     el.tablesScreen.dataset.state = onMenu ? 'behind' : 'on';
     el.menuScreen.dataset.state = onMenu ? 'on' : 'off';
-    if (onMenu) window.setTimeout(() => el.productSearch.focus({ preventScroll: true }), 300);
+    // V1-RMD-175: found by the 2026-09-10 Garson audit — this used to
+    // force-focus the search box on every single menu open (every table
+    // tap, every return from the bill), popping the on-screen keyboard even
+    // when the waiter only wanted to tap a category or a product. Search is
+    // still one tap away; it just is not forced on the waiter anymore.
   }
 
   // On a tablet the bill is a fixed column, so these calls are no-ops there -
@@ -574,6 +578,17 @@
     }
   }
 
+  // V1-RMD-175: found by the 2026-09-10 Garson audit — the catalog was
+  // fetched once at start() and never again for the rest of the shift.
+  // Tables/pending orders get refetched on every action that touches them,
+  // but nothing a waiter does naturally re-triggers a catalog reload, so a
+  // manager changing a price or marking something out mid-shift never
+  // reached an already-open app. catalogLoadedAt lets the visibilitychange
+  // handler below refresh it opportunistically without hammering the
+  // server every time the tab briefly regains focus.
+  let catalogLoadedAt = 0;
+  const CATALOG_REFRESH_INTERVAL_MS = 15 * 60 * 1000;
+
   async function loadCatalog() {
     // V1-RMD-129: categories are derived from this one response's own
     // categoryCode/categoryName. There is no separate categories endpoint a
@@ -584,6 +599,7 @@
       state.categories = [];
       return;
     }
+    catalogLoadedAt = Date.now();
     const list = result.items;
     state.products = list.map((product) => ({
       id: product.productId,
@@ -603,6 +619,14 @@
       }
     }
     state.categories = Array.from(seen, ([id, name]) => ({ id, name }));
+  }
+
+  async function refreshCatalogIfStaleAsync() {
+    if (!state.isOnline) return;
+    if (Date.now() - catalogLoadedAt < CATALOG_REFRESH_INTERVAL_MS) return;
+    await loadCatalog();
+    renderCategories();
+    renderProducts();
   }
 
   async function loadTables() {
@@ -1517,6 +1541,20 @@
     el.optionsConfirm.hidden = true;
   }
 
+  // V1-RMD-175: disables both buttons on the same line for the duration of
+  // the call, re-enabling them only on failure - success already
+  // re-renders the sheet (or closes it), which throws these nodes away.
+  async function resolvePendingGuarded(button, orderId, accept) {
+    const line = button.closest('.line-side') || button.parentElement;
+    const pair = line ? line.querySelectorAll('[data-accept], [data-reject]') : [button];
+    pair.forEach((candidate) => { candidate.disabled = true; });
+    try {
+      await resolvePending(orderId, accept);
+    } finally {
+      pair.forEach((candidate) => { candidate.disabled = false; });
+    }
+  }
+
   // Accept and reject both need the order's current row version, which the
   // summary does not carry - so it is read first rather than guessed.
   async function resolvePending(orderId, accept) {
@@ -2140,6 +2178,9 @@
       // round to go out, and a backgrounded PWA's timers may have been
       // throttled to nothing while it was away.
       void flushQueue();
+      // V1-RMD-175: same "coming back to the app" moment, opportunistically
+      // catches up a catalog that has sat unrefreshed since start().
+      void refreshCatalogIfStaleAsync();
     });
 
     el.zoneChips.addEventListener('click', (event) => {
@@ -2346,10 +2387,17 @@
       return;
     }
 
+    // V1-RMD-175: found by the 2026-09-10 Garson audit — these two buttons
+    // had no double-tap guard; a fast double-tap fired two concurrent
+    // resolvePending() calls for the same order (the server's own
+    // row_version check would reject the second as a conflict, but the
+    // waiter still saw a spurious error toast from what looked like one
+    // tap). The pair is disabled together since accepting/rejecting either
+    // one settles the same order.
     const accept = event.target.closest('[data-accept]');
-    if (accept) { void resolvePending(accept.dataset.accept, true); return; }
+    if (accept) { void resolvePendingGuarded(accept, accept.dataset.accept, true); return; }
     const reject = event.target.closest('[data-reject]');
-    if (reject) { void resolvePending(reject.dataset.reject, false); return; }
+    if (reject) { void resolvePendingGuarded(reject, reject.dataset.reject, false); return; }
 
     const profile = event.target.closest('[data-profile]');
     if (profile) {
