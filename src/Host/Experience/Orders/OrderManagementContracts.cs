@@ -222,11 +222,22 @@ public sealed record VoidSentItemResultV1(
 /// caller needs orders.transfer-server when FromUserId is their own user id,
 /// orders.transfer-server-any otherwise (docs/domain/authorization-model.md
 /// §3).
+///
+/// <paramref name="HandoffNote"/> (V1-WTR-013): optional, at most 200
+/// characters, shown to the receiving waiter exactly once (the first time
+/// their client pops it, typically right after opening a table) — see
+/// <see cref="ServingHandoffNoteStore"/>.
 /// </summary>
-public sealed record TransferServingUserRequestV1(Guid FromUserId, Guid ToUserId);
+public sealed record TransferServingUserRequestV1(Guid FromUserId, Guid ToUserId, string? HandoffNote = null);
 
 /// <summary>V1-RMD-111: response for the garson-masa hand-off endpoint.</summary>
 public sealed record TransferServingUserResultV1(int OrdersReassigned);
+
+/// <summary>
+/// V1-WTR-013: the receiving waiter's pending hand-off note, popped exactly
+/// once. Null (204) when there is none.
+/// </summary>
+public sealed record ServingHandoffNoteV1(string Note, string FromDisplayName, DateTimeOffset CreatedAt);
 
 /// <summary>
 /// V1-RMD-177: one row of the GET /staff listing used to pick a

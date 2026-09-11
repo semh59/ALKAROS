@@ -138,9 +138,19 @@ HOST_AREA_SCHEMA = {
 # self-check-in (V14-NFC-001) is the exact same soft-cache-pointer write as
 # Orders' table-draft flow, just from the unauthenticated NFC endpoint
 # instead of the cashier-authenticated one.
+#
+# V1-WTR-013: Orders/transfer-server also writes notifications.
+# serving_handoff_notes — small, ephemeral, user-directed operational
+# metadata (same shape as WebPush's own push_subscriptions, which is why it
+# lives in the same schema) that belongs to the hand-off ACTION itself, not
+# to any order or to identity. No module owns "a note about a hand-off
+# event" any more than one owns "a browser's push endpoint"; giving it a
+# third schema of its own for one small table would be its own kind of
+# overhead, so it borrows notifications the same deliberate way the pointer
+# writes above borrow table_mgmt.
 HOST_AREA_EXTRA_SCHEMAS = {
     "Experience/NfcOrdering": {"table_mgmt"},
-    "Experience/Orders": {"table_mgmt"},
+    "Experience/Orders": {"table_mgmt", "notifications"},
     "Experience/Billing": {"table_mgmt"},
     "DualScreen": {"table_mgmt"},
 }

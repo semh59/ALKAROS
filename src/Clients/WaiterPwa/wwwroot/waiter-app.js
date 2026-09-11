@@ -828,6 +828,19 @@
       showScreen('tables');
       openBill();
     }
+
+    // V1-WTR-013: pops (reads and marks seen, in one server round trip) any
+    // pending hand-off note left for this waiter — fires on every table
+    // open, but a note only ever exists once, so in practice this shows it
+    // exactly the first time a table is opened after receiving it and does
+    // nothing on every open after that.
+    void popHandoffNoteIfAny();
+  }
+
+  async function popHandoffNoteIfAny() {
+    const result = await api(apiUrl('/orders/handoff-note/pop'), { method: 'POST' });
+    if (!result.ok || !result.data) return;
+    toast(`${result.data.fromDisplayName}'den not: ${result.data.note}`, { warning: true });
   }
 
   function activeItems() {
@@ -1928,6 +1941,14 @@
             <span class="opt-name">${escapeHtml(person.displayName)}</span>
           </button>`).join('')}</div>`;
 
+    // V1-WTR-013: optional context for the receiving waiter — "table 5 is
+    // waiting on dessert, table 8 complained" — shown to them once, the
+    // first time their client pops it (see popHandoffNoteIfAny below).
+    const noteField = `
+      <label class="hint" for="handoffNoteInput">Devir notu (isteğe bağlı)</label>
+      <input class="note" type="text" id="handoffNoteInput" maxlength="200"
+             placeholder="Örn. 5 nolu masa tatlı bekliyor">`;
+
     state.optionsContext = { targetId: null };
     openOptions('transfer-server', 'Masaları devret',
       // V1-RMD-178: found by independent review of V1-RMD-177 — this used
@@ -1936,7 +1957,7 @@
       // user, on every device/terminal — device-independent, no undo. The
       // text now says what the action actually does.
       'Üzerinizdeki TÜM açık masalar (bu cihazda olsun olmasın) seçtiğiniz kişiye geçer — geri alınamaz',
-      body, 'Devret', '', '');
+      body + noteField, 'Devret', '', '');
     el.optionsConfirm.className = 'btn btn-primary';
     el.optionsConfirm.disabled = true;
   }
@@ -1946,9 +1967,12 @@
     if (!context || !context.targetId || !state.user) return;
     el.optionsConfirm.disabled = true;
 
+    const noteField = el.optionsBody.querySelector('#handoffNoteInput');
+    const handoffNote = noteField ? noteField.value.trim() : '';
+
     const result = await api(apiUrl('/orders/transfer-server'), {
       method: 'POST',
-      body: { fromUserId: state.user.userId, toUserId: context.targetId }
+      body: { fromUserId: state.user.userId, toUserId: context.targetId, handoffNote: handoffNote || null }
     });
 
     if (!result.ok) {

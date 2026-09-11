@@ -492,6 +492,122 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
+    // V1-WTR-013: an optional context note a departing waiter can leave on
+    // /transfer-server - "table 5 is waiting on dessert" - popped (read and
+    // marked seen in one round trip) exactly once by the receiving waiter.
+
+    [Fact]
+    public async Task ATransferWithAHandoffNoteLetsTheReceiverPopItExactlyOnce()
+    {
+        var fromTerminalId = Guid.NewGuid();
+        var toTerminalId = Guid.NewGuid();
+        var (fromWaiterId, fromCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            fromTerminalId, "waiter", "orders.transfer-server");
+        var (_, toCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            toTerminalId, "waiter", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        // ToUserId must be a real, known target - read it back from /staff
+        // rather than re-deriving the seeded id, so this test exercises the
+        // same lookup the real client uses.
+        using var staffResponse = await client.SendAsync(GetRequest(StaffPath(fromTerminalId), fromCookie));
+        var staff = await staffResponse.Content.ReadFromJsonAsync<StaffMemberV1[]>();
+        var toUserId = staff!.Single().UserId;
+
+        using var transfer = await client.SendAsync(JsonRequest(TransferPath(fromTerminalId), fromCookie,
+            new TransferServingUserRequestV1(fromWaiterId, toUserId, "5 nolu masa tatlı bekliyor")));
+        Assert.Equal(HttpStatusCode.OK, transfer.StatusCode);
+
+        using var firstPop = await client.SendAsync(PostRequest(HandoffNotePopPath(toTerminalId), toCookie));
+        Assert.Equal(HttpStatusCode.OK, firstPop.StatusCode);
+        var note = await firstPop.Content.ReadFromJsonAsync<ServingHandoffNoteV1>();
+        Assert.Equal("5 nolu masa tatlı bekliyor", note!.Note);
+        Assert.Equal("Table Draft API Test", note.FromDisplayName);
+
+        // Read once: the same note must not come back a second time.
+        using var secondPop = await client.SendAsync(PostRequest(HandoffNotePopPath(toTerminalId), toCookie));
+        Assert.Equal(HttpStatusCode.NoContent, secondPop.StatusCode);
+    }
+
+    [Fact]
+    public async Task PoppingWithNoPendingNoteReturnsNoContent()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(PostRequest(HandoffNotePopPath(terminalId), cookie));
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ATransferWithNoHandoffNoteLeavesNothingToPop()
+    {
+        var terminalId = Guid.NewGuid();
+        var toTerminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.transfer-server");
+        var (toWaiterId, toCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            toTerminalId, "waiter", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var transfer = await client.SendAsync(JsonRequest(TransferPath(terminalId), cookie,
+            new TransferServingUserRequestV1(waiterId, toWaiterId)));
+        Assert.Equal(HttpStatusCode.OK, transfer.StatusCode);
+
+        using var pop = await client.SendAsync(PostRequest(HandoffNotePopPath(toTerminalId), toCookie));
+        Assert.Equal(HttpStatusCode.NoContent, pop.StatusCode);
+    }
+
+    [Fact]
+    public async Task ATooLongHandoffNoteIsRejected()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.transfer-server");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var transfer = await client.SendAsync(JsonRequest(TransferPath(terminalId), cookie,
+            new TransferServingUserRequestV1(waiterId, Guid.NewGuid(), new string('a', 201))));
+
+        Assert.Equal(HttpStatusCode.BadRequest, transfer.StatusCode);
+    }
+
+    [Fact]
+    public async Task ASecondHandoffNoteSupersedesTheFirstUnpoppedOne()
+    {
+        var terminalId = Guid.NewGuid();
+        var toTerminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.transfer-server");
+        var (toWaiterId, toCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            toTerminalId, "waiter", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var firstTransfer = await client.SendAsync(JsonRequest(TransferPath(terminalId), cookie,
+            new TransferServingUserRequestV1(waiterId, toWaiterId, "İlk not")));
+        Assert.Equal(HttpStatusCode.OK, firstTransfer.StatusCode);
+        using var secondTransfer = await client.SendAsync(JsonRequest(TransferPath(terminalId), cookie,
+            new TransferServingUserRequestV1(waiterId, toWaiterId, "İkinci not")));
+        Assert.Equal(HttpStatusCode.OK, secondTransfer.StatusCode);
+
+        using var pop = await client.SendAsync(PostRequest(HandoffNotePopPath(toTerminalId), toCookie));
+        Assert.Equal(HttpStatusCode.OK, pop.StatusCode);
+        var note = await pop.Content.ReadFromJsonAsync<ServingHandoffNoteV1>();
+        Assert.Equal("İkinci not", note!.Note);
+
+        // The superseded first note must not surface later either.
+        using var secondPop = await client.SendAsync(PostRequest(HandoffNotePopPath(toTerminalId), toCookie));
+        Assert.Equal(HttpStatusCode.NoContent, secondPop.StatusCode);
+    }
+
     [Fact]
     public async Task DraftingAnUnavailableProductIsRejected()
     {
@@ -1191,9 +1307,19 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     private static string StaffPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/staff";
 
+    private static string HandoffNotePopPath(Guid terminalId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/handoff-note/pop";
+
     private static HttpRequestMessage JsonRequest<T>(string path, string cookie, T body)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, path) { Content = JsonContent.Create(body) };
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return request;
+    }
+
+    private static HttpRequestMessage PostRequest(string path, string cookie)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, path);
         request.Headers.TryAddWithoutValidation("Cookie", cookie);
         return request;
     }

@@ -858,6 +858,14 @@
         "authorization_grants"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "100",
+      "phase": "B",
+      "tables": [
+        "serving_handoff_notes"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

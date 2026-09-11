@@ -49,6 +49,7 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<DualScreenStore>();
         services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
         services.TryAddSingleton<OrderManagementStore>();
+        services.TryAddSingleton<ServingHandoffNoteStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
@@ -672,6 +673,7 @@ public static class OrderManagementEndpoints
             Guid terminalId,
             TransferServingUserRequestV1 request,
             OrderManagementStore store,
+            ServingHandoffNoteStore handoffNotes,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -685,8 +687,35 @@ public static class OrderManagementEndpoints
             await authorization.AuthorizeAsync(actingUserId, permissionCode, cancellationToken);
 
             var count = await store.TransferServingUserAsync(request.FromUserId, request.ToUserId, cancellationToken);
+            // V1-WTR-013: left by the person actually performing the
+            // hand-off (not always request.FromUserId - a cashier using
+            // orders.transfer-server-any transfers on someone else's
+            // behalf), for the target to see once. A no-op when the note
+            // is empty (LeaveAsync's own contract).
+            await handoffNotes.LeaveAsync(actingUserId, request.ToUserId, request.HandoffNote, cancellationToken);
             return Results.Ok(new TransferServingUserResultV1(count));
         });
+
+        // V1-WTR-013: "read once" by design - the client calls this right
+        // after opening a table, gets the departing waiter's context note
+        // exactly the first time (if one was left), and never sees it
+        // again. No permission check beyond a valid cashier session: a
+        // waiter's own pending note is never anyone else's business to
+        // withhold, and ServingHandoffNoteStore only ever returns notes
+        // addressed to the caller (to_user_id = userId).
+        group.MapPost("/handoff-note/pop", async (
+            Guid terminalId,
+            ServingHandoffNoteStore handoffNotes,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            var note = await handoffNotes.PopPendingAsync(userId, cancellationToken);
+            return note is null
+                ? Results.NoContent()
+                : Results.Ok(new ServingHandoffNoteV1(note.Note, note.FromDisplayName, note.CreatedAt));
+        }).RequireRateLimiting("terminal-read");
 
         return group;
     }
@@ -782,6 +811,9 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
         KeyNotFoundException or OrderItemNotFoundException or OrderNotFoundException => (404, "NOT_FOUND", "İstenen kayıt bulunamadı."),
         InvalidItemReasonException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        // V1-WTR-013: the 200-character cap on an optional hand-off note.
+        HandoffNoteTooLongException tooLong =>
+            (400, "VALIDATION_FAILED", $"Devir notu en fazla {tooLong.MaxLength} karakter olabilir."),
         LateVoidRejectedException => (409, "ALREADY_SENT", "Ürün zaten mutfağa gönderilmiş."),
         ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
