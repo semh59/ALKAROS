@@ -548,7 +548,16 @@
 
     el.tablesGrid.innerHTML = visible.map((table) => {
       const status = TABLE_STATUS[table.status] || { label: table.status, cls: '' };
-      const busy = table.amount > 0;
+      // V1-RMD-168: found by the 2026-09-10 Garson audit (foundations.md
+      // §0.2) — this used to read `table.amount > 0`, deriving whether a
+      // table is occupied from money instead of the server's own status
+      // field. A table with an open check whose current total happens to
+      // be zero (every line comped, or a Draft round not yet priced) would
+      // wrongly look empty; the server already says "Occupied" directly
+      // (set when an order attaches to the table, V1-ORD-006) and that is
+      // what "does this table already have an order to add to" actually
+      // means, not its running total.
+      const busy = table.status === 'occupied';
       // A table already carrying an order gets a shortcut straight to the
       // menu; tapping the table itself opens its bill.
       const quick = busy

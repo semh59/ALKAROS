@@ -95,20 +95,33 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // V1-RMD-168: found by the 2026-09-10 Garson audit — cache-first meant a
+  // deploy that changed waiter-app.js/waiter-app.css/index.html but left
+  // sw.js itself byte-identical (CACHE_NAME not bumped, an easy step to
+  // forget — the shell files and this file are edited independently, no
+  // build step ties them together) was undetectable: the browser only
+  // re-runs `install` when sw.js's own bytes change, so the stale cached
+  // shell would be served forever with nothing telling anyone it was
+  // stale. Network-first for the app shell fixes this without depending
+  // on remembering to bump anything: an online device always gets the
+  // real, current file; the cache exists purely as the offline fallback
+  // it was always meant to be (the whole reason this app has an offline
+  // queue). A background cache.put still runs on every successful fetch
+  // so the offline fallback itself stays reasonably fresh too.
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
+    fetch(event.request).then((networkResponse) => {
+      if (networkResponse && networkResponse.status === 200) {
+        const responseToCache = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
       }
-      return fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+      return networkResponse;
+    }).catch(() => {
+      return caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
-        return networkResponse;
-      }).catch(() => {
         if (event.request.headers.get('accept')?.includes('text/html')) {
           return caches.match('./index.html');
         }
