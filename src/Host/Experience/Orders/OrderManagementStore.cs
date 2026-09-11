@@ -245,30 +245,43 @@ public sealed class OrderManagementStore
             // audit, 2026-09-06).
             var currentOrder = await _repository.GetByIdAsync(existingOrder.OrderId, cancellationToken)
                 ?? throw new InvalidOperationException($"Order {existingOrder.OrderId} was not found during draft merge.");
-            // A retried request (e.g. the offline queue resending a call whose
-            // response was lost to a dropped connection) carries the same
-            // client-generated item ids as the round it already applied —
-            // drop those from newItems instead of appending a duplicate line.
-            var alreadyPersistedIds = currentOrder.Items.Select(item => item.Id).ToHashSet();
-            var roundToAdd = newItems.Where(item => !alreadyPersistedIds.Contains(item.Id)).ToList();
+            var currentById = currentOrder.Items.ToDictionary(item => item.Id);
 
-            if (roundToAdd.Count == 0)
+            // V1-RMD-164: found by the 2026-09-10 Garson audit — a client-
+            // generated item id already on this check used to be treated as
+            // a pure retry outright and dropped, keeping whatever content
+            // was already stored. Correct for an identical resend, wrong for
+            // the audit's exact scenario: table-draft succeeds (the item now
+            // exists, Draft, NotSent) but submit-draft fails; the waiter
+            // corrects the quantity on the SAME line and resends the whole
+            // draft. The old code silently kept the stale quantity forever —
+            // the kitchen got the wrong amount and the screen showed the
+            // round as sent. "Nothing to save" now means content-unchanged,
+            // not merely id-known.
+            var anyChange = newItems.Any(item =>
+                !currentById.TryGetValue(item.Id, out var existing)
+                || (existing.KitchenState == KitchenState.NotSent && !ItemContentUnchanged(existing, item)));
+
+            if (!anyChange)
             {
-                // A pure retry: every line was already applied. Saving would
-                // only bump the row version and hand the caller a number the
-                // database no longer agrees with.
+                // A pure retry: every line already matches what is stored.
+                // Saving would only bump the row version and hand the caller
+                // a number the database no longer agrees with.
                 await transaction.CommitAsync(cancellationToken);
                 return await WithAvailableStockAsync(MapToDto(currentOrder, request.TableNumber), cancellationToken);
             }
 
-            // V1-ORD-006: the aggregate appends the round itself, which keeps
+            // V1-ORD-006: the aggregate merges the round itself, which keeps
             // everything the old hand-rebuilt `new Order(...)` had to restate
             // and got wrong: it hardcoded `status: Draft` (which would now
             // silently reopen a Submitted check), overwrote `notes` with this
             // request's OrderNote (erasing an allergy note left on round one
             // when round two carried none) and rewrote `order_number` into a
-            // second format.
-            order = currentOrder.AddRound(roundToAdd);
+            // second format. ReconcileRound (V1-RMD-164) both appends
+            // genuinely new lines and, for an existing NotSent line, replaces
+            // its content with the corrected version — an already-fired line
+            // stays untouched here exactly as it always did.
+            order = currentOrder.ReconcileRound(newItems);
 
             // Saved through the connection/transaction already holding the
             // FOR UPDATE lock acquired above, instead of the store's other
@@ -774,6 +787,32 @@ public sealed class OrderManagementStore
                         $"Quantity for modifier {modifier.ModifierId} may not exceed {MaximumOrderQuantity}; got {quantity}.");
             }
         }
+    }
+
+    /// <summary>
+    /// V1-RMD-164: whether an incoming item is content-identical to what is
+    /// already stored — quantity, notes and the modifier set (by id and
+    /// quantity; name/price are always catalog-resolved and so can never
+    /// differ for the same id). Used to tell an idempotent retry (nothing to
+    /// do) apart from a correction (must replace the stored line).
+    /// </summary>
+    private static bool ItemContentUnchanged(OrderItem existing, OrderItem incoming)
+    {
+        if (existing.Quantity != incoming.Quantity)
+            return false;
+        if (existing.Notes != incoming.Notes)
+            return false;
+
+        var existingModifiers = existing.Modifiers
+            .Select(m => (m.ModifierId, m.Quantity))
+            .OrderBy(m => m.ModifierId)
+            .ToList();
+        var incomingModifiers = incoming.Modifiers
+            .Select(m => (m.ModifierId, m.Quantity))
+            .OrderBy(m => m.ModifierId)
+            .ToList();
+
+        return existingModifiers.SequenceEqual(incomingModifiers);
     }
 
     /// <summary>

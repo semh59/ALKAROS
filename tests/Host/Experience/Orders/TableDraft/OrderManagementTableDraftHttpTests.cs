@@ -73,6 +73,60 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ResendingTheSameLineWithACorrectedQuantityUpdatesTheStoredItem()
+    {
+        // V1-RMD-164: found by the 2026-09-10 Garson audit — the exact
+        // scenario: table-draft succeeds (the item now exists, Draft,
+        // NotSent), the caller (in production: submit-draft failing on the
+        // same round) then resends the SAME client-generated line id with a
+        // corrected quantity. The old merge logic saw the id already
+        // existed and dropped the correction outright, permanently keeping
+        // the stale quantity - the kitchen would get the wrong amount and
+        // the screen would show the round as sent.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        var lineId = Guid.NewGuid();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var firstResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-06",
+                [new OrderItemDraftDto(lineId, product, "Çorba", 2, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        var firstDraft = await firstResponse.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(2m, Assert.Single(firstDraft!.Items).Quantity);
+
+        // Same table-draft call, SAME line id, corrected quantity - exactly
+        // what a waiter resending a failed round after fixing a typo sends.
+        using var correctedResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-06",
+                [new OrderItemDraftDto(lineId, product, "Çorba", 3, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, correctedResponse.StatusCode);
+        var correctedDraft = await correctedResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        var item = Assert.Single(correctedDraft!.Items);
+        Assert.Equal(lineId, item.ItemId);
+        Assert.Equal(3m, item.Quantity);
+        Assert.Equal(180m, correctedDraft.TotalAmount);
+        Assert.Equal(firstDraft.OrderId, correctedDraft.OrderId);
+
+        // A third resend with the SAME corrected content must be the pure-
+        // retry path (no change), not a second silent overwrite loop.
+        using var repeatResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-06",
+                [new OrderItemDraftDto(lineId, product, "Çorba", 3, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, repeatResponse.StatusCode);
+        var repeatDraft = await repeatResponse.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(3m, Assert.Single(repeatDraft!.Items).Quantity);
+        Assert.Equal(correctedDraft.RowVersion, repeatDraft.RowVersion);
+    }
+
+    [Fact]
     public async Task SubmitDraftMovesTheOrderToSubmittedStatus()
     {
         var terminalId = Guid.NewGuid();

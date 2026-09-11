@@ -287,6 +287,47 @@ public sealed class Order
     }
 
     /// <summary>
+    /// V1-RMD-164: found by the 2026-09-10 Garson audit — <see cref="AddRound"/>
+    /// treats any incoming item id that already exists on this check as a
+    /// pure retry and drops it outright, keeping whatever was already
+    /// stored. That is correct for an identical resend, but not for the
+    /// audit's exact scenario: table-draft succeeds (the item now exists,
+    /// Draft, NotSent) but submit-draft fails; the waiter corrects the
+    /// quantity on the SAME client-side line and resends the whole draft.
+    /// AddRound silently kept the stale first quantity forever — the
+    /// kitchen got the wrong amount and the screen showed the round as
+    /// sent. An item that has not yet been fired to the kitchen is still
+    /// safely correctable, so this REPLACES it with the incoming version
+    /// instead of dropping it. An item that already left NotSent stays
+    /// exactly as untouchable here as it is in <see cref="AddRound"/> —
+    /// void/void-sent is the only path allowed to change what the kitchen
+    /// already has.
+    /// </summary>
+    public Order ReconcileRound(IReadOnlyList<OrderItem> incomingItems)
+    {
+        ArgumentNullException.ThrowIfNull(incomingItems);
+        if (!IsOpenCheck)
+            throw new InvalidOperationException($"Order {Id} cannot accept items in state {Status}.");
+        if (incomingItems.Any(item => item.Status is not OrderItemState.Draft))
+            throw new ArgumentException("A round may only carry Draft items.", nameof(incomingItems));
+
+        var incomingById = incomingItems.ToDictionary(item => item.Id);
+        var reconciled = new List<OrderItem>(_items.Count);
+        foreach (var existing in _items)
+        {
+            if (incomingById.TryGetValue(existing.Id, out var incoming) && existing.KitchenState == KitchenState.NotSent)
+                reconciled.Add(incoming);
+            else
+                reconciled.Add(existing);
+            incomingById.Remove(existing.Id);
+        }
+
+        // Whatever ids remain are genuinely new lines this round adds.
+        reconciled.AddRange(incomingById.Values);
+        return RebuildWith(items: reconciled);
+    }
+
+    /// <summary>
     /// V1-ORD-006: activates the Draft items — and only those — returning the
     /// order together with the round that was actually fired. The caller
     /// hands that list to <see cref="IOrderSubmissionDispatcher"/> so the
