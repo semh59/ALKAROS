@@ -40,10 +40,29 @@ public sealed class HelpRequestStore
         CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        // Found in an independent review (2026-09-11): the cooldown check
+        // below (a SELECT) and the insert further down had nothing tying
+        // them together, so two concurrent raises for the same table (a
+        // genuine double-tap, or two devices) could both read "no recent
+        // request" and both insert - exactly the double-tap/stuck-finger
+        // scenario this cooldown's own doc comment says it exists to
+        // protect against, defeated by the case least protected by a bare
+        // check-then-insert. A transaction-scoped advisory lock keyed by
+        // the table id serializes concurrent raises for THIS table only;
+        // every other table's raise proceeds fully concurrently, and the
+        // lock releases automatically on commit or rollback.
+        await using (var tableLock = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext(@table_id)::bigint);", connection, transaction))
+        {
+            tableLock.Parameters.Add("table_id", NpgsqlDbType.Text).Value = tableId.ToString("N");
+            await tableLock.ExecuteNonQueryAsync(cancellationToken);
+        }
 
         string? tableNumber;
         await using (var lookup = new NpgsqlCommand(
-            "SELECT table_number FROM table_mgmt.tables WHERE table_id = @table_id;", connection))
+            "SELECT table_number FROM table_mgmt.tables WHERE table_id = @table_id;", connection, transaction))
         {
             lookup.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
             tableNumber = (string?)await lookup.ExecuteScalarAsync(cancellationToken);
@@ -57,7 +76,7 @@ public sealed class HelpRequestStore
             WHERE table_id = @table_id
             ORDER BY created_at DESC
             LIMIT 1;
-            """, connection))
+            """, connection, transaction))
         {
             cooldownCheck.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
             if (await cooldownCheck.ExecuteScalarAsync(cancellationToken) is DateTime lastRaisedAtUtc)
@@ -69,6 +88,7 @@ public sealed class HelpRequestStore
         }
 
         var helpRequestId = Guid.NewGuid();
+        HelpRequestRecord record;
         await using (var insert = new NpgsqlCommand(
             """
             WITH inserted AS (
@@ -80,7 +100,7 @@ public sealed class HelpRequestStore
             SELECT inserted.created_at, u.display_name
             FROM inserted, identity.users u
             WHERE u.user_id = @requested_by_user_id;
-            """, connection))
+            """, connection, transaction))
         {
             insert.Parameters.Add("help_request_id", NpgsqlDbType.Uuid).Value = helpRequestId;
             insert.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
@@ -92,7 +112,10 @@ public sealed class HelpRequestStore
             await reader.ReadAsync(cancellationToken);
             var createdAt = reader.GetFieldValue<DateTimeOffset>(0);
             var requestedByDisplayName = reader.GetString(1);
-            return new HelpRequestRecord(helpRequestId, tableNumber, requestedByDisplayName, createdAt);
+            record = new HelpRequestRecord(helpRequestId, tableNumber, requestedByDisplayName, createdAt);
         }
+
+        await transaction.CommitAsync(cancellationToken);
+        return record;
     }
 }

@@ -68,6 +68,49 @@ public sealed class HelpRequestHttpTests : IAsyncLifetime
         Assert.Equal(1, await _database.HelpRequestCountAsync());
     }
 
+    /// <summary>
+    /// Found in an independent review (2026-09-11): the cooldown's own read
+    /// (last request time) and the insert used to have nothing tying them
+    /// together, so two genuinely concurrent raises for the same table
+    /// (a real double-tap, or two devices at once) could both read "no
+    /// recent request" and both succeed - exactly the scenario this
+    /// cooldown's own doc comment says it exists to protect against.
+    /// HelpRequestStore.RaiseAsync now takes a transaction-scoped advisory
+    /// lock keyed by table id before either read, serializing the two
+    /// concurrent calls below into a real first-and-second rather than two
+    /// parallel winners. Verified this test genuinely exercises the race
+    /// (not a vacuous pass either way): temporarily reverting the lock to a
+    /// no-op made this exact test fail 5/5 runs.
+    /// </summary>
+    [Fact]
+    public async Task TwoGenuinelyConcurrentRequestsForTheSameTableProduceExactlyOneWinner()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var (tableId, _) = await _database.SeedTableAsync();
+        await using var app = await StartAsync();
+        using var firstClient = CreateClient(app);
+        using var secondClient = CreateClient(app);
+
+        var responses = await Task.WhenAll(
+            firstClient.SendAsync(JsonRequest(HelpRequestPath(terminalId), cookie,
+                new HelpRequestV1(tableId, HelpRequestTypeCatalog.Spill))),
+            secondClient.SendAsync(JsonRequest(HelpRequestPath(terminalId), cookie,
+                new HelpRequestV1(tableId, HelpRequestTypeCatalog.Spill))));
+        try
+        {
+            Assert.Equal(1, responses.Count(response => response.StatusCode == HttpStatusCode.OK));
+            Assert.Equal(1, responses.Count(response => response.StatusCode == (HttpStatusCode)429));
+        }
+        finally
+        {
+            foreach (var response in responses)
+                response.Dispose();
+        }
+
+        Assert.Equal(1, await _database.HelpRequestCountAsync());
+    }
+
     [Fact]
     public async Task ARequestForADifferentTableDuringAnotherTablesCooldownIsNotAffected()
     {

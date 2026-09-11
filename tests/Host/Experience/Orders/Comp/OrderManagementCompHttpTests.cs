@@ -309,6 +309,84 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
         Assert.Equal("Pending", body!.Status);
     }
 
+    /// <summary>
+    /// Found in an independent review (2026-09-11): the daily cap check
+    /// (sum granted today) and the grant insert used to have nothing tying
+    /// them together, so two genuinely concurrent comps - each individually
+    /// within the ₺150 cap when checked alone (₺100 already spent + ₺50 =
+    /// exactly ₺150) - could both read "₺100 spent so far" and both apply,
+    /// pushing the real total to ₺200. AuthorizationGrantService now holds a
+    /// per-(requester, permission) advisory lock across this exact
+    /// check-then-insert sequence.
+    ///
+    /// This HTTP-level test asserts the correct end-to-end outcome, but is
+    /// NOT by itself proof the race is closed: verified (by temporarily
+    /// reverting the lock to a no-op) that this exact test still passed
+    /// 5/5 runs even without the fix - the window between two independent
+    /// round trips here is too narrow to hit reliably by chance. The real,
+    /// deterministic proof is
+    /// PostgresAuthorizationGrantRepositoryTests.
+    /// AcquireRequesterLockSerializesTheSameRequesterAndPermission, which
+    /// forces the interleaving with an artificial delay and was confirmed
+    /// to fail without the fix. Kept here anyway as a legitimate business-
+    /// outcome regression test.
+    /// </summary>
+    [Fact]
+    public async Task TwoGenuinelyConcurrentCompsThatWouldTogetherExceedTheDailyCapProduceExactlyOneWinner()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var firstClient = CreateClient(app);
+        using var secondClient = CreateClient(app);
+
+        // Two sequential ₺50 comps first - ₺100 of the ₺150 daily cap spent,
+        // ₺50 of headroom left.
+        for (var i = 0; i < 2; i++)
+        {
+            var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(
+                waiterId, unitPrice: 50m, taxRate: 0m);
+            using var spend = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+                new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+            using var spendResponse = await firstClient.SendAsync(spend);
+            Assert.Equal(HttpStatusCode.OK, spendResponse.StatusCode);
+        }
+
+        // Two more ₺50 comps, fired genuinely concurrently. Each alone fits
+        // the remaining ₺50 headroom exactly; together they would overspend
+        // to ₺200 if both were granted.
+        var (thirdOrderId, thirdItemId) = await _database.SeedActiveOrderWithOneItemAsync(
+            waiterId, unitPrice: 50m, taxRate: 0m);
+        var (fourthOrderId, fourthItemId) = await _database.SeedActiveOrderWithOneItemAsync(
+            waiterId, unitPrice: 50m, taxRate: 0m);
+        using var thirdRequest = JsonRequest(CompPath(terminalId, thirdOrderId, thirdItemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var fourthRequest = JsonRequest(CompPath(terminalId, fourthOrderId, fourthItemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+
+        var responses = await Task.WhenAll(
+            firstClient.SendAsync(thirdRequest),
+            secondClient.SendAsync(fourthRequest));
+        try
+        {
+            Assert.Equal(1, responses.Count(response => response.StatusCode == HttpStatusCode.OK));
+            Assert.Equal(1, responses.Count(response => response.StatusCode == HttpStatusCode.Accepted));
+
+            var appliedBody = await responses
+                .Single(response => response.StatusCode == HttpStatusCode.OK)
+                .Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+            // The winner's own remaining-budget report must reflect the full
+            // ₺150 spent (₺100 + this ₺50), proving the second request's
+            // read did not silently miss the first's write.
+            Assert.Equal(0m, appliedBody!.PersonalBudgetRemaining);
+        }
+        finally
+        {
+            foreach (var response in responses)
+                response.Dispose();
+        }
+    }
+
     private static string CompPath(Guid terminalId, Guid orderId, Guid itemId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/items/{itemId:D}/comp";
 

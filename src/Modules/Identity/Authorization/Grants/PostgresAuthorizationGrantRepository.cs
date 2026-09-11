@@ -184,6 +184,59 @@ public sealed class PostgresAuthorizationGrantRepository : IAuthorizationGrantRe
         return result;
     }
 
+    public async Task<IAsyncDisposable> AcquireRequesterLockAsync(
+        Guid requesterUserId, string permissionCode, CancellationToken cancellationToken = default)
+    {
+        // A dedicated connection, not one from a shared command - a session-
+        // level pg_advisory_lock is held for the life of the connection that
+        // took it, and must stay open (not returned to the pool) until the
+        // caller disposes the handle. hashtext() computes the lock key
+        // server-side so it is stable across processes/machines, unlike
+        // .NET's own randomized string hashing.
+        var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        try
+        {
+            await using var command = new NpgsqlCommand(
+                "SELECT pg_advisory_lock(hashtext(@key)::bigint);", connection);
+            command.Parameters.AddWithValue("key", $"{requesterUserId:N}:{permissionCode}");
+            await command.ExecuteNonQueryAsync(cancellationToken);
+            return new AdvisoryLockHandle(connection);
+        }
+        catch
+        {
+            await connection.DisposeAsync();
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Releases every session-level advisory lock this dedicated connection
+    /// holds (only ever the one <see cref="AcquireRequesterLockAsync"/> took)
+    /// and returns the connection.
+    /// </summary>
+    private sealed class AdvisoryLockHandle : IAsyncDisposable
+    {
+        private readonly NpgsqlConnection _connection;
+
+        public AdvisoryLockHandle(NpgsqlConnection connection)
+        {
+            _connection = connection;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            try
+            {
+                await using var command = new NpgsqlCommand("SELECT pg_advisory_unlock_all();", _connection);
+                await command.ExecuteNonQueryAsync();
+            }
+            finally
+            {
+                await _connection.DisposeAsync();
+            }
+        }
+    }
+
     private static AuthorizationGrant Read(NpgsqlDataReader reader) => new(
         reader.GetGuid(0),
         reader.GetString(1),

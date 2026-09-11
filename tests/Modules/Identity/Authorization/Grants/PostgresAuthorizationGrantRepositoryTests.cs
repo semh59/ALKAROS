@@ -22,6 +22,59 @@ public sealed class PostgresAuthorizationGrantRepositoryTests : IClassFixture<Gr
         Amount: amount, ReasonCode: "OperatorError", RequestedAt: DateTimeOffset.UtcNow,
         Status: GrantStatus.Pending, Path: null, ApproverUserId: null, ResolvedAt: null);
 
+    /// <summary>
+    /// Found in an independent review (2026-09-11): a TOCTOU race let two
+    /// concurrent grant requests from the same requester/permission both
+    /// read the same pre-insert running total and both pass a cap meant to
+    /// block the second one - proven earlier by disabling
+    /// AuthorizationGrantService's lock and observing the HTTP-level
+    /// concurrency test still passed anyway (the race window between two
+    /// independent round trips is too narrow to hit reliably by chance,
+    /// so a black-box test alone cannot prove this). This test instead
+    /// proves the lock primitive itself deterministically: a second
+    /// acquisition for the SAME (requester, permission) key genuinely
+    /// blocks until the first is disposed, with an artificial delay
+    /// removing any timing luck.
+    /// </summary>
+    [Fact]
+    public async Task AcquireRequesterLockSerializesTheSameRequesterAndPermission()
+    {
+        var requesterId = Guid.NewGuid();
+        const string permission = "bills.comp";
+
+        var firstLock = await _repository.AcquireRequesterLockAsync(requesterId, permission);
+        var secondLockTask = Task.Run(() => _repository.AcquireRequesterLockAsync(requesterId, permission));
+
+        // Real wall-clock wait, not a race against however fast the second
+        // acquisition happens to run - if the lock did not actually block,
+        // 300ms is far more than enough for it to have completed already.
+        await Task.Delay(300);
+        secondLockTask.IsCompleted.Should().BeFalse(
+            "a second acquisition for the same (requester, permission) must still be blocked by the first lock");
+
+        await firstLock.DisposeAsync();
+
+        var secondLock = await secondLockTask.WaitAsync(TimeSpan.FromSeconds(5));
+        await secondLock.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task AcquireRequesterLockDoesNotSerializeDifferentRequestersOrPermissions()
+    {
+        // Two different requesters, and the same requester on two different
+        // permissions, must never block each other - only proven meaningful
+        // by the WaitAsync timeout above actually being reachable in
+        // practice; if this hung, the test run itself would time out.
+        var requesterA = Guid.NewGuid();
+        var requesterB = Guid.NewGuid();
+
+        await using var lockA1 = await _repository.AcquireRequesterLockAsync(requesterA, "bills.comp");
+        await using var lockB1 = await _repository.AcquireRequesterLockAsync(requesterB, "bills.comp")
+            .WaitAsync(TimeSpan.FromSeconds(5));
+        await using var lockA2 = await _repository.AcquireRequesterLockAsync(requesterA, "bills.discount")
+            .WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
     [Fact]
     public async Task InsertPendingThenGetAndFindByKeyReturnIt()
     {

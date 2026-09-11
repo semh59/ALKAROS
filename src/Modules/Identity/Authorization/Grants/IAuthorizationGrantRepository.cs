@@ -57,6 +57,25 @@ public interface IAuthorizationGrantRepository
         string permissionCode,
         DateTimeOffset since,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Found in an independent review (2026-09-11): <see cref="CountAutoGrantsSinceAsync"/>
+    /// and <see cref="SumPersonalBudgetGrantedSinceAsync"/> each read a
+    /// running total that a separate, later <see cref="InsertAsync"/> call
+    /// then adds to — with nothing tying the read and the write together,
+    /// two concurrent requests from the same requester for the same
+    /// permission could both read the same pre-insert total and both pass a
+    /// cap (auto_within's count, the personal comp budget's daily sum) meant
+    /// to block the second one. Acquires a session-scoped Postgres advisory
+    /// lock keyed by <paramref name="requesterUserId"/> +
+    /// <paramref name="permissionCode"/>, held until the returned handle is
+    /// disposed — serializes exactly that (requester, permission) pair;
+    /// every other pair is completely unaffected. The caller
+    /// (<see cref="IAuthorizationGrantService"/>) holds it across its own
+    /// read-check-then-insert sequence.
+    /// </summary>
+    Task<IAsyncDisposable> AcquireRequesterLockAsync(
+        Guid requesterUserId, string permissionCode, CancellationToken cancellationToken = default);
 }
 
 /// <summary>Raised when resolving a grant that is already terminal.</summary>

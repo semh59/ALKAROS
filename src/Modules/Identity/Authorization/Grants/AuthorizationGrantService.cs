@@ -89,6 +89,19 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
             return await StoreAsync(request, GrantStatus.Denied, PolicyPath.Auto, cancellationToken);
         }
 
+        // Found in an independent review (2026-09-11): everything from here
+        // to the end of this method reads a running total for this exact
+        // (requester, permission) pair - auto_within's own count just below,
+        // and PersonalCompBudgetEscalationResolver's daily sum further down
+        // - then StoreAsync inserts a new row. Nothing tied the read to the
+        // write, so two concurrent requests could both read the same
+        // pre-insert total and both pass a cap meant to block the second
+        // one. This advisory lock serializes exactly this (requester,
+        // permission) pair for the rest of the method; every other pair
+        // proceeds fully concurrently.
+        await using var requesterLock = await _grants.AcquireRequesterLockAsync(
+            request.RequesterUserId, request.PermissionCode, cancellationToken);
+
         var forceEscalation = false;
         foreach (var gate in _prePolicyGates)
         {
