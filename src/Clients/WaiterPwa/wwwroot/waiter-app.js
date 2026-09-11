@@ -2208,9 +2208,28 @@
 
       // A product with options cannot be added blind - the sheet asks first.
       if (product.modifierGroups.length > 0) { openProductSheet(product, 1); return; }
+      // V1-RMD-173: found by the 2026-09-10 Garson audit — addToDraft()
+      // runs afterDraftChange(), which re-renders the whole product list
+      // (draftQuantityOf(product.id) changed, so every row's own markup
+      // does too). `button` is the OLD node by the time addToDraft()
+      // returns - it has already been removed from the document and
+      // replaced by a fresh one from the same innerHTML rewrite. Adding
+      // the animation class to it did nothing visible, and if this
+      // button held keyboard focus (a Bluetooth keyboard, or Tab
+      // navigation), that focus silently fell back to <body> the instant
+      // the old node was discarded. Re-finding the real, current button
+      // by the one thing that still identifies it (the product id) fixes
+      // both: the animation plays where the waiter is actually looking,
+      // and focus follows onto the new node instead of vanishing.
       addToDraft(product, 1, [], '');
-      button.classList.add('just-added');
-      window.setTimeout(() => button.classList.remove('just-added'), 400);
+      const freshButton = el.productList.querySelector(`[data-product="${CSS.escape(product.id)}"]`);
+      if (freshButton) {
+        freshButton.classList.add('just-added');
+        window.setTimeout(() => freshButton.classList.remove('just-added'), 400);
+        if (document.activeElement === document.body || document.activeElement === button) {
+          freshButton.focus();
+        }
+      }
     });
 
     el.billBody.addEventListener('click', (event) => {
