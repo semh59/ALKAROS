@@ -131,6 +131,26 @@ public static class QrOrderingEndpoints
             return Results.Ok(page.Items);
         }).RequireRateLimiting("qr-order");
 
+        // V1-WTR-018: garson-karsilastirma idea #6 — a guest polls their own
+        // table's running tab from their own phone, same session-header
+        // pattern as /menu. Read-only:
+        // no write route exists on this DTO's shape, matching CWB-001's own
+        // "browse, don't mutate" scope for everything except /orders.
+        group.MapGet("/bill", async (
+            HttpContext context,
+            CustomerSessionService sessionService,
+            DualScreenStore store,
+            CancellationToken cancellationToken) =>
+        {
+            var rawSession = context.Request.Headers[SessionHeaderName].ToString();
+            var validation = await sessionService.ValidateAsync(rawSession, cancellationToken);
+            if (!validation.IsValid)
+                throw new QrCustomerSessionInvalidException(validation.FailureReason!);
+
+            var bill = await store.GetLiveBillAsync(validation.TableId!.Value, cancellationToken);
+            return Results.Ok(bill);
+        }).RequireRateLimiting("qr-order");
+
         // V12-CWB-002. Accepted, not Ok: the real Order does not exist yet —
         // QrPendingOrderStore only queues a QrOrderSubmitted integration
         // event; Order's own QrOrderSubmittedConsumer materializes it

@@ -121,6 +121,50 @@ public sealed class QrOrderingTestDatabase : PgTestDatabase
         return raw;
     }
 
+    /// <summary>
+    /// V1-WTR-018: seeds a live, running order for a table (one active line)
+    /// and points the table's current_order_id at it, the same shape
+    /// GetLiveBillAsync reads. Returns the order id.
+    /// </summary>
+    public async Task<Guid> SeedActiveOrderAsync(
+        Guid tableId, Guid productId, string productName, decimal unitPrice, decimal quantity = 1)
+    {
+        var orderId = Guid.NewGuid();
+        var now = DateTimeOffset.UtcNow;
+        var netAmount = unitPrice * quantity;
+        await ExecuteAsync(
+            """
+            INSERT INTO orders.orders (
+                order_id, source, table_id, status, confirmation_status, order_number,
+                subtotal, tax_total, total, created_at, updated_at)
+            VALUES (
+                @order_id, 'Qr', @table_id, 'Submitted', 'NotRequired', @order_number,
+                @net_amount, 0, @net_amount, @now, @now);
+
+            UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;
+
+            INSERT INTO orders.order_items (
+                order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price,
+                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status,
+                created_at, updated_at)
+            VALUES (
+                @order_item_id, @order_id, @product_id, @product_name, @quantity, @unit_price,
+                0, @net_amount, @net_amount, 'Active', 'NotSent', 'NotApplicable', @now, @now);
+            """,
+            ("order_id", orderId),
+            ("table_id", tableId),
+            ("order_number", "QR-" + orderId.ToString("N")[..8]),
+            ("net_amount", netAmount),
+            ("now", now),
+            ("order_item_id", Guid.NewGuid()),
+            ("product_id", productId),
+            ("product_name", productName),
+            ("quantity", quantity),
+            ("unit_price", unitPrice));
+
+        return orderId;
+    }
+
     public async Task<long> NonceCountAsync()
         => await ScalarAsync<long>("SELECT count(*) FROM qr_ordering.relay_request_nonces;");
 

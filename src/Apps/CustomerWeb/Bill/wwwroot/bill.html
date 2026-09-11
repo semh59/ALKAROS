@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ALKAROS Adisyonum</title>
+  <link rel="stylesheet" href="./bill.css" />
+</head>
+<body>
+  <header class="bill-header">
+    <a class="back-link" href="./index.html">‹ Menüye dön</a>
+    <h1>Adisyonum</h1>
+    <p class="bill-live-note">Bu ekran canlı güncellenir, garsonu çağırmanıza gerek yok.</p>
+  </header>
+
+  <main id="billMain">
+    <p id="loadingState" class="state-message">Adisyon yükleniyor…</p>
+    <p id="errorState" class="state-message state-error" hidden></p>
+    <p id="emptyBillState" class="state-message" hidden>
+      Henüz siparişiniz görünmüyor. <a href="./index.html">Menüden ürün ekleyin.</a>
+    </p>
+
+    <ul id="billList" class="bill-list" hidden></ul>
+
+    <div id="billSummary" class="bill-summary" hidden>
+      <div class="bill-summary-row">
+        <span>Ara toplam</span>
+        <span id="billSubtotal"></span>
+      </div>
+      <div class="bill-summary-row">
+        <span>KDV</span>
+        <span id="billTax"></span>
+      </div>
+      <div class="bill-summary-row bill-summary-total">
+        <span>Toplam</span>
+        <span id="billTotal"></span>
+      </div>
+    </div>
+  </main>
+
+  <script src="./bill.js"></script>
+</body>
+</html>

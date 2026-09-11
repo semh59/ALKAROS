@@ -30,9 +30,27 @@ body {
   padding: 1rem 1rem 0;
 }
 
-.menu-header h1 {
+.menu-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   margin: 0 0 0.75rem;
+}
+
+.menu-header h1 {
+  margin: 0;
   font-size: 1.25rem;
+}
+
+/* V1-WTR-018: link to the read-only live bill page. */
+.bill-link {
+  flex: none;
+  color: var(--cw-accent);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .category-tabs {

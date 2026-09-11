@@ -67,6 +67,33 @@ public sealed record CatalogModifierDto(
 
 public sealed record CatalogPage(IReadOnlyList<CatalogProductDto> Items, string? NextCursor);
 
+/// <summary>
+/// V1-WTR-018: one line of a guest's own read-only live bill — the QR
+/// live-bill idea. Name-only (no product/order-item ids): this DTO
+/// carries nothing a guest could use to target a mutation, mirroring
+/// CatalogProductDto's own "read model, not a write surface" shape.
+/// </summary>
+public sealed record QrLiveBillLineDto(string Name, decimal Quantity, decimal UnitPrice, decimal LineTotal);
+
+/// <summary>
+/// V1-WTR-018: a table's live, running tab, exactly as the guest's own QR
+/// session sees it — no ids beyond what a poll needs to detect a change.
+/// <paramref name="HasActiveOrder"/> is false whenever there is nothing to
+/// show yet (no order placed, or the table's check already closed/paid);
+/// every other field is then empty/zero rather than null, so the guest
+/// page never has to special-case a partially-populated shape.
+/// </summary>
+public sealed record QrLiveBillDto(
+    bool HasActiveOrder,
+    IReadOnlyList<QrLiveBillLineDto> Lines,
+    decimal Subtotal,
+    decimal TaxTotal,
+    decimal Total,
+    long Revision)
+{
+    public static readonly QrLiveBillDto Empty = new(false, [], 0m, 0m, 0m, 0);
+}
+
 public sealed record StartOrderRequest(Guid? TableId = null, long? ExpectedTableRowVersion = null);
 
 public sealed record StartOrderResponse(Guid OrderId, string OrderNumber, long Revision);

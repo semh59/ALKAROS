@@ -1,0 +1,127 @@
+:root {
+  color-scheme: light;
+  --cw-bg: #faf7f2;
+  --cw-surface: #ffffff;
+  --cw-border: #e7ddcd;
+  --cw-text: #241c10;
+  --cw-text-muted: #6b6152;
+  --cw-accent: #b5772f;
+  --cw-error: #b3261e;
+  --cw-error-bg: #fbeae9;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--cw-bg);
+  color: var(--cw-text);
+  min-height: 100vh;
+}
+
+.bill-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--cw-surface);
+  border-bottom: 1px solid var(--cw-border);
+  padding: 1rem;
+}
+
+.back-link {
+  display: inline-block;
+  color: var(--cw-accent);
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.bill-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.bill-live-note {
+  margin: 0.35rem 0 0;
+  color: var(--cw-text-muted);
+  font-size: 0.82rem;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem 1rem 6rem;
+}
+
+.state-message {
+  text-align: center;
+  color: var(--cw-text-muted);
+  padding: 2rem 1rem;
+}
+
+.state-error {
+  color: var(--cw-error);
+  background: var(--cw-error-bg);
+  border-radius: 0.5rem;
+}
+
+.bill-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.bill-line {
+  background: var(--cw-surface);
+  border: 1px solid var(--cw-border);
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.bill-line-name {
+  font-weight: 600;
+}
+
+.bill-line-qty {
+  color: var(--cw-text-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.bill-line-total {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.bill-summary {
+  background: var(--cw-surface);
+  border: 1px solid var(--cw-border);
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.bill-summary-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--cw-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.bill-summary-total {
+  margin-top: 0.3rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--cw-border);
+  color: var(--cw-text);
+  font-weight: 700;
+  font-size: 1.1rem;
+}

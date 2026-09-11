@@ -92,15 +92,17 @@ WORKDIR /app
 COPY --from=backend-build /out/api ./
 COPY database ./database
 COPY build/project-manifest.json ./build/project-manifest.json
-# V12-CWB-001/V12-CWB-002: the QR customer app's static bundle, read
-# directly by this process (not `web`) - the public relay's tunnel reaches
-# this container over loopback and never goes through `web` at all. See
-# DualScreenOptions.QrWebRoot's own doc comment for why. Menu and OrderEntry
-# are separate owned-surface source directories that merge into one served
-# tree - OrderEntry's own order-entry.html/js/css sit alongside Menu's
-# index.html/menu-app.js, linked from there (Menu's own cart bar).
+# V12-CWB-001/V12-CWB-002/V1-WTR-018: the QR customer app's static bundle,
+# read directly by this process (not `web`) - the public relay's tunnel
+# reaches this container over loopback and never goes through `web` at all.
+# See DualScreenOptions.QrWebRoot's own doc comment for why. Menu, OrderEntry
+# and Bill are separate owned-surface source directories that merge into one
+# served tree - OrderEntry's own order-entry.html/js/css and Bill's own
+# bill.html/js/css sit alongside Menu's index.html/menu-app.js, linked from
+# there (Menu's own cart bar / "Adisyonum" link).
 COPY src/Apps/CustomerWeb/Menu/wwwroot ./qr-web
 COPY src/Apps/CustomerWeb/OrderEntry/wwwroot ./qr-web
+COPY src/Apps/CustomerWeb/Bill/wwwroot ./qr-web
 # V1-RMD-141: NFC's own customer page, symmetric with QR's above - built by
 # frontend-build's separate `pnpm build:nfc-standalone` step (nfc.html,
 # base "/nfc/"), served directly by this process so a relay-connected

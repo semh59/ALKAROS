@@ -202,6 +202,64 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         Assert.DoesNotContain("NOT_FOUND", text);
     }
 
+    /// <summary>V1-WTR-018: idea #6, "misafir için salt-okunur canlı adisyon".</summary>
+    [Fact]
+    public async Task ABeforeAnyOrderTheBillHasNoActiveOrder()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/qr/bill");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var bill = await response.Content.ReadFromJsonAsync<QrLiveBillDto>();
+        Assert.False(bill!.HasActiveOrder);
+        Assert.Empty(bill.Lines);
+        Assert.Equal(0m, bill.Total);
+    }
+
+    [Fact]
+    public async Task AfterAnOrderTheBillShowsTheLiveLinesAndTotals()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Izgara Köfte", 320m);
+        await _database.SeedActiveOrderAsync(tableId, product, "Izgara Köfte", 320m, quantity: 2);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/qr/bill");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var bill = await response.Content.ReadFromJsonAsync<QrLiveBillDto>();
+        Assert.True(bill!.HasActiveOrder);
+        var line = Assert.Single(bill.Lines);
+        Assert.Equal("Izgara Köfte", line.Name);
+        Assert.Equal(2m, line.Quantity);
+        Assert.Equal(640m, bill.Total);
+    }
+
+    [Fact]
+    public async Task PollingTheBillWithAnInvalidSessionIsRejected()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/qr/bill");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, "does-not-exist");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
     [Fact]
     public async Task AnUnknownSessionTokenIsRejected()
     {

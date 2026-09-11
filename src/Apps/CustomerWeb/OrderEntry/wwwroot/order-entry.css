@@ -40,9 +40,26 @@ body {
   font-size: 0.9rem;
 }
 
+.order-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
 .order-header h1 {
   margin: 0;
   font-size: 1.25rem;
+}
+
+/* V1-WTR-018: link to the read-only live bill page. */
+.bill-link {
+  flex: none;
+  color: var(--cw-accent);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 main {
