@@ -373,6 +373,12 @@
     const name = (user && user.displayName) || 'Garson';
     el.userName.textContent = name;
     el.userInitials.textContent = name.trim().charAt(0).toLocaleUpperCase('tr-TR') || '?';
+    // V1-RMD-175: found by the 2026-09-10 Garson audit — #userRole was
+    // never written to at all, so it stayed on its static "Garson" HTML
+    // default no matter who actually signed in (a supervisor's own
+    // profile still said "Garson"). /auth/login and /auth/session now
+    // both send the real roleName.
+    el.userRole.textContent = (user && user.roleName) || 'Garson';
   }
 
   function can(permission) {

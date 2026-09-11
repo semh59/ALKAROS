@@ -448,6 +448,15 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         AddTrustedForwarding(login, "198.51.100.30");
         using var loginResponse = await client.SendAsync(login);
         Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+        // V1-RMD-175: found by the 2026-09-10 Garson audit — /auth/login's
+        // own response never carried the signed-in user's role at all, so
+        // the waiter client's #userRole element had nothing to read.
+        // Pinned at the wire-format level here: the property must exist
+        // (this seeded user holds no role, so its value is legitimately
+        // null - what matters is that the client always gets a roleName
+        // key to read, not always a non-null one).
+        var loginBody = await loginResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(loginBody.TryGetProperty("roleName", out _));
         var setCookie = loginResponse.Headers.GetValues("Set-Cookie")
             .Single(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal));
         Assert.Contains("; secure", setCookie, StringComparison.OrdinalIgnoreCase);
@@ -493,6 +502,47 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
             $"{DualScreenApplication.DisplayCookieName}={displayToken}");
         using var displayResponse = await client.SendAsync(displayMutation);
         Assert.Equal(HttpStatusCode.Forbidden, displayResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task LoginAndSessionBothReturnTheSignedInUsersRoleName()
+    {
+        // V1-RMD-175: found by the 2026-09-10 Garson audit — the waiter
+        // client's #userRole element had nothing to read because neither
+        // /auth/login nor /auth/session ever carried a role name. Unlike
+        // the isolation test above (whose seeded user legitimately has no
+        // role), this user is given a real, named role so the assertions
+        // below prove an actual name round-trips, not just that the key
+        // exists.
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await SeedUserRoleAsync(userId, "Vardiya Amiri");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        AddTrustedForwarding(login, "198.51.100.32");
+        using var loginResponse = await client.SendAsync(login);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+        var loginBody = await loginResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Vardiya Amiri", loginBody.GetProperty("roleName").GetString());
+        var cashierCookie = loginResponse.Headers.GetValues("Set-Cookie")
+            .Single(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal))
+            .Split(';', 2)[0];
+
+        using var session = CreateForwardedRequest(
+            HttpMethod.Get,
+            $"/api/v1/auth/session?terminalId={terminalId:D}",
+            "198.51.100.32",
+            cashierCookie);
+        using var sessionResponse = await client.SendAsync(session);
+        Assert.Equal(HttpStatusCode.OK, sessionResponse.StatusCode);
+        var sessionBody = await sessionResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Vardiya Amiri", sessionBody.GetProperty("roleName").GetString());
     }
 
     [Fact]
@@ -694,6 +744,26 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
             """,
             ("user_id", userId),
             ("password_hash", passwordHash));
+    }
+
+    // V1-RMD-175: assigns a real, named role to an already-seeded user so
+    // tests can assert on the roleName that /auth/login and /auth/session
+    // now return — SeedUserAsync alone leaves the user role-less, which is
+    // fine for the tests that only need a valid session, but useless for
+    // proving the client actually receives a non-null role display name.
+    private async Task SeedUserRoleAsync(Guid userId, string roleName)
+    {
+        var roleId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, @role_name);
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (@user_role_id, @user_id, @role_id);
+            """,
+            ("role_id", roleId),
+            ("role_code", "rmd175-role-" + roleId.ToString("N")[..8]),
+            ("role_name", roleName),
+            ("user_role_id", Guid.NewGuid()),
+            ("user_id", userId));
     }
 
     private async Task<WebApplication> StartAsync()
