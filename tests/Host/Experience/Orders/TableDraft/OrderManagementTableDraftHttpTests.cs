@@ -362,6 +362,121 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(1, await _database.KitchenTicketCountAsync(draft.OrderId));
     }
 
+    /// <summary>
+    /// V1-WTR-025: submitting a whole multi-course draft in one round
+    /// commits every course (all Active) but only sends the lowest course
+    /// number to the kitchen; firing the next course promotes just that
+    /// course to Sent and prints a second ticket for it alone.
+    /// </summary>
+    [Fact]
+    public async Task SubmittingAMultiCourseDraftHoldsLaterCoursesUntilFired()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var starter = await _database.SeedStockedProductAsync("Çorba", 90m, 10m);
+        var main = await _database.SeedStockedProductAsync("Izgara", 350m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-09",
+            [
+                new OrderItemDraftDto(Guid.NewGuid(), starter, "Çorba", 1, 90m, CourseNumber: 1),
+                new OrderItemDraftDto(Guid.NewGuid(), main, "Izgara", 1, 350m, CourseNumber: 2),
+            ])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        var submitted = await submitResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        var starterItem = submitted!.Items.Single(i => i.CourseNumber == 1);
+        var mainItem = submitted.Items.Single(i => i.CourseNumber == 2);
+        Assert.Equal("Sent", starterItem.KitchenState);
+        Assert.Equal("Held", mainItem.KitchenState);
+        // Both courses are already committed to the check, not just course 1.
+        Assert.Equal("Active", starterItem.Status);
+        Assert.Equal("Active", mainItem.Status);
+        // The whole-plan ticket is one ticket, showing both courses.
+        Assert.Equal(1, await _database.KitchenTicketCountAsync(draft.OrderId));
+
+        using var fireResponse = await client.SendAsync(JsonRequest(
+            FireCoursePath(terminalId, draft.OrderId), cookie, new FireCourseRequestV1(2)));
+
+        Assert.Equal(HttpStatusCode.OK, fireResponse.StatusCode);
+        var fired = await fireResponse.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal("Sent", fired!.Items.Single(i => i.CourseNumber == 2).KitchenState);
+        // Firing the course prints its own dedicated ticket.
+        Assert.Equal(2, await _database.KitchenTicketCountAsync(draft.OrderId));
+    }
+
+    [Fact]
+    public async Task FiringACourseWithNothingHeldForItReturnsAConflict()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-10",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        using var fireResponse = await client.SendAsync(JsonRequest(
+            FireCoursePath(terminalId, draft.OrderId), cookie, new FireCourseRequestV1(2)));
+
+        Assert.Equal(HttpStatusCode.Conflict, fireResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task RetryingAndAlreadyFiredCourseReplaysWithoutASecondTicket()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var starter = await _database.SeedStockedProductAsync("Çorba", 90m, 10m);
+        var main = await _database.SeedStockedProductAsync("Izgara", 350m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-11",
+            [
+                new OrderItemDraftDto(Guid.NewGuid(), starter, "Çorba", 1, 90m, CourseNumber: 1),
+                new OrderItemDraftDto(Guid.NewGuid(), main, "Izgara", 1, 350m, CourseNumber: 2),
+            ])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        using var first = await client.SendAsync(JsonRequest(
+            FireCoursePath(terminalId, draft.OrderId), cookie, new FireCourseRequestV1(2)));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(2, await _database.KitchenTicketCountAsync(draft.OrderId));
+
+        // A second fire of an already-Sent course finds no Held items left
+        // for it and is refused, not silently replayed as success -
+        // Order.FireCourse's own guard, same as re-voiding an already-voided
+        // item elsewhere in this file.
+        using var second = await client.SendAsync(JsonRequest(
+            FireCoursePath(terminalId, draft.OrderId), cookie, new FireCourseRequestV1(2)));
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+        Assert.Equal(2, await _database.KitchenTicketCountAsync(draft.OrderId));
+    }
+
     [Fact]
     public async Task RetryingAnIdenticalDraftRequestDoesNotDuplicateItems()
     {
@@ -1504,6 +1619,9 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
     private static string SubmitPath(Guid terminalId, Guid orderId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/submit-draft";
+
+    private static string FireCoursePath(Guid terminalId, Guid orderId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/fire-course";
 
     private static string TransferPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/transfer-server";

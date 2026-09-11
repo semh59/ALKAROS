@@ -68,7 +68,11 @@ public sealed record OrderItemDraftDto(
     // or null when the waiter did not pick one. Validated server-side
     // against the order's own table (OrderManagementStore) — a client can
     // never assert an arbitrary/other-table seat id.
-    Guid? SeatId = null);
+    Guid? SeatId = null,
+    // V1-WTR-025: which course this line belongs to (1-20), or null for an
+    // order with no course structure. See Order.FireRound/FireCourse for
+    // how this drives the kitchen ticket.
+    int? CourseNumber = null);
 
 /// <summary>
 /// V1-RMD-150: one chosen modifier and how many of it. <paramref name="Quantity"/>
@@ -343,4 +347,16 @@ public sealed record OrderItemDto(
     bool CanVoid = false,
     bool CanVoidSent = false,
     bool CanComp = false,
-    Guid? SeatId = null);
+    Guid? SeatId = null,
+    // V1-WTR-025: null when this order has no course structure. KitchenState
+    // "Held" on a course-bearing item is the client's own signal that this
+    // course is on the ticket but not yet fired.
+    int? CourseNumber = null);
+
+/// <summary>
+/// V1-WTR-025: the "fire" action for one Held course — the
+/// explicit call-in the full course model needs. <paramref name="CourseNumber"/>
+/// must match at least one item currently at KitchenState Held on this order,
+/// or the store throws (no held items for that course).
+/// </summary>
+public sealed record FireCourseRequestV1(int CourseNumber);

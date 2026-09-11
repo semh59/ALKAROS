@@ -23,7 +23,9 @@ public sealed class KitchenTicketItem
         DateTimeOffset? servedAt = null,
         DateTimeOffset? cancelledAt = null,
         string? cancellationReason = null,
-        bool isAgeRestricted = false)
+        bool isAgeRestricted = false,
+        int? courseNumber = null,
+        bool isHeld = false)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Item id cannot be empty.", nameof(id));
@@ -55,6 +57,8 @@ public sealed class KitchenTicketItem
         CancelledAt = cancelledAt;
         CancellationReason = cancellationReason;
         IsAgeRestricted = isAgeRestricted;
+        CourseNumber = courseNumber;
+        IsHeld = isHeld;
     }
 
     public Guid Id { get; }
@@ -81,6 +85,19 @@ public sealed class KitchenTicketItem
     /// why the kitchen ticket dispatches immediately regardless.
     /// </summary>
     public bool IsAgeRestricted { get; }
+
+    /// <summary>V1-WTR-025: which course this line belongs to, or null when the order has no course structure.</summary>
+    public int? CourseNumber { get; }
+
+    /// <summary>
+    /// V1-WTR-025: a point-in-time snapshot — true when this line was
+    /// printed as part of the whole-plan ticket while its course was still
+    /// Held (on the ticket for prep visibility, not yet called in). A later
+    /// course's own "fire" ticket (see <see cref="KitchenTicket.CreateFromOrder"/>
+    /// callers) always prints its items with this false, since by then they
+    /// have already been promoted to Sent.
+    /// </summary>
+    public bool IsHeld { get; }
 
     public bool CanTransitionTo(KitchenTicketItemState targetState)
     {
@@ -129,6 +146,8 @@ public sealed class KitchenTicketItem
             servedAt: newState == KitchenTicketItemState.Served ? at : ServedAt,
             cancelledAt: newState == KitchenTicketItemState.Cancelled ? at : CancelledAt,
             cancellationReason: newState == KitchenTicketItemState.Cancelled ? reason : CancellationReason,
-            isAgeRestricted: IsAgeRestricted);
+            isAgeRestricted: IsAgeRestricted,
+            courseNumber: CourseNumber,
+            isHeld: IsHeld);
     }
 }

@@ -31,7 +31,8 @@ public sealed class OrderItem
         long rowVersion = 1,
         DateTimeOffset? createdAt = null,
         DateTimeOffset? updatedAt = null,
-        Guid? seatId = null)
+        Guid? seatId = null,
+        int? courseNumber = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Order item id cannot be empty.", nameof(id));
@@ -55,6 +56,8 @@ public sealed class OrderItem
             throw new ArgumentException("Tax rate cannot be negative.", nameof(taxRate));
         if (discountAmount < 0)
             throw new ArgumentException("Discount amount cannot be negative.", nameof(discountAmount));
+        if (courseNumber is < 1 or > 20)
+            throw new ArgumentOutOfRangeException(nameof(courseNumber), courseNumber, "Course number must be between 1 and 20.");
 
         Id = id;
         OrderId = orderId;
@@ -87,6 +90,7 @@ public sealed class OrderItem
         CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
         UpdatedAt = updatedAt ?? CreatedAt;
         SeatId = seatId;
+        CourseNumber = courseNumber;
 
         var lineSubtotal = LineSubtotal();
         if (DiscountAmount > lineSubtotal)
@@ -151,6 +155,16 @@ public sealed class OrderItem
     /// migration comment for why.
     /// </summary>
     public Guid? SeatId { get; }
+
+    /// <summary>
+    /// V1-WTR-025: which course this item belongs to (1 = first course,
+    /// higher numbers fire later), or null when the order has no course
+    /// structure — the common case, unchanged in behaviour from before this
+    /// field existed. See <see cref="Order.FireRound"/> and
+    /// <see cref="Order.FireCourse"/> for how this drives
+    /// <see cref="KitchenState"/>.
+    /// </summary>
+    public int? CourseNumber { get; }
 
     public bool IsActive => Status is OrderItemState.Draft or OrderItemState.Active;
 
@@ -239,7 +253,8 @@ public sealed class OrderItem
             rowVersion: RowVersion,
             createdAt: CreatedAt,
             updatedAt: DateTimeOffset.UtcNow,
-            seatId: SeatId);
+            seatId: SeatId,
+            courseNumber: CourseNumber);
     }
 
     /// <summary>
@@ -261,13 +276,24 @@ public sealed class OrderItem
     public OrderItem WithSeat(Guid? seatId)
         => Mutate(seatIdSet: true, seatId: seatId);
 
+    /// <summary>V1-WTR-025: assigns or clears (null) which course this item belongs to.</summary>
+    public OrderItem WithCourseNumber(int? courseNumber)
+    {
+        if (courseNumber is < 1 or > 20)
+            throw new ArgumentOutOfRangeException(nameof(courseNumber), courseNumber, "Course number must be between 1 and 20.");
+
+        return Mutate(courseNumberSet: true, courseNumber: courseNumber);
+    }
+
     private OrderItem Mutate(
         Guid? orderId = null,
         OrderItemState? status = null,
         KitchenState? kitchenState = null,
         long? rowVersion = null,
         bool seatIdSet = false,
-        Guid? seatId = null)
+        Guid? seatId = null,
+        bool courseNumberSet = false,
+        int? courseNumber = null)
         => new(
             Id,
             orderId ?? OrderId,
@@ -289,7 +315,8 @@ public sealed class OrderItem
             rowVersion: rowVersion ?? RowVersion,
             createdAt: CreatedAt,
             updatedAt: UpdatedAt,
-            seatId: seatIdSet ? seatId : SeatId);
+            seatId: seatIdSet ? seatId : SeatId,
+            courseNumber: courseNumberSet ? courseNumber : CourseNumber);
 
     private decimal LineSubtotal()
     {

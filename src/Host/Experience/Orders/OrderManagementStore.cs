@@ -1,7 +1,9 @@
 using System.Data;
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using Npgsql;
@@ -40,6 +42,7 @@ public sealed class OrderManagementStore
     private readonly IProductStockMappingRepository _stockMappings;
     private readonly IStockItemRepository _stockItems;
     private readonly IStockBalanceRepository _stockBalances;
+    private readonly IKitchenTicketRepository _kitchenTickets;
 
     public OrderManagementStore(
         NpgsqlDataSource dataSource,
@@ -48,7 +51,8 @@ public sealed class OrderManagementStore
         SubmitOrderHandler submitHandler,
         IProductStockMappingRepository stockMappings,
         IStockItemRepository stockItems,
-        IStockBalanceRepository stockBalances)
+        IStockBalanceRepository stockBalances,
+        IKitchenTicketRepository kitchenTickets)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
@@ -57,6 +61,7 @@ public sealed class OrderManagementStore
         _stockMappings = stockMappings ?? throw new ArgumentNullException(nameof(stockMappings));
         _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
         _stockBalances = stockBalances ?? throw new ArgumentNullException(nameof(stockBalances));
+        _kitchenTickets = kitchenTickets ?? throw new ArgumentNullException(nameof(kitchenTickets));
     }
 
     /// <summary>
@@ -156,7 +161,8 @@ public sealed class OrderManagementStore
                 notes: i.SpecialInstructions,
                 createdAt: now,
                 updatedAt: now,
-                seatId: i.SeatId is { } seatId && validSeatIds.Contains(seatId) ? seatId : null
+                seatId: i.SeatId is { } seatId && validSeatIds.Contains(seatId) ? seatId : null,
+                courseNumber: i.CourseNumber
             ));
         }
 
@@ -560,6 +566,78 @@ public sealed class OrderManagementStore
     }
 
     /// <summary>
+    /// V1-WTR-025: calls in one Held course (<see cref="Order.FireCourse"/>)
+    /// and prints a dedicated "fire" ticket for exactly the items that
+    /// course promotes to Sent — the explicit "fire" action the full
+    /// course model needs. No stock dispatch here: unlike a fresh round,
+    /// these items already activated (and their stock already consumed) the
+    /// moment the order was first fired — only their kitchen state moves.
+    ///
+    /// Deliberately does NOT reuse <see cref="KitchenOrderSubmissionDispatcher"/>:
+    /// that dispatcher's own already-ticketed guard exists to make a RETRY
+    /// of the SAME dispatch idempotent, and these exact order items are
+    /// already on a ticket by design (the original whole-plan ticket,
+    /// printed Held) — the guard would read that as "nothing to do" and
+    /// silently skip the fire notice. Idempotency here is the ticket number
+    /// itself instead, one per (order, station, course), locked the same
+    /// way the dispatcher locks its own ticket creation.
+    /// </summary>
+    public async Task<OrderDto> FireCourseAsync(
+        Guid orderId, int courseNumber, Guid actorId, CancellationToken cancellationToken = default)
+    {
+        var order = await _repository.GetByIdAsync(orderId, cancellationToken)
+            ?? throw new InvalidOperationException($"Order '{orderId}' was not found.");
+
+        var (fired, firedItems) = order.FireCourse(courseNumber, changedBy: actorId);
+
+        var stationId = Environment.GetEnvironmentVariable(DualScreenApplication.KitchenStationEnvironmentVariable);
+        if (string.IsNullOrWhiteSpace(stationId))
+        {
+            throw new InvalidOperationException(
+                $"{DualScreenApplication.KitchenStationEnvironmentVariable} is required before a course can be fired.");
+        }
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await _repository.SaveAsync(fired, order.RowVersion, connection, transaction, cancellationToken);
+
+        var ticketNumber = $"KT-{fired.OrderNumber}-{stationId}-FIRE-{courseNumber}";
+        await using (var lockCommand = connection.CreateCommand())
+        {
+            lockCommand.Transaction = transaction;
+            lockCommand.CommandText = "SELECT pg_advisory_xact_lock(hashtextextended(@lock_key, 0));";
+            lockCommand.Parameters.AddWithValue("lock_key", ticketNumber);
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        bool alreadyPrinted;
+        await using (var existing = connection.CreateCommand())
+        {
+            existing.Transaction = transaction;
+            existing.CommandText = "SELECT EXISTS(SELECT 1 FROM kitchen.kitchen_tickets WHERE ticket_number = @ticket_number);";
+            existing.Parameters.AddWithValue("ticket_number", ticketNumber);
+            alreadyPrinted = (bool)(await existing.ExecuteScalarAsync(cancellationToken))!;
+        }
+
+        if (!alreadyPrinted)
+        {
+            var firedIdSet = firedItems.Select(item => item.Id).ToHashSet();
+            var ticket = KitchenTicket.CreateFromOrder(
+                fired,
+                stationId,
+                ticketNumber: ticketNumber,
+                itemFilter: item => firedIdSet.Contains(item.Id));
+            await _kitchenTickets.AddAsync(ticket, connection, transaction, cancellationToken);
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+
+        var tableNumber = await GetTableNumberAsync(fired.TableId, cancellationToken) ?? string.Empty;
+        return MapToDto(fired, tableNumber);
+    }
+
+    /// <summary>
     /// V1-RMD-149: orders sitting in PendingConfirmation, oldest first. The
     /// live SignalR announcement can be missed — the app was closed, the
     /// network dropped, the device just connected — and without this a
@@ -859,6 +937,8 @@ public sealed class OrderManagementStore
         // reconstructs an OrderItem at all.
         if (existing.SeatId != incoming.SeatId)
             return false;
+        if (existing.CourseNumber != incoming.CourseNumber)
+            return false;
 
         var existingModifiers = existing.Modifiers
             .Select(m => (m.ModifierId, m.Quantity))
@@ -1092,7 +1172,8 @@ public sealed class OrderManagementStore
             // V1-RMD-177: mirrors ItemExceptionHandler.ApplyComplimentaryAsync's
             // own eligibility check exactly.
             CanComp: i.Status == OrderItemState.Active,
-            SeatId: i.SeatId
+            SeatId: i.SeatId,
+            CourseNumber: i.CourseNumber
         )).ToList();
 
         return new OrderDto(

@@ -603,6 +603,95 @@ public class OrderSubmitTests
     }
 }
 
+/// <summary>
+/// V1-WTR-025: full course model — FireRound splits a round with a course
+/// structure into one immediately-Sent course and the rest Held; FireCourse
+/// calls in a Held course explicitly.
+/// </summary>
+public class OrderCourseTests
+{
+    private static OrderItem CourseItem(int courseNumber, string name = "Çorba")
+        => new(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), name, 1, 60m, 10m, courseNumber: courseNumber);
+
+    [Fact]
+    public void FiringAMultiCourseRoundSendsOnlyTheLowestCourseAndHoldsTheRest()
+    {
+        var starter = CourseItem(1, "Çorba");
+        var main = CourseItem(2, "Izgara");
+        var dessert = CourseItem(3, "Baklava");
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4001", [starter, main, dessert]);
+
+        var (fired, firedItems) = order.FireRound();
+
+        firedItems.Should().HaveCount(3);
+        fired.Items.Single(i => i.Id == starter.Id).KitchenState.Should().Be(KitchenState.Sent);
+        fired.Items.Single(i => i.Id == main.Id).KitchenState.Should().Be(KitchenState.Held);
+        fired.Items.Single(i => i.Id == dessert.Id).KitchenState.Should().Be(KitchenState.Held);
+        // All three still activate together — the whole plan is committed
+        // to the check at once, only the kitchen state differs per course.
+        fired.Items.Should().OnlyContain(i => i.Status == OrderItemState.Active);
+        fired.Status.Should().Be(OrderState.Submitted);
+    }
+
+    [Fact]
+    public void AnItemWithNoCourseNumberFiresSentImmediatelyEvenAlongsideCourses()
+    {
+        var noCourse = new OrderItem(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Su", 1, 10m, 10m);
+        var mainCourse = CourseItem(1, "Pilav");
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4002", [noCourse, mainCourse]);
+
+        var (fired, _) = order.FireRound();
+
+        fired.Items.Single(i => i.Id == noCourse.Id).KitchenState.Should().Be(KitchenState.Sent);
+    }
+
+    [Fact]
+    public void FireCoursePromotesOnlyThatCoursesHeldItemsToSent()
+    {
+        var starter = CourseItem(1, "Çorba");
+        var main = CourseItem(2, "Izgara");
+        var dessert = CourseItem(3, "Baklava");
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4003", [starter, main, dessert])
+            .FireRound().Order;
+
+        var (fired, firedItems) = order.FireCourse(2, changedBy: Guid.NewGuid());
+
+        firedItems.Should().ContainSingle(i => i.Id == main.Id);
+        fired.Items.Single(i => i.Id == main.Id).KitchenState.Should().Be(KitchenState.Sent);
+        // Course 3 is untouched — a separate, later fire is required for it.
+        fired.Items.Single(i => i.Id == dessert.Id).KitchenState.Should().Be(KitchenState.Held);
+    }
+
+    [Fact]
+    public void FiringACourseWithNoHeldItemsThrows()
+    {
+        var starter = CourseItem(1, "Çorba");
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4004", [starter])
+            .FireRound().Order;
+
+        // Course 1 already fired Sent (it was the lowest in the round); no
+        // Held items exist for course 2 at all.
+        var act = () => order.FireCourse(2);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"Order {order.Id} has no held items for course 2 to fire.");
+    }
+
+    [Fact]
+    public void FiringTheSameCourseTwiceThrowsTheSecondTime()
+    {
+        var starter = CourseItem(1);
+        var main = CourseItem(2);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4005", [starter, main])
+            .FireRound().Order;
+
+        var afterFirstFire = order.FireCourse(2).Order;
+        var act = () => afterFirstFire.FireCourse(2);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+}
+
 public class OrderVoidTests
 {
     [Fact]

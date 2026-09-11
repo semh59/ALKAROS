@@ -989,6 +989,7 @@ input {
 }
 
 .kitchen-state .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+.kitchen-state.is-held { background: var(--color-warning-soft); color: var(--color-warning); }
 .kitchen-state.is-sent { background: var(--color-info-soft); color: var(--color-info); }
 .kitchen-state.is-preparing { background: var(--color-warning-soft); color: var(--color-warning); }
 .kitchen-state.is-ready { background: var(--color-success-soft); color: var(--color-success); }

@@ -283,7 +283,9 @@ public sealed class KitchenTicket
                 status: KitchenTicketItemState.Queued,
                 rowVersion: 1,
                 createdAt: at,
-                isAgeRestricted: ageRestricted(orderItem));
+                isAgeRestricted: ageRestricted(orderItem),
+                courseNumber: orderItem.CourseNumber,
+                isHeld: orderItem.KitchenState == KitchenState.Held);
         }).ToList();
 
         return new KitchenTicket(

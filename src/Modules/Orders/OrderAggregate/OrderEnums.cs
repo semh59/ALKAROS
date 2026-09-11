@@ -67,6 +67,13 @@ public enum OrderItemState
 public enum KitchenState
 {
     NotSent,
+    /// <summary>
+    /// V1-WTR-025: fired to the kitchen as part of the whole course plan
+    /// (so it is on the printed ticket, for prep visibility) but not yet
+    /// called in — the kitchen must not start this item until
+    /// <see cref="Order.FireCourse"/> promotes it to <see cref="Sent"/>.
+    /// </summary>
+    Held,
     Sent,
     Preparing,
     Ready,

@@ -353,12 +353,29 @@ public sealed class Order
     /// <see cref="Submit"/> always did. An order that is already Submitted
     /// stays Submitted: the check was opened by the first round and the
     /// second one does not reopen it.
+    ///
+    /// V1-WTR-025: every Draft item in this round activates together — so a
+    /// multi-course order entered all at once is fully committed to the
+    /// check and its whole plan reaches the kitchen ticket in one round, for
+    /// prep visibility. Only the lowest <see cref="OrderItem.CourseNumber"/>
+    /// present in THIS round goes straight to <see cref="KitchenState.Sent"/>;
+    /// every higher course number in the same round becomes
+    /// <see cref="KitchenState.Held"/> instead, printed on the ticket but not
+    /// yet called in — <see cref="FireCourse"/> is the only thing that
+    /// advances a Held course. An item with no course number is unaffected
+    /// (always Sent immediately), exactly as before this field existed.
     /// </summary>
     public (Order Order, IReadOnlyList<OrderItem> FiredItems) FireRound(
         string? reason = null, Guid? changedBy = null, DateTimeOffset? changedAt = null)
     {
         if (!IsOpenCheck)
             throw new InvalidOperationException($"Order {Id} cannot be submitted from {Status}.");
+
+        var firstCourseInRound = _items
+            .Where(item => item.Status is OrderItemState.Draft && item.CourseNumber is not null)
+            .Select(item => item.CourseNumber!.Value)
+            .DefaultIfEmpty(int.MinValue)
+            .Min();
 
         var items = new List<OrderItem>(_items.Count);
         var fired = new List<OrderItem>();
@@ -378,7 +395,9 @@ public sealed class Order
                 // under orders.create — skipping the bills.void approval,
                 // leaving the kitchen ticket standing, and never giving the
                 // consumed stock back.
-                var activated = item.Activate().AdvanceKitchenState(KitchenState.Sent);
+                var laterCourse = item.CourseNumber is not null && item.CourseNumber.Value != firstCourseInRound;
+                var kitchenState = laterCourse ? KitchenState.Held : KitchenState.Sent;
+                var activated = item.Activate().AdvanceKitchenState(kitchenState);
                 items.Add(activated);
                 fired.Add(activated);
             }
@@ -396,6 +415,48 @@ public sealed class Order
             updated = updated.TransitionTo(OrderState.Submitted, reason, changedBy, changedAt);
 
         return (updated, fired);
+    }
+
+    /// <summary>
+    /// V1-WTR-025: calls in a Held course — the explicit "fire" action a
+    /// multi-course check needs once the table is ready for its next
+    /// course. Promotes every item with the given <see cref="OrderItem.CourseNumber"/>
+    /// still at <see cref="KitchenState.Held"/> to <see cref="KitchenState.Sent"/>
+    /// and hands back exactly those items, the same shape
+    /// <see cref="FireRound"/> returns, so the caller can dispatch a fresh
+    /// kitchen ticket for this course alone — no stock re-consumption here,
+    /// the item already became Active (and its stock already committed) the
+    /// moment it was first fired.
+    /// </summary>
+    public (Order Order, IReadOnlyList<OrderItem> FiredItems) FireCourse(
+        int courseNumber, string? reason = null, Guid? changedBy = null, DateTimeOffset? changedAt = null)
+    {
+        if (courseNumber is < 1 or > 20)
+            throw new ArgumentOutOfRangeException(nameof(courseNumber), courseNumber, "Course number must be between 1 and 20.");
+
+        var items = new List<OrderItem>(_items.Count);
+        var fired = new List<OrderItem>();
+        foreach (var item in _items)
+        {
+            if (item.CourseNumber == courseNumber && item.KitchenState == KitchenState.Held)
+            {
+                var advanced = item.AdvanceKitchenState(KitchenState.Sent);
+                items.Add(advanced);
+                fired.Add(advanced);
+            }
+            else
+            {
+                items.Add(item);
+            }
+        }
+
+        if (fired.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"Order {Id} has no held items for course {courseNumber} to fire.");
+        }
+
+        return (RebuildWith(items: items), fired);
     }
 
     /// <summary>

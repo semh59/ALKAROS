@@ -345,6 +345,35 @@ public static class OrderManagementEndpoints
             return Results.Ok(submitted);
         });
 
+        // V1-WTR-025: the explicit "fire" action a multi-course check
+        // needs once the table is ready for its next course. Same
+        // permission as submit-draft — both are "send items to the
+        // kitchen", one for a fresh round, one for a course already on the
+        // ticket but held back.
+        group.MapPost("/{orderId:guid}/fire-course", async (
+            Guid terminalId,
+            Guid orderId,
+            FireCourseRequestV1 request,
+            OrderManagementStore store,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            IHubContext<CustomerDisplayHub> hub,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersSend, cancellationToken);
+
+            var fired = await store.FireCourseAsync(orderId, request.CourseNumber, userId, cancellationToken);
+
+            await hub.Clients.Group(DualScreenApplication.TerminalGroup(terminalId)).SendAsync(
+                CustomerDisplayHub.SnapshotChanged,
+                new { orderId, revision = fired.RowVersion, kind = "OrderChanged" },
+                cancellationToken);
+
+            return Results.Ok(fired);
+        });
+
         // V1-ORD-005: ItemExceptionHandler.VoidItemAsync already existed
         // (V1-ORD-003) and works — nothing called it. Gated by orders.create
         // (model §2: unsent items need only orders.create, not the grant-class

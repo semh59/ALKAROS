@@ -208,7 +208,8 @@ public sealed class ItemExceptionHandler
             rowVersion: targetItem.RowVersion,
             createdAt: targetItem.CreatedAt,
             updatedAt: now,
-            seatId: targetItem.SeatId);
+            seatId: targetItem.SeatId,
+            courseNumber: targetItem.CourseNumber);
 
         var updatedItems = new List<OrderItem>(order.Items);
         updatedItems[itemIndex] = compItem;

@@ -111,6 +111,10 @@
 
   const KITCHEN_STATE = {
     notsent: { label: 'Gönderilmedi', cls: '' },
+    // V1-WTR-025: printed on the whole-plan kitchen ticket for prep
+    // visibility but not yet called in — distinct from NotSent (never
+    // reached the kitchen at all) and Sent (actively being prepared).
+    held: { label: 'Bekletiliyor', cls: 'is-held' },
     sent: { label: 'Mutfakta', cls: 'is-sent' },
     preparing: { label: 'Hazırlanıyor', cls: 'is-preparing' },
     ready: { label: 'Hazır', cls: 'is-ready' },
@@ -756,6 +760,13 @@
     return seat ? seat.label : null;
   }
 
+  // V1-WTR-025: a plain label, not a lookup — unlike seats, a course number
+  // is not resolved against any server-side catalog, it is just an integer
+  // the waiter assigns while building the draft.
+  function courseLabel(courseNumber) {
+    return `${courseNumber}. kurs`;
+  }
+
   // The bill is always the server's answer, never a local accumulation.
   async function loadOrder(tableId) {
     const result = await api(apiUrl(`/orders/table/${tableId}`));
@@ -978,15 +989,16 @@
 
   // ══ The draft round ════════════════════════════════════════════════
 
-  function addToDraft(product, quantity, modifiers, note, seatId) {
+  function addToDraft(product, quantity, modifiers, note, seatId, courseNumber) {
     // Lines that are identical in every respect merge; anything with its own
-    // options, note or seat stays its own line so the kitchen ticket reads
-    // right and the split screen can tell the seats apart.
+    // options, note, seat or course stays its own line so the kitchen ticket
+    // reads right and the split screen can tell the seats/courses apart.
     const plain = (!modifiers || modifiers.length === 0) && !note;
     if (plain) {
       const existing = state.draft.find((line) =>
         line.productId === product.id && line.modifiers.length === 0 && !line.note
-        && (line.seatId || null) === (seatId || null));
+        && (line.seatId || null) === (seatId || null)
+        && (line.courseNumber || null) === (courseNumber || null));
       if (existing) {
         existing.quantity = Math.round((existing.quantity + quantity) * 1000) / 1000;
         afterDraftChange();
@@ -1001,7 +1013,8 @@
       quantity,
       modifiers: modifiers || [],
       note: note || '',
-      seatId: seatId || null
+      seatId: seatId || null,
+      courseNumber: courseNumber || null
     });
     afterDraftChange();
   }
@@ -1199,7 +1212,8 @@
             <span class="line-total">${escapeHtml(formatMoney(line.price * line.quantity + extras))}</span>
           </div>
           <div class="line-unit">${escapeHtml(formatQuantity(line.quantity))} × ${escapeHtml(formatMoney(line.price))}${
-            line.seatId && seatLabel(line.seatId) ? ` • ${escapeHtml(seatLabel(line.seatId))}` : ''}</div>
+            line.seatId && seatLabel(line.seatId) ? ` • ${escapeHtml(seatLabel(line.seatId))}` : ''}${
+            line.courseNumber ? ` • ${escapeHtml(courseLabel(line.courseNumber))}` : ''}</div>
           ${chips ? `<div class="line-chips">${chips}</div>` : ''}
           ${priceNotice}
           <input class="note" type="text" maxlength="200" data-note="${escapeHtml(line.id)}"
@@ -1265,7 +1279,8 @@
           </div>
           <div class="line-unit">${escapeHtml(formatQuantity(item.quantity))} × ${escapeHtml(formatMoney(item.unitPrice))}${
             item.createdAt ? ` • ${escapeHtml(formatClock(item.createdAt))}` : ''}${
-            item.seatId && seatLabel(item.seatId) ? ` • ${escapeHtml(seatLabel(item.seatId))}` : ''}</div>
+            item.seatId && seatLabel(item.seatId) ? ` • ${escapeHtml(seatLabel(item.seatId))}` : ''}${
+            item.courseNumber ? ` • ${escapeHtml(courseLabel(item.courseNumber))}` : ''}</div>
           ${chips ? `<div class="line-chips">${chips}</div>` : ''}
           <div class="line-chips">
             ${kitchen ? `<span class="kitchen-state ${kitchen.cls}"><span class="dot"></span>${escapeHtml(kitchen.label)}</span>` : ''}
@@ -1277,6 +1292,9 @@
           ${canComp ? `<button type="button" class="btn btn-quiet btn-compact" data-comp="${escapeHtml(item.itemId)}">İkram</button>` : ''}
           ${canVoid ? `<button type="button" class="btn-void" data-void="${escapeHtml(item.itemId)}">İptal</button>` : ''}
           ${canVoidSent ? `<button type="button" class="btn-void" data-void-sent="${escapeHtml(item.itemId)}">İptal iste</button>` : ''}
+          ${(item.kitchenState || '').toLowerCase() === 'held' && item.courseNumber
+            ? `<button type="button" class="btn btn-quiet btn-compact" data-fire-course="${item.courseNumber}">Kursu ateşle</button>`
+            : ''}
         </div>
       </div>`;
   }
@@ -1288,7 +1306,8 @@
       product,
       quantity: presetQuantity || 1,
       chosen: new Map(),
-      seatId: null
+      seatId: null,
+      courseNumber: null
     };
 
     openOptions('product', product.name, '', productSheetHtml(), 'Adisyona ekle', 'Tutar', '');
@@ -1325,6 +1344,23 @@
           </div>
         </div>`;
     }
+
+    // V1-WTR-025: optional — most orders have no course structure at all.
+    // Choosing a course number here just tags the line; whether it goes
+    // straight to the kitchen or is held with the rest of its course is
+    // decided server-side when the whole draft is fired (Order.FireRound).
+    html += `
+      <div class="optgroup">
+        <div class="optgroup-head"><span class="optgroup-name">Kurs</span>
+          <span class="optgroup-rule">opsiyonel</span></div>
+        <div class="qty-row">
+          <button type="button" class="qty-quick" data-course=""
+                  aria-pressed="${!context.courseNumber}">Kurssuz</button>
+          ${[1, 2, 3, 4, 5].map((course) => `
+            <button type="button" class="qty-quick" data-course="${course}"
+                    aria-pressed="${context.courseNumber === course}">${course}. kurs</button>`).join('')}
+        </div>
+      </div>`;
 
     for (const group of context.product.modifierGroups) {
       const single = group.selectionType === 'Single';
@@ -1412,7 +1448,8 @@
         // the seat actually belongs to this table (OrderManagementStore) -
         // a stale/foreign id here is simply ignored server-side, never an
         // error this client needs to pre-check.
-        seatId: line.seatId || null
+        seatId: line.seatId || null,
+        courseNumber: line.courseNumber || null
       }))
     };
   }
@@ -2037,6 +2074,23 @@
     await loadTables();
     if (state.pending.length === 0) closeOptions(); else openPendingSheet();
     if (state.table) { await loadOrder(state.table.id); renderBill(); }
+  }
+
+  // V1-WTR-025: calls in one Held course — the explicit "ateşle" action
+  // the full course model needs once the table is ready for it. No
+  // confirmation sheet (unlike void/comp): this is routine kitchen
+  // dispatch, the same class of action as submit-draft, not a discretionary
+  // exception.
+  async function fireCourse(courseNumber) {
+    if (!state.order) return;
+    const result = await api(apiUrl(`/orders/${state.order.orderId}/fire-course`), {
+      method: 'POST',
+      body: { courseNumber }
+    });
+    if (!result.ok) { toast(result.message, { warning: true }); return; }
+    toast(`${courseNumber}. kurs mutfağa ateşlendi.`);
+    await loadOrder(state.table.id);
+    renderBill();
   }
 
   // ══ Sending the check to the cashier ═══════════════════════════════
@@ -2923,7 +2977,10 @@
       if (voidSentButton) { openVoidSentSheet(voidSentButton.dataset.voidSent); return; }
 
       const compButton = event.target.closest('[data-comp]');
-      if (compButton) openCompSheet(compButton.dataset.comp);
+      if (compButton) { openCompSheet(compButton.dataset.comp); return; }
+
+      const fireCourseButton = event.target.closest('[data-fire-course]');
+      if (fireCourseButton) void fireCourse(Number(fireCourseButton.dataset.fireCourse));
     });
 
     el.billBody.addEventListener('input', (event) => {
@@ -2963,6 +3020,16 @@
       state.optionsContext.seatId = seat.dataset.seat || null;
       el.optionsBody.querySelectorAll('[data-seat]').forEach((button) => {
         button.setAttribute('aria-pressed', String((button.dataset.seat || null) === state.optionsContext.seatId));
+      });
+      return;
+    }
+
+    const course = event.target.closest('[data-course]');
+    if (course && state.optionsMode === 'product') {
+      state.optionsContext.courseNumber = course.dataset.course ? Number(course.dataset.course) : null;
+      el.optionsBody.querySelectorAll('[data-course]').forEach((button) => {
+        button.setAttribute('aria-pressed',
+          String((button.dataset.course ? Number(button.dataset.course) : null) === state.optionsContext.courseNumber));
       });
       return;
     }
@@ -3092,7 +3159,7 @@
         }
       }
       const noteField = el.optionsBody.querySelector('[data-product-note]');
-      addToDraft(context.product, context.quantity, chosenModifiers(), noteField ? noteField.value.trim() : '', context.seatId);
+      addToDraft(context.product, context.quantity, chosenModifiers(), noteField ? noteField.value.trim() : '', context.seatId, context.courseNumber);
       closeOptions();
       return;
     }

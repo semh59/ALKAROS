@@ -61,6 +61,18 @@ public static class EscPosTicketFormatter
 
         foreach (var item in ticket.Items)
         {
+            // V1-WTR-025: a course-bearing item prints its course number so
+            // a multi-course order's whole plan reads as one plan, not a
+            // flat list — and a Held one is marked not to start, since it
+            // is on this ticket for prep visibility only until it is fired.
+            if (item.CourseNumber is { } course)
+            {
+                var courseLine = item.IsHeld
+                    ? string.Create(CultureInfo.InvariantCulture, $"-- KURS {course} (BEKLETILIYOR) --")
+                    : string.Create(CultureInfo.InvariantCulture, $"-- KURS {course} --");
+                sb.AppendLine(courseLine);
+            }
+
             var quantityStr = item.Quantity.ToString("0.##", CultureInfo.InvariantCulture).PadRight(5);
             sb.AppendLine(CultureInfo.InvariantCulture, $"{quantityStr} {item.ProductNameSnapshot}");
 
@@ -84,6 +96,11 @@ public static class EscPosTicketFormatter
             if (item.IsAgeRestricted)
             {
                 sb.AppendLine("      *** YAS KONTROLU GEREKLI ***");
+            }
+
+            if (item.IsHeld)
+            {
+                sb.AppendLine("      *** HAZIRLAMAYIN - ATES BEKLENIYOR ***");
             }
         }
 
