@@ -41,6 +41,10 @@
 .catalog-available, .catalog-suspended { border-radius: 999px; padding: .22rem .55rem; font-size: .7rem; font-weight: 900; }
 .catalog-available { color: var(--ds-color-success); background: var(--ds-color-success-soft); }
 .catalog-suspended { color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+/* V1-WTR-017: the label+input TextField needs bottom-alignment against the
+   Button beside it, unlike the plain <span> the availability row aligns. */
+.catalog-prep-time { align-items: flex-end; }
+.catalog-prep-time > label { flex: 1; }
 .catalog-details { position: sticky; top: var(--ds-space-4); display: grid; gap: var(--ds-space-4); border: 1px solid var(--catalog-line); border-radius: var(--ds-radius-md); padding: var(--ds-space-5); background: var(--ds-color-surface); box-shadow: var(--ds-shadow-raised); }
 .catalog-details__heading { display: grid; gap: .25rem; padding-bottom: var(--ds-space-3); border-bottom: 1px solid var(--catalog-line); }
 .catalog-details__heading h3 { margin: .1rem 0; font-size: 1.7rem; letter-spacing: -.04em; }

@@ -31,4 +31,14 @@ describe("catalog management client", () => {
     await client.create({ kind: "modifierGroups", value: { id: "g-1", code: "MILK", name: "Süt seçimi", selectionType: "SelectOne", minSelections: 0, maxSelections: 1 } });
     expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/management/catalog/modifier-groups", expect.objectContaining({ method: "POST", body: expect.stringContaining("MILK") }));
   });
+
+  it("posts a prep-time update, including the null-to-clear case", async () => {
+    // V1-WTR-017.
+    const fetcher = vi.fn().mockResolvedValueOnce(response({ id: "p-1" })).mockResolvedValueOnce(response({ id: "p-1" }));
+    const client = createCatalogManagementClient(fetcher);
+    await client.setPrepTime("p-1", 12);
+    expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/management/catalog/products/p-1/prep-time", expect.objectContaining({ method: "POST", body: JSON.stringify({ prepTimeMinutes: 12 }) }));
+    await client.setPrepTime("p-1", null);
+    expect(fetcher).toHaveBeenNthCalledWith(2, "/api/v1/management/catalog/products/p-1/prep-time", expect.objectContaining({ method: "POST", body: JSON.stringify({ prepTimeMinutes: null }) }));
+  });
 });

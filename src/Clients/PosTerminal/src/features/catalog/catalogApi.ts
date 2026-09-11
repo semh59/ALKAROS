@@ -8,6 +8,7 @@ export interface CatalogManagementClient {
   load: () => Promise<CatalogData>;
   create: (input: CatalogCreateInput) => Promise<unknown>;
   setAvailability: (productId: string, isAvailable: boolean) => Promise<unknown>;
+  setPrepTime: (productId: string, prepTimeMinutes: number | null) => Promise<unknown>;
 }
 
 interface Page<T> { items: T[]; nextCursor: string | null }
@@ -46,5 +47,7 @@ export function createCatalogManagementClient(fetcher: typeof fetch = fetch): Ca
     },
     setAvailability: (productId, isAvailable) =>
       request(`/products/${productId}/availability`, { method: "POST", body: JSON.stringify({ isAvailable }) }),
+    setPrepTime: (productId, prepTimeMinutes) =>
+      request(`/products/${productId}/prep-time`, { method: "POST", body: JSON.stringify({ prepTimeMinutes }) }),
   };
 }

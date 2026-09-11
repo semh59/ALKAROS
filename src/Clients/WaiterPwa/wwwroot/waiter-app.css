@@ -1187,6 +1187,20 @@ input {
   cursor: pointer;
 }
 
+/* V1-WTR-017: the pre-send "hazırlama süreleri farklı" sheet body. */
+.delay-warning-text {
+  margin: 0 0 var(--space-4);
+  color: var(--color-ink);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.delay-choice-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.delay-choice-actions .btn { width: 100%; }
+
 /* ============================================================
    TOASTS — foundations §5.2/§5.3
    ============================================================ */

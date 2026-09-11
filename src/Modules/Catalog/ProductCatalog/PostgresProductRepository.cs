@@ -24,7 +24,7 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   row_version
+                   row_version, prep_time_minutes
             FROM {Table}
             WHERE product_id = @id;
             """);
@@ -45,7 +45,7 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   row_version
+                   row_version, prep_time_minutes
             FROM {Table}
             WHERE sku = @sku;
             """);
@@ -66,7 +66,7 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   row_version
+                   row_version, prep_time_minutes
             FROM {Table}
             WHERE category_id = @category_id
             ORDER BY display_order, sku
@@ -93,7 +93,7 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   row_version
+                   row_version, prep_time_minutes
             FROM {Table}
             ORDER BY display_order, sku
             LIMIT {MaxUnpagedRows + 1};
@@ -119,10 +119,10 @@ public sealed class PostgresProductRepository : IProductRepository
             INSERT INTO {Table} (
                 product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                 description, printer_route_policy, display_order, current_price, active, is_available,
-                row_version)
+                row_version, prep_time_minutes)
             VALUES (@id, @sku, @name, @product_type, @stock_mode, @category_id, @tax_profile_id,
                     @description, @printer_route_policy, @display_order, @current_price, @active, @is_available,
-                    @row_version);
+                    @row_version, @prep_time_minutes);
             """);
         command.Parameters.AddWithValue("id", product.Id);
         command.Parameters.AddWithValue("sku", product.Sku);
@@ -138,6 +138,7 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("active", product.Active);
         command.Parameters.AddWithValue("is_available", product.IsAvailable);
         command.Parameters.AddWithValue("row_version", product.RowVersion);
+        command.Parameters.AddWithValue("prep_time_minutes", (object?)product.PrepTimeMinutes ?? DBNull.Value);
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -164,6 +165,7 @@ public sealed class PostgresProductRepository : IProductRepository
                 current_price = @current_price,
                 active = @active,
                 is_available = @is_available,
+                prep_time_minutes = @prep_time_minutes,
                 row_version = row_version + 1
             WHERE product_id = @id AND row_version = @expected_row_version
             RETURNING product_id;
@@ -181,6 +183,7 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("current_price", (object?)product.CurrentPrice ?? DBNull.Value);
         command.Parameters.AddWithValue("active", product.Active);
         command.Parameters.AddWithValue("is_available", product.IsAvailable);
+        command.Parameters.AddWithValue("prep_time_minutes", (object?)product.PrepTimeMinutes ?? DBNull.Value);
         command.Parameters.AddWithValue("expected_row_version", expectedRowVersion);
 
         var result = await command.ExecuteScalarAsync(cancellationToken);
@@ -216,6 +219,7 @@ public sealed class PostgresProductRepository : IProductRepository
             reader.IsDBNull(10) ? null : reader.GetDecimal(10),
             reader.GetBoolean(11),
             reader.GetBoolean(12),
-            reader.GetInt64(13));
+            reader.GetInt64(13),
+            reader.IsDBNull(14) ? null : reader.GetInt32(14));
     }
 }

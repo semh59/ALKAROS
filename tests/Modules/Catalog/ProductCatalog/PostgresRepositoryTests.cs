@@ -28,6 +28,7 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
         _database = database;
         EnsureAvailabilityColumn(database.DataSource);
         EnsureRowVersionColumn(database.DataSource);
+        EnsurePrepTimeColumn(database.DataSource);
         _categories = new PostgresCategoryRepository(database.DataSource);
         _taxProfiles = new PostgresTaxProfileRepository(database.DataSource);
         _modifierGroups = new PostgresModifierGroupRepository(database.DataSource);
@@ -53,6 +54,15 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
     {
         using var command = dataSource.CreateCommand(
             "ALTER TABLE catalog.products ADD COLUMN IF NOT EXISTS row_version BIGINT NOT NULL DEFAULT 1;");
+        command.ExecuteNonQuery();
+    }
+
+    // Same pattern again: the shared fixture only applies V1-CAT-001, so the
+    // V1-WTR-017 prep_time_minutes column is added here idempotently.
+    private static void EnsurePrepTimeColumn(NpgsqlDataSource dataSource)
+    {
+        using var command = dataSource.CreateCommand(
+            "ALTER TABLE catalog.products ADD COLUMN IF NOT EXISTS prep_time_minutes INTEGER NULL;");
         command.ExecuteNonQuery();
     }
 

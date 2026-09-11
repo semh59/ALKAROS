@@ -21,7 +21,8 @@ public sealed class Product
         decimal? currentPrice = null,
         bool active = true,
         bool isAvailable = true,
-        long rowVersion = 1)
+        long rowVersion = 1,
+        int? prepTimeMinutes = null)
     {
         if (string.IsNullOrWhiteSpace(sku))
             throw new ArgumentException("Product SKU cannot be empty.", nameof(sku));
@@ -29,6 +30,8 @@ public sealed class Product
             throw new ArgumentException("Product name cannot be empty.", nameof(name));
         if (currentPrice is < 0)
             throw new ArgumentOutOfRangeException(nameof(currentPrice), "Current price cannot be negative.");
+        if (prepTimeMinutes is < 1 or > 180)
+            throw new ArgumentOutOfRangeException(nameof(prepTimeMinutes), prepTimeMinutes, "Prep time must be between 1 and 180 minutes.");
 
         Id = id;
         Sku = sku;
@@ -44,6 +47,7 @@ public sealed class Product
         Active = active;
         IsAvailable = isAvailable;
         RowVersion = rowVersion;
+        PrepTimeMinutes = prepTimeMinutes;
     }
 
     public Guid Id { get; }
@@ -73,13 +77,28 @@ public sealed class Product
     /// </summary>
     public long RowVersion { get; }
 
+    /// <summary>
+    /// V1-WTR-017: optional estimated kitchen preparation time, in minutes
+    /// (1-180). Manager-entered on the product; lets a waiter client warn
+    /// before sending a round whose items' prep times are far apart (e.g. a
+    /// 3-minute salad alongside a 25-minute grill). Null means "no estimate
+    /// entered" — such a product is simply excluded from that comparison,
+    /// never treated as zero.
+    /// </summary>
+    public int? PrepTimeMinutes { get; }
+
     /// <summary>Hides the product from sales clients without deleting it.</summary>
     public Product Suspend() => IsAvailable ? WithAvailability(false) : this;
 
     /// <summary>Restores a suspended product to the sellable menu.</summary>
     public Product Restore() => IsAvailable ? this : WithAvailability(true);
 
+    /// <summary>Sets or clears (null) the manager-entered prep-time estimate.</summary>
+    public Product WithPrepTimeMinutes(int? prepTimeMinutes) => new(
+        Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
+        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, IsAvailable, RowVersion, prepTimeMinutes);
+
     private Product WithAvailability(bool isAvailable) => new(
         Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
-        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, isAvailable, RowVersion);
+        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, isAvailable, RowVersion, PrepTimeMinutes);
 }

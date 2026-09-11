@@ -315,6 +315,57 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
     }
 
     [Fact]
+    public async Task SettingPrepTimeStoresItAndClearingItSetsNullAgain()
+    {
+        // V1-WTR-017: same single-field-update shape and evidence pattern as
+        // SettingAvailabilityChangesRowVersionAndReturnsTheProduct above.
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        var sku = "PREP-" + Guid.NewGuid().ToString("N")[..8];
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(productId, sku, "Kavurma", ProductType.MenuItem, StockMode.Untracked));
+
+        using var setResponse = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/prep-time",
+            new SetProductPrepTimeV1(25));
+        Assert.Equal(HttpStatusCode.OK, setResponse.StatusCode);
+        var afterSet = await setResponse.Content.ReadFromJsonAsync<ProductV1>();
+        Assert.Equal(25, afterSet?.PrepTimeMinutes);
+        Assert.Equal(
+            25,
+            await ScalarAsync<int>("SELECT prep_time_minutes FROM catalog.products WHERE product_id = @value;", productId));
+
+        using var clearResponse = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/prep-time",
+            new SetProductPrepTimeV1(null));
+        Assert.Equal(HttpStatusCode.OK, clearResponse.StatusCode);
+        var afterClear = await clearResponse.Content.ReadFromJsonAsync<ProductV1>();
+        Assert.Null(afterClear?.PrepTimeMinutes);
+    }
+
+    [Fact]
+    public async Task AnOutOfRangePrepTimeIsRejected()
+    {
+        // Product.WithPrepTimeMinutes throws ArgumentOutOfRangeException,
+        // which CatalogManagerEndpointFilter's ArgumentException catch maps
+        // to 400 VALIDATION_FAILED (CatalogManagementEndpoints.MapError) -
+        // the database CHECK constraint is defense in depth, never reached
+        // through this endpoint.
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        var sku = "PREPX-" + Guid.NewGuid().ToString("N")[..8];
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(productId, sku, "Aşırı yavaş", ProductType.MenuItem, StockMode.Untracked));
+
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/prep-time",
+            new SetProductPrepTimeV1(181));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("VALIDATION_FAILED", (await ReadErrorAsync(response)).Error.Code);
+    }
+
+    [Fact]
     public async Task CreatingAScheduledFuturePriceClearsAnAlreadyExpiredCurrentPrice()
     {
         // Found by an independent audit (2026-09-07): CreatePriceAsync only

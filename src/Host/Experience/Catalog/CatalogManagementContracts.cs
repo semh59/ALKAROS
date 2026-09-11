@@ -44,7 +44,10 @@ public sealed record ProductV1(
     int DisplayOrder,
     decimal? CurrentPrice,
     bool Active,
-    bool IsAvailable = true);
+    bool IsAvailable = true,
+    // V1-WTR-017: manager-entered estimated prep time in minutes (1-180),
+    // null when never set. See Product.PrepTimeMinutes.
+    int? PrepTimeMinutes = null);
 
 public sealed record CreateProductV1(
     Guid Id,
@@ -59,9 +62,13 @@ public sealed record CreateProductV1(
     int DisplayOrder = 0,
     decimal? CurrentPrice = null,
     bool Active = true,
-    bool IsAvailable = true);
+    bool IsAvailable = true,
+    int? PrepTimeMinutes = null);
 
 public sealed record SetProductAvailabilityV1(bool IsAvailable);
+
+/// <summary>V1-WTR-017: sets or clears (null) a product's prep-time estimate.</summary>
+public sealed record SetProductPrepTimeV1(int? PrepTimeMinutes);
 
 public sealed record ModifierGroupV1(
     Guid Id,

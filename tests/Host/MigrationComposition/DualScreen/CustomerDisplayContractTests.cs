@@ -13,7 +13,9 @@ public sealed class CustomerDisplayContractTests
     // without a deliberate change is what this test is for.
     private static readonly string[] ExpectedCatalogProperties =
     [
-        "categoryCode", "categoryName", "modifierGroups", "name", "productId", "sku", "taxRate", "unitPrice",
+        // V1-WTR-017: prepTimeMinutes joins the allowlist here too — same
+        // "asserted exactly" discipline as modifierGroups above.
+        "categoryCode", "categoryName", "modifierGroups", "name", "prepTimeMinutes", "productId", "sku", "taxRate", "unitPrice",
     ];
     private static readonly string[] ExpectedProperties =
     [

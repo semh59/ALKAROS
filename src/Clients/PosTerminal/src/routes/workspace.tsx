@@ -379,7 +379,8 @@ function CatalogRoute({ canManage }: { canManage: boolean }) {
   useEffect(() => { void load(); }, [load]);
   const create = async (input: CatalogCreateInput) => { await client.create(input); await load(); };
   const setAvailability = async (productId: string, isAvailable: boolean) => { await client.setAvailability(productId, isAvailable); await load(); };
-  return <CatalogWorkspace state={state} data={data} canManage={canManage} onRefresh={load} onCreate={canManage ? create : undefined} onSetAvailability={canManage ? setAvailability : undefined} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
+  const setPrepTime = async (productId: string, prepTimeMinutes: number | null) => { await client.setPrepTime(productId, prepTimeMinutes); await load(); };
+  return <CatalogWorkspace state={state} data={data} canManage={canManage} onRefresh={load} onCreate={canManage ? create : undefined} onSetAvailability={canManage ? setAvailability : undefined} onSetPrepTime={canManage ? setPrepTime : undefined} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
 }
 
 function SystemHealthRoute({ terminalId, canView }: { terminalId: string; canView: boolean }) {

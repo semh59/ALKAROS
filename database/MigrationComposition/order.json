@@ -882,6 +882,14 @@
         "orders"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "103",
+      "phase": "B",
+      "tables": [
+        "products"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

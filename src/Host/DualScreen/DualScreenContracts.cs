@@ -37,7 +37,11 @@ public sealed record CatalogProductDto(
     string CategoryName,
     decimal UnitPrice,
     decimal TaxRate,
-    IReadOnlyList<CatalogModifierGroupDto>? ModifierGroups = null);
+    IReadOnlyList<CatalogModifierGroupDto>? ModifierGroups = null,
+    // V1-WTR-017: manager-entered estimated prep time in minutes, null when
+    // never set on the product. Lets a waiter client warn before sending a
+    // round whose items' prep times are far apart.
+    int? PrepTimeMinutes = null);
 
 /// <summary>
 /// V1-RMD-148: one option group of a product. <paramref name="SelectionType"/>

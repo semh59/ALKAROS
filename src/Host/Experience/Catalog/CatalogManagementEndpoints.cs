@@ -106,6 +106,15 @@ public static class CatalogManagementEndpoints
             var updated = await store.SetProductAvailabilityAsync(productId, request, cancellationToken);
             return updated is null ? Results.NotFound() : Results.Ok(updated);
         });
+        catalog.MapPost("/products/{productId:guid}/prep-time", async (
+            Guid productId,
+            SetProductPrepTimeV1 request,
+            CatalogManagementStore store,
+            CancellationToken cancellationToken) =>
+        {
+            var updated = await store.SetProductPrepTimeAsync(productId, request, cancellationToken);
+            return updated is null ? Results.NotFound() : Results.Ok(updated);
+        });
 
         catalog.MapGet("/modifier-groups", async (
             string? limit,

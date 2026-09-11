@@ -173,7 +173,8 @@ public sealed partial class DualScreenStore
                    COALESCE(c.code, 'OTHER'), COALESCE(c.name, 'Diğer'),
                    p.current_price, COALESCE(t.vat_rate, 0),
                    COALESCE(c.sort_order, 2147483647), p.display_order,
-                   p.name COLLATE "C", p.sku COLLATE "C"
+                   p.name COLLATE "C", p.sku COLLATE "C",
+                   p.prep_time_minutes
             FROM catalog.products p
             LEFT JOIN catalog.categories c ON c.category_id = p.category_id AND c.active
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
@@ -218,7 +219,8 @@ public sealed partial class DualScreenStore
             rows.Add(new CatalogRow(
                 new CatalogProductDto(
                     reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4),
-                    reader.GetDecimal(5), reader.GetDecimal(6)),
+                    reader.GetDecimal(5), reader.GetDecimal(6),
+                    PrepTimeMinutes: reader.IsDBNull(11) ? null : reader.GetInt32(11)),
                 reader.GetInt32(7), reader.GetInt32(8), reader.GetString(9), reader.GetString(10)));
         }
 
