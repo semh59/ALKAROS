@@ -167,6 +167,14 @@ public sealed record ApplyComplimentaryRequestV1(
 /// result fields; "Pending" carries only GrantId — the caller polls the
 /// authorization-decisions surface (V1-IAM-020) or retries this same request
 /// (same IdempotencyKey) once a manager resolves it.
+///
+/// <paramref name="PersonalBudgetRemaining"/> (V1-WTR-012): set only when
+/// this specific comp was resolved by the requester's own per-day
+/// discretionary allowance (<c>PolicyPath.PersonalBudget</c>) rather than an
+/// outright permission or a delegation — the remaining amount for the rest
+/// of today, so the waiter client can show it instead of a generic success
+/// toast. Null for every other outcome, including "Applied" via a role that
+/// holds <c>bills.comp</c> outright.
 /// </summary>
 public sealed record ApplyComplimentaryResultV1(
     string Status,
@@ -176,7 +184,8 @@ public sealed record ApplyComplimentaryResultV1(
     long? NewOrderRowVersion,
     decimal? NewOrderTotal,
     DateTimeOffset? AppliedAt,
-    Guid? GrantId);
+    Guid? GrantId,
+    decimal? PersonalBudgetRemaining = null);
 
 /// <summary>
 /// V1-IAM-027: request body for voiding a sent-but-unserved item.

@@ -15,6 +15,7 @@ using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
+using ALKAROS.Identity.Authorization.PersonalBudgets;
 using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.ItemExceptions;
@@ -63,6 +64,17 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IAuthorizationPolicyRepository, PostgresAuthorizationPolicyRepository>();
         services.TryAddSingleton<IAuthorizationDelegationRepository, PostgresAuthorizationDelegationRepository>();
         services.TryAddSingleton<IEscalationResolver, DelegationEscalationResolver>();
+        // V1-WTR-012: plain AddSingleton, not TryAddSingleton — TryAdd*
+        // checks only the SERVICE type and DelegationEscalationResolver
+        // already registered one IEscalationResolver, so a TryAdd here
+        // would silently no-op and this resolver would never run. Ordered
+        // after Delegation — an active delegation (broader, individually
+        // granted authority) takes precedence over this small, always-on
+        // self-service allowance. Runs for every escalated grant but only
+        // ever resolves bills.comp requests from the waiter role within
+        // PersonalCompBudgetPolicy's caps; anything else falls through to
+        // it unchanged (returns null).
+        services.AddSingleton<IEscalationResolver, PersonalCompBudgetEscalationResolver>();
         services.TryAddSingleton<IBehaviouralRateSource, PostgresBehaviouralRateSource>();
         services.TryAddSingleton<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
         services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
@@ -401,6 +413,7 @@ public static class OrderManagementEndpoints
             IOrderRepository orders,
             IRoleRepository roles,
             IAuthorizationGrantService grants,
+            IAuthorizationGrantRepository grantsRepository,
             DualScreenStore dualStore,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -410,6 +423,12 @@ public static class OrderManagementEndpoints
             if (!ComplimentaryReasonCatalog.IsValid(request.ReasonCode))
                 throw new InvalidItemReasonException(
                     $"Reason '{request.ReasonCode}' is not a valid complimentary catalog reason.");
+
+            // V1-WTR-012: only set when PersonalCompBudgetEscalationResolver
+            // is what actually resolved this request - the waiter client
+            // shows today's remaining allowance in the success toast instead
+            // of a generic message.
+            decimal? personalBudgetRemaining = null;
 
             var permissions = await roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
             if (!permissions.Contains(ApplicationPermissions.BillsComp, StringComparer.Ordinal))
@@ -445,8 +464,16 @@ public static class OrderManagementEndpoints
                             statusCode: StatusCodes.Status403Forbidden);
                     case GrantOutcome.Pending:
                         return Results.Accepted(value: new ApplyComplimentaryResultV1(
-                            "Pending", orderId, itemId, null, null, null, null, resolution.Grant.GrantId));
+                            "Pending", orderId, itemId, null, null, null, null, resolution.Grant.GrantId, null));
                     case GrantOutcome.Authorized:
+                        if (resolution.Grant.Path == PolicyPath.PersonalBudget)
+                        {
+                            var startOfUtcDay = new DateTimeOffset(DateTime.UtcNow.Date, TimeSpan.Zero);
+                            var spentToday = await grantsRepository.SumPersonalBudgetGrantedSinceAsync(
+                                userId, ApplicationPermissions.BillsComp, startOfUtcDay, cancellationToken);
+                            personalBudgetRemaining =
+                                Math.Max(0m, PersonalCompBudgetPolicy.DailyCap - spentToday);
+                        }
                         break;
                     default:
                         throw new InvalidOperationException($"Unhandled grant outcome '{resolution.Outcome}'.");
@@ -473,7 +500,8 @@ public static class OrderManagementEndpoints
                 result.NewOrderRowVersion,
                 result.NewOrderTotal,
                 result.AppliedAt,
-                null));
+                null,
+                personalBudgetRemaining));
         });
 
         // V1-IAM-027: V0-DOM-006 amendment (Semih, 2026-09-04) — a sent-but-

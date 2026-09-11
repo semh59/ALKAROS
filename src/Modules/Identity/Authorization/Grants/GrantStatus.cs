@@ -24,6 +24,14 @@ public enum PolicyPath
 
     /// <summary>A manager approved or denied it (V1-IAM-020).</summary>
     Manual,
+
+    /// <summary>
+    /// V1-WTR-012: the requester's own per-day discretionary comp allowance
+    /// covered it — no human in the loop, but unlike <see cref="Auto"/> (a
+    /// policy row) this is a running per-requester budget, checked and
+    /// consumed one grant at a time.
+    /// </summary>
+    PersonalBudget,
 }
 
 /// <summary>Text mappings for the <c>status</c> and <c>policy_path</c> columns.</summary>
@@ -50,6 +58,7 @@ public static class GrantText
         PolicyPath.Auto => "auto",
         PolicyPath.Delegation => "delegation",
         PolicyPath.Manual => "manual",
+        PolicyPath.PersonalBudget => "personal_budget",
         _ => throw new ArgumentOutOfRangeException(nameof(path), path, null),
     };
 
@@ -58,6 +67,7 @@ public static class GrantText
         "auto" => PolicyPath.Auto,
         "delegation" => PolicyPath.Delegation,
         "manual" => PolicyPath.Manual,
+        "personal_budget" => PolicyPath.PersonalBudget,
         _ => throw new ArgumentException($"Unknown policy path '{text}'.", nameof(text)),
     };
 }

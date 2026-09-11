@@ -133,6 +133,34 @@ public sealed class PostgresAuthorizationGrantRepository : IAuthorizationGrantRe
         return (int)(long)(await command.ExecuteScalarAsync(cancellationToken) ?? 0L);
     }
 
+    public async Task<decimal> SumPersonalBudgetGrantedSinceAsync(
+        Guid requesterUserId,
+        string permissionCode,
+        DateTimeOffset since,
+        CancellationToken cancellationToken = default)
+    {
+        // V1-WTR-012: the (requester_user_id, permission_code, resolved_at)
+        // WHERE status = 'granted' partial index from 052
+        // (ix_authorization_grants_granted_rate) already covers this filter
+        // shape — no new index needed for a per-requester, per-day row count
+        // this small.
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT coalesce(sum(amount), 0)
+            FROM {Table}
+            WHERE requester_user_id = @requester
+              AND permission_code = @permission
+              AND status = 'granted'
+              AND policy_path = 'personal_budget'
+              AND resolved_at >= @since;
+            """);
+        command.Parameters.AddWithValue("requester", requesterUserId);
+        command.Parameters.AddWithValue("permission", permissionCode);
+        command.Parameters.AddWithValue("since", since);
+
+        return (decimal)(await command.ExecuteScalarAsync(cancellationToken) ?? 0m);
+    }
+
     public async Task<IReadOnlyList<AuthorizationGrant>> ListPendingAsync(CancellationToken cancellationToken = default)
     {
         var result = new List<AuthorizationGrant>();

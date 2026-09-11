@@ -1603,7 +1603,14 @@
     await loadOrder(state.table.id);
     await loadTables();
     renderBill();
-    toast('Ürün ikram edildi.');
+    // V1-WTR-012: personalBudgetRemaining is only set by the server when
+    // this specific comp was resolved by the waiter's own per-day allowance
+    // (not an outright bills.comp, not a delegation) — telling the waiter
+    // what's left keeps the allowance usable without a separate screen.
+    const remaining = result.data && result.data.personalBudgetRemaining;
+    toast(remaining !== null && remaining !== undefined
+      ? `Ürün ikram edildi. Bugünkü ikram hakkınızdan ${formatMoney(remaining)} kaldı.`
+      : 'Ürün ikram edildi.');
   }
 
   function openVoidSheet(itemId) {

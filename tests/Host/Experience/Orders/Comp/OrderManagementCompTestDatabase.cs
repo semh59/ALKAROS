@@ -117,7 +117,17 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
     /// guard, which reads Order.ServingUserId end to end from here through
     /// the comp endpoint.
     /// </summary>
-    public async Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithOneItemAsync(Guid? servingUserId)
+    public Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithOneItemAsync(Guid? servingUserId)
+        => SeedActiveOrderWithOneItemAsync(servingUserId, unitPrice: 100m, taxRate: 10m);
+
+    /// <summary>
+    /// V1-WTR-012: lets a test control the item's exact GrossAmount
+    /// (taxRate 0 makes GrossAmount == unitPrice, no rounding surprises) —
+    /// needed to place an item precisely inside or outside
+    /// PersonalCompBudgetPolicy's per-item/daily caps.
+    /// </summary>
+    public async Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithOneItemAsync(
+        Guid? servingUserId, decimal unitPrice, decimal taxRate)
     {
         var productId = Guid.NewGuid();
         await ExecuteAsync(
@@ -134,8 +144,8 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
             productId,
             "Comp Test Product",
             quantity: 1,
-            unitPrice: 100m,
-            taxRate: 10m,
+            unitPrice: unitPrice,
+            taxRate: taxRate,
             status: OrderItemState.Active);
 
         var order = new Order(

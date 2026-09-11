@@ -204,6 +204,111 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
         Assert.Equal("Pending", body!.Status);
     }
 
+    // V1-WTR-012 (garson audit follow-on ideation, 2026-09-11): a small,
+    // self-service daily comp allowance for the waiter role — ₺50/kalem,
+    // ₺150/gün. The shared SeedActiveOrderWithOneItemAsync() default (₺100,
+    // 10% tax) is deliberately ABOVE the per-item cap, so every test above
+    // that uses it exercises the unaffected escalate-to-pending path exactly
+    // as before; these tests seed a cheap item on purpose to reach the new
+    // resolver.
+
+    [Fact]
+    public async Task AWaiterWithinTheDailyPersonalBudgetAppliesDirectlyWithoutAManager()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(
+            waiterId, unitPrice: 30m, taxRate: 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        Assert.Equal("Applied", body!.Status);
+        // ₺150 daily cap - this ₺30 comp = ₺120 left for the rest of today.
+        Assert.Equal(120m, body.PersonalBudgetRemaining);
+    }
+
+    [Fact]
+    public async Task ARoleThatHoldsBillsCompOutrightNeverReportsAPersonalBudgetRemainder()
+    {
+        // The existing direct-grant test (above) doesn't assert this field;
+        // pinning it separately so a future change to the endpoint can't
+        // quietly start reporting a personal-budget number for a role that
+        // was never on that path at all.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.comp");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(
+            servingUserId: null, unitPrice: 30m, taxRate: 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "VIPGuest"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        Assert.Null(body!.PersonalBudgetRemaining);
+    }
+
+    [Fact]
+    public async Task AWaiterOverThePerItemCapStillEscalatesToPendingInsteadOfUsingTheBudget()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        // ₺60 - one ₺10 over the ₺50 per-item cap; still comfortably under
+        // the ₺150 daily cap, so this isolates the per-item check.
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(
+            waiterId, unitPrice: 60m, taxRate: 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        Assert.Equal("Pending", body!.Status);
+    }
+
+    [Fact]
+    public async Task AWaiterAtTheDailyCapEscalatesTheNextCompToPendingInsteadOfOverspendingTheBudget()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        // Three ₺50 comps exhaust the ₺150 daily cap exactly.
+        for (var i = 0; i < 3; i++)
+        {
+            var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(
+                waiterId, unitPrice: 50m, taxRate: 0m);
+            using var spend = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+                new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+            using var spendResponse = await client.SendAsync(spend);
+            Assert.Equal(HttpStatusCode.OK, spendResponse.StatusCode);
+        }
+
+        // A fourth ₺50 comp would push the day to ₺200 - over the ₺150 cap -
+        // so it must fall back to a manager, not silently apply.
+        var (fourthOrderId, fourthItemId) = await _database.SeedActiveOrderWithOneItemAsync(
+            waiterId, unitPrice: 50m, taxRate: 0m);
+        using var fourth = JsonRequest(CompPath(terminalId, fourthOrderId, fourthItemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var fourthResponse = await client.SendAsync(fourth);
+
+        Assert.Equal(HttpStatusCode.Accepted, fourthResponse.StatusCode);
+        var body = await fourthResponse.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        Assert.Equal("Pending", body!.Status);
+    }
+
     private static string CompPath(Guid terminalId, Guid orderId, Guid itemId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/items/{itemId:D}/comp";
 

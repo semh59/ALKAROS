@@ -44,6 +44,19 @@ public interface IAuthorizationGrantRepository
 
     /// <summary>Every pending grant, oldest first. Consumed by the manager surface.</summary>
     Task<IReadOnlyList<AuthorizationGrant>> ListPendingAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-WTR-012: total <paramref name="amount"/> already granted to
+    /// <paramref name="requesterUserId"/> for <paramref name="permissionCode"/>
+    /// under <see cref="PolicyPath.PersonalBudget"/> with <c>resolved_at</c> at
+    /// or after <paramref name="since"/> — feeds the personal daily comp
+    /// budget check. 0 when nothing has been granted yet.
+    /// </summary>
+    Task<decimal> SumPersonalBudgetGrantedSinceAsync(
+        Guid requesterUserId,
+        string permissionCode,
+        DateTimeOffset since,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>Raised when resolving a grant that is already terminal.</summary>
