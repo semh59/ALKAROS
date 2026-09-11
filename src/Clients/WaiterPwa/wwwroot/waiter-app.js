@@ -697,6 +697,11 @@
     await loadCatalog();
     renderCategories();
     renderProducts();
+    // V1-WTR-016: a held draft's price-changed badges (renderDraftLine)
+    // read straight from state.products, so they only actually appear
+    // once this runs - without it a stale price could sit unflagged until
+    // some unrelated action happened to call renderBill() next.
+    renderBill();
   }
 
   async function loadTables() {
@@ -1112,6 +1117,19 @@
       <span class="chip-mod${modifier.priceDelta > 0 ? ' is-paid' : ''}">
         ${modifier.priceDelta > 0 && count > 1 ? `${escapeHtml(formatQuantity(count))}× ` : ''}${escapeHtml(modifier.name)}
       </span>`).join('');
+    // V1-WTR-016: the server always resolves the real price from the
+    // catalog at submit time (never trusts this cached value), so this is
+    // purely "don't let the waiter be surprised" - a stale line still
+    // sends correctly, this just lets them see and match the real price
+    // first.
+    const liveProduct = state.products.find((candidate) => candidate.id === line.productId);
+    const priceChanged = liveProduct && liveProduct.price !== line.price;
+    const priceNotice = priceChanged
+      ? `<div class="line-price-changed">
+           Fiyat güncellendi: ${escapeHtml(formatMoney(liveProduct.price))}
+           <button type="button" data-update-price="${escapeHtml(line.id)}">Güncelle</button>
+         </div>`
+      : '';
     return `
       <div class="line">
         <div class="line-main">
@@ -1121,6 +1139,7 @@
           </div>
           <div class="line-unit">${escapeHtml(formatQuantity(line.quantity))} × ${escapeHtml(formatMoney(line.price))}</div>
           ${chips ? `<div class="line-chips">${chips}</div>` : ''}
+          ${priceNotice}
           <input class="note" type="text" maxlength="200" data-note="${escapeHtml(line.id)}"
                  value="${escapeHtml(line.note)}" placeholder="Not (az pişmiş, acısız…)"
                  aria-label="${escapeHtml(line.name)} için not">
@@ -2665,6 +2684,25 @@
           });
         }
         afterDraftChange();
+        return;
+      }
+
+      // V1-WTR-016: found in "Yeni fikirler" ideation (Katman A, madde 4) —
+      // a draft line's price is cached at the moment it was added; if the
+      // catalog refreshes in the background (V1-RMD-176) while it still
+      // sits unsent, the price on screen can go stale. The server always
+      // re-resolves the real price from the catalog at submit time
+      // regardless (OrderManagementStore.CreateTableDraftAsync never
+      // trusts the client's own unitPrice) — so this was never a money
+      // bug, only a "the waiter got surprised by the real total" one.
+      const updatePrice = event.target.closest('[data-update-price]');
+      if (updatePrice) {
+        const line = state.draft.find((candidate) => candidate.id === updatePrice.dataset.updatePrice);
+        const product = line && state.products.find((candidate) => candidate.id === line.productId);
+        if (line && product) {
+          line.price = product.price;
+          afterDraftChange();
+        }
         return;
       }
 
