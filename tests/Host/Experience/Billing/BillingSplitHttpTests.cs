@@ -452,6 +452,50 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(40m, summary.TipPoolShare);
     }
 
+    /// <summary>
+    /// Found in an independent review (2026-09-11): the "how many waiters
+    /// worked today" divisor counted every distinct serving_user_id
+    /// regardless of order status, while the sales-total query (same
+    /// response) excludes Cancelled orders - a waiter whose only order today
+    /// was cancelled diluted every other waiter's tip-pool share despite not
+    /// counting as "worked" anywhere else in this same response.
+    /// </summary>
+    [Fact]
+    public async Task AWaiterWhoseOnlyOrderTodayWasCancelledDoesNotDiluteTheTipPool()
+    {
+        var terminalId = Guid.NewGuid();
+        var (activeWaiterId, activeWaiterCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var activeBill = await _database.SeedBillAsync();
+        await _database.SetOrderServingUserAsync(activeBill.BillId, activeWaiterId);
+
+        var (cancelledWaiterId, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "waiter");
+        var cancelledBill = await _database.SeedBillAsync();
+        await _database.SetOrderServingUserAsync(cancelledBill.BillId, cancelledWaiterId);
+        await _database.SetOrderStatusAsync(cancelledBill.BillId, "Cancelled");
+
+        var (_, cashierCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        await using var app = await StartAsyncWithOrders();
+        using var client = CreateClient(app);
+
+        using var tipResponse = await client.SendAsync(JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{activeBill.BillId:D}/tip",
+            cashierCookie,
+            new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 40m)));
+        Assert.Equal(HttpStatusCode.OK, tipResponse.StatusCode);
+
+        using var summaryResponse = await client.SendAsync(
+            Request(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/orders/my-shift-summary", activeWaiterCookie));
+        Assert.Equal(HttpStatusCode.OK, summaryResponse.StatusCode);
+        var summary = await summaryResponse.Content.ReadFromJsonAsync<MyShiftSummaryV1>();
+
+        // Only the active waiter counts - the cancelled-order waiter must
+        // not appear in the divisor, so the full 40 TRY goes to the one
+        // waiter who actually worked today, not split into 20/20.
+        Assert.Equal(1, summary!.WaitersWorkedToday);
+        Assert.Equal(40m, summary.TipPoolShare);
+    }
+
     [Fact]
     public async Task ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending()
     {
@@ -1014,6 +1058,17 @@ internal sealed class BillingSplitTestDatabase
             WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @bill_id);
             """,
             ("waiter_user_id", waiterUserId),
+            ("bill_id", billId));
+
+    /// <summary>V1-WTR-021 review fix: sets a seeded bill's underlying order's own status directly (bypassing the aggregate) for the shift-summary Cancelled-exclusion test.</summary>
+    public Task SetOrderStatusAsync(Guid billId, string status)
+        => ExecuteAsync(
+            DataSource,
+            """
+            UPDATE orders.orders SET status = @status
+            WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @bill_id);
+            """,
+            ("status", status),
             ("bill_id", billId));
 
     private NpgsqlDataSource DataSource

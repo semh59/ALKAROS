@@ -247,6 +247,62 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         Assert.Equal(640m, bill.Total);
     }
 
+    /// <summary>
+    /// Found in an independent review (2026-09-11): GetLiveBillAsync's
+    /// terminal-status guard (the exact property this feature's own commit
+    /// message highlights as its security guard against showing a guest a
+    /// stale/closed tab) had zero regression coverage. The logic was traced
+    /// and found correct, but a future edit could silently break it - this
+    /// closes the gap.
+    /// </summary>
+    [Fact]
+    public async Task AClosedOrderNeverShowsAStaleBillEvenThoughTheTablesPointerStillNamesIt()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Izgara Köfte", 320m);
+        // current_order_id is normally cleared on close; seeded here with it
+        // still set (defensive read-side mirror of that, per this method's
+        // own doc comment) so the status check is what's actually exercised.
+        await _database.SeedActiveOrderAsync(tableId, product, "Izgara Köfte", 320m, status: "Completed");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/qr/bill");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var bill = await response.Content.ReadFromJsonAsync<QrLiveBillDto>();
+        Assert.False(bill!.HasActiveOrder);
+        Assert.Empty(bill.Lines);
+        Assert.Equal(0m, bill.Total);
+    }
+
+    [Fact]
+    public async Task ACancelledLineNeverAppearsOnTheLiveBillEvenInsideAnOpenOrder()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Izgara Köfte", 320m);
+        await _database.SeedActiveOrderAsync(tableId, product, "Izgara Köfte", 320m, itemStatus: "Cancelled");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/qr/bill");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var bill = await response.Content.ReadFromJsonAsync<QrLiveBillDto>();
+        // The order itself is still open (Submitted), so HasActiveOrder is
+        // true - it is only the voided line that must never surface.
+        Assert.True(bill!.HasActiveOrder);
+        Assert.Empty(bill.Lines);
+    }
+
     [Fact]
     public async Task PollingTheBillWithAnInvalidSessionIsRejected()
     {

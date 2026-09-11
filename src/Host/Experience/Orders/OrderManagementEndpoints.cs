@@ -686,13 +686,21 @@ public static class OrderManagementEndpoints
                 : ApplicationPermissions.OrdersTransferServerAny;
             await authorization.AuthorizeAsync(actingUserId, permissionCode, cancellationToken);
 
-            var count = await store.TransferServingUserAsync(request.FromUserId, request.ToUserId, cancellationToken);
-            // V1-WTR-013: left by the person actually performing the
-            // hand-off (not always request.FromUserId - a cashier using
-            // orders.transfer-server-any transfers on someone else's
-            // behalf), for the target to see once. A no-op when the note
-            // is empty (LeaveAsync's own contract).
+            // Found in an independent review (2026-09-11): this used to call
+            // TransferServingUserAsync first and validate/store the note
+            // second. A note over 200 characters threw AFTER the tables had
+            // already been reassigned - the caller saw a 400, but the
+            // transfer had already happened. LeaveAsync depends on neither
+            // side of the transfer (it only needs the two user ids), so
+            // validating and storing the note FIRST makes a rejected note
+            // leave every table untouched, matching what the error response
+            // actually tells the caller. Left by the person actually
+            // performing the hand-off (not always request.FromUserId - a
+            // cashier using orders.transfer-server-any transfers on someone
+            // else's behalf), for the target to see once. A no-op when the
+            // note is empty (LeaveAsync's own contract).
             await handoffNotes.LeaveAsync(actingUserId, request.ToUserId, request.HandoffNote, cancellationToken);
+            var count = await store.TransferServingUserAsync(request.FromUserId, request.ToUserId, cancellationToken);
             return Results.Ok(new TransferServingUserResultV1(count));
         });
 

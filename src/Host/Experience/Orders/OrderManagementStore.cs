@@ -838,7 +838,7 @@ public sealed class OrderManagementStore
 
     /// <summary>
     /// V1-RMD-164: whether an incoming item is content-identical to what is
-    /// already stored — quantity, notes and the modifier set (by id and
+    /// already stored — quantity, notes, seat and the modifier set (by id and
     /// quantity; name/price are always catalog-resolved and so can never
     /// differ for the same id). Used to tell an idempotent retry (nothing to
     /// do) apart from a correction (must replace the stored line).
@@ -848,6 +848,16 @@ public sealed class OrderManagementStore
         if (existing.Quantity != incoming.Quantity)
             return false;
         if (existing.Notes != incoming.Notes)
+            return false;
+        // Found in an independent review (2026-09-11): a resend that only
+        // changed SeatId (same quantity/notes/modifiers) used to read as
+        // "unchanged" here, so the whole round short-circuited before
+        // ReconcileRound ever ran and the seat change was silently dropped -
+        // the exact "field reset by a reconstruction path" bug class
+        // V1-WTR-022 already fixed for OrderItem.Mutate/ChangeQuantity and
+        // ItemExceptionHandler, missed here since this path never
+        // reconstructs an OrderItem at all.
+        if (existing.SeatId != incoming.SeatId)
             return false;
 
         var existingModifiers = existing.Modifiers
@@ -1155,7 +1165,7 @@ public sealed class OrderManagementStore
                 COALESCE((SELECT SUM(amount) FROM billing.bill_adjustments
                           WHERE adjustment_type = 'Tip' AND created_at >= @since), 0),
                 (SELECT COUNT(DISTINCT serving_user_id) FROM orders.orders
-                 WHERE serving_user_id IS NOT NULL AND created_at >= @since);
+                 WHERE serving_user_id IS NOT NULL AND status <> 'Cancelled' AND created_at >= @since);
             """))
         {
             tipCommand.Parameters.AddWithValue("since", startOfUtcDay);

@@ -200,6 +200,49 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Null(Assert.Single(draft!.Items).SeatId);
     }
 
+    /// <summary>
+    /// Found in an independent review (2026-09-11): ItemContentUnchanged
+    /// compared quantity/notes/modifiers but not SeatId, so a resend that
+    /// only changed the seat (same everything else) read as "nothing to do"
+    /// and never reached ReconcileRound - the seat change was silently
+    /// dropped. Same "field reset by a reconstruction path" bug class
+    /// V1-WTR-022 already fixed for void/comp/ChangeQuantity, missed here.
+    /// </summary>
+    [Fact]
+    public async Task ResendingTheSameLineWithOnlyTheSeatChangedUpdatesTheStoredSeat()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var firstSeatId = await _database.SeedSeatAsync(tableId, seatNumber: 1);
+        var secondSeatId = await _database.SeedSeatAsync(tableId, seatNumber: 2);
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        var lineId = Guid.NewGuid();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var firstResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-11",
+                [new OrderItemDraftDto(lineId, product, "Çorba", 1, 60m, SeatId: firstSeatId)])));
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        var firstDraft = await firstResponse.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(firstSeatId, Assert.Single(firstDraft!.Items).SeatId);
+
+        // Same table-draft call, SAME line id, identical quantity/notes/
+        // modifiers - only the seat differs.
+        using var reseatedResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-11",
+                [new OrderItemDraftDto(lineId, product, "Çorba", 1, 60m, SeatId: secondSeatId)])));
+        Assert.Equal(HttpStatusCode.OK, reseatedResponse.StatusCode);
+        var reseatedDraft = await reseatedResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        var item = Assert.Single(reseatedDraft!.Items);
+        Assert.Equal(lineId, item.ItemId);
+        Assert.Equal(secondSeatId, item.SeatId);
+    }
+
     [Fact]
     public async Task ResendingTheSameLineWithACorrectedQuantityUpdatesTheStoredItem()
     {
@@ -705,6 +748,39 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
             new TransferServingUserRequestV1(waiterId, Guid.NewGuid(), new string('a', 201))));
 
         Assert.Equal(HttpStatusCode.BadRequest, transfer.StatusCode);
+    }
+
+    /// <summary>
+    /// Found in an independent review (2026-09-11): TransferServingUserAsync
+    /// used to run BEFORE the note's length was validated, so a rejected
+    /// note (400) still left every one of the departing waiter's tables
+    /// reassigned. The note is now validated and stored first, so a 400 here
+    /// must mean nothing moved at all.
+    /// </summary>
+    [Fact]
+    public async Task ATooLongHandoffNoteLeavesTheTablesUntransferred()
+    {
+        var terminalId = Guid.NewGuid();
+        var (fromWaiterId, fromCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create", "orders.send", "orders.transfer-server");
+        var toWaiterId = Guid.NewGuid();
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), fromCookie,
+            new CreateTableDraftRequest(tableId, "M-99",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var transfer = await client.SendAsync(JsonRequest(TransferPath(terminalId), fromCookie,
+            new TransferServingUserRequestV1(fromWaiterId, toWaiterId, new string('a', 201))));
+
+        Assert.Equal(HttpStatusCode.BadRequest, transfer.StatusCode);
+        Assert.Equal(fromWaiterId, await _database.GetServingUserIdAsync(draft!.OrderId));
     }
 
     [Fact]

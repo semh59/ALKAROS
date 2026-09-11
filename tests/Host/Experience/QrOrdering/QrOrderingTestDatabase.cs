@@ -127,7 +127,8 @@ public sealed class QrOrderingTestDatabase : PgTestDatabase
     /// GetLiveBillAsync reads. Returns the order id.
     /// </summary>
     public async Task<Guid> SeedActiveOrderAsync(
-        Guid tableId, Guid productId, string productName, decimal unitPrice, decimal quantity = 1)
+        Guid tableId, Guid productId, string productName, decimal unitPrice, decimal quantity = 1,
+        string status = "Submitted", string itemStatus = "Active")
     {
         var orderId = Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
@@ -138,7 +139,7 @@ public sealed class QrOrderingTestDatabase : PgTestDatabase
                 order_id, source, table_id, status, confirmation_status, order_number,
                 subtotal, tax_total, total, created_at, updated_at)
             VALUES (
-                @order_id, 'Qr', @table_id, 'Submitted', 'NotRequired', @order_number,
+                @order_id, 'Qr', @table_id, @status, 'NotRequired', @order_number,
                 @net_amount, 0, @net_amount, @now, @now);
 
             UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;
@@ -149,10 +150,11 @@ public sealed class QrOrderingTestDatabase : PgTestDatabase
                 created_at, updated_at)
             VALUES (
                 @order_item_id, @order_id, @product_id, @product_name, @quantity, @unit_price,
-                0, @net_amount, @net_amount, 'Active', 'NotSent', 'NotApplicable', @now, @now);
+                0, @net_amount, @net_amount, @item_status, 'NotSent', 'NotApplicable', @now, @now);
             """,
             ("order_id", orderId),
             ("table_id", tableId),
+            ("status", status),
             ("order_number", "QR-" + orderId.ToString("N")[..8]),
             ("net_amount", netAmount),
             ("now", now),
@@ -160,7 +162,8 @@ public sealed class QrOrderingTestDatabase : PgTestDatabase
             ("product_id", productId),
             ("product_name", productName),
             ("quantity", quantity),
-            ("unit_price", unitPrice));
+            ("unit_price", unitPrice),
+            ("item_status", itemStatus));
 
         return orderId;
     }
