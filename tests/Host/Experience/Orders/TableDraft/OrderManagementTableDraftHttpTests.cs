@@ -154,6 +154,52 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    // V1-WTR-022 (garson karşılaştırma dokümanı, "koltuk bazlı atama"): a
+    // waiter can tag an order line with the table seat it was ordered for.
+
+    [Fact]
+    public async Task AnItemTaggedWithARealTableSeatStoresAndReturnsIt()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var seatId = await _database.SeedSeatAsync(tableId, seatNumber: 3);
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-09",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m, SeatId: seatId)])));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var draft = await response.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(seatId, Assert.Single(draft!.Items).SeatId);
+    }
+
+    [Fact]
+    public async Task ASeatIdFromAnotherTableIsIgnoredRatherThanTrusted()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var otherTableId = await _database.SeedTableAsync();
+        var foreignSeatId = await _database.SeedSeatAsync(otherTableId, seatNumber: 1);
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-10",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m, SeatId: foreignSeatId)])));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var draft = await response.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Null(Assert.Single(draft!.Items).SeatId);
+    }
+
     [Fact]
     public async Task ResendingTheSameLineWithACorrectedQuantityUpdatesTheStoredItem()
     {

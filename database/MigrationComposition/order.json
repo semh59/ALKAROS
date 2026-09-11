@@ -890,6 +890,14 @@
         "products"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "104",
+      "phase": "B",
+      "tables": [
+        "order_items"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

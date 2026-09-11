@@ -168,6 +168,10 @@
     // order.partySize is the source of truth and this is ignored. Reset
     // whenever a different table is opened (see openTable()).
     draftPartySize: null,
+    // V1-WTR-022: the currently-open table's floor-plan seats
+    // ({id, number, label}), empty when the table has no floor-plan layout
+    // at all - seat assignment is then simply not offered, never an error.
+    tableSeats: [],
     // Unsent rounds for tables the waiter stepped away from, keyed by table
     // id. A waiter checking another table mid-order is ordinary; losing what
     // they typed is not.
@@ -730,6 +734,28 @@
     renderTables();
   }
 
+  // V1-WTR-022: the table's floor-plan seats, for the "koltuk bazlı atama"
+  // idea - a table nobody has ever laid out visually simply has none
+  // (404), which is not an error, just "this table offers no seat
+  // picker". Fire-and-forget from openTable(): nothing blocks on this,
+  // the product sheet just has no seat picker until it resolves.
+  async function loadTableSeats(table) {
+    state.tableSeats = [];
+    if (!table.zoneId) return;
+    const result = await api(apiUrl(`/table-management/floor-plans/${table.zoneId}`));
+    if (!result.ok || !result.data || !result.data.tables) return;
+    const floorTable = result.data.tables.find((candidate) => candidate.tableId === table.id);
+    if (!floorTable || !floorTable.seats) return;
+    state.tableSeats = floorTable.seats
+      .map((seat) => ({ id: seat.seatId, number: seat.number, label: seat.label }))
+      .sort((a, b) => a.number - b.number);
+  }
+
+  function seatLabel(seatId) {
+    const seat = state.tableSeats.find((candidate) => candidate.id === seatId);
+    return seat ? seat.label : null;
+  }
+
   // The bill is always the server's answer, never a local accumulation.
   async function loadOrder(tableId) {
     const result = await api(apiUrl(`/orders/table/${tableId}`));
@@ -857,6 +883,7 @@
     el.menuTableName.textContent = `${table.number} masası`;
     el.billTitle.textContent = `${table.number} masası`;
 
+    void loadTableSeats(table);
     await loadOrder(tableId);
     renderBill();
 
@@ -951,13 +978,15 @@
 
   // ══ The draft round ════════════════════════════════════════════════
 
-  function addToDraft(product, quantity, modifiers, note) {
+  function addToDraft(product, quantity, modifiers, note, seatId) {
     // Lines that are identical in every respect merge; anything with its own
-    // options or note stays its own line so the kitchen ticket reads right.
+    // options, note or seat stays its own line so the kitchen ticket reads
+    // right and the split screen can tell the seats apart.
     const plain = (!modifiers || modifiers.length === 0) && !note;
     if (plain) {
       const existing = state.draft.find((line) =>
-        line.productId === product.id && line.modifiers.length === 0 && !line.note);
+        line.productId === product.id && line.modifiers.length === 0 && !line.note
+        && (line.seatId || null) === (seatId || null));
       if (existing) {
         existing.quantity = Math.round((existing.quantity + quantity) * 1000) / 1000;
         afterDraftChange();
@@ -971,7 +1000,8 @@
       price: product.price,
       quantity,
       modifiers: modifiers || [],
-      note: note || ''
+      note: note || '',
+      seatId: seatId || null
     });
     afterDraftChange();
   }
@@ -1168,7 +1198,8 @@
             <span class="line-name">${escapeHtml(line.name)}</span>
             <span class="line-total">${escapeHtml(formatMoney(line.price * line.quantity + extras))}</span>
           </div>
-          <div class="line-unit">${escapeHtml(formatQuantity(line.quantity))} × ${escapeHtml(formatMoney(line.price))}</div>
+          <div class="line-unit">${escapeHtml(formatQuantity(line.quantity))} × ${escapeHtml(formatMoney(line.price))}${
+            line.seatId && seatLabel(line.seatId) ? ` • ${escapeHtml(seatLabel(line.seatId))}` : ''}</div>
           ${chips ? `<div class="line-chips">${chips}</div>` : ''}
           ${priceNotice}
           <input class="note" type="text" maxlength="200" data-note="${escapeHtml(line.id)}"
@@ -1233,7 +1264,8 @@
             <span class="line-total">${escapeHtml(formatMoney(item.totalPrice))}</span>
           </div>
           <div class="line-unit">${escapeHtml(formatQuantity(item.quantity))} × ${escapeHtml(formatMoney(item.unitPrice))}${
-            item.createdAt ? ` • ${escapeHtml(formatClock(item.createdAt))}` : ''}</div>
+            item.createdAt ? ` • ${escapeHtml(formatClock(item.createdAt))}` : ''}${
+            item.seatId && seatLabel(item.seatId) ? ` • ${escapeHtml(seatLabel(item.seatId))}` : ''}</div>
           ${chips ? `<div class="line-chips">${chips}</div>` : ''}
           <div class="line-chips">
             ${kitchen ? `<span class="kitchen-state ${kitchen.cls}"><span class="dot"></span>${escapeHtml(kitchen.label)}</span>` : ''}
@@ -1255,7 +1287,8 @@
     state.optionsContext = {
       product,
       quantity: presetQuantity || 1,
-      chosen: new Map()
+      chosen: new Map(),
+      seatId: null
     };
 
     openOptions('product', product.name, '', productSheetHtml(), 'Adisyona ekle', 'Tutar', '');
@@ -1275,6 +1308,23 @@
                     aria-pressed="${context.quantity === quantity}">${escapeHtml(formatQuantity(quantity))}</button>`).join('')}
         </div>
       </div>`;
+
+    // V1-WTR-022: only offered when the table actually has a floor-plan
+    // seat layout - a table with none simply never shows this optgroup.
+    if (state.tableSeats.length > 0) {
+      html += `
+        <div class="optgroup">
+          <div class="optgroup-head"><span class="optgroup-name">Koltuk</span>
+            <span class="optgroup-rule">opsiyonel</span></div>
+          <div class="qty-row">
+            <button type="button" class="qty-quick" data-seat=""
+                    aria-pressed="${!context.seatId}">Koltuksuz</button>
+            ${state.tableSeats.map((seat) => `
+              <button type="button" class="qty-quick" data-seat="${escapeHtml(seat.id)}"
+                      aria-pressed="${context.seatId === seat.id}">${escapeHtml(seat.label)}</button>`).join('')}
+          </div>
+        </div>`;
+    }
 
     for (const group of context.product.modifierGroups) {
       const single = group.selectionType === 'Single';
@@ -1357,7 +1407,12 @@
         // the field optional for exactly that) - neither is this client's to
         // assert.
         modifiers: line.modifiers.map((modifier) => ({ modifierId: modifier.modifierId })),
-        specialInstructions: line.note || null
+        specialInstructions: line.note || null,
+        // V1-WTR-022: the server only ever trusts this once it re-validates
+        // the seat actually belongs to this table (OrderManagementStore) -
+        // a stale/foreign id here is simply ignored server-side, never an
+        // error this client needs to pre-check.
+        seatId: line.seatId || null
       }))
     };
   }
@@ -2903,6 +2958,15 @@
       return;
     }
 
+    const seat = event.target.closest('[data-seat]');
+    if (seat && state.optionsMode === 'product') {
+      state.optionsContext.seatId = seat.dataset.seat || null;
+      el.optionsBody.querySelectorAll('[data-seat]').forEach((button) => {
+        button.setAttribute('aria-pressed', String((button.dataset.seat || null) === state.optionsContext.seatId));
+      });
+      return;
+    }
+
     const modifier = event.target.closest('[data-modifier]');
     if (modifier && state.optionsMode === 'product') {
       toggleModifier(modifier);
@@ -3028,7 +3092,7 @@
         }
       }
       const noteField = el.optionsBody.querySelector('[data-product-note]');
-      addToDraft(context.product, context.quantity, chosenModifiers(), noteField ? noteField.value.trim() : '');
+      addToDraft(context.product, context.quantity, chosenModifiers(), noteField ? noteField.value.trim() : '', context.seatId);
       closeOptions();
       return;
     }

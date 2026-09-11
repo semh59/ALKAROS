@@ -63,7 +63,12 @@ public sealed record OrderItemDraftDto(
     decimal Quantity,
     decimal UnitPrice,
     IReadOnlyList<OrderItemModifierSelectionDto>? Modifiers = null,
-    string? SpecialInstructions = null);
+    string? SpecialInstructions = null,
+    // V1-WTR-022: which table seat this line is for (seat-based assignment),
+    // or null when the waiter did not pick one. Validated server-side
+    // against the order's own table (OrderManagementStore) — a client can
+    // never assert an arbitrary/other-table seat id.
+    Guid? SeatId = null);
 
 /// <summary>
 /// V1-RMD-150: one chosen modifier and how many of it. <paramref name="Quantity"/>
@@ -337,4 +342,5 @@ public sealed record OrderItemDto(
     IReadOnlyList<OrderItemModifierDto>? Modifiers = null,
     bool CanVoid = false,
     bool CanVoidSent = false,
-    bool CanComp = false);
+    bool CanComp = false,
+    Guid? SeatId = null);

@@ -30,7 +30,8 @@ public sealed class OrderItem
         string? notes = null,
         long rowVersion = 1,
         DateTimeOffset? createdAt = null,
-        DateTimeOffset? updatedAt = null)
+        DateTimeOffset? updatedAt = null,
+        Guid? seatId = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Order item id cannot be empty.", nameof(id));
@@ -85,6 +86,7 @@ public sealed class OrderItem
         RowVersion = rowVersion;
         CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
         UpdatedAt = updatedAt ?? CreatedAt;
+        SeatId = seatId;
 
         var lineSubtotal = LineSubtotal();
         if (DiscountAmount > lineSubtotal)
@@ -140,6 +142,15 @@ public sealed class OrderItem
     public DateTimeOffset CreatedAt { get; }
 
     public DateTimeOffset UpdatedAt { get; }
+
+    /// <summary>
+    /// V1-WTR-022: the table seat this item was ordered for (seat-based
+    /// item assignment), or null when no seat was chosen (a table with no floor-plan
+    /// seat layout, or a channel — Cashier quick-sale, NFC, QR — that never
+    /// picks a seat). No FK to table_mgmt.table_seats; see this column's own
+    /// migration comment for why.
+    /// </summary>
+    public Guid? SeatId { get; }
 
     public bool IsActive => Status is OrderItemState.Draft or OrderItemState.Active;
 
@@ -227,7 +238,8 @@ public sealed class OrderItem
             notes: Notes,
             rowVersion: RowVersion,
             createdAt: CreatedAt,
-            updatedAt: DateTimeOffset.UtcNow);
+            updatedAt: DateTimeOffset.UtcNow,
+            seatId: SeatId);
     }
 
     /// <summary>
@@ -245,11 +257,17 @@ public sealed class OrderItem
     public OrderItem ForOrder(Guid orderId)
         => Mutate(orderId: orderId);
 
+    /// <summary>V1-WTR-022: assigns or clears (null) which seat this item is for.</summary>
+    public OrderItem WithSeat(Guid? seatId)
+        => Mutate(seatIdSet: true, seatId: seatId);
+
     private OrderItem Mutate(
         Guid? orderId = null,
         OrderItemState? status = null,
         KitchenState? kitchenState = null,
-        long? rowVersion = null)
+        long? rowVersion = null,
+        bool seatIdSet = false,
+        Guid? seatId = null)
         => new(
             Id,
             orderId ?? OrderId,
@@ -270,7 +288,8 @@ public sealed class OrderItem
             notes: Notes,
             rowVersion: rowVersion ?? RowVersion,
             createdAt: CreatedAt,
-            updatedAt: UpdatedAt);
+            updatedAt: UpdatedAt,
+            seatId: seatIdSet ? seatId : SeatId);
 
     private decimal LineSubtotal()
     {

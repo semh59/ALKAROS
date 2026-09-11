@@ -349,11 +349,11 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 order_item_id, order_id, product_id, product_name_snapshot, sku_snapshot,
                 quantity, unit_price, discount_amount, tax_rate, tax_amount, net_amount, gross_amount,
                 status, kitchen_state, portion_reservation_status, notes,
-                created_at, updated_at, row_version)
+                created_at, updated_at, row_version, seat_id)
             VALUES (@order_item_id, @order_id, @product_id, @product_name_snapshot, @sku_snapshot,
                     @quantity, @unit_price, @discount_amount, @tax_rate, @tax_amount, @net_amount, @gross_amount,
                     @status, @kitchen_state, @portion_reservation_status, @notes,
-                    @created_at, @updated_at, @row_version);
+                    @created_at, @updated_at, @row_version, @seat_id);
             """);
         BindItem(command, item);
         await command.ExecuteNonQueryAsync(cancellationToken);
@@ -381,6 +381,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 portion_reservation_status = @portion_reservation_status,
                 notes = @notes,
                 updated_at = @updated_at,
+                seat_id = @seat_id,
                 row_version = row_version + 1
             WHERE order_item_id = @order_item_id AND row_version = @row_version
             RETURNING order_item_id;
@@ -429,6 +430,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
         command.Parameters.AddWithValue("created_at", item.CreatedAt);
         command.Parameters.AddWithValue("updated_at", item.UpdatedAt);
         command.Parameters.AddWithValue("row_version", item.RowVersion);
+        command.Parameters.AddWithValue("seat_id", (object?)item.SeatId ?? DBNull.Value);
     }
 
     private static async Task InsertModifierAsync(
@@ -536,7 +538,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
             SELECT order_item_id, order_id, product_id, product_name_snapshot, sku_snapshot,
                    quantity, unit_price, discount_amount, tax_rate, tax_amount, net_amount, gross_amount,
                    status, kitchen_state, portion_reservation_status, notes,
-                   created_at, updated_at, row_version
+                   created_at, updated_at, row_version, seat_id
             FROM {Items}
             WHERE order_id = @order_id
             -- V1-RMD-158: every item added in the same round shares the
@@ -574,7 +576,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 reader.IsDBNull(15) ? null : reader.GetString(15),
                 reader.GetDateTime(16),
                 reader.GetDateTime(17),
-                reader.GetInt64(18)));
+                reader.GetInt64(18),
+                reader.IsDBNull(19) ? null : reader.GetGuid(19)));
         }
 
         return result;
@@ -778,7 +781,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
         string? Notes,
         DateTimeOffset CreatedAt,
         DateTimeOffset UpdatedAt,
-        long RowVersion)
+        long RowVersion,
+        Guid? SeatId)
     {
         public List<OrderItemModifier> Modifiers { get; } = new();
 
@@ -810,7 +814,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 notes: Notes,
                 rowVersion: RowVersion,
                 createdAt: CreatedAt,
-                updatedAt: UpdatedAt);
+                updatedAt: UpdatedAt,
+                seatId: SeatId);
     }
 
     private sealed record ModifierRow(

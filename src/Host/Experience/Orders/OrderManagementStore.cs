@@ -113,6 +113,12 @@ public sealed class OrderManagementStore
         // its max and the order still went through with whatever was sent.
         var applicableGroups = await ResolveApplicableModifierGroupsAsync(
             connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
+        // V1-WTR-022: a client-asserted seat id is only ever trusted once
+        // confirmed to belong to this order's own table - same check
+        // PostgresSplitDesignRepository already runs for a seat-kind bill
+        // allocation owner, reused here at order-entry time instead.
+        var validSeatIds = await ResolveValidSeatIdsAsync(
+            connection, transaction, request.TableId, request.Items, cancellationToken);
 
         var newItems = new List<OrderItem>();
         foreach (var i in request.Items)
@@ -149,7 +155,8 @@ public sealed class OrderManagementStore
                 portionReservationStatus: PortionReservationStatus.NotApplicable,
                 notes: i.SpecialInstructions,
                 createdAt: now,
-                updatedAt: now
+                updatedAt: now,
+                seatId: i.SeatId is { } seatId && validSeatIds.Contains(seatId) ? seatId : null
             ));
         }
 
@@ -669,6 +676,42 @@ public sealed class OrderManagementStore
     /// nothing from at all, which the per-selection resolve in
     /// <see cref="ResolveModifiersAsync"/> can never see.
     /// </summary>
+    /// <summary>
+    /// V1-WTR-022: which of the requested items' SeatId values genuinely
+    /// belong to <paramref name="tableId"/>. A stale or fabricated id is not
+    /// an error here - it just means that line ends up unassigned (SeatId
+    /// null), same tolerance the code already gives an unknown/removed
+    /// modifier - never a reason to fail the whole round. A table with no
+    /// floor-plan seat layout returns an empty set, so every item on it is
+    /// simply unassigned.
+    /// </summary>
+    private static async Task<HashSet<Guid>> ResolveValidSeatIdsAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        Guid tableId,
+        IReadOnlyList<OrderItemDraftDto> items,
+        CancellationToken cancellationToken)
+    {
+        var seatIds = items.Where(i => i.SeatId.HasValue).Select(i => i.SeatId!.Value).Distinct().ToArray();
+        var result = new HashSet<Guid>();
+        if (seatIds.Length == 0)
+            return result;
+
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT seat_id FROM table_mgmt.table_seats
+            WHERE table_id = @table_id AND seat_id = ANY(@seat_ids);
+            """, connection, transaction);
+        cmd.Parameters.AddWithValue("table_id", tableId);
+        cmd.Parameters.AddWithValue("seat_ids", seatIds);
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result.Add(reader.GetGuid(0));
+
+        return result;
+    }
+
     private static async Task<Dictionary<Guid, List<(Guid GroupId, int MinSelections, int MaxSelections)>>> ResolveApplicableModifierGroupsAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
@@ -1038,7 +1081,8 @@ public sealed class OrderManagementStore
                 && i.KitchenState is not (KitchenState.Served or KitchenState.Cancelled),
             // V1-RMD-177: mirrors ItemExceptionHandler.ApplyComplimentaryAsync's
             // own eligibility check exactly.
-            CanComp: i.Status == OrderItemState.Active
+            CanComp: i.Status == OrderItemState.Active,
+            SeatId: i.SeatId
         )).ToList();
 
         return new OrderDto(

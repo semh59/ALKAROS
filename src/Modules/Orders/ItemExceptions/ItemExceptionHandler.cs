@@ -207,7 +207,8 @@ public sealed class ItemExceptionHandler
             notes: targetItem.Notes,
             rowVersion: targetItem.RowVersion,
             createdAt: targetItem.CreatedAt,
-            updatedAt: now);
+            updatedAt: now,
+            seatId: targetItem.SeatId);
 
         var updatedItems = new List<OrderItem>(order.Items);
         updatedItems[itemIndex] = compItem;

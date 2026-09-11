@@ -157,6 +157,23 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         return tableId;
     }
 
+    /// <summary>V1-WTR-022: seeds one floor-plan seat for a table and returns its id.</summary>
+    public async Task<Guid> SeedSeatAsync(Guid tableId, int seatNumber = 1)
+    {
+        var seatId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.table_seats (seat_id, table_id, seat_number, label, x, y)
+            VALUES (@seat_id, @table_id, @seat_number, @label, 0, 0);
+            """,
+            ("seat_id", seatId),
+            ("table_id", tableId),
+            ("seat_number", seatNumber),
+            ("label", "Seat " + seatNumber));
+
+        return seatId;
+    }
+
     /// <summary>
     /// Seeds one purchasable catalog product and returns its id.
     /// <paramref name="isAvailable"/> defaults to true (matches the
