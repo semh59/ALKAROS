@@ -823,6 +823,71 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AQuantityAboveTheMaximumIsRejected()
+    {
+        // V1-RMD-162: found by the 2026-09-10 Garson audit — quantity had
+        // no upper bound server-side.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Çorba", 90m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-57",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1_000_000m, 90m)])));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ANoteLongerThanTheMaximumIsRejected()
+    {
+        // V1-RMD-162: found by the 2026-09-10 Garson audit — note length
+        // had no upper bound server-side.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Çorba", 90m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-58",
+                [new OrderItemDraftDto(
+                    Guid.NewGuid(), product, "Çorba", 1, 90m,
+                    SpecialInstructions: new string('a', 5000))])));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task TooManyItemsInOneDraftIsRejected()
+    {
+        // V1-RMD-162: found by the 2026-09-10 Garson audit — item count had
+        // no upper bound server-side.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Çorba", 90m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var items = Enumerable.Range(0, 250)
+            .Select(_ => new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 90m))
+            .ToArray();
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-59", items)));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task ModifiersStillReadBackAfterSubmit()
     {
         // V1-RMD-147: the repository already persisted order_item_modifiers;

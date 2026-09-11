@@ -754,6 +754,22 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         TableCheckAlreadyOpenException => (409, "TABLE_CHECK_ALREADY_OPEN",
             "Bu masada kapanmamış bir hesap var. Önce hesabı kasaya gönderin."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        // V1-RMD-162: found by the 2026-09-10 Garson audit — every
+        // PostgresException used to fall straight through to the generic
+        // 503 below, telling the caller the database was unreachable even
+        // when the real problem was a data constraint the request itself
+        // violated (e.g. V1-RMD-156's quantity/price CHECK constraints, or
+        // a value too large for the column). A client-side offline queue
+        // treats 503 as transient and retries forever — a request that can
+        // never succeed would retry until the queue gave up or the device
+        // died, rather than telling the user immediately. Same branches
+        // Catalog's own error mapper already established for this table.
+        PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
+            (409, "DUPLICATE_RESOURCE", "Aynı kayıt zaten mevcut."),
+        PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
+            (400, "REFERENCE_NOT_FOUND", "İşaret edilen bir kayıt bulunamadı."),
+        PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
+            (400, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };

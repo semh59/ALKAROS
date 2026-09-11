@@ -19,6 +19,20 @@ public sealed class OrderManagementStore
     /// </summary>
     private const decimal MinimumOrderQuantity = 0.001m;
 
+    // V1-RMD-162: found by the 2026-09-10 Garson audit — quantity, item
+    // count and note length had no upper bound at all server-side. None of
+    // these can overflow orders.order_items.quantity NUMERIC(18,3) or a
+    // notes TEXT column outright (Postgres just stores it), so a bug or a
+    // hostile client sending an enormous value used to succeed silently —
+    // wasting storage/bandwidth at best, or hitting an arbitrary limit
+    // somewhere downstream (a receipt printer's buffer, a phone's memory
+    // rendering the ticket) with no clear error at worst. These are
+    // generous, not tight: comfortably above anything a real kitchen order
+    // needs, so no real request is expected to ever hit them.
+    private const decimal MaximumOrderQuantity = 9999m;
+    private const int MaximumItemsPerDraft = 200;
+    private const int MaximumNoteLength = 1000;
+
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
     private readonly IRoleRepository _roles;
@@ -57,6 +71,7 @@ public sealed class OrderManagementStore
     public async Task<OrderDto> CreateOrUpdateTableDraftAsync(CreateTableDraftRequest request, Guid actingUserId, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ValidateRequestBounds(request);
 
         var submissionId = request.Id is { } id && id != Guid.Empty ? id : (Guid?)null;
 
@@ -714,6 +729,49 @@ public sealed class OrderManagementStore
                     nameof(item),
                     $"Product {item.ProductId} modifier group {group.GroupId} requires between " +
                     $"{group.MinSelections} and {group.MaxSelections} selections; got {count}.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// V1-RMD-162: found by the 2026-09-10 Garson audit — quantity, item
+    /// count and note length were unbounded server-side. Checked once,
+    /// before anything touches the database, so a request that will never
+    /// succeed is refused immediately with a clear 400 rather than after
+    /// partial work, or (for a value large enough to trip a Postgres limit
+    /// somewhere downstream) as a raw database error.
+    /// </summary>
+    private static void ValidateRequestBounds(CreateTableDraftRequest request)
+    {
+        if (request.Items.Count > MaximumItemsPerDraft)
+            throw new ArgumentOutOfRangeException(
+                nameof(request),
+                $"A draft may not carry more than {MaximumItemsPerDraft} items; got {request.Items.Count}.");
+
+        if (request.OrderNote is { Length: > MaximumNoteLength })
+            throw new ArgumentOutOfRangeException(
+                nameof(request),
+                $"Order note may not exceed {MaximumNoteLength} characters; got {request.OrderNote.Length}.");
+
+        foreach (var item in request.Items)
+        {
+            if (item.Quantity > MaximumOrderQuantity)
+                throw new ArgumentOutOfRangeException(
+                    nameof(request),
+                    $"Quantity for product {item.ProductId} may not exceed {MaximumOrderQuantity}; got {item.Quantity}.");
+
+            if (item.SpecialInstructions is { Length: > MaximumNoteLength })
+                throw new ArgumentOutOfRangeException(
+                    nameof(request),
+                    $"Special instructions for product {item.ProductId} may not exceed {MaximumNoteLength} characters.");
+
+            if (item.Modifiers is not { Count: > 0 }) continue;
+            foreach (var modifier in item.Modifiers)
+            {
+                if (modifier.Quantity is { } quantity && quantity > MaximumOrderQuantity)
+                    throw new ArgumentOutOfRangeException(
+                        nameof(request),
+                        $"Quantity for modifier {modifier.ModifierId} may not exceed {MaximumOrderQuantity}; got {quantity}.");
             }
         }
     }
