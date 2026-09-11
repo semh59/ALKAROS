@@ -169,7 +169,11 @@ public sealed class OrderManagementStore
                 createdAt: now,
                 updatedAt: now,
                 rowVersion: 1,
-                servingUserId: actingUserId
+                servingUserId: actingUserId,
+                // V1-WTR-015: only ever applied here, the FIRST round for
+                // this table — CreateTableDraftRequest's own doc comment
+                // explains why resending it on a later round is harmless.
+                partySize: request.PartySize
             );
 
             try
@@ -1045,7 +1049,8 @@ public sealed class OrderManagementStore
             order.RowVersion,
             order.Total,
             dtos,
-            order.CreatedAt
+            order.CreatedAt,
+            order.PartySize
         );
     }
 }

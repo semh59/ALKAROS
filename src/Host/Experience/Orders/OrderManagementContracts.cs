@@ -23,12 +23,20 @@ namespace ALKAROS.Host.Experience.Orders;
 // anything was a redundant, spoofable stand-in for data the server already
 // has correctly. Removed here and from both real clients' payloads
 // (cashier-app.js, waiter-app.js) rather than wired in.
+/// <summary>
+/// <paramref name="PartySize"/> (V1-WTR-015): only ever applied when this
+/// request creates a table's FIRST round (a new Order) — the store's own
+/// existing-order branch never touches it, so resending it on a later
+/// round for the same table (routine, every round sends the same draft
+/// shape) is a harmless no-op, not a correction.
+/// </summary>
 public sealed record CreateTableDraftRequest(
     Guid TableId,
     string TableNumber,
     IReadOnlyList<OrderItemDraftDto> Items,
     string? OrderNote = null,
-    Guid? Id = null);
+    Guid? Id = null,
+    int? PartySize = null);
 
 /// <summary>
 /// <paramref name="Id"/> is the client-generated cart-line id (both PWAs
@@ -245,6 +253,11 @@ public sealed record ServingHandoffNoteV1(string Note, string FromDisplayName, D
 /// </summary>
 public sealed record StaffMemberV1(Guid UserId, string DisplayName);
 
+/// <summary>
+/// <paramref name="PartySize"/> (V1-WTR-015): how many guests, or null if
+/// never set. Purely informational — the client shows it, nothing reads it
+/// to gate a decision.
+/// </summary>
 public sealed record OrderDto(
     Guid OrderId,
     Guid TableId,
@@ -253,7 +266,8 @@ public sealed record OrderDto(
     long RowVersion,
     decimal TotalAmount,
     IReadOnlyList<OrderItemDto> Items,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    int? PartySize = null);
 
 /// <summary>
 /// <paramref name="AvailableStockQuantity"/> (V1-RMD-143, Semih's own

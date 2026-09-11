@@ -39,6 +39,7 @@
     <None Include="../../../../../database/migrations/V1/V1-RMD-111/056-orders-serving-user-id.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-WTR-011/096-push-subscriptions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-WTR-013/100-serving-handoff-notes.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-WTR-015/102-orders-party-size.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- V1-RMD-143: OrderManagementStore.GetOrderByIdAsync's own stock
          enrichment (submit-draft's response builds through it too). -->
     <None Include="../../../../../database/migrations/V11/V11-INV-004/059-stock-master.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

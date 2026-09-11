@@ -75,7 +75,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
             order.RowVersion,
             order.CreatedAt,
             order.UpdatedAt,
-            order.ServingUserId);
+            order.ServingUserId,
+            order.PartySize);
     }
 
     public async Task AddAsync(Order order, CancellationToken cancellationToken = default)
@@ -255,12 +256,12 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 status, confirmation_status, order_number, notes,
                 subtotal, discount_total, tax_total, total, currency_code,
                 submitted_at, accepted_at, closed_at, cancelled_at,
-                created_at, updated_at, row_version, serving_user_id)
+                created_at, updated_at, row_version, serving_user_id, party_size)
             VALUES (@order_id, @source, @source_reference_id, @source_external_id, @table_id, @customer_id,
                     @status, @confirmation_status, @order_number, @notes,
                     @subtotal, @discount_total, @tax_total, @total, @currency_code,
                     @submitted_at, @accepted_at, @closed_at, @cancelled_at,
-                    @created_at, @updated_at, @row_version, @serving_user_id);
+                    @created_at, @updated_at, @row_version, @serving_user_id, @party_size);
             """);
         BindOrder(command, order);
         await command.ExecuteNonQueryAsync(cancellationToken);
@@ -291,7 +292,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 cancelled_at = @cancelled_at,
                 updated_at = @updated_at,
                 row_version = row_version + 1,
-                serving_user_id = @serving_user_id
+                serving_user_id = @serving_user_id,
+                party_size = @party_size
             WHERE order_id = @order_id AND row_version = @expected_row_version
             RETURNING row_version;
             """);
@@ -332,6 +334,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
         command.Parameters.AddWithValue("updated_at", order.UpdatedAt);
         command.Parameters.AddWithValue("row_version", order.RowVersion);
         command.Parameters.AddWithValue("serving_user_id", (object?)order.ServingUserId ?? DBNull.Value);
+        command.Parameters.AddWithValue("party_size", (object?)order.PartySize ?? DBNull.Value);
     }
 
     private static async Task InsertItemAsync(
@@ -490,7 +493,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
                    status, confirmation_status, order_number, notes,
                    subtotal, discount_total, tax_total, total, currency_code,
                    submitted_at, accepted_at, closed_at, cancelled_at,
-                   created_at, updated_at, row_version, serving_user_id
+                   created_at, updated_at, row_version, serving_user_id, party_size
             FROM {Orders}
             WHERE order_id = @id;
             """);
@@ -519,7 +522,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
             reader.GetDateTime(19),
             reader.GetDateTime(20),
             reader.GetInt64(21),
-            reader.IsDBNull(22) ? null : reader.GetGuid(22));
+            reader.IsDBNull(22) ? null : reader.GetGuid(22),
+            reader.IsDBNull(23) ? null : reader.GetInt32(23));
     }
 
     private static async Task<IReadOnlyList<ItemRow>> ReadItemsAsync(
@@ -752,7 +756,8 @@ public sealed class PostgresOrderRepository : IOrderRepository
         DateTimeOffset CreatedAt,
         DateTimeOffset UpdatedAt,
         long RowVersion,
-        Guid? ServingUserId);
+        Guid? ServingUserId,
+        int? PartySize);
 
     private sealed record ItemRow(
         Guid Id,

@@ -163,6 +163,11 @@
     table: null,
     order: null,
     draft: [],
+    // V1-WTR-015: only meaningful before the table's first round is ever
+    // sent (state.order is still null) - once a real Order exists,
+    // order.partySize is the source of truth and this is ignored. Reset
+    // whenever a different table is opened (see openTable()).
+    draftPartySize: null,
     // Unsent rounds for tables the waiter stepped away from, keyed by table
     // id. A waiter checking another table mid-order is ordinary; losing what
     // they typed is not.
@@ -201,7 +206,7 @@
     'btnMenuBack', 'menuTableName', 'menuTableSub', 'productSearch', 'categoryChips', 'productList',
     'cartBar', 'cartCount', 'cartTotal', 'btnOpenBill', 'btnSendFromMenu',
     'billBackdrop', 'billSheet', 'billTitle', 'billSub', 'billBody', 'billTotal',
-    'btnAddItems', 'btnHelpRequest', 'btnMoveTable', 'btnSendToCashier', 'billClose', 'btnSendFromBill',
+    'btnAddItems', 'btnPartySize', 'btnHelpRequest', 'btnMoveTable', 'btnSendToCashier', 'billClose', 'btnSendFromBill',
     'optionsBackdrop', 'optionsSheet', 'optionsTitle', 'optionsSub', 'optionsBody',
     'optionsClose', 'optionsConfirm', 'optionsFootLabel', 'optionsFootValue',
     'toasts', 'loginOverlay', 'loginForm', 'loginUsername', 'loginPassword', 'loginError', 'loginSubmit',
@@ -806,6 +811,9 @@
       const held = state.draftsByTable.get(tableId);
       state.draft = held ? held.lines : [];
       state.draftsByTable.delete(tableId);
+      // V1-WTR-015: a party size typed for the PREVIOUS table must never
+      // leak into a different one's fresh draft.
+      state.draftPartySize = null;
     }
     persistDraftsByTable();
 
@@ -1011,6 +1019,7 @@
       el.billTotal.textContent = formatMoney(0);
       el.billSub.textContent = '';
       el.btnAddItems.hidden = true;
+      el.btnPartySize.hidden = true;
       el.btnMoveTable.hidden = true;
       el.btnSendToCashier.hidden = true;
       return;
@@ -1026,10 +1035,22 @@
     // unsent round, which the server has not seen yet, is estimated here.
     const sentTotal = state.order ? state.order.totalAmount : 0;
     el.billTotal.textContent = formatMoney(sentTotal + draftTotal());
-    el.billSub.textContent = state.order
+    // V1-WTR-015: order.partySize is the source of truth once a real order
+    // exists; draftPartySize is only ever shown before that (the button
+    // itself is hidden then, but a stale label would still be wrong).
+    const partySize = state.order ? state.order.partySize : state.draftPartySize;
+    const partySuffix = partySize ? ` • ${partySize} kişi` : '';
+    el.billSub.textContent = (state.order
       ? `${sent.length} kalem • ${formatClock(state.order.createdAt)}`
-      : 'Açık sipariş yok';
+      : 'Açık sipariş yok') + partySuffix;
     el.menuTableSub.textContent = el.billSub.textContent;
+
+    // V1-WTR-015: editable only before the table's first round is ever
+    // sent — once a real Order exists, order.partySize is the source of
+    // truth and this task deliberately does not offer a way to correct it
+    // (see the task file's Out of scope).
+    el.btnPartySize.hidden = !!state.order;
+    el.btnPartySize.setAttribute('aria-label', state.draftPartySize ? `${state.draftPartySize} kişi` : 'Kişi sayısı');
 
     // Transfer is offered only when the server's own AllowedCommands says so.
     el.btnMoveTable.hidden = state.table.allowedCommands.indexOf('Transfer') < 0;
@@ -1269,6 +1290,10 @@
       id: randomUUID(),
       tableId: state.table.id,
       tableNumber: state.table.number,
+      // V1-WTR-015: only takes effect server-side on this table's FIRST
+      // round (CreateTableDraftRequest's own doc comment) - sending it on
+      // every later round too is harmless, not a correction.
+      partySize: state.draftPartySize || null,
       items: state.draft.map((line) => ({
         // A stable per-line id makes a retried draft submission idempotent
         // server-side instead of appending a duplicate line.
@@ -1678,6 +1703,39 @@
 
     closeOptions();
     toast('Yardım çağrınız yöneticiye iletildi.');
+  }
+
+  // ══ Party size (kaç kişi) ═══════════════════════════════════════════
+  // V1-WTR-015 (garson karşılaştırma dokümanı, "Katman B" eksiği): her
+  // rakip POS kaç kişi olduğunu takip ediyordu, ALKAROS hiçbirini. Yalnız
+  // masanın İLK turu gönderilmeden önce ayarlanabilir/düzenlenebilir —
+  // sunucu yalnız o anda kalıcı olarak kaydeder (CreateTableDraftRequest
+  // .PartySize'ın kendi doc yorumu); sonrasında düzeltmek bu görevin
+  // kapsamı dışında.
+
+  function openPartySizeSheet() {
+    if (!state.table || state.order) return;
+    state.optionsContext = { partySize: state.draftPartySize || 2 };
+    openOptions('party-size', 'Kaç kişi?', `${state.table.number} masası`,
+      partySizeSheetHtml(state.optionsContext.partySize), 'Tamam', '', '');
+    el.optionsConfirm.className = 'btn btn-primary';
+  }
+
+  function partySizeSheetHtml(value) {
+    return `
+      <div class="stepper stepper-lg">
+        <button type="button" data-party-step="-" aria-label="Azalt">−</button>
+        <span class="qty" id="partySizeValue">${escapeHtml(String(value))}</span>
+        <button type="button" data-party-step="+" aria-label="Artır">+</button>
+      </div>`;
+  }
+
+  function confirmPartySize() {
+    const context = state.optionsContext;
+    if (!context) return;
+    state.draftPartySize = context.partySize;
+    closeOptions();
+    renderBill();
   }
 
   function openVoidSheet(itemId) {
@@ -2513,6 +2571,7 @@
       renderProducts();
       closeBill();
     });
+    el.btnPartySize.addEventListener('click', openPartySizeSheet);
     el.btnHelpRequest.addEventListener('click', openHelpRequestSheet);
     el.btnMoveTable.addEventListener('click', openTransferSheet);
     el.btnSendToCashier.addEventListener('click', openSendToCashierSheet);
@@ -2657,6 +2716,15 @@
       return;
     }
 
+    const partyStep = event.target.closest('[data-party-step]');
+    if (partyStep && state.optionsMode === 'party-size') {
+      const delta = partyStep.dataset.partyStep === '+' ? 1 : -1;
+      state.optionsContext.partySize = Math.min(50, Math.max(1, state.optionsContext.partySize + delta));
+      const valueEl = el.optionsBody.querySelector('#partySizeValue');
+      if (valueEl) valueEl.textContent = String(state.optionsContext.partySize);
+      return;
+    }
+
     const reason = event.target.closest('[data-reason]');
     if (reason && (state.optionsMode === 'void' || state.optionsMode === 'void-sent' || state.optionsMode === 'comp' || state.optionsMode === 'help-request')) {
       state.optionsContext.reason = reason.dataset.reason;
@@ -2768,6 +2836,7 @@
     if (state.optionsMode === 'void-sent') { void confirmVoidSent(); return; }
     if (state.optionsMode === 'comp') { void confirmComp(); return; }
     if (state.optionsMode === 'help-request') { void confirmHelpRequest(); return; }
+    if (state.optionsMode === 'party-size') { confirmPartySize(); return; }
     if (state.optionsMode === 'cashier') { void confirmSendToCashier(); return; }
     if (state.optionsMode === 'transfer') { void confirmTransfer(); return; }
     if (state.optionsMode === 'transfer-server') { void confirmTransferServer(); return; }

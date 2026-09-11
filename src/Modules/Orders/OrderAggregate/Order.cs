@@ -40,7 +40,8 @@ public sealed class Order
         long rowVersion = 1,
         DateTimeOffset? createdAt = null,
         DateTimeOffset? updatedAt = null,
-        Guid? servingUserId = null)
+        Guid? servingUserId = null,
+        int? partySize = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Order id cannot be empty.", nameof(id));
@@ -54,6 +55,8 @@ public sealed class Order
             throw new ArgumentException("Source reference id cannot be empty.", nameof(sourceReferenceId));
         if (string.IsNullOrWhiteSpace(currencyCode))
             throw new ArgumentException("Currency code cannot be empty.", nameof(currencyCode));
+        if (partySize is < 1 or > 50)
+            throw new ArgumentOutOfRangeException(nameof(partySize), partySize, "Party size must be between 1 and 50.");
 
         Id = id;
         Source = source;
@@ -72,6 +75,7 @@ public sealed class Order
         CancelledAt = cancelledAt;
         RowVersion = rowVersion;
         ServingUserId = servingUserId;
+        PartySize = partySize;
 
         _items = items is null
             ? new List<OrderItem>()
@@ -122,6 +126,16 @@ public sealed class Order
     /// implicit side effect of any other transition.
     /// </summary>
     public Guid? ServingUserId { get; }
+
+    /// <summary>
+    /// V1-WTR-015 (garson comparison doc, "Katman B" gap): how many guests
+    /// are at this table. Null means never set — every rival POS surveyed
+    /// tracks this, ALKAROS tracked none. Set once, at creation (the
+    /// waiter has just greeted the table and knows the count then);
+    /// changed only by <see cref="WithPartySize"/>. Purely informational —
+    /// nothing in the domain reads it to make a decision.
+    /// </summary>
+    public int? PartySize { get; }
 
     public IReadOnlyList<OrderItem> Items => _items;
 
@@ -241,7 +255,8 @@ public sealed class Order
             RowVersion,
             CreatedAt,
             at,
-            ServingUserId);
+            ServingUserId,
+            PartySize);
         return result;
     }
 
@@ -551,11 +566,26 @@ public sealed class Order
         return RebuildWith(servingUserId: toUserId);
     }
 
+    /// <summary>
+    /// Sets or corrects the party size (V1-WTR-015). Always a real count —
+    /// same convention as <see cref="ReassignServer"/>'s non-nullable
+    /// <c>toUserId</c>: this never "un-sets" a party size once given one,
+    /// only changes it to a different valid count.
+    /// </summary>
+    public Order WithPartySize(int partySize)
+    {
+        if (partySize is < 1 or > 50)
+            throw new ArgumentOutOfRangeException(nameof(partySize), partySize, "Party size must be between 1 and 50.");
+
+        return RebuildWith(partySize: partySize);
+    }
+
     private Order RebuildWith(
         IReadOnlyList<OrderItem>? items = null,
         long? rowVersion = null,
         IReadOnlyList<OrderStatusHistoryEntry>? history = null,
-        Guid? servingUserId = null)
+        Guid? servingUserId = null,
+        int? partySize = null)
         => new(
             Id,
             Source,
@@ -577,5 +607,6 @@ public sealed class Order
             rowVersion ?? RowVersion,
             CreatedAt,
             UpdatedAt,
-            servingUserId ?? ServingUserId);
+            servingUserId ?? ServingUserId,
+            partySize ?? PartySize);
 }

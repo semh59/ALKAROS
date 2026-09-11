@@ -72,6 +72,88 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(150m, secondDraft.TotalAmount);
     }
 
+    // V1-WTR-015 (garson karşılaştırma dokümanı, "Katman B" eksiği): party
+    // size - every rival POS surveyed tracked it, ALKAROS tracked none.
+
+    [Fact]
+    public async Task ATableDraftWithAPartySizeStoresItOnTheOrder()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-06",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)],
+                PartySize: 4)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var draft = await response.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(4, draft!.PartySize);
+    }
+
+    [Fact]
+    public async Task APartySizeSurvivesASecondRoundOnTheSameTable()
+    {
+        // V1-WTR-015: Order.TransitionTo and RebuildWith both reconstruct
+        // the aggregate by hand from its own current fields - the exact
+        // shape of bug that already silently dropped ServingUserId once
+        // (V1-RMD-154, see that fix's own comment in ItemExceptionHandler
+        // .cs). This proves PartySize was threaded through correctly, not
+        // just accepted on the first call and then lost.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var starter = await _database.SeedProductAsync("Çorba", 60m);
+        var dessert = await _database.SeedProductAsync("Baklava", 90m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var firstResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-07",
+                [new OrderItemDraftDto(Guid.NewGuid(), starter, "Çorba", 1, 60m)],
+                PartySize: 3)));
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+
+        // The second round deliberately omits PartySize - matching what
+        // the real waiter client actually sends (it resends the current
+        // draftPartySize every round, but a fresh client session or an
+        // older app build might not); the point is the SERVER never
+        // re-derives it from a later request once an order exists.
+        using var secondResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-07",
+                [new OrderItemDraftDto(Guid.NewGuid(), dessert, "Baklava", 1, 90m)])));
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+        var secondDraft = await secondResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        Assert.Equal(3, secondDraft!.PartySize);
+    }
+
+    [Fact]
+    public async Task AnOutOfRangePartySizeIsRejected()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-08",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)],
+                PartySize: 0)));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     [Fact]
     public async Task ResendingTheSameLineWithACorrectedQuantityUpdatesTheStoredItem()
     {

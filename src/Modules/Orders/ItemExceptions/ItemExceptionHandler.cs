@@ -120,7 +120,8 @@ public sealed class ItemExceptionHandler
             // waiter could raise one on a table that was not theirs), and
             // transfer-server, which matches on serving_user_id, skipped the
             // order entirely.
-            order.ServingUserId);
+            order.ServingUserId,
+            order.PartySize);
 
         var newVersion = await _orderRepository.SaveAsync(updatedOrder, command.ExpectedRowVersion, cancellationToken).ConfigureAwait(false);
 
@@ -255,7 +256,8 @@ public sealed class ItemExceptionHandler
             // waiter could raise one on a table that was not theirs), and
             // transfer-server, which matches on serving_user_id, skipped the
             // order entirely.
-            order.ServingUserId);
+            order.ServingUserId,
+            order.PartySize);
 
         var newVersion = await _orderRepository.SaveAsync(updatedOrder, command.ExpectedRowVersion, cancellationToken).ConfigureAwait(false);
 

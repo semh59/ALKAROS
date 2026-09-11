@@ -45,6 +45,7 @@ oturumunun bağlantısı sunucuda sessizce reddediliyor, hiçbir maliyeti yok).
 - `database/migrations/V1/V1-WTR-014/**` (yeni)
 - `src/Host/Experience/HelpRequests/**` (yeni)
 - `tests/Host/Experience/HelpRequests/**` (yeni)
+- `src/Clients/PosTerminal/src/routes/Cashier.help-alerts.test.tsx` (yeni)
 - Sınırlı ek:
   - src/Host/DualScreen/DualScreenApplication.cs (DualScreen sahipliğinde)
     — `AddHelpRequestExperience()`/`MapHelpRequestApi()` kaydı.
@@ -60,9 +61,8 @@ oturumunun bağlantısı sunucuda sessizce reddediliyor, hiçbir maliyeti yok).
   - src/Clients/WaiterPwa/wwwroot/index.html, waiter-app.js (V1-WTR-010
     sahipliğinde) — adisyon başlığına "Yardım çağır" düğmesi, tip seçim
     sheet'i.
-  - src/Clients/PosTerminal/src/routes/Cashier.tsx,
-    Cashier.help-alerts.test.tsx (yeni), styles.css (PosTerminal
-    sahipliğinde) — SignalR bağlantısı, bildirim banner'ı.
+  - src/Clients/PosTerminal/src/routes/Cashier.tsx, styles.css
+    (PosTerminal sahipliğinde) — SignalR bağlantısı, bildirim banner'ı.
 
 ## Out of scope
 
