@@ -246,6 +246,22 @@ public sealed record OrderDto(
 /// the kitchen is doing by querying the KDS ticket surface separately; without
 /// CreatedAt there is no way to tell one round of items from the next.
 /// </remarks>
+/// <summary>
+/// <paramref name="CanVoid"/>/<paramref name="CanVoidSent"/> (V1-RMD-168,
+/// found by the 2026-09-10 Garson audit — foundations.md §0.2, "which
+/// action is valid is the server's answer"): the waiter client used to
+/// derive these itself from KitchenState alone (`!kitchenSent` /
+/// `kitchenSent &amp;&amp; not Served/Cancelled`), missing the `Status`
+/// half of each real eligibility check
+/// (<see cref="ALKAROS.Orders.ItemExceptions.ItemExceptionHandler.VoidItemAsync"/>,
+/// <c>SentItemVoidStore.VoidAsync</c>) — a client-side assumption that
+/// happened to hold today only because <c>activeItems()</c> already
+/// filters Cancelled/Waste lines before rendering, not because anything
+/// enforced it. These two fields are computed here with the exact same
+/// predicates the two handlers themselves use, so the client only ever
+/// shows/hides a button, never re-derives whether the click would
+/// succeed.
+/// </summary>
 public sealed record OrderItemDto(
     Guid ItemId,
     Guid ProductId,
@@ -258,4 +274,6 @@ public sealed record OrderItemDto(
     string Status = "",
     string KitchenState = "",
     DateTimeOffset CreatedAt = default,
-    IReadOnlyList<OrderItemModifierDto>? Modifiers = null);
+    IReadOnlyList<OrderItemModifierDto>? Modifiers = null,
+    bool CanVoid = false,
+    bool CanVoidSent = false);

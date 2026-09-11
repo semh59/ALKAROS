@@ -1022,7 +1022,16 @@ public sealed class OrderManagementStore
             Status: i.Status.ToString(),
             KitchenState: i.KitchenState.ToString(),
             CreatedAt: i.CreatedAt,
-            Modifiers: MapModifiers(i)
+            Modifiers: MapModifiers(i),
+            // V1-RMD-168: mirrors ItemExceptionHandler.VoidItemAsync's own
+            // eligibility check exactly.
+            CanVoid: i.Status is OrderItemState.Active or OrderItemState.Draft
+                && i.KitchenState == KitchenState.NotSent,
+            // V1-RMD-168: mirrors SentItemVoidStore.VoidAsync's own
+            // eligibility check exactly.
+            CanVoidSent: i.Status == OrderItemState.Active
+                && i.KitchenState != KitchenState.NotSent
+                && i.KitchenState is not (KitchenState.Served or KitchenState.Cancelled)
         )).ToList();
 
         return new OrderDto(

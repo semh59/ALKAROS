@@ -897,21 +897,24 @@
          </span>`
       : '';
 
-    // V1-RMD-154/155: which of the two void paths this line belongs to, read
-    // off the state the server reports.
+    // V1-RMD-154/155: which of the two void paths this line belongs to.
     //
     // A line that has not gone to the kitchen voids for free. One that has
     // needs the grant-gated path, which cancels the kitchen ticket and gives
     // the stock back — and for a waiter raises a manager approval. Offering
     // no button at all (which is what V1-RMD-154 left, because that endpoint
     // had no client) meant a wrongly-sent dish could not be cancelled at all.
-    const kitchenSent = (item.kitchenState || 'NotSent') !== 'NotSent';
-    const canVoid = !kitchenSent;
-    // Served and Cancelled are past the point of no return; the aggregate
-    // refuses both, so the screen does not offer them either.
-    const canVoidSent = kitchenSent
-      && item.kitchenState !== 'Served'
-      && item.kitchenState !== 'Cancelled';
+    //
+    // V1-RMD-168: found by the 2026-09-10 Garson audit (foundations.md
+    // §0.2, "which action is valid is the server's answer") — this used to
+    // derive both flags itself from kitchenState alone, missing the Status
+    // half of each real eligibility check
+    // (ItemExceptionHandler.VoidItemAsync, SentItemVoidStore.VoidAsync).
+    // canVoid/canVoidSent are now the server's own computed fields; the
+    // client only shows or hides a button, never re-derives whether the
+    // click would succeed.
+    const canVoid = item.canVoid;
+    const canVoidSent = item.canVoidSent;
 
     return `
       <div class="line">

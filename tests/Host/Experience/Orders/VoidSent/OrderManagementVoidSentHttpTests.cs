@@ -112,6 +112,45 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         Assert.True(body.BillLineConvertedToWaste);
     }
 
+    [Fact]
+    public async Task CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck()
+    {
+        // V1-RMD-168: found by the 2026-09-10 Garson audit (foundations.md
+        // §0.2) — the waiter client used to derive these two flags itself
+        // from kitchenState alone. Pins that the three kitchen states this
+        // very test file already exercises against the real endpoints
+        // (AnItemStillNotSentIsRejected, the Preparing success case above,
+        // AnItemAlreadyServedIsRejected) produce exactly the canVoid/
+        // canVoidSent the DTO now computes server-side.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(
+            terminalId, "supervisor", "bills.void", "orders.create");
+
+        var (notSentOrderId, _, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.NotSent);
+        var (preparingOrderId, _, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing);
+        var (servedOrderId, _, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Served);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var notSentResponse = await client.SendAsync(GetRequest(OrderPath(terminalId, notSentOrderId), cookie));
+        var notSentOrder = await notSentResponse.Content.ReadFromJsonAsync<OrderDto>();
+        var notSentItem = Assert.Single(notSentOrder!.Items);
+        Assert.True(notSentItem.CanVoid);
+        Assert.False(notSentItem.CanVoidSent);
+
+        using var preparingResponse = await client.SendAsync(GetRequest(OrderPath(terminalId, preparingOrderId), cookie));
+        var preparingOrder = await preparingResponse.Content.ReadFromJsonAsync<OrderDto>();
+        var preparingItem = Assert.Single(preparingOrder!.Items);
+        Assert.False(preparingItem.CanVoid);
+        Assert.True(preparingItem.CanVoidSent);
+
+        using var servedResponse = await client.SendAsync(GetRequest(OrderPath(terminalId, servedOrderId), cookie));
+        var servedOrder = await servedResponse.Content.ReadFromJsonAsync<OrderDto>();
+        var servedItem = Assert.Single(servedOrder!.Items);
+        Assert.False(servedItem.CanVoid);
+        Assert.False(servedItem.CanVoidSent);
+    }
+
     /// <summary>
     /// Bağımsız denetimde bulundu (2026-09-05): önceki sıralamada Order ve
     /// Kitchen zaten kalıcı olarak yazılıyordu, Bill kapalıysa (Paid/
@@ -315,9 +354,19 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
     private static string VoidSentPath(Guid terminalId, Guid orderId, Guid itemId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/items/{itemId:D}/void-sent";
 
+    private static string OrderPath(Guid terminalId, Guid orderId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}";
+
     private static HttpRequestMessage JsonRequest(string path, string cookie, VoidSentItemRequestV1 body)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, path) { Content = JsonContent.Create(body) };
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return request;
+    }
+
+    private static HttpRequestMessage GetRequest(string path, string cookie)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, path);
         request.Headers.TryAddWithoutValidation("Cookie", cookie);
         return request;
     }
