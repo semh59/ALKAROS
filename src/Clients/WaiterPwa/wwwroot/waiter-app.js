@@ -155,7 +155,15 @@
     // Unsent rounds for tables the waiter stepped away from, keyed by table
     // id. A waiter checking another table mid-order is ordinary; losing what
     // they typed is not.
-    draftsByTable: new Map(),
+    //
+    // V1-RMD-169: found by the 2026-09-10 Garson audit — this used to be
+    // in-memory only, so a page reload (an accidental pull-to-refresh, the
+    // browser reclaiming memory, a crash) silently erased whatever a
+    // waiter had typed but not yet sent, with no warning and nothing to
+    // undo. Restored from localStorage at startup the same way
+    // offlineQueue/failedOrders already are; loadDraftsByTable/
+    // persistDraftsByTable below keep it in sync every time it changes.
+    draftsByTable: loadDraftsByTable(),
     // Bumped whenever the current round is cleared or sent, so a stale undo
     // cannot resurrect a line into a round that no longer exists.
     draftEpoch: 0,
@@ -610,6 +618,7 @@
       state.draft = held ? held.lines : [];
       state.draftsByTable.delete(tableId);
     }
+    persistDraftsByTable();
 
     state.table = table;
     el.menuTableName.textContent = `${table.number} masası`;
@@ -747,6 +756,19 @@
     el.btnSendFromBill.disabled = empty;
     renderProducts();
     renderBill();
+
+    // V1-RMD-169: keeps the CURRENT table's own unsent round in the same
+    // held-drafts map (and so in localStorage) it lands in the moment the
+    // waiter steps away — every keystroke while composing is already
+    // durable, not only the state as of the last table switch.
+    if (state.table) {
+      if (state.draft.length > 0) {
+        state.draftsByTable.set(state.table.id, { number: state.table.number, lines: state.draft });
+      } else {
+        state.draftsByTable.delete(state.table.id);
+      }
+      persistDraftsByTable();
+    }
   }
 
   // ══ The bill ═══════════════════════════════════════════════════════
@@ -1131,6 +1153,28 @@
       state.sendInFlight = false;
       afterDraftChange();
     }
+  }
+
+  // ══ Held drafts (unsent rounds, per table) ═══════════════════════════
+
+  // V1-RMD-169: see the field's own comment on state.draftsByTable. Stored
+  // as an array of [tableId, {number, lines}] pairs since a Map is not
+  // directly JSON-serializable.
+  function loadDraftsByTable() {
+    try {
+      const raw = localStorage.getItem('alkaros_waiter_drafts_by_table');
+      return raw ? new Map(JSON.parse(raw)) : new Map();
+    } catch {
+      // Corrupt/foreign localStorage content must never crash startup -
+      // worst case the held drafts are gone, same as before this fix.
+      return new Map();
+    }
+  }
+
+  function persistDraftsByTable() {
+    localStorage.setItem(
+      'alkaros_waiter_drafts_by_table',
+      JSON.stringify([...state.draftsByTable]));
   }
 
   // ══ Offline queue ══════════════════════════════════════════════════
@@ -1558,6 +1602,16 @@
       toast('Arka plan bildirimi için güvenli bağlantı (HTTPS) gerekli.', { warning: true });
       return;
     }
+    // V1-RMD-169: found by the 2026-09-10 Garson audit — if
+    // registerOfflineWorker() already failed (state.offlineDisabled), no
+    // service worker will ever activate, so the `navigator.serviceWorker.ready`
+    // await further down used to hang forever: no error, no toast, the
+    // waiter tapping "bildirimleri aç" just got a screen that never
+    // responded again.
+    if (state.offlineDisabled) {
+      toast('Arka plan bildirimi kurulamadı: çevrimdışı mod kapalı.', { warning: true });
+      return;
+    }
 
     // The browser requires this to come from a user gesture, which is why it
     // lives behind a button in the profile sheet and not in start().
@@ -1576,7 +1630,17 @@
     if (!key.ok) { toast(key.message, { warning: true }); return; }
 
     try {
-      const registration = await navigator.serviceWorker.ready;
+      // V1-RMD-169: a bare `await navigator.serviceWorker.ready` still has
+      // no timeout of its own — if registration reports success but the
+      // worker somehow never actually activates (a genuinely broken state,
+      // distinct from the registerOfflineWorker() failure already checked
+      // above), this raced it against a bound instead of hanging silently
+      // forever with the sheet stuck open.
+      const registration = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise((_, reject) => window.setTimeout(
+          () => reject(new Error('service-worker-timeout')), 10000))
+      ]);
       const subscription = await registration.pushManager.subscribe({
         // Chrome refuses a subscription that could be silent, and every
         // notification this app sends is shown anyway.
