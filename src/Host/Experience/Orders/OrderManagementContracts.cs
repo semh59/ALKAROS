@@ -254,6 +254,20 @@ public sealed record ServingHandoffNoteV1(string Note, string FromDisplayName, D
 public sealed record StaffMemberV1(Guid UserId, string DisplayName);
 
 /// <summary>
+/// V1-WTR-021: a waiter's own read-only shift summary — session-scoped to
+/// the caller, never anyone else's numbers. <paramref name="TipPoolShare"/>
+/// is <paramref name="TipPoolTotal"/> split evenly across
+/// <paramref name="WaitersWorkedToday"/> (0 when nobody has served an order
+/// yet today, in which case the share is 0 too, not a division error).
+/// </summary>
+public sealed record MyShiftSummaryV1(
+    decimal SalesTotal,
+    decimal CompUsed,
+    decimal TipPoolTotal,
+    long WaitersWorkedToday,
+    decimal TipPoolShare);
+
+/// <summary>
 /// <paramref name="PartySize"/> (V1-WTR-015): how many guests, or null if
 /// never set. Purely informational — the client shows it, nothing reads it
 /// to gate a decision.

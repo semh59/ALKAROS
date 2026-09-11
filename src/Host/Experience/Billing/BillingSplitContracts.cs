@@ -122,6 +122,24 @@ public sealed record ApplyBillDiscountResultV1(
     AdjustedBillSummaryV1? Summary,
     Guid? GrantId);
 
+/// <summary>
+/// V1-WTR-020: records a voluntary tip. No ReasonCode catalog (unlike
+/// discount) — a tip needs no business justification, only the amount the
+/// customer actually gave. No escalation path either: unlike bills.discount/
+/// bills.comp, recording a tip already received is not a discretionary
+/// business decision a role might lack the authority for, so bills.split
+/// (already held outright by cashier and up) is checked directly.
+/// </summary>
+public sealed record ApplyBillTipRequestV1(
+    string IdempotencyKey,
+    decimal Amount,
+    string? Notes = null);
+
+public sealed record ApplyBillTipResultV1(
+    Guid BillId,
+    Guid AdjustmentId,
+    AdjustedBillSummaryV1 Summary);
+
 public sealed record AdjustedBillSummaryV1(
     decimal OriginalPayableAmount,
     decimal TotalDiscounts,

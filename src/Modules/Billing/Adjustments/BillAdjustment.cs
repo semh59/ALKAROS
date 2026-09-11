@@ -220,6 +220,17 @@ public sealed class BillAdjustment
     /// <summary>
     /// Creates a service fee or kuver adjustment.
     /// </summary>
+    /// <remarks>
+    /// V1-WTR-020: domain-complete since V1-BIL-003 but, as of this comment,
+    /// still never wired to any HTTP endpoint — and it must stay that way. A
+    /// regulation effective 2026-01-30 (Resmi Gazete 33153) bans food/
+    /// beverage establishments from adding a "servis, masa, kuver veya
+    /// benzeri" charge under any name; violations are fined per adisyon
+    /// (3.973 TRY, 2026). Wiring this factory up to any client-facing
+    /// endpoint would make ALKAROS a tool for an illegal charge. Only
+    /// <see cref="CreateTip"/> below (a genuinely voluntary, customer-
+    /// initiated amount) may ever reach an endpoint.
+    /// </remarks>
     public static BillAdjustment CreateServiceFee(
         Guid id,
         Guid billId,
@@ -258,7 +269,11 @@ public sealed class BillAdjustment
     }
 
     /// <summary>
-    /// Creates a tip adjustment (VAT exempt / 0% tax per V0-CMP-004).
+    /// Creates a tip adjustment (VAT exempt / 0% tax per V0-CMP-004). The
+    /// caller (V1-WTR-020's <c>POST .../bills/{billId}/tip</c>) must never
+    /// pre-fill or suggest <paramref name="amount"/> — a voluntary tip is
+    /// only lawful when the customer chose the figure themselves, per the
+    /// same regulation <see cref="CreateServiceFee"/>'s own remark cites.
     /// </summary>
     public static BillAdjustment CreateTip(
         Guid id,
@@ -267,7 +282,8 @@ public sealed class BillAdjustment
         string reason,
         Guid authorizedBy,
         string? notes = null,
-        Guid? createdBy = null)
+        Guid? createdBy = null,
+        string? idempotencyKey = null)
     {
         if (amount <= 0)
             throw new ArgumentException("Tip amount must be positive.", nameof(amount));
@@ -288,6 +304,7 @@ public sealed class BillAdjustment
             taxAmount: 0m,
             isDeduction: false,
             notes: notes,
-            createdBy: createdBy);
+            createdBy: createdBy,
+            idempotencyKey: idempotencyKey);
     }
 }

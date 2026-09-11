@@ -717,6 +717,20 @@ public static class OrderManagementEndpoints
                 : Results.Ok(new ServingHandoffNoteV1(note.Note, note.FromDisplayName, note.CreatedAt));
         }).RequireRateLimiting("terminal-read");
 
+        // V1-WTR-021: garson-karsilastirma idea #9. Same "no permission
+        // check beyond a valid session" reasoning as handoff-note/pop above
+        // - these are always and only the caller's own numbers.
+        group.MapGet("/my-shift-summary", async (
+            Guid terminalId,
+            OrderManagementStore store,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            return Results.Ok(await store.GetMyShiftSummaryAsync(userId, cancellationToken));
+        }).RequireRateLimiting("terminal-read");
+
         return group;
     }
 

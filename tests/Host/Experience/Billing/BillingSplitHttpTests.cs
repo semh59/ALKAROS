@@ -5,6 +5,7 @@ using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Billing;
+using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
@@ -347,6 +348,110 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
     }
 
+    /// <summary>V1-WTR-020: bills.split (already held outright by cashier) records a tip directly, no grant escalation.</summary>
+    [Fact]
+    public async Task ARoleThatHoldsBillsSplitRecordsATipDirectly()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip",
+            cookie,
+            new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 50m));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<ApplyBillTipResultV1>();
+        Assert.NotEqual(Guid.Empty, body!.AdjustmentId);
+        Assert.Equal(50m, body.Summary.TotalTips);
+        Assert.Equal(
+            body.Summary.OriginalPayableAmount + body.Summary.TotalTips,
+            body.Summary.AdjustedPayableAmount);
+    }
+
+    [Fact]
+    public async Task RetryingATipWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var body = new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 25m);
+
+        using var first = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip", cookie, body));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var firstResult = await first.Content.ReadFromJsonAsync<ApplyBillTipResultV1>();
+
+        using var retry = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip", cookie, body));
+        Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
+        var retryResult = await retry.Content.ReadFromJsonAsync<ApplyBillTipResultV1>();
+
+        Assert.Equal(firstResult!.AdjustmentId, retryResult!.AdjustmentId);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ARoleWithoutBillsSplitIsRejectedFromRecordingATip()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip",
+            cookie,
+            new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 20m)));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    /// <summary>
+    /// V1-WTR-021: end-to-end across both endpoints this session added -
+    /// a tip recorded through V1-WTR-020's endpoint shows up in the
+    /// waiter's own shift summary the same UTC day, with the single waiter
+    /// who served today taking the whole equal-pool share.
+    /// </summary>
+    [Fact]
+    public async Task AVoluntaryTipTodayAppearsInTheServingWaitersShiftSummary()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, waiterCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await _database.SetOrderServingUserAsync(seeded.BillId, waiterId);
+        var (_, cashierCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        await using var app = await StartAsyncWithOrders();
+        using var client = CreateClient(app);
+
+        using var tipResponse = await client.SendAsync(JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip",
+            cashierCookie,
+            new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 40m)));
+        Assert.Equal(HttpStatusCode.OK, tipResponse.StatusCode);
+
+        using var summaryResponse = await client.SendAsync(
+            Request(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/orders/my-shift-summary", waiterCookie));
+
+        Assert.Equal(HttpStatusCode.OK, summaryResponse.StatusCode);
+        var summary = await summaryResponse.Content.ReadFromJsonAsync<MyShiftSummaryV1>();
+        Assert.True(summary!.SalesTotal > 0m);
+        Assert.Equal(0m, summary.CompUsed);
+        Assert.Equal(40m, summary.TipPoolTotal);
+        Assert.Equal(1, summary.WaitersWorkedToday);
+        Assert.Equal(40m, summary.TipPoolShare);
+    }
+
     [Fact]
     public async Task ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending()
     {
@@ -525,6 +630,30 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         builder.Services.AddBillingSplitExperience();
         var app = builder.Build();
         app.MapBillingSplitApi();
+        await app.StartAsync();
+        return app;
+    }
+
+    /// <summary>
+    /// V1-WTR-021: a second, test-local host composition that also maps
+    /// OrderManagementApi (my-shift-summary reads across orders, identity
+    /// and billing schemas — this project's own full-migration-directory
+    /// fixture already has all three, unlike a per-file fixture-list
+    /// project, so this is a self-contained addition here rather than a
+    /// new test project). Deliberately separate from the shared
+    /// <see cref="StartAsync"/> above so this does not touch the other 19
+    /// tests that already depend on it.
+    /// </summary>
+    private async Task<WebApplication> StartAsyncWithOrders()
+    {
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
+        builder.WebHost.UseUrls("http://127.0.0.1:0");
+        builder.Services.AddSingleton(NpgsqlDataSource.Create(_database.ConnectionString));
+        builder.Services.AddBillingSplitExperience();
+        builder.Services.AddOrderManagementExperience();
+        var app = builder.Build();
+        app.MapBillingSplitApi();
+        app.MapOrderManagementApi();
         await app.StartAsync();
         return app;
     }
@@ -875,6 +1004,17 @@ internal sealed class BillingSplitTestDatabase
             WHERE grant_id = @grant_id;
             """,
             ("grant_id", grantId));
+
+    /// <summary>V1-WTR-021: attributes a seeded bill's underlying order to a waiter for the shift-summary test.</summary>
+    public Task SetOrderServingUserAsync(Guid billId, Guid waiterUserId)
+        => ExecuteAsync(
+            DataSource,
+            """
+            UPDATE orders.orders SET serving_user_id = @waiter_user_id
+            WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @bill_id);
+            """,
+            ("waiter_user_id", waiterUserId),
+            ("bill_id", billId));
 
     private NpgsqlDataSource DataSource
         => _dataSource ?? throw new InvalidOperationException("Test database is not initialized.");

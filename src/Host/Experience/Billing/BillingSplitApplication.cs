@@ -159,6 +159,35 @@ public static class BillingSplitApplication
                 null));
         });
 
+        // V1-WTR-020: records a voluntary tip. bills.split is checked
+        // directly (RequireMutationAsync, no grant-request dance) - unlike
+        // discount/comp, this is never a discretionary decision a role might
+        // lack the authority for, only data entry of money already handed
+        // over. See ApplyBillTipRequestV1's own doc comment and
+        // BillAdjustment.CreateServiceFee's remark for why a service-charge
+        // endpoint must never exist alongside this one.
+        billsGroup.MapPost("/{billId:guid}/tip", async (
+            Guid terminalId,
+            Guid billId,
+            ApplyBillTipRequestV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            BillingSplitStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var (adjustment, summary) = await store.ApplyTipAsync(billId, request, principal.UserId, cancellationToken);
+            return Results.Ok(new ApplyBillTipResultV1(
+                billId,
+                adjustment.Id,
+                new AdjustedBillSummaryV1(
+                    summary.OriginalPayableAmount,
+                    summary.TotalDiscounts,
+                    summary.TotalFees,
+                    summary.TotalTips,
+                    summary.AdjustedPayableAmount)));
+        });
+
         billsGroup.MapGet("/{billId:guid}/adjustments", async (
             Guid terminalId,
             Guid billId,

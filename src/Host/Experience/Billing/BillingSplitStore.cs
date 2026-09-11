@@ -138,6 +138,76 @@ public sealed class BillingSplitStore
     private static bool IsDiscountable(BillState status) => status
         is BillState.Open or BillState.PartiallyAllocated or BillState.Allocated or BillState.Reopened;
 
+    /// <summary>
+    /// V1-WTR-020: records a voluntary tip (<see cref="BillAdjustment.CreateTip"/>).
+    /// Same lock/idempotency/status-gate shape as <see cref="ApplyDiscountAsync"/>
+    /// above — deliberately reusing <see cref="IsDiscountable"/>'s status set
+    /// rather than a second copy of it, since "can this bill still take an
+    /// adjustment line" is the same question for a tip as for a discount.
+    /// No <see cref="AdjustmentCalculator"/> upper-bound check is needed here
+    /// (unlike a discount, a tip can never make the adjusted total negative).
+    /// </summary>
+    public async Task<(BillAdjustment Adjustment, AdjustedBillSummary Summary)> ApplyTipAsync(
+        Guid billId,
+        ApplyBillTipRequestV1 request,
+        Guid actorId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_adjustments == null)
+            throw new InvalidOperationException("Bill adjustment repository is not configured.");
+        if (_dataSource == null)
+            throw new InvalidOperationException("Data source is not configured.");
+        ArgumentNullException.ThrowIfNull(request);
+        if (request.Amount <= 0)
+            throw new ArgumentException("Tip amount must be positive.", nameof(request));
+
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var lockTransaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using (var lockCommand = new NpgsqlCommand(
+            "SELECT bill_id FROM billing.bills WHERE bill_id = @bill_id FOR UPDATE;", connection, lockTransaction))
+        {
+            lockCommand.Parameters.AddWithValue("bill_id", billId);
+            await lockCommand.ExecuteScalarAsync(cancellationToken);
+        }
+
+        var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
+
+        var replay = existingAdjustments.FirstOrDefault(
+            a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal));
+        if (replay is not null)
+        {
+            await lockTransaction.CommitAsync(cancellationToken);
+            return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
+        }
+
+        // A fixed code, not free text - matches how DiscountReasonCatalog's
+        // codes work: the server stores a code, a future client translates
+        // it (UI_STYLE_GUIDE's translation-dictionary rule). A tip needs no
+        // business-reason catalog since it is never discretionary, but the
+        // stored value still stays in the same "code, not prose" shape.
+        var adjustment = BillAdjustment.CreateTip(
+            Guid.NewGuid(),
+            billId,
+            request.Amount,
+            reason: "VOLUNTARY_TIP",
+            authorizedBy: actorId,
+            notes: request.Notes,
+            createdBy: actorId,
+            idempotencyKey: request.IdempotencyKey);
+
+        var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
+
+        await _adjustments.AddAsync(adjustment, connection, lockTransaction, cancellationToken);
+        await lockTransaction.CommitAsync(cancellationToken);
+
+        return (adjustment, summary);
+    }
+
     public async Task<(IReadOnlyList<BillAdjustment> Adjustments, AdjustedBillSummary Summary)> GetAdjustmentsAsync(
         Guid billId,
         CancellationToken cancellationToken = default)

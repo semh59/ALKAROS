@@ -2455,6 +2455,10 @@
             <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-move"/></svg></span>
             <span class="opt-name">Açık masaları devret</span>
           </button>
+          <button type="button" class="opt" data-profile="shift-summary">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-seats"/></svg></span>
+            <span class="opt-name">Vardiya özetim</span>
+          </button>
           <button type="button" class="opt" data-profile="signout">
             <span class="opt-box is-round"></span>
             <span class="opt-name">Oturumu kapat</span>
@@ -2464,6 +2468,46 @@
         'Bu cihaz için ayarlar', body, '', '', '');
       el.optionsConfirm.hidden = true;
     });
+  }
+
+  // V1-WTR-021: garson-karsilastirma idea #9, "yalnızca kendine görünen
+  // vardiya özeti". The server already scopes /my-shift-summary to the
+  // calling session (RequireCashierSessionAsync) - there is no manager
+  // view or other-waiter lookup to accidentally build here.
+  async function openShiftSummarySheet() {
+    openOptions('shift-summary', 'Vardiya özetim', 'Bugün (UTC gün başlangıcından beri)',
+      '<div class="empty">Yükleniyor…</div>', '', '', '');
+    el.optionsConfirm.hidden = true;
+
+    const result = await api(apiUrl('/orders/my-shift-summary'));
+    if (!result.ok) {
+      el.optionsBody.innerHTML = `<div class="callout">
+        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
+        <span>${escapeHtml(result.message || 'Vardiya özeti alınamadı.')}</span>
+      </div>`;
+      return;
+    }
+
+    const summary = result.data;
+    el.optionsBody.innerHTML = `
+      <div class="opts">
+        <div class="shift-summary-row">
+          <span class="shift-summary-label">Satış toplamım</span>
+          <span class="shift-summary-value">${formatMoney(summary.salesTotal)}</span>
+        </div>
+        <div class="shift-summary-row">
+          <span class="shift-summary-label">Kullandığım ikram bütçesi</span>
+          <span class="shift-summary-value">${formatMoney(summary.compUsed)}</span>
+        </div>
+        <div class="shift-summary-row">
+          <span class="shift-summary-label">Bahşiş havuzu payım</span>
+          <span class="shift-summary-value">${formatMoney(summary.tipPoolShare)}</span>
+        </div>
+      </div>
+      <p class="shift-summary-note">
+        Bahşiş havuzu payı: bugün toplanan ${formatMoney(summary.tipPoolTotal)} bahşiş,
+        bugün en az bir sipariş alan ${summary.waitersWorkedToday} garson arasında eşit bölünür.
+      </p>`;
   }
 
   // Setting a PIN needs the current password on top of the session, so a
@@ -2926,6 +2970,7 @@
       else if (action === 'push') { closeOptions(); void (state.pushEnabled ? disablePush() : enablePush()); }
       else if (action === 'pin-off') openPinSheet(true);
       else if (action === 'transfer-server') void openTransferServerSheet();
+      else if (action === 'shift-summary') void openShiftSummarySheet();
       else if (state.pinArmed) { closeOptions(); lockScreen(); }
       else openPinSheet(false);
     }

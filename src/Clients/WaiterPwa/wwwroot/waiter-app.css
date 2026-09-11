@@ -1088,6 +1088,25 @@ input {
 
 .opts { display: flex; flex-direction: column; gap: var(--space-2); }
 
+/* V1-WTR-021: the "vardiya özetim" sheet's three read-only numbers. */
+.shift-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.shift-summary-label { font-weight: 600; font-size: 0.89rem; }
+.shift-summary-value { font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.shift-summary-note {
+  margin: var(--space-3) 0 0;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
 /* V1-WTR-013: was scoped to .login-card only; the hand-off note field in
    the transfer-server sheet needed the same small muted caption style. */
 .hint { margin: var(--space-3) 0 var(--space-1); font-size: 0.83rem; color: var(--color-muted); display: block; }
