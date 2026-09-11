@@ -130,7 +130,11 @@ public sealed record TableDto(
     // current order or it has no items yet. Was missing entirely before
     // this; WaiterPwa read a field ("amount"/"currentAmount") that never
     // existed on this contract and the client always rendered it as empty.
-    decimal CurrentOrderTotal = 0m);
+    decimal CurrentOrderTotal = 0m,
+    // V1-WTR-019: when the table's current order was created (orders.orders.
+    // created_at) — the table-ageing indicator idea's own timestamp.
+    // Null when there is no current order.
+    DateTimeOffset? CurrentOrderOpenedAt = null);
 
 public sealed record CreateTableReservationRequest(
     Guid TableId,
@@ -239,7 +243,8 @@ internal static class TableContractMapper
         Table table,
         IReadOnlySet<string> permissions,
         TableReservationRecord? activeReservation = null,
-        decimal currentOrderTotal = 0m) => new(
+        decimal currentOrderTotal = 0m,
+        DateTimeOffset? currentOrderOpenedAt = null) => new(
         table.Id,
         table.TableNumber,
         table.ZoneId,
@@ -252,7 +257,8 @@ internal static class TableContractMapper
         AllowedCommands(table, permissions),
         activeReservation?.Id,
         activeReservation?.RowVersion,
-        currentOrderTotal);
+        currentOrderTotal,
+        currentOrderOpenedAt);
 
     public static IReadOnlyList<string> AllowedCommands(Table table, IReadOnlySet<string> permissions)
     {

@@ -220,6 +220,33 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
         }
     }
 
+    /// <summary>V1-WTR-019: garson-karsilastirma idea #7, "masa yaşlanma göstergesi".</summary>
+    [Fact]
+    public async Task TableListReportsWhenTheCurrentOrderWasOpenedAndNullWhenThereIsNone()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var table = await PostAsync<TableDto>(
+            client,
+            Prefix(terminalId) + "/tables",
+            cookie,
+            new CreateTableRequest(0, "T-AGE", null, 4));
+        Assert.Null(table.CurrentOrderOpenedAt);
+
+        var before = DateTimeOffset.UtcNow;
+        await _database.SeedCurrentOrderWithItemsAsync(table.TableId, (60.00m, "Active"));
+        var after = DateTimeOffset.UtcNow;
+
+        using var readRequest = Request(HttpMethod.Get, $"{Prefix(terminalId)}/tables/{table.TableId:D}", cookie);
+        using var read = await client.SendAsync(readRequest);
+        var read1 = await read.Content.ReadFromJsonAsync<TableDto>();
+        Assert.NotNull(read1!.CurrentOrderOpenedAt);
+        Assert.InRange(read1.CurrentOrderOpenedAt!.Value, before.AddSeconds(-1), after.AddSeconds(1));
+    }
+
     [Fact]
     public async Task ReservationTransferMergeAndUnmergeExecuteThroughRealPostgresqlServices()
     {

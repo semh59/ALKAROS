@@ -470,6 +470,12 @@ input {
 .is-reserved .tag.tag-status { background: var(--color-info-soft); color: var(--color-info); }
 .is-cleaning .tag.tag-status { background: var(--color-warning-soft); color: var(--color-warning); }
 
+/* V1-WTR-019: "masa yaşlanma" badge - how long the table's current order
+   has been open. Neutral under the warning threshold, then escalates. */
+.tag-age-normal { background: #eef1f3; color: var(--color-muted); }
+.tag-age-warning { background: var(--color-warning-soft); color: var(--color-warning); }
+.tag-age-danger { background: var(--color-danger-soft); color: var(--color-danger); }
+
 .table-amount {
   margin-top: auto;
   font-size: 1rem;

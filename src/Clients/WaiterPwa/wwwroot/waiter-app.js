@@ -720,6 +720,10 @@
       rowVersion: table.rowVersion,
       // V1-RMD-135: the table's real running total.
       amount: table.currentOrderTotal || 0,
+      // V1-WTR-019: when the table's current order was opened
+      // (orders.orders.created_at) - null when there is no current order.
+      // The "masa yaşlanma" (table ageing) badge's own source of truth.
+      openedAt: table.currentOrderOpenedAt || null,
       // foundations §0.2: which actions are valid is the server's answer.
       allowedCommands: table.allowedCommands || []
     }));
@@ -745,6 +749,29 @@
     el.zoneChips.innerHTML = state.zones.map((zone) => `
       <button type="button" class="chip" data-zone="${escapeHtml(zone.id)}"
               aria-pressed="${state.activeZone === zone.id}">${escapeHtml(zone.name)}</button>`).join('');
+  }
+
+  // V1-WTR-019: garson-karsilastirma idea #7, "masa yaşlanma göstergesi" -
+  // how long a table has carried an open tab, so a waiter can spot the one
+  // that has sat forgotten. Thresholds are a reasonable default (not a
+  // business-policy number like idea #8's service charge), tuned to a
+  // normal Turkish restaurant turn time: under 45 dk is unremarkable, 45-90
+  // is worth a glance, 90+ is worth walking over for.
+  const TABLE_AGE_WARNING_MINUTES = 45;
+  const TABLE_AGE_DANGER_MINUTES = 90;
+
+  function tableAgeMinutes(openedAt) {
+    if (!openedAt) return null;
+    const opened = new Date(openedAt).getTime();
+    if (Number.isNaN(opened)) return null;
+    return Math.max(0, Math.floor((Date.now() - opened) / 60000));
+  }
+
+  function tableAgeBadgeHtml(minutes) {
+    if (minutes == null) return '';
+    const tier = minutes >= TABLE_AGE_DANGER_MINUTES ? 'tag-age-danger'
+      : minutes >= TABLE_AGE_WARNING_MINUTES ? 'tag-age-warning' : 'tag-age-normal';
+    return `<span class="tag ${tier}">${minutes} dk</span>`;
   }
 
   function renderTables() {
@@ -786,7 +813,7 @@
                 <svg class="icon" aria-hidden="true"><use href="#ico-seats"/></svg>${escapeHtml(table.seats)}
               </span>
             </span>
-            <span class="tagrow"><span class="tag tag-status">${escapeHtml(status.label)}</span></span>
+            <span class="tagrow"><span class="tag tag-status">${escapeHtml(status.label)}</span>${busy ? tableAgeBadgeHtml(tableAgeMinutes(table.openedAt)) : ''}</span>
             <span class="table-amount${busy ? '' : ' is-empty'}">${busy ? formatMoney(table.amount) : 'Boş'}</span>
           </button>
           ${quick}
@@ -3061,6 +3088,10 @@
     resetIdleTimer();
     void refreshPushState();
     void flushQueue();
+    // V1-WTR-019: the age badge is computed client-side from the already-
+    // loaded openedAt, so ticking it forward needs only a re-render, not a
+    // re-fetch - cheap even when the tables screen is not the one showing.
+    window.setInterval(renderTables, 60000);
   }
 
   async function init() {

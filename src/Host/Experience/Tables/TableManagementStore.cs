@@ -40,13 +40,27 @@ public sealed class TableManagementStore
         ), 0)
         """;
 
-    public async Task<(Table Table, decimal CurrentOrderTotal)?> GetAsync(
+    // V1-WTR-019: garson-karsilastirma idea #7, the table-ageing indicator —
+    // how long the table's current tab has been open, for WaiterPwa's own
+    // ageing badge. Same "read model, not a new column" shape
+    // CurrentOrderTotalSql above already established: the truth is
+    // orders.orders.created_at for the order table_mgmt's own
+    // current_order_id points at, not a new timestamp duplicated onto
+    // table_mgmt.tables itself (which would need its own write-path
+    // discipline to ever stay in sync). Null when there is no current
+    // order.
+    private const string CurrentOrderOpenedAtSql =
+        """
+        (SELECT o.created_at FROM orders.orders o WHERE o.order_id = t.current_order_id)
+        """;
+
+    public async Task<(Table Table, decimal CurrentOrderTotal, DateTimeOffset? CurrentOrderOpenedAt)?> GetAsync(
         Guid tableId, CancellationToken cancellationToken = default)
     {
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT t.table_id, t.table_number, t.zone_id, t.capacity, t.active, t.current_status,
-                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}
+                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}, {CurrentOrderOpenedAtSql}
             FROM table_mgmt.tables t
             WHERE t.table_id = @table_id;
             """);
@@ -54,18 +68,18 @@ public sealed class TableManagementStore
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken))
             return null;
-        return (Read(reader), reader.GetDecimal(9));
+        return (Read(reader), reader.GetDecimal(9), reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10));
     }
 
-    public async Task<IReadOnlyList<(Table Table, decimal CurrentOrderTotal)>> GetAllAsync(
+    public async Task<IReadOnlyList<(Table Table, decimal CurrentOrderTotal, DateTimeOffset? CurrentOrderOpenedAt)>> GetAllAsync(
         Guid? zoneId,
         CancellationToken cancellationToken = default)
     {
-        var tables = new List<(Table, decimal)>();
+        var tables = new List<(Table, decimal, DateTimeOffset?)>();
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT t.table_id, t.table_number, t.zone_id, t.capacity, t.active, t.current_status,
-                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}
+                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}, {CurrentOrderOpenedAtSql}
             FROM table_mgmt.tables t
             WHERE @zone_id IS NULL OR t.zone_id = @zone_id
             ORDER BY t.table_number, t.table_id;
@@ -73,7 +87,7 @@ public sealed class TableManagementStore
         command.Parameters.Add("zone_id", NpgsqlDbType.Uuid).Value = zoneId ?? (object)DBNull.Value;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
-            tables.Add((Read(reader), reader.GetDecimal(9)));
+            tables.Add((Read(reader), reader.GetDecimal(9), reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10)));
         return tables;
     }
 
