@@ -52,7 +52,7 @@ export function RelaySettings() {
       setZoneIdInput(result.zoneId ?? "");
       setBaseDomainInput(result.baseDomain ?? "");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Durum alınamadı.");
+      setError(reason instanceof ApiError ? reason.message : "Durum alınamadı.");
     }
   }, [terminalId]);
 
@@ -89,7 +89,7 @@ export function RelaySettings() {
       await loadStatus();
     } catch (reason) {
       setSession("anonymous");
-      setError(reason instanceof Error ? reason.message : "Giriş yapılamadı.");
+      setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
     } finally {
       setBusy(false);
     }
@@ -115,7 +115,7 @@ export function RelaySettings() {
       setSaveMessage("Bağlantı bilgisi kaydedildi.");
       await loadStatus();
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Kaydedilemedi.");
+      setError(reason instanceof ApiError ? reason.message : "Kaydedilemedi.");
     } finally {
       setBusy(false);
     }
@@ -132,7 +132,7 @@ export function RelaySettings() {
       setProvisionMessage(`Bağlantı etkinleştirildi: ${result.hostname}`);
       await loadStatus();
     } catch (reason) {
-      setProvisionError(reason instanceof Error ? reason.message : "Bağlantı etkinleştirilemedi.");
+      setProvisionError(reason instanceof ApiError ? reason.message : "Bağlantı etkinleştirilemedi.");
     } finally {
       setProvisionBusy(false);
     }

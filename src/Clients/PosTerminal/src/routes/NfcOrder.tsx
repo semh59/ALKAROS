@@ -42,7 +42,7 @@ export function NfcOrder() {
       setProducts(list);
       setState("browsing");
     } catch (reason) {
-      setMessage(reason instanceof Error ? reason.message : "Menü yüklenemedi.");
+      setMessage(reason instanceof ApiError ? reason.message : "Menü yüklenemedi.");
       setState("error");
     }
   }, [tableId]);
@@ -99,7 +99,7 @@ export function NfcOrder() {
         setState("blocked");
         return;
       }
-      setMessage(reason instanceof Error ? reason.message : "Sipariş gönderilemedi.");
+      setMessage(reason instanceof ApiError ? reason.message : "Sipariş gönderilemedi.");
       setState("browsing");
     }
   };

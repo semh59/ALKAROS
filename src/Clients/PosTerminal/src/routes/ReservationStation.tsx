@@ -59,7 +59,7 @@ export function ReservationStation() {
       await restoreSession();
     } catch (reason) {
       setSession("anonymous");
-      setError(reason instanceof Error ? reason.message : "Giriş yapılamadı.");
+      setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
     } finally {
       setBusy(false);
     }

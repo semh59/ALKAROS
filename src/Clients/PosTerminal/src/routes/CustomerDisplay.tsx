@@ -33,7 +33,7 @@ export function CustomerDisplay() {
     try {
       setPairing(await api.createPairing(displayId));
     } catch (reason) {
-      setPairingError(reason instanceof Error ? reason.message : "Eşleştirme başlatılamadı.");
+      setPairingError(reason instanceof ApiError ? reason.message : "Eşleştirme başlatılamadı.");
       setDisplaySession("error");
     } finally {
       pairingRequestInFlight.current = false;
@@ -53,7 +53,7 @@ export function CustomerDisplay() {
       if (reason instanceof ApiError && reason.status === 401) {
         await beginPairing();
       } else if (!hasSuccessfulSnapshot.current) {
-        setPairingError(reason instanceof Error ? reason.message : "Ekran bilgisi alınamadı.");
+        setPairingError(reason instanceof ApiError ? reason.message : "Ekran bilgisi alınamadı.");
         setDisplaySession("error");
       }
     }
@@ -76,7 +76,7 @@ export function CustomerDisplay() {
         .catch((reason: unknown) => {
           if (reason instanceof ApiError && reason.status === 409) return;
           setPairing(null);
-          setPairingError(reason instanceof Error ? reason.message : "Eşleştirme tamamlanamadı.");
+          setPairingError(reason instanceof ApiError ? reason.message : "Eşleştirme tamamlanamadı.");
           setDisplaySession("error");
         });
     }, 2_000);
