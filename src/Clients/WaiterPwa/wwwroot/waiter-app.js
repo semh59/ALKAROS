@@ -233,10 +233,25 @@
 
   // ══ Toasts ═════════════════════════════════════════════════════════
 
+  // V1-RMD-166: found by the 2026-09-10 Garson audit — the toast count was
+  // unbounded, so a round of several items (one toast each, e.g. a
+  // nine-line table) stacked up and covered the screen. An undo toast is
+  // never force-closed early — cutting it short would silently take away
+  // the one chance to undo a removal — so the cap only ever prunes plain
+  // (non-undo) toasts, oldest first.
+  const MAX_VISIBLE_TOASTS = 4;
+
   function toast(text, options) {
     const settings = options || {};
+    while (el.toasts.children.length >= MAX_VISIBLE_TOASTS) {
+      const oldest = [...el.toasts.children].find((child) => !child.dataset.hasUndo);
+      if (!oldest) break;
+      oldest.remove();
+    }
+
     const node = document.createElement('div');
     node.className = 'toast';
+    if (settings.undo) node.dataset.hasUndo = 'true';
     node.innerHTML = `
       <span class="toast-mark${settings.warning ? ' is-warning' : ''}">
         <svg class="icon" aria-hidden="true"><use href="#ico-${settings.warning ? 'alert' : 'check'}"/></svg>
@@ -788,9 +803,25 @@
       html += state.draft.map(renderDraftLine).join('');
     }
 
-    if (sent.length > 0) {
+    // V1-RMD-166: found by the 2026-09-10 Garson audit — every item on
+    // state.order used to render under the "Gönderildi" header just for
+    // being non-cancelled, even one whose own kitchenState is NotSent (the
+    // server persisted it, e.g. table-draft succeeded, but it was never
+    // actually fired to the kitchen - the exact case V1-RMD-164 fixed the
+    // correction path for). The section header said "Sent" while the
+    // line's own badge said "Not sent", directly contradicting it. Split
+    // into two groups instead of one.
+    const awaitingDispatch = sent.filter((item) => (item.kitchenState || 'NotSent') === 'NotSent');
+    const dispatched = sent.filter((item) => (item.kitchenState || 'NotSent') !== 'NotSent');
+
+    if (awaitingDispatch.length > 0) {
+      html += '<div class="group-label"><span>Gönderilmeyi bekliyor</span><span>gönderilmedi</span></div>';
+      html += awaitingDispatch.map(renderSentLine).join('');
+    }
+
+    if (dispatched.length > 0) {
       html += `<div class="group-label"><span>Gönderildi</span><span>${escapeHtml(formatMoney(sentTotal))}</span></div>`;
-      html += sent.map(renderSentLine).join('');
+      html += dispatched.map(renderSentLine).join('');
     }
 
     if (!html) html = '<div class="empty">Bu masada henüz sipariş yok.<br>Ürün ekleyerek başlayın.</div>';
