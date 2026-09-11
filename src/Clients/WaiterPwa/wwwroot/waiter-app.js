@@ -167,7 +167,7 @@
     // id. A waiter checking another table mid-order is ordinary; losing what
     // they typed is not.
     //
-    // V1-RMD-169: found by the 2026-09-10 Garson audit — this used to be
+    // V1-RMD-170: found by the 2026-09-10 Garson audit — this used to be
     // in-memory only, so a page reload (an accidental pull-to-refresh, the
     // browser reclaiming memory, a crash) silently erased whatever a
     // waiter had typed but not yet sent, with no warning and nothing to
@@ -312,9 +312,17 @@
   }
 
   function closeOptions() {
+    // V1-RMD-178: found by independent review of V1-RMD-173 — Escape (or a
+    // backdrop click, reachable if the lock overlay's own layering is ever
+    // wrong) used to close the options sheet even while the device was
+    // locked, because the check lived only in the keydown handler and only
+    // tested the sheet's own is-open class, never state.locked. The single
+    // choke point here is the one that actually matters: nothing may close
+    // the options sheet while the PIN lock is the active overlay.
+    if (state.locked) return;
     el.optionsSheet.classList.remove('is-open');
     el.optionsBackdrop.classList.remove('is-open');
-    // V1-RMD-172: this sheet stays in the DOM at all times (CSS moves it
+    // V1-RMD-173: this sheet stays in the DOM at all times (CSS moves it
     // off-screen instead of removing it), so a closed sheet is still a
     // tab stop unless told otherwise.
     el.optionsSheet.inert = true;
@@ -339,11 +347,23 @@
     // disabled button never leaks into the next sheet.
     el.optionsConfirm.className = 'btn btn-primary';
     el.optionsConfirm.disabled = false;
+    // V1-RMD-178: found by independent review of V1-RMD-177 — a sheet can
+    // repopulate itself while already open (openTransferServerSheet keeps
+    // the profile sheet showing during its await, then calls openOptions()
+    // again with the staff picker). Capturing focus/trapping again on that
+    // second call recorded a node INSIDE the sheet body openOptions was
+    // about to wipe via innerHTML above — closeOptions() later tried to
+    // refocus a detached node, and silently fell through to <body>. Only a
+    // sheet transitioning from closed to open needs a fresh focus snapshot
+    // and trap; repopulating an already-open one keeps both.
+    const wasAlreadyOpen = el.optionsSheet.classList.contains('is-open');
     el.optionsSheet.inert = false;
     el.optionsSheet.classList.add('is-open');
     el.optionsBackdrop.classList.add('is-open');
-    lastOptionsFocus = document.activeElement;
-    trapBackgroundExcept(el.optionsSheet, el.optionsBackdrop);
+    if (!wasAlreadyOpen) {
+      lastOptionsFocus = document.activeElement;
+      trapBackgroundExcept(el.optionsSheet, el.optionsBackdrop);
+    }
     window.setTimeout(() => {
       (el.optionsBody.querySelector('button, input, [tabindex]') || el.optionsConfirm)?.focus();
     }, 0);
@@ -360,7 +380,7 @@
 
   // ══ Sign-in and session ════════════════════════════════════════════
 
-  // V1-RMD-171: found by the 2026-09-10 Garson audit — a reload while
+  // V1-RMD-172: found by the 2026-09-10 Garson audit — a reload while
   // genuinely offline used to be treated exactly like "not logged in":
   // this call cannot reach the server to confirm the session either way,
   // so init() showed the full-screen login overlay, hiding the ribbon
@@ -373,12 +393,25 @@
   // showLogin() the moment any later call proves the session really is
   // gone, so proceeding optimistically here is self-correcting, not a
   // security gap.
+  //
+  // V1-RMD-178: found by independent review — the code did not actually
+  // match that last sentence. api() only sets `offline` on a network-level
+  // failure (fetch itself threw); a response that DID come back but with a
+  // transient server error (500/503, or 429 from this route's own rate
+  // limit) fell through the same `!result.ok` branch as a real 401/403 and
+  // was treated as "not logged in" — the exact login-overlay-while-still-
+  // valid bug this task exists to prevent, just triggered by a busy server
+  // instead of a dead network. Only 401/403 are a real "the session is
+  // gone"; every other failure (including a genuine network drop) means
+  // "cannot tell" and must not force a re-login.
   async function hasValidSession() {
     const result = await api(`/api/v1/auth/session?terminalId=${state.terminalId}`);
-    if (result.offline) return 'offline';
-    if (!result.ok) return 'no';
-    applyUser(result.data);
-    return 'yes';
+    if (result.ok) {
+      applyUser(result.data);
+      return 'yes';
+    }
+    if (result.status === 401 || result.status === 403) return 'no';
+    return 'offline';
   }
 
   function applyUser(user) {
@@ -399,7 +432,7 @@
     return state.capabilities.indexOf(permission) >= 0;
   }
 
-  // V1-RMD-172: found by the 2026-09-10 Garson audit — every overlay here
+  // V1-RMD-173: found by the 2026-09-10 Garson audit — every overlay here
   // (PIN lock, login, the options/product/void/transfer sheet) hid the
   // rest of the screen visually but left it fully focusable: a Bluetooth
   // keyboard's Tab key, or a screen reader's virtual cursor, could still
@@ -411,22 +444,32 @@
   // platform's own answer to "trap focus", nothing to reimplement by
   // hand. `toasts` is deliberately never inert-ed: a toast's own "geri
   // al" button must stay reachable no matter what else is open.
-  let releaseBackgroundTrap = null;
+  // V1-RMD-178: found by independent review of V1-RMD-173 — this used to
+  // be a single global slot: a second trapBackgroundExcept() call (e.g. the
+  // PIN lock firing while the options sheet was still open) released the
+  // FIRST trap's record and replaced it, so releaseTrap() only ever knew
+  // how to undo the MOST RECENT call. Closing the options sheet (even via
+  // Escape, now blocked separately above) while the lock overlay was the
+  // active layer popped the lock's own trap and un-inerted the app behind
+  // it — the lock stayed visible, but Tab could walk straight through it.
+  // A real stack fixes this at the root: each push only inerts elements
+  // that were not ALREADY inert (so a nested trap records nothing new for
+  // whatever the outer trap already hid) and each pop undoes only what
+  // that specific push actually did — LIFO, but never double-touches an
+  // element another still-active layer needs to stay hidden.
+  const trapStack = [];
 
   function trapBackgroundExcept(...activeElements) {
-    if (releaseBackgroundTrap) releaseBackgroundTrap();
     const active = new Set(activeElements);
-    const affected = Array.from(document.body.children)
-      .filter((child) => !active.has(child) && child.id !== 'toasts');
-    affected.forEach((child) => { child.inert = true; });
-    releaseBackgroundTrap = () => {
-      affected.forEach((child) => { child.inert = false; });
-      releaseBackgroundTrap = null;
-    };
+    const newlyInert = Array.from(document.body.children)
+      .filter((child) => !active.has(child) && child.id !== 'toasts' && !child.inert);
+    newlyInert.forEach((child) => { child.inert = true; });
+    trapStack.push(newlyInert);
   }
 
   function releaseTrap() {
-    if (releaseBackgroundTrap) releaseBackgroundTrap();
+    const newlyInert = trapStack.pop();
+    if (newlyInert) newlyInert.forEach((child) => { child.inert = false; });
   }
 
   function showLogin() {
@@ -484,7 +527,7 @@
     const offline = state.offlineDisabled || !state.isOnline;
     el.ribbon.classList.toggle('is-offline', offline);
     if (state.offlineDisabled) {
-      // V1-RMD-171: found by the 2026-09-10 Garson audit — this said
+      // V1-RMD-172: found by the 2026-09-10 Garson audit — this said
       // "güvenli bağlantı (HTTPS) gerekli" for every reason offline mode
       // could be disabled, including two where the connection is already
       // secure and HTTPS is not the problem at all (the browser lacking
@@ -514,7 +557,7 @@
     measureChrome();
   }
 
-  // V1-RMD-171: one accurate Turkish sentence per real reason offline mode
+  // V1-RMD-172: one accurate Turkish sentence per real reason offline mode
   // can end up disabled, instead of a single "HTTPS gerekli" that was
   // wrong whenever the actual cause was something else.
   const OFFLINE_DISABLED_REASONS = {
@@ -605,8 +648,20 @@
     // waiter session may call.
     const result = await fetchWholeCatalogAsync();
     if (!result.ok) {
-      state.products = [];
-      state.categories = [];
+      // V1-RMD-178: found by independent review of V1-RMD-176 — this
+      // unconditional clear was harmless while loadCatalog() only ran at
+      // start()/coming back online (nothing worked yet to destroy). Once
+      // V1-RMD-176 started calling it opportunistically mid-shift
+      // (refreshCatalogIfStaleAsync), the exact same line meant one
+      // transient failure (a 429, a dropped connection) on an ordinary
+      // background refresh blanked a working menu the waiter was actively
+      // using. Only the very first load has nothing to protect; any later
+      // one (catalogLoadedAt already set) leaves the last good catalog in
+      // place and simply tries again on the next opportunity.
+      if (catalogLoadedAt === 0) {
+        state.products = [];
+        state.categories = [];
+      }
       return;
     }
     catalogLoadedAt = Date.now();
@@ -690,7 +745,7 @@
 
     el.tablesGrid.innerHTML = visible.map((table) => {
       const status = TABLE_STATUS[table.status] || { label: table.status, cls: '' };
-      // V1-RMD-168: found by the 2026-09-10 Garson audit (foundations.md
+      // V1-RMD-169: found by the 2026-09-10 Garson audit (foundations.md
       // §0.2) — this used to read `table.amount > 0`, deriving whether a
       // table is occupied from money instead of the server's own status
       // field. A table with an open check whose current total happens to
@@ -891,7 +946,7 @@
     renderProducts();
     renderBill();
 
-    // V1-RMD-169: keeps the CURRENT table's own unsent round in the same
+    // V1-RMD-170: keeps the CURRENT table's own unsent round in the same
     // held-drafts map (and so in localStorage) it lands in the moment the
     // waiter steps away — every keystroke while composing is already
     // durable, not only the state as of the last table switch.
@@ -1103,7 +1158,7 @@
           ${item.specialInstructions ? `<div class="line-unit">${escapeHtml(item.specialInstructions)}</div>` : ''}
         </div>
         <div class="line-side">
-          ${canComp ? `<button type="button" class="btn-quiet btn-compact" data-comp="${escapeHtml(item.itemId)}">İkram</button>` : ''}
+          ${canComp ? `<button type="button" class="btn btn-quiet btn-compact" data-comp="${escapeHtml(item.itemId)}">İkram</button>` : ''}
           ${canVoid ? `<button type="button" class="btn-void" data-void="${escapeHtml(item.itemId)}">İptal</button>` : ''}
           ${canVoidSent ? `<button type="button" class="btn-void" data-void-sent="${escapeHtml(item.itemId)}">İptal iste</button>` : ''}
         </div>
@@ -1297,7 +1352,7 @@
 
   // ══ Held drafts (unsent rounds, per table) ═══════════════════════════
 
-  // V1-RMD-169: see the field's own comment on state.draftsByTable. Stored
+  // V1-RMD-170: see the field's own comment on state.draftsByTable. Stored
   // as an array of [tableId, {number, lines}] pairs since a Map is not
   // directly JSON-serializable.
   function loadDraftsByTable() {
@@ -1868,7 +1923,13 @@
 
     state.optionsContext = { targetId: null };
     openOptions('transfer-server', 'Masaları devret',
-      'Bu cihazda açık olan tüm masalar seçtiğiniz kişiye geçer', body, 'Devret', '', '');
+      // V1-RMD-178: found by independent review of V1-RMD-177 — this used
+      // to say "bu cihazda açık olan" (open on this device), but
+      // TransferServingUserAsync reassigns EVERY order attributed to this
+      // user, on every device/terminal — device-independent, no undo. The
+      // text now says what the action actually does.
+      'Üzerinizdeki TÜM açık masalar (bu cihazda olsun olmasın) seçtiğiniz kişiye geçer — geri alınamaz',
+      body, 'Devret', '', '');
     el.optionsConfirm.className = 'btn btn-primary';
     el.optionsConfirm.disabled = true;
   }
@@ -1944,7 +2005,7 @@
       toast('Arka plan bildirimi için güvenli bağlantı (HTTPS) gerekli.', { warning: true });
       return;
     }
-    // V1-RMD-169: found by the 2026-09-10 Garson audit — if
+    // V1-RMD-170: found by the 2026-09-10 Garson audit — if
     // registerOfflineWorker() already failed (state.offlineDisabled), no
     // service worker will ever activate, so the `navigator.serviceWorker.ready`
     // await further down used to hang forever: no error, no toast, the
@@ -1972,7 +2033,7 @@
     if (!key.ok) { toast(key.message, { warning: true }); return; }
 
     try {
-      // V1-RMD-169: a bare `await navigator.serviceWorker.ready` still has
+      // V1-RMD-170: a bare `await navigator.serviceWorker.ready` still has
       // no timeout of its own — if registration reports success but the
       // worker somehow never actually activates (a genuinely broken state,
       // distinct from the registerOfflineWorker() failure already checked
@@ -2269,7 +2330,7 @@
   // ══ Events ═════════════════════════════════════════════════════════
 
   function bindEvents() {
-    // V1-RMD-172: the sheet is a permanent DOM node CSS moves off-screen,
+    // V1-RMD-173: the sheet is a permanent DOM node CSS moves off-screen,
     // so before it has ever been opened once it would otherwise still be
     // a live tab stop.
     el.optionsSheet.inert = true;
@@ -2280,7 +2341,7 @@
       state.isOnline = true;
       renderRibbon();
       void flushQueue();
-      // V1-RMD-171: if the app started offline (hasValidSession() could
+      // V1-RMD-172: if the app started offline (hasValidSession() could
       // not reach the server, see its own comment), state.user was never
       // populated. Backfilling it once the network is actually back is
       // display-only (name/initials in the header) - every permission
@@ -2349,11 +2410,12 @@
     el.billBackdrop.addEventListener('click', closeBill);
     el.optionsBackdrop.addEventListener('click', closeOptions);
     el.optionsClose.addEventListener('click', closeOptions);
-    // V1-RMD-172: found by the 2026-09-10 Garson audit — none of the
+    // V1-RMD-173: found by the 2026-09-10 Garson audit — none of the
     // sheets responded to Escape at all. The PIN lock is deliberately
-    // excluded (Escape must never be a way out of it) and the bill sheet
-    // is a fixed column on tablet rather than a dismissable modal, so
-    // only the options sheet closes here.
+    // excluded (Escape must never be a way out of it — enforced inside
+    // closeOptions() itself as of V1-RMD-178, not just here) and the bill
+    // sheet is a fixed column on tablet rather than a dismissable modal,
+    // so only the options sheet closes here.
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && el.optionsSheet.classList.contains('is-open')) {
         closeOptions();
@@ -2400,7 +2462,7 @@
 
       // A product with options cannot be added blind - the sheet asks first.
       if (product.modifierGroups.length > 0) { openProductSheet(product, 1); return; }
-      // V1-RMD-173: found by the 2026-09-10 Garson audit — addToDraft()
+      // V1-RMD-174: found by the 2026-09-10 Garson audit — addToDraft()
       // runs afterDraftChange(), which re-renders the whole product list
       // (draftQuantityOf(product.id) changed, so every row's own markup
       // does too). `button` is the OLD node by the time addToDraft()

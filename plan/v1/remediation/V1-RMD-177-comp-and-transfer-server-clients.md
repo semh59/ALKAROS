@@ -81,9 +81,11 @@ oradaki eksiklik daha düşük öncelikli; ayrı bir görev olabilir.
   - tests/Host/Experience/Orders/VoidSent/OrderManagementVoidSentHttpTests.cs
     (Host test sahipliğinde) — mevcut `CanVoidAndCanVoidSent...` testine
     `CanComp` doğrulaması eklendi.
-  - tests/Host/Experience/Orders/TableDraft/OrderManagementTableDraftHttpTests.cs,
-    OrderManagementTableDraftTestDatabase.cs (Host test sahipliğinde) —
-    yeni `/staff` testleri ve `GetRequest` yardımcısı.
+  - tests/Host/Experience/Orders/TableDraft/OrderManagementTableDraftHttpTests.cs
+    (Host test sahipliğinde) — yeni `/staff` testleri ve `GetRequest`
+    yardımcısı (bağımsız incelemede düzeltildi: `OrderManagementTableDraft
+    TestDatabase.cs` burada yanlışlıkla dokunulmuş olarak listelenmişti —
+    o dosyaya hiç dokunulmadı).
 
 ## Out of scope
 

@@ -200,10 +200,24 @@ input {
   animation: pulse 2.2s ease-in-out infinite;
 }
 
+/* V1-RMD-178: found by independent review of V1-RMD-171 — turning this
+   from a <span> into a <button> made it clickable, but nothing here reset
+   the UA button chrome (background/border/appearance) or gave it a real
+   tap target, so it rendered as a small grey box against the ribbon's own
+   color, well under --target-min. */
 .ribbon .queue {
   margin-left: auto;
+  min-height: 28px;
+  padding: 2px var(--space-2);
+  border: 1.5px solid currentColor;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
   font-variant-numeric: tabular-nums;
+  cursor: pointer;
 }
+.ribbon .queue:hover { background: rgba(0, 0, 0, 0.06); }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }

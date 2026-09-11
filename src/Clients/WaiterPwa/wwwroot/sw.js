@@ -13,6 +13,18 @@ const ASSETS_TO_CACHE = [
   './icon-192.png'
 ];
 
+// V1-RMD-178: rejects with the same shape a network-level fetch() failure
+// already produces, so the caller's existing .catch(...) fallback handles
+// both "no connection" and "connected but nothing is answering" alike.
+function fetchWithTimeout(request, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('fetch timed out')), timeoutMs);
+    fetch(request).then(
+      (response) => { clearTimeout(timer); resolve(response); },
+      (error) => { clearTimeout(timer); reject(error); });
+  });
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -95,7 +107,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // V1-RMD-168: found by the 2026-09-10 Garson audit — cache-first meant a
+  // V1-RMD-169: found by the 2026-09-10 Garson audit — cache-first meant a
   // deploy that changed waiter-app.js/waiter-app.css/index.html but left
   // sw.js itself byte-identical (CACHE_NAME not bumped, an easy step to
   // forget — the shell files and this file are edited independently, no
@@ -108,8 +120,16 @@ self.addEventListener('fetch', (event) => {
   // it was always meant to be (the whole reason this app has an offline
   // queue). A background cache.put still runs on every successful fetch
   // so the offline fallback itself stays reasonably fresh too.
+  //
+  // V1-RMD-178: found by independent review — plain fetch() has no timeout
+  // race. The failure mode that actually dominates a restaurant floor is
+  // not "no network" (that rejects fast, .catch already handles it) but
+  // "associated to a Wi-Fi AP with no real uplink" — TCP hangs rather than
+  // resets, and the shell load stalled for the OS connect timeout instead
+  // of painting instantly from cache like it should. A short race falls
+  // back to the same cached-shell path a hard failure already uses.
   event.respondWith(
-    fetch(event.request).then((networkResponse) => {
+    fetchWithTimeout(event.request, 3000).then((networkResponse) => {
       if (networkResponse && networkResponse.status === 200) {
         const responseToCache = networkResponse.clone();
         caches.open(CACHE_NAME).then((cache) => {
