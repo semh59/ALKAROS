@@ -127,6 +127,16 @@
     { code: 'DuplicateEntry', label: 'İki kez girilmiş' }
   ];
 
+  // V1-RMD-177: ComplimentaryReasonCatalog
+  // (src/Modules/Orders/ItemExceptions/ReasonCatalogs.cs). The codes are
+  // the server's; only the wording is ours.
+  const COMP_REASONS = [
+    { code: 'ServiceApology', label: 'Hizmet için özür' },
+    { code: 'CustomerSatisfaction', label: 'Müşteri memnuniyeti' },
+    { code: 'VIPGuest', label: 'VIP misafir' },
+    { code: 'ManagerPromotion', label: 'Yönetici promosyonu' }
+  ];
+
   const IDLE_LOCK_MS = 3 * 60 * 1000;
 
   // ══ State ══════════════════════════════════════════════════════════
@@ -1070,6 +1080,11 @@
     // click would succeed.
     const canVoid = item.canVoid;
     const canVoidSent = item.canVoidSent;
+    // V1-RMD-177: found by the 2026-09-10 Garson audit — /comp had no
+    // client at all. canComp is the server's own field (mirrors
+    // ItemExceptionHandler.ApplyComplimentaryAsync's eligibility check),
+    // same pattern as canVoid/canVoidSent above.
+    const canComp = item.canComp;
 
     return `
       <div class="line">
@@ -1088,6 +1103,7 @@
           ${item.specialInstructions ? `<div class="line-unit">${escapeHtml(item.specialInstructions)}</div>` : ''}
         </div>
         <div class="line-side">
+          ${canComp ? `<button type="button" class="btn-quiet btn-compact" data-comp="${escapeHtml(item.itemId)}">İkram</button>` : ''}
           ${canVoid ? `<button type="button" class="btn-void" data-void="${escapeHtml(item.itemId)}">İptal</button>` : ''}
           ${canVoidSent ? `<button type="button" class="btn-void" data-void-sent="${escapeHtml(item.itemId)}">İptal iste</button>` : ''}
         </div>
@@ -1461,6 +1477,80 @@
     toast(restored ? 'Ürün iptal edildi, stok geri alındı.' : 'Ürün iptal edildi.');
   }
 
+  // ══ Complimentary (ikram) ════════════════════════════════════════════
+  // V1-RMD-177: found by the 2026-09-10 Garson audit — /comp had no client
+  // anywhere. bills.comp is grant-class the same way bills.void is on the
+  // void-sent path above: a role that holds it outright (cashier/supervisor
+  // /manager) applies directly, a waiter's request goes to a manager and may
+  // come back 202 Pending — same idempotency-key-survives-a-retry pattern.
+
+  const pendingCompKeys = new Map();
+
+  function openCompSheet(itemId) {
+    const item = activeItems().find((candidate) => candidate.itemId === itemId);
+    if (!item || !state.order) return;
+
+    state.optionsContext = {
+      itemId,
+      reason: null,
+      idempotencyKey: pendingCompKeys.get(itemId) || randomUUID()
+    };
+
+    const body = `
+      <div class="callout">
+        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
+        <span>Ürün ücretsiz sayılır, kalıcı olarak kayda geçer. Bir gerekçe seçin.</span>
+      </div>
+      <div class="opts">
+        ${COMP_REASONS.map((reason) => `
+          <button type="button" class="opt" data-reason="${escapeHtml(reason.code)}" aria-pressed="false">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
+            <span class="opt-name">${escapeHtml(reason.label)}</span>
+          </button>`).join('')}
+      </div>`;
+
+    openOptions('comp', 'Ürünü ikram et',
+      `${formatQuantity(item.quantity)} × ${item.productName}`, body, 'İkram et', '', '');
+    el.optionsConfirm.className = 'btn btn-primary';
+    el.optionsConfirm.disabled = true;
+  }
+
+  async function confirmComp() {
+    const context = state.optionsContext;
+    if (!context || !context.reason || !state.order) return;
+    el.optionsConfirm.disabled = true;
+
+    const result = await api(
+      apiUrl(`/orders/${state.order.orderId}/items/${context.itemId}/comp`),
+      {
+        method: 'POST',
+        body: {
+          idempotencyKey: context.idempotencyKey,
+          expectedRowVersion: state.order.rowVersion,
+          reasonCode: context.reason
+        }
+      });
+
+    if (!result.ok) {
+      toast(result.message, { warning: true });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+
+    closeOptions();
+    if (result.data && result.data.status === 'Pending') {
+      pendingCompKeys.set(context.itemId, context.idempotencyKey);
+      toast('İkram yönetici onayına gönderildi.', { warning: true });
+      return;
+    }
+
+    pendingCompKeys.delete(context.itemId);
+    await loadOrder(state.table.id);
+    await loadTables();
+    renderBill();
+    toast('Ürün ikram edildi.');
+  }
+
   function openVoidSheet(itemId) {
     const item = activeItems().find((candidate) => candidate.itemId === itemId);
     if (!item || !state.order) return;
@@ -1753,6 +1843,57 @@
     toast(`${from} masası ${target.number} masasına taşındı.`);
   }
 
+  // ══ Handing every open check off to another server ══════════════════
+  // V1-RMD-111/V1-RMD-177. Different from openTransferSheet above (that
+  // moves ONE table's order to a different, empty table); this reassigns
+  // EVERY order this waiter currently serves to a colleague at once — the
+  // "I'm going on break/leaving" move. orders.transfer-server (every role
+  // holds it) covers only one's own orders; deliberately not offering the
+  // orders.transfer-server-any (someone else's) variant here — that is a
+  // cashier/supervisor action, out of this client's scope.
+
+  async function openTransferServerSheet() {
+    if (!state.user) return;
+    const result = await api(apiUrl('/orders/staff'));
+    if (!result.ok) { closeOptions(); toast(result.message, { warning: true }); return; }
+
+    const staff = Array.isArray(result.data) ? result.data : [];
+    const body = staff.length === 0
+      ? '<div class="empty">Devredilecek başka personel yok.</div>'
+      : `<div class="opts">${staff.map((person) => `
+          <button type="button" class="opt" data-target="${escapeHtml(person.userId)}" aria-pressed="false">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
+            <span class="opt-name">${escapeHtml(person.displayName)}</span>
+          </button>`).join('')}</div>`;
+
+    state.optionsContext = { targetId: null };
+    openOptions('transfer-server', 'Masaları devret',
+      'Bu cihazda açık olan tüm masalar seçtiğiniz kişiye geçer', body, 'Devret', '', '');
+    el.optionsConfirm.className = 'btn btn-primary';
+    el.optionsConfirm.disabled = true;
+  }
+
+  async function confirmTransferServer() {
+    const context = state.optionsContext;
+    if (!context || !context.targetId || !state.user) return;
+    el.optionsConfirm.disabled = true;
+
+    const result = await api(apiUrl('/orders/transfer-server'), {
+      method: 'POST',
+      body: { fromUserId: state.user.userId, toUserId: context.targetId }
+    });
+
+    if (!result.ok) {
+      toast(result.message, { warning: true });
+      el.optionsConfirm.disabled = false;
+      return;
+    }
+    closeOptions();
+    const count = result.data && result.data.ordersReassigned;
+    toast(count > 0 ? `${count} masa devredildi.` : 'Devredilecek açık masa yoktu.');
+    await loadTables();
+  }
+
   // ══ Web Push ═══════════════════════════════════════════════════════
   // V1-WTR-011. SignalR only reaches a device whose app is open; a plated
   // dish is announced exactly when it is not. The server does the encryption
@@ -1976,6 +2117,10 @@
             <span class="opt-box is-round"></span>
             <span class="opt-name">Ekran kilidini kaldır</span>
           </button>` : ''}
+          <button type="button" class="opt" data-profile="transfer-server">
+            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-move"/></svg></span>
+            <span class="opt-name">Açık masaları devret</span>
+          </button>
           <button type="button" class="opt" data-profile="signout">
             <span class="opt-box is-round"></span>
             <span class="opt-name">Oturumu kapat</span>
@@ -2320,7 +2465,10 @@
       if (voidButton) { openVoidSheet(voidButton.dataset.void); return; }
 
       const voidSentButton = event.target.closest('[data-void-sent]');
-      if (voidSentButton) openVoidSentSheet(voidSentButton.dataset.voidSent);
+      if (voidSentButton) { openVoidSentSheet(voidSentButton.dataset.voidSent); return; }
+
+      const compButton = event.target.closest('[data-comp]');
+      if (compButton) openCompSheet(compButton.dataset.comp);
     });
 
     el.billBody.addEventListener('input', (event) => {
@@ -2362,7 +2510,7 @@
     }
 
     const reason = event.target.closest('[data-reason]');
-    if (reason && (state.optionsMode === 'void' || state.optionsMode === 'void-sent')) {
+    if (reason && (state.optionsMode === 'void' || state.optionsMode === 'void-sent' || state.optionsMode === 'comp')) {
       state.optionsContext.reason = reason.dataset.reason;
       el.optionsBody.querySelectorAll('[data-reason]').forEach((button) => {
         button.setAttribute('aria-pressed', String(button === reason));
@@ -2378,7 +2526,7 @@
     }
 
     const target = event.target.closest('[data-target]');
-    if (target && state.optionsMode === 'transfer') {
+    if (target && (state.optionsMode === 'transfer' || state.optionsMode === 'transfer-server')) {
       state.optionsContext.targetId = target.dataset.target;
       el.optionsBody.querySelectorAll('[data-target]').forEach((button) => {
         button.setAttribute('aria-pressed', String(button === target));
@@ -2406,6 +2554,7 @@
       else if (action === 'fullscreen') { closeOptions(); void toggleFullscreen(); }
       else if (action === 'push') { closeOptions(); void (state.pushEnabled ? disablePush() : enablePush()); }
       else if (action === 'pin-off') openPinSheet(true);
+      else if (action === 'transfer-server') void openTransferServerSheet();
       else if (state.pinArmed) { closeOptions(); lockScreen(); }
       else openPinSheet(false);
     }
@@ -2469,8 +2618,10 @@
     }
     if (state.optionsMode === 'void') { void confirmVoid(); return; }
     if (state.optionsMode === 'void-sent') { void confirmVoidSent(); return; }
+    if (state.optionsMode === 'comp') { void confirmComp(); return; }
     if (state.optionsMode === 'cashier') { void confirmSendToCashier(); return; }
     if (state.optionsMode === 'transfer') { void confirmTransfer(); return; }
+    if (state.optionsMode === 'transfer-server') { void confirmTransferServer(); return; }
     if (state.optionsMode === 'pin') { void confirmPin(); return; }
     if (state.optionsMode === 'failed-orders') { clearAllFailedOrders(); }
   }

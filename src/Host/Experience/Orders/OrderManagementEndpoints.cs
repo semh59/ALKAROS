@@ -611,6 +611,26 @@ public static class OrderManagementEndpoints
             return Results.Ok(result);
         });
 
+        // V1-RMD-177: found by the 2026-09-10 Garson audit — /transfer-server
+        // had no client anywhere, and the reason turned out to be deeper than
+        // "nobody built the button": no session below manager level had any
+        // way to list staff at all to pick a hand-off target from. Deliberately
+        // minimal (id + display name, no username/role data) and available to
+        // every cashier session — picking a colleague from a list is not
+        // itself a privileged act; TransferServingUserAsync below still makes
+        // its own real authorization decision once a target is chosen.
+        group.MapGet("/staff", async (
+            Guid terminalId,
+            IRoleRepository roles,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            var staff = await roles.ListActiveUsersAsync(userId, cancellationToken);
+            return Results.Ok(staff.Select(s => new StaffMemberV1(s.UserId, s.DisplayName)).ToList());
+        }).RequireRateLimiting("terminal-read");
+
         // V1-RMD-111: the garson-masa hand-off. Two-tier permission model
         // (Toast "Change Server" / Lightspeed "Table Ownership" precedent,
         // researched 2026-09-06): a server handing off their OWN open checks

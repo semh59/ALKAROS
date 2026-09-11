@@ -262,6 +262,32 @@ public sealed class PostgresRoleRepository : IRoleRepository
         return userId;
     }
 
+    public async Task<IReadOnlyList<(Guid UserId, string DisplayName)>> ListActiveUsersAsync(
+        Guid excludingUserId, CancellationToken cancellationToken = default)
+    {
+        var result = new List<(Guid, string)>();
+
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT user_id, display_name
+            FROM identity.users
+            WHERE active = true AND user_id != @excluding_user_id
+            ORDER BY display_name
+            LIMIT {MaxUnpagedRows + 1};
+            """);
+        command.Parameters.AddWithValue("excluding_user_id", excludingUserId);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result.Add((reader.GetGuid(0), reader.GetString(1)));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"ListActiveUsersAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
+        return result;
+    }
+
     private static Role ReadRole(NpgsqlDataReader reader)
         => new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2));
 }

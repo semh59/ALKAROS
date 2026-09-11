@@ -519,6 +519,15 @@ input {
 .btn-send { background: var(--color-success); color: #ffffff; }
 .btn-send:hover:not(:disabled) { filter: brightness(1.12); }
 
+/* V1-RMD-176 removed this as dead; V1-RMD-177 gave it a real consumer
+   (the "İkram" / comp button) so it is back. */
+.btn-quiet {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-border);
+}
+.btn-quiet:hover:not(:disabled) { background: var(--color-canvas); }
+
 .btn-danger { background: var(--color-danger); color: #ffffff; }
 .btn-danger:hover:not(:disabled) { filter: brightness(1.1); }
 

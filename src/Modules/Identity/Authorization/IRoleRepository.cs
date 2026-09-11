@@ -34,4 +34,17 @@ public interface IRoleRepository
     /// </summary>
     Task<Guid> CreateUserAsync(
         string username, string passwordHash, string displayName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-RMD-177: found by the 2026-09-10 Garson audit — orders.transfer-server
+    /// (garson-masa hand-off, V1-RMD-111) needs a target user id, but no
+    /// session below manager level had any way to list staff at all. Returns
+    /// every active user except <paramref name="excludingUserId"/> (the
+    /// caller themselves is never a valid hand-off target), ordered by
+    /// display name. Deliberately minimal (id + display name only, no
+    /// username/role/permission data) — this is reachable from a plain
+    /// cashier session, not a manager one.
+    /// </summary>
+    Task<IReadOnlyList<(Guid UserId, string DisplayName)>> ListActiveUsersAsync(
+        Guid excludingUserId, CancellationToken cancellationToken = default);
 }

@@ -452,6 +452,46 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    // V1-RMD-177: found by the 2026-09-10 Garson audit — /transfer-server
+    // had no client anywhere, and the reason was deeper than "nobody built
+    // the button": no session below manager level had any way to list
+    // staff at all to pick a hand-off target from. This is the first real
+    // caller of GET /staff.
+
+    [Fact]
+    public async Task StaffListsOtherActiveUsersButExcludesTheCallerThemselves()
+    {
+        var terminalId = Guid.NewGuid();
+        var (callerId, callerCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create");
+        var (colleagueId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "waiter", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(GetRequest(StaffPath(terminalId), callerCookie));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var staff = await response.Content.ReadFromJsonAsync<StaffMemberV1[]>();
+        // The helper hardcodes display_name to "Table Draft API Test" for
+        // every seeded user - asserting on it here is still a real check
+        // that DisplayName round-trips from identity.users, not a filler.
+        Assert.Contains(staff!, member => member.UserId == colleagueId && member.DisplayName == "Table Draft API Test");
+        Assert.DoesNotContain(staff!, member => member.UserId == callerId);
+    }
+
+    [Fact]
+    public async Task StaffWithoutASessionCookieIsUnauthorized()
+    {
+        var terminalId = Guid.NewGuid();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync(StaffPath(terminalId));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
     [Fact]
     public async Task DraftingAnUnavailableProductIsRejected()
     {
@@ -1148,9 +1188,19 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     private static string TransferPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/transfer-server";
 
+    private static string StaffPath(Guid terminalId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/staff";
+
     private static HttpRequestMessage JsonRequest<T>(string path, string cookie, T body)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, path) { Content = JsonContent.Create(body) };
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return request;
+    }
+
+    private static HttpRequestMessage GetRequest(string path, string cookie)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, path);
         request.Headers.TryAddWithoutValidation("Cookie", cookie);
         return request;
     }

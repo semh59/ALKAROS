@@ -1031,7 +1031,10 @@ public sealed class OrderManagementStore
             // eligibility check exactly.
             CanVoidSent: i.Status == OrderItemState.Active
                 && i.KitchenState != KitchenState.NotSent
-                && i.KitchenState is not (KitchenState.Served or KitchenState.Cancelled)
+                && i.KitchenState is not (KitchenState.Served or KitchenState.Cancelled),
+            // V1-RMD-177: mirrors ItemExceptionHandler.ApplyComplimentaryAsync's
+            // own eligibility check exactly.
+            CanComp: i.Status == OrderItemState.Active
         )).ToList();
 
         return new OrderDto(

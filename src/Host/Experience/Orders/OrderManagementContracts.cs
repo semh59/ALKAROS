@@ -219,6 +219,12 @@ public sealed record TransferServingUserRequestV1(Guid FromUserId, Guid ToUserId
 /// <summary>V1-RMD-111: response for the garson-masa hand-off endpoint.</summary>
 public sealed record TransferServingUserResultV1(int OrdersReassigned);
 
+/// <summary>
+/// V1-RMD-177: one row of the GET /staff listing used to pick a
+/// transfer-server target. Deliberately just id + display name.
+/// </summary>
+public sealed record StaffMemberV1(Guid UserId, string DisplayName);
+
 public sealed record OrderDto(
     Guid OrderId,
     Guid TableId,
@@ -261,6 +267,12 @@ public sealed record OrderDto(
 /// predicates the two handlers themselves use, so the client only ever
 /// shows/hides a button, never re-derives whether the click would
 /// succeed.
+///
+/// <paramref name="CanComp"/> (V1-RMD-177, found by the 2026-09-10 Garson
+/// audit — the /comp endpoint had no client at all): mirrors
+/// <see cref="ALKAROS.Orders.ItemExceptions.ItemExceptionHandler.ApplyComplimentaryAsync"/>'s
+/// own eligibility check (Active status; unlike void it does not care about
+/// KitchenState — a served item can still be comp'd).
 /// </summary>
 public sealed record OrderItemDto(
     Guid ItemId,
@@ -276,4 +288,5 @@ public sealed record OrderItemDto(
     DateTimeOffset CreatedAt = default,
     IReadOnlyList<OrderItemModifierDto>? Modifiers = null,
     bool CanVoid = false,
-    bool CanVoidSent = false);
+    bool CanVoidSent = false,
+    bool CanComp = false);

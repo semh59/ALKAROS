@@ -137,18 +137,26 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         var notSentItem = Assert.Single(notSentOrder!.Items);
         Assert.True(notSentItem.CanVoid);
         Assert.False(notSentItem.CanVoidSent);
+        // V1-RMD-177: found by the 2026-09-10 Garson audit — /comp had no
+        // client at all. Unlike CanVoid/CanVoidSent, CanComp does not care
+        // about KitchenState at all (a served dish can still be comp'd) -
+        // true across all three states pinned here is the point of the
+        // assertion, not incidental.
+        Assert.True(notSentItem.CanComp);
 
         using var preparingResponse = await client.SendAsync(GetRequest(OrderPath(terminalId, preparingOrderId), cookie));
         var preparingOrder = await preparingResponse.Content.ReadFromJsonAsync<OrderDto>();
         var preparingItem = Assert.Single(preparingOrder!.Items);
         Assert.False(preparingItem.CanVoid);
         Assert.True(preparingItem.CanVoidSent);
+        Assert.True(preparingItem.CanComp);
 
         using var servedResponse = await client.SendAsync(GetRequest(OrderPath(terminalId, servedOrderId), cookie));
         var servedOrder = await servedResponse.Content.ReadFromJsonAsync<OrderDto>();
         var servedItem = Assert.Single(servedOrder!.Items);
         Assert.False(servedItem.CanVoid);
         Assert.False(servedItem.CanVoidSent);
+        Assert.True(servedItem.CanComp);
     }
 
     /// <summary>
