@@ -334,6 +334,19 @@
       }))
     };
 
+    // V1-RMD-167: found in independent review of V1-RMD-157 — the release
+    // call used to live inline between the submit fetch and its ok check,
+    // so it only ran when the submit CALL ITSELF completed (whether it
+    // then succeeded or failed). If table-draft attached the order but
+    // then draftResponse.json() failed to parse, or the submit fetch
+    // itself threw (a dropped connection), execution jumped straight to
+    // the outer catch and skipped release entirely — leaving KASA-1
+    // attached to a half-finished order for the next customer to merge
+    // into, exactly the bug V1-RMD-157 exists to close. `draft` is now
+    // captured outside the try/catch and the release is attempted in
+    // `finally` whenever an orderId was ever obtained, regardless of what
+    // happened afterward.
+    let draft = null;
     try {
       // V1-RMD-163: found by the 2026-09-10 Garson audit — an
       // X-Idempotency-Key header used to be sent here too, carrying the
@@ -358,7 +371,7 @@
         return;
       }
 
-      const draft = await draftResponse.json();
+      draft = await draftResponse.json();
       // Found by an independent audit (2026-09-06): the draft above was
       // never followed by a submit call, so the order stayed in Draft
       // forever and was never dispatched to the kitchen even though the
@@ -379,27 +392,6 @@
         })
       });
 
-      // V1-RMD-157: KASA-1 is a fixed, shared endpoint for unrelated
-      // walk-up customers, not a real table — draft above just attached
-      // this order to it. Whether the submit above just succeeded (the
-      // check now belongs to the cashier, table-side is done with it) or
-      // failed (a half-finished Draft would otherwise sit attached to
-      // KASA-1 forever), release the table now so the next customer's
-      // dispatch never merges into this one (the exact cross-customer
-      // merge the audit found). A failed release here is logged only —
-      // it must never block telling the cashier the real outcome of their
-      // dispatch.
-      try {
-        await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/send-to-cashier`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ tableId: orderPayload.tableId })
-        });
-      } catch (releaseError) {
-        console.error('KASA-1 serbest bırakılamadı:', releaseError);
-      }
-
       if (!submitResponse.ok) {
         alert(describeHttpFailure(submitResponse.status));
         return;
@@ -414,6 +406,26 @@
     } catch {
       alert('Sunucuya ulaşılamadı. Sipariş iletilemedi.');
     } finally {
+      // V1-RMD-157: KASA-1 is a fixed, shared endpoint for unrelated
+      // walk-up customers, not a real table — a successful table-draft
+      // above attached this order to it. Whatever happened afterward
+      // (submit succeeded, failed, or threw), release the table now so
+      // the next customer's dispatch never merges into this one (the
+      // exact cross-customer merge the audit found). A failed release
+      // here is logged only — it must never block or change the outcome
+      // already shown to the cashier.
+      if (draft && draft.orderId) {
+        try {
+          await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/send-to-cashier`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ tableId: orderPayload.tableId })
+          });
+        } catch (releaseError) {
+          console.error('KASA-1 serbest bırakılamadı:', releaseError);
+        }
+      }
       state.dispatchInFlight = false;
       if (el.btnDispatchOrder) el.btnDispatchOrder.disabled = state.catalogStatus !== 'ready';
     }

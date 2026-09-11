@@ -439,8 +439,17 @@
   // whenever more remain, but this used to fetch one page and stop. A
   // restaurant with more than 1000 rows would silently lose everything
   // past the first page. Follows the cursor until the server stops
-  // sending one; a failed page stops the loop with what was already
-  // collected rather than losing everything gathered so far.
+  // sending one.
+  //
+  // V1-RMD-167: found in independent review of V1-RMD-163 — a failure on
+  // a LATER page (items already collected from earlier ones) used to
+  // return ok:true with only the partial catalog, which is exactly the
+  // silently-incomplete-catalog failure mode this whole fix exists to
+  // close, just moved one page later. Any page failing now fails the
+  // whole fetch, matching cashier-app.js's own fetchWholeCatalogAsync
+  // (which throws on any non-ok page) — showing nothing/an error beats
+  // showing a catalog missing an unknown number of products with no
+  // indication anything is wrong.
   async function fetchWholeCatalogAsync() {
     const items = [];
     let cursor = null;
@@ -449,7 +458,7 @@
         ? `${apiUrl('/catalog')}?cursor=${encodeURIComponent(cursor)}`
         : apiUrl('/catalog');
       const result = await api(path);
-      if (!result.ok) return { ok: items.length > 0, items };
+      if (!result.ok) return { ok: false, items: [] };
       const pageItems = Array.isArray(result.data) ? result.data : result.data.items || [];
       items.push(...pageItems);
       cursor = result.headers && result.headers.get ? result.headers.get('X-Next-Cursor') : null;
@@ -820,7 +829,19 @@
     }
 
     if (dispatched.length > 0) {
-      html += `<div class="group-label"><span>Gönderildi</span><span>${escapeHtml(formatMoney(sentTotal))}</span></div>`;
+      // V1-RMD-167: found in independent review of V1-RMD-166 — sentTotal
+      // is the server's total for the WHOLE order (every active item,
+      // dispatched or not; §0.1 above is exactly why this never recomputes
+      // it from lines). Printing it next to "Gönderildi" was correct only
+      // when every active item is dispatched; the moment a table also has
+      // an awaitingDispatch line, this label summed to more than the lines
+      // shown under it — the same contradiction this split was meant to
+      // remove, moved from the badge text into the money. No server figure
+      // exists for "dispatched-only total", and one is never invented
+      // client-side, so the label is shown only when it is truly this
+      // group's total.
+      const dispatchedLabel = awaitingDispatch.length === 0 ? escapeHtml(formatMoney(sentTotal)) : '';
+      html += `<div class="group-label"><span>Gönderildi</span><span>${dispatchedLabel}</span></div>`;
       html += dispatched.map(renderSentLine).join('');
     }
 
