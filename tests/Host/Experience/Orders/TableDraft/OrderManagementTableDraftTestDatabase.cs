@@ -231,7 +231,8 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
     /// belongs to no group of this product — the "not yours" rejection case.
     /// </summary>
     public async Task<Guid> SeedModifierAsync(
-        Guid productId, string name, decimal priceDelta, bool active = true, bool assignToProduct = true)
+        Guid productId, string name, decimal priceDelta, bool active = true, bool assignToProduct = true,
+        int minSelections = 0, int maxSelections = 5)
     {
         var groupId = Guid.NewGuid();
         var modifierId = Guid.NewGuid();
@@ -240,12 +241,14 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         await ExecuteAsync(
             """
             INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
-            VALUES (@group_id, @group_code, 'Table Draft Test Group', 2, 0, 5, true);
+            VALUES (@group_id, @group_code, 'Table Draft Test Group', 2, @min_selections, @max_selections, true);
             INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
             VALUES (@modifier_id, @group_id, @modifier_code, @name, @price_delta, @active);
             """,
             ("group_id", groupId),
             ("group_code", "RMD147G-" + suffix),
+            ("min_selections", minSelections),
+            ("max_selections", maxSelections),
             ("modifier_id", modifierId),
             ("modifier_code", "RMD147M-" + suffix),
             ("name", name),
@@ -265,6 +268,45 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         }
 
         return modifierId;
+    }
+
+    /// <summary>
+    /// V1-RMD-161: like <see cref="SeedModifierAsync"/> but adds a SECOND
+    /// modifier into the SAME group, so a test can select both to exercise
+    /// a group's max_selections rule (a single-modifier group can never
+    /// produce more than one selection to test against).
+    /// </summary>
+    public async Task<(Guid GroupId, Guid FirstModifierId, Guid SecondModifierId)> SeedModifierGroupWithTwoOptionsAsync(
+        Guid productId, int minSelections, int maxSelections)
+    {
+        var groupId = Guid.NewGuid();
+        var firstId = Guid.NewGuid();
+        var secondId = Guid.NewGuid();
+        var suffix = groupId.ToString("N")[..8];
+
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
+            VALUES (@group_id, @group_code, 'Table Draft Test Group', 2, @min_selections, @max_selections, true);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@first_id, @group_id, @first_code, 'Seçenek A', 10, true);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@second_id, @group_id, @second_code, 'Seçenek B', 15, true);
+            INSERT INTO catalog.product_modifier_groups (product_modifier_group_id, product_id, modifier_group_id)
+            VALUES (@pmg_id, @product_id, @group_id);
+            """,
+            ("group_id", groupId),
+            ("group_code", "RMD161G-" + suffix),
+            ("min_selections", minSelections),
+            ("max_selections", maxSelections),
+            ("first_id", firstId),
+            ("first_code", "RMD161A-" + suffix),
+            ("second_id", secondId),
+            ("second_code", "RMD161B-" + suffix),
+            ("pmg_id", Guid.NewGuid()),
+            ("product_id", productId));
+
+        return (groupId, firstId, secondId);
     }
 
     /// <summary>

@@ -755,6 +755,74 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARequiredModifierGroupWithNoSelectionIsRejected()
+    {
+        // V1-RMD-161: found by the 2026-09-10 Garson audit — a modifier
+        // group's min_selections was never enforced. A required group
+        // (min 1) picked from not at all used to go through silently.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Pizza", 400m, 10m);
+        await _database.SeedModifierGroupWithTwoOptionsAsync(product, minSelections: 1, maxSelections: 1);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-54",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Pizza", 1, 400m)])));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SelectingMoreThanAModifierGroupsMaxIsRejected()
+    {
+        // V1-RMD-161: a group capped at one selection (e.g. "pick one size")
+        // used to accept both options with no complaint.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Pizza", 400m, 10m);
+        var (_, first, second) = await _database.SeedModifierGroupWithTwoOptionsAsync(
+            product, minSelections: 0, maxSelections: 1);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-55",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Pizza", 1, 400m,
+                    [new OrderItemModifierSelectionDto(first), new OrderItemModifierSelectionDto(second)])])));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ASelectionWithinTheGroupsRuleIsAccepted()
+    {
+        // V1-RMD-161: the positive case — exactly one selection from a
+        // required, max-one group must still work.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Pizza", 400m, 10m);
+        var (_, first, _) = await _database.SeedModifierGroupWithTwoOptionsAsync(
+            product, minSelections: 1, maxSelections: 1);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-56",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Pizza", 1, 400m,
+                    [new OrderItemModifierSelectionDto(first)])])));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
     public async Task ModifiersStillReadBackAfterSubmit()
     {
         // V1-RMD-147: the repository already persisted order_item_modifiers;

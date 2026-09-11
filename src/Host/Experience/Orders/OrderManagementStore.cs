@@ -90,6 +90,14 @@ public sealed class OrderManagementStore
             connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
         var modifierCatalog = await ResolveModifiersAsync(
             connection, transaction, request.Items, cancellationToken);
+        // V1-RMD-161: found by the 2026-09-10 Garson audit — a modifier
+        // group's min/max selection rule (e.g. "exactly one size", "at
+        // most two extras") was never checked here; the server only
+        // verified each selected id belonged to the product, then priced
+        // it. A client could omit a required group entirely or pick past
+        // its max and the order still went through with whatever was sent.
+        var applicableGroups = await ResolveApplicableModifierGroupsAsync(
+            connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
 
         var newItems = new List<OrderItem>();
         foreach (var i in request.Items)
@@ -108,6 +116,7 @@ public sealed class OrderManagementStore
             // this constructor was hard-coded to null, so every extra a waiter
             // picked was silently dropped.
             var modifiers = BuildModifiers(i, modifierCatalog);
+            ValidateModifierGroupSelections(i, modifierCatalog, applicableGroups);
 
             newItems.Add(new OrderItem(
                 i.Id,
@@ -571,13 +580,13 @@ public sealed class OrderManagementStore
     /// from the request, exactly as the product's own name and price already do.
     /// One round trip for the whole draft.
     /// </summary>
-    private static async Task<Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta)>> ResolveModifiersAsync(
+    private static async Task<Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)>> ResolveModifiersAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         IReadOnlyList<OrderItemDraftDto> items,
         CancellationToken cancellationToken)
     {
-        var result = new Dictionary<(Guid, Guid), (string, decimal)>();
+        var result = new Dictionary<(Guid, Guid), (string, decimal, Guid)>();
         var productIds = new List<Guid>();
         var modifierIds = new List<Guid>();
         foreach (var item in items)
@@ -595,7 +604,7 @@ public sealed class OrderManagementStore
 
         await using var cmd = new NpgsqlCommand(
             """
-            SELECT p.product_id, m.modifier_id, m.name, m.price_delta
+            SELECT p.product_id, m.modifier_id, m.name, m.price_delta, m.modifier_group_id
             FROM unnest(@product_ids, @modifier_ids) AS p(product_id, modifier_id)
             JOIN catalog.modifiers m
               ON m.modifier_id = p.modifier_id AND m.active
@@ -612,10 +621,101 @@ public sealed class OrderManagementStore
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
-            result[(reader.GetGuid(0), reader.GetGuid(1))] = (reader.GetString(2), reader.GetDecimal(3));
+            result[(reader.GetGuid(0), reader.GetGuid(1))] = (reader.GetString(2), reader.GetDecimal(3), reader.GetGuid(4));
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// V1-RMD-161: every modifier group applicable to any of the given
+    /// products (directly via <c>catalog.modifiers.product_id</c>, or
+    /// through <c>catalog.product_modifier_groups</c>), with its own
+    /// min/max selection rule, so <see cref="ValidateModifierGroupSelections"/>
+    /// can check what a line actually selected against what its product's
+    /// groups require — including a required group the client selected
+    /// nothing from at all, which the per-selection resolve in
+    /// <see cref="ResolveModifiersAsync"/> can never see.
+    /// </summary>
+    private static async Task<Dictionary<Guid, List<(Guid GroupId, int MinSelections, int MaxSelections)>>> ResolveApplicableModifierGroupsAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        IEnumerable<Guid> productIds,
+        CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<Guid, List<(Guid, int, int)>>();
+        var ids = productIds.Distinct().ToArray();
+        if (ids.Length == 0)
+            return result;
+
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT product_id, modifier_group_id, min_selections, max_selections
+            FROM (
+                SELECT m.product_id, g.modifier_group_id, g.min_selections, g.max_selections
+                FROM catalog.modifiers m
+                JOIN catalog.modifier_groups g ON g.modifier_group_id = m.modifier_group_id AND g.active
+                WHERE m.product_id = ANY(@product_ids) AND m.active
+                UNION
+                SELECT pmg.product_id, g.modifier_group_id, g.min_selections, g.max_selections
+                FROM catalog.product_modifier_groups pmg
+                JOIN catalog.modifier_groups g ON g.modifier_group_id = pmg.modifier_group_id AND g.active
+                WHERE pmg.product_id = ANY(@product_ids)
+            ) applicable;
+            """, connection, transaction);
+        cmd.Parameters.AddWithValue("product_ids", ids);
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            var productId = reader.GetGuid(0);
+            if (!result.TryGetValue(productId, out var groups))
+                result[productId] = groups = [];
+            groups.Add((reader.GetGuid(1), reader.GetInt32(2), reader.GetInt32(3)));
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// V1-RMD-161: refuses a line whose modifier selections do not satisfy
+    /// every one of its product's group rules — too few from a group whose
+    /// min_selections > 0 (including a required group picked from not at
+    /// all), or too many from a group's max_selections. A modifier with no
+    /// group mapping at all (should not exist given the FK, but the join
+    /// above only knows groups that resolved) is not this check's problem;
+    /// BuildModifiers already refused an unresolved modifier id outright.
+    /// </summary>
+    private static void ValidateModifierGroupSelections(
+        OrderItemDraftDto item,
+        Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)> modifierCatalog,
+        Dictionary<Guid, List<(Guid GroupId, int MinSelections, int MaxSelections)>> applicableGroups)
+    {
+        if (!applicableGroups.TryGetValue(item.ProductId, out var groups) || groups.Count == 0)
+            return;
+
+        var selectedGroupCounts = new Dictionary<Guid, int>();
+        if (item.Modifiers is { Count: > 0 })
+        {
+            foreach (var selection in item.Modifiers)
+            {
+                if (!modifierCatalog.TryGetValue((item.ProductId, selection.ModifierId), out var resolved))
+                    continue; // BuildModifiers throws on this; nothing to add here.
+                selectedGroupCounts[resolved.GroupId] = selectedGroupCounts.GetValueOrDefault(resolved.GroupId) + 1;
+            }
+        }
+
+        foreach (var group in groups)
+        {
+            var count = selectedGroupCounts.GetValueOrDefault(group.GroupId);
+            if (count < group.MinSelections || count > group.MaxSelections)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(item),
+                    $"Product {item.ProductId} modifier group {group.GroupId} requires between " +
+                    $"{group.MinSelections} and {group.MaxSelections} selections; got {count}.");
+            }
+        }
     }
 
     /// <summary>
@@ -626,7 +726,7 @@ public sealed class OrderManagementStore
     /// </summary>
     private static List<OrderItemModifier>? BuildModifiers(
         OrderItemDraftDto item,
-        Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta)> catalog)
+        Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)> catalog)
     {
         if (item.Modifiers is not { Count: > 0 })
             return null;
