@@ -300,9 +300,17 @@
   function closeOptions() {
     el.optionsSheet.classList.remove('is-open');
     el.optionsBackdrop.classList.remove('is-open');
+    // V1-RMD-172: this sheet stays in the DOM at all times (CSS moves it
+    // off-screen instead of removing it), so a closed sheet is still a
+    // tab stop unless told otherwise.
+    el.optionsSheet.inert = true;
+    releaseTrap();
+    if (lastOptionsFocus) { lastOptionsFocus.focus(); lastOptionsFocus = null; }
     state.optionsMode = null;
     state.optionsContext = null;
   }
+
+  let lastOptionsFocus = null;
 
   function openOptions(mode, title, subtitle, bodyHtml, confirmLabel, footLabel, footValue) {
     state.optionsMode = mode;
@@ -317,8 +325,14 @@
     // disabled button never leaks into the next sheet.
     el.optionsConfirm.className = 'btn btn-primary';
     el.optionsConfirm.disabled = false;
+    el.optionsSheet.inert = false;
     el.optionsSheet.classList.add('is-open');
     el.optionsBackdrop.classList.add('is-open');
+    lastOptionsFocus = document.activeElement;
+    trapBackgroundExcept(el.optionsSheet, el.optionsBackdrop);
+    window.setTimeout(() => {
+      (el.optionsBody.querySelector('button, input, [tabindex]') || el.optionsConfirm)?.focus();
+    }, 0);
   }
 
   // The tablet bill column starts below whatever chrome is currently showing;
@@ -365,10 +379,41 @@
     return state.capabilities.indexOf(permission) >= 0;
   }
 
+  // V1-RMD-172: found by the 2026-09-10 Garson audit — every overlay here
+  // (PIN lock, login, the options/product/void/transfer sheet) hid the
+  // rest of the screen visually but left it fully focusable: a Bluetooth
+  // keyboard's Tab key, or a screen reader's virtual cursor, could still
+  // reach and activate buttons behind the lock screen — the PIN lock in
+  // particular is a real security gap, not just an accessibility one.
+  // `inert` (standard, no polyfill needed at this app's browser baseline)
+  // makes everything outside the active overlay simultaneously
+  // unfocusable, unclickable and invisible to assistive tech - the
+  // platform's own answer to "trap focus", nothing to reimplement by
+  // hand. `toasts` is deliberately never inert-ed: a toast's own "geri
+  // al" button must stay reachable no matter what else is open.
+  let releaseBackgroundTrap = null;
+
+  function trapBackgroundExcept(...activeElements) {
+    if (releaseBackgroundTrap) releaseBackgroundTrap();
+    const active = new Set(activeElements);
+    const affected = Array.from(document.body.children)
+      .filter((child) => !active.has(child) && child.id !== 'toasts');
+    affected.forEach((child) => { child.inert = true; });
+    releaseBackgroundTrap = () => {
+      affected.forEach((child) => { child.inert = false; });
+      releaseBackgroundTrap = null;
+    };
+  }
+
+  function releaseTrap() {
+    if (releaseBackgroundTrap) releaseBackgroundTrap();
+  }
+
   function showLogin() {
     el.loginOverlay.hidden = false;
     el.lockOverlay.hidden = true;
     state.locked = false;
+    trapBackgroundExcept(el.loginOverlay);
     el.loginUsername.focus();
   }
 
@@ -396,6 +441,7 @@
       applyUser(result.data);
       el.loginPassword.value = '';
       el.loginOverlay.hidden = true;
+      releaseTrap();
       await start();
     } finally {
       el.loginSubmit.disabled = false;
@@ -1972,6 +2018,11 @@
     el.pinDots.classList.remove('is-wrong');
     renderPinDots();
     el.lockOverlay.hidden = false;
+    // Deliberately no Escape-to-close and no data-pin keys reachable from
+    // outside: this overlay exists specifically so a keyboard cannot walk
+    // around it.
+    trapBackgroundExcept(el.lockOverlay);
+    el.pinKeys.querySelector('[data-pin="1"]')?.focus();
   }
 
   function renderPinDots() {
@@ -1999,6 +2050,7 @@
       state.locked = false;
       state.pinBuffer = '';
       el.lockOverlay.hidden = true;
+      releaseTrap();
       resetIdleTimer();
       return;
     }
@@ -2010,6 +2062,7 @@
       localStorage.setItem('alkaros_waiter_pin_armed', '0');
       state.locked = false;
       el.lockOverlay.hidden = true;
+      releaseTrap();
       toast('Bu hesapta PIN tanımlı değil, kilit kaldırıldı.', { warning: true });
       return;
     }
@@ -2027,6 +2080,10 @@
   // ══ Events ═════════════════════════════════════════════════════════
 
   function bindEvents() {
+    // V1-RMD-172: the sheet is a permanent DOM node CSS moves off-screen,
+    // so before it has ever been opened once it would otherwise still be
+    // a live tab stop.
+    el.optionsSheet.inert = true;
     el.loginForm.addEventListener('submit', submitLogin);
     el.btnProfile.addEventListener('click', openProfileSheet);
 
@@ -2100,6 +2157,16 @@
     el.billBackdrop.addEventListener('click', closeBill);
     el.optionsBackdrop.addEventListener('click', closeOptions);
     el.optionsClose.addEventListener('click', closeOptions);
+    // V1-RMD-172: found by the 2026-09-10 Garson audit — none of the
+    // sheets responded to Escape at all. The PIN lock is deliberately
+    // excluded (Escape must never be a way out of it) and the bill sheet
+    // is a fixed column on tablet rather than a dismissable modal, so
+    // only the options sheet closes here.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && el.optionsSheet.classList.contains('is-open')) {
+        closeOptions();
+      }
+    });
 
     el.btnAddItems.addEventListener('click', () => {
       if (!state.table) return;
