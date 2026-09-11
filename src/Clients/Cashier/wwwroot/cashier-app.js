@@ -129,12 +129,33 @@
     }
   }
 
-  async function loadCatalog() {
-    try {
-      const response = await fetch(`/api/v1/terminals/${state.terminalId}/catalog`, { credentials: 'include' });
+  // V1-RMD-163: found by the 2026-09-10 Garson audit — the catalog
+  // endpoint paginates at 1000 rows and answers an X-Next-Cursor header
+  // whenever more remain, but this used to fetch one page and stop. A
+  // restaurant with more than 1000 rows (products, once every
+  // size/variant is its own row) would silently lose everything past the
+  // first page — no error, nothing telling the cashier a product is
+  // missing. Follows the cursor until the server stops sending one.
+  async function fetchWholeCatalogAsync() {
+    const items = [];
+    let cursor = null;
+    for (;;) {
+      const url = new URL(`/api/v1/terminals/${state.terminalId}/catalog`, window.location.origin);
+      if (cursor) url.searchParams.set('cursor', cursor);
+      const response = await fetch(url, { credentials: 'include' });
       if (!response.ok) throw new Error(`catalog ${response.status}`);
       const payload = await response.json();
-      const items = Array.isArray(payload) ? payload : payload.products || [];
+      const pageItems = Array.isArray(payload) ? payload : payload.products || [];
+      items.push(...pageItems);
+      cursor = response.headers.get('X-Next-Cursor');
+      if (!cursor) break;
+    }
+    return items;
+  }
+
+  async function loadCatalog() {
+    try {
+      const items = await fetchWholeCatalogAsync();
       const products = items
         .map(p => ({
           id: p.productId || p.id,
@@ -314,11 +335,19 @@
     };
 
     try {
+      // V1-RMD-163: found by the 2026-09-10 Garson audit — an
+      // X-Idempotency-Key header used to be sent here too, carrying the
+      // exact same value as orderPayload.id in the body below. No endpoint
+      // anywhere ever reads that header (grep confirmed); the real,
+      // working idempotency protection is orderPayload.id itself, which
+      // the server persists as Order.SourceReferenceId behind a partial
+      // unique index (V1-RMD-123). Removed the header as a pointless
+      // duplicate rather than wiring up a second mechanism for the same
+      // value.
       const draftResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-Idempotency-Key': orderPayload.id
+          'Content-Type': 'application/json'
         },
         credentials: 'include',
         body: JSON.stringify(orderPayload)

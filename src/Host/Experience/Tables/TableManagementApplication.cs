@@ -51,8 +51,16 @@ public static class TableManagementApplication
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
+        // V1-RMD-163: found by the 2026-09-10 Garson audit — this whole
+        // group had no rate limiting at all, unlike DualScreenApplication's
+        // own endpoints and Orders (both of which reuse these exact same
+        // globally-registered "terminal-read"/"terminal-write" policies,
+        // AddRateLimiter is called once for the whole app). Group default
+        // is the write bucket, since most of this group's endpoints
+        // mutate; each read-only GET below overrides it individually.
         var group = endpoints.MapGroup(RoutePrefix)
             .WithTags("TableManagement")
+            .RequireRateLimiting("terminal-write")
             .AddEndpointFilter<TableManagementExceptionFilter>();
 
         group.MapGet("/zones", async (
@@ -64,7 +72,7 @@ public static class TableManagementApplication
         {
             await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             return Results.Ok(await store.GetAllAsync(cancellationToken));
-        });
+        }).RequireRateLimiting("terminal-read");
 
         group.MapPost("/zones", async (
             Guid terminalId,
@@ -125,7 +133,7 @@ public static class TableManagementApplication
                 dtos.Add(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal));
             }
             return Results.Ok(dtos);
-        });
+        }).RequireRateLimiting("terminal-read");
 
         group.MapGet("/tables/{tableId:guid}", async (
             Guid terminalId,
@@ -141,7 +149,7 @@ public static class TableManagementApplication
                 ?? throw new TableManagementNotFoundException($"Table {tableId} was not found.");
             var activeReservation = await ActiveReservationOrNullAsync(table, reservations, cancellationToken);
             return Results.Ok(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal));
-        });
+        }).RequireRateLimiting("terminal-read");
 
         group.MapPost("/tables", async (
             Guid terminalId,
@@ -199,7 +207,7 @@ public static class TableManagementApplication
             var pointer = await projector.DetectTableDriftAsync(tableId, cancellationToken)
                 ?? throw new TableManagementNotFoundException($"Table {tableId} was not found.");
             return Results.Ok(TablePointerDto.From(pointer));
-        });
+        }).RequireRateLimiting("terminal-read");
 
         group.MapGet("/floor-plans/{zoneId:guid}", async (
             Guid terminalId,
@@ -213,7 +221,7 @@ public static class TableManagementApplication
             var floorPlan = await repository.GetAsync(zoneId, cancellationToken)
                 ?? throw new FloorPlanNotFoundException($"Floor plan for zone {zoneId} was not found.");
             return Results.Ok(TableContractMapper.ToDto(floorPlan, principal.Permissions));
-        });
+        }).RequireRateLimiting("terminal-read");
 
         group.MapPut("/floor-plans/{zoneId:guid}", async (
             Guid terminalId,
@@ -242,7 +250,7 @@ public static class TableManagementApplication
             await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var record = await service.GetByIdAsync(reservationId, cancellationToken);
             return Results.Ok(TableReservationDto.From(record));
-        });
+        }).RequireRateLimiting("terminal-read");
 
         group.MapPost("/reservations", async (
             Guid terminalId,

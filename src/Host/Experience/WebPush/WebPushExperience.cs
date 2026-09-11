@@ -37,7 +37,13 @@ public static class WebPushExperience
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
-        var group = endpoints.MapGroup(RoutePrefix).WithTags("WebPush");
+        // V1-RMD-163: found by the 2026-09-10 Garson audit — this group had
+        // no rate limiting at all, unlike DualScreenApplication's own
+        // endpoints and Orders (both reuse these exact same
+        // globally-registered "terminal-read"/"terminal-write" policies —
+        // AddRateLimiter is called once for the whole app).
+        var group = endpoints.MapGroup(RoutePrefix).WithTags("WebPush")
+            .RequireRateLimiting("terminal-write");
 
         // The VAPID public key. A client cannot call pushManager.subscribe
         // without it, and it is public by definition — but the session check
@@ -51,7 +57,7 @@ public static class WebPushExperience
         {
             await RequireCashierAsync(context, terminalId, store, cancellationToken);
             return Results.Ok(new PushPublicKeyResponseV1(await sender.GetPublicKeyAsync(cancellationToken)));
-        });
+        }).RequireRateLimiting("terminal-read");
 
         group.MapPost("/subscriptions", async (
             Guid terminalId,

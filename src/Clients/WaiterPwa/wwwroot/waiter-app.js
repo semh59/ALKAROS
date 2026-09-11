@@ -217,13 +217,14 @@
       try { data = await response.json(); } catch { data = null; }
     }
 
-    if (response.ok) return { ok: true, status: response.status, data };
+    if (response.ok) return { ok: true, status: response.status, data, headers: response.headers };
 
     if (response.status === 401) showLogin();
     return {
       ok: false,
       status: response.status,
       data,
+      headers: response.headers,
       // The server's own error.message is already Turkish everywhere this
       // client calls (V1-RMD-127); the dictionary covers anything that is not.
       message: (data && data.error && data.error.message) || describeHttpFailure(response.status)
@@ -418,17 +419,40 @@
       list.map((zone) => ({ id: zone.zoneId || zone.id, name: zone.zoneName || zone.name })));
   }
 
+  // V1-RMD-163: found by the 2026-09-10 Garson audit — the catalog
+  // endpoint paginates at 1000 rows and answers an X-Next-Cursor header
+  // whenever more remain, but this used to fetch one page and stop. A
+  // restaurant with more than 1000 rows would silently lose everything
+  // past the first page. Follows the cursor until the server stops
+  // sending one; a failed page stops the loop with what was already
+  // collected rather than losing everything gathered so far.
+  async function fetchWholeCatalogAsync() {
+    const items = [];
+    let cursor = null;
+    for (;;) {
+      const path = cursor
+        ? `${apiUrl('/catalog')}?cursor=${encodeURIComponent(cursor)}`
+        : apiUrl('/catalog');
+      const result = await api(path);
+      if (!result.ok) return { ok: items.length > 0, items };
+      const pageItems = Array.isArray(result.data) ? result.data : result.data.items || [];
+      items.push(...pageItems);
+      cursor = result.headers && result.headers.get ? result.headers.get('X-Next-Cursor') : null;
+      if (!cursor) return { ok: true, items };
+    }
+  }
+
   async function loadCatalog() {
     // V1-RMD-129: categories are derived from this one response's own
     // categoryCode/categoryName. There is no separate categories endpoint a
     // waiter session may call.
-    const result = await api(apiUrl('/catalog'));
+    const result = await fetchWholeCatalogAsync();
     if (!result.ok) {
       state.products = [];
       state.categories = [];
       return;
     }
-    const list = Array.isArray(result.data) ? result.data : result.data.items || [];
+    const list = result.items;
     state.products = list.map((product) => ({
       id: product.productId,
       name: product.name,
@@ -969,10 +993,16 @@
     };
   }
 
+  // V1-RMD-163: found by the 2026-09-10 Garson audit — an
+  // X-Idempotency-Key header used to be sent here too, carrying the exact
+  // same value as payload.id in the body. No endpoint anywhere ever reads
+  // that header (grep confirmed); the real, working idempotency
+  // protection is payload.id itself, which the server persists as
+  // Order.SourceReferenceId behind a partial unique index (V1-RMD-123).
+  // Removed the header as a pointless duplicate rather than wiring up a
+  // second mechanism for the same value.
   async function postOrder(payload) {
-    const headers = { 'X-Idempotency-Key': payload.id };
-
-    const draft = await api(apiUrl('/orders/table-draft'), { method: 'POST', headers, body: payload });
+    const draft = await api(apiUrl('/orders/table-draft'), { method: 'POST', body: payload });
     if (!draft.ok) return draft;
 
     // The draft alone never reaches the kitchen; the submit is what dispatches

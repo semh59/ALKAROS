@@ -201,7 +201,12 @@ public static class OrderManagementEndpoints
             await RequireCashierPermissionAsync(
                 context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
             return Results.Ok(await store.GetPendingOrdersAsync(cancellationToken));
-        });
+        // V1-RMD-163: found by the 2026-09-10 Garson audit — the group
+        // default below is "terminal-write" (120/min), correct for the
+        // POST endpoints in this group but wrong for a read; this and the
+        // other three GETs in this group used to share that tighter
+        // write bucket with every mutating call on the same terminal.
+        }).RequireRateLimiting("terminal-read");
 
         // V1-ORD-006: the party has left the table and is paying at the till.
         // Same permission as taking the order — a routine floor action every
@@ -235,7 +240,7 @@ public static class OrderManagementEndpoints
         {
             await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
             return Results.Ok(await store.GetChecksAwaitingPaymentAsync(cancellationToken));
-        });
+        }).RequireRateLimiting("terminal-read");
 
         group.MapGet("/table/{tableId:guid}", async (
             Guid terminalId,
@@ -252,7 +257,7 @@ public static class OrderManagementEndpoints
                 return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "Bu masa için aktif sipariş bulunamadı." } });
 
             return Results.Ok(order);
-        });
+        }).RequireRateLimiting("terminal-read");
 
         // V1-RMD-160: found by the 2026-09-10 Garson audit — this used to
         // call RequireCashierSessionAsync (any authenticated session, no
@@ -280,7 +285,7 @@ public static class OrderManagementEndpoints
                 return Results.NotFound(new { error = new { code = "ORDER_NOT_FOUND", message = "Sipariş bulunamadı." } });
 
             return Results.Ok(order);
-        });
+        }).RequireRateLimiting("terminal-read");
 
         // Renamed from "/{orderId}/submit" (found by an independent audit,
         // 2026-09-05): that exact path was ALSO mapped unconditionally in
