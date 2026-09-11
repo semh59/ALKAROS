@@ -7,6 +7,7 @@ import {
   type FormEvent,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api } from "../api";
 import type { CatalogProduct, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
@@ -17,6 +18,24 @@ import { ExperiencePage, type BackendStatus } from "./workspace";
 
 type CashierSession = "checking" | "anonymous" | "ready";
 type FeedbackKind = "error" | "success" | "conflict" | "unauthorized";
+
+// V1-WTR-014: mirrors HelpRequestTypeCatalog
+// (src/Host/Experience/HelpRequests/HelpRequestContracts.cs). The codes
+// are the server's; only the wording is ours - same wording waiter-app.js
+// uses for the same codes.
+const helpRequestTypeLabels: Record<string, string> = {
+  Spill: "Döküldü / temizlik gerekiyor",
+  Complaint: "Misafir şikayeti",
+  Approval: "Onay gerekiyor",
+  Other: "Diğer",
+};
+
+interface HelpAlert {
+  id: string;
+  tableNumber: string;
+  requestType: string;
+  requestedByDisplayName: string;
+}
 
 const focusableSelector = [
   "button:not([disabled])",
@@ -53,6 +72,7 @@ export function Cashier() {
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [backendStatus, setBackendStatus] = useState<BackendStatus>("checking");
   const [pairingOpen, setPairingOpen] = useState(false);
+  const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
   const pairingTrigger = useRef<HTMLButtonElement>(null);
   const pairingDialog = useRef<HTMLDivElement>(null);
 
@@ -89,6 +109,49 @@ export function Cashier() {
   useEffect(() => {
     void restoreSession();
   }, [restoreSession]);
+
+  // V1-WTR-014: a waiter's real-time call for help. The connection is
+  // attempted for every signed-in session (matching CustomerDisplay's own
+  // SignalR setup, this file's established precedent), not gated on
+  // capabilities client-side - HelpRequestHub's own auth (the
+  // manager/supervisor-only `alkaros.manager` cookie) is what actually
+  // decides who receives anything; a cashier-only session's connection is
+  // simply refused there, same cost as never attempting one.
+  useEffect(() => {
+    if (session !== "ready") return;
+    // HubConnectionBuilder.build() itself resolves the URL against
+    // window.location synchronously and can throw outright in an
+    // environment without a real browser location (found by this file's
+    // own test suite, not a real deployment) - defensive for the same
+    // reason as api.ts's own network-failure handling: a real-time nicety
+    // failing to initialize must never crash the cashier screen.
+    let connection: ReturnType<HubConnectionBuilder["build"]> | null = null;
+    try {
+      connection = new HubConnectionBuilder()
+        .withUrl("/hubs/help-requests")
+        .withAutomaticReconnect([0, 1_000, 3_000, 5_000, 10_000])
+        .configureLogging(LogLevel.Warning)
+        .build();
+    } catch {
+      return;
+    }
+    connection.on(
+      "HelpRequested",
+      (payload: { tableId: string; tableNumber: string; requestType: string; requestedByDisplayName: string }) => {
+        setHelpAlerts((previous) => [
+          { id: `${payload.tableId}-${Date.now()}`, tableNumber: payload.tableNumber,
+            requestType: payload.requestType, requestedByDisplayName: payload.requestedByDisplayName },
+          ...previous,
+        ]);
+      },
+    );
+    // A cashier-only session's connection is refused by the hub itself
+    // (Context.Abort()); that surfaces here as a rejected start() and is
+    // expected, not an error - nothing to show for it.
+    void connection.start().catch(() => {});
+    const activeConnection = connection;
+    return () => { void activeConnection.stop(); };
+  }, [session]);
 
   useEffect(() => {
     const check = () => {
@@ -332,6 +395,25 @@ export function Cashier() {
           </button>
         </div>
       </header>
+
+      {helpAlerts.length > 0 && (
+        <div className="help-alerts" role="alert" aria-live="assertive">
+          {helpAlerts.map((alert) => (
+            <div key={alert.id} className="help-alert">
+              <span>
+                <strong>{alert.tableNumber} masası</strong> — {helpRequestTypeLabels[alert.requestType] ?? alert.requestType}
+                {" · "}{alert.requestedByDisplayName}
+              </span>
+              <button
+                onClick={() => setHelpAlerts((previous) => previous.filter((candidate) => candidate.id !== alert.id))}
+                aria-label={stateText.dismissMessage}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {(error || notice) && (
         <div

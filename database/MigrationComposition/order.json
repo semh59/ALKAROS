@@ -866,6 +866,14 @@
         "serving_handoff_notes"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "101",
+      "phase": "B",
+      "tables": [
+        "help_requests"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

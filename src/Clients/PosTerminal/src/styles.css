@@ -211,6 +211,37 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .toast-message.unauthorized { color: #7d251f; border: 1px solid #edb8ae; background: #fff1ed; }
 .toast-message.conflict { color: #6d4a05; border: 1px solid #e1c373; background: #fff8df; }
 .toast-message button { min-width: 44px; min-height: 44px; border: 0; color: currentColor; background: transparent; font-size: 1.3rem; }
+
+/* V1-WTR-014: a waiter's real-time call for help - deliberately its own,
+   more insistent style than .toast-message (a stronger border/background),
+   stacked (more than one table can call at once) and persistent until
+   dismissed (a missed call for help is worse than a cluttered banner). */
+.help-alerts {
+  position: fixed;
+  z-index: 21;
+  top: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 320px;
+  max-width: min(620px, calc(100vw - 2rem));
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.help-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 12px;
+  padding: .85rem 1rem;
+  box-shadow: var(--shadow);
+  font-weight: 700;
+  color: #7d251f;
+  border: 1.5px solid #e28a7a;
+  background: #fff1ed;
+}
+.help-alert button { min-width: 44px; min-height: 44px; border: 0; color: currentColor; background: transparent; font-size: 1.3rem; }
 .mobile-ticket-bar { display: none; }
 .pos-workspace {
   height: calc(100vh - 72px);

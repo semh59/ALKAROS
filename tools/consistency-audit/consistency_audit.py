@@ -125,6 +125,10 @@ HOST_AREA_SCHEMA = {
     # owned outright by this area - no module owns them, which is why the
     # migration gives them their own schema rather than borrowing identity's.
     "Experience/WebPush": "notifications",
+    # V1-WTR-014: same reasoning as WebPush above - a help request is owned
+    # outright by this area, no module claims it, so it gets the same
+    # notifications schema rather than a fourth one of its own.
+    "Experience/HelpRequests": "notifications",
     "DualScreen": "customer_display",
 }
 
