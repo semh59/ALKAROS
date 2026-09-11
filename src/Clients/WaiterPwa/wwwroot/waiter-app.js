@@ -137,6 +137,7 @@
     terminalId: deviceTerminalId(),
     isOnline: navigator.onLine,
     offlineDisabled: false,
+    offlineDisabledReason: null,
     user: null,
     capabilities: [],
 
@@ -331,11 +332,25 @@
 
   // ══ Sign-in and session ════════════════════════════════════════════
 
+  // V1-RMD-171: found by the 2026-09-10 Garson audit — a reload while
+  // genuinely offline used to be treated exactly like "not logged in":
+  // this call cannot reach the server to confirm the session either way,
+  // so init() showed the full-screen login overlay, hiding the ribbon
+  // (and the pending-orders queue behind it) until connectivity came back
+  // AND the waiter logged in again — even though their offline queue was
+  // sitting safely in localStorage the whole time and their real session
+  // was very likely still valid. 'offline' now means "cannot tell, do not
+  // assume logged out"; only a real 401/403 from a server that actually
+  // answered means 'no'. api()'s own 401 handler already calls
+  // showLogin() the moment any later call proves the session really is
+  // gone, so proceeding optimistically here is self-correcting, not a
+  // security gap.
   async function hasValidSession() {
     const result = await api(`/api/v1/auth/session?terminalId=${state.terminalId}`);
-    if (!result.ok) return false;
+    if (result.offline) return 'offline';
+    if (!result.ok) return 'no';
     applyUser(result.data);
-    return true;
+    return 'yes';
   }
 
   function applyUser(user) {
@@ -403,7 +418,15 @@
     const offline = state.offlineDisabled || !state.isOnline;
     el.ribbon.classList.toggle('is-offline', offline);
     if (state.offlineDisabled) {
-      el.ribbonText.textContent = 'Çevrimdışı mod kapalı — güvenli bağlantı (HTTPS) gerekli';
+      // V1-RMD-171: found by the 2026-09-10 Garson audit — this said
+      // "güvenli bağlantı (HTTPS) gerekli" for every reason offline mode
+      // could be disabled, including two where the connection is already
+      // secure and HTTPS is not the problem at all (the browser lacking
+      // service worker support, or registration failing for an unrelated
+      // reason such as sw.js itself being unreachable) - on a genuinely
+      // secure connection the banner blamed HTTPS anyway.
+      el.ribbonText.textContent = OFFLINE_DISABLED_REASONS[state.offlineDisabledReason]
+        || OFFLINE_DISABLED_REASONS.unknown;
     } else if (state.isOnline) {
       el.ribbonText.textContent = 'Bağlı';
     } else {
@@ -425,15 +448,34 @@
     measureChrome();
   }
 
+  // V1-RMD-171: one accurate Turkish sentence per real reason offline mode
+  // can end up disabled, instead of a single "HTTPS gerekli" that was
+  // wrong whenever the actual cause was something else.
+  const OFFLINE_DISABLED_REASONS = {
+    insecure: 'Çevrimdışı mod kapalı — güvenli bağlantı (HTTPS) gerekli',
+    unsupported: 'Çevrimdışı mod bu tarayıcıda desteklenmiyor',
+    'registration-failed': 'Çevrimdışı mod kurulamadı — sayfayı yenileyin',
+    unknown: 'Çevrimdışı mod kapalı'
+  };
+
   function registerOfflineWorker() {
-    if (!window.isSecureContext || !('serviceWorker' in navigator)) {
+    if (!window.isSecureContext) {
       state.offlineDisabled = true;
+      state.offlineDisabledReason = 'insecure';
       renderRibbon();
       console.warn('Offline mode disabled: a secure context (HTTPS or localhost) is required.');
       return;
     }
+    if (!('serviceWorker' in navigator)) {
+      state.offlineDisabled = true;
+      state.offlineDisabledReason = 'unsupported';
+      renderRibbon();
+      console.warn('Offline mode disabled: this browser has no service worker support.');
+      return;
+    }
     navigator.serviceWorker.register('./sw.js').catch((err) => {
       state.offlineDisabled = true;
+      state.offlineDisabledReason = 'registration-failed';
       renderRibbon();
       console.warn('Service worker registration failed; offline mode is disabled:', err);
     });
@@ -1988,7 +2030,37 @@
     el.loginForm.addEventListener('submit', submitLogin);
     el.btnProfile.addEventListener('click', openProfileSheet);
 
-    window.addEventListener('online', () => { state.isOnline = true; renderRibbon(); void flushQueue(); });
+    window.addEventListener('online', () => {
+      state.isOnline = true;
+      renderRibbon();
+      void flushQueue();
+      // V1-RMD-171: if the app started offline (hasValidSession() could
+      // not reach the server, see its own comment), state.user was never
+      // populated. Backfilling it once the network is actually back is
+      // display-only (name/initials in the header) - every permission
+      // check already re-resolves against state.capabilities on its own
+      // next read, and a session that turns out to have truly expired
+      // still gets caught by api()'s own 401 handler on the very next
+      // real call.
+      if (!state.user) {
+        void hasValidSession().then(async () => {
+          // The very first load(s) after start() ran offline came back
+          // empty (each already falls back gracefully rather than
+          // throwing) - now that the network is actually back, load the
+          // real data once instead of leaving the screen looking empty
+          // until the waiter manually reloads the page.
+          await loadZones();
+          await loadCatalog();
+          await loadTables();
+          await loadPending();
+          renderZones();
+          renderCategories();
+          renderProducts();
+          renderBill();
+          afterDraftChange();
+        });
+      }
+    });
     window.addEventListener('offline', () => { state.isOnline = false; renderRibbon(); });
     window.addEventListener('resize', measureChrome);
 
@@ -2360,8 +2432,10 @@
     renderRibbon();
 
     // Tables, catalog and orders are all session-scoped: without one there is
-    // nothing to load, only a wall of 401s.
-    if (!(await hasValidSession())) {
+    // nothing to load, only a wall of 401s. A genuinely offline reload is
+    // not the same as "not logged in" - see hasValidSession's own comment.
+    const session = await hasValidSession();
+    if (session === 'no') {
       showLogin();
       return;
     }
