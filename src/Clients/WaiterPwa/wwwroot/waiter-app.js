@@ -20,10 +20,12 @@
 //   POST /api/v1/terminals/{t}/orders/{o}/items/{i}/void
 //   POST /api/v1/terminals/{t}/orders/{o}/accept | /reject
 import {
-  escapeHtml, formatMoney, formatQuantity, formatClock, describeHttpFailure,
+  escapeHtml, formatMoney, formatQuantity, formatClock,
   randomUUID, courseLabel, isFullscreen,
 } from './js/util.js';
 import { state, el } from './js/state.js';
+import { applyUser, can, trapBackgroundExcept, releaseTrap, showLogin } from './js/auth.js';
+import { apiUrl, api } from './js/api.js';
 
 (function () {
   'use strict';
@@ -78,48 +80,6 @@ import { state, el } from './js/state.js';
   ];
 
   const IDLE_LOCK_MS = 3 * 60 * 1000;
-
-  // ══ API ════════════════════════════════════════════════════════════
-
-  function apiUrl(path) {
-    return `/api/v1/terminals/${state.terminalId}${path}`;
-  }
-
-  // One shape for every call: never throws, never leaks a browser message.
-  async function api(path, options) {
-    const config = Object.assign({ credentials: 'include' }, options || {});
-    if (config.body !== undefined && typeof config.body !== 'string') {
-      config.headers = Object.assign({ 'Content-Type': 'application/json' }, config.headers || {});
-      config.body = JSON.stringify(config.body);
-    }
-
-    let response;
-    try {
-      response = await fetch(path, config);
-    } catch {
-      // A network-level failure throws before a response exists and its
-      // message is the browser's own English text ("Failed to fetch").
-      return { ok: false, status: 0, offline: true, message: 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edin.' };
-    }
-
-    let data = null;
-    if (response.status !== 204) {
-      try { data = await response.json(); } catch { data = null; }
-    }
-
-    if (response.ok) return { ok: true, status: response.status, data, headers: response.headers };
-
-    if (response.status === 401) showLogin();
-    return {
-      ok: false,
-      status: response.status,
-      data,
-      headers: response.headers,
-      // The server's own error.message is already Turkish everywhere this
-      // client calls (V1-RMD-127); the dictionary covers anything that is not.
-      message: (data && data.error && data.error.message) || describeHttpFailure(response.status)
-    };
-  }
 
   // ══ Toasts ═════════════════════════════════════════════════════════
 
@@ -283,85 +243,6 @@ import { state, el } from './js/state.js';
     }
     if (result.status === 401 || result.status === 403) return 'no';
     return 'offline';
-  }
-
-  function applyUser(user) {
-    state.user = user;
-    state.capabilities = (user && user.capabilities) || [];
-    const name = (user && user.displayName) || 'Garson';
-    el.userName.textContent = name;
-    el.userInitials.textContent = name.trim().charAt(0).toLocaleUpperCase('tr-TR') || '?';
-    // V1-RMD-175: found by the 2026-09-10 Garson audit — #userRole was
-    // never written to at all, so it stayed on its static "Garson" HTML
-    // default no matter who actually signed in (a supervisor's own
-    // profile still said "Garson"). /auth/login and /auth/session now
-    // both send the real roleName.
-    el.userRole.textContent = (user && user.roleName) || 'Garson';
-  }
-
-  function can(permission) {
-    return state.capabilities.indexOf(permission) >= 0;
-  }
-
-  // V1-RMD-173: found by the 2026-09-10 Garson audit — every overlay here
-  // (PIN lock, login, the options/product/void/transfer sheet) hid the
-  // rest of the screen visually but left it fully focusable: a Bluetooth
-  // keyboard's Tab key, or a screen reader's virtual cursor, could still
-  // reach and activate buttons behind the lock screen — the PIN lock in
-  // particular is a real security gap, not just an accessibility one.
-  // `inert` (standard, no polyfill needed at this app's browser baseline)
-  // makes everything outside the active overlay simultaneously
-  // unfocusable, unclickable and invisible to assistive tech - the
-  // platform's own answer to "trap focus", nothing to reimplement by
-  // hand. `toasts` is deliberately never inert-ed: a toast's own "geri
-  // al" button must stay reachable no matter what else is open.
-  // V1-RMD-178: found by independent review of V1-RMD-173 — this used to
-  // be a single global slot: a second trapBackgroundExcept() call (e.g. the
-  // PIN lock firing while the options sheet was still open) released the
-  // FIRST trap's record and replaced it, so releaseTrap() only ever knew
-  // how to undo the MOST RECENT call. Closing the options sheet (even via
-  // Escape, now blocked separately above) while the lock overlay was the
-  // active layer popped the lock's own trap and un-inerted the app behind
-  // it — the lock stayed visible, but Tab could walk straight through it.
-  // A real stack fixes this at the root: each push only inerts elements
-  // that were not ALREADY inert (so a nested trap records nothing new for
-  // whatever the outer trap already hid) and each pop undoes only what
-  // that specific push actually did — LIFO, but never double-touches an
-  // element another still-active layer needs to stay hidden.
-  const trapStack = [];
-
-  function trapBackgroundExcept(...activeElements) {
-    const active = new Set(activeElements);
-    const newlyInert = Array.from(document.body.children)
-      .filter((child) => !active.has(child) && child.id !== 'toasts' && !child.inert);
-    newlyInert.forEach((child) => { child.inert = true; });
-    trapStack.push(newlyInert);
-  }
-
-  function releaseTrap() {
-    const newlyInert = trapStack.pop();
-    if (newlyInert) newlyInert.forEach((child) => { child.inert = false; });
-  }
-
-  function showLogin() {
-    // Found by the WaiterPwa E2E audit (2026-09-12): the FIRST session
-    // check on a fresh load (no cookie yet) gets a 401, which api()'s own
-    // generic interceptor already answers by calling showLogin() - then
-    // init() itself, seeing the same 401 via hasValidSession(), calls
-    // showLogin() again unconditionally. Two calls means two
-    // trapBackgroundExcept() pushes for the same visible overlay, but
-    // submitLogin() only ever calls releaseTrap() once on success - the
-    // second (redundant) push was never undone, leaving #screens and
-    // everything else permanently inert (uninteractive) after every
-    // fresh login until a full page reload. Making this idempotent - a
-    // no-op once the overlay is already showing - keeps the push/pop
-    // count balanced no matter how many callers see the same 401.
-    if (!el.loginOverlay.hidden) return;
-    el.loginOverlay.hidden = false;
-    el.lockOverlay.hidden = true;
-    state.locked = false;
-    trapBackgroundExcept(el.loginOverlay);
-    el.loginUsername.focus();
   }
 
   async function submitLogin(event) {
