@@ -134,3 +134,14 @@ export function seatLabel(seatId) {
   const seat = state.tableSeats.find((candidate) => candidate.id === seatId);
   return seat ? seat.label : null;
 }
+
+// The tablet bill column starts below whatever chrome is currently showing;
+// the guest banner appears and disappears, so this is measured, not
+// assumed. Kept here (an `el`-only DOM reader, like the rest of this file)
+// rather than in whichever module happens to call it first.
+export function measureChrome() {
+  const header = document.querySelector('.app-header');
+  let height = (header ? header.offsetHeight : 0) + (el.ribbon ? el.ribbon.offsetHeight : 0);
+  if (!el.pendingBanner.hidden) height += el.pendingBanner.offsetHeight;
+  document.documentElement.style.setProperty('--chrome-height', `${height}px`);
+}
