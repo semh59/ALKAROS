@@ -5,14 +5,29 @@
 - Bağlam: Semih'in talimatı ("refactor için detaylı ve derin plan yap",
   garson modülü işi bitmek üzereyken yapılan performans/teknik-borç
   değerlendirmesinin doğrudan devamı).
-- Durum: **Bölüm 1 (`OrderManagementStore.cs`, 7 adım) tamamlandı —
-  V1-WTR-031..036, 2026-09-12, "Başla" talimatıyla.** `OrderManagementStore.cs`
-  silindi; yerine `OrderDtoAssembler`, `TableDraft/TableDraftService`,
-  `OrderSubmissionCoordinator`, `CashierHandoffStore`, `OrderReadStore`,
-  `ShiftSummaryStore` var. Her adım kendi build+test+E2E kanıtıyla,
-  kendi commit'iyle kapandı — regresyon yok. **Bölüm 2 (`waiter-app.js`)
-  henüz uygulanmadı**, Bölüm 3'ün kendi sıralama kararına göre (önce C#,
-  sonra JS) sırada.
+- Durum: **Her iki bölüm de tamamlandı.** Bölüm 1 (`OrderManagementStore.cs`,
+  7 adım) — V1-WTR-031..036, 2026-09-12, "Başla" talimatıyla.
+  `OrderManagementStore.cs` silindi; yerine `OrderDtoAssembler`,
+  `TableDraft/TableDraftService`, `OrderSubmissionCoordinator`,
+  `CashierHandoffStore`, `OrderReadStore`, `ShiftSummaryStore` var.
+  Bölüm 2 (`waiter-app.js`, 17 adım) — V1-WTR-037..053, 2026-09-12,
+  "Devam et" talimatlarıyla. `waiter-app.js` 3295 satırdan 776 satıra
+  düştü (%76 azalma); geri kalanı 22 native ES modülüne (`js/util.js`,
+  `js/state.js`, `js/auth.js`, `js/api.js`, `js/toast.js`,
+  `js/options-sheet.js`, `js/kiosk-lock.js`, `js/features.js`,
+  `js/push.js`, `js/offline-queue.js`, `js/screens/tables.js`,
+  `js/screens/menu.js`, `js/sheets/party-size.js`, `js/sheets/bill.js`,
+  `js/sheets/product-sheet.js`, `js/sheets/void-comp.js`,
+  `js/sheets/help-request.js`, `js/sheets/transfer.js`,
+  `js/sheets/pending-orders.js`, `js/sheets/failed-orders.js`,
+  `js/sheets/profile.js`) taşındı; `waiter-app.js` artık yalnız giriş
+  noktası. Her adım kendi build+E2E kanıtıyla, kendi commit'iyle
+  kapandı; en riskli modülün (`offline-queue.js`) gerçek çevrimdışı
+  davranışı geçici bir smoke testle doğrudan doğrulandı. Refactor'un
+  tamamı ayrıca bağımsız bir incelemeden geçti (Semih'in isteğiyle,
+  V1-WTR-037..049 arası) — bulunan iki kozmetik sorun (kullanılmayan
+  import'lar) düzeltildi, hiçbir davranış regresyonu bulunmadı.
+  Regresyon yok.
 - Kapsam: yalnız bu iki dosya. Diğer teknik borç maddeleri (E2E'nin CI'a
   bağlanmaması, `IPrePolicyGate` yarışı, V1-WTR-024'ün advisory-lock
   maliyeti) bu planın dışında — ayrı görevler.

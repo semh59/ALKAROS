@@ -16,6 +16,7 @@ import { state, el, seatLabel } from '../state.js';
 import { escapeHtml, formatMoney, formatQuantity, formatClock, courseLabel } from '../util.js';
 import { featureEnabled } from '../features.js';
 import { apiUrl, api } from '../api.js';
+import { toast } from '../toast.js';
 
 // The bill is always the server's answer, never a local accumulation.
 // Exported: several not-yet-extracted sheets (void, void-sent, comp,
@@ -26,6 +27,23 @@ export async function loadOrder(tableId) {
   const result = await api(apiUrl(`/orders/table/${tableId}`));
   state.order = result.ok ? result.data : null;
   return result;
+}
+
+// V1-WTR-025: calls in one Held course — the explicit "ateşle" action
+// the full course model needs once the table is ready for it. No
+// confirmation sheet (unlike void/comp): this is routine kitchen
+// dispatch, the same class of action as submit-draft, not a discretionary
+// exception.
+export async function fireCourse(courseNumber) {
+  if (!state.order) return;
+  const result = await api(apiUrl(`/orders/${state.order.orderId}/fire-course`), {
+    method: 'POST',
+    body: { courseNumber }
+  });
+  if (!result.ok) { toast(result.message, { warning: true }); return; }
+  toast(`${courseNumber}. kurs mutfağa ateşlendi.`);
+  await loadOrder(state.table.id);
+  renderBill();
 }
 
 // V1-WTR-025: printed on the whole-plan kitchen ticket for prep

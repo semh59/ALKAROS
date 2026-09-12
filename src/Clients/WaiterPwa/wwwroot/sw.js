@@ -1,9 +1,10 @@
 // ALKAROS Waiter PWA Service Worker (V1-WTR-006, V1-WTR-011, V1-WTR-037,
 // V1-WTR-038, V1-WTR-039, V1-WTR-040, V1-WTR-041, V1-WTR-042, V1-WTR-043,
 // V1-WTR-044, V1-WTR-045, V1-WTR-046, V1-WTR-047, V1-WTR-048, V1-WTR-049,
-// V1-WTR-050, V1-WTR-051, V1-WTR-052)
-// v19: another waiter-app.js module split off — js/sheets/profile.js.
-const CACHE_NAME = 'alkaros-waiter-v19';
+// V1-WTR-050, V1-WTR-051, V1-WTR-052, V1-WTR-053)
+// v20: the final waiter-app.js module split off — js/offline-queue.js.
+// This completes docs/engineering/garson-refactor-plan.md's Section 2.
+const CACHE_NAME = 'alkaros-waiter-v20';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -18,6 +19,7 @@ const ASSETS_TO_CACHE = [
   './js/kiosk-lock.js',
   './js/features.js',
   './js/push.js',
+  './js/offline-queue.js',
   './js/screens/tables.js',
   './js/screens/menu.js',
   './js/sheets/party-size.js',

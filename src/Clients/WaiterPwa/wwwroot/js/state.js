@@ -145,3 +145,46 @@ export function measureChrome() {
   if (!el.pendingBanner.hidden) height += el.pendingBanner.offsetHeight;
   document.documentElement.style.setProperty('--chrome-height', `${height}px`);
 }
+
+// V1-RMD-172: one accurate Turkish sentence per real reason offline mode
+// can end up disabled, instead of a single "HTTPS gerekli" that was
+// wrong whenever the actual cause was something else.
+const OFFLINE_DISABLED_REASONS = {
+  insecure: 'Çevrimdışı mod kapalı — güvenli bağlantı (HTTPS) gerekli',
+  unsupported: 'Çevrimdışı mod bu tarayıcıda desteklenmiyor',
+  'registration-failed': 'Çevrimdışı mod kurulamadı — sayfayı yenileyin',
+  unknown: 'Çevrimdışı mod kapalı'
+};
+
+// Kept here (not offline-queue.js, where the caller that actually cares
+// about the queue count lives) because it is genuinely a state reader for
+// four different pieces of state (isOnline, offlineDisabled, offlineQueue,
+// failedOrders), not specifically an offline-queue concern - waiter-app.js
+// itself (registerOfflineWorker, the online/offline listeners) is still
+// this function's biggest caller.
+export function renderRibbon() {
+  const offline = state.offlineDisabled || !state.isOnline;
+  el.ribbon.classList.toggle('is-offline', offline);
+  if (state.offlineDisabled) {
+    el.ribbonText.textContent = OFFLINE_DISABLED_REASONS[state.offlineDisabledReason]
+      || OFFLINE_DISABLED_REASONS.unknown;
+  } else if (state.isOnline) {
+    el.ribbonText.textContent = 'Bağlı';
+  } else {
+    el.ribbonText.textContent = 'Bağlantı yok — siparişler kuyrukta bekliyor';
+  }
+
+  const waiting = state.offlineQueue.length;
+  const failed = state.failedOrders.length;
+  const parts = [];
+  if (waiting > 0) parts.push(`${waiting} bekleyen`);
+  if (failed > 0) parts.push(`${failed} hatalı`);
+  el.ribbonQueue.textContent = parts.join(' • ');
+  // V1-RMD-171: found by the 2026-09-10 Garson audit — the count used
+  // to be the whole story; nothing said which table, what was in it, or
+  // gave a way to clear it. Now a real button into a real list.
+  el.ribbonQueue.hidden = waiting === 0 && failed === 0;
+  el.ribbonQueue.setAttribute('aria-label',
+    `${parts.join(', ')} - sipariş kuyruğunu göster`);
+  measureChrome();
+}

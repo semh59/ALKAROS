@@ -19,8 +19,8 @@
 //   POST /api/v1/terminals/{t}/orders/{o}/submit-draft
 //   POST /api/v1/terminals/{t}/orders/{o}/items/{i}/void
 //   POST /api/v1/terminals/{t}/orders/{o}/accept | /reject
-import { randomUUID, isFullscreen } from './js/util.js';
-import { state, el, measureChrome } from './js/state.js';
+import { isFullscreen } from './js/util.js';
+import { state, el, measureChrome, renderRibbon } from './js/state.js';
 import { applyUser, releaseTrap, showLogin } from './js/auth.js';
 import { apiUrl, api } from './js/api.js';
 import { toast } from './js/toast.js';
@@ -32,10 +32,10 @@ import {
 import {
   loadZones, loadTables, renderZones, renderTables, showScreen, openTable,
 } from './js/screens/tables.js';
-import { openPartySizeSheet } from './js/sheets/party-size.js';
+import { openPartySizeSheet, confirmPartySize } from './js/sheets/party-size.js';
 import { loadFeatures } from './js/features.js';
 import {
-  lastRound, renderBill, openBill, closeBill, loadOrder,
+  lastRound, renderBill, openBill, closeBill, fireCourse,
 } from './js/sheets/bill.js';
 import { renderCategories, renderProducts, addToDraft, afterDraftChange } from './js/screens/menu.js';
 import {
@@ -52,7 +52,8 @@ import {
   loadPending, renderPendingBanner, openPendingSheet, resolvePendingGuarded,
   openSendToCashierSheet, confirmSendToCashier,
 } from './js/sheets/pending-orders.js';
-import { openFailedOrdersSheet } from './js/sheets/failed-orders.js';
+import { openFailedOrdersSheet, dismissFailedOrder, clearAllFailedOrders } from './js/sheets/failed-orders.js';
+import { sendDraft, flushQueue } from './js/offline-queue.js';
 import { refreshPushState, enablePush, unsubscribePush, disablePush } from './js/push.js';
 import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js';
 
@@ -143,50 +144,9 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
   }
 
   // ══ Connection ribbon ══════════════════════════════════════════════
-
-  function renderRibbon() {
-    const offline = state.offlineDisabled || !state.isOnline;
-    el.ribbon.classList.toggle('is-offline', offline);
-    if (state.offlineDisabled) {
-      // V1-RMD-172: found by the 2026-09-10 Garson audit — this said
-      // "güvenli bağlantı (HTTPS) gerekli" for every reason offline mode
-      // could be disabled, including two where the connection is already
-      // secure and HTTPS is not the problem at all (the browser lacking
-      // service worker support, or registration failing for an unrelated
-      // reason such as sw.js itself being unreachable) - on a genuinely
-      // secure connection the banner blamed HTTPS anyway.
-      el.ribbonText.textContent = OFFLINE_DISABLED_REASONS[state.offlineDisabledReason]
-        || OFFLINE_DISABLED_REASONS.unknown;
-    } else if (state.isOnline) {
-      el.ribbonText.textContent = 'Bağlı';
-    } else {
-      el.ribbonText.textContent = 'Bağlantı yok — siparişler kuyrukta bekliyor';
-    }
-
-    const waiting = state.offlineQueue.length;
-    const failed = state.failedOrders.length;
-    const parts = [];
-    if (waiting > 0) parts.push(`${waiting} bekleyen`);
-    if (failed > 0) parts.push(`${failed} hatalı`);
-    el.ribbonQueue.textContent = parts.join(' • ');
-    // V1-RMD-171: found by the 2026-09-10 Garson audit — the count used
-    // to be the whole story; nothing said which table, what was in it, or
-    // gave a way to clear it. Now a real button into a real list.
-    el.ribbonQueue.hidden = waiting === 0 && failed === 0;
-    el.ribbonQueue.setAttribute('aria-label',
-      `${parts.join(', ')} - sipariş kuyruğunu göster`);
-    measureChrome();
-  }
-
-  // V1-RMD-172: one accurate Turkish sentence per real reason offline mode
-  // can end up disabled, instead of a single "HTTPS gerekli" that was
-  // wrong whenever the actual cause was something else.
-  const OFFLINE_DISABLED_REASONS = {
-    insecure: 'Çevrimdışı mod kapalı — güvenli bağlantı (HTTPS) gerekli',
-    unsupported: 'Çevrimdışı mod bu tarayıcıda desteklenmiyor',
-    'registration-failed': 'Çevrimdışı mod kurulamadı — sayfayı yenileyin',
-    unknown: 'Çevrimdışı mod kapalı'
-  };
+  // renderRibbon/OFFLINE_DISABLED_REASONS moved to js/state.js (V1-WTR-053)
+  // — a reader of four different state fields, not specifically an
+  // offline-queue concern.
 
   function registerOfflineWorker() {
     if (!window.isSecureContext) {
@@ -315,282 +275,6 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     // once this runs - without it a stale price could sit unflagged until
     // some unrelated action happened to call renderBill() next.
     renderBill();
-  }
-
-  // ══ Sending ════════════════════════════════════════════════════════
-
-  // V1-RMD-160: waiterName and createdAt used to be sent here but nothing
-  // on the server ever read either (found by the 2026-09-10 Garson audit).
-  // The real actor is already attributed server-side via
-  // Order.ServingUserId, from the session this request already carries;
-  // the real timestamp is server-authoritative (DateTimeOffset.UtcNow at
-  // the point the draft is created), same as everywhere else in this
-  // system — a client clock is never the source of truth for it. Removed
-  // rather than wired in.
-  function draftToPayload(items) {
-    return {
-      id: randomUUID(),
-      tableId: state.table.id,
-      tableNumber: state.table.number,
-      // V1-WTR-015: only takes effect server-side on this table's FIRST
-      // round (CreateTableDraftRequest's own doc comment) - sending it on
-      // every later round too is harmless, not a correction.
-      partySize: state.draftPartySize || null,
-      items: (items || state.draft).map((line) => ({
-        // A stable per-line id makes a retried draft submission idempotent
-        // server-side instead of appending a duplicate line.
-        id: line.id,
-        productId: line.productId,
-        productName: line.name,
-        quantity: line.quantity,
-        unitPrice: line.price,
-        // V1-RMD-147: ids only. The price of an option is the catalog's
-        // answer and the count is the server's own rule (V1-RMD-150 leaves
-        // the field optional for exactly that) - neither is this client's to
-        // assert.
-        modifiers: line.modifiers.map((modifier) => ({ modifierId: modifier.modifierId })),
-        specialInstructions: line.note || null,
-        // V1-WTR-022: the server only ever trusts this once it re-validates
-        // the seat actually belongs to this table (OrderManagementStore) -
-        // a stale/foreign id here is simply ignored server-side, never an
-        // error this client needs to pre-check.
-        seatId: line.seatId || null,
-        courseNumber: line.courseNumber || null
-      }))
-    };
-  }
-
-  // V1-RMD-163: found by the 2026-09-10 Garson audit — an
-  // X-Idempotency-Key header used to be sent here too, carrying the exact
-  // same value as payload.id in the body. No endpoint anywhere ever reads
-  // that header (grep confirmed); the real, working idempotency
-  // protection is payload.id itself, which the server persists as
-  // Order.SourceReferenceId behind a partial unique index (V1-RMD-123).
-  // Removed the header as a pointless duplicate rather than wiring up a
-  // second mechanism for the same value.
-  async function postOrder(payload) {
-    const draft = await api(apiUrl('/orders/table-draft'), { method: 'POST', body: payload });
-    if (!draft.ok) return draft;
-
-    // The draft alone never reaches the kitchen; the submit is what dispatches
-    // it. The operation id identifies THIS ROUND: `payload.id` is generated
-    // once per round and resent unchanged on every retry of it, so a retry
-    // replays and the next round is a new operation.
-    //
-    // It used to be `${orderId}:submit`, which was right only while one order
-    // meant one submission. Once a check started taking a second round
-    // (V1-ORD-006) every round on that check reused the same key, and the
-    // second one came back 409 IDEMPOTENCY_KEY_REUSED — the food never
-    // reached the kitchen.
-    // Found by the WaiterPwa E2E audit (2026-09-12): a bare `headers,`
-    // shorthand property here referenced no variable in scope at all - a
-    // leftover from V1-RMD-163's removal of a duplicate X-Idempotency-Key
-    // header (that removal deleted the header's VALUE but missed this one
-    // remaining reference to it). Evaluating the request options object
-    // threw `ReferenceError: headers is not defined` synchronously, before
-    // fetch() ever ran - table-draft always succeeded, but submit-draft
-    // never even attempted, silently. Every single "Gönder" click was
-    // broken: the order never reached the kitchen, with no error shown to
-    // the waiter (sendDraft()'s try/finally has no catch, so the thrown
-    // error just propagated out of the click handler unseen). No unit or
-    // HTTP test catches this class of bug - none of them execute this
-    // actual browser script; only running it in a real browser does.
-    return api(apiUrl(`/orders/${draft.data.orderId}/submit-draft`), {
-      method: 'POST',
-      body: {
-        orderId: draft.data.orderId,
-        expectedRowVersion: draft.data.rowVersion,
-        operationId: `${draft.data.orderId}:${payload.id}`
-      }
-    });
-  }
-
-  // V1-TBL-010 follow-up (Semih, 2026-09-12: "başka iş yükü artışı yaptığımız
-  // ne varsa bul"): V1-WTR-017's "hafif gecikme kontrolü" used to sit here,
-  // intercepting BOTH send buttons with a forced "gönder birlikte / ayrı
-  // gönder" choice whenever a round's items had prep-time estimates ≥10
-  // minutes apart - a very common shape (any starter + main combination).
-  // Removed outright rather than tuned: V1-WTR-025's course system already
-  // solves the same "food shouldn't all arrive unevenly" problem, more
-  // deliberately (a waiter who cares assigns courses; FireRound/FireCourse
-  // stagger the actual kitchen dispatch) and without ever touching
-  // prepTimeMinutes - the two mechanisms were solving the same problem
-  // twice, and this one fired on every send regardless of whether the
-  // waiter had already handled staggering via courses. Send is a single
-  // action again, exactly like every other quick-add path.
-  async function sendDraft() {
-    if (state.draft.length === 0 || !state.table || state.sendInFlight) return;
-    state.sendInFlight = true;
-    el.btnSendFromMenu.disabled = true;
-    el.btnSendFromBill.disabled = true;
-
-    const targetItems = state.draft;
-    const payload = draftToPayload(targetItems);
-    const tableNumber = state.table.number;
-    try {
-      if (!state.isOnline) {
-        queueOrder(payload);
-        removeSentDraftLines(targetItems);
-        afterDraftChange();
-        toast(`Bağlantı yok — ${tableNumber} siparişi kuyruğa alındı.`, { warning: true });
-        return;
-      }
-
-      const result = await postOrder(payload);
-      if (result.ok) {
-        removeSentDraftLines(targetItems);
-        await loadOrder(state.table.id);
-        await loadTables();
-        afterDraftChange();
-        showScreen('tables');
-        toast(`${tableNumber} siparişi mutfağa gönderildi.`);
-      } else if (result.status >= 400 && result.status < 500) {
-        // A rejected order is kept on screen so nothing typed is lost.
-        toast(result.message, { warning: true });
-      } else {
-        queueOrder(payload);
-        removeSentDraftLines(targetItems);
-        afterDraftChange();
-        toast(`Sunucuya ulaşılamadı — ${tableNumber} siparişi kuyruğa alındı.`, { warning: true });
-      }
-    } finally {
-      state.sendInFlight = false;
-      afterDraftChange();
-    }
-  }
-
-  function removeSentDraftLines(sentItems) {
-    const sentIds = new Set(sentItems.map((line) => line.id));
-    state.draft = state.draft.filter((line) => !sentIds.has(line.id));
-    state.draftEpoch += 1;
-  }
-
-
-  // ══ Offline queue ══════════════════════════════════════════════════
-
-  function persistQueue() {
-    localStorage.setItem('alkaros_waiter_offline_queue', JSON.stringify(state.offlineQueue));
-    localStorage.setItem('alkaros_waiter_failed_orders', JSON.stringify(state.failedOrders));
-    renderRibbon();
-  }
-
-  function queueOrder(payload) {
-    state.offlineQueue.push(Object.assign({}, payload, { queuedAt: new Date().toISOString() }));
-    persistQueue();
-    scheduleQueueRetry();
-  }
-
-  // The queue used to be flushed only by the browser's `online` event and by
-  // start(). But the commonest way into the queue is not going offline at
-  // all — it is the server answering 5xx while the network is perfectly up,
-  // and in that state `online` never fires. A round queued that way sat in
-  // localStorage for the rest of the shift and the kitchen never saw it.
-  //
-  // So the queue now retries itself, backing off so a server that is down
-  // does not get hammered, and stops as soon as the queue empties.
-  const QUEUE_RETRY_MIN_MS = 15000;
-  const QUEUE_RETRY_MAX_MS = 5 * 60 * 1000;
-  let queueRetryTimer = null;
-  let queueRetryDelay = QUEUE_RETRY_MIN_MS;
-  let flushInFlight = false;
-
-  function scheduleQueueRetry() {
-    window.clearTimeout(queueRetryTimer);
-    if (state.offlineQueue.length === 0) {
-      queueRetryDelay = QUEUE_RETRY_MIN_MS;
-      return;
-    }
-    queueRetryTimer = window.setTimeout(() => {
-      queueRetryDelay = Math.min(queueRetryDelay * 2, QUEUE_RETRY_MAX_MS);
-      void flushQueue();
-    }, queueRetryDelay);
-  }
-
-  async function flushQueue() {
-    if (state.offlineQueue.length === 0 || !state.isOnline) return;
-    // Two overlapping flushes would send the same payload twice. The server
-    // is idempotent on the submission id, so this is a courtesy rather than
-    // the last line of defence — but it also keeps the ribbon honest.
-    if (flushInFlight) return;
-    flushInFlight = true;
-
-    try {
-      for (const payload of state.offlineQueue.slice()) {
-        const result = await postOrder(payload);
-        if (result.ok) {
-          state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);
-          // A success means the server is back; drop the backoff.
-          queueRetryDelay = QUEUE_RETRY_MIN_MS;
-        } else if (result.status === 429) {
-          // Rate limited while draining a long queue. Retryable, and filing
-          // it as permanently failed would destroy the round.
-          break;
-        } else if (result.status >= 400 && result.status < 500) {
-          // A 4xx will never succeed on retry, but the order is never destroyed:
-          // it moves to the failed list and the ribbon keeps saying so.
-          state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);
-          state.failedOrders.push(Object.assign({}, payload, { rejectedAt: new Date().toISOString(), error: result.message }));
-          console.error('Order rejected by server:', payload.id, result.status, result.message);
-        } else {
-          // Temporary failure: keep the rest queued and stop trying for now.
-          break;
-        }
-      }
-      persistQueue();
-      if (state.table) { await loadOrder(state.table.id); renderBill(); }
-      await loadTables();
-    } finally {
-      flushInFlight = false;
-      scheduleQueueRetry();
-    }
-  }
-
-  // ══ Party size (kaç kişi) ═══════════════════════════════════════════
-  // openPartySizeSheet/partySizeSheetHtml moved to js/sheets/party-size.js
-  // (V1-WTR-044). confirmPartySize stays here — it calls renderBill(),
-  // which is not yet its own module.
-
-  function confirmPartySize() {
-    const context = state.optionsContext;
-    if (!context) return;
-    state.draftPartySize = context.partySize;
-    closeOptions();
-    renderBill();
-  }
-
-  // V1-WTR-025: calls in one Held course — the explicit "ateşle" action
-  // the full course model needs once the table is ready for it. No
-  // confirmation sheet (unlike void/comp): this is routine kitchen
-  // dispatch, the same class of action as submit-draft, not a discretionary
-  // exception.
-  async function fireCourse(courseNumber) {
-    if (!state.order) return;
-    const result = await api(apiUrl(`/orders/${state.order.orderId}/fire-course`), {
-      method: 'POST',
-      body: { courseNumber }
-    });
-    if (!result.ok) { toast(result.message, { warning: true }); return; }
-    toast(`${courseNumber}. kurs mutfağa ateşlendi.`);
-    await loadOrder(state.table.id);
-    renderBill();
-  }
-
-  // ══ Failed / queued orders ═══════════════════════════════════════════
-  // openFailedOrdersSheet/queuedOrderRow moved to js/sheets/failed-orders.js
-  // (V1-WTR-050). dismissFailedOrder/clearAllFailedOrders stay here — both
-  // call persistQueue(), which is not yet its own module.
-
-  function dismissFailedOrder(payloadId) {
-    state.failedOrders = state.failedOrders.filter((payload) => payload.id !== payloadId);
-    persistQueue();
-    openFailedOrdersSheet();
-  }
-
-  function clearAllFailedOrders() {
-    state.failedOrders = [];
-    persistQueue();
-    closeOptions();
-    toast('Hatalı siparişler temizlendi.');
   }
 
   // ══ Events ═════════════════════════════════════════════════════════

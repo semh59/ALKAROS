@@ -2,15 +2,15 @@
 // (V1-WTR-050, step 14/? of docs/engineering/garson-refactor-plan.md's
 // Section 2).
 //
-// dismissFailedOrder()/clearAllFailedOrders() (the mutating half) stay in
-// waiter-app.js, not here: both call persistQueue(), which is
-// offline-queue.js's own concern and does not exist as a module yet - the
-// same open/confirm split V1-WTR-044 (party-size.js) already established
-// for exactly this kind of not-yet-ready dependency.
+// dismissFailedOrder()/clearAllFailedOrders() (the mutating half) moved in
+// later (V1-WTR-053), once offline-queue.js existed to resolve their
+// persistQueue() dependency.
 
 import { state, el } from '../state.js';
 import { escapeHtml, formatQuantity } from '../util.js';
-import { openOptions } from '../options-sheet.js';
+import { openOptions, closeOptions } from '../options-sheet.js';
+import { toast } from '../toast.js';
+import { persistQueue } from '../offline-queue.js';
 
 // V1-RMD-171: found by the 2026-09-10 Garson audit — the ribbon's own
 // "N hatalı" count was the whole story: no table, no content, and no
@@ -39,6 +39,19 @@ export function openFailedOrdersSheet() {
     '', '');
   el.optionsConfirm.className = 'btn btn-danger';
   el.optionsConfirm.hidden = failed.length === 0;
+}
+
+export function dismissFailedOrder(payloadId) {
+  state.failedOrders = state.failedOrders.filter((payload) => payload.id !== payloadId);
+  persistQueue();
+  openFailedOrdersSheet();
+}
+
+export function clearAllFailedOrders() {
+  state.failedOrders = [];
+  persistQueue();
+  closeOptions();
+  toast('Hatalı siparişler temizlendi.');
 }
 
 function queuedOrderRow(payload, isFailed) {
