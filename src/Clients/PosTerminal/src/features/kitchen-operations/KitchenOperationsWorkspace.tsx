@@ -76,6 +76,7 @@ export function KitchenOperationsWorkspace({
   onTransitionTicket,
   onApproveReprint,
   onRejectReprint,
+  onCreateCategoryRoute,
   errorMessage: suppliedError,
   lastUpdated,
 }: KitchenWorkspaceProps) {
@@ -208,7 +209,13 @@ export function KitchenOperationsWorkspace({
       </div>
       <aside className="kitchen-workspace__rail" aria-label="Mutfak operasyon uyarıları">
         <UnknownPanel deliveries={data.unknownDeliveries} canManage={canManageReprints} busyKey={busyKey} onDecision={openDecision} />
-        <PrinterPanel printers={data.printers} routes={data.routes} />
+        <PrinterPanel
+          printers={data.printers}
+          routes={data.routes}
+          categories={data.categories}
+          canOperate={canOperate}
+          onCreateCategoryRoute={onCreateCategoryRoute}
+        />
       </aside>
     </div>
 
@@ -239,6 +246,76 @@ function UnknownPanel({ deliveries, canManage, busyKey, onDecision }: { deliveri
   return <section className={`kitchen-panel kitchen-panel--unknown ${deliveries.length ? "has-alert" : ""}`} aria-labelledby="unknown-heading"><header><div><span className="kitchen-panel__eyebrow">YAZICI KURTARMA</span><h3 id="unknown-heading">Doğrulanamayan teslimatlar</h3></div><strong>{deliveries.length}</strong></header>{deliveries.length === 0 ? <p className="kitchen-panel__muted">Bekleyen belirsiz teslimat yok.</p> : <div className="kitchen-unknown-list">{deliveries.map((delivery) => <div className="kitchen-unknown" key={delivery.id}><div><strong>{compactId(delivery.ticketId)}</strong><span>{delivery.crashReason ?? "ACK alınamadı"}</span></div>{canManage ? <div className="kitchen-unknown__actions"><Button variant="secondary" disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "reject")}>Reddet</Button><Button disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "approve")}>Gerekçeli onay</Button></div> : <span className="kitchen-panel__muted">Süpervizör gerekli</span>}</div>)}</div>}</section>;
 }
 
-function PrinterPanel({ printers, routes }: { printers: readonly KitchenWorkspaceProps["data"]["printers"][number][]; routes: readonly KitchenWorkspaceProps["data"]["routes"][number][] }) {
-  return <section className="kitchen-panel" aria-labelledby="printer-heading"><header><div><span className="kitchen-panel__eyebrow">DONANIM</span><h3 id="printer-heading">Yazıcı rotaları</h3></div><span>{printers.filter((printer) => printer.isActive).length}/{printers.length} aktif</span></header>{printers.length === 0 ? <p className="kitchen-panel__muted">Yapılandırılmış yazıcı yok.</p> : <ul className="kitchen-printer-list">{printers.map((printer) => <li key={printer.id}><span className={`kitchen-printer-dot ${printer.isActive ? "is-active" : ""}`} /><div><strong>{printer.name}</strong><span>{printer.stationId} · {routes.filter((route) => route.printerId === printer.id && route.isActive).length} aktif rota</span></div></li>)}</ul>}</section>;
+function PrinterPanel({
+  printers,
+  routes,
+  categories,
+  canOperate,
+  onCreateCategoryRoute,
+}: {
+  printers: readonly KitchenWorkspaceProps["data"]["printers"][number][];
+  routes: readonly KitchenWorkspaceProps["data"]["routes"][number][];
+  categories: readonly KitchenWorkspaceProps["data"]["categories"][number][];
+  canOperate: boolean;
+  onCreateCategoryRoute?: KitchenWorkspaceProps["onCreateCategoryRoute"];
+}) {
+  const categoryName = (id: string | null) => categories.find((category) => category.id === id)?.name ?? id;
+  const categoryRoutes = routes.filter((route) => route.routeLevel === "Category" && route.isActive);
+  // Every category already routed can't take a second active route (the
+  // same category-level uniqueness kitchen.printer_routes itself enforces)
+  // - offering it again would just fail server-side on submit.
+  const routedCategoryIds = new Set(categoryRoutes.map((route) => route.categoryId));
+  const availableCategories = categories.filter((category) => !routedCategoryIds.has(category.id));
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [selectedPrinterId, setSelectedPrinterId] = useState("");
+  const [routeBusy, setRouteBusy] = useState(false);
+  const [routeFeedback, setRouteFeedback] = useState<Feedback>(null);
+
+  async function submitCategoryRoute(event: FormEvent) {
+    event.preventDefault();
+    if (!onCreateCategoryRoute || !selectedCategoryId || !selectedPrinterId) return;
+    setRouteBusy(true);
+    setRouteFeedback(null);
+    try {
+      await onCreateCategoryRoute(selectedCategoryId, selectedPrinterId);
+      setRouteFeedback({ tone: "success", message: "Kategori rotası kaydedildi." });
+      setSelectedCategoryId("");
+      setSelectedPrinterId("");
+    } catch (error) {
+      setRouteFeedback({ tone: "error", message: error instanceof Error ? error.message : "Rota kaydedilemedi." });
+    } finally {
+      setRouteBusy(false);
+    }
+  }
+
+  return <section className="kitchen-panel" aria-labelledby="printer-heading">
+    <header><div><span className="kitchen-panel__eyebrow">DONANIM</span><h3 id="printer-heading">Yazıcı rotaları</h3></div><span>{printers.filter((printer) => printer.isActive).length}/{printers.length} aktif</span></header>
+    {printers.length === 0 ? <p className="kitchen-panel__muted">Yapılandırılmış yazıcı yok.</p> : <ul className="kitchen-printer-list">{printers.map((printer) => <li key={printer.id}><span className={`kitchen-printer-dot ${printer.isActive ? "is-active" : ""}`} /><div><strong>{printer.name}</strong><span>{printer.stationId} · {routes.filter((route) => route.printerId === printer.id && route.isActive).length} aktif rota</span></div></li>)}</ul>}
+
+    {categoryRoutes.length > 0 && <ul className="kitchen-printer-list" aria-label="Kategori yönlendirmeleri">
+      {categoryRoutes.map((route) => <li key={route.id}>
+        <span className="kitchen-printer-dot is-active" />
+        <div><strong>{categoryName(route.categoryId)}</strong><span>→ {printers.find((printer) => printer.id === route.printerId)?.name ?? route.printerId}</span></div>
+      </li>)}
+    </ul>}
+
+    {canOperate && onCreateCategoryRoute && <form className="kitchen-route-form" onSubmit={(event) => void submitCategoryRoute(event)}>
+      <p className="kitchen-panel__muted">Bir ürün grubunun tamamını tek yazıcıya yönlendir (örn. "Izgara" grubu ızgara yazıcısına).</p>
+      {routeFeedback && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${routeFeedback.tone}`}>{routeFeedback.message}</p>}
+      <label>Ürün grubu
+        <select value={selectedCategoryId} onChange={(event) => setSelectedCategoryId(event.target.value)} aria-label="Ürün grubu" disabled={routeBusy}>
+          <option value="">Seçin…</option>
+          {availableCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
+        </select>
+      </label>
+      <label>Yazıcı
+        <select value={selectedPrinterId} onChange={(event) => setSelectedPrinterId(event.target.value)} aria-label="Yazıcı" disabled={routeBusy}>
+          <option value="">Seçin…</option>
+          {printers.filter((printer) => printer.isActive).map((printer) => <option key={printer.id} value={printer.id}>{printer.name}</option>)}
+        </select>
+      </label>
+      <Button type="submit" variant="secondary" disabled={routeBusy || !selectedCategoryId || !selectedPrinterId}>{routeBusy ? "Kaydediliyor…" : "Rota ekle"}</Button>
+    </form>}
+  </section>;
 }

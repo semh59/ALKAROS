@@ -250,6 +250,59 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Contains(byCorrelation!, e => e.Id == auditEvent.Id);
     }
 
+    /// <summary>
+    /// V1-WTR-025's E2E audit (2026-09-12): PUT /routes/{routeId} could only
+    /// ever edit a route that already existed - nothing anywhere could
+    /// create the first one, so a category-level route (e.g. "the whole
+    /// Izgara group goes to the grill printer") could never actually be
+    /// configured through the API at all.
+    /// </summary>
+    [Fact]
+    public async Task CreatingACategoryRouteSucceedsAndIsThenListedAndEditable()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId,
+            [KitchenOperationsEndpoints.RoutingMutationPermission]);
+        var readOnlyCookie = await _database.SeedSessionAsync(terminalId, []);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var routeId = Guid.NewGuid();
+        var categoryId = Guid.NewGuid();
+
+        using var deniedRequest = JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/routes/{routeId:D}",
+            readOnlyCookie,
+            new UpdatePrinterRouteV1("Category", seed.PrinterId, CategoryId: categoryId));
+        using var denied = await client.SendAsync(deniedRequest);
+        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+
+        var created = await PostAsync<PrinterRouteV1>(
+            client,
+            $"{Prefix(terminalId)}/routes/{routeId:D}",
+            cookie,
+            new UpdatePrinterRouteV1("Category", seed.PrinterId, CategoryId: categoryId));
+        Assert.Equal("Category", created.RouteLevel);
+        Assert.Equal(categoryId, created.CategoryId);
+        Assert.True(created.IsActive);
+
+        var routes = await GetAsync<PrinterRouteV1[]>(
+            client, Prefix(terminalId) + "/routes", cookie);
+        Assert.Contains(routes!, route => route.Id == routeId && route.CategoryId == categoryId);
+
+        // The same endpoint that created it can still edit it afterwards -
+        // deactivating, same as PUT already could for a pre-seeded route.
+        var deactivated = await PutAsync<PrinterRouteV1>(
+            client,
+            $"{Prefix(terminalId)}/routes/{routeId:D}",
+            cookie,
+            new UpdatePrinterRouteV1("Category", seed.PrinterId, CategoryId: categoryId, IsActive: false));
+        Assert.False(deactivated.IsActive);
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -273,6 +326,20 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.True(
             response.IsSuccessStatusCode,
             $"POST {path} returned {(int)response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+        return (await response.Content.ReadFromJsonAsync<TResponse>())!;
+    }
+
+    private static async Task<TResponse> PutAsync<TResponse>(
+        HttpClient client,
+        string path,
+        string cookie,
+        object body)
+    {
+        using var request = JsonRequest(HttpMethod.Put, path, cookie, body);
+        using var response = await client.SendAsync(request);
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"PUT {path} returned {(int)response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
         return (await response.Content.ReadFromJsonAsync<TResponse>())!;
     }
 

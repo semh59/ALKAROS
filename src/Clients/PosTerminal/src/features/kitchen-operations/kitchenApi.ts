@@ -1,5 +1,6 @@
 import type {
   KitchenBackup,
+  KitchenCategory,
   KitchenData,
   KitchenHealthSnapshot,
   KitchenPrinter,
@@ -20,7 +21,10 @@ export interface KitchenOperationsClient {
   transitionTicket: (ticketId: string, targetState: string, expectedRowVersion: number, reason?: string) => Promise<KitchenTicket>;
   approveReprint: (deliveryId: string, reason: string) => Promise<KitchenUnknownDelivery>;
   rejectReprint: (deliveryId: string, reason: string) => Promise<KitchenUnknownDelivery>;
+  createCategoryRoute: (categoryId: string, printerId: string) => Promise<KitchenPrinterRoute>;
 }
+
+interface Page<T> { items: T[]; nextCursor: string | null }
 
 export interface KitchenRuntimeConfiguration {
   kitchenStationId: string;
@@ -87,24 +91,54 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
   }
 
   const get = <T>(path: string) => request<T>(path);
+
+  // Categories live under Catalog's own management prefix, not this
+  // module's terminal-scoped one - same cross-feature read CatalogWorkspace
+  // itself does, reused here only for the routing form's dropdown.
+  async function getCategories(): Promise<KitchenCategory[]> {
+    let response: Response;
+    try {
+      response = await fetcher("/api/v1/management/catalog/categories?limit=100", {
+        credentials: "same-origin",
+        headers: { "X-Correlation-Id": crypto.randomUUID() },
+        signal: AbortSignal.timeout(8_000),
+      });
+    } catch {
+      throw new KitchenOperationsApiError(0, "NETWORK_UNAVAILABLE", "Kategori listesi alınamadı.");
+    }
+    if (!response.ok) return [];
+    const result = await response.json() as Page<KitchenCategory> | KitchenCategory[];
+    return Array.isArray(result) ? result : result.items;
+  }
+
   return {
     load: async () => {
       const health = await get<KitchenHealthSnapshot | null>("/operations/health/latest").catch((error: unknown) => {
         if (error instanceof KitchenOperationsApiError && error.status === 404) return null;
         throw error;
       });
-      const [tickets, printers, routes, unknownDeliveries, backups] = await Promise.all([
+      const [tickets, printers, routes, categories, unknownDeliveries, backups] = await Promise.all([
         get<KitchenTicket[]>(`/tickets?stationId=${encodeURIComponent(stationId)}`),
         get<KitchenPrinter[]>("/printers"),
         get<KitchenPrinterRoute[]>("/routes"),
+        getCategories(),
         get<KitchenUnknownDelivery[]>("/deliveries/unknown"),
         get<KitchenBackup[]>("/operations/backups/recent?limit=20"),
       ]);
-      return { tickets, printers, routes, unknownDeliveries, health, backups };
+      return { tickets, printers, routes, categories, unknownDeliveries, health, backups };
     },
     transitionItem: (ticketId, itemId, targetState, expectedTicketRowVersion, expectedItemRowVersion, reason) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/items/${encodeURIComponent(itemId)}/transition`, { method: "POST", body: JSON.stringify({ targetState, expectedTicketRowVersion, expectedItemRowVersion, reason }) }),
     transitionTicket: (ticketId, targetState, expectedRowVersion, reason) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/transition`, { method: "POST", body: JSON.stringify({ targetState, expectedRowVersion, reason }) }),
     approveReprint: (deliveryId, reason) => request<KitchenUnknownDelivery>(`/deliveries/${encodeURIComponent(deliveryId)}/reprint-approval`, { method: "POST", body: JSON.stringify({ reason }) }),
     rejectReprint: (deliveryId, reason) => request<KitchenUnknownDelivery>(`/deliveries/${encodeURIComponent(deliveryId)}/reprint-rejection`, { method: "POST", body: JSON.stringify({ reason }) }),
+    // A brand-new route needs its own id - client-generated, same
+    // convention as every other caller-generated id in this codebase (an
+    // order line's own id, for one). RouteLevel "Category" is the only
+    // level this form offers; Item/Product/DailySpecial routes are edited
+    // through the existing PUT (no create UI for those yet).
+    createCategoryRoute: (categoryId, printerId) => request<KitchenPrinterRoute>(`/routes/${encodeURIComponent(crypto.randomUUID())}`, {
+      method: "POST",
+      body: JSON.stringify({ routeLevel: "Category", printerId, categoryId, isActive: true }),
+    }),
   };
 }

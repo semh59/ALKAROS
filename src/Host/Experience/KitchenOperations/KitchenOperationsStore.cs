@@ -228,6 +228,37 @@ public sealed class KitchenOperationsStore
     public async Task<IReadOnlyList<PrinterRouteV1>> GetRoutesAsync(CancellationToken cancellationToken)
         => (await _routes.GetAllAsync(cancellationToken)).Select(ToDto).ToArray();
 
+    /// <summary>
+    /// Found while wiring category-level printer routing end to end
+    /// (2026-09-12): <see cref="UpdateRouteAsync"/> requires the route to
+    /// already exist, but nothing anywhere ever created one — the manage
+    /// endpoint could edit a route, never make a new one. The repository's
+    /// own <c>SaveRouteAsync</c> is already an upsert (<c>ON CONFLICT (id)
+    /// DO UPDATE</c>); <paramref name="routeId"/> is caller-generated, the
+    /// same client-generated-id convention this codebase already uses
+    /// elsewhere (an order line's own id, for one).
+    /// </summary>
+    public async Task<PrinterRouteV1> CreateRouteAsync(
+        Guid routeId,
+        UpdatePrinterRouteV1 request,
+        CancellationToken cancellationToken)
+    {
+        EnsureId(routeId, nameof(routeId));
+        ArgumentNullException.ThrowIfNull(request);
+        var level = ParseEnum<RouteLevel>(request.RouteLevel, nameof(request.RouteLevel));
+        var created = new PrinterRoute(
+            routeId,
+            level,
+            request.PrinterId,
+            request.ItemId,
+            request.ProductId,
+            request.CategoryId,
+            request.SpecialDate,
+            request.IsActive);
+        await _routes.SaveRouteAsync(created, cancellationToken);
+        return ToDto(created);
+    }
+
     public async Task<PrinterRouteV1> UpdateRouteAsync(
         Guid routeId,
         UpdatePrinterRouteV1 request,

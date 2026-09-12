@@ -169,6 +169,25 @@ public static class KitchenOperationsEndpoints
             return Results.Ok(await store.GetRoutesAsync(cancellationToken));
         });
 
+        // Found while wiring category-level printer routing end to end
+        // (2026-09-12): PUT below only ever edits a route that already
+        // exists - nothing could create the first one. routeId is
+        // caller-generated (the PosTerminal routing form generates it),
+        // same convention as PUT's own path parameter.
+        group.MapPost("/routes/{routeId:guid}", async (
+            Guid terminalId,
+            Guid routeId,
+            UpdatePrinterRouteV1 request,
+            IKitchenOperationsSessionAuthorizer authorizer,
+            KitchenOperationsStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await authorizer.RequirePermissionAsync(
+                context, terminalId, RoutingMutationPermission, cancellationToken);
+            return Results.Ok(await store.CreateRouteAsync(routeId, request, cancellationToken));
+        });
+
         group.MapPut("/routes/{routeId:guid}", async (
             Guid terminalId,
             Guid routeId,

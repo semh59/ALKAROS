@@ -63,7 +63,8 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
         if (activeItems.Count == 0)
             return;
 
-        var stationByItemId = await ResolveStationsAsync(activeItems, cancellationToken).ConfigureAwait(false);
+        var stationByItemId = await ResolveStationsAsync(
+            activeItems, connection, transaction, cancellationToken).ConfigureAwait(false);
         // V1-RMD-137: found by an independent audit (2026-09-09) — an
         // age-restricted item's kitchen ticket looked identical to any
         // other, so whoever served it had no system prompt to check ID.
@@ -190,6 +191,8 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
 
     private async Task<Dictionary<Guid, string>> ResolveStationsAsync(
         IReadOnlyList<OrderItem> activeItems,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         CancellationToken cancellationToken)
     {
         var stationByItemId = new Dictionary<Guid, string>();
@@ -206,7 +209,44 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
         var printers = await _printerRepository!.GetAllAsync(cancellationToken).ConfigureAwait(false);
         var routes = await _routeRepository!.GetActiveRoutesAsync(cancellationToken).ConfigureAwait(false);
 
-        return MapItemsToStations(activeItems, routes, printers, _router!, _defaultStationId);
+        // Found while wiring up category-level printer routing (2026-09-12):
+        // a Category route (RouteLevel.Category, e.g. "the whole Izgara
+        // group goes to the grill printer") was fully implemented in
+        // KitchenPrinterRouter's own precedence chain and completely
+        // unreachable in practice — this was the only real caller of
+        // RoutingEvaluationRequest, and it never populated CategoryId at
+        // all, so a configured category route could never once match.
+        // Resolved fresh from catalog.products in the same transaction the
+        // ticket is written in, same reasoning as the age-restriction
+        // snapshot just below this call.
+        var categoryByProductId = await ResolveProductCategoriesAsync(
+            connection, transaction, activeItems, cancellationToken).ConfigureAwait(false);
+
+        return MapItemsToStations(activeItems, routes, printers, _router!, _defaultStationId, categoryByProductId);
+    }
+
+    private static async Task<Dictionary<Guid, Guid?>> ResolveProductCategoriesAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        IReadOnlyList<OrderItem> activeItems,
+        CancellationToken cancellationToken)
+    {
+        var productIds = activeItems.Select(item => item.ProductId).Distinct().ToArray();
+        var result = new Dictionary<Guid, Guid?>();
+        if (productIds.Length == 0)
+            return result;
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
+            "SELECT product_id, category_id FROM catalog.products WHERE product_id = ANY(@product_ids);";
+        command.Parameters.Add("product_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = productIds;
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            result[reader.GetGuid(0)] = reader.IsDBNull(1) ? null : reader.GetGuid(1);
+
+        return result;
     }
 
     /// <summary>
@@ -219,14 +259,19 @@ public sealed class KitchenOrderSubmissionDispatcher : IOrderSubmissionDispatche
         IReadOnlyList<PrinterRoute> routes,
         IReadOnlyList<Printer> printers,
         IKitchenPrinterRouter router,
-        string defaultStationId)
+        string defaultStationId,
+        IReadOnlyDictionary<Guid, Guid?>? categoryByProductId = null)
     {
         var printersById = printers.DistinctBy(printer => printer.Id).ToDictionary(printer => printer.Id);
         var stationByItemId = new Dictionary<Guid, string>();
 
         foreach (var item in activeItems)
         {
-            var request = new RoutingEvaluationRequest(item.ProductId, itemId: item.Id);
+            var categoryId = categoryByProductId is not null
+                && categoryByProductId.TryGetValue(item.ProductId, out var resolvedCategoryId)
+                    ? resolvedCategoryId
+                    : null;
+            var request = new RoutingEvaluationRequest(item.ProductId, categoryId: categoryId, itemId: item.Id);
             var result = router.ResolveRoute(request, routes, printers);
 
             stationByItemId[item.Id] = result.Resolved

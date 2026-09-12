@@ -74,6 +74,12 @@ export interface KitchenPrinterRoute {
   updatedAt: string | null;
 }
 
+/** A minimal read of catalog.categories - just enough for the routing form's own dropdown. */
+export interface KitchenCategory {
+  id: string;
+  name: string;
+}
+
 export interface KitchenUnknownDelivery {
   id: string;
   printJobId: string;
@@ -115,6 +121,7 @@ export interface KitchenData {
   tickets: readonly KitchenTicket[];
   printers: readonly KitchenPrinter[];
   routes: readonly KitchenPrinterRoute[];
+  categories: readonly KitchenCategory[];
   unknownDeliveries: readonly KitchenUnknownDelivery[];
   health: KitchenHealthSnapshot | null;
   backups: readonly KitchenBackup[];
@@ -131,6 +138,7 @@ export interface KitchenWorkspaceProps {
   onTransitionTicket?: (ticket: KitchenTicket, targetState: KitchenTicket["status"], reason?: string) => void | Promise<void>;
   onApproveReprint?: (delivery: KitchenUnknownDelivery, reason: string) => void | Promise<void>;
   onRejectReprint?: (delivery: KitchenUnknownDelivery, reason: string) => void | Promise<void>;
+  onCreateCategoryRoute?: (categoryId: string, printerId: string) => void | Promise<void>;
   errorMessage?: string;
   lastUpdated?: string;
 }

@@ -16,6 +16,7 @@ const data: KitchenData = {
   }],
   printers: [{ id: "printer-1", name: "Mutfak yazıcı", stationId: "hot-line", isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
   routes: [{ id: "route-1", routeLevel: "Default", printerId: "printer-1", itemId: null, productId: null, categoryId: null, specialDate: null, isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
+  categories: [{ id: "category-1", name: "Izgara" }],
   unknownDeliveries: [{ id: "delivery-1", printJobId: "job-1", ticketId: "ticket-1", printerId: "printer-1", status: "Unknown", attemptNumber: 1, isReprint: false, operatorReason: null, crashReason: "ACK alınamadı", createdAt: "2026-08-26T10:00:00Z", deliveredAt: null, resolvedAt: null, rowVersion: 1 }],
   health: { snapshotId: "snapshot-1", databaseStatus: "Healthy", diskStatus: "Unhealthy", lastBackupStatus: "Unhealthy", freeDiskBytes: 10, databaseSizeBytes: 100, capturedAt: "2026-08-26T10:00:00Z" },
   backups: [{ backupId: "backup-1", backupType: "Full", fileSizeBytes: 0, status: "Failed", errorMessage: "Backup engine unavailable", startedAt: "2026-08-26T09:00:00Z", completedAt: "2026-08-26T09:01:00Z", retentionDays: 30 }],

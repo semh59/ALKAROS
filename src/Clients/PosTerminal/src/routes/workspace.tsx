@@ -454,7 +454,7 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
   />;
 }
 
-const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], unknownDeliveries: [], health: null, backups: [] };
+const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], categories: [], unknownDeliveries: [], health: null, backups: [] };
 
 function KitchenRoute({ terminalId, canOperate }: { terminalId: string; canOperate: boolean }) {
   const [stationId, setStationId] = useState("");
@@ -497,6 +497,7 @@ function KitchenRoute({ terminalId, canOperate }: { terminalId: string; canOpera
     onTransitionTicket={canOperate && client ? async (ticket, target, reason) => { await client.transitionTicket(ticket.id, target, ticket.rowVersion, reason); await load(); } : undefined}
     onApproveReprint={canOperate && client ? async (delivery, reason) => { await client.approveReprint(delivery.id, reason); await load(); } : undefined}
     onRejectReprint={canOperate && client ? async (delivery, reason) => { await client.rejectReprint(delivery.id, reason); await load(); } : undefined}
+    onCreateCategoryRoute={canOperate && client ? async (categoryId, printerId) => { await client.createCategoryRoute(categoryId, printerId); await load(); } : undefined}
     errorMessage={errorMessage}
     lastUpdated={lastUpdated}
   />;

@@ -102,6 +102,12 @@
 .kitchen-decision-form__context { margin: 0; color: var(--ds-color-muted); font-size: .78rem; }
 .kitchen-decision-form__actions { display: flex; justify-content: flex-end; gap: .5rem; }
 .kitchen-decision-form__actions .ds-button { min-height: 44px; }
+.kitchen-route-form { display: grid; gap: .5rem; margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--ds-color-line); }
+.kitchen-route-form label { display: grid; gap: .25rem; font-size: .78rem; color: var(--ds-color-muted); }
+.kitchen-route-form select { min-height: 40px; border-radius: var(--ds-radius-sm, 6px); border: 1px solid var(--ds-color-line); background: var(--ds-color-surface); color: inherit; font: inherit; padding: 0 .5rem; }
+.kitchen-route-form__feedback { margin: 0; font-size: .78rem; }
+.kitchen-route-form__feedback--success { color: var(--ds-color-success); }
+.kitchen-route-form__feedback--error { color: var(--ds-color-danger); }
 
 @media (max-width: 1023px) { .kitchen-workspace__layout { grid-template-columns: minmax(0, 1fr); } .kitchen-workspace__rail { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 767px) { .kitchen-workspace__header { flex-direction: column; } .kitchen-workspace__header-actions { width: 100%; justify-content: space-between; } .kitchen-workspace__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kitchen-workspace__toolbar { align-items: stretch; flex-direction: column; gap: var(--ds-space-3); } .kitchen-workspace__toolbar > label { min-width: 0; } .kitchen-workspace__rail { grid-template-columns: 1fr; } }

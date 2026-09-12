@@ -52,6 +52,52 @@ public sealed class KitchenOrderSubmissionDispatcherTests
         map[unroutedItem.Id].Should().Be("GRILL");
     }
 
+    /// <summary>
+    /// V1-WTR-025's E2E audit (2026-09-12): RouteLevel.Category was fully
+    /// implemented in KitchenPrinterRouter's own precedence chain but
+    /// unreachable end to end - the only real caller of
+    /// RoutingEvaluationRequest never populated CategoryId at all, so a
+    /// configured category route (e.g. "the whole Izgara group goes to the
+    /// grill printer") could never once match. This is the caller's own
+    /// contract, not KitchenPrinterRouterTests' territory (that project
+    /// already covers the router's own precedence logic in isolation).
+    /// </summary>
+    [Fact]
+    public void CategoryRoutesSendEveryProductInThatCategoryToItsOwnPrinter()
+    {
+        var grillPrinter = new Printer(Guid.NewGuid(), "Grill", "GRILL");
+        var grillCategoryId = Guid.NewGuid();
+        var koftePrduct = Guid.NewGuid();
+        var izgaraProduct = Guid.NewGuid();
+        var uncategorizedProduct = Guid.NewGuid();
+
+        var routes = new[] { PrinterRoute.CreateCategoryRoute(Guid.NewGuid(), grillCategoryId, grillPrinter.Id) };
+        var categoryByProductId = new Dictionary<Guid, Guid?>
+        {
+            [koftePrduct] = grillCategoryId,
+            [izgaraProduct] = grillCategoryId,
+            // Deliberately absent: an item whose product this dictionary
+            // never resolved (e.g. a product deleted between order time and
+            // dispatch) must fall through to the default, not throw.
+        };
+
+        var kofteItem = Item(koftePrduct);
+        var izgaraItem = Item(izgaraProduct);
+        var uncategorizedItem = Item(uncategorizedProduct);
+
+        var map = KitchenOrderSubmissionDispatcher.MapItemsToStations(
+            [kofteItem, izgaraItem, uncategorizedItem],
+            routes,
+            [grillPrinter],
+            Router,
+            defaultStationId: "MAIN",
+            categoryByProductId);
+
+        map[kofteItem.Id].Should().Be("GRILL");
+        map[izgaraItem.Id].Should().Be("GRILL");
+        map[uncategorizedItem.Id].Should().Be("MAIN");
+    }
+
     [Fact]
     public void WithNoRoutesEveryItemUsesTheDefaultStation()
     {
