@@ -26,6 +26,7 @@ import {
 import { state, el } from './js/state.js';
 import { applyUser, can, trapBackgroundExcept, releaseTrap, showLogin } from './js/auth.js';
 import { apiUrl, api } from './js/api.js';
+import { toast } from './js/toast.js';
 
 (function () {
   'use strict';
@@ -80,42 +81,6 @@ import { apiUrl, api } from './js/api.js';
   ];
 
   const IDLE_LOCK_MS = 3 * 60 * 1000;
-
-  // ══ Toasts ═════════════════════════════════════════════════════════
-
-  // V1-RMD-166: found by the 2026-09-10 Garson audit — the toast count was
-  // unbounded, so a round of several items (one toast each, e.g. a
-  // nine-line table) stacked up and covered the screen. An undo toast is
-  // never force-closed early — cutting it short would silently take away
-  // the one chance to undo a removal — so the cap only ever prunes plain
-  // (non-undo) toasts, oldest first.
-  const MAX_VISIBLE_TOASTS = 4;
-
-  function toast(text, options) {
-    const settings = options || {};
-    while (el.toasts.children.length >= MAX_VISIBLE_TOASTS) {
-      const oldest = [...el.toasts.children].find((child) => !child.dataset.hasUndo);
-      if (!oldest) break;
-      oldest.remove();
-    }
-
-    const node = document.createElement('div');
-    node.className = 'toast';
-    if (settings.undo) node.dataset.hasUndo = 'true';
-    node.innerHTML = `
-      <span class="toast-mark${settings.warning ? ' is-warning' : ''}">
-        <svg class="icon" aria-hidden="true"><use href="#ico-${settings.warning ? 'alert' : 'check'}"/></svg>
-      </span>
-      <span class="toast-text">${escapeHtml(text)}</span>
-      ${settings.undo ? '<button type="button" class="toast-undo">Geri al</button>' : ''}`;
-
-    const close = () => { window.clearTimeout(timer); node.remove(); };
-    const timer = window.setTimeout(close, settings.warning ? 6000 : 5000);
-    if (settings.undo) {
-      node.querySelector('.toast-undo').addEventListener('click', () => { close(); settings.undo(); });
-    }
-    el.toasts.appendChild(node);
-  }
 
   // ══ Screens and sheets ═════════════════════════════════════════════
 
