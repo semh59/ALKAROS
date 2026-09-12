@@ -53,6 +53,8 @@ public static class OrderManagementEndpoints
         // order-reading surface shares one Order -> OrderDto projection.
         services.TryAddSingleton<OrderDtoAssembler>();
         services.TryAddSingleton<OrderManagementStore>();
+        // Refactor step 2/7 (docs/engineering/garson-refactor-plan.md).
+        services.TryAddSingleton<ShiftSummaryStore>();
         services.TryAddSingleton<ServingHandoffNoteStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
@@ -763,7 +765,7 @@ public static class OrderManagementEndpoints
         // - these are always and only the caller's own numbers.
         group.MapGet("/my-shift-summary", async (
             Guid terminalId,
-            OrderManagementStore store,
+            ShiftSummaryStore store,
             DualScreenStore dualStore,
             HttpContext context,
             CancellationToken cancellationToken) =>
