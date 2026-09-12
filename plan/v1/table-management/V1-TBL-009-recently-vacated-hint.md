@@ -49,10 +49,12 @@ istemci değil, tel adı değişti.
 
 ## Owned surface
 
+- `database/migrations/V1/V1-TBL-009/106-tables-status-changed-at.up.sql`
+  (yeni) — `table_mgmt.tables.status_changed_at TIMESTAMPTZ NOT NULL
+  DEFAULT NOW()`.
+- `database/migrations/V1/V1-TBL-009/106-tables-status-changed-at.down.sql`
+  (yeni).
 - Sınırlı ek:
-  - database/migrations/V1/V1-TBL-009/106-tables-status-changed-at.up.sql,
-    .down.sql (yeni) — `table_mgmt.tables.status_changed_at TIMESTAMPTZ
-    NOT NULL DEFAULT NOW()`.
   - src/Host/Composition/Migrations/MigrationManifest.cs (V0-ARC-001
     sahipliğinde) — `PhaseBMax` "105" → "106", doc comment güncellendi.
   - database/MigrationComposition/order.json (V0-ARC-001 sahipliğinde) —

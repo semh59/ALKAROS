@@ -169,7 +169,14 @@ export const tableStatusLabels: Record<TableStatus, string> = {
   Available: "Müsait",
   Occupied: "Dolu",
   Reserved: "Rezerve",
-  Cleaning: "Temizlik",
+  // V1-TBL-010 (Semih's catch, 2026-09-12): the previous label read as a
+  // hard "don't touch yet" while the actual system behaviour is the
+  // opposite for the common case — a check sent to the cashier frees the
+  // table for a new party IMMEDIATELY (SendCheckToCashierAsync,
+  // V1-ORD-006), no staff action or confirmation required. The new label
+  // reads as informational (recently vacated, might not be tidied yet)
+  // rather than prohibitive.
+  Cleaning: "Toplanıyor",
   OutOfService: "Servis dışı",
 };
 

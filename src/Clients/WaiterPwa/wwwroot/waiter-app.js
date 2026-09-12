@@ -105,7 +105,13 @@
     available: { label: 'Boş', cls: 'is-available' },
     occupied: { label: 'Dolu', cls: 'is-occupied' },
     reserved: { label: 'Rezerve', cls: 'is-reserved' },
-    cleaning: { label: 'Temizlik', cls: 'is-cleaning' },
+    // V1-TBL-010 (Semih's catch, 2026-09-12): the previous label read as
+    // a hard "don't touch yet" while the actual behaviour is the
+    // opposite for the common case - a check sent to the cashier frees
+    // the table for a new party IMMEDIATELY (SendCheckToCashierAsync,
+    // V1-ORD-006), openTable() has no status gate at all. The new label
+    // reads as informational rather than prohibitive.
+    cleaning: { label: 'Toplanıyor', cls: 'is-cleaning' },
     outofservice: { label: 'Servis dışı', cls: 'is-cleaning' }
   };
 
