@@ -19,11 +19,7 @@ import { deviceTerminalId } from './util.js';
 
 // V1-RMD-170: see state.draftsByTable's own comment below. Stored as an
 // array of [tableId, {number, lines}] pairs since a Map is not directly
-// JSON-serializable. Kept here (not offline-queue.js, where the rest of
-// the held-draft persistence lives once that module exists) because it is
-// only ever read once, as state's own initial value — offline-queue.js's
-// own persistDraftsByTable is the write side, and moves there in a later
-// step of this same refactor.
+// JSON-serializable.
 function loadDraftsByTable() {
   try {
     const raw = localStorage.getItem('alkaros_waiter_drafts_by_table');
@@ -118,3 +114,13 @@ export const el = {};
   'toasts', 'loginOverlay', 'loginForm', 'loginUsername', 'loginPassword', 'loginError', 'loginSubmit',
   'lockOverlay', 'lockSub', 'pinDots', 'pinKeys'
 ].forEach((id) => { el[id] = document.getElementById(id); });
+
+// V1-RMD-170: the write side of state.draftsByTable, reunited here with
+// loadDraftsByTable above (its read side) rather than left in
+// offline-queue.js as originally planned — on inspection, menu.js's own
+// afterDraftChange() needed it, and offline-queue.js does not exist yet.
+export function persistDraftsByTable() {
+  localStorage.setItem(
+    'alkaros_waiter_drafts_by_table',
+    JSON.stringify([...state.draftsByTable]));
+}
