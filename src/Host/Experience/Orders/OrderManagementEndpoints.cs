@@ -53,7 +53,6 @@ public static class OrderManagementEndpoints
         // 2026-09-12): extracted out of OrderManagementStore so every
         // order-reading surface shares one Order -> OrderDto projection.
         services.TryAddSingleton<OrderDtoAssembler>();
-        services.TryAddSingleton<OrderManagementStore>();
         // Refactor step 2/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<ShiftSummaryStore>();
         // Refactor step 3/7 (docs/engineering/garson-refactor-plan.md).
@@ -62,6 +61,13 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<TableDraftService>();
         // Refactor step 5/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<OrderSubmissionCoordinator>();
+        // Refactor step 6/7 (docs/engineering/garson-refactor-plan.md):
+        // OrderManagementStore's own final, no-longer-worth-a-better-name
+        // remainder — GetOrderByIdAsync/GetActiveOrderByTableIdAsync/
+        // TransferServingUserAsync/GetPendingOrdersAsync share no real
+        // cohesion, deliberately left as one small group rather than
+        // forcing a fake abstraction (the plan's own Section 1.3 reasoning).
+        services.TryAddSingleton<OrderReadStore>();
         services.TryAddSingleton<ServingHandoffNoteStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
@@ -218,7 +224,7 @@ public static class OrderManagementEndpoints
         // a pending order may see the queue of them.
         group.MapGet("/pending", async (
             Guid terminalId,
-            OrderManagementStore store,
+            OrderReadStore store,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -271,7 +277,7 @@ public static class OrderManagementEndpoints
         group.MapGet("/table/{tableId:guid}", async (
             Guid terminalId,
             Guid tableId,
-            OrderManagementStore store,
+            OrderReadStore store,
             DualScreenStore dualStore,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -297,7 +303,7 @@ public static class OrderManagementEndpoints
         group.MapGet("/{orderId:guid}", async (
             Guid terminalId,
             Guid orderId,
-            OrderManagementStore store,
+            OrderReadStore store,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -714,7 +720,7 @@ public static class OrderManagementEndpoints
         group.MapPost("/transfer-server", async (
             Guid terminalId,
             TransferServingUserRequestV1 request,
-            OrderManagementStore store,
+            OrderReadStore store,
             ServingHandoffNoteStore handoffNotes,
             DualScreenStore dualStore,
             IAuthorizationService authorization,

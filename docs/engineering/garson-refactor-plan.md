@@ -5,8 +5,14 @@
 - Bağlam: Semih'in talimatı ("refactor için detaylı ve derin plan yap",
   garson modülü işi bitmek üzereyken yapılan performans/teknik-borç
   değerlendirmesinin doğrudan devamı).
-- Durum: **Plan — henüz uygulanmadı.** Bu doküman kod değişikliği içermiyor;
-  V1-WTR-028 ile birlikte kapatılan "en küçük hatalar" ayrı, bu ayrı.
+- Durum: **Bölüm 1 (`OrderManagementStore.cs`, 7 adım) tamamlandı —
+  V1-WTR-031..036, 2026-09-12, "Başla" talimatıyla.** `OrderManagementStore.cs`
+  silindi; yerine `OrderDtoAssembler`, `TableDraft/TableDraftService`,
+  `OrderSubmissionCoordinator`, `CashierHandoffStore`, `OrderReadStore`,
+  `ShiftSummaryStore` var. Her adım kendi build+test+E2E kanıtıyla,
+  kendi commit'iyle kapandı — regresyon yok. **Bölüm 2 (`waiter-app.js`)
+  henüz uygulanmadı**, Bölüm 3'ün kendi sıralama kararına göre (önce C#,
+  sonra JS) sırada.
 - Kapsam: yalnız bu iki dosya. Diğer teknik borç maddeleri (E2E'nin CI'a
   bağlanmaması, `IPrePolicyGate` yarışı, V1-WTR-024'ün advisory-lock
   maliyeti) bu planın dışında — ayrı görevler.

@@ -134,8 +134,7 @@ public sealed class OrderSubmissionCoordinator
     }
 
     /// <summary>
-    /// Same shape as <c>OrderManagementStore.GetOrderByIdAsync</c>/
-    /// <c>OrderReadStore.GetOrderByIdAsync</c> — kept as its own private
+    /// Same shape as <c>OrderReadStore.GetOrderByIdAsync</c> — kept as its own private
     /// copy rather than a cross-service call so this coordinator does not
     /// need to depend on the read-side store for one reload after submit.
     /// </summary>

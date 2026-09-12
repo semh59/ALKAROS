@@ -59,7 +59,7 @@ public sealed class TableDraftService
     /// <paramref name="actingUserId"/> becomes <see cref="Order.ServingUserId"/>
     /// on a brand-new order (V1-RMD-111, garson-masa design) — the server who
     /// opens a table's tab is attributed as serving it until an explicit
-    /// serving-user hand-off (<c>OrderManagementStore.TransferServingUserAsync</c>)
+    /// serving-user hand-off (<c>OrderReadStore.TransferServingUserAsync</c>)
     /// says otherwise. An existing draft keeps whoever already opened it; a
     /// second round of items from a different terminal/session does not
     /// silently reassign the check.
@@ -310,7 +310,7 @@ public sealed class TableDraftService
         await transaction.CommitAsync(cancellationToken);
 
         // V1-RMD-143: same enrichment as every other order-viewing path
-        // (OrderManagementStore.GetOrderByIdAsync, OrderDtoAssembler.
+        // (OrderReadStore.GetOrderByIdAsync, OrderDtoAssembler.
         // LoadOrderDtoAsync) — a waiter building up a table's cart sees the
         // same "kalan stok" as one reviewing it later.
         return await _assembler.WithAvailableStockAsync(OrderDtoAssembler.MapToDto(order, request.TableNumber), cancellationToken);

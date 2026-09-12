@@ -5,17 +5,27 @@ using NpgsqlTypes;
 
 namespace ALKAROS.Host.Experience.Orders;
 
-public sealed class OrderManagementStore
+/// <summary>
+/// Refactor step 6/7 (docs/engineering/garson-refactor-plan.md, 2026-09-12):
+/// the former god-class <c>OrderManagementStore</c>'s own final remainder,
+/// renamed rather than further split. <see cref="GetOrderByIdAsync"/>,
+/// <see cref="GetActiveOrderByTableIdAsync"/>,
+/// <see cref="TransferServingUserAsync"/> and
+/// <see cref="GetPendingOrdersAsync"/> share no real cohesion with each
+/// other — the plan's own Section 1.3 deliberately left this as one small
+/// grab-bag group instead of forcing a fake shared abstraction on four
+/// unrelated single-endpoint reads/writes; a real common point (e.g. a
+/// shared authorization pattern) would be the trigger to split it further,
+/// not file size alone.
+/// </summary>
+public sealed class OrderReadStore
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
     private readonly IRoleRepository _roles;
-    // Refactor step 1/7 (docs/engineering/garson-refactor-plan.md): every
-    // "Order -> OrderDto (+ available-stock enrichment)" concern now lives
-    // in one shared place instead of copied private methods here.
     private readonly OrderDtoAssembler _assembler;
 
-    public OrderManagementStore(
+    public OrderReadStore(
         NpgsqlDataSource dataSource,
         IOrderRepository repository,
         IRoleRepository roles,
