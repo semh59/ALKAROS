@@ -29,11 +29,10 @@ public sealed class QrTableReservationPolicyTests
     }
 
     [Theory]
-    [InlineData(TableState.Occupied)]
     [InlineData(TableState.Reserved)]
     [InlineData(TableState.Cleaning)]
     [InlineData(TableState.OutOfService)]
-    public async Task ANonAvailableTableIsRefusedAndNeverUpdated(TableState currentState)
+    public async Task ANonAvailableNonOccupiedTableIsRefusedAndNeverUpdated(TableState currentState)
     {
         var table = new Table(Guid.NewGuid(), "2", state: currentState);
         var repository = new FakeTableRepository(table);
@@ -43,6 +42,26 @@ public sealed class QrTableReservationPolicyTests
             () => policy.ReserveForSubmissionAsync(table.Id, FakeConnection, FakeTransaction, CancellationToken.None));
 
         Assert.Equal(currentState, exception.CurrentState);
+        Assert.False(repository.WasUpdateCalled);
+    }
+
+    /// <summary>
+    /// V12-QRO-004: a genuinely occupied table (a waiter already confirmed at
+    /// least one order there) accepts a second, independent QR submission —
+    /// this is the actual "two different guests at the same table order from
+    /// their own phone" scenario, and it must not touch the table's state at
+    /// all (no re-reservation, nothing to converge — the table is already
+    /// exactly where it should be).
+    /// </summary>
+    [Fact]
+    public async Task AnOccupiedTableAcceptsASecondSubmissionWithoutAnyStateChange()
+    {
+        var table = new Table(Guid.NewGuid(), "4", state: TableState.Occupied);
+        var repository = new FakeTableRepository(table);
+        var policy = new ALKAROS.QrOrdering.TablePolicy.QrTableReservationPolicy(repository);
+
+        await policy.ReserveForSubmissionAsync(table.Id, FakeConnection, FakeTransaction, CancellationToken.None);
+
         Assert.False(repository.WasUpdateCalled);
     }
 

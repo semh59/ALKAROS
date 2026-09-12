@@ -144,25 +144,27 @@ public sealed class QrPendingOrderStoreTests : IClassFixture<QrOrderingPendingOr
     }
 
     /// <summary>
-    /// V12-QRO-002: the actual anti-remote-abuse mechanism the task exists
-    /// for — a QR code can be photographed and reused from anywhere
-    /// (unlike NFC's physical-proximity requirement), so a submission
-    /// against a table someone else is already genuinely using must be
-    /// refused outright, not silently create a competing/confusing order.
+    /// V12-QRO-004 (Semih's decision, 2026-09-12: two separate guests should
+    /// not be forced to share one phone to order): a second, independent guest at the same
+    /// already-occupied table must be able to submit their own QR order from
+    /// their own phone — the table state is left completely untouched (no
+    /// re-reservation; there is nothing to converge, the table is already
+    /// exactly where it should be).
     /// </summary>
     [Fact]
-    public async Task ASubmissionAgainstAnOccupiedTableIsRefusedAndTheTableIsUnchanged()
+    public async Task ASubmissionAgainstAnOccupiedTableSucceedsAndTheTableIsUnchanged()
     {
         var tableId = await _database.SeedTableAsync(status: "Occupied");
         var productId = await _database.SeedProductAsync();
         var rawSession = await IssueSessionAsync(tableId);
         var (_, rowVersionBefore) = await _database.GetTableStateAsync(tableId);
+        var submissionId = Guid.NewGuid();
 
-        var act = () => _store.SubmitAsync(
+        var result = await _store.SubmitAsync(
             rawSession,
-            new QrOrderSubmissionRequest([new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1, null)], Guid.NewGuid()));
+            new QrOrderSubmissionRequest([new QrOrderSubmissionItemRequest(Guid.NewGuid(), productId, 1, null)], submissionId));
 
-        await act.Should().ThrowAsync<QrTableNotAvailableException>();
+        result.SubmissionId.Should().Be(submissionId);
         var (status, rowVersionAfter) = await _database.GetTableStateAsync(tableId);
         status.Should().Be("Occupied");
         rowVersionAfter.Should().Be(rowVersionBefore);

@@ -398,10 +398,43 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         Assert.DoesNotContain("cannot be", text);
     }
 
+    /// <summary>
+    /// V12-QRO-004 (Semih's decision, 2026-09-12: two separate guests should
+    /// not be forced to share one phone to order): a second guest at an already-occupied
+    /// table submits their own QR order from their own phone/session — this
+    /// must succeed exactly like the first guest's did, and leave the table
+    /// state untouched (it is already exactly where it should be).
+    /// </summary>
     [Fact]
-    public async Task AnOccupiedTableRefusesTheSubmission()
+    public async Task ASecondGuestAtAnOccupiedTableSucceeds()
     {
         var tableId = await _database.SeedTableAsync(status: "Occupied");
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Kola", 45m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+        var submissionId = Guid.NewGuid();
+
+        using var response = await PostOrderAsync(client, sessionToken, submissionId, product, 1);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<QrOrderSubmissionResponse>();
+        Assert.Equal(submissionId, body!.SubmissionId);
+        Assert.Equal(tableId, body.TableId);
+        Assert.Equal("Occupied", await _database.GetTableStatusAsync(tableId));
+        Assert.Equal(1, await _database.OutboxCountAsync());
+    }
+
+    /// <summary>
+    /// V12-QRO-004: unlike Occupied, a table that is Reserved (an earlier
+    /// submission is still awaiting a waiter's confirmation — no order has
+    /// been accepted yet) still refuses a second submission outright.
+    /// </summary>
+    [Fact]
+    public async Task AReservedTableStillRefusesTheSubmission()
+    {
+        var tableId = await _database.SeedTableAsync(status: "Reserved");
         var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
         var product = await _database.SeedProductAsync("Kola", 45m);
         await using var app = await StartAsync();
