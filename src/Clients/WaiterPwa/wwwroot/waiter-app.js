@@ -33,6 +33,7 @@ import {
   openPinSheet, confirmPin, resetIdleTimer, lockScreen, renderPinDots, renderPinPad, submitPin,
 } from './js/kiosk-lock.js';
 import { loadZones, loadTables, loadTableSeats, renderZones, renderTables } from './js/screens/tables.js';
+import { openPartySizeSheet, partySizeSheetHtml } from './js/sheets/party-size.js';
 
 (function () {
   'use strict';
@@ -1410,29 +1411,9 @@ import { loadZones, loadTables, loadTableSeats, renderZones, renderTables } from
   }
 
   // ══ Party size (kaç kişi) ═══════════════════════════════════════════
-  // V1-WTR-015 (garson karşılaştırma dokümanı, "Katman B" eksiği): her
-  // rakip POS kaç kişi olduğunu takip ediyordu, ALKAROS hiçbirini. Yalnız
-  // masanın İLK turu gönderilmeden önce ayarlanabilir/düzenlenebilir —
-  // sunucu yalnız o anda kalıcı olarak kaydeder (CreateTableDraftRequest
-  // .PartySize'ın kendi doc yorumu); sonrasında düzeltmek bu görevin
-  // kapsamı dışında.
-
-  function openPartySizeSheet() {
-    if (!state.table || state.order) return;
-    state.optionsContext = { partySize: state.draftPartySize || 2 };
-    openOptions('party-size', 'Kaç kişi?', `${state.table.number} masası`,
-      partySizeSheetHtml(state.optionsContext.partySize), 'Tamam', '', '');
-    el.optionsConfirm.className = 'btn btn-primary';
-  }
-
-  function partySizeSheetHtml(value) {
-    return `
-      <div class="stepper stepper-lg">
-        <button type="button" data-party-step="-" aria-label="Azalt">−</button>
-        <span class="qty" id="partySizeValue">${escapeHtml(String(value))}</span>
-        <button type="button" data-party-step="+" aria-label="Artır">+</button>
-      </div>`;
-  }
+  // openPartySizeSheet/partySizeSheetHtml moved to js/sheets/party-size.js
+  // (V1-WTR-044). confirmPartySize stays here — it calls renderBill(),
+  // which is not yet its own module.
 
   function confirmPartySize() {
     const context = state.optionsContext;
