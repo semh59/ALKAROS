@@ -55,6 +55,8 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<OrderManagementStore>();
         // Refactor step 2/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<ShiftSummaryStore>();
+        // Refactor step 3/7 (docs/engineering/garson-refactor-plan.md).
+        services.TryAddSingleton<CashierHandoffStore>();
         services.TryAddSingleton<ServingHandoffNoteStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
@@ -234,7 +236,7 @@ public static class OrderManagementEndpoints
             Guid terminalId,
             Guid orderId,
             SendCheckToCashierRequestV1 request,
-            OrderManagementStore store,
+            CashierHandoffStore store,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -252,7 +254,7 @@ public static class OrderManagementEndpoints
         // V1-ORD-006: the cashier's queue of checks that left their table.
         group.MapGet("/awaiting-payment", async (
             Guid terminalId,
-            OrderManagementStore store,
+            CashierHandoffStore store,
             DualScreenStore dualStore,
             HttpContext context,
             CancellationToken cancellationToken) =>
