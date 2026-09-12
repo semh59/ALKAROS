@@ -64,8 +64,9 @@ tutarlı.
 ## Owned surface
 
 - `plan/v1/waiter-pwa/V1-WTR-025-course-management.md` (yeni)
-- `database/migrations/V1/V1-WTR-025/105-order-items-course.up.sql`,
-  `105-order-items-course.down.sql` (yeni) — `orders.order_items.course_number`,
+- `database/migrations/V1/V1-WTR-025/105-order-items-course.up.sql`
+- `database/migrations/V1/V1-WTR-025/105-order-items-course.down.sql`
+  (ikisi de yeni) — `orders.order_items.course_number`,
   `kitchen_state` CHECK'ine `Held` eklendi.
 - Sınırlı ek:
   - database/MigrationComposition/order.json (V0-DAT-001 sahipliğinde)

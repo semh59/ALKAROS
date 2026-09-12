@@ -486,6 +486,19 @@
   }
 
   function showLogin() {
+    // Found by the WaiterPwa E2E audit (2026-09-12): the FIRST session
+    // check on a fresh load (no cookie yet) gets a 401, which api()'s own
+    // generic interceptor already answers by calling showLogin() - then
+    // init() itself, seeing the same 401 via hasValidSession(), calls
+    // showLogin() again unconditionally. Two calls means two
+    // trapBackgroundExcept() pushes for the same visible overlay, but
+    // submitLogin() only ever calls releaseTrap() once on success - the
+    // second (redundant) push was never undone, leaving #screens and
+    // everything else permanently inert (uninteractive) after every
+    // fresh login until a full page reload. Making this idempotent - a
+    // no-op once the overlay is already showing - keeps the push/pop
+    // count balanced no matter how many callers see the same 401.
+    if (!el.loginOverlay.hidden) return;
     el.loginOverlay.hidden = false;
     el.lockOverlay.hidden = true;
     state.locked = false;
@@ -1476,9 +1489,21 @@
     // (V1-ORD-006) every round on that check reused the same key, and the
     // second one came back 409 IDEMPOTENCY_KEY_REUSED — the food never
     // reached the kitchen.
+    // Found by the WaiterPwa E2E audit (2026-09-12): a bare `headers,`
+    // shorthand property here referenced no variable in scope at all - a
+    // leftover from V1-RMD-163's removal of a duplicate X-Idempotency-Key
+    // header (that removal deleted the header's VALUE but missed this one
+    // remaining reference to it). Evaluating the request options object
+    // threw `ReferenceError: headers is not defined` synchronously, before
+    // fetch() ever ran - table-draft always succeeded, but submit-draft
+    // never even attempted, silently. Every single "Gönder" click was
+    // broken: the order never reached the kitchen, with no error shown to
+    // the waiter (sendDraft()'s try/finally has no catch, so the thrown
+    // error just propagated out of the click handler unseen). No unit or
+    // HTTP test catches this class of bug - none of them execute this
+    // actual browser script; only running it in a real browser does.
     return api(apiUrl(`/orders/${draft.data.orderId}/submit-draft`), {
       method: 'POST',
-      headers,
       body: {
         orderId: draft.data.orderId,
         expectedRowVersion: draft.data.rowVersion,
