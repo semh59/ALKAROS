@@ -1,0 +1,120 @@
+// ALKAROS Waiter PWA — shared mutable state, and the DOM-element cache
+// every screen reads from (V1-WTR-038, step 2/? of
+// docs/engineering/garson-refactor-plan.md's Section 2).
+//
+// What used to be two closure-captured `const` bindings any function inside
+// the old single IIFE could silently reach into are now explicit imports —
+// `import { state, el } from './state.js'` names exactly which shared
+// mutable container a module touches, instead of a reader having to scan
+// the whole file to discover it.
+//
+// Both are still ordinary mutable objects: an ES module's exported `const`
+// binding is immutable as a BINDING, not as the object it points to —
+// `state.draft = []` from any importer still mutates the one shared
+// instance every other importer sees, exactly like the old closure did.
+// Nothing about how callers read/write `state`/`el` changes here, only
+// where the two are declared.
+
+import { deviceTerminalId } from './util.js';
+
+// V1-RMD-170: see state.draftsByTable's own comment below. Stored as an
+// array of [tableId, {number, lines}] pairs since a Map is not directly
+// JSON-serializable. Kept here (not offline-queue.js, where the rest of
+// the held-draft persistence lives once that module exists) because it is
+// only ever read once, as state's own initial value — offline-queue.js's
+// own persistDraftsByTable is the write side, and moves there in a later
+// step of this same refactor.
+function loadDraftsByTable() {
+  try {
+    const raw = localStorage.getItem('alkaros_waiter_drafts_by_table');
+    return raw ? new Map(JSON.parse(raw)) : new Map();
+  } catch {
+    // Corrupt/foreign localStorage content must never crash startup -
+    // worst case the held drafts are gone, same as before this fix.
+    return new Map();
+  }
+}
+
+// ══ State ══════════════════════════════════════════════════════════
+// Everything under `server` is a copy of a DTO. Everything under `draft` is
+// the round being composed on this device and not yet sent.
+
+export const state = {
+  terminalId: deviceTerminalId(),
+  isOnline: navigator.onLine,
+  offlineDisabled: false,
+  offlineDisabledReason: null,
+  user: null,
+  capabilities: [],
+  // V1-SET-004: per-deployment on/off for every optional Garson feature
+  // (/runtime-configuration's own garsonFeatures object) - fetched once
+  // in start(). Missing/unfetched reads as enabled (featureEnabled()'s
+  // own default) so a network hiccup or an older server never silently
+  // disables something instead of just not knowing about the setting.
+  features: {},
+
+  zones: [],
+  tables: [],
+  products: [],
+  categories: [],
+
+  activeZone: 'all',
+  activeCategory: 'all',
+  search: '',
+
+  table: null,
+  order: null,
+  draft: [],
+  // V1-WTR-015: only meaningful before the table's first round is ever
+  // sent (state.order is still null) - once a real Order exists,
+  // order.partySize is the source of truth and this is ignored. Reset
+  // whenever a different table is opened (see openTable()).
+  draftPartySize: null,
+  // V1-WTR-022: the currently-open table's floor-plan seats
+  // ({id, number, label}), empty when the table has no floor-plan layout
+  // at all - seat assignment is then simply not offered, never an error.
+  tableSeats: [],
+  // Unsent rounds for tables the waiter stepped away from, keyed by table
+  // id. A waiter checking another table mid-order is ordinary; losing what
+  // they typed is not.
+  //
+  // V1-RMD-170: found by the 2026-09-10 Garson audit — this used to be
+  // in-memory only, so a page reload (an accidental pull-to-refresh, the
+  // browser reclaiming memory, a crash) silently erased whatever a
+  // waiter had typed but not yet sent, with no warning and nothing to
+  // undo. Restored from localStorage at startup the same way
+  // offlineQueue/failedOrders already are; loadDraftsByTable/
+  // persistDraftsByTable below keep it in sync every time it changes.
+  draftsByTable: loadDraftsByTable(),
+  // Bumped whenever the current round is cleared or sent, so a stale undo
+  // cannot resurrect a line into a round that no longer exists.
+  draftEpoch: 0,
+
+  pending: [],
+  offlineQueue: JSON.parse(localStorage.getItem('alkaros_waiter_offline_queue') || '[]'),
+  failedOrders: JSON.parse(localStorage.getItem('alkaros_waiter_failed_orders') || '[]'),
+
+  sendInFlight: false,
+  optionsMode: null,
+  optionsContext: null,
+  pinArmed: localStorage.getItem('alkaros_waiter_pin_armed') === '1',
+  locked: false,
+  pinBuffer: '',
+  pushEnabled: false,
+  wakeLock: null
+};
+
+export const el = {};
+[
+  'ribbon', 'ribbonText', 'ribbonQueue', 'userName', 'userRole', 'userInitials', 'btnProfile',
+  'pendingBanner', 'pendingTitle', 'pendingSub',
+  'tablesScreen', 'menuScreen', 'zoneChips', 'tablesGrid',
+  'btnMenuBack', 'menuTableName', 'menuTableSub', 'productSearch', 'categoryChips', 'productList',
+  'cartBar', 'cartCount', 'cartTotal', 'btnOpenBill', 'btnSendFromMenu',
+  'billBackdrop', 'billSheet', 'billTitle', 'billSub', 'billBody', 'billTotal',
+  'btnAddItems', 'btnPartySize', 'btnHelpRequest', 'btnMoveTable', 'btnSendToCashier', 'billClose', 'btnSendFromBill',
+  'optionsBackdrop', 'optionsSheet', 'optionsTitle', 'optionsSub', 'optionsBody',
+  'optionsClose', 'optionsConfirm', 'optionsFootLabel', 'optionsFootValue',
+  'toasts', 'loginOverlay', 'loginForm', 'loginUsername', 'loginPassword', 'loginError', 'loginSubmit',
+  'lockOverlay', 'lockSub', 'pinDots', 'pinKeys'
+].forEach((id) => { el[id] = document.getElementById(id); });

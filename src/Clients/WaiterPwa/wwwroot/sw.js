@@ -1,16 +1,14 @@
-// ALKAROS Waiter PWA Service Worker (V1-WTR-006, V1-WTR-011, V1-WTR-037)
-// v4: waiter-app.js started splitting into native ES modules under js/ —
-// each module the entry point imports must be precached explicitly (unlike
-// a classic script, the browser only fetches what index.html's own <script>
-// tag names; everything waiter-app.js imports is a separate request the
-// old v3 list never listed).
-const CACHE_NAME = 'alkaros-waiter-v4';
+// ALKAROS Waiter PWA Service Worker (V1-WTR-006, V1-WTR-011, V1-WTR-037,
+// V1-WTR-038)
+// v5: another waiter-app.js module split off — js/state.js.
+const CACHE_NAME = 'alkaros-waiter-v5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './waiter-app.css',
   './waiter-app.js',
   './js/util.js',
+  './js/state.js',
   './manifest.json',
   './vendor/signalr.min.js',
   './brand/alkaros-logo-on-dark.png',
