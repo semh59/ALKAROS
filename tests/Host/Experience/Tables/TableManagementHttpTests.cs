@@ -247,6 +247,86 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
         Assert.InRange(read1.CurrentOrderOpenedAt!.Value, before.AddSeconds(-1), after.AddSeconds(1));
     }
 
+    /// <summary>
+    /// V1-TBL-009: <see cref="TableDto.CurrentOrderOpenedAt"/>'s wire name is
+    /// deliberately "occupiedSince", not the default camelCase policy's
+    /// "currentOrderOpenedAt" — found while adding StatusChangedAt below,
+    /// this had silently never matched what PosTerminal's own
+    /// TableRecord.occupiedSince field actually reads since V1-WTR-019
+    /// shipped (round-tripping through the SAME C# type would pass
+    /// regardless of the wire name, which is why this checks the raw JSON
+    /// text rather than a deserialized TableDto).
+    /// </summary>
+    [Fact]
+    public async Task TheCurrentOrderOpenedAtFieldIsWrittenAsOccupiedSinceOnTheWire()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var table = await CreateTableAsync(client, terminalId, cookie, "T-WIRE");
+        await _database.SeedCurrentOrderWithItemsAsync(table.TableId, (60.00m, "Active"));
+
+        using var readRequest = Request(HttpMethod.Get, $"{Prefix(terminalId)}/tables/{table.TableId:D}", cookie);
+        using var read = await client.SendAsync(readRequest);
+        var raw = await read.Content.ReadAsStringAsync();
+        using var json = JsonDocument.Parse(raw);
+
+        Assert.True(json.RootElement.TryGetProperty("occupiedSince", out _), $"Expected an \"occupiedSince\" field in: {raw}");
+        Assert.False(json.RootElement.TryGetProperty("currentOrderOpenedAt", out _), $"Did not expect a \"currentOrderOpenedAt\" field in: {raw}");
+    }
+
+    /// <summary>
+    /// V1-TBL-009 (Semih, 2026-09-12: a practical way to flag a table that
+    /// might still need wiping down, without adding a manual step to an
+    /// already busy staff's workload): statusChangedAt moves every time a
+    /// table's status genuinely changes, so a client can show a passive
+    /// "just vacated" hint on a freshly-Available table.
+    /// </summary>
+    [Fact]
+    public async Task StatusChangedAtMovesForwardEveryTimeTheTableStatusActuallyChanges()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var created = await CreateTableAsync(client, terminalId, cookie, "T-CLEAN");
+        Assert.NotEqual(default, created.StatusChangedAt);
+
+        var beforeOccupy = DateTimeOffset.UtcNow;
+        await Task.Delay(TimeSpan.FromMilliseconds(50));
+        using (var occupyRequest = Request(HttpMethod.Post, $"{Prefix(terminalId)}/tables/{created.TableId:D}/status", cookie))
+        {
+            occupyRequest.Content = JsonContent.Create(new ChangeTableStatusRequest(created.RowVersion, "Occupied"));
+            using var occupy = await client.SendAsync(occupyRequest);
+            Assert.Equal(HttpStatusCode.OK, occupy.StatusCode);
+        }
+
+        TableDto afterOccupy;
+        using (var readRequest = Request(HttpMethod.Get, $"{Prefix(terminalId)}/tables/{created.TableId:D}", cookie))
+        using (var read = await client.SendAsync(readRequest))
+        {
+            afterOccupy = (await read.Content.ReadFromJsonAsync<TableDto>())!;
+        }
+        Assert.True(afterOccupy.StatusChangedAt > beforeOccupy, "Expected status_changed_at to move forward after SetOccupied.");
+
+        var beforeFree = DateTimeOffset.UtcNow;
+        await Task.Delay(TimeSpan.FromMilliseconds(50));
+        using (var freeRequest = Request(HttpMethod.Post, $"{Prefix(terminalId)}/tables/{created.TableId:D}/status", cookie))
+        {
+            freeRequest.Content = JsonContent.Create(new ChangeTableStatusRequest(afterOccupy.RowVersion, "Available"));
+            using var free = await client.SendAsync(freeRequest);
+            Assert.Equal(HttpStatusCode.OK, free.StatusCode);
+        }
+
+        using var finalReadRequest = Request(HttpMethod.Get, $"{Prefix(terminalId)}/tables/{created.TableId:D}", cookie);
+        using var finalRead = await client.SendAsync(finalReadRequest);
+        var afterFree = (await finalRead.Content.ReadFromJsonAsync<TableDto>())!;
+        Assert.True(afterFree.StatusChangedAt > beforeFree, "Expected status_changed_at to move forward again after SetAvailable.");
+    }
+
     [Fact]
     public async Task ReservationTransferMergeAndUnmergeExecuteThroughRealPostgresqlServices()
     {

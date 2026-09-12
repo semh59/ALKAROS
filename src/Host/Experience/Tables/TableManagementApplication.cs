@@ -127,10 +127,10 @@ public static class TableManagementApplication
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var tables = await store.GetAllAsync(zoneId, cancellationToken);
             var dtos = new List<TableDto>(tables.Count);
-            foreach (var (table, currentOrderTotal, currentOrderOpenedAt) in tables)
+            foreach (var (table, currentOrderTotal, currentOrderOpenedAt, statusChangedAt) in tables)
             {
                 var activeReservation = await ActiveReservationOrNullAsync(table, reservations, cancellationToken);
-                dtos.Add(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt));
+                dtos.Add(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt));
             }
             return Results.Ok(dtos);
         }).RequireRateLimiting("terminal-read");
@@ -145,10 +145,10 @@ public static class TableManagementApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
-            var (table, currentOrderTotal, currentOrderOpenedAt) = await store.GetAsync(tableId, cancellationToken)
+            var (table, currentOrderTotal, currentOrderOpenedAt, statusChangedAt) = await store.GetAsync(tableId, cancellationToken)
                 ?? throw new TableManagementNotFoundException($"Table {tableId} was not found.");
             var activeReservation = await ActiveReservationOrNullAsync(table, reservations, cancellationToken);
-            return Results.Ok(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt));
+            return Results.Ok(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt));
         }).RequireRateLimiting("terminal-read");
 
         group.MapPost("/tables", async (
@@ -161,7 +161,7 @@ public static class TableManagementApplication
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             var created = await store.CreateAsync(request, cancellationToken);
-            var dto = TableContractMapper.ToDto(created, principal.Permissions);
+            var dto = await ToDtoWithStatusChangedAtAsync(store, created, principal.Permissions, activeReservation: null, cancellationToken);
             return Results.Created($"{Prefix(terminalId)}/tables/{created.Id:D}", dto);
         });
 
@@ -176,7 +176,7 @@ public static class TableManagementApplication
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             var updated = await store.UpdateAsync(tableId, request, cancellationToken);
-            return Results.Ok(TableContractMapper.ToDto(updated, principal.Permissions));
+            return Results.Ok(await ToDtoWithStatusChangedAtAsync(store, updated, principal.Permissions, activeReservation: null, cancellationToken));
         });
 
         group.MapPost("/tables/{tableId:guid}/status", async (
@@ -192,7 +192,7 @@ public static class TableManagementApplication
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesStatus, cancellationToken);
             var updated = await store.ChangeStatusAsync(tableId, request, principal.UserId, cancellationToken);
             var activeReservation = await ActiveReservationOrNullAsync(updated, reservations, cancellationToken);
-            return Results.Ok(TableContractMapper.ToDto(updated, principal.Permissions, activeReservation));
+            return Results.Ok(await ToDtoWithStatusChangedAtAsync(store, updated, principal.Permissions, activeReservation, cancellationToken));
         });
 
         group.MapGet("/tables/{tableId:guid}/current-pointer", async (
@@ -401,6 +401,27 @@ public static class TableManagementApplication
         => table.State == TableState.Reserved
             ? reservations.GetActiveByTableIdAsync(table.Id, cancellationToken)
             : Task.FromResult<TableReservationRecord?>(null);
+
+    // V1-TBL-009: Create/Update/ChangeStatus all hand back a bare Table from
+    // their own store method (no CurrentOrderTotal/CurrentOrderOpenedAt/
+    // StatusChangedAt — those only exist on TableManagementStore.GetAsync's
+    // read-model tuple, V1-RMD-135/V1-WTR-019/this task respectively). A
+    // status change is exactly the moment StatusChangedAt needs to be
+    // right, so this re-reads the row once more rather than serving a
+    // default(DateTimeOffset) in the mutation's own response — found by
+    // this task's own HTTP test, which failed loudly on exactly that.
+    private static async Task<TableDto> ToDtoWithStatusChangedAtAsync(
+        TableManagementStore store,
+        Table table,
+        IReadOnlySet<string> permissions,
+        TableReservationRecord? activeReservation,
+        CancellationToken cancellationToken)
+    {
+        var read = await store.GetAsync(table.Id, cancellationToken)
+            ?? throw new TableManagementNotFoundException($"Table {table.Id} was not found after its own mutation.");
+        return TableContractMapper.ToDto(
+            read.Table, permissions, activeReservation, read.CurrentOrderTotal, read.CurrentOrderOpenedAt, read.StatusChangedAt);
+    }
 }
 
 internal interface ITableManagementSessionAuthorizer

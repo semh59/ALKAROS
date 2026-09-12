@@ -131,11 +131,19 @@ public sealed class PostgresTableRepository : ITableRepository
         // looking at any more. Only Available clears it: Cleaning is the step
         // between sending a check to the cashier and re-seating, and the
         // pointer is already NULL by then.
+        //
+        // V1-TBL-009: status_changed_at moves every time this fires, not
+        // only when the target is Available — the column answers "how long
+        // has this table been in its CURRENT state", which is generically
+        // useful (a stale Cleaning/OutOfService table is just as worth
+        // surfacing as a freshly-vacated one), even though today's own
+        // client only reads it for the just-vacated case.
         await using var command = _dataSource.CreateCommand(
             $"""
             UPDATE {Table}
             SET current_status = @target,
                 current_order_id = CASE WHEN @target = 'Available' THEN NULL ELSE current_order_id END,
+                status_changed_at = NOW(),
                 row_version = row_version + 1
             WHERE table_id = @id AND row_version = @expected_row_version
             RETURNING row_version;

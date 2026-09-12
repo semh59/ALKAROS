@@ -32,6 +32,10 @@ export interface TableRecord {
   rowVersion: number;
   allowedCommands: readonly string[];
   occupiedSince?: string | null;
+  // V1-TBL-009: when current_status last changed — used to show a passive
+  // "just vacated" hint on an Available table for a few minutes, without
+  // any extra staff action beyond the existing status-change click.
+  statusChangedAt: string;
   // Found by an independent audit (2026-09-07): missing here, so
   // ClaimReservation/CancelReservation could never carry a request body —
   // isClientExecutableAction disabled both unconditionally. Non-null only

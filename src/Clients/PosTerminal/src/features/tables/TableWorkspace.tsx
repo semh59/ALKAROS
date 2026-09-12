@@ -58,6 +58,24 @@ function occupancyTone(occupiedSince?: string | null): "ok" | "warn" | "crit" {
   return "ok";
 }
 
+// V1-TBL-009 (Semih, 2026-09-12: a practical fix that adds zero clicks to an
+// already busy staff's workload): a table that just went back to Available
+// might still need wiping down — nobody is required to mark that, so the
+// only signal available is "how recently did it change status at all". A
+// passive visual hint, not a blocking state: the table is fully bookable the
+// whole time this shows, it just fades on its own once the window passes.
+// 10 minutes is a visual default (same kind of judgement call as
+// OCCUPANCY_WARNING_MINUTES above), not a business policy — long enough for
+// a busser to notice and swing by, short enough that it never lingers on a
+// table nobody actually needs to check.
+const RECENTLY_VACATED_MINUTES = 10;
+
+function isRecentlyVacated(table: TableRecord): boolean {
+  if (table.status !== "Available") return false;
+  const minutesSinceChange = occupiedMinutes(table.statusChangedAt);
+  return minutesSinceChange !== null && minutesSinceChange < RECENTLY_VACATED_MINUTES;
+}
+
 function errorMessage(reason: unknown) {
   // V1-RMD-114: only ApiError's message is guaranteed to come from the
   // backend's own Turkish-mapped exception filter — a raw network failure
@@ -349,7 +367,7 @@ function TableCard({ table, selected, onSelect, onAction }: { table: TableRecord
   const command = table.allowedCommands.find((value): value is TableAction => value in tableActionLabels && isClientExecutableAction(value as TableAction, table));
   return <article className={`table-card table-card--${table.status.toLowerCase()} ${selected ? "is-selected" : ""}`}>
     <button type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${tableStatusLabels[table.status]}`} aria-pressed={selected} onClick={onSelect}>
-      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-status">{tableStatusLabels[table.status]}</span></span>
+      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-card__status-group"><span className="table-status">{tableStatusLabels[table.status]}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</span></span>
       <span className="table-card__capacity">◉ {table.capacity} kişilik</span>
       <span className="table-card__context">{table.currentOrderId ? `Sipariş #${table.currentOrderId.slice(0, 8)}` : table.currentBillId ? `Hesap #${table.currentBillId.slice(0, 8)}` : "Sipariş yok"}</span>
     </button>
@@ -360,7 +378,7 @@ function TableCard({ table, selected, onSelect, onAction }: { table: TableRecord
 function TableDetails({ table, zoneName, onAction }: { table: TableRecord; zoneName?: string; onAction: (action: TableAction) => void }) {
   const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels);
   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
-    <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h3>{table.tableNumber}</h3><span>{zoneName ?? "Bölge atanmamış"}</span></div><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{tableStatusLabels[table.status]}</span></div>
+    <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h3>{table.tableNumber}</h3><span>{zoneName ?? "Bölge atanmamış"}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{tableStatusLabels[table.status]}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
     <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Satır sürümü</span><strong>v{table.rowVersion}</strong></div><div><span>Geçen süre</span><strong className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
     <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Sipariş</strong><code>{table.currentOrderId}</code></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Hesap</strong><code>{table.currentBillId}</code></p>}</div>
     {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command, table)} title={isClientExecutableAction(command, table) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}

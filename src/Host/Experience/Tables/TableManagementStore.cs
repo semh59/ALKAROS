@@ -54,13 +54,14 @@ public sealed class TableManagementStore
         (SELECT o.created_at FROM orders.orders o WHERE o.order_id = t.current_order_id)
         """;
 
-    public async Task<(Table Table, decimal CurrentOrderTotal, DateTimeOffset? CurrentOrderOpenedAt)?> GetAsync(
+    public async Task<(Table Table, decimal CurrentOrderTotal, DateTimeOffset? CurrentOrderOpenedAt, DateTimeOffset StatusChangedAt)?> GetAsync(
         Guid tableId, CancellationToken cancellationToken = default)
     {
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT t.table_id, t.table_number, t.zone_id, t.capacity, t.active, t.current_status,
-                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}, {CurrentOrderOpenedAtSql}
+                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}, {CurrentOrderOpenedAtSql},
+                   t.status_changed_at
             FROM table_mgmt.tables t
             WHERE t.table_id = @table_id;
             """);
@@ -68,18 +69,20 @@ public sealed class TableManagementStore
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken))
             return null;
-        return (Read(reader), reader.GetDecimal(9), reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10));
+        return (Read(reader), reader.GetDecimal(9), reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10),
+            reader.GetFieldValue<DateTimeOffset>(11));
     }
 
-    public async Task<IReadOnlyList<(Table Table, decimal CurrentOrderTotal, DateTimeOffset? CurrentOrderOpenedAt)>> GetAllAsync(
+    public async Task<IReadOnlyList<(Table Table, decimal CurrentOrderTotal, DateTimeOffset? CurrentOrderOpenedAt, DateTimeOffset StatusChangedAt)>> GetAllAsync(
         Guid? zoneId,
         CancellationToken cancellationToken = default)
     {
-        var tables = new List<(Table, decimal, DateTimeOffset?)>();
+        var tables = new List<(Table, decimal, DateTimeOffset?, DateTimeOffset)>();
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT t.table_id, t.table_number, t.zone_id, t.capacity, t.active, t.current_status,
-                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}, {CurrentOrderOpenedAtSql}
+                   t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}, {CurrentOrderOpenedAtSql},
+                   t.status_changed_at
             FROM table_mgmt.tables t
             WHERE @zone_id IS NULL OR t.zone_id = @zone_id
             ORDER BY t.table_number, t.table_id;
@@ -87,7 +90,8 @@ public sealed class TableManagementStore
         command.Parameters.Add("zone_id", NpgsqlDbType.Uuid).Value = zoneId ?? (object)DBNull.Value;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
-            tables.Add((Read(reader), reader.GetDecimal(9), reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10)));
+            tables.Add((Read(reader), reader.GetDecimal(9), reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10),
+                reader.GetFieldValue<DateTimeOffset>(11)));
         return tables;
     }
 

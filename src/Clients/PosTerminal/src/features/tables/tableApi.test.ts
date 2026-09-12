@@ -29,6 +29,7 @@ describe("table management client", () => {
       status: "Occupied" as const, currentOrderId: "order-1", currentBillId: null, rowVersion: 9,
       allowedCommands: ["Transfer", "Merge"],
       activeReservationId: null, reservationRowVersion: null,
+      statusChangedAt: new Date(Date.now() - 60 * 60_000).toISOString(),
     };
 
     await client.execute({ table, action: "SetAvailable" });
@@ -71,6 +72,7 @@ describe("table management client", () => {
       status: "Reserved" as const, currentOrderId: null, currentBillId: null, rowVersion: 5,
       allowedCommands: ["ClaimReservation", "CancelReservation"],
       activeReservationId: "res-01", reservationRowVersion: 1,
+      statusChangedAt: new Date(Date.now() - 60 * 60_000).toISOString(),
     };
 
     await client.execute({ table: reservedTable, action: "ClaimReservation" });
@@ -88,6 +90,7 @@ describe("table management client", () => {
       status: "Reserved" as const, currentOrderId: null, currentBillId: null, rowVersion: 5,
       allowedCommands: ["ClaimReservation", "CancelReservation"],
       activeReservationId: null, reservationRowVersion: null,
+      statusChangedAt: new Date(Date.now() - 60 * 60_000).toISOString(),
     };
 
     await expect(client.execute({ table, action: "ClaimReservation" })).rejects.toMatchObject({ code: "RESERVATION_MISSING" } satisfies Partial<TableManagementApiError>);

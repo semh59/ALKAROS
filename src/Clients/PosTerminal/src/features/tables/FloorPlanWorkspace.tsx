@@ -12,6 +12,7 @@ import {
   type SaveFloorPlanResult,
   type TableAction,
   type TableRecord,
+  type TableStatus,
   tableActionLabels,
 } from "./models";
 import "./floorPlan.css";
@@ -172,6 +173,19 @@ function elapsedLabel(occupiedSince?: string | null) {
   if (!Number.isFinite(elapsedMinutes)) return "—";
   if (elapsedMinutes < 60) return `${elapsedMinutes} dk`;
   return `${Math.floor(elapsedMinutes / 60)} sa ${elapsedMinutes % 60} dk`;
+}
+
+// V1-TBL-009: same passive "just vacated" hint as TableWorkspace.tsx's own
+// isRecentlyVacated — a local duplicate rather than a shared import,
+// matching this file's existing elapsedLabel duplication above.
+const RECENTLY_VACATED_MINUTES = 10;
+
+function isRecentlyVacated(table: { status: TableStatus; statusChangedAt: string }): boolean {
+  if (table.status !== "Available") return false;
+  const started = Date.parse(table.statusChangedAt);
+  if (!Number.isFinite(started)) return false;
+  const minutesSinceChange = Math.max(0, Math.floor((Date.now() - started) / 60_000));
+  return minutesSinceChange < RECENTLY_VACATED_MINUTES;
 }
 
 export function FloorPlanWorkspace({
@@ -368,6 +382,8 @@ export function FloorPlanWorkspace({
                   {table.mergeGroupId && <span className="floor-plan-table__badge">{table.isMergePrimary ? "Birleşim lideri" : "Birleşik"}</span>}
                   {table.activeReservationId && <span className="floor-plan-table__badge">Rezerve</span>}
                   {authoritative?.occupiedSince && table.status === "Occupied" && <span className="floor-plan-table__elapsed">{elapsedLabel(authoritative.occupiedSince)}</span>}
+                  {/* V1-TBL-009: same passive "just vacated" hint as TableWorkspace's own table card. */}
+                  {table.status === "Available" && authoritative && isRecentlyVacated(authoritative) && <span className="floor-plan-table__badge floor-plan-table__badge--info">Az önce boşaldı</span>}
                 </button>
                 {table.seats.map((seat) => <span
                   key={seat.seatId}

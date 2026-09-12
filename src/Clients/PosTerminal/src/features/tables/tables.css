@@ -137,10 +137,17 @@
 .table-card__quick-action:focus-visible { outline: 3px solid var(--ds-color-focus); outline-offset: 3px; }
 .table-card__top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
 .table-card__top strong { font-size: 1.35rem; letter-spacing: -.035em; }
+.table-card__status-group { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; }
 .table-status { width: fit-content; border-radius: 999px; padding: .25rem .5rem; color: var(--ds-color-success); background: var(--ds-color-success-soft); font-size: .7rem; font-weight: 900; }
 .table-card--occupied .table-status { color: var(--ds-color-accent-hover); background: #fff0eb; }
 .table-card--reserved .table-status { color: var(--ds-color-warning); background: var(--ds-color-warning-soft); }
 .table-card--outofservice .table-status { color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+/* V1-TBL-009: a passive, informational hint — never the accent/warning/
+   danger hues those already mean something else (occupied dwell-time
+   heat, out-of-service). Fades away on its own once the window in
+   TableWorkspace.tsx's RECENTLY_VACATED_MINUTES passes; nothing to
+   dismiss. */
+.table-card__recently-vacated { width: fit-content; border-radius: 999px; padding: .25rem .5rem; color: var(--ds-color-info); background: var(--ds-color-info-soft); font-size: .7rem; font-weight: 900; white-space: nowrap; }
 .table-card__capacity, .table-card__context { color: var(--table-muted); font-size: .8rem; }
 .table-card__context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .table-card__footer { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem; margin-top: auto; color: var(--table-muted); font-size: .75rem; }
@@ -158,6 +165,7 @@
 
 .table-details { position: sticky; top: var(--ds-space-4); display: grid; gap: var(--ds-space-4); border: 1px solid var(--table-line); border-radius: var(--ds-radius-md); padding: var(--ds-space-5); background: var(--ds-color-surface); box-shadow: var(--ds-shadow-raised); }
 .table-details__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ds-space-3); padding-bottom: var(--ds-space-3); border-bottom: 1px solid var(--table-line); }
+.table-details__status-group { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; }
 .table-details h3 { margin: .2rem 0 .25rem; font-size: 2rem; letter-spacing: -.05em; }
 .table-details__header > div > span:last-child { color: var(--table-muted); font-size: .82rem; }
 .table-details__status { border-radius: 999px; padding: .35rem .6rem; color: var(--ds-color-success); background: var(--ds-color-success-soft); font-size: .75rem; font-weight: 900; }

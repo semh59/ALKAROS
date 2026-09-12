@@ -28,6 +28,10 @@ const tables: TableRecord[] = [
     allowedCommands: ["Update", "SetOccupied", "Reserve"],
     activeReservationId: null,
     reservationRowVersion: null,
+    // V1-TBL-009: well outside RECENTLY_VACATED_MINUTES so unrelated
+    // assertions in this file don't unexpectedly see the "just vacated"
+    // badge — tests that need it set their own recent value.
+    statusChangedAt: new Date(Date.now() - 60 * 60_000).toISOString(),
   },
   {
     tableId: "table-10",
@@ -45,6 +49,7 @@ const tables: TableRecord[] = [
     allowedCommands: ["SetAvailable", "Transfer", "Merge"],
     activeReservationId: null,
     reservationRowVersion: null,
+    statusChangedAt: new Date(Date.now() - 30 * 60_000).toISOString(),
   },
 ];
 
@@ -243,5 +248,31 @@ describe("table workspace", () => {
     await render(<TableWorkspace {...baseProps({ tables: fresh })} />);
     expect(document.querySelector(".table-card__elapsed--warn")).toBeNull();
     expect(document.querySelector(".table-card__elapsed--crit")).toBeNull();
+  });
+
+  // V1-TBL-009: the passive "just vacated" hint — no extra staff click, it
+  // only depends on how recently the table's own status last changed.
+  it("shows a passive hint on an Available table that changed status a moment ago", async () => {
+    const justVacated = tables.map((table) => table.status === "Available"
+      ? { ...table, statusChangedAt: new Date(Date.now() - 2 * 60_000).toISOString() }
+      : table);
+    await render(<TableWorkspace {...baseProps({ tables: justVacated })} />);
+    expect(document.querySelector(".table-card__recently-vacated")?.textContent).toBe("Az önce boşaldı");
+  });
+
+  it("hides the hint once the recently-vacated window has passed", async () => {
+    const longVacant = tables.map((table) => table.status === "Available"
+      ? { ...table, statusChangedAt: new Date(Date.now() - 30 * 60_000).toISOString() }
+      : table);
+    await render(<TableWorkspace {...baseProps({ tables: longVacant })} />);
+    expect(document.querySelector(".table-card__recently-vacated")).toBeNull();
+  });
+
+  it("never shows the hint on an Occupied table regardless of statusChangedAt", async () => {
+    const recentlyOccupied = tables.map((table) => table.status === "Occupied"
+      ? { ...table, statusChangedAt: new Date(Date.now() - 1 * 60_000).toISOString() }
+      : table);
+    await render(<TableWorkspace {...baseProps({ tables: recentlyOccupied })} />);
+    expect(document.querySelector(".table-card__recently-vacated")).toBeNull();
   });
 });

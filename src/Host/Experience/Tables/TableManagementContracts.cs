@@ -133,8 +133,24 @@ public sealed record TableDto(
     decimal CurrentOrderTotal = 0m,
     // V1-WTR-019: when the table's current order was created (orders.orders.
     // created_at) — the table-ageing indicator idea's own timestamp.
-    // Null when there is no current order.
-    DateTimeOffset? CurrentOrderOpenedAt = null);
+    // Null when there is no current order. Found while adding
+    // StatusChangedAt below (V1-TBL-009): this field's wire name never
+    // matched what PosTerminal's TableRecord.occupiedSince actually reads
+    // (the default camelCase policy produces "currentOrderOpenedAt", not
+    // "occupiedSince") — every Occupied table's elapsed-time badge in
+    // PosTerminal (TableWorkspace.tsx, FloorPlanWorkspace.tsx) has been
+    // silently rendering its "—" fallback in production since V1-WTR-019
+    // shipped. Fixed here by renaming the WIRE property, not the client —
+    // "occupiedSince" is the more honest name for what a client consumes
+    // anyway.
+    [property: JsonPropertyName("occupiedSince")] DateTimeOffset? CurrentOrderOpenedAt = null,
+    // V1-TBL-009: when the table's current_status last changed — lets a
+    // client show a passive "just vacated" hint on an Available table
+    // without any staff action beyond the existing status-change click
+    // (Semih: a manual "mark as cleaning" step would add workload, not
+    // reduce it). Always present (not nullable) since every row has had a
+    // real value since the column's own migration default.
+    DateTimeOffset StatusChangedAt = default);
 
 public sealed record CreateTableReservationRequest(
     Guid TableId,
@@ -244,7 +260,8 @@ internal static class TableContractMapper
         IReadOnlySet<string> permissions,
         TableReservationRecord? activeReservation = null,
         decimal currentOrderTotal = 0m,
-        DateTimeOffset? currentOrderOpenedAt = null) => new(
+        DateTimeOffset? currentOrderOpenedAt = null,
+        DateTimeOffset statusChangedAt = default) => new(
         table.Id,
         table.TableNumber,
         table.ZoneId,
@@ -258,7 +275,8 @@ internal static class TableContractMapper
         activeReservation?.Id,
         activeReservation?.RowVersion,
         currentOrderTotal,
-        currentOrderOpenedAt);
+        currentOrderOpenedAt,
+        statusChangedAt);
 
     public static IReadOnlyList<string> AllowedCommands(Table table, IReadOnlySet<string> permissions)
     {

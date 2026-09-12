@@ -79,6 +79,9 @@
 .floor-plan-table__number { font-size: clamp(.68rem, 1.15vw, 1rem); font-weight: 950; letter-spacing: -.03em; }
 .floor-plan-table__state, .floor-plan-table__context, .floor-plan-table__elapsed { overflow: hidden; font-size: clamp(.48rem, .72vw, .64rem); text-overflow: ellipsis; white-space: nowrap; }
 .floor-plan-table__badge { width: fit-content; justify-self: center; border-radius: 999px; padding: .08rem .32rem; color: #fff; background: #253d48; font-size: .48rem; font-weight: 900; }
+/* V1-TBL-009: the passive "just vacated" hint — informational, not the
+   generic dark badge tone above which reads as a warning/status marker. */
+.floor-plan-table__badge--info { color: var(--ds-color-info); background: var(--ds-color-info-soft); }
 .floor-plan-seat {
   position: absolute;
   z-index: 2;
