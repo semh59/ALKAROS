@@ -36,16 +36,24 @@ public sealed class SubmitOrderHandler
         CancellationToken cancellationToken = default)
     {
         // Found by the WaiterPwa E2E load test (2026-09-12): several tables
-        // ordering the SAME popular product at once can make two concurrent
-        // submissions deadlock against each other purely from Postgres's
-        // own INSERT ... ON CONFLICT DO UPDATE locking under heavy
-        // contention on one stock_balances row (a documented Postgres
-        // corner case, not a lock-ordering bug here - every attempt touches
-        // its own order's stock items in the same stable order already).
-        // The losing side's whole transaction rolls back with nothing
+        // ordering the SAME popular product(s) at once could make two
+        // concurrent submissions deadlock against each other. The actual
+        // root cause turned out to be a genuine lock-ordering bug, not a
+        // one-off Postgres corner case: OrderStockConsumptionService used
+        // to lock each (stock item, location) row only as it reached that
+        // item in `order.Items`' own created_at order, which differs from
+        // one order to the next - two concurrent orders touching the same
+        // two stock items in opposite relative order could form a classic
+        // AB-BA cycle. That is now closed at the root by locking every row
+        // an order's consumption will touch up front, in one fixed,
+        // globally-consistent order (see OrderStockConsumptionService.
+        // ConsumeItemsAsync) - verified by disabling this retry entirely
+        // and running the load test 8/8 clean before restoring maxAttempts.
+        // The retry below stays as defense-in-depth for any other
+        // transient serialization failure, not as the primary fix: the
+        // losing side's whole transaction rolls back with nothing
         // persisted, so retrying the entire attempt on a fresh connection
-        // is safe - never a partial redo - and near-certain to succeed
-        // once Postgres has broken the cycle by aborting one side.
+        // is safe - never a partial redo.
         const int maxAttempts = 5;
         for (var attempt = 1; ; attempt++)
         {

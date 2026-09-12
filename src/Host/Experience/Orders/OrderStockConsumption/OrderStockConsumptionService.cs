@@ -101,6 +101,31 @@ public sealed class OrderStockConsumptionService
         ArgumentNullException.ThrowIfNull(items);
         ArgumentException.ThrowIfNullOrWhiteSpace(trigger);
 
+        // V1-WTR-027 follow-up (2026-09-12, root-causing the load test's
+        // remaining deadlock after the per-row advisory lock alone did not
+        // close it): that lock only serializes writers to ONE (stock item,
+        // location) row. It does nothing to stop two concurrent orders that
+        // both need locks on the SAME TWO rows — a product and its
+        // "ekstra peynir" modifier, say — from deadlocking against each
+        // other if they reach for those two rows in opposite order. Which
+        // order this loop reaches them in depends on `items`' own
+        // created_at ordering, which differs order-to-order, so two
+        // concurrent submissions touching the same popular product+modifier
+        // pair can form exactly that AB-BA cycle even with the row lock in
+        // place (advisory locks join Postgres's own deadlock detection the
+        // same as row locks do). The fix: resolve every (stock item,
+        // location) pair this call will touch up front, and lock them all
+        // in one fixed, globally-consistent order — never the order this
+        // particular order happened to list its items in.
+        var requiredLocks = await CollectRequiredLocksAsync(items, cancellationToken).ConfigureAwait(false);
+        foreach (var (stockItemId, stockLocationId) in requiredLocks
+            .OrderBy(pair => pair.StockItemId)
+            .ThenBy(pair => pair.StockLocationId))
+        {
+            await _balances.AcquireOnHandLockAsync(stockItemId, stockLocationId, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         foreach (var item in items)
         {
             // A waiter can void an item (ItemExceptionHandler.VoidItemAsync)
@@ -151,6 +176,52 @@ public sealed class OrderStockConsumptionService
 
             await ConsumeModifiersAsync(order, item, trigger, actorId, connection, transaction, cancellationToken);
         }
+    }
+
+    /// <summary>
+    /// Resolves every (stock item, location) pair <see cref="ConsumeItemsAsync"/>
+    /// is about to write to — products and modifiers alike — purely so the
+    /// caller can lock them all up front in a fixed order. Deliberately
+    /// permissive about the same failures the main loop already turns into
+    /// a proper domain exception (no mapping, no stock item, no default
+    /// location): this pass just skips what it cannot resolve and leaves
+    /// raising the correctly-typed exception to the real consumption loop
+    /// below, so the two passes can never disagree about what "invalid"
+    /// means.
+    /// </summary>
+    private async Task<HashSet<(Guid StockItemId, Guid StockLocationId)>> CollectRequiredLocksAsync(
+        IReadOnlyCollection<OrderItem> items,
+        CancellationToken cancellationToken)
+    {
+        var locks = new HashSet<(Guid StockItemId, Guid StockLocationId)>();
+
+        foreach (var item in items)
+        {
+            if (item.Status == OrderItemState.Cancelled)
+                continue;
+
+            var productMappings = await _mappings.GetByProductIdAsync(item.ProductId, cancellationToken).ConfigureAwait(false);
+            foreach (var mapping in productMappings)
+            {
+                var stockItem = await _stockItems.GetByIdAsync(mapping.StockItemId, cancellationToken).ConfigureAwait(false);
+                if (stockItem?.DefaultLocationId is { } locationId)
+                    locks.Add((mapping.StockItemId, locationId));
+            }
+
+            if (item.Modifiers.Count == 0)
+                continue;
+
+            var modifierIds = item.Modifiers.Select(m => m.ModifierId).Distinct().ToArray();
+            var modifierMappings = await _modifierMappings.GetByModifierIdsAsync(modifierIds, cancellationToken).ConfigureAwait(false);
+            foreach (var mapping in modifierMappings)
+            {
+                var stockItem = await _stockItems.GetByIdAsync(mapping.StockItemId, cancellationToken).ConfigureAwait(false);
+                if (stockItem?.DefaultLocationId is { } locationId)
+                    locks.Add((mapping.StockItemId, locationId));
+            }
+        }
+
+        return locks;
     }
 
     /// <summary>

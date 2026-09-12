@@ -501,6 +501,9 @@ public sealed class WasteRecordingDomainTests
                 .ContinueWith(t => (StockBalance?)t.Result, ct);
         }
 
+        public Task AcquireOnHandLockAsync(Guid stockItemId, Guid stockLocationId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+            => Task.CompletedTask;
+
         public Task SetExactBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, CancellationToken ct = default)
         {
             if (!_balances.TryGetValue((stockItemId, stockLocationId), out var bal))

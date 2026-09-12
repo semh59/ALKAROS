@@ -179,9 +179,51 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(transaction);
 
+        await AcquireStockRowLockAsync(connection, transaction, stockItemId, stockLocationId, ct);
         await using var cmd = new NpgsqlCommand(ApplyOnHandDeltaSql, connection, transaction);
         BindApplyOnHandDeltaParameters(cmd, stockItemId, stockLocationId, onHandDelta);
         return await ReadAppliedBalanceAsync(cmd, ct);
+    }
+
+    // Found while root-causing V1-WTR-027's stock-consumption deadlock: the
+    // retry there treats the symptom (a real Postgres corner case where
+    // concurrent `INSERT ... ON CONFLICT DO UPDATE` writers to the SAME
+    // already-existing row can deadlock under heavy contention). This
+    // closes the actual root cause the same way V1-WTR-024 already closed
+    // two other check-then-write races in this codebase: a
+    // transaction-scoped advisory lock keyed by the exact row
+    // (stock_item_id, stock_location_id) serializes concurrent writers to
+    // THAT row only — every other stock item/location proceeds fully
+    // concurrently, and the lock releases automatically on commit or
+    // rollback. With writers to the same row now serialized instead of
+    // racing, the deadlock this method's callers used to hit cannot occur
+    // in the first place; SubmitOrderHandler's retry (V1-WTR-027) stays as
+    // defense-in-depth for any other transient serialization failure, not
+    // as the only thing standing between a popular dish and a lost order.
+    private static async Task AcquireStockRowLockAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        Guid stockItemId,
+        Guid stockLocationId,
+        CancellationToken ct)
+    {
+        await using var lockCommand = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+        lockCommand.Parameters.AddWithValue($"{stockItemId:N}:{stockLocationId:N}");
+        await lockCommand.ExecuteNonQueryAsync(ct);
+    }
+
+    public Task AcquireOnHandLockAsync(
+        Guid stockItemId,
+        Guid stockLocationId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        return AcquireStockRowLockAsync(connection, transaction, stockItemId, stockLocationId, ct);
     }
 
     private const string ApplyOnHandDeltaSql = @"
@@ -218,6 +260,7 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(transaction);
 
+        await AcquireStockRowLockAsync(connection, transaction, stockItemId, stockLocationId, ct);
         await using var cmd = new NpgsqlCommand(TryApplyGuardedOnHandDeltaSql, connection, transaction);
         BindApplyOnHandDeltaParameters(cmd, stockItemId, stockLocationId, onHandDelta);
 
