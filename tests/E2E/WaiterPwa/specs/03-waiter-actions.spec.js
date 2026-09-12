@@ -11,10 +11,19 @@ test.describe.configure({ mode: 'serial' });
 
 test.describe('Garson eylemleri (masa devri, garson devri, yardım, vardiya)', () => {
   let sharedPage;
+  let sharedContext;
+
+  // Found while root-causing the full suite's 05-load-and-timing flake:
+  // this context was opened here but never closed - see 02-ordering.spec.js's
+  // own note on the same pattern (that file leaked the first one, this one
+  // leaked the second).
+  test.afterAll(async () => {
+    await sharedContext?.close();
+  });
 
   test('1. giriş yapılır ve dolu masa açılır', async ({ browser }) => {
-    const context = await browser.newContext();
-    sharedPage = await context.newPage();
+    sharedContext = await browser.newContext();
+    sharedPage = await sharedContext.newPage();
     await login(sharedPage, seed);
     await sharedPage.locator(`[data-table="${seed.tableId}"]`).click();
     await expect(sharedPage.locator('#billSheet')).toHaveClass(/is-open/);

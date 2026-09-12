@@ -89,6 +89,15 @@ export default async function globalSetup() {
         // Production and every plain-HTTP request is refused with
         // HTTPS_REQUIRED, found the first time this harness actually ran.
         ASPNETCORE_ENVIRONMENT: 'Development',
+        // Root-caused a real full-suite-only flake (2026-09-12): the login
+        // endpoint's rate limiter partitions by remote IP alone, 10/minute
+        // - every Playwright test in one run shares that single bucket
+        // (all from 127.0.0.1), so specs 01-04's own logins had already
+        // spent most of the window before 05's load test fired 6 more
+        // concurrent ones, tipping 2 into a real 429 (confirmed via
+        // E2E_HOST_LOG). A generous test-only override; production's own
+        // default (10/minute) is untouched when this variable is unset.
+        ALKAROS_LOGIN_RATE_LIMIT_PERMITS: '1000',
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     },

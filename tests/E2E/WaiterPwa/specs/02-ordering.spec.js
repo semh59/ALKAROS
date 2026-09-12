@@ -18,10 +18,23 @@ test.describe('Sipariş akışı (kurs, koltuk, ikram, iptal)', () => {
   });
 
   let sharedPage;
+  let sharedContext;
+
+  // Found while root-causing why the full suite's own load-test spec
+  // (05-load-and-timing) sometimes hit a client-side timeout only when run
+  // after this file, never in isolation: this context was opened here but
+  // never closed - every run of this suite leaked one live Chromium
+  // context (and 03-waiter-actions.spec.js leaked a second) for the rest
+  // of the worker process's lifetime, accumulating real resource pressure
+  // by the time 05's own 6-concurrent-context load test ran later in the
+  // same run.
+  test.afterAll(async () => {
+    await sharedContext?.close();
+  });
 
   test('1. masa açılır ve kişi sayısı ilk turdan önce ayarlanır', async ({ browser }) => {
-    const context = await browser.newContext();
-    sharedPage = await context.newPage();
+    sharedContext = await browser.newContext();
+    sharedPage = await sharedContext.newPage();
     await login(sharedPage, seed);
     await openSeedTable(sharedPage, seed);
 

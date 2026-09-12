@@ -209,7 +209,7 @@ public static partial class DualScreenApplication
                     cancellationToken);
             };
             rateLimiter.AddPolicy("login", context =>
-                FixedWindow(ClientPartition(context), 10));
+                FixedWindow(ClientPartition(context), LoginRateLimitPermits()));
             rateLimiter.AddPolicy("pairing-create", context =>
                 FixedWindow($"{ClientPartition(context)}:pairing-create", 10));
             rateLimiter.AddPolicy("pairing-approve", context =>
@@ -568,6 +568,26 @@ public static partial class DualScreenApplication
 
     private static string ClientPartition(HttpContext context)
         => context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+    // Root-caused while chasing a WaiterPwa E2E flake (2026-09-12): the
+    // "login" policy partitions purely by remote IP (ClientPartition), 10
+    // requests per rolling minute. Every Playwright test in a single suite
+    // run connects from the SAME loopback IP, so the whole ~60-second run
+    // shares ONE bucket - specs 01-04's own logins had already spent most
+    // of the window's 10 permits by the time 05's load test fired 6 MORE
+    // concurrent logins, tipping 2 of them into a real 429 (confirmed via
+    // E2E_HOST_LOG, not guessed: "auth/login - 429" in the Host's own
+    // access log at the exact failure). This is real production-appropriate
+    // behaviour (anti-brute-force) that the E2E suite happened to trip over
+    // by generating more traffic from one IP than any single real client
+    // legitimately would in a minute - so the fix is a test-only override,
+    // not a weaker default. ALKAROS_LOGIN_RATE_LIMIT_PERMITS lets the E2E
+    // Host process opt into a generous limit; unset (every real deployment)
+    // keeps today's 10/minute exactly as-is.
+    private static int LoginRateLimitPermits()
+        => int.TryParse(Environment.GetEnvironmentVariable("ALKAROS_LOGIN_RATE_LIMIT_PERMITS"), out var configured) && configured > 0
+            ? configured
+            : 10;
 
     private static string RoutePartition(HttpContext context, string routeName, string operation)
     {
