@@ -52,6 +52,10 @@
     <None Include="../../../../../database/migrations/V1/V1-RMD-152/095-modifier-stock-mappings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V11/V11-INV-003/062-stock-reversals.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-RMD-125/087-inventory-stock-balances-non-negative.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- V1-SET-004: a void-sent under bills.void may escalate, and that
+         chain now runs GarsonFeatureGatedEscalationResolver, which checks
+         GarsonFeature.PersonalCompBudget before delegating. -->
+    <None Include="../../../../../database/migrations/V1/V1-SET-001/026-typed-settings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

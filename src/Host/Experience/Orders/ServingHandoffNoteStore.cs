@@ -1,3 +1,5 @@
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -24,21 +26,26 @@ public sealed class ServingHandoffNoteStore
     private const int MaxNoteLength = 200;
 
     private readonly NpgsqlDataSource _dataSource;
+    private readonly ISettingsService _settings;
 
-    public ServingHandoffNoteStore(NpgsqlDataSource dataSource)
+    public ServingHandoffNoteStore(NpgsqlDataSource dataSource, ISettingsService settings)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
     /// <summary>
     /// Validates and stores a note for a hand-off. A null or whitespace-only
     /// note is a no-op (the note is optional) - the caller does not need to
-    /// branch on whether one was given.
+    /// branch on whether one was given. V1-SET-004: this deployment turning
+    /// the whole feature off is the same as the caller having sent no note.
     /// </summary>
     public async Task LeaveAsync(
         Guid fromUserId, Guid toUserId, string? note, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(note))
+            return;
+        if (!await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.ShiftHandoffNotes, cancellationToken))
             return;
         var trimmed = note.Trim();
         if (trimmed.Length > MaxNoteLength)
@@ -82,6 +89,9 @@ public sealed class ServingHandoffNoteStore
     public async Task<ServingHandoffNote?> PopPendingAsync(
         Guid toUserId, CancellationToken cancellationToken = default)
     {
+        if (!await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.ShiftHandoffNotes, cancellationToken))
+            return null;
+
         await using var cmd = _dataSource.CreateCommand(
             """
             UPDATE notifications.serving_handoff_notes n

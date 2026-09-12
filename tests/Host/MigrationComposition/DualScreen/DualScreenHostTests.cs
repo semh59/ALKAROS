@@ -357,10 +357,16 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, configuredResponse.StatusCode);
         using var document = JsonDocument.Parse(await configuredResponse.Content.ReadAsStringAsync());
         var properties = document.RootElement.EnumerateObject().ToDictionary(p => p.Name, p => p.Value);
-        Assert.Equal(2, properties.Count);
+        // V1-SET-004: garsonFeatures joined kitchenStationId/reservationStationEnabled.
+        Assert.Equal(3, properties.Count);
         Assert.Equal(KitchenStationId, properties["kitchenStationId"].GetString());
         // V1-SET-003: off by default — a fresh test database never turned it on.
         Assert.False(properties["reservationStationEnabled"].GetBoolean());
+        // V1-SET-004: every Garson feature is on by default — a fresh test
+        // database never turned any of them off.
+        var garsonFeatures = properties["garsonFeatures"].EnumerateObject().ToDictionary(p => p.Name, p => p.Value);
+        Assert.Equal(9, garsonFeatures.Count);
+        Assert.All(garsonFeatures.Values, value => Assert.True(value.GetBoolean()));
 
         var settings = app.Services.GetRequiredService<ISettingsService>();
         var record = await settings.GetRecordAsync(ReservationStationSetting.Key);

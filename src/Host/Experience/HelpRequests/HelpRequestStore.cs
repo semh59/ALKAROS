@@ -1,3 +1,5 @@
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -22,16 +24,21 @@ public sealed class HelpRequestStore
     private static readonly TimeSpan Cooldown = TimeSpan.FromMinutes(2);
 
     private readonly NpgsqlDataSource _dataSource;
+    private readonly ISettingsService _settings;
 
-    public HelpRequestStore(NpgsqlDataSource dataSource)
+    public HelpRequestStore(NpgsqlDataSource dataSource, ISettingsService settings)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
     /// <summary>
     /// Raises a help request. Throws <see cref="HelpRequestCooldownActiveException"/>
     /// if this table's cooldown has not elapsed yet;
-    /// <see cref="KeyNotFoundException"/> if the table does not exist.
+    /// <see cref="KeyNotFoundException"/> if the table does not exist;
+    /// <see cref="GarsonFeatureDisabledException"/> (V1-SET-004) if this
+    /// deployment turned the whole feature off — unlike the note/course/seat
+    /// fields, there is no "just ignore it" reading of a help call.
     /// </summary>
     public async Task<HelpRequestRecord> RaiseAsync(
         Guid tableId,
@@ -39,6 +46,9 @@ public sealed class HelpRequestStore
         Guid requestedByUserId,
         CancellationToken cancellationToken = default)
     {
+        if (!await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.HelpRequest, cancellationToken))
+            throw new GarsonFeatureDisabledException(GarsonFeature.HelpRequest);
+
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 

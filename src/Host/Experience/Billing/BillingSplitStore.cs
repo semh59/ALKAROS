@@ -2,6 +2,8 @@ using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using Npgsql;
 
 namespace ALKAROS.Host.Experience.Billing;
@@ -13,19 +15,22 @@ public sealed class BillingSplitStore
     private readonly IOrderRepository? _orders;
     private readonly NpgsqlDataSource? _dataSource;
     private readonly IBillAdjustmentRepository? _adjustments;
+    private readonly ISettingsService? _settings;
 
     public BillingSplitStore(
         IBillRepository bills,
         ISplitDesignRepository splitDesigns,
         IOrderRepository? orders = null,
         NpgsqlDataSource? dataSource = null,
-        IBillAdjustmentRepository? adjustments = null)
+        IBillAdjustmentRepository? adjustments = null,
+        ISettingsService? settings = null)
     {
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
         _splitDesigns = splitDesigns ?? throw new ArgumentNullException(nameof(splitDesigns));
         _orders = orders;
         _dataSource = dataSource;
         _adjustments = adjustments;
+        _settings = settings;
     }
 
     /// <summary>
@@ -160,6 +165,13 @@ public sealed class BillingSplitStore
         ArgumentNullException.ThrowIfNull(request);
         if (request.Amount <= 0)
             throw new ArgumentException("Tip amount must be positive.", nameof(request));
+        // V1-SET-004: this deployment turned the voluntary-tip line off.
+        // Refused outright, not silently zeroed — unlike the tolerant
+        // optional-field handling elsewhere, an explicit tip call when the
+        // feature is off can only mean a client still showing the old UI.
+        if (_settings is not null
+            && !await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.VoluntaryTip, cancellationToken))
+            throw new GarsonFeatureDisabledException(GarsonFeature.VoluntaryTip);
 
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");

@@ -19,6 +19,7 @@ using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Tables;
 using ALKAROS.Host.Outbox;
+using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.ReservationStation;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
@@ -265,9 +266,29 @@ public static partial class DualScreenApplication
             // unaffected either way (the cashier's own floor-plan screen
             // already gates its "Rezervasyon al" action on it regardless).
             var reservationStationEnabled = await ReservationStationSetting.IsEnabledAsync(settings, cancellationToken);
+
+            // V1-SET-004: every optional Garson feature's per-deployment
+            // on/off, in one round trip — WaiterPwa fetches this once at
+            // login and hides the corresponding UI for whatever is off,
+            // the same way PosTerminal already does for
+            // reservationStationEnabled above.
+            var toggles = await GarsonFeatureToggles.GetAllAsync(settings, cancellationToken);
+            var garsonFeatures = new
+            {
+                courseManagement = toggles[GarsonFeature.CourseManagement],
+                seatAssignment = toggles[GarsonFeature.SeatAssignment],
+                personalCompBudget = toggles[GarsonFeature.PersonalCompBudget],
+                shiftHandoffNotes = toggles[GarsonFeature.ShiftHandoffNotes],
+                helpRequest = toggles[GarsonFeature.HelpRequest],
+                guestLiveBill = toggles[GarsonFeature.GuestLiveBill],
+                voluntaryTip = toggles[GarsonFeature.VoluntaryTip],
+                shiftSummary = toggles[GarsonFeature.ShiftSummary],
+                partySize = toggles[GarsonFeature.PartySize],
+            };
+
             return string.IsNullOrWhiteSpace(customerDisplayUrl)
-                ? Results.Ok(new { kitchenStationId, reservationStationEnabled })
-                : Results.Ok(new { kitchenStationId, customerDisplayUrl, reservationStationEnabled });
+                ? Results.Ok(new { kitchenStationId, reservationStationEnabled, garsonFeatures })
+                : Results.Ok(new { kitchenStationId, customerDisplayUrl, reservationStationEnabled, garsonFeatures });
         }).RequireRateLimiting("terminal-read");
 
         app.MapPost("/api/v1/auth/logout", async (

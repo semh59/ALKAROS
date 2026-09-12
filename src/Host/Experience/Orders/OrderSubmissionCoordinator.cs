@@ -2,6 +2,8 @@ using ALKAROS.Host.DualScreen;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using Npgsql;
 
 namespace ALKAROS.Host.Experience.Orders;
@@ -21,18 +23,21 @@ public sealed class OrderSubmissionCoordinator
     private readonly SubmitOrderHandler _submitHandler;
     private readonly IKitchenTicketRepository _kitchenTickets;
     private readonly OrderDtoAssembler _assembler;
+    private readonly ISettingsService _settings;
 
     public OrderSubmissionCoordinator(
         NpgsqlDataSource dataSource,
         IOrderRepository repository,
         SubmitOrderHandler submitHandler,
         IKitchenTicketRepository kitchenTickets,
-        OrderDtoAssembler assembler)
+        OrderDtoAssembler assembler,
+        ISettingsService settings)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _submitHandler = submitHandler ?? throw new ArgumentNullException(nameof(submitHandler));
         _kitchenTickets = kitchenTickets ?? throw new ArgumentNullException(nameof(kitchenTickets));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _assembler = assembler ?? throw new ArgumentNullException(nameof(assembler));
     }
 
@@ -81,6 +86,14 @@ public sealed class OrderSubmissionCoordinator
     public async Task<OrderDto> FireCourseAsync(
         Guid orderId, int courseNumber, Guid actorId, CancellationToken cancellationToken = default)
     {
+        // V1-SET-004: unlike the tolerant "just ignore the field" handling
+        // in TableDraftService, an explicit fire-course call when the whole
+        // feature is off for this deployment is refused outright — there is
+        // no course to have been assigned in the first place, so this can
+        // only mean a client that still thinks the feature is on.
+        if (!await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.CourseManagement, cancellationToken))
+            throw new GarsonFeatureDisabledException(GarsonFeature.CourseManagement);
+
         var order = await _repository.GetByIdAsync(orderId, cancellationToken)
             ?? throw new InvalidOperationException($"Order '{orderId}' was not found.");
 

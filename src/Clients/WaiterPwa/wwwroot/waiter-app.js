@@ -160,6 +160,12 @@
     offlineDisabledReason: null,
     user: null,
     capabilities: [],
+    // V1-SET-004: per-deployment on/off for every optional Garson feature
+    // (/runtime-configuration's own garsonFeatures object) - fetched once
+    // in start(). Missing/unfetched reads as enabled (featureEnabled()'s
+    // own default) so a network hiccup or an older server never silently
+    // disables something instead of just not knowing about the setting.
+    features: {},
 
     zones: [],
     tables: [],
@@ -623,6 +629,21 @@
   }
 
   // ══ Loading ════════════════════════════════════════════════════════
+
+  // V1-SET-004: fetched once per session start - a deployment's feature
+  // set does not change mid-shift, so nothing re-fetches this later.
+  async function loadFeatures() {
+    const result = await api(apiUrl('/runtime-configuration'));
+    state.features = result.ok && result.data && result.data.garsonFeatures ? result.data.garsonFeatures : {};
+  }
+
+  // Missing (fetch failed, older server, key not yet in the response)
+  // reads as enabled - the same fail-open default GarsonFeatureToggles
+  // itself uses server-side, so a network hiccup never silently hides a
+  // feature that is actually still on.
+  function featureEnabled(name) {
+    return state.features[name] !== false;
+  }
 
   async function loadZones() {
     const result = await api(apiUrl('/table-management/zones'));
@@ -1147,8 +1168,14 @@
     // sent — once a real Order exists, order.partySize is the source of
     // truth and this task deliberately does not offer a way to correct it
     // (see the task file's Out of scope).
-    el.btnPartySize.hidden = !!state.order;
+    // V1-SET-004: also hidden outright when this deployment has party
+    // size turned off.
+    el.btnPartySize.hidden = !!state.order || !featureEnabled('partySize');
     el.btnPartySize.setAttribute('aria-label', state.draftPartySize ? `${state.draftPartySize} kişi` : 'Kişi sayısı');
+
+    // V1-SET-004: hidden outright when this deployment has help requests
+    // turned off — same treatment as the party-size button above.
+    el.btnHelpRequest.hidden = !featureEnabled('helpRequest');
 
     // Transfer is offered only when the server's own AllowedCommands says so.
     el.btnMoveTable.hidden = state.table.allowedCommands.indexOf('Transfer') < 0;
@@ -1349,7 +1376,8 @@
 
     // V1-WTR-022: only offered when the table actually has a floor-plan
     // seat layout - a table with none simply never shows this optgroup.
-    if (state.tableSeats.length > 0) {
+    // V1-SET-004: AND only when this deployment has seat assignment on.
+    if (state.tableSeats.length > 0 && featureEnabled('seatAssignment')) {
       html += `
         <div class="optgroup">
           <div class="optgroup-head"><span class="optgroup-name">Koltuk</span>
@@ -1368,18 +1396,24 @@
     // Choosing a course number here just tags the line; whether it goes
     // straight to the kitchen or is held with the rest of its course is
     // decided server-side when the whole draft is fired (Order.FireRound).
-    html += `
-      <div class="optgroup">
-        <div class="optgroup-head"><span class="optgroup-name">Kurs</span>
-          <span class="optgroup-rule">opsiyonel</span></div>
-        <div class="qty-row">
-          <button type="button" class="qty-quick" data-course=""
-                  aria-pressed="${!context.courseNumber}">Kurssuz</button>
-          ${[1, 2, 3, 4, 5].map((course) => `
-            <button type="button" class="qty-quick" data-course="${course}"
-                    aria-pressed="${context.courseNumber === course}">${course}. kurs</button>`).join('')}
-        </div>
-      </div>`;
+    // V1-SET-004: this whole optgroup only when this deployment has
+    // course management on — the server would silently drop the field
+    // anyway (TableDraftService), but showing a control that quietly does
+    // nothing is worse than not showing it at all.
+    if (featureEnabled('courseManagement')) {
+      html += `
+        <div class="optgroup">
+          <div class="optgroup-head"><span class="optgroup-name">Kurs</span>
+            <span class="optgroup-rule">opsiyonel</span></div>
+          <div class="qty-row">
+            <button type="button" class="qty-quick" data-course=""
+                    aria-pressed="${!context.courseNumber}">Kurssuz</button>
+            ${[1, 2, 3, 4, 5].map((course) => `
+              <button type="button" class="qty-quick" data-course="${course}"
+                      aria-pressed="${context.courseNumber === course}">${course}. kurs</button>`).join('')}
+          </div>
+        </div>`;
+    }
 
     for (const group of context.product.modifierGroups) {
       const single = group.selectionType === 'Single';
@@ -2263,10 +2297,13 @@
     // V1-WTR-013: optional context for the receiving waiter — "table 5 is
     // waiting on dessert, table 8 complained" — shown to them once, the
     // first time their client pops it (see popHandoffNoteIfAny below).
-    const noteField = `
+    // V1-SET-004: omitted outright when this deployment has hand-off notes
+    // turned off — the server already silently drops it either way, but a
+    // hidden field never even looks offered.
+    const noteField = featureEnabled('shiftHandoffNotes') ? `
       <label class="hint" for="handoffNoteInput">Devir notu (isteğe bağlı)</label>
       <input class="note" type="text" id="handoffNoteInput" maxlength="200"
-             placeholder="Örn. 5 nolu masa tatlı bekliyor">`;
+             placeholder="Örn. 5 nolu masa tatlı bekliyor">` : '';
 
     state.optionsContext = { targetId: null };
     openOptions('transfer-server', 'Masaları devret',
@@ -2532,10 +2569,11 @@
             <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-move"/></svg></span>
             <span class="opt-name">Açık masaları devret</span>
           </button>
+          ${featureEnabled('shiftSummary') ? `
           <button type="button" class="opt" data-profile="shift-summary">
             <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-seats"/></svg></span>
             <span class="opt-name">Vardiya özetim</span>
-          </button>
+          </button>` : ''}
           <button type="button" class="opt" data-profile="signout">
             <span class="opt-box is-round"></span>
             <span class="opt-name">Oturumu kapat</span>
@@ -3212,6 +3250,7 @@
 
   async function start() {
     renderRibbon();
+    await loadFeatures();
     await loadZones();
     await loadCatalog();
     await loadTables();

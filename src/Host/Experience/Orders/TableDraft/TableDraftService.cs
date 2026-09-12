@@ -1,5 +1,7 @@
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using Npgsql;
 using NpgsqlTypes;
 using System.Data;
@@ -44,15 +46,18 @@ public sealed class TableDraftService
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
     private readonly OrderDtoAssembler _assembler;
+    private readonly ISettingsService _settings;
 
     public TableDraftService(
         NpgsqlDataSource dataSource,
         IOrderRepository repository,
-        OrderDtoAssembler assembler)
+        OrderDtoAssembler assembler,
+        ISettingsService settings)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _assembler = assembler ?? throw new ArgumentNullException(nameof(assembler));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
     /// <summary>
@@ -70,6 +75,16 @@ public sealed class TableDraftService
         ValidateRequestBounds(request);
 
         var submissionId = request.Id is { } id && id != Guid.Empty ? id : (Guid?)null;
+
+        // V1-SET-004: per-deployment on/off for these three optional
+        // fields. Deliberately tolerant, not a rejection — a client built
+        // before a feature was turned off (or that simply still shows its
+        // old UI for a beat after a toggle changes) just has that one
+        // field silently ignored, the same way an unknown/stale seat id
+        // already was; never a reason to fail the whole round.
+        var courseManagementEnabled = await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.CourseManagement, cancellationToken);
+        var seatAssignmentEnabled = await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.SeatAssignment, cancellationToken);
+        var partySizeEnabled = await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.PartySize, cancellationToken);
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
@@ -152,8 +167,8 @@ public sealed class TableDraftService
                 notes: i.SpecialInstructions,
                 createdAt: now,
                 updatedAt: now,
-                seatId: i.SeatId is { } seatId && validSeatIds.Contains(seatId) ? seatId : null,
-                courseNumber: i.CourseNumber
+                seatId: seatAssignmentEnabled && i.SeatId is { } seatId && validSeatIds.Contains(seatId) ? seatId : null,
+                courseNumber: courseManagementEnabled ? i.CourseNumber : null
             ));
         }
 
@@ -177,7 +192,7 @@ public sealed class TableDraftService
                 // V1-WTR-015: only ever applied here, the FIRST round for
                 // this table — CreateTableDraftRequest's own doc comment
                 // explains why resending it on a later round is harmless.
-                partySize: request.PartySize
+                partySize: partySizeEnabled ? request.PartySize : null
             );
 
             try

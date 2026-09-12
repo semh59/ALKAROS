@@ -9,6 +9,8 @@ using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using System.Data.Common;
 
 namespace ALKAROS.Host.Experience.Billing;
 
@@ -59,6 +62,14 @@ public static class BillingSplitApplication
         services.TryAddSingleton<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
         services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
         services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
+        // V1-SET-004: ApplyTipAsync checks GarsonFeature.VoluntaryTip — same
+        // DbDataSource/ISettingValidator gap every other settings-backed
+        // experience registration already had to close on its own.
+        services.TryAddSingleton<DbDataSource>(serviceProvider =>
+            serviceProvider.GetRequiredService<NpgsqlDataSource>());
+        services.TryAddSingleton<ISettingValidator, SettingValidator>();
+        services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
+        services.TryAddSingleton<ISettingsService, SettingsService>();
         services.TryAddSingleton<BillingSplitStore>();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
         services.TryAddTransient<BillingSplitExceptionFilter>();
@@ -428,6 +439,7 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         SplitDesignUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda bölme tasarımı değiştirilemez."),
         BillDiscountUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim uygulanamaz."),
         IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
+        GarsonFeatureDisabledException => (403, "FEATURE_DISABLED", "Bu özellik bu işletme için kapatılmış."),
         ArgumentException or InvalidOperationException or BadHttpRequestException => (400, "VALIDATION_FAILED", "Hesap bölme isteği doğrulanamadı."),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.SerializationFailure =>
             (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),

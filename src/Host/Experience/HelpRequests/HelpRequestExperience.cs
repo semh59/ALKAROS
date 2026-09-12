@@ -1,10 +1,14 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Npgsql;
+using System.Data.Common;
 
 namespace ALKAROS.Host.Experience.HelpRequests;
 
@@ -28,6 +32,15 @@ public static class HelpRequestExperience
         // WaiterNotificationsExperience's own note on this).
         services.AddSignalR(options => options.EnableDetailedErrors = false);
         services.TryAddSingleton<DualScreenStore>();
+        // V1-SET-004: HelpRequestStore now checks GarsonFeature.HelpRequest —
+        // same DbDataSource/ISettingValidator gap KitchenOperationsEndpoints
+        // and OrderManagementEndpoints already had to close for their own
+        // settings-backed features.
+        services.TryAddSingleton<DbDataSource>(serviceProvider =>
+            serviceProvider.GetRequiredService<NpgsqlDataSource>());
+        services.TryAddSingleton<ISettingValidator, SettingValidator>();
+        services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
+        services.TryAddSingleton<ISettingsService, SettingsService>();
         services.TryAddSingleton<HelpRequestStore>();
         return services;
     }
@@ -84,6 +97,12 @@ public static class HelpRequestExperience
             catch (KeyNotFoundException)
             {
                 return Results.NotFound(new { error = new { code = "NOT_FOUND", message = "Masa bulunamadı." } });
+            }
+            catch (GarsonFeatureDisabledException)
+            {
+                return Results.Json(
+                    new { error = new { code = "FEATURE_DISABLED", message = "Bu özellik bu işletme için kapatılmış." } },
+                    statusCode: StatusCodes.Status403Forbidden);
             }
 
             await hub.Clients.All.SendAsync(

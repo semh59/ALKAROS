@@ -1,3 +1,5 @@
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using Npgsql;
 
 namespace ALKAROS.Host.Experience.Orders;
@@ -13,10 +15,12 @@ namespace ALKAROS.Host.Experience.Orders;
 public sealed class ShiftSummaryStore
 {
     private readonly NpgsqlDataSource _dataSource;
+    private readonly ISettingsService _settings;
 
-    public ShiftSummaryStore(NpgsqlDataSource dataSource)
+    public ShiftSummaryStore(NpgsqlDataSource dataSource, ISettingsService settings)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
     // V1-WTR-021: garson-karsilastirma idea #9, a self-view-only shift
@@ -29,6 +33,13 @@ public sealed class ShiftSummaryStore
     public async Task<MyShiftSummaryV1> GetMyShiftSummaryAsync(
         Guid waiterUserId, CancellationToken cancellationToken = default)
     {
+        // V1-SET-004: this deployment turned the self-view shift summary
+        // off — refused outright rather than returning zeros, so a client
+        // still showing the old menu item gets a clear "not offered here"
+        // instead of a misleadingly empty summary.
+        if (!await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.ShiftSummary, cancellationToken))
+            throw new GarsonFeatureDisabledException(GarsonFeature.ShiftSummary);
+
         var startOfUtcDay = new DateTimeOffset(DateTimeOffset.UtcNow.UtcDateTime.Date, TimeSpan.Zero);
 
         decimal salesTotal;

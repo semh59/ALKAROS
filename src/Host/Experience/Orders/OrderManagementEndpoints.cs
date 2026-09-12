@@ -10,6 +10,7 @@ using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
@@ -30,6 +31,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using System.Data.Common;
 
 namespace ALKAROS.Host.Experience.Orders;
 
@@ -94,7 +96,17 @@ public static class OrderManagementEndpoints
         // ever resolves bills.comp requests from the waiter role within
         // PersonalCompBudgetPolicy's caps; anything else falls through to
         // it unchanged (returns null).
-        services.AddSingleton<IEscalationResolver, PersonalCompBudgetEscalationResolver>();
+        // V1-SET-004: PersonalCompBudgetEscalationResolver lives in the
+        // Identity module, which never depends on Settings (Settings is
+        // consumed only at this Host layer, same boundary every other
+        // Experience registration respects) — so the toggle check wraps it
+        // here instead of reaching into that module.
+        services.AddSingleton<IEscalationResolver>(serviceProvider =>
+            new GarsonFeatureGatedEscalationResolver(
+                new PersonalCompBudgetEscalationResolver(
+                    serviceProvider.GetRequiredService<IAuthorizationGrantRepository>()),
+                serviceProvider.GetRequiredService<ISettingsService>(),
+                GarsonFeature.PersonalCompBudget));
         services.TryAddSingleton<IBehaviouralRateSource, PostgresBehaviouralRateSource>();
         services.TryAddSingleton<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
         services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
@@ -139,6 +151,13 @@ public static class OrderManagementEndpoints
         // unconfirmed QR order auto-rejects (reusing the exact same
         // PendingOrderConfirmationStore.RejectAsync above) once it exceeds
         // the configured timeout.
+        // V1-SET-004: PostgresSettingsRepository takes a DbDataSource, not
+        // the NpgsqlDataSource this standalone composition registers —
+        // same gap KitchenOperationsEndpoints.AddKitchenOperationsExperience
+        // already had to close for its own settings-backed features.
+        services.TryAddSingleton<DbDataSource>(serviceProvider =>
+            serviceProvider.GetRequiredService<NpgsqlDataSource>());
+        services.TryAddSingleton<ISettingValidator, SettingValidator>();
         services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
         services.TryAddSingleton<ISettingsService, SettingsService>();
         services.AddHostedService<QrOrderExpiryHostedService>();
@@ -908,6 +927,9 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         // than having the previous party's unpaid check silently orphaned.
         TableCheckAlreadyOpenException => (409, "TABLE_CHECK_ALREADY_OPEN",
             "Bu masada kapanmamış bir hesap var. Önce hesabı kasaya gönderin."),
+        // V1-SET-004: the whole feature is turned off for this deployment.
+        GarsonFeatureDisabledException => (403, "FEATURE_DISABLED",
+            "Bu özellik bu işletme için kapatılmış."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         // V1-RMD-162: found by the 2026-09-10 Garson audit — every
         // PostgresException used to fall straight through to the generic
@@ -928,4 +950,35 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };
+}
+
+/// <summary>
+/// V1-SET-004: makes any <see cref="IEscalationResolver"/> behave as if it
+/// were never registered when <paramref name="feature"/> is off for this
+/// deployment — lives at the Host layer specifically so the wrapped
+/// resolver's own module (here, Identity) never has to depend on Settings,
+/// the same boundary every Experience registration already respects.
+/// </summary>
+public sealed class GarsonFeatureGatedEscalationResolver : IEscalationResolver
+{
+    private readonly IEscalationResolver _inner;
+    private readonly ISettingsService _settings;
+    private readonly GarsonFeature _feature;
+
+    public GarsonFeatureGatedEscalationResolver(
+        IEscalationResolver inner, ISettingsService settings, GarsonFeature feature)
+    {
+        _inner = inner ?? throw new ArgumentNullException(nameof(inner));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+        _feature = feature;
+    }
+
+    public async Task<PolicyPath?> TryResolveAsync(
+        GrantRequest request, DateTimeOffset instant, CancellationToken cancellationToken = default)
+    {
+        if (!await GarsonFeatureToggles.IsEnabledAsync(_settings, _feature, cancellationToken))
+            return null;
+
+        return await _inner.TryResolveAsync(request, instant, cancellationToken);
+    }
 }

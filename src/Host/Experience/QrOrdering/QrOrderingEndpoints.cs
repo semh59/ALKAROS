@@ -4,6 +4,8 @@ using ALKAROS.QrOrdering.PendingOrders;
 using ALKAROS.QrOrdering.RelaySecurity;
 using ALKAROS.QrOrdering.TablePolicy;
 using ALKAROS.QrOrdering.TokenLifecycle;
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Tables.TableLifecycle;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using System.Data.Common;
 
 namespace ALKAROS.Host.Experience.QrOrdering;
 
@@ -66,6 +69,14 @@ public static class QrOrderingEndpoints
         services.TryAddSingleton<QrTableReservationPolicy>();
         services.TryAddSingleton<QrPendingOrderStore>();
         services.TryAddTransient<QrOrderingExceptionFilter>();
+        // V1-SET-004: /bill checks GarsonFeature.GuestLiveBill — same
+        // DbDataSource/ISettingValidator gap every other settings-backed
+        // experience registration already had to close on its own.
+        services.TryAddSingleton<DbDataSource>(serviceProvider =>
+            serviceProvider.GetRequiredService<NpgsqlDataSource>());
+        services.TryAddSingleton<ISettingValidator, SettingValidator>();
+        services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
+        services.TryAddSingleton<ISettingsService, SettingsService>();
         return services;
     }
 
@@ -140,12 +151,19 @@ public static class QrOrderingEndpoints
             HttpContext context,
             CustomerSessionService sessionService,
             DualScreenStore store,
+            ISettingsService settings,
             CancellationToken cancellationToken) =>
         {
             var rawSession = context.Request.Headers[SessionHeaderName].ToString();
             var validation = await sessionService.ValidateAsync(rawSession, cancellationToken);
             if (!validation.IsValid)
                 throw new QrCustomerSessionInvalidException(validation.FailureReason!);
+
+            // V1-SET-004: this deployment turned the guest live-bill feature
+            // off — the same empty state the guest's own page already
+            // renders before anything has been ordered, not an error.
+            if (!await GarsonFeatureToggles.IsEnabledAsync(settings, GarsonFeature.GuestLiveBill, cancellationToken))
+                return Results.Ok(QrLiveBillDto.Empty);
 
             var bill = await store.GetLiveBillAsync(validation.TableId!.Value, cancellationToken);
             return Results.Ok(bill);
