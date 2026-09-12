@@ -20,11 +20,11 @@
 //   POST /api/v1/terminals/{t}/orders/{o}/items/{i}/void
 //   POST /api/v1/terminals/{t}/orders/{o}/accept | /reject
 import {
-  escapeHtml, formatMoney, formatQuantity, formatClock,
+  escapeHtml, formatMoney, formatQuantity,
   randomUUID, isFullscreen,
 } from './js/util.js';
-import { state, el, persistDraftsByTable, measureChrome } from './js/state.js';
-import { applyUser, can, trapBackgroundExcept, releaseTrap, showLogin } from './js/auth.js';
+import { state, el, measureChrome } from './js/state.js';
+import { applyUser, releaseTrap, showLogin } from './js/auth.js';
 import { apiUrl, api } from './js/api.js';
 import { toast } from './js/toast.js';
 import { openOptions, closeOptions } from './js/options-sheet.js';
@@ -33,13 +33,12 @@ import {
   openPinSheet, confirmPin, resetIdleTimer, lockScreen, renderPinDots, renderPinPad, submitPin,
 } from './js/kiosk-lock.js';
 import {
-  loadZones, loadTables, loadTableSeats, renderZones, renderTables, showScreen, openTable,
+  loadZones, loadTables, renderZones, renderTables, showScreen, openTable,
 } from './js/screens/tables.js';
-import { openPartySizeSheet, partySizeSheetHtml } from './js/sheets/party-size.js';
+import { openPartySizeSheet } from './js/sheets/party-size.js';
 import { loadFeatures, featureEnabled } from './js/features.js';
 import {
-  activeItems, modifierCountFor, draftTotal, lastRound, renderQuickSend,
-  renderBill, renderDraftLine, renderSentLine, openBill, closeBill, loadOrder,
+  lastRound, renderBill, openBill, closeBill, loadOrder,
 } from './js/sheets/bill.js';
 import { renderCategories, renderProducts, addToDraft, afterDraftChange } from './js/screens/menu.js';
 import {

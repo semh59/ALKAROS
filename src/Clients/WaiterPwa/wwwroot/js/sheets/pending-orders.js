@@ -3,7 +3,7 @@
 // 13/? of docs/engineering/garson-refactor-plan.md's Section 2).
 
 import { state, el, measureChrome } from '../state.js';
-import { escapeHtml, formatMoney, formatQuantity, formatClock } from '../util.js';
+import { escapeHtml, formatMoney, formatClock } from '../util.js';
 import { activeItems, loadOrder, renderBill, closeBill } from './bill.js';
 import { showScreen, loadTables } from '../screens/tables.js';
 import { afterDraftChange } from '../screens/menu.js';

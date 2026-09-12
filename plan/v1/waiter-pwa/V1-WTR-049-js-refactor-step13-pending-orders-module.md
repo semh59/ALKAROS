@@ -57,8 +57,13 @@ adımın kapsamı değil.
 
 - `node --check` üç dosyanın da (`js/sheets/pending-orders.js`,
   `js/state.js`, `waiter-app.js`) sözdizimsel olarak geçerli olduğunu
-  doğruladı. Her import edilen ismin gerçekten kullanıldığı (bare
-  event-listener referansları dahil) tek tek `grep`'le kontrol edildi.
+  doğruladı. `waiter-app.js`'in kendi import listesindeki isimler
+  `grep`'le kontrol edildi (bare event-listener referansları dahil),
+  ama yeni `js/sheets/pending-orders.js`'in KENDİ import ettiği
+  `formatQuantity` gözden kaçtı — hiç kullanılmıyordu (bağımsız bir
+  incelemede bulundu, 2026-09-12, kaldırıldı). Bu bir çalışma zamanı
+  hatası değildi (kullanılmayan bir import ES modüllerinde sessizce
+  yutulur), yalnız bu iddianın kendisi eksikti — düzeltildi.
 - `npx playwright test` (`tests/E2E/WaiterPwa`, gerçek Chromium + gerçek
   Postgres + gerçek Host ikili dosyası): **2/2 çalıştırmada 18/18
   temiz** (~43s/çalıştırma).
