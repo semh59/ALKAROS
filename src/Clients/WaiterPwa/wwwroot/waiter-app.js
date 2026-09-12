@@ -1518,17 +1518,26 @@
     });
   }
 
-  // V1-WTR-017: `items` lets checkDelayAndSend() send only half the draft
-  // (the "ayrı gönder" split). Omitted (the ordinary case), it sends the
-  // whole draft, exactly as before this task.
-  async function sendDraft(items) {
-    const targetItems = items || state.draft;
-    if (targetItems.length === 0 || !state.table || state.sendInFlight) return;
-    const isPartialSend = Boolean(items) && items.length < state.draft.length;
+  // V1-TBL-010 follow-up (Semih, 2026-09-12: "başka iş yükü artışı yaptığımız
+  // ne varsa bul"): V1-WTR-017's "hafif gecikme kontrolü" used to sit here,
+  // intercepting BOTH send buttons with a forced "gönder birlikte / ayrı
+  // gönder" choice whenever a round's items had prep-time estimates ≥10
+  // minutes apart - a very common shape (any starter + main combination).
+  // Removed outright rather than tuned: V1-WTR-025's course system already
+  // solves the same "food shouldn't all arrive unevenly" problem, more
+  // deliberately (a waiter who cares assigns courses; FireRound/FireCourse
+  // stagger the actual kitchen dispatch) and without ever touching
+  // prepTimeMinutes - the two mechanisms were solving the same problem
+  // twice, and this one fired on every send regardless of whether the
+  // waiter had already handled staggering via courses. Send is a single
+  // action again, exactly like every other quick-add path.
+  async function sendDraft() {
+    if (state.draft.length === 0 || !state.table || state.sendInFlight) return;
     state.sendInFlight = true;
     el.btnSendFromMenu.disabled = true;
     el.btnSendFromBill.disabled = true;
 
+    const targetItems = state.draft;
     const payload = draftToPayload(targetItems);
     const tableNumber = state.table.number;
     try {
@@ -1546,7 +1555,7 @@
         await loadOrder(state.table.id);
         await loadTables();
         afterDraftChange();
-        if (!isPartialSend) showScreen('tables');
+        showScreen('tables');
         toast(`${tableNumber} siparişi mutfağa gönderildi.`);
       } else if (result.status >= 400 && result.status < 500) {
         // A rejected order is kept on screen so nothing typed is lost.
@@ -1567,78 +1576,6 @@
     const sentIds = new Set(sentItems.map((line) => line.id));
     state.draft = state.draft.filter((line) => !sentIds.has(line.id));
     state.draftEpoch += 1;
-  }
-
-  // V1-WTR-017: the "hafif gecikme kontrolü" idea - a warning before sending
-  // a round whose items' known prep times are far apart (a 3-minute salad
-  // next to a 25-minute grill), letting the waiter choose to send everything
-  // together or split the slow items into their own round instead. Items
-  // with no prep-time estimate on the product are simply excluded from the
-  // comparison - never treated as fast or slow.
-  const DELAY_WARNING_THRESHOLD_MINUTES = 10;
-
-  function productPrepTimeMinutes(productId) {
-    const product = state.products.find((candidate) => candidate.id === productId);
-    return product ? product.prepTimeMinutes : null;
-  }
-
-  function checkDelayAndSend() {
-    if (state.draft.length === 0 || !state.table || state.sendInFlight) return;
-    const preps = state.draft
-      .map((line) => productPrepTimeMinutes(line.productId))
-      .filter((value) => value != null);
-    if (preps.length < 2) {
-      void sendDraft();
-      return;
-    }
-    const minPrep = Math.min(...preps);
-    const maxPrep = Math.max(...preps);
-    if (maxPrep - minPrep < DELAY_WARNING_THRESHOLD_MINUTES) {
-      void sendDraft();
-      return;
-    }
-
-    const fastest = state.draft.find((line) => productPrepTimeMinutes(line.productId) === minPrep);
-    const slowest = state.draft.find((line) => productPrepTimeMinutes(line.productId) === maxPrep);
-    state.optionsContext = { minPrep, maxPrep };
-    openOptions(
-      'send-delay',
-      'Hazırlama süreleri farklı',
-      state.table ? `${state.table.number} masası` : '',
-      `<p class="delay-warning-text">${escapeHtml(fastest ? fastest.name : '')} (${minPrep} dk) ile
-       ${escapeHtml(slowest ? slowest.name : '')} (${maxPrep} dk) arasında büyük fark var.</p>
-       <div class="delay-choice-actions">
-         <button type="button" class="btn btn-quiet" data-delay-choice="together">Birlikte gönder</button>
-         <button type="button" class="btn btn-primary" data-delay-choice="split">Ayrı gönder (hızlı önce)</button>
-       </div>`,
-      '', '', '');
-  }
-
-  function confirmDelayChoice(choice) {
-    const context = state.optionsContext;
-    closeOptions();
-    if (!context) return;
-    if (choice === 'together') {
-      void sendDraft();
-      return;
-    }
-    // "Ayrı gönder": the slower half (>= the midpoint between the round's
-    // fastest and slowest known prep time) becomes its own, second round;
-    // everything else - fast items and items with no estimate at all - goes
-    // immediately. Two sequential sends, not two parallel ones: the second
-    // await only starts once the first round has actually left for the
-    // kitchen (or been queued/failed and handled), same as any other
-    // sendDraft() call.
-    const midpoint = (context.minPrep + context.maxPrep) / 2;
-    const slowLines = state.draft.filter((line) => {
-      const prep = productPrepTimeMinutes(line.productId);
-      return prep != null && prep >= midpoint;
-    });
-    const fastLines = state.draft.filter((line) => !slowLines.includes(line));
-    void (async () => {
-      if (fastLines.length > 0) await sendDraft(fastLines);
-      if (slowLines.length > 0) await sendDraft(slowLines);
-    })();
   }
 
   // ══ Held drafts (unsent rounds, per table) ═══════════════════════════
@@ -2889,8 +2826,8 @@
     el.btnHelpRequest.addEventListener('click', openHelpRequestSheet);
     el.btnMoveTable.addEventListener('click', openTransferSheet);
     el.btnSendToCashier.addEventListener('click', openSendToCashierSheet);
-    el.btnSendFromMenu.addEventListener('click', checkDelayAndSend);
-    el.btnSendFromBill.addEventListener('click', checkDelayAndSend);
+    el.btnSendFromMenu.addEventListener('click', () => void sendDraft());
+    el.btnSendFromBill.addEventListener('click', () => void sendDraft());
     el.pendingBanner.addEventListener('click', openPendingSheet);
     el.ribbonQueue.addEventListener('click', openFailedOrdersSheet);
 
@@ -3087,12 +3024,6 @@
         button.setAttribute('aria-pressed', String(button === reason));
       });
       el.optionsConfirm.disabled = false;
-      return;
-    }
-
-    const delayChoice = event.target.closest('[data-delay-choice]');
-    if (delayChoice && state.optionsMode === 'send-delay') {
-      confirmDelayChoice(delayChoice.dataset.delayChoice);
       return;
     }
 
