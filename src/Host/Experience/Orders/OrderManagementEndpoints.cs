@@ -4,6 +4,7 @@ using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Host.Experience.Orders.SentItemVoid;
 using ALKAROS.Host.Experience.Orders.SubmissionStockConsumption;
+using ALKAROS.Host.Experience.Orders.TableDraft;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
@@ -57,6 +58,8 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<ShiftSummaryStore>();
         // Refactor step 3/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<CashierHandoffStore>();
+        // Refactor step 4/7 (docs/engineering/garson-refactor-plan.md).
+        services.TryAddSingleton<TableDraftService>();
         services.TryAddSingleton<ServingHandoffNoteStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
@@ -185,7 +188,7 @@ public static class OrderManagementEndpoints
         group.MapPost("/table-draft", async (
             Guid terminalId,
             CreateTableDraftRequest request,
-            OrderManagementStore store,
+            TableDraftService store,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
