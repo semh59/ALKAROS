@@ -62,6 +62,11 @@ export async function loadTableSeats(table) {
     .sort((a, b) => a.number - b.number);
 }
 
+export function seatLabel(seatId) {
+  const seat = state.tableSeats.find((candidate) => candidate.id === seatId);
+  return seat ? seat.label : null;
+}
+
 export function renderZones() {
   el.zoneChips.innerHTML = state.zones.map((zone) => `
     <button type="button" class="chip" data-zone="${escapeHtml(zone.id)}"
