@@ -201,6 +201,12 @@ export async function openTable(tableId, goStraightToMenu) {
 
   void loadTableSeats(table);
   await loadOrder(tableId);
+  // V1-RMD-179: if a second, newer openTable() call for a different table
+  // has since taken over (loadOrder() above already refused to write a
+  // stale state.order for exactly this reason), this call's own remaining
+  // work — rendering, switching screens, popping a hand-off note — belongs
+  // to a table that is no longer the one on screen. Stop here.
+  if (state.table?.id !== tableId) return;
   renderBill();
 
   // The locked flow: an occupied table opens its bill, an empty one opens

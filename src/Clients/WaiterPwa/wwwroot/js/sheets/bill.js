@@ -25,6 +25,15 @@ import { toast } from '../toast.js';
 // documents above.
 export async function loadOrder(tableId) {
   const result = await api(apiUrl(`/orders/table/${tableId}`));
+  // V1-RMD-179: found by an independent audit (2026-09-12) — a waiter
+  // tapping table A then immediately table B fires two overlapping
+  // openTable() calls; if A's own /orders/table/{id} response lands AFTER
+  // B's (ordinary network jitter, no error involved), this used to stamp
+  // A's order — its lines, its money — onto state.order while state.table
+  // was already B, and the next render showed B's own header over A's
+  // bill. Never write a response for a table that is no longer the one on
+  // screen.
+  if (state.table?.id !== tableId) return result;
   state.order = result.ok ? result.data : null;
   return result;
 }
