@@ -1,8 +1,6 @@
 using System.Data;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
-using ALKAROS.Inventory.BalanceProjection;
-using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
@@ -39,29 +37,26 @@ public sealed class OrderManagementStore
     private readonly IOrderRepository _repository;
     private readonly IRoleRepository _roles;
     private readonly SubmitOrderHandler _submitHandler;
-    private readonly IProductStockMappingRepository _stockMappings;
-    private readonly IStockItemRepository _stockItems;
-    private readonly IStockBalanceRepository _stockBalances;
     private readonly IKitchenTicketRepository _kitchenTickets;
+    // Refactor step 1/7 (docs/engineering/garson-refactor-plan.md): every
+    // "Order -> OrderDto (+ available-stock enrichment)" concern now lives
+    // in one shared place instead of copied private methods here.
+    private readonly OrderDtoAssembler _assembler;
 
     public OrderManagementStore(
         NpgsqlDataSource dataSource,
         IOrderRepository repository,
         IRoleRepository roles,
         SubmitOrderHandler submitHandler,
-        IProductStockMappingRepository stockMappings,
-        IStockItemRepository stockItems,
-        IStockBalanceRepository stockBalances,
-        IKitchenTicketRepository kitchenTickets)
+        IKitchenTicketRepository kitchenTickets,
+        OrderDtoAssembler assembler)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _roles = roles ?? throw new ArgumentNullException(nameof(roles));
         _submitHandler = submitHandler ?? throw new ArgumentNullException(nameof(submitHandler));
-        _stockMappings = stockMappings ?? throw new ArgumentNullException(nameof(stockMappings));
-        _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
-        _stockBalances = stockBalances ?? throw new ArgumentNullException(nameof(stockBalances));
         _kitchenTickets = kitchenTickets ?? throw new ArgumentNullException(nameof(kitchenTickets));
+        _assembler = assembler ?? throw new ArgumentNullException(nameof(assembler));
     }
 
     /// <summary>
@@ -92,17 +87,17 @@ public sealed class OrderManagementStore
             // since moved past Draft (already Submitted, already dispatched
             // to the kitchen). The Draft-only lookup below cannot see it —
             // that gap used to make a retry start a second, duplicate order.
-            var existingBySubmission = await FindOrderIdBySubmissionAsync(connection, transaction, request.TableId, sid, cancellationToken);
+            var existingBySubmission = await OrderDtoAssembler.FindOrderIdBySubmissionAsync(connection, transaction, request.TableId, sid, cancellationToken);
             if (existingBySubmission is { } existingOrderId)
             {
-                var replay = await LoadOrderDtoAsync(existingOrderId, request.TableId, cancellationToken)
+                var replay = await _assembler.LoadOrderDtoAsync(existingOrderId, request.TableId, cancellationToken)
                     ?? throw new InvalidOperationException($"Order {existingOrderId} was not found replaying submission {sid}.");
                 await transaction.CommitAsync(cancellationToken);
                 return replay;
             }
         }
 
-        var existingOrder = await GetActiveOrderByTableIdInternalAsync(connection, transaction, request.TableId, cancellationToken);
+        var existingOrder = await OrderDtoAssembler.GetActiveOrderByTableIdInternalAsync(connection, transaction, request.TableId, cancellationToken);
         var orderId = existingOrder?.OrderId ?? Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
 
@@ -206,10 +201,10 @@ public sealed class OrderManagementStore
                 await transaction.RollbackAsync(cancellationToken);
                 if (submissionId is { } concurrentSubmissionId)
                 {
-                    var concurrentOrderId = await FindOrderIdBySubmissionAsync(request.TableId, concurrentSubmissionId, cancellationToken);
+                    var concurrentOrderId = await _assembler.FindOrderIdBySubmissionAsync(request.TableId, concurrentSubmissionId, cancellationToken);
                     if (concurrentOrderId is { } foundOrderId)
                     {
-                        return await LoadOrderDtoAsync(foundOrderId, request.TableId, cancellationToken)
+                        return await _assembler.LoadOrderDtoAsync(foundOrderId, request.TableId, cancellationToken)
                             ?? throw new InvalidOperationException($"Order {foundOrderId} was not found replaying submission {concurrentSubmissionId}.");
                     }
                 }
@@ -285,7 +280,7 @@ public sealed class OrderManagementStore
                 // Saving would only bump the row version and hand the caller
                 // a number the database no longer agrees with.
                 await transaction.CommitAsync(cancellationToken);
-                return await WithAvailableStockAsync(MapToDto(currentOrder, request.TableNumber), cancellationToken);
+                return await _assembler.WithAvailableStockAsync(OrderDtoAssembler.MapToDto(currentOrder, request.TableNumber), cancellationToken);
             }
 
             // V1-ORD-006: the aggregate merges the round itself, which keeps
@@ -320,7 +315,7 @@ public sealed class OrderManagementStore
         // V1-RMD-143: same enrichment as every other order-viewing path
         // (GetOrderByIdAsync, LoadOrderDtoAsync) — a waiter building up a
         // table's cart sees the same "kalan stok" as one reviewing it later.
-        return await WithAvailableStockAsync(MapToDto(order, request.TableNumber), cancellationToken);
+        return await _assembler.WithAvailableStockAsync(OrderDtoAssembler.MapToDto(order, request.TableNumber), cancellationToken);
     }
 
     /// <summary>
@@ -414,91 +409,9 @@ public sealed class OrderManagementStore
         var order = await _repository.GetByIdAsync(orderId, cancellationToken);
         if (order == null) return null;
 
-        var tableNumber = await GetTableNumberAsync(order.TableId, cancellationToken) ?? "—";
-        var dto = MapToDto(order, tableNumber);
-        return await WithAvailableStockAsync(dto, cancellationToken);
-    }
-
-    /// <summary>
-    /// Semih's own "kalan stok bilgisi ver garsona" (2026-09-09): a staff
-    /// member viewing an order — typically a PendingConfirmation one, right
-    /// before deciding Accept/Reject — sees how many more units of each item
-    /// the mapped stock item(s) could still cover, the exact same
-    /// availableQuantity/quantityMultiplier arithmetic
-    /// StockMasterEndpoints exposes per product. Null when the product has
-    /// no stock mapping at all yet (not tracked) rather than a misleading
-    /// zero; this is purely a display aid, it does not gate anything —
-    /// OrderStockConsumptionService is the real, authoritative check that
-    /// runs at Accept time.
-    /// </summary>
-    private async Task<OrderDto> WithAvailableStockAsync(OrderDto dto, CancellationToken cancellationToken)
-    {
-        // V1-RMD-156: this used to issue up to three round trips PER LINE
-        // (mappings, then the stock item, then the balance, for every mapping
-        // a line had) on a path every order-viewing call goes through —
-        // GetOrderByIdAsync, table-draft's own response, and this same
-        // method reused for GetOrderByIdAsync too. Three batched queries
-        // now cover every line in the order regardless of how many it has.
-        if (dto.Items.Count == 0) return dto;
-
-        var productIds = dto.Items.Select(i => i.ProductId).Distinct().ToArray();
-        var mappings = await _stockMappings.GetByProductIdsAsync(productIds, cancellationToken);
-        if (mappings.Count == 0) return dto;
-
-        var mappingsByProduct = mappings
-            .GroupBy(m => m.ProductId)
-            .ToDictionary(g => g.Key, g => g.ToList());
-
-        var stockItemIds = mappings.Select(m => m.StockItemId).Distinct().ToArray();
-        var stockItems = await _stockItems.GetByIdsAsync(stockItemIds, cancellationToken);
-        var stockItemsById = stockItems.ToDictionary(s => s.Id);
-
-        var locatedStockItemIds = stockItems
-            .Where(s => s.DefaultLocationId is not null)
-            .Select(s => s.Id)
-            .ToArray();
-        var balances = locatedStockItemIds.Length == 0
-            ? []
-            : await _stockBalances.GetByStockItemsAsync(locatedStockItemIds, cancellationToken);
-        // stock_balances is unique per (stock_item_id, stock_location_id), not
-        // per stock_item_id alone — a stock item CAN carry balance rows at
-        // several locations. The single-pair lookup this replaces only ever
-        // asked about one location, the item's own default, so the batch
-        // result is keyed the same way: (item, its default location).
-        var balanceByStockItem = balances
-            .Where(b => stockItemsById.TryGetValue(b.StockItemId, out var stockItem)
-                        && stockItem.DefaultLocationId == b.StockLocationId)
-            .ToDictionary(b => b.StockItemId);
-
-        var enrichedItems = new List<OrderItemDto>(dto.Items.Count);
-        foreach (var item in dto.Items)
-        {
-            decimal? availableStockQuantity = null;
-            if (mappingsByProduct.TryGetValue(item.ProductId, out var productMappings))
-            {
-                foreach (var mapping in productMappings)
-                {
-                    if (!stockItemsById.TryGetValue(mapping.StockItemId, out var stockItem)
-                        || stockItem.DefaultLocationId is null)
-                        continue;
-
-                    if (!balanceByStockItem.TryGetValue(mapping.StockItemId, out var balance))
-                        continue;
-
-                    // The limiting stock item decides how many more units of
-                    // the product can still be made — same reasoning as a
-                    // real BOM.
-                    var unitsFromThisMapping = balance.AvailableQuantity / mapping.QuantityMultiplier;
-                    availableStockQuantity = availableStockQuantity is null
-                        ? unitsFromThisMapping
-                        : Math.Min(availableStockQuantity.Value, unitsFromThisMapping);
-                }
-            }
-
-            enrichedItems.Add(item with { AvailableStockQuantity = availableStockQuantity });
-        }
-
-        return dto with { Items = enrichedItems };
+        var tableNumber = await _assembler.GetTableNumberAsync(order.TableId, cancellationToken) ?? "—";
+        var dto = OrderDtoAssembler.MapToDto(order, tableNumber);
+        return await _assembler.WithAvailableStockAsync(dto, cancellationToken);
     }
 
     public async Task<OrderDto?> GetActiveOrderByTableIdAsync(Guid tableId, CancellationToken cancellationToken = default)
@@ -516,7 +429,7 @@ public sealed class OrderManagementStore
         var result = await cmd.ExecuteScalarAsync(cancellationToken);
         if (result is not Guid orderId) return null;
 
-        return await LoadOrderDtoAsync(orderId, tableId, cancellationToken);
+        return await _assembler.LoadOrderDtoAsync(orderId, tableId, cancellationToken);
     }
 
     /// <summary>
@@ -633,8 +546,8 @@ public sealed class OrderManagementStore
 
         await transaction.CommitAsync(cancellationToken);
 
-        var tableNumber = await GetTableNumberAsync(fired.TableId, cancellationToken) ?? string.Empty;
-        return MapToDto(fired, tableNumber);
+        var tableNumber = await _assembler.GetTableNumberAsync(fired.TableId, cancellationToken) ?? string.Empty;
+        return OrderDtoAssembler.MapToDto(fired, tableNumber);
     }
 
     /// <summary>
@@ -675,17 +588,6 @@ public sealed class OrderManagementStore
 
         return results;
     }
-
-    /// <summary>
-    /// V1-RMD-147: projects an item's recorded modifiers. Shared by the two
-    /// order-reading surfaces so a line looks the same whichever one served it.
-    /// </summary>
-    internal static IReadOnlyList<OrderItemModifierDto>? MapModifiers(OrderItem item)
-        => item.Modifiers.Count == 0
-            ? null
-            : item.Modifiers
-                .Select(m => new OrderItemModifierDto(m.ModifierId, m.ModifierNameSnapshot, m.PriceDelta, m.Quantity))
-                .ToList();
 
     /// <summary>
     /// V1-RMD-147: resolves every requested modifier from the catalog, keyed
@@ -1035,158 +937,6 @@ public sealed class OrderManagementStore
         }
 
         return result;
-    }
-
-    /// <summary>
-    /// V1-ORD-006: the check currently attached to this table, which is
-    /// exactly what <c>table_mgmt.tables.current_order_id</c> points at.
-    /// Sending a check to the cashier clears that pointer, so "attached" and
-    /// "not yet sent to the cashier" are the same condition and need no extra
-    /// column.
-    /// </summary>
-    /// <remarks>
-    /// This used to match <c>status = 'Draft'</c>. The waiter client never
-    /// leaves an order in Draft — it always draft-then-submits in one go — so
-    /// every round after the first missed this lookup and opened a *second*
-    /// order on the table, while the read path returned only the newest one.
-    /// A party ordering ₺400 of starters and then ₺900 of mains showed ₺900
-    /// on the bill and on the table tile, and the ₺400 was never billed.
-    /// </remarks>
-    private static async Task<OrderDto?> GetActiveOrderByTableIdInternalAsync(
-        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid tableId, CancellationToken cancellationToken)
-    {
-        await using var cmd = new NpgsqlCommand(
-            """
-            SELECT o.order_id, o.status, o.row_version, o.created_at
-            FROM orders.orders o
-            JOIN table_mgmt.tables t ON t.current_order_id = o.order_id
-            WHERE t.table_id = @table_id
-              AND o.status IN ('Draft', 'Submitted')
-            FOR UPDATE OF o;
-            """, connection, transaction);
-        cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
-        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
-        if (!await reader.ReadAsync(cancellationToken))
-            return null;
-
-        return new OrderDto(
-            reader.GetGuid(0),
-            tableId,
-            "",
-            reader.GetString(1),
-            reader.GetInt64(2),
-            0,
-            [],
-            reader.GetFieldValue<DateTimeOffset>(3));
-    }
-
-    /// <summary>
-    /// V1-RMD-123: looks up an existing order for the table by its
-    /// client-generated submission id (see <see cref="CreateTableDraftRequest.Id"/>),
-    /// regardless of the order's current status — a plain read, not FOR
-    /// UPDATE, since the real serialization guard against a concurrent
-    /// duplicate is the database's own partial unique index, not this check.
-    /// </summary>
-    private static async Task<Guid?> FindOrderIdBySubmissionAsync(
-        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid tableId, Guid submissionId, CancellationToken cancellationToken)
-    {
-        await using var cmd = new NpgsqlCommand(
-            """
-            SELECT order_id
-            FROM orders.orders
-            WHERE table_id = @table_id AND source_reference_id = @submission_id
-            LIMIT 1;
-            """, connection, transaction);
-        cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
-        cmd.Parameters.Add("submission_id", NpgsqlDbType.Uuid).Value = submissionId;
-        var result = await cmd.ExecuteScalarAsync(cancellationToken);
-        return result is Guid orderId ? orderId : null;
-    }
-
-    /// <summary>Same lookup as above, on the store's own connection — used after
-    /// a failed transaction has already been rolled back and cannot be reused.</summary>
-    private async Task<Guid?> FindOrderIdBySubmissionAsync(Guid tableId, Guid submissionId, CancellationToken cancellationToken)
-    {
-        await using var cmd = _dataSource.CreateCommand(
-            """
-            SELECT order_id
-            FROM orders.orders
-            WHERE table_id = @table_id AND source_reference_id = @submission_id
-            LIMIT 1;
-            """);
-        cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
-        cmd.Parameters.Add("submission_id", NpgsqlDbType.Uuid).Value = submissionId;
-        var result = await cmd.ExecuteScalarAsync(cancellationToken);
-        return result is Guid orderId ? orderId : null;
-    }
-
-    private async Task<OrderDto?> LoadOrderDtoAsync(Guid orderId, Guid tableId, CancellationToken cancellationToken)
-    {
-        var order = await _repository.GetByIdAsync(orderId, cancellationToken);
-        if (order == null) return null;
-
-        var tableNumber = await GetTableNumberAsync(tableId, cancellationToken) ?? "—";
-        var dto = MapToDto(order, tableNumber);
-        // V1-RMD-143: shared with GetOrderByIdAsync so every order-viewing
-        // route (GET /table/{tableId}, the table-draft create/replay
-        // responses, and GET /{orderId}) shows the same "kalan stok" —
-        // a waiter looking up an order by its table, the far more common
-        // path on the floor, must not be the one view left without it.
-        return await WithAvailableStockAsync(dto, cancellationToken);
-    }
-
-    private async Task<string?> GetTableNumberAsync(Guid? tableId, CancellationToken cancellationToken)
-    {
-        if (tableId == null) return null;
-        await using var cmd = _dataSource.CreateCommand(
-            "SELECT table_number FROM table_mgmt.tables WHERE table_id = @table_id;");
-        cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId.Value;
-        var res = await cmd.ExecuteScalarAsync(cancellationToken);
-        return res as string;
-    }
-
-    private static OrderDto MapToDto(Order order, string tableNumber)
-    {
-        var dtos = order.Items.Select(i => new OrderItemDto(
-            i.Id,
-            i.ProductId,
-            i.ProductNameSnapshot,
-            i.Quantity,
-            i.UnitPrice,
-            i.GrossAmount,
-            i.Notes,
-            AvailableStockQuantity: null,
-            Status: i.Status.ToString(),
-            KitchenState: i.KitchenState.ToString(),
-            CreatedAt: i.CreatedAt,
-            Modifiers: MapModifiers(i),
-            // V1-RMD-168: mirrors ItemExceptionHandler.VoidItemAsync's own
-            // eligibility check exactly.
-            CanVoid: i.Status is OrderItemState.Active or OrderItemState.Draft
-                && i.KitchenState == KitchenState.NotSent,
-            // V1-RMD-168: mirrors SentItemVoidStore.VoidAsync's own
-            // eligibility check exactly.
-            CanVoidSent: i.Status == OrderItemState.Active
-                && i.KitchenState != KitchenState.NotSent
-                && i.KitchenState is not (KitchenState.Served or KitchenState.Cancelled),
-            // V1-RMD-177: mirrors ItemExceptionHandler.ApplyComplimentaryAsync's
-            // own eligibility check exactly.
-            CanComp: i.Status == OrderItemState.Active,
-            SeatId: i.SeatId,
-            CourseNumber: i.CourseNumber
-        )).ToList();
-
-        return new OrderDto(
-            order.Id,
-            order.TableId ?? Guid.Empty,
-            tableNumber,
-            order.Status.ToString(),
-            order.RowVersion,
-            order.Total,
-            dtos,
-            order.CreatedAt,
-            order.PartySize
-        );
     }
 
     // V1-WTR-021: garson-karsilastirma idea #9, a self-view-only shift

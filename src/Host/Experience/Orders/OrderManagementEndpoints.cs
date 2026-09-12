@@ -48,6 +48,10 @@ public static class OrderManagementEndpoints
         // parameters", so a standalone host for this module never started.
         services.TryAddSingleton<DualScreenStore>();
         services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
+        // Refactor step 1/7 (docs/engineering/garson-refactor-plan.md,
+        // 2026-09-12): extracted out of OrderManagementStore so every
+        // order-reading surface shares one Order -> OrderDto projection.
+        services.TryAddSingleton<OrderDtoAssembler>();
         services.TryAddSingleton<OrderManagementStore>();
         services.TryAddSingleton<ServingHandoffNoteStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
