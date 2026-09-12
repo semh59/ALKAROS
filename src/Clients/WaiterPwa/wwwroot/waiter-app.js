@@ -19,15 +19,12 @@
 //   POST /api/v1/terminals/{t}/orders/{o}/submit-draft
 //   POST /api/v1/terminals/{t}/orders/{o}/items/{i}/void
 //   POST /api/v1/terminals/{t}/orders/{o}/accept | /reject
-import {
-  escapeHtml, formatMoney,
-  randomUUID, isFullscreen,
-} from './js/util.js';
+import { randomUUID, isFullscreen } from './js/util.js';
 import { state, el, measureChrome } from './js/state.js';
 import { applyUser, releaseTrap, showLogin } from './js/auth.js';
 import { apiUrl, api } from './js/api.js';
 import { toast } from './js/toast.js';
-import { openOptions, closeOptions } from './js/options-sheet.js';
+import { closeOptions } from './js/options-sheet.js';
 import {
   requestWakeLock, toggleFullscreen, onFullscreenChange,
   openPinSheet, confirmPin, resetIdleTimer, lockScreen, renderPinDots, renderPinPad, submitPin,
@@ -36,7 +33,7 @@ import {
   loadZones, loadTables, renderZones, renderTables, showScreen, openTable,
 } from './js/screens/tables.js';
 import { openPartySizeSheet } from './js/sheets/party-size.js';
-import { loadFeatures, featureEnabled } from './js/features.js';
+import { loadFeatures } from './js/features.js';
 import {
   lastRound, renderBill, openBill, closeBill, loadOrder,
 } from './js/sheets/bill.js';
@@ -57,6 +54,7 @@ import {
 } from './js/sheets/pending-orders.js';
 import { openFailedOrdersSheet } from './js/sheets/failed-orders.js';
 import { refreshPushState, enablePush, unsubscribePush, disablePush } from './js/push.js';
+import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js';
 
 (function () {
   'use strict';
@@ -593,94 +591,6 @@ import { refreshPushState, enablePush, unsubscribePush, disablePush } from './js
     persistQueue();
     closeOptions();
     toast('Hatalı siparişler temizlendi.');
-  }
-
-  // ══ Profile, PIN and the kiosk lock ════════════════════════════════
-  // (Full screen/wake lock and the PIN kiosk lock itself moved to
-  // js/kiosk-lock.js — V1-WTR-042. openProfileSheet/openShiftSummarySheet
-  // stay here for now, their own future module.)
-
-  function openProfileSheet() {
-    void refreshPushState().then(() => {
-      const body = `
-        <div class="opts">
-          <button type="button" class="opt" data-profile="fullscreen">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-expand"/></svg></span>
-            <span class="opt-name">${isFullscreen() ? 'Tam ekrandan çık' : 'Tam ekran'}</span>
-          </button>
-          <button type="button" class="opt" data-profile="push">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-bell"/></svg></span>
-            <span class="opt-name">${state.pushEnabled
-              ? 'Arka plan bildirimini kapat'
-              : 'Uygulama kapalıyken de bildir'}</span>
-          </button>
-          <button type="button" class="opt" data-profile="lock">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg></span>
-            <span class="opt-name">${state.pinArmed ? 'Ekranı şimdi kilitle' : 'Ekran kilidini kur'}</span>
-          </button>
-          ${state.pinArmed ? `
-          <button type="button" class="opt" data-profile="pin-off">
-            <span class="opt-box is-round"></span>
-            <span class="opt-name">Ekran kilidini kaldır</span>
-          </button>` : ''}
-          <button type="button" class="opt" data-profile="transfer-server">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-move"/></svg></span>
-            <span class="opt-name">Açık masaları devret</span>
-          </button>
-          ${featureEnabled('shiftSummary') ? `
-          <button type="button" class="opt" data-profile="shift-summary">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-seats"/></svg></span>
-            <span class="opt-name">Vardiya özetim</span>
-          </button>` : ''}
-          <button type="button" class="opt" data-profile="signout">
-            <span class="opt-box is-round"></span>
-            <span class="opt-name">Oturumu kapat</span>
-          </button>
-        </div>`;
-      openOptions('profile', (state.user && state.user.displayName) || 'Personel',
-        'Bu cihaz için ayarlar', body, '', '', '');
-      el.optionsConfirm.hidden = true;
-    });
-  }
-
-  // V1-WTR-021: garson-karsilastirma idea #9, "yalnızca kendine görünen
-  // vardiya özeti". The server already scopes /my-shift-summary to the
-  // calling session (RequireCashierSessionAsync) - there is no manager
-  // view or other-waiter lookup to accidentally build here.
-  async function openShiftSummarySheet() {
-    openOptions('shift-summary', 'Vardiya özetim', 'Bugün (UTC gün başlangıcından beri)',
-      '<div class="empty">Yükleniyor…</div>', '', '', '');
-    el.optionsConfirm.hidden = true;
-
-    const result = await api(apiUrl('/orders/my-shift-summary'));
-    if (!result.ok) {
-      el.optionsBody.innerHTML = `<div class="callout">
-        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
-        <span>${escapeHtml(result.message || 'Vardiya özeti alınamadı.')}</span>
-      </div>`;
-      return;
-    }
-
-    const summary = result.data;
-    el.optionsBody.innerHTML = `
-      <div class="opts">
-        <div class="shift-summary-row">
-          <span class="shift-summary-label">Satış toplamım</span>
-          <span class="shift-summary-value">${formatMoney(summary.salesTotal)}</span>
-        </div>
-        <div class="shift-summary-row">
-          <span class="shift-summary-label">Kullandığım ikram bütçesi</span>
-          <span class="shift-summary-value">${formatMoney(summary.compUsed)}</span>
-        </div>
-        <div class="shift-summary-row">
-          <span class="shift-summary-label">Bahşiş havuzu payım</span>
-          <span class="shift-summary-value">${formatMoney(summary.tipPoolShare)}</span>
-        </div>
-      </div>
-      <p class="shift-summary-note">
-        Bahşiş havuzu payı: bugün toplanan ${formatMoney(summary.tipPoolTotal)} bahşiş,
-        bugün en az bir sipariş alan ${summary.waitersWorkedToday} garson arasında eşit bölünür.
-      </p>`;
   }
 
   // ══ Events ═════════════════════════════════════════════════════════
