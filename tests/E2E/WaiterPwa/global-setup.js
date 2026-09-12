@@ -94,8 +94,8 @@ export default async function globalSetup() {
     },
   );
   let hostOutput = '';
-  hostProcess.stdout.on('data', (chunk) => { hostOutput += chunk; });
-  hostProcess.stderr.on('data', (chunk) => { hostOutput += chunk; });
+  hostProcess.stdout.on('data', (chunk) => { hostOutput += chunk; if (process.env.E2E_HOST_LOG) process.stdout.write(chunk); });
+  hostProcess.stderr.on('data', (chunk) => { hostOutput += chunk; if (process.env.E2E_HOST_LOG) process.stderr.write(chunk); });
   hostProcess.on('exit', (code) => {
     if (code !== null && code !== 0) {
       console.error(`[global-setup] Host process exited early with code ${code}:\n${hostOutput}`);

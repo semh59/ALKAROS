@@ -108,6 +108,45 @@ export async function seedDatabase(client) {
     [secondTableId, zoneId, secondTableNumber],
   );
 
+  // A dedicated, untouched 4-top with 4 seats - for the "how long does a
+  // real 4-person table's order actually take" timing spec, kept separate
+  // from E2E-1 (which 02/03's own specs already open, order on and move).
+  const timingTableId = randomUUID();
+  const timingTableNumber = 'E2E-TIMING';
+  const timingSeatIds = [randomUUID(), randomUUID(), randomUUID(), randomUUID()];
+  await client.query(
+    `INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+     VALUES ($1, $2, $3, 4, 'Available')`,
+    [timingTableId, zoneId, timingTableNumber],
+  );
+  for (let i = 0; i < timingSeatIds.length; i++) {
+    await client.query(
+      `INSERT INTO table_mgmt.table_seats (seat_id, table_id, seat_number, label, x, y)
+       VALUES ($1, $2, $3, $4, $5, 0)`,
+      [timingSeatIds[i], timingTableId, i + 1, `Koltuk ${i + 1}`, i * 40],
+    );
+  }
+  await client.query(
+    `INSERT INTO table_mgmt.table_layouts (table_id, zone_id, x, y, width, height, shape, rotation_degrees)
+     VALUES ($1, $2, 200, 40, 140, 140, 'Rectangle', 0)`,
+    [timingTableId, zoneId],
+  );
+
+  // A pool of otherwise-untouched seatless tables for the concurrency/load
+  // spec - each virtual waiter needs its own table so they never contend
+  // for the same order.
+  const loadTableIds = [];
+  const loadTableCount = 6;
+  for (let i = 1; i <= loadTableCount; i++) {
+    const loadTableId = randomUUID();
+    await client.query(
+      `INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+       VALUES ($1, $2, $3, 4, 'Available')`,
+      [loadTableId, zoneId, `LOAD-${i}`],
+    );
+    loadTableIds.push(loadTableId);
+  }
+
   const plainProductId = randomUUID();
   const modifierProductId = randomUUID();
   const modifierGroupId = randomUUID();
@@ -159,9 +198,13 @@ export async function seedDatabase(client) {
        VALUES ($1, $2, 1.0)`,
       [productId, stockItemId],
     );
+    // A high on-hand quantity - the load-test spec sends many concurrent
+    // orders against these same two products; 50 units would run out and
+    // taint the timing numbers with real, expected 409 INSUFFICIENT_STOCK
+    // rejections that have nothing to do with the system's actual speed.
     await client.query(
       `INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
-       VALUES ($1, $2, $3, 50, 0, 50)`,
+       VALUES ($1, $2, $3, 100000, 0, 100000)`,
       [randomUUID(), stockItemId, locationId],
     );
   }
@@ -174,6 +217,10 @@ export async function seedDatabase(client) {
     tableNumber,
     secondTableId,
     secondTableNumber,
+    timingTableId,
+    timingTableNumber,
+    timingSeatIds,
+    loadTableIds,
     zoneId,
     seatOneId,
     seatTwoId,

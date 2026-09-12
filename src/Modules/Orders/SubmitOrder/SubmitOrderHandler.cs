@@ -35,6 +35,40 @@ public sealed class SubmitOrderHandler
         SubmitOrderCommand command,
         CancellationToken cancellationToken = default)
     {
+        // Found by the WaiterPwa E2E load test (2026-09-12): several tables
+        // ordering the SAME popular product at once can make two concurrent
+        // submissions deadlock against each other purely from Postgres's
+        // own INSERT ... ON CONFLICT DO UPDATE locking under heavy
+        // contention on one stock_balances row (a documented Postgres
+        // corner case, not a lock-ordering bug here - every attempt touches
+        // its own order's stock items in the same stable order already).
+        // The losing side's whole transaction rolls back with nothing
+        // persisted, so retrying the entire attempt on a fresh connection
+        // is safe - never a partial redo - and near-certain to succeed
+        // once Postgres has broken the cycle by aborting one side.
+        const int maxAttempts = 5;
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                return await HandleAttemptAsync(command, cancellationToken).ConfigureAwait(false);
+            }
+            catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.DeadlockDetected && attempt < maxAttempts)
+            {
+                // A small random backoff before retrying, not an immediate
+                // retry: several losers of the same deadlock cycle would
+                // otherwise restart in lockstep and have a real chance of
+                // immediately re-forming the same cycle against each other.
+                var backoff = TimeSpan.FromMilliseconds(Random.Shared.Next(20, 120) * attempt);
+                await Task.Delay(backoff, cancellationToken).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private async Task<SubmitOrderResult> HandleAttemptAsync(
+        SubmitOrderCommand command,
+        CancellationToken cancellationToken)
+    {
         ArgumentNullException.ThrowIfNull(command);
         command.Validate();
 

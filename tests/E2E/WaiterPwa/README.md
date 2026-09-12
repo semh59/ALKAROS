@@ -56,6 +56,30 @@ seeded table, in the order those tests put it in) — running only a later
 spec file in isolation will fail for that reason; run the whole suite, or at
 least from `01` through whichever spec you need.
 
+Set `E2E_HOST_LOG=1` to stream the real Host process's own console output
+(ASP.NET's request log, and any unhandled-exception stack trace) live —
+this is how the load test's real Postgres deadlock (see `specs/05-*`'s own
+comment) was actually root-caused, rather than guessed at from just the
+HTTP status code.
+
+## `05-load-and-timing.spec.js`
+
+Two scenarios beyond the functional specs above:
+- A single, dedicated 4-top (`E2E-TIMING`, its own 4 seats) ordered through
+  the real options-sheet UI end to end, timed from opening the table to the
+  kitchen ticket confirming — a floor, not a claim about how fast an actual
+  person could do this (it is scripted clicking, with zero human decision
+  time).
+- 6 concurrent virtual waiters (`lib/seed.js`'s `LOAD-1..6` tables), each
+  logging in, ordering and sending independently at the same time via
+  `Promise.all` over separate browser contexts. This is what surfaced a
+  real Postgres deadlock (`40P01`) in stock consumption under contention on
+  a shared popular product — fixed in `SubmitOrderHandler.HandleAsync` with
+  a bounded, backed-off retry (see that method's own comment). Run this
+  spec a handful of times after touching anything in the stock-consumption
+  path; a single green run is not strong evidence either way for a race
+  this narrow a window.
+
 `npx` on Windows Git Bash occasionally launches a broken Node process here
 (observed hanging indefinitely, no output, on this same Node 24 install) —
 if `npx playwright test` hangs with zero CPU usage and no output at all,
