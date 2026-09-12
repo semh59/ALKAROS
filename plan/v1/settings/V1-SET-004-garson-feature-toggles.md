@@ -166,11 +166,11 @@ Bu oturumda bulunan ve düzeltilen sorunlar (kanıtın parçası):
   dosyalarda temiz (kalan tek ihlal, `InventoryAdjustmentService.cs:96`,
   bu görevden tamamen bağımsız, pre-existing, dokunulmadı).
 - `python tools/plan-audit/plan_audit_tool.py validate`: 0 hata / 0 uyarı.
-- Bu oturumda **çalıştırılmadı**: tam Playwright E2E paketi (WaiterPwa) —
-  zaman bütçesi nedeniyle atlandı; `waiter-app.js`'teki değişiklikler
-  yalnızca görünürlük/gizleme mantığı ekliyor (mevcut akışları değiştirmiyor)
-  ve `node --check` ile doğrulandı, ama gerçek tarayıcı regresyonu bu
-  oturumda kanıtlanmadı — bir sonraki oturumda önerilir.
+- `npx playwright test` (`tests/E2E/WaiterPwa`, gerçek Chromium + gerçek
+  Postgres + gerçek Host ikili dosyası, mock yok): **4/4 çalıştırmada
+  18/18 temiz** (~43s/çalıştırma) — `waiter-app.js`'teki görünürlük/gizleme
+  değişikliklerinin gerçek tarayıcıda hiçbir regresyona yol açmadığı
+  doğrulandı.
 
 ## Handoff
 
