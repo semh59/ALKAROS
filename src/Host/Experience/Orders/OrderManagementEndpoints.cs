@@ -60,6 +60,8 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<CashierHandoffStore>();
         // Refactor step 4/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<TableDraftService>();
+        // Refactor step 5/7 (docs/engineering/garson-refactor-plan.md).
+        services.TryAddSingleton<OrderSubmissionCoordinator>();
         services.TryAddSingleton<ServingHandoffNoteStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
@@ -335,7 +337,7 @@ public static class OrderManagementEndpoints
             Guid terminalId,
             Guid orderId,
             SubmitTableOrderRequest request,
-            OrderManagementStore store,
+            OrderSubmissionCoordinator store,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> hub,
@@ -365,7 +367,7 @@ public static class OrderManagementEndpoints
             Guid terminalId,
             Guid orderId,
             FireCourseRequestV1 request,
-            OrderManagementStore store,
+            OrderSubmissionCoordinator store,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> hub,
