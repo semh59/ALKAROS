@@ -1,9 +1,9 @@
 // ALKAROS Waiter PWA Service Worker (V1-WTR-006, V1-WTR-011, V1-WTR-037,
 // V1-WTR-038, V1-WTR-039, V1-WTR-040, V1-WTR-041, V1-WTR-042, V1-WTR-043,
-// V1-WTR-044, V1-WTR-045, V1-WTR-046)
-// v13: two more waiter-app.js modules split off — js/screens/menu.js,
-// js/sheets/product-sheet.js.
-const CACHE_NAME = 'alkaros-waiter-v13';
+// V1-WTR-044, V1-WTR-045, V1-WTR-046, V1-WTR-047)
+// v14: two more waiter-app.js modules split off — js/sheets/void-comp.js,
+// js/sheets/help-request.js.
+const CACHE_NAME = 'alkaros-waiter-v14';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -22,6 +22,8 @@ const ASSETS_TO_CACHE = [
   './js/sheets/party-size.js',
   './js/sheets/bill.js',
   './js/sheets/product-sheet.js',
+  './js/sheets/void-comp.js',
+  './js/sheets/help-request.js',
   './manifest.json',
   './vendor/signalr.min.js',
   './brand/alkaros-logo-on-dark.png',

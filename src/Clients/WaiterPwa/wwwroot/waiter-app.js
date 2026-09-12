@@ -37,12 +37,16 @@ import { openPartySizeSheet, partySizeSheetHtml } from './js/sheets/party-size.j
 import { loadFeatures, featureEnabled } from './js/features.js';
 import {
   activeItems, modifierCountFor, draftTotal, lastRound, renderQuickSend,
-  renderBill, renderDraftLine, renderSentLine, openBill, closeBill, KITCHEN_STATE,
+  renderBill, renderDraftLine, renderSentLine, openBill, closeBill, loadOrder,
 } from './js/sheets/bill.js';
 import { renderCategories, renderProducts, addToDraft, afterDraftChange } from './js/screens/menu.js';
 import {
   openProductSheet, chosenModifiers, updateProductSheetTotal, toggleModifier,
 } from './js/sheets/product-sheet.js';
+import {
+  openVoidSheet, confirmVoid, openVoidSentSheet, confirmVoidSent, openCompSheet, confirmComp,
+} from './js/sheets/void-comp.js';
+import { openHelpRequestSheet, confirmHelpRequest } from './js/sheets/help-request.js';
 
 (function () {
   'use strict';
@@ -50,26 +54,8 @@ import {
   // ══ Turkish dictionaries ═══════════════════════════════════════════
   // Enum values arrive from the server in English and are never printed raw.
   // (TABLE_STATUS moved to js/screens/tables.js, KITCHEN_STATE to
-  // js/sheets/bill.js, each's own only reader.)
-
-  // VoidReasonCatalog (src/Modules/Orders/ItemExceptions/ReasonCatalogs.cs).
-  // The codes are the server's; only the wording is ours.
-  const VOID_REASONS = [
-    { code: 'CustomerChange', label: 'Müşteri vazgeçti' },
-    { code: 'OperatorError', label: 'Yanlış girdim' },
-    { code: 'ProductUnavailable', label: 'Ürün kalmadı' },
-    { code: 'DuplicateEntry', label: 'İki kez girilmiş' }
-  ];
-
-  // V1-RMD-177: ComplimentaryReasonCatalog
-  // (src/Modules/Orders/ItemExceptions/ReasonCatalogs.cs). The codes are
-  // the server's; only the wording is ours.
-  const COMP_REASONS = [
-    { code: 'ServiceApology', label: 'Hizmet için özür' },
-    { code: 'CustomerSatisfaction', label: 'Müşteri memnuniyeti' },
-    { code: 'VIPGuest', label: 'VIP misafir' },
-    { code: 'ManagerPromotion', label: 'Yönetici promosyonu' }
-  ];
+  // js/sheets/bill.js, VOID_REASONS/COMP_REASONS to js/sheets/void-comp.js,
+  // each's own only reader.)
 
   // ══ Screens and sheets ═════════════════════════════════════════════
 
@@ -343,13 +329,6 @@ import {
     // once this runs - without it a stale price could sit unflagged until
     // some unrelated action happened to call renderBill() next.
     renderBill();
-  }
-
-  // The bill is always the server's answer, never a local accumulation.
-  async function loadOrder(tableId) {
-    const result = await api(apiUrl(`/orders/table/${tableId}`));
-    state.order = result.ok ? result.data : null;
-    return result;
   }
 
   async function loadPending() {
@@ -653,222 +632,6 @@ import {
     }
   }
 
-  // ══ Voiding a line ═════════════════════════════════════════════════
-
-  // Keyed by item id so a retry after approval reuses the same request.
-  const pendingVoidKeys = new Map();
-
-  // V1-RMD-155: the grant-gated path for a line the kitchen already has.
-  // Unlike the free void it may not resolve immediately — a waiter's request
-  // goes to a manager and comes back 202 Pending. The idempotency key is
-  // generated once per attempt and kept, so retrying after the manager
-  // approves resolves to that same request instead of opening a second one.
-  function openVoidSentSheet(itemId) {
-    const item = activeItems().find((candidate) => candidate.itemId === itemId);
-    if (!item || !state.order) return;
-
-    state.optionsContext = {
-      itemId,
-      reason: null,
-      idempotencyKey: pendingVoidKeys.get(itemId) || randomUUID()
-    };
-
-    const kitchen = KITCHEN_STATE[(item.kitchenState || '').toLowerCase()];
-    const body = `
-      <div class="callout">
-        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
-        <span>Bu ürün mutfağa gitti${kitchen ? ` (${escapeHtml(kitchen.label)})` : ''}.
-        İptali yönetici onayına gidebilir. Onaylanırsa mutfak bileti de iptal edilir
-        ve stok geri alınır.</span>
-      </div>
-      <div class="opts">
-        ${VOID_REASONS.map((reason) => `
-          <button type="button" class="opt" data-reason="${escapeHtml(reason.code)}" aria-pressed="false">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
-            <span class="opt-name">${escapeHtml(reason.label)}</span>
-          </button>`).join('')}
-      </div>`;
-
-    openOptions('void-sent', 'Mutfaktaki ürünü iptal et',
-      `${formatQuantity(item.quantity)} × ${item.productName}`, body, 'İptal iste', '', '');
-    el.optionsConfirm.className = 'btn btn-danger';
-    el.optionsConfirm.disabled = true;
-  }
-
-  async function confirmVoidSent() {
-    const context = state.optionsContext;
-    if (!context || !context.reason || !state.order) return;
-    el.optionsConfirm.disabled = true;
-
-    const result = await api(
-      apiUrl(`/orders/${state.order.orderId}/items/${context.itemId}/void-sent`),
-      {
-        method: 'POST',
-        body: {
-          idempotencyKey: context.idempotencyKey,
-          expectedRowVersion: state.order.rowVersion,
-          reasonCode: context.reason
-        }
-      });
-
-    if (!result.ok) {
-      toast(result.message, { warning: true });
-      el.optionsConfirm.disabled = false;
-      return;
-    }
-
-    closeOptions();
-    if (result.data && result.data.status === 'Pending') {
-      // Keep the key: the same request has to be resent once a manager
-      // resolves it, or a second grant would be raised for one decision.
-      pendingVoidKeys.set(context.itemId, context.idempotencyKey);
-      toast('İptal yönetici onayına gönderildi.', { warning: true });
-      return;
-    }
-
-    pendingVoidKeys.delete(context.itemId);
-    await loadOrder(state.table.id);
-    await loadTables();
-    renderBill();
-    const restored = result.data && result.data.stockRestored;
-    toast(restored ? 'Ürün iptal edildi, stok geri alındı.' : 'Ürün iptal edildi.');
-  }
-
-  // ══ Complimentary (ikram) ════════════════════════════════════════════
-  // V1-RMD-177: found by the 2026-09-10 Garson audit — /comp had no client
-  // anywhere. bills.comp is grant-class the same way bills.void is on the
-  // void-sent path above: a role that holds it outright (cashier/supervisor
-  // /manager) applies directly, a waiter's request goes to a manager and may
-  // come back 202 Pending — same idempotency-key-survives-a-retry pattern.
-
-  const pendingCompKeys = new Map();
-
-  function openCompSheet(itemId) {
-    const item = activeItems().find((candidate) => candidate.itemId === itemId);
-    if (!item || !state.order) return;
-
-    state.optionsContext = {
-      itemId,
-      reason: null,
-      idempotencyKey: pendingCompKeys.get(itemId) || randomUUID()
-    };
-
-    const body = `
-      <div class="callout">
-        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
-        <span>Ürün ücretsiz sayılır, kalıcı olarak kayda geçer. Bir gerekçe seçin.</span>
-      </div>
-      <div class="opts">
-        ${COMP_REASONS.map((reason) => `
-          <button type="button" class="opt" data-reason="${escapeHtml(reason.code)}" aria-pressed="false">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
-            <span class="opt-name">${escapeHtml(reason.label)}</span>
-          </button>`).join('')}
-      </div>`;
-
-    openOptions('comp', 'Ürünü ikram et',
-      `${formatQuantity(item.quantity)} × ${item.productName}`, body, 'İkram et', '', '');
-    el.optionsConfirm.className = 'btn btn-primary';
-    el.optionsConfirm.disabled = true;
-  }
-
-  async function confirmComp() {
-    const context = state.optionsContext;
-    if (!context || !context.reason || !state.order) return;
-    el.optionsConfirm.disabled = true;
-
-    const result = await api(
-      apiUrl(`/orders/${state.order.orderId}/items/${context.itemId}/comp`),
-      {
-        method: 'POST',
-        body: {
-          idempotencyKey: context.idempotencyKey,
-          expectedRowVersion: state.order.rowVersion,
-          reasonCode: context.reason
-        }
-      });
-
-    if (!result.ok) {
-      toast(result.message, { warning: true });
-      el.optionsConfirm.disabled = false;
-      return;
-    }
-
-    closeOptions();
-    if (result.data && result.data.status === 'Pending') {
-      pendingCompKeys.set(context.itemId, context.idempotencyKey);
-      toast('İkram yönetici onayına gönderildi.', { warning: true });
-      return;
-    }
-
-    pendingCompKeys.delete(context.itemId);
-    await loadOrder(state.table.id);
-    await loadTables();
-    renderBill();
-    // V1-WTR-012: personalBudgetRemaining is only set by the server when
-    // this specific comp was resolved by the waiter's own per-day allowance
-    // (not an outright bills.comp, not a delegation) — telling the waiter
-    // what's left keeps the allowance usable without a separate screen.
-    const remaining = result.data && result.data.personalBudgetRemaining;
-    toast(remaining !== null && remaining !== undefined
-      ? `Ürün ikram edildi. Bugünkü ikram hakkınızdan ${formatMoney(remaining)} kaldı.`
-      : 'Ürün ikram edildi.');
-  }
-
-  // ══ Calling for help ═══════════════════════════════════════════════
-  // V1-WTR-014: real-time, reaches every connected manager/supervisor
-  // device (not cashier — Semih's decision, 2026-09-11: they're busy at
-  // the till). HelpRequestTypeCatalog (src/Host/Experience/HelpRequests/
-  // HelpRequestContracts.cs). The codes are the server's; only the
-  // wording is ours.
-  const HELP_REQUEST_TYPES = [
-    { code: 'Spill', label: 'Döküldü / temizlik gerekiyor' },
-    { code: 'Complaint', label: 'Misafir şikayeti' },
-    { code: 'Approval', label: 'Onay gerekiyor' },
-    { code: 'Other', label: 'Diğer' }
-  ];
-
-  function openHelpRequestSheet() {
-    if (!state.table) return;
-    state.optionsContext = { reason: null };
-    const body = `
-      <div class="opts">
-        ${HELP_REQUEST_TYPES.map((type) => `
-          <button type="button" class="opt" data-reason="${escapeHtml(type.code)}" aria-pressed="false">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
-            <span class="opt-name">${escapeHtml(type.label)}</span>
-          </button>`).join('')}
-      </div>`;
-    openOptions('help-request', 'Yardım çağır',
-      `${state.table.number} masası için nöbetçi yöneticiye anında bildirim gider`,
-      body, 'Çağır', '', '');
-    el.optionsConfirm.className = 'btn btn-primary';
-    el.optionsConfirm.disabled = true;
-  }
-
-  async function confirmHelpRequest() {
-    const context = state.optionsContext;
-    if (!context || !context.reason || !state.table) return;
-    el.optionsConfirm.disabled = true;
-
-    const result = await api(apiUrl('/help-requests'), {
-      method: 'POST',
-      body: { tableId: state.table.id, requestType: context.reason }
-    });
-
-    if (!result.ok) {
-      // V1-WTR-014: a 429 (same table's 2-minute cooldown still active) is
-      // routine, not an error - the earlier call already reached
-      // management, this one would only be a duplicate.
-      toast(result.message, { warning: true });
-      el.optionsConfirm.disabled = false;
-      return;
-    }
-
-    closeOptions();
-    toast('Yardım çağrınız yöneticiye iletildi.');
-  }
-
   // ══ Party size (kaç kişi) ═══════════════════════════════════════════
   // openPartySizeSheet/partySizeSheetHtml moved to js/sheets/party-size.js
   // (V1-WTR-044). confirmPartySize stays here — it calls renderBill(),
@@ -880,49 +643,6 @@ import {
     state.draftPartySize = context.partySize;
     closeOptions();
     renderBill();
-  }
-
-  function openVoidSheet(itemId) {
-    const item = activeItems().find((candidate) => candidate.itemId === itemId);
-    if (!item || !state.order) return;
-
-    state.optionsContext = { itemId, reason: null };
-    const body = `
-      <div class="callout">
-        <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>
-        <span>İptal geri alınamaz ve kaydı tutulur. Bir gerekçe seçin.</span>
-      </div>
-      <div class="opts">
-        ${VOID_REASONS.map((reason) => `
-          <button type="button" class="opt" data-reason="${escapeHtml(reason.code)}" aria-pressed="false">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
-            <span class="opt-name">${escapeHtml(reason.label)}</span>
-          </button>`).join('')}
-      </div>`;
-    openOptions('void', 'Kalemi iptal et', `${formatQuantity(item.quantity)} × ${item.productName}`,
-      body, 'İptal et', '', '');
-    el.optionsConfirm.className = 'btn btn-danger';
-    el.optionsConfirm.disabled = true;
-  }
-
-  async function confirmVoid() {
-    const context = state.optionsContext;
-    if (!context || !context.reason || !state.order) return;
-    el.optionsConfirm.disabled = true;
-    const result = await api(
-      apiUrl(`/orders/${state.order.orderId}/items/${context.itemId}/void`),
-      { method: 'POST', body: { expectedRowVersion: state.order.rowVersion, reasonCode: context.reason } });
-
-    if (!result.ok) {
-      toast(result.message, { warning: true });
-      el.optionsConfirm.disabled = false;
-      return;
-    }
-    closeOptions();
-    await loadOrder(state.table.id);
-    await loadTables();
-    renderBill();
-    toast('Kalem iptal edildi.');
   }
 
   // ══ Guest orders waiting for confirmation ══════════════════════════

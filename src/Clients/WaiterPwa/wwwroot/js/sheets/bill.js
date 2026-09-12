@@ -19,6 +19,18 @@ import { state, el } from '../state.js';
 import { escapeHtml, formatMoney, formatQuantity, formatClock, courseLabel } from '../util.js';
 import { seatLabel } from '../screens/tables.js';
 import { featureEnabled } from '../features.js';
+import { apiUrl, api } from '../api.js';
+
+// The bill is always the server's answer, never a local accumulation.
+// Exported: several not-yet-extracted sheets (void, void-sent, comp,
+// transfer) reload the order the same way after their own mutation - the
+// same one-directional dependency this file's activeItems() already
+// documents above.
+export async function loadOrder(tableId) {
+  const result = await api(apiUrl(`/orders/table/${tableId}`));
+  state.order = result.ok ? result.data : null;
+  return result;
+}
 
 // V1-WTR-025: printed on the whole-plan kitchen ticket for prep
 // visibility but not yet called in — distinct from NotSent (never
