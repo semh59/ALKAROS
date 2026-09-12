@@ -11,13 +11,9 @@
 // exactly the one-directional dependency every other extraction in this
 // refactor has kept (a not-yet-extracted part of waiter-app.js importing
 // FROM an already-extracted module is fine; the reverse is not).
-//
-// afterDraftChange() stays in waiter-app.js, not here: it also calls
-// renderProducts() (menu.js's own concern, not extracted yet).
 
-import { state, el } from '../state.js';
+import { state, el, seatLabel } from '../state.js';
 import { escapeHtml, formatMoney, formatQuantity, formatClock, courseLabel } from '../util.js';
-import { seatLabel } from '../screens/tables.js';
 import { featureEnabled } from '../features.js';
 import { apiUrl, api } from '../api.js';
 

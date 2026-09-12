@@ -32,7 +32,9 @@ import {
   requestWakeLock, toggleFullscreen, onFullscreenChange,
   openPinSheet, confirmPin, resetIdleTimer, lockScreen, renderPinDots, renderPinPad, submitPin,
 } from './js/kiosk-lock.js';
-import { loadZones, loadTables, loadTableSeats, renderZones, renderTables } from './js/screens/tables.js';
+import {
+  loadZones, loadTables, loadTableSeats, renderZones, renderTables, showScreen, openTable,
+} from './js/screens/tables.js';
 import { openPartySizeSheet, partySizeSheetHtml } from './js/sheets/party-size.js';
 import { loadFeatures, featureEnabled } from './js/features.js';
 import {
@@ -47,6 +49,9 @@ import {
   openVoidSheet, confirmVoid, openVoidSentSheet, confirmVoidSent, openCompSheet, confirmComp,
 } from './js/sheets/void-comp.js';
 import { openHelpRequestSheet, confirmHelpRequest } from './js/sheets/help-request.js';
+import {
+  openTransferSheet, confirmTransfer, openTransferServerSheet, confirmTransferServer,
+} from './js/sheets/transfer.js';
 
 (function () {
   'use strict';
@@ -56,19 +61,6 @@ import { openHelpRequestSheet, confirmHelpRequest } from './js/sheets/help-reque
   // (TABLE_STATUS moved to js/screens/tables.js, KITCHEN_STATE to
   // js/sheets/bill.js, VOID_REASONS/COMP_REASONS to js/sheets/void-comp.js,
   // each's own only reader.)
-
-  // ══ Screens and sheets ═════════════════════════════════════════════
-
-  function showScreen(name) {
-    const onMenu = name === 'menu';
-    el.tablesScreen.dataset.state = onMenu ? 'behind' : 'on';
-    el.menuScreen.dataset.state = onMenu ? 'on' : 'off';
-    // V1-RMD-175: found by the 2026-09-10 Garson audit — this used to
-    // force-focus the search box on every single menu open (every table
-    // tap, every return from the bill), popping the on-screen keyboard even
-    // when the waiter only wanted to tap a category or a product. Search is
-    // still one tap away; it just is not forced on the waiter anymore.
-  }
 
   // The tablet bill column starts below whatever chrome is currently showing;
   // the guest banner appears and disappears, so this is measured, not assumed.
@@ -335,73 +327,6 @@ import { openHelpRequestSheet, confirmHelpRequest } from './js/sheets/help-reque
     const result = await api(apiUrl('/orders/pending'));
     state.pending = result.ok && Array.isArray(result.data) ? result.data : [];
     renderPendingBanner();
-  }
-
-  // ══ Opening a table ════════════════════════════════════════════════
-
-  async function openTable(tableId, goStraightToMenu) {
-    const table = state.tables.find((candidate) => candidate.id === tableId);
-    if (!table) return;
-
-    // An unsent round belongs to the table it was composed for, and it is
-    // kept there. The previous version showed a toast saying the round was
-    // still held and then deleted it on the very next line — nine items
-    // typed for table 5 vanished the moment the waiter glanced at table 7,
-    // while the screen claimed otherwise.
-    if (state.table && state.table.id !== tableId) {
-      if (state.draft.length > 0) {
-        state.draftsByTable.set(state.table.id, {
-          number: state.table.number,
-          lines: state.draft
-        });
-        toast(`${state.table.number} masasının gönderilmemiş turu saklandı.`, { warning: true });
-      } else {
-        state.draftsByTable.delete(state.table.id);
-      }
-    }
-    if (!state.table || state.table.id !== tableId) {
-      const held = state.draftsByTable.get(tableId);
-      state.draft = held ? held.lines : [];
-      state.draftsByTable.delete(tableId);
-      // V1-WTR-015: a party size typed for the PREVIOUS table must never
-      // leak into a different one's fresh draft.
-      state.draftPartySize = null;
-    }
-    persistDraftsByTable();
-
-    state.table = table;
-    el.menuTableName.textContent = `${table.number} masası`;
-    el.billTitle.textContent = `${table.number} masası`;
-
-    void loadTableSeats(table);
-    await loadOrder(tableId);
-    renderBill();
-
-    // The locked flow: an occupied table opens its bill, an empty one opens
-    // the menu. The bill sheet is never raised over the menu - that covers the
-    // very screen the waiter came to use.
-    const empty = !state.order || activeItems().length === 0;
-    if (empty || goStraightToMenu) {
-      closeBill();
-      showScreen('menu');
-      renderProducts();
-    } else {
-      showScreen('tables');
-      openBill();
-    }
-
-    // V1-WTR-013: pops (reads and marks seen, in one server round trip) any
-    // pending hand-off note left for this waiter — fires on every table
-    // open, but a note only ever exists once, so in practice this shows it
-    // exactly the first time a table is opened after receiving it and does
-    // nothing on every open after that.
-    void popHandoffNoteIfAny();
-  }
-
-  async function popHandoffNoteIfAny() {
-    const result = await api(apiUrl('/orders/handoff-note/pop'), { method: 'POST' });
-    if (!result.ok || !result.data) return;
-    toast(`${result.data.fromDisplayName}'den not: ${result.data.note}`, { warning: true });
   }
 
   // ══ Sending ════════════════════════════════════════════════════════
@@ -855,131 +780,6 @@ import { openHelpRequestSheet, confirmHelpRequest } from './js/sheets/help-reque
     persistQueue();
     closeOptions();
     toast('Hatalı siparişler temizlendi.');
-  }
-
-  // ══ Moving a table ═════════════════════════════════════════════════
-
-  function openTransferSheet() {
-    if (!state.table) return;
-    const targets = state.tables.filter((table) =>
-      table.id !== state.table.id && table.status === 'available');
-
-    const body = targets.length === 0
-      ? '<div class="empty">Şu anda boş masa yok.</div>'
-      : `<div class="opts">${targets.map((table) => `
-          <button type="button" class="opt" data-target="${escapeHtml(table.id)}" aria-pressed="false">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
-            <span class="opt-name">${escapeHtml(table.number)} masası</span>
-            <span class="opt-code">${escapeHtml(table.seats)} kişilik</span>
-          </button>`).join('')}</div>`;
-
-    state.optionsContext = { targetId: null };
-    openOptions('transfer', 'Masa değiştir',
-      `${state.table.number} masasındaki sipariş ve hesap taşınır`, body, 'Taşı', '', '');
-    el.optionsConfirm.className = 'btn btn-primary';
-    el.optionsConfirm.disabled = true;
-  }
-
-  async function confirmTransfer() {
-    const context = state.optionsContext;
-    if (!context || !context.targetId) return;
-    const target = state.tables.find((table) => table.id === context.targetId);
-    if (!target) return;
-
-    el.optionsConfirm.disabled = true;
-    const result = await api(apiUrl('/table-management/transfers'), {
-      method: 'POST',
-      body: {
-        sourceTableId: state.table.id,
-        expectedSourceRowVersion: state.table.rowVersion,
-        targetTableId: target.id,
-        expectedTargetRowVersion: target.rowVersion,
-        reason: 'Misafir masa değiştirdi'
-      }
-    });
-
-    if (!result.ok) {
-      toast(result.message, { warning: true });
-      el.optionsConfirm.disabled = false;
-      return;
-    }
-    const from = state.table.number;
-    closeOptions();
-    await loadTables();
-    const moved = state.tables.find((table) => table.id === target.id);
-    if (moved) await openTable(moved.id, false);
-    toast(`${from} masası ${target.number} masasına taşındı.`);
-  }
-
-  // ══ Handing every open check off to another server ══════════════════
-  // V1-RMD-111/V1-RMD-177. Different from openTransferSheet above (that
-  // moves ONE table's order to a different, empty table); this reassigns
-  // EVERY order this waiter currently serves to a colleague at once — the
-  // "I'm going on break/leaving" move. orders.transfer-server (every role
-  // holds it) covers only one's own orders; deliberately not offering the
-  // orders.transfer-server-any (someone else's) variant here — that is a
-  // cashier/supervisor action, out of this client's scope.
-
-  async function openTransferServerSheet() {
-    if (!state.user) return;
-    const result = await api(apiUrl('/orders/staff'));
-    if (!result.ok) { closeOptions(); toast(result.message, { warning: true }); return; }
-
-    const staff = Array.isArray(result.data) ? result.data : [];
-    const body = staff.length === 0
-      ? '<div class="empty">Devredilecek başka personel yok.</div>'
-      : `<div class="opts">${staff.map((person) => `
-          <button type="button" class="opt" data-target="${escapeHtml(person.userId)}" aria-pressed="false">
-            <span class="opt-box is-round"><svg class="icon" aria-hidden="true"><use href="#ico-check"/></svg></span>
-            <span class="opt-name">${escapeHtml(person.displayName)}</span>
-          </button>`).join('')}</div>`;
-
-    // V1-WTR-013: optional context for the receiving waiter — "table 5 is
-    // waiting on dessert, table 8 complained" — shown to them once, the
-    // first time their client pops it (see popHandoffNoteIfAny below).
-    // V1-SET-004: omitted outright when this deployment has hand-off notes
-    // turned off — the server already silently drops it either way, but a
-    // hidden field never even looks offered.
-    const noteField = featureEnabled('shiftHandoffNotes') ? `
-      <label class="hint" for="handoffNoteInput">Devir notu (isteğe bağlı)</label>
-      <input class="note" type="text" id="handoffNoteInput" maxlength="200"
-             placeholder="Örn. 5 nolu masa tatlı bekliyor">` : '';
-
-    state.optionsContext = { targetId: null };
-    openOptions('transfer-server', 'Masaları devret',
-      // V1-RMD-178: found by independent review of V1-RMD-177 — this used
-      // to say "bu cihazda açık olan" (open on this device), but
-      // TransferServingUserAsync reassigns EVERY order attributed to this
-      // user, on every device/terminal — device-independent, no undo. The
-      // text now says what the action actually does.
-      'Üzerinizdeki TÜM açık masalar (bu cihazda olsun olmasın) seçtiğiniz kişiye geçer — geri alınamaz',
-      body + noteField, 'Devret', '', '');
-    el.optionsConfirm.className = 'btn btn-primary';
-    el.optionsConfirm.disabled = true;
-  }
-
-  async function confirmTransferServer() {
-    const context = state.optionsContext;
-    if (!context || !context.targetId || !state.user) return;
-    el.optionsConfirm.disabled = true;
-
-    const noteField = el.optionsBody.querySelector('#handoffNoteInput');
-    const handoffNote = noteField ? noteField.value.trim() : '';
-
-    const result = await api(apiUrl('/orders/transfer-server'), {
-      method: 'POST',
-      body: { fromUserId: state.user.userId, toUserId: context.targetId, handoffNote: handoffNote || null }
-    });
-
-    if (!result.ok) {
-      toast(result.message, { warning: true });
-      el.optionsConfirm.disabled = false;
-      return;
-    }
-    closeOptions();
-    const count = result.data && result.data.ordersReassigned;
-    toast(count > 0 ? `${count} masa devredildi.` : 'Devredilecek açık masa yoktu.');
-    await loadTables();
   }
 
   // ══ Web Push ═══════════════════════════════════════════════════════

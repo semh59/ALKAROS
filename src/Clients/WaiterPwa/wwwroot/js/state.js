@@ -124,3 +124,13 @@ export function persistDraftsByTable() {
     'alkaros_waiter_drafts_by_table',
     JSON.stringify([...state.draftsByTable]));
 }
+
+// Kept here rather than in screens/tables.js (which owns state.tableSeats
+// itself): bill.js already needs this to render a line's seat label, and
+// tables.js needs to import openTable's own dependencies FROM bill.js
+// (V1-WTR-048) — tables.js -> bill.js -> tables.js would have been a real
+// circular import if this stayed on the tables.js side of it.
+export function seatLabel(seatId) {
+  const seat = state.tableSeats.find((candidate) => candidate.id === seatId);
+  return seat ? seat.label : null;
+}

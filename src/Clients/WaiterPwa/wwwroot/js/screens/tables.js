@@ -2,19 +2,19 @@
 // docs/engineering/garson-refactor-plan.md's Section 2, the plan's own
 // first screen module in its 2.4 ordering).
 //
-// Deliberately does NOT include openTable() here, even though it is the
-// action that opens this very screen's own table cells: on inspection it
-// orchestrates across tables/bill/menu (closeBill/openBill, showScreen,
-// renderProducts, renderBill, persistDraftsByTable, popHandoffNoteIfAny) —
-// none of bill.js or menu.js exist as modules yet, so pulling it in now
-// would mean this module importing back from waiter-app.js itself. It
-// stays in waiter-app.js until those two exist (the plan's own 2.4
-// ordering: tables.js -> party-size.js -> bill.js -> menu.js/
-// product-sheet.js -> the rest), then moves wherever it actually belongs.
+// openTable() (plus its own two small helpers, showScreen and
+// popHandoffNoteIfAny) moved in here too, in a later step (V1-WTR-048)
+// once bill.js and menu.js both existed to resolve what used to orchestrate
+// across three not-yet-extracted modules (closeBill/openBill, renderProducts,
+// renderBill, persistDraftsByTable) — exactly the point this file's own
+// history note above always said it was waiting for.
 
-import { state, el } from '../state.js';
+import { state, el, persistDraftsByTable } from '../state.js';
 import { escapeHtml, formatMoney } from '../util.js';
 import { apiUrl, api } from '../api.js';
+import { toast } from '../toast.js';
+import { activeItems, loadOrder, renderBill, openBill, closeBill } from '../sheets/bill.js';
+import { renderProducts } from './menu.js';
 
 export async function loadZones() {
   const result = await api(apiUrl('/table-management/zones'));
@@ -60,11 +60,6 @@ export async function loadTableSeats(table) {
   state.tableSeats = floorTable.seats
     .map((seat) => ({ id: seat.seatId, number: seat.number, label: seat.label }))
     .sort((a, b) => a.number - b.number);
-}
-
-export function seatLabel(seatId) {
-  const seat = state.tableSeats.find((candidate) => candidate.id === seatId);
-  return seat ? seat.label : null;
 }
 
 export function renderZones() {
@@ -155,4 +150,82 @@ export function renderTables() {
         ${quick}
       </div>`;
   }).join('');
+}
+
+export function showScreen(name) {
+  const onMenu = name === 'menu';
+  el.tablesScreen.dataset.state = onMenu ? 'behind' : 'on';
+  el.menuScreen.dataset.state = onMenu ? 'on' : 'off';
+  // V1-RMD-175: found by the 2026-09-10 Garson audit — this used to
+  // force-focus the search box on every single menu open (every table
+  // tap, every return from the bill), popping the on-screen keyboard even
+  // when the waiter only wanted to tap a category or a product. Search is
+  // still one tap away; it just is not forced on the waiter anymore.
+}
+
+// ══ Opening a table ════════════════════════════════════════════════
+
+export async function openTable(tableId, goStraightToMenu) {
+  const table = state.tables.find((candidate) => candidate.id === tableId);
+  if (!table) return;
+
+  // An unsent round belongs to the table it was composed for, and it is
+  // kept there. The previous version showed a toast saying the round was
+  // still held and then deleted it on the very next line — nine items
+  // typed for table 5 vanished the moment the waiter glanced at table 7,
+  // while the screen claimed otherwise.
+  if (state.table && state.table.id !== tableId) {
+    if (state.draft.length > 0) {
+      state.draftsByTable.set(state.table.id, {
+        number: state.table.number,
+        lines: state.draft
+      });
+      toast(`${state.table.number} masasının gönderilmemiş turu saklandı.`, { warning: true });
+    } else {
+      state.draftsByTable.delete(state.table.id);
+    }
+  }
+  if (!state.table || state.table.id !== tableId) {
+    const held = state.draftsByTable.get(tableId);
+    state.draft = held ? held.lines : [];
+    state.draftsByTable.delete(tableId);
+    // V1-WTR-015: a party size typed for the PREVIOUS table must never
+    // leak into a different one's fresh draft.
+    state.draftPartySize = null;
+  }
+  persistDraftsByTable();
+
+  state.table = table;
+  el.menuTableName.textContent = `${table.number} masası`;
+  el.billTitle.textContent = `${table.number} masası`;
+
+  void loadTableSeats(table);
+  await loadOrder(tableId);
+  renderBill();
+
+  // The locked flow: an occupied table opens its bill, an empty one opens
+  // the menu. The bill sheet is never raised over the menu - that covers the
+  // very screen the waiter came to use.
+  const empty = !state.order || activeItems().length === 0;
+  if (empty || goStraightToMenu) {
+    closeBill();
+    showScreen('menu');
+    renderProducts();
+  } else {
+    showScreen('tables');
+    openBill();
+  }
+
+  // V1-WTR-013: pops (reads and marks seen, in one server round trip) any
+  // pending hand-off note left for this waiter — fires on every table
+  // open, but a note only ever exists once, so in practice this shows it
+  // exactly the first time a table is opened after receiving it and does
+  // nothing on every open after that.
+  void popHandoffNoteIfAny();
+}
+
+async function popHandoffNoteIfAny() {
+  const result = await api(apiUrl('/orders/handoff-note/pop'), { method: 'POST' });
+  if (!result.ok || !result.data) return;
+  toast(`${result.data.fromDisplayName}'den not: ${result.data.note}`, { warning: true });
 }
