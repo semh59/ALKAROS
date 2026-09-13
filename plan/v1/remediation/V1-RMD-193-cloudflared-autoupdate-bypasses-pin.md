@@ -39,13 +39,9 @@ katıyordu.
 
 ## Out of scope
 
-- Yeni `api` imajının rebuild edilip yeniden deploy edilmesi: bu bir kod
-  değişikliği, bir dağıtım/operasyon adımı değil — bir sonraki imaj
-  rebuild'inde etkin olacak. Şu an çalışan `alkaros-api-1` container'ı
-  eski imajı kullanıyor, bu görevin kapsamı yalnızca kaynak koddaki
-  düzeltme. Bir sonraki rebuild'de `docker logs <yeni-container> |
-  grep autoupdate` ile cloudflared'ın artık kendi kendini
-  güncellemediğinin zamanla teyidi ayrı bir operasyonel takip maddesi.
+- Yok — `docker compose build api` + `docker compose up -d --no-deps api`
+  ile aynı oturumda gerçek imaj rebuild edilip yayına alındı, bkz.
+  Acceptance evidence.
 
 ## Dependencies
 
@@ -67,8 +63,22 @@ katıyordu.
   kullanıyor, gerçek argüman listesini sınamıyor — regresyon riski yok,
   ama gerçek davranışı da doğrulamıyor; asıl kanıt yukarıdaki gerçek
   binary --help doğrulaması).
-- `python tools/plan-audit/plan_audit_tool.py validate` → bkz. commit.
-- `python tools/consistency-audit/consistency_audit.py` → bkz. commit.
+- `docker compose build api` ile gerçek imaj rebuild edildi, sonra
+  `docker compose up -d --no-deps api` ile container yeniden oluşturuldu.
+  Yeni container'ın kendi başlangıç logunda:
+  ```
+  Version 2026.8.3 (Checksum f29324fe934d1e100617484c78deef803c4dc2cd351d645bbde42e96b4fccc5e)
+  Settings: map[no-autoupdate:true]
+  ```
+  — hem Dockerfile'ın pinlediği tam sürüm/checksum hem de
+  `no-autoupdate:true`'nun gerçekten etkin olduğu, cloudflared'ın kendi
+  loguyla doğrulandı. DNS/QUIC precheck'leri (`region1`/`region2.
+  v2.argotunnel.com`) PASS geçti, tünel sağlıklı yeniden kuruldu —
+  `docker inspect alkaros-api-1 --format '{{.State.Health.Status}}'`
+  → `healthy`.
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.
+- `python tools/consistency-audit/consistency_audit.py` → bu görevin
+  değiştirdiği dosyalarda 0 ihlal.
 
 ## Handoff
 
