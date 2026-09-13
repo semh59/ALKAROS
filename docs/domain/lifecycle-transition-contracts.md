@@ -83,7 +83,7 @@ forbidden edges are rejected.
 | FiscalDocument | Requested→Pending; Pending→Issued\|Rejected\|Cancelled\|ReconciliationRequired; Issued→Refunded | Issued→Pending; Cancelled→Issued; timeout→Issued (CORR:C29) |
 | ProductionBatch | Planned→InProgress; InProgress→Completed\|Cancelled | Completed→InProgress; Planned→Completed |
 | PortionReservation | Reserved→Released\|Consumed\|Waste | Released→Consumed; Waste→Reserved |
-| KitchenTicket | Queued→Accepted; Accepted→Preparing; Preparing→Ready; Ready→Cancelled; {Queued,Accepted,Preparing}→Cancelled | Ready→Accepted; Cancelled→Queued (print retry does not reopen ticket) |
+| KitchenTicket | Queued→Accepted; Accepted→Preparing; Queued→Preparing (implicit accept — V1-KIT-007, 2026-09-13: the first item to start preparing accepts the ticket in the same step, `AcceptedAt` is backfilled identically to the explicit path); Preparing→Ready; Ready→Cancelled; {Queued,Accepted,Preparing}→Cancelled | Ready→Accepted; Cancelled→Queued (print retry does not reopen ticket) |
 | KitchenTicketItem | Queued→Preparing; Preparing→Ready; Ready→Served; {Queued,Preparing,Ready}→Cancelled | Served→Ready; Cancelled→Preparing; parent Ready before all non-cancelled items Ready/Served (PDF:II.5.7A) |
 | PrintJob | Pending→Printing; Printing→Printed\|Failed; Failed→Retrying; Retrying→Printing\|Failed\|Cancelled | Printed→Printing; Failed→Printed (no silent success); Cancelled→Retrying |
 | CashSession | Open→Counting; Counting→Closing; Closing→Closed; Closed→Reconciled | Reconciled→Open; Closed→Counting |
@@ -100,7 +100,10 @@ Positive:
 
 - Waiter submits order → `Draft→Submitted→PendingConfirmation`; kitchen
   acceptance → `Accepted`; ticket `Queued→Accepted→Preparing→Ready` — all
-  recorded with actor and reason.
+  recorded with actor and reason. In practice kitchen staff advance the
+  first item directly (`Queued→Preparing`, implicit accept, V1-KIT-007) —
+  the explicit `Accepted` step stays available (e.g. a manager accepting
+  a whole ticket at once) but is no longer a mandatory first tap.
 - Cash tender times out → `Pending→Unknown→ReconciliationRequired` +
   ReconciliationCase → operator verifies → `Approved` (PDF:I.27.1, CORR:C29).
 

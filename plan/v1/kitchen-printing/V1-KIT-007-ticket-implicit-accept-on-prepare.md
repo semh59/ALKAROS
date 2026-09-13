@@ -43,6 +43,14 @@ taşınmasını `KitchenTicket` domain modeline ekler.
   HTTP-seviyesi regresyon testi: `Queued` bir ticket'ın kalemi doğrudan
   `Preparing`'e geçirilince ticket DTO'sunun `status: "Preparing"`
   döndüğü.
+- docs/domain/lifecycle-transition-contracts.md (Sınırlı ek — V0-DOM-001
+  sahipliğinde kalan, Semih onaylı resmi karar kaydı) — bağımsız denetimde
+  (2026-09-13) bulundu: bu dokümanın KitchenTicket "Allowed transitions"
+  satırı yalnız `Queued→Accepted`'ı listeliyordu, yeni gerçek çalışma-zamanı
+  geçişi olan `Queued→Preparing` (örtük kabul) eklenmedi. Satır ve narrative
+  örnek (`Positive:` bölümü) güncellendi; PDF kaynağı/onay tarihi
+  değişmedi, yalnız zaten Semih onaylı olan bu davranışın dokümana
+  yansıtılması eklendi.
 
 ## Out of scope
 
@@ -69,12 +77,17 @@ taşınmasını `KitchenTicket` domain modeline ekler.
   `ExplicitAcceptStillWorksAndItsAcceptedAtIsNotOverwrittenByLaterItemProgress`).
 - `ALKAROS_TEST_PG_PORT=55432 ALKAROS_TEST_PG_PASSWORD=postgres dotnet
   test tests/Host/Experience/KitchenOperations/ALKAROS.Host.Experience.KitchenOperations.Tests.csproj
-  -c Release` → gerçek Postgresql'e karşı **Başarılı! Başarısız: 0,
-  Başarılı: 9, Atlanan: 0, Toplam: 9** (8 mevcut + 1 yeni:
-  `ItemStartedDirectlyFromQueuedTicketImplicitlyAcceptsTheTicket`).
+  -c Release` → gerçek Postgresql'e karşı geçti (test daha sonra
+  V1-IAM-028'de `KitchenAdvanceOnlySessionCanAdvanceButNotCancel` olarak
+  yeniden adlandırıldı ve kitchen.advance-yalnız senaryosunu da kapsayacak
+  şekilde genişletildi — bkz. o görevin Acceptance evidence'ı).
 - `python tools/consistency-audit/consistency_audit.py` → `clean`.
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
-  uyarı.
+  uyarı. **Düzeltme notu (2026-09-13, bağımsız denetim sonrası):**
+  `docs/domain/lifecycle-transition-contracts.md`'nin bu görevle senkron
+  olmadığı bulundu ve yukarıdaki Owned surface'a eklenerek güncellendi;
+  audit bu ek dosyayla birlikte yeniden çalıştırılıp tekrar 0 hata/0
+  uyarı doğrulandı.
 - Semih'in elle deneyebileceği senaryo: yeni bir sipariş gönder (ticket
   `Queued`), mutfak ekranından tek bir kalemi doğrudan "Hazırlanıyor"a al,
   ticket'ın "Kabul Edildi" adımını atlamadan "Hazırlanıyor" durumuna

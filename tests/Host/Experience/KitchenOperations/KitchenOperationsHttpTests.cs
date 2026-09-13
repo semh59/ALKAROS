@@ -178,6 +178,35 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
     }
 
+    // Independent review (2026-09-13): the permission gate's "is this a
+    // Cancelled request" check and the domain's eventual enum parse
+    // (Enum.TryParse, which documentedly trims whitespace) must agree — a
+    // kitchen.advance-only session must not be able to bypass the
+    // orders.send requirement for Cancelled just by padding the target
+    // state with whitespace.
+    [Theory]
+    [InlineData("Cancelled ")]
+    [InlineData(" Cancelled")]
+    [InlineData("CANCELLED")]
+    public async Task KitchenAdvanceOnlySessionCannotCancelViaWhitespaceOrCaseVariants(string targetState)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId,
+            [ApplicationPermissions.KitchenAdvance]);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var cancelRequest = JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/transition",
+            cookie,
+            new TransitionKitchenTicketV1(targetState, 1));
+        using var cancelDenied = await client.SendAsync(cancelRequest);
+        Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
+    }
+
     [Fact]
     public async Task UnknownDeliveryRequiresReasonedReprintApprovalAndNeverAutoPrints()
     {

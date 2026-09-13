@@ -44,9 +44,21 @@ public static class KitchenOperationsEndpoints
     /// narrower <see cref="ApplicationPermissions.KitchenAdvance"/>, which
     /// every FOH role also holds (additive, no regression) so this never
     /// changes what a waiter/cashier/supervisor/manager session can do.
+    ///
+    /// Independent review (2026-09-13) flagged a real gap here: the eventual
+    /// domain-level parse (<c>KitchenOperationsStore.ParseEnum</c>, backed by
+    /// <see cref="Enum.TryParse{TEnum}(string?, bool, out TEnum)"/>) trims
+    /// leading/trailing whitespace (documented .NET behavior), but a bare
+    /// <see cref="string.Equals(string?, string?, StringComparison)"/> here did
+    /// not — a request with <c>TargetState: "Cancelled "</c> would have been
+    /// gated as a non-Cancelled transition (kitchen.advance only) while still
+    /// actually cancelling the ticket downstream, letting a kitchen-staff-only
+    /// session bypass the orders.send requirement. Trimming here keeps this
+    /// check's notion of "is this a Cancelled request" identical to what the
+    /// store will actually parse.
     /// </summary>
     private static string TicketTransitionPermission(string? targetState) =>
-        string.Equals(targetState, nameof(KitchenTicketState.Cancelled), StringComparison.OrdinalIgnoreCase)
+        string.Equals(targetState?.Trim(), nameof(KitchenTicketState.Cancelled), StringComparison.OrdinalIgnoreCase)
             ? TicketMutationPermission
             : ApplicationPermissions.KitchenAdvance;
 

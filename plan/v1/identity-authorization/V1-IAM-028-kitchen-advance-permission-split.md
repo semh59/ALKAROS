@@ -38,7 +38,7 @@ davranış değişmez.
   `/tickets/{id}/transition` ve `/tickets/{id}/items/{id}/transition`
   uçlarının, `TargetState == "Cancelled"` ise `orders.send`, aksi halde
   `kitchen.advance` istemesi.
-- Yeni migration (`database/migrations/V1/V1-IAM-028/`, numara 109, bu
+- Yeni migration (`database/migrations/V1/V1-IAM-028/**`, numara 109, bu
   görevin kendi owned dosyası) — `roles` tablosuna "Mutfak Personeli"
   (`kitchen-staff`) satırı, `role_permissions` tablosuna bu rol için
   yalnız `kitchen.advance` ataması. "Mutfak Şefi" rolünün kendisi bu
@@ -112,6 +112,32 @@ davranış değişmez.
   - `tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj` →
     **Başarılı! Başarısız: 0, Başarılı: 135, Atlanan: 0, Toplam: 135**
     (manifest 108→109 pozisyon/tablo güncellemesi dahil).
+
+**Düzeltmeler (2026-09-13, bağımsız kod denetimi sonrası):**
+
+1. **plan-audit gerçekte hata veriyordu**: Owned surface'taki migration
+   yolu (`database/migrations/V1/V1-IAM-028/`) sonunda `/**` eksikti,
+   audit tool'u bunu dosyalarla eşleşmeyen bir desen olarak okuyup
+   `UNOWNED_PRODUCTION_FILE` hatası veriyordu (migration commit'ten önce
+   audit çalıştırılmış, sonra tekrar çalıştırılmamış). `/**` eklendi,
+   `plan_audit_tool.py validate` yeniden çalıştırılıp gerçekten **0
+   hata, 0 uyarı** doğrulandı.
+2. **Gerçek yetki atlatma açığı bulundu ve kapatıldı**: `TicketTransitionPermission`
+   `string.Equals` ile boşluk kırpmadan karşılaştırıyordu, ama domain'in
+   `Enum.TryParse` ayrıştırması (.NET'in dokümante davranışı) boşluk
+   kırpıyor — `TargetState: "Cancelled "` gibi bir istek yetki kapısında
+   "Cancelled değil" sanılıp yalnız `kitchen.advance` isteniyordu, ama
+   domain yine de gerçekten iptal ediyordu. **Önce açığı boşlukla kanıtladım**
+   (düzeltmeyi `git stash` ile geçici kaldırıp `KitchenAdvanceOnlySessionCannotCancelViaWhitespaceOrCaseVariants`
+   testini çalıştırdım — `"Cancelled "` ve `" Cancelled"` varyantları
+   gerçekten 200 OK döndü, açık doğrulandı), sonra `.Trim()` eklenip
+   düzeltme geri getirildi, aynı test 3/3 yeşil oldu
+   (`ALKAROS.Host.Experience.KitchenOperations.Tests`: 12/12 toplam).
+3. Bir kod yorumunda yanlışlıkla Türkçe karakter bulundu, İngilizceye
+   çevrildi (`consistency_audit.py` yeniden `clean` doğrulandı).
+4. `docs/domain/lifecycle-transition-contracts.md` senkronizasyonu için
+   bkz. `V1-KIT-007`'nin Owned surface'ı (bu görevin değil, o görevin
+   davranışının dokümanı).
 - `python tools/consistency-audit/consistency_audit.py` → `clean` (bir
   kod yorumundaki yanlışlıkla yazılmış Türkçe karakter bulundu ve
   düzeltildi).
