@@ -28,11 +28,23 @@ public static class ApplicationPermissions
     public const string ReportsView = "reports.view";
     /// <summary>V12-QRT-003: configuring a third-party integration credential (e.g. the QR relay provider token) — manager-only, no escalation path.</summary>
     public const string IntegrationsManage = "integrations.manage";
+    /// <summary>
+    /// V1-IAM-028: advancing a kitchen ticket/item one stage forward
+    /// (Queued→Preparing→Ready→Served), split out of <see cref="OrdersSend"/>
+    /// so a line-cook-only role (kitchen-staff) can hold it WITHOUT also being
+    /// able to cancel a ticket — cancel/report-a-problem still require
+    /// OrdersSend (KitchenOperationsEndpoints branches on the target state).
+    /// Every existing FOH role keeps OrdersSend, so their behavior is
+    /// unchanged; this is additive.
+    /// </summary>
+    public const string KitchenAdvance = "kitchen.advance";
 
     public const string RoleWaiter = "waiter";
     public const string RoleCashier = "cashier";
     public const string RoleSupervisor = "supervisor";
     public const string RoleManager = "manager";
+    /// <summary>V1-IAM-028: line kitchen staff ("Mutfak Personeli") — holds only <see cref="KitchenAdvance"/>, defined and seeded in migration 109, not in <see cref="RoleGrants"/> below (that dictionary only covers the four FOH roles; kitchen-staff's single grant is seeded directly by the migration).</summary>
+    public const string RoleKitchenStaff = "kitchen-staff";
 
     /// <summary>Every code this catalog introduces, in seed order.</summary>
     public static readonly IReadOnlyList<string> Codes = new[]
@@ -41,7 +53,7 @@ public static class ApplicationPermissions
         TablesMerge, FloorplanManage, BillsSplit, BillsVoid, BillsComp,
         BillsDiscount, CashDrawer, ReportsView,
         OrdersTransferServer, OrdersTransferServerAny,
-        IntegrationsManage,
+        IntegrationsManage, KitchenAdvance,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -50,8 +62,12 @@ public static class ApplicationPermissions
     // "Table Ownership": self-transfer needs no manager, transferring
     // someone else's tables does). orders.transfer-server-any is the
     // broader tier, granted only at the CashierFloorSet level and up.
+    // kitchen.advance (V1-IAM-028) joins this base set too: every FOH role
+    // that can already fire an order to the kitchen can also advance the
+    // resulting ticket, same as before the split — only the new
+    // kitchen-staff role is limited to kitchen.advance alone.
     private static readonly string[] EveryRoleTakesOrders =
-        { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer };
+        { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer, KitchenAdvance };
 
     private static readonly string[] CashierFloorSet =
         { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny };

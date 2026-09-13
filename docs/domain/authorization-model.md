@@ -59,6 +59,7 @@ removed in the last wave task. New application permission codes:
 | `cash.drawer` | no-sale / drawer open / count |
 | `reports.view` | operational reports |
 | `catalog.manage` | menu / price / routing (already exists, unchanged) |
+| `kitchen.advance` | advance a kitchen ticket/item one stage forward (Queued→Preparing→Ready→Served) — split out of `orders.send` (V1-IAM-028) so the narrow `kitchen-staff` role can hold it without also being able to cancel a ticket. A ticket/item transition to `Cancelled` still requires `orders.send` regardless of which role/permission gate is checked; `KitchenOperationsEndpoints.TicketTransitionPermission` branches on the target state. |
 
 ## 3. Roles (seed defaults; tunable from the manager UI)
 
@@ -91,6 +92,22 @@ authorization request resolved by §4.
    `bills.void` / `bills.comp` / `bills.discount` / `floorplan.manage` /
    `reports.view` outright so the rush keeps moving without a manager, but never
    `catalog.manage` and never staff/finance settings.
+
+### 3.1 `kitchen.advance` and the `kitchen-staff` role (V1-IAM-028)
+
+All four roles above (waiter/cashier/supervisor/manager) also hold
+`kitchen.advance` outright — additive, no regression, since they already held
+`orders.send` and could already advance a kitchen ticket before the split.
+A fifth, kitchen-only role, `kitchen-staff` ("Mutfak Personeli", a line cook
+with no FOH access), holds **only** `kitchen.advance` — it can move a ticket/
+item forward but cannot cancel it, approve a reprint (`kitchen.reprint`),
+manage printer routing (`kitchen.routing.manage`), or suspend a sold-out
+product (`kitchen.availability.suspend`, V1-IAM-029's "Mutfak Şefi" role).
+Note that `kitchen.reprint` and `kitchen.routing.manage` are Kitchen-module
+local permission constants (defined in `KitchenOperationsEndpoints.cs`, not
+in `ApplicationPermissions.Codes`) — `kitchen.advance` is the first Kitchen
+permission added to the central catalog, because it needed to be granted to
+the four existing FOH roles too, not just a new Kitchen-only one.
 
 ## 4. Grant flow (`authorization_grants`)
 

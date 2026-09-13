@@ -49,19 +49,26 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
         var error = await denied.Content.ReadFromJsonAsync<KitchenOperationsErrorEnvelopeV1>();
         Assert.Equal("FORBIDDEN", error!.Error.Code);
+        // V1-IAM-028: a non-Cancelled ticket transition ("Accepted" here) now
+        // checks kitchen.advance, not orders.send — the permission split's
+        // whole point is that these are no longer the same check.
         Assert.Equal(
             1L,
             await _database.ScalarAsync<long>(
-                "SELECT count(*) FROM identity.denial_events WHERE permission_code = 'orders.send';"));
+                "SELECT count(*) FROM identity.denial_events WHERE permission_code = 'kitchen.advance';"));
     }
 
     [Fact]
     public async Task TicketItemLifecycleUsesAuthoritativeVersionsAndRejectsStaleWrites()
     {
         var terminalId = Guid.NewGuid();
+        // V1-IAM-028: every real FOH role holds both grants (orders.send for
+        // cancel, kitchen.advance for forward progress) — this lifecycle test
+        // exercises both kinds of transition, so it seeds a full session
+        // rather than the narrow kitchen-staff one.
         var cookie = await _database.SeedSessionAsync(
             terminalId,
-            [KitchenOperationsEndpoints.TicketMutationPermission]);
+            [KitchenOperationsEndpoints.TicketMutationPermission, ApplicationPermissions.KitchenAdvance]);
         var seed = await _database.SeedKitchenGraphAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
@@ -133,13 +140,18 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
     // "Accepted" transition before advancing an item — starting the item
     // directly from a Queued ticket must implicitly accept the ticket in
     // the same request, not leave it stuck on "Queued" forever.
+    //
+    // V1-IAM-028: this session deliberately holds ONLY kitchen.advance (the
+    // "Mutfak Personeli" line-cook grant), not orders.send — proving a
+    // narrow session can advance an item forward but is refused a Cancelled
+    // transition, which still requires orders.send (Mutfak Şefi/FOH roles).
     [Fact]
-    public async Task ItemStartedDirectlyFromQueuedTicketImplicitlyAcceptsTheTicket()
+    public async Task KitchenAdvanceOnlySessionCanAdvanceButNotCancel()
     {
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedSessionAsync(
             terminalId,
-            [KitchenOperationsEndpoints.TicketMutationPermission]);
+            [ApplicationPermissions.KitchenAdvance]);
         var seed = await _database.SeedKitchenGraphAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
@@ -156,6 +168,14 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
 
         Assert.Equal("Preparing", preparing.Status);
         Assert.Equal("Preparing", Assert.Single(preparing.Items).Status);
+
+        using var cancelRequest = JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/transition",
+            cookie,
+            new TransitionKitchenTicketV1("Cancelled", preparing.RowVersion));
+        using var cancelDenied = await client.SendAsync(cancelRequest);
+        Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
     }
 
     [Fact]

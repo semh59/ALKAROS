@@ -7,15 +7,16 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 public sealed class ApplicationPermissionsTests
 {
     [Fact]
-    public void CatalogHasSixteenDistinctCodes()
+    public void CatalogHasSeventeenDistinctCodes()
     {
-        ApplicationPermissions.Codes.Should().HaveCount(16);
+        // V1-IAM-028 added kitchen.advance, the 17th code.
+        ApplicationPermissions.Codes.Should().HaveCount(17);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
 
     [Fact]
-    public void WaiterHoldsOrderTakingTableStatusAndSelfTransferOnly()
+    public void WaiterHoldsOrderTakingTableStatusSelfTransferAndKitchenAdvanceOnly()
     {
         var waiter = ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter];
 
@@ -25,6 +26,7 @@ public sealed class ApplicationPermissionsTests
             ApplicationPermissions.OrdersSend,
             ApplicationPermissions.TablesStatus,
             ApplicationPermissions.OrdersTransferServer,
+            ApplicationPermissions.KitchenAdvance,
         });
     }
 

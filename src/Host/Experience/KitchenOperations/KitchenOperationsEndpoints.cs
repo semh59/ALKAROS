@@ -26,10 +26,29 @@ namespace ALKAROS.Host.Experience.KitchenOperations;
 public static class KitchenOperationsEndpoints
 {
     public const string RoutePrefix = "/api/v1/terminals/{terminalId:guid}/kitchen-operations";
+    /// <summary>
+    /// V1-IAM-028: kept for the "any mutation" case (unused directly by the
+    /// transition endpoints anymore — see <see cref="TicketTransitionPermission"/> —
+    /// but still the permission a Cancelled transition requires).
+    /// </summary>
     public const string TicketMutationPermission = ApplicationPermissions.OrdersSend;
     public const string RoutingMutationPermission = "kitchen.routing.manage";
     public const string ReprintPermission = "kitchen.reprint";
     public const string BackupPermission = "operations.backup";
+
+    /// <summary>
+    /// V1-IAM-028: a ticket/item transition to Cancelled still requires
+    /// <see cref="TicketMutationPermission"/> (orders.send) — cancelling is
+    /// not something a line-cook-only "kitchen-staff" session may do. Every
+    /// other target state (Accepted/Preparing/Ready/Served) only requires the
+    /// narrower <see cref="ApplicationPermissions.KitchenAdvance"/>, which
+    /// every FOH role also holds (additive, no regression) so this never
+    /// changes what a waiter/cashier/supervisor/manager session can do.
+    /// </summary>
+    private static string TicketTransitionPermission(string? targetState) =>
+        string.Equals(targetState, nameof(KitchenTicketState.Cancelled), StringComparison.OrdinalIgnoreCase)
+            ? TicketMutationPermission
+            : ApplicationPermissions.KitchenAdvance;
 
     public static IServiceCollection AddKitchenOperationsExperience(this IServiceCollection services)
     {
@@ -114,7 +133,7 @@ public static class KitchenOperationsEndpoints
             CancellationToken cancellationToken) =>
         {
             await authorizer.RequirePermissionAsync(
-                context, terminalId, TicketMutationPermission, cancellationToken);
+                context, terminalId, TicketTransitionPermission(request.TargetState), cancellationToken);
             return Results.Ok(await store.TransitionTicketAsync(ticketId, request, cancellationToken));
         });
 
@@ -129,7 +148,7 @@ public static class KitchenOperationsEndpoints
             CancellationToken cancellationToken) =>
         {
             await authorizer.RequirePermissionAsync(
-                context, terminalId, TicketMutationPermission, cancellationToken);
+                context, terminalId, TicketTransitionPermission(request.TargetState), cancellationToken);
             return Results.Ok(await store.TransitionItemAsync(ticketId, itemId, request, cancellationToken));
         });
 

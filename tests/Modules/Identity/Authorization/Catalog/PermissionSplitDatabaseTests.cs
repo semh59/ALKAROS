@@ -18,14 +18,14 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
     public PermissionSplitDatabaseTests(PermissionSplitDatabase db) => _db = db;
 
     [Fact]
-    public async Task AllSixteenCodesAreSeeded()
+    public async Task AllSeventeenCodesAreSeeded()
     {
         foreach (var code in ApplicationPermissions.Codes)
             (await _db.PermissionCountAsync(code)).Should().Be(1, "'{0}' must be seeded once", code);
     }
 
     [Fact]
-    public async Task WaiterRoleExistsAndHoldsExactlyOrderTakingTableStatusAndSelfTransfer()
+    public async Task WaiterRoleExistsAndHoldsExactlyOrderTakingTableStatusSelfTransferAndKitchenAdvance()
     {
         (await _db.RoleCountAsync(ApplicationPermissions.RoleWaiter)).Should().Be(1);
 
@@ -37,8 +37,19 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
             ApplicationPermissions.OrdersSend,
             ApplicationPermissions.TablesStatus,
             ApplicationPermissions.OrdersTransferServer,
+            ApplicationPermissions.KitchenAdvance,
         });
         granted.Should().NotContain("pos.cashier.mutate");
+    }
+
+    [Fact]
+    public async Task KitchenStaffRoleExistsAndHoldsExactlyKitchenAdvance()
+    {
+        (await _db.RoleCountAsync(ApplicationPermissions.RoleKitchenStaff)).Should().Be(1);
+
+        var granted = await _db.PermissionCodesForRoleAsync(ApplicationPermissions.RoleKitchenStaff);
+
+        granted.Should().BeEquivalentTo(new[] { ApplicationPermissions.KitchenAdvance });
     }
 
     [Fact]
@@ -105,14 +116,15 @@ public sealed class PermissionSplitDownMigrationTests : IClassFixture<Permission
     public PermissionSplitDownMigrationTests(PermissionSplitDatabase db) => _db = db;
 
     [Fact]
-    public async Task Down049Then043RestoreTheAliasDropTheGranularSetAndLeave042Alone()
+    public async Task Down109Through043RestoreTheAliasDropTheGranularSetAndLeave042Alone()
     {
         await _db.ApplyDownSplitAsync();
 
         foreach (var code in ApplicationPermissions.Codes)
-            (await _db.PermissionCountAsync(code)).Should().Be(0, "043 down must drop '{0}'", code);
+            (await _db.PermissionCountAsync(code)).Should().Be(0, "043/109 down must drop '{0}'", code);
 
         (await _db.RoleCountAsync(ApplicationPermissions.RoleWaiter)).Should().Be(0);
+        (await _db.RoleCountAsync(ApplicationPermissions.RoleKitchenStaff)).Should().Be(0);
 
         (await _db.RoleCountAsync(ApplicationPermissions.RoleCashier)).Should().Be(1);
         // 049 down re-creates the alias and re-grants it to cashier/supervisor/manager.
