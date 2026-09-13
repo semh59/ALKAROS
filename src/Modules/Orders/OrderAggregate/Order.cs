@@ -431,6 +431,17 @@ public sealed class Order
     public (Order Order, IReadOnlyList<OrderItem> FiredItems) FireCourse(
         int courseNumber, string? reason = null, Guid? changedBy = null, DateTimeOffset? changedAt = null)
     {
+        // V1-RMD-182: found by the 2026-09-12 five-agent independent Garson
+        // audit — this had no IsOpenCheck guard, unlike FireRound and every
+        // other state-changing method here. A Cancelled order can still
+        // carry Held items (an earlier round's later course, never called
+        // in before the check was voided); calling FireCourse on it would
+        // still promote them to Sent and hand back "fired" items for the
+        // caller to dispatch a fresh kitchen ticket for - the kitchen would
+        // start cooking a course of an order nobody is paying for anymore.
+        if (!IsOpenCheck)
+            throw new InvalidOperationException($"Order {Id} cannot fire a course from {Status}.");
+
         if (courseNumber is < 1 or > 20)
             throw new ArgumentOutOfRangeException(nameof(courseNumber), courseNumber, "Course number must be between 1 and 20.");
 

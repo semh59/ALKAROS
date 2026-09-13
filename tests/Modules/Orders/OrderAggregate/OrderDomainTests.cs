@@ -690,6 +690,31 @@ public class OrderCourseTests
 
         act.Should().Throw<InvalidOperationException>();
     }
+
+    /// <summary>
+    /// V1-RMD-182: found by the 2026-09-12 five-agent independent Garson
+    /// audit — FireCourse had no IsOpenCheck guard, unlike FireRound and
+    /// every other state-changing method on this aggregate. A Cancelled
+    /// order can still carry Held items (a later course of an already-fired
+    /// round, never called in before the check was voided); without the
+    /// guard, calling FireCourse on it would still promote them to Sent and
+    /// hand back items for the caller to dispatch a fresh kitchen ticket
+    /// for - cooking a course of an order nobody is paying for anymore.
+    /// </summary>
+    [Fact]
+    public void FiringACourseOnACancelledOrderThrows()
+    {
+        var starter = CourseItem(1);
+        var main = CourseItem(2);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4006", [starter, main])
+            .FireRound().Order
+            .TransitionTo(OrderState.Cancelled);
+
+        var act = () => order.FireCourse(2);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"Order {order.Id} cannot fire a course from Cancelled.");
+    }
 }
 
 public class OrderVoidTests
