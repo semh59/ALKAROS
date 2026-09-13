@@ -228,6 +228,21 @@ export async function sendDraft() {
       afterDraftChange();
       showScreen('tables');
       toast(`${tableNumber} siparişi mutfağa gönderildi.`);
+    } else if (result.status === 429) {
+      // V1-RMD-185: found by the 2026-09-12 five-agent independent Garson
+      // audit — this used to fall into the generic 4xx branch below,
+      // which is right for an actual validation rejection (something
+      // about THIS round is wrong, fix it and resend) but wrong for a
+      // rate limit (nothing about the round is wrong, the server is just
+      // asking to wait). flushQueue() already treats 429 as retryable and
+      // never destroys the round for it; the live-send path now queues
+      // the same way the network-failure branch below does, instead of
+      // leaving the waiter staring at a rate-limit message with no clear
+      // next step.
+      queueOrder(payload);
+      removeSentDraftLines(targetItems);
+      afterDraftChange();
+      toast(`Sunucu şu an yoğun — ${tableNumber} siparişi kuyruğa alındı.`, { warning: true });
     } else if (result.status >= 400 && result.status < 500) {
       // A rejected order is kept on screen so nothing typed is lost.
       toast(result.message, { warning: true });
