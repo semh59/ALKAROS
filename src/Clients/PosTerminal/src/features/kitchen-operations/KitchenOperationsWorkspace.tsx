@@ -102,6 +102,7 @@ export function KitchenOperationsWorkspace({
   canAdvance,
   canOperate,
   canManageReprints,
+  canSuspendAvailability,
   onRefresh,
   onTransitionItem,
   onUndoItem,
@@ -109,6 +110,7 @@ export function KitchenOperationsWorkspace({
   onApproveReprint,
   onRejectReprint,
   onCreateCategoryRoute,
+  onSuspendProductAvailability,
   errorMessage: suppliedError,
   lastUpdated,
 }: KitchenWorkspaceProps) {
@@ -122,6 +124,8 @@ export function KitchenOperationsWorkspace({
   const [densityOverride, setDensityOverride] = useState<Density>("auto");
   const [cancelTarget, setCancelTarget] = useState<KitchenTicket | null>(null);
   const [cancelReason, setCancelReason] = useState("");
+  const [suspendPromptOpen, setSuspendPromptOpen] = useState(false);
+  const [suspendProductId, setSuspendProductId] = useState("");
 
   // V1-KDS-003: ticks every second (not 15s like before undo existed) so the
   // undo affordance's countdown and disappearance track the backend's real
@@ -155,6 +159,17 @@ export function KitchenOperationsWorkspace({
 
   const orderGroups = useMemo(() => groupByOrder(data.tickets), [data.tickets]);
   const overallHealth = worstHealth(data.health);
+
+  // V1-KDS-002: the Goal's own scope - products from open tickets, not
+  // every product in the catalog. A distinct product can appear on several
+  // tickets/items; only the name is needed once each.
+  const openProducts = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const ticket of data.tickets)
+      for (const item of ticket.items)
+        if (item.status !== "Cancelled" && !seen.has(item.productId)) seen.set(item.productId, item.productName);
+    return Array.from(seen, ([productId, productName]) => ({ productId, productName }));
+  }, [data.tickets]);
 
   const executeItemTransition = async (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => {
     if (!onTransitionItem) return;
@@ -208,6 +223,39 @@ export function KitchenOperationsWorkspace({
       setCancelTarget(null);
     } catch (error) {
       setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ticket değişti; listeyi yenileyin." : error instanceof ApiError ? error.message : "İptal edilemedi." });
+    } finally {
+      setBusyKey(null);
+    }
+  };
+
+  const openSuspendPrompt = () => {
+    setSuspendProductId("");
+    setFormErrors([]);
+    setSuspendPromptOpen(true);
+  };
+
+  const submitSuspend = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!onSuspendProductAvailability) return;
+    if (!suspendProductId) {
+      setFormErrors(["Bir ürün seçin."]);
+      return;
+    }
+    const product = openProducts.find((candidate) => candidate.productId === suspendProductId);
+    const key = `suspend:${suspendProductId}`;
+    setBusyKey(key);
+    setFormErrors([]);
+    try {
+      const result = await onSuspendProductAvailability(suspendProductId);
+      setFeedback({
+        tone: "success",
+        message: result.planConflict
+          ? `${product?.productName ?? "Ürün"} tükendi olarak işaretlendi; plana aykırı olduğu için yöneticiye bildirim kaydı düşüldü.`
+          : `${product?.productName ?? "Ürün"} tükendi olarak işaretlendi.`,
+      });
+      setSuspendPromptOpen(false);
+    } catch (error) {
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ürün başka bir işlemle değişti; tekrar deneyin." : error instanceof ApiError ? error.message : "Ürün tükendi olarak işaretlenemedi." });
     } finally {
       setBusyKey(null);
     }
@@ -272,6 +320,12 @@ export function KitchenOperationsWorkspace({
         {!data.liveSyncEnabled && <span className="kitchen-live-sync-badge" title="Kalem hazır olduğunda garsona bildirim gitmiyor">Canlı senkron kapalı</span>}
         {!canOperate && canAdvance && <span className="kitchen-role-badge" title="Yalnız ilerletme yapabilirsiniz">Mutfak Personeli</span>}
         <span className={`kitchen-health-dot kitchen-health-dot--${(overallHealth ?? "unknown").toLowerCase()}`} role="img" aria-label={`Sistem durumu: ${healthStatusLabel(overallHealth)}`} />
+        {onSuspendProductAvailability && <Button
+          variant="secondary"
+          disabled={!canSuspendAvailability}
+          title={canSuspendAvailability ? undefined : "Bu işlem için Mutfak Şefi yetkisi gerekli"}
+          onClick={openSuspendPrompt}
+        >Ürün Tükendi Bildir</Button>}
         <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
       </div>
     </header>
@@ -332,6 +386,23 @@ export function KitchenOperationsWorkspace({
 
     <ModalDialog open={decision !== null} title={decision === "approve" ? "Reprint onayı" : "Reprint reddi"} onClose={() => { if (!busyKey) { setDecision(null); setSelectedDelivery(null); } }}>
       <form className="kitchen-decision-form" onSubmit={(event) => void submitDecision(event)}><ValidationSummary title="Gerekçeyi kontrol edin" errors={formErrors} />{selectedDelivery && <p className="kitchen-decision-form__context"><strong>Doğrulanamayan teslimat</strong> · {compactId(selectedDelivery.id)} · deneme {selectedDelivery.attemptNumber}</p>}<TextField label={kitchenReprintText.reasonLabel} hint="İstasyonda fiziksel kontrol yapıldı mı?" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Örn. Ticket yazıcıdan çıkmadı" autoComplete="off" /><div className="kitchen-decision-form__actions"><Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => { setDecision(null); setSelectedDelivery(null); }}>Vazgeç</Button><Button type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : decision === "approve" ? "Reprint'i onayla" : "Reprint'i reddet"}</Button></div></form>
+    </ModalDialog>
+
+    <ModalDialog open={suspendPromptOpen} title="Ürün Tükendi Bildir" onClose={() => { if (!busyKey) setSuspendPromptOpen(false); }}>
+      <form className="kitchen-decision-form" onSubmit={(event) => void submitSuspend(event)}>
+        <ValidationSummary title="Seçimi kontrol edin" errors={formErrors} />
+        {openProducts.length === 0 ? <p className="kitchen-panel__muted">Açık biletlerde ürün yok.</p> : <label>Ürün
+          <select value={suspendProductId} onChange={(event) => setSuspendProductId(event.target.value)} aria-label="Tükenen ürün" disabled={Boolean(busyKey)}>
+            <option value="">Seçin…</option>
+            {openProducts.map((product) => <option key={product.productId} value={product.productId}>{product.productName}</option>)}
+          </select>
+        </label>}
+        <p className="kitchen-decision-form__context">Ürün pasife alınır; Catalog Management'ta da pasif görünecektir. Ürün hâlâ satışta iken 86'lanıyorsa, yöneticiye denetlenebilir bir bildirim kaydı düşülür.</p>
+        <div className="kitchen-decision-form__actions">
+          <Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => setSuspendPromptOpen(false)}>Vazgeç</Button>
+          <Button type="submit" disabled={Boolean(busyKey) || openProducts.length === 0}>{busyKey ? "Kaydediliyor…" : "Tükendi olarak işaretle"}</Button>
+        </div>
+      </form>
     </ModalDialog>
   </section>;
 }

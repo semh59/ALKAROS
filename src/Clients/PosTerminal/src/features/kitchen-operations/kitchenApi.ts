@@ -7,6 +7,7 @@ import type {
   KitchenPrinterRoute,
   KitchenTicket,
   KitchenUnknownDelivery,
+  ProductAvailabilitySuspended,
 } from "./models";
 
 export class KitchenOperationsApiError extends Error {
@@ -25,6 +26,8 @@ export interface KitchenOperationsClient {
   approveReprint: (deliveryId: string, reason: string) => Promise<KitchenUnknownDelivery>;
   rejectReprint: (deliveryId: string, reason: string) => Promise<KitchenUnknownDelivery>;
   createCategoryRoute: (categoryId: string, printerId: string) => Promise<KitchenPrinterRoute>;
+  // V1-KIT-008: 86 a product from the Kitchen screen itself.
+  suspendProductAvailability: (productId: string) => Promise<ProductAvailabilitySuspended>;
 }
 
 interface Page<T> { items: T[]; nextCursor: string | null }
@@ -145,5 +148,6 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
       method: "POST",
       body: JSON.stringify({ routeLevel: "Category", printerId, categoryId, isActive: true }),
     }),
+    suspendProductAvailability: (productId) => request<ProductAvailabilitySuspended>(`/products/${encodeURIComponent(productId)}/suspend`, { method: "POST" }),
   };
 }

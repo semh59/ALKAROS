@@ -135,6 +135,17 @@ export interface KitchenData {
   liveSyncEnabled: boolean;
 }
 
+/** V1-KIT-008/V1-KDS-002: the result of 86-ing a product from this screen. */
+export interface ProductAvailabilitySuspended {
+  productId: string;
+  isAvailable: boolean;
+  // True when the product was still on active sale the instant before this
+  // suspend — the backend then also wrote an informational
+  // authorization_grants row for a manager to find (V1-KIT-008's Goal:
+  // this is a durable audit record, not a live push).
+  planConflict: boolean;
+}
+
 export interface KitchenWorkspaceProps {
   state: KitchenWorkspaceState;
   stationId: string;
@@ -149,6 +160,11 @@ export interface KitchenWorkspaceProps {
   canAdvance: boolean;
   canOperate: boolean;
   canManageReprints: boolean;
+  // V1-IAM-029/V1-KDS-002: `kitchen.availability.suspend` - held outright
+  // only by the kitchen-chef ("Mutfak Sefi") role today (migration 110
+  // also grants it to manager, so V1-KIT-008's endpoint is testable before
+  // this role existed). Neither `canAdvance` nor `canOperate` implies this.
+  canSuspendAvailability: boolean;
   onRefresh: () => void | Promise<void>;
   onTransitionItem?: (ticket: KitchenTicket, item: KitchenTicketItem, targetState: KitchenTicketItem["status"]) => void | Promise<void>;
   // V1-KIT-009/V1-KDS-003: reverses an item's most recent transition within
@@ -158,6 +174,11 @@ export interface KitchenWorkspaceProps {
   onApproveReprint?: (delivery: KitchenUnknownDelivery, reason: string) => void | Promise<void>;
   onRejectReprint?: (delivery: KitchenUnknownDelivery, reason: string) => void | Promise<void>;
   onCreateCategoryRoute?: (categoryId: string, printerId: string) => void | Promise<void>;
+  // V1-KIT-008/V1-KDS-002: 86 a product. Present whenever a cashier session
+  // exists at all — visibility of the *button* is gated in the workspace
+  // itself (locked, not hidden, for a non-chef session, per this task's own
+  // acceptance evidence), the actual call is gated server-side regardless.
+  onSuspendProductAvailability?: (productId: string) => Promise<ProductAvailabilitySuspended>;
   errorMessage?: string;
   lastUpdated?: string;
 }

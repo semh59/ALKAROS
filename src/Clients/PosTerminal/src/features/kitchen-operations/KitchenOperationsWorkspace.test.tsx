@@ -24,7 +24,7 @@ const data: KitchenData = {
 };
 
 function baseProps(overrides: Partial<ComponentProps<typeof KitchenOperationsWorkspace>> = {}) {
-  return { state: "ready" as const, stationId: "hot-line", data, canAdvance: true, canOperate: true, canManageReprints: true, onRefresh: vi.fn(), onTransitionItem: vi.fn(), onTransitionTicket: vi.fn(), onApproveReprint: vi.fn(), onRejectReprint: vi.fn(), ...overrides };
+  return { state: "ready" as const, stationId: "hot-line", data, canAdvance: true, canOperate: true, canManageReprints: true, canSuspendAvailability: true, onRefresh: vi.fn(), onTransitionItem: vi.fn(), onTransitionTicket: vi.fn(), onApproveReprint: vi.fn(), onRejectReprint: vi.fn(), ...overrides };
 }
 
 describe("kitchen operations workspace", () => {
@@ -182,6 +182,61 @@ describe("kitchen operations workspace", () => {
     const dot = document.querySelector(".kitchen-workspace__header-actions .kitchen-health-dot");
     expect(dot).not.toBeNull();
     expect(dot!.getAttribute("aria-label")).toContain("Sistem durumu");
+  });
+
+  it("shows the Ürün Tükendi Bildir button locked for a kitchen-staff session and enabled for the chef", async () => {
+    const onSuspendProductAvailability = vi.fn();
+    await render(<KitchenOperationsWorkspace {...baseProps({ canSuspendAvailability: false, onSuspendProductAvailability })} />);
+    const button = [...document.querySelectorAll("button")].find((candidate) => candidate.textContent?.includes("Ürün Tükendi Bildir"))!;
+    expect(button).not.toBeNull();
+    expect(button.hasAttribute("disabled")).toBe(true);
+  });
+
+  it("hides the Ürün Tükendi Bildir button entirely when the session has no cashier client at all", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ onSuspendProductAvailability: undefined })} />);
+    expect([...document.querySelectorAll("button")].some((candidate) => candidate.textContent?.includes("Ürün Tükendi Bildir"))).toBe(false);
+  });
+
+  it("86s a product picked from the open-ticket list and reports the manager notification when it was plan-conflicting", async () => {
+    const onSuspendProductAvailability = vi.fn().mockResolvedValue({ productId: "product-1", isAvailable: false, planConflict: true });
+    await render(<KitchenOperationsWorkspace {...baseProps({ onSuspendProductAvailability })} />);
+    await click([...document.querySelectorAll("button")].find((candidate) => candidate.textContent?.includes("Ürün Tükendi Bildir"))!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const submit = () => click([...dialog.querySelectorAll("button")].find((candidate) => candidate.textContent?.includes("Tükendi olarak işaretle"))!);
+
+    // No product selected yet - a client-side guard, not a wasted round trip.
+    await submit();
+    expect(dialog.textContent).toContain("Bir ürün seçin.");
+    expect(onSuspendProductAvailability).not.toHaveBeenCalled();
+
+    const select = dialog.querySelector<HTMLSelectElement>("select")!;
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!;
+      setter.call(select, "product-1");
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await submit();
+
+    expect(onSuspendProductAvailability).toHaveBeenCalledWith("product-1");
+    expect(document.body.textContent).toContain("Mercimek çorbası tükendi olarak işaretlendi");
+    expect(document.body.textContent).toContain("yöneticiye bildirim kaydı düşüldü");
+  });
+
+  it("86s a product without a manager notification when the suspend was not plan-conflicting", async () => {
+    const onSuspendProductAvailability = vi.fn().mockResolvedValue({ productId: "product-1", isAvailable: false, planConflict: false });
+    await render(<KitchenOperationsWorkspace {...baseProps({ onSuspendProductAvailability })} />);
+    await click([...document.querySelectorAll("button")].find((candidate) => candidate.textContent?.includes("Ürün Tükendi Bildir"))!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const select = dialog.querySelector<HTMLSelectElement>("select")!;
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!;
+      setter.call(select, "product-1");
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await click([...dialog.querySelectorAll("button")].find((candidate) => candidate.textContent?.includes("Tükendi olarak işaretle"))!);
+
+    expect(document.body.textContent).toContain("Mercimek çorbası tükendi olarak işaretlendi.");
+    expect(document.body.textContent).not.toContain("yöneticiye bildirim kaydı düşüldü");
   });
 
   it("has no critical or serious axe violations", async () => {
