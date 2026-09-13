@@ -52,6 +52,13 @@
     <!-- V1-RMD-152: what a modifier consumes. -->
     <None Include="../../../../../database/migrations/V1/V1-RMD-152/095-modifier-stock-mappings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-RMD-125/087-inventory-stock-balances-non-negative.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- V1-RMD-184: found by the 2026-09-12 five-agent independent Garson
+         audit — without settings.settings, QrOrderExpiryHostedService (a
+         background hosted service started with the Host, not this test's
+         own subject) failed every tick with 42P01 "relation
+         settings.settings does not exist", silently swallowed rather than
+         failing any test outright. -->
+    <None Include="../../../../../database/migrations/V1/V1-SET-001/026-typed-settings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
