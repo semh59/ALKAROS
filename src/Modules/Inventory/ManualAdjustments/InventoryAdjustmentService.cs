@@ -93,7 +93,7 @@ public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
             : MovementDirection.Out;
         var signedDelta = movementDirection == MovementDirection.In ? quantityInTrackingUnit : -quantityInTrackingUnit;
 
-        // Non-negative outcome invariant ("olumsuz olmayan sonuç")
+        // Non-negative outcome invariant.
         if (movementDirection == MovementDirection.Out && currentOnHand - quantityInTrackingUnit < 0m)
         {
             throw new NegativeInventoryResultException(
