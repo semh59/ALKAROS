@@ -20,6 +20,7 @@ const data: KitchenData = {
   unknownDeliveries: [{ id: "delivery-1", printJobId: "job-1", ticketId: "ticket-1", printerId: "printer-1", status: "Unknown", attemptNumber: 1, isReprint: false, operatorReason: null, crashReason: "ACK alınamadı", createdAt: "2026-08-26T10:00:00Z", deliveredAt: null, resolvedAt: null, rowVersion: 1 }],
   health: { snapshotId: "snapshot-1", databaseStatus: "Healthy", diskStatus: "Unhealthy", lastBackupStatus: "Unhealthy", freeDiskBytes: 10, databaseSizeBytes: 100, capturedAt: "2026-08-26T10:00:00Z" },
   backups: [{ backupId: "backup-1", backupType: "Full", fileSizeBytes: 0, status: "Failed", errorMessage: "Backup engine unavailable", startedAt: "2026-08-26T09:00:00Z", completedAt: "2026-08-26T09:01:00Z", retentionDays: 30 }],
+  liveSyncEnabled: true,
 };
 
 function baseProps(overrides: Partial<ComponentProps<typeof KitchenOperationsWorkspace>> = {}) {
@@ -56,6 +57,15 @@ describe("kitchen operations workspace", () => {
     expect(next).not.toBeNull();
     await click(next);
     expect(onTransitionItem).toHaveBeenCalledWith(data.tickets[0], data.tickets[0].items[0], "Ready");
+  });
+
+  it("shows a badge when kitchen.live_sync_enabled is off, and hides it when on", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, liveSyncEnabled: false } })} />);
+    expect(document.querySelector(".kitchen-live-sync-badge")).not.toBeNull();
+    expect(document.body.textContent).toContain("Canlı senkron kapalı");
+
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, liveSyncEnabled: true } })} />);
+    expect(document.querySelector(".kitchen-live-sync-badge")).toBeNull();
   });
 
   it("only a session with orders.send (canOperate) can open the cancel/sorun-bildir prompt", async () => {

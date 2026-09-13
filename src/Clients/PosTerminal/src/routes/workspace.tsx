@@ -465,7 +465,7 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
   />;
 }
 
-const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], categories: [], unknownDeliveries: [], health: null, backups: [] };
+const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], categories: [], unknownDeliveries: [], health: null, backups: [], liveSyncEnabled: false };
 
 function KitchenRoute({ terminalId, canAdvance, canOperate }: { terminalId: string; canAdvance: boolean; canOperate: boolean }) {
   const [stationId, setStationId] = useState("");

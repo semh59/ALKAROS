@@ -1,8 +1,8 @@
 # V1-KDS-004 - Mutfak ekranında canlı senkron durumu rozeti
 
 - Task ID: V1-KDS-004
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Planned
 
@@ -25,13 +25,26 @@ mevcut "Canlı" göstergesi (`.kitchen-live-dot`, `V1-KDS-001`) korunur.
 
 ## Acceptance evidence
 
-- `cd src/Clients/PosTerminal && npx tsc --noEmit` → 0 hata.
-- `cd src/Clients/PosTerminal && npx vitest run` → tüm proje yeşil, yeni
-  test dahil (rozetin `liveSyncEnabled: false` ile göründüğü, `true` ile
-  görünmediği).
-- Semih'in elle deneyebileceği senaryo: ayarı kapat, Mutfak ekranında
-  rozetin göründüğünü doğrula; ayarı aç, rozetin kaybolup "Canlı"
-  göstergesinin kaldığını doğrula.
+- `cd src/Clients/PosTerminal && npx tsc --noEmit` → **0 hata.**
+- `cd src/Clients/PosTerminal && npx vitest run` → **Test Files 23
+  passed (23), Tests 146 passed (146)** — tüm proje, izole değil (yeni
+  test: `"shows a badge when kitchen.live_sync_enabled is off, and hides
+  it when on"`; `kitchenApi.test.ts`'e de `liveSyncEnabled` alanının
+  gerçekten `/operations/live-sync` yanıtından okunduğunu kanıtlayan bir
+  assertion eklendi).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
+  uyarı.
+- Uygulanan tasarım: `kitchenApi.ts`'in `load()`'ı artık 7 paralel GET
+  yapıyor (yeni `/operations/live-sync` dahil), `KitchenData.liveSyncEnabled`
+  alanına yazıyor. Kapalıyken üst barda "Canlı senkron kapalı" rozeti
+  (turuncu/uyarı renginde) görünüyor; açıkken hiçbir ek gösterim yok,
+  mevcut "Canlı" noktası (bağlantı canlılığı, farklı bir kavram)
+  değişmeden kalıyor.
+- Semih'in elle deneyebileceği senaryo: `kitchen.live_sync_enabled`
+  ayarını kapat, Mutfak ekranını yenile, üst barda "Canlı senkron kapalı"
+  rozetinin göründüğünü doğrula; ayarı aç, yenile, rozetin kaybolup
+  "Canlı" göstergesinin kaldığını doğrula.
 
 ## Handoff
 

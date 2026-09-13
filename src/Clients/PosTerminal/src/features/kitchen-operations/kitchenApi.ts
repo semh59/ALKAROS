@@ -117,15 +117,16 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
         if (error instanceof KitchenOperationsApiError && error.status === 404) return null;
         throw error;
       });
-      const [tickets, printers, routes, categories, unknownDeliveries, backups] = await Promise.all([
+      const [tickets, printers, routes, categories, unknownDeliveries, backups, liveSync] = await Promise.all([
         get<KitchenTicket[]>(`/tickets?stationId=${encodeURIComponent(stationId)}`),
         get<KitchenPrinter[]>("/printers"),
         get<KitchenPrinterRoute[]>("/routes"),
         getCategories(),
         get<KitchenUnknownDelivery[]>("/deliveries/unknown"),
         get<KitchenBackup[]>("/operations/backups/recent?limit=20"),
+        get<{ enabled: boolean }>("/operations/live-sync"),
       ]);
-      return { tickets, printers, routes, categories, unknownDeliveries, health, backups };
+      return { tickets, printers, routes, categories, unknownDeliveries, health, backups, liveSyncEnabled: liveSync.enabled };
     },
     transitionItem: (ticketId, itemId, targetState, expectedTicketRowVersion, expectedItemRowVersion, reason) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/items/${encodeURIComponent(itemId)}/transition`, { method: "POST", body: JSON.stringify({ targetState, expectedTicketRowVersion, expectedItemRowVersion, reason }) }),
     transitionTicket: (ticketId, targetState, expectedRowVersion, reason) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/transition`, { method: "POST", body: JSON.stringify({ targetState, expectedRowVersion, reason }) }),

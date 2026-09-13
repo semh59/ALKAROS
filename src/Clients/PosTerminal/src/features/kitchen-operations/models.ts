@@ -129,6 +129,10 @@ export interface KitchenData {
   unknownDeliveries: readonly KitchenUnknownDelivery[];
   health: KitchenHealthSnapshot | null;
   backups: readonly KitchenBackup[];
+  // V1-KIT-010/V1-KDS-004: kitchen.live_sync_enabled — off by default,
+  // silently skips the waiter ready-notification and KitchenState mirror
+  // when off. Shown so the screen doesn't lie about what it's doing.
+  liveSyncEnabled: boolean;
 }
 
 export interface KitchenWorkspaceProps {

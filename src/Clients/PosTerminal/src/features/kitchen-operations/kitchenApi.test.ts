@@ -4,6 +4,7 @@ import { createKitchenOperationsClient, KitchenOperationsApiError, loadKitchenRu
 const payloads = {
   tickets: [{ id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", stationId: "hot-line", status: "Queued", rowVersion: 1, createdAt: "2026-08-26T00:00:00Z", updatedAt: null, acceptedAt: null, readyAt: null, cancelledAt: null, items: [] }],
   printers: [], routes: [], unknownDeliveries: [], backups: [], health: { snapshotId: "health-1", databaseStatus: "Healthy", diskStatus: "Healthy", lastBackupStatus: "Healthy", freeDiskBytes: 100, databaseSizeBytes: 100, capturedAt: "2026-08-26T00:00:00Z" },
+  liveSync: { enabled: true },
 };
 
 describe("kitchen operations API client", () => {
@@ -35,11 +36,12 @@ describe("kitchen operations API client", () => {
   it("loads every production surface with same-origin credentials and station scope", async () => {
     const fetcher = vi.fn(async (url: RequestInfo | URL, _init?: RequestInit) => {
       const path = String(url);
-      return new Response(JSON.stringify(path.includes("health") ? payloads.health : path.includes("tickets") ? payloads.tickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify(path.includes("health") ? payloads.health : path.includes("tickets") ? payloads.tickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : path.includes("live-sync") ? payloads.liveSync : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
     });
     const client = createKitchenOperationsClient("terminal/1", "hot line", fetcher);
     const result = await client.load();
     expect(result.tickets).toHaveLength(1);
+    expect(result.liveSyncEnabled).toBe(true);
     expect(fetcher).toHaveBeenCalledWith(expect.stringContaining("stationId=hot%20line"), expect.objectContaining({ credentials: "same-origin" }));
   });
 

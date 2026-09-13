@@ -244,6 +244,7 @@ export function KitchenOperationsWorkspace({
       <div><span className="kitchen-workspace__kicker">EXPO / MUTFAK</span><h2>{stationId} istasyonu</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Sipariş bazlı çapraz istasyon görünümü"}</p></div>
       <div className="kitchen-workspace__header-actions">
         <span className="kitchen-live-dot" aria-hidden="true" /><span className="kitchen-workspace__source">Canlı</span>
+        {!data.liveSyncEnabled && <span className="kitchen-live-sync-badge" title="Kalem hazır olduğunda garsona bildirim gitmiyor">Canlı senkron kapalı</span>}
         {!canOperate && canAdvance && <span className="kitchen-role-badge" title="Yalnız ilerletme yapabilirsiniz">Mutfak Personeli</span>}
         <span className={`kitchen-health-dot kitchen-health-dot--${(overallHealth ?? "unknown").toLowerCase()}`} role="img" aria-label={`Sistem durumu: ${healthStatusLabel(overallHealth)}`} />
         <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
