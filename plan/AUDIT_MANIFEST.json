@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1108,
-  "markdown_line_count": 81155,
-  "markdown_byte_count": 4700510,
+  "markdown_file_count": 1109,
+  "markdown_line_count": 81232,
+  "markdown_byte_count": 4704096,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2290,9 +2290,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "0A6B9D0F7F0D63C3F6D908612F33128DA5D173987E6B47579F4DB0D1E780CC9E",
-      "lines": 2384,
-      "bytes": 343134,
+      "sha256": "C5E585D99BF51C4373CB0E452D06FFF9C734B3133CB3B26F9C109D2B9AD5A8EA",
+      "lines": 2385,
+      "bytes": 343309,
       "utf8": true
     },
     {
@@ -6136,6 +6136,13 @@
       "sha256": "175AFA9A6B106A3EAC82EF285045CDA60B117469DBA5C287169DE57F911E1E9D",
       "lines": 70,
       "bytes": 2982,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-196-coverage-step-silent-failure-diagnostics.md",
+      "sha256": "8FAA3CDB7EC12E457A95734E3D83CE984967DCFA6BAF9912152631027F09EA8A",
+      "lines": 76,
+      "bytes": 3411,
       "utf8": true
     },
     {
