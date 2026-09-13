@@ -44,9 +44,11 @@ edilmez.
   /kitchen-operations/products/{productId}/suspend` ucu; yerel
   `kitchen.availability.suspend` sabiti (mevcut `TicketMutationPermission`
   emsaliyle aynı desende, bu dosyada tanımlanır); `KitchenOperationsStore`'a
-  `CatalogManagementStore` DI enjeksiyonu (bu nedenle `KitchenOperationsStore`
-  ve `IKitchenOperationsSessionAuthorizer`'ın DI kaydı Singleton'dan
-  Scoped'a indi — Catalog'un kendi `CatalogManagementStore`'u zaten Scoped).
+  `CatalogManagementStore` DI enjeksiyonu (bu nedenle yalnız
+  `KitchenOperationsStore`'un DI kaydı Singleton'dan Scoped'a indi —
+  Catalog'un kendi `CatalogManagementStore`'u zaten Scoped;
+  `IKitchenOperationsSessionAuthorizer` Singleton olarak kaldı, Scoped bir
+  şeye bağımlı değil).
 - authorization_grants yazma yolu (Sınırlı ek, paylaşılan) — doğrudan
   `IAuthorizationGrantRepository.InsertAsync` ile, `AuthorizationGrant.cs`/
   `AuthorizationGrantService.cs`'e HİÇ dokunmadan: derin inceleme (bu görev
@@ -58,7 +60,7 @@ edilmez.
   doğrudan zaten-çözümlenmiş (`Granted`/`Auto`) bir satır yazmaya izin
   veriyor; tetikleyici sadece INSERT/UPDATE'te çalışıyor, bu yolu
   engellemiyor.
-- database/migrations/V1/V1-KIT-008/** (yeni) — `kitchen.availability.
+- `database/migrations/V1/V1-KIT-008/**` (yeni) — `kitchen.availability.
   suspend` izin kodunu `identity.permissions`'a ekler ve şimdilik yalnız
   `manager` rolüne bağlar (V1-IAM-029 aynı kodu Mutfak Şefi'ne de ekleyecek,
   additive). Migration olmadan uç hiçbir oturum için hiç açılamazdı — FK
