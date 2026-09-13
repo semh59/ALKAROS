@@ -861,6 +861,23 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
             new EventId(5200, nameof(LogRequestFailure)),
             "Order management request failed on {Path} ({TraceIdentifier}).");
 
+    // V1-RMD-187: found by the 2026-09-12 five-agent independent Garson
+    // audit — InvalidOperationException maps to a 409 below, under the
+    // >=500 threshold LogRequestFailure gates on, so it was never logged
+    // at all. It is thrown for many distinct reasons across this codebase
+    // (order not found, "no items to submit", V1-RMD-182's own "cannot
+    // fire a course from Cancelled", a genuine concurrency conflict...),
+    // all reported to the caller as the same generic concurrency-conflict
+    // message. A real, non-concurrency bug here left zero server-side
+    // trace to diagnose it from. Warning, not Error: a 409 is an expected
+    // client-facing outcome in the common (actually-concurrent) case, not
+    // an alert-worthy fault.
+    private static readonly Action<ILogger, string, string, Exception?> LogInvalidOperation =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Warning,
+            new EventId(5201, nameof(LogInvalidOperation)),
+            "Order management request on {Path} ({TraceIdentifier}) mapped to a 409 via InvalidOperationException.");
+
     private readonly ILogger<OrderManagementExceptionFilter> _logger;
 
     public OrderManagementExceptionFilter(ILogger<OrderManagementExceptionFilter> logger)
@@ -882,6 +899,14 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
             if (mapped.Status >= StatusCodes.Status500InternalServerError)
             {
                 LogRequestFailure(
+                    _logger,
+                    context.HttpContext.Request.Path,
+                    context.HttpContext.TraceIdentifier,
+                    exception);
+            }
+            else if (exception is InvalidOperationException)
+            {
+                LogInvalidOperation(
                     _logger,
                     context.HttpContext.Request.Path,
                     context.HttpContext.TraceIdentifier,
