@@ -41,15 +41,21 @@ export function ExperiencePage({
   const routeNeedsCatalogManage = path === "/catalog" || path === "/system-health";
   const routeNeedsReportsView = path === "/authorization";
   const routeNeedsBillsSplit = path === "/billing";
-  const routeNeedsOrdersSend = path === "/kitchen";
+  const routeNeedsKitchenAdvance = path === "/kitchen";
   const canOpenRoute = routeNeedsCatalogManage
     ? capabilitySet.has("catalog.manage")
     : routeNeedsReportsView
       ? capabilitySet.has("reports.view")
       : routeNeedsBillsSplit
         ? capabilitySet.has("bills.split")
-        : routeNeedsOrdersSend
-          ? capabilitySet.has("orders.send")
+        : routeNeedsKitchenAdvance
+          // V1-IAM-028: either grant opens the tab — kitchen.advance so a
+          // kitchen-staff-only session can reach it, orders.send so no
+          // existing FOH session regresses even if a fixture/environment
+          // somehow predates the additive migration. Which actions render
+          // inside is decided separately by canAdvance/canOperate below
+          // (KitchenRoute) — this only gates whether the tab opens at all.
+          ? capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")
           : capabilitySet.has("orders.create") || capabilitySet.has("tables.status");
   // Role label is derived from the session's capabilities, not from the current
   // route. (deep-analysis finding F-4)
@@ -102,7 +108,12 @@ export function ExperiencePage({
     { id: "sales", label: navLabels.sales, href: "/", icon: "sales", requiredCapability: "orders.create" },
     { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "tables.status" },
     { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split" },
-    { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "orders.send" },
+    // V1-IAM-028: kitchen.advance is additive — every role that held
+    // orders.send before still holds it, and the new kitchen-staff
+    // ("Mutfak Personeli") role holds ONLY kitchen.advance. Gating the nav
+    // link on orders.send would have locked that role out of the Kitchen
+    // tab entirely.
+    { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "kitchen.advance" },
     { id: "catalog", label: navLabels.catalog, href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
     { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
     { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "system", requiredCapability: "reports.view" },
@@ -125,7 +136,7 @@ export function ExperiencePage({
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/catalog" && <CatalogRoute canManage={canOpenRoute} />}
-    {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canOperate={canOpenRoute} />}
+    {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canAdvance={capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")} canOperate={capabilitySet.has("orders.send")} />}
     {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
     {path === "/authorization" && <AuthorizationDecisionsRoute canView={canOpenRoute} />}
     {!(["/", "/tables", "/billing", "/catalog", "/kitchen", "/system-health", "/authorization"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
@@ -456,7 +467,7 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
 
 const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], categories: [], unknownDeliveries: [], health: null, backups: [] };
 
-function KitchenRoute({ terminalId, canOperate }: { terminalId: string; canOperate: boolean }) {
+function KitchenRoute({ terminalId, canAdvance, canOperate }: { terminalId: string; canAdvance: boolean; canOperate: boolean }) {
   const [stationId, setStationId] = useState("");
   const [client, setClient] = useState<KitchenOperationsClient | null>(null);
   const [state, setState] = useState<KitchenWorkspaceState>("loading");
@@ -464,7 +475,7 @@ function KitchenRoute({ terminalId, canOperate }: { terminalId: string; canOpera
   const [errorMessage, setErrorMessage] = useState<string>();
   const [lastUpdated, setLastUpdated] = useState<string>();
   const load = useCallback(async () => {
-    if (!canOperate) { setState("unauthorized"); return; }
+    if (!canAdvance) { setState("unauthorized"); return; }
     setState("loading");
     setErrorMessage(undefined);
     try {
@@ -484,16 +495,17 @@ function KitchenRoute({ terminalId, canOperate }: { terminalId: string; canOpera
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");
       setErrorMessage(reason instanceof ApiError ? reason.message : "Mutfak verisi alınamadı.");
     }
-  }, [canOperate, terminalId]);
+  }, [canAdvance, terminalId]);
   useEffect(() => { void load(); }, [load]);
   return <KitchenOperationsWorkspace
     state={state}
     stationId={stationId || "Mutfak"}
     data={data}
+    canAdvance={canAdvance}
     canOperate={canOperate}
     canManageReprints={canOperate}
     onRefresh={load}
-    onTransitionItem={canOperate && client ? async (ticket, item, target) => { await client.transitionItem(ticket.id, item.id, target, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
+    onTransitionItem={canAdvance && client ? async (ticket, item, target) => { await client.transitionItem(ticket.id, item.id, target, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
     onTransitionTicket={canOperate && client ? async (ticket, target, reason) => { await client.transitionTicket(ticket.id, target, ticket.rowVersion, reason); await load(); } : undefined}
     onApproveReprint={canOperate && client ? async (delivery, reason) => { await client.approveReprint(delivery.id, reason); await load(); } : undefined}
     onRejectReprint={canOperate && client ? async (delivery, reason) => { await client.rejectReprint(delivery.id, reason); await load(); } : undefined}

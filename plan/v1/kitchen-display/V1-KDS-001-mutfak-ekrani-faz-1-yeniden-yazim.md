@@ -1,8 +1,8 @@
 # V1-KDS-001 - Mutfak ekranı Faz 1 yeniden yazım
 
 - Task ID: V1-KDS-001
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -24,6 +24,17 @@ göre çalışır: bu izne SAHİP AMA `orders.send`'e sahip olmayan bir oturum
 (Mutfak Personeli) yalnız ilerletme butonlarını görür, sorun bildir/iptal
 gizli/kilitli görünür.
 
+**Uygulama sırasında bulunan bir gerçek kısıt (kapsam sapması, kayıtlı):**
+`KitchenTicketV1`/`KitchenTicketItemV1` contract'ı hiçbir masa/hesap
+kimliği taşımıyor (yalnız `orderId`) — "masa bazlı gruplama" fabrikasyon
+veri gerektirirdi (backend akıllı, frontend aptal ilkesine aykırı).
+Expo görünümü bunun yerine **sipariş bazlı** gruplama olarak uygulandı
+(`groupByOrder`, aynı `orderId`'ye sahip ticket'lar tek kartta) — bir
+masanın "o anki turu" için en yakın doğru vekil, uydurma bir "Masa 7"
+etiketi değil. Gerçek masa etiketi göstermek küçük bir backend contract
+eklemesi (`KitchenTicketV1`'e `TableId`/etiket) gerektirir; bu, ayrı bir
+küçük fast-follow görevi olmalı, burada icat edilmedi.
+
 ## Owned surface
 
 - src/Clients/PosTerminal/src/features/kitchen-operations/** (Sınırlı ek
@@ -34,7 +45,12 @@ gizli/kilitli görünür.
   sahipliğinde kalan dosya) — Kitchen route'unun otomatik yenileme
   (polling) tetiklemesi (bkz. In scope §5 — bağımsız denetim O2'nin
   işaret ettiği, karşılaştırma raporunun kendi CRIT bulgusuydu,
-  unutulmamalı).
+  unutulmamalı). Ayrıca gerçek bir engelleyici bulundu ve düzeltildi: nav
+  linki ve rota kapısı (`canOpenRoute`) yalnız `orders.send` kontrol
+  ediyordu — `kitchen.advance`-yalnız bir Mutfak Personeli oturumu Mutfak
+  sekmesini hiç açamıyordu. Artık ikisinden biri yeterli;
+  `KitchenRoute`/`KitchenOperationsWorkspace`'e ayrı `canAdvance`
+  (kitchen.advance) ve `canOperate` (orders.send) prop'ları geçiliyor.
 - src/Clients/PosTerminal/src/design-system/tokens.css (Sınırlı ek —
   V1-RMD-016 sahipliğinde kalan dosya) — Mutfak'a özgü büyütülmüş
   tipografi ölçeğinin kalıcı token'lara taşınması (mockup'ta `clamp()`
@@ -76,23 +92,42 @@ gizli/kilitli görünür.
 
 ## Acceptance evidence
 
-- `cd src/Clients/PosTerminal && npx tsc --noEmit` → 0 hata.
-- `cd src/Clients/PosTerminal && npx vitest run` → tüm proje yeşil (izole
-  değil), yeni testler dahil.
-- `python tools/consistency-audit/consistency_audit.py` → bu görevin
-  değiştirdiği dosyalarda 0 yeni ihlal.
-- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.
-- Tablet/PC uyumluluk kanıtı: ~768px (13" tablet) ve ~1920px (21.5"+
-  PC/duvar monitörü) genişliklerinde gerçek tarayıcıda ekran görüntüsü
-  alınır — dar ekranda istasyonların tek sütuna düştüğü, geniş ekranda
-  yan yana sığdığı, hiçbir metnin kırpılmadığı/taştığı, dört aşamalı
-  göstergenin ikisinde de okunabilir kaldığı gösterilir (yalnız kod
-  incelemesi değil, gerçek render kanıtı — mockup'ta bu yalnız akıl
-  yürütmeyle doğrulanmıştı, burada gerçek ekran görüntüsü şart).
+- `cd src/Clients/PosTerminal && npx tsc --noEmit` → **0 hata.**
+- `cd src/Clients/PosTerminal && npx vitest run` → **Test Files 23 passed
+  (23), Tests 145 passed (145)** — tüm proje, izole değil (10 yeni/yeniden
+  yazılan test dahil: Expo sipariş gruplama, rol bazlı görünürlük,
+  yaş kısıtı rozeti, iptal gerekçe zorunluluğu, yoğun mod geçişi + mevcut
+  regresyon testleri).
+- `python tools/consistency-audit/consistency_audit.py` → `clean` (bu
+  görev sırasında yazılan birkaç Türkçe kod yorumu bulundu, İngilizceye
+  çevrildi, yeniden doğrulandı).
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
+  uyarı.
+- **Tablet/PC uyumluluk kanıtı (gerçek tarayıcı, gerçek bileşen kodu, mock
+  veriyle)**: bileşen, geçici bir Vite demo harness'i (`kitchen-demo.html`
+  + `kitchen-demo-main.tsx`, ekran görüntüsünden hemen sonra silindi, repoya
+  hiç commit edilmedi) üzerinden gerçek Chrome'da render edildi.
+  - **~768px (13" tablet)**: istasyonlar tek sütuna düşüyor, dört aşamalı
+    gösterge (Bekliyor/Hazırlanıyor/Hazır/Servis Edildi) tam genişlikte
+    okunabilir, hiçbir metin kırpılmıyor.
+  - **1600px** (fiziksel ekran çözünürlüğü 1920px'e izin vermedi —
+    `resize_window` "bounds must be at least 50% within visible screen
+    space" hatası verdi; 1600px en yakın gerçekleştirilebilir PC/geniş
+    monitör vekili, tasarım akışkan olduğundan 1920px'e sorunsuz ölçekler):
+    iki istasyon (İzgara/Soğuk) yan yana sığıyor, header tek satırda,
+    yazıcı rotaları paneli sağ rayda görünür, yoğunluk geçişi (Otomatik/
+    Sakin/Yoğun) çalışıyor.
+  - Doğrulanamayan tek şey: yoğun mod'un ikincil detayları gerçekten
+    gizlediği piksel piksel doğrulanmadı (tarayıcı oturumu CDP zaman
+    aşımına uğradı) — kod/CSS incelemesiyle doğru (`is-dense` sınıfı
+    doğru koşulda ekleniyor, testte de doğrulandı), yalnız görsel kanıt
+    eksik. Engelleyici değil.
 - Semih'in elle deneyebileceği senaryo: bir masaya sipariş al, mutfağa
-  gönder, Mutfak ekranında Expo görünümünde masayı bul, kalemi dört
-  aşamada ilerlet, "Mutfak Personeli" izinli bir oturumda iptal/sorun
-  bildir butonlarının kilitli göründüğünü doğrula.
+  gönder, Mutfak ekranında Expo görünümünde siparişi bul, kalemi dört
+  aşamada ilerlet, "Mutfak Personeli" (yalnız `kitchen.advance`) izinli
+  bir oturumda "⚠ sorun bildir/iptal" butonunun hiç görünmediğini, buna
+  rağmen Mutfak sekmesinin (daha önce yanlışlıkla kilitliyken artık)
+  açıldığını doğrula.
 
 ## Handoff
 

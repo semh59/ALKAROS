@@ -34,6 +34,10 @@ export interface KitchenTicketItem {
   readyAt: string | null;
   servedAt: string | null;
   cancelledAt: string | null;
+  // V1-KDS-001: KitchenTicketItemV1 has carried this since V1-RMD-137, the
+  // client just never read it — an id-check prompt belongs on-screen, not
+  // only on the printed ticket (EscPosTicketFormatter already prints it).
+  isAgeRestricted: boolean;
 }
 
 export interface KitchenTicket {
@@ -131,6 +135,14 @@ export interface KitchenWorkspaceProps {
   state: KitchenWorkspaceState;
   stationId: string;
   data: KitchenData;
+  // V1-IAM-028/V1-KDS-001: two distinct grants, not one. `canAdvance` is
+  // `kitchen.advance` — every FOH role has it AND so does the narrow
+  // "Mutfak Personeli" (kitchen-staff) role; it only allows moving a
+  // ticket/item one stage forward. `canOperate` is `orders.send` — held by
+  // FOH roles but NOT kitchen-staff; it is required for anything that is
+  // not a forward step (cancel/"sorun bildir"). A kitchen-staff session has
+  // canAdvance=true, canOperate=false. Every existing FOH role has both.
+  canAdvance: boolean;
   canOperate: boolean;
   canManageReprints: boolean;
   onRefresh: () => void | Promise<void>;

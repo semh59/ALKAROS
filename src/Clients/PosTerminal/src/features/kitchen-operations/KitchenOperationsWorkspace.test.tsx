@@ -12,7 +12,7 @@ const data: KitchenData = {
   tickets: [{
     id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", stationId: "hot-line", status: "Preparing", rowVersion: 4,
     createdAt: "2026-08-26T10:00:00Z", updatedAt: "2026-08-26T10:02:00Z", acceptedAt: "2026-08-26T10:01:00Z", readyAt: null, cancelledAt: null, targetPrepMinutes: 15,
-    items: [{ id: "item-1", orderItemId: "order-item-1", productId: "product-1", productName: "Mercimek çorbası", quantity: 2, modifiers: "Ekmeği ayrı", notes: "az tuz", status: "Preparing", rowVersion: 2, createdAt: "2026-08-26T10:00:00Z", updatedAt: null, readyAt: null, servedAt: null, cancelledAt: null }],
+    items: [{ id: "item-1", orderItemId: "order-item-1", productId: "product-1", productName: "Mercimek çorbası", quantity: 2, modifiers: "Ekmeği ayrı", notes: "az tuz", status: "Preparing", rowVersion: 2, createdAt: "2026-08-26T10:00:00Z", updatedAt: null, readyAt: null, servedAt: null, cancelledAt: null, isAgeRestricted: false }],
   }],
   printers: [{ id: "printer-1", name: "Mutfak yazıcı", stationId: "hot-line", isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
   routes: [{ id: "route-1", routeLevel: "Default", printerId: "printer-1", itemId: null, productId: null, categoryId: null, specialDate: null, isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
@@ -23,7 +23,7 @@ const data: KitchenData = {
 };
 
 function baseProps(overrides: Partial<ComponentProps<typeof KitchenOperationsWorkspace>> = {}) {
-  return { state: "ready" as const, stationId: "hot-line", data, canOperate: true, canManageReprints: true, onRefresh: vi.fn(), onTransitionItem: vi.fn(), onTransitionTicket: vi.fn(), onApproveReprint: vi.fn(), onRejectReprint: vi.fn(), ...overrides };
+  return { state: "ready" as const, stationId: "hot-line", data, canAdvance: true, canOperate: true, canManageReprints: true, onRefresh: vi.fn(), onTransitionItem: vi.fn(), onTransitionTicket: vi.fn(), onApproveReprint: vi.fn(), onRejectReprint: vi.fn(), ...overrides };
 }
 
 describe("kitchen operations workspace", () => {
@@ -46,14 +46,56 @@ describe("kitchen operations workspace", () => {
   }
   afterEach(async () => { if (root) await act(async () => root!.unmount()); root = null; vi.restoreAllMocks(); });
 
-  it("renders station tickets, item action without customer detail", async () => {
+  it("groups tickets by order (Expo view) and advances an item without leaking customer detail", async () => {
     const onTransitionItem = vi.fn();
     await render(<KitchenOperationsWorkspace {...baseProps({ onTransitionItem })} />);
     expect(document.body.textContent).toContain("KT-001");
     expect(document.body.textContent).toContain("Mercimek çorbası");
     expect(document.body.textContent).not.toContain("customer");
-    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("→ Hazır"))!);
+    const next = document.querySelector<HTMLButtonElement>(".kitchen-step.is-next")!;
+    expect(next).not.toBeNull();
+    await click(next);
     expect(onTransitionItem).toHaveBeenCalledWith(data.tickets[0], data.tickets[0].items[0], "Ready");
+  });
+
+  it("only a session with orders.send (canOperate) can open the cancel/sorun-bildir prompt", async () => {
+    const onTransitionTicket = vi.fn();
+    await render(<KitchenOperationsWorkspace {...baseProps({ canAdvance: true, canOperate: false, onTransitionTicket })} />);
+    expect(document.querySelector(".kitchen-flag-btn")).toBeNull();
+    // Advancing must still work for a kitchen.advance-only session.
+    expect(document.querySelector(".kitchen-step.is-next")).not.toBeNull();
+  });
+
+  it("shows the age-restriction badge and its id-check hint", async () => {
+    const withAgeRestriction: KitchenData = {
+      ...data,
+      tickets: [{ ...data.tickets[0], items: [{ ...data.tickets[0].items[0], isAgeRestricted: true }] }],
+    };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: withAgeRestriction })} />);
+    const badge = document.querySelector(".kitchen-age-badge");
+    expect(badge).not.toBeNull();
+    expect(badge!.getAttribute("title")).toContain("kimlik kontrolü");
+  });
+
+  it("requires a reason before cancelling ('sorun bildir / iptal')", async () => {
+    const onTransitionTicket = vi.fn();
+    await render(<KitchenOperationsWorkspace {...baseProps({ onTransitionTicket })} />);
+    await click(document.querySelector(".kitchen-flag-btn")!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent?.includes("İptal et"))!);
+    expect(dialog.textContent).toContain("Sorun/iptal gerekçesi gerekli.");
+    const input = dialog.querySelector<HTMLInputElement>("input")!;
+    await fill(input, "Malzeme bitti");
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent?.includes("İptal et"))!);
+    expect(onTransitionTicket).toHaveBeenCalledWith(data.tickets[0], "Cancelled", "Malzeme bitti");
+  });
+
+  it("toggles dense mode on and off", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    const workspace = document.querySelector(".kitchen-workspace")!;
+    expect(workspace.className).not.toContain("is-dense");
+    await click([...document.querySelectorAll(".kitchen-density button")].find((button) => button.textContent?.includes("Yoğun mod"))!);
+    expect(workspace.className).toContain("is-dense");
   });
 
   it("requires a supervisor reason before resolving Unknown delivery", async () => {
@@ -88,16 +130,16 @@ describe("kitchen operations workspace", () => {
 
   it("shows the line special instruction on the ticket", async () => {
     await render(<KitchenOperationsWorkspace {...baseProps()} />);
-    const note = document.querySelector(".kitchen-ticket__item-note");
+    const note = document.querySelector(".kitchen-item-row__detail--note");
     expect(note).not.toBeNull();
     expect(note!.textContent).toContain("az tuz");
   });
 
-  it("escalates ticket age colour past the station preparation threshold", async () => {
+  it("escalates the order's timer colour past the station preparation threshold", async () => {
     await render(<KitchenOperationsWorkspace {...baseProps()} />);
-    const age = document.querySelector(".kitchen-ticket__age");
-    expect(age).not.toBeNull();
-    expect(age!.className).toContain("kitchen-ticket__age--crit");
+    const timer = document.querySelector(".kitchen-order__timer");
+    expect(timer).not.toBeNull();
+    expect(timer!.className).toContain("kitchen-order__timer--crit");
   });
 
   it("keeps the detailed health panel out of the operator view but shows the top-bar dot", async () => {

@@ -5,7 +5,6 @@ import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
   healthStatusLabel,
   itemStatusLabels,
-  ticketStatusLabels,
   type KitchenHealthSnapshot,
   type KitchenTicket,
   type KitchenTicketItem,
@@ -15,12 +14,21 @@ import {
 import "./kitchen-operations.css";
 
 type Feedback = { tone: "success" | "error" | "conflict"; message: string } | null;
-type Filter = "all" | KitchenTicket["status"];
 type AgeTone = "ok" | "warn" | "crit";
+type Density = "auto" | "sparse" | "dense";
 
-// Escalation window is derived from each ticket's target preparation minutes
-// (kitchen operations contract). The critical threshold is a fixed multiple of
-// the warning target. A missing target falls back to a safe default.
+// V1-KDS-001: an open ticket/item count at or above this makes the board
+// switch to dense mode on its own (fewer secondary details, so the screen
+// itself doesn't turn into a "white-out" rail during a rush). Kitchen staff
+// can always override with the density toggle; the override holds until the
+// next new ticket arrives, then the automatic evaluation runs again fresh.
+const AUTO_DENSE_OPEN_ITEM_THRESHOLD = 9;
+// Matches KitchenPrintDispatchHostedService's own 5s dispatch rhythm closely
+// enough that a ticket someone else advances shows up here without a manual
+// refresh, without hammering the API every tick.
+const POLL_INTERVAL_MS = 8_000;
+const STAGES = ["Queued", "Preparing", "Ready", "Served"] as const;
+
 const DEFAULT_TARGET_PREP_MINUTES = 15;
 const CRITICAL_TARGET_MULTIPLIER = 5 / 3;
 
@@ -65,10 +73,28 @@ function compactId(value: string) {
   return value.length > 10 ? value.slice(0, 8) : value;
 }
 
+// V1-KDS-001: tickets carry an orderId but no table/check label — grouping
+// by order is the closest available proxy to "one table's current round"
+// without inventing data the backend contract does not provide ("backend
+// is smart, frontend is dumb" — foundations.md §0). A real table label
+// needs a small contract addition (KitchenTicketV1 has no TableId today) —
+// a separate follow-up, not fabricated here.
+function groupByOrder(tickets: readonly KitchenTicket[]): { orderId: string; tickets: KitchenTicket[] }[] {
+  const order: string[] = [];
+  const byOrder = new Map<string, KitchenTicket[]>();
+  for (const ticket of tickets) {
+    const existing = byOrder.get(ticket.orderId);
+    if (existing) existing.push(ticket);
+    else { byOrder.set(ticket.orderId, [ticket]); order.push(ticket.orderId); }
+  }
+  return order.map((orderId) => ({ orderId, tickets: byOrder.get(orderId)! }));
+}
+
 export function KitchenOperationsWorkspace({
   state,
   stationId,
   data,
+  canAdvance,
   canOperate,
   canManageReprints,
   onRefresh,
@@ -80,8 +106,6 @@ export function KitchenOperationsWorkspace({
   errorMessage: suppliedError,
   lastUpdated,
 }: KitchenWorkspaceProps) {
-  const [filter, setFilter] = useState<Filter>("all");
-  const [search, setSearch] = useState("");
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [selectedDelivery, setSelectedDelivery] = useState<KitchenUnknownDelivery | null>(null);
@@ -89,24 +113,41 @@ export function KitchenOperationsWorkspace({
   const [reason, setReason] = useState("");
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [now, setNow] = useState(() => Date.now());
+  const [densityOverride, setDensityOverride] = useState<Density>("auto");
+  const [cancelTarget, setCancelTarget] = useState<KitchenTicket | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 30_000);
+    const timer = setInterval(() => setNow(Date.now()), 15_000);
     return () => clearInterval(timer);
   }, []);
 
-  const normalizedSearch = search.trim().toLocaleLowerCase("tr-TR");
-  const tickets = useMemo(() => data.tickets.filter((ticket) => {
-    if (filter !== "all" && ticket.status !== filter) return false;
-    if (!normalizedSearch) return true;
-    return `${ticket.ticketNumber} ${ticket.id} ${ticket.items.map((item) => item.productName).join(" ")}`
-      .toLocaleLowerCase("tr-TR").includes(normalizedSearch);
-  }), [data.tickets, filter, normalizedSearch]);
+  // Auto-refresh (the comparison report's own CRIT finding) — only polls
+  // while the screen is ready/empty, never hammers the server on an
+  // error/auth state.
+  useEffect(() => {
+    if (state !== "ready" && state !== "empty") return;
+    const timer = setInterval(() => { void onRefresh(); }, POLL_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [state, onRefresh]);
+
+  // A manually chosen density resets whenever the ticket count changes (a
+  // ticket arrived or left) — the automatic evaluation starts fresh again.
+  useEffect(() => { setDensityOverride("auto"); }, [data.tickets.length]);
+
+  const openItemCount = useMemo(
+    () => data.tickets.reduce((sum, ticket) => sum + ticket.items.filter((item) => item.status !== "Cancelled" && item.status !== "Served").length, 0),
+    [data.tickets],
+  );
+  const autoDense = openItemCount >= AUTO_DENSE_OPEN_ITEM_THRESHOLD;
+  const density: Density = densityOverride === "auto" ? (autoDense ? "dense" : "sparse") : densityOverride;
+  const isDense = density === "dense";
+
+  const orderGroups = useMemo(() => groupByOrder(data.tickets), [data.tickets]);
   const overallHealth = worstHealth(data.health);
 
-  const executeItemTransition = async (ticket: KitchenTicket, item: KitchenTicketItem) => {
-    const target = nextItemState(item.status);
-    if (!target || !onTransitionItem) return;
+  const executeItemTransition = async (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => {
+    if (!onTransitionItem) return;
     const key = `item:${item.id}`;
     setBusyKey(key);
     setFeedback(null);
@@ -120,16 +161,28 @@ export function KitchenOperationsWorkspace({
     }
   };
 
-  const executeTicketTransition = async (ticket: KitchenTicket, target: KitchenTicket["status"], transitionReason?: string) => {
-    if (!onTransitionTicket) return;
-    const key = `ticket:${ticket.id}`;
+  const openCancelPrompt = (ticket: KitchenTicket) => {
+    setCancelTarget(ticket);
+    setCancelReason("");
+    setFormErrors([]);
+  };
+
+  const submitCancel = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!cancelTarget || !onTransitionTicket) return;
+    if (!cancelReason.trim()) {
+      setFormErrors(["Sorun/iptal gerekçesi gerekli."]);
+      return;
+    }
+    const key = `ticket:${cancelTarget.id}`;
     setBusyKey(key);
-    setFeedback(null);
+    setFormErrors([]);
     try {
-      await onTransitionTicket(ticket, target, transitionReason);
-      setFeedback({ tone: "success", message: `${ticket.ticketNumber} → ${ticketStatusLabels[target]}.` });
+      await onTransitionTicket(cancelTarget, "Cancelled", cancelReason.trim());
+      setFeedback({ tone: "success", message: `${cancelTarget.ticketNumber} iptal edildi.` });
+      setCancelTarget(null);
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ticket değişti veya hazır olma kuralı sağlanmıyor." : error instanceof ApiError ? error.message : "Ticket güncellenemedi." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ticket değişti; listeyi yenileyin." : error instanceof ApiError ? error.message : "İptal edilemedi." });
     } finally {
       setBusyKey(null);
     }
@@ -186,26 +239,45 @@ export function KitchenOperationsWorkspace({
     return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="conflict" title={state === "stale" ? "Mutfak verisi güncel değil" : "Mutfak çakışması"}><p>Operasyon komutu göndermeden önce sunucunun son durumunu alın.</p><Button onClick={onRefresh}>Güncel veriyi al</Button></StateMessage></div>;
   }
 
-  return <section className="kitchen-workspace" aria-label="Mutfak ve operasyon yönetimi">
+  return <section className={`kitchen-workspace ${isDense ? "is-dense" : ""}`} aria-label="Mutfak ve operasyon yönetimi">
     <header className="kitchen-workspace__header">
-      <div><span className="kitchen-workspace__kicker">OPERASYON / MUTFAK</span><h2>{stationId} istasyonu</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Ticket akışı, yazıcı kurtarma ve sistem sağlığı"}</p></div>
-      <div className="kitchen-workspace__header-actions"><span className="kitchen-workspace__source">Kaynak: production API</span><span className={`kitchen-health-dot kitchen-health-dot--${(overallHealth ?? "unknown").toLowerCase()}`} role="img" aria-label={`Sistem durumu: ${healthStatusLabel(overallHealth)}`} /><Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button></div>
+      <div><span className="kitchen-workspace__kicker">EXPO / MUTFAK</span><h2>{stationId} istasyonu</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Sipariş bazlı çapraz istasyon görünümü"}</p></div>
+      <div className="kitchen-workspace__header-actions">
+        <span className="kitchen-live-dot" aria-hidden="true" /><span className="kitchen-workspace__source">Canlı</span>
+        {!canOperate && canAdvance && <span className="kitchen-role-badge" title="Yalnız ilerletme yapabilirsiniz">Mutfak Personeli</span>}
+        <span className={`kitchen-health-dot kitchen-health-dot--${(overallHealth ?? "unknown").toLowerCase()}`} role="img" aria-label={`Sistem durumu: ${healthStatusLabel(overallHealth)}`} />
+        <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
+      </div>
     </header>
 
     {feedback && <div className={`kitchen-workspace__feedback kitchen-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
 
-    <div className="kitchen-workspace__stats" aria-label="Mutfak özeti">
-      <Stat label="Aktif ticket" value={data.tickets.length} />
-      <Stat label="Bekliyor" value={data.tickets.filter((ticket) => ticket.status === "Queued").length} tone="warning" />
-      <Stat label="Hazırlanıyor" value={data.tickets.filter((ticket) => ticket.status === "Preparing").length} tone="accent" />
-      <Stat label="Doğrulanamayan baskı" value={data.unknownDeliveries.length} tone={data.unknownDeliveries.length ? "danger" : "success"} />
+    <div className="kitchen-workspace__toolbar">
+      <div className="kitchen-workspace__stats" aria-label="Mutfak özeti">
+        <Stat label="Açık sipariş" value={orderGroups.length} />
+        <Stat label="Açık kalem" value={openItemCount} tone={autoDense ? "warning" : "neutral"} />
+        <Stat label="Doğrulanamayan baskı" value={data.unknownDeliveries.length} tone={data.unknownDeliveries.length ? "danger" : "success"} />
+      </div>
+      <div className="kitchen-density" role="group" aria-label="Ekran yoğunluğu">
+        <button type="button" className={densityOverride === "auto" ? "is-active" : ""} onClick={() => setDensityOverride("auto")}>Otomatik{autoDense && densityOverride === "auto" ? " (yoğun)" : ""}</button>
+        <button type="button" className={densityOverride === "sparse" ? "is-active" : ""} onClick={() => setDensityOverride("sparse")}>Sakin mod</button>
+        <button type="button" className={densityOverride === "dense" ? "is-active" : ""} onClick={() => setDensityOverride("dense")}>Yoğun mod</button>
+      </div>
     </div>
 
-    <div className="kitchen-workspace__toolbar"><label>Ticket ara<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Ticket no veya ürün" aria-label="Ticket ara" /></label><div className="kitchen-workspace__filters" role="group" aria-label="Ticket durumuna göre filtrele">{(["all", "Queued", "Accepted", "Preparing", "Ready", "Cancelled"] as const).map((value) => <button type="button" key={value} className={filter === value ? "is-active" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === "all" ? "Tümü" : ticketStatusLabels[value]}<span>{value === "all" ? data.tickets.length : data.tickets.filter((ticket) => ticket.status === value).length}</span></button>)}</div></div>
-
     <div className="kitchen-workspace__layout">
-      <div className="kitchen-workspace__tickets">
-        {state === "empty" || tickets.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Aktif ticket yok" : "Eşleşen ticket yok"}><p>{state === "empty" ? "Bu istasyona henüz aktif ticket gelmedi." : "Aramayı veya durum filtresini değiştirin."}</p></StateMessage></div> : tickets.map((ticket) => <TicketCard key={ticket.id} ticket={ticket} now={now} canOperate={canOperate} busyKey={busyKey} onItemTransition={(item) => void executeItemTransition(ticket, item)} onTicketTransition={(target, transitionReason) => void executeTicketTransition(ticket, target, transitionReason)} />)}
+      <div className="kitchen-workspace__board">
+        {state === "empty" || orderGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : orderGroups.map((group) => <OrderGroupCard
+          key={group.orderId}
+          orderId={group.orderId}
+          tickets={group.tickets}
+          now={now}
+          canAdvance={canAdvance}
+          canOperate={canOperate}
+          busyKey={busyKey}
+          onItemTransition={executeItemTransition}
+          onCancel={openCancelPrompt}
+        />)}
       </div>
       <aside className="kitchen-workspace__rail" aria-label="Mutfak operasyon uyarıları">
         <UnknownPanel deliveries={data.unknownDeliveries} canManage={canManageReprints} busyKey={busyKey} onDecision={openDecision} />
@@ -219,6 +291,18 @@ export function KitchenOperationsWorkspace({
       </aside>
     </div>
 
+    <ModalDialog open={cancelTarget !== null} title="Sorun bildir / iptal et" onClose={() => { if (!busyKey) setCancelTarget(null); }}>
+      <form className="kitchen-decision-form" onSubmit={(event) => void submitCancel(event)}>
+        <ValidationSummary title="Gerekçeyi kontrol edin" errors={formErrors} />
+        {cancelTarget && <p className="kitchen-decision-form__context"><strong>{cancelTarget.ticketNumber}</strong> iptal edilecek.</p>}
+        <TextField label="Gerekçe" hint="Bu bilgi denetim kaydına geçer." value={cancelReason} onChange={(event) => setCancelReason(event.target.value)} placeholder="Örn. Malzeme bitti" autoComplete="off" />
+        <div className="kitchen-decision-form__actions">
+          <Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => setCancelTarget(null)}>Vazgeç</Button>
+          <Button type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : "İptal et"}</Button>
+        </div>
+      </form>
+    </ModalDialog>
+
     <ModalDialog open={decision !== null} title={decision === "approve" ? "Reprint onayı" : "Reprint reddi"} onClose={() => { if (!busyKey) { setDecision(null); setSelectedDelivery(null); } }}>
       <form className="kitchen-decision-form" onSubmit={(event) => void submitDecision(event)}><ValidationSummary title="Gerekçeyi kontrol edin" errors={formErrors} />{selectedDelivery && <p className="kitchen-decision-form__context"><strong>Doğrulanamayan teslimat</strong> · {compactId(selectedDelivery.id)} · deneme {selectedDelivery.attemptNumber}</p>}<TextField label={kitchenReprintText.reasonLabel} hint="İstasyonda fiziksel kontrol yapıldı mı?" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Örn. Ticket yazıcıdan çıkmadı" autoComplete="off" /><div className="kitchen-decision-form__actions"><Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => { setDecision(null); setSelectedDelivery(null); }}>Vazgeç</Button><Button type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : decision === "approve" ? "Reprint'i onayla" : "Reprint'i reddet"}</Button></div></form>
     </ModalDialog>
@@ -229,17 +313,116 @@ function Stat({ label, value, tone = "neutral" }: { label: string; value: number
   return <div className={`kitchen-stat kitchen-stat--${tone}`}><span>{label}</span><strong>{value}</strong></div>;
 }
 
-function TicketCard({ ticket, now, canOperate, busyKey, onItemTransition, onTicketTransition }: { ticket: KitchenTicket; now: number; canOperate: boolean; busyKey: string | null; onItemTransition: (item: KitchenTicketItem) => void; onTicketTransition: (target: KitchenTicket["status"], reason?: string) => void }) {
-  const allReady = ticket.items.length > 0 && ticket.items.every((item) => item.status === "Ready" || item.status === "Served" || item.status === "Cancelled");
-  const ticketBusy = busyKey === `ticket:${ticket.id}`;
-  const open = ticket.status !== "Ready" && ticket.status !== "Cancelled";
-  const minutes = elapsedMinutesSince(ticket.createdAt, now);
-  const tone = ageTone(minutes, ticket.targetPrepMinutes);
-  return <article className={`kitchen-ticket kitchen-ticket--${ticket.status.toLowerCase()}`}>
-    <header className="kitchen-ticket__header"><div><span className="kitchen-ticket__number">{ticket.ticketNumber}</span><span className={`kitchen-ticket__status kitchen-ticket__status--${ticket.status.toLowerCase()}`}>{ticketStatusLabels[ticket.status]}</span>{open && <span className={`kitchen-ticket__age kitchen-ticket__age--${tone}`} title={tone === "crit" ? "Hedef hazırlık süresi aşıldı" : tone === "warn" ? "Hedef hazırlık süresine yaklaşıldı" : "Hedef süre içinde"}>{ageLabel(minutes)}</span>}</div><span className="kitchen-ticket__version">v{ticket.rowVersion}</span></header>
-    <div className="kitchen-ticket__items">{ticket.items.map((item) => { const next = nextItemState(item.status); const itemBusy = busyKey === `item:${item.id}`; return <div className="kitchen-ticket__item" key={item.id}><div className="kitchen-ticket__item-main"><strong>{item.quantity}× {item.productName}</strong>{item.modifiers && <span>{item.modifiers}</span>}{item.notes && <span className="kitchen-ticket__item-note">Not: {item.notes}</span>}</div><div className="kitchen-ticket__item-action"><span className={`kitchen-item-status kitchen-item-status--${item.status.toLowerCase()}`}>{itemStatusLabels[item.status]}</span>{canOperate && next && <Button variant="quiet" disabled={itemBusy || ticketBusy} onClick={() => onItemTransition(item)}>{itemBusy ? "…" : `→ ${itemStatusLabels[next]}`}</Button>}</div></div>; })}</div>
-    <footer className="kitchen-ticket__footer"><span>Sipariş <code>{compactId(ticket.orderId)}</code></span><div>{canOperate && ticket.status === "Queued" && <Button variant="secondary" disabled={ticketBusy} onClick={() => onTicketTransition("Accepted")}>{ticketBusy ? "…" : "Kabul et"}</Button>}{canOperate && ticket.status === "Preparing" && allReady && <Button disabled={ticketBusy} onClick={() => onTicketTransition("Ready")}>{ticketBusy ? "…" : "Hazır"}</Button>}{canOperate && ticket.status !== "Cancelled" && ticket.status !== "Ready" && <Button variant="quiet" disabled={ticketBusy} onClick={() => onTicketTransition("Cancelled", "Kitchen operator cancelled ticket")}>İptal</Button>}</div></footer>
+// Expo view: one order can spread across several stations (tickets) — all
+// of them render side by side/stacked here so a table's whole round can be
+// tracked from one place.
+function OrderGroupCard({
+  orderId,
+  tickets,
+  now,
+  canAdvance,
+  canOperate,
+  busyKey,
+  onItemTransition,
+  onCancel,
+}: {
+  orderId: string;
+  tickets: readonly KitchenTicket[];
+  now: number;
+  canAdvance: boolean;
+  canOperate: boolean;
+  busyKey: string | null;
+  onItemTransition: (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => void;
+  onCancel: (ticket: KitchenTicket) => void;
+}) {
+  const oldestCreatedAt = tickets.reduce((oldest, t) => (Date.parse(t.createdAt) < Date.parse(oldest) ? t.createdAt : oldest), tickets[0].createdAt);
+  const targetPrepMinutes = Math.max(...tickets.map((t) => t.targetPrepMinutes));
+  const minutes = elapsedMinutesSince(oldestCreatedAt, now);
+  const tone = ageTone(minutes, targetPrepMinutes);
+  const allDone = tickets.every((t) => t.items.every((i) => i.status === "Ready" || i.status === "Served" || i.status === "Cancelled"));
+  const anyCancellable = tickets.some((t) => t.status !== "Cancelled");
+
+  return <article className={`kitchen-order kitchen-order--${tone}`}>
+    <header className="kitchen-order__head">
+      <div><span className="kitchen-order__label">Sipariş</span><span className="kitchen-order__id">{compactId(orderId)}</span></div>
+      <div className={`kitchen-order__timer kitchen-order__timer--${tone}`}>{ageLabel(minutes)}<small>hedef {targetPrepMinutes} dk</small></div>
+      {allDone && <span className="kitchen-order__done">✓ Tüm kalemler hazır</span>}
+      {canOperate && anyCancellable && <button type="button" className="kitchen-flag-btn" title="Sorun bildir / iptal et" onClick={() => onCancel(tickets[0])}>⚠</button>}
+    </header>
+    <div className="kitchen-order__stations">
+      {tickets.map((ticket) => <StationColumn
+        key={ticket.id}
+        ticket={ticket}
+        canAdvance={canAdvance}
+        busyKey={busyKey}
+        onItemTransition={onItemTransition}
+      />)}
+    </div>
   </article>;
+}
+
+function StationColumn({
+  ticket,
+  canAdvance,
+  busyKey,
+  onItemTransition,
+}: {
+  ticket: KitchenTicket;
+  canAdvance: boolean;
+  busyKey: string | null;
+  onItemTransition: (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => void;
+}) {
+  const done = ticket.items.every((i) => i.status === "Ready" || i.status === "Served" || i.status === "Cancelled");
+  const doing = ticket.items.some((i) => i.status === "Preparing");
+  return <div className="kitchen-station">
+    <div className={`kitchen-station__label ${done ? "is-done" : doing ? "is-doing" : ""}`}><span className="kitchen-station__pip" />{ticket.stationId} <span className="kitchen-station__number">· {ticket.ticketNumber}</span></div>
+    {ticket.items.filter((item) => item.status !== "Cancelled").map((item) => <ItemRow
+      key={item.id}
+      item={item}
+      busy={busyKey === `item:${item.id}`}
+      canAdvance={canAdvance}
+      onAdvance={(target) => onItemTransition(ticket, item, target)}
+    />)}
+  </div>;
+}
+
+function ItemRow({
+  item,
+  busy,
+  canAdvance,
+  onAdvance,
+}: {
+  item: KitchenTicketItem;
+  busy: boolean;
+  canAdvance: boolean;
+  onAdvance: (target: KitchenTicketItem["status"]) => void;
+}) {
+  const currentIndex = STAGES.indexOf(item.status as typeof STAGES[number]);
+  return <div className="kitchen-item-row">
+    <div className="kitchen-item-row__main">
+      <span className="kitchen-item-row__qty">{item.quantity}×</span>
+      <div className="kitchen-item-row__body">
+        <span className="kitchen-item-row__name">{item.productName}{item.isAgeRestricted && <span className="kitchen-age-badge" title="Servis öncesi kimlik kontrolü gerekli">🔞</span>}</span>
+        {item.modifiers && <span className="kitchen-item-row__detail">{item.modifiers}</span>}
+        {item.notes && <span className="kitchen-item-row__detail kitchen-item-row__detail--note">Not: {item.notes}</span>}
+      </div>
+    </div>
+    {currentIndex < 0 ? null : <div className="kitchen-stepper" role="group" aria-label={`${item.productName} durumu`}>
+      {STAGES.map((stage, index) => {
+        const isPast = index < currentIndex;
+        const isCurrent = index === currentIndex;
+        const isNext = index === currentIndex + 1;
+        const clickable = canAdvance && isNext && !busy;
+        return <button
+          key={stage}
+          type="button"
+          className={`kitchen-step ${isPast ? "is-done" : ""} ${isCurrent ? `is-current is-current--${stage.toLowerCase()}` : ""} ${isNext ? "is-next" : ""}`}
+          disabled={!clickable}
+          onClick={clickable ? () => onAdvance(stage) : undefined}
+        >{isPast ? "✓ " : ""}{busy && isNext ? "…" : itemStatusLabels[stage]}</button>;
+      })}
+    </div>}
+  </div>;
 }
 
 function UnknownPanel({ deliveries, canManage, busyKey, onDecision }: { deliveries: readonly KitchenUnknownDelivery[]; canManage: boolean; busyKey: string | null; onDecision: (delivery: KitchenUnknownDelivery, decision: "approve" | "reject") => void }) {
