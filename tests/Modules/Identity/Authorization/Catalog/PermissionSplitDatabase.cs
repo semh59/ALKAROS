@@ -4,12 +4,16 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 
 /// <summary>
 /// A fresh identity database with the real migration chain applied up to and
-/// including V1-IAM-028 (109): base identity schema (005, 008), the V1-RMD-097
+/// including V1-IAM-029 (111): base identity schema (005, 008), the V1-RMD-097
 /// role catalog (042), the permission split (043), the drop of the
 /// transitional <c>pos.cashier.mutate</c> alias (049), the manager admin
-/// grants (054), transfer-server (055), integrations.manage (079), and the
-/// kitchen.advance / kitchen-staff split (109). The SQL is read from the
-/// repository tree so the test exercises exactly what ships.
+/// grants (054), transfer-server (055), integrations.manage (079), the
+/// kitchen.advance / kitchen-staff split (109), the Kitchen-local
+/// kitchen.availability.suspend permission (110, V1-KIT-008 — needed here
+/// only so 111's role_permissions JOIN below has something to find, not
+/// because it is itself part of ApplicationPermissions.Codes), and the
+/// kitchen-chef role (111, V1-IAM-029). The SQL is read from the repository
+/// tree so the test exercises exactly what ships.
 /// </summary>
 public sealed class PermissionSplitDatabase : PgTestDatabase
 {
@@ -33,6 +37,8 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
             Mig("V1-RMD-111", "055-orders-transfer-server-permissions.up.sql"),
             MigVersioned("V12", "V12-QRT-003", "079-integrations-manage-permission.up.sql"),
             Mig("V1-IAM-028", "109-kitchen-advance-permission-and-staff-role.up.sql"),
+            Mig("V1-KIT-008", "110-kitchen-availability-suspend-permission.up.sql"),
+            Mig("V1-IAM-029", "111-kitchen-chef-role.up.sql"),
         };
 
         foreach (var path in scripts)
@@ -41,16 +47,23 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
 
     /// <summary>
     /// Reverses everything applied after migration 042, in strict descending
-    /// order: 109 down (drops kitchen.advance and the kitchen-staff role),
-    /// 079 down (drops integrations.manage), 055 down (drops the two
-    /// transfer-server codes), 049 down (restores the alias), then 043 down
-    /// (drops the 13 granular codes and the <c>waiter</c> role). Migration
-    /// 042's and 054's rows are left in place (054 grants identity.*.manage
-    /// codes, which are not part of ApplicationPermissions.Codes and are not
-    /// asserted here).
+    /// order: 111 down (drops the kitchen-chef role), 110 down (drops
+    /// kitchen.availability.suspend), 109 down (drops kitchen.advance and
+    /// the kitchen-staff role), 079 down (drops integrations.manage), 055
+    /// down (drops the two transfer-server codes), 049 down (restores the
+    /// alias), then 043 down (drops the 13 granular codes and the
+    /// <c>waiter</c> role). Migration 042's and 054's rows are left in
+    /// place (054 grants identity.*.manage codes, which are not part of
+    /// ApplicationPermissions.Codes and are not asserted here).
     /// </summary>
     public async Task ApplyDownSplitAsync()
     {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-IAM-029", "111-kitchen-chef-role.down.sql")));
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-KIT-008", "110-kitchen-availability-suspend-permission.down.sql")));
         await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-IAM-028", "109-kitchen-advance-permission-and-staff-role.down.sql")));

@@ -5,7 +5,7 @@ namespace ALKAROS.Host.Composition.Migrations;
 /// <summary>
 /// One position of the verified global migration order. Positions are
 /// zero-padded three-digit ids inside the phase ranges defined by
-/// V0-DAT-001 (phase A: 001-030, phase B: 031-110 as of V1-KIT-008). Phase B
+/// V0-DAT-001 (phase A: 001-030, phase B: 031-111 as of V1-IAM-029). Phase B
 /// 031-056 is V1; 057-073 is V1.1 (renumbered from 054-070 to resolve the
 /// collision between the two versions' independently-numbered migrations —
 /// docs/audit/INDEPENDENT_DEEP_AUDIT_2026-09-06.md). This comment drifted out
@@ -37,7 +37,7 @@ public sealed class MigrationManifest
     public const string PhaseAMin = "001";
     public const string PhaseAMax = "030";
     public const string PhaseBMin = "031";
-    public const string PhaseBMax = "110";
+    public const string PhaseBMax = "111";
 
     private MigrationManifest(IReadOnlyList<MigrationManifestEntry> migrations)
     {

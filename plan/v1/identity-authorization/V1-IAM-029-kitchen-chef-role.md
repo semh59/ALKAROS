@@ -1,8 +1,8 @@
 # V1-IAM-029 - Mutfak Şefi rolü
 
 - Task ID: V1-IAM-029
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Planned
 
@@ -19,12 +19,23 @@ halde erişilemeyen bir uca izin vermiş oluruz (bağımsız denetim Y2).
 
 ## Owned surface
 
-- Yeni migration (`database/migrations/V1/V1-IAM-029/`) — `roles`
-  tablosuna "Mutfak Şefi" satırı; `role_permissions`'a `orders.send`,
+- `database/migrations/V1/V1-IAM-029/**` (yeni) — `roles` tablosuna
+  `kitchen-chef` ("Mutfak Şefi") satırı; `role_permissions`'a `orders.send`,
   `kitchen.advance`, `kitchen.reprint`, `kitchen.availability.suspend`
-  atamaları.
-- `docs/domain/authorization-model.md` — rol/izin tablosuna "Mutfak Şefi"
-  sütunu.
+  atamaları. `kitchen.routing.manage` kasıtlı olarak VERİLMİYOR (Out of
+  scope).
+- database/MigrationComposition/order.json, src/Host/Composition/
+  Migrations/MigrationManifest.cs, tests/Host/MigrationComposition/
+  Manifest/ManifestTests.cs (Sınırlı ek, paylaşılan — V1-IAM-028/V1-KIT-008
+  emsaliyle aynı desen) — yeni migration pozisyonu 111.
+- tests/Modules/Identity/Authorization/Catalog/PermissionSplitDatabase.cs,
+  PermissionSplitDatabaseTests.cs (Sınırlı ek, paylaşılan — V1-IAM-028
+  sahipliğinde kalan dosyalar) — 110/111'i up/down zincirine ekler, yeni
+  `kitchen-chef` rol/izin testi.
+- `docs/domain/authorization-model.md` — yeni §3.2 alt bölümü, "Mutfak
+  Şefi"nin taşıdığı/taşımadığı izinleri belgeler (4 FOH rolünün tablosu bir
+  sütun olarak genişletilmedi — `kitchen-chef` o tabloya uymuyor, tıpkı
+  §3.1'in `kitchen-staff`'ı ayrı bir düzyazı bölümünde ele alması gibi).
 
 ## Out of scope
 
@@ -41,13 +52,31 @@ halde erişilemeyen bir uca izin vermiş oluruz (bağımsız denetim Y2).
 
 ## Acceptance evidence
 
-- Migration'ın ileri/geri (up/down) ikisi de boş veritabanında denenir.
-- `dotnet test` → rol/izin okuma testleri (varsa mevcut
-  `tests/Modules/Identity` projesindeki ilgili test sınıfı) yeni rolü
-  doğru izin kümesiyle döndürür.
-- Semih'in elle deneyebileceği senaryo: "Mutfak Şefi" rolüne atanmış bir
-  kullanıcıyla oturum aç, hem bir kalemi iptal et hem bir ürünü 86'la,
-  ikisinin de 200 döndüğünü doğrula.
+- `dotnet build ALKAROS.slnx -c Debug` → **0 uyarı, 0 hata** (doğrulandı).
+- Migration'ın ileri/geri (up/down) ikisi de boş veritabanında denendi:
+  `PermissionSplitDatabase`/`PermissionSplitDatabaseTests` fixture'ı gerçek,
+  atılabilir bir Postgres veritabanında hem up-zincirini (111'e kadar) hem
+  `ApplyDownSplitAsync`'i (111'den 043'e kadar geriye) çalıştırıyor.
+- `dotnet test tests/Modules/Identity/Authorization/ALKAROS.Identity.
+  Authorization.Tests.csproj` → **200/200 yeşil** (1 yeni test:
+  `KitchenChefRoleExistsAndHoldsCancelReprintSuspendAndAdvance` — rolün tam
+  olarak `orders.send`, `kitchen.advance`, `kitchen.reprint`,
+  `kitchen.availability.suspend`'i taşıdığını ve `kitchen.routing.manage`'i
+  TAŞIMADIĞINI doğruluyor; down-migration testi de `kitchen-chef` rolünün
+  ve `kitchen.availability.suspend`'in kaybolduğunu doğrulayacak şekilde
+  genişletildi).
+- `dotnet test tests/Host/MigrationComposition` → **135/135 yeşil**
+  (ManifestTests migration 111'i kapsayacak şekilde güncellendi).
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı
+  (doğrulandı).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`
+  (doğrulandı).
+- Semih'in elle deneyebileceği senaryo: "Mutfak Şefi" (`kitchen-chef`)
+  rolüne atanmış bir kullanıcıyla oturum aç, hem bir kalemi iptal et
+  (`orders.send`) hem bir ürünü 86'la (`kitchen.availability.suspend`),
+  ikisinin de 200 döndüğünü doğrula; aynı oturumla yazıcı rotası
+  değiştirmeyi dene ve `kitchen.routing.manage` olmadığı için 403 aldığını
+  doğrula.
 
 ## Handoff
 

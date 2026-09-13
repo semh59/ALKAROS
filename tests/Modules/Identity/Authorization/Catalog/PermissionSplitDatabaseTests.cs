@@ -52,6 +52,30 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
         granted.Should().BeEquivalentTo(new[] { ApplicationPermissions.KitchenAdvance });
     }
 
+    /// <summary>
+    /// V1-IAM-029: "kitchen-chef" is not in <see cref="ApplicationPermissions"/>
+    /// (like kitchen.reprint/kitchen.routing.manage, it is a Kitchen-local
+    /// role/permission pairing, not part of the central catalog) — the role
+    /// code and kitchen.availability.suspend are literal strings here on
+    /// purpose, matching migration 111's own literals.
+    /// </summary>
+    [Fact]
+    public async Task KitchenChefRoleExistsAndHoldsCancelReprintSuspendAndAdvance()
+    {
+        (await _db.RoleCountAsync("kitchen-chef")).Should().Be(1);
+
+        var granted = await _db.PermissionCodesForRoleAsync("kitchen-chef");
+
+        granted.Should().BeEquivalentTo(new[]
+        {
+            ApplicationPermissions.OrdersSend,
+            ApplicationPermissions.KitchenAdvance,
+            "kitchen.reprint",
+            "kitchen.availability.suspend",
+        });
+        granted.Should().NotContain("kitchen.routing.manage");
+    }
+
     [Fact]
     public async Task CashierNoLongerHoldsTheMutateAliasButKeepsReserveNotVoid()
     {
@@ -116,7 +140,7 @@ public sealed class PermissionSplitDownMigrationTests : IClassFixture<Permission
     public PermissionSplitDownMigrationTests(PermissionSplitDatabase db) => _db = db;
 
     [Fact]
-    public async Task Down109Through043RestoreTheAliasDropTheGranularSetAndLeave042Alone()
+    public async Task Down111Through043RestoreTheAliasDropTheGranularSetAndLeave042Alone()
     {
         await _db.ApplyDownSplitAsync();
 
@@ -125,6 +149,8 @@ public sealed class PermissionSplitDownMigrationTests : IClassFixture<Permission
 
         (await _db.RoleCountAsync(ApplicationPermissions.RoleWaiter)).Should().Be(0);
         (await _db.RoleCountAsync(ApplicationPermissions.RoleKitchenStaff)).Should().Be(0);
+        (await _db.RoleCountAsync("kitchen-chef")).Should().Be(0);
+        (await _db.PermissionCountAsync("kitchen.availability.suspend")).Should().Be(0);
 
         (await _db.RoleCountAsync(ApplicationPermissions.RoleCashier)).Should().Be(1);
         // 049 down re-creates the alias and re-grants it to cashier/supervisor/manager.
