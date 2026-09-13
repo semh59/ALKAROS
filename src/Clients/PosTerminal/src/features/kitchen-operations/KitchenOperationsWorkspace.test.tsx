@@ -59,6 +59,29 @@ describe("kitchen operations workspace", () => {
     expect(onTransitionItem).toHaveBeenCalledWith(data.tickets[0], data.tickets[0].items[0], "Ready");
   });
 
+  it("shows the undo affordance right after a transition, even for a kitchen.advance-only (Mutfak Personeli) session", async () => {
+    const onUndoItem = vi.fn();
+    const fresh: KitchenData = {
+      ...data,
+      tickets: [{ ...data.tickets[0], items: [{ ...data.tickets[0].items[0], updatedAt: new Date().toISOString() }] }],
+    };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: fresh, canAdvance: true, canOperate: false, onUndoItem })} />);
+    const undo = document.querySelector<HTMLButtonElement>(".kitchen-undo-btn");
+    expect(undo).not.toBeNull();
+    expect(undo!.textContent).toContain("Geri Al");
+    await click(undo!);
+    expect(onUndoItem).toHaveBeenCalledWith(fresh.tickets[0], fresh.tickets[0].items[0]);
+  });
+
+  it("hides the undo affordance once the window has passed", async () => {
+    const old: KitchenData = {
+      ...data,
+      tickets: [{ ...data.tickets[0], items: [{ ...data.tickets[0].items[0], updatedAt: new Date(Date.now() - 20_000).toISOString() }] }],
+    };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: old, onUndoItem: vi.fn() })} />);
+    expect(document.querySelector(".kitchen-undo-btn")).toBeNull();
+  });
+
   it("shows a badge when kitchen.live_sync_enabled is off, and hides it when on", async () => {
     await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, liveSyncEnabled: false } })} />);
     expect(document.querySelector(".kitchen-live-sync-badge")).not.toBeNull();

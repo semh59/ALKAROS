@@ -1,8 +1,8 @@
 # V1-KDS-003 - Mutfak ekranında kalem geri alma (undo) arayüzü
 
 - Task ID: V1-KDS-003
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Planned
 
@@ -33,12 +33,30 @@ araştırmasının bulduğu genel KDS emsaliyle aynı desen (bkz.
 
 ## Acceptance evidence
 
-- `cd src/Clients/PosTerminal && npx tsc --noEmit` → 0 hata.
-- `cd src/Clients/PosTerminal && npx vitest run` → tüm proje yeşil.
+- `cd src/Clients/PosTerminal && npx tsc --noEmit` → **0 hata.**
+- `cd src/Clients/PosTerminal && npx vitest run` → **Test Files 23
+  passed (23), Tests 149 passed (149)** — tüm proje, izole değil (2 yeni
+  test: geri al düğmesinin taze bir geçişten hemen sonra göründüğü ve
+  `kitchen.advance`-yalnız — Mutfak Personeli — bir oturumda da
+  çalıştığı; pencere geçtikten sonra düğmenin hiç görünmediği).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
+  uyarı.
+- Uygulanan tasarım: `KitchenOperationsClient.undoItem`, yeni
+  `onUndoItem` prop'u (yalnız `canAdvance` ile kapılı — `canOperate`
+  gerekmiyor, undo bir iptal değil ileri-adım düzeltmesi). Her kalem
+  satırında, `item.updatedAt`'tan itibaren `UNDO_WINDOW_MS` (10sn,
+  backend'in `KitchenTicketItem.UndoWindow`'ıyla eşleşiyor) içinde
+  görünen bir "Geri Al · Nsn" düğmesi; `now` state'i artık 1 saniyede
+  bir tikliyor (önceden 15sn — geri sayımın gerçek pencereyle senkron
+  kalması için). Backend'in kendi 409'u zaten otoriter — istemci
+  yalnız butonun ne zaman gösterileceğine karar veriyor, ayrı bir
+  doğrulama icat etmiyor.
 - Semih'in elle deneyebileceği senaryo: bir kalemi ilerlet, pencere
   açıkken geri al butonunu gör ve kullan, kalemin önceki aşamaya
-  döndüğünü doğrula; pencere kapandıktan sonra geri alma seçeneğinin
-  kaybolduğunu doğrula.
+  döndüğünü doğrula; "Mutfak Personeli" izinli bir oturumda da aynı
+  düğmenin çalıştığını doğrula; pencere kapandıktan sonra geri alma
+  seçeneğinin kaybolduğunu doğrula.
 
 ## Handoff
 

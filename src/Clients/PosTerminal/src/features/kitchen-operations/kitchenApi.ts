@@ -18,6 +18,9 @@ export class KitchenOperationsApiError extends Error {
 export interface KitchenOperationsClient {
   load: () => Promise<KitchenData>;
   transitionItem: (ticketId: string, itemId: string, targetState: string, expectedTicketRowVersion: number, expectedItemRowVersion: number, reason?: string) => Promise<KitchenTicket>;
+  // V1-KIT-009: reverses an item's most recent transition within its short
+  // undo window — no targetState, there is only one valid direction.
+  undoItem: (ticketId: string, itemId: string, expectedTicketRowVersion: number, expectedItemRowVersion: number) => Promise<KitchenTicket>;
   transitionTicket: (ticketId: string, targetState: string, expectedRowVersion: number, reason?: string) => Promise<KitchenTicket>;
   approveReprint: (deliveryId: string, reason: string) => Promise<KitchenUnknownDelivery>;
   rejectReprint: (deliveryId: string, reason: string) => Promise<KitchenUnknownDelivery>;
@@ -129,6 +132,7 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
       return { tickets, printers, routes, categories, unknownDeliveries, health, backups, liveSyncEnabled: liveSync.enabled };
     },
     transitionItem: (ticketId, itemId, targetState, expectedTicketRowVersion, expectedItemRowVersion, reason) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/items/${encodeURIComponent(itemId)}/transition`, { method: "POST", body: JSON.stringify({ targetState, expectedTicketRowVersion, expectedItemRowVersion, reason }) }),
+    undoItem: (ticketId, itemId, expectedTicketRowVersion, expectedItemRowVersion) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/items/${encodeURIComponent(itemId)}/undo`, { method: "POST", body: JSON.stringify({ expectedTicketRowVersion, expectedItemRowVersion }) }),
     transitionTicket: (ticketId, targetState, expectedRowVersion, reason) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/transition`, { method: "POST", body: JSON.stringify({ targetState, expectedRowVersion, reason }) }),
     approveReprint: (deliveryId, reason) => request<KitchenUnknownDelivery>(`/deliveries/${encodeURIComponent(deliveryId)}/reprint-approval`, { method: "POST", body: JSON.stringify({ reason }) }),
     rejectReprint: (deliveryId, reason) => request<KitchenUnknownDelivery>(`/deliveries/${encodeURIComponent(deliveryId)}/reprint-rejection`, { method: "POST", body: JSON.stringify({ reason }) }),

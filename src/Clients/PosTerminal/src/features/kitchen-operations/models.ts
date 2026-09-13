@@ -151,6 +151,9 @@ export interface KitchenWorkspaceProps {
   canManageReprints: boolean;
   onRefresh: () => void | Promise<void>;
   onTransitionItem?: (ticket: KitchenTicket, item: KitchenTicketItem, targetState: KitchenTicketItem["status"]) => void | Promise<void>;
+  // V1-KIT-009/V1-KDS-003: reverses an item's most recent transition within
+  // its short undo window. Gated by canAdvance only, same as onTransitionItem.
+  onUndoItem?: (ticket: KitchenTicket, item: KitchenTicketItem) => void | Promise<void>;
   onTransitionTicket?: (ticket: KitchenTicket, targetState: KitchenTicket["status"], reason?: string) => void | Promise<void>;
   onApproveReprint?: (delivery: KitchenUnknownDelivery, reason: string) => void | Promise<void>;
   onRejectReprint?: (delivery: KitchenUnknownDelivery, reason: string) => void | Promise<void>;

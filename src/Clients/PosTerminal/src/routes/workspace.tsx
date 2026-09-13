@@ -506,6 +506,7 @@ function KitchenRoute({ terminalId, canAdvance, canOperate }: { terminalId: stri
     canManageReprints={canOperate}
     onRefresh={load}
     onTransitionItem={canAdvance && client ? async (ticket, item, target) => { await client.transitionItem(ticket.id, item.id, target, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
+    onUndoItem={canAdvance && client ? async (ticket, item) => { await client.undoItem(ticket.id, item.id, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
     onTransitionTicket={canOperate && client ? async (ticket, target, reason) => { await client.transitionTicket(ticket.id, target, ticket.rowVersion, reason); await load(); } : undefined}
     onApproveReprint={canOperate && client ? async (delivery, reason) => { await client.approveReprint(delivery.id, reason); await load(); } : undefined}
     onRejectReprint={canOperate && client ? async (delivery, reason) => { await client.rejectReprint(delivery.id, reason); await load(); } : undefined}

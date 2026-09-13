@@ -28,6 +28,11 @@ const AUTO_DENSE_OPEN_ITEM_THRESHOLD = 9;
 // refresh, without hammering the API every tick.
 const POLL_INTERVAL_MS = 8_000;
 const STAGES = ["Queued", "Preparing", "Ready", "Served"] as const;
+// V1-KIT-009/V1-KDS-003: mirrors KitchenTicketItem.UndoWindow (10s) — the
+// backend is the actual authority (a request past this shows a normal error
+// like any other), this is only how long the affordance stays visible so
+// kitchen staff isn't shown a button that would just fail.
+const UNDO_WINDOW_MS = 10_000;
 
 const DEFAULT_TARGET_PREP_MINUTES = 15;
 const CRITICAL_TARGET_MULTIPLIER = 5 / 3;
@@ -99,6 +104,7 @@ export function KitchenOperationsWorkspace({
   canManageReprints,
   onRefresh,
   onTransitionItem,
+  onUndoItem,
   onTransitionTicket,
   onApproveReprint,
   onRejectReprint,
@@ -117,8 +123,12 @@ export function KitchenOperationsWorkspace({
   const [cancelTarget, setCancelTarget] = useState<KitchenTicket | null>(null);
   const [cancelReason, setCancelReason] = useState("");
 
+  // V1-KDS-003: ticks every second (not 15s like before undo existed) so the
+  // undo affordance's countdown and disappearance track the backend's real
+  // 10s window closely — the age/timer displays are just as accurate this
+  // way, not a regression.
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 15_000);
+    const timer = setInterval(() => setNow(Date.now()), 1_000);
     return () => clearInterval(timer);
   }, []);
 
@@ -156,6 +166,21 @@ export function KitchenOperationsWorkspace({
       setFeedback({ tone: "success", message: `${item.productName} → ${itemStatusLabels[target]}.` });
     } catch (error) {
       setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Mutfak verisi değişti. Güncel kartı alın; işlem tekrarlanmadı." : error instanceof ApiError ? error.message : "Ürün durumu güncellenemedi." });
+    } finally {
+      setBusyKey(null);
+    }
+  };
+
+  const executeUndoItem = async (ticket: KitchenTicket, item: KitchenTicketItem) => {
+    if (!onUndoItem) return;
+    const key = `undo:${item.id}`;
+    setBusyKey(key);
+    setFeedback(null);
+    try {
+      await onUndoItem(ticket, item);
+      setFeedback({ tone: "success", message: `${item.productName} geri alındı.` });
+    } catch (error) {
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Geri alma penceresi kapandı veya kart değişti. Güncel kartı alın." : error instanceof ApiError ? error.message : "Geri alınamadı." });
     } finally {
       setBusyKey(null);
     }
@@ -277,6 +302,7 @@ export function KitchenOperationsWorkspace({
           canOperate={canOperate}
           busyKey={busyKey}
           onItemTransition={executeItemTransition}
+          onUndoItem={onUndoItem ? executeUndoItem : undefined}
           onCancel={openCancelPrompt}
         />)}
       </div>
@@ -325,6 +351,7 @@ function OrderGroupCard({
   canOperate,
   busyKey,
   onItemTransition,
+  onUndoItem,
   onCancel,
 }: {
   orderId: string;
@@ -334,6 +361,7 @@ function OrderGroupCard({
   canOperate: boolean;
   busyKey: string | null;
   onItemTransition: (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => void;
+  onUndoItem?: (ticket: KitchenTicket, item: KitchenTicketItem) => void;
   onCancel: (ticket: KitchenTicket) => void;
 }) {
   const oldestCreatedAt = tickets.reduce((oldest, t) => (Date.parse(t.createdAt) < Date.parse(oldest) ? t.createdAt : oldest), tickets[0].createdAt);
@@ -354,9 +382,11 @@ function OrderGroupCard({
       {tickets.map((ticket) => <StationColumn
         key={ticket.id}
         ticket={ticket}
+        now={now}
         canAdvance={canAdvance}
         busyKey={busyKey}
         onItemTransition={onItemTransition}
+        onUndoItem={onUndoItem}
       />)}
     </div>
   </article>;
@@ -364,14 +394,18 @@ function OrderGroupCard({
 
 function StationColumn({
   ticket,
+  now,
   canAdvance,
   busyKey,
   onItemTransition,
+  onUndoItem,
 }: {
   ticket: KitchenTicket;
+  now: number;
   canAdvance: boolean;
   busyKey: string | null;
   onItemTransition: (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => void;
+  onUndoItem?: (ticket: KitchenTicket, item: KitchenTicketItem) => void;
 }) {
   const done = ticket.items.every((i) => i.status === "Ready" || i.status === "Served" || i.status === "Cancelled");
   const doing = ticket.items.some((i) => i.status === "Preparing");
@@ -380,25 +414,36 @@ function StationColumn({
     {ticket.items.filter((item) => item.status !== "Cancelled").map((item) => <ItemRow
       key={item.id}
       item={item}
-      busy={busyKey === `item:${item.id}`}
+      now={now}
+      busy={busyKey === `item:${item.id}` || busyKey === `undo:${item.id}`}
       canAdvance={canAdvance}
       onAdvance={(target) => onItemTransition(ticket, item, target)}
+      onUndo={onUndoItem ? () => onUndoItem(ticket, item) : undefined}
     />)}
   </div>;
 }
 
 function ItemRow({
   item,
+  now,
   busy,
   canAdvance,
   onAdvance,
+  onUndo,
 }: {
   item: KitchenTicketItem;
+  now: number;
   busy: boolean;
   canAdvance: boolean;
   onAdvance: (target: KitchenTicketItem["status"]) => void;
+  onUndo?: () => void;
 }) {
   const currentIndex = STAGES.indexOf(item.status as typeof STAGES[number]);
+  // V1-KIT-009/V1-KDS-003: a fresh transition (Preparing/Ready/Served, never
+  // Queued — nothing to undo from there) leaves a short window to undo it.
+  const updatedAtMs = item.updatedAt ? Date.parse(item.updatedAt) : NaN;
+  const remainingMs = Number.isFinite(updatedAtMs) ? UNDO_WINDOW_MS - (now - updatedAtMs) : 0;
+  const canShowUndo = canAdvance && Boolean(onUndo) && currentIndex > 0 && remainingMs > 0;
   return <div className="kitchen-item-row">
     <div className="kitchen-item-row__main">
       <span className="kitchen-item-row__qty">{item.quantity}×</span>
@@ -407,6 +452,7 @@ function ItemRow({
         {item.modifiers && <span className="kitchen-item-row__detail">{item.modifiers}</span>}
         {item.notes && <span className="kitchen-item-row__detail kitchen-item-row__detail--note">Not: {item.notes}</span>}
       </div>
+      {canShowUndo && <button type="button" className="kitchen-undo-btn" disabled={busy} onClick={onUndo}>{busy ? "…" : `Geri Al · ${Math.ceil(remainingMs / 1000)}sn`}</button>}
     </div>
     {currentIndex < 0 ? null : <div className="kitchen-stepper" role="group" aria-label={`${item.productName} durumu`}>
       {STAGES.map((stage, index) => {
