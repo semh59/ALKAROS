@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "107"
+    "max": "108"
   },
   "migrations": [
     {
@@ -923,6 +923,15 @@
         "authorization_delegations",
         "behavioural_tightenings",
         "authorization_policies"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "108",
+      "phase": "B",
+      "tables": [
+        "bill_adjustments",
+        "bill_allocations"
       ],
       "deferredConstraints": []
     }

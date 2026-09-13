@@ -58,10 +58,9 @@ aynı şekle sahip, o yüzden aynı `ON DELETE SET NULL`'u aldı.
   bu audit bulgusunun kapsamı yalnızca kullanıcı referansı boşluklarıydı;
   ayrı, daha geniş bir iyileştirme olabilir.
 - `billing.bill_adjustments`/`bill_allocations`'daki benzer boşluklar:
-  cross-module FK'lar için bu codebase'de tutarsız bir önceki emsal var
-  (bazı modüller arası referanslar bilinçli olarak DB seviyesinde
-  zorlanmıyor, uygulama seviyesinde tutuluyor) — ayrı bir karar gerektirir,
-  bu görevin kapsamı yalnızca in-module (identity şeması içi) boşluklar.
+  bu görev yazılırken emsal "tutarsız" varsayılmıştı; V1-RMD-191 bunu
+  kontrol edip tersini bulup aynı diffte kapattı — bkz. o görevin kendi
+  Goal bölümü.
 
 ## Dependencies
 
