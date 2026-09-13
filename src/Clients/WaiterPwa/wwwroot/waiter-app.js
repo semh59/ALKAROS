@@ -461,8 +461,20 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
           state.draft.splice(index, 1);
           toast(`${removed.name} çıkarıldı.`, {
             undo: () => {
-              if (!state.table || state.table.id !== ownerTableId || state.draftEpoch !== epoch) {
+              // V1-RMD-188: found by the 2026-09-12 five-agent independent
+              // Garson audit — this always said "masa değişti" (table
+              // changed), even when the table was still the SAME one and
+              // draftEpoch had advanced for the other reason it exists
+              // for (see state.js): the round itself was sent or cleared
+              // while the toast was still showing. Telling a waiter
+              // standing at the same table their table changed is simply
+              // wrong; the two cases now get their own accurate message.
+              if (!state.table || state.table.id !== ownerTableId) {
                 toast(`${removed.name} geri alınamadı, masa değişti.`, { warning: true });
+                return;
+              }
+              if (state.draftEpoch !== epoch) {
+                toast(`${removed.name} geri alınamadı, tur değişti.`, { warning: true });
                 return;
               }
               removed.quantity = 0.5;
