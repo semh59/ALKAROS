@@ -121,6 +121,9 @@ public sealed record BackupV1(
     DateTimeOffset? CompletedAt,
     int RetentionDays);
 
+/// <summary>V1-KIT-010: whether kitchen.live_sync_enabled is on for this deployment — read-only, the setting itself is changed elsewhere (Settings module).</summary>
+public sealed record LiveSyncStatusV1(bool Enabled);
+
 public sealed record HealthSnapshotV1(
     Guid SnapshotId,
     string DatabaseStatus,

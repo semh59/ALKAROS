@@ -312,6 +312,17 @@ public static class KitchenOperationsEndpoints
                 deliveryId, request, principal.UserId, cancellationToken));
         });
 
+        group.MapGet("/operations/live-sync", async (
+            Guid terminalId,
+            IKitchenOperationsSessionAuthorizer authorizer,
+            KitchenOperationsStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            return Results.Ok(await store.GetLiveSyncStatusAsync(cancellationToken));
+        });
+
         group.MapGet("/operations/health/latest", async (
             Guid terminalId,
             IKitchenOperationsSessionAuthorizer authorizer,

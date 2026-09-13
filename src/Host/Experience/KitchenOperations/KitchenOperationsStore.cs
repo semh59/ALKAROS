@@ -348,6 +348,15 @@ public sealed class KitchenOperationsStore
     public async Task<HealthSnapshotV1?> GetLatestHealthAsync(CancellationToken cancellationToken)
         => (await _backupHealth.GetLatestHealthSnapshotAsync(cancellationToken)) is { } value ? ToDto(value) : null;
 
+    // V1-KIT-010: kitchen.live_sync_enabled silently changes behavior
+    // (ready-item waiter notifications, KitchenState mirroring to Orders)
+    // but was never readable from the Kitchen HTTP surface — an
+    // independent review (2026-09-13) found this makes the setting's
+    // effect invisible on the screen it actually changes. This is the
+    // same flag TransitionItemAsync already reads before publishing.
+    public async Task<LiveSyncStatusV1> GetLiveSyncStatusAsync(CancellationToken cancellationToken)
+        => new(await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken));
+
     public async Task<IReadOnlyList<BackupV1>> GetRecentBackupsAsync(
         int limit,
         CancellationToken cancellationToken)

@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Settings.KitchenLiveSync;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -205,6 +207,30 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
             new TransitionKitchenTicketV1(targetState, 1));
         using var cancelDenied = await client.SendAsync(cancelRequest);
         Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
+    }
+
+    // V1-KIT-010: kitchen.live_sync_enabled silently changed behavior
+    // (waiter ready-notifications, KitchenState mirroring) with no way for
+    // the Kitchen screen itself to see it — an independent review
+    // (2026-09-13) found this. GetLiveSyncStatusAsync must report the same
+    // value TransitionItemAsync itself already reads before publishing.
+    [Fact]
+    public async Task LiveSyncStatusReflectsTheDeploymentSettingDefaultOffThenOn()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, []);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var initial = await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
+        Assert.False(initial!.Enabled);
+
+        var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
+        var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
+        await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
+
+        var afterEnabled = await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
+        Assert.True(afterEnabled!.Enabled);
     }
 
     [Fact]
