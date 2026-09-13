@@ -1,8 +1,8 @@
 # V1-KIT-007 - Bir kalem hazırlanmaya başlayınca bileti örtük kabul etme
 
 - Task ID: V1-KIT-007
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -58,14 +58,28 @@ taşınmasını `KitchenTicket` domain modeline ekler.
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata.
-- `dotnet test tests/Modules/Kitchen/ALKAROS.Kitchen.Tests.csproj` ve
-  `tests/Host/Experience/KitchenOperations` → yeni testler dahil tümü
-  yeşil.
+- `dotnet build ALKAROS.slnx -c Debug` → **Oluşturma başarılı oldu. 0
+  Uyarı, 0 Hata.**
+- `ALKAROS_TEST_PG_PORT=55432 ALKAROS_TEST_PG_PASSWORD=postgres dotnet
+  test tests/Modules/Kitchen/TicketLifecycle/ALKAROS.Kitchen.TicketLifecycle.Tests.csproj
+  -c Release` → gerçek Postgresql'e karşı **Başarılı! Başarısız: 0,
+  Başarılı: 24, Atlanan: 0, Toplam: 24** (21 mevcut + 3 yeni:
+  `QueuedTicketIsImplicitlyAcceptedWhenItsOnlyItemStartsPreparing`,
+  `QueuedTicketWithMultipleItemsIsImplicitlyAcceptedWhenOneItemStartsPreparing`,
+  `ExplicitAcceptStillWorksAndItsAcceptedAtIsNotOverwrittenByLaterItemProgress`).
+- `ALKAROS_TEST_PG_PORT=55432 ALKAROS_TEST_PG_PASSWORD=postgres dotnet
+  test tests/Host/Experience/KitchenOperations/ALKAROS.Host.Experience.KitchenOperations.Tests.csproj
+  -c Release` → gerçek Postgresql'e karşı **Başarılı! Başarısız: 0,
+  Başarılı: 9, Atlanan: 0, Toplam: 9** (8 mevcut + 1 yeni:
+  `ItemStartedDirectlyFromQueuedTicketImplicitlyAcceptsTheTicket`).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
+  uyarı.
 - Semih'in elle deneyebileceği senaryo: yeni bir sipariş gönder (ticket
   `Queued`), mutfak ekranından tek bir kalemi doğrudan "Hazırlanıyor"a al,
-  ticket kartının "Kabul Edildi" adımını atlamadan "Hazırlanıyor"
-  gösterdiğini doğrula.
+  ticket'ın "Kabul Edildi" adımını atlamadan "Hazırlanıyor" durumuna
+  geçtiğini doğrula (bu davranış artık `ItemStartedDirectlyFromQueuedTicketImplicitlyAcceptsTheTicket`
+  ile gerçek HTTP çağrısıyla kanıtlanmış durumda).
 
 ## Handoff
 

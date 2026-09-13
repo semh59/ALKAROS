@@ -75,6 +75,57 @@ public sealed class KitchenTicketUnitTests
         withItem.TargetPrepMinutes.Should().Be(ticket.TargetPrepMinutes);
     }
 
+    // V1-KIT-007: a ticket left in Queued must not stay Queued forever just because
+    // no one tapped a separate "Kabul Et" action first — the first item to start
+    // preparing implicitly accepts the whole ticket in the same step.
+    [Fact]
+    public void QueuedTicketIsImplicitlyAcceptedWhenItsOnlyItemStartsPreparing()
+    {
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1);
+        var ticket = new KitchenTicket(ticketId, Guid.NewGuid(), "KT-910", "Grill", [item]);
+
+        ticket.Status.Should().Be(KitchenTicketState.Queued);
+        ticket.AcceptedAt.Should().BeNull();
+
+        var updated = ticket.UpdateItemStatus(item.Id, KitchenTicketItemState.Preparing);
+
+        updated.Status.Should().Be(KitchenTicketState.Preparing);
+        updated.AcceptedAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void QueuedTicketWithMultipleItemsIsImplicitlyAcceptedWhenOneItemStartsPreparing()
+    {
+        var ticketId = Guid.NewGuid();
+        var item1 = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1);
+        var item2 = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Çoban Salata", 1);
+        var ticket = new KitchenTicket(ticketId, Guid.NewGuid(), "KT-911", "Grill", [item1, item2]);
+
+        var updated = ticket.UpdateItemStatus(item1.Id, KitchenTicketItemState.Preparing);
+
+        updated.Status.Should().Be(KitchenTicketState.Preparing);
+        updated.Items.Single(i => i.Id == item2.Id).Status.Should().Be(KitchenTicketItemState.Queued);
+    }
+
+    [Fact]
+    public void ExplicitAcceptStillWorksAndItsAcceptedAtIsNotOverwrittenByLaterItemProgress()
+    {
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1);
+        var ticket = new KitchenTicket(ticketId, Guid.NewGuid(), "KT-912", "Grill", [item]);
+
+        var acceptedAt = new DateTimeOffset(2026, 9, 13, 12, 0, 0, TimeSpan.Zero);
+        var accepted = ticket.TransitionTo(KitchenTicketState.Accepted, timestamp: acceptedAt);
+        accepted.Status.Should().Be(KitchenTicketState.Accepted);
+        accepted.AcceptedAt.Should().Be(acceptedAt);
+
+        var preparing = accepted.UpdateItemStatus(item.Id, KitchenTicketItemState.Preparing, timestamp: acceptedAt.AddMinutes(1));
+
+        preparing.Status.Should().Be(KitchenTicketState.Preparing);
+        preparing.AcceptedAt.Should().Be(acceptedAt);
+    }
+
     [Fact]
     public void TargetPrepMinutesMustBePositive()
     {

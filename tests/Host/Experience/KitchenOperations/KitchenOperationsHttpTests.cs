@@ -129,6 +129,35 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal("Ready", readyTicket.Status);
     }
 
+    // V1-KIT-007: kitchen staff no longer has to call the ticket-level
+    // "Accepted" transition before advancing an item — starting the item
+    // directly from a Queued ticket must implicitly accept the ticket in
+    // the same request, not leave it stuck on "Queued" forever.
+    [Fact]
+    public async Task ItemStartedDirectlyFromQueuedTicketImplicitlyAcceptsTheTicket()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId,
+            [KitchenOperationsEndpoints.TicketMutationPermission]);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var ticket = await GetAsync<KitchenTicketV1>(
+            client, Prefix(terminalId) + $"/tickets/{seed.TicketId:D}", cookie);
+        Assert.Equal("Queued", ticket!.Status);
+
+        var preparing = await PostAsync<KitchenTicketV1>(
+            client,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition",
+            cookie,
+            new TransitionKitchenItemV1("Preparing", 1, 1));
+
+        Assert.Equal("Preparing", preparing.Status);
+        Assert.Equal("Preparing", Assert.Single(preparing.Items).Status);
+    }
+
     [Fact]
     public async Task UnknownDeliveryRequiresReasonedReprintApprovalAndNeverAutoPrints()
     {

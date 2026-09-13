@@ -187,10 +187,17 @@ public sealed class KitchenTicket
         var at = timestamp ?? DateTimeOffset.UtcNow;
         var newTicketStatus = Status;
 
-        // Auto-promote: If ticket was Accepted and an item started Preparing -> ticket becomes Preparing
-        if (Status == KitchenTicketState.Accepted && newItemStatus == KitchenTicketItemState.Preparing)
+        // Auto-promote: If ticket was Accepted and an item started Preparing -> ticket becomes Preparing.
+        // V1-KIT-007: a ticket left in Queued behaves the same way — the first item to start
+        // preparing implicitly accepts the ticket in the same step, so kitchen staff never has
+        // to tap a separate "Kabul Et" action before they can advance the item they are holding.
+        // AcceptedAt is backfilled here exactly like the explicit TransitionTo(Accepted) path does.
+        var implicitlyAccepted = false;
+        if (newItemStatus == KitchenTicketItemState.Preparing &&
+            (Status == KitchenTicketState.Accepted || Status == KitchenTicketState.Queued))
         {
             newTicketStatus = KitchenTicketState.Preparing;
+            implicitlyAccepted = Status == KitchenTicketState.Queued;
         }
 
         // Auto-ready: If ticket is in Preparing or Accepted and all non-cancelled items are Ready or Served -> ticket becomes Ready
@@ -219,7 +226,7 @@ public sealed class KitchenTicket
             rowVersion: RowVersion,
             createdAt: CreatedAt,
             updatedAt: at,
-            acceptedAt: AcceptedAt,
+            acceptedAt: implicitlyAccepted ? at : AcceptedAt,
             readyAt: newTicketStatus == KitchenTicketState.Ready ? (ReadyAt ?? at) : ReadyAt,
             cancelledAt: newTicketStatus == KitchenTicketState.Cancelled ? at : CancelledAt,
             cancellationReason: newTicketStatus == KitchenTicketState.Cancelled ? (reason ?? "All items cancelled") : CancellationReason,
