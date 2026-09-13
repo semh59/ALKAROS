@@ -217,36 +217,60 @@ jobs:
         run: |
           set -uo pipefail
           dotnet tool install --global dotnet-coverage --version 18.10.0
-          dotnet-coverage collect \
-            "dotnet test ALKAROS.slnx --configuration Release --no-build --logger trx --results-directory $RUNNER_TEMP/test-results" \
+          # V1-RMD-197: found on the first two real runs of this step ever
+          # (9+ days of prior pushes never reached it - V1-RMD-194/195
+          # opened the gates ahead of it; V1-RMD-196 added the diagnostics
+          # that proved this). Wrapping the ENTIRE solution's `dotnet test
+          # ALKAROS.slnx` in one `dotnet-coverage collect` session held
+          # ~90 test projects' live coverage data in memory for one final
+          # merge; that merge never completed - no diagnostic output at
+          # all appeared between dotnet-coverage's own "Code coverage
+          # results: ..." line and the step's bare failure, on either run,
+          # meaning the process was killed from outside normal shell
+          # control (this session's own machine hit the identical OOM
+          # trying to reproduce the same single giant collect locally,
+          # twice). Collecting per test project and merging the resulting
+          # (already-flushed-to-disk) files afterward keeps only one
+          # project's coverage session live in memory at a time - the
+          # merge step then combines completed XML files, a far lighter
+          # operation than merging live sessions.
+          mkdir -p "$RUNNER_TEMP/coverage-parts" "$RUNNER_TEMP/test-results"
+          failed_projects=""
+          while IFS= read -r project; do
+            project_name=$(basename "$project" .csproj)
+            echo "::group::Coverage: $project_name"
+            dotnet-coverage collect \
+              "dotnet test \"$project\" --configuration Release --no-build --logger trx --results-directory $RUNNER_TEMP/test-results" \
+              --output "$RUNNER_TEMP/coverage-parts/$project_name.cobertura.xml" \
+              --output-format cobertura
+            project_exit=$?
+            echo "::endgroup::"
+            if [ "$project_exit" -ne 0 ]; then
+              echo "FAILED ($project_exit): $project_name"
+              failed_projects="$failed_projects $project_name"
+            fi
+          done < <(find tests -name "*.Tests.csproj" | sort)
+          if [ -n "$failed_projects" ]; then
+            echo "One or more test projects failed:$failed_projects"
+            exit 1
+          fi
+          echo "Coverage part files:"
+          ls -la "$RUNNER_TEMP/coverage-parts" || true
+          dotnet-coverage merge "$RUNNER_TEMP"/coverage-parts/*.cobertura.xml \
             --output "$RUNNER_TEMP/coverage.cobertura.xml" \
             --output-format cobertura
-          collect_exit=$?
-          # V1-RMD-196: found the first time this step was ever reached in
-          # 9+ days (the plan-audit/markdown-lint gates ahead of it were
-          # broken that whole time - V1-RMD-194/195) - the step failed
-          # here with a bare "Process completed with exit code 1" and no
-          # other output between dotnet-coverage's own "Code coverage
-          # results: ..." line and the failure, so it was impossible to
-          # tell from the logs alone whether `dotnet test` itself failed
-          # under the wrapper, the coverage file came out missing/empty,
-          # or the merge step silently produced nothing. Diagnostics below
-          # answer that on the next run instead of guessing; `set -e` is
-          # deliberately dropped for this block so a failure here still
-          # prints everything before the step exits non-zero.
-          echo "dotnet-coverage collect exit code: $collect_exit"
+          merge_exit=$?
+          echo "dotnet-coverage merge exit code: $merge_exit"
           echo "Disk space:"
           df -h "$RUNNER_TEMP" || true
-          echo "Coverage output file:"
+          echo "Merged coverage output file:"
           ls -la "$RUNNER_TEMP/coverage.cobertura.xml" 2>&1 || echo "  (does not exist)"
-          echo "Test result files:"
-          ls -la "$RUNNER_TEMP/test-results" 2>&1 || echo "  (results directory does not exist)"
-          if [ "$collect_exit" -ne 0 ]; then
-            echo "dotnet-coverage collect itself failed (exit $collect_exit) - see the dotnet test output above for the real failure."
-            exit "$collect_exit"
+          if [ "$merge_exit" -ne 0 ]; then
+            echo "dotnet-coverage merge failed (exit $merge_exit)."
+            exit "$merge_exit"
           fi
           if [ ! -s "$RUNNER_TEMP/coverage.cobertura.xml" ]; then
-            echo "Coverage file is missing or empty despite a successful collect exit code."
+            echo "Merged coverage file is missing or empty despite a successful merge exit code."
             exit 1
           fi
           python - "$RUNNER_TEMP/coverage.cobertura.xml" <<'PY'

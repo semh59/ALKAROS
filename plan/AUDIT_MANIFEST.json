@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1109,
-  "markdown_line_count": 81232,
-  "markdown_byte_count": 4704096,
+  "markdown_file_count": 1110,
+  "markdown_line_count": 81307,
+  "markdown_byte_count": 4707519,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2290,9 +2290,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C5E585D99BF51C4373CB0E452D06FFF9C734B3133CB3B26F9C109D2B9AD5A8EA",
-      "lines": 2385,
-      "bytes": 343309,
+      "sha256": "95D8E75FCBAA200CB9EAC820DF81D4408609664F2CAEB532842115EA8F29B3C7",
+      "lines": 2386,
+      "bytes": 343480,
       "utf8": true
     },
     {
@@ -6143,6 +6143,13 @@
       "sha256": "8FAA3CDB7EC12E457A95734E3D83CE984967DCFA6BAF9912152631027F09EA8A",
       "lines": 76,
       "bytes": 3411,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-197-coverage-step-per-project-collection.md",
+      "sha256": "FC582E146C0E206D0C79A03E7C601DDD35066683ADE6B6A25BFF26F0ECD90699",
+      "lines": 74,
+      "bytes": 3252,
       "utf8": true
     },
     {
