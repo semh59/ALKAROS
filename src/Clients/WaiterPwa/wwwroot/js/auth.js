@@ -86,6 +86,20 @@ export function showLogin() {
   // no-op once the overlay is already showing - keeps the push/pop
   // count balanced no matter how many callers see the same 401.
   if (!el.loginOverlay.hidden) return;
+  // V1-RMD-180: found by the 2026-09-12 five-agent independent Garson
+  // audit — the idempotency guard above only covers "login is already
+  // showing". It missed the PIN lock's own transition to login (too many
+  // wrong PINs, submitPin()'s 423 branch; the same path any background
+  // 401 takes while state.locked is true): the lock overlay's OWN trap
+  // (pushed by lockScreen() via trapBackgroundExcept(el.lockOverlay)) was
+  // still on the stack, unreleased, when the code below pushed a second
+  // trap for the login overlay. submitLogin() only ever pops once on
+  // success, so the lock's orphaned entry stayed on the stack forever -
+  // exactly the double-push-without-a-matching-pop bug V1-RMD-178's stack
+  // rewrite was meant to prevent, just reached through a different door.
+  // Releasing the lock's own trap here first keeps every push paired with
+  // exactly one pop, no matter which overlay handed off to which.
+  if (state.locked) releaseTrap();
   el.loginOverlay.hidden = false;
   el.lockOverlay.hidden = true;
   state.locked = false;
