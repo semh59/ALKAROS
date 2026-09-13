@@ -898,6 +898,48 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(fromWaiterId, await _database.GetServingUserIdAsync(draft!.OrderId));
     }
 
+    /// <summary>
+    /// V1-RMD-181: found by the 2026-09-12 five-agent independent Garson
+    /// audit — the bulk reassignment left row_version untouched, so a
+    /// stale reader (a waiter mid-edit on the table, still holding the OLD
+    /// row_version) would have passed UpdateOrderAsync's own optimistic
+    /// concurrency check afterwards even though serving_user_id had, in
+    /// fact, just changed under them. A real shift transfer must bump it
+    /// like every other mutation does.
+    /// </summary>
+    [Fact]
+    public async Task TransferringServingUserBumpsTheOrdersRowVersion()
+    {
+        var terminalId = Guid.NewGuid();
+        var toTerminalId = Guid.NewGuid();
+        var (fromWaiterId, fromCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create", "orders.send", "orders.transfer-server");
+        var (toWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            toTerminalId, "waiter", "orders.create");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), fromCookie,
+            new CreateTableDraftRequest(tableId, "M-181",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        var rowVersionBefore = await _database.GetRowVersionAsync(draft!.OrderId);
+
+        using var transfer = await client.SendAsync(JsonRequest(TransferPath(terminalId), fromCookie,
+            new TransferServingUserRequestV1(fromWaiterId, toWaiterId, "")));
+        Assert.Equal(HttpStatusCode.OK, transfer.StatusCode);
+
+        var rowVersionAfter = await _database.GetRowVersionAsync(draft.OrderId);
+        Assert.True(rowVersionAfter > rowVersionBefore,
+            $"Expected row_version to advance past {rowVersionBefore} after a serving-user transfer, stayed at {rowVersionAfter}.");
+        Assert.Equal(toWaiterId, await _database.GetServingUserIdAsync(draft.OrderId));
+    }
+
     [Fact]
     public async Task ASecondHandoffNoteSupersedesTheFirstUnpoppedOne()
     {

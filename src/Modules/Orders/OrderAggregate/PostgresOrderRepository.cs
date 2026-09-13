@@ -230,11 +230,22 @@ public sealed class PostgresOrderRepository : IOrderRepository
     public async Task<int> ReassignServingUserAsync(
         Guid fromUserId, Guid toUserId, CancellationToken cancellationToken = default)
     {
+        // V1-RMD-181: found by the 2026-09-12 five-agent independent Garson
+        // audit — this UPDATE left row_version untouched. UpdateOrderAsync's
+        // own optimistic concurrency check (above) trusts row_version as
+        // proof "nothing else has changed this order since I last read it";
+        // a waiter mid-edit on a table who is reassigned away from it mid-
+        // shift still held the OLD row_version in memory, and their next
+        // save would have passed that check even though serving_user_id had
+        // in fact just changed under them. Bumping row_version here, same
+        // convention as every other order mutation, makes a shift transfer
+        // count as a real change like any other.
         await using var command = _dataSource.CreateCommand(
             $"""
             UPDATE {Orders}
             SET serving_user_id = @to_user_id,
-                updated_at = now()
+                updated_at = now(),
+                row_version = row_version + 1
             WHERE serving_user_id = @from_user_id
               AND status NOT IN ('Completed', 'Cancelled', 'Rejected');
             """);

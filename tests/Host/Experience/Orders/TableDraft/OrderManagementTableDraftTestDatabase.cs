@@ -138,6 +138,16 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         return result as Guid?;
     }
 
+    /// <summary>V1-RMD-181: reads the order's current row_version column directly (no DTO exposes it).</summary>
+    public async Task<long> GetRowVersionAsync(Guid orderId)
+    {
+        await using var cmd = DataSource.CreateCommand(
+            "SELECT row_version FROM orders.orders WHERE order_id = @order_id;");
+        cmd.Parameters.Add("order_id", NpgsqlTypes.NpgsqlDbType.Uuid).Value = orderId;
+        var result = await cmd.ExecuteScalarAsync();
+        return (long)result!;
+    }
+
     /// <summary>Seeds a zone and a table (orders.orders.table_id has an FK to table_mgmt.tables) and returns the table id.</summary>
     public async Task<Guid> SeedTableAsync()
     {
