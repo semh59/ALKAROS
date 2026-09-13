@@ -30,3 +30,23 @@
 ## 3. Affected Tasks
 
 - V20-INS-001, V20-INS-002
+
+## 4. Doğrulanmış rekabet farkı (V1-KIT-011, 2026-09-13)
+
+Bu bölüm §1-3'teki kararı değiştirmez, yalnız zaten var olan mimarinin
+rakip karşılaştırmasında doğrulanmış somut faydasını kayda geçirir.
+
+"OS (Server): Local backend" ve "Prerequisites: ... local network"
+satırlarının pratik sonucu: PosTerminal/WaiterPwa/Cashier istemcileri
+buluta değil, restoranın kendi yerel ağındaki Host'a konuşur. Cloud-
+öncelikli rakiplerin (Toast, Square, Lightspeed) ortak, dokümante edilmiş
+bir zaafı var — internet bağlantısı kesildiğinde sipariş/mutfak bileti
+akışı durur (endüstri kaynağı: 45 dakikalık bir kesinti tek başına 1.100
+USD+ doğrudan satış kaybına yol açabiliyor, kaynak:
+[kwickos.com](https://kwickos.com/blog/pos-system-offline-mode-guide.html)).
+ALKAROS bu senaryoya karşı **yapısal olarak bağışık**: internet kesilse
+bile PosTerminal↔Host↔PostgreSQL zinciri aynı yerel ağda çalışmaya devam
+eder, mutfak biletleri akmaya devam eder. Bu, ek kod gerektirmeyen,
+2026-07-30'da zaten onaylanmış bir mimari kararın (V0-ARC-007) doğal
+sonucu — yalnız şimdiye kadar rakip karşılaştırması bağlamında hiçbir
+yerde kayıtlı değildi.

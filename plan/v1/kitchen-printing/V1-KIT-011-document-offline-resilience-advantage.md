@@ -1,8 +1,8 @@
 # V1-KIT-011 - Yerel ağ dayanıklılığını doğrulanmış bir fark olarak belgele
 
 - Task ID: V1-KIT-011
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: documentation
 - Surface state: Existing
 
@@ -45,9 +45,10 @@ karşılaştırması bağlamında **doğrulanmış bir fark** olarak kayıtlı d
 
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
   uyarı.
+- `python tools/consistency-audit/consistency_audit.py` → `clean`.
 - Semih'in elle doğrulayabileceği senaryo: `docs/architecture/deployment-compatibility-matrix.md`'yi
-  aç, yeni notun mevcut karar tablosuyla çelişmediğini, yalnız açıklayıcı
-  olduğunu gör.
+  aç, yeni §4'ün mevcut §1-3 karar tablosuyla çelişmediğini, yalnız
+  açıklayıcı olduğunu gör.
 
 ## Handoff
 
