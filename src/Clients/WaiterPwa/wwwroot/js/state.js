@@ -31,6 +31,25 @@ function loadDraftsByTable() {
   }
 }
 
+// V1-RMD-183: found by the 2026-09-12 five-agent independent Garson
+// audit — offlineQueue/failedOrders read their own localStorage keys with
+// a bare JSON.parse, unlike loadDraftsByTable right above (and its own
+// V1-RMD-170 lesson: "corrupt/foreign localStorage content must never
+// crash startup"). This module is imported before almost anything else,
+// so a thrown SyntaxError here (a manual edit, a stale schema from an
+// old app version, another extension writing to the same origin) failed
+// the whole app at import time - every screen, not just the offline
+// queue. Same fallback shape loadDraftsByTable already uses.
+function loadJsonArray(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 // ══ State ══════════════════════════════════════════════════════════
 // Everything under `server` is a copy of a DTO. Everything under `draft` is
 // the round being composed on this device and not yet sent.
@@ -87,8 +106,8 @@ export const state = {
   draftEpoch: 0,
 
   pending: [],
-  offlineQueue: JSON.parse(localStorage.getItem('alkaros_waiter_offline_queue') || '[]'),
-  failedOrders: JSON.parse(localStorage.getItem('alkaros_waiter_failed_orders') || '[]'),
+  offlineQueue: loadJsonArray('alkaros_waiter_offline_queue'),
+  failedOrders: loadJsonArray('alkaros_waiter_failed_orders'),
 
   sendInFlight: false,
   optionsMode: null,
