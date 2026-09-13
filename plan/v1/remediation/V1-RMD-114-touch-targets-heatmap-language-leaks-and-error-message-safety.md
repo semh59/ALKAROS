@@ -41,7 +41,7 @@ katmanı bulgularının doğrulanmış, gerçek olanlarını kapatır.
     görünürlüğü", "yönetici CRUD" Türkçeleştirildi; hata mesajı güvenliği.
   - src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
     (ilgili görev sahipliğinde) — "Supervisor gerekli/yetkisi",
-    "Reprint onaylandı/reddedildi/kararı", "worker", "<span>Order"
+    "Reprint onaylandı/reddedildi/kararı", "worker", "`<span>`Order"
     Türkçeleştirildi; hata mesajı güvenliği.
   - src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx,
     FloorPlanWorkspace.test.tsx, src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx,

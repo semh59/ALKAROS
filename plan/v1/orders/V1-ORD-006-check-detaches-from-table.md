@@ -150,7 +150,6 @@ faturalanmıyor. İkisi tek kavramla kapanır: *masaya bağlı hesap*.
   boşaldığını gör; aynı masaya yeni müşteri otur ve adisyonun boş açıldığını
   doğrula.
 
-
 ## Handoff
 
 - None

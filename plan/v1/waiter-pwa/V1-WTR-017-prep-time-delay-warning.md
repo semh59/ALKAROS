@@ -17,6 +17,7 @@ salatayı beklesin mi?' — istersem ayrı iki gönderime böler."
 Kodda hiçbir yerde bir "hazırlama süresi" kavramı yoktu (Catalog, Recipes,
 Production dahil — `grep` boş döndü). Semih'e iki karar soruldu ve
 onaylandı:
+
 1. Süre nereden girilsin? → Yönetici, ürün düzenlerken opsiyonel bir alan
    olarak girer (veritabanı seviyesinde idari bir SQL değil).
 2. Garson uyarıyı görünce ne olsun? → Tek satırlık soru: birlikte gönder /
@@ -60,6 +61,7 @@ eklendi) ve `/catalog` uç noktasını gerçekten çağıran üç proje:
 bir fixture listesi yok — yeni migration dosyası otomatik alındı).
 
 **İki gerçek regresyon bulundu ve düzeltildi:**
+
 1. `CustomerDisplayContractTests.CatalogProductCarriesRealCategoryMetadata`,
    `CatalogProductDto`'nun JSON alanlarını tam bir allowlist ile
    karşılaştırıyor (tıpkı `modifierGroups`'un V1-RMD-148'de eklendiği gibi)

@@ -17,7 +17,7 @@ kararlaştırılan akışa göre yeniden yazar; arayüzün bağlanacağı sunucu
 tarafı bu oturumda V1-RMD-144…152 ile zaten hazırlandı.
 
 Onaylanmış prototip:
-https://claude.ai/code/artifact/573359b1-111d-41a5-a193-6882f1850208
+<https://claude.ai/code/artifact/573359b1-111d-41a5-a193-6882f1850208>
 
 ## Owned surface
 

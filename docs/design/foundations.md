@@ -23,6 +23,7 @@ ve Host katmanında `DualScreenStore`'un `Order` aggregate'ini atlayan ham
 SQL'i — bkz. `V1-RMD-120`) ya öldü ya da gerçek bir hataya dönüştü.
 
 Somut kurallar:
+
 1. **İstemci state tutmaz, yalnız gösterir.** Sipariş/bilet/onay durumu her
    zaman API'den gelen DTO'nun doğrudan yansımasıdır; istemci "şu an şu
    durumda olmalı" diye kendi kafasından hesaplamaz.
@@ -49,6 +50,7 @@ Somut kurallar:
 | `--color-border` | `#C8D0D7` | Ayraç/çizgi (mevcut `--ds-color-line` ile aynı — kasıtlı düşük kontrast, dekoratif ayraç) |
 
 **`--color-accent` kullanım kuralı (WCAG hesabıyla doğrulandı):**
+
 - `#00CFFF` dolgu + üzerine `#0B2135` (ink) metin/ikon → 8.86:1, AAA. **Doğru kullanım budur.**
 - `#00CFFF` dolgu + üzerine beyaz metin/ikon → 1.85:1, **FAIL**. Kullanılmaz.
 - `#00CFFF` açık zeminde (canvas veya surface) doğrudan metin/ikon rengi → 1.71-1.85:1, **FAIL**. Kullanılmaz.
@@ -81,6 +83,7 @@ için yetersiz). Mevcut sistemin değerleri daha sıkı; onlar kazandı.
 
 **Inter** — tüm ağırlıklarıyla (Regular/Medium/SemiBold/Bold/ExtraBold),
 tek font ailesi. Gerekçe:
+
 - Küçük punto okunabilirliği POS ekranları için kanıtlanmış.
 - Tabular rakam desteği (`font-variant-numeric: tabular-nums`) — fiyat/adet
   sütunlarında hizalama kaymaz.

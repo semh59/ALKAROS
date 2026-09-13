@@ -284,7 +284,7 @@ raporlandı):
    not düşülen NFC eşzamanlı çifte-tüketim yarışını da gerçekten
    kapatıyor (kaybeden isteğin row-version korumalı UPDATE'i satır
    kilidine takılıp sıfır satır etkiler ve o transaction'ın kendi stok
-   tüketimini de birlikte geri alır). `TryConsumeStockAsync` bu yüzden
+   tüketimini de birlikte geri alır).`TryConsumeStockAsync` bu yüzden
    `TryConsumeStockAndAcceptAsync` olarak yeniden yazıldı. Regresyon:
    Confirmation 15/15 (yeni test dahil), NfcOrdering 17/17 (3 ardışık
    koşuda kararlı).
@@ -324,7 +324,7 @@ eşleme kaldırma uç noktası, Accept-sonrası stok iadesi), dördüncüsü
   `ALKAROS.Host.Experience.Orders.Confirmation.Tests`: 17/17 (15'ten).
 - **Eşleme kaldırma**: `DELETE /api/v1/management/inventory/products/
   {productId}/stock-mappings/{stockItemId}`, gerçek 404 (eşleme yoksa)
-  + 204 (varsa, yalnız hedeflenen çift silinir, aynı ürünün diğer
+  - 204 (varsa, yalnız hedeflenen çift silinir, aynı ürünün diğer
   eşlemeleri dokunulmadan kalır) — `ALKAROS.Host.Experience.Inventory.
   Tests`: 9/9 (7'den).
 - **Accept-sonrası stok iadesi**: `docs/domain/void-complimentary-

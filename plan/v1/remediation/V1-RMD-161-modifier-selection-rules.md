@@ -56,6 +56,7 @@ Düzeltme:
 ## Out of scope
 
 API uç noktaları bölümünün kalan beş bulgusu (ayrı görev/görevler):
+
 - Miktar/kalem sayısı/not uzunluğu sınırları.
 - `PostgresException` → 503 eşlemesinin genişletilmesi.
 - Masa yönetimi/push uç noktalarında hız sınırı; `/pending`'in kovası.

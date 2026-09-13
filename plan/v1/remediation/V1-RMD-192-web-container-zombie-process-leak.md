@@ -16,6 +16,7 @@ her 10 saniyede bir) her çalıştığında busybox'ın TLS için çatalladığ�
 için hepsi zombie kalıyor.
 
 Kanıt (düzeltmeden önce, gerçek container üzerinde):
+
 - `docker exec alkaros-web-1 grep -l 'State:.*Z' /proc/[0-9]*/status | wc -l`
   → **10643** — container yaklaşık 30 saattir açıktı; 30h × 3600s ÷ 10s ≈
   10800, gözlenen sayıya çok yakın.

@@ -48,7 +48,7 @@ ekranı bozup bozmadığını yalnız elle/E2E ile anlayabiliyoruz.
 
 ### 1.1 Gerçek satır haritası (koddan çıkarıldı, tahmin değil)
 
-```
+```text
   76-336   CreateOrUpdateTableDraftAsync   (261 satır) — kamuya açık gövde
  337-374   SendCheckToCashierAsync          (38 satır)
  375-411   GetChecksAwaitingPaymentAsync    (37 satır)
@@ -82,7 +82,7 @@ edilebilir parça önce çıkmalı.
 
 ### 1.2 Hedef mimari
 
-```
+```text
 src/Host/Experience/Orders/
 ├── OrderManagementEndpoints.cs         (değişmez — HTTP yüzeyi aynı kalır)
 ├── OrderManagementContracts.cs         (değişmez)
@@ -225,7 +225,7 @@ ekstra araç olmadan destekliyor; tek bedel dosya sayısının artması ve
 her `<script type="module">`'un kendi scope'unda çalışması (global
 değişken sızıntısı otomatik biter — bu aslında bir kazanç).
 
-```
+```text
 src/Clients/WaiterPwa/wwwroot/
 ├── waiter-app.js                 [KALIR ama küçülür — yalnız giriş noktası:
 │                                   import'lar + bindEvents() çağrısı +

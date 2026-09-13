@@ -33,7 +33,7 @@
 each over the public internet through Cloudflare's edge and back through
 the outbound tunnel to the local probe:
 
-```
+```text
 HTTP 200
 HTTP 200
 HTTP 200
@@ -51,7 +51,7 @@ response — while the connecting machine never opened an inbound port.
 `taskkill /F /IM cloudflared.exe` (kills every connector process, no
 graceful shutdown) → immediate re-probe:
 
-```
+```text
 HTTP 502
 ```
 
@@ -65,7 +65,7 @@ edge.
 `cloudflared tunnel run alkaros-relay-test` restarted (fresh process,
 same credentials, no config change) → 6s later:
 
-```
+```text
 HTTP 200
 ```
 
@@ -78,7 +78,7 @@ connector had to come back.
 `cloudflared tunnel delete -f alkaros-relay-test` (after stopping the
 connector) → `cloudflared tunnel list` confirms zero tunnels remain → re-probe:
 
-```
+```text
 HTTP 530
 ```
 

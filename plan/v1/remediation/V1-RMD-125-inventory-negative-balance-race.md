@@ -47,7 +47,7 @@ yakalanmıyordu.
     geçiş.
   - src/Modules/Inventory/WasteRecording/WasteRecordingService.cs
     (V11-INV-006 sahipliğinde) — aynı geçiş + üç yazımın atomikleştirilmesi
-    + idempotency-key çakışma yakalama.
+    - idempotency-key çakışma yakalama.
   - src/Modules/Inventory/InventoryModule.cs (V1.1 Inventory foundation
     sahipliğinde) — yeni `IInventoryTransactionRunner` DI kaydı.
   - database/MigrationComposition/order.json,

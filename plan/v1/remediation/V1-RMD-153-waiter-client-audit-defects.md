@@ -64,7 +64,8 @@ durumda bir daha hiç denenmiyor.
 ## Acceptance evidence
 
 Altısı da tarayıcıda, kusurun kendisi üretilerek denendi (yerel HTTP sunucusu
-+ scratchpad'de kalan geçici API stub'ı; stub menüye saldırıyı taşıyan bir
+
+- scratchpad'de kalan geçici API stub'ı; stub menüye saldırıyı taşıyan bir
 ürün adı ve satır toplamıyla çelişen bir sunucu toplamı koydu).
 
 1. **XSS kapandı.** Menüde `Kola" onmouseover="window.__XSS=1` adlı ürünle:

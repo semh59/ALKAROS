@@ -75,6 +75,7 @@ bölümündeki 11 bulgudan dördünü kapatır (kalan yedisi V1-RMD-161'de):
 
 Bu görev, API uç noktaları bölümünün kalan yedi bulgusunu kapsamaz (ayrı
 görev, V1-RMD-161):
+
 - Eklenti seçim kurallarının sunucuda zorlanması.
 - Miktar/kalem sayısı/not uzunluğu sınırları.
 - `PostgresException` → 503 eşlemesinin genişletilmesi.

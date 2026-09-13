@@ -19,7 +19,8 @@ kapatıldı.
 
 **Çözüm: PostgreSQL advisory lock, ilgili anahtarla sınırlı.** Bir
 transaction/session boyunca sürüyor, yalnızca AYNI anahtarı (istek sahibi
-+ izin kodu; masa id'si) paylaşan eşzamanlı istekleri seri hale getiriyor
+
+- izin kodu; masa id'si) paylaşan eşzamanlı istekleri seri hale getiriyor
 — farklı kullanıcılar/masalar arasında hiçbir gecikme yok. Anahtar
 sunucu tarafında `hashtext()` ile hesaplanıyor (istemci tarafı .NET
 hash'i process'e göre rastgele olduğu için birden fazla Host örneği

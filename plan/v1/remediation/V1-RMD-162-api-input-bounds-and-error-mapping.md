@@ -50,6 +50,7 @@ bölümünden iki bulguyu kapatır (aynı kökten, birlikte ele alındı):
 ## Out of scope
 
 API uç noktaları bölümünün kalan dört bulgusu (ayrı görev/görevler):
+
 - Masa yönetimi/push uç noktalarında hız sınırı; `/pending`'in kovası.
 - Katalog sayfalama imleci.
 - `X-Idempotency-Key` başlığının okunması.

@@ -22,6 +22,7 @@ Bu adım tamamlanınca planın Bölüm 2.4'ündeki HER modül gerçekleşti —
 
 Bu adım ayrıca üç önceki adımda bilinçli olarak ertelenmiş parçayı da
 tamamladı (`persistQueue`/`renderBill` artık modül olarak var):
+
 - `confirmPartySize` → `js/sheets/party-size.js`'e taşındı
   (V1-WTR-044'ün ertelediği).
 - `fireCourse` → `js/sheets/bill.js`'e taşındı.

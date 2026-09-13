@@ -1491,7 +1491,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/architecture/settings-ownership.md` | ✅ | `2E989C6CC343D6EDFF44CAA3A57BD0909CE8D33F31738EF23C8D9AE7E4C5E033` | Tek-sahip görev |
 | `docs/audit/FULL_PROJECT_DEEP_AUDIT_REPORT.md` | ✅ | `ADD9C4544A208AE9BF779C46528A0780A5F48D5EF4E0535B787C40229AD68D7E` | Tek-sahip görev |
 | `docs/audit/FULL_PROJECT_PRODUCTION_AUDIT_2026-08-24.md` | ✅ | `86979B612E0471A055EEF6A2BD7F6EC35025013B3D70A4B0A7008261C430554F` | Tek-sahip görev |
-| `docs/audit/INDEPENDENT_DEEP_AUDIT_2026-09-06.md` | ✅ | `0C801978874F340274F2AF973E77970A80EBDAB58B8200065CA2BDF44E7B7D4A` | Tek-sahip görev |
+| `docs/audit/INDEPENDENT_DEEP_AUDIT_2026-09-06.md` | ✅ | `00FF32152F2C604D99EA20716AD9EEB08E8EB0BA54F839B69AE4E6134B08E3B2` | Tek-sahip görev |
 | `docs/audit/V1_DESKTOP_POS_AND_CONTAINER_ACCEPTANCE_2026-08-28.md` | ✅ | `0E56399BC69A229551673A549CD87D88BF42A9AA5D96020D19A4BD2949C90481` | Tek-sahip görev |
 | `docs/audit/V1_PRODUCTION_EXPERIENCE_DESIGN_ACCEPTANCE_2026-08-25.md` | ✅ | `C5CD734DC8EE14A5FAD63022BFE918653029BD0FD16F83099E07639E4B91A263` | Tek-sahip görev |
 | `docs/compliance/accessibility-target.md` | ✅ | `AB6AAC8B1B8711556DACD715D1377919A1A4B1BD7C598F2C6F7AB6F73A4DB8CE` | Tek-sahip görev |
@@ -1505,7 +1505,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/data/projection-ownership.md` | ✅ | `88FAAAFC7E5B94B3F0BE2184A8929C8273948A4B072FFADF5C01CE1924D71302` | Tek-sahip görev |
 | `docs/data/single-branch-key-strategy.md` | ✅ | `F484711A2BF18CBDCB7F2B259F5F9F153026B2A8841B141BA99F00619AD9153C` | Tek-sahip görev |
 | `docs/design/brand/README.md` | ✅ | `EB22EDE137AD17F08D52CE0A55F1303A5D6C2EA88BB2E8BF94B03C83D641109F` | Tek-sahip görev |
-| `docs/design/foundations.md` | ✅ | `446E2454A2BE1293E55524B7A49EE4AA427BDEE192C90F0BAA69CC826F91F6B5` | Tek-sahip görev |
+| `docs/design/foundations.md` | ✅ | `2EF87F7BAF55933592948ECEB8FA4A6FE63F6FC923A52EB38DDFB22A02B3DFA2` | Tek-sahip görev |
 | `docs/design/modules/check-and-table.md` | ✅ | `8F624927E3840F38FCDA9773573BF605BCE661E39B70BDA6309ADB754B93FDCE` | Tek-sahip görev |
 | `docs/design/modules/qr-nfc-ordering.md` | ✅ | `9F01F1C4CC8DF90B90A8B3F1A16729578CD35B34BB81888244B38D38A2C565EF` | Tek-sahip görev |
 | `docs/domain/authorization-model.md` | ✅ | `2DA884DFA9774E384C47A307C5742B270CE8B9E3F2EE67AC0950DA86AC07279A` | Tek-sahip görev |
@@ -1524,7 +1524,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/engineering/authz-wave-remediation-plan.md` | ✅ | `CB32C35323CDA67E0D8997791A69C84B4BCEC843B7D6724EDC7DACC88CEAA5CB` | Tek-sahip görev |
 | `docs/engineering/closure-evidence-envelope.md` | ✅ | `2B9B42220FD515D66146A6C75AA956CE52AAC061BE1D598733F1C9C3114D666E` | Tek-sahip görev |
 | `docs/engineering/garson-audit-2026-09-10.md` | ✅ | `009B02114127919085E3F8B8B49C1697EA24773D9FB01959D5CF3857F3E7519D` | Tek-sahip görev |
-| `docs/engineering/garson-refactor-plan.md` | ✅ | `EEC245C85287EB6903FEDA22306C598573FBA6C3E63408EEC955C584F0B656DE` | Tek-sahip görev |
+| `docs/engineering/garson-refactor-plan.md` | ✅ | `BBFCE1FE1675887EEB509439A69E29931E3E1B659AF569BA1CDA341E7284AB36` | Tek-sahip görev |
 | `docs/engineering/immutable-closure-exceptions.md` | ✅ | `D6A95988A952FAD394B3F8645B9AC5F9C6F5DB98208B90CAA49728C0347AB409` | Tek-sahip görev |
 | `docs/engineering/login-timing-contract.md` | ✅ | `05F7C0E522229E2FC0BB341D635FD04140EA6A18483639B89DF3106F1DB9E3A1` | Tek-sahip görev |
 | `docs/engineering/task-scope-contract.md` | ✅ | `CECE4919C0152F2B724D9E6730C4F5D380662883E1158DD44BDCDC93097D5CE4` | Tek-sahip görev |
@@ -1532,7 +1532,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/licensing/licensing-contract.md` | ✅ | `8A2AA58265B800F88B80033EA0119BD198FFB975BA205A8623F998DDE18A0730` | Tek-sahip görev |
 | `docs/operations/data-housekeeping.md` | ✅ | `6C37A3044624B2087B0382085C025203C8BF8DF9F022C3116B4FA12F73DEBBA6` | Tek-sahip görev |
 | `docs/operations/production-go-live-checklist.md` | ✅ | `87E8D15E44DE3C44F3AD9CB23525667BC04BF114C1C5492040F6D73B083707CE` | Tek-sahip görev |
-| `docs/operations/qr-relay-setup-guide.md` | ✅ | `04023D9F73ECC61B65AC13A4993D295C79DDF1001526F3C6FF11CB7CD4F55221` | Tek-sahip görev |
+| `docs/operations/qr-relay-setup-guide.md` | ✅ | `6FAC765196E9824F9BA99F589C20A70240041E424524D8EAA292C87CD97062E9` | Tek-sahip görev |
 | `docs/performance/critical-path-load-v1.md` | ✅ | `355EE858A1EA0CA6E3EB37A79CE9E8CCADEF14130B9D5682DB6BC1C8BC459FD1` | Tek-sahip görev |
 | `docs/performance/infra-tuning.md` | ✅ | `1F1687A92B88C41C0DA883F90B3926D743FC14B07BD9190AFE84743A698136BD` | Tek-sahip görev |
 | `docs/performance/load-baseline-v1.md` | ✅ | `A28B13C3EAB4D53557D7F4CBC98D596D87ADAD49B2AC621237A2A5D717A14688` | Tek-sahip görev |
@@ -1787,7 +1787,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md` | ✅ | `31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA` | Tek-sahip görev |
 | `evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md` | ✅ | `D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277` | Tek-sahip görev |
 | `evidence/v0/gate-v0-exit-closure.md` | ✅ | `DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142` | Tek-sahip görev |
-| `evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md` | ✅ | `03B130C9FAC77360E305334423BE12162D4F7282A0D941657C989468F914ACA8` | Tek-sahip görev |
+| `evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md` | ✅ | `BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6` | Tek-sahip görev |
 | `evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md` | ✅ | `9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7` | Tek-sahip görev |
 | `evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md` | ✅ | `0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F` | Tek-sahip görev |
 | `evidence/v1/gate-v1-exit-closure.md` | ✅ | `9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D` | Tek-sahip görev |
@@ -2109,7 +2109,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/kitchen-printing/V1-KIT-006-category-level-printer-routing.md` | ✅ | `A1B96297DE52579824B575E75EF5E95DC1EFAC129B13335B83F4D87A612F8A17` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md` | ✅ | `946FFAF9D6594AD249E1425065A067707EC3159DDB07235421201B30531E24AD` | Tek-sahip görev |
-| `plan/v1/orders/V1-ORD-006-check-detaches-from-table.md` | ✅ | `427CCBE5CA61597616E723F4BFB79EBC2083636CD8466B5D5A4E32AC4F38D7CC` | Tek-sahip görev |
+| `plan/v1/orders/V1-ORD-006-check-detaches-from-table.md` | ✅ | `481C3EB35A01956BB534D74C67772CFB3C557B74C7AF1744895FBAF215E50CCB` | Tek-sahip görev |
 | `plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md` | ✅ | `0426076A29BCE1C9ABC2A8E7112ADCE747DC1049BB9108C42F8D7AF96A0D992C` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-001-consolidated-remediation.md` | ✅ | `D28F3FDD8A743C9082AF4C5B1537D4C2A91101669284175ECFD474EE96265AAC` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md` | ✅ | `7681D9EB05F936115401601CF68D119F427D3D3795EFE5C81502A1A6F888F226` | Tek-sahip görev |
@@ -2223,7 +2223,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-111-waiter-table-serving-ownership-and-transfer.md` | ✅ | `3BB4263E4C0AD7E2A06EF944438C3E78F75980352D8C5A0CEEC139AEF69EED1A` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-112-audit-index-cascade-and-discount-idempotency-fixes.md` | ✅ | `BC3025E184012D42BC16404B536C245AC1EA35EE6B1A342533CDFDA5968EC483` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-113-submit-draft-kitchen-dispatch-and-idempotency.md` | ✅ | `55E6F2CFA9E013C080DDC6963DCA6B77C12533315431AA5058B4B3B1FFFCF5D6` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-114-touch-targets-heatmap-language-leaks-and-error-message-safety.md` | ✅ | `65C15315319CFE06352B169226485C6551F910AA2BA303EC1DE0841D91AD5046` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-114-touch-targets-heatmap-language-leaks-and-error-message-safety.md` | ✅ | `0336761DEF28F580FF24793E997FD44B42B015A396AEDF9065464B1F3D7E0F5F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-115-audit-closure-error-mapping-and-false-findings.md` | ✅ | `F32FFB408DE78C577EBD28E386AC7E888242A0D61AEC44D37C312EB95FABF895` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-116-grant-replay-tampering-audit-exposure-connectivity-badge.md` | ✅ | `60D1C698D4944A70472E2405B494F08E92274FB3E2455AE14904EB74C801C3FE` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-117-reservation-row-version-and-release-invariant.md` | ✅ | `908CFD0B1EB73D220A9C395144A80B5D677A31714E8B1DC89480B7BD4899EDD6` | Tek-sahip görev |
@@ -2234,45 +2234,45 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-122-consistency-audit-host-cross-schema-rule.md` | ✅ | `D2EAE5C73C43ED90116275EB0BD61FFB03C4CF09F66446F9C9CB6F13398FBB48` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-123-table-draft-submission-idempotency.md` | ✅ | `D29F281BA63F5826E72C3B5E4E8B71109599501EDBDF84776A12D33AC9021941` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-124-goods-receipt-atomicity.md` | ✅ | `9F0BE2B00C66B579DB33EF21894EE04340803E2AEB35DA05C26F5AFEB8A749AA` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-125-inventory-negative-balance-race.md` | ✅ | `5CB61B6D7224E5143FAA6116ADC8FED9A9669514643F961FF35FBEC258B15980` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-125-inventory-negative-balance-race.md` | ✅ | `6DC8A2C85E66B7AB5E836B8D8A2018E3F1A448B828F608B2BA339D8B9DF93D05` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-126-tables-reserved-status-bypass.md` | ✅ | `F9930B6CB372F9619FB6E1D63E2C0990D07064CEBB398018C9CC05DE92D9C9FD` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-127-orders-raw-english-error-leaks.md` | ✅ | `1907E5E1C3A0FAECB0D51C9CB222408C3A0A8008395C2A9147C774A2E32217E1` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-128-order-item-availability-check.md` | ✅ | `2AC09F2FA09915B1AF379AD25596A9F29243925B4DF5EACEEEE231F521F4486F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-129-waiterpwa-catalog-field-mismatches.md` | ✅ | `CF45397425FC28F881A77DC06A032CDB4869A0176E61E9354E67838EAA4C8762` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-130-kitchen-physical-print-dispatch.md` | ✅ | `865070667733BF3B74ADFBD3D882948736F076A9F15EBDF6714383F51C002CDA` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-130-kitchen-physical-print-dispatch.md` | ✅ | `55D34611CBAEC2ECD8002FAB17C94B6BE3B27DCDB4734CB4F5E5921EF77A4D10` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-131-menu-management-experience.md` | ✅ | `6B651E10D8414B4EF42B7D6ADF189491FA64F2A5DEC8BBB55C57B9B8064D0450` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-132-purchasing-management-experience.md` | ✅ | `39DD27E72C95CD3D2807046FEB2A82BC1909F61A2D4A3D772CBEB5A117076603` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-133-production-management-experience.md` | ✅ | `10B44F5AB2CCC485C35B032B893B055FD7DB44C2E3479CF12EA97CD6176F83DC` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-134-buildingblocks-dead-foundation-cleanup.md` | ✅ | `EBBBB03D64A1484ED5AFAF126F7F7213AFB51A926C3719FF93F11898E40D0D7C` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-135-waiterpwa-table-amount-and-dead-cashier-engines.md` | ✅ | `FF4AED05F2E1EDB0D2A818DCF6B1B00E782BB8F9DE5FB704BD67F8F20EE421F6` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-136-nfc-ordering-english-error-leak.md` | ✅ | `E04C25C8AAB0AE20CFE7D350F581CA4C2E34F3F1DDAB6079D051F32C87E174FB` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-137-nfc-age-restriction-enforcement-and-order-confirmation.md` | ✅ | `E83A3EA8BE37FCD3F9B35CF4ED227150566B3A3A1E2235FC68D7E8A18B73EEF0` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-137-nfc-age-restriction-enforcement-and-order-confirmation.md` | ✅ | `3824ABEC9C4B09BA17FF2A1BDF9BACB0874EB2925053A8177691520B833AEA9A` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-138-nfc-qr-order-bounds-and-relay-hardening.md` | ✅ | `DFA77E36F54253661BC596257D73C34CB603FFF23A8DE8D330787F6FDEAF2876` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-139-nfc-origin-isolation-and-bundle-splitting.md` | ✅ | `93DC469F439E28301A8828DFD2BEDBBE4DA3AE9EBBFE15317F08D7E3AFF68EF5` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-140-qr-relay-origin-scope-hardening.md` | ✅ | `C8F14B558A8A16CB6D990BEC2B410672389FE23F4C687BA0E3F3A0A077D03BA0` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-141-nfc-customer-page-relay-reachability.md` | ✅ | `47EF34C53032AD28CE964FEDC93913B9A41DF080D3D30F88D7AF4563293F1AA5` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-142-nfc-qr-lan-origin-reachability.md` | ✅ | `8EA9ABBA8ED0A1F8430AF183B6010AB7B5A2D4294611072C8688E89C3531D8C8` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-143-order-accept-real-stock-consumption.md` | ✅ | `001859A708416AF80AF23C92C118B4442210F0E48FEC110EF853BFDB02653DEA` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-143-order-accept-real-stock-consumption.md` | ✅ | `176882230713E39FEBD0396C25CDE73373B2C0CEF8447AADFEC374F1EC2CF13B` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-144-channel-scoped-stock-consumption.md` | ✅ | `6C1DA812CB8748DE896C845464EF5B0F20192A4DEE05FF239D9A4698A58ABEFB` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-145-pwa-manifest-and-touch-compliance.md` | ✅ | `0D5F4D1AC55BB4C700BE7154C93ECBB0B825528C5286A8C6A35404AFC872FF5E` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-146-order-item-dto-lossy-projection.md` | ✅ | `C9C64D1225F02763CA2E3326FE85CA391258E26A62D0D9EA35240C0170C4AC90` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-147-order-line-modifiers-dropped.md` | ✅ | `0AC5DE8D9B7EC5DAA59606CC93598DC822267A857103920369BA99F2A0DA0BAC` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-148-catalog-modifier-groups-invisible.md` | ✅ | `DC4C9DC762399DE111B0D7BB232F4C14A087B30D8FD4B8B77ABC5AA8FF514C02` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-149-pending-qr-order-invisible-to-waiter.md` | ✅ | `6148472DE3353FA5C983AF395E94384A0F8B918BC28A547F168167C1F08E3879` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-150-modifier-quantity-and-kitchen-visibility.md` | ✅ | `96CB635E059B114CA1106A0E0E25DCD86D317D8A5908A5B4301E2CC35BF8C3F8` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-150-modifier-quantity-and-kitchen-visibility.md` | ✅ | `5FFFF95F053127762BCC35962D13A82724AD6D7444D67C1A01EECC71C3A390C0` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-151-device-session-pin-lock.md` | ✅ | `89537DCE76CC98EFEDF9DA191026E3C3585ABF41AC8A725775D4651A546E6281` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-152-modifier-stock-consumption.md` | ✅ | `B94D32F7E722E4C60ECCF394E267C3EA3F1198A09E149AB427858D78DD8CF84B` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-153-waiter-client-audit-defects.md` | ✅ | `975A781693FA0E82319EAC89D6BC4B86FDEFC36B9826D8C0E75F03CD91EFA4DC` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-153-waiter-client-audit-defects.md` | ✅ | `03FB101002B3316428433913374CB78D2CE3238765C7FD6540ECFD4DCFBC8CA8` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-154-void-restores-stock-and-respects-the-kitchen.md` | ✅ | `2A3A96228E86B23E84E8777605C0B2C6CAF2F38675CB1DC626D2BA7FF9882851` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-155-sent-item-void-ui-and-round-idempotency.md` | ✅ | `11C666916577AC20FEBA4724C04CD8869285A27B7BD883F9CAAC70400F56B759` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-156-database-integrity-constraints.md` | ✅ | `135A3BFB2E768A7415EA804A68C49A09097217DB97D9BBDB28A257D7777F5BF0` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-157-cashier-quick-sale-table-provisioning.md` | ✅ | `2BAC6E95D12D2B4D3E32A5AFBEF22BBF49BC4F2C53E420ABB6666E5734727F5A` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-158-backend-audit-remainder.md` | ✅ | `22D73C5806EB656201FC13F6B7A46B150FC0173B34066647B354A71AA387D0BB` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-159-architecture-boundaries-remainder.md` | ✅ | `D5C2068FBCA6BACD79F1F0F8FC118B42F35C43CFBBFB8499B626F623BA2B1828` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-160-api-endpoints-remainder-part1.md` | ✅ | `6E13F5994A9401F558C6C325B3F48C641AC76700003EF62996F86F3617CA091B` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-161-modifier-selection-rules.md` | ✅ | `F3BFEF20C4EA44877F2AACD38662750B55E22E261DD0F945E16150F91BF60B54` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-162-api-input-bounds-and-error-mapping.md` | ✅ | `4C2A18DEFB9585EFA461A97D115D599191E7FADFF674B93E883AC0709FFFF0AE` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-163-rate-limiting-cursor-idempotency-header.md` | ✅ | `A5354B156FCC015D552AC4FF53FE07C79F5831E77BD8FEBFDE3BB9F1552BA8BE` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-160-api-endpoints-remainder-part1.md` | ✅ | `A4E26DCBC846931C4FDEFB7CCCA5F29E32FE3E34BBA962F75C75F6D72A4211A2` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-161-modifier-selection-rules.md` | ✅ | `50A3264A4A0D4289E161512C48F59B078B942E33C521C7477CE198B69E946C7A` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-162-api-input-bounds-and-error-mapping.md` | ✅ | `A905FC1BEA8F33176A33D4D6264DE93A54B0DA41DD21691624EA57FD69FFA76C` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-163-rate-limiting-cursor-idempotency-header.md` | ✅ | `6E6B1B2AE52775331EA3B35C18FBD518520E7D80D3217BAF16CFE3ABDF5D9EE9` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-164-frontend-high-quantity-correction-lost.md` | ✅ | `B9D80743B93ED7E7AFF9EC8D3F58D984B2868CD62303ECA24FF88B331410071E` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-165-posterminal-raw-error-message-leak.md` | ✅ | `A12F650C579C8A11E9390E85DB8BC7B3EEB67D0C050053774EF74A2E5471BF37` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-166-waiter-toast-cap-and-sent-badge-contradiction.md` | ✅ | `947F4BE4F73492C142A39CF10B04770D66A71913D0CA9C09A415FC0D17DA1151` | Tek-sahip görev |
@@ -2287,7 +2287,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-175-userrole-server-derived.md` | ✅ | `1ECD3B16E5F9253A5798BB409EF0F1FF5ABBEFEE5BB651DE7A4630D9026A53D4` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-176-frontend-low-cleanup.md` | ✅ | `40B8B39CF0B09598591A5D5DBEA0F37792C5CE2C1F438BC99F3FB470CD316137` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-177-comp-and-transfer-server-clients.md` | ✅ | `00F808479C3F73123A3118E7B9F149273BB3AB80849648CB4DD3200A52E60443` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-178-independent-review-of-168-177.md` | ✅ | `2D633DC7D02664C879EE360C481D4932BB50244C7B6473BAF5178AE89FBFEC2E` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-178-independent-review-of-168-177.md` | ✅ | `A620C0A7AF0EADCAE8CE2A9038E536AE26A5B3062E0D4F737F832741F0755BB4` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-179-stale-order-race-on-table-switch.md` | ✅ | `7A8670274E105BCE9133857414DC9C0AA347C3FBC2165A385A79AF57F6079407` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-180-lock-to-login-handoff-inert.md` | ✅ | `CFFDB0D0CFF573D19F241A87781B6AC96CA9BA5D8DAECBE9C315612D1F4E6D9E` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-181-reassign-serving-user-row-version.md` | ✅ | `31F81DB9FB31C0FD38069F68D1138E7E647A3B1F541868658D6E2D4696040306` | Tek-sahip görev |
@@ -2301,9 +2301,10 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-189-authorization-tables-user-fk.md` | ✅ | `EC6EFE6D4A86CC531E0AC431B6258E638FD60B7FA1187744998FCF5277EF9667` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-190-billing-adjustment-endpoints-no-client.md` | ✅ | `B6E4F2A8603148E3CEEC6C78D9C3FC710472CC93DD80EF01E07CF84FB752BF5F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-191-bill-adjustments-allocations-user-fk.md` | ✅ | `93412F2117548F7C0B9A6876531FE9EA50AEECB3420D86ADF574F9DE16D5F025` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-192-web-container-zombie-process-leak.md` | ✅ | `FFCF5065549B59B1972B319EDEE6F8CA7D6F1CB240B740A55DAB69A73D58D8F8` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-193-cloudflared-autoupdate-bypasses-pin.md` | ✅ | `448722AEB8053D3F2D73DB999D2B10B9F37948325AE8B906F7C08FDF15E02444` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-192-web-container-zombie-process-leak.md` | ✅ | `C47926299D643324C898539265FCF17553F47471D9EBCF03BFA04BB76B9A1905` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-193-cloudflared-autoupdate-bypasses-pin.md` | ✅ | `D32FACBCCE02470D167D4CD2453799F36677AC349E0D9C1349134A672D7B2913` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-194-ci-verify-manifest-crash-9-days.md` | ✅ | `A618BB26E40ACC2808757D40A3AF05D657CAFFB56DD494AEE1AF372362D035DE` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-195-markdown-lint-gate-never-reached.md` | ✅ | `175AFA9A6B106A3EAC82EF285045CDA60B117469DBA5C287169DE57F911E1E9D` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2324,21 +2325,21 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/waiter-pwa/V1-WTR-007-waiter-host-order-and-session-contract.md` | ✅ | `EAD81156641DA1076C55AA3D8B1A579EBAEE8DB41A43D589200176CA8B25476D` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-008-waiter-pwa-real-api-and-reliable-queue.md` | ✅ | `2227A5E2F1F87664609C619A1614823058684CE507206FD9DEA36435E8D65CEE` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-009-order-ready-notification.md` | ✅ | `DC12FD871D692B9C3B0CA1879ED1EA48504AAACC416F59582269312603314334` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-010-waiter-screen-phase-1-rewrite.md` | ✅ | `04FE078DED7CC52B0EEDB745C16A9565714CFC6003EA644643C6B90AA4DFE242` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-010-waiter-screen-phase-1-rewrite.md` | ✅ | `6440B74C560CBFEA1A5A0587781394ACE63D333B6131034A22EF9B4F526D330E` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-011-web-push-and-kiosk-lock.md` | ✅ | `01AD4B39643A4840581EA75149A0D5FF9857B8796B52AE30D9C3D9FF1C62F477` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-012-personal-comp-budget.md` | ✅ | `567D5BCE331C93E983E53B83B4574834769D2F5C2A2C3C9A15A6645021779A5E` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-013-serving-handoff-note.md` | ✅ | `B8929437EA23F932FB6D3D082EE6ACF4183875143A6DD94C9F1D857931561D55` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-014-help-request.md` | ✅ | `977EAA31E96EFB938E00D189615935152043C0BF0D7348A8EB12B4941B895BD6` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-015-party-size.md` | ✅ | `2E33997C0A5409702F7BEF136280F2A299BB7C1F391982F7D50CAD3D62976CC2` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-016-draft-price-changed-badge.md` | ✅ | `D91C442C1A9769595D6606BF930FA11ED48E669830F5BB2FBF3E62E3CF00C522` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-017-prep-time-delay-warning.md` | ✅ | `F8C89329A80ABFB53BB5BDF3F194C2B4EDD6A8C4F3803D91D47F4D9F382BADB6` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-018-guest-live-bill.md` | ✅ | `33D69BF181D124B582D3D1B8F17969F18AF049C74240B3F47C0E31779CF57C90` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-017-prep-time-delay-warning.md` | ✅ | `FF0A85D7E74179DAE83B38183C06474EFF7586BE3C044FDFE93F21E7FFB5BCC5` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-018-guest-live-bill.md` | ✅ | `D2C499AB00D527106F6A1DD70FCF16E8AB9E7327F2FEFB37179C6759BE5A472F` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-019-table-age-indicator.md` | ✅ | `88DF3F642D592970B111B6538DEB2D3FC2844CC23BD2E02440182539AA9B04C3` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-020-voluntary-tip.md` | ✅ | `C14F5496830413E9354ADC5DC430C2884E18A2A73C2F540AD2D2B90D8F1F9C92` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-021-shift-summary.md` | ✅ | `605615E537C8D14C119E870786E83EBEA36753B63BBD70679E27F10494C31ECA` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-021-shift-summary.md` | ✅ | `0347C1B2359FFAC2778C275393DC44DDF1DF501FEE2E90F21DCBD3A1AA5A5C30` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-022-seat-item-assignment.md` | ✅ | `8A48B577E5EE2B04CB3D824F6E31152EF0EBA4E588315893D5EF76D8066DE5FE` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-023-independent-review-fixes.md` | ✅ | `4A637C9B9134131196ACFD485C0C7B29B53B6DCC406FE80AF27AC531A75DFBCE` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-024-toctou-advisory-locks.md` | ✅ | `E590424996FCB49E3920FA223DFC899544CB97D3F32E9DBF59C6575D513FA90F` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-024-toctou-advisory-locks.md` | ✅ | `E8F06F7F74C9B688DC43626E59AB58FF59153538ECDB1593AAC24E83BB1962F4` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-025-course-management.md` | ✅ | `13B7425C5436169D1A26DDE9E281D70F665B9FE111863802BDA751BC616376D2` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-026-e2e-browser-audit.md` | ✅ | `36D1ED7FFE080099ED80BD83D5517CD3F61CB2D325C0690BAB6095643F208E03` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-027-stock-consumption-deadlock-retry.md` | ✅ | `CE504B0E2052A54EE6838312896242B5CE74A2E7FB44689B6A259AB7410D0C6C` | Tek-sahip görev |
@@ -2348,9 +2349,9 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/waiter-pwa/V1-WTR-031-refactor-step1-order-dto-assembler.md` | ✅ | `2CB89EDD553780CB0B5DF90A5A8E2C17776DAE9A88F8B2943AAFE71E1D4F1367` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-032-refactor-step2-shift-summary-store.md` | ✅ | `DE579496BBDEB7B3643D9CB321A94D67CE2078473ECC27FACDF873CB84F82CC1` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-033-refactor-step3-cashier-handoff-store.md` | ✅ | `F8B6577038C4CB5CF636E26A4804886AE22F02BDE5B4827195B4C3F454DEF442` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-034-refactor-step4-table-draft-service.md` | ✅ | `208F91EF2AFBA3FB1F796CBB69E724AA28D1C2EE7558871E21EA298C1F06C488` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-034-refactor-step4-table-draft-service.md` | ✅ | `ED06BF7A12B94FD3E23E055B0EBD77776E12F07CB1408413BCB184DAABCD5E42` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-035-refactor-step5-order-submission-coordinator.md` | ✅ | `979D39793A97C7D8949CF34ED5C6E8B09A5D710D3DCEAF13A679E6CDF85C0046` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-036-refactor-step6-7-order-read-store.md` | ✅ | `185072967793FE4D5F0915F552EC2F6236A0288C273D27D2F7534C09ADDD495D` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-036-refactor-step6-7-order-read-store.md` | ✅ | `0B7B283DC0C9F1B34C24BCF996F814ACE446902BFF8AE1795958506903FBF6F1` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md` | ✅ | `DB9ACD3952452F1BE6D380B6D5598D23839AE8E8D32A76653DF386BFC8BFAD97` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-038-js-refactor-step2-state-module.md` | ✅ | `0DE2D9CF057FF6387976807C07E6D0264B62F7B93765B19DD93A0A039CAD2CB2` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-039-js-refactor-step3-auth-api-modules.md` | ✅ | `E61E225A3D01EE4A1B3A016807B3E25F21C246607DA6EA4A151F6AC87C7F22BA` | Tek-sahip görev |
@@ -2367,7 +2368,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/waiter-pwa/V1-WTR-050-js-refactor-step14-failed-orders-module.md` | ✅ | `726F98DF28A0FFA812AB1246A4EA2A477D2D5A5AB942C8DDE9C97A51DC489459` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-051-js-refactor-step15-push-module.md` | ✅ | `CB9C6BDD90BC563755FC346E756BBF3FB1A7BBC2C2B15D0CA57B4AACD9288A1F` | Tek-sahip görev |
 | `plan/v1/waiter-pwa/V1-WTR-052-js-refactor-step16-profile-module.md` | ✅ | `F60CE1F2089BF00357FD6C17908EC2D9A025FCDE295F659805BD4A4A383F0E37` | Tek-sahip görev |
-| `plan/v1/waiter-pwa/V1-WTR-053-js-refactor-step17-offline-queue-module.md` | ✅ | `AEEF28A4E644EF33DAD03EDD185337C7659C4F2518295E0AFCD9E8CFB5108750` | Tek-sahip görev |
+| `plan/v1/waiter-pwa/V1-WTR-053-js-refactor-step17-offline-queue-module.md` | ✅ | `B686356DE9DDD8496E645D19D3540F653C66A975B059B42C2FF651E3EDAC4E3A` | Tek-sahip görev |
 | `plan/v2.0/release/V20-REL-004-production-deployment.md` | ✅ | `349A5479E2937065AE5A64803356FA65BC1C9C1F0EA5EE5C56DD5569BB38C904` | Tek-sahip görev |
 | `plan/v2.0/release/V20-REL-005-post-go-live-observation.md` | ✅ | `18DA1BFFA21344C9EFEF7E8138B805503FE3376946A7AB35902339DFFC52C8EF` | Tek-sahip görev |
 | `plan/AUDIT_REPORT.md` | ✅ | `plan/AUDIT_MANIFEST.json` içinde | Bu satır bazlı denetim kaydı |
@@ -2379,5 +2380,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1107` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1108` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

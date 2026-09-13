@@ -16,6 +16,7 @@ bütçesini ve bahşiş havuzu payını görmesi. Hiçbir yönetici görünümü
 başka bir garsonun rakamları asla görünmez.
 
 **Semih'in araştırma sonrası kararları (2026-09-11):**
+
 1. Bahşiş bölüşümü: **eşit havuz** — bugün toplanan tüm bahşiş, bugün en
    az bir sipariş alan garson sayısına eşit bölünür (kim hangi siparişe
    bahşiş girdiği önemli değil).

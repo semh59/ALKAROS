@@ -87,7 +87,7 @@ değil: aynı sayı hem ücreti hem mutfağın hazırlayacağı miktarı belirli
 - Migration yok — `orders.order_item_modifiers.quantity` NUMERIC(18,3)
   olarak V1-ORD-001'den beri yerinde.
 - Semih'in elle deneyebileceği senaryo: ücretli bir eklentisi olan bir
-  üründen iki porsiyon gönder; mutfak biletinde "2× <eklenti>" yazdığını ve
+  üründen iki porsiyon gönder; mutfak biletinde "2× `<eklenti>`" yazdığını ve
   kalem tutarının eklenti farkını iki kez içerdiğini gör; sonra aynı üründen
   yarım porsiyon gönder ve eklentinin bir kez ücretlendirildiğini gör.
 - `python tools/plan-audit/plan_audit_tool.py validate`: 0 hata, 0 uyarı.

@@ -149,7 +149,7 @@ termal mutfak yazıcısının (Epson/Star/Bixolon) desteklediği evrensel
   Postgres'e karşı çalıştırıldı (boru hattı olmadan, gerçek `$?`
   yakalanarak):
   `ALKAROS.Kitchen.PrintQueue.Tests` (yeni `TcpEscPosPrinterTransportTests`
-  + `AwaitingOperatorReview` domain/entegrasyon testleri dahil): 27/27,
+  - `AwaitingOperatorReview` domain/entegrasyon testleri dahil): 27/27,
   `ALKAROS.Host.Experience.KitchenOperations.Tests` (yeni
   `KitchenPrintDispatchHostedServiceTests` dahil): 7/7,
   `ALKAROS.Host.Tests` (Manifest + Reachability, migration 088 dahil):

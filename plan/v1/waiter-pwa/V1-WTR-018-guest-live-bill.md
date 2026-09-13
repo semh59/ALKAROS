@@ -59,7 +59,7 @@ başlıklarına "Adisyonum" bağlantısı eklendi.
     `qr-web`'e kopyalayan satır.
   - tests/Host/Experience/QrOrdering/{QrOrderingHttpTests.cs,
     QrOrderingTestDatabase.cs} (QrOrdering test sahipliğinde) — yeni testler
-    + `SeedActiveOrderAsync` yardımcı fonksiyonu.
+    - `SeedActiveOrderAsync` yardımcı fonksiyonu.
   - tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj
     — migration 103 fixture eklemesi (V1-WTR-017'nin kendi blast-radius
     kaçırması, bu görevle aynı commit'te düzeltildi — bkz. V1-WTR-017'nin

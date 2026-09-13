@@ -24,7 +24,7 @@ adlı yeni dosyaya taşındı, eski `OrderManagementStore.cs` silindi.
 **Refactor artık tamamen bitti.** `OrderManagementStore.cs` (1285 satır,
 tek dosya) yerine 6 odaklı dosya var:
 
-```
+```text
 OrderDtoAssembler.cs            288 satır
 TableDraft/TableDraftService.cs 684 satır (en büyük, kendi klasöründe)
 OrderSubmissionCoordinator.cs   150 satır

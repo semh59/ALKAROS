@@ -33,6 +33,7 @@ görünürken. Tam olarak V1-RMD-173'ün kapatmaya çalıştığı güvenlik aç
 aynısı, farklı bir tetikleyiciyle hayatta kalmıştı.
 
 Düzeltme: iki tamamlayıcı önlem —
+
 1. `closeOptions()`'ın en başına `if (state.locked) return;` — tek bir
    denetim noktası, Escape/backdrop tıklaması/kapat düğmesi fark etmeksizin
    hiçbir yol kilit ekranı aktifken options sheet'i kapatamaz.

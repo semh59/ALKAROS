@@ -23,6 +23,7 @@ kalıcı olarak askıda kalıyordu, masa personel tarafından zorla serbest
 bırakılsa bile.
 
 Kullanıcıyla (Semih) iki karar netleştirildi:
+
 1. Mutfak bileti hemen gitsin (hazırlık süresi kaybolmasın); kimlik
    kontrolü servis anında yapılsın — biletin üzerinde yaş kısıtlı
    kalemler ayrıca işaretlenir ki servis eden kişi kontrolsüz teslim

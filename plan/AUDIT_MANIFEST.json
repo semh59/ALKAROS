@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1107,
-  "markdown_line_count": 81013,
-  "markdown_byte_count": 4697241,
+  "markdown_file_count": 1108,
+  "markdown_line_count": 81155,
+  "markdown_byte_count": 4700510,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -169,9 +169,9 @@
     },
     {
       "path": "docs/audit/INDEPENDENT_DEEP_AUDIT_2026-09-06.md",
-      "sha256": "0C801978874F340274F2AF973E77970A80EBDAB58B8200065CA2BDF44E7B7D4A",
-      "lines": 272,
-      "bytes": 25390,
+      "sha256": "00FF32152F2C604D99EA20716AD9EEB08E8EB0BA54F839B69AE4E6134B08E3B2",
+      "lines": 321,
+      "bytes": 25439,
       "utf8": true
     },
     {
@@ -274,9 +274,9 @@
     },
     {
       "path": "docs/design/foundations.md",
-      "sha256": "446E2454A2BE1293E55524B7A49EE4AA427BDEE192C90F0BAA69CC826F91F6B5",
-      "lines": 176,
-      "bytes": 9426,
+      "sha256": "2EF87F7BAF55933592948ECEB8FA4A6FE63F6FC923A52EB38DDFB22A02B3DFA2",
+      "lines": 179,
+      "bytes": 9429,
       "utf8": true
     },
     {
@@ -407,9 +407,9 @@
     },
     {
       "path": "docs/engineering/garson-refactor-plan.md",
-      "sha256": "EEC245C85287EB6903FEDA22306C598573FBA6C3E63408EEC955C584F0B656DE",
+      "sha256": "BBFCE1FE1675887EEB509439A69E29931E3E1B659AF569BA1CDA341E7284AB36",
       "lines": 367,
-      "bytes": 22166,
+      "bytes": 22178,
       "utf8": true
     },
     {
@@ -463,9 +463,9 @@
     },
     {
       "path": "docs/operations/qr-relay-setup-guide.md",
-      "sha256": "04023D9F73ECC61B65AC13A4993D295C79DDF1001526F3C6FF11CB7CD4F55221",
-      "lines": 85,
-      "bytes": 4353,
+      "sha256": "6FAC765196E9824F9BA99F589C20A70240041E424524D8EAA292C87CD97062E9",
+      "lines": 87,
+      "bytes": 4359,
       "utf8": true
     },
     {
@@ -603,9 +603,9 @@
     },
     {
       "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
-      "sha256": "03B130C9FAC77360E305334423BE12162D4F7282A0D941657C989468F914ACA8",
+      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
       "lines": 127,
-      "bytes": 5732,
+      "bytes": 5748,
       "utf8": true
     },
     {
@@ -2290,9 +2290,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "01FBBEA88911417E45761A92C9842626E7A51258A6E609AB7510D0C98CFD985D",
-      "lines": 2383,
-      "bytes": 342967,
+      "sha256": "0A6B9D0F7F0D63C3F6D908612F33128DA5D173987E6B47579F4DB0D1E780CC9E",
+      "lines": 2384,
+      "bytes": 343134,
       "utf8": true
     },
     {
@@ -4754,9 +4754,9 @@
     },
     {
       "path": "plan/v1/orders/V1-ORD-006-check-detaches-from-table.md",
-      "sha256": "427CCBE5CA61597616E723F4BFB79EBC2083636CD8466B5D5A4E32AC4F38D7CC",
-      "lines": 156,
-      "bytes": 8548,
+      "sha256": "481C3EB35A01956BB534D74C67772CFB3C557B74C7AF1744895FBAF215E50CCB",
+      "lines": 155,
+      "bytes": 8547,
       "utf8": true
     },
     {
@@ -5566,9 +5566,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-114-touch-targets-heatmap-language-leaks-and-error-message-safety.md",
-      "sha256": "65C15315319CFE06352B169226485C6551F910AA2BA303EC1DE0841D91AD5046",
+      "sha256": "0336761DEF28F580FF24793E997FD44B42B015A396AEDF9065464B1F3D7E0F5F",
       "lines": 134,
-      "bytes": 7365,
+      "bytes": 7367,
       "utf8": true
     },
     {
@@ -5643,7 +5643,7 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-125-inventory-negative-balance-race.md",
-      "sha256": "5CB61B6D7224E5143FAA6116ADC8FED9A9669514643F961FF35FBEC258B15980",
+      "sha256": "6DC8A2C85E66B7AB5E836B8D8A2018E3F1A448B828F608B2BA339D8B9DF93D05",
       "lines": 152,
       "bytes": 8643,
       "utf8": true
@@ -5678,7 +5678,7 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-130-kitchen-physical-print-dispatch.md",
-      "sha256": "865070667733BF3B74ADFBD3D882948736F076A9F15EBDF6714383F51C002CDA",
+      "sha256": "55D34611CBAEC2ECD8002FAB17C94B6BE3B27DCDB4734CB4F5E5921EF77A4D10",
       "lines": 165,
       "bytes": 9230,
       "utf8": true
@@ -5727,9 +5727,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-137-nfc-age-restriction-enforcement-and-order-confirmation.md",
-      "sha256": "E83A3EA8BE37FCD3F9B35CF4ED227150566B3A3A1E2235FC68D7E8A18B73EEF0",
-      "lines": 160,
-      "bytes": 8648,
+      "sha256": "3824ABEC9C4B09BA17FF2A1BDF9BACB0874EB2925053A8177691520B833AEA9A",
+      "lines": 161,
+      "bytes": 8649,
       "utf8": true
     },
     {
@@ -5769,9 +5769,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-143-order-accept-real-stock-consumption.md",
-      "sha256": "001859A708416AF80AF23C92C118B4442210F0E48FEC110EF853BFDB02653DEA",
+      "sha256": "176882230713E39FEBD0396C25CDE73373B2C0CEF8447AADFEC374F1EC2CF13B",
       "lines": 368,
-      "bytes": 22761,
+      "bytes": 22760,
       "utf8": true
     },
     {
@@ -5818,9 +5818,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-150-modifier-quantity-and-kitchen-visibility.md",
-      "sha256": "96CB635E059B114CA1106A0E0E25DCD86D317D8A5908A5B4301E2CC35BF8C3F8",
+      "sha256": "5FFFF95F053127762BCC35962D13A82724AD6D7444D67C1A01EECC71C3A390C0",
       "lines": 100,
-      "bytes": 5173,
+      "bytes": 5175,
       "utf8": true
     },
     {
@@ -5839,9 +5839,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-153-waiter-client-audit-defects.md",
-      "sha256": "975A781693FA0E82319EAC89D6BC4B86FDEFC36B9826D8C0E75F03CD91EFA4DC",
-      "lines": 104,
-      "bytes": 5347,
+      "sha256": "03FB101002B3316428433913374CB78D2CE3238765C7FD6540ECFD4DCFBC8CA8",
+      "lines": 105,
+      "bytes": 5348,
       "utf8": true
     },
     {
@@ -5888,30 +5888,30 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-160-api-endpoints-remainder-part1.md",
-      "sha256": "6E13F5994A9401F558C6C325B3F48C641AC76700003EF62996F86F3617CA091B",
-      "lines": 118,
-      "bytes": 6324,
+      "sha256": "A4E26DCBC846931C4FDEFB7CCCA5F29E32FE3E34BBA962F75C75F6D72A4211A2",
+      "lines": 119,
+      "bytes": 6325,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-161-modifier-selection-rules.md",
-      "sha256": "F3BFEF20C4EA44877F2AACD38662750B55E22E261DD0F945E16150F91BF60B54",
-      "lines": 93,
-      "bytes": 4447,
+      "sha256": "50A3264A4A0D4289E161512C48F59B078B942E33C521C7477CE198B69E946C7A",
+      "lines": 94,
+      "bytes": 4448,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-162-api-input-bounds-and-error-mapping.md",
-      "sha256": "4C2A18DEFB9585EFA461A97D115D599191E7FADFF674B93E883AC0709FFFF0AE",
-      "lines": 84,
-      "bytes": 4140,
+      "sha256": "A905FC1BEA8F33176A33D4D6264DE93A54B0DA41DD21691624EA57FD69FFA76C",
+      "lines": 85,
+      "bytes": 4141,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-163-rate-limiting-cursor-idempotency-header.md",
-      "sha256": "A5354B156FCC015D552AC4FF53FE07C79F5831E77BD8FEBFDE3BB9F1552BA8BE",
-      "lines": 109,
-      "bytes": 5912,
+      "sha256": "6E6B1B2AE52775331EA3B35C18FBD518520E7D80D3217BAF16CFE3ABDF5D9EE9",
+      "lines": 110,
+      "bytes": 5913,
       "utf8": true
     },
     {
@@ -6014,9 +6014,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-178-independent-review-of-168-177.md",
-      "sha256": "2D633DC7D02664C879EE360C481D4932BB50244C7B6473BAF5178AE89FBFEC2E",
-      "lines": 165,
-      "bytes": 8865,
+      "sha256": "A620C0A7AF0EADCAE8CE2A9038E536AE26A5B3062E0D4F737F832741F0755BB4",
+      "lines": 166,
+      "bytes": 8866,
       "utf8": true
     },
     {
@@ -6112,16 +6112,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-192-web-container-zombie-process-leak.md",
-      "sha256": "FFCF5065549B59B1972B319EDEE6F8CA7D6F1CB240B740A55DAB69A73D58D8F8",
-      "lines": 73,
-      "bytes": 3082,
+      "sha256": "C47926299D643324C898539265FCF17553F47471D9EBCF03BFA04BB76B9A1905",
+      "lines": 74,
+      "bytes": 3083,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-193-cloudflared-autoupdate-bypasses-pin.md",
-      "sha256": "448722AEB8053D3F2D73DB999D2B10B9F37948325AE8B906F7C08FDF15E02444",
-      "lines": 85,
-      "bytes": 3780,
+      "sha256": "D32FACBCCE02470D167D4CD2453799F36677AC349E0D9C1349134A672D7B2913",
+      "lines": 89,
+      "bytes": 3792,
       "utf8": true
     },
     {
@@ -6129,6 +6129,13 @@
       "sha256": "A618BB26E40ACC2808757D40A3AF05D657CAFFB56DD494AEE1AF372362D035DE",
       "lines": 91,
       "bytes": 4463,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-195-markdown-lint-gate-never-reached.md",
+      "sha256": "175AFA9A6B106A3EAC82EF285045CDA60B117469DBA5C287169DE57F911E1E9D",
+      "lines": 70,
+      "bytes": 2982,
       "utf8": true
     },
     {
@@ -6343,9 +6350,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-010-waiter-screen-phase-1-rewrite.md",
-      "sha256": "04FE078DED7CC52B0EEDB745C16A9565714CFC6003EA644643C6B90AA4DFE242",
+      "sha256": "6440B74C560CBFEA1A5A0587781394ACE63D333B6131034A22EF9B4F526D330E",
       "lines": 125,
-      "bytes": 6653,
+      "bytes": 6655,
       "utf8": true
     },
     {
@@ -6392,14 +6399,14 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-017-prep-time-delay-warning.md",
-      "sha256": "F8C89329A80ABFB53BB5BDF3F194C2B4EDD6A8C4F3803D91D47F4D9F382BADB6",
-      "lines": 175,
-      "bytes": 9899,
+      "sha256": "FF0A85D7E74179DAE83B38183C06474EFF7586BE3C044FDFE93F21E7FFB5BCC5",
+      "lines": 177,
+      "bytes": 9901,
       "utf8": true
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-018-guest-live-bill.md",
-      "sha256": "33D69BF181D124B582D3D1B8F17969F18AF049C74240B3F47C0E31779CF57C90",
+      "sha256": "D2C499AB00D527106F6A1DD70FCF16E8AB9E7327F2FEFB37179C6759BE5A472F",
       "lines": 103,
       "bytes": 5110,
       "utf8": true
@@ -6420,9 +6427,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-021-shift-summary.md",
-      "sha256": "605615E537C8D14C119E870786E83EBEA36753B63BBD70679E27F10494C31ECA",
-      "lines": 98,
-      "bytes": 4585,
+      "sha256": "0347C1B2359FFAC2778C275393DC44DDF1DF501FEE2E90F21DCBD3A1AA5A5C30",
+      "lines": 99,
+      "bytes": 4586,
       "utf8": true
     },
     {
@@ -6441,9 +6448,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-024-toctou-advisory-locks.md",
-      "sha256": "E590424996FCB49E3920FA223DFC899544CB97D3F32E9DBF59C6575D513FA90F",
-      "lines": 112,
-      "bytes": 5785,
+      "sha256": "E8F06F7F74C9B688DC43626E59AB58FF59153538ECDB1593AAC24E83BB1962F4",
+      "lines": 113,
+      "bytes": 5786,
       "utf8": true
     },
     {
@@ -6511,9 +6518,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-034-refactor-step4-table-draft-service.md",
-      "sha256": "208F91EF2AFBA3FB1F796CBB69E724AA28D1C2EE7558871E21EA298C1F06C488",
-      "lines": 76,
-      "bytes": 3295,
+      "sha256": "ED06BF7A12B94FD3E23E055B0EBD77776E12F07CB1408413BCB184DAABCD5E42",
+      "lines": 77,
+      "bytes": 3296,
       "utf8": true
     },
     {
@@ -6525,9 +6532,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-036-refactor-step6-7-order-read-store.md",
-      "sha256": "185072967793FE4D5F0915F552EC2F6236A0288C273D27D2F7534C09ADDD495D",
+      "sha256": "0B7B283DC0C9F1B34C24BCF996F814ACE446902BFF8AE1795958506903FBF6F1",
       "lines": 90,
-      "bytes": 4004,
+      "bytes": 4008,
       "utf8": true
     },
     {
@@ -6644,9 +6651,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-053-js-refactor-step17-offline-queue-module.md",
-      "sha256": "AEEF28A4E644EF33DAD03EDD185337C7659C4F2518295E0AFCD9E8CFB5108750",
-      "lines": 129,
-      "bytes": 6821,
+      "sha256": "B686356DE9DDD8496E645D19D3540F653C66A975B059B42C2FF651E3EDAC4E3A",
+      "lines": 130,
+      "bytes": 6822,
       "utf8": true
     },
     {

@@ -59,6 +59,7 @@ bölümünden üç bulguyu kapatır:
 ## Out of scope
 
 API uç noktaları bölümünün son bulgusu (ayrı görev):
+
 - `/comp` ve `/transfer-server`'ın hiçbir istemcisi yok.
 
 ## Dependencies

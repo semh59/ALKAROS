@@ -18,10 +18,12 @@ olarak 24 saatte bir güncelleme kontrolü yapıyor (`autoupdateFreq=
 binary'sini SESSİZCE değiştirip yeniden başlıyor.
 
 Kanıt, gerçek container loglarında iki kez tekrarlanmış:
-```
+
+```text
 2026-09-10T18:28:09Z ERR Initiating shutdown error="cloudflared has been updated to version 2026.9.0"
 2026-09-13T00:14:40Z ERR Initiating shutdown error="cloudflared has been updated to version 2026.9.1"
 ```
+
 Her ikisinde de gerçek checksum/PID değişimi var; her restart penceresinde
 tünel kısa süre kesiliyor (QUIC/datagram hata patlaması loglarda geçişin
 etrafında görünüyor). Dockerfile'ın pinleme niyeti çalışma zamanında
@@ -66,10 +68,12 @@ katıyordu.
 - `docker compose build api` ile gerçek imaj rebuild edildi, sonra
   `docker compose up -d --no-deps api` ile container yeniden oluşturuldu.
   Yeni container'ın kendi başlangıç logunda:
-  ```
+
+  ```text
   Version 2026.8.3 (Checksum f29324fe934d1e100617484c78deef803c4dc2cd351d645bbde42e96b4fccc5e)
   Settings: map[no-autoupdate:true]
   ```
+
   — hem Dockerfile'ın pinlediği tam sürüm/checksum hem de
   `no-autoupdate:true`'nun gerçekten etkin olduğu, cloudflared'ın kendi
   loguyla doğrulandı. DNS/QUIC precheck'leri (`region1`/`region2.

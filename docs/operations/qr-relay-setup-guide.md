@@ -37,10 +37,12 @@ Bunlar restoranın değil, **ALKAROS'un** (işletmenin) sahip olacağı şeyler.
 4. **Sunucuda bir şifreleme anahtarı üret ve ortam değişkeni olarak ayarla**
    — bu, token'ın veritabanında şifreli saklanmasını sağlayan asıl anahtar,
    token'ın kendisinden ayrı ve daha önemli bir sır:
-   ```
+
+   ```bash
    # 32 baytlık rastgele anahtar, base64:
    openssl rand -base64 32
    ```
+
    Çıkan değeri ALKAROS Host'un çalıştığı sunucuda
    `ALKAROS_SECRET_ENVELOPE_MASTER_KEY` ortam değişkenine ata (Docker
    Compose kullanıyorsan `compose.yaml`'daki `environment:` bölümüne, ya da

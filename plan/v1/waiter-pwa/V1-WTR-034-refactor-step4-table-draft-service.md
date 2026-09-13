@@ -12,11 +12,12 @@ Semih'in talimatının devamı ("Başla" → "Durum değerlendirmesi yap ve
 devam et", 2026-09-12) —
 `docs/engineering/garson-refactor-plan.md`'in Bölüm 1.4'ündeki 7 adımın
 **dördüncüsü ve en büyük/en riskli parçası**: `CreateOrUpdateTableDraftAsync`
-+ kendi 8 private yardımcı metodu (`ResolveModifiersAsync`,
+
+- kendi 8 private yardımcı metodu (`ResolveModifiersAsync`,
 `ResolveValidSeatIdsAsync`, `ResolveApplicableModifierGroupsAsync`,
 `ValidateModifierGroupSelections`, `ValidateRequestBounds`,
 `ItemContentUnchanged`, `BuildModifiers`, `ResolveCatalogProductsAsync`)
-+ ilgili 4 sabit + `TableCheckAlreadyOpenException`, planın öngördüğü
+- ilgili 4 sabit + `TableCheckAlreadyOpenException`, planın öngördüğü
 gibi kendi klasörüne (`TableDraft/`) taşındı. Davranış değişmedi —
 yalnız kod taşındı.
 
