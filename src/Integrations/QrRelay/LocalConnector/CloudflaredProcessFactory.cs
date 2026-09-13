@@ -26,6 +26,21 @@ public sealed class CloudflaredProcessFactory : ICloudflaredProcessFactory
             RedirectStandardError = false,
         };
         startInfo.ArgumentList.Add("tunnel");
+        // V1-RMD-193: found by inspecting the running api container's own
+        // logs — cloudflared defaults to checking for updates every 24h
+        // (autoupdateFreq=86400000, visible in its own startup log) and, on
+        // finding one, silently replaces its on-disk binary and restarts
+        // itself ("cloudflared has been updated to version 2026.9.0", then
+        // "...2026.9.1", each a real version/checksum change, confirmed
+        // twice in production). deploy/docker/Dockerfile pins this binary
+        // by exact release + sha256 specifically so a rebuild is the only
+        // way it changes — the missing flag let cloudflared bypass that pin
+        // entirely at runtime, and each self-update briefly dropped the
+        // relay tunnel (a burst of QUIC/datagram errors around every
+        // restart in the logs). --no-autoupdate keeps the pinned binary
+        // pinned until the next image rebuild, like every other dependency
+        // here.
+        startInfo.ArgumentList.Add("--no-autoupdate");
         startInfo.ArgumentList.Add("run");
         startInfo.Environment["TUNNEL_TOKEN"] = tunnelToken;
 

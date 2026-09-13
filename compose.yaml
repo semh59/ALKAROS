@@ -172,6 +172,16 @@ services:
       context: .
       dockerfile: deploy/docker/Dockerfile
       target: web
+    # V1-RMD-192: found while inspecting the running container - caddy runs
+    # as PID 1 with no init process, so it never reaps a zombie. The
+    # healthcheck below (wget --spider https://...) forks a busybox
+    # ssl_client helper for the TLS handshake on every single check; that
+    # helper's zombie was never reaped, and 10s * (uptime) of them had piled
+    # up (10,643 zombies after ~30h uptime, /proc/*/status confirmed State:
+    # Z on every one, cgroup pids.max was "max" - no ceiling at all). `init:
+    # true` makes Docker run its bundled tini as PID 1 instead, which does
+    # reap every zombie a health check (or anything else) leaves behind.
+    init: true
     environment:
       # LAN hostname / IP the devices use. Becomes the SAN of Caddy's internal
       # CA certificate for both the main and display virtual hosts.
