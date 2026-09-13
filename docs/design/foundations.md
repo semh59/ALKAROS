@@ -130,8 +130,8 @@ Tüm modüllerde aynı anlama gelir, ekran ekran yeniden icat edilmez.
 
 | Jest | Anlamı | Renk/geri bildirim | Not |
 | --- | --- | --- | --- |
-| Sağa kaydır | İlerlet / onayla / olumlu aksiyon (hazır, onayla, kabul et) | `--color-success`, kısa "pin" sesi | Mutfak "hazır" burada |
-| Sola kaydır | Dikkat çek / sorun bildir | `--color-warning` | **Asla doğrudan silme/iptal değil** — bir kişiye (garson/yönetici) bildirim gider, gerçek karar backend'in zaten sahip olduğu yetki akışında verilir |
+| Sağa kaydır | İlerlet / onayla / olumlu aksiyon (hazır, onayla, kabul et) | `--color-success`, kısa "pin" sesi | FOH (Garson/Kasa/Müşteri) ekranlarında. **Mutfak (BOH) bu jesti kullanmaz — bkz. 5.1.1.** |
+| Sola kaydır | Dikkat çek / sorun bildir | `--color-warning` | **Asla doğrudan silme/iptal değil** — bir kişiye (garson/yönetici) bildirim gider, gerçek karar backend'in zaten sahip olduğu yetki akışında verilir. FOH ekranlarında; Mutfak'ta karşılığı 5.1.1'deki büyük dokunuşlu "⚠" butonudur |
 | Tek dokunuş | Seç / aç / birincil aksiyon | — | |
 | Uzun basma | Detay / ek seçenekler (context menu) | Hafif titreşim | Nadiren — "en basit" ilkesiyle çelişmesin |
 | Sürükleme | Yeniden sırala / taşı (masa yerleşimi, sepet kalemi) | — | Yalnız gerçekten gerekli ekranlarda |
@@ -141,6 +141,28 @@ Not: "Sağa kaydır" ilk taslakta "iptal" olarak düşünülmüştü;
 için, ve geri alınamaz bir aksiyonun (iptal) tek jestle, backend'in zaten
 sahip olduğu yetki/gerekçe akışını (`bills.void` grant, sebep kodu)
 atlayarak tetiklenmemesi için.
+
+### 5.1.1 BOH istisnası: Mutfak kaydırma kullanmaz
+
+**Onaylandı (Semih, 2026-09-13):** Mutfak (KDS) ekranı 5.1'deki kaydırma
+jestini (sağa=ilerlet, sola=sorun bildir) kullanmaz — bunun yerine her
+kalem/bilet **büyük, tek dokunuşlu** aşama butonlarıyla ilerler (Bekliyor→
+Hazırlanıyor→Hazır→Servis Edildi, yalnız bir sonraki aşama tıklanabilir),
+"sorun bildir" ayrı, büyük bir ⚠ butonudur.
+
+Gerekçe: kapasitif dokunmatik yüzeyler yağ/buhar/nemli filmle
+güvenilirliğini kaybediyor; deneyimli mutfak personeli bu yüzden kaydırma
+gibi hassas hareket gerektiren jestler yerine net, kaba-hedefli tek
+dokunuşu (veya fiziksel bump bar tuşunu) tercih ediyor — bu, önyüzün temiz
+elle çalıştığı varsayımının mutfağın fiziksel ortamında geçerli olmaması.
+Terminal kararı: Mutfak hem dokunmatik hem bump bar'ı (harici HID/klavye
+tuş takımı) birlikte destekler; büyük dokunuş hedefleri aynı zamanda bump
+bar'ın odak/seçim imlecinin hedefidir.
+
+Bu istisna yalnız Mutfak'a (BOH) özgüdür — Garson/Kasa/Müşteri (FOH)
+ekranları 5.1'deki kaydırma sözlüğünü aynen kullanmaya devam eder. Başka
+bir ekran benzer bir istisna istiyorsa önce bu bölüm güncellenir, sonra
+ekrana yansır (bu dokümanın genel ilkesi, bkz. §4'ün aynı kuralı).
 
 ### 5.2 Onay kalıpları
 
