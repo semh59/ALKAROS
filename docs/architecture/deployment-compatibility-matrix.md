@@ -39,10 +39,11 @@ rakip karşılaştırmasında doğrulanmış somut faydasını kayda geçirir.
 "OS (Server): Local backend" ve "Prerequisites: ... local network"
 satırlarının pratik sonucu: PosTerminal/WaiterPwa/Cashier istemcileri
 buluta değil, restoranın kendi yerel ağındaki Host'a konuşur. Cloud-
-öncelikli rakiplerin (Toast, Square, Lightspeed) ortak, dokümante edilmiş
-bir zaafı var — internet bağlantısı kesildiğinde sipariş/mutfak bileti
-akışı durur (endüstri kaynağı: 45 dakikalık bir kesinti tek başına 1.100
-USD+ doğrudan satış kaybına yol açabiliyor, kaynak:
+öncelikli rakiplerin (Toast, Square, Lightspeed) bilinen, yaygın kabul
+gören bir zaafı var — internet bağlantısı kesildiğinde sipariş/mutfak
+bileti akışı durabiliyor (genel POS sektörü kaynağı, ürün-bazlı değil:
+45 dakikalık bir kesinti tek başına 1.100 USD+ doğrudan satış kaybına
+yol açabiliyor, kaynak:
 [kwickos.com](https://kwickos.com/blog/pos-system-offline-mode-guide.html)).
 ALKAROS bu senaryoya karşı **yapısal olarak bağışık**: internet kesilse
 bile PosTerminal↔Host↔PostgreSQL zinciri aynı yerel ağda çalışmaya devam
