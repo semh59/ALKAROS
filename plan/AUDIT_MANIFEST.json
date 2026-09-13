@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1110,
-  "markdown_line_count": 81307,
-  "markdown_byte_count": 4707519,
+  "markdown_file_count": 1111,
+  "markdown_line_count": 81390,
+  "markdown_byte_count": 4711310,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2290,9 +2290,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "95D8E75FCBAA200CB9EAC820DF81D4408609664F2CAEB532842115EA8F29B3C7",
-      "lines": 2386,
-      "bytes": 343480,
+      "sha256": "4448EBBA7B7018271FEF8D9535DAEB10909424704A048287808D50D4067AAF95",
+      "lines": 2387,
+      "bytes": 343657,
       "utf8": true
     },
     {
@@ -6150,6 +6150,13 @@
       "sha256": "FC582E146C0E206D0C79A03E7C601DDD35066683ADE6B6A25BFF26F0ECD90699",
       "lines": 74,
       "bytes": 3252,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-198-authorization-decision-tests-fk-regression.md",
+      "sha256": "73EC175ACFEC64A513DFF7C084F230D771433FD5AAA1D3DDA08FA45A94BF4E18",
+      "lines": 82,
+      "bytes": 3614,
       "utf8": true
     },
     {

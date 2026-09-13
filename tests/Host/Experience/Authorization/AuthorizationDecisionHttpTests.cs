@@ -318,6 +318,7 @@ internal sealed class AuthorizationDecisionTestDatabase
     public async Task<Guid> SeedPendingGrantAsync(string permissionCode, decimal amount)
     {
         var grantId = Guid.NewGuid();
+        var requesterId = await SeedBareUserAsync();
         await ExecuteAsync(
             DataSource,
             """
@@ -329,7 +330,7 @@ internal sealed class AuthorizationDecisionTestDatabase
             ("grant_id", grantId),
             ("key", "decision-" + grantId.ToString("N")),
             ("permission", permissionCode),
-            ("requester", Guid.NewGuid()),
+            ("requester", requesterId),
             ("amount", amount));
         return grantId;
     }
@@ -337,6 +338,8 @@ internal sealed class AuthorizationDecisionTestDatabase
     public async Task<Guid> SeedActiveDelegationAsync()
     {
         var delegationId = Guid.NewGuid();
+        var granteeId = await SeedBareUserAsync();
+        var delegatorId = await SeedBareUserAsync();
         await ExecuteAsync(
             DataSource,
             """
@@ -345,14 +348,15 @@ internal sealed class AuthorizationDecisionTestDatabase
             VALUES (@id, 'bills.comp', @grantee, @delegator, 200, now(), now() + interval '2 hours');
             """,
             ("id", delegationId),
-            ("grantee", Guid.NewGuid()),
-            ("delegator", Guid.NewGuid()));
+            ("grantee", granteeId),
+            ("delegator", delegatorId));
         return delegationId;
     }
 
     public async Task<Guid> SeedOpenTighteningAsync()
     {
         var tighteningId = Guid.NewGuid();
+        var userId = await SeedBareUserAsync();
         await ExecuteAsync(
             DataSource,
             """
@@ -361,8 +365,31 @@ internal sealed class AuthorizationDecisionTestDatabase
             VALUES (@id, @user, 'bills.void', 6, 1.5, 4, now());
             """,
             ("id", tighteningId),
-            ("user", Guid.NewGuid()));
+            ("user", userId));
         return tighteningId;
+    }
+
+    // V1-RMD-198: found by the 2026-09-13 CI run - V1-RMD-189 added
+    // fk_authorization_grants_requester/fk_authorization_delegations_
+    // grantee/delegator/fk_behavioural_tightenings_user (identity.users
+    // FKs the whole rest of this codebase already had), and this test
+    // project's own seed helpers above had never needed a real user row
+    // for these columns before - they inserted a bare Guid.NewGuid() with
+    // nothing backing it. A minimal identity.users row (no session, no
+    // role - the decision endpoints under test here never look at either)
+    // is all any of the three actually need.
+    private async Task<Guid> SeedBareUserAsync()
+    {
+        var userId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', 'Decision API Seed User', true);
+            """,
+            ("user_id", userId),
+            ("username", "decision-seed-" + userId.ToString("N")));
+        return userId;
     }
 
     private async Task ApplyMigrationsAsync()
