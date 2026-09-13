@@ -82,6 +82,13 @@ gizli/kilitli görünür.
 - `python tools/consistency-audit/consistency_audit.py` → bu görevin
   değiştirdiği dosyalarda 0 yeni ihlal.
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.
+- Tablet/PC uyumluluk kanıtı: ~768px (13" tablet) ve ~1920px (21.5"+
+  PC/duvar monitörü) genişliklerinde gerçek tarayıcıda ekran görüntüsü
+  alınır — dar ekranda istasyonların tek sütuna düştüğü, geniş ekranda
+  yan yana sığdığı, hiçbir metnin kırpılmadığı/taştığı, dört aşamalı
+  göstergenin ikisinde de okunabilir kaldığı gösterilir (yalnız kod
+  incelemesi değil, gerçek render kanıtı — mockup'ta bu yalnız akıl
+  yürütmeyle doğrulanmıştı, burada gerçek ekran görüntüsü şart).
 - Semih'in elle deneyebileceği senaryo: bir masaya sipariş al, mutfağa
   gönder, Mutfak ekranında Expo görünümünde masayı bul, kalemi dört
   aşamada ilerlet, "Mutfak Personeli" izinli bir oturumda iptal/sorun
