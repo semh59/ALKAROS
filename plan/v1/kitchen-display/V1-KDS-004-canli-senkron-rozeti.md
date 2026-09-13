@@ -27,11 +27,13 @@ mevcut "Canlı" göstergesi (`.kitchen-live-dot`, `V1-KDS-001`) korunur.
 
 - `cd src/Clients/PosTerminal && npx tsc --noEmit` → **0 hata.**
 - `cd src/Clients/PosTerminal && npx vitest run` → **Test Files 23
-  passed (23), Tests 146 passed (146)** — tüm proje, izole değil (yeni
+  passed (23), Tests 147 passed (147)** — tüm proje, izole değil (yeni
   test: `"shows a badge when kitchen.live_sync_enabled is off, and hides
-  it when on"`; `kitchenApi.test.ts`'e de `liveSyncEnabled` alanının
-  gerçekten `/operations/live-sync` yanıtından okunduğunu kanıtlayan bir
-  assertion eklendi).
+  it when on"`; `kitchenApi.test.ts`'e `liveSyncEnabled` alanının
+  gerçekten `/operations/live-sync` yanıtından okunduğunu kanıtlayan iki
+  test eklendi — `true` ve `false` senaryoları ayrı ayrı, bağımsız
+  denetimin bulduğu "yalnız true'yu kanıtlıyor, hardcode olsa da geçerdi"
+  zayıflığı kapatıldı).
 - `python tools/consistency-audit/consistency_audit.py` → `clean`.
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
   uyarı.

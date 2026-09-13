@@ -45,6 +45,20 @@ describe("kitchen operations API client", () => {
     expect(fetcher).toHaveBeenCalledWith(expect.stringContaining("stationId=hot%20line"), expect.objectContaining({ credentials: "same-origin" }));
   });
 
+  // Independent review (2026-09-13): the previous test only proved
+  // load() *can* return true — a client that ignored the endpoint and
+  // hardcoded true would have passed it too. This proves the field is
+  // actually read from the response, not defaulted.
+  it("reads liveSyncEnabled: false from the endpoint rather than defaulting", async () => {
+    const fetcher = vi.fn(async (url: RequestInfo | URL) => {
+      const path = String(url);
+      return new Response(JSON.stringify(path.includes("live-sync") ? { enabled: false } : path.includes("health") ? payloads.health : path.includes("tickets") ? payloads.tickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
+    });
+    const client = createKitchenOperationsClient("terminal-1", "hot-line", fetcher);
+    const result = await client.load();
+    expect(result.liveSyncEnabled).toBe(false);
+  });
+
   it("keeps HTTP conflict and network errors typed", async () => {
     const conflict = createKitchenOperationsClient("terminal-1", "hot-line", vi.fn(async () => new Response(JSON.stringify({ error: { code: "CONCURRENT_MODIFICATION", message: "changed" } }), { status: 409 })));
     await expect(conflict.transitionTicket("ticket-1", "Ready", 1)).rejects.toMatchObject({ status: 409, code: "CONCURRENT_MODIFICATION" });
