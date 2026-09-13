@@ -1,6 +1,8 @@
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.WaiterNotifications;
 using ALKAROS.Host.Experience.WebPush;
+using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Kitchen.OrderItemStateSync;
 using ALKAROS.Kitchen.PhysicalPrintRecovery;
 using ALKAROS.Kitchen.PrintQueue;
@@ -12,6 +14,7 @@ using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.KitchenLiveSync;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.SignalR;
+using Npgsql;
 
 namespace ALKAROS.Host.Experience.KitchenOperations;
 
@@ -29,6 +32,9 @@ public sealed class KitchenOperationsStore
     private readonly IOrderRepository _orders;
     private readonly IHubContext<WaiterOrderStatusHub> _waiterHub;
     private readonly WebPushSender? _push;
+    private readonly NpgsqlDataSource _dataSource;
+    private readonly CatalogManagementStore _catalog;
+    private readonly IAuthorizationGrantRepository _grants;
 
     public KitchenOperationsStore(
         IKitchenTicketRepository tickets,
@@ -42,6 +48,9 @@ public sealed class KitchenOperationsStore
         OutboxStore outbox,
         IOrderRepository orders,
         IHubContext<WaiterOrderStatusHub> waiterHub,
+        NpgsqlDataSource dataSource,
+        CatalogManagementStore catalog,
+        IAuthorizationGrantRepository grants,
         WebPushSender? push = null)
     {
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
@@ -64,6 +73,15 @@ public sealed class KitchenOperationsStore
         // keeps constructing this store without a push stack — the same shape
         // NfcOrderingStore already uses for IPendingOrderAnnouncer.
         _push = push;
+        // V1-KIT-008: SuspendProductAvailabilityAsync reads catalog.products
+        // directly (same precedent as KitchenOrderSubmissionDispatcher's own
+        // age-restriction/category lookups — V1-RMD-137/V1-KIT-006) rather
+        // than adding a new cross-module port, and reuses Catalog's own
+        // write path (CatalogManagementStore) instead of touching
+        // Product.cs/PostgresProductRepository at all.
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
+        _grants = grants ?? throw new ArgumentNullException(nameof(grants));
     }
 
     public async Task<IReadOnlyList<KitchenTicketV1>> GetActiveTicketsAsync(
@@ -405,6 +423,119 @@ public sealed class KitchenOperationsStore
     // same flag TransitionItemAsync already reads before publishing.
     public async Task<LiveSyncStatusV1> GetLiveSyncStatusAsync(CancellationToken cancellationToken)
         => new(await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken));
+
+    /// <summary>
+    /// V1-KIT-008: 86 a product from the Kitchen screen itself. Reuses
+    /// Catalog's own write path (<see cref="CatalogManagementStore.SetProductAvailabilityAsync"/>)
+    /// — the domain (Product.cs, PostgresProductRepository) is untouched, and
+    /// the existing row_version optimistic-concurrency check there is what
+    /// rejects the loser of two concurrent 86 calls on the same product with
+    /// <see cref="KitchenOperationsConcurrencyException"/> (mapped to 409 by
+    /// the endpoint filter), not a new mechanism invented here.
+    ///
+    /// "Plan conflict" detection (this task's scope, item 3): the simple,
+    /// false-positive-tolerant first rule is whether the product was still
+    /// on active sale (IsAvailable = true) the instant before this call — an
+    /// already-suspended product being 86'd again (idempotent retry) is not
+    /// a conflict. When it is, an already-resolved, informational
+    /// identity.authorization_grants row is written directly via
+    /// <see cref="IAuthorizationGrantRepository.InsertAsync"/> — deliberately
+    /// bypassing <c>IAuthorizationGrantService.RequestAsync</c>, whose
+    /// idempotency/own-check/policy/escalation pipeline exists to gate an
+    /// action the requester does NOT hold outright and ends in a *blocking*
+    /// Pending state; a chef who already holds kitchen.availability.suspend
+    /// outright needs the opposite — the suspend must take effect
+    /// immediately, and this row is a durable, queryable notification a
+    /// manager can find (reporting.authorization_grant_daily and a manual
+    /// query both already read granted rows this way), not a live push
+    /// (out of scope here — see the task's Goal for why not
+    /// WaiterOrderStatusHub). InsertAsync's own contract explicitly allows
+    /// this: "must be Pending... or a terminal status with Path set".
+    /// </summary>
+    public async Task<ProductAvailabilitySuspendedV1> SuspendProductAvailabilityAsync(
+        Guid productId,
+        KitchenOperationsPrincipal principal,
+        CancellationToken cancellationToken)
+    {
+        EnsureId(productId, nameof(productId));
+        ArgumentNullException.ThrowIfNull(principal);
+
+        var wasAvailable = await IsProductAvailableAsync(productId, cancellationToken)
+            ?? throw new KitchenOperationsNotFoundException("Product was not found.");
+
+        ProductV1 suspended;
+        try
+        {
+            suspended = await _catalog.SetProductAvailabilityAsync(
+                productId, new SetProductAvailabilityV1(false), cancellationToken)
+                ?? throw new KitchenOperationsNotFoundException("Product was not found.");
+        }
+        catch (InvalidOperationException)
+        {
+            throw new KitchenOperationsConcurrencyException(
+                $"Product {productId} was updated concurrently; retry the 86.");
+        }
+
+        var planConflict = wasAvailable;
+        if (planConflict)
+            await RaisePlanConflictGrantAsync(productId, principal, cancellationToken);
+
+        return new ProductAvailabilitySuspendedV1(suspended.Id, suspended.IsAvailable, planConflict);
+    }
+
+    private async Task<bool?> IsProductAvailableAsync(Guid productId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "SELECT is_available FROM catalog.products WHERE product_id = @id;");
+        command.Parameters.AddWithValue("id", productId);
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        return result is bool value ? value : null;
+    }
+
+    private async Task RaisePlanConflictGrantAsync(
+        Guid productId, KitchenOperationsPrincipal principal, CancellationToken cancellationToken)
+    {
+        var roleCode = await GetPrimaryRoleCodeAsync(principal.UserId, cancellationToken);
+        var now = DateTimeOffset.UtcNow;
+        // This bypasses IAuthorizationGrantService.RequestAsync entirely (see
+        // the method doc-comment), so idempotency_key is not consulted for
+        // command replay here — it only needs to satisfy the table's own
+        // uniqueness constraint. Each real 86 is its own event, so a fresh
+        // random key per call is correct, not a fabricated stand-in.
+        var grant = new AuthorizationGrant(
+            GrantId: Guid.NewGuid(),
+            IdempotencyKey: $"kitchen.availability.suspend.plan-conflict:{Guid.NewGuid():N}",
+            PermissionCode: KitchenOperationsEndpoints.AvailabilitySuspendPermission,
+            RequesterUserId: principal.UserId,
+            RequesterRoleCode: roleCode,
+            SubjectType: "product",
+            SubjectId: productId,
+            SubjectServingUserId: null,
+            Amount: 0m,
+            ReasonCode: "kitchen.availability.suspend.plan-conflict",
+            RequestedAt: now,
+            Status: GrantStatus.Granted,
+            Path: PolicyPath.Auto,
+            ApproverUserId: null,
+            ResolvedAt: now);
+        await _grants.InsertAsync(grant, cancellationToken);
+    }
+
+    private async Task<string> GetPrimaryRoleCodeAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT r.code
+            FROM identity.user_roles ur
+            JOIN identity.roles r ON r.role_id = ur.role_id
+            WHERE ur.user_id = @user_id
+            ORDER BY r.code
+            LIMIT 1;
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        return result as string ?? "unknown";
+    }
 
     public async Task<IReadOnlyList<BackupV1>> GetRecentBackupsAsync(
         int limit,

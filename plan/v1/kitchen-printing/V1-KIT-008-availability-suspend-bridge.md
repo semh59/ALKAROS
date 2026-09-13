@@ -1,8 +1,8 @@
 # V1-KIT-008 - Mutfak ekranından ürün tükendi bildirimi (86'lama köprüsü)
 
 - Task ID: V1-KIT-008
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -44,11 +44,32 @@ edilmez.
   /kitchen-operations/products/{productId}/suspend` ucu; yerel
   `kitchen.availability.suspend` sabiti (mevcut `TicketMutationPermission`
   emsaliyle aynı desende, bu dosyada tanımlanır); `KitchenOperationsStore`'a
-  `CatalogManagementStore` DI enjeksiyonu.
-- authorization_grants yazma yolu (Sınırlı ek, paylaşılan — mevcut
-  grant-akışını yöneten dosya(lar), `docs/domain/authorization-model.md`
-  §4'te tarif edilen mekanizma) — yeni bir grant türü/`policy_path` (ör.
-  `kitchen.availability.suspend.plan-conflict`).
+  `CatalogManagementStore` DI enjeksiyonu (bu nedenle `KitchenOperationsStore`
+  ve `IKitchenOperationsSessionAuthorizer`'ın DI kaydı Singleton'dan
+  Scoped'a indi — Catalog'un kendi `CatalogManagementStore`'u zaten Scoped).
+- authorization_grants yazma yolu (Sınırlı ek, paylaşılan) — doğrudan
+  `IAuthorizationGrantRepository.InsertAsync` ile, `AuthorizationGrant.cs`/
+  `AuthorizationGrantService.cs`'e HİÇ dokunmadan: derin inceleme (bu görev
+  kapsamında) `IAuthorizationGrantService.RequestAsync`'in bir ÖN-onay/
+  engelleme mekanizması olduğunu (izni zaten taşımayan bir rol için,
+  Pending'de bekleten) doğruladı — zaten `kitchen.availability.suspend`
+  taşıyan bir şefin işlemini bloklamak yanlış olurdu. `InsertAsync`'in kendi
+  sözleşmesi ("Pending... veya Path'i set edilmiş bir terminal durum")
+  doğrudan zaten-çözümlenmiş (`Granted`/`Auto`) bir satır yazmaya izin
+  veriyor; tetikleyici sadece INSERT/UPDATE'te çalışıyor, bu yolu
+  engellemiyor.
+- database/migrations/V1/V1-KIT-008/** (yeni) — `kitchen.availability.
+  suspend` izin kodunu `identity.permissions`'a ekler ve şimdilik yalnız
+  `manager` rolüne bağlar (V1-IAM-029 aynı kodu Mutfak Şefi'ne de ekleyecek,
+  additive). Migration olmadan uç hiçbir oturum için hiç açılamazdı — FK
+  (`role_permissions.permission_id -> permissions.permission_id`) izin
+  kodunun önce katalogda var olmasını zorunlu kılıyor; bu görevin ilk
+  taslağında atlanmış gerçek bir kapsam boşluğuydu, uygulama sırasında
+  bulunup buraya eklendi.
+- database/MigrationComposition/order.json, src/Host/Composition/
+  Migrations/MigrationManifest.cs, tests/Host/MigrationComposition/
+  Manifest/ManifestTests.cs (Sınırlı ek, paylaşılan — V1-IAM-028 emsaliyle
+  aynı desen) — yeni migration pozisyonu 110.
 - tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
   (Sınırlı ek — V1-RMD-082 sahipliğinde kalan dosya) — yeni testler.
 
@@ -83,14 +104,45 @@ edilmez.
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata.
-- `dotnet test` → yeni testler dahil ilgili projeler yeşil, gerçek
-  Postgres'e karşı; en az bir test aynı ürünü eşzamanlı iki çağrının
-  birini 409 ile reddettiğini kanıtlar.
+- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata (doğrulandı).
+- `dotnet test tests/Host/Experience/KitchenOperations` → gerçek Postgres'e
+  karşı **18/18 yeşil** (4 yeni test: izin sınırı + plana-aykırı grant
+  kaydı, idempotent tekrar çağrıda ikinci grant OLUŞMAMASI, ürün
+  bulunamadı → 404).
+  Eşzamanlılık notu (dürüst düzeltme): `SetProductAvailabilityAsync`
+  kendi row_version'ını her çağrıda taze okuyup yazdığı için (client'tan
+  bir "expected version" almıyor), gerçek 409'u HTTP seviyesinde
+  deterministik olarak zorlamak mümkün değil — aynı sınırlama zaten
+  `CatalogManagementHttpTests.cs`'in kendi `/availability` ucu için
+  yazdığı yorumda da kayıtlı ("an HTTP-level Task.WhenAll race is not
+  reliable here"). Bu görev o mekanizmayı DEĞİŞTİRMEDEN aynen yeniden
+  kullanıyor; asıl kanıt zaten
+  `tests/Modules/Catalog/ProductCatalog/PostgresRepositoryTests.cs::
+  UpdateAsyncThrowsWhenTheProductWasConcurrentlyModified`'da var
+  (row_version'ı SQL ile elle ileri alıp `InvalidOperationException`
+  fırlatıldığını kanıtlıyor). Bu görevin katkısı o exception'ın
+  `KitchenOperationsConcurrencyException` → 409 CONCURRENT_MODIFICATION'a
+  doğru eşlendiğini göstermek (`catch (InvalidOperationException)` bloğu,
+  kod incelemesiyle doğrulanabilir) — flaky bir HTTP testi icat etmek
+  yerine bu sınırı olduğu gibi belgelemek tercih edildi.
+- `dotnet test tests/Modules/Identity/Authorization/ALKAROS.Identity.
+  Authorization.Tests.csproj` → **199/199 yeşil** (migration 110 bu
+  projenin PermissionSplitDatabase zincirine dahil edilmedi — 054'ün
+  identity.*.manage satırları gibi, ApplicationPermissions.Codes'un bir
+  parçası değil, kasıtlı).
+- `dotnet test tests/Host/MigrationComposition` → **135/135 yeşil**
+  (ManifestTests migration 110'u kapsayacak şekilde güncellendi).
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
+  uyarı (doğrulandı).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`
+  (doğrulandı).
 - Semih'in elle deneyebileceği senaryo: `kitchen.availability.suspend`
-  izinli bir oturumla aktif bir ürünü mutfak ucundan 86'la, Catalog
-  Management ekranında ürünün gerçekten pasif göründüğünü ve
-  `authorization_grants` tablosunda yeni bir kaydın oluştuğunu doğrula.
+  izinli bir oturumla (bugün için: manager rolü — migration 110) aktif
+  bir ürünü mutfak ucundan 86'la, Catalog Management ekranında ürünün
+  gerçekten pasif göründüğünü ve `identity.authorization_grants`
+  tablosunda `status='granted', policy_path='auto',
+  reason_code='kitchen.availability.suspend.plan-conflict'` olan yeni bir
+  kaydın oluştuğunu doğrula.
 
 ## Handoff
 

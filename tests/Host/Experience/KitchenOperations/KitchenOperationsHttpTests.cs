@@ -461,6 +461,120 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.False(deactivated.IsActive);
     }
 
+    /// <summary>
+    /// V1-KIT-008: suspending a product that was still on active sale
+    /// (IsAvailable = true) is this task's "plan aykırı" rule, and must
+    /// write an already-resolved, informational identity.authorization_grants
+    /// row so a manager can find it later — deliberately not a live push
+    /// (see the task's Goal), so this is checked against the table directly
+    /// rather than any notification endpoint.
+    /// </summary>
+    [Fact]
+    public async Task SuspendingAnAvailableProductRequiresTheSuspendPermissionAndRaisesAPlanConflictGrant()
+    {
+        var terminalId = Guid.NewGuid();
+        var suspendCookie = await _database.SeedSessionAsync(
+            terminalId, [KitchenOperationsEndpoints.AvailabilitySuspendPermission]);
+        // V1-IAM-028: kitchen.advance is a real, separate grant from
+        // kitchen.availability.suspend — a line-cook-only session must not
+        // be able to 86 a product just because it can advance tickets.
+        var advanceOnlyCookie = await _database.SeedSessionAsync(
+            terminalId, [ApplicationPermissions.KitchenAdvance]);
+        var productId = await SeedProductAsync(isAvailable: true);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var deniedRequest = Request(
+            HttpMethod.Post, $"{Prefix(terminalId)}/products/{productId:D}/suspend", advanceOnlyCookie);
+        using var denied = await client.SendAsync(deniedRequest);
+        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+
+        using var suspendRequest = Request(
+            HttpMethod.Post, $"{Prefix(terminalId)}/products/{productId:D}/suspend", suspendCookie);
+        using var response = await client.SendAsync(suspendRequest);
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"POST suspend returned {(int)response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+        var result = await response.Content.ReadFromJsonAsync<ProductAvailabilitySuspendedV1>();
+        Assert.NotNull(result);
+        Assert.Equal(productId, result!.ProductId);
+        Assert.False(result.IsAvailable);
+        Assert.True(result.PlanConflict);
+
+        Assert.False(await _database.ScalarAsync<bool>(
+            $"SELECT is_available FROM catalog.products WHERE product_id = '{productId:D}';"));
+        Assert.Equal(
+            1L,
+            await _database.ScalarAsync<long>(
+                $"""
+                SELECT count(*) FROM identity.authorization_grants
+                WHERE subject_type = 'product' AND subject_id = '{productId:D}'
+                  AND permission_code = 'kitchen.availability.suspend'
+                  AND reason_code = 'kitchen.availability.suspend.plan-conflict'
+                  AND status = 'granted' AND policy_path = 'auto'
+                  AND approver_user_id IS NULL AND resolved_at IS NOT NULL;
+                """));
+    }
+
+    /// <summary>
+    /// V1-KIT-008 scope item 4: an already-suspended product being 86'd
+    /// again (idempotent retry, e.g. a double-tap) is not a plan conflict —
+    /// only the first, genuinely-conflicting suspend raises a grant row.
+    /// </summary>
+    [Fact]
+    public async Task SuspendingAnAlreadySuspendedProductIsIdempotentAndRaisesNoSecondGrant()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId, [KitchenOperationsEndpoints.AvailabilitySuspendPermission]);
+        var productId = await SeedProductAsync(isAvailable: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = Request(
+            HttpMethod.Post, $"{Prefix(terminalId)}/products/{productId:D}/suspend", cookie);
+        using var response = await client.SendAsync(request);
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"POST suspend returned {(int)response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+        var result = await response.Content.ReadFromJsonAsync<ProductAvailabilitySuspendedV1>();
+        Assert.NotNull(result);
+        Assert.False(result!.IsAvailable);
+        Assert.False(result.PlanConflict);
+
+        Assert.Equal(
+            0L,
+            await _database.ScalarAsync<long>(
+                $"SELECT count(*) FROM identity.authorization_grants WHERE subject_id = '{productId:D}';"));
+    }
+
+    [Fact]
+    public async Task SuspendingAMissingProductReturnsNotFound()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId, [KitchenOperationsEndpoints.AvailabilitySuspendPermission]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = Request(
+            HttpMethod.Post, $"{Prefix(terminalId)}/products/{Guid.NewGuid():D}/suspend", cookie);
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    private async Task<Guid> SeedProductAsync(bool isAvailable)
+    {
+        var productId = Guid.NewGuid();
+        await using var command = _database.DataSource.CreateCommand(
+            $"""
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price, is_available)
+            VALUES ('{productId:D}', 'SKU-{productId:N}', '86 test product', 1, 1, 30.00, {(isAvailable ? "TRUE" : "FALSE")});
+            """);
+        await command.ExecuteNonQueryAsync();
+        return productId;
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });

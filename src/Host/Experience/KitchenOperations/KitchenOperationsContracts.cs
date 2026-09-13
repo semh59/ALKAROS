@@ -129,6 +129,22 @@ public sealed record BackupV1(
 /// <summary>V1-KIT-010: whether kitchen.live_sync_enabled is on for this deployment — read-only, the setting itself is changed elsewhere (Settings module).</summary>
 public sealed record LiveSyncStatusV1(bool Enabled);
 
+/// <summary>
+/// V1-KIT-008: the result of 86-ing a product from the Kitchen screen. A
+/// deliberately narrow projection of Catalog's own ProductV1 — the Kitchen
+/// HTTP surface only ever needs to confirm the id and the new availability,
+/// not re-expose SKU/pricing/modifier data that belongs to Catalog
+/// Management. <see cref="PlanConflict"/> is the simple first-pass rule from
+/// this task's scope: true when the product was still on active sale
+/// (IsAvailable = true) the instant before this suspend, in which case an
+/// informational authorization_grants row was also written (see
+/// KitchenOperationsStore.SuspendProductAvailabilityAsync).
+/// </summary>
+public sealed record ProductAvailabilitySuspendedV1(
+    Guid ProductId,
+    bool IsAvailable,
+    bool PlanConflict);
+
 public sealed record HealthSnapshotV1(
     Guid SnapshotId,
     string DatabaseStatus,

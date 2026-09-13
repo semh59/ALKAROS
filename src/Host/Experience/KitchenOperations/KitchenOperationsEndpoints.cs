@@ -1,8 +1,10 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.WaiterNotifications;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Kitchen.PhysicalPrintRecovery;
 using ALKAROS.Kitchen.PrintQueue;
@@ -35,6 +37,14 @@ public static class KitchenOperationsEndpoints
     public const string RoutingMutationPermission = "kitchen.routing.manage";
     public const string ReprintPermission = "kitchen.reprint";
     public const string BackupPermission = "operations.backup";
+    /// <summary>
+    /// V1-KIT-008: deliberately kept local to this file, not added to the
+    /// central ApplicationPermissions.cs catalog — see the task's Goal for
+    /// why. Granted to 'manager' for now (migration 110) so the endpoint is
+    /// testable before V1-IAM-029's Mutfak Sefi role exists; V1-IAM-029
+    /// grants the same code to that role additively.
+    /// </summary>
+    public const string AvailabilitySuspendPermission = "kitchen.availability.suspend";
 
     /// <summary>
     /// V1-IAM-028: a ticket/item transition to Cancelled still requires
@@ -96,8 +106,16 @@ public static class KitchenOperationsEndpoints
         // V1-WTR-009: broadcasts "ready" to every connected waiter device.
         services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
         services.AddWaiterNotificationsExperience();
-        services.TryAddSingleton<KitchenOperationsStore>();
+        // V1-KIT-008: SuspendProductAvailabilityAsync calls Catalog's own
+        // CatalogManagementStore (Scoped — see AddCatalogManagement), so
+        // KitchenOperationsStore itself can no longer be a Singleton (a
+        // Scoped dependency would be captured for the app's lifetime
+        // otherwise). Every existing consumer resolves it per-request from
+        // an endpoint delegate, so Scoped is safe here.
+        services.TryAddScoped<KitchenOperationsStore>();
         services.TryAddSingleton<IKitchenOperationsSessionAuthorizer, KitchenOperationsSessionAuthorizer>();
+        services.AddCatalogManagement();
+        services.TryAddSingleton<IAuthorizationGrantRepository, PostgresAuthorizationGrantRepository>();
         services.TryAddSingleton(_ => new ProductionBackupOptions(
             Environment.GetEnvironmentVariable("ALKAROS_BACKUP_DIRECTORY")));
         services.TryAddTransient<KitchenOperationsExceptionFilter>();
@@ -181,6 +199,23 @@ public static class KitchenOperationsEndpoints
             await authorizer.RequirePermissionAsync(
                 context, terminalId, ApplicationPermissions.KitchenAdvance, cancellationToken);
             return Results.Ok(await store.UndoItemAsync(ticketId, itemId, request, cancellationToken));
+        });
+
+        // V1-KIT-008: 86 a product from the Kitchen screen itself, under
+        // Kitchen's own cashier-session model — see this file's Goal note on
+        // AvailabilitySuspendPermission for why this does not just call
+        // Catalog's manager-cookie-protected endpoint directly.
+        group.MapPost("/products/{productId:guid}/suspend", async (
+            Guid terminalId,
+            Guid productId,
+            IKitchenOperationsSessionAuthorizer authorizer,
+            KitchenOperationsStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequirePermissionAsync(
+                context, terminalId, AvailabilitySuspendPermission, cancellationToken);
+            return Results.Ok(await store.SuspendProductAvailabilityAsync(productId, principal, cancellationToken));
         });
 
         group.MapGet("/printers", async (
