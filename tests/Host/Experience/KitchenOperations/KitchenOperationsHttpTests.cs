@@ -180,6 +180,60 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
     }
 
+    // V1-KIT-009: undo is a forward-step correction, not a cancel — a
+    // kitchen-staff-only (kitchen.advance) session must be able to fix its
+    // own misclick without needing orders.send.
+    [Fact]
+    public async Task KitchenAdvanceOnlySessionCanUndoItsOwnMistake()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId,
+            [ApplicationPermissions.KitchenAdvance]);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var preparing = await PostAsync<KitchenTicketV1>(
+            client,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition",
+            cookie,
+            new TransitionKitchenItemV1("Preparing", 1, 1));
+        var preparingItem = Assert.Single(preparing.Items);
+        Assert.Equal("Preparing", preparingItem.Status);
+
+        var undone = await PostAsync<KitchenTicketV1>(
+            client,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/undo",
+            cookie,
+            new UndoKitchenItemV1(preparing.RowVersion, preparingItem.RowVersion));
+
+        Assert.Equal("Queued", Assert.Single(undone.Items).Status);
+    }
+
+    [Fact]
+    public async Task UndoFromQueuedIsRejectedThereIsNothingToReverse()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId,
+            [ApplicationPermissions.KitchenAdvance]);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var undoRequest = JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/undo",
+            cookie,
+            new UndoKitchenItemV1(1, 1));
+        using var response = await client.SendAsync(undoRequest);
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal(
+            "DOMAIN_CONFLICT",
+            (await response.Content.ReadFromJsonAsync<KitchenOperationsErrorEnvelopeV1>())!.Error.Code);
+    }
+
     // Independent review (2026-09-13): the permission gate's "is this a
     // Cancelled request" check and the domain's eventual enum parse
     // (Enum.TryParse, which documentedly trims whitespace) must agree — a

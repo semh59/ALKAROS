@@ -170,6 +170,55 @@ public sealed class KitchenOperationsStore
     }
 
     /// <summary>
+    /// V1-KIT-009: reverses an item's most recent transition within its
+    /// short undo window. Reuses exactly the same post-save path
+    /// (state-sync publish + ready notification) as
+    /// <see cref="TransitionItemAsync"/> — the reverted status is
+    /// published like any other status, and if undoing Served back to
+    /// Ready lands the item on Ready again, the waiter is re-notified the
+    /// same way a fresh Ready transition would (correct: it really is
+    /// ready again).
+    /// </summary>
+    public async Task<KitchenTicketV1> UndoItemAsync(
+        Guid ticketId,
+        Guid itemId,
+        UndoKitchenItemV1 request,
+        CancellationToken cancellationToken)
+    {
+        EnsureId(ticketId, nameof(ticketId));
+        EnsureId(itemId, nameof(itemId));
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureVersion(request.ExpectedTicketRowVersion, nameof(request.ExpectedTicketRowVersion));
+        EnsureVersion(request.ExpectedItemRowVersion, nameof(request.ExpectedItemRowVersion));
+        var ticket = await _tickets.GetByIdAsync(ticketId, cancellationToken)
+            ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found.");
+        EnsureVersion(ticket.RowVersion, request.ExpectedTicketRowVersion, "kitchen ticket");
+        var item = ticket.Items.FirstOrDefault(value => value.Id == itemId)
+            ?? throw new KitchenOperationsNotFoundException("Kitchen ticket item was not found.");
+        EnsureVersion(item.RowVersion, request.ExpectedItemRowVersion, "kitchen ticket item");
+
+        try
+        {
+            var undone = ticket.UndoItemStatus(itemId);
+            await _tickets.SaveAsync(undone, request.ExpectedTicketRowVersion, cancellationToken);
+            var undoneItem = undone.Items.First(value => value.Id == itemId);
+            var liveSyncEnabled = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
+            await KitchenOrderItemStateSyncPublisher.PublishAsync(
+                _outbox, undone.OrderId, undoneItem, liveSyncEnabled, cancellationToken);
+            if (liveSyncEnabled && undoneItem.Status == KitchenTicketItemState.Ready)
+                await NotifyWaitersItemIsReadyAsync(undone.OrderId, undoneItem, cancellationToken);
+            var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
+                ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after undo.");
+            return ToDto(canonical);
+        }
+        catch (InvalidOperationException exception)
+        {
+            await ThrowConcurrencyOrNotFoundAsync(ticketId, request.ExpectedTicketRowVersion, exception, cancellationToken);
+            throw;
+        }
+    }
+
+    /// <summary>
     /// V1-WTR-009: broadcasts to every connected waiter device — there is no
     /// waiter-to-table assignment tracked anywhere in this system to target
     /// one specific device (see <see cref="WaiterOrderStatusHub"/>). A

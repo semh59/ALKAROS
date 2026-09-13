@@ -164,6 +164,25 @@ public static class KitchenOperationsEndpoints
             return Results.Ok(await store.TransitionItemAsync(ticketId, itemId, request, cancellationToken));
         });
 
+        group.MapPost("/tickets/{ticketId:guid}/items/{itemId:guid}/undo", async (
+            Guid terminalId,
+            Guid ticketId,
+            Guid itemId,
+            UndoKitchenItemV1 request,
+            IKitchenOperationsSessionAuthorizer authorizer,
+            KitchenOperationsStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            // V1-KIT-009: undo is always a forward-step correction (never a
+            // cancel), so it only ever needs kitchen.advance — the same
+            // grant a kitchen-staff-only session already has to make the
+            // mistake in the first place.
+            await authorizer.RequirePermissionAsync(
+                context, terminalId, ApplicationPermissions.KitchenAdvance, cancellationToken);
+            return Results.Ok(await store.UndoItemAsync(ticketId, itemId, request, cancellationToken));
+        });
+
         group.MapGet("/printers", async (
             Guid terminalId,
             IKitchenOperationsSessionAuthorizer authorizer,

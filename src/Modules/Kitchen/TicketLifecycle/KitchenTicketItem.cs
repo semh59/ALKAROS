@@ -99,6 +99,72 @@ public sealed class KitchenTicketItem
     /// </summary>
     public bool IsHeld { get; }
 
+    // V1-KIT-009: a short, time-boxed recovery for a misclick — the general
+    // KDS industry pattern (an undo option next to a just-completed item,
+    // gone once a few seconds pass). Deliberately covers only the forward
+    // progression chain (Queued<->Preparing<->Ready<->Served), not
+    // Cancelled: reopening a cancelled item touches void/stock-restore
+    // concerns this narrow recovery path has no business deciding.
+    public static readonly TimeSpan UndoWindow = TimeSpan.FromSeconds(10);
+
+    private static readonly Dictionary<KitchenTicketItemState, KitchenTicketItemState> UndoTargets =
+        new Dictionary<KitchenTicketItemState, KitchenTicketItemState>
+        {
+            [KitchenTicketItemState.Preparing] = KitchenTicketItemState.Queued,
+            [KitchenTicketItemState.Ready] = KitchenTicketItemState.Preparing,
+            [KitchenTicketItemState.Served] = KitchenTicketItemState.Ready,
+        };
+
+    /// <summary>
+    /// Whether this item's most recent transition can still be undone at
+    /// <paramref name="now"/> — it left a state <see cref="UndoTargets"/>
+    /// knows how to reverse, and its own <see cref="UpdatedAt"/> is within
+    /// <see cref="UndoWindow"/>. A missing <see cref="UpdatedAt"/> (never
+    /// transitioned) has nothing to undo.
+    /// </summary>
+    public bool CanUndo(DateTimeOffset now) =>
+        UndoTargets.ContainsKey(Status) && UpdatedAt is { } updatedAt && now - updatedAt <= UndoWindow;
+
+    /// <summary>
+    /// Reverses this item's most recent transition one stage. Clears
+    /// whichever milestone timestamp belonged to the state being left
+    /// (<see cref="ReadyAt"/> leaving Ready, <see cref="ServedAt"/> leaving
+    /// Served) since it is no longer accurate; an earlier milestone (e.g.
+    /// <see cref="ReadyAt"/> when undoing Served back to Ready) is left
+    /// alone — it really did happen.
+    /// </summary>
+    public KitchenTicketItem Undo(DateTimeOffset? timestamp = null)
+    {
+        var now = timestamp ?? DateTimeOffset.UtcNow;
+        if (!CanUndo(now))
+        {
+            throw new InvalidKitchenTransitionException(
+                $"Kitchen ticket item '{Id}' cannot be undone from {Status} (window expired or nothing to undo).");
+        }
+
+        var previous = UndoTargets[Status];
+        return new KitchenTicketItem(
+            Id,
+            TicketId,
+            OrderItemId,
+            ProductId,
+            ProductNameSnapshot,
+            Quantity,
+            ModifiersSummary,
+            Notes,
+            status: previous,
+            rowVersion: RowVersion,
+            createdAt: CreatedAt,
+            updatedAt: now,
+            readyAt: Status == KitchenTicketItemState.Ready ? null : ReadyAt,
+            servedAt: Status == KitchenTicketItemState.Served ? null : ServedAt,
+            cancelledAt: CancelledAt,
+            cancellationReason: CancellationReason,
+            isAgeRestricted: IsAgeRestricted,
+            courseNumber: CourseNumber,
+            isHeld: IsHeld);
+    }
+
     public bool CanTransitionTo(KitchenTicketItemState targetState)
     {
         if (Status == targetState)

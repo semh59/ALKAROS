@@ -126,6 +126,83 @@ public sealed class KitchenTicketUnitTests
         preparing.AcceptedAt.Should().Be(acceptedAt);
     }
 
+    // V1-KIT-009: short-window undo for a misclick — general KDS industry
+    // pattern found in the 2026-09-13 competitor research. Item-level only.
+    [Fact]
+    public void ItemCanBeUndoneWithinTheWindowClearingTheMilestoneItLeft()
+    {
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1);
+        var ticket = new KitchenTicket(ticketId, Guid.NewGuid(), "KT-920", "Grill", [item]);
+
+        var t0 = new DateTimeOffset(2026, 9, 14, 12, 0, 0, TimeSpan.Zero);
+        var ready = ticket
+            .UpdateItemStatus(item.Id, KitchenTicketItemState.Preparing, timestamp: t0)
+            .UpdateItemStatus(item.Id, KitchenTicketItemState.Ready, timestamp: t0.AddSeconds(5));
+        var readyItem = ready.Items.Single();
+        readyItem.Status.Should().Be(KitchenTicketItemState.Ready);
+        readyItem.ReadyAt.Should().NotBeNull();
+        readyItem.CanUndo(t0.AddSeconds(6)).Should().BeTrue();
+
+        var undone = ready.UndoItemStatus(item.Id, t0.AddSeconds(6));
+
+        var undoneItem = undone.Items.Single();
+        undoneItem.Status.Should().Be(KitchenTicketItemState.Preparing);
+        undoneItem.ReadyAt.Should().BeNull("the milestone for the state just left is no longer accurate");
+        // Ticket status is deliberately left as-is — see UndoItemStatus's own doc comment.
+        undone.Status.Should().Be(ready.Status);
+    }
+
+    [Fact]
+    public void UndoServedBackToReadyKeepsTheEarlierReadyMilestone()
+    {
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1);
+        var ticket = new KitchenTicket(ticketId, Guid.NewGuid(), "KT-921", "Grill", [item]);
+
+        var t0 = new DateTimeOffset(2026, 9, 14, 12, 0, 0, TimeSpan.Zero);
+        var served = ticket
+            .UpdateItemStatus(item.Id, KitchenTicketItemState.Preparing, timestamp: t0)
+            .UpdateItemStatus(item.Id, KitchenTicketItemState.Ready, timestamp: t0.AddSeconds(5))
+            .UpdateItemStatus(item.Id, KitchenTicketItemState.Served, timestamp: t0.AddSeconds(8));
+        var readyAt = served.Items.Single().ReadyAt;
+        readyAt.Should().NotBeNull();
+
+        var undone = served.UndoItemStatus(item.Id, t0.AddSeconds(9));
+
+        var undoneItem = undone.Items.Single();
+        undoneItem.Status.Should().Be(KitchenTicketItemState.Ready);
+        undoneItem.ServedAt.Should().BeNull();
+        undoneItem.ReadyAt.Should().Be(readyAt, "it really was ready before — that milestone is still true");
+    }
+
+    [Fact]
+    public void UndoIsRejectedOnceTheWindowHasPassed()
+    {
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1);
+        var ticket = new KitchenTicket(ticketId, Guid.NewGuid(), "KT-922", "Grill", [item]);
+
+        var t0 = new DateTimeOffset(2026, 9, 14, 12, 0, 0, TimeSpan.Zero);
+        var preparing = ticket.UpdateItemStatus(item.Id, KitchenTicketItemState.Preparing, timestamp: t0);
+        var tooLate = t0 + KitchenTicketItem.UndoWindow + TimeSpan.FromSeconds(1);
+
+        preparing.Items.Single().CanUndo(tooLate).Should().BeFalse();
+        var act = () => preparing.UndoItemStatus(item.Id, tooLate);
+        act.Should().Throw<InvalidKitchenTransitionException>();
+    }
+
+    [Fact]
+    public void UndoIsRejectedFromQueuedThereIsNothingToReverse()
+    {
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1);
+
+        item.CanUndo(DateTimeOffset.UtcNow).Should().BeFalse("a never-transitioned item has nothing to undo");
+        var act = () => item.Undo();
+        act.Should().Throw<InvalidKitchenTransitionException>();
+    }
+
     [Fact]
     public void TargetPrepMinutesMustBePositive()
     {

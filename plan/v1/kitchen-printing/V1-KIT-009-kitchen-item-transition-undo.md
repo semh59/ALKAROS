@@ -1,8 +1,8 @@
 # V1-KIT-009 - Mutfak kalemi için kısa pencereli geri alma (undo)
 
 - Task ID: V1-KIT-009
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -44,11 +44,14 @@ içinde** bir aşama geri alınabilmesini domain'e ekler.
    içinde (öneri: 10 sn — kesin değer bu görevde kararlaştırılır).
 2. Pencere dolduktan sonra istek 409/400 ile reddedilir (backend
    otoriter, istemci yalnız gösterir).
-3. Ticket-seviyesi durumun geri alma sonrası yeniden hesaplanması —
-   V1-KIT-007'nin auto-promote/auto-ready mantığıyla simetrik (bir kalem
-   `Preparing`'den `Queued`'a dönerse ve bu ticket'ın örtük kabulünü
-   sağlayan TEK kalemse, ticket da `Queued`'a dönmeli mi? Bu görevde
-   netleştirilecek açık bir tasarım sorusu).
+3. **Karar (bu görevde netleştirildi): ticket-seviyesi durum geri alma
+   sonrası OTOMATİK DÜŞÜRÜLMEZ.** Domain'de zaten hiçbir yerde bir
+   "demotion" yolu yok (tek regresyon auto-cancel — tüm kalemler iptal
+   olunca); yeni bir düşürme kuralı icat etmek (birden fazla kalemden
+   hangisinin ticket aşamasını "belirlediği" gibi kendi kenar durumlarını
+   getirirdi) — ekranın zaten kalem durumunu doğrudan gösterdiği, ticket
+   durumunu bir üst sınır olarak okumadığı göz önüne alınınca gereksiz.
+   Gerekçe `KitchenTicket.UndoItemStatus`'un kendi doc comment'inde.
 4. `kitchen.advance` izni yeterli — Mutfak Personeli kendi hatasını
    Mutfak Şefi'ne ihtiyaç duymadan düzeltebilmeli.
 
@@ -70,14 +73,35 @@ içinde** bir aşama geri alınabilmesini domain'e ekler.
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata.
-- `dotnet test` → yeni testler dahil ilgili projeler yeşil, gerçek
-  Postgres'e karşı; en az bir test pencere dolduktan sonra undo'nun
-  reddedildiğini kanıtlar.
+- `dotnet build ALKAROS.slnx -c Debug` → **Oluşturma başarılı oldu. 0
+  Uyarı, 0 Hata.**
+- `ALKAROS_TEST_PG_PORT=55432 ALKAROS_TEST_PG_PASSWORD=postgres dotnet
+  test tests/Modules/Kitchen/TicketLifecycle/ALKAROS.Kitchen.TicketLifecycle.Tests.csproj
+  -c Release` → **Başarılı! Başarısız: 0, Başarılı: 28, Atlanan: 0,
+  Toplam: 28** (24 mevcut + 4 yeni: pencere içinde geri alma +
+  `ReadyAt`/`ServedAt` doğru temizlenmesi, Served→Ready geri alırken
+  erken `ReadyAt`'ın korunması, pencere dolduktan sonra reddedilme,
+  `Queued`'dan geri almanın reddedilmesi).
+- `ALKAROS_TEST_PG_PORT=55432 ALKAROS_TEST_PG_PASSWORD=postgres dotnet
+  test tests/Host/Experience/KitchenOperations/ALKAROS.Host.Experience.KitchenOperations.Tests.csproj
+  -c Release` → **Başarılı! Başarısız: 0, Başarılı: 15, Atlanan: 0,
+  Toplam: 15** (13 mevcut + 2 yeni: `kitchen.advance`-yalnız oturumun
+  kendi hatasını `orders.send` olmadan geri alabildiği, `Queued`'dan geri
+  almanın 409 DOMAIN_CONFLICT verdiği).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
+  uyarı.
+- Uygulanan tasarım: `KitchenTicketItem.UndoWindow` = 10 sn,
+  `CanUndo(now)`/`Undo(timestamp)`; `KitchenTicket.UndoItemStatus`;
+  yeni `POST .../items/{itemId}/undo` (`UndoKitchenItemV1`),
+  `kitchen.advance` izniyle korunuyor; `KitchenOperationsStore.UndoItemAsync`
+  `TransitionItemAsync`'in aynı state-sync/bildirim yolunu yeniden
+  kullanıyor (Served→Ready geri alma "hazır" bildirimini doğru şekilde
+  yeniden tetikliyor).
 - Semih'in elle deneyebileceği senaryo: bir kalemi yanlışlıkla "Hazır"a
   ilerlet, birkaç saniye içinde geri al, kalemin "Hazırlanıyor"a
-  döndüğünü doğrula; aynı işlemi pencere geçtikten sonra dene, reddedildiğini
-  doğrula.
+  döndüğünü doğrula; aynı işlemi 10 saniye geçtikten sonra dene,
+  reddedildiğini doğrula.
 
 ## Handoff
 

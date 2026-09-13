@@ -233,6 +233,61 @@ public sealed class KitchenTicket
             targetPrepMinutes: TargetPrepMinutes);
     }
 
+    /// <summary>
+    /// V1-KIT-009: reverses one item's most recent transition within its
+    /// short undo window (<see cref="KitchenTicketItem.CanUndo"/>).
+    ///
+    /// Deliberate design decision (this task's own open question, now
+    /// closed): the ticket's own <see cref="Status"/> is NOT auto-demoted
+    /// here. Nothing in this domain demotes ticket status today either —
+    /// the only aggregate regression it models at all is auto-cancel (every
+    /// item cancelled). A ticket sitting at "Preparing" while its one item
+    /// just reverted to "Queued" is not a violated invariant: nothing reads
+    /// ticket.Status as an enforced ceiling on item progress, and the
+    /// screen already renders per-item status directly rather than
+    /// inferring it from the ticket. Inventing a new demotion rule nobody
+    /// asked for, with its own edge cases (which of several items "counts"
+    /// for the ticket's stage), is exactly the shortcut this codebase's
+    /// history keeps warning against.
+    /// </summary>
+    public KitchenTicket UndoItemStatus(Guid itemId, DateTimeOffset? timestamp = null)
+    {
+        var itemIndex = -1;
+        for (var i = 0; i < Items.Count; i++)
+        {
+            if (Items[i].Id == itemId)
+            {
+                itemIndex = i;
+                break;
+            }
+        }
+
+        if (itemIndex < 0)
+        {
+            throw new ArgumentException($"Kitchen ticket item '{itemId}' does not exist on ticket '{Id}'.", nameof(itemId));
+        }
+
+        var undoneItem = Items[itemIndex].Undo(timestamp);
+        var newItems = new List<KitchenTicketItem>(Items);
+        newItems[itemIndex] = undoneItem;
+
+        return new KitchenTicket(
+            Id,
+            OrderId,
+            TicketNumber,
+            StationId,
+            newItems,
+            status: Status,
+            rowVersion: RowVersion,
+            createdAt: CreatedAt,
+            updatedAt: timestamp ?? DateTimeOffset.UtcNow,
+            acceptedAt: AcceptedAt,
+            readyAt: ReadyAt,
+            cancelledAt: CancelledAt,
+            cancellationReason: CancellationReason,
+            targetPrepMinutes: TargetPrepMinutes);
+    }
+
     public static KitchenTicket CreateFromOrder(
         Order order,
         string stationId,

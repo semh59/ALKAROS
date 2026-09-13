@@ -49,6 +49,11 @@ public sealed record TransitionKitchenItemV1(
     long ExpectedItemRowVersion,
     string? Reason = null);
 
+/// <summary>V1-KIT-009: reverses an item's most recent transition within its short undo window (KitchenTicketItem.CanUndo) — no TargetState, there is only one valid direction.</summary>
+public sealed record UndoKitchenItemV1(
+    long ExpectedTicketRowVersion,
+    long ExpectedItemRowVersion);
+
 public sealed record PrinterV1(
     Guid Id,
     string Name,
