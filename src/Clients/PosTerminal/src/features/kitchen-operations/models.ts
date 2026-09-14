@@ -54,6 +54,11 @@ export interface KitchenTicket {
   cancelledAt: string | null;
   targetPrepMinutes: number;
   items: readonly KitchenTicketItem[];
+  // V1-KIT-012/V1-KDS-005: resolved fresh from orders.orders + table_mgmt.tables
+  // on the backend, never fabricated here. Both null for a table-less
+  // order (takeaway/bar tab).
+  tableId: string | null;
+  tableNumber: string | null;
 }
 
 export interface KitchenPrinter {

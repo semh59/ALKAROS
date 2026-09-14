@@ -441,10 +441,17 @@ function OrderGroupCard({
   const tone = ageTone(minutes, targetPrepMinutes);
   const allDone = tickets.every((t) => t.items.every((i) => i.status === "Ready" || i.status === "Served" || i.status === "Cancelled"));
   const anyCancellable = tickets.some((t) => t.status !== "Cancelled");
+  // V1-KIT-012/V1-KDS-005: every ticket here shares the same orderId, so
+  // they share the same table label too - the first one is authoritative.
+  // Falls back to the truncated order id for a table-less order (takeaway/
+  // bar tab), never fabricates a table number.
+  const tableNumber = tickets[0].tableNumber;
 
   return <article className={`kitchen-order kitchen-order--${tone}`}>
     <header className="kitchen-order__head">
-      <div><span className="kitchen-order__label">Sipariş</span><span className="kitchen-order__id">{compactId(orderId)}</span></div>
+      <div>{tableNumber
+        ? <><span className="kitchen-order__label">Masa</span><span className="kitchen-order__id">{tableNumber}</span></>
+        : <><span className="kitchen-order__label">Sipariş</span><span className="kitchen-order__id">{compactId(orderId)}</span></>}</div>
       <div className={`kitchen-order__timer kitchen-order__timer--${tone}`}>{ageLabel(minutes)}<small>hedef {targetPrepMinutes} dk</small></div>
       {allDone && <span className="kitchen-order__done">✓ Tüm kalemler hazır</span>}
       {canOperate && anyCancellable && <button type="button" className="kitchen-flag-btn" title="Sorun bildir / iptal et" onClick={() => onCancel(tickets[0])}>⚠</button>}

@@ -11,7 +11,7 @@ import { KitchenOperationsWorkspace, type KitchenData } from "./index";
 const data: KitchenData = {
   tickets: [{
     id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", stationId: "hot-line", status: "Preparing", rowVersion: 4,
-    createdAt: "2026-08-26T10:00:00Z", updatedAt: "2026-08-26T10:02:00Z", acceptedAt: "2026-08-26T10:01:00Z", readyAt: null, cancelledAt: null, targetPrepMinutes: 15,
+    createdAt: "2026-08-26T10:00:00Z", updatedAt: "2026-08-26T10:02:00Z", acceptedAt: "2026-08-26T10:01:00Z", readyAt: null, cancelledAt: null, targetPrepMinutes: 15, tableId: null, tableNumber: null,
     items: [{ id: "item-1", orderItemId: "order-item-1", productId: "product-1", productName: "Mercimek çorbası", quantity: 2, modifiers: "Ekmeği ayrı", notes: "az tuz", status: "Preparing", rowVersion: 2, createdAt: "2026-08-26T10:00:00Z", updatedAt: null, readyAt: null, servedAt: null, cancelledAt: null, isAgeRestricted: false }],
   }],
   printers: [{ id: "printer-1", name: "Mutfak yazıcı", stationId: "hot-line", isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
@@ -57,6 +57,24 @@ describe("kitchen operations workspace", () => {
     expect(next).not.toBeNull();
     await click(next);
     expect(onTransitionItem).toHaveBeenCalledWith(data.tickets[0], data.tickets[0].items[0], "Ready");
+  });
+
+  it("shows the real table number instead of the order id when the order has a table", async () => {
+    const withTable: KitchenData = {
+      ...data,
+      tickets: [{ ...data.tickets[0], tableId: "table-1", tableNumber: "7" }],
+    };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: withTable })} />);
+    expect(document.body.textContent).toContain("Masa");
+    expect(document.body.textContent).toContain("7");
+    expect(document.querySelector(".kitchen-order__label")!.textContent).toBe("Masa");
+  });
+
+  it("falls back to the truncated order id for a table-less (takeaway/bar) order", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    // The shared fixture's ticket has tableId/tableNumber: null.
+    expect(document.querySelector(".kitchen-order__label")!.textContent).toBe("Sipariş");
+    expect(document.querySelector(".kitchen-order__id")!.textContent).toBe("order-1");
   });
 
   it("shows the undo affordance right after a transition, even for a kitchen.advance-only (Mutfak Personeli) session", async () => {
