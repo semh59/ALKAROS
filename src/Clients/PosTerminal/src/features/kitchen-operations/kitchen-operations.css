@@ -23,9 +23,16 @@
 .kitchen-stat--danger { border-top: 3px solid var(--ds-color-danger); }
 .kitchen-stat--success { border-top: 3px solid var(--ds-color-success); }
 
-.kitchen-density { display: flex; gap: .3rem; border: 1px solid var(--ds-color-line); border-radius: 999px; padding: .25rem; background: var(--ds-color-surface); }
-.kitchen-density button { min-height: 38px; border: none; border-radius: 999px; padding: 0 .8rem; font: inherit; font-size: .74rem; font-weight: 800; color: var(--ds-color-muted); background: transparent; cursor: pointer; }
-.kitchen-density button.is-active { color: #fff; background: var(--ds-color-brand); }
+.kitchen-density, .kitchen-view-mode { display: flex; gap: .3rem; border: 1px solid var(--ds-color-line); border-radius: 999px; padding: .25rem; background: var(--ds-color-surface); }
+.kitchen-density button, .kitchen-view-mode button { min-height: 38px; border: none; border-radius: 999px; padding: 0 .8rem; font: inherit; font-size: .74rem; font-weight: 800; color: var(--ds-color-muted); background: transparent; cursor: pointer; }
+.kitchen-density button.is-active, .kitchen-view-mode button.is-active { color: #fff; background: var(--ds-color-brand); }
+
+/* V1-KDS-008: Tüm Gün Görünümü — bir istasyondaki açık kalemlerin ürün
+   bazlı toplamı, Expo kartlarının yerine geçen tek liste. */
+.kitchen-allday-list { display: grid; gap: .5rem; }
+.kitchen-allday-row { display: flex; align-items: baseline; gap: .75rem; border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); background: var(--ds-color-surface); padding: .85rem 1.1rem; }
+.kitchen-allday-row__qty { font-family: var(--ds-font-mono); font-weight: 900; font-size: clamp(1.3rem, 1vw + 1.1rem, 1.7rem); color: var(--ds-color-brand); font-variant-numeric: tabular-nums; }
+.kitchen-allday-row__name { font-weight: 700; font-size: clamp(1rem, .3vw + .95rem, 1.15rem); }
 
 .kitchen-workspace__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem); align-items: start; gap: var(--ds-space-5); }
 .kitchen-workspace__board { min-width: 0; display: grid; gap: var(--ds-space-4); }

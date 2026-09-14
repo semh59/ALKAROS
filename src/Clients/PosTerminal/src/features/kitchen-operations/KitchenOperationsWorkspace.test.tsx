@@ -105,6 +105,28 @@ describe("kitchen operations workspace", () => {
     expect(document.querySelectorAll(".kitchen-order").length).toBe(2);
   });
 
+  it("Tüm Gün Görünümü totals the same product across separate tickets and excludes cancelled/served items", async () => {
+    const mixed: KitchenData = {
+      ...data,
+      tickets: [
+        { ...data.tickets[0], id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", items: [
+          { ...data.tickets[0].items[0], id: "item-1", quantity: 2, status: "Preparing" },
+        ] },
+        { ...data.tickets[0], id: "ticket-2", orderId: "order-2", ticketNumber: "KT-002", items: [
+          { ...data.tickets[0].items[0], id: "item-2", quantity: 3, status: "Queued" },
+          { ...data.tickets[0].items[0], id: "item-3", quantity: 99, status: "Cancelled" },
+          { ...data.tickets[0].items[0], id: "item-4", quantity: 99, status: "Served" },
+        ] },
+      ],
+    };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: mixed })} />);
+    await click([...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent?.includes("Tüm Gün"))!);
+    const rows = document.querySelectorAll(".kitchen-allday-row");
+    expect(rows.length).toBe(1);
+    expect(rows[0].textContent).toContain("5×");
+    expect(rows[0].textContent).toContain("Mercimek çorbası");
+  });
+
   it("shows the undo affordance right after a transition, even for a kitchen.advance-only (Mutfak Personeli) session", async () => {
     const onUndoItem = vi.fn();
     const fresh: KitchenData = {

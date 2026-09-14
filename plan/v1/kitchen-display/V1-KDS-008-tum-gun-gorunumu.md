@@ -1,8 +1,8 @@
 # V1-KDS-008 - Mutfak ekranında Tüm Gün Görünümü
 
 - Task ID: V1-KDS-008
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -49,13 +49,25 @@ kalemin "hazır" sanılmasını önlemek için).
 
 ## Acceptance evidence
 
-- `cd src/Clients/PosTerminal && npx tsc --noEmit` → 0 hata.
-- `cd src/Clients/PosTerminal && npx vitest run` → tüm proje yeşil (yeni
-  testler: aynı üründen farklı biletlerde geçenlerin tek satırda
-  toplandığı; iptal edilmiş kalemlerin toplama dahil edilmediği).
+- `cd src/Clients/PosTerminal && npx tsc --noEmit` → **0 hata** (doğrulandı).
+- `cd src/Clients/PosTerminal && npx vitest run` → **Test Files 23 passed
+  (23), Tests 161 passed (161)** — tüm proje, izole değil (1 yeni test:
+  aynı üründen iki farklı bilette geçen, farklı miktarlardaki kalemlerin
+  ("Preparing" 2× ve "Queued" 3×) tek satırda 5× olarak toplandığı, aynı
+  üründen ama `Cancelled`/`Served` durumundaki kalemlerin — kasıtlı
+  olarak abartılı miktarlarla, 99× — toplama HİÇ dahil edilmediği tek
+  testte kanıtlanıyor).
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
-  uyarı.
-- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+  uyarı (doğrulandı).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`
+  (doğrulandı).
+- Uygulanan tasarım: toolbar'da Expo ↔ Tüm Gün geçişi (`viewMode` state,
+  varsayılan Expo — bugünkü davranış hiç değişmiyor); `allDayGroups`
+  aynı `openItemCount`'un kullandığı filtre kuralını (`Cancelled`/`Served`
+  hariç) tekrar kullanıyor; ürün bazlı azalan miktara göre sıralı.
+  Araştırma dosyasının kendi dersi kod içi yorum olarak da işlendi:
+  ALKAROS'ta bugün `Held` durumu yok, ama eklendiğinde filtrenin TEK
+  yeri burası — unutulmaması için işaretlendi.
 - Semih'in elle deneyebileceği senaryo: aynı üründen birden fazla bilette
   sipariş gönder, Tüm Gün Görünümü'ne geçip tek satırda doğru toplamı
   gör.

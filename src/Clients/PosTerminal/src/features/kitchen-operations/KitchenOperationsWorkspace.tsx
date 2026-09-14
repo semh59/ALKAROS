@@ -129,6 +129,7 @@ export function KitchenOperationsWorkspace({
   const [cancelReason, setCancelReason] = useState("");
   const [suspendPromptOpen, setSuspendPromptOpen] = useState(false);
   const [suspendProductId, setSuspendProductId] = useState("");
+  const [viewMode, setViewMode] = useState<"expo" | "allday">("expo");
 
   // V1-KDS-003: ticks every second (not 15s like before undo existed) so the
   // undo affordance's countdown and disappearance track the backend's real
@@ -166,6 +167,27 @@ export function KitchenOperationsWorkspace({
   // V1-KDS-002: the Goal's own scope - products from open tickets, not
   // every product in the catalog. A distinct product can appear on several
   // tickets/items; only the name is needed once each.
+  // V1-KDS-008: Toast's own All Day View - active items totaled by product
+  // so a high-volume station doesn't need to count tickets by hand. Same
+  // "still to be made" filter as openItemCount (Cancelled/Served excluded).
+  // Real lesson from Toast's own shipped bug (research doc, 2026-09-14):
+  // a Held item must never inflate this total, once ALKAROS's own status
+  // enum ever grows one - this filter is the one place that exclusion
+  // belongs, so it isn't forgotten when that day comes.
+  const allDayGroups = useMemo(() => {
+    const totals = new Map<string, { productName: string; quantity: number }>();
+    const order: string[] = [];
+    for (const ticket of data.tickets) {
+      for (const item of ticket.items) {
+        if (item.status === "Cancelled" || item.status === "Served") continue;
+        const existing = totals.get(item.productId);
+        if (existing) existing.quantity += item.quantity;
+        else { totals.set(item.productId, { productName: item.productName, quantity: item.quantity }); order.push(item.productId); }
+      }
+    }
+    return order.map((productId) => ({ productId, ...totals.get(productId)! })).sort((a, b) => b.quantity - a.quantity);
+  }, [data.tickets]);
+
   const openProducts = useMemo(() => {
     const seen = new Map<string, string>();
     for (const ticket of data.tickets)
@@ -343,6 +365,12 @@ export function KitchenOperationsWorkspace({
         <Stat label="Açık kalem" value={openItemCount} tone={autoDense ? "warning" : "neutral"} />
         <Stat label="Doğrulanamayan baskı" value={data.unknownDeliveries.length} tone={data.unknownDeliveries.length ? "danger" : "success"} />
       </div>
+      {/* V1-KDS-008: Expo (per-table) vs Tüm Gün (per-product totals) —
+          same board data, two ways to look at it. */}
+      <div className="kitchen-view-mode" role="group" aria-label="Görünüm modu">
+        <button type="button" className={viewMode === "expo" ? "is-active" : ""} onClick={() => setViewMode("expo")}>Expo</button>
+        <button type="button" className={viewMode === "allday" ? "is-active" : ""} onClick={() => setViewMode("allday")}>Tüm Gün</button>
+      </div>
       <div className="kitchen-density" role="group" aria-label="Ekran yoğunluğu">
         <button type="button" className={densityOverride === "auto" ? "is-active" : ""} onClick={() => setDensityOverride("auto")}>Otomatik{autoDense && densityOverride === "auto" ? " (yoğun)" : ""}</button>
         <button type="button" className={densityOverride === "sparse" ? "is-active" : ""} onClick={() => setDensityOverride("sparse")}>Sakin mod</button>
@@ -352,7 +380,11 @@ export function KitchenOperationsWorkspace({
 
     <div className="kitchen-workspace__layout">
       <div className="kitchen-workspace__board">
-        {state === "empty" || orderGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : orderGroups.map((group) => <OrderGroupCard
+        {viewMode === "allday" ? (
+          allDayGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif kalem yok"><p>Bu istasyona henüz aktif kalem gelmedi.</p></StateMessage></div> : <ul className="kitchen-allday-list" aria-label="Tüm gün toplamı">
+            {allDayGroups.map((group) => <li key={group.productId} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__name">{group.productName}</span></li>)}
+          </ul>
+        ) : state === "empty" || orderGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : orderGroups.map((group) => <OrderGroupCard
           key={group.groupKey}
           groupKey={group.groupKey}
           tickets={group.tickets}
