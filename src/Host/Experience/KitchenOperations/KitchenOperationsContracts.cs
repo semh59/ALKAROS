@@ -134,7 +134,15 @@ public sealed record BackupV1(
     int RetentionDays);
 
 /// <summary>V1-KIT-010: whether kitchen.live_sync_enabled is on for this deployment — read-only, the setting itself is changed elsewhere (Settings module).</summary>
-public sealed record LiveSyncStatusV1(bool Enabled);
+/// <summary>
+/// V1-KIT-013: DenseModeThreshold has its own name on purpose — it is a
+/// separate typed setting (kitchen.dense_mode_threshold, V1-SET-005), not
+/// derived from Enabled. Both are exposed on the same response so the
+/// Kitchen screen's one `/operations/live-sync` call (already fetched on
+/// every load) covers everything it needs to know about its own silent
+/// behavior toggles, rather than adding a second GET.
+/// </summary>
+public sealed record LiveSyncStatusV1(bool Enabled, int DenseModeThreshold);
 
 /// <summary>
 /// V1-KIT-008: the result of 86-ing a product from the Kitchen screen. A

@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Settings.KitchenDenseModeThreshold;
 using ALKAROS.Settings.KitchenLiveSync;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
@@ -285,6 +286,31 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
 
         var afterEnabled = await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
         Assert.True(afterEnabled!.Enabled);
+    }
+
+    /// <summary>
+    /// V1-KIT-013: kitchen.dense_mode_threshold (V1-SET-005) rides the same
+    /// response as live-sync — proves the default AND that an operator
+    /// change is actually read from the setting, not defaulted (same
+    /// independent-review lesson V1-KDS-004's own live-sync test learned).
+    /// </summary>
+    [Fact]
+    public async Task LiveSyncStatusReflectsTheDeploymentsDenseModeThresholdDefaultThenChanged()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, []);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var initial = await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
+        Assert.Equal(9, initial!.DenseModeThreshold);
+
+        var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
+        var record = await settings.GetRecordAsync(KitchenDenseModeThresholdSetting.Key);
+        await settings.SetValueAsync(KitchenDenseModeThresholdSetting.Key, 15, record!.RowVersion);
+
+        var afterChange = await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
+        Assert.Equal(15, afterChange!.DenseModeThreshold);
     }
 
     [Fact]

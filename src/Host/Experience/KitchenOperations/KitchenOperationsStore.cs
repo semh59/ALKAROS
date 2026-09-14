@@ -11,6 +11,7 @@ using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Messaging;
 using ALKAROS.Operations.BackupHealth;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Settings.KitchenDenseModeThreshold;
 using ALKAROS.Settings.KitchenLiveSync;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.SignalR;
@@ -427,8 +428,13 @@ public sealed class KitchenOperationsStore
     // independent review (2026-09-13) found this makes the setting's
     // effect invisible on the screen it actually changes. This is the
     // same flag TransitionItemAsync already reads before publishing.
+    // V1-KIT-013: kitchen.dense_mode_threshold (V1-SET-005) rides the same
+    // response — both are silent per-deployment behavior toggles the
+    // screen's one already-fetched-on-every-load GET should be honest about.
     public async Task<LiveSyncStatusV1> GetLiveSyncStatusAsync(CancellationToken cancellationToken)
-        => new(await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken));
+        => new(
+            await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken),
+            await KitchenDenseModeThresholdSetting.GetThresholdAsync(_settings, cancellationToken));
 
     /// <summary>
     /// V1-KIT-008: 86 a product from the Kitchen screen itself. Reuses

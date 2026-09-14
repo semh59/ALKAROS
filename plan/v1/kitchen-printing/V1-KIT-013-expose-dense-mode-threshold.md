@@ -1,8 +1,8 @@
 # V1-KIT-013 - kitchen.dense_mode_threshold değerini Kitchen HTTP yüzeyine aç
 
 - Task ID: V1-KIT-013
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -36,14 +36,24 @@ kendi tercihiydi, gereksiz bir ağ isteği eklenmesin).
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata.
+- `dotnet build ALKAROS.slnx -c Debug` → **0 uyarı, 0 hata** (doğrulandı).
 - `dotnet test tests/Host/Experience/KitchenOperations` → gerçek
-  Postgres'e karşı yeşil; en az bir yeni test — ayar hiç kayıtlı değilken
-  varsayılan `9` döndüğü, `SettingsService.SetValueAsync` ile
-  değiştirilince aynı uçtan yeni değerin döndüğü.
+  Postgres'e karşı **22/22 yeşil** (21 mevcut + 1 yeni:
+  `LiveSyncStatusReflectsTheDeploymentsDenseModeThresholdDefaultThenChanged`
+  — ayar hiç kayıtlı değilken varsayılan `9` döndüğü, `SettingsService
+  .SetValueAsync` ile `15` yapılınca aynı uçtan `15` döndüğü — V1-KDS-004'ün
+  kendi dersiyle aynı: hardcoded bir `9` implementasyonu da ilk yarıyı
+  geçerdi, ikinci kontrol bunu engelliyor).
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
-  uyarı.
-- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+  uyarı (doğrulandı).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`
+  (doğrulandı).
+- Uygulanan tasarım: `LiveSyncStatusV1(bool Enabled, int
+  DenseModeThreshold)` — V1-KIT-010'un ucuna yeni bir alan, ayrı bir GET
+  değil (gereksiz ağ isteği eklenmesin). `KitchenOperationsStore
+  .GetLiveSyncStatusAsync`, `KitchenDenseModeThresholdSetting
+  .GetThresholdAsync`'i zaten var olan `KitchenLiveSyncSetting
+  .IsEnabledAsync`'in yanına ekliyor.
 - Semih'in elle deneyebileceği senaryo: ayarı `15` yap, Mutfak
   ekranından `/operations/live-sync`'i çek, yanıtta eşiğin `15`
   göründüğünü doğrula.
