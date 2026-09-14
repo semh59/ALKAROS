@@ -109,24 +109,25 @@ in `ApplicationPermissions.Codes`) — `kitchen.advance` is the first Kitchen
 permission added to the central catalog, because it needed to be granted to
 the four existing FOH roles too, not just a new Kitchen-only one.
 
-### 3.2 `kitchen-chef` role (V1-IAM-029)
+### 3.2 `kitchen-chef` role (V1-IAM-029, extended V1-IAM-030)
 
 A sixth role, `kitchen-chef` ("Mutfak Şefi", an executive chef — distinct
 from the FOH `supervisor`/"şef garson", a senior waiter role with no kitchen
 duties). Holds everything `kitchen-staff` cannot: `orders.send` (cancel a
 kitchen ticket/item, or report a problem — the same permission a `Cancelled`
 transition already requires from any role), `kitchen.reprint` (approve or
-reject a physical-print recovery reprint), and `kitchen.availability.suspend`
-(86 a sold-out product from the Kitchen screen, V1-KIT-008). `kitchen.advance`
+reject a physical-print recovery reprint), `kitchen.availability.suspend`
+(86 a sold-out product from the Kitchen screen, V1-KIT-008), and
+`kitchen.routing.manage` (manage printer routing, V1-IAM-030 — V1-IAM-029
+had left this open; Semih's decision, 2026-09-14, granted it). `kitchen.advance`
 is granted too, so the chef is not left unable to do what a line cook
-already can. `kitchen.routing.manage` is deliberately **not** granted —
-whether a chef should also manage printer routing is an open question,
-not yet decided (V1-IAM-029's Out of scope).
+already can.
 
-Like `kitchen-staff`, `kitchen-chef`/`orders.send`/`kitchen.reprint`/
-`kitchen.availability.suspend` are seeded directly by migration 111, not
-listed in `ApplicationPermissions.RoleGrants` (that dictionary only covers
-the four original FOH roles).
+Like `kitchen-staff`, none of `kitchen-chef`'s grants are listed in
+`ApplicationPermissions.RoleGrants` (that dictionary only covers the four
+original FOH roles) — seeded directly by migrations 111 (the role itself
+plus `orders.send`/`kitchen.advance`/`kitchen.reprint`/
+`kitchen.availability.suspend`) and 112 (`kitchen.routing.manage`).
 
 ## 4. Grant flow (`authorization_grants`)
 
