@@ -563,6 +563,77 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    /// <summary>
+    /// V1-KIT-012: the table label is resolved fresh from orders.orders +
+    /// table_mgmt.tables, not stored on kitchen.kitchen_tickets — this
+    /// proves the list endpoint (batched resolver) actually returns it.
+    /// </summary>
+    [Fact]
+    public async Task ActiveTicketsIncludeTheRealTableNumberWhenTheOrderHasATable()
+    {
+        var terminalId = Guid.NewGuid();
+        var tableId = Guid.NewGuid();
+        var (ticketId, _, stationId) = await _database.SeedTicketAwaitingPrintJobAsync(tableId, "Masa 7");
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var tickets = await GetAsync<KitchenTicketV1[]>(
+            client, Prefix(terminalId) + $"/tickets?stationId={Uri.EscapeDataString(stationId)}", cookie);
+        var ticket = Assert.Single(tickets!, t => t.Id == ticketId);
+        Assert.Equal(tableId, ticket.TableId);
+        Assert.Equal("Masa 7", ticket.TableNumber);
+    }
+
+    /// <summary>
+    /// V1-KIT-012: a table-less order (takeaway/bar tab — SeedKitchenGraphAsync
+    /// never sets orders.orders.table_id) must not fabricate a table label.
+    /// </summary>
+    [Fact]
+    public async Task ActiveTicketsHaveNullTableFieldsForATableLessOrder()
+    {
+        var terminalId = Guid.NewGuid();
+        var seed = await _database.SeedKitchenGraphAsync();
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var tickets = await GetAsync<KitchenTicketV1[]>(
+            client, Prefix(terminalId) + "/tickets?stationId=hot-line", cookie);
+        var ticket = Assert.Single(tickets!, t => t.Id == seed.TicketId);
+        Assert.Null(ticket.TableId);
+        Assert.Null(ticket.TableNumber);
+    }
+
+    /// <summary>
+    /// V1-KIT-012: the single-ticket GET and the transition endpoint's
+    /// canonical response are separate code paths from the list endpoint —
+    /// this proves both are wired, not just GetActiveTicketsAsync.
+    /// </summary>
+    [Fact]
+    public async Task SingleTicketGetAndTransitionResponsesBothIncludeTheTableLabel()
+    {
+        var terminalId = Guid.NewGuid();
+        var tableId = Guid.NewGuid();
+        var (ticketId, _, _) = await _database.SeedTicketAwaitingPrintJobAsync(tableId, "Masa 12");
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var fetched = await GetAsync<KitchenTicketV1>(client, Prefix(terminalId) + $"/tickets/{ticketId:D}", cookie);
+        Assert.Equal(tableId, fetched.TableId);
+        Assert.Equal("Masa 12", fetched.TableNumber);
+
+        var item = Assert.Single(fetched.Items);
+        var transitioned = await PostAsync<KitchenTicketV1>(
+            client,
+            $"{Prefix(terminalId)}/tickets/{ticketId:D}/items/{item.Id:D}/transition",
+            cookie,
+            new TransitionKitchenItemV1("Preparing", fetched.RowVersion, item.RowVersion));
+        Assert.Equal(tableId, transitioned.TableId);
+        Assert.Equal("Masa 12", transitioned.TableNumber);
+    }
+
     private async Task<Guid> SeedProductAsync(bool isAvailable)
     {
         var productId = Guid.NewGuid();

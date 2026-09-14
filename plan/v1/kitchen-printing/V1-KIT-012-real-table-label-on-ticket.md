@@ -1,8 +1,8 @@
 # V1-KIT-012 - Mutfak biletine gerçek masa etiketi ekleme
 
 - Task ID: V1-KIT-012
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -57,15 +57,25 @@ yaş-kısıtı/kategori okumalarında var (V1-RMD-137/V1-KIT-006 emsali) —
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata.
+- `dotnet build ALKAROS.slnx -c Debug` → **0 uyarı, 0 hata** (doğrulandı).
 - `dotnet test tests/Host/Experience/KitchenOperations` → gerçek
-  Postgres'e karşı yeşil; en az iki yeni test — masaya bağlı bir sipariş
-  için doğru `tableId`/`tableNumber` döner, masasız (paket) bir sipariş
-  için ikisi de null döner; liste ucunun aynı siparişten gelen birden
-  fazla bilette tutarlı etiket döndürdüğü.
+  Postgres'e karşı **21/21 yeşil** (18 mevcut + 3 yeni: masaya bağlı bir
+  sipariş için liste ucunun doğru `tableId`/`tableNumber` döndürdüğü;
+  masasız (`SeedKitchenGraphAsync`'in ürettiği) bir sipariş için ikisinin
+  de null döndüğü; tekli GET ucunun VE bir transition'ın canonical
+  yanıtının da aynı etiketi taşıdığı — yalnız liste ucu değil, tüm bilet
+  döndüren yollar).
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
-  uyarı.
-- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+  uyarı (doğrulandı).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`
+  (doğrulandı).
+- Uygulanan tasarım: `KitchenOperationsStore.ResolveTableLabelsAsync`
+  (`orders.orders` + `table_mgmt.tables` üzerinde tek toplu
+  `WHERE order_id = ANY(@order_ids)` sorgusu, LEFT JOIN — masasız sipariş
+  veya silinmiş masa satırı satırı düşürmez, yalnız null döner) liste
+  ucunda tek seferde çağrılır; tekli uçlar `ResolveTableLabelAsync`
+  (aynı sorgunun tek-id sarmalayıcısı) kullanır. `KitchenTicket.cs`/
+  `kitchen.kitchen_tickets` şemasına hiç dokunulmadı.
 
 ## Handoff
 

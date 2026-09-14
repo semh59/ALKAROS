@@ -15,6 +15,7 @@ using ALKAROS.Settings.KitchenLiveSync;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.SignalR;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace ALKAROS.Host.Experience.KitchenOperations;
 
@@ -90,7 +91,12 @@ public sealed class KitchenOperationsStore
     {
         var normalizedStation = RequireText(stationId, 100, nameof(stationId));
         var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, cancellationToken);
-        return tickets.Select(ToDto).ToArray();
+        // V1-KIT-012: one batched query for every distinct order on this
+        // station's board, not one query per ticket — several tickets
+        // (different stations) can share the same orderId.
+        var labels = await ResolveTableLabelsAsync(
+            tickets.Select(ticket => ticket.OrderId).ToArray(), cancellationToken);
+        return tickets.Select(ticket => ToDto(ticket, ResolveLabel(labels, ticket.OrderId))).ToArray();
     }
 
     public async Task<KitchenTicketV1> GetTicketAsync(Guid ticketId, CancellationToken cancellationToken)
@@ -98,7 +104,7 @@ public sealed class KitchenOperationsStore
         EnsureId(ticketId, nameof(ticketId));
         var ticket = await _tickets.GetByIdAsync(ticketId, cancellationToken)
             ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found.");
-        return ToDto(ticket);
+        return ToDto(ticket, await ResolveTableLabelAsync(ticket.OrderId, cancellationToken));
     }
 
     public async Task<KitchenTicketV1> TransitionTicketAsync(
@@ -116,7 +122,7 @@ public sealed class KitchenOperationsStore
 
         if (ticket.Status == target)
         {
-            return ToDto(ticket);
+            return ToDto(ticket, await ResolveTableLabelAsync(ticket.OrderId, cancellationToken));
         }
 
         // V1-RMD-158: InvalidKitchenTransitionException comes from
@@ -144,7 +150,7 @@ public sealed class KitchenOperationsStore
 
         var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
             ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
-        return ToDto(canonical);
+        return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
     }
 
     public async Task<KitchenTicketV1> TransitionItemAsync(
@@ -178,7 +184,7 @@ public sealed class KitchenOperationsStore
                 await NotifyWaitersItemIsReadyAsync(transitioned.OrderId, transitionedItem, cancellationToken);
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after transition.");
-            return ToDto(canonical);
+            return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
         }
         catch (InvalidOperationException exception)
         {
@@ -227,7 +233,7 @@ public sealed class KitchenOperationsStore
                 await NotifyWaitersItemIsReadyAsync(undone.OrderId, undoneItem, cancellationToken);
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
                 ?? throw new KitchenOperationsNotFoundException("Kitchen ticket was not found after undo.");
-            return ToDto(canonical);
+            return ToDto(canonical, await ResolveTableLabelAsync(canonical.OrderId, cancellationToken));
         }
         catch (InvalidOperationException exception)
         {
@@ -611,7 +617,52 @@ public sealed class KitchenOperationsStore
             $"Kitchen ticket row version {actual.RowVersion} does not match expected version {expected}.");
     }
 
-    private static KitchenTicketV1 ToDto(KitchenTicket value)
+    /// <summary>
+    /// V1-KIT-012: one batched read for every ticket's table label, resolved
+    /// fresh from orders.orders + table_mgmt.tables — never stored on
+    /// kitchen.kitchen_tickets. A LEFT JOIN so a table-less order (no
+    /// orders.orders.table_id) or a deleted table row still returns the
+    /// order id with a null table number, rather than dropping the row.
+    /// </summary>
+    private async Task<IReadOnlyDictionary<Guid, (Guid? TableId, string? TableNumber)>> ResolveTableLabelsAsync(
+        IReadOnlyCollection<Guid> orderIds, CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<Guid, (Guid? TableId, string? TableNumber)>();
+        var distinctOrderIds = orderIds.Distinct().ToArray();
+        if (distinctOrderIds.Length == 0)
+            return result;
+
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT o.order_id, o.table_id, t.table_number
+            FROM orders.orders o
+            LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
+            WHERE o.order_id = ANY(@order_ids);
+            """);
+        command.Parameters.Add("order_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = distinctOrderIds;
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            result[reader.GetGuid(0)] = (
+                reader.IsDBNull(1) ? null : reader.GetGuid(1),
+                reader.IsDBNull(2) ? null : reader.GetString(2));
+        }
+        return result;
+    }
+
+    private async Task<(Guid? TableId, string? TableNumber)> ResolveTableLabelAsync(
+        Guid orderId, CancellationToken cancellationToken)
+    {
+        var labels = await ResolveTableLabelsAsync([orderId], cancellationToken);
+        return ResolveLabel(labels, orderId);
+    }
+
+    private static (Guid? TableId, string? TableNumber) ResolveLabel(
+        IReadOnlyDictionary<Guid, (Guid? TableId, string? TableNumber)> labels, Guid orderId)
+        => labels.TryGetValue(orderId, out var label) ? label : (null, null);
+
+    private static KitchenTicketV1 ToDto(KitchenTicket value, (Guid? TableId, string? TableNumber) tableLabel = default)
         => new(
             value.Id,
             value.OrderId,
@@ -625,7 +676,9 @@ public sealed class KitchenOperationsStore
             value.ReadyAt,
             value.CancelledAt,
             value.TargetPrepMinutes,
-            value.Items.Select(ToDto).ToArray());
+            value.Items.Select(ToDto).ToArray(),
+            tableLabel.TableId,
+            tableLabel.TableNumber);
 
     private static KitchenTicketItemV1 ToDto(KitchenTicketItem value)
         => new(

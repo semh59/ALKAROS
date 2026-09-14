@@ -36,7 +36,14 @@ public sealed record KitchenTicketV1(
     DateTimeOffset? ReadyAt,
     DateTimeOffset? CancelledAt,
     int TargetPrepMinutes,
-    IReadOnlyList<KitchenTicketItemV1> Items);
+    IReadOnlyList<KitchenTicketItemV1> Items,
+    // V1-KIT-012: resolved fresh from orders.orders + table_mgmt.tables at
+    // read time (same precedent as KitchenOrderSubmissionDispatcher's own
+    // age-restriction/category lookups, V1-RMD-137/V1-KIT-006) — never
+    // stored on kitchen.kitchen_tickets itself. Both null for a table-less
+    // order (takeaway/bar tab) — orders.orders.table_id is nullable.
+    Guid? TableId = null,
+    string? TableNumber = null);
 
 public sealed record TransitionKitchenTicketV1(
     string TargetState,
