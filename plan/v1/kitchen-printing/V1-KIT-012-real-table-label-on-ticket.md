@@ -71,11 +71,20 @@ yaş-kısıtı/kategori okumalarında var (V1-RMD-137/V1-KIT-006 emsali) —
   (doğrulandı).
 - Uygulanan tasarım: `KitchenOperationsStore.ResolveTableLabelsAsync`
   (`orders.orders` + `table_mgmt.tables` üzerinde tek toplu
-  `WHERE order_id = ANY(@order_ids)` sorgusu, LEFT JOIN — masasız sipariş
-  veya silinmiş masa satırı satırı düşürmez, yalnız null döner) liste
+  `WHERE order_id = ANY(@order_ids)` sorgusu, LEFT JOIN — masasız
+  (`table_id IS NULL`) sipariş satırı düşürmez, yalnız null döner) liste
   ucunda tek seferde çağrılır; tekli uçlar `ResolveTableLabelAsync`
   (aynı sorgunun tek-id sarmalayıcısı) kullanır. `KitchenTicket.cs`/
   `kitchen.kitchen_tickets` şemasına hiç dokunulmadı.
+- **Bağımsız denetim notu (2026-09-14)**: ilk yazımda bu madde "silinmiş
+  masa satırı" senaryosunu da LEFT JOIN'in koruduğunu iddia ediyordu —
+  denetim, `orders.orders.table_id`'nin `table_mgmt.tables`'a
+  `ON DELETE RESTRICT` FK'li olduğunu (`011-orders.up.sql`), yani canlı
+  bir sipariş işaret ederken bir masanın hiç silinemeyeceğini buldu; o
+  senaryo bu şemada zaten imkânsız, hiçbir testte de doğrulanmıyordu.
+  İddia düzeltildi (yalnız masasız sipariş), kod içi doc-comment de
+  aynı şekilde düzeltildi — engelleyici değildi, kozmetik bir aşırı
+  iddiaydı.
 
 ## Handoff
 

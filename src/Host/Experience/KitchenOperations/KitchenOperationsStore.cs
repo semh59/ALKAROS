@@ -621,8 +621,15 @@ public sealed class KitchenOperationsStore
     /// V1-KIT-012: one batched read for every ticket's table label, resolved
     /// fresh from orders.orders + table_mgmt.tables — never stored on
     /// kitchen.kitchen_tickets. A LEFT JOIN so a table-less order (no
-    /// orders.orders.table_id) or a deleted table row still returns the
-    /// order id with a null table number, rather than dropping the row.
+    /// orders.orders.table_id) still returns the order id with a null table
+    /// number, rather than dropping the row. Independent review (2026-09-14)
+    /// found the up-front claim here overstated: orders.orders.table_id has
+    /// an ON DELETE RESTRICT foreign key to table_mgmt.tables, so a table a
+    /// live order still points at can never actually be deleted — the "a
+    /// table row was deleted out from under an order" case this LEFT JOIN
+    /// was also written to guard against cannot occur in this schema. The
+    /// join stays (no reason to make this read fail closed on a NULL
+    /// table_id), the claim is just narrowed to what is real.
     /// </summary>
     private async Task<IReadOnlyDictionary<Guid, (Guid? TableId, string? TableNumber)>> ResolveTableLabelsAsync(
         IReadOnlyCollection<Guid> orderIds, CancellationToken cancellationToken)
