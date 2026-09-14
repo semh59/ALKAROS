@@ -55,22 +55,34 @@ public static class KitchenOperationsEndpoints
     /// every FOH role also holds (additive, no regression) so this never
     /// changes what a waiter/cashier/supervisor/manager session can do.
     ///
-    /// Independent review (2026-09-13) flagged a real gap here: the eventual
-    /// domain-level parse (<c>KitchenOperationsStore.ParseEnum</c>, backed by
-    /// <see cref="Enum.TryParse{TEnum}(string?, bool, out TEnum)"/>) trims
-    /// leading/trailing whitespace (documented .NET behavior), but a bare
-    /// <see cref="string.Equals(string?, string?, StringComparison)"/> here did
-    /// not — a request with <c>TargetState: "Cancelled "</c> would have been
-    /// gated as a non-Cancelled transition (kitchen.advance only) while still
-    /// actually cancelling the ticket downstream, letting a kitchen-staff-only
-    /// session bypass the orders.send requirement. Trimming here keeps this
-    /// check's notion of "is this a Cancelled request" identical to what the
-    /// store will actually parse.
+    /// Independent review (2026-09-13) fixed a whitespace-trimming gap here
+    /// (a bare string.Equals did not trim like the domain parse does). A
+    /// second, independent review (2026-09-14) found the same class of bug
+    /// survived in a different shape and empirically proved it: this used
+    /// to be a bare string comparison against the literal "Cancelled",
+    /// while the actual domain parse
+    /// (<c>KitchenOperationsStore.ParseEnum</c>, backed by
+    /// <see cref="Enum.TryParse{TEnum}(string?, bool, out TEnum)"/>) also
+    /// accepts an enum's raw numeric value — <c>TargetState: "4"</c> parses
+    /// to <see cref="KitchenTicketState.Cancelled"/> (ordinal 4) exactly as
+    /// well as the string "Cancelled" does. A request sending "4" was gated
+    /// as non-Cancelled (kitchen.advance only) while the store still
+    /// actually cancelled the ticket — a kitchen-staff-only session could
+    /// bypass the orders.send requirement with a numeric target state.
+    /// This is now generic and calls the identical
+    /// <c>Enum.TryParse</c>/<c>Enum.IsDefined</c> pair <c>ParseEnum</c>
+    /// itself uses, so this check's notion of "is this a Cancelled
+    /// request" can never diverge from what the store will actually parse
+    /// again, in any representation.
     /// </summary>
-    private static string TicketTransitionPermission(string? targetState) =>
-        string.Equals(targetState?.Trim(), nameof(KitchenTicketState.Cancelled), StringComparison.OrdinalIgnoreCase)
-            ? TicketMutationPermission
-            : ApplicationPermissions.KitchenAdvance;
+    private static string TicketTransitionPermission<TTargetState>(string? targetState)
+        where TTargetState : struct, Enum
+    {
+        var isCancelled = Enum.TryParse<TTargetState>(targetState, true, out var parsed)
+            && Enum.IsDefined(parsed)
+            && string.Equals(parsed.ToString(), nameof(KitchenTicketState.Cancelled), StringComparison.Ordinal);
+        return isCancelled ? TicketMutationPermission : ApplicationPermissions.KitchenAdvance;
+    }
 
     public static IServiceCollection AddKitchenOperationsExperience(this IServiceCollection services)
     {
@@ -163,7 +175,7 @@ public static class KitchenOperationsEndpoints
             CancellationToken cancellationToken) =>
         {
             await authorizer.RequirePermissionAsync(
-                context, terminalId, TicketTransitionPermission(request.TargetState), cancellationToken);
+                context, terminalId, TicketTransitionPermission<KitchenTicketState>(request.TargetState), cancellationToken);
             return Results.Ok(await store.TransitionTicketAsync(ticketId, request, cancellationToken));
         });
 
@@ -178,7 +190,7 @@ public static class KitchenOperationsEndpoints
             CancellationToken cancellationToken) =>
         {
             await authorizer.RequirePermissionAsync(
-                context, terminalId, TicketTransitionPermission(request.TargetState), cancellationToken);
+                context, terminalId, TicketTransitionPermission<KitchenTicketItemState>(request.TargetState), cancellationToken);
             return Results.Ok(await store.TransitionItemAsync(ticketId, itemId, request, cancellationToken));
         });
 

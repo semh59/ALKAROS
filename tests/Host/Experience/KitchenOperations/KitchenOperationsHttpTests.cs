@@ -240,11 +240,18 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
     // (Enum.TryParse, which documentedly trims whitespace) must agree — a
     // kitchen.advance-only session must not be able to bypass the
     // orders.send requirement for Cancelled just by padding the target
-    // state with whitespace.
+    // state with whitespace. A second independent review (2026-09-14)
+    // found and proved the same class of bug survived in a different
+    // representation: Enum.TryParse also accepts a raw numeric value, and
+    // KitchenTicketState.Cancelled is ordinal 4 — "4" used to bypass the
+    // gate exactly like " Cancelled" once did (empirically confirmed: a
+    // request sending "4" returned 200 and actually cancelled the ticket
+    // before the fix).
     [Theory]
     [InlineData("Cancelled ")]
     [InlineData(" Cancelled")]
     [InlineData("CANCELLED")]
+    [InlineData("4")]
     public async Task KitchenAdvanceOnlySessionCannotCancelViaWhitespaceOrCaseVariants(string targetState)
     {
         var terminalId = Guid.NewGuid();
@@ -260,6 +267,31 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
             $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/transition",
             cookie,
             new TransitionKitchenTicketV1(targetState, 1));
+        using var cancelDenied = await client.SendAsync(cancelRequest);
+        Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
+    }
+
+    // Same bypass class, item-level endpoint — it shares TicketTransitionPermission
+    // with the ticket endpoint but is a separate call site; proves the fix
+    // covers both, not just the one this bug was first found on.
+    [Theory]
+    [InlineData("Cancelled ")]
+    [InlineData("4")]
+    public async Task KitchenAdvanceOnlySessionCannotCancelAnItemViaWhitespaceOrNumericVariants(string targetState)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId,
+            [ApplicationPermissions.KitchenAdvance]);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var cancelRequest = JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition",
+            cookie,
+            new TransitionKitchenItemV1(targetState, 1, 1));
         using var cancelDenied = await client.SendAsync(cancelRequest);
         Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
     }
