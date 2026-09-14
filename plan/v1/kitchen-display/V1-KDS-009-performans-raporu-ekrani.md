@@ -22,6 +22,10 @@ prop'uyla kapılanır — bugün yalnız supervisor/manager taşıyor.
 - src/Clients/PosTerminal/src/features/kitchen-operations/** (Sınırlı ek
   — V1-KDS-001 sahipliğinde kalan dosyalar) — yeni bir rapor
   bileşeni/panel, `kitchenApi.ts`'e yeni bir çağrı.
+- src/Clients/PosTerminal/src/routes/workspace.tsx (Sınırlı ek, paylaşılan
+  — V1-KDS-001 sahipliğinde kalan dosya) — `KitchenRoute`'a `canViewReports`
+  (`capabilitySet.has("reports.view")`) ve `onLoadPerformanceReport`
+  prop'larını ekler; V1-KDS-002/V1-KDS-006 emsaliyle aynı desen.
 
 ## Out of scope
 
