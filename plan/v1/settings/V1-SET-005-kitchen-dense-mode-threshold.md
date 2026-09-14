@@ -1,8 +1,8 @@
 # V1-SET-005 - Mutfak yoğun mod eşiği ayarı
 
 - Task ID: V1-SET-005
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -21,6 +21,9 @@ bir işletme yalnız isterse değiştirir.
 - `plan/v1/settings/V1-SET-005-kitchen-dense-mode-threshold.md`
 - `src/Modules/Settings/KitchenDenseModeThreshold/**`
 - `tests/Modules/Settings/KitchenDenseModeThreshold/**`
+- ALKAROS.slnx (Sınırlı ek, paylaşılan, mekanik — V1-FND-001 sahipliğinde
+  kalan, V1-SET-002/003'ün kendi yeni test projelerini eklerken yaptığı
+  aynı zorunlu güncelleme) — yeni test projesinin tek satırlık kaydı.
 - Bu görev, başka bir task'in owned surface alanını değiştiremez.
 
 ## In scope
@@ -54,16 +57,22 @@ bir işletme yalnız isterse değiştirir.
 
 ## Acceptance evidence
 
-- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata.
+- `dotnet build ALKAROS.slnx -c Debug` → **0 uyarı, 0 hata** (doğrulandı).
 - `dotnet test tests/Modules/Settings/KitchenDenseModeThreshold` → gerçek
-  Postgres'e karşı yeşil (V1-SET-002'nin 4 testiyle birebir aynı desende:
-  ilk soruluşta `9` ile kendini kaydeder; ikinci `EnsureRegisteredAsync`
-  çağrısı no-op; operatör değiştirdiğinde `GetThresholdAsync` bunu
-  yansıtır; anahtar hiç dokunulmamışsa varsayılan `9`).
-- `dotnet test tests/Modules/Settings/TypedSettings` → regresyon yok.
+  Postgres'e karşı **4/4 yeşil** (V1-SET-002'nin 4 testiyle birebir aynı
+  desende: ilk soruluşta `9` ile kendini kaydeder; ikinci
+  `EnsureRegisteredAsync` çağrısı no-op — row_version değişmez; operatör
+  `15` yaptığında `GetThresholdAsync` bunu yansıtır; anahtar hiç
+  dokunulmamışsa varsayılan `9`).
+- `dotnet test tests/Modules/Settings/TypedSettings` → **33/33 yeşil**,
+  regresyon yok.
+- `python tools/project-manifest/project_manifest_tool.py` → **VALID**
+  (yeni test projesi `ALKAROS.slnx`'e eklendi, disk/slnx/ProjectReferences
+  arasında sapma yok).
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
-  uyarı.
-- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+  uyarı (doğrulandı).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`
+  (doğrulandı).
 
 ## Handoff
 

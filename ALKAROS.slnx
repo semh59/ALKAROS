@@ -83,6 +83,7 @@
   <Project Path="tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj" />
   <Project Path="tests/Modules/Settings/TypedSettings/ALKAROS.Settings.TypedSettings.Tests.csproj" />
   <Project Path="tests/Modules/Settings/KitchenLiveSync/ALKAROS.Settings.KitchenLiveSync.Tests.csproj" />
+  <Project Path="tests/Modules/Settings/KitchenDenseModeThreshold/ALKAROS.Settings.KitchenDenseModeThreshold.Tests.csproj" />
   <Project Path="tests/Modules/Settings/ReservationStation/ALKAROS.Settings.ReservationStation.Tests.csproj" />
   <Project Path="tests/Modules/Tables/CurrentPointers/ALKAROS.Tables.CurrentPointers.Tests.csproj" />
   <Project Path="tests/Modules/Tables/Reservations/ALKAROS.Tables.Reservations.Tests.csproj" />
