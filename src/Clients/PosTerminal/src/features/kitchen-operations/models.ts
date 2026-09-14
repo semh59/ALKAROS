@@ -138,6 +138,11 @@ export interface KitchenData {
   // silently skips the waiter ready-notification and KitchenState mirror
   // when off. Shown so the screen doesn't lie about what it's doing.
   liveSyncEnabled: boolean;
+  // V1-KIT-013/V1-KDS-006: kitchen.dense_mode_threshold — the open-item
+  // count at or above which the screen auto-switches to dense mode.
+  // Replaces the workspace's own former hardcoded constant (default 9,
+  // same number, so an untouched deployment never changes behavior).
+  denseModeThreshold: number;
 }
 
 /** V1-KIT-008/V1-KDS-002: the result of 86-ing a product from this screen. */

@@ -130,9 +130,13 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
         getCategories(),
         get<KitchenUnknownDelivery[]>("/deliveries/unknown"),
         get<KitchenBackup[]>("/operations/backups/recent?limit=20"),
-        get<{ enabled: boolean }>("/operations/live-sync"),
+        get<{ enabled: boolean; denseModeThreshold: number }>("/operations/live-sync"),
       ]);
-      return { tickets, printers, routes, categories, unknownDeliveries, health, backups, liveSyncEnabled: liveSync.enabled };
+      return {
+        tickets, printers, routes, categories, unknownDeliveries, health, backups,
+        liveSyncEnabled: liveSync.enabled,
+        denseModeThreshold: liveSync.denseModeThreshold,
+      };
     },
     transitionItem: (ticketId, itemId, targetState, expectedTicketRowVersion, expectedItemRowVersion, reason) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/items/${encodeURIComponent(itemId)}/transition`, { method: "POST", body: JSON.stringify({ targetState, expectedTicketRowVersion, expectedItemRowVersion, reason }) }),
     undoItem: (ticketId, itemId, expectedTicketRowVersion, expectedItemRowVersion) => request<KitchenTicket>(`/tickets/${encodeURIComponent(ticketId)}/items/${encodeURIComponent(itemId)}/undo`, { method: "POST", body: JSON.stringify({ expectedTicketRowVersion, expectedItemRowVersion }) }),

@@ -21,6 +21,7 @@ const data: KitchenData = {
   health: { snapshotId: "snapshot-1", databaseStatus: "Healthy", diskStatus: "Unhealthy", lastBackupStatus: "Unhealthy", freeDiskBytes: 10, databaseSizeBytes: 100, capturedAt: "2026-08-26T10:00:00Z" },
   backups: [{ backupId: "backup-1", backupType: "Full", fileSizeBytes: 0, status: "Failed", errorMessage: "Backup engine unavailable", startedAt: "2026-08-26T09:00:00Z", completedAt: "2026-08-26T09:01:00Z", retentionDays: 30 }],
   liveSyncEnabled: true,
+  denseModeThreshold: 9,
 };
 
 function baseProps(overrides: Partial<ComponentProps<typeof KitchenOperationsWorkspace>> = {}) {
@@ -147,6 +148,22 @@ describe("kitchen operations workspace", () => {
     expect(workspace.className).not.toContain("is-dense");
     await click([...document.querySelectorAll(".kitchen-density button")].find((button) => button.textContent?.includes("Yoğun mod"))!);
     expect(workspace.className).toContain("is-dense");
+  });
+
+  // V1-KIT-013/V1-KDS-006: proves the threshold is actually read from
+  // data.denseModeThreshold, not a hardcoded 9 — the shared fixture only
+  // ever has 1 open item, so a hardcoded-9 implementation would also
+  // leave this in sparse mode and the test would pass for the wrong
+  // reason. Setting the threshold down to 1 (at or below the fixture's
+  // real open-item count) must flip it to dense automatically.
+  it("auto-switches to dense mode using the deployment's own threshold, not a hardcoded one", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, denseModeThreshold: 1 } })} />);
+    expect(document.querySelector(".kitchen-workspace")!.className).toContain("is-dense");
+  });
+
+  it("stays in sparse mode when the open-item count is below the deployment's threshold", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, denseModeThreshold: 5 } })} />);
+    expect(document.querySelector(".kitchen-workspace")!.className).not.toContain("is-dense");
   });
 
   it("requires a supervisor reason before resolving Unknown delivery", async () => {

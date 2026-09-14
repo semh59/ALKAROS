@@ -4,7 +4,7 @@ import { createKitchenOperationsClient, KitchenOperationsApiError, loadKitchenRu
 const payloads = {
   tickets: [{ id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", stationId: "hot-line", status: "Queued", rowVersion: 1, createdAt: "2026-08-26T00:00:00Z", updatedAt: null, acceptedAt: null, readyAt: null, cancelledAt: null, items: [] }],
   printers: [], routes: [], unknownDeliveries: [], backups: [], health: { snapshotId: "health-1", databaseStatus: "Healthy", diskStatus: "Healthy", lastBackupStatus: "Healthy", freeDiskBytes: 100, databaseSizeBytes: 100, capturedAt: "2026-08-26T00:00:00Z" },
-  liveSync: { enabled: true },
+  liveSync: { enabled: true, denseModeThreshold: 9 },
 };
 
 describe("kitchen operations API client", () => {
@@ -42,6 +42,7 @@ describe("kitchen operations API client", () => {
     const result = await client.load();
     expect(result.tickets).toHaveLength(1);
     expect(result.liveSyncEnabled).toBe(true);
+    expect(result.denseModeThreshold).toBe(9);
     expect(fetcher).toHaveBeenCalledWith(expect.stringContaining("stationId=hot%20line"), expect.objectContaining({ credentials: "same-origin" }));
   });
 
@@ -57,6 +58,20 @@ describe("kitchen operations API client", () => {
     const client = createKitchenOperationsClient("terminal-1", "hot-line", fetcher);
     const result = await client.load();
     expect(result.liveSyncEnabled).toBe(false);
+  });
+
+  // V1-KIT-013/V1-KDS-006: same reasoning as the liveSyncEnabled test above
+  // — a hardcoded 9 would also have passed the "loads every production
+  // surface" test's own denseModeThreshold assertion, since that test's
+  // fixture value happens to be 9 too. This proves it is actually read.
+  it("reads denseModeThreshold: 15 from the endpoint rather than defaulting to 9", async () => {
+    const fetcher = vi.fn(async (url: RequestInfo | URL) => {
+      const path = String(url);
+      return new Response(JSON.stringify(path.includes("live-sync") ? { enabled: true, denseModeThreshold: 15 } : path.includes("health") ? payloads.health : path.includes("tickets") ? payloads.tickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
+    });
+    const client = createKitchenOperationsClient("terminal-1", "hot-line", fetcher);
+    const result = await client.load();
+    expect(result.denseModeThreshold).toBe(15);
   });
 
   it("keeps HTTP conflict and network errors typed", async () => {

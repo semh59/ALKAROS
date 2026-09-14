@@ -17,12 +17,13 @@ type Feedback = { tone: "success" | "error" | "conflict"; message: string } | nu
 type AgeTone = "ok" | "warn" | "crit";
 type Density = "auto" | "sparse" | "dense";
 
-// V1-KDS-001: an open ticket/item count at or above this makes the board
-// switch to dense mode on its own (fewer secondary details, so the screen
-// itself doesn't turn into a "white-out" rail during a rush). Kitchen staff
-// can always override with the density toggle; the override holds until the
-// next new ticket arrives, then the automatic evaluation runs again fresh.
-const AUTO_DENSE_OPEN_ITEM_THRESHOLD = 9;
+// V1-KDS-001: an open ticket/item count at or above the deployment's
+// dense-mode threshold (kitchen.dense_mode_threshold, V1-KIT-013/V1-KDS-006
+// — data.denseModeThreshold, default 9) makes the board switch to dense
+// mode on its own (fewer secondary details, so the screen itself doesn't
+// turn into a "white-out" rail during a rush). Kitchen staff can always
+// override with the density toggle; the override holds until the next new
+// ticket arrives, then the automatic evaluation runs again fresh.
 // Matches KitchenPrintDispatchHostedService's own 5s dispatch rhythm closely
 // enough that a ticket someone else advances shows up here without a manual
 // refresh, without hammering the API every tick.
@@ -153,7 +154,7 @@ export function KitchenOperationsWorkspace({
     () => data.tickets.reduce((sum, ticket) => sum + ticket.items.filter((item) => item.status !== "Cancelled" && item.status !== "Served").length, 0),
     [data.tickets],
   );
-  const autoDense = openItemCount >= AUTO_DENSE_OPEN_ITEM_THRESHOLD;
+  const autoDense = openItemCount >= data.denseModeThreshold;
   const density: Density = densityOverride === "auto" ? (autoDense ? "dense" : "sparse") : densityOverride;
   const isDense = density === "dense";
 
