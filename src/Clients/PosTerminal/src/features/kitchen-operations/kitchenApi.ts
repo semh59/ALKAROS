@@ -3,6 +3,7 @@ import type {
   KitchenCategory,
   KitchenData,
   KitchenHealthSnapshot,
+  KitchenPerformanceReport,
   KitchenPrinter,
   KitchenPrinterRoute,
   KitchenTicket,
@@ -28,6 +29,8 @@ export interface KitchenOperationsClient {
   createCategoryRoute: (categoryId: string, printerId: string) => Promise<KitchenPrinterRoute>;
   // V1-KIT-008: 86 a product from the Kitchen screen itself.
   suspendProductAvailability: (productId: string) => Promise<ProductAvailabilitySuspended>;
+  // V1-KIT-014: from/to as ISO-8601 strings, passed straight through to the query string.
+  getPerformanceReport: (from: string, to: string) => Promise<KitchenPerformanceReport>;
 }
 
 interface Page<T> { items: T[]; nextCursor: string | null }
@@ -153,5 +156,6 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
       body: JSON.stringify({ routeLevel: "Category", printerId, categoryId, isActive: true }),
     }),
     suspendProductAvailability: (productId) => request<ProductAvailabilitySuspended>(`/products/${encodeURIComponent(productId)}/suspend`, { method: "POST" }),
+    getPerformanceReport: (from, to) => request<KitchenPerformanceReport>(`/operations/performance-report?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`),
   };
 }

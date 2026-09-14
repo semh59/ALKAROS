@@ -6,6 +6,7 @@ import {
   healthStatusLabel,
   itemStatusLabels,
   type KitchenHealthSnapshot,
+  type KitchenPerformanceReport,
   type KitchenTicket,
   type KitchenTicketItem,
   type KitchenUnknownDelivery,
@@ -106,6 +107,7 @@ export function KitchenOperationsWorkspace({
   canOperate,
   canManageReprints,
   canSuspendAvailability,
+  canViewReports,
   onRefresh,
   onTransitionItem,
   onUndoItem,
@@ -114,6 +116,7 @@ export function KitchenOperationsWorkspace({
   onRejectReprint,
   onCreateCategoryRoute,
   onSuspendProductAvailability,
+  onLoadPerformanceReport,
   errorMessage: suppliedError,
   lastUpdated,
 }: KitchenWorkspaceProps) {
@@ -129,7 +132,9 @@ export function KitchenOperationsWorkspace({
   const [cancelReason, setCancelReason] = useState("");
   const [suspendPromptOpen, setSuspendPromptOpen] = useState(false);
   const [suspendProductId, setSuspendProductId] = useState("");
-  const [viewMode, setViewMode] = useState<"expo" | "allday">("expo");
+  const [viewMode, setViewMode] = useState<"expo" | "allday" | "report">("expo");
+  const [report, setReport] = useState<KitchenPerformanceReport | null>(null);
+  const [reportState, setReportState] = useState<"idle" | "loading" | "error">("idle");
 
   // V1-KDS-003: ticks every second (not 15s like before undo existed) so the
   // undo affordance's countdown and disappearance track the backend's real
@@ -152,6 +157,24 @@ export function KitchenOperationsWorkspace({
   // A manually chosen density resets whenever the ticket count changes (a
   // ticket arrived or left) — the automatic evaluation starts fresh again.
   useEffect(() => { setDensityOverride("auto"); }, [data.tickets.length]);
+
+  // V1-KIT-014/V1-KDS-009: fetched on demand, only when the report view is
+  // actually opened — not part of the workspace's own polling load(), a
+  // manager checking this a few times a shift does not need it refreshed
+  // every 8s like the board does. Window: today, UTC midnight to now.
+  useEffect(() => {
+    if (viewMode !== "report" || !onLoadPerformanceReport) return;
+    let cancelled = false;
+    setReportState("loading");
+    const nowDate = new Date();
+    const from = new Date(Date.UTC(nowDate.getUTCFullYear(), nowDate.getUTCMonth(), nowDate.getUTCDate())).toISOString();
+    const to = nowDate.toISOString();
+    onLoadPerformanceReport(from, to).then(
+      (result) => { if (!cancelled) { setReport(result); setReportState("idle"); } },
+      () => { if (!cancelled) setReportState("error"); },
+    );
+    return () => { cancelled = true; };
+  }, [viewMode, onLoadPerformanceReport]);
 
   const openItemCount = useMemo(
     () => data.tickets.reduce((sum, ticket) => sum + ticket.items.filter((item) => item.status !== "Cancelled" && item.status !== "Served").length, 0),
@@ -370,6 +393,10 @@ export function KitchenOperationsWorkspace({
       <div className="kitchen-view-mode" role="group" aria-label="Görünüm modu">
         <button type="button" className={viewMode === "expo" ? "is-active" : ""} onClick={() => setViewMode("expo")}>Expo</button>
         <button type="button" className={viewMode === "allday" ? "is-active" : ""} onClick={() => setViewMode("allday")}>Tüm Gün</button>
+        {/* V1-KIT-014/V1-KDS-009: hidden entirely without reports.view —
+            an operational report, not a locked-but-visible action like the
+            86 button (V1-KDS-002's own pattern doesn't apply here). */}
+        {canViewReports && onLoadPerformanceReport && <button type="button" className={viewMode === "report" ? "is-active" : ""} onClick={() => setViewMode("report")}>Rapor</button>}
       </div>
       <div className="kitchen-density" role="group" aria-label="Ekran yoğunluğu">
         <button type="button" className={densityOverride === "auto" ? "is-active" : ""} onClick={() => setDensityOverride("auto")}>Otomatik{autoDense && densityOverride === "auto" ? " (yoğun)" : ""}</button>
@@ -380,7 +407,9 @@ export function KitchenOperationsWorkspace({
 
     <div className="kitchen-workspace__layout">
       <div className="kitchen-workspace__board">
-        {viewMode === "allday" ? (
+        {viewMode === "report" ? (
+          <PerformanceReportPanel report={report} state={reportState} />
+        ) : viewMode === "allday" ? (
           allDayGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif kalem yok"><p>Bu istasyona henüz aktif kalem gelmedi.</p></StateMessage></div> : <ul className="kitchen-allday-list" aria-label="Tüm gün toplamı">
             {allDayGroups.map((group) => <li key={group.productId} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__name">{group.productName}</span></li>)}
           </ul>
@@ -446,6 +475,53 @@ export function KitchenOperationsWorkspace({
 
 function Stat({ label, value, tone = "neutral" }: { label: string; value: number; tone?: string }) {
   return <div className={`kitchen-stat kitchen-stat--${tone}`}><span>{label}</span><strong>{value}</strong></div>;
+}
+
+function formatMinutes(value: number): string {
+  return `${value.toFixed(1)} dk`;
+}
+
+function formatHour(iso: string): string {
+  const parsed = new Date(iso);
+  return Number.isNaN(parsed.getTime()) ? iso : parsed.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+// V1-KIT-014/V1-KDS-009: mean AND median shown side by side on purpose —
+// the research this is grounded in found a real vendor's own docs (Fresh
+// KDS) warning that an average alone can hide extreme values.
+function PerformanceReportPanel({ report, state }: { report: KitchenPerformanceReport | null; state: "idle" | "loading" | "error" }) {
+  if (state === "loading") {
+    return <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Rapor yükleniyor"><p>Bugünün performans verisi alınıyor…</p></StateMessage></div>;
+  }
+  if (state === "error" || !report) {
+    return <div className="kitchen-workspace__empty"><StateMessage tone="error" title="Rapor alınamadı"><p>Performans raporu yüklenemedi.</p></StateMessage></div>;
+  }
+  const maxHourlyCount = Math.max(1, ...report.hourlyVolume.map((hour) => hour.completedTicketCount));
+  return <div className="kitchen-report">
+    <section className="kitchen-report__stations" aria-label="İstasyon bazlı performans">
+      {report.stations.length === 0 ? <p className="kitchen-panel__muted">Bu aralıkta tamamlanmış bilet yok.</p> : <table className="kitchen-report__table">
+        <thead><tr><th>İstasyon</th><th>Bilet</th><th>Ortalama</th><th>Medyan</th><th>Hedef aşımı</th></tr></thead>
+        <tbody>
+          {report.stations.map((station) => <tr key={station.stationId}>
+            <td>{station.stationId}</td>
+            <td>{station.completedTicketCount}</td>
+            <td>{formatMinutes(station.averageMinutes)}</td>
+            <td>{formatMinutes(station.medianMinutes)}</td>
+            <td className={station.targetOverrunPercentage > 0 ? "kitchen-report__overrun" : undefined}>%{station.targetOverrunPercentage.toFixed(1)}</td>
+          </tr>)}
+        </tbody>
+      </table>}
+    </section>
+    <section className="kitchen-report__hourly" aria-label="Saatlik bilet hacmi">
+      {report.hourlyVolume.length === 0 ? <p className="kitchen-panel__muted">Bu aralıkta veri yok.</p> : <ul className="kitchen-report__bars">
+        {report.hourlyVolume.map((hour) => <li key={hour.hourStart} className="kitchen-report__bar-row">
+          <span className="kitchen-report__bar-label">{formatHour(hour.hourStart)}</span>
+          <span className="kitchen-report__bar-track"><span className="kitchen-report__bar-fill" style={{ width: `${(hour.completedTicketCount / maxHourlyCount) * 100}%` }} /></span>
+          <span className="kitchen-report__bar-value">{hour.completedTicketCount}</span>
+        </li>)}
+      </ul>}
+    </section>
+  </div>;
 }
 
 // Expo view: one table's whole round can spread across several orders and

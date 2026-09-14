@@ -1,8 +1,8 @@
 # V1-KDS-009 - Mutfak performans raporu ekranı
 
 - Task ID: V1-KDS-009
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -35,13 +35,27 @@ prop'uyla kapılanır — bugün yalnız supervisor/manager taşıyor.
 
 ## Acceptance evidence
 
-- `cd src/Clients/PosTerminal && npx tsc --noEmit` → 0 hata.
-- `cd src/Clients/PosTerminal && npx vitest run` → tüm proje yeşil (yeni
-  testler: rapor panelinin ortalama VE medyanı ayrı ayrı gösterdiği;
-  `canViewReports=false` bir oturumda panelin görünmediği).
+- `cd src/Clients/PosTerminal && npx tsc --noEmit` → **0 hata** (doğrulandı).
+- `cd src/Clients/PosTerminal && npx vitest run` → **Test Files 23 passed
+  (23), Tests 165 passed (165)** — tüm proje, izole değil (4 yeni test:
+  "Rapor" düğmesinin `canViewReports=false`'ta VE `onLoadPerformanceReport`
+  hiç verilmediğinde gizlendiği (iki ayrı koşul, ayrı ayrı test edildi);
+  rapor açılınca ortalama (15.0 dk) VE medyanın (10.0 dk — farklı değer,
+  testin anlamlı olduğunu kanıtlıyor) VE hedef aşım yüzdesinin (%33.3)
+  ekranda gerçekten göründüğü; yükleme başarısız olunca sınırlı bir hata
+  mesajı gösterildiği).
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
-  uyarı.
-- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+  uyarı (doğrulandı; ilk yazımda 1 Türkçe-karakter-in-İngilizce-yorum
+  ihlali bulundu ve düzeltildi).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`
+  (doğrulandı).
+- Uygulanan tasarım: Expo/Tüm Gün'ün yanına üçüncü bir görünüm modu
+  ("Rapor"), yalnız `canViewReports && onLoadPerformanceReport` ikisi de
+  doğruyken düğme render edilir (gizli, V1-KDS-002'nin "kilitli ama
+  görünür" desenini bilinçli olarak takip etmiyor — bu ayrı bir operasyon
+  ekranı, küçük bir aksiyon değil). Rapor yalnız "Rapor" moduna
+  geçildiğinde çekilir (workspace'in kendi 8sn'lik polling'ine dahil
+  değil), varsayılan aralık bugün (UTC gece yarısından şu ana kadar).
 - Semih'in elle deneyebileceği senaryo: birkaç bilet tamamla, performans
   panelini aç, istasyon bazlı ortalama/medyan sürelerin ve hedef aşım
   yüzdesinin gerçek verilerle eşleştiğini doğrula.

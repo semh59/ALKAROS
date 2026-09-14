@@ -136,7 +136,7 @@ export function ExperiencePage({
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/catalog" && <CatalogRoute canManage={canOpenRoute} />}
-    {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canAdvance={capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")} canOperate={capabilitySet.has("orders.send")} canSuspendAvailability={capabilitySet.has("kitchen.availability.suspend")} />}
+    {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canAdvance={capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")} canOperate={capabilitySet.has("orders.send")} canSuspendAvailability={capabilitySet.has("kitchen.availability.suspend")} canViewReports={capabilitySet.has("reports.view")} />}
     {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
     {path === "/authorization" && <AuthorizationDecisionsRoute canView={canOpenRoute} />}
     {!(["/", "/tables", "/billing", "/catalog", "/kitchen", "/system-health", "/authorization"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
@@ -467,7 +467,7 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
 
 const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], categories: [], unknownDeliveries: [], health: null, backups: [], liveSyncEnabled: false, denseModeThreshold: 9 };
 
-function KitchenRoute({ terminalId, canAdvance, canOperate, canSuspendAvailability }: { terminalId: string; canAdvance: boolean; canOperate: boolean; canSuspendAvailability: boolean }) {
+function KitchenRoute({ terminalId, canAdvance, canOperate, canSuspendAvailability, canViewReports }: { terminalId: string; canAdvance: boolean; canOperate: boolean; canSuspendAvailability: boolean; canViewReports: boolean }) {
   const [stationId, setStationId] = useState("");
   const [client, setClient] = useState<KitchenOperationsClient | null>(null);
   const [state, setState] = useState<KitchenWorkspaceState>("loading");
@@ -505,6 +505,7 @@ function KitchenRoute({ terminalId, canAdvance, canOperate, canSuspendAvailabili
     canOperate={canOperate}
     canManageReprints={canOperate}
     canSuspendAvailability={canSuspendAvailability}
+    canViewReports={canViewReports}
     onRefresh={load}
     onTransitionItem={canAdvance && client ? async (ticket, item, target) => { await client.transitionItem(ticket.id, item.id, target, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
     onUndoItem={canAdvance && client ? async (ticket, item) => { await client.undoItem(ticket.id, item.id, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
@@ -517,6 +518,7 @@ function KitchenRoute({ terminalId, canAdvance, canOperate, canSuspendAvailabili
     // this task's own acceptance evidence (a kitchen-staff session must see
     // the same button, locked, not a hidden one).
     onSuspendProductAvailability={client ? async (productId) => { const result = await client.suspendProductAvailability(productId); await load(); return result; } : undefined}
+    onLoadPerformanceReport={client ? (from, to) => client.getPerformanceReport(from, to) : undefined}
     errorMessage={errorMessage}
     lastUpdated={lastUpdated}
   />;

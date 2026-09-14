@@ -34,6 +34,21 @@
 .kitchen-allday-row__qty { font-family: var(--ds-font-mono); font-weight: 900; font-size: clamp(1.3rem, 1vw + 1.1rem, 1.7rem); color: var(--ds-color-brand); font-variant-numeric: tabular-nums; }
 .kitchen-allday-row__name { font-weight: 700; font-size: clamp(1rem, .3vw + .95rem, 1.15rem); }
 
+/* V1-KIT-014/V1-KDS-009: performans raporu — istasyon tablosu + saatlik
+   çubuk grafik, ek bir kütüphane olmadan düz CSS ile. */
+.kitchen-report { display: grid; gap: var(--ds-space-4); }
+.kitchen-report__stations, .kitchen-report__hourly { border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); background: var(--ds-color-surface); padding: var(--ds-space-4); }
+.kitchen-report__table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.kitchen-report__table th { text-align: left; font-size: .68rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--ds-color-muted); padding: 0 .6rem .5rem; }
+.kitchen-report__table td { padding: .5rem .6rem; border-top: 1px solid var(--ds-color-line); font-weight: 700; }
+.kitchen-report__overrun { color: var(--ds-color-warning); }
+.kitchen-report__bars { display: grid; gap: .4rem; }
+.kitchen-report__bar-row { display: grid; grid-template-columns: 3.5rem 1fr 2.5rem; align-items: center; gap: .6rem; font-variant-numeric: tabular-nums; }
+.kitchen-report__bar-label { font-size: .8rem; color: var(--ds-color-muted); font-weight: 700; }
+.kitchen-report__bar-track { height: .65rem; border-radius: 999px; background: var(--ds-color-line); overflow: hidden; }
+.kitchen-report__bar-fill { display: block; height: 100%; background: var(--ds-color-brand); border-radius: inherit; }
+.kitchen-report__bar-value { text-align: right; font-weight: 800; }
+
 .kitchen-workspace__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem); align-items: start; gap: var(--ds-space-5); }
 .kitchen-workspace__board { min-width: 0; display: grid; gap: var(--ds-space-4); }
 .kitchen-workspace__empty { min-height: 16rem; display: grid; place-items: center; border: 1px dashed var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: var(--ds-space-5); }

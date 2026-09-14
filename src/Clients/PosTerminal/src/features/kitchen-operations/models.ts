@@ -156,6 +156,34 @@ export interface ProductAvailabilitySuspended {
   planConflict: boolean;
 }
 
+/**
+ * V1-KIT-014/V1-KDS-009: one station's timing over a report window. Mean
+ * AND median are both carried — a real vendor's own docs (Fresh KDS)
+ * warn an average alone can hide extreme values. `targetMinutes` is
+ * honestly the backend's fixed global default, not a per-product
+ * estimate.
+ */
+export interface StationPerformance {
+  stationId: string;
+  completedTicketCount: number;
+  averageMinutes: number;
+  medianMinutes: number;
+  targetMinutes: number;
+  targetOverrunPercentage: number;
+}
+
+export interface HourlyVolume {
+  hourStart: string;
+  completedTicketCount: number;
+}
+
+export interface KitchenPerformanceReport {
+  from: string;
+  to: string;
+  stations: readonly StationPerformance[];
+  hourlyVolume: readonly HourlyVolume[];
+}
+
 export interface KitchenWorkspaceProps {
   state: KitchenWorkspaceState;
   stationId: string;
@@ -175,6 +203,11 @@ export interface KitchenWorkspaceProps {
   // also grants it to manager, so V1-KIT-008's endpoint is testable before
   // this role existed). Neither `canAdvance` nor `canOperate` implies this.
   canSuspendAvailability: boolean;
+  // V1-KIT-014/V1-KDS-009: `reports.view` — held only by supervisor/
+  // manager today (same gate the audit-log endpoints already use).
+  // Neither `canAdvance`/`canOperate`/`canManageReprints` implies this;
+  // whether kitchen-chef should hold it is a separate, undecided question.
+  canViewReports: boolean;
   onRefresh: () => void | Promise<void>;
   onTransitionItem?: (ticket: KitchenTicket, item: KitchenTicketItem, targetState: KitchenTicketItem["status"]) => void | Promise<void>;
   // V1-KIT-009/V1-KDS-003: reverses an item's most recent transition within
@@ -189,6 +222,10 @@ export interface KitchenWorkspaceProps {
   // itself (locked, not hidden, for a non-chef session, per this task's own
   // acceptance evidence), the actual call is gated server-side regardless.
   onSuspendProductAvailability?: (productId: string) => Promise<ProductAvailabilitySuspended>;
+  // V1-KIT-014/V1-KDS-009: from/to as ISO-8601 strings, matching the
+  // backend's own query parameter shape exactly - no client-side date
+  // parsing/reformatting needed.
+  onLoadPerformanceReport?: (from: string, to: string) => Promise<KitchenPerformanceReport>;
   errorMessage?: string;
   lastUpdated?: string;
 }

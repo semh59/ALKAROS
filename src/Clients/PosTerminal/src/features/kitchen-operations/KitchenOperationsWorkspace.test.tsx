@@ -25,7 +25,7 @@ const data: KitchenData = {
 };
 
 function baseProps(overrides: Partial<ComponentProps<typeof KitchenOperationsWorkspace>> = {}) {
-  return { state: "ready" as const, stationId: "hot-line", data, canAdvance: true, canOperate: true, canManageReprints: true, canSuspendAvailability: true, onRefresh: vi.fn(), onTransitionItem: vi.fn(), onTransitionTicket: vi.fn(), onApproveReprint: vi.fn(), onRejectReprint: vi.fn(), ...overrides };
+  return { state: "ready" as const, stationId: "hot-line", data, canAdvance: true, canOperate: true, canManageReprints: true, canSuspendAvailability: true, canViewReports: true, onRefresh: vi.fn(), onTransitionItem: vi.fn(), onTransitionTicket: vi.fn(), onApproveReprint: vi.fn(), onRejectReprint: vi.fn(), ...overrides };
 }
 
 describe("kitchen operations workspace", () => {
@@ -321,6 +321,45 @@ describe("kitchen operations workspace", () => {
 
     expect(document.body.textContent).toContain("Mercimek çorbası tükendi olarak işaretlendi.");
     expect(document.body.textContent).not.toContain("yöneticiye bildirim kaydı düşüldü");
+  });
+
+  it("hides the Rapor toggle entirely without reports.view", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ canViewReports: false, onLoadPerformanceReport: vi.fn() })} />);
+    expect([...document.querySelectorAll(".kitchen-view-mode button")].some((button) => button.textContent === "Rapor")).toBe(false);
+  });
+
+  it("hides the Rapor toggle when no report loader is supplied at all, even with reports.view", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ canViewReports: true, onLoadPerformanceReport: undefined })} />);
+    expect([...document.querySelectorAll(".kitchen-view-mode button")].some((button) => button.textContent === "Rapor")).toBe(false);
+  });
+
+  it("loads and shows the performance report's mean, median and hourly volume when Rapor is opened", async () => {
+    const onLoadPerformanceReport = vi.fn().mockResolvedValue({
+      from: "2026-09-14T00:00:00Z",
+      to: "2026-09-14T12:00:00Z",
+      stations: [{ stationId: "hot-line", completedTicketCount: 3, averageMinutes: 15, medianMinutes: 10, targetMinutes: 15, targetOverrunPercentage: 33.3 }],
+      hourlyVolume: [{ hourStart: "2026-09-14T08:00:00Z", completedTicketCount: 2 }],
+    });
+    await render(<KitchenOperationsWorkspace {...baseProps({ onLoadPerformanceReport })} />);
+    await click([...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent === "Rapor")!);
+    // The fetch is a promise resolved outside the click's own synchronous
+    // event handler (inside a useEffect), so it needs its own flush.
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+
+    expect(onLoadPerformanceReport).toHaveBeenCalledWith("2026-09-14T00:00:00.000Z", expect.any(String));
+    expect(document.body.textContent).toContain("hot-line");
+    expect(document.body.textContent).toContain("15.0 dk");
+    expect(document.body.textContent).toContain("10.0 dk");
+    expect(document.body.textContent).toContain("%33.3");
+  });
+
+  it("shows a bounded error when the performance report fails to load", async () => {
+    const onLoadPerformanceReport = vi.fn().mockRejectedValue(new Error("network down"));
+    await render(<KitchenOperationsWorkspace {...baseProps({ onLoadPerformanceReport })} />);
+    await click([...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent === "Rapor")!);
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+
+    expect(document.body.textContent).toContain("Rapor alınamadı");
   });
 
   it("has no critical or serious axe violations", async () => {
