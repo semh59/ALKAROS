@@ -133,16 +133,50 @@ public sealed record BackupV1(
     DateTimeOffset? CompletedAt,
     int RetentionDays);
 
-/// <summary>V1-KIT-010: whether kitchen.live_sync_enabled is on for this deployment — read-only, the setting itself is changed elsewhere (Settings module).</summary>
 /// <summary>
-/// V1-KIT-013: DenseModeThreshold has its own name on purpose — it is a
-/// separate typed setting (kitchen.dense_mode_threshold, V1-SET-005), not
-/// derived from Enabled. Both are exposed on the same response so the
-/// Kitchen screen's one `/operations/live-sync` call (already fetched on
-/// every load) covers everything it needs to know about its own silent
-/// behavior toggles, rather than adding a second GET.
+/// V1-KIT-010: whether kitchen.live_sync_enabled is on for this deployment
+/// — read-only, the setting itself is changed elsewhere (Settings
+/// module). V1-KIT-013: DenseModeThreshold has its own name on purpose —
+/// it is a separate typed setting (kitchen.dense_mode_threshold,
+/// V1-SET-005), not derived from Enabled. Both are exposed on the same
+/// response so the Kitchen screen's one `/operations/live-sync` call
+/// (already fetched on every load) covers everything it needs to know
+/// about its own silent behavior toggles, rather than adding a second GET.
 /// </summary>
 public sealed record LiveSyncStatusV1(bool Enabled, int DenseModeThreshold);
+
+/// <summary>
+/// V1-KIT-014: research-grounded answer to Toast's "Tickets by Hour"/
+/// "Tickets by Fulfillment Time" and Lightspeed's "KDS Statistics"
+/// (docs/engineering/kitchen-allday-view-and-performance-report-research.md).
+/// Built entirely from kitchen.kitchen_tickets' own existing timestamps —
+/// no new event-tracking schema. <see cref="StationPerformanceV1.TargetMinutes"/>
+/// is honestly a fixed global default (KitchenTicket.DefaultTargetPrepMinutes),
+/// not a per-product estimate a Toast/Lightspeed-class system would carry.
+/// </summary>
+public sealed record KitchenPerformanceReportV1(
+    DateTimeOffset From,
+    DateTimeOffset To,
+    IReadOnlyList<StationPerformanceV1> Stations,
+    IReadOnlyList<HourlyVolumeV1> HourlyVolume);
+
+/// <summary>
+/// One station's timing over the report window, for tickets that reached
+/// Ready (a ticket still open at query time is not a data point, it is
+/// simply not counted yet). Mean AND median are both reported — the
+/// research this task is grounded in found a real vendor's own docs
+/// (Fresh KDS) warning that an average alone can hide extreme values.
+/// </summary>
+public sealed record StationPerformanceV1(
+    string StationId,
+    int CompletedTicketCount,
+    double AverageMinutes,
+    double MedianMinutes,
+    int TargetMinutes,
+    double TargetOverrunPercentage);
+
+/// <summary>Completed-ticket volume for one UTC hour inside the report window.</summary>
+public sealed record HourlyVolumeV1(DateTimeOffset HourStart, int CompletedTicketCount);
 
 /// <summary>
 /// V1-KIT-008: the result of 86-ing a product from the Kitchen screen. A

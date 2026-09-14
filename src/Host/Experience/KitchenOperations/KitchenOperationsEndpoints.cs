@@ -377,6 +377,28 @@ public static class KitchenOperationsEndpoints
             return Results.Ok(await store.GetLiveSyncStatusAsync(cancellationToken));
         });
 
+        // V1-KIT-014: research-grounded (docs/engineering/kitchen-allday-view-
+        // and-performance-report-research.md) station performance report —
+        // reports.view, the same gate /audit/aggregate and /audit/correlation
+        // already use, not the plain RequireReadAsync every cashier session
+        // passes. Only supervisor/manager hold reports.view today; whether
+        // Mutfak Sefi should is a separate, undecided product question.
+        group.MapGet("/operations/performance-report", async (
+            Guid terminalId,
+            DateTimeOffset? from,
+            DateTimeOffset? to,
+            IKitchenOperationsSessionAuthorizer authorizer,
+            KitchenOperationsStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await authorizer.RequirePermissionAsync(
+                context, terminalId, ApplicationPermissions.ReportsView, cancellationToken);
+            if (from is null || to is null)
+                throw new ArgumentException("Both 'from' and 'to' query parameters are required.");
+            return Results.Ok(await store.GetPerformanceReportAsync(from.Value, to.Value, cancellationToken));
+        });
+
         group.MapGet("/operations/health/latest", async (
             Guid terminalId,
             IKitchenOperationsSessionAuthorizer authorizer,

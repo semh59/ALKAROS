@@ -12,8 +12,10 @@
 İstasyon bazlı ortalama/medyan süre, hedef aşım yüzdesi, saatlik hacim
 grafiği. Araştırmanın kendi dersi: ortalama VE medyan YAN YANA gösterilir
 (yalnız ortalama göstermek yanıltıcı olabilir — bkz. araştırma dosyası
-§3). `canManageReprints` (bugün `orders.send`/`canOperate` ile aynı kapı)
-gerektirir — operasyonel rapor, düz mutfak personeline değil.
+§3). Backend `reports.view` (`ApplicationPermissions.ReportsView`) ile
+korunuyor (V1-KIT-014); frontend'de görünürlük capability set'ten
+`capabilitySet.has("reports.view")` ile türetilen yeni bir `canViewReports`
+prop'uyla kapılanır — bugün yalnız supervisor/manager taşıyor.
 
 ## Owned surface
 
@@ -36,7 +38,7 @@ gerektirir — operasyonel rapor, düz mutfak personeline değil.
 - `cd src/Clients/PosTerminal && npx tsc --noEmit` → 0 hata.
 - `cd src/Clients/PosTerminal && npx vitest run` → tüm proje yeşil (yeni
   testler: rapor panelinin ortalama VE medyanı ayrı ayrı gösterdiği;
-  `canManageReprints=false` bir oturumda panelin görünmediği).
+  `canViewReports=false` bir oturumda panelin görünmediği).
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
   uyarı.
 - `python tools/consistency-audit/consistency_audit.py` → `clean`.

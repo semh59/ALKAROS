@@ -660,6 +660,107 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal("Masa 12", transitioned.TableNumber);
     }
 
+    /// <summary>
+    /// V1-KIT-014: proves the report's mean/median actually diverge and are
+    /// computed correctly from real rows — 5/10/30 minute tickets give a
+    /// mean of 15 but a median of 10; a report that only ever returned the
+    /// mean twice would still pass a test that checked just one of them.
+    /// </summary>
+    [Fact]
+    public async Task PerformanceReportComputesMeanMedianAndTargetOverrunPerStation()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.ReportsView]);
+        var windowStart = new DateTimeOffset(2026, 9, 14, 8, 0, 0, TimeSpan.Zero);
+        await SeedCompletedTicketAsync("hot-line", windowStart.AddMinutes(0), TimeSpan.FromMinutes(5));
+        await SeedCompletedTicketAsync("hot-line", windowStart.AddMinutes(20), TimeSpan.FromMinutes(10));
+        await SeedCompletedTicketAsync("hot-line", windowStart.AddMinutes(40), TimeSpan.FromMinutes(30));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var report = await GetAsync<KitchenPerformanceReportV1>(
+            client,
+            Prefix(terminalId) + $"/operations/performance-report?from={Uri.EscapeDataString(windowStart.ToString("O"))}&to={Uri.EscapeDataString(windowStart.AddHours(2).ToString("O"))}",
+            cookie);
+        var station = Assert.Single(report!.Stations);
+        Assert.Equal("hot-line", station.StationId);
+        Assert.Equal(3, station.CompletedTicketCount);
+        Assert.Equal(15.0, station.AverageMinutes, precision: 3);
+        Assert.Equal(10.0, station.MedianMinutes, precision: 3);
+        Assert.Equal(15, station.TargetMinutes);
+        // Only the 30-minute ticket busts the 15-minute target: 1/3.
+        Assert.Equal(100.0 / 3.0, station.TargetOverrunPercentage, precision: 3);
+    }
+
+    [Fact]
+    public async Task PerformanceReportGroupsCompletedTicketsByHour()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.ReportsView]);
+        var windowStart = new DateTimeOffset(2026, 9, 14, 8, 0, 0, TimeSpan.Zero);
+        await SeedCompletedTicketAsync("hot-line", windowStart.AddMinutes(5), TimeSpan.FromMinutes(5));
+        await SeedCompletedTicketAsync("hot-line", windowStart.AddMinutes(50), TimeSpan.FromMinutes(5));
+        await SeedCompletedTicketAsync("hot-line", windowStart.AddHours(1).AddMinutes(10), TimeSpan.FromMinutes(5));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var report = await GetAsync<KitchenPerformanceReportV1>(
+            client,
+            Prefix(terminalId) + $"/operations/performance-report?from={Uri.EscapeDataString(windowStart.ToString("O"))}&to={Uri.EscapeDataString(windowStart.AddHours(3).ToString("O"))}",
+            cookie);
+        Assert.Equal(2, report!.HourlyVolume.Count);
+        Assert.Equal(2, report.HourlyVolume.Single(hour => hour.HourStart == windowStart).CompletedTicketCount);
+        Assert.Equal(1, report.HourlyVolume.Single(hour => hour.HourStart == windowStart.AddHours(1)).CompletedTicketCount);
+    }
+
+    [Fact]
+    public async Task PerformanceReportRequiresReportsViewNotJustAnyCashierSession()
+    {
+        var terminalId = Guid.NewGuid();
+        var readOnlyCookie = await _database.SeedSessionAsync(terminalId, []);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var now = DateTimeOffset.UtcNow;
+        using var request = Request(
+            HttpMethod.Get,
+            Prefix(terminalId) + $"/operations/performance-report?from={Uri.EscapeDataString(now.AddHours(-1).ToString("O"))}&to={Uri.EscapeDataString(now.ToString("O"))}",
+            readOnlyCookie);
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PerformanceReportRejectsAMissingFromOrTo()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.ReportsView]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = Request(
+            HttpMethod.Get, Prefix(terminalId) + "/operations/performance-report?from=2026-09-14T00:00:00Z", cookie);
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    private async Task SeedCompletedTicketAsync(string stationId, DateTimeOffset createdAt, TimeSpan duration)
+    {
+        var orderId = Guid.NewGuid();
+        var ticketId = Guid.NewGuid();
+        await using var command = _database.DataSource.CreateCommand(
+            $"""
+            INSERT INTO orders.orders (
+                order_id, source, status, confirmation_status, order_number, created_at, updated_at)
+            VALUES ('{orderId:D}', 'Cashier', 'Submitted', 'NotRequired', 'ORD-{orderId:N}', '{createdAt:O}', '{createdAt:O}');
+
+            INSERT INTO kitchen.kitchen_tickets (
+                id, order_id, ticket_number, station_id, status, row_version, created_at, ready_at)
+            VALUES ('{ticketId:D}', '{orderId:D}', 'KT-{ticketId:N}', '{stationId}', 'Ready', 1, '{createdAt:O}', '{(createdAt + duration):O}');
+            """);
+        await command.ExecuteNonQueryAsync();
+    }
+
     private async Task<Guid> SeedProductAsync(bool isAvailable)
     {
         var productId = Guid.NewGuid();

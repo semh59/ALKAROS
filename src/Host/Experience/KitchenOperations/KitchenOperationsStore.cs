@@ -437,6 +437,65 @@ public sealed class KitchenOperationsStore
             await KitchenDenseModeThresholdSetting.GetThresholdAsync(_settings, cancellationToken));
 
     /// <summary>
+    /// V1-KIT-014: research-grounded (docs/engineering/kitchen-allday-view-
+    /// and-performance-report-research.md) station performance report,
+    /// built entirely from kitchen.kitchen_tickets' own existing
+    /// created_at/ready_at columns. Reports mean AND median per station —
+    /// a real vendor's own docs (Fresh KDS) warn an average alone can hide
+    /// extreme values. "Target" is honestly the fixed global default
+    /// (KitchenTicket.DefaultTargetPrepMinutes), not a per-product
+    /// estimate; a ticket that never reached Ready in the window is not
+    /// counted at all (it is not yet a completed data point).
+    /// </summary>
+    public async Task<KitchenPerformanceReportV1> GetPerformanceReportAsync(
+        DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken)
+    {
+        if (to <= from)
+            throw new ArgumentException("'to' must be after 'from'.", nameof(to));
+
+        var rows = await _tickets.GetCompletedTicketTimingsAsync(from, to, cancellationToken);
+
+        var stations = rows
+            .GroupBy(row => row.StationId, StringComparer.Ordinal)
+            .Select(group =>
+            {
+                var minutes = group
+                    .Select(row => (row.ReadyAt - row.CreatedAt).TotalMinutes)
+                    .OrderBy(value => value)
+                    .ToArray();
+                var overrunCount = minutes.Count(value => value > KitchenTicket.DefaultTargetPrepMinutes);
+                return new StationPerformanceV1(
+                    group.Key,
+                    minutes.Length,
+                    minutes.Average(),
+                    Median(minutes),
+                    KitchenTicket.DefaultTargetPrepMinutes,
+                    (double)overrunCount / minutes.Length * 100.0);
+            })
+            .OrderBy(station => station.StationId, StringComparer.Ordinal)
+            .ToArray();
+
+        var hourlyVolume = rows
+            .GroupBy(row => new DateTimeOffset(
+                row.CreatedAt.UtcDateTime.Year, row.CreatedAt.UtcDateTime.Month, row.CreatedAt.UtcDateTime.Day,
+                row.CreatedAt.UtcDateTime.Hour, 0, 0, TimeSpan.Zero))
+            .Select(group => new HourlyVolumeV1(group.Key, group.Count()))
+            .OrderBy(hour => hour.HourStart)
+            .ToArray();
+
+        return new KitchenPerformanceReportV1(from, to, stations, hourlyVolume);
+    }
+
+    private static double Median(double[] sortedValues)
+    {
+        var count = sortedValues.Length;
+        if (count == 0)
+            return 0;
+        var mid = count / 2;
+        return count % 2 == 0 ? (sortedValues[mid - 1] + sortedValues[mid]) / 2.0 : sortedValues[mid];
+    }
+
+    /// <summary>
     /// V1-KIT-008: 86 a product from the Kitchen screen itself. Reuses
     /// Catalog's own write path (<see cref="CatalogManagementStore.SetProductAvailabilityAsync"/>)
     /// — the domain (Product.cs, PostgresProductRepository) is untouched, and

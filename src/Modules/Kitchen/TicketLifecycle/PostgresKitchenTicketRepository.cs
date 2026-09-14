@@ -293,6 +293,41 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         return newRowVersion;
     }
 
+    public async Task<IReadOnlyList<CompletedTicketTimingRow>> GetCompletedTicketTimingsAsync(
+        DateTimeOffset windowStart, DateTimeOffset windowEnd, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT station_id, created_at, ready_at
+            FROM kitchen.kitchen_tickets
+            WHERE created_at >= @window_start AND created_at < @window_end AND ready_at IS NOT NULL
+            ORDER BY created_at
+            LIMIT @max_rows;
+            """);
+        command.Parameters.AddWithValue("window_start", windowStart);
+        command.Parameters.AddWithValue("window_end", windowEnd);
+        command.Parameters.AddWithValue("max_rows", MaxUnpagedRows + 1);
+
+        var result = new List<CompletedTicketTimingRow>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            result.Add(new CompletedTicketTimingRow(
+                reader.GetString(0),
+                reader.GetFieldValue<DateTimeOffset>(1),
+                reader.GetFieldValue<DateTimeOffset>(2)));
+        }
+
+        if (result.Count > MaxUnpagedRows)
+        {
+            throw new InvalidOperationException(
+                $"More than {MaxUnpagedRows} completed tickets in the requested window; " +
+                "GetCompletedTicketTimingsAsync must be paginated or the window narrowed.");
+        }
+
+        return result;
+    }
+
     private static async Task<IReadOnlyList<KitchenTicketItem>> LoadItemsAsync(
         NpgsqlConnection connection,
         Guid ticketId,
