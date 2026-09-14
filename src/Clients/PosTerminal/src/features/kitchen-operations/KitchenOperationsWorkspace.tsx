@@ -79,21 +79,23 @@ function compactId(value: string) {
   return value.length > 10 ? value.slice(0, 8) : value;
 }
 
-// V1-KDS-001: tickets carry an orderId but no table/check label — grouping
-// by order is the closest available proxy to "one table's current round"
-// without inventing data the backend contract does not provide ("backend
-// is smart, frontend is dumb" — foundations.md §0). A real table label
-// needs a small contract addition (KitchenTicketV1 has no TableId today) —
-// a separate follow-up, not fabricated here.
-function groupByOrder(tickets: readonly KitchenTicket[]): { orderId: string; tickets: KitchenTicket[] }[] {
+// V1-KDS-007: groups by the real table (V1-KIT-012's tableId) when the
+// order has one — two separate rounds sent to the same table (two
+// different orderIds) now land on one card, matching how the floor
+// actually thinks about "what's happening at table 7". A table-less
+// order (takeaway/bar tab, V1-KDS-005) has nothing to merge on, so it
+// keeps grouping by its own orderId — the same behavior this replaces
+// had for every ticket, before V1-KIT-012 gave real orders a table at all.
+function groupByTable(tickets: readonly KitchenTicket[]): { groupKey: string; tickets: KitchenTicket[] }[] {
   const order: string[] = [];
-  const byOrder = new Map<string, KitchenTicket[]>();
+  const byKey = new Map<string, KitchenTicket[]>();
   for (const ticket of tickets) {
-    const existing = byOrder.get(ticket.orderId);
+    const key = ticket.tableId ?? ticket.orderId;
+    const existing = byKey.get(key);
     if (existing) existing.push(ticket);
-    else { byOrder.set(ticket.orderId, [ticket]); order.push(ticket.orderId); }
+    else { byKey.set(key, [ticket]); order.push(key); }
   }
-  return order.map((orderId) => ({ orderId, tickets: byOrder.get(orderId)! }));
+  return order.map((groupKey) => ({ groupKey, tickets: byKey.get(groupKey)! }));
 }
 
 export function KitchenOperationsWorkspace({
@@ -158,7 +160,7 @@ export function KitchenOperationsWorkspace({
   const density: Density = densityOverride === "auto" ? (autoDense ? "dense" : "sparse") : densityOverride;
   const isDense = density === "dense";
 
-  const orderGroups = useMemo(() => groupByOrder(data.tickets), [data.tickets]);
+  const orderGroups = useMemo(() => groupByTable(data.tickets), [data.tickets]);
   const overallHealth = worstHealth(data.health);
 
   // V1-KDS-002: the Goal's own scope - products from open tickets, not
@@ -335,7 +337,9 @@ export function KitchenOperationsWorkspace({
 
     <div className="kitchen-workspace__toolbar">
       <div className="kitchen-workspace__stats" aria-label="Mutfak özeti">
-        <Stat label="Açık sipariş" value={orderGroups.length} />
+        {/* V1-KDS-007: a card can now hold more than one order (merged by
+            table), so this counts cards, not orders — labeled accordingly. */}
+        <Stat label="Açık masa/sipariş" value={orderGroups.length} />
         <Stat label="Açık kalem" value={openItemCount} tone={autoDense ? "warning" : "neutral"} />
         <Stat label="Doğrulanamayan baskı" value={data.unknownDeliveries.length} tone={data.unknownDeliveries.length ? "danger" : "success"} />
       </div>
@@ -349,8 +353,8 @@ export function KitchenOperationsWorkspace({
     <div className="kitchen-workspace__layout">
       <div className="kitchen-workspace__board">
         {state === "empty" || orderGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : orderGroups.map((group) => <OrderGroupCard
-          key={group.orderId}
-          orderId={group.orderId}
+          key={group.groupKey}
+          groupKey={group.groupKey}
           tickets={group.tickets}
           now={now}
           canAdvance={canAdvance}
@@ -412,11 +416,11 @@ function Stat({ label, value, tone = "neutral" }: { label: string; value: number
   return <div className={`kitchen-stat kitchen-stat--${tone}`}><span>{label}</span><strong>{value}</strong></div>;
 }
 
-// Expo view: one order can spread across several stations (tickets) — all
-// of them render side by side/stacked here so a table's whole round can be
-// tracked from one place.
+// Expo view: one table's whole round can spread across several orders and
+// stations (tickets) — V1-KDS-007 groups by table (groupByTable) so all of
+// them render side by side/stacked here as one card, tracked from one place.
 function OrderGroupCard({
-  orderId,
+  groupKey,
   tickets,
   now,
   canAdvance,
@@ -426,7 +430,7 @@ function OrderGroupCard({
   onUndoItem,
   onCancel,
 }: {
-  orderId: string;
+  groupKey: string;
   tickets: readonly KitchenTicket[];
   now: number;
   canAdvance: boolean;
@@ -442,17 +446,18 @@ function OrderGroupCard({
   const tone = ageTone(minutes, targetPrepMinutes);
   const allDone = tickets.every((t) => t.items.every((i) => i.status === "Ready" || i.status === "Served" || i.status === "Cancelled"));
   const anyCancellable = tickets.some((t) => t.status !== "Cancelled");
-  // V1-KIT-012/V1-KDS-005: every ticket here shares the same orderId, so
-  // they share the same table label too - the first one is authoritative.
-  // Falls back to the truncated order id for a table-less order (takeaway/
-  // bar tab), never fabricates a table number.
+  // V1-KIT-012/V1-KDS-005/V1-KDS-007: every ticket in this group shares the
+  // same tableId (that is what groupByTable grouped on), so the same table
+  // label too - the first one is authoritative. Falls back to the
+  // truncated groupKey for a table-less group, which groupByTable always
+  // keys by a single orderId (never fabricates a table number).
   const tableNumber = tickets[0].tableNumber;
 
   return <article className={`kitchen-order kitchen-order--${tone}`}>
     <header className="kitchen-order__head">
       <div>{tableNumber
         ? <><span className="kitchen-order__label">Masa</span><span className="kitchen-order__id">{tableNumber}</span></>
-        : <><span className="kitchen-order__label">Sipariş</span><span className="kitchen-order__id">{compactId(orderId)}</span></>}</div>
+        : <><span className="kitchen-order__label">Sipariş</span><span className="kitchen-order__id">{compactId(groupKey)}</span></>}</div>
       <div className={`kitchen-order__timer kitchen-order__timer--${tone}`}>{ageLabel(minutes)}<small>hedef {targetPrepMinutes} dk</small></div>
       {allDone && <span className="kitchen-order__done">✓ Tüm kalemler hazır</span>}
       {canOperate && anyCancellable && <button type="button" className="kitchen-flag-btn" title="Sorun bildir / iptal et" onClick={() => onCancel(tickets[0])}>⚠</button>}

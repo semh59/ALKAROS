@@ -1,8 +1,8 @@
 # V1-KDS-007 - Expo görünümünü gerçek masaya göre gruplama
 
 - Task ID: V1-KDS-007
-- Status: Planned
-- Assignee: Unassigned
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
 - Surface state: Existing
 
@@ -40,13 +40,24 @@ göre ayrı ayrı gruplanır (birleştirilecek ortak bir anahtarları yok).
 
 ## Acceptance evidence
 
-- `cd src/Clients/PosTerminal && npx tsc --noEmit` → 0 hata.
-- `cd src/Clients/PosTerminal && npx vitest run` → tüm proje yeşil (yeni
-  test: aynı masaya ait iki farklı `orderId`'nin TEK kartta birleştiği;
-  masasız iki farklı siparişin ayrı ayrı kart olarak kaldığı).
+- `cd src/Clients/PosTerminal && npx tsc --noEmit` → **0 hata** (doğrulandı).
+- `cd src/Clients/PosTerminal && npx vitest run` → **Test Files 23 passed
+  (23), Tests 160 passed (160)** — tüm proje, izole değil (2 yeni test:
+  aynı `tableId`'ye sahip, farklı `orderId`'lerden gelen iki biletin TEK
+  `.kitchen-order` kartında iki `.kitchen-station` olarak birleştiği;
+  `tableId: null` olan iki farklı siparişin İKİ ayrı karta bölünmüş
+  kaldığı).
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
-  uyarı.
-- `python tools/consistency-audit/consistency_audit.py` → `clean`.
+  uyarı (doğrulandı).
+- `python tools/consistency-audit/consistency_audit.py` → `clean`
+  (doğrulandı).
+- Uygulanan tasarım: `groupByOrder` → `groupByTable`, anahtar
+  `ticket.tableId ?? ticket.orderId` (masasız sipariş kendi orderId'sine
+  düşer, önceki davranışla birebir aynı). "Açık sipariş" istatistiği
+  artık kart sayısını saydığı için "Açık masa/sipariş" olarak yeniden
+  etiketlendi (dürüstlük — bir kart artık birden fazla siparişi
+  temsil edebiliyor). İptal aksiyonu hâlâ `tickets[0]` üzerinden çalışıyor
+  (Out of scope'ta belirtildiği gibi, bilinçli olarak değiştirilmedi).
 - Semih'in elle deneyebileceği senaryo: aynı masaya iki ayrı tur
   gönder, Mutfak ekranında tek kartta iki istasyon/bilet olarak
   göründüğünü doğrula.

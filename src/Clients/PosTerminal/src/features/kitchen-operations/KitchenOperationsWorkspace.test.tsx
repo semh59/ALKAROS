@@ -78,6 +78,33 @@ describe("kitchen operations workspace", () => {
     expect(document.querySelector(".kitchen-order__id")!.textContent).toBe("order-1");
   });
 
+  it("merges two separate orders sent to the same table into one card", async () => {
+    const sameTable: KitchenData = {
+      ...data,
+      tickets: [
+        { ...data.tickets[0], id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", tableId: "table-1", tableNumber: "7" },
+        { ...data.tickets[0], id: "ticket-2", orderId: "order-2", ticketNumber: "KT-002", stationId: "cold-line", tableId: "table-1", tableNumber: "7" },
+      ],
+    };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: sameTable })} />);
+    expect(document.querySelectorAll(".kitchen-order").length).toBe(1);
+    expect(document.querySelectorAll(".kitchen-station").length).toBe(2);
+    expect(document.body.textContent).toContain("KT-001");
+    expect(document.body.textContent).toContain("KT-002");
+  });
+
+  it("keeps two table-less orders as separate cards", async () => {
+    const twoTakeaways: KitchenData = {
+      ...data,
+      tickets: [
+        { ...data.tickets[0], id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001" },
+        { ...data.tickets[0], id: "ticket-2", orderId: "order-2", ticketNumber: "KT-002" },
+      ],
+    };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: twoTakeaways })} />);
+    expect(document.querySelectorAll(".kitchen-order").length).toBe(2);
+  });
+
   it("shows the undo affordance right after a transition, even for a kitchen.advance-only (Mutfak Personeli) session", async () => {
     const onUndoItem = vi.fn();
     const fresh: KitchenData = {
