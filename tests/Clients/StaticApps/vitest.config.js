@@ -9,6 +9,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     include: ["**/*.test.js"],
+    setupFiles: [resolve(here, "support/setup.js")],
   },
   server: {
     // The apps under test (src/Clients/**/wwwroot/*.js) live outside this

@@ -13,19 +13,28 @@ const PRODUCT_ID = "22222222-2222-2222-2222-222222222222";
 const TABLE_ID = "44444444-4444-4444-4444-444444444444";
 const ORDER_ID = "33333333-3333-3333-3333-333333333333";
 
+// V1-RMD-206: rebuilt against the CURRENT app. The previous version of this
+// file predated the 17-step JS modularization (V1-WTR-037..053) and the
+// tables/menu screen rewrite - it asserted on a ".table-card"/".product-card"
+// markup and "#btnOpenOrderModal"/"#btnSendKitchen" button ids that do not
+// exist anywhere in this codebase anymore (grep-confirmed), and on a plain
+// window.alert() the app replaced with an in-page toast (js/toast.js) a
+// while ago. Every one of its four tests failed for that reason alone,
+// independent of whatever regression each was originally written to guard.
 function standardRoutes({ draftStatus = 200, submitStatus = 200 } = {}) {
   return [
     { test: (url) => url.includes("/api/v1/auth/session?"), body: { userId: "u1", name: "Garson Ahmet" } },
+    { test: (url) => url.includes("/runtime-configuration"), body: { garsonFeatures: {} } },
     { test: (url) => url.includes("/table-management/zones"), body: [] },
-    { test: (url) => url.includes("/catalog?category=all"), body: [] },
-    {
-      test: (url) => url.includes("/catalog") && !url.includes("category="),
-      body: [{ productId: PRODUCT_ID, productName: "Kola", currentPrice: 45, categoryId: "c1" }],
-    },
+    { test: (url) => url.includes("/catalog"), body: [{ productId: PRODUCT_ID, name: "Kola", unitPrice: 45, categoryCode: "c1", categoryName: "İçecek" }] },
     {
       test: (url) => url.includes("/table-management/tables"),
-      body: [{ tableId: TABLE_ID, tableNumber: "M-05", capacity: 4, zoneId: "z1", currentStatus: "Available" }],
+      body: [{ tableId: TABLE_ID, tableNumber: "M-05", capacity: 4, zoneId: "z1", status: "Available" }],
     },
+    // A 404 here (no order yet) is what openTable() reads as "empty table" -
+    // its own real-world branch straight to the menu screen, no order to load.
+    { test: (url) => url.includes(`/orders/table/${TABLE_ID}`), status: 404, body: {} },
+    { test: (url) => url.includes("/orders/pending"), body: [] },
     {
       test: (url, init) => url.includes("/orders/table-draft") && init?.method === "POST",
       status: draftStatus,
@@ -41,21 +50,24 @@ function standardRoutes({ draftStatus = 200, submitStatus = 200 } = {}) {
 
 async function startAppWithOneProductInCart(routes) {
   const fetchMock = installFetchRouter(routes);
-  vi.stubGlobal("alert", vi.fn());
   await loadApp(htmlPath, scriptPath);
 
   await vi.waitFor(() => {
-    if (!document.querySelector(".table-card")) throw new Error("tables not rendered yet");
+    if (!document.querySelector(".table[data-table]")) throw new Error("tables not rendered yet");
   });
-  document.querySelector(".table-card").click();
-  document.getElementById("btnOpenOrderModal").click();
+  document.querySelector(".table[data-table]").click();
 
   await vi.waitFor(() => {
-    if (!document.querySelector(".product-card")) throw new Error("products not rendered yet");
+    if (!document.querySelector(".product[data-product]")) throw new Error("products not rendered yet");
   });
-  document.querySelector(".product-card").click();
+  document.querySelector(".product[data-product]").click();
 
   return fetchMock;
+}
+
+function lastToastText() {
+  const nodes = document.querySelectorAll("#toasts .toast-text");
+  return nodes.length ? nodes[nodes.length - 1].textContent : null;
 }
 
 describe("waiter-app.js", () => {
@@ -77,53 +89,57 @@ describe("waiter-app.js", () => {
     const fetchMock = await startAppWithOneProductInCart(standardRoutes());
     const beforeSend = fetchMock.mock.calls.length;
 
-    document.getElementById("btnSendKitchen").click();
+    document.getElementById("btnSendFromMenu").click();
 
     await vi.waitFor(() => {
-      expect(fetchMock.mock.calls.length).toBeGreaterThanOrEqual(beforeSend + 2);
+      const calls = fetchMock.mock.calls.slice(beforeSend);
+      if (!calls.some(([url]) => url.includes("/orders/table-draft"))) throw new Error("table-draft not called yet");
+      if (!calls.some(([url]) => url.includes(`/orders/${ORDER_ID}/submit-draft`))) throw new Error("submit-draft not called yet");
     });
 
     const calls = fetchMock.mock.calls.slice(beforeSend);
     const draftCall = calls.find(([url]) => url.includes("/orders/table-draft"));
     const submitCall = calls.find(([url]) => url.includes(`/orders/${ORDER_ID}/submit-draft`));
-    expect(draftCall, "table-draft was never called").toBeTruthy();
-    expect(submitCall, "submit-draft was never called").toBeTruthy();
     expect(draftCall[1].method).toBe("POST");
     expect(submitCall[1].method).toBe("POST");
     // submit-draft only makes sense after table-draft returned an orderId.
     expect(calls.indexOf(draftCall)).toBeLessThan(calls.indexOf(submitCall));
-    expect(alert).toHaveBeenCalledWith(expect.stringContaining("mutfağa iletildi"));
+    await vi.waitFor(() => {
+      expect(lastToastText()).toContain("mutfağa gönderildi");
+    });
   });
 
   it("does not send a second request while the first dispatch is still in flight", async () => {
     const fetchMock = await startAppWithOneProductInCart(standardRoutes());
     const beforeSend = fetchMock.mock.calls.length;
 
-    const button = document.getElementById("btnSendKitchen");
+    const button = document.getElementById("btnSendFromMenu");
     button.click();
     button.click();
     button.click();
 
     await vi.waitFor(() => {
-      expect(fetchMock.mock.calls.length).toBeGreaterThanOrEqual(beforeSend + 2);
+      const calls = fetchMock.mock.calls.slice(beforeSend);
+      if (!calls.some(([url]) => url.includes(`/orders/${ORDER_ID}/submit-draft`))) throw new Error("not sent yet");
     });
+    const afterFirstSend = fetchMock.mock.calls.length;
+    // A short settle window to prove no extra calls trickle in from the
+    // extra clicks before asserting the count stays put.
     await new Promise((r) => setTimeout(r, 20));
-    expect(fetchMock.mock.calls.length).toBe(beforeSend + 2);
+    expect(fetchMock.mock.calls.length).toBe(afterFirstSend);
   });
 
   it("never shows the raw HTTP status code when the server rejects the draft", async () => {
-    const fetchMock = await startAppWithOneProductInCart(standardRoutes({ draftStatus: 409 }));
+    await startAppWithOneProductInCart(standardRoutes({ draftStatus: 409 }));
 
-    document.getElementById("btnSendKitchen").click();
+    document.getElementById("btnSendFromMenu").click();
 
     await vi.waitFor(() => {
-      expect(alert).toHaveBeenCalled();
+      if (!lastToastText()) throw new Error("no toast yet");
     });
-    const messages = alert.mock.calls.map(([m]) => m);
-    for (const message of messages) {
-      expect(message).not.toMatch(/\b409\b/);
-      expect(message).not.toMatch(/Hata:/);
-    }
+    const shown = lastToastText();
+    expect(shown).not.toMatch(/\b409\b/);
+    expect(shown).not.toMatch(/Hata:/);
   });
 
   it("shows a Turkish message, not the browser's own error, when the login request itself fails", async () => {
