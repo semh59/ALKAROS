@@ -141,8 +141,65 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         Assert.Empty(hub.Clients.GroupCalls);
     }
 
-    private static PendingOrderAnnouncement NewAnnouncement() => new(
-        Guid.NewGuid(), Guid.NewGuid(), "7", 2, 250.00m, DateTimeOffset.UtcNow);
+    [Fact]
+    public async Task ATiedLoadGoesToWhoeverServedTheSameZoneMostRecently()
+    {
+        var gardenZone = await _database.SeedZoneAsync("Bahçe");
+        var indoorZone = await _database.SeedZoneAsync("İç Mekân");
+        var gardenTable = await _database.SeedTableAsync(gardenZone, "B-1");
+        var anotherGardenTable = await _database.SeedTableAsync(gardenZone, "B-2");
+        var indoorTable = await _database.SeedTableAsync(indoorZone, "I-1");
+
+        var gardenWaiter = await _database.SeedWaiterAsync("Bahçeci Garson", hasOpenSession: true);
+        var indoorWaiter = await _database.SeedWaiterAsync("İç Mekân Garsonu", hasOpenSession: true);
+        // Both tied at active_load 1. Deliberately the OPPOSITE of what the
+        // rotation tiebreak alone would pick - the indoor waiter's own order
+        // is much older (so, ignoring zone, indoor would win "longest idle
+        // wins ties") - so this only passes because the zone tier is
+        // checked BEFORE that tiebreak, not because of it or insertion order.
+        await _database.SeedOrderAsync(indoorWaiter, "Preparing", DateTimeOffset.UtcNow.AddHours(-3), indoorTable);
+        await _database.SeedOrderAsync(gardenWaiter, "Preparing", DateTimeOffset.UtcNow.AddMinutes(-10), anotherGardenTable);
+
+        var hub = new RecordingHubContext();
+        var presence = new WaiterPresenceTracker();
+        presence.Connected(gardenWaiter);
+        presence.Connected(indoorWaiter);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+
+        // A NEW guest order from a garden table - the garden waiter's own
+        // most recent open order is also in the garden zone.
+        await announcer.AnnounceAsync(NewAnnouncement(gardenTable));
+
+        var group = Assert.Single(hub.Clients.GroupCalls);
+        Assert.Equal(WaiterOrderStatusHub.GroupName(gardenWaiter), group);
+    }
+
+    [Fact]
+    public async Task ZoneIsAPreferenceNotAFilterTheOnlyCandidateStillWinsWithNoZoneMatch()
+    {
+        var gardenZone = await _database.SeedZoneAsync("Bahçe");
+        var indoorZone = await _database.SeedZoneAsync("İç Mekân");
+        var gardenTable = await _database.SeedTableAsync(gardenZone, "B-1");
+        var indoorTable = await _database.SeedTableAsync(indoorZone, "I-1");
+
+        // The only waiter on duty has only ever served the indoor zone.
+        var onlyWaiter = await _database.SeedWaiterAsync("Tek Garson", hasOpenSession: true);
+        await _database.SeedOrderAsync(onlyWaiter, "Preparing", DateTimeOffset.UtcNow.AddMinutes(-5), indoorTable);
+
+        var hub = new RecordingHubContext();
+        var presence = new WaiterPresenceTracker();
+        presence.Connected(onlyWaiter);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+
+        // A garden-table order still must reach the only real candidate.
+        await announcer.AnnounceAsync(NewAnnouncement(gardenTable));
+
+        var group = Assert.Single(hub.Clients.GroupCalls);
+        Assert.Equal(WaiterOrderStatusHub.GroupName(onlyWaiter), group);
+    }
+
+    private static PendingOrderAnnouncement NewAnnouncement(Guid? tableId = null) => new(
+        Guid.NewGuid(), tableId ?? Guid.NewGuid(), "7", 2, 250.00m, DateTimeOffset.UtcNow);
 }
 
 [CollectionDefinition("Pending order notifications PostgreSQL", DisableParallelization = true)]

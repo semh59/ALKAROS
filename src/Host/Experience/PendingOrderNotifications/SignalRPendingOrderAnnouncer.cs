@@ -45,7 +45,7 @@ public sealed class SignalRPendingOrderAnnouncer : IPendingOrderAnnouncer
     public async Task AnnounceAsync(PendingOrderAnnouncement announcement, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(announcement);
-        var suggested = await _suggestedWaiter.ResolveMostSuitableWaiterAsync(cancellationToken);
+        var suggested = await _suggestedWaiter.ResolveMostSuitableWaiterAsync(announcement.TableId, cancellationToken);
         var waiterId = suggested?.UserId;
 
         // V1-RMD-203: the resolved candidate only holds a live

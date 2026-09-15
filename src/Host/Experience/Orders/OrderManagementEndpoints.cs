@@ -220,6 +220,7 @@ public static class OrderManagementEndpoints
             Guid terminalId,
             CreateTableDraftRequest request,
             TableDraftService store,
+            SuggestedWaiterResolver suggestedWaiter,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -244,8 +245,18 @@ public static class OrderManagementEndpoints
             // beyond the orders.create check already done above.
             var servingUserId = request.AssignedWaiterUserId ?? actingUserId;
             if (servingUserId != actingUserId)
+            {
                 await authorization.AuthorizeAsync(
                     actingUserId, ApplicationPermissions.OrdersTransferServerAny, cancellationToken);
+
+                // V1-RMD-207: found while verifying V1-RMD-204 — nothing
+                // constrains orders.orders.serving_user_id to a real row
+                // (deliberately, V1-RMD-111's module boundary), so without
+                // this a caller who HOLDS transfer-server-any could name any
+                // Guid and it would be silently accepted.
+                if (!await suggestedWaiter.IsValidWaiterAsync(servingUserId, cancellationToken))
+                    return Results.BadRequest(new { error = new { code = "INVALID_WAITER", message = "Belirtilen garson bulunamadı veya yetkili değil." } });
+            }
 
             var draft = await store.CreateOrUpdateTableDraftAsync(request, servingUserId, cancellationToken);
             return Results.Ok(draft);
@@ -264,7 +275,9 @@ public static class OrderManagementEndpoints
             CancellationToken cancellationToken) =>
         {
             await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
-            var suggestion = await suggestedWaiter.ResolveMostSuitableWaiterAsync(cancellationToken);
+            // V1-RMD-208: Cashier has no real table (KASA-1, V1-RMD-157), so
+            // the zone-preference tier never applies here.
+            var suggestion = await suggestedWaiter.ResolveMostSuitableWaiterAsync(tableId: null, cancellationToken);
             return suggestion is null ? Results.NoContent() : Results.Ok(suggestion);
         }).RequireRateLimiting("terminal-read");
 

@@ -70,7 +70,11 @@ public sealed class PendingOrderNotificationsTestDatabase : PgTestDatabase
     }
 
     /// <summary>Seeds one order assigned to <paramref name="servingUserId"/> for load/rotation ranking.</summary>
-    public async Task SeedOrderAsync(Guid servingUserId, string status, DateTimeOffset createdAt)
+    public Task SeedOrderAsync(Guid servingUserId, string status, DateTimeOffset createdAt)
+        => SeedOrderAsync(servingUserId, status, createdAt, tableId: null);
+
+    /// <summary>V1-RMD-208: same, but attributed to a real table for zone-preference ranking.</summary>
+    public async Task SeedOrderAsync(Guid servingUserId, string status, DateTimeOffset createdAt, Guid? tableId)
     {
         await ExecuteAsync(
             """
@@ -78,14 +82,38 @@ public sealed class PendingOrderNotificationsTestDatabase : PgTestDatabase
                 (order_id, source, table_id, status, confirmation_status, order_number,
                  serving_user_id, created_at, updated_at)
             VALUES
-                (@order_id, 'Waiter', NULL, @status, 'NotRequired', @order_number,
+                (@order_id, 'Waiter', @table_id, @status, 'NotRequired', @order_number,
                  @serving_user_id, @created_at, @created_at);
             """,
             ("order_id", Guid.NewGuid()),
+            ("table_id", (object?)tableId ?? DBNull.Value),
             ("status", status),
             ("order_number", "ORD-" + Guid.NewGuid().ToString("N")[..12]),
             ("serving_user_id", servingUserId),
             ("created_at", createdAt));
+    }
+
+    /// <summary>V1-RMD-208: a zone, for the "same zone as this table" preference.</summary>
+    public async Task<Guid> SeedZoneAsync(string name)
+    {
+        var zoneId = Guid.NewGuid();
+        await ExecuteAsync(
+            "INSERT INTO table_mgmt.zones (zone_id, code, name) VALUES (@zone_id, @code, @name);",
+            ("zone_id", zoneId), ("code", "zone-" + zoneId.ToString("N")[..12]), ("name", name));
+        return zoneId;
+    }
+
+    /// <summary>V1-RMD-208: a real table in <paramref name="zoneId"/>, for zone-preference ranking.</summary>
+    public async Task<Guid> SeedTableAsync(Guid zoneId, string tableNumber)
+    {
+        var tableId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, current_status)
+            VALUES (@table_id, @zone_id, @table_number, 'Available');
+            """,
+            ("table_id", tableId), ("zone_id", zoneId), ("table_number", tableNumber));
+        return tableId;
     }
 
     private async Task<Guid> EnsureWaiterRoleAsync()

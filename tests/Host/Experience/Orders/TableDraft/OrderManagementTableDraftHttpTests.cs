@@ -1703,7 +1703,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     public async Task ACashierWithTransferAnyCanAssignAnotherWaiterAtOpen()
     {
         var (otherWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
-            Guid.NewGuid(), "waiter", "orders.create");
+            Guid.NewGuid(), "waiter", "orders.create", "orders.send");
         var terminalId = Guid.NewGuid();
         var (_, cashierCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
             terminalId, "cashier", "orders.create", "orders.transfer-server-any");
@@ -1721,6 +1721,48 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var draft = await response.Content.ReadFromJsonAsync<OrderDto>();
         Assert.Equal(otherWaiterId, await _database.GetServingUserIdAsync(draft!.OrderId));
+    }
+
+    [Fact]
+    public async Task AssigningANonexistentWaiterAtOpenIsRejected()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cashierCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "cashier", "orders.create", "orders.transfer-server-any");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cashierCookie,
+            new CreateTableDraftRequest(tableId, "M-23",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)],
+                AssignedWaiterUserId: Guid.NewGuid())));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AssigningARealUserWithoutOrdersSendAtOpenIsRejected()
+    {
+        var (nonWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "cashier", "orders.create"); // no orders.send
+        var terminalId = Guid.NewGuid();
+        var (_, cashierCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "cashier", "orders.create", "orders.transfer-server-any");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cashierCookie,
+            new CreateTableDraftRequest(tableId, "M-24",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)],
+                AssignedWaiterUserId: nonWaiterId)));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]

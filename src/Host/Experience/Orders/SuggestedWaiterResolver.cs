@@ -28,13 +28,24 @@ public sealed class SuggestedWaiterResolver
     /// with a live (unexpired, unrevoked) device session, picks whoever
     /// currently carries the fewest non-terminal orders
     /// (<c>orders.orders.serving_user_id</c>) — the same "active load" count
-    /// <c>ShiftSummaryStore</c> already computes. A tie goes to whoever has
-    /// gone longest without a new assignment (oldest <c>MAX(created_at)</c>
-    /// first, nulls — never assigned — first of all), so the same person
-    /// does not keep winning ties all shift. Returns null when nobody
-    /// qualifies.
+    /// <c>ShiftSummaryStore</c> already computes.
+    ///
+    /// V1-RMD-208: when <paramref name="tableId"/> names a real table with a
+    /// zone, a second-tier preference goes to whoever's own most recent open
+    /// order is in that same zone (<c>table_mgmt.zones</c>) — a preference,
+    /// not a filter: a candidate with no matching zone (or no zone history
+    /// at all) is never excluded, only ranked behind one who has it, so a
+    /// zone's very first order of the day still gets a real suggestion. Null
+    /// (Cashier's own call - no real table, V1-RMD-157) skips this tier
+    /// entirely, unchanged from before this existed.
+    ///
+    /// The final tie goes to whoever has gone longest without a new
+    /// assignment (oldest <c>MAX(created_at)</c> first, nulls — never
+    /// assigned — first of all), so the same person does not keep winning
+    /// ties all shift. Returns null when nobody qualifies.
     /// </summary>
-    public async Task<SuggestedWaiterV1?> ResolveMostSuitableWaiterAsync(CancellationToken cancellationToken)
+    public async Task<SuggestedWaiterV1?> ResolveMostSuitableWaiterAsync(
+        Guid? tableId, CancellationToken cancellationToken)
     {
         await using var command = _dataSource.CreateCommand(
             """
@@ -49,6 +60,15 @@ public sealed class SuggestedWaiterResolver
                 FROM orders.orders o
                 WHERE o.serving_user_id = u.user_id
             ) w ON true
+            LEFT JOIN LATERAL (
+                SELECT t.zone_id
+                FROM orders.orders o2
+                JOIN table_mgmt.tables t ON t.table_id = o2.table_id
+                WHERE o2.serving_user_id = u.user_id
+                  AND o2.status NOT IN ('Served', 'Completed', 'Cancelled', 'Rejected')
+                ORDER BY o2.created_at DESC
+                LIMIT 1
+            ) z ON true
             WHERE u.active
               AND EXISTS (
                   SELECT 1
@@ -65,14 +85,63 @@ public sealed class SuggestedWaiterResolver
                     AND s.expires_at > @now
               )
             ORDER BY COALESCE(w.active_load, 0) ASC,
+                     CASE
+                         WHEN @target_zone_id::uuid IS NOT NULL AND z.zone_id = @target_zone_id::uuid THEN 0
+                         ELSE 1
+                     END ASC,
                      COALESCE(w.last_assigned_at, '-infinity'::timestamptz) ASC
             LIMIT 1;
             """);
         command.Parameters.Add("permission_code", NpgsqlDbType.Varchar).Value = ApplicationPermissions.OrdersSend;
         command.Parameters.Add("now", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+        command.Parameters.Add("target_zone_id", NpgsqlDbType.Uuid).Value =
+            tableId is Guid id ? await ResolveZoneIdAsync(id, cancellationToken) : (object)DBNull.Value;
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken)) return null;
         return new SuggestedWaiterV1(reader.GetGuid(0), reader.GetString(1));
+    }
+
+    private async Task<object> ResolveZoneIdAsync(Guid tableId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "SELECT zone_id FROM table_mgmt.tables WHERE table_id = @table_id;");
+        command.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+        var result = await command.ExecuteScalarAsync(cancellationToken);
+        return result is Guid zoneId ? zoneId : DBNull.Value;
+    }
+
+    /// <summary>
+    /// V1-RMD-207: whether <paramref name="userId"/> is a real, active user
+    /// holding <see cref="ApplicationPermissions.OrdersSend"/> — the "is
+    /// this genuinely a waiter" question, deliberately without the session
+    /// requirement <see cref="ResolveMostSuitableWaiterAsync"/> has (that
+    /// one asks "reachable right now"; this one asks "does this
+    /// assignment even make sense" for a caller-supplied id that otherwise
+    /// has no FK to check it, orders.orders.serving_user_id being
+    /// intentionally unconstrained per V1-RMD-111's module boundary).
+    /// </summary>
+    public async Task<bool> IsValidWaiterAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM identity.users u
+                WHERE u.user_id = @user_id
+                  AND u.active
+                  AND EXISTS (
+                      SELECT 1
+                      FROM identity.user_roles ur
+                      JOIN identity.role_permissions rp ON rp.role_id = ur.role_id
+                      JOIN identity.permissions p ON p.permission_id = rp.permission_id
+                      WHERE ur.user_id = u.user_id AND p.code = @permission_code
+                  )
+            );
+            """);
+        command.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = userId;
+        command.Parameters.Add("permission_code", NpgsqlDbType.Varchar).Value = ApplicationPermissions.OrdersSend;
+
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 }
