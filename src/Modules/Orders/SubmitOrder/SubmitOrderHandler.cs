@@ -165,7 +165,20 @@ public sealed class SubmitOrderHandler
                 return SubmitOrderResponseSerializer.Deserialize(recheckEnvelope!, isReplay: true);
             }
 
-            throw new StaleOrderVersionException(order.Id, command.ExpectedRowVersion, order.RowVersion);
+            // Idea 4 (offline-first follow-up): a mismatched ExpectedRowVersion
+            // here does not mean this submission is unsafe - only that
+            // something else changed the order since the caller last read it
+            // (another round added, a note, a merge from a different
+            // device). FireRound below fires whatever the order's CURRENT
+            // Draft items actually are, not a client-supplied snapshot, so
+            // it is correct regardless of which version the caller thought
+            // it was looking at. Proceeding here - instead of failing the
+            // caller with a conflict that resolving it is squarely this
+            // system's job to avoid - eliminates that whole class of
+            // spurious offline-reconnect conflicts. The real safety net is
+            // SaveAsync's own compare-and-swap below, pinned to the version
+            // just read: exactly the same protection an ordinary,
+            // non-stale submit already relies on.
         }
 
         // V1-ORD-006: FireRound activates only the Draft items and hands back
@@ -176,10 +189,11 @@ public sealed class SubmitOrderHandler
             command.Reason,
             command.ChangedBy,
             command.SubmittedAt);
+        var saveExpectedVersion = order.RowVersion;
 
         try
         {
-            var newVersion = await _orderRepository.SaveAsync(submitted, command.ExpectedRowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
+            var newVersion = await _orderRepository.SaveAsync(submitted, saveExpectedVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
 
             if (_dispatcher is not null)
             {

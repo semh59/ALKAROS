@@ -124,6 +124,39 @@ function queueOrder(payload) {
   scheduleQueueRetry();
 }
 
+// A bulk reconnect (router reset, a shift-start scramble) can drop several
+// rounds into the queue before any of them flush. Sending them back in raw
+// arrival order treats a dessert round exactly like a starter round, even
+// though the kitchen would rather see starters first regardless of which
+// waiter happened to queue theirs a few seconds earlier. Mirrors the
+// server's own FireRound priority (TableDraftService.cs: the round's
+// earliest courseNumber, lower first) so the queue's send order agrees with
+// what the kitchen would do with the same rounds anyway; queuedAt (oldest
+// first) only breaks a tie within the same course. A round with no
+// course-tagged items (course management off, or every line unassigned)
+// sorts as course 0 — first, not last: there is no signal to deprioritize
+// it by, and in the common case (the whole deployment has course
+// management off) every queued round shares that same value, so this never
+// actually reorders anything.
+function roundPriority(payload) {
+  const courseNumbers = (payload.items || [])
+    .map((item) => item.courseNumber)
+    .filter((value) => typeof value === 'number');
+  const minCourse = courseNumbers.length > 0 ? Math.min(...courseNumbers) : 0;
+  return { minCourse, queuedAt: payload.queuedAt || '' };
+}
+
+export function sortQueueByPriority(queue) {
+  return queue.slice().sort((a, b) => {
+    const pa = roundPriority(a);
+    const pb = roundPriority(b);
+    if (pa.minCourse !== pb.minCourse) return pa.minCourse - pb.minCourse;
+    if (pa.queuedAt < pb.queuedAt) return -1;
+    if (pa.queuedAt > pb.queuedAt) return 1;
+    return 0;
+  });
+}
+
 // The queue used to be flushed only by the browser's `online` event and by
 // start(). But the commonest way into the queue is not going offline at
 // all — it is the server answering 5xx while the network is perfectly up,
@@ -159,7 +192,7 @@ export async function flushQueue() {
   flushInFlight = true;
 
   try {
-    for (const payload of state.offlineQueue.slice()) {
+    for (const payload of sortQueueByPriority(state.offlineQueue)) {
       const result = await postOrder(payload);
       if (result.ok) {
         state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);

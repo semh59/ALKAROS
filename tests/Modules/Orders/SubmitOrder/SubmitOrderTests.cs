@@ -271,19 +271,46 @@ public sealed class PostgresSubmitOrderIntegrationTests : IClassFixture<SubmitOr
     }
 
     [Fact]
-    public async Task HandleAsyncStaleVersionThrowsStaleOrderVersionException()
+    public async Task HandleAsyncStaleVersionStillSucceedsWhenTheOrderRemainsOpen()
     {
+        // Idea 4 (offline-first follow-up): FireRound fires whatever the
+        // order's CURRENT Draft items are, not a client-supplied snapshot -
+        // a caller's stale ExpectedRowVersion (e.g. a WaiterPwa device that
+        // was offline while something else touched this order) no longer
+        // fails the whole submission outright. The real safety net is
+        // SaveAsync's own compare-and-swap against the version this handler
+        // just read, not the caller's.
         var order = await CreateSampleDraftOrderAsync();
         var staleVersion = order.RowVersion + 99;
 
         var cmd = new SubmitOrderCommand("waiter-pwa-01", "op-stale-01", order.Id, staleVersion);
+        var result = await _handler.HandleAsync(cmd);
+
+        result.IsReplay.Should().BeFalse();
+        result.Status.Should().Be(OrderState.Submitted);
+
+        var reloaded = await _repository.GetByIdAsync(order.Id);
+        reloaded!.Status.Should().Be(OrderState.Submitted);
+    }
+
+    [Fact]
+    public async Task HandleAsyncStaleVersionStillFailsWhenTheOrderIsNoLongerOpen()
+    {
+        // The version mismatch is not the reason this fails - the order
+        // genuinely cannot be fired from a terminal state, exactly as a
+        // matching-version submit against the same order would also fail.
+        var order = await CreateSampleDraftOrderAsync();
+        var firstSubmit = new SubmitOrderCommand("waiter-pwa-01", "op-first-submit", order.Id, order.RowVersion);
+        await _handler.HandleAsync(firstSubmit);
+        var submitted = await _repository.GetByIdAsync(order.Id);
+        var cancelled = submitted!.TransitionTo(OrderState.Cancelled);
+        await _repository.SaveAsync(cancelled, submitted.RowVersion);
+
+        var staleVersion = order.RowVersion + 99;
+        var cmd = new SubmitOrderCommand("waiter-pwa-01", "op-stale-cancelled", order.Id, staleVersion);
         var act = () => _handler.HandleAsync(cmd);
 
-        await act.Should().ThrowAsync<StaleOrderVersionException>();
-
-        // Order remains in Draft state
-        var reloaded = await _repository.GetByIdAsync(order.Id);
-        reloaded!.Status.Should().Be(OrderState.Draft);
+        await act.Should().ThrowAsync<InvalidOperationException>();
     }
 
     [Fact]
