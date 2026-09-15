@@ -1479,7 +1479,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/CONSISTENCY_AUDIT.md` | ✅ | `347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7` | Tek-sahip görev |
 | `docs/UI_STYLE_GUIDE.md` | ✅ | `48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79` | Tek-sahip görev |
 | `docs/architecture/api-contract-standard.md` | ✅ | `BB398A3DCC869E47BBA355DA05EE26BE027021A0E2565FB3CDB28B321D769B6D` | Tek-sahip görev |
-| `docs/architecture/deployment-compatibility-matrix.md` | ✅ | `47E5E3031E44EA06C947DB181842BF101D75F486FE184AFACDD28917EA3F4A25` | Tek-sahip görev |
+| `docs/architecture/deployment-compatibility-matrix.md` | ✅ | `19DF28BC6516301BC15520D558FA0ABC6E9AABFC089463A73FE0D4305AC99088` | Tek-sahip görev |
 | `docs/architecture/dual-screen-pos-topology.md` | ✅ | `1872F1A491C1E084E26681E91942E5BF21AB62BB655589CCDC34A91A5C5BFC2B` | Tek-sahip görev |
 | `docs/architecture/idempotency-inbox-outbox.md` | ✅ | `F4D0F14703633F6CF015AAE9CB505E7BD7097FCFD87B1B41E145B5B8B8B82499` | Tek-sahip görev |
 | `docs/architecture/local-first-sync-contract.md` | ✅ | `0AB1382E141D087F181C73711B2A42ED4A738D30212A667B44C0DAA984B53C92` | Tek-sahip görev |
@@ -1505,15 +1505,15 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/data/projection-ownership.md` | ✅ | `88FAAAFC7E5B94B3F0BE2184A8929C8273948A4B072FFADF5C01CE1924D71302` | Tek-sahip görev |
 | `docs/data/single-branch-key-strategy.md` | ✅ | `F484711A2BF18CBDCB7F2B259F5F9F153026B2A8841B141BA99F00619AD9153C` | Tek-sahip görev |
 | `docs/design/brand/README.md` | ✅ | `EB22EDE137AD17F08D52CE0A55F1303A5D6C2EA88BB2E8BF94B03C83D641109F` | Tek-sahip görev |
-| `docs/design/foundations.md` | ✅ | `2EF87F7BAF55933592948ECEB8FA4A6FE63F6FC923A52EB38DDFB22A02B3DFA2` | Tek-sahip görev |
+| `docs/design/foundations.md` | ✅ | `A9D1E72AB956A0CA762E232B7075318E868B67145F0FDAB532C6B06D5502445C` | Tek-sahip görev |
 | `docs/design/modules/check-and-table.md` | ✅ | `8F624927E3840F38FCDA9773573BF605BCE661E39B70BDA6309ADB754B93FDCE` | Tek-sahip görev |
 | `docs/design/modules/qr-nfc-ordering.md` | ✅ | `9F01F1C4CC8DF90B90A8B3F1A16729578CD35B34BB81888244B38D38A2C565EF` | Tek-sahip görev |
-| `docs/domain/authorization-model.md` | ✅ | `2DA884DFA9774E384C47A307C5742B270CE8B9E3F2EE67AC0950DA86AC07279A` | Tek-sahip görev |
+| `docs/domain/authorization-model.md` | ✅ | `82F699027A247516A0B1AC3BBC3DB2160B7C33774F635031D00CA1219AF9BDFC` | Tek-sahip görev |
 | `docs/domain/bill-order-cardinality.md` | ✅ | `60B03AEA8D67FC8F816CEB308FE715050CA698E410A7725874140BA3BDAED02A` | Tek-sahip görev |
 | `docs/domain/cash-session-design.md` | ✅ | `3ACA34AA1E57DE329483F8D2AD812A31AFCB68350B8171E06416EAC8EB72FFE7` | Tek-sahip görev |
 | `docs/domain/customer-credit-invoice-semantics.md` | ✅ | `791D5F71F6DED706EFEF261E126F6665D0C7D6D41626D9D09EE0E4A95C8AB5F0` | Tek-sahip görev |
 | `docs/domain/inventory-cost-basis.md` | ✅ | `35681F78A28087C844324D28AA383B01FD7473FCF6F758446AE82FE91F5FB36D` | Tek-sahip görev |
-| `docs/domain/lifecycle-transition-contracts.md` | ✅ | `C76AC756CC9D23EF27B6227B5CDF007D86CF84935BFEDD5C64F6F210C8AE6CD4` | Tek-sahip görev |
+| `docs/domain/lifecycle-transition-contracts.md` | ✅ | `441BF484576E1B438A35C142BD5EDE9EB98BE4B3421E531766DAB8710C6A99EB` | Tek-sahip görev |
 | `docs/domain/payment-allocation-integrity.md` | ✅ | `7EE0807B2084A62933AB1EE27CC529EF095187E08E0BA3ED7F300B85228C3631` | Tek-sahip görev |
 | `docs/domain/printer-routing-precedence.md` | ✅ | `44842E75F9E5FDFE76E93296E6CF2E1665A94545CAB9C8EC6932044448B30BD4` | Tek-sahip görev |
 | `docs/domain/receipt-variance-policy.md` | ✅ | `ED57819B74ECA4AED47253C921DC5CC6F177DE180F4E0CDD0A34CBB5CF57BE50` | Tek-sahip görev |
@@ -1526,6 +1526,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/engineering/garson-audit-2026-09-10.md` | ✅ | `009B02114127919085E3F8B8B49C1697EA24773D9FB01959D5CF3857F3E7519D` | Tek-sahip görev |
 | `docs/engineering/garson-refactor-plan.md` | ✅ | `BBFCE1FE1675887EEB509439A69E29931E3E1B659AF569BA1CDA341E7284AB36` | Tek-sahip görev |
 | `docs/engineering/immutable-closure-exceptions.md` | ✅ | `D6A95988A952FAD394B3F8645B9AC5F9C6F5DB98208B90CAA49728C0347AB409` | Tek-sahip görev |
+| `docs/engineering/kitchen-allday-view-and-performance-report-research.md` | ✅ | `E81C0014A62BFB7607BE6836E07BBC3142AD429B3C63517E4E8AF6320A621095` | Tek-sahip görev |
 | `docs/engineering/login-timing-contract.md` | ✅ | `05F7C0E522229E2FC0BB341D635FD04140EA6A18483639B89DF3106F1DB9E3A1` | Tek-sahip görev |
 | `docs/engineering/task-scope-contract.md` | ✅ | `CECE4919C0152F2B724D9E6730C4F5D380662883E1158DD44BDCDC93097D5CE4` | Tek-sahip görev |
 | `docs/engineering/v1-independent-audit.md` | ✅ | `E2FB115FB700D9F65B5D8AA5F315E3277055C983CE19C7A04EA331070F7B2CC5` | Tek-sahip görev |
@@ -2105,8 +2106,28 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md` | ✅ | `DC83ED6DC05C38E24F90AD5B5EDEBC125B87538424C7DE9C8E3DCB3BA1C09878` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-026-grant-class-bill-adjustment-surface.md` | ✅ | `EE231C37E36BCAE5558337FF71D50034203036211B8EEFF5E5FA4506F371111A` | Tek-sahip görev |
 | `plan/v1/identity-authorization/V1-IAM-027-sent-unserved-void-with-waste.md` | ✅ | `EB0B75299018EC2DFAE214A130C1E16B13DAC3A48C158280D5132373ECE1CA7B` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-028-kitchen-advance-permission-split.md` | ✅ | `45C60F0035820F2D129F53EAA2102AE4E86696AFFF02AA6F47CB019CE0D92A4B` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-029-kitchen-chef-role.md` | ✅ | `76DFA21DC6EC679F529D1646FE188682DE4A69C78287D2D0518728F45102C44D` | Tek-sahip görev |
+| `plan/v1/identity-authorization/V1-IAM-030-kitchen-chef-routing-permission.md` | ✅ | `6FA8BA5C0BA8A95FD17D162682C1AF805B75ABF05D20EC44F4A8428108424447` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-001-mutfak-ekrani-faz-1-yeniden-yazim.md` | ✅ | `24D33202418808231241BD478D19430DA465ABBA7E15EF2ED824846626378624` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-002-urun-tukendi-arayuzu.md` | ✅ | `52A04A57DAC6B8141A396A75FA25A18793F4B3DB2EB8F4244641879726FB46DA` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-003-item-undo-arayuzu.md` | ✅ | `A8F4AB6D0CBD8261CC2CBF2E81CD19B32D6259D512C6A0787DFCC23DE35201CE` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-004-canli-senkron-rozeti.md` | ✅ | `15B0F2F6EB7E35B5CEE0588F6D23BEC5812B2C9304A6008BCCF677E07AB673BD` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-005-expo-masa-etiketi.md` | ✅ | `AF759E672855D5C1829C17A635F982DB06C2E39D68E118738F7785AF024F6D18` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-006-ayarlanabilir-yogun-mod-esigi.md` | ✅ | `7CC0D5519BB12E95D663D7E31289B2E6C3AEF273052B2F4839C0439D70F8D68E` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-007-expo-gercek-masa-gruplama.md` | ✅ | `579EFA0C6A1C6ABD9E5F8D79FE8BB6FBA94635E428224DA06EF63B8B23CF51D3` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-008-tum-gun-gorunumu.md` | ✅ | `6912A590EBB7E368D03098E937C9F161037C46D8E5E5850A73EBF7EDCE28BA20` | Tek-sahip görev |
+| `plan/v1/kitchen-display/V1-KDS-009-performans-raporu-ekrani.md` | ✅ | `9C70057103961E61BF96A299384908E61DFC797EA66E8DDB78D7DB4E505A4BB7` | Tek-sahip görev |
 | `plan/v1/kitchen-printing/V1-KIT-005-kitchen-order-item-state-sync.md` | ✅ | `AD31BEAD8035AFA3574615B3FAB281C9F389DBAF7031B9E32DA774D7056F905C` | Tek-sahip görev |
 | `plan/v1/kitchen-printing/V1-KIT-006-category-level-printer-routing.md` | ✅ | `A1B96297DE52579824B575E75EF5E95DC1EFAC129B13335B83F4D87A612F8A17` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-007-ticket-implicit-accept-on-prepare.md` | ✅ | `29C8DACCE8E9A1C55B8F759E960E00C6146893CBB6C44AE3A0A6AAD11B9E259B` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-008-availability-suspend-bridge.md` | ✅ | `F8345297D6D47CA529AFE941FD61D8C505114BF100FE183788AAAE9DDD866F46` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-009-kitchen-item-transition-undo.md` | ✅ | `6BC6756746D1CE7F181BAA23FE77AB6A022C2D7345A06B1755EE5067D360B361` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-010-expose-live-sync-state.md` | ✅ | `3D4E7B1E5567D23271F2B89F8764542FA798A6E9B003D11D92EE0A6F58B47770` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-011-document-offline-resilience-advantage.md` | ✅ | `613EC0A5A56169D597719A198F97A3997C9E17895D7657B6AB18886DB4DD12C7` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-012-real-table-label-on-ticket.md` | ✅ | `C736E8A605317E5BF90A20B24F86FF3962CDFE243C6052ACC4AE3281BF696992` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-013-expose-dense-mode-threshold.md` | ✅ | `5413FB3B2B28D5BE504FE03637DBC35BEC3DF66F8DC5BCAF92972C306B92C482` | Tek-sahip görev |
+| `plan/v1/kitchen-printing/V1-KIT-014-kitchen-performance-report.md` | ✅ | `EE101887E4DE1CA417DA0208047E216E8326344807047945BD95D941FD993D58` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md` | ✅ | `A4A6A2FF6516C48C653F8A9A340645F862F9E2FD594FBBE12B16CB975CC24B26` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md` | ✅ | `946FFAF9D6594AD249E1425065A067707EC3159DDB07235421201B30531E24AD` | Tek-sahip görev |
 | `plan/v1/orders/V1-ORD-006-check-detaches-from-table.md` | ✅ | `481C3EB35A01956BB534D74C67772CFB3C557B74C7AF1744895FBAF215E50CCB` | Tek-sahip görev |
@@ -2308,6 +2329,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-196-coverage-step-silent-failure-diagnostics.md` | ✅ | `8FAA3CDB7EC12E457A95734E3D83CE984967DCFA6BAF9912152631027F09EA8A` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-197-coverage-step-per-project-collection.md` | ✅ | `FC582E146C0E206D0C79A03E7C601DDD35066683ADE6B6A25BFF26F0ECD90699` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-198-authorization-decision-tests-fk-regression.md` | ✅ | `73EC175ACFEC64A513DFF7C084F230D771433FD5AAA1D3DDA08FA45A94BF4E18` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-199-kitchen-ticket-transition-permission-numeric-bypass.md` | ✅ | `972F6D228E34E70CDBCFDE9CBE88E50936AB7CF467DD19795AF2AA81561F59EB` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2317,6 +2339,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/settings/V1-SET-002-kitchen-live-sync-toggle.md` | ✅ | `2BD8CB0CFB45F5172F24C88294B2A0913F3B9C704547E7BB5C67EE6CBDC58A00` | Tek-sahip görev |
 | `plan/v1/settings/V1-SET-003-reservation-station-toggle.md` | ✅ | `F68039F1D2D5EB9DDBBA4AAB009ECE2CD46B1247CC873E52EDB71D7DDF4C9651` | Tek-sahip görev |
 | `plan/v1/settings/V1-SET-004-garson-feature-toggles.md` | ✅ | `A84A847E81562C1F2A0DF60B1FCA1EB5667E82BBB36FE810AA791BA9361B75A2` | Tek-sahip görev |
+| `plan/v1/settings/V1-SET-005-kitchen-dense-mode-threshold.md` | ✅ | `950F8CF2B179279EB69F38B439C58EFBC61476B573D63908B2F498270DBFFFC6` | Tek-sahip görev |
 | `plan/v1/table-management/V1-TBL-006-table-lifecycle-reacceptance.md` | ✅ | `BBDFADC66C4F08E3112B3C57FF18E5DD2F6F6AB3A51838C4EAC54822CC29DC8F` | Tek-sahip görev |
 | `plan/v1/table-management/V1-TBL-007-fail-closed-table-audit.md` | ✅ | `F6800EA23217061EF2BFBBE74DDF88749F6489642472EBFB2FE4EE0FA975F471` | Tek-sahip görev |
 | `plan/v1/table-management/V1-TBL-008-dedicated-reservation-station-decision.md` | ✅ | `B8A08753307C09495D7F38F121D099176F2CC158DAC6BE8A1CD49D60772D6C2A` | Tek-sahip görev |
@@ -2383,5 +2406,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1111` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1134` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

@@ -71,9 +71,7 @@ göndermek (yanlış/eksik çıkan bir yemek fark edildiğinde). Bu, ALKAROS'un
 amaçlı) FARKLI bir yetenek — ayrı bir gerçek boşluk, bu görevin kapsamı
 dışında, ileride ayrı bir Task ID olarak değerlendirilebilir.
 
-## 5. ALKAROS'un elindeki, rakiplerin çoğunun ödeme duvarının arkasında
-   tuttuğu avantajlar (mevcut kod tabanında zaten var, yeniden icat
-   edilmeyecek)
+## 5. ALKAROS'un elindeki, rakiplerin çoğunun ödeme duvarının arkasında tuttuğu avantajlar (mevcut kod tabanında zaten var, yeniden icat edilmeyecek)
 
 - `KitchenTicket.TargetPrepMinutes` zaten her bilette var — ama
   **düzeltme (bu araştırmanın kendi dürüstlük kontrolü)**: bugün bu

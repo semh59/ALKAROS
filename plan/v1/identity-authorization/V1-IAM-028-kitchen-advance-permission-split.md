@@ -138,6 +138,7 @@ davranış değişmez.
 4. `docs/domain/lifecycle-transition-contracts.md` senkronizasyonu için
    bkz. `V1-KIT-007`'nin Owned surface'ı (bu görevin değil, o görevin
    davranışının dokümanı).
+
 - `python tools/consistency-audit/consistency_audit.py` → `clean` (bir
   kod yorumundaki yanlışlıkla yazılmış Türkçe karakter bulundu ve
   düzeltildi).
