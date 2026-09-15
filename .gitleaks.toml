@@ -15,6 +15,14 @@ paths = [
   '''tests/Modules/Audit/EventStore/AuditSanitizerTests\.cs''',
   '''tests/BuildingBlocks/Security/SensitiveData/Fixtures/SensitiveDataFixtures\.cs''',
   '''evidence/V1-RMD-0(17|18)/validation\.md''',
+  # RFC 8291 §5's own published Web Push encryption worked example
+  # (public IETF test vectors, not a real key pair) plus plain string
+  # idempotency-key test literals the generic-api-key rule's entropy
+  # heuristic misreads as key material.
+  '''tests/Host/Experience/WebPush/WebPushHttpTests\.cs''',
+  '''tests/Host/Experience/WebPush/WebPushCryptoTests\.cs''',
+  '''tests/Modules/Kitchen/PrintQueue/PostgresPrintQueueIntegrationTests\.cs''',
+  '''tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests\.cs''',
 ]
 regexes = [
   # AES-256 test key: "0123456789abcdef0123456789abcdef" and its base64.
