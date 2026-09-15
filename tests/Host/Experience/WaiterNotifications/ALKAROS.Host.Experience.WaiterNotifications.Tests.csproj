@@ -16,6 +16,13 @@
 
   <ItemGroup>
     <ProjectReference Include="../../../../src/Host/ALKAROS.Host.csproj" />
+    <ProjectReference Include="../../../BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <!-- V1-RMD-201: only what OnConnectedAsync's cashier-session lookup touches. -->
+  <ItemGroup>
+    <None Include="../../../../database/migrations/V1/V1-IAM-001/005-users.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-IAM-003/009-identity-device-sessions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -244,33 +244,54 @@ public sealed class KitchenOperationsStore
     }
 
     /// <summary>
-    /// V1-WTR-009: broadcasts to every connected waiter device — there is no
-    /// waiter-to-table assignment tracked anywhere in this system to target
-    /// one specific device (see <see cref="WaiterOrderStatusHub"/>). A
-    /// missing order is tolerated (the ticket/order pairing is normally
-    /// guaranteed, but a notification is best-effort, not a correctness
-    /// path — it must never fail the transition itself).
+    /// V1-WTR-009/V1-RMD-201: a missing order is tolerated (the
+    /// ticket/order pairing is normally guaranteed, but a notification is
+    /// best-effort, not a correctness path — it must never fail the
+    /// transition itself). Targeting itself lives in
+    /// <see cref="DispatchItemReadyNotificationAsync"/> so it can be
+    /// exercised without a full store.
     /// </summary>
-    private async Task NotifyWaitersItemIsReadyAsync(
+    private Task NotifyWaitersItemIsReadyAsync(
         Guid orderId, KitchenTicketItem item, CancellationToken cancellationToken)
+        => DispatchItemReadyNotificationAsync(_waiterHub, _push, _orders, orderId, item, cancellationToken);
+
+    /// <summary>
+    /// V1-RMD-201: an order with a known <see cref="Order.ServingUserId"/>
+    /// (V1-RMD-111) is notified only on that waiter's own SignalR group
+    /// (see <see cref="WaiterOrderStatusHub.GroupName"/>) and push
+    /// subscriptions; an order with none (e.g. a quick-sale ticket, or data
+    /// from before V1-RMD-111) keeps the previous flat broadcast so nobody
+    /// misses it. Takes its collaborators as parameters, rather than reading
+    /// instance fields, so the targeting decision is testable on its own.
+    /// </summary>
+    public static async Task DispatchItemReadyNotificationAsync(
+        IHubContext<WaiterOrderStatusHub> waiterHub,
+        WebPushSender? push,
+        IOrderRepository orders,
+        Guid orderId,
+        KitchenTicketItem item,
+        CancellationToken cancellationToken)
     {
-        var order = await _orders.GetByIdAsync(orderId, cancellationToken);
-        await _waiterHub.Clients.All.SendAsync(
-            WaiterOrderStatusHub.OrderItemReady,
-            new OrderItemReadyV1(orderId, order?.TableId, item.OrderItemId, item.ProductNameSnapshot),
-            cancellationToken);
+        var order = await orders.GetByIdAsync(orderId, cancellationToken);
+        var servingUserId = order?.ServingUserId;
+        var payload = new OrderItemReadyV1(orderId, order?.TableId, item.OrderItemId, item.ProductNameSnapshot);
+
+        var recipients = servingUserId is Guid waiterId
+            ? waiterHub.Clients.Group(WaiterOrderStatusHub.GroupName(waiterId))
+            : waiterHub.Clients.All;
+        await recipients.SendAsync(WaiterOrderStatusHub.OrderItemReady, payload, cancellationToken);
 
         // V1-WTR-011: SignalR only reaches a device whose app is open, which
         // is exactly the case a plated dish is not in — the waiter is on the
         // floor with the phone pocketed. The sender swallows its own failures.
-        if (_push is not null)
+        if (push is not null)
         {
-            await _push.BroadcastAsync(
-                new WebPushMessage(
-                    "Sipariş hazır",
-                    $"{item.ProductNameSnapshot} hazır",
-                    "alkaros-order-ready"),
-                cancellationToken);
+            var message = new WebPushMessage(
+                "Sipariş hazır", $"{item.ProductNameSnapshot} hazır", "alkaros-order-ready");
+            if (servingUserId is Guid pushUserId)
+                await push.SendToUserAsync(message, pushUserId, cancellationToken);
+            else
+                await push.BroadcastAsync(message, cancellationToken);
         }
     }
 

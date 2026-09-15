@@ -53,4 +53,23 @@ public sealed class WebPushTestDatabase : PgTestDatabase
 
     public Task<long> VapidRowCountAsync()
         => ScalarAsync<long>("SELECT count(*) FROM notifications.vapid_keys;");
+
+    /// <summary>
+    /// V1-RMD-201: a bare user row for tests that need a real
+    /// <c>identity.users</c> FK for <c>push_subscriptions.user_id</c> but no
+    /// device session (unlike <see cref="SeedCashierSessionAsync"/>).
+    /// </summary>
+    public async Task<Guid> SeedUserAsync(string displayName)
+    {
+        var userId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', @display_name, true);
+            """,
+            ("user_id", userId),
+            ("username", "push-user-" + userId.ToString("N")),
+            ("display_name", displayName));
+        return userId;
+    }
 }

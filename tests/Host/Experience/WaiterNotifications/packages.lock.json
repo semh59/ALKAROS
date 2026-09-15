@@ -360,6 +360,15 @@
           "Npgsql": "[9.0.2, )"
         }
       },
+      "alkaros.testhelpers": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )",
+          "xunit": "[2.9.2, )"
+        }
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",
         "requested": "[8.0.1, )",

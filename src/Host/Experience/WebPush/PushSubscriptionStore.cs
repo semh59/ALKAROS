@@ -82,6 +82,36 @@ public sealed class PushSubscriptionStore
     }
 
     /// <summary>
+    /// V1-RMD-201: every device a specific user has ever subscribed from —
+    /// used to target a single waiter once an order's serving user is known,
+    /// instead of <see cref="GetAllAsync"/>'s deployment-wide broadcast set.
+    /// </summary>
+    public async Task<IReadOnlyList<PushSubscriptionRecord>> GetByUserAsync(
+        Guid userId, CancellationToken cancellationToken = default)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            """
+            SELECT subscription_id, endpoint, p256dh, auth, user_id, terminal_id
+            FROM notifications.push_subscriptions
+            WHERE user_id = @user_id;
+            """);
+        cmd.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = userId;
+        var results = new List<PushSubscriptionRecord>();
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            results.Add(new PushSubscriptionRecord(
+                reader.GetGuid(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.GetString(3),
+                reader.GetGuid(4),
+                reader.GetGuid(5)));
+        }
+        return results;
+    }
+
+    /// <summary>
     /// RFC 8030 §7.3: a push service answers 404 or 410 once a subscription is
     /// permanently gone. Keeping the row would mean re-sending to a dead
     /// endpoint on every notification for the life of the deployment.

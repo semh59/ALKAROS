@@ -64,12 +64,26 @@ public sealed class WebPushSender
         (await _store.GetOrCreateVapidKeysAsync(_subject, cancellationToken)).PublicKey;
 
     /// <summary>
-    /// Sends one notification to every registered device. The waiter hub
-    /// broadcasts for the same reason this does: nothing in this system
-    /// records which waiter serves which table, so there is no narrower
-    /// audience to address (V1-RMD-149's own note).
+    /// Sends one notification to every registered device. Still the right
+    /// call for an event with no single addressee (e.g. a pending QR order —
+    /// nobody has claimed it yet, V1-RMD-149) or a legacy/unassigned order
+    /// (V1-RMD-201: <c>Order.ServingUserId</c> is null).
     /// </summary>
-    public async Task BroadcastAsync(WebPushMessage message, CancellationToken cancellationToken = default)
+    public Task BroadcastAsync(WebPushMessage message, CancellationToken cancellationToken = default)
+        => SendToSubscriptionsAsync(message, _store.GetAllAsync, cancellationToken);
+
+    /// <summary>
+    /// V1-RMD-201: sends one notification to only the devices one specific
+    /// user has subscribed from — used once an order's serving waiter is
+    /// known, so the rest of the floor's phones stay quiet.
+    /// </summary>
+    public Task SendToUserAsync(WebPushMessage message, Guid userId, CancellationToken cancellationToken = default)
+        => SendToSubscriptionsAsync(message, ct => _store.GetByUserAsync(userId, ct), cancellationToken);
+
+    private async Task SendToSubscriptionsAsync(
+        WebPushMessage message,
+        Func<CancellationToken, Task<IReadOnlyList<PushSubscriptionRecord>>> loadSubscriptions,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -77,7 +91,7 @@ public sealed class WebPushSender
         VapidKeyPair keys;
         try
         {
-            subscriptions = await _store.GetAllAsync(cancellationToken);
+            subscriptions = await loadSubscriptions(cancellationToken);
             if (subscriptions.Count == 0) return;
             keys = await _store.GetOrCreateVapidKeysAsync(_subject, cancellationToken);
         }

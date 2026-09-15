@@ -4,21 +4,22 @@ using Microsoft.AspNetCore.SignalR;
 namespace ALKAROS.Host.Experience.WaiterNotifications;
 
 /// <summary>
-/// V1-WTR-009: pushes "an order item is ready" to every connected waiter
-/// device — only reachable when a deployment has turned on kitchen
-/// live-sync (V1-SET-002). Same shape as
-/// <see cref="ALKAROS.Host.DualScreen.CustomerDisplayHub"/>, but there is no
-/// waiter-to-table (or waiter-to-order) assignment tracked anywhere in this
-/// system to target one specific device, so this is a flat broadcast to
-/// every authenticated connection on this hub rather than a per-table or
-/// per-waiter group; the payload carries the table and item so a client can
-/// decide what is relevant to show. Targeted delivery is a natural follow-on
-/// once/if a waiter-table assignment model exists.
+/// V1-WTR-009: pushes "an order item is ready" to connected waiter devices —
+/// only reachable when a deployment has turned on kitchen live-sync
+/// (V1-SET-002). Same shape as
+/// <see cref="ALKAROS.Host.DualScreen.CustomerDisplayHub"/>. Every
+/// authenticated connection joins its own per-user group (see
+/// <see cref="GroupName"/>) on connect; V1-RMD-201 uses this so a
+/// notification for an order with a known <c>ServingUserId</c> reaches only
+/// that waiter's devices instead of every connected device.
 /// </summary>
 public sealed class WaiterOrderStatusHub : Hub
 {
     public const string Route = "/hubs/waiter-order-status";
     public const string OrderItemReady = "OrderItemReady";
+
+    /// <summary>The SignalR group a given waiter's connections join.</summary>
+    public static string GroupName(Guid userId) => $"waiter-user:{userId:D}";
 
     /// <summary>
     /// V1-RMD-149: a guest-entered order is waiting for staff confirmation.
@@ -54,6 +55,7 @@ public sealed class WaiterOrderStatusHub : Hub
             return;
         }
 
+        await Groups.AddToGroupAsync(Context.ConnectionId, GroupName(principal.UserId), Context.ConnectionAborted);
         await base.OnConnectedAsync();
     }
 }
