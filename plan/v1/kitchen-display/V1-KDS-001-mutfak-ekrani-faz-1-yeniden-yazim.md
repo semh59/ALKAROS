@@ -104,8 +104,8 @@ küçük fast-follow görevi olmalı, burada icat edilmedi.
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0
   uyarı.
 - **Tablet/PC uyumluluk kanıtı (gerçek tarayıcı, gerçek bileşen kodu, mock
-  veriyle)**: bileşen, geçici bir Vite demo harness'i (`kitchen-demo.html`
-  + `kitchen-demo-main.tsx`, ekran görüntüsünden hemen sonra silindi, repoya
+  veriyle)**: bileşen, geçici bir Vite demo harness'i (`kitchen-demo.html` +
+  `kitchen-demo-main.tsx`, ekran görüntüsünden hemen sonra silindi, repoya
   hiç commit edilmedi) üzerinden gerçek Chrome'da render edildi.
   - **~768px (13" tablet)**: istasyonlar tek sütuna düşüyor, dört aşamalı
     gösterge (Bekliyor/Hazırlanıyor/Hazır/Servis Edildi) tam genişlikte

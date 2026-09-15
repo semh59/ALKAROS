@@ -1039,15 +1039,22 @@ internal sealed class BillingSplitTestDatabase
     /// the tampering the caller is testing against).
     /// </summary>
     public Task ApproveGrantAsync(Guid grantId)
-        => ExecuteAsync(
+    {
+        var approverId = Guid.NewGuid();
+        return ExecuteAsync(
             DataSource,
             """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@approver_id, @approver_username, 'not-used', 'Billing API Test Approver', true);
             UPDATE identity.authorization_grants
             SET status = 'granted', policy_path = 'manual',
-                approver_user_id = gen_random_uuid(), resolved_at = now()
+                approver_user_id = @approver_id, resolved_at = now()
             WHERE grant_id = @grant_id;
             """,
-            ("grant_id", grantId));
+            ("grant_id", grantId),
+            ("approver_id", approverId),
+            ("approver_username", "rmd103-approver-" + approverId.ToString("N")));
+    }
 
     /// <summary>V1-WTR-021: attributes a seeded bill's underlying order to a waiter for the shift-summary test.</summary>
     public Task SetOrderServingUserAsync(Guid billId, Guid waiterUserId)

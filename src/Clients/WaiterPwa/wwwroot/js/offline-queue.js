@@ -124,6 +124,55 @@ function queueOrder(payload) {
   scheduleQueueRetry();
 }
 
+// A bulk reconnect (router reset, a shift-start scramble) can drop several
+// rounds into the queue before any of them flush. Sending them back in raw
+// arrival order treats a dessert round exactly like a starter round, even
+// though the kitchen would rather see starters first regardless of which
+// waiter happened to queue theirs a few seconds earlier. Mirrors the
+// server's own FireRound priority (TableDraftService.cs: the round's
+// earliest courseNumber, lower first) so the queue's send order agrees with
+// what the kitchen would do with the same rounds anyway; queuedAt (oldest
+// first) only breaks a tie within the same course. A round with no
+// course-tagged items (course management off, or every line unassigned)
+// sorts as course 0 — first, not last: there is no signal to deprioritize
+// it by, and in the common case (the whole deployment has course
+// management off) every queued round shares that same value, so this never
+// actually reorders anything.
+//
+// Found by an independent audit (2026-09-15): re-sorting by course on
+// every flushQueue() call, with no aging term, let a low-priority round
+// (e.g. dessert) be pushed back indefinitely — flushQueue() breaks out of
+// its loop on the first temporary failure (429 or 5xx), leaving everything
+// after it untouched for that cycle, and every new higher-priority round
+// queued in the meantime re-earns a spot ahead of it on the next cycle. A
+// round that has been waiting long enough now ages into top priority
+// (effective course -1) so it can no longer be re-buried by newer arrivals
+// forever; queuedAt still breaks ties among aged rounds, oldest first.
+const QUEUE_PRIORITY_AGING_MS = 2 * 60 * 1000;
+
+function roundPriority(payload, nowMs) {
+  const courseNumbers = (payload.items || [])
+    .map((item) => item.courseNumber)
+    .filter((value) => typeof value === 'number');
+  const minCourse = courseNumbers.length > 0 ? Math.min(...courseNumbers) : 0;
+  const queuedAt = payload.queuedAt || '';
+  const queuedAtMs = queuedAt ? Date.parse(queuedAt) : NaN;
+  const waitedMs = Number.isFinite(queuedAtMs) ? nowMs - queuedAtMs : 0;
+  const aged = waitedMs >= QUEUE_PRIORITY_AGING_MS;
+  return { effectiveCourse: aged ? -1 : minCourse, queuedAt };
+}
+
+export function sortQueueByPriority(queue, now = Date.now()) {
+  return queue.slice().sort((a, b) => {
+    const pa = roundPriority(a, now);
+    const pb = roundPriority(b, now);
+    if (pa.effectiveCourse !== pb.effectiveCourse) return pa.effectiveCourse - pb.effectiveCourse;
+    if (pa.queuedAt < pb.queuedAt) return -1;
+    if (pa.queuedAt > pb.queuedAt) return 1;
+    return 0;
+  });
+}
+
 // The queue used to be flushed only by the browser's `online` event and by
 // start(). But the commonest way into the queue is not going offline at
 // all — it is the server answering 5xx while the network is perfectly up,
@@ -159,7 +208,7 @@ export async function flushQueue() {
   flushInFlight = true;
 
   try {
-    for (const payload of state.offlineQueue.slice()) {
+    for (const payload of sortQueueByPriority(state.offlineQueue)) {
       const result = await postOrder(payload);
       if (result.ok) {
         state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);

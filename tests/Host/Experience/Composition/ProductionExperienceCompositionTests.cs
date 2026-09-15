@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Sockets;
 using ALKAROS.Host.Composition.Modules;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.ModuleComposition;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -12,6 +14,18 @@ namespace ALKAROS.Host.Experience.Composition.Tests;
 
 public sealed class ProductionExperienceCompositionTests
 {
+    static ProductionExperienceCompositionTests()
+    {
+        // DualScreenApplication.Build wires IOrderSubmissionDispatcher lazily
+        // from this env var - unset, resolving it throws. Most tests here
+        // never resolve that service so the gap was invisible, but
+        // ServeContainerResolvesEveryModuleServiceFromTheModuleCatalog walks
+        // every module-registered service, this one included. Same value
+        // other Host/Experience test fixtures already use (e.g.
+        // OrderManagementConfirmationTestDatabase).
+        Environment.SetEnvironmentVariable(DualScreenApplication.KitchenStationEnvironmentVariable, "grill-1");
+    }
+
     private static int FreeLoopbackPort()
     {
         var listener = new TcpListener(IPAddress.Loopback, 0);
@@ -306,6 +320,20 @@ public sealed class ProductionExperienceCompositionTests
             AllowInsecureLoopbackDevelopment: true);
     }
 
+    // V1-SET-004: OrderManagementEndpoints intentionally re-registers
+    // IEscalationResolver with a Host-level feature-toggle decorator
+    // (GarsonFeatureGatedEscalationResolver, wrapping the module's own
+    // DelegationEscalationResolver) so the wrapped resolver's module never
+    // has to depend on Settings. The module's own registration is real and
+    // still the ambient default the decorator wraps, but the serve
+    // container's last-registration-wins resolution never returns it
+    // directly - this is the one approved case where a module service
+    // resolves to a Host decorator instead of its own implementation type.
+    private static readonly Dictionary<Type, Type> ApprovedHostDecoratedModuleServices = new()
+    {
+        [typeof(IEscalationResolver)] = typeof(GarsonFeatureGatedEscalationResolver),
+    };
+
     [Fact]
     public void ServeContainerResolvesEveryModuleServiceFromTheModuleCatalog()
     {
@@ -346,6 +374,13 @@ public sealed class ProductionExperienceCompositionTests
                 Assert.True(
                     resolved is not null,
                     $"Module service {descriptor.ServiceType.Name} did not resolve from the serve container.");
+
+                if (ApprovedHostDecoratedModuleServices.TryGetValue(descriptor.ServiceType, out var decoratorType))
+                {
+                    Assert.IsType(decoratorType, resolved);
+                    continue;
+                }
+
                 Assert.IsType(descriptor.ImplementationType, resolved);
             }
         }

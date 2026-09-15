@@ -1,4 +1,5 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.Authorization.Policies;
@@ -33,6 +34,7 @@ public static class OfflineReconciliationEndpoints
         services.TryAddScoped<IAuthorizationGrantRepository, PostgresAuthorizationGrantRepository>();
         services.TryAddScoped<IAuthorizationPolicyRepository, PostgresAuthorizationPolicyRepository>();
         services.TryAddScoped<IOfflineReplayLedger, PostgresOfflineReplayLedger>();
+        services.TryAddScoped<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
         services.TryAddScoped<IOfflineGrantReconciler, OfflineGrantReconciler>();
         services.TryAddTransient<OfflineReconciliationExceptionFilter>();
         return services;
@@ -90,11 +92,76 @@ public static class OfflineReconciliationEndpoints
                 .ToList();
 
             var results = await reconciler.ReconcileAsync(request.BudgetId, actions, cancellationToken);
-            return Results.Ok(results.Select(result => new OfflineReconciliationResultV1(
-                result.IdempotencyKey, result.GrantId, result.Status.ToString(), result.Detail)));
+            return Results.Ok(BuildResponse(results));
         });
 
         return group;
+    }
+
+    // Idea 1: turn a reconnect batch from an undifferentiated list of rows
+    // into a prioritized brief a manager can act on without reading every
+    // line — flagged-and-pending items (the requester has an active
+    // behavioural-tightening signal, idea 2) surface first, then the rest
+    // of what still needs review, then what was already resolved
+    // automatically or is a pure replay. Deterministic and rule-based, not
+    // a model call: the summary text is a fixed Turkish template over
+    // these counts, so it needs no external service, no secret, and no
+    // network egress from a device that may itself have just come back
+    // online.
+    private static OfflineReconciliationResponseV1 BuildResponse(IReadOnlyList<OfflineReconciliationResult> results)
+    {
+        var pendingCount = results.Count(r => r.Status == GrantStatus.Pending);
+        var deniedCount = results.Count(r => r.Status == GrantStatus.Denied);
+        var flaggedCount = results.Count(r => r.IsBehaviourallyFlagged);
+        // Found by an independent audit (2026-09-15): this must be scoped to
+        // Pending for BuildBrief's "bunlardan {flagged} tanesi..." clause —
+        // it reads as "of these [pending] ones", but a flagged action can
+        // just as well end up Denied (flagging never changes Admit/Deny,
+        // see OfflineGrantReconciler.ReconcileAsync). Using the unscoped
+        // count there produced a sentence claiming a flagged item was in
+        // the pending bucket when it had actually been denied.
+        var pendingFlaggedCount = results.Count(r => r.Status == GrantStatus.Pending && r.IsBehaviourallyFlagged);
+        var replayCount = results.Count(r => r.IsReplay);
+
+        var ordered = results
+            .OrderByDescending(r => r.Status == GrantStatus.Pending && r.IsBehaviourallyFlagged)
+            .ThenByDescending(r => r.Status == GrantStatus.Pending)
+            .ThenByDescending(r => r.Status == GrantStatus.Denied)
+            .Select(result => new OfflineReconciliationResultV1(
+                result.IdempotencyKey, result.GrantId, result.Status.ToString(), result.Detail, result.IsBehaviourallyFlagged))
+            .ToList();
+
+        var summary = new OfflineReconciliationSummaryV1(
+            TotalActions: results.Count,
+            PendingReviewCount: pendingCount,
+            FlaggedCount: flaggedCount,
+            DeniedCount: deniedCount,
+            AlreadyReconciledCount: replayCount,
+            Brief: BuildBrief(results.Count, pendingCount, pendingFlaggedCount, deniedCount, replayCount));
+
+        return new OfflineReconciliationResponseV1(summary, ordered);
+    }
+
+    private static string BuildBrief(
+        int total, int pending, int pendingFlagged, int denied, int replayed)
+    {
+        if (total == 0)
+            return "Çevrimdışı işlem bulunamadı.";
+
+        var parts = new List<string> { $"{total} çevrimdışı işlem değerlendirildi" };
+        if (pending > 0)
+        {
+            var pendingText = $"{pending} tanesi yönetici onayı bekliyor";
+            if (pendingFlagged > 0)
+                pendingText += $" (bunlardan {pendingFlagged} tanesi anormal kullanım sinyali taşıdığı için öncelikli)";
+            parts.Add(pendingText);
+        }
+        if (denied > 0)
+            parts.Add($"{denied} tanesi otomatik reddedildi");
+        if (replayed > 0)
+            parts.Add($"{replayed} tanesi daha önce işlenmişti (tekrar)");
+
+        return string.Join(", ", parts) + ".";
     }
 }
 
@@ -114,7 +181,23 @@ public sealed record OfflineAuthorizedActionV1(
     Guid? SubjectServingUserId = null);
 
 public sealed record OfflineReconciliationResultV1(
-    string IdempotencyKey, Guid GrantId, string Status, string Detail);
+    string IdempotencyKey, Guid GrantId, string Status, string Detail, bool IsFlagged);
+
+/// <summary>
+/// Deterministic, rule-based rollup of one reconnect batch (idea 1) — see
+/// <see cref="OfflineReconciliationEndpoints.BuildResponse"/>.
+/// </summary>
+public sealed record OfflineReconciliationSummaryV1(
+    int TotalActions,
+    int PendingReviewCount,
+    int FlaggedCount,
+    int DeniedCount,
+    int AlreadyReconciledCount,
+    string Brief);
+
+public sealed record OfflineReconciliationResponseV1(
+    OfflineReconciliationSummaryV1 Summary,
+    IReadOnlyList<OfflineReconciliationResultV1> Results);
 
 internal sealed class OfflineReconciliationExceptionFilter : IEndpointFilter
 {

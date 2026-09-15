@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.OfflineReconciliation;
+using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.DeviceSessions;
 using Microsoft.AspNetCore.Builder;
@@ -89,11 +90,111 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var results = await response.Content.ReadFromJsonAsync<List<OfflineReconciliationResultV1>>();
-        var result = Assert.Single(results!);
+        var body = await response.Content.ReadFromJsonAsync<OfflineReconciliationResponseV1>();
+        var result = Assert.Single(body!.Results);
         Assert.Equal(action.IdempotencyKey, result.IdempotencyKey);
         Assert.Equal("Pending", result.Status);
         Assert.Contains("offline_pending_review", result.Detail);
+        Assert.False(result.IsFlagged);
+
+        Assert.Equal(1, body.Summary.TotalActions);
+        Assert.Equal(1, body.Summary.PendingReviewCount);
+        Assert.Equal(0, body.Summary.FlaggedCount);
+        Assert.Contains("1 çevrimdışı işlem değerlendirildi", body.Summary.Brief);
+        Assert.Contains("1 tanesi yönetici onayı bekliyor", body.Summary.Brief);
+    }
+
+    [Fact]
+    public async Task AFlaggedPendingActionSortsFirstAndTheSummaryCountsIt()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var issuedAt = DateTimeOffset.UtcNow.AddHours(-2);
+        await _database.SeedActiveTighteningAsync(userId, "bills.comp", issuedAt);
+        var budget = await _database.SeedOfflineBudgetAsync(
+            userId, issuedAt, issuedAt.AddHours(4),
+            new OfflineAuthorityBudgetLine("bills.void", null, 5),
+            new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        // The unflagged action is listed first in the request; the response
+        // must still put the flagged one first.
+        var unflagged = new OfflineAuthorizedActionV1(
+            "http-recon-unflagged-" + Guid.NewGuid().ToString("N"), "bills.void", userId, "waiter",
+            "CustomerChange", 0m, issuedAt.AddMinutes(10));
+        var flagged = new OfflineAuthorizedActionV1(
+            "http-recon-flagged-" + Guid.NewGuid().ToString("N"), "bills.comp", userId, "waiter",
+            "CustomerChange", 40m, issuedAt.AddMinutes(30));
+
+        using var request = JsonRequest(
+            Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [unflagged, flagged]));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<OfflineReconciliationResponseV1>();
+        Assert.Equal(2, body!.Summary.TotalActions);
+        Assert.Equal(2, body.Summary.PendingReviewCount);
+        Assert.Equal(1, body.Summary.FlaggedCount);
+        Assert.Contains("öncelikli", body.Summary.Brief);
+
+        Assert.Equal(2, body.Results.Count);
+        Assert.Equal(flagged.IdempotencyKey, body.Results[0].IdempotencyKey);
+        Assert.True(body.Results[0].IsFlagged);
+        Assert.False(body.Results[1].IsFlagged);
+    }
+
+    [Fact]
+    public async Task AFlaggedButDeniedActionIsNotClaimedAsPendingInTheBrief()
+    {
+        // Found by an independent audit (2026-09-15): FlaggedCount used to be
+        // computed over every status, but BuildBrief's pending clause reads
+        // it as "bunlardan {flagged} tanesi..." — "of these [pending] ones".
+        // Flagging never changes Admit/Deny (OfflineGrantReconciler), so a
+        // flagged action can end up Denied (e.g. amount over the budget
+        // line's limit) instead of Pending, and the old brief would falsely
+        // claim the flagged item was in the pending bucket when it had
+        // actually been denied.
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var issuedAt = DateTimeOffset.UtcNow.AddHours(-2);
+        await _database.SeedActiveTighteningAsync(userId, "bills.comp", issuedAt);
+        var budget = await _database.SeedOfflineBudgetAsync(
+            userId, issuedAt, issuedAt.AddHours(4),
+            new OfflineAuthorityBudgetLine("bills.void", null, 5),
+            new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var pending = new OfflineAuthorizedActionV1(
+            "http-recon-pending-" + Guid.NewGuid().ToString("N"), "bills.void", userId, "waiter",
+            "CustomerChange", 0m, issuedAt.AddMinutes(10));
+        // Flagged (active tightening on bills.comp) but over the budget
+        // line's 150m limit, so the reconciler denies it despite the flag.
+        var flaggedButDenied = new OfflineAuthorizedActionV1(
+            "http-recon-flagged-denied-" + Guid.NewGuid().ToString("N"), "bills.comp", userId, "waiter",
+            "CustomerChange", 500m, issuedAt.AddMinutes(30));
+
+        using var request = JsonRequest(
+            Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [pending, flaggedButDenied]));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<OfflineReconciliationResponseV1>();
+        Assert.Equal(2, body!.Summary.TotalActions);
+        Assert.Equal(1, body.Summary.PendingReviewCount);
+        Assert.Equal(1, body.Summary.DeniedCount);
+        Assert.Equal(1, body.Summary.FlaggedCount);
+
+        var deniedResult = Assert.Single(body.Results, r => r.IdempotencyKey == flaggedButDenied.IdempotencyKey);
+        Assert.Equal("Denied", deniedResult.Status);
+        Assert.True(deniedResult.IsFlagged);
+
+        // The pending clause must not claim a flagged item is among the
+        // pending ones when the only flagged item was actually denied.
+        Assert.DoesNotContain("öncelikli", body.Summary.Brief);
+        Assert.Contains("1 tanesi yönetici onayı bekliyor", body.Summary.Brief);
+        Assert.Contains("1 tanesi otomatik reddedildi", body.Summary.Brief);
     }
 
     [Fact]
@@ -268,6 +369,12 @@ internal sealed class OfflineReconciliationTestDatabase
         Guid userId, DateTimeOffset issuedAt, DateTimeOffset expiresAt, params OfflineAuthorityBudgetLine[] lines)
         => await new PostgresOfflineAuthorityBudgetRepository(DataSource)
             .CreateAsync(userId, Guid.NewGuid(), lines, issuedAt, expiresAt);
+
+    public Task SeedActiveTighteningAsync(Guid userId, string permissionCode, DateTimeOffset triggeredAt)
+        => new PostgresBehaviouralTighteningRepository(DataSource).OpenAsync(
+            new BehaviouralTightening(
+                Guid.Empty, userId, permissionCode, RecentCount: 6, BaselinePerWindow: 2m,
+                TriggerRatio: 3m, TriggeredAt: triggeredAt, ClearedAt: null, ClearedByUserId: null));
 
     private async Task ApplyMigrationsAsync()
     {

@@ -46,7 +46,7 @@ describe("kitchen operations workspace", () => {
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
   }
-  afterEach(async () => { if (root) await act(async () => root!.unmount()); root = null; vi.restoreAllMocks(); });
+  afterEach(async () => { if (root) await act(async () => root!.unmount()); root = null; vi.restoreAllMocks(); vi.useRealTimers(); });
 
   it("groups tickets by order (Expo view) and advances an item without leaking customer detail", async () => {
     const onTransitionItem = vi.fn();
@@ -358,6 +358,11 @@ describe("kitchen operations workspace", () => {
   });
 
   it("loads and shows the performance report's mean, median and hourly volume when Rapor is opened", async () => {
+    // The workspace derives its report window ("today, UTC midnight to
+    // now") from the real clock, so the expected `from` below has to move
+    // with it - pin the clock instead of hardcoding a date that goes stale
+    // every day CI runs.
+    vi.setSystemTime(new Date("2026-09-14T12:34:56Z"));
     const onLoadPerformanceReport = vi.fn().mockResolvedValue({
       from: "2026-09-14T00:00:00Z",
       to: "2026-09-14T12:00:00Z",

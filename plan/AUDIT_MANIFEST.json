@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1111,
-  "markdown_line_count": 81390,
-  "markdown_byte_count": 4711310,
+  "markdown_file_count": 1134,
+  "markdown_line_count": 83494,
+  "markdown_byte_count": 4820410,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -77,6 +77,20 @@
       "utf8": true
     },
     {
+      "path": "docs/CONSISTENCY_AUDIT.md",
+      "sha256": "347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7",
+      "lines": 81,
+      "bytes": 6167,
+      "utf8": true
+    },
+    {
+      "path": "docs/UI_STYLE_GUIDE.md",
+      "sha256": "48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79",
+      "lines": 71,
+      "bytes": 2977,
+      "utf8": true
+    },
+    {
       "path": "docs/architecture/api-contract-standard.md",
       "sha256": "BB398A3DCC869E47BBA355DA05EE26BE027021A0E2565FB3CDB28B321D769B6D",
       "lines": 149,
@@ -85,9 +99,9 @@
     },
     {
       "path": "docs/architecture/deployment-compatibility-matrix.md",
-      "sha256": "47E5E3031E44EA06C947DB181842BF101D75F486FE184AFACDD28917EA3F4A25",
-      "lines": 32,
-      "bytes": 1180,
+      "sha256": "19DF28BC6516301BC15520D558FA0ABC6E9AABFC089463A73FE0D4305AC99088",
+      "lines": 53,
+      "bytes": 2438,
       "utf8": true
     },
     {
@@ -210,13 +224,6 @@
       "utf8": true
     },
     {
-      "path": "docs/CONSISTENCY_AUDIT.md",
-      "sha256": "347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7",
-      "lines": 81,
-      "bytes": 6167,
-      "utf8": true
-    },
-    {
       "path": "docs/data/canonical-value-catalog.md",
       "sha256": "FBA59F8FF920F9B7452F5FFD2F99852AFF4DD05F267E53DBF8955D985097AA77",
       "lines": 139,
@@ -274,9 +281,9 @@
     },
     {
       "path": "docs/design/foundations.md",
-      "sha256": "2EF87F7BAF55933592948ECEB8FA4A6FE63F6FC923A52EB38DDFB22A02B3DFA2",
-      "lines": 179,
-      "bytes": 9429,
+      "sha256": "A9D1E72AB956A0CA762E232B7075318E868B67145F0FDAB532C6B06D5502445C",
+      "lines": 201,
+      "bytes": 10900,
       "utf8": true
     },
     {
@@ -295,9 +302,9 @@
     },
     {
       "path": "docs/domain/authorization-model.md",
-      "sha256": "2DA884DFA9774E384C47A307C5742B270CE8B9E3F2EE67AC0950DA86AC07279A",
-      "lines": 181,
-      "bytes": 9806,
+      "sha256": "82F699027A247516A0B1AC3BBC3DB2160B7C33774F635031D00CA1219AF9BDFC",
+      "lines": 218,
+      "bytes": 12470,
       "utf8": true
     },
     {
@@ -330,9 +337,9 @@
     },
     {
       "path": "docs/domain/lifecycle-transition-contracts.md",
-      "sha256": "C76AC756CC9D23EF27B6227B5CDF007D86CF84935BFEDD5C64F6F210C8AE6CD4",
-      "lines": 135,
-      "bytes": 9721,
+      "sha256": "441BF484576E1B438A35C142BD5EDE9EB98BE4B3421E531766DAB8710C6A99EB",
+      "lines": 138,
+      "bytes": 10173,
       "utf8": true
     },
     {
@@ -417,6 +424,13 @@
       "sha256": "D6A95988A952FAD394B3F8645B9AC5F9C6F5DB98208B90CAA49728C0347AB409",
       "lines": 35,
       "bytes": 5304,
+      "utf8": true
+    },
+    {
+      "path": "docs/engineering/kitchen-allday-view-and-performance-report-research.md",
+      "sha256": "E81C0014A62BFB7607BE6836E07BBC3142AD429B3C63517E4E8AF6320A621095",
+      "lines": 133,
+      "bytes": 8960,
       "utf8": true
     },
     {
@@ -539,13 +553,6 @@
       "utf8": true
     },
     {
-      "path": "docs/UI_STYLE_GUIDE.md",
-      "sha256": "48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79",
-      "lines": 71,
-      "bytes": 2977,
-      "utf8": true
-    },
-    {
       "path": "docs/versioning-strategy.md",
       "sha256": "9FCBDE0EC857B39FD540091297EBDFD3AF4256711151489AFA68ECA741A1A1AC",
       "lines": 173,
@@ -571,55 +578,6 @@
       "sha256": "3764164120418A5E35E34D16E8A758494792290E0E407C011EC6011D6C81105E",
       "lines": 34,
       "bytes": 1347,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md",
-      "sha256": "A2ABE22D5CB334941A7C01A91590338A1DA8C60B6BCCF75D25298934C368A54C",
-      "lines": 32,
-      "bytes": 1556,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
-      "sha256": "31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA",
-      "lines": 35,
-      "bytes": 2012,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md",
-      "sha256": "D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277",
-      "lines": 47,
-      "bytes": 2593,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/gate-v0-exit-closure.md",
-      "sha256": "DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142",
-      "lines": 95,
-      "bytes": 4479,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
-      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
-      "lines": 127,
-      "bytes": 5748,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
-      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
-      "lines": 68,
-      "bytes": 2507,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
-      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
-      "lines": 112,
-      "bytes": 4908,
       "utf8": true
     },
     {
@@ -1082,13 +1040,6 @@
       "sha256": "28E3C84328041A2B525BBE17C6AF5CC84CC363632FCA2417C15AC8CC3A3C3C74",
       "lines": 161,
       "bytes": 5834,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v1/gate-v1-exit-closure.md",
-      "sha256": "9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D",
-      "lines": 69,
-      "bytes": 2685,
       "utf8": true
     },
     {
@@ -2282,6 +2233,62 @@
       "utf8": true
     },
     {
+      "path": "evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md",
+      "sha256": "A2ABE22D5CB334941A7C01A91590338A1DA8C60B6BCCF75D25298934C368A54C",
+      "lines": 32,
+      "bytes": 1556,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+      "sha256": "31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA",
+      "lines": 35,
+      "bytes": 2012,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md",
+      "sha256": "D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277",
+      "lines": 47,
+      "bytes": 2593,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/gate-v0-exit-closure.md",
+      "sha256": "DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142",
+      "lines": 95,
+      "bytes": 4479,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
+      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
+      "lines": 127,
+      "bytes": 5748,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
+      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
+      "lines": 68,
+      "bytes": 2507,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
+      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
+      "lines": 112,
+      "bytes": 4908,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v1/gate-v1-exit-closure.md",
+      "sha256": "9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D",
+      "lines": 69,
+      "bytes": 2685,
+      "utf8": true
+    },
+    {
       "path": "plan/ASSUMPTION_POLICY.md",
       "sha256": "0C8AE929DBD8178F655E2E69DC48EB963255FA42B1222F8801594BFC940BE82C",
       "lines": 49,
@@ -2290,9 +2297,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "4448EBBA7B7018271FEF8D9535DAEB10909424704A048287808D50D4067AAF95",
-      "lines": 2387,
-      "bytes": 343657,
+      "sha256": "E19F59B68DBCE383E6E928CB2CD82AB2B97C1C4D80C5753DD3FA593CA68B596A",
+      "lines": 2410,
+      "bytes": 347491,
       "utf8": true
     },
     {
@@ -2370,6 +2377,20 @@
       "sha256": "477D8E1F970760E409DC01D1F94265C653E650A1CC5A3F608B823789DEE6304B",
       "lines": 199,
       "bytes": 77551,
+      "utf8": true
+    },
+    {
+      "path": "plan/VALIDATION_CONTRACT.md",
+      "sha256": "D8C1A268F872CC6B72C70DF1A0900E90242CB2B318CEEFB45A306B0B2381E4BC",
+      "lines": 293,
+      "bytes": 20124,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/README.md",
+      "sha256": "B1B6AB267A4E0CAFE1CD0852CC2428C7F7A0DB669272A91C2227F1B89D93265C",
+      "lines": 31,
+      "bytes": 1233,
       "utf8": true
     },
     {
@@ -3059,13 +3080,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v0/README.md",
-      "sha256": "B1B6AB267A4E0CAFE1CD0852CC2428C7F7A0DB669272A91C2227F1B89D93265C",
-      "lines": 31,
-      "bytes": 1233,
-      "utf8": true
-    },
-    {
       "path": "plan/v0/revalidation/V0-REV-001-dat001-decision-revalidation.md",
       "sha256": "9CC4EE3F479D4C0B12D5F3AD7AEC3BC106F678B12584D9217E86A472FF11F1B2",
       "lines": 66,
@@ -3287,6 +3301,13 @@
       "sha256": "CFD156D379D194E5B2584A384BA9F4DF21B6FC69056021ECF85928EEB732F1B8",
       "lines": 57,
       "bytes": 1544,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/README.md",
+      "sha256": "E3348D922138128DF7341941B61EB2CE850E5DDFBEF2D56F9569FE8D6000EA29",
+      "lines": 317,
+      "bytes": 29428,
       "utf8": true
     },
     {
@@ -4655,6 +4676,90 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/identity-authorization/V1-IAM-028-kitchen-advance-permission-split.md",
+      "sha256": "45C60F0035820F2D129F53EAA2102AE4E86696AFFF02AA6F47CB019CE0D92A4B",
+      "lines": 155,
+      "bytes": 8835,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-029-kitchen-chef-role.md",
+      "sha256": "76DFA21DC6EC679F529D1646FE188682DE4A69C78287D2D0518728F45102C44D",
+      "lines": 83,
+      "bytes": 4086,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/identity-authorization/V1-IAM-030-kitchen-chef-routing-permission.md",
+      "sha256": "6FA8BA5C0BA8A95FD17D162682C1AF805B75ABF05D20EC44F4A8428108424447",
+      "lines": 72,
+      "bytes": 3224,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-001-mutfak-ekrani-faz-1-yeniden-yazim.md",
+      "sha256": "24D33202418808231241BD478D19430DA465ABBA7E15EF2ED824846626378624",
+      "lines": 134,
+      "bytes": 7465,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-002-urun-tukendi-arayuzu.md",
+      "sha256": "52A04A57DAC6B8141A396A75FA25A18793F4B3DB2EB8F4244641879726FB46DA",
+      "lines": 74,
+      "bytes": 3415,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-003-item-undo-arayuzu.md",
+      "sha256": "A8F4AB6D0CBD8261CC2CBF2E81CD19B32D6259D512C6A0787DFCC23DE35201CE",
+      "lines": 63,
+      "bytes": 2617,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-004-canli-senkron-rozeti.md",
+      "sha256": "15B0F2F6EB7E35B5CEE0588F6D23BEC5812B2C9304A6008BCCF677E07AB673BD",
+      "lines": 53,
+      "bytes": 2176,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-005-expo-masa-etiketi.md",
+      "sha256": "AF759E672855D5C1829C17A635F982DB06C2E39D68E118738F7785AF024F6D18",
+      "lines": 63,
+      "bytes": 2628,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-006-ayarlanabilir-yogun-mod-esigi.md",
+      "sha256": "7CC0D5519BB12E95D663D7E31289B2E6C3AEF273052B2F4839C0439D70F8D68E",
+      "lines": 58,
+      "bytes": 2438,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-007-expo-gercek-masa-gruplama.md",
+      "sha256": "579EFA0C6A1C6ABD9E5F8D79FE8BB6FBA94635E428224DA06EF63B8B23CF51D3",
+      "lines": 67,
+      "bytes": 2947,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-008-tum-gun-gorunumu.md",
+      "sha256": "6912A590EBB7E368D03098E937C9F161037C46D8E5E5850A73EBF7EDCE28BA20",
+      "lines": 77,
+      "bytes": 3457,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-KDS-009-performans-raporu-ekrani.md",
+      "sha256": "9C70057103961E61BF96A299384908E61DFC797EA66E8DDB78D7DB4E505A4BB7",
+      "lines": 69,
+      "bytes": 3227,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/kitchen-printing/V1-KIT-001-kitchen-ticket-lifecycle.md",
       "sha256": "BFE2772773FB5CBF5DCC1097950B362530D5A9C5002C94268D7858CBAFECE4A2",
       "lines": 56,
@@ -4694,6 +4799,62 @@
       "sha256": "A1B96297DE52579824B575E75EF5E95DC1EFAC129B13335B83F4D87A612F8A17",
       "lines": 116,
       "bytes": 5817,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-007-ticket-implicit-accept-on-prepare.md",
+      "sha256": "29C8DACCE8E9A1C55B8F759E960E00C6146893CBB6C44AE3A0A6AAD11B9E259B",
+      "lines": 99,
+      "bytes": 5399,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-008-availability-suspend-bridge.md",
+      "sha256": "F8345297D6D47CA529AFE941FD61D8C505114BF100FE183788AAAE9DDD866F46",
+      "lines": 151,
+      "bytes": 8575,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-009-kitchen-item-transition-undo.md",
+      "sha256": "6BC6756746D1CE7F181BAA23FE77AB6A022C2D7345A06B1755EE5067D360B361",
+      "lines": 108,
+      "bytes": 5485,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-010-expose-live-sync-state.md",
+      "sha256": "3D4E7B1E5567D23271F2B89F8764542FA798A6E9B003D11D92EE0A6F58B47770",
+      "lines": 68,
+      "bytes": 3063,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-011-document-offline-resilience-advantage.md",
+      "sha256": "613EC0A5A56169D597719A198F97A3997C9E17895D7657B6AB18886DB4DD12C7",
+      "lines": 55,
+      "bytes": 2147,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-012-real-table-label-on-ticket.md",
+      "sha256": "C736E8A605317E5BF90A20B24F86FF3962CDFE243C6052ACC4AE3281BF696992",
+      "lines": 91,
+      "bytes": 4428,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-013-expose-dense-mode-threshold.md",
+      "sha256": "5413FB3B2B28D5BE504FE03637DBC35BEC3DF66F8DC5BCAF92972C306B92C482",
+      "lines": 63,
+      "bytes": 2581,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-printing/V1-KIT-014-kitchen-performance-report.md",
+      "sha256": "EE101887E4DE1CA417DA0208047E216E8326344807047945BD95D941FD993D58",
+      "lines": 96,
+      "bytes": 4557,
       "utf8": true
     },
     {
@@ -4757,13 +4918,6 @@
       "sha256": "481C3EB35A01956BB534D74C67772CFB3C557B74C7AF1744895FBAF215E50CCB",
       "lines": 155,
       "bytes": 8547,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1/README.md",
-      "sha256": "E3348D922138128DF7341941B61EB2CE850E5DDFBEF2D56F9569FE8D6000EA29",
-      "lines": 317,
-      "bytes": 29428,
       "utf8": true
     },
     {
@@ -6160,6 +6314,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-199-kitchen-ticket-transition-permission-numeric-bypass.md",
+      "sha256": "972F6D228E34E70CDBCFDE9CBE88E50936AB7CF467DD19795AF2AA81561F59EB",
+      "lines": 87,
+      "bytes": 4269,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -6234,6 +6395,13 @@
       "sha256": "A84A847E81562C1F2A0DF60B1FCA1EB5667E82BBB36FE810AA791BA9361B75A2",
       "lines": 177,
       "bytes": 9630,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/settings/V1-SET-005-kitchen-dense-mode-threshold.md",
+      "sha256": "950F8CF2B179279EB69F38B439C58EFBC61476B573D63908B2F498270DBFFFC6",
+      "lines": 79,
+      "bytes": 3442,
       "utf8": true
     },
     {
@@ -6678,6 +6846,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.1/README.md",
+      "sha256": "FB045BA24E506EAD4539A31CD6ADBD7BFD5ECC1A3E95BD9C3AC3982AB2866613",
+      "lines": 36,
+      "bytes": 1588,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.1/daily-menu/V11-MNU-001-daily-menu-lifecycle.md",
       "sha256": "508B02715E83A64D12D202DB888F91A7C30DD2FB99E68F61CFA126FFED4CC099",
       "lines": 59,
@@ -6839,13 +7014,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.1/README.md",
-      "sha256": "FB045BA24E506EAD4539A31CD6ADBD7BFD5ECC1A3E95BD9C3AC3982AB2866613",
-      "lines": 36,
-      "bytes": 1588,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.1/remediation/V11-RMD-001-migration-id-collision-and-live-composition-wiring.md",
       "sha256": "75A3B7660863CEA09F5E6134FF37EE6D220C6A6D2D2AC20C3604AF72DA51D76F",
       "lines": 123,
@@ -6885,6 +7053,13 @@
       "sha256": "DEB25A39A060418C334C4A756BBEF5A026F3E3F569D9DFCCE46761D5CDB28A16",
       "lines": 54,
       "bytes": 1704,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/README.md",
+      "sha256": "8B9A6547FCDAB426DC8E164A6FB1DB4DA2434C041C86494A58B3360F1D4F47CA",
+      "lines": 61,
+      "bytes": 2984,
       "utf8": true
     },
     {
@@ -7077,13 +7252,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.2/README.md",
-      "sha256": "8B9A6547FCDAB426DC8E164A6FB1DB4DA2434C041C86494A58B3360F1D4F47CA",
-      "lines": 61,
-      "bytes": 2984,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.2/reconciliation/V12-REC-001-online-order-reconciliation.md",
       "sha256": "E9287C795D700CEA6CB1F8C49CFEFB18F53B653BB0DEB8B871F0E72C4153F7B8",
       "lines": 60,
@@ -7102,6 +7270,13 @@
       "sha256": "C5CEF2182269C0F2464C0CA936652B26E1DFBD94448BB099AC196E4BA1B0F7EB",
       "lines": 58,
       "bytes": 1671,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/README.md",
+      "sha256": "07EB59C7528BEB1FA22081DB0C7A62C3B0CCE05EB7DDFC01F6A099D0EF961916",
+      "lines": 29,
+      "bytes": 1078,
       "utf8": true
     },
     {
@@ -7294,13 +7469,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.3/README.md",
-      "sha256": "07EB59C7528BEB1FA22081DB0C7A62C3B0CCE05EB7DDFC01F6A099D0EF961916",
-      "lines": 29,
-      "bytes": 1078,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.3/reconciliation/V13-REC-001-payment-reconciliation.md",
       "sha256": "8DB273807622239A294D465BB863269F445CFCB5DE870588A7C7B1371D79C439",
       "lines": 72,
@@ -7319,6 +7487,13 @@
       "sha256": "33C21DFE224EB6D34BB55F83ABFCB846D09BDC033DB4923AFBAD5D5EEE7D9BDA",
       "lines": 56,
       "bytes": 1521,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.4/README.md",
+      "sha256": "0C3CD9103C94562BFE2A817091A533C785C73E7B7918B149BAE6D7D842FB4786",
+      "lines": 27,
+      "bytes": 914,
       "utf8": true
     },
     {
@@ -7490,17 +7665,17 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.4/README.md",
-      "sha256": "0C3CD9103C94562BFE2A817091A533C785C73E7B7918B149BAE6D7D842FB4786",
-      "lines": 27,
-      "bytes": 914,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.4/reporting/V14-RPT-001-account-invoice-reports.md",
       "sha256": "29EB5AD9C0D1AB9A942A59D758DA242AEF3E5F309A6183D74B4DD185E7204553",
       "lines": 54,
       "bytes": 1382,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.5/README.md",
+      "sha256": "BAD547C430CD8918B923FD6A6D285AEE3E3D7E74D5C7AD6BDDBA4E665BD764F1",
+      "lines": 26,
+      "bytes": 836,
       "utf8": true
     },
     {
@@ -7574,13 +7749,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.5/README.md",
-      "sha256": "BAD547C430CD8918B923FD6A6D285AEE3E3D7E74D5C7AD6BDDBA4E665BD764F1",
-      "lines": 26,
-      "bytes": 836,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.5/reconciliation/V15-REC-001-unified-reconciliation-read-model.md",
       "sha256": "77E99DA52456836A86AF034B3815D24A36A3C81FE9B459055269FA1A0A922246",
       "lines": 63,
@@ -7641,6 +7809,13 @@
       "sha256": "AE8281470274A7DCA5163A3F9A40427BD04DDB246663944C6051B07C2D29755B",
       "lines": 52,
       "bytes": 1290,
+      "utf8": true
+    },
+    {
+      "path": "plan/v2.0/README.md",
+      "sha256": "D29552ADECADA935C27F6C160E9BFC8FC469E5D11D71B9309781909F838ED082",
+      "lines": 32,
+      "bytes": 1354,
       "utf8": true
     },
     {
@@ -7763,13 +7938,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v2.0/README.md",
-      "sha256": "D29552ADECADA935C27F6C160E9BFC8FC469E5D11D71B9309781909F838ED082",
-      "lines": 32,
-      "bytes": 1354,
-      "utf8": true
-    },
-    {
       "path": "plan/v2.0/recovery-drill/V20-DRL-001-disaster-restore-drill.md",
       "sha256": "0AE9EDDE1547D2B8558197DBEF68A1261AF9B27DB496A13117C36853E7333B43",
       "lines": 53,
@@ -7837,13 +8005,6 @@
       "sha256": "F4885231A79623375FAC569376D9966C6683896CA1FBA4E0C5E8E3844BD8F70B",
       "lines": 62,
       "bytes": 1398,
-      "utf8": true
-    },
-    {
-      "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "D8C1A268F872CC6B72C70DF1A0900E90242CB2B318CEEFB45A306B0B2381E4BC",
-      "lines": 293,
-      "bytes": 20124,
       "utf8": true
     }
   ]

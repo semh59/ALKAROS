@@ -175,7 +175,20 @@ public sealed class TableDraftService
         Order order;
         if (existingOrder == null)
         {
-            var orderNumber = $"TBL-{request.TableNumber}-{now:HHmmssff}";
+            // orders.order_number carries its own UNIQUE constraint
+            // (orders_order_number_key), separate from the submission-id
+            // idempotency index above - HHmmssff alone (hundredths of a
+            // second) collides whenever two genuinely different orders hit
+            // the same table within the same ~10ms window (two waiters
+            // opening the same table at once is an ordinary, not a rare,
+            // shape). That collision has nothing to do with a retry: the
+            // try/catch above only recognizes ux_orders_table_submission,
+            // so it bubbled up as a raw 409 DUPLICATE_RESOURCE instead of
+            // either order succeeding. orderId already carries the real
+            // entropy an order needs to be unique; an 8-hex-char slice of
+            // it keeps the number human-readable while making a same-table,
+            // same-centisecond collision practically impossible.
+            var orderNumber = $"TBL-{request.TableNumber}-{now:HHmmssff}-{orderId.ToString("N")[..8]}";
             order = new Order(
                 orderId,
                 OrderSource.Waiter,

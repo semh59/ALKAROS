@@ -51,4 +51,6 @@ public sealed record OfflineReconciliationResult(
     string IdempotencyKey,
     Guid GrantId,
     GrantStatus Status,
-    string Detail);
+    string Detail,
+    bool IsBehaviourallyFlagged,
+    bool IsReplay);

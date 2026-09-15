@@ -21,6 +21,7 @@ public sealed class OfflineBudgetDatabase : PgTestDatabase
             Mig("V1-IAM-019", "045-authorization-grants.up.sql"),
             Mig("V1-IAM-021", "046-authorization-delegations.up.sql"),
             Mig("V1-IAM-022", "047-offline-authority-budget.up.sql"),
+            Mig("V1-IAM-023", "048-behavioural-tightening.up.sql"),
             Mig("V1-IAM-025", "050-offline-authority-reissue.up.sql"),
         };
         foreach (var path in scripts)

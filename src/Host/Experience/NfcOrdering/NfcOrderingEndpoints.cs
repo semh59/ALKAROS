@@ -171,7 +171,7 @@ public sealed class NfcOrderingExceptionFilter : IEndpointFilter
         NfcTableNotAvailableException => (409, "TABLE_NOT_AVAILABLE", "Bu masada şu anda kendi kendine sipariş verilemiyor, lütfen garsonu çağırın."),
         KeyNotFoundException => (400, "PRODUCT_NOT_FOUND", "Seçilen ürün bulunamadı veya artık satışta değil."),
         SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
-        StaleOrderVersionException or InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
+        InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

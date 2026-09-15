@@ -1,3 +1,4 @@
+using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Policies;
 using Npgsql;
@@ -13,6 +14,7 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
     private readonly IAuthorizationGrantRepository _grants;
     private readonly IAuthorizationPolicyRepository _policies;
     private readonly IOfflineReplayLedger _replays;
+    private readonly IBehaviouralTighteningRepository _tightenings;
     private readonly Func<DateTimeOffset> _nowUtc;
 
     public OfflineGrantReconciler(
@@ -20,12 +22,14 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
         IAuthorizationGrantRepository grants,
         IAuthorizationPolicyRepository policies,
         IOfflineReplayLedger replays,
+        IBehaviouralTighteningRepository tightenings,
         Func<DateTimeOffset>? nowUtc = null)
     {
         _budgets = budgets ?? throw new ArgumentNullException(nameof(budgets));
         _grants = grants ?? throw new ArgumentNullException(nameof(grants));
         _policies = policies ?? throw new ArgumentNullException(nameof(policies));
         _replays = replays ?? throw new ArgumentNullException(nameof(replays));
+        _tightenings = tightenings ?? throw new ArgumentNullException(nameof(tightenings));
         _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
     }
 
@@ -46,11 +50,22 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
         {
             action.Validate();
 
+            // Idea 2: surface the requester's existing behavioural-tightening
+            // signal (docs/domain/authorization-model.md's rolling rate
+            // check, V1-IAM-023) alongside the offline result itself, so a
+            // manager reviewing a reconnect batch sees which pending items
+            // belong to someone already flagged for an unusual rate on this
+            // permission - not just an undifferentiated list. This never
+            // changes the reconciliation decision itself (Admit/Deny above
+            // is unaffected); it only annotates it.
+            var flagged = await _tightenings.FindActiveAsync(
+                action.RequesterUserId, action.PermissionCode, cancellationToken) is not null;
+
             var replay = await _grants.FindByIdempotencyKeyAsync(action.IdempotencyKey, cancellationToken);
             if (replay is not null)
             {
                 results.Add(new OfflineReconciliationResult(
-                    action.IdempotencyKey, replay.GrantId, replay.Status, "already reconciled"));
+                    action.IdempotencyKey, replay.GrantId, replay.Status, "already reconciled", flagged, IsReplay: true));
                 continue;
             }
 
@@ -62,7 +77,7 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
                 grantedThisBatch[action.PermissionCode] = priorBatch + 1;
 
             results.Add(new OfflineReconciliationResult(
-                action.IdempotencyKey, stored.GrantId, stored.Status, detail));
+                action.IdempotencyKey, stored.GrantId, stored.Status, detail, flagged, IsReplay: false));
         }
 
         return results;

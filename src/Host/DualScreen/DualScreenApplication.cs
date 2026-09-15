@@ -631,7 +631,6 @@ public static partial class DualScreenApplication
             DualScreenNotFoundException => (404, "NOT_FOUND", "İstenen kayıt bulunamadı."),
             DualScreenConflictException => (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
             SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış."),
-            StaleOrderVersionException => (409, "CONCURRENT_MODIFICATION", "Sipariş başka bir işlem tarafından değiştirildi."),
             OrderNotFoundException => (404, "ORDER_NOT_FOUND", "Sipariş bulunamadı."),
             ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             PostgresException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
