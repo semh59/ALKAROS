@@ -11,12 +11,13 @@ public sealed record IssuedSessionToken(string Token, string TokenHash, DateTime
 
 /// <summary>
 /// Produces cryptographically random session tokens with a default lifetime
-/// of 12 hours.
+/// of 8 hours (V1-IAM-031: matches a working day; a session must not be able
+/// to stay open indefinitely).
 /// </summary>
 public static class SessionTokenIssuer
 {
     public const int TokenBytes = 32;
-    public static readonly TimeSpan DefaultLifetime = TimeSpan.FromHours(12);
+    public static readonly TimeSpan DefaultLifetime = TimeSpan.FromHours(8);
 
     public static IssuedSessionToken Issue(DateTimeOffset now, TimeSpan? lifetime = null)
     {
