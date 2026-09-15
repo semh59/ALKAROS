@@ -71,6 +71,10 @@ public static class OrderManagementEndpoints
         // forcing a fake abstraction (the plan's own Section 1.3 reasoning).
         services.TryAddSingleton<OrderReadStore>();
         services.TryAddSingleton<ServingHandoffNoteStore>();
+        // V1-RMD-204: shared by /table-draft's assignment suggestion and by
+        // SignalRPendingOrderAnnouncer's QR-routing (V1-RMD-202) — one
+        // "who's most suitable right now" answer.
+        services.TryAddSingleton<SuggestedWaiterResolver>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
@@ -234,9 +238,35 @@ public static class OrderManagementEndpoints
             if (request.Items == null || request.Items.Count == 0)
                 return Results.BadRequest(new { error = new { code = "EMPTY_ITEMS", message = "Sipariş kalemleri boş olamaz." } });
 
-            var draft = await store.CreateOrUpdateTableDraftAsync(request, actingUserId, cancellationToken);
+            // V1-RMD-204: assigning someone ELSE as the serving waiter is the
+            // same privileged act V1-RMD-111's own hand-off endpoint gates
+            // with orders.transfer-server-any; naming yourself needs nothing
+            // beyond the orders.create check already done above.
+            var servingUserId = request.AssignedWaiterUserId ?? actingUserId;
+            if (servingUserId != actingUserId)
+                await authorization.AuthorizeAsync(
+                    actingUserId, ApplicationPermissions.OrdersTransferServerAny, cancellationToken);
+
+            var draft = await store.CreateOrUpdateTableDraftAsync(request, servingUserId, cancellationToken);
             return Results.Ok(draft);
         });
+
+        // V1-RMD-204: what a Cashier/PosTerminal picker shows as the default
+        // when opening a table by hand — the exact same candidate
+        // SignalRPendingOrderAnnouncer (V1-RMD-202) already picks for a QR
+        // order, just exposed for a human to see (and override) before
+        // committing to it.
+        group.MapGet("/suggested-waiter", async (
+            Guid terminalId,
+            SuggestedWaiterResolver suggestedWaiter,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            var suggestion = await suggestedWaiter.ResolveMostSuitableWaiterAsync(cancellationToken);
+            return suggestion is null ? Results.NoContent() : Results.Ok(suggestion);
+        }).RequireRateLimiting("terminal-read");
 
         // V1-RMD-149: what a waiter falls back to when the live announcement
         // was missed. Same permission as accepting one — whoever may resolve

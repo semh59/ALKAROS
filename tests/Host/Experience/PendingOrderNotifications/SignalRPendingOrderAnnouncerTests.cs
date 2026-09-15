@@ -1,3 +1,4 @@
+using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.WaiterNotifications;
 using ALKAROS.Orders.Integration;
 using Microsoft.AspNetCore.SignalR;
@@ -33,7 +34,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var presence = new WaiterPresenceTracker();
         presence.Connected(busyWaiter);
         presence.Connected(freeWaiter);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -54,7 +55,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
 
         var hub = new RecordingHubContext();
         var presence = new WaiterPresenceTracker();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -73,7 +74,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var hub = new RecordingHubContext();
         var presence = new WaiterPresenceTracker();
         presence.Connected(loggedInButBusier);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -95,7 +96,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var presence = new WaiterPresenceTracker();
         presence.Connected(recentlyAssigned);
         presence.Connected(longIdle);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -115,7 +116,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var presence = new WaiterPresenceTracker();
         presence.Connected(everAssigned);
         presence.Connected(neverAssigned);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -132,7 +133,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
 
         var hub = new RecordingHubContext();
         var presence = new WaiterPresenceTracker();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 

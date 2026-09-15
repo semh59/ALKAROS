@@ -1656,8 +1656,125 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(0, await _database.KitchenTicketCountAsync(draft.OrderId));
     }
 
+    [Fact]
+    public async Task AssigningYourselfAtOpenNeedsNoExtraPermission()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-20",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)],
+                AssignedWaiterUserId: waiterId)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var draft = await response.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(waiterId, await _database.GetServingUserIdAsync(draft!.OrderId));
+    }
+
+    [Fact]
+    public async Task AssigningAnotherWaiterAtOpenWithoutTransferAnyIsForbidden()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create");
+        var otherWaiterId = Guid.NewGuid();
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-21",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)],
+                AssignedWaiterUserId: otherWaiterId)));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ACashierWithTransferAnyCanAssignAnotherWaiterAtOpen()
+    {
+        var (otherWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "waiter", "orders.create");
+        var terminalId = Guid.NewGuid();
+        var (_, cashierCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "cashier", "orders.create", "orders.transfer-server-any");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cashierCookie,
+            new CreateTableDraftRequest(tableId, "M-22",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)],
+                AssignedWaiterUserId: otherWaiterId)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var draft = await response.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(otherWaiterId, await _database.GetServingUserIdAsync(draft!.OrderId));
+    }
+
+    [Fact]
+    public async Task SuggestedWaiterRequiresASession()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync(SuggestedWaiterPath(Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SuggestedWaiterReturnsNoContentWhenNobodyQualifies()
+    {
+        var terminalId = Guid.NewGuid();
+        // orders.create only (no orders.send): a valid session, but not a
+        // candidate itself - the point of this test is zero candidates.
+        var (_, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "cashier", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(GetRequest(SuggestedWaiterPath(terminalId), cookie));
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SuggestedWaiterReturnsTheLeastLoadedOpenSessionWaiter()
+    {
+        var terminalId = Guid.NewGuid();
+        // Deliberately no orders.send for the caller itself, so it can never
+        // be the (sole, otherwise ambiguous-order) candidate this asserts on.
+        var (_, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "cashier", "orders.create");
+        var (freeWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "waiter", "orders.send");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(GetRequest(SuggestedWaiterPath(terminalId), cookie));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var suggestion = await response.Content.ReadFromJsonAsync<SuggestedWaiterV1>();
+        Assert.Equal(freeWaiterId, suggestion!.UserId);
+    }
+
     private static string DraftPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/table-draft";
+
+    private static string SuggestedWaiterPath(Guid terminalId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/suggested-waiter";
 
     private static string SubmitPath(Guid terminalId, Guid orderId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/submit-draft";

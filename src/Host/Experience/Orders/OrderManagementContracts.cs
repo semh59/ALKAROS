@@ -30,13 +30,28 @@ namespace ALKAROS.Host.Experience.Orders;
 /// round for the same table (routine, every round sends the same draft
 /// shape) is a harmless no-op, not a correction.
 /// </summary>
+/// <summary>
+/// <paramref name="AssignedWaiterUserId"/> (V1-RMD-204): opt-in override of
+/// who <see cref="ALKAROS.Orders.OrderAggregate.Order.ServingUserId"/>
+/// becomes on a brand-new order — otherwise (and for every existing draft,
+/// which always keeps whoever already opened it) it's the caller. Only
+/// takes effect on a genuinely new order; like <c>PartySize</c>, resending
+/// it on a later round for the same table is a harmless no-op. A caller
+/// naming someone other than themselves needs
+/// <see cref="ALKAROS.Identity.Authorization.Catalog.ApplicationPermissions.OrdersTransferServerAny"/>
+/// — the same two-tier model V1-RMD-111's own hand-off endpoint uses, so
+/// this is a real authorization decision, not a client-supplied label
+/// (V1-RMD-160's own lesson: a free-text "WaiterName" was removed for
+/// exactly this reason).
+/// </summary>
 public sealed record CreateTableDraftRequest(
     Guid TableId,
     string TableNumber,
     IReadOnlyList<OrderItemDraftDto> Items,
     string? OrderNote = null,
     Guid? Id = null,
-    int? PartySize = null);
+    int? PartySize = null,
+    Guid? AssignedWaiterUserId = null);
 
 /// <summary>
 /// <paramref name="Id"/> is the client-generated cart-line id (both PWAs
