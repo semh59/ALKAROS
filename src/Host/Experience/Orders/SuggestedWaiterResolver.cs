@@ -72,6 +72,16 @@ public sealed class SuggestedWaiterResolver
                 ORDER BY o2.created_at DESC
                 LIMIT 1
             ) z ON true
+            -- V1-RMD-211: reads the target table's own zone in this same
+            -- query (a second round trip via a separate ResolveZoneIdAsync
+            -- call used to happen before this one) — LEFT JOIN, not an
+            -- inner join or a CTE joined unconditionally, so a null
+            -- @table_id (Cashier, V1-RMD-157) or an id matching no row
+            -- still yields exactly one (target.zone_id IS NULL) row rather
+            -- than eliminating every candidate.
+            LEFT JOIN (
+                SELECT zone_id FROM table_mgmt.tables WHERE table_id = @table_id::uuid
+            ) target ON true
             WHERE u.active
               AND EXISTS (
                   SELECT 1
@@ -89,7 +99,7 @@ public sealed class SuggestedWaiterResolver
               )
             ORDER BY COALESCE(w.active_load, 0) ASC,
                      CASE
-                         WHEN @target_zone_id::uuid IS NOT NULL AND z.zone_id = @target_zone_id::uuid THEN 0
+                         WHEN target.zone_id IS NOT NULL AND z.zone_id = target.zone_id THEN 0
                          ELSE 1
                      END ASC,
                      COALESCE(w.last_assigned_at, '-infinity'::timestamptz) ASC
@@ -97,21 +107,11 @@ public sealed class SuggestedWaiterResolver
             """);
         command.Parameters.Add("permission_code", NpgsqlDbType.Varchar).Value = ApplicationPermissions.OrdersSend;
         command.Parameters.Add("now", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
-        command.Parameters.Add("target_zone_id", NpgsqlDbType.Uuid).Value =
-            tableId is Guid id ? await ResolveZoneIdAsync(id, cancellationToken) : (object)DBNull.Value;
+        command.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId is Guid id ? id : (object)DBNull.Value;
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken)) return null;
         return new SuggestedWaiterV1(reader.GetGuid(0), reader.GetString(1));
-    }
-
-    private async Task<object> ResolveZoneIdAsync(Guid tableId, CancellationToken cancellationToken)
-    {
-        await using var command = _dataSource.CreateCommand(
-            "SELECT zone_id FROM table_mgmt.tables WHERE table_id = @table_id;");
-        command.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
-        var result = await command.ExecuteScalarAsync(cancellationToken);
-        return result is Guid zoneId ? zoneId : DBNull.Value;
     }
 
     /// <summary>

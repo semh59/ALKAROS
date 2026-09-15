@@ -217,29 +217,37 @@
 
   // V1-RMD-205: best-effort. Neither call ever blocks or fails dispatch —
   // an empty list just means the picker only ever offers "Ben", the same
-  // as before this existed.
+  // as before this existed. V1-RMD-211: the two GET requests are
+  // independent (neither's outcome affects how the other is made or
+  // read), so they run in parallel rather than one after the other.
   async function loadWaiterOptions() {
-    try {
-      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/staff`, { credentials: 'include' });
-      if (response.ok) {
-        const staff = await response.json();
-        state.waiterOptions = Array.isArray(staff)
-          ? staff.map(s => ({ userId: s.userId, displayName: s.displayName }))
-          : [];
+    const loadStaff = (async () => {
+      try {
+        const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/staff`, { credentials: 'include' });
+        if (response.ok) {
+          const staff = await response.json();
+          state.waiterOptions = Array.isArray(staff)
+            ? staff.map(s => ({ userId: s.userId, displayName: s.displayName }))
+            : [];
+        }
+      } catch {
+        state.waiterOptions = [];
       }
-    } catch {
-      state.waiterOptions = [];
-    }
+    })();
 
-    try {
-      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/suggested-waiter`, { credentials: 'include' });
-      if (response.status === 200) {
-        const suggestion = await response.json();
-        if (suggestion && suggestion.userId) state.selectedWaiterUserId = suggestion.userId;
+    const loadSuggestion = (async () => {
+      try {
+        const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/suggested-waiter`, { credentials: 'include' });
+        if (response.status === 200) {
+          const suggestion = await response.json();
+          if (suggestion && suggestion.userId) state.selectedWaiterUserId = suggestion.userId;
+        }
+      } catch {
+        // No suggestion available - the picker stays on "Ben".
       }
-    } catch {
-      // No suggestion available - the picker stays on "Ben".
-    }
+    })();
+
+    await Promise.all([loadStaff, loadSuggestion]);
 
     renderWaiterOptions();
   }
