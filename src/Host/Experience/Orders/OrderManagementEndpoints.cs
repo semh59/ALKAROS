@@ -770,6 +770,22 @@ public static class OrderManagementEndpoints
             return Results.Ok(staff.Select(s => new StaffMemberV1(s.UserId, s.DisplayName)).ToList());
         }).RequireRateLimiting("terminal-read");
 
+        // V1-RMD-212: same authorization level as /staff above (a cashier
+        // session, nothing more privileged) - this is a read of how busy
+        // each waiter already is, useful right next to the same picker
+        // /staff already feeds.
+        group.MapGet("/waiter-load", async (
+            Guid terminalId,
+            SuggestedWaiterResolver suggestedWaiter,
+            DualScreenStore dualStore,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            var loads = await suggestedWaiter.ListActiveLoadsAsync(cancellationToken);
+            return Results.Ok(loads);
+        }).RequireRateLimiting("terminal-read");
+
         // V1-RMD-111: the garson-masa hand-off. Two-tier permission model
         // (Toast "Change Server" / Lightspeed "Table Ownership" precedent,
         // researched 2026-09-06): a server handing off their OWN open checks

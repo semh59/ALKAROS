@@ -1812,11 +1812,43 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(freeWaiterId, suggestion!.UserId);
     }
 
+    [Fact]
+    public async Task WaiterLoadRequiresASession()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync(WaiterLoadPath(Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task WaiterLoadListsEveryOrdersSendHolderWithTheirCurrentCount()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "cashier", "orders.create");
+        var (waiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "waiter", "orders.send");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(GetRequest(WaiterLoadPath(terminalId), cookie));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var loads = await response.Content.ReadFromJsonAsync<List<WaiterLoadV1>>();
+        Assert.Contains(loads!, w => w.UserId == waiterId && w.ActiveLoad == 0);
+    }
+
     private static string DraftPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/table-draft";
 
     private static string SuggestedWaiterPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/suggested-waiter";
+
+    private static string WaiterLoadPath(Guid terminalId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/waiter-load";
 
     private static string SubmitPath(Guid terminalId, Guid orderId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/submit-draft";

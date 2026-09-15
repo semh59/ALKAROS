@@ -278,6 +278,13 @@ public sealed record ServingHandoffNoteV1(string Note, string FromDisplayName, D
 public sealed record StaffMemberV1(Guid UserId, string DisplayName);
 
 /// <summary>
+/// V1-RMD-212: one waiter's current open-table count, for Cashier's
+/// waiter picker to show alongside the name — a visibility read, not the
+/// suggestion pick itself (<see cref="SuggestedWaiterV1"/>).
+/// </summary>
+public sealed record WaiterLoadV1(Guid UserId, int ActiveLoad);
+
+/// <summary>
 /// V1-WTR-021: a waiter's own read-only shift summary — session-scoped to
 /// the caller, never anyone else's numbers. <paramref name="TipPoolShare"/>
 /// is <paramref name="TipPoolTotal"/> split evenly across

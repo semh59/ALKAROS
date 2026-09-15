@@ -15,7 +15,9 @@ const ORDER_ID = "33333333-3333-3333-3333-333333333333";
 
 const WAITER_ID = "44444444-4444-4444-4444-444444444444";
 
-function standardRoutes({ draftStatus = 200, submitStatus = 200, staffStatus = 200, suggestedStatus = 200 } = {}) {
+function standardRoutes({
+  draftStatus = 200, submitStatus = 200, staffStatus = 200, suggestedStatus = 200, waiterLoadStatus = 200,
+} = {}) {
   return [
     {
       test: (url) => url.endsWith("/api/v1/auth/session/current"),
@@ -43,6 +45,11 @@ function standardRoutes({ draftStatus = 200, submitStatus = 200, staffStatus = 2
       test: (url) => url.endsWith(`/api/v1/terminals/${TERMINAL_ID}/orders/suggested-waiter`),
       status: suggestedStatus,
       body: { userId: WAITER_ID, displayName: "Ayşe Garson" },
+    },
+    {
+      test: (url) => url.endsWith(`/api/v1/terminals/${TERMINAL_ID}/orders/waiter-load`),
+      status: waiterLoadStatus,
+      body: [{ userId: WAITER_ID, activeLoad: 3 }],
     },
     {
       test: (url, init) => url.endsWith(`/api/v1/terminals/${TERMINAL_ID}/orders/table-draft`) && init?.method === "POST",
@@ -95,16 +102,16 @@ describe("cashier-app.js", () => {
     document.getElementById("btnDispatchOrder").click();
 
     await vi.waitFor(() => {
-      // session + catalog + staff + suggested-waiter + table-draft (submit-draft is the 6th)
-      expect(fetchMock).toHaveBeenCalledTimes(5);
+      // session + catalog + staff + suggested-waiter + waiter-load + table-draft (submit-draft is the 7th)
+      expect(fetchMock).toHaveBeenCalledTimes(6);
     });
     await vi.waitFor(() => {
-      // ...then send-to-cashier releases KASA-1 (the 7th).
-      expect(fetchMock).toHaveBeenCalledTimes(7);
+      // ...then send-to-cashier releases KASA-1 (the 8th).
+      expect(fetchMock).toHaveBeenCalledTimes(8);
     });
 
-    const [draftUrl, draftInit] = fetchMock.mock.calls[4];
-    const [submitUrl, submitInit] = fetchMock.mock.calls[5];
+    const [draftUrl, draftInit] = fetchMock.mock.calls[5];
+    const [submitUrl, submitInit] = fetchMock.mock.calls[6];
     expect(draftUrl).toContain("/orders/table-draft");
     expect(draftInit.method).toBe("POST");
     expect(submitUrl).toContain(`/orders/${ORDER_ID}/submit-draft`);
@@ -124,12 +131,12 @@ describe("cashier-app.js", () => {
     button.click();
 
     await vi.waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledTimes(7);
+      expect(fetchMock).toHaveBeenCalledTimes(8);
     });
     // A short settle window to prove no extra calls trickle in from the
-    // extra clicks before asserting the final count stays at 7.
+    // extra clicks before asserting the final count stays at 8.
     await new Promise((r) => setTimeout(r, 20));
-    expect(fetchMock).toHaveBeenCalledTimes(7);
+    expect(fetchMock).toHaveBeenCalledTimes(8);
   });
 
   it("never shows the raw HTTP status code when the server rejects the draft", async () => {
@@ -182,6 +189,17 @@ describe("cashier-app.js", () => {
     });
     const select = document.getElementById("dispatchWaiterSelect");
     expect(select.querySelectorAll("option")).toHaveLength(2); // "Ben" + the one staff member
+    expect(select.selectedOptions[0].textContent).toBe("Ayşe Garson (3 masa)");
+  });
+
+  it("V1-RMD-212: falls back to no load suffix when /orders/waiter-load fails", async () => {
+    await startAppWithOneProductInTicket(standardRoutes({ waiterLoadStatus: 500 }));
+
+    await vi.waitFor(() => {
+      const select = document.getElementById("dispatchWaiterSelect");
+      if (select.value !== WAITER_ID) throw new Error("suggestion not applied yet");
+    });
+    const select = document.getElementById("dispatchWaiterSelect");
     expect(select.selectedOptions[0].textContent).toBe("Ayşe Garson");
   });
 
@@ -193,8 +211,8 @@ describe("cashier-app.js", () => {
 
     document.getElementById("btnDispatchOrder").click();
 
-    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(7));
-    const [, draftInit] = fetchMock.mock.calls[4];
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(8));
+    const [, draftInit] = fetchMock.mock.calls[5];
     const body = JSON.parse(draftInit.body);
     expect(body.assignedWaiterUserId).toBe(WAITER_ID);
   });
@@ -210,8 +228,8 @@ describe("cashier-app.js", () => {
 
     document.getElementById("btnDispatchOrder").click();
 
-    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(7));
-    const [, draftInit] = fetchMock.mock.calls[4];
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(8));
+    const [, draftInit] = fetchMock.mock.calls[5];
     const body = JSON.parse(draftInit.body);
     expect(body.assignedWaiterUserId).toBeUndefined();
   });
@@ -222,7 +240,7 @@ describe("cashier-app.js", () => {
 
     document.getElementById("btnDispatchOrder").click();
 
-    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(7));
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(8));
     expect(alert).toHaveBeenCalledWith(expect.stringContaining("mutfağa iletildi"));
     const select = document.getElementById("dispatchWaiterSelect");
     expect(select.querySelectorAll("option")).toHaveLength(1); // only "Ben"

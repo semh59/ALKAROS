@@ -54,7 +54,13 @@
     // already attributes it to them. Populated from /orders/staff, with
     // /orders/suggested-waiter's pick pre-selected when available.
     waiterOptions: [],
-    selectedWaiterUserId: null
+    selectedWaiterUserId: null,
+
+    // V1-RMD-212: userId -> current open-table count, from
+    // /orders/waiter-load. Missing entries render with no count (never "0
+    // masa" - a waiter this map has nothing for is just unmeasured, not
+    // confirmed idle).
+    waiterLoads: {}
   };
 
   // DOM Elements
@@ -247,7 +253,24 @@
       }
     })();
 
-    await Promise.all([loadStaff, loadSuggestion]);
+    // V1-RMD-212: a third independent, self-error-swallowing GET - missing
+    // it just means the picker shows names with no load count, same as
+    // before this existed.
+    const loadWaiterLoads = (async () => {
+      try {
+        const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/waiter-load`, { credentials: 'include' });
+        if (response.ok) {
+          const loads = await response.json();
+          state.waiterLoads = Array.isArray(loads)
+            ? Object.fromEntries(loads.map(w => [w.userId, w.activeLoad]))
+            : {};
+        }
+      } catch {
+        state.waiterLoads = {};
+      }
+    })();
+
+    await Promise.all([loadStaff, loadSuggestion, loadWaiterLoads]);
 
     renderWaiterOptions();
   }
@@ -257,7 +280,9 @@
     const options = ['<option value="">Ben (' + escapeHtml(state.cashierName) + ')</option>'];
     for (const waiter of state.waiterOptions) {
       const selected = waiter.userId === state.selectedWaiterUserId ? ' selected' : '';
-      options.push(`<option value="${escapeHtml(waiter.userId)}"${selected}>${escapeHtml(waiter.displayName)}</option>`);
+      const load = state.waiterLoads[waiter.userId];
+      const loadSuffix = typeof load === 'number' ? ` (${load} masa)` : '';
+      options.push(`<option value="${escapeHtml(waiter.userId)}"${selected}>${escapeHtml(waiter.displayName)}${loadSuffix}</option>`);
     }
     el.dispatchWaiterSelect.innerHTML = options.join('');
     // The suggestion may name a waiter fetched after this render call in a

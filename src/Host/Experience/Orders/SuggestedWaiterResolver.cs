@@ -129,6 +129,44 @@ public sealed class SuggestedWaiterResolver
     }
 
     /// <summary>
+    /// V1-RMD-212: every active <see cref="ApplicationPermissions.OrdersSend"/>
+    /// holder's current <c>active_load</c> — a visibility question, not an
+    /// eligibility one, so deliberately without <see
+    /// cref="ResolveMostSuitableWaiterAsync"/>'s live-session requirement or
+    /// <c>waiter.max_active_tables</c> cap: a caller showing this (Cashier's
+    /// waiter picker) wants to see everyone's real number, including a
+    /// waiter who is offline or already over the cap.
+    /// </summary>
+    public async Task<IReadOnlyList<WaiterLoadV1>> ListActiveLoadsAsync(CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT u.user_id,
+                   COUNT(o.order_id) FILTER (
+                       WHERE o.status NOT IN ('Served', 'Completed', 'Cancelled', 'Rejected')
+                   ) AS active_load
+            FROM identity.users u
+            LEFT JOIN orders.orders o ON o.serving_user_id = u.user_id
+            WHERE u.active
+              AND EXISTS (
+                  SELECT 1
+                  FROM identity.user_roles ur
+                  JOIN identity.role_permissions rp ON rp.role_id = ur.role_id
+                  JOIN identity.permissions p ON p.permission_id = rp.permission_id
+                  WHERE ur.user_id = u.user_id AND p.code = @permission_code
+              )
+            GROUP BY u.user_id;
+            """);
+        command.Parameters.Add("permission_code", NpgsqlDbType.Varchar).Value = ApplicationPermissions.OrdersSend;
+
+        var results = new List<WaiterLoadV1>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            results.Add(new WaiterLoadV1(reader.GetGuid(0), checked((int)reader.GetInt64(1))));
+        return results;
+    }
+
+    /// <summary>
     /// V1-RMD-207/210: whether <paramref name="userId"/> is a real, active
     /// user holding <see cref="ApplicationPermissions.OrdersSend"/> — the
     /// "is this genuinely a waiter" question, deliberately without the
