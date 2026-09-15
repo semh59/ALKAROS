@@ -25,7 +25,7 @@ const data: KitchenData = {
 };
 
 function baseProps(overrides: Partial<ComponentProps<typeof KitchenOperationsWorkspace>> = {}) {
-  return { state: "ready" as const, stationId: "hot-line", data, canAdvance: true, canOperate: true, canManageReprints: true, canSuspendAvailability: true, canViewReports: true, onRefresh: vi.fn(), onTransitionItem: vi.fn(), onTransitionTicket: vi.fn(), onApproveReprint: vi.fn(), onRejectReprint: vi.fn(), ...overrides };
+  return { state: "ready" as const, stationId: "hot-line", data, canAdvance: true, canOperate: true, canManageReprints: true, canManageRouting: true, canSuspendAvailability: true, canViewReports: true, onRefresh: vi.fn(), onTransitionItem: vi.fn(), onTransitionTicket: vi.fn(), onApproveReprint: vi.fn(), onRejectReprint: vi.fn(), ...overrides };
 }
 
 describe("kitchen operations workspace", () => {
@@ -266,6 +266,30 @@ describe("kitchen operations workspace", () => {
     const dot = document.querySelector(".kitchen-workspace__header-actions .kitchen-health-dot");
     expect(dot).not.toBeNull();
     expect(dot!.getAttribute("aria-label")).toContain("Sistem durumu");
+  });
+
+  it("V1-RMD-200: hides the reprint onay/red buttons without kitchen.reprint and shows the supervisor-required note instead", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ canManageReprints: false })} />);
+    const unknownPanel = document.querySelector(".kitchen-panel--unknown")!;
+    expect(unknownPanel.textContent).toContain("Süpervizör gerekli");
+    expect([...unknownPanel.querySelectorAll("button")].some((button) => button.textContent === "Onayla" || button.textContent === "Reddet" || button.textContent?.includes("Gerekçeli onay"))).toBe(false);
+  });
+
+  it("V1-RMD-200: shows the reprint onay/red buttons with kitchen.reprint", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ canManageReprints: true })} />);
+    const unknownPanel = document.querySelector(".kitchen-panel--unknown")!;
+    expect(unknownPanel.textContent).not.toContain("Süpervizör gerekli");
+    expect([...unknownPanel.querySelectorAll("button")].some((button) => button.textContent?.includes("Gerekçeli onay"))).toBe(true);
+  });
+
+  it("V1-RMD-200: hides the category-printer routing form without kitchen.routing.manage", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ canManageRouting: false })} />);
+    expect(document.querySelector(".kitchen-route-form")).toBeNull();
+  });
+
+  it("V1-RMD-200: shows the category-printer routing form with kitchen.routing.manage", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ canManageRouting: true, onCreateCategoryRoute: vi.fn() })} />);
+    expect(document.querySelector(".kitchen-route-form")).not.toBeNull();
   });
 
   it("shows the Ürün Tükendi Bildir button locked for a kitchen-staff session and enabled for the chef", async () => {

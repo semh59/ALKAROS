@@ -197,7 +197,18 @@ export interface KitchenWorkspaceProps {
   // canAdvance=true, canOperate=false. Every existing FOH role has both.
   canAdvance: boolean;
   canOperate: boolean;
+  // V1-RMD-200: `kitchen.reprint` — a real, separate permission from
+  // `canOperate` (`orders.send`). Independent audit (2026-09-14) found
+  // this was previously fed `canOperate` directly, showing the
+  // reprint-approval panel to waiter/cashier sessions (which hold
+  // orders.send but not kitchen.reprint) — the backend correctly
+  // rejected them with 403, but the UI misled the user into trying.
   canManageReprints: boolean;
+  // V1-RMD-200: `kitchen.routing.manage` — same class of bug as
+  // canManageReprints above, same audit. Held only by manager and
+  // kitchen-chef, NOT by orders.send holders in general (not even
+  // supervisor).
+  canManageRouting: boolean;
   // V1-IAM-029/V1-KDS-002: `kitchen.availability.suspend` - held outright
   // only by the kitchen-chef ("Mutfak Sefi") role today (migration 110
   // also grants it to manager, so V1-KIT-008's endpoint is testable before

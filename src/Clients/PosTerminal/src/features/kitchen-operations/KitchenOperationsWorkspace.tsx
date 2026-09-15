@@ -106,6 +106,7 @@ export function KitchenOperationsWorkspace({
   canAdvance,
   canOperate,
   canManageReprints,
+  canManageRouting,
   canSuspendAvailability,
   canViewReports,
   onRefresh,
@@ -432,7 +433,7 @@ export function KitchenOperationsWorkspace({
           printers={data.printers}
           routes={data.routes}
           categories={data.categories}
-          canOperate={canOperate}
+          canManageRouting={canManageRouting}
           onCreateCategoryRoute={onCreateCategoryRoute}
         />
       </aside>
@@ -672,13 +673,13 @@ function PrinterPanel({
   printers,
   routes,
   categories,
-  canOperate,
+  canManageRouting,
   onCreateCategoryRoute,
 }: {
   printers: readonly KitchenWorkspaceProps["data"]["printers"][number][];
   routes: readonly KitchenWorkspaceProps["data"]["routes"][number][];
   categories: readonly KitchenWorkspaceProps["data"]["categories"][number][];
-  canOperate: boolean;
+  canManageRouting: boolean;
   onCreateCategoryRoute?: KitchenWorkspaceProps["onCreateCategoryRoute"];
 }) {
   const categoryName = (id: string | null) => categories.find((category) => category.id === id)?.name ?? id;
@@ -722,7 +723,7 @@ function PrinterPanel({
       </li>)}
     </ul>}
 
-    {canOperate && onCreateCategoryRoute && <form className="kitchen-route-form" onSubmit={(event) => void submitCategoryRoute(event)}>
+    {canManageRouting && onCreateCategoryRoute && <form className="kitchen-route-form" onSubmit={(event) => void submitCategoryRoute(event)}>
       <p className="kitchen-panel__muted">Bir ürün grubunun tamamını tek yazıcıya yönlendir (örn. "Izgara" grubu ızgara yazıcısına).</p>
       {routeFeedback && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${routeFeedback.tone}`}>{routeFeedback.message}</p>}
       <label>Ürün grubu

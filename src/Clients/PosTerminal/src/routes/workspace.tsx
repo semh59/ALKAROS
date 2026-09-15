@@ -136,7 +136,7 @@ export function ExperiencePage({
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/catalog" && <CatalogRoute canManage={canOpenRoute} />}
-    {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canAdvance={capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")} canOperate={capabilitySet.has("orders.send")} canSuspendAvailability={capabilitySet.has("kitchen.availability.suspend")} canViewReports={capabilitySet.has("reports.view")} />}
+    {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canAdvance={capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")} canOperate={capabilitySet.has("orders.send")} canManageReprints={capabilitySet.has("kitchen.reprint")} canManageRouting={capabilitySet.has("kitchen.routing.manage")} canSuspendAvailability={capabilitySet.has("kitchen.availability.suspend")} canViewReports={capabilitySet.has("reports.view")} />}
     {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
     {path === "/authorization" && <AuthorizationDecisionsRoute canView={canOpenRoute} />}
     {!(["/", "/tables", "/billing", "/catalog", "/kitchen", "/system-health", "/authorization"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
@@ -467,7 +467,7 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
 
 const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], categories: [], unknownDeliveries: [], health: null, backups: [], liveSyncEnabled: false, denseModeThreshold: 9 };
 
-function KitchenRoute({ terminalId, canAdvance, canOperate, canSuspendAvailability, canViewReports }: { terminalId: string; canAdvance: boolean; canOperate: boolean; canSuspendAvailability: boolean; canViewReports: boolean }) {
+function KitchenRoute({ terminalId, canAdvance, canOperate, canManageReprints, canManageRouting, canSuspendAvailability, canViewReports }: { terminalId: string; canAdvance: boolean; canOperate: boolean; canManageReprints: boolean; canManageRouting: boolean; canSuspendAvailability: boolean; canViewReports: boolean }) {
   const [stationId, setStationId] = useState("");
   const [client, setClient] = useState<KitchenOperationsClient | null>(null);
   const [state, setState] = useState<KitchenWorkspaceState>("loading");
@@ -503,16 +503,17 @@ function KitchenRoute({ terminalId, canAdvance, canOperate, canSuspendAvailabili
     data={data}
     canAdvance={canAdvance}
     canOperate={canOperate}
-    canManageReprints={canOperate}
+    canManageReprints={canManageReprints}
+    canManageRouting={canManageRouting}
     canSuspendAvailability={canSuspendAvailability}
     canViewReports={canViewReports}
     onRefresh={load}
     onTransitionItem={canAdvance && client ? async (ticket, item, target) => { await client.transitionItem(ticket.id, item.id, target, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
     onUndoItem={canAdvance && client ? async (ticket, item) => { await client.undoItem(ticket.id, item.id, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
     onTransitionTicket={canOperate && client ? async (ticket, target, reason) => { await client.transitionTicket(ticket.id, target, ticket.rowVersion, reason); await load(); } : undefined}
-    onApproveReprint={canOperate && client ? async (delivery, reason) => { await client.approveReprint(delivery.id, reason); await load(); } : undefined}
-    onRejectReprint={canOperate && client ? async (delivery, reason) => { await client.rejectReprint(delivery.id, reason); await load(); } : undefined}
-    onCreateCategoryRoute={canOperate && client ? async (categoryId, printerId) => { await client.createCategoryRoute(categoryId, printerId); await load(); } : undefined}
+    onApproveReprint={canManageReprints && client ? async (delivery, reason) => { await client.approveReprint(delivery.id, reason); await load(); } : undefined}
+    onRejectReprint={canManageReprints && client ? async (delivery, reason) => { await client.rejectReprint(delivery.id, reason); await load(); } : undefined}
+    onCreateCategoryRoute={canManageRouting && client ? async (categoryId, printerId) => { await client.createCategoryRoute(categoryId, printerId); await load(); } : undefined}
     // V1-KDS-002: present whenever a client exists - the workspace itself
     // decides whether the button is enabled or shown-but-locked, matching
     // this task's own acceptance evidence (a kitchen-staff session must see
