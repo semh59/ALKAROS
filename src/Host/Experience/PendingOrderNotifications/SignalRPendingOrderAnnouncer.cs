@@ -48,27 +48,23 @@ public sealed class SignalRPendingOrderAnnouncer : IPendingOrderAnnouncer
         var suggested = await _suggestedWaiter.ResolveMostSuitableWaiterAsync(announcement.TableId, cancellationToken);
         var waiterId = suggested?.UserId;
 
-        // V1-RMD-203: the resolved candidate only holds a live
-        // identity.device_sessions row, which Cashier/PosTerminal sessions
-        // also satisfy — neither ever connects to this hub, so a candidate
-        // must additionally be a live hub connection before being targeted.
-        var recipients = waiterId is Guid id && _presence.IsConnected(id)
-            ? _hub.Clients.Group(WaiterOrderStatusHub.GroupName(id))
-            : _hub.Clients.All;
-        await recipients.SendAsync(
-            WaiterOrderStatusHub.OrderPendingConfirmation, announcement, cancellationToken);
-
-        if (_push is null) return;
-
         // Same wording as the in-app banner: what happened at the table, not
         // which channel it arrived through (docs/UI_STYLE_GUIDE.md).
-        var message = new WebPushMessage(
-            "Misafir siparişi",
-            $"{announcement.TableNumber} masası sipariş verdi — {announcement.ItemCount} kalem",
-            "alkaros-pending-order");
-        if (waiterId is Guid pushId && await _push.HasAnySubscriptionAsync(pushId, cancellationToken))
-            await _push.SendToUserAsync(message, pushId, cancellationToken);
-        else
-            await _push.BroadcastAsync(message, cancellationToken);
+        var pushMessage = _push is null
+            ? null
+            : new WebPushMessage(
+                "Misafir siparişi",
+                $"{announcement.TableNumber} masası sipariş verdi — {announcement.ItemCount} kalem",
+                "alkaros-pending-order");
+
+        // V1-RMD-209: per-channel targeting/fallback (V1-RMD-203: the
+        // resolved candidate only holds a live identity.device_sessions
+        // row, which Cashier/PosTerminal sessions also satisfy — neither
+        // ever connects to this hub or registers push, so reachability is
+        // checked again per channel) lives in WaiterNotificationDispatch,
+        // shared with KitchenOperationsStore's own "item ready" path.
+        await WaiterNotificationDispatch.SendAsync(
+            _hub, _presence, _push, waiterId,
+            WaiterOrderStatusHub.OrderPendingConfirmation, announcement, pushMessage, cancellationToken);
     }
 }

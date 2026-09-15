@@ -73,22 +73,45 @@ public sealed class WebPushSender
         => SendToSubscriptionsAsync(message, _store.GetAllAsync, cancellationToken);
 
     /// <summary>
-    /// V1-RMD-201: sends one notification to only the devices one specific
-    /// user has subscribed from — used once an order's serving waiter is
-    /// known, so the rest of the floor's phones stay quiet.
+    /// V1-RMD-201/203/209: sends to only the devices one specific user has
+    /// subscribed from — once an order's serving waiter is known, so the
+    /// rest of the floor's phones stay quiet — unless that user has zero
+    /// subscriptions (e.g. staff who only ever use a client that never
+    /// registers for push, like Cashier/PosTerminal), in which case this
+    /// falls back to <see cref="BroadcastAsync"/> so the notification is
+    /// never silently dropped. The subscription list is read exactly once
+    /// and reused for both the decision and the send — the earlier version
+    /// of this (a separate "has any?" check, then a second, separate fetch
+    /// to actually send) left a real window where a subscription deleted
+    /// between the two calls (the RFC 8030 §7.3 dead-endpoint cleanup in
+    /// <see cref="SendOneAsync"/>, from an unrelated notification landing
+    /// moments earlier) made the send silently reach nobody instead of
+    /// falling back.
     /// </summary>
-    public Task SendToUserAsync(WebPushMessage message, Guid userId, CancellationToken cancellationToken = default)
-        => SendToSubscriptionsAsync(message, ct => _store.GetByUserAsync(userId, ct), cancellationToken);
+    public async Task SendToUserOrBroadcastAsync(
+        WebPushMessage message, Guid userId, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(message);
 
-    /// <summary>
-    /// V1-RMD-203: a caller deciding between <see cref="SendToUserAsync"/>
-    /// and <see cref="BroadcastAsync"/> needs to know this first — a user
-    /// with zero subscriptions (e.g. staff who only ever use a client that
-    /// never registers for push, like Cashier/PosTerminal) would otherwise
-    /// silently receive nothing from a targeted send.
-    /// </summary>
-    public async Task<bool> HasAnySubscriptionAsync(Guid userId, CancellationToken cancellationToken = default)
-        => (await _store.GetByUserAsync(userId, cancellationToken)).Count > 0;
+        IReadOnlyList<PushSubscriptionRecord> subscriptions;
+        try
+        {
+            subscriptions = await _store.GetByUserAsync(userId, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            LogNotPrepared(_logger, ex);
+            return;
+        }
+
+        if (subscriptions.Count == 0)
+        {
+            await BroadcastAsync(message, cancellationToken);
+            return;
+        }
+
+        await SendToSubscriptionsAsync(message, _ => Task.FromResult(subscriptions), cancellationToken);
+    }
 
     private async Task SendToSubscriptionsAsync(
         WebPushMessage message,

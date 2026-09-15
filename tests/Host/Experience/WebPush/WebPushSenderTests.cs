@@ -5,11 +5,13 @@ using Xunit;
 namespace ALKAROS.Host.Experience.WebPush.Tests;
 
 /// <summary>
-/// V1-RMD-201: <see cref="WebPushSender.SendToUserAsync"/> must reach only
-/// one waiter's devices, and the pre-existing <see cref="WebPushSender.BroadcastAsync"/>
-/// must keep reaching everyone (used for events like V1-RMD-149's pending QR
-/// order, or an order with no serving waiter) — both send through the same
-/// refactored <c>SendToSubscriptionsAsync</c> path, so both are covered here.
+/// V1-RMD-201/209: <see cref="WebPushSender.SendToUserOrBroadcastAsync"/>
+/// must reach only one waiter's devices when they have any, and the
+/// pre-existing <see cref="WebPushSender.BroadcastAsync"/> must keep
+/// reaching everyone (used for events like V1-RMD-149's pending QR order,
+/// an order with no serving waiter, or — V1-RMD-209 — a serving waiter with
+/// no push subscription at all) — both send through the same refactored
+/// <c>SendToSubscriptionsAsync</c> path, so both are covered here.
 /// </summary>
 [Collection("Web push PostgreSQL HTTP")]
 public sealed class WebPushSenderTests : IAsyncLifetime
@@ -27,7 +29,7 @@ public sealed class WebPushSenderTests : IAsyncLifetime
     public Task DisposeAsync() => _database.DisposeAsync();
 
     [Fact]
-    public async Task SendToUserOnlyPostsToThatUsersEndpoint()
+    public async Task SendToUserOrBroadcastOnlyPostsToThatUsersEndpointWhenTheyHaveOne()
     {
         var store = new PushSubscriptionStore(_database.DataSource);
         var userA = await _database.SeedUserAsync("Waiter A");
@@ -40,7 +42,7 @@ public sealed class WebPushSenderTests : IAsyncLifetime
         var handler = new RecordingHandler();
         var sender = new WebPushSender(new HttpClient(handler), store, NullLogger<WebPushSender>.Instance);
 
-        await sender.SendToUserAsync(
+        await sender.SendToUserOrBroadcastAsync(
             new WebPushMessage("Sipariş hazır", "Mercimek çorbası hazır", "alkaros-order-ready"), userA);
 
         var requested = Assert.Single(handler.RequestedEndpoints);
@@ -48,18 +50,26 @@ public sealed class WebPushSenderTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task SendToUserDoesNothingForAUserWithNoSubscription()
+    public async Task SendToUserOrBroadcastFallsBackToEveryoneWhenTheUserHasNoSubscription()
     {
+        // V1-RMD-209: the whole point of the "or broadcast" half - a serving
+        // waiter attributed to a Cashier/PosTerminal session (neither ever
+        // registers for push) must not be a silent no-op.
         var store = new PushSubscriptionStore(_database.DataSource);
         var userWithNoSubscription = await _database.SeedUserAsync("Waiter C");
+        var otherUser = await _database.SeedUserAsync("Waiter D");
+        var terminalId = Guid.NewGuid();
+        await store.SaveAsync(new PushSubscriptionRecord(
+            Guid.NewGuid(), "https://push.example.net/d", ValidP256dh, ValidAuth, otherUser, terminalId));
         var handler = new RecordingHandler();
         var sender = new WebPushSender(new HttpClient(handler), store, NullLogger<WebPushSender>.Instance);
 
-        await sender.SendToUserAsync(
+        await sender.SendToUserOrBroadcastAsync(
             new WebPushMessage("Sipariş hazır", "Mercimek çorbası hazır", "alkaros-order-ready"),
             userWithNoSubscription);
 
-        Assert.Empty(handler.RequestedEndpoints);
+        var requested = Assert.Single(handler.RequestedEndpoints);
+        Assert.Equal("https://push.example.net/d", requested);
     }
 
     [Fact]
