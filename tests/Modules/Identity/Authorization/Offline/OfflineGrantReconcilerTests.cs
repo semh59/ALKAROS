@@ -1,3 +1,4 @@
+using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.Authorization.Policies;
@@ -17,6 +18,7 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
     private readonly PostgresAuthorizationGrantRepository _grants;
     private readonly PostgresAuthorizationPolicyRepository _policies;
     private readonly PostgresOfflineReplayLedger _replays;
+    private readonly PostgresBehaviouralTighteningRepository _tightenings;
     private readonly DateTimeOffset _issuedAt = new(2026, 9, 4, 8, 0, 0, TimeSpan.Zero);
     private DateTimeOffset _reconnectAt = new(2026, 9, 4, 10, 0, 0, TimeSpan.Zero);
 
@@ -27,18 +29,19 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
         _grants = new PostgresAuthorizationGrantRepository(db.DataSource);
         _policies = new PostgresAuthorizationPolicyRepository(db.DataSource);
         _replays = new PostgresOfflineReplayLedger(db.DataSource);
+        _tightenings = new PostgresBehaviouralTighteningRepository(db.DataSource);
     }
 
     private OfflineGrantReconciler Reconciler()
-        => new(_budgets, _grants, _policies, _replays, () => _reconnectAt);
+        => new(_budgets, _grants, _policies, _replays, _tightenings, () => _reconnectAt);
 
     private Task<OfflineAuthorityBudget> BudgetAsync(TimeSpan ttl, params OfflineAuthorityBudgetLine[] lines)
         => _budgets.CreateAsync(Guid.NewGuid(), Guid.NewGuid(), lines, _issuedAt, _issuedAt + ttl);
 
     private OfflineAuthorizedAction Action(
         string key, string permission = "bills.comp", decimal amount = 100m,
-        string role = "waiter", TimeSpan? takenAfter = null)
-        => new(key, permission, Guid.NewGuid(), role, "CustomerChange", amount,
+        string role = "waiter", TimeSpan? takenAfter = null, Guid? requesterUserId = null)
+        => new(key, permission, requesterUserId ?? Guid.NewGuid(), role, "CustomerChange", amount,
             _issuedAt + (takenAfter ?? TimeSpan.FromHours(1)),
             SubjectType: "bill", SubjectId: Guid.NewGuid());
 
@@ -156,7 +159,37 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
 
         second[0].GrantId.Should().Be(first[0].GrantId);
         second[0].Detail.Should().Be("already reconciled");
+        second[0].IsReplay.Should().BeTrue();
+        first[0].IsReplay.Should().BeFalse();
         (await _db.CountAsync("identity.authorization_grants")).Should().Be(before);
+    }
+
+    [Fact]
+    public async Task AnActionFromARequesterWithAnActiveBehaviouralTighteningIsFlagged()
+    {
+        var requesterId = Guid.NewGuid();
+        await _tightenings.OpenAsync(new BehaviouralTightening(
+            Guid.Empty, requesterId, "bills.comp", RecentCount: 6, BaselinePerWindow: 2m,
+            TriggerRatio: 3m, TriggeredAt: _issuedAt, ClearedAt: null, ClearedByUserId: null));
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 2));
+
+        var results = await Reconciler().ReconcileAsync(
+            budget.BudgetId, new[] { Action("recon-flagged", amount: 40m, requesterUserId: requesterId) });
+
+        results[0].IsBehaviourallyFlagged.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task AnActionFromARequesterWithNoActiveTighteningIsNotFlagged()
+    {
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 2));
+
+        var results = await Reconciler().ReconcileAsync(
+            budget.BudgetId, new[] { Action("recon-not-flagged", amount: 40m) });
+
+        results[0].IsBehaviourallyFlagged.Should().BeFalse();
     }
 
     [Fact]
@@ -182,7 +215,7 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
         }
 
         var reconciler = new OfflineGrantReconciler(
-            new StaleSnapshotBudgetRepository(budget), _grants, _policies, _replays, () => _reconnectAt);
+            new StaleSnapshotBudgetRepository(budget), _grants, _policies, _replays, _tightenings, () => _reconnectAt);
 
         await FluentActions
             .Invoking(() => reconciler.ReconcileAsync(budget.BudgetId, new[] { Action("recon-vanished-budget") }))
