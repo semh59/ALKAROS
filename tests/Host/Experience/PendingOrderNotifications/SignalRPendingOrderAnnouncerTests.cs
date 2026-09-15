@@ -1,5 +1,6 @@
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.WaiterNotifications;
+using ALKAROS.Identity.Authorization;
 using ALKAROS.Orders.Integration;
 using Microsoft.AspNetCore.SignalR;
 using Xunit;
@@ -34,7 +35,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var presence = new WaiterPresenceTracker();
         presence.Connected(busyWaiter);
         presence.Connected(freeWaiter);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource)));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -55,7 +56,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
 
         var hub = new RecordingHubContext();
         var presence = new WaiterPresenceTracker();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource)));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -74,7 +75,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var hub = new RecordingHubContext();
         var presence = new WaiterPresenceTracker();
         presence.Connected(loggedInButBusier);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource)));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -96,7 +97,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var presence = new WaiterPresenceTracker();
         presence.Connected(recentlyAssigned);
         presence.Connected(longIdle);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource)));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -116,7 +117,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var presence = new WaiterPresenceTracker();
         presence.Connected(everAssigned);
         presence.Connected(neverAssigned);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource)));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -133,7 +134,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
 
         var hub = new RecordingHubContext();
         var presence = new WaiterPresenceTracker();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource)));
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -164,7 +165,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var presence = new WaiterPresenceTracker();
         presence.Connected(gardenWaiter);
         presence.Connected(indoorWaiter);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource)));
 
         // A NEW guest order from a garden table - the garden waiter's own
         // most recent open order is also in the garden zone.
@@ -189,7 +190,7 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         var hub = new RecordingHubContext();
         var presence = new WaiterPresenceTracker();
         presence.Connected(onlyWaiter);
-        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource));
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource)));
 
         // A garden-table order still must reach the only real candidate.
         await announcer.AnnounceAsync(NewAnnouncement(gardenTable));

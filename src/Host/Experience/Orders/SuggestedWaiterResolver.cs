@@ -1,3 +1,4 @@
+using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using Npgsql;
 using NpgsqlTypes;
@@ -17,10 +18,12 @@ public sealed record SuggestedWaiterV1(Guid UserId, string DisplayName);
 public sealed class SuggestedWaiterResolver
 {
     private readonly NpgsqlDataSource _dataSource;
+    private readonly IRoleRepository _roles;
 
-    public SuggestedWaiterResolver(NpgsqlDataSource dataSource)
+    public SuggestedWaiterResolver(NpgsqlDataSource dataSource, IRoleRepository roles)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _roles = roles ?? throw new ArgumentNullException(nameof(roles));
     }
 
     /// <summary>
@@ -112,36 +115,26 @@ public sealed class SuggestedWaiterResolver
     }
 
     /// <summary>
-    /// V1-RMD-207: whether <paramref name="userId"/> is a real, active user
-    /// holding <see cref="ApplicationPermissions.OrdersSend"/> — the "is
-    /// this genuinely a waiter" question, deliberately without the session
-    /// requirement <see cref="ResolveMostSuitableWaiterAsync"/> has (that
-    /// one asks "reachable right now"; this one asks "does this
+    /// V1-RMD-207/210: whether <paramref name="userId"/> is a real, active
+    /// user holding <see cref="ApplicationPermissions.OrdersSend"/> — the
+    /// "is this genuinely a waiter" question, deliberately without the
+    /// session requirement <see cref="ResolveMostSuitableWaiterAsync"/> has
+    /// (that one asks "reachable right now"; this one asks "does this
     /// assignment even make sense" for a caller-supplied id that otherwise
     /// has no FK to check it, orders.orders.serving_user_id being
     /// intentionally unconstrained per V1-RMD-111's module boundary).
+    ///
+    /// Goes through <see cref="IRoleRepository"/> — the same canonical
+    /// active/permission source every other authorization decision in this
+    /// codebase reads — rather than a second, hand-written copy of that
+    /// query that could silently drift from it.
     /// </summary>
     public async Task<bool> IsValidWaiterAsync(Guid userId, CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
-            """
-            SELECT EXISTS (
-                SELECT 1
-                FROM identity.users u
-                WHERE u.user_id = @user_id
-                  AND u.active
-                  AND EXISTS (
-                      SELECT 1
-                      FROM identity.user_roles ur
-                      JOIN identity.role_permissions rp ON rp.role_id = ur.role_id
-                      JOIN identity.permissions p ON p.permission_id = rp.permission_id
-                      WHERE ur.user_id = u.user_id AND p.code = @permission_code
-                  )
-            );
-            """);
-        command.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = userId;
-        command.Parameters.Add("permission_code", NpgsqlDbType.Varchar).Value = ApplicationPermissions.OrdersSend;
+        var (exists, active) = await _roles.GetUserStateAsync(userId, cancellationToken);
+        if (!exists || !active) return false;
 
-        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
+        var permissions = await _roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
+        return permissions.Contains(ApplicationPermissions.OrdersSend);
     }
 }
