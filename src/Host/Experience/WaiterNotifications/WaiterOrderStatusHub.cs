@@ -28,11 +28,15 @@ public sealed class WaiterOrderStatusHub : Hub
     /// </summary>
     public const string OrderPendingConfirmation = "OrderPendingConfirmation";
 
-    private readonly DualScreenStore _store;
+    private static readonly object ConnectedUserIdItemKey = new();
 
-    public WaiterOrderStatusHub(DualScreenStore store)
+    private readonly DualScreenStore _store;
+    private readonly WaiterPresenceTracker _presence;
+
+    public WaiterOrderStatusHub(DualScreenStore store, WaiterPresenceTracker presence)
     {
         _store = store ?? throw new ArgumentNullException(nameof(store));
+        _presence = presence ?? throw new ArgumentNullException(nameof(presence));
     }
 
     public override async Task OnConnectedAsync()
@@ -56,7 +60,18 @@ public sealed class WaiterOrderStatusHub : Hub
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, GroupName(principal.UserId), Context.ConnectionAborted);
+        // V1-RMD-203: remembered here so OnDisconnectedAsync (which carries
+        // no principal of its own) knows whose count to decrement.
+        Context.Items[ConnectedUserIdItemKey] = principal.UserId;
+        _presence.Connected(principal.UserId);
         await base.OnConnectedAsync();
+    }
+
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        if (Context.Items.TryGetValue(ConnectedUserIdItemKey, out var value) && value is Guid userId)
+            _presence.Disconnected(userId);
+        return base.OnDisconnectedAsync(exception);
     }
 }
 

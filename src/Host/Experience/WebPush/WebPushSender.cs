@@ -80,6 +80,16 @@ public sealed class WebPushSender
     public Task SendToUserAsync(WebPushMessage message, Guid userId, CancellationToken cancellationToken = default)
         => SendToSubscriptionsAsync(message, ct => _store.GetByUserAsync(userId, ct), cancellationToken);
 
+    /// <summary>
+    /// V1-RMD-203: a caller deciding between <see cref="SendToUserAsync"/>
+    /// and <see cref="BroadcastAsync"/> needs to know this first — a user
+    /// with zero subscriptions (e.g. staff who only ever use a client that
+    /// never registers for push, like Cashier/PosTerminal) would otherwise
+    /// silently receive nothing from a targeted send.
+    /// </summary>
+    public async Task<bool> HasAnySubscriptionAsync(Guid userId, CancellationToken cancellationToken = default)
+        => (await _store.GetByUserAsync(userId, cancellationToken)).Count > 0;
+
     private async Task SendToSubscriptionsAsync(
         WebPushMessage message,
         Func<CancellationToken, Task<IReadOnlyList<PushSubscriptionRecord>>> loadSubscriptions,

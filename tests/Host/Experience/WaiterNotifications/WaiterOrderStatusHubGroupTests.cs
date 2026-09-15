@@ -26,11 +26,12 @@ public sealed class WaiterOrderStatusHubGroupTests : IAsyncLifetime
     public Task DisposeAsync() => _database.DisposeAsync();
 
     [Fact]
-    public async Task AnAuthenticatedConnectionJoinsItsOwnUserGroup()
+    public async Task AnAuthenticatedConnectionJoinsItsOwnUserGroupAndIsMarkedPresent()
     {
         var terminalId = Guid.NewGuid();
         var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
-        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource));
+        var presence = new WaiterPresenceTracker();
+        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), presence);
         var groups = new FakeGroupManager();
         var context = new FakeHubCallerContext(cookie, terminalId);
         hub.Context = context;
@@ -42,13 +43,32 @@ public sealed class WaiterOrderStatusHubGroupTests : IAsyncLifetime
         var joined = Assert.Single(groups.AddedGroups);
         Assert.Equal(context.ConnectionId, joined.ConnectionId);
         Assert.Equal(WaiterOrderStatusHub.GroupName(userId), joined.GroupName);
+        Assert.True(presence.IsConnected(userId));
+    }
+
+    [Fact]
+    public async Task DisconnectingMarksTheUserNoLongerPresent()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var presence = new WaiterPresenceTracker();
+        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), presence);
+        hub.Context = new FakeHubCallerContext(cookie, terminalId);
+        hub.Groups = new FakeGroupManager();
+
+        await hub.OnConnectedAsync();
+        Assert.True(presence.IsConnected(userId));
+
+        await hub.OnDisconnectedAsync(null);
+
+        Assert.False(presence.IsConnected(userId));
     }
 
     [Fact]
     public async Task AnUnauthenticatedConnectionIsAbortedAndJoinsNoGroup()
     {
         var terminalId = Guid.NewGuid();
-        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource));
+        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), new WaiterPresenceTracker());
         var groups = new FakeGroupManager();
         var context = new FakeHubCallerContext(
             $"{DualScreenApplication.CashierCookieName}=not-a-real-token", terminalId);

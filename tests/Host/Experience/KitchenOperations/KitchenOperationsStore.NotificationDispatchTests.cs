@@ -16,15 +16,17 @@ namespace ALKAROS.Host.Experience.KitchenOperations.Tests;
 public sealed class KitchenOperationsStoreNotificationDispatchTests
 {
     [Fact]
-    public async Task TargetsOnlyTheServingWaitersGroupWhenOneIsKnown()
+    public async Task TargetsOnlyTheServingWaitersGroupWhenOneIsKnownAndConnected()
     {
         var waiterId = Guid.NewGuid();
         var order = NewOrder(waiterId);
         var hub = new RecordingHubContext();
+        var presence = new WaiterPresenceTracker();
+        presence.Connected(waiterId);
         var item = NewItem();
 
         await KitchenOperationsStore.DispatchItemReadyNotificationAsync(
-            hub, push: null, new FakeOrderRepository(order), order.Id, item, CancellationToken.None);
+            hub, presence, push: null, new FakeOrderRepository(order), order.Id, item, CancellationToken.None);
 
         var group = Assert.Single(hub.Clients.GroupCalls);
         Assert.Equal(WaiterOrderStatusHub.GroupName(waiterId), group);
@@ -34,14 +36,35 @@ public sealed class KitchenOperationsStoreNotificationDispatchTests
     }
 
     [Fact]
+    public async Task BroadcastsWhenTheServingWaiterHasNoLiveHubConnection()
+    {
+        // V1-RMD-203: the regression this guards against — a table opened
+        // from Cashier/PosTerminal makes that staff member ServingUserId,
+        // but neither client ever connects to this hub. Targeting them
+        // would silently reach nobody.
+        var waiterId = Guid.NewGuid();
+        var order = NewOrder(waiterId);
+        var hub = new RecordingHubContext();
+        var presence = new WaiterPresenceTracker();
+        var item = NewItem();
+
+        await KitchenOperationsStore.DispatchItemReadyNotificationAsync(
+            hub, presence, push: null, new FakeOrderRepository(order), order.Id, item, CancellationToken.None);
+
+        Assert.Equal(1, hub.Clients.AllCalls);
+        Assert.Empty(hub.Clients.GroupCalls);
+    }
+
+    [Fact]
     public async Task BroadcastsWhenTheOrderHasNoServingWaiter()
     {
         var order = NewOrder(servingUserId: null);
         var hub = new RecordingHubContext();
+        var presence = new WaiterPresenceTracker();
         var item = NewItem();
 
         await KitchenOperationsStore.DispatchItemReadyNotificationAsync(
-            hub, push: null, new FakeOrderRepository(order), order.Id, item, CancellationToken.None);
+            hub, presence, push: null, new FakeOrderRepository(order), order.Id, item, CancellationToken.None);
 
         Assert.Equal(1, hub.Clients.AllCalls);
         Assert.Empty(hub.Clients.GroupCalls);
@@ -51,10 +74,11 @@ public sealed class KitchenOperationsStoreNotificationDispatchTests
     public async Task BroadcastsWhenTheOrderIsMissingEntirely()
     {
         var hub = new RecordingHubContext();
+        var presence = new WaiterPresenceTracker();
         var item = NewItem();
 
         await KitchenOperationsStore.DispatchItemReadyNotificationAsync(
-            hub, push: null, new FakeOrderRepository(order: null), Guid.NewGuid(), item, CancellationToken.None);
+            hub, presence, push: null, new FakeOrderRepository(order: null), Guid.NewGuid(), item, CancellationToken.None);
 
         Assert.Equal(1, hub.Clients.AllCalls);
         Assert.Empty(hub.Clients.GroupCalls);

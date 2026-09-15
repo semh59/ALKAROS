@@ -30,13 +30,36 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         await _database.SeedOrderAsync(busyWaiter, "Ready", DateTimeOffset.UtcNow.AddMinutes(-3));
 
         var hub = new RecordingHubContext();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, _database.DataSource);
+        var presence = new WaiterPresenceTracker();
+        presence.Connected(busyWaiter);
+        presence.Connected(freeWaiter);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
         var group = Assert.Single(hub.Clients.GroupCalls);
         Assert.Equal(WaiterOrderStatusHub.GroupName(freeWaiter), group);
         Assert.Equal(0, hub.Clients.AllCalls);
+    }
+
+    [Fact]
+    public async Task FallsBackToBroadcastWhenTheResolvedWaiterHasNoLiveHubConnection()
+    {
+        // V1-RMD-203: the regression this guards against - a Cashier/
+        // PosTerminal session satisfies the SQL candidacy check (a live
+        // device_sessions row) but neither client ever connects to this
+        // hub, so targeting them would silently reach nobody.
+        var waiter = await _database.SeedWaiterAsync("Oturumu Açık Ama Hub'a Bağlı Değil", hasOpenSession: true);
+        _ = waiter;
+
+        var hub = new RecordingHubContext();
+        var presence = new WaiterPresenceTracker();
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
+
+        await announcer.AnnounceAsync(NewAnnouncement());
+
+        Assert.Equal(1, hub.Clients.AllCalls);
+        Assert.Empty(hub.Clients.GroupCalls);
     }
 
     [Fact]
@@ -48,7 +71,9 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         _ = loggedOutButIdle;
 
         var hub = new RecordingHubContext();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, _database.DataSource);
+        var presence = new WaiterPresenceTracker();
+        presence.Connected(loggedInButBusier);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -67,7 +92,10 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         await _database.SeedOrderAsync(longIdle, "Preparing", DateTimeOffset.UtcNow.AddHours(-3));
 
         var hub = new RecordingHubContext();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, _database.DataSource);
+        var presence = new WaiterPresenceTracker();
+        presence.Connected(recentlyAssigned);
+        presence.Connected(longIdle);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -84,7 +112,10 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         _ = neverAssigned;
 
         var hub = new RecordingHubContext();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, _database.DataSource);
+        var presence = new WaiterPresenceTracker();
+        presence.Connected(everAssigned);
+        presence.Connected(neverAssigned);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
 
         await announcer.AnnounceAsync(NewAnnouncement());
 
@@ -100,7 +131,8 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
         await _database.SeedWaiterAsync("Oturumu Kapalı", hasOpenSession: false);
 
         var hub = new RecordingHubContext();
-        var announcer = new SignalRPendingOrderAnnouncer(hub, _database.DataSource);
+        var presence = new WaiterPresenceTracker();
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, _database.DataSource);
 
         await announcer.AnnounceAsync(NewAnnouncement());
 

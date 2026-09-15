@@ -17,6 +17,10 @@ public static class WaiterNotificationsExperience
         // this codebase each register their own dependencies defensively —
         // see OfflineReconciliation/AddOfflineReconciliationExperience).
         services.AddSignalR(options => options.EnableDetailedErrors = false);
+        // V1-RMD-203: shared by the hub itself and by every targeted-send
+        // caller (KitchenOperationsStore, SignalRPendingOrderAnnouncer) that
+        // needs to know whether a group send would actually reach anyone.
+        services.TryAddSingleton<WaiterPresenceTracker>();
         // V1-RMD-149: lets Orders announce a guest order waiting for
         // confirmation without depending on SignalR or on Host at all.
         services.TryAddSingleton<IPendingOrderAnnouncer, SignalRPendingOrderAnnouncer>();

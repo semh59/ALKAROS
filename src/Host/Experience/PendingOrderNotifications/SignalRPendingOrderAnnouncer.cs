@@ -31,13 +31,18 @@ namespace ALKAROS.Host.Experience.PendingOrderNotifications;
 public sealed class SignalRPendingOrderAnnouncer : IPendingOrderAnnouncer
 {
     private readonly IHubContext<WaiterOrderStatusHub> _hub;
+    private readonly WaiterPresenceTracker _presence;
     private readonly NpgsqlDataSource _dataSource;
     private readonly WebPushSender? _push;
 
     public SignalRPendingOrderAnnouncer(
-        IHubContext<WaiterOrderStatusHub> hub, NpgsqlDataSource dataSource, WebPushSender? push = null)
+        IHubContext<WaiterOrderStatusHub> hub,
+        WaiterPresenceTracker presence,
+        NpgsqlDataSource dataSource,
+        WebPushSender? push = null)
     {
         _hub = hub ?? throw new ArgumentNullException(nameof(hub));
+        _presence = presence ?? throw new ArgumentNullException(nameof(presence));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _push = push;
     }
@@ -47,7 +52,11 @@ public sealed class SignalRPendingOrderAnnouncer : IPendingOrderAnnouncer
         ArgumentNullException.ThrowIfNull(announcement);
         var waiterId = await ResolveMostSuitableWaiterAsync(cancellationToken);
 
-        var recipients = waiterId is Guid id
+        // V1-RMD-203: the resolved candidate only holds a live
+        // identity.device_sessions row, which Cashier/PosTerminal sessions
+        // also satisfy — neither ever connects to this hub, so a candidate
+        // must additionally be a live hub connection before being targeted.
+        var recipients = waiterId is Guid id && _presence.IsConnected(id)
             ? _hub.Clients.Group(WaiterOrderStatusHub.GroupName(id))
             : _hub.Clients.All;
         await recipients.SendAsync(
@@ -61,7 +70,7 @@ public sealed class SignalRPendingOrderAnnouncer : IPendingOrderAnnouncer
             "Misafir siparişi",
             $"{announcement.TableNumber} masası sipariş verdi — {announcement.ItemCount} kalem",
             "alkaros-pending-order");
-        if (waiterId is Guid pushId)
+        if (waiterId is Guid pushId && await _push.HasAnySubscriptionAsync(pushId, cancellationToken))
             await _push.SendToUserAsync(message, pushId, cancellationToken);
         else
             await _push.BroadcastAsync(message, cancellationToken);

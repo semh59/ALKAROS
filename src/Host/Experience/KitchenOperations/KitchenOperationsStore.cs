@@ -33,6 +33,7 @@ public sealed class KitchenOperationsStore
     private readonly OutboxStore _outbox;
     private readonly IOrderRepository _orders;
     private readonly IHubContext<WaiterOrderStatusHub> _waiterHub;
+    private readonly WaiterPresenceTracker _waiterPresence;
     private readonly WebPushSender? _push;
     private readonly NpgsqlDataSource _dataSource;
     private readonly CatalogManagementStore _catalog;
@@ -50,6 +51,7 @@ public sealed class KitchenOperationsStore
         OutboxStore outbox,
         IOrderRepository orders,
         IHubContext<WaiterOrderStatusHub> waiterHub,
+        WaiterPresenceTracker waiterPresence,
         NpgsqlDataSource dataSource,
         CatalogManagementStore catalog,
         IAuthorizationGrantRepository grants,
@@ -70,6 +72,9 @@ public sealed class KitchenOperationsStore
         // same gate.
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _waiterHub = waiterHub ?? throw new ArgumentNullException(nameof(waiterHub));
+        // V1-RMD-203: lets the "ready" push decide per-channel whether the
+        // order's ServingUserId is actually reachable before targeting it.
+        _waiterPresence = waiterPresence ?? throw new ArgumentNullException(nameof(waiterPresence));
         // V1-WTR-011: the same "ready" announcement, for a device whose app is
         // closed. Optional so the standalone KitchenOperations test harness
         // keeps constructing this store without a push stack — the same shape
@@ -253,7 +258,8 @@ public sealed class KitchenOperationsStore
     /// </summary>
     private Task NotifyWaitersItemIsReadyAsync(
         Guid orderId, KitchenTicketItem item, CancellationToken cancellationToken)
-        => DispatchItemReadyNotificationAsync(_waiterHub, _push, _orders, orderId, item, cancellationToken);
+        => DispatchItemReadyNotificationAsync(
+            _waiterHub, _waiterPresence, _push, _orders, orderId, item, cancellationToken);
 
     /// <summary>
     /// V1-RMD-201: an order with a known <see cref="Order.ServingUserId"/>
@@ -263,9 +269,18 @@ public sealed class KitchenOperationsStore
     /// from before V1-RMD-111) keeps the previous flat broadcast so nobody
     /// misses it. Takes its collaborators as parameters, rather than reading
     /// instance fields, so the targeting decision is testable on its own.
+    ///
+    /// V1-RMD-203: the two channels decide independently, because only
+    /// WaiterPwa ever connects to the hub or registers a push subscription —
+    /// a table opened from Cashier/PosTerminal makes that staff member's own
+    /// UserId the ServingUserId, and they have neither. Targeting a UserId
+    /// with no live connection (SignalR) or no subscription (push) would
+    /// silently reach nobody, so each channel falls back to its own
+    /// broadcast when the target isn't actually reachable on it.
     /// </summary>
     public static async Task DispatchItemReadyNotificationAsync(
         IHubContext<WaiterOrderStatusHub> waiterHub,
+        WaiterPresenceTracker waiterPresence,
         WebPushSender? push,
         IOrderRepository orders,
         Guid orderId,
@@ -276,7 +291,7 @@ public sealed class KitchenOperationsStore
         var servingUserId = order?.ServingUserId;
         var payload = new OrderItemReadyV1(orderId, order?.TableId, item.OrderItemId, item.ProductNameSnapshot);
 
-        var recipients = servingUserId is Guid waiterId
+        var recipients = servingUserId is Guid waiterId && waiterPresence.IsConnected(waiterId)
             ? waiterHub.Clients.Group(WaiterOrderStatusHub.GroupName(waiterId))
             : waiterHub.Clients.All;
         await recipients.SendAsync(WaiterOrderStatusHub.OrderItemReady, payload, cancellationToken);
@@ -288,7 +303,7 @@ public sealed class KitchenOperationsStore
         {
             var message = new WebPushMessage(
                 "Sipariş hazır", $"{item.ProductNameSnapshot} hazır", "alkaros-order-ready");
-            if (servingUserId is Guid pushUserId)
+            if (servingUserId is Guid pushUserId && await push.HasAnySubscriptionAsync(pushUserId, cancellationToken))
                 await push.SendToUserAsync(message, pushUserId, cancellationToken);
             else
                 await push.BroadcastAsync(message, cancellationToken);
