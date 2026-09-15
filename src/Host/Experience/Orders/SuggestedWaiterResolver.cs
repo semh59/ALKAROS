@@ -1,5 +1,7 @@
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Settings.TypedSettings;
+using ALKAROS.Settings.WaiterMaxActiveTables;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -19,11 +21,13 @@ public sealed class SuggestedWaiterResolver
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly IRoleRepository _roles;
+    private readonly ISettingsService _settings;
 
-    public SuggestedWaiterResolver(NpgsqlDataSource dataSource, IRoleRepository roles)
+    public SuggestedWaiterResolver(NpgsqlDataSource dataSource, IRoleRepository roles, ISettingsService settings)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _roles = roles ?? throw new ArgumentNullException(nameof(roles));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
 
     /// <summary>
@@ -46,10 +50,18 @@ public sealed class SuggestedWaiterResolver
     /// assignment (oldest <c>MAX(created_at)</c> first, nulls — never
     /// assigned — first of all), so the same person does not keep winning
     /// ties all shift. Returns null when nobody qualifies.
+    ///
+    /// V1-SET-006: a candidate whose own <c>active_load</c> has reached
+    /// <c>waiter.max_active_tables</c> (0 = no cap, the default) drops out
+    /// of the pool entirely rather than merely ranking last — a genuinely
+    /// overloaded waiter must never be the answer just because everyone
+    /// else happens to be busier.
     /// </summary>
     public async Task<SuggestedWaiterV1?> ResolveMostSuitableWaiterAsync(
         Guid? tableId, CancellationToken cancellationToken)
     {
+        var maxActiveTables = await WaiterMaxActiveTablesSetting.GetLimitAsync(_settings, cancellationToken);
+
         await using var command = _dataSource.CreateCommand(
             """
             SELECT u.user_id, u.display_name
@@ -97,6 +109,7 @@ public sealed class SuggestedWaiterResolver
                     AND s.revoked_at IS NULL
                     AND s.expires_at > @now
               )
+              AND (@max_active_tables = 0 OR COALESCE(w.active_load, 0) < @max_active_tables)
             ORDER BY COALESCE(w.active_load, 0) ASC,
                      CASE
                          WHEN target.zone_id IS NOT NULL AND z.zone_id = target.zone_id THEN 0
@@ -108,6 +121,7 @@ public sealed class SuggestedWaiterResolver
         command.Parameters.Add("permission_code", NpgsqlDbType.Varchar).Value = ApplicationPermissions.OrdersSend;
         command.Parameters.Add("now", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
         command.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId is Guid id ? id : (object)DBNull.Value;
+        command.Parameters.Add("max_active_tables", NpgsqlDbType.Integer).Value = maxActiveTables;
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken)) return null;

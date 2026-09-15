@@ -52,6 +52,7 @@
   <Project Path="tests/Host/Experience/Orders/Comp/ALKAROS.Host.Experience.Orders.Comp.Tests.csproj" />
   <Project Path="tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj" />
   <Project Path="tests/Host/Experience/Orders/Confirmation/ALKAROS.Host.Experience.Orders.Confirmation.Tests.csproj" />
+  <Project Path="tests/Host/Experience/PendingOrderNotifications/ALKAROS.Host.Experience.PendingOrderNotifications.Tests.csproj" />
   <Project Path="tests/Host/Experience/WaiterNotifications/ALKAROS.Host.Experience.WaiterNotifications.Tests.csproj" />
   <Project Path="tests/Host/Experience/WebPush/ALKAROS.Host.Experience.WebPush.Tests.csproj" />
   <Project Path="tests/Host/Experience/HelpRequests/ALKAROS.Host.Experience.HelpRequests.Tests.csproj" />
@@ -85,6 +86,7 @@
   <Project Path="tests/Modules/Settings/KitchenLiveSync/ALKAROS.Settings.KitchenLiveSync.Tests.csproj" />
   <Project Path="tests/Modules/Settings/KitchenDenseModeThreshold/ALKAROS.Settings.KitchenDenseModeThreshold.Tests.csproj" />
   <Project Path="tests/Modules/Settings/ReservationStation/ALKAROS.Settings.ReservationStation.Tests.csproj" />
+  <Project Path="tests/Modules/Settings/WaiterMaxActiveTables/ALKAROS.Settings.WaiterMaxActiveTables.Tests.csproj" />
   <Project Path="tests/Modules/Tables/CurrentPointers/ALKAROS.Tables.CurrentPointers.Tests.csproj" />
   <Project Path="tests/Modules/Tables/Reservations/ALKAROS.Tables.Reservations.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj" />
