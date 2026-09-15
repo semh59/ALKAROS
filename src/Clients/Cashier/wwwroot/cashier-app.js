@@ -47,7 +47,14 @@
     categories: [{ id: 'all', name: 'Tüm Ürünler' }],
     products: [],
     dispatchInFlight: false,
-    isOnline: navigator.onLine
+    isOnline: navigator.onLine,
+
+    // V1-RMD-205: who runs this order to the customer. null (the default,
+    // "Ben") means the cashier themselves — nothing extra sent, the server
+    // already attributes it to them. Populated from /orders/staff, with
+    // /orders/suggested-waiter's pick pre-selected when available.
+    waiterOptions: [],
+    selectedWaiterUserId: null
   };
 
   // DOM Elements
@@ -67,7 +74,8 @@
     btnCloseParkedModal: document.getElementById('btnCloseParkedModal'),
     connectivityPill: document.getElementById('connectivityPill'),
     connectivityLabel: document.getElementById('connectivityLabel'),
-    dispatchHint: document.getElementById('dispatchHint')
+    dispatchHint: document.getElementById('dispatchHint'),
+    dispatchWaiterSelect: document.getElementById('dispatchWaiterSelect')
   };
 
   // Found by an independent audit (2026-09-07): this badge was static
@@ -120,6 +128,7 @@
     const sessionOk = await bootstrapSession();
     if (sessionOk) {
       await loadCatalog();
+      await loadWaiterOptions();
     } else {
       state.catalogStatus = 'error';
       renderProducts();
@@ -204,6 +213,50 @@
     renderCategoryTabs();
     renderProducts(el.searchInput ? el.searchInput.value : '');
     updateDispatchAvailability();
+  }
+
+  // V1-RMD-205: best-effort. Neither call ever blocks or fails dispatch —
+  // an empty list just means the picker only ever offers "Ben", the same
+  // as before this existed.
+  async function loadWaiterOptions() {
+    try {
+      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/staff`, { credentials: 'include' });
+      if (response.ok) {
+        const staff = await response.json();
+        state.waiterOptions = Array.isArray(staff)
+          ? staff.map(s => ({ userId: s.userId, displayName: s.displayName }))
+          : [];
+      }
+    } catch {
+      state.waiterOptions = [];
+    }
+
+    try {
+      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/suggested-waiter`, { credentials: 'include' });
+      if (response.status === 200) {
+        const suggestion = await response.json();
+        if (suggestion && suggestion.userId) state.selectedWaiterUserId = suggestion.userId;
+      }
+    } catch {
+      // No suggestion available - the picker stays on "Ben".
+    }
+
+    renderWaiterOptions();
+  }
+
+  function renderWaiterOptions() {
+    if (!el.dispatchWaiterSelect) return;
+    const options = ['<option value="">Ben (' + escapeHtml(state.cashierName) + ')</option>'];
+    for (const waiter of state.waiterOptions) {
+      const selected = waiter.userId === state.selectedWaiterUserId ? ' selected' : '';
+      options.push(`<option value="${escapeHtml(waiter.userId)}"${selected}>${escapeHtml(waiter.displayName)}</option>`);
+    }
+    el.dispatchWaiterSelect.innerHTML = options.join('');
+    // The suggestion may name a waiter fetched after this render call in a
+    // slow-network interleaving; re-apply the selection explicitly rather
+    // than relying on the `selected` attribute already being in the markup
+    // the browser parsed.
+    el.dispatchWaiterSelect.value = state.selectedWaiterUserId || '';
   }
 
   function updateDispatchAvailability() {
@@ -356,6 +409,10 @@
       id: crypto.randomUUID(),
       tableId: '00000000-0000-0000-0000-000000000001',
       tableNumber: 'KASA-1',
+      // V1-RMD-205: unset (the "Ben" default) sends nothing, which is
+      // exactly what the server already does without this field - the
+      // cashier themselves becomes ServingUserId.
+      assignedWaiterUserId: state.selectedWaiterUserId || undefined,
       items: state.ticketItems.map(item => ({
         // Stable per-line id (already used for local cart tracking) makes a
         // retried draft submission idempotent server-side instead of
@@ -530,6 +587,13 @@
         state.activeCategory = btn.dataset.catId;
         renderCategoryTabs();
         renderProducts(el.searchInput ? el.searchInput.value : '');
+      });
+    }
+
+    // V1-RMD-205: waiter picker
+    if (el.dispatchWaiterSelect) {
+      el.dispatchWaiterSelect.addEventListener('change', (e) => {
+        state.selectedWaiterUserId = e.target.value || null;
       });
     }
 

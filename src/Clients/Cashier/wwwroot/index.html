@@ -102,6 +102,15 @@
           <span class="grand-total-amount" id="grandTotalAmount">0,00 ₺</span>
         </div>
 
+        <!-- V1-RMD-205: who runs this order to the customer — Cashier has
+             no real table to attribute it to (V1-RMD-157: KASA-1 is a
+             fixed, shared pseudo-table), so this is the actual "who takes
+             it from here" answer. Defaults to the cashier themselves. -->
+        <div class="dispatch-waiter-row">
+          <label for="dispatchWaiterSelect" class="dispatch-waiter-label">Servis eden</label>
+          <select id="dispatchWaiterSelect" class="dispatch-waiter-select"></select>
+        </div>
+
         <!-- Confirm and Dispatch to Kitchen Button -->
         <button type="button" class="btn-dispatch-order" id="btnDispatchOrder">
           <span><svg class="icon" aria-hidden="true"><use href="#ico-send"/></svg> SİPARİŞİ ONAYLA &amp; MUTFAĞA İLET</span>

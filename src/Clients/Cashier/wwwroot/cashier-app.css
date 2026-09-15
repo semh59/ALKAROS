@@ -367,6 +367,33 @@ body {
   font-family: var(--font-mono);
 }
 
+/* V1-RMD-205: who runs the order to the customer */
+.dispatch-waiter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dispatch-waiter-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.dispatch-waiter-select {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface-elevated);
+  color: inherit;
+  font-size: 0.9rem;
+}
+
 /* Big Dispatch Button */
 .btn-dispatch-order {
   height: 52px;

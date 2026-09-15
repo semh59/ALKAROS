@@ -5,9 +5,19 @@ import { vi } from "vitest";
  * about response.ok / response.status / response.json(), so this returns
  * a plain object rather than depending on a real Response/Headers global.
  *
- * @param {Array<{ test: (url: string, init?: RequestInit) => boolean, status?: number, body?: unknown }>} routes
+ * @param {Array<{ test: (url: string, init?: RequestInit) => boolean, status?: number, body?: unknown, headers?: Record<string, string> }>} routes
  *   Checked in order; the first match wins. Every call is also recorded on
  *   the returned mock's `.mock.calls` for assertions on call order/shape.
+ *
+ * `headers.get(name)` (V1-RMD-205): found while adding new routes to this
+ * suite — cashier-app.js's fetchWholeCatalogAsync reads
+ * `response.headers.get('X-Next-Cursor')` on every real fetch, but this
+ * stub never gave a route a `headers` object at all, so every cashier-app
+ * test that reaches catalog loading threw synchronously (caught by
+ * loadCatalog's own try/catch, silently leaving state.products empty) —
+ * a pre-existing bug in this shared test double, independent of the new
+ * routes. A route with no `headers` now answers `null` for any header
+ * name, which is exactly "no next page" to the real pagination loop.
  */
 export function installFetchRouter(routes) {
   const fetchMock = vi.fn(async (url, init) => {
@@ -21,6 +31,7 @@ export function installFetchRouter(routes) {
       ok: status >= 200 && status < 300,
       status,
       json: async () => route.body ?? {},
+      headers: { get: (name) => route.headers?.[name] ?? null },
     };
   });
   vi.stubGlobal("fetch", fetchMock);
