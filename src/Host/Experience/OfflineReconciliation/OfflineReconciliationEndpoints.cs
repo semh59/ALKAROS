@@ -113,6 +113,14 @@ public static class OfflineReconciliationEndpoints
         var pendingCount = results.Count(r => r.Status == GrantStatus.Pending);
         var deniedCount = results.Count(r => r.Status == GrantStatus.Denied);
         var flaggedCount = results.Count(r => r.IsBehaviourallyFlagged);
+        // Found by an independent audit (2026-09-15): this must be scoped to
+        // Pending for BuildBrief's "bunlardan {flagged} tanesi..." clause —
+        // it reads as "of these [pending] ones", but a flagged action can
+        // just as well end up Denied (flagging never changes Admit/Deny,
+        // see OfflineGrantReconciler.ReconcileAsync). Using the unscoped
+        // count there produced a sentence claiming a flagged item was in
+        // the pending bucket when it had actually been denied.
+        var pendingFlaggedCount = results.Count(r => r.Status == GrantStatus.Pending && r.IsBehaviourallyFlagged);
         var replayCount = results.Count(r => r.IsReplay);
 
         var ordered = results
@@ -129,13 +137,13 @@ public static class OfflineReconciliationEndpoints
             FlaggedCount: flaggedCount,
             DeniedCount: deniedCount,
             AlreadyReconciledCount: replayCount,
-            Brief: BuildBrief(results.Count, pendingCount, flaggedCount, deniedCount, replayCount));
+            Brief: BuildBrief(results.Count, pendingCount, pendingFlaggedCount, deniedCount, replayCount));
 
         return new OfflineReconciliationResponseV1(summary, ordered);
     }
 
     private static string BuildBrief(
-        int total, int pending, int flagged, int denied, int replayed)
+        int total, int pending, int pendingFlagged, int denied, int replayed)
     {
         if (total == 0)
             return "Çevrimdışı işlem bulunamadı.";
@@ -144,8 +152,8 @@ public static class OfflineReconciliationEndpoints
         if (pending > 0)
         {
             var pendingText = $"{pending} tanesi yönetici onayı bekliyor";
-            if (flagged > 0)
-                pendingText += $" (bunlardan {flagged} tanesi anormal kullanım sinyali taşıdığı için öncelikli)";
+            if (pendingFlagged > 0)
+                pendingText += $" (bunlardan {pendingFlagged} tanesi anormal kullanım sinyali taşıdığı için öncelikli)";
             parts.Add(pendingText);
         }
         if (denied > 0)
