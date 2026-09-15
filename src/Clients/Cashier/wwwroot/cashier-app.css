@@ -390,6 +390,24 @@ body {
   transform: scale(0.98);
 }
 
+.btn-dispatch-order:disabled {
+  background-color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dispatch-hint {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid #7f1d1d;
+  border-radius: var(--radius-md);
+  background: rgba(127, 29, 29, 0.15);
+  color: #fca5a5;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 /* Icon set (mirrors PosTerminal design-system/Icon.tsx, finding F-8) */
 .icon {
   width: 1.15em;

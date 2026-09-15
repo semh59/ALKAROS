@@ -46,7 +46,8 @@
     catalogStatus: 'loading', // 'loading' | 'ready' | 'error'
     categories: [{ id: 'all', name: 'Tüm Ürünler' }],
     products: [],
-    dispatchInFlight: false
+    dispatchInFlight: false,
+    isOnline: navigator.onLine
   };
 
   // DOM Elements
@@ -65,7 +66,8 @@
     parkedList: document.getElementById('parkedList'),
     btnCloseParkedModal: document.getElementById('btnCloseParkedModal'),
     connectivityPill: document.getElementById('connectivityPill'),
-    connectivityLabel: document.getElementById('connectivityLabel')
+    connectivityLabel: document.getElementById('connectivityLabel'),
+    dispatchHint: document.getElementById('dispatchHint')
   };
 
   // Found by an independent audit (2026-09-07): this badge was static
@@ -84,6 +86,26 @@
     if (el.connectivityLabel) el.connectivityLabel.textContent = online ? 'Çevrimiçi' : 'Çevrimdışı';
   }
 
+  // DESIGN.md's "kiosk goes read-only on LAN outage" protocol, decided
+  // narrowly: the kiosk's only real network write is dispatch (table-draft
+  // -> submit-draft -> send-to-cashier, three sequential requests with no
+  // retry/idempotency queue behind them, unlike WaiterPwa's offline-queue.js
+  // — a drop mid-sequence would leave an inconsistent half-sent order). So
+  // only dispatch locks offline; building/editing the ticket, park/recall
+  // and catalog browsing stay local-only and keep working (they never touch
+  // the network). A cashier session's own expiry is intentionally NOT
+  // re-checked here: it is only ever known by asking the server, which is
+  // exactly what offline means we cannot do — forcing a lockout offline
+  // would freeze every local-only action above for no security benefit
+  // (the one real risk, dispatch, is already blocked), and the next real
+  // request after reconnect still gets a normal 401 if the session did
+  // expire.
+  function onConnectivityChange() {
+    state.isOnline = navigator.onLine;
+    updateConnectivityBadge();
+    updateDispatchAvailability();
+  }
+
   async function init() {
     renderCategoryTabs();
     renderProducts();
@@ -92,8 +114,8 @@
     bindEvents();
     updateDispatchAvailability();
     updateConnectivityBadge();
-    window.addEventListener('online', updateConnectivityBadge);
-    window.addEventListener('offline', updateConnectivityBadge);
+    window.addEventListener('online', onConnectivityChange);
+    window.addEventListener('offline', onConnectivityChange);
 
     const sessionOk = await bootstrapSession();
     if (sessionOk) {
@@ -186,7 +208,12 @@
 
   function updateDispatchAvailability() {
     if (!el.btnDispatchOrder) return;
-    el.btnDispatchOrder.disabled = state.catalogStatus !== 'ready';
+    const offline = !state.isOnline;
+    el.btnDispatchOrder.disabled = state.catalogStatus !== 'ready' || offline;
+    if (el.dispatchHint) {
+      el.dispatchHint.hidden = !offline;
+      if (offline) el.dispatchHint.textContent = 'Bağlantı yok — sipariş mutfağa gönderilemiyor. Sepeti düzenlemeye devam edebilirsiniz.';
+    }
   }
 
   function renderCategoryTabs() {
@@ -297,6 +324,15 @@
     if (state.ticketItems.length === 0) return;
     if (state.catalogStatus !== 'ready') {
       alert('Katalog sunucudan alınamadığı için sipariş gönderilemiyor.');
+      return;
+    }
+    // Defense in depth: the button is already disabled offline
+    // (updateDispatchAvailability), but a click that lands in the gap
+    // between an 'offline' event and its disabled re-render must not start
+    // the three-request dispatch sequence with no retry/idempotency queue
+    // behind it.
+    if (!state.isOnline) {
+      alert('Bağlantı yok. Sipariş gönderilemiyor.');
       return;
     }
     // Found by an independent audit (2026-09-05): nothing stopped a second
@@ -427,7 +463,7 @@
         }
       }
       state.dispatchInFlight = false;
-      if (el.btnDispatchOrder) el.btnDispatchOrder.disabled = state.catalogStatus !== 'ready';
+      updateDispatchAvailability();
     }
   }
 
