@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiError, api } from "../api";
 import { useRouter } from "../router";
 import { navLabels, roleLabels } from "../strings";
@@ -497,6 +497,29 @@ function KitchenRoute({ terminalId, canAdvance, canOperate, canManageReprints, c
     }
   }, [canAdvance, terminalId]);
   useEffect(() => { void load(); }, [load]);
+
+  // V1-RMD-223: found by an independent audit (2026-09-16) - load() (and
+  // therefore onRefresh, which the workspace's own 8s poll calls) builds a
+  // brand-new client every cycle, so `client` itself is a fresh reference
+  // every poll even though nothing about it actually changed. A plain
+  // `client ? (from, to) => client.getPerformanceReport(from, to) : undefined`
+  // inline closure was a new function identity every render for the same
+  // reason - the report screen's own effect depends on this prop, so it
+  // kept re-firing (the Turkish "loading" state flashing) every poll tick while
+  // someone was reading it, exactly the polling-inclusion the workspace's
+  // own comment says the report is NOT supposed to have. A ref keeps the
+  // callback's identity stable across polls while still always calling
+  // whatever client is current at the time it is actually invoked.
+  const clientRef = useRef(client);
+  useEffect(() => { clientRef.current = client; }, [client]);
+  const loadPerformanceReport = useCallback(
+    (from: string, to: string) => {
+      if (!clientRef.current) return Promise.reject(new Error("Mutfak istemcisi hazır değil."));
+      return clientRef.current.getPerformanceReport(from, to);
+    },
+    [],
+  );
+
   return <KitchenOperationsWorkspace
     state={state}
     stationId={stationId || "Mutfak"}
@@ -519,7 +542,7 @@ function KitchenRoute({ terminalId, canAdvance, canOperate, canManageReprints, c
     // this task's own acceptance evidence (a kitchen-staff session must see
     // the same button, locked, not a hidden one).
     onSuspendProductAvailability={client ? async (productId) => { const result = await client.suspendProductAvailability(productId); await load(); return result; } : undefined}
-    onLoadPerformanceReport={client ? (from, to) => client.getPerformanceReport(from, to) : undefined}
+    onLoadPerformanceReport={client ? loadPerformanceReport : undefined}
     errorMessage={errorMessage}
     lastUpdated={lastUpdated}
   />;

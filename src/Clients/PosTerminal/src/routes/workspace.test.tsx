@@ -180,3 +180,79 @@ describe("workspace route gating uses granular permission codes, not the removed
     },
   );
 });
+
+/**
+ * V1-RMD-223: found by an independent audit (2026-09-16) - KitchenRoute's
+ * onLoadPerformanceReport prop was a fresh inline closure every render, and
+ * `client` itself is a fresh object every 8s poll cycle (load() always
+ * builds a new one) even when nothing about it changed. The report view's
+ * own useEffect depends on this prop, so it kept re-fetching (and flashing
+ * back to "loading") on every single poll tick while someone was reading
+ * the report - the opposite of the workspace's own documented intent that
+ * the report is not part of the board's polling.
+ */
+describe("KitchenRoute's performance report survives the board's own poll cycle", () => {
+  let root: Root | null = null;
+
+  async function render(element: ReactElement) {
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(element));
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it("does not re-fetch the report on a poll tick while the report tab is open", async () => {
+    const reportCalls: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.endsWith("/runtime-configuration")) return jsonResponse({ kitchenStationId: "hot-line" });
+      if (path.includes("/operations/performance-report")) {
+        reportCalls.push(path);
+        return jsonResponse({ from: "2026-09-16", to: "2026-09-16", stations: [], hourlyVolume: [] });
+      }
+      if (path.includes("/operations/live-sync")) return jsonResponse({ enabled: true, denseModeThreshold: 9 });
+      if (path.includes("/operations/health/latest")) return new Response(null, { status: 204 });
+      // /tickets, /printers, /routes, /categories, /deliveries/unknown,
+      // /operations/backups/recent all shape as a plain empty array.
+      return jsonResponse([]);
+    }));
+
+    vi.useFakeTimers();
+    window.history.replaceState({}, "", "/kitchen");
+    await act(async () => render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="44444444-4444-4444-4444-444444444444"
+          displayName="Test Kullanıcı"
+          capabilities={["kitchen.advance", "reports.view"]}
+          path="/kitchen"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    ));
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    const reportTab = [...document.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Rapor");
+    expect(reportTab).toBeDefined();
+    await act(async () => reportTab!.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    await act(async () => Promise.resolve());
+    expect(reportCalls).toHaveLength(1);
+
+    // Advance past the board's own 8s poll interval while still on the
+    // report tab - the fetch mock above proves whether the report was
+    // fetched again.
+    await act(async () => { await vi.advanceTimersByTimeAsync(9_000); });
+
+    expect(reportCalls).toHaveLength(1);
+  });
+});
