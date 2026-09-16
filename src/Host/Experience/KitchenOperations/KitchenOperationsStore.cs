@@ -298,6 +298,28 @@ public sealed class KitchenOperationsStore
             WaiterOrderStatusHub.OrderItemReady, payload, pushMessage, cancellationToken);
     }
 
+    /// <summary>
+    /// V1-RMD-219: found by an independent audit (2026-09-16) - the
+    /// routing form's category dropdown used to call Catalog's own
+    /// manager-cookie-protected endpoint directly (catalog.manage), which
+    /// kitchen-chef (kitchen.routing.manage, deliberately never
+    /// catalog.manage - V1-IAM-029) never holds; the request 401'd and the
+    /// dropdown stayed silently empty. This reads the same rows a terminal
+    /// session already may (this endpoint sits behind RequireReadAsync,
+    /// same as GetRoutesAsync right below) - a category NAME is not a
+    /// catalog-management decision, only creating/editing one is.
+    /// </summary>
+    public async Task<IReadOnlyList<KitchenCategoryV1>> GetCategoriesAsync(CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "SELECT category_id, name FROM catalog.categories WHERE active ORDER BY sort_order, name;");
+        var results = new List<KitchenCategoryV1>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            results.Add(new KitchenCategoryV1(reader.GetGuid(0), reader.GetString(1)));
+        return results;
+    }
+
     public async Task<IReadOnlyList<PrinterV1>> GetPrintersAsync(CancellationToken cancellationToken)
         => (await _printers.GetAllAsync(cancellationToken)).Select(ToDto).ToArray();
 

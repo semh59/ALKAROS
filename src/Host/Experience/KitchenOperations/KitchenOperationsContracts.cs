@@ -61,6 +61,13 @@ public sealed record UndoKitchenItemV1(
     long ExpectedTicketRowVersion,
     long ExpectedItemRowVersion);
 
+/// <summary>
+/// V1-RMD-219: a minimal read of catalog.categories for the routing form's
+/// own dropdown - just enough to name a category, nothing catalog.manage
+/// itself would gate (price, availability, product membership).
+/// </summary>
+public sealed record KitchenCategoryV1(Guid Id, string Name);
+
 public sealed record PrinterV1(
     Guid Id,
     string Name,

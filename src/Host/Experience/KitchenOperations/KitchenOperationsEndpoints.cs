@@ -230,6 +230,22 @@ public static class KitchenOperationsEndpoints
             return Results.Ok(await store.SuspendProductAvailabilityAsync(productId, principal, cancellationToken));
         });
 
+        // V1-RMD-219: found by an independent audit (2026-09-16) - the
+        // routing form used to fetch categories from Catalog's own
+        // manager-cookie-protected endpoint, which kitchen-chef never
+        // holds the cookie for. Same RequireReadAsync as every other GET
+        // in this file.
+        group.MapGet("/categories", async (
+            Guid terminalId,
+            IKitchenOperationsSessionAuthorizer authorizer,
+            KitchenOperationsStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            return Results.Ok(await store.GetCategoriesAsync(cancellationToken));
+        });
+
         group.MapGet("/printers", async (
             Guid terminalId,
             IKitchenOperationsSessionAuthorizer authorizer,

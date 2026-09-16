@@ -74,6 +74,28 @@ describe("kitchen operations API client", () => {
     expect(result.denseModeThreshold).toBe(15);
   });
 
+  // V1-RMD-219: found by an independent audit (2026-09-16) - categories
+  // used to be fetched from Catalog's own manager-cookie-protected
+  // endpoint (/api/v1/management/catalog/categories), which kitchen-chef
+  // (kitchen.routing.manage, never catalog.manage) always got a 401 from,
+  // silently swallowed into an empty list. This proves categories now
+  // come from this module's own terminal-scoped /categories path.
+  it("reads categories from this module's own terminal-scoped path, not Catalog's management endpoint", async () => {
+    const categories = [{ id: "category-1", name: "Izgara" }];
+    const fetcher = vi.fn(async (url: RequestInfo | URL) => {
+      const path = String(url);
+      expect(path).not.toContain("/management/catalog/categories");
+      return new Response(JSON.stringify(path.includes("/categories") ? categories : path.includes("health") ? payloads.health : path.includes("tickets") ? payloads.tickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : path.includes("live-sync") ? payloads.liveSync : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
+    });
+    const client = createKitchenOperationsClient("terminal-1", "hot-line", fetcher);
+    const result = await client.load();
+    expect(result.categories).toEqual(categories);
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.stringMatching(/\/kitchen-operations\/categories$/),
+      expect.objectContaining({ credentials: "same-origin" }),
+    );
+  });
+
   it("keeps HTTP conflict and network errors typed", async () => {
     const conflict = createKitchenOperationsClient("terminal-1", "hot-line", vi.fn(async () => new Response(JSON.stringify({ error: { code: "CONCURRENT_MODIFICATION", message: "changed" } }), { status: 409 })));
     await expect(conflict.transitionTicket("ticket-1", "Ready", 1)).rejects.toMatchObject({ status: 409, code: "CONCURRENT_MODIFICATION" });

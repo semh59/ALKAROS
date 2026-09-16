@@ -388,6 +388,34 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task CategoriesAreReadableWithNoPermissionAtAllJustLikePrintersAndRoutes()
+    {
+        // V1-RMD-219: found by an independent audit (2026-09-16) - the
+        // routing form's category dropdown used to call Catalog's own
+        // manager-cookie-protected endpoint directly, which a real
+        // kitchen-chef session (kitchen.routing.manage, never
+        // catalog.manage) always got a 401 from. This new terminal-scoped
+        // GET sits behind the same RequireReadAsync as /printers and
+        // /routes - a plain authenticated session with NO permissions at
+        // all must still be able to read it.
+        var terminalId = Guid.NewGuid();
+        var readOnlyCookie = await _database.SeedSessionAsync(terminalId, []);
+        var categoryId = Guid.NewGuid();
+        await _database.ExecuteAsync(
+            "INSERT INTO catalog.categories (category_id, code, name) VALUES (@id, @code, @name);",
+            ("id", categoryId),
+            ("code", "cat-" + categoryId.ToString("N")),
+            ("name", "Izgara"));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var categories = await GetAsync<KitchenCategoryV1[]>(
+            client, Prefix(terminalId) + "/categories", readOnlyCookie);
+
+        Assert.Contains(categories!, category => category.Id == categoryId && category.Name == "Izgara");
+    }
+
+    [Fact]
     public async Task HealthBackupPrinterRouteAndAuditSurfacesAreMinimizedAndFailClosed()
     {
         var terminalId = Guid.NewGuid();

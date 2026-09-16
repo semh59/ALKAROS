@@ -33,8 +33,6 @@ export interface KitchenOperationsClient {
   getPerformanceReport: (from: string, to: string) => Promise<KitchenPerformanceReport>;
 }
 
-interface Page<T> { items: T[]; nextCursor: string | null }
-
 export interface KitchenRuntimeConfiguration {
   kitchenStationId: string;
 }
@@ -101,25 +99,6 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
 
   const get = <T>(path: string) => request<T>(path);
 
-  // Categories live under Catalog's own management prefix, not this
-  // module's terminal-scoped one - same cross-feature read CatalogWorkspace
-  // itself does, reused here only for the routing form's dropdown.
-  async function getCategories(): Promise<KitchenCategory[]> {
-    let response: Response;
-    try {
-      response = await fetcher("/api/v1/management/catalog/categories?limit=100", {
-        credentials: "same-origin",
-        headers: { "X-Correlation-Id": crypto.randomUUID() },
-        signal: AbortSignal.timeout(8_000),
-      });
-    } catch {
-      throw new KitchenOperationsApiError(0, "NETWORK_UNAVAILABLE", "Kategori listesi alınamadı.");
-    }
-    if (!response.ok) return [];
-    const result = await response.json() as Page<KitchenCategory> | KitchenCategory[];
-    return Array.isArray(result) ? result : result.items;
-  }
-
   return {
     load: async () => {
       const health = await get<KitchenHealthSnapshot | null>("/operations/health/latest").catch((error: unknown) => {
@@ -130,7 +109,14 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
         get<KitchenTicket[]>(`/tickets?stationId=${encodeURIComponent(stationId)}`),
         get<KitchenPrinter[]>("/printers"),
         get<KitchenPrinterRoute[]>("/routes"),
-        getCategories(),
+        // V1-RMD-219: found by an independent audit (2026-09-16) - this
+        // used to call Catalog's own manager-cookie-protected endpoint
+        // directly, which kitchen-chef (kitchen.routing.manage, never
+        // catalog.manage) never holds; the 401 was silently swallowed and
+        // the routing form's dropdown just stayed empty for that role. Now
+        // this module's own terminal-scoped GET, same RequireReadAsync as
+        // every other read here.
+        get<KitchenCategory[]>("/categories"),
         get<KitchenUnknownDelivery[]>("/deliveries/unknown"),
         get<KitchenBackup[]>("/operations/backups/recent?limit=20"),
         get<{ enabled: boolean; denseModeThreshold: number }>("/operations/live-sync"),
