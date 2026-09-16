@@ -257,7 +257,14 @@ export async function sendDraft() {
   el.btnSendFromMenu.disabled = true;
   el.btnSendFromBill.disabled = true;
 
-  const targetItems = state.draft;
+  // V1-RMD-213: a snapshot, not a live reference to state.draft. postOrder
+  // below awaits the network; nothing blocks the waiter from touching the
+  // menu meanwhile (addToDraft pushes straight onto state.draft), and
+  // removeSentDraftLines runs AFTER that await using whatever ids are still
+  // in targetItems at that point. A live reference would let a line added
+  // during the wait get swept up as "already sent" and vanish silently,
+  // never reaching the kitchen.
+  const targetItems = state.draft.slice();
   const payload = draftToPayload(targetItems);
   const tableNumber = state.table.number;
   try {

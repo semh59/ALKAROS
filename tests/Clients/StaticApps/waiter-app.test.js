@@ -10,6 +10,7 @@ const htmlPath = resolve(repoRoot, "src/Clients/WaiterPwa/wwwroot/index.html");
 const scriptPath = resolve(repoRoot, "src/Clients/WaiterPwa/wwwroot/waiter-app.js");
 
 const PRODUCT_ID = "22222222-2222-2222-2222-222222222222";
+const PRODUCT_ID_2 = "55555555-5555-5555-5555-555555555555";
 const TABLE_ID = "44444444-4444-4444-4444-444444444444";
 const ORDER_ID = "33333333-3333-3333-3333-333333333333";
 
@@ -140,6 +141,42 @@ describe("waiter-app.js", () => {
     const shown = lastToastText();
     expect(shown).not.toMatch(/\b409\b/);
     expect(shown).not.toMatch(/Hata:/);
+  });
+
+  it("V1-RMD-213: keeps an item added while a send is still in flight instead of losing it silently", async () => {
+    // Regression coverage for a Critical finding (2026-09-16, independent
+    // multi-agent audit): sendDraft() used to hold a live reference to
+    // state.draft; a line added mid-await (the network round trip to
+    // table-draft/submit-draft) got swept up by removeSentDraftLines as
+    // "already sent" and vanished, even though it never reached the server.
+    const routes = standardRoutes();
+    routes.find((r) => r.test("http://test/catalog")).body = [
+      { productId: PRODUCT_ID, name: "Kola", unitPrice: 45, categoryCode: "c1", categoryName: "İçecek" },
+      { productId: PRODUCT_ID_2, name: "Ayran", unitPrice: 20, categoryCode: "c1", categoryName: "İçecek" },
+    ];
+    routes.find((r) => r.test("http://test/orders/table-draft", { method: "POST" })).delayMs = 30;
+
+    const fetchMock = await startAppWithOneProductInCart(routes);
+
+    document.getElementById("btnSendFromMenu").click();
+
+    // While table-draft is still in flight (delayMs above), touch a second,
+    // distinct product - this is the mid-send addition the bug lost.
+    await vi.waitFor(() => {
+      const products = document.querySelectorAll(".product[data-product]");
+      if (products.length < 2) throw new Error("second product not rendered yet");
+    });
+    document.querySelectorAll(".product[data-product]")[1].click();
+
+    await vi.waitFor(() => {
+      if (!fetchMock.mock.calls.some(([url]) => url.includes(`/orders/${ORDER_ID}/submit-draft`))) {
+        throw new Error("send not finished yet");
+      }
+    });
+
+    // The first product was sent and removed; the second, added mid-send,
+    // must still be sitting in the cart - not silently dropped.
+    expect(document.getElementById("cartCount").textContent).not.toBe("0");
   });
 
   it("shows a Turkish message, not the browser's own error, when the login request itself fails", async () => {
