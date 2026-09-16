@@ -13,7 +13,7 @@ const data: KitchenData = {
   tickets: [{
     id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", stationId: "hot-line", status: "Preparing", rowVersion: 4,
     createdAt: "2026-08-26T10:00:00Z", updatedAt: "2026-08-26T10:02:00Z", acceptedAt: "2026-08-26T10:01:00Z", readyAt: null, cancelledAt: null, targetPrepMinutes: 15, tableId: null, tableNumber: null,
-    items: [{ id: "item-1", orderItemId: "order-item-1", productId: "product-1", productName: "Mercimek çorbası", quantity: 2, modifiers: "Ekmeği ayrı", notes: "az tuz", status: "Preparing", rowVersion: 2, createdAt: "2026-08-26T10:00:00Z", updatedAt: null, readyAt: null, servedAt: null, cancelledAt: null, isAgeRestricted: false }],
+    items: [{ id: "item-1", orderItemId: "order-item-1", productId: "product-1", productName: "Mercimek çorbası", quantity: 2, modifiers: "Ekmeği ayrı", notes: "az tuz", status: "Preparing", rowVersion: 2, createdAt: "2026-08-26T10:00:00Z", updatedAt: null, readyAt: null, servedAt: null, cancelledAt: null, isAgeRestricted: false, isHeld: false }],
   }],
   printers: [{ id: "printer-1", name: "Mutfak yazıcı", stationId: "hot-line", isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
   routes: [{ id: "route-1", routeLevel: "Default", printerId: "printer-1", itemId: null, productId: null, categoryId: null, specialDate: null, isActive: true, createdAt: "2026-08-26T09:00:00Z", updatedAt: null }],
@@ -195,6 +195,22 @@ describe("kitchen operations workspace", () => {
     const badge = document.querySelector(".kitchen-age-badge");
     expect(badge).not.toBeNull();
     expect(badge!.getAttribute("title")).toContain("kimlik kontrolü");
+  });
+
+  it("V1-RMD-220: shows a held-course badge so a deliberately-held item is never mistaken for a normal Queued one", async () => {
+    // Regression coverage for a High finding (2026-09-16, independent
+    // audit): KitchenTicketItem.IsHeld (V1-WTR-025's course model) was
+    // never surfaced past the backend DTO - the screen could not tell a
+    // held course item apart from a normal one, risking it being started
+    // early.
+    const withHeldItem: KitchenData = {
+      ...data,
+      tickets: [{ ...data.tickets[0], items: [{ ...data.tickets[0].items[0], isHeld: true }] }],
+    };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: withHeldItem })} />);
+    const badge = document.querySelector(".kitchen-held-badge");
+    expect(badge).not.toBeNull();
+    expect(badge!.textContent).toContain("bekliyor");
   });
 
   it("requires a reason before cancelling ('sorun bildir / iptal')", async () => {

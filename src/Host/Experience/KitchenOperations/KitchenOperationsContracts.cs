@@ -21,7 +21,13 @@ public sealed record KitchenTicketItemV1(
     // ticket item's own point-in-time age-restriction snapshot so a kitchen
     // screen can prompt an ID check before the item is served, same as the
     // printed ticket's own marker (EscPosTicketFormatter).
-    bool IsAgeRestricted = false);
+    bool IsAgeRestricted = false,
+    // V1-RMD-220: found by an independent audit (2026-09-16) — the domain
+    // model (KitchenTicketItem.IsHeld, V1-WTR-025) has carried this since
+    // the course system shipped, but it was never copied into this DTO, so
+    // the KDS screen could never tell a deliberately-held course item
+    // apart from a normal Queued one and staff could start it early.
+    bool IsHeld = false);
 
 public sealed record KitchenTicketV1(
     Guid Id,

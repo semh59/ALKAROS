@@ -1,4 +1,4 @@
-﻿CREATE SCHEMA IF NOT EXISTS audit;
+CREATE SCHEMA IF NOT EXISTS audit;
 
 CREATE TABLE IF NOT EXISTS audit.audit_events (
     id                  UUID         PRIMARY KEY,

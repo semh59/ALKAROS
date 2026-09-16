@@ -970,6 +970,14 @@
         "role_permissions"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "113",
+      "phase": "B",
+      "tables": [
+        "kitchen_ticket_items"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

@@ -494,6 +494,48 @@ public sealed class PostgresKitchenTicketIntegrationTests : IClassFixture<Kitche
     }
 
     [Fact]
+    public async Task IsHeldSurvivesASaveAndReloadThroughPostgres()
+    {
+        // Regression coverage for a High finding (2026-09-16, independent
+        // audit): KitchenTicketItem.IsHeld was computed correctly by
+        // CreateFromOrder but the repository never persisted it - it read
+        // back as false (the constructor default) on every real GET, since
+        // the KDS screen never sees the in-memory object CreateFromOrder
+        // built, only what a fresh GetByIdAsync/GetActiveByStationAsync
+        // reads from the database.
+        var productId = Guid.NewGuid();
+        await using (var cmd = _dataSource.CreateCommand(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES (@product_id, @sku, @name, @product_type, @stock_mode, @current_price);
+            """))
+        {
+            cmd.Parameters.AddWithValue("product_id", productId);
+            cmd.Parameters.AddWithValue("sku", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("name", "Baklava");
+            cmd.Parameters.AddWithValue("product_type", 1);
+            cmd.Parameters.AddWithValue("stock_mode", 1);
+            cmd.Parameters.AddWithValue("current_price", 80m);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var orderId = Guid.NewGuid();
+        var heldItem = new OrderItem(
+            Guid.NewGuid(), orderId, productId, "Baklava", 1, 80m, 10m,
+            skuSnapshot: "BAKLAVA-01", kitchenState: KitchenState.Held, courseNumber: 2);
+        var order = new Order(orderId, OrderSource.Waiter, "ORD-" + Guid.NewGuid().ToString("N")[..8], [heldItem]);
+        await _orderRepo.AddAsync(order);
+
+        var ticket = KitchenTicket.CreateFromOrder(order, "Dessert");
+        ticket.Items[0].IsHeld.Should().BeTrue("CreateFromOrder itself must compute this correctly first");
+
+        await _ticketRepo.AddAsync(ticket);
+        var reloaded = await _ticketRepo.GetByIdAsync(ticket.Id);
+
+        reloaded!.Items.Should().ContainSingle().Which.IsHeld.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task SaveAsyncEnforcesOptimisticConcurrency()
     {
         var order = await CreateAndPersistSampleOrderAsync();

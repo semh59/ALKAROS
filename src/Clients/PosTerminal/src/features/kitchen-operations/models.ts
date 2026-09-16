@@ -38,6 +38,11 @@ export interface KitchenTicketItem {
   // client just never read it — an id-check prompt belongs on-screen, not
   // only on the printed ticket (EscPosTicketFormatter already prints it).
   isAgeRestricted: boolean;
+  // V1-RMD-220: found by an independent audit (2026-09-16) - the domain
+  // model has carried this since the course system shipped (V1-WTR-025),
+  // but it was never in this DTO, so the screen could not tell a
+  // deliberately-held course item apart from a normal Queued one.
+  isHeld: boolean;
 }
 
 export interface KitchenTicket {

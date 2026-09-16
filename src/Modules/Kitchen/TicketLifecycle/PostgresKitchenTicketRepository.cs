@@ -155,12 +155,12 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
                     id, ticket_id, order_item_id, product_id, product_name_snapshot,
                     quantity, modifiers_summary, notes, status, row_version,
                     created_at, updated_at, ready_at, served_at, cancelled_at, cancellation_reason,
-                    is_age_restricted
+                    is_age_restricted, is_held
                 ) VALUES (
                     @id, @ticket_id, @order_item_id, @product_id, @product_name_snapshot,
                     @quantity, @modifiers_summary, @notes, @status, @row_version,
                     @created_at, @updated_at, @ready_at, @served_at, @cancelled_at, @cancellation_reason,
-                    @is_age_restricted
+                    @is_age_restricted, @is_held
                 );
                 """;
             itemCmd.Parameters.AddWithValue("id", item.Id);
@@ -180,6 +180,7 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             itemCmd.Parameters.AddWithValue("cancelled_at", (object?)item.CancelledAt ?? DBNull.Value);
             itemCmd.Parameters.AddWithValue("cancellation_reason", (object?)item.CancellationReason ?? DBNull.Value);
             itemCmd.Parameters.AddWithValue("is_age_restricted", item.IsAgeRestricted);
+            itemCmd.Parameters.AddWithValue("is_held", item.IsHeld);
 
             await itemCmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
@@ -250,12 +251,12 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
                     id, ticket_id, order_item_id, product_id, product_name_snapshot,
                     quantity, modifiers_summary, notes, status, row_version,
                     created_at, updated_at, ready_at, served_at, cancelled_at, cancellation_reason,
-                    is_age_restricted
+                    is_age_restricted, is_held
                 ) VALUES (
                     @id, @ticket_id, @order_item_id, @product_id, @product_name_snapshot,
                     @quantity, @modifiers_summary, @notes, @status, @row_version,
                     @created_at, @updated_at, @ready_at, @served_at, @cancelled_at, @cancellation_reason,
-                    @is_age_restricted
+                    @is_age_restricted, @is_held
                 )
                 ON CONFLICT (id) DO UPDATE SET
                     status = EXCLUDED.status,
@@ -284,6 +285,7 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             itemCmd.Parameters.AddWithValue("cancelled_at", (object?)item.CancelledAt ?? DBNull.Value);
             itemCmd.Parameters.AddWithValue("cancellation_reason", (object?)item.CancellationReason ?? DBNull.Value);
             itemCmd.Parameters.AddWithValue("is_age_restricted", item.IsAgeRestricted);
+            itemCmd.Parameters.AddWithValue("is_held", item.IsHeld);
 
             await itemCmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
@@ -339,7 +341,7 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             SELECT id, ticket_id, order_item_id, product_id, product_name_snapshot,
                    quantity, modifiers_summary, notes, status, row_version,
                    created_at, updated_at, ready_at, served_at, cancelled_at, cancellation_reason,
-                   is_age_restricted
+                   is_age_restricted, is_held
             FROM kitchen.kitchen_ticket_items
             WHERE ticket_id = @ticket_id
             ORDER BY created_at;
@@ -367,7 +369,8 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
                 reader.IsDBNull(13) ? null : reader.GetFieldValue<DateTimeOffset>(13),
                 reader.IsDBNull(14) ? null : reader.GetFieldValue<DateTimeOffset>(14),
                 reader.IsDBNull(15) ? null : reader.GetString(15),
-                reader.GetBoolean(16)));
+                reader.GetBoolean(16),
+                isHeld: reader.GetBoolean(17)));
         }
 
         return list;
@@ -395,7 +398,7 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
                    i.id, i.ticket_id, i.order_item_id, i.product_id, i.product_name_snapshot,
                    i.quantity, i.modifiers_summary, i.notes, i.status, i.row_version,
                    i.created_at, i.updated_at, i.ready_at, i.served_at, i.cancelled_at, i.cancellation_reason,
-                   i.is_age_restricted
+                   i.is_age_restricted, i.is_held
             FROM kitchen.kitchen_tickets AS t
             LEFT JOIN kitchen.kitchen_ticket_items AS i ON i.ticket_id = t.id
             WHERE {predicate}
@@ -448,7 +451,8 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
                     reader.IsDBNull(25) ? null : reader.GetFieldValue<DateTimeOffset>(25),
                     reader.IsDBNull(26) ? null : reader.GetFieldValue<DateTimeOffset>(26),
                     reader.IsDBNull(27) ? null : reader.GetString(27),
-                    reader.GetBoolean(28)));
+                    reader.GetBoolean(28),
+                    isHeld: reader.GetBoolean(29)));
             }
         }
 

@@ -682,7 +682,7 @@ function ItemRow({
     <div className="kitchen-item-row__main">
       <span className="kitchen-item-row__qty">{item.quantity}×</span>
       <div className="kitchen-item-row__body">
-        <span className="kitchen-item-row__name">{item.productName}{item.isAgeRestricted && <span className="kitchen-age-badge" title="Servis öncesi kimlik kontrolü gerekli">🔞</span>}</span>
+        <span className="kitchen-item-row__name">{item.productName}{item.isAgeRestricted && <span className="kitchen-age-badge" title="Servis öncesi kimlik kontrolü gerekli">🔞</span>}{item.isHeld && <span className="kitchen-held-badge" title="Bu kalem bir sonraki kurs için bekletiliyor; garson ateşlemeden hazırlamayın">⏸ Kurs bekliyor</span>}</span>
         {item.modifiers && <span className="kitchen-item-row__detail">{item.modifiers}</span>}
         {item.notes && <span className="kitchen-item-row__detail kitchen-item-row__detail--note">Not: {item.notes}</span>}
       </div>

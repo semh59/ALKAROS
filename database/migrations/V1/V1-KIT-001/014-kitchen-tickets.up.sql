@@ -1,4 +1,4 @@
-﻿CREATE SCHEMA IF NOT EXISTS kitchen;
+CREATE SCHEMA IF NOT EXISTS kitchen;
 
 CREATE TABLE IF NOT EXISTS kitchen.kitchen_tickets (
     id                  UUID         PRIMARY KEY,
