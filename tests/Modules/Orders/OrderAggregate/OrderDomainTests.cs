@@ -715,6 +715,49 @@ public class OrderCourseTests
         act.Should().Throw<InvalidOperationException>()
             .WithMessage($"Order {order.Id} cannot fire a course from Cancelled.");
     }
+
+    /// <summary>
+    /// V1-RMD-217: found by an independent audit (2026-09-16) - if
+    /// GarsonFeature.CourseManagement is disabled mid-service (or any other
+    /// caller simply never calls FireCourse), a Held course used to be able
+    /// to ride the check all the way to Served/Completed untouched: nobody
+    /// ever validated that every item had actually left KitchenState.Held
+    /// before the order could be marked served. The customer's dessert
+    /// (say) would never reach the kitchen, and once Served, FireCourse
+    /// could no longer even be called (IsOpenCheck already refuses it).
+    /// </summary>
+    [Fact]
+    public void CannotBeMarkedServedWhileACourseIsStillHeld()
+    {
+        var starter = CourseItem(1);
+        var dessert = CourseItem(2);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4007", [starter, dessert])
+            .FireRound().Order
+            .TransitionTo(OrderState.PendingConfirmation)
+            .TransitionTo(OrderState.Accepted)
+            .TransitionTo(OrderState.Preparing)
+            .TransitionTo(OrderState.Ready);
+
+        order.CanTransitionTo(OrderState.Served).Should().BeFalse();
+        var act = () => order.TransitionTo(OrderState.Served);
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void CanBeMarkedServedOnceEveryCourseHasBeenFired()
+    {
+        var starter = CourseItem(1);
+        var dessert = CourseItem(2);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, "ORD-4008", [starter, dessert])
+            .FireRound().Order
+            .FireCourse(2).Order
+            .TransitionTo(OrderState.PendingConfirmation)
+            .TransitionTo(OrderState.Accepted)
+            .TransitionTo(OrderState.Preparing)
+            .TransitionTo(OrderState.Ready);
+
+        order.CanTransitionTo(OrderState.Served).Should().BeTrue();
+    }
 }
 
 public class OrderVoidTests

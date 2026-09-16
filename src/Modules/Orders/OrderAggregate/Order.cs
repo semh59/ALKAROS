@@ -201,7 +201,18 @@ public sealed class Order
         OrderState.Rejected => Status is OrderState.PendingConfirmation,
         OrderState.Preparing => Status is OrderState.Accepted,
         OrderState.Ready => Status is OrderState.Preparing,
-        OrderState.Served => Status is OrderState.Ready,
+        // V1-RMD-217: found by an independent audit (2026-09-16) - without
+        // this, disabling GarsonFeature.CourseManagement mid-service (or any
+        // other path that stops calling FireCourse) let a check reach
+        // Served/Completed with a course still sitting at
+        // KitchenState.Held - ordered, never sent to the kitchen, and with
+        // FireCourse now permanently unreachable, never fireable again. A
+        // held item is a real invariant this aggregate already models
+        // (FireCourse's own doc comment: "printed on the ticket but not yet
+        // called in"), so it belongs here regardless of which caller forgot
+        // to fire it.
+        OrderState.Served => Status is OrderState.Ready
+            && Items.All(item => item.KitchenState != KitchenState.Held),
         OrderState.Completed => Status is OrderState.Served,
         OrderState.Cancelled => Status is OrderState.Draft or OrderState.Submitted or OrderState.PendingConfirmation
             or OrderState.Accepted or OrderState.Preparing or OrderState.Ready,
