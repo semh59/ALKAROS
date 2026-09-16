@@ -160,6 +160,12 @@ public static class ModuleBoundaryTests
                 ["ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders", "ALKAROS.Settings"],
             ["ALKAROS.Host.Experience.KitchenOperations"] =
                 ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Operations", "ALKAROS.Orders", "ALKAROS.Settings"],
+            // V11-RCP-003: a manager-only surface saying which recipe a
+            // catalog product corresponds to. Orders itself still can't
+            // reach Recipe directly (see V0-ARC-001 row 4) — this is a
+            // self-contained Host area, not a Orders-module dependency.
+            ["ALKAROS.Host.Experience.Recipes"] =
+                ["ALKAROS.Identity", "ALKAROS.Recipes"],
         };
 
     [Fact]

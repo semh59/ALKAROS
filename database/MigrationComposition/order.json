@@ -986,6 +986,14 @@
         "kitchen_tickets"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "115",
+      "phase": "B",
+      "tables": [
+        "product_recipe_mappings"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

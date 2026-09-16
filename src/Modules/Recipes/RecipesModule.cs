@@ -1,5 +1,6 @@
 using ALKAROS.Measurements;
 using ALKAROS.ModuleComposition;
+using ALKAROS.Recipes.CatalogMapping;
 using ALKAROS.Recipes.CostSnapshots;
 using ALKAROS.Recipes.Units;
 using ALKAROS.Recipes.Versioning;
@@ -32,5 +33,7 @@ public sealed class RecipesModule : IModule
         context.RegisterTransient<IRecipeCostSnapshotRepository, PostgresRecipeCostSnapshotRepository>();
         context.RegisterTransient<IStockCostResolver, PostgresStockCostResolver>();
         context.RegisterTransient<IRecipeCostSnapshotService, RecipeCostSnapshotService>();
+
+        context.RegisterTransient<IProductRecipeMappingRepository, PostgresProductRecipeMappingRepository>();
     }
 }

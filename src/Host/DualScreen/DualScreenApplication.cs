@@ -21,6 +21,7 @@ using ALKAROS.Host.Experience.Menu;
 using ALKAROS.Host.Experience.NfcOrdering;
 using ALKAROS.Host.Experience.Production;
 using ALKAROS.Host.Experience.Purchasing;
+using ALKAROS.Host.Experience.Recipes;
 using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.QrOrdering;
 using ALKAROS.Host.Experience.RelaySettings;
@@ -123,6 +124,9 @@ public static partial class DualScreenApplication
         // should really decrement stock needed this first — nothing could
         // ever configure which product maps to which stock item before now.
         builder.Services.AddStockMasterExperience();
+        // V11-RCP-003: which recipe a catalog product corresponds to, the
+        // first step towards a real actual-vs-theoretical variance report.
+        builder.Services.AddRecipeCatalogMappingExperience();
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
@@ -490,6 +494,7 @@ public static partial class DualScreenApplication
         app.MapPurchasingManagement();
         app.MapProductionManagement();
         app.MapStockMasterApi();
+        app.MapRecipeCatalogMappingApi();
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();
