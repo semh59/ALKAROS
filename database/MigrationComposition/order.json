@@ -978,6 +978,14 @@
         "kitchen_ticket_items"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "114",
+      "phase": "B",
+      "tables": [
+        "kitchen_tickets"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

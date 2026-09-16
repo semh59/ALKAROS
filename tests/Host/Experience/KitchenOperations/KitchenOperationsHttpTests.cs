@@ -804,6 +804,26 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    [Fact]
+    public async Task CompletedTicketTimingIndexExistsForTheReportsRangeQuery()
+    {
+        // V1-RMD-224: found by an independent audit (2026-09-16) -
+        // GetCompletedTicketTimingsAsync's WHERE created_at range + ready_at
+        // IS NOT NULL filter was unsupported by kitchen_tickets' two
+        // existing indexes (order_id; station_id, status), forcing a full
+        // sequential scan as the table accumulates months of tickets.
+        var indexExists = await _database.ScalarAsync<bool>(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM pg_indexes
+                WHERE schemaname = 'kitchen'
+                  AND tablename = 'kitchen_tickets'
+                  AND indexname = 'ix_kitchen_tickets_completed_timing'
+            );
+            """);
+        Assert.True(indexExists, "ix_kitchen_tickets_completed_timing must exist on kitchen.kitchen_tickets.");
+    }
+
     private async Task SeedCompletedTicketAsync(string stationId, DateTimeOffset createdAt, TimeSpan duration)
     {
         var orderId = Guid.NewGuid();
