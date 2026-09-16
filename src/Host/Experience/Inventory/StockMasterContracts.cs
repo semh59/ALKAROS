@@ -7,7 +7,7 @@ public sealed record CreateStockLocationV1(string Code, string Name, string Loca
 
 public sealed record CreateStockItemV1(
     string Code, string Name, string ItemType, string TrackingUnitCode,
-    Guid? DefaultLocationId = null, bool IsActive = true);
+    Guid? DefaultLocationId = null, bool IsActive = true, decimal? ReorderPoint = null);
 
 public sealed record AssignProductStockMappingV1(Guid StockItemId, decimal QuantityMultiplier = 1.0m, string? Notes = null);
 
@@ -18,11 +18,15 @@ public sealed record StockLocationV1(Guid Id, string Code, string Name, string L
 }
 
 public sealed record StockItemV1(
-    Guid Id, string Code, string Name, string ItemType, string TrackingUnitCode, Guid? DefaultLocationId, bool IsActive)
+    Guid Id, string Code, string Name, string ItemType, string TrackingUnitCode, Guid? DefaultLocationId, bool IsActive,
+    decimal? ReorderPoint)
 {
     public static StockItemV1 From(StockItem value)
-        => new(value.Id, value.Code, value.Name, value.ItemType.ToString(), value.TrackingUnitCode, value.DefaultLocationId, value.IsActive);
+        => new(value.Id, value.Code, value.Name, value.ItemType.ToString(), value.TrackingUnitCode, value.DefaultLocationId, value.IsActive, value.ReorderPoint);
 }
+
+/// <summary>V11-INV-009: set (or clear, with null) a stock item's persisted low-stock threshold.</summary>
+public sealed record SetReorderPointV1(decimal? ReorderPoint);
 
 /// <summary>
 /// <paramref name="AvailableQuantity"/> is null when the mapped stock item

@@ -53,6 +53,51 @@ public sealed class StockMasterDomainTests
     }
 
     [Fact]
+    public void CreateStockItemWithNegativeReorderPointThrows()
+    {
+        var act = () => StockItem.Create("SKU-NEG", "Negative Test", StockItemType.RawMaterial, "kg", reorderPoint: -1m);
+
+        act.Should().Throw<ArgumentOutOfRangeException>().WithParameterName("reorderPoint");
+    }
+
+    [Fact]
+    public void UpdateWithNegativeReorderPointThrows()
+    {
+        var item = StockItem.Create("SKU-POS", "Positive Test", StockItemType.RawMaterial, "kg");
+
+        var act = () => item.Update(item.Name, item.ItemType, item.TrackingUnitCode, item.DefaultLocationId, item.IsActive, reorderPoint: -5m);
+
+        act.Should().Throw<ArgumentOutOfRangeException>().WithParameterName("reorderPoint");
+    }
+
+    [Fact]
+    public void UpdateCanSetAndClearReorderPoint()
+    {
+        var item = StockItem.Create("SKU-RP", "Reorder Point Test", StockItemType.RawMaterial, "kg");
+        item.ReorderPoint.Should().BeNull();
+
+        item.Update(item.Name, item.ItemType, item.TrackingUnitCode, item.DefaultLocationId, item.IsActive, reorderPoint: 5m);
+        item.ReorderPoint.Should().Be(5m);
+
+        item.Update(item.Name, item.ItemType, item.TrackingUnitCode, item.DefaultLocationId, item.IsActive, reorderPoint: null);
+        item.ReorderPoint.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SetReorderPointAsyncUpdatesTheItem()
+    {
+        var itemRepo = new FakeItemRepository();
+        var item = StockItem.Create("SKU-SVC", "Service Test", StockItemType.RawMaterial, "kg");
+        await itemRepo.AddAsync(item);
+
+        var service = new StockMasterService(new FakeLocationRepository(), itemRepo, new FakeMappingRepository(), new UnitConverter());
+        var updated = await service.SetReorderPointAsync(item.Id, 3.5m);
+
+        updated.ReorderPoint.Should().Be(3.5m);
+        (await itemRepo.GetByIdAsync(item.Id))!.ReorderPoint.Should().Be(3.5m);
+    }
+
+    [Fact]
     public void ProductStockMappingRequiresPositiveMultiplier()
     {
         var prodId = Guid.NewGuid();

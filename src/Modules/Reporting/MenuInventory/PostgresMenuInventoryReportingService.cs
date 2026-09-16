@@ -359,7 +359,7 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
 
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
 
-        var threshold = query.CriticalThreshold ?? 0m;
+        var fallbackThreshold = query.CriticalThreshold ?? 0m;
 
         const string sql = """
             SELECT
@@ -373,7 +373,8 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
                 COALESCE(sb.on_hand_quantity, 0) AS on_hand,
                 COALESCE(sb.reserved_quantity, 0) AS reserved,
                 COALESCE(sb.available_quantity, 0) AS available,
-                COALESCE(auth_rsv.qty, 0) AS auth_reserved
+                COALESCE(auth_rsv.qty, 0) AS auth_reserved,
+                si.reorder_point
             FROM inventory.stock_items si
             CROSS JOIN inventory.stock_locations loc
             LEFT JOIN inventory.stock_balances sb
@@ -410,6 +411,12 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
             var reserved = reader.GetDecimal(8);
             var available = reader.GetDecimal(9);
             var authReserved = reader.GetDecimal(10);
+            // V11-INV-009: a persisted per-item threshold now takes priority
+            // over the caller-supplied one — backward compatible, since a
+            // null ReorderPoint (every item before this task, and any item
+            // still unconfigured) falls back to the exact old behavior.
+            var persistedReorderPoint = reader.IsDBNull(11) ? (decimal?)null : reader.GetDecimal(11);
+            var threshold = persistedReorderPoint ?? fallbackThreshold;
 
             // Reconciled check: available == on_hand - reserved AND reserved == authReserved
             var isReconciled = (available == (onHand - reserved)) && (reserved == authReserved);

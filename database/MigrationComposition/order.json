@@ -1010,6 +1010,14 @@
         "stock_physical_counts"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "118",
+      "phase": "B",
+      "tables": [
+        "stock_items"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

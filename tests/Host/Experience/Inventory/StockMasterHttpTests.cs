@@ -277,6 +277,38 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SettingAndClearingAReorderPointPersistsIt()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var itemCode = "ITEM-" + Guid.NewGuid().ToString("N")[..8];
+        using var create = await client.PostAsJsonAsync(
+            "/api/v1/management/inventory/stock-items", new CreateStockItemV1(itemCode, "Reorder Point HTTP", "RawMaterial", "kg"));
+        var created = await create.Content.ReadFromJsonAsync<StockItemV1>();
+        Assert.Null(created!.ReorderPoint);
+
+        using var set = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{created.Id:D}/reorder-point", new SetReorderPointV1(8.5m));
+        Assert.Equal(HttpStatusCode.OK, set.StatusCode);
+        var updated = await set.Content.ReadFromJsonAsync<StockItemV1>();
+        Assert.Equal(8.5m, updated!.ReorderPoint);
+
+        using var clear = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{created.Id:D}/reorder-point", new SetReorderPointV1(null));
+        var cleared = await clear.Content.ReadFromJsonAsync<StockItemV1>();
+        Assert.Null(cleared!.ReorderPoint);
+    }
+
+    [Fact]
+    public async Task SettingAReorderPointForAnUnknownStockItemIsNotFound()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+
+        using var response = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{Guid.NewGuid():D}/reorder-point", new SetReorderPointV1(5m));
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task RecordingAPhysicalCountAppliesTheDeltaAndReturnsIt()
     {
         using var client = CreateClient(StockMasterTestDatabase.ManagerToken);

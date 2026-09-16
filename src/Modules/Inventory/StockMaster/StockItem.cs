@@ -11,7 +11,8 @@ public sealed class StockItem
         Guid? defaultLocationId = null,
         bool isActive = true,
         DateTimeOffset? createdAt = null,
-        int rowVersion = 1)
+        int rowVersion = 1,
+        decimal? reorderPoint = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Id cannot be empty.", nameof(id));
@@ -25,6 +26,9 @@ public sealed class StockItem
         if (string.IsNullOrWhiteSpace(trackingUnitCode))
             throw new ArgumentException("Tracking unit code cannot be empty.", nameof(trackingUnitCode));
 
+        if (reorderPoint is < 0m)
+            throw new ArgumentOutOfRangeException(nameof(reorderPoint), "Reorder point cannot be negative.");
+
         Id = id;
         Code = code.Trim().ToUpperInvariant();
         Name = name.Trim();
@@ -34,6 +38,7 @@ public sealed class StockItem
         IsActive = isActive;
         CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
         RowVersion = rowVersion;
+        ReorderPoint = reorderPoint;
     }
 
     public Guid Id { get; }
@@ -46,13 +51,22 @@ public sealed class StockItem
     public DateTimeOffset CreatedAt { get; }
     public int RowVersion { get; internal set; }
 
+    /// <summary>
+    /// V11-INV-009: the on-hand threshold below which this item should be
+    /// flagged low (V11-RPT-002's alert/report). Null means no threshold is
+    /// configured yet — existing behavior (the passive `CriticalStockReport`
+    /// falling back to a caller-supplied threshold) is unchanged.
+    /// </summary>
+    public decimal? ReorderPoint { get; private set; }
+
     public static StockItem Create(
         string code,
         string name,
         StockItemType itemType,
         string trackingUnitCode,
         Guid? defaultLocationId = null,
-        bool isActive = true)
+        bool isActive = true,
+        decimal? reorderPoint = null)
     {
         return new StockItem(
             id: Guid.NewGuid(),
@@ -63,7 +77,8 @@ public sealed class StockItem
             defaultLocationId: defaultLocationId,
             isActive: isActive,
             createdAt: DateTimeOffset.UtcNow,
-            rowVersion: 1);
+            rowVersion: 1,
+            reorderPoint: reorderPoint);
     }
 
     public void Update(
@@ -71,7 +86,8 @@ public sealed class StockItem
         StockItemType itemType,
         string trackingUnitCode,
         Guid? defaultLocationId,
-        bool isActive)
+        bool isActive,
+        decimal? reorderPoint = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Name cannot be empty.", nameof(name));
@@ -79,11 +95,15 @@ public sealed class StockItem
         if (string.IsNullOrWhiteSpace(trackingUnitCode))
             throw new ArgumentException("Tracking unit code cannot be empty.", nameof(trackingUnitCode));
 
+        if (reorderPoint is < 0m)
+            throw new ArgumentOutOfRangeException(nameof(reorderPoint), "Reorder point cannot be negative.");
+
         Name = name.Trim();
         ItemType = itemType;
         TrackingUnitCode = trackingUnitCode.Trim().ToLowerInvariant();
         DefaultLocationId = defaultLocationId;
         IsActive = isActive;
+        ReorderPoint = reorderPoint;
     }
 
     public void Activate()

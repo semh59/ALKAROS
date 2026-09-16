@@ -107,7 +107,7 @@ public static class StockMasterEndpoints
             var itemType = Enum.Parse<StockItemType>(request.ItemType, ignoreCase: true);
             var created = await service.CreateStockItemAsync(
                 request.Code, request.Name, itemType, request.TrackingUnitCode,
-                request.DefaultLocationId, request.IsActive, cancellationToken);
+                request.DefaultLocationId, request.IsActive, request.ReorderPoint, cancellationToken);
             return Results.Created(
                 $"/api/v1/management/inventory/stock-items/{created.Id:D}", StockItemV1.From(created));
         });
@@ -238,6 +238,19 @@ public static class StockMasterEndpoints
 
             await mappings.RemoveAsync(productId, stockItemId, cancellationToken);
             return Results.NoContent();
+        });
+
+        // V11-INV-009: the persisted low-stock threshold read by
+        // CriticalStockReport (Reporting) and the future low-stock alert
+        // (V11-RPT-002).
+        group.MapPut("/stock-items/{stockItemId:guid}/reorder-point", async (
+            Guid stockItemId,
+            SetReorderPointV1 request,
+            IStockMasterService service,
+            CancellationToken cancellationToken) =>
+        {
+            var updated = await service.SetReorderPointAsync(stockItemId, request.ReorderPoint, cancellationToken);
+            return Results.Ok(StockItemV1.From(updated));
         });
 
         // V11-INV-008: a manager/staff member's real shelf count. Records

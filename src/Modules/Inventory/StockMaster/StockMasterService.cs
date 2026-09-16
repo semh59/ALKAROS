@@ -50,6 +50,7 @@ public sealed class StockMasterService : IStockMasterService
         string trackingUnitCode,
         Guid? defaultLocationId = null,
         bool isActive = true,
+        decimal? reorderPoint = null,
         CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(code))
@@ -87,9 +88,23 @@ public sealed class StockMasterService : IStockMasterService
             itemType: itemType,
             trackingUnitCode: normalizedUnit,
             defaultLocationId: defaultLocationId,
-            isActive: isActive);
+            isActive: isActive,
+            reorderPoint: reorderPoint);
 
         await _itemRepo.AddAsync(item, ct);
+        return item;
+    }
+
+    public async Task<StockItem> SetReorderPointAsync(
+        Guid stockItemId,
+        decimal? reorderPoint,
+        CancellationToken ct = default)
+    {
+        var item = await _itemRepo.GetByIdAsync(stockItemId, ct)
+            ?? throw new StockItemNotFoundException(stockItemId);
+
+        item.Update(item.Name, item.ItemType, item.TrackingUnitCode, item.DefaultLocationId, item.IsActive, reorderPoint);
+        await _itemRepo.UpdateAsync(item, ct);
         return item;
     }
 

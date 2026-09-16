@@ -65,6 +65,10 @@ public sealed class MenuInventoryReportingTestDb : PgTestDatabase
         // 10. Production outputs and consumptions
         var sql072 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "072-production-outputs-consumptions.up.sql"));
         await RunAsync(DataSource, sql072);
+
+        // 11. StockItem.ReorderPoint (V11-INV-009)
+        var sql118 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "118-stock-items-reorder-point.up.sql"));
+        await RunAsync(DataSource, sql118);
     }
 }
 
@@ -353,6 +357,65 @@ public sealed class MenuInventoryReportingDatabaseTests : IClassFixture<MenuInve
 
         report.Items.Should().Contain(i => i.StockItemId == itemNormalId && !i.IsCritical && i.IsReconciled);
         report.Items.Should().Contain(i => i.StockItemId == itemCriticalId && i.IsCritical && i.IsReconciled);
+    }
+
+    /// <summary>
+    /// V11-INV-009: a persisted StockItem.ReorderPoint takes priority over
+    /// the caller-supplied CriticalThreshold, per item — an item with no
+    /// ReorderPoint configured still falls back to the old behavior.
+    /// </summary>
+    [Fact]
+    public async Task CriticalStockReportPrefersThePersistedReorderPointOverTheCallerSuppliedThreshold()
+    {
+        var (_, _, _, _, locationId) = await SeedDataAsync();
+
+        var itemWithHighReorderPointId = Guid.NewGuid();
+        var itemWithNoReorderPointId = Guid.NewGuid();
+
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        {
+            const string itemSql = """
+                INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, is_active, row_version, reorder_point)
+                VALUES
+                    (@i1, @c1, 'Configured Threshold Item', 'RawMaterial', 'kg', true, 1, 40.0000),
+                    (@i2, @c2, 'Unconfigured Threshold Item', 'RawMaterial', 'kg', true, 1, NULL);
+                """;
+            await using var iCmd = new NpgsqlCommand(itemSql, conn);
+            iCmd.Parameters.AddWithValue("i1", itemWithHighReorderPointId);
+            iCmd.Parameters.AddWithValue("c1", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            iCmd.Parameters.AddWithValue("i2", itemWithNoReorderPointId);
+            iCmd.Parameters.AddWithValue("c2", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            await iCmd.ExecuteNonQueryAsync();
+
+            // item1's available (10) sits ABOVE the caller-supplied fallback
+            // (5) but AT-OR-BELOW its own persisted ReorderPoint (40) — only
+            // the persisted-threshold override flags it critical.
+            const string balSql = """
+                INSERT INTO inventory.stock_balances (
+                    stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                    reserved_quantity, available_quantity, updated_at, row_version
+                ) VALUES
+                    (gen_random_uuid(), @i1, @loc, 10.0000, 0.0000, 10.0000, NOW(), 1),
+                    (gen_random_uuid(), @i2, @loc, 45.0000, 0.0000, 45.0000, NOW(), 1);
+                """;
+            await using var bCmd = new NpgsqlCommand(balSql, conn);
+            bCmd.Parameters.AddWithValue("i1", itemWithHighReorderPointId);
+            bCmd.Parameters.AddWithValue("i2", itemWithNoReorderPointId);
+            bCmd.Parameters.AddWithValue("loc", locationId);
+            await bCmd.ExecuteNonQueryAsync();
+        }
+
+        // Caller-supplied threshold is 5.0. item1 has 10 available: under
+        // the OLD (pre-V11-INV-009) behavior that would NOT be critical
+        // (10 > 5), but its persisted ReorderPoint (40) overrides the
+        // fallback and flags it critical (10 <= 40). item2 has 45 available
+        // and no ReorderPoint, so it keeps the old (not critical) outcome.
+        var report = await _service.GetCriticalStockReportAsync(new CriticalStockReportQuery(
+            LocationId: locationId,
+            CriticalThreshold: 5.0m));
+
+        report.Items.Should().Contain(i => i.StockItemId == itemWithHighReorderPointId && i.IsCritical && i.CriticalThreshold == 40.0m);
+        report.Items.Should().Contain(i => i.StockItemId == itemWithNoReorderPointId && !i.IsCritical && i.CriticalThreshold == 5.0m);
     }
 
     private async Task<(Guid menuId, Guid itemId, Guid productId, Guid versionId, Guid locationId)> SeedDataAsync()

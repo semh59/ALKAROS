@@ -15,6 +15,10 @@ public sealed class StockMasterTestDb : PgTestDatabase
         var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
         var sql059 = await File.ReadAllTextAsync(migration059);
         await RunAsync(DataSource, sql059);
+
+        var migration118 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "118-stock-items-reorder-point.up.sql");
+        var sql118 = await File.ReadAllTextAsync(migration118);
+        await RunAsync(DataSource, sql118);
     }
 
     public async Task RollbackMigration059Async()
@@ -29,6 +33,14 @@ public sealed class StockMasterTestDb : PgTestDatabase
         var migration059 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "059-stock-master.up.sql");
         var sql059 = await File.ReadAllTextAsync(migration059);
         await RunAsync(DataSource, sql059);
+
+        // 059's down.sql drops inventory.stock_items outright, so reapplying
+        // 059 alone recreates it WITHOUT 118's reorder_point column —
+        // reapply 118 too, or every test running after this one in the
+        // shared class fixture hits "column reorder_point does not exist".
+        var migration118 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "118-stock-items-reorder-point.up.sql");
+        var sql118 = await File.ReadAllTextAsync(migration118);
+        await RunAsync(DataSource, sql118);
     }
 }
 
@@ -139,6 +151,26 @@ public sealed class StockMasterDatabaseTests : IClassFixture<StockMasterTestDb>
         var act = () => _itemRepo.DeleteAsync(item.Id);
         await act.Should().ThrowAsync<PostgresException>()
             .Where(e => e.SqlState == "23503" || e.SqlState == "23001");
+    }
+
+    [Fact]
+    public async Task ReorderPointPersistsAcrossCreateAndUpdate()
+    {
+        var itemCode = "SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
+        var item = await _service.CreateStockItemAsync(itemCode, "Reorder Point Item", StockItemType.RawMaterial, "kg");
+
+        var loaded = await _itemRepo.GetByIdAsync(item.Id);
+        loaded!.ReorderPoint.Should().BeNull();
+
+        var updated = await _service.SetReorderPointAsync(item.Id, 12.5m);
+        updated.ReorderPoint.Should().Be(12.5m);
+
+        var reloaded = await _itemRepo.GetByIdAsync(item.Id);
+        reloaded!.ReorderPoint.Should().Be(12.5m);
+
+        var cleared = await _service.SetReorderPointAsync(item.Id, null);
+        cleared.ReorderPoint.Should().BeNull();
+        (await _itemRepo.GetByIdAsync(item.Id))!.ReorderPoint.Should().BeNull();
     }
 
     [Fact]

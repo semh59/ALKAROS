@@ -20,9 +20,9 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
 
         const string sql = @"
             INSERT INTO inventory.stock_items (
-                id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version
+                id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version, reorder_point
             ) VALUES (
-                $1, $2, $3, $4, $5, $6, $7, $8, $9
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
             );";
 
         await using var cmd = _dataSource.CreateCommand(sql);
@@ -35,6 +35,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
         cmd.Parameters.AddWithValue(item.IsActive);
         cmd.Parameters.AddWithValue(item.CreatedAt);
         cmd.Parameters.AddWithValue(item.RowVersion);
+        cmd.Parameters.AddWithValue((object?)item.ReorderPoint ?? DBNull.Value);
 
         await cmd.ExecuteNonQueryAsync(ct);
     }
@@ -42,7 +43,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
     public async Task<StockItem?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         const string sql = @"
-            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version
+            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version, reorder_point
             FROM inventory.stock_items
             WHERE id = $1;";
 
@@ -63,7 +64,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
         if (ids.Count == 0) return [];
 
         string sql = $@"
-            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version
+            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version, reorder_point
             FROM inventory.stock_items
             WHERE id = ANY($1)
             LIMIT {MaxUnpagedRows + 1};";
@@ -90,7 +91,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
     public async Task<StockItem?> GetByCodeAsync(string code, CancellationToken ct = default)
     {
         const string sql = @"
-            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version
+            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version, reorder_point
             FROM inventory.stock_items
             WHERE code = $1;";
 
@@ -108,7 +109,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
     public async Task<IReadOnlyList<StockItem>> GetAllAsync(bool activeOnly = false, CancellationToken ct = default)
     {
         var sql = @"
-            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version
+            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version, reorder_point
             FROM inventory.stock_items";
 
         if (activeOnly)
@@ -137,7 +138,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
     public async Task<IReadOnlyList<StockItem>> GetByTypeAsync(StockItemType itemType, bool activeOnly = false, CancellationToken ct = default)
     {
         var sql = @"
-            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version
+            SELECT id, code, name, item_type, tracking_unit_code, default_location_id, is_active, created_at, row_version, reorder_point
             FROM inventory.stock_items
             WHERE item_type = $1";
 
@@ -177,6 +178,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
                 tracking_unit_code = $4,
                 default_location_id = $5,
                 is_active = $6,
+                reorder_point = $8,
                 row_version = row_version + 1
             WHERE id = $1 AND row_version = $7
             RETURNING row_version;";
@@ -189,6 +191,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
         cmd.Parameters.AddWithValue((object?)item.DefaultLocationId ?? DBNull.Value);
         cmd.Parameters.AddWithValue(item.IsActive);
         cmd.Parameters.AddWithValue(item.RowVersion);
+        cmd.Parameters.AddWithValue((object?)item.ReorderPoint ?? DBNull.Value);
 
         var result = await cmd.ExecuteScalarAsync(ct);
         if (result is null or DBNull)
@@ -219,6 +222,7 @@ public sealed class PostgresStockItemRepository : IStockItemRepository
             defaultLocationId: reader.IsDBNull(5) ? null : reader.GetGuid(5),
             isActive: reader.GetBoolean(6),
             createdAt: reader.GetFieldValue<DateTimeOffset>(7),
-            rowVersion: reader.GetInt32(8));
+            rowVersion: reader.GetInt32(8),
+            reorderPoint: reader.IsDBNull(9) ? null : reader.GetDecimal(9));
     }
 }
