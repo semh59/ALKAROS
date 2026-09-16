@@ -210,6 +210,34 @@ describe("kitchen operations workspace", () => {
     expect(onTransitionTicket).toHaveBeenCalledWith(data.tickets[0], "Cancelled", "Malzeme bitti");
   });
 
+  it("V1-RMD-218: cancelling a table-merged card cancels every station's ticket, not just the first", async () => {
+    // Regression coverage for a High finding (2026-09-16, independent
+    // audit): the single "Sorun bildir / iptal et" button on a card
+    // merging two stations' tickets for the same table used to cancel
+    // only tickets[0] - the other station kept preparing while staff
+    // believed the whole table order was cancelled.
+    const sameTable: KitchenData = {
+      ...data,
+      tickets: [
+        { ...data.tickets[0], id: "ticket-1", orderId: "order-1", ticketNumber: "KT-001", tableId: "table-1", tableNumber: "7" },
+        { ...data.tickets[0], id: "ticket-2", orderId: "order-2", ticketNumber: "KT-002", stationId: "cold-line", tableId: "table-1", tableNumber: "7" },
+      ],
+    };
+    const onTransitionTicket = vi.fn();
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: sameTable, onTransitionTicket })} />);
+    await click(document.querySelector(".kitchen-flag-btn")!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.textContent).toContain("KT-001");
+    expect(dialog.textContent).toContain("KT-002");
+    const input = dialog.querySelector<HTMLInputElement>("input")!;
+    await fill(input, "Masa iptal edildi");
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent?.includes("İptal et"))!);
+
+    expect(onTransitionTicket).toHaveBeenCalledWith(sameTable.tickets[0], "Cancelled", "Masa iptal edildi");
+    expect(onTransitionTicket).toHaveBeenCalledWith(sameTable.tickets[1], "Cancelled", "Masa iptal edildi");
+    expect(onTransitionTicket).toHaveBeenCalledTimes(2);
+  });
+
   it("toggles dense mode on and off", async () => {
     await render(<KitchenOperationsWorkspace {...baseProps()} />);
     const workspace = document.querySelector(".kitchen-workspace")!;

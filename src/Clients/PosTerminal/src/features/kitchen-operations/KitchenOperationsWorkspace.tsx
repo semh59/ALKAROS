@@ -141,7 +141,7 @@ export function KitchenOperationsWorkspace({
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [now, setNow] = useState(() => Date.now());
   const [densityOverride, setDensityOverride] = useState<Density>("auto");
-  const [cancelTarget, setCancelTarget] = useState<KitchenTicket | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<readonly KitchenTicket[] | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const [suspendPromptOpen, setSuspendPromptOpen] = useState(false);
   const [suspendProductId, setSuspendProductId] = useState("");
@@ -262,12 +262,21 @@ export function KitchenOperationsWorkspace({
     }
   };
 
-  const openCancelPrompt = (ticket: KitchenTicket) => {
-    setCancelTarget(ticket);
+  const openCancelPrompt = (tickets: readonly KitchenTicket[]) => {
+    setCancelTarget(tickets);
     setCancelReason("");
     setFormErrors([]);
   };
 
+  // V1-RMD-218: found by an independent audit (2026-09-16) - a table
+  // merging two orders sent to different stations (V1-KDS-007) showed one
+  // "Sorun bildir / iptal et" button for the whole card, but it only ever
+  // cancelled tickets[0]; the other station's ticket kept preparing while
+  // staff believed the whole table order was cancelled. Cancels every
+  // still-cancellable ticket in the group now, one request per ticket
+  // (each carries its own rowVersion/expectedRowVersion, so this can't be
+  // a single batched call) - a partial failure still cancels what it can
+  // and reports exactly which tickets did not go through.
   const submitCancel = async (event: FormEvent) => {
     event.preventDefault();
     if (!cancelTarget || !onTransitionTicket) return;
@@ -275,18 +284,38 @@ export function KitchenOperationsWorkspace({
       setFormErrors(["Sorun/iptal gerekçesi gerekli."]);
       return;
     }
-    const key = `ticket:${cancelTarget.id}`;
+    const targets = cancelTarget.filter((ticket) => ticket.status !== "Cancelled");
+    const key = `cancel-group:${targets.map((ticket) => ticket.id).join(",")}`;
     setBusyKey(key);
     setFormErrors([]);
-    try {
-      await onTransitionTicket(cancelTarget, "Cancelled", cancelReason.trim());
-      setFeedback({ tone: "success", message: `${cancelTarget.ticketNumber} iptal edildi.` });
-      setCancelTarget(null);
-    } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ticket değişti; listeyi yenileyin." : error instanceof KitchenOperationsApiError ? error.message : "İptal edilemedi." });
-    } finally {
-      setBusyKey(null);
+    const failed: string[] = [];
+    let lastError: unknown = null;
+    for (const ticket of targets) {
+      try {
+        await onTransitionTicket(ticket, "Cancelled", cancelReason.trim());
+      } catch (error) {
+        failed.push(ticket.ticketNumber);
+        lastError = error;
+      }
     }
+    if (failed.length === 0) {
+      setFeedback({
+        tone: "success",
+        message: targets.length === 1
+          ? `${targets[0].ticketNumber} iptal edildi.`
+          : `${targets.map((ticket) => ticket.ticketNumber).join(", ")} iptal edildi.`,
+      });
+      setCancelTarget(null);
+    } else {
+      const error = lastError;
+      setFeedback({
+        tone: isConflict(error) ? "conflict" : "error",
+        message: isConflict(error)
+          ? `Ticket değişti; listeyi yenileyin. İptal edilemeyen: ${failed.join(", ")}.`
+          : `İptal edilemedi: ${failed.join(", ")}.`,
+      });
+    }
+    setBusyKey(null);
   };
 
   const openSuspendPrompt = () => {
@@ -454,7 +483,7 @@ export function KitchenOperationsWorkspace({
     <ModalDialog open={cancelTarget !== null} title="Sorun bildir / iptal et" onClose={() => { if (!busyKey) setCancelTarget(null); }}>
       <form className="kitchen-decision-form" onSubmit={(event) => void submitCancel(event)}>
         <ValidationSummary title="Gerekçeyi kontrol edin" errors={formErrors} />
-        {cancelTarget && <p className="kitchen-decision-form__context"><strong>{cancelTarget.ticketNumber}</strong> iptal edilecek.</p>}
+        {cancelTarget && <p className="kitchen-decision-form__context"><strong>{cancelTarget.map((ticket) => ticket.ticketNumber).join(", ")}</strong> iptal edilecek.</p>}
         <TextField label="Gerekçe" hint="Bu bilgi denetim kaydına geçer." value={cancelReason} onChange={(event) => setCancelReason(event.target.value)} placeholder="Örn. Malzeme bitti" autoComplete="off" />
         <div className="kitchen-decision-form__actions">
           <Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => setCancelTarget(null)}>Vazgeç</Button>
@@ -559,7 +588,7 @@ function OrderGroupCard({
   busyKey: string | null;
   onItemTransition: (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => void;
   onUndoItem?: (ticket: KitchenTicket, item: KitchenTicketItem) => void;
-  onCancel: (ticket: KitchenTicket) => void;
+  onCancel: (tickets: readonly KitchenTicket[]) => void;
 }) {
   const oldestCreatedAt = tickets.reduce((oldest, t) => (Date.parse(t.createdAt) < Date.parse(oldest) ? t.createdAt : oldest), tickets[0].createdAt);
   const targetPrepMinutes = Math.max(...tickets.map((t) => t.targetPrepMinutes));
@@ -581,7 +610,7 @@ function OrderGroupCard({
         : <><span className="kitchen-order__label">Sipariş</span><span className="kitchen-order__id">{compactId(groupKey)}</span></>}</div>
       <div className={`kitchen-order__timer kitchen-order__timer--${tone}`}>{ageLabel(minutes)}<small>hedef {targetPrepMinutes} dk</small></div>
       {allDone && <span className="kitchen-order__done">✓ Tüm kalemler hazır</span>}
-      {canOperate && anyCancellable && <button type="button" className="kitchen-flag-btn" title="Sorun bildir / iptal et" onClick={() => onCancel(tickets[0])}>⚠</button>}
+      {canOperate && anyCancellable && <button type="button" className="kitchen-flag-btn" title="Sorun bildir / iptal et" onClick={() => onCancel(tickets)}>⚠</button>}
     </header>
     <div className="kitchen-order__stations">
       {tickets.map((ticket) => <StationColumn
