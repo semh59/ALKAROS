@@ -136,6 +136,19 @@ public static class ModuleBoundaryTests
     // namespace and the module assemblies its own doc comment says it
     // calls (docs/architecture/module-dependency-rules.md, Enforcement);
     // add a new orchestrator here in the same diff that introduces it.
+    // V1-RMD-215: found by an independent audit (2026-09-16) — the two
+    // entries below only ever matched their own narrow sub-namespace, so
+    // every other file directly under ALKAROS.Host.Experience.Orders (the
+    // whole Orders composition root, OrderManagementEndpoints.cs included)
+    // and everything under ALKAROS.Host.Experience.KitchenOperations was
+    // never checked by this test at all — a new, unapproved module
+    // reference there would compile clean and pass CI silently. The two
+    // new root entries are deliberately broader (the union of every module
+    // actually referenced anywhere in that namespace tree, `git grep -h
+    // "^using ALKAROS\." src/Host/Experience/Orders|KitchenOperations`) so
+    // they double-check, never loosen, the two existing narrower entries
+    // above (whose own approved lists are each a subset of their area's
+    // root entry) while finally giving the root-level files real coverage.
     private static readonly Dictionary<string, string[]> ApprovedHostOrchestrationEdges =
         new(StringComparer.Ordinal)
         {
@@ -143,6 +156,10 @@ public static class ModuleBoundaryTests
                 ["ALKAROS.Inventory", "ALKAROS.Orders"],
             ["ALKAROS.Host.Experience.Orders.SentItemVoid"] =
                 ["ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
+            ["ALKAROS.Host.Experience.Orders"] =
+                ["ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders", "ALKAROS.Settings"],
+            ["ALKAROS.Host.Experience.KitchenOperations"] =
+                ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Operations", "ALKAROS.Orders", "ALKAROS.Settings"],
         };
 
     [Fact]

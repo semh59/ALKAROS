@@ -153,11 +153,15 @@ a new one could be added or widened completely silently.
 | --- | --- | --- | --- |
 | `OrderStockConsumptionService` | `ALKAROS.Host.Experience.Orders.OrderStockConsumption` | Inventory, Orders | V1-RMD-143/144: decrements stock in the same transaction as an order's Accept/submit write, through `IStockBalanceRepository`/`IStockMovementRepository`/`IProductStockMappingRepository`/etc. |
 | `SentItemVoidStore` | `ALKAROS.Host.Experience.Orders.SentItemVoid` | Billing, Inventory, Kitchen, Orders | V1-RMD-154: voiding a line already sent to the kitchen reverses its stock consumption, cancels its kitchen ticket item, and updates the order — one transaction, four modules' contracts. |
+| *(root, everything else under this tree)* | `ALKAROS.Host.Experience.Orders` | Billing, Identity, Inventory, Kitchen, Orders, Settings | V1-RMD-215: found by an independent audit (2026-09-16) — the two entries above only ever matched their own narrow sub-namespace, so `OrderManagementEndpoints.cs` and every sibling file directly under this root (table-draft, waiter suggestion, shift summary, handoff notes, course firing, ...) was never checked by anything. Deliberately the union of every module actually referenced anywhere in this tree, so it only adds coverage rather than loosening the two rows above. |
+| *(root, everything under this tree)* | `ALKAROS.Host.Experience.KitchenOperations` | Audit, Identity, Kitchen, Operations, Orders, Settings | V1-RMD-215: same gap, for Kitchen's own Host orchestrator (`KitchenOperationsStore`/`KitchenOperationsEndpoints`) — never had any entry at all before this. |
 
 `tests/Architecture/ModuleBoundaries`'s `HostOrchestrationEdgesStayWithinTheApprovedList`
 enforces this table now (see Enforcement below); add a new orchestrator to
 both the test's `ApprovedHostOrchestrationEdges` and this table in the same
-diff that introduces it.
+diff that introduces it. A namespace that is itself a parent of an
+already-listed narrower one (the two root rows above) must approve at
+least the union of its children's own lists, so it only adds coverage.
 
 ## Enforcement
 
