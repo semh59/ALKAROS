@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { ApiError } from "../../api";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
 import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
@@ -12,6 +11,7 @@ import {
   type KitchenUnknownDelivery,
   type KitchenWorkspaceProps,
 } from "./models";
+import { KitchenOperationsApiError } from "./kitchenApi";
 import "./kitchen-operations.css";
 
 type Feedback = { tone: "success" | "error" | "conflict"; message: string } | null;
@@ -72,8 +72,20 @@ function nextItemState(status: KitchenTicketItem["status"]): KitchenTicketItem["
   return null;
 }
 
+// V1-RMD-214: found by an independent audit (2026-09-16) to never actually
+// fire - it tested error.message against an English regex, but the
+// backend's message is always Turkish, and every call site's own
+// `error instanceof ApiError` fallback checked an unrelated class
+// imported from "../../api" instead of this feature's real
+// KitchenOperationsApiError (kitchenApi.ts). A real 409 conflict fell
+// through to the same generic static message as every other error, and
+// the caller kept acting on a stale card. The backend's own 409 codes
+// (CONCURRENT_MODIFICATION, DOMAIN_CONFLICT, DUPLICATE_RESOURCE,
+// RESOURCE_IN_USE - KitchenOperationsEndpoints.cs's exception map) all
+// mean the same thing to this screen: the card the user is looking at
+// is stale.
 function isConflict(error: unknown) {
-  return error instanceof Error && /409|conflict|concurrent|version/i.test(error.message);
+  return error instanceof KitchenOperationsApiError && error.status === 409;
 }
 
 function compactId(value: string) {
@@ -229,7 +241,7 @@ export function KitchenOperationsWorkspace({
       await onTransitionItem(ticket, item, target);
       setFeedback({ tone: "success", message: `${item.productName} → ${itemStatusLabels[target]}.` });
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Mutfak verisi değişti. Güncel kartı alın; işlem tekrarlanmadı." : error instanceof ApiError ? error.message : "Ürün durumu güncellenemedi." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Mutfak verisi değişti. Güncel kartı alın; işlem tekrarlanmadı." : error instanceof KitchenOperationsApiError ? error.message : "Ürün durumu güncellenemedi." });
     } finally {
       setBusyKey(null);
     }
@@ -244,7 +256,7 @@ export function KitchenOperationsWorkspace({
       await onUndoItem(ticket, item);
       setFeedback({ tone: "success", message: `${item.productName} geri alındı.` });
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Geri alma penceresi kapandı veya kart değişti. Güncel kartı alın." : error instanceof ApiError ? error.message : "Geri alınamadı." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Geri alma penceresi kapandı veya kart değişti. Güncel kartı alın." : error instanceof KitchenOperationsApiError ? error.message : "Geri alınamadı." });
     } finally {
       setBusyKey(null);
     }
@@ -271,7 +283,7 @@ export function KitchenOperationsWorkspace({
       setFeedback({ tone: "success", message: `${cancelTarget.ticketNumber} iptal edildi.` });
       setCancelTarget(null);
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ticket değişti; listeyi yenileyin." : error instanceof ApiError ? error.message : "İptal edilemedi." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ticket değişti; listeyi yenileyin." : error instanceof KitchenOperationsApiError ? error.message : "İptal edilemedi." });
     } finally {
       setBusyKey(null);
     }
@@ -304,7 +316,7 @@ export function KitchenOperationsWorkspace({
       });
       setSuspendPromptOpen(false);
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ürün başka bir işlemle değişti; tekrar deneyin." : error instanceof ApiError ? error.message : "Ürün tükendi olarak işaretlenemedi." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ürün başka bir işlemle değişti; tekrar deneyin." : error instanceof KitchenOperationsApiError ? error.message : "Ürün tükendi olarak işaretlenemedi." });
     } finally {
       setBusyKey(null);
     }
@@ -339,7 +351,7 @@ export function KitchenOperationsWorkspace({
       setSelectedDelivery(null);
       setFeedback({ tone: "success", message: decision === "approve" ? "Yeniden yazdırma onaylandı; fiziksel gönderim ayrı bir arka plan işlemi tarafından yapılacak." : "Yeniden yazdırma reddedildi." });
     } catch (error) {
-      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Kayıt değişti; listeyi yenileyin." : error instanceof ApiError ? error.message : "Yeniden yazdırma kararı kaydedilemedi." });
+      setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Kayıt değişti; listeyi yenileyin." : error instanceof KitchenOperationsApiError ? error.message : "Yeniden yazdırma kararı kaydedilemedi." });
     } finally {
       setBusyKey(null);
     }

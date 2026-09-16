@@ -5,6 +5,7 @@ import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { KitchenOperationsWorkspace, type KitchenData } from "./index";
+import { KitchenOperationsApiError } from "./kitchenApi";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -69,6 +70,24 @@ describe("kitchen operations workspace", () => {
     expect(document.body.textContent).toContain("Masa");
     expect(document.body.textContent).toContain("7");
     expect(document.querySelector(".kitchen-order__label")!.textContent).toBe("Masa");
+  });
+
+  it("V1-RMD-214: shows the conflict tone and message for a real 409 from the server, not a generic error", async () => {
+    // Regression coverage for a Critical finding (2026-09-16, independent
+    // audit): isConflict() used to test error.message against an English
+    // regex the Turkish backend message never matches, and the fallback
+    // branch checked an unrelated ApiError class - a real 409 always fell
+    // through to the same generic static message with tone "error".
+    const onTransitionItem = vi.fn().mockRejectedValue(
+      new KitchenOperationsApiError(409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
+    );
+    await render(<KitchenOperationsWorkspace {...baseProps({ onTransitionItem })} />);
+    const next = document.querySelector<HTMLButtonElement>(".kitchen-step.is-next")!;
+    await click(next);
+
+    const feedback = document.querySelector(".kitchen-workspace__feedback")!;
+    expect(feedback.className).toContain("kitchen-workspace__feedback--conflict");
+    expect(feedback.textContent).toContain("Mutfak verisi değişti");
   });
 
   it("falls back to the truncated order id for a table-less (takeaway/bar) order", async () => {
