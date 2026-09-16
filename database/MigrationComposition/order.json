@@ -1002,6 +1002,14 @@
         "theoretical_consumption_records"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "117",
+      "phase": "B",
+      "tables": [
+        "stock_physical_counts"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

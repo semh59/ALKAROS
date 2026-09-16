@@ -1,3 +1,4 @@
+using ALKAROS.Inventory.PhysicalCounts;
 using ALKAROS.Inventory.StockMaster;
 
 namespace ALKAROS.Host.Experience.Inventory;
@@ -44,6 +45,19 @@ public sealed record AssignModifierStockMappingV1(Guid StockItemId, decimal Quan
 public sealed record ModifierStockMappingV1(
     Guid ModifierId, Guid StockItemId, decimal QuantityMultiplier,
     string? Notes, decimal? AvailableQuantity);
+
+/// <summary>V11-INV-008: what someone counted on the shelf for a stock item.</summary>
+public sealed record RecordPhysicalCountV1(Guid StockLocationId, decimal CountedQuantity, string? Notes = null);
+
+public sealed record PhysicalCountResultV1(
+    Guid StockItemId, Guid StockLocationId, decimal CountedQuantity,
+    decimal PreviousOnHandQuantity, decimal NewOnHandQuantity, decimal Delta, DateTimeOffset CountedAt)
+{
+    public static PhysicalCountResultV1 From(PhysicalCountResult result)
+        => new(
+            result.Count.StockItemId, result.Count.StockLocationId, result.Count.CountedQuantity,
+            result.PreviousOnHandQuantity, result.NewOnHandQuantity, result.Count.Delta, result.Count.CountedAt);
+}
 
 public sealed record StockMasterApiErrorV1(string Code, string Message, int Status, string TraceId);
 

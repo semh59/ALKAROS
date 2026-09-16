@@ -7,6 +7,7 @@ using ALKAROS.Inventory.PortionReservations.Concurrency;
 using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.ModifierStock;
+using ALKAROS.Inventory.PhysicalCounts;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
@@ -55,6 +56,9 @@ public sealed class InventoryModule : IModule
         context.RegisterTransient<IWasteRecordRepository, PostgresWasteRecordRepository>();
         context.RegisterTransient<IWasteRecordingService, WasteRecordingService>();
         context.RegisterTransient<IInventoryAdjustmentService, InventoryAdjustmentService>();
+
+        context.RegisterTransient<IPhysicalCountRepository, PostgresPhysicalCountRepository>();
+        context.RegisterTransient<IPhysicalCountService, PhysicalCountService>();
 
         context.RegisterTransient<IPortionReservationRepository, PostgresPortionReservationRepository>();
         context.RegisterTransient<IPortionReservationLifecycleService, PortionReservationLifecycleService>();

@@ -276,6 +276,51 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
         Assert.Equal("NOT_FOUND", (await ReadErrorAsync(delete)).Error.Code);
     }
 
+    [Fact]
+    public async Task RecordingAPhysicalCountAppliesTheDeltaAndReturnsIt()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId);
+        await _database.SeedStockBalanceAsync(stockItemId, locationId, 10m);
+
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{stockItemId:D}/physical-counts",
+            new RecordPhysicalCountV1(locationId, 7m, "Fire tespit edildi"));
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var result = await response.Content.ReadFromJsonAsync<PhysicalCountResultV1>();
+        Assert.Equal(10m, result!.PreviousOnHandQuantity);
+        Assert.Equal(7m, result.NewOnHandQuantity);
+        Assert.Equal(-3m, result.Delta);
+    }
+
+    [Fact]
+    public async Task RecordingAPhysicalCountWithoutASessionIsRejected()
+    {
+        using var client = CreateClient(null);
+        var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId);
+
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{stockItemId:D}/physical-counts",
+            new RecordPhysicalCountV1(locationId, 5m));
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task RecordingAPhysicalCountForAnUnknownStockItemIsNotFound()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{Guid.NewGuid():D}/physical-counts",
+            new RecordPhysicalCountV1(locationId, 5m));
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("NOT_FOUND", (await ReadErrorAsync(response)).Error.Code);
+    }
+
     private HttpClient CreateClient(string? token)
     {
         var client = new HttpClient { BaseAddress = _baseAddress };

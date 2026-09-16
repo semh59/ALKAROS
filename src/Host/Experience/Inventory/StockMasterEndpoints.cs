@@ -3,7 +3,9 @@ using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.ModifierStock;
+using ALKAROS.Inventory.PhysicalCounts;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
 using ALKAROS.Measurements;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +49,12 @@ public static class StockMasterEndpoints
         // mappings) — the same contract OrderStockConsumptionService writes
         // through on Accept.
         services.TryAddScoped<IStockBalanceRepository, PostgresStockBalanceRepository>();
+        // V11-INV-008: physical/cycle counts, same TryAdd-defers-to-
+        // InventoryModule shape as the registrations above.
+        services.TryAddScoped<IStockMovementRepository, PostgresStockMovementRepository>();
+        services.TryAddScoped<IInventoryTransactionRunner, PostgresInventoryTransactionRunner>();
+        services.TryAddScoped<IPhysicalCountRepository, PostgresPhysicalCountRepository>();
+        services.TryAddScoped<IPhysicalCountService, PhysicalCountService>();
 
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
@@ -232,6 +240,25 @@ public static class StockMasterEndpoints
             return Results.NoContent();
         });
 
+        // V11-INV-008: a manager/staff member's real shelf count. Records
+        // the count regardless of whether it matched the system balance
+        // (a match is still evidence for the future AvT report,
+        // V11-RPT-003), and applies the real delta through the same
+        // guarded transaction ManualAdjustments uses.
+        group.MapPost("/stock-items/{stockItemId:guid}/physical-counts", async (
+            Guid stockItemId,
+            RecordPhysicalCountV1 request,
+            IPhysicalCountService service,
+            HttpContext httpContext,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = StockMasterEndpointFilter.RequireActorId(httpContext);
+            var result = await service.RecordPhysicalCountAsync(
+                new PhysicalCountRequest(stockItemId, request.StockLocationId, request.CountedQuantity, actorId, request.Notes),
+                cancellationToken);
+            return Results.Ok(PhysicalCountResultV1.From(result));
+        });
+
         return group;
     }
 }
@@ -256,6 +283,8 @@ public sealed class StockMasterAuthentication
 
 public sealed class StockMasterEndpointFilter : IEndpointFilter
 {
+    private const string ActorIdItemKey = "StockMasterActorId";
+
     private static readonly Action<ILogger, string, string, Exception?> LogRequestFailure =
         LoggerMessage.Define<string, string>(
             LogLevel.Error,
@@ -274,12 +303,18 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         _logger = logger;
     }
 
+    /// <summary>V11-INV-008: the authenticated actor, for endpoints that record who did something (e.g. a physical count).</summary>
+    public static Guid RequireActorId(HttpContext context)
+        => context.Items[ActorIdItemKey] as Guid?
+            ?? throw new InvalidOperationException($"{nameof(StockMasterEndpointFilter)} did not run before this endpoint.");
+
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         try
         {
             var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
             await _authorization.AuthorizeAsync(actorId, StockMasterEndpoints.ManagePermission, context.HttpContext.RequestAborted);
+            context.HttpContext.Items[ActorIdItemKey] = actorId;
             return await next(context);
         }
         catch (Exception exception)
@@ -309,6 +344,7 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         InvalidStockItemException or InvalidStockLocationException or InvalidProductStockMappingException =>
             (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         StockMasterConcurrencyException => (409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi."),
+        PhysicalCountBalanceGuardFailedException => (409, "CONCURRENCY_CONFLICT", "Sayım uygulanırken bakiye başka bir işlemle çakıştı, tekrar deneyin."),
         PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } => (409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
         PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } => (400, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
