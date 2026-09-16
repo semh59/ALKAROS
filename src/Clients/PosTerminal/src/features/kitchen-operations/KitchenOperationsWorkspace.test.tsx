@@ -186,6 +186,19 @@ describe("kitchen operations workspace", () => {
     expect(document.querySelector(".kitchen-step.is-next")).not.toBeNull();
   });
 
+  it("V1-RMD-225: shows a failed backup's error message, not just a health dot color", async () => {
+    // Regression coverage for a Medium finding (2026-09-16, independent
+    // audit): GetRecentBackupsAsync was fetched into KitchenData.backups on
+    // every load() but never rendered anywhere - a failed backup was only
+    // ever visible as a single generic health-dot color change, with no
+    // way to see which backup failed or why. The shared fixture's own
+    // backups entry (a Failed backup with an errorMessage) is exactly this
+    // case.
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    expect(document.body.textContent).toContain("Başarısız");
+    expect(document.body.textContent).toContain("Backup engine unavailable");
+  });
+
   it("shows the age-restriction badge and its id-check hint", async () => {
     const withAgeRestriction: KitchenData = {
       ...data,

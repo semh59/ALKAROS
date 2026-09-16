@@ -4,6 +4,7 @@ import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
   healthStatusLabel,
   itemStatusLabels,
+  type KitchenBackup,
   type KitchenHealthSnapshot,
   type KitchenPerformanceReport,
   type KitchenTicket,
@@ -469,6 +470,7 @@ export function KitchenOperationsWorkspace({
         />)}
       </div>
       <aside className="kitchen-workspace__rail" aria-label="Mutfak operasyon uyarıları">
+        <HealthPanel health={data.health} backups={data.backups} />
         <UnknownPanel deliveries={data.unknownDeliveries} canManage={canManageReprints} busyKey={busyKey} onDecision={openDecision} />
         <PrinterPanel
           printers={data.printers}
@@ -704,6 +706,38 @@ function ItemRow({
       })}
     </div>}
   </div>;
+}
+
+function formatGigabytes(bytes: number): string {
+  return `${(bytes / (1024 ** 3)).toFixed(1)} GB`;
+}
+
+function formatBackupDate(iso: string): string {
+  return new Date(iso).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" });
+}
+
+// V1-RMD-225: found by an independent audit (2026-09-16) - GetRecentBackupsAsync
+// was fetched into KitchenData.backups on every load() but never rendered
+// anywhere on this screen; a failed backup (BackupV1.ErrorMessage set) was
+// visible only as a single generic health-dot color, with no way to see
+// which backup failed or why. The CSS for this panel (.kitchen-backup,
+// .kitchen-backup--failed) already existed, unused, since before this task.
+function HealthPanel({ health, backups }: { health: KitchenHealthSnapshot | null; backups: readonly KitchenBackup[] }) {
+  const lastBackup = backups[0] ?? null;
+  const hasFailedBackup = backups.some((backup) => backup.status === "Failed");
+  return <section className={`kitchen-panel ${hasFailedBackup ? "has-alert" : ""}`} aria-labelledby="health-heading">
+    <header><div><span className="kitchen-panel__eyebrow">SİSTEM SAĞLIĞI</span><h3 id="health-heading">Veritabanı ve yedekleme</h3></div></header>
+    {health ? <dl className="kitchen-health">
+      <div><dt>Veritabanı</dt><dd>{healthStatusLabel(health.databaseStatus)}</dd></div>
+      <div><dt>Disk</dt><dd>{healthStatusLabel(health.diskStatus)} · {formatGigabytes(health.freeDiskBytes)} boş</dd></div>
+      <div><dt>Son yedekleme</dt><dd>{healthStatusLabel(health.lastBackupStatus)}</dd></div>
+    </dl> : <p className="kitchen-panel__muted">Sağlık verisi henüz alınamadı.</p>}
+    {lastBackup && <div className={`kitchen-backup ${lastBackup.status === "Failed" ? "kitchen-backup--failed" : ""}`}>
+      <span>{lastBackup.backupType} yedekleme · {formatBackupDate(lastBackup.startedAt)}</span>
+      <strong>{lastBackup.status === "Completed" ? "Tamamlandı" : lastBackup.status === "Failed" ? "Başarısız" : "Devam ediyor"}</strong>
+      {lastBackup.status === "Failed" && lastBackup.errorMessage && <p>{lastBackup.errorMessage}</p>}
+    </div>}
+  </section>;
 }
 
 function UnknownPanel({ deliveries, canManage, busyKey, onDecision }: { deliveries: readonly KitchenUnknownDelivery[]; canManage: boolean; busyKey: string | null; onDecision: (delivery: KitchenUnknownDelivery, decision: "approve" | "reject") => void }) {
