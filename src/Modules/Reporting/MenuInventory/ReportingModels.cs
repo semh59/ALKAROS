@@ -104,3 +104,47 @@ public sealed record CriticalStockReportQuery(
 public sealed record CriticalStockReport(
     IReadOnlyList<CriticalStockReportItem> Items,
     int TotalCriticalItemsCount);
+
+/// <summary>
+/// V11-RPT-003: classic restaurant actual-vs-theoretical (AvT) variance.
+/// <see cref="TheoreticalUsage"/> comes from V11-RCP-004's recipe-exploded
+/// shadow ledger (<c>recipe.theoretical_consumption_records</c>) — that
+/// ledger is item-level only, with no location column, so when the same
+/// stock item is physically counted in more than one location, its
+/// theoretical usage is attributed identically to each location's row
+/// (a documented simplification, not a bug: most items live in exactly one
+/// location). <see cref="ActualUsage"/> is
+/// <c>OpeningCount + PurchaseReceipts - ClosingCount</c> — the classic
+/// formula, computed from real <c>inventory.stock_physical_counts</c> rows,
+/// never estimated.
+/// </summary>
+public sealed record ActualVsTheoreticalReportItem(
+    Guid StockItemId,
+    string StockItemCode,
+    string StockItemName,
+    string TrackingUnitCode,
+    Guid StockLocationId,
+    string LocationName,
+    decimal OpeningCount,
+    decimal ClosingCount,
+    decimal PurchaseReceipts,
+    decimal ActualUsage,
+    decimal TheoreticalUsage,
+    decimal VarianceQuantity,
+    decimal? VariancePercentage);
+
+public sealed record ActualVsTheoreticalReportQuery(
+    DateTimeOffset FromTime,
+    DateTimeOffset ToTime,
+    Guid? LocationId = null);
+
+/// <summary>
+/// <paramref name="ExcludedForMissingCountsCount"/> is how many (stock
+/// item, location) pairs had at least one physical count on record but
+/// were still excluded from <paramref name="Items"/> because they were
+/// missing an opening or closing count for THIS period — never estimated,
+/// per the report's own "no false precision" rule.
+/// </summary>
+public sealed record ActualVsTheoreticalReport(
+    IReadOnlyList<ActualVsTheoreticalReportItem> Items,
+    int ExcludedForMissingCountsCount);

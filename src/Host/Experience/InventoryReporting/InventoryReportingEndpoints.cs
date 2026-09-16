@@ -64,6 +64,23 @@ public static class InventoryReportingEndpoints
             return Results.Ok(report);
         });
 
+        // V11-RPT-003: classic actual-vs-theoretical variance, closing the
+        // last gap the Toast/xtraCHEF comparison found.
+        group.MapGet("/actual-vs-theoretical", async (
+            DateTimeOffset? from,
+            DateTimeOffset? to,
+            Guid? locationId,
+            IMenuInventoryReportingService service,
+            CancellationToken cancellationToken) =>
+        {
+            if (from is null || to is null)
+                throw new ArgumentException("Both 'from' and 'to' query parameters are required.");
+
+            var report = await service.GetActualVsTheoreticalReportAsync(
+                new ActualVsTheoreticalReportQuery(from.Value, to.Value, locationId), cancellationToken);
+            return Results.Ok(report);
+        });
+
         return group;
     }
 }

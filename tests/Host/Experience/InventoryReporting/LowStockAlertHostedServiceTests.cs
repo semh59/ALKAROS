@@ -127,6 +127,9 @@ public sealed class LowStockAlertHostedServiceTests
 
         public Task<WasteReport> GetWasteReportAsync(WasteReportQuery query, CancellationToken ct = default)
             => throw new NotSupportedException();
+
+        public Task<ActualVsTheoreticalReport> GetActualVsTheoreticalReportAsync(ActualVsTheoreticalReportQuery query, CancellationToken ct = default)
+            => throw new NotSupportedException();
     }
 }
 

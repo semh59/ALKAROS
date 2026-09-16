@@ -446,6 +446,117 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
             TotalCriticalItemsCount: criticalCount);
     }
 
+    public async Task<ActualVsTheoreticalReport> GetActualVsTheoreticalReportAsync(
+        ActualVsTheoreticalReportQuery query,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        await using var conn = await _dataSource.OpenConnectionAsync(ct);
+
+        // Candidate (item, location) pairs: anything with at least one
+        // physical count on record at or before the period's end — the
+        // opening/closing LATERAL joins below then resolve the nearest
+        // count on each side, and a pair missing either side is excluded
+        // in the C# loop (never estimated).
+        const string sql = """
+            WITH candidate_pairs AS (
+                SELECT DISTINCT stock_item_id, stock_location_id
+                FROM inventory.stock_physical_counts
+                WHERE counted_at <= @to
+                  AND (@locId::uuid IS NULL OR stock_location_id = @locId::uuid)
+            )
+            SELECT
+                si.id,
+                si.code,
+                si.name,
+                si.tracking_unit_code,
+                cp.stock_location_id,
+                loc.name,
+                opening.counted_quantity,
+                closing.counted_quantity,
+                COALESCE(receipts.qty, 0),
+                COALESCE(theoretical.qty, 0)
+            FROM candidate_pairs cp
+            JOIN inventory.stock_items si ON si.id = cp.stock_item_id
+            JOIN inventory.stock_locations loc ON loc.id = cp.stock_location_id
+            LEFT JOIN LATERAL (
+                SELECT c.counted_quantity
+                FROM inventory.stock_physical_counts c
+                WHERE c.stock_item_id = cp.stock_item_id AND c.stock_location_id = cp.stock_location_id AND c.counted_at <= @from
+                ORDER BY c.counted_at DESC LIMIT 1
+            ) opening ON true
+            LEFT JOIN LATERAL (
+                SELECT c.counted_quantity
+                FROM inventory.stock_physical_counts c
+                WHERE c.stock_item_id = cp.stock_item_id AND c.stock_location_id = cp.stock_location_id AND c.counted_at <= @to
+                ORDER BY c.counted_at DESC LIMIT 1
+            ) closing ON true
+            LEFT JOIN (
+                SELECT stock_item_id, stock_location_id, SUM(quantity) AS qty
+                FROM inventory.stock_movements
+                WHERE source_type IN ('PurchaseOrder', 'GoodsReceipt') AND created_at > @from AND created_at <= @to
+                GROUP BY stock_item_id, stock_location_id
+            ) receipts ON receipts.stock_item_id = cp.stock_item_id AND receipts.stock_location_id = cp.stock_location_id
+            LEFT JOIN (
+                SELECT stock_item_id, SUM(quantity) AS qty
+                FROM recipe.theoretical_consumption_records
+                WHERE recorded_at > @from AND recorded_at <= @to
+                GROUP BY stock_item_id
+            ) theoretical ON theoretical.stock_item_id = cp.stock_item_id
+            ORDER BY si.name, loc.name;
+            """;
+
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        AddParameter(cmd, "from", query.FromTime);
+        AddParameter(cmd, "to", query.ToTime);
+        AddParameter(cmd, "locId", query.LocationId.HasValue ? query.LocationId.Value : DBNull.Value);
+
+        var items = new List<ActualVsTheoreticalReportItem>();
+        var excluded = 0;
+
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        while (await reader.ReadAsync(ct))
+        {
+            if (reader.IsDBNull(6) || reader.IsDBNull(7))
+            {
+                // Missing an opening or closing count for this period — no
+                // false precision, exclude rather than estimate.
+                excluded++;
+                continue;
+            }
+
+            var openingCount = reader.GetDecimal(6);
+            var closingCount = reader.GetDecimal(7);
+            var purchaseReceipts = reader.GetDecimal(8);
+            var theoreticalUsage = reader.GetDecimal(9);
+
+            var actualUsage = openingCount + purchaseReceipts - closingCount;
+            var varianceQuantity = actualUsage - theoreticalUsage;
+            var variancePercentage = theoreticalUsage == 0m ? (decimal?)null : varianceQuantity / theoreticalUsage;
+
+            items.Add(new ActualVsTheoreticalReportItem(
+                StockItemId: reader.GetGuid(0),
+                StockItemCode: reader.GetString(1),
+                StockItemName: reader.GetString(2),
+                TrackingUnitCode: reader.GetString(3),
+                StockLocationId: reader.GetGuid(4),
+                LocationName: reader.GetString(5),
+                OpeningCount: openingCount,
+                ClosingCount: closingCount,
+                PurchaseReceipts: purchaseReceipts,
+                ActualUsage: actualUsage,
+                TheoreticalUsage: theoreticalUsage,
+                VarianceQuantity: varianceQuantity,
+                VariancePercentage: variancePercentage));
+        }
+
+        return new ActualVsTheoreticalReport(
+            Items: items,
+            ExcludedForMissingCountsCount: excluded);
+    }
+
     private static void AddParameter(DbCommand cmd, string name, object value)
     {
         var p = cmd.CreateParameter();

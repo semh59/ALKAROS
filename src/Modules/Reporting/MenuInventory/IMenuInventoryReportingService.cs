@@ -17,4 +17,8 @@ public interface IMenuInventoryReportingService
     Task<CriticalStockReport> GetCriticalStockReportAsync(
         CriticalStockReportQuery query,
         CancellationToken ct = default);
+
+    Task<ActualVsTheoreticalReport> GetActualVsTheoreticalReportAsync(
+        ActualVsTheoreticalReportQuery query,
+        CancellationToken ct = default);
 }

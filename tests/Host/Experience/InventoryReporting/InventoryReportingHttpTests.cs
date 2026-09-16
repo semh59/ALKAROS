@@ -78,6 +78,30 @@ public sealed class InventoryReportingHttpTests : IAsyncLifetime
         Assert.Contains(report.Items, i => i.StockItemId == normalItemId && !i.IsCritical);
     }
 
+    [Fact]
+    public async Task ActualVsTheoreticalRequiresFromAndTo()
+    {
+        using var client = CreateClient(InventoryReportingTestDatabase.ViewerToken);
+
+        using var missing = await client.GetAsync("/api/v1/management/inventory/reports/actual-vs-theoretical");
+        Assert.Equal(HttpStatusCode.BadRequest, missing.StatusCode);
+    }
+
+    [Fact]
+    public async Task ActualVsTheoreticalReturnsAnEmptyReportWhenNoPhysicalCountsExist()
+    {
+        using var client = CreateClient(InventoryReportingTestDatabase.ViewerToken);
+        var from = DateTimeOffset.UtcNow.AddDays(-7).ToString("O");
+        var to = DateTimeOffset.UtcNow.ToString("O");
+
+        using var response = await client.GetAsync(
+            $"/api/v1/management/inventory/reports/actual-vs-theoretical?from={Uri.EscapeDataString(from)}&to={Uri.EscapeDataString(to)}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var report = await response.Content.ReadFromJsonAsync<ActualVsTheoreticalReport>();
+        Assert.Empty(report!.Items);
+    }
+
     private HttpClient CreateClient(string? token)
     {
         var client = new HttpClient { BaseAddress = _baseAddress };

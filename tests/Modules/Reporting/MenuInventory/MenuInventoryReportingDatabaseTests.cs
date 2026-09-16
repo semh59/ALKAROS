@@ -69,6 +69,14 @@ public sealed class MenuInventoryReportingTestDb : PgTestDatabase
         // 11. StockItem.ReorderPoint (V11-INV-009)
         var sql118 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "118-stock-items-reorder-point.up.sql"));
         await RunAsync(DataSource, sql118);
+
+        // 12. Physical counts (V11-INV-008)
+        var sql117 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "117-stock-physical-counts.up.sql"));
+        await RunAsync(DataSource, sql117);
+
+        // 13. Theoretical consumption records (V11-RCP-004)
+        var sql116 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "116-theoretical-consumption-records.up.sql"));
+        await RunAsync(DataSource, sql116);
     }
 }
 
@@ -416,6 +424,139 @@ public sealed class MenuInventoryReportingDatabaseTests : IClassFixture<MenuInve
 
         report.Items.Should().Contain(i => i.StockItemId == itemWithHighReorderPointId && i.IsCritical && i.CriticalThreshold == 40.0m);
         report.Items.Should().Contain(i => i.StockItemId == itemWithNoReorderPointId && !i.IsCritical && i.CriticalThreshold == 5.0m);
+    }
+
+    /// <summary>
+    /// V11-RPT-003: ActualUsage = OpeningCount + PurchaseReceipts -
+    /// ClosingCount, TheoreticalUsage from the shadow ledger, and variance
+    /// is their difference — a fully-covered item (opening + closing count
+    /// both present) gets a real row.
+    /// </summary>
+    [Fact]
+    public async Task ActualVsTheoreticalReportComputesVarianceForAFullyCoveredItem()
+    {
+        var (_, _, _, versionId, locationId) = await SeedDataAsync();
+        var stockItemId = Guid.NewGuid();
+        var from = DateTimeOffset.UtcNow.AddDays(-7);
+        var to = DateTimeOffset.UtcNow;
+
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        {
+            await using (var cmd = new NpgsqlCommand(
+                """
+                INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, is_active, row_version)
+                VALUES (@id, @code, 'AvT Flour', 'RawMaterial', 'kg', true, 1);
+                """, conn))
+            {
+                cmd.Parameters.AddWithValue("id", stockItemId);
+                cmd.Parameters.AddWithValue("code", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            // Opening count (before the period): 100. Closing count (within
+            // the period, at or before `to`): 60.
+            await using (var cmd = new NpgsqlCommand(
+                """
+                INSERT INTO inventory.stock_physical_counts
+                    (id, stock_item_id, stock_location_id, counted_quantity, previous_on_hand_quantity, counted_by_user_id, counted_at)
+                VALUES
+                    (gen_random_uuid(), @item, @loc, 100.0000, 100.0000, gen_random_uuid(), @openAt),
+                    (gen_random_uuid(), @item, @loc, 60.0000, 60.0000, gen_random_uuid(), @closeAt);
+                """, conn))
+            {
+                cmd.Parameters.AddWithValue("item", stockItemId);
+                cmd.Parameters.AddWithValue("loc", locationId);
+                cmd.Parameters.AddWithValue("openAt", from.AddDays(-1));
+                cmd.Parameters.AddWithValue("closeAt", to.AddHours(-1));
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            // A 30kg goods receipt inside the period.
+            await using (var cmd = new NpgsqlCommand(
+                """
+                INSERT INTO inventory.stock_movements
+                    (stock_movement_id, stock_item_id, stock_location_id, movement_type, direction, quantity, unit_code, source_type, created_at)
+                VALUES
+                    (gen_random_uuid(), @item, @loc, 'PurchaseReceipt', 'In', 30.0000, 'kg', 'GoodsReceipt', @receiptAt);
+                """, conn))
+            {
+                cmd.Parameters.AddWithValue("item", stockItemId);
+                cmd.Parameters.AddWithValue("loc", locationId);
+                cmd.Parameters.AddWithValue("receiptAt", to.AddDays(-2));
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            // Theoretical usage: recipe says 65kg should have been used.
+            await using (var cmd = new NpgsqlCommand(
+                """
+                INSERT INTO recipe.theoretical_consumption_records
+                    (id, order_item_id, product_id, recipe_id, recipe_version_id, stock_item_id, quantity, unit_code, recorded_at)
+                SELECT gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), rv.recipe_id, rv.id, @item, 65.0000, 'kg', @recordedAt
+                FROM recipe.recipe_versions rv WHERE rv.id = @versionId;
+                """, conn))
+            {
+                cmd.Parameters.AddWithValue("item", stockItemId);
+                cmd.Parameters.AddWithValue("versionId", versionId);
+                cmd.Parameters.AddWithValue("recordedAt", to.AddDays(-3));
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        var report = await _service.GetActualVsTheoreticalReportAsync(
+            new ActualVsTheoreticalReportQuery(from, to, locationId));
+
+        var row = report.Items.Should().ContainSingle(i => i.StockItemId == stockItemId).Subject;
+        row.OpeningCount.Should().Be(100m);
+        row.ClosingCount.Should().Be(60m);
+        row.PurchaseReceipts.Should().Be(30m);
+        row.ActualUsage.Should().Be(70m); // 100 + 30 - 60
+        row.TheoreticalUsage.Should().Be(65m);
+        row.VarianceQuantity.Should().Be(5m); // 70 actual - 65 theoretical
+        row.VariancePercentage.Should().BeApproximately(5m / 65m, 0.0001m);
+    }
+
+    [Fact]
+    public async Task ActualVsTheoreticalReportExcludesAnItemMissingAnOpeningCount()
+    {
+        var (_, _, _, _, locationId) = await SeedDataAsync();
+        var stockItemId = Guid.NewGuid();
+        var from = DateTimeOffset.UtcNow.AddDays(-7);
+        var to = DateTimeOffset.UtcNow;
+
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        {
+            await using (var cmd = new NpgsqlCommand(
+                """
+                INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, is_active, row_version)
+                VALUES (@id, @code, 'No Opening Count Item', 'RawMaterial', 'kg', true, 1);
+                """, conn))
+            {
+                cmd.Parameters.AddWithValue("id", stockItemId);
+                cmd.Parameters.AddWithValue("code", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            // Only ONE count, taken inside the period (no count before
+            // `from` exists) — the opening side stays unresolved.
+            await using (var cmd = new NpgsqlCommand(
+                """
+                INSERT INTO inventory.stock_physical_counts
+                    (id, stock_item_id, stock_location_id, counted_quantity, previous_on_hand_quantity, counted_by_user_id, counted_at)
+                VALUES (gen_random_uuid(), @item, @loc, 40.0000, 40.0000, gen_random_uuid(), @countAt);
+                """, conn))
+            {
+                cmd.Parameters.AddWithValue("item", stockItemId);
+                cmd.Parameters.AddWithValue("loc", locationId);
+                cmd.Parameters.AddWithValue("countAt", to.AddDays(-1));
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        var report = await _service.GetActualVsTheoreticalReportAsync(
+            new ActualVsTheoreticalReportQuery(from, to, locationId));
+
+        report.Items.Should().NotContain(i => i.StockItemId == stockItemId);
+        report.ExcludedForMissingCountsCount.Should().BeGreaterThanOrEqualTo(1);
     }
 
     private async Task<(Guid menuId, Guid itemId, Guid productId, Guid versionId, Guid locationId)> SeedDataAsync()

@@ -31,6 +31,8 @@
     <None Include="../../../../database/migrations/V11/V11-PRD-001/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V11/V11-PRD-002/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V11/V11-INV-009/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-008/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-RCP-004/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
