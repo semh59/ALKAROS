@@ -233,6 +233,31 @@ public sealed class KitchenTicketUnitTests
     }
 
     [Fact]
+    public void ManualTicketLevelPreparingIsRejectedUntilAtLeastOneItemHasActuallyStarted()
+    {
+        // Regression coverage for a Medium finding (2026-09-16, independent
+        // audit): the manual (Accepted, Preparing) ticket transition had no
+        // item-state guard at all, unlike (Preparing, Ready)'s own
+        // CanBeMarkedReady(). A caller with only kitchen.advance (no item
+        // transition needed) could mark the whole ticket Preparing while
+        // every item still sat at Queued.
+        var ticketId = Guid.NewGuid();
+        var item = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Burger", 1);
+        var ticket = new KitchenTicket(
+            ticketId, Guid.NewGuid(), "KT-101", "Grill", [item], status: KitchenTicketState.Accepted);
+
+        ticket.CanTransitionTo(KitchenTicketState.Preparing).Should().BeFalse();
+        var act = () => ticket.TransitionTo(KitchenTicketState.Preparing);
+        act.Should().Throw<InvalidKitchenTransitionException>();
+
+        // The real path (V1-KIT-007's auto-promotion) still works exactly
+        // as before: an item actually starting Preparing is what carries
+        // the ticket forward.
+        var afterItemStarts = ticket.UpdateItemStatus(item.Id, KitchenTicketItemState.Preparing);
+        afterItemStarts.Status.Should().Be(KitchenTicketState.Preparing);
+    }
+
+    [Fact]
     public void ParentReadyRequiresAllNonCancelledItemsToBeReadyOrServed()
     {
         var ticketId = Guid.NewGuid();
@@ -468,10 +493,12 @@ public sealed class PostgresKitchenTicketIntegrationTests : IClassFixture<Kitche
         loaded.RowVersion.Should().Be(1);
         loaded.Items.Should().HaveCount(1);
 
-        // 2. Accept and start preparing
+        // 2. Accept and start preparing - the item's own transition
+        // auto-promotes the ticket (V1-KIT-007), the real path every actual
+        // client uses; a manual ticket-level TransitionTo(Preparing) with no
+        // item advanced first is refused since V1-RMD-222.
         var accepted = loaded.TransitionTo(KitchenTicketState.Accepted);
-        var preparing = accepted.TransitionTo(KitchenTicketState.Preparing);
-        var updatedItem = preparing.UpdateItemStatus(preparing.Items[0].Id, KitchenTicketItemState.Preparing);
+        var updatedItem = accepted.UpdateItemStatus(accepted.Items[0].Id, KitchenTicketItemState.Preparing);
 
         var newVer = await _ticketRepo.SaveAsync(updatedItem, loaded.RowVersion);
         newVer.Should().Be(2);

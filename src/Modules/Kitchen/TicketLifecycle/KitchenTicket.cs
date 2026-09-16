@@ -85,13 +85,31 @@ public sealed class KitchenTicket
         {
             (KitchenTicketState.Queued, KitchenTicketState.Accepted) => true,
             (KitchenTicketState.Queued, KitchenTicketState.Cancelled) => true,
-            (KitchenTicketState.Accepted, KitchenTicketState.Preparing) => true,
+            (KitchenTicketState.Accepted, KitchenTicketState.Preparing) => CanBeMarkedPreparing(),
             (KitchenTicketState.Accepted, KitchenTicketState.Cancelled) => true,
             (KitchenTicketState.Preparing, KitchenTicketState.Ready) => CanBeMarkedReady(),
             (KitchenTicketState.Preparing, KitchenTicketState.Cancelled) => true,
             (KitchenTicketState.Ready, KitchenTicketState.Cancelled) => true,
             _ => false,
         };
+    }
+
+    /// <summary>
+    /// V1-RMD-222: found by an independent audit (2026-09-16) - unlike
+    /// (Preparing, Ready)'s own CanBeMarkedReady() guard, the manual
+    /// (Accepted, Preparing) transition had no item-state check at all: a
+    /// caller (kitchen.advance is enough, no item transition needed first)
+    /// could mark the whole ticket Preparing while every item still sat at
+    /// Queued, leaving ticket.Status and every item's own Status
+    /// permanently disagreeing about whether prep had actually started.
+    /// </summary>
+    public bool CanBeMarkedPreparing()
+    {
+        var nonCancelledItems = Items.Where(i => i.Status != KitchenTicketItemState.Cancelled).ToList();
+        if (nonCancelledItems.Count == 0)
+            return false;
+
+        return nonCancelledItems.Any(i => i.Status != KitchenTicketItemState.Queued);
     }
 
     /// <summary>
