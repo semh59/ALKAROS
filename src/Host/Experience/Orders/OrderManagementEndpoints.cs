@@ -1020,6 +1020,15 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         StockItemHasNoDefaultLocationException =>
             (409, "STOCK_ITEM_MISCONFIGURED", "Bu ürünün stok kalemi için bir konum tanımlanmamış, lütfen yöneticiye bildirin."),
         OrderAlreadyBilledException => (409, "ORDER_ALREADY_BILLED", "Sipariş zaten faturalandırılmış, bu işlemle reddedilemez."),
+        // V1-RMD-221: found by an independent audit (2026-09-16) — must be
+        // listed before the generic InvalidOperationException branch below,
+        // or this never matches (CourseNotFireableException does not
+        // inherit InvalidOperationException). Fixing the same request by
+        // simply resending it can never succeed, unlike a real
+        // CONCURRENCY_CONFLICT — the waiter needs to refresh the ticket
+        // instead.
+        CourseNotFireableException => (409, "COURSE_NOT_FIREABLE",
+            "Bu kurs artık ateşlenemez — zaten ateşlenmiş olabilir veya sipariş durumu değişti. Listeyi yenileyin."),
         StaleOrderRowVersionException or InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         IdempotencyKeyReusedException or SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         OrderSubmissionDispatchException => (503, "KITCHEN_DISPATCH_FAILED", "Sipariş mutfağa iletilemedi."),

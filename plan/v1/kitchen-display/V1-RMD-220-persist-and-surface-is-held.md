@@ -21,7 +21,10 @@ olmadan sözleşme alanı kozmetik kalırdı.
 
 ## Owned surface
 
-- database/migrations/V1/V1-RMD-220/** (yeni)
+- `database/migrations/V1/V1-RMD-220/**` (yeni)
+
+Sınırlı ek (yollar geri-tik olmadan):
+
 - src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs
   (ilgili modülün sahipliğinde) — is_held artık okunuyor/yazılıyor.
 - src/Host/Experience/KitchenOperations/KitchenOperationsContracts.cs,
@@ -32,9 +35,6 @@ olmadan sözleşme alanı kozmetik kalırdı.
 - tests/Modules/Kitchen/TicketLifecycle/KitchenTicketTests.cs,
   src/Clients/PosTerminal/.../KitchenOperationsWorkspace.test.tsx
   (ilgili modüller)
-
-Sınırlı ek (yollar geri-tik olmadan):
-
 - database/MigrationComposition/order.json,
   src/Host/Composition/Migrations/MigrationManifest.cs (paylaşılan) —
   yeni migration pozisyonu 113 kaydedildi, `PhaseBMax` güncellendi

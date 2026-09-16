@@ -97,7 +97,27 @@ public sealed class OrderSubmissionCoordinator
         var order = await _repository.GetByIdAsync(orderId, cancellationToken)
             ?? throw new InvalidOperationException($"Order '{orderId}' was not found.");
 
-        var (fired, firedItems) = order.FireCourse(courseNumber, changedBy: actorId);
+        // V1-RMD-221: found by an independent audit (2026-09-16) - FireCourse's
+        // own InvalidOperationException (either "no held items for this
+        // course" - already fired, or never had one - or "cannot fire from
+        // this status" - the check closed under the caller) used to fall
+        // through to the generic InvalidOperationException branch in the
+        // Host's exception map, which answers with the same 409
+        // CONCURRENCY_CONFLICT message a real optimistic-concurrency clash
+        // gets. Two waiters racing to fire the same already-fired course saw
+        // the generic Turkish concurrency-conflict message - true in the
+        // loosest sense, but it tells them to retry a request that will
+        // never succeed, instead of "someone already fired this."
+        Order fired;
+        IReadOnlyList<OrderItem> firedItems;
+        try
+        {
+            (fired, firedItems) = order.FireCourse(courseNumber, changedBy: actorId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new CourseNotFireableException(ex.Message);
+        }
 
         var stationId = Environment.GetEnvironmentVariable(DualScreenApplication.KitchenStationEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(stationId))
@@ -159,5 +179,19 @@ public sealed class OrderSubmissionCoordinator
         var tableNumber = await _assembler.GetTableNumberAsync(order.TableId, cancellationToken) ?? "—";
         var dto = OrderDtoAssembler.MapToDto(order, tableNumber);
         return await _assembler.WithAvailableStockAsync(dto, cancellationToken);
+    }
+}
+
+/// <summary>
+/// V1-RMD-221: <see cref="Order.FireCourse"/> refusing a request — the
+/// course was already fired (or never had a held item at all) or the check
+/// closed under the caller. Distinct from a real optimistic-concurrency
+/// clash even though both currently originate from
+/// <see cref="InvalidOperationException"/> at the domain layer.
+/// </summary>
+public sealed class CourseNotFireableException : Exception
+{
+    public CourseNotFireableException(string message) : base(message)
+    {
     }
 }

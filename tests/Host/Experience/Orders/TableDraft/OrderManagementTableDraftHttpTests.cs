@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using ALKAROS.Host.Experience.Orders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -475,6 +476,13 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
             FireCoursePath(terminalId, draft.OrderId), cookie, new FireCourseRequestV1(2)));
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
         Assert.Equal(2, await _database.KitchenTicketCountAsync(draft.OrderId));
+
+        // V1-RMD-221: found by an independent audit (2026-09-16) - this used
+        // to come back as the same generic CONCURRENCY_CONFLICT code (and
+        // message) a real optimistic-concurrency clash gets, telling the
+        // waiter to retry a request that can never succeed.
+        var body = await second.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("COURSE_NOT_FIREABLE", body.GetProperty("error").GetProperty("code").GetString());
     }
 
     [Fact]
