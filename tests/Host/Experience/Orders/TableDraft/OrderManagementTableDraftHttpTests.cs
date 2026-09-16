@@ -1841,6 +1841,42 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Contains(loads!, w => w.UserId == waiterId && w.ActiveLoad == 0);
     }
 
+    [Fact]
+    public async Task ReadingATablesOrderRequiresOrdersCreate()
+    {
+        // V1-RMD-216: found by an independent audit (2026-09-16) - this
+        // endpoint used to accept any authenticated terminal session, no
+        // permission check at all, unlike its sibling GET /{orderId}
+        // (V1-RMD-160). A session holding orders.send but not orders.create
+        // must not be able to read any table's order either.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter-no-create", "orders.send");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(GetRequest(TableOrderPath(terminalId, Guid.NewGuid()), cookie));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ReadingChecksAwaitingPaymentRequiresOrdersCreate()
+    {
+        // V1-RMD-216: same gap as above, on the cashier's awaiting-payment
+        // queue - amounts and table numbers for every check that left its
+        // table, previously readable by any authenticated terminal session.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter-no-create", "orders.send");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(GetRequest(AwaitingPaymentPath(terminalId), cookie));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
     private static string DraftPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/table-draft";
 
@@ -1864,6 +1900,12 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
     private static string HandoffNotePopPath(Guid terminalId)
         => $"/api/v1/terminals/{terminalId:D}/orders/handoff-note/pop";
+
+    private static string TableOrderPath(Guid terminalId, Guid tableId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/table/{tableId:D}";
+
+    private static string AwaitingPaymentPath(Guid terminalId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/awaiting-payment";
 
     private static HttpRequestMessage JsonRequest<T>(string path, string cookie, T body)
     {

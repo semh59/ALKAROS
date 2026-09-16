@@ -324,27 +324,44 @@ public static class OrderManagementEndpoints
             return Results.Ok(await store.SendCheckToCashierAsync(request.TableId, orderId, cancellationToken));
         });
 
-        // V1-ORD-006: the cashier's queue of checks that left their table.
+        // V1-RMD-216: found by an independent audit (2026-09-16) — same gap
+        // V1-RMD-160 fixed on the sibling GET /{orderId} below: this used to
+        // call RequireCashierSessionAsync only (any authenticated terminal
+        // session, no permission check), unlike its /pending sibling above.
+        // A session holding neither OrdersCreate nor any Orders permission
+        // (e.g. a kitchen-only role sharing the same terminal-session
+        // mechanism) could read every check awaiting payment, amounts
+        // included. Same OrdersCreate as /pending and GET /{orderId} -
+        // whoever may take/resolve an order may see this queue too.
         group.MapGet("/awaiting-payment", async (
             Guid terminalId,
             CashierHandoffStore store,
             DualScreenStore dualStore,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
             return Results.Ok(await store.GetChecksAwaitingPaymentAsync(cancellationToken));
         }).RequireRateLimiting("terminal-read");
 
+        // V1-RMD-216: found by the same independent audit as the entry right
+        // above - the identical gap, on the identical store's other read
+        // path (OrderReadStore.GetActiveOrderByTableIdAsync, same full
+        // order/items/amounts payload as GET /{orderId} below already
+        // requires OrdersCreate for since V1-RMD-160).
         group.MapGet("/table/{tableId:guid}", async (
             Guid terminalId,
             Guid tableId,
             OrderReadStore store,
             DualScreenStore dualStore,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierSessionAsync(context, terminalId, dualStore, cancellationToken);
+            await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
 
             var order = await store.GetActiveOrderByTableIdAsync(tableId, cancellationToken);
             if (order == null)
