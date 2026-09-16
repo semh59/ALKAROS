@@ -22,6 +22,7 @@ using ALKAROS.Host.Experience.NfcOrdering;
 using ALKAROS.Host.Experience.Production;
 using ALKAROS.Host.Experience.Purchasing;
 using ALKAROS.Host.Experience.Recipes;
+using ALKAROS.Host.Experience.InventoryReporting;
 using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.QrOrdering;
 using ALKAROS.Host.Experience.RelaySettings;
@@ -127,6 +128,9 @@ public static partial class DualScreenApplication
         // V11-RCP-003: which recipe a catalog product corresponds to, the
         // first step towards a real actual-vs-theoretical variance report.
         builder.Services.AddRecipeCatalogMappingExperience();
+        // V11-RPT-002: the critical-stock report finally gets a Host
+        // endpoint, plus a live low-stock alert broadcast.
+        builder.Services.AddInventoryReportingExperience();
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
@@ -495,6 +499,7 @@ public static partial class DualScreenApplication
         app.MapProductionManagement();
         app.MapStockMasterApi();
         app.MapRecipeCatalogMappingApi();
+        app.MapInventoryReportingApi();
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();

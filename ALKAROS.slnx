@@ -46,6 +46,7 @@
   <Project Path="tests/Host/Experience/Production/ALKAROS.Host.Experience.Production.Tests.csproj" />
   <Project Path="tests/Host/Experience/Inventory/ALKAROS.Host.Experience.Inventory.Tests.csproj" />
   <Project Path="tests/Host/Experience/Recipes/ALKAROS.Host.Experience.Recipes.Tests.csproj" />
+  <Project Path="tests/Host/Experience/InventoryReporting/ALKAROS.Host.Experience.InventoryReporting.Tests.csproj" />
   <Project Path="tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj" />
   <Project Path="tests/Host/Experience/OfflineReconciliation/ALKAROS.Host.Experience.OfflineReconciliation.Tests.csproj" />
   <Project Path="tests/Host/Experience/Orders/Void/ALKAROS.Host.Experience.Orders.Void.Tests.csproj" />
