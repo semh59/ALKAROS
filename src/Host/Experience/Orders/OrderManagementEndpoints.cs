@@ -20,9 +20,13 @@ using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.PersonalBudgets;
 using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Kitchen.TicketLifecycle;
+using ALKAROS.Measurements;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
+using ALKAROS.Recipes.CatalogMapping;
+using ALKAROS.Recipes.TheoreticalConsumption;
+using ALKAROS.Recipes.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -135,6 +139,13 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IStockItemRepository, PostgresStockItemRepository>();
         services.TryAddSingleton<IStockBalanceRepository, PostgresStockBalanceRepository>();
         services.TryAddSingleton<IStockMovementRepository, PostgresStockMovementRepository>();
+        // V11-RCP-004: same TryAdd-defers-to-RecipesModule shape as the
+        // stock registrations just above — a standalone composition of just
+        // this experience still resolves the whole chain.
+        services.TryAddSingleton<IProductRecipeMappingRepository, PostgresProductRecipeMappingRepository>();
+        services.TryAddSingleton<IRecipeVersionRepository, PostgresRecipeVersionRepository>();
+        services.TryAddSingleton<ITheoreticalConsumptionRecordRepository, PostgresTheoreticalConsumptionRecordRepository>();
+        services.TryAddSingleton<IUnitConverter, UnitConverter>();
         services.TryAddSingleton<OrderStockConsumptionService>();
         // V1-RMD-143 follow-up (2026-09-09): SentItemVoidStore restores an
         // item's own consumed stock when it is voided before the kitchen

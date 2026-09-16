@@ -2,7 +2,11 @@ using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Measurements;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Recipes.CatalogMapping;
+using ALKAROS.Recipes.TheoreticalConsumption;
+using ALKAROS.Recipes.Versioning;
 using Npgsql;
 
 namespace ALKAROS.Host.Experience.Orders.OrderStockConsumption;
@@ -42,19 +46,31 @@ public sealed class OrderStockConsumptionService
     private readonly IStockBalanceRepository _balances;
     private readonly IStockMovementRepository _movements;
     private readonly IModifierStockMappingRepository _modifierMappings;
+    private readonly IProductRecipeMappingRepository _recipeMappings;
+    private readonly IRecipeVersionRepository _recipeVersions;
+    private readonly ITheoreticalConsumptionRecordRepository _theoreticalConsumption;
+    private readonly IUnitConverter _unitConverter;
 
     public OrderStockConsumptionService(
         IProductStockMappingRepository mappings,
         IStockItemRepository stockItems,
         IStockBalanceRepository balances,
         IStockMovementRepository movements,
-        IModifierStockMappingRepository modifierMappings)
+        IModifierStockMappingRepository modifierMappings,
+        IProductRecipeMappingRepository recipeMappings,
+        IRecipeVersionRepository recipeVersions,
+        ITheoreticalConsumptionRecordRepository theoreticalConsumption,
+        IUnitConverter unitConverter)
     {
         _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
         _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
         _balances = balances ?? throw new ArgumentNullException(nameof(balances));
         _movements = movements ?? throw new ArgumentNullException(nameof(movements));
         _modifierMappings = modifierMappings ?? throw new ArgumentNullException(nameof(modifierMappings));
+        _recipeMappings = recipeMappings ?? throw new ArgumentNullException(nameof(recipeMappings));
+        _recipeVersions = recipeVersions ?? throw new ArgumentNullException(nameof(recipeVersions));
+        _theoreticalConsumption = theoreticalConsumption ?? throw new ArgumentNullException(nameof(theoreticalConsumption));
+        _unitConverter = unitConverter ?? throw new ArgumentNullException(nameof(unitConverter));
     }
 
     /// <summary>
@@ -175,6 +191,61 @@ public sealed class OrderStockConsumptionService
             }
 
             await ConsumeModifiersAsync(order, item, trigger, actorId, connection, transaction, cancellationToken);
+            await RecordTheoreticalConsumptionAsync(item, connection, transaction, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// V11-RCP-004: in the same transaction as the real (BOM-driven) stock
+    /// decrement above, also record what the item's RECIPE says it should
+    /// have consumed — a parallel, append-only shadow ledger feeding the
+    /// future actual-vs-theoretical variance report (V11-RPT-003). This
+    /// never touches <c>stock_balances</c> and never blocks or fails the
+    /// Accept: a product with no recipe mapping, or a recipe with no active
+    /// version, is simply not tracked here yet (most products won't have a
+    /// mapping on day one — this is additive, not a new gate). Same for a
+    /// unit an <see cref="IUnitConverter"/> cannot bridge to the stock
+    /// item's own tracking unit: the ingredient line is skipped rather than
+    /// failing the whole order, since this data is informational, not
+    /// operational.
+    /// </summary>
+    private async Task RecordTheoreticalConsumptionAsync(
+        OrderItem item,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        var recipeMapping = await _recipeMappings.GetByProductIdAsync(item.ProductId, cancellationToken).ConfigureAwait(false);
+        if (recipeMapping is null || !recipeMapping.IsActive)
+            return;
+
+        var version = await _recipeVersions.GetActiveVersionAsync(recipeMapping.RecipeId, cancellationToken).ConfigureAwait(false);
+        if (version is null || version.Ingredients.Count == 0)
+            return;
+
+        foreach (var ingredient in version.Ingredients)
+        {
+            var stockItem = await _stockItems.GetByIdAsync(ingredient.IngredientItemId, cancellationToken).ConfigureAwait(false);
+            if (stockItem is null)
+                continue;
+
+            var theoreticalQuantity = item.Quantity / version.YieldQuantity
+                * ingredient.Quantity
+                * (1 + ingredient.LossPercentage / 100m);
+
+            if (!_unitConverter.TryConvert(theoreticalQuantity, ingredient.UnitCode, stockItem.TrackingUnitCode, out var converted))
+                continue;
+
+            var record = new TheoreticalConsumptionRecord(
+                id: Guid.NewGuid(),
+                orderItemId: item.Id,
+                productId: item.ProductId,
+                recipeId: recipeMapping.RecipeId,
+                recipeVersionId: version.Id,
+                stockItemId: ingredient.IngredientItemId,
+                quantity: converted,
+                unitCode: stockItem.TrackingUnitCode);
+            await _theoreticalConsumption.AppendAsync(record, connection, transaction, cancellationToken).ConfigureAwait(false);
         }
     }
 

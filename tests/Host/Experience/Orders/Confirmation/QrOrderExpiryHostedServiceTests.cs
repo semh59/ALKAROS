@@ -6,7 +6,11 @@ using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
+using ALKAROS.Measurements;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Recipes.CatalogMapping;
+using ALKAROS.Recipes.TheoreticalConsumption;
+using ALKAROS.Recipes.Versioning;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
@@ -93,5 +97,9 @@ public sealed class QrOrderExpiryHostedServiceTests : IAsyncLifetime
             new PostgresStockItemRepository(_database.DataSource),
             new PostgresStockBalanceRepository(_database.DataSource),
             new PostgresStockMovementRepository(_database.DataSource),
-            new PostgresModifierStockMappingRepository(_database.DataSource)));
+            new PostgresModifierStockMappingRepository(_database.DataSource),
+            new PostgresProductRecipeMappingRepository(_database.DataSource),
+            new PostgresRecipeVersionRepository(_database.DataSource),
+            new PostgresTheoreticalConsumptionRecordRepository(_database.DataSource),
+            new UnitConverter()));
 }

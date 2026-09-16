@@ -153,11 +153,11 @@ public static class ModuleBoundaryTests
         new(StringComparer.Ordinal)
         {
             ["ALKAROS.Host.Experience.Orders.OrderStockConsumption"] =
-                ["ALKAROS.Inventory", "ALKAROS.Orders"],
+                ["ALKAROS.Inventory", "ALKAROS.Orders", "ALKAROS.Recipes"],
             ["ALKAROS.Host.Experience.Orders.SentItemVoid"] =
                 ["ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
             ["ALKAROS.Host.Experience.Orders"] =
-                ["ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders", "ALKAROS.Settings"],
+                ["ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders", "ALKAROS.Recipes", "ALKAROS.Settings"],
             ["ALKAROS.Host.Experience.KitchenOperations"] =
                 ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Operations", "ALKAROS.Orders", "ALKAROS.Settings"],
             // V11-RCP-003: a manager-only surface saying which recipe a

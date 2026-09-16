@@ -994,6 +994,14 @@
         "product_recipe_mappings"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "116",
+      "phase": "B",
+      "tables": [
+        "theoretical_consumption_records"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

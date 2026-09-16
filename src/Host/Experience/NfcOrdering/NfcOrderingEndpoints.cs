@@ -5,8 +5,12 @@ using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
+using ALKAROS.Measurements;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
+using ALKAROS.Recipes.CatalogMapping;
+using ALKAROS.Recipes.TheoreticalConsumption;
+using ALKAROS.Recipes.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -60,6 +64,12 @@ public static class NfcOrderingEndpoints
         services.TryAddSingleton<IStockItemRepository, PostgresStockItemRepository>();
         services.TryAddSingleton<IStockBalanceRepository, PostgresStockBalanceRepository>();
         services.TryAddSingleton<IStockMovementRepository, PostgresStockMovementRepository>();
+        // V11-RCP-004: same shadow theoretical-consumption recording as
+        // every other Accept path — no channel-specific behavior here.
+        services.TryAddSingleton<IProductRecipeMappingRepository, PostgresProductRecipeMappingRepository>();
+        services.TryAddSingleton<IRecipeVersionRepository, PostgresRecipeVersionRepository>();
+        services.TryAddSingleton<ITheoreticalConsumptionRecordRepository, PostgresTheoreticalConsumptionRecordRepository>();
+        services.TryAddSingleton<IUnitConverter, UnitConverter>();
         services.TryAddSingleton<OrderStockConsumptionService>();
         services.TryAddSingleton<NfcOrderingStore>();
         services.TryAddTransient<NfcOrderingExceptionFilter>();
