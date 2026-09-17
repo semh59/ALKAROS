@@ -234,6 +234,82 @@ describe("cashier-app.js", () => {
     expect(body.assignedWaiterUserId).toBeUndefined();
   });
 
+  it("V1-RMD-232: still releases KASA-1 when table-draft's response body fails to parse", async () => {
+    // The fetch stub's json() is normally fixed to resolve route.body -
+    // this test needs one route (table-draft) whose json() actually
+    // rejects, to reproduce a 2xx response with an unparseable body (a
+    // dropped connection mid-body). Built inline here rather than
+    // extending the shared fetchRouter, which every other test in this
+    // file also depends on.
+    const routes = standardRoutes();
+    const RECOVERED_ROW_VERSION = 7;
+    const fetchMock = vi.fn(async (url, init) => {
+      const href = typeof url === "string" ? url : String(url);
+      if (href.endsWith("/orders/table-draft") && init?.method === "POST") {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => { throw new SyntaxError("Unexpected end of JSON input"); },
+          headers: { get: () => null },
+        };
+      }
+      if (href.includes("/orders/table/") && (!init || init.method === undefined)) {
+        // The recovery query dispatchOrderToKitchen falls back to when the
+        // draft response body cannot be parsed.
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ orderId: ORDER_ID, rowVersion: RECOVERED_ROW_VERSION }),
+          headers: { get: () => null },
+        };
+      }
+      const route = routes.find((candidate) => candidate.test(href, init));
+      if (!route) throw new Error(`No fetch route matched ${init?.method ?? "GET"} ${href}`);
+      const status = route.status ?? 200;
+      return {
+        ok: status >= 200 && status < 300,
+        status,
+        json: async () => route.body ?? {},
+        headers: { get: (name) => route.headers?.[name] ?? null },
+      };
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    vi.stubGlobal("alert", vi.fn());
+    await loadApp(htmlPath, scriptPath);
+
+    await vi.waitFor(() => {
+      if (!document.querySelector(".pos-product-card")) throw new Error("catalog not rendered yet");
+    });
+    document.querySelector(".pos-product-card").click();
+    document.getElementById("btnDispatchOrder").click();
+
+    await vi.waitFor(() => {
+      const releaseCall = fetchMock.mock.calls.find(([callUrl, callInit]) =>
+        typeof callUrl === "string" && callUrl.endsWith(`/orders/${ORDER_ID}/send-to-cashier`) && callInit?.method === "POST");
+      if (!releaseCall) throw new Error("KASA-1 not released yet");
+    });
+    // Before V1-RMD-232, `draft` stayed null when draftResponse.json()
+    // threw, so `finally`'s `if (draft && draft.orderId)` never fired and
+    // this release call never happened at all - KASA-1 stayed stuck.
+    expect(alert).toHaveBeenCalledWith(expect.stringContaining("Sunucuya ulaşılamadı"));
+  });
+
+  it("V1-RMD-232: loads with an empty parked-ticket list instead of crashing when localStorage is corrupted", async () => {
+    localStorage.setItem("alkaros_cashier_parked", "{not valid json");
+    installFetchRouter(standardRoutes());
+    vi.stubGlobal("alert", vi.fn());
+
+    await loadApp(htmlPath, scriptPath);
+
+    // Before V1-RMD-232, JSON.parse on this corrupted value threw
+    // synchronously at module load (before DOMContentLoaded), crashing the
+    // whole script - the catalog below would never have rendered.
+    await vi.waitFor(() => {
+      if (!document.querySelector(".pos-product-card")) throw new Error("catalog not rendered yet");
+    });
+    expect(document.getElementById("btnRecallTicket")).not.toBeNull();
+  });
+
   it("V1-RMD-205: dispatch still works when staff/suggested-waiter fail", async () => {
     const fetchMock = await startAppWithOneProductInTicket(
       standardRoutes({ staffStatus: 500, suggestedStatus: 500 }));

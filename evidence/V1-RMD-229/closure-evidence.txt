@@ -1,0 +1,57 @@
+V1-RMD-229 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Scope executed
+- `src/Modules/Payments/TenderRouting/TenderMethod.cs`: `TenderMethodCatalog.TryParse`
+  no longer trusts `Enum.TryParse`'s numeric-ordinal / whitespace-trimming
+  behavior. Fix requires the parsed value's own `ToString()` to round-trip
+  back to the raw input exactly, which rejects every bare-numeric and
+  whitespace-padded numeric variant (" 1", "1 ", " 1 ", "+1", "1.0", "0",
+  "99") without needing a per-variant guard.
+- `tests/Modules/Payments/TenderRouting/TenderRoutingTests.cs`: added
+  `" 1"`, `"1 "`, `" 1 "`, `"+1"`, `"1.0"` to the existing
+  `TryParseRejectsSplitPaymentAndUnknownText` theory (alongside the
+  already-present `"0"`/`"99"` bare-numeric cases).
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Modules/Payments/TenderRouting -c Debug
+   Result: Toplam: 28, Basarili: 28, Basarisiz: 0, Atlanan: 0 (exit code: 0)
+   - TryParseAcceptsEveryCanonicalMethodName (4 cases): PASSED
+   - TryParseRejectsSplitPaymentAndUnknownText (14 cases, incl. the 5 new
+     whitespace/variant-numeric cases): PASSED
+   - remaining TenderRouter/TenderRequest tests: PASSED (no regression)
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+Note: `tools/task-scope/task_scope_tool.py --task-id V1-RMD-229` reports
+"path not in task allowlist" for both owned-surface paths and for a large
+number of unrelated pre-existing untracked files elsewhere in the repo
+(V1-CUI-*, V1-WTR-054/055/056, screensaver work, the rest of the Payments
+module scaffolding — all pre-existing working-tree state from before this
+task started, not touched by this task). Root cause: this task's Owned
+surface intentionally lists its two "Sinirli ek (paylasilan, geri-tik
+olmadan)" paths WITHOUT backticks — the same convention used in
+V1-RMD-120 ("yollar geri-tik olmadan yazildi ki denetleyici bunlari
+sahiplik iddiasi olarak parse etmesin") so plan-audit's ownership-collision
+checker does not read them as an exclusive-ownership claim on files owned
+by V13-PAY-002. task_scope_tool.py only recognizes backtick-wrapped
+fragments as allowlist entries, so it cannot see non-backtick "Sinirli ek"
+paths at all. This task's own Acceptance evidence list does not require
+task_scope_tool.py, only plan-audit and consistency-audit (both clean
+above), so this is a known, pre-existing tool limitation, not a scope
+violation of this task.
+
+## Write-set vs Allowlist
+- src/Modules/Payments/TenderRouting/TenderMethod.cs (Sinirli ek, V13-PAY-002 sahipliginde kalir — only TryParse's numeric-ordinal acceptance changed)
+- tests/Modules/Payments/TenderRouting/TenderRoutingTests.cs (Sinirli ek, V13-PAY-002 sahipliginde kalir — only new regression cases added)
+- evidence/V1-RMD-229/closure-evidence.txt
+- plan/v1/remediation/V1-RMD-229-tender-method-whitespace-numeric-bypass.md (Status: Planned -> Done, Assignee updated)

@@ -169,6 +169,93 @@ public sealed class BillDomainTests
         Assert.Equal(0m, billItem.NetAmount);
         Assert.Equal(0m, billItem.TaxAmount);
         Assert.Equal(0m, billItem.GrossAmount);
+        // V1-RMD-228: the payable total is 0, but the real gross value (4 *
+        // 20 = 80) must stay visible as a 100% discount for fiscal
+        // reporting — not silently discarded.
+        Assert.Equal(80m, billItem.DiscountAmount);
+        Assert.Equal(80m, billItem.LineSubtotal);
+    }
+
+    [Fact]
+    public void ComplimentaryLineConstructedDirectlyRejectsAPartialDiscount()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => new BillItem(
+            id: Guid.NewGuid(),
+            billId: Guid.NewGuid(),
+            orderItemId: Guid.NewGuid(),
+            productId: Guid.NewGuid(),
+            productNameSnapshot: "Ikram Kahve",
+            quantity: 1,
+            unitPrice: 50m,
+            taxRate: 10m,
+            discountAmount: 30m,
+            lineType: BillLineType.Complimentary));
+
+        Assert.Contains("fully discounted", ex.Message);
+    }
+
+    [Fact]
+    public void ComplimentaryFromOrderItemRejectsADiscountThatDoesNotMatchTheTrueGross()
+    {
+        // Simulates a reloaded OrderItem where a modifier's price delta
+        // (50) was somehow left out of NetAmount when the item was last
+        // persisted (netAmount explicitly 100 instead of the real 150 =
+        // 100 unit price + 50 modifier). Before V1-RMD-231, FromOrderItem's
+        // Complimentary branch derived its own "lineSubtotal" from
+        // NetAmount + DiscountAmount, so this inconsistency was invisible
+        // -- the check compared DiscountAmount to itself. Now it is cross-
+        // checked against OrderItem.LineSubtotalValue (quantity * unit
+        // price + modifiers), an independent value, so it must throw.
+        var modifier = new OrderItemModifier(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Extra Cheese", priceDelta: 50m, quantity: 1);
+        var orderItem = new OrderItem(
+            id: Guid.NewGuid(),
+            orderId: Guid.NewGuid(),
+            productId: Guid.NewGuid(),
+            productNameSnapshot: "Burger",
+            quantity: 1,
+            unitPrice: 100m,
+            taxRate: 10m,
+            modifiers: new[] { modifier },
+            status: OrderItemState.Complimentary,
+            netAmount: 100m,
+            taxAmount: 10m,
+            grossAmount: 110m);
+
+        var ex = Assert.Throws<ArgumentException>(() => BillItem.FromOrderItem(Guid.NewGuid(), orderItem));
+        Assert.Contains("fully discounted", ex.Message);
+    }
+
+    [Fact]
+    public void MixedSaleAndComplimentaryBillTotalsPayableExcludesTheCompLine()
+    {
+        var billId = Guid.NewGuid();
+        var saleItem = new BillItem(
+            id: Guid.NewGuid(),
+            billId: billId,
+            orderItemId: Guid.NewGuid(),
+            productId: Guid.NewGuid(),
+            productNameSnapshot: "Iskender",
+            quantity: 1,
+            unitPrice: 100m,
+            taxRate: 0m);
+        var compItem = new BillItem(
+            id: Guid.NewGuid(),
+            billId: billId,
+            orderItemId: Guid.NewGuid(),
+            productId: Guid.NewGuid(),
+            productNameSnapshot: "Cay",
+            quantity: 1,
+            unitPrice: 50m,
+            taxRate: 0m,
+            discountAmount: 50m,
+            netAmount: 0m,
+            lineType: BillLineType.Complimentary);
+
+        var bill = new Bill(billId, "BILL-MIXED-01", new[] { saleItem, compItem });
+
+        Assert.Equal(150m, bill.Subtotal);
+        Assert.Equal(50m, bill.DiscountTotal);
+        Assert.Equal(100m, bill.PayableAmount);
     }
 
     [Fact]

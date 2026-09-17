@@ -511,6 +511,7 @@ public static partial class DualScreenApplication
         app.MapRoleManagementApi();
         app.MapOfflineReconciliationApi();
         app.MapWaiterNotificationsApi();
+        app.MapCustomerDisplayScreensaverApi();
         app.MapWebPushApi();
         app.MapHelpRequestApi();
         app.MapHub<CustomerDisplayHub>(CustomerDisplayHub.Route);

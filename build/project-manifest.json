@@ -161,7 +161,9 @@
         "src/Modules/Payments/ALKAROS.Payments.csproj",
         "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj"
       ],
-      "packages": []
+      "packages": [
+        "Npgsql"
+      ]
     },
     {
       "path": "src/Modules/Fiscal/ALKAROS.Fiscal.csproj",
@@ -543,6 +545,59 @@
       "module": "Catalog",
       "references": [
         "src/Modules/Catalog/ALKAROS.Catalog.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "FluentAssertions",
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "tests/Modules/Cash/SessionLifecycle/ALKAROS.Cash.SessionLifecycle.Tests.csproj",
+      "kind": "test",
+      "module": "Cash",
+      "references": [
+        "src/Modules/Cash/ALKAROS.Cash.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "FluentAssertions",
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "tests/Modules/Cash/TransactionLedger/ALKAROS.Cash.TransactionLedger.Tests.csproj",
+      "kind": "test",
+      "module": "Cash",
+      "references": [
+        "src/Modules/Cash/ALKAROS.Cash.csproj",
+        "src/Modules/Payments/ALKAROS.Payments.csproj",
+        "src/Modules/Billing/ALKAROS.Billing.csproj",
+        "src/Modules/Orders/ALKAROS.Orders.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "FluentAssertions",
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "tests/Modules/Payments/Allocations/Persistence/ALKAROS.Payments.Allocations.Persistence.Tests.csproj",
+      "kind": "test",
+      "module": "Payments",
+      "references": [
+        "src/Modules/Payments/ALKAROS.Payments.csproj",
+        "src/Modules/Billing/ALKAROS.Billing.csproj",
+        "src/Modules/Orders/ALKAROS.Orders.csproj",
         "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
       ],
       "packages": [

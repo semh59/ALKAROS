@@ -1,0 +1,61 @@
+V1-RMD-231 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Scope executed
+- `src/Modules/Billing/BillFoundation/BillItem.cs`:
+  - Added an optional constructor parameter `decimal? trueGrossAmount = null`.
+    When present it replaces `lineSubtotal` as the value `DiscountAmount`
+    must equal for a Complimentary line, breaking the tautology where
+    `netAmount` is passed explicitly (every real `FromOrderItem` call):
+    previously `lineSubtotal = RoundCurrency(netAmount + DiscountAmount)`
+    with `netAmount == 0m` reduced to `lineSubtotal == DiscountAmount`,
+    comparing `DiscountAmount` to itself.
+  - `FromOrderItem`'s Complimentary branch now passes
+    `trueGrossAmount: orderItem.LineSubtotalValue` — an independent value
+    (quantity * unit price plus modifiers, already a public property on
+    `OrderItem`, no change needed there) computed without any reference to
+    `NetAmount`/`DiscountAmount`. If a caller's `NetAmount`/`DiscountAmount`
+    bookkeeping ever drifts from that true gross (e.g. a modifier total
+    forgotten on reload), the constructor now throws instead of silently
+    accepting it.
+  - Backward compatible: `trueGrossAmount` defaults to `null`, in which
+    case behavior is identical to before (falls back to `lineSubtotal`) —
+    the existing `ComplimentaryLineConstructedDirectlyRejectsAPartialDiscount`
+    test (direct constructor call, no `netAmount`, no `trueGrossAmount`)
+    is untouched and still passes.
+- `tests/Modules/Billing/BillFoundation/BillDomainTests.cs`: 2 new tests
+  (`ComplimentaryFromOrderItemRejectsADiscountThatDoesNotMatchTheTrueGross`,
+  `MixedSaleAndComplimentaryBillTotalsPayableExcludesTheCompLine`); no
+  existing test changed.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Modules/Billing/BillFoundation -c Debug (real Postgres, alkaros-test-pg:55432)
+   Result: Toplam: 44, Basarili: 44, Basarisiz: 0 (exit code: 0)
+   - ComplimentaryFromOrderItemRejectsADiscountThatDoesNotMatchTheTrueGross: PASSED
+     (simulated a reloaded Complimentary OrderItem with a modifier's 50
+     price delta missing from its persisted NetAmount; FromOrderItem now
+     throws ArgumentException instead of silently accepting the
+     under-reported comp)
+   - MixedSaleAndComplimentaryBillTotalsPayableExcludesTheCompLine: PASSED
+     (1 Sale line 100 + 1 Complimentary line 50 discount -> Subtotal=150,
+     DiscountTotal=50, PayableAmount=100, matching the task's own example)
+   - all pre-existing tests (incl. ComplimentaryLineConstructedDirectlyRejectsAPartialDiscount,
+     BillItemComplimentaryLineHasZeroTaxableBase,
+     BillItemFromOrderItemWithModifiersAndDiscountCalculatesAccurately): PASSED, no regression
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Write-set vs Allowlist
+- src/Modules/Billing/BillFoundation/BillItem.cs (Sinirli ek, V1-RMD-035 ailesinde kalir)
+- tests/Modules/Billing/BillFoundation/BillDomainTests.cs (Sinirli ek, V1-RMD-035 ailesinde kalir)
+- evidence/V1-RMD-231/closure-evidence.txt
+- plan/v1/remediation/V1-RMD-231-complimentary-invariant-hardening.md (Status: Planned -> Done, Assignee updated)

@@ -13,7 +13,7 @@ Production shell'deki daimi "fresh" durum hatasını düzeltmek; bağlantı kopt
 ## Owned surface
 
 - `src/Clients/PosTerminal/src/shell/ProductionShell.tsx`
-- `src/Clients/PosTerminal/src/styles.css`
+- PO:2026-09-16 kararıyla src/Clients/PosTerminal/src/styles.css yüzeyi Faz 0 token migrasyonu için V1-CUI-009'a devredildi; bu historical task closed kalır.
 - `src/Clients/WaiterPwa/wwwroot/waiter-app.css`
 - `evidence/V1-RMD-042/**`
 

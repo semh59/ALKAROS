@@ -24,7 +24,12 @@ hiç yansımamasına açık bırakıyordu.
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-120-dualscreen-order-writes-through-order-aggregate.md` (yeni)
-- `src/Host/DualScreen/DualScreenStore.cs` (V1-RMD-090'dan devralındı) —
+- PO:2026-09-16 kararıyla src/Host/DualScreen/DualScreenStore.cs yüzeyi
+  katalog satırına kalan-adet alanı eklemek için V1-WTR-054'e devredildi.
+  Bu görevin aşağıda anlatılan sipariş-yazma teslimatı geçmişte kalır,
+  değişmez.
+- Tarihsel not (bu görev teslim edildiğinde geçerliydi):
+  src/Host/DualScreen/DualScreenStore.cs (V1-RMD-090'dan devralınmıştı) —
   kendi `NpgsqlDataSource`'undan kurduğu bir `PostgresOrderRepository` alanı
   (DI enjeksiyonu değil — bkz. Acceptance evidence'taki gerekçe: beş ayrı
   Experience alanı bu store'u yalnız oturum kimlik doğrulaması için kaydediyor,

@@ -1,8 +1,8 @@
 # V13-CSH-002 - Implement CashTransaction ledger and close difference
 
 - Task ID: V13-CSH-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
 - Work type: implementation
 - Surface state: Planned
 
@@ -22,6 +22,13 @@ Cash sale/refund/in/out entry'lerini kaydetmek ve expected/actual close variance
 - `src/Modules/Cash/TransactionLedger/**`, `tests/Modules/Cash/TransactionLedger/**`,
   `database/migrations/V13/V13-CSH-002/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- Kapsam genişletme onayı (2026-09-17 kullanıcı talimatı): bu task'ın yeni
+  test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine
+  kaydı (V11-UNT-001/V13-CSH-001/V13-ALC-001 emsaliyle aynı desen).
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json,
+  src/Host/Composition/Migrations/MigrationManifest.cs,
+  tests/Host/MigrationComposition/Manifest/ManifestTests.cs — yeni migration
+  pozisyonunun kaydı (V13-ALC-001 emsaliyle aynı desen).
 
 ## In scope
 

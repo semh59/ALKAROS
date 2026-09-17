@@ -19,7 +19,10 @@ Garson PWA ve Cashier sipariş ekranlarında her sepet kalemine serbest metin ö
 - `plan/v1/remediation/V1-RMD-083-waiter-and-cashier-order-line-note-entry.md`
 - `src/Clients/WaiterPwa/wwwroot/waiter-app.js`
 - PO:2026-09-01 kararıyla src/Clients/WaiterPwa/wwwroot/index.html yüzeyi V1-RMD-092'ye devredildi; bu historical task closed kalır ve viewport erişilebilirlik düzeltmesi 19. dalgada yapılır.
-- `src/Clients/Cashier/wwwroot/**`
+- `src/Clients/Cashier/wwwroot/index.html`
+- `src/Clients/Cashier/wwwroot/cashier-app.js`
+- `src/Clients/Cashier/wwwroot/manifest.json`
+- PO:2026-09-16 kararıyla src/Clients/Cashier/wwwroot/cashier-app.css yüzeyi Faz 0 token migrasyonu için V1-CUI-008'e devredildi; bu historical task closed kalır.
 - `tests/Host/Experience/Orders/OrderManagementExperienceTests.cs` (hiç
   `.csproj`'u yok, derlenmiyor — ayrı, önceden var olan bir kusur olarak
   not edilir)

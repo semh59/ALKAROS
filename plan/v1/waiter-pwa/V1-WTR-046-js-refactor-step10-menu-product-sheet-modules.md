@@ -30,7 +30,9 @@ dalları `toggleModifier`/`updateProductSheetTotal`/`addToDraft`'ı
 
 ## Owned surface
 
-- `src/Clients/WaiterPwa/wwwroot/js/screens/menu.js` (yeni).
+- PO:2026-09-16 kararıyla src/Clients/WaiterPwa/wwwroot/js/screens/menu.js
+  yüzeyi kalan-adet rozeti için V1-WTR-055'e devredildi; bu historical task
+  closed kalır.
 - `src/Clients/WaiterPwa/wwwroot/js/sheets/product-sheet.js` (yeni).
 - Sınırlı ek (V1-WTR-010 ailesinin sahipliğinde kalır):
   - src/Clients/WaiterPwa/wwwroot/js/state.js — `persistDraftsByTable`

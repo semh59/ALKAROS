@@ -22,6 +22,9 @@ const RelaySettings = lazy(() =>
 const ReservationStation = lazy(() =>
   import("./routes/ReservationStation").then((m) => ({ default: m.ReservationStation })),
 );
+const CustomerDisplayScreensaverSettings = lazy(() =>
+  import("./routes/CustomerDisplayScreensaverSettings").then((m) => ({ default: m.CustomerDisplayScreensaverSettings })),
+);
 
 export function App() {
   if (window.location.pathname.startsWith("/display")) {
@@ -49,6 +52,13 @@ export function App() {
     return (
       <Suspense fallback={null}>
         <RelaySettings />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname.startsWith("/settings/screensaver")) {
+    return (
+      <Suspense fallback={null}>
+        <CustomerDisplayScreensaverSettings />
       </Suspense>
     );
   }

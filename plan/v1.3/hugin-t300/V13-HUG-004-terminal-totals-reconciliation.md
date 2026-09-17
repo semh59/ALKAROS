@@ -1,4 +1,4 @@
-# V13-HUG-004 - Implement T300 terminal totals reconciliation
+# V13-HUG-004 - Implement Token/Beko terminal totals reconciliation
 
 - Task ID: V13-HUG-004
 - Status: Planned
@@ -13,14 +13,18 @@
 - PDF:II.3.12
 - PDF:II.5.4
 - PDF:III.19
+- CORR:C98
 
 ## Goal
+
+**Retarget notu (2026-09-17, `V0-GOV-064`/CORR:C98):** hedef cihaz Hugin
+T300 değil, Token/Beko (300 TR / X30 TR). Task ID değişmedi.
 
 Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamları veya işlem sorgu kaynağıyla karşılaştırın.
 
 ## Owned surface
 
-- `src/Modules/Reconciliation/HuginTotals/**`, `tests/Modules/Reconciliation/HuginTotals/**`,
+- `src/Modules/Reconciliation/TokenTotals/**`, `tests/Modules/Reconciliation/TokenTotals/**`,
   `database/migrations/V13/V13-HUG-004/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
@@ -31,7 +35,7 @@ Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamla
 
 ## Out of scope
 
-- Doğrulanmış T300 contract dışındaki banka ödemesi.
+- Doğrulanmış Token/Beko contract dışındaki banka ödemesi.
 
 ## Dependencies
 
@@ -44,7 +48,7 @@ Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamla
 
 ## Deliverables
 
-- `src/Modules/Reconciliation/HuginTotals/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Reconciliation/TokenTotals/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Contract/UI ve otomatik success/failure/retry testleri.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.
@@ -52,7 +56,7 @@ Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamla
 ## Acceptance evidence
 
 - Bilinen test periyodu sıfır farkla uzlaşır; enjekte edilen eksik/ekstra işlem, izlenebilir bir vaka oluşturur.
-- `V13-REC-001` tarihli `NotApplicable` ise payment reconciliation case üretimi bu task kapsamında doğrulanmaz; Hugin
+- `V13-REC-001` tarihli `NotApplicable` ise payment reconciliation case üretimi bu task kapsamında doğrulanmaz; Token/Beko
   terminal totals karşılaştırması kendi doğrulanmış toplam/işlem sorgu kaynaklarıyla yine doğrulanır.
 
 ## Handoff

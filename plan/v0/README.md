@@ -14,7 +14,9 @@ Kodlamadan önce domain, veri, mevzuat ve dış sistem belirsizliklerini kapatma
   açık `Blocked` görev kalmaz.
 - Tüm `V0-DOM`, `V0-DAT`, `V0-ARC`, `V0-CMP`, recovery ve dış-sözleşme görevleri
   karar kaynakları ve named approver kanıtıyla kapanır.
-- Hugin, QNB, Yemeksepeti, meal-card, printer ve QR relay görevleri gerçek
+- Hugin (2026-09-17 itibarıyla Token/Beko hedefli, bkz. `V0-GOV-064`/CORR:C98
+  — modül klasör adı/task ID'leri tarihi nedenlerle korunuyor), QNB,
+  Yemeksepeti, meal-card, printer ve QR relay görevleri gerçek
   sandbox/device/contract kanıtı olmadan V0 çıkışını geçiremez.
 - Backup tool path'i disposable PostgreSQL 18 üzerinde doğrulanmış, RPO/RTO
   hedefi karar kaydına bağlanmıştır; application restore kanıtı V1.5'e aittir.

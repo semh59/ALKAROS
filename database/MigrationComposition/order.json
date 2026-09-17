@@ -1018,6 +1018,56 @@
         "stock_items"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "119",
+      "phase": "B",
+      "tables": [
+        "screensaver_images"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "120",
+      "phase": "B",
+      "tables": [
+        "payments",
+        "payment_status_history"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "121",
+      "phase": "B",
+      "tables": [
+        "payments"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "122",
+      "phase": "B",
+      "tables": [
+        "cash_sessions",
+        "cash_counts"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "123",
+      "phase": "B",
+      "tables": [
+        "payment_allocations"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "124",
+      "phase": "B",
+      "tables": [
+        "cash_transactions"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

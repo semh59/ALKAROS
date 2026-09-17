@@ -1,0 +1,109 @@
+V13-CSH-002 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Scope executed
+Implements the append-only CashTransaction ledger and the expected/actual
+close variance computation (docs/domain/cash-session-design.md §4-5,
+PDF:I.38-I.44/II.2.7/II.5.9/III.9.2).
+
+- `src/Modules/Cash/TransactionLedger/CashTransaction.cs`: immutable entry.
+  `Amount` is always a positive magnitude; `Direction` (In/Out) carries the
+  sign — Opening/Sale/CashIn are always In and CashOut/Refund are always
+  Out (constructor refuses any other direction for those); CountAdjustment
+  and ClosingDifference may legitimately go either way (a recount can be
+  short or over; a closing variance can be a shortage or an overage), so
+  their direction is caller-supplied. Payment linkage: Sale/Refund require
+  a `RelatedPaymentId`, every other type must not carry one. Explicit
+  correction requirement: CountAdjustment must always carry non-empty
+  `Notes` stating why.
+- `CashTransactionExceptions.cs`: InvalidCashTransactionAmountException,
+  InvalidCashTransactionDirectionException, MissingRelatedPaymentException,
+  UnexpectedRelatedPaymentException, MissingCountAdjustmentReasonException.
+- `ICashTransactionLedgerRepository.cs` + `PostgresCashTransactionLedgerRepository.cs`:
+  `RecordAsync` (insert-only, no update path exists anywhere — a correction
+  is always a new row), `GetBySessionIdAsync` (bounded, MaxUnpagedRows
+  idiom), and `ComputeExpectedCashAsync` — sums every entry's signed amount
+  except CountAdjustment/ClosingDifference (the design doc's own formula:
+  ExpectedCash = OpeningBalance + CashIn + Sales - CashOut - Refunds, with
+  CountAdjustment/ClosingDifference being audit-trail entries recorded
+  AFTER the fact, not inputs to that running total). Acceptance evidence
+  ("cash reconstructed from immutable entries alone, difference recorded,
+  never silently overwritten") is satisfied literally: Opening is itself
+  just another ledger row, so ExpectedCash needs no external "opening
+  balance" input at all — it is 100% reconstructed from the session's own
+  rows, and every row is insert-only.
+- `CashTransactionLedgerModule.cs`: a third `IModule` in the Cash assembly,
+  kept separate from `CashModule` (V1-CSH-001) and
+  `CashSessionLifecycleModule` (V13-CSH-001) so this task never touched
+  either shared file.
+- `database/migrations/V13/V13-CSH-002/124-cash-transactions.{up,down}.sql`:
+  `cash.cash_transactions`, FK to `cash.cash_sessions` and (nullable) to
+  `payments.payments`. Defense-in-depth CHECK constraints mirror all three
+  application-level rules above (direction-matches-type,
+  payment-linkage-matches-type, count-adjustment-requires-notes), plus
+  amount > 0.
+- `tests/Modules/Cash/TransactionLedger/**`: new test project. 10 pure
+  constructor tests (no DB) + 12 real-Postgres tests: round trip, the
+  design doc's own worked formula (500+20+100-15-5=600) computed purely
+  from persisted ledger rows, confirms CountAdjustment/ClosingDifference
+  are excluded from that sum, a zero-entry session sums to 0, and 5
+  raw-SQL "database test" cases proving the CHECK/FK constraints reject
+  the same violations the constructor already refuses even if a future
+  caller bypasses it (same pattern as PostgresPaymentTests/
+  PostgresPaymentAllocationRepositoryTests' own DatabaseRejects* tests).
+
+## Scope-gap corrections made mid-task (documented, user-approved)
+1. Manifest chain (order.json/MigrationManifest.cs/ManifestTests.cs) —
+   migration 124 registration, same precedent as V13-ALC-001/V13-CSH-001.
+2. New test project registration in `ALKAROS.slnx` and
+   `build/project-manifest.json` — same blanket scope-extension approval
+   already granted for this build-out chain. No src-side csproj changes
+   were needed this time (CashTransaction.cs only uses `Guid` for payment
+   linkage, no cross-module type reference, so `ALKAROS.Cash.csproj` itself
+   needed no new ProjectReference).
+
+## Self-caught issue (fixed before closure)
+`consistency_audit.py` flagged 2 Turkish-language code comments (one in
+the migration, one in CashTransaction.cs) on the first run — AGENTS.md
+requires code/comments in English. Both reworded in English with no
+change in meaning; re-run confirmed clean.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Modules/Cash/TransactionLedger -c Debug (real Postgres)
+   Result: Toplam: 22, Basarili: 22, Basarisiz: 0 (exit code: 0)
+
+3. Regression (unchanged):
+   - ALKAROS.Cash.SessionLifecycle.Tests: 11/11
+   - ALKAROS.Cash.Contracts.Tests: 13/13
+   - ALKAROS.Host.Tests (Manifest filter): 17/17
+
+## Migration forward/backward proof (manual, real Postgres)
+Scratch database (`scratch_csh002b`, after the comment fix): applied
+006->010->011->019->036->120->121->122->124 (up) in order, all clean.
+Applied 124 (down): clean, table dropped. Re-applied 124 (up): clean, no
+errors. Scratch database dropped.
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: VALID (0 differences across Solution, Disk, and ProjectReferences)
+
+2. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+3. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0) — after fixing the 2
+   Turkish-comment findings above.
+
+## Write-set vs Allowlist
+- src/Modules/Cash/TransactionLedger/** (new)
+- tests/Modules/Cash/TransactionLedger/** (new)
+- database/migrations/V13/V13-CSH-002/** (new)
+- database/MigrationComposition/order.json, src/Host/Composition/Migrations/MigrationManifest.cs,
+  tests/Host/MigrationComposition/Manifest/ManifestTests.cs (Sinirli ek, migration 124 registration)
+- ALKAROS.slnx, build/project-manifest.json (scope-extension approval, new test project registration)
+- evidence/V13-CSH-002/closure-evidence.txt
+- plan/v1.3/cash/V13-CSH-002-cash-transaction-ledger.md (Status: Planned -> Done, Assignee updated, Owned surface corrected)

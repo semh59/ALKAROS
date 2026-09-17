@@ -1,0 +1,78 @@
+V1-RMD-230 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Scope executed
+- New migration 121 (`database/migrations/V1/V1-RMD-230/121-payments-cross-field-invariants.{up,down}.sql`),
+  additive only, adds four CHECK constraints on `payments.payments`
+  mirroring `Payment.cs`'s own constructor invariants (defense-in-depth):
+  - `ck_payments_status_tendered_amount_pairing`: (status = 'Initiated') = (tendered_amount IS NULL)
+  - `ck_payments_status_approved_amount_pairing`: (status = 'Approved') = (approved_amount IS NOT NULL)
+  - `ck_payments_approved_amount_not_exceeding_tendered`: approved_amount IS NULL OR approved_amount <= tendered_amount
+  - `ck_payments_change_amount_reconciles`: approved_amount IS NULL OR change_amount = tendered_amount - approved_amount
+  and `CREATE INDEX ix_payments_status ON payments.payments (status)`.
+- `tests/Modules/Payments/PaymentAggregate/PostgresPaymentTests.cs`: 6 new
+  tests, each inserting a raw row via direct SQL that violates exactly one
+  new constraint and asserting `PostgresException` with SQLSTATE 23514
+  (CheckViolation). Also renamed the misleadingly-named
+  `GetByBillIdReturnsEveryPaymentAgainstThatBillMultiPaymentCap` to
+  `GetByBillIdReturnsEveryPaymentAgainstThatBill` with a comment clarifying
+  it does NOT exercise a real bill-payable cap (that's V13-ALC-001's job,
+  not invented here) — existing test body/assertions unchanged.
+
+## Scope-gap corrections made mid-task (documented, user-approved)
+The task's own Owned surface omitted two sets of shared files its own
+Acceptance evidence requires touching. Both gaps were surfaced to the user
+before writing any code touching them; user chose "fix Owned surface,
+continue" (same precedent as V11-INV-009's Owned surface for the same
+kind of shared manifest files):
+1. `database/MigrationComposition/order.json`,
+   `src/Host/Composition/Migrations/MigrationManifest.cs`,
+   `tests/Host/MigrationComposition/Manifest/ManifestTests.cs` — needed to
+   register migration position 121 (PhaseBMax "120"->"121", order.json new
+   entry, ManifestTests RuntimeManifestIds/count/LastEntryTables updated).
+2. `tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj` —
+   needed one new `<None Include>` line so the new 121 migration is part of
+   the fixture chain `PostgresPaymentTests` applies against real Postgres;
+   otherwise the new CHECK-violation tests would have nothing to violate.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Host/MigrationComposition -c Debug --filter FullyQualifiedName~Manifest
+   Result: Toplam: 17, Basarili: 17, Basarisiz: 0 (exit code: 0)
+
+3. dotnet test tests/Modules/Payments/PaymentAggregate -c Debug (real Postgres, alkaros-test-pg:55432)
+   Result: Toplam: 43, Basarili: 43, Basarisiz: 0 (exit code: 0)
+   - 6 new CHECK-violation tests: PASSED
+   - GetByBillIdReturnsEveryPaymentAgainstThatBill (renamed): PASSED
+   - all pre-existing tests: PASSED (no regression)
+
+## Migration forward/backward proof (manual, real Postgres)
+Scratch database `scratch_rmd230` on alkaros-test-pg:
+1. Applied 006 -> 010 -> 011 -> 019 -> 036 -> 120 -> 121 (up) in order: all
+   clean (CREATE SCHEMA/TABLE/INDEX/ALTER TABLE, no errors).
+2. Applied 121 (down): clean, `\d payments.payments` confirmed all four new
+   constraints and ix_payments_status gone, the four pre-existing 120
+   constraints intact.
+3. Re-applied 121 (up): clean, no errors on re-apply.
+4. Scratch database dropped.
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Write-set vs Allowlist
+- database/migrations/V1/V1-RMD-230/121-payments-cross-field-invariants.up.sql (new)
+- database/migrations/V1/V1-RMD-230/121-payments-cross-field-invariants.down.sql (new)
+- tests/Modules/Payments/PaymentAggregate/PostgresPaymentTests.cs (Sinirli ek, V13-PAY-001 sahipliginde kalir)
+- tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj (Sinirli ek, V13-PAY-001 sahipliginde kalir — Owned surface corrected mid-task)
+- database/MigrationComposition/order.json (paylasilan — Owned surface corrected mid-task)
+- src/Host/Composition/Migrations/MigrationManifest.cs (paylasilan — Owned surface corrected mid-task)
+- tests/Host/MigrationComposition/Manifest/ManifestTests.cs (paylasilan — Owned surface corrected mid-task)
+- evidence/V1-RMD-230/closure-evidence.txt
+- plan/v1/remediation/V1-RMD-230-payment-cross-field-db-invariants.md (Status: Planned -> Done, Assignee updated, Owned surface corrected)

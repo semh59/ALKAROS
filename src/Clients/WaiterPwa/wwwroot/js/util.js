@@ -95,3 +95,22 @@ export function courseLabel(courseNumber) {
 export function isFullscreen() {
   return document.fullscreenElement !== null && document.fullscreenElement !== undefined;
 }
+
+// V1-WTR-056: bill.js's renderSentLine (V1-RMD-143, item.availableStockQuantity)
+// and menu.js's renderProducts (V1-WTR-055, product.remainingCount) built the
+// same "Kalan N" badge from two independent copies of this logic - a
+// 2026-09-16 code review flagged the threshold/markup drifting apart as the
+// two are edited separately. One helper, both callers.
+//
+// `count` null/undefined means the product is not stock-tracked at all -
+// not the same as none left - so nothing is shown. `allowOut` distinguishes
+// bill.js's already-sent line (where a stock count can legitimately reach
+// zero, V1-RMD-143's ".is-out"/"Tükendi") from menu.js's still-selectable
+// catalog (where V1-WTR-054 already drops a zero-or-less product from the
+// response entirely, so that state can never occur there).
+export function renderStockBadge(count, { allowOut = false } = {}) {
+  if (count === null || count === undefined) return '';
+  const isOut = allowOut && count <= 0;
+  const cssClass = isOut ? ' is-out' : (count < 5 ? ' is-low' : '');
+  return `<span class="product-stock${cssClass}">Kalan ${escapeHtml(formatQuantity(count))}</span>`;
+}

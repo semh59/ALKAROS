@@ -4,7 +4,7 @@
 // that the two are "birbirine en sıkı bağımlı" — tightly coupled).
 
 import { state, el, persistDraftsByTable } from '../state.js';
-import { escapeHtml, formatMoney, formatQuantity, randomUUID } from '../util.js';
+import { escapeHtml, formatMoney, formatQuantity, randomUUID, renderStockBadge } from '../util.js';
 import { draftTotal, renderBill } from '../sheets/bill.js';
 
 export function renderCategories() {
@@ -43,12 +43,21 @@ export function renderProducts() {
     }
     const inDraft = draftQuantityOf(product.id);
     const hasOptions = product.modifierGroups.length > 0;
+    // V1-WTR-055/056: same badge bill.js's renderSentLine already shows for
+    // a sent line (V1-RMD-143), via the shared renderStockBadge — reused
+    // here so the waiter sees it while still CHOOSING, not only after
+    // adding. A product V1-WTR-054's catalog query would report at 0 or
+    // less never reaches this list at all, so allowOut stays false.
+    const remaining = renderStockBadge(product.remainingCount);
+    const meta = hasOptions || remaining
+      ? `<span class="product-meta">${hasOptions ? '<span class="product-options">Seçenekli</span>' : ''}${remaining}</span>`
+      : '';
     html += `
       <div class="product-row">
         <button type="button" class="product" data-product="${escapeHtml(product.id)}">
           <span class="product-main">
             <span class="product-name">${escapeHtml(product.name)}</span>
-            ${hasOptions ? '<span class="product-meta"><span class="product-options">Seçenekli</span></span>' : ''}
+            ${meta}
           </span>
           <span class="product-price">${formatMoney(product.price)}</span>
           ${inDraft > 0 ? `<span class="product-count">${escapeHtml(formatQuantity(inDraft))}</span>` : ''}

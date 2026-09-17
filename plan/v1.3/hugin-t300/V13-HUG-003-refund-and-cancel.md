@@ -1,4 +1,4 @@
-# V13-HUG-003 - Implement Hugin refund and cancellation transport
+# V13-HUG-003 - Implement Token/Beko refund and cancellation transport
 
 - Task ID: V13-HUG-003
 - Status: Planned
@@ -13,14 +13,18 @@
 - PDF:II.3.12
 - PDF:II.5.4
 - PDF:III.19
+- CORR:C98
 
 ## Goal
+
+**Retarget notu (2026-09-17, `V0-GOV-064`/CORR:C98):** hedef cihaz Hugin
+T300 değil, Token/Beko (300 TR / X30 TR). Task ID değişmedi.
 
 Onaylı RefundIntent için iptal/iade işlemini gönderip Approved, Rejected veya Unknown provider sonucunu kaydetmek.
 
 ## Owned surface
 
-- `src/Modules/Payments/Hugin/RefundTransport/**`, `tests/Modules/Payments/Hugin/RefundTransport/**`
+- `src/Modules/Payments/Token/RefundTransport/**`, `tests/Modules/Payments/Token/RefundTransport/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -42,7 +46,7 @@ Onaylı RefundIntent için iptal/iade işlemini gönderip Approved, Rejected vey
 
 ## Deliverables
 
-- `src/Modules/Payments/Hugin/RefundTransport/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Payments/Token/RefundTransport/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Başarı, ret, timeout/retry ve finansal invariant testleri.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

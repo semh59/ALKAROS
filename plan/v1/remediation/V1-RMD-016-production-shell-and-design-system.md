@@ -16,7 +16,12 @@ içermez.
 
 - `src/Clients/PosTerminal/src/shell/index.ts`
 - `src/Clients/PosTerminal/src/shell/models.ts`
-- `src/Clients/PosTerminal/src/design-system/**`
+- `src/Clients/PosTerminal/src/design-system/Icon.tsx`
+- `src/Clients/PosTerminal/src/design-system/icon.css`
+- `src/Clients/PosTerminal/src/design-system/index.ts`
+- `src/Clients/PosTerminal/src/design-system/primitives.css`
+- `src/Clients/PosTerminal/src/design-system/primitives.tsx`
+- PO:2026-09-16 kararıyla src/Clients/PosTerminal/src/design-system/tokens.css ve src/Clients/PosTerminal/src/design-system/primitives.test.tsx yüzeyi Faz 0 token migrasyonu için V1-CUI-009'a devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-016/**`
 
 ## Dependencies

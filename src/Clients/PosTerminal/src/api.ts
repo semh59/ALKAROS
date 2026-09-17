@@ -11,6 +11,13 @@ import type {
   RuntimeConfiguration,
 } from "./contracts";
 
+// V1-CDP-002/004: fetchIdleScreensaver's result — the content type decides
+// whether CustomerDisplay.tsx renders an <img> or a <video>.
+export interface IdleScreensaver {
+  url: string;
+  contentType: string;
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -169,6 +176,57 @@ export const api = {
     ),
   snapshot: (displayId: string) =>
     request<DisplaySnapshot>(`/api/v1/customer-displays/${displayId}/snapshot`),
+  // V1-CDP-002: the endpoint returns raw image (or, since V1-CDP-004, video)
+  // bytes, not JSON, so this bypasses the generic `request` helper entirely;
+  // a missing screensaver (404) is the expected default, not an error — it
+  // resolves to null so the Idle screen falls back to the branded card
+  // without ever throwing. The content type comes back alongside the object
+  // URL so the caller knows whether to render an <img> or a <video>.
+  fetchIdleScreensaver: async (displayId: string): Promise<IdleScreensaver | null> => {
+    let response: Response;
+    try {
+      response = await fetch(`/api/v1/customer-displays/${displayId}/screensaver`, {
+        credentials: "same-origin",
+      });
+    } catch {
+      return null;
+    }
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return { url: URL.createObjectURL(blob), contentType: blob.type };
+  },
+  // V1-CDP-003: multipart body, so this bypasses `request` too — a manually
+  // set "Content-Type: application/json" header would break the browser's
+  // own multipart boundary.
+  uploadScreensaver: async (file: File): Promise<void> => {
+    const body = new FormData();
+    body.append("file", file);
+    let response: Response;
+    try {
+      response = await fetch("/api/v1/management/customer-display/screensaver", {
+        method: "PUT",
+        credentials: "same-origin",
+        body,
+      });
+    } catch {
+      throw new ApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.");
+    }
+    if (!response.ok) {
+      let errorBody: ApiErrorBody | undefined;
+      try {
+        errorBody = (await response.json()) as ApiErrorBody;
+      } catch {
+        errorBody = undefined;
+      }
+      throw new ApiError(
+        response.status,
+        errorBody?.error?.code ?? "REQUEST_FAILED",
+        errorBody?.error?.message ?? "İşlem tamamlanamadı.",
+      );
+    }
+  },
+  removeScreensaver: () =>
+    request<void>("/api/v1/management/customer-display/screensaver", { method: "DELETE" }),
   revokeDisplay: (terminalId: string) =>
     request<{ revoked: number }>(`/api/v1/terminals/${terminalId}/display-sessions/revoke`, {
       method: "POST",

@@ -1,4 +1,4 @@
-# V13-HUG-001 - Implement Hugin T300 payment request path
+# V13-HUG-001 - Implement Token/Beko payment request path
 
 - Task ID: V13-HUG-001
 - Status: Planned
@@ -13,14 +13,19 @@
 - PDF:II.3.12
 - PDF:II.5.4
 - PDF:III.19
+- CORR:C98
 
 ## Goal
 
-Doğrulanmış T300 contract'ye karşı onaylanmış ve reddedilen kart payment akışlarını uygulayın.
+**Retarget notu (2026-09-17, `V0-GOV-064`/CORR:C98):** hedef cihaz Hugin
+T300 değil, Token/Beko (300 TR / X30 TR) — `IntegrationHub.dll`
+(`sendBasket`, `type`/`operatorId`). Task ID değişmedi.
+
+Doğrulanmış Token/Beko contract'ına karşı onaylanmış ve reddedilen kart payment akışlarını uygulayın.
 
 ## Owned surface
 
-- `src/Modules/Payments/Hugin/PaymentRequest/**`, `tests/Modules/Payments/Hugin/PaymentRequest/**`
+- `src/Modules/Payments/Token/PaymentRequest/**`, `tests/Modules/Payments/Token/PaymentRequest/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -41,7 +46,7 @@ Doğrulanmış T300 contract'ye karşı onaylanmış ve reddedilen kart payment 
 
 ## Deliverables
 
-- `src/Modules/Payments/Hugin/PaymentRequest/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Payments/Token/PaymentRequest/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Başarı, ret, timeout/retry ve finansal invariant testleri.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

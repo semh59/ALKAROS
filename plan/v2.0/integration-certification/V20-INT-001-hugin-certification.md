@@ -1,4 +1,4 @@
-# V20-INT-001 - Certify Hugin integration
+# V20-INT-001 - Certify Token/Beko integration
 
 - Task ID: V20-INT-001
 - Status: Planned
@@ -8,19 +8,21 @@
 
 ## Source basis
 
-- EXT:GIB-HUGIN-T300
-- EXT:HUGIN-PC-LINK-V1
-- EXT:HUGIN-CLOUD-LINK-V1-T300
+- EXT:TOKEN-DEVELOPER-PORTAL
+- CORR:C98
 
 ## Goal
 
-Onaylanan Hugin model/ürün yazılımı/protokol kombinasyonunu mali satış, retry, toplam ve arıza senaryolarına göre
+**Retarget notu (2026-09-17, `V0-GOV-064`/CORR:C98):** hedef cihaz Hugin
+T300 değil, Token/Beko (300 TR / X30 TR). Task ID değişmedi.
+
+Onaylanan Token/Beko model/ürün yazılımı/protokol kombinasyonunu mali satış, retry, toplam ve arıza senaryolarına göre
 onaylayın.
 
 ## Owned surface
 
-- `release/evidence/integrations/hugin/**`
-- Bu görev Hugin adapter kodunu değiştiremez.
+- `release/evidence/integrations/token/**`
+- Bu görev Token adapter kodunu değiştiremez.
 
 ## In scope
 
@@ -47,12 +49,12 @@ onaylayın.
 
 - Onaylanan her zorunlu senaryo, adı geçen fiziksel cihazı/ürün yazılımını aktarır; hiçbir retry açıklanamayan yinelenen
   bir mali işlem üretmez.
-- `V13-FSC-003` tarihli `NotApplicable` ise adisyon lifecycle bu certification'a dahil edilmez; Hugin payment ve
+- `V13-FSC-003` tarihli `NotApplicable` ise adisyon lifecycle bu certification'a dahil edilmez; Token payment ve
   terminal
   total senaryoları yine kanıtlanır.
-- `V13-HUG-004` kanıtlı `NotApplicable` ise terminal totals senaryoları certification kapsamına dahil edilmez; Hugin
+- `V13-HUG-004` kanıtlı `NotApplicable` ise terminal totals senaryoları certification kapsamına dahil edilmez; Token
   payment senaryoları yine kanıtlanır.
-- NotApplicable koşulu: `GATE-V13-FSC-STRATEGY` tarihli branch kararı Hugin'i dışlarsa bu task kanıtlı `NotApplicable`
+- NotApplicable koşulu: `GATE-V13-FSC-STRATEGY` tarihli branch kararı Token/Beko'yu dışlarsa bu task kanıtlı `NotApplicable`
   olarak kapanır (karar kaydı + `V13-FSC-003`/`V13-FSC-004` durum kanıtıyla).
 
 ## Handoff

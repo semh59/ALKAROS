@@ -22,6 +22,12 @@ Aktif terminal/kasiyer için açma, sayma, kapatma ve fark teyit akışını uyg
 ## In scope
 
 - Açılış bakiyesi, cash giriş/çıkış, sayım, beklenen/gerçek fark, izin ve eski sürüm yönetimi.
+- PO:2026-09-16 kararı (en az iş ilkesi): açılış ekranı, V13-CSH-001'in
+  eklediği öneri sorgusundan gelen tutarı alan içine ÖN-DOLU getirir;
+  kasiyer bunu değiştirebilir ama genelde tek dokunuşla onaylar. Öneri
+  `null` ise (ilk oturum/önceki kapanış yok) alan `0,00` ile başlar — bu
+  görevin kendisi hiçbir hesaplama yapmaz, yalnız sunucunun verdiği sayıyı
+  gösterir (backend akıllı, frontend aptal).
 
 ## Out of scope
 

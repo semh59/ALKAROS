@@ -40,7 +40,7 @@
 | `GATE-V12-EXIT` | V1.2 public channel, stock race ve reconciliation kanıtları tamamlanır. |
 | `GATE-V13-ENTRY` | `GATE-V12-EXIT` kapanır. |
 | `GATE-V13-MEAL-CARD-ADAPTERS` | V0-MCD approved provider listesi ve her provider için generated adapter Done olur; liste boşsa downstream task'lar tarihli NotApplicable olur. |
-| `GATE-V13-FSC-STRATEGY` | V0-CMP-001 strategy kararı ve yalnız seçilen Hugin veya QNB contract kanıtı Done olur; uygulanmayan branch tarihli NotApplicable olur. |
+| `GATE-V13-FSC-STRATEGY` | V0-CMP-001 strategy kararı ve yalnız seçilen Token/Beko (eski adıyla Hugin, bkz. `V0-GOV-064`/CORR:C98) veya QNB contract kanıtı Done olur; uygulanmayan branch tarihli NotApplicable olur. |
 | `GATE-V13-EXIT` | V1.3 ödeme, fiscal ve cash görevlerinin uygulanabilir kapsamı tamamlanır. |
 | `GATE-V14-ENTRY` | `GATE-V13-EXIT` kapanır. |
 | `GATE-V14-EXIT` | V1.4 hesap ve invoicing görevlerinin uygulanabilir kapsamı tamamlanır. |
@@ -151,7 +151,7 @@ behavior başlatmaz; Aşama 3 kabul zinciri sırası değişmez.
 <!-- V0_DEFERRED_TASKS:START -->
 | Task ID | Approval date | Reopen stage | Required evidence | Gate closure evidence |
 | --- | --- | --- | --- | --- |
-| `V0-HUG-001` | `2026-08-03` | `V13` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |
+| `V0-HUG-001` | `2026-08-03` | `V13` | Gerçek Token/Beko provider contract/erişim kanıtı (2026-09-17 `V0-GOV-064`/CORR:C98 ile Hugin'in yerini aldı) | Not V0 gate closure evidence |
 | `V0-QNB-001` | `2026-08-03` | `V14` | Gerçek QNB provider contract/erişim kanıtı | Not V0 gate closure evidence |
 | `V0-YSP-001` | `2026-08-03` | `V12` | Gerçek Yemeksepeti partner API erişim kanıtı | Not V0 gate closure evidence |
 | `V0-MCD-001` | `2026-08-03` | `V13` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |

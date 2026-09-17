@@ -62,7 +62,8 @@ ReconciliationCase) → `Approved / Declined / Cancelled`.
    requests the FiscalDocument (`Requested`) per PDF:I.28
    ("Payment → Fiscal strategy → FiscalDocument"); payment cancellation or
    refund triggers the fiscal refund/cancel pathway (PDF:I.28.1) per the
-   verified Hugin contract. Provider-specific ordering beyond this direction
+   verified provider contract (Token/Beko as of 2026-09-17, V0-GOV-064/CORR:C98
+   — task IDs unchanged). Provider-specific ordering beyond this direction
    is delegated to V13-FSC-*/V13-HUG-* tasks.
 3. **Reopen policy:** only `Bill.Reopened` exists in the canonical set; the
    Bill transitions `Paid/Cancelled → Reopened` only through an explicit,

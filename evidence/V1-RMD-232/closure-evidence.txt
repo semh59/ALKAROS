@@ -1,0 +1,69 @@
+V1-RMD-232 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Scope executed
+- `src/Clients/Cashier/wwwroot/cashier-app.js`:
+  1. `dispatchOrderToKitchen`: `draftResponse.json()` is now wrapped in its
+     own try/catch. On parse failure (the draft POST already returned 2xx,
+     meaning KASA-1 WAS attached server-side), it queries the existing
+     `GET /api/v1/terminals/{terminalId}/orders/table/{tableId}` endpoint
+     (already used elsewhere in the codebase, no server change) to recover
+     the attached order's id/rowVersion into `draft`, so the outer
+     `finally`'s `if (draft && draft.orderId)` can still release KASA-1
+     instead of leaving it stuck for the next customer to merge into.
+  2. Module-load-time `JSON.parse(localStorage.getItem('alkaros_cashier_parked') || '[]')`
+     extracted into a new `loadParkedTickets()` helper wrapped in try/catch;
+     a corrupted value now logs and falls back to `[]` instead of crashing
+     the whole script before `DOMContentLoaded`.
+- `tests/Clients/StaticApps/cashier-app.test.js`: 2 new vitest+jsdom tests
+  proving the real async/DOM behavior (see below); no existing test changed.
+- `tests/Clients/Cashier/Frontend/test_cashier_frontend.py`: 2 new static
+  assertions (`loadParkedTickets`, `orders/table/` present in the shipped
+  script) pointing at the real behavioral proof in the vitest suite; no
+  existing test changed.
+
+## Scope-gap correction made mid-task (documented)
+The task's Owned surface only listed `tests/Clients/Cashier/Frontend/`
+(Python, string-assertion only) for new tests, but that directory cannot
+prove either finding's real async/DOM behavior (a parsed vs. rejected
+fetch Promise, a module that crashes at import time). The repo already has
+a real JS behavioral test harness for this exact file
+(`tests/Clients/StaticApps/cashier-app.test.js`, vitest+jsdom, V1-RMD-109
+family) with 9 pre-existing tests already exercising `dispatchOrderToKitchen`
+end to end. Owned surface corrected to add this file (same "fix Owned
+surface, continue" resolution already used for V1-RMD-230's two gaps this
+session) before writing to it.
+
+## Tests and Checks
+1. node --check src/Clients/Cashier/wwwroot/cashier-app.js
+   Result: exit code 0 (no syntax errors)
+
+2. cd tests/Clients/StaticApps && npm test (vitest run, all 3 suites)
+   Result: Test Files 3 passed (3), Tests 23 passed (23)
+   - "V1-RMD-232: still releases KASA-1 when table-draft's response body
+     fails to parse": PASSED (asserts the send-to-cashier release call
+     happens even though table-draft's json() rejected)
+   - "V1-RMD-232: loads with an empty parked-ticket list instead of
+     crashing when localStorage is corrupted": PASSED (seeds
+     `alkaros_cashier_parked` with invalid JSON before loadApp(), asserts
+     the app still renders the catalog instead of dying at import)
+   - all 9 pre-existing cashier-app.test.js tests + all waiter-app.test.js/
+     offline-queue.test.js tests: PASSED, no regression
+
+3. python -m pytest tests/Clients/Cashier/Frontend/ -q
+   Result: 6 passed (2 new static assertions + 4 pre-existing), no regression
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Write-set vs Allowlist
+- src/Clients/Cashier/wwwroot/cashier-app.js (Sinirli ek, V1-RMD-083 ailesinde kalir)
+- tests/Clients/StaticApps/cashier-app.test.js (Sinirli ek, V1-RMD-109 ailesinde kalir — Owned surface corrected mid-task)
+- tests/Clients/Cashier/Frontend/test_cashier_frontend.py (Sinirli ek, V1-CUI-008 sahipliginde kalir)
+- evidence/V1-RMD-232/closure-evidence.txt
+- plan/v1/remediation/V1-RMD-232-cashier-stuck-table-and-crash-guards.md (Status: Planned -> Done, Assignee updated, Owned surface corrected)

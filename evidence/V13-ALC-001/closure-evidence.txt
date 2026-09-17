@@ -1,0 +1,113 @@
+V13-ALC-001 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Scope executed
+Implements PaymentAllocation persistence per V0-DOM-004's locked decision
+record (docs/domain/payment-allocation-integrity.md): immutable
+payment_allocations rows, same-bill, currency-equality, remaining-amount
+and idempotency invariants, both at the application level and the
+database level.
+
+- `src/Modules/Payments/Allocations/Persistence/PaymentAllocation.cs`:
+  immutable entity, constructor enforces amount > 0 (CORR:C4 — no
+  negative/zero allocation ever exists).
+- `PaymentAllocationExceptions.cs`: InvalidPaymentAllocationAmountException,
+  CrossBillPaymentAllocationException, CurrencyMismatchAllocationException,
+  OverAllocationException.
+- `PaymentAllocationFactory.cs`: pure (no I/O) validation given an
+  already-loaded Payment, Bill and the bill's already-allocated total —
+  same-bill, currency-equality (transitively payment=bill), and
+  remaining-amount (`amount <= bill.PayableAmount - alreadyAllocated`).
+  Testable without a database (5 pure unit tests).
+- `IPaymentAllocationRepository.cs` + `PostgresPaymentAllocationRepository.cs`:
+  `AllocateAsync` is atomic and idempotent — a replay of an already-
+  persisted idempotency key returns the existing row; a per-bill Postgres
+  advisory lock (`pg_advisory_xact_lock(hashtext(...))`, same pattern as
+  PostgresStockBalanceRepository) serializes concurrent allocation attempts
+  against the SAME bill so the remaining-amount check can never race.
+  Verified with a real concurrent-Task.WhenAll test, not just sequential.
+- `PaymentAllocationPersistenceModule.cs`: a separate `IModule` (kept out
+  of `PaymentAggregateModule.cs`, owned by V13-PAY-001).
+- `database/migrations/V13/V13-ALC-001/123-payment-allocations.{up,down}.sql`:
+  additive only. Two composite UNIQUE constraints on `payments.payments`
+  ((payment_id, bill_id), (payment_id, currency_code)) and one on
+  `billing.bills` ((bill_id, currency_code)) — each a strict superset of
+  an already-unique column, restricting nothing already stored — enable
+  `payment_allocations` to express the same-bill AND currency-equality
+  invariants as real composite foreign keys, with NO trigger needed. Plus
+  the idempotency-key UNIQUE constraint and the amount>0 CHECK.
+  Over-allocation (a running SUM across sibling rows) has no equivalent
+  static SQL constraint without a trigger; consistent with every other
+  cross-aggregate money invariant in this codebase (Payment, Bill,
+  BillItem all enforce these at the application level only, never via a
+  trigger), it is enforced in `PaymentAllocationFactory` instead, proven
+  against real Postgres through the repository (not a raw-SQL bypass).
+- `tests/Modules/Payments/Allocations/Persistence/**`: new test project.
+  5 pure factory tests (no DB) + 13 repository integration tests (real
+  Postgres): round trip, idempotent replay, over-allocation through the
+  real repository, a genuinely concurrent double-allocation race (proves
+  the advisory lock, not just the sequential case), and 4 raw-SQL "database
+  test" cases proving the composite FK/UNIQUE/CHECK constraints reject
+  cross-bill, currency-mismatch, duplicate-idempotency-key and zero-amount
+  inserts even if a future caller bypasses the factory entirely (same
+  pattern as PostgresPaymentTests' own DatabaseRejects* tests).
+
+## Scope-gap corrections made mid-task (documented, user-approved)
+1. Manifest chain (order.json/MigrationManifest.cs/ManifestTests.cs) —
+   migration 123 registration, same precedent as V1-RMD-230/V13-CSH-001.
+2. New test project registration in `ALKAROS.slnx` and
+   `build/project-manifest.json` — same blanket scope-extension approval
+   already granted for this whole build-out chain.
+3. `src/Modules/Payments/ALKAROS.Payments.csproj` was missing a
+   ProjectReference to `ALKAROS.Billing.csproj` — `build/project-manifest.json`
+   had listed this reference as if it already existed (stale/aspirational
+   entry, pre-existing drift not caused by this task), but the real csproj
+   never had it. Added (Billing does not reference Payments, no cycle).
+   Documented as Sinirli ek in Owned surface before editing.
+4. Mechanical side effect: `dotnet restore --force-evaluate` regenerated
+   packages.lock.json across every project that transitively depends on
+   Payments (build does not compile without it, NU1004) — same category
+   as V13-CSH-001's identical Npgsql-driven ripple, purely deterministic,
+   no dependency manually added/removed.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Modules/Payments/Allocations/Persistence -c Debug (real Postgres)
+   Result: Toplam: 13, Basarili: 13, Basarisiz: 0 (exit code: 0)
+
+3. Regression (unchanged, real Postgres where applicable):
+   - ALKAROS.Payments.PaymentAggregate.Tests: 43/43
+   - ALKAROS.Payments.TenderRouting.Tests: 28/28
+   - ALKAROS.Host.Tests (Manifest filter): 17/17
+   - ALKAROS.Billing.BillFoundation.Tests: 44/44
+
+## Migration forward/backward proof (manual, real Postgres)
+Scratch database `scratch_alc001`: applied 006->010->011->019->036->120->
+121->123 (up) in order, all clean. Applied 123 (down): clean, table and
+all 3 composite constraints removed. Re-applied 123 (up): clean, no
+errors. Scratch database dropped.
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: VALID (0 differences across Solution, Disk, and ProjectReferences)
+
+2. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+3. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Write-set vs Allowlist
+- src/Modules/Payments/Allocations/Persistence/** (new)
+- tests/Modules/Payments/Allocations/Persistence/** (new)
+- database/migrations/V13/V13-ALC-001/** (new)
+- src/Modules/Payments/ALKAROS.Payments.csproj (Sinirli ek, added Billing ProjectReference)
+- database/MigrationComposition/order.json, src/Host/Composition/Migrations/MigrationManifest.cs,
+  tests/Host/MigrationComposition/Manifest/ManifestTests.cs (Sinirli ek, migration 123 registration)
+- ALKAROS.slnx, build/project-manifest.json (scope-extension approval, new test project registration)
+- packages.lock.json across projects transitively depending on Payments (mechanical restore side effect)
+- evidence/V13-ALC-001/closure-evidence.txt
+- plan/v1.3/payment-allocation/V13-ALC-001-allocation-persistence.md (Status: Planned -> Done, Assignee updated, Owned surface corrected)

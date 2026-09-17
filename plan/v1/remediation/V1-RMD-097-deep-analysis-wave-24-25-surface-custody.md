@@ -35,7 +35,7 @@ kuralı yeniden sağlanır ve bu dosyalar yalnızca yeni bir plan görevi ile de
 - `src/Clients/PosTerminal/src/strings.ts`
 - `src/Clients/PosTerminal/src/router.tsx`
 - `src/Clients/PosTerminal/src/router.test.tsx`
-- `src/Clients/PosTerminal/src/routes/Cashier.tsx`
+- PO:2026-09-16 kararıyla src/Clients/PosTerminal/src/routes/Cashier.tsx yüzeyi Faz 0 token migrasyonu için V1-CUI-009'a devredildi; bu historical task closed kalır.
 - `src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx`
 - `src/Clients/PosTerminal/src/routes/workspace.tsx`
 - `tests/BuildingBlocks/Idempotency/OutboxFanoutSinkTests.cs`

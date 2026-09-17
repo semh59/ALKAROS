@@ -84,3 +84,12 @@ def test_cashier_javascript_order_engine():
     assert "updateConnectivityBadge" in app_code
     assert "addEventListener('online'" in app_code
     assert "addEventListener('offline'" in app_code
+
+    # V1-RMD-232: bağımsız denetimde bulundu (2026-09-17) — draftResponse.json()
+    # başarısız olursa KASA-1 asılı kalabiliyordu (draft null kalıp finally'deki
+    # serbest bırakma koşulu hiç tetiklenmiyordu); modül yüklenirken çalışan
+    # localStorage JSON.parse'ı da korumasızdı ve bozuk veride tüm ekranı
+    # çökertebiliyordu. Gerçek davranış kanıtı
+    # tests/Clients/StaticApps/cashier-app.test.js'te (vitest+jsdom).
+    assert "loadParkedTickets" in app_code
+    assert "orders/table/" in app_code

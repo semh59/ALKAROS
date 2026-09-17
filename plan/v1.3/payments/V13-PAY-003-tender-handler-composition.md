@@ -53,5 +53,6 @@ Cash handler, durable BankCard workflow ve MealCard provider-registry bridge'ini
 ## Handoff
 
 - V13-PUI-001
+- V13-PAY-005
 - V14-ACC-003
 - V14-ACC-008

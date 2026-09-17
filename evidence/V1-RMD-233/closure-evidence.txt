@@ -1,0 +1,70 @@
+V1-RMD-233 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Decision: "no balance row" stays UNLIMITED, not "0" (explicit, per task requirement)
+`src/Host/DualScreen/DualScreenStore.cs` is NOT modified — the existing
+"mapping with no balance row is excluded from the MIN(), leaving
+RemainingCount null (unlimited)" behavior is CORRECT and INTENTIONAL,
+confirmed by direct precedent already shipped elsewhere in the codebase:
+`OrderDtoAssembler.WithAvailableStockAsync` (V1-RMD-143) does the exact
+same thing in C# — its per-mapping loop `continue`s past a mapping with no
+matching balance row, so if every mapping for a product lacks a balance,
+`AvailableStockQuantity` stays null (unlimited), the identical outcome to
+DualScreenStore's LATERAL join's MIN() silently ignoring NULL rows.
+DualScreenStore.cs's own inline comment already references this exact
+precedent ("MIN() ignores NULL rows on its own, so a mapping with no
+default location or no balance row is silently excluded from the limiting
+decision, same as that C# loop's own 'continue'").
+Rationale for keeping "unlimited" rather than switching to "0": a mapping
+that exists but has never had a stock_balances row (e.g. a brand-new stock
+item awaiting its first physical count) is a data-entry gap, not proof the
+product is out of stock. Showing "0" would hide the product from sale for
+a reason the operator never intended or even knows about, whereas
+"unlimited" matches what an unmapped product already shows and self-
+corrects the moment a balance is recorded — no code change needed to fix
+a data-entry gap once it's filled in.
+
+## Scope executed
+- `tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs`:
+  2 new tests, 1 new private seed helper; no existing test changed.
+  1. `GetCatalogAsyncPicksTheMostRestrictiveMappingWhenAProductHasMultipleStockMappings` —
+     seeds two product_stock_mappings rows for the same product (mapping A
+     alone allows 10, mapping B alone allows FLOOR(6/2)=3) and asserts the
+     query returns the more restrictive value (3), proving MIN() picks
+     across multiple mappings correctly.
+  2. `GetCatalogAsyncLeavesRemainingCountNullWhenMappingHasNoBalanceRow` —
+     seeds a mapping with no corresponding stock_balances row at all (new
+     helper `SeedStockMappingWithNoBalanceAsync`) and asserts RemainingCount
+     is null, documenting the intentional behavior above as an executable
+     regression test rather than leaving it undocumented.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Host/MigrationComposition --filter FullyQualifiedName~DualScreenStoreTests (real Postgres, alkaros-test-pg:55432)
+   Result: Toplam: 14, Basarili: 14, Basarisiz: 0 (exit code: 0)
+   - GetCatalogAsyncPicksTheMostRestrictiveMappingWhenAProductHasMultipleStockMappings: PASSED
+   - GetCatalogAsyncLeavesRemainingCountNullWhenMappingHasNoBalanceRow: PASSED
+   - all pre-existing DualScreenStoreTests (incl. GetCatalogAsyncReturnsRemainingCountFromDirectStockMapping,
+     GetCatalogAsyncLeavesRemainingCountNullWithoutStockMapping,
+     GetCatalogAsyncDropsProductWhenStockExhausted,
+     GetCatalogAsyncPaginationIsUnaffectedByAnExhaustedProduct): PASSED, no regression
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Write-set vs Allowlist
+- tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs (Sinirli ek, V1-WTR-054 sahipliginde kalir)
+- evidence/V1-RMD-233/closure-evidence.txt
+- plan/v1/remediation/V1-RMD-233-remaining-count-multi-mapping-coverage.md (Status: Planned -> Done, Assignee updated)
+
+Note: src/Host/DualScreen/DualScreenStore.cs (also listed in Owned surface,
+conditionally) was NOT touched, per the decision above — the task file
+itself says this file is only written "if the current behavior is
+decided wrong," which it was not.

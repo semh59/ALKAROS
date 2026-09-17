@@ -252,7 +252,12 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       // V1-WTR-017: manager-entered estimate, minutes. null when never set -
       // such a product is excluded from the pre-send delay check, not
       // treated as zero.
-      prepTimeMinutes: product.prepTimeMinutes != null ? product.prepTimeMinutes : null
+      prepTimeMinutes: product.prepTimeMinutes != null ? product.prepTimeMinutes : null,
+      // V1-WTR-054/055: how many more units the mapped stock can still
+      // cover, null when the product isn't stock-tracked (unlimited). A
+      // product the server computed at 0 or less never appears in `list`
+      // at all - the catalog query already dropped it.
+      remainingCount: product.remainingCount != null ? product.remainingCount : null
     }));
 
     const seen = new Map();

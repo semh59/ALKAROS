@@ -13,7 +13,7 @@
 // FROM an already-extracted module is fine; the reverse is not).
 
 import { state, el, seatLabel } from '../state.js';
-import { escapeHtml, formatMoney, formatQuantity, formatClock, courseLabel } from '../util.js';
+import { escapeHtml, formatMoney, formatQuantity, formatClock, courseLabel, renderStockBadge } from '../util.js';
 import { featureEnabled } from '../features.js';
 import { apiUrl, api } from '../api.js';
 import { toast } from '../toast.js';
@@ -291,13 +291,8 @@ export function renderSentLine(item) {
     </span>`).join('');
 
   // V1-RMD-143: how many more of this product the mapped stock could still
-  // cover. Null means the product is not stock-tracked at all - which is not
-  // the same as none left, so nothing is shown.
-  const stock = item.availableStockQuantity !== null && item.availableStockQuantity !== undefined
-    ? `<span class="product-stock${item.availableStockQuantity <= 0 ? ' is-out' : (item.availableStockQuantity < 5 ? ' is-low' : '')}">
-         Kalan ${escapeHtml(formatQuantity(item.availableStockQuantity))}
-       </span>`
-    : '';
+  // cover (V1-WTR-056: shared with menu.js's own badge via renderStockBadge).
+  const stock = renderStockBadge(item.availableStockQuantity, { allowOut: true });
 
   // V1-RMD-154/155: which of the two void paths this line belongs to.
   //

@@ -1,0 +1,17 @@
+/* V1-CDP-003/004: the manager-only screensaver upload screen — reuses
+   .login-shell/.login-card (RelaySettings' own screen shares the same
+   standalone-URL, own-login pattern), scoped additions only. Preview box
+   sizing applies equally to an <img> (V1-CDP-003) or a <video> (V1-CDP-004). */
+.screensaver-settings-card { gap: 1.1rem; }
+.screensaver-preview { display: grid; gap: .5rem; }
+.screensaver-preview > span { color: var(--muted); font-size: .85rem; font-weight: 750; }
+.screensaver-preview img, .screensaver-preview video {
+  width: 100%;
+  max-height: 260px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  object-fit: contain;
+  background: var(--navy);
+}
+.screensaver-preview-current { border-top: 1px solid var(--line); padding-top: 1.1rem; }
+.screensaver-settings-note { margin: 0; color: var(--muted); font-size: .82rem; line-height: 1.5; }

@@ -172,7 +172,8 @@
       "alkaros.cash": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "alkaros.catalog": {
@@ -198,6 +199,7 @@
           "ALKAROS.Observability": "[1.0.0, )",
           "ALKAROS.Operations": "[1.0.0, )",
           "ALKAROS.Orders": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )",
           "ALKAROS.Production": "[1.0.0, )",
           "ALKAROS.Purchasing": "[1.0.0, )",
           "ALKAROS.QrOrdering": "[1.0.0, )",
@@ -276,6 +278,14 @@
           "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Tables": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.payments": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Billing": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
       },

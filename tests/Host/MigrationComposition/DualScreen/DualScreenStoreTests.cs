@@ -234,6 +234,158 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         Assert.Null(principal);
     }
 
+    // V1-WTR-054: the shared terminal catalog (Garson + Kasa) reports how
+    // many more units a directly stock-mapped product can still sell.
+
+    [Fact]
+    public async Task GetCatalogAsyncReturnsRemainingCountFromDirectStockMapping()
+    {
+        var productId = Guid.NewGuid();
+        await SeedProductAsync(productId);
+        await SeedStockMappingAsync(productId, quantityMultiplier: 1.0m, onHand: 2.0m);
+
+        var page = await _store!.GetCatalogAsync(null, 50, null, CancellationToken.None);
+
+        var item = Assert.Single(page.Items, p => p.ProductId == productId);
+        Assert.Equal(2, item.RemainingCount);
+    }
+
+    [Fact]
+    public async Task GetCatalogAsyncLeavesRemainingCountNullWithoutStockMapping()
+    {
+        // _productId (seeded in InitializeAsync) carries no stock mapping.
+        var page = await _store!.GetCatalogAsync(null, 50, null, CancellationToken.None);
+
+        var item = Assert.Single(page.Items, p => p.ProductId == _productId);
+        Assert.Null(item.RemainingCount);
+    }
+
+    // V1-RMD-233: found by an independent audit (2026-09-17) — a product
+    // with more than one product_stock_mappings row (a real BOM scenario,
+    // same reasoning as OrderDtoAssembler.WithAvailableStockAsync,
+    // V1-RMD-143) had never been tested here; only the single-mapping case
+    // above was covered.
+    [Fact]
+    public async Task GetCatalogAsyncPicksTheMostRestrictiveMappingWhenAProductHasMultipleStockMappings()
+    {
+        var productId = Guid.NewGuid();
+        await SeedProductAsync(productId);
+        // Mapping A alone would allow 10; mapping B alone would allow 3
+        // (FLOOR(6 / 2)) — the limiting one (B) must win.
+        await SeedStockMappingAsync(productId, quantityMultiplier: 1.0m, onHand: 10.0m);
+        await SeedStockMappingAsync(productId, quantityMultiplier: 2.0m, onHand: 6.0m);
+
+        var page = await _store!.GetCatalogAsync(null, 50, null, CancellationToken.None);
+
+        var item = Assert.Single(page.Items, p => p.ProductId == productId);
+        Assert.Equal(3, item.RemainingCount);
+    }
+
+    // V1-RMD-233: a mapping row with no corresponding stock_balances row is
+    // an INTENTIONAL "unlimited" (RemainingCount stays null), not a bug —
+    // the LATERAL join's MIN() ignores NULL rows the same way
+    // OrderDtoAssembler.WithAvailableStockAsync's own loop `continue`s past
+    // a mapping with no balance (same V1-RMD-143 reasoning, referenced
+    // directly in this query's own comment). Decision: keep "unlimited",
+    // not "0" — a mapping that exists but has never had a balance entered
+    // (e.g. a brand-new stock item awaiting its first count) is a data-
+    // entry gap, not proof the product is out of stock; showing "0" would
+    // hide the product from sale for a reason the operator never intended,
+    // whereas "unlimited" matches what every other unmapped product already
+    // shows and is silently corrected the moment a balance is recorded.
+    [Fact]
+    public async Task GetCatalogAsyncLeavesRemainingCountNullWhenMappingHasNoBalanceRow()
+    {
+        var productId = Guid.NewGuid();
+        await SeedProductAsync(productId);
+        await SeedStockMappingWithNoBalanceAsync(productId, quantityMultiplier: 1.0m);
+
+        var page = await _store!.GetCatalogAsync(null, 50, null, CancellationToken.None);
+
+        var item = Assert.Single(page.Items, p => p.ProductId == productId);
+        Assert.Null(item.RemainingCount);
+    }
+
+    [Fact]
+    public async Task GetCatalogAsyncDropsProductWhenStockExhausted()
+    {
+        var productId = Guid.NewGuid();
+        await SeedProductAsync(productId);
+        await SeedStockMappingAsync(productId, quantityMultiplier: 1.0m, onHand: 0.0m);
+
+        var page = await _store!.GetCatalogAsync(null, 50, null, CancellationToken.None);
+
+        Assert.DoesNotContain(page.Items, p => p.ProductId == productId);
+    }
+
+    [Fact]
+    public async Task GetCatalogAsyncPaginationIsUnaffectedByAnExhaustedProduct()
+    {
+        // The already-seeded _productId (no mapping, always visible) is the
+        // only product this page should ever see once the exhausted one is
+        // filtered out — a page-size-1 request must not come back empty or
+        // report a phantom next page because of the dropped row.
+        var exhaustedProductId = Guid.NewGuid();
+        await SeedProductAsync(exhaustedProductId);
+        await SeedStockMappingAsync(exhaustedProductId, quantityMultiplier: 1.0m, onHand: 0.0m);
+
+        var page = await _store!.GetCatalogAsync(null, 1, null, CancellationToken.None);
+
+        var item = Assert.Single(page.Items);
+        Assert.Equal(_productId, item.ProductId);
+        Assert.Null(page.NextCursor);
+    }
+
+    private async Task SeedStockMappingAsync(Guid productId, decimal quantityMultiplier, decimal onHand)
+    {
+        var locationId = Guid.NewGuid();
+        var stockItemId = Guid.NewGuid();
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        await using var command = _dataSource!.CreateCommand(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@location_id, @location_code, 'V1-WTR-054 Test Location', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@stock_item_id, @stock_item_code, 'V1-WTR-054 Test Stock Item', 'Portion', 'adet', @location_id);
+            INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier)
+            VALUES (@product_id, @stock_item_id, @quantity_multiplier);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES (@balance_id, @stock_item_id, @location_id, @on_hand, 0, @on_hand);
+            """);
+        command.Parameters.AddWithValue("location_id", locationId);
+        command.Parameters.AddWithValue("location_code", "WTR054-" + suffix);
+        command.Parameters.AddWithValue("stock_item_id", stockItemId);
+        command.Parameters.AddWithValue("stock_item_code", "WTR054-" + suffix);
+        command.Parameters.AddWithValue("product_id", productId);
+        command.Parameters.AddWithValue("quantity_multiplier", quantityMultiplier);
+        command.Parameters.AddWithValue("balance_id", Guid.NewGuid());
+        command.Parameters.AddWithValue("on_hand", onHand);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private async Task SeedStockMappingWithNoBalanceAsync(Guid productId, decimal quantityMultiplier)
+    {
+        var locationId = Guid.NewGuid();
+        var stockItemId = Guid.NewGuid();
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        await using var command = _dataSource!.CreateCommand(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@location_id, @location_code, 'V1-RMD-233 Test Location', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@stock_item_id, @stock_item_code, 'V1-RMD-233 Test Stock Item', 'Portion', 'adet', @location_id);
+            INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier)
+            VALUES (@product_id, @stock_item_id, @quantity_multiplier);
+            """);
+        command.Parameters.AddWithValue("location_id", locationId);
+        command.Parameters.AddWithValue("location_code", "RMD233-" + suffix);
+        command.Parameters.AddWithValue("stock_item_id", stockItemId);
+        command.Parameters.AddWithValue("stock_item_code", "RMD233-" + suffix);
+        command.Parameters.AddWithValue("product_id", productId);
+        command.Parameters.AddWithValue("quantity_multiplier", quantityMultiplier);
+        await command.ExecuteNonQueryAsync();
+    }
+
     private async Task SeedCashierSessionAsync(Guid terminalId, string rawToken, string displayName)
     {
         var userId = Guid.NewGuid();

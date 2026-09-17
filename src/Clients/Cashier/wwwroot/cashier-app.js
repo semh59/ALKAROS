@@ -14,6 +14,20 @@
     return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
   }
 
+  // V1-CUI-010: the same "Kalan N" badge Garson's util.js renders
+  // (renderStockBadge, V1-WTR-056) for the shared /catalog endpoint's
+  // remainingCount — reimplemented here because Cashier and WaiterPwa are
+  // separate apps with no shared JS module, but the class names
+  // (.product-stock/.is-low) and wording match on purpose. null means the
+  // product is not stock-tracked at all - not the same as none left - so
+  // nothing renders. A zero-or-less product never reaches this catalog at
+  // all (V1-WTR-054 drops it), so there is no "is-out" case here either.
+  function renderStockBadge(remainingCount) {
+    if (remainingCount === null || remainingCount === undefined) return '';
+    const cssClass = remainingCount < 5 ? ' is-low' : '';
+    return `<div class="product-stock${cssClass}">Kalan ${escapeHtml(Number(remainingCount).toLocaleString('tr-TR'))}</div>`;
+  }
+
   // UI_STYLE_GUIDE §3: raw HTTP status codes are never shown to the user.
   function describeHttpFailure(status) {
     if (status === 400) return 'İstek doğrulanamadı. Lütfen ürün ve masa bilgilerini kontrol edin.';
@@ -23,6 +37,21 @@
     if (status === 409) return 'Sipariş başka bir işlem tarafından değiştirildi. Lütfen tekrar deneyin.';
     if (status >= 500) return 'Sunucu hatası oluştu. Lütfen tekrar deneyin.';
     return 'İstek sunucu tarafından reddedildi. Lütfen tekrar deneyin.';
+  }
+
+  // V1-RMD-232: found by an independent audit (2026-09-17) — this ran
+  // unguarded at module load, before DOMContentLoaded; a corrupted
+  // localStorage value for this key would throw synchronously and crash
+  // the whole module, leaving the cashier screen entirely nonfunctional
+  // with no Turkish error shown at all. Falls back to an empty list and
+  // logs the bad value instead.
+  function loadParkedTickets() {
+    try {
+      return JSON.parse(localStorage.getItem('alkaros_cashier_parked') || '[]');
+    } catch (parseError) {
+      console.error('Bekletilen fiş verisi bozuk, boş liste ile devam ediliyor:', parseError);
+      return [];
+    }
   }
 
   // State
@@ -38,7 +67,7 @@
 
     // Active Ticket / Basket
     ticketItems: [],
-    parkedTickets: JSON.parse(localStorage.getItem('alkaros_cashier_parked') || '[]'),
+    parkedTickets: loadParkedTickets(),
 
     // Catalog is loaded from the authoritative endpoint only. There is no
     // hardcoded fallback: if the catalog cannot be loaded the terminal fails
@@ -196,11 +225,20 @@
       const products = items
         .map(p => ({
           id: p.productId || p.id,
-          categoryId: p.categoryId || 'uncategorized',
+          // V1-RMD-227: the real CatalogProductDto field is categoryCode,
+          // not categoryId - every product silently fell into
+          // 'uncategorized' and never matched a real category tab.
+          categoryId: p.categoryCode || 'uncategorized',
           categoryName: p.categoryName || 'Diğer',
           code: p.sku || p.code || '',
           name: p.productName || p.name || '',
-          price: Number(p.currentPrice ?? p.price ?? 0)
+          // V1-RMD-227: the real field is unitPrice - the two field names
+          // this used to read never existed on the response, so every
+          // product showed ₺0,00.
+          price: Number(p.unitPrice ?? 0),
+          // V1-CUI-010: how many more units the mapped stock can still
+          // cover, null when the product isn't stock-tracked (unlimited).
+          remainingCount: p.remainingCount != null ? p.remainingCount : null
         }))
         .filter(p => p.id && p.name);
       if (products.length === 0) throw new Error('catalog empty');
@@ -335,8 +373,9 @@
     el.productMatrix.innerHTML = filtered.map(prod => `
       <div class="pos-product-card" data-product-id="${escapeHtml(prod.id)}" tabindex="0" role="button">
         <div class="product-badge">${escapeHtml(prod.code || '')}</div>
-        <div class="product-name">${escapeHtml(prod.name)}</div>
-        <div class="product-price">${formatMoney(prod.price)}</div>
+        <div class="pos-product-name">${escapeHtml(prod.name)}</div>
+        <div class="pos-product-price">${formatMoney(prod.price)}</div>
+        ${renderStockBadge(prod.remainingCount)}
       </div>
     `).join('');
   }
@@ -497,7 +536,33 @@
         return;
       }
 
-      draft = await draftResponse.json();
+      try {
+        draft = await draftResponse.json();
+      } catch (parseError) {
+        // V1-RMD-232: found by an independent audit (2026-09-17) — the
+        // fetch above already returned 2xx, meaning table-draft attached
+        // this order to KASA-1 server-side, even though reading its
+        // response body then failed (a dropped connection mid-body, a
+        // malformed response). Before this, `draft` stayed null, so the
+        // `finally` below's `if (draft && draft.orderId)` never fired and
+        // KASA-1 stayed attached for the next customer to merge into —
+        // exactly the bug V1-RMD-167 exists to close, just from a
+        // different failure point. Query KASA-1's own active order back so
+        // `finally` can still release it.
+        console.error('table-draft yanıtı çözülemedi:', parseError);
+        try {
+          const recoveryResponse = await fetch(
+            `/api/v1/terminals/${state.terminalId}/orders/table/${orderPayload.tableId}`,
+            { credentials: 'include' });
+          if (recoveryResponse.ok) {
+            draft = await recoveryResponse.json();
+          }
+        } catch (recoveryError) {
+          console.error('KASA-1 kurtarma sorgusu başarısız:', recoveryError);
+        }
+        alert('Sunucuya ulaşılamadı. Sipariş iletilemedi.');
+        return;
+      }
       // Found by an independent audit (2026-09-06): the draft above was
       // never followed by a submit call, so the order stayed in Draft
       // forever and was never dispatched to the kitchen even though the

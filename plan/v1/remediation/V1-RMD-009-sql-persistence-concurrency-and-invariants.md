@@ -13,7 +13,9 @@ katalog sorgusuna bounded sayfalama/filtreleme eklemek ve cashier siparişini se
 
 ## Owned surface
 
-- `src/Host/DualScreen/DualScreenContracts.cs`
+- PO:2026-09-16 kararıyla src/Host/DualScreen/DualScreenContracts.cs yüzeyi
+  `CatalogProductDto`'ya kalan-adet alanı eklemek için V1-WTR-054'e
+  devredildi; bu historical task closed kalır.
 - `database/migrations/V1/V1-CAT-002/007-catalog-pricing.up.sql`
 - `database/migrations/V1/V1-CAT-002/007-catalog-pricing.down.sql`
 - `database/migrations/V1/V1-FND-021/012-btree-gist-ownership.up.sql`

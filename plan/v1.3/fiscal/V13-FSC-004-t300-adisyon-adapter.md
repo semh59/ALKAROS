@@ -1,4 +1,4 @@
-# V13-FSC-004 - Implement selected T300 adisyon adapter
+# V13-FSC-004 - Implement selected Token/Beko adisyon adapter
 
 - Task ID: V13-FSC-004
 - Status: Planned
@@ -11,18 +11,23 @@
 - PDF:I.26-I.29
 - PDF:II.2.16
 - PDF:II.5.4
-- EXT:GIB-HUGIN-T300
+- EXT:TOKEN-DEVELOPER-PORTAL
 - CORR:C25
+- CORR:C98
 
 ## Goal
 
-Yalnız `V0-CMP-001` T300 adisyon lifecycle'ını seçtiğinde, doğrulanmış V0-HUG-001 contract'ındaki
+**Retarget notu (2026-09-17, `V0-GOV-064`/CORR:C98):** hedef cihaz Hugin
+T300 değil, Token/Beko (300 TR / X30 TR) — bu Beko modelleri de gerçek bir
+YN ÖKC/e-Adisyon cihazıdır. Task ID değişmedi.
+
+Yalnız `V0-CMP-001` Token/Beko adisyon lifecycle'ını seçtiğinde, doğrulanmış V0-HUG-001 contract'ındaki
 open/update/close command mapping'ini uygulamak.
 
 ## Owned surface
 
-- `src/Modules/Fiscal/AdisyonStrategy/HuginT300/**`, `tests/Modules/Fiscal/AdisyonStrategy/HuginT300/**`
-- Bu görev, Hugin payment transport veya ortak composition surface'ini değiştiremez.
+- `src/Modules/Fiscal/AdisyonStrategy/TokenBeko/**`, `tests/Modules/Fiscal/AdisyonStrategy/TokenBeko/**`
+- Bu görev, Token payment transport veya ortak composition surface'ini değiştiremez.
 
 ## In scope
 
@@ -31,7 +36,7 @@ open/update/close command mapping'ini uygulamak.
 
 ## Out of scope
 
-- Applicability kararı, QNB/e-Adisyon adapter, Hugin payment request ve final Bill closure.
+- Applicability kararı, QNB/e-Adisyon adapter, Token payment request ve final Bill closure.
 
 ## Dependencies
 
@@ -41,13 +46,13 @@ open/update/close command mapping'ini uygulamak.
 
 ## Deliverables
 
-- T300 adisyon adapter production code'u ve gerçek contract/device transcript'e bağlı automated contract tests.
+- Token/Beko adisyon adapter production code'u ve gerçek contract/device transcript'e bağlı automated contract tests.
 
 ## Acceptance evidence
 
-- T300 branch seçildiyse open/update/close reference zinciri doğrulanmış contract ve gerçek cihaz/sandbox transkriptiyle
+- Token/Beko branch seçildiyse open/update/close reference zinciri doğrulanmış contract ve gerçek cihaz/sandbox transkriptiyle
   geçer; retry ikinci fiscal document oluşturmaz.
-- T300 seçilmediyse görev `V0-CMP-001` tarihli/onaylı kararıyla `NotApplicable` olur; adapter/stub oluşturulmaz.
+- Token/Beko seçilmediyse görev `V0-CMP-001` tarihli/onaylı kararıyla `NotApplicable` olur; adapter/stub oluşturulmaz.
 
 ## Handoff
 

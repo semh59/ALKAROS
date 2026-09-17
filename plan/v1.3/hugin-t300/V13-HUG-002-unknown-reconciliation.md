@@ -1,4 +1,4 @@
-# V13-HUG-002 - Implement Hugin unknown-state recovery
+# V13-HUG-002 - Implement Token/Beko unknown-state recovery
 
 - Task ID: V13-HUG-002
 - Status: Planned
@@ -13,15 +13,19 @@
 - PDF:II.3.12
 - PDF:II.5.4
 - PDF:III.19
+- CORR:C98
 
 ## Goal
+
+**Retarget notu (2026-09-17, `V0-GOV-064`/CORR:C98):** hedef cihaz Hugin
+T300 değil, Token/Beko (300 TR / X30 TR). Task ID değişmedi.
 
 Timeout veya connection loss sonucunu Unknown olarak saklamak, terminal status'ünü sorgulamak ve çözümlenemeyen
 divergence evidence event'i üretmek.
 
 ## Owned surface
 
-- `src/Modules/Payments/Hugin/UnknownRecovery/**`, `tests/Modules/Payments/Hugin/UnknownRecovery/**`
+- `src/Modules/Payments/Token/UnknownRecovery/**`, `tests/Modules/Payments/Token/UnknownRecovery/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -41,7 +45,7 @@ divergence evidence event'i üretmek.
 
 ## Deliverables
 
-- `src/Modules/Payments/Hugin/UnknownRecovery/**` altında Goal kapsamını uygulayan production code ve task-specific
+- `src/Modules/Payments/Token/UnknownRecovery/**` altında Goal kapsamını uygulayan production code ve task-specific
   automated test assets.
 - Başarı, ret, timeout/retry ve finansal invariant testleri.
 - Veri değişiyorsa yalnızca bu task'a ait ileri/geri migration.

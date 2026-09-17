@@ -1,8 +1,8 @@
 # V13-ALC-001 - Implement PaymentAllocation persistence constraints
 
 - Task ID: V13-ALC-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
 - Work type: implementation
 - Surface state: Planned
 
@@ -26,6 +26,19 @@ enforcement'ı uygulamak.
 - `src/Modules/Payments/Allocations/Persistence/**`, `tests/Modules/Payments/Allocations/Persistence/**`,
   `database/migrations/V13/V13-ALC-001/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- Kapsam genişletme onayı (2026-09-17 kullanıcı talimatı): bu task'ın yeni
+  test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine
+  kaydı (V11-UNT-001/V13-CSH-001 emsaliyle aynı desen).
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json,
+  src/Host/Composition/Migrations/MigrationManifest.cs,
+  tests/Host/MigrationComposition/Manifest/ManifestTests.cs — yeni migration
+  pozisyonunun kaydı (V1-RMD-230/V13-CSH-001 emsaliyle aynı desen).
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Payments/ALKAROS.Payments.csproj
+  (Payments modülünün kendisi sahipliğinde kalır) — `build/project-manifest.json`
+  bu referansı zaten aspirational olarak listeliyordu ama gerçek dosyada
+  eksikti; yalnız `ALKAROS.Billing.csproj`'a ProjectReference eklenir (bu
+  task'ın Bill/BillItem'a ihtiyacı için, döngü yok — Billing zaten Payments'a
+  referans vermiyor); mevcut ayarlar değişmez.
 
 ## In scope
 

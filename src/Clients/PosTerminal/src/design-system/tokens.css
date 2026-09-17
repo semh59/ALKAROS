@@ -13,17 +13,23 @@
    * Every currency and countdown value in the design uses this face. */
   --ds-font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --ds-color-canvas: #f4f5f6;
+  /* CHANGED (V1-CUI-009, Faz 0 migration, docs/design/foundations.md §1):
+   * ink/brand/accent/canvas move to the locked Faz 0 hex values. line/
+   * success/warning/danger/info were already byte-identical to foundations.md
+   * (deliberate — see that document's own note) and are untouched.
+   * --ds-color-focus and --ds-color-accent-hover/-brand-strong are derived
+   * from the new accent/brand rather than picked freehand. */
+  --ds-color-canvas: #f4f6f8;
   --ds-color-surface: #ffffff;
   --ds-color-surface-subtle: #eef1f3;
-  --ds-color-ink: #17212b;
-  --ds-color-muted: #52606d;
+  --ds-color-ink: #0b2135;
+  --ds-color-muted: #4d5c68;
   --ds-color-line: #c8d0d7;
-  --ds-color-brand: #283a4a;
-  --ds-color-brand-strong: #162532;
-  --ds-color-accent: #b73c20;
-  --ds-color-accent-hover: #922d17;
-  --ds-color-focus: #006cbd;
+  --ds-color-brand: #1b4d7b;
+  --ds-color-brand-strong: color-mix(in srgb, #1b4d7b 82%, black);
+  --ds-color-accent: #00cfff;
+  --ds-color-accent-hover: color-mix(in srgb, #00cfff 82%, black);
+  --ds-color-focus: #00cfff;
   --ds-color-info: #0b5d8d;
   --ds-color-info-soft: #e4f3fb;
   --ds-color-success: #176548;

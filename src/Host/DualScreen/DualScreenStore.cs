@@ -174,13 +174,34 @@ public sealed partial class DualScreenStore
                    p.current_price, COALESCE(t.vat_rate, 0),
                    COALESCE(c.sort_order, 2147483647), p.display_order,
                    p.name COLLATE "C", p.sku COLLATE "C",
-                   p.prep_time_minutes
+                   p.prep_time_minutes,
+                   remaining.remaining_count
             FROM catalog.products p
             LEFT JOIN catalog.categories c ON c.category_id = p.category_id AND c.active
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
+            -- V1-WTR-054: how many more of this product the mapped stock could
+            -- still cover, mirroring OrderDtoAssembler.WithAvailableStockAsync's
+            -- reasoning (V1-RMD-143) — the limiting stock item decides. NULL
+            -- when the product has no mapping (unlimited, unchanged behavior).
+            -- MIN() ignores NULL rows on its own, so a mapping with no default
+            -- location or no balance row is silently excluded from the
+            -- limiting decision, same as that C# loop's own "continue".
+            LEFT JOIN LATERAL (
+                SELECT MIN(FLOOR(sb.available_quantity / psm.quantity_multiplier))::int AS remaining_count
+                FROM inventory.product_stock_mappings psm
+                JOIN inventory.stock_items si ON si.id = psm.stock_item_id
+                LEFT JOIN inventory.stock_balances sb
+                    ON sb.stock_item_id = si.id AND sb.stock_location_id = si.default_location_id
+                WHERE psm.product_id = p.product_id
+            ) remaining ON true
             WHERE p.active
               AND p.is_available
               AND p.current_price IS NOT NULL
+              -- 2026-09-16: a product whose mapped stock is exhausted is
+              -- dropped from the catalog entirely, the same way an
+              -- is_available=false product already is — never a
+              -- remaining_count: 0 row for a client to render.
+              AND (remaining.remaining_count IS NULL OR remaining.remaining_count > 0)
               AND (@category_code IS NULL OR c.code = @category_code)
               AND (
                   NOT @has_cursor
@@ -220,7 +241,8 @@ public sealed partial class DualScreenStore
                 new CatalogProductDto(
                     reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4),
                     reader.GetDecimal(5), reader.GetDecimal(6),
-                    PrepTimeMinutes: reader.IsDBNull(11) ? null : reader.GetInt32(11)),
+                    PrepTimeMinutes: reader.IsDBNull(11) ? null : reader.GetInt32(11),
+                    RemainingCount: reader.IsDBNull(12) ? null : reader.GetInt32(12)),
                 reader.GetInt32(7), reader.GetInt32(8), reader.GetString(9), reader.GetString(10)));
         }
 

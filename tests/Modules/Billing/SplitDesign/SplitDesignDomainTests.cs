@@ -408,7 +408,8 @@ public sealed class SplitDesignDomainTests
             quantity: 1,
             unitPrice: 20m,
             taxRate: 10m,
-            lineType: BillLineType.Complimentary); // Gross = 0
+            discountAmount: 20m, // fully discounted (V1-RMD-228) — Gross = 0
+            lineType: BillLineType.Complimentary);
 
         var bill = new Bill(billId, "BILL-COMP", new[] { compItem });
 

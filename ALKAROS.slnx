@@ -15,6 +15,7 @@
   <Project Path="src/Modules/Observability/ALKAROS.Observability.csproj" />
   <Project Path="src/Modules/Operations/ALKAROS.Operations.csproj" />
   <Project Path="src/Modules/Orders/ALKAROS.Orders.csproj" />
+  <Project Path="src/Modules/Payments/ALKAROS.Payments.csproj" />
   <Project Path="src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj" />
   <Project Path="src/Modules/Reporting/ALKAROS.Reporting.csproj" />
   <Project Path="src/Modules/Settings/ALKAROS.Settings.csproj" />
@@ -66,6 +67,8 @@
   <Project Path="tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj" />
   <Project Path="tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj" />
   <Project Path="tests/Modules/Cash/Contracts/ALKAROS.Cash.Contracts.Tests.csproj" />
+  <Project Path="tests/Modules/Cash/SessionLifecycle/ALKAROS.Cash.SessionLifecycle.Tests.csproj" />
+  <Project Path="tests/Modules/Cash/TransactionLedger/ALKAROS.Cash.TransactionLedger.Tests.csproj" />
   <Project Path="tests/Modules/Catalog/Pricing/ALKAROS.Catalog.Pricing.Tests.csproj" />
   <Project Path="tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj" />
@@ -82,6 +85,9 @@
   <Project Path="tests/Modules/Orders/ItemExceptions/ALKAROS.Orders.ItemExceptions.Tests.csproj" />
   <Project Path="tests/Modules/Orders/OrderAggregate/ALKAROS.Orders.OrderAggregate.Tests.csproj" />
   <Project Path="tests/Modules/Orders/SubmitOrder/ALKAROS.Orders.SubmitOrder.Tests.csproj" />
+  <Project Path="tests/Modules/Payments/Allocations/Persistence/ALKAROS.Payments.Allocations.Persistence.Tests.csproj" />
+  <Project Path="tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj" />
+  <Project Path="tests/Modules/Payments/TenderRouting/ALKAROS.Payments.TenderRouting.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj" />
   <Project Path="tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj" />
   <Project Path="tests/Modules/Settings/TypedSettings/ALKAROS.Settings.TypedSettings.Tests.csproj" />

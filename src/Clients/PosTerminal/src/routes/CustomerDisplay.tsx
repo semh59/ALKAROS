@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { ApiError, api } from "../api";
+import { ApiError, api, type IdleScreensaver } from "../api";
 import type { PairingCreated } from "../contracts";
 import { Icon, type IconName } from "../design-system";
 import { afterFailure, afterSnapshot, displayPresentation, type DisplayFreshness } from "../stale";
@@ -20,6 +20,7 @@ export function CustomerDisplay() {
     connectionLost: false,
   });
   const [completedConcealed, setCompletedConcealed] = useState(false);
+  const [screensaver, setScreensaver] = useState<IdleScreensaver | null>(null);
   const initialized = useRef(false);
   const pairingRequestInFlight = useRef(false);
   const hasSuccessfulSnapshot = useRef(false);
@@ -138,6 +139,36 @@ export function CustomerDisplay() {
     return () => window.clearTimeout(timer);
   }, [freshness.snapshot?.revision, freshness.snapshot?.state]);
 
+  const idleShown = freshness.snapshot
+    ? displayPresentation(freshness.snapshot) === "idle"
+      || (displayPresentation(freshness.snapshot) === "completed" && completedConcealed)
+    : false;
+
+  // V1-CDP-002: refetches on every fresh entry into Idle (dependency flips
+  // false -> true), not continuously while idle stays shown — a business's
+  // screensaver has no live-update requirement (out of scope, see the
+  // task's own note), just "don't show a stale one from an earlier visit".
+  useEffect(() => {
+    if (!idleShown) {
+      setScreensaver(null);
+      return;
+    }
+    let cancelled = false;
+    let objectUrl: string | null = null;
+    void api.fetchIdleScreensaver(displayId).then((result) => {
+      if (cancelled) {
+        if (result) URL.revokeObjectURL(result.url);
+        return;
+      }
+      objectUrl = result?.url ?? null;
+      setScreensaver(result);
+    });
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [idleShown, displayId]);
+
   if (displaySession === "checking") {
     return (
       <DisplayMessageScreen
@@ -206,6 +237,28 @@ export function CustomerDisplay() {
   }
 
   if (presentation === "idle" || (presentation === "completed" && completedConcealed)) {
+    if (screensaver) {
+      const isVideo = screensaver.contentType.startsWith("video/");
+      return (
+        <main className="display-shell idle-screen idle-screen-with-image">
+          {isVideo ? (
+            <video
+              className="idle-screensaver-image"
+              src={screensaver.url}
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          ) : (
+            <img src={screensaver.url} alt="" className="idle-screensaver-image" />
+          )}
+          <DisplayBrand />
+          {freshness.connectionLost && <ConnectionBanner />}
+          <div className="privacy-note idle-screensaver-note">Bu ekran yalnız sipariş içeriğini gösterir.</div>
+        </main>
+      );
+    }
     return (
       <main className="display-shell idle-screen">
         <DisplayBrand />

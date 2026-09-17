@@ -41,7 +41,13 @@ public sealed record CatalogProductDto(
     // V1-WTR-017: manager-entered estimated prep time in minutes, null when
     // never set on the product. Lets a waiter client warn before sending a
     // round whose items' prep times are far apart.
-    int? PrepTimeMinutes = null);
+    int? PrepTimeMinutes = null,
+    // V1-WTR-054: how many more units the mapped stock can still cover, null
+    // when the product carries no stock mapping (unlimited). A product whose
+    // computed count would be zero or less never reaches this DTO at all —
+    // GetCatalogAsync's query drops it, the same way an unavailable product
+    // already is.
+    int? RemainingCount = null);
 
 /// <summary>
 /// V1-RMD-148: one option group of a product. <paramref name="SelectionType"/>

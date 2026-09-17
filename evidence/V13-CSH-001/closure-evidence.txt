@@ -1,0 +1,129 @@
+V13-CSH-001 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Scope executed
+Implements the CashSession lifecycle (docs/domain/cash-session-design.md,
+V1-CSH-001, PDF:I.38-I.44/II.2.7/II.5.9/III.9) against real persistence,
+consuming the already-locked contracts in src/Modules/Cash/Contracts/**
+(CashSessionSnapshot, the 5 commands, the 5 domain events,
+ICashSessionPolicy) without modifying any of them.
+
+- `src/Modules/Cash/SessionLifecycle/CashSessionRecord.cs`: `CashSessionRecord`
+  (wraps the locked `CashSessionSnapshot` with the audit-trail fields
+  PDF:II.5.9's supervisor-override requirement needs recorded — ClosedBy,
+  IsSupervisorOverride, OverrideReason, ReconciledBy, ReconciliationNotes,
+  ReconciledAt — none of which the snapshot contract itself carries) and
+  `CashCountEntry` (one physical count row, PDF:III.9.3).
+- `src/Modules/Cash/SessionLifecycle/ICashSessionRepository.cs` +
+  `PostgresCashSessionRepository.cs`: persistence, optimistic row-version
+  concurrency (same pattern as IPaymentRepository), and the read-only
+  `GetSuggestedOpeningBalanceAsync` query (PO:2026-09-16 decision — never
+  authoritative for OpenSession itself, informational only for V13-PUI-002).
+- `src/Modules/Cash/SessionLifecycle/ICashSessionLifecycleService.cs` +
+  `CashSessionLifecycleService.cs`: orchestrates all 5 commands — loads
+  current state, delegates every invariant decision to the already-approved
+  `ICashSessionPolicy`, persists the result, returns the snapshot + the
+  domain event a caller may publish. `CloseSessionAsync` takes
+  `expectedCash` as an explicit caller-supplied parameter (matching how the
+  policy itself already takes it) rather than computing it internally —
+  V13-CSH-001 has no ledger yet (out of scope, V13-CSH-002's job), so for
+  now it is simply the session's own opening balance; nothing here hard-
+  codes that assumption into a signature the ledger will need to change.
+- `src/Modules/Cash/SessionLifecycle/CashSessionLifecycleModule.cs`: a
+  second `IModule` in the Cash assembly (registers the two services above),
+  kept deliberately separate from the existing `CashModule.cs` (owned by
+  V1-CSH-001) so this task never had to touch that shared file at all.
+- `database/migrations/V13/V13-CSH-001/122-cash-sessions.{up,down}.sql`:
+  `cash.cash_sessions` + `cash.cash_counts`. Defense-in-depth beyond the
+  application-level policy: a partial unique index
+  `ux_cash_sessions_one_active_per_terminal` enforces CSH-INV-01 (at most
+  one Open/Counting/Closing session per terminal) at the database level
+  too, and a CHECK constraint requires `override_reason` whenever
+  `is_supervisor_override` is true.
+- `tests/Modules/Cash/SessionLifecycle/**`: new test project (11 tests,
+  real Postgres) — round trip, the single-open-session invariant, closing
+  an already-closed session, proof no command can move Closed back toward
+  Open, full Open->Count->Close->Reconcile lifecycle with correct
+  difference, variance-threshold + supervisor override, stale-row-version
+  concurrency, and both GetSuggestedOpeningBalanceAsync cases.
+
+## Scope-gap corrections made mid-task (documented, user-approved)
+1. `database/MigrationComposition/order.json`,
+   `src/Host/Composition/Migrations/MigrationManifest.cs`,
+   `tests/Host/MigrationComposition/Manifest/ManifestTests.cs` — migration
+   122 registration (V11-INV-009/V1-RMD-230 precedent, same session).
+2. `src/Modules/Cash/ALKAROS.Cash.csproj` — added `Npgsql` package
+   reference (Cash module itself owns this file; limited addition).
+3. **Scope-extension approval (2026-09-17 user instruction, same pattern as
+   V11-UNT-001):** a brand-new test project needed registering in the
+   reserved root surfaces `ALKAROS.slnx` and `build/project-manifest.json`
+   (both owned by V1-FND-001 per AGENTS.md — no feature task's wildcard
+   Owned surface covers them). User granted a blanket approval up front for
+   this whole Kasa/Payments build-out chain rather than asking per task.
+4. Mechanical/automatic side effect (no file hand-edited): adding Npgsql to
+   Cash's csproj required `dotnet restore --force-evaluate` to regenerate
+   `packages.lock.json` in every project that transitively references Cash
+   (~31 files) — the build does not compile without this (NU1004). Purely
+   deterministic, tool-generated content; no dependency was manually added
+   or removed anywhere.
+5. `consistency_audit.py`'s Rule 6 (every list-returning read needs a
+   LIMIT) flagged `GetByTerminalIdAsync`/`GetCountsAsync` on first run —
+   fixed by adopting the exact `MaxUnpagedRows = 5000` + fail-loud-if-
+   exceeded idiom already used by Inventory's repositories (e.g.
+   PostgresStockBalanceRepository), confirmed clean on re-run.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Modules/Cash/SessionLifecycle -c Debug (real Postgres, alkaros-test-pg:55432)
+   Result: Toplam: 11, Basarili: 11, Basarisiz: 0 (exit code: 0)
+
+3. dotnet test tests/Modules/Cash/Contracts -c Debug (regression, unchanged)
+   Result: Toplam: 13, Basarili: 13, Basarisiz: 0 (exit code: 0)
+
+4. dotnet test tests/Host/MigrationComposition --filter FullyQualifiedName~Manifest
+   Result: Toplam: 17, Basarili: 17, Basarisiz: 0 (exit code: 0)
+
+## Migration forward/backward proof (manual, real Postgres)
+Scratch database `scratch_csh001` on alkaros-test-pg: applied 122 (up) —
+clean; applied 122 (down) — clean, both tables dropped; re-applied 122
+(up) — clean, no errors. Scratch database dropped.
+
+## Tool Audits
+1. python tools/project-manifest/project_manifest_tool.py
+   Result: VALID (0 differences across Solution, Disk, and ProjectReferences)
+
+2. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+3. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Post-closure fix (2026-09-17, same-day deep review)
+A self-requested deep review of this session's work found a genuine race:
+`OpenSessionAsync`'s `GetByTerminalIdAsync` check and its `AddAsync` insert
+are not atomic, so two truly concurrent opens on the same terminal could
+both pass the in-memory policy check and race to insert — the DB's partial
+unique index (migration 122) still guarantees only one row survives, but
+the losing caller previously saw a raw `PostgresException` instead of the
+clean `ActiveCashSessionExistsException` a sequential second call gets.
+Fixed in `CashSessionLifecycleService.OpenSessionAsync` by catching that
+specific unique-violation (constraint `ux_cash_sessions_one_active_per_terminal`)
+and translating it into the same domain exception. New test
+`ConcurrentOpenSessionAsyncCallsOnTheSameTerminalNeverBothSucceed` drives
+two real concurrent `OpenSessionAsync` calls via `Task.WhenAll` and asserts
+exactly one wins — re-ran the full suite: 12/12 (was 11/11).
+
+## Write-set vs Allowlist
+- src/Modules/Cash/SessionLifecycle/** (new)
+- tests/Modules/Cash/SessionLifecycle/** (new)
+- database/migrations/V13/V13-CSH-001/** (new)
+- src/Modules/Cash/ALKAROS.Cash.csproj (Sinirli ek, Npgsql reference)
+- database/MigrationComposition/order.json, src/Host/Composition/Migrations/MigrationManifest.cs,
+  tests/Host/MigrationComposition/Manifest/ManifestTests.cs (Sinirli ek, migration 122 registration)
+- ALKAROS.slnx, build/project-manifest.json (scope-extension approval, new test project registration)
+- ~31 packages.lock.json files (mechanical dotnet restore --force-evaluate side effect, no manual edits)
+- evidence/V13-CSH-001/closure-evidence.txt
+- plan/v1.3/cash/V13-CSH-001-cash-session-lifecycle.md (Status: Planned -> Done, Assignee updated, Owned surface corrected)

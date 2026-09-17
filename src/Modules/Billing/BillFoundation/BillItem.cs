@@ -26,7 +26,8 @@ public sealed class BillItem
         string? notes = null,
         long rowVersion = 1,
         DateTimeOffset? createdAt = null,
-        DateTimeOffset? updatedAt = null)
+        DateTimeOffset? updatedAt = null,
+        decimal? trueGrossAmount = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Bill item id cannot be empty.", nameof(id));
@@ -62,27 +63,40 @@ public sealed class BillItem
         CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
         UpdatedAt = updatedAt ?? CreatedAt;
 
-        if (lineType is BillLineType.Complimentary)
-        {
-            NetAmount = 0m;
-            TaxAmount = 0m;
-            GrossAmount = 0m;
-        }
-        else
-        {
-            var lineSubtotal = netAmount.HasValue
-                ? BillMath.RoundCurrency(netAmount.Value + DiscountAmount)
-                : BillMath.RoundCurrency(Quantity * UnitPrice);
-            if (DiscountAmount > lineSubtotal)
-                throw new ArgumentException(
-                    "Discount amount cannot exceed the bill item subtotal.",
-                    nameof(discountAmount));
-            NetAmount = netAmount ?? BillMath.RoundCurrency(lineSubtotal - DiscountAmount);
-            TaxAmount = taxAmount ?? BillMath.RoundCurrency(NetAmount * TaxRate / 100m);
-            GrossAmount = grossAmount ?? BillMath.RoundCurrency(NetAmount + TaxAmount);
-            if (NetAmount < 0 || TaxAmount < 0 || GrossAmount < 0)
-                throw new ArgumentException("Persisted bill item amounts cannot be negative.");
-        }
+        var lineSubtotal = netAmount.HasValue
+            ? BillMath.RoundCurrency(netAmount.Value + DiscountAmount)
+            : BillMath.RoundCurrency(Quantity * UnitPrice);
+        if (DiscountAmount > lineSubtotal)
+            throw new ArgumentException(
+                "Discount amount cannot exceed the bill item subtotal.",
+                nameof(discountAmount));
+        // V1-RMD-228: a complimentary line pays 0, but it is NOT a 0-value
+        // line for fiscal purposes (Turkish fiscal register rules require
+        // the real gross value plus a 100% discount, not an invisible line
+        // that never happened). Enforced here rather than silently zeroed, so a
+        // caller that forgets to discount the full subtotal fails loudly
+        // instead of shipping an under-reported comp.
+        //
+        // V1-RMD-231: when netAmount is passed explicitly (every real
+        // FromOrderItem call for a Complimentary line passes 0m), lineSubtotal
+        // above is literally RoundCurrency(0 + DiscountAmount) == DiscountAmount
+        // -- comparing DiscountAmount to lineSubtotal in that case is a
+        // tautology that can never fail, even if DiscountAmount was computed
+        // wrong upstream (e.g. a modifier total forgotten). trueGrossAmount is
+        // an independent gross value (Quantity*UnitPrice plus modifiers,
+        // OrderItem.LineSubtotalValue) supplied by the caller specifically to
+        // break that tautology; when present it replaces lineSubtotal as the
+        // value DiscountAmount must equal.
+        if (lineType is BillLineType.Complimentary && DiscountAmount != (trueGrossAmount ?? lineSubtotal))
+            throw new ArgumentException(
+                "A complimentary line must be fully discounted (discount amount must equal the line's true gross value) " +
+                "so its real gross value stays visible for fiscal reporting.",
+                nameof(discountAmount));
+        NetAmount = netAmount ?? BillMath.RoundCurrency(lineSubtotal - DiscountAmount);
+        TaxAmount = taxAmount ?? BillMath.RoundCurrency(NetAmount * TaxRate / 100m);
+        GrossAmount = grossAmount ?? BillMath.RoundCurrency(NetAmount + TaxAmount);
+        if (NetAmount < 0 || TaxAmount < 0 || GrossAmount < 0)
+            throw new ArgumentException("Persisted bill item amounts cannot be negative.");
     }
 
     public Guid Id { get; }
@@ -140,6 +154,18 @@ public sealed class BillItem
             ? BillLineType.Complimentary
             : BillLineType.Sale);
 
+        // V1-RMD-228: a complimentary line's discount is the item's full
+        // pre-discount subtotal (orderItem.NetAmount already reflects any
+        // modifiers and prior discount, so adding the discount back
+        // recovers the true gross including modifiers) — the real gross
+        // value stays visible via LineSubtotal for fiscal reporting, only
+        // the customer's payable stays 0. netAmount/taxAmount/grossAmount
+        // are still passed explicitly (not left to recompute from
+        // quantity * unitPrice) so a modifier's price delta is not lost.
+        var discountAmount = effectiveLineType == BillLineType.Complimentary
+            ? orderItem.NetAmount + orderItem.DiscountAmount
+            : orderItem.DiscountAmount;
+
         return new BillItem(
             id: billItemId ?? Guid.NewGuid(),
             billId: billId,
@@ -149,12 +175,18 @@ public sealed class BillItem
             quantity: orderItem.Quantity,
             unitPrice: orderItem.UnitPrice,
             taxRate: orderItem.TaxRate,
-            discountAmount: orderItem.DiscountAmount,
+            discountAmount: discountAmount,
             netAmount: effectiveLineType == BillLineType.Complimentary ? 0m : orderItem.NetAmount,
             taxAmount: effectiveLineType == BillLineType.Complimentary ? 0m : orderItem.TaxAmount,
             grossAmount: effectiveLineType == BillLineType.Complimentary ? 0m : orderItem.GrossAmount,
             lineType: effectiveLineType,
-            notes: notes ?? orderItem.Notes);
+            notes: notes ?? orderItem.Notes,
+            // V1-RMD-231: the order item's own independent gross (quantity *
+            // unit price plus modifiers, computed without any reference to
+            // NetAmount/DiscountAmount) so the constructor's Complimentary
+            // check verifies discountAmount above against a real value
+            // instead of one derived from itself.
+            trueGrossAmount: effectiveLineType == BillLineType.Complimentary ? orderItem.LineSubtotalValue : null);
     }
 
     /// <summary>
