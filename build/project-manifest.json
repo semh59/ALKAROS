@@ -310,6 +310,18 @@
       "packages": []
     },
     {
+      "path": "src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj",
+      "kind": "integration",
+      "module": "QrRelay",
+      "references": [
+        "src/Integrations/QrRelay/ALKAROS.QrRelay.csproj"
+      ],
+      "packages": [
+        "Npgsql",
+        "Microsoft.Extensions.Hosting"
+      ]
+    },
+    {
       "path": "tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj",
       "kind": "test",
       "module": "Architecture",

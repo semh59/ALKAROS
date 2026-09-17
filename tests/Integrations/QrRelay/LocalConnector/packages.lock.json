@@ -21,6 +21,15 @@
           "Microsoft.TestPlatform.TestHost": "17.11.1"
         }
       },
+      "Npgsql": {
+        "type": "Direct",
+        "requested": "[9.0.2, )",
+        "resolved": "9.0.2",
+        "contentHash": "hCbO8box7i/XXiTFqCJ3GoowyLqx3JXxyrbOJ6om7dr+eAknvBNhhUHeJVGAQo44sySZTfdVffp4BrtPeLZOAA==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
+        }
+      },
       "xunit": {
         "type": "Direct",
         "requested": "[2.9.2, )",
@@ -206,6 +215,15 @@
           "Npgsql": "[9.0.2, )"
         }
       },
+      "alkaros.testhelpers": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )",
+          "xunit": "[2.9.2, )"
+        }
+      },
       "Microsoft.Extensions.Hosting.Abstractions": {
         "type": "CentralTransitive",
         "requested": "[8.0.1, )",
@@ -216,15 +234,6 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
           "Microsoft.Extensions.Diagnostics.Abstractions": "8.0.1",
           "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
-        }
-      },
-      "Npgsql": {
-        "type": "CentralTransitive",
-        "requested": "[9.0.2, )",
-        "resolved": "9.0.2",
-        "contentHash": "hCbO8box7i/XXiTFqCJ3GoowyLqx3JXxyrbOJ6om7dr+eAknvBNhhUHeJVGAQo44sySZTfdVffp4BrtPeLZOAA==",
-        "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
         }
       }

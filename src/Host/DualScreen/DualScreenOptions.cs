@@ -46,19 +46,37 @@ public sealed record DualScreenOptions(
     string? NfcOriginUrl = null,
     string? NfcOriginHeader = null,
     // V12-QRO-002/relay scope hardening (2026-09-09): the Cloudflare Tunnel
-    // connector (cloudflared, ALKAROS.QrRelay.LocalConnector) runs alongside
-    // this process in the same container and reaches it over loopback
-    // (RelayProvisioningService's own LocalOriginService is literally
-    // "http://localhost:5080") — a real, structural signal distinct from
-    // every other caller: Caddy (the LAN-facing reverse proxy) always
-    // arrives over the Docker network, on the container's own interface,
-    // never loopback, because it runs in a different container. The `api`
-    // service publishes no port at all (compose.yaml) so nothing outside
-    // this container can reach 5080 to forge a loopback-looking connection.
-    // Opt-in and requires --api-only, same as the header-based signals
-    // above, since the whole reasoning is specific to that deployment
-    // topology (compose.yaml's actual `api` service).
+    // connector (cloudflared, ALKAROS.QrRelay.LocalConnector) originally ran
+    // alongside this process in the same container and reached it over
+    // loopback (RelayProvisioningService's own LocalOriginService was
+    // literally "http://localhost:5080") — a real, structural signal
+    // distinct from every other caller: Caddy (the LAN-facing reverse
+    // proxy) always arrives over the Docker network, on the container's
+    // own interface, never loopback, because it runs in a different
+    // container. The `api` service publishes no port at all (compose.yaml)
+    // so nothing outside this container could reach 5080 to forge a
+    // loopback-looking connection. Opt-in and requires --api-only, same as
+    // the header-based signals above, since the whole reasoning is
+    // specific to that deployment topology (compose.yaml's actual `api`
+    // service). Still honoured (a genuine loopback connection still
+    // qualifies) but V12-QRT-005 moved the connector into its own
+    // container, so production traffic no longer arrives this way — see
+    // <see cref="NfcTrustedNetworks"/>.
     bool NfcLoopbackOriginTrusted = false,
+    // V12-QRT-005: the relay connector's own container (no longer sharing
+    // this process's loopback, see NfcLoopbackOriginTrusted's own updated
+    // doc comment) reaches this process over a small, DEDICATED Docker
+    // network (compose.yaml's `relay-internal`, joined only by `api` and
+    // `connector` — not `web`, not `postgres`, not any other service). That
+    // narrowness is the actual trust argument, the same shape as the
+    // loopback one it replaces: nothing outside this specific two-container
+    // network can ever present a source address inside it, the same way
+    // nothing outside the container could forge loopback before. The
+    // generic, broader --trusted-network allowlist (ForwardedHeaders'
+    // KnownNetworks) is deliberately NOT reused for this — that list also
+    // covers `postgres`/`migrate`/`provision`'s network, which have no
+    // business satisfying an NFC-relay transport exemption.
+    IReadOnlyList<ForwardedNetwork>? NfcTrustedNetworks = null,
     // V12-CWB-001: found while wiring the QR customer page — in --api-only
     // mode this process serves no static files at all (the reverse proxy
     // does, per ApiOnly's own doc comment), but the Cloudflare Tunnel
@@ -145,6 +163,7 @@ public sealed record DualScreenOptions(
         string? nfcUrls = null;
         string? nfcOriginHeader = null;
         var nfcLoopbackOriginTrusted = false;
+        var nfcTrustedNetworks = new List<ForwardedNetwork>();
         string? qrWebRoot = null;
         string? nfcWebRoot = null;
 
@@ -178,6 +197,9 @@ public sealed record DualScreenOptions(
                     break;
                 case "--nfc-loopback-origin" when !nfcLoopbackOriginTrusted:
                     nfcLoopbackOriginTrusted = true;
+                    break;
+                case "--nfc-trusted-network" when index + 1 < args.Length:
+                    nfcTrustedNetworks.Add(ParseTrustedNetwork(args[++index]));
                     break;
                 case "--qr-web-root" when index + 1 < args.Length && qrWebRoot is null:
                     qrWebRoot = args[++index];
@@ -240,6 +262,8 @@ public sealed record DualScreenOptions(
         }
         if (nfcLoopbackOriginTrusted && !apiOnly)
             throw new DualScreenStartupException("--nfc-loopback-origin requires --api-only.");
+        if (nfcTrustedNetworks.Count > 0 && !apiOnly)
+            throw new DualScreenStartupException("--nfc-trusted-network requires --api-only.");
         if (qrWebRoot is not null && !apiOnly)
             throw new DualScreenStartupException("--qr-web-root requires --api-only.");
         if (nfcWebRoot is not null && !apiOnly)
@@ -362,6 +386,7 @@ public sealed record DualScreenOptions(
             nfcUris.Count == 0 ? null : string.Join(';', nfcUris.Select(u => u.ToString())),
             nfcOriginHeader,
             nfcLoopbackOriginTrusted,
+            nfcTrustedNetworks,
             resolvedQrWebRoot,
             resolvedNfcWebRoot);
     }

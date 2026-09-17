@@ -35,10 +35,12 @@ public static class RelaySettingsEndpoints
         services.TryAddSingleton<IRelayTunnelStore, PostgresRelayTunnelStore>();
         services.AddHttpClient<ICloudflareApiClient, CloudflareApiClient>();
         services.TryAddScoped<IRelayProvisioningService, RelayProvisioningService>();
-        services.TryAddSingleton<ICloudflaredProcessFactory, CloudflaredProcessFactory>();
-        services.TryAddSingleton<RelayConnectorSupervisor>();
-        services.AddHostedService<RelayConnectorSupervisor>(sp => sp.GetRequiredService<RelayConnectorSupervisor>());
-        services.TryAddSingleton<IRelayConnectorStatusReporter>(sp => sp.GetRequiredService<RelayConnectorSupervisor>());
+        // V12-QRT-005: RelayConnectorSupervisor (and the ICloudflaredProcessFactory
+        // it drives) no longer run in this process — the relay connector was
+        // split into its own container (ConnectorHost) so a restart of one
+        // never drops the other. That container writes its own live status
+        // to Postgres (RelayConnectorStatusPublisher); this reads it back.
+        services.TryAddSingleton<IRelayConnectorStatusReporter, PostgresRelayConnectorStatusReporter>();
         services.TryAddTransient<RelaySettingsExceptionFilter>();
         return services;
     }

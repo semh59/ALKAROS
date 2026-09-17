@@ -12,10 +12,19 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <!-- V12-QRT-005: RelayConnectorStatusPublisherTests writes to real
+         Postgres (the publisher's own job), unlike this project's existing
+         pure in-memory RelayConnectorSupervisorTests. -->
+    <PackageReference Include="Npgsql" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Integrations\QrRelay\ALKAROS.QrRelay.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\TestHelpers\ALKAROS.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\database\migrations\V12\V12-QRT-005\125-relay-connector-status.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSIntegration>true</ALKAROSIntegration>
+    <RootNamespace>ALKAROS.QrRelay.ConnectorHost</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- V12-QRT-005: this executable's own module composition (Program.cs)
+         registers exactly the services RelayConnectorSupervisor and
+         RelayConnectorStatusPublisher need, transitively pulling in
+         ALKAROS.QrOrdering (relay credential access policy) and the
+         Secrets/SensitiveData building blocks through this one reference -
+         no ModuleComposition/reflection-based discovery, this process runs
+         nothing else. -->
+    <ProjectReference Include="..\..\ALKAROS.QrRelay.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+</Project>

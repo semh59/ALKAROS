@@ -27,7 +27,26 @@ Customer Phone → Public QR Relay (HTTPS) → Durable Queue → Local Outbound 
 | Customer → Relay | HTTPS | QR token (signed, time-limited) | Relay provider |
 | Relay → Queue | Internal | Service account | Relay provider |
 | Queue → Connector | mTLS outbound | Client certificate | POS (local) |
-| Connector → POS | Internal localhost | API key | POS |
+| Connector → POS | Internal Docker network (compose service DNS) | API key | POS |
+
+## 2a. Amendment (V12-QRT-005, 2026-09-17)
+
+The "Connector → POS" hop's mechanism changed from OS loopback ("Internal
+localhost") to the compose bridge network's service DNS
+(`http://api:5080`), because the connector was split out of the `api`
+container into its own container for fault isolation (a public-relay-side
+incident must never share a process with the staff-facing POS). The first
+attempt kept "localhost" literally true by sharing `api`'s network
+namespace (`network_mode: "service:api"`), but that coupling meant
+restarting/redeploying `api` also forced the connector to restart — the
+exact blast-radius problem this split exists to fix, just in the other
+direction. Moving to compose DNS instead removes that coupling entirely
+(verified with real `docker compose restart api`/`restart connector`: each
+now leaves the other running undisturbed).
+
+This is a mechanism change, not a trust-boundary change: still no public
+inbound port on the LAN, still the same physical host, still API-key
+authenticated, still owned entirely by POS. Rule 1 below is unaffected.
 
 ## 3. Rules
 

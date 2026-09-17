@@ -36,13 +36,20 @@ public sealed class RelayProvisioningService : IRelayProvisioningService
 
 
     /// <summary>
-    /// The LocalConnector runs `cloudflared` alongside the API process in
-    /// the same container (see `deploy/docker/Dockerfile`'s `api` stage and
-    /// `ALKAROS.QrRelay.LocalConnector.CloudflaredProcessFactory`) — so
-    /// "localhost" is the API's own listen address (compose.yaml's
-    /// `--urls http://0.0.0.0:5080`), not a different host.
+    /// The LocalConnector's own container runs `cloudflared` (see
+    /// `deploy/docker/Dockerfile`'s `connector` stage and
+    /// `ALKAROS.QrRelay.LocalConnector.CloudflaredProcessFactory`), on the
+    /// compose network as its own independent container (V12-QRT-005) — so
+    /// this targets the `api` service's compose DNS name, not "localhost".
+    /// Revised from a shared network namespace (`network_mode:
+    /// "service:api"`) specifically because that coupling meant restarting
+    /// `api` also forced the connector to restart — this is the fix for
+    /// that (see docs/architecture/qr-relay-topology.md's amendment note,
+    /// V12-QRT-005: still no public inbound port, still the same physical
+    /// host, still API-key authenticated — only the internal reachability
+    /// mechanism changed).
     /// </summary>
-    private const string LocalOriginService = "http://localhost:5080";
+    private const string LocalOriginService = "http://api:5080";
 
     private readonly ICloudflareApiClient _client;
     private readonly IRelayCredentialStore _credentialStore;

@@ -13,6 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- V12-QRT-005: ConnectorHost is its own executable project nested
+         under LocalConnector/ - the SDK's default item glob does not
+         exclude a nested project's own folder automatically, so without
+         this it would try to compile ConnectorHost/Program.cs into this
+         library too (and fail: this project has no
+         Microsoft.Extensions.Hosting reference, only .Abstractions). -->
+    <Compile Remove="LocalConnector\ConnectorHost\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Npgsql" />
     <!-- V12-QRT-001 LocalConnector: BackgroundService/IHostedService (Hosting)
          and ILogger<T>/LoggerMessage (Logging) — this project has no

@@ -198,6 +198,53 @@ public sealed class DualScreenOptionsTests : IDisposable
         Assert.Contains("--api-only", exception.Message, StringComparison.Ordinal);
     }
 
+    /// <summary>V12-QRT-005: same reasoning as --nfc-loopback-origin — the relay connector's own container is only reachable this way in --api-only mode.</summary>
+    [Fact]
+    public void NfcTrustedNetworkRequiresApiOnly()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--web-root", _webRoot,
+            "--urls", "http://0.0.0.0:5080",
+            "--nfc-trusted-network", "172.28.90.0/28",
+        ]));
+
+        Assert.Contains("--api-only", exception.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>V12-QRT-005: the relay connector's own compose network (relay-internal) is parsed into NfcTrustedNetworks so the NFC-relay transport-exemption gate can check a request's source address against it.</summary>
+    [Fact]
+    public void NfcTrustedNetworkParsesIntoNfcTrustedNetworksList()
+    {
+        var options = DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--urls", "http://0.0.0.0:5080",
+            "--api-only",
+            "--nfc-trusted-network", "172.28.90.0/28",
+        ]);
+
+        var network = Assert.Single(options.NfcTrustedNetworks!);
+        Assert.True(network.Contains(System.Net.IPAddress.Parse("172.28.90.3")));
+        Assert.False(network.Contains(System.Net.IPAddress.Parse("172.22.0.3")));
+    }
+
+    /// <summary>--nfc-trusted-network must reject a malformed CIDR the same way --trusted-network already does (shared ParseTrustedNetwork helper).</summary>
+    [Fact]
+    public void NfcTrustedNetworkRejectsAMalformedCidr()
+    {
+        var exception = Assert.Throws<DualScreenStartupException>(() => DualScreenOptions.Parse(
+        [
+            "--db-url", "postgresql://alkaros@localhost:5432/alkaros",
+            "--urls", "http://0.0.0.0:5080",
+            "--api-only",
+            "--nfc-trusted-network", "not-a-cidr",
+        ]));
+
+        Assert.Contains("--trusted-network", exception.Message, StringComparison.Ordinal);
+    }
+
     /// <summary>V12-CWB-001: same reasoning as --nfc-loopback-origin — this flag only makes sense in --api-only mode (the non-api-only pipeline already serves everything from --web-root).</summary>
     [Fact]
     public void QrWebRootRequiresApiOnly()

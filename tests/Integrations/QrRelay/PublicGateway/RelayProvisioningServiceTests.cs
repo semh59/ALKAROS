@@ -37,7 +37,7 @@ public sealed class RelayProvisioningServiceTests
         Assert.Equal("tunnel-id-1.cfargotunnel.com", client.LastDnsTarget);
         Assert.Equal("tunnel-id-1", client.LastConfiguredTunnelId);
         Assert.Equal("sube1.alkaros.app", client.LastConfiguredHostname);
-        Assert.Equal("http://localhost:5080", client.LastConfiguredOriginService);
+        Assert.Equal("http://api:5080", client.LastConfiguredOriginService);
         Assert.Equal(("tunnel-id-1", "tunnel-run-token", "sube1.alkaros.app"), tunnelStore.Saved);
     }
 

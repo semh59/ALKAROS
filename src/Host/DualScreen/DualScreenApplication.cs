@@ -270,19 +270,32 @@ public static partial class DualScreenApplication
             // forwarded-header proxy — compose.yaml never does that, since
             // --trusted-network only covers the Docker bridge range). Without
             // this, every single NFC/QR request the Cloudflare Tunnel
-            // connector forwards over loopback was rejected here with
-            // HTTPS_REQUIRED before the origin gate below even ran — the
-            // whole relay path was silently non-functional. Cloudflare's own
-            // edge already terminated real TLS from the customer's browser;
-            // the tunnel's loopback hop to this process is the same kind of
-            // internal, unencrypted last leg Caddy's own trusted-proxy
-            // forwarding already represents for the LAN path. Same
-            // unspoofable signal as the origin gate's own reasoning: no port
-            // is published, so nothing outside this container can present
-            // itself as a loopback peer.
-            var nfcRelayRequest = options.NfcLoopbackOriginTrusted
-                && IPAddress.IsLoopback(context.Connection.LocalIpAddress ?? IPAddress.None)
-                && IPAddress.IsLoopback(context.Connection.RemoteIpAddress ?? IPAddress.None);
+            // connector forwards was rejected here with HTTPS_REQUIRED before
+            // the origin gate below even ran — the whole relay path was
+            // silently non-functional. Cloudflare's own edge already
+            // terminated real TLS from the customer's browser; the
+            // connector's hop to this process is the same kind of internal,
+            // unencrypted last leg Caddy's own trusted-proxy forwarding
+            // already represents for the LAN path.
+            //
+            // V12-QRT-005: the connector no longer shares this process's
+            // loopback (its own container now) — NfcLoopbackOriginTrusted
+            // still covers a genuine loopback caller (e.g. local debugging),
+            // and NfcTrustedNetworks covers the connector's real production
+            // path: a source address inside the small, dedicated
+            // `relay-internal` Docker network (compose.yaml) joined only by
+            // `api` and `connector`. Same unspoofable shape as the loopback
+            // check it extends: nothing outside that specific two-container
+            // network can ever present a source address inside it, same as
+            // nothing outside the container could forge loopback before.
+            var remoteAddress = context.Connection.RemoteIpAddress;
+            var nfcRelayRequest =
+                (options.NfcLoopbackOriginTrusted
+                    && IPAddress.IsLoopback(context.Connection.LocalIpAddress ?? IPAddress.None)
+                    && IPAddress.IsLoopback(remoteAddress ?? IPAddress.None))
+                || (remoteAddress is not null
+                    && options.NfcTrustedNetworks is { Count: > 0 } nfcTrustedNetworks
+                    && nfcTrustedNetworks.Any(network => network.Contains(remoteAddress)));
             if (!context.Request.IsHttps && !insecureDevelopmentLoopback && !loopbackReadinessProbe && !nfcRelayRequest)
             {
                 await Error(

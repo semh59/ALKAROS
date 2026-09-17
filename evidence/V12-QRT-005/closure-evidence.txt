@@ -1,0 +1,171 @@
+V12-QRT-005 closure evidence
+Date: 2026-09-17
+Assignee: claude-code-session_01Xsqh6z1RYhmFapKkHKoBmk
+
+## Scope executed
+Splits the relay connector (RelayConnectorSupervisor + the cloudflared child
+process it supervises, V12-QRT-001) out of the `api` container into its own
+container, so the ONE component in this system actually reachable from the
+public internet no longer shares a process/blast-radius with the rest of
+the POS (Orders/Billing/Payments/Cash/Kitchen/...).
+
+Two real problems were found and fixed during implementation (both via
+real `docker compose`, not simulated — see below):
+
+1. First attempt used `network_mode: "service:api"` to preserve
+   V0-ARC-009's "Connector -> POS: Internal localhost" literally. Real
+   testing found this coupled the two containers' lifecycles: restarting
+   `api` also forced the connector to restart (Docker tears down/recreates
+   a shared network namespace on the owner's restart), defeating half of
+   this task's own point. Fixed by making the connector genuinely
+   independent on the compose network, targeting `api` by its compose
+   service DNS name (`http://api:5080`) instead of "localhost" -
+   `RelayProvisioningService.LocalOriginService` changed accordingly.
+   `docs/architecture/qr-relay-topology.md` (V0-ARC-009, a locked "Done"
+   decision) got a dated, reasoned amendment note for this one line's
+   mechanism (not its trust boundary/protocol/auth) - the decision itself
+   was not deleted or reopened otherwise.
+
+2. That fix broke a real, pre-existing security gate:
+   `DualScreenApplication.cs` requires HTTPS on every request except a
+   genuine loopback connection (the entire "unspoofable" argument for the
+   NFC/QR relay's transport exemption was "nothing outside this container
+   can present itself as a loopback peer"). Once the connector reached
+   `api` over the compose bridge network instead of loopback, every real
+   NFC/QR relay request started failing closed with 400 HTTPS_REQUIRED -
+   a complete outage of the public ordering path, worse than the original
+   problem. Fixed (user-approved) with a new, narrow, fixed-subnet Docker
+   network (`relay-internal`, `172.28.90.0/28`) joined ONLY by `api`,
+   `postgres` and `connector` — no other service — and a new
+   `DualScreenOptions.NfcTrustedNetworks` / `--nfc-trusted-network` CLI
+   flag extending the existing NFC-relay exemption check (OR'd with the
+   still-honoured loopback check) to accept a source address inside that
+   specific network. Same "unspoofable" shape as the loopback check it
+   extends (only these three containers can ever be attached to it, by
+   construction), verified this actually holds with a real request.
+   Also found and fixed along the way: `connector` sharing TWO networks
+   with `api` (`default` + `relay-internal`) made Docker's embedded DNS
+   resolution of "api" ambiguous (it did not reliably return the
+   `relay-internal` address) — fixed by putting `connector` on ONLY
+   `relay-internal` and adding `postgres` to that same network too (so
+   `connector` needs exactly one shared network with each peer it talks to).
+
+## Files
+- `src/Integrations/QrRelay/LocalConnector/ConnectorHost/**` (new):
+  `ALKAROS.QrRelay.ConnectorHost.csproj` (new executable project,
+  `ALKAROSIntegration` kind) + `Program.cs` (own `--db-url`/
+  `ALKAROS_DB_PASSWORD` parsing, DI registration mirroring
+  `QrOrderingModule.Register`, starts `RelayConnectorSupervisor` +
+  `RelayConnectorStatusPublisher` as hosted services).
+- `src/Integrations/QrRelay/LocalConnector/RelayConnectorStatusPublisher.cs`
+  (new): periodically upserts `IRelayConnectorStatusReporter.CurrentStatus`
+  into Postgres — `RelayConnectorSupervisor.cs` itself is untouched.
+- `src/Integrations/QrRelay/PublicGateway/PostgresRelayConnectorStatusReporter.cs`
+  (new): the `api`-side `IRelayConnectorStatusReporter` reading that row
+  back (genuinely synchronous ADO.NET, not async-blocked-on, since the
+  interface's own `CurrentStatus` property is synchronous and out of this
+  task's Owned surface).
+- `database/migrations/V12/V12-QRT-005/125-relay-connector-status.{up,down}.sql`
+  (new): `qr_ordering.relay_connector_status`, single well-known row, same
+  pattern as `relay_tunnel` (083).
+- `src/Integrations/QrRelay/ALKAROS.QrRelay.csproj` (Sinirli ek): one
+  `<Compile Remove>` line excluding the nested `ConnectorHost/` project's
+  own files from this library's SDK-style glob.
+- `src/Host/Experience/RelaySettings/RelaySettingsEndpoints.cs` (Sinirli ek):
+  removed the in-process `RelayConnectorSupervisor`/`ICloudflaredProcessFactory`/
+  hosted-service registrations; `IRelayConnectorStatusReporter` now resolves
+  to `PostgresRelayConnectorStatusReporter`.
+- `src/Integrations/QrRelay/PublicGateway/ICloudflareApiClient.cs`,
+  `RelayProvisioningService.cs` (Sinirli ek): `LocalOriginService`
+  `http://localhost:5080` -> `http://api:5080`; doc comments updated.
+- `src/Integrations/QrRelay/LocalConnector/CloudflaredProcessFactory.cs`
+  (Sinirli ek): doc comment accuracy only (now `connector` stage, not `api`).
+- `src/Host/DualScreen/DualScreenOptions.cs`, `DualScreenApplication.cs`
+  (Sinirli ek): new `NfcTrustedNetworks` field + `--nfc-trusted-network`
+  CLI flag; `nfcRelayRequest` extended with an OR clause.
+- `docs/architecture/qr-relay-topology.md` (Sinirli ek, V0-ARC-009 amendment):
+  "Connector -> POS" row + dated "2a. Amendment" section.
+- `deploy/docker/Dockerfile` (Sinirli ek): new `connector` build stage +
+  runtime target (`mcr.microsoft.com/dotnet/runtime:8.0-alpine`, real
+  digest pulled and verified via `docker pull`/`docker inspect`, not
+  fabricated); `cloudflared` moved out of the `api` stage into `connector`.
+- `compose.yaml` (Sinirli ek): new `connector` service; new `relay-internal`
+  network (fixed subnet `172.28.90.0/28`, not `internal: true` since
+  `cloudflared` needs real outbound internet access); `postgres` joins
+  `relay-internal` too; `api`'s entrypoint gains `--nfc-trusted-network
+  172.28.90.0/28`.
+- `ALKAROS.slnx`, `build/project-manifest.json` (scope-extension approval):
+  new `ConnectorHost` project registration.
+- `Directory.Packages.props` (Sinirli ek): `Microsoft.Extensions.Hosting`
+  version pin added (matches the already-pinned `.Abstractions`).
+- `database/MigrationComposition/order.json`,
+  `src/Host/Composition/Migrations/MigrationManifest.cs`,
+  `tests/Host/MigrationComposition/Manifest/ManifestTests.cs` (Sinirli ek):
+  migration 125 registration.
+- New tests: `tests/Integrations/QrRelay/LocalConnector/RelayConnectorStatusPublisherTests.cs`
+  (9 tests, real Postgres) + a new `RelayConnectorStatusTestDatabase` fixture
+  + package/project references added to that test project (Npgsql,
+  TestHelpers) since it was previously pure in-memory;
+  `tests/Integrations/QrRelay/PublicGateway/PostgresRelayConnectorStatusReporterTests.cs`
+  (3 tests, real Postgres, part of that project's 21); 3 new
+  `DualScreenOptionsTests.cs` cases for `--nfc-trusted-network`.
+- Updated existing tests (Sinirli ek, required by this task's own changes):
+  `tests/Integrations/QrRelay/PublicGateway/RelayProvisioningServiceTests.cs`
+  (one assertion, `http://localhost:5080` -> `http://api:5080`).
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Integrations/QrRelay/LocalConnector -c Debug (real Postgres)
+   Result: 9/9 passed
+
+3. dotnet test tests/Integrations/QrRelay/PublicGateway -c Debug (real Postgres)
+   Result: 21/21 passed (includes the updated RelayProvisioningServiceTests
+   assertion and the new PostgresRelayConnectorStatusReporterTests)
+
+4. dotnet test tests/Host/MigrationComposition --filter "DualScreenOptions|Manifest"
+   Result: 42/42 passed (includes the 3 new --nfc-trusted-network cases)
+
+## Real Docker Compose verification (isolated `-p alkaros-verify` project,
+## never touched the user's own real named volume/containers)
+- `docker compose build` (all images) + `docker compose up --build --wait`:
+  all 5 services healthy, migration 125 applied cleanly in the full
+  006->125 chain (124 positions).
+- `docker inspect connector --format NetworkMode/Networks`: confirmed
+  independent network membership (`relay-internal` only), IP inside
+  172.28.90.0/28.
+- `wget http://api:5080/health/ready` from inside `connector`: real 200
+  `{"status":"Ready"}` — proves both DNS reachability over `relay-internal`
+  and the NFC-relay-exemption gate accepting it.
+- `docker compose restart connector` then checked `api`: uptime/health
+  unaffected.
+- `docker compose restart api` then checked `connector`: `docker inspect
+  .State.StartedAt` on `connector` predates `api`'s new StartedAt;
+  `docker logs connector | grep -c "Application started"` stayed at 2 (the
+  initial `up` + the earlier explicit `restart connector`, not a 3rd from
+  `api`'s restart) — connector was NOT restarted by api's restart. The same
+  `wget` request afterward still returned 200.
+- Verification stack + its scratch volumes torn down and removed after
+  each round (`docker compose -p alkaros-verify down` + `docker volume rm`).
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 0, Validation warnings: 0 (exit code: 0)
+
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Write-set vs Allowlist
+See "Files" section above for the full list; matches the task file's own
+Owned surface (corrected mid-task, twice, as real problems were found and
+the user directed fixes — both corrections documented in the task file's
+own Goal section and Owned surface, not hidden).
+
+## Note for a future session
+The Docker images running before this task (`alkaros-api-1`, `alkaros-web-1`)
+were last built 2026-09-13 and do NOT contain this session's changes (or
+several days of other work) — a real `docker compose up --build --wait`
+against the user's own actual project (not `-p alkaros-verify`) is needed
+to deploy this for real. Not done here since it touches the user's live
+local stack; left for the user or a follow-up instruction.

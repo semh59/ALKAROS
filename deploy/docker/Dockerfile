@@ -1,20 +1,25 @@
 # syntax=docker/dockerfile:1.7
 #
-# ALKAROS container build. Four stages, two publishable targets:
+# ALKAROS container build. Publishable targets:
 #
-#   backend-build  ->  api   the .NET 8 host, JSON API + SignalR hubs only
-#   frontend-build ->  web   Caddy: static bundles + reverse proxy to the api
+#   backend-build  ->  api        the .NET 8 host, JSON API + SignalR hubs only
+#   backend-build  ->  connector  V12-QRT-005: the relay connector (cloudflared
+#                                 supervisor), split out of `api` into its own
+#                                 container/lifecycle
+#   frontend-build ->  web        Caddy: static bundles + reverse proxy to the api
 #
 # Build context is the repo root (compose sets `context: .`).
 
 # ---------------------------------------------------------------------------
-# backend-build: restore the whole solution (locked) and publish the host.
+# backend-build: restore the whole solution (locked) and publish both hosts.
 # ---------------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0 AS backend-build
 WORKDIR /src
 COPY . .
 RUN dotnet restore ALKAROS.slnx --locked-mode
 RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
+RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj \
+    --configuration Release --no-restore --output /out/connector
 
 # ---------------------------------------------------------------------------
 # test: runs the .NET test suite in the same Debian/Linux environment
@@ -80,14 +85,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc
 RUN apk update \
     && apk add --no-cache libcrypto3=3.5.8-r0 libssl3=3.5.8-r0 openssl=3.5.8-r0 postgresql-client ca-certificates curl \
     && rm -rf /var/cache/apk/*
-# V12-QRT-001 LocalConnector: cloudflared is a statically-linked Go binary
-# (CGO_ENABLED=0 release build) — verified to run unmodified on Alpine/musl,
-# no glibc compat layer needed. Pinned by exact release + checksum, same
-# convention as the base image digests above.
-RUN curl -fsSL -o /usr/local/bin/cloudflared \
-        https://github.com/cloudflare/cloudflared/releases/download/2026.8.3/cloudflared-linux-amd64 \
-    && echo "f29324fe934d1e100617484c78deef803c4dc2cd351d645bbde42e96b4fccc5e  /usr/local/bin/cloudflared" | sha256sum -c - \
-    && chmod +x /usr/local/bin/cloudflared
 WORKDIR /app
 COPY --from=backend-build /out/api ./
 COPY database ./database
@@ -123,6 +120,34 @@ ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
     "--qr-web-root", "/app/qr-web", \
     "--nfc-web-root", "/app/nfc-web", \
     "--trusted-network", "172.16.0.0/12"]
+
+# ---------------------------------------------------------------------------
+# connector: V12-QRT-005. runtime (not aspnet) — ConnectorHost has no
+# ASP.NET Core dependency, only Microsoft.Extensions.Hosting. Runs in its own
+# container sharing `api`'s network namespace (compose.yaml's
+# `network_mode: "service:api"`) so `cloudflared`'s tunnel ingress target
+# (`http://localhost:5080`, RelayProvisioningService.LocalOriginService)
+# keeps reaching the API unchanged.
+# ---------------------------------------------------------------------------
+FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83 AS connector
+RUN apk update \
+    && apk add --no-cache libcrypto3=3.5.8-r0 libssl3=3.5.8-r0 openssl=3.5.8-r0 ca-certificates curl \
+    && rm -rf /var/cache/apk/*
+# V12-QRT-001 LocalConnector: cloudflared is a statically-linked Go binary
+# (CGO_ENABLED=0 release build) — verified to run unmodified on Alpine/musl,
+# no glibc compat layer needed. Pinned by exact release + checksum, same
+# convention as the base image digests above. Moved here from the `api`
+# stage by V12-QRT-005 — this is now the only container that runs it.
+RUN curl -fsSL -o /usr/local/bin/cloudflared \
+        https://github.com/cloudflare/cloudflared/releases/download/2026.8.3/cloudflared-linux-amd64 \
+    && echo "f29324fe934d1e100617484c78deef803c4dc2cd351d645bbde42e96b4fccc5e  /usr/local/bin/cloudflared" | sha256sum -c - \
+    && chmod +x /usr/local/bin/cloudflared \
+    && apk del curl \
+    && rm -rf /var/cache/apk/*
+WORKDIR /app
+COPY --from=backend-build /out/connector ./
+ENTRYPOINT ["dotnet", "ALKAROS.QrRelay.ConnectorHost.dll", \
+    "--db-url", "postgresql://alkaros@postgres:5432/alkaros"]
 
 # ---------------------------------------------------------------------------
 # web: Caddy serves the assembled static tree and reverse-proxies the dynamic

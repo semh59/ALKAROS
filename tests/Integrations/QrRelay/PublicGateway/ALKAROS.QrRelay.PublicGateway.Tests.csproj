@@ -22,6 +22,7 @@
   <ItemGroup>
     <None Include="..\..\..\..\database\migrations\V12\V12-QRT-001\082-qr-ordering-relay-provider-config.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V12\V12-QRT-001\083-qr-ordering-relay-tunnel.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V12\V12-QRT-005\125-relay-connector-status.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

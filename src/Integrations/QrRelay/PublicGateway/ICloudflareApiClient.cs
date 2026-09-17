@@ -15,9 +15,10 @@ public interface ICloudflareApiClient
     /// <summary>
     /// Tells Cloudflare's edge where to route requests for <paramref name="hostname"/>
     /// once they arrive over the tunnel: to <paramref name="originService"/>
-    /// (e.g. <c>http://localhost:5080</c> — the LocalConnector runs `cloudflared`
-    /// alongside the API process in the same container, so "localhost" is
-    /// correct). Without this, a tunnel can be healthy and connected yet still
+    /// (e.g. <c>http://api:5080</c> — the LocalConnector's own container
+    /// runs `cloudflared` as an independent container on the compose network,
+    /// V12-QRT-005, reaching the API by its compose service DNS name).
+    /// Without this, a tunnel can be healthy and connected yet still
     /// answer every request with cloudflared's own 404 — a connected tunnel is
     /// not the same as a configured one.
     /// </summary>

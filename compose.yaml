@@ -54,6 +54,14 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+    # V12-QRT-005: also on `relay-internal` so `connector` (which joins only
+    # that one network, deliberately, to avoid the DNS ambiguity of sharing
+    # two networks with `api` - Docker's embedded DNS does not consistently
+    # pick the network you want when a name resolves on more than one) can
+    # still reach `postgres` without ever needing `default`.
+    networks:
+      default: {}
+      relay-internal: {}
     restart: unless-stopped
     deploy:
       resources:
@@ -130,14 +138,19 @@ services:
         # --api-only: no static file pipeline, no --web-root; `web` serves the
         # bundles. --customer-display-origin-header is the proxy-mode B-4 origin
         # signal (Caddy sets X-Alkaros-Origin: display on the display vhost).
-        # --nfc-loopback-origin (relay scope hardening, 2026-09-09): the
-        # Cloudflare Tunnel connector (ALKAROS.QrRelay.LocalConnector) runs in
-        # this same container and reaches this port over loopback - without
-        # this flag, a provisioned tunnel exposed the ENTIRE app (every
-        # Cashier/manager API included) to the public internet, protected by
-        # nothing but the app's own auth. This restricts a loopback-sourced
-        # request to the NFC/QR customer route allowlist, the same way the
-        # display vhost is already restricted above.
+        # --nfc-loopback-origin (relay scope hardening, 2026-09-09): kept for
+        # a genuine loopback caller (e.g. local debugging) - without some form
+        # of this gate, a provisioned tunnel would expose the ENTIRE app
+        # (every Cashier/manager API included) to the public internet,
+        # protected by nothing but the app's own auth.
+        # --nfc-trusted-network (V12-QRT-005): the connector now runs in its
+        # own container (ALKAROS.QrRelay.LocalConnector, see the `connector`
+        # service below), reaching this port over the dedicated
+        # `relay-internal` network instead of loopback - this is that
+        # network's own subnet, so the NFC/QR customer route allowlist gate
+        # still applies to it, same reasoning as the loopback flag above.
+        # Both restrict the request to the NFC/QR customer route allowlist,
+        # the same way the display vhost is already restricted above.
         # --qr-web-root (V12-CWB-001) / --nfc-web-root (V1-RMD-141): the QR
         # and NFC customer pages' own static bundles, baked into this image
         # at /app/qr-web and /app/nfc-web - the tunnel above never reaches
@@ -148,10 +161,18 @@ services:
         # tags its proxied /api/v1/nfc|qr/* requests X-Alkaros-Origin: nfc,
         # so a customer on the restaurant's own WiFi reaches the same
         # isolated surface a relay-connected customer does.
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --nfc-origin-header X-Alkaros-Origin --qr-web-root /app/qr-web --nfc-web-root /app/nfc-web --trusted-network 172.16.0.0/12
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --nfc-trusted-network 172.28.90.0/28 --nfc-origin-header X-Alkaros-Origin --qr-web-root /app/qr-web --nfc-web-root /app/nfc-web --trusted-network 172.16.0.0/12
     secrets: [db_password]
     depends_on:
       provision: { condition: service_completed_successfully }
+    networks:
+      default: {}
+      # V12-QRT-005: the small, dedicated network the `connector` service
+      # also joins below - see DualScreenOptions.NfcTrustedNetworks's own
+      # doc comment for why this narrower network (not the generic
+      # `default`/--trusted-network 172.16.0.0/12 range) is what the NFC
+      # relay transport-exemption gate actually checks against.
+      relay-internal: {}
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://127.0.0.1:5080/health/ready"]
       interval: 10s
@@ -166,6 +187,53 @@ services:
         reservations:
           cpus: "1.0"
           memory: 512m
+
+  connector:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: connector
+    secrets: [db_password]
+    depends_on:
+      api: { condition: service_healthy }
+    # V12-QRT-005: an independent container on the compose network (its own
+    # network namespace), NOT `network_mode: "service:api"` — that was tried
+    # first and rejected: sharing api's network namespace meant restarting
+    # `api` also forced the connector to restart (Docker tears down and
+    # recreates the namespace, which every joiner shares), defeating half of
+    # this task's own point (a routine API deploy would still drop the
+    # public QR ordering path). `cloudflared`'s tunnel ingress target is now
+    # `http://api:5080` (RelayProvisioningService.LocalOriginService) — the
+    # compose service DNS name — instead of "localhost". See
+    # docs/architecture/qr-relay-topology.md's V12-QRT-005 amendment note:
+    # still no public inbound port, still the same physical host, still
+    # API-key authenticated; only the internal reachability mechanism
+    # changed from OS loopback to the compose bridge network.
+    #
+    # Only `relay-internal`, deliberately not `default` too: `postgres` also
+    # joins `relay-internal` (see its own service block) specifically so
+    # this container needs exactly one shared network with each of `api`
+    # and `postgres` - sharing two networks with the same peer makes
+    # Docker's embedded DNS resolution of that peer's name ambiguous
+    # (confirmed: it does not reliably return the `relay-internal` address
+    # when `api` is reachable on both `default` and `relay-internal`, which
+    # defeats DualScreenOptions.NfcTrustedNetworks's whole point).
+    networks:
+      relay-internal: {}
+    command:
+      - |
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        exec dotnet ALKAROS.QrRelay.ConnectorHost.dll --db-url postgresql://alkaros@postgres:5432/alkaros
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256m
+        reservations:
+          cpus: "0.1"
+          memory: 64m
 
   web:
     build:
@@ -211,3 +279,24 @@ volumes:
   alkaros-wal-archive:
   caddy-data:
   caddy-config:
+
+networks:
+  default: {}
+  # V12-QRT-005: joined by `api`, `postgres` and `connector` (see each
+  # service's own `networks:` block) - `connector` is deliberately on ONLY
+  # this network (not `default` too), since sharing two networks with the
+  # same peer makes Docker's embedded DNS resolution of that peer's name
+  # ambiguous (confirmed: it does not reliably return the `relay-internal`
+  # address when a peer is reachable on both networks). NOT `internal:
+  # true`: `cloudflared` (inside `connector`) needs real outbound internet
+  # access to reach Cloudflare's edge - only inbound routing from outside
+  # the host is what Docker already blocks for an unpublished-port bridge
+  # network like this one, `internal: true` was never required for that.
+  # A fixed subnet (rather than an auto-assigned one) is what
+  # DualScreenOptions.NfcTrustedNetworks / compose's own
+  # --nfc-trusted-network flag on `api` actually checks against, so it must
+  # stay this exact value.
+  relay-internal:
+    ipam:
+      config:
+        - subnet: 172.28.90.0/28

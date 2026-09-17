@@ -27,6 +27,7 @@
   <Project Path="src/Modules/Production/ALKAROS.Production.csproj" />
   <Project Path="src/Modules/QrOrdering/ALKAROS.QrOrdering.csproj" />
   <Project Path="src/Integrations/QrRelay/ALKAROS.QrRelay.csproj" />
+  <Project Path="src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj" />
   <Project Path="src/Clients/Cashier/ALKAROS.Cashier.csproj" />
   <Project Path="src/Clients/WaiterPwa/ALKAROS.WaiterPwa.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />

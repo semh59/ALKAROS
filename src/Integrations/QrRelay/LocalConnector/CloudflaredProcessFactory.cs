@@ -4,8 +4,8 @@ namespace ALKAROS.QrRelay.LocalConnector;
 
 /// <summary>
 /// V12-QRT-001. Real process launch — requires the <c>cloudflared</c>
-/// binary on PATH (baked into the `api` container image; see
-/// `deploy/docker/Dockerfile`). stdout/stderr are inherited so cloudflared's
+/// binary on PATH (baked into the `connector` container image, V12-QRT-005;
+/// see `deploy/docker/Dockerfile`). stdout/stderr are inherited so cloudflared's
 /// own connection logs ("Registered tunnel connection", errors, etc.) land
 /// directly in the container's own log stream — this is the only place that
 /// activity is currently observable; no metrics parsing is attempted.
