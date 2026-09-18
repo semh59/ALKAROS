@@ -1,0 +1,85 @@
+V13-ALC-002 closure evidence
+Date: 2026-09-18
+Assignee: Codex
+
+## Scope executed
+`src/Modules/Billing/PaymentClosure/**`: a deterministic, side-effect-free
+projection of a Bill's payment-closure state (PDF:I.26-I.29/II.2.6/
+II.3.4-II.3.5/II.5.3/III.8):
+- BillPaymentClosureProjection.cs: the record (BillId, CurrencyCode,
+  PayableAmount, AllocatedTotal, PaidTotal, ChangeTotal, PaymentSatisfied,
+  Blockers) and BillClosureBlocker enum (NotFullyAllocated,
+  HasPendingPayment, HasUnknownPayment).
+- BillPaymentClosureCalculator.cs: pure function `Compute(bill, payments,
+  allocations)` — no database, unit-testable in isolation (same separation
+  PaymentAllocationFactory already established). Only Status == Approved
+  payments ever contribute (Pending/Unknown/Declined/Cancelled never
+  produce PaymentSatisfied, this task's own Acceptance evidence);
+  allocations are cross-referenced against that same approved-payment set
+  rather than trusted at face value ("authoritative Payment kayıtlarından").
+  PaymentSatisfied = AllocatedTotal >= PayableAmount (>0).
+- BillPaymentClosureProjector.cs / IBillPaymentClosureProjector.cs: loads
+  the real Bill + its Payments + its PaymentAllocations and calls the pure
+  calculator — a genuine "rebuild" every call (Acceptance evidence:
+  "Rebuild projection deterministiktir"), never a mutable stored flag that
+  could drift from the underlying ledger.
+- PaymentClosureExceptions.cs: PaymentClosureBillNotFoundException.
+- BillPaymentClosureModule.cs: its own IModule (not yet added to
+  ModuleRegistry.DefaultCatalog, same reasoning as V13-CSH-003 — the full
+  V1.3 HTTP composition is a later task's job, likely V13-FSC-002).
+
+## A real circular-dependency conflict found and resolved
+Payments already references Billing (ALKAROS.Payments.csproj ->
+ALKAROS.Billing.csproj), but this task's own code (physically under
+src/Modules/Billing/PaymentClosure/, per its Owned surface) needs Payment/
+PaymentAllocation types from the Payments assembly — a straight
+Billing -> Payments reference would have cycled. Resolved by giving
+PaymentClosure/** its own separate project
+(ALKAROS.Billing.PaymentClosure.csproj, referencing BOTH
+ALKAROS.Billing.csproj and ALKAROS.Payments.csproj — no cycle, since
+Billing itself never references back), with a `<Compile Remove>` added to
+ALKAROS.Billing.csproj so its own default file glob does not also compile
+the same sources into that assembly.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Modules/Billing/PaymentClosure (real Postgres, alkaros-test-pg:55432)
+   Result: Toplam: 13, Başarılı: 13, Başarısız: 0 (exit code: 0)
+   - 7 pure BillPaymentClosureCalculatorTests (no database): empty state,
+     each non-Approved status individually (Pending/Declined/Cancelled/
+     Unknown) never satisfies, HasPendingPayment/HasUnknownPayment
+     blockers, exact-match satisfied, partial-allocation not-yet-satisfied,
+     and the defensive cross-check (an allocation tied to a non-Approved
+     payment contributes nothing).
+   - 3 real-Postgres BillPaymentClosureProjectorTests: not-found throws,
+     a real seeded Approved Payment + Allocation rebuilds as satisfied end
+     to end, and rebuild is deterministic across two calls (BeEquivalentTo,
+     not Be — record auto-equality compares the Blockers list by reference,
+     not content, a known .NET record+List<T> gotcha, not a production bug).
+
+3. Regression check on ALKAROS.Billing.BillFoundation.Tests (the project
+   whose csproj I amended): 44/44, unaffected.
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 1 (UNOWNED_PRODUCTION_FILE
+   tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py),
+   Validation warnings: 0. Pre-existing and unrelated (confirmed earlier
+   this session via git stash).
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+3. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences) — run because this task added new
+   .csproj files.
+
+## Write-set vs Allowlist
+- src/Modules/Billing/PaymentClosure/** (new, including its own
+  ALKAROS.Billing.PaymentClosure.csproj)
+- tests/Modules/Billing/PaymentClosure/** (new)
+- evidence/V13-ALC-002/closure-evidence.txt
+- plan/v1.3/payment-allocation/V13-ALC-002-bill-closure-projection.md
+  (Status: Planned -> Done, Owned surface amended with the Sınırlı ek
+  entries above)
+- Sınırlı ek: src/Modules/Billing/ALKAROS.Billing.csproj, ALKAROS.slnx

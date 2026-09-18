@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSModule>true</ALKAROSModule>
+    <RootNamespace>ALKAROS.Billing.PaymentClosure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Its own separate project (not part of ALKAROS.Billing.csproj):
+         Payments already references Billing, so this needs its own
+         assembly to depend on both without cycling. -->
+    <ProjectReference Include="..\ALKAROS.Billing.csproj" />
+    <ProjectReference Include="..\..\Payments\ALKAROS.Payments.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+  </ItemGroup>
+
+</Project>

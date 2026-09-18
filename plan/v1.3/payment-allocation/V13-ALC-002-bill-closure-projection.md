@@ -1,8 +1,8 @@
 # V13-ALC-002 - Implement Bill allocation and payment-satisfied projections
 
 - Task ID: V13-ALC-002
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Codex
 - Work type: implementation
 - Surface state: Planned
 
@@ -23,6 +23,17 @@ kayıtlarından atomik üretmek.
 
 - `src/Modules/Billing/PaymentClosure/**`, `tests/Modules/Billing/PaymentClosure/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Billing/ALKAROS.Billing.csproj
+  (V1-BIL-001 ailesinde kalır) — yalnız `PaymentClosure/**/*.cs`'i bu
+  projenin derlemesinden hariç tutan bir `<Compile Remove>` eklendi.
+  Gerekçe: `ALKAROS.Payments.csproj` zaten `ALKAROS.Billing.csproj`'a
+  referans veriyor; bu görevin kodu Payment/PaymentAllocation tiplerine
+  ihtiyaç duyduğu için `PaymentClosure/**`'ı kendi ayrı projesi
+  (`ALKAROS.Billing.PaymentClosure.csproj`) yaptım — aksi halde
+  Billing→Payments referansı döngü oluştururdu.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx — yalnız yeni
+  `ALKAROS.Billing.PaymentClosure.csproj` ve
+  `ALKAROS.Billing.PaymentClosure.Tests.csproj` girişleri eklendi.
 
 ## In scope
 
