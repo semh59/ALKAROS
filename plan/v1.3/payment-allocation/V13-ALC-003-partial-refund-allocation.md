@@ -1,8 +1,8 @@
 # V13-ALC-003 - Implement refund intents
 
 - Task ID: V13-ALC-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Codex
 - Work type: implementation
 - Surface state: Planned
 
@@ -24,6 +24,16 @@ kalıcılaştırmak.
 - `src/Modules/Payments/Allocations/RefundIntents/**`, `tests/Modules/Payments/Allocations/RefundIntents/**`,
   `database/migrations/V13/V13-ALC-003/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
+  — yalnız yeni "126" (refund_intents, phase B) girişi eklendi; mevcut
+  hiçbir giriş değişmedi.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
+  (çok sayıda geçmiş migration görevinin sahipliğinde kalır — bu dosyanın
+  kendi yorumu, PhaseBMax'ı her yeni pozisyonla aynı diff'te güncellemeyi
+  zorunlu kılıyor) — yalnız `PhaseBMax` "125"→"126" ve üstündeki yorum
+  güncellendi.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx — yalnız yeni
+  `ALKAROS.Payments.Allocations.RefundIntents.Tests.csproj` girişi eklendi.
 
 ## In scope
 

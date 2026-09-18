@@ -1,0 +1,108 @@
+V13-ALC-003 closure evidence
+Date: 2026-09-18
+Assignee: Codex
+
+## Scope executed
+`src/Modules/Payments/Allocations/RefundIntents/**`: RefundIntent
+eligibility/persistence, deliberately NOT the actual refund
+(payment_reversals ledger, real Payment Approved/PartiallyRefunded/
+Refunded transition, net-paid mutation) — all V13-ALC-004's own scope
+(this task's Handoff, and this task's own Out of scope), which has not
+landed yet:
+- RefundIntent.cs: RefundIntentStatus (Pending/Rejected) and the
+  RefundIntent entity — immutable except for its one Pending->Rejected
+  transition (`Reject`). No Approve/Complete transition exists here; a
+  fulfilled intent stays Pending in this table forever, its completion
+  recorded entirely by V13-ALC-004's separate reversal ledger.
+- RefundIntentExceptions.cs: InvalidRefundIntentAmountException,
+  InvalidRefundIntentTransitionException,
+  RefundIntentAllocationNotFoundException,
+  RefundIntentCrossPaymentException, RefundIntentOverLimitException.
+- RefundIntentFactory.cs: pure validation (no database) — same-payment
+  invariant (an intent's target allocation must belong to the named
+  payment) and the cumulative eligibility check: requestedAmount +
+  already-Pending intents for that SAME allocation must not exceed the
+  allocation's own amount. No payment_reversals table exists yet to also
+  net against (V13-ALC-004's own table) - eligibility here is purely
+  "already-Pending intents for this allocation".
+- IRefundIntentRepository.cs / PostgresRefundIntentRepository.cs:
+  CreateAsync — idempotency-replay first (a duplicate submit returns the
+  existing row unchanged), then a per-allocation pg_advisory_xact_lock
+  (same pattern PostgresPaymentAllocationRepository already uses
+  per-bill) before computing the cumulative-Pending sum and calling the
+  factory, so a genuinely concurrent duplicate submit still produces
+  exactly one real row. GetByIdempotencyKeyAsync, GetByAllocationIdAsync,
+  SaveAsync (persists the Reject transition, optimistic concurrency).
+- RefundIntentsModule.cs: its own IModule (not yet added to
+  ModuleRegistry.DefaultCatalog, same reasoning as V13-CSH-003/
+  V13-ALC-002 — the full V1.3 composition is a later task's job).
+- database/migrations/V13/V13-ALC-003/126-refund-intents.up.sql (+.down.sql):
+  payments.refund_intents table — FKs to payments.payments and
+  payments.payment_allocations, a CHECK tying Rejected status to
+  rejected_at/rejection_reason both being set (and Pending to both being
+  null), UNIQUE idempotency_key.
+
+## Migration-manifest bookkeeping (required, shared files)
+database/MigrationComposition/order.json gained the "126"
+(refund_intents, phase B) entry; src/Host/Composition/Migrations/
+MigrationManifest.cs's PhaseBMax moved "125"->"126" together with its own
+range comment, in the same diff — that file's own comment explicitly
+requires this ("update it in the same diff as PhaseBMax from now on, not
+after"), and this session's own memory carries the same lesson from a
+prior task. Migration-composition tests re-run after the change (see
+below) to confirm nothing broke.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0) — one CA1305 warning-as-error
+   fixed along the way (DateTimeOffset.ToString() with no culture in an
+   ArgumentException message; switched to InvariantCulture, matching
+   Payment.cs's own existing convention).
+
+2. dotnet test tests/Modules/Payments/Allocations/RefundIntents (real
+   Postgres, alkaros-test-pg:55432)
+   Result: Toplam: 11, Başarılı: 11, Başarısız: 0 (exit code: 0)
+   - 6 pure RefundIntentFactoryTests (no database): zero/negative amount,
+     cross-payment mismatch, exact-limit acceptance (the task's own
+     100/20/80 example), over-limit rejection (the task's own "100 üzeri
+     ... reddedilir" example), Reject records reason+timestamp, Reject
+     refuses an already-Rejected intent.
+   - 5 real-Postgres PostgresRefundIntentRepositoryTests: 20-of-100
+     produces exactly one Pending intent, a duplicate submit replays
+     (same id, still exactly one row), an over-limit request is rejected
+     AND persists nothing, a truly concurrent duplicate submit (advisory
+     lock) still produces exactly one real row, and SaveAsync's Reject
+     transition persists correctly (then confirms a Rejected intent no
+     longer counts toward cumulative eligibility — the full amount is
+     requestable again).
+
+3. Migration-composition regression check (tests/Host/MigrationComposition,
+   filtered to MigrationManifest/MigrationComposition): passed, confirming
+   the PhaseBMax bump and the new "126" order.json entry did not break
+   migration ordering/validation.
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 1 (UNOWNED_PRODUCTION_FILE
+   tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py),
+   Validation warnings: 0. Pre-existing and unrelated (confirmed earlier
+   this session via git stash).
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0) — found and fixed 2
+   real violations along the way: two doc-comments had quoted Turkish
+   task-spec phrases verbatim (AGENTS.md: code/comments must be English),
+   paraphrased in English instead.
+3. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences) — run because this task added a
+   new .csproj.
+
+## Write-set vs Allowlist
+- src/Modules/Payments/Allocations/RefundIntents/** (new)
+- tests/Modules/Payments/Allocations/RefundIntents/** (new)
+- database/migrations/V13/V13-ALC-003/** (new)
+- evidence/V13-ALC-003/closure-evidence.txt
+- plan/v1.3/payment-allocation/V13-ALC-003-partial-refund-allocation.md
+  (Status: Planned -> Done, Owned surface amended with the Sınırlı ek
+  entries above)
+- Sınırlı ek: database/MigrationComposition/order.json,
+  src/Host/Composition/Migrations/MigrationManifest.cs, ALKAROS.slnx
