@@ -2,6 +2,8 @@ using System.Net;
 using System.Globalization;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
+using ALKAROS.Cash.Contracts;
+using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
@@ -527,6 +529,7 @@ public static partial class DualScreenApplication
         app.MapCustomerDisplayScreensaverApi();
         app.MapWebPushApi();
         app.MapHelpRequestApi();
+        app.MapCashSessionApi();
         app.MapHub<CustomerDisplayHub>(CustomerDisplayHub.Route);
         app.MapMethods(
             "/api/{**path}",
@@ -656,6 +659,20 @@ public static partial class DualScreenApplication
             DualScreenConflictException => (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
             SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış."),
             OrderNotFoundException => (404, "ORDER_NOT_FOUND", "Sipariş bulunamadı."),
+            // V13-CSH-004: Cash/CashTender domain exceptions, most specific
+            // first (CashVarianceThresholdExceededException/
+            // ActiveCashSessionExistsException/InvalidCashSessionStateException
+            // all derive from CashSessionException, so they must precede it).
+            CashSessionNotFoundException => (404, "CASH_SESSION_NOT_FOUND", "Kasa oturumu bulunamadı."),
+            ActiveCashSessionExistsException => (409, "ACTIVE_CASH_SESSION_EXISTS", "Bu terminalde zaten açık bir kasa oturumu var."),
+            InvalidCashSessionStateException => (409, "INVALID_CASH_SESSION_STATE", "Kasa oturumu bu işlem için uygun durumda değil."),
+            CashVarianceThresholdExceededException => (409, "CASH_VARIANCE_THRESHOLD_EXCEEDED", "Fark tolerans sınırını aşıyor; süpervizör onayı gerekiyor."),
+            NegativeCashAmountException => (400, "VALIDATION_FAILED", "Tutar negatif olamaz."),
+            CashSessionException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+            CashTenderBillNotFoundException => (404, "BILL_NOT_FOUND", "Hesap bulunamadı."),
+            ClosedCashSessionException => (409, "CLOSED_CASH_SESSION", "Kasa oturumu açık değil."),
+            InsufficientCashTenderException => (400, "INSUFFICIENT_CASH_TENDER", "Verilen tutar hesaplanan tutarı karşılamıyor."),
+            CashTenderException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             PostgresException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

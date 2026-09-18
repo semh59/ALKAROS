@@ -1,0 +1,106 @@
+V13-CSH-004 closure evidence
+Date: 2026-09-18
+Assignee: Codex
+
+## Why this task exists
+Starting V13-PUI-002 (cashier CashSession UI) found that ICashSessionLifecycleService
+(V13-CSH-001) and ICashTenderHandler (V13-CSH-003) had zero HTTP endpoints
+and were not even registered in ModuleRegistry.DefaultCatalog - a UI cannot
+call a backend that does not exist. Semih approved (PO:2026-09-18, via
+AskUserQuestion in this session) opening a dedicated task for the
+composition rather than silently expanding V13-PUI-002's own scope.
+
+## Scope executed
+New src/Host/DualScreen/DualScreenApplication.CashSession.cs (same file
+pattern as DualScreenApplication.Screensaver.cs - a separate partial-class
+file with its own MapCashSessionApi extension method):
+- GET  /api/v1/terminals/{terminalId}/cash-sessions/suggested-opening-balance
+- GET  /api/v1/terminals/{terminalId}/cash-sessions/active (404 when none open)
+- POST /api/v1/terminals/{terminalId}/cash-sessions (Open)
+- POST .../cash-sessions/{id}/start-count
+- POST .../cash-sessions/{id}/counts (RecordCount)
+- POST .../cash-sessions/{id}/close
+- POST .../cash-sessions/{id}/reconcile
+- POST .../cash-sessions/{id}/cash-tender (ICashTenderHandler)
+
+All terminal-scoped, same cashier-cookie session (RequireCashierAsync)
+every other Cashier route already uses.
+
+A real bug found and fixed while wiring this: OpenSessionAsync itself
+never posts an Opening CashTransaction (ICashSessionLifecycleService's own
+doc comment already said as much - "V13-CSH-001 has no ledger yet... once
+the ledger lands, the caller sums it instead"). Without the Open endpoint
+also recording that entry, /close's own ComputeExpectedCashAsync would
+have silently computed an expected cash of 0 for every session regardless
+of what was actually floated. Fixed by recording the Opening entry
+immediately after a successful open (skipped only when the opening
+balance is exactly 0).
+
+## Shared-file amendments (documented in this task's own Owned surface)
+- src/Host/DualScreen/DualScreenApplication.cs: (1) one line added to the
+  Map*Api() call chain (app.MapCashSessionApi();), same pattern as
+  Screensaver's own app.MapCustomerDisplayScreensaverApi(); (2) 10 new
+  exception->HTTP mapping cases in WriteErrorAsync for the Cash/CashTender
+  exception hierarchies (most-specific-subtype-first, since several derive
+  from the same CashSessionException/CashTenderException base).
+- src/Host/Composition/Modules/ModuleRegistry.cs: 4 modules added to
+  DefaultCatalog that had real domain code (V13-CSH-001/002/003, V13-ALC-001)
+  but were never wired into the live Host at all: CashSessionLifecycleModule,
+  CashTransactionLedgerModule, PaymentAllocationPersistenceModule,
+  CashTenderHandlerModule.
+- ALKAROS.slnx: new tests/Host/Experience/CashSession test project entry.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Host/Experience/CashSession (real Postgres + real
+   DualScreenApplication.Build host, alkaros-test-pg:55432)
+   Result: Toplam: 9, Başarılı: 9, Başarısız: 0 (exit code: 0)
+   - Open succeeds and posts an Opening ledger entry (verified indirectly
+     via the close/expected-cash test below).
+   - A second open on the same terminal is rejected (409).
+   - GET .../active returns the open session, then 404 once closed.
+   - Close computes expected cash purely from the Opening ledger entry -
+     a 300 open + 300 actual count reports exactly 0 difference (this IS
+     the direct proof the Opening-entry fix above actually works; without
+     it expected cash would have been 0 and the "difference" would have
+     wrongly been -300).
+   - start-count then record-count succeed.
+   - A real cash-tender succeeds (80 due, 100 tendered -> 20 change) and
+     posts a Sale ledger entry.
+   - A cash-tender on a closed session is rejected (409).
+   - A cash-tender below the amount due is rejected (400).
+   - Every route without a cashier session is 401.
+
+3. Module composition regression check
+   (tests/Host/MigrationComposition, filtered to Composition): 24/25
+   passed - the 1 failure
+   (HostModuleReachabilityTests.DefaultCatalogContainsStandardProductionModules,
+   a hardcoded module-count assertion) is the SAME pre-existing stale test
+   already confirmed unrelated to this session's work (V1-CUI-011's own
+   evidence file has the git-stash confirmation from earlier in this
+   session, when it read 20 vs a stale expected 19); it now reads 24 since
+   this task legitimately added 4 real modules to the catalog - not a
+   regression, the count itself is correct.
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 1 (UNOWNED_PRODUCTION_FILE
+   tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py),
+   Validation warnings: 0. Pre-existing and unrelated (confirmed earlier
+   this session via git stash).
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+3. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences) - run because this task added a
+   new .csproj.
+
+## Write-set vs Allowlist
+- src/Host/DualScreen/DualScreenApplication.CashSession.cs (new)
+- tests/Host/Experience/CashSession/** (new)
+- evidence/V13-CSH-004/closure-evidence.txt
+- plan/v1.3/cash/V13-CSH-004-cash-session-and-tender-http-composition.md
+  (Status: Planned -> InProgress -> Done)
+- Sınırlı ek: src/Host/DualScreen/DualScreenApplication.cs,
+  src/Host/Composition/Modules/ModuleRegistry.cs, ALKAROS.slnx

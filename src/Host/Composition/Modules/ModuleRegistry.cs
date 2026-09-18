@@ -35,7 +35,15 @@ public static class ModuleRegistry
         typeof(ALKAROS.Purchasing.PurchasingModule),
         typeof(ALKAROS.Production.ProductionModule),
         typeof(ALKAROS.QrOrdering.TokenLifecycle.QrOrderingModule),
-        typeof(ALKAROS.Payments.PaymentAggregate.PaymentAggregateModule)
+        typeof(ALKAROS.Payments.PaymentAggregate.PaymentAggregateModule),
+        // V13-CSH-004: the Cash/Payments sub-modules below already existed
+        // (V13-CSH-001/002/003, V13-ALC-001) but were never added here, so
+        // none of their services were ever actually resolvable by the live
+        // Host - this is the first HTTP surface that needs them.
+        typeof(ALKAROS.Cash.SessionLifecycle.CashSessionLifecycleModule),
+        typeof(ALKAROS.Cash.TransactionLedger.CashTransactionLedgerModule),
+        typeof(ALKAROS.Payments.Allocations.Persistence.PaymentAllocationPersistenceModule),
+        typeof(ALKAROS.Cash.TenderHandler.CashTenderHandlerModule)
     ];
 
     /// <summary>
