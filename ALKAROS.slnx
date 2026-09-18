@@ -8,6 +8,7 @@
   <Project Path="src/Host/ALKAROS.Host.csproj" />
   <Project Path="src/Modules/Audit/ALKAROS.Audit.csproj" />
   <Project Path="src/Modules/Billing/ALKAROS.Billing.csproj" />
+  <Project Path="src/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.csproj" />
   <Project Path="src/Modules/Cash/ALKAROS.Cash.csproj" />
   <Project Path="src/Modules/Catalog/ALKAROS.Catalog.csproj" />
   <Project Path="src/Modules/Identity/ALKAROS.Identity.csproj" />
@@ -66,9 +67,11 @@
   <Project Path="tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj" />
   <Project Path="tests/Modules/Billing/Adjustments/ALKAROS.Billing.Adjustments.Tests.csproj" />
   <Project Path="tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj" />
+  <Project Path="tests/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.Tests.csproj" />
   <Project Path="tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj" />
   <Project Path="tests/Modules/Cash/Contracts/ALKAROS.Cash.Contracts.Tests.csproj" />
   <Project Path="tests/Modules/Cash/SessionLifecycle/ALKAROS.Cash.SessionLifecycle.Tests.csproj" />
+  <Project Path="tests/Modules/Cash/TenderHandler/ALKAROS.Cash.TenderHandler.Tests.csproj" />
   <Project Path="tests/Modules/Cash/TransactionLedger/ALKAROS.Cash.TransactionLedger.Tests.csproj" />
   <Project Path="tests/Modules/Catalog/Pricing/ALKAROS.Catalog.Pricing.Tests.csproj" />
   <Project Path="tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj" />
@@ -87,6 +90,7 @@
   <Project Path="tests/Modules/Orders/OrderAggregate/ALKAROS.Orders.OrderAggregate.Tests.csproj" />
   <Project Path="tests/Modules/Orders/SubmitOrder/ALKAROS.Orders.SubmitOrder.Tests.csproj" />
   <Project Path="tests/Modules/Payments/Allocations/Persistence/ALKAROS.Payments.Allocations.Persistence.Tests.csproj" />
+  <Project Path="tests/Modules/Payments/Allocations/RefundIntents/ALKAROS.Payments.Allocations.RefundIntents.Tests.csproj" />
   <Project Path="tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj" />
   <Project Path="tests/Modules/Payments/TenderRouting/ALKAROS.Payments.TenderRouting.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj" />

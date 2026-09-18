@@ -23,22 +23,36 @@ public sealed class PostgresPaymentAllocationRepository : IPaymentAllocationRepo
         string idempotencyKey,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(payment);
-        ArgumentNullException.ThrowIfNull(bill);
-        if (string.IsNullOrWhiteSpace(idempotencyKey))
-            throw new ArgumentException("Idempotency key cannot be empty.", nameof(idempotencyKey));
-
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        var allocation = await AllocateAsync(payment, bill, amount, idempotencyKey, connection, transaction, cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+        return allocation;
+    }
+
+    public async Task<PaymentAllocation> AllocateAsync(
+        Payment payment,
+        Bill bill,
+        decimal amount,
+        string idempotencyKey,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(payment);
+        ArgumentNullException.ThrowIfNull(bill);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        if (string.IsNullOrWhiteSpace(idempotencyKey))
+            throw new ArgumentException("Idempotency key cannot be empty.", nameof(idempotencyKey));
 
         // Idempotency fast path (PDF:II.2.6): a replay returns the existing
         // row instead of re-validating or inserting a second one.
         var existing = await ReadByIdempotencyKeyAsync(connection, transaction, idempotencyKey, cancellationToken);
         if (existing is not null)
-        {
-            await transaction.CommitAsync(cancellationToken);
             return existing;
-        }
 
         // Per-bill advisory lock: serializes concurrent allocation attempts
         // against the SAME bill (same pattern as
@@ -52,17 +66,27 @@ public sealed class PostgresPaymentAllocationRepository : IPaymentAllocationRepo
         var allocation = PaymentAllocationFactory.Create(payment, bill, amount, alreadyAllocated, idempotencyKey);
 
         await InsertAsync(connection, transaction, allocation, cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
         return allocation;
     }
 
     public async Task<PaymentAllocation?> GetByIdempotencyKeyAsync(string idempotencyKey, CancellationToken cancellationToken = default)
     {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        return await GetByIdempotencyKeyAsync(idempotencyKey, connection, transaction, cancellationToken);
+    }
+
+    public async Task<PaymentAllocation?> GetByIdempotencyKeyAsync(
+        string idempotencyKey,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
         if (string.IsNullOrWhiteSpace(idempotencyKey))
             throw new ArgumentException("Idempotency key cannot be empty.", nameof(idempotencyKey));
 
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         return await ReadByIdempotencyKeyAsync(connection, transaction, idempotencyKey, cancellationToken);
     }
 

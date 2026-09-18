@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <!-- V13-CSH-003: the cash tender handler composes Payment/PaymentAllocation
+         alongside its own CashTransaction ledger write. -->
+    <ProjectReference Include="..\Payments\ALKAROS.Payments.csproj" />
   </ItemGroup>
 
   <ItemGroup>

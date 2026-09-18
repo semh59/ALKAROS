@@ -19,7 +19,27 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
     {
         ArgumentNullException.ThrowIfNull(transaction);
 
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var dbTransaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await RecordAsync(transaction, connection, dbTransaction, cancellationToken);
+
+        await dbTransaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task RecordAsync(
+        CashTransaction transaction,
+        NpgsqlConnection connection,
+        NpgsqlTransaction dbTransaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(transaction);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(dbTransaction);
+
+        var command = connection.CreateCommand();
+        command.Transaction = dbTransaction;
+        command.CommandText =
             $"""
             INSERT INTO {Transactions} (
                 cash_transaction_id, cash_session_id, type, direction, amount,
@@ -27,17 +47,20 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
             VALUES (
                 @cash_transaction_id, @cash_session_id, @type, @direction, @amount,
                 @related_payment_id, @notes, @recorded_by, @occurred_at);
-            """);
-        command.Parameters.AddWithValue("cash_transaction_id", transaction.Id);
-        command.Parameters.AddWithValue("cash_session_id", transaction.CashSessionId);
-        command.Parameters.AddWithValue("type", transaction.Type.ToString());
-        command.Parameters.AddWithValue("direction", transaction.Direction.ToString());
-        command.Parameters.AddWithValue("amount", transaction.Amount);
-        command.Parameters.AddWithValue("related_payment_id", (object?)transaction.RelatedPaymentId ?? DBNull.Value);
-        command.Parameters.AddWithValue("notes", (object?)transaction.Notes ?? DBNull.Value);
-        command.Parameters.AddWithValue("recorded_by", (object?)transaction.RecordedBy ?? DBNull.Value);
-        command.Parameters.AddWithValue("occurred_at", transaction.OccurredAt);
-        await command.ExecuteNonQueryAsync(cancellationToken);
+            """;
+        await using (command)
+        {
+            command.Parameters.AddWithValue("cash_transaction_id", transaction.Id);
+            command.Parameters.AddWithValue("cash_session_id", transaction.CashSessionId);
+            command.Parameters.AddWithValue("type", transaction.Type.ToString());
+            command.Parameters.AddWithValue("direction", transaction.Direction.ToString());
+            command.Parameters.AddWithValue("amount", transaction.Amount);
+            command.Parameters.AddWithValue("related_payment_id", (object?)transaction.RelatedPaymentId ?? DBNull.Value);
+            command.Parameters.AddWithValue("notes", (object?)transaction.Notes ?? DBNull.Value);
+            command.Parameters.AddWithValue("recorded_by", (object?)transaction.RecordedBy ?? DBNull.Value);
+            command.Parameters.AddWithValue("occurred_at", transaction.OccurredAt);
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 
     public async Task<IReadOnlyList<CashTransaction>> GetBySessionIdAsync(Guid cashSessionId, CancellationToken cancellationToken = default)

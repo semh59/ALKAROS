@@ -1,0 +1,104 @@
+V13-CSH-003 closure evidence
+Date: 2026-09-18
+Assignee: Codex
+
+## Scope executed
+`src/Modules/Cash/TenderHandler/**`: a new, self-contained module implementing
+the cash tender handler (PDF:I.26-I.29/I.49/II.2.7/II.5.9/III.9):
+- CashTenderContracts.cs: CashTenderRequest/CashTenderResult. Deliberately
+  its own shape, not ALKAROS.Payments.TenderRouting.TenderRequest (V13-PAY-002,
+  out of this task's Owned surface) — cash needs strictly more than that
+  generic envelope carries (tendered amount for change, which cash session
+  it posts to, an idempotency key). Composing this into the generic
+  router's shape is V13-PAY-003's own job (this task's Handoff).
+- CashTenderExceptions.cs: CashTenderBillNotFoundException,
+  ClosedCashSessionException, InsufficientCashTenderException.
+- ICashTenderHandler.cs / CashTenderHandler.cs: the handler itself.
+  - Validates the session is Open and the bill exists (plain reads before
+    the write transaction opens).
+  - Rejects TenderedAmount < AmountDue (InsufficientCashTenderException).
+  - Opens ONE connection+transaction, takes a pg_advisory_xact_lock keyed
+    on the request's own idempotency key (same pattern
+    PostgresPaymentAllocationRepository already uses per-bill), checks for
+    an existing allocation under that key first (idempotent replay - no
+    new rows on a duplicate submit, not even a throwaway Payment), and
+    otherwise creates the Payment (Initiated -> Tender -> Approve in
+    memory, inserted once in its final Approved state with full status
+    history), a CashTransaction (type Sale, amount = approved amount, the
+    net cash retained in the drawer per docs/domain/cash-session-design.md
+    §4's ExpectedCash formula), and the PaymentAllocation, all inside that
+    same transaction, then commits once.
+  - Change = TenderedAmount - AmountDue, returned in the result; never
+    persisted as a separate record (Payment.ChangeAmount already carries
+    it, per the Payment aggregate's own invariant).
+- CashTenderHandlerModule.cs: its own IModule (same pattern as
+  CashTransactionLedgerModule, keeps this task from ever writing to
+  CashModule.cs), not yet added to ModuleRegistry.DefaultCatalog — none of
+  this task's own dependencies (CashTransactionLedgerModule,
+  PaymentAllocationPersistenceModule) are registered there either; wiring
+  the full V1.3 composition into the live Host is V13-PAY-003's own job.
+
+## Shared-file amendments required (documented in this task's own Owned
+## surface, "Sınırlı ek" entries)
+IPaymentAllocationRepository/PostgresPaymentAllocationRepository (V13-ALC-001)
+and ICashTransactionLedgerRepository/PostgresCashTransactionLedgerRepository
+(V13-CSH-002) each needed a connection/transaction-scoped overload to
+participate in this task's single atomic transaction — IPaymentRepository
+already had exactly this overload with a comment anticipating it ("V13-PAY-003/
+CSH-003 compose with this"), the other two simply hadn't been given the
+same treatment yet. Existing parameterless overloads now open their own
+connection and delegate to the new one; no behavior change, confirmed by
+the full existing test suites for both (see Build and Tests below).
+ALKAROS.Cash.csproj gained one ProjectReference (to ALKAROS.Payments.csproj,
+which transitively brings Billing) so TenderHandler can see Payment/Bill.
+ALKAROS.slnx gained the new test project's entry.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Modules/Cash/TenderHandler (real Postgres, alkaros-test-pg:55432)
+   Result: Toplam: 6, Başarılı: 6, Başarısız: 0 (exit code: 0)
+   - HandleAsyncCreatesExactlyOnePaymentAllocationAndCashTransactionWithDeterministicChange
+   - HandleAsyncRejectsATenderOnAClosedSessionAndCreatesNothing
+   - HandleAsyncRejectsATenderBelowTheAmountDueAndCreatesNothing
+   - HandleAsyncLeavesNoPartialPaymentOrCashTransactionWhenTheAllocationStepFails
+     (rollback proof: AmountDue deliberately exceeds the bill's payable so
+     AllocateAsync's own over-allocation check fails AFTER Payment and
+     CashTransaction would already have inserted in the same transaction -
+     confirms all three roll back together, not just the allocation)
+   - HandleAsyncReplaysADuplicateSubmitInsteadOfCreatingASecondSetOfRecords
+   - ConcurrentSubmitsOfTheSameCommandProduceExactlyOneRealSetOfRecords
+     (two truly parallel HandleAsync calls with the same idempotency key -
+     proves the advisory lock actually serializes them, not just the
+     sequential-replay case above)
+
+3. Regression check on the two amended shared modules (both real Postgres,
+   both clean, no behavior change):
+   - ALKAROS.Payments.Allocations.Persistence.Tests: 13/13
+   - ALKAROS.Cash.TransactionLedger.Tests: 22/22
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 1 (UNOWNED_PRODUCTION_FILE
+   tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py),
+   Validation warnings: 0. Pre-existing and unrelated (confirmed via git
+   stash before this whole session's work started).
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+3. python tools/project-manifest/project_manifest_tool.py
+   Result: Status: VALID (0 differences across Solution, Disk, and
+   ProjectReferences) — run because this task added a new .csproj.
+
+## Write-set vs Allowlist
+- src/Modules/Cash/TenderHandler/** (new)
+- tests/Modules/Cash/TenderHandler/** (new)
+- evidence/V13-CSH-003/closure-evidence.txt
+- plan/v1.3/cash/V13-CSH-003-cash-tender-handler.md (Status: Planned -> Done,
+  Owned surface amended with the Sınırlı ek entries above)
+- Sınırlı ek (see the task file's own Owned surface for detail):
+  src/Modules/Payments/Allocations/Persistence/IPaymentAllocationRepository.cs,
+  src/Modules/Payments/Allocations/Persistence/PostgresPaymentAllocationRepository.cs,
+  src/Modules/Cash/TransactionLedger/ICashTransactionLedgerRepository.cs,
+  src/Modules/Cash/TransactionLedger/PostgresCashTransactionLedgerRepository.cs,
+  src/Modules/Cash/ALKAROS.Cash.csproj, ALKAROS.slnx

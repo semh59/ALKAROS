@@ -1,8 +1,8 @@
 # V13-CSH-003 - Implement cash tender handler
 
 - Task ID: V13-CSH-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Codex
 - Work type: implementation
 - Surface state: Planned
 
@@ -22,6 +22,30 @@ Cash tender için Payment, PaymentAllocation, CashTransaction ve change sonucunu
 
 - `src/Modules/Cash/TenderHandler/**`, `tests/Modules/Cash/TenderHandler/**`
 - Bu görev CashSession veya allocation persistence schema'sını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Payments/Allocations/Persistence/IPaymentAllocationRepository.cs
+  (V13-ALC-001 sahipliğinde kalır) — yalnız `AllocateAsync`/`GetByIdempotencyKeyAsync`'in
+  caller'ın connection/transaction'ını kabul eden birer overload'ı eklendi
+  (`IPaymentRepository.AddAsync`'in zaten aynı amaçla taşıdığı, "V13-PAY-003/
+  CSH-003 compose with this" notuyla önceden işaretlenmiş overload deseninin
+  aynısı); şema/mevcut davranış değişmedi.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Payments/Allocations/Persistence/PostgresPaymentAllocationRepository.cs
+  (V13-ALC-001 sahipliğinde kalır) — yukarıdaki overload'ların gerçek
+  implementasyonu; eski parametresiz overload'lar artık kendi bağlantısını
+  açıp yeni overload'ı çağırıyor (davranış aynı, kod tekrarı kaldırıldı).
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Cash/TransactionLedger/ICashTransactionLedgerRepository.cs
+  (V13-CSH-002 sahipliğinde kalır) — yalnız `RecordAsync`'in caller'ın
+  connection/transaction'ını kabul eden bir overload'ı eklendi.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Cash/TransactionLedger/PostgresCashTransactionLedgerRepository.cs
+  (V13-CSH-002 sahipliğinde kalır) — yukarıdaki overload'ın gerçek
+  implementasyonu; eski parametresiz overload kendi bağlantısını açıp yeni
+  overload'ı çağırıyor.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Cash/ALKAROS.Cash.csproj
+  — yalnız `ALKAROS.Payments.csproj`'a (ve onun üzerinden `ALKAROS.Billing.csproj`'a)
+  bir `ProjectReference` eklendi; TenderHandler'ın Payment/Bill tiplerine
+  erişimi için gerekli.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx — yalnız yeni
+  `tests/Modules/Cash/TenderHandler/ALKAROS.Cash.TenderHandler.Tests.csproj`
+  girişi eklendi.
 
 ## In scope
 

@@ -1,5 +1,6 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Payments.PaymentAggregate;
+using Npgsql;
 
 namespace ALKAROS.Payments.Allocations.Persistence;
 
@@ -21,8 +22,25 @@ public interface IPaymentAllocationRepository
         string idempotencyKey,
         CancellationToken cancellationToken = default);
 
+    /// <summary>Same as <see cref="AllocateAsync(Payment, Bill, decimal, string, CancellationToken)"/> inside the caller's transaction (V13-CSH-003 composes with this).</summary>
+    Task<PaymentAllocation> AllocateAsync(
+        Payment payment,
+        Bill bill,
+        decimal amount,
+        string idempotencyKey,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
     /// <summary>Loads an allocation by its idempotency key, or null if none was ever persisted.</summary>
     Task<PaymentAllocation?> GetByIdempotencyKeyAsync(string idempotencyKey, CancellationToken cancellationToken = default);
+
+    /// <summary>Same as <see cref="GetByIdempotencyKeyAsync(string, CancellationToken)"/> inside the caller's transaction (V13-CSH-003 composes with this).</summary>
+    Task<PaymentAllocation?> GetByIdempotencyKeyAsync(
+        string idempotencyKey,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Loads every allocation recorded against a Bill, oldest first.</summary>
     Task<IReadOnlyList<PaymentAllocation>> GetByBillIdAsync(Guid billId, CancellationToken cancellationToken = default);

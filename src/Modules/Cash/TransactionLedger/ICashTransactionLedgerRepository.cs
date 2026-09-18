@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace ALKAROS.Cash.TransactionLedger;
 
 /// <summary>Persistence contract for the append-only CashTransaction ledger (V13-CSH-002).</summary>
@@ -5,6 +7,13 @@ public interface ICashTransactionLedgerRepository
 {
     /// <summary>Persists a new, already-validated ledger entry. Entries are never updated.</summary>
     Task RecordAsync(CashTransaction transaction, CancellationToken cancellationToken = default);
+
+    /// <summary>Same as <see cref="RecordAsync(CashTransaction, CancellationToken)"/> inside the caller's transaction (V13-CSH-003 composes with this).</summary>
+    Task RecordAsync(
+        CashTransaction transaction,
+        NpgsqlConnection connection,
+        NpgsqlTransaction dbTransaction,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Loads every entry recorded against a session, oldest first.</summary>
     Task<IReadOnlyList<CashTransaction>> GetBySessionIdAsync(Guid cashSessionId, CancellationToken cancellationToken = default);
