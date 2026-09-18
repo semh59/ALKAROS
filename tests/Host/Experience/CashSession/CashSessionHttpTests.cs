@@ -191,6 +191,41 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task CashTenderClaimingMoreThanTheBillsRemainingPayableIsRejectedAndPersistsNothing()
+    {
+        // Found by an independent review (2026-09-18): AmountDue is
+        // client-supplied and was never cross-checked against the bill's
+        // own real remaining payable before this fix - confirms the fix
+        // through the real HTTP route, not just the domain-level test.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "csh004-over-allocate");
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
+            new { BillId = billId, AmountDue = 200m, TenderedAmount = 200m, IdempotencyKey = "csh004-over-allocate-key" });
+
+        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
+        var body = await tender.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("OVER_ALLOCATION", body.GetProperty("error").GetProperty("code").GetString());
+
+        // A same-key retry of the SAME over-claiming request must still be
+        // rejected the same way, not silently "replayed" as a success -
+        // nothing was ever persisted for this idempotency key.
+        var retry = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
+            new { BillId = billId, AmountDue = 200m, TenderedAmount = 200m, IdempotencyKey = "csh004-over-allocate-key" });
+        Assert.Equal(HttpStatusCode.Conflict, retry.StatusCode);
+
+        // The bill is still fully payable by a real, correctly-sized tender.
+        var valid = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 80m, IdempotencyKey = "csh004-over-allocate-followup" });
+        Assert.Equal(HttpStatusCode.OK, valid.StatusCode);
+    }
+
+    [Fact]
     public async Task WithoutACashierSessionEveryRouteIsUnauthorized()
     {
         var terminalId = Guid.NewGuid();

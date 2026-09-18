@@ -85,6 +85,27 @@ public sealed class CashTenderHandler : ICashTenderHandler
             return await BuildReplayResultAsync(existingAllocation, request.CashSessionId, cancellationToken);
         }
 
+        // Fail-fast check, now that this is confirmed to be a genuinely new
+        // command (not a replay of one that already succeeded): a plain
+        // read of the bill's own already-allocated total, same connection.
+        // AllocateAsync below remains the real, concurrency-safe guard (its
+        // own per-bill advisory lock, inside this same atomic transaction)
+        // — this one only avoids inserting and then immediately rolling
+        // back the Payment/CashTransaction for the common case of a
+        // caller-supplied AmountDue that plainly exceeds what the bill has
+        // left, without weakening the actual invariant (a bill's total
+        // allocated can never exceed its payable amount, enforced under
+        // lock either way). Found by an independent review (2026-09-18): an
+        // earlier draft ran this check BEFORE the replay check above and
+        // broke replay itself (a second, identical submit of an
+        // already-fully-allocated bill was wrongly rejected as
+        // over-allocating).
+        var existingAllocations = await _allocationRepository.GetByBillIdAsync(bill.Id, cancellationToken);
+        var alreadyAllocated = existingAllocations.Sum(a => a.Amount);
+        var remainingPayable = bill.PayableAmount - alreadyAllocated;
+        if (request.AmountDue > remainingPayable)
+            throw new OverAllocationException(bill.Id, request.AmountDue, remainingPayable);
+
         var approvedAmount = request.AmountDue;
         var changeAmount = request.TenderedAmount - approvedAmount;
 

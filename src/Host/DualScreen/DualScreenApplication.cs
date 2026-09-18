@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.TenderHandler;
+using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
@@ -673,6 +674,12 @@ public static partial class DualScreenApplication
             ClosedCashSessionException => (409, "CLOSED_CASH_SESSION", "Kasa oturumu açık değil."),
             InsufficientCashTenderException => (400, "INSUFFICIENT_CASH_TENDER", "Verilen tutar hesaplanan tutarı karşılamıyor."),
             CashTenderException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+            // V13-CSH-004: OverAllocationException (V13-ALC-001) is reachable
+            // through the cash-tender endpoint - both this handler's own
+            // fail-fast check and AllocateAsync's deeper, lock-guarded one
+            // can throw it when the requested amount exceeds what the bill
+            // actually has left.
+            OverAllocationException => (409, "OVER_ALLOCATION", "İstenen tutar hesabın kalan bakiyesini aşıyor."),
             ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             PostgresException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

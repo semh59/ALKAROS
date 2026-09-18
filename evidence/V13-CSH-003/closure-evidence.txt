@@ -2,6 +2,28 @@ V13-CSH-003 closure evidence
 Date: 2026-09-18
 Assignee: Codex
 
+## Addendum (2026-09-18, same day): real bug found by an independent review
+After V13-CSH-004 wired this handler to a real HTTP endpoint, an
+independent review found that `HandleAsync` accepted `request.AmountDue`
+as the approved amount without ever cross-checking it against the Bill's
+own real remaining payable BEFORE opening the write transaction — only
+`AllocateAsync`'s own later, lock-guarded check would catch an
+over-claiming amount (correctly rolling back the whole transaction, per
+the existing `HandleAsyncLeavesNoPartialPaymentOrCashTransactionWhenTheAllocationStepFails`
+test), but only after an otherwise-avoidable Payment+CashTransaction
+insert-then-rollback. Added a fail-fast plain-read check
+(`GetByBillIdAsync` sum vs `bill.PayableAmount`) - positioned AFTER the
+idempotency-replay check (an earlier draft placed it before, which broke
+replay itself: a duplicate submit of an already-fully-allocated bill was
+wrongly rejected as over-allocating). `AllocateAsync`'s own check remains
+the authoritative, concurrency-safe guard; the new check is purely a
+fail-fast optimization, verified not to change any test's asserted
+outcome. All 6 ALKAROS.Cash.TenderHandler.Tests still pass; a new HTTP-level
+test in V13-CSH-004's own suite
+(`CashTenderClaimingMoreThanTheBillsRemainingPayableIsRejectedAndPersistsNothing`)
+confirms the real route returns 409 OVER_ALLOCATION and a same-key retry
+of the rejected request stays rejected (nothing was ever persisted for it).
+
 ## Scope executed
 `src/Modules/Cash/TenderHandler/**`: a new, self-contained module implementing
 the cash tender handler (PDF:I.26-I.29/I.49/II.2.7/II.5.9/III.9):
