@@ -112,6 +112,19 @@ public static partial class DualScreenApplication
             return Results.Ok(recorded);
         });
 
+        group.MapGet("/{cashSessionId:guid}/expected-cash", async (
+            Guid terminalId,
+            Guid cashSessionId,
+            ICashTransactionLedgerRepository ledger,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var expectedCash = await ledger.ComputeExpectedCashAsync(cashSessionId, cancellationToken);
+            return Results.Ok(new ExpectedCashResponseV1(expectedCash));
+        });
+
         group.MapPost("/{cashSessionId:guid}/close", async (
             Guid terminalId,
             Guid cashSessionId,
@@ -149,6 +162,38 @@ public static partial class DualScreenApplication
             return Results.Ok(session);
         });
 
+        group.MapPost("/{cashSessionId:guid}/cash-movements", async (
+            Guid terminalId,
+            Guid cashSessionId,
+            RecordCashMovementRequestV1 request,
+            ICashSessionRepository sessionRepository,
+            ICashTransactionLedgerRepository ledger,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var session = await sessionRepository.GetByIdAsync(cashSessionId, cancellationToken)
+                ?? throw new CashSessionNotFoundException(cashSessionId);
+            if (session.Snapshot.Status != CashSessionStatus.Open)
+            {
+                throw new ClosedCashSessionException(cashSessionId, session.Snapshot.Status);
+            }
+            var transactionType = request.Direction == CashMovementDirectionV1.In
+                ? CashTransactionType.CashIn
+                : CashTransactionType.CashOut;
+            var direction = request.Direction == CashMovementDirectionV1.In
+                ? CashTransactionDirection.In
+                : CashTransactionDirection.Out;
+            var movement = new Cash.TransactionLedger.CashTransaction(
+                Guid.NewGuid(), cashSessionId, transactionType, request.Amount, direction,
+                recordedBy: principal.UserId, notes: request.Notes);
+            await ledger.RecordAsync(movement, cancellationToken);
+            return Results.Created(
+                $"/api/v1/terminals/{terminalId:D}/cash-sessions/{cashSessionId:D}/cash-movements/{movement.Id:D}",
+                movement);
+        });
+
         group.MapPost("/{cashSessionId:guid}/cash-tender", async (
             Guid terminalId,
             Guid cashSessionId,
@@ -183,7 +228,28 @@ public sealed record CloseCashSessionRequestV1(
 
 public sealed record CloseCashSessionResultV1(CashSessionSnapshot Session, decimal Difference);
 
+/// <summary>
+/// V13-CSH-004 (Ek, 2026-09-18): CashSessionSnapshot.ExpectedCash is only
+/// ever refreshed by CloseSessionAsync's own write path - before a close is
+/// actually committed it still holds the value from Open (V13-PUI-002's own
+/// Fark Teyidi screen found this live, showing a wrong "Beklenen" figure).
+/// This is a read-only preview of the same ComputeExpectedCashAsync the
+/// close endpoint itself uses, so the confirmation screen can show the real
+/// number before the cashier commits.
+/// </summary>
+public sealed record ExpectedCashResponseV1(decimal ExpectedCash);
+
 public sealed record ReconcileCashSessionRequestV1(string? Notes);
 
 public sealed record CashTenderRequestV1(
     Guid BillId, decimal AmountDue, decimal TenderedAmount, string IdempotencyKey);
+
+/// <summary>V13-CSH-004: manual cash-in/cash-out drawer movement, outside any sale.</summary>
+public enum CashMovementDirectionV1
+{
+    In,
+    Out,
+}
+
+public sealed record RecordCashMovementRequestV1(
+    CashMovementDirectionV1 Direction, decimal Amount, string? Notes);

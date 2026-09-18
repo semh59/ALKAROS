@@ -62,6 +62,18 @@ yüzey olsun.
   - `POST .../cash-sessions/{id}/reconcile`
   - `POST .../cash-sessions/{id}/cash-tender` (`ICashTenderHandler`,
     `AmountDue`/`TenderedAmount`/`IdempotencyKey`/hedef `billId` body'de)
+  - `GET .../cash-sessions/{id}/expected-cash` (Ek, 2026-09-18:
+    V13-PUI-002'nin Fark Teyidi ekranı `CashSessionSnapshot.ExpectedCash`'i
+    okuyordu, ama bu alan yalnız `/close`'un kendi yazma yolunda tazelenir —
+    kapatmadan önce hâlâ açılıştaki eski değeri taşıyordu, ekranda yanlış
+    "Beklenen" tutarı gösteriyordu; bu, `/close`'un zaten kullandığı
+    `ComputeExpectedCashAsync`'in salt-okunur bir önizlemesi)
+  - `POST .../cash-sessions/{id}/cash-movements` (Ek, 2026-09-18:
+    V13-PUI-002'nin tasarım geçişinde "Nakit Giriş/Çıkış" ekranı ortaya
+    çıktı ama bu ekranın çağıracağı bir uç nokta hiç yoktu — satış dışı
+    manuel kasa hareketi, `ICashTransactionLedgerRepository.RecordAsync`
+    üzerinden doğrudan `CashIn`/`CashOut` tipinde bir `CashTransaction`
+    kaydeder; yalnız oturum Open iken kabul edilir)
 - Her mutasyon uç noktası gerçek row-version/idempotency hatalarını (409
   Conflict, mevcut `DualScreenApplication`'ın hata haritalama deseniyle)
   doğru HTTP koduna çevirir.

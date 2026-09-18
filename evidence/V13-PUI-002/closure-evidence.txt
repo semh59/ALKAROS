@@ -1,0 +1,123 @@
+V13-PUI-002 - Implement cashier CashSession UI
+Closure evidence, 2026-09-18
+
+## Scope delivered
+
+- src/Clients/Cashier/wwwroot/payments/cash-session/{index.html,cash-session.css,cash-session.js}:
+  a standalone, bundler-less vanilla page implementing the full CashSession
+  state machine (login fallback -> no-active-session open form, prefilled
+  from the server's suggested-opening-balance -> concurrent-open conflict
+  screen -> open dashboard with manual cash-in/cash-out -> sayim ->
+  fark teyidi -> kapatma sonrasi -> yeni vardiya ac).
+- Design basis: an Artifact (Design canvas) with 9 artboards covering the
+  happy path plus the 4 states Semih asked to be added mid-session
+  (conflict, cash-in/out modal, post-close confirmation, single-session
+  reconcile confirmation - the last one intentionally NOT wired into this
+  task's own UI, see "Deliberately deferred" below).
+- Real production Faz0 design tokens (--color-ink/--color-brand/etc.) were
+  copied by hand from cashier-app.css (V1-CUI-008), same "kept in sync by
+  hand" precedent that file's own icon-sprite comment already documents -
+  no shared CSS file exists between the two standalone Cashier surfaces.
+
+## Backend gap found and closed under V13-CSH-004 (same session, Sınırlı ek)
+
+V13-CSH-004 (the HTTP composition for CashSession/cash-tender) was already
+Done and committed before this task started. Building this UI's real screens
+surfaced two more gaps in that same composition, fixed as amendments to
+V13-CSH-004 (not a new task - same Owned surface, same files):
+
+1. No endpoint existed for the "Nakit Giriş/Çıkış" (manual cash-in/cash-out)
+   screen the design mockup called for. Added
+   `POST /api/v1/terminals/{terminalId}/cash-sessions/{id}/cash-movements`
+   (Direction: In|Out, Amount, Notes) - a thin wrapper over
+   ICashTransactionLedgerRepository.RecordAsync with the same CashIn/CashOut
+   transaction types the ledger already modeled but never exposed.
+2. `CashSessionSnapshot.ExpectedCash` is only ever refreshed by
+   CloseSessionAsync's own write path. The Fark Teyidi (variance
+   confirmation) screen, which must show the real beklenen tutar BEFORE the
+   cashier commits to closing, was reading this stale field and showing the
+   wrong number (caught live by the first E2E test run: after a 500 opening
+   + 50 cash-in movement, the screen showed "Beklenen 500,00" instead of
+   550,00). Added a read-only preview endpoint,
+   `GET .../cash-sessions/{id}/expected-cash`, using the exact same
+   ComputeExpectedCashAsync the close endpoint itself already used.
+
+## Real bugs found and fixed during this task (not simulated)
+
+1. **Stale expected-cash on the Fark Teyidi screen** (see above) - fixed by
+   adding the expected-cash preview endpoint and reading it instead of the
+   session snapshot's own stale field.
+2. **Client-side variance-tolerance duplication removed before it shipped**:
+   an early draft computed `exceeded = Math.abs(difference) > 0.005`
+   client-side, which would have shown the süpervizör-override UI for ANY
+   nonzero difference, when the real server policy
+   (CashSessionPolicy.ValidateCanCloseSession) tolerates up to 50.00 TRY.
+   Fixed before commit by making the close flow always attempt a normal
+   close first and only show the override UI in response to a real 409
+   CASH_VARIANCE_THRESHOLD_EXCEEDED from the server ("backend akıllı,
+   frontend aptal" - the same principle this task's own PO:2026-09-16
+   decision already established for the opening-balance suggestion).
+3. **Conflict-screen auto-skip race**: `submitOpen`'s 409 branch called
+   `loadActiveSession()` without awaiting it, then immediately rendered
+   `phase = 'conflict'`. The async fetch resolved moments later and
+   silently overwrote the phase back to 'open', so the conflict screen
+   (with its "Mevcut Oturuma Git" button) would flash and disappear before
+   a real user could ever click through it. Found live by
+   06-cash-session-conflict.spec.js (the button locator timed out because
+   the DOM had already moved on by the time Playwright tried to click it).
+   Fixed by not eagerly re-fetching on the 409 path; the active session is
+   now only loaded when the user actually clicks "Mevcut Oturuma Git".
+4. **Deploy-path gap**: the first draft was written under
+   src/Clients/Cashier/Payments/CashSession/ (a directory never referenced
+   by deploy/docker/Dockerfile's `COPY src/Clients/Cashier/wwwroot
+   /out/app/cashier` step). Found before any test ran, by re-reading that
+   Dockerfile stage - moved the whole page under
+   src/Clients/Cashier/wwwroot/payments/cash-session/ so it ships via the
+   existing copy step with no Dockerfile/Caddyfile change needed.
+5. **UseDefaultFiles does not resolve a bare directory URL** in this Host's
+   static-file pipeline (a PRE-EXISTING gap, not introduced here -
+   02-stock-badge-and-kitchen-dispatch.spec.js already works around the
+   same thing for cashier-app.js's own root by navigating to
+   `/cashier/index.html` explicitly, not `/cashier/`). Confirmed with a
+   one-off debug script directly against the running Host: `/cashier/` and
+   `/cashier/payments/cash-session/` both silently fall through to the
+   PosTerminal SPA's MapFallback instead of serving the real index.html,
+   while the exact same paths WITH an explicit `/index.html` suffix serve
+   correctly. Worked around the same way the existing spec does, not fixed
+   (out of scope for this task - a Host-wide static-file pipeline fix would
+   touch every client, not just this one).
+
+## Deliberately deferred (not built in this pass)
+
+- The single-session Mutabakat (reconcile) confirmation screen from the
+  design mockup (Kasa-Mutabakat.dc.html) was NOT wired into cash-session.js.
+  The task's own Goal text is literally "açma, sayma, kapatma ve fark teyit
+  akışı" (no mention of reconcile) and Out of scope separately excludes
+  "mutabakat kontrol paneli" - V13-CSH-004's own `/reconcile` endpoint
+  exists and is exercised at the HTTP level (V13-CSH-004's own test suite),
+  but no UI calls it from this task. Left for whichever future task owns
+  V13-REC-001 / the reconcile requirement in full.
+
+## Test evidence
+
+- `dotnet build ALKAROS.slnx -c Debug` -> 0 Uyarı, 0 Hata.
+- `tests/Host/Experience/CashSession` (dotnet test) -> 13/13 başarılı (10
+  pre-existing V13-CSH-004 tests + 3 new: expected-cash preview matches
+  close's own computed value, cash-movements adjust expected cash in both
+  directions and are rejected on a closed session, variance-over-tolerance
+  requires supervisor override).
+- `tests/E2E/Cashier` (Playwright, real Chrome + real Host + real Postgres,
+  full suite including all 4 pre-existing specs) -> 7/7 başarılı:
+  - 05-cash-session-lifecycle.spec.js: full open -> cash-in -> sayim ->
+    zero-difference close path; and a second scenario proving the
+    supervisor-override requirement round-trips through the real 409.
+  - 06-cash-session-conflict.spec.js: two tabs, same terminal/cookie, race
+    to open - second gets the real conflict screen, "Mevcut Oturuma Git"
+    correctly recovers to the real open session.
+- `python tools/plan-audit/plan_audit_tool.py validate` -> 0 errors besides
+  the pre-existing, unrelated UNOWNED_PRODUCTION_FILE for
+  tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py (confirmed
+  pre-existing in earlier sessions, out of this task's scope).
+- `python tools/consistency-audit/consistency_audit.py` -> clean.
+- No new .csproj added this task, so tools/project-manifest was not
+  required to run.

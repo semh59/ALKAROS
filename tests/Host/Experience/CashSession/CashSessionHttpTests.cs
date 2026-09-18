@@ -226,6 +226,84 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ExpectedCashPreviewMatchesWhatCloseItselfLaterComputes()
+    {
+        // Found while building V13-PUI-002's own Fark Teyidi screen:
+        // CashSessionSnapshot.ExpectedCash is only ever refreshed by
+        // CloseSessionAsync's own write path - a screen reading it before
+        // close sees the stale Open-time value. This preview endpoint must
+        // report the same number /close itself later computes and commits.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "csh004-expected-preview");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 300m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
+            new { Direction = "In", Amount = 50m, Notes = "bank deposit returned" });
+
+        var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
+        Assert.Equal(HttpStatusCode.OK, preview.StatusCode);
+        Assert.Equal(350m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
+
+        var close = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
+            new { ActualCash = 350m });
+        Assert.Equal(0m, (await close.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
+    }
+
+    [Fact]
+    public async Task CashMovementsAdjustExpectedCashInBothDirectionsAndRejectOnAClosedSession()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "csh004-movements");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 200m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var cashIn = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
+            new { Direction = "In", Amount = 100m, Notes = (string?)null });
+        Assert.Equal(HttpStatusCode.Created, cashIn.StatusCode);
+
+        var cashOut = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
+            new { Direction = "Out", Amount = 40m, Notes = "till float trimmed for bank drop" });
+        Assert.Equal(HttpStatusCode.Created, cashOut.StatusCode);
+
+        var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
+        Assert.Equal(260m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
+
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie, new { ActualCash = 260m });
+
+        var afterClose = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
+            new { Direction = "In", Amount = 10m, Notes = (string?)null });
+        Assert.Equal(HttpStatusCode.Conflict, afterClose.StatusCode);
+    }
+
+    [Fact]
+    public async Task ClosingWithADifferenceOverTheToleranceRequiresSupervisorOverride()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "csh004-variance");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        // Default tolerance (CashSessionPolicy.ValidateCanCloseSession) is
+        // 50.00 - a 60 TL shortage must be rejected without an override.
+        var rejected = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
+            new { ActualCash = 40m });
+        Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
+        var body = await rejected.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("CASH_VARIANCE_THRESHOLD_EXCEEDED", body.GetProperty("error").GetProperty("code").GetString());
+
+        var overridden = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
+            new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short" });
+        Assert.Equal(HttpStatusCode.OK, overridden.StatusCode);
+        Assert.Equal(-60m, (await overridden.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
+    }
+
+    [Fact]
     public async Task WithoutACashierSessionEveryRouteIsUnauthorized()
     {
         var terminalId = Guid.NewGuid();
