@@ -11,11 +11,12 @@ namespace ALKAROS.Host.DualScreen;
 
 public sealed partial class DualScreenStore
 {
-    public Task<StartOrderResponse> StartOrderAsync(Guid terminalId, CancellationToken cancellationToken)
-        => StartOrderAsync(terminalId, new StartOrderRequest(), cancellationToken);
+    public Task<StartOrderResponse> StartOrderAsync(Guid terminalId, Guid servingUserId, CancellationToken cancellationToken)
+        => StartOrderAsync(terminalId, servingUserId, new StartOrderRequest(), cancellationToken);
 
     public async Task<StartOrderResponse> StartOrderAsync(
         Guid terminalId,
+        Guid servingUserId,
         StartOrderRequest request,
         CancellationToken cancellationToken)
     {
@@ -158,7 +159,17 @@ public sealed partial class DualScreenStore
         // would silently apply to the Waiter/table-draft channel
         // (OrderManagementStore) but not this one. The connection/transaction
         // overload keeps the insert inside this method's existing lock/commit.
-        var order = new Order(orderId, OrderSource.Cashier, orderNumber, Array.Empty<OrderItem>(), tableId: request.TableId);
+        // V1-CUI-011: found by that task's own real-browser E2E suite - every
+        // walk-in Cashier sale created here (Order.ServingUserId left null)
+        // failed with a 500 at submit time, since
+        // OrderSubmissionStockDispatcher.DispatchAsync requires it ("Every
+        // Cashier/Waiter order is created with one; a null here means an
+        // order was constructed outside that path"). The table-draft channel
+        // (OrderManagementStore, the vanilla Cashier client) already
+        // threaded the authenticated actor through correctly - this
+        // endpoint's own `new Order(...)` call had simply never been
+        // updated to do the same.
+        var order = new Order(orderId, OrderSource.Cashier, orderNumber, Array.Empty<OrderItem>(), tableId: request.TableId, servingUserId: servingUserId);
         await _orderRepository.AddAsync(order, connection, transaction, cancellationToken);
 
         if (request.TableId is { } createdTableId)

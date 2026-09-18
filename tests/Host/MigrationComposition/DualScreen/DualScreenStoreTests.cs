@@ -44,7 +44,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     public async Task SequentialAddsCommit999AndRejectCumulative1000WithoutChangingRevision()
     {
         var terminalId = Guid.NewGuid();
-        var order = await _store!.StartOrderAsync(terminalId, CancellationToken.None);
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
 
         var accepted = await _store.AddItemAsync(
             terminalId,
@@ -71,7 +71,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     public async Task ConcurrentAddsWithSameRevisionCannotCommitCumulative1000()
     {
         var terminalId = Guid.NewGuid();
-        var order = await _store!.StartOrderAsync(terminalId, CancellationToken.None);
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
         var seeded = await _store.AddItemAsync(
             terminalId,
             order.OrderId,
@@ -110,6 +110,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
 
         var order = await _store!.StartOrderAsync(
             terminalId,
+            Guid.NewGuid(),
             new StartOrderRequest(tableId, 1),
             CancellationToken.None);
 
@@ -142,6 +143,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         // version behind is not a real conflict (V1-RMD-090).
         var first = await _store!.StartOrderAsync(
             firstTerminalId,
+            Guid.NewGuid(),
             new StartOrderRequest(tableId, 2),
             CancellationToken.None);
         Assert.Equal(1L, await ScalarAsync<long>(
@@ -155,6 +157,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         // conflict and is rejected without creating a second order.
         await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
             secondTerminalId,
+            Guid.NewGuid(),
             new StartOrderRequest(tableId, 2),
             CancellationToken.None));
 
@@ -179,6 +182,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         // error even when the caller's version is exactly right.
         await Assert.ThrowsAsync<DualScreenConflictException>(() => _store!.StartOrderAsync(
             terminalId,
+            Guid.NewGuid(),
             new StartOrderRequest(tableId, 1),
             CancellationToken.None));
         Assert.Equal(0L, await ScalarAsync<long>(
@@ -195,10 +199,12 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
 
         var first = CaptureAsync(() => _store!.StartOrderAsync(
             firstTerminalId,
+            Guid.NewGuid(),
             new StartOrderRequest(tableId, 1),
             CancellationToken.None));
         var second = CaptureAsync(() => _store!.StartOrderAsync(
             secondTerminalId,
+            Guid.NewGuid(),
             new StartOrderRequest(tableId, 1),
             CancellationToken.None));
         var results = await Task.WhenAll(first, second);

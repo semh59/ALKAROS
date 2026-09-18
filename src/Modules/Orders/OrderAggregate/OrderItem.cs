@@ -168,6 +168,19 @@ public sealed class OrderItem
 
     public bool IsActive => Status is OrderItemState.Draft or OrderItemState.Active;
 
+    // V1-CUI-011: found by that task's own real-browser E2E suite - a
+    // Complimentary item is deliberately excluded from IsActive (it must
+    // not be re-fired to the kitchen or counted toward submission-time
+    // stock dispatch), but Order.cs's own Subtotal/DiscountTotal/TaxTotal/
+    // Total used that same IsActive to decide which items to sum, so a
+    // comp silently dropped the item from every one of those totals
+    // instead of retaining its real price with the discount applied
+    // (PDF:I.28.1/V0-DOM-006's own "retains original quantity, snapshot
+    // unit price... for tax records" requirement) - the exact same class of
+    // bug BillItem.cs was already fixed for (V1-RMD-228), just in this
+    // aggregate instead.
+    public bool CountsInOrderTotals => Status is OrderItemState.Draft or OrderItemState.Active or OrderItemState.Complimentary;
+
     /// <summary>
     /// Moves a Draft item into Active; part of order submission. Returns a
     /// new immutable instance; a non-Draft item cannot be activated.

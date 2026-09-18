@@ -1,8 +1,8 @@
 # V1-CUI-011 - Kasa modülü için gerçek tarayıcı (E2E) test paketi
 
 - Task ID: V1-CUI-011
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Codex
 - Work type: implementation
 - Surface state: Planned
 
@@ -26,6 +26,65 @@ bulmuştu — aynı sınıf riskler Kasa tarafında da sessizce mevcut olabilir.
 - `tests/E2E/Cashier/**` (yeni — tests/E2E/WaiterPwa (V1-WTR-026) ile aynı
   yapı: `playwright.config.js`, `global-setup.js`, `specs/`, `package.json`)
 - `evidence/V1-CUI-011/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenStore.Orders.cs
+  (çok sayıda geçmiş dalga görevinin sahipliğinde kalır) — yalnız
+  `StartOrderAsync`'in her iki overload'ı artık `servingUserId` parametresi
+  alıp `Order`'a geçiriyor. Bu paketin kendi 04 numaralı senaryosu
+  ÇALIŞIRKEN bulundu: PosTerminal Cashier'ın "Yeni sipariş aç" akışıyla
+  açılan HER siparişte `Order.ServingUserId` null kalıyordu, bu da
+  `OrderSubmissionStockDispatcher`'ın attığı bir `InvalidOperationException`
+  ile HER kasa satışının gönderiminde 500 hatasına yol açıyordu — gerçek,
+  o an üretimde olan bir çökme (V1-WTR-026/027'nin kendi E2E paketinin
+  bulduğu bug'ları aynı görevde düzelttiği emsalle aynı desen).
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Endpoints.cs
+  (V1-IAM-024 sahipliğinde kalır) — yalnız `POST .../orders` ve
+  `POST .../orders/table` uç noktaları artık `RequireCashierPermissionAsync`
+  sonucundaki `principal.UserId`'yi `StartOrderAsync`'e geçiriyor; başka
+  hiçbir uç nokta/kayıt değişmedi.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+  (V1-RMD-090 sahipliğinde kalır) — yukarıdaki imza değişikliğine uyacak
+  şekilde 8 çağrı noktasına `Guid.NewGuid()` eklendi; testlerin kendi
+  iddiaları değişmedi.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/OrderAggregate/OrderItem.cs
+  (V1-RMD-064 sahipliğinde kalır) — yalnız yeni bir `CountsInOrderTotals`
+  property'si eklendi (Draft/Active/Complimentary); mevcut `IsActive`
+  (Draft/Active) DEĞİŞMEDİ.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/OrderAggregate/Order.cs
+  (V1-RMD-064 sahipliğinde kalır) — yalnız `Subtotal`/`DiscountTotal`/
+  `TaxTotal`/`Total`'ın kendi `_items.Where(...)` filtresi `i.IsActive`
+  yerine `i.CountsInOrderTotals` kullanıyor. Önceden `IsActive`,
+  `Complimentary`'yi HARİÇ TUTUYORDU — ikram edilen bir kalem bu dört
+  toplamdan da tamamen SİLİNİYORDU, sanki hiç sipariş edilmemiş gibi; bu
+  paketin kendi 04 numaralı senaryosuyla bulundu.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs
+  (V1-ORD-004 sahipliğinde kalır) — yalnız `ApplyComplimentaryAsync`'in
+  kurduğu `compItem`'ın `discountAmount`'ı artık
+  `targetItem.NetAmount + targetItem.DiscountAmount` (BillItem.cs'nin
+  V1-RMD-228'de kurduğu "gerçek fiyat + ayrı indirim satırı" desenin
+  birebir aynısı), önceden değişmeden geçen `targetItem.DiscountAmount`
+  (çoğu zaman 0) yerine.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenStore.Display.cs
+  (V1-RMD-097 sahipliğinde kalır) — yalnız `GetSnapshotAsync`'in satır
+  sorgusu artık `Complimentary` durumundaki kalemleri de döndürüyor
+  (önceden `status IN ('Draft','Active')` onları tamamen filtreliyordu) ve
+  ikram edilen bir kalemin `LineTotal`'ı, kalıcı `gross_amount`'tan
+  (ikramda kasıtlı olarak 0, PDF:I.28.1/V0-DOM-006) yerine
+  `unit_price × quantity × (1 + tax_rate/100)`'den yeniden hesaplanıyor —
+  Kasa'nın (`Cashier.tsx`) ve müşteri ekranının kendi kalem satırı artık
+  gerçek fiyatı gösteriyor, indirim yalnızca `discountTotal` toplamında
+  ayrı bir satır olarak görünüyor.
+
+  Yukarıdaki `OrderAggregate`/`ItemExceptionHandler`/`Display.cs` üçü
+  birlikte: `ServingUserId` düzeltmesi olmadan gönderilemeyen bir
+  siparişte ikram denendiğinde, kalem hem tüm Kasa/müşteri-ekranı
+  toplamlarından SİLİNİYOR hem de satırı gösterilse bile ₺0 görünüyordu —
+  bu görevin kendi `04-complimentary-line.spec.js` senaryosunun doğrudan
+  test ettiği, gerçekten var olan davranış. `dotnet test` ile doğrulanan
+  projeler (hepsi yeşil, regresyon yok): `ALKAROS.Orders.OrderAggregate.Tests`
+  (128/128), `ALKAROS.Orders.ItemExceptions.Tests` (20/20),
+  `ALKAROS.Host.Experience.Orders.Comp.Tests` (14/14), `ALKAROS.Host.Tests`
+  (DualScreen dahil, 156/158 — kalan 2 hata `git stash` ile temiz master'da
+  da aynen üretilen, bu görevden bağımsız önceden var olan hatalar).
 
 ## In scope
 

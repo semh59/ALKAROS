@@ -332,9 +332,9 @@ public static partial class DualScreenApplication
             IHubContext<CustomerDisplayHub> hub,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierPermissionAsync(
+            var principal = await RequireCashierPermissionAsync(
                 context, terminalId, store, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
-            var created = await store.StartOrderAsync(terminalId, cancellationToken);
+            var created = await store.StartOrderAsync(terminalId, principal.UserId, cancellationToken);
             await NotifyAsync(hub, terminalId, created.OrderId, created.Revision, cancellationToken);
             return Results.Created($"/api/v1/terminals/{terminalId:D}/orders/{created.OrderId:D}", created);
         }).RequireRateLimiting("terminal-write");
@@ -348,11 +348,11 @@ public static partial class DualScreenApplication
             IHubContext<CustomerDisplayHub> hub,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierPermissionAsync(
+            var principal = await RequireCashierPermissionAsync(
                 context, terminalId, store, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
             if (request.TableId is null)
                 throw new ArgumentException("TableId is required for a table order.", nameof(request));
-            var created = await store.StartOrderAsync(terminalId, request, cancellationToken);
+            var created = await store.StartOrderAsync(terminalId, principal.UserId, request, cancellationToken);
             await NotifyAsync(hub, terminalId, created.OrderId, created.Revision, cancellationToken);
             return Results.Created($"/api/v1/terminals/{terminalId:D}/orders/{created.OrderId:D}", created);
         }).RequireRateLimiting("terminal-write");

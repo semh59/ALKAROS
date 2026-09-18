@@ -227,9 +227,9 @@ public sealed partial class DualScreenStore
         var lines = new List<CustomerDisplayLineDto>();
         await using (var lineCommand = _dataSource.CreateCommand(
             """
-            SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount
+            SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount, status, tax_rate
             FROM orders.order_items
-            WHERE order_id = @order_id AND status IN ('Draft', 'Active')
+            WHERE order_id = @order_id AND status IN ('Draft', 'Active', 'Complimentary')
             ORDER BY created_at, order_item_id;
             """))
         {
@@ -237,8 +237,27 @@ public sealed partial class DualScreenStore
             await using var reader = await lineCommand.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
+                var quantity = reader.GetDecimal(2);
+                var unitPrice = reader.GetDecimal(3);
+                var storedGrossAmount = reader.GetDecimal(4);
+                var status = reader.GetString(5);
+                // V1-CUI-011: a Complimentary item's own persisted
+                // gross_amount is 0 (PDF:I.28.1/V0-DOM-006 - "effective
+                // payable amounts" are zeroed), so showing it as-is would
+                // render the line as free/invisible instead of at its real
+                // price with the discount surfaced separately in
+                // DiscountTotal (same "real price + separate discount line"
+                // contract as BillItem.cs, V1-RMD-228). Reconstructed from
+                // unit_price/quantity/tax_rate, the same inputs
+                // OrderItem's own constructor derives GrossAmount from for
+                // a non-discounted line; like the rest of this query, it
+                // does not account for modifiers (gross_amount already
+                // didn't for any status before this fix either).
+                var lineTotal = status == "Complimentary"
+                    ? Math.Round(unitPrice * quantity * (1 + reader.GetDecimal(6) / 100m), 2, MidpointRounding.AwayFromZero)
+                    : storedGrossAmount;
                 lines.Add(new CustomerDisplayLineDto(
-                    reader.GetGuid(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3), reader.GetDecimal(4)));
+                    reader.GetGuid(0), reader.GetString(1), quantity, unitPrice, lineTotal));
             }
         }
 

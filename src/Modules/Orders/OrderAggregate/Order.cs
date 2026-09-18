@@ -150,7 +150,7 @@ public sealed class Order
         get
         {
             var subtotal = 0m;
-            foreach (var item in _items.Where(i => i.IsActive))
+            foreach (var item in _items.Where(i => i.CountsInOrderTotals))
                 subtotal += item.LineSubtotalValue;
             return OrderMath.RoundCurrency(subtotal);
         }
@@ -161,7 +161,7 @@ public sealed class Order
         get
         {
             var total = 0m;
-            foreach (var item in _items.Where(i => i.IsActive))
+            foreach (var item in _items.Where(i => i.CountsInOrderTotals))
                 total += item.DiscountAmount;
             return OrderMath.RoundCurrency(total);
         }
@@ -172,7 +172,7 @@ public sealed class Order
         get
         {
             var tax = 0m;
-            foreach (var item in _items.Where(i => i.IsActive))
+            foreach (var item in _items.Where(i => i.CountsInOrderTotals))
                 tax += item.TaxAmount;
             return OrderMath.RoundCurrency(tax);
         }
@@ -183,7 +183,7 @@ public sealed class Order
         get
         {
             var total = 0m;
-            foreach (var item in _items.Where(i => i.IsActive))
+            foreach (var item in _items.Where(i => i.CountsInOrderTotals))
                 total += item.GrossAmount;
             return OrderMath.RoundCurrency(total);
         }

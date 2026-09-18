@@ -1,0 +1,135 @@
+V1-CUI-011 closure evidence
+Date: 2026-09-18
+Assignee: Codex
+
+## Scope executed
+New real-browser (Chromium/Playwright) E2E suite at tests/E2E/Cashier/,
+same structure/pattern as tests/E2E/WaiterPwa (V1-WTR-026): playwright.config.js,
+global-setup.js, lib/{migrate,passwordHash,seed,testHelpers}.js, specs/01-04,
+README.md, package.json, .gitignore. Runs against a real Postgres (freshly
+migrated + seeded) and the real compiled ALKAROS.Host.dll serving a web root
+assembled the same way deploy/docker/Dockerfile's frontend-build stage
+assembles /srv/app (built PosTerminal dist/ + the vanilla src/Clients/Cashier
+shell copied under dist/cashier - both real, independently-shipped Kasa
+surfaces, per docs/engineering/kasa-faz0-redesign-requirements.md §2).
+
+All 4 required scenarios implemented and green (2 consecutive full runs):
+1. 01-login-and-catalog.spec.js - real Cashier.tsx login, catalog loads.
+2. 02-stock-badge-and-kitchen-dispatch.spec.js - vanilla /cashier/index.html:
+   remaining-count badge (Kalan 3 / is-low vs Kalan 500), real table-draft ->
+   submit-draft -> send-to-cashier dispatch to kitchen.
+3. 03-screensaver.spec.js - manager uploads idle-screen image
+   (/settings/screensaver), a second browser context pairs as the customer
+   display and shows it once idle, removing it restores the default branded
+   card (kept on one page instance throughout - see spec's own comment on
+   why: CustomerDisplayScreensaverSettings.tsx has no server-side "current
+   media" GET, its state is session-local, a second navigation remounts and
+   loses it).
+4. 04-complimentary-line.spec.js - after a real comp (via an authenticated
+   HTTP call - PosTerminal's Cashier.tsx has no comp button of its own,
+   confirmed by grep: only WaiterPwa's UI calls .../comp), the ticket-line
+   still shows the item's real price and a separate "İndirim" line appears
+   (V1-RMD-228's "real price + separate discount line" contract, now also
+   correct on this surface - see below).
+
+## Real bugs found by this suite's own scenarios, root-caused and fixed
+(same precedent as V1-WTR-026/027: an E2E suite exists to catch exactly this
+class of defect, and fixing it in the same task the suite that found it
+belongs to keeps the finding and the fix in one place)
+
+1. Scenario 4 (and by extension every real walk-in Cashier sale) failed at
+   submit with a 500: `DualScreenStore.StartOrderAsync` never set
+   `Order.ServingUserId`, and `OrderSubmissionStockDispatcher.DispatchAsync`
+   requires it ("Every Cashier/Waiter order is created with one; a null here
+   means an order was constructed outside that path"). Fixed by threading
+   the authenticated cashier's `principal.UserId` through both
+   `StartOrderAsync` overloads and their two endpoints
+   (`POST /terminals/{id}/orders` and `.../orders/table`) into the `new
+   Order(...)` call. This was a REAL, currently-shipped defect: every
+   PosTerminal Cashier walk-in sale ("Yeni sipariş aç") was already broken
+   in production before this fix, confirmed via the real Host's own
+   exception log (E2E_HOST_LOG=1), not by reading code.
+
+2. Once (1) was fixed, comping an item on a submitted order made it vanish
+   entirely from Order.Subtotal/DiscountTotal/TaxTotal/Total AND from the
+   Kasa/customer-display line list, instead of showing "real price + a
+   separate discount line" the way V1-RMD-228 already established for the
+   Billing module's BillItem.cs. Root cause: `OrderItem.IsActive` (Draft or
+   Active only) was reused by those four `Order` aggregate getters to decide
+   which items to sum - a Complimentary item was silently excluded, as if
+   never ordered. Fixed:
+   - New `OrderItem.CountsInOrderTotals` (Draft/Active/Complimentary),
+     `IsActive` itself left untouched (still gates kitchen re-fire and
+     submission-time stock dispatch, which a post-submit comp can never
+     reach anyway).
+   - `Order.Subtotal/DiscountTotal/TaxTotal/Total` now use
+     `CountsInOrderTotals`.
+   - `ItemExceptionHandler.ApplyComplimentaryAsync`'s `compItem` now sets
+     `discountAmount: targetItem.NetAmount + targetItem.DiscountAmount`
+     (the full original net amount, now entirely discounted away) instead
+     of passing `targetItem.DiscountAmount` through unchanged (typically 0)
+     - the exact same formula `BillItem.FromOrderItem` already uses for a
+     Complimentary line (V1-RMD-228).
+   - `DualScreenStore.Display.cs`'s `GetSnapshotAsync` line query now
+     includes `Complimentary` in its status filter (was `Draft`/`Active`
+     only) and reconstructs a comped line's `LineTotal` from
+     `unit_price * quantity * (1 + tax_rate/100)` instead of the persisted
+     `gross_amount` (deliberately 0 for a comp, PDF:I.28.1/V0-DOM-006) - so
+     the line renders at its real price on both Cashier.tsx and
+     CustomerDisplay.tsx, with the discount surfaced only in the aggregate
+     `discountTotal`.
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. Targeted real-Postgres test projects (all clean, no regressions):
+   - ALKAROS.Orders.OrderAggregate.Tests: 128/128
+   - ALKAROS.Orders.ItemExceptions.Tests: 20/20
+   - ALKAROS.Host.Experience.Orders.Comp.Tests: 14/14
+   - ALKAROS.Host.Tests (DualScreen, incl. DualScreenStoreTests +
+     CustomerDisplayContractTests, and every other Host.Tests class):
+     156/158 - the 2 failures
+     (HostModuleReachabilityTests.DefaultCatalogContainsStandardProductionModules,
+     CustomerDisplayContractTests.CatalogProductCarriesRealCategoryMetadata)
+     CONFIRMED pre-existing and unrelated: reproduced identically on a
+     `git stash` of every file this task touched (clean master), same exact
+     assertion failures (a stale hardcoded module count 19 vs 20, and a
+     stale expected-field-list vs the real field list which already
+     includes `remainingCount` from an earlier task). Restored via
+     `git stash pop` afterward.
+   - ALKAROS.Host.Experience.Orders.TableDraft.Tests: 48/79 - the 31
+     failures are the SAME pre-existing, already-documented flake noted in
+     memory from V12-QRT-005 (confirmed via git-bisect there to predate and
+     be unrelated to unrelated work); not re-investigated here, out of this
+     task's scope.
+
+3. tests/E2E/Cashier (this suite itself), 2 consecutive full runs:
+   `ALKAROS_TEST_PG_PORT=55432 ALKAROS_TEST_PG_PASSWORD=postgres npx
+   playwright test` -> 4 passed, 4 passed (both runs clean, ~16-18s each).
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 1 (UNOWNED_PRODUCTION_FILE
+   tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py),
+   Validation warnings: 0. Confirmed PRE-EXISTING and unrelated (already
+   flagged identically before this task started, see V1-RMD-234's own
+   evidence file for the same confirmation via git stash).
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Write-set vs Allowlist
+- tests/E2E/Cashier/** (new)
+- evidence/V1-CUI-011/closure-evidence.txt
+- plan/v1/cashier-ui/V1-CUI-011-kasa-e2e-test-suite.md (Status: Planned ->
+  Done, Owned surface amended with the "Sınırlı ek" entries for the 2 real
+  bugs found+fixed above - see that file's own updated section for the full
+  per-file breakdown and rationale)
+- Sınırlı ek (see the task file's own Owned surface for detail):
+  src/Host/DualScreen/DualScreenStore.Orders.cs,
+  src/Host/DualScreen/DualScreenApplication.Endpoints.cs,
+  tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs,
+  src/Modules/Orders/OrderAggregate/OrderItem.cs,
+  src/Modules/Orders/OrderAggregate/Order.cs,
+  src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs,
+  src/Host/DualScreen/DualScreenStore.Display.cs

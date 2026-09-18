@@ -187,6 +187,17 @@ public sealed class ItemExceptionHandler
 
         // Complimentary item retains original quantity, snapshot unit price and tax rate for tax records,
         // while setting effective payable amounts to 0 (PDF:I.28.1, V0-DOM-006).
+        //
+        // V1-CUI-011: discountAmount used to pass targetItem.DiscountAmount
+        // straight through unchanged (whatever pre-existing discount the
+        // item already carried, typically 0) instead of the FULL net amount
+        // now being discounted away - found by that task's own E2E suite,
+        // the same "real price + separate discount line" contract
+        // BillItem.FromOrderItem already establishes for a Complimentary
+        // line (`orderItem.NetAmount + orderItem.DiscountAmount`, V1-RMD-228).
+        // Without this, Order.DiscountTotal (now that CountsInOrderTotals
+        // includes Complimentary) would still show 0 discount for a fully
+        // comped item.
         var compItem = new OrderItem(
             targetItem.Id,
             targetItem.OrderId,
@@ -196,7 +207,7 @@ public sealed class ItemExceptionHandler
             targetItem.UnitPrice,
             targetItem.TaxRate,
             targetItem.SkuSnapshot,
-            discountAmount: targetItem.DiscountAmount,
+            discountAmount: targetItem.NetAmount + targetItem.DiscountAmount,
             modifiers: targetItem.Modifiers,
             status: OrderItemState.Complimentary,
             kitchenState: targetItem.KitchenState,
