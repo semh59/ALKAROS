@@ -1,0 +1,60 @@
+V1-RMD-234 closure evidence
+Date: 2026-09-17
+Assignee: Codex
+
+## Scope executed
+- `src/Clients/PosTerminal/src/styles.css`: added a single scoped rule,
+  `.idle-screen-with-image .display-brand`, giving the ALKAROS brand badge
+  the same semi-transparent dark panel (`rgba(13, 21, 29, .78)`) already
+  used by `.idle-screensaver-note`, plus a rounded pill shape and drop
+  shadow so it reads as an intentional overlay chip rather than a random
+  box. Scoped strictly to the screensaver-with-image/video state
+  (`idle-screen-with-image`), so pairing/unavailable/completed screens and
+  the plain (imageless) idle screen are untouched — confirmed by the CSS
+  selector cascade (base `.display-brand` rule untouched, this new rule
+  only adds background/padding/shadow on top when the ancestor class is
+  present).
+- No JSX change needed: `CustomerDisplay.tsx` already renders
+  `<DisplayBrand />` as a direct child of
+  `<main className="display-shell idle-screen idle-screen-with-image">`
+  (line 243/256), so the descendant selector matches without any markup
+  change.
+
+## Build
+1. corepack pnpm build (src/Clients/PosTerminal)
+   Result: tsc --noEmit clean, vite build succeeded, 0 errors (exit code: 0)
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 1 (UNOWNED_PRODUCTION_FILE
+   tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py),
+   Validation warnings: 0
+   Confirmed PRE-EXISTING and unrelated to this task: re-ran the same
+   command after `git stash` (reverting both files this task touched)
+   and got the identical single error, then `git stash pop` restored the
+   change. This task's own write-set (styles.css + this task's own .md +
+   evidence dir) introduces zero new plan-audit findings.
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Visual verification
+NOT performed in this environment (no screenshot-capable browser tool
+available here). Per the task's own Acceptance evidence, this step is
+explicitly deferred to Semih's own browser: load the screensaver with a
+light-colored background image/video configured and confirm the
+`ALKAROS` badge (top-left corner) stays legible against it.
+
+## Write-set vs Allowlist
+- src/Clients/PosTerminal/src/styles.css (Sinirli ek, V1-CUI-009
+  sahipliginde kalir; only the .idle-screen-with-image .display-brand
+  rule added, no other selector touched)
+- evidence/V1-RMD-234/closure-evidence.txt
+- plan/v1/remediation/V1-RMD-234-screensaver-brand-badge-contrast.md
+  (Status: Planned -> Done, Assignee updated)
+
+## Out-of-scope note (not fixed, flagged only)
+plan-audit's UNOWNED_PRODUCTION_FILE finding on
+tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py predates
+this task and is unrelated to the screensaver/brand-badge surface. Left
+untouched per the single-task-scope rule in AGENTS.md; flagged to Semih
+for a separate task.

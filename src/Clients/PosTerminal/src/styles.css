@@ -466,6 +466,10 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
    either an <img> or a <video> element — the rule below is element-agnostic. */
 .idle-screensaver-image { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .idle-screensaver-note { position: absolute; bottom: 2.2rem; left: 50%; transform: translateX(-50%); background: rgba(13, 21, 29, .78); }
+/* V1-RMD-234: the screensaver image/video can be arbitrarily light, so the
+   brand badge needs the same contrast backing as the privacy note above,
+   not just the base .display-brand styling used on the other screens. */
+.idle-screen-with-image .display-brand { background: rgba(13, 21, 29, .78); border-radius: 999px; padding: .55rem 1.1rem .55rem .55rem; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 

@@ -1,8 +1,8 @@
 # V1-RMD-234 - Ekran koruyucu üzerindeki marka rozetinin kontrast koruması
 
 - Task ID: V1-RMD-234
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Codex
 - Work type: implementation
 - Surface state: Existing
 
