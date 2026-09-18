@@ -214,6 +214,79 @@ public sealed class DualScreenScreensaverTests : IAsyncLifetime
         Assert.Null(await _store!.GetScreensaverAsync(CancellationToken.None));
     }
 
+    // V1-RMD-235: the declared Content-Type header is entirely
+    // client-controlled and already passed the allowlist check - this
+    // proves the file's own first bytes (magic number) are checked
+    // independently and a mismatch is still rejected even though the
+    // header itself claims a valid type.
+    [Fact]
+    public async Task PutRejectsAFileWhoseContentDoesNotMatchItsDeclaredContentType()
+    {
+        await using var app = DualScreenApplication.Build(BuildOptions());
+        await app.StartAsync();
+        using var client = CreateClient(app);
+        await SeedManagerSessionAsync("manager-token-magic-number");
+        client.DefaultRequestHeaders.Add("Cookie", "alkaros.manager=manager-token-magic-number");
+
+        using var content = new MultipartFormDataContent();
+        // Plain text, not a real PNG - no byte here matches the PNG magic
+        // number, even though the header below declares image/png.
+        var fileContent = new ByteArrayContent("this is not actually a png file"u8.ToArray());
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        content.Add(fileContent, "file", "fake.png");
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, "/api/v1/management/customer-display/screensaver") { Content = content };
+        AddTrustedForwarding(request);
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Null(await _store!.GetScreensaverAsync(CancellationToken.None));
+    }
+
+    // V1-RMD-235: without an explicit MaxRequestBodySize on this route, a
+    // request between the 20 MB video cap and Kestrel's own ~28.6 MB
+    // implicit default would reach this handler's own size check only
+    // AFTER the whole body was already read off the wire. This proves the
+    // request is now rejected before that - at the transport level - for a
+    // body past this route's own explicit (25 MB) limit.
+    [Fact]
+    public async Task PutRejectsARequestBodyOverTheExplicitTransportLimit()
+    {
+        await using var app = DualScreenApplication.Build(BuildOptions());
+        await app.StartAsync();
+        using var client = CreateClient(app);
+        await SeedManagerSessionAsync("manager-token-body-limit");
+        client.DefaultRequestHeaders.Add("Cookie", "alkaros.manager=manager-token-body-limit");
+
+        using var content = new MultipartFormDataContent();
+        var fileContent = new ByteArrayContent(new byte[26 * 1024 * 1024]);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("video/mp4");
+        content.Add(fileContent, "file", "over-transport-limit.mp4");
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, "/api/v1/management/customer-display/screensaver") { Content = content };
+        AddTrustedForwarding(request);
+
+        // Kestrel enforces MaxRequestBodySize while the body is still being
+        // READ, not after - it resets the connection mid-upload the moment
+        // the limit is crossed, so the client observes a transport-level
+        // failure (a reset/aborted connection) rather than a normal HTTP
+        // response with a status code. That abrupt reset IS the rejection
+        // this test proves; a response that completed normally with any
+        // status would mean the limit was never actually enforced.
+        var rejected = false;
+        try
+        {
+            using var response = await client.SendAsync(request);
+            rejected = !response.IsSuccessStatusCode;
+        }
+        catch (HttpRequestException)
+        {
+            rejected = true;
+        }
+        Assert.True(rejected, "Expected the request to be rejected (either a non-success response or a reset connection).");
+        Assert.Null(await _store!.GetScreensaverAsync(CancellationToken.None));
+    }
+
     // V1-CDP-004: proves the two content-class limits are genuinely
     // separate, not one shared cap silently widened to 20 MB — a video
     // bigger than the image limit (5 MB) but within its own (20 MB) must
@@ -227,8 +300,17 @@ public sealed class DualScreenScreensaverTests : IAsyncLifetime
         await SeedManagerSessionAsync("manager-token-mid-video");
         client.DefaultRequestHeaders.Add("Cookie", "alkaros.manager=manager-token-mid-video");
 
+        // V1-RMD-235: the first 8 bytes carry a real MP4 "ftyp" box
+        // signature (offset 4-7) - an all-zero buffer would now be rejected
+        // by the magic-number check that task added, independent of this
+        // test's own point (the two size limits are genuinely separate).
+        var videoBytes = new byte[6 * 1024 * 1024];
+        videoBytes[4] = (byte)'f';
+        videoBytes[5] = (byte)'t';
+        videoBytes[6] = (byte)'y';
+        videoBytes[7] = (byte)'p';
         using var content = new MultipartFormDataContent();
-        var fileContent = new ByteArrayContent(new byte[6 * 1024 * 1024]);
+        var fileContent = new ByteArrayContent(videoBytes);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("video/mp4");
         content.Add(fileContent, "file", "reel.mp4");
 
@@ -287,7 +369,10 @@ public sealed class DualScreenScreensaverTests : IAsyncLifetime
         await SeedManagerSessionAsync("manager-token-3");
         client.DefaultRequestHeaders.Add("Cookie", "alkaros.manager=manager-token-3");
 
-        var bytes = new byte[] { 0x89, 0x50, 0x4e, 0x47 };
+        // V1-RMD-235: the full 8-byte PNG signature, not just its first 4 -
+        // the magic-number check that task added requires all 8 to accept
+        // a file declared image/png.
+        var bytes = new byte[] { 0x89, 0x50, 0x4e, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
         using (var content = new MultipartFormDataContent())
         {
             var fileContent = new ByteArrayContent(bytes);

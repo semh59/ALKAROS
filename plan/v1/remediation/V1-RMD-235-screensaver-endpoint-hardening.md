@@ -1,8 +1,8 @@
 # V1-RMD-235 - Ekran koruyucu uç noktası: savunma derinliği iyileştirmeleri
 
 - Task ID: V1-RMD-235
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Codex
 - Work type: implementation
 - Surface state: Existing
 

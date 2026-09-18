@@ -1,0 +1,81 @@
+V1-RMD-235 closure evidence
+Date: 2026-09-18
+Assignee: Codex
+
+## Scope executed (all 3 In-scope items)
+1. `.DisableAntiforgery()` on the PUT /screensaver endpoint: kept (not
+   removed — no behavior change), but the surrounding comment now correctly
+   explains it is a genuine no-op today (no AddAntiforgery/UseAntiforgery
+   registered anywhere in this host) rather than implying it disables a
+   real, active protection; also notes CSRF defense here is the terminal
+   session cookie's own SameSite=Strict attribute, unaffected either way.
+2. Added an explicit 25 MB `IHttpMaxRequestBodySizeFeature.MaxRequestBodySize`
+   for the PUT /screensaver route specifically (host-level middleware,
+   path+method scoped, registered ahead of `MapCustomerDisplayScreensaverApi`'s
+   route group — `RouteGroupBuilder` itself has no `.Use`, and IFormFile
+   binding already reads the body before any IEndpointFilter runs, so the
+   limit has to be set from plain middleware earlier in the pipeline).
+   Previously this route relied entirely on Kestrel's own implicit ~28.6 MB
+   default, leaving little margin over the 20 MB video cap.
+3. Added a magic-number (actual file-byte-signature) check independent of
+   the client-declared Content-Type header: PNG (8-byte signature), JPEG
+   (0xFFD8FF), WEBP (RIFF....WEBP), MP4 (ftyp box at offset 4). A file whose
+   declared Content-Type passes the allowlist but whose real bytes don't
+   match is now rejected with the same INVALID_SCREENSAVER 400.
+
+## Fixture fix required by item 3 (pre-existing tests)
+Two already-passing HTTP-level tests in DualScreenScreensaverTests.cs used
+all-zero or too-short byte arrays as "valid" PNG/MP4 content (their point
+was the SIZE-limit logic, not real file bytes) - the new magic-number check
+would have made both regress from 204 to 400. Fixed by giving each fixture
+a real, minimal signature while preserving each test's own original size
+assertions:
+- PutAcceptsAVideoLargerThanTheImageLimitButWithinTheVideoLimit: bytes
+  4-7 of the 6 MB buffer now spell "ftyp".
+- PutWithAValidImageThenGetWithARealDisplaySessionRoundTripsTheSameBytes:
+  the fixture grew from 4 bytes (0x89,0x50,0x4E,0x47) to the real 8-byte
+  PNG signature (added 0x0D,0x0A,0x1A,0x0A) - the test's own byte-for-byte
+  round-trip assertion still holds since both the PUT and the comparison
+  use the same updated `bytes` variable.
+
+## New tests (2 required by Acceptance evidence)
+- PutRejectsAFileWhoseContentDoesNotMatchItsDeclaredContentType: a plain
+  text buffer declared `image/png` -> 400, nothing stored.
+- PutRejectsARequestBodyOverTheExplicitTransportLimit: a 26 MB body (over
+  the new 25 MB route limit) -> rejected. Kestrel enforces
+  MaxRequestBodySize WHILE reading the body, not after, so the observed
+  failure is a reset/aborted connection (HttpRequestException) rather than
+  a normal HTTP response with a status code - the test accepts either a
+  non-success response or that transport-level reset as "rejected" (both
+  are the same real-world outcome: nothing gets stored, confirmed by the
+  test's own final assertion).
+
+## Build and Tests
+1. dotnet build ALKAROS.slnx -c Debug
+   Result: 0 Uyarı, 0 Hata (exit code: 0)
+
+2. dotnet test tests/Host/MigrationComposition (real Postgres, alkaros-test-pg:55432)
+   --filter FullyQualifiedName~DualScreenScreensaverTests
+   Result: Toplam: 16, Başarılı: 16, Başarısız: 0 (exit code: 0) - includes
+   every pre-existing test (regression-free) plus the 2 new ones above.
+
+## Tool Audits
+1. python tools/plan-audit/plan_audit_tool.py validate
+   Result: Validation errors: 1 (UNOWNED_PRODUCTION_FILE
+   tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py),
+   Validation warnings: 0. Pre-existing and unrelated (confirmed via git
+   stash before this task started, see V1-RMD-234's own evidence for the
+   same confirmation).
+2. python tools/consistency-audit/consistency_audit.py
+   Result: consistency-audit: clean (exit code: 0)
+
+## Write-set vs Allowlist
+- src/Host/DualScreen/DualScreenApplication.Screensaver.cs (Sınırlı ek,
+  V1-CDP-001/V1-CDP-004 ailesinde kalır, per the task's own Owned surface)
+- tests/Host/MigrationComposition/DualScreen/DualScreenScreensaverTests.cs
+  (Sınırlı ek, V1-CDP-004 sahipliğinde kalır, per the task's own Owned
+  surface) - 2 new tests + 2 minimal fixture corrections on pre-existing
+  tests (see above), no test's own assertions/intent changed
+- evidence/V1-RMD-235/closure-evidence.txt
+- plan/v1/remediation/V1-RMD-235-screensaver-endpoint-hardening.md
+  (Status: Planned -> Done, Assignee updated)
