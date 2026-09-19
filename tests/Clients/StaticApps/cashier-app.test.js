@@ -70,7 +70,6 @@ function standardRoutes({
 
 async function startAppWithOneProductInTicket(routes) {
   const fetchMock = installFetchRouter(routes);
-  vi.stubGlobal("alert", vi.fn());
   await loadApp(htmlPath, scriptPath);
 
   await vi.waitFor(() => {
@@ -79,6 +78,12 @@ async function startAppWithOneProductInTicket(routes) {
   document.querySelector(".pos-product-card").click();
 
   return fetchMock;
+}
+
+// V1-RMD-253: dispatch feedback is a self-dismissing #toastRegion entry now,
+// not a native alert() the tests used to stub and assert on.
+function toastMessages() {
+  return [...document.querySelectorAll("#toastRegion .toast")].map((node) => node.textContent);
 }
 
 describe("cashier-app.js", () => {
@@ -116,7 +121,9 @@ describe("cashier-app.js", () => {
     expect(draftInit.method).toBe("POST");
     expect(submitUrl).toContain(`/orders/${ORDER_ID}/submit-draft`);
     expect(submitInit.method).toBe("POST");
-    expect(alert).toHaveBeenCalledWith(expect.stringContaining("mutfağa iletildi"));
+    await vi.waitFor(() => {
+      expect(toastMessages()).toContainEqual(expect.stringContaining("mutfağa iletildi"));
+    });
   });
 
   it("does not send a second request while the first dispatch is still in flight", async () => {
@@ -166,9 +173,9 @@ describe("cashier-app.js", () => {
     document.getElementById("btnDispatchOrder").click();
 
     await vi.waitFor(() => {
-      expect(alert).toHaveBeenCalled();
+      if (toastMessages().length === 0) throw new Error("no toast shown yet");
     });
-    const [message] = alert.mock.calls[0];
+    const [message] = toastMessages();
     expect(message).not.toMatch(/\b409\b/);
     expect(message).not.toMatch(/Hata:/);
   });
@@ -294,7 +301,6 @@ describe("cashier-app.js", () => {
       };
     });
     vi.stubGlobal("fetch", fetchMock);
-    vi.stubGlobal("alert", vi.fn());
     await loadApp(htmlPath, scriptPath);
 
     await vi.waitFor(() => {
@@ -311,13 +317,12 @@ describe("cashier-app.js", () => {
     // Before V1-RMD-232, `draft` stayed null when draftResponse.json()
     // threw, so `finally`'s `if (draft && draft.orderId)` never fired and
     // this release call never happened at all - KASA-1 stayed stuck.
-    expect(alert).toHaveBeenCalledWith(expect.stringContaining("Sunucuya ulaşılamadı"));
+    expect(toastMessages()).toContainEqual(expect.stringContaining("Sunucuya ulaşılamadı"));
   });
 
   it("V1-RMD-232: loads with an empty parked-ticket list instead of crashing when localStorage is corrupted", async () => {
     localStorage.setItem("alkaros_cashier_parked", "{not valid json");
     installFetchRouter(standardRoutes());
-    vi.stubGlobal("alert", vi.fn());
 
     await loadApp(htmlPath, scriptPath);
 
@@ -337,7 +342,9 @@ describe("cashier-app.js", () => {
     document.getElementById("btnDispatchOrder").click();
 
     await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(8));
-    expect(alert).toHaveBeenCalledWith(expect.stringContaining("mutfağa iletildi"));
+    await vi.waitFor(() => {
+      expect(toastMessages()).toContainEqual(expect.stringContaining("mutfağa iletildi"));
+    });
     const select = document.getElementById("dispatchWaiterSelect");
     expect(select.querySelectorAll("option")).toHaveLength(1); // only "Ben"
   });
