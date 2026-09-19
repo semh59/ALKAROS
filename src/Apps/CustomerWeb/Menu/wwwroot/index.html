@@ -8,6 +8,13 @@
 </head>
 <body>
   <header class="menu-header">
+    <!-- V1-SET-009: the business's own name/logo (V1-SET-007/008) — hidden
+         until menu-app.js's loadBranding() finds either one set, so an
+         unconfigured install looks exactly as it did before this. -->
+    <div id="businessBrand" class="business-brand" hidden>
+      <img id="businessLogo" class="business-logo" alt="" hidden>
+      <p id="businessName" class="business-name" hidden></p>
+    </div>
     <div class="menu-header-top">
       <h1>Menü</h1>
       <a class="bill-link" href="./bill.html">Adisyonum</a>

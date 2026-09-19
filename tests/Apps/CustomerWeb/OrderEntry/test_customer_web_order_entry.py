@@ -70,3 +70,25 @@ def test_customer_web_order_entry_out_of_scope_features_are_not_faked():
     assert "/reject" not in app_code
     assert "payment" not in app_code.lower()
     assert "kitchenTicket" not in app_code
+
+
+def test_customer_web_order_entry_renders_the_business_own_identity():
+    """V1-SET-009: same business-identity brand block as Menu's own page
+    (V1-SET-007/008) - hidden by default."""
+    html = (WWWROOT / "order-entry.html").read_text(encoding="utf-8")
+    css = (WWWROOT / "order-entry.css").read_text(encoding="utf-8")
+    app_code = (WWWROOT / "order-entry.js").read_text(encoding="utf-8")
+
+    assert 'id="businessBrand" class="business-brand" hidden' in html
+    assert 'id="businessLogo"' in html
+    assert 'id="businessName"' in html
+    assert ".business-brand" in css
+    assert ".business-logo" in css
+
+    assert "loadBranding" in app_code
+    assert "/api/v1/qr/branding" in app_code
+    assert "/api/v1/qr/logo" in app_code
+    assert "accentColor" in app_code
+    assert "businessName" in app_code
+    assert "hasLogo" in app_code
+    assert "--cw-accent" in app_code

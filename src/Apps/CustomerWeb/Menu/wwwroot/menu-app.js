@@ -163,6 +163,41 @@ async function loadMenuWithSessionRetry(tableToken) {
   throw new Error(GENERIC_ERROR_MESSAGE);
 }
 
+/**
+ * V1-SET-009: the business's own name/color/logo (V1-SET-007/008) — public,
+ * session-free, deliberately independent of the menu/session flow below.
+ * Cosmetic only: a failed fetch must never block the page's real job of
+ * showing the menu, so this never throws to its caller.
+ */
+async function loadBranding() {
+  try {
+    const response = await fetch("/api/v1/qr/branding");
+    if (!response.ok) return;
+    const branding = await response.json();
+
+    document.documentElement.style.setProperty("--cw-accent", branding.accentColor);
+
+    const brandBlock = document.getElementById("businessBrand");
+    let hasBrand = false;
+    if (branding.businessName) {
+      const nameEl = document.getElementById("businessName");
+      nameEl.textContent = branding.businessName;
+      nameEl.hidden = false;
+      hasBrand = true;
+    }
+    if (branding.hasLogo) {
+      const logoEl = document.getElementById("businessLogo");
+      logoEl.src = "/api/v1/qr/logo";
+      logoEl.hidden = false;
+      hasBrand = true;
+    }
+    brandBlock.hidden = !hasBrand;
+  } catch {
+    // Network error / malformed response — the page keeps ALKAROS's own
+    // default look, exactly as if branding had never been configured.
+  }
+}
+
 function formatPrice(amount) {
   return new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(amount);
 }
@@ -261,6 +296,8 @@ function showError(message) {
 }
 
 async function init() {
+  void loadBranding();
+
   const urlToken = getTableTokenFromUrl();
   const tableToken = urlToken || readStoredTableToken();
   if (!tableToken) {

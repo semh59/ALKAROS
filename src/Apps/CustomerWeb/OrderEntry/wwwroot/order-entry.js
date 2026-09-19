@@ -290,7 +290,44 @@ function showError(message) {
   errorState.hidden = false;
 }
 
+/**
+ * V1-SET-009: the business's own name/color/logo (V1-SET-007/008) — public,
+ * session-free, deliberately independent of the cart/submit flow below.
+ * Cosmetic only: a failed fetch must never block checkout, so this never
+ * throws to its caller (same contract as menu-app.js's own loadBranding()).
+ */
+async function loadBranding() {
+  try {
+    const response = await fetch("/api/v1/qr/branding");
+    if (!response.ok) return;
+    const branding = await response.json();
+
+    document.documentElement.style.setProperty("--cw-accent", branding.accentColor);
+
+    const brandBlock = document.getElementById("businessBrand");
+    let hasBrand = false;
+    if (branding.businessName) {
+      const nameEl = document.getElementById("businessName");
+      nameEl.textContent = branding.businessName;
+      nameEl.hidden = false;
+      hasBrand = true;
+    }
+    if (branding.hasLogo) {
+      const logoEl = document.getElementById("businessLogo");
+      logoEl.src = "/api/v1/qr/logo";
+      logoEl.hidden = false;
+      hasBrand = true;
+    }
+    brandBlock.hidden = !hasBrand;
+  } catch {
+    // Network error / malformed response — the page keeps ALKAROS's own
+    // default look, exactly as if branding had never been configured.
+  }
+}
+
 function init() {
+  void loadBranding();
+
   let lines = readCart();
 
   const onChange = (productId, delta) => {
