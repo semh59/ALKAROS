@@ -1,5 +1,6 @@
 import { useEffect, useId, useState, type MouseEvent, type ReactNode } from "react";
 import { Button, ContextDrawer, Icon, StateMessage } from "../design-system";
+import alkarosLogo from "../design-system/brand/alkaros-logo-on-dark.png";
 import { isPlainClick } from "../router";
 import { commonActions, connectivityLabels } from "../strings";
 import {
@@ -71,7 +72,9 @@ export function ProductionShell(props: ProductionShellProps) {
     <div className="production-shell" data-viewport={mode}>
       <a className="production-shell__skip-link" href={`#${workspaceId}`}>Ana içeriğe geç</a>
       <header className="production-shell__header">
-        <div className="production-shell__brand">ALKAROS</div>
+        <div className="production-shell__brand">
+          <img className="production-shell__brand-mark" src={alkarosLogo} alt="ALKAROS" />
+        </div>
         {identity && <div className="production-shell__identity" role="group" aria-label="Aktif çalışma bağlamı">
           {identity.branchName && <IdentityItem label="Şube" value={identity.branchName} />}
           <IdentityItem label="Terminal" value={identity.terminalName} />
