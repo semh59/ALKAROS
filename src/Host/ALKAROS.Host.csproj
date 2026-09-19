@@ -36,6 +36,7 @@
     <ProjectReference Include="..\Modules\QrOrdering\ALKAROS.QrOrdering.csproj" />
     <ProjectReference Include="..\Integrations\QrRelay\ALKAROS.QrRelay.csproj" />
     <ProjectReference Include="..\Modules\Payments\ALKAROS.Payments.csproj" />
+    <ProjectReference Include="..\Modules\Invoicing\ALKAROS.Invoicing.csproj" />
   </ItemGroup>
 
 </Project>

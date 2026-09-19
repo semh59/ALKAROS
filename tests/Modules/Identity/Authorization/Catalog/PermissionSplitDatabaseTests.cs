@@ -18,7 +18,7 @@ public sealed class PermissionSplitDatabaseTests : IClassFixture<PermissionSplit
     public PermissionSplitDatabaseTests(PermissionSplitDatabase db) => _db = db;
 
     [Fact]
-    public async Task AllSeventeenCodesAreSeeded()
+    public async Task AllNineteenCodesAreSeeded()
     {
         foreach (var code in ApplicationPermissions.Codes)
             (await _db.PermissionCountAsync(code)).Should().Be(1, "'{0}' must be seeded once", code);

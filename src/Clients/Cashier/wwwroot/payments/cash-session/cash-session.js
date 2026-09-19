@@ -206,7 +206,12 @@
     setBusy(true);
     api(cashSessionsBase() + '/' + state.session.cashSessionId + '/cash-movements', {
       method: 'POST',
-      body: { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes || null },
+      // V1-RMD-241: the endpoint now requires a key and rejects a second
+      // insert under the same one — this makes a would-be duplicate (a
+      // race just under the button's own busy-guard, a browser/proxy
+      // resend of the same request) return the original row instead of
+      // posting the movement twice.
+      body: { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes || null, IdempotencyKey: crypto.randomUUID() },
     }).then(function (result) {
       state.busy = false;
       if (!result.ok) {

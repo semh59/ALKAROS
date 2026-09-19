@@ -25,9 +25,39 @@ public static class ApplicationPermissions
     public const string BillsComp = "bills.comp";
     public const string BillsDiscount = "bills.discount";
     public const string CashDrawer = "cash.drawer";
+    /// <summary>
+    /// V1-RMD-236: closing a cash session with a supervisor override (bypassing
+    /// the normal variance-tolerance check) — supervisor-tier, same family as
+    /// <see cref="BillsVoid"/>/<see cref="BillsComp"/>/<see cref="BillsDiscount"/>.
+    /// A plain cashier holding only <see cref="CashDrawer"/> must escalate.
+    /// </summary>
+    public const string CashSessionOverride = "cash.session.override";
     public const string ReportsView = "reports.view";
+    /// <summary>
+    /// V1-RMD-250: investigating/resolving a reconciliation discrepancy case
+    /// — supervisor-tier, same family as
+    /// <see cref="BillsVoid"/>/<see cref="BillsComp"/> (a per-case exception
+    /// a supervisor already handles), distinct from merely reading a case
+    /// (<see cref="ReportsView"/>).
+    /// </summary>
+    public const string ReconciliationManage = "reconciliation.manage";
+    /// <summary>
+    /// V1-RMD-251: acknowledging/escalating/suppressing/resolving an
+    /// operational alert, or recording a manual health check — supervisor
+    /// tier, same family as <see cref="ReconciliationManage"/> (a per-case
+    /// exception a supervisor already handles), distinct from merely
+    /// reading an alert/health-check (<see cref="ReportsView"/>).
+    /// </summary>
+    public const string ObservabilityManage = "observability.manage";
     /// <summary>V12-QRT-003: configuring a third-party integration credential (e.g. the QR relay provider token) — manager-only, no escalation path.</summary>
     public const string IntegrationsManage = "integrations.manage";
+    /// <summary>
+    /// V1-RMD-249: opening/closing a business day (EOD) — a one-time-per-day,
+    /// no-escalation-path manager action (same family as
+    /// <see cref="IntegrationsManage"/>/<c>settings.manage</c>), distinct from
+    /// merely viewing a report (<see cref="ReportsView"/>, Supervisor+).
+    /// </summary>
+    public const string ReportsCloseDay = "reports.close-day";
     /// <summary>
     /// V1-IAM-028: advancing a kitchen ticket/item one stage forward
     /// (Queued→Preparing→Ready→Served), split out of <see cref="OrdersSend"/>
@@ -53,7 +83,8 @@ public static class ApplicationPermissions
         TablesMerge, FloorplanManage, BillsSplit, BillsVoid, BillsComp,
         BillsDiscount, CashDrawer, ReportsView,
         OrdersTransferServer, OrdersTransferServerAny,
-        IntegrationsManage, KitchenAdvance,
+        IntegrationsManage, KitchenAdvance, CashSessionOverride, ReportsCloseDay,
+        ReconciliationManage, ObservabilityManage,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -73,7 +104,10 @@ public static class ApplicationPermissions
         { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny };
 
     private static readonly string[] SupervisorEscalations =
-        { FloorplanManage, ReportsView, BillsVoid, BillsComp, BillsDiscount };
+        {
+            FloorplanManage, ReportsView, BillsVoid, BillsComp, BillsDiscount,
+            CashSessionOverride, ReconciliationManage, ObservabilityManage,
+        };
 
     /// <summary>
     /// Granular grants held OUTRIGHT by each role (model §3). Absence from a
@@ -97,7 +131,8 @@ public static class ApplicationPermissions
             // resolve), so it sits a level above supervisor rather than
             // going through the grant-request escalation path.
             [RoleManager] = new HashSet<string>(
-                EveryRoleTakesOrders.Concat(CashierFloorSet).Concat(SupervisorEscalations).Append(IntegrationsManage),
+                EveryRoleTakesOrders.Concat(CashierFloorSet).Concat(SupervisorEscalations)
+                    .Append(IntegrationsManage).Append(ReportsCloseDay),
                 StringComparer.Ordinal),
         };
 }

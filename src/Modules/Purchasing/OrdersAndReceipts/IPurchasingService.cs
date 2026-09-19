@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Measurements;
 using ALKAROS.Purchasing.Suppliers;
 using Npgsql;
 
@@ -54,6 +56,8 @@ public sealed class PurchasingService : IPurchasingService
     private readonly NpgsqlDataSource _dataSource;
     private readonly IStockBalanceRepository _balanceRepo;
     private readonly IStockMovementRepository _movementRepo;
+    private readonly IStockItemRepository _itemRepo;
+    private readonly IUnitConverter _unitConverter;
 
     public PurchasingService(
         IPurchaseOrderRepository poRepo,
@@ -61,7 +65,9 @@ public sealed class PurchasingService : IPurchasingService
         ISupplierRepository supplierRepo,
         NpgsqlDataSource dataSource,
         IStockBalanceRepository balanceRepo,
-        IStockMovementRepository movementRepo)
+        IStockMovementRepository movementRepo,
+        IStockItemRepository itemRepo,
+        IUnitConverter unitConverter)
     {
         _poRepo = poRepo ?? throw new ArgumentNullException(nameof(poRepo));
         _grRepo = grRepo ?? throw new ArgumentNullException(nameof(grRepo));
@@ -69,6 +75,8 @@ public sealed class PurchasingService : IPurchasingService
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _balanceRepo = balanceRepo ?? throw new ArgumentNullException(nameof(balanceRepo));
         _movementRepo = movementRepo ?? throw new ArgumentNullException(nameof(movementRepo));
+        _itemRepo = itemRepo ?? throw new ArgumentNullException(nameof(itemRepo));
+        _unitConverter = unitConverter ?? throw new ArgumentNullException(nameof(unitConverter));
     }
 
     public async Task<PurchaseOrder> CreatePurchaseOrderAsync(CreatePOCommand command, CancellationToken ct = default)
@@ -167,7 +175,7 @@ public sealed class PurchasingService : IPurchasingService
             command.Notes,
             receivedAt);
 
-        var itemsToPostToStock = new List<GoodsReceiptItem>();
+        var itemsToPostToStock = new List<(GoodsReceiptItem Item, decimal TrackingQuantity, string TrackingUnitCode)>();
 
         foreach (var deliveredItem in command.DeliveredItems)
         {
@@ -203,7 +211,32 @@ public sealed class PurchasingService : IPurchasingService
 
             if (eval.AcceptedQuantity > 0)
             {
-                itemsToPostToStock.Add(receiptItem);
+                // V1-RMD-239: the PO line's own unit (line.UnitCode, e.g. a
+                // supplier's "box") is not necessarily the stock item's
+                // tracking unit (e.g. "kg") — found by an independent audit
+                // (2026-09-18) posting the accepted quantity straight to
+                // on-hand with no conversion at all (5 boxes of 24 posted
+                // on-hand as 5, not 120). The receipt itself still records
+                // what was physically counted in the supplier's own unit
+                // (receiptItem above, unchanged); only the stock-effect
+                // posting below is converted, same as
+                // InventoryAdjustmentService's own dimension-safety check.
+                var stockItem = await _itemRepo.GetByIdAsync(line.StockItemId, ct)
+                    ?? throw new StockItemNotFoundException(line.StockItemId);
+
+                var trackingQuantity = eval.AcceptedQuantity;
+                if (!string.Equals(line.UnitCode, stockItem.TrackingUnitCode, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!_unitConverter.CanConvert(line.UnitCode, stockItem.TrackingUnitCode))
+                    {
+                        var fromDim = _unitConverter.GetDimension(line.UnitCode);
+                        var toDim = _unitConverter.GetDimension(stockItem.TrackingUnitCode);
+                        throw new IncompatibleUnitDimensionException(line.UnitCode, fromDim, stockItem.TrackingUnitCode, toDim);
+                    }
+                    trackingQuantity = _unitConverter.Convert(eval.AcceptedQuantity, line.UnitCode, stockItem.TrackingUnitCode);
+                }
+
+                itemsToPostToStock.Add((receiptItem, trackingQuantity, stockItem.TrackingUnitCode));
             }
         }
 
@@ -231,10 +264,10 @@ public sealed class PurchasingService : IPurchasingService
         // own contract, using this receipt's connection and transaction so
         // both commit or roll back with the receipt (V0-ARC-001 row 27:
         // Purchasing → Inventory, goods receipt stock movement).
-        foreach (var item in itemsToPostToStock)
+        foreach (var (item, trackingQuantity, trackingUnitCode) in itemsToPostToStock)
         {
             await _balanceRepo.ApplyOnHandDeltaAsync(
-                item.StockItemId, receipt.DestinationLocationId, item.AcceptedQuantity, conn, tx, ct);
+                item.StockItemId, receipt.DestinationLocationId, trackingQuantity, conn, tx, ct);
 
             var movement = new StockMovement(
                 id: Guid.NewGuid(),
@@ -242,8 +275,8 @@ public sealed class PurchasingService : IPurchasingService
                 stockLocationId: receipt.DestinationLocationId,
                 movementType: StockMovementType.PurchaseReceipt,
                 direction: MovementDirection.In,
-                quantity: item.AcceptedQuantity,
-                unitCode: item.UnitCode,
+                quantity: trackingQuantity,
+                unitCode: trackingUnitCode,
                 sourceType: StockMovementSourceType.GoodsReceipt,
                 sourceReferenceId: receipt.Id,
                 reason: receipt.ReceiptNumber,

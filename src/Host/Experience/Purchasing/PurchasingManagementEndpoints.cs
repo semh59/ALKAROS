@@ -2,6 +2,8 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Measurements;
 using ALKAROS.Purchasing.OrdersAndReceipts;
 using ALKAROS.Purchasing.Suppliers;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +39,11 @@ public static class PurchasingManagementEndpoints
         // (V0-ARC-001 row 27) — these must resolve standalone too.
         services.TryAddScoped<IStockBalanceRepository, PostgresStockBalanceRepository>();
         services.TryAddScoped<IStockMovementRepository, PostgresStockMovementRepository>();
+        // V1-RMD-239: converts a PO line's own unit into the stock item's
+        // tracking unit before posting a stock effect — must resolve
+        // standalone too, same reason as the two repositories above.
+        services.TryAddScoped<IStockItemRepository, PostgresStockItemRepository>();
+        services.TryAddSingleton<IUnitConverter, UnitConverter>();
 
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();

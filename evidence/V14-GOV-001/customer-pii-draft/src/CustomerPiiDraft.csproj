@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- V14-GOV-001: bilerek ALKAROS.slnx'e eklenmedi. GATE-V14-ENTRY hâlâ
+         açık olduğu için bu, V14-CST-001'in gerçek Owned surface'ı DEĞİL -
+         standalone bir taslak/referans projesidir. -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+    <RestoreLockedMode>false</RestoreLockedMode>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ALKAROS.CustomerData.Draft</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -2,9 +2,12 @@ using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
 using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Cash.TransactionLedger;
+using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Npgsql;
 
 namespace ALKAROS.Host.DualScreen;
 
@@ -132,10 +135,19 @@ public static partial class DualScreenApplication
             ICashSessionLifecycleService sessions,
             ICashTransactionLedgerRepository ledger,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            // V1-RMD-236: IsSupervisorOverride bypasses CashSessionPolicy's own
+            // variance-tolerance check below — without this, any cashier could
+            // self-declare the override and close with an unlimited variance.
+            if (request.IsSupervisorOverride)
+            {
+                await authorization.AuthorizeAsync(
+                    principal.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
+            }
             var expectedCash = await ledger.ComputeExpectedCashAsync(cashSessionId, cancellationToken);
             var (session, closedEvent) = await sessions.CloseSessionAsync(
                 new CloseCashSessionCommand(
@@ -173,6 +185,20 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
+                throw new ArgumentException("IdempotencyKey is required.", nameof(request));
+
+            // V1-RMD-241: a network retry (or a race just under the client's
+            // own double-click guard) used to always insert a brand-new row
+            // here, unlike cash-tender's own idempotency-key handling.
+            var replay = await ledger.GetBySessionAndIdempotencyKeyAsync(cashSessionId, request.IdempotencyKey, cancellationToken);
+            if (replay is not null)
+            {
+                return Results.Created(
+                    $"/api/v1/terminals/{terminalId:D}/cash-sessions/{cashSessionId:D}/cash-movements/{replay.Id:D}",
+                    replay);
+            }
+
             var session = await sessionRepository.GetByIdAsync(cashSessionId, cancellationToken)
                 ?? throw new CashSessionNotFoundException(cashSessionId);
             if (session.Snapshot.Status != CashSessionStatus.Open)
@@ -187,8 +213,22 @@ public static partial class DualScreenApplication
                 : CashTransactionDirection.Out;
             var movement = new Cash.TransactionLedger.CashTransaction(
                 Guid.NewGuid(), cashSessionId, transactionType, request.Amount, direction,
-                recordedBy: principal.UserId, notes: request.Notes);
-            await ledger.RecordAsync(movement, cancellationToken);
+                recordedBy: principal.UserId, notes: request.Notes, idempotencyKey: request.IdempotencyKey);
+            try
+            {
+                await ledger.RecordAsync(movement, cancellationToken);
+            }
+            catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                // A concurrent request for the same key won the race between
+                // the check above and this insert; its row is the real one.
+                var raced = await ledger.GetBySessionAndIdempotencyKeyAsync(cashSessionId, request.IdempotencyKey, cancellationToken);
+                if (raced is null)
+                    throw;
+                return Results.Created(
+                    $"/api/v1/terminals/{terminalId:D}/cash-sessions/{cashSessionId:D}/cash-movements/{raced.Id:D}",
+                    raced);
+            }
             return Results.Created(
                 $"/api/v1/terminals/{terminalId:D}/cash-sessions/{cashSessionId:D}/cash-movements/{movement.Id:D}",
                 movement);
@@ -252,4 +292,4 @@ public enum CashMovementDirectionV1
 }
 
 public sealed record RecordCashMovementRequestV1(
-    CashMovementDirectionV1 Direction, decimal Amount, string? Notes);
+    CashMovementDirectionV1 Direction, decimal Amount, string? Notes, string IdempotencyKey);

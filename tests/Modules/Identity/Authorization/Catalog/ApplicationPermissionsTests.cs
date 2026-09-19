@@ -7,10 +7,10 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 public sealed class ApplicationPermissionsTests
 {
     [Fact]
-    public void CatalogHasSeventeenDistinctCodes()
+    public void CatalogHasTwentyOneDistinctCodes()
     {
-        // V1-IAM-028 added kitchen.advance, the 17th code.
-        ApplicationPermissions.Codes.Should().HaveCount(17);
+        // V1-RMD-251 added observability.manage, the 21st code.
+        ApplicationPermissions.Codes.Should().HaveCount(21);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
@@ -40,7 +40,10 @@ public sealed class ApplicationPermissionsTests
     [InlineData("bills.discount")]
     [InlineData("floorplan.manage")]
     [InlineData("cash.drawer")]
+    [InlineData("cash.session.override")]
     [InlineData("reports.view")]
+    [InlineData("reconciliation.manage")]
+    [InlineData("observability.manage")]
     [InlineData("orders.transfer-server-any")]
     public void WaiterDoesNotHoldAnyEscalatedGrant(string code)
     {
@@ -61,6 +64,9 @@ public sealed class ApplicationPermissionsTests
         cashier.Should().NotContain(ApplicationPermissions.BillsDiscount);
         cashier.Should().NotContain(ApplicationPermissions.FloorplanManage);
         cashier.Should().NotContain(ApplicationPermissions.ReportsView);
+        cashier.Should().NotContain(ApplicationPermissions.CashSessionOverride);
+        cashier.Should().NotContain(ApplicationPermissions.ReconciliationManage);
+        cashier.Should().NotContain(ApplicationPermissions.ObservabilityManage);
     }
 
     [Fact]
@@ -73,6 +79,9 @@ public sealed class ApplicationPermissionsTests
         supervisor.Should().Contain(ApplicationPermissions.BillsDiscount);
         supervisor.Should().Contain(ApplicationPermissions.FloorplanManage);
         supervisor.Should().Contain(ApplicationPermissions.ReportsView);
+        supervisor.Should().Contain(ApplicationPermissions.CashSessionOverride);
+        supervisor.Should().Contain(ApplicationPermissions.ReconciliationManage);
+        supervisor.Should().Contain(ApplicationPermissions.ObservabilityManage);
         // catalog.manage is not an ApplicationPermissions code — it is owned by
         // migration 042 and only ever granted to `manager`. The catalog exposes
         // no supervisor path to it.
@@ -80,18 +89,22 @@ public sealed class ApplicationPermissionsTests
     }
 
     [Fact]
-    public void ManagerHoldsEverySupervisorGrantPlusIntegrationsManageOnly()
+    public void ManagerHoldsEverySupervisorGrantPlusIntegrationsManageAndReportsCloseDay()
     {
         // V12-QRT-003: the first manager-exclusive grant — every tier before
         // it was identical to supervisor's. integrations.manage (configuring
         // a third-party relay credential) is a one-time setup action with no
         // requester/approver dynamic, unlike bills.void/comp/discount, which
         // are per-transaction exceptions supervisor can already resolve.
+        // V1-RMD-249 added reports.close-day (opening/closing a business
+        // day) to the same manager-exclusive tier.
         var supervisor = ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor];
         var manager = ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager];
 
-        manager.Should().BeEquivalentTo(supervisor.Append(ApplicationPermissions.IntegrationsManage));
+        manager.Should().BeEquivalentTo(
+            supervisor.Append(ApplicationPermissions.IntegrationsManage).Append(ApplicationPermissions.ReportsCloseDay));
         supervisor.Should().NotContain(ApplicationPermissions.IntegrationsManage);
+        supervisor.Should().NotContain(ApplicationPermissions.ReportsCloseDay);
     }
 
     [Fact]

@@ -45,6 +45,36 @@ export interface RelayCredentialStatus {
   connectorState: string;
 }
 
+// V14-QNB-006: userId/vergiTcKimlikNo are not secret (they identify WHICH
+// tenant, not a credential) so they round-trip back; the password never does.
+export interface QnbCredentialStatus {
+  configured: boolean;
+  updatedAt: string | null;
+  userId: string | null;
+  vergiTcKimlikNo: string | null;
+}
+
+// V14-QNB-007: the real result of attempting a `wsLogin` against QNB's own
+// live test server with the saved credential — `message` is always a
+// pre-written Turkish sentence (docs/UI_STYLE_GUIDE.md §3), never QNB's raw
+// SOAP fault text.
+export interface QnbConnectionTestResult {
+  success: boolean;
+  message: string;
+}
+
+// V13-HUG-005: merchantId/branchId/terminalId/clientId are not secret (they
+// identify WHICH terminal, not a credential) so they round-trip back; the
+// client secret never does.
+export interface TokenTerminalCredentialStatus {
+  configured: boolean;
+  updatedAt: string | null;
+  merchantId: string | null;
+  branchId: string | null;
+  terminalId: string | null;
+  clientId: string | null;
+}
+
 export interface RuntimeConfiguration {
   kitchenStationId: string;
   // Absolute origin the customer display is served from (finding B-4). Absent

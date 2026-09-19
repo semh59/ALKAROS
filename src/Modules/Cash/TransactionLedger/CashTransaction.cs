@@ -33,7 +33,8 @@ public sealed class CashTransaction
         Guid? relatedPaymentId = null,
         string? notes = null,
         Guid? recordedBy = null,
-        DateTimeOffset? occurredAt = null)
+        DateTimeOffset? occurredAt = null,
+        string? idempotencyKey = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Cash transaction id cannot be empty.", nameof(id));
@@ -69,6 +70,7 @@ public sealed class CashTransaction
         Notes = notes;
         RecordedBy = recordedBy;
         OccurredAt = occurredAt ?? DateTimeOffset.UtcNow;
+        IdempotencyKey = idempotencyKey;
     }
 
     public Guid Id { get; }
@@ -80,6 +82,14 @@ public sealed class CashTransaction
     public string? Notes { get; }
     public Guid? RecordedBy { get; }
     public DateTimeOffset OccurredAt { get; }
+
+    /// <summary>
+    /// V1-RMD-241: caller-supplied retry key for endpoints that expose one
+    /// (currently only the manual cash-in/cash-out endpoint). Null for
+    /// every other production entry (Opening/Sale/Refund), whose own
+    /// callers are already idempotent by construction.
+    /// </summary>
+    public string? IdempotencyKey { get; }
 
     /// <summary>The signed contribution this entry makes to the drawer's running cash.</summary>
     public decimal SignedAmount => Direction == CashTransactionDirection.In ? Amount : -Amount;

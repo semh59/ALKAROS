@@ -115,8 +115,10 @@ _DEFERRED_TASKS_ROW = re.compile(
 # The 2026-08-13 deferral entries V0-REV-001..030 and V0-GOV-041/042 were
 # removed from GATES.md on 2026-08-15 (TRACEABILITY C69): the revalidation
 # tasks closed as Done with an ## Onay block and the gov tasks closed as
-# NotApplicable in remediation phase 1.2. Only the 2026-08-03 C40 entries
-# remain.
+# NotApplicable in remediation phase 1.2. V0-CMP-001 was removed on
+# 2026-09-18 (TRACEABILITY C99, V0-GOV-065): its original mali-müşavir
+# requirement was replaced with self-declared configuration and it closed
+# Done with an ## Onay block. Remaining entries are the 2026-08-03 C40 set.
 _DEFERRED_TASK_RECORDS = {
     ("V0-HUG-001", "2026-08-03", "V12", "Gerçek Hugin provider contract/erişim kanıtı"),
     ("V0-QNB-001", "2026-08-03", "V13", "Gerçek QNB provider contract/erişim kanıtı"),
@@ -124,7 +126,6 @@ _DEFERRED_TASK_RECORDS = {
     ("V0-MCD-001", "2026-08-03", "V12", "Gerçek meal-card provider sözleşme/onay kanıtı"),
     ("V0-PRN-001", "2026-08-03", "V14", "Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı"),
     ("V0-QRG-001", "2026-08-03", "V14", "Gerçek QR relay public kanal onay kanıtı"),
-    ("V0-CMP-001", "2026-08-03", "V12", "Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı"),
     ("V0-SEC-001", "2026-08-03", "V14", "Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı"),
     ("V0-LIC-001", "2026-08-03", "V20", "Gerçek license server ve lisans sözleşmesi kanıtı"),
 }

@@ -76,6 +76,18 @@ public static class ModuleBoundaryTests
             // Table Management has no direct-call edge: it reparents orders and
             // bills after a merge/transfer/unmerge by publishing a table event
             // to the outbox, which Order and Bill consume (V0-ARC-001 row 3).
+            // V1-RMD-248: found by an independent audit (2026-09-18) — these
+            // four real, already-Done (V13-CSH-001/002/003) sub-module edges
+            // were never added here, so this whole dictionary construction
+            // has been throwing on the very first `dotnet test` run of this
+            // suite since V13-CSH-004 registered them into DefaultCatalog.
+            // Row 7 of the table below already documents "Cash -> Payment";
+            // these are that same edge, split across the row's four separate
+            // ALKAROS.Cash/ALKAROS.Payments sub-modules.
+            ["Cash.SessionLifecycle"] = ["Cash"],
+            ["Cash.TransactionLedger"] = ["Cash"],
+            ["Cash.TenderHandler"] = ["Cash", "Cash.TransactionLedger", "Payments", "Payments.Allocations.Persistence", "Billing"],
+            ["Payments.Allocations.Persistence"] = ["Payments", "Billing"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()
@@ -101,25 +113,51 @@ public static class ModuleBoundaryTests
     [Fact]
     public static void ActualAssemblyDependenciesAreDeclaredInDependsOn()
     {
-        var idByAssemblyName = CatalogModules()
-            .ToDictionary(m => m.Assembly.GetName().Name!, m => m.Module.Id, StringComparer.Ordinal);
+        // V1-RMD-248: found by an independent audit (2026-09-18) — several
+        // real assemblies (ALKAROS.Cash, ALKAROS.Payments) deliberately host
+        // more than one IModule (e.g. CashModule/CashSessionLifecycleModule/
+        // CashTransactionLedgerModule/CashTenderHandlerModule all compile
+        // into one ALKAROS.Cash.csproj, same reasoning as
+        // CashTenderHandlerModule's own doc comment: a later task never has
+        // to write to an earlier task's shared module file). Compile
+        // references are a property of the ASSEMBLY, not of any one module
+        // inside it — CashTenderHandlerModule's own reference to Payments
+        // shows up on every module compiled into ALKAROS.Cash.csproj,
+        // including CashModule itself, which has nothing to do with it. So
+        // this check is done per assembly: an assembly's declared dependency
+        // set is the UNION of every module it hosts' DependsOn, and a
+        // reference is satisfied if ANY hosted module declares it.
+        var groups = CatalogModules()
+            .GroupBy(m => m.Assembly.GetName().Name!, StringComparer.Ordinal)
+            .Select(g => new
+            {
+                AssemblyName = g.Key,
+                Assembly = g.First().Assembly,
+                HostedIds = g.Select(m => m.Module.Id).ToArray(),
+                Declared = g.SelectMany(m => m.Module.DependsOn).ToArray(),
+            })
+            .ToDictionary(g => g.AssemblyName, StringComparer.Ordinal);
 
-        foreach (var (module, assembly) in CatalogModules())
+        foreach (var group in groups.Values)
         {
-            var referencedModuleIds = assembly.GetReferencedAssemblies()
+            var referencedModuleIdGroups = group.Assembly.GetReferencedAssemblies()
                 .Select(a => a.Name)
-                .Where(name => name is not null && idByAssemblyName.ContainsKey(name))
-                .Select(name => idByAssemblyName[name!])
-                .Where(id => id != module.Id)
-                .Distinct(StringComparer.Ordinal)
+                .Where(name => name is not null && groups.ContainsKey(name))
+                .Where(name => name != group.AssemblyName)
+                .Select(name => groups[name!].HostedIds)
                 .ToArray();
 
-            var undeclared = referencedModuleIds.Except(module.DependsOn, StringComparer.Ordinal).ToArray();
+            var undeclared = referencedModuleIdGroups
+                .Where(ids => !ids.Any(id => group.Declared.Contains(id, StringComparer.Ordinal)))
+                .Select(ids => string.Join("/", ids))
+                .ToArray();
+
             Assert.True(
                 undeclared.Length == 0,
-                $"Module '{module.Id}' has a compile dependency on [{string.Join(", ", undeclared)}] " +
-                "(project reference) that is not declared in IModule.DependsOn. Declare it so the composition " +
-                "order and the boundary rules stay honest.");
+                $"Assembly '{group.AssemblyName}' (hosting module(s) [{string.Join(", ", group.HostedIds)}]) has " +
+                $"a compile dependency on [{string.Join(", ", undeclared)}] (project reference) that is not " +
+                "declared in any hosted module's IModule.DependsOn. Declare it so the composition order and " +
+                "the boundary rules stay honest.");
         }
     }
 
@@ -157,7 +195,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Orders.SentItemVoid"] =
                 ["ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
             ["ALKAROS.Host.Experience.Orders"] =
-                ["ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders", "ALKAROS.Recipes", "ALKAROS.Settings"],
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders", "ALKAROS.Recipes", "ALKAROS.Settings"],
             ["ALKAROS.Host.Experience.KitchenOperations"] =
                 ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Operations", "ALKAROS.Orders", "ALKAROS.Settings"],
             // V11-RCP-003: a manager-only surface saying which recipe a

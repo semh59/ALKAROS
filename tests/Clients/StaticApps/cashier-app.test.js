@@ -139,6 +139,26 @@ describe("cashier-app.js", () => {
     expect(fetchMock).toHaveBeenCalledTimes(8);
   });
 
+  it("V1-RMD-238: escapes a double quote in an item note so it cannot break out of the note input's value attribute", async () => {
+    // WaiterPwa found and fixed the exact same defect in its own escapeHtml
+    // (js/util.js) after a real product name broke a double-quoted
+    // attribute and injected an event handler; that fix never propagated
+    // to Cashier's own escapeHtml, which still only escaped & < >.
+    await startAppWithOneProductInTicket(standardRoutes());
+    const malicious = '" onmouseover="window.__pwned = true';
+
+    const noteInput = document.querySelector(".item-note-input");
+    noteInput.value = malicious;
+    noteInput.dispatchEvent(new Event("input", { bubbles: true }));
+    // The note-input listener only mutates state; force a re-render the
+    // same way the real app does (any ticket mutation calls renderTicket()).
+    document.querySelector('.btn-micro[data-action="inc"]').click();
+
+    const rerendered = document.querySelector(".item-note-input");
+    expect(rerendered.getAttribute("onmouseover")).toBeNull();
+    expect(rerendered.value).toBe(malicious);
+  });
+
   it("never shows the raw HTTP status code when the server rejects the draft", async () => {
     // UI_STYLE_GUIDE §3: raw HTTP status codes must never reach the user.
     const fetchMock = await startAppWithOneProductInTicket(standardRoutes({ draftStatus: 409 }));

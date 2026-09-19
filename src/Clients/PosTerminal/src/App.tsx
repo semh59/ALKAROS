@@ -19,6 +19,12 @@ const NfcOrder = lazy(() => import("./routes/NfcOrder").then((m) => ({ default: 
 const RelaySettings = lazy(() =>
   import("./routes/RelaySettings").then((m) => ({ default: m.RelaySettings })),
 );
+const TokenTerminalSettings = lazy(() =>
+  import("./routes/TokenTerminalSettings").then((m) => ({ default: m.TokenTerminalSettings })),
+);
+const QnbCredentialSettings = lazy(() =>
+  import("./routes/QnbCredentialSettings").then((m) => ({ default: m.QnbCredentialSettings })),
+);
 const ReservationStation = lazy(() =>
   import("./routes/ReservationStation").then((m) => ({ default: m.ReservationStation })),
 );
@@ -52,6 +58,20 @@ export function App() {
     return (
       <Suspense fallback={null}>
         <RelaySettings />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname.startsWith("/settings/token-terminal")) {
+    return (
+      <Suspense fallback={null}>
+        <TokenTerminalSettings />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname.startsWith("/settings/qnb-credential")) {
+    return (
+      <Suspense fallback={null}>
+        <QnbCredentialSettings />
       </Suspense>
     );
   }

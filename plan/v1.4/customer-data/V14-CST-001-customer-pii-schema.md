@@ -18,6 +18,15 @@
 Field-level access policy ile PII sahibi boundary içinde minimum customer identity, tax ve contact alanlarını
 kalıcılaştırmak.
 
+**Taslak notu (2026-09-18, `V14-GOV-001`):** `GATE-V14-ENTRY` hâlâ açık
+olduğu için bu görev henüz `InProgress` alınamıyor. Semih'in onayıyla,
+gerçek gate kapanmadan önce yalnız bir domain taslağı
+`evidence/V14-GOV-001/customer-pii-draft/` altında yazıldı (bu görevin
+Owned surface'ının DIŞINDA, ayrı/standalone bir proje olarak). Bu görev
+gerçekten başladığında o taslak referans alınabilir, ama Acceptance
+evidence yine `GATE-V14-ENTRY`'nin kapanmasını ve gerçek Owned surface'a
+taşınmayı gerektiriyor.
+
 ## Owned surface
 
 - `src/Modules/CustomerData/Profiles/**`, `tests/Modules/CustomerData/Profiles/**`,

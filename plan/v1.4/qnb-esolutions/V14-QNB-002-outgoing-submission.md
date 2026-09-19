@@ -17,6 +17,16 @@
 
 Değişmez bir invoice draft'yi anında gönderin ve provider referanslarını/status geçmişini sürdürün.
 
+**Taslak notu (2026-09-18, `V13-GOV-007`):** `V0-QNB-001` hâlâ `Blocked`
+olduğu için bu görev henüz `InProgress` alınamıyor. Semih'in onayıyla,
+gerçek credential'dan önce yalnız dokümana dayalı, doğrulanmamış bir
+taslak `evidence/V13-GOV-007/qnb-efatura-adapter-draft/` altında yazıldı
+(bu görevin Owned surface'ının DIŞINDA, ayrı/standalone bir proje olarak) —
+`belgeGonderExt` gönderim şeması ve tam durum kodu ağacı (`durumKodu`/
+`gonderimDurumu`/`yanitDurumu`) dahil. Bu görev gerçekten başladığında o
+taslak referans alınabilir, ama Acceptance evidence yine gerçek sandbox
+kanıtı gerektiriyor.
+
 ## Owned surface
 
 - `src/Modules/Invoicing/Qnb/Outgoing/**`, `tests/Modules/Invoicing/Qnb/Outgoing/**`

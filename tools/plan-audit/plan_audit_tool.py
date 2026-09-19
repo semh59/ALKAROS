@@ -165,6 +165,10 @@ DEPENDENCY_REMOVALS = {
 # an ## Onay block in remediation wave 22 (V1-RMD-095 shipped WAL archiving /
 # PITR and the competitively calibrated RPO/RTO targets); their deferral
 # entries were removed from GATES.md and so are removed here too.
+# 2026-09-18 (TRACEABILITY C99): V0-CMP-001's original mali-müşavir-approved
+# centralized applicability determination was replaced with self-declared
+# configuration (V0-GOV-065); closed Done with an ## Onay block; its
+# deferral entry was removed from GATES.md and so is removed here too.
 V0_DEFERRED_TASKS = {
     "V0-HUG-001",
     "V0-QNB-001",
@@ -172,7 +176,6 @@ V0_DEFERRED_TASKS = {
     "V0-MCD-001",
     "V0-PRN-001",
     "V0-QRG-001",
-    "V0-CMP-001",
     "V0-SEC-001",
     "V0-LIC-001",
 }

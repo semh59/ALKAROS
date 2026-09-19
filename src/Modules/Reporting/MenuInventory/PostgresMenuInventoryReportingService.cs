@@ -361,6 +361,15 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
 
         var fallbackThreshold = query.CriticalThreshold ?? 0m;
 
+        // V1-RMD-243: this used to CROSS JOIN every active item with every
+        // active location, so an item that is only ever stocked in one
+        // location (the overwhelmingly common case — StockLocationType
+        // itself models Warehouse/Kitchen/Bar/etc. as distinct places) got
+        // a fabricated "0 available" row (and therefore a false "critical"
+        // alarm) at every OTHER location it was never assigned to. Now only
+        // pairs the item actually has a real relationship with: its own
+        // default_location_id, or any location a stock_balances row already
+        // exists for (it was received/moved there at some point).
         const string sql = """
             SELECT
                 si.id,
@@ -376,7 +385,13 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
                 COALESCE(auth_rsv.qty, 0) AS auth_reserved,
                 si.reorder_point
             FROM inventory.stock_items si
-            CROSS JOIN inventory.stock_locations loc
+            JOIN inventory.stock_locations loc
+                ON loc.is_active = true
+               AND (loc.id = si.default_location_id
+                    OR EXISTS (
+                        SELECT 1 FROM inventory.stock_balances existing
+                        WHERE existing.stock_item_id = si.id AND existing.stock_location_id = loc.id
+                    ))
             LEFT JOIN inventory.stock_balances sb
                 ON sb.stock_item_id = si.id AND sb.stock_location_id = loc.id
             LEFT JOIN (
@@ -385,7 +400,7 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
                 WHERE status = 'Reserved'
                 GROUP BY stock_item_id, stock_location_id
             ) auth_rsv ON auth_rsv.stock_item_id = si.id AND auth_rsv.stock_location_id = loc.id
-            WHERE si.is_active = true AND loc.is_active = true
+            WHERE si.is_active = true
               AND (@locId::uuid IS NULL OR loc.id = @locId::uuid)
             ORDER BY si.name, loc.name;
             """;

@@ -7,8 +7,11 @@ import type {
   NfcOrderResult,
   PairingCompleted,
   PairingCreated,
+  QnbConnectionTestResult,
+  QnbCredentialStatus,
   RelayCredentialStatus,
   RuntimeConfiguration,
+  TokenTerminalCredentialStatus,
 } from "./contracts";
 
 // V1-CDP-002/004: fetchIdleScreensaver's result — the content type decides
@@ -269,5 +272,42 @@ export const api = {
     request<{ hostname: string }>(`/api/v1/terminals/${terminalId}/relay-credential/provision`, {
       method: "POST",
       body: JSON.stringify({ subdomainLabel }),
+    }),
+  // V13-HUG-005: manager-only, same shape as saveRelayCredential/
+  // relayCredentialStatus above — saveTokenTerminalCredential never returns
+  // the client secret back; tokenTerminalCredentialStatus reports only
+  // configured/updatedAt plus the non-secret merchant/branch/terminal/client ids.
+  saveTokenTerminalCredential: (
+    terminalId: string,
+    merchantId: string,
+    branchId: string,
+    tokenTerminalId: string,
+    clientId: string,
+    clientSecret: string,
+  ) =>
+    request<void>(`/api/v1/terminals/${terminalId}/token-credential/`, {
+      method: "POST",
+      body: JSON.stringify({ merchantId, branchId, terminalId: tokenTerminalId, clientId, clientSecret }),
+    }),
+  tokenTerminalCredentialStatus: (terminalId: string) =>
+    request<TokenTerminalCredentialStatus>(`/api/v1/terminals/${terminalId}/token-credential/status`),
+  // V14-QNB-006: manager-only, same shape as saveTokenTerminalCredential/
+  // tokenTerminalCredentialStatus above — saveQnbCredential never returns
+  // the password back; qnbCredentialStatus reports only configured/updatedAt
+  // plus the non-secret userId/vergiTcKimlikNo.
+  saveQnbCredential: (terminalId: string, userId: string, password: string, vergiTcKimlikNo: string) =>
+    request<void>(`/api/v1/terminals/${terminalId}/qnb-credential/`, {
+      method: "POST",
+      body: JSON.stringify({ userId, password, vergiTcKimlikNo }),
+    }),
+  qnbCredentialStatus: (terminalId: string) =>
+    request<QnbCredentialStatus>(`/api/v1/terminals/${terminalId}/qnb-credential/status`),
+  // V14-QNB-007: attempts a real wsLogin against QNB's own live test server
+  // with the saved credential; never throws for a failed login itself (the
+  // backend always answers 200 with { success: false, message }) — this
+  // rejects only on transport/auth-gate failure (no session, forbidden).
+  testQnbConnection: (terminalId: string) =>
+    request<QnbConnectionTestResult>(`/api/v1/terminals/${terminalId}/qnb-credential/test-connection`, {
+      method: "POST",
     }),
 };

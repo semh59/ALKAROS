@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- Root repo's Directory.Packages.props enforces Central Package
+         Management by ancestor-directory discovery; this standalone draft
+         opts out so its own explicit PackageReference Versions apply. -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+    <RestoreLockedMode>false</RestoreLockedMode>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ALKAROS.Payments.Token.Draft</RootNamespace>
+    <!-- V13-GOV-006: bilerek ALKAROS.slnx'e eklenmedi. Bu, V13-HUG-001'in
+         gerçek Owned surface'ı DEĞİL - standalone bir taslak/referans
+         projesidir, plan-audit'in production-surface taramasına girmez. -->
+  </PropertyGroup>
+
+</Project>

@@ -383,7 +383,6 @@ DEFERRED_TASK_IDS = [
     "V0-MCD-001",
     "V0-PRN-001",
     "V0-QRG-001",
-    "V0-CMP-001",
     "V0-SEC-001",
     "V0-LIC-001",
 ]
@@ -393,6 +392,9 @@ DEFERRED_TASK_IDS = [
 # list in GATES.md; only the 2026-08-03 C40 entries remain.
 # 2026-09-01 (TRACEABILITY C73): V0-BKP-001 and V0-BKP-002 closed as Done in
 # remediation wave 22 (V1-RMD-095) and were removed from the deferral list.
+# 2026-09-18 (TRACEABILITY C99): V0-CMP-001 closed Done (V0-GOV-065,
+# self-declared configuration replacing the mali-müşavir requirement) and
+# was removed from the deferral list.
 
 DEFERRED_ROWS = [
     "| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |",
@@ -401,7 +403,6 @@ DEFERRED_ROWS = [
     "| `V0-MCD-001` | `2026-08-03` | `V12` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |",
     "| `V0-PRN-001` | `2026-08-03` | `V14` | Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı | Not V0 gate closure evidence |",
     "| `V0-QRG-001` | `2026-08-03` | `V14` | Gerçek QR relay public kanal onay kanıtı | Not V0 gate closure evidence |",
-    "| `V0-CMP-001` | `2026-08-03` | `V12` | Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı | Not V0 gate closure evidence |",
     "| `V0-SEC-001` | `2026-08-03` | `V14` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |",
     "| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |",
 ]

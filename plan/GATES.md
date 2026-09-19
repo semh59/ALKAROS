@@ -40,7 +40,7 @@
 | `GATE-V12-EXIT` | V1.2 public channel, stock race ve reconciliation kanıtları tamamlanır. |
 | `GATE-V13-ENTRY` | `GATE-V12-EXIT` kapanır. |
 | `GATE-V13-MEAL-CARD-ADAPTERS` | V0-MCD approved provider listesi ve her provider için generated adapter Done olur; liste boşsa downstream task'lar tarihli NotApplicable olur. |
-| `GATE-V13-FSC-STRATEGY` | V0-CMP-001 strategy kararı ve yalnız seçilen Token/Beko (eski adıyla Hugin, bkz. `V0-GOV-064`/CORR:C98) veya QNB contract kanıtı Done olur; uygulanmayan branch tarihli NotApplicable olur. |
+| `GATE-V13-FSC-STRATEGY` | `V0-CMP-001`'in self-declared beyan matrisi (`V0-GOV-065`/CORR:C99) yayımlanır VE yalnız seçilen Token/Beko (eski adıyla Hugin, bkz. `V0-GOV-064`/CORR:C98) veya QNB contract kanıtı Done olur; uygulanmayan branch tarihli NotApplicable olur. |
 | `GATE-V13-EXIT` | V1.3 ödeme, fiscal ve cash görevlerinin uygulanabilir kapsamı tamamlanır. |
 | `GATE-V14-ENTRY` | `GATE-V13-EXIT` kapanır. |
 | `GATE-V14-EXIT` | V1.4 hesap ve invoicing görevlerinin uygulanabilir kapsamı tamamlanır. |
@@ -157,7 +157,6 @@ behavior başlatmaz; Aşama 3 kabul zinciri sırası değişmez.
 | `V0-MCD-001` | `2026-08-03` | `V13` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |
 | `V0-PRN-001` | `2026-08-03` | `V12` | Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı | Not V0 gate closure evidence |
 | `V0-QRG-001` | `2026-08-03` | `V12` | Gerçek QR relay public kanal onay kanıtı | Not V0 gate closure evidence |
-| `V0-CMP-001` | `2026-08-03` | `V13` | Mali müşavir onaylı FSC/T300-QNB adisyon strateji kararı | Not V0 gate closure evidence |
 | `V0-SEC-001` | `2026-08-03` | `V12` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |
 | `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |
 <!-- V0_DEFERRED_TASKS:END -->
@@ -175,7 +174,11 @@ tarihli gerekçeyle `NotApplicable` oldu; deferral satırları listeden çıkar�
 `V0-BKP-002` 22. dalgada (`V1-RMD-095`: WAL arşivleme / point-in-time recovery
 ve rakiplere göre kalibre edilmiş RPO/RTO hedefleri) `## Onay` bloklu `Done`
 oldu; iki satır listeden çıkarıldı. C65/C66 devir kayıtları tarihsel lafzını
-korur; aktif deferral kümesi yukarıdaki 9 görevdir.
+korur. 2026-09-18 kullanıcı onayıyla (`TRACEABILITY.md` C99, `V0-GOV-065`)
+`V0-CMP-001`'in özgün, mali müşavir onaylı merkezi uygulanabilirlik kararı
+self-declared configuration ile değiştirildi ve `## Onay` bloklu `Done`
+oldu; bir satır daha listeden çıkarıldı. Aktif deferral kümesi yukarıdaki
+8 görevdir.
 
 ## Canlı veri kuralı
 

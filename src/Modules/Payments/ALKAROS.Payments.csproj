@@ -9,6 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
     <ProjectReference Include="..\Billing\ALKAROS.Billing.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj" />
   </ItemGroup>
 
   <ItemGroup>

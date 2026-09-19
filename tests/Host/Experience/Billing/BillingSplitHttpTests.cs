@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Billing;
@@ -315,6 +316,46 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(
             body.Summary.AdjustedPayableAmount,
             adjustmentsDoc.RootElement.GetProperty("summary").GetProperty("adjustedPayableAmount").GetDecimal());
+    }
+
+    /// <summary>
+    /// V1-RMD-237: IAuditEventStore existed since V1-OPS-001 with zero real
+    /// callers anywhere in the codebase — a discounted bill left no audit
+    /// trail at all despite the read-side endpoints
+    /// (KitchenOperationsEndpoints' /audit/aggregate, /audit/correlation)
+    /// already existing and being correctly permission-gated. This is the
+    /// first real write.
+    /// </summary>
+    [Fact]
+    public async Task ApplyingADiscountWritesARealAuditEvent()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        await using var auditDataSource = NpgsqlDataSource.Create(_database.ConnectionString);
+        var auditEvents = new PostgresAuditEventStore(auditDataSource);
+        var events = await auditEvents.GetByAggregateAsync("Bill", seeded.BillId);
+
+        var applied = Assert.Single(events);
+        Assert.Equal("bill.discount.applied", applied.EventName);
+        Assert.Equal("Bill", applied.AggregateType);
+        Assert.Equal(seeded.BillId, applied.AggregateId);
+        Assert.Equal("User", applied.ActorType);
+        Assert.NotNull(applied.ActorId);
+        Assert.Equal("PromotionalOffer", applied.Reason);
+        Assert.NotNull(applied.BeforeStateJson);
+        Assert.NotNull(applied.AfterStateJson);
     }
 
     [Fact]

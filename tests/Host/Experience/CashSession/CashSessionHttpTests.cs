@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
@@ -240,7 +241,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 300m });
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "In", Amount = 50m, Notes = "bank deposit returned" });
+            new { Direction = "In", Amount = 50m, Notes = "bank deposit returned", IdempotencyKey = Guid.NewGuid().ToString() });
 
         var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
         Assert.Equal(HttpStatusCode.OK, preview.StatusCode);
@@ -262,11 +263,11 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
 
         var cashIn = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "In", Amount = 100m, Notes = (string?)null });
+            new { Direction = "In", Amount = 100m, Notes = (string?)null, IdempotencyKey = Guid.NewGuid().ToString() });
         Assert.Equal(HttpStatusCode.Created, cashIn.StatusCode);
 
         var cashOut = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "Out", Amount = 40m, Notes = "till float trimmed for bank drop" });
+            new { Direction = "Out", Amount = 40m, Notes = "till float trimmed for bank drop", IdempotencyKey = Guid.NewGuid().ToString() });
         Assert.Equal(HttpStatusCode.Created, cashOut.StatusCode);
 
         var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
@@ -275,8 +276,36 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie, new { ActualCash = 260m });
 
         var afterClose = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "In", Amount = 10m, Notes = (string?)null });
+            new { Direction = "In", Amount = 10m, Notes = (string?)null, IdempotencyKey = Guid.NewGuid().ToString() });
         Assert.Equal(HttpStatusCode.Conflict, afterClose.StatusCode);
+    }
+
+    [Fact]
+    public async Task RetryingACashMovementWithTheSameIdempotencyKeyDoesNotDuplicateIt()
+    {
+        // V1-RMD-241: unlike cash-tender, this endpoint used to accept no
+        // idempotency key at all — a network retry (or a race just under
+        // the client's own busy-guard) could post the same movement twice.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "csh004-movement-retry");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var key = Guid.NewGuid().ToString();
+
+        var first = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
+            new { Direction = "In", Amount = 75m, Notes = (string?)null, IdempotencyKey = key });
+        Assert.Equal(HttpStatusCode.Created, first.StatusCode);
+        var firstId = (await first.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+
+        var retry = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
+            new { Direction = "In", Amount = 75m, Notes = (string?)null, IdempotencyKey = key });
+        Assert.Equal(HttpStatusCode.Created, retry.StatusCode);
+        Assert.Equal(firstId, (await retry.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid());
+
+        var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
+        Assert.Equal(175m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
     }
 
     [Fact]
@@ -297,7 +326,16 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var body = await rejected.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal("CASH_VARIANCE_THRESHOLD_EXCEEDED", body.GetProperty("error").GetProperty("code").GetString());
 
-        var overridden = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
+        // V1-RMD-236: the override itself requires a real cash.session.override
+        // grant — the SAME cashier session that opened/counted the session
+        // cannot self-declare an override.
+        var deniedOverride = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
+            new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short" });
+        Assert.Equal(HttpStatusCode.Forbidden, deniedOverride.StatusCode);
+
+        var supervisorCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "csh004-variance-supervisor", ApplicationPermissions.CashSessionOverride);
+        var overridden = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", supervisorCookie,
             new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short" });
         Assert.Equal(HttpStatusCode.OK, overridden.StatusCode);
         Assert.Equal(-60m, (await overridden.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
@@ -422,6 +460,58 @@ internal sealed class CashSessionHttpTestDatabase
         command.Parameters.AddWithValue("device_id", $"cashier:{terminalId:D}");
         command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
         await command.ExecuteNonQueryAsync();
+        return $"alkaros.cashier={rawToken}";
+    }
+
+    /// <summary>
+    /// V1-RMD-236: seeds a real user + device session + role + explicit
+    /// permission grants bound to <paramref name="terminalId"/> — used for
+    /// the cash.session.override authorization checks the plain
+    /// <see cref="SeedCashierSessionAsync"/> user intentionally has none of.
+    /// </summary>
+    public async Task<string> SeedCashierSessionWithPermissionsAsync(
+        Guid terminalId, string rawToken, params string[] permissionCodes)
+    {
+        var userId = Guid.NewGuid();
+        var roleId = Guid.NewGuid();
+        var suffix = userId.ToString("N")[..8];
+
+        await using (var command = DataSource.CreateCommand(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'x', 'CashSession Test Supervisor', true);
+
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
+            VALUES (gen_random_uuid(), @user_id, @device_id, @token_hash, now() + interval '1 hour');
+
+            INSERT INTO identity.roles (role_id, code, name)
+            VALUES (@role_id, @role_code, 'CashSession Test Role');
+
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
+            VALUES (gen_random_uuid(), @user_id, @role_id);
+            """))
+        {
+            command.Parameters.AddWithValue("user_id", userId);
+            command.Parameters.AddWithValue("username", "csh004-role-" + suffix);
+            command.Parameters.AddWithValue("device_id", $"cashier:{terminalId:D}");
+            command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
+            command.Parameters.AddWithValue("role_id", roleId);
+            command.Parameters.AddWithValue("role_code", "csh004-role-" + suffix);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        foreach (var code in permissionCodes)
+        {
+            await using var grant = DataSource.CreateCommand(
+                """
+                INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+                SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions WHERE code = @code;
+                """);
+            grant.Parameters.AddWithValue("role_id", roleId);
+            grant.Parameters.AddWithValue("code", code);
+            await grant.ExecuteNonQueryAsync();
+        }
+
         return $"alkaros.cashier={rawToken}";
     }
 

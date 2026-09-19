@@ -2,12 +2,20 @@
 (function () {
   'use strict';
 
+  // V1-RMD-238: this used to serialize a text node (`div.textContent = …;
+  // return div.innerHTML`), which escapes only & < > — a quote passed
+  // through untouched. Several call sites below put user-entered text (an
+  // item note, a waiter's display name) inside double-quoted attributes
+  // (`value="${escapeHtml(item.note)}"`), so a note like `" onmouseover="…`
+  // closed the attribute and injected an event handler running in the
+  // cashier's own session — the exact same defect WaiterPwa's `js/util.js`
+  // already found and fixed for the same reason; that fix never propagated
+  // here. Mirrors WaiterPwa's HTML_ESCAPES map.
+  const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
-    const text = String(str);
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    return String(str).replace(/[&<>"']/g, (character) => HTML_ESCAPES[character]);
   }
 
   function formatMoney(amount) {

@@ -43,10 +43,10 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
             $"""
             INSERT INTO {Transactions} (
                 cash_transaction_id, cash_session_id, type, direction, amount,
-                related_payment_id, notes, recorded_by, occurred_at)
+                related_payment_id, notes, recorded_by, occurred_at, idempotency_key)
             VALUES (
                 @cash_transaction_id, @cash_session_id, @type, @direction, @amount,
-                @related_payment_id, @notes, @recorded_by, @occurred_at);
+                @related_payment_id, @notes, @recorded_by, @occurred_at, @idempotency_key);
             """;
         await using (command)
         {
@@ -59,8 +59,31 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
             command.Parameters.AddWithValue("notes", (object?)transaction.Notes ?? DBNull.Value);
             command.Parameters.AddWithValue("recorded_by", (object?)transaction.RecordedBy ?? DBNull.Value);
             command.Parameters.AddWithValue("occurred_at", transaction.OccurredAt);
+            command.Parameters.AddWithValue("idempotency_key", (object?)transaction.IdempotencyKey ?? DBNull.Value);
             await command.ExecuteNonQueryAsync(cancellationToken);
         }
+    }
+
+    public async Task<CashTransaction?> GetBySessionAndIdempotencyKeyAsync(
+        Guid cashSessionId, string idempotencyKey, CancellationToken cancellationToken = default)
+    {
+        if (cashSessionId == Guid.Empty)
+            throw new ArgumentException("Cash session id cannot be empty.", nameof(cashSessionId));
+        if (string.IsNullOrWhiteSpace(idempotencyKey))
+            throw new ArgumentException("Idempotency key cannot be empty.", nameof(idempotencyKey));
+
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT cash_transaction_id, cash_session_id, type, direction, amount,
+                   related_payment_id, notes, recorded_by, occurred_at, idempotency_key
+            FROM {Transactions}
+            WHERE cash_session_id = @cash_session_id AND idempotency_key = @idempotency_key;
+            """);
+        command.Parameters.AddWithValue("cash_session_id", cashSessionId);
+        command.Parameters.AddWithValue("idempotency_key", idempotencyKey);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        return await reader.ReadAsync(cancellationToken) ? ReadRow(reader) : null;
     }
 
     public async Task<IReadOnlyList<CashTransaction>> GetBySessionIdAsync(Guid cashSessionId, CancellationToken cancellationToken = default)
@@ -72,7 +95,7 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT cash_transaction_id, cash_session_id, type, direction, amount,
-                   related_payment_id, notes, recorded_by, occurred_at
+                   related_payment_id, notes, recorded_by, occurred_at, idempotency_key
             FROM {Transactions}
             WHERE cash_session_id = @cash_session_id
             ORDER BY occurred_at
@@ -117,5 +140,6 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
         reader.IsDBNull(5) ? null : reader.GetGuid(5),
         reader.IsDBNull(6) ? null : reader.GetString(6),
         reader.IsDBNull(7) ? null : reader.GetGuid(7),
-        reader.GetDateTime(8));
+        reader.GetDateTime(8),
+        reader.IsDBNull(9) ? null : reader.GetString(9));
 }

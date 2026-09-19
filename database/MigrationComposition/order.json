@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "112"
+    "max": "132"
   },
   "migrations": [
     {
@@ -1082,6 +1082,87 @@
       "phase": "B",
       "tables": [
         "refund_intents"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "127",
+      "phase": "B",
+      "tables": [
+        "token_terminal_credentials"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "128",
+      "phase": "B",
+      "tables": [
+        "qnb_credentials"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "129",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "130",
+      "phase": "B",
+      "tables": [
+        "cash_transactions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "131",
+      "phase": "B",
+      "tables": [
+        "payment_status_history",
+        "cash_sessions",
+        "cash_counts",
+        "cash_transactions",
+        "refund_intents"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "132",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "133",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "134",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "135",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
       ],
       "deferredConstraints": []
     }

@@ -185,6 +185,7 @@
           "ALKAROS.Identity": "[1.0.0, )",
           "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.Inventory": "[1.0.0, )",
+          "ALKAROS.Invoicing": "[1.0.0, )",
           "ALKAROS.Kitchen": "[1.0.0, )",
           "ALKAROS.Menu": "[1.0.0, )",
           "ALKAROS.Messaging": "[1.0.0, )",
@@ -219,6 +220,15 @@
         "dependencies": {
           "ALKAROS.Measurements": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.invoicing": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
       },
@@ -278,6 +288,8 @@
         "dependencies": {
           "ALKAROS.Billing": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
       },

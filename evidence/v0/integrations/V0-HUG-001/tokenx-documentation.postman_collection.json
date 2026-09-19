@@ -1,0 +1,2731 @@
+{
+  "info": {
+    "_postman_id": "c21eeeff-9eb6-47de-8714-087875fd8e37",
+    "name": "TokenX Documentation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58341910",
+    "_collection_link": "https://go.postman.co/collection/58341910-c21eeeff-9eb6-47de-8714-087875fd8e37?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Authenticate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{TEST_CLIENT_SECRET}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "{{TEST_CLIENT_ID}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{TEST_AUTH_URL}}/v1/auth/token",
+              "host": [
+                "{{TEST_AUTH_URL}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "token"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{TEST_AUTH_URL}}/v1/auth/token",
+                  "host": [
+                    "{{TEST_AUTH_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "token"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 201,\n    \"description\": \"User authenticated successfully.\",\n    \"result\": {\n        \"accessToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJSdGFfXzdoanlacFd4RjlsajQwMklOT1lmb0tqZmI1RVQzWldiazJvUmtZIn0.eyJleHAiOjE3Mjk1ODIxNjQsImlhdCI6MTcyOTU4MTI2NCwianRpIjoiNTY0MzkxMjYtNTNmZS00M2IyLWIzNzMtNDk2OGMzN2VlZDhiIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLWh0dHAuZGV2LWtleWNsb2FrLWRvbWFpbi5zdmMuY2x1c3Rlci5sb2NhbC9hdXRoL3JlYWxtcy90b2tlbngtZHRva2MiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNjc4NjBmODEtYzRkOS00OTIyLWIzMWYtODA4YzNjNDE2MGZhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiMTNlNTg2MmItMTMyOC00N2RkLTg4N2MtZDljYTZjYjQzNzVjIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiMTNlNTg2MmItMTMyOC00N2RkLTg4N2MtZDljYTZjYjQzNzVjIjp7InJvbGVzIjpbInVtYV9wcm90ZWN0aW9uIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJjbGllbnRIb3N0IjoiMTcyLjE3LjQzLjIyMCIsImNsaWVudElkIjoiMTNlNTg2MmItMTMyOC00N2RkLTg4N2MtZDljYTZjYjQzNzVjIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJtZXJjaGFudElkIjoiMTNlNTg2MmItMTMyOC00N2RkLTg4N2MtZDljYTZjYjQzNzVjIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LTEzZTU4NjJiLTEzMjgtNDdkZC04ODdjLWQ5Y2E2Y2I0Mzc1YyIsImNsaWVudEFkZHJlc3MiOiIxNzIuMTcuNDMuMjIwIn0.dEj8Czz7iwrgu9txliL7Do_yp50HAsCwNEdbSA7wB3JCLPfvMq0jd1IsbXSfBEwryY3o1cYl-P4qV1O9SnyjbQxJsK6fRPoXkSNhGarPk8Dh1qXs0qIT_ZJ8lxdSd0kcZPyUxNK32EmrzPsVErNeDc4N3kHxi-toSunccldRssDW7uam6jCWWgKMvoHV062i1-duUnwjBgZdO8x3UP3eUbhbHmJ64m-f7F9SolTwQKbgv5o-0SzT-WRdZNdjzFzXG0-_o21nnVPE-mgELcpabIqYRIySeseDaSX701oDaTo20dqrLMo7WPLCYjHFXt6OK_286TPC7YhEswdovADkEg\",\n        \"expiresIn\": 900,\n        \"tokenType\": \"Bearer\"\n    }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Client Settings",
+      "item": [
+        {
+          "name": "Set",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"callbackUrl\":\"\", // www.sunmi.dev.portal.com/webhook\n    \"callbackAuthHeader\":\"\" // Bearer - Basic ...\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{TEST_CLIENT_SETTINGS_URL}}/v1/client-settings",
+              "host": [
+                "{{TEST_CLIENT_SETTINGS_URL}}"
+              ],
+              "path": [
+                "v1",
+                "client-settings"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"callbackUrl\":\"https://webhook.site/77173082-404e-4d90-b643-74c34cbac15f\"  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_CLIENT_SETTINGS_URL}}/v1/client-settings",
+                  "host": [
+                    "{{TEST_CLIENT_SETTINGS_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "client-settings"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Your client settings has been set successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{TEST_CLIENT_SETTINGS_URL}}/v1/client-settings",
+              "host": [
+                "{{TEST_CLIENT_SETTINGS_URL}}"
+              ],
+              "path": [
+                "v1",
+                "client-settings"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{TEST_CLIENT_SETTINGS_URL}}/v1/client-settings",
+                  "host": [
+                    "{{TEST_CLIENT_SETTINGS_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "client-settings"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Your client settings has been fetched successfully\",\n    \"result\": {\n        \"callbackUrl\":\"https://webhook.site/77173082-404e-4d90-b643-74c34cbac15f\"\n    }    \n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Basket",
+      "item": [
+        {
+          "name": "Add Basket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "branch-id",
+                "value": "{{TEST_BRANCH_ID}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"checkNumber\": 1,\n    \"title\": \"Masa 16\",\n    \"filter\": \"Bahçe\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1800,\n            \"quantity\": 1000\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/basket",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "basket"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 - OK (With Items)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"checkNumber\": 1,\n    \"title\": \"Masa 16\",\n    \"filter\": \"Bahçe\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1800,\n            \"quantity\": 1000\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (With Items&Payment)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"checkNumber\": 1,\n    \"title\": \"Masa 1\",\n    \"filter\": \"Salon\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1800,\n            \"quantity\": 1000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"type\": 1,\n            \"amount\": 22500\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Basket Record Successfully Created\"   \n}"
+            },
+            {
+              "name": "201 - OK (With Unit)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"checkNumber\": 1,\n    \"title\": \"Masa 1\",\n    \"filter\": \"Salon\",\n    \"items\": [\n        {\n            \"name\": \"Su\",\n            \"price\": 500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 2000\n        },\n        {\n            \"name\": \"Armut\",\n            \"price\": 6000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1500,\n            \"unit\": \"KGM\"\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"type\": 1,\n            \"amount\": 22500\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Basket Record Successfully Created\"   \n}"
+            },
+            {
+              "name": "201 - OK (Item Adjust)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"{{$randomUUID}}\",\n    \"checkNumber\": 1,\n    \"title\": \"Masa 16\",\n    \"filter\": \"Kurye-2\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000,\n            \"adjust\": {\n                \"description\": \"ürüne indirim\",\n                \"discountOrSurcharge\": 0,\n                \"type\": 0,\n                \"value\": 7500\n            }\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Thu, 16 Oct 2025 08:23:45 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "63"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (Item Adjust-TotalValue)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"{{$randomUUID}}\",\n    \"checkNumber\": 1,\n    \"title\": \"Masa 16\",\n    \"filter\": \"Kurye-2\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 2000,\n            \"adjust\": {\n                \"description\": \"ürüne toplam indirim\",\n                \"discountOrSurcharge\": 0,\n                \"type\": 0,\n                \"totalValue\": 5000\n            }\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Thu, 16 Oct 2025 08:23:45 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "63"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Basket Record Successfully Created\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Basket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "branch-id",
+                "value": "{{TEST_BRANCH_ID}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"checkNumber\": {{$randomInt}},\n  \"title\": \"Masa 16\",\n  \"filter\": \"Bahçe\",\n  \"items\": [\n    {     \n      \"name\": \"Pizza\",      \n      \"price\": 15000,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1000,            \n      \"quantity\": 1000\n      \n    },\n    {      \n      \"name\": \"Cola\",\n      \"price\": 7500,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1800,         \n      \"quantity\": 1000      \n    },\n    {     \n      \"name\": \"Hamburger\",      \n      \"price\": 20000,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1000,            \n      \"quantity\": 1000\n      \n    },\n    {      \n      \"name\": \"Fanta\",\n      \"price\": 7500,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1800,         \n      \"quantity\": 1000      \n    }\n  ]  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/basket/{{basketID}}",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "basket",
+                "{{basketID}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"checkNumber\": 1,\n    \"title\": \"Masa 16\",\n    \"filter\": \"Bahçe\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1800,\n            \"quantity\": 1000\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/33b33990-3d88-4676-8b4d-6a8c1d41d5bd",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "33b33990-3d88-4676-8b4d-6a8c1d41d5bd"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Basket Record Successfully Updated\"\n}"
+            },
+            {
+              "name": "404 - Not Found",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"checkNumber\": 1,\n    \"title\": \"Masa 1\",\n    \"filter\": \"Salon\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1800,\n            \"quantity\": 1000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"type\": 1,\n            \"amount\": 22500\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/33b33990-3d88-4676-8b4d-6a8c1d41d5bd",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "33b33990-3d88-4676-8b4d-6a8c1d41d5bd"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 1006,\n    \"description\": \"No record found\"\n}"
+            },
+            {
+              "name": "400 - Status Error (Basket Completed)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"checkNumber\": 1,\n    \"title\": \"Masa 1\",\n    \"filter\": \"Salon\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1800,\n            \"quantity\": 1000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"type\": 1,\n            \"amount\": 22500\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/33b33990-3d88-4676-8b4d-6a8c1d41d5bd",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "33b33990-3d88-4676-8b4d-6a8c1d41d5bd"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 1105,\n    \"description\": \"This baskets status is not suitable for this operation\"\n}"
+            },
+            {
+              "name": "400 - Order Locked",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"checkNumber\": 1,\n    \"title\": \"Masa 1\",\n    \"filter\": \"Salon\",\n    \"items\": [\n        {\n            \"name\": \"Pizza\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Cola\",\n            \"price\": 7500,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1800,\n            \"quantity\": 1000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"type\": 1,\n            \"amount\": 22500\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/33b33990-3d88-4676-8b4d-6a8c1d41d5bd",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "33b33990-3d88-4676-8b4d-6a8c1d41d5bd"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 1018,\n    \"description\": \"Error: Order locked! For this operation you must first unlock the order.\"\n}"
+            },
+            {
+              "name": "403 - Forbidden",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"checkNumber\": {{$randomInt}},\n  \"title\": \"Masa 16\",\n  \"filter\": \"Bahçe\",\n  \"items\": [\n    {     \n      \"name\": \"Pizza\",      \n      \"price\": 15000,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1000,            \n      \"quantity\": 1000\n      \n    },\n    {      \n      \"name\": \"Cola\",\n      \"price\": 7500,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1800,         \n      \"quantity\": 1000      \n    },\n    {     \n      \"name\": \"Hamburger\",      \n      \"price\": 20000,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1000,            \n      \"quantity\": 1000\n      \n    },\n    {      \n      \"name\": \"Fanta\",\n      \"price\": 7500,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1800,         \n      \"quantity\": 1000      \n    }\n  ]  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/{{basketID}}",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "{{basketID}}"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "Text",
+              "header": null,
+              "cookie": [],
+              "body": "{\n    \"status\": 403,\n    \"description\": \"Forbidden\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Unlock Basket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "branch-id",
+                "value": "{{TEST_BRANCH_ID}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"basketID\": \"\" //your basketID\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/basket/unlock",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "basket",
+                "unlock"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/unlock",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "unlock"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Unlock Operation Successfully Completed\"\n}"
+            },
+            {
+              "name": "404 - Not Found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/unlock",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "unlock"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Unlock Operation Successfully Completed\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Instant Basket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "terminal-id",
+                "value": "{{TEST_TERMINAL_ID}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"basketID\": \"{{$randomUUID}}\",\n  \"checkNumber\": {{$randomInt}},\n  \"items\": [\n     {     \n      \"name\": \"Cheesecake\",      \n      \"price\": 15000,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1000,            \n      \"quantity\": 1000      \n    },\n    {      \n      \"name\": \"Filtre Kahve\",\n      \"price\": 10000,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1000,         \n      \"quantity\": 2000      \n    }\n  ]  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "instant-basket"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 - OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n  \"items\": [\n    {     \n      \"name\": \"Cheesecake\",      \n      \"price\": 15000,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1000,            \n      \"quantity\": 1000      \n    },\n    {      \n      \"name\": \"Filtre Kahve\",\n      \"price\": 10000,\n      \"sectionNo\": 1,\n      \"taxPercent\": 1000,         \n      \"quantity\": 2000      \n    }\n  ]  \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (With Payment)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"items\": [\n        {\n            \"name\": \"Cheesecake\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Filtre Kahve\",\n            \"price\": 10000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 2000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"type\": 1,\n            \"amount\": 35000\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Instant Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (TaxFreeAmount)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"documentType\": 9008,\n    \"taxFreeAmount\": 5000,\n    \"customerInfo\": {\n        \"taxID\": \"11111111111\"\n    },\n    \"paymentItems\": [\n        {\n            \"amount\": 5000,\n            \"description\": \"Nakit\",\n            \"type\": 1\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Instant Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (TaxFreeAmount&Items)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"documentType\": 9008,\n    \"customerInfo\": {\n        \"taxID\": \"11111111111\"\n    },\n    \"items\": [\n        {\n            \"name\": \"İLAÇ\",\n            \"price\": 1000,\n            \"quantity\": 1000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000\n        }\n    ],\n    \"taxFreeAmount\": 5000,\n    \"paymentItems\": [\n        {\n            \"amount\": 6000,\n            \"description\": \"Cash\",\n            \"type\": 1\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Instant Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (Cari Tahsilat)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"documentType\": 9002,\n    \"customerInfo\": {\n        \"name\": \"AD SOYAD\",\n        \"taxID\": \"11111111111\"\n    },\n    \"infoReceiptInfo\": {\n        \"documentDate\": \"29-10-2024\",\n        \"documentNo\": \"ABC123\"\n    },\n    \"taxFreeAmount\": 10000,\n    \"paymentItems\": [\n        {\n            \"amount\": 10000,\n            \"type\": 1\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Instant Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (Fatura Bilgi Fişi)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"documentType\": 9002,\n    \"customerInfo\": {\n        \"name\": \"AD SOYAD\",\n        \"taxID\": \"11111111111\"\n    },\n    \"infoReceiptInfo\": {\n        \"documentDate\": \"29-10-2024\",\n        \"documentNo\": \"ABC123\"\n    },\n    \"taxFreeAmount\": 10000,\n    \"paymentItems\": [\n        {\n            \"amount\": 10000,\n            \"type\": 1\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Instant Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (E-Arşiv Bilgi Fişi)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"documentType\": 9007,\n    \"isWayBill\": false,\n    \"customerInfo\": {\n        \"taxID\": \"11111111111\"\n    },\n    \"infoReceiptInfo\": {\n        \"serialNo\": \"TKN20240000000002\"\n    },\n    \"items\": [\n        {\n            \"name\": \"İLAÇ\",\n            \"price\": 5500,\n            \"quantity\": 1000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"amount\": 5500,\n            \"type\": 2\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Instant Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "201 - OK (E-Fatura Bilgi Fişi)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"documentType\": 9006,\n    \"isWayBill\": false,\n    \"customerInfo\": {\n        \"taxID\": \"11111111111\"\n    },\n    \"infoReceiptInfo\": {\n        \"serialNo\": \"TKN20240000000001\"\n    },\n    \"items\": [\n        {\n            \"name\": \"YİYECEK\",\n            \"price\": 58300,\n            \"quantity\": 1000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"amount\": 58300,\n            \"type\": 11\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Instant Basket Record Successfully Created\"\n}"
+            },
+            {
+              "name": "400 - Bad Request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"items\": [\n        {\n            \"name\": \"Cheesecake\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Filtre Kahve\",\n            \"price\": 10000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 2000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"type\": 1,\n            \"amount\": 35000\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 1100,\n    \"description\": \"There is already an open basket assigned to this terminal\"\n}"
+            },
+            {
+              "name": "400 - Bad Request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"basketID\": \"33b33990-3d88-4676-8b4d-6a8c1d41d5bd\",\n    \"items\": [\n        {\n            \"name\": \"Cheesecake\",\n            \"price\": 15000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 1000\n        },\n        {\n            \"name\": \"Filtre Kahve\",\n            \"price\": 10000,\n            \"sectionNo\": 1,\n            \"taxPercent\": 1000,\n            \"quantity\": 2000\n        }\n    ],\n    \"paymentItems\": [\n        {\n            \"type\": 1,\n            \"amount\": 35000\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/instant-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "instant-basket"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 1104,\n    \"description\": \"This terminals sale mode is not suitable for receive instant basket!\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Basket Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/basket/{{BASKET_ID}}",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "basket",
+                "{{BASKET_ID}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/{{BASKET_ID}}",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "{{BASKET_ID}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"OK\",\n    \"result\": {\n        \"terminalId\": \"\",\n        \"branchId\": \"13e5862b-1328-47dd-887c-d9ca6cb4375c\",\n        \"checkNumber\": \"1\", //string (max10),    \n        \"note\": \"Basket Note\",\n        \"basketID\": \"18b3bc92-8ce2-4c5c-a410-425b0b03434b\", // (uuid)\n        \"islocked\": false, //boolean \n        \"lockedBy\": \"\", // locking terminal id\n        \"createInvoice\": false, // boolean,\n        \"documentType\": 0,\n        \"isVoid\": false, //boolean,\n        \"items\": [\n            {\n                \"barcode\": \"\",\n                \"name\": \"Su\",\n                \"pluNo\": 0,\n                \"price\": 500,\n                \"sectionNo\": 1,\n                \"taxPercent\": 1000,\n                \"type\": 0,\n                \"unit\": \"Adet\",\n                \"vatID\": 0,\n                \"limit\": 0,\n                \"quantity\": 1000,\n                \"paymentType\": 0\n            },\n            {\n                \"barcode\": \"\",\n                \"name\": \"Armut\",\n                \"pluNo\": 0,\n                \"price\": 1500,\n                \"sectionNo\": 1,\n                \"taxPercent\": 1000,\n                \"type\": 0,\n                \"unit\": \"Adet\",\n                \"vatID\": 0,\n                \"limit\": 0,\n                \"quantity\": 1000,\n                \"paymentType\": 0\n            }\n        ],\n        \"paymentItems\": [\n            {\n                \"description\": \"yarısı nakit\",\n                \"amount\": 1000,\n                \"type\": 1,\n                \"taxRate\": 5\n            },\n            {\n                \"description\": \"yarısı kredi kartı\",\n                \"amount\": 1000,\n                \"type\": 3,\n                \"taxRate\": 5\n            }\n        ],\n        \"customerInfo\": {\n            \"buildingName\": \"Building B\",\n            \"buildingNumber\": \"202\",\n            \"cityName\": \"City Y\",\n            \"citySubdivisonName\": \"Subdivision 2\",\n            \"country\": \"Country B\",\n            \"email\": \"customer2@example.com\",\n            \"isLock\": false,\n            \"name\": \"Ege Yardımcı\",\n            \"postalZone\": \"67890\",\n            \"region\": \"Region Y\",\n            \"room\": \"20\",\n            \"street\": \"Street B\",\n            \"taxID\": \"0987654321\",\n            \"taxScheme\": \"Scheme B\",\n            \"telefax\": \"654321\",\n            \"telephone\": \"0123456789\"\n        },\n        \"adjust\": {\n            \"description\": \"20 tl indirim\",\n            \"discountOrSurcharge\": 0,\n            \"type\": 0,\n            \"value\": 2000\n        }\n    }    \n}\n\n"
+            },
+            {
+              "name": "200 - OK (Completed Basket)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/{{BASKET_ID}}",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "{{BASKET_ID}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Successfully Fetched the Basket\",\n    \"result\": {\n        \"basketID\": \"653a9a6b-36c4-49e6-b6d2-e9e33d62e5ed\",\n        \"createdAt\": \"2025-08-14T08:28:18.447Z\",\n        \"updatedAt\": \"2025-08-14T12:37:36.311Z\",\n        \"deletedAt\": null,\n        \"status\": 1,\n        \"clientId\": \"ece000ef-6023-409f-9d9c-f0dc53a872c8\",\n        \"branchId\": \"13e5862b-1328-47dd-887c-d9ca6cb4375c\",\n        \"total\": 22500,\n        \"filter\": \"Bahçe\",\n        \"checkNumber\": 288,\n        \"title\": \"Test Masa\",\n        \"isLocked\": true,\n        \"lockedBy\": \"AV0000111044\",\n        \"items\": [\n            {\n                \"name\": \"Pizza\",\n                \"price\": 15000,\n                \"sectionNo\": 1,\n                \"taxPercent\": 2000,\n                \"quantity\": 1000\n            },\n            {\n                \"name\": \"Cola\",\n                \"price\": 7500,\n                \"sectionNo\": 4,\n                \"taxPercent\": 1000,\n                \"quantity\": 1000\n            }\n        ],\n        \"paymentItems\": [],\n        \"sale\": {\n            \"basketID\": \"653a9a6b-36c4-49e6-b6d2-e9e33d62e5ed\",\n            \"documentType\": 0,\n            \"InstanceIdentifier\": \"XXXX\",\n            \"invoiceID\": \"\",\n            \"message\": \"OK\",\n            \"paymentCount\": 1,\n            \"paymentItems\": [\n                {\n                    \"amount\": 22500,\n                    \"BatchNo\": 0,\n                    \"currencyId\": 0,\n                    \"description\": \"Nakit\",\n                    \"operatorId\": 0,\n                    \"status\": -1,\n                    \"taxRate\": -1,\n                    \"TxnNo\": 0,\n                    \"type\": 1\n                }\n            ],\n            \"receiptNo\": 6,\n            \"status\": 0,\n            \"UUID\": \"c3efb147-2240-4755-bbff-18c68d3b474a\",\n            \"zNo\": 3\n        }\n    }\n}"
+            },
+            {
+              "name": "404 - Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/{{BASKET_ID}}",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "{{BASKET_ID}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 404,\n    \"description\": \"No basket record found for given id\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Fiscal Parameters",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "terminal-id",
+                "value": "{{TEST_TERMINAL_ID}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/fiscal-parameters",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "fiscal-parameters"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/fiscal-parameters",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "fiscal-parameters"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Successfully Fetched Fiscal Parameters\",\n    \"result\": {\n        \"sections\": [\n            {\n                \"limit\": 0,\n                \"name\": \"Yiyecek\",\n                \"price\": 0,\n                \"sectionNo\": 1,\n                \"status\": 1,\n                \"taxPercent\": 2000,\n                \"type\": 0,\n                \"plus\": []\n            },\n            {\n                \"limit\": 0,\n                \"name\": \"Temizlik\",\n                \"price\": 0,\n                \"sectionNo\": 2,\n                \"status\": 1,\n                \"taxPercent\": 1000,\n                \"type\": 0,\n                \"plus\": []\n            }\n        ],\n        \"receiptLimit\": null,\n        \"currencies\": [\n            {\n                \"id\": 1,\n                \"name\": \"DOLAR\",\n                \"rate\": 473452\n            },\n            {\n                \"id\": 2,\n                \"name\": \"AVRO\",\n                \"rate\": 544841\n            },\n            {\n                \"id\": 3,\n                \"name\": \"STERLIN\",\n                \"rate\": 635517\n            },\n            {\n                \"id\": 4,\n                \"name\": \"RUBLE\",\n                \"rate\": 5917\n            },\n            {\n                \"id\": 5,\n                \"name\": \"YEN\",\n                \"rate\": 295301\n            }\n        ],\n        \"terminal\": \"AV0000000823\",\n        \"createdAt\": \"2024-12-10T08:44:30.231Z\",\n        \"updatedAt\": \"2026-08-03T08:14:45.253Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Open Basket For Terminal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "terminal-id",
+                "value": "{{TEST_TERMINAL_ID}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/basket/open-basket",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "basket",
+                "open-basket"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/open-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "open-basket"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Successfully Fetched Open Baskets\",\n    \"result\": [\n        {\n            \"basketID\": \"5d5bb49b-610c-4f94-9895-33022459306d\",\n            \"checkNumber\": 183,\n            \"filter\": \"Test2\",\n            \"total\": 73500,\n            \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n            \"title\": \"Test Masa\",\n            \"isLocked\": false,\n            \"createdAt\": \"2025-10-01T11:54:05.317Z\",\n            \"lockedBy\": null\n        },\n        {\n            \"basketID\": \"01480d81-8543-429d-91ad-60c9b4a9cbcb\",\n            \"checkNumber\": 644,\n            \"filter\": \"Test2\",\n            \"total\": 73500,\n            \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n            \"title\": \"Test Masa\",\n            \"isLocked\": false,\n            \"createdAt\": \"2025-10-01T11:54:06.554Z\",\n            \"lockedBy\": null\n        },\n        {\n            \"basketID\": \"3f76b97f-5a90-4ba5-b8dd-1002ab546229\",\n            \"checkNumber\": 767,\n            \"filter\": \"Test2\",\n            \"total\": 73500,\n            \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n            \"title\": \"Test Masa\",\n            \"isLocked\": false,\n            \"createdAt\": \"2025-10-01T11:54:07.551Z\",\n            \"lockedBy\": null\n        }\n    ]\n}"
+            },
+            {
+              "name": "422 - NOK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{DIFFERENT_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/open-basket",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "open-basket"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 403,\n    \"description\": \"Forbidden resource\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Basket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/basket/{{BASKET_ID}}",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "basket",
+                "{{BASKET_ID}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - OK",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/basket/{{BASKET_ID}}",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "basket",
+                    "{{BASKET_ID}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Basket has been deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Organization",
+      "item": [
+        {
+          "name": "Get Terminal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "branch-id",
+                "value": "{{TEST_BRANCH_ID}}",
+                "type": "text"
+              },
+              {
+                "key": "merchant-id",
+                "value": "{{TEST_MERCHANT_ID}}",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "terminal-id",
+                "value": "{{TEST_TERMINAL_ID}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/terminal",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "terminal"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - Terminal Filter",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  },
+                  {
+                    "key": "merchant-id",
+                    "value": "{{TEST_MERCHANT_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  },
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/terminal",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "terminal"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 30 Sep 2025 19:52:49 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "155"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Terminal List Successfully Fetched\",\n    \"result\": [\n        {\n            \"id\": \"AV0000000001\",\n            \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n            \"mode\": 0\n        }\n    ]\n}"
+            },
+            {
+              "name": "200 - Branch Filter",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "merchant-id",
+                    "value": "{{TEST_MERCHANT_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  },
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/terminal",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "terminal"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 30 Sep 2025 19:51:57 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "236"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "set-cookie",
+                  "value": "2b3bc3f4946fc0b1e2ffffe87bc2be90=e4ff2d4bf9fd1cb5b23c049d4b16ab84; path=/; HttpOnly; Secure; SameSite=None"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Terminal List Successfully Fetched\",\n    \"result\": [\n        {\n            \"id\": \"AV0000000001\",\n            \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n            \"mode\": 0\n        },\n        {\n            \"id\": \"AV0000000002\",\n            \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n            \"mode\": 0\n        }\n    ]\n}"
+            },
+            {
+              "name": "200 - Merchant Filter",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  },
+                  {
+                    "key": "merchant-id",
+                    "value": "{{TEST_MERCHANT_ID}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/terminal",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "terminal"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 30 Sep 2025 19:53:05 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1532"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"Terminal List Successfully Fetched\",\n    \"result\": [\n        {\n            \"id\": \"AV0000000001\",\n            \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n            \"mode\": 0\n        },\n        {\n            \"id\": \"AV0000000002\",\n            \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n            \"mode\": 0\n        },\n        {\n            \"id\": \"AV000000003\",\n            \"branchId\": \"da058640-ff12-4eba-a124-9ef5b7a0bc92\",\n            \"mode\": 1\n        },\n        {\n            \"id\": \"AV000000004\",\n            \"branchId\": \"9fe50c09-0779-41b4-9ccf-97b757cbcb3f\",\n            \"mode\": 1\n        }\n    ]\n}"
+            },
+            {
+              "name": "400 - No Filter in Header",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  },
+                  {
+                    "key": "merchant-id",
+                    "value": "{{TEST_MERCHANT_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  },
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/terminal",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "terminal"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 30 Sep 2025 19:52:15 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "56"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"description\": \"No context header provided.\",\n    \"status\": 6\n}"
+            },
+            {
+              "name": "403 - Forbiddden Access",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "branch-id",
+                    "value": "{{TEST_BRANCH_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  },
+                  {
+                    "key": "merchant-id",
+                    "value": "{{TEST_MERCHANT_ID}}",
+                    "type": "text",
+                    "disabled": true
+                  },
+                  {
+                    "key": "terminal-id",
+                    "value": "AV0000000001",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/terminal",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "terminal"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 30 Sep 2025 20:03:15 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "46"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"description\": \"Forbidden access.\",\n    \"status\": 9\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Terminal By Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "terminal-id",
+                "value": "{{TEST_TERMINAL_ID}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{TEST_BASKET_URL}}/v1/terminal/{{TEST_TERMINAL_ID}}",
+              "host": [
+                "{{TEST_BASKET_URL}}"
+              ],
+              "path": [
+                "v1",
+                "terminal",
+                "{{TEST_TERMINAL_ID}}"
+              ],
+              "query": [
+                {
+                  "key": "merchantId",
+                  "value": "{{TEST_MERCHANT_ID}}",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Terminal By Id",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "{{TEST_TERMINAL_ID}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/terminal/{{TEST_TERMINAL_ID}}",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "terminal",
+                    "{{TEST_TERMINAL_ID}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 30 Sep 2025 19:59:47 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "211"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": 0,\n    \"description\": \"POS's organization returned successfully.\",\n    \"result\": {\n        \"terminalId\": \"AV0000000001\",\n        \"branchId\": \"b81bb869-d45c-43df-a078-9337900ff84e\",\n        \"merchantId\": \"8e32fb33-2020-433b-92ff-e4d38f5bc94a\"\n    }\n}"
+            },
+            {
+              "name": "400 - No terminal-id in Header",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/terminal/{{TEST_TERMINAL_ID}}",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "terminal",
+                    "{{TEST_TERMINAL_ID}}"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 30 Sep 2025 19:59:58 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "56"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"description\": \"No context header provided.\",\n    \"status\": 6\n}"
+            },
+            {
+              "name": "403 - Forbidden Access",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "terminal-id",
+                    "value": "AV0000000001",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{TEST_BASKET_URL}}/v1/terminal/{{TEST_TERMINAL_ID}}",
+                  "host": [
+                    "{{TEST_BASKET_URL}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "terminal",
+                    "{{TEST_TERMINAL_ID}}"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 30 Sep 2025 20:00:14 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "Apache"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "x-content-type-options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "strict-transport-security",
+                  "value": "max-age=31536000 ; includeSubDomains"
+                },
+                {
+                  "key": "x-xss-protection",
+                  "value": "0"
+                },
+                {
+                  "key": "referrer-policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "46"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';"
+                },
+                {
+                  "key": "Permissions-Policy",
+                  "value": "geolocation=(), microphone=(), camera=()"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 google"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"description\": \"Forbidden access.\",\n    \"status\": 9\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

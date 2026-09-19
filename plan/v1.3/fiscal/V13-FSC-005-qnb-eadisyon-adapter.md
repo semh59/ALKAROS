@@ -1,8 +1,8 @@
 # V13-FSC-005 - Implement selected QNB e-Adisyon adapter
 
 - Task ID: V13-FSC-005
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: NotApplicable
+- Assignee: Semih (product owner)
 - Work type: implementation
 - Surface state: Planned
 
@@ -38,6 +38,26 @@ open/update/close mapping'ini uygulamak.
 - GATE-V13-FSC-STRATEGY
 - V13-FSC-001
 - V0-QNB-001
+
+## Onay
+
+NotApplicable — 2026-09-18, Semih (Founder/Product Owner) onaylı ön karar.
+Gerekçe: (1) QNB'nin kamuya açık dokümantasyonu ("e-Adisyon" ürün
+sayfası, `evidence/v0/integrations/V0-QNB-001/qnb-esolutions-code-library-raw.txt`)
+"adisyon" kelimesini hiç içermiyor — teknik olarak doğrulanabilir hiçbir
+sözleşme yüzeyi yok. (2) `V13-FSC-004`'ün kendi Goal metni Token/Beko'yu
+zaten "gerçek bir YN ÖKC/e-Adisyon cihazı" olarak tanımlıyor — donanım
+zaten bu yeteneğe sahip, ayrı bir QNB entegrasyonuna ihtiyaç yaratmıyor.
+(3) Semih, iki alternatifi (Token/Beko dalı vs QNB dalı) değerlendirip
+Token/Beko dalını (`V13-FSC-004`) tercih etti.
+
+**Bu, `GATE-V13-FSC-STRATEGY`'nin resmi olarak beklediği `V0-CMP-001`
+(mali müşavir onaylı fiscal strateji) kararının YERİNE GEÇMEZ** — o karar
+hâlâ `Blocked` ve ayrı bir profesyonel onay gerektiriyor. Bu, Semih'in
+ürün/mühendislik tarafından yaptığı bir ÖN teknik tercih; `V0-CMP-001`
+nihai sign-off'unda QNB dalı gerekli görülürse bu karar yeniden açılır.
+`V0-GOV-064`'ün Hugin→Token retarget kararıyla aynı desende: bağımsız
+araştırmaya dayalı, açıkça onaylı, gerekçeli ve revize edilebilir.
 
 ## Deliverables
 

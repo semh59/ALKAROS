@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Measurements;
 using ALKAROS.Purchasing.Suppliers;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
@@ -32,6 +34,12 @@ public sealed class OrdersAndReceiptsTestDb : PgTestDatabase
 
         var sql069 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "069-purchase-orders-receipts.up.sql"));
         await RunAsync(DataSource, sql069);
+
+        // V1-RMD-239: PostgresStockItemRepository.GetByIdAsync (now the
+        // service's real first caller here) selects reorder_point, added by
+        // 118 after 059 originally created the table.
+        var sql118 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "118-stock-items-reorder-point.up.sql"));
+        await RunAsync(DataSource, sql118);
     }
 
     public async Task RollbackMigration069Async()
@@ -67,7 +75,9 @@ public sealed class OrdersAndReceiptsDatabaseTests : IClassFixture<OrdersAndRece
             _supplierRepo,
             db.DataSource,
             new PostgresStockBalanceRepository(db.DataSource),
-            new PostgresStockMovementRepository(db.DataSource));
+            new PostgresStockMovementRepository(db.DataSource),
+            new PostgresStockItemRepository(db.DataSource),
+            new UnitConverter());
     }
 
     private async Task<(Guid supplierId, Guid locationId, Guid itemId)> SeedPrerequisitesAsync(bool supplierActive = true)
@@ -238,6 +248,38 @@ WHERE source_reference_id = $1;";
         unchangedPo!.Status.Should().Be(PurchaseOrderStatus.Submitted);
         unchangedPo.Lines[0].ReceivedQuantity.Should().Be(0m,
             "the order's received quantity must not advance when the same attempt's stock posting failed");
+    }
+
+    /// <summary>
+    /// V1-RMD-239: found by an independent audit (2026-09-18) — the accepted
+    /// quantity was posted to on-hand straight in the PO line's own unit,
+    /// with no comparison against (or conversion into) the stock item's
+    /// tracking unit. A stock item tracked in "kg" receiving a PO line
+    /// opened in "g" used to post the gram count directly as if it were kg
+    /// (2000 g in, 2000 "kg" on-hand — a 1000x error); this proves the real
+    /// conversion (2000 g -> 2 kg) now happens before the balance is touched.
+    /// </summary>
+    [Fact]
+    public async Task ReceivingAPoLineInAUnitOtherThanTheItemsTrackingUnitConvertsBeforePostingOnHand()
+    {
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var po = await _service.CreatePurchaseOrderAsync(new CreatePOCommand(
+            OrderNumber: "PO-" + Guid.NewGuid().ToString("N")[..8],
+            SupplierId: supplierId,
+            DestinationLocationId: locationId,
+            Lines: new[] { new CreatePOLineDto(itemId, 2000m, "g", 0.05m) }));
+        await _service.SubmitPurchaseOrderAsync(po.Id);
+
+        await _service.ReceiveGoodsAsync(new ReceiveGoodsCommand(
+            ReceiptNumber: "GR-" + Guid.NewGuid().ToString("N")[..8],
+            OrderId: po.Id,
+            ReceivedBy: "Warehouse Clerk",
+            DeliveredItems: new[] { new ReceiveLineItemDto(po.Lines[0].Id, DeliveredQuantity: 2000m) }));
+
+        var balanceRepo = new PostgresStockBalanceRepository(_db.DataSource);
+        var balance = await balanceRepo.GetByItemAndLocationAsync(itemId, locationId);
+        balance.Should().NotBeNull();
+        balance!.OnHandQuantity.Should().Be(2m, "the item tracks in kg — 2000 g received must post as 2 kg, not 2000");
     }
 
     [Fact]

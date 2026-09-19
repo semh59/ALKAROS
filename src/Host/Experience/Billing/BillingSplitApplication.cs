@@ -1,3 +1,4 @@
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
@@ -19,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Data.Common;
+using System.Text.Json;
 
 namespace ALKAROS.Host.Experience.Billing;
 
@@ -70,6 +72,9 @@ public static class BillingSplitApplication
         services.TryAddSingleton<ISettingValidator, SettingValidator>();
         services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
         services.TryAddSingleton<ISettingsService, SettingsService>();
+        // V1-RMD-237: IAuditEventStore existed since V1-OPS-001 with zero
+        // real callers anywhere in the codebase — this is its first.
+        services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         services.TryAddSingleton<BillingSplitStore>();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
         services.TryAddTransient<BillingSplitExceptionFilter>();
@@ -109,6 +114,7 @@ public static class BillingSplitApplication
             BillingSplitStore store,
             IRoleRepository roles,
             IAuthorizationGrantService grants,
+            IAuditEventStore auditEvents,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -157,6 +163,29 @@ public static class BillingSplitApplication
             }
 
             var (adjustment, summary) = await store.ApplyDiscountAsync(billId, request, principal.UserId, cancellationToken);
+            // V1-RMD-237: first real caller of IAuditEventStore.AppendAsync —
+            // this was registered since V1-OPS-001 but never actually
+            // invoked anywhere in the codebase. Only the applied outcome is
+            // recorded here; Pending/Refused grant outcomes above already
+            // have their own record in identity.authorization_grants.
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "bill.discount.applied",
+                    aggregateType: "Bill",
+                    aggregateId: billId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: principal.UserId,
+                    reason: request.ReasonCode,
+                    beforeStateJson: JsonSerializer.Serialize(new { payableAmount = summary.OriginalPayableAmount }),
+                    afterStateJson: JsonSerializer.Serialize(new
+                    {
+                        payableAmount = summary.AdjustedPayableAmount,
+                        discountId = adjustment.Id,
+                        discountValue = request.Value,
+                    })),
+                cancellationToken);
             return Results.Ok(new ApplyBillDiscountResultV1(
                 "Applied",
                 billId,

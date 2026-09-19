@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Kitchen.TicketLifecycle;
@@ -110,6 +111,14 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         Assert.Equal(2, body.NewOrderRowVersion);
         Assert.True(body.KitchenTicketItemCancelled);
         Assert.True(body.BillLineConvertedToWaste);
+
+        // V1-RMD-244: IAuditEventStore existed since V1-OPS-001 with zero
+        // real callers on this endpoint.
+        var auditEvents = new PostgresAuditEventStore(_database.DataSource);
+        var events = await auditEvents.GetByAggregateAsync("OrderItem", itemId);
+        var applied = Assert.Single(events);
+        Assert.Equal("order-item.void-sent", applied.EventName);
+        Assert.Equal("CustomerChange", applied.Reason);
     }
 
     [Fact]

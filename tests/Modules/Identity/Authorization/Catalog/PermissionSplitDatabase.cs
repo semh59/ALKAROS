@@ -13,8 +13,12 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 /// only so 111's role_permissions JOIN below has something to find, not
 /// because it is itself part of ApplicationPermissions.Codes), the
 /// kitchen-chef role (111, V1-IAM-029), and its kitchen.routing.manage
-/// grant (112, V1-IAM-030). The SQL is read from the repository tree so
-/// the test exercises exactly what ships.
+/// grant (112, V1-IAM-030), the cash.session.override supervisor-tier
+/// permission (129, V1-RMD-236), the reports.close-day manager-tier
+/// permission (133, V1-RMD-249), the reconciliation.manage supervisor-tier
+/// permission (134, V1-RMD-250), and the observability.manage
+/// supervisor-tier permission (135, V1-RMD-251). The SQL is read from the
+/// repository tree so the test exercises exactly what ships.
 /// </summary>
 public sealed class PermissionSplitDatabase : PgTestDatabase
 {
@@ -41,6 +45,10 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
             Mig("V1-KIT-008", "110-kitchen-availability-suspend-permission.up.sql"),
             Mig("V1-IAM-029", "111-kitchen-chef-role.up.sql"),
             Mig("V1-IAM-030", "112-kitchen-chef-routing-permission.up.sql"),
+            Mig("V1-RMD-236", "129-cash-session-override-permission.up.sql"),
+            Mig("V1-RMD-249", "133-reports-close-day-permission.up.sql"),
+            Mig("V1-RMD-250", "134-reconciliation-manage-permission.up.sql"),
+            Mig("V1-RMD-251", "135-observability-manage-permission.up.sql"),
         };
 
         foreach (var path in scripts)
@@ -64,6 +72,18 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
     /// </summary>
     public async Task ApplyDownSplitAsync()
     {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-RMD-251", "135-observability-manage-permission.down.sql")));
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-RMD-250", "134-reconciliation-manage-permission.down.sql")));
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-RMD-249", "133-reports-close-day-permission.down.sql")));
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-RMD-236", "129-cash-session-override-permission.down.sql")));
         await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-IAM-030", "112-kitchen-chef-routing-permission.down.sql")));

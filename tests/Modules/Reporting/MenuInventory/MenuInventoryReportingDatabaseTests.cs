@@ -368,6 +368,64 @@ public sealed class MenuInventoryReportingDatabaseTests : IClassFixture<MenuInve
     }
 
     /// <summary>
+    /// V1-RMD-243: found by an independent audit (2026-09-18) — the report
+    /// used to CROSS JOIN every item with every location, so an item
+    /// stocked only at "Central Kitchen" got a fabricated
+    /// available=0/critical=true row for a second, unrelated location it
+    /// was never assigned to and has no stock_balances row for.
+    /// </summary>
+    [Fact]
+    public async Task CriticalStockReportDoesNotAlarmOnALocationTheItemIsNeverStockedAt()
+    {
+        var (_, _, _, _, kitchenLocationId) = await SeedDataAsync();
+        var barLocationId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        {
+            const string locSql = """
+                INSERT INTO inventory.stock_locations (id, code, name, location_type, is_active, row_version)
+                VALUES (@lId, @lCode, 'Bar', 'Bar', true, 1);
+                """;
+            await using var lCmd = new NpgsqlCommand(locSql, conn);
+            lCmd.Parameters.AddWithValue("lId", barLocationId);
+            lCmd.Parameters.AddWithValue("lCode", "LOC-" + Guid.NewGuid().ToString("N")[..8]);
+            await lCmd.ExecuteNonQueryAsync();
+
+            const string itemSql = """
+                INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id, is_active, row_version)
+                VALUES (@i, @c, 'Kitchen-Only Item', 'RawMaterial', 'kg', @loc, true, 1);
+                """;
+            await using var iCmd = new NpgsqlCommand(itemSql, conn);
+            iCmd.Parameters.AddWithValue("i", itemId);
+            iCmd.Parameters.AddWithValue("c", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            iCmd.Parameters.AddWithValue("loc", kitchenLocationId);
+            await iCmd.ExecuteNonQueryAsync();
+
+            const string balSql = """
+                INSERT INTO inventory.stock_balances (
+                    stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                    reserved_quantity, available_quantity, updated_at, row_version
+                ) VALUES (gen_random_uuid(), @i, @loc, 50.0000, 0.0000, 50.0000, NOW(), 1);
+                """;
+            await using var bCmd = new NpgsqlCommand(balSql, conn);
+            bCmd.Parameters.AddWithValue("i", itemId);
+            bCmd.Parameters.AddWithValue("loc", kitchenLocationId);
+            await bCmd.ExecuteNonQueryAsync();
+        }
+
+        // No LocationId filter — the report scans every location, the same
+        // way LowStockAlertHostedService calls it on every 5-minute tick.
+        var report = await _service.GetCriticalStockReportAsync(new CriticalStockReportQuery(
+            LocationId: null,
+            CriticalThreshold: 5.0m));
+
+        report.Items.Should().Contain(i => i.StockItemId == itemId && i.StockLocationId == kitchenLocationId);
+        report.Items.Should().NotContain(i => i.StockItemId == itemId && i.StockLocationId == barLocationId,
+            "the item has no relationship with the Bar location at all — it must not appear there, critical or not");
+    }
+
+    /// <summary>
     /// V11-INV-009: a persisted StockItem.ReorderPoint takes priority over
     /// the caller-supplied CriticalThreshold, per item — an item with no
     /// ReorderPoint configured still falls back to the old behavior.

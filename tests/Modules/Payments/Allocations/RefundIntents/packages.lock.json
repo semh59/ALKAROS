@@ -172,7 +172,18 @@
         "dependencies": {
           "ALKAROS.Billing": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.secrets": {
+        "type": "Project"
+      },
+      "alkaros.sensitivedata": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Secrets": "[1.0.0, )"
         }
       },
       "alkaros.tables": {

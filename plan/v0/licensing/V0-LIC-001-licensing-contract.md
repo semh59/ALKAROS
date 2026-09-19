@@ -10,6 +10,7 @@
 
 - PDF:II.2.24
 - PDF:III.26
+- PO:2026-09-18
 
 ## Goal
 
@@ -36,9 +37,15 @@ tanımlamak.
 
 ## Blocker
 
-- Mevcut license record product/legal onay olmadan crypto, device limiti ve grace davranışı seçmektedir. Ancak named
-  product
-  owner ve legal approver tarafından imzalı license policy sağlanınca görev yeniden `Planned` yapılabilir.
+- `plan/GATES.md`'deki 2026-08-03 kullanıcı onaylı devir listesi (`V0_DEFERRED_TASKS`)
+  bu görevi `V20` reopen stage'ine, "Gerçek license server ve lisans sözleşmesi kanıtı"
+  şartıyla erteler: "Devredilen görev `Blocked` durumunda kalır ... görev ilgili aşama
+  gate'inde gerçek kanıtla `Done` ... olur." Named product owner/legal approver'ın
+  politika kararı 2026-09-18'de alındı ve `docs/licensing/licensing-contract.md`'ye
+  yazıldı (aktivasyon birimi, machine binding, offline grace, transfer/kurtarma,
+  geçersiz lisans davranışı) — ancak bu, gerçek bir çalışan lisans sunucusu ve gerçek
+  bir imzalı lisans sözleşmesi kanıtı değildir. `V20-LIC-001` gerçek lisans sunucusunu
+  inşa edip gerçek bir kurulumla bu politikayı doğruladığında görev `Done` yapılabilir.
 
 ## Deliverables
 

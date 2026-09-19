@@ -49,10 +49,10 @@ etmesini sağlar.
     eşlemesine `remainingCount: product.remainingCount ?? null` satırı
     eklenir; mevcut alan listesi (id/name/price/categoryCode/...)
     değiştirilmez.
-  - tests/Clients/WaiterPwa/ altına bu davranış için yeni bir test dosyası
-    eklenir — bu dizin onlarca task tarafından (V1-RMD-051, V1-IAM-020,
-    V1-WTR-002/003, V1-RMD-002, ...) zaten paylaşılan bir yüzey; mevcut alt
-    klasörler/testler değiştirilmez.
+  - `tests/Clients/WaiterPwa/Frontend/test_menu_remaining_count.py` (yeni
+    dosya) — tests/Clients/WaiterPwa/ dizini onlarca task tarafından
+    (V1-RMD-051, V1-IAM-020, V1-WTR-002/003, V1-RMD-002, ...) zaten
+    paylaşılan bir yüzey; mevcut alt klasörler/testler değiştirilmez.
 - Bu görev src/Clients/WaiterPwa/wwwroot/waiter-app.css'e dokunmaz — yeni
   sınıf eklenmez, `.product-stock`/`.is-low`/`.is-out` zaten var (V1-RMD-143),
   aynen yeniden kullanılır.

@@ -27,6 +27,19 @@ public static class RelaySettingsEndpoints
     public static IServiceCollection AddRelaySettingsExperience(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
+        // V1-RMD-240: IRelayCredentialStore (below) needs SensitivePayloadProtector/
+        // ISecretResolver/IEnvelopeCipher/ISecretProvider/ISecretAccessPolicy/
+        // ISensitiveDataAccessPolicy — none of which this method registers.
+        // They are registered by QrOrderingModule (src/Modules/QrOrdering/
+        // TokenLifecycle/QrOrderingModule.cs), which the real Host always
+        // loads alongside this experience. A standalone composition (e.g. a
+        // narrower test host) must register that chain itself — see
+        // tests/Host/Experience/RelaySettings/RelaySettingsHttpTests.cs's
+        // own fixture for the exact chain. Not duplicated here on purpose:
+        // ISensitiveDataAccessPolicy/ISecretAccessPolicy are process-wide
+        // singletons keyed to one accessor string (RelayCredentialAccessPolicy)
+        // — a second registration for the same accessor would silently
+        // collide (see TokenTerminalCredentialAccessPolicy's own doc-comment).
         services.TryAddSingleton<DualScreenStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();

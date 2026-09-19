@@ -24,11 +24,17 @@ using ALKAROS.Host.Experience.Menu;
 using ALKAROS.Host.Experience.NfcOrdering;
 using ALKAROS.Host.Experience.Production;
 using ALKAROS.Host.Experience.Purchasing;
+using ALKAROS.Host.Experience.Settings;
 using ALKAROS.Host.Experience.Recipes;
 using ALKAROS.Host.Experience.InventoryReporting;
+using ALKAROS.Host.Experience.Reporting;
+using ALKAROS.Host.Experience.Reconciliation;
+using ALKAROS.Host.Experience.Observability;
 using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.QrOrdering;
 using ALKAROS.Host.Experience.RelaySettings;
+using ALKAROS.Host.Experience.TokenTerminalSettings;
+using ALKAROS.Host.Experience.QnbCredentialSettings;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.SubmissionStockConsumption;
@@ -124,6 +130,10 @@ public static partial class DualScreenApplication
         // above but had zero HTTP surface.
         builder.Services.AddPurchasingManagementExperience();
         builder.Services.AddProductionManagementExperience();
+        // V1-RMD-246: ISettingsService.SetValueAsync/DeactivateAsync existed
+        // since V1-SET-001 with zero HTTP surface — a setting could only
+        // ever change via direct database access.
+        builder.Services.AddSettingsManagementExperience();
         // V1-RMD-143: Semih's decision (2026-09-09) that order acceptance
         // should really decrement stock needed this first — nothing could
         // ever configure which product maps to which stock item before now.
@@ -131,9 +141,23 @@ public static partial class DualScreenApplication
         // V11-RCP-003: which recipe a catalog product corresponds to, the
         // first step towards a real actual-vs-theoretical variance report.
         builder.Services.AddRecipeCatalogMappingExperience();
+        // V1-RMD-247: IRecipeCostSnapshotService (V11-RCP-002) existed with
+        // zero HTTP surface — a recipe's cost could never be calculated
+        // through the running application.
+        builder.Services.AddRecipeCostSnapshotExperience();
         // V11-RPT-002: the critical-stock report finally gets a Host
         // endpoint, plus a live low-stock alert broadcast.
         builder.Services.AddInventoryReportingExperience();
+        // V1-RMD-249: IOperationalReportService (V1-RPT-001, EOD business-day
+        // open/close) existed with zero HTTP surface.
+        builder.Services.AddEndOfDayExperience();
+        // V1-RMD-250: IReconciliationService (V1-REC-001, discrepancy case
+        // lifecycle) existed with zero HTTP surface.
+        builder.Services.AddReconciliationCaseExperience();
+        // V1-RMD-251: IAlertService (V1-ALT-001) and
+        // IObservabilityService's health-check surface (V1-OBS-001)
+        // existed with zero HTTP surface.
+        builder.Services.AddObservabilityExperience();
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
@@ -142,6 +166,8 @@ public static partial class DualScreenApplication
         // comment for why it needs a session-exchange step NFC does not.
         builder.Services.AddQrOrderingExperience();
         builder.Services.AddRelaySettingsExperience();
+        builder.Services.AddTokenTerminalSettingsExperience();
+        builder.Services.AddQnbCredentialSettingsExperience();
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddRoleManagementExperience();
@@ -513,15 +539,22 @@ public static partial class DualScreenApplication
         app.MapMenuManagement();
         app.MapPurchasingManagement();
         app.MapProductionManagement();
+        app.MapSettingsManagement();
         app.MapStockMasterApi();
         app.MapRecipeCatalogMappingApi();
+        app.MapRecipeCostSnapshotApi();
         app.MapInventoryReportingApi();
+        app.MapEndOfDayApi();
+        app.MapReconciliationCaseApi();
+        app.MapObservabilityApi();
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();
         app.MapNfcOrderingApi();
         app.MapQrOrderingApi();
         app.MapRelaySettingsApi();
+        app.MapTokenTerminalSettingsApi();
+        app.MapQnbCredentialSettingsApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
         app.MapRoleManagementApi();

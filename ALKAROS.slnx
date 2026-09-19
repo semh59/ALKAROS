@@ -17,6 +17,7 @@
   <Project Path="src/Modules/Operations/ALKAROS.Operations.csproj" />
   <Project Path="src/Modules/Orders/ALKAROS.Orders.csproj" />
   <Project Path="src/Modules/Payments/ALKAROS.Payments.csproj" />
+  <Project Path="src/Modules/Invoicing/ALKAROS.Invoicing.csproj" />
   <Project Path="src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj" />
   <Project Path="src/Modules/Reporting/ALKAROS.Reporting.csproj" />
   <Project Path="src/Modules/Settings/ALKAROS.Settings.csproj" />
@@ -48,9 +49,13 @@
   <Project Path="tests/Host/Experience/Menu/ALKAROS.Host.Experience.Menu.Tests.csproj" />
   <Project Path="tests/Host/Experience/Purchasing/ALKAROS.Host.Experience.Purchasing.Tests.csproj" />
   <Project Path="tests/Host/Experience/Production/ALKAROS.Host.Experience.Production.Tests.csproj" />
+  <Project Path="tests/Host/Experience/Settings/ALKAROS.Host.Experience.Settings.Tests.csproj" />
   <Project Path="tests/Host/Experience/Inventory/ALKAROS.Host.Experience.Inventory.Tests.csproj" />
   <Project Path="tests/Host/Experience/Recipes/ALKAROS.Host.Experience.Recipes.Tests.csproj" />
   <Project Path="tests/Host/Experience/InventoryReporting/ALKAROS.Host.Experience.InventoryReporting.Tests.csproj" />
+  <Project Path="tests/Host/Experience/Reporting/ALKAROS.Host.Experience.Reporting.Tests.csproj" />
+  <Project Path="tests/Host/Experience/Reconciliation/ALKAROS.Host.Experience.Reconciliation.Tests.csproj" />
+  <Project Path="tests/Host/Experience/Observability/ALKAROS.Host.Experience.Observability.Tests.csproj" />
   <Project Path="tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj" />
   <Project Path="tests/Host/Experience/OfflineReconciliation/ALKAROS.Host.Experience.OfflineReconciliation.Tests.csproj" />
   <Project Path="tests/Host/Experience/Orders/Void/ALKAROS.Host.Experience.Orders.Void.Tests.csproj" />
@@ -65,6 +70,8 @@
   <Project Path="tests/Host/Experience/NfcOrdering/ALKAROS.Host.Experience.NfcOrdering.Tests.csproj" />
   <Project Path="tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj" />
   <Project Path="tests/Host/Experience/RelaySettings/ALKAROS.Host.Experience.RelaySettings.Tests.csproj" />
+  <Project Path="tests/Host/Experience/TokenTerminalSettings/ALKAROS.Host.Experience.TokenTerminalSettings.Tests.csproj" />
+  <Project Path="tests/Host/Experience/QnbCredentialSettings/ALKAROS.Host.Experience.QnbCredentialSettings.Tests.csproj" />
   <Project Path="tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj" />
   <Project Path="tests/Modules/Billing/Adjustments/ALKAROS.Billing.Adjustments.Tests.csproj" />
   <Project Path="tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj" />
@@ -94,6 +101,9 @@
   <Project Path="tests/Modules/Payments/Allocations/RefundIntents/ALKAROS.Payments.Allocations.RefundIntents.Tests.csproj" />
   <Project Path="tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj" />
   <Project Path="tests/Modules/Payments/TenderRouting/ALKAROS.Payments.TenderRouting.Tests.csproj" />
+  <Project Path="tests/Modules/Payments/Token/TerminalCredential/ALKAROS.Payments.Token.TerminalCredential.Tests.csproj" />
+  <Project Path="tests/Modules/Invoicing/Qnb/CredentialRegistration/ALKAROS.Invoicing.Qnb.CredentialRegistration.Tests.csproj" />
+  <Project Path="tests/Modules/Invoicing/Qnb/Client/ALKAROS.Invoicing.Qnb.Client.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj" />
   <Project Path="tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj" />
   <Project Path="tests/Modules/Settings/TypedSettings/ALKAROS.Settings.TypedSettings.Tests.csproj" />

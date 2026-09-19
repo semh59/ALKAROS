@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- V13-GOV-007: bilerek ALKAROS.slnx'e eklenmedi. Bu, V14-QNB-001/002'nin
+         gerçek Owned surface'ı DEĞİL - standalone bir taslak/referans
+         projesidir, plan-audit'in production-surface taramasına girmez. -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+    <RestoreLockedMode>false</RestoreLockedMode>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ALKAROS.Invoicing.Qnb.Draft</RootNamespace>
+  </PropertyGroup>
+
+</Project>

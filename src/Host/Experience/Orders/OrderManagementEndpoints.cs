@@ -1,3 +1,4 @@
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
@@ -36,6 +37,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Data.Common;
+using System.Text.Json;
 
 namespace ALKAROS.Host.Experience.Orders;
 
@@ -82,6 +84,11 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
+        // V1-RMD-244: bills.void/bills.comp are the exact sensitive-command
+        // examples this store was built for (V1-RMD-116's own comment on
+        // the audit read endpoints); V1-RMD-237 wired the first real
+        // caller (bills.discount) in a different module, this is the second.
+        services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         // V1-ORD-005: wires the existing (previously unreachable)
         // ItemExceptionHandler.VoidItemAsync to the pre-send void endpoint.
         services.TryAddSingleton<ItemExceptionHandler>();
@@ -497,6 +504,7 @@ public static class OrderManagementEndpoints
             ItemExceptionHandler itemExceptions,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
+            IAuditEventStore auditEvents,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -523,6 +531,20 @@ public static class OrderManagementEndpoints
                 CorrelationId: context.TraceIdentifier,
                 request.Notes);
             var result = await itemExceptions.VoidItemAsync(command, cancellationToken);
+            // V1-RMD-244: first real audit event on this endpoint —
+            // IAuditEventStore existed since V1-OPS-001 with zero callers.
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "order-item.voided",
+                    aggregateType: "OrderItem",
+                    aggregateId: itemId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: userId,
+                    reason: request.ReasonCode,
+                    afterStateJson: JsonSerializer.Serialize(new { status = result.NewItemStatus.ToString() })),
+                cancellationToken);
             return Results.Ok(new VoidOrderItemResultV1(
                 result.OrderId,
                 result.OrderItemId,
@@ -554,6 +576,7 @@ public static class OrderManagementEndpoints
             IAuthorizationGrantService grants,
             IAuthorizationGrantRepository grantsRepository,
             DualScreenStore dualStore,
+            IAuditEventStore auditEvents,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -631,6 +654,18 @@ public static class OrderManagementEndpoints
                 CorrelationId: context.TraceIdentifier,
                 request.Notes);
             var result = await itemExceptions.ApplyComplimentaryAsync(command, cancellationToken);
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "order-item.complimentary-applied",
+                    aggregateType: "OrderItem",
+                    aggregateId: itemId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: userId,
+                    reason: request.ReasonCode,
+                    afterStateJson: JsonSerializer.Serialize(new { status = result.NewItemStatus.ToString() })),
+                cancellationToken);
             return Results.Ok(new ApplyComplimentaryResultV1(
                 "Applied",
                 result.OrderId,
@@ -660,6 +695,7 @@ public static class OrderManagementEndpoints
             IRoleRepository roles,
             IAuthorizationGrantService grants,
             DualScreenStore dualStore,
+            IAuditEventStore auditEvents,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -723,6 +759,22 @@ public static class OrderManagementEndpoints
                 CorrelationId: context.TraceIdentifier,
                 request.Notes);
             var result = await store.VoidAsync(command, cancellationToken);
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "order-item.void-sent",
+                    aggregateType: "OrderItem",
+                    aggregateId: itemId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: userId,
+                    reason: request.ReasonCode,
+                    afterStateJson: JsonSerializer.Serialize(new
+                    {
+                        kitchenTicketItemCancelled = result.KitchenTicketItemCancelled,
+                        billLineConvertedToWaste = result.BillLineConvertedToWaste,
+                    })),
+                cancellationToken);
             return Results.Ok(new VoidSentItemResultV1(
                 "Applied",
                 result.OrderId,

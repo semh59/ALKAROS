@@ -18,6 +18,10 @@ public interface ICashTransactionLedgerRepository
     /// <summary>Loads every entry recorded against a session, oldest first.</summary>
     Task<IReadOnlyList<CashTransaction>> GetBySessionIdAsync(Guid cashSessionId, CancellationToken cancellationToken = default);
 
+    /// <summary>V1-RMD-241: the entry (if any) already recorded under this session+key, for idempotent replay.</summary>
+    Task<CashTransaction?> GetBySessionAndIdempotencyKeyAsync(
+        Guid cashSessionId, string idempotencyKey, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// The session's expected cash reconstructed purely from its own
     /// immutable ledger entries (Acceptance evidence) — sums every entry

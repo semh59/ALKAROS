@@ -46,6 +46,15 @@
           "Npgsql": "[9.0.2, )"
         }
       },
+      "alkaros.secrets": {
+        "type": "Project"
+      },
+      "alkaros.sensitivedata": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Secrets": "[1.0.0, )"
+        }
+      },
       "alkaros.tables": {
         "type": "Project",
         "dependencies": {

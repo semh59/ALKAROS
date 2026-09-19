@@ -1,8 +1,8 @@
 # V0-CMP-001 - Determine GIB and e-Adisyon scope
 
 - Task ID: V0-CMP-001
-- Status: Blocked
-- Assignee: codex-v0-cmp-001
+- Status: Done
+- Assignee: Semih (product owner)
 - Work type: validation
 - Surface state: Existing
 
@@ -20,8 +20,10 @@
 
 ## Goal
 
-Hedef restoran profilinin YN ÖKC, adisyon/e-Adisyon ve 2026 GİB kuralları kapsamındaki yükümlülüklerini yazılı olarak
-doğrulamak.
+YN ÖKC, adisyon/e-Adisyon ve 2026 GİB kurallarının hangi işletme olgularında (masada servis, gerçek usul
+vergilendirme, e-Fatura/e-Arşiv mükellefiyeti) devreye girdiğini, GİB'in gerçek yayımlanmış metnine dayanarak
+yazılı bir beyan matrisi olarak belgelemek — belirli bir işletmenin bu olgulara sahip olup olmadığına ALKAROS
+karar vermez, her işletme kendi muhasebecisiyle doğruladığı olguyu kurulumda beyan eder (`V0-GOV-065`).
 
 ## Owned surface
 
@@ -42,21 +44,30 @@ doğrulamak.
 
 - None
 
-## Blocker
+## Onay
 
-- GİB kaynakları işletme profilinin tüm yükümlülüklerini tek başına belirlemez; mevcut evidence package'ta named mali
-  müşavir/uyum sorumlusu onayı ve kayıtlı tüm kaynakların erişim tarihi yoktur. Ancak güncel resmî kaynaklar ile named
-  approver applicability matrix'i doğrulanınca görev yeniden `Planned` yapılabilir.
+Approved by Semih — Founder/Product Owner — 2026-09-18, via `V0-GOV-065`.
+Görevin özgün Blocker'ı (hedef işletme profili için mali müşavir onaylı,
+merkezi bir uygulanabilirlik kararı) self-declared configuration modeliyle
+değiştirildi: ALKAROS hangi işletmenin yükümlü olduğuna karar vermez,
+GİB'in gerçek yayımlanmış koşulunu (VUK 509 IV.12) doğru uygular; her
+işletme üç gerçek olguyu (masada servis, gerçek usul, e-Fatura/e-Arşiv
+mükellefiyeti) kendi muhasebecisiyle kurulumda beyan eder. Bu, Token/Beko
+belgesinin e-Adisyon'u hukuken tam karşıladığı iddiasını KAPATMAZ — o soru
+ayrı ve `V20-CMP-001`'in (nihai compliance sign-off) kapsamındadır.
 
 ## Deliverables
 
-- V0-CMP-001 için tarihli ve kaynakları belirtilmiş evidence package.
-- Başarı ve en az bir gerçek hata/edge-case çıktısı.
-- Doğrulanamayan maddeler için açık blocker kaydı; varsayımla kapatma yok.
+- V0-CMP-001 için tarihli ve kaynakları belirtilmiş evidence package
+  (`evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md`).
+- 3 beyan olgusu ve 2^3 kombinasyonun her biri için doğru davranış eşlemesi.
+- Doğrulanamayan maddeler için açık not; varsayımla kapatma yok.
 
 ## Acceptance evidence
 
-- Güncel resmi kaynak sürümleri ve mali müşavir/uyum sorumlusu onayıyla applicability matrix mevcut.
+- Güncel resmi GİB kaynak sürümleriyle (`EXT:GIB-VUK509-2026` IV.12 dahil) doğrudan eşlenen, işletmenin kendi
+  beyanına dayalı bir uygulanabilirlik matrisi mevcut; matris named mali müşavir onayı YERİNE named product
+  owner'ın (`V0-GOV-065`) onayladığı self-declaration modelini kullanır.
 
 ## Handoff
 

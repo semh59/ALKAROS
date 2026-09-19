@@ -23,6 +23,14 @@ T300 değil, Token/Beko (300 TR / X30 TR) — `IntegrationHub.dll`
 
 Doğrulanmış Token/Beko contract'ına karşı onaylanmış ve reddedilen kart payment akışlarını uygulayın.
 
+**Taslak notu (2026-09-18, `V13-GOV-006`):** `V0-HUG-001` hâlâ `Blocked`
+olduğu için bu görev henüz `InProgress` alınamıyor. Semih'in onayıyla,
+gerçek credential'dan önce yalnız dokümana dayalı, doğrulanmamış bir
+taslak `evidence/V13-GOV-006/token-adapter-draft/` altında yazıldı (bu
+görevin Owned surface'ının DIŞINDA, ayrı/standalone bir proje olarak).
+Bu görev gerçekten başladığında o taslak referans alınabilir, ama
+Acceptance evidence yine gerçek sandbox/cihaz transkripti gerektiriyor.
+
 ## Owned surface
 
 - `src/Modules/Payments/Token/PaymentRequest/**`, `tests/Modules/Payments/Token/PaymentRequest/**`

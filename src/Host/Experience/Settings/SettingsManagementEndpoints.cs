@@ -1,0 +1,242 @@
+using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Settings.TypedSettings;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Npgsql;
+
+namespace ALKAROS.Host.Experience.Settings;
+
+/// <summary>
+/// V1-RMD-246: found by an independent audit (2026-09-18) —
+/// ISettingsService.SetValueAsync/DeactivateAsync (V1-SET-001) existed with
+/// zero HTTP surface; a setting could only ever be changed by direct
+/// database access, not through the API a manager/operator would actually
+/// use. Same manager-cookie pattern as Menu/Purchasing/Production management.
+/// </summary>
+public static class SettingsManagementEndpoints
+{
+    public const string ManagerCookieName = "alkaros.manager";
+    public const string ManagePermission = "settings.manage";
+
+    public static IServiceCollection AddSettingsManagementExperience(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        // PostgresSettingsRepository takes DbDataSource (the base type), not
+        // NpgsqlDataSource directly — same gap every other settings-backed
+        // experience registration already had to close on its own (e.g.
+        // BillingSplitApplication's own ApplyTipAsync/GarsonFeature checks).
+        services.TryAddSingleton<System.Data.Common.DbDataSource>(
+            serviceProvider => serviceProvider.GetRequiredService<NpgsqlDataSource>());
+        services.TryAddScoped<ISettingValidator, SettingValidator>();
+        services.TryAddScoped<ISettingsRepository, PostgresSettingsRepository>();
+        services.TryAddScoped<ISettingsService, SettingsService>();
+
+        services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
+        services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
+        services.TryAddScoped<IAuthorizationService, AuthorizationService>();
+        services.TryAddScoped<SettingsManagerAuthentication>();
+        return services;
+    }
+
+    public static RouteGroupBuilder MapSettingsManagement(this IEndpointRouteBuilder endpoints)
+    {
+        ArgumentNullException.ThrowIfNull(endpoints);
+        var group = endpoints.MapGroup("/api/v1/management/settings");
+        group.AddEndpointFilter<SettingsManagerEndpointFilter>();
+
+        group.MapGet("/", async (
+            string? moduleOwner,
+            ISettingsService settings,
+            CancellationToken cancellationToken) =>
+        {
+            var records = string.IsNullOrWhiteSpace(moduleOwner)
+                ? await settings.GetAllActiveAsync(cancellationToken)
+                : await settings.GetByModuleOwnerAsync(moduleOwner, cancellationToken);
+            return Results.Ok(records.Select(SettingRecordV1.From).ToArray());
+        });
+
+        group.MapGet("/{key}", async (
+            string key,
+            ISettingsService settings,
+            CancellationToken cancellationToken) =>
+        {
+            var record = await settings.GetRecordAsync(key, cancellationToken)
+                ?? throw new SettingNotFoundException(key);
+            return Results.Ok(SettingRecordV1.From(record));
+        });
+
+        group.MapPut("/{key}", async (
+            string key,
+            UpdateSettingValueV1 request,
+            ISettingsService settings,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = SettingsManagerEndpointFilter.RequireActorId(context);
+            var updated = await settings.SetValueAsync(
+                key, request.NewValue, request.ExpectedRowVersion, actorId, request.Reason, cancellationToken);
+            return Results.Ok(SettingRecordV1.From(updated));
+        });
+
+        // DELETE cannot carry an inferred JSON body in minimal APIs (ASP.NET
+        // Core rejects it for GET/HEAD/DELETE without an explicit [FromBody]);
+        // no other DELETE endpoint in this codebase carries one either, so
+        // this follows the same convention with query parameters instead.
+        group.MapDelete("/{key}", async (
+            string key,
+            long expectedRowVersion,
+            string? reason,
+            ISettingsService settings,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = SettingsManagerEndpointFilter.RequireActorId(context);
+            var deactivated = await settings.DeactivateAsync(
+                key, expectedRowVersion, actorId, reason, cancellationToken);
+            return Results.Ok(SettingRecordV1.From(deactivated));
+        });
+
+        group.MapGet("/{key}/history", async (
+            string key,
+            ISettingsService settings,
+            CancellationToken cancellationToken) =>
+        {
+            var record = await settings.GetRecordAsync(key, cancellationToken)
+                ?? throw new SettingNotFoundException(key);
+            var history = await settings.GetHistoryAsync(record.SettingId, cancellationToken);
+            return Results.Ok(history.Select(SettingHistoryRecordV1.From).ToArray());
+        });
+
+        return group;
+    }
+}
+
+public sealed class SettingsManagerAuthentication
+{
+    private readonly NpgsqlDataSource _dataSource;
+
+    public SettingsManagerAuthentication(NpgsqlDataSource dataSource)
+    {
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+    }
+
+    public async Task<Guid> AuthenticateAsync(HttpContext context, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        var rawToken = context.Request.Cookies[SettingsManagementEndpoints.ManagerCookieName];
+        var actorId = await ManagementSessionLookup.ResolveActorAsync(_dataSource, rawToken, allowSupervisor: false, cancellationToken);
+        return actorId ?? throw new SettingsManagementUnauthorizedException();
+    }
+}
+
+public sealed class SettingsManagerEndpointFilter : IEndpointFilter
+{
+    private const string ActorIdItemKey = "SettingsManagerActorId";
+
+    private readonly SettingsManagerAuthentication _authentication;
+    private readonly IAuthorizationService _authorization;
+
+    public SettingsManagerEndpointFilter(
+        SettingsManagerAuthentication authentication,
+        IAuthorizationService authorization)
+    {
+        _authentication = authentication ?? throw new ArgumentNullException(nameof(authentication));
+        _authorization = authorization ?? throw new ArgumentNullException(nameof(authorization));
+    }
+
+    public static Guid RequireActorId(HttpContext context)
+        => context.Items[ActorIdItemKey] as Guid?
+            ?? throw new InvalidOperationException($"{nameof(SettingsManagerEndpointFilter)} did not run before this endpoint.");
+
+    public async ValueTask<object?> InvokeAsync(
+        EndpointFilterInvocationContext context,
+        EndpointFilterDelegate next)
+    {
+        try
+        {
+            var actorId = await _authentication.AuthenticateAsync(
+                context.HttpContext,
+                context.HttpContext.RequestAborted);
+            await _authorization.AuthorizeAsync(
+                actorId,
+                SettingsManagementEndpoints.ManagePermission,
+                context.HttpContext.RequestAborted);
+            context.HttpContext.Items[ActorIdItemKey] = actorId;
+            return await next(context);
+        }
+        catch (SettingsManagementUnauthorizedException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
+        catch (AuthorizationDeniedException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
+        catch (SettingsException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
+        catch (PostgresException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
+        catch (NpgsqlException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
+        catch (BadHttpRequestException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
+        catch (ArgumentException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
+    }
+
+    private static IResult MapError(HttpContext context, Exception exception)
+    {
+        var (status, code, message) = exception switch
+        {
+            SettingsManagementUnauthorizedException =>
+                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
+            AuthorizationDeniedException =>
+                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Ayar yönetimi izni gerekiyor."),
+            SettingNotFoundException =>
+                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen ayar bulunamadı."),
+            SecretSettingsStorageBanException =>
+                (StatusCodes.Status400BadRequest, "SECRET_KEY_BANNED", "Bu anahtar gizli bilgi deposu kuralını ihlal ediyor."),
+            SettingTypeValidationException =>
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "Değer, ayarın türüyle uyuşmuyor."),
+            SettingConcurrencyException =>
+                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Ayar başka bir işlem tarafından değiştirildi."),
+            DuplicateSettingKeyException =>
+                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu anahtarla bir ayar zaten var."),
+            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
+                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
+            PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
+                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
+            PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
+            ArgumentException or BadHttpRequestException =>
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+            NpgsqlException =>
+                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
+            _ => throw exception,
+        };
+        return Results.Json(
+            new SettingsApiErrorEnvelopeV1(new SettingsApiErrorV1(code, message, status, context.TraceIdentifier)),
+            statusCode: status);
+    }
+}
+
+public sealed class SettingsManagementUnauthorizedException : Exception
+{
+    public SettingsManagementUnauthorizedException() : base("A valid settings manager session is required.")
+    {
+    }
+}

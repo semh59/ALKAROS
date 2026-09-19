@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.Experience.Orders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -55,6 +56,14 @@ public sealed class OrderManagementVoidHttpTests : IAsyncLifetime
         var body = await response.Content.ReadFromJsonAsync<VoidOrderItemResultV1>();
         Assert.Equal("Cancelled", body!.NewItemStatus);
         Assert.Equal(2, body.NewOrderRowVersion);
+
+        // V1-RMD-244: IAuditEventStore existed since V1-OPS-001 with zero
+        // real callers on this endpoint.
+        var auditEvents = new PostgresAuditEventStore(_database.DataSource);
+        var events = await auditEvents.GetByAggregateAsync("OrderItem", itemId);
+        var applied = Assert.Single(events);
+        Assert.Equal("order-item.voided", applied.EventName);
+        Assert.Equal("CustomerChange", applied.Reason);
     }
 
     [Fact]
