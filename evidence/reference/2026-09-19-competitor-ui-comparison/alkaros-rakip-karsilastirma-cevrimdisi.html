@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ALKAROS Rakip Arayüz Karşılaştırması</title>
+<style>
+:root{--ink:#0B2135;--brand:#1B4D7B;--acc:#00CFFF;--bg:#F4F6F8;--sf:#fff;--mut:#5b6b7a;--bd:#d8dee5}
+*{box-sizing:border-box}body{margin:0;font:15px/1.55 Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:20px;margin:36px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--brand)}
+.lead{color:var(--mut);margin:0 0 16px}
+.warn{background:#fff7e6;border:1px solid #f0c36d;border-radius:8px;padding:12px 14px;margin:14px 0}
+.row{display:grid;grid-template-columns:minmax(220px,1fr) 2fr;gap:14px;margin:12px 0}
+@media(max-width:800px){.row{grid-template-columns:1fr}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:12px}
+.ph{border:2px dashed var(--brand);background:#eef4fa;color:var(--brand);min-height:180px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:14px;border-radius:8px;font-weight:600}
+.ph small{font-weight:400;color:var(--mut);margin-top:6px}
+.shots{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+figure{margin:0;flex:1 1 200px;max-width:340px}
+figure img{width:100%;height:auto;border:1px solid var(--bd);border-radius:6px;background:#fafafa}
+figcaption{font-size:12px;color:var(--mut);margin-top:4px;word-break:break-all}
+figcaption b{color:var(--ink)}
+.note{margin-top:10px;padding:10px 12px;border-left:4px solid var(--acc);background:#f0fbff;border-radius:0 6px 6px 0}
+.tag{font-size:12px;color:var(--mut);margin:0 0 6px}
+table{width:100%;border-collapse:collapse;background:var(--sf);font-size:14px}
+th,td{border:1px solid var(--bd);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--ink);color:#fff}
+</style></head><body><main>
+<h1>ALKAROS – Rakip Arayüz Karşılaştırması</h1>
+<p class="lead">Rakip görselleri yalnızca resmi kaynaklardan (App Store listeleri, resmi web siteleri) alınmıştır; hiçbiri çizilmemiş veya yeniden üretilmemiştir. Görseller bu dosyayla aynı klasörde bulunan alkaros-rakip_*.webp dosyalarından yüklenir. Tarih: 19 Eylül 2026.</p>
+<div class="warn"><b>Önemli sınırlar.</b> (1) ALKAROS için gerçek ekran görüntüsü bu oturumda yoktur; kod deposu bağlı değil. Sol sütundaki kutular, sizden gelecek gerçek görüntüler için ayrılmıştır ve ALKAROS notları yalnızca sizin verdiğiniz kod bulgularına dayanır. (2) Adisyo'nun kendi sitesi otomatik erişime kapalı olduğu için (robots.txt) Adisyo yalnızca App Store görselleriyle yer alır. (3) Bulunamayan ekranlar ilgili bölümde açıkça belirtilmiştir. (4) Rakiplerin ekran görüntüleri pazarlama görselleridir; gerçek canlı veriyi ve hata durumlarını yansıtmayabilir.</div>
+
+<h2>1. Kasiyer / sipariş alma ekranı</h2>
+<div class="row"><div class="card"><div class="ph">ALKAROS Cashier<small>Gerçek ekran görüntüsü bekleniyor: sol katalog grid + sağ adisyon paneli</small></div></div>
+<div class="card"><div class="shots">
+<figure><img src="alkaros-rakip_foodics-1-register.webp" alt="Foodics Register"><figcaption><b>Foodics – Register (iPad, İngilizce)</b><br>https://apps.apple.com/sa/app/foodics-5-cashier/id1516147723</figcaption></figure>
+<figure><img src="alkaros-rakip_adisyo-4-urun-ekleme.webp" alt="Adisyo ürün ekleme"><figcaption><b>Adisyo – ürün ekleme (Masa 6, iPhone, Türkçe)</b><br>https://apps.apple.com/tr/app/adisyo-cafe-restoran-pos/id6471924118</figcaption></figure>
+<figure><img src="alkaros-rakip_adisyo-6-odeme.webp" alt="Adisyo ödeme"><figcaption><b>Adisyo – ödeme al (sayısal tuş takımı)</b><br>https://apps.apple.com/tr/app/adisyo-cafe-restoran-pos/id6471924118</figcaption></figure>
+<figure><img src="alkaros-rakip_robotpos-3-siparis.webp" alt="RobotPOS sipariş"><figcaption><b>RobotPOS – sipariş giriş ekranı (Türkçe)</b><br>https://www.robotpos.com/urunler/yazilim-urunleri/satis-noktasi-pos (site içinde küçük önizleme olarak doğrulandı)</figcaption></figure>
+<figure><img src="alkaros-rakip_robotpos-1-ana-menu.webp" alt="RobotPOS ana menü"><figcaption><b>RobotPOS – ana menü (Masa Modu, Al Götür, Paket Satış…)</b><br>https://www.robotpos.com/images/pos-screen/pos01.webp (ekranın altında 07.10.2015 tarihi ve v1.0.0.23716 görünüyor)</figcaption></figure>
+</div>
+<div class="note"><b>Kıyas:</b> Foodics kasiyer ekranı sol adisyon, sağ kategori kutuları düzenini çok az renkle (tek mor vurgu) kuruyor; kategorilerde görsel yokken yer tutucu ikon gösteriyor, ürün görseli olmayan bir katalog için makul bir boş durum çözümü. ALKAROS Cashier aynı iki bölmeli düzeni kullanıyor, ancak sistem yazı tipi kalması (Inter yüklenmemiş) ve rakamlar için DM Mono'nun kasada hâlâ devreye girmemesi, Foodics'in tutarlı tipografisine göre marka olarak geride kalıyor. RobotPOS ekranı fotoğraf arka planı üzerine yarı saydam kutular koyuyor; okunabilirlik zayıf ve görüntü 2015 tarihli, yani ALKAROS'un temiz canvas/surface ayrımı burada açık ara önde. Adisyo'nun mobil ödeme ekranındaki büyük tuş takımı, dokunma hedefi açısından ALKAROS'un kasa paneli için iyi bir referans.</div></div></div>
+
+<h2>2. Mutfak ekranı (KDS)</h2>
+<div class="row"><div class="card"><div class="ph">ALKAROS PosTerminal – Mutfak Operasyonları<small>Gerçek ekran görüntüsü bekleniyor: Bekliyor / Hazırlanıyor / Hazır / Servis edildi kolonları, yaş rozetleri</small></div></div>
+<div class="card"><div class="shots">
+<figure><img src="alkaros-rakip_simpra-3-kds.webp" alt="Simpra KDS"><figcaption><b>Simpra Suite – KDS (koyu tema, Türkçe: Hazırlanıyor / Hazırlandı)</b><br>https://simprasuite.com/restaurant-software/kitchen-order-display-system-kds/</figcaption></figure>
+<figure><img src="alkaros-rakip_foodics-2-kds.webp" alt="Foodics KDS"><figcaption><b>Foodics – KDS (Delayed / New / Changed sütunları, Bump düğmeleri, İngilizce)</b><br>https://www.foodics.com/rms-pos/</figcaption></figure>
+</div>
+<div class="note"><b>Kıyas:</b> Foodics KDS her sütun başlığını tek bir düz renkle (kırmızı gecikmiş, yeşil yeni, mavi değişmiş) kodluyor ve her sütunun altına tam genişlikte "Bump" düğmesi koyuyor; durumu ve eylemi bir bakışta ayırt ettiriyor. Simpra koyu zeminde kart başına sipariş numarası, kurye/masa sayısı, garson ve müşteri bilgisi ile daha yoğun; Türkçe etiketler yerinde ama küçük punto. ALKAROS'un dört kolonlu akışı (servis edildi dahil) iki rakipten daha eksiksiz bir yaşam döngüsü sunuyor; yaş rozetleri gecikme vurgusu için Foodics'in "Delayed" başlığından daha ince bilgi taşıyor, ancak kritik durumun kolon başlığı düzeyinde renklenip renklenmediğini ve büyük dokunma düğmesi olup olmadığını gerçek ekranla doğrulamak gerekir. Adisyo ve RobotPOS için resmi kaynaklarda KDS görseli bulunamadı.</div></div></div></div>
+
+<h2>3. Garson / saha personeli mobil ekranı</h2>
+<div class="row"><div class="card"><div class="ph">ALKAROS WaiterPwa<small>Gerçek ekran görüntüsü bekleniyor: masa durumu kartları + alt dock navigasyon</small></div></div>
+<div class="card"><div class="shots">
+<figure><img src="alkaros-rakip_adisyo-2-masalar.webp" alt="Adisyo masalar"><figcaption><b>Adisyo – Masalar sekmesi (iPhone, Türkçe)</b><br>https://apps.apple.com/tr/app/adisyo-cafe-restoran-pos/id6471924118</figcaption></figure>
+<figure><img src="alkaros-rakip_adisyo-3-hizli-islemler.webp" alt="Adisyo hızlı işlemler"><figcaption><b>Adisyo – masa hızlı işlemler alt sayfası (Öde, Masayı Birleştir…)</b><br>https://apps.apple.com/tr/app/adisyo-cafe-restoran-pos/id6471924118</figcaption></figure>
+<figure><img src="alkaros-rakip_simpra-1-menu.webp" alt="Simpra menü"><figcaption><b>Simpra POS – menü/sipariş ekranı (iPhone, İngilizce)</b><br>https://apps.apple.com/tr/app/id1356460037</figcaption></figure>
+</div>
+<div class="note"><b>Kıyas:</b> Adisyo tamamen Türkçe ve iki sütunlu masa kartlarıyla tek elle kullanılabilir; ancak alt sekme etiketleri ve masa başlıkları çok küçük punto, kart renklerinin anlamı ekranda açıklanmıyor. Adisyo'nun "Hızlı işlemler" alt sayfası (Öde, Masayı Değiştir, Masayı Birleştir, Adisyon Aktar) garson akışı için somut bir eksik-listesi sağlıyor; WaiterPwa'da bu işlemlerin bir dokunuşta erişilebilir olup olmadığı kontrol edilmeli. Simpra'nın App Store görselleri Türkiye mağazasında İngilizce ("Foods", "Out of Stock"); ALKAROS'un "her metin Türkçe" kuralı burada gerçek bir farklılaşma noktası. Foodics ve RobotPOS için resmi kaynaklarda garson mobil görseli bulunamadı.</div></div></div></div>
+
+<h2>4. Masa / oturma planı</h2>
+<div class="row"><div class="card"><div class="ph">ALKAROS WaiterPwa – masa durumu kartları<small>Boş / Dolu / Rezerve / Toplanıyor / Servis dışı. Gerçek ekran görüntüsü bekleniyor</small></div></div>
+<div class="card"><div class="shots">
+<figure><img src="alkaros-rakip_simpra-2-masa-plani.webp" alt="Simpra masa planı"><figcaption><b>Simpra POS – Table Plan (yuvarlak/oval masalar, süreye göre renk ve alt lejant)</b><br>https://apps.apple.com/tr/app/id1356460037</figcaption></figure>
+<figure><img src="alkaros-rakip_adisyo-2-masalar.webp" alt="Adisyo masa planı"><figcaption><b>Adisyo – Salon masaları (liste kartları, tutar gösterimi)</b><br>https://apps.apple.com/tr/app/adisyo-cafe-restoran-pos/id6471924118</figcaption></figure>
+<figure><img src="alkaros-rakip_robotpos-2-masa-plani.webp" alt="RobotPOS masa planı"><figcaption><b>RobotPOS – masa planı (Salon, Bahçe, Teras sekmeleri; açık masada müşteri adı ve "02 dk")</b><br>https://www.robotpos.com/urunler/yazilim-urunleri/satis-noktasi-pos</figcaption></figure>
+</div>
+<div class="note"><b>Kıyas:</b> Simpra masa planı fiziksel yerleşimi (yuvarlak ve oval masalar) yansıtıyor ve renkleri geçen süreye bağlıyor (0-30 dk, 30-45 dk, 45+ dk, hesap isteyen), alt lejantla açıklıyor; bu, ALKAROS'un statü tabanlı (Boş/Dolu/Rezerve…) kartlarından farklı olarak zaman baskısını gösteriyor. Adisyo yerleşim değil, düz kart listesi kullanıyor: hızlı ama mekânı temsil etmiyor. RobotPOS masalarda müşteri adı ve geçen dakika gösteriyor, salon sekmeleri net; görsel dil ise eski. ALKAROS'un beş durumlu renk sistemi net bir avantaj olabilir, fakat masada geçen süre ve lejant olup olmadığı gerçek ekranla teyit edilmeli.</div></div></div>
+
+<h2>5. Müşteriye açık sipariş / QR menü</h2>
+<div class="row"><div class="card"><div class="ph">ALKAROS CustomerWeb<small>Menü / Sepet / Adisyon (amber #B5772F). Gerçek ekran görüntüsü bekleniyor</small></div></div>
+<div class="card"><p><b>Bu bölümde rakip görseli yok.</b> Simpra'nın site sayfası (https://simprasuite.com/restaurant-software/qr-menu/) yalnızca çizim niteliğinde SVG'ler içeriyor; bunları gerçek ekran görüntüsü olarak doğrulayamadım ve kullanmadım. Adisyo, Foodics ve RobotPOS için de sayfa görselleri açıkça QR sipariş arayüzü göstermiyordu. Karşılaştırma için rakiplerin canlı demo QR menülerinden sizin alacağınız ekran görüntüleri gerekir.</p></div></div>
+
+<h2>Ek rakipler (2. tur)</h2>
+<p class="lead">Yerli: Menulux. Global: Lightspeed, Square, Loyverse. Bu turda ilk turda boş kalan garson mobil, KDS ve müşteri ekranı alanları hedeflendi. Ekranlar yine yalnızca resmi App Store listelerinden alındı.</p>
+<div class="warn"><b>Bu turda kullanılamayanlar:</b> Toast, Denge Smart, KarekodGarson ve Menulux'un kendi web sitesi. Bu sitelerde doğrulanabilir gerçek arayüz ekran görüntüsü çıkmadı (Toast görselleri alt metinsiz pazarlama grafikleri, KarekodGarson arayüzü resim değil HTML çizim, Menulux sayfasında ekran görüntüsü yok). Bunları eklemedim.</div>
+
+<div class="card" style="margin:12px 0"><p class="tag">Garson mobil ve masa planı</p>
+<div class="shots">
+<figure><img src="alkaros-rakip_menulux-garson-1-masalar.webp" alt="Menulux Garson masalar"><figcaption><b>Menulux Garson – Salon masaları (iPhone, Türkçe)</b><br>https://apps.apple.com/tr/app/menulux-garson/id6742921152</figcaption></figure>
+<figure><img src="alkaros-rakip_menulux-garson-2-urunler.webp" alt="Menulux Garson ürünler"><figcaption><b>Menulux Garson – fotoğraflı ürün ızgarası</b><br>https://apps.apple.com/tr/app/menulux-garson/id6742921152</figcaption></figure>
+<figure><img src="alkaros-rakip_menulux-garson-3-sepet.webp" alt="Menulux Garson sepet"><figcaption><b>Menulux Garson – Sepet / Adisyonlar, "Siparişi Gönder"</b><br>https://apps.apple.com/tr/app/menulux-garson/id6742921152</figcaption></figure>
+<figure><img src="alkaros-rakip_lightspeed-1-masa-plani.webp" alt="Lightspeed masa planı"><figcaption><b>Lightspeed Restaurant (L) – Dining Room kat planı (iPhone, İngilizce)</b><br>https://apps.apple.com/tr/app/lightspeed-restaurant-pos-l/id474723658</figcaption></figure>
+<figure><img src="alkaros-rakip_lightspeed-2-adisyon.webp" alt="Lightspeed adisyon"><figcaption><b>Lightspeed – bölünmüş adisyon ve ödeme yöntemleri, "Finalize"</b><br>https://apps.apple.com/tr/app/lightspeed-restaurant-pos-l/id474723658</figcaption></figure>
+<figure><img src="alkaros-rakip_square-1-kat-plani.webp" alt="Square kat planı"><figcaption><b>Square Restaurants – Orders ve kat planı (eğik pazarlama kompozisyonu, İngilizce)</b><br>https://apps.apple.com/gb/app/square-restaurants-pos/id1346862885</figcaption></figure>
+</div>
+<div class="note"><b>Kıyas:</b> Menulux Garson, ALKAROS'un hedefine en yakın yerli rakip: tamamen Türkçe, masa kartında tutar, garson adı ve açılış saati birlikte görünüyor ve alt sekmeler (Tüm Masalar, Açık Masalar, Numara Gir) garsonun iki ana görevini ayırıyor. Zayıf yanları: ürün ekranındaki "Back" düğmesi İngilizce kalmış (yerelleştirme sızıntısı), kategori sekmeleri kenarda kesiliyor. Lightspeed ve Square kat planı çizimi masayı fiziksel yerleşimle gösteriyor; Square ayrıca her masada geçen süreyi ve durumu renkle veriyor, koyu tema kullanıyor ve küçük punto kullanıyor. Lightspeed'in adisyon ekranı "Combine" ve bölünmüş adisyon işlemlerini tek ekranda toplarken ödeme yöntemleri ve kırmızı "Finalize" düğmesi büyük dokunma hedefi sağlıyor. WaiterPwa'nın beş durumlu kart sistemi bunlardan daha okunur bir renk anlamı sunabilir, ama garsonun sepet, adisyon bölme ve birleştirme akışları gerçek ekranla karşılaştırılmalı.</div></div>
+
+<div class="card" style="margin:12px 0"><p class="tag">Mutfak ekranı (KDS)</p>
+<div class="shots">
+<figure><img src="alkaros-rakip_loyverse-kds.webp" alt="Loyverse KDS"><figcaption><b>Loyverse KDS (iPad, İngilizce): başlık rengi bekleme süresine göre kırmızı / sarı / yeşil</b><br>https://apps.apple.com/tr/app/loyverse-kds-kitchen-display/id1218352383</figcaption></figure>
+</div>
+<div class="note"><b>Kıyas:</b> Loyverse her sipariş kartının başlığını bekleme süresine göre renklendiriyor (kırmızı, sarı, yeşil) ve sipariş tipini (Take out, Delivery, Dine in) italik ikinci satırda veriyor; uyarı süresi ayrı bir ayar ekranında saniye cinsinden ayarlanabiliyor. Bu, ALKAROS'un "yaş rozeti" yaklaşımına karşı somut bir alternatif: rozet küçük bir ipucu, başlık rengi ise uzaktan okunur. ALKAROS KDS'nin yaş rozetinin renk eşiklerini yapılandırmaya izin verip vermediği ve masadan uzakta okunabilirliği gerçek ekranla test edilmeli.</div></div>
+
+<div class="card" style="margin:12px 0"><p class="tag">Müşteriye açık menü / sipariş</p>
+<div class="shots">
+<figure><img src="alkaros-rakip_menulux-tablet-menu.webp" alt="Menulux Tablet Menu"><figcaption><b>Menulux Tablet Menu – müşteri menüsü (Türkçe, tam kadraj fotoğraflı kategori kutuları)</b><br>https://apps.apple.com/in/app/menulux-tablet-menu/id1139222076</figcaption></figure>
+<figure><img src="alkaros-rakip_lightspeed-self-1-menu.webp" alt="Lightspeed self-order menü"><figcaption><b>Lightspeed Self-Order – menü ızgarası (iPad kiosk, İngilizce)</b><br>https://apps.apple.com/tr/app/id1134460904</figcaption></figure>
+<figure><img src="alkaros-rakip_lightspeed-self-2-adisyon.webp" alt="Lightspeed self-order adisyon"><figcaption><b>Lightspeed Self-Order – Current Bill (−/+ adet düğmeleri, toplam)</b><br>https://apps.apple.com/tr/app/id1134460904</figcaption></figure>
+<figure><img src="alkaros-rakip_lightspeed-self-3-bildirim.webp" alt="Lightspeed bildirim"><figcaption><b>Lightspeed Self-Order – "Get Notified" (ad ve telefon ile SMS bildirimi)</b><br>https://apps.apple.com/tr/app/id1134460904</figcaption></figure>
+</div>
+<div class="note"><b>Kıyas:</b> İki ürün de QR/web değil, tablet veya kiosk uygulaması; CustomerWeb ile birebir aynı kanal değil, bu yüzden yalnızca arayüz düzeni karşılaştırılabilir. Menulux menüsü Türkçe ve fotoğraf ağırlıklı; kategori kutuları tam kadraj, ürün bilgisi ve fiyat bu ilk ekranda yok. Lightspeed kiosk, sol kategori rayı, fiyat rozetli fotoğraf kutuları ve ürün üzerinde seçili adedi gösteren yeşil sayaçla hızlı sipariş akışı kuruyor; adisyon ekranı ve sipariş hazır olunca SMS bildirimi akışı da tam. CustomerWeb'in amber teması ve mobil öncelikli yapısı bunlardan ayrışıyor ama sistem yazı tipi ve Menü/Sepet/Adisyon ayrımı gerçek ekran görüntüsüyle kıyaslanmalı.</div></div>
+
+<h2>Bulgular tablosu</h2>
+<table><tr><th>Alan</th><th>Rakip (görülen kanıta göre)</th><th>ALKAROS durumu (sizin kod bulgularınıza göre)</th></tr>
+<tr><td>Görsel dil / marka tutarlılığı</td><td>Foodics tek vurgu rengi ve tutarlı tipografi; RobotPOS 2015 tarihli, fotoğraf arka planlı, dağınık</td><td>Palet güçlü, ama Cashier'da system-ui ve CustomerWeb'de ayrı amber tema tutarlılığı zayıflatıyor</td></tr>
+<tr><td>Bilgi yoğunluğu / okunabilirlik</td><td>Foodics KDS sütun başlığı renk kodu ve tam genişlik Bump düğmesi; Simpra KDS daha yoğun ama küçük punto</td><td>Dört kolon ve yaş rozeti iyi; kritik durum vurgusu gerçek ekranla doğrulanmalı</td></tr>
+<tr><td>Dokunma hedefi / mobil ergonomi</td><td>Adisyo ödeme tuş takımı büyük; ama sekme etiketleri ve masa yazıları çok küçük</td><td>WaiterPwa alt dock var; hedef boyutları ölçülmedi</td></tr>
+<tr><td>Yerelleştirme</td><td>Adisyo ve RobotPOS tam Türkçe; Simpra App Store'da İngilizce, KDS'de Türkçe; Foodics İngilizce</td><td>Tüm arayüz Türkçe: net avantaj (enum sızıntısı ayrıca test edilmeli)</td></tr>
+<tr><td>Hata / boş durum</td><td>Foodics kategori yer tutucu ikonları; başka hata durumu görseli bulunamadı</td><td>Bilinmiyor; gerçek ekran gerekli</td></tr>
+<tr><td>Erişilebilirlik</td><td>RobotPOS'ta fotoğraf üzeri metin düşük kontrast; diğerlerinde odak durumu görselden anlaşılmıyor</td><td>Palet kontrastı ölçülmedi</td></tr>
+<tr><td>Masa planı</td><td>Simpra: yerleşim + süre bazlı renk + lejant en zengin</td><td>Statü kartları var; zaman ve yerleşim bilgisi doğrulanmalı</td></tr>
+<tr><td>Müşteri QR / menü ekranı</td><td>Lightspeed kiosk akışı eksiksiz (menü, adisyon, bildirim); Menulux Türkçe fotoğraflı menü. İkisi de QR değil</td><td>CustomerWeb kanal olarak farklı; görsel kıyas için gerçek ekran gerekli</td></tr>
+<tr><td>KDS (2. tur)</td><td>Loyverse: bekleme süresine göre renkli başlık, sipariş tipi etiketi, ayarlanabilir uyarı süresi</td><td>Yaş rozeti var; eşik ve başlık rengi doğrulanmalı</td></tr>
+<tr><td>Garson mobil (2. tur)</td><td>Menulux Garson tam Türkçe ama "Back" sızıntısı var; Lightspeed adisyon bölme/birleştirme güçlü; Square masada süre gösteriyor</td><td>WaiterPwa Türkçe ve durum kartları güçlü; adisyon bölme/birleştirme akışı doğrulanmalı</td></tr></table>
+<p class="tag">Kaynaklar: apps.apple.com/tr/app/adisyo-cafe-restoran-pos/id6471924118; apps.apple.com/tr/app/id1356460037; apps.apple.com/sa/app/foodics-5-cashier/id1516147723; simprasuite.com/restaurant-software/kitchen-order-display-system-kds/; foodics.com/rms-pos/; robotpos.com/urunler/yazilim-urunleri/satis-noktasi-pos; apps.apple.com/tr/app/menulux-garson/id6742921152; apps.apple.com/in/app/menulux-tablet-menu/id1139222076; apps.apple.com/tr/app/lightspeed-restaurant-pos-l/id474723658; apps.apple.com/tr/app/id1134460904; apps.apple.com/gb/app/square-restaurants-pos/id1346862885; apps.apple.com/tr/app/loyverse-kds-kitchen-display/id1218352383</p>
+</main></body></html>
