@@ -111,13 +111,16 @@ body {
 }
 
 .pos-logo {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--color-accent);
   display: flex;
   align-items: center;
-  gap: 6px;
+}
+
+/* V1-RMD-255: mirrors WaiterPwa's own .brand-mark rule (waiter-app.css:139)
+   for the same "on-dark" logo asset. */
+.brand-mark {
+  height: 24px;
+  width: auto;
+  display: block;
 }
 
 .pos-badge {
