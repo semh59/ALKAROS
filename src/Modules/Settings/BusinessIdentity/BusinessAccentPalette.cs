@@ -15,14 +15,22 @@ namespace ALKAROS.Settings.BusinessIdentity;
 ///
 /// The current shipped default, #B5772F, does NOT clear this bar (3.72:1) —
 /// deliberately not included as-is. Its darkened, same-hue replacement
-/// (#9C6323, 4.97:1) is offered instead so a business picking "amber" gets
-/// a real, verified color rather than the unvalidated shipped one.
+/// (#9C6323, 4.97:1) is offered as the "amber" entry instead, but is not
+/// this palette's own default (see DefaultKey below).
 /// </summary>
 public static class BusinessAccentPalette
 {
     public sealed record Entry(string Key, string Label, string Hex);
 
-    public const string DefaultKey = "amber";
+    /// <summary>
+    /// V1-RMD-257: an unconfigured business's QR pages default to
+    /// "lacivert" (#1B4D7B) — the exact same --color-brand token Cashier,
+    /// WaiterPwa and PosTerminal's own design system already use
+    /// (docs/design/foundations.md §1). An unset install this way looks
+    /// like one coherent product instead of pairing ALKAROS's own navy
+    /// staff tools with an unrelated brown/amber customer page.
+    /// </summary>
+    public const string DefaultKey = "lacivert";
 
     public static readonly IReadOnlyList<Entry> All =
     [

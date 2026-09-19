@@ -5,7 +5,10 @@
   --cw-border: #e7ddcd;
   --cw-text: #241c10;
   --cw-text-muted: #6b6152;
-  --cw-accent: #b5772f;
+  /* V1-RMD-257: matches BusinessAccentPalette.DefaultKey ("lacivert") so
+     an unconfigured install shows this color from first paint, not a
+     brief flash of the old brown before loadBranding()'s fetch resolves. */
+  --cw-accent: #1b4d7b;
   --cw-accent-contrast: #ffffff;
   --cw-error: #b3261e;
   --cw-error-bg: #fbeae9;
