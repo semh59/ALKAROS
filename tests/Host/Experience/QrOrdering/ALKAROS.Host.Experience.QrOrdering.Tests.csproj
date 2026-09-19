@@ -45,6 +45,8 @@
          references identity.users, not otherwise needed by this project. -->
     <None Include="../../../../database/migrations/V1/V1-IAM-001/005-users.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V1/V1-SET-001/026-typed-settings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- V1-SET-008: settings.business_logo, queried by /branding's HasLogo and /logo. -->
+    <None Include="../../../../database/migrations/V1/V1-SET-008/136-business-logo.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

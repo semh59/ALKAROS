@@ -134,6 +134,9 @@ public static partial class DualScreenApplication
         // since V1-SET-001 with zero HTTP surface — a setting could only
         // ever change via direct database access.
         builder.Services.AddSettingsManagementExperience();
+        // V1-SET-008: the business's own QR-page logo — same manager gate
+        // V1-RMD-246 just built for business.name/business.accent_theme.
+        builder.Services.AddBusinessIdentityLogoExperience();
         // V1-RMD-143: Semih's decision (2026-09-09) that order acceptance
         // should really decrement stock needed this first — nothing could
         // ever configure which product maps to which stock item before now.
@@ -540,6 +543,7 @@ public static partial class DualScreenApplication
         app.MapPurchasingManagement();
         app.MapProductionManagement();
         app.MapSettingsManagement();
+        app.MapBusinessIdentityLogoApi();
         app.MapStockMasterApi();
         app.MapRecipeCatalogMappingApi();
         app.MapRecipeCostSnapshotApi();

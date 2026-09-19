@@ -1,6 +1,7 @@
 namespace ALKAROS.Settings;
 
 using ALKAROS.ModuleComposition;
+using ALKAROS.Settings.BusinessIdentity;
 using ALKAROS.Settings.TypedSettings;
 
 public sealed class SettingsModule : IModule
@@ -14,5 +15,7 @@ public sealed class SettingsModule : IModule
         context.RegisterTransient<ISettingsRepository, PostgresSettingsRepository>();
         context.RegisterTransient<ISettingValidator, SettingValidator>();
         context.RegisterTransient<ISettingsService, SettingsService>();
+        // V1-SET-008: the business's own QR-page logo image.
+        context.RegisterTransient<IBusinessLogoStore, BusinessLogoStore>();
     }
 }

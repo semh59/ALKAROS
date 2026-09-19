@@ -545,6 +545,66 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         Assert.Equal(BusinessAccentPalette.Resolve(null).Hex, body!.AccentColor);
     }
 
+    [Fact]
+    public async Task LogoIsNotFoundWhenNoneHasBeenSet()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync("/api/v1/qr/logo");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task BrandingReportsHasLogoFalseWhenNoneHasBeenSet()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync("/api/v1/qr/branding");
+
+        var body = await response.Content.ReadFromJsonAsync<QrBrandingResponse>();
+        Assert.False(body!.HasLogo);
+    }
+
+    [Fact]
+    public async Task LogoReturnsTheUploadedBytesAndBrandingReflectsItsPresence()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var logoStore = app.Services.GetRequiredService<IBusinessLogoStore>();
+        byte[] png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 1, 2, 3];
+        await logoStore.SaveAsync(png, "image/png", CancellationToken.None);
+
+        using var logoResponse = await client.GetAsync("/api/v1/qr/logo");
+        Assert.Equal(HttpStatusCode.OK, logoResponse.StatusCode);
+        Assert.Equal("image/png", logoResponse.Content.Headers.ContentType!.MediaType);
+        Assert.Equal(png, await logoResponse.Content.ReadAsByteArrayAsync());
+
+        using var brandingResponse = await client.GetAsync("/api/v1/qr/branding");
+        var body = await brandingResponse.Content.ReadFromJsonAsync<QrBrandingResponse>();
+        Assert.True(body!.HasLogo);
+    }
+
+    [Fact]
+    public async Task LogoHonorsIfNoneMatchWithA304()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var logoStore = app.Services.GetRequiredService<IBusinessLogoStore>();
+        await logoStore.SaveAsync([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], "image/png", CancellationToken.None);
+
+        using var first = await client.GetAsync("/api/v1/qr/logo");
+        var etag = first.Headers.ETag!.Tag;
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/qr/logo");
+        request.Headers.TryAddWithoutValidation("If-None-Match", etag);
+        using var second = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.NotModified, second.StatusCode);
+    }
+
     private static Task<HttpResponseMessage> PostOrderAsync(
         HttpClient client, string sessionToken, Guid submissionId, Guid productId, int quantity)
     {

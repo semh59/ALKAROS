@@ -78,6 +78,8 @@ public static class QrOrderingEndpoints
         services.TryAddSingleton<ISettingValidator, SettingValidator>();
         services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
         services.TryAddSingleton<ISettingsService, SettingsService>();
+        // V1-SET-008: /logo and /branding's HasLogo both read this.
+        services.TryAddSingleton<IBusinessLogoStore, BusinessLogoStore>();
         return services;
     }
 
@@ -124,11 +126,33 @@ public static class QrOrderingEndpoints
         // should not have to wait on just to know its own colors).
         group.MapGet("/branding", async (
             ISettingsService settings,
+            IBusinessLogoStore logoStore,
             CancellationToken cancellationToken) =>
         {
             var name = await BusinessNameSetting.GetNameAsync(settings, cancellationToken);
             var theme = await BusinessAccentThemeSetting.GetThemeAsync(settings, cancellationToken);
-            return Results.Ok(new QrBrandingResponse(name, theme.Hex, HasLogo: false));
+            var logo = await logoStore.GetAsync(cancellationToken);
+            return Results.Ok(new QrBrandingResponse(name, theme.Hex, HasLogo: logo is not null));
+        }).RequireRateLimiting("qr-order");
+
+        // V1-SET-008: same public/session-free reasoning as /branding above —
+        // the QR page's first paint needs to know whether to render a logo
+        // <img> before a customer session exists. 404 (not a placeholder)
+        // when no logo has been set, exactly like V1-CDP-001's screensaver GET.
+        group.MapGet("/logo", async (
+            HttpContext context,
+            IBusinessLogoStore logoStore,
+            CancellationToken cancellationToken) =>
+        {
+            var logo = await logoStore.GetAsync(cancellationToken)
+                ?? throw new QrLogoNotFoundException();
+
+            if (context.Request.Headers.IfNoneMatch.Contains(logo.ETag))
+                return Results.StatusCode(StatusCodes.Status304NotModified);
+
+            context.Response.Headers.ETag = logo.ETag;
+            context.Response.Headers.CacheControl = "public, max-age=300";
+            return Results.File(logo.Content, logo.ContentType);
         }).RequireRateLimiting("qr-order");
 
         // The same read-only projection NFC's own catalog endpoint serves
@@ -278,6 +302,7 @@ public sealed class QrOrderingExceptionFilter : IEndpointFilter
         QrTableNotFoundException => (404, "TABLE_NOT_FOUND", "Masa bulunamadı."),
         QrTableNotAvailableException => (409, "TABLE_NOT_AVAILABLE", "Bu masada şu anda kendi kendine sipariş verilemiyor, lütfen garsonu çağırın."),
         QrOrderInvalidProductException => (400, "PRODUCT_NOT_FOUND", "Seçilen ürün bulunamadı veya artık satışta değil."),
+        QrLogoNotFoundException => (404, "LOGO_NOT_FOUND", "İşletme logosu ayarlanmamış."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
@@ -299,6 +324,14 @@ public sealed class QrOrderingExceptionFilter : IEndpointFilter
         "EXPIRED" => (401, "QR_SESSION_EXPIRED", "Oturumunuzun süresi doldu, lütfen QR kodunu tekrar okutun."),
         _ => (401, "QR_SESSION_INVALID", "Oturumunuz bulunamadı, lütfen QR kodunu tekrar okutun."),
     };
+}
+
+/// <summary>V1-SET-008: no logo has been set — the caller (QR customer page) renders no logo, never a 500 or a placeholder.</summary>
+public sealed class QrLogoNotFoundException : Exception
+{
+    public QrLogoNotFoundException() : base("No business logo has been set.")
+    {
+    }
 }
 
 /// <summary>V12-CWB-001: the raw table token failed relay/token validation (unknown/revoked/expired/replayed/stale timestamp).</summary>
