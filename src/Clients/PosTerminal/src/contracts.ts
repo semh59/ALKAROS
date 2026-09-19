@@ -147,3 +147,42 @@ export interface ApiErrorBody {
     message?: string;
   };
 }
+
+// V1-CUI-012: the business's own name/color/logo (V1-SET-007/008), read
+// through the same public, session-free endpoint the QR customer pages use.
+export interface QrBrandingResponse {
+  businessName: string;
+  accentColor: string;
+  hasLogo: boolean;
+}
+
+// V1-CUI-012: one selectable accent color — never a free hex field (the
+// backend owns the design decision, docs/design/foundations.md §0). The
+// settings screen renders exactly this list, it never invents its own.
+export interface AccentPaletteEntry {
+  key: string;
+  label: string;
+  hex: string;
+}
+
+export interface AccentPaletteResponse {
+  entries: AccentPaletteEntry[];
+  defaultKey: string;
+}
+
+// V1-CUI-012: a typed setting's full record (V1-RMD-246's generic
+// management surface) — only `value` and `rowVersion` are used by this
+// screen, but the wire shape is the server's SettingRecordV1 as-is.
+export interface SettingRecord {
+  settingId: string;
+  key: string;
+  value: string;
+  dataType: string;
+  scope: string;
+  moduleOwner: string;
+  description: string | null;
+  requiresRestart: boolean;
+  active: boolean;
+  updatedAt: string;
+  rowVersion: number;
+}

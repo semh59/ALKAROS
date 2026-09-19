@@ -122,6 +122,17 @@ public static class BusinessIdentityLogoEndpoints
             return Results.NoContent();
         });
 
+        // V1-CUI-012: PosTerminal's own settings screen picks a color from
+        // this list, never a free hex field (the backend owns the design
+        // decision, docs/design/foundations.md §0). Read-only, so it shares
+        // the same settings.manage group rather than needing its own gate.
+        management.MapGet("/accent-palette", () =>
+            Results.Ok(new AccentPaletteResponseV1(
+                BusinessAccentPalette.All
+                    .Select(entry => new AccentPaletteEntryV1(entry.Key, entry.Label, entry.Hex))
+                    .ToArray(),
+                BusinessAccentPalette.DefaultKey)));
+
         return management;
     }
 
@@ -148,3 +159,9 @@ public static class BusinessIdentityLogoEndpoints
         && content[0] == 'R' && content[1] == 'I' && content[2] == 'F' && content[3] == 'F'
         && content[8] == 'W' && content[9] == 'E' && content[10] == 'B' && content[11] == 'P';
 }
+
+/// <summary>V1-CUI-012: one selectable palette color, as PosTerminal's settings screen renders it.</summary>
+public sealed record AccentPaletteEntryV1(string Key, string Label, string Hex);
+
+/// <summary>V1-CUI-012: the full selectable palette plus which key is the unset-install default.</summary>
+public sealed record AccentPaletteResponseV1(IReadOnlyList<AccentPaletteEntryV1> Entries, string DefaultKey);

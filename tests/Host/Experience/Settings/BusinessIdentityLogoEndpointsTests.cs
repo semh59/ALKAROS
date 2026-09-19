@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using ALKAROS.Settings.BusinessIdentity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -137,6 +138,39 @@ public sealed class BusinessIdentityLogoEndpointsTests : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Null(await _store.GetAsync(CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task AccentPaletteReturnsAllEightColorsAndTheRealDefaultKey()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.GetAsync("/api/v1/management/business-identity/accent-palette");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<AccentPaletteResponseV1>();
+        Assert.Equal(8, body!.Entries.Count);
+        Assert.Equal(BusinessAccentPalette.DefaultKey, body.DefaultKey);
+        Assert.Contains(body.Entries, entry => entry.Key == body.DefaultKey);
+        // PosTerminal's own settings screen never invents/copies these — it
+        // renders exactly what this endpoint returns, so every entry here
+        // must match the server's own palette record byte-for-byte.
+        foreach (var serverEntry in BusinessAccentPalette.All)
+        {
+            var wireEntry = Assert.Single(body.Entries, entry => entry.Key == serverEntry.Key);
+            Assert.Equal(serverEntry.Label, wireEntry.Label);
+            Assert.Equal(serverEntry.Hex, wireEntry.Hex);
+        }
+    }
+
+    [Fact]
+    public async Task AccentPaletteWithoutAManagerSessionIsUnauthorized()
+    {
+        using var client = CreateClient(null);
+
+        using var response = await client.GetAsync("/api/v1/management/business-identity/accent-palette");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     private static MultipartFormDataContent BuildPngContent()
