@@ -7,10 +7,10 @@ Menulux, Lightspeed, Square, Loyverse) resmi App Store/web görselleriyle
 karşılaştırıyor. ALKAROS tarafı hâlâ gerçek ekran görüntüsü bekliyor
 (kutular yer tutucu) — kıyaslar yalnızca kod bulgularına dayanıyor.
 
-**Eksik görseller:** Rapor ~25 `.webp` dosyasına referans veriyor, ama
-2026-09-19 itibarıyla yalnızca `alkaros-rakip_adisyo-1-giris.webp`
-teslim edildi. HTML'i tarayıcıda açarsan diğer 24 görsel kırık link
-olarak görünür. Kalan görseller geldiğinde bu klasöre eklenmeli.
+**Görseller:** Rapor ~25 `.webp` dosyasına referans veriyor; hepsi
+`alkaros-rakip-gorseller.zip` ile teslim edildi ve bu klasöre çıkarıldı
+(2026-09-19). HTML dosyasını bu klasörden açtığında tüm görseller
+görünür.
 
 Bu klasör bir aktif Task ID'nin Owned Surface'ı değil — yalnızca
 gelecekteki arayüz karşılaştırma/iyileştirme çalışması için referans
