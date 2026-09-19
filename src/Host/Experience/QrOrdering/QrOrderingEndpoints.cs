@@ -4,6 +4,7 @@ using ALKAROS.QrOrdering.PendingOrders;
 using ALKAROS.QrOrdering.RelaySecurity;
 using ALKAROS.QrOrdering.TablePolicy;
 using ALKAROS.QrOrdering.TokenLifecycle;
+using ALKAROS.Settings.BusinessIdentity;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Tables.TableLifecycle;
@@ -115,6 +116,20 @@ public static class QrOrderingEndpoints
 
             return Results.Ok(new QrSessionIssueResponse(issue.RawToken!, issue.TableId!.Value));
         }).RequireRateLimiting("qr-session");
+
+        // V1-SET-007: deliberately public, unlike every other route in this
+        // group — a business's own name/color is not sensitive, and the
+        // very first paint of the QR page needs it before a customer
+        // session exists (issuing one costs a relay round trip this page
+        // should not have to wait on just to know its own colors).
+        group.MapGet("/branding", async (
+            ISettingsService settings,
+            CancellationToken cancellationToken) =>
+        {
+            var name = await BusinessNameSetting.GetNameAsync(settings, cancellationToken);
+            var theme = await BusinessAccentThemeSetting.GetThemeAsync(settings, cancellationToken);
+            return Results.Ok(new QrBrandingResponse(name, theme.Hex, HasLogo: false));
+        }).RequireRateLimiting("qr-order");
 
         // The same read-only projection NFC's own catalog endpoint serves
         // (DualScreenApplication.Endpoints.cs), reused as-is — but unlike
