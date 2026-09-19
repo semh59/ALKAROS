@@ -51,6 +51,16 @@ body {
   overflow: hidden;
 }
 
+/* V1-RMD-252: the bare `hidden` attribute on the icon sprite's root <svg>
+   (index.html) is not honored by the browser's default UA stylesheet on an
+   inline SVG root the way it is on ordinary HTML elements — without this
+   rule the sprite renders as a visible ~150px block above the header on
+   every real load. Matches WaiterPwa's own defensive rule
+   (waiter-app.css:100), which is why WaiterPwa never showed this defect. */
+[hidden] {
+  display: none !important;
+}
+
 /* Header — foundations.md §1.1: --color-ink is the dark top-bar surface;
    accent as icon/text color is explicitly free on a dark ground. */
 .pos-header {
