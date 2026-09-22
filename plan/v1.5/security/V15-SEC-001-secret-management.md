@@ -1,10 +1,10 @@
 # V15-SEC-001 - Harden secret rotation and recovery
 
 - Task ID: V15-SEC-001
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -20,6 +20,14 @@ V1-SEC-001 secret boundary üzerinde production rotation, failover ve recovery d
 
 - `src/Modules/Security/SecretRotation/**`, `tests/Modules/Security/SecretRotation/**`, `deployment/secrets/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- Sınırlı ek (module bootstrap — C86/C88/C91 emsali: yeni bağımsız
+  foundation görevi oluşturulmaz, yeni bir modülün ilk feature görevi kendi
+  proje dosyasını sahiplenir): `src/Modules/Security/ALKAROS.Security.csproj`
+  (modül-kök proje dosyası, `SecretRotation/` bu modülün ilk feature'ı),
+  `src/Modules/Security/packages.lock.json`,
+  `tests/Modules/Security/SecretRotation/packages.lock.json`, `ALKAROS.slnx`
+  ve `build/project-manifest.json`'a bu iki projenin kaydı (V1-FND-001
+  sahipliğinde).
 
 ## In scope
 
@@ -48,7 +56,30 @@ V1-SEC-001 secret boundary üzerinde production rotation, failover ve recovery d
 
 ## Acceptance evidence
 
-- Repository/database/log içinde raw secret yoktur; rotation ve rollback bekleyen işi bozmadan exact version değiştirir.
+- Repository/database/log içinde raw secret yoktur: `SecretVersionRecord`/
+  `SecretRotationRecord`/`SecretRotationSnapshot` hiçbir alanda ham secret
+  değeri taşımaz (yalnız versiyon numarası, status, zaman damgaları); gerçek
+  değerler mevcut `ISecretProvider`/`ISecretResolver` sınırından, versioned
+  bir `SecretReference` (`{name}-v{n}`) üzerinden okunur — `FileSecretRotationStore`
+  yalnız bu metadata'yı `evidence/V15-SEC-001` dışında, çağıranın verdiği
+  dizine (örn. `deployment/secrets/rotation-state/`) JSON olarak yazar.
+- Başarı/ret/recovery testleri: `dotnet test
+  tests/Modules/Security/SecretRotation/ALKAROS.Security.SecretRotation.Tests.csproj`
+  → 28/28 (bkz. `evidence/V15-SEC-001/test-secretrotation.txt`) — versioned
+  rotation, overlap window, revoke (aktif dahil), rollback (başarı +
+  expired-overlap reddi + non-overlap-status reddi), provider outage
+  fallback'i (`RotatingSecretResolver`, `SecretNotFoundException`'da bir
+  sonraki Overlap versiyonuna düşer), access-denied'ın ASLA başka bir
+  versiyona tekrar denenmemesi, atomik dosya-tabanlı persistence round-trip,
+  path-traversal/unsafe dosya adı reddi.
+- `dotnet build ALKAROS.slnx -c Release` → 0 uyarı, 0 hata
+  (`evidence/V15-SEC-001/build-release.txt`); Debug de doğrulandı.
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı
+  (`evidence/V15-SEC-001/plan-audit.txt`).
+- `python tools/consistency-audit/consistency_audit.py` → temiz
+  (`evidence/V15-SEC-001/consistency-audit.txt`).
+- `python tools/project-manifest/project_manifest_tool.py` → VALID, 0 fark
+  (`evidence/V15-SEC-001/project-manifest.txt`).
 
 ## Handoff
 

@@ -20,6 +20,7 @@
   <Project Path="src/Modules/Invoicing/ALKAROS.Invoicing.csproj" />
   <Project Path="src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj" />
   <Project Path="src/Modules/Reporting/ALKAROS.Reporting.csproj" />
+  <Project Path="src/Modules/Security/ALKAROS.Security.csproj" />
   <Project Path="src/Modules/Settings/ALKAROS.Settings.csproj" />
   <Project Path="src/Modules/Tables/ALKAROS.Tables.csproj" />
   <Project Path="src/Modules/Recipes/ALKAROS.Recipes.csproj" />
@@ -106,6 +107,7 @@
   <Project Path="tests/Modules/Invoicing/Qnb/Client/ALKAROS.Invoicing.Qnb.Client.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj" />
   <Project Path="tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj" />
+  <Project Path="tests/Modules/Security/SecretRotation/ALKAROS.Security.SecretRotation.Tests.csproj" />
   <Project Path="tests/Modules/Settings/TypedSettings/ALKAROS.Settings.TypedSettings.Tests.csproj" />
   <Project Path="tests/Modules/Settings/KitchenLiveSync/ALKAROS.Settings.KitchenLiveSync.Tests.csproj" />
   <Project Path="tests/Modules/Settings/KitchenDenseModeThreshold/ALKAROS.Settings.KitchenDenseModeThreshold.Tests.csproj" />
