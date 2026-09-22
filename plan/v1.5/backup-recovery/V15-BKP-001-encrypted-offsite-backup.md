@@ -45,6 +45,15 @@ Doğrulanmış şifrelenmiş veritabanı yapılarını, saklama ve anahtar meta 
   sahipliğinde, FIND-IA-0043 emsali) — yeni ProjectReference'ların
   transitive kapanışı `dotnet restore --force-evaluate` ile mekanik olarak
   yeniden üretildi, elle içerik değiştirilmedi.
+- Sınırlı ek (paylaşılan, geri-tik olmadan, path bilerek backtick'siz —
+  retroaktif olarak eklendi, 2026-09-22 bağımsız denetim: bu üç dosya
+  `105f725d` commit'inde değiştirilmiş ama burada belgelenmemişti):
+  docs/architecture/module-dependency-rules.md, src/Modules/Operations/
+  OperationsModule.cs (V1-RMD-002 sahipliğinde), tests/Architecture/
+  ModuleBoundaries/ModuleBoundaryTests.cs (V1-FND-013 sahipliğinde) —
+  Operations'ın Security'ye olan gerçek derleme bağımlılığı `DependsOn`/
+  `ApprovedEdges`'e eklendi (mimari testin bu bağımlılığı hiç
+  denetlemediği bir kör nokta kapatıldı).
 
 ## In scope
 

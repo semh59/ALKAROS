@@ -74,7 +74,8 @@ public sealed class PostgresRefundIntentRepository : IRefundIntentRepository
                    idempotency_key, requested_by, requested_at, rejected_at, rejection_reason, row_version
             FROM {RefundIntents}
             WHERE payment_allocation_id = @payment_allocation_id
-            ORDER BY requested_at, refund_intent_id;
+            ORDER BY requested_at, refund_intent_id
+            LIMIT 500;
             """);
         command.Parameters.AddWithValue("payment_allocation_id", paymentAllocationId);
 

@@ -66,11 +66,12 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 | 21 | Reporting | none (reads projections only) | none | II.2.20 |
 | 22 | Reconciliation | Payment, Fiscal, Invoice, Print (mismatch sources) | ReconciliationCaseChanged → Observability, Reporting | II.2.21, II.5.12 |
 | 23 | Audit | none (append-only event trail consumer) | none | II.2.22, II.9 |
-| 24 | Backup | Observability (structured alert logging on upload failure, V15-BKP-001) | BackupJobStateChanged → Observability | II.2.23 |
+| 24 | Backup | Observability (structured alert logging on upload failure, V15-BKP-001), Security (off-site envelope encryption keyed through V15-SEC-001's secret rotation, V15-BKP-001) | BackupJobStateChanged → Observability | II.2.23 |
 | 25 | Licensing | none (cross-cutting validation; consumed by composition) | none | II.2.24 |
 | 26 | Observability | none (cross-cutting consumer) | none | II.2.25 |
 | 27 | Purchasing | Inventory (goods receipt stock movement) | none yet | 2026-09-06 addition |
 | 28 | Support | Observability (system status summary), Audit (selected correlation logs, bundle provenance) | none | V15-SUP-001, 2026-09-22 addition |
+| 29 | Security | Identity (session/lockout hardening composes with AuthenticationService/IUserStore/IDeviceSessionService), Audit (disposal/purge/re-encryption trail) | none | V15-SEC-001/002/003, 2026-09-22 addition (found undeclared by an independent audit — Operations already had a real, undeclared ProjectReference on Security for V15-BKP-001's envelope encryption; Security itself was not a registered IModule at all, so it never appeared in dependency-boundary checks) |
 
 Notes:
 

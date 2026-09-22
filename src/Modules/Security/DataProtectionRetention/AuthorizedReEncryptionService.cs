@@ -18,19 +18,28 @@ public sealed class AuthorizedReEncryptionService
     private readonly IRetentionSubjectStore _store;
     private readonly SensitivePayloadProtector _protector;
     private readonly IAuditEventStore _auditStore;
-    private readonly string _accessor;
 
+    /// <summary>
+    /// Builds its own private secret-resolver/cipher/protector chain from
+    /// <paramref name="secretProvider"/> instead of taking a shared
+    /// <see cref="SensitivePayloadProtector"/> — <c>ISensitiveDataAccessPolicy</c>
+    /// has no shared DI registration by design (see
+    /// <see cref="RetentionAccessPolicy"/>), so this is the only component
+    /// that can ever decrypt a retention subject's envelope.
+    /// </summary>
     public AuthorizedReEncryptionService(
         IRetentionSubjectStore store,
-        SensitivePayloadProtector protector,
-        IAuditEventStore auditStore,
-        string accessor)
+        ISecretProvider secretProvider,
+        IAuditEventStore auditStore)
     {
         _store = store ?? throw new ArgumentNullException(nameof(store));
-        _protector = protector ?? throw new ArgumentNullException(nameof(protector));
+        ArgumentNullException.ThrowIfNull(secretProvider);
         _auditStore = auditStore ?? throw new ArgumentNullException(nameof(auditStore));
-        ArgumentException.ThrowIfNullOrWhiteSpace(accessor);
-        _accessor = accessor;
+
+        var policy = new RetentionAccessPolicy();
+        var resolver = new SecretResolver(secretProvider, policy);
+        var cipher = new AesGcmEnvelopeCipher(resolver);
+        _protector = new SensitivePayloadProtector(cipher, policy);
     }
 
     /// <summary>Returns <c>false</c> when the subject was already encrypted under <paramref name="newKey"/> (no-op).</summary>
@@ -54,8 +63,8 @@ public sealed class AuthorizedReEncryptionService
         if (string.Equals(subject.Envelope.Ciphertext.KeyId, newKey.Name, StringComparison.Ordinal))
             return false;
 
-        var payload = _protector.Unprotect(subject.Envelope, oldKey, _accessor);
-        var reEncrypted = _protector.Protect(payload, newKey, _accessor);
+        var payload = _protector.Unprotect(subject.Envelope, oldKey, RetentionAccessPolicy.Accessor);
+        var reEncrypted = _protector.Protect(payload, newKey, RetentionAccessPolicy.Accessor);
         // Protect() stamps its own fresh CreatedAt into the envelope's AAD
         // (cryptographically bound into the GCM tag) — that value cannot be
         // overwritten after the fact without breaking decryption. This is

@@ -23,7 +23,7 @@ public sealed class AuthorizedReEncryptionServiceTests : IAsyncLifetime
         var envelope = RetentionCryptoFixtures.ProtectTestPayload(protector, RetentionCryptoFixtures.OldKey);
         var createdAt = DateTimeOffset.UtcNow.AddDays(-30);
         var id = await store.InsertAsync(DataCategory.ProviderPayloads, envelope, false, createdAt, default);
-        var service = new AuthorizedReEncryptionService(store, protector, audit, RetentionCryptoFixtures.Accessor);
+        var service = new AuthorizedReEncryptionService(store, RetentionCryptoFixtures.CreateSecretProvider(), audit);
 
         var changed = await service.ReEncryptAsync(id, RetentionCryptoFixtures.OldKey, RetentionCryptoFixtures.NewKey, Actor, "corr-1", default);
 
@@ -46,7 +46,7 @@ public sealed class AuthorizedReEncryptionServiceTests : IAsyncLifetime
         var audit = new RecordingAuditEventStore();
         var envelope = RetentionCryptoFixtures.ProtectTestPayload(protector, RetentionCryptoFixtures.NewKey);
         var id = await store.InsertAsync(DataCategory.ProviderPayloads, envelope, false, DateTimeOffset.UtcNow, default);
-        var service = new AuthorizedReEncryptionService(store, protector, audit, RetentionCryptoFixtures.Accessor);
+        var service = new AuthorizedReEncryptionService(store, RetentionCryptoFixtures.CreateSecretProvider(), audit);
 
         var changed = await service.ReEncryptAsync(id, RetentionCryptoFixtures.OldKey, RetentionCryptoFixtures.NewKey, Actor, "corr-2", default);
 
@@ -63,7 +63,7 @@ public sealed class AuthorizedReEncryptionServiceTests : IAsyncLifetime
         var envelope = RetentionCryptoFixtures.ProtectTestPayload(protector, RetentionCryptoFixtures.OldKey);
         var id = await store.InsertAsync(DataCategory.ProviderPayloads, envelope, false, DateTimeOffset.UtcNow, default);
         await store.MarkDisposedAsync(id, DisposalAction.Anonymize, 1, default);
-        var service = new AuthorizedReEncryptionService(store, protector, audit, RetentionCryptoFixtures.Accessor);
+        var service = new AuthorizedReEncryptionService(store, RetentionCryptoFixtures.CreateSecretProvider(), audit);
 
         await Assert.ThrowsAsync<RetentionSubjectDisposedException>(
             () => service.ReEncryptAsync(id, RetentionCryptoFixtures.OldKey, RetentionCryptoFixtures.NewKey, Actor, "corr-3", default));
@@ -75,7 +75,7 @@ public sealed class AuthorizedReEncryptionServiceTests : IAsyncLifetime
         var protector = RetentionCryptoFixtures.CreateProtector();
         var store = new PostgresRetentionSubjectStore(_database.DataSource);
         var audit = new RecordingAuditEventStore();
-        var service = new AuthorizedReEncryptionService(store, protector, audit, RetentionCryptoFixtures.Accessor);
+        var service = new AuthorizedReEncryptionService(store, RetentionCryptoFixtures.CreateSecretProvider(), audit);
 
         await Assert.ThrowsAsync<RetentionSubjectNotFoundException>(
             () => service.ReEncryptAsync(Guid.NewGuid(), RetentionCryptoFixtures.OldKey, RetentionCryptoFixtures.NewKey, Actor, "corr-4", default));
@@ -89,7 +89,7 @@ public sealed class AuthorizedReEncryptionServiceTests : IAsyncLifetime
         var audit = new RecordingAuditEventStore();
         var envelope = RetentionCryptoFixtures.ProtectTestPayload(protector, RetentionCryptoFixtures.OldKey);
         var id = await store.InsertAsync(DataCategory.ProviderPayloads, envelope, false, DateTimeOffset.UtcNow, default);
-        var service = new AuthorizedReEncryptionService(store, protector, audit, RetentionCryptoFixtures.Accessor);
+        var service = new AuthorizedReEncryptionService(store, RetentionCryptoFixtures.CreateSecretProvider(), audit);
 
         // Envelope was encrypted with OldKey; claiming NewKey as the old key
         // fails Unprotect's key-identity check (not the "already on the

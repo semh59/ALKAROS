@@ -7,6 +7,7 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Security.IdentityHardening;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
@@ -49,7 +50,7 @@ public static partial class DualScreenApplication
         app.MapPost("/api/v1/auth/login", async (
             LoginRequest request,
             HttpContext context,
-            AuthenticationService authentication,
+            SuspiciousLoginAuditingAuthenticationService authentication,
             IDeviceSessionService sessions,
             DualScreenStore store,
             IRoleRepository roles,

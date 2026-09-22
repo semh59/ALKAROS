@@ -381,6 +381,15 @@ public sealed class ProductionExperienceCompositionTests
                     continue;
                 }
 
+                // A factory registration's ImplementationType is the
+                // service type itself (the concrete type is only known
+                // once the factory runs, e.g. a bare-primitive constructor
+                // parameter it supplies internally) - the exact-type check
+                // below does not apply; resolving non-null is already
+                // proven above.
+                if (descriptor.ImplementationFactory is not null)
+                    continue;
+
                 Assert.IsType(descriptor.ImplementationType, resolved);
             }
         }

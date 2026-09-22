@@ -190,6 +190,12 @@ public static class HostComposition
             var root = ModuleRegistry.ComposeRoot(discovered);
 
             var services = new ServiceCollection();
+            // A real Host always has logging configured (WebApplication.CreateBuilder
+            // adds it automatically) - this helper validates the full module
+            // graph is constructible the same way production composes it, so
+            // any module needing ILogger<T> (e.g. StructuredEventLogger) must
+            // find it here too.
+            services.AddLogging();
             if (dataSource is not null)
             {
                 services.AddSingleton(dataSource);
@@ -245,6 +251,13 @@ public static class HostComposition
     {
         if (descriptor.ImplementationInstance is not null)
             services.AddSingleton(descriptor.ServiceType, descriptor.ImplementationInstance);
+        else if (descriptor.ImplementationFactory is not null)
+        {
+            if (descriptor.Lifetime == ModuleContext.ServiceLifetime.Transient)
+                services.AddTransient(descriptor.ServiceType, descriptor.ImplementationFactory);
+            else
+                services.AddSingleton(descriptor.ServiceType, descriptor.ImplementationFactory);
+        }
         else if (descriptor.Lifetime == ModuleContext.ServiceLifetime.Transient)
             services.AddTransient(descriptor.ServiceType, descriptor.ImplementationType);
         else

@@ -62,6 +62,14 @@ kalıcılaştırmak.
 - 100 payment için 20 talep tek Pending RefundIntent üretir; duplicate aynı intent'i döndürür ve 100 üzeri talep
   provider çağrısından önce reddedilir.
 - Bu görev PaymentAllocation veya net-paid amount değiştirmez.
+- **2026-09-22 sonradan düzeltme** (bağımsız denetim, `tools/consistency-audit`'in
+  `MODULE_SCHEMA` kör noktası — `Payments` bu sözlükte hiç yoktu, kapatılınca
+  ortaya çıktı): `PostgresRefundIntentRepository.GetByAllocationIdAsync`'in
+  LIMIT'siz bir SELECT çalıştırdığı bulundu — diğer store'ların "büyüyen bir
+  tabloda sessizce sınırsız yük yerine yüksek sesle başarısız ol"
+  konvansiyonuna uymuyordu. `LIMIT 500` eklendi (tek bir
+  `payment_allocation_id`'nin gerçekçi iade sayısının çok üzerinde bir
+  güvenlik sınırı). 11/11 test yeşil, davranış değişmedi.
 
 ## Handoff
 

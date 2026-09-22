@@ -209,6 +209,7 @@
           "ALKAROS.Recipes": "[1.0.0, )",
           "ALKAROS.Reconciliation": "[1.0.0, )",
           "ALKAROS.Reporting": "[1.0.0, )",
+          "ALKAROS.Security": "[1.0.0, )",
           "ALKAROS.Settings": "[1.0.0, )",
           "ALKAROS.Support": "[1.0.0, )",
           "ALKAROS.Tables": "[1.0.0, )",

@@ -36,6 +36,8 @@ public static class ModuleBoundaryTests
         "ALKAROS.Menu",
         "ALKAROS.Purchasing",
         "ALKAROS.Production",
+        "ALKAROS.Security",
+        "ALKAROS.Support",
     };
 
     private static readonly string[] EmptyDependencies = Array.Empty<string>();
@@ -90,12 +92,18 @@ public static class ModuleBoundaryTests
             ["Payments.Allocations.Persistence"] = ["Payments", "Billing"],
             // V15-BKP-001: module-dependency-rules.md row 24 ("Backup"),
             // structured alert logging on upload/RPO failure.
-            ["Operations"] = ["Observability"],
+            // V15-BKP-001: OffsiteBackup's envelope encryption is keyed
+            // through Security's versioned secret rotation.
+            ["Operations"] = ["Observability", "Security"],
             // V15-SUP-001: module-dependency-rules.md row 28 ("Support") -
             // system status summary reuses Observability's health-check
             // query, selected correlation logs and the bundle's own
             // provenance record reuse Audit's existing event store.
             ["Support"] = ["Observability", "Audit"],
+            // V15-SEC-001/002/003: module-dependency-rules.md row 29
+            // ("Security") - Identity for session/lockout hardening, Audit
+            // for the disposal/purge/re-encryption trail.
+            ["Security"] = ["Identity", "Audit"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()

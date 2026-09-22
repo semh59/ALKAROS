@@ -34,11 +34,36 @@ public sealed class ModuleContext
         return this;
     }
 
+    /// <summary>
+    /// Registers a singleton built from a factory that may itself resolve
+    /// other DI-registered dependencies — the escape hatch for an
+    /// implementation whose constructor takes a primitive (a connection
+    /// string, a file-system path) that <see cref="RegisterSingleton{TService,TImplementation}"/>'s
+    /// plain type-to-type mapping cannot supply.
+    /// </summary>
+    public ModuleContext RegisterSingleton<TService>(Func<IServiceProvider, TService> factory)
+        where TService : class
+    {
+        ArgumentNullException.ThrowIfNull(factory);
+        _services.Add(ServiceDescriptor.SingletonFactory(factory));
+        return this;
+    }
+
+    /// <summary>Transient counterpart of <see cref="RegisterSingleton{TService}(Func{IServiceProvider, TService})"/>.</summary>
+    public ModuleContext RegisterTransient<TService>(Func<IServiceProvider, TService> factory)
+        where TService : class
+    {
+        ArgumentNullException.ThrowIfNull(factory);
+        _services.Add(ServiceDescriptor.TransientFactory(factory));
+        return this;
+    }
+
     public sealed record ServiceDescriptor(
         Type ServiceType,
         Type ImplementationType,
         ServiceLifetime Lifetime,
-        object? ImplementationInstance)
+        object? ImplementationInstance,
+        Func<IServiceProvider, object>? ImplementationFactory = null)
     {
         public static ServiceDescriptor Singleton<TService>(TService instance)
             where TService : notnull
@@ -53,6 +78,14 @@ public sealed class ModuleContext
             where TService : class
             where TImplementation : class, TService
             => new(typeof(TService), typeof(TImplementation), ServiceLifetime.Transient, null);
+
+        public static ServiceDescriptor SingletonFactory<TService>(Func<IServiceProvider, TService> factory)
+            where TService : class
+            => new(typeof(TService), typeof(TService), ServiceLifetime.Singleton, null, sp => factory(sp));
+
+        public static ServiceDescriptor TransientFactory<TService>(Func<IServiceProvider, TService> factory)
+            where TService : class
+            => new(typeof(TService), typeof(TService), ServiceLifetime.Transient, null, sp => factory(sp));
     }
 
     public enum ServiceLifetime { Singleton, Transient }

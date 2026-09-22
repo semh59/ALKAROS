@@ -96,6 +96,17 @@ MODULE_SCHEMA = {
     "Observability": "observability", "Operations": "operations",
     "Recipes": "recipe", "Inventory": "inventory", "Menu": "menu",
     "Purchasing": "purchasing", "Production": "production",
+    # 2026-09-22: an independent audit found these five real modules missing
+    # from this dict — the same "pre-V11-RMD-002 5-module blind spot" class
+    # of bug (rule 5 silently `continue`s for any module.get() miss, so none
+    # of their src/Modules/**/*.cs files were ever checked for cross-schema
+    # writes). Security/Support are new this session (V15-SEC-001..003,
+    # V15-SUP-001); Invoicing/Payments/QrOrdering predate it and were simply
+    # never added.
+    "Security": "security",
+    "Invoicing": "invoicing",
+    "Payments": "payments",
+    "QrOrdering": "qr_ordering",
 }
 _SCHEMA_CONST_RE = re.compile(r'const\s+string\s+(\w+)\s*=\s*"(\w+)\.\w+"')
 _WRITE_TARGET_RE = re.compile(

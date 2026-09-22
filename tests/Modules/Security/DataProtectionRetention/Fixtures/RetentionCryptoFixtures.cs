@@ -18,12 +18,17 @@ public static class RetentionCryptoFixtures
     public static readonly SecretReference OldKey = new("Test/RetentionOldKey");
     public static readonly SecretReference NewKey = new("Test/RetentionNewKey");
 
-    public static SensitivePayloadProtector CreateProtector()
+    public static InMemorySecretProvider CreateSecretProvider()
     {
         var provider = new InMemorySecretProvider();
         provider.Set(OldKey, OldKeyBase64);
         provider.Set(NewKey, NewKeyBase64);
-        var resolver = new SecretResolver(provider, AllowAllSecretAccessPolicy.Instance);
+        return provider;
+    }
+
+    public static SensitivePayloadProtector CreateProtector()
+    {
+        var resolver = new SecretResolver(CreateSecretProvider(), AllowAllSecretAccessPolicy.Instance);
         var cipher = new AesGcmEnvelopeCipher(resolver);
         return new SensitivePayloadProtector(cipher, AllowAllSensitiveAccessPolicy.Instance);
     }

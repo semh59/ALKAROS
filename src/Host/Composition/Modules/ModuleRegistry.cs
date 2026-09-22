@@ -25,6 +25,9 @@ public static class ModuleRegistry
         typeof(ALKAROS.Identity.IdentityModule),
         typeof(ALKAROS.Kitchen.KitchenModule),
         typeof(ALKAROS.Observability.ObservabilityModule),
+        // V15-SEC-001/002/003: must precede Operations (its OffsiteBackup
+        // feature depends on Security's secret rotation).
+        typeof(ALKAROS.Security.SecurityModule),
         typeof(ALKAROS.Operations.OperationsModule),
         typeof(ALKAROS.Reconciliation.ReconciliationModule),
         typeof(ALKAROS.Reporting.ReportingModule),
