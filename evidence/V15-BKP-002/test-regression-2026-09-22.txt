@@ -1,0 +1,29 @@
+2026-09-22 post-Done audit fix regression run
+==============================================
+
+dotnet test tests/Modules/Operations/OffsiteBackup/ALKAROS.Operations.OffsiteBackup.Tests.csproj -c Release
+  => Basarili! - Basarisiz: 0, Basarili: 24, Atlanan: 0, Toplam: 24
+
+dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+  => Basarili! - Basarisiz: 0, Basarili: 9, Atlanan: 0, Toplam: 9
+
+dotnet test tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj -c Release
+  => Basarisiz! - Basarisiz: 54, Basarili: 106, Atlanan: 0, Toplam: 160
+  NOT (pre-existing, bu task ile ilgisiz): failing testlerin tamami
+  DualScreenStoreTests.InitializeAsync() icinde "Expected: Success, Actual:
+  StartupFailed" ile basliyor. Bu session'in git status snapshot'i, bu
+  session baslamadan ONCE zaten uncommitted degisikligi olan dosyalari
+  gosteriyor: src/Host/DualScreen/DualScreenApplication.Endpoints.cs,
+  src/Host/Composition/HostComposition.cs, src/Host/Composition/Modules/
+  ModuleRegistry.cs, src/BuildingBlocks/ModuleComposition/ModuleContext.cs,
+  vb. (V15-SEC-003 calismasindan kalma WIP). Bu dosyalarin hicbiri V15-BKP-002'nin
+  owned surface'inde degil (src/Modules/Operations/RestoreVerification/**,
+  tests/Modules/Operations/RestoreVerification/**) ve bu fix oturumunda
+  DOKUNULMADI. Manifest testi (17/17 idi) de dahil olmak uzere bu paket
+  ayni WIP nedeniyle bozuk goruluyor; V15-BKP-002'nin kendi test paketi
+  (asagida) ve dogrudan regresyon kapsami (OffsiteBackup, Architecture) tam
+  yesil.
+
+dotnet test tests/Modules/Operations/RestoreVerification/ALKAROS.Operations.RestoreVerification.Tests.csproj -c Release
+  => Basarili! - Basarisiz: 0, Basarili: 8, Atlanan: 0, Toplam: 8
+  (bkz. test-restoreverification-2026-09-22.txt)

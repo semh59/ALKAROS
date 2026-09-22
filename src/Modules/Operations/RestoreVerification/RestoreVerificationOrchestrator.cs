@@ -69,11 +69,14 @@ public sealed class RestoreVerificationOrchestrator
         await using var database = await _databaseFactory.ProvisionAsync(cancellationToken);
         var sqlScript = Encoding.UTF8.GetString(plaintext);
 
+        // Lives outside the try block so a check failure that jumps to the
+        // catch below still records how many checks GENUINELY passed before
+        // the failure, instead of the misleading fixed 0.
+        var passed = 0;
         try
         {
             await database.ApplyScriptAsync(sqlScript, cancellationToken);
 
-            var passed = 0;
             foreach (var check in _integrityChecks)
             {
                 var value = await database.ExecuteScalarAsync(check.SqlQuery, cancellationToken);
@@ -106,7 +109,7 @@ public sealed class RestoreVerificationOrchestrator
             var failed = new RestoreAttemptRecord(
                 receipt.ArtifactId, dataClass, startedAtUtc, stopwatch.Elapsed,
                 succeeded: false, withinRtoTarget: false,
-                integrityChecksPassed: 0, integrityChecksTotal: _integrityChecks.Count,
+                integrityChecksPassed: passed, integrityChecksTotal: _integrityChecks.Count,
                 failureReason: ex.Message);
             await _attemptStore.RecordAsync(failed, cancellationToken);
             throw;

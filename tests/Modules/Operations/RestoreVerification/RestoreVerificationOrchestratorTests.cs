@@ -137,6 +137,36 @@ public sealed class RestoreVerificationOrchestratorTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RunAsyncRecordsGenuinePassedCountWhenALaterIntegrityCheckFails()
+    {
+        // Regression test: 4 of 5 checks genuinely pass before the 5th
+        // throws. The recorded attempt must report integrityChecksPassed
+        // == 4 (the real count reached before the failure), not the
+        // misleading fixed 0 that a `passed` counter scoped only to the
+        // try block used to produce once control jumped to the catch.
+        await SeedRealArtifactAsync(
+            "drill-partial-pass-1",
+            DataClass.OrdersInventory,
+            "CREATE TABLE drill_probe (id INT PRIMARY KEY); INSERT INTO drill_probe (id) VALUES (1), (2), (3);");
+
+        var orchestrator = BuildOrchestrator(out _, [
+            new IntegrityCheck("check 1 (passes)", "SELECT count(*) FROM drill_probe;", value => Convert.ToInt64(value, System.Globalization.CultureInfo.InvariantCulture) == 3),
+            new IntegrityCheck("check 2 (passes)", "SELECT 1;", value => Convert.ToInt64(value, System.Globalization.CultureInfo.InvariantCulture) == 1),
+            new IntegrityCheck("check 3 (passes)", "SELECT 2;", value => Convert.ToInt64(value, System.Globalization.CultureInfo.InvariantCulture) == 2),
+            new IntegrityCheck("check 4 (passes)", "SELECT 3;", value => Convert.ToInt64(value, System.Globalization.CultureInfo.InvariantCulture) == 3),
+            new IntegrityCheck("check 5 (fails)", "SELECT 4;", value => Convert.ToInt64(value, System.Globalization.CultureInfo.InvariantCulture) == 999),
+        ]);
+
+        await Assert.ThrowsAsync<RestoreIntegrityCheckFailedException>(() => orchestrator.RunAsync(DataClass.OrdersInventory));
+
+        var history = await _attemptStore.GetByDataClassAsync(DataClass.OrdersInventory);
+        Assert.Single(history);
+        Assert.False(history[0].Succeeded);
+        Assert.Equal(4, history[0].IntegrityChecksPassed);
+        Assert.Equal(5, history[0].IntegrityChecksTotal);
+    }
+
+    [Fact]
     public async Task RunAsyncThrowsWhenNoArtifactIsRecorded()
     {
         var orchestrator = BuildOrchestrator(out _, []);

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Npgsql;
 
@@ -83,8 +84,21 @@ internal sealed class NpgsqlIsolatedRestoreDatabase : IIsolatedRestoreDatabase
 
         await _dataSource.DisposeAsync();
 
-        await using var maintenance = new NpgsqlDataSourceBuilder(_maintenanceConnectionString).Build();
-        await using var drop = maintenance.CreateCommand($"DROP DATABASE IF EXISTS \"{Name.Replace("\"", "\"\"")}\" WITH (FORCE);");
-        await drop.ExecuteNonQueryAsync();
+        // Best-effort cleanup: if this disposal is running while an earlier
+        // exception (e.g. a failed integrity check) is already unwinding
+        // through the caller's `await using`, a DROP DATABASE failure here
+        // must never replace or mask that original exception. Swallow and
+        // log it instead of letting it propagate — a leaked scratch database
+        // is recoverable; a lost diagnostic is not.
+        try
+        {
+            await using var maintenance = new NpgsqlDataSourceBuilder(_maintenanceConnectionString).Build();
+            await using var drop = maintenance.CreateCommand($"DROP DATABASE IF EXISTS \"{Name.Replace("\"", "\"\"")}\" WITH (FORCE);");
+            await drop.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"NpgsqlIsolatedRestoreDatabase: failed to drop scratch database '{Name}' during dispose: {ex}");
+        }
     }
 }

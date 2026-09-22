@@ -87,6 +87,19 @@ Isolated PostgreSQL instance'a restore işlemini otomatikleştirmek ve integrity
   bire bir aynı format değil — `V15-BKP-001`'in "yerel yedekleme oluşturma" kapsam dışı kararıyla aynı gerekçe:
   hangi görev gerçek artifact'i üretirse, format uyumu o görevin/entegrasyonun konusu olur. Bu görev restore
   ORKESTRASYONUNU (seçim/çöz/uygula/doğrula/kaydet) ve gerçek bir izole Postgres'e karşı çalıştığını kanıtlıyor.
+- **2026-09-22 sonradan düzeltme** (bağımsız denetim): İki gerçek kusur giderildi.
+  (1) `RestoreVerificationOrchestrator`'da `passed` sayacı `try` bloğu içinde yaşıyordu; bir integrity check
+  başarısız olup dış `catch` bloğuna düşüldüğünde o ana kadar GERÇEKTEN geçen check sayısı yok sayılıp
+  `integrityChecksPassed: 0` sabit değeri kaydediliyordu (yanıltıcı tanı verisi). `passed` artık metod seviyesinde
+  yaşıyor; `catch` bloğu da gerçek sayıyı kaydediyor. Yeni test:
+  `RunAsyncRecordsGenuinePassedCountWhenALaterIntegrityCheckFails` (5 check'ten 4'ü geçip 5.'si patladığında
+  `integrityChecksPassed == 4` doğrulanıyor). (2) `NpgsqlIsolatedRestoreDatabase.DisposeAsync`'te `DROP DATABASE
+  ... WITH (FORCE)` çağrısı, zaten bir istisna işlenip yeniden fırlatılırken kendisi de atarsa orijinal istisnayı
+  maskeleyebiliyordu; artık `try/catch` ile sarılıp `Debug.WriteLine` ile loglanıp yutuluyor. Yeni test:
+  `DisposeAsyncSwallowsDropFailureAndPreservesOriginalException` (bozuk maintenance connection string ile DROP
+  bilerek başarısız kılınıyor, orijinal `RestoreIntegrityCheckFailedException`'ın kaybolmadığı doğrulanıyor).
+  `dotnet test ALKAROS.Operations.RestoreVerification.Tests` → 8/8 (eski 6 + yeni 2)
+  (`evidence/V15-BKP-002/test-restoreverification-2026-09-22.txt`).
 
 ## Handoff
 
