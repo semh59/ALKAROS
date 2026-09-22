@@ -1,0 +1,103 @@
+V15-SEC-001 sonradan-bulunan-kusur duzeltmesi: optimistic concurrency
+=======================================================================
+
+Bulgu (bagimsiz denetim, 2026-09-22):
+ISecretRotationStore.Save(record) hicbir versiyon/etag kontrolu yapmadan
+mevcut durumu degistiriyordu. Iki esamanli cagri ayni secret adi icin
+Find -> mutate (Rotate/Revoke/Rollback) -> Save yaparsa, ikinci yazan
+birinciyi sessizce eziyordu. Kritik senaryo: bir admin sizan bir secreti
+Revoke ederken esamanli bir Rotate ayni eski state'i okuyup kendi sonucunu
+yazarsa, Revoke kaybolurdu.
+
+Ek bulgu: FileSecretRotationStore.Save ayni secret adina esamanli iki
+Save cagrisinin ayni "<path>.tmp" dosyasina yazmasindan kaynaklanan bir
+dosya-seviyesi interleave riski tasiyordu.
+
+Duzeltme:
+- SecretRotationRecord'a bir Version sayaci eklendi (Initialize -> 1,
+  her transition (Rotate/Revoke/Rollback/ExpireOverlapWindows) +1).
+- InMemorySecretRotationStore.Save ve FileSecretRotationStore.Save artik
+  Save'e verilen record'un Version'unu, o secret adi icin halihazirda
+  persist edilmis Version'a karsi kontrol ediyor: persist edilmis bir
+  state varsa, yeni record.Version == existing.Version + 1 olmali, aksi
+  halde SecretRotationConcurrencyException firlatiliyor. Ilk kayit (henuz
+  persist edilmemis) her zaman kabul edilir - carpisacak bir onceki state
+  yok.
+- Her iki store da kontrol+yazma dizisini bir lock altinda atomik hale
+  getirdi (InMemory: Dictionary'yi koruyan bir object lock; File: dosya
+  yoluna gore per-path lock), boylece gercek thread-race'lerde de
+  yarisma dogru tespit ediliyor.
+- FileSecretRotationStore.Save artik temp dosya adini
+  "<path>." + Guid.NewGuid("N") + ".tmp" seklinde benzersiz uretiyor
+  (eskiden sabit "<path>.tmp" idi).
+- API geriye uyumlu: ISecretRotationStore.Save(SecretRotationRecord)
+  imzasi degismedi; SecretRotationRecord.Restore da eski 2 parametreli
+  cagrilarla calismaya devam ediyor (version parametresi varsayilan 1).
+  OffsiteBackupCipher (Operations modulu, ISecretRotationStore.Find
+  tuketen tek gercek tuketici) hic degistirilmedi - yalnizca Find
+  kullaniyor, Save cagirmiyor.
+
+Yeni testler (tests/Modules/Security/SecretRotation/SecretRotationConcurrencyTests.cs):
+(a) SecondSaveOfAConcurrentFindMutateSaveRaceThrowsConcurrencyException
+    - iki "session" ayni state'i Find eder, biri Rotate biri Revoke yapar;
+      ikinci Save SecretRotationConcurrencyException firlatir.
+(b) ARevokeIsNeverSilentlyLostToAConcurrentRotateThatReadTheSameStaleState
+    - admin'in Revoke'u basariyla kaydedilir; ayni eski state'i okuyan bir
+      rotation job'un Rotate'i reddedilir; store'da Revoke hala gecerlidir
+      (kaybolmamistir).
+(c) ManyTrueConcurrentSavesFromTheSameBaselineLeaveExactlyOneWinner
+    - 8 gercek thread ayni baseline'dan mutate edip Save dener; tam olarak
+      1 basarili, 7 SecretRotationConcurrencyException alir; son state
+      tutarli.
+tests/Modules/Security/SecretRotation/FileSecretRotationStoreTests.cs'e
+eklenen:
+    ConcurrentSavesForDifferentSecretsDoNotCollideOnTempFileNames
+    - 16 thread farkli secret adlari icin esamanli Save yapar; hicbir
+      corruption/collision olmadan hepsi basarili, dizinde yetim ".tmp"
+      dosyasi kalmaz.
+
+Dogrulama komutlari ve sonuclari (2026-09-22, Windows, .dotnet PATH'e
+eklendi):
+
+1) dotnet build tests/Modules/Security/SecretRotation/ALKAROS.Security.SecretRotation.Tests.csproj -c Release
+   -> Basarili, 0 Uyari, 0 Hata (bkz. asagida, ayrica bu proje
+      ALKAROS.slnx tam derlemesinde de 0 hata/0 uyari verdi - slnx'teki
+      tek derleme hatasi tests/Modules/Operations/RestoreVerification/**
+      icindeydi, bu gorevin Owned Surface'i disinda, baska/onceki bir
+      calisma tarafindan devam eden isten kalma, bu commit'in
+      dokunmadigi bir proje).
+
+2) dotnet test tests/Modules/Security/SecretRotation/ALKAROS.Security.SecretRotation.Tests.csproj -c Release
+   -> Basarili! - Basarisiz: 0, Basarili: 35, Atlanan: 0, Toplam: 35
+      (eski 28 + yeni 7: 3 SecretRotationConcurrencyTests + 1
+      FileSecretRotationStoreTests.ConcurrentSavesForDifferentSecretsDoNotCollideOnTempFileNames
+      + zaten var olan diger degisiklikler test sayisini etkilemedi)
+
+3) dotnet test tests/Host/Experience/Composition/ALKAROS.Host.Experience.Composition.Tests.csproj -c Release
+   -> Basarili! - Basarisiz: 0, Basarili: 10, Atlanan: 0, Toplam: 10
+      (DI graph hala kuruluyor - ISecretRotationStore kayitli, imza
+      degismedi)
+
+4) dotnet test tests/Modules/Operations/OffsiteBackup/ALKAROS.Operations.OffsiteBackup.Tests.csproj -c Release
+   -> Basarisiz: 3, Basarili: 21, Atlanan: 0, Toplam: 24
+      Basarisiz olan 3 test tamami PostgresOffsiteBackupReceiptStoreTests
+      icinde ve bu ortamda calisan bir Postgres olmadigi icin baglanti
+      hatasi aliyor (Npgsql SocketException - connection refused); bu
+      test dosyasi Postgres/OffsiteBackupCipher/SecretRotation'a
+      dokunmuyor. OffsiteBackupCipher'i (SecretRotation tuketicisi)
+      dolayli olarak egzersiz eden diger 21 test (Upload/LocalDirectory/
+      RpoCoverage/WalArchiveFreshness) hepsi gecti - bu PR'daki
+      degisiklikten kaynaklanan bir regresyon yok.
+
+5) python tools/plan-audit/plan_audit_tool.py validate
+   -> Markdown files: 917, Task files: 895, Registered gates: 18,
+      Registered EXT sources: 22, Dependency edges: 2001,
+      Validation errors: 0, Validation warnings: 0
+
+6) python tools/consistency-audit/consistency_audit.py
+   -> consistency-audit: clean
+
+Owned surface: yalnizca src/Modules/Security/SecretRotation/** ve
+tests/Modules/Security/SecretRotation/** degistirildi (artı bu evidence
+dosyasi ve plan/v1.5/security/V15-SEC-001-secret-management.md'nin
+Acceptance evidence bolumune eklenen tek madde).

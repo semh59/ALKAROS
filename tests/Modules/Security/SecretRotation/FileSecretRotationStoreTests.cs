@@ -56,6 +56,43 @@ public sealed class FileSecretRotationStoreTests : IDisposable
         Assert.Throws<ArgumentException>(() => store.Save(SecretRotationRecord.Initialize("Has Space", Now)));
     }
 
+    [Fact]
+    public void ConcurrentSavesForDifferentSecretsDoNotCollideOnTempFileNames()
+    {
+        // Regression for the file-level interleave risk the audit found:
+        // Save used to write to a fixed "<path>.tmp" name, so two
+        // concurrent Save calls (even for different secret names sharing
+        // no state) briefly touching overlapping temp paths was a latent
+        // hazard. Each Save now uses a GUID-suffixed temp file, so this
+        // must complete cleanly with no corruption regardless of thread
+        // interleaving.
+        var store = new FileSecretRotationStore(_directory);
+        const int secretCount = 16;
+        var threads = new Thread[secretCount];
+
+        for (var i = 0; i < secretCount; i++)
+        {
+            var name = $"secret-{i}";
+            threads[i] = new Thread(() => store.Save(SecretRotationRecord.Initialize(name, Now)));
+        }
+
+        foreach (var thread in threads)
+            thread.Start();
+        foreach (var thread in threads)
+            thread.Join();
+
+        for (var i = 0; i < secretCount; i++)
+        {
+            var restored = store.Find($"secret-{i}");
+            Assert.NotNull(restored);
+            Assert.Equal(1, restored!.ActiveVersion!.Version);
+        }
+
+        // No leftover ".tmp" files - every Save's temp file was moved into
+        // place, none were left orphaned by a naming collision.
+        Assert.Empty(Directory.GetFiles(_directory, "*.tmp"));
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_directory))

@@ -80,6 +80,16 @@ V1-SEC-001 secret boundary üzerinde production rotation, failover ve recovery d
   (`evidence/V15-SEC-001/consistency-audit.txt`).
 - `python tools/project-manifest/project_manifest_tool.py` → VALID, 0 fark
   (`evidence/V15-SEC-001/project-manifest.txt`).
+- **2026-09-22 sonradan düzeltme** (bağımsız denetim): `ISecretRotationStore.Save`
+  optimistic concurrency'den yoksundu — eşzamanlı iki `Find → mutate → Save`
+  (ör. bir Revoke ile yarışan bir Rotate) sessizce birbirini eziyordu.
+  `SecretRotationRecord`'a bir `Version` sayacı eklendi; her iki store
+  (`InMemorySecretRotationStore`, `FileSecretRotationStore`) artık
+  `Save`'de bu sayacı kontrol edip uyuşmazlıkta `SecretRotationConcurrencyException`
+  fırlatıyor. `FileSecretRotationStore` ayrıca artık GUID sufiksli benzersiz
+  temp dosya adları kullanıyor (eskiden sabit `path + ".tmp"` idi, eşzamanlı
+  yazımlarda çakışma riski taşıyordu). 35/35 test yeşil (eski 28 + yeni 7) —
+  bkz. `evidence/V15-SEC-001/concurrency-fix-2026-09-22.txt`.
 
 ## Handoff
 

@@ -12,10 +12,25 @@ public sealed class SecretRotationRecord
     public string SecretName { get; }
     public IReadOnlyList<SecretVersionRecord> Versions { get; }
 
-    private SecretRotationRecord(string secretName, IReadOnlyList<SecretVersionRecord> versions)
+    /// <summary>
+    /// Optimistic-concurrency counter for the rotation record as a whole
+    /// (distinct from <see cref="SecretVersionRecord.Version"/>, which
+    /// numbers individual secret versions). Starts at 1 on
+    /// <see cref="Initialize"/> and increments by exactly 1 on every
+    /// transition (<see cref="Rotate"/>, <see cref="Revoke"/>,
+    /// <see cref="Rollback"/>, <see cref="ExpireOverlapWindows"/>). An
+    /// <see cref="ISecretRotationStore"/> uses it to detect a lost update:
+    /// a <c>Save</c> whose <see cref="Version"/> is not exactly one past
+    /// the currently persisted record's version was built from stale state
+    /// and must be rejected with <see cref="SecretRotationConcurrencyException"/>.
+    /// </summary>
+    public int Version { get; }
+
+    private SecretRotationRecord(string secretName, IReadOnlyList<SecretVersionRecord> versions, int version)
     {
         SecretName = secretName;
         Versions = versions;
+        Version = version;
     }
 
     /// <summary>Starts rotation history for a brand-new secret name at version 1, Active immediately.</summary>
@@ -23,11 +38,17 @@ public sealed class SecretRotationRecord
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(secretName);
         var first = new SecretVersionRecord(1, SecretVersionStatus.Active, now, overlapExpiresAtUtc: null, revokedAtUtc: null);
-        return new SecretRotationRecord(secretName, new[] { first });
+        return new SecretRotationRecord(secretName, new[] { first }, version: 1);
     }
 
-    /// <summary>Rebuilds a rotation record from previously persisted versions (used by <see cref="ISecretRotationStore"/> implementations).</summary>
-    public static SecretRotationRecord Restore(string secretName, IReadOnlyList<SecretVersionRecord> versions)
+    /// <summary>
+    /// Rebuilds a rotation record from previously persisted versions (used
+    /// by <see cref="ISecretRotationStore"/> implementations). <paramref name="version"/>
+    /// is the optimistic-concurrency counter as it was persisted; it
+    /// defaults to 1 for callers (and legacy persisted state) that predate
+    /// the counter.
+    /// </summary>
+    public static SecretRotationRecord Restore(string secretName, IReadOnlyList<SecretVersionRecord> versions, int version = 1)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(secretName);
         ArgumentNullException.ThrowIfNull(versions);
@@ -36,8 +57,10 @@ public sealed class SecretRotationRecord
         var activeCount = versions.Count(v => v.Status == SecretVersionStatus.Active);
         if (activeCount > 1)
             throw new ArgumentException("A rotation record cannot carry more than one Active version.", nameof(versions));
+        if (version < 1)
+            throw new ArgumentOutOfRangeException(nameof(version), version, "Version must be a positive integer.");
 
-        return new SecretRotationRecord(secretName, versions.ToArray());
+        return new SecretRotationRecord(secretName, versions.ToArray(), version);
     }
 
     public SecretVersionRecord? ActiveVersion => Versions.SingleOrDefault(v => v.Status == SecretVersionStatus.Active);
@@ -63,7 +86,7 @@ public sealed class SecretRotationRecord
                 : v)
             .Append(new SecretVersionRecord(nextVersion, SecretVersionStatus.Active, now, overlapExpiresAtUtc: null, revokedAtUtc: null))
             .ToArray();
-        return new SecretRotationRecord(SecretName, updated);
+        return new SecretRotationRecord(SecretName, updated, Version + 1);
     }
 
     /// <summary>
@@ -82,7 +105,7 @@ public sealed class SecretRotationRecord
         var updated = Versions
             .Select(v => v.Version == version ? v.With(SecretVersionStatus.Revoked, revokedAtUtc: now) : v)
             .ToArray();
-        return new SecretRotationRecord(SecretName, updated);
+        return new SecretRotationRecord(SecretName, updated, Version + 1);
     }
 
     /// <summary>
@@ -112,7 +135,7 @@ public sealed class SecretRotationRecord
                 return v;
             })
             .ToArray();
-        return new SecretRotationRecord(SecretName, updated);
+        return new SecretRotationRecord(SecretName, updated, Version + 1);
     }
 
     /// <summary>
@@ -126,7 +149,7 @@ public sealed class SecretRotationRecord
                 ? v.With(SecretVersionStatus.Revoked, revokedAtUtc: now)
                 : v)
             .ToArray();
-        return new SecretRotationRecord(SecretName, updated);
+        return new SecretRotationRecord(SecretName, updated, Version + 1);
     }
 
     private SecretVersionRecord FindOrThrow(int version) =>
