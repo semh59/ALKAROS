@@ -133,7 +133,7 @@ public static class QrOrderingEndpoints
             var theme = await BusinessAccentThemeSetting.GetThemeAsync(settings, cancellationToken);
             var logo = await logoStore.GetAsync(cancellationToken);
             return Results.Ok(new QrBrandingResponse(name, theme.Hex, HasLogo: logo is not null));
-        }).RequireRateLimiting("qr-order");
+        }).RequireRateLimiting("qr-public");
 
         // V1-SET-008: same public/session-free reasoning as /branding above —
         // the QR page's first paint needs to know whether to render a logo
@@ -153,7 +153,7 @@ public static class QrOrderingEndpoints
             context.Response.Headers.ETag = logo.ETag;
             context.Response.Headers.CacheControl = "public, max-age=300";
             return Results.File(logo.Content, logo.ContentType);
-        }).RequireRateLimiting("qr-order");
+        }).RequireRateLimiting("qr-public");
 
         // The same read-only projection NFC's own catalog endpoint serves
         // (DualScreenApplication.Endpoints.cs), reused as-is — but unlike

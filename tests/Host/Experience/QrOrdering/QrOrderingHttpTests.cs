@@ -638,6 +638,7 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         {
             options.AddPolicy("qr-session", _ => System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("test"));
             options.AddPolicy("qr-order", _ => System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("test"));
+            options.AddPolicy("qr-public", _ => System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("test"));
         });
         builder.Services.AddQrOrderingExperience();
         var app = builder.Build();
