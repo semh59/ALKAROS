@@ -24,6 +24,9 @@ public interface IDeviceSessionService
 
     Task<int> RevokeDeviceAsync(Guid userId, string deviceId, CancellationToken cancellationToken = default);
 
+    /// <summary>V15-SEC-002: revokes every active session for a user, all devices.</summary>
+    Task<int> RevokeAllAsync(Guid userId, CancellationToken cancellationToken = default);
+
     Task<ReconnectResult> ReconnectAsync(
         Guid userId,
         string deviceId,

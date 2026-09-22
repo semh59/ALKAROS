@@ -106,6 +106,20 @@ public sealed class PostgresDeviceSessionRepository : IDeviceSessionRepository
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task<int> RevokeAllForUserAsync(Guid userId, DateTimeOffset revokedAt, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            UPDATE {Sessions}
+            SET revoked_at = @revoked_at
+            WHERE user_id = @user_id AND revoked_at IS NULL;
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+        command.Parameters.AddWithValue("revoked_at", revokedAt);
+
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task<ReconnectClaimResult> ClaimReconnectOperationsAsync(
         string tokenHash,
         Guid userId,

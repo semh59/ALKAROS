@@ -62,6 +62,15 @@ public interface IUserStore
 
     /// <summary>V1-RMD-151: clears the PIN attempt counters after a correct PIN.</summary>
     Task<bool> RecordPinSuccessAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V15-SEC-002: an authorized administrative action that clears a locked
+    /// account immediately instead of waiting out the lockout window — the
+    /// account's own password lockout counters only, never the PIN's (same
+    /// separation <see cref="SetPinAsync"/> keeps). Returns <c>false</c> when
+    /// no such user exists.
+    /// </summary>
+    Task<bool> ForceUnlockAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
 public sealed record LoginFailureUpdate(int FailedLoginAttempts, DateTimeOffset? LockedUntil);

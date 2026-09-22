@@ -12,6 +12,14 @@ public interface IDeviceSessionRepository
 
     Task<int> RevokeForDeviceAsync(Guid userId, string deviceId, DateTimeOffset revokedAt, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// V15-SEC-002: revokes every currently-active session for
+    /// <paramref name="userId"/> across all devices — the administrative
+    /// "sign out everywhere" action, unlike <see cref="RevokeForDeviceAsync"/>
+    /// which stays scoped to one device.
+    /// </summary>
+    Task<int> RevokeAllForUserAsync(Guid userId, DateTimeOffset revokedAt, CancellationToken cancellationToken = default);
+
     Task<ReconnectClaimResult> ClaimReconnectOperationsAsync(
         string tokenHash,
         Guid userId,

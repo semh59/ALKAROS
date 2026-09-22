@@ -52,6 +52,9 @@ public sealed class DeviceSessionService : IDeviceSessionService
         return _repository.RevokeForDeviceAsync(userId, deviceId, DateTimeOffset.UtcNow, cancellationToken);
     }
 
+    public Task<int> RevokeAllAsync(Guid userId, CancellationToken cancellationToken = default)
+        => _repository.RevokeAllForUserAsync(userId, DateTimeOffset.UtcNow, cancellationToken);
+
     public async Task<ReconnectResult> ReconnectAsync(
         Guid userId,
         string deviceId,

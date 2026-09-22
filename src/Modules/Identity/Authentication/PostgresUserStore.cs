@@ -221,6 +221,29 @@ public sealed class PostgresUserStore : IUserStore
         return affected == 1;
     }
 
+    /// <summary>
+    /// V15-SEC-002: unlike <see cref="RecordLoginSuccessAsync"/>, this clears
+    /// the lock unconditionally — that is the entire point of an
+    /// administrative force-unlock, so there is no "already unlocked" guard
+    /// clause to fail against.
+    /// </summary>
+    public async Task<bool> ForceUnlockAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            UPDATE {Table}
+            SET failed_login_attempts = 0,
+                locked_until = NULL,
+                updated_at = now(),
+                row_version = row_version + 1
+            WHERE user_id = @user_id;
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+
+        var affected = await command.ExecuteNonQueryAsync(cancellationToken);
+        return affected == 1;
+    }
+
     public async Task<bool> TryUpgradePasswordHashAsync(
         Guid userId,
         string expectedCurrentHash,

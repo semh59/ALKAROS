@@ -8,6 +8,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj" />
+    <!-- V15-SEC-002: IdentityHardening composes with Identity's own
+         AuthenticationService/IUserStore/IDeviceSessionService instead of
+         duplicating their persistence. -->
+    <ProjectReference Include="..\Identity\ALKAROS.Identity.csproj" />
   </ItemGroup>
 
 </Project>

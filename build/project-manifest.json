@@ -499,6 +499,23 @@
       ]
     },
     {
+      "path": "tests/Modules/Security/IdentityHardening/ALKAROS.Security.IdentityHardening.Tests.csproj",
+      "kind": "test",
+      "module": "IdentityHardening",
+      "references": [
+        "src/Modules/Security/ALKAROS.Security.csproj",
+        "src/Modules/Identity/ALKAROS.Identity.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "FluentAssertions",
+        "Npgsql"
+      ]
+    },
+    {
       "path": "tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj",
       "kind": "test",
       "module": "SensitiveData",
