@@ -83,7 +83,7 @@ Doğrulanmış şifrelenmiş veritabanı yapılarını, saklama ve anahtar meta 
   hata sonrası 3. denemede başarı, `RetryPolicy`'nin exponential backoff'u
   ile) ve `UploadAsyncFailuresExhaustMaxAttemptsEmitsCriticalAlertAndThrows`
   (3 deneme de başarısız → `IStructuredEventLogger`'a
-  `offsite_backup.upload_failed` Critical event + `OffsiteBackupUploadFailedException`).
+  `offsitebackup.upload.failed` Critical event + `OffsiteBackupUploadFailedException`).
 - **Ölçülen backup sıklığı/RPO eşiği karşılaştırması:** `RpoCoverageChecker`
   + 4 test — en yeni receipt'in yaşı `docs/recovery/rpo-rto-targets.md`'nin
   onaylı hedefine (Fiscal 5dk, OrdersInventory 1sa, Settings 24sa) göre
@@ -111,6 +111,23 @@ Doğrulanmış şifrelenmiş veritabanı yapılarını, saklama ve anahtar meta 
   aynı artifact id'yle tekrar yüklemenin reddedildiğini, ve
   `OffsiteBackupRestoreVerificationService.DownloadAndVerifyAsync`'in
   orijinal pg_dump baytlarını checksum'ı doğrulayarak geri verdiğini gör.
+- **2026-09-22 sonradan düzeltme (CRITICAL)** (bağımsız denetim): production
+  kodu `OffsiteBackupUploadService.cs:95`'te retry tükendiğinde
+  `EventNameConvention.IsValid`'in reddettiği alt çizgili bir event adı
+  (`offsite_backup.upload_failed`) yayınlıyordu; gerçek
+  `StructuredEventLogger` bu adı `ArgumentException` ile reddediyor, yani
+  yedekleme kalıcı olarak başarısız olduğunda operatöre gitmesi gereken
+  Critical alert HİÇ YAYINLANMIYORDU. Kök neden:
+  `tests/Modules/Operations/OffsiteBackup/Fixtures/RecordingStructuredEventLogger.cs`
+  test double'ı `EventNameConvention.IsValid`'i hiç uygulamıyordu, bu yüzden
+  mevcut test yeşil geçiyordu ama gerçek DI grafiğiyle asla çalışmazdı.
+  Düzeltme: event adı `offsitebackup.upload.failed` olarak değiştirildi
+  (regex'e karşı doğrulandı), test double gerçek convention'ı uygulayacak
+  şekilde güncellendi (ve aynı desendeki
+  `tests/Modules/Operations/RestoreVerification/Fixtures/RecordingStructuredEventLogger.cs`
+  de sınırlı ek olarak aynı şekilde düzeltildi), revert-and-confirm ile
+  eski adla testin gerçekten `ArgumentException` fırlattığı kanıtlandı.
+  Kanıt: `evidence/V15-BKP-001/2026-09-22-event-name-fix-revert-and-confirm.txt`.
 
 ## Handoff
 

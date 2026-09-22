@@ -92,7 +92,7 @@ public sealed class OffsiteBackupUploadService
         }
 
         _eventLogger.Emit(
-            "offsite_backup.upload_failed",
+            "offsitebackup.upload.failed",
             LogSeverity.Critical,
             payload: new Dictionary<string, object?>
             {

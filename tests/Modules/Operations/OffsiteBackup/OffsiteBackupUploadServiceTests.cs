@@ -109,7 +109,7 @@ public sealed class OffsiteBackupUploadServiceTests : IDisposable
         await Assert.ThrowsAsync<OffsiteBackupUploadFailedException>(() => service.UploadAsync(artifact));
 
         var alert = Assert.Single(logger.Events);
-        Assert.Equal("offsite_backup.upload_failed", alert.EventName);
+        Assert.Equal("offsitebackup.upload.failed", alert.EventName);
         Assert.Equal(LogSeverity.Critical, alert.Severity);
     }
 
