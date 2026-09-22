@@ -9,6 +9,11 @@ namespace ALKAROS.Security.DataProtectionRetention;
 /// concurrent run, both fall through as a no-op rather than an error. Each
 /// purge is recorded through V1-OPS-001's audit foundation before the row
 /// disappears — the purge itself is the only lasting evidence otherwise.
+/// The audit event is appended only after the purge itself has
+/// successfully completed: if <see cref="IRetentionSubjectStore.PurgeAsync"/>
+/// throws, no audit event is written for that id — the row remains queued
+/// and is retried on the next run without producing a duplicate audit
+/// event for a purge that never happened.
 /// </summary>
 public sealed class DeletionQueueProcessor
 {
@@ -27,6 +32,7 @@ public sealed class DeletionQueueProcessor
         var queued = await _store.GetDeletionQueueAsync(cancellationToken);
         foreach (var id in queued)
         {
+            await _store.PurgeAsync(id, cancellationToken);
             await _auditStore.AppendAsync(
                 new AuditEvent(
                     Guid.NewGuid(),
@@ -36,7 +42,6 @@ public sealed class DeletionQueueProcessor
                     actorType: "System",
                     correlationId: correlationId),
                 cancellationToken);
-            await _store.PurgeAsync(id, cancellationToken);
         }
         return queued;
     }

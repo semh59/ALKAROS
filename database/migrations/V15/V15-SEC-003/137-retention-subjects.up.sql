@@ -8,7 +8,7 @@
 -- processor hard-deletes it.
 CREATE SCHEMA IF NOT EXISTS security;
 
-CREATE TABLE security.retention_subjects (
+CREATE TABLE IF NOT EXISTS security.retention_subjects (
     id              UUID        NOT NULL,
     data_category   TEXT        NOT NULL,
     envelope_bytes  BYTEA       NOT NULL,
@@ -21,13 +21,24 @@ CREATE TABLE security.retention_subjects (
     CONSTRAINT retention_subjects_disposal_action_check
         CHECK (disposal_action IS NULL OR disposal_action IN ('Anonymize', 'Delete')),
     CONSTRAINT retention_subjects_disposal_consistency_check
-        CHECK ((disposed_at IS NULL) = (disposal_action IS NULL))
+        CHECK ((disposed_at IS NULL) = (disposal_action IS NULL)),
+    -- Mirrors DataCategory's 9 enum values (ALKAROS.Security.DataProtectionRetention.DataCategory) —
+    -- update both if a category is ever added.
+    CONSTRAINT retention_subjects_data_category_check
+        CHECK (data_category IN (
+            'CustomerPii', 'UserCredentials', 'OrderNotes', 'ProviderPayloads',
+            'AuditLogs', 'FiscalData', 'InvoiceData', 'SupplierData', 'DeviceData'
+        ))
 );
 
-CREATE INDEX ix_retention_subjects_pending
+-- Predicate must match PostgresRetentionSubjectStore.GetPendingAsync's actual
+-- WHERE clause (disposed_at IS NULL only - legal_hold is filtered in memory
+-- by RetentionExecutionService, not in SQL) or the planner cannot use this
+-- index at all.
+CREATE INDEX IF NOT EXISTS ix_retention_subjects_pending
     ON security.retention_subjects (data_category, created_at)
-    WHERE disposed_at IS NULL AND legal_hold = FALSE;
+    WHERE disposed_at IS NULL;
 
-CREATE INDEX ix_retention_subjects_delete_queue
+CREATE INDEX IF NOT EXISTS ix_retention_subjects_delete_queue
     ON security.retention_subjects (id)
     WHERE disposal_action = 'Delete' AND disposed_at IS NOT NULL;

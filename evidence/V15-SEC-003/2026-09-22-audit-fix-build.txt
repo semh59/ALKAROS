@@ -1,0 +1,32 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Release\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Release\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Release\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Release\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Release\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Security -> D:\PROJECT\ALKAROS\src\Modules\Security\bin\Release\net8.0\ALKAROS.Security.dll
+
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+
+Geçen Süre 00:00:03.82
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Release\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Release\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Release\net8.0\ALKAROS.Identity.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Release\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Release\net8.0\ALKAROS.Audit.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Release\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Release\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Security -> D:\PROJECT\ALKAROS\src\Modules\Security\bin\Release\net8.0\ALKAROS.Security.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Release\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Security.DataProtectionRetention.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Security\DataProtectionRetention\bin\Release\net8.0\ALKAROS.Security.DataProtectionRetention.Tests.dll
+
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+
+Geçen Süre 00:00:04.22

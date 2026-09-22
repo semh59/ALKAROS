@@ -71,7 +71,7 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
         return ReadRecord(reader);
     }
 
-    public async Task<IReadOnlyList<RetentionSubjectRecord>> GetPendingAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<RetentionSubjectRecord>> GetPendingAsync(CancellationToken cancellationToken, int limit = 1000)
     {
         await using var command = _dataSource.CreateCommand(
             """
@@ -79,8 +79,10 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
                    disposed_at, disposal_action, row_version
             FROM security.retention_subjects
             WHERE disposed_at IS NULL
-            ORDER BY created_at ASC;
+            ORDER BY created_at ASC
+            LIMIT @limit;
             """);
+        command.Parameters.Add("limit", NpgsqlDbType.Integer).Value = limit;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         var results = new List<RetentionSubjectRecord>();
         while (await reader.ReadAsync(cancellationToken))
@@ -88,13 +90,16 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
         return results;
     }
 
-    public async Task<IReadOnlyList<Guid>> GetDeletionQueueAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Guid>> GetDeletionQueueAsync(CancellationToken cancellationToken, int limit = 1000)
     {
         await using var command = _dataSource.CreateCommand(
             """
             SELECT id FROM security.retention_subjects
-            WHERE disposal_action = 'Delete' AND disposed_at IS NOT NULL;
+            WHERE disposal_action = 'Delete' AND disposed_at IS NOT NULL
+            ORDER BY disposed_at ASC
+            LIMIT @limit;
             """);
+        command.Parameters.Add("limit", NpgsqlDbType.Integer).Value = limit;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         var results = new List<Guid>();
         while (await reader.ReadAsync(cancellationToken))
@@ -189,12 +194,25 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
     private static RetentionSubjectRecord ReadRecord(NpgsqlDataReader reader)
     {
         var id = reader.GetFieldValue<Guid>(0);
-        var category = Enum.Parse<DataCategory>(reader.GetString(1));
+
+        var rawCategory = reader.GetString(1);
+        if (!Enum.TryParse<DataCategory>(rawCategory, out var category))
+            throw new RetentionSubjectCorruptDataException(id, nameof(DataCategory), rawCategory);
+
         var envelope = SensitiveEnvelope.FromPersistenceBytes((byte[])reader[2]);
         var createdAt = reader.GetFieldValue<DateTimeOffset>(3);
         var legalHold = reader.GetFieldValue<bool>(4);
         var disposedAt = reader.IsDBNull(5) ? (DateTimeOffset?)null : reader.GetFieldValue<DateTimeOffset>(5);
-        var action = reader.IsDBNull(6) ? (DisposalAction?)null : Enum.Parse<DisposalAction>(reader.GetString(6));
+
+        DisposalAction? action = null;
+        if (!reader.IsDBNull(6))
+        {
+            var rawAction = reader.GetString(6);
+            if (!Enum.TryParse<DisposalAction>(rawAction, out var parsedAction))
+                throw new RetentionSubjectCorruptDataException(id, nameof(DisposalAction), rawAction);
+            action = parsedAction;
+        }
+
         var rowVersion = reader.GetFieldValue<int>(7);
 
         return new RetentionSubjectRecord(id, category, envelope, createdAt, legalHold, disposedAt, action, rowVersion);

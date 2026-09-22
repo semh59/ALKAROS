@@ -85,6 +85,29 @@ public sealed class RetentionExecutionServiceTests : IAsyncLifetime
         (await store.GetAsync(id, default))!.IsDisposed.Should().BeFalse();
     }
 
+    [Theory]
+    [InlineData(DataCategory.FiscalData)]
+    [InlineData(DataCategory.InvoiceData)]
+    public async Task RetainClassSubjectWithNoConfiguredPeriodIsBucketedAsSkippedRetainNotSkippedNotExpired(DataCategory category)
+    {
+        // Regression for the audit finding: RunSweepAsync used to check the
+        // retention period before the Retain action, so FiscalData/
+        // InvoiceData (both Retain-class, both with a null period) fell into
+        // SkippedNotExpired instead of SkippedRetain. Behavior (never
+        // disposed) was already correct - only the reporting bucket was
+        // wrong. The action check now runs first.
+        var (store, protector, audit) = Build();
+        var envelope = RetentionCryptoFixtures.ProtectTestPayload(protector, RetentionCryptoFixtures.OldKey);
+        var id = await store.InsertAsync(category, envelope, false, DateTimeOffset.UnixEpoch, default);
+
+        var result = await new RetentionExecutionService(store, audit).RunSweepAsync(DateTimeOffset.UtcNow, "corr-4b", default);
+
+        result.SkippedRetain.Should().Contain(id);
+        result.SkippedNotExpired.Should().NotContain(id);
+        result.Disposed.Should().NotContain(id);
+        audit.Events.Should().BeEmpty();
+    }
+
     [Fact]
     public async Task NotYetExpiredSubjectIsUntouched()
     {

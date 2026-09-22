@@ -1,0 +1,46 @@
+Evidence: ix_retention_subjects_pending is used by the planner after the predicate fix (2026-09-22)
+Setup: 20000 rows, 400 pending (disposed_at IS NULL), realistic selectivity for the sweep query.
+
+=== row counts ===
+INSERT 0 20000
+ANALYZE
+ pending | total 
+---------+-------
+     400 | 20000
+(1 row)
+
+
+=== EXPLAIN for GetPendingAsync's actual query shape (WHERE disposed_at IS NULL ORDER BY created_at ASC LIMIT 1000) ===
+                                                QUERY PLAN                                                 
+-----------------------------------------------------------------------------------------------------------
+ Limit  (cost=318.85..319.85 rows=400 width=63)
+   ->  Sort  (cost=318.85..319.85 rows=400 width=63)
+         Sort Key: created_at
+         ->  Bitmap Heap Scan on retention_subjects  (cost=30.37..301.56 rows=400 width=63)
+               Recheck Cond: (disposed_at IS NULL)
+               ->  Bitmap Index Scan on ix_retention_subjects_pending  (cost=0.00..30.27 rows=400 width=0)
+(6 rows)
+
+
+=== Table definition (CHECK constraints, indexes) ===
+                     Table "security.retention_subjects"
+     Column      |           Type           | Collation | Nullable | Default 
+-----------------+--------------------------+-----------+----------+---------
+ id              | uuid                     |           | not null | 
+ data_category   | text                     |           | not null | 
+ envelope_bytes  | bytea                    |           | not null | 
+ created_at      | timestamp with time zone |           | not null | 
+ legal_hold      | boolean                  |           | not null | false
+ disposed_at     | timestamp with time zone |           |          | 
+ disposal_action | text                     |           |          | 
+ row_version     | integer                  |           | not null | 1
+Indexes:
+    "retention_subjects_pkey" PRIMARY KEY, btree (id)
+    "ix_retention_subjects_delete_queue" btree (id) WHERE disposal_action = 'Delete'::text AND disposed_at IS NOT NULL
+    "ix_retention_subjects_pending" btree (data_category, created_at) WHERE disposed_at IS NULL
+Check constraints:
+    "retention_subjects_data_category_check" CHECK (data_category = ANY (ARRAY['CustomerPii'::text, 'UserCredentials'::text, 'OrderNotes'::text, 'ProviderPayloads'::text, 'AuditLogs'::text, 'FiscalData'::text, 'InvoiceData'::text, 'SupplierData'::text, 'DeviceData'::text]))
+    "retention_subjects_disposal_action_check" CHECK (disposal_action IS NULL OR (disposal_action = ANY (ARRAY['Anonymize'::text, 'Delete'::text])))
+    "retention_subjects_disposal_consistency_check" CHECK ((disposed_at IS NULL) = (disposal_action IS NULL))
+    "retention_subjects_row_version_check" CHECK (row_version > 0)
+

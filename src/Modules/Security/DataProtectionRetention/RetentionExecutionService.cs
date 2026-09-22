@@ -44,17 +44,17 @@ public sealed class RetentionExecutionService
                 continue;
             }
 
-            var period = DisposalMatrix.RetentionPeriodFor(subject.Category);
-            if (period is null || now - subject.CreatedAt < period.Value)
-            {
-                skippedNotExpired.Add(subject.Id);
-                continue;
-            }
-
             var action = DisposalMatrix.ActionFor(subject.Category);
             if (action == DisposalAction.Retain)
             {
                 skippedRetain.Add(subject.Id);
+                continue;
+            }
+
+            var period = DisposalMatrix.RetentionPeriodFor(subject.Category);
+            if (period is null || now - subject.CreatedAt < period.Value)
+            {
+                skippedNotExpired.Add(subject.Id);
                 continue;
             }
 

@@ -19,11 +19,21 @@ public interface IRetentionSubjectStore
 
     Task<RetentionSubjectRecord?> GetAsync(Guid id, CancellationToken cancellationToken);
 
-    /// <summary>Not-yet-disposed subjects, oldest first.</summary>
-    Task<IReadOnlyList<RetentionSubjectRecord>> GetPendingAsync(CancellationToken cancellationToken);
+    /// <summary>
+    /// Not-yet-disposed subjects, oldest first, bounded by
+    /// <paramref name="limit"/> so a growing table fails loudly (a caller
+    /// that needs "the rest" sees a short result and can page) rather than
+    /// silently returning an ever-larger unbounded result set.
+    /// </summary>
+    Task<IReadOnlyList<RetentionSubjectRecord>> GetPendingAsync(CancellationToken cancellationToken, int limit = 1000);
 
-    /// <summary>Ids currently queued for hard deletion (disposed with <see cref="DataProtectionRetention.DisposalAction.Delete"/>).</summary>
-    Task<IReadOnlyList<Guid>> GetDeletionQueueAsync(CancellationToken cancellationToken);
+    /// <summary>
+    /// Ids currently queued for hard deletion (disposed with
+    /// <see cref="DataProtectionRetention.DisposalAction.Delete"/>), oldest
+    /// disposal first, bounded by <paramref name="limit"/> for the same
+    /// reason as <see cref="GetPendingAsync"/>.
+    /// </summary>
+    Task<IReadOnlyList<Guid>> GetDeletionQueueAsync(CancellationToken cancellationToken, int limit = 1000);
 
     /// <summary>
     /// Marks a subject Anonymize-disposed and overwrites its envelope with a

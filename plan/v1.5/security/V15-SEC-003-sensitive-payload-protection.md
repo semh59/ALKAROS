@@ -86,6 +86,16 @@ V1-SEC-002 sınırı üzerinde retention enforcement, authorized re-encryption v
 - `python tools/consistency-audit/consistency_audit.py` → temiz (`evidence/V15-SEC-003/consistency-audit.txt`).
 - `python tools/project-manifest/project_manifest_tool.py` → VALID
   (`evidence/V15-SEC-003/project-manifest-validate.txt`).
+- **2026-09-22 sonradan düzeltme** (bağımsız denetim): migration 137'de 3 gerçek kusur (kullanılmayan partial index —
+  predicate gerçek sorguyla eşleşmiyordu; idempotent olmayan `CREATE TABLE`/`CREATE INDEX`; eksik `data_category`
+  CHECK constraint'i) ve `PostgresRetentionSubjectStore.ReadRecord`'da bir kod-seviyesi fail-safe eksikliği
+  (`Enum.Parse` → `Enum.TryParse` + yeni `RetentionSubjectCorruptDataException`) düzeltildi; ayrıca
+  `GetPendingAsync`/`GetDeletionQueueAsync`'e parametrik `LIMIT` (varsayılan 1000), `DeletionQueueProcessor`'da
+  audit-event/purge sıralaması (artık purge başarıyla bittikten SONRA audit yazılıyor) ve
+  `RetentionExecutionService.RunSweepAsync`'te `Retain` aksiyon kontrolünün süre kontrolünden önce yapılması
+  (FiscalData/InvoiceData artık doğru şekilde `SkippedRetain`'e düşüyor) düzeltildi. 40/40 test (8 yeni), migration
+  ileri/geri gerçek Postgres'e karşı yeniden doğrulandı — bkz. `evidence/V15-SEC-003/README.md`'nin "2026-09-22
+  sonradan düzeltilen kusurlar" bölümü ve `evidence/V15-SEC-003/2026-09-22-audit-fix-*.txt`.
 
 ## Handoff
 
