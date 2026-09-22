@@ -66,7 +66,7 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 | 21 | Reporting | none (reads projections only) | none | II.2.20 |
 | 22 | Reconciliation | Payment, Fiscal, Invoice, Print (mismatch sources) | ReconciliationCaseChanged → Observability, Reporting | II.2.21, II.5.12 |
 | 23 | Audit | none (append-only event trail consumer) | none | II.2.22, II.9 |
-| 24 | Backup | none (infrastructure) | BackupJobStateChanged → Observability | II.2.23 |
+| 24 | Backup | Observability (structured alert logging on upload failure, V15-BKP-001) | BackupJobStateChanged → Observability | II.2.23 |
 | 25 | Licensing | none (cross-cutting validation; consumed by composition) | none | II.2.24 |
 | 26 | Observability | none (cross-cutting consumer) | none | II.2.25 |
 | 27 | Purchasing | Inventory (goods receipt stock movement) | none yet | 2026-09-06 addition |

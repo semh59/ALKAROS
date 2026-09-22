@@ -88,6 +88,9 @@ public static class ModuleBoundaryTests
             ["Cash.TransactionLedger"] = ["Cash"],
             ["Cash.TenderHandler"] = ["Cash", "Cash.TransactionLedger", "Payments", "Payments.Allocations.Persistence", "Billing"],
             ["Payments.Allocations.Persistence"] = ["Payments", "Billing"],
+            // V15-BKP-001: module-dependency-rules.md row 24 ("Backup"),
+            // structured alert logging on upload/RPO failure.
+            ["Operations"] = ["Observability"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()

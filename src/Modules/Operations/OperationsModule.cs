@@ -7,7 +7,7 @@ public sealed class OperationsModule : IModule
 {
     public string Id => "Operations";
     public string DisplayName => "System Operations and Backup";
-    public IReadOnlyCollection<string> DependsOn => [];
+    public IReadOnlyCollection<string> DependsOn => ["Observability"];
 
     public void Register(ModuleContext context)
     {
