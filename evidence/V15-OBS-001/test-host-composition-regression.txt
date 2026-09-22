@@ -1,0 +1,4 @@
+﻿D:\PROJECT\ALKAROS\tests\Host\Experience\Composition\bin\Release\net8.0\ALKAROS.Host.Experience.Composition.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 16 s - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)
