@@ -91,6 +91,11 @@ public static class ModuleBoundaryTests
             // V15-BKP-001: module-dependency-rules.md row 24 ("Backup"),
             // structured alert logging on upload/RPO failure.
             ["Operations"] = ["Observability"],
+            // V15-SUP-001: module-dependency-rules.md row 28 ("Support") -
+            // system status summary reuses Observability's health-check
+            // query, selected correlation logs and the bundle's own
+            // provenance record reuse Audit's existing event store.
+            ["Support"] = ["Observability", "Audit"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()

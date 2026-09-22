@@ -1,0 +1,4 @@
+﻿D:\PROJECT\ALKAROS\tests\Modules\Support\DiagnosticBundle\bin\Release\net8.0\ALKAROS.Support.DiagnosticBundle.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    19, Atlanan:     0, Toplam:    19, Süre: 16 s - ALKAROS.Support.DiagnosticBundle.Tests.dll (net8.0)

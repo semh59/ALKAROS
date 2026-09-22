@@ -247,6 +247,17 @@
       "packages": []
     },
     {
+      "path": "src/Modules/Support/ALKAROS.Support.csproj",
+      "kind": "module",
+      "module": "Support",
+      "references": [
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj",
+        "src/Modules/Observability/ALKAROS.Observability.csproj",
+        "src/Modules/Audit/ALKAROS.Audit.csproj"
+      ],
+      "packages": []
+    },
+    {
       "path": "src/Modules/Identity/ALKAROS.Identity.csproj",
       "kind": "module",
       "module": "Identity",
@@ -705,6 +716,23 @@
         "xunit",
         "xunit.runner.visualstudio",
         "FluentAssertions",
+        "Npgsql"
+      ]
+    },
+    {
+      "path": "tests/Modules/Support/DiagnosticBundle/ALKAROS.Support.DiagnosticBundle.Tests.csproj",
+      "kind": "test",
+      "module": "DiagnosticBundle",
+      "references": [
+        "src/Modules/Support/ALKAROS.Support.csproj",
+        "src/Modules/Observability/ALKAROS.Observability.csproj",
+        "src/Modules/Audit/ALKAROS.Audit.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
         "Npgsql"
       ]
     }

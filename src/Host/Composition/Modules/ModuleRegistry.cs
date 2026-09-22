@@ -29,6 +29,7 @@ public static class ModuleRegistry
         typeof(ALKAROS.Reconciliation.ReconciliationModule),
         typeof(ALKAROS.Reporting.ReportingModule),
         typeof(ALKAROS.Settings.SettingsModule),
+        typeof(ALKAROS.Support.SupportModule),
         typeof(ALKAROS.Recipes.RecipesModule),
         typeof(ALKAROS.Inventory.InventoryModule),
         typeof(ALKAROS.Menu.MenuModule),

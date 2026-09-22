@@ -22,6 +22,7 @@
   <Project Path="src/Modules/Reporting/ALKAROS.Reporting.csproj" />
   <Project Path="src/Modules/Security/ALKAROS.Security.csproj" />
   <Project Path="src/Modules/Settings/ALKAROS.Settings.csproj" />
+  <Project Path="src/Modules/Support/ALKAROS.Support.csproj" />
   <Project Path="src/Modules/Tables/ALKAROS.Tables.csproj" />
   <Project Path="src/Modules/Recipes/ALKAROS.Recipes.csproj" />
   <Project Path="src/Modules/Inventory/ALKAROS.Inventory.csproj" />
@@ -119,6 +120,7 @@
   <Project Path="tests/Modules/Settings/ReservationStation/ALKAROS.Settings.ReservationStation.Tests.csproj" />
   <Project Path="tests/Modules/Settings/WaiterMaxActiveTables/ALKAROS.Settings.WaiterMaxActiveTables.Tests.csproj" />
   <Project Path="tests/Modules/Settings/BusinessIdentity/ALKAROS.Settings.BusinessIdentity.Tests.csproj" />
+  <Project Path="tests/Modules/Support/DiagnosticBundle/ALKAROS.Support.DiagnosticBundle.Tests.csproj" />
   <Project Path="tests/Modules/Tables/CurrentPointers/ALKAROS.Tables.CurrentPointers.Tests.csproj" />
   <Project Path="tests/Modules/Tables/Reservations/ALKAROS.Tables.Reservations.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj" />

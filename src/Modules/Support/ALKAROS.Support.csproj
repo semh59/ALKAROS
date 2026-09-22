@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSModule>true</ALKAROSModule>
+    <RootNamespace>ALKAROS.Support</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <!-- V15-SUP-001: system status summary and JSON key-based redaction
+         reuse V15-OBS-001/V1-OBS-001's Observability boundary instead of
+         duplicating it. -->
+    <ProjectReference Include="..\Observability\ALKAROS.Observability.csproj" />
+    <!-- V15-SUP-001: selected correlation-id logs and the bundle's own
+         provenance record both reuse the existing Audit trail
+         (IAuditEventStore.GetByCorrelationIdAsync) instead of standing up a
+         second log store. -->
+    <ProjectReference Include="..\Audit\ALKAROS.Audit.csproj" />
+  </ItemGroup>
+
+</Project>

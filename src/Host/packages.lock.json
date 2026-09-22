@@ -260,6 +260,14 @@
           "ALKAROS.ModuleComposition": "[1.0.0, )"
         }
       },
+      "alkaros.support": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Audit": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Observability": "[1.0.0, )"
+        }
+      },
       "alkaros.tables": {
         "type": "Project",
         "dependencies": {

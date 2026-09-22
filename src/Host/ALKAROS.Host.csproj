@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Modules\Reporting\ALKAROS.Reporting.csproj" />
     <ProjectReference Include="..\Modules\Reconciliation\ALKAROS.Reconciliation.csproj" />
     <ProjectReference Include="..\Modules\Settings\ALKAROS.Settings.csproj" />
+    <ProjectReference Include="..\Modules\Support\ALKAROS.Support.csproj" />
     <ProjectReference Include="..\Modules\Identity\ALKAROS.Identity.csproj" />
     <ProjectReference Include="..\Modules\Audit\ALKAROS.Audit.csproj" />
     <ProjectReference Include="..\Modules\Observability\ALKAROS.Observability.csproj" />

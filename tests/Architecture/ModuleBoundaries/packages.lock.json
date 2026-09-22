@@ -215,6 +215,7 @@
           "ALKAROS.Reconciliation": "[1.0.0, )",
           "ALKAROS.Reporting": "[1.0.0, )",
           "ALKAROS.Settings": "[1.0.0, )",
+          "ALKAROS.Support": "[1.0.0, )",
           "ALKAROS.Tables": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection": "[8.0.1, )"
         }
@@ -392,6 +393,14 @@
         "type": "Project",
         "dependencies": {
           "ALKAROS.ModuleComposition": "[1.0.0, )"
+        }
+      },
+      "alkaros.support": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Audit": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Observability": "[1.0.0, )"
         }
       },
       "alkaros.tables": {

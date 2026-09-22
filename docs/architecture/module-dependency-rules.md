@@ -70,6 +70,7 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 | 25 | Licensing | none (cross-cutting validation; consumed by composition) | none | II.2.24 |
 | 26 | Observability | none (cross-cutting consumer) | none | II.2.25 |
 | 27 | Purchasing | Inventory (goods receipt stock movement) | none yet | 2026-09-06 addition |
+| 28 | Support | Observability (system status summary), Audit (selected correlation logs, bundle provenance) | none | V15-SUP-001, 2026-09-22 addition |
 
 Notes:
 
