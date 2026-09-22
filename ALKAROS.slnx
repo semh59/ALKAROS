@@ -111,6 +111,7 @@
   <Project Path="tests/Modules/Settings/KitchenDenseModeThreshold/ALKAROS.Settings.KitchenDenseModeThreshold.Tests.csproj" />
   <Project Path="tests/Modules/Settings/ReservationStation/ALKAROS.Settings.ReservationStation.Tests.csproj" />
   <Project Path="tests/Modules/Settings/WaiterMaxActiveTables/ALKAROS.Settings.WaiterMaxActiveTables.Tests.csproj" />
+  <Project Path="tests/Modules/Settings/BusinessIdentity/ALKAROS.Settings.BusinessIdentity.Tests.csproj" />
   <Project Path="tests/Modules/Tables/CurrentPointers/ALKAROS.Tables.CurrentPointers.Tests.csproj" />
   <Project Path="tests/Modules/Tables/Reservations/ALKAROS.Tables.Reservations.Tests.csproj" />
   <Project Path="tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj" />

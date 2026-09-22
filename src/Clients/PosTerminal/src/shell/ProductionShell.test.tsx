@@ -65,6 +65,12 @@ describe("production shell", () => {
     expect(document.body.textContent).toContain("Deniz Kaya");
     expect(document.querySelector('.ds-drawer--persistent')).not.toBeNull();
     expect(document.querySelector(".production-shell__brand")?.hasAttribute("aria-label")).toBe(false);
+    // V1-RMD-256: the brand mark is now the real ALKAROS logo image, not
+    // plain "ALKAROS" text.
+    const brandMark = document.querySelector<HTMLImageElement>(".production-shell__brand-mark");
+    expect(brandMark?.tagName).toBe("IMG");
+    expect(brandMark?.alt).toBe("ALKAROS");
+    expect(brandMark?.getAttribute("src")).toBeTruthy();
     expect(document.querySelector('.production-shell__identity[role="group"][aria-label="Aktif çalışma bağlamı"]')).not.toBeNull();
   });
 

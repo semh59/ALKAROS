@@ -134,6 +134,9 @@ public static partial class DualScreenApplication
         // since V1-SET-001 with zero HTTP surface — a setting could only
         // ever change via direct database access.
         builder.Services.AddSettingsManagementExperience();
+        // V1-SET-008: the business's own QR-page logo — same manager gate
+        // V1-RMD-246 just built for business.name/business.accent_theme.
+        builder.Services.AddBusinessIdentityLogoExperience();
         // V1-RMD-143: Semih's decision (2026-09-09) that order acceptance
         // should really decrement stock needed this first — nothing could
         // ever configure which product maps to which stock item before now.
@@ -278,6 +281,16 @@ public static partial class DualScreenApplication
             // each holds a distinct session.
             rateLimiter.AddPolicy("qr-order", context =>
                 FixedWindow(HeaderPartition(context, QrOrderingEndpoints.SessionHeaderName, "qr-order"), RelayAbusePolicy.PerTokenRequestLimit));
+            // V1-SET-007/008: /branding and /logo are deliberately session-free
+            // (the page's first render happens before a session exists), so
+            // HeaderPartition would collapse every visitor without a session
+            // header into one shared "qr-order:missing" bucket alongside
+            // qr-order's real per-session traffic — starving unrelated
+            // customers' menu/order calls once enough branding/logo reads
+            // land in the same window. Partitioned by IP instead, same bound
+            // as qr-session.
+            rateLimiter.AddPolicy("qr-public", context =>
+                FixedWindow(ClientPartition(context), RelayAbusePolicy.PerIpRequestLimit));
             rateLimiter.AddPolicy("display-read", context =>
                 FixedWindow(RoutePartition(context, "displayId", "display-read"), 240));
         });
@@ -540,6 +553,7 @@ public static partial class DualScreenApplication
         app.MapPurchasingManagement();
         app.MapProductionManagement();
         app.MapSettingsManagement();
+        app.MapBusinessIdentityLogoApi();
         app.MapStockMasterApi();
         app.MapRecipeCatalogMappingApi();
         app.MapRecipeCostSnapshotApi();

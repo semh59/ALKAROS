@@ -118,8 +118,25 @@
     connectivityPill: document.getElementById('connectivityPill'),
     connectivityLabel: document.getElementById('connectivityLabel'),
     dispatchHint: document.getElementById('dispatchHint'),
-    dispatchWaiterSelect: document.getElementById('dispatchWaiterSelect')
+    dispatchWaiterSelect: document.getElementById('dispatchWaiterSelect'),
+    toastRegion: document.getElementById('toastRegion')
   };
+
+  // V1-RMD-253: replaces native alert() in the dispatch flow — a blocking
+  // dialog the cashier had to manually dismiss on every single order,
+  // including a successful one. Mirrors foundations.md §5.3's toast
+  // pattern (self-dismissing, 3-5s) already used by WaiterPwa/PosTerminal.
+  // textContent (not innerHTML) needs no HTML escaping — every message
+  // passed here is a fixed Turkish string, never user-entered text.
+  function showToast(message, tone) {
+    if (!el.toastRegion) return;
+    const node = document.createElement('div');
+    node.className = `toast toast--${tone}`;
+    node.setAttribute('role', tone === 'error' ? 'alert' : 'status');
+    node.textContent = message;
+    el.toastRegion.appendChild(node);
+    window.setTimeout(() => node.remove(), tone === 'error' ? 6000 : 5000);
+  }
 
   // Found by an independent audit (2026-09-07): this badge was static
   // markup — always "Çevrimiçi" regardless of the terminal's actual
@@ -456,7 +473,7 @@
   async function dispatchOrderToKitchen() {
     if (state.ticketItems.length === 0) return;
     if (state.catalogStatus !== 'ready') {
-      alert('Katalog sunucudan alınamadığı için sipariş gönderilemiyor.');
+      showToast('Katalog sunucudan alınamadığı için sipariş gönderilemiyor.', 'error');
       return;
     }
     // Defense in depth: the button is already disabled offline
@@ -465,7 +482,7 @@
     // the three-request dispatch sequence with no retry/idempotency queue
     // behind it.
     if (!state.isOnline) {
-      alert('Bağlantı yok. Sipariş gönderilemiyor.');
+      showToast('Bağlantı yok. Sipariş gönderilemiyor.', 'error');
       return;
     }
     // Found by an independent audit (2026-09-05): nothing stopped a second
@@ -540,7 +557,7 @@
       });
 
       if (!draftResponse.ok) {
-        alert(describeHttpFailure(draftResponse.status));
+        showToast(describeHttpFailure(draftResponse.status), 'error');
         return;
       }
 
@@ -568,7 +585,7 @@
         } catch (recoveryError) {
           console.error('KASA-1 kurtarma sorgusu başarısız:', recoveryError);
         }
-        alert('Sunucuya ulaşılamadı. Sipariş iletilemedi.');
+        showToast('Sunucuya ulaşılamadı. Sipariş iletilemedi.', 'error');
         return;
       }
       // Found by an independent audit (2026-09-06): the draft above was
@@ -592,7 +609,7 @@
       });
 
       if (!submitResponse.ok) {
-        alert(describeHttpFailure(submitResponse.status));
+        showToast(describeHttpFailure(submitResponse.status), 'error');
         return;
       }
 
@@ -601,9 +618,9 @@
       state.shiftTotalOrders += 1;
       state.ticketItems = [];
       renderTicket();
-      alert(`Sipariş mutfağa iletildi. (${itemCount} kalem, ${formatMoney(total)})`);
+      showToast(`Sipariş mutfağa iletildi. (${itemCount} kalem, ${formatMoney(total)})`, 'success');
     } catch {
-      alert('Sunucuya ulaşılamadı. Sipariş iletilemedi.');
+      showToast('Sunucuya ulaşılamadı. Sipariş iletilemedi.', 'error');
     } finally {
       // V1-RMD-157: KASA-1 is a fixed, shared endpoint for unrelated
       // walk-up customers, not a real table — a successful table-draft

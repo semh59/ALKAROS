@@ -1,4 +1,5 @@
 import type {
+  AccentPaletteResponse,
   ApiErrorBody,
   CatalogProduct,
   DisplaySnapshot,
@@ -9,8 +10,10 @@ import type {
   PairingCreated,
   QnbConnectionTestResult,
   QnbCredentialStatus,
+  QrBrandingResponse,
   RelayCredentialStatus,
   RuntimeConfiguration,
+  SettingRecord,
   TokenTerminalCredentialStatus,
 } from "./contracts";
 
@@ -19,6 +22,17 @@ import type {
 export interface IdleScreensaver {
   url: string;
   contentType: string;
+}
+
+// V1-CUI-012: fetchBusinessLogo's result — an object URL for the real,
+// currently-set logo (or null when none is set), unlike
+// CustomerDisplayScreensaverSettings.tsx's own screen, whose read endpoint
+// requires a display session a manager's PosTerminal login does not have.
+// GET /api/v1/qr/logo is deliberately public, so this screen CAN show the
+// server's actual current state on every load, not just this session's own
+// last upload.
+export interface BusinessLogoPreview {
+  url: string;
 }
 
 export class ApiError extends Error {
@@ -310,4 +324,61 @@ export const api = {
     request<QnbConnectionTestResult>(`/api/v1/terminals/${terminalId}/qnb-credential/test-connection`, {
       method: "POST",
     }),
+  // V1-CUI-012: public/session-free, same endpoint the QR customer pages
+  // use — reading it also self-registers business.name/business.accent_theme
+  // (BusinessNameSetting/BusinessAccentThemeSetting) if this is the very
+  // first time either has ever been read, which the two management
+  // GETs below require to already exist.
+  qrBranding: () => request<QrBrandingResponse>("/api/v1/qr/branding"),
+  accentPalette: () => request<AccentPaletteResponse>("/api/v1/management/business-identity/accent-palette"),
+  getSetting: (key: string) => request<SettingRecord>(`/api/v1/management/settings/${key}`),
+  updateSetting: (key: string, newValue: string, expectedRowVersion: number, reason?: string) =>
+    request<SettingRecord>(`/api/v1/management/settings/${key}`, {
+      method: "PUT",
+      body: JSON.stringify({ newValue, expectedRowVersion, reason: reason ?? null }),
+    }),
+  // Bypasses `request` like fetchIdleScreensaver does — raw image bytes, not
+  // JSON; a missing logo (404) is the expected default, resolves to null.
+  fetchBusinessLogo: async (): Promise<BusinessLogoPreview | null> => {
+    let response: Response;
+    try {
+      response = await fetch("/api/v1/qr/logo", { credentials: "same-origin" });
+    } catch {
+      return null;
+    }
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return { url: URL.createObjectURL(blob) };
+  },
+  // Multipart body, so this bypasses `request` too — same reasoning as
+  // uploadScreensaver.
+  uploadBusinessLogo: async (file: File): Promise<void> => {
+    const body = new FormData();
+    body.append("file", file);
+    let response: Response;
+    try {
+      response = await fetch("/api/v1/management/business-identity/logo", {
+        method: "PUT",
+        credentials: "same-origin",
+        body,
+      });
+    } catch {
+      throw new ApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.");
+    }
+    if (!response.ok) {
+      let errorBody: ApiErrorBody | undefined;
+      try {
+        errorBody = (await response.json()) as ApiErrorBody;
+      } catch {
+        errorBody = undefined;
+      }
+      throw new ApiError(
+        response.status,
+        errorBody?.error?.code ?? "REQUEST_FAILED",
+        errorBody?.error?.message ?? "İşlem tamamlanamadı.",
+      );
+    }
+  },
+  removeBusinessLogo: () =>
+    request<void>("/api/v1/management/business-identity/logo", { method: "DELETE" }),
 };

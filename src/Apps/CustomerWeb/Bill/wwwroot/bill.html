@@ -9,6 +9,12 @@
 <body>
   <header class="bill-header">
     <a class="back-link" href="./index.html">‹ Menüye dön</a>
+    <!-- V1-SET-009: the business's own name/logo (V1-SET-007/008) — hidden
+         until bill.js's loadBranding() finds either one set. -->
+    <div id="businessBrand" class="business-brand" hidden>
+      <img id="businessLogo" class="business-logo" alt="" hidden>
+      <p id="businessName" class="business-name" hidden></p>
+    </div>
     <h1>Adisyonum</h1>
     <p class="bill-live-note">Bu ekran canlı güncellenir, garsonu çağırmanıza gerek yok.</p>
   </header>

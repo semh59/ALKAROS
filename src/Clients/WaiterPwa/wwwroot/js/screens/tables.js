@@ -145,7 +145,7 @@ export function renderTables() {
             </span>
           </span>
           <span class="tagrow"><span class="tag tag-status">${escapeHtml(status.label)}</span>${busy ? tableAgeBadgeHtml(tableAgeMinutes(table.openedAt)) : ''}</span>
-          <span class="table-amount${busy ? '' : ' is-empty'}">${busy ? formatMoney(table.amount) : 'Boş'}</span>
+          <span class="table-amount${busy ? '' : ' is-empty'}">${busy ? formatMoney(table.amount) : ''}</span>
         </button>
         ${quick}
       </div>`;

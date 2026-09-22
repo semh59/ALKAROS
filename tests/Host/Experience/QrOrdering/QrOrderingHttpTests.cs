@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.QrOrdering.PendingOrders;
+using ALKAROS.Settings.BusinessIdentity;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -484,6 +486,125 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
+    [Fact]
+    public async Task BrandingIsReachableWithNoSessionAndDefaultsToTheUnsetPaletteColor()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        // No X-Alkaros-Qr-Session header at all — unlike every other route
+        // in this group, /branding must not require one (V1-SET-007).
+        using var response = await client.GetAsync("/api/v1/qr/branding");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<QrBrandingResponse>();
+        Assert.Equal("", body!.BusinessName);
+        Assert.Equal(BusinessAccentPalette.Resolve(null).Hex, body.AccentColor);
+        Assert.False(body.HasLogo);
+    }
+
+    [Fact]
+    public async Task BrandingReflectsAnOperatorSettingTheBusinessNameAndColor()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var settings = app.Services.GetRequiredService<ISettingsService>();
+
+        await BusinessNameSetting.EnsureRegisteredAsync(settings);
+        var nameRecord = await settings.GetRecordAsync(BusinessNameSetting.Key);
+        await settings.SetValueAsync(BusinessNameSetting.Key, "Sahil Cafe", nameRecord!.RowVersion);
+
+        await BusinessAccentThemeSetting.EnsureRegisteredAsync(settings);
+        var themeRecord = await settings.GetRecordAsync(BusinessAccentThemeSetting.Key);
+        await settings.SetValueAsync(BusinessAccentThemeSetting.Key, "lacivert", themeRecord!.RowVersion);
+
+        using var response = await client.GetAsync("/api/v1/qr/branding");
+
+        var body = await response.Content.ReadFromJsonAsync<QrBrandingResponse>();
+        Assert.Equal("Sahil Cafe", body!.BusinessName);
+        Assert.Equal("#1B4D7B", body.AccentColor);
+    }
+
+    [Fact]
+    public async Task BrandingFallsBackToTheDefaultPaletteColorWhenTheStoredThemeIsNotARecognizedKey()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var settings = app.Services.GetRequiredService<ISettingsService>();
+
+        await BusinessAccentThemeSetting.EnsureRegisteredAsync(settings);
+        var themeRecord = await settings.GetRecordAsync(BusinessAccentThemeSetting.Key);
+        // A real corrupted-data scenario, not a revert-and-confirm: a stale
+        // key from a since-shrunk palette (or a hand-edited DB row) must
+        // never reach a customer-facing page as-is (V1-SET-007).
+        await settings.SetValueAsync(BusinessAccentThemeSetting.Key, "#FF00FF", themeRecord!.RowVersion);
+
+        using var response = await client.GetAsync("/api/v1/qr/branding");
+
+        var body = await response.Content.ReadFromJsonAsync<QrBrandingResponse>();
+        Assert.Equal(BusinessAccentPalette.Resolve(null).Hex, body!.AccentColor);
+    }
+
+    [Fact]
+    public async Task LogoIsNotFoundWhenNoneHasBeenSet()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync("/api/v1/qr/logo");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task BrandingReportsHasLogoFalseWhenNoneHasBeenSet()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync("/api/v1/qr/branding");
+
+        var body = await response.Content.ReadFromJsonAsync<QrBrandingResponse>();
+        Assert.False(body!.HasLogo);
+    }
+
+    [Fact]
+    public async Task LogoReturnsTheUploadedBytesAndBrandingReflectsItsPresence()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var logoStore = app.Services.GetRequiredService<IBusinessLogoStore>();
+        byte[] png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 1, 2, 3];
+        await logoStore.SaveAsync(png, "image/png", CancellationToken.None);
+
+        using var logoResponse = await client.GetAsync("/api/v1/qr/logo");
+        Assert.Equal(HttpStatusCode.OK, logoResponse.StatusCode);
+        Assert.Equal("image/png", logoResponse.Content.Headers.ContentType!.MediaType);
+        Assert.Equal(png, await logoResponse.Content.ReadAsByteArrayAsync());
+
+        using var brandingResponse = await client.GetAsync("/api/v1/qr/branding");
+        var body = await brandingResponse.Content.ReadFromJsonAsync<QrBrandingResponse>();
+        Assert.True(body!.HasLogo);
+    }
+
+    [Fact]
+    public async Task LogoHonorsIfNoneMatchWithA304()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var logoStore = app.Services.GetRequiredService<IBusinessLogoStore>();
+        await logoStore.SaveAsync([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], "image/png", CancellationToken.None);
+
+        using var first = await client.GetAsync("/api/v1/qr/logo");
+        var etag = first.Headers.ETag!.Tag;
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/qr/logo");
+        request.Headers.TryAddWithoutValidation("If-None-Match", etag);
+        using var second = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.NotModified, second.StatusCode);
+    }
+
     private static Task<HttpResponseMessage> PostOrderAsync(
         HttpClient client, string sessionToken, Guid submissionId, Guid productId, int quantity)
     {
@@ -517,6 +638,7 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         {
             options.AddPolicy("qr-session", _ => System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("test"));
             options.AddPolicy("qr-order", _ => System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("test"));
+            options.AddPolicy("qr-public", _ => System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("test"));
         });
         builder.Services.AddQrOrderingExperience();
         var app = builder.Build();

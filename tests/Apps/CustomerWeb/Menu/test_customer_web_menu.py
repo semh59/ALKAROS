@@ -67,3 +67,26 @@ def test_customer_web_menu_cart_accumulates_but_never_submits():
     assert "alkaros.qr.cart" in app_code
     assert "Sepete ekle" in html or "Sepete ekle" in app_code
     assert 'href="./order-entry.html"' in html
+
+
+def test_customer_web_menu_renders_the_business_own_identity():
+    """V1-SET-009: the QR page belongs to the restaurant, not ALKAROS
+    (V1-SET-007/008) - hidden by default so an unconfigured install still
+    looks exactly as it did before this."""
+    html = (WWWROOT / "index.html").read_text(encoding="utf-8")
+    css = (WWWROOT / "menu-app.css").read_text(encoding="utf-8")
+    app_code = (WWWROOT / "menu-app.js").read_text(encoding="utf-8")
+
+    assert 'id="businessBrand" class="business-brand" hidden' in html
+    assert 'id="businessLogo"' in html
+    assert 'id="businessName"' in html
+    assert ".business-brand" in css
+    assert ".business-logo" in css
+
+    assert "loadBranding" in app_code
+    assert "/api/v1/qr/branding" in app_code
+    assert "/api/v1/qr/logo" in app_code
+    assert "accentColor" in app_code
+    assert "businessName" in app_code
+    assert "hasLogo" in app_code
+    assert "--cw-accent" in app_code

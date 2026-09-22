@@ -5,7 +5,10 @@
   --cw-border: #e7ddcd;
   --cw-text: #241c10;
   --cw-text-muted: #6b6152;
-  --cw-accent: #b5772f;
+  /* V1-RMD-257: matches BusinessAccentPalette.DefaultKey ("lacivert") so
+     an unconfigured install shows this color from first paint, not a
+     brief flash of the old brown before loadBranding()'s fetch resolves. */
+  --cw-accent: #1b4d7b;
   --cw-accent-contrast: #ffffff;
   --cw-error: #b3261e;
   --cw-error-bg: #fbeae9;
@@ -28,6 +31,26 @@ body {
   background: var(--cw-surface);
   border-bottom: 1px solid var(--cw-border);
   padding: 1rem 1rem 0;
+}
+
+/* V1-SET-009: the business's own name/logo (V1-SET-007/008). */
+.business-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.business-logo {
+  height: 32px;
+  width: auto;
+  border-radius: 4px;
+}
+
+.business-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .menu-header-top {

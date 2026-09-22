@@ -31,6 +31,9 @@ const ReservationStation = lazy(() =>
 const CustomerDisplayScreensaverSettings = lazy(() =>
   import("./routes/CustomerDisplayScreensaverSettings").then((m) => ({ default: m.CustomerDisplayScreensaverSettings })),
 );
+const BusinessIdentitySettings = lazy(() =>
+  import("./routes/BusinessIdentitySettings").then((m) => ({ default: m.BusinessIdentitySettings })),
+);
 
 export function App() {
   if (window.location.pathname.startsWith("/display")) {
@@ -79,6 +82,13 @@ export function App() {
     return (
       <Suspense fallback={null}>
         <CustomerDisplayScreensaverSettings />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname.startsWith("/settings/business-identity")) {
+    return (
+      <Suspense fallback={null}>
+        <BusinessIdentitySettings />
       </Suspense>
     );
   }

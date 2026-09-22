@@ -34,3 +34,13 @@ public sealed record QrOrderSubmissionResponse(Guid SubmissionId, Guid TableId, 
 /// docs/design/modules/qr-nfc-ordering.md).
 /// </summary>
 public sealed record QrOrderPollResponse(Guid SubmissionId, string Status, Guid? OrderId);
+
+/// <summary>
+/// V1-SET-007. Public, session-free — a business's own name/color/logo
+/// presence is not sensitive, and the QR page's first paint needs it before
+/// a customer session even exists. <paramref name="AccentColor"/> is
+/// always one of <c>BusinessAccentPalette</c>'s own verified hex values,
+/// never an arbitrary string. <paramref name="HasLogo"/> is always
+/// <c>false</c> today — logo storage does not exist yet (a separate task).
+/// </summary>
+public sealed record QrBrandingResponse(string BusinessName, string AccentColor, bool HasLogo);

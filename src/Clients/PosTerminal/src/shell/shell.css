@@ -39,7 +39,10 @@
   color: #fff;
   background: var(--ds-color-brand-strong);
 }
-.production-shell__brand { flex: 0 0 auto; font-weight: 900; letter-spacing: 0.08em; }
+.production-shell__brand { flex: 0 0 auto; display: flex; align-items: center; }
+/* V1-RMD-256: mirrors WaiterPwa/Cashier's own .brand-mark rule for the
+   same "on-dark" logo asset. */
+.production-shell__brand-mark { height: 24px; width: auto; display: block; }
 .production-shell__identity { min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: var(--ds-space-2) var(--ds-space-4); }
 .production-shell__identity-item { min-width: 0; display: grid; gap: 0.1rem; }
 .production-shell__identity-item span { color: #b9c7d1; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; }
