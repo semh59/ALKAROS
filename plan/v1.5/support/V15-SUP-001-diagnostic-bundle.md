@@ -97,6 +97,21 @@ destek paketi oluşturun.
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.
 - `python tools/consistency-audit/consistency_audit.py` → temiz.
 - `python tools/project-manifest/project_manifest_tool.py` → VALID.
+- **2026-09-22 sonradan düzeltme** (bağımsız denetim): `RedactEntry`
+  `BeforeStateJson`/`AfterStateJson`/`MetadataJson`'ı (bunlar zaten
+  serialize edilmiş JSON metinleridir) dış zarfa düz string olarak
+  gömüyordu; `ObservabilityRedactionHook.RedactNode` bir `JsonValue`
+  (string) düğümüne inmediği için içteki key-bazlı hassas alanlar (ör.
+  `{"password":"..."}`) hiç redakte edilmiyordu. Düzeltme: her alan artık
+  gömülmeden önce ayrı ayrı `JsonNode.Parse` edilip aynı iki geçişten
+  (`IRedactionHook.RedactJson` + `ISecretPatternScanner.Scan`) geçiriliyor;
+  parse edilemeyen/boş/null değerler olduğu gibi bırakılıyor
+  (`RedactNestedStateJson`). Revert-and-confirm ile gerçek sızıntı
+  kanıtlandı (bkz. `evidence/V15-SUP-001/2026-09-22-nested-json-redaction-fix.md`).
+  2 yeni test eklendi (`RedactsASensitiveKeyNestedInsideTheBeforeStateJsonText`,
+  `RedactsASecretPatternValueNestedInsideTheAfterStateJsonText`) +
+  1 revert-and-confirm testi (`RevertAndConfirmEmbeddingBeforeAfterMetadataAsOpaqueStringsWouldLeakANestedPassword`);
+  toplam 19→22/22 yeşil.
 
 ## Handoff
 

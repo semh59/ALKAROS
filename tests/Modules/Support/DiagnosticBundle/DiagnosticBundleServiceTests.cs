@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Observability.Foundation;
 using ALKAROS.Support.DiagnosticBundle.Tests.Fixtures;
@@ -201,5 +202,153 @@ public sealed class DiagnosticBundleServiceTests : IAsyncLifetime
         Assert.All(results.Where((_, i) => i % 2 == 0), r => Assert.Contains("marker alpha", r.LogEntries.Single().RedactedDetailsJson));
         Assert.All(results.Where((_, i) => i % 2 == 1), r => Assert.Contains("marker beta", r.LogEntries.Single().RedactedDetailsJson));
         Assert.Equal(4, results.Select(r => r.BundleId).Distinct().Count());
+    }
+
+    // The next tests target a design gap found by an independent 2026-09-22
+    // audit: BeforeStateJson/AfterStateJson/MetadataJson are themselves
+    // already-serialized JSON TEXT (see AuditEvent.cs / e.g.
+    // BillingSplitApplication.cs writing to these fields). RedactEntry used
+    // to embed them as opaque STRING leaves of the outer envelope JSON, and
+    // ObservabilityRedactionHook.RedactNode only ever descends into
+    // JsonObject/JsonArray nodes - a JsonValue (string) leaf is left alone,
+    // so a sensitive key nested INSIDE one of those JSON-text fields (e.g.
+    // {"password":"..."}) was never visited by either redaction pass.
+    //
+    // In production this is normally caught first by IAuditSanitizer at
+    // write time (PostgresAuditEventStore.AppendAsync), which is why these
+    // tests go around the real Postgres-backed IAuditEventStore with a
+    // fake, unsanitized one: the point is to isolate and prove
+    // DiagnosticBundleService's OWN redaction, as a second independent
+    // layer, actually descends into nested JSON text rather than relying
+    // solely on the audit store having already scrubbed it.
+    private sealed class UnsanitizedFakeAuditEventStore : IAuditEventStore
+    {
+        private readonly List<AuditEvent> _events = [];
+
+        public Task AppendAsync(AuditEvent auditEvent, CancellationToken cancellationToken = default)
+        {
+            _events.Add(auditEvent);
+            return Task.CompletedTask;
+        }
+
+        public Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default)
+        {
+            _events.AddRange(auditEvents);
+            return Task.CompletedTask;
+        }
+
+        public Task<IReadOnlyList<AuditEvent>> GetByAggregateAsync(
+            string aggregateType, Guid aggregateId, CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<AuditEvent>>(
+                _events.Where(e => e.AggregateType == aggregateType && e.AggregateId == aggregateId).ToList());
+
+        public Task<IReadOnlyList<AuditEvent>> GetByCorrelationIdAsync(
+            string correlationId, CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<AuditEvent>>(
+                _events.Where(e => e.CorrelationId == correlationId).ToList());
+    }
+
+    [Fact]
+    public async Task RedactsASensitiveKeyNestedInsideTheBeforeStateJsonText()
+    {
+        const string seededPassword = "gizli-deger-123";
+        var nestedBeforeStateJson = $$"""{"password":"{{seededPassword}}"}""";
+
+        var fakeStore = new UnsanitizedFakeAuditEventStore();
+        var redactionHook = new ObservabilityRedactionHook();
+        var healthCheckRepository = new PostgresHealthCheckRepository(_database.DataSource, redactionHook);
+        var observabilityService = new ObservabilityService(healthCheckRepository, redactionHook);
+        var service = new DiagnosticBundleService(
+            observabilityService,
+            redactionHook,
+            new SecretPatternScanner(),
+            fakeStore);
+
+        await fakeStore.AppendAsync(new AuditEvent(
+            id: Guid.NewGuid(),
+            eventName: "order.updated",
+            aggregateType: "Order",
+            aggregateId: Guid.NewGuid(),
+            actorType: "Waiter",
+            correlationId: "corr-1",
+            beforeStateJson: nestedBeforeStateJson,
+            occurredAt: DateTimeOffset.UtcNow));
+
+        var result = await service.GenerateAsync(Request());
+
+        var entry = Assert.Single(result.LogEntries);
+        Assert.DoesNotContain(seededPassword, entry.RedactedDetailsJson);
+        Assert.Contains(ObservabilityRedactionHook.RedactedPlaceholder, entry.RedactedDetailsJson);
+    }
+
+    [Fact]
+    public async Task RedactsASecretPatternValueNestedInsideTheAfterStateJsonText()
+    {
+        // Same nested-JSON-text gap as above, but for the value-pattern
+        // scanner pass rather than the key-name pass: a token-shaped value
+        // under a non-sensitive key, nested inside AfterStateJson.
+        const string seededToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U";
+        var nestedAfterStateJson = $$"""{"note":"issued session {{seededToken}}"}""";
+
+        var fakeStore = new UnsanitizedFakeAuditEventStore();
+        var redactionHook = new ObservabilityRedactionHook();
+        var healthCheckRepository = new PostgresHealthCheckRepository(_database.DataSource, redactionHook);
+        var observabilityService = new ObservabilityService(healthCheckRepository, redactionHook);
+        var service = new DiagnosticBundleService(
+            observabilityService,
+            redactionHook,
+            new SecretPatternScanner(),
+            fakeStore);
+
+        await fakeStore.AppendAsync(new AuditEvent(
+            id: Guid.NewGuid(),
+            eventName: "order.updated",
+            aggregateType: "Order",
+            aggregateId: Guid.NewGuid(),
+            actorType: "Waiter",
+            correlationId: "corr-1",
+            afterStateJson: nestedAfterStateJson,
+            occurredAt: DateTimeOffset.UtcNow));
+
+        var result = await service.GenerateAsync(Request());
+
+        var entry = Assert.Single(result.LogEntries);
+        Assert.DoesNotContain(seededToken, entry.RedactedDetailsJson);
+        Assert.Contains(SecretPatternScanner.Placeholder, entry.RedactedDetailsJson);
+    }
+
+    [Fact]
+    public void RevertAndConfirmEmbeddingBeforeAfterMetadataAsOpaqueStringsWouldLeakANestedPassword()
+    {
+        // Reproduces the pre-fix RedactEntry behavior exactly: Before/After/
+        // Metadata embedded as raw opaque strings in the outer envelope,
+        // with no per-field nested parse/redact step first. Proves the
+        // nested-JSON-text redaction added in
+        // DiagnosticBundleService.RedactNestedStateJson is load-bearing,
+        // not a no-op - without it, the two existing passes alone do not
+        // catch this.
+        const string seededPassword = "gizli-deger-123";
+        var nestedBeforeStateJson = $$"""{"password":"{{seededPassword}}"}""";
+
+        var redactionHook = new ObservabilityRedactionHook();
+        var secretScanner = new SecretPatternScanner();
+
+        var preFixOuterJson = JsonSerializer.Serialize(new
+        {
+            AggregateType = "Order",
+            AggregateId = Guid.NewGuid(),
+            ActorType = "Waiter",
+            Reason = (string?)null,
+            Before = nestedBeforeStateJson,
+            After = (string?)null,
+            Metadata = (string?)null,
+        });
+
+        // Pass 1 (key-based) then pass 2 (value-pattern) - the same two
+        // passes RedactEntry has always applied to the outer envelope.
+        var keyRedacted = redactionHook.RedactJson(preFixOuterJson);
+        var (valueRedacted, _) = secretScanner.Scan(keyRedacted);
+
+        Assert.Contains(seededPassword, valueRedacted);
     }
 }

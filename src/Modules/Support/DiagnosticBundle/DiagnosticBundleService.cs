@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Observability.Foundation;
 
@@ -124,15 +125,27 @@ public sealed class DiagnosticBundleService : IDiagnosticBundleService
 
     private DiagnosticBundleLogEntry RedactEntry(AuditEvent auditEvent)
     {
+        // Before/After/Metadata are themselves already-serialized JSON TEXT
+        // (see AuditEvent.cs / e.g. BillingSplitApplication.cs writing to
+        // these fields) - if embedded verbatim as opaque strings below, a
+        // sensitive key nested INSIDE one of them (e.g. {"password":"..."})
+        // would never be visited by either redaction pass, because the
+        // outer JSON only sees a string leaf, not the object inside it.
+        // Redact each nested payload independently, in its own right, before
+        // it is ever embedded.
+        var beforeRedacted = RedactNestedStateJson(auditEvent.BeforeStateJson);
+        var afterRedacted = RedactNestedStateJson(auditEvent.AfterStateJson);
+        var metadataRedacted = RedactNestedStateJson(auditEvent.MetadataJson);
+
         var detailsJson = JsonSerializer.Serialize(new
         {
             auditEvent.AggregateType,
             auditEvent.AggregateId,
             auditEvent.ActorType,
             auditEvent.Reason,
-            Before = auditEvent.BeforeStateJson,
-            After = auditEvent.AfterStateJson,
-            Metadata = auditEvent.MetadataJson,
+            Before = beforeRedacted,
+            After = afterRedacted,
+            Metadata = metadataRedacted,
         });
 
         // Pass 1: key-name-based redaction (a field literally named
@@ -148,6 +161,36 @@ public sealed class DiagnosticBundleService : IDiagnosticBundleService
             auditEvent.CorrelationId,
             auditEvent.OccurredAt,
             valueRedacted);
+    }
+
+    /// <summary>
+    /// Runs a nested JSON-text field (Before/After/Metadata state JSON)
+    /// through the same two-pass redaction the outer envelope gets, before
+    /// it is embedded as a string value in that envelope. Anything that
+    /// isn't parseable JSON - null, empty, or plain text - is left exactly
+    /// as-is: this method must never throw on caller-controlled content.
+    /// </summary>
+    private string? RedactNestedStateJson(string? stateJson)
+    {
+        if (string.IsNullOrWhiteSpace(stateJson))
+            return stateJson;
+
+        JsonNode? node;
+        try
+        {
+            node = JsonNode.Parse(stateJson);
+        }
+        catch (JsonException)
+        {
+            return stateJson;
+        }
+
+        if (node is null)
+            return stateJson;
+
+        var keyRedacted = _redactionHook.RedactJson(stateJson);
+        var (valueRedacted, _) = _secretScanner.Scan(keyRedacted);
+        return valueRedacted;
     }
 
     private static long MeasureSize(
