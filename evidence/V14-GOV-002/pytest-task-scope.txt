@@ -1,0 +1,9 @@
+........................................................................ [ 52%]
+.................................................................        [100%]
+============================== warnings summary ===============================
+C:\Users\semih\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\_pytest\cacheprovider.py:469
+  C:\Users\semih\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\_pytest\cacheprovider.py:469: PytestCacheWarning: could not create cache path D:\PROJECT\ALKAROS\.pytest_cache\v\cache\nodeids: [WinError 5] Eriþim engellendi: 'D:\\PROJECT\\ALKAROS\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+137 passed, 1 warning in 76.49s (0:01:16)

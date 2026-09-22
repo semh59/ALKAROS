@@ -120,16 +120,53 @@ _DEFERRED_TASKS_ROW = re.compile(
 # requirement was replaced with self-declared configuration and it closed
 # Done with an ## Onay block. Remaining entries are the 2026-08-03 C40 set.
 _DEFERRED_TASK_RECORDS = {
-    ("V0-HUG-001", "2026-08-03", "V12", "Gerçek Hugin provider contract/erişim kanıtı"),
-    ("V0-QNB-001", "2026-08-03", "V13", "Gerçek QNB provider contract/erişim kanıtı"),
-    ("V0-YSP-001", "2026-08-03", "V12", "Gerçek Yapı Kredi provider contract/erişim kanıtı"),
-    ("V0-MCD-001", "2026-08-03", "V12", "Gerçek meal-card provider sözleşme/onay kanıtı"),
-    ("V0-PRN-001", "2026-08-03", "V14", "Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı"),
-    ("V0-QRG-001", "2026-08-03", "V14", "Gerçek QR relay public kanal onay kanıtı"),
-    ("V0-SEC-001", "2026-08-03", "V14", "Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı"),
+    ("V0-HUG-001", "2026-08-03", "V13", "Gerçek Token/Beko provider contract/erişim kanıtı (2026-09-17 `V0-GOV-064`/CORR:C98 ile Hugin'in yerini aldı)"),
+    ("V0-QNB-001", "2026-08-03", "V14", "Gerçek QNB provider contract/erişim kanıtı"),
+    ("V0-YSP-001", "2026-08-03", "V12", "Gerçek Yemeksepeti partner API erişim kanıtı"),
+    ("V0-MCD-001", "2026-08-03", "V13", "Gerçek meal-card provider sözleşme/onay kanıtı"),
+    ("V0-PRN-001", "2026-08-03", "V12", "Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı"),
+    ("V0-QRG-001", "2026-08-03", "V12", "Gerçek QR relay public kanal onay kanıtı"),
+    ("V0-SEC-001", "2026-08-03", "V12", "Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı"),
     ("V0-LIC-001", "2026-08-03", "V20", "Gerçek license server ve lisans sözleşmesi kanıtı"),
 }
 _DEFERRED_TASK_IDS = {record[0] for record in _DEFERRED_TASK_RECORDS}
+
+# 2026-09-22 Semih onayı (GATE-V14-ENTRY şimdi kaldırılıyor, TRACEABILITY.md):
+# GATE-V13-EXIT'in kendi kapanma koşulu (V1.3'ün "uygulanabilir kapsamı")
+# hâlâ 6 kök dış sözleşmeye (Token/Beko, meal-card, QNB) zincirli 14 V13
+# görevini içeriyor. Semih bu SIRALAMA kararını (V14-GOV-001'in 2026-09-18
+# tarihli "taslak/standalone" ihtiyatlı tercihinin aksine) bilerek kaldırdı:
+# aşağıdaki tam olarak 14 görev, gerçek dış erişim gelene kadar açık kaldığı
+# sürece GATE-V13-EXIT'i V14 girişi için kapalı SAYMAZ. V0 deferral
+# mekanizmasıyla birebir aynı fail-closed desen: tablo GATES.md'deki işaretli
+# bloktan ayrıştırılır ve bu sabit kümeyle TAM eşleşmelidir.
+_V13_EXIT_WAIVER_START = "<!-- V13_EXIT_ENTRY_WAIVER:START -->"
+_V13_EXIT_WAIVER_END = "<!-- V13_EXIT_ENTRY_WAIVER:END -->"
+_V13_EXIT_WAIVER_HEADER = (
+    "| Task ID | Approval date | Blocked by | Required evidence |"
+)
+_V13_EXIT_WAIVER_SEPARATOR = "| --- | --- | --- | --- |"
+_V13_EXIT_WAIVER_ROW = re.compile(
+    r"^\|\s*`(?P<task_id>V13-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>2026-09-22)`\s*\|\s*"
+    r"`(?P<blocked_by>[^`|]+)`\s*\|\s*(?P<required_evidence>[^|]+?)\s*\|$"
+)
+_V13_EXIT_WAIVER_RECORDS = {
+    ("V13-FSC-001", "2026-09-22", "GATE-V13-FSC-STRATEGY", "Gerçek Token/Beko veya QNB fiscal strateji kanıtı"),
+    ("V13-FSC-002", "2026-09-22", "V13-FSC-001", "Gerçek Token/Beko veya QNB fiscal strateji kanıtı"),
+    ("V13-FSC-003", "2026-09-22", "GATE-V13-FSC-STRATEGY", "Gerçek Token/Beko veya QNB fiscal strateji kanıtı"),
+    ("V13-FSC-004", "2026-09-22", "V0-HUG-001", "Gerçek Token/Beko provider contract/erişim kanıtı"),
+    ("V13-HUG-001", "2026-09-22", "V0-HUG-001", "Gerçek Token/Beko provider contract/erişim kanıtı"),
+    ("V13-HUG-002", "2026-09-22", "V0-HUG-001", "Gerçek Token/Beko provider contract/erişim kanıtı"),
+    ("V13-HUG-003", "2026-09-22", "V0-HUG-001", "Gerçek Token/Beko provider contract/erişim kanıtı"),
+    ("V13-HUG-004", "2026-09-22", "V0-HUG-001", "Gerçek Token/Beko provider contract/erişim kanıtı"),
+    ("V13-MCD-001", "2026-09-22", "V0-MCD-001", "Gerçek meal-card provider sözleşme/onay kanıtı"),
+    ("V13-MCD-002", "2026-09-22", "V0-MCD-001", "Gerçek meal-card provider sözleşme/onay kanıtı"),
+    ("V13-MCD-003", "2026-09-22", "V0-MCD-001", "Gerçek meal-card provider sözleşme/onay kanıtı"),
+    ("V13-MCD-004", "2026-09-22", "V0-MCD-001", "Gerçek meal-card provider sözleşme/onay kanıtı"),
+    ("V13-ALC-004", "2026-09-22", "V13-HUG-003", "Gerçek Token/Beko provider contract/erişim kanıtı"),
+    ("V13-PUI-003", "2026-09-22", "V13-ALC-004", "Gerçek Token/Beko provider contract/erişim kanıtı"),
+}
+_V13_EXIT_WAIVER_TASK_IDS = {record[0] for record in _V13_EXIT_WAIVER_RECORDS}
 
 
 class TaskParseError(Exception):
@@ -419,6 +456,64 @@ def parse_v0_deferral_ids(plan_dir: Path) -> Set[str]:
     return _DEFERRED_TASK_IDS
 
 
+def parse_v13_exit_waiver_ids(plan_dir: Path) -> Set[str]:
+    """Return the 2026-09-22 Semih-approved GATE-V13-EXIT waiver task IDs.
+
+    Mirrors ``parse_v0_deferral_ids``: the table is deliberately strict, a
+    malformed, duplicate, missing, or non-approved record cannot expand or
+    hide the entry-gate exemption.
+    """
+    gates_file = plan_dir / "GATES.md"
+    if not gates_file.is_file():
+        raise TaskParseError("V13 exit waiver table not found in GATES.md")
+
+    lines = gates_file.read_text(encoding="utf-8").splitlines()
+    starts = [
+        index for index, line in enumerate(lines) if line == _V13_EXIT_WAIVER_START
+    ]
+    ends = [
+        index for index, line in enumerate(lines) if line == _V13_EXIT_WAIVER_END
+    ]
+    if len(starts) != 1 or len(ends) != 1:
+        raise TaskParseError("V13 exit waiver table markers must occur exactly once")
+    start, end = starts[0], ends[0]
+
+    if start >= end:
+        raise TaskParseError("V13 exit waiver table markers are out of order")
+
+    table_lines = lines[start + 1:end]
+    if len(table_lines) < 3:
+        raise TaskParseError("V13 exit waiver table is incomplete")
+    if table_lines[0] != _V13_EXIT_WAIVER_HEADER:
+        raise TaskParseError("V13 exit waiver table header is invalid")
+    if table_lines[1] != _V13_EXIT_WAIVER_SEPARATOR:
+        raise TaskParseError("V13 exit waiver table separator is invalid")
+
+    records: Set[tuple] = set()
+    for line in table_lines[2:]:
+        match = _V13_EXIT_WAIVER_ROW.fullmatch(line)
+        if match is None:
+            raise TaskParseError("V13 exit waiver table contains an invalid record")
+        record = (
+            match.group("task_id"),
+            match.group("approval_date"),
+            match.group("blocked_by"),
+            match.group("required_evidence"),
+        )
+        if record in records:
+            raise TaskParseError(
+                f"V13 exit waiver table contains a duplicate Task ID: {record[0]}"
+            )
+        records.add(record)
+
+    if records != _V13_EXIT_WAIVER_RECORDS:
+        raise TaskParseError(
+            "V13 exit waiver table records must exactly match the 2026-09-22 "
+            "user approval"
+        )
+    return _V13_EXIT_WAIVER_TASK_IDS
+
+
 def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
     """Return closure errors for the release gate immediately before *task*.
 
@@ -468,6 +563,22 @@ def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
                 for item in preceding
                 if item.status not in {"Done", "NotApplicable"}
                 and item.task_id not in deferred_ids
+            ]
+            if still_open:
+                return [f"Entry gate {gate_id} is open: " + ", ".join(still_open)]
+            return []
+        if gate_id == "GATE-V13-EXIT":
+            try:
+                waived_ids = parse_v13_exit_waiver_ids(plan_dir)
+            except TaskParseError as exc:
+                if not (plan_dir / "GATES.md").is_file():
+                    return [f"Entry gate {gate_id} is open: " + ", ".join(unfinished)]
+                return [f"Entry gate {gate_id} waiver table rejected: {exc}"]
+            still_open = [
+                f"{item.task_id} ({item.status})"
+                for item in preceding
+                if item.status not in {"Done", "NotApplicable"}
+                and item.task_id not in waived_ids
             ]
             if still_open:
                 return [f"Entry gate {gate_id} is open: " + ", ".join(still_open)]

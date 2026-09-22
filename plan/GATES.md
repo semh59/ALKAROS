@@ -42,7 +42,7 @@
 | `GATE-V13-MEAL-CARD-ADAPTERS` | V0-MCD approved provider listesi ve her provider için generated adapter Done olur; liste boşsa downstream task'lar tarihli NotApplicable olur. |
 | `GATE-V13-FSC-STRATEGY` | `V0-CMP-001`'in self-declared beyan matrisi (`V0-GOV-065`/CORR:C99) yayımlanır VE yalnız seçilen Token/Beko (eski adıyla Hugin, bkz. `V0-GOV-064`/CORR:C98) veya QNB contract kanıtı Done olur; uygulanmayan branch tarihli NotApplicable olur. |
 | `GATE-V13-EXIT` | V1.3 ödeme, fiscal ve cash görevlerinin uygulanabilir kapsamı tamamlanır. |
-| `GATE-V14-ENTRY` | `GATE-V13-EXIT` kapanır. |
+| `GATE-V14-ENTRY` | `GATE-V13-EXIT` kapanır. **2026-09-22 Semih onaylı waiver:** dış sözleşmeye zincirli 14 V13 görevi (aşağıdaki `V13_EXIT_ENTRY_WAIVER` tablosu) açık kaldığı sürece bu koşulu artık kapalı saymıyor — `TRACEABILITY.md` C100.** |
 | `GATE-V14-EXIT` | V1.4 hesap ve invoicing görevlerinin uygulanabilir kapsamı tamamlanır. |
 | `GATE-V15-ENTRY` | `GATE-V14-EXIT` kapanır. |
 | `GATE-V15-EXIT` | V1.5 hardening, recovery ve runbook doğrulamaları tamamlanır. |
@@ -166,6 +166,52 @@ C40). Devredilen görev `Blocked` durumunda kalır; `GATE-V0-EXIT` bunların
 kanıtı olmadan kapanabilir ve görev ilgili aşama gate'inde gerçek kanıtla
 `Done` veya tarihli/onaylı `NotApplicable` olur. Devir yeni product behavior
 başlatma izni vermez ve V0 karar/uygulama kapsamını daraltmaz.
+
+## 2026-09-22 Semih onaylı GATE-V13-EXIT → GATE-V14-ENTRY waiver
+
+`GATE-V14-ENTRY`nin `GATE-V13-EXIT` kapanışını şart koşması, `V14-GOV-001`de
+(2026-09-18) bilinçli bir SIRALAMA kararı olarak kaydedilmişti: v1.4'ün
+fatura/müşteri domain'i, v1.3'ün fiscal stratejisi netleşmeden tasarlanırsa
+değişen strateji fatura varsayımlarına sıçrayabilir riski. Semih bu kuralı
+kendisi koymuştu; 2026-09-22'de bilerek kaldırdı ("Gate kural ben koydum,
+şimdi de kaldırıyorum") — v1.2 (Yemeksepeti kanalı) ve v1.4 (müşteri hesabı/
+faturalama) zincirlerinin dış bağımlılık gerektirmeyen tüm kodlama işinin
+şimdi tamamlanması kararının bir parçası.
+
+Aşağıdaki tam olarak 14 V13 görevi (`V13-FSC-001..004`, `V13-HUG-001..004`,
+`V13-MCD-001..004`, `V13-ALC-004`, `V13-PUI-003`) gerçek dış sözleşme kanıtı
+(Token/Beko, meal-card veya QNB fiscal strateji) olmadan tamamlanamaz —
+kendi Acceptance evidence metinleri onaylı sağlayıcı yoksa schema/stub/
+dead-code üretilmesini bile yasaklıyor. Bu waiver, bu 14 görev açık kaldığı
+sürece `GATE-V13-EXIT`i `GATE-V14-ENTRY` için kapalı SAYMAZ; görevlerin
+kendileri hâlâ gerçek kanıt olmadan `Done` olamaz (`TASK_STANDARD.md:62-66`
+aynen geçerli). `V13`ün geri kalan (dış bağımlılık gerektirmeyen) görevleri
+bu waiver'a girmez — onlar normal şekilde `Done` olup `GATE-V13-EXIT`in
+gerçek kapanışına katkıda bulunur.
+
+<!-- V13_EXIT_ENTRY_WAIVER:START -->
+| Task ID | Approval date | Blocked by | Required evidence |
+| --- | --- | --- | --- |
+| `V13-FSC-001` | `2026-09-22` | `GATE-V13-FSC-STRATEGY` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |
+| `V13-FSC-002` | `2026-09-22` | `V13-FSC-001` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |
+| `V13-FSC-003` | `2026-09-22` | `GATE-V13-FSC-STRATEGY` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |
+| `V13-FSC-004` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-HUG-001` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-HUG-002` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-HUG-003` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-HUG-004` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-MCD-001` | `2026-09-22` | `V0-MCD-001` | Gerçek meal-card provider sözleşme/onay kanıtı |
+| `V13-MCD-002` | `2026-09-22` | `V0-MCD-001` | Gerçek meal-card provider sözleşme/onay kanıtı |
+| `V13-MCD-003` | `2026-09-22` | `V0-MCD-001` | Gerçek meal-card provider sözleşme/onay kanıtı |
+| `V13-MCD-004` | `2026-09-22` | `V0-MCD-001` | Gerçek meal-card provider sözleşme/onay kanıtı |
+| `V13-ALC-004` | `2026-09-22` | `V13-HUG-003` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-PUI-003` | `2026-09-22` | `V13-ALC-004` | Gerçek Token/Beko provider contract/erişim kanıtı |
+<!-- V13_EXIT_ENTRY_WAIVER:END -->
+
+Bu waiver yalnız `GATE-V14-ENTRY` türetimini etkiler; `GATE-V13-EXIT`in
+kendisi (yukarıdaki satır) yalnız bu 14 görev gerçek kanıtla `Done` veya
+tarihli/onaylı `NotApplicable` olduğunda fiilen kapanır. Yeni product
+behavior başlatma izni vermez; yalnızca V14 task-seçim sırasını değiştirir.
 
 2026-08-15 kullanıcı onayıyla (`TRACEABILITY.md` C69) `V0-REV-001..030`
 revalidation görevleri `## Onay` bloklu `Done`, `V0-GOV-041` ile `V0-GOV-042`

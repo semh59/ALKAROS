@@ -93,6 +93,26 @@ def _write_v0_deferrals(plan_dir: Path, rows: list[str]) -> None:
     )
 
 
+def _write_v13_exit_waiver(plan_dir: Path, rows: list[str]) -> None:
+    """Write the strict GATES.md GATE-V13-EXIT waiver table fixture."""
+    table = "\n".join(rows)
+    (plan_dir / "GATES.md").write_text(
+        "\n".join(
+            [
+                "# Version Gates",
+                "",
+                "<!-- V13_EXIT_ENTRY_WAIVER:START -->",
+                "| Task ID | Approval date | Blocked by | Required evidence |",
+                "| --- | --- | --- | --- |",
+                table,
+                "<!-- V13_EXIT_ENTRY_WAIVER:END -->",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+
 REMEDIATION_RECORDS = {
     "V1-CAT-003": ("2026-08-10", "CORR:C52"),
     "V1-FND-016": ("2026-08-10", "CORR:C52"),
@@ -397,14 +417,53 @@ DEFERRED_TASK_IDS = [
 # was removed from the deferral list.
 
 DEFERRED_ROWS = [
-    "| `V0-HUG-001` | `2026-08-03` | `V12` | Gerçek Hugin provider contract/erişim kanıtı | Not V0 gate closure evidence |",
-    "| `V0-QNB-001` | `2026-08-03` | `V13` | Gerçek QNB provider contract/erişim kanıtı | Not V0 gate closure evidence |",
-    "| `V0-YSP-001` | `2026-08-03` | `V12` | Gerçek Yapı Kredi provider contract/erişim kanıtı | Not V0 gate closure evidence |",
-    "| `V0-MCD-001` | `2026-08-03` | `V12` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |",
-    "| `V0-PRN-001` | `2026-08-03` | `V14` | Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı | Not V0 gate closure evidence |",
-    "| `V0-QRG-001` | `2026-08-03` | `V14` | Gerçek QR relay public kanal onay kanıtı | Not V0 gate closure evidence |",
-    "| `V0-SEC-001` | `2026-08-03` | `V14` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |",
+    "| `V0-HUG-001` | `2026-08-03` | `V13` | Gerçek Token/Beko provider contract/erişim kanıtı (2026-09-17 `V0-GOV-064`/CORR:C98 ile Hugin'in yerini aldı) | Not V0 gate closure evidence |",
+    "| `V0-QNB-001` | `2026-08-03` | `V14` | Gerçek QNB provider contract/erişim kanıtı | Not V0 gate closure evidence |",
+    "| `V0-YSP-001` | `2026-08-03` | `V12` | Gerçek Yemeksepeti partner API erişim kanıtı | Not V0 gate closure evidence |",
+    "| `V0-MCD-001` | `2026-08-03` | `V13` | Gerçek meal-card provider sözleşme/onay kanıtı | Not V0 gate closure evidence |",
+    "| `V0-PRN-001` | `2026-08-03` | `V12` | Gerçek yazıcı/cihaz sözleşmesi veya onay kanıtı | Not V0 gate closure evidence |",
+    "| `V0-QRG-001` | `2026-08-03` | `V12` | Gerçek QR relay public kanal onay kanıtı | Not V0 gate closure evidence |",
+    "| `V0-SEC-001` | `2026-08-03` | `V12` | Doğrulanmış güvenlik gereksinim kaynağı/standart kanıtı | Not V0 gate closure evidence |",
     "| `V0-LIC-001` | `2026-08-03` | `V20` | Gerçek license server ve lisans sözleşmesi kanıtı | Not V0 gate closure evidence |",
+]
+
+# 2026-09-22 (TRACEABILITY C100): GATE-V14-ENTRY no longer requires
+# GATE-V13-EXIT to fully close — Semih lifted the ordering rule he set in
+# V14-GOV-001. These 14 V13 tasks stay open pending real Token/Beko,
+# meal-card or QNB fiscal-strategy evidence; their own acceptance evidence
+# forbids even draft/stub work without an approved provider.
+V13_WAIVER_TASK_IDS = [
+    "V13-FSC-001",
+    "V13-FSC-002",
+    "V13-FSC-003",
+    "V13-FSC-004",
+    "V13-HUG-001",
+    "V13-HUG-002",
+    "V13-HUG-003",
+    "V13-HUG-004",
+    "V13-MCD-001",
+    "V13-MCD-002",
+    "V13-MCD-003",
+    "V13-MCD-004",
+    "V13-ALC-004",
+    "V13-PUI-003",
+]
+
+V13_WAIVER_ROWS = [
+    "| `V13-FSC-001` | `2026-09-22` | `GATE-V13-FSC-STRATEGY` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |",
+    "| `V13-FSC-002` | `2026-09-22` | `V13-FSC-001` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |",
+    "| `V13-FSC-003` | `2026-09-22` | `GATE-V13-FSC-STRATEGY` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |",
+    "| `V13-FSC-004` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |",
+    "| `V13-HUG-001` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |",
+    "| `V13-HUG-002` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |",
+    "| `V13-HUG-003` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |",
+    "| `V13-HUG-004` | `2026-09-22` | `V0-HUG-001` | Gerçek Token/Beko provider contract/erişim kanıtı |",
+    "| `V13-MCD-001` | `2026-09-22` | `V0-MCD-001` | Gerçek meal-card provider sözleşme/onay kanıtı |",
+    "| `V13-MCD-002` | `2026-09-22` | `V0-MCD-001` | Gerçek meal-card provider sözleşme/onay kanıtı |",
+    "| `V13-MCD-003` | `2026-09-22` | `V0-MCD-001` | Gerçek meal-card provider sözleşme/onay kanıtı |",
+    "| `V13-MCD-004` | `2026-09-22` | `V0-MCD-001` | Gerçek meal-card provider sözleşme/onay kanıtı |",
+    "| `V13-ALC-004` | `2026-09-22` | `V13-HUG-003` | Gerçek Token/Beko provider contract/erişim kanıtı |",
+    "| `V13-PUI-003` | `2026-09-22` | `V13-ALC-004` | Gerçek Token/Beko provider contract/erişim kanıtı |",
 ]
 
 
@@ -1143,6 +1202,66 @@ class TestDeferredV0EntryGate:
         self, write_task, make_repo, make_plan, run_tool
     ):
         self._prepare_deferred_v0_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V1-FND-003", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V11-ALT-001")
+
+        exit_code, result = run_tool("V11-ALT-001", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("GATE-V1-EXIT is open" in error for error in result["metadata_errors"])
+
+
+class TestV13ExitEntryWaiver:
+    def _prepare_waived_v13_gate(self, write_task, make_repo, make_plan) -> None:
+        _write_v13_exit_waiver(make_plan, V13_WAIVER_ROWS)
+        for task_id in V13_WAIVER_TASK_IDS:
+            write_task(task_id=task_id, status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+
+    def test_waived_v13_tasks_close_gate_for_v14_entry(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_waived_v13_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V14-GOV-002")
+
+        exit_code, result = run_tool("V14-GOV-002", make_repo, make_plan)
+
+        assert exit_code == 0
+        assert result["metadata_errors"] == []
+        assert result["valid"] is True
+
+    def test_non_waived_v13_task_keeps_gate_open(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_waived_v13_gate(write_task, make_repo, make_plan)
+        write_task(task_id="V13-PAY-003", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V14-GOV-002")
+
+        exit_code, result = run_tool("V14-GOV-002", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("GATE-V13-EXIT is open" in error for error in result["metadata_errors"])
+        assert any("V13-PAY-003 (Planned)" in error for error in result["metadata_errors"])
+
+    def test_missing_waiver_table_fails_closed(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        write_task(task_id="V13-FSC-001", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V14-GOV-002")
+
+        exit_code, result = run_tool("V14-GOV-002", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("GATE-V13-EXIT is open" in error for error in result["metadata_errors"])
+        assert any("V13-FSC-001 (Planned)" in error for error in result["metadata_errors"])
+
+    def test_waiver_does_not_apply_to_other_gates(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._prepare_waived_v13_gate(write_task, make_repo, make_plan)
         write_task(task_id="V1-FND-003", status="Planned")
         _git(make_repo, "checkout", "--", "plan")
         write_task(task_id="V11-ALT-001")
