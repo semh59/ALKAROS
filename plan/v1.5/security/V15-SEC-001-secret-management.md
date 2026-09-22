@@ -20,6 +20,13 @@ V1-SEC-001 secret boundary üzerinde production rotation, failover ve recovery d
 
 - `src/Modules/Security/SecretRotation/**`, `tests/Modules/Security/SecretRotation/**`, `deployment/secrets/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- `src/Modules/Security/SecurityModule.cs` — modül-kök `IModule`
+  implementasyonu, `ModuleRegistry.DefaultCatalog`'a kayıt (**2026-09-22
+  sonradan eklendi**, bağımsız denetim: modül hiç `IModule` olarak kayıtlı
+  değildi, DI'a tamamen kopuktu). SEC-001/002/003'ün üçünün de servislerini
+  kaydediyor (ModuleRegistry.cs'in kendisi gibi bir kompozisyon köküdür) —
+  bu üç task'ın ortak, sonradan eklenen bootstrap dosyası olarak burada
+  sahiplenildi.
 - Sınırlı ek (module bootstrap — C86/C88/C91 emsali: yeni bağımsız
   foundation görevi oluşturulmaz, yeni bir modülün ilk feature görevi kendi
   proje dosyasını sahiplenir): `src/Modules/Security/ALKAROS.Security.csproj`
