@@ -1,0 +1,15 @@
+$ PGPASSWORD=postgres psql -h 127.0.0.1 -p 55432 -U postgres -c "CREATE DATABASE alkaros_migtest3;"
+NOTICE:  database "alkaros_migtest3" does not exist, skipping
+DROP DATABASE
+CREATE DATABASE
+
+$ psql -f 138-offsite-backup-receipts.up.sql
+CREATE SCHEMA
+CREATE TABLE
+CREATE INDEX
+
+$ psql -f 138-offsite-backup-receipts.down.sql
+DROP TABLE
+
+$ psql -c DROP DATABASE
+DROP DATABASE

@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "137"
+    "max": "138"
   },
   "migrations": [
     {
@@ -1179,6 +1179,14 @@
       "phase": "B",
       "tables": [
         "retention_subjects"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "138",
+      "phase": "B",
+      "tables": [
+        "offsite_backup_receipts"
       ],
       "deferredConstraints": []
     }

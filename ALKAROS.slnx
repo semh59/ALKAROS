@@ -96,6 +96,7 @@
   <Project Path="tests/Modules/Observability/Foundation/ALKAROS.Observability.Foundation.Tests.csproj" />
   <Project Path="tests/Modules/Observability/StructuredLogging/ALKAROS.Observability.StructuredLogging.Tests.csproj" />
   <Project Path="tests/Modules/Operations/BackupHealth/ALKAROS.Operations.BackupHealth.Tests.csproj" />
+  <Project Path="tests/Modules/Operations/OffsiteBackup/ALKAROS.Operations.OffsiteBackup.Tests.csproj" />
   <Project Path="tests/Modules/Orders/ItemExceptions/ALKAROS.Orders.ItemExceptions.Tests.csproj" />
   <Project Path="tests/Modules/Orders/OrderAggregate/ALKAROS.Orders.OrderAggregate.Tests.csproj" />
   <Project Path="tests/Modules/Orders/SubmitOrder/ALKAROS.Orders.SubmitOrder.Tests.csproj" />

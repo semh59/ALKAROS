@@ -8,6 +8,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <!-- V15-BKP-001: OffsiteBackup's client-side envelope encryption is
+         keyed through V15-SEC-001's versioned secret rotation and the
+         V1-SEC-001 base secret boundary (its own private resolver chain,
+         V0-ARC-005). -->
+    <ProjectReference Include="..\Security\ALKAROS.Security.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj" />
+    <!-- V15-BKP-001: upload retry reuses RetryPolicy's exponential backoff
+         (V0-ARC-003), same as the outbox dispatcher. -->
+    <ProjectReference Include="..\..\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
+    <!-- V15-BKP-001: an exhausted upload retry is reported through
+         V15-OBS-001's structured event logger. -->
+    <ProjectReference Include="..\Observability\ALKAROS.Observability.csproj" />
   </ItemGroup>
 
   <ItemGroup>

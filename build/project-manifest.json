@@ -534,6 +534,21 @@
       ]
     },
     {
+      "path": "tests/Modules/Operations/OffsiteBackup/ALKAROS.Operations.OffsiteBackup.Tests.csproj",
+      "kind": "test",
+      "module": "OffsiteBackup",
+      "references": [
+        "src/Modules/Operations/ALKAROS.Operations.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "Npgsql"
+      ]
+    },
+    {
       "path": "tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj",
       "kind": "test",
       "module": "SensitiveData",

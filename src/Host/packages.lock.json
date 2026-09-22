@@ -150,7 +150,12 @@
       "alkaros.operations": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Observability": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.Security": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
       },
@@ -232,6 +237,16 @@
       },
       "alkaros.secrets": {
         "type": "Project"
+      },
+      "alkaros.security": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Audit": "[1.0.0, )",
+          "ALKAROS.Identity": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
       },
       "alkaros.sensitivedata": {
         "type": "Project",
