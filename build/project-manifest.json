@@ -499,6 +499,24 @@
       ]
     },
     {
+      "path": "tests/Modules/Security/DataProtectionRetention/ALKAROS.Security.DataProtectionRetention.Tests.csproj",
+      "kind": "test",
+      "module": "DataProtectionRetention",
+      "references": [
+        "src/Modules/Security/ALKAROS.Security.csproj",
+        "src/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.csproj",
+        "src/Modules/Audit/ALKAROS.Audit.csproj",
+        "tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj"
+      ],
+      "packages": [
+        "Microsoft.NET.Test.Sdk",
+        "xunit",
+        "xunit.runner.visualstudio",
+        "FluentAssertions",
+        "Npgsql"
+      ]
+    },
+    {
       "path": "tests/Modules/Security/IdentityHardening/ALKAROS.Security.IdentityHardening.Tests.csproj",
       "kind": "test",
       "module": "IdentityHardening",

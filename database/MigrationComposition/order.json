@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "136"
+    "max": "137"
   },
   "migrations": [
     {
@@ -1171,6 +1171,14 @@
       "phase": "B",
       "tables": [
         "business_logo"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "137",
+      "phase": "B",
+      "tables": [
+        "retention_subjects"
       ],
       "deferredConstraints": []
     }

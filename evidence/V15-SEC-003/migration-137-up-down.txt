@@ -1,0 +1,36 @@
+$ docker exec -i alkaros-test-pg psql -U postgres -c "CREATE DATABASE sec003_check2;"
+CREATE DATABASE
+
+$ cat database/migrations/V15/V15-SEC-003/137-retention-subjects.up.sql | docker exec -i alkaros-test-pg psql -U postgres -d sec003_check2 -v ON_ERROR_STOP=1
+CREATE SCHEMA
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+
+$ docker exec alkaros-test-pg psql -U postgres -d sec003_check2 -c "\d security.retention_subjects"
+                     Table "security.retention_subjects"
+     Column      |           Type           | Collation | Nullable | Default
+-----------------+--------------------------+-----------+----------+---------
+ id              | uuid                     |           | not null |
+ data_category   | text                     |           | not null |
+ envelope_bytes  | bytea                    |           | not null |
+ created_at      | timestamp with time zone |           | not null |
+ legal_hold      | boolean                  |           | not null | false
+ disposed_at     | timestamp with time zone |           |          |
+ disposal_action | text                     |           |          |
+ row_version     | integer                  |           | not null | 1
+Indexes:
+    "retention_subjects_pkey" PRIMARY KEY, btree (id)
+    "ix_retention_subjects_delete_queue" btree (id) WHERE disposal_action = 'Delete'::text AND disposed_at IS NOT NULL
+    "ix_retention_subjects_pending" btree (data_category, created_at) WHERE disposed_at IS NULL AND legal_hold = false
+Check constraints:
+    "retention_subjects_disposal_action_check" CHECK (disposal_action IS NULL OR (disposal_action = ANY (ARRAY['Anonymize'::text, 'Delete'::text])))
+    "retention_subjects_disposal_consistency_check" CHECK ((disposed_at IS NULL) = (disposal_action IS NULL))
+    "retention_subjects_row_version_check" CHECK (row_version > 0)
+
+$ cat database/migrations/V15/V15-SEC-003/137-retention-subjects.down.sql | docker exec -i alkaros-test-pg psql -U postgres -d sec003_check2 -v ON_ERROR_STOP=1
+DROP TABLE
+DROP SCHEMA
+
+$ docker exec alkaros-test-pg psql -U postgres -c "DROP DATABASE sec003_check2;"
+DROP DATABASE

@@ -1,10 +1,10 @@
 # V15-SEC-003 - Harden sensitive payload retention
 
 - Task ID: V15-SEC-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: implementation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -21,6 +21,17 @@ V1-SEC-002 sınırı üzerinde retention enforcement, authorized re-encryption v
 - `src/Modules/Security/DataProtectionRetention/**`, `tests/Modules/Security/DataProtectionRetention/**`,
   `database/migrations/V15/V15-SEC-003/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan, path bilerek backtick'siz):
+  src/Modules/Security/ALKAROS.Security.csproj, src/Modules/Security/packages.lock.json
+  (V15-SEC-001/V15-SEC-002 sahipliğinde) — yeni ALKAROS.SensitiveData ve ALKAROS.Audit proje
+  referansları + Npgsql paket referansı eklendi.
+- Sınırlı ek (paylaşılan, geri-tik olmadan, path bilerek backtick'siz):
+  ALKAROS.slnx (V1-FND-001 sahipliğinde), build/project-manifest.json (V1-FND-007 sahipliğinde) —
+  yeni ALKAROS.Security.DataProtectionRetention.Tests proje kaydı eklendi (C86/C88/C91/V15-SEC-002 emsali).
+- Sınırlı ek (paylaşılan, geri-tik olmadan, path bilerek backtick'siz):
+  database/MigrationComposition/order.json, src/Host/Composition/Migrations/MigrationManifest.cs,
+  tests/Host/MigrationComposition/Manifest/ManifestTests.cs (V0-DAT-001 sahipliğinde) —
+  migration 137 pozisyonunun kaydı (security.retention_subjects).
 
 ## In scope
 
@@ -49,6 +60,32 @@ V1-SEC-002 sınırı üzerinde retention enforcement, authorized re-encryption v
 
 - Expired payload, V0-CMP-003 disposal matrisine göre Anonymize edilir; yalnız matriste Delete sınıfındaki veriler
   silinir; re-encryption ve deletion retry idempotent'tır; plaintext/log leakage yoktur.
+- `security.retention_subjects` (migration 137) — 9 `DataCategory` (V0-CMP-003'ün KVKK envanterinden birebir),
+  `DisposalMatrix` her kategoriyi Anonymize/Delete/Retain'e dispatch eder; `RetentionCoverageVerifier` her ikisinin
+  (Actions + RetentionPeriods) tüm enum değerlerini kapsadığını doğrular.
+- `RetentionExecutionService.RunSweepAsync`: süresi dolmuş `ProviderPayloads` gerçekten Anonymize edilir (envelope
+  gerçek olmayan bir sentinel key-id ile üzerine yazılır, `SensitivePayloadProtector.Unprotect` artık başarısız
+  olur); legal-hold ve Retain-sınıfı asla dispose edilmez; henüz süresi dolmamış konu dokunulmaz; sweep'i iki kez
+  çalıştırmak idempotent (ikinci koşuda hiçbir şey yeniden işlenmez/çift sayılmaz).
+- `DeletionQueueProcessor`: Delete-sınıfı bir konu önce kuyruğa alınır (envelope hâlâ yerinde), yalnız processor
+  gerçekten satırı kalıcı siler; boş kuyrukta veya ikinci çalıştırmada no-op (hata değil).
+- `AuthorizedReEncryptionService`: eski anahtardan yeni anahtara gerçek round-trip (plaintext korunur, retention
+  saati -- tablo'nun kendi `created_at` kolonu -- değişmez); zaten hedef anahtardaki bir konu no-op; disposed bir
+  konu veya yanlış eski anahtar fail-closed.
+- Her disposal/purge/re-encryption, `V1-OPS-001`'in `IAuditEventStore`'u üzerinden kaydedilir (yalnız
+  kategori/aksiyon/aktör metadata'sı — envelope veya plaintext asla değil).
+- `dotnet build ALKAROS.slnx -c Release` → 0 uyarı, 0 hata (`evidence/V15-SEC-003/build-release.txt`).
+- `ALKAROS.Security.DataProtectionRetention.Tests`: 32/32
+  (`evidence/V15-SEC-003/test-dataprotectionretention.txt`).
+- Regresyon: `ALKAROS.Security.SecretRotation.Tests` 28/28, `ALKAROS.Security.IdentityHardening.Tests` 12/12,
+  `ALKAROS.Audit.EventStore.Tests` 22/22, migration `ManifestTests` 16/16 — hepsi yeşil
+  (`evidence/V15-SEC-003/test-regression-*.txt`).
+- Migration 137 gerçek PostgreSQL 18'e karşı ileri/geri doğrulandı (`evidence/V15-SEC-003/migration-137-up-down.txt`).
+- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı
+  (`evidence/V15-SEC-003/plan-audit-validate.txt`).
+- `python tools/consistency-audit/consistency_audit.py` → temiz (`evidence/V15-SEC-003/consistency-audit.txt`).
+- `python tools/project-manifest/project_manifest_tool.py` → VALID
+  (`evidence/V15-SEC-003/project-manifest-validate.txt`).
 
 ## Handoff
 

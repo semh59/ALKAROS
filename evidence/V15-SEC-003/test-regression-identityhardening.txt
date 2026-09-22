@@ -1,0 +1,4 @@
+﻿D:\PROJECT\ALKAROS\tests\Modules\Security\IdentityHardening\bin\Release\net8.0\ALKAROS.Security.IdentityHardening.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 439 ms - ALKAROS.Security.IdentityHardening.Tests.dll (net8.0)

@@ -106,6 +106,13 @@
           "xunit.extensibility.core": "[2.9.2]"
         }
       },
+      "alkaros.audit": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
       "alkaros.identity": {
         "type": "Project",
         "dependencies": {
@@ -122,7 +129,16 @@
       "alkaros.security": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.Audit": "[1.0.0, )",
           "ALKAROS.Identity": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.sensitivedata": {
+        "type": "Project",
+        "dependencies": {
           "ALKAROS.Secrets": "[1.0.0, )"
         }
       },

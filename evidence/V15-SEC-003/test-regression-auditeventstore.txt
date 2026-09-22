@@ -1,0 +1,4 @@
+﻿D:\PROJECT\ALKAROS\tests\Modules\Audit\EventStore\bin\Release\net8.0\ALKAROS.Audit.EventStore.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    22, Atlanan:     0, Toplam:    22, Süre: 3 s - ALKAROS.Audit.EventStore.Tests.dll (net8.0)

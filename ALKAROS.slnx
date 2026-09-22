@@ -107,6 +107,7 @@
   <Project Path="tests/Modules/Invoicing/Qnb/Client/ALKAROS.Invoicing.Qnb.Client.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj" />
   <Project Path="tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj" />
+  <Project Path="tests/Modules/Security/DataProtectionRetention/ALKAROS.Security.DataProtectionRetention.Tests.csproj" />
   <Project Path="tests/Modules/Security/IdentityHardening/ALKAROS.Security.IdentityHardening.Tests.csproj" />
   <Project Path="tests/Modules/Security/SecretRotation/ALKAROS.Security.SecretRotation.Tests.csproj" />
   <Project Path="tests/Modules/Settings/TypedSettings/ALKAROS.Settings.TypedSettings.Tests.csproj" />

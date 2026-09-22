@@ -1,0 +1,4 @@
+ALKAROS Project Manifest Validator
+Repository Root: D:\PROJECT\ALKAROS
+Solution: ALKAROS.slnx
+Status: VALID (0 differences across Solution, Disk, and ProjectReferences)

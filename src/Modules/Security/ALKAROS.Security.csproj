@@ -12,6 +12,18 @@
          AuthenticationService/IUserStore/IDeviceSessionService instead of
          duplicating their persistence. -->
     <ProjectReference Include="..\Identity\ALKAROS.Identity.csproj" />
+    <!-- V15-SEC-003: DataProtectionRetention protects/unprotects envelopes
+         through the V1-SEC-002 SensitiveData boundary and persists them
+         directly (security.retention_subjects, migration 137). -->
+    <ProjectReference Include="..\..\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj" />
+    <!-- V15-SEC-003: disposal/purge/re-encryption actions are recorded
+         through V1-OPS-001's audit foundation (its own declared dependency). -->
+    <ProjectReference Include="..\Audit\ALKAROS.Audit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- V15-SEC-003: PostgresRetentionSubjectStore. -->
+    <PackageReference Include="Npgsql" />
   </ItemGroup>
 
 </Project>
