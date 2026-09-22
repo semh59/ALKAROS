@@ -1,0 +1,13 @@
+$ docker exec -i alkaros-test-pg psql -U postgres -d postgres -c "CREATE DATABASE alkaros_migtest_bkp002;"
+CREATE DATABASE
+
+$ docker exec -i alkaros-test-pg psql -U postgres -d alkaros_migtest_bkp002 < 139-restore-attempts.up.sql
+CREATE SCHEMA
+CREATE TABLE
+CREATE INDEX
+
+$ docker exec -i alkaros-test-pg psql -U postgres -d alkaros_migtest_bkp002 < 139-restore-attempts.down.sql
+DROP TABLE
+
+$ docker exec -i alkaros-test-pg psql -U postgres -d postgres -c "DROP DATABASE alkaros_migtest_bkp002 WITH (FORCE);"
+DROP DATABASE

@@ -1,0 +1,4 @@
+﻿D:\PROJECT\ALKAROS\tests\Modules\Operations\RestoreVerification\bin\Release\net8.0\ALKAROS.Operations.RestoreVerification.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:     6, Atlanan:     0, Toplam:     6, Süre: 5 s - ALKAROS.Operations.RestoreVerification.Tests.dll (net8.0)
