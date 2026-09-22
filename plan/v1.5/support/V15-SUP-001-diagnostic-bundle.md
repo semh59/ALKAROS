@@ -19,12 +19,12 @@ destek paketi oluşturun.
 ## Owned surface
 
 - `src/Modules/Support/DiagnosticBundle/**`, `tests/Modules/Support/DiagnosticBundle/**`
+- `src/Modules/Support/SupportModule.cs`, `src/Modules/Support/ALKAROS.Support.csproj`,
+  `src/Modules/Support/packages.lock.json` — modül-kök dosyaları
+  (C86/C88/C91 emsali: yeni bağımsız foundation görevi oluşturulmaz, yeni
+  bir modülün ilk feature görevi kendi proje dosyasını sahiplenir;
+  `DiagnosticBundle/` bu modülün ilk feature'ı).
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
-- Bu, `Support` modülünün ilk (ve şimdilik tek) feature'ı: modül kök dosyaları
-  (`SupportModule.cs`, `ALKAROS.Support.csproj`, `packages.lock.json`)
-  `src/Modules/Support/DiagnosticBundle/**` deseninin dışında ama modülün ilk
-  feature görevi kendi proje dosyasını sahiplenir konvansiyonuyla bu görevde
-  oluşturuldu (C86/C88/C91 emsali).
 - Sınırlı ek (paylaşılan, geri-tik olmadan, path bilerek backtick'siz):
   ALKAROS.slnx (V1-FND-001 sahipliğinde), build/project-manifest.json
   (V1-FND-007 sahipliğinde) — yeni `ALKAROS.Support`/
