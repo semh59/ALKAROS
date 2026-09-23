@@ -49,6 +49,26 @@ V1 flow'ları için structured event contract, correlation/request ID ve bounded
 - Order yazdırma kuyruğuna gönderme ID tek korelasyonla izlenebilir; sağlık status standarttır; gizli test işaretçisi
   senaryosu ilgili testlerle doğrulanır (ilgili test: `tests/Modules/Observability/Foundation/**`; çalıştırma komutu,
   komut çıktısı ve exit code evidence'e eklenir); onaylanmış bir saklama politikası kimliği olmadan ısrar reddedilir.
+- **2026-09-23 kabul edilen risk + tamamlayıcı önlem** (Semih onaylı, V15
+  Faz 0/1 audit turunda bulunan bir bulgunun takibi): `V15-SUP-001`'in
+  `SecretPatternScanner`'ı yalnız kart-benzeri rakam dizilerini ve
+  24+ karakterlik token/JWT-benzeri değerleri yakalıyor — kısa, insan
+  tarafından yazılmış bir şifre/PIN/OTP, yanlış/etiketsiz bir anahtar
+  altında durursa bu değer-bazlı katmandan geçebilir. Bu, regex ile kısa
+  string'leri "şifre" diye tahmin etmenin yanlış-pozitif maliyeti çok
+  yüksek olduğu için BİLİNÇLİ olarak düzeltilmedi — birincil savunma
+  (`ObservabilityRedactionHook`'un anahtar-bazlı kontrolü) alanlar doğru
+  adlandırıldığında (`password`, `secret`, `pin` vb.) uzunluktan bağımsız
+  zaten yakalıyor. Tamamlayıcı, sıfır yanlış-pozitif riskli önlem olarak
+  `SensitiveKeys` listesi genişletildi: `passwd`, `passphrase`,
+  `one_time_password`, `otp`, `security_code`, `verification_code`,
+  `recovery_code`. Kalan artık kabul edilen risk yalnızca "kısa bir
+  sır TAMAMEN farklı/tahmin edilemeyen bir anahtar adı altında" durumu —
+  bu, mevcut mimaride (serbest-formatlı `BeforeStateJson`/`AfterStateJson`/
+  `MetadataJson`) teorik olarak mümkün ama regex ile pratik bir çözümü yok.
+  7 yeni test (`IsSensitiveKeyIdentifiesProtectedFields`), 29/29 yeşil;
+  regresyon: `Support.DiagnosticBundle` 22/22, `Observability.
+  StructuredLogging` 29/29, `Audit.EventStore` 22/22.
 
 ## Handoff
 

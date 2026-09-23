@@ -100,6 +100,15 @@ public sealed class CorrelationAndRedactionTests
     [InlineData("order_id", false)]
     [InlineData("table_number", false)]
     [InlineData("status", false)]
+    // 2026-09-23: widened key list (SecretPatternScanner value-scan gap
+    // mitigation, see V15-SUP-001).
+    [InlineData("passwd", true)]
+    [InlineData("passphrase", true)]
+    [InlineData("one_time_password", true)]
+    [InlineData("otp", true)]
+    [InlineData("security_code", true)]
+    [InlineData("verification_code", true)]
+    [InlineData("recovery_code", true)]
     public void IsSensitiveKeyIdentifiesProtectedFields(string keyName, bool isSensitive)
     {
         _redactionHook.IsSensitiveKey(keyName).Should().Be(isSensitive);

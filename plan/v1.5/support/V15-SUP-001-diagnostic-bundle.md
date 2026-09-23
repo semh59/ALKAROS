@@ -112,6 +112,12 @@ destek paketi oluşturun.
   `RedactsASecretPatternValueNestedInsideTheAfterStateJsonText`) +
   1 revert-and-confirm testi (`RevertAndConfirmEmbeddingBeforeAfterMetadataAsOpaqueStringsWouldLeakANestedPassword`);
   toplam 19→22/22 yeşil.
+- **2026-09-23 kabul edilen risk** (Semih onaylı): `SecretPatternScanner`'ın
+  kısa/insan-tarafından-yazılmış şifreleri (uzun token/kart-benzeri
+  olmayan) yakalamaması bilinçli bir tasarım sınırı olarak kabul edildi —
+  detay ve tamamlayıcı önlem (`ObservabilityRedactionHook`'un anahtar
+  listesinin genişletilmesi) için bkz. `plan/v1/operations/
+  V1-OBS-001-observability-foundation.md`'nin Acceptance evidence bölümü.
 - **2026-09-23 not** (bağımsız denetim): `Deliverables`'ın "yetkili
   tanılama paketi komutu/arabirimi" ifadesi, gerçek bir rol/izin
   kontrolüne değil yalnızca `RequestedByActorId`'nin boş-olmama

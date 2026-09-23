@@ -50,7 +50,22 @@ public sealed class ObservabilityRedactionHook : IRedactionHook
         "tc_kimlik",
         "tckn",
         "identity_no",
-        "tax_id"
+        "tax_id",
+        // 2026-09-23: SecretPatternScanner (V15-SUP-001) can only catch a
+        // mislabeled sensitive VALUE when it looks like a long token or a
+        // card-shaped digit run — a short, human-typed password/PIN/OTP
+        // under a differently-named key would slip through both layers.
+        // Widening this key list (name-based, zero false-positive risk —
+        // unlike guessing at short values) is the cheap complementary
+        // mitigation for that accepted residual risk (see V15-SUP-001's
+        // Acceptance evidence).
+        "passwd",
+        "passphrase",
+        "one_time_password",
+        "otp",
+        "security_code",
+        "verification_code",
+        "recovery_code"
     };
 
     public bool IsSensitiveKey(string key)
