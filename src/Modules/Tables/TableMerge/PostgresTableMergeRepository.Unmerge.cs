@@ -2,6 +2,7 @@ using System.Data;
 using System.Text.Json;
 using ALKAROS.IntegrationContracts;
 using ALKAROS.Messaging;
+using ALKAROS.Tables.PaymentTopology;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -96,9 +97,13 @@ public sealed partial class PostgresTableMergeRepository
                 throw new TableMergeConcurrencyException(mergeRecord.MergedTableId, expectedVersion, actualVersion);
         }
 
-        // 4. Payment Policy Check: verify no payment activity occurred on primary table bills
+        // 4. Payment-aware topology policy (V13-TBL-001): see
+        // PaymentAwareTableTopologyPolicy's own doc comment — only an
+        // unsettled (Pending/Unknown/ReconciliationRequired) Payment blocks
+        // an unmerge; a merely partially allocated/paid bill is safe.
+        var primaryBillIdsForPolicy = new List<Guid>();
         const string checkBillsSql = $"""
-            SELECT bill_id, status, payable_amount, allocated_amount, paid_amount
+            SELECT bill_id
             FROM {BillsTable}
             WHERE table_id = @primary_id AND status NOT IN ('Cancelled');
             """;
@@ -109,19 +114,12 @@ public sealed partial class PostgresTableMergeRepository
             await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
-                var billId = reader.GetGuid(0);
-                var status = reader.GetString(1);
-                var allocated = reader.GetDecimal(3);
-                var paid = reader.GetDecimal(4);
-
-                if (paid > 0 || allocated > 0 || !string.Equals(status, "Open", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new PaymentPolicyRequiredException(
-                        billId,
-                        $"Bill '{billId}' on merged primary table has payment data (paid: {paid}, allocated: {allocated}, status: {status}). Unmerging tables after payment activity requires V1.2 payment-aware policy.");
-                }
+                primaryBillIdsForPolicy.Add(reader.GetGuid(0));
             }
         }
+
+        await PaymentAwareTableTopologyPolicy.EnsureNoUnsettledPaymentForMergeAsync(
+            primaryBillIdsForPolicy, connection, transaction, cancellationToken);
 
         // 5. Restore Orders and Bills to their original participant tables
         var restoredOrderIds = new List<Guid>();

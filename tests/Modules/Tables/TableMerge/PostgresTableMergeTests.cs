@@ -223,8 +223,10 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
     }
 
     [Fact]
-    public async Task MergeWithPaidBillOnParticipantThrowsPaymentPolicyRequiredExceptionAndRollsBack()
+    public async Task MergeWithPendingPaymentOnParticipantThrowsPaymentPolicyRequiredExceptionAndRollsBack()
     {
+        // V13-TBL-001: an unsettled (Pending) Payment on any participating
+        // bill locks the whole merge out, regardless of allocated/paid.
         var primaryId = await CreateTableAsync("M-201", "Occupied", 1);
         var partId = await CreateTableAsync("M-202", "Occupied", 1);
 
@@ -233,14 +235,15 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
         await SetTablePointersAsync(primaryId, order1Id, bill1Id);
 
         var order2Id = await CreateOrderAsync(partId, "ORD-P2", 150m);
-        var bill2Id = await CreateBillAsync(partId, order2Id, "BIL-P2", 150m, allocatedAmount: 0m, paidAmount: 50m, status: "PartiallyPaid");
+        var bill2Id = await CreateBillAsync(partId, order2Id, "BIL-P2", 150m, allocatedAmount: 0m, paidAmount: 0m, status: "Open");
         await SetTablePointersAsync(partId, order2Id, bill2Id);
+        await CreatePaymentAsync(bill2Id, "Pending", requestedAmount: 150m);
 
         var request = new TableMergeRequest(
             primaryId,
             ExpectedPrimaryRowVersion: 1,
             new[] { new TableMergeParticipant(partId, 1) },
-            Reason: "Merge with partial payment",
+            Reason: "Merge with pending payment",
             MergedBy: _userId);
 
         var act = () => _service.MergeTablesAsync(request);
@@ -256,30 +259,32 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
     }
 
     [Fact]
-    public async Task MergeWithAllocatedBillOnParticipantThrowsPaymentPolicyRequiredException()
+    public async Task MergeWithAllocatedBillAndNoUnsettledPaymentSucceeds()
     {
+        // V13-TBL-001: a partially allocated Bill with no unsettled Payment
+        // is safe to merge — its own bill_id never changes.
         var primaryId = await CreateTableAsync("M-301", "Occupied", 1);
         var partId = await CreateTableAsync("M-302", "Occupied", 1);
 
         var orderId = await CreateOrderAsync(partId, "ORD-A1", 120m);
         var billId = await CreateBillAsync(partId, orderId, "BIL-A1", 120m, allocatedAmount: 40m, paidAmount: 0m, status: "Open");
         await SetTablePointersAsync(partId, orderId, billId);
+        await CreatePaymentAsync(billId, "Approved", requestedAmount: 40m);
 
         var request = new TableMergeRequest(
             primaryId,
             ExpectedPrimaryRowVersion: 1,
             new[] { new TableMergeParticipant(partId, 1) },
-            Reason: "Merge with allocated bill",
+            Reason: "Merge with allocated, settled bill",
             MergedBy: _userId);
 
-        var act = () => _service.MergeTablesAsync(request);
+        var result = await _service.MergeTablesAsync(request);
 
-        var ex = await act.Should().ThrowAsync<PaymentPolicyRequiredException>();
-        ex.Which.BillId.Should().Be(billId);
+        result.ConsolidatedBillIds.Should().Contain(billId);
     }
 
     [Fact]
-    public async Task MergeWithBillAllocationRowThrowsPaymentPolicyRequiredException()
+    public async Task MergeWithBillAllocationRowAndNoPaymentSucceeds()
     {
         var primaryId = await CreateTableAsync("M-401", "Occupied", 1);
         var partId = await CreateTableAsync("M-402", "Occupied", 1);
@@ -294,13 +299,12 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
             primaryId,
             ExpectedPrimaryRowVersion: 1,
             new[] { new TableMergeParticipant(partId, 1) },
-            Reason: "Merge with allocation rows",
+            Reason: "Merge with a split row but no payment",
             MergedBy: _userId);
 
-        var act = () => _service.MergeTablesAsync(request);
+        var result = await _service.MergeTablesAsync(request);
 
-        var ex = await act.Should().ThrowAsync<PaymentPolicyRequiredException>();
-        ex.Which.BillId.Should().Be(billId);
+        result.ConsolidatedBillIds.Should().Contain(billId);
     }
 
     [Theory]
@@ -511,6 +515,30 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
         cmd.Parameters.AddWithValue("bill_id", billId);
         cmd.Parameters.AddWithValue("amount", amount);
         await cmd.ExecuteNonQueryAsync();
+    }
+
+    private async Task<Guid> CreatePaymentAsync(Guid billId, string status, decimal requestedAmount = 100m)
+    {
+        var id = Guid.NewGuid();
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        const string sql = """
+            INSERT INTO payments.payments (
+                payment_id, bill_id, status, currency_code, requested_amount,
+                tendered_amount, approved_amount, change_amount,
+                initiated_at, tendered_at, created_at, updated_at, row_version
+            ) VALUES (
+                @id, @bill_id, @status, 'TRY', @requested_amount,
+                @requested_amount, NULL, 0,
+                now(), now(), now(), now(), 1
+            );
+            """;
+        await using var cmd = new NpgsqlCommand(sql, connection);
+        cmd.Parameters.AddWithValue("id", id);
+        cmd.Parameters.AddWithValue("bill_id", billId);
+        cmd.Parameters.AddWithValue("status", status);
+        cmd.Parameters.AddWithValue("requested_amount", requestedAmount);
+        await cmd.ExecuteNonQueryAsync();
+        return id;
     }
 
     private async Task<(string Status, Guid? CurrentOrderId, Guid? CurrentBillId, long RowVersion)> GetTableAsync(Guid tableId)

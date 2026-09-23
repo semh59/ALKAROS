@@ -155,21 +155,24 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
     }
 
     [Fact]
-    public async Task ExecuteTransferPaymentDataOnBillThrowsPaymentPolicyRequiredExceptionAndRollsBack()
+    public async Task ExecuteTransferPendingPaymentOnBillThrowsPaymentPolicyRequiredExceptionAndRollsBack()
     {
+        // V13-TBL-001: an unsettled (Pending) Payment locks the table out of
+        // transfer, regardless of the Bill's own allocated/paid columns.
         var sourceTableId = await CreateTableAsync("T-201", "Occupied", 1);
         var targetTableId = await CreateTableAsync("T-202", "Available", 1);
 
         var orderId = await CreateOrderAsync(sourceTableId, "ORD-201", 200m);
-        var billId = await CreateBillAsync(sourceTableId, orderId, "BIL-201", 200m, allocatedAmount: 0m, paidAmount: 50m, status: "PartiallyPaid");
+        var billId = await CreateBillAsync(sourceTableId, orderId, "BIL-201", 200m, allocatedAmount: 0m, paidAmount: 0m, status: "Open");
         await SetTablePointersAsync(sourceTableId, orderId, billId);
+        await CreatePaymentAsync(billId, "Pending");
 
         var request = new TableTransferRequest(
             sourceTableId,
             ExpectedSourceRowVersion: 1,
             targetTableId,
             ExpectedTargetRowVersion: 1,
-            Reason: "Transfer attempt with payment",
+            Reason: "Transfer attempt with pending payment",
             TransferredBy: _userId);
 
         var act = () => _service.TransferTableAsync(request);
@@ -196,22 +199,25 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
         bill.TableId.Should().Be(sourceTableId);
     }
 
-    [Fact]
-    public async Task ExecuteTransferAllocatedBillThrowsPaymentPolicyRequiredException()
+    [Theory]
+    [InlineData("Unknown")]
+    [InlineData("ReconciliationRequired")]
+    public async Task ExecuteTransferUnsettledPaymentOnBillThrowsPaymentPolicyRequiredException(string paymentStatus)
     {
-        var sourceTableId = await CreateTableAsync("T-301", "Occupied", 1);
-        var targetTableId = await CreateTableAsync("T-302", "Available", 1);
+        var sourceTableId = await CreateTableAsync($"T-201-{paymentStatus}", "Occupied", 1);
+        var targetTableId = await CreateTableAsync($"T-202-{paymentStatus}", "Available", 1);
 
-        var orderId = await CreateOrderAsync(sourceTableId, "ORD-301", 100m);
-        var billId = await CreateBillAsync(sourceTableId, orderId, "BIL-301", 100m, allocatedAmount: 50m, paidAmount: 0m, status: "Open");
+        var orderId = await CreateOrderAsync(sourceTableId, $"ORD-201-{paymentStatus}", 200m);
+        var billId = await CreateBillAsync(sourceTableId, orderId, $"BIL-201-{paymentStatus}", 200m, allocatedAmount: 0m, paidAmount: 0m, status: "Open");
         await SetTablePointersAsync(sourceTableId, orderId, billId);
+        await CreatePaymentAsync(billId, paymentStatus);
 
         var request = new TableTransferRequest(
             sourceTableId,
             ExpectedSourceRowVersion: 1,
             targetTableId,
             ExpectedTargetRowVersion: 1,
-            Reason: "Transfer attempt with allocation",
+            Reason: "Transfer attempt with unsettled payment",
             TransferredBy: _userId);
 
         var act = () => _service.TransferTableAsync(request);
@@ -221,7 +227,41 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
     }
 
     [Fact]
-    public async Task ExecuteTransferBillWithBillAllocationsRowThrowsPaymentPolicyRequiredException()
+    public async Task ExecuteTransferPartiallyPaidBillWithSettledPaymentSucceeds()
+    {
+        // V13-TBL-001: a partially-paid Bill whose known Payment already
+        // settled (Approved) is safe to move — its bill_id never changes,
+        // so its allocation stays attributed to the same Bill either way.
+        var sourceTableId = await CreateTableAsync("T-301", "Occupied", 1);
+        var targetTableId = await CreateTableAsync("T-302", "Available", 1);
+
+        var orderId = await CreateOrderAsync(sourceTableId, "ORD-301", 100m);
+        var billId = await CreateBillAsync(sourceTableId, orderId, "BIL-301", 100m, allocatedAmount: 50m, paidAmount: 50m, status: "PartiallyPaid");
+        await SetTablePointersAsync(sourceTableId, orderId, billId);
+        await CreatePaymentAsync(billId, "Approved", requestedAmount: 50m);
+
+        var request = new TableTransferRequest(
+            sourceTableId,
+            ExpectedSourceRowVersion: 1,
+            targetTableId,
+            ExpectedTargetRowVersion: 1,
+            Reason: "Transfer of a partially-paid, fully-settled bill",
+            TransferredBy: _userId);
+
+        var result = await _service.TransferTableAsync(request);
+
+        result.TransferredBillIds.Should().Contain(billId);
+        var targetTable = await GetTableAsync(targetTableId);
+        targetTable.Status.Should().Be("Occupied");
+        targetTable.CurrentBillId.Should().Be(billId);
+
+        // The allocation itself is untouched — same bill_id, same amount.
+        var allocated = await GetBillAllocatedAmountAsync(billId);
+        allocated.Should().Be(50m);
+    }
+
+    [Fact]
+    public async Task ExecuteTransferBillWithBillAllocationsRowAndNoUnsettledPaymentSucceeds()
     {
         var sourceTableId = await CreateTableAsync("T-401", "Occupied", 1);
         var targetTableId = await CreateTableAsync("T-402", "Available", 1);
@@ -230,7 +270,9 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
         var billId = await CreateBillAsync(sourceTableId, orderId, "BIL-401", 100m, allocatedAmount: 0m, paidAmount: 0m, status: "Open");
         await SetTablePointersAsync(sourceTableId, orderId, billId);
 
-        // Insert allocation row into billing.bill_allocations
+        // A split-allocation row with no Payment record at all (e.g. a
+        // manual split not yet tendered) — never blocked, since allocations
+        // never move between bills regardless of which table points at one.
         await InsertBillAllocationAsync(billId, 50m);
 
         var request = new TableTransferRequest(
@@ -238,13 +280,12 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
             ExpectedSourceRowVersion: 1,
             targetTableId,
             ExpectedTargetRowVersion: 1,
-            Reason: "Transfer attempt with split row",
+            Reason: "Transfer of a bill with a split row but no payment",
             TransferredBy: _userId);
 
-        var act = () => _service.TransferTableAsync(request);
+        var result = await _service.TransferTableAsync(request);
 
-        var ex = await act.Should().ThrowAsync<PaymentPolicyRequiredException>();
-        ex.Which.BillId.Should().Be(billId);
+        result.TransferredBillIds.Should().Contain(billId);
     }
 
     [Theory]
@@ -486,6 +527,40 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
         cmd.Parameters.AddWithValue("payable", payable);
         cmd.Parameters.AddWithValue("allocated", allocatedAmount);
         cmd.Parameters.AddWithValue("paid", paidAmount);
+        await cmd.ExecuteNonQueryAsync();
+        return id;
+    }
+
+    private async Task<decimal> GetBillAllocatedAmountAsync(Guid billId)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        const string sql = "SELECT allocated_amount FROM billing.bills WHERE bill_id = @id;";
+        await using var cmd = new NpgsqlCommand(sql, connection);
+        cmd.Parameters.AddWithValue("id", billId);
+        var result = await cmd.ExecuteScalarAsync();
+        return (decimal)result!;
+    }
+
+    private async Task<Guid> CreatePaymentAsync(Guid billId, string status, decimal requestedAmount = 100m)
+    {
+        var id = Guid.NewGuid();
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        const string sql = """
+            INSERT INTO payments.payments (
+                payment_id, bill_id, status, currency_code, requested_amount,
+                tendered_amount, approved_amount, change_amount,
+                initiated_at, tendered_at, created_at, updated_at, row_version
+            ) VALUES (
+                @id, @bill_id, @status, 'TRY', @requested_amount,
+                @requested_amount, NULL, 0,
+                now(), now(), now(), now(), 1
+            );
+            """;
+        await using var cmd = new NpgsqlCommand(sql, connection);
+        cmd.Parameters.AddWithValue("id", id);
+        cmd.Parameters.AddWithValue("bill_id", billId);
+        cmd.Parameters.AddWithValue("status", status);
+        cmd.Parameters.AddWithValue("requested_amount", requestedAmount);
         await cmd.ExecuteNonQueryAsync();
         return id;
     }

@@ -19,7 +19,6 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
     // Order/Bill row moves are requested through a table integration event.
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
-    private const string BillAllocationsTable = "billing.bill_allocations";
     private const string AuditEventsTable = "audit.audit_events";
 
     // Defensive ceiling for a filtered list read: a real filter returns

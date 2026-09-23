@@ -69,8 +69,12 @@ public sealed class InvalidTargetTableStateException : TableTransferException
 }
 
 /// <summary>
-/// Thrown when a Bill associated with the source table has payment data (allocations, partial payments, or non-Open status).
-/// Moving partially-paid or allocated bills is deferred to V1.3 payment-aware table topology (V13-TBL-001).
+/// Thrown when a Bill associated with the source table has a Payment
+/// currently Pending, Unknown, or ReconciliationRequired (V13-TBL-001's
+/// <c>PaymentAwareTableTopologyPolicy</c>) — a merely partially
+/// allocated/paid Bill whose known Payments have all already settled
+/// (Approved/Declined/Cancelled) is not blocked, since its own bill_id
+/// never changes across a transfer.
 /// </summary>
 public sealed class PaymentPolicyRequiredException : TableTransferException
 {

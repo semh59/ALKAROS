@@ -2,6 +2,7 @@ using System.Data;
 using System.Text.Json;
 using ALKAROS.IntegrationContracts;
 using ALKAROS.Messaging;
+using ALKAROS.Tables.PaymentTopology;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -18,7 +19,6 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
     private const string TablesTable = "table_mgmt.tables";
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
-    private const string BillAllocationsTable = "billing.bill_allocations";
     private const string AuditEventsTable = "audit.audit_events";
 
     // Defensive ceiling for a filtered list read: a real filter returns
@@ -231,10 +231,17 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             throw new TableTransferConcurrencyException(request.TargetTableId, request.ExpectedTargetRowVersion, targetRowVersion);
         }
 
-        // 3. Payment-policy validation: verify no payment data on bills for source table
+        // 3. Payment-aware topology policy (V13-TBL-001): a Bill with any
+        // Payment currently Pending/Unknown/ReconciliationRequired locks
+        // this table out of transfer until it settles. A Bill that is
+        // merely partially allocated/paid (every known Payment already
+        // Approved/Declined/Cancelled) is safe to move — its own bill_id
+        // never changes, so its allocations are never at risk of moving to
+        // the wrong Bill (see PaymentAwareTableTopologyPolicy's own doc
+        // comment for the full reasoning).
         var activeBillIds = new List<Guid>();
         const string selectBillsSql = $"""
-            SELECT bill_id, status, payable_amount, allocated_amount, paid_amount
+            SELECT bill_id, status
             FROM {BillsTable}
             WHERE table_id = @source_id AND status NOT IN ('Paid', 'Cancelled');
             """;
@@ -245,50 +252,12 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
-                var billId = reader.GetGuid(0);
-                var status = reader.GetString(1);
-                var allocated = reader.GetDecimal(3);
-                var paid = reader.GetDecimal(4);
-
-                if (!string.Equals(status, "Open", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new PaymentPolicyRequiredException(
-                        billId,
-                        $"Bill '{billId}' is in '{status}' state. Table transfer for non-open bills requires V1.2 payment-aware topology policy.");
-                }
-
-                if (allocated > 0 || paid > 0)
-                {
-                    throw new PaymentPolicyRequiredException(
-                        billId,
-                        $"Bill '{billId}' has payment progress (allocated: {allocated}, paid: {paid}). Table transfer with payment data requires V1.2 payment-aware topology policy.");
-                }
-
-                activeBillIds.Add(billId);
+                activeBillIds.Add(reader.GetGuid(0));
             }
         }
 
-        // Also check if any bill allocations exist for source table bills
-        const string selectAllocationsSql = $"""
-            SELECT ba.bill_id
-            FROM {BillAllocationsTable} ba
-            JOIN {BillsTable} b ON ba.bill_id = b.bill_id
-            WHERE b.table_id = @source_id AND b.status NOT IN ('Paid', 'Cancelled')
-            LIMIT 1;
-            """;
-
-        await using (var cmd = new NpgsqlCommand(selectAllocationsSql, connection, transaction))
-        {
-            cmd.Parameters.AddWithValue("source_id", request.SourceTableId);
-            var allocBillId = await cmd.ExecuteScalarAsync(cancellationToken);
-            if (allocBillId is not null and not DBNull)
-            {
-                var billId = (Guid)allocBillId;
-                throw new PaymentPolicyRequiredException(
-                    billId,
-                    $"Bill '{billId}' has split/payment allocations. Table transfer requires V1.2 payment policy.");
-            }
-        }
+        await PaymentAwareTableTopologyPolicy.EnsureNoUnsettledPaymentAsync(
+            activeBillIds, connection, transaction, cancellationToken);
 
         // 4. Find open orders on Source Table
         var activeOrderIds = new List<Guid>();

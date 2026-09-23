@@ -82,8 +82,12 @@ public sealed class InvalidTableMergeStateException : TableMergeException
 }
 
 /// <summary>
-/// Thrown when an active bill on any participating table has payment progress (allocated, partially paid, paid, or non-Open status).
-/// Merging tables with payment data requires V1.3 payment-aware table topology (V13-TBL-001).
+/// Thrown when a Bill on any participating (or, for unmerge, primary)
+/// table has a Payment currently Pending, Unknown, or
+/// ReconciliationRequired (V13-TBL-001's
+/// <c>PaymentAwareTableTopologyPolicy</c>) — a merely partially
+/// allocated/paid Bill whose known Payments have all already settled is
+/// not blocked, since its own bill_id never changes across a merge/unmerge.
 /// </summary>
 public sealed class PaymentPolicyRequiredException : TableMergeException
 {

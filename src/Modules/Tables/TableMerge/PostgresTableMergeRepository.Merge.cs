@@ -2,6 +2,7 @@ using System.Data;
 using System.Text.Json;
 using ALKAROS.IntegrationContracts;
 using ALKAROS.Messaging;
+using ALKAROS.Tables.PaymentTopology;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -138,9 +139,15 @@ public sealed partial class PostgresTableMergeRepository
                 throw new InvalidTableMergeStateException(participant.TableId, "Merged", $"Participant table {participant.TableId} is already part of an active merge.");
         }
 
-        // 3. Payment-policy validation: verify no payment data on any participating bills
+        // 3. Payment-aware topology policy (V13-TBL-001): a Bill with any
+        // Payment currently Pending/Unknown/ReconciliationRequired locks
+        // every table it touches out of merge until it settles. A merely
+        // partially allocated/paid Bill is safe — its own bill_id never
+        // changes, so its allocations never move to the wrong Bill (see
+        // PaymentAwareTableTopologyPolicy's own doc comment).
+        var participantBillIdsForPolicy = new List<Guid>();
         const string checkBillsSql = $"""
-            SELECT bill_id, status, payable_amount, allocated_amount, paid_amount
+            SELECT bill_id
             FROM {BillsTable}
             WHERE table_id = ANY(@table_ids) AND status NOT IN ('Paid', 'Cancelled');
             """;
@@ -151,48 +158,12 @@ public sealed partial class PostgresTableMergeRepository
             await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
-                var billId = reader.GetGuid(0);
-                var status = reader.GetString(1);
-                var allocated = reader.GetDecimal(3);
-                var paid = reader.GetDecimal(4);
-
-                if (!string.Equals(status, "Open", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new PaymentPolicyRequiredException(
-                        billId,
-                        $"Bill '{billId}' is in '{status}' state. Table merge with non-open bills requires V1.2 payment policy.");
-                }
-
-                if (allocated > 0 || paid > 0)
-                {
-                    throw new PaymentPolicyRequiredException(
-                        billId,
-                        $"Bill '{billId}' has payment data (allocated: {allocated}, paid: {paid}). Table merge with payment requires V1.2 payment policy.");
-                }
+                participantBillIdsForPolicy.Add(reader.GetGuid(0));
             }
         }
 
-        // 3. Precondition: Check bill_allocations table (AUD-01: Fail-Closed)
-        const string checkAllocationsSql = $"""
-            SELECT ba.bill_id
-            FROM {BillAllocationsTable} ba
-            JOIN {BillsTable} b ON ba.bill_id = b.bill_id
-            WHERE b.table_id = ANY(@table_ids) AND b.status NOT IN ('Paid', 'Cancelled')
-            LIMIT 1;
-            """;
-
-        await using (var cmd = new NpgsqlCommand(checkAllocationsSql, connection, transaction))
-        {
-            cmd.Parameters.AddWithValue("table_ids", allTableIds.ToArray());
-            var allocBillId = await cmd.ExecuteScalarAsync(cancellationToken);
-            if (allocBillId is not null and not DBNull)
-            {
-                var billId = (Guid)allocBillId;
-                throw new PaymentPolicyRequiredException(
-                    billId,
-                    $"Bill '{billId}' has split allocations in {BillAllocationsTable}. Table merge with allocations requires V1.2 payment policy.");
-            }
-        }
+        await PaymentAwareTableTopologyPolicy.EnsureNoUnsettledPaymentForMergeAsync(
+            participantBillIdsForPolicy, connection, transaction, cancellationToken);
 
         // 4. Consolidate and reparent Orders and Bills from participants to Primary Table
         var allConsolidatedOrderIds = new List<Guid>();
