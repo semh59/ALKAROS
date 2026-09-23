@@ -90,6 +90,11 @@ public static class ModuleBoundaryTests
             ["Cash.TransactionLedger"] = ["Cash"],
             ["Cash.TenderHandler"] = ["Cash", "Cash.TransactionLedger", "Payments", "Payments.Allocations.Persistence", "Billing"],
             ["Payments.Allocations.Persistence"] = ["Payments", "Billing"],
+            // V13-PAY-004: same coarse edge module-dependency-rules.md row 6
+            // ("Payment -> Bill, Identity") already documents, split into its
+            // own IModule for the same reason as Cash.TenderHandler/
+            // Payments.Allocations.Persistence above — no new doc row needed.
+            ["Payments.CardSettlement"] = ["Payments", "Payments.Allocations.Persistence", "Billing"],
             // V15-BKP-001: module-dependency-rules.md row 24 ("Backup"),
             // structured alert logging on upload/RPO failure.
             // V15-BKP-001: OffsiteBackup's envelope encryption is keyed

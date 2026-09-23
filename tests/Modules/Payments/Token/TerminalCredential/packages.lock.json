@@ -149,6 +149,7 @@
         "type": "Project",
         "dependencies": {
           "ALKAROS.Billing": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Secrets": "[1.0.0, )",
           "ALKAROS.SensitiveData": "[1.0.0, )",

@@ -1197,6 +1197,14 @@
         "restore_attempts"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "140",
+      "phase": "B",
+      "tables": [
+        "card_settlement_attempts"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Billing\ALKAROS.Billing.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -104,6 +104,7 @@
   <Project Path="tests/Modules/Orders/SubmitOrder/ALKAROS.Orders.SubmitOrder.Tests.csproj" />
   <Project Path="tests/Modules/Payments/Allocations/Persistence/ALKAROS.Payments.Allocations.Persistence.Tests.csproj" />
   <Project Path="tests/Modules/Payments/Allocations/RefundIntents/ALKAROS.Payments.Allocations.RefundIntents.Tests.csproj" />
+  <Project Path="tests/Modules/Payments/CardSettlement/ALKAROS.Payments.CardSettlement.Tests.csproj" />
   <Project Path="tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj" />
   <Project Path="tests/Modules/Payments/TenderRouting/ALKAROS.Payments.TenderRouting.Tests.csproj" />
   <Project Path="tests/Modules/Payments/Token/TerminalCredential/ALKAROS.Payments.Token.TerminalCredential.Tests.csproj" />
