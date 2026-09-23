@@ -4,11 +4,32 @@ namespace ALKAROS.Payments.TenderRouting;
 /// A request to tender a Payment through one of the canonical
 /// <see cref="TenderRouting.TenderMethod"/> values. The envelope every
 /// handler (Cash/BankCard/MealCard, later) and the router itself agree on.
+///
+/// <para>
+/// <see cref="BillId"/>/<see cref="CashSessionId"/>/<see cref="IdempotencyKey"/>/
+/// <see cref="RecordedBy"/> are optional fields added by V13-PAY-003's Cash
+/// composition bridge (<c>ALKAROS.Payments.TenderComposition.CashTenderMethodAdapter</c>):
+/// <c>ICashTenderHandler</c>'s own contract (V13-CSH-003, unmodified) needs
+/// strictly more than the original three-field envelope carried, and that
+/// contract mints its own new Payment id rather than tendering
+/// <see cref="PaymentId"/> — so for a <see cref="TenderMethod.Cash"/>
+/// request, <see cref="PaymentId"/> is only a non-empty correlation token
+/// the caller supplies to satisfy <see cref="Validate"/>, never the id of
+/// the Payment actually created (that id is only observable by calling
+/// <c>ICashTenderHandler</c> directly, or by inspecting the resulting
+/// <c>CashTenderResult</c> outside the generic <see cref="TenderHandlerResult"/>
+/// contract, which this task's Owned surface does not extend). Other tender
+/// methods (BankCard/MealCard) leave these four fields null.
+/// </para>
 /// </summary>
 public sealed record TenderRequest(
     Guid PaymentId,
     TenderMethod Method,
-    decimal Amount)
+    decimal Amount,
+    Guid? BillId = null,
+    Guid? CashSessionId = null,
+    string? IdempotencyKey = null,
+    Guid? RecordedBy = null)
 {
     public void Validate()
     {

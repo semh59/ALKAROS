@@ -179,6 +179,14 @@
           "Npgsql": "[9.0.2, )"
         }
       },
+      "alkaros.payments.tendercomposition": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Cash": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )"
+        }
+      },
       "alkaros.production": {
         "type": "Project",
         "dependencies": {

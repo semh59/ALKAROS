@@ -95,6 +95,11 @@ public static class ModuleBoundaryTests
             // own IModule for the same reason as Cash.TenderHandler/
             // Payments.Allocations.Persistence above — no new doc row needed.
             ["Payments.CardSettlement"] = ["Payments", "Payments.Allocations.Persistence", "Billing"],
+            // V13-PAY-003: same module-dependency-rules.md row 6 edge as
+            // Cash.TenderHandler above (this module only bridges into it),
+            // plus Cash.TenderHandler itself to reach ICashTenderHandler —
+            // no new doc row needed.
+            ["Payments.TenderComposition"] = ["Payments", "Cash.TenderHandler"],
             // V15-BKP-001: module-dependency-rules.md row 24 ("Backup"),
             // structured alert logging on upload/RPO failure.
             // V15-BKP-001: OffsiteBackup's envelope encryption is keyed

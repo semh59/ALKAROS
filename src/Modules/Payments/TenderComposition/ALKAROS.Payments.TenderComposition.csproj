@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSModule>true</ALKAROSModule>
+    <RootNamespace>ALKAROS.Payments.TenderRouting</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- V13-PAY-003: this composition needs both ALKAROS.Payments (the
+         generic ITenderHandler/TenderHandlerRegistry contract it wires) and
+         ALKAROS.Cash (ICashTenderHandler it bridges). Cash already
+         references Payments one-way (V13-CSH-003), so this project cannot
+         live inside ALKAROS.Payments.csproj itself (that would be a cycle:
+         Payments -> Cash -> Payments) — a dedicated project sitting above
+         both is the only cycle-free shape. -->
+    <ProjectReference Include="..\..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <ProjectReference Include="..\ALKAROS.Payments.csproj" />
+    <ProjectReference Include="..\..\Cash\ALKAROS.Cash.csproj" />
+  </ItemGroup>
+
+</Project>

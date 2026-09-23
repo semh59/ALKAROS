@@ -2631,7 +2631,13 @@ def validate_plan() -> None:
         if dependency_status not in ("Done", "NotApplicable"):
             if c54_admitted_as_final and dependency_id == _C54_APPLICATION_TASK_ID:
                 return
-            if len(path) == 2 and (task_id, dependency_id) in PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
+            # The waiver is registered against the (immediate parent, waived
+            # dependency) edge that actually declares it in that parent's own
+            # `## Dependencies` — path[-2] is that immediate parent at ANY
+            # depth (equal to task_id itself for a direct edge, len(path)==2),
+            # so a waived edge stays waived no matter how many other Done
+            # tasks transitively reach it through the waived consumer.
+            if (path[-2], dependency_id) in PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
                 return
             if len(path) == 2:
                 errors.append(

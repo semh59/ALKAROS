@@ -193,6 +193,7 @@
           "ALKAROS.Operations": "[1.0.0, )",
           "ALKAROS.Orders": "[1.0.0, )",
           "ALKAROS.Payments": "[1.0.0, )",
+          "ALKAROS.Payments.TenderComposition": "[1.0.0, )",
           "ALKAROS.Production": "[1.0.0, )",
           "ALKAROS.Purchasing": "[1.0.0, )",
           "ALKAROS.QrOrdering": "[1.0.0, )",
@@ -299,6 +300,14 @@
           "ALKAROS.Secrets": "[1.0.0, )",
           "ALKAROS.SensitiveData": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.payments.tendercomposition": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Cash": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )"
         }
       },
       "alkaros.production": {

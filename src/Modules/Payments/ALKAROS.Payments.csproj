@@ -18,4 +18,15 @@
     <PackageReference Include="Npgsql" />
   </ItemGroup>
 
+  <!-- V13-PAY-003: TenderComposition/** is its own separate project
+       (ALKAROS.Payments.TenderComposition.csproj), not part of this
+       assembly - it needs ALKAROS.Cash.csproj, and Cash already references
+       THIS project, so a reference the other way would cycle. Excluded
+       here so the SDK's default **/*.cs glob does not also compile it into
+       this assembly (same precedent as ALKAROS.Billing.csproj's
+       PaymentClosure exclusion, V13-ALC-002). -->
+  <ItemGroup>
+    <Compile Remove="TenderComposition\**\*.cs" />
+  </ItemGroup>
+
 </Project>

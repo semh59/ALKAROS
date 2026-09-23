@@ -17,6 +17,7 @@
   <Project Path="src/Modules/Operations/ALKAROS.Operations.csproj" />
   <Project Path="src/Modules/Orders/ALKAROS.Orders.csproj" />
   <Project Path="src/Modules/Payments/ALKAROS.Payments.csproj" />
+  <Project Path="src/Modules/Payments/TenderComposition/ALKAROS.Payments.TenderComposition.csproj" />
   <Project Path="src/Modules/Invoicing/ALKAROS.Invoicing.csproj" />
   <Project Path="src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj" />
   <Project Path="src/Modules/Reporting/ALKAROS.Reporting.csproj" />
@@ -106,6 +107,7 @@
   <Project Path="tests/Modules/Payments/Allocations/RefundIntents/ALKAROS.Payments.Allocations.RefundIntents.Tests.csproj" />
   <Project Path="tests/Modules/Payments/CardSettlement/ALKAROS.Payments.CardSettlement.Tests.csproj" />
   <Project Path="tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj" />
+  <Project Path="tests/Modules/Payments/TenderComposition/ALKAROS.Payments.TenderComposition.Tests.csproj" />
   <Project Path="tests/Modules/Payments/TenderRouting/ALKAROS.Payments.TenderRouting.Tests.csproj" />
   <Project Path="tests/Modules/Payments/Token/TerminalCredential/ALKAROS.Payments.Token.TerminalCredential.Tests.csproj" />
   <Project Path="tests/Modules/Invoicing/Qnb/CredentialRegistration/ALKAROS.Invoicing.Qnb.CredentialRegistration.Tests.csproj" />
