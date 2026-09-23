@@ -49,6 +49,7 @@ public static class ModuleRegistry
         typeof(ALKAROS.Payments.Allocations.Persistence.PaymentAllocationPersistenceModule),
         typeof(ALKAROS.Cash.TenderHandler.CashTenderHandlerModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
+        typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule)
     ];
 

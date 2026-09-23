@@ -55,17 +55,23 @@ public sealed class TenderCompositionTests : IClassFixture<TenderCompositionTest
         return registry;
     }
 
+    private ALKAROS.Payments.EftTender.EftTenderHandler BuildEftHandler()
+        => new(_bills, _payments, _allocations, _dataSource);
+
     [Fact]
     public void FactoryBuildsARegistryWithCashAndBankCardResolved()
     {
         var registry = ALKAROS.Payments.TenderRouting.TenderHandlerRegistryFactory.Build(
             new ALKAROS.Payments.TenderRouting.CashTenderMethodAdapter(_cashHandler),
-            new ALKAROS.Payments.TenderRouting.PendingBankCardTerminalIntegrationHandler());
+            new ALKAROS.Payments.TenderRouting.PendingBankCardTerminalIntegrationHandler(),
+            BuildEftHandler());
 
         registry.TryGet(ALKAROS.Payments.TenderRouting.TenderMethod.Cash, out var cash).Should().BeTrue();
         cash.Should().BeOfType<ALKAROS.Payments.TenderRouting.CashTenderMethodAdapter>();
         registry.TryGet(ALKAROS.Payments.TenderRouting.TenderMethod.BankCard, out var bankCard).Should().BeTrue();
         bankCard.Should().BeOfType<ALKAROS.Payments.TenderRouting.PendingBankCardTerminalIntegrationHandler>();
+        registry.TryGet(ALKAROS.Payments.TenderRouting.TenderMethod.Eft, out var eft).Should().BeTrue();
+        eft.Should().BeOfType<ALKAROS.Payments.EftTender.EftTenderHandler>();
     }
 
     [Fact]
@@ -73,7 +79,8 @@ public sealed class TenderCompositionTests : IClassFixture<TenderCompositionTest
     {
         var act = () => ALKAROS.Payments.TenderRouting.TenderHandlerRegistryFactory.Build(
             new ALKAROS.Payments.TenderRouting.CashTenderMethodAdapter(_cashHandler),
-            new ALKAROS.Payments.TenderRouting.CashTenderMethodAdapter(_cashHandler));
+            new ALKAROS.Payments.TenderRouting.CashTenderMethodAdapter(_cashHandler),
+            BuildEftHandler());
 
         act.Should().Throw<InvalidOperationException>();
     }

@@ -14,6 +14,14 @@ public enum TenderMethod
     MealCard,
 
     /// <summary>
+    /// EFT/Havale (bank transfer, V13-PAY-005, PO:2026-09-16) — not in the
+    /// original PDF baseline, a direct Semih product decision. No
+    /// provider/Open Banking integration exists; the cashier declares that
+    /// the amount landed in the business's own account statement.
+    /// </summary>
+    Eft,
+
+    /// <summary>
     /// Recognized by name in V1.3 but never routable here — every request
     /// for this method gets a typed "version not enabled" rejection
     /// (V13-PAY-002). A real handler is registered only once V14-ACC-008

@@ -95,11 +95,17 @@ public static class ModuleBoundaryTests
             // own IModule for the same reason as Cash.TenderHandler/
             // Payments.Allocations.Persistence above — no new doc row needed.
             ["Payments.CardSettlement"] = ["Payments", "Payments.Allocations.Persistence", "Billing"],
+            // V13-PAY-005: same coarse edge as Payments.CardSettlement above
+            // (module-dependency-rules.md row 6, "Payment -> Bill, Identity"),
+            // split into its own IModule for the same reason — no new doc
+            // row needed.
+            ["Payments.EftTender"] = ["Payments", "Payments.Allocations.Persistence", "Billing"],
             // V13-PAY-003: same module-dependency-rules.md row 6 edge as
             // Cash.TenderHandler above (this module only bridges into it),
-            // plus Cash.TenderHandler itself to reach ICashTenderHandler —
-            // no new doc row needed.
-            ["Payments.TenderComposition"] = ["Payments", "Cash.TenderHandler"],
+            // plus Cash.TenderHandler itself to reach ICashTenderHandler and
+            // Payments.EftTender itself to reach IEftTenderHandler (V13-PAY-005)
+            // — no new doc row needed.
+            ["Payments.TenderComposition"] = ["Payments", "Cash.TenderHandler", "Payments.EftTender"],
             // V15-BKP-001: module-dependency-rules.md row 24 ("Backup"),
             // structured alert logging on upload/RPO failure.
             // V15-BKP-001: OffsiteBackup's envelope encryption is keyed

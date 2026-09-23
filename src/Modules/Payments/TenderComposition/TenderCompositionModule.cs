@@ -1,5 +1,6 @@
 using ALKAROS.Cash.TenderHandler;
 using ALKAROS.ModuleComposition;
+using ALKAROS.Payments.EftTender;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ALKAROS.Payments.TenderRouting;
@@ -27,14 +28,15 @@ public sealed class TenderCompositionModule : IModule
     public string DisplayName => "Payments Tender Composition";
 
     public IReadOnlyCollection<string> DependsOn =>
-        ["Payments", "Cash.TenderHandler"];
+        ["Payments", "Cash.TenderHandler", "Payments.EftTender"];
 
     public void Register(ModuleContext context)
     {
         context.RegisterSingleton<ITenderHandlerRegistry>(sp =>
             TenderHandlerRegistryFactory.Build(
                 new CashTenderMethodAdapter(sp.GetRequiredService<ICashTenderHandler>()),
-                new PendingBankCardTerminalIntegrationHandler()));
+                new PendingBankCardTerminalIntegrationHandler(),
+                sp.GetRequiredService<IEftTenderHandler>()));
         context.RegisterSingleton<TenderRouter, TenderRouter>();
     }
 }

@@ -21,6 +21,14 @@ namespace ALKAROS.Payments.TenderRouting;
 /// contract, which this task's Owned surface does not extend). Other tender
 /// methods (BankCard/MealCard) leave these four fields null.
 /// </para>
+///
+/// <para>
+/// <see cref="Note"/> is an optional free-text field added by V13-PAY-005's
+/// EFT/Havale handler (a reference number is explicitly NOT required —
+/// Semih's own product decision). It carries through unchanged as the
+/// resulting <c>Payment</c> status-history entry's own <c>reason</c> text;
+/// other tender methods leave it null.
+/// </para>
 /// </summary>
 public sealed record TenderRequest(
     Guid PaymentId,
@@ -29,7 +37,8 @@ public sealed record TenderRequest(
     Guid? BillId = null,
     Guid? CashSessionId = null,
     string? IdempotencyKey = null,
-    Guid? RecordedBy = null)
+    Guid? RecordedBy = null,
+    string? Note = null)
 {
     public void Validate()
     {
