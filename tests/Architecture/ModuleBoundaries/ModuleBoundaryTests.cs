@@ -120,6 +120,13 @@ public static class ModuleBoundaryTests
             // ("Security") - Identity for session/lockout hardening, Audit
             // for the disposal/purge/re-encryption trail.
             ["Security"] = ["Identity", "Audit"],
+            // V13-REC-001: reads payments.*/cash.* tables directly via
+            // plain SQL (the same "read model" pattern as Tables' own
+            // CurrentOrderTotal read) rather than a C# ProjectReference to
+            // ALKAROS.Payments/ALKAROS.Cash, so its only real compile-time
+            // module dependency is Reconciliation itself, for
+            // IReconciliationService.
+            ["Reconciliation.Payments"] = ["Reconciliation"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()

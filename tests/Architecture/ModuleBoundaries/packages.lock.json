@@ -372,7 +372,9 @@
       "alkaros.reconciliation": {
         "type": "Project",
         "dependencies": {
-          "ALKAROS.ModuleComposition": "[1.0.0, )"
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Microsoft.Extensions.DependencyInjection": "[8.0.1, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "alkaros.reporting": {

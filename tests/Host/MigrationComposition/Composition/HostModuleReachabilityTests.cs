@@ -16,7 +16,7 @@ public sealed class HostModuleReachabilityTests
         var catalog = ModuleRegistry.DefaultCatalog;
 
         Assert.NotEmpty(catalog);
-        Assert.Equal(29, catalog.Count);
+        Assert.Equal(30, catalog.Count);
         Assert.All(catalog, type =>
         {
             Assert.True(typeof(IModule).IsAssignableFrom(type));

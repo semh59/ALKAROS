@@ -10,4 +10,13 @@
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- V13-REC-001: PaymentReconciliationModule reads payments.*/cash.*
+         directly via plain SQL (a read model, no ProjectReference to
+         ALKAROS.Payments/ALKAROS.Cash) and resolves the shared
+         NpgsqlDataSource through a DI factory registration. -->
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
 </Project>

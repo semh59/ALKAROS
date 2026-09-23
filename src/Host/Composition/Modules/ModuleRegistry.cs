@@ -50,7 +50,8 @@ public static class ModuleRegistry
         typeof(ALKAROS.Cash.TenderHandler.CashTenderHandlerModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
-        typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule)
+        typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),
+        typeof(ALKAROS.Reconciliation.Payments.PaymentReconciliationModule)
     ];
 
     /// <summary>
