@@ -184,6 +184,36 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task EftOnlyTenderFullyClosingTheBillReflectsZeroRemainingAmount()
+    {
+        // V13-PUI-004: the split-payment screen's own "paid" phase switches
+        // purely off a server-read remainingAmount of (approximately) zero,
+        // never client-side arithmetic. Prove an EFT-only bill (no Cash, no
+        // BankCard involved at all) genuinely reaches that server-confirmed
+        // state, matching the manual scenario Semih can verify by hand: pay
+        // a bill entirely via EFT and see it reach "Ödendi" (Paid).
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pui004-eft-full");
+        var billId = await _database.SeedBillAsync(payable: 75m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var first = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 50m, IdempotencyKey = "eft-full-1" });
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        var second = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 25m, IdempotencyKey = "eft-full-2" });
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+
+        var summary = await GetAsync(client, TendersPath(terminalId, billId), cookie);
+        var summaryBody = await summary.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(75m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
+        Assert.Equal(0m, summaryBody.GetProperty("remainingAmount").GetDecimal());
+        Assert.Equal(2, summaryBody.GetProperty("allocations").GetArrayLength());
+    }
+
+    [Fact]
     public async Task MixedEftAndBankCardOnlyReflectsTheEftAllocationServerSideNeverClientArithmetic()
     {
         var terminalId = Guid.NewGuid();

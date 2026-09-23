@@ -26,6 +26,11 @@
     splitCount: 2,
     amountDraft: '0.00',
     noteDraft: '',
+    // V13-PUI-004: EFT/Havale onay kutusu - kasiyer tutarı işletmenin banka
+    // hesap hareketinde GÖRDÜĞÜNÜ işaretlemeden "Ödemeyi Ekle" pasif kalır.
+    // Yöntem değiştikçe veya her başarılı gönderimden sonra sıfırlanır -
+    // bir sonraki EFT tahsilatı kendi onayını taze istemeli.
+    eftConfirmed: false,
     locked: false,
     busy: false,
     error: null,
@@ -171,6 +176,12 @@
       setError('Tutar kalan tutarı aşamaz.');
       return;
     }
+    // Savunma amaçlı ikinci kontrol - düğme zaten bu durumda pasif, ama
+    // programatik bir tıklama (ör. Enter tuşu) burada da engellenmeli.
+    if (state.selectedMethod === 'Eft' && !state.eftConfirmed) {
+      setError('Devam etmeden önce tutarı banka hesap hareketinde gördüğünüzü onaylayın.');
+      return;
+    }
 
     setBusy(true);
     state.error = null;
@@ -203,6 +214,7 @@
       }
       state.lastResult = result.body;
       state.noteDraft = '';
+      state.eftConfirmed = false;
       if (result.body.outcome === 'RequiresReconciliation') {
         // Bilinmeyen durum kilidi: bu satır onaylanana kadar bu sekmede
         // hesaba yeni bir tahsilat eklenemez - mükerrer tahsilat riskini
@@ -317,7 +329,12 @@
           ? '<div class="sp-field"><span class="sp-field-label">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></span>' +
             '<input class="sp-input" type="text" id="note-draft" value="' + escapeHtml(state.noteDraft) + '"></div>'
           : '') +
-        '<button class="sp-btn sp-btn-primary" id="submit-tender" ' + (state.busy ? 'disabled' : '') + '>' +
+        (state.selectedMethod === 'Eft'
+          ? '<div class="sp-confirm-row"><input type="checkbox" id="eft-confirm"' + (state.eftConfirmed ? ' checked' : '') + '>' +
+            '<label for="eft-confirm">Tutarı işletmenin banka hesap hareketinde gördüm</label></div>'
+          : '') +
+        '<button class="sp-btn sp-btn-primary" id="submit-tender" ' +
+        ((state.busy || (state.selectedMethod === 'Eft' && !state.eftConfirmed)) ? 'disabled' : '') + '>' +
         (state.busy ? 'Gönderiliyor…' : 'Ödemeyi Ekle') + '</button>') +
       '</div>';
 
@@ -325,6 +342,7 @@
       button.addEventListener('click', function () {
         if (button.disabled) return;
         state.selectedMethod = button.getAttribute('data-method');
+        state.eftConfirmed = false;
         render();
       });
     });
@@ -336,6 +354,11 @@
     if (amountInput) amountInput.addEventListener('input', function () { state.amountDraft = this.value; });
     var noteInput = document.getElementById('note-draft');
     if (noteInput) noteInput.addEventListener('input', function () { state.noteDraft = this.value; });
+    var eftConfirmInput = document.getElementById('eft-confirm');
+    if (eftConfirmInput) eftConfirmInput.addEventListener('change', function () {
+      state.eftConfirmed = this.checked;
+      render();
+    });
     var submitButton = document.getElementById('submit-tender');
     if (submitButton) submitButton.addEventListener('click', submitTender);
   }
