@@ -2,6 +2,7 @@ namespace ALKAROS.Reporting;
 
 using ALKAROS.ModuleComposition;
 using ALKAROS.Reporting.MenuInventory;
+using ALKAROS.Reporting.Payments;
 using ALKAROS.Reporting.V1Operations;
 
 public sealed class ReportingModule : IModule
@@ -18,5 +19,8 @@ public sealed class ReportingModule : IModule
         // Waste/CriticalStock reports) but had never been registered here or
         // given any Host endpoint — greenfield HTTP surface.
         context.RegisterTransient<IMenuInventoryReportingService, PostgresMenuInventoryReportingService>();
+        // V13-RPT-001: payment/cash/reconciliation settlement report.
+        context.RegisterTransient<IPaymentSettlementReportRepository, PostgresPaymentSettlementReportRepository>();
+        context.RegisterTransient<IPaymentSettlementReportService, PaymentSettlementReportService>();
     }
 }
