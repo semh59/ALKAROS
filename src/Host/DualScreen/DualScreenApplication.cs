@@ -578,6 +578,7 @@ public static partial class DualScreenApplication
         app.MapWebPushApi();
         app.MapHelpRequestApi();
         app.MapCashSessionApi();
+        app.MapPaymentTenderApi();
         app.MapHub<CustomerDisplayHub>(CustomerDisplayHub.Route);
         app.MapMethods(
             "/api/{**path}",
