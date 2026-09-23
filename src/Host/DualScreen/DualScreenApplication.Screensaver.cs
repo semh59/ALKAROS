@@ -97,7 +97,7 @@ public static partial class DualScreenApplication
             // actually match what it claims to be, independent of that
             // header, before anything gets persisted as "the business's
             // screensaver."
-            if (!HasValidScreensaverMagicNumber(content, isVideo))
+            if (!HasValidScreensaverMagicNumber(content, file.ContentType))
                 return ScreensaverValidationError(context, "Dosya içeriği beyan edilen türle eşleşmiyor.");
 
             await store.SaveScreensaverAsync(content, file.ContentType, cancellationToken);
@@ -153,15 +153,20 @@ public static partial class DualScreenApplication
     // client-declared and already checked against the allowlist by the
     // caller — this checks the actual bytes independently, so a file
     // relabeled with a spoofed header (e.g. an executable saved as
-    // "screensaver.png") is still caught. Only recognizes the exact formats
-    // this endpoint already allows (PNG/JPEG/WEBP/MP4); anything else is
-    // rejected regardless of `isVideo`.
-    private static bool HasValidScreensaverMagicNumber(byte[] content, bool isVideo)
-    {
-        if (isVideo)
-            return HasMp4MagicNumber(content);
-        return HasPngMagicNumber(content) || HasJpegMagicNumber(content) || HasWebpMagicNumber(content);
-    }
+    // "screensaver.png") is still caught. Checks the magic number against
+    // the SPECIFIC declared Content-Type, not "any of the allowed formats"
+    // (2026-09-22 independent audit finding: the original version accepted
+    // any recognized signature regardless of which type was declared, e.g.
+    // a real PNG declared as image/webp would pass).
+    private static bool HasValidScreensaverMagicNumber(byte[] content, string declaredContentType) =>
+        declaredContentType switch
+        {
+            "image/png" => HasPngMagicNumber(content),
+            "image/jpeg" => HasJpegMagicNumber(content),
+            "image/webp" => HasWebpMagicNumber(content),
+            "video/mp4" => HasMp4MagicNumber(content),
+            _ => false,
+        };
 
     private static bool HasPngMagicNumber(byte[] content) =>
         content.Length >= 8

@@ -103,6 +103,13 @@ yeniden kullanıldı — logo da bir business-identity ayarı, Catalog'un değil
   gerçek bir PNG yükle, `GET /api/v1/qr/logo`'nun aynı görseli döndürdüğünü
   gör; `DELETE` ile kaldır, `GET`'in 404 döndüğünü ve `GET /api/v1/qr/branding`'in
   `HasLogo:false`'a döndüğünü doğrula.
+- **2026-09-23 sonradan düzeltme** (bağımsız denetim, V15 Faz 0/1 audit
+  turunda çapraz-kesme taraması): `HasValidLogoMagicNumber`, beyan edilen
+  `Content-Type` ile GERÇEKTEN eşleşen imzayı değil, üç izinli formattan
+  HERHANGİ birinin imzasını kontrol ediyordu — bir istemci `image/webp`
+  beyan edip gerçek bir PNG yükleyebilir, kabul edilirdi. Artık yalnız
+  beyan edilen türün kendi imzası kontrol ediliyor. Yeni test:
+  `PutRejectsARealPngDeclaredAsAMismatchedAllowedContentType`. 15/15 yeşil.
 
 ## Handoff
 

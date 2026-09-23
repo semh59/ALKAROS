@@ -140,6 +140,26 @@ public sealed class BusinessIdentityLogoEndpointsTests : IAsyncLifetime
         Assert.Null(await _store.GetAsync(CancellationToken.None));
     }
 
+    // 2026-09-22 independent audit finding: the magic-number check used to
+    // accept ANY recognized signature (PNG/JPEG/WEBP) regardless of which
+    // one was declared — a real PNG declared as image/webp passed. This
+    // proves the check now verifies the SPECIFIC declared type.
+    [Fact]
+    public async Task PutRejectsARealPngDeclaredAsAMismatchedAllowedContentType()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var content = new MultipartFormDataContent();
+        byte[] png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 1, 2, 3];
+        var fileContent = new ByteArrayContent(png);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/webp");
+        content.Add(fileContent, "file", "logo.webp");
+
+        using var response = await client.PutAsync("/api/v1/management/business-identity/logo", content);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Null(await _store.GetAsync(CancellationToken.None));
+    }
+
     [Fact]
     public async Task AccentPaletteReturnsAllEightColorsAndTheRealDefaultKey()
     {

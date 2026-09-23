@@ -96,6 +96,17 @@ V1-SEC-002 sınırı üzerinde retention enforcement, authorized re-encryption v
   (FiscalData/InvoiceData artık doğru şekilde `SkippedRetain`'e düşüyor) düzeltildi. 40/40 test (8 yeni), migration
   ileri/geri gerçek Postgres'e karşı yeniden doğrulandı — bkz. `evidence/V15-SEC-003/README.md`'nin "2026-09-22
   sonradan düzeltilen kusurlar" bölümü ve `evidence/V15-SEC-003/2026-09-22-audit-fix-*.txt`.
+- **2026-09-23 not** (bağımsız denetim): `SecurityModule.cs`'e kayıtla
+  `RetentionExecutionService`/`DeletionQueueProcessor`/
+  `AuthorizedReEncryptionService` artık gerçekten DI'dan çözülebiliyor
+  (bkz. `71f28599`; `AuthorizedReEncryptionService`'in kendi bare-string
+  `accessor` parametresi kaldırılıp yeni `RetentionAccessPolicy` ile
+  DI-uyumlu hale getirildi). Ama hiçbiri henüz bir HTTP endpoint'e veya
+  zamanlanmış bir arka plan işine (scheduled job) bağlı değil — retention
+  sweep/deletion-queue/re-encryption'ı bugün hiçbir şey otomatik veya
+  yönetici-tetiklemeli olarak çalıştıramaz; bu, ayrı bir Host-wiring/
+  scheduling görevi gerektiriyor (bu task'ın Owned surface'ı hiçbir zaman
+  Host/HTTP dosyalarını kapsamadı).
 
 ## Handoff
 

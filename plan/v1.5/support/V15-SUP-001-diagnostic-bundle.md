@@ -112,6 +112,15 @@ destek paketi oluşturun.
   `RedactsASecretPatternValueNestedInsideTheAfterStateJsonText`) +
   1 revert-and-confirm testi (`RevertAndConfirmEmbeddingBeforeAfterMetadataAsOpaqueStringsWouldLeakANestedPassword`);
   toplam 19→22/22 yeşil.
+- **2026-09-23 not** (bağımsız denetim): `Deliverables`'ın "yetkili
+  tanılama paketi komutu/arabirimi" ifadesi, gerçek bir rol/izin
+  kontrolüne değil yalnızca `RequestedByActorId`'nin boş-olmama
+  kontrolüne dayanıyor — `IDiagnosticBundleService`'e bugün hiçbir HTTP
+  endpoint'i bağlı değil (Owned surface hiçbir zaman Host/HTTP
+  dosyalarını kapsamadı), bu yüzden fiilen istismar edilebilir bir açık
+  yok, ama "yetkili" ifadesi bir HTTP yüzeyi eklenene kadar (o zaman gerçek
+  bir izin kontrolü de eklenmeli) gerçek bir yetkilendirmeyi değil, yalnız
+  çağıranın bir kimlik beyan etmesini ifade ediyor.
 
 ## Handoff
 

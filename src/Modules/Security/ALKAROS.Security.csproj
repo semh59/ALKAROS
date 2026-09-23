@@ -2,11 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <ALKAROSProjectKind>buildingblock</ALKAROSProjectKind>
+    <ALKAROSModule>true</ALKAROSModule>
     <RootNamespace>ALKAROS.Security</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- SecurityModule.cs (2026-09-22 remediation) registers this module
+         into ModuleRegistry.DefaultCatalog. -->
+    <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
     <ProjectReference Include="..\..\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj" />
     <!-- V15-SEC-002: IdentityHardening composes with Identity's own
          AuthenticationService/IUserStore/IDeviceSessionService instead of

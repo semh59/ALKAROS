@@ -243,6 +243,33 @@ public sealed class DualScreenScreensaverTests : IAsyncLifetime
         Assert.Null(await _store!.GetScreensaverAsync(CancellationToken.None));
     }
 
+    // 2026-09-22 independent audit finding: the magic-number check used to
+    // accept ANY recognized signature (PNG/JPEG/WEBP) regardless of which
+    // one was declared - a real PNG declared as image/webp passed. This
+    // proves the check now verifies the SPECIFIC declared type.
+    [Fact]
+    public async Task PutRejectsARealPngDeclaredAsAMismatchedAllowedContentType()
+    {
+        await using var app = DualScreenApplication.Build(BuildOptions());
+        await app.StartAsync();
+        using var client = CreateClient(app);
+        await SeedManagerSessionAsync("manager-token-magic-mismatch");
+        client.DefaultRequestHeaders.Add("Cookie", "alkaros.manager=manager-token-magic-mismatch");
+
+        using var content = new MultipartFormDataContent();
+        byte[] png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 1, 2, 3];
+        var fileContent = new ByteArrayContent(png);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/webp");
+        content.Add(fileContent, "file", "screensaver.webp");
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, "/api/v1/management/customer-display/screensaver") { Content = content };
+        AddTrustedForwarding(request);
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Null(await _store!.GetScreensaverAsync(CancellationToken.None));
+    }
+
     // V1-RMD-235: without an explicit MaxRequestBodySize on this route, a
     // request between the 20 MB video cap and Kestrel's own ~28.6 MB
     // implicit default would reach this handler's own size check only

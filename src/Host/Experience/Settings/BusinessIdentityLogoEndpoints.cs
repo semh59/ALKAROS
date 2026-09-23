@@ -100,9 +100,11 @@ public static class BusinessIdentityLogoEndpoints
 
             // Same reasoning as V1-RMD-235: the declared Content-Type header
             // is entirely client-controlled — this checks the file's own
-            // first bytes independently, before anything gets persisted as
-            // "the business's logo."
-            if (!HasValidLogoMagicNumber(content))
+            // first bytes actually match the SPECIFIC type it claims (not
+            // merely "one of the three allowed types"), before anything
+            // gets persisted as "the business's logo" under a
+            // possibly-mismatched content_type.
+            if (!HasValidLogoMagicNumber(content, file.ContentType))
                 return LogoValidationError(context, "Dosya içeriği beyan edilen türle eşleşmiyor.");
 
             await store.SaveAsync(content, file.ContentType, cancellationToken);
@@ -141,10 +143,19 @@ public static class BusinessIdentityLogoEndpoints
             new SettingsApiErrorEnvelopeV1(new SettingsApiErrorV1("INVALID_LOGO", message, StatusCodes.Status400BadRequest, context.TraceIdentifier)),
             statusCode: StatusCodes.Status400BadRequest);
 
-    // Recognizes only the exact formats this endpoint allows (PNG/JPEG/WEBP)
-    // — same signatures V1-RMD-235's screensaver validation already checks.
-    private static bool HasValidLogoMagicNumber(byte[] content) =>
-        HasPngMagicNumber(content) || HasJpegMagicNumber(content) || HasWebpMagicNumber(content);
+    // Checks the content's magic number against the SPECIFIC type declared
+    // in Content-Type, not "any of the three allowed types" — otherwise a
+    // client could declare image/webp and upload a real PNG, and it would
+    // pass (2026-09-22 independent audit finding: the original version
+    // accepted any recognized signature regardless of the declared type).
+    private static bool HasValidLogoMagicNumber(byte[] content, string declaredContentType) =>
+        declaredContentType switch
+        {
+            "image/png" => HasPngMagicNumber(content),
+            "image/jpeg" => HasJpegMagicNumber(content),
+            "image/webp" => HasWebpMagicNumber(content),
+            _ => false,
+        };
 
     private static bool HasPngMagicNumber(byte[] content) =>
         content.Length >= 8

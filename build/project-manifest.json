@@ -230,12 +230,18 @@
     },
     {
       "path": "src/Modules/Security/ALKAROS.Security.csproj",
-      "kind": "buildingblock",
+      "kind": "module",
       "module": "Security",
       "references": [
-        "src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj"
+        "src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj",
+        "src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj",
+        "src/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.csproj",
+        "src/Modules/Audit/ALKAROS.Audit.csproj",
+        "src/Modules/Identity/ALKAROS.Identity.csproj"
       ],
-      "packages": []
+      "packages": [
+        "Npgsql"
+      ]
     },
     {
       "path": "src/Modules/Settings/ALKAROS.Settings.csproj",

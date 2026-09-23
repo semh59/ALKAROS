@@ -90,6 +90,17 @@ Oturum açma kısıtlaması, kilitleme politikası, oturum rotasyonu ve idari ip
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.
 - `python tools/consistency-audit/consistency_audit.py` → temiz.
 - Detaylı komut çıktıları: `evidence/V15-SEC-002/**`.
+- **2026-09-23 not** (bağımsız denetim): `SecurityModule.cs`'e kayıtla artık
+  `AccountRecoveryService`/`SessionRotationService`/
+  `SuspiciousLoginAuditingAuthenticationService` gerçekten DI'dan
+  çözülebiliyor (önceden modülün tamamı DI'a hiç bağlı değildi — ayrı bir
+  mimari düzeltmeyle giderildi, bkz. `71f28599`). `SuspiciousLoginAuditing
+  AuthenticationService` artık `/api/v1/auth/login`'in gerçek yolunda
+  (`DualScreenApplication.Endpoints.cs`). Ama `AccountRecoveryService`'in
+  `RevokeAllSessionsAsync`/`ForceUnlockAsync`'i hâlâ HİÇBİR HTTP endpoint'e
+  bağlı değil — yönetici bu eylemleri bugün API/SQL bilmeden tetikleyemez;
+  bu, ayrı bir Host-wiring görevi gerektiriyor (bu task'ın Owned surface'ı
+  hiçbir zaman Host/HTTP dosyalarını kapsamadı).
 
 ## Handoff
 

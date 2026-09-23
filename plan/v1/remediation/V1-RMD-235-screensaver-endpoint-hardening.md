@@ -70,6 +70,15 @@ kritik olmayan ama düzeltilmesi gereken üç savunma-derinliği notu buldu:
 - `dotnet build ALKAROS.slnx -c Debug` → 0 Uyarı, 0 Hata.
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.
 - `python tools/consistency-audit/consistency_audit.py` → temiz.
+- **2026-09-23 sonradan düzeltme** (bağımsız denetim, V15 Faz 0/1 audit
+  turunda çapraz-kesme taraması): `HasValidScreensaverMagicNumber`, beyan
+  edilen `Content-Type` ile GERÇEKTEN eşleşen imzayı değil, izinli
+  formatlardan (görsel için) HERHANGİ birinin imzasını kontrol ediyordu —
+  bir istemci `image/webp` beyan edip gerçek bir PNG yükleyebilir, kabul
+  edilirdi. Artık yalnız beyan edilen türün kendi imzası kontrol ediliyor
+  (video/mp4 dahil, `isVideo` bool yerine doğrudan Content-Type switch'i).
+  Yeni test: `PutRejectsARealPngDeclaredAsAMismatchedAllowedContentType`.
+  17/17 yeşil (16 önceki + 1 yeni).
 
 ## Handoff
 
