@@ -76,6 +76,14 @@ public sealed class EftTenderHandler : IEftTenderHandler
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var dbTransaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
+        // V1-RMD-258: bill-scoped lock FIRST, idempotency-key lock second —
+        // the same fixed order CardSettlementOrchestrator and
+        // PaymentAwareTableTopologyPolicy (Tables module) use on the SAME
+        // namespaced key, so a concurrent table transfer/merge/unmerge or a
+        // concurrent BankCard settlement attempt against the same bill
+        // genuinely serializes against this EFT tender rather than racing.
+        await LockBillForSettlementAsync(connection, dbTransaction, billId, cancellationToken)
+            .ConfigureAwait(false);
         // Same per-idempotency-key advisory lock pattern as CashTenderHandler
         // (own namespaced key so it can never collide with Cash's/another
         // method's lock on the same raw key string).
@@ -86,9 +94,24 @@ public sealed class EftTenderHandler : IEftTenderHandler
             request.IdempotencyKey, connection, dbTransaction, cancellationToken).ConfigureAwait(false);
         if (existingAllocation is not null)
         {
+            if (existingAllocation.BillId != billId)
+                throw new EftBillMismatchException(request.IdempotencyKey, existingAllocation.BillId, billId);
             await dbTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return new TenderApproved(existingAllocation.Amount);
         }
+
+        // V1-RMD-258: a genuinely NEW tender must never be layered on top of
+        // a Bill that already has an unresolved Payment (e.g. an unresolved
+        // BankCard settlement attempt sitting at Unknown) — held under the
+        // same bill-settlement lock just acquired above, so this read is
+        // race-free against any concurrent settlement attempt for the same
+        // bill.
+        var existingPayments = await _paymentRepository.GetByBillIdAsync(billId, cancellationToken)
+            .ConfigureAwait(false);
+        var unsettledPayment = existingPayments.FirstOrDefault(p =>
+            p.Status is PaymentStatus.Pending or PaymentStatus.Unknown or PaymentStatus.ReconciliationRequired);
+        if (unsettledPayment is not null)
+            throw new EftUnsettledPaymentExistsException(billId, unsettledPayment.Id, unsettledPayment.Status.ToString());
 
         var existingAllocations = await _allocationRepository.GetByBillIdAsync(billId, cancellationToken)
             .ConfigureAwait(false);
@@ -121,6 +144,28 @@ public sealed class EftTenderHandler : IEftTenderHandler
         await using (command)
         {
             command.Parameters.AddWithValue($"eft-tender:{idempotencyKey}");
+            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// V1-RMD-258: the shared bill-settlement advisory lock — same
+    /// namespaced key (<c>"bill-settlement:{billId:N}"</c>) that
+    /// <c>ALKAROS.Tables.PaymentTopology.PaymentAwareTableTopologyPolicy</c>
+    /// and <c>ALKAROS.Payments.CardSettlement.CardSettlementOrchestrator</c>
+    /// take, so a concurrent table transfer/merge/unmerge or BankCard
+    /// settlement attempt against the same bill genuinely serializes
+    /// against this EFT tender.
+    /// </summary>
+    private static async Task LockBillForSettlementAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);";
+        await using (command)
+        {
+            command.Parameters.AddWithValue($"bill-settlement:{billId:N}");
             await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
     }

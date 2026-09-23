@@ -9,6 +9,7 @@ public sealed class CardSettlementAttempt
 {
     public CardSettlementAttempt(
         Guid id,
+        Guid billId,
         string idempotencyKey,
         string providerCorrelationId,
         Guid paymentId,
@@ -21,6 +22,8 @@ public sealed class CardSettlementAttempt
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Attempt id cannot be empty.", nameof(id));
+        if (billId == Guid.Empty)
+            throw new ArgumentException("Bill id cannot be empty.", nameof(billId));
         if (string.IsNullOrWhiteSpace(idempotencyKey))
             throw new ArgumentException("Idempotency key cannot be empty.", nameof(idempotencyKey));
         if (string.IsNullOrWhiteSpace(providerCorrelationId))
@@ -42,6 +45,7 @@ public sealed class CardSettlementAttempt
             throw new ArgumentException("Approved amount must be greater than zero.", nameof(approvedAmount));
 
         Id = id;
+        BillId = billId;
         IdempotencyKey = idempotencyKey;
         ProviderCorrelationId = providerCorrelationId;
         PaymentId = paymentId;
@@ -54,6 +58,14 @@ public sealed class CardSettlementAttempt
     }
 
     public Guid Id { get; }
+
+    /// <summary>
+    /// V1-RMD-258: the Bill this attempt was recorded against — added so a
+    /// replay can detect a genuine cross-bill idempotency-key collision
+    /// (a key reused for a different bill than the one it was first recorded
+    /// under) instead of returning the wrong bill's result.
+    /// </summary>
+    public Guid BillId { get; }
     public string IdempotencyKey { get; }
     public string ProviderCorrelationId { get; }
     public Guid PaymentId { get; }

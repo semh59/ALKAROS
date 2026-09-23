@@ -38,6 +38,22 @@ namespace ALKAROS.Tables.PaymentTopology;
 /// <c>Approved</c>/<c>Declined</c>/<c>Cancelled</c> is safe to move — its
 /// allocations stay exactly where they are.
 /// </para>
+///
+/// <para>
+/// V1-RMD-258: the plain unlocked SELECT below is not, by itself, enough to
+/// make the "cannot race" claim true — nothing on the payment-write side
+/// (<c>CardSettlementOrchestrator</c>, <c>EftTenderHandler</c>) took a lock
+/// keyed to the bill, so a settlement could still begin and commit a new
+/// <c>Pending</c>/<c>Unknown</c> Payment between this check and the caller's
+/// own commit. Both methods here now take a <c>pg_advisory_xact_lock</c> on
+/// the SAME namespaced key (<c>"bill-settlement:{billId:N}"</c>) that
+/// <c>CardSettlementOrchestrator</c> and <c>EftTenderHandler</c> take before
+/// writing a Payment for that bill — no shared C# type is needed for this
+/// (Tables has no compile-time reference to Payments, by design), only the
+/// shared string convention, exactly how Postgres advisory locks are meant
+/// to be used across modules. Whichever side acquires the lock first for a
+/// given bill determines what the other must respect once it proceeds.
+/// </para>
 /// </summary>
 public static class PaymentAwareTableTopologyPolicy
 {
@@ -50,9 +66,10 @@ public static class PaymentAwareTableTopologyPolicy
     /// any of <paramref name="billIds"/> has a Payment currently
     /// <c>Pending</c>, <c>Unknown</c>, or <c>ReconciliationRequired</c>.
     /// Must run inside the caller's own transfer/merge/unmerge transaction,
-    /// after the caller's own table-row locks are held, so a payment cannot
-    /// be tendered against a bill between this check and the caller's own
-    /// commit.
+    /// after the caller's own table-row locks are held. Also takes the
+    /// shared bill-settlement advisory lock (see class doc comment) before
+    /// reading, so a payment genuinely cannot be committed against any of
+    /// these bills between this check and the caller's own commit.
     /// </summary>
     public static async Task EnsureNoUnsettledPaymentAsync(
         IReadOnlyCollection<Guid> billIds,
@@ -64,6 +81,8 @@ public static class PaymentAwareTableTopologyPolicy
         ArgumentNullException.ThrowIfNull(transaction);
         if (billIds.Count == 0)
             return;
+
+        await LockBillsForSettlementAsync(connection, transaction, billIds, cancellationToken).ConfigureAwait(false);
 
         const string sql = $"""
             SELECT bill_id, status
@@ -108,6 +127,8 @@ public static class PaymentAwareTableTopologyPolicy
         if (billIds.Count == 0)
             return;
 
+        await LockBillsForSettlementAsync(connection, transaction, billIds, cancellationToken).ConfigureAwait(false);
+
         const string sql = $"""
             SELECT bill_id, status
             FROM {PaymentsTable}
@@ -127,6 +148,27 @@ public static class PaymentAwareTableTopologyPolicy
             throw new TableMerge.PaymentPolicyRequiredException(
                 billId,
                 $"Bill '{billId}' has a payment currently '{status}'. Table topology changes are locked until it settles (V13-TBL-001).");
+        }
+    }
+
+    /// <summary>
+    /// Acquires the shared bill-settlement advisory lock (see class doc
+    /// comment) for every bill in <paramref name="billIds"/>, sorted so two
+    /// concurrent callers locking the same set of bills always acquire them
+    /// in the same order and can never deadlock against each other.
+    /// </summary>
+    private static async Task LockBillsForSettlementAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        IReadOnlyCollection<Guid> billIds,
+        CancellationToken cancellationToken)
+    {
+        foreach (var billId in billIds.Distinct().OrderBy(id => id))
+        {
+            await using var command = new NpgsqlCommand(
+                "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+            command.Parameters.AddWithValue($"bill-settlement:{billId:N}");
+            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

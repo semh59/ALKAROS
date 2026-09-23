@@ -1205,6 +1205,14 @@
         "card_settlement_attempts"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "141",
+      "phase": "B",
+      "tables": [
+        "card_settlement_attempts"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

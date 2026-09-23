@@ -19,7 +19,7 @@ public sealed class PostgresCardSettlementAttemptRepository : ICardSettlementAtt
 
         await using var command = CreateCommand(connection, transaction,
             $"""
-            SELECT card_settlement_attempt_id, idempotency_key, provider_correlation_id, payment_id,
+            SELECT card_settlement_attempt_id, bill_id, idempotency_key, provider_correlation_id, payment_id,
                    outcome, approved_amount, allocation_id, reason, fiscal_handoff_queued, created_at
             FROM {Attempts}
             WHERE idempotency_key = @idempotency_key;
@@ -32,15 +32,16 @@ public sealed class PostgresCardSettlementAttemptRepository : ICardSettlementAtt
 
         return new CardSettlementAttempt(
             reader.GetGuid(0),
-            reader.GetString(1),
+            reader.GetGuid(1),
             reader.GetString(2),
-            reader.GetGuid(3),
-            Enum.Parse<CardSettlementOutcome>(reader.GetString(4)),
-            reader.IsDBNull(5) ? null : reader.GetDecimal(5),
-            reader.IsDBNull(6) ? null : reader.GetGuid(6),
-            reader.IsDBNull(7) ? null : reader.GetString(7),
-            reader.GetBoolean(8),
-            reader.GetDateTime(9));
+            reader.GetString(3),
+            reader.GetGuid(4),
+            Enum.Parse<CardSettlementOutcome>(reader.GetString(5)),
+            reader.IsDBNull(6) ? null : reader.GetDecimal(6),
+            reader.IsDBNull(7) ? null : reader.GetGuid(7),
+            reader.IsDBNull(8) ? null : reader.GetString(8),
+            reader.GetBoolean(9),
+            reader.GetDateTime(10));
     }
 
     public async Task InsertAsync(
@@ -56,13 +57,14 @@ public sealed class PostgresCardSettlementAttemptRepository : ICardSettlementAtt
         await using var command = CreateCommand(connection, transaction,
             $"""
             INSERT INTO {Attempts} (
-                card_settlement_attempt_id, idempotency_key, provider_correlation_id, payment_id,
+                card_settlement_attempt_id, bill_id, idempotency_key, provider_correlation_id, payment_id,
                 outcome, approved_amount, allocation_id, reason, fiscal_handoff_queued, created_at)
             VALUES (
-                @card_settlement_attempt_id, @idempotency_key, @provider_correlation_id, @payment_id,
+                @card_settlement_attempt_id, @bill_id, @idempotency_key, @provider_correlation_id, @payment_id,
                 @outcome, @approved_amount, @allocation_id, @reason, @fiscal_handoff_queued, @created_at);
             """);
         command.Parameters.AddWithValue("card_settlement_attempt_id", attempt.Id);
+        command.Parameters.AddWithValue("bill_id", attempt.BillId);
         command.Parameters.AddWithValue("idempotency_key", attempt.IdempotencyKey);
         command.Parameters.AddWithValue("provider_correlation_id", attempt.ProviderCorrelationId);
         command.Parameters.AddWithValue("payment_id", attempt.PaymentId);

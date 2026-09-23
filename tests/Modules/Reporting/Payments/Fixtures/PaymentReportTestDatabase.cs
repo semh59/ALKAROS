@@ -138,12 +138,13 @@ public sealed class PaymentReportTestDatabase : PgTestDatabase
         await ExecuteAsync(
             """
             INSERT INTO payments.card_settlement_attempts
-                (card_settlement_attempt_id, idempotency_key, provider_correlation_id, payment_id, outcome,
+                (card_settlement_attempt_id, bill_id, idempotency_key, provider_correlation_id, payment_id, outcome,
                  approved_amount, allocation_id, fiscal_handoff_queued, created_at)
             VALUES
-                (@id, @idempotency, @correlation, @payment, 'Approved', @amount, @allocation_id, true, now());
+                (@id, @bill, @idempotency, @correlation, @payment, 'Approved', @amount, @allocation_id, true, now());
             """,
             ("id", Guid.NewGuid()),
+            ("bill", billId),
             ("idempotency", $"rpt-test-{Guid.NewGuid():N}"),
             ("correlation", $"corr-{Guid.NewGuid():N}"),
             ("payment", paymentId),

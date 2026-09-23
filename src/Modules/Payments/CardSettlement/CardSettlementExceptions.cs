@@ -34,3 +34,51 @@ public sealed class CardSettlementBillNotFoundException : CardSettlementExceptio
 
     public Guid BillId { get; }
 }
+
+/// <summary>
+/// V1-RMD-258: thrown when a NEW settlement attempt (no existing attempt row
+/// under this idempotency key) targets a Bill that already has a Payment
+/// sitting at <c>Pending</c>/<c>Unknown</c>/<c>ReconciliationRequired</c> —
+/// a genuinely new attempt must never be layered on top of an already
+/// unresolved one (that would risk two attempts eventually both trying to
+/// settle the same remaining amount). The existing unresolved attempt must
+/// be reconciled first (V13-REC-001).
+/// </summary>
+public sealed class CardSettlementUnsettledPaymentExistsException : CardSettlementException
+{
+    public CardSettlementUnsettledPaymentExistsException(Guid billId, Guid existingPaymentId, string existingStatus)
+        : base($"Bill '{billId}' already has a payment '{existingPaymentId}' at status '{existingStatus}'; " +
+               "it must be reconciled before a new card settlement attempt can be recorded.")
+    {
+        BillId = billId;
+        ExistingPaymentId = existingPaymentId;
+        ExistingStatus = existingStatus;
+    }
+
+    public Guid BillId { get; }
+    public Guid ExistingPaymentId { get; }
+    public string ExistingStatus { get; }
+}
+
+/// <summary>
+/// V1-RMD-258: thrown when a replayed idempotency key's recorded attempt
+/// belongs to a DIFFERENT Bill than the one the current request names — a
+/// genuine cross-bill idempotency-key collision (key-generation bug or a
+/// stale/replayed client context), never silently accepted as a valid
+/// replay for the wrong bill.
+/// </summary>
+public sealed class CardSettlementBillMismatchException : CardSettlementException
+{
+    public CardSettlementBillMismatchException(string idempotencyKey, Guid recordedBillId, Guid requestedBillId)
+        : base($"Card settlement attempt '{idempotencyKey}' was recorded against bill '{recordedBillId}', " +
+               $"not the requested bill '{requestedBillId}'.")
+    {
+        IdempotencyKey = idempotencyKey;
+        RecordedBillId = recordedBillId;
+        RequestedBillId = requestedBillId;
+    }
+
+    public string IdempotencyKey { get; }
+    public Guid RecordedBillId { get; }
+    public Guid RequestedBillId { get; }
+}

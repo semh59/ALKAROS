@@ -146,6 +146,25 @@ public sealed class PostgresPaymentAllocationRepositoryTests : IClassFixture<Pay
     }
 
     [Fact]
+    public async Task AllocateAsyncRejectsAReusedIdempotencyKeyAgainstADifferentBill()
+    {
+        // V1-RMD-258: defense-in-depth for a genuine cross-bill
+        // idempotency-key collision (a key-generation bug in a caller) —
+        // must never silently return the wrong bill's allocation as if it
+        // were a valid replay for this one.
+        var (paymentA, billA) = await SeedPaymentAndBillAsync(payable: 50m);
+        await _allocations.AllocateAsync(paymentA, billA, 50m, "idem-cross-bill-1");
+
+        var (paymentB, billB) = await SeedPaymentAndBillAsync(payable: 50m);
+
+        var act = () => _allocations.AllocateAsync(paymentB, billB, 50m, "idem-cross-bill-1");
+
+        await act.Should().ThrowAsync<CrossBillPaymentAllocationException>();
+        var byBillB = await _allocations.GetByBillIdAsync(billB.Id);
+        byBillB.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task AllocateAsyncRejectsAnOverAllocationThroughARealRepositoryRoundTrip()
     {
         var (payment, bill) = await SeedPaymentAndBillAsync(payable: 80m);

@@ -120,6 +120,58 @@ public sealed class PaymentAwareTableTopologyPolicyTests : IClassFixture<Payment
         ex.Which.BillId.Should().Be(unsettledBillId);
     }
 
+    [Fact]
+    public async Task EnsureNoUnsettledPaymentAsyncHoldsTheBillSettlementLockAcrossItsOwnTransaction()
+    {
+        // V1-RMD-258: proves the real fix for the Faz 2 independent audit's
+        // TOCTOU finding — EnsureNoUnsettledPaymentAsync must hold the SAME
+        // "bill-settlement:{billId:N}" advisory lock that
+        // CardSettlementOrchestrator/EftTenderHandler take before writing a
+        // Payment, so a concurrent settlement attempt against the same bill
+        // genuinely cannot proceed while a transfer/merge/unmerge's own gate
+        // check is still open. Uses pg_try_advisory_xact_lock (non-blocking)
+        // from a SECOND real connection to observe this without hanging the
+        // test — the second connection must fail to acquire the lock while
+        // the first transaction (which called the real policy method) is
+        // still open, and must succeed once it rolls back.
+        var billId = await CreateBillAsync();
+
+        await using var firstConnection = await _db.DataSource.OpenConnectionAsync();
+        await using var firstTransaction = await firstConnection.BeginTransactionAsync();
+
+        await PaymentAwareTableTopologyPolicy.EnsureNoUnsettledPaymentAsync(
+            [billId], firstConnection, firstTransaction);
+
+        await using var secondConnection = await _db.DataSource.OpenConnectionAsync();
+        var stillHeld = await TryAcquireBillSettlementLockAsync(secondConnection, billId);
+        stillHeld.Should().BeFalse(
+            "EnsureNoUnsettledPaymentAsync should still be holding the bill-settlement lock inside its caller's open transaction");
+
+        await firstTransaction.RollbackAsync();
+
+        var releasedAfterRollback = await TryAcquireBillSettlementLockAsync(secondConnection, billId);
+        releasedAfterRollback.Should().BeTrue(
+            "the advisory lock must release once the transaction that held it ends");
+    }
+
+    /// <summary>
+    /// Mirrors the exact key format <c>CardSettlementOrchestrator</c>/
+    /// <c>EftTenderHandler</c>/<c>PaymentAwareTableTopologyPolicy</c> all use
+    /// (<c>"bill-settlement:{billId:N}"</c>) via the non-blocking
+    /// <c>pg_try_advisory_xact_lock</c>, so this test can observe contention
+    /// without ever hanging.
+    /// </summary>
+    private static async Task<bool> TryAcquireBillSettlementLockAsync(Npgsql.NpgsqlConnection connection, Guid billId)
+    {
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using var command = new Npgsql.NpgsqlCommand(
+            "SELECT pg_try_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+        command.Parameters.AddWithValue($"bill-settlement:{billId:N}");
+        var acquired = (bool)(await command.ExecuteScalarAsync())!;
+        await transaction.CommitAsync();
+        return acquired;
+    }
+
     private async Task<Guid> CreateBillAsync()
     {
         var id = Guid.NewGuid();

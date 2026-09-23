@@ -133,6 +133,136 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task BankCardRequiresReconciliationIsPersistedAndSurvivesAFreshClientLoad()
+    {
+        // V1-RMD-258: the Faz 2 independent audit found the "don't retry
+        // into a duplicate charge" lock lived only in the browser's own JS
+        // memory — a page reload silently dropped it. This proves the real
+        // fix: a BRAND NEW HttpClient with no prior in-memory state (the
+        // server-side equivalent of a page reload) still sees the
+        // unresolved Payment via GET, because CardSettlementOrchestrator
+        // now actually persists the RequiresReconciliation attempt.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd258-bankcard-persist");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var firstClient = CreateClient(app);
+
+        var response = await PostAsync(firstClient, TendersPath(terminalId, billId), cookie,
+            new { Method = "BankCard", Amount = 40m, IdempotencyKey = "rmd258-bankcard-1" });
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var reloadedClient = CreateClient(app);
+        var summary = await GetAsync(reloadedClient, TendersPath(terminalId, billId), cookie);
+        var summaryBody = await summary.Content.ReadFromJsonAsync<JsonElement>();
+
+        var unsettled = summaryBody.GetProperty("unsettledPayment");
+        Assert.NotEqual(JsonValueKind.Null, unsettled.ValueKind);
+        Assert.Equal("Unknown", unsettled.GetProperty("status").GetString());
+    }
+
+    [Fact]
+    public async Task ANewBankCardAttemptIsRejectedWhileAPriorOneIsUnresolved()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd258-bankcard-block-bc");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var first = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "BankCard", Amount = 40m, IdempotencyKey = "rmd258-bankcard-block-1" });
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        var second = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "BankCard", Amount = 40m, IdempotencyKey = "rmd258-bankcard-block-2" });
+
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+        var body = await second.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("TENDER_UNSETTLED_PAYMENT_EXISTS", body.GetProperty("error").GetProperty("code").GetString());
+    }
+
+    [Fact]
+    public async Task AnEftAttemptIsRejectedWhileAPriorBankCardAttemptIsUnresolved()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd258-bankcard-block-eft");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var first = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "BankCard", Amount = 40m, IdempotencyKey = "rmd258-bankcard-block-eft-1" });
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        var second = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 40m, IdempotencyKey = "rmd258-eft-blocked-1" });
+
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+        var body = await second.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("TENDER_UNSETTLED_PAYMENT_EXISTS", body.GetProperty("error").GetProperty("code").GetString());
+
+        // Nothing was allocated by the rejected attempt.
+        var summary = await GetAsync(client, TendersPath(terminalId, billId), cookie);
+        var summaryBody = await summary.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(0m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
+    }
+
+    [Fact]
+    public async Task SummaryWithNoUnsettledPaymentReportsUnsettledPaymentAsNull()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd258-no-unsettled");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var summary = await GetAsync(client, TendersPath(terminalId, billId), cookie);
+        var summaryBody = await summary.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(JsonValueKind.Null, summaryBody.GetProperty("unsettledPayment").ValueKind);
+    }
+
+    [Fact]
+    public async Task ConcurrentEftTendersThatTogetherOverAllocateGiveTheLoserAProperTurkish409NeverARaw500()
+    {
+        // V1-RMD-258: the Faz 2 independent audit found EftTenderHandler's
+        // own pre-check reads through an unlocked connection, so two
+        // concurrent tenders can both pass it; the REAL enforcement is the
+        // per-bill advisory lock inside PostgresPaymentAllocationRepository
+        // .AllocateAsync, which correctly throws OverAllocationException for
+        // the loser — but that exception was previously uncaught, surfacing
+        // as a raw, un-Turkish 500. This drives two REAL concurrent HTTP
+        // requests (not sequential) against a bill that can only fit one of
+        // them, and asserts the loser gets the same Turkish 409 contract a
+        // client-side-detected over-tender gets.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd258-eft-concurrent");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var clientA = CreateClient(app);
+        using var clientB = CreateClient(app);
+
+        var taskA = PostAsync(clientA, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd258-eft-race-a" });
+        var taskB = PostAsync(clientB, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd258-eft-race-b" });
+        var responses = await Task.WhenAll(taskA, taskB);
+
+        var statusCodes = responses.Select(r => r.StatusCode).OrderBy(s => s).ToArray();
+        Assert.Equal([HttpStatusCode.OK, HttpStatusCode.Conflict], statusCodes);
+
+        var loser = responses.Single(r => r.StatusCode == HttpStatusCode.Conflict);
+        var loserBody = await loser.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("TENDER_OVER_ALLOCATION", loserBody.GetProperty("error").GetProperty("code").GetString());
+        Assert.Contains("₺", loserBody.GetProperty("error").GetProperty("message").GetString());
+
+        var summary = await GetAsync(clientA, TendersPath(terminalId, billId), cookie);
+        var summaryBody = await summary.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(60m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
+    }
+
+    [Fact]
     public async Task MealCardTenderIsRejectedAsNotRegisteredNeverSilentlyAccepted()
     {
         var terminalId = Guid.NewGuid();

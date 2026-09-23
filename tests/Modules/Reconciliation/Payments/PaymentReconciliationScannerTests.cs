@@ -98,12 +98,13 @@ public sealed class PaymentReconciliationScannerTests : IClassFixture<PaymentRec
         await using (var command = _dataSource.CreateCommand(
             """
             INSERT INTO payments.card_settlement_attempts
-                (card_settlement_attempt_id, idempotency_key, provider_correlation_id, payment_id,
+                (card_settlement_attempt_id, bill_id, idempotency_key, provider_correlation_id, payment_id,
                  outcome, approved_amount, allocation_id, fiscal_handoff_queued, created_at)
-            VALUES (@id, @key, @corr, @payment, 'Approved', @approved, @allocation, true, now());
+            VALUES (@id, @bill, @key, @corr, @payment, 'Approved', @approved, @allocation, true, now());
             """))
         {
             command.Parameters.AddWithValue("id", attemptId);
+            command.Parameters.AddWithValue("bill", billId);
             command.Parameters.AddWithValue("key", Guid.NewGuid().ToString());
             command.Parameters.AddWithValue("corr", "TXN-DRIFT");
             command.Parameters.AddWithValue("payment", payment.Id);

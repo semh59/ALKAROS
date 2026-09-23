@@ -1,5 +1,6 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Payments.Allocations.Persistence;
+using ALKAROS.Payments.CardSettlement;
 using ALKAROS.Payments.EftTender;
 using ALKAROS.Payments.PaymentAggregate;
 using ALKAROS.Payments.TenderRouting;
@@ -13,11 +14,11 @@ namespace ALKAROS.Host.DualScreen;
 public static partial class DualScreenApplication
 {
     /// <summary>
-    /// V13-PUI-001: the generic tender-routing HTTP surface for the split
-    /// payment UI — BankCard and Eft only. Cash keeps its own dedicated
-    /// <c>POST .../cash-sessions/{cashSessionId}/cash-tender</c> endpoint
-    /// (V13-CSH-004, unmodified): it needs a <c>CashSessionId</c> and mints
-    /// its own real Payment id, neither of which the generic
+    /// V13-PUI-001/V1-RMD-258: the generic tender-routing HTTP surface for
+    /// the split payment UI — BankCard and Eft only. Cash keeps its own
+    /// dedicated <c>POST .../cash-sessions/{cashSessionId}/cash-tender</c>
+    /// endpoint (V13-CSH-004, unmodified): it needs a <c>CashSessionId</c>
+    /// and mints its own real Payment id, neither of which the generic
     /// <see cref="TenderRouter"/> envelope carries faithfully (see
     /// <c>TenderRequest</c>'s own doc comment) — routing Cash through here
     /// too would only add an indirection with no real benefit. MealCard is
@@ -25,6 +26,21 @@ public static partial class DualScreenApplication
     /// (V13-PAY-003), so the router's own <see cref="TenderMethodNotRegistered"/>
     /// already gives it the correct typed-unavailable response with zero
     /// special-casing.
+    ///
+    /// V1-RMD-258: a BankCard routing result is no longer relayed to the
+    /// caller unpersisted — it is handed to
+    /// <see cref="ICardSettlementOrchestrator"/>, which durably records the
+    /// attempt (Approved/Declined/RequiresReconciliation) exactly as
+    /// V13-PAY-004 built it. This closes two findings from the Faz 2
+    /// independent audit at their shared root: (1) <c>CardSettlementOrchestrator</c>
+    /// had zero real callers despite being fully built and tested; (2) an
+    /// Unknown/RequiresReconciliation BankCard attempt left no trace in the
+    /// database, so the "don't let the cashier retry into a duplicate
+    /// charge" lock lived only in the browser's own JS memory and was lost
+    /// on a page reload. The GET endpoint below now surfaces a real
+    /// unresolved Payment (if any) read from the database, so the client can
+    /// correctly re-derive its lock state after a reload instead of relying
+    /// on in-memory state alone.
     /// </summary>
     public static RouteGroupBuilder MapPaymentTenderApi(this WebApplication app)
     {
@@ -54,19 +70,13 @@ public static partial class DualScreenApplication
             var allocatedTotal = allocations.Sum(a => a.Amount);
             var remaining = bill.PayableAmount - allocatedTotal;
 
-            // No PaymentAllocation is ever created for a
-            // TenderRequiresReconciliation outcome today (the BankCard
-            // placeholder handler persists nothing — there is no real
-            // terminal result to record), so an Unknown/pending BankCard
-            // attempt cannot be detected by reading allocations alone. The
-            // client-side lock (see split-payment.js) is therefore the real
-            // enforcement point for "don't let the cashier retry a pending
-            // BankCard line into a duplicate charge" until V13-HUG-001
-            // lands and a real Payment row can carry that state.
+            var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
+            var paymentsById = payments.ToDictionary(p => p.Id);
+
             var lines = new List<PaymentAllocationLineV1>(allocations.Count);
             foreach (var allocation in allocations)
             {
-                var payment = await paymentRepository.GetByIdAsync(allocation.PaymentId, cancellationToken);
+                paymentsById.TryGetValue(allocation.PaymentId, out var payment);
                 lines.Add(new PaymentAllocationLineV1(
                     allocation.Id,
                     allocation.PaymentId,
@@ -74,8 +84,23 @@ public static partial class DualScreenApplication
                     payment?.Status.ToString() ?? "Unknown"));
             }
 
+            // V1-RMD-258: a genuinely persisted Pending/Unknown/
+            // ReconciliationRequired Payment (CardSettlementOrchestrator now
+            // writes one for a RequiresReconciliation BankCard outcome) is
+            // read here for real — the client uses this to re-derive its
+            // lock state on every load, so a page reload can no longer
+            // silently drop the "don't retry into a duplicate charge" lock.
+            var unsettled = payments.FirstOrDefault(p =>
+                p.Status is PaymentStatus.Pending or PaymentStatus.Unknown or PaymentStatus.ReconciliationRequired);
+            var unsettledDto = unsettled is null
+                ? null
+                : new UnsettledPaymentV1(
+                    unsettled.Id,
+                    unsettled.Status.ToString(),
+                    unsettled.History.Count > 0 ? unsettled.History[^1].Reason : null);
+
             return Results.Ok(new BillTenderSummaryV1(
-                billId, bill.PayableAmount, allocatedTotal, remaining, lines));
+                billId, bill.PayableAmount, allocatedTotal, remaining, lines, unsettledDto));
         });
 
         group.MapPost("/", async (
@@ -83,6 +108,7 @@ public static partial class DualScreenApplication
             Guid billId,
             SubmitBillTenderRequestV1 request,
             TenderRouter router,
+            ICardSettlementOrchestrator cardSettlementOrchestrator,
             DualScreenStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -119,6 +145,40 @@ public static partial class DualScreenApplication
             try
             {
                 routing = await router.RouteAsync(tenderRequest, cancellationToken);
+
+                // V1-RMD-258: BankCard's routing result is never returned to
+                // the caller unpersisted — it is durably recorded through
+                // CardSettlementOrchestrator (V13-PAY-004), the same
+                // orchestrator built for exactly this purpose but never
+                // wired to any real caller until now. The provider
+                // correlation id is honestly the request's own idempotency
+                // key, not a real terminal reference — no real terminal call
+                // was ever made (the BankCard handler is still
+                // PendingBankCardTerminalIntegrationHandler's honest
+                // placeholder); this will be replaced by the terminal's own
+                // reference the day V13-HUG-001 ships a real handler.
+                if (method == TenderMethod.BankCard && routing is TenderRoutingHandled { Result: var cardResult })
+                {
+                    var settlement = await cardSettlementOrchestrator.HandleAsync(
+                        new CardSettlementRequest(
+                            billId, request.Amount, request.IdempotencyKey, request.IdempotencyKey, cardResult),
+                        cancellationToken);
+
+                    return settlement.Outcome switch
+                    {
+                        CardSettlementOutcome.Approved =>
+                            Results.Ok(new SubmitBillTenderResultV1("Approved", settlement.ApprovedAmount, null)),
+                        CardSettlementOutcome.Declined =>
+                            Results.Ok(new SubmitBillTenderResultV1("Declined", null,
+                                ((TenderDeclined)cardResult).Reason)),
+                        CardSettlementOutcome.RequiresReconciliation =>
+                            Results.Ok(new SubmitBillTenderResultV1("RequiresReconciliation", null,
+                                ((TenderRequiresReconciliation)cardResult).Reason)),
+                        _ => Results.Json(
+                            new { error = new { code = "INTERNAL_ERROR", message = "İşlem tamamlanamadı." } },
+                            statusCode: StatusCodes.Status500InternalServerError),
+                    };
+                }
             }
             catch (EftOverTenderException ex)
             {
@@ -136,6 +196,74 @@ public static partial class DualScreenApplication
             catch (EftTenderBillNotFoundException)
             {
                 return Results.NotFound();
+            }
+            catch (EftUnsettledPaymentExistsException ex)
+            {
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "TENDER_UNSETTLED_PAYMENT_EXISTS",
+                            message = $"Bu hesapta '{ex.ExistingStatus}' durumunda çözülmemiş bir ödeme var; " +
+                                "yeni bir tahsilat eklemeden önce mutabakat tamamlanmalı.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (EftBillMismatchException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_IDEMPOTENCY_KEY_REUSED", message = "İşlem kimliği başka bir hesap için zaten kullanılmış." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CardSettlementUnsettledPaymentExistsException ex)
+            {
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "TENDER_UNSETTLED_PAYMENT_EXISTS",
+                            message = $"Bu hesapta '{ex.ExistingStatus}' durumunda çözülmemiş bir ödeme var; " +
+                                "yeni bir tahsilat eklemeden önce mutabakat tamamlanmalı.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CardSettlementBillMismatchException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_IDEMPOTENCY_KEY_REUSED", message = "İşlem kimliği başka bir hesap için zaten kullanılmış." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CardSettlementBillNotFoundException)
+            {
+                return Results.NotFound();
+            }
+            catch (OverAllocationException ex)
+            {
+                // V1-RMD-258: a concurrency-triggered over-allocation (the
+                // client-side pre-check passed, but a concurrent tender won
+                // the real per-bill advisory lock first) must look identical
+                // to the cashier as the client-side-detected case — never a
+                // raw, unhandled 500 with no Turkish message.
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "TENDER_OVER_ALLOCATION",
+                            message = $"Tutar kalan {ex.RemainingPayable:0.00} ₺'yi aşıyor.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CrossBillPaymentAllocationException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_IDEMPOTENCY_KEY_REUSED", message = "İşlem kimliği başka bir hesap için zaten kullanılmış." } },
+                    statusCode: StatusCodes.Status409Conflict);
             }
 
             return routing switch
@@ -169,9 +297,13 @@ public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedA
 
 public sealed record PaymentAllocationLineV1(Guid AllocationId, Guid PaymentId, decimal Amount, string PaymentStatus);
 
+/// <summary>V1-RMD-258: a real, persisted unresolved Payment for a bill, if any — the server-side source of truth the client re-derives its lock state from.</summary>
+public sealed record UnsettledPaymentV1(Guid PaymentId, string Status, string? Reason);
+
 public sealed record BillTenderSummaryV1(
     Guid BillId,
     decimal PayableAmount,
     decimal AllocatedTotal,
     decimal RemainingAmount,
-    IReadOnlyList<PaymentAllocationLineV1> Allocations);
+    IReadOnlyList<PaymentAllocationLineV1> Allocations,
+    UnsettledPaymentV1? UnsettledPayment);

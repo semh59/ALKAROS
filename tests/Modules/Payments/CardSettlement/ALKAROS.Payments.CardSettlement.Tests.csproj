@@ -37,6 +37,7 @@
     <None Include="..\..\..\..\database\migrations\V1\V1-RMD-230\121-payments-cross-field-invariants.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V13\V13-ALC-001\123-payment-allocations.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V13\V13-PAY-004\140-card-settlement-attempts.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V1\V1-RMD-258\141-card-settlement-attempts-bill-scoping.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

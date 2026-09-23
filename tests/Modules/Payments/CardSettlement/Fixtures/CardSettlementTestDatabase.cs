@@ -5,9 +5,10 @@ namespace ALKAROS.Payments.CardSettlement.Tests.Fixtures;
 /// <summary>
 /// Creates a unique test database for V13-PAY-004 and applies outbox (003),
 /// catalog, tables, orders, billing, payments (120, 121), payment_allocations
-/// (123) and card_settlement_attempts (140) migrations in order — a card
-/// settlement writes Payment, PaymentAllocation, an outbox row, and its own
-/// attempt row, each with real FKs into Bill/Payment.
+/// (123), card_settlement_attempts (140) and its V1-RMD-258 bill-scoping
+/// follow-up (141) migrations in order — a card settlement writes Payment,
+/// PaymentAllocation, an outbox row, and its own attempt row, each with real
+/// FKs into Bill/Payment.
 /// </summary>
 public sealed class CardSettlementTestDatabase : PgTestDatabase
 {

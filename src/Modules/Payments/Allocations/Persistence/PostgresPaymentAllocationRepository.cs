@@ -52,7 +52,16 @@ public sealed class PostgresPaymentAllocationRepository : IPaymentAllocationRepo
         // row instead of re-validating or inserting a second one.
         var existing = await ReadByIdempotencyKeyAsync(connection, transaction, idempotencyKey, cancellationToken);
         if (existing is not null)
+        {
+            // V1-RMD-258: defense-in-depth — a genuine cross-bill
+            // idempotency-key collision (a key reused for a different bill
+            // than it was first recorded under, e.g. a key-generation bug
+            // in a caller) must never silently return the wrong bill's
+            // allocation as if it were a valid replay for this one.
+            if (existing.BillId != bill.Id)
+                throw new CrossBillPaymentAllocationException(payment.Id, existing.BillId, bill.Id);
             return existing;
+        }
 
         // Per-bill advisory lock: serializes concurrent allocation attempts
         // against the SAME bill (same pattern as

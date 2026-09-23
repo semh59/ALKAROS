@@ -53,17 +53,38 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
+        // V1-RMD-258: bill-scoped lock FIRST, idempotency-key lock second —
+        // the same fixed order PaymentAwareTableTopologyPolicy (Tables
+        // module) uses on the SAME namespaced key, so a concurrent table
+        // transfer/merge/unmerge attempt and a concurrent settlement attempt
+        // against the same bill genuinely serialize against each other
+        // rather than racing (no shared C# type needed — Tables has no
+        // compile-time reference to Payments, by design — only the shared
+        // "bill-settlement:{billId:N}" string convention).
+        await LockBillForSettlementAsync(connection, transaction, request.BillId, cancellationToken);
         await LockIdempotencyKeyAsync(connection, transaction, request.IdempotencyKey, cancellationToken);
 
         var existing = await _attemptRepository.GetByIdempotencyKeyAsync(
             request.IdempotencyKey, connection, transaction, cancellationToken);
         if (existing is not null)
         {
-            EnsureReplayMatches(existing, request);
+            EnsureReplayMatches(existing, request, bill.Id);
             await transaction.CommitAsync(cancellationToken);
             return new CardSettlementResult(
                 existing.PaymentId, existing.Outcome, existing.AllocationId, existing.ApprovedAmount, WasReplayed: true);
         }
+
+        // V1-RMD-258: a genuinely NEW attempt (no prior row under this exact
+        // idempotency key) must never be layered on top of a Bill that
+        // already has an unresolved Payment — held under the same
+        // bill-settlement lock just acquired above, so this read is
+        // race-free against any concurrent settlement attempt for the same
+        // bill.
+        var existingPayments = await _paymentRepository.GetByBillIdAsync(bill.Id, cancellationToken);
+        var unsettled = existingPayments.FirstOrDefault(p =>
+            p.Status is PaymentStatus.Pending or PaymentStatus.Unknown or PaymentStatus.ReconciliationRequired);
+        if (unsettled is not null)
+            throw new CardSettlementUnsettledPaymentExistsException(bill.Id, unsettled.Id, unsettled.Status.ToString());
 
         var attemptId = Guid.NewGuid();
         var payment = new Payment(Guid.NewGuid(), bill.Id, request.AttemptedAmount);
@@ -83,7 +104,7 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
                     connection, transaction, cancellationToken);
 
                 attempt = new CardSettlementAttempt(
-                    attemptId, request.IdempotencyKey, request.ProviderCorrelationId, payment.Id,
+                    attemptId, bill.Id, request.IdempotencyKey, request.ProviderCorrelationId, payment.Id,
                     CardSettlementOutcome.Approved, approved.ApprovedAmount, allocation.Id,
                     reason: null, fiscalHandoffQueued: true);
                 break;
@@ -93,7 +114,7 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
                 await _paymentRepository.AddAsync(payment, connection, transaction, cancellationToken);
 
                 attempt = new CardSettlementAttempt(
-                    attemptId, request.IdempotencyKey, request.ProviderCorrelationId, payment.Id,
+                    attemptId, bill.Id, request.IdempotencyKey, request.ProviderCorrelationId, payment.Id,
                     CardSettlementOutcome.Declined, approvedAmount: null, allocationId: null,
                     reason: declined.Reason, fiscalHandoffQueued: false);
                 break;
@@ -107,7 +128,7 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
                 await _paymentRepository.AddAsync(payment, connection, transaction, cancellationToken);
 
                 attempt = new CardSettlementAttempt(
-                    attemptId, request.IdempotencyKey, request.ProviderCorrelationId, payment.Id,
+                    attemptId, bill.Id, request.IdempotencyKey, request.ProviderCorrelationId, payment.Id,
                     CardSettlementOutcome.RequiresReconciliation, approvedAmount: null, allocationId: null,
                     reason: requiresReconciliation.Reason, fiscalHandoffQueued: false);
                 break;
@@ -131,8 +152,15 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
     /// mismatch (V13-PAY-004 Acceptance evidence: "allocation/provider
     /// mismatch"), never a silent overwrite.
     /// </summary>
-    private static void EnsureReplayMatches(CardSettlementAttempt existing, CardSettlementRequest request)
+    private static void EnsureReplayMatches(CardSettlementAttempt existing, CardSettlementRequest request, Guid requestedBillId)
     {
+        // V1-RMD-258: checked first — a cross-bill idempotency-key collision
+        // is a more fundamental mismatch than any field-level divergence
+        // below, and must never be masked by a field check happening to
+        // also fail (or, worse, happening to also pass).
+        if (existing.BillId != requestedBillId)
+            throw new CardSettlementBillMismatchException(request.IdempotencyKey, existing.BillId, requestedBillId);
+
         if (!string.Equals(existing.ProviderCorrelationId, request.ProviderCorrelationId, StringComparison.Ordinal))
             throw new CardSettlementReplayMismatchException(
                 request.IdempotencyKey,
@@ -178,6 +206,23 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
         await using var command = new NpgsqlCommand(
             "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
         command.Parameters.AddWithValue($"card-settlement:{idempotencyKey}");
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// V1-RMD-258: the shared bill-settlement advisory lock — same
+    /// namespaced key (<c>"bill-settlement:{billId:N}"</c>) that
+    /// <c>ALKAROS.Tables.PaymentTopology.PaymentAwareTableTopologyPolicy</c>
+    /// and <c>ALKAROS.Payments.EftTender.EftTenderHandler</c> take, so a
+    /// concurrent table transfer/merge/unmerge or EFT tender against the
+    /// same bill genuinely serializes against this settlement attempt.
+    /// </summary>
+    private static async Task LockBillForSettlementAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+        command.Parameters.AddWithValue($"bill-settlement:{billId:N}");
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 }
