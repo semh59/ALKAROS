@@ -168,7 +168,7 @@ _V13_EXIT_WAIVER_RECORDS = {
 }
 _V13_EXIT_WAIVER_TASK_IDS = {record[0] for record in _V13_EXIT_WAIVER_RECORDS}
 
-# 2026-09-23 (TRACEABILITY C101, V13-GOV-008): Semih approved a formal,
+# 2026-09-23 (TRACEABILITY C102, V13-GOV-008): Semih approved a formal,
 # per-edge waiver of the per-task Dependencies-must-be-Done check for
 # exactly these 12 (consumer, waived dependency) pairs. Mirrors
 # `plan_audit_tool.py`'s PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER exactly —

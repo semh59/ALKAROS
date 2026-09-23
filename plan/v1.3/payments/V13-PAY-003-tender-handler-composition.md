@@ -30,8 +30,12 @@ Cash handler, durable BankCard workflow ve MealCard provider-registry bridge'ini
   src/Host/Composition/Modules/ModuleRegistry.cs (TenderCompositionModule kaydı eklendi),
   tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs (ApprovedEdges'e
   `Payments.TenderComposition` satırı eklendi), tests/Host/MigrationComposition/Composition/
-  HostModuleReachabilityTests.cs (sabit modül sayısı 27→28) — hepsi paylaşılan dosyalar,
-  plain text (backtick'siz).
+  HostModuleReachabilityTests.cs (sabit modül sayısı 27→28), tools/plan-audit/plan_audit_tool.py
+  (V13-GOV-008 sahipliğinde kalır — bu görev sırasında V13-GOV-008'in
+  DONE_DEPENDENCY_TRANSITIVE_NOT_FINAL kontrolündeki gerçek bir hatayı (waiver'ı yalnız
+  doğrudan kenarlarda tanıyıp dolaylı zincirlerde tanımaması) bulup düzeltti, bkz. Acceptance
+  evidence — bu satır, bağımsız Faz 2 denetiminin bulduğu bir retroaktif Owned surface eksikliğini
+  kapatıyor, `V13-RMD-GOV-001`) — hepsi paylaşılan dosyalar, plain text (backtick'siz).
 
 ## In scope
 

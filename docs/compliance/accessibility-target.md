@@ -26,7 +26,7 @@
 | ------------ | ------------- | -------------- | --------------------- | ----------- |
 | CUI | Cashier UI (touch-screen POS) | WCAG 2.2 AA | All AA criteria except 2.4.11 (Focus Appearance) — waived for touch-only kiosk mode | 2.4.11: Touch-only device, no keyboard focus indicator needed |
 | WTR | Waiter UI (handheld tablet) | WCAG 2.2 AA | All AA criteria | None |
-| PUI | Customer QR UI (mobile browser) | WCAG 2.2 AA | All AA criteria | None |
+| PUI | Cashier Payment UI (payments-ui subtask family — touch-screen POS, same physical device class as CUI) | WCAG 2.2 AA | All AA criteria | None (see remediation note below) |
 | OUI | Operations UI (back-office web) | WCAG 2.2 AA | All AA criteria | None |
 | CWB | Customer-facing web (menu/ordering) | WCAG 2.2 AA | All AA criteria | None |
 
@@ -117,8 +117,10 @@
 - V1-CUI-001, V1-CUI-002, V1-CUI-003 (Cashier UI)
 - V1-WTR-001, V1-WTR-002, V1-WTR-003 (Waiter UI)
 - V11-UI-001, V11-UI-002, V11-UI-003
-- V13-PUI-001, V13-PUI-002, V13-PUI-003 (Customer QR UI)
+- V13-PUI-001, V13-PUI-002, V13-PUI-003, V13-PUI-004 (Cashier Payment UI — see remediation note below; V13-PUI-004 was missing from this list entirely before the correction)
 - V14-UI-001, V14-UI-002, V14-UI-003
-- V12-CWB-001, V12-CWB-002 (Customer web)
+- V12-CWB-001, V12-CWB-002 (Customer web — the actual customer-facing QR ordering surface)
 - V12-OUI-001 (Operations UI)
 - V20-INT-006, V20-UAT-001
+
+**2026-09-23 remediation note (`V13-RMD-GOV-001`)**: row §2's PUI description and this list both originally, incorrectly, described the `PUI` prefix as "Customer QR UI (mobile browser)". A real code/task-file audit found every `V13-PUI-*` task (`001`-`004`) actually builds a Cashier POS screen under `src/Clients/Cashier/wwwroot/**` — the same physical touch-screen kiosk device class as `CUI`, not a customer's own mobile phone. The description and this list were corrected to reflect that. **Left deliberately open, not resolved here**: whether `PUI` should also receive `CUI`'s `EXC-001` touch-only exception for 2.4.11 (Focus Appearance) is a substantive accessibility-policy decision this documentation-accuracy fix does not have the authority to make on its own — it needs the same named-approver review `EXC-001` itself received. `V13-PUI-001` was independently found to already implement real keyboard focus handling in its split-payment screen (not touch-only), which is a data point for that future decision, not a resolution of it.

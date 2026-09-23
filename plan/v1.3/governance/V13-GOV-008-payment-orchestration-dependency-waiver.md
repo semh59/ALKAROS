@@ -68,7 +68,7 @@ olarak esnetilmesini seçti (bkz. Onay).
    `TestPaymentOrchestrationDependencyWaiver` (3 test: waived kenar gate'i
    kapatmaz, aynı görevin BAŞKA bir bağımlılığı yine zorunlu kalır, waiver
    yalnız kayıtlı tüketiciye özeldir).
-5. `plan/TRACEABILITY.md`'ye `C101` kaydı.
+5. `plan/TRACEABILITY.md`'ye `C102` kaydı.
 
 ## Out of scope
 
@@ -102,7 +102,9 @@ Surface'ta, arayüz/tipli-sözleşme seviyesinde entegrasyon.
 - `plan/GATES.md`: `V13_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER` tablosu.
 - `tests/Architecture/TaskScope/test_task_scope.py`:
   `TestPaymentOrchestrationDependencyWaiver` (3 test).
-- `plan/TRACEABILITY.md`: `C101`.
+- `plan/TRACEABILITY.md`: `C102` (başlangıçta `C101` olarak atanmıştı, önceden var olan ve alakasız
+  bir `V15-GOV-001` kaydıyla çakıştığı için yeniden numaralandırıldı — Faz 2 bağımsız denetiminde
+  (`V13-RMD-GOV-001`) bulunup düzeltildi).
 
 ## Acceptance evidence
 

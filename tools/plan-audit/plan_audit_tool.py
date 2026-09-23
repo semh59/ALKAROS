@@ -180,7 +180,7 @@ V0_DEFERRED_TASKS = {
     "V0-LIC-001",
 }
 
-# 2026-09-23 (TRACEABILITY C101, V13-GOV-008): Semih approved a formal,
+# 2026-09-23 (TRACEABILITY C102, V13-GOV-008): Semih approved a formal,
 # per-edge waiver of DONE_DEPENDENCY_NOT_FINAL for exactly the 12 (consumer,
 # waived dependency) pairs below. Each consumer task's own Owned surface
 # explicitly excludes the concrete external-provider integration (terminal

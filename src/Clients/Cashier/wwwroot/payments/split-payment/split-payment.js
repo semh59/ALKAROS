@@ -341,9 +341,18 @@
     document.querySelectorAll('.sp-method-chip').forEach(function (button) {
       button.addEventListener('click', function () {
         if (button.disabled) return;
-        state.selectedMethod = button.getAttribute('data-method');
+        var method = button.getAttribute('data-method');
+        state.selectedMethod = method;
         state.eftConfirmed = false;
         render();
+        // render() replaces the whole card's innerHTML, destroying the
+        // clicked chip and creating a fresh node in its place - without
+        // this, a keyboard/switch-access user's focus silently falls back
+        // to <body> after every method selection (same class of bug as
+        // WaiterPwa's own re-render-loses-focus fixes: re-find the fresh
+        // node by its stable data attribute and re-apply focus to it).
+        var refreshedChip = document.querySelector('.sp-method-chip[data-method="' + method + '"]');
+        if (refreshedChip) refreshedChip.focus();
       });
     });
     var splitCountInput = document.getElementById('split-count');
@@ -358,6 +367,10 @@
     if (eftConfirmInput) eftConfirmInput.addEventListener('change', function () {
       state.eftConfirmed = this.checked;
       render();
+      // Same re-render-destroys-the-node issue as the method chips above -
+      // re-find the fresh checkbox by its stable id and restore focus to it.
+      var refreshedCheckbox = document.getElementById('eft-confirm');
+      if (refreshedCheckbox) refreshedCheckbox.focus();
     });
     var submitButton = document.getElementById('submit-tender');
     if (submitButton) submitButton.addEventListener('click', submitTender);
