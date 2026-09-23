@@ -168,6 +168,28 @@ _V13_EXIT_WAIVER_RECORDS = {
 }
 _V13_EXIT_WAIVER_TASK_IDS = {record[0] for record in _V13_EXIT_WAIVER_RECORDS}
 
+# 2026-09-23 (TRACEABILITY C101, V13-GOV-008): Semih approved a formal,
+# per-edge waiver of the per-task Dependencies-must-be-Done check for
+# exactly these 12 (consumer, waived dependency) pairs. Mirrors
+# `plan_audit_tool.py`'s PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER exactly —
+# see that constant's comment for the rationale. This does not exempt any
+# OTHER dependency of the same consumer, and does not let the waived
+# dependency itself close.
+_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER = {
+    ("V13-PAY-004", "V13-HUG-001"),
+    ("V13-PAY-004", "V13-FSC-001"),
+    ("V13-PAY-003", "V13-MCD-004"),
+    ("V13-REC-001", "V13-HUG-002"),
+    ("V13-REC-001", "V13-HUG-003"),
+    ("V13-REC-001", "V13-FSC-002"),
+    ("V13-REC-001", "V13-ALC-004"),
+    ("V13-REC-001", "V13-MCD-002"),
+    ("V13-REC-001", "V13-MCD-004"),
+    ("V13-RPT-001", "V13-ALC-004"),
+    ("V13-RPT-001", "V13-MCD-002"),
+    ("V13-RPT-001", "V13-FSC-001"),
+}
+
 
 class TaskParseError(Exception):
     """Raised when a task Markdown file cannot be parsed."""
@@ -879,6 +901,8 @@ def validate_task_metadata(
 
     if not candidate_remediation:
         for dep_id in task.dependencies:
+            if (task.task_id, dep_id) in _PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
+                continue
             is_done, reason = check_dependency_status(dep_id, plan_dir)
             if not is_done:
                 errors.append(

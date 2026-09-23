@@ -706,6 +706,59 @@ class TestDependencies:
 
 
 # ---------------------------------------------------------------------------
+# V13-GOV-008 payment orchestration dependency waiver
+# ---------------------------------------------------------------------------
+
+class TestPaymentOrchestrationDependencyWaiver:
+    def _satisfy_v13_entry_gate(self, write_task) -> None:
+        write_task(task_id="V12-GOV-900", status="Done", assignee="test-session")
+
+    def test_waived_dependency_does_not_block(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._satisfy_v13_entry_gate(write_task)
+        write_task(task_id="V13-HUG-001", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V13-PAY-004", dependencies="- V13-HUG-001")
+
+        exit_code, result = run_tool("V13-PAY-004", make_repo, make_plan)
+
+        assert exit_code == 0
+        assert result["metadata_errors"] == []
+
+    def test_other_dependency_of_the_same_task_is_still_enforced(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._satisfy_v13_entry_gate(write_task)
+        write_task(task_id="V13-HUG-001", status="Planned")
+        write_task(task_id="V1-SEC-002", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(
+            task_id="V13-PAY-004",
+            dependencies="- V13-HUG-001\n- V1-SEC-002",
+        )
+
+        exit_code, result = run_tool("V13-PAY-004", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("V1-SEC-002" in e for e in result["metadata_errors"])
+        assert not any("V13-HUG-001" in e for e in result["metadata_errors"])
+
+    def test_waiver_is_specific_to_the_registered_consumer(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        self._satisfy_v13_entry_gate(write_task)
+        write_task(task_id="V13-HUG-001", status="Planned")
+        _git(make_repo, "checkout", "--", "plan")
+        write_task(task_id="V13-TBL-001", dependencies="- V13-HUG-001")
+
+        exit_code, result = run_tool("V13-TBL-001", make_repo, make_plan)
+
+        assert exit_code == 1
+        assert any("V13-HUG-001" in e for e in result["metadata_errors"])
+
+
+# ---------------------------------------------------------------------------
 # User-approved remediation entry-gate exceptions
 # ---------------------------------------------------------------------------
 

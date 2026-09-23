@@ -213,6 +213,51 @@ kendisi (yukarıdaki satır) yalnız bu 14 görev gerçek kanıtla `Done` veya
 tarihli/onaylı `NotApplicable` olduğunda fiilen kapanır. Yeni product
 behavior başlatma izni vermez; yalnızca V14 task-seçim sırasını değiştirir.
 
+## 2026-09-23 Semih onaylı ödeme orkestrasyonu bağımlılık waiver'ı (V13-GOV-008)
+
+Yukarıdaki 14 görevin kendisi dışında, v1.3'ün 8 "yan görevi"
+(`V13-PAY-003/004/005`, `V13-PUI-001/004`, `V13-TBL-001`, `V13-REC-001`,
+`V13-RPT-001`) kendi `## Dependencies` bölümlerinde bu 14 görevden birine
+(veya `V13-HUG-001` gibi doğrudan sözleşmeye bağlı bir göreve) doğrudan
+zincirleniyor — `plan_audit_tool.py`'nin `DONE_DEPENDENCY_NOT_FINAL` kontrolü
+bunları hiçbir zaman `Done` yapamayacak şekilde kilitliyordu. Semih 2026-09-23
+tarihinde bu zincirin resmi olarak esnetilmesini onayladı: her waived edge,
+tüketici görevin OWN Owned surface'ının somut sağlayıcı entegrasyonunu
+("Terminal protocol", "fiscal document lifecycle" vb.) zaten açıkça
+Out-of-scope bıraktığı ve tüketicinin ZATEN Done olan tipli sözleşme
+(`ITenderHandler`, `ReconciliationCase` vb.) üzerine inşa edildiği durumlar
+içindir — tüketici, waived bağımlılık kapanmadığı sürece o bağımlılığın
+sağladığı özelliği "disabled"/"typed unavailable" olarak (kendi Acceptance
+evidence metninin zaten öngördüğü şekilde) bırakır, asla sahte/stub bir
+başarı üretmez. Bu waiver ne waived görevin kendisini kapatır ne de aynı
+tüketicinin BAŞKA bir bağımlılığını etkiler.
+
+<!-- V13_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:START -->
+| Consumer | Waived dependency | Approval date | Required evidence |
+| --- | --- | --- | --- |
+| `V13-PAY-004` | `V13-HUG-001` | `2026-09-23` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-PAY-004` | `V13-FSC-001` | `2026-09-23` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |
+| `V13-PAY-003` | `V13-MCD-004` | `2026-09-23` | Gerçek meal-card provider sözleşme/onay kanıtı |
+| `V13-REC-001` | `V13-HUG-002` | `2026-09-23` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-REC-001` | `V13-HUG-003` | `2026-09-23` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-REC-001` | `V13-FSC-002` | `2026-09-23` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |
+| `V13-REC-001` | `V13-ALC-004` | `2026-09-23` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-REC-001` | `V13-MCD-002` | `2026-09-23` | Gerçek meal-card provider sözleşme/onay kanıtı |
+| `V13-REC-001` | `V13-MCD-004` | `2026-09-23` | Gerçek meal-card provider sözleşme/onay kanıtı |
+| `V13-RPT-001` | `V13-ALC-004` | `2026-09-23` | Gerçek Token/Beko provider contract/erişim kanıtı |
+| `V13-RPT-001` | `V13-MCD-002` | `2026-09-23` | Gerçek meal-card provider sözleşme/onay kanıtı |
+| `V13-RPT-001` | `V13-FSC-001` | `2026-09-23` | Gerçek Token/Beko veya QNB fiscal strateji kanıtı |
+<!-- V13_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:END -->
+
+Bu tablo `tools/plan-audit/plan_audit_tool.py`'nin
+`PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER` sabitiyle ve
+`tools/task-scope/task_scope_tool.py`'nin
+`_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER` sabitiyle tam eşleşmelidir
+(V0 deferral ve V13 exit-waiver tablolarıyla birebir aynı fail-closed
+desen). Yeni product behavior başlatmaz; yalnızca bu 8 görevin
+gerçek Owned surface'ta InProgress'e alınmasına ve kendi gerçek
+kapsamlarıyla `Done` olmasına izin verir.
+
 2026-08-15 kullanıcı onayıyla (`TRACEABILITY.md` C69) `V0-REV-001..030`
 revalidation görevleri `## Onay` bloklu `Done`, `V0-GOV-041` ile `V0-GOV-042`
 tarihli gerekçeyle `NotApplicable` oldu; deferral satırları listeden çıkarıldı.

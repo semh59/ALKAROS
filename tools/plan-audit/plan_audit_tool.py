@@ -180,6 +180,32 @@ V0_DEFERRED_TASKS = {
     "V0-LIC-001",
 }
 
+# 2026-09-23 (TRACEABILITY C101, V13-GOV-008): Semih approved a formal,
+# per-edge waiver of DONE_DEPENDENCY_NOT_FINAL for exactly the 12 (consumer,
+# waived dependency) pairs below. Each consumer task's own Owned surface
+# explicitly excludes the concrete external-provider integration (terminal
+# protocol, fiscal document lifecycle, meal-card settlement) of the waived
+# dependency; the consumer is built against the already-Done typed contract
+# (ITenderHandler, ReconciliationCase, etc.) and its own Acceptance evidence
+# defines the correct behaviour while the waived dependency stays
+# Blocked/Planned (a disabled/typed-unavailable branch), not a stub. This
+# waiver does not let the waived dependency itself close, and does not
+# exempt any OTHER dependency of the same consumer.
+PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER = {
+    ("V13-PAY-004", "V13-HUG-001"),
+    ("V13-PAY-004", "V13-FSC-001"),
+    ("V13-PAY-003", "V13-MCD-004"),
+    ("V13-REC-001", "V13-HUG-002"),
+    ("V13-REC-001", "V13-HUG-003"),
+    ("V13-REC-001", "V13-FSC-002"),
+    ("V13-REC-001", "V13-ALC-004"),
+    ("V13-REC-001", "V13-MCD-002"),
+    ("V13-REC-001", "V13-MCD-004"),
+    ("V13-RPT-001", "V13-ALC-004"),
+    ("V13-RPT-001", "V13-MCD-002"),
+    ("V13-RPT-001", "V13-FSC-001"),
+}
+
 BROAD_HANDOFF_REPLACEMENTS = {
     "V0-DAT-001": ["GATE-V0-EXIT"],
     "V0-DAT-002": ["GATE-V0-EXIT"],
@@ -2326,6 +2352,33 @@ def validate_plan() -> None:
                 "GATES_V0_DEFERRED_MISMATCH expected=%s registered=%s"
                 % (sorted(V0_DEFERRED_TASKS), sorted(registered_deferred))
             )
+    waiver_block = gate_text.split(
+        "<!-- V13_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:START -->", 1
+    )
+    if (
+        len(waiver_block) != 2
+        or "<!-- V13_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:END -->" not in waiver_block[1]
+    ):
+        errors.append("GATES_PAYMENT_ORCHESTRATION_WAIVER_MARKER_MISSING")
+    else:
+        waiver_table = waiver_block[1].split(
+            "<!-- V13_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:END -->", 1
+        )[0]
+        registered_waiver = set(
+            re.findall(
+                r"^\| `(V13-[A-Z0-9]+-\d+)` \| `(V13-[A-Z0-9]+-\d+)` \| `2026-09-23` \|",
+                waiver_table,
+                re.MULTILINE,
+            )
+        )
+        if registered_waiver != PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
+            errors.append(
+                "GATES_PAYMENT_ORCHESTRATION_WAIVER_MISMATCH expected=%s registered=%s"
+                % (
+                    sorted(PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER),
+                    sorted(registered_waiver),
+                )
+            )
     traceability_text = read_utf8(PLAN_DIR / "TRACEABILITY.md")
     registered_corrections = set(
         re.findall(r"^\| `(C\d+)` \|", traceability_text, re.MULTILINE)
@@ -2577,6 +2630,8 @@ def validate_plan() -> None:
         dependency_status = task_statuses[dependency_id]
         if dependency_status not in ("Done", "NotApplicable"):
             if c54_admitted_as_final and dependency_id == _C54_APPLICATION_TASK_ID:
+                return
+            if len(path) == 2 and (task_id, dependency_id) in PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
                 return
             if len(path) == 2:
                 errors.append(
