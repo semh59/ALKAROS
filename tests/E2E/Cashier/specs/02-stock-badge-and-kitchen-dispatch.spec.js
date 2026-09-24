@@ -32,15 +32,13 @@ test.describe('Kalan stok rozeti ve mutfağa gönderim (vanilla Cashier - /cashi
     await lowStockCard.click();
     await expect(page.locator('.ticket-row .item-title')).toHaveText('E2E Kasa Düşük Stok');
 
-    const dialogPromise = new Promise((resolve) => {
-      page.once('dialog', async (dialog) => {
-        expect(dialog.message()).toContain('Sipariş mutfağa iletildi.');
-        await dialog.accept();
-        resolve();
-      });
-    });
+    // V1-RMD-253 replaced the blocking native alert() with a self-dismissing
+    // toast (role="status" on success); this spec used to wait for a
+    // `dialog` event that no longer fires, so it timed out even though the
+    // dispatch itself succeeded.
     await page.locator('#btnDispatchOrder').click();
-    await dialogPromise;
+    await expect(page.locator('#toastRegion .toast--success[role="status"]'))
+      .toContainText('Sipariş mutfağa iletildi.');
 
     // A successful dispatch clears the ticket back to its empty state.
     await expect(page.locator('.ticket-empty')).toBeVisible();

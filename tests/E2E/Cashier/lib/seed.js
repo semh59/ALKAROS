@@ -63,9 +63,23 @@ export async function seedDatabase(client) {
     [normalStockProductId],
   );
 
+  // A dedicated, round-priced, deep-stock product for the split-payment
+  // specs (07+): every scenario there builds its own bill from it, and a
+  // 100,00 unit price makes equal-split rounding cases (100/3, 300/7...)
+  // exact to reason about. Kept separate from the two products above so
+  // consuming its stock never disturbs 02's exact "Kalan 3"/"Kalan 500"
+  // badge assertions.
+  const paymentProductId = randomUUID();
+  await client.query(
+    `INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, is_available, current_price)
+     VALUES ($1, 'E2E-ODEME-URUN', 'E2E Ödeme Ürünü', 1, 1, true, true, 100.00)`,
+    [paymentProductId],
+  );
+
   const stockPlan = [
     { productId: lowStockProductId, onHand: 3 },
     { productId: normalStockProductId, onHand: 500 },
+    { productId: paymentProductId, onHand: 5000 },
   ];
   for (const { productId, onHand } of stockPlan) {
     const locationId = randomUUID();
@@ -100,5 +114,6 @@ export async function seedDatabase(client) {
     kasa1TableNumber: KASA_1_TABLE_NUMBER,
     lowStockProductId,
     normalStockProductId,
+    paymentProductId,
   };
 }
