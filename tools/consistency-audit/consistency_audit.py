@@ -53,6 +53,7 @@ docs/CONSISTENCY_AUDIT.md.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -208,6 +209,86 @@ def _rel(path: Path) -> str:
     return path.relative_to(REPO_ROOT).as_posix()
 
 
+
+# 8. Reachability of DI-registered module services ("registered is not reachable",
+#    V1-RMD-272). A service registered in a module (context.Register*<...>) that no
+#    code path starting at src/Host/** can reach is dead in production: it may be fully
+#    unit-tested and still never run. The check builds a type-name reference graph over
+#    src/**/*.cs, adds one edge per DI registration (service interface -> implementation,
+#    because the container resolves the implementation through the interface), and walks
+#    it from every Host file. Test code never counts as a caller. A type that is
+#    knowingly unreachable must be listed in unreachable_services_allowlist.json with a
+#    task reference; an entry that became reachable (or stopped being registered) is
+#    reported as stale so the list only ever shrinks.
+UNREACHABLE_ALLOWLIST = Path(__file__).with_name("unreachable_services_allowlist.json")
+_TYPE_DECL_RE = re.compile(r"\b(?:class|interface|record(?:\s+struct)?|struct|enum)\s+([A-Z][A-Za-z0-9_]*)")
+_MODULE_REGISTRATION_RE = re.compile(
+    r"Register(?:Singleton|Transient|Scoped)\s*<\s*([A-Za-z0-9_.]+)\s*(?:,\s*([A-Za-z0-9_.]+))?"
+)
+_TYPE_NAME_RE = re.compile(r"\b[A-Z][A-Za-z0-9_]*\b")
+
+
+def _is_registration_file(path: Path) -> bool:
+    return path.name.endswith("Module.cs") or path.name == "ModuleRegistry.cs"
+
+
+def _unreachable_registered_types() -> dict[str, str]:
+    """Registered module types no Host path reaches, as {type name: declaring file (repo-relative)}."""
+    src_root = REPO_ROOT / "src"
+    files = _iter_files(src_root, (".cs",))
+    texts = {path: path.read_text(encoding="utf-8-sig", errors="replace") for path in files}
+
+    declared_in: dict[str, set[Path]] = {}
+    for path, text in texts.items():
+        for match in _TYPE_DECL_RE.finditer(text):
+            declared_in.setdefault(match.group(1), set()).add(path)
+
+    references: dict[Path, set[Path]] = {}
+    for path, text in texts.items():
+        targets: set[Path] = set()
+        for name in set(_TYPE_NAME_RE.findall(text)):
+            for declaring in declared_in.get(name, ()):
+                if declaring != path:
+                    targets.add(declaring)
+        references[path] = targets
+
+    registered: dict[str, Path] = {}
+    for path, text in texts.items():
+        if not _is_registration_file(path) or "Modules" not in path.relative_to(src_root).parts[:1]:
+            continue
+        for match in _MODULE_REGISTRATION_RE.finditer(text):
+            service = match.group(1).split(".")[-1]
+            implementation = (match.group(2) or match.group(1)).split(".")[-1]
+            for service_file in declared_in.get(service, ()):
+                for implementation_file in declared_in.get(implementation, ()):
+                    if service_file != implementation_file:
+                        references.setdefault(service_file, set()).add(implementation_file)
+            for name in {service, implementation}:
+                for declaring in declared_in.get(name, ()):
+                    registered.setdefault(name, declaring)
+
+    roots = [
+        path for path in files
+        if path.relative_to(src_root).parts[:1] == ("Host",)
+        and "Composition" not in path.relative_to(src_root).parts
+        and not _is_registration_file(path)
+    ]
+    reached = set(roots)
+    queue = list(roots)
+    while queue:
+        current = queue.pop()
+        for target in references.get(current, ()):
+            if target not in reached and not _is_registration_file(target):
+                reached.add(target)
+                queue.append(target)
+
+    return {
+        name: _rel(declaring)
+        for name, declaring in registered.items()
+        if all(file not in reached for file in declared_in[name])
+    }
+
+
 def audit() -> list[str]:
     violations: list[str] = []
 
@@ -335,6 +416,32 @@ def audit() -> list[str]:
                 ):
                     violations.append(f"{_rel(path)}:{number}: English role noun in a string literal; use strings.ts: {line.strip()}")
 
+    violations.extend(_reachability_violations())
+
+    return violations
+
+
+def _reachability_violations() -> list[str]:
+    allowlist: dict[str, str] = {}
+    if UNREACHABLE_ALLOWLIST.is_file():
+        allowlist = json.loads(UNREACHABLE_ALLOWLIST.read_text(encoding="utf-8"))
+
+    unreachable = _unreachable_registered_types()
+    violations: list[str] = []
+    for name, declaring in sorted(unreachable.items()):
+        if name not in allowlist:
+            violations.append(
+                f"{declaring}: {name} is DI-registered in a module but no Host code path reaches it "
+                f"(add a runtime caller, or list it in {UNREACHABLE_ALLOWLIST.name} with a task reference)"
+            )
+    for name, reason in sorted(allowlist.items()):
+        if name not in unreachable:
+            violations.append(
+                f"{UNREACHABLE_ALLOWLIST.name}: stale entry {name} ({reason}); it is reachable now or no longer "
+                "registered - remove it"
+            )
+        elif not re.search(r"\bV\d+-[A-Z0-9]+-\d+\b", reason):
+            violations.append(f"{UNREACHABLE_ALLOWLIST.name}: entry {name} carries no task reference")
     return violations
 
 
