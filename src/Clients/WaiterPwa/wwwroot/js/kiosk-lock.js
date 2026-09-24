@@ -124,6 +124,12 @@ export async function confirmPin() {
   toast(removing ? 'Ekran kilidi kaldırıldı.' : 'Ekran kilidi kuruldu.');
 }
 
+const LOCKED_KEY = 'alkaros_waiter_locked';
+
+export function reapplyPersistedLock() {
+  if (state.pinArmed && localStorage.getItem(LOCKED_KEY) === '1') lockScreen();
+}
+
 let idleTimer = null;
 
 export function resetIdleTimer() {
@@ -135,6 +141,9 @@ export function resetIdleTimer() {
 export function lockScreen() {
   if (!state.pinArmed || state.locked) return;
   state.locked = true;
+  // Persisted so a page reload cannot walk around the lock: init() re-locks
+  // while this flag is set and the session is still valid.
+  localStorage.setItem(LOCKED_KEY, '1');
   state.pinBuffer = '';
   el.lockSub.textContent = 'PIN kodunuzu girin';
   el.pinDots.classList.remove('is-wrong');
@@ -170,6 +179,7 @@ export async function submitPin() {
 
   if (result.ok) {
     state.locked = false;
+    localStorage.setItem(LOCKED_KEY, '0');
     state.pinBuffer = '';
     el.lockOverlay.hidden = true;
     releaseTrap();
@@ -182,6 +192,7 @@ export async function submitPin() {
     // is stale - drop the lock rather than trapping the waiter behind it.
     state.pinArmed = false;
     localStorage.setItem('alkaros_waiter_pin_armed', '0');
+    localStorage.setItem(LOCKED_KEY, '0');
     state.locked = false;
     el.lockOverlay.hidden = true;
     releaseTrap();

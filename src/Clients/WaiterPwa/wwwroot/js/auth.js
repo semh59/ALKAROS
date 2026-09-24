@@ -115,6 +115,7 @@ export function showLogin() {
   el.loginOverlay.hidden = false;
   el.lockOverlay.hidden = true;
   state.locked = false;
+  localStorage.setItem('alkaros_waiter_locked', '0');
   trapBackgroundExcept(el.loginOverlay);
   el.loginUsername.focus();
 }

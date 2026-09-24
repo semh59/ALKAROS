@@ -282,4 +282,24 @@ test.describe('Ekran kilidi / PIN (V1-WTR-011, V1-RMD-173/178/180)', () => {
     expect(await page.evaluate(() => localStorage.getItem('alkaros_waiter_pin_armed'))).toBe('0');
     expect(await page.evaluate(() => document.querySelector('#screens').inert)).toBe(false);
   });
+
+  test('kilitliyken sayfayı yenilemek kilidi aşmaz; doğru PIN sonrası yenileme kilitsiz açılır', async ({ page }) => {
+    await login(page, seed);
+    await armPin(page);
+    await lockNow(page);
+
+    // Kilit ekranında yenileme: uygulama oturum açık olsa da yeniden kilitli açılmalı.
+    await page.reload();
+    await expect(lockOverlay(page)).toBeVisible({ timeout: 15_000 });
+    expect(await page.evaluate(() => document.querySelector('#screens').inert)).toBe(true);
+
+    await pressPin(page, PIN);
+    await page.locator('#pinKeys [data-pin="ok"]').click();
+    await expect(lockOverlay(page)).toBeHidden();
+
+    // Kilit açıldıktan sonra yenileme kilitsiz açılır.
+    await page.reload();
+    await expect(page.locator('#tablesGrid [data-table]').first()).toBeVisible({ timeout: 15_000 });
+    await expect(lockOverlay(page)).toBeHidden();
+  });
 });

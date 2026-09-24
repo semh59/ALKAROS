@@ -27,7 +27,7 @@ import { toast } from './js/toast.js';
 import { closeOptions } from './js/options-sheet.js';
 import {
   requestWakeLock, toggleFullscreen, onFullscreenChange,
-  openPinSheet, confirmPin, resetIdleTimer, lockScreen, renderPinDots, renderPinPad, submitPin,
+  openPinSheet, confirmPin, resetIdleTimer, lockScreen, reapplyPersistedLock, renderPinDots, renderPinPad, submitPin,
 } from './js/kiosk-lock.js';
 import {
   loadZones, loadTables, renderZones, renderTables, showScreen, openTable,
@@ -783,6 +783,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       return;
     }
     await start();
+    reapplyPersistedLock();
   }
 
   if (document.readyState === 'loading') {
