@@ -6,6 +6,7 @@ import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "../../api";
 import { TableWorkspace, type TableRecord, type TableZone } from "./index";
+import { TableManagementApiError } from "./tableApi";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -181,10 +182,11 @@ describe("table workspace", () => {
   });
 
   it("requires transfer target and reason, then preserves context after a stale conflict", async () => {
-    // V1-RMD-114: a real conflict always reaches this component as an
-    // ApiError; a plain Error is now correctly treated as an untrusted
-    // client-side/network failure instead.
-    const onAction = vi.fn().mockRejectedValue(new ApiError(409, "CONCURRENCY_CONFLICT", "409 concurrent modification"));
+    // Table actions go through tableApi.ts, so a real conflict reaches this
+    // component as a TableManagementApiError carrying the server's own
+    // CONCURRENT_MODIFICATION code (this used to be faked with the shared
+    // ApiError and matched on the message text, which never happens for real).
+    const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."));
     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
     await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
     const dialog = document.querySelector('[role="dialog"]')!;
@@ -202,6 +204,25 @@ describe("table workspace", () => {
     expect(onAction).toHaveBeenCalledWith({ table: tables[1], action: "Transfer", reason: "Servis yönlendirmesi", targetTableId: "table-09", targetTableVersion: 3, participantTableIds: undefined, participantTableVersions: undefined });
     expect(document.body.textContent).toContain("Sipariş #order-12");
     expect(document.body.textContent).toContain("Masa güncellendi");
+  });
+
+  it("shows the backend's own message for an unsettled-payment rejection, not the generic retry text or the stale-conflict text", async () => {
+    const message = "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez.";
+    const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, "PAYMENT_UNSETTLED", message));
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const confirm = [...dialog.querySelectorAll("button")].find((button) => button.textContent === "Onayla")!;
+    const select = dialog.querySelector("select") as HTMLSelectElement;
+    await act(async () => {
+      select.value = "table-09";
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await fillInput(dialog.querySelector<HTMLInputElement>("input")!, "Servis yönlendirmesi");
+    await click(confirm);
+    expect(document.body.textContent).toContain(message);
+    expect(document.body.textContent).not.toContain("Tekrar deneyin");
+    expect(document.body.textContent).not.toContain("Masa güncellendi");
   });
 
   it.each([

@@ -38,14 +38,18 @@ async function expectOk(response, what) {
  * the vanilla Cashier hardcodes; it is released again (send-to-cashier) exactly
  * like the client's own dispatch does, so consecutive scenarios never collide.
  */
-export async function createBill(page, terminalId, seed, { quantity = 1 } = {}) {
+export async function createBill(page, terminalId, seed, { quantity = 1, table = null } = {}) {
   const base = `/api/v1/terminals/${terminalId}`;
+  // `table` = a real seeded table ({ tableId, tableNumber }); default is the
+  // fixed over-the-counter KASA-1 the vanilla Cashier client hardcodes.
+  const tableId = table ? table.tableId : KASA_1_TABLE_ID;
+  const tableNumber = table ? table.tableNumber : KASA_1_TABLE_NUMBER;
   const draft = await expectOk(
     await page.request.post(`${base}/orders/table-draft`, {
       data: {
         id: randomUUID(),
-        tableId: KASA_1_TABLE_ID,
-        tableNumber: KASA_1_TABLE_NUMBER,
+        tableId,
+        tableNumber,
         items: [{
           id: randomUUID(),
           productId: seed.paymentProductId,
@@ -66,12 +70,16 @@ export async function createBill(page, terminalId, seed, { quantity = 1 } = {}) 
     }),
     'submit-draft',
   );
-  await expectOk(
-    await page.request.post(`${base}/orders/${draft.orderId}/send-to-cashier`, {
-      data: { tableId: KASA_1_TABLE_ID },
-    }),
-    'send-to-cashier',
-  );
+  // Only the over-the-counter KASA-1 is released again (the client's own
+  // dispatch does this); a real table stays occupied by its open order.
+  if (!table) {
+    await expectOk(
+      await page.request.post(`${base}/orders/${draft.orderId}/send-to-cashier`, {
+        data: { tableId: KASA_1_TABLE_ID },
+      }),
+      'send-to-cashier',
+    );
+  }
 
   const bill = await expectOk(
     await page.request.post(`${base}/billing/bills/from-order/${draft.orderId}`),

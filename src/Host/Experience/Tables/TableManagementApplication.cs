@@ -553,15 +553,21 @@ internal sealed class TableManagementExceptionFilter : IEndpointFilter
             or TableMergeConcurrencyException
             or TableReservationConcurrencyException =>
             (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
+        // A payment that could not be confirmed (card attempt awaiting manual
+        // reconciliation) blocks moving or merging the table. It gets its own
+        // code and message: the generic conflict text below tells the manager
+        // nothing, and retrying can never help until the payment is resolved.
+        ALKAROS.Tables.TableTransfer.PaymentPolicyRequiredException
+            or ALKAROS.Tables.TableMerge.PaymentPolicyRequiredException =>
+            (409, "PAYMENT_UNSETTLED",
+                "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez."),
         TableManagementConflictException
             or SameTableTransferException
             or InvalidSourceTableStateException
             or InvalidTargetTableStateException
-            or ALKAROS.Tables.TableTransfer.PaymentPolicyRequiredException
             or SameTableMergeException
             or DuplicateMergeParticipantException
             or InvalidTableMergeStateException
-            or ALKAROS.Tables.TableMerge.PaymentPolicyRequiredException
             or TableNotAvailableForReservationException
             or InvalidReservationStateException =>
             (409, "DOMAIN_CONFLICT", "Masa işlemi mevcut durumla çakışıyor."),

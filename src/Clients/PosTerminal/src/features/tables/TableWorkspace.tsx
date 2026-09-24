@@ -22,6 +22,7 @@ import {
   type TableView,
 } from "./models";
 import { FloorPlanWorkspace } from "./FloorPlanWorkspace";
+import { TableManagementApiError } from "./tableApi";
 import "./tables.css";
 
 type Feedback = { tone: "success" | "error" | "conflict"; message: string } | null;
@@ -81,7 +82,21 @@ function errorMessage(reason: unknown) {
   // backend's own Turkish-mapped exception filter — a raw network failure
   // (fetch() itself throwing) is a native, English, browser message
   // (independent audit, 2026-09-06).
-  return reason instanceof ApiError ? reason.message : "İşlem tamamlanamadı. Tekrar deneyin.";
+  // Table actions go through tableApi.ts, which throws its OWN error class
+  // (TableManagementApiError), not the shared ApiError - checking only
+  // ApiError made every table-action failure (conflict, forbidden, an
+  // unsettled payment) fall through to this generic text, hiding the
+  // backend's own Turkish message from the manager.
+  return reason instanceof ApiError || reason instanceof TableManagementApiError
+    ? reason.message
+    : "İşlem tamamlanamadı. Tekrar deneyin.";
+}
+
+// Only a genuine optimistic-concurrency failure means "the table changed
+// under you, reloaded, nothing was repeated". Every other 409 (an unsettled
+// payment, a state rule) is a different situation with its own message.
+function isConcurrencyConflict(reason: unknown) {
+  return reason instanceof TableManagementApiError && reason.code === "CONCURRENT_MODIFICATION";
 }
 
 export function TableWorkspace({
@@ -233,7 +248,7 @@ export function TableWorkspace({
       setFeedback({ tone: "success", message: `${tableActionLabels[action]} tamamlandı.` });
     } catch (reasonValue) {
       const message = errorMessage(reasonValue);
-      const conflict = reasonValue instanceof Error && /409|conflict|concurrent|version/i.test(message);
+      const conflict = isConcurrencyConflict(reasonValue);
       setFeedback({ tone: conflict ? "conflict" : "error", message: conflict ? "Masa güncellendi. Güncel durum yüklendi; işlem tekrarlanmadı." : message });
     } finally {
       setActionBusy(false);

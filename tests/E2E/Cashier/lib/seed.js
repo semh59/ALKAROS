@@ -69,6 +69,25 @@ export async function seedDatabase(client) {
   // exact to reason about. Kept separate from the two products above so
   // consuming its stock never disturbs 02's exact "Kalan 3"/"Kalan 500"
   // badge assertions.
+  // A zone with untouched tables for the payment-aware transfer/merge specs
+  // (11+): each scenario takes its own pair so none inherits an order, bill or
+  // payment left on another scenario's table.
+  const transferZoneId = randomUUID();
+  await client.query(
+    `INSERT INTO table_mgmt.zones (zone_id, code, name) VALUES ($1, 'E2E-TRF', 'E2E Devir Salonu')`,
+    [transferZoneId],
+  );
+  const transferTables = [];
+  for (let i = 1; i <= 12; i++) {
+    const tableId = randomUUID();
+    await client.query(
+      `INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+       VALUES ($1, $2, $3, 4, 'Available')`,
+      [tableId, transferZoneId, `TRF-${i}`],
+    );
+    transferTables.push({ tableId, tableNumber: `TRF-${i}` });
+  }
+
   const paymentProductId = randomUUID();
   await client.query(
     `INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, is_available, current_price)
@@ -115,5 +134,6 @@ export async function seedDatabase(client) {
     lowStockProductId,
     normalStockProductId,
     paymentProductId,
+    transferTables,
   };
 }
