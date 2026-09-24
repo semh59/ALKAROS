@@ -69,6 +69,52 @@ internal sealed class NpgsqlIsolatedRestoreDatabase : IIsolatedRestoreDatabase
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task ApplyCustomFormatDumpAsync(ReadOnlyMemory<byte> dump, CancellationToken cancellationToken = default)
+    {
+        var connection = new NpgsqlConnectionStringBuilder(_maintenanceConnectionString);
+        var dumpPath = Path.Combine(Path.GetTempPath(), $"alkaros-restore-{Guid.NewGuid():N}.dump");
+        await File.WriteAllBytesAsync(dumpPath, dump.ToArray(), cancellationToken);
+        try
+        {
+            var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("ALKAROS_PG_RESTORE_PATH") ?? "pg_restore")
+            {
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+            // Arguments as a list: the scratch name and connection parts are never shell-interpolated.
+            foreach (var argument in new[]
+            {
+                "--no-owner", "--no-privileges", "--exit-on-error",
+                $"--host={connection.Host}", $"--port={connection.Port}", $"--username={connection.Username}",
+                $"--dbname={Name}", dumpPath,
+            })
+            {
+                start.ArgumentList.Add(argument);
+            }
+
+            // The password travels in the child environment only, never on the command line or in a log.
+            if (!string.IsNullOrEmpty(connection.Password))
+                start.Environment["PGPASSWORD"] = connection.Password;
+
+            using var process = Process.Start(start)
+                ?? throw new InvalidOperationException("pg_restore could not be started.");
+            var diagnostic = process.StandardError.ReadToEndAsync(cancellationToken);
+            _ = process.StandardOutput.ReadToEndAsync(cancellationToken);
+            await process.WaitForExitAsync(cancellationToken);
+            if (process.ExitCode != 0)
+            {
+                var text = (await diagnostic).Trim();
+                throw new RestoreDumpApplyFailedException(process.ExitCode, text.Length > 500 ? text[..500] : text);
+            }
+        }
+        finally
+        {
+            File.Delete(dumpPath);
+        }
+    }
+
     public async Task<object?> ExecuteScalarAsync(string sql, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sql);

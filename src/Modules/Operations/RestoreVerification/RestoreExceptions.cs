@@ -12,6 +12,14 @@ public sealed class RestoreArtifactNotFoundException : Exception
 }
 
 /// <summary>Thrown when a restored database fails a named integrity check — the artifact restored, but its contents did not.</summary>
+public sealed class RestoreDumpApplyFailedException : Exception
+{
+    public RestoreDumpApplyFailedException(int exitCode, string diagnostic)
+        : base($"pg_restore exited with code {exitCode}: {diagnostic}")
+    {
+    }
+}
+
 public sealed class RestoreIntegrityCheckFailedException : Exception
 {
     public RestoreIntegrityCheckFailedException(string checkName, string artifactId)

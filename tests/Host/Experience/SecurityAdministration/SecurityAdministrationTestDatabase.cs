@@ -141,6 +141,10 @@ public sealed class SecurityAdministrationTestDatabase : PgTestDatabase
         return (expired, held, fresh);
     }
 
+    /// <summary>Restore-drill scratch databases still present on the server (must be 0 after a drill).</summary>
+    public Task<long> ScratchDatabaseCountAsync()
+        => ScalarAsync<long>("SELECT count(*) FROM pg_database WHERE datname LIKE 'alkaros_restore_drill_%';");
+
     public Task<long> DisposedCountAsync(Guid id)
         => ScalarAsync<long>($"SELECT count(*) FROM security.retention_subjects WHERE id = '{id:D}' AND disposed_at IS NOT NULL;");
 

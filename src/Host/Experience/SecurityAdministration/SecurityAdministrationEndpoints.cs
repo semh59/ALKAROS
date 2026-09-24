@@ -4,6 +4,7 @@ using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Host.Experience.Observability;
 using ALKAROS.Host.Experience.SecurityAdministration.Maintenance;
 using ALKAROS.Operations.OffsiteBackup;
+using ALKAROS.Operations.RestoreVerification;
 using ALKAROS.Security.IdentityHardening;
 using ALKAROS.Security.SecretRotation;
 using ALKAROS.Support.DiagnosticBundle;
@@ -43,10 +44,17 @@ public static class SecurityAdministrationEndpoints
         // The diagnostic bundle reads current health checks and redacts through the observability services.
         services.AddObservabilityExperience();
 
+        // The Operations module defaults the restore drill to NpgsqlDataSource.ConnectionString,
+        // which has no password; use the host's full connection string (or the explicit override).
+        services.AddSingleton<IIsolatedRestoreDatabaseFactory>(provider => new NpgsqlIsolatedRestoreDatabaseFactory(
+            Environment.GetEnvironmentVariable("ALKAROS_RESTORE_MAINTENANCE_CONNECTION")
+                ?? provider.GetRequiredService<HostDatabaseConnection>().ConnectionString));
+
         // Scheduled and manager-triggerable operational jobs (V1-RMD-268 onward).
         services.TryAddSingleton<MaintenanceJobRunner>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RetentionSweepMaintenanceJob>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, OffsiteBackupMaintenanceJob>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RestoreVerificationMaintenanceJob>());
         services.AddHostedService<MaintenanceJobHostedService>();
         return services;
     }
@@ -117,6 +125,18 @@ public static class SecurityAdministrationEndpoints
                     result.MeetsTarget)));
         });
 
+        // The recorded restore drills (newest first): what proves the off-site copies can be restored.
+        group.MapGet("/backup/restore-attempts", async (IRestoreAttemptStore attempts, CancellationToken cancellationToken) =>
+        {
+            var recorded = await attempts.GetByDataClassAsync(DataClass.Settings, 20, cancellationToken);
+            return Results.Ok(recorded
+                .OrderByDescending(attempt => attempt.StartedAtUtc)
+                .Select(attempt => new RestoreAttemptV1(
+                    attempt.ArtifactId, attempt.DataClass.ToString(), attempt.StartedAtUtc,
+                    attempt.Duration.TotalSeconds, attempt.Succeeded, attempt.WithinRtoTarget,
+                    attempt.IntegrityChecksPassed, attempt.IntegrityChecksTotal, attempt.FailureReason)));
+        });
+
         group.MapPost("/diagnostic-bundle", async (
             DiagnosticBundleRequestV1 request,
             IDiagnosticBundleService bundles,
@@ -159,6 +179,10 @@ public static class SecurityAdministrationEndpoints
         return group;
     }
 }
+
+public sealed record RestoreAttemptV1(
+    string ArtifactId, string DataClass, DateTimeOffset StartedAtUtc, double DurationSeconds,
+    bool Succeeded, bool WithinRtoTarget, int IntegrityChecksPassed, int IntegrityChecksTotal, string? FailureReason);
 
 public sealed record BackupRpoStatusV1(string DataClass, long TargetSeconds, long? MeasuredGapSeconds, bool MeetsTarget);
 

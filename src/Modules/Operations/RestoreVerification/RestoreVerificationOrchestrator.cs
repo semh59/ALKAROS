@@ -35,6 +35,10 @@ public sealed class RestoreVerificationOrchestrator
         _integrityChecks = integrityChecks ?? throw new ArgumentNullException(nameof(integrityChecks));
     }
 
+    private static bool IsCustomFormatDump(byte[] content)
+        => content.Length >= 5 && content[0] == (byte)'P' && content[1] == (byte)'G'
+            && content[2] == (byte)'D' && content[3] == (byte)'M' && content[4] == (byte)'P';
+
     public async Task<RestoreAttemptRecord> RunAsync(DataClass dataClass, CancellationToken cancellationToken = default)
     {
         var receipts = await _receiptStore.GetByDataClassAsync(dataClass, limit: 1, cancellationToken);
@@ -67,7 +71,6 @@ public sealed class RestoreVerificationOrchestrator
         }
 
         await using var database = await _databaseFactory.ProvisionAsync(cancellationToken);
-        var sqlScript = Encoding.UTF8.GetString(plaintext);
 
         // Lives outside the try block so a check failure that jumps to the
         // catch below still records how many checks GENUINELY passed before
@@ -75,7 +78,12 @@ public sealed class RestoreVerificationOrchestrator
         var passed = 0;
         try
         {
-            await database.ApplyScriptAsync(sqlScript, cancellationToken);
+            // backup.sh produces a pg_dump custom-format archive (binary, starts with "PGDMP"); it
+            // must go through pg_restore. Anything else is treated as a plain SQL script.
+            if (IsCustomFormatDump(plaintext))
+                await database.ApplyCustomFormatDumpAsync(plaintext, cancellationToken);
+            else
+                await database.ApplyScriptAsync(Encoding.UTF8.GetString(plaintext), cancellationToken);
 
             foreach (var check in _integrityChecks)
             {

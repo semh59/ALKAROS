@@ -99,6 +99,7 @@ public static partial class DualScreenApplication
             json.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         var dataSource = NpgsqlDataSource.Create(options.ConnectionString);
         builder.Services.AddSingleton(dataSource);
+        builder.Services.AddSingleton(new HostDatabaseConnection(options.ConnectionString));
         builder.Services.AddSingleton<System.Data.Common.DbDataSource>(dataSource);
 
         // The bounded-context modules are the single composition root for the

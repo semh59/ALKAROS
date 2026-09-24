@@ -40,6 +40,7 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseKestrel().UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton(_database.DataSource);
+        builder.Services.AddSingleton(new HostDatabaseConnection(new Npgsql.NpgsqlConnectionStringBuilder(_database.DataSource.ConnectionString) { Password = Environment.GetEnvironmentVariable("ALKAROS_TEST_PG_PASSWORD") }.ConnectionString));
         var composition = ModuleRegistry.ComposeRoot(ModuleRegistry.DefaultCatalog);
         HostComposition.ApplyComposedModuleServices(builder.Services, composition.Services);
         builder.Services.AddSecurityAdministrationExperience();
@@ -382,6 +383,96 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         var run3 = await (await manager.PostAsync(BackupJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
         Assert.Contains("0 yedek yüklendi, 2 yedek zaten uzakta", run3.GetProperty("lastSummary").GetString());
         Assert.Equal(2, Directory.GetFiles(_backupTargetDirectory).Length);
+    }
+
+    private const string RestoreJobRunPath = JobsPath + "/restore-verification/run";
+
+    /// <summary>Produces a REAL pg_dump custom-format archive of the test database, exactly what backup.sh ships.</summary>
+    private void WriteRealDump(string name)
+    {
+        var connection = new Npgsql.NpgsqlConnectionStringBuilder(_database.DataSource.ConnectionString);
+        var start = new System.Diagnostics.ProcessStartInfo("pg_dump")
+        {
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        };
+        foreach (var argument in new[]
+        {
+            "--format=custom", "--no-owner", "--no-privileges",
+            $"--host={Environment.GetEnvironmentVariable("ALKAROS_TEST_PG_HOST") ?? "localhost"}",
+            $"--port={Environment.GetEnvironmentVariable("ALKAROS_TEST_PG_PORT") ?? "5432"}",
+            $"--username={Environment.GetEnvironmentVariable("ALKAROS_TEST_PG_USER") ?? "postgres"}",
+            $"--dbname={connection.Database}",
+            $"--file={Path.Combine(_backupSourceDirectory, name)}",
+        })
+        {
+            start.ArgumentList.Add(argument);
+        }
+        start.Environment["PGPASSWORD"] = Environment.GetEnvironmentVariable("ALKAROS_TEST_PG_PASSWORD") ?? string.Empty;
+        using var process = System.Diagnostics.Process.Start(start)!;
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        Assert.True(process.ExitCode == 0, $"pg_dump failed: {error}");
+
+        var bytes = File.ReadAllBytes(Path.Combine(_backupSourceDirectory, name));
+        File.WriteAllText(Path.Combine(_backupSourceDirectory, name + ".sha256"), $"{Sha256Hex(bytes)}  {name}\n");
+    }
+
+    [Fact]
+    public async Task TheRestoreDrillRestoresARealShippedDumpIntoAThrowawayDatabaseAndRecordsTheAttempt()
+    {
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V1", "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=");
+        Environment.SetEnvironmentVariable("ALKAROS_BACKUP_DIR", _backupSourceDirectory);
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        // Before anything is initialized or shipped the drill says why it cannot run.
+        var blocked = await (await manager.PostAsync(RestoreJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Skipped", blocked.GetProperty("lastStatus").GetString());
+
+        Assert.Equal(HttpStatusCode.OK, (await manager.PostAsync($"{RotationPath}/initialize", null)).StatusCode);
+        var nothingShipped = await (await manager.PostAsync(RestoreJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Skipped", nothingShipped.GetProperty("lastStatus").GetString());
+        Assert.Contains("yedek yok", nothingShipped.GetProperty("lastSummary").GetString());
+
+        WriteRealDump("alkaros_real_20260924T040000Z.dump");
+        var shipped = await (await manager.PostAsync(BackupJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Succeeded", shipped.GetProperty("lastStatus").GetString());
+
+        var drill = await (await manager.PostAsync(RestoreJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(drill.GetProperty("lastStatus").GetString() == "Succeeded", drill.GetProperty("lastSummary").GetString());
+        Assert.Contains("2/2 kontrol geçti", drill.GetProperty("lastSummary").GetString());
+
+        var attempts = await manager.GetFromJsonAsync<JsonElement>("/api/v1/management/security/backup/restore-attempts");
+        var attempt = attempts.EnumerateArray().Single();
+        Assert.True(attempt.GetProperty("succeeded").GetBoolean());
+        Assert.True(attempt.GetProperty("withinRtoTarget").GetBoolean());
+        Assert.Equal("alkaros_real_20260924T040000Z.dump", attempt.GetProperty("artifactId").GetString());
+        // The throwaway database was dropped again.
+        Assert.Equal(0, await _database.ScratchDatabaseCountAsync());
+    }
+
+    [Fact]
+    public async Task ATamperedOffsiteCopyFailsTheRestoreDrillAndTheFailureIsRecorded()
+    {
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V1", "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=");
+        Environment.SetEnvironmentVariable("ALKAROS_BACKUP_DIR", _backupSourceDirectory);
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        Assert.Equal(HttpStatusCode.OK, (await manager.PostAsync($"{RotationPath}/initialize", null)).StatusCode);
+        WriteArtifact("alkaros_t_20260924T050000Z.dump", "PGDMP-not-really-a-dump");
+        Assert.Equal("Succeeded", (await (await manager.PostAsync(BackupJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>()).GetProperty("lastStatus").GetString());
+
+        var copy = Directory.GetFiles(_backupTargetDirectory).Single();
+        var bytes = File.ReadAllBytes(copy);
+        bytes[^1] ^= 0xFF;
+        File.WriteAllBytes(copy, bytes);
+
+        var drill = await (await manager.PostAsync(RestoreJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal("Failed", drill.GetProperty("lastStatus").GetString());
+        var attempts = await manager.GetFromJsonAsync<JsonElement>("/api/v1/management/security/backup/restore-attempts");
+        var attempt = attempts.EnumerateArray().Single();
+        Assert.False(attempt.GetProperty("succeeded").GetBoolean());
+        Assert.Equal(0, await _database.ScratchDatabaseCountAsync());
     }
 
     private HttpClient CreateClient(string? managerToken)
