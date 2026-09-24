@@ -49,6 +49,14 @@ public static class ApplicationPermissions
     /// reading an alert/health-check (<see cref="ReportsView"/>).
     /// </summary>
     public const string ObservabilityManage = "observability.manage";
+    /// <summary>
+    /// V1-RMD-266: account recovery (revoke every session of a user, clear a
+    /// lockout) and the other security administration operations —
+    /// manager-exclusive, same tier as <see cref="IntegrationsManage"/> and
+    /// <see cref="ReportsCloseDay"/>: there is no requester/approver
+    /// dynamic, and a supervisor must not be able to lock a manager out.
+    /// </summary>
+    public const string SecurityManage = "security.manage";
     /// <summary>V12-QRT-003: configuring a third-party integration credential (e.g. the QR relay provider token) — manager-only, no escalation path.</summary>
     public const string IntegrationsManage = "integrations.manage";
     /// <summary>
@@ -84,7 +92,7 @@ public static class ApplicationPermissions
         BillsDiscount, CashDrawer, ReportsView,
         OrdersTransferServer, OrdersTransferServerAny,
         IntegrationsManage, KitchenAdvance, CashSessionOverride, ReportsCloseDay,
-        ReconciliationManage, ObservabilityManage,
+        ReconciliationManage, ObservabilityManage, SecurityManage,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -132,7 +140,7 @@ public static class ApplicationPermissions
             // going through the grant-request escalation path.
             [RoleManager] = new HashSet<string>(
                 EveryRoleTakesOrders.Concat(CashierFloorSet).Concat(SupervisorEscalations)
-                    .Append(IntegrationsManage).Append(ReportsCloseDay),
+                    .Append(IntegrationsManage).Append(ReportsCloseDay).Append(SecurityManage),
                 StringComparer.Ordinal),
         };
 }

@@ -29,6 +29,7 @@ using ALKAROS.Host.Experience.Recipes;
 using ALKAROS.Host.Experience.InventoryReporting;
 using ALKAROS.Host.Experience.Reporting;
 using ALKAROS.Host.Experience.Reconciliation;
+using ALKAROS.Host.Experience.SecurityAdministration;
 using ALKAROS.Host.Experience.Observability;
 using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.QrOrdering;
@@ -157,6 +158,7 @@ public static partial class DualScreenApplication
         // V1-RMD-250: IReconciliationService (V1-REC-001, discrepancy case
         // lifecycle) existed with zero HTTP surface.
         builder.Services.AddReconciliationCaseExperience();
+        builder.Services.AddSecurityAdministrationExperience();
         // V1-RMD-251: IAlertService (V1-ALT-001) and
         // IObservabilityService's health-check surface (V1-OBS-001)
         // existed with zero HTTP surface.
@@ -561,6 +563,7 @@ public static partial class DualScreenApplication
         app.MapEndOfDayApi();
         app.MapReconciliationCaseApi();
         app.MapPaymentSettlementApi();
+        app.MapSecurityAdministrationApi();
         app.MapObservabilityApi();
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();

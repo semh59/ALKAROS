@@ -17,7 +17,8 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 /// permission (129, V1-RMD-236), the reports.close-day manager-tier
 /// permission (133, V1-RMD-249), the reconciliation.manage supervisor-tier
 /// permission (134, V1-RMD-250), and the observability.manage
-/// supervisor-tier permission (135, V1-RMD-251). The SQL is read from the
+/// supervisor-tier permission (135, V1-RMD-251), and the security.manage
+/// manager-tier permission (142, V1-RMD-266). The SQL is read from the
 /// repository tree so the test exercises exactly what ships.
 /// </summary>
 public sealed class PermissionSplitDatabase : PgTestDatabase
@@ -49,6 +50,7 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
             Mig("V1-RMD-249", "133-reports-close-day-permission.up.sql"),
             Mig("V1-RMD-250", "134-reconciliation-manage-permission.up.sql"),
             Mig("V1-RMD-251", "135-observability-manage-permission.up.sql"),
+            Mig("V1-RMD-266", "142-security-manage-permission.up.sql"),
         };
 
         foreach (var path in scripts)
@@ -72,6 +74,9 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
     /// </summary>
     public async Task ApplyDownSplitAsync()
     {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-RMD-266", "142-security-manage-permission.down.sql")));
         await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-RMD-251", "135-observability-manage-permission.down.sql")));

@@ -1213,6 +1213,15 @@
         "card_settlement_attempts"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "142",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

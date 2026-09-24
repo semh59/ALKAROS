@@ -7,10 +7,10 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 public sealed class ApplicationPermissionsTests
 {
     [Fact]
-    public void CatalogHasTwentyOneDistinctCodes()
+    public void CatalogHasTwentyTwoDistinctCodes()
     {
-        // V1-RMD-251 added observability.manage, the 21st code.
-        ApplicationPermissions.Codes.Should().HaveCount(21);
+        // V1-RMD-266 added security.manage, the 22nd code.
+        ApplicationPermissions.Codes.Should().HaveCount(22);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
@@ -44,6 +44,7 @@ public sealed class ApplicationPermissionsTests
     [InlineData("reports.view")]
     [InlineData("reconciliation.manage")]
     [InlineData("observability.manage")]
+    [InlineData("security.manage")]
     [InlineData("orders.transfer-server-any")]
     public void WaiterDoesNotHoldAnyEscalatedGrant(string code)
     {
@@ -67,6 +68,7 @@ public sealed class ApplicationPermissionsTests
         cashier.Should().NotContain(ApplicationPermissions.CashSessionOverride);
         cashier.Should().NotContain(ApplicationPermissions.ReconciliationManage);
         cashier.Should().NotContain(ApplicationPermissions.ObservabilityManage);
+        cashier.Should().NotContain(ApplicationPermissions.SecurityManage);
     }
 
     [Fact]
@@ -102,9 +104,11 @@ public sealed class ApplicationPermissionsTests
         var manager = ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager];
 
         manager.Should().BeEquivalentTo(
-            supervisor.Append(ApplicationPermissions.IntegrationsManage).Append(ApplicationPermissions.ReportsCloseDay));
+            supervisor.Append(ApplicationPermissions.IntegrationsManage).Append(ApplicationPermissions.ReportsCloseDay)
+                .Append(ApplicationPermissions.SecurityManage));
         supervisor.Should().NotContain(ApplicationPermissions.IntegrationsManage);
         supervisor.Should().NotContain(ApplicationPermissions.ReportsCloseDay);
+        supervisor.Should().NotContain(ApplicationPermissions.SecurityManage);
     }
 
     [Fact]
