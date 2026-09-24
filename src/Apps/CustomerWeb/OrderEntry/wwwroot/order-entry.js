@@ -19,6 +19,12 @@ const CART_STORAGE_KEY = "alkaros.qr.cart";
 // creating a second queued submission — QrPendingOrderStore.SubmitAsync is
 // idempotent on exactly this value.
 const SUBMISSION_ID_STORAGE_KEY = "alkaros.qr.submissionId";
+// Set only after the server has actually accepted the submission (the 202
+// response arrived). The id above is persisted BEFORE the request is sent, so
+// its mere presence cannot distinguish "server has this order" from "the
+// request never got through" — resuming the poll on the latter would hide a
+// still-unsent cart behind a poll for an order the server never saw.
+const SUBMISSION_ACCEPTED_STORAGE_KEY = "alkaros.qr.submissionAccepted";
 const GENERIC_ERROR_MESSAGE = "Siparişiniz şu anda gönderilemedi, lütfen daha sonra tekrar deneyin.";
 const POLL_INTERVAL_MS = 2000;
 const MAX_POLL_ATTEMPTS = 30;
@@ -73,6 +79,24 @@ function storeSessionToken(token) {
   }
 }
 
+/** Returns the persisted submission id only if the server already accepted it; null when none exists or the submit never went through. */
+function readAcceptedSubmissionId() {
+  try {
+    if (sessionStorage.getItem(SUBMISSION_ACCEPTED_STORAGE_KEY) !== "1") return null;
+    return sessionStorage.getItem(SUBMISSION_ID_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function markSubmissionAccepted() {
+  try {
+    sessionStorage.setItem(SUBMISSION_ACCEPTED_STORAGE_KEY, "1");
+  } catch {
+    // Without storage a reload simply shows the cart again, as before.
+  }
+}
+
 function readOrCreateSubmissionId() {
   try {
     let id = sessionStorage.getItem(SUBMISSION_ID_STORAGE_KEY);
@@ -92,6 +116,7 @@ function readOrCreateSubmissionId() {
 function clearSubmissionId() {
   try {
     sessionStorage.removeItem(SUBMISSION_ID_STORAGE_KEY);
+    sessionStorage.removeItem(SUBMISSION_ACCEPTED_STORAGE_KEY);
   } catch {
     // Nothing to clean up if storage was never writable.
   }
@@ -259,7 +284,7 @@ function renderCart(lines, onChange) {
         <button type="button" class="qty-button" data-action="increase">+</button>
         <button type="button" class="remove-line-button">Kaldır</button>
       </div>
-      <input type="text" class="notes-input" placeholder="Not ekleyin (opsiyonel)" />
+      <input type="text" class="notes-input" placeholder="Not ekleyin (opsiyonel)" maxlength="200" />
     `;
     item.querySelector(".cart-line-name").textContent = line.name;
     item.querySelector(".cart-line-total").textContent = formatPrice(line.unitPrice * line.quantity);
@@ -328,6 +353,24 @@ async function loadBranding() {
 function init() {
   void loadBranding();
 
+  // A same-tab reload (dropped connection, an impatient reload) while a
+  // submission is already in flight leaves both the cart and the submission
+  // id in sessionStorage, since neither is cleared until pollUntilMaterialized
+  // reaches a terminal status. Resume watching that existing order instead of
+  // showing the cart form again — re-showing it would invite a confusing
+  // resubmit with a possibly-edited cart, whose extra/changed lines the
+  // server's submissionId-keyed idempotency would silently ignore anyway
+  // (the original order is what gets returned, never a second one).
+  const existingSubmissionId = readAcceptedSubmissionId();
+  if (existingSubmissionId) {
+    document.getElementById("cartList").hidden = true;
+    document.getElementById("cartSummary").hidden = true;
+    document.getElementById("btnSubmitOrder").hidden = true;
+    document.getElementById("emptyCartState").hidden = true;
+    void pollUntilMaterialized(existingSubmissionId);
+    return;
+  }
+
   let lines = readCart();
 
   const onChange = (productId, delta) => {
@@ -364,6 +407,7 @@ function init() {
     try {
       const submissionId = readOrCreateSubmissionId();
       const result = await submitOrderWithSessionRetry(tableToken, submissionId, currentCart);
+      markSubmissionAccepted();
       submitButton.hidden = true;
       await pollUntilMaterialized(result.submissionId);
     } catch (error) {

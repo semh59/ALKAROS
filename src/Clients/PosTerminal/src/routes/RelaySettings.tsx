@@ -9,7 +9,12 @@ const IntegrationsManage = "integrations.manage";
 
 // Raw server enum names (ALKAROS.QrRelay.LocalConnector.RelayConnectorState)
 // -> Turkish, per docs/UI_STYLE_GUIDE.md (no raw enum name reaches the screen).
-const ConnectorStateLabels: Record<string, string> = {
+// Keyed off RelayCredentialStatus["connectorState"]'s own real union (not a
+// bare `Record<string, string>`), the same exhaustive-map technique
+// `src/strings.ts`'s `healthStatusLabels`/`backupStatusLabels` already use —
+// a 4th backend state added without updating this map is now a TypeScript
+// compile error, not a silent raw-enum leak.
+const ConnectorStateLabels: Record<RelayCredentialStatus["connectorState"], string> = {
   NotConfigured: "Bağlayıcı henüz kurulmadı",
   Running: "Bağlayıcı çalışıyor",
   Restarting: "Bağlayıcı yeniden başlatılıyor",
@@ -244,7 +249,7 @@ export function RelaySettings() {
                 : "● Henüz etkinleştirilmedi"}
             </p>
             {status.tunnelHostname && (
-              <p>{ConnectorStateLabels[status.connectorState] ?? status.connectorState}</p>
+              <p>{ConnectorStateLabels[status.connectorState]}</p>
             )}
           </div>
           <form onSubmit={provision}>

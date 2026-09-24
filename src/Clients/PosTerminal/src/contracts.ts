@@ -40,9 +40,13 @@ export interface RelayCredentialStatus {
   baseDomain: string | null;
   tunnelHostname: string | null;
   tunnelUpdatedAt: string | null;
-  // Raw server enum name ("NotConfigured" | "Running" | "Restarting") — the
-  // UI never shows this directly, see RelaySettings.tsx's Turkish mapping.
-  connectorState: string;
+  // Raw server enum name (ALKAROS.QrRelay.LocalConnector.RelayConnectorState)
+  // — the UI never shows this directly, see RelaySettings.tsx's Turkish
+  // mapping. Narrowed to the real 3-member union (not a bare `string`) so
+  // RelaySettings.tsx's label map is TypeScript-exhaustive: a 4th backend
+  // value added without updating that map is a compile error here, not a
+  // silent raw-enum leak to the screen.
+  connectorState: "NotConfigured" | "Running" | "Restarting";
 }
 
 // V14-QNB-006: userId/vergiTcKimlikNo are not secret (they identify WHICH
