@@ -171,6 +171,48 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.PostAsJsonAsync(BundlePath, request)).StatusCode);
     }
 
+    private const string JobsPath = "/api/v1/management/security/maintenance/jobs";
+
+    [Fact]
+    public async Task MaintenanceJobsAreListedRunOnDemandAndRefuseUnknownNamesAndUnauthorizedCallers()
+    {
+        using var anonymous = CreateClient(null);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync(JobsPath)).StatusCode);
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.PostAsync($"{JobsPath}/retention-sweep/run", null)).StatusCode);
+
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        var jobs = await manager.GetFromJsonAsync<JsonElement>(JobsPath);
+        var retention = jobs.EnumerateArray().Single(job => job.GetProperty("name").GetString() == "retention-sweep");
+        Assert.True(retention.GetProperty("enabled").GetBoolean());
+        Assert.Equal("NeverRun", retention.GetProperty("lastStatus").GetString());
+
+        Assert.Equal(HttpStatusCode.NotFound, (await manager.PostAsync($"{JobsPath}/no-such-job/run", null)).StatusCode);
+    }
+
+    [Fact]
+    public async Task TheRetentionSweepDisposesOnlyExpiredUnheldSubjectsAndIsIdempotent()
+    {
+        var (expired, held, fresh) = await _database.SeedRetentionSubjectsAsync();
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        using var first = await manager.PostAsync($"{JobsPath}/retention-sweep/run", null);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var status = await first.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Succeeded", status.GetProperty("lastStatus").GetString());
+        Assert.Contains("1 kayıt imha edildi", status.GetProperty("lastSummary").GetString());
+        Assert.Equal(1, await _database.DisposedCountAsync(expired));
+        Assert.Equal(0, await _database.DisposedCountAsync(held));
+        Assert.Equal(0, await _database.DisposedCountAsync(fresh));
+        Assert.Equal(1, await _database.SystemAuditCountAsync("RetentionSubjectDisposed", expired));
+
+        using var second = await manager.PostAsync($"{JobsPath}/retention-sweep/run", null);
+        var again = await second.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Contains("0 kayıt imha edildi", again.GetProperty("lastSummary").GetString());
+        Assert.Equal(1, await _database.SystemAuditCountAsync("RetentionSubjectDisposed", expired));
+    }
+
     private HttpClient CreateClient(string? managerToken)
     {
         var client = new HttpClient { BaseAddress = _baseAddress };

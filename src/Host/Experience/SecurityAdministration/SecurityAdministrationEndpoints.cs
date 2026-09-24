@@ -2,6 +2,7 @@ using ALKAROS.Audit.EventStore;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Host.Experience.Observability;
+using ALKAROS.Host.Experience.SecurityAdministration.Maintenance;
 using ALKAROS.Security.IdentityHardening;
 using ALKAROS.Support.DiagnosticBundle;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,11 @@ public static class SecurityAdministrationEndpoints
         services.TryAddScoped<SecurityAdministrationAuthentication>();
         // The diagnostic bundle reads current health checks and redacts through the observability services.
         services.AddObservabilityExperience();
+
+        // Scheduled and manager-triggerable operational jobs (V1-RMD-268 onward).
+        services.TryAddSingleton<MaintenanceJobRunner>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RetentionSweepMaintenanceJob>());
+        services.AddHostedService<MaintenanceJobHostedService>();
         return services;
     }
 
@@ -73,6 +79,23 @@ public static class SecurityAdministrationEndpoints
                     new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
                         "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound);
+        });
+
+        group.MapGet("/maintenance/jobs", (MaintenanceJobRunner runner) => Results.Ok(runner.GetStatuses()));
+
+        group.MapPost("/maintenance/jobs/{name}/run", async (
+            string name,
+            MaintenanceJobRunner runner,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var status = await runner.RunAsync(name, cancellationToken);
+            return status is null
+                ? Results.Json(
+                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                        "NOT_FOUND", "İstenen bakım işi bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status404NotFound)
+                : Results.Ok(status);
         });
 
         group.MapPost("/diagnostic-bundle", async (

@@ -1,5 +1,8 @@
 using System.Text.Json;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Secrets;
+using ALKAROS.Security.DataProtectionRetention;
+using ALKAROS.SensitiveData;
 using ALKAROS.TestHelpers;
 
 namespace ALKAROS.Host.Experience.SecurityAdministration.Tests;
@@ -112,6 +115,48 @@ public sealed class SecurityAdministrationTestDatabase : PgTestDatabase
     public Task<long> AuditCountAsync(string eventName, Guid aggregateId, Guid actorId)
         => ScalarAsync<long>(
             $"SELECT count(*) FROM audit.audit_events WHERE event_name = '{eventName}' AND aggregate_id = '{aggregateId:D}' AND actor_id = '{actorId:D}';");
+
+    private static readonly SecretReference RetentionKey = new("Test/Rmd268Key");
+
+    /// <summary>Seeds an expired, a legally held (also expired) and a fresh OrderNotes subject (5-year retention).</summary>
+    public async Task<(Guid Expired, Guid Held, Guid Fresh)> SeedRetentionSubjectsAsync()
+    {
+        var secrets = new InMemorySecretProvider();
+        secrets.Set(RetentionKey, "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=");
+        var protector = new SensitivePayloadProtector(
+            new AesGcmEnvelopeCipher(new SecretResolver(secrets, new AllowAllSecrets())),
+            new AllowAllSensitive());
+        SensitiveEnvelope Envelope() => protector.Protect(
+            new SensitivePayload(
+                new Dictionary<string, string> { ["value"] = "order-note" },
+                new Dictionary<string, SensitiveCategory> { ["value"] = SensitiveCategory.Payment }),
+            RetentionKey,
+            "rmd268-test");
+
+        var store = new PostgresRetentionSubjectStore(DataSource);
+        var sixYearsAgo = DateTimeOffset.UtcNow.AddDays(-365 * 6);
+        var expired = await store.InsertAsync(DataCategory.OrderNotes, Envelope(), false, sixYearsAgo, default);
+        var held = await store.InsertAsync(DataCategory.OrderNotes, Envelope(), true, sixYearsAgo, default);
+        var fresh = await store.InsertAsync(DataCategory.OrderNotes, Envelope(), false, DateTimeOffset.UtcNow, default);
+        return (expired, held, fresh);
+    }
+
+    public Task<long> DisposedCountAsync(Guid id)
+        => ScalarAsync<long>($"SELECT count(*) FROM security.retention_subjects WHERE id = '{id:D}' AND disposed_at IS NOT NULL;");
+
+    public Task<long> SystemAuditCountAsync(string eventName, Guid aggregateId)
+        => ScalarAsync<long>(
+            $"SELECT count(*) FROM audit.audit_events WHERE event_name = '{eventName}' AND aggregate_id = '{aggregateId:D}';");
+
+    private sealed class AllowAllSecrets : ISecretAccessPolicy
+    {
+        public bool IsAllowed(string accessor, SecretReference reference) => true;
+    }
+
+    private sealed class AllowAllSensitive : ISensitiveDataAccessPolicy
+    {
+        public bool CanRead(string accessor, SensitiveEnvelope envelope) => true;
+    }
 
     private static string FindRepositoryRoot()
     {
