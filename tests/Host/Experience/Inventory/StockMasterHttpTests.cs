@@ -353,6 +353,86 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
         Assert.Equal("NOT_FOUND", (await ReadErrorAsync(response)).Error.Code);
     }
 
+    [Fact]
+    public async Task RecordingWasteRemovesRealStockOnceEvenWhenTheRequestIsRepeated()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId);
+        await _database.SeedStockBalanceAsync(stockItemId, locationId, 10m);
+        var request = new RecordWasteV1(locationId, "Spoilage", 2.5m, "kg", "Buzdolabı arızası", null, "waste-rmd274-1");
+
+        using var first = await client.PostAsJsonAsync($"/api/v1/management/inventory/stock-items/{stockItemId:D}/waste", request);
+        using var replay = await client.PostAsJsonAsync($"/api/v1/management/inventory/stock-items/{stockItemId:D}/waste", request);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var firstBody = await first.Content.ReadFromJsonAsync<RecordWasteResultV1>();
+        Assert.False(firstBody!.IsIdempotentReplay);
+        Assert.Equal(StockMasterTestDatabase.ManagerUserId, firstBody.Record.RecordedBy);
+        var replayBody = await replay.Content.ReadFromJsonAsync<RecordWasteResultV1>();
+        Assert.True(replayBody!.IsIdempotentReplay);
+        Assert.Equal(firstBody.Record.Id, replayBody.Record.Id);
+        Assert.Equal(7.5m, await _database.OnHandAsync(stockItemId, locationId));
+        Assert.Equal(1, await _database.WasteRecordCountAsync(stockItemId));
+    }
+
+    [Fact]
+    public async Task WasteBiggerThanTheShelfIsRefusedAndNothingChanges()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId);
+        await _database.SeedStockBalanceAsync(stockItemId, locationId, 1m);
+
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{stockItemId:D}/waste",
+            new RecordWasteV1(locationId, "Spoilage", 5m, "kg", "Çürüdü"));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("INSUFFICIENT_STOCK", (await ReadErrorAsync(response)).Error.Code);
+        Assert.Equal(1m, await _database.OnHandAsync(stockItemId, locationId));
+        Assert.Equal(0, await _database.WasteRecordCountAsync(stockItemId));
+    }
+
+    [Fact]
+    public async Task WasteNeedsAReasonAndAKnownSourceAndASession()
+    {
+        var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId);
+        await _database.SeedStockBalanceAsync(stockItemId, locationId, 5m);
+        var path = $"/api/v1/management/inventory/stock-items/{stockItemId:D}/waste";
+
+        using var manager = CreateClient(StockMasterTestDatabase.ManagerToken);
+        using var noReason = await manager.PostAsJsonAsync(path, new RecordWasteV1(locationId, "Spoilage", 1m, "kg", "  "));
+        Assert.Equal(HttpStatusCode.BadRequest, noReason.StatusCode);
+        using var badSource = await manager.PostAsJsonAsync(path, new RecordWasteV1(locationId, "Nonsense", 1m, "kg", "x"));
+        Assert.Equal(HttpStatusCode.BadRequest, badSource.StatusCode);
+        Assert.Equal(5m, await _database.OnHandAsync(stockItemId, locationId));
+
+        using var anonymous = CreateClient(null);
+        using var noSession = await anonymous.PostAsJsonAsync(path, new RecordWasteV1(locationId, "Spoilage", 1m, "kg", "x"));
+        Assert.Equal(HttpStatusCode.Unauthorized, noSession.StatusCode);
+    }
+
+    [Fact]
+    public async Task WasteRecordsCanBeListedBySourceReference()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var locationId = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], locationId);
+        await _database.SeedStockBalanceAsync(stockItemId, locationId, 10m);
+        var reference = Guid.NewGuid();
+        using var recorded = await client.PostAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{stockItemId:D}/waste",
+            new RecordWasteV1(locationId, "Production", 1m, "kg", "Üretim firesi", reference));
+        Assert.Equal(HttpStatusCode.OK, recorded.StatusCode);
+
+        var listed = await client.GetFromJsonAsync<WasteRecordV1[]>($"/api/v1/management/inventory/waste?wasteSource=Production&sourceReferenceId={reference:D}");
+
+        Assert.Single(listed!);
+        Assert.Equal(stockItemId, listed![0].StockItemId);
+    }
+
     private HttpClient CreateClient(string? token)
     {
         var client = new HttpClient { BaseAddress = _baseAddress };

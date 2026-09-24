@@ -63,6 +63,39 @@ public sealed record PhysicalCountResultV1(
             result.PreviousOnHandQuantity, result.NewOnHandQuantity, result.Count.Delta, result.Count.CountedAt);
 }
 
+/// <summary>V1-RMD-274: a manager records waste (spoilage, expiry, damage...) against one stock item at one location.</summary>
+public sealed record RecordWasteV1(
+    Guid StockLocationId,
+    string WasteSource,
+    decimal Quantity,
+    string UnitCode,
+    string Reason,
+    Guid? SourceReferenceId = null,
+    string? IdempotencyKey = null);
+
+public sealed record WasteRecordV1(
+    Guid Id,
+    Guid StockMovementId,
+    Guid StockItemId,
+    Guid StockLocationId,
+    string WasteSource,
+    Guid? SourceReferenceId,
+    decimal Quantity,
+    string UnitCode,
+    decimal NormalizedQuantity,
+    string TrackingUnitCode,
+    string Reason,
+    Guid RecordedBy,
+    DateTimeOffset RecordedAt)
+{
+    public static WasteRecordV1 From(ALKAROS.Inventory.WasteRecording.WasteRecord record) => new(
+        record.Id, record.StockMovementId, record.StockItemId, record.StockLocationId, record.WasteSource,
+        record.SourceReferenceId, record.Quantity, record.UnitCode, record.NormalizedQuantity,
+        record.TrackingUnitCode, record.WasteReason, record.RecordedBy, record.RecordedAt);
+}
+
+public sealed record RecordWasteResultV1(WasteRecordV1 Record, bool IsIdempotentReplay);
+
 public sealed record StockMasterApiErrorV1(string Code, string Message, int Status, string TraceId);
 
 public sealed record StockMasterApiErrorEnvelopeV1(StockMasterApiErrorV1 Error);

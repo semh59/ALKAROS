@@ -107,6 +107,13 @@ public sealed class StockMasterTestDatabase : PgTestDatabase
     /// V1-RMD-156: product_stock_mappings.product_id is now FK'd to
     /// catalog.products, so a mapping needs a real product to point at.
     /// </summary>
+    public Task<decimal> OnHandAsync(Guid stockItemId, Guid stockLocationId)
+        => ScalarAsync<decimal>(
+            $"SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = '{stockItemId:D}' AND stock_location_id = '{stockLocationId:D}';");
+
+    public Task<long> WasteRecordCountAsync(Guid stockItemId)
+        => ScalarAsync<long>($"SELECT count(*) FROM inventory.waste_records WHERE stock_item_id = '{stockItemId:D}';");
+
     public async Task<Guid> SeedProductAsync(string sku)
     {
         var id = Guid.NewGuid();

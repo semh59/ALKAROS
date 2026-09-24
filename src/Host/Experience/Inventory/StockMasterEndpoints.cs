@@ -6,6 +6,7 @@ using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.PhysicalCounts;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Inventory.Transactions;
+using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Measurements;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -55,6 +56,9 @@ public static class StockMasterEndpoints
         services.TryAddScoped<IInventoryTransactionRunner, PostgresInventoryTransactionRunner>();
         services.TryAddScoped<IPhysicalCountRepository, PostgresPhysicalCountRepository>();
         services.TryAddScoped<IPhysicalCountService, PhysicalCountService>();
+        // V1-RMD-274: waste recording (V11-INV-006) - same defer-to-InventoryModule shape.
+        services.TryAddScoped<IWasteRecordRepository, PostgresWasteRecordRepository>();
+        services.TryAddScoped<IWasteRecordingService, WasteRecordingService>();
 
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
@@ -272,6 +276,36 @@ public static class StockMasterEndpoints
             return Results.Ok(PhysicalCountResultV1.From(result));
         });
 
+        // V1-RMD-274: fire / zayiat. Removes real stock through the same guarded ledger
+        // transaction, idempotent on IdempotencyKey, refused (never negative) when the
+        // shelf does not hold that much.
+        group.MapPost("/stock-items/{stockItemId:guid}/waste", async (
+            Guid stockItemId,
+            RecordWasteV1 request,
+            IWasteRecordingService service,
+            HttpContext httpContext,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = StockMasterEndpointFilter.RequireActorId(httpContext);
+            var result = await service.RecordWasteAsync(
+                new RecordWasteRequest(
+                    stockItemId, request.StockLocationId, request.WasteSource ?? string.Empty, request.Quantity,
+                    request.UnitCode ?? string.Empty, request.Reason ?? string.Empty, actorId,
+                    request.SourceReferenceId, request.IdempotencyKey),
+                cancellationToken);
+            return Results.Ok(new RecordWasteResultV1(WasteRecordV1.From(result.Record), result.IsIdempotentReplay));
+        });
+
+        group.MapGet("/waste", async (
+            string wasteSource,
+            Guid sourceReferenceId,
+            IWasteRecordingService service,
+            CancellationToken cancellationToken) =>
+        {
+            var records = await service.GetWasteRecordsBySourceAsync(wasteSource, sourceReferenceId, cancellationToken);
+            return Results.Ok(records.Select(WasteRecordV1.From).ToArray());
+        });
+
         return group;
     }
 }
@@ -357,6 +391,12 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         InvalidStockItemException or InvalidStockLocationException or InvalidProductStockMappingException =>
             (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         StockMasterConcurrencyException => (409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi."),
+        InsufficientStockForWasteException => (409, "INSUFFICIENT_STOCK", "Rafta bu kadar stok yok; fire miktarı mevcut stoktan büyük olamaz."),
+        WasteItemNotFoundException or WasteLocationNotFoundException => (404, "NOT_FOUND", "İstenen stok kalemi ya da konumu bulunamadı."),
+        UnauthorizedWasteRecorderException => (403, "FORBIDDEN", "Fire kaydı için yetkili bir kullanıcı gerekiyor."),
+        InvalidWasteQuantityException or InvalidWasteReasonException or IncompatibleWasteUnitException =>
+            (400, "VALIDATION_FAILED", "İstek doğrulanamadı: miktar, birim ve gerekçe geçerli olmalı."),
+        WasteRecordingException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı: fire kaynağı geçerli değil."),
         PhysicalCountBalanceGuardFailedException => (409, "CONCURRENCY_CONFLICT", "Sayım uygulanırken bakiye başka bir işlemle çakıştı, tekrar deneyin."),
         PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } => (409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
         PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } => (400, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
