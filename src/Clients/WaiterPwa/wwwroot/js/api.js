@@ -36,7 +36,16 @@ export async function api(path, options) {
 
   if (response.ok) return { ok: true, status: response.status, data, headers: response.headers };
 
-  if (response.status === 401) showLogin();
+  // A 401 normally means the session died, so the login overlay opens. But
+  // two endpoints answer 401 to a credential CHECK, not to a dead session:
+  // /auth/unlock (wrong PIN, INVALID_PIN) and /auth/pin (wrong current
+  // password, INVALID_CREDENTIALS). Treating those as "session expired"
+  // hid the PIN lock the moment a wrong PIN was typed and threw the waiter
+  // into the full username/password login, so the "PIN hatalı" retry flow
+  // and the 5-attempt lockout were unreachable.
+  const errorCode = data && data.error && data.error.code;
+  const isCredentialCheckFailure = errorCode === 'INVALID_PIN' || errorCode === 'INVALID_CREDENTIALS';
+  if (response.status === 401 && !isCredentialCheckFailure) showLogin();
   return {
     ok: false,
     status: response.status,

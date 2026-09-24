@@ -59,17 +59,29 @@ export function can(permission) {
 // element another still-active layer needs to stay hidden.
 const trapStack = [];
 
+// A trap that is stacked on top of another one (the PIN lock or the login
+// overlay appearing while the options sheet is open) must also make ITS OWN
+// active elements live again: the lower trap already inerted every other
+// body child, including this overlay, and "only inert what is not already
+// inert" alone never undoes that. Without it the overlay is visible but
+// dead - PIN keys and login fields cannot be clicked or focused, so the
+// waiter cannot unlock or sign in. Each push therefore records both what it
+// newly inerted and what it newly revived, and its pop hands both back.
 export function trapBackgroundExcept(...activeElements) {
   const active = new Set(activeElements);
   const newlyInert = Array.from(document.body.children)
     .filter((child) => !active.has(child) && child.id !== 'toasts' && !child.inert);
+  const newlyRevived = activeElements.filter((element) => element && element.inert);
   newlyInert.forEach((child) => { child.inert = true; });
-  trapStack.push(newlyInert);
+  newlyRevived.forEach((element) => { element.inert = false; });
+  trapStack.push({ newlyInert, newlyRevived });
 }
 
 export function releaseTrap() {
-  const newlyInert = trapStack.pop();
-  if (newlyInert) newlyInert.forEach((child) => { child.inert = false; });
+  const record = trapStack.pop();
+  if (!record) return;
+  record.newlyInert.forEach((child) => { child.inert = false; });
+  record.newlyRevived.forEach((element) => { element.inert = true; });
 }
 
 export function showLogin() {

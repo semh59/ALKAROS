@@ -147,6 +147,20 @@ export async function seedDatabase(client) {
     loadTableIds.push(loadTableId);
   }
 
+  // Untouched seatless tables reserved for the offline-queue / kiosk-lock
+  // specs (06+): each test there opens its own so no scenario inherits an
+  // order, draft or queue another spec left behind on a shared table.
+  const offlineTableIds = [];
+  for (let i = 1; i <= 8; i++) {
+    const offlineTableId = randomUUID();
+    await client.query(
+      `INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+       VALUES ($1, $2, $3, 4, 'Available')`,
+      [offlineTableId, zoneId, `OFF-${i}`],
+    );
+    offlineTableIds.push(offlineTableId);
+  }
+
   const plainProductId = randomUUID();
   const modifierProductId = randomUUID();
   const modifierGroupId = randomUUID();
@@ -221,6 +235,7 @@ export async function seedDatabase(client) {
     timingTableNumber,
     timingSeatIds,
     loadTableIds,
+    offlineTableIds,
     zoneId,
     seatOneId,
     seatTwoId,
