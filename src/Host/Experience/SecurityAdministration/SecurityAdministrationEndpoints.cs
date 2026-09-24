@@ -1,7 +1,9 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Host.Experience.Observability;
 using ALKAROS.Security.IdentityHardening;
+using ALKAROS.Support.DiagnosticBundle;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -35,6 +37,8 @@ public static class SecurityAdministrationEndpoints
         // recovery action that vanishes on restart is not an audit trail.
         services.AddSingleton<ISuspiciousLoginAuditSink, AuditEventStoreSuspiciousLoginSink>();
         services.TryAddScoped<SecurityAdministrationAuthentication>();
+        // The diagnostic bundle reads current health checks and redacts through the observability services.
+        services.AddObservabilityExperience();
         return services;
     }
 
@@ -71,9 +75,52 @@ public static class SecurityAdministrationEndpoints
                     statusCode: StatusCodes.Status404NotFound);
         });
 
+        group.MapPost("/diagnostic-bundle", async (
+            DiagnosticBundleRequestV1 request,
+            IDiagnosticBundleService bundles,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = SecurityAdministrationEndpointFilter.RequireActorId(context);
+            try
+            {
+                var bundle = await bundles.GenerateAsync(
+                    new DiagnosticBundleRequest(
+                        actorId.ToString("D"),
+                        request.CorrelationIds ?? [],
+                        request.WindowStart,
+                        request.WindowEnd,
+                        request.Reason ?? string.Empty),
+                    cancellationToken);
+                return Results.Ok(bundle);
+            }
+            catch (DiagnosticBundleException exception)
+            {
+                var (status, code, message) = exception.Reason switch
+                {
+                    DiagnosticBundleFailureReason.NoCorrelationIdsProvided =>
+                        (StatusCodes.Status400BadRequest, "NO_CORRELATION_IDS", "En az bir korelasyon kimliği seçilmelidir."),
+                    DiagnosticBundleFailureReason.TimeWindowTooLarge =>
+                        (StatusCodes.Status400BadRequest, "TIME_WINDOW_TOO_LARGE", "Zaman aralığı en fazla 30 gün olabilir."),
+                    DiagnosticBundleFailureReason.SizeLimitExceeded =>
+                        (StatusCodes.Status413PayloadTooLarge, "BUNDLE_TOO_LARGE", "Paket çok büyük; korelasyon kimliklerini veya zaman aralığını daraltın."),
+                    _ => (StatusCodes.Status500InternalServerError, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
+                };
+                return Results.Json(
+                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(code, message, status, context.TraceIdentifier)),
+                    statusCode: status);
+            }
+        });
+
         return group;
     }
 }
+
+public sealed record DiagnosticBundleRequestV1(
+    IReadOnlyList<string>? CorrelationIds,
+    DateTimeOffset WindowStart,
+    DateTimeOffset WindowEnd,
+    string? Reason);
 
 public sealed record RevokeSessionsResultV1(Guid UserId, int RevokedSessions);
 

@@ -109,6 +109,68 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
     }
 
+    private const string BundlePath = "/api/v1/management/security/diagnostic-bundle";
+    private static readonly string[] OneCorrelation = ["c"];
+    private static readonly string[] BundleCorrelation = ["rmd267-corr"];
+
+    [Fact]
+    public async Task ADiagnosticBundleIsRedactedBoundedAndItsOwnGenerationIsAudited()
+    {
+        var store = _application!.Services.GetRequiredService<ALKAROS.Audit.EventStore.IAuditEventStore>();
+        await store.AppendAsync(new ALKAROS.Audit.EventStore.AuditEvent(
+            Guid.NewGuid(), "bill.discount.applied", "Bill", Guid.NewGuid(), "User", "rmd267-corr",
+            afterStateJson: "{\"password\":\"hunter2-secret\",\"note\":\"visible\"}"));
+        using var client = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        using var response = await client.PostAsJsonAsync(BundlePath, new
+        {
+            CorrelationIds = BundleCorrelation,
+            WindowStart = DateTimeOffset.UtcNow.AddHours(-1),
+            WindowEnd = DateTimeOffset.UtcNow.AddHours(1),
+            Reason = "Destek incelemesi",
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var raw = await response.Content.ReadAsStringAsync();
+        Assert.DoesNotContain("hunter2-secret", raw);
+        Assert.Contains("visible", raw);
+        var body = JsonDocument.Parse(raw).RootElement;
+        Assert.Equal(1, body.GetProperty("logEntries").GetArrayLength());
+        Assert.Equal(
+            SecurityAdministrationTestDatabase.ManagerUserId.ToString("D"),
+            body.GetProperty("requestedByActorId").GetString());
+    }
+
+    [Fact]
+    public async Task ABundleRequestWithoutCorrelationIdsAnOversizedWindowOrNoReasonIsRejected()
+    {
+        using var client = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        var now = DateTimeOffset.UtcNow;
+
+        using var none = await client.PostAsJsonAsync(BundlePath, new { CorrelationIds = Array.Empty<string>(), WindowStart = now.AddHours(-1), WindowEnd = now, Reason = "x" });
+        Assert.Equal(HttpStatusCode.BadRequest, none.StatusCode);
+        Assert.Equal("NO_CORRELATION_IDS", (await none.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+
+        using var wide = await client.PostAsJsonAsync(BundlePath, new { CorrelationIds = OneCorrelation, WindowStart = now.AddDays(-31), WindowEnd = now, Reason = "x" });
+        Assert.Equal(HttpStatusCode.BadRequest, wide.StatusCode);
+        Assert.Equal("TIME_WINDOW_TOO_LARGE", (await wide.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+
+        using var noReason = await client.PostAsJsonAsync(BundlePath, new { CorrelationIds = OneCorrelation, WindowStart = now.AddHours(-1), WindowEnd = now, Reason = "  " });
+        Assert.Equal(HttpStatusCode.BadRequest, noReason.StatusCode);
+    }
+
+    [Fact]
+    public async Task ADiagnosticBundleNeedsAManagerSessionWithSecurityManage()
+    {
+        var now = DateTimeOffset.UtcNow;
+        var request = new { CorrelationIds = OneCorrelation, WindowStart = now.AddHours(-1), WindowEnd = now, Reason = "x" };
+
+        using var anonymous = CreateClient(null);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.PostAsJsonAsync(BundlePath, request)).StatusCode);
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.PostAsJsonAsync(BundlePath, request)).StatusCode);
+    }
+
     private HttpClient CreateClient(string? managerToken)
     {
         var client = new HttpClient { BaseAddress = _baseAddress };
