@@ -4,6 +4,7 @@ using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Host.Experience.Observability;
 using ALKAROS.Host.Experience.SecurityAdministration.Maintenance;
 using ALKAROS.Security.IdentityHardening;
+using ALKAROS.Security.SecretRotation;
 using ALKAROS.Support.DiagnosticBundle;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -135,6 +136,8 @@ public static class SecurityAdministrationEndpoints
             }
         });
 
+        group.MapSecretRotation();
+
         return group;
     }
 }
@@ -213,6 +216,14 @@ public sealed class SecurityAdministrationEndpointFilter : IEndpointFilter
         {
             return MapError(context.HttpContext, exception);
         }
+        catch (SecretRotationConflictException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
+        catch (SecretRotationConcurrencyException exception)
+        {
+            return MapError(context.HttpContext, exception);
+        }
         catch (PostgresException exception)
         {
             return MapError(context.HttpContext, exception);
@@ -239,6 +250,10 @@ public sealed class SecurityAdministrationEndpointFilter : IEndpointFilter
                 (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
             AuthorizationDeniedException =>
                 (StatusCodes.Status403Forbidden, "FORBIDDEN", "Güvenlik yönetimi için yeterli izin yok."),
+            SecretRotationConflictException =>
+                (StatusCodes.Status409Conflict, "INVALID_OPERATION", "Bu işlem sürümün mevcut durumuyla uyumlu değil."),
+            SecretRotationConcurrencyException =>
+                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Sürüm kaydı başka bir işlem tarafından değiştirildi."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             NpgsqlException =>

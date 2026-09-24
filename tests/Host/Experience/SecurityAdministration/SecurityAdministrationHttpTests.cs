@@ -25,8 +25,12 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
     private WebApplication? _application;
     private Uri? _baseAddress;
 
+    private readonly string _rotationDirectory = Path.Combine(Path.GetTempPath(), $"alkaros-rmd269-{Guid.NewGuid():N}");
+
     public async Task InitializeAsync()
     {
+        Directory.CreateDirectory(_rotationDirectory);
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_ROTATION_DIR", _rotationDirectory);
         await _database.InitializeAsync();
 
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -48,6 +52,11 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         if (_application is not null)
             await _application.DisposeAsync();
         await _database.DisposeAsync();
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_ROTATION_DIR", null);
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V1", null);
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V2", null);
+        if (Directory.Exists(_rotationDirectory))
+            Directory.Delete(_rotationDirectory, recursive: true);
     }
 
     private static string RevokePath(Guid userId) => $"/api/v1/management/security/users/{userId:D}/revoke-sessions";
@@ -211,6 +220,88 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         var again = await second.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Contains("0 kayıt imha edildi", again.GetProperty("lastSummary").GetString());
         Assert.Equal(1, await _database.SystemAuditCountAsync("RetentionSubjectDisposed", expired));
+    }
+
+    private const string SecretsPath = "/api/v1/management/security/secrets";
+    private const string RotationPath = SecretsPath + "/offsite-backup/rotation";
+    private const string V1Value = "rmd269-key-material-one";
+    private const string V2Value = "rmd269-key-material-two";
+
+    [Fact]
+    public async Task SecretRotationNeedsAManagerAndOnlyKnownSecretsAreManageable()
+    {
+        using var anonymous = CreateClient(null);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync(SecretsPath)).StatusCode);
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.GetAsync(SecretsPath)).StatusCode);
+
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        Assert.Equal(HttpStatusCode.NotFound, (await manager.GetAsync($"{SecretsPath}/not-a-known-secret/rotation")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await manager.PostAsync($"{SecretsPath}/../etc/rotation/initialize", null)).StatusCode);
+    }
+
+    [Fact]
+    public async Task ARotationCannotActivateAVersionWhoseKeyMaterialIsNotInTheEnvironment()
+    {
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        using var refused = await manager.PostAsync($"{RotationPath}/initialize", null);
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        var body = await refused.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("KEY_MATERIAL_MISSING", body.GetProperty("error").GetProperty("code").GetString());
+        Assert.Contains("ALKAROS_SECRET_OFFSITE_BACKUP_V1", body.GetProperty("error").GetProperty("message").GetString());
+        Assert.Equal(HttpStatusCode.NotFound, (await manager.GetAsync(RotationPath)).StatusCode);
+    }
+
+    [Fact]
+    public async Task TheFullRotationLifecycleIsGuardedAuditedAndNeverEchoesKeyMaterial()
+    {
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V1", V1Value);
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        var aggregate = ALKAROS.Host.Experience.SecurityAdministration.SecretRotationAdministration.AggregateIdFor("offsite-backup");
+        var everything = new System.Text.StringBuilder();
+
+        async Task<JsonElement> Ok(HttpResponseMessage response)
+        {
+            var text = await response.Content.ReadAsStringAsync();
+            everything.AppendLine(text);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            return JsonDocument.Parse(text).RootElement;
+        }
+
+        var initialized = await Ok(await manager.PostAsync($"{RotationPath}/initialize", null));
+        Assert.Equal(1, initialized.GetProperty("activeVersion").GetInt32());
+        Assert.Equal(HttpStatusCode.Conflict, (await manager.PostAsync($"{RotationPath}/initialize", null)).StatusCode);
+
+        // Version 2's material is not in the environment yet: refuse, state unchanged.
+        using var early = await manager.PostAsJsonAsync($"{RotationPath}/rotate", new { OverlapHours = 24 });
+        Assert.Equal(HttpStatusCode.Conflict, early.StatusCode);
+
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V2", V2Value);
+        var rotated = await Ok(await manager.PostAsJsonAsync($"{RotationPath}/rotate", new { OverlapHours = 24 }));
+        Assert.Equal(2, rotated.GetProperty("activeVersion").GetInt32());
+        Assert.Equal(1, rotated.GetProperty("overlapVersionCount").GetInt32());
+
+        // The active version can never be revoked; an out-of-range overlap is refused.
+        using var revokeActive = await manager.PostAsJsonAsync($"{RotationPath}/revoke", new { Version = 2 });
+        Assert.Equal(HttpStatusCode.Conflict, revokeActive.StatusCode);
+        using var badOverlap = await manager.PostAsJsonAsync($"{RotationPath}/rotate", new { OverlapHours = 100000 });
+        Assert.Equal(HttpStatusCode.BadRequest, badOverlap.StatusCode);
+
+        var rolledBack = await Ok(await manager.PostAsJsonAsync($"{RotationPath}/rollback", new { Version = 1 }));
+        Assert.Equal(1, rolledBack.GetProperty("activeVersion").GetInt32());
+        Assert.Equal(1, rolledBack.GetProperty("revokedVersionCount").GetInt32());
+
+        var listed = await Ok(await manager.GetAsync(SecretsPath));
+        Assert.Equal(1, listed.GetArrayLength());
+
+        Assert.DoesNotContain(V1Value, everything.ToString());
+        Assert.DoesNotContain(V2Value, everything.ToString());
+        Assert.Equal(1, await _database.SystemAuditCountAsync("secret.rotation.initialize", aggregate));
+        Assert.Equal(1, await _database.SystemAuditCountAsync("secret.rotation.rotate", aggregate));
+        Assert.Equal(1, await _database.SystemAuditCountAsync("secret.rotation.rollback", aggregate));
+        Assert.Equal(0, await _database.SystemAuditCountAsync("secret.rotation.revoke", aggregate));
     }
 
     private HttpClient CreateClient(string? managerToken)
