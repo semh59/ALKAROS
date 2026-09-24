@@ -70,3 +70,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) { .bill-split * { scroll-behavior: auto !important; } }
+.billing-route__collect { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; margin-top: var(--ds-space-3); border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-4); color: #f7fbfd; background: #142b35; font-weight: 750; text-decoration: none; }
+.billing-route__collect:focus-visible { outline: 3px solid #ff7d49; outline-offset: 2px; }

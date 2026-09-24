@@ -359,6 +359,17 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
         errorMessage={errorMessage}
         lastUpdated={lastUpdated}
       />
+      {design?.billId && (
+        // The split editor only decides who owes what; collecting the money
+        // happens on the cashier payment page (V13-PUI-001), which had no
+        // inbound link from anywhere in the running app.
+        <a
+          className="billing-route__collect"
+          href={`/cashier/payments/split-payment/index.html?billId=${encodeURIComponent(design.billId)}`}
+        >
+          Tahsilata geç
+        </a>
+      )}
     </div>
   );
 }

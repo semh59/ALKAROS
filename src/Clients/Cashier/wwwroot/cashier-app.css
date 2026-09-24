@@ -692,3 +692,5 @@ body {
   border-color: var(--color-danger);
   background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
 }
+
+a.session-pill { color: inherit; text-decoration: none; }
