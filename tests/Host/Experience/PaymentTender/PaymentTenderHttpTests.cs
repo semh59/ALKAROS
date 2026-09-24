@@ -383,6 +383,130 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal("TENDER_METHOD_UNKNOWN", body.GetProperty("error").GetProperty("code").GetString());
     }
 
+    // V1-RMD-264: manager-only manual resolution of an unconfirmed card payment.
+    private static async Task<Guid> CreateUnsettledPaymentAsync(HttpClient client, Guid terminalId, Guid billId, string cookie, string key)
+    {
+        await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "BankCard", Amount = 40m, IdempotencyKey = key });
+        var summary = await GetAsync(client, TendersPath(terminalId, billId), cookie);
+        var body = await summary.Content.ReadFromJsonAsync<JsonElement>();
+        return body.GetProperty("unsettledPayment").GetProperty("paymentId").GetGuid();
+    }
+
+    private static string NotChargedPath(Guid terminalId, Guid billId, Guid paymentId)
+        => $"{TendersPath(terminalId, billId)}unsettled/{paymentId:D}/not-charged";
+
+    [Fact]
+    public async Task AManagerCanMarkAnUnconfirmedCardPaymentNotChargedWhichUnlocksTheBillAndIsAudited()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd264-cashier-ok");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd264-ok-1");
+        var managerTerminal = Guid.NewGuid();
+        var manager = await _database.SeedManagerSessionAsync(managerTerminal, "rmd264-manager-ok");
+
+        var response = await PostAsync(client, NotChargedPath(managerTerminal, billId, paymentId), manager,
+            new { Reason = "Müşterinin kartı çekilmedi, slip yok." });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var summary = await GetAsync(client, TendersPath(managerTerminal, billId), manager);
+        var summaryBody = await summary.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(JsonValueKind.Null, summaryBody.GetProperty("unsettledPayment").ValueKind);
+        Assert.Equal(0m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
+        Assert.Equal("Declined", await _database.PaymentStatusAsync(paymentId));
+        Assert.Equal(1, await _database.AuditEventCountAsync("payment.manual-resolution.not-charged", paymentId));
+
+        // The lock is really gone: a new tender is accepted again.
+        var retry = await PostAsync(client, TendersPath(terminalId, billId), cashier,
+            new { Method = "Eft", Amount = 25m, IdempotencyKey = "rmd264-ok-retry" });
+        Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
+    }
+
+    [Fact]
+    public async Task APlainCashierCannotResolveAnUnconfirmedCardPayment()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd264-cashier-denied");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd264-denied-1");
+
+        var response = await PostAsync(client, NotChargedPath(terminalId, billId, paymentId), cashier,
+            new { Reason = "Kasiyer kendi başına çözemez." });
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("   ")]
+    public async Task AMissingReasonIsRejectedAndThePaymentStaysUnresolved(string? reason)
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd264-cashier-reason");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd264-reason-1");
+        var managerTerminal = Guid.NewGuid();
+        var manager = await _database.SeedManagerSessionAsync(managerTerminal, "rmd264-manager-reason-" + (reason is null ? "n" : "w"));
+
+        var response = await PostAsync(client, NotChargedPath(managerTerminal, billId, paymentId), manager, new { Reason = reason });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("RESOLUTION_REASON_INVALID", body.GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+    }
+
+    [Fact]
+    public async Task ResolvingTheSamePaymentTwiceIsAConflictAndWritesOnlyOneAuditEvent()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd264-cashier-twice");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd264-twice-1");
+        var managerTerminal = Guid.NewGuid();
+        var manager = await _database.SeedManagerSessionAsync(managerTerminal, "rmd264-manager-twice");
+        var path = NotChargedPath(managerTerminal, billId, paymentId);
+
+        var first = await PostAsync(client, path, manager, new { Reason = "İlk çözüm." });
+        var second = await PostAsync(client, path, manager, new { Reason = "İkinci çözüm." });
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+        var body = await second.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("PAYMENT_NOT_RESOLVABLE", body.GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(1, await _database.AuditEventCountAsync("payment.manual-resolution.not-charged", paymentId));
+    }
+
+    [Fact]
+    public async Task APaymentOfAnotherBillCannotBeResolvedThroughThisBillsPath()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd264-cashier-other");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var otherBillId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd264-other-1");
+        var managerTerminal = Guid.NewGuid();
+        var manager = await _database.SeedManagerSessionAsync(managerTerminal, "rmd264-manager-other");
+
+        var response = await PostAsync(client, NotChargedPath(managerTerminal, otherBillId, paymentId), manager,
+            new { Reason = "Yanlış hesap." });
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+    }
+
     [Fact]
     public async Task SummaryOnANonExistentBillIsNotFound()
     {
@@ -507,6 +631,48 @@ internal sealed class PaymentTenderHttpTestDatabase
         command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
         await command.ExecuteNonQueryAsync();
         return $"alkaros.cashier={rawToken}";
+    }
+
+    /// <summary>Seeds a user holding reconciliation.manage with a cashier device session on <paramref name="terminalId"/>.</summary>
+    public async Task<string> SeedManagerSessionAsync(Guid terminalId, string rawToken)
+    {
+        var userId = Guid.NewGuid();
+        var roleId = Guid.NewGuid();
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'x', 'PaymentTender Test Manager', true);
+            INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'PaymentTender Test Manager Role');
+            INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+            SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions WHERE code = 'reconciliation.manage';
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (gen_random_uuid(), @user_id, @role_id);
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
+            VALUES (gen_random_uuid(), @user_id, @device_id, @token_hash, now() + interval '1 hour');
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+        command.Parameters.AddWithValue("role_id", roleId);
+        command.Parameters.AddWithValue("role_code", "pui264-manager-" + roleId.ToString("N")[..8]);
+        command.Parameters.AddWithValue("username", "pui264-manager-" + userId.ToString("N")[..8]);
+        command.Parameters.AddWithValue("device_id", $"cashier:{terminalId:D}");
+        command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
+        await command.ExecuteNonQueryAsync();
+        return $"alkaros.cashier={rawToken}";
+    }
+
+    public async Task<string> PaymentStatusAsync(Guid paymentId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT status FROM payments.payments WHERE payment_id = @id;");
+        command.Parameters.AddWithValue("id", paymentId);
+        return (string)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<long> AuditEventCountAsync(string eventName, Guid aggregateId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT count(*) FROM audit.audit_events WHERE event_name = @name AND aggregate_id = @id;");
+        command.Parameters.AddWithValue("name", eventName);
+        command.Parameters.AddWithValue("id", aggregateId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     /// <summary>Seeds a real, payable Bill (catalog product + table + order + bill) for a tender test.</summary>

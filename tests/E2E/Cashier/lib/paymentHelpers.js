@@ -16,10 +16,10 @@ import { KASA_1_TABLE_ID, KASA_1_TABLE_NUMBER } from './seed.js';
 export const SPLIT_PAYMENT_PATH = '/cashier/payments/split-payment/index.html';
 
 /** Real cashier login through the API; the cookie lands in the page's own context. */
-export async function loginViaApi(page, seed) {
+export async function loginViaApi(page, seed, username = seed.cashierUsername) {
   const terminalId = randomUUID();
   const response = await page.request.post('/api/v1/auth/login', {
-    data: { Username: seed.cashierUsername, Password: seed.cashierPassword, TerminalId: terminalId },
+    data: { Username: username, Password: seed.cashierPassword, TerminalId: terminalId },
   });
   expect(response.ok(), `login failed: ${response.status()}`).toBeTruthy();
   const body = await response.json();

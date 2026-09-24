@@ -17,6 +17,7 @@ import { hashPassword } from './passwordHash.js';
 
 export const CASHIER_USERNAME = 'e2e.kasiyer';
 export const CASHIER_PASSWORD = 'E2eKasiyerSifre!42';
+export const LIMITED_USERNAME = 'e2e.kasiyer.sinirli';
 export const KASA_1_TABLE_ID = '00000000-0000-0000-0000-000000000001';
 export const KASA_1_TABLE_NUMBER = 'KASA-1';
 
@@ -42,6 +43,33 @@ export async function seedDatabase(client) {
   await client.query(
     'INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES ($1, $2, $3)',
     [randomUUID(), userId, roleId],
+  );
+
+  // A cashier who holds every permission EXCEPT reconciliation.manage: proves
+  // the manual card-payment resolution (V1-RMD-264) is manager-only.
+  const limitedUserId = randomUUID();
+  const limitedRoleId = randomUUID();
+  await client.query(
+    `INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+     VALUES ($1, $2, $3, 'E2E Sınırlı Kasiyer', true)`,
+    [limitedUserId, LIMITED_USERNAME, hashPassword(CASHIER_PASSWORD)],
+  );
+  await client.query(
+    `INSERT INTO identity.roles (role_id, code, name) VALUES ($1, 'e2e-limited-cashier-role', 'E2E Sınırlı Kasiyer Rolü')`,
+    [limitedRoleId],
+  );
+  const { rows: limitedRows } = await client.query(
+    "SELECT permission_id FROM identity.permissions WHERE code <> 'reconciliation.manage'",
+  );
+  for (const row of limitedRows) {
+    await client.query(
+      'INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id) VALUES ($1, $2, $3)',
+      [randomUUID(), limitedRoleId, row.permission_id],
+    );
+  }
+  await client.query(
+    'INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES ($1, $2, $3)',
+    [randomUUID(), limitedUserId, limitedRoleId],
   );
 
   // The vanilla Cashier client (src/Clients/Cashier/wwwroot/cashier-app.js)
@@ -129,6 +157,7 @@ export async function seedDatabase(client) {
   return {
     cashierUsername: CASHIER_USERNAME,
     cashierPassword: CASHIER_PASSWORD,
+    limitedUsername: LIMITED_USERNAME,
     kasa1TableId: KASA_1_TABLE_ID,
     kasa1TableNumber: KASA_1_TABLE_NUMBER,
     lowStockProductId,

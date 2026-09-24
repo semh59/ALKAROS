@@ -35,7 +35,7 @@ Cash handler, durable BankCard workflow ve MealCard provider-registry bridge'ini
   DONE_DEPENDENCY_TRANSITIVE_NOT_FINAL kontrolündeki gerçek bir hatayı (waiver'ı yalnız
   doğrudan kenarlarda tanıyıp dolaylı zincirlerde tanımaması) bulup düzeltti, bkz. Acceptance
   evidence — bu satır, bağımsız Faz 2 denetiminin bulduğu bir retroaktif Owned surface eksikliğini
-  kapatıyor, `V13-RMD-GOV-001`) — hepsi paylaşılan dosyalar, plain text (backtick'siz).
+  kapatıyor, `V13-GOV-009`) — hepsi paylaşılan dosyalar, plain text (backtick'siz).
 
 ## In scope
 

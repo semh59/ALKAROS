@@ -19,7 +19,7 @@ denetimin "tarayıcıda doğrulanamadı" diye açık bıraktığı özelliklerin
 Postgres + gerçek Host + gerçek Chromium ile kalıcı spec'lere dönüştürmek.
 Özellikle: kart tahsilatının asla sahte onay üretmemesi ve çözülmemiş kart
 tahsilatı kilidinin sayfa yenilemesinde korunması (`V1-RMD-258`/`V13-RMD-002`),
-EFT onay kutusu kapısı (`V13-PUI-004`), odak korunumu (`V13-RMD-GOV-001`) ve
+EFT onay kutusu kapısı (`V13-PUI-004`), odak korunumu (`V13-GOV-009`) ve
 eşzamanlı aşırı-tahsis yarışının Türkçe 409'a eşlenmesi (`V1-RMD-258`).
 
 ## Owned surface

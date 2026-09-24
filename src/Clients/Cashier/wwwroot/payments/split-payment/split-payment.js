@@ -26,6 +26,7 @@
     splitCount: 2,
     amountDraft: '0.00',
     noteDraft: '',
+    resolveReason: '',
     // V13-PUI-004: EFT/Havale onay kutusu - kasiyer tutarı işletmenin banka
     // hesap hareketinde GÖRDÜĞÜNÜ işaretlemeden "Ödemeyi Ekle" pasif kalır.
     // Yöntem değiştikçe veya her başarılı gönderimden sonra sıfırlanır -
@@ -172,6 +173,37 @@
     var perLine = Math.round((remainingAmount() / count) * 100) / 100;
     state.amountDraft = perLine.toFixed(2);
     render();
+  }
+
+  // V1-RMD-264: a manager declares the unconfirmed card payment was NOT
+  // charged. The server decides who may do this (403 for a plain cashier).
+  function resolveNotCharged() {
+    var reason = (state.resolveReason || '').trim();
+    if (!reason) {
+      setError('Gerekçe yazmalısınız.');
+      return;
+    }
+    var unsettled = state.summary && state.summary.unsettledPayment;
+    if (!unsettled) return;
+    setBusy(true);
+    state.error = null;
+    api(tendersBase() + 'unsettled/' + unsettled.paymentId + '/not-charged', {
+      method: 'POST',
+      body: { reason: reason },
+    }).then(function (result) {
+      state.busy = false;
+      if (result.ok) {
+        state.resolveReason = '';
+        return refreshSummary().then(function () { render(); });
+      }
+      state.error = result.status === 403
+        ? 'Bu işlem için müdür yetkisi gerekir. Yetkili bir kullanıcıyla giriş yapın.'
+        : describeHttpFailure(result.status, result.body);
+      render();
+    }).catch(function () {
+      state.busy = false;
+      setError('Bağlantı kurulamadı. Tekrar deneyin.');
+    });
   }
 
   function submitTender() {
@@ -326,7 +358,12 @@
         ? '<div class="sp-alert sp-alert-warning"><span class="sp-alert-icon">!</span>' +
           '<div><div class="sp-alert-title">Manuel mutabakat gerekiyor</div>' +
           '<div class="sp-alert-body">Son kart tahsilatı otomatik onaylanamadı. Bu hesaba yeni bir tahsilat ' +
-          'eklemeden önce mutabakat tamamlanmalı.</div></div></div>'
+          'eklemeden önce mutabakat tamamlanmalı.</div></div></div>' +
+          '<div class="sp-field"><span class="sp-field-label">Yetkili müdür: kart çekilmedi mi?</span>' +
+          '<input class="sp-input" type="text" id="resolve-reason" maxlength="500" ' +
+          'placeholder="Gerekçe (zorunlu)" value="' + escapeHtml(state.resolveReason) + '">' +
+          '<button class="sp-btn sp-btn-secondary" id="resolve-not-charged" type="button"' +
+          (state.busy ? ' disabled' : '') + '>Kart çekilmedi olarak çöz</button></div>'
         : '') +
       '<div class="sp-summary-row is-total"><span>Toplam</span><span class="value">' + formatMoney(s.payableAmount) + '</span></div>' +
       '<div class="sp-summary-row"><span>Tahsil edilen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
@@ -391,6 +428,10 @@
       var refreshedCheckbox = document.getElementById('eft-confirm');
       if (refreshedCheckbox) refreshedCheckbox.focus();
     });
+    var resolveReasonInput = document.getElementById('resolve-reason');
+    if (resolveReasonInput) resolveReasonInput.addEventListener('input', function () { state.resolveReason = this.value; });
+    var resolveButton = document.getElementById('resolve-not-charged');
+    if (resolveButton) resolveButton.addEventListener('click', resolveNotCharged);
     var submitButton = document.getElementById('submit-tender');
     if (submitButton) submitButton.addEventListener('click', submitTender);
   }

@@ -1,6 +1,6 @@
-# V13-RMD-GOV-001 - Remediate governance, documentation, and accessibility findings from the Faz 2 independent audit
+# V13-GOV-009 - Remediate governance, documentation, and accessibility findings from the Faz 2 independent audit
 
-- Task ID: V13-RMD-GOV-001
+- Task ID: V13-GOV-009
 - Status: Done
 - Assignee: Claude Sonnet 5
 - Work type: implementation
@@ -20,12 +20,13 @@ eşleme, BillId kapsamı) **ayrı, paralel bir remediation görevinde** ele alı
 
 ## Owned surface
 
-- `src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js` (yalnız iki event handler'a
-  odak-geri-yükleme eklendi — render()/lock/state-loading mantığına dokunulmadı)
-- `src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+  (V13-PUI-001 sahipliğinde kalır — yalnız iki event handler'a odak-geri-yükleme eklendi; render()/lock/state-loading mantığına dokunulmadı)
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+  (V13-PUI-001 sahipliğinde kalır — yalnız EFT onay kutusunun dokunma hedefi)
 - `docs/compliance/accessibility-target.md`
 - `plan/TRACEABILITY.md`
-- `plan/v1.3/governance/V13-RMD-GOV-001-faz2-audit-governance-and-accessibility-remediation.md`
+- `plan/v1.3/governance/V13-GOV-009-faz2-audit-governance-and-accessibility-remediation.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1.3/governance/V13-GOV-008-payment-orchestration-dependency-waiver.md
   (yalnız kendi C101→C102 referansı düzeltildi), plan/v1.3/payments/V13-PAY-003-tender-handler-composition.md
   (retroaktif Owned surface notu eklendi — bkz. Acceptance evidence), tools/plan-audit/plan_audit_tool.py

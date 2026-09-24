@@ -104,7 +104,7 @@ Surface'ta, arayüz/tipli-sözleşme seviyesinde entegrasyon.
   `TestPaymentOrchestrationDependencyWaiver` (3 test).
 - `plan/TRACEABILITY.md`: `C102` (başlangıçta `C101` olarak atanmıştı, önceden var olan ve alakasız
   bir `V15-GOV-001` kaydıyla çakıştığı için yeniden numaralandırıldı — Faz 2 bağımsız denetiminde
-  (`V13-RMD-GOV-001`) bulunup düzeltildi).
+  (`V13-GOV-009`) bulunup düzeltildi).
 
 ## Acceptance evidence
 

@@ -1,4 +1,9 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Identity.Authorization;
+using ALKAROS.Payments.ManualResolution;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.CardSettlement;
 using ALKAROS.Payments.EftTender;
@@ -101,6 +106,67 @@ public static partial class DualScreenApplication
 
             return Results.Ok(new BillTenderSummaryV1(
                 billId, bill.PayableAmount, allocatedTotal, remaining, lines, unsettledDto));
+        });
+
+        // V1-RMD-264: an unconfirmed card payment locks its bill (no real
+        // terminal exists to settle it). A manager - never a plain cashier -
+        // can declare "the card was NOT charged", which closes the payment as
+        // Declined and unlocks the bill. Creates no money record.
+        group.MapPost("/unsettled/{paymentId:guid}/not-charged", async (
+            Guid terminalId,
+            Guid billId,
+            Guid paymentId,
+            ResolveUnsettledPaymentRequestV1 request,
+            IManualPaymentResolutionService resolution,
+            IPaymentRepository paymentRepository,
+            IAuditEventStore auditEvents,
+            IAuthorizationService authorization,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
+
+            var payment = await paymentRepository.GetByIdAsync(paymentId, cancellationToken);
+            if (payment is null || payment.BillId != billId)
+                return Results.NotFound();
+
+            try
+            {
+                var result = await resolution.MarkNotChargedAsync(
+                    paymentId, principal.UserId, request.Reason ?? string.Empty, cancellationToken);
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "payment.manual-resolution.not-charged",
+                        aggregateType: "Payment",
+                        aggregateId: paymentId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: principal.UserId,
+                        reason: request.Reason?.Trim(),
+                        beforeStateJson: JsonSerializer.Serialize(new { status = result.PreviousStatus, billId }),
+                        afterStateJson: JsonSerializer.Serialize(new { status = result.NewStatus, billId })),
+                    cancellationToken);
+                return Results.Ok(new ResolveUnsettledPaymentResultV1(paymentId, result.NewStatus));
+            }
+            catch (ManualResolutionReasonInvalidException)
+            {
+                return Results.Json(
+                    new { error = new { code = "RESOLUTION_REASON_INVALID", message = "Gerekçe yazmalısınız (en fazla 500 karakter)." } },
+                    statusCode: StatusCodes.Status400BadRequest);
+            }
+            catch (ManualResolutionNotResolvableException)
+            {
+                return Results.Json(
+                    new { error = new { code = "PAYMENT_NOT_RESOLVABLE", message = "Bu ödeme artık elle çözülemez; sayfayı yenileyip durumu kontrol edin." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (ManualResolutionPaymentNotFoundException)
+            {
+                return Results.NotFound();
+            }
         });
 
         group.MapPost("/", async (
@@ -292,6 +358,10 @@ public static partial class DualScreenApplication
 
 /// <summary>V13-PUI-001: request/response DTOs for the generic (non-Cash) tender HTTP surface.</summary>
 public sealed record SubmitBillTenderRequestV1(string Method, decimal Amount, string IdempotencyKey, string? Note = null);
+
+public sealed record ResolveUnsettledPaymentRequestV1(string? Reason);
+
+public sealed record ResolveUnsettledPaymentResultV1(Guid PaymentId, string Status);
 
 public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedAmount, string? Reason);
 
