@@ -3,6 +3,7 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Host.Experience.Observability;
 using ALKAROS.Host.Experience.SecurityAdministration.Maintenance;
+using ALKAROS.Operations.OffsiteBackup;
 using ALKAROS.Security.IdentityHardening;
 using ALKAROS.Security.SecretRotation;
 using ALKAROS.Support.DiagnosticBundle;
@@ -45,6 +46,7 @@ public static class SecurityAdministrationEndpoints
         // Scheduled and manager-triggerable operational jobs (V1-RMD-268 onward).
         services.TryAddSingleton<MaintenanceJobRunner>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RetentionSweepMaintenanceJob>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, OffsiteBackupMaintenanceJob>());
         services.AddHostedService<MaintenanceJobHostedService>();
         return services;
     }
@@ -99,6 +101,22 @@ public static class SecurityAdministrationEndpoints
                 : Results.Ok(status);
         });
 
+        // What the off-site receipts prove per data class. A class with no receipt, or
+        // whose newest receipt is older than its target, reports MeetsTarget=false: the
+        // RPO shortfall is shown, never hidden.
+        group.MapGet("/backup/rpo", async (IOffsiteBackupReceiptStore receipts, CancellationToken cancellationToken) =>
+        {
+            var all = await receipts.GetAllAsync(cancellationToken: cancellationToken);
+            var now = DateTimeOffset.UtcNow;
+            return Results.Ok(Enum.GetValues<DataClass>()
+                .Select(dataClass => RpoCoverageChecker.Evaluate(dataClass, all, now))
+                .Select(result => new BackupRpoStatusV1(
+                    result.DataClass.ToString(),
+                    (long)result.Target.TotalSeconds,
+                    result.MeasuredGap is null ? null : (long)result.MeasuredGap.Value.TotalSeconds,
+                    result.MeetsTarget)));
+        });
+
         group.MapPost("/diagnostic-bundle", async (
             DiagnosticBundleRequestV1 request,
             IDiagnosticBundleService bundles,
@@ -141,6 +159,8 @@ public static class SecurityAdministrationEndpoints
         return group;
     }
 }
+
+public sealed record BackupRpoStatusV1(string DataClass, long TargetSeconds, long? MeasuredGapSeconds, bool MeetsTarget);
 
 public sealed record DiagnosticBundleRequestV1(
     IReadOnlyList<string>? CorrelationIds,

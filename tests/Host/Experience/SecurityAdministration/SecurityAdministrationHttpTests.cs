@@ -26,11 +26,15 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
     private Uri? _baseAddress;
 
     private readonly string _rotationDirectory = Path.Combine(Path.GetTempPath(), $"alkaros-rmd269-{Guid.NewGuid():N}");
+    private readonly string _backupSourceDirectory = Path.Combine(Path.GetTempPath(), $"alkaros-rmd270-src-{Guid.NewGuid():N}");
+    private readonly string _backupTargetDirectory = Path.Combine(Path.GetTempPath(), $"alkaros-rmd270-dst-{Guid.NewGuid():N}");
 
     public async Task InitializeAsync()
     {
         Directory.CreateDirectory(_rotationDirectory);
+        Directory.CreateDirectory(_backupSourceDirectory);
         Environment.SetEnvironmentVariable("ALKAROS_SECRET_ROTATION_DIR", _rotationDirectory);
+        Environment.SetEnvironmentVariable("ALKAROS_OFFSITE_BACKUP_DIR", _backupTargetDirectory);
         await _database.InitializeAsync();
 
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -53,10 +57,15 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
             await _application.DisposeAsync();
         await _database.DisposeAsync();
         Environment.SetEnvironmentVariable("ALKAROS_SECRET_ROTATION_DIR", null);
+        Environment.SetEnvironmentVariable("ALKAROS_OFFSITE_BACKUP_DIR", null);
+        Environment.SetEnvironmentVariable("ALKAROS_BACKUP_DIR", null);
         Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V1", null);
         Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V2", null);
-        if (Directory.Exists(_rotationDirectory))
-            Directory.Delete(_rotationDirectory, recursive: true);
+        foreach (var directory in new[] { _rotationDirectory, _backupSourceDirectory, _backupTargetDirectory })
+        {
+            if (Directory.Exists(directory))
+                Directory.Delete(directory, recursive: true);
+        }
     }
 
     private static string RevokePath(Guid userId) => $"/api/v1/management/security/users/{userId:D}/revoke-sessions";
@@ -302,6 +311,77 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(1, await _database.SystemAuditCountAsync("secret.rotation.rotate", aggregate));
         Assert.Equal(1, await _database.SystemAuditCountAsync("secret.rotation.rollback", aggregate));
         Assert.Equal(0, await _database.SystemAuditCountAsync("secret.rotation.revoke", aggregate));
+    }
+
+    private const string BackupJobRunPath = JobsPath + "/offsite-backup/run";
+    private const string PlainMarker = "PGDMP-rmd270-plaintext-marker";
+
+    private static string Sha256Hex(byte[] bytes) => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes)).ToLowerInvariant();
+
+    private void WriteArtifact(string name, string content, string? overrideChecksum = null, bool sidecar = true)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(content);
+        File.WriteAllBytes(Path.Combine(_backupSourceDirectory, name), bytes);
+        if (sidecar)
+            File.WriteAllText(Path.Combine(_backupSourceDirectory, name + ".sha256"), $"{overrideChecksum ?? Sha256Hex(bytes)}  {name}\n");
+    }
+
+    [Fact]
+    public async Task TheBackupJobReportsWhyItCannotRunInsteadOfSilentlySucceeding()
+    {
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        var noSource = await manager.PostAsync(BackupJobRunPath, null);
+        var first = await noSource.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Skipped", first.GetProperty("lastStatus").GetString());
+        Assert.Contains("ALKAROS_BACKUP_DIR", first.GetProperty("lastSummary").GetString());
+
+        Environment.SetEnvironmentVariable("ALKAROS_BACKUP_DIR", _backupSourceDirectory);
+        var noKey = await manager.PostAsync(BackupJobRunPath, null);
+        var second = await noKey.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Skipped", second.GetProperty("lastStatus").GetString());
+        Assert.Contains("offsite-backup", second.GetProperty("lastSummary").GetString());
+    }
+
+    [Fact]
+    public async Task TheBackupJobEncryptsAndShipsVerifiedArtifactsOnceRecordsReceiptsAndTheRpoReportIsHonest()
+    {
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V1", "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=");
+        Environment.SetEnvironmentVariable("ALKAROS_BACKUP_DIR", _backupSourceDirectory);
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        Assert.Equal(HttpStatusCode.OK, (await manager.PostAsync($"{RotationPath}/initialize", null)).StatusCode);
+
+        WriteArtifact("alkaros_a_20260924T010000Z.dump", PlainMarker + " good");
+        WriteArtifact("alkaros_b_20260924T020000Z.dump", PlainMarker + " corrupt", overrideChecksum: new string('0', 64));
+        WriteArtifact("alkaros_c_20260924T030000Z.dump", PlainMarker + " no sidecar", sidecar: false);
+
+        var run1 = await (await manager.PostAsync(BackupJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Failed", run1.GetProperty("lastStatus").GetString());
+        Assert.Contains("1 yedek yüklendi", run1.GetProperty("lastSummary").GetString());
+        Assert.Contains("alkaros_b_20260924T020000Z.dump", run1.GetProperty("lastSummary").GetString());
+
+        // Only the verified artifact reached the target, and never as plaintext.
+        var shipped = Directory.GetFiles(_backupTargetDirectory);
+        Assert.Single(shipped);
+        Assert.EndsWith("alkaros_a_20260924T010000Z.dump.enc", shipped[0]);
+        Assert.DoesNotContain(PlainMarker, System.Text.Encoding.UTF8.GetString(File.ReadAllBytes(shipped[0])));
+
+        // The RPO report shows the truth: a dump only proves the 24 h class.
+        var rpo = await manager.GetFromJsonAsync<JsonElement>("/api/v1/management/security/backup/rpo");
+        bool Meets(string dataClass) => rpo.EnumerateArray()
+            .Single(item => item.GetProperty("dataClass").GetString() == dataClass).GetProperty("meetsTarget").GetBoolean();
+        Assert.True(Meets("Settings"));
+        Assert.False(Meets("Fiscal"));
+        Assert.False(Meets("OrdersInventory"));
+
+        // Fixing the checksum ships the second one; the first is never uploaded twice.
+        WriteArtifact("alkaros_b_20260924T020000Z.dump", PlainMarker + " corrupt");
+        var run2 = await (await manager.PostAsync(BackupJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Succeeded", run2.GetProperty("lastStatus").GetString());
+        Assert.Contains("1 yedek yüklendi, 1 yedek zaten uzakta", run2.GetProperty("lastSummary").GetString());
+        var run3 = await (await manager.PostAsync(BackupJobRunPath, null)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Contains("0 yedek yüklendi, 2 yedek zaten uzakta", run3.GetProperty("lastSummary").GetString());
+        Assert.Equal(2, Directory.GetFiles(_backupTargetDirectory).Length);
     }
 
     private HttpClient CreateClient(string? managerToken)
