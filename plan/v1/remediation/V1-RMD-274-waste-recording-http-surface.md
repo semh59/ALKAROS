@@ -50,7 +50,7 @@ Kaydı yapan yönetici oturumdan alınır (istemci kimlik gönderemez). Türkçe
 
 - V11-INV-006
 - V1-RMD-143
-- V1-RMD-273
+- V1-RMD-272
 
 ## Acceptance evidence
 
