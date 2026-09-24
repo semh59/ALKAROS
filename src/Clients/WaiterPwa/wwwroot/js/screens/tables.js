@@ -116,7 +116,11 @@ export function renderTables() {
   }
 
   el.tablesGrid.innerHTML = visible.map((table) => {
-    const status = TABLE_STATUS[table.status] || { label: table.status, cls: '' };
+    // V1-RMD-259: TABLE_STATUS above covers every real TableState value
+    // (canonical-value-catalog.md section C) - this fallback only guards
+    // against a future/unknown value ever reaching this screen, and must
+    // never render it raw (docs/UI_STYLE_GUIDE.md §3).
+    const status = TABLE_STATUS[table.status] || { label: 'Bilinmiyor', cls: '' };
     // V1-RMD-169: found by the 2026-09-10 Garson audit (foundations.md
     // §0.2) — this used to read `table.amount > 0`, deriving whether a
     // table is occupied from money instead of the server's own status
