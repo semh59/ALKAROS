@@ -131,12 +131,15 @@
       state.cashSessionId = cashResult.ok ? cashResult.body.cashSessionId : null;
       if (!state.cashSessionOpen) state.selectedMethod = 'Eft';
 
-      // Sunucu Unknown/RequiresReconciliation için hiçbir allocation
-      // yazmıyor (V13-PUI-001'in kendi bilinen sınırı - gerçek Token/Beko
-      // terminali olmadan böyle bir Payment satırı hiç oluşmuyor), bu
-      // yüzden kilit sunucu tarafında değil, bu sayfanın kendi oturumu
-      // içinde tutuluyor: bir kez RequiresReconciliation görülünce bu
-      // sekmede aynı hesaba yeni tahsilat eklenemez.
+      // V1-RMD-258/V13-RMD-002: the server persists a real, unresolved
+      // Payment (Pending/Unknown/ReconciliationRequired) for this bill and
+      // reports it as `summary.unsettledPayment` - the lock is re-derived
+      // from THIS on every load, not tracked purely in this page's own
+      // in-memory state, so a page reload after an unresolved BankCard
+      // attempt correctly shows the same "manuel mutabakat gerekiyor"
+      // banner instead of silently letting a new tender attempt through
+      // client-side only to be rejected by the server with a generic error.
+      state.locked = !!state.summary.unsettledPayment;
       state.amountDraft = remainingAmount().toFixed(2);
       state.phase = remainingAmount() <= 0.004 ? 'paid' : 'ready';
       render();
@@ -155,6 +158,11 @@
     return api(tendersBase()).then(function (result) {
       if (!result.ok) return;
       state.summary = result.body;
+      // Re-derive the lock from server truth on every refresh, same as
+      // loadEverything() does on initial load (V1-RMD-258/V13-RMD-002) -
+      // this both sets the lock when a fresh RequiresReconciliation lands,
+      // and clears it once a real resolution exists server-side.
+      state.locked = !!state.summary.unsettledPayment;
       if (remainingAmount() <= 0.004 && !state.locked) state.phase = 'paid';
     });
   }
@@ -209,6 +217,17 @@
       state.busy = false;
       if (!result.ok) {
         state.error = describeHttpFailure(result.status, result.body);
+        // A concurrently-created unresolved Payment (e.g. another tab, or
+        // this exact lock having been dropped by a stale reload before this
+        // fix) can reject a submit with TENDER_UNSETTLED_PAYMENT_EXISTS -
+        // refresh so the real "manuel mutabakat gerekiyor" banner replaces
+        // the generic error message instead of leaving the cashier with
+        // only an ambiguous failure toast.
+        var code = result.body && result.body.error && result.body.error.code;
+        if (code === 'TENDER_UNSETTLED_PAYMENT_EXISTS') {
+          state.error = null;
+          return refreshSummary().then(render);
+        }
         render();
         return;
       }
