@@ -400,6 +400,33 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         Assert.DoesNotContain("cannot be", text);
     }
 
+    [Theory]
+    [InlineData(200, HttpStatusCode.Accepted)]
+    [InlineData(201, HttpStatusCode.BadRequest)]
+    public async Task ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(int length, HttpStatusCode expected)
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/qr/orders");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        request.Content = JsonContent.Create(new QrOrderSubmissionRequest(
+            [new QrOrderSubmissionItemRequest(Guid.NewGuid(), product, 1, new string('a', length))], Guid.NewGuid()));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(expected, response.StatusCode);
+        if (expected == HttpStatusCode.BadRequest)
+        {
+            var text = await response.Content.ReadAsStringAsync();
+            Assert.Contains("İstek doğrulanamadı.", text);
+            Assert.DoesNotContain("cannot exceed", text);
+        }
+    }
+
     /// <summary>
     /// V12-QRO-004 (Semih's decision, 2026-09-12: two separate guests should
     /// not be forced to share one phone to order): a second guest at an already-occupied

@@ -22,6 +22,16 @@
   <ItemGroup>
     <None Include="../../../../database/migrations/V1/V1-TBL-001/010-tables.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V1/V1-CAT-001/006-catalog.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-004/059-stock-master.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-009/118-stock-items-reorder-point.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-001/060-stock-movements.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-002/061-stock-balances.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-UNT-001/057-unit-conversions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-RCP-001/058-recipe-versions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-RCP-003/115-product-recipe-mappings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-RCP-004/116-theoretical-consumption-records.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-RMD-152/095-modifier-stock-mappings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-RMD-125/087-inventory-stock-balances-non-negative.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- V1-RMD-128: catalog.products.is_available, checked by DualScreenStore.GetCatalogAsync -->
     <None Include="../../../../database/migrations/V1/V1-GOV-040/040-wave9-schema-additions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- V1-WTR-017: catalog.products.prep_time_minutes, also selected by

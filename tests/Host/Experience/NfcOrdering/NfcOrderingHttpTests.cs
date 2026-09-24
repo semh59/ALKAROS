@@ -67,6 +67,29 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
         Assert.Equal(1, await _database.KitchenTicketCountAsync(order.OrderId));
     }
 
+    [Theory]
+    [InlineData(200, HttpStatusCode.OK)]
+    [InlineData(201, HttpStatusCode.BadRequest)]
+    public async Task ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(int length, HttpStatusCode expected)
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1, new string('a', length))], Guid.NewGuid()));
+
+        Assert.Equal(expected, response.StatusCode);
+        if (expected == HttpStatusCode.BadRequest)
+        {
+            var text = await response.Content.ReadAsStringAsync();
+            Assert.Contains("İstek doğrulanamadı.", text);
+            Assert.DoesNotContain("cannot exceed", text);
+        }
+    }
+
     [Fact]
     public async Task RetryingTheSameSubmissionReplaysTheExistingOrderInsteadOfDuplicatingIt()
     {

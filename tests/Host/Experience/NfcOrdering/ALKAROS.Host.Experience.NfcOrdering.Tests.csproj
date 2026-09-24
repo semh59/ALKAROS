@@ -39,6 +39,7 @@
     <!-- V1-RMD-143: OrderStockConsumptionService's own schema, exercised by
          NFC's own trusted immediate-accept path. -->
     <None Include="../../../../database/migrations/V11/V11-INV-004/059-stock-master.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V11/V11-INV-009/118-stock-items-reorder-point.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V11/V11-INV-001/060-stock-movements.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V11/V11-INV-002/061-stock-balances.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- V1-RMD-152: what a modifier consumes. -->

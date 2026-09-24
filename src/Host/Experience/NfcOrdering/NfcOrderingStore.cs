@@ -42,6 +42,8 @@ public sealed class NfcOrderingStore
     // real single-table order could plausibly exceed.
     private const int MaxQuantityPerItem = 999;
     private const int MaxItemsPerSubmission = 50;
+    // Same bound the guest clients enforce with maxlength; the server must not trust that.
+    private const int MaxSpecialInstructionsLength = 200;
 
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
@@ -79,6 +81,9 @@ public sealed class NfcOrderingStore
             if (line.Quantity > MaxQuantityPerItem)
                 throw new ArgumentException(
                     $"Quantity for product {line.ProductId} cannot exceed {MaxQuantityPerItem}.", nameof(request));
+            if (line.SpecialInstructions is { Length: > MaxSpecialInstructionsLength })
+                throw new ArgumentException(
+                    $"Special instructions cannot exceed {MaxSpecialInstructionsLength} characters.", nameof(request));
         }
 
         await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken))

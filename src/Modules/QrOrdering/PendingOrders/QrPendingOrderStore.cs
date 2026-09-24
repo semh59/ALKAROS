@@ -35,6 +35,7 @@ public sealed class QrPendingOrderStore
     // bounds so the two anonymous ordering channels don't drift apart.
     private const int MaxQuantityPerItem = 999;
     private const int MaxItemsPerSubmission = 50;
+    private const int MaxSpecialInstructionsLength = 200;
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -89,6 +90,9 @@ public sealed class QrPendingOrderStore
                 if (line.Quantity > MaxQuantityPerItem)
                     throw new ArgumentException(
                         $"Quantity for product {line.ProductId} cannot exceed {MaxQuantityPerItem}.", nameof(request));
+                if (line.SpecialInstructions is { Length: > MaxSpecialInstructionsLength })
+                    throw new ArgumentException(
+                        $"Special instructions cannot exceed {MaxSpecialInstructionsLength} characters.", nameof(request));
                 if (!catalog.TryGetValue(line.ProductId, out var product))
                     throw new QrOrderInvalidProductException(line.ProductId);
 
