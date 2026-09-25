@@ -27,7 +27,8 @@ gönderim katsayıyı değiştirir.
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-275-recipe-management-http-surface.md`
-- `src/Host/Experience/Recipes/RecipeManagementEndpoints.cs`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Recipes/RecipeManagementEndpoints.cs
+  (V11-RCP-003 sahipliğindeki klasöre eklenen yeni dosya)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Recipes/RecipeCatalogMappingEndpoints.cs
   (V11-RCP-003 sahipliğinde kalır — yalnız servis kayıtları, `MapRecipeManagement()` çağrısı ve hata eşlemeleri)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Recipes/RecipeManagementHttpTests.cs
