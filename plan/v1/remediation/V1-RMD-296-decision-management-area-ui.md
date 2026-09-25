@@ -25,6 +25,8 @@
 ## Out of scope
 
 - Ekranların uygulanması.
+- Ertelendi (2026-09-25): yönetici ekranları sonraya bırakılmıştı; bu görev güncel yolda değildir, Faz 3-5 sonrası ele alınır.
+- Ertelendi (2026-09-25): yönetici ekranları sonraya bırakılmıştı; bu görev güncel yolda değildir, Faz 3-5 sonrası ele alınır.
 
 ## Dependencies
 
@@ -38,4 +40,4 @@
 
 ## Handoff
 
-- Ertelendi (2026-09-25): Semih yönetici ekranlarını sonraya bırakmıştı; bu görev güncel yolda değildir, Faz 3-5 sonrası ele alınır.
+- None

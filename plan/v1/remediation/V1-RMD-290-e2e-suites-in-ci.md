@@ -1,8 +1,8 @@
 # V1-RMD-290 - Cashier ve WaiterPwa E2E paketleri CI'da koşar
 
 - Task ID: V1-RMD-290
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: remediation
 - Surface state: Existing
 
@@ -34,7 +34,9 @@ Cashier (33) ve WaiterPwa (43) E2E senaryoları yalnızca yerelde koşuyor; bu y
 
 ## Acceptance evidence
 
-- CI'da E2E işinin yeşil koşusu (Cashier 33/33, WaiterPwa 43/43) ve bilerek kırılmış bir senaryoda işin kırmızı olması.
+- CI koşusu 36160379565 (master, `e2e` işi): Cashier 33/33, WaiterPwa 43/43 yeşil; aynı koşuda PosTerminal 201 test ve Python mimari testleri 215 geçti.
+- Kırmızı yol: `ci-e2e-red-check` dalında Cashier 01 spec'ine bilerek başarısız doğrulama eklendi; koşu 36168831021'de `e2e` işi failure (1 failed, 32 passed). Dal silindi.
+- Başarısız koşuda rapor ve izler `e2e-reports` artifact'ı olarak yüklenir (14 gün).
 - `plan_audit_tool.py validate` temiz.
 
 ## Handoff

@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1312,
-  "markdown_line_count": 100537,
-  "markdown_byte_count": 5741792,
+  "markdown_line_count": 100541,
+  "markdown_byte_count": 5742355,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2521,7 +2521,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "8C38ACF8974B1B28B3CC0756B1509106C953B067D79FB59B89D4468F346845B7",
+      "sha256": "A3506D917128659822187AA8E7C5FE884174C294FAAB8CDCC55A6A54E4616C4D",
       "lines": 2588,
       "bytes": 376824,
       "utf8": true
@@ -7239,9 +7239,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-290-e2e-suites-in-ci.md",
-      "sha256": "2DF2D8E7EE425A558436342B67A88144F2C4162C168F71CECB271EB6CC8375CE",
-      "lines": 42,
-      "bytes": 1272,
+      "sha256": "BEF657C0A61EE2B2CF4CA9668019167E7AE994726021F57A71CC8B76BF41E190",
+      "lines": 44,
+      "bytes": 1555,
       "utf8": true
     },
     {
@@ -7281,9 +7281,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-296-decision-management-area-ui.md",
-      "sha256": "188B5B4817CB1C9FC53CBD7B553B5022983C2E7F8CFC7B73FB653768A0FAC4B5",
-      "lines": 41,
-      "bytes": 1569,
+      "sha256": "BA7E4B6C9F6C1B6B8558C522089283249EABCFE46957570EE27976FCC67FCE9F",
+      "lines": 43,
+      "bytes": 1849,
       "utf8": true
     },
     {
