@@ -68,6 +68,15 @@ public sealed class RecipeCatalogMappingTestDatabase : PgTestDatabase
             """);
     }
 
+    public async Task<Guid> SeedStockItemAsync(string code, string trackingUnitCode = "kg")
+    {
+        var id = Guid.NewGuid();
+        await ExecuteAsync(
+            "INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code) VALUES (@id, @code, @code, 'RawMaterial', @unit);",
+            ("id", id), ("code", code), ("unit", trackingUnitCode));
+        return id;
+    }
+
     public async Task<Guid> SeedRecipeAsync(string code)
     {
         var id = Guid.NewGuid();

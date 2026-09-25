@@ -1,5 +1,8 @@
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Measurements;
 using ALKAROS.Recipes.CatalogMapping;
+using ALKAROS.Recipes.Units;
+using ALKAROS.Recipes.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -29,6 +32,12 @@ public static class RecipeCatalogMappingEndpoints
     {
         ArgumentNullException.ThrowIfNull(services);
         services.TryAddScoped<IProductRecipeMappingRepository, PostgresProductRecipeMappingRepository>();
+        // V1-RMD-275: recipe catalog management (V11-RCP-001) and custom unit conversions (V11-UNT-001).
+        services.TryAddTransient<IUnitConverter, UnitConverter>();
+        services.TryAddScoped<IUnitConversionRepository, PostgresUnitConversionRepository>();
+        services.TryAddScoped<IRecipeRepository, PostgresRecipeRepository>();
+        services.TryAddScoped<IRecipeVersionRepository, PostgresRecipeVersionRepository>();
+        services.TryAddScoped<IRecipeLifecycleService, RecipeLifecycleService>();
 
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
@@ -76,6 +85,8 @@ public static class RecipeCatalogMappingEndpoints
             await mappings.RemoveAsync(productId, cancellationToken);
             return Results.NoContent();
         });
+
+        group.MapRecipeManagement();
 
         return group;
     }
@@ -154,7 +165,12 @@ public sealed class RecipeCatalogMappingEndpointFilter : IEndpointFilter
         RecipeCatalogMappingUnauthorizedException => (401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetki gerekiyor."),
         ProductRecipeMappingNotFoundException => (404, "NOT_FOUND", "Bu ürün için reçete eşlemesi bulunamadı."),
+        RecipeNotFoundException => (404, "NOT_FOUND", "İstenen reçete ya da sürümü bulunamadı."),
+        RecipeVersionImmutableException => (409, "VERSION_IMMUTABLE", "Etkinleştirilmiş ya da kilitlenmiş reçete sürümü değiştirilemez; yeni bir taslak sürüm oluşturun."),
+        RecipeVersionConflictException => (409, "VERSION_CONFLICT", "Reçete sürümü mevcut durumuyla bu işleme uygun değil."),
+        InvalidRecipeVersionException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı: reçete sürümü bilgileri geçerli olmalı."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } => (409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
         PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } => (400, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
