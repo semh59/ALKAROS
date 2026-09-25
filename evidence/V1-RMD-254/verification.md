@@ -1,6 +1,7 @@
 # V1-RMD-254 — Verification transcript
 
 ## Ortam
+
 - Chromium 141.0.7390.37 (`/opt/pw-browsers/chromium-1194`, Playwright 1.56.1)
 - WaiterPwa statik dosyaları gerçek olarak sunuldu; `/api/v1/*` uç noktaları
   (session, runtime-configuration, zones, catalog, tables, pending) temsili
@@ -8,6 +9,7 @@
   Reserved, Cleaning, OutOfService) kapsanacak şekilde.
 
 ## Ölçüm — düzeltmeden önce (`git stash` ile geçici olarak eski koda dönülüp
+
 alındı, sonra `git stash pop` ile düzeltme geri getirildi)
 
 | Masa | Durum etiketi | Tutar alanı |
@@ -47,7 +49,7 @@ değişmedi.
 
 ## Otomatik testler
 
-```
+```text
 $ cd tests/Clients/StaticApps && npx vitest run waiter-app.test.js
  Test Files  1 passed (1)
       Tests  5 passed (5)

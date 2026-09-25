@@ -25,7 +25,7 @@ task, independent of whether/when the corresponding E2E spec gets written:
 ## 1. Where the project actually stands today (verified by reading every relevant file, not assumed)
 
 | Client / surface | Tech | E2E/Playwright coverage today | Unit/HTTP coverage |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **WaiterPwa** | vanilla JS PWA, 16 ES modules | 5 specs (`01`–`05`): login, ordering, waiter-actions (comp/void-sent/help/transfer/transfer-server/shift-summary — genuinely thorough), performance, 6-terminal load | None (E2E-only client by design) |
 | **Cashier** | vanilla JS PWA | 6 specs (`01`–`06`): login/catalog, stock badge/dispatch, screensaver, comp line, cash-session lifecycle, cash-session conflict. **Zero specs touch the new `payments/split-payment/` page.** | None |
 | **PosTerminal** | React 19 + Vite + TS, multi-role single app | **Zero Playwright specs exist for any of it.** | `vitest run`, extensive per-route `.test.tsx` (jsdom, mocked API) |

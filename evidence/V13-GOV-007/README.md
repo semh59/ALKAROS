@@ -29,6 +29,7 @@ bir proje olarak burada tutuluyor.
 ## Doğrulanan vs DOĞRULANMAYAN
 
 **Doğrulanan (gerçek QNB dokümantasyonuna karşı, 23/23 test yeşil):**
+
 - SOAP zarf şekli: `wsLogin`/`logout` (userService), `belgeGonderExt`/
   `gidenBelgeDurumSorgulaExt`/`kayitliKullaniciListeleExtended`
   (connectorService).
@@ -49,6 +50,7 @@ bir proje olarak burada tutuluyor.
   testler bunu yakaladı, sıra değiştirilip düzeltildi).
 
 **DOĞRULANMAYAN (gerçek test tenant olmadan doğrulanamaz):**
+
 - Gerçek bir QNB sunucusuna hiç bağlanılmadı.
 - `gonderimDurumu == 3` durumunun 6+ farklı senaryosunun (aynı sayısal
   kod altında, yalnız serbest metin `gonderimCevabiDetayi` ile ayrışan)
@@ -64,7 +66,7 @@ bir proje olarak burada tutuluyor.
 
 ## Nasıl çalıştırılır
 
-```
+```text
 cd evidence/V13-GOV-007/qnb-efatura-adapter-draft
 dotnet test tests/QnbEFaturaAdapterDraft.Tests.csproj
 ```

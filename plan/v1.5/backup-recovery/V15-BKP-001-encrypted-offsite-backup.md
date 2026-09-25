@@ -94,7 +94,7 @@ Doğrulanmış şifrelenmiş veritabanı yapılarını, saklama ve anahtar meta 
   (3 deneme de başarısız → `IStructuredEventLogger`'a
   `offsitebackup.upload.failed` Critical event + `OffsiteBackupUploadFailedException`).
 - **Ölçülen backup sıklığı/RPO eşiği karşılaştırması:** `RpoCoverageChecker`
-  + 4 test — en yeni receipt'in yaşı `docs/recovery/rpo-rto-targets.md`'nin
+  - 4 test — en yeni receipt'in yaşı `docs/recovery/rpo-rto-targets.md`'nin
   onaylı hedefine (Fiscal 5dk, OrdersInventory 1sa, Settings 24sa) göre
   ölçülüyor.
 - **RPO=5dk (WAL) karşılanma ölçümü:** `WalArchiveFreshnessChecker` + 5 test

@@ -23,6 +23,7 @@ Uygulama ayrıca `window.alert()`'ten kendi sayfa-içi `toast()`'una geçmiş
 
 Ayrıca kod incelenirken (üretim koduna DOKUNULMADAN, yalnız testleri
 gerçek akışa göre kurarken) iki gerçek, ilgisiz kusur daha bulundu:
+
 1. `tests/Clients/StaticApps/support/fetchRouter.js`'nin sahte fetch
    yanıtı hiç `headers` taşımıyordu — V1-RMD-205'te zaten düzeltildi.
 2. jsdom `CSS.escape`'i hiç desteklemiyor; `waiter-app.js`'in ürün

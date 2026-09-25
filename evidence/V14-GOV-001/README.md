@@ -22,7 +22,7 @@ kabul edip yine de taslak istedi (`V13-GOV-006`/`V13-GOV-007` ile aynı
 V0-CMP-003/kvkk-data-inventory.md`) okuyunca şu netleşti:
 
 | Kategori | Alanlar | Erişim rolü |
-|---|---|---|
+| --- | --- | --- |
 | **Customer PII** | name, phone, email, address | Manager, **Cashier** |
 | **Invoice data** | customer name, **tax ID**, amount | Manager, **Finance** |
 
@@ -37,6 +37,7 @@ kimliği alanı yok.
 ## Doğrulanan vs DOĞRULANMAYAN
 
 **Doğrulanan (V0-CMP-003'ün gerçek envanterine göre, 8/8 test yeşil):**
+
 - Alan seti (`name`/`phone`/`email`/`address`) envanterle birebir eşleşiyor.
 - 10 yıllık saklama süresi (envanterdeki "10 years (tax)" değeri).
 - Rol bazlı erişim: Cashier VE Manager ikisi de tam görür, başka rol hiçbir
@@ -46,6 +47,7 @@ kimliği alanı yok.
 - Anonimleştirilmiş bir müşteriye fatura kesme girişimi reddediliyor.
 
 **DOĞRULANMAYAN:**
+
 - Gerçek bir veritabanına hiç bağlanılmadı — migration/repository yok.
 - `GATE-V14-ENTRY` kapanmadan bu taslağın gerçek domain modeliyle birebir
   aynı kalıp kalmayacağı garanti değil.

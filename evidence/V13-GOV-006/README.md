@@ -22,6 +22,7 @@ production'a girmez.
 ## Doğrulanan vs DOĞRULANMAYAN
 
 **Doğrulanan (gerçek Token dokümantasyonuna karşı, 21/21 test yeşil):**
+
 - Auth akışının gerçek tuhaflığı: `POST /v1/auth/token` başarı durumunda
   body `status: 201` döndürüyor (diğer TÜM endpoint'lerin `status: 0`
   konvansiyonunun aksine) — bu asimetriyi ilk yazımda ıskalamıştım, kendi
@@ -65,6 +66,7 @@ metod dönene kadar `HttpRequestMessage`'ı (ve içeriğini) dispose ediyor.
 edilmeden ÖNCE okuyup ayrı bir `RequestBodies` listesine kaydediyor.
 
 **DOĞRULANMAYAN (gerçek cihaz/sandbox olmadan doğrulanamaz):**
+
 - Bu şemanın TokenX Connect **Cloud**'da (buradaki testler Wire/genel
   dokümantasyondan alınan `paymentItems`/`sale` şeklini kullanıyor,
   V0-HUG-001'in kendi notunda bu bir varsayım olarak işaretli) birebir
@@ -78,7 +80,7 @@ edilmeden ÖNCE okuyup ayrı bir `RequestBodies` listesine kaydediyor.
 
 ## Nasıl çalıştırılır
 
-```
+```text
 cd evidence/V13-GOV-006/token-adapter-draft
 dotnet test tests/TokenAdapterDraft.Tests.csproj
 ```

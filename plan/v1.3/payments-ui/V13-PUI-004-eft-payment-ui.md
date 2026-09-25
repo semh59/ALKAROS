@@ -75,7 +75,7 @@ tercihi).
   → sözdizimi hatasız.
 - Gerçek Postgres'e karşı (`ALKAROS.Host.Experience.PaymentTender.Tests`,
   `alkaros-test-pg`, port 55432): 11/11 yeşil (10 önceki V13-PUI-001 testi
-  + yeni `EftOnlyTenderFullyClosingTheBillReflectsZeroRemainingAmount` —
+  - yeni `EftOnlyTenderFullyClosingTheBillReflectsZeroRemainingAmount` —
   iki ayrı EFT tahsilatıyla (50+25=75) bir hesabın `remainingAmount`
   alanının sunucu tarafında tam sıfıra ulaştığını, tek bir client-side
   hesaplamaya değil sunucunun kendi GET özetine dayanarak kanıtlıyor —

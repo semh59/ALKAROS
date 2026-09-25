@@ -83,7 +83,8 @@ biter" diyerek self-declared configuration çözümünü önerdi, (3) gerçek
 GİB kaynağı (VUK 509 IV.12, zaten `evidence/v0/compliance/V0-CMP-001/
 gib-applicability-matrix.md`'de kayıtlı) kontrol edildi ve önerinin bu
 kaynağın kendi yayımladığı 3 boolean koşula (masada servis + gerçek usul
-+ e-Fatura/e-Arşiv mükellefiyeti) birebir eşlendiği doğrulandı, (4) önerinin
+
+- e-Fatura/e-Arşiv mükellefiyeti) birebir eşlendiği doğrulandı, (4) önerinin
 `V20-CMP-001`'in kendi ayrı sorusunu (Token/Beko belgesinin hukuken yeterli
 olup olmadığı) KAPATMADIĞI açıkça belirtildi ve Semih bu ayrımla devam
 onayı verdi. Gerekçe: her restoranın kendi vergi/hizmet profilini

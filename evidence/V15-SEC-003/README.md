@@ -45,11 +45,11 @@ gerekmedi, dosyanın kendisi düzeltildi):
 Aynı oturumda, aynı dizindeki (`src/Modules/Security/DataProtectionRetention/**`)
 iki ayrı düşük-öncelikli bulgu da düzeltildi:
 
-6. `DeletionQueueProcessor.ProcessAsync`: audit event artık `PurgeAsync`
+1. `DeletionQueueProcessor.ProcessAsync`: audit event artık `PurgeAsync`
    BAŞARIYLA tamamlandıktan SONRA yazılıyor (önceden tersiydi — purge
    başarısız olursa audit trail'de gerçekleşmemiş bir purge için sahte kayıt
    riski vardı).
-7. `RetentionExecutionService.RunSweepAsync`: `Retain` aksiyon kontrolü artık
+2. `RetentionExecutionService.RunSweepAsync`: `Retain` aksiyon kontrolü artık
    süre kontrolünden ÖNCE yapılıyor — `FiscalData`/`InvoiceData` (her ikisi de
    `Retain`, süre `null`) artık doğru şekilde `SkippedRetain` kovasına
    düşüyor (davranış zaten doğruydu, yalnız raporlama kovası yanlıştı).

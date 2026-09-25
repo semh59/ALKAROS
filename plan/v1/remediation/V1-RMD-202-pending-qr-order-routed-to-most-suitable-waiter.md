@@ -19,6 +19,7 @@ altyapıyı `OrderPendingConfirmation` yoluna da bağlar, ama hedef kullanıcıy
 "en uygun garson" seçimiyle bulur.
 
 "En uygun" tanımı (Semih'in kararı, 2026-09-15 sohbeti):
+
 1. Adayın oturumu açık olmalı (`identity.device_sessions`, süre az önce
    V1-IAM-031 ile 8 saate düşürüldü) VE `orders.send` iznini taşımalı.
 2. Adaylar arasından en az aktif (kapanmamış) siparişi olan seçilir —
@@ -47,7 +48,7 @@ altyapıyı `OrderPendingConfirmation` yoluna da bağlar, ama hedef kullanıcıy
 
 1. `ResolveMostSuitableWaiterAsync(CancellationToken)`: tek bir SQL
    sorgusuyla (identity.users + user_roles + role_permissions + permissions
-   + device_sessions + orders.orders) en uygun garsonun `user_id`'sini
+   - device_sessions + orders.orders) en uygun garsonun `user_id`'sini
    (veya adayı yoksa `null`) döndürür.
 2. `AnnounceAsync`: hedef bulunursa SignalR `Clients.Group(WaiterOrderStatusHub
    .GroupName(id))` ve push `SendToUserAsync`; bulunamazsa mevcut

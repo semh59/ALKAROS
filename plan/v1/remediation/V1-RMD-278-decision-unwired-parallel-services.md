@@ -22,7 +22,7 @@ bağlanırlarsa aynı tüketim iki kez düşülebilir. Kod SİLİNMEDİ (testli,
 benimsenebilir), yalnız `unreachable_services_allowlist.json` içinde bu karara bağlandı.
 
 | Aile | Türler | Gerekçe |
-|---|---|---|
+| --- | --- | --- |
 | Porsiyon rezervasyonu | `IPortionReservationLifecycleService`, `IPortionReservationArbitrator` (+ depolar), `IPortionCancellationDecisionService`, `IKitchenItemStateProvider` | Tüketim `OrderStockConsumptionService` ile düşülüyor; rezervasyon yaşam döngüsü ikinci bir düşüm yolu açar. Benimsemek sipariş akışında (bekleyen → kabul → iptal) mimari bir değişikliktir. |
 | Rezervasyon bakiyesi | `IReservationBalanceProjector` (+ depo) | Yalnız rezervasyon ailesinin izdüşümü; onsuz anlamsız. |
 | Stok hareket servisi | `IStockMovementService` | Fire ve sayım gibi çalışan yollar hareket deposunu doğrudan kullanıyor; genel servis kimseye gerekmedi. |

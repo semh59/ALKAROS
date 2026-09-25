@@ -91,4 +91,3 @@ Sınırlı ek (yollar geri-tik olmadan):
   uyarı.
 - `python tools/consistency-audit/consistency_audit.py` → temiz.
 - `python tools/project-manifest/project_manifest_tool.py` → VALID.
-

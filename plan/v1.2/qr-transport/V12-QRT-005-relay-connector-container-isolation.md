@@ -193,7 +193,7 @@ tablo; ne HTTP ne de shared-memory).
   kod paylaşımı olmadan küçük bir kopya — çapraz-bağımlılık yaratmamak
   için), DI kaydı (Secrets/SensitiveData building block'ları
   `QrOrderingModule.Register`'daki ile birebir aynı), `RelayConnectorSupervisor`
-  + yeni `RelayConnectorStatusPublisher`'ı hosted service olarak başlatma.
+  - yeni `RelayConnectorStatusPublisher`'ı hosted service olarak başlatma.
 - Yeni Dockerfile stage'i ve compose servis tanımı; connector, compose
   ağında tam bağımsız bir container (`network_mode` paylaşımı YOK — bu
   yaklaşım denenip gerçek testte reddedildi, yukarıya bakın).

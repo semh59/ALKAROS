@@ -36,7 +36,8 @@ YAZILMAZ (dependency kilidini bypass etmemek için); bunun yerine bu
 governance task'ın kendi Owned surface'ı altında, ana solution'a
 (`ALKAROS.slnx`) bağlanmamış, ayrı/standalone bir referans projesi olarak
 tutulur. `V14-QNB-001/002` gerçekten başladığında (test tenant credential'ı
-+ v1.4 domain nesneleri hazır olunca) bu taslağı kendi Owned surface'ına
+
+- v1.4 domain nesneleri hazır olunca) bu taslağı kendi Owned surface'ına
 taşıyıp gerçek sandbox kanıtıyla tamamlar — bu görev o taşımayı yapmaz,
 sadece taslağı üretir.
 

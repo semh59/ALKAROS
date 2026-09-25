@@ -65,7 +65,7 @@ parse etmesin, V1-RMD-111 emsali):
   dokunmadığını kanıtlar).
 - tests/Host/Experience/KitchenOperations/** (V1-RMD-082 test sahipliğinde)
   — yeni KitchenOperationsStore.NotificationDispatchTests.cs, elle yazılmış
-  bir IHubContext<WaiterOrderStatusHub> sahtesiyle
+  bir `IHubContext<WaiterOrderStatusHub>` sahtesiyle
   DispatchItemReadyNotificationAsync'in ServingUserId varken
   Clients.Group(GroupName(id))'i, yokken Clients.All'ı çağırdığını doğrudan
   doğrular (Postgres/tam store kurulumu gerektirmez — yalnız ilgili statik

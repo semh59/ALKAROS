@@ -15,7 +15,7 @@ açılıp sonra laciverte geçerdi.
 
 ## Gerçek build/test sonuçları (Docker + gerçek Postgres)
 
-```
+```text
 $ dotnet build ALKAROS.slnx --configuration Release --no-restore
 Build succeeded. 0 Warning(s), 0 Error(s)
 
@@ -25,15 +25,17 @@ Build succeeded. 0 Warning(s), 0 Error(s)
 $ dotnet test tests/Modules/Settings/BusinessIdentity/ALKAROS.Settings.BusinessIdentity.Tests.csproj
 Passed! - Failed: 0, Passed: 24, Skipped: 0, Total: 24
 ```
+
 (Tüm testler `BusinessAccentPalette.DefaultKey`'e dinamik referans veriyordu
 — hiçbiri `"amber"`'ı hardcoded beklemiyordu — bu yüzden değişiklik
 regresyonsuz geçti; bu da ayrıca doğrulandı: kod tabanında `"amber"` sabit
 literal'i yalnızca palet tanımının kendisinde kalıyor.)
 
-```
+```text
 $ dotnet test tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj
 Failed! - Failed: 2, Passed: 28, Skipped: 0, Total: 30
 ```
+
 Kalan 2 başarısızlık (`AValidSessionListsAvailableProductsOnTheMenu`,
 `AnUnavailableProductIsHiddenFromTheMenu`) V1-SET-007/008'in kendi
 verification.md'lerinde `git stash` ile zaten bu görevlerden bağımsız/
@@ -42,7 +44,7 @@ verification.md'lerinde `git stash` ile zaten bu görevlerden bağımsız/
 28 test yeşil — gerçek bir HTTP çağrısıyla yeni varsayılanın
 `GET /api/v1/qr/branding` üzerinden de doğru yansıdığı doğrulandı.
 
-```
+```text
 $ python -m pytest tests/Apps/CustomerWeb -q
 16 passed
 ```
@@ -61,7 +63,7 @@ değeriyle birebir aynı.
 
 ## Gate'ler
 
-```
+```text
 $ python tools/plan-audit/plan_audit_tool.py validate
 Validation errors: 1 (C54_APPLICATION_ADMISSION_V3_FINAL_MISSING — öncedendi,
 ilgisiz, değişmedi)
@@ -76,7 +78,7 @@ consistency-audit: clean
 `git status --short`, Owned surface (tamamı "Sınırlı ek") ile birebir
 eşleşiyor:
 
-```
+```text
  M src/Apps/CustomerWeb/Bill/wwwroot/bill.css
  M src/Apps/CustomerWeb/Menu/wwwroot/menu-app.css
  M src/Apps/CustomerWeb/OrderEntry/wwwroot/order-entry.css

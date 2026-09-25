@@ -37,7 +37,7 @@ idempotency, status query" maddelerinin tümüne karşılık geliyor.
 ## Gerçek test ortamı URL'leri (bulundu, tahmin değil)
 
 | Servis | URL |
-|---|---|
+| --- | --- |
 | e-Fatura connector (gönder/durum) | `https://erpefaturatest1.qnbesolutions.com.tr/efatura/ws/connectorService` |
 | e-Fatura kullanıcı/login servisi | `https://erpefaturatest1.qnbesolutions.com.tr/efatura/ws/userService` |
 | e-Arşiv web servisi | `https://earsivtest.qnbesolutions.com.tr/earsiv/ws/EarsivWebService` |
@@ -111,7 +111,7 @@ GÖVDESİNDEKİ if/else zincirinde (yorum değil, çalışan kontrol mantığı)
 gömülü. Tam tablo:
 
 | `durumKodu` | Anlamı |
-|---|---|
+| --- | --- |
 | 1 | Alındı durumu — 2 veya 3 olana kadar beklenmeli |
 | 2 | Fatura işleme hatası — düzeltip yeniden gönder |
 | 3 | Fatura başarıyla işlendi — `gonderimDurumu`'na bak |
@@ -119,7 +119,7 @@ gömülü. Tam tablo:
 `durumKodu == 3` ise `gonderimDurumu`:
 
 | `gonderimDurumu` | Anlamı |
-|---|---|
+| --- | --- |
 | -2 | GİB'e gönderilemedi, iptal edildi, gönderilmeyecek |
 | -1 | GİB'e gönderim kuyruğuna eklendi |
 | 0 | GİB'e gönderilemedi, sistem yeniden deneyecek |
@@ -131,7 +131,7 @@ gömülü. Tam tablo:
 `gonderimDurumu == 4` ise `yanitDurumu`:
 
 | `yanitDurumu` | Anlamı |
-|---|---|
+| --- | --- |
 | -1 | Temel fatura — karşıdan yanıt beklenmez (terminal, başarılı) |
 | 0 | Ticari fatura — yanıt bekleniyor |
 | 1 | Ticari fatura — RED uygulama yanıtı alındı |
@@ -146,6 +146,7 @@ altında ayrı `gonderimCevabiDetayi` metniyle ayrışıyor — tam ayrım metni
 sabit değil, gerçek response'a bakmak gerekiyor.
 
 **Hâlâ gerçekten eksik olanlar:**
+
 1. Gerçek rate limit sayıları (sadece "günde 1 defa" gibi öneri var).
 2. Hangi çağrılarda WS-Security header'ı da zorunlu (cookie yetiyor mu).
 3. İptal/düzeltme (cancellation) için hiçbir API metodu bu taramada

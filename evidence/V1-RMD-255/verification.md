@@ -1,6 +1,7 @@
 # V1-RMD-255 — Verification transcript
 
 ## Ortam
+
 - Chromium 141.0.7390.37 (`/opt/pw-browsers/chromium-1194`, Playwright 1.56.1)
 - Cashier statik dosyaları gerçek olarak sunuldu.
 
@@ -18,7 +19,7 @@
 
 ## Gerçek tarayıcı doğrulaması
 
-```
+```text
 logo: {"naturalWidth":1005,"naturalHeight":233,"complete":true,"alt":"ALKAROS"}
 ```
 
@@ -36,7 +37,7 @@ konu. Bilgi için not edildi, bu görevin kapsamında değiştirilmedi.
 
 ## Otomatik testler
 
-```
+```text
 $ cd tests/Clients/StaticApps && npx vitest run cashier-app.test.js
  Test Files  1 passed (1)
       Tests  12 passed (12)

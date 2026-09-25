@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1134,
-  "markdown_line_count": 83494,
-  "markdown_byte_count": 4820410,
+  "markdown_file_count": 1299,
+  "markdown_line_count": 99938,
+  "markdown_byte_count": 5716251,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "C28B1AE59C359FF8AF767621943E3E30D1748B676DE18EE511F7CBF4317012C1",
-      "lines": 4380,
-      "bytes": 213672,
+      "sha256": "0D16CE786F06857A9501169AE63B95BCF077390336419979EBE29AECFF8E8705",
+      "lines": 4444,
+      "bytes": 216837,
       "utf8": true
     }
   ],
@@ -74,20 +74,6 @@
       "sha256": "DE0D53C116B7EA5C889997C3A1C854A9E7A104234EA3C265927C108E0588F2C6",
       "lines": 88,
       "bytes": 5817,
-      "utf8": true
-    },
-    {
-      "path": "docs/CONSISTENCY_AUDIT.md",
-      "sha256": "347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7",
-      "lines": 81,
-      "bytes": 6167,
-      "utf8": true
-    },
-    {
-      "path": "docs/UI_STYLE_GUIDE.md",
-      "sha256": "48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79",
-      "lines": 71,
-      "bytes": 2977,
       "utf8": true
     },
     {
@@ -127,9 +113,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "26361E7CE3ECCAF55103D0969E0D649DEFA3DFBC1B6E8D71FEED0A0D0DEF9583",
-      "lines": 210,
-      "bytes": 13641,
+      "sha256": "98FFB7F3CC3411B39401C8803269CC2F6E5C299AA7D21F10B51A55A99A531494",
+      "lines": 217,
+      "bytes": 16665,
       "utf8": true
     },
     {
@@ -148,9 +134,9 @@
     },
     {
       "path": "docs/architecture/qr-relay-topology.md",
-      "sha256": "AC517598C05944DB72106F00A6201DF2553D5DC16F71D0A1408E137317FE2DC0",
-      "lines": 41,
-      "bytes": 1420,
+      "sha256": "5DCC614C814D0F20377449BBDD9FA652C3C0117E27981DD11F8E953234006CAB",
+      "lines": 60,
+      "bytes": 2526,
       "utf8": true
     },
     {
@@ -204,9 +190,9 @@
     },
     {
       "path": "docs/compliance/accessibility-target.md",
-      "sha256": "AB6AAC8B1B8711556DACD715D1377919A1A4B1BD7C598F2C6F7AB6F73A4DB8CE",
-      "lines": 124,
-      "bytes": 4644,
+      "sha256": "F3EB3A001C7E1DB5370ADB55E297F12C53FEB3BFEF77B37E49ECFBA4B41BFDB6",
+      "lines": 126,
+      "bytes": 5837,
       "utf8": true
     },
     {
@@ -221,6 +207,13 @@
       "sha256": "3C4B1463C67F1BA1A269BCAA57A4CC3CC5F2DEE08A11F39C0FCC41AFC4A91C17",
       "lines": 75,
       "bytes": 4618,
+      "utf8": true
+    },
+    {
+      "path": "docs/CONSISTENCY_AUDIT.md",
+      "sha256": "347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7",
+      "lines": 81,
+      "bytes": 6167,
       "utf8": true
     },
     {
@@ -315,10 +308,24 @@
       "utf8": true
     },
     {
+      "path": "docs/domain/card-tip-scope-decision.md",
+      "sha256": "C433D901F42CC365264305DE2198151AD8194C2AB81A14E92B5E00BD15D7A97D",
+      "lines": 74,
+      "bytes": 3117,
+      "utf8": true
+    },
+    {
       "path": "docs/domain/cash-session-design.md",
       "sha256": "3ACA34AA1E57DE329483F8D2AD812A31AFCB68350B8171E06416EAC8EB72FFE7",
       "lines": 128,
       "bytes": 6401,
+      "utf8": true
+    },
+    {
+      "path": "docs/domain/complimentary-line-fiscal-representation.md",
+      "sha256": "C9F2D212B0F3D6989B0EEEA80E683E4E0B5F0A90F8E1FA46BDB25BC0859F3B87",
+      "lines": 94,
+      "bytes": 4436,
       "utf8": true
     },
     {
@@ -337,9 +344,9 @@
     },
     {
       "path": "docs/domain/lifecycle-transition-contracts.md",
-      "sha256": "441BF484576E1B438A35C142BD5EDE9EB98BE4B3421E531766DAB8710C6A99EB",
-      "lines": 138,
-      "bytes": 10173,
+      "sha256": "FE31AAFC025FE76DA5AE5E50A9291BC4B6107B0C6A5B4702EC413CA674E58D26",
+      "lines": 139,
+      "bytes": 10253,
       "utf8": true
     },
     {
@@ -378,10 +385,24 @@
       "utf8": true
     },
     {
+      "path": "docs/domain/split-bill-terminal-architecture.md",
+      "sha256": "A86E8A7072E29D913533BE957472327F66BB8AD7EA33904D58F677E79AB25BA5",
+      "lines": 93,
+      "bytes": 4388,
+      "utf8": true
+    },
+    {
       "path": "docs/domain/table-reservation-policy.md",
       "sha256": "A4D6381A4DEF12518A3AA18AF36D90857DB59F439BD4F99F1248CFB7F30AFD95",
       "lines": 116,
       "bytes": 7643,
+      "utf8": true
+    },
+    {
+      "path": "docs/domain/token-integration-path-decision.md",
+      "sha256": "F630D325705E85388696FFDC850D1C63490B92CD7B0F962B2F652ACE4D34DC77",
+      "lines": 110,
+      "bytes": 5505,
       "utf8": true
     },
     {
@@ -406,6 +427,13 @@
       "utf8": true
     },
     {
+      "path": "docs/engineering/e2e-playwright-master-test-plan.md",
+      "sha256": "9E93DF175C66330F815264CB8CD370ACA3D9A284F410E9B89A90CA79FF26D5F3",
+      "lines": 188,
+      "bytes": 39086,
+      "utf8": true
+    },
+    {
       "path": "docs/engineering/garson-audit-2026-09-10.md",
       "sha256": "009B02114127919085E3F8B8B49C1697EA24773D9FB01959D5CF3857F3E7519D",
       "lines": 203,
@@ -424,6 +452,13 @@
       "sha256": "D6A95988A952FAD394B3F8645B9AC5F9C6F5DB98208B90CAA49728C0347AB409",
       "lines": 35,
       "bytes": 5304,
+      "utf8": true
+    },
+    {
+      "path": "docs/engineering/kasa-faz0-redesign-requirements.md",
+      "sha256": "0662613DB43C083600615A8E2137E9CF053B6884B8479CE5985BC34773CF8762",
+      "lines": 126,
+      "bytes": 6672,
       "utf8": true
     },
     {
@@ -456,9 +491,9 @@
     },
     {
       "path": "docs/licensing/licensing-contract.md",
-      "sha256": "8A2AA58265B800F88B80033EA0119BD198FFB975BA205A8623F998DDE18A0730",
-      "lines": 16,
-      "bytes": 636,
+      "sha256": "23E5BFA21A3C2BA549A66433D789FFD4491578626B34B2F3284D265ADC59FCFB",
+      "lines": 129,
+      "bytes": 8080,
       "utf8": true
     },
     {
@@ -553,6 +588,13 @@
       "utf8": true
     },
     {
+      "path": "docs/UI_STYLE_GUIDE.md",
+      "sha256": "48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79",
+      "lines": 71,
+      "bytes": 2977,
+      "utf8": true
+    },
+    {
       "path": "docs/versioning-strategy.md",
       "sha256": "9FCBDE0EC857B39FD540091297EBDFD3AF4256711151489AFA68ECA741A1A1AC",
       "lines": 173,
@@ -578,6 +620,90 @@
       "sha256": "3764164120418A5E35E34D16E8A758494792290E0E407C011EC6011D6C81105E",
       "lines": 34,
       "bytes": 1347,
+      "utf8": true
+    },
+    {
+      "path": "evidence/reference/2026-09-19-competitor-ui-comparison/README.md",
+      "sha256": "614A60D783AAC5396DD0A65E5769F0960FAC63A291A1226D39BEC7A51F838817",
+      "lines": 17,
+      "bytes": 977,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md",
+      "sha256": "47E6A9489D70393590D4456C3ADDF465F29E6C264CB5FDC5178B4A673234CA77",
+      "lines": 71,
+      "bytes": 4055,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+      "sha256": "31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA",
+      "lines": 35,
+      "bytes": 2012,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md",
+      "sha256": "D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277",
+      "lines": 47,
+      "bytes": 2593,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/gate-v0-exit-closure.md",
+      "sha256": "DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142",
+      "lines": 95,
+      "bytes": 4479,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-operator-id-and-void-schema.md",
+      "sha256": "50D945968B7E9434EF6DC6D2315BAE6A892C9F5A238F8DF80265020075D8FE9A",
+      "lines": 109,
+      "bytes": 4868,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-postman-collection-schema.md",
+      "sha256": "901E27EA032A94ED4C1C8374783FD592F25E3FE7F9F71CD9C879354CBCDFE0A4",
+      "lines": 128,
+      "bytes": 5778,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-public-docs-research.md",
+      "sha256": "32CF2BE94D5DAAB3035B367BE1BBBF23DBEE1090DFCD91886A53B6947B6836E3",
+      "lines": 92,
+      "bytes": 4709,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-QNB-001/2026-09-18-public-docs-research.md",
+      "sha256": "CA833D389492F2A7351F314B45E2CA257E75AA8D7FA77DAA2DCBD87BA95BD6CD",
+      "lines": 191,
+      "bytes": 8905,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
+      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
+      "lines": 127,
+      "bytes": 5748,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
+      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
+      "lines": 68,
+      "bytes": 2507,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
+      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
+      "lines": 112,
+      "bytes": 4908,
       "utf8": true
     },
     {
@@ -1043,6 +1169,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/v1/gate-v1-exit-closure.md",
+      "sha256": "9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D",
+      "lines": 69,
+      "bytes": 2685,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-CUI-004/verification.md",
       "sha256": "4476394C2A56473F00B7F932EF41E6C2DCDE9B110527848B34E438FC79BB67BE",
       "lines": 51,
@@ -1054,6 +1187,13 @@
       "sha256": "1F7D2752A6CBD23A692FDD5284A9B6F5266F408FD146996607E5BB77B71D7B2F",
       "lines": 20,
       "bytes": 781,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-CUI-012/verification.md",
+      "sha256": "472495C245D4A5557C519E83E90E6D533DA7C590D0BC6E0CF42F2F21BABF950F",
+      "lines": 108,
+      "bytes": 4680,
       "utf8": true
     },
     {
@@ -2184,6 +2324,48 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-252/verification.md",
+      "sha256": "7128B2F74BFD9864DD87C13BF7A2ED46FF0056BCE8D273A67B57F0EB4C60B380",
+      "lines": 67,
+      "bytes": 2210,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-253/verification.md",
+      "sha256": "8F339EE8A8F6527467E8BB6D0F0FE6147C1F9DD3056A6259E15CC97580C618C6",
+      "lines": 64,
+      "bytes": 2809,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-254/verification.md",
+      "sha256": "3EB1EDB71380E347F12BEC0F86EF4921056263995C270FBA771A04195B09C280",
+      "lines": 70,
+      "bytes": 2440,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-255/verification.md",
+      "sha256": "B45B512DF0725AB47D6D72E51F94CC3335A683320D570CF98F14409523571109",
+      "lines": 63,
+      "bytes": 2704,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-256/verification.md",
+      "sha256": "790528863C826697AF381FD309F4AA5569AA6D1713AA261CE1E6AF824DE0C48D",
+      "lines": 86,
+      "bytes": 3733,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-257/verification.md",
+      "sha256": "0B456567E5A4D4F1FECAA9D30270C9964E95F2388B3E6862F2548EA3540C90FA",
+      "lines": 96,
+      "bytes": 3851,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2212,6 +2394,27 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-SET-007/verification.md",
+      "sha256": "881F606F73162CF7178A8C1E6D067CC259C6647C115F9897F06488213497767F",
+      "lines": 150,
+      "bytes": 7126,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-SET-008/verification.md",
+      "sha256": "C2AAFCA5D0E721DECBB6BB793F6C97D42979CF833AB8FDC78DDBF17F8327D886",
+      "lines": 150,
+      "bytes": 6527,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-SET-009/verification.md",
+      "sha256": "C38A9A8C9CCFED05ECE88FCF65EC6E670B88B1D43D025172B8E08151108E1B68",
+      "lines": 84,
+      "bytes": 3731,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-WTR-006/verification.md",
       "sha256": "4828F3E729A85E43BB01F09A6F852DD306F401BDA617ED7D89A1E8D82F96EB8A",
       "lines": 51,
@@ -2233,59 +2436,73 @@
       "utf8": true
     },
     {
-      "path": "evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md",
-      "sha256": "A2ABE22D5CB334941A7C01A91590338A1DA8C60B6BCCF75D25298934C368A54C",
+      "path": "evidence/V13-GOV-006/README.md",
+      "sha256": "B33A4648B0FE354E6A866B54DE5377129B889B8BF6BFFAAC34AC2938BC0CE12C",
+      "lines": 108,
+      "bytes": 6011,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V13-GOV-007/README.md",
+      "sha256": "8F8A00F358A1041C8CBE314939A718EA5AA8B8761651C7F39EC2B529E85383CC",
+      "lines": 86,
+      "bytes": 4302,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V14-GOV-001/README.md",
+      "sha256": "E31E1F273421A26A294A7189B637F80B5D49908E02B2E3E248553AB7ACE9497D",
+      "lines": 62,
+      "bytes": 3099,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V14-GOV-002/README.md",
+      "sha256": "63173D250C206AE91817B734436714BD8FCE497A7264B47B187C263506CD87D5",
+      "lines": 18,
+      "bytes": 863,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V15-BKP-002/README.md",
+      "sha256": "51205A981D5CC4D9649160ABF4B4049BD7134101DA32D0D02054973642CE50C4",
+      "lines": 61,
+      "bytes": 3166,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V15-OBS-001/README.md",
+      "sha256": "9F964FC1EFC983A2DD6942429E4820B87183D49F1107E903F8318A7623A25B1C",
+      "lines": 20,
+      "bytes": 1155,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V15-SEC-002/README.md",
+      "sha256": "B3B8637028F4A556CBE109B0F91B95B4B892861E234E39BEC5D83E4BA532C70A",
       "lines": 32,
-      "bytes": 1556,
+      "bytes": 1416,
       "utf8": true
     },
     {
-      "path": "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
-      "sha256": "31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA",
-      "lines": 35,
-      "bytes": 2012,
+      "path": "evidence/V15-SEC-003/README.md",
+      "sha256": "A0D643533D0D0F79FB50057FEBB6B37D9C4AEDB347FBFA51594F3C3D5C856D79",
+      "lines": 71,
+      "bytes": 4084,
       "utf8": true
     },
     {
-      "path": "evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md",
-      "sha256": "D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277",
-      "lines": 47,
-      "bytes": 2593,
+      "path": "evidence/V15-SUP-001/2026-09-22-nested-json-redaction-fix.md",
+      "sha256": "9972E1392492AE8A559C76D5482B3902DBAEE736AF213E09FD772DD99E54E851",
+      "lines": 99,
+      "bytes": 4989,
       "utf8": true
     },
     {
-      "path": "evidence/v0/gate-v0-exit-closure.md",
-      "sha256": "DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142",
-      "lines": 95,
-      "bytes": 4479,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
-      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
-      "lines": 127,
-      "bytes": 5748,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
-      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
-      "lines": 68,
-      "bytes": 2507,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
-      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
-      "lines": 112,
-      "bytes": 4908,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v1/gate-v1-exit-closure.md",
-      "sha256": "9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D",
-      "lines": 69,
-      "bytes": 2685,
+      "path": "evidence/V15-SUP-001/README.md",
+      "sha256": "9377597A053A4F561F62CB9D9A25E34CCEEA0684D04B6C666E41C00A7DADFA7E",
+      "lines": 37,
+      "bytes": 1838,
       "utf8": true
     },
     {
@@ -2297,9 +2514,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "E19F59B68DBCE383E6E928CB2CD82AB2B97C1C4D80C5753DD3FA593CA68B596A",
-      "lines": 2410,
-      "bytes": 347491,
+      "sha256": "372A47E11803DF77B341ADCA04006965309797318270E0AE855A507BEF7AEED3",
+      "lines": 2575,
+      "bytes": 374694,
       "utf8": true
     },
     {
@@ -2318,16 +2535,16 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "34295338B2A82DB8DF94BA5FBE5872A1FF48B4CCE72C30F448D694D08EE83396",
-      "lines": 422,
-      "bytes": 133201,
+      "sha256": "E2A20FCA4B8767267DE0B3DA6E076A08E47C79F64D35E1EC0E49C50954D02327",
+      "lines": 516,
+      "bytes": 140818,
       "utf8": true
     },
     {
       "path": "plan/OFFICIAL_SOURCE_REGISTER.md",
-      "sha256": "334DEF0C1A772FD7F60B573C3F2FA40C18200A01416E4F7FA3185ACADAA12135",
-      "lines": 43,
-      "bytes": 6818,
+      "sha256": "B8566A2DE5E724629B94F6AE91A5948DD03E44C6A66F05D181CE5938BEEC7172",
+      "lines": 44,
+      "bytes": 7937,
       "utf8": true
     },
     {
@@ -2374,23 +2591,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "477D8E1F970760E409DC01D1F94265C653E650A1CC5A3F608B823789DEE6304B",
-      "lines": 199,
-      "bytes": 77551,
-      "utf8": true
-    },
-    {
-      "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "D8C1A268F872CC6B72C70DF1A0900E90242CB2B318CEEFB45A306B0B2381E4BC",
-      "lines": 293,
-      "bytes": 20124,
-      "utf8": true
-    },
-    {
-      "path": "plan/v0/README.md",
-      "sha256": "B1B6AB267A4E0CAFE1CD0852CC2428C7F7A0DB669272A91C2227F1B89D93265C",
-      "lines": 31,
-      "bytes": 1233,
+      "sha256": "2B8E27B0BA639747BA1CD7D64653D49DA6C88AE3CF1C4C27656C903C7D223D2B",
+      "lines": 204,
+      "bytes": 86171,
       "utf8": true
     },
     {
@@ -2409,9 +2612,9 @@
     },
     {
       "path": "plan/v0/compliance/V0-CMP-001-gib-eadisyon-scope.md",
-      "sha256": "EC9031940FCB7ECC1DA327F3878E7DE06E5CD123FFE6C7FBB05BC9301B20B956",
-      "lines": 65,
-      "bytes": 1872,
+      "sha256": "76D71E0DD555E9FD1F654BEFACA71ED709BD4CFCE7D9F1906C01656915A58CF6",
+      "lines": 76,
+      "bytes": 2820,
       "utf8": true
     },
     {
@@ -2975,17 +3178,31 @@
       "utf8": true
     },
     {
+      "path": "plan/v0/governance/V0-GOV-064-override-hugin-t300-device-lock-with-token-beko.md",
+      "sha256": "5853AF279230A57F7606EFBEE879CAFA56D4155151ED3C222619EFD76EC48337",
+      "lines": 146,
+      "bytes": 7129,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/governance/V0-GOV-065-self-declared-eadisyon-applicability.md",
+      "sha256": "7703CEE8C507769A322D85D7FD056E9E358DA623B15F5917FA51043D8B6A40FF",
+      "lines": 123,
+      "bytes": 5589,
+      "utf8": true
+    },
+    {
       "path": "plan/v0/hugin-t300/V0-HUG-001-integration-contract.md",
-      "sha256": "86150EEE44ED480E221AD36168309373E8C6F432B1162AAB0FD7772820B792D0",
-      "lines": 76,
-      "bytes": 2976,
+      "sha256": "08F4FC16E66DD9F76A056338C67BECA0110755C39A66A286CC89A79C018524BD",
+      "lines": 115,
+      "bytes": 4973,
       "utf8": true
     },
     {
       "path": "plan/v0/licensing/V0-LIC-001-licensing-contract.md",
-      "sha256": "9C61939DECA39D7F8B13DDFA59CCE9B5D58C0601E8944E74986F926AEEE58164",
-      "lines": 58,
-      "bytes": 1581,
+      "sha256": "18BAE1E3FB015C25BB082A1B75E63B1ECCFD91FF86CDE8FEC673C38BD0238C1E",
+      "lines": 65,
+      "bytes": 2174,
       "utf8": true
     },
     {
@@ -3077,6 +3294,13 @@
       "sha256": "9C606AC51E14EEFAE066C458BCA5EAD4857D814C8862954FAF7A7333024B53E5",
       "lines": 59,
       "bytes": 1812,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/README.md",
+      "sha256": "080D35C983EC43DAAE79698B1FD3FAFD916DF542549899346A903C9E30842465",
+      "lines": 33,
+      "bytes": 1374,
       "utf8": true
     },
     {
@@ -3304,13 +3528,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1/README.md",
-      "sha256": "E3348D922138128DF7341941B61EB2CE850E5DDFBEF2D56F9569FE8D6000EA29",
-      "lines": 317,
-      "bytes": 29428,
-      "utf8": true
-    },
-    {
       "path": "plan/v1/alerts/V1-ALT-001-alert-foundation.md",
       "sha256": "625EC15A0093ECF3E86239154C0859B06C2C5BD7E7E8A7CDF88E975BFEA4C0F9",
       "lines": 54,
@@ -3389,9 +3606,9 @@
     },
     {
       "path": "plan/v1/cashier-ui/V1-CUI-005-remove-fake-cashier-payment-and-align-v1.md",
-      "sha256": "254A25E099F4C62213CB43B5D8DF3C39B849D741939D03190AFB6115A483FC3A",
+      "sha256": "DA1F87739DCBA15D180F357FF1FF7F4AFEF4D1DCB7326D146C5BC69058EE09DE",
       "lines": 32,
-      "bytes": 1057,
+      "bytes": 1185,
       "utf8": true
     },
     {
@@ -3399,6 +3616,48 @@
       "sha256": "98EDE275CF1BE26417031E0B731077C982D47951A6ACDB45118EF506415D053D",
       "lines": 115,
       "bytes": 6118,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/cashier-ui/V1-CUI-007-kasa-faz0-redesign-kapsam-karari.md",
+      "sha256": "A972C4781D084A87306E392C120AAE70ED1E352345B5D4711C07D1FB4502C3E6",
+      "lines": 53,
+      "bytes": 1325,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/cashier-ui/V1-CUI-008-cashier-app-faz0-token-migration.md",
+      "sha256": "F7B9C593D1E76740A7B053BA69E9D10CDDC1F5BE018F143B7494368DFED73DF7",
+      "lines": 57,
+      "bytes": 3032,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/cashier-ui/V1-CUI-009-posterminal-tokens-faz0-migration.md",
+      "sha256": "5DA1E40F7F3DCE86DBAB0ADEEF368F2C4962F858B909EB909CC4D068FC59EA4C",
+      "lines": 80,
+      "bytes": 3994,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/cashier-ui/V1-CUI-010-cashier-remaining-count-badge.md",
+      "sha256": "AD085E3FE10633E8A982D325C5F783744FA3EA7746C28017CBA9FA5876D086B6",
+      "lines": 82,
+      "bytes": 4261,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/cashier-ui/V1-CUI-011-kasa-e2e-test-suite.md",
+      "sha256": "21614168276F9294493DD138D464172792B25BF9B44D5CB76F4F1BF9484E133B",
+      "lines": 130,
+      "bytes": 7212,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/cashier-ui/V1-CUI-012-business-identity-settings-screen.md",
+      "sha256": "B6A8669DB696BDD3317A6EC5B90D27B91B4AFCE99B3B37B29C2D78DDC4F27AEB",
+      "lines": 116,
+      "bytes": 6184,
       "utf8": true
     },
     {
@@ -3427,6 +3686,34 @@
       "sha256": "CB6A92EA6AD8850166729E13718BB33DE593394F36D0F05ED65A1A0818D3E401",
       "lines": 53,
       "bytes": 1570,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/customer-display/V1-CDP-001-screensaver-image-storage-and-api.md",
+      "sha256": "FD37CC99B48EDD7B52BD2A3B2B3B3450CDB7FBB4D3D7ACBA04EBCE14329DEB9F",
+      "lines": 117,
+      "bytes": 6130,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/customer-display/V1-CDP-002-idle-screen-custom-screensaver.md",
+      "sha256": "4E226516ACD221D808D579F8CB14F1461845DA941C19B8EB525CC606FC58EB5F",
+      "lines": 76,
+      "bytes": 3632,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/customer-display/V1-CDP-003-screensaver-upload-management-ui.md",
+      "sha256": "1B30B63BDE4EA0838B53978609175097F8CF9B47EEBB77E34A2BAEFA3898598A",
+      "lines": 83,
+      "bytes": 4162,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/customer-display/V1-CDP-004-screensaver-video-support.md",
+      "sha256": "CECBC6C18F34C418E826B15E8438024E1B18091132DEB3C1AEAA329FA2520B82",
+      "lines": 126,
+      "bytes": 6700,
       "utf8": true
     },
     {
@@ -4697,6 +4984,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/identity-authorization/V1-IAM-031-session-lifetime-8-hours.md",
+      "sha256": "EA5E55818DD2178983A6047FAE49C304AB054454CEDC7929FF8428923404C8D9",
+      "lines": 44,
+      "bytes": 1564,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/kitchen-display/V1-KDS-001-mutfak-ekrani-faz-1-yeniden-yazim.md",
       "sha256": "24D33202418808231241BD478D19430DA465ABBA7E15EF2ED824846626378624",
       "lines": 134,
@@ -4757,6 +5051,62 @@
       "sha256": "9C70057103961E61BF96A299384908E61DFC797EA66E8DDB78D7DB4E505A4BB7",
       "lines": 69,
       "bytes": 3227,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-RMD-214-fix-broken-conflict-detection.md",
+      "sha256": "B4C0FDA57F277EB31290B43CAAFF9261CFD99A067E791836FC24938D6F069070",
+      "lines": 64,
+      "bytes": 2525,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-RMD-218-fix-table-merged-cancel-button.md",
+      "sha256": "890C56AF15BB27F78C4B44820F27C4E09172692C9C7DB141930679574166214E",
+      "lines": 60,
+      "bytes": 2289,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-RMD-219-kitchen-chef-can-read-categories.md",
+      "sha256": "D6F1870B88B86E9F27CF617E4F6E5AD8C5B8FDC8DFCDF9C97E33848A6D2BEBE3",
+      "lines": 77,
+      "bytes": 3176,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-RMD-220-persist-and-surface-is-held.md",
+      "sha256": "59AE38D18AD15D3D96166A9F0CFC5363D7FD3F6043841356A8B14EF82B91A726",
+      "lines": 118,
+      "bytes": 5806,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-RMD-222-guard-manual-preparing-transition.md",
+      "sha256": "C82BCED14C1AF0EADA43CB2BE3B9E72126254F843DB6A881DE73F83F75C8F8F9",
+      "lines": 64,
+      "bytes": 2442,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-RMD-223-stabilize-report-callback-identity.md",
+      "sha256": "19F44B93B7533F441E01CB974A106546BAA94AA066470DAA28D9AE3428F16096",
+      "lines": 67,
+      "bytes": 2668,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-RMD-224-add-completed-timing-index.md",
+      "sha256": "881C034D2FB6AC1CDCCFF251F3098E472614B7E122B0DB13374B0EC1B48DE19A",
+      "lines": 69,
+      "bytes": 2516,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/kitchen-display/V1-RMD-225-render-backup-health-panel.md",
+      "sha256": "E35F4F210BD572700963AB4ECA549330020D755697D40600799F60FD3130FE9E",
+      "lines": 57,
+      "bytes": 2093,
       "utf8": true
     },
     {
@@ -4859,9 +5209,9 @@
     },
     {
       "path": "plan/v1/operations/V1-OBS-001-observability-foundation.md",
-      "sha256": "6B195BF8FCB9C73A14ADF5B5A924E1EAAB102400A2E169D789F5E94BF42955FC",
-      "lines": 57,
-      "bytes": 1680,
+      "sha256": "39CAE99D7C3D1595F869469D2154A5A02D06AA9EBEBA455A8BA302C844E31272",
+      "lines": 77,
+      "bytes": 3152,
       "utf8": true
     },
     {
@@ -4918,6 +5268,13 @@
       "sha256": "481C3EB35A01956BB534D74C67772CFB3C557B74C7AF1744895FBAF215E50CCB",
       "lines": 155,
       "bytes": 8547,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/README.md",
+      "sha256": "E3348D922138128DF7341941B61EB2CE850E5DDFBEF2D56F9569FE8D6000EA29",
+      "lines": 317,
+      "bytes": 29428,
       "utf8": true
     },
     {
@@ -4992,9 +5349,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md",
-      "sha256": "76187F27EC5E6CEB2804EA6BA6A375F14ED2343F43736947C8EC17F3B2040685",
-      "lines": 83,
-      "bytes": 4764,
+      "sha256": "13835ED7041E86CE94185725A6DD79C45A5133E95F06A753494D35F8FA268B4D",
+      "lines": 85,
+      "bytes": 4913,
       "utf8": true
     },
     {
@@ -5041,9 +5398,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-016-production-shell-and-design-system.md",
-      "sha256": "B04DA15D7B62C4C41A822F774D2FC8C7E0C22A8F2A39836BE068B784B3871860",
-      "lines": 42,
-      "bytes": 1731,
+      "sha256": "814F6936DCB62AC5DAD53CD2D0621E9C82EE3BA277C7E308BF7B276C886D87C0",
+      "lines": 47,
+      "bytes": 2210,
       "utf8": true
     },
     {
@@ -5223,9 +5580,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-042-shell-freshness-accessibility-and-wcag.md",
-      "sha256": "561D037438D24F1D08A2C2CDAA85319025B8F8D35E4C82AE543A6AE80693C53B",
+      "sha256": "CAAC2E2017914658EBB35D86153D2F7D7AD1CBF8F7E16C7C351B5DFAFD861780",
       "lines": 35,
-      "bytes": 1056,
+      "bytes": 1175,
       "utf8": true
     },
     {
@@ -5510,9 +5867,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-083-waiter-and-cashier-order-line-note-entry.md",
-      "sha256": "27699260D08CC17C05BEC77D0C752A2F16E8F2A38D69BC0732458C969BAB4A6F",
-      "lines": 58,
-      "bytes": 2610,
+      "sha256": "E9833A52DBC3B56D6831EE4D59FA70CB8F3F3F504D27ACB9A23CE9296E490DB4",
+      "lines": 61,
+      "bytes": 2878,
       "utf8": true
     },
     {
@@ -5608,9 +5965,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-097-deep-analysis-wave-24-25-surface-custody.md",
-      "sha256": "F97EB13EE52233F9B3035D1F8E444D45A7E5B8D39134708E6B13D41AC929C80E",
+      "sha256": "419F5454BAD361B9C014971178676E1F8AE202F97982F1872C3D653D13733605",
       "lines": 73,
-      "bytes": 4086,
+      "bytes": 4205,
       "utf8": true
     },
     {
@@ -5762,9 +6119,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-120-dualscreen-order-writes-through-order-aggregate.md",
-      "sha256": "A511096A2A69B59E633A5635895D9FF7B5CDFA1A7F1ECA5F6EBAA6623DF46115",
-      "lines": 145,
-      "bytes": 8702,
+      "sha256": "85A4E9E09D1D4EA42D1294C0E426693966992A11A10C59C1CE249A68F56130F7",
+      "lines": 150,
+      "bytes": 9012,
       "utf8": true
     },
     {
@@ -6321,6 +6678,524 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-200-kitchen-frontend-reprint-routing-permission-mismatch.md",
+      "sha256": "DD5947568D2C6601D1991EBEA7352BAAEA51279B85F757AB101A08412977F947",
+      "lines": 83,
+      "bytes": 3731,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-201-targeted-order-ready-notification-by-serving-waiter.md",
+      "sha256": "4B674B64235AC99154B9CD05E768F794D496464037E73B9E274288478660E7A9",
+      "lines": 128,
+      "bytes": 6909,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-202-pending-qr-order-routed-to-most-suitable-waiter.md",
+      "sha256": "6FE930C98F9F83F4FD2593721D602EC1350E88180DEDF4A293C65BDC4D8CF21A",
+      "lines": 97,
+      "bytes": 4786,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-203-targeted-notification-reachability-fallback.md",
+      "sha256": "8F3B55903FF06F50891C35FF33EF80F0BE0287BD26E2A92E4AFF707DE926FC34",
+      "lines": 115,
+      "bytes": 5900,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-204-table-open-waiter-assignment-backend.md",
+      "sha256": "71DA7D887823DB84DE98227AF624D24232A1B00AFD482F139BDCF7F7C186D05F",
+      "lines": 93,
+      "bytes": 4516,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-205-cashier-waiter-assignment-picker.md",
+      "sha256": "F31B596377E9EADCBDCA6C75D9CCE8D3FC5C6E46524D9E75B0A4B2F3DF641E13",
+      "lines": 82,
+      "bytes": 3963,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-206-waiter-app-static-test-suite-rewrite.md",
+      "sha256": "860050AB42055CA1B1469FFA6A7460FD8EC1A6986700DC246BDD8A5383D45768",
+      "lines": 82,
+      "bytes": 3889,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-207-assigned-waiter-validation.md",
+      "sha256": "F853C95FD80A6B2967EEB70E5EFB99178CD51C338F669EDA6D55FDFD820B3850",
+      "lines": 76,
+      "bytes": 3283,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-208-suggested-waiter-zone-awareness.md",
+      "sha256": "18F51FD1CC1270EED9EE96EC45D18305A437120765CDCC8F298208E8C769A0DE",
+      "lines": 86,
+      "bytes": 3730,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-209-waiter-notification-dispatch-consolidation.md",
+      "sha256": "60C4F9103D86996C2BF6363EC9BDD353FFF9D82301C3E42DE0EC4EFAE77E1DE3",
+      "lines": 97,
+      "bytes": 4480,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-210-suggested-waiter-resolver-reuses-role-repository.md",
+      "sha256": "19C73EC5A5DE2914EE4D536F0C76718FBEDFC1248E4863A87E26E4E7454A682B",
+      "lines": 72,
+      "bytes": 3014,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-211-suggested-waiter-and-cashier-perf-trims.md",
+      "sha256": "3CFDA22E19CAC925B4735CC2C638297FEAE45A9768FB33DB582D0455D8F18858",
+      "lines": 70,
+      "bytes": 2699,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-212-cashier-waiter-picker-load-indicator.md",
+      "sha256": "9C8B2E0BA6FBAC21DE4ECBB0C7B69F8B301B70F92B312C24BFE2EB8F8415FAEE",
+      "lines": 87,
+      "bytes": 3974,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-215-close-module-boundary-blind-spot.md",
+      "sha256": "0B8B91ABB7C84069F0E3AB9D1684321023EB79BE177A5D5F3500186ECA32294E",
+      "lines": 66,
+      "bytes": 2610,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-216-close-two-missing-permission-checks.md",
+      "sha256": "D1D1D6DE63050D19D4DBE88D8C9BAA496CBF7C107B8BA420A363CE2821A71A7F",
+      "lines": 59,
+      "bytes": 2132,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-226-fix-presence-tracker-toctou.md",
+      "sha256": "DE8F461D9FFBB7FE5C570373A9DFBAC52BC33DBC63DAB98CAA19ECAEB5369950",
+      "lines": 63,
+      "bytes": 2357,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-227-cashier-catalog-field-mismatches.md",
+      "sha256": "B744B59ED381D15B725EF01E020F4D1398C84464381B3CB97BA8782E88FD1E74",
+      "lines": 79,
+      "bytes": 3694,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-228-complimentary-line-fiscal-visibility.md",
+      "sha256": "196C0B2E53B88D2E965BF5E812C85B2BE8F7AD32BF1F7CE5F8F3E49949D7FFCF",
+      "lines": 116,
+      "bytes": 6380,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-229-tender-method-whitespace-numeric-bypass.md",
+      "sha256": "681C899C801C090DA474E34B27E9D48DDF163706B9CE8CCBC715BE2EBEA82B40",
+      "lines": 63,
+      "bytes": 2671,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-230-payment-cross-field-db-invariants.md",
+      "sha256": "DF117EEE9811C4F5FCCFEF1F4A63EDF72839393320BCA943B5D6C3A743F0BA35",
+      "lines": 88,
+      "bytes": 4370,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-231-complimentary-invariant-hardening.md",
+      "sha256": "409820B04DA7F746E8D7AFD6990539279A09A658E0730001691AC5B7050BFAC2",
+      "lines": 80,
+      "bytes": 3725,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-232-cashier-stuck-table-and-crash-guards.md",
+      "sha256": "E64EF22035392190CBD2949D3E15AFFEF7C2DA553E53D85071B9112F3E9E54DF",
+      "lines": 85,
+      "bytes": 4056,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-233-remaining-count-multi-mapping-coverage.md",
+      "sha256": "43AC99558E526B73FB14474F416982926CD47EAFF0A82FF1ADEECBA2C6877FC2",
+      "lines": 75,
+      "bytes": 3375,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-234-screensaver-brand-badge-contrast.md",
+      "sha256": "F08330D9A65F446B63772D299CF3A37C2A3B9B34912B4098A2A5F598AE312872",
+      "lines": 57,
+      "bytes": 2186,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-235-screensaver-endpoint-hardening.md",
+      "sha256": "5A3F1431C6FD7AF1BBA24ACE8586918AC3023CE99888574EB1D7B1F45C918B45",
+      "lines": 85,
+      "bytes": 4063,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-236-cash-session-close-supervisor-override-authorization.md",
+      "sha256": "295F085ECA21983F729199CCEA222A23E204EB3519A73E9F8C5836A00915E0E2",
+      "lines": 92,
+      "bytes": 4820,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md",
+      "sha256": "C3284E99BA6A827C1F1C0CB0C26230276391A45AE8E6FAB2BDA662C90EEBB16E",
+      "lines": 72,
+      "bytes": 3244,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-238-cashier-escape-html-quote-xss.md",
+      "sha256": "3FB3D183B9A8D00B348693E3BE67A1AF9312F1B6A29647187BFE3AAD7A3BB113",
+      "lines": 67,
+      "bytes": 2872,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-239-goods-receipt-unit-conversion.md",
+      "sha256": "3405DF6C9091CAD79F380DFEA59B39AB0CD5C586763D4DC6D065888C5BF6E35A",
+      "lines": 83,
+      "bytes": 4280,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-240-relay-settings-shared-di-dependency-doc.md",
+      "sha256": "9AB9E0D9696184119BD065C337BE56EB7DE053A2E4E3A4EDA695D4B1B27A7067",
+      "lines": 60,
+      "bytes": 2313,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-241-cash-movements-idempotency-key.md",
+      "sha256": "A4A5286AC714113FBA8033EF970A7CEC6AEA10539C5CAF30E884600BDC87FD83",
+      "lines": 83,
+      "bytes": 4050,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-242-payments-cash-user-fk-norm.md",
+      "sha256": "ED1B2B7586447EEA58E6214695EE2823D5967B3B857A59927854F0185C201D18",
+      "lines": 64,
+      "bytes": 2513,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-243-critical-stock-report-cross-location-false-alarm.md",
+      "sha256": "7A468258F7F37EAD79EA63D5DEFC8E6C6A876C04848437D7A54FCA128AC6D003",
+      "lines": 67,
+      "bytes": 3086,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-244-void-comp-audit-event-write-path.md",
+      "sha256": "6E28F7E8E4006F27C110F8E7D89FEE129B2DDE0F2ADA37070396EC50A0A418AA",
+      "lines": 78,
+      "bytes": 3677,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-245-stale-manifest-and-module-count-test-literals.md",
+      "sha256": "6243A5A41BD62765F10B5095DCC04FE6E2659766A506F3DA44E0012BB76918E3",
+      "lines": 68,
+      "bytes": 2935,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-246-settings-management-http-surface.md",
+      "sha256": "EE8B5D756FE873591F982405CF8691F7155E81AB5D96044CBD6FBA5C986C1D8F",
+      "lines": 82,
+      "bytes": 3818,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-247-recipe-cost-snapshot-http-surface.md",
+      "sha256": "FE3236BA3A4029E3C4D0745151AD7B0C45A4D8102FEF83A037D319F78CEF767D",
+      "lines": 78,
+      "bytes": 3695,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-248-cash-payments-module-boundary-drift.md",
+      "sha256": "259F0DF12243C954EE002A05E2D7359FC2762EDBDFA50F23A4E8C2A311FEA05E",
+      "lines": 88,
+      "bytes": 4460,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-249-eod-business-day-http-surface.md",
+      "sha256": "F29C4E1E121B1AA58993362F586CD55A2B87EE65925E3B80F85E71C5A43A7112",
+      "lines": 101,
+      "bytes": 5009,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-250-reconciliation-case-http-surface.md",
+      "sha256": "FD097C566B49043597D5F9C0E6B1DA071CA338E56C52709C822DEBF9623D0F19",
+      "lines": 110,
+      "bytes": 5962,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-251-observability-alert-http-surface.md",
+      "sha256": "1FA3D38B05632B2865F13A3C843EF394221874F41FC48DFB2963BE67E6641504",
+      "lines": 121,
+      "bytes": 6633,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-252-cashier-icon-sprite-hidden-attribute-rendering.md",
+      "sha256": "16678D37976EEDEB61573AA50217A2A09BB7E3DCD512B72B00E700DF360B674E",
+      "lines": 67,
+      "bytes": 3469,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-253-cashier-alert-to-toast-notifications.md",
+      "sha256": "11FC1CB10CD094597F8B153E3B85F34A59205796104F1EA276EE3FD7C086A26A",
+      "lines": 76,
+      "bytes": 3846,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-254-waiter-table-card-non-occupied-amount-label.md",
+      "sha256": "A8A0FB230FB3F507531AB72F29D60C853DF4AFE8F67D3EE294BC308B730C3676",
+      "lines": 63,
+      "bytes": 2740,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-255-cashier-real-logo-asset.md",
+      "sha256": "8CFF1B7E23CF1CFA766EB474DD33D035E8D715E5F2BBC950C2FF86B35CCAA4C9",
+      "lines": 64,
+      "bytes": 3016,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-256-posterminal-real-logo-asset.md",
+      "sha256": "468E26F45F21D5BEB679A6F8CB8180B77FAD3D9C50E011C8A77450D10D4AAEF4",
+      "lines": 82,
+      "bytes": 4211,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-257-business-accent-default-matches-brand-navy.md",
+      "sha256": "3DC76BE772BAE251AEED77D52BCD4A3FBFEC39DDD3B71AAB5E07DD1AFBD591F5",
+      "lines": 71,
+      "bytes": 3362,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-258-faz2-payments-independent-audit-remediation.md",
+      "sha256": "F3A83C5049915F6E454A1045F1888B3097E1022675E1206468EF9165F99DDA13",
+      "lines": 196,
+      "bytes": 12005,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-259-table-status-unknown-fallback-turkish.md",
+      "sha256": "A008E42A7E80929267F7DC72F5EAE741AAE4B80772FDCDC7191494150FFE541B",
+      "lines": 71,
+      "bytes": 3226,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-260-waiterpwa-pin-401-and-stacked-overlay-inert-e2e.md",
+      "sha256": "C2C2BC0D9233357C7C603476A3DF388285F0EA2AB14BCCF0C609CC8EF736A9E9",
+      "lines": 122,
+      "bytes": 6552,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-261-table-action-errors-reach-manager-and-unsettled-payment-message.md",
+      "sha256": "40F3794D208AC3B3C3109E9774E8C37F78CCC5EA144ABEA0415F917293298545",
+      "lines": 115,
+      "bytes": 6187,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-262-guest-order-line-note-server-cap.md",
+      "sha256": "6A54F6BB067A48A8E82378CE6CC89D68FA0E36A320DC8D3A95B99E8126B2317C",
+      "lines": 69,
+      "bytes": 3150,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-263-kiosk-lock-survives-page-reload.md",
+      "sha256": "9E79ED3F6111F24FBFBFA930E4DA7ABBD67EB3BC28304B606E185EB35F286075",
+      "lines": 59,
+      "bytes": 2244,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-264-manual-card-payment-resolution.md",
+      "sha256": "A8715E27F82EE6DF9B36BA816CE658A231089BAAF5A3366DC0C9B0FB4DD957A4",
+      "lines": 81,
+      "bytes": 4357,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-265-payment-surfaces-reachable.md",
+      "sha256": "4BAB04055D52BD5F0E0F4522F5B6BE81690C2D68867C4F8519F225A6C7C3E25F",
+      "lines": 88,
+      "bytes": 4382,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-266-security-administration-account-recovery.md",
+      "sha256": "27DFDE4A8EF2DF18BDC47397717D0E125F2BE18B902E37065847CF8285DD3D22",
+      "lines": 93,
+      "bytes": 4611,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-267-diagnostic-bundle-endpoint.md",
+      "sha256": "4AADF7128B5EB9B04DE1406C45B92D199C4B361967D436E66DD7295CEC31CCE2",
+      "lines": 59,
+      "bytes": 2351,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-268-maintenance-jobs-and-retention-sweep.md",
+      "sha256": "0D3229F11E7562FEDE96205604B5FB8E86C5D7F0D97B696032A502CDA9600C95",
+      "lines": 80,
+      "bytes": 4227,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-269-secret-rotation-administration.md",
+      "sha256": "0EC37FBCBC5158E5FA05150C64F9DB0833E79045FE0F0AB9CDDC69514EE12DD1",
+      "lines": 73,
+      "bytes": 3529,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-270-offsite-backup-job-and-rpo-report.md",
+      "sha256": "BA0FA2563128D012D761257D496FA4A11DD72344E9CC3C8900646A8D9453C87C",
+      "lines": 78,
+      "bytes": 3781,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-271-restore-drill-job-and-custom-dump-restore.md",
+      "sha256": "6B052ADE74E7DB3948FDCFD36A7AC1B9D652D743C437A8FC6905DE3B72B8BE62",
+      "lines": 95,
+      "bytes": 5774,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-272-reachability-gate-for-registered-services.md",
+      "sha256": "CC108CB46ADA6D003505EEE5EC589EBE7A5F5248D7DE78EE568710C882B6D9EB",
+      "lines": 77,
+      "bytes": 3641,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-273-unreachable-registered-services-backlog.md",
+      "sha256": "A5E6395DB2D4022FA6C6C0D0E4102C291E29D5F9D0B40EB6E03753CD5F6CF287",
+      "lines": 58,
+      "bytes": 2668,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-274-waste-recording-http-surface.md",
+      "sha256": "60C0FA0EA7DBE5BFEBB67D0BB3E5B08310DF10E5DF7E69372BE12984CDABF79F",
+      "lines": 65,
+      "bytes": 2769,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-275-recipe-management-http-surface.md",
+      "sha256": "AD3CA4A5BDED22EC9BB0115C7741613CCE7AAF2C04A0358E8BCE5680BF53BB16",
+      "lines": 69,
+      "bytes": 3290,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-276-paid-bill-closes.md",
+      "sha256": "40FAEC440C3DE13A3925C257B561BC5E3DA2DACF0B37E440C409EAF58650A230",
+      "lines": 101,
+      "bytes": 5863,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-277-session-token-rotation-on-pin-unlock.md",
+      "sha256": "8EE057E6828185AAD984E62E1C968125FD131E7831EC25628F9D97B2A5ED23BC",
+      "lines": 59,
+      "bytes": 2440,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-278-decision-unwired-parallel-services.md",
+      "sha256": "55E0CB51DE090062B64EF6C8605D61560E277CC1123DAD7B9A0F7422D5E8CE7D",
+      "lines": 66,
+      "bytes": 3256,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-279-till-queue-follows-the-bill.md",
+      "sha256": "8AC8EE6A153AAC8B89AF9E71A9D8F5C7E30B1F0D6B374F56CF3D725B1F9E8CC2",
+      "lines": 67,
+      "bytes": 3197,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-280-till-pending-checks-screen.md",
+      "sha256": "DC75251C29530791364897829171F9ECF58AC1886EBD7A53FE5C025622FA105A",
+      "lines": 90,
+      "bytes": 4754,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-281-recall-check-sent-by-mistake.md",
+      "sha256": "B65B0F794FBE3AC46008B7560936E9AD345071123E73810EEA0E036A1CB3C071",
+      "lines": 101,
+      "bytes": 6160,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-282-payment-completes-the-order.md",
+      "sha256": "A2314DA783256F703F07B161A9DEB0A30A83B2438948D1A446BF564775264F09",
+      "lines": 85,
+      "bytes": 4894,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-283-manual-card-charged-two-person-confirmation.md",
+      "sha256": "0944DF0B8AF026CB2847464EF8F11F474D5683B840BC9392B100078FCA0DB70E",
+      "lines": 107,
+      "bytes": 6758,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-284-close-settled-orders-backlog.md",
+      "sha256": "541BF6AF216709BEDEA736FEEEC92BCA27909FC85D6A07E55EE3FA14C0857642",
+      "lines": 70,
+      "bytes": 3538,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -6405,6 +7280,34 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/settings/V1-SET-006-waiter-max-active-tables-threshold.md",
+      "sha256": "DC5C62111D3C0F958B7FD704765F74EEE79066FCD94D869DC61076D9AEAF7DFB",
+      "lines": 87,
+      "bytes": 4077,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/settings/V1-SET-007-business-identity-qr-branding.md",
+      "sha256": "66FFBE5FC99E566888692B09E9D91A1E65C8020AAD4114D708B92F3AEFE19EB9",
+      "lines": 119,
+      "bytes": 6338,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/settings/V1-SET-008-business-logo-upload.md",
+      "sha256": "6FA1130EE731BC52C7151E5CEC8699B25E5D4AE5FA49DE8EBF77FF6626821EFC",
+      "lines": 116,
+      "bytes": 6398,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/settings/V1-SET-009-customerweb-branding-consumption.md",
+      "sha256": "0DBA54DBAAD653CF95F70E526D2E8733C323344C614284805FBF8D2E74473199",
+      "lines": 86,
+      "bytes": 4285,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/table-management/V1-TBL-001-table-lifecycle.md",
       "sha256": "3306EA49714434F6B243732E2027CFEDB16C94C9AB4B3DE7B8744DB0DEF4955D",
       "lines": 63,
@@ -6472,6 +7375,27 @@
       "sha256": "9B2B4FD83E57B05D5E0F005FCE2275D5B76B5F587C1783AF6DCAE996F70D1983",
       "lines": 96,
       "bytes": 4662,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-RMD-213-fix-send-round-drops-items-added-mid-send.md",
+      "sha256": "25522357E8AD9F4C2C4182CB0A527D6C5079296B8A6C00B93B4CFEB54E2348EC",
+      "lines": 67,
+      "bytes": 2660,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-RMD-217-block-served-with-held-course.md",
+      "sha256": "10E05B29849DC088136805C9A9386EF7EE84DDD142C3B3D218F74654304F004F",
+      "lines": 62,
+      "bytes": 2308,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-RMD-221-fix-misleading-fire-course-error.md",
+      "sha256": "3239219108A7EB1C7E9F0876BC4A0F464943E779D6C521AB3B8A6F7231DDAE5A",
+      "lines": 76,
+      "bytes": 3246,
       "utf8": true
     },
     {
@@ -6791,9 +7715,9 @@
     },
     {
       "path": "plan/v1/waiter-pwa/V1-WTR-046-js-refactor-step10-menu-product-sheet-modules.md",
-      "sha256": "EA1B733E5E61E8310C686419E9E1A511605DFCC0A24CCCF7093A28139BF10F0F",
-      "lines": 97,
-      "bytes": 4781,
+      "sha256": "28BC4E995B561423F8D44236004D16B985C0CEF018A1EF2065CCAA50BE93AA17",
+      "lines": 99,
+      "bytes": 4891,
       "utf8": true
     },
     {
@@ -6846,10 +7770,24 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.1/README.md",
-      "sha256": "FB045BA24E506EAD4539A31CD6ADBD7BFD5ECC1A3E95BD9C3AC3982AB2866613",
-      "lines": 36,
-      "bytes": 1588,
+      "path": "plan/v1/waiter-pwa/V1-WTR-054-remaining-sellable-count-in-table-draft-catalog.md",
+      "sha256": "7F05268AC9463CA38D5D8FC8E094BFAE3E86820449EA22AFC9473D93CF047F60",
+      "lines": 114,
+      "bytes": 6299,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-WTR-055-menu-remaining-count-badge.md",
+      "sha256": "F9502D3E75024A212B525BDA0A5734636B224E092A038E056841D055BA27EBFC",
+      "lines": 118,
+      "bytes": 6711,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/waiter-pwa/V1-WTR-056-shared-stock-badge-helper.md",
+      "sha256": "E71EB25FC8C39593880B32A273B31781A609DC40272449B5B1BAAA2FFEE01625",
+      "lines": 77,
+      "bytes": 3667,
       "utf8": true
     },
     {
@@ -6944,6 +7882,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.1/inventory/V11-INV-008-physical-counts.md",
+      "sha256": "A454E44A86276A1A7025444557C35562EFE5552375D449C7F3BF8324ABE05AC5",
+      "lines": 79,
+      "bytes": 3638,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.1/inventory/V11-INV-009-stockitem-reorder-point.md",
+      "sha256": "EC3B7B15093088EF5F2E8D16B7C70685BF39EC5B6EEFF325CB14B9681FE08A69",
+      "lines": 85,
+      "bytes": 4074,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.1/operations-ui/V11-UI-001-menu-and-recipe-ui.md",
       "sha256": "78754F2F1056AF17173F35D2556DBC52F9BD2DD091E6ED8022382F43138D9697",
       "lines": 55,
@@ -7014,6 +7966,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.1/README.md",
+      "sha256": "FB045BA24E506EAD4539A31CD6ADBD7BFD5ECC1A3E95BD9C3AC3982AB2866613",
+      "lines": 36,
+      "bytes": 1588,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.1/remediation/V11-RMD-001-migration-id-collision-and-live-composition-wiring.md",
       "sha256": "75A3B7660863CEA09F5E6134FF37EE6D220C6A6D2D2AC20C3604AF72DA51D76F",
       "lines": 123,
@@ -7035,6 +7994,20 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.1/reporting/V11-RPT-002-low-stock-report-and-alert.md",
+      "sha256": "0D28E6D5B71BA9B9CEF2EB9FDC7036424783155A0CCF7F4D614309BA4C046568",
+      "lines": 79,
+      "bytes": 3613,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.1/reporting/V11-RPT-003-actual-vs-theoretical-report.md",
+      "sha256": "E46FFD98B64164C2716EF1D92F325057D9E433A33D1B47B8A1FF15905924A1E4",
+      "lines": 87,
+      "bytes": 4313,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.1/units-recipes/V11-RCP-001-immutable-recipe-versions.md",
       "sha256": "9B90ED66EC4593070754EE1C611DE3E97D0FA03810832A5910A75DE0B1156CCA",
       "lines": 56,
@@ -7049,17 +8022,24 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.1/units-recipes/V11-RCP-003-product-recipe-mapping.md",
+      "sha256": "A1633F09C1F4E235B9A1DBE027EE5DCFC15B9247DFF8EA36B2A2ED1C962F2658",
+      "lines": 93,
+      "bytes": 4331,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.1/units-recipes/V11-RCP-004-theoretical-consumption-recording.md",
+      "sha256": "496C2D35DBE4F700EF4EF4123A20239E9EF3B2CCD4193CB09E85417E9F32CBA9",
+      "lines": 96,
+      "bytes": 4670,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.1/units-recipes/V11-UNT-001-dimension-safe-units.md",
       "sha256": "DEB25A39A060418C334C4A756BBEF5A026F3E3F569D9DFCCE46761D5CDB28A16",
       "lines": 54,
       "bytes": 1704,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1.2/README.md",
-      "sha256": "8B9A6547FCDAB426DC8E164A6FB1DB4DA2434C041C86494A58B3360F1D4F47CA",
-      "lines": 61,
-      "bytes": 2984,
       "utf8": true
     },
     {
@@ -7088,6 +8068,13 @@
       "sha256": "73B2A6774177D79EFD97CBED0CEBD0A897458B795F558DEECAAE75AF647769B7",
       "lines": 114,
       "bytes": 6410,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/customer-web/V12-RMD-002-order-entry-note-length-and-reload-resume.md",
+      "sha256": "C3408D542198A2F1EF41E7391A379AD04BB91E550BD070CFE83879586433AD49",
+      "lines": 132,
+      "bytes": 6790,
       "utf8": true
     },
     {
@@ -7252,6 +8239,27 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/qr-transport/V12-QRT-005-relay-connector-container-isolation.md",
+      "sha256": "2F8B2771417C056C8B6FB4DEEC2B02B02D46FB5E966D52AB910E5179789C1D04",
+      "lines": 275,
+      "bytes": 17173,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/qr-transport/V12-RMD-001-relay-connector-state-label-exhaustiveness.md",
+      "sha256": "853EE2702D839A360D6D366DEA936418F884A5D80C1DBA550DE8DF8F1B73F9AD",
+      "lines": 83,
+      "bytes": 3638,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/README.md",
+      "sha256": "8B9A6547FCDAB426DC8E164A6FB1DB4DA2434C041C86494A58B3360F1D4F47CA",
+      "lines": 61,
+      "bytes": 2984,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/reconciliation/V12-REC-001-online-order-reconciliation.md",
       "sha256": "E9287C795D700CEA6CB1F8C49CFEFB18F53B653BB0DEB8B871F0E72C4153F7B8",
       "lines": 60,
@@ -7273,31 +8281,31 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.3/README.md",
-      "sha256": "07EB59C7528BEB1FA22081DB0C7A62C3B0CCE05EB7DDFC01F6A099D0EF961916",
-      "lines": 29,
-      "bytes": 1078,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.3/cash/V13-CSH-001-cash-session-lifecycle.md",
-      "sha256": "D3AE210876453B04AC963D270981C59617CDFA53286AB59EDF31B6D510505567",
-      "lines": 54,
-      "bytes": 1318,
+      "sha256": "AB13DE244A76BFBCCD7E452F25217434783955BFBB18555AB6C140472F887808",
+      "lines": 76,
+      "bytes": 3003,
       "utf8": true
     },
     {
       "path": "plan/v1.3/cash/V13-CSH-002-cash-transaction-ledger.md",
-      "sha256": "E5A20745346982BE4FA9D996873B39C612E9249B52BAE87A46FB4DD68D0F8FA1",
-      "lines": 56,
-      "bytes": 1367,
+      "sha256": "5DD63B002A1781BA782436621437F2C3CC797094E061DF33ED918E55E140C056",
+      "lines": 63,
+      "bytes": 1887,
       "utf8": true
     },
     {
       "path": "plan/v1.3/cash/V13-CSH-003-cash-tender-handler.md",
-      "sha256": "7F25FED37E93B407CC79F1127706211554287B5F357ACDCF8E1F3D5206037661",
-      "lines": 55,
-      "bytes": 1365,
+      "sha256": "40E3010063E3FABE16230C3E9FD310879052AE3DFAB218AF75F695751B54FC90",
+      "lines": 79,
+      "bytes": 3262,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/cash/V13-CSH-004-cash-session-and-tender-http-composition.md",
+      "sha256": "F92177527517F4E78646848FDD9F7BC817037E8B6EB809876563F80B4938B96D",
+      "lines": 108,
+      "bytes": 5347,
       "utf8": true
     },
     {
@@ -7323,44 +8331,107 @@
     },
     {
       "path": "plan/v1.3/fiscal/V13-FSC-004-t300-adisyon-adapter.md",
-      "sha256": "F8B798B928B4C73582427D39A2DEFECF2381FC00B76C2551692E0947C3732D2F",
-      "lines": 55,
-      "bytes": 1482,
+      "sha256": "BF56B091994CAE1B61285F119C079CC87F6BB7264085F34125A74008D23272FB",
+      "lines": 60,
+      "bytes": 1736,
       "utf8": true
     },
     {
       "path": "plan/v1.3/fiscal/V13-FSC-005-qnb-eadisyon-adapter.md",
-      "sha256": "B76C85002C9F2AE9968F3A05472E4A1F7950B53C12A7E00463CDF44041054CD3",
-      "lines": 57,
-      "bytes": 1578,
+      "sha256": "B68D1DC235B1D74B2AA7D5E6BFA72F127DE5FB1A08FD1FE9E124893DCA368207",
+      "lines": 77,
+      "bytes": 2795,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/governance/V13-GOV-001-admit-contract-independent-payments-cash-chain.md",
+      "sha256": "EA520A0C2129AF798D5CC9B0FE3019474C6333D502D139BAF861094476FC7564",
+      "lines": 129,
+      "bytes": 5912,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/governance/V13-GOV-002-complimentary-line-fiscal-representation-decision.md",
+      "sha256": "F66E6F67E096ACDCF2A8CCEC0CCE1ABE49F35657D71F417A04BB7E916ADFAD64",
+      "lines": 74,
+      "bytes": 2678,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/governance/V13-GOV-003-split-bill-managed-by-alkaros-decision.md",
+      "sha256": "1DB4852E9B02F2FEEA21AE80C70E5C3EB74D5B19DC13750235D9CD0B43407E66",
+      "lines": 76,
+      "bytes": 2726,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/governance/V13-GOV-004-card-tip-out-of-scope-decision.md",
+      "sha256": "CD5936CB876B334AAF333BC990E57FD941697934C5E30631D088D3732FB94630",
+      "lines": 76,
+      "bytes": 2665,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/governance/V13-GOV-005-token-cloud-integration-path-decision.md",
+      "sha256": "5F270C52F6583D7D9F4F782170BDF7CB0C38D2344C20B8A2DB7720A5A3A3EDB2",
+      "lines": 108,
+      "bytes": 4763,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/governance/V13-GOV-006-token-payment-request-unverified-draft-authorization.md",
+      "sha256": "B7F4A5A426B62C5A2459AFE66FFF5DB64C139844DC93A469541A243277143919",
+      "lines": 107,
+      "bytes": 4900,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/governance/V13-GOV-008-payment-orchestration-dependency-waiver.md",
+      "sha256": "F187827419D2134C3E28B30AB81B617D98E8B428D67C5BBD8DDB3B617DEAEA74",
+      "lines": 129,
+      "bytes": 6138,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/governance/V13-GOV-009-faz2-audit-governance-and-accessibility-remediation.md",
+      "sha256": "DF1F0DED180EB1F90AA0CC13B4D09BD82078B4B56D242D2E18CA0021871A4B47",
+      "lines": 111,
+      "bytes": 7385,
       "utf8": true
     },
     {
       "path": "plan/v1.3/hugin-t300/V13-HUG-001-payment-request-path.md",
-      "sha256": "590C925B14F0D1380A115DE374243D0E0B197F5EE2B1E9714CFD059C2A76B56E",
-      "lines": 61,
-      "bytes": 1567,
+      "sha256": "5BC6F85AEAB6FBC0BB116E945253CF57BF510F1852DFBFBBF25FDB53F8119C91",
+      "lines": 74,
+      "bytes": 2312,
       "utf8": true
     },
     {
       "path": "plan/v1.3/hugin-t300/V13-HUG-002-unknown-reconciliation.md",
-      "sha256": "4B63D0F7505D8D0B1A57FDACB7CB5C57D40E0A5E048FD1742C835BBCDAF883F7",
-      "lines": 57,
-      "bytes": 1424,
+      "sha256": "D64A94736C2A3F264FA67BAD26DBB6EBB8EF74FE69D981680F47B00461179767",
+      "lines": 61,
+      "bytes": 1578,
       "utf8": true
     },
     {
       "path": "plan/v1.3/hugin-t300/V13-HUG-003-refund-and-cancel.md",
-      "sha256": "4D0ED5F315F7C16E43B5BC7CA02C37BDA642A1DD624FBAF965B5E25F903316BB",
-      "lines": 57,
-      "bytes": 1447,
+      "sha256": "1E4C9D8995A10E086AACBE33FD043A27573E8BC647B96A4605ADD01481A0BCD2",
+      "lines": 61,
+      "bytes": 1601,
       "utf8": true
     },
     {
       "path": "plan/v1.3/hugin-t300/V13-HUG-004-terminal-totals-reconciliation.md",
-      "sha256": "AE40FA4EC6034CEC8F98D3C09A4506AD0D9D6000424D98F1CB18D5405C319EAE",
-      "lines": 60,
-      "bytes": 1689,
+      "sha256": "2A81D4F35CC3F3B3DD35602554460C9D9DA1BDFD2F6C2AD3D78F2B0755958811",
+      "lines": 64,
+      "bytes": 1855,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/hugin-t300/V13-HUG-005-terminal-credential-registration.md",
+      "sha256": "AF93F4E50A95DECB1A33A450982830707AA98AF73CD541F4735C1BE157278D98",
+      "lines": 118,
+      "bytes": 5343,
       "utf8": true
     },
     {
@@ -7393,23 +8464,23 @@
     },
     {
       "path": "plan/v1.3/payment-allocation/V13-ALC-001-allocation-persistence.md",
-      "sha256": "D922010745A3A0B5E102DB84F25BEF3593162202211D2596636C389FD5552183",
-      "lines": 61,
-      "bytes": 1527,
+      "sha256": "5F0341F16E2BA3BF0E86A3CD6F2D56FAFEBE37C581DA09E3A96CA8BEF28BC7CA",
+      "lines": 74,
+      "bytes": 2514,
       "utf8": true
     },
     {
       "path": "plan/v1.3/payment-allocation/V13-ALC-002-bill-closure-projection.md",
-      "sha256": "D21D1CF2C19AE0AFBA139AB40CA3F487A96BE026596EE7AD3D2B8715BA6FA2A3",
-      "lines": 58,
-      "bytes": 1552,
+      "sha256": "8F9B8680965BA1E305521061F2E7E33A339D7326F392B097CAE4E1C16DDFF0DD",
+      "lines": 69,
+      "bytes": 2287,
       "utf8": true
     },
     {
       "path": "plan/v1.3/payment-allocation/V13-ALC-003-partial-refund-allocation.md",
-      "sha256": "88B2473B37957A95149988082A842A629FB1F6A126D746C3BCF0DAE0C521F6C6",
-      "lines": 59,
-      "bytes": 1590,
+      "sha256": "F060A325798ED7CFBA14CF3356C671EE21FE1E4BCF7F499BC1BF7C316F2EE1DC",
+      "lines": 77,
+      "bytes": 2893,
       "utf8": true
     },
     {
@@ -7421,44 +8492,51 @@
     },
     {
       "path": "plan/v1.3/payments/V13-PAY-001-payment-aggregate.md",
-      "sha256": "58B5B11A316281320E76003E2B2AAFBD1CE781C58C36F0990C563C94015C3AF0",
-      "lines": 56,
-      "bytes": 1482,
+      "sha256": "B6EADE81AF436D9F41E922FB25F480945226896C24B23DF38B712AE0BADA5ED1",
+      "lines": 114,
+      "bytes": 5489,
       "utf8": true
     },
     {
       "path": "plan/v1.3/payments/V13-PAY-002-tender-command-routing.md",
-      "sha256": "C359EEA4A624FC2A4B1F479198EA80E4D0308FE2CFC2A5856209CFE713EE9149",
-      "lines": 59,
-      "bytes": 1564,
+      "sha256": "BF4B96AC26AD81239D646CB9742961FEBC8430863FFFB44601D88863D11C7A20",
+      "lines": 94,
+      "bytes": 3910,
       "utf8": true
     },
     {
       "path": "plan/v1.3/payments/V13-PAY-003-tender-handler-composition.md",
-      "sha256": "725734278FA9AAF318B661AB7BDC82A7A729D0D16D3217413FE2967B39397966",
-      "lines": 57,
-      "bytes": 1656,
+      "sha256": "9399E5B0F63D8433404A4E85657F13332C7EBDC577CA9461629B21604EC8C551",
+      "lines": 151,
+      "bytes": 8365,
       "utf8": true
     },
     {
       "path": "plan/v1.3/payments/V13-PAY-004-card-settlement-orchestration.md",
-      "sha256": "87F740AC3330037BA7AC634EC1D79F42F524047048F1FF3249301D0B7BF39384",
-      "lines": 61,
-      "bytes": 1566,
+      "sha256": "4DB44FCAD341C5BE1B78E845428167363A1C692BFC1439BB5C55501E30D4182B",
+      "lines": 124,
+      "bytes": 6767,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/payments/V13-PAY-005-eft-tender-handler.md",
+      "sha256": "9F0AA80E2229A167B1DB1D7243968A8C7842BD2872F19C257608F2E9BAD95628",
+      "lines": 117,
+      "bytes": 6331,
       "utf8": true
     },
     {
       "path": "plan/v1.3/payments-ui/V13-PUI-001-split-payment-ui.md",
-      "sha256": "2E1EFD9B29178E80F2ACC3B4C14F4670A2F9A3DA098CAEB700138E651803B962",
-      "lines": 57,
-      "bytes": 1584,
+      "sha256": "FB2D31BF8C4865505EADEF1FDC1816058C016573505C6CA96861315688F595CE",
+      "lines": 103,
+      "bytes": 5637,
       "utf8": true
     },
     {
       "path": "plan/v1.3/payments-ui/V13-PUI-002-cash-session-ui.md",
-      "sha256": "62CC947ABEA015463DCCFA01AFCA9739BDCCE454E82D90CFE78AFB5AF2FDC27D",
-      "lines": 51,
-      "bytes": 1344,
+      "sha256": "279C68FECA780453891C9363BFEA09B6DC0B3471576F77B06B903E81737C8184",
+      "lines": 113,
+      "bytes": 5437,
       "utf8": true
     },
     {
@@ -7469,31 +8547,52 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.3/payments-ui/V13-PUI-004-eft-payment-ui.md",
+      "sha256": "EE20F14E573152495FCC57758D75E71E51101B74BBAE12254F78342B2C04A1C1",
+      "lines": 94,
+      "bytes": 4732,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/payments-ui/V13-RMD-002-split-payment-unsettled-lock-survives-reload.md",
+      "sha256": "0E8AE4016E0CD3E4721D5DE0F75A4712F1102EDA506D90C6D2E09B26D50C76CC",
+      "lines": 100,
+      "bytes": 5108,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/payments-ui/V13-RMD-003-cashier-split-payment-e2e-suite.md",
+      "sha256": "E4AA76512601531EF8FDAAC1A97F1B069D43995A8AE3D2E8C904C3F9A33B19E1",
+      "lines": 125,
+      "bytes": 6956,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/README.md",
+      "sha256": "56F2CE1E9E86E9C447932917D604ABDED126150E8D1DBF24F6608F1E51D3B767",
+      "lines": 40,
+      "bytes": 1776,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.3/reconciliation/V13-REC-001-payment-reconciliation.md",
-      "sha256": "8DB273807622239A294D465BB863269F445CFCB5DE870588A7C7B1371D79C439",
-      "lines": 72,
-      "bytes": 2246,
+      "sha256": "FC14D8CC4BA8C1A927762F87BAEE5F2D2E3D15041B018D083F6F1390FF47019B",
+      "lines": 186,
+      "bytes": 10176,
       "utf8": true
     },
     {
       "path": "plan/v1.3/reporting/V13-RPT-001-payment-cash-settlement-reports.md",
-      "sha256": "C0E940FB7303E9DAF6386139E93882455FAEFE9D69F8E90FE6DEECDD7AE1C520",
-      "lines": 57,
-      "bytes": 1523,
+      "sha256": "CF3126B1227A24DE1C2D210359AD3DCCF193BD90CB57C1C8F58C5F57CCF58ABC",
+      "lines": 113,
+      "bytes": 5331,
       "utf8": true
     },
     {
       "path": "plan/v1.3/table-payment/V13-TBL-001-payment-aware-table-topology.md",
-      "sha256": "33C21DFE224EB6D34BB55F83ABFCB846D09BDC033DB4923AFBAD5D5EEE7D9BDA",
-      "lines": 56,
-      "bytes": 1521,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1.4/README.md",
-      "sha256": "0C3CD9103C94562BFE2A817091A533C785C73E7B7918B149BAE6D7D842FB4786",
-      "lines": 27,
-      "bytes": 914,
+      "sha256": "EE9C97CB93346A85F4DD1047D8D76DE545538A1D671BBDBC58802B4C487FF204",
+      "lines": 132,
+      "bytes": 7668,
       "utf8": true
     },
     {
@@ -7582,9 +8681,9 @@
     },
     {
       "path": "plan/v1.4/customer-data/V14-CST-001-customer-pii-schema.md",
-      "sha256": "1667D33EC69C1213B5408ADE4860917C58570DFE6BE606027CA860FA9FDC8315",
-      "lines": 60,
-      "bytes": 1700,
+      "sha256": "3021249146DBEAE7DD8F4214E8AE40E13D451EB09ABBDD3393E798ED94903005",
+      "lines": 69,
+      "bytes": 2243,
       "utf8": true
     },
     {
@@ -7592,6 +8691,20 @@
       "sha256": "B5AC7777DBD688D6465C10D9957F273B2FAAD474375B289F5BCDABCDCC74ECF9",
       "lines": 56,
       "bytes": 1441,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.4/customer-data/V14-GOV-001-v14-gate-unverified-draft-authorization.md",
+      "sha256": "A72123210154C8DB2AFEBCC41F70B0B516E460F3CD7C06FD981AD52B5A12E316",
+      "lines": 91,
+      "bytes": 3785,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.4/customer-data/V14-GOV-002-lift-v14-entry-gate-waiver.md",
+      "sha256": "D08E895E2DAABBBA52705F3161F4DA1B878BD264B0979F8CD646004FC3EA7D41",
+      "lines": 131,
+      "bytes": 6408,
       "utf8": true
     },
     {
@@ -7630,17 +8743,24 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.4/qnb-esolutions/V13-GOV-007-qnb-efatura-unverified-draft-authorization.md",
+      "sha256": "6A87F3A94B6ACF14B1BB67AD9ECF58ACC77D15A9932BF43CE8F658CFF891752B",
+      "lines": 128,
+      "bytes": 6098,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.4/qnb-esolutions/V14-QNB-001-registered-user-query.md",
-      "sha256": "B8446F868BCA1908ADDB3D61B5960CFD763F8E8939ADCB07AF0A7336A7A3C7FE",
-      "lines": 53,
-      "bytes": 1308,
+      "sha256": "9F2501EA45AC33F6231620B10B18E27C179469472E74B41146A2913B642ED438",
+      "lines": 61,
+      "bytes": 1840,
       "utf8": true
     },
     {
       "path": "plan/v1.4/qnb-esolutions/V14-QNB-002-outgoing-submission.md",
-      "sha256": "1AE4E59A81D47A49EF1C621DC90631A44A3A8DA6C022A0616E2B2BC63098B04F",
-      "lines": 56,
-      "bytes": 1350,
+      "sha256": "2BF9C63B735B87CF37FB97EB549FC99E114527BA8731F48D360E0E70F7258E26",
+      "lines": 66,
+      "bytes": 1992,
       "utf8": true
     },
     {
@@ -7665,6 +8785,27 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.4/qnb-esolutions/V14-QNB-006-credential-registration.md",
+      "sha256": "DA7DA508F5E81A00C4523F71AFEE217B48DE132D910B72DD7277232DA538AB97",
+      "lines": 99,
+      "bytes": 4080,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.4/qnb-esolutions/V14-QNB-007-connection-test.md",
+      "sha256": "B281C9735A602A0E654162C0473F42632E217A812FEF788A1769E6742946923D",
+      "lines": 93,
+      "bytes": 4182,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.4/README.md",
+      "sha256": "0C3CD9103C94562BFE2A817091A533C785C73E7B7918B149BAE6D7D842FB4786",
+      "lines": 27,
+      "bytes": 914,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.4/reporting/V14-RPT-001-account-invoice-reports.md",
       "sha256": "29EB5AD9C0D1AB9A942A59D758DA242AEF3E5F309A6183D74B4DD185E7204553",
       "lines": 54,
@@ -7672,24 +8813,24 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.5/README.md",
-      "sha256": "BAD547C430CD8918B923FD6A6D285AEE3E3D7E74D5C7AD6BDDBA4E665BD764F1",
-      "lines": 26,
-      "bytes": 836,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.5/backup-recovery/V15-BKP-001-encrypted-offsite-backup.md",
-      "sha256": "8A3569AA3F76BA3CD626932CFCF51E80441E1030FDA1A696D128859AA1EC8F25",
-      "lines": 58,
-      "bytes": 1780,
+      "sha256": "807C4FBFDD6245DDDE39670645C3FC3647B27C5C24189811C1D83454484DCF75",
+      "lines": 143,
+      "bytes": 7819,
       "utf8": true
     },
     {
       "path": "plan/v1.5/backup-recovery/V15-BKP-002-restore-automation.md",
-      "sha256": "2F186D3184060568BDB7269EFA21F6339F11F656E467E48C95647D2B7230376E",
-      "lines": 55,
-      "bytes": 1513,
+      "sha256": "CCAD61B998C4A21A011A024B7E5E23C01DFDB73C54C2D7480D55D428EAD05914",
+      "lines": 106,
+      "bytes": 6191,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.5/governance/V15-GOV-001-lift-gate-v15-entry-waiver.md",
+      "sha256": "143AF4570CEC09060DA1889A562260A30747BE169CA0B1CB71C0617B4122D251",
+      "lines": 89,
+      "bytes": 3533,
       "utf8": true
     },
     {
@@ -7715,9 +8856,9 @@
     },
     {
       "path": "plan/v1.5/observability/V15-OBS-001-structured-logging.md",
-      "sha256": "E955B5007FBAA0FAB6E195DA017822AF7D56E174231FB2FAFCBA816D2952787D",
-      "lines": 56,
-      "bytes": 1390,
+      "sha256": "C5FE6DF5B745B96B077E0327740EE835D48C037FE97DE2A7D3F6A3413EAFE0B8",
+      "lines": 81,
+      "bytes": 3557,
       "utf8": true
     },
     {
@@ -7746,6 +8887,13 @@
       "sha256": "27195F66CABDD67F5335340C9D23FF6516E8446C59AC36A348DCAC1AFBF667BA",
       "lines": 54,
       "bytes": 1484,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.5/README.md",
+      "sha256": "BAD547C430CD8918B923FD6A6D285AEE3E3D7E74D5C7AD6BDDBA4E665BD764F1",
+      "lines": 26,
+      "bytes": 836,
       "utf8": true
     },
     {
@@ -7785,37 +8933,30 @@
     },
     {
       "path": "plan/v1.5/security/V15-SEC-001-secret-management.md",
-      "sha256": "6D030134593A359FF428201E39522AB8AB43E05249A5F76F8E319092FB3CA30C",
-      "lines": 55,
-      "bytes": 1600,
+      "sha256": "9CE4507F518054B9F77DABA1F8F7397C43A13DB6E09841CE1C7ED1AD097E38F8",
+      "lines": 103,
+      "bytes": 4921,
       "utf8": true
     },
     {
       "path": "plan/v1.5/security/V15-SEC-002-identity-hardening.md",
-      "sha256": "50A606AE020279CF7697E8214023C4D255099B57CC06CFE7CCEFEEA6EF5B6E1D",
-      "lines": 55,
-      "bytes": 1354,
+      "sha256": "24DC8B548E1D129671C39050737F13E466FFA2D49C0A3E509665E6622AB23BB0",
+      "lines": 107,
+      "bytes": 5588,
       "utf8": true
     },
     {
       "path": "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md",
-      "sha256": "31DE2EE24F1B2D56E8BA52026C88C14BD3B1E6FB5E3E6E114A28E5FFF706E329",
-      "lines": 57,
-      "bytes": 1617,
+      "sha256": "1EE2493A1957D4EE195ECFA7EA2A15D8E0F2209BC0676F0428ACF007C4CB3B84",
+      "lines": 115,
+      "bytes": 6849,
       "utf8": true
     },
     {
       "path": "plan/v1.5/support/V15-SUP-001-diagnostic-bundle.md",
-      "sha256": "AE8281470274A7DCA5163A3F9A40427BD04DDB246663944C6051B07C2D29755B",
-      "lines": 52,
-      "bytes": 1290,
-      "utf8": true
-    },
-    {
-      "path": "plan/v2.0/README.md",
-      "sha256": "D29552ADECADA935C27F6C160E9BFC8FC469E5D11D71B9309781909F838ED082",
-      "lines": 32,
-      "bytes": 1354,
+      "sha256": "D504DF084D5DCCF9E7618CFF23C7E96F4C957D5371394A4BDAC7E92B94CCE465",
+      "lines": 134,
+      "bytes": 7066,
       "utf8": true
     },
     {
@@ -7883,9 +9024,9 @@
     },
     {
       "path": "plan/v2.0/integration-certification/V20-INT-001-hugin-certification.md",
-      "sha256": "7F6BF49C2E48228A051C613B5D22641C6AC2FA04A28FC11660B29B3F8DE56440",
-      "lines": 60,
-      "bytes": 1750,
+      "sha256": "0E6FF0C666905D2EA4BF56251423EDBE6AF84E90E459F1BB9CB9C2A66748DD0A",
+      "lines": 62,
+      "bytes": 1869,
       "utf8": true
     },
     {
@@ -7935,6 +9076,13 @@
       "sha256": "3ED1EE1000C34C9B2997EABE48E60A1B5B1F2AB0628082AE79E66601F045384E",
       "lines": 53,
       "bytes": 1549,
+      "utf8": true
+    },
+    {
+      "path": "plan/v2.0/README.md",
+      "sha256": "D29552ADECADA935C27F6C160E9BFC8FC469E5D11D71B9309781909F838ED082",
+      "lines": 32,
+      "bytes": 1354,
       "utf8": true
     },
     {
@@ -8005,6 +9153,13 @@
       "sha256": "F4885231A79623375FAC569376D9966C6683896CA1FBA4E0C5E8E3844BD8F70B",
       "lines": 62,
       "bytes": 1398,
+      "utf8": true
+    },
+    {
+      "path": "plan/VALIDATION_CONTRACT.md",
+      "sha256": "D8C1A268F872CC6B72C70DF1A0900E90242CB2B318CEEFB45A306B0B2381E4BC",
+      "lines": 293,
+      "bytes": 20124,
       "utf8": true
     }
   ]

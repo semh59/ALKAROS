@@ -2,10 +2,11 @@
 
 ## Statik testler
 
-```
+```text
 $ python -m pytest tests/Apps/CustomerWeb -q
 16 passed
 ```
+
 (13 önceki + 3 yeni: `test_customer_web_menu_renders_the_business_own_identity`,
 `test_customer_web_order_entry_renders_the_business_own_identity`,
 `test_customer_web_bill_renders_the_business_own_identity` — her biri
@@ -14,7 +15,7 @@ olduğunu ve JS'in `loadBranding`/`/api/v1/qr/branding`/`/api/v1/qr/logo`/
 `accentColor`/`businessName`/`hasLogo`/`--cw-accent`'i gerçekten
 kullandığını doğruluyor.)
 
-```
+```text
 $ node --check menu-app.js && node --check order-entry.js && node --check bill.js
 menu-app.js OK
 order-entry.js OK
@@ -59,7 +60,7 @@ dışında.)
 
 ## Gate'ler
 
-```
+```text
 $ python tools/plan-audit/plan_audit_tool.py validate
 Validation errors: 1 (C54_APPLICATION_ADMISSION_V3_FINAL_MISSING — öncedendi,
 ilgisiz, değişmedi)

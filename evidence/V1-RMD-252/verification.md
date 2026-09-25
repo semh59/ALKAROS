@@ -1,6 +1,7 @@
 # V1-RMD-252 — Verification transcript
 
 ## Ortam
+
 - Chromium 141.0.7390.37 (`/opt/pw-browsers/chromium-1194`, Playwright 1.56.1)
 - Cashier statik dosyaları gerçek olarak sunuldu (`src/Clients/Cashier/wwwroot`),
   `/api/v1/*` uç noktaları temsili örnek veri döndüren yerel bir stub sunucuyla
@@ -8,7 +9,7 @@
 
 ## Ölçüm — düzeltmeden önce
 
-```
+```text
 [before] {"headerTop":150,"headerHeight":52,"svgDisplay":"block"}
 ```
 
@@ -28,7 +29,7 @@ eklendi:
 
 ## Ölçüm — düzeltmeden sonra
 
-```
+```text
 [after] {"headerTop":0,"headerHeight":52,"svgDisplay":"none"}
 ```
 
@@ -48,7 +49,7 @@ eklendi:
 
 ## Otomatik testler
 
-```
+```text
 $ cd tests/Clients/StaticApps && npx vitest run
  Test Files  3 passed (3)
       Tests  24 passed (24)

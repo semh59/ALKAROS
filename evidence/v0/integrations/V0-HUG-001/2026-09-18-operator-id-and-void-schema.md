@@ -20,7 +20,7 @@
 ## 1) Ödeme tipi (`paymentItems[].type`) tam tablosu — ÇÖZÜLDÜ
 
 | Sabit | Değer | Anlamı |
-|---|---|---|
+| --- | --- | --- |
 | `PAYMENT_CASH` | 1 | Nakit |
 | `PAYMENT_CHEQUE` | 2 | Çek |
 | `PAYMENT_CREDITCARD` | 3 | Kredi Kartı |
@@ -43,7 +43,7 @@
 Tümü `type: 7` ile birlikte gönderiliyor.
 
 | Yemek Kartı | operatorId |
-|---|---|
+| --- | --- |
 | App Temp (Test Uygulaması) | 1000 |
 | TokenFlex | 1005 |
 | Edenred | 1001 |
@@ -53,6 +53,7 @@ Tümü `type: 7` ile birlikte gönderiliyor.
 | Metropol | 1006 |
 
 Örnek payload:
+
 ```json
 "paymentItems": [
   { "amount": 1000, "type": 7, "operatorId": 1005 }
@@ -95,6 +96,7 @@ gerekiyor — dokümantasyon bunun ötesine geçmiyor.
 
 `V0-HUG-001`'in Blocker'ında sayılan maddelerden **yemek kartı operatörü
 eşlemesi artık tam olarak kapalı**. Kalan gerçek boşluklar:
+
 1. Refund'un (tamamlanmış işlem sonrası iade) API üzerinden mümkün olup
    olmadığı — sadece void/isVoid mekanizması dokümante, gerçek refund akışı
    değil.

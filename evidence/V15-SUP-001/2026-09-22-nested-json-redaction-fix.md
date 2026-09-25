@@ -38,6 +38,7 @@ güvenlik ağı olarak var olmalıydı ve olmuyordu.
 ## Düzeltme
 
 `src/Modules/Support/DiagnosticBundle/DiagnosticBundleService.cs`:
+
 - Yeni `RedactNestedStateJson(string? stateJson)` metodu: `stateJson` null/
   boş ise olduğu gibi döner; `JsonNode.Parse` başarısız olursa (geçerli JSON
   değilse) olduğu gibi döner (patlamaz); parse başarılıysa aynı iki geçişten
@@ -55,13 +56,13 @@ haline döndürüldü (yalnızca `Before = auditEvent.BeforeStateJson` vb. düz
 string gömme, `RedactNestedStateJson` çağrısı olmadan) ve yalnız yeni testler
 çalıştırıldı:
 
-```
+```text
 dotnet test tests/Modules/Support/DiagnosticBundle/ALKAROS.Support.DiagnosticBundle.Tests.csproj -c Release --filter "FullyQualifiedName~RedactsASensitiveKeyNestedInsideTheBeforeStateJsonText|FullyQualifiedName~RedactsASecretPatternValueNestedInsideTheAfterStateJsonText"
 ```
 
 Sonuç (kusurlu haliyle):
 
-```
+```text
 Başarısız ALKAROS.Support.DiagnosticBundle.Tests.DiagnosticBundleServiceTests.RedactsASensitiveKeyNestedInsideTheBeforeStateJsonText [205 ms]
   Hata İletisi:
    Assert.DoesNotContain() Failure: Sub-string found
@@ -80,7 +81,7 @@ KEY-bazlı redaksiyon içindi, açıklama yukarıda.)
 Ardından düzeltme geri getirildi (`RedactNestedStateJson` çağrıları) ve tam
 paket yeniden çalıştırıldı:
 
-```
+```text
 dotnet test tests/Modules/Support/DiagnosticBundle/ALKAROS.Support.DiagnosticBundle.Tests.csproj -c Release
 ...
 Başarılı!  - Başarısız:     0, Başarılı:    22, Atlanan:     0, Toplam:    22, Süre: 42 s

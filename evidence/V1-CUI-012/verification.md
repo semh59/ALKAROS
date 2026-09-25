@@ -6,7 +6,7 @@
 `settings.manage` yönetici grubunda, `BusinessAccentPalette.All`'ı
 (8 renk) + `DefaultKey`'i döndürür.
 
-```
+```text
 $ dotnet build ALKAROS.slnx --configuration Release --no-restore
 Build succeeded. 0 Warning(s), 0 Error(s)
 
@@ -16,13 +16,14 @@ Build succeeded. 0 Warning(s), 0 Error(s)
 $ dotnet test tests/Host/Experience/Settings/ALKAROS.Host.Experience.Settings.Tests.csproj
 Passed! - Failed: 0, Passed: 14, Skipped: 0, Total: 14
 ```
+
 (12 önceki + 2 yeni: `AccentPaletteReturnsAllEightColorsAndTheRealDefaultKey`
 — 8 renk + gerçek `defaultKey`, her giriş sunucunun kendi palet kaydıyla
 bayt bayt eşleşiyor; `AccentPaletteWithoutAManagerSessionIsUnauthorized`.)
 
 ## Frontend: gerçek build/test
 
-```
+```text
 $ pnpm --dir src/Clients/PosTerminal typecheck
 (temiz, hata yok)
 
@@ -30,6 +31,7 @@ $ pnpm --dir src/Clients/PosTerminal test
 Test Files  1 failed | 25 passed (26)
      Tests  1 failed | 193 passed (194)
 ```
+
 Yeni `BusinessIdentitySettings.test.tsx` (5/5 yeşil): oturumsuz personel
 girişi gösterir; `settings.manage` yetkisi yokken "erişim yetkiniz yok"
 gösterir (form hiç render edilmez); yönetici girişinde form gerçek
@@ -46,10 +48,11 @@ satır bile dokunulmadı) ve `V1-RMD-256`'nın kendi verification.md'sinde
 `git stash` ile üç kez çalıştırılıp bu görevlerden önce de var olduğu,
 ilgisiz olduğu zaten kanıtlanmış aynı test.
 
-```
+```text
 $ pnpm --dir src/Clients/PosTerminal build
 ✓ built in 1.40s
 ```
+
 `BusinessIdentitySettings` kendi ayrı chunk'ında (`BusinessIdentitySettings-*.js`,
 7.90 kB) — V1-RMD-139'un route-başına code-splitting deseniyle tutarlı.
 
@@ -75,7 +78,7 @@ edildi:
 
 ## Gate'ler
 
-```
+```text
 $ python tools/plan-audit/plan_audit_tool.py validate
 Validation errors: 1 (C54_APPLICATION_ADMISSION_V3_FINAL_MISSING — öncedendi,
 ilgisiz, değişmedi)
@@ -84,6 +87,7 @@ Validation warnings: 0
 $ python tools/consistency-audit/consistency_audit.py
 consistency-audit: clean
 ```
+
 (İlk çalıştırmada 3 gerçek ihlal bulundu — üç yorumda tırnak içinde
 alıntılanan Türkçe ifadeler ("Backend akıllı, frontend aptal",
 "işletme adımız ve logomuz görünsün") `TASK_STANDARD.md`'nin "kod/yorum

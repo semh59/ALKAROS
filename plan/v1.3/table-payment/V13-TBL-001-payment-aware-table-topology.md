@@ -93,6 +93,7 @@ yalnız gerçek riski (bir Bill'in Pending/Unknown/ReconciliationRequired durumu
 varken masasının değişmesi — sonucun hangi masa/context'e karşı geldiği belirsizleşir) engelliyor;
 salt kısmi ödenmiş (allocated/paid>0 ama bilinen her Payment zaten Approved/Declined/Cancelled)
 bir Bill artık serbestçe taşınabiliyor, önceki placeholder'ın aksine.
+
 - Pending veya Unknown/ReconciliationRequired payment sırasında transfer, merge ve unmerge —
   `payments.payments` üzerinden gerçek zamanlı okunarak — hiçbir ilişkiyi değiştirmeden
   reddedilir (`PaymentAwareTableTopologyPolicy` + gerçek Postgres testleri: `ExecuteTransferPendingPaymentOnBillThrowsPaymentPolicyRequiredExceptionAndRollsBack`,

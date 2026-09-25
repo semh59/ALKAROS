@@ -1,20 +1,24 @@
 # V1-RMD-253 — Verification transcript
 
 ## Ortam
+
 - Chromium 141.0.7390.37 (`/opt/pw-browsers/chromium-1194`, Playwright 1.56.1)
 - Cashier statik dosyaları gerçek olarak sunuldu; `/api/v1/*` uç noktaları
   (session, catalog, orders/staff, table-draft, submit-draft, send-to-cashier)
   temsili örnek veri döndüren yerel bir stub sunucuyla yanıtlandı.
 
 ## Gerçek tarayıcı senaryosu
+
 1. Ürün kartına tıkla (sepete ekle).
 2. "Siparişi Onayla & Mutfağa İlet"e tıkla.
 3. Playwright'in `page.on('dialog', ...)` dinleyicisi hiç tetiklenmedi
    (`dialogFired: false`) — native `alert()` artık hiç çağrılmıyor.
 4. `#toastRegion` içinde gerçek bir toast belirdi:
+
    ```json
    {"text":"Sipariş mutfağa iletildi. (1 kalem, ₺185,00)","className":"toast toast--success","role":"status"}
    ```
+
 5. ~5 saniye sonra, hiçbir tıklama olmadan toast kendiliğinden DOM'dan
    kaldırıldı (`self-dismissed: true`) — `toast-dismissed.png`.
 
@@ -35,7 +39,7 @@ görevi açılabilir.
 
 ## Otomatik testler
 
-```
+```text
 $ cd tests/Clients/StaticApps && npx vitest run
  Test Files  3 passed (3)
       Tests  24 passed (24)

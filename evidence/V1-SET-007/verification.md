@@ -59,7 +59,7 @@ kullanmıyor. Bu fark açıkça burada belgeleniyor, gizlenmiyor.
 
 Konteyner içinde, `/src` olarak mount edilmiş repo üzerinde:
 
-```
+```text
 $ dotnet restore ALKAROS.slnx --locked-mode
 ... (tüm proje dosyaları dahil, ALKAROS.Settings.BusinessIdentity.Tests dahil)
 (hatasız tamamlandı)
@@ -77,24 +77,26 @@ Build succeeded.
 
 ## Gerçek test sonuçları
 
-```
+```text
 $ dotnet test tests/Modules/Settings/BusinessIdentity/ALKAROS.Settings.BusinessIdentity.Tests.csproj \
     --configuration Release --no-restore --no-build
 Passed!  - Failed: 0, Passed: 18, Skipped: 0, Total: 18
 ```
 
 18 testin tamamı (palet WCAG kontrast testleri dahil — 8 renk + benzersizlik
-+ varsayılan-anahtar-var + mevcut `#B5772F`'nin barajı GEÇMEDİĞİNİ kanıtlayan
+
+- varsayılan-anahtar-var + mevcut `#B5772F`'nin barajı GEÇMEDİĞİNİ kanıtlayan
 test; `BusinessNameSetting`/`BusinessAccentThemeSetting` gerçek Postgres'e
 karşı okuma/yazma/kayıt testleri; bozuk paletin varsayılana düşmesi) yeşil.
 
-```
+```text
 $ dotnet test tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj \
     --configuration Release --no-restore --no-build
 Failed!  - Failed: 2, Passed: 24, Skipped: 0, Total: 26
 ```
 
 Yeni eklenen 3 `/branding` testinin tamamı yeşil:
+
 - `BrandingIsReachableWithNoSessionAndDefaultsToTheUnsetPaletteColor`
 - `BrandingReflectsAnOperatorSettingTheBusinessNameAndColor`
 - `BrandingFallsBackToTheDefaultPaletteColorWhenTheStoredThemeIsNotARecognizedKey`
@@ -115,7 +117,7 @@ değişikliğinden değil. Değişiklik geri yüklendi (`git stash pop`) ve
 
 ## Gate'ler
 
-```
+```text
 $ python tools/plan-audit/plan_audit_tool.py validate
 Validation errors: 1 (C54_APPLICATION_ADMISSION_V3_FINAL_MISSING — bu görevden
 önce de var olan, ilgisiz, bilinen hata)
@@ -129,7 +131,7 @@ consistency-audit: clean
 
 `git status --short` çıktısı, Owned surface ile birebir eşleşiyor:
 
-```
+```text
  M ALKAROS.slnx
  M src/Host/Experience/QrOrdering/QrOrderingContracts.cs
  M src/Host/Experience/QrOrdering/QrOrderingEndpoints.cs

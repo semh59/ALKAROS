@@ -107,6 +107,7 @@ Done olan transactional outbox'ı (V1-FND-006) tüketiyor.
   bu görev kapsamında ele alınmadı.
 
 **Gerçek doğrulama (2026-09-23, Docker `alkaros-test-pg`, port 55432):**
+
 - `dotnet build ALKAROS.slnx -c Debug` → 0 Uyarı, 0 Hata.
 - `dotnet test tests/Modules/Payments/CardSettlement/ALKAROS.Payments.CardSettlement.Tests.csproj` → 8/8 başarılı (gerçek Postgres'e karşı: approved/declined/requires-reconciliation, resume, iki ayrı mismatch türü, gerçek eşzamanlı çift-gönderim, bilinmeyen bill reddi).
 - Regresyon kontrolü: `ALKAROS.Payments.Allocations.Persistence.Tests` 13/13, `ALKAROS.Payments.PaymentAggregate.Tests` 43/43, `ALKAROS.Payments.TenderRouting.Tests` 28/28, `ALKAROS.Cash.TenderHandler.Tests` 6/6 — hepsi yeşil, sıfır regresyon.

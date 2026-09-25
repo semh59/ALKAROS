@@ -8,17 +8,18 @@
 
 ## Taranan kaynaklar
 
-- https://developer.tokeninc.com/token-developer-portal-1/x-platform/token-x-connect-cloud/gelistirici-dokumani-tr.md
-- https://developer.tokeninc.com/token-developer-portal-1/x-platform/token-x-connect-cloud/sik-sorulan-sorular.md
-- https://developer.tokeninc.com/token-developer-portal-1/x-platform/token-x-connect-cloud/entegrasyon-kilavuzu-and-ipuclari.md
-- https://developer.tokeninc.com/token-developer-portal-1/baslangic.md
-- https://developer.tokeninc.com/token-developer-portal-1/x-platform/destek/gelistirici-destek.md
-- https://xci.devtokeninc.com/ (TokenX Connect Client App / simülatör)
-- https://documenter.getpostman.com/view/29891759/2sB34hEzUj (Postman koleksiyonu, üçüncü taraf barındırma)
+- <https://developer.tokeninc.com/token-developer-portal-1/x-platform/token-x-connect-cloud/gelistirici-dokumani-tr.md>
+- <https://developer.tokeninc.com/token-developer-portal-1/x-platform/token-x-connect-cloud/sik-sorulan-sorular.md>
+- <https://developer.tokeninc.com/token-developer-portal-1/x-platform/token-x-connect-cloud/entegrasyon-kilavuzu-and-ipuclari.md>
+- <https://developer.tokeninc.com/token-developer-portal-1/baslangic.md>
+- <https://developer.tokeninc.com/token-developer-portal-1/x-platform/destek/gelistirici-destek.md>
+- <https://xci.devtokeninc.com/> (TokenX Connect Client App / simülatör)
+- <https://documenter.getpostman.com/view/29891759/2sB34hEzUj> (Postman koleksiyonu, üçüncü taraf barındırma)
 
 ## Bulgular
 
 ### Kimlik doğrulama
+
 - `client-id`/`client-secret`: test aşamasında Token'ın geliştirici ekibi
   tarafından paylaşılıyor; production için devops/security ekibi e-posta
   ile dağıtıyor. **Bu hâlâ self-servis değil — talep/başvuru gerektiriyor.**
@@ -26,6 +27,7 @@
   Yanıt: `accessToken` (Bearer), `expiresIn` (86400 sn), `tokenType`.
 
 ### Endpoint şeması (kısmi doğrulama — V0-HUG-001 In scope ile örtüşüyor)
+
 - **Add Basket** (liste modu): header `branch-id` veya `terminal-id` +
   `access_token`; body `items[]` (`name`, `price`, `sectionNo`,
   `taxPercent`, `quantity`), opsiyonel `checkNumber`/`title`/`note`/`filter`.
@@ -41,8 +43,9 @@
   `99` fiş iptali (void). `BASKET_LOCKED`/`BASKET_UNLOCKED` de mevcut.
 
 ### Hata kodları (kısmi liste, kamuya açık dokümandan)
+
 | Kod | Açıklama |
-|-----|----------|
+| ----- | ---------- |
 | 0 | Başarılı |
 | 1007 | Duplicate basketID |
 | 1013 | Geçersiz veri formatı |
@@ -51,6 +54,7 @@
 | 1104 | Terminal instant modda değil |
 
 ### Test/simülasyon kaynakları (yeni bulgu, bloker'ı hafifletmiyor ama ilerletebilir)
+
 - `https://xci.devtokeninc.com/` — "TokenX Connect Client App", TokenX
   API'lerini simüle eden bir client uygulaması; "API Key" ve "Client
   Settings" alanları var (yani bu da bir credential istiyor — kayıt/erişim
@@ -61,6 +65,7 @@
   üçüncü taraf barındırma, içeriği bu oturumda doğrulanmadı.
 
 ### Destek/iletişim kanalı (yeni bulgu)
+
 - Doğrudan email/telefon/form linki kamuya açık dokümanda YOK.
 - Tek belirtilen kanal: **Token AI Support Chatbot** —
   `https://devassistant.tokeninc.com`. Credential/test cihazı/ticari
@@ -68,6 +73,7 @@
   bu doğrulanmadı (chatbot içeriği bu taramaya dahil değil).
 
 ### Doğrulanamayan maddeler (Blocker'da hâlâ açık)
+
 - Yemek kartı operatörleri (TokenFlex, Edenred, Multinet, Setcard,
   Sodexo/Pluxee, Metropol) için `operatorId` eşlemesi kamuya açık
   dokümanda **bulunamadı**.

@@ -114,7 +114,7 @@ sıralama kararını bilerek geri aldı.
 ## Acceptance evidence
 
 - `python -m pytest tests/Architecture/TaskScope/ -q` → 137/137 (106 önceki
-  + 4 yeni `TestV13ExitEntryWaiver` + `test_task_scope_markdown_boundary.py`
+  - 4 yeni `TestV13ExitEntryWaiver` + `test_task_scope_markdown_boundary.py`
   27), 0 başarısız.
 - Gerçek `plan/` dizinine karşı `parse_v0_deferral_ids`/
   `parse_v13_exit_waiver_ids` çağrıları hatasız dönüyor (önceden V0'ınki

@@ -28,6 +28,7 @@ sessizce değiştirilmesine hiç izin vermez; garsona söylenir); hesap kasa kuy
 `CHECK_NOT_RECALLABLE`. Aynı isteği tekrarlamak zararsızdır (`AlreadyAttached`). Geri alınan hesap yeniden gönderilebilir.
 
 İstemciler:
+
 - Garson PWA: gönderim başarı bildirimi artık **10 saniyelik "Geri al"** düğmesi taşır (5 sn yerine; bir el kayması
   fark edilip düzeltilebilsin); geri alınamazsa sunucunun Türkçe nedeni gösterilir.
 - Kasiyer "Bekleyen hesaplar": tahsilat başlamamış her satırda "Yanlışlıkla gönderildi: masaya geri gönder";

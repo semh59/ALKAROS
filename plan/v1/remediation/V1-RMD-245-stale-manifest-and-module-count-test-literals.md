@@ -13,6 +13,7 @@
 bağımsız olarak bulundu (bu görevin kendi değişikliklerinden değil,
 önceki oturumlardan kalan bir drift'ten kaynaklanıyordu — `git status`
 ile doğrulandı, bu dosyalar bu oturumda daha önce hiç değiştirilmemişti):
+
 - `HostModuleReachabilityTests.DefaultCatalogContainsStandardProductionModules`
   `ModuleRegistry.DefaultCatalog`'un tam olarak 19 modül içerdiğini
   varsayıyordu; gerçek sayı (Invoicing/Token/QNB/CashSession modüllerinin

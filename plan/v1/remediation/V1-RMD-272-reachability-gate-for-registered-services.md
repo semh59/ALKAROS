@@ -42,7 +42,7 @@ liste bugünkü durumu gizlemez, gelecekteki yenilerini engeller.
 
 ## In scope
 
-1. 8. kural, izin listesi, bayat/referanssız giriş denetimi.
+1. Sekizinci kuralın kendisi, izin listesi, bayat/referanssız giriş denetimi.
 2. Mevcut ulaşılamayan türlerin (38) görev referansıyla listeye alınması.
 
 ## Out of scope

@@ -85,4 +85,3 @@ altyapıyı birleştiren, paylaşılan dosyalara yapılan ekler.
 - `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.
 - `python tools/consistency-audit/consistency_audit.py` → temiz.
 - `python tools/project-manifest/project_manifest_tool.py` → VALID.
-

@@ -48,7 +48,7 @@ sahipliğinde — bu görev yalnızca mevcut dosyalara alan/parametre ekliyor):
 1. Migration: `inventory.stock_items`'a `reorder_point NUMERIC(14,4) NULL
    CHECK (reorder_point >= 0)` — null = eşik yok, mevcut davranış korunur.
 2. `StockItem`'e `ReorderPoint` alanı (negatifse `ArgumentOutOfRangeException`)
-   + `Update(...)`'e opsiyonel parametre; repository'nin her SELECT
+   - `Update(...)`'e opsiyonel parametre; repository'nin her SELECT
    listesi, `MapRow`, Add/Update SQL'i güncellendi (bu dosyanın kendi
    yorumu: "any new column requires updating every SELECT list + MapRow +
    Add/Update SQL" — üç yeri de değiştirdim).

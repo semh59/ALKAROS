@@ -102,6 +102,7 @@ kaydının kendi mantığının doğal uzantısı.
 **Gerçekten uygulanan 4 kaynak çifti** (`IReconciliationSourcePair`,
 `payments.*`/`cash.*` üzerine salt-okunur SQL, hiçbiri harici sağlayıcıya
 bağımlı değil):
+
 1. **Hugin Unknown** — `Payment.Status IN ('Unknown','ReconciliationRequired')`.
    Gerçek terminal (V13-HUG-001) olmadan da doğrulanabilir: V13-PAY-003'ün
    `PendingBankCardTerminalIntegrationHandler` yer tutucusu her BankCard
@@ -131,6 +132,7 @@ mismatch (V13-MCD-002/004), Terminal totals mismatch (V13-HUG-004).
   kaynağın TEK gelecekteki giriş noktasını tanımlıyor.
 
 **Gerçek test/build/audit kanıtı (2026-09-23, bizzat çalıştırılıp izlendi):**
+
 - Yeni proje `ALKAROS.Reconciliation.Payments.Tests`: **7/7** (4 gerçek kaynak çiftinin her biri + dedup + disabled
   source raporlama + karışık enabled/disabled tarama).
 - Regresyon: `ALKAROS.Reconciliation.CaseFoundation.Tests` 6/6, `ALKAROS.Architecture.Tests` (ModuleBoundaries) 9/9,
@@ -161,7 +163,8 @@ düzeltildi):** (1) dört kaynak çiftinin `ScanAsync`'i `LIMIT` olmadan
 .GetCaseActionsAsync`'in `MaxUnpagedRows` deseniyle birebir aynı) bir
 tablo büyüdüğünde veya filtre gevşediğinde sessizce sınırsız yüklemek
 yerine yüksek sesle hata vermeyi şart koşuyor — her dördüne `LIMIT 5001`
-+ 5000 satırı aşarsa `InvalidOperationException` eklendi. (2) İki dosyanın
+
+- 5000 satırı aşarsa `InvalidOperationException` eklendi. (2) İki dosyanın
 doc-comment'lerinde Türkçe alıntı vardı (İngilizce koda Türkçe karakter
 yasağı, AGENTS.md) — İngilizceye parafraze edildi.
 

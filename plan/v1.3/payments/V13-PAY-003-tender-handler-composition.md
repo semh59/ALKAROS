@@ -134,6 +134,7 @@ uygulandı: `src/Modules/Payments/TenderComposition/` kendi ayrı projesine
 bu klasörü `<Compile Remove>` ile kendi derlemesinden hariç tutuyor.
 
 **Gerçek doğrulama (2026-09-23, Docker `alkaros-test-pg`, port 55432):**
+
 - `dotnet build ALKAROS.slnx -c Debug` → 0 Uyarı, 0 Hata.
 - `dotnet test tests/Modules/Payments/TenderComposition/ALKAROS.Payments.TenderComposition.Tests.csproj` → 8/8 başarılı.
 - Regresyon kontrolü: `ALKAROS.Cash.TenderHandler.Tests` 6/6, `ALKAROS.Payments.TenderRouting.Tests` 28/28, `ALKAROS.Payments.CardSettlement.Tests` 8/8, `ALKAROS.Architecture.Tests` (ModuleBoundaries) 9/9 — hepsi yeşil, sıfır regresyon.

@@ -1,6 +1,7 @@
 # V1-RMD-256 — Verification transcript
 
 ## Ortam
+
 - Node v22.22.2 (paket `>=24.0.0` istiyor — `pnpm install` uyarı verdi,
   hata değil; testler/build yine de çalıştı, ama fark kayıt altına
   alınıyor).
@@ -26,7 +27,7 @@
 
 ## Otomatik testler
 
-```
+```text
 $ pnpm test
  Test Files  1 failed | 24 passed (25)
       Tests  1 failed | 188 passed (189)
@@ -52,7 +53,7 @@ düzeltilmedi.
 
 ## `pnpm build` (tsc --noEmit && vite build)
 
-```
+```text
 ✓ 101 modules transformed.
 dist/assets/alkaros-logo-on-dark-CmVDjlL_.png   32.94 kB
 ✓ built in 462ms
@@ -71,7 +72,7 @@ sayfasında (`harness.html`/`harness-main.tsx`, GEÇİCİ — committed değil,
 bu doğrulamadan hemen sonra silindi) gerçek Chromium'da render edip
 ölçüldü:
 
-```
+```text
 logo: {"naturalWidth":1005,"naturalHeight":233,"complete":true,"alt":"ALKAROS"}
 ```
 

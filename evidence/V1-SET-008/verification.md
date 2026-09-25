@@ -15,7 +15,7 @@ dosyalarına (Dockerfile/compose) hiç dokunulmadı.
 
 ## Gerçek build sonuçları
 
-```
+```text
 $ dotnet restore ALKAROS.slnx --locked-mode
 (hatasız tamamlandı)
 
@@ -28,19 +28,21 @@ Build succeeded. 0 Warning(s), 0 Error(s)
 
 ## Gerçek test sonuçları
 
-```
+```text
 $ dotnet test tests/Modules/Settings/BusinessIdentity/ALKAROS.Settings.BusinessIdentity.Tests.csproj
 Passed! - Failed: 0, Passed: 24, Skipped: 0, Total: 24
 ```
+
 (18 V1-SET-007'den + 6 yeni `BusinessLogoStoreTests`: null-when-unset,
 save/get round-trip, ikinci kaydın satırı değiştirmesi — INSERT değil,
 ETag'in değişmesi, delete sonrası null, var-olmayan logoyu silmenin no-op
 olması.)
 
-```
+```text
 $ dotnet test tests/Host/Experience/Settings/ALKAROS.Host.Experience.Settings.Tests.csproj
 Passed! - Failed: 0, Passed: 12, Skipped: 0, Total: 12
 ```
+
 (6 V1-RMD-246'dan + 6 yeni `BusinessIdentityLogoEndpointsTests`:
 oturumsuz `PUT` → 401; `settings.manage` izni olmayan `PUT` → 403; gerçek
 bir yönetici oturumuyla `PUT` → 204, DB'de doğrulandı, sonra `DELETE` →
@@ -62,10 +64,11 @@ test çalıştırmasıyla yakalandı (revert-and-confirm değil, ilk gerçek
 kapattığı aynı üç kaydı ekleyerek düzeltildi; testler tekrar
 çalıştırılıp 12/12 yeşil olduğu doğrulandı.
 
-```
+```text
 $ dotnet test tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj
 Failed! - Failed: 2, Passed: 28, Skipped: 0, Total: 30
 ```
+
 Yeni eklenen 4 `/logo` testinin tamamı yeşil:
 `LogoIsNotFoundWhenNoneHasBeenSet`, `BrandingReportsHasLogoFalseWhenNoneHasBeenSet`,
 `LogoReturnsTheUploadedBytesAndBrandingReflectsItsPresence`,
@@ -76,22 +79,24 @@ zaten `git stash` ile bu görevlerden bağımsız/öncedendi olduğu kanıtlanm�
 aynı iki testtir — bu görev onlara hiç dokunmadı, sayıları (28/30, önceki
 24/26'dan +4 yeni test kadar arttı) bunu doğruluyor.
 
-```
+```text
 $ dotnet test tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj --filter FullyQualifiedName~ManifestTests
 Passed! - Failed: 0, Passed: 16, Skipped: 0, Total: 16
 ```
 
-```
+```text
 $ dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj
 Passed! - Failed: 0, Passed: 9, Skipped: 0, Total: 9
 ```
+
 (regresyon yok — `SettingsModule.cs`'e eklenen yeni kayıt modül sınırı
 ihlali üretmedi.)
 
 ## Migration ileri/geri doğrulaması
 
 Boş bir scratch veritabanında elle doğrulandı:
-```
+
+```text
 CREATE SCHEMA settings;
 \i 136-business-logo.up.sql   → CREATE TABLE (settings.business_logo, id=1
                                   check constraint, content BYTEA NOT NULL,
@@ -102,7 +107,7 @@ CREATE SCHEMA settings;
 
 ## Gate'ler
 
-```
+```text
 $ python tools/plan-audit/plan_audit_tool.py validate
 Validation errors: 1 (C54_APPLICATION_ADMISSION_V3_FINAL_MISSING — öncedendi,
 ilgisiz, değişmedi)
@@ -116,7 +121,7 @@ consistency-audit: clean
 
 `git status --short`, Owned surface ile birebir eşleşiyor:
 
-```
+```text
  M database/MigrationComposition/order.json
  M src/Host/Composition/Migrations/MigrationManifest.cs
  M src/Host/DualScreen/DualScreenApplication.cs
