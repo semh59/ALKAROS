@@ -1,7 +1,17 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.CrossChannelReservation;
+using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.PortionReservations.CancellationEffects;
+using ALKAROS.Inventory.PortionReservations.Lifecycle;
+using ALKAROS.Inventory.ReservationBalanceProjection;
+using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
+using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Kitchen.TicketLifecycle;
+using ALKAROS.Measurements;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.TestHelpers;
 
@@ -517,5 +527,64 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     {
         var repository = new PostgresOrderRepository(DataSource);
         return await repository.GetByIdAsync(orderId) ?? throw new InvalidOperationException("Order not found.");
+    }
+
+    /// <summary>
+    /// V12-STK-001: holds one unit of <paramref name="productId"/> for <paramref name="orderId"/>'s
+    /// <paramref name="orderItemId"/> through the real cross-channel arbiter, committed.
+    /// </summary>
+    public async Task<CrossChannelReservationOutcome> HoldAsync(Guid orderId, Guid orderItemId, Guid productId)
+    {
+        var items = new PostgresStockItemRepository(DataSource);
+        var locations = new PostgresStockLocationRepository(DataSource);
+        var reservations = new PostgresPortionReservationRepository(DataSource);
+        var balances = new PostgresStockBalanceRepository(DataSource);
+        var arbiter = new PostgresCrossChannelPortionArbiter(
+            DataSource,
+            balances,
+            new PortionCancellationDecisionService(
+                reservations,
+                new PortionReservationLifecycleService(reservations, items, locations),
+                new ReservationBalanceProjector(new PostgresReservationBalanceRepository(DataSource)),
+                new WasteRecordingService(
+                    new PostgresInventoryTransactionRunner(DataSource),
+                    new PostgresWasteRecordRepository(DataSource),
+                    new PostgresStockMovementRepository(DataSource),
+                    items,
+                    locations,
+                    balances,
+                    new UnitConverter()),
+                new PostgresKitchenItemStateProvider(DataSource)));
+
+        await using var connection = await DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var result = await arbiter.ReserveAsync(
+            new CrossChannelReservationRequest(
+                ReservationChannel.Online, "provider-" + orderId.ToString("N"), orderId, Guid.NewGuid(),
+                new[] { new CrossChannelReservationLine(orderItemId, productId, 1m) }),
+            connection,
+            transaction);
+        await transaction.CommitAsync();
+        return result.Outcome;
+    }
+
+    /// <summary>V12-STK-001: (reserved quantity, statuses of every hold) for a product's single stock mapping.</summary>
+    public async Task<(decimal Reserved, IReadOnlyList<string> HoldStatuses)> GetHoldStateForProductAsync(Guid productId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            SELECT b.reserved_quantity,
+                   COALESCE(array_agg(r.status ORDER BY r.reserved_at) FILTER (WHERE r.id IS NOT NULL), '{}')
+            FROM inventory.product_stock_mappings m
+            JOIN inventory.stock_balances b ON b.stock_item_id = m.stock_item_id
+            LEFT JOIN inventory.portion_reservations r ON r.stock_item_id = m.stock_item_id
+            WHERE m.product_id = @product_id
+            GROUP BY b.reserved_quantity;
+            """);
+        command.Parameters.AddWithValue("product_id", productId);
+        await using var reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+            throw new InvalidOperationException("No stock balance for product.");
+        return (reader.GetDecimal(0), reader.GetFieldValue<string[]>(1));
     }
 }

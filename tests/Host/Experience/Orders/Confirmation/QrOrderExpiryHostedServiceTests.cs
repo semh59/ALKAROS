@@ -2,6 +2,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
@@ -101,5 +102,6 @@ public sealed class QrOrderExpiryHostedServiceTests : IAsyncLifetime
             new PostgresProductRecipeMappingRepository(_database.DataSource),
             new PostgresRecipeVersionRepository(_database.DataSource),
             new PostgresTheoreticalConsumptionRecordRepository(_database.DataSource),
-            new UnitConverter()));
+            new UnitConverter(),
+            new PostgresReservationAwareConsumptionGuard()));
 }

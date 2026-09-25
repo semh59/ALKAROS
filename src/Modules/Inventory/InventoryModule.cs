@@ -1,4 +1,5 @@
 using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.ManualAdjustments;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
@@ -70,5 +71,10 @@ public sealed class InventoryModule : IModule
 
         context.RegisterTransient<IKitchenItemStateProvider, PostgresKitchenItemStateProvider>();
         context.RegisterTransient<IPortionCancellationDecisionService, PortionCancellationDecisionService>();
+
+        // V12-STK-001: one reservation command for every channel, and the consumption-side guard
+        // that stops a direct sale from taking a portion another order holds.
+        context.RegisterTransient<ICrossChannelPortionArbiter, PostgresCrossChannelPortionArbiter>();
+        context.RegisterTransient<IReservationAwareConsumptionGuard, PostgresReservationAwareConsumptionGuard>();
     }
 }

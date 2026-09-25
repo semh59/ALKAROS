@@ -7,6 +7,7 @@ using ALKAROS.Host.Experience.Orders.SentItemVoid;
 using ALKAROS.Host.Experience.Orders.SubmissionStockConsumption;
 using ALKAROS.Host.Experience.Orders.TableDraft;
 using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Inventory.ModifierStock;
@@ -157,6 +158,8 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IRecipeVersionRepository, PostgresRecipeVersionRepository>();
         services.TryAddSingleton<ITheoreticalConsumptionRecordRepository, PostgresTheoreticalConsumptionRecordRepository>();
         services.TryAddSingleton<IUnitConverter, UnitConverter>();
+        // V12-STK-001: consumption respects every other order's holds.
+        services.TryAddSingleton<IReservationAwareConsumptionGuard, PostgresReservationAwareConsumptionGuard>();
         services.TryAddSingleton<OrderStockConsumptionService>();
         // V1-RMD-143 follow-up (2026-09-09): SentItemVoidStore restores an
         // item's own consumed stock when it is voided before the kitchen

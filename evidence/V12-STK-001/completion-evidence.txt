@@ -1,0 +1,42 @@
+V12-STK-001 completion evidence (2026-09-25, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (Docker postgres:18, server_encoding UTF8). Not 55432 (SQL_ASCII trap).
+
+Decision: Semih 2026-09-25 (AskUserQuestion) "Hold + tuketim guard'i tek gorevde".
+
+Commands (exit code 0 unless noted):
+- dotnet build ALKAROS.slnx -c Debug                                   -> 0 warnings, 0 errors
+- dotnet test tests/Modules/Inventory/CrossChannelReservation          -> 27/27
+- dotnet test tests/Modules/Inventory/PortionReservations/Concurrency  -> 9/9
+- dotnet test tests/Modules/Inventory/PortionReservations/CancellationEffects -> 9/9
+- dotnet test tests/Modules/Inventory/PortionReservations/Lifecycle    -> 9/9
+- dotnet test tests/Modules/Inventory/ReservationBalanceProjection     -> 13/13
+- dotnet test tests/Host/Experience/Orders/Confirmation                -> 21/21 (2 new)
+- dotnet test tests/Host/Experience/Orders/TableDraft                  -> 84/84
+- dotnet test tests/Host/Experience/Orders/VoidSent                    -> 14/14
+- dotnet test tests/Host/Experience/NfcOrdering                        -> 19/19
+- dotnet test tests/Host/Experience/QrOrdering                         -> 32/32
+- dotnet test tests/Host/MigrationComposition                          -> 161/161 (host-tests.txt)
+- dotnet test tests/Architecture/ModuleBoundaries                      -> 9/9
+- python tools/project-manifest/project_manifest_tool.py               -> VALID
+- python tools/consistency-audit/consistency_audit.py                  -> clean
+- python tools/plan-audit/plan_audit_tool.py validate                  -> 0 errors, 0 warnings
+
+Before the Host DI/fixture fix, Confirmation was 14 failed / 5 passed (IReservationAwareConsumptionGuard
+unresolved) - proof the five Host fixtures/registrations needed the limited additions.
+
+Mutations (each reverted; cmp against backup identical):
+- arbiter row locks removed            -> 2 failed (4-channel race, hold-vs-sale race), 3 runs
+- guard availability check -> true     -> 3 failed
+- guard never converts own hold        -> 2 failed
+- arbiter replay check disabled        -> 3 failed
+- accept path skips guard (Host)       -> 2 failed (both new Confirmation tests)
+
+Honest limits: ICrossChannelPortionArbiter has no runtime caller yet (V12-QRO-003 / V12-ONL-002 wire it);
+listed in unreachable_services_allowlist.json with this task id. No Yemeksepeti/provider evidence exists
+or is claimed (V0-YSP-001 edge waived by V12-GOV-004).
+
+task_scope_tool --task-id V12-STK-001: reports 14 path findings + the task-markdown body change. Every
+reported path is exactly one of the "Sinirli ek" entries documented in the task's Owned surface
+(approved by Semih: hold+guard in one task, and "Sinirli ek + yol notu" policy, both 2026-09-25).
+No undocumented path was changed. (The tool's allowlist only parses backticked Owned surface bullets,
+and it only enforces on pull_request events - see fork-coordination notes.)

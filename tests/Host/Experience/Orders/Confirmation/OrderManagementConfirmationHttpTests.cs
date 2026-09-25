@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
+using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -185,6 +186,54 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
         // Nothing applied — the guarded delta refused the whole thing.
         Assert.Equal(0m, await _database.GetOnHandQuantityForProductAsync(productId));
     }
+
+    /// <summary>V12-STK-001: a direct Accept cannot take the last portion another channel's order already holds.</summary>
+    [Fact]
+    public async Task AcceptingIsRefusedWhenAnotherOrderHoldsTheLastPortion()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, productId) = await _database.SeedPendingConfirmationOrderAsync(stockOnHandQuantity: 1m);
+        Assert.Equal(
+            CrossChannelReservationOutcome.Reserved,
+            await _database.HoldAsync(Guid.NewGuid(), Guid.NewGuid(), productId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("INSUFFICIENT_STOCK", await response.Content.ReadAsStringAsync());
+        Assert.Equal(OrderState.PendingConfirmation, (await _database.ReloadOrderAsync(orderId)).Status);
+        Assert.Equal(1m, await _database.GetOnHandQuantityForProductAsync(productId));
+        Assert.Equal((1m, "Reserved"), NormalizeHolds(await _database.GetHoldStateForProductAsync(productId)));
+    }
+
+    /// <summary>V12-STK-001: an order's own hold is what its Accept consumes — it is never counted against itself.</summary>
+    [Fact]
+    public async Task AcceptingAnOrderConsumesItsOwnHold()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, productId) = await _database.SeedPendingConfirmationOrderAsync(stockOnHandQuantity: 1m);
+        var orderItemId = (await _database.ReloadOrderAsync(orderId)).Items.Single().Id;
+        Assert.Equal(
+            CrossChannelReservationOutcome.Reserved,
+            await _database.HoldAsync(orderId, orderItemId, productId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(0m, await _database.GetOnHandQuantityForProductAsync(productId));
+        Assert.Equal((0m, "Consumed"), NormalizeHolds(await _database.GetHoldStateForProductAsync(productId)));
+    }
+
+    private static (decimal, string) NormalizeHolds((decimal Reserved, IReadOnlyList<string> HoldStatuses) state) =>
+        (state.Reserved, string.Join(",", state.HoldStatuses));
 
     /// <summary>
     /// V1-RMD-143 regression: a waiter can void an item off a

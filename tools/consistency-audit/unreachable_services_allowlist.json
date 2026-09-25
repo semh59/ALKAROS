@@ -1,5 +1,6 @@
 {
   "AuthorizedReEncryptionService": "V1-RMD-278: yeniden sifreleme yalniz saklama kayitlari uretildiginde anlamli; kayit ureten veri gorevleri (V14) baglayacak.",
+  "ICrossChannelPortionArbiter": "V12-STK-001: kanallar arasi rezervasyon komutu; ilk calisma zamani cagirani V12-QRO-003 (QR onayi) ve V12-ONL-002 (online siparis) baglayacak, baglandiginda bu satir silinir.",
   "IKitchenItemStateProvider": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "IKitchenRoutingService": "V1-RMD-278: mutfak yonlendirmesi Host tarafindan depolar ve yonlendirici uzerinden zaten calisiyor; sarmalayici servis gereksiz.",
   "IPortionCancellationDecisionService": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
@@ -16,6 +17,7 @@
   "PortionCancellationDecisionService": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "PortionReservationArbitrator": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "PortionReservationLifecycleService": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
+  "PostgresCrossChannelPortionArbiter": "V12-STK-001: kanallar arasi rezervasyon komutu; ilk calisma zamani cagirani V12-QRO-003 (QR onayi) ve V12-ONL-002 (online siparis) baglayacak, baglandiginda bu satir silinir.",
   "PostgresKitchenItemStateProvider": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "PostgresPortionReservationArbitratorRepository": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "PostgresPortionReservationRepository": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",

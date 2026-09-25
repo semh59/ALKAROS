@@ -52,6 +52,8 @@
     <None Include="../../../../../database/migrations/V13/V13-ALC-001/123-payment-allocations.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V11/V11-INV-001/060-stock-movements.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V11/V11-INV-002/061-stock-balances.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V11/V11-RSV-001/064-portion-reservations.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V11/V11-INV-007/065-reservation-balance-projection.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- V1-RMD-152: what a modifier consumes. -->
     <None Include="../../../../../database/migrations/V1/V1-RMD-152/095-modifier-stock-mappings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-RMD-125/087-inventory-stock-balances-non-negative.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

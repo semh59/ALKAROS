@@ -1,0 +1,5 @@
+PortionReservations/Concurrency: Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 759 ms - ALKAROS.Inventory.PortionReservations.Concurrency.Tests.dll (net8.0)
+PortionReservations/CancellationEffects: Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 764 ms - ALKAROS.Inventory.PortionReservations.CancellationEffects.Tests.dll (net8.0)
+PortionReservations/Lifecycle: Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 742 ms - ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll (net8.0)
+ReservationBalanceProjection: Başarılı!  - Başarısız:     0, Başarılı:    13, Atlanan:     0, Toplam:    13, Süre: 1 s - ALKAROS.Inventory.ReservationBalanceProjection.Tests.dll (net8.0)
+CrossChannelReservation: Başarılı!  - Başarısız:     0, Başarılı:    27, Atlanan:     0, Toplam:    27, Süre: 979 ms - ALKAROS.Inventory.CrossChannelReservation.Tests.dll (net8.0)

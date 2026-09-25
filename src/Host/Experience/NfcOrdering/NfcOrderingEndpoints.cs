@@ -1,6 +1,7 @@
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
@@ -70,6 +71,8 @@ public static class NfcOrderingEndpoints
         services.TryAddSingleton<IRecipeVersionRepository, PostgresRecipeVersionRepository>();
         services.TryAddSingleton<ITheoreticalConsumptionRecordRepository, PostgresTheoreticalConsumptionRecordRepository>();
         services.TryAddSingleton<IUnitConverter, UnitConverter>();
+        // V12-STK-001: consumption respects every other order's holds.
+        services.TryAddSingleton<IReservationAwareConsumptionGuard, PostgresReservationAwareConsumptionGuard>();
         services.TryAddSingleton<OrderStockConsumptionService>();
         services.TryAddSingleton<NfcOrderingStore>();
         services.TryAddTransient<NfcOrderingExceptionFilter>();

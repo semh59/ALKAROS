@@ -1,4 +1,5 @@
 using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
@@ -50,6 +51,7 @@ public sealed class OrderStockConsumptionService
     private readonly IRecipeVersionRepository _recipeVersions;
     private readonly ITheoreticalConsumptionRecordRepository _theoreticalConsumption;
     private readonly IUnitConverter _unitConverter;
+    private readonly IReservationAwareConsumptionGuard _reservationGuard;
 
     public OrderStockConsumptionService(
         IProductStockMappingRepository mappings,
@@ -60,7 +62,8 @@ public sealed class OrderStockConsumptionService
         IProductRecipeMappingRepository recipeMappings,
         IRecipeVersionRepository recipeVersions,
         ITheoreticalConsumptionRecordRepository theoreticalConsumption,
-        IUnitConverter unitConverter)
+        IUnitConverter unitConverter,
+        IReservationAwareConsumptionGuard reservationGuard)
     {
         _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
         _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
@@ -71,6 +74,7 @@ public sealed class OrderStockConsumptionService
         _recipeVersions = recipeVersions ?? throw new ArgumentNullException(nameof(recipeVersions));
         _theoreticalConsumption = theoreticalConsumption ?? throw new ArgumentNullException(nameof(theoreticalConsumption));
         _unitConverter = unitConverter ?? throw new ArgumentNullException(nameof(unitConverter));
+        _reservationGuard = reservationGuard ?? throw new ArgumentNullException(nameof(reservationGuard));
     }
 
     /// <summary>
@@ -167,8 +171,14 @@ public sealed class OrderStockConsumptionService
                     ?? throw new StockItemHasNoDefaultLocationException(stockItem.Id, stockItem.Name);
 
                 var consumeQuantity = item.Quantity * mapping.QuantityMultiplier;
-                var applied = await _balances.TryApplyGuardedOnHandDeltaAsync(
-                    mapping.StockItemId, locationId, -consumeQuantity, connection, transaction, cancellationToken);
+                // V12-STK-001: this line's own hold (if a channel reserved it) becomes the
+                // consumption; every other order's hold still counts against it.
+                var coveredByAvailable = await _reservationGuard.ConvertOwnHoldsAndCheckAvailableAsync(
+                    item.Id, mapping.StockItemId, locationId, consumeQuantity, actorId, connection, transaction, cancellationToken);
+                var applied = coveredByAvailable
+                    ? await _balances.TryApplyGuardedOnHandDeltaAsync(
+                        mapping.StockItemId, locationId, -consumeQuantity, connection, transaction, cancellationToken)
+                    : null;
                 if (applied is null)
                 {
                     throw new InsufficientOrderStockException(
@@ -341,8 +351,12 @@ public sealed class OrderStockConsumptionService
                     ?? throw new StockItemHasNoDefaultLocationException(stockItem.Id, stockItem.Name);
 
                 var consumeQuantity = modifier.Quantity * mapping.QuantityMultiplier;
-                var applied = await _balances.TryApplyGuardedOnHandDeltaAsync(
-                    mapping.StockItemId, locationId, -consumeQuantity, connection, transaction, cancellationToken);
+                var coveredByAvailable = await _reservationGuard.ConvertOwnHoldsAndCheckAvailableAsync(
+                    item.Id, mapping.StockItemId, locationId, consumeQuantity, actorId, connection, transaction, cancellationToken);
+                var applied = coveredByAvailable
+                    ? await _balances.TryApplyGuardedOnHandDeltaAsync(
+                        mapping.StockItemId, locationId, -consumeQuantity, connection, transaction, cancellationToken)
+                    : null;
                 if (applied is null)
                 {
                     throw new InsufficientOrderStockException(
