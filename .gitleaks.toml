@@ -23,6 +23,17 @@ paths = [
   '''tests/Host/Experience/WebPush/WebPushCryptoTests\.cs''',
   '''tests/Modules/Kitchen/PrintQueue/PostgresPrintQueueIntegrationTests\.cs''',
   '''tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests\.cs''',
+  # Same reasoning, later additions: idempotency-key string literals, fake
+  # bearer/JWT-shaped strings that the secret-pattern scanner tests must
+  # detect, and a fake retention crypto key.
+  '''tests/Host/Experience/PaymentTender/PaymentTenderHttpTests\.cs''',
+  '''tests/Host/Experience/CashSession/CashSessionHttpTests\.cs''',
+  '''tests/Host/Experience/WebPush/WebPushSenderTests\.cs''',
+  '''tests/Modules/Support/DiagnosticBundle/(DiagnosticBundleService|SecretPatternScanner)Tests\.cs''',
+  '''tests/Modules/Security/DataProtectionRetention/Fixtures/RetentionCryptoFixtures\.cs''',
+  # TokenX Cloud's own public Postman documentation: its sample login
+  # response carries an example (expired) access token, not a credential.
+  '''evidence/v0/integrations/V0-HUG-001/tokenx-documentation\.postman_collection\.json''',
 ]
 regexes = [
   # AES-256 test key: "0123456789abcdef0123456789abcdef" and its base64.
