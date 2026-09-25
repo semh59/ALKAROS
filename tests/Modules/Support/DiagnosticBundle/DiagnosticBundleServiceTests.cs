@@ -199,10 +199,17 @@ public sealed class DiagnosticBundleServiceTests : IAsyncLifetime
 
         var results = await Task.WhenAll(tasks);
 
-        Assert.All(results.Where((_, i) => i % 2 == 0), r => Assert.Contains("marker alpha", r.LogEntries.Single().RedactedDetailsJson));
-        Assert.All(results.Where((_, i) => i % 2 == 1), r => Assert.Contains("marker beta", r.LogEntries.Single().RedactedDetailsJson));
+        Assert.All(results.Where((_, i) => i % 2 == 0), r => Assert.Contains("marker alpha", IncidentEntry(r).RedactedDetailsJson));
+        Assert.All(results.Where((_, i) => i % 2 == 1), r => Assert.Contains("marker beta", IncidentEntry(r).RedactedDetailsJson));
         Assert.Equal(4, results.Select(r => r.BundleId).Distinct().Count());
     }
+
+    // A concurrent request may already have appended its own provenance event
+    // ("support.diagnostic_bundle.generated") under the same correlation id, so
+    // the bundle can legitimately also contain that record; the seeded incident
+    // event is the one this test is about.
+    private static DiagnosticBundleLogEntry IncidentEntry(DiagnosticBundleResult result) =>
+        result.LogEntries.Single(e => e.EventName != "support.diagnostic_bundle.generated");
 
     // The next tests target a design gap found by an independent 2026-09-22
     // audit: BeforeStateJson/AfterStateJson/MetadataJson are themselves
