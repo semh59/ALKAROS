@@ -124,6 +124,18 @@ public sealed class YemeksepetiWebhookInbox
         return new WebhookReceipt(WebhookReceiptOutcome.Duplicate, inboxId);
     }
 
+    /// <summary>
+    /// V12-ONL-002: opens a stored delivery's raw body for processing. The inbox stays the only
+    /// component whose accessor can decrypt it.
+    /// </summary>
+    public string OpenPayload(byte[] payloadEnvelope)
+    {
+        ArgumentNullException.ThrowIfNull(payloadEnvelope);
+        var payload = _protector.Unprotect(
+            SensitiveEnvelope.FromPersistenceBytes(payloadEnvelope), MasterKey, YemeksepetiWebhookAccessPolicy.Accessor);
+        return payload.Fields[PayloadField];
+    }
+
     /// <summary>Compares SHA-256 digests in constant time, so neither content nor length of the secret leaks through timing.</summary>
     private static bool Matches(string? presented, string expected)
     {

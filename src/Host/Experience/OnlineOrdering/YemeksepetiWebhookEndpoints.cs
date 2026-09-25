@@ -1,3 +1,6 @@
+using ALKAROS.Catalog.ProductCatalog;
+using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
+using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +31,16 @@ public static class YemeksepetiWebhookEndpoints
         // registers these through OnlineOrderingModule.
         services.TryAddTransient<ALKAROS.Secrets.ISecretProvider, ALKAROS.Secrets.EnvironmentVariableSecretProvider>();
         services.TryAddTransient<YemeksepetiWebhookInbox>();
+        // V12-ONL-002: asynchronous processing of stored events. Order, kitchen dispatch and the
+        // cross-channel arbiter come from AddOrderManagementExperience / the modules.
+        services.TryAddTransient<IProductRepository, PostgresProductRepository>();
+        services.TryAddTransient<ITaxProfileRepository, PostgresTaxProfileRepository>();
+        services.TryAddTransient<IProductModifierGroupRepository, PostgresProductModifierGroupRepository>();
+        services.TryAddTransient<IModifierGroupRepository, PostgresModifierGroupRepository>();
+        services.TryAddTransient<IYemeksepetiProductMappingService, PostgresYemeksepetiProductMappingService>();
+        services.TryAddTransient<YemeksepetiOrderNormalizer>();
+        services.TryAddTransient<YemeksepetiOrderIntakeService>();
+        services.AddHostedService<YemeksepetiInboxProcessingHostedService>();
         return services;
     }
 

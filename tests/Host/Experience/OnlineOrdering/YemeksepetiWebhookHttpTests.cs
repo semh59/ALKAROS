@@ -17,21 +17,6 @@ using Xunit;
 
 namespace ALKAROS.Host.Experience.OnlineOrdering.Tests;
 
-public sealed class OnlineOrderingTestDatabase : PgTestDatabase
-{
-    public OnlineOrderingTestDatabase() : base("alkaros_ysp_webhook_http_") { }
-
-    protected override async Task ApplySqlAsync() =>
-        await RunAsync(DataSource, await File.ReadAllTextAsync(
-            Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "145-yemeksepeti-webhook-inbox.up.sql")));
-
-    public async Task<long> CountAllAsync()
-    {
-        await using var command = DataSource.CreateCommand("SELECT count(*) FROM online_ordering.yemeksepeti_webhook_inbox;");
-        return (long)(await command.ExecuteScalarAsync())!;
-    }
-}
-
 /// <summary>
 /// V12-ONL-001: the webhook endpoint over real HTTP and real Postgres. This exercises our own
 /// endpoint and inbox; it proves nothing about Yemeksepeti's real deliveries, which have never

@@ -1,0 +1,21 @@
+V12-ONL-002 completion evidence (2026-09-26, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+UNVERIFIED DRAFT provider payload shape - public Partner API v2.0.2 order schema only
+(https://developer.yemeksepeti.com/api-specifications); test payloads are our own fixtures; no real
+Yemeksepeti delivery has ever been processed (V0-YSP-001 Blocked, V12-GOV-004 waiver).
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization -> 18/18
+- dotnet test tests/Host/Experience/OnlineOrdering -> 14/14 (5 webhook + 9 intake)
+- dotnet test tests/Host/MigrationComposition -> 161/161 (host-tests.txt; migration 146, hosted service composed)
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- consistency_audit.py -> clean (V12-MAP-001 allowlist entries pruned: mapping now reached at runtime)
+- plan_audit_tool.py validate -> 0/0
+Migration 146 down -> up exercised by TheProcessingMigrationRollsBackAndReapplies.
+Mutations (reverted, cmp identical; Host ones run twice each): per-order advisory lock removed -> 1 failed;
+hold refusal ignored -> 2 failed; cancellations claimed too -> 1 failed; normalizer skips unresolved line
+-> 3 failed; fractional quantity allowed -> 1 failed.
+Real defect found by the new tests: JsonElement.TryGetDecimal throws on a non-number value; now a typed
+InvalidQuantity/InvalidPrice rejection.

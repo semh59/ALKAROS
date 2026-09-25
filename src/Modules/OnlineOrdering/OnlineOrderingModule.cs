@@ -1,4 +1,5 @@
 using ALKAROS.ModuleComposition;
+using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Secrets;
@@ -25,5 +26,7 @@ public sealed class OnlineOrderingModule : IModule
         // single-purpose access policy; only the secret source itself comes from DI.
         context.RegisterTransient<ISecretProvider, EnvironmentVariableSecretProvider>();
         context.RegisterTransient<YemeksepetiWebhookInbox, YemeksepetiWebhookInbox>();
+        // V12-ONL-002: payload normalization.
+        context.RegisterTransient<YemeksepetiOrderNormalizer, YemeksepetiOrderNormalizer>();
     }
 }

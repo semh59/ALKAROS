@@ -1246,6 +1246,14 @@
         "yemeksepeti_webhook_inbox"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "146",
+      "phase": "B",
+      "tables": [
+        "yemeksepeti_webhook_inbox"
+      ],
+      "deferredConstraints": []
     }
   ]
 }
