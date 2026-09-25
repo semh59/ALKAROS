@@ -1,5 +1,7 @@
 using ALKAROS.ModuleComposition;
 using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
+using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
+using ALKAROS.Secrets;
 
 namespace ALKAROS.OnlineOrdering;
 
@@ -19,5 +21,9 @@ public sealed class OnlineOrderingModule : IModule
     public void Register(ModuleContext context)
     {
         context.RegisterTransient<IYemeksepetiProductMappingService, PostgresYemeksepetiProductMappingService>();
+        // V12-ONL-001: the inbox builds its own resolver/cipher/protector chain around its
+        // single-purpose access policy; only the secret source itself comes from DI.
+        context.RegisterTransient<ISecretProvider, EnvironmentVariableSecretProvider>();
+        context.RegisterTransient<YemeksepetiWebhookInbox, YemeksepetiWebhookInbox>();
     }
 }

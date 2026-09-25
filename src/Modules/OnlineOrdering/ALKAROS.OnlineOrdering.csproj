@@ -11,6 +11,9 @@
     <!-- module-dependency-rules.md row 20: Online Ordering may call Catalog directly
          (V12-MAP-001 resolves provider SKUs to active catalog products). -->
     <ProjectReference Include="..\Catalog\ALKAROS.Catalog.csproj" />
+    <!-- V12-ONL-001: webhook secret resolution and the encrypted raw-payload envelope. -->
+    <ProjectReference Include="..\..\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj" />
   </ItemGroup>
 
   <ItemGroup>

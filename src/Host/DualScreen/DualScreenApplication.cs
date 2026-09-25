@@ -35,6 +35,7 @@ using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Host.Experience.QrOrdering;
 using ALKAROS.Host.Experience.RelaySettings;
 using ALKAROS.Host.Experience.TokenTerminalSettings;
+using ALKAROS.Host.Experience.OnlineOrdering;
 using ALKAROS.Host.Experience.QnbCredentialSettings;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
@@ -174,6 +175,7 @@ public static partial class DualScreenApplication
         builder.Services.AddRelaySettingsExperience();
         builder.Services.AddTokenTerminalSettingsExperience();
         builder.Services.AddQnbCredentialSettingsExperience();
+        builder.Services.AddYemeksepetiWebhookExperience();
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddRoleManagementExperience();
@@ -268,6 +270,11 @@ public static partial class DualScreenApplication
             // authenticated terminal/display id), this partitions by table
             // id since there is no session to key on. A generous-but-bounded
             // limit: several guests at one table placing a few rounds each.
+            // V12-ONL-001: provider-to-server webhook; keyed by caller address so an
+            // unauthenticated flood is bounded before it reaches the inbox (the provider itself
+            // retries a delivery at most 5 times, 10 s apart).
+            rateLimiter.AddPolicy("yemeksepeti-webhook", context =>
+                FixedWindow($"{ClientPartition(context)}:yemeksepeti-webhook", 300));
             rateLimiter.AddPolicy("nfc-order", context =>
                 FixedWindow(RoutePartition(context, "tableId", "nfc-order"), 30));
             // V12-CWB-001: relay-facing, so unlike every other unauthenticated
@@ -574,6 +581,7 @@ public static partial class DualScreenApplication
         app.MapRelaySettingsApi();
         app.MapTokenTerminalSettingsApi();
         app.MapQnbCredentialSettingsApi();
+        app.MapYemeksepetiWebhookApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
         app.MapRoleManagementApi();

@@ -58,6 +58,7 @@
   <Project Path="tests/Host/Experience/Inventory/ALKAROS.Host.Experience.Inventory.Tests.csproj" />
   <Project Path="tests/Host/Experience/Recipes/ALKAROS.Host.Experience.Recipes.Tests.csproj" />
   <Project Path="tests/Host/Experience/InventoryReporting/ALKAROS.Host.Experience.InventoryReporting.Tests.csproj" />
+  <Project Path="tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj" />
   <Project Path="tests/Host/Experience/Reporting/ALKAROS.Host.Experience.Reporting.Tests.csproj" />
   <Project Path="tests/Host/Experience/Reconciliation/ALKAROS.Host.Experience.Reconciliation.Tests.csproj" />
   <Project Path="tests/Host/Experience/SecurityAdministration/ALKAROS.Host.Experience.SecurityAdministration.Tests.csproj" />
@@ -160,6 +161,7 @@
   <Project Path="tests/Modules/Inventory/CrossChannelReservation/ALKAROS.Inventory.CrossChannelReservation.Tests.csproj" />
   <Project Path="tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.csproj" />
   <Project Path="tests/Modules/OnlineOrdering/Yemeksepeti/StatusMapping/ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping.Tests.csproj" />
+  <Project Path="tests/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox.Tests.csproj" />
   <Project Path="tests/Modules/Menu/StaticMenu/ALKAROS.Menu.StaticMenu.Tests.csproj" />
   <Project Path="tests/Modules/Menu/DailyMenuLifecycle/ALKAROS.Menu.DailyMenuLifecycle.Tests.csproj" />
   <Project Path="tests/Modules/Purchasing/Suppliers/ALKAROS.Purchasing.Suppliers.Tests.csproj" />

@@ -1,0 +1,22 @@
+V12-ONL-001 completion evidence (2026-09-25, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+UNVERIFIED DRAFT provider contract - public sources only (no Partner Portal credential, no sandbox, no real
+delivery ever received; V0-YSP-001 Blocked, V12-GOV-004 waiver):
+- https://developer.yemeksepeti.com/api-specifications : webhook auth "Static token for webhook notifications
+  can be added through the Vendor Portal"; retried up to 5 times on 4XX/5XX.
+- https://developer.yemeksepeti.com/en/documentation/pos-partner-picking-faq : "Secret is mandatory",
+  Authorization header (Basic example), 10 s timeout, up to 5 retries 10 s apart, duplicate payloads possible;
+  payload order_id / external_order_id / order_code, status, sys.updated_at.
+
+Commands (exit 0):
+- dotnet restore ALKAROS.slnx --force-evaluate; dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox -> 21/21
+- dotnet test tests/Host/Experience/OnlineOrdering -> 5/5 (real Kestrel + Postgres)
+- dotnet test tests/Host/MigrationComposition -> 161/161 (host-tests.txt)
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- consistency_audit.py -> clean; plan_audit_tool.py validate -> 0/0
+Migration 145 up -> down -> up exercised by TheMigrationRollsBackAndReapplies.
+Mutations (reverted, cmp identical): auth bypass -> 5 failed; ON CONFLICT removed -> 3 failed; status dropped
+from event key -> 1 failed (after adding the same-update-time test; first attempt survived); raw body stored
+unencrypted -> 1 failed.

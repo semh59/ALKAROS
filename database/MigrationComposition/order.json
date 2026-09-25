@@ -1238,6 +1238,14 @@
         "yemeksepeti_product_mappings"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "145",
+      "phase": "B",
+      "tables": [
+        "yemeksepeti_webhook_inbox"
+      ],
+      "deferredConstraints": []
     }
   ]
 }
