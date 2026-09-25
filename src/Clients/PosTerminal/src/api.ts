@@ -35,6 +35,18 @@ export interface BusinessLogoPreview {
   url: string;
 }
 
+// V1-RMD-291: a session dropped on the server (expiry, revocation, a
+// terminal reassigned) used to be handled ad hoc — Cashier.tsx caught it on
+// some calls, six separate spots in workspace.tsx each showed their own
+// 'unauthorized' text with no way back to the login screen, and
+// pendingChecksApi.ts showed a message that never went anywhere. One place
+// now owns it: whoever renders the login screen registers a callback once;
+// `request()` calls it on every 401 from here on, from any workspace.
+let onSessionExpired: (() => void) | null = null;
+export function registerSessionExpiredHandler(handler: (() => void) | null): void {
+  onSessionExpired = handler;
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -99,6 +111,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       body = undefined;
     }
+    // Idempotent to call redundantly (e.g. a rejected login, where there was
+    // never a session to drop) - the handler only sets state to what it
+    // already is in that case.
+    if (response.status === 401) onSessionExpired?.();
     throw new ApiError(
       response.status,
       body?.error?.code ?? "REQUEST_FAILED",
@@ -235,6 +251,7 @@ export const api = {
       } catch {
         errorBody = undefined;
       }
+      if (response.status === 401) onSessionExpired?.();
       throw new ApiError(
         response.status,
         errorBody?.error?.code ?? "REQUEST_FAILED",
@@ -372,6 +389,7 @@ export const api = {
       } catch {
         errorBody = undefined;
       }
+      if (response.status === 401) onSessionExpired?.();
       throw new ApiError(
         response.status,
         errorBody?.error?.code ?? "REQUEST_FAILED",

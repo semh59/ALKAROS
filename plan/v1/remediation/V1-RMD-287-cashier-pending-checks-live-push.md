@@ -23,8 +23,9 @@ Kasa 'Bekleyen hesaplar' ekranı (`V1-RMD-280`) her 10 saniyede bir sorgu yapıy
   (yalnız `PendingChecksChanged` sabiti ve payload kaydı)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/WaiterNotifications/WaiterNotificationsExperience.cs
   (yalnız DI kaydının değiştirilmesi)
-- Yeni dosya: src/Host/Experience/Orders/CashierQueueAnnouncer.cs
-- Yeni dosya: src/Host/Experience/WaiterNotifications/SignalRCashierQueueAnnouncer.cs
+- Yeni dosya: `src/Host/Experience/Orders/CashierQueueAnnouncer.cs`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/WaiterNotifications/SignalRCashierQueueAnnouncer.cs
+  (yeni dosya, klasör `V1-WTR-009` tarafından zaten sahiplenilmiş)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/TableDraft/CheckLifecycleHttpTests.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/E2E/Cashier/specs/14-till-queue-of-sent-checks.spec.js
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx

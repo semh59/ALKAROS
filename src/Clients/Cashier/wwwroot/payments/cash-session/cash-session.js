@@ -77,6 +77,14 @@
       headers: options.body ? { 'Content-Type': 'application/json' } : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
     }).then(function (response) {
+      // V1-RMD-291: one place catches a dropped session, from ANY call, not
+      // just the bootstrap check - before this a 401 from a mid-use action
+      // only added an inline message to the already-stale screen; nothing
+      // sent the cashier back to the real login form this page already has.
+      if (response.status === 401 && state.phase !== 'login') {
+        state.phase = 'login';
+        render();
+      }
       if (response.status === 204) return { ok: true, status: response.status, body: null };
       return response.json().catch(function () { return null; }).then(function (body) {
         return { ok: response.ok, status: response.status, body: body };

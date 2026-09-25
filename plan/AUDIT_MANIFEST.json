@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1312,
-  "markdown_line_count": 100558,
-  "markdown_byte_count": 5745224,
+  "markdown_line_count": 100569,
+  "markdown_byte_count": 5746825,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2521,7 +2521,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "922AFC0FC4F107C738057128CD3771CFE530BEA1C212A9E671B3594B96F7CF2B",
+      "sha256": "F073C32D3265AF6F7A7F73289449DC8B70FE52F35F34333EF6083808B72A03BC",
       "lines": 2588,
       "bytes": 376824,
       "utf8": true
@@ -7218,9 +7218,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-287-cashier-pending-checks-live-push.md",
-      "sha256": "E5FACD12621FB985CE93F97B21779539EF84A71FB3656407DED29ECD5836C68C",
-      "lines": 57,
-      "bytes": 3075,
+      "sha256": "DB380CD8189122F1BDDE0FAEC0F73E495E405A997E6857E51F284E6E8174B553",
+      "lines": 58,
+      "bytes": 3183,
       "utf8": true
     },
     {
@@ -7246,9 +7246,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-291-posterminal-session-expiry-handling.md",
-      "sha256": "79623391A12E4DBC32A2AC274CE0F2B96F4736E6D875842267D1092BB26BD9BA",
-      "lines": 49,
-      "bytes": 2185,
+      "sha256": "D3D3DC5D9C63A6465A15294EBEF9E6E860613A08912CB9C8F17003FEC69A05B9",
+      "lines": 59,
+      "bytes": 3678,
       "utf8": true
     },
     {

@@ -74,6 +74,15 @@
       headers: options.body ? { 'Content-Type': 'application/json' } : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
     }).then(function (response) {
+      // V1-RMD-291: one place catches a dropped session, from ANY call, not
+      // just the bootstrap check - before this a 401 from a mid-use action
+      // (resolve/claim/decide/tender below) only added an inline message to
+      // the already-stale 'ready' screen; nothing sent the cashier back to
+      // where they could actually sign in again.
+      if (response.status === 401 && state.phase !== 'login') {
+        state.phase = 'login';
+        render();
+      }
       if (response.status === 204) return { ok: true, status: response.status, body: null };
       return response.json().catch(function () { return null; }).then(function (body) {
         return { ok: response.ok, status: response.status, body: body };
@@ -365,9 +374,9 @@
       '<div class="sp-card">' +
       '<div><span class="sp-eyebrow">ALKAROS</span>' +
       '<h1 class="sp-title">Kasa Girişi</h1>' +
-      '<p class="sp-subtitle">Hesabı ödemek için giriş yapın.</p></div>' +
+      '<p class="sp-subtitle">Oturumunuz sona erdi. Devam etmek için tekrar giriş yapın.</p></div>' +
       errorAlert() +
-      '<p class="sp-subtitle">Lütfen kasa uygulamasından giriş yapıp bu sayfayı yeniden açın.</p>' +
+      '<a class="sp-btn sp-btn-primary" href="/" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">Giriş ekranına dön</a>' +
       '</div>';
   }
 

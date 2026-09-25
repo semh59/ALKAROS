@@ -8,7 +8,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { ApiError, api } from "../api";
+import { ApiError, api, registerSessionExpiredHandler } from "../api";
 import type { CatalogProduct, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
 import { stateText } from "../strings";
@@ -112,6 +112,19 @@ export function Cashier() {
   useEffect(() => {
     void restoreSession();
   }, [restoreSession]);
+
+  // V1-RMD-291: the one place that drops the session on a 401 from ANY call
+  // in this app - not just the ones that already caught it locally
+  // (restoreSession/execute/login below). Before this, a 401 from an
+  // uncaught call (or a future one that forgets to check) left the cashier
+  // stuck on a half-rendered screen with no way back to the login form.
+  // A 401 from a rejected login itself also reaches here, but that is
+  // harmless: the session is already anonymous, and login()'s own catch
+  // still owns the Turkish message shown for it.
+  useEffect(() => {
+    registerSessionExpiredHandler(() => setSession("anonymous"));
+    return () => registerSessionExpiredHandler(null);
+  }, []);
 
   // V1-WTR-014: a waiter's real-time call for help. The connection is
   // attempted for every signed-in session (matching CustomerDisplay's own

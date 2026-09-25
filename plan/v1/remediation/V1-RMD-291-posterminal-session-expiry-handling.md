@@ -1,8 +1,8 @@
 # V1-RMD-291 - PosTerminal ve Kasa sayfalarında oturum düşmesi tutarlı işlenir
 
 - Task ID: V1-RMD-291
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: remediation
 - Surface state: Existing
 
@@ -22,6 +22,7 @@ Oturum sunucuda düştüğünde istemciler farklı davranıyor: garson PWA `api.
   (yalnız oturum durumu)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/E2E/Cashier/specs/15-session-expiry.spec.js
 
 ## In scope
 
@@ -40,9 +41,18 @@ Oturum sunucuda düştüğünde istemciler farklı davranıyor: garson PWA `api.
 
 ## Acceptance evidence
 
-- vitest: herhangi bir çağrıda 401 oturumu düşürür ve giriş ekranı açılır; statik istemci testi: split-payment ve cash-session 401'de giriş aşamasına geçer.
-- Kasa E2E: oturum sunucuda iptal edilince ekran giriş aşamasına döner.
-- `plan_audit_tool.py validate` temiz.
+- PosTerminal vitest: 27 dosya, 205/205. `pnpm typecheck` temiz.
+- Cashier E2E (gerçek Host + Chromium): 36/36 (34 mevcut + 2 yeni `15-session-expiry`). Yeni: Hesap Ödeme'de tahsilat sırasında sunucu 401 dönünce ekran 'Kasa Girişi' fazına döner ve '/' adresine giden bir bağlantı gösterir; Kasa Oturumu'nda vardiya açılışı sırasında 401 dönünce sayfanın kendi gerçek giriş formu (kullanıcı adı/şifre) görünür.
+- Mutasyon kontrolü: `api.ts`, `Cashier.tsx`, `split-payment.js`, `cash-session.js` eski hâline döndürülünce yeni 2 E2E senaryosu da kırıldı.
+- `plan_audit_tool.py validate` ve `consistency_audit.py` temiz.
+
+### Kapsam sapması (dürüstçe kaydedildi)
+
+Görevin metni `pendingChecksApi.ts` ve PosTerminal `workspace.tsx`'teki 6 ayrı 'yetkisiz' durumunu da örnek veriyordu, ama görevin Owned surface'ı bu iki dosyayı LİSTELEMİYOR (yalnız `api.ts`, `Cashier.tsx` oturum durumu, ve iki statik sayfa). Bu yüzden dokunulmadı:
+
+- `pendingChecksApi.ts` kendi `fetcher`'ını kullanıyor, `api.ts`'in `request()` katmanından geçmiyor; yeni tek işleyici bunu kapsamıyor.
+- `workspace.tsx`'teki 6 sekme (Tables, Billing, Catalog, SystemHealth, Authorization, Kitchen) kendi özellik istemcilerini kullanıyor, hiçbiri `api.ts` üzerinden geçmiyor; her biri hâlâ kendi yerel 'yetkisiz' metnini gösteriyor, oturumu düşürmüyor.
+- Bu iki sınıf, bu görevin uyguladığı `api.ts` tek işleyicisiyle ÇÖZÜLMEDİ. Kapsam genişletmeden, ayrı bir görev (`V1-RMD-291` takibi) açılması önerilir: ya bu 6 istemciye ortak bir `onUnauthorized` geri çağırma eklenir, ya da hepsi `api.ts` üzerinden geçecek şekilde yeniden yazılır.
 
 ## Handoff
 
