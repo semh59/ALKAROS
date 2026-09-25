@@ -4,6 +4,29 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PendingChecksWorkspace } from "./PendingChecksWorkspace";
 
+// V1-RMD-287: the live link is faked so a test can fire the hub event directly.
+const hubHandlers: Record<string, () => void> = {};
+const hubLifecycle: { reconnected?: () => void } = {};
+const hubStart = vi.fn(async () => undefined);
+vi.mock("@microsoft/signalr", () => ({
+  LogLevel: { Warning: 2 },
+  HubConnectionBuilder: class {
+    withUrl(url: string) { hubUrls.push(url); return this; }
+    withAutomaticReconnect() { return this; }
+    configureLogging() { return this; }
+    build() {
+      return {
+        on: (event: string, handler: () => void) => { hubHandlers[event] = handler; },
+        onreconnected: (callback: () => void) => { hubLifecycle.reconnected = callback; },
+        onclose: () => undefined,
+        start: hubStart,
+        stop: async () => undefined,
+      };
+    }
+  },
+}));
+const hubUrls: string[] = [];
+
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 const sample = [
@@ -18,6 +41,9 @@ describe("PendingChecksWorkspace", () => {
   beforeEach(() => {
     document.body.innerHTML = '<div id="root"></div>';
     fetchMock.mockReset();
+    hubStart.mockReset();
+    hubStart.mockImplementation(async () => undefined);
+    hubUrls.length = 0;
     vi.stubGlobal("fetch", fetchMock);
   });
   afterEach(() => {
@@ -119,5 +145,20 @@ describe("PendingChecksWorkspace", () => {
     });
 
     expect(document.querySelector('[role="alert"]')?.textContent).toContain("yeni bir hesap açık");
+  });
+  it("reloads the list the moment the hub says the queue changed, and again after a reconnect", async () => {
+    fetchMock.mockResolvedValue(ok([]));
+    await render();
+    expect(hubUrls[0]).toBe("/hubs/waiter-order-status?terminalId=t-1");
+    const awaitingCalls = () => fetchMock.mock.calls.filter(([url]) => String(url).includes("awaiting-payment")).length;
+    const before = awaitingCalls();
+
+    fetchMock.mockResolvedValue(ok(sample));
+    await act(async () => { hubHandlers.PendingChecksChanged(); });
+    expect(awaitingCalls()).toBe(before + 1);
+    expect(document.querySelectorAll("button.pending-checks__row")).toHaveLength(2);
+
+    await act(async () => { hubLifecycle.reconnected?.(); });
+    expect(awaitingCalls()).toBe(before + 2);
   });
 });

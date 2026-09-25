@@ -34,6 +34,8 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
 
     public Task InitializeAsync() => _database.InitializeAsync();
 
+    private readonly RecordingCashierQueueAnnouncer _queueAnnouncer = new();
+
     public Task DisposeAsync() => _database.DisposeAsync();
 
     [Fact]
@@ -189,6 +191,57 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
     // V1-RMD-281: a check sent by mistake goes back to its table while no money has moved.
     private static string RecallPath(Guid terminalId, Guid orderId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/recall-from-cashier";
+
+    // V1-RMD-287: the till refreshes at once instead of on its next poll.
+    [Fact]
+    public async Task SendingAndRecallingACheckTellTheTillOnceEachAndARepeatedSendSaysNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        Assert.Empty(_queueAnnouncer.Changes);
+
+        using var sent = await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        Assert.Equal(HttpStatusCode.OK, sent.StatusCode);
+        Assert.Equal([("Sent", check.OrderId, tableId)], _queueAnnouncer.Changes);
+
+        // Nothing changed for the till, so nothing is announced.
+        using var repeat = await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        Assert.True((await repeat.Content.ReadFromJsonAsync<SendCheckToCashierResultV1>())!.AlreadySent);
+        Assert.Single(_queueAnnouncer.Changes);
+
+        await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open");
+        using var recalled = await client.SendAsync(JsonRequest(RecallPath(terminalId, check.OrderId), cookie, new RecallCheckRequestV1(tableId)));
+        Assert.Equal(HttpStatusCode.OK, recalled.StatusCode);
+        Assert.Equal([("Sent", check.OrderId, tableId), ("Recalled", check.OrderId, tableId)], _queueAnnouncer.Changes);
+    }
+
+    // A recall the server refuses moved nothing, so the till is not told.
+    [Fact]
+    public async Task ARefusedRecallIsNotAnnounced()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open", allocated: 100m);
+        var announcedBefore = _queueAnnouncer.Changes.Count;
+
+        using var refused = await client.SendAsync(JsonRequest(RecallPath(terminalId, check.OrderId), cookie, new RecallCheckRequestV1(tableId)));
+
+        Assert.NotEqual(HttpStatusCode.OK, refused.StatusCode);
+        Assert.Equal(announcedBefore, _queueAnnouncer.Changes.Count);
+    }
 
     [Fact]
     public async Task ACheckSentByMistakeGoesBackToItsTableAndLeavesTheTillQueue()
@@ -551,6 +604,8 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton(_database.DataSource);
+        // V1-RMD-287: registered first so the module's no-op default does not replace it.
+        builder.Services.AddSingleton<ICashierQueueAnnouncer>(_queueAnnouncer);
         builder.Services.AddOrderManagementExperience();
         var app = builder.Build();
         app.MapOrderManagementApi();
@@ -563,5 +618,22 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         var server = app.Services.GetRequiredService<IServer>();
         var address = server.Features.Get<IServerAddressesFeature>()!.Addresses.Single();
         return new HttpClient { BaseAddress = new Uri(address) };
+    }
+}
+
+internal sealed class RecordingCashierQueueAnnouncer : ICashierQueueAnnouncer
+{
+    private readonly object _gate = new();
+    private readonly List<(string Change, Guid OrderId, Guid TableId)> _changes = [];
+
+    public List<(string Change, Guid OrderId, Guid TableId)> Changes
+    {
+        get { lock (_gate) return [.. _changes]; }
+    }
+
+    public Task AnnouncePendingChecksChangedAsync(string change, Guid orderId, Guid tableId, CancellationToken cancellationToken = default)
+    {
+        lock (_gate) _changes.Add((change, orderId, tableId));
+        return Task.CompletedTask;
     }
 }

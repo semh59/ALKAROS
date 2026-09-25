@@ -15,6 +15,26 @@ const rowOf = (page, table, amount) => page
   .filter({ hasText: `Masa ${table.tableNumber} ` })
   .filter({ hasText: amount });
 
+// V1-RMD-287: the till used to only see a newly sent check on its next 10 s poll; the queue now pushes over
+// the same live connection the waiter app uses, so the screen updates itself.
+test.describe('Kasa: canlı bekleyen hesap bildirimi (V1-RMD-287)', () => {
+  test('garson hesabı gönderince sayfa yenilenmeden kuyrukta belirir', async ({ page }) => {
+    const seed = readSeed();
+    await loginCashier(page, seed);
+    await page.goto('/pending-checks');
+    const terminalId = await currentTerminalId(page);
+    const table = seed.transferTables[8];
+
+    const row = rowOf(page, table, '₺100,00');
+    await expect(row).toHaveCount(0);
+    const sentAt = Date.now();
+    await sendCheckToCashier(page, terminalId, seed, table, { quantity: 1 });
+
+    // Well under the 60 s safety-net poll: proves the push, not the poll, showed it.
+    await expect(row).toBeVisible({ timeout: 2_000 });
+    expect(Date.now() - sentAt).toBeLessThan(2_000);
+  });
+});
 test.describe('Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280)', () => {
   test('garsonun gönderdiği iki hesap ayırt edilir, biri tahsil edilince yalnız o kuyruktan çıkar', async ({ page }) => {
     const seed = readSeed();

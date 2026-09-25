@@ -1,3 +1,4 @@
+using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.PendingOrderNotifications;
 using ALKAROS.Orders.Integration;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +25,8 @@ public static class WaiterNotificationsExperience
         // V1-RMD-149: lets Orders announce a guest order waiting for
         // confirmation without depending on SignalR or on Host at all.
         services.TryAddSingleton<IPendingOrderAnnouncer, SignalRPendingOrderAnnouncer>();
+        // V1-RMD-287: replaces the no-op default AddOrderManagementExperience registers, whichever runs first.
+        services.Replace(ServiceDescriptor.Singleton<ICashierQueueAnnouncer, SignalRCashierQueueAnnouncer>());
         return services;
     }
 

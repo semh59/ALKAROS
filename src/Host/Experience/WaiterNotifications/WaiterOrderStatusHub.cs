@@ -18,6 +18,9 @@ public sealed class WaiterOrderStatusHub : Hub
     public const string Route = "/hubs/waiter-order-status";
     public const string OrderItemReady = "OrderItemReady";
 
+    /// <summary>V1-RMD-287: the till's queue of checks awaiting payment changed; the till reloads it.</summary>
+    public const string PendingChecksChanged = "PendingChecksChanged";
+
     /// <summary>The SignalR group a given waiter's connections join.</summary>
     public static string GroupName(Guid userId) => $"waiter-user:{userId:D}";
 
@@ -77,3 +80,6 @@ public sealed class WaiterOrderStatusHub : Hub
 
 /// <summary>Payload for <see cref="WaiterOrderStatusHub.OrderItemReady"/>.</summary>
 public sealed record OrderItemReadyV1(Guid OrderId, Guid? TableId, Guid OrderItemId, string ProductName);
+
+/// <summary>Payload for <see cref="WaiterOrderStatusHub.PendingChecksChanged"/>; <c>Change</c> is <c>Sent</c> or <c>Recalled</c>.</summary>
+public sealed record PendingChecksChangedV1(string Change, Guid OrderId, Guid TableId);

@@ -65,6 +65,8 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<ShiftSummaryStore>();
         // Refactor step 3/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<CashierHandoffStore>();
+        // V1-RMD-287: no-op until the Host's live-connection registration replaces it.
+        services.TryAddSingleton<ICashierQueueAnnouncer, NoOpCashierQueueAnnouncer>();
         // V1-RMD-282: closes the order once its check is paid.
         services.TryAddSingleton<OrderSettlementService>();
         // Refactor step 4/7 (docs/engineering/garson-refactor-plan.md).
@@ -330,6 +332,7 @@ public static class OrderManagementEndpoints
             Guid orderId,
             SendCheckToCashierRequestV1 request,
             CashierHandoffStore store,
+            ICashierQueueAnnouncer queueAnnouncer,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
@@ -341,7 +344,11 @@ public static class OrderManagementEndpoints
             if (request is null || request.TableId == Guid.Empty)
                 return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "Masa kimliği boş olamaz." } });
 
-            return Results.Ok(await store.SendCheckToCashierAsync(request.TableId, orderId, cancellationToken));
+            var sent = await store.SendCheckToCashierAsync(request.TableId, orderId, cancellationToken);
+            // A repeat of the same request changed nothing, so the till has nothing to reload.
+            if (!sent.AlreadySent)
+                await queueAnnouncer.AnnouncePendingChecksChangedAsync("Sent", orderId, request.TableId, cancellationToken);
+            return Results.Ok(sent);
         });
 
         // V1-RMD-281: the waiter (or the till) took a check back that was sent by mistake. Same permission as
@@ -351,6 +358,7 @@ public static class OrderManagementEndpoints
             Guid orderId,
             RecallCheckRequestV1 request,
             CashierHandoffStore store,
+            ICashierQueueAnnouncer queueAnnouncer,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             IAuditEventStore auditEvents,
@@ -390,6 +398,8 @@ public static class OrderManagementEndpoints
                             afterStateJson: System.Text.Json.JsonSerializer.Serialize(new { tableId = request.TableId })),
                         cancellationToken);
                 }
+                // Also on a repeat: a retry may be completing a request that failed half-way.
+                await queueAnnouncer.AnnouncePendingChecksChangedAsync("Recalled", orderId, request.TableId, cancellationToken);
                 return Results.Ok(result);
             }
             catch (TableHasNewerCheckException)

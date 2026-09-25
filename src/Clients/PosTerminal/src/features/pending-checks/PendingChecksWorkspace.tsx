@@ -1,10 +1,15 @@
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { useCallback, useEffect, useState } from "react";
 import { createBillFromOrder } from "../billing";
 import { formatMoney } from "../../format";
 import { PendingChecksApiError, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import "./pending-checks.css";
 
-const REFRESH_MS = 10_000;
+// V1-RMD-287: the live push below refreshes the list at once; this poll is only the safety net for a
+// missed event (the link was down, or a browser throttled the tab), so it can be slow.
+const REFRESH_MS = 60_000;
+const HUB_RETRY_CAP_MS = 15_000;
+const hubRetryDelay = (attempt: number) => Math.min(HUB_RETRY_CAP_MS, 1_000 * 2 ** Math.min(attempt, 4));
 
 function sentAt(iso: string): string {
   return new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
@@ -38,6 +43,44 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
     const timer = window.setInterval(() => void load(), REFRESH_MS);
     return () => window.clearInterval(timer);
   }, [load]);
+
+  // A waiter sending a check over (or taking one back) reaches the till through the same device hub the
+  // waiter app listens to. Retries forever with a capped backoff and reloads on every (re)connect, the same
+  // rules as the help-request link in Cashier.tsx (V1-RMD-286). A failed push only means the slow poll
+  // above is what shows the change.
+  useEffect(() => {
+    let connection: ReturnType<HubConnectionBuilder["build"]>;
+    try {
+      connection = new HubConnectionBuilder()
+        .withUrl(`/hubs/waiter-order-status?terminalId=${encodeURIComponent(terminalId)}`)
+        .withAutomaticReconnect({ nextRetryDelayInMilliseconds: (context) => hubRetryDelay(context.previousRetryCount) })
+        .configureLogging(LogLevel.Warning)
+        .build();
+    } catch {
+      return;
+    }
+    let disposed = false;
+    let attempt = 0;
+    let retryTimer: number | undefined;
+    const start = () => {
+      connection.start().then(() => { attempt = 0; void load(); }).catch(() => {
+        if (disposed) return;
+        retryTimer = window.setTimeout(start, hubRetryDelay(attempt++));
+      });
+    };
+    connection.on("PendingChecksChanged", () => { void load(); });
+    connection.onreconnected(() => { attempt = 0; void load(); });
+    connection.onclose(() => {
+      if (disposed) return;
+      retryTimer = window.setTimeout(start, hubRetryDelay(attempt++));
+    });
+    start();
+    return () => {
+      disposed = true;
+      window.clearTimeout(retryTimer);
+      void connection.stop();
+    };
+  }, [terminalId, load]);
 
   const collect = async (check: PendingCheck) => {
     setOpeningOrderId(check.orderId);
