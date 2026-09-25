@@ -44,6 +44,9 @@
     <None Include="../../../../../database/migrations/V1/V1-IAM-025/051-delegation-revoke-actor.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-IAM-025/052-authorization-grants-rate-index.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-RMD-111/056-orders-serving-user-id.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V11/V11-INV-009/118-stock-items-reorder-point.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V13/V13-PAY-001/120-payments.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V13/V13-ALC-001/123-payment-allocations.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- V1-RMD-143: OrderStockConsumptionService's own schema — stock
          items/locations, movements ledger, on-hand balances, and product
          stock mappings — needed for Accept to actually consume stock. -->
