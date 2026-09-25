@@ -1,0 +1,14 @@
+V12-QRO-003 completion evidence (2026-09-25, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+Scope decision: Semih 2026-09-25 "Sinirli ek + yol notu" (QrOrdering module cannot call Orders/Inventory,
+V0-ARC-001 row 19). src/Modules/QrOrdering/Confirmation/** intentionally left empty.
+
+- dotnet build ALKAROS.slnx                      -> 0 warnings, 0 errors
+- test-runs.txt: Confirmation 28/28 (7 new QR tests), TableDraft 84/84, VoidSent 14/14, NfcOrdering 19/19,
+  QrOrdering 32/32, Host.Tests (MigrationComposition) 161/161
+- consistency_audit.py -> clean (14 now-reachable allowlist entries pruned)
+- plan_audit_tool.py validate -> 0 errors, 0 warnings
+Mutations (reverted, cmp identical): QR arbiter call skipped -> 2 failed; accept tx rolled back instead of
+committed -> 9 failed.
+task_scope_tool: findings are exactly the documented "Sinirli ek" paths (store, endpoints, Confirmation tests,
+allowlist) plus the task markdown body; nothing undocumented.

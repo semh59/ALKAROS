@@ -103,5 +103,8 @@ public sealed class QrOrderExpiryHostedServiceTests : IAsyncLifetime
             new PostgresRecipeVersionRepository(_database.DataSource),
             new PostgresTheoreticalConsumptionRecordRepository(_database.DataSource),
             new UnitConverter(),
-            new PostgresReservationAwareConsumptionGuard()));
+            new PostgresReservationAwareConsumptionGuard()),
+        _database.CreateArbiter(),
+        new PostgresProductStockMappingRepository(_database.DataSource),
+        new PostgresStockItemRepository(_database.DataSource));
 }

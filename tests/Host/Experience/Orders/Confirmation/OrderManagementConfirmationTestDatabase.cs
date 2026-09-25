@@ -535,11 +535,26 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     /// </summary>
     public async Task<CrossChannelReservationOutcome> HoldAsync(Guid orderId, Guid orderItemId, Guid productId)
     {
+        await using var connection = await DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var result = await CreateArbiter().ReserveAsync(
+            new CrossChannelReservationRequest(
+                ReservationChannel.Online, "provider-" + orderId.ToString("N"), orderId, Guid.NewGuid(),
+                new[] { new CrossChannelReservationLine(orderItemId, productId, 1m) }),
+            connection,
+            transaction);
+        await transaction.CommitAsync();
+        return result.Outcome;
+    }
+
+    /// <summary>The real cross-channel arbiter (V12-STK-001) over this database, with its V11-RSV-003 compensation chain.</summary>
+    public PostgresCrossChannelPortionArbiter CreateArbiter()
+    {
         var items = new PostgresStockItemRepository(DataSource);
         var locations = new PostgresStockLocationRepository(DataSource);
         var reservations = new PostgresPortionReservationRepository(DataSource);
         var balances = new PostgresStockBalanceRepository(DataSource);
-        var arbiter = new PostgresCrossChannelPortionArbiter(
+        return new PostgresCrossChannelPortionArbiter(
             DataSource,
             balances,
             new PortionCancellationDecisionService(
@@ -555,17 +570,76 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
                     balances,
                     new UnitConverter()),
                 new PostgresKitchenItemStateProvider(DataSource)));
+    }
 
-        await using var connection = await DataSource.OpenConnectionAsync();
-        await using var transaction = await connection.BeginTransactionAsync();
-        var result = await arbiter.ReserveAsync(
-            new CrossChannelReservationRequest(
-                ReservationChannel.Online, "provider-" + orderId.ToString("N"), orderId, Guid.NewGuid(),
-                new[] { new CrossChannelReservationLine(orderItemId, productId, 1m) }),
-            connection,
-            transaction);
-        await transaction.CommitAsync();
-        return result.Outcome;
+    /// <summary>
+    /// V12-QRO-003: a QR-sourced PendingConfirmation order (one item, quantity 1) holding its table as
+    /// Reserved, as QrOrderSubmittedConsumer leaves it; its product is mapped to stock with
+    /// <paramref name="stockOnHandQuantity"/> on hand unless <paramref name="seedStockMapping"/> is false.
+    /// </summary>
+    public async Task<(Guid OrderId, Guid TableId, Guid ProductId, Guid SubmissionId)> SeedQrPendingOrderAsync(
+        decimal stockOnHandQuantity, bool seedStockMapping = true)
+    {
+        var tableId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status)
+            VALUES (@table_id, @table_number, 4, true, 'Reserved');
+            """,
+            ("table_id", tableId),
+            ("table_number", "QRO003-" + tableId.ToString("N")[..8]));
+
+        var productId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
+            VALUES (@product_id, @sku, 'Son Porsiyon Mantı', 1, 1, true);
+            """,
+            ("product_id", productId),
+            ("sku", "qro003-" + productId.ToString("N")[..8]));
+        if (seedStockMapping)
+            await SeedStockMappingWithBalanceAsync(productId, stockOnHandQuantity);
+
+        var orderItem = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), productId, "Son Porsiyon Mantı",
+            quantity: 1, unitPrice: 180m, taxRate: 10m,
+            status: OrderItemState.Active, kitchenState: KitchenState.Sent);
+        var submissionId = Guid.NewGuid();
+        var order = new Order(
+            Guid.NewGuid(),
+            OrderSource.Qr,
+            "QRO003-" + orderItem.Id.ToString("N")[..8],
+            new[] { orderItem },
+            tableId: tableId,
+            sourceReferenceId: submissionId,
+            status: OrderState.PendingConfirmation,
+            confirmationStatus: ConfirmationStatus.Pending);
+        await new PostgresOrderRepository(DataSource).AddAsync(order);
+
+        await ExecuteAsync(
+            "UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;",
+            ("order_id", order.Id),
+            ("table_id", tableId));
+
+        return (order.Id, tableId, productId, submissionId);
+    }
+
+    /// <summary>V12-QRO-003: (status, channel, channel reference) of every hold written for an order.</summary>
+    public async Task<IReadOnlyList<(string Status, string Channel, string Reference)>> GetHoldsForOrderAsync(Guid orderId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            SELECT status, metadata->>'channel', metadata->>'channelOrderReference'
+            FROM inventory.portion_reservations
+            WHERE order_id = @order_id
+            ORDER BY reserved_at;
+            """);
+        command.Parameters.AddWithValue("order_id", orderId);
+        var holds = new List<(string, string, string)>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            holds.Add((reader.GetString(0), reader.GetString(1), reader.GetString(2)));
+        return holds;
     }
 
     /// <summary>V12-STK-001: (reserved quantity, statuses of every hold) for a product's single stock mapping.</summary>

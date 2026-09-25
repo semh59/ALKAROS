@@ -11,7 +11,12 @@ using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Inventory.ModifierStock;
+using ALKAROS.Inventory.PortionReservations.CancellationEffects;
+using ALKAROS.Inventory.PortionReservations.Lifecycle;
+using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.Transactions;
+using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Identity.Authorization;
@@ -174,6 +179,19 @@ public static class OrderManagementEndpoints
         // (see PendingOrderConfirmationStore's own doc comment for the full
         // story). Reuses the same IOrderRepository/IKitchenTicketRepository/
         // IBillRepository already registered above.
+        // V12-QRO-003: accepting a QR order claims its portions through the cross-channel
+        // arbiter (V12-STK-001); its compensation path needs V11-RSV-003's cancellation
+        // decision. Same TryAdd-defers-to-InventoryModule shape as the stock registrations above.
+        services.TryAddSingleton<IPortionReservationRepository, PostgresPortionReservationRepository>();
+        services.TryAddSingleton<IPortionReservationLifecycleService, PortionReservationLifecycleService>();
+        services.TryAddSingleton<IReservationBalanceRepository, PostgresReservationBalanceRepository>();
+        services.TryAddSingleton<IReservationBalanceProjector, ReservationBalanceProjector>();
+        services.TryAddSingleton<IInventoryTransactionRunner, PostgresInventoryTransactionRunner>();
+        services.TryAddSingleton<IWasteRecordRepository, PostgresWasteRecordRepository>();
+        services.TryAddSingleton<IWasteRecordingService, WasteRecordingService>();
+        services.TryAddSingleton<IKitchenItemStateProvider, PostgresKitchenItemStateProvider>();
+        services.TryAddSingleton<IPortionCancellationDecisionService, PortionCancellationDecisionService>();
+        services.TryAddSingleton<ICrossChannelPortionArbiter, PostgresCrossChannelPortionArbiter>();
         services.TryAddSingleton<PendingOrderConfirmationStore>();
         // V12-QRO-002: the background half of "no remote QR service denial"
         // (see QrOrderExpiryHostedService's own doc comment) — an
@@ -1165,6 +1183,9 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
             (409, "INSUFFICIENT_STOCK", $"'{insufficientStock.ProductName}' için yeterli stok yok."),
         StockItemHasNoDefaultLocationException =>
             (409, "STOCK_ITEM_MISCONFIGURED", "Bu ürünün stok kalemi için bir konum tanımlanmamış, lütfen yöneticiye bildirin."),
+        // V12-QRO-003: the order already holds stock for different lines (a concurrent change
+        // between two accept attempts) — a refresh, not a stock shortage.
+        CrossChannelReservationConflictException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         OrderAlreadyBilledException => (409, "ORDER_ALREADY_BILLED", "Sipariş zaten faturalandırılmış, bu işlemle reddedilemez."),
         // V1-RMD-221: found by an independent audit (2026-09-16) — must be
         // listed before the generic InvalidOperationException branch below,

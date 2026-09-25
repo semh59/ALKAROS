@@ -1,0 +1,7 @@
+Orders/Confirmation: Başarılı!  - Başarısız:     0, Başarılı:    28, Atlanan:     0, Toplam:    28, Süre: 17 s - ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll (net8.0)
+Orders/TableDraft: Başarılı!  - Başarısız:     0, Başarılı:    84, Atlanan:     0, Toplam:    84, Süre: 59 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8.0)
+Orders/VoidSent: Başarılı!  - Başarısız:     0, Başarılı:    14, Atlanan:     0, Toplam:    14, Süre: 9 s - ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll (net8.0)
+NfcOrdering: Başarılı!  - Başarısız:     0, Başarılı:    19, Atlanan:     0, Toplam:    19, Süre: 7 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+QrOrdering: Başarılı!  - Başarısız:     0, Başarılı:    32, Atlanan:     0, Toplam:    32, Süre: 14 s - ALKAROS.Host.Experience.QrOrdering.Tests.dll (net8.0)
+Host.Tests: Başarılı!  - Başarısız:     0, Başarılı:   161, Atlanan:     0, Toplam:   161, Süre: 10 m 46 s - ALKAROS.Host.Tests.dll (net8.0)
+done

@@ -1,5 +1,7 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
+using ALKAROS.Inventory.CrossChannelReservation;
+using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
@@ -20,9 +22,15 @@ namespace ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 /// ticket items were already dispatched, since NfcOrderingStore's own
 /// decision (Semih, 2026-09-09) is to dispatch the kitchen ticket immediately
 /// regardless of the age check, checking ID only at the point of service.
-/// QR's own portion-reservation-on-accept is out of scope: QR has no HTTP
-/// surface yet to ever reach a PendingConfirmation order through (see the
-/// 2026-09-09 QR/NFC audit's finding #0).
+/// V12-QRO-003 completes the QR side: accepting a QR order first claims its
+/// portions through the channel-neutral cross-channel arbiter (V12-STK-001),
+/// in the same transaction as the stock consumption (which turns those holds
+/// into Consumed), the Accepted write and the table's Reserved -&gt; Occupied
+/// move; rejecting writes the order and frees the table together. Either
+/// outcome is all-or-nothing: a stock loss or a stale row version leaves no
+/// hold, no half-moved table and no Accepted order behind. The QR module
+/// itself cannot host this — its only approved direct-call edges are
+/// Identity and Table Management (V0-ARC-001 row 19).
 /// </summary>
 public sealed class PendingOrderConfirmationStore
 {
@@ -31,19 +39,28 @@ public sealed class PendingOrderConfirmationStore
     private readonly IBillRepository _bills;
     private readonly NpgsqlDataSource _dataSource;
     private readonly OrderStockConsumptionService _stockConsumption;
+    private readonly ICrossChannelPortionArbiter _portionArbiter;
+    private readonly IProductStockMappingRepository _stockMappings;
+    private readonly IStockItemRepository _stockItems;
 
     public PendingOrderConfirmationStore(
         IOrderRepository orders,
         IKitchenTicketRepository tickets,
         IBillRepository bills,
         NpgsqlDataSource dataSource,
-        OrderStockConsumptionService stockConsumption)
+        OrderStockConsumptionService stockConsumption,
+        ICrossChannelPortionArbiter portionArbiter,
+        IProductStockMappingRepository stockMappings,
+        IStockItemRepository stockItems)
     {
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _stockConsumption = stockConsumption ?? throw new ArgumentNullException(nameof(stockConsumption));
+        _portionArbiter = portionArbiter ?? throw new ArgumentNullException(nameof(portionArbiter));
+        _stockMappings = stockMappings ?? throw new ArgumentNullException(nameof(stockMappings));
+        _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
     }
 
     /// <summary>
@@ -90,17 +107,21 @@ public sealed class PendingOrderConfirmationStore
         var accepted = order.TransitionTo(OrderState.Accepted, notes, actorId, now);
 
         long newVersion;
+        bool tableReleased;
         await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
         await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
         {
+            if (order.Source == OrderSource.Qr)
+                await ReserveQrPortionsAsync(order, actorId, connection, transaction, cancellationToken).ConfigureAwait(false);
             await _stockConsumption.ConsumeForAcceptedOrderAsync(order, actorId, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
             newVersion = await _orders.SaveAsync(accepted, expectedRowVersion, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
+            tableReleased = await ReleaseTableAsync(order, releaseToOccupied: true, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        var tableReleased = await ReleaseTableAsync(order, releaseToOccupied: true, cancellationToken).ConfigureAwait(false);
         await AppendAuditAsync(order.Id, "Order.Accepted", actorId, notes, now, cancellationToken).ConfigureAwait(false);
 
         return new PendingOrderConfirmationResultV1(
@@ -139,9 +160,18 @@ public sealed class PendingOrderConfirmationStore
             .ConfigureAwait(false);
 
         var rejected = order.TransitionTo(OrderState.Rejected, reason, actorId, now);
-        var newVersion = await _orders.SaveAsync(rejected, expectedRowVersion, cancellationToken).ConfigureAwait(false);
+        long newVersion;
+        bool tableReleased;
+        await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
+        await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
+        {
+            newVersion = await _orders.SaveAsync(rejected, expectedRowVersion, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
+            tableReleased = await ReleaseTableAsync(order, releaseToOccupied: false, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
 
-        var tableReleased = await ReleaseTableAsync(order, releaseToOccupied: false, cancellationToken).ConfigureAwait(false);
         await AppendAuditAsync(order.Id, "Order.Rejected", actorId, reason, now, cancellationToken).ConfigureAwait(false);
 
         return new PendingOrderConfirmationResultV1(
@@ -189,25 +219,99 @@ public sealed class PendingOrderConfirmationStore
     /// order (should not happen for NFC, but this store is channel-agnostic)
     /// is a no-op, not an error.
     /// </summary>
-    private async Task<bool> ReleaseTableAsync(Order order, bool releaseToOccupied, CancellationToken cancellationToken)
+    private static async Task<bool> ReleaseTableAsync(
+        Order order,
+        bool releaseToOccupied,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
     {
         if (order.TableId is not { } tableId)
             return false;
 
-        await using var command = _dataSource.CreateCommand(
+        await using var command = new NpgsqlCommand(
             """
             UPDATE table_mgmt.tables
             SET current_status = @status,
                 current_order_id = CASE WHEN @release_to_occupied THEN current_order_id ELSE NULL END,
                 row_version = row_version + 1
             WHERE table_id = @table_id AND current_order_id = @order_id AND current_status = 'Reserved';
-            """);
+            """, connection, transaction);
         command.Parameters.AddWithValue("status", releaseToOccupied ? "Occupied" : "Available");
         command.Parameters.AddWithValue("release_to_occupied", releaseToOccupied);
         command.Parameters.AddWithValue("table_id", tableId);
         command.Parameters.AddWithValue("order_id", order.Id);
         var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         return affected > 0;
+    }
+
+    /// <summary>
+    /// V12-QRO-003: a QR order claims its portions only now, on a successful accept, through the
+    /// same arbiter every channel uses — so an online or other QR order already holding the last
+    /// portion wins, and this accept is refused with the same typed stock errors the consumption
+    /// path raises. Cancelled lines never compete for stock.
+    /// </summary>
+    private async Task ReserveQrPortionsAsync(
+        Order order,
+        Guid actorId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        var lines = order.Items
+            .Where(item => item.Status != OrderItemState.Cancelled)
+            .Select(item => new CrossChannelReservationLine(item.Id, item.ProductId, item.Quantity))
+            .ToList();
+        if (lines.Count == 0)
+            return;
+
+        var result = await _portionArbiter.ReserveAsync(
+            new CrossChannelReservationRequest(
+                ReservationChannel.Qr,
+                (order.SourceReferenceId ?? order.Id).ToString("D"),
+                order.Id,
+                actorId,
+                lines),
+            connection,
+            transaction,
+            cancellationToken).ConfigureAwait(false);
+
+        switch (result.Outcome)
+        {
+            case CrossChannelReservationOutcome.Reserved:
+            case CrossChannelReservationOutcome.Replayed:
+                return;
+            case CrossChannelReservationOutcome.OutOfStock:
+            {
+                var shortage = result.Shortages[0];
+                var item = order.Items.First(i => i.Id == shortage.OrderItemIds[0]);
+                var stockItem = await _stockItems.GetByIdAsync(shortage.StockItemId, cancellationToken).ConfigureAwait(false)
+                    ?? throw new StockItemNotFoundException(shortage.StockItemId);
+                throw new InsufficientOrderStockException(item.ProductId, item.ProductNameSnapshot, stockItem.Name);
+            }
+            case CrossChannelReservationOutcome.NotConfigured:
+                throw await UnconfiguredStockExceptionAsync(order, result.UnconfiguredLines[0], cancellationToken)
+                    .ConfigureAwait(false);
+            default:
+                throw new InvalidOperationException($"Unhandled reservation outcome '{result.Outcome}'.");
+        }
+    }
+
+    private async Task<Exception> UnconfiguredStockExceptionAsync(
+        Order order, UnconfiguredLine line, CancellationToken cancellationToken)
+    {
+        var item = order.Items.First(i => i.Id == line.OrderItemId);
+        if (line.Gap == StockConfigurationGap.StockItemHasNoDefaultLocation)
+        {
+            foreach (var mapping in await _stockMappings.GetByProductIdAsync(item.ProductId, cancellationToken).ConfigureAwait(false))
+            {
+                var stockItem = await _stockItems.GetByIdAsync(mapping.StockItemId, cancellationToken).ConfigureAwait(false);
+                if (stockItem is { DefaultLocationId: null })
+                    return new StockItemHasNoDefaultLocationException(stockItem.Id, stockItem.Name);
+            }
+        }
+
+        return new ProductStockNotConfiguredException(item.ProductId, item.ProductNameSnapshot);
     }
 
     private async Task AppendAuditAsync(

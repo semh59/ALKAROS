@@ -1,0 +1,208 @@
+using System.Net;
+using System.Net.Http.Json;
+using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
+using ALKAROS.Inventory.CrossChannelReservation;
+using ALKAROS.Orders.OrderAggregate;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
+
+namespace ALKAROS.Host.Experience.Orders.Confirmation.Tests;
+
+/// <summary>
+/// V12-QRO-003: confirming a pending QR order claims its portions through the cross-channel
+/// arbiter only on a successful accept, atomically with the Accepted write and the table move;
+/// a refusal, a stock loss or a lost race leaves no hold and no half-moved table.
+/// </summary>
+[Collection("Order confirmation PostgreSQL HTTP")]
+public sealed class QrConfirmationReservationHttpTests : IAsyncLifetime
+{
+    private readonly OrderManagementConfirmationTestDatabase _database = new();
+
+    public Task InitializeAsync() => _database.InitializeAsync();
+
+    public Task DisposeAsync() => _database.DisposeAsync();
+
+    [Fact]
+    public async Task AcceptingAQrOrderClaimsItsPortionsAndOccupiesTheTableTogether()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, tableId, productId, submissionId) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 2m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(OrderState.Accepted, (await _database.ReloadOrderAsync(orderId)).Status);
+        Assert.Equal(("Occupied", (Guid?)orderId), await _database.GetTableStateAsync(tableId));
+        // The QR hold was taken and, in the same transaction, became the consumption.
+        var hold = Assert.Single(await _database.GetHoldsForOrderAsync(orderId));
+        Assert.Equal(("Consumed", "Qr", submissionId.ToString("D")), hold);
+        Assert.Equal(1m, await _database.GetOnHandQuantityForProductAsync(productId));
+        Assert.Equal(0m, (await _database.GetHoldStateForProductAsync(productId)).Reserved);
+    }
+
+    [Fact]
+    public async Task AQrOrderLosingTheLastPortionToAnotherChannelLeavesNothingBehind()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, tableId, productId, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 1m);
+        Assert.Equal(
+            CrossChannelReservationOutcome.Reserved,
+            await _database.HoldAsync(Guid.NewGuid(), Guid.NewGuid(), productId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("INSUFFICIENT_STOCK", body);
+        Assert.Contains("Son Porsiyon Mantı", body);
+        Assert.Equal(OrderState.PendingConfirmation, (await _database.ReloadOrderAsync(orderId)).Status);
+        Assert.Equal(("Reserved", (Guid?)orderId), await _database.GetTableStateAsync(tableId));
+        Assert.Empty(await _database.GetHoldsForOrderAsync(orderId));
+        Assert.Equal(1m, await _database.GetOnHandQuantityForProductAsync(productId));
+    }
+
+    [Fact]
+    public async Task AQrOrderForAnUnmappedProductIsRefusedWithoutAnyHold()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, tableId, _, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 0m, seedStockMapping: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("PRODUCT_STOCK_NOT_CONFIGURED", await response.Content.ReadAsStringAsync());
+        Assert.Equal(("Reserved", (Guid?)orderId), await _database.GetTableStateAsync(tableId));
+        Assert.Empty(await _database.GetHoldsForOrderAsync(orderId));
+    }
+
+    [Fact]
+    public async Task TwoStaffAcceptingTheSameQrOrderAtOnceHaveOneWinnerAndOneStockEffect()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, tableId, productId, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 5m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var start = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var attempts = Enumerable.Range(0, 2).Select(async _ =>
+        {
+            await start.Task;
+            using var response = await client.SendAsync(JsonRequest(
+                AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+            return response.StatusCode;
+        }).ToList();
+        start.SetResult();
+        var statuses = await Task.WhenAll(attempts);
+
+        Assert.Equal(1, statuses.Count(s => s == HttpStatusCode.OK));
+        Assert.Equal(1, statuses.Count(s => s == HttpStatusCode.Conflict));
+        Assert.Equal(4m, await _database.GetOnHandQuantityForProductAsync(productId));
+        Assert.Single(await _database.GetHoldsForOrderAsync(orderId));
+        Assert.Equal(("Occupied", (Guid?)orderId), await _database.GetTableStateAsync(tableId));
+    }
+
+    [Fact]
+    public async Task RejectingAQrOrderFreesTheTableAndNeverClaimsStock()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, tableId, productId, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            RejectPath(terminalId, orderId), cookie, new RejectPendingOrderRequestV1(1, "Masada kimse yok")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(OrderState.Rejected, (await _database.ReloadOrderAsync(orderId)).Status);
+        Assert.Equal(("Available", (Guid?)null), await _database.GetTableStateAsync(tableId));
+        Assert.Empty(await _database.GetHoldsForOrderAsync(orderId));
+        Assert.Equal(1m, await _database.GetOnHandQuantityForProductAsync(productId));
+    }
+
+    [Fact]
+    public async Task AStaleRowVersionRefusesTheQrAcceptWithoutAnyHold()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, tableId, _, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(7, null)));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("CONCURRENCY_CONFLICT", await response.Content.ReadAsStringAsync());
+        Assert.Equal(("Reserved", (Guid?)orderId), await _database.GetTableStateAsync(tableId));
+        Assert.Empty(await _database.GetHoldsForOrderAsync(orderId));
+    }
+
+    [Fact]
+    public async Task AStaffSessionWithoutOrderPermissionCannotAcceptAQrOrder()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter");
+        var (orderId, tableId, _, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal(OrderState.PendingConfirmation, (await _database.ReloadOrderAsync(orderId)).Status);
+        Assert.Equal(("Reserved", (Guid?)orderId), await _database.GetTableStateAsync(tableId));
+        Assert.Empty(await _database.GetHoldsForOrderAsync(orderId));
+    }
+
+    private static string AcceptPath(Guid terminalId, Guid orderId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/accept";
+
+    private static string RejectPath(Guid terminalId, Guid orderId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/reject";
+
+    private static HttpRequestMessage JsonRequest<T>(string path, string cookie, T body)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, path) { Content = JsonContent.Create(body) };
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return request;
+    }
+
+    private async Task<WebApplication> StartAsync()
+    {
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
+        builder.WebHost.UseUrls("http://127.0.0.1:0");
+        builder.Services.AddSingleton(_database.DataSource);
+        builder.Services.AddOrderManagementExperience();
+        var app = builder.Build();
+        app.MapOrderManagementApi();
+        await app.StartAsync();
+        return app;
+    }
+
+    private static HttpClient CreateClient(WebApplication app)
+    {
+        var server = app.Services.GetRequiredService<IServer>();
+        var address = server.Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+        return new HttpClient { BaseAddress = new Uri(address) };
+    }
+}
