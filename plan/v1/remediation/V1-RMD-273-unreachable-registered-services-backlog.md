@@ -1,10 +1,10 @@
 # V1-RMD-273 - Çalışan uygulamadan çağrılmayan kayıtlı servislerin kapatılması
 
 - Task ID: V1-RMD-273
-- Status: Planned
-- Assignee: Unassigned
+- Status: NotApplicable
+- Assignee: Claude Sonnet 5
 - Work type: remediation
-- Surface state: Planned
+- Surface state: Existing
 
 ## Source basis
 
@@ -26,6 +26,8 @@ Aileler: porsiyon rezervasyonu (yaşam döngüsü, çakışma hakemi, iptal etki
 rezervasyon bakiye izdüşümü, reçete sürümleme ve birim dönüşümü, fire kaydı, stok hareket defteri, iade niyeti,
 hesap ödeme kapanış izdüşümü, mutfak yönlendirme servisi, V15 güvenlik servisleri (oturum rotasyonu — ne zaman
 döndürüleceği ürün kararı —, sır çözümleyici, yeniden şifreleme).
+
+**Kapanış:** sınıflandırma yapıldı; ölü ve gerekli olanlar `V1-RMD-274/275/276/277` ile bağlandı, kalanlar `V1-RMD-278` kararıyla gerekçelendirildi. Bu görev ayrı bir uygulama gerektirmediği için `NotApplicable`.
 
 ## Owned surface
 

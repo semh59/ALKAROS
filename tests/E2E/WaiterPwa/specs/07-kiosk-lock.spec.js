@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, request as playwrightRequest } from '@playwright/test';
 import { login, readSeed } from '../lib/testHelpers.js';
 
 const seed = readSeed();
@@ -301,5 +301,30 @@ test.describe('Ekran kilidi / PIN (V1-WTR-011, V1-RMD-173/178/180)', () => {
     await page.reload();
     await expect(page.locator('#tablesGrid [data-table]').first()).toBeVisible({ timeout: 15_000 });
     await expect(lockOverlay(page)).toBeHidden();
+  });
+
+  test('doğru PIN oturum belirtecini yeniler: eski belirteç geçersiz olur, uygulama kullanılabilir kalır (V1-RMD-277)', async ({ page, baseURL }) => {
+    await login(page, seed);
+    await armPin(page);
+    const cookieOf = async () => (await page.context().cookies()).find((cookie) => cookie.name === 'alkaros.cashier')?.value;
+    const before = await cookieOf();
+    expect(before).toBeTruthy();
+    await lockNow(page);
+
+    await pressPin(page, PIN);
+    await page.locator('#pinKeys [data-pin="ok"]').click();
+    await expect(lockOverlay(page)).toBeHidden();
+
+    const after = await cookieOf();
+    expect(after).toBeTruthy();
+    expect(after).not.toBe(before);
+    // Eski belirteç artık hiçbir şeye yetmez ...
+    const stale = await playwrightRequest.newContext({ baseURL, extraHTTPHeaders: { Cookie: `alkaros.cashier=${before}` } });
+    expect((await stale.get('/api/v1/auth/session/current')).status()).toBe(401);
+    await stale.dispose();
+    // ... yeni belirteç çalışır ve uygulama giriş ekranına düşmeden kullanılabilir.
+    expect((await page.request.get('/api/v1/auth/session/current')).ok()).toBeTruthy();
+    await expectBackgroundUsable(page);
+    await expect(page.locator('#loginOverlay')).toBeHidden();
   });
 });

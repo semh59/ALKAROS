@@ -173,6 +173,7 @@ public static partial class DualScreenApplication
             HttpContext context,
             DualScreenStore store,
             AuthenticationService authentication,
+            SessionRotationService rotation,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
@@ -181,6 +182,17 @@ public static partial class DualScreenApplication
 
             var result = await authentication.UnlockAsync(
                 principal.UserId, request.Pin, DateTimeOffset.UtcNow, cancellationToken);
+
+            if (result is UnlockSuccess)
+            {
+                // V1-RMD-277: a correct PIN re-establishes who is holding the device, so the
+                // session token is replaced (same terminal, same 12 h life). A token that leaked
+                // while the screen was locked or the tablet was unattended stops working here.
+                var (session, rawToken) = await rotation.RotateAsync(
+                    principal.UserId, $"cashier:{terminalId:D}", context.Request.Cookies[CashierCookieName]!,
+                    TimeSpan.FromHours(12), cancellationToken);
+                AppendCookie(context, CashierCookieName, rawToken, session.ExpiresAt);
+            }
 
             return result switch
             {
