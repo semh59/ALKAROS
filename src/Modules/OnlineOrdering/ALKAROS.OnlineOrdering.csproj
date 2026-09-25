@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSModule>true</ALKAROSModule>
+    <RootNamespace>ALKAROS.OnlineOrdering</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <!-- module-dependency-rules.md row 20: Online Ordering may call Catalog directly
+         (V12-MAP-001 resolves provider SKUs to active catalog products). -->
+    <ProjectReference Include="..\Catalog\ALKAROS.Catalog.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+</Project>

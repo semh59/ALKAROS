@@ -38,6 +38,7 @@ public static class ModuleBoundaryTests
         "ALKAROS.Production",
         "ALKAROS.Security",
         "ALKAROS.Support",
+        "ALKAROS.OnlineOrdering",
     };
 
     private static readonly string[] EmptyDependencies = Array.Empty<string>();
@@ -75,6 +76,9 @@ public static class ModuleBoundaryTests
             // 2026-08-03, exercised in code for the first time now (same
             // situation as rows 11/27's own notes describe).
             ["QrOrdering"] = ["Tables"],
+            // V12-MAP-001: module-dependency-rules.md row 20 (Online Ordering -> Catalog),
+            // exercised in code for the first time now.
+            ["OnlineOrdering"] = ["Catalog"],
             // Table Management has no direct-call edge: it reparents orders and
             // bills after a merge/transfer/unmerge by publishing a table event
             // to the outbox, which Order and Bill consume (V0-ARC-001 row 3).

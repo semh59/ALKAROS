@@ -6,10 +6,12 @@
   "IRefundIntentRepository": "V13-HUG-003: iade niyeti gercek terminal ister (dis bagimlilik); terminal gelince baglanacak.",
   "IRotatingSecretResolver": "V1-RMD-278: tuketicisi yok; yedek sifreleyici surum kaydini dogrudan okuyor, cozumleyici kullanilmiyor.",
   "IStockMovementService": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
+  "IYemeksepetiProductMappingService": "V12-MAP-001: Yemeksepeti urun eslemesi; ilk calisma zamani cagiranlari V12-ONL-002 (siparis normalizasyonu) ve V12-ONL-004 (katalog yayini) baglayacak, baglandiginda bu satir silinir.",
   "KitchenRoutingService": "V1-RMD-278: mutfak yonlendirmesi Host tarafindan depolar ve yonlendirici uzerinden zaten calisiyor; sarmalayici servis gereksiz.",
   "PortionReservationArbitrator": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "PostgresPortionReservationArbitratorRepository": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "PostgresRefundIntentRepository": "V13-HUG-003: iade niyeti gercek terminal ister (dis bagimlilik); terminal gelince baglanacak.",
+  "PostgresYemeksepetiProductMappingService": "V12-MAP-001: Yemeksepeti urun eslemesi; ilk calisma zamani cagiranlari V12-ONL-002 (siparis normalizasyonu) ve V12-ONL-004 (katalog yayini) baglayacak, baglandiginda bu satir silinir.",
   "RotatingSecretResolver": "V1-RMD-278: tuketicisi yok; yedek sifreleyici surum kaydini dogrudan okuyor, cozumleyici kullanilmiyor.",
   "StockMovementService": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi."
 }

@@ -213,6 +213,7 @@
           "ALKAROS.Menu": "[1.0.0, )",
           "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.Observability": "[1.0.0, )",
+          "ALKAROS.OnlineOrdering": "[1.0.0, )",
           "ALKAROS.Operations": "[1.0.0, )",
           "ALKAROS.Orders": "[1.0.0, )",
           "ALKAROS.Payments": "[1.0.0, )",
@@ -289,6 +290,14 @@
       "alkaros.observability": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.onlineordering": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Catalog": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }

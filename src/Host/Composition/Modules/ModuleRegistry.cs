@@ -39,6 +39,8 @@ public static class ModuleRegistry
         typeof(ALKAROS.Purchasing.PurchasingModule),
         typeof(ALKAROS.Production.ProductionModule),
         typeof(ALKAROS.QrOrdering.TokenLifecycle.QrOrderingModule),
+        // V12-MAP-001: Online Ordering (row 20) - after Catalog, its only direct-call dependency.
+        typeof(ALKAROS.OnlineOrdering.OnlineOrderingModule),
         typeof(ALKAROS.Payments.PaymentAggregate.PaymentAggregateModule),
         // V13-CSH-004: the Cash/Payments sub-modules below already existed
         // (V13-CSH-001/002/003, V13-ALC-001) but were never added here, so

@@ -1230,6 +1230,14 @@
         "manual_card_confirmations"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "144",
+      "phase": "B",
+      "tables": [
+        "yemeksepeti_product_mappings"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

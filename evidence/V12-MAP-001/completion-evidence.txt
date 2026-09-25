@@ -1,0 +1,21 @@
+V12-MAP-001 completion evidence (2026-09-25, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+Public source basis (UNVERIFIED - no Partner Portal credential, no sandbox; V0-YSP-001 Blocked):
+- https://developer.yemeksepeti.com/api-specifications (Partner API v2.0.2, read 2026-09-25): products are
+  identified by `sku` in catalog calls; order items carry `sku`, `name`, `pricing{quantity,unit_price,...}`.
+  The public order item schema has no modifier/topping field.
+- https://developer.yemeksepeti.com/en/documentation/pos-partner-picking-faq (read 2026-09-25).
+
+Commands (exit 0):
+- dotnet restore ALKAROS.slnx --force-evaluate; dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping -> 20/20
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- dotnet test tests/Host/MigrationComposition -> 161/161 (host-tests.txt; module count 32, migration 144)
+- python tools/project-manifest/project_manifest_tool.py -> VALID
+- python tools/consistency-audit/consistency_audit.py -> clean
+- python tools/plan-audit/plan_audit_tool.py validate -> 0 errors, 0 warnings
+Migration forward/backward: 144 up -> down -> up exercised by TheMigrationRollsBackAndReapplies.
+Mutations (reverted, cmp identical): table lock removed -> 1 failed; mandatory-modifier rule off -> 2 failed;
+ambiguity check off -> 1 failed; effective_from ignored -> 2 failed.
+Honest limits: no runtime caller yet (V12-ONL-002/004), allowlisted with this task id.
