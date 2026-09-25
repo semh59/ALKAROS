@@ -161,6 +161,18 @@ export async function seedDatabase(client) {
     offlineTableIds.push(offlineTableId);
   }
 
+  // Untouched tables for the send-to-cashier / undo specs (08): each scenario sends its own check.
+  const sendTableIds = [];
+  for (let i = 1; i <= 3; i++) {
+    const sendTableId = randomUUID();
+    await client.query(
+      `INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+       VALUES ($1, $2, $3, 4, 'Available')`,
+      [sendTableId, zoneId, `SND-${i}`],
+    );
+    sendTableIds.push(sendTableId);
+  }
+
   const plainProductId = randomUUID();
   const modifierProductId = randomUUID();
   const modifierGroupId = randomUUID();
@@ -236,6 +248,7 @@ export async function seedDatabase(client) {
     timingSeatIds,
     loadTableIds,
     offlineTableIds,
+    sendTableIds,
     zoneId,
     seatOneId,
     seatTwoId,

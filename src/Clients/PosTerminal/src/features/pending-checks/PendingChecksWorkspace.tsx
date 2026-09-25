@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { createBillFromOrder } from "../billing";
 import { formatMoney } from "../../format";
-import { PendingChecksApiError, collectionHref, loadPendingChecks, type PendingCheck } from "./pendingChecksApi";
+import { PendingChecksApiError, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import "./pending-checks.css";
 
 const REFRESH_MS = 10_000;
@@ -50,6 +50,19 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
     }
   };
 
+  const recall = async (check: PendingCheck) => {
+    if (!check.tableId) return;
+    setOpeningOrderId(check.orderId);
+    try {
+      await recallPendingCheck(terminalId, check.orderId, check.tableId);
+      setOpeningOrderId(undefined);
+      await load();
+    } catch (reason) {
+      setOpeningOrderId(undefined);
+      setError(reason instanceof PendingChecksApiError ? reason.message : "Hesap masaya geri gönderilemedi.");
+    }
+  };
+
   return (
     <section className="pending-checks" aria-label="Bekleyen hesaplar">
       {error && <p className="pending-checks__error" role="alert">{error}</p>}
@@ -79,6 +92,17 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
                 </span>
                 {openingOrderId === check.orderId && <span className="pending-checks__opening">Açılıyor…</span>}
               </button>
+              {check.paidAmount === 0 && check.tableId && (
+                <button
+                  type="button"
+                  className="pending-checks__recall"
+                  disabled={openingOrderId !== undefined}
+                  onClick={() => void recall(check)}
+                  aria-label={`${check.orderNumber} hesabını masaya geri gönder`}
+                >
+                  Yanlışlıkla gönderildi: masaya geri gönder
+                </button>
+              )}
             </li>
           );
         })}

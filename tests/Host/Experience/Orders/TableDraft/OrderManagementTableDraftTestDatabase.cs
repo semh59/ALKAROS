@@ -57,6 +57,13 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         return billId;
     }
 
+    public async Task<string> BillStatusAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT status FROM billing.bills WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (string)(await command.ExecuteScalarAsync())!;
+    }
+
     public Task SetBillStatusAsync(Guid billId, string status)
         => ExecuteAsync("UPDATE billing.bills SET status = @status WHERE bill_id = @bill;", ("status", status), ("bill", billId));
 

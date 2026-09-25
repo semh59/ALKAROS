@@ -133,6 +133,8 @@ export async function confirmSendToCashier() {
   }
 
   const tableNumber = state.table.number;
+  const sentOrderId = context.orderId;
+  const sentTableId = context.tableId;
   closeOptions();
   closeBill();
   state.table = null;
@@ -142,7 +144,25 @@ export async function confirmSendToCashier() {
   await loadTables();
   afterDraftChange();
   showScreen('tables');
-  toast(result.data.alreadySent
-    ? `${tableNumber} hesabı zaten kasaya gönderilmişti.`
-    : `${tableNumber} hesabı kasaya gönderildi, masa boşaldı.`);
+  if (result.data.alreadySent) {
+    toast(`${tableNumber} hesabı zaten kasaya gönderilmişti.`);
+    return;
+  }
+  // A check sent by mistake goes back to its table with one tap while no money has moved (V1-RMD-281).
+  toast(`${tableNumber} hesabı kasaya gönderildi, masa boşaldı.`, {
+    undo: () => recallCheckFromCashier(sentOrderId, sentTableId, tableNumber)
+  });
+}
+
+export async function recallCheckFromCashier(orderId, tableId, tableNumber) {
+  const result = await api(apiUrl(`/orders/${orderId}/recall-from-cashier`), {
+    method: 'POST',
+    body: { tableId }
+  });
+  if (!result.ok) {
+    toast(result.message, { warning: true });
+    return;
+  }
+  await loadTables();
+  toast(`${tableNumber} hesabı masaya geri alındı.`);
 }

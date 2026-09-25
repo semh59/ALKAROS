@@ -35,7 +35,8 @@ export function toast(text, options) {
     ${settings.undo ? '<button type="button" class="toast-undo">Geri al</button>' : ''}`;
 
   const close = () => { window.clearTimeout(timer); node.remove(); };
-  const timer = window.setTimeout(close, settings.warning ? 6000 : 5000);
+  // An undo needs time to be noticed and used (an accidental send, a slip of the thumb).
+  const timer = window.setTimeout(close, settings.undo ? 10000 : settings.warning ? 6000 : 5000);
   if (settings.undo) {
     node.querySelector('.toast-undo').addEventListener('click', () => { close(); settings.undo(); });
   }

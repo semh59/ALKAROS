@@ -186,6 +186,110 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.Null(await InQueue());
     }
 
+    // V1-RMD-281: a check sent by mistake goes back to its table while no money has moved.
+    private static string RecallPath(Guid terminalId, Guid orderId)
+        => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/recall-from-cashier";
+
+    [Fact]
+    public async Task ACheckSentByMistakeGoesBackToItsTableAndLeavesTheTillQueue()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open");
+
+        using var recalled = await client.SendAsync(JsonRequest(RecallPath(terminalId, check.OrderId), cookie, new RecallCheckRequestV1(tableId)));
+
+        Assert.Equal(HttpStatusCode.OK, recalled.StatusCode);
+        Assert.Equal("Recalled", (await recalled.Content.ReadFromJsonAsync<RecallCheckResultV1>())!.Outcome);
+        Assert.True(await _database.TablePointsAtAsync(tableId, check.OrderId));
+        Assert.Equal("Occupied", await _database.TableStatusAsync(tableId));
+        Assert.Equal("Cancelled", await _database.BillStatusAsync(billId));
+        using var queue = await client.SendAsync(GetRequest(AwaitingPaymentPath(terminalId), cookie));
+        Assert.DoesNotContain((await queue.Content.ReadFromJsonAsync<List<PendingCheckSummaryV1>>())!, c => c.OrderId == check.OrderId);
+
+        // A repeat is harmless, and the check can be sent again.
+        using var again = await client.SendAsync(JsonRequest(RecallPath(terminalId, check.OrderId), cookie, new RecallCheckRequestV1(tableId)));
+        Assert.Equal("AlreadyAttached", (await again.Content.ReadFromJsonAsync<RecallCheckResultV1>())!.Outcome);
+        using var resent = await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        Assert.False((await resent.Content.ReadFromJsonAsync<SendCheckToCashierResultV1>())!.AlreadySent);
+    }
+
+    [Fact]
+    public async Task ACheckWithMoneyOnItCannotBeRecalled()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open", allocated: 100m);
+
+        using var refused = await client.SendAsync(JsonRequest(RecallPath(terminalId, check.OrderId), cookie, new RecallCheckRequestV1(tableId)));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Contains("CHECK_HAS_PAYMENT", await refused.Content.ReadAsStringAsync());
+        Assert.False(await _database.TableHasOpenCheckAsync(tableId));
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task ACheckCannotBeRecalledOntoATableThatAlreadyHasANewerCheck()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var first = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, first.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        var second = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 2, 280m));
+
+        using var refused = await client.SendAsync(JsonRequest(RecallPath(terminalId, first.OrderId), cookie, new RecallCheckRequestV1(tableId)));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Contains("TABLE_HAS_OPEN_CHECK", await refused.Content.ReadAsStringAsync());
+        Assert.True(await _database.TablePointsAtAsync(tableId, second.OrderId));
+    }
+
+    [Fact]
+    public async Task ACheckThatIsNotWaitingAtTheTillCannotBeRecalled()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var openCheck = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        var otherTable = await _database.SeedTableAsync();
+
+        // Still attached to its table: a recall against a DIFFERENT table is refused.
+        using var wrongTable = await client.SendAsync(JsonRequest(RecallPath(terminalId, openCheck.OrderId), cookie, new RecallCheckRequestV1(otherTable)));
+        Assert.Equal(HttpStatusCode.NotFound, wrongTable.StatusCode);
+
+        using var anonymous = new HttpRequestMessage(HttpMethod.Post, RecallPath(terminalId, openCheck.OrderId))
+        {
+            Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(new RecallCheckRequestV1(tableId)), Encoding.UTF8, "application/json"),
+        };
+        using var noSession = await client.SendAsync(anonymous);
+        Assert.Equal(HttpStatusCode.Unauthorized, noSession.StatusCode);
+    }
+
     [Fact]
     public async Task ANewPartyCanBeSeatedOnceTheCheckHasGoneToTheCashier()
     {

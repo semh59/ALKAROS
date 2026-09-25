@@ -64,6 +64,50 @@ test.describe('Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280)', () => {
     expect(summary.remainingAmount).toBe(0);
   });
 
+  test('yanlışlıkla gönderilen hesap kasadan masaya geri gönderilir; tahsilat başlamış hesapta seçenek yoktur', async ({ page }) => {
+    const seed = readSeed();
+    await loginCashier(page, seed);
+    const terminalId = await currentTerminalId(page);
+    const table = seed.transferTables[7];
+    const orderId = await sendCheckToCashier(page, terminalId, seed, table, { quantity: 3 });
+
+    await page.goto('/pending-checks');
+    const row = rowOf(page, table, '₺300,00');
+    await expect(row).toBeVisible({ timeout: 15_000 });
+    const tableRow = async () => {
+      const body = await (await page.request.get(`/api/v1/terminals/${terminalId}/table-management/tables`)).json();
+      return (Array.isArray(body) ? body : body.tables || body.items).find((t) => t.tableNumber === table.tableNumber);
+    };
+    expect((await tableRow()).currentOrderId).toBeNull();
+
+    await page.getByRole('button', { name: /hesabını masaya geri gönder/ }).filter({ hasText: 'Yanlışlıkla' }).first().waitFor();
+    await page.locator('li', { has: row }).getByRole('button', { name: /masaya geri gönder/ }).click();
+
+    // Hesap kuyruktan çıktı, masa yeniden dolu ve hesabına bağlı.
+    await expect(row).toHaveCount(0, { timeout: 15_000 });
+    const back = await tableRow();
+    expect(back.status).toBe('Occupied');
+    expect(back.currentOrderId).toBe(orderId);
+
+    // Yeniden gönderilebilir; bu kez 60 ₺ tahsilat başlar: geri gönderme seçeneği kaybolur ve sunucu da reddeder.
+    await page.request.post(`/api/v1/terminals/${terminalId}/orders/${orderId}/send-to-cashier`, { data: { tableId: table.tableId } });
+    await page.goto('/pending-checks');
+    await expect(row).toBeVisible({ timeout: 15_000 });
+    await row.click();
+    await expect(page).toHaveURL((url) => url.pathname.endsWith('/split-payment/index.html') && !!url.searchParams.get('billId'));
+    const billId = new URL(page.url()).searchParams.get('billId');
+    const paid = await page.request.post(`/api/v1/terminals/${terminalId}/billing/bills/${billId}/tenders/`, {
+      data: { Method: 'Eft', Amount: 60, IdempotencyKey: randomUUID(), Note: null },
+    });
+    expect(paid.ok()).toBeTruthy();
+    await page.goto('/pending-checks');
+    await expect(rowOf(page, table, 'Kalan')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('li', { has: rowOf(page, table, 'Kalan') }).getByRole('button', { name: /masaya geri gönder/ })).toHaveCount(0);
+    const refused = await page.request.post(`/api/v1/terminals/${terminalId}/orders/${orderId}/recall-from-cashier`, { data: { tableId: table.tableId } });
+    expect(refused.status()).toBe(409);
+    expect((await refused.json()).error.code).toBe('CHECK_HAS_PAYMENT');
+  });
+
   test('kuyruk boşken bunu söyler', async ({ page }) => {
     const seed = readSeed();
     await loginCashier(page, seed);

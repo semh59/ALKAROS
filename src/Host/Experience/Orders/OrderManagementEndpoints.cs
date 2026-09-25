@@ -342,6 +342,74 @@ public static class OrderManagementEndpoints
             return Results.Ok(await store.SendCheckToCashierAsync(request.TableId, orderId, cancellationToken));
         });
 
+        // V1-RMD-281: the waiter (or the till) took a check back that was sent by mistake. Same permission as
+        // sending it; refused with a Turkish reason once money has moved or a newer check sits on the table.
+        group.MapPost("/{orderId:guid}/recall-from-cashier", async (
+            Guid terminalId,
+            Guid orderId,
+            RecallCheckRequestV1 request,
+            CashierHandoffStore store,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            IAuditEventStore auditEvents,
+            IBillRepository bills,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersCreate, cancellationToken);
+
+            if (request is null || request.TableId == Guid.Empty)
+                return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "Masa kimliği boş olamaz." } });
+
+            try
+            {
+                var result = await store.RecallCheckAsync(request.TableId, orderId, cancellationToken);
+                // The till must not keep a ghost bill: a re-send would otherwise reuse it with stale items.
+                // Run on a repeat too, so a request that failed half-way is completed by the retry.
+                foreach (var bill in await bills.GetByOrderIdAsync(orderId, cancellationToken))
+                {
+                    if (bill.Status is not (BillState.Paid or BillState.Cancelled))
+                        await bills.SaveAsync(bill.Cancel(), bill.RowVersion, cancellationToken);
+                }
+
+                if (result.Outcome == "Recalled")
+                {
+                    await auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "check.recalled-from-cashier",
+                            aggregateType: "Order",
+                            aggregateId: orderId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal,
+                            reason: "Hesap kasadan masaya geri alındı.",
+                            afterStateJson: System.Text.Json.JsonSerializer.Serialize(new { tableId = request.TableId })),
+                        cancellationToken);
+                }
+                return Results.Ok(result);
+            }
+            catch (TableHasNewerCheckException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TABLE_HAS_OPEN_CHECK", message = "Bu masada yeni bir hesap açık; önce onu kasaya gönderin." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CheckHasPaymentException)
+            {
+                return Results.Json(
+                    new { error = new { code = "CHECK_HAS_PAYMENT", message = "Bu hesapta tahsilat başlamış; masaya geri alınamaz." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CheckNotRecallableException exception)
+            {
+                return Results.Json(
+                    new { error = new { code = "CHECK_NOT_RECALLABLE", message = exception.Message } },
+                    statusCode: StatusCodes.Status404NotFound);
+            }
+        });
+
         // V1-RMD-216: found by an independent audit (2026-09-16) — same gap
         // V1-RMD-160 fixed on the sibling GET /{orderId} below: this used to
         // call RequireCashierSessionAsync only (any authenticated terminal

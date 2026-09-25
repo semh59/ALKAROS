@@ -7,8 +7,8 @@ import { PendingChecksWorkspace } from "./PendingChecksWorkspace";
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 const sample = [
-  { orderId: "o-1", orderNumber: "S-001", tableNumber: "5", itemCount: 3, total: 540, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: "Köfte, Ayran" },
-  { orderId: "o-2", orderNumber: "S-002", tableNumber: "5", itemCount: 1, total: 90, createdAt: "2026-09-24T12:10:00Z", billId: "b-2", paidAmount: 40, itemPreview: "Çay" },
+  { orderId: "o-1", orderNumber: "S-001", tableNumber: "5", itemCount: 3, total: 540, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: "Köfte, Ayran", tableId: "tb-5" },
+  { orderId: "o-2", orderNumber: "S-002", tableNumber: "5", itemCount: 1, total: 90, createdAt: "2026-09-24T12:10:00Z", billId: "b-2", paidAmount: 40, itemPreview: "Çay", tableId: "tb-5" },
 ];
 
 describe("PendingChecksWorkspace", () => {
@@ -81,5 +81,43 @@ describe("PendingChecksWorkspace", () => {
     fetchMock.mockResolvedValue({ ok: false, status: 403, json: async () => ({}) });
     await render();
     expect(document.querySelector('[role="alert"]')?.textContent).toContain("yetkiniz yok");
+  });
+
+  it("offers to send a mistaken check back only while nothing is collected, and refreshes after it", async () => {
+    let listed = sample;
+    fetchMock.mockImplementation(async (url: string, init?: RequestInit) => {
+      if (String(url).includes("recall-from-cashier")) {
+        expect(JSON.parse(String(init?.body))).toEqual({ tableId: "tb-5" });
+        listed = sample.filter((check) => check.orderId !== "o-1");
+        return ok({ outcome: "Recalled" });
+      }
+      return ok(listed);
+    });
+    await render();
+
+    expect(document.querySelector('button[aria-label="S-001 hesabını masaya geri gönder"]')).not.toBeNull();
+    // The part-paid check has money on it: no way back.
+    expect(document.querySelector('button[aria-label="S-002 hesabını masaya geri gönder"]')).toBeNull();
+
+    await act(async () => {
+      (document.querySelector('button[aria-label="S-001 hesabını masaya geri gönder"]') as HTMLButtonElement).click();
+    });
+
+    expect(document.body.textContent).not.toContain("S-001");
+    expect(document.body.textContent).toContain("S-002");
+  });
+
+  it("shows the server's Turkish reason when the check cannot go back", async () => {
+    fetchMock.mockImplementation(async (url: string) =>
+      String(url).includes("recall-from-cashier")
+        ? { ok: false, status: 409, json: async () => ({ error: { message: "Bu masada yeni bir hesap açık; önce onu kasaya gönderin." } }) }
+        : ok(sample));
+    await render();
+
+    await act(async () => {
+      (document.querySelector('button[aria-label="S-001 hesabını masaya geri gönder"]') as HTMLButtonElement).click();
+    });
+
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain("yeni bir hesap açık");
   });
 });

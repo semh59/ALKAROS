@@ -154,6 +154,12 @@ public sealed record SendCheckToCashierRequestV1(Guid TableId);
 /// </summary>
 public sealed record SendCheckToCashierResultV1(Guid OrderId, Guid TableId, bool AlreadySent);
 
+/// <summary>V1-RMD-281: request body for taking a mistakenly sent check back from the till.</summary>
+public sealed record RecallCheckRequestV1(Guid TableId);
+
+/// <summary>V1-RMD-281: Outcome is "Recalled" or "AlreadyAttached" (a repeat of the same request).</summary>
+public sealed record RecallCheckResultV1(Guid OrderId, Guid TableId, string Outcome);
+
 /// <summary>
 /// V1-ORD-006: one check waiting to be settled at the till. Carries its own
 /// number because by the time the guest reaches the cashier the table has
@@ -171,7 +177,9 @@ public sealed record PendingCheckSummaryV1(
     Guid? BillId = null,
     decimal PaidAmount = 0m,
     // V1-RMD-280: the first few item names, so the cashier can tell two checks of the same table apart.
-    string? ItemPreview = null);
+    string? ItemPreview = null,
+    // V1-RMD-281: lets the till send a mistakenly sent check back to its table.
+    Guid? TableId = null);
 
 /// <summary>V1-ORD-005: request body for voiding a not-yet-sent item.</summary>
 public sealed record VoidOrderItemRequestV1(

@@ -11,3 +11,6 @@
 .pending-checks__opening { grid-column: 1 / -1; color: #61727a; }
 .pending-checks__empty { color: #61727a; }
 .pending-checks__error { border: 1px solid var(--ds-color-danger); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+.pending-checks__list li { display: grid; gap: .25rem; }
+.pending-checks__recall { justify-self: start; min-height: 2.5rem; border: 0; padding: 0 var(--ds-space-2); color: #61727a; background: none; text-decoration: underline; cursor: pointer; }
+.pending-checks__recall:focus-visible { outline: 3px solid #ff7d49; outline-offset: 2px; }
