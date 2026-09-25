@@ -1,4 +1,5 @@
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Payments.ManualResolution;
 using ALKAROS.Reconciliation.Payments;
 using ALKAROS.Reporting.Payments;
 using Microsoft.AspNetCore.Builder;
@@ -35,6 +36,29 @@ public static class PaymentSettlementEndpoints
             return Results.Ok(result);
         });
 
+        // V1-RMD-283: every manual "the card WAS charged" claim with its slip number, amount, who claimed and who
+        // decided. This is what a bank-statement match runs on: a manually approved payment is only as trustworthy
+        // as its slip, so the list is always available to a manager (reports.view).
+        group.MapGet("/manual-confirmations", async (
+            string? status,
+            int? limit,
+            IManualCardConfirmationRepository confirmations,
+            CancellationToken cancellationToken) =>
+        {
+            ManualCardConfirmationStatus? parsed = null;
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                if (!Enum.TryParse<ManualCardConfirmationStatus>(status, ignoreCase: true, out var value))
+                    return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Durum Pending, Approved ya da Rejected olmalı." } });
+                parsed = value;
+            }
+
+            var items = await confirmations.ListAsync(parsed, limit ?? 100, cancellationToken);
+            return Results.Ok(items.Select(item => new ManualCardConfirmationListItemV1(
+                item.Id, item.PaymentId, item.BillId, item.SlipNumber, item.Amount, item.Status.ToString(),
+                item.RequestedBy, item.RequestedAt, item.RequestNote, item.DecidedBy, item.DecidedAt, item.DecisionNote)));
+        });
+
         group.MapPost("/reconciliation-scan", async (
             PaymentReconciliationScanner scanner,
             IAuthorizationService authorization,
@@ -50,3 +74,7 @@ public static class PaymentSettlementEndpoints
         return group;
     }
 }
+
+public sealed record ManualCardConfirmationListItemV1(
+    Guid ConfirmationId, Guid PaymentId, Guid BillId, string SlipNumber, decimal Amount, string Status,
+    Guid RequestedBy, DateTimeOffset RequestedAt, string? RequestNote, Guid? DecidedBy, DateTimeOffset? DecidedAt, string? DecisionNote);

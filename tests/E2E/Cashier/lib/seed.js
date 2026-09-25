@@ -18,6 +18,7 @@ import { hashPassword } from './passwordHash.js';
 export const CASHIER_USERNAME = 'e2e.kasiyer';
 export const CASHIER_PASSWORD = 'E2eKasiyerSifre!42';
 export const LIMITED_USERNAME = 'e2e.kasiyer.sinirli';
+export const SECOND_MANAGER_USERNAME = 'e2e.mudur.ikinci';
 export const KASA_1_TABLE_ID = '00000000-0000-0000-0000-000000000001';
 export const KASA_1_TABLE_NUMBER = 'KASA-1';
 
@@ -70,6 +71,30 @@ export async function seedDatabase(client) {
   await client.query(
     'INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES ($1, $2, $3)',
     [randomUUID(), limitedUserId, limitedRoleId],
+  );
+
+  // A SECOND person holding every permission: the manual card confirmation is two-person (one claims the
+  // charge with the slip number, a DIFFERENT one approves), so a browser test needs two real users.
+  const secondManagerId = randomUUID();
+  const secondManagerRoleId = randomUUID();
+  await client.query(
+    `INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+     VALUES ($1, $2, $3, 'E2E İkinci Müdür', true)`,
+    [secondManagerId, SECOND_MANAGER_USERNAME, hashPassword(CASHIER_PASSWORD)],
+  );
+  await client.query(
+    `INSERT INTO identity.roles (role_id, code, name) VALUES ($1, 'e2e-second-manager-role', 'E2E İkinci Müdür Rolü')`,
+    [secondManagerRoleId],
+  );
+  for (const row of permissionRows) {
+    await client.query(
+      'INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id) VALUES ($1, $2, $3)',
+      [randomUUID(), secondManagerRoleId, row.permission_id],
+    );
+  }
+  await client.query(
+    'INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES ($1, $2, $3)',
+    [randomUUID(), secondManagerId, secondManagerRoleId],
   );
 
   // The vanilla Cashier client (src/Clients/Cashier/wwwroot/cashier-app.js)
@@ -158,6 +183,7 @@ export async function seedDatabase(client) {
     cashierUsername: CASHIER_USERNAME,
     cashierPassword: CASHIER_PASSWORD,
     limitedUsername: LIMITED_USERNAME,
+    secondManagerUsername: SECOND_MANAGER_USERNAME,
     kasa1TableId: KASA_1_TABLE_ID,
     kasa1TableNumber: KASA_1_TABLE_NUMBER,
     lowStockProductId,

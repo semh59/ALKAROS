@@ -1222,6 +1222,14 @@
         "role_permissions"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "143",
+      "phase": "B",
+      "tables": [
+        "manual_card_confirmations"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

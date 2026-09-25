@@ -41,3 +41,39 @@ public sealed class ManualResolutionReasonInvalidException : ManualPaymentResolu
 {
     public ManualResolutionReasonInvalidException(string message) : base(message) { }
 }
+
+/// <summary>V1-RMD-283: the slip (receipt) number is missing or malformed.</summary>
+public sealed class ManualResolutionSlipInvalidException : ManualPaymentResolutionException
+{
+    public ManualResolutionSlipInvalidException() : base("A valid slip number (4-32 letters, digits, - or /) is required.") { }
+}
+
+/// <summary>V1-RMD-283: this slip number already backs another live claim.</summary>
+public sealed class ManualResolutionSlipReusedException : ManualPaymentResolutionException
+{
+    public ManualResolutionSlipReusedException(string slip) : base($"Slip number '{slip}' is already used.") { }
+}
+
+/// <summary>V1-RMD-283: the payment already has a claim waiting for approval.</summary>
+public sealed class ManualResolutionAlreadyPendingException : ManualPaymentResolutionException
+{
+    public ManualResolutionAlreadyPendingException(Guid paymentId) : base($"Payment '{paymentId}' already has a pending claim.") { }
+}
+
+/// <summary>V1-RMD-283: the confirmation does not exist.</summary>
+public sealed class ManualResolutionConfirmationNotFoundException : ManualPaymentResolutionException
+{
+    public ManualResolutionConfirmationNotFoundException(Guid id) : base($"Confirmation '{id}' was not found.") { }
+}
+
+/// <summary>V1-RMD-283: the confirmation was already approved or rejected.</summary>
+public sealed class ManualResolutionConfirmationDecidedException : ManualPaymentResolutionException
+{
+    public ManualResolutionConfirmationDecidedException(Guid id, string status) : base($"Confirmation '{id}' is already {status}.") { }
+}
+
+/// <summary>V1-RMD-283: four-eyes - the person who claimed the charge cannot approve it.</summary>
+public sealed class ManualResolutionSameActorException : ManualPaymentResolutionException
+{
+    public ManualResolutionSameActorException() : base("The person who claimed the charge cannot approve it.") { }
+}

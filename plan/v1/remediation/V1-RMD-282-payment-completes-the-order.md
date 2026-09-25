@@ -37,8 +37,7 @@ uç noktaları hesabı kapattıktan sonra çağırır; en iyi çaba (para zaten 
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-282-payment-completes-the-order.md`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Orders/OrderSettlementService.cs
-  (V1-ORD-006 ailesindeki Orders Host klasörüne eklenen yeni dosya)
+- `src/Host/Experience/Orders/OrderSettlementService.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Orders/OrderManagementEndpoints.cs
   (yalnız servisin kaydı)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/OrderAggregate/Order.cs

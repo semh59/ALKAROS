@@ -27,6 +27,9 @@
     amountDraft: '0.00',
     noteDraft: '',
     resolveReason: '',
+    userId: null,
+    slipDraft: '',
+    decisionNote: '',
     // V13-PUI-004: EFT/Havale onay kutusu - kasiyer tutarı işletmenin banka
     // hesap hareketinde GÖRDÜĞÜNÜ işaretlemeden "Ödemeyi Ekle" pasif kalır.
     // Yöntem değiştikçe veya her başarılı gönderimden sonra sıfırlanır -
@@ -101,6 +104,7 @@
         return;
       }
       state.terminalId = result.body.terminalId;
+      state.userId = result.body.userId || null;
       loadEverything();
     }).catch(function () {
       state.phase = 'login';
@@ -197,6 +201,59 @@
         return refreshSummary().then(function () { render(); });
       }
       state.error = result.status === 403
+        ? 'Bu işlem için müdür yetkisi gerekir. Yetkili bir kullanıcıyla giriş yapın.'
+        : describeHttpFailure(result.status, result.body);
+      render();
+    }).catch(function () {
+      state.busy = false;
+      setError('Bağlantı kurulamadı. Tekrar deneyin.');
+    });
+  }
+
+  function claimCardCharged() {
+    var slip = (state.slipDraft || '').trim();
+    if (!slip) {
+      setError('Fiş numarasını yazın.');
+      return;
+    }
+    var unsettled = state.summary && state.summary.unsettledPayment;
+    if (!unsettled) return;
+    setBusy(true);
+    state.error = null;
+    api(tendersBase() + 'unsettled/' + unsettled.paymentId + '/card-charged', {
+      method: 'POST',
+      body: { slipNumber: slip, note: null },
+    }).then(function (result) {
+      state.busy = false;
+      if (result.ok) {
+        state.slipDraft = '';
+        return refreshSummary().then(function () { render(); });
+      }
+      state.error = result.status === 403
+        ? 'Bu işlem için müdür yetkisi gerekir. Yetkili bir kullanıcıyla giriş yapın.'
+        : describeHttpFailure(result.status, result.body);
+      render();
+    }).catch(function () {
+      state.busy = false;
+      setError('Bağlantı kurulamadı. Tekrar deneyin.');
+    });
+  }
+
+  function decideConfirmation(decision) {
+    var pending = state.summary && state.summary.unsettledPayment && state.summary.unsettledPayment.pendingConfirmation;
+    if (!pending) return;
+    setBusy(true);
+    state.error = null;
+    api(tendersBase() + 'confirmations/' + pending.confirmationId + '/' + decision, {
+      method: 'POST',
+      body: { note: (state.decisionNote || '').trim() || null },
+    }).then(function (result) {
+      state.busy = false;
+      if (result.ok) {
+        state.decisionNote = '';
+        return refreshSummary().then(function () { render(); });
+      }
+      state.error = result.status === 403 && !(result.body && result.body.error && result.body.error.message)
         ? 'Bu işlem için müdür yetkisi gerekir. Yetkili bir kullanıcıyla giriş yapın.'
         : describeHttpFailure(result.status, result.body);
       render();
@@ -346,6 +403,36 @@
     );
   }
 
+  // V1-RMD-283: how a manager closes an unconfirmed card payment. "Not charged" needs one authorized person.
+  // "Charged" moves money, so it needs TWO: one claims it with the slip number, a different one approves.
+  function renderResolution() {
+    var pending = state.summary.unsettledPayment && state.summary.unsettledPayment.pendingConfirmation;
+    var disabled = state.busy ? ' disabled' : '';
+    if (pending) {
+      var mine = state.userId && pending.requestedBy === state.userId;
+      return (
+        '<div class="sp-field" id="pending-confirmation"><span class="sp-field-label">Onay bekliyor: fiş ' +
+        escapeHtml(pending.slipNumber) + ' · ' + formatMoney(pending.amount) + '</span>' +
+        (mine
+          ? '<div class="sp-alert-body">Kart çekildi bildirimini siz yaptınız; ikinci bir yetkilinin onaylaması gerekir.</div>'
+          : '<input class="sp-input" type="text" id="decision-note" maxlength="500" placeholder="Not (isteğe bağlı)" value="' +
+            escapeHtml(state.decisionNote) + '">' +
+            '<button class="sp-btn sp-btn-primary" id="approve-confirmation" type="button"' + disabled + '>Onayla: kart çekildi</button>') +
+        '<button class="sp-btn sp-btn-secondary" id="reject-confirmation" type="button"' + disabled + '>' +
+        (mine ? 'Bildirimi geri çek' : 'Reddet') + '</button></div>'
+      );
+    }
+    return (
+      '<div class="sp-field"><span class="sp-field-label">Yetkili müdür: kart çekildi mi? (fiş numarası ile, ikinci bir yetkili onaylar)</span>' +
+      '<input class="sp-input" type="text" id="claim-slip" maxlength="32" placeholder="Fiş numarası" value="' + escapeHtml(state.slipDraft) + '">' +
+      '<button class="sp-btn sp-btn-secondary" id="claim-card-charged" type="button"' + disabled + '>Kart çekildi: onaya gönder</button></div>' +
+      '<div class="sp-field"><span class="sp-field-label">Yetkili müdür: kart çekilmedi mi?</span>' +
+      '<input class="sp-input" type="text" id="resolve-reason" maxlength="500" ' +
+      'placeholder="Gerekçe (zorunlu)" value="' + escapeHtml(state.resolveReason) + '">' +
+      '<button class="sp-btn sp-btn-secondary" id="resolve-not-charged" type="button"' + disabled + '>Kart çekilmedi olarak çöz</button></div>'
+    );
+  }
+
   function renderReady() {
     var s = state.summary;
     var remaining = remainingAmount();
@@ -359,11 +446,7 @@
           '<div><div class="sp-alert-title">Manuel mutabakat gerekiyor</div>' +
           '<div class="sp-alert-body">Son kart tahsilatı otomatik onaylanamadı. Bu hesaba yeni bir tahsilat ' +
           'eklemeden önce mutabakat tamamlanmalı.</div></div></div>' +
-          '<div class="sp-field"><span class="sp-field-label">Yetkili müdür: kart çekilmedi mi?</span>' +
-          '<input class="sp-input" type="text" id="resolve-reason" maxlength="500" ' +
-          'placeholder="Gerekçe (zorunlu)" value="' + escapeHtml(state.resolveReason) + '">' +
-          '<button class="sp-btn sp-btn-secondary" id="resolve-not-charged" type="button"' +
-          (state.busy ? ' disabled' : '') + '>Kart çekilmedi olarak çöz</button></div>'
+          renderResolution()
         : '') +
       '<div class="sp-summary-row is-total"><span>Toplam</span><span class="value">' + formatMoney(s.payableAmount) + '</span></div>' +
       '<div class="sp-summary-row"><span>Tahsil edilen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
@@ -428,6 +511,16 @@
       var refreshedCheckbox = document.getElementById('eft-confirm');
       if (refreshedCheckbox) refreshedCheckbox.focus();
     });
+    var slipInput = document.getElementById('claim-slip');
+    if (slipInput) slipInput.addEventListener('input', function () { state.slipDraft = this.value; });
+    var claimButton = document.getElementById('claim-card-charged');
+    if (claimButton) claimButton.addEventListener('click', claimCardCharged);
+    var decisionNoteInput = document.getElementById('decision-note');
+    if (decisionNoteInput) decisionNoteInput.addEventListener('input', function () { state.decisionNote = this.value; });
+    var approveButton = document.getElementById('approve-confirmation');
+    if (approveButton) approveButton.addEventListener('click', function () { decideConfirmation('approve'); });
+    var rejectButton = document.getElementById('reject-confirmation');
+    if (rejectButton) rejectButton.addEventListener('click', function () { decideConfirmation('reject'); });
     var resolveReasonInput = document.getElementById('resolve-reason');
     if (resolveReasonInput) resolveReasonInput.addEventListener('input', function () { state.resolveReason = this.value; });
     var resolveButton = document.getElementById('resolve-not-charged');

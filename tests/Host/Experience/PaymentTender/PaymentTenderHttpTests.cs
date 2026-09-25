@@ -611,6 +611,125 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal("Open", await _database.BillStatusAsync(otherBill));
     }
 
+    // V1-RMD-283: "the card WAS charged" - two people, a unique slip number, and only the approval moves money.
+    private static string ClaimPath(Guid terminalId, Guid billId, Guid paymentId)
+        => $"{TendersPath(terminalId, billId)}unsettled/{paymentId:D}/card-charged";
+
+    private static string DecidePath(Guid terminalId, Guid billId, Guid confirmationId, string decision)
+        => $"{TendersPath(terminalId, billId)}confirmations/{confirmationId:D}/{decision}";
+
+    [Fact]
+    public async Task ACardChargeClaimedByOneManagerAndApprovedByAnotherSettlesThePaymentClosesTheBillAndIsAudited()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd283-cashier");
+        var billId = await _database.SeedBillAsync(payable: 40m);
+        var (orderId, _) = await _database.BillOrderAndTableAsync(billId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd283-ok-1");
+        var managerA = await _database.SeedManagerSessionAsync(terminalId, "rmd283-manager-a");
+        var managerB = await _database.SeedManagerSessionAsync(terminalId, "rmd283-manager-b");
+
+        var claim = await PostAsync(client, ClaimPath(terminalId, billId, paymentId), managerA,
+            new { SlipNumber = " fis-1001 ", Note = "Müşteri slipi gösterdi." });
+        Assert.Equal(HttpStatusCode.OK, claim.StatusCode);
+        var confirmationId = (await claim.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("confirmationId").GetGuid();
+
+        // Nothing moved yet: the bill is still locked and unpaid, and the claim is visible on the summary.
+        var summary = await (await GetAsync(client, TendersPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(0m, summary.GetProperty("allocatedTotal").GetDecimal());
+        var pending = summary.GetProperty("unsettledPayment").GetProperty("pendingConfirmation");
+        Assert.Equal("FIS-1001", pending.GetProperty("slipNumber").GetString());
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+
+        // The person who claimed it cannot approve it.
+        var self = await PostAsync(client, DecidePath(terminalId, billId, confirmationId, "approve"), managerA, new { });
+        Assert.Equal(HttpStatusCode.Forbidden, self.StatusCode);
+        Assert.Equal("SAME_ACTOR", (await self.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+
+        var approved = await PostAsync(client, DecidePath(terminalId, billId, confirmationId, "approve"), managerB, new { Note = "Slip doğrulandı." });
+
+        Assert.Equal(HttpStatusCode.OK, approved.StatusCode);
+        var result = await approved.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Approved", result.GetProperty("status").GetString());
+        Assert.True(result.GetProperty("billClosed").GetBoolean());
+        Assert.Equal("Approved", await _database.PaymentStatusAsync(paymentId));
+        Assert.Equal("Paid", await _database.BillStatusAsync(billId));
+        Assert.Equal("Completed", await _database.OrderStatusAsync(orderId));
+        Assert.Equal(1, await _database.AuditEventCountAsync("payment.manual-resolution.card-charged-requested", paymentId));
+        Assert.Equal(1, await _database.AuditEventCountAsync("payment.manual-resolution.card-charged-approved", paymentId));
+        Assert.Equal(1, await _database.OutboxEventCountAsync("card-settlement.approved", confirmationId));
+
+        var after = await (await GetAsync(client, TendersPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(40m, after.GetProperty("allocatedTotal").GetDecimal());
+        Assert.Equal(JsonValueKind.Null, after.GetProperty("unsettledPayment").ValueKind);
+
+        var again = await PostAsync(client, DecidePath(terminalId, billId, confirmationId, "approve"), managerB, new { });
+        Assert.Equal(HttpStatusCode.Conflict, again.StatusCode);
+    }
+
+    [Fact]
+    public async Task ACardClaimNeedsAuthorityAValidSlipAndOnlyOnePendingClaimPerPayment()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd283-rules-cashier");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd283-rules-1");
+        var manager = await _database.SeedManagerSessionAsync(terminalId, "rmd283-rules-manager");
+
+        Assert.Equal(HttpStatusCode.Forbidden, (await PostAsync(client, ClaimPath(terminalId, billId, paymentId), cashier, new { SlipNumber = "FIS-2001" })).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await PostAsync(client, ClaimPath(terminalId, billId, paymentId), manager, new { SlipNumber = "AB" })).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await PostAsync(client, ClaimPath(terminalId, billId, paymentId), manager, new { SlipNumber = "   " })).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await PostAsync(client, ClaimPath(terminalId, billId, paymentId), manager, new { SlipNumber = "FIS 2001 !" })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, ClaimPath(terminalId, billId, paymentId), manager, new { SlipNumber = "FIS-2001" })).StatusCode);
+
+        var second = await PostAsync(client, ClaimPath(terminalId, billId, paymentId), manager, new { SlipNumber = "FIS-2002" });
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+        Assert.Equal("CONFIRMATION_PENDING", (await second.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+    }
+
+    [Fact]
+    public async Task OneSlipCannotBackTwoPaymentsUntilItsClaimIsRejectedAndARejectionLeavesThePaymentUnresolved()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd283-slip-cashier");
+        var billOne = await _database.SeedBillAsync(payable: 100m);
+        var billTwo = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentOne = await CreateUnsettledPaymentAsync(client, terminalId, billOne, cashier, "rmd283-slip-1");
+        var paymentTwo = await CreateUnsettledPaymentAsync(client, terminalId, billTwo, cashier, "rmd283-slip-2");
+        var managerA = await _database.SeedManagerSessionAsync(terminalId, "rmd283-slip-a");
+        var managerB = await _database.SeedManagerSessionAsync(terminalId, "rmd283-slip-b");
+
+        var first = await PostAsync(client, ClaimPath(terminalId, billOne, paymentOne), managerA, new { SlipNumber = "FIS-3001" });
+        var firstId = (await first.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("confirmationId").GetGuid();
+
+        var reused = await PostAsync(client, ClaimPath(terminalId, billTwo, paymentTwo), managerA, new { SlipNumber = "fis-3001" });
+        Assert.Equal(HttpStatusCode.Conflict, reused.StatusCode);
+        Assert.Equal("SLIP_REUSED", (await reused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+
+        // A wrong bill path decides nothing.
+        var wrongBill = await PostAsync(client, DecidePath(terminalId, billTwo, firstId, "reject"), managerB, new { });
+        Assert.Equal(HttpStatusCode.NotFound, wrongBill.StatusCode);
+
+        var rejected = await PostAsync(client, DecidePath(terminalId, billOne, firstId, "reject"), managerB, new { Note = "Slip eşleşmedi." });
+        Assert.Equal(HttpStatusCode.OK, rejected.StatusCode);
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentOne));
+        Assert.Equal("Open", await _database.BillStatusAsync(billOne));
+        var summary = await (await GetAsync(client, TendersPath(terminalId, billOne), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(JsonValueKind.Null, summary.GetProperty("unsettledPayment").GetProperty("pendingConfirmation").ValueKind);
+
+        // The rejected slip is free again.
+        var retry = await PostAsync(client, ClaimPath(terminalId, billTwo, paymentTwo), managerA, new { SlipNumber = "FIS-3001" });
+        Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
+    }
+
     [Fact]
     public async Task SummaryOnANonExistentBillIsNotFound()
     {
@@ -836,6 +955,15 @@ internal sealed class PaymentTenderHttpTestDatabase
         command.Parameters.AddWithValue("table", tableId);
         await command.ExecuteNonQueryAsync();
         return billId;
+    }
+
+    public async Task<long> OutboxEventCountAsync(string eventType, Guid aggregateId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT count(*) FROM outbox_messages WHERE event_type = @type AND aggregate_id = @id;");
+        command.Parameters.AddWithValue("type", eventType);
+        command.Parameters.AddWithValue("id", aggregateId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<string> BillStatusAsync(Guid billId)

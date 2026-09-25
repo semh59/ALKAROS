@@ -22,5 +22,7 @@ public sealed class CardSettlementModule : IModule
         context.RegisterTransient<ICardSettlementAttemptRepository, PostgresCardSettlementAttemptRepository>();
         context.RegisterTransient<ICardSettlementOrchestrator, CardSettlementOrchestrator>();
         context.RegisterTransient<ALKAROS.Payments.ManualResolution.IManualPaymentResolutionService, ALKAROS.Payments.ManualResolution.ManualPaymentResolutionService>();
+        context.RegisterTransient<ALKAROS.Payments.ManualResolution.IManualCardConfirmationRepository, ALKAROS.Payments.ManualResolution.PostgresManualCardConfirmationRepository>();
+        context.RegisterTransient<ALKAROS.Payments.ManualResolution.IManualCardConfirmationService, ALKAROS.Payments.ManualResolution.ManualCardConfirmationService>();
     }
 }

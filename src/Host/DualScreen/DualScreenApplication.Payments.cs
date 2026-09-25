@@ -73,6 +73,24 @@ public static partial class DualScreenApplication
         }
     }
 
+    private static IResult MapManualResolutionError(ManualPaymentResolutionException exception)
+    {
+        var (status, code, message) = exception switch
+        {
+            ManualResolutionSlipInvalidException => (StatusCodes.Status400BadRequest, "SLIP_INVALID", "Fiş numarası 4-32 karakter olmalı (harf, rakam, - ve /)."),
+            ManualResolutionSlipReusedException => (StatusCodes.Status409Conflict, "SLIP_REUSED", "Bu fiş numarası başka bir ödemeye zaten bağlı."),
+            ManualResolutionAlreadyPendingException => (StatusCodes.Status409Conflict, "CONFIRMATION_PENDING", "Bu ödeme için onay bekleyen bir bildirim var."),
+            ManualResolutionNotResolvableException => (StatusCodes.Status409Conflict, "PAYMENT_NOT_RESOLVABLE", "Bu ödeme artık elle çözülemez; sayfayı yenileyip durumu kontrol edin."),
+            ManualResolutionConfirmationDecidedException => (StatusCodes.Status409Conflict, "CONFIRMATION_DECIDED", "Bu bildirim zaten karara bağlanmış."),
+            ManualResolutionSameActorException => (StatusCodes.Status403Forbidden, "SAME_ACTOR", "Bildirimi yapan kişi onaylayamaz; başka bir yetkili onaylamalı."),
+            ManualResolutionReasonInvalidException => (StatusCodes.Status400BadRequest, "NOTE_INVALID", "Not en fazla 500 karakter olabilir."),
+            ManualResolutionConfirmationNotFoundException or ManualResolutionPaymentNotFoundException =>
+                (StatusCodes.Status404NotFound, "NOT_FOUND", "Kayıt bulunamadı."),
+            _ => (StatusCodes.Status500InternalServerError, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
+        };
+        return Results.Json(new { error = new { code, message } }, statusCode: status);
+    }
+
     public static RouteGroupBuilder MapPaymentTenderApi(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
@@ -87,6 +105,7 @@ public static partial class DualScreenApplication
             IBillRepository billRepository,
             IPaymentAllocationRepository allocationRepository,
             IPaymentRepository paymentRepository,
+            IManualCardConfirmationRepository confirmations,
             DualScreenStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -123,12 +142,16 @@ public static partial class DualScreenApplication
             // silently drop the "don't retry into a duplicate charge" lock.
             var unsettled = payments.FirstOrDefault(p =>
                 p.Status is PaymentStatus.Pending or PaymentStatus.Unknown or PaymentStatus.ReconciliationRequired);
+            var pending = unsettled is null ? null : await confirmations.GetPendingByPaymentIdAsync(unsettled.Id, cancellationToken);
             var unsettledDto = unsettled is null
                 ? null
                 : new UnsettledPaymentV1(
                     unsettled.Id,
                     unsettled.Status.ToString(),
-                    unsettled.History.Count > 0 ? unsettled.History[^1].Reason : null);
+                    unsettled.History.Count > 0 ? unsettled.History[^1].Reason : null,
+                    pending is null
+                        ? null
+                        : new PendingCardConfirmationV1(pending.Id, pending.SlipNumber, pending.Amount, pending.RequestedBy, pending.RequestedAt));
 
             return Results.Ok(new BillTenderSummaryV1(
                 billId, bill.PayableAmount, allocatedTotal, remaining, lines, unsettledDto));
@@ -192,6 +215,138 @@ public static partial class DualScreenApplication
             catch (ManualResolutionPaymentNotFoundException)
             {
                 return Results.NotFound();
+            }
+        });
+
+        // V1-RMD-283: "the card WAS charged". Two people: one claims it with the slip number, a DIFFERENT
+        // authorized person approves; only the approval creates a money record. Both need reconciliation.manage.
+        group.MapPost("/unsettled/{paymentId:guid}/card-charged", async (
+            Guid terminalId,
+            Guid billId,
+            Guid paymentId,
+            ClaimCardChargedRequestV1 request,
+            IManualCardConfirmationService confirmationService,
+            IPaymentRepository paymentRepository,
+            IAuditEventStore auditEvents,
+            IAuthorizationService authorization,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
+            var payment = await paymentRepository.GetByIdAsync(paymentId, cancellationToken);
+            if (payment is null || payment.BillId != billId)
+                return Results.NotFound();
+
+            try
+            {
+                var claim = await confirmationService.RequestAsync(
+                    paymentId, principal.UserId, request.SlipNumber ?? string.Empty, request.Note, cancellationToken);
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "payment.manual-resolution.card-charged-requested",
+                        aggregateType: "Payment",
+                        aggregateId: paymentId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: principal.UserId,
+                        reason: request.Note?.Trim(),
+                        afterStateJson: JsonSerializer.Serialize(new { confirmationId = claim.Id, slipNumber = claim.SlipNumber, amount = claim.Amount, billId })),
+                    cancellationToken);
+                return Results.Ok(new CardConfirmationResultV1(claim.Id, claim.Status.ToString()));
+            }
+            catch (ManualPaymentResolutionException exception)
+            {
+                return MapManualResolutionError(exception);
+            }
+        });
+
+        group.MapPost("/confirmations/{confirmationId:guid}/approve", async (
+            Guid terminalId,
+            Guid billId,
+            Guid confirmationId,
+            DecideCardConfirmationRequestV1 request,
+            IManualCardConfirmationService confirmationService,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
+            IAuditEventStore auditEvents,
+            IAuthorizationService authorization,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
+            try
+            {
+                var decided = await confirmationService.ApproveAsync(confirmationId, billId, principal.UserId, request?.Note, cancellationToken);
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "payment.manual-resolution.card-charged-approved",
+                        aggregateType: "Payment",
+                        aggregateId: decided.PaymentId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: principal.UserId,
+                        reason: request?.Note?.Trim(),
+                        afterStateJson: JsonSerializer.Serialize(new
+                        {
+                            confirmationId = decided.Id, slipNumber = decided.SlipNumber, amount = decided.Amount,
+                            requestedBy = decided.RequestedBy, approvedBy = principal.UserId, billId,
+                        })),
+                    cancellationToken);
+                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, cancellationToken);
+                return Results.Ok(new CardConfirmationResultV1(decided.Id, decided.Status.ToString(), closed));
+            }
+            catch (OverAllocationException exception)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_OVER_ALLOCATION", message = $"Tutar kalan {exception.RemainingPayable:0.00} ₺'yi aşıyor." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (ManualPaymentResolutionException exception)
+            {
+                return MapManualResolutionError(exception);
+            }
+        });
+
+        group.MapPost("/confirmations/{confirmationId:guid}/reject", async (
+            Guid terminalId,
+            Guid billId,
+            Guid confirmationId,
+            DecideCardConfirmationRequestV1 request,
+            IManualCardConfirmationService confirmationService,
+            IAuditEventStore auditEvents,
+            IAuthorizationService authorization,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
+            try
+            {
+                var decided = await confirmationService.RejectAsync(confirmationId, billId, principal.UserId, request?.Note, cancellationToken);
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "payment.manual-resolution.card-charged-rejected",
+                        aggregateType: "Payment",
+                        aggregateId: decided.PaymentId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: principal.UserId,
+                        reason: request?.Note?.Trim(),
+                        afterStateJson: JsonSerializer.Serialize(new { confirmationId = decided.Id, slipNumber = decided.SlipNumber, billId })),
+                    cancellationToken);
+                return Results.Ok(new CardConfirmationResultV1(decided.Id, decided.Status.ToString()));
+            }
+            catch (ManualPaymentResolutionException exception)
+            {
+                return MapManualResolutionError(exception);
             }
         });
 
@@ -403,7 +558,16 @@ public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedA
 public sealed record PaymentAllocationLineV1(Guid AllocationId, Guid PaymentId, decimal Amount, string PaymentStatus);
 
 /// <summary>V1-RMD-258: a real, persisted unresolved Payment for a bill, if any — the server-side source of truth the client re-derives its lock state from.</summary>
-public sealed record UnsettledPaymentV1(Guid PaymentId, string Status, string? Reason);
+public sealed record UnsettledPaymentV1(Guid PaymentId, string Status, string? Reason, PendingCardConfirmationV1? PendingConfirmation = null);
+
+/// <summary>V1-RMD-283: a claim "the card WAS charged" waiting for a second authorized person.</summary>
+public sealed record PendingCardConfirmationV1(Guid ConfirmationId, string SlipNumber, decimal Amount, Guid RequestedBy, DateTimeOffset RequestedAt);
+
+public sealed record ClaimCardChargedRequestV1(string? SlipNumber, string? Note);
+
+public sealed record DecideCardConfirmationRequestV1(string? Note);
+
+public sealed record CardConfirmationResultV1(Guid ConfirmationId, string Status, bool BillClosed = false);
 
 public sealed record BillTenderSummaryV1(
     Guid BillId,
