@@ -335,3 +335,102 @@ jobs:
         if: always()
         shell: bash
         run: docker rm --force alkaros-ci-postgres >/dev/null 2>&1 || true
+
+  e2e:
+    name: Cashier and WaiterPwa browser E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.419
+            10.0.302
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: "11.19.0"
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: src/Clients/PosTerminal/pnpm-lock.yaml
+          package-manager-cache: false
+      - name: Build PosTerminal
+        working-directory: src/Clients/PosTerminal
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm install --frozen-lockfile
+          pnpm build
+      - name: Build Host in Debug
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore src/Host/ALKAROS.Host.csproj --locked-mode
+          dotnet build src/Host/ALKAROS.Host.csproj --configuration Debug --no-restore
+          test -f src/Host/bin/Debug/net8.0/ALKAROS.Host.dll
+      - name: Start digest-pinned PostgreSQL 18
+        shell: bash
+        run: |
+          set -euo pipefail
+          password="$(openssl rand -hex 24)"
+          echo "::add-mask::$password"
+          echo "ALKAROS_TEST_PG_PASSWORD=$password" >> "$GITHUB_ENV"
+          docker run --detach --name alkaros-e2e-postgres \
+            --publish 5432:5432 \
+            --env POSTGRES_PASSWORD="$password" \
+            "$POSTGRES_IMAGE"
+          for attempt in $(seq 1 60); do
+            if docker exec alkaros-e2e-postgres pg_isready --username postgres --dbname postgres; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs alkaros-e2e-postgres >&2
+          exit 1
+      - name: Install E2E dependencies and Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in Cashier WaiterPwa; do
+            npm ci --prefix "tests/E2E/$suite"
+          done
+          npx --prefix tests/E2E/Cashier playwright install --with-deps chromium
+      - name: Cashier E2E
+        working-directory: tests/E2E/Cashier
+        shell: bash
+        env:
+          ALKAROS_TEST_PG_HOST: localhost
+          ALKAROS_TEST_PG_PORT: "5432"
+        run: |
+          set -euo pipefail
+          DOTNET_EXE="$(command -v dotnet)" npx playwright test
+      - name: WaiterPwa E2E
+        if: success() || failure()
+        working-directory: tests/E2E/WaiterPwa
+        shell: bash
+        env:
+          ALKAROS_TEST_PG_HOST: localhost
+          ALKAROS_TEST_PG_PORT: "5432"
+        run: |
+          set -euo pipefail
+          DOTNET_EXE="$(command -v dotnet)" npx playwright test
+      - name: Upload E2E reports and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-reports
+          path: |
+            tests/E2E/*/report
+            tests/E2E/*/test-results
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Stop PostgreSQL
+        if: always()
+        shell: bash
+        run: docker rm --force alkaros-e2e-postgres >/dev/null 2>&1 || true
