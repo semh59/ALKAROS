@@ -52,6 +52,7 @@ public static class SecurityAdministrationEndpoints
 
         // Scheduled and manager-triggerable operational jobs (V1-RMD-268 onward).
         services.TryAddSingleton<MaintenanceJobRunner>();
+        services.TryAddSingleton<ALKAROS.Host.Experience.Orders.OrderSettlementService>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RetentionSweepMaintenanceJob>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, OffsiteBackupMaintenanceJob>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RestoreVerificationMaintenanceJob>());
@@ -175,6 +176,7 @@ public static class SecurityAdministrationEndpoints
         });
 
         group.MapSecretRotation();
+        group.MapOrderBacklog();
 
         return group;
     }

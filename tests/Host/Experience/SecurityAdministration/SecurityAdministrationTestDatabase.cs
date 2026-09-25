@@ -1,5 +1,7 @@
 using System.Text.Json;
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Secrets;
 using ALKAROS.Security.DataProtectionRetention;
 using ALKAROS.SensitiveData;
@@ -140,6 +142,36 @@ public sealed class SecurityAdministrationTestDatabase : PgTestDatabase
         var fresh = await store.InsertAsync(DataCategory.OrderNotes, Envelope(), false, DateTimeOffset.UtcNow, default);
         return (expired, held, fresh);
     }
+
+    /// <summary>Seeds an order (with a real table and product) and, when <paramref name="billStatus"/> is given, one bill for it.</summary>
+    public async Task<(Guid OrderId, Guid? BillId)> SeedOrderAsync(OrderState orderStatus, BillState? billStatus)
+    {
+        var productId = Guid.NewGuid();
+        var tableId = Guid.NewGuid();
+        await ExecuteAsync(
+            "INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price) VALUES (@id, @sku, 'Backlog Item', 1, 1, 50);",
+            ("id", productId), ("sku", "SKU-" + Guid.NewGuid().ToString("N")[..8]));
+        await ExecuteAsync(
+            "INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status) VALUES (@id, @number, 4, true, 'Available');",
+            ("id", tableId), ("number", "BK-" + Guid.NewGuid().ToString("N")[..6]));
+
+        var orderId = Guid.NewGuid();
+        var item = new OrderItem(Guid.NewGuid(), orderId, productId, "Backlog Item", 1, 50m, 0m);
+        var order = new Order(orderId, OrderSource.Waiter, "ORD-" + Guid.NewGuid().ToString("N")[..8], [item], tableId: tableId, status: orderStatus);
+        await new PostgresOrderRepository(DataSource).AddAsync(order);
+        if (billStatus is null)
+            return (orderId, null);
+
+        var billId = Guid.NewGuid();
+        var bill = new Bill(
+            billId, "BILL-" + Guid.NewGuid().ToString("N")[..8], [BillItem.FromOrderItem(billId, order.Items[0])],
+            tableId: tableId, orderId: orderId, status: billStatus.Value, currencyCode: "TRY");
+        await new PostgresBillRepository(DataSource).AddAsync(bill);
+        return (orderId, billId);
+    }
+
+    public Task<string> OrderStatusOfAsync(Guid orderId)
+        => ScalarAsync<string>($"SELECT status FROM orders.orders WHERE order_id = '{orderId:D}';");
 
     /// <summary>Restore-drill scratch databases still present on the server (must be 0 after a drill).</summary>
     public Task<long> ScratchDatabaseCountAsync()

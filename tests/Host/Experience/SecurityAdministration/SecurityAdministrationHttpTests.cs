@@ -475,6 +475,69 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(0, await _database.ScratchDatabaseCountAsync());
     }
 
+    private const string OrdersPath = "/api/v1/management/security/orders";
+
+    [Fact]
+    public async Task TheOrderBacklogToolsAreManagerOnly()
+    {
+        using var anonymous = CreateClient(null);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync($"{OrdersPath}/backlog")).StatusCode);
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.PostAsync($"{OrdersPath}/close-settled?dryRun=false", null)).StatusCode);
+        using var supervisorDevice = CreateClient(SecurityAdministrationTestDatabase.SupervisorDeviceToken);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await supervisorDevice.GetAsync($"{OrdersPath}/backlog")).StatusCode);
+    }
+
+    [Fact]
+    public async Task TheBacklogReportSeparatesProvablySettledOrdersFromThoseNeedingABusinessDecision()
+    {
+        await _database.SeedOrderAsync(ALKAROS.Orders.OrderAggregate.OrderState.Submitted, ALKAROS.Billing.BillFoundation.BillState.Paid);
+        await _database.SeedOrderAsync(ALKAROS.Orders.OrderAggregate.OrderState.Submitted, null);
+        await _database.SeedOrderAsync(ALKAROS.Orders.OrderAggregate.OrderState.Accepted, ALKAROS.Billing.BillFoundation.BillState.Open);
+        await _database.SeedOrderAsync(ALKAROS.Orders.OrderAggregate.OrderState.Completed, ALKAROS.Billing.BillFoundation.BillState.Paid);
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        var report = await manager.GetFromJsonAsync<JsonElement>($"{OrdersPath}/backlog");
+
+        Assert.Equal(3, report.GetProperty("liveOrders").GetInt64());
+        Assert.Equal(1, report.GetProperty("provablySettled").GetInt64());
+        Assert.Equal(1, report.GetProperty("withoutBill").GetInt64());
+        Assert.Equal(1, report.GetProperty("withOpenBill").GetInt64());
+    }
+
+    [Fact]
+    public async Task ClosingSettledOrdersIsADryRunByDefaultAndTheRealRunTouchesOnlyProvablySettledOnes()
+    {
+        var (settled, _) = await _database.SeedOrderAsync(ALKAROS.Orders.OrderAggregate.OrderState.Submitted, ALKAROS.Billing.BillFoundation.BillState.Paid);
+        var (noBill, _) = await _database.SeedOrderAsync(ALKAROS.Orders.OrderAggregate.OrderState.Submitted, null);
+        var (openBill, _) = await _database.SeedOrderAsync(ALKAROS.Orders.OrderAggregate.OrderState.Accepted, ALKAROS.Billing.BillFoundation.BillState.Open);
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        using var dryResponse = await manager.PostAsync($"{OrdersPath}/close-settled", null);
+        var dryText = await dryResponse.Content.ReadAsStringAsync();
+        Assert.True(dryResponse.IsSuccessStatusCode, dryText);
+        var dry = JsonDocument.Parse(dryText).RootElement;
+        Assert.True(dry.GetProperty("dryRun").GetBoolean());
+        Assert.Equal(1, dry.GetProperty("eligible").GetInt32());
+        Assert.Equal(0, dry.GetProperty("closed").GetInt32());
+        Assert.Equal("Submitted", await _database.OrderStatusOfAsync(settled));
+
+        using var realResponse = await manager.PostAsync($"{OrdersPath}/close-settled?dryRun=false", null);
+        var realText = await realResponse.Content.ReadAsStringAsync();
+        Assert.True(realResponse.IsSuccessStatusCode, realText);
+        var real = JsonDocument.Parse(realText).RootElement;
+        Assert.False(real.GetProperty("dryRun").GetBoolean());
+        Assert.Equal(1, real.GetProperty("closed").GetInt32());
+        Assert.Equal(0, real.GetProperty("failed").GetInt32());
+        Assert.Equal("Completed", await _database.OrderStatusOfAsync(settled));
+        Assert.Equal("Submitted", await _database.OrderStatusOfAsync(noBill));
+        Assert.Equal("Accepted", await _database.OrderStatusOfAsync(openBill));
+        Assert.Equal(1, await _database.SystemAuditCountAsync("orders.backfill.closed-settled", OrderBacklogAdministration.AuditAggregateId));
+
+        var again = await (await manager.PostAsync($"{OrdersPath}/close-settled?dryRun=false", null)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(0, again.GetProperty("eligible").GetInt32());
+    }
+
     private HttpClient CreateClient(string? managerToken)
     {
         var client = new HttpClient { BaseAddress = _baseAddress };
