@@ -1534,6 +1534,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/engineering/kasa-faz0-redesign-requirements.md` | ✅ | `0662613DB43C083600615A8E2137E9CF053B6884B8479CE5985BC34773CF8762` | Tek-sahip görev |
 | `docs/engineering/kitchen-allday-view-and-performance-report-research.md` | ✅ | `E81C0014A62BFB7607BE6836E07BBC3142AD429B3C63517E4E8AF6320A621095` | Tek-sahip görev |
 | `docs/engineering/login-timing-contract.md` | ✅ | `05F7C0E522229E2FC0BB341D635FD04140EA6A18483639B89DF3106F1DB9E3A1` | Tek-sahip görev |
+| `docs/engineering/remaining-gaps-register.md` | ✅ | `ED505CE82F4B027C880238CC954C83098912D4DCD9B66421E678EE0917CD88D3` | Tek-sahip görev |
 | `docs/engineering/task-scope-contract.md` | ✅ | `CECE4919C0152F2B724D9E6730C4F5D380662883E1158DD44BDCDC93097D5CE4` | Tek-sahip görev |
 | `docs/engineering/v1-independent-audit.md` | ✅ | `E2FB115FB700D9F65B5D8AA5F315E3277055C983CE19C7A04EA331070F7B2CC5` | Tek-sahip görev |
 | `docs/licensing/licensing-contract.md` | ✅ | `23E5BFA21A3C2BA549A66433D789FFD4491578626B34B2F3284D265ADC59FCFB` | Tek-sahip görev |
@@ -2491,6 +2492,12 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-288-outbox-dead-letter-visibility.md` | ✅ | `B9D600390C619E52483C65FE8CA60DC1C709EBE42FE6F30AAFFA624BF676D78F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-289-help-request-scoped-delivery.md` | ✅ | `09F7B712E932CA76B46A4BF6054CCD3C0130B0D65F3119C2EB363B2AF94C471D` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-290-e2e-suites-in-ci.md` | ✅ | `2DF2D8E7EE425A558436342B67A88144F2C4162C168F71CECB271EB6CC8375CE` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-291-posterminal-session-expiry-handling.md` | ✅ | `79623391A12E4DBC32A2AC274CE0F2B96F4736E6D875842267D1092BB26BD9BA` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-292-cashier-discount-tip-adjustment-ui.md` | ✅ | `03E8E85B3A6D4A73BDF0B4D9972D3A33450BD2FC1AF80376305F926B3E802DCA` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-293-kitchen-print-failure-visibility.md` | ✅ | `23E29DC7A10966F6DDB94E143DC8320133EA5E817A202D291AA9D61639B00EA2` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-294-customer-display-refresh-on-payment.md` | ✅ | `A82D1E6969C1BF63BB3F7B7529A8480F34DC74EDB81F7BC06541E46D168A9024` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-295-offline-reconciliation-client-decision.md` | ✅ | `9BE5C052F08EA8225CDFEB9FA7D2E461A4FB3A4D8D3F7BCB0ED6829520A10FAB` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-296-decision-management-area-ui.md` | ✅ | `188B5B4817CB1C9FC53CBD7B553B5022983C2E7F8CFC7B73FB653768A0FAC4B5` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2577,5 +2584,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1305` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1312` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
