@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1312,
-  "markdown_line_count": 100544,
-  "markdown_byte_count": 5742905,
+  "markdown_line_count": 100546,
+  "markdown_byte_count": 5743721,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2521,7 +2521,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9093CD6E0148BF70B3A020B99F69B2D79354836F633E8A55CE3F2722A7A1B0FE",
+      "sha256": "33689630EEBDE65354962CA10CF71A6EDAA141056652BC8A8B7C4C3D404D57EC",
       "lines": 2588,
       "bytes": 376824,
       "utf8": true
@@ -7211,9 +7211,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-286-cashier-help-hub-resilience.md",
-      "sha256": "90AA53C97E94CD11994FDF46B3E054A18C587251F53F5530FC413D4F05941C1B",
-      "lines": 45,
-      "bytes": 1558,
+      "sha256": "7A60694960E85BD45E5CAA22EA210A098560E616ED0720BAD8D9B123DC8C8F72",
+      "lines": 47,
+      "bytes": 2374,
       "utf8": true
     },
     {

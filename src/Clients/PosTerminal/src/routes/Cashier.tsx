@@ -73,6 +73,9 @@ export function Cashier() {
   const [backendStatus, setBackendStatus] = useState<BackendStatus>("checking");
   const [pairingOpen, setPairingOpen] = useState(false);
   const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
+  // V1-RMD-286: 'ok' | 'reconnecting' (was connected, link dropped) | 'missed'
+  // (link is back but calls sent while it was down cannot be recovered).
+  const [helpLink, setHelpLink] = useState<"ok" | "reconnecting" | "missed">("ok");
   const pairingTrigger = useRef<HTMLButtonElement>(null);
   const pairingDialog = useRef<HTMLDivElement>(null);
 
@@ -125,17 +128,63 @@ export function Cashier() {
     // own test suite, not a real deployment) - defensive for the same
     // reason as api.ts's own network-failure handling: a real-time nicety
     // failing to initialize must never crash the cashier screen.
+    // V1-RMD-286: the connection used to give up for good after five automatic
+    // retries and a failed first start() was swallowed. Retry with a capped
+    // exponential delay instead. A session the hub refuses (cashier-only, see
+    // above) connects and is aborted at once, so it only counts as
+    // 'established' - and only then may show a status - after staying up for
+    // a few seconds; the backoff also only resets at that point.
+    // There is no endpoint listing open help requests, so calls sent while
+    // the link was down cannot be reloaded; the cashier is told they may
+    // have been missed instead.
+    const retryDelay = (attempt: number) => Math.min(15_000, 1_000 * 2 ** Math.min(attempt, 4));
     let connection: ReturnType<HubConnectionBuilder["build"]> | null = null;
     try {
       connection = new HubConnectionBuilder()
         .withUrl("/hubs/help-requests")
-        .withAutomaticReconnect([0, 1_000, 3_000, 5_000, 10_000])
+        .withAutomaticReconnect({ nextRetryDelayInMilliseconds: (context) => retryDelay(context.previousRetryCount) })
         .configureLogging(LogLevel.Warning)
         .build();
     } catch {
       return;
     }
-    connection.on(
+    const activeConnection = connection;
+    let disposed = false;
+    let established = false;
+    let attempt = 0;
+    let stableTimer: number | undefined;
+    let retryTimer: number | undefined;
+    const armStable = () => {
+      window.clearTimeout(stableTimer);
+      stableTimer = window.setTimeout(() => {
+        established = true;
+        attempt = 0;
+        setHelpLink((current) => (current === "reconnecting" ? "missed" : current));
+      }, 5_000);
+    };
+    const start = () => {
+      activeConnection.start().then(armStable).catch(() => {
+        if (disposed) return;
+        retryTimer = window.setTimeout(start, retryDelay(attempt++));
+      });
+    };
+    activeConnection.onreconnecting(() => {
+      window.clearTimeout(stableTimer);
+      if (established) setHelpLink("reconnecting");
+    });
+    activeConnection.onreconnected(() => {
+      if (established) setHelpLink("missed");
+      armStable();
+    });
+    // Not reachable while the reconnect policy above never gives up, and also
+    // how a refused session ends; either way start again with backoff.
+    activeConnection.onclose(() => {
+      window.clearTimeout(stableTimer);
+      if (disposed) return;
+      if (established) setHelpLink("reconnecting");
+      retryTimer = window.setTimeout(start, retryDelay(attempt++));
+    });
+    activeConnection.on(
       "HelpRequested",
       (payload: { tableId: string; tableNumber: string; requestType: string; requestedByDisplayName: string }) => {
         setHelpAlerts((previous) => [
@@ -145,12 +194,13 @@ export function Cashier() {
         ]);
       },
     );
-    // A cashier-only session's connection is refused by the hub itself
-    // (Context.Abort()); that surfaces here as a rejected start() and is
-    // expected, not an error - nothing to show for it.
-    void connection.start().catch(() => {});
-    const activeConnection = connection;
-    return () => { void activeConnection.stop(); };
+    start();
+    return () => {
+      disposed = true;
+      window.clearTimeout(stableTimer);
+      window.clearTimeout(retryTimer);
+      void activeConnection.stop();
+    };
   }, [session]);
 
   useEffect(() => {
@@ -397,6 +447,20 @@ export function Cashier() {
         </div>
       </header>
 
+      {helpLink !== "ok" && (
+        <div className="help-alerts" role="status" aria-live="polite">
+          <div className="help-alert">
+            <span>
+              {helpLink === "reconnecting"
+                ? "Yardım çağrısı bağlantısı koptu, yeniden bağlanılıyor."
+                : "Bağlantı koptuğu sırada gelen yardım çağrıları görülmemiş olabilir."}
+            </span>
+            {helpLink === "missed" && (
+              <button onClick={() => setHelpLink("ok")} aria-label={stateText.dismissMessage}>×</button>
+            )}
+          </div>
+        </div>
+      )}
       {helpAlerts.length > 0 && (
         <div className="help-alerts" role="alert" aria-live="assertive">
           {helpAlerts.map((alert) => (
