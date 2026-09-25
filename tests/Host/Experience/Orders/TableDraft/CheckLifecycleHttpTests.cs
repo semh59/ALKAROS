@@ -149,6 +149,42 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.Contains(awaiting!, c => c.OrderId == check.OrderId && c.Total == 280m);
     }
 
+    // V1-RMD-279: the till's queue follows the BILL. A part-paid check shows how much is collected so the
+    // cashier resumes it; a fully paid check leaves the queue (the order itself stays Submitted).
+    [Fact]
+    public async Task TheTillQueueShowsTheBillAndWhatIsPaidAndDropsAFullyPaidCheck()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        using var sent = await client.SendAsync(JsonRequest(
+            SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        Assert.Equal(HttpStatusCode.OK, sent.StatusCode);
+
+        async Task<PendingCheckSummaryV1?> InQueue()
+        {
+            using var queue = await client.SendAsync(GetRequest(AwaitingPaymentPath(terminalId), cookie));
+            return (await queue.Content.ReadFromJsonAsync<List<PendingCheckSummaryV1>>())!.SingleOrDefault(c => c.OrderId == check.OrderId);
+        }
+
+        var beforeBill = await InQueue();
+        Assert.NotNull(beforeBill);
+        Assert.Null(beforeBill!.BillId);
+
+        var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open", allocated: 100m);
+        var partPaid = await InQueue();
+        Assert.Equal(billId, partPaid!.BillId);
+        Assert.Equal(100m, partPaid.PaidAmount);
+
+        await _database.SetBillStatusAsync(billId, "Paid");
+        Assert.Null(await InQueue());
+    }
+
     [Fact]
     public async Task ANewPartyCanBeSeatedOnceTheCheckHasGoneToTheCashier()
     {

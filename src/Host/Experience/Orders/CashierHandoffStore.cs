@@ -79,15 +79,31 @@ public sealed class CashierHandoffStore
                    COALESCE(t.table_number, '—') AS table_number,
                    COUNT(i.order_item_id) FILTER (WHERE i.status = 'Active') AS item_count,
                    o.total,
-                   o.created_at
+                   o.created_at,
+                   ob.bill_id,
+                   COALESCE(ob.paid_amount, 0)
             FROM orders.orders o
             LEFT JOIN orders.order_items i ON i.order_id = o.order_id
             LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
+            LEFT JOIN LATERAL (
+                SELECT b.bill_id,
+                       (SELECT SUM(pa.amount) FROM payments.payment_allocations pa WHERE pa.bill_id = b.bill_id) AS paid_amount
+                FROM billing.bills b
+                WHERE b.order_id = o.order_id AND b.status <> 'Cancelled'
+                ORDER BY b.opened_at DESC
+                LIMIT 1
+            ) ob ON TRUE
             WHERE o.status = 'Submitted'
               AND NOT EXISTS (
                     SELECT 1 FROM table_mgmt.tables ct
                     WHERE ct.current_order_id = o.order_id)
-            GROUP BY o.order_id, o.order_number, t.table_number, o.total, o.created_at
+              -- V1-RMD-279: a check whose bill is fully paid has left the till's queue. The order
+              -- itself stays Submitted (the order lifecycle is a separate, larger gap), so the
+              -- queue must look at the bill, not the order.
+              AND NOT EXISTS (
+                    SELECT 1 FROM billing.bills pb
+                    WHERE pb.order_id = o.order_id AND pb.status = 'Paid')
+            GROUP BY o.order_id, o.order_number, t.table_number, o.total, o.created_at, ob.bill_id, ob.paid_amount
             ORDER BY o.created_at;
             """);
 
@@ -101,7 +117,9 @@ public sealed class CashierHandoffStore
                 reader.GetString(2),
                 (int)reader.GetInt64(3),
                 reader.GetDecimal(4),
-                reader.GetFieldValue<DateTimeOffset>(5)));
+                reader.GetFieldValue<DateTimeOffset>(5),
+                reader.IsDBNull(6) ? null : reader.GetGuid(6),
+                reader.GetDecimal(7)));
         }
         return results;
     }

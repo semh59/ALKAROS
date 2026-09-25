@@ -165,7 +165,11 @@ public sealed record PendingCheckSummaryV1(
     string TableNumber,
     int ItemCount,
     decimal Total,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    // V1-RMD-279: the check's bill, once the cashier has opened one (null before that), and how much
+    // of it is already collected, so the till can resume a part-paid check instead of starting over.
+    Guid? BillId = null,
+    decimal PaidAmount = 0m);
 
 /// <summary>V1-ORD-005: request body for voiding a not-yet-sent item.</summary>
 public sealed record VoidOrderItemRequestV1(

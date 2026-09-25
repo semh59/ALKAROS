@@ -31,6 +31,35 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
     }
 
     /// <summary>V1-RMD-113: counts kitchen tickets dispatched for an order.</summary>
+    /// <summary>Seeds a bill for an order, optionally with an approved payment allocated to it.</summary>
+    public async Task<Guid> SeedBillForOrderAsync(Guid orderId, decimal payable, string status, decimal allocated = 0m)
+    {
+        var billId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, order_id, status, payable_amount, opened_at, created_at, updated_at)
+            VALUES (@bill, @number, @order, @status, @payable, now(), now(), now());
+            """,
+            ("bill", billId), ("number", "B-" + billId.ToString("N")[..10]), ("order", orderId),
+            ("status", status), ("payable", payable));
+        if (allocated > 0m)
+        {
+            var paymentId = Guid.NewGuid();
+            await ExecuteAsync(
+                """
+                INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, approved_amount, initiated_at, created_at, updated_at)
+                VALUES (@payment, @bill, 'Approved', @amount, @amount, now(), now(), now());
+                INSERT INTO payments.payment_allocations (payment_allocation_id, payment_id, bill_id, amount, currency_code, idempotency_key, allocated_at)
+                VALUES (gen_random_uuid(), @payment, @bill, @amount, 'TRY', @key, now());
+                """,
+                ("payment", paymentId), ("bill", billId), ("amount", allocated), ("key", "k-" + paymentId.ToString("N")));
+        }
+        return billId;
+    }
+
+    public Task SetBillStatusAsync(Guid billId, string status)
+        => ExecuteAsync("UPDATE billing.bills SET status = @status WHERE bill_id = @bill;", ("status", status), ("bill", billId));
+
     public Task<long> KitchenTicketCountAsync(Guid orderId)
         => ScalarAsync<long>($"SELECT count(*) FROM kitchen.kitchen_tickets WHERE order_id = '{orderId:D}';");
 
