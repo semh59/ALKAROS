@@ -98,7 +98,7 @@ public sealed class RelayConnectorSupervisorTests
         var factory = new FakeProcessFactory();
         var supervisor = new RelayConnectorSupervisor(
             new FakeTunnelStore(() => "token-abc"), factory, NullLogger<RelayConnectorSupervisor>.Instance,
-            ShortInterval, baseBackoff);
+            TimeSpan.FromMilliseconds(200), baseBackoff); // fast-failure window = 3 x interval = 600 ms, wide enough that a loaded CI runner cannot turn the "immediate" second exit into a non-fast one
 
         await supervisor.StartAsync(CancellationToken.None);
         try
