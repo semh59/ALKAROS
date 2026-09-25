@@ -212,6 +212,21 @@ jobs:
           EOF
           sudo chmod 0755 /usr/local/bin/psql
           psql --version
+      - name: Install isolated pg_dump and pg_restore 18 wrappers
+        shell: bash
+        run: |
+          # V1-RMD-266: the restore-drill tests write a real custom-format dump
+          # (pg_dump) and restore it (pg_restore); the runner's own client is
+          # v16 and refuses a v18 server. /tmp is writable and files are owned
+          # by the runner user so the tests can clean up after themselves.
+          for tool in pg_dump pg_restore; do
+            printf '%s\n' '#!/usr/bin/env bash' \
+              'exec docker run --rm --network host --user "$(id -u):$(id -g)" -e PGPASSWORD -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE:ro" -v /tmp:/tmp -w "$GITHUB_WORKSPACE" postgres@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2 '"$tool"' "$@"' \
+              | sudo tee "/usr/local/bin/$tool" >/dev/null
+            sudo chmod 0755 "/usr/local/bin/$tool"
+          done
+          pg_dump --version
+          pg_restore --version
       - name: Full .NET tests with line and branch coverage measurement
         shell: bash
         run: |
