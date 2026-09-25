@@ -37,7 +37,9 @@ test.describe('Hesabı kasaya gönder ve geri al (V1-RMD-281)', () => {
     await login(page, seed);
     const tableId = seed.sendTableIds[0];
     await openTableWithOneItem(page, tableId);
-    await page.locator('#btnMenuBack').click();
+    // The app itself returns to the tables screen once the send succeeds; clicking
+    // 'back' as well raced that navigation on a slow runner (CI run 36169889571).
+    await expect(page.locator('#tablesGrid [data-table]').first()).toBeVisible();
     await sendCheckToCashier(page, tableId);
 
     // Gönderim: masa boşaldı, hesap masada görünmüyor.
@@ -56,7 +58,9 @@ test.describe('Hesabı kasaya gönder ve geri al (V1-RMD-281)', () => {
     await login(page, seed);
     const tableId = seed.sendTableIds[1];
     await openTableWithOneItem(page, tableId);
-    await page.locator('#btnMenuBack').click();
+    // The app itself returns to the tables screen once the send succeeds; clicking
+    // 'back' as well raced that navigation on a slow runner (CI run 36169889571).
+    await expect(page.locator('#tablesGrid [data-table]').first()).toBeVisible();
     await sendCheckToCashier(page, tableId);
 
     // Yeni müşteri oturdu ve sipariş verildi (aynı masada yeni hesap).
