@@ -38,4 +38,4 @@
 
 ## Handoff
 
-- None
+- Ertelendi (2026-09-25): Semih yönetici ekranlarını sonraya bırakmıştı; bu görev güncel yolda değildir, Faz 3-5 sonrası ele alınır.
