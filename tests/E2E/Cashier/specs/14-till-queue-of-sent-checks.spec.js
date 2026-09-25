@@ -23,7 +23,7 @@ test.describe('Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280)', () => {
     const table = seed.transferTables[6];
 
     // Aynı masada önce bir müşteri (kalkıp kasaya gitti), sonra yeni müşteri: iki ayrı hesap.
-    await sendCheckToCashier(page, terminalId, seed, table, { quantity: 2 });
+    const firstOrderId = await sendCheckToCashier(page, terminalId, seed, table, { quantity: 2 });
     await sendCheckToCashier(page, terminalId, seed, table, { quantity: 1 });
 
     await page.getByRole('link', { name: 'Bekleyen hesaplar' }).click();
@@ -55,6 +55,9 @@ test.describe('Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280)', () => {
       data: { Method: 'Eft', Amount: 150, IdempotencyKey: randomUUID(), Note: null },
     });
     expect((await rest.json()).billClosed).toBe(true);
+    // V1-RMD-282: the settled check closed its order (it used to stay Submitted for ever).
+    const settled = await (await page.request.get(`/api/v1/terminals/${terminalId}/orders/${firstOrderId}`)).json();
+    expect(settled.status).toBe('Completed');
     await page.goto('/pending-checks');
     await expect(rowOf(page, table, '₺100,00')).toBeVisible({ timeout: 15_000 });
     await expect(rowOf(page, table, '₺200,00')).toHaveCount(0);

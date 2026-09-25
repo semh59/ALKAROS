@@ -236,6 +236,35 @@ public sealed class Order
             throw new InvalidOperationException(
                 $"Order {Id} cannot transition from {Status} to {target}.");
 
+        return ApplyTransition(target, reason, changedBy, changedAt);
+    }
+
+    /// <summary>
+    /// V1-RMD-282: whether payment can close this order. Waiters never mark items served and the kitchen only
+    /// mirrors item states, so orders never walked Ready -> Served -> Completed and stayed Submitted forever
+    /// (server hand-off reassigned the whole history, waiter load counted every old order, order notes were
+    /// never anonymised). Payment is the financial end of an order and can precede serving (pay first), so it
+    /// closes an order from any live state; Draft, PendingConfirmation, Rejected and Cancelled never complete.
+    /// </summary>
+    public bool CanCompleteOnPayment => Status is OrderState.Submitted or OrderState.Accepted
+        or OrderState.Preparing or OrderState.Ready or OrderState.Served;
+
+    /// <summary>
+    /// Closes the order because its check was paid (Completed is terminal). Idempotent for an order that is
+    /// already Completed; throws for a state payment cannot close.
+    /// </summary>
+    public Order CompleteOnPayment(Guid? changedBy = null, DateTimeOffset? changedAt = null)
+    {
+        if (Status == OrderState.Completed)
+            return this;
+        if (!CanCompleteOnPayment)
+            throw new InvalidOperationException($"Order {Id} cannot be completed by payment from state {Status}.");
+
+        return ApplyTransition(OrderState.Completed, "Ödeme tamamlandı", changedBy, changedAt);
+    }
+
+    private Order ApplyTransition(OrderState target, string? reason, Guid? changedBy, DateTimeOffset? changedAt)
+    {
         var at = changedAt ?? DateTimeOffset.UtcNow;
         var confirmation = target switch
         {

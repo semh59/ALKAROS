@@ -2,6 +2,7 @@ using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.PaymentClosure;
+using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Payments.ManualResolution;
@@ -54,12 +55,17 @@ public static partial class DualScreenApplication
     /// successful payment into an error response; the bill just stays open and the next
     /// tender or close attempt completes it.
     /// </summary>
-    private static async Task<bool> TryCloseBillAsync(IBillClosureService billClosure, Guid billId, CancellationToken cancellationToken)
+    private static async Task<bool> TryCloseBillAsync(
+        IBillClosureService billClosure, OrderSettlementService orderSettlement, Guid billId, CancellationToken cancellationToken)
     {
         try
         {
             var result = await billClosure.TryCloseAsync(billId, cancellationToken);
-            return result.Outcome is BillClosureOutcome.Closed or BillClosureOutcome.AlreadyClosed;
+            var closed = result.Outcome is BillClosureOutcome.Closed or BillClosureOutcome.AlreadyClosed;
+            // V1-RMD-282: a settled check closes its order (and frees a table it was still attached to).
+            if (closed)
+                await orderSettlement.CompleteForPaidBillAsync(billId, cancellationToken);
+            return closed;
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
@@ -196,6 +202,7 @@ public static partial class DualScreenApplication
             TenderRouter router,
             ICardSettlementOrchestrator cardSettlementOrchestrator,
             IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
             DualScreenStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -252,7 +259,7 @@ public static partial class DualScreenApplication
                         cancellationToken);
 
                     var cardClosed = settlement.Outcome == CardSettlementOutcome.Approved
-                        && await TryCloseBillAsync(billClosure, billId, cancellationToken);
+                        && await TryCloseBillAsync(billClosure, orderSettlement, billId, cancellationToken);
                     return settlement.Outcome switch
                     {
                         CardSettlementOutcome.Approved =>
@@ -358,7 +365,7 @@ public static partial class DualScreenApplication
             // V1-RMD-276: an approved tender may have completed the bill; close it now
             // (idempotent, and a bill that is still short of its total simply stays open).
             var closed = routing is TenderRoutingHandled { Result: TenderApproved }
-                && await TryCloseBillAsync(billClosure, billId, cancellationToken);
+                && await TryCloseBillAsync(billClosure, orderSettlement, billId, cancellationToken);
 
             return routing switch
             {

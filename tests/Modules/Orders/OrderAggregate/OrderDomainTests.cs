@@ -232,6 +232,44 @@ public class OrderDomainTests
 
         act.Should().Throw<InvalidOperationException>();
     }
+
+    // V1-RMD-282: payment closes an order from any live state; states that never became a real check stay out.
+    [Theory]
+    [InlineData(OrderState.Submitted, true)]
+    [InlineData(OrderState.Accepted, true)]
+    [InlineData(OrderState.Preparing, true)]
+    [InlineData(OrderState.Ready, true)]
+    [InlineData(OrderState.Served, true)]
+    [InlineData(OrderState.Draft, false)]
+    [InlineData(OrderState.PendingConfirmation, false)]
+    [InlineData(OrderState.Rejected, false)]
+    [InlineData(OrderState.Cancelled, false)]
+    public void PaymentCanCompleteOnlyALiveOrder(OrderState state, bool allowed)
+    {
+        var order = NewOrder(state);
+
+        order.CanCompleteOnPayment.Should().Be(allowed);
+        if (allowed)
+            order.CompleteOnPayment().Status.Should().Be(OrderState.Completed);
+        else
+            new Action(() => order.CompleteOnPayment()).Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void CompletingByPaymentRecordsWhyAndWhenAndIsIdempotent()
+    {
+        var actor = Guid.NewGuid();
+        var completed = NewOrder(OrderState.Submitted).CompleteOnPayment(actor);
+
+        completed.Status.Should().Be(OrderState.Completed);
+        completed.ClosedAt.Should().NotBeNull();
+        var entry = completed.History[^1];
+        entry.NewStatus.Should().Be(OrderState.Completed);
+        entry.Reason.Should().Be("Ödeme tamamlandı");
+        entry.ChangedBy.Should().Be(actor);
+
+        completed.CompleteOnPayment().Should().BeSameAs(completed);
+    }
 }
 
 /// <summary>

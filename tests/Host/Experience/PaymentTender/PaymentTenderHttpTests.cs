@@ -552,6 +552,65 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal("Open", await _database.BillStatusAsync(billId));
     }
 
+    // V1-RMD-282: a settled check closes its order (nothing ever did), and frees the table only when the check
+    // was still attached to it.
+    [Fact]
+    public async Task PayingTheLastBillCompletesTheOrderAndFreesATableTheCheckWasStillAttachedTo()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd282-attached");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var (orderId, tableId) = await _database.BillOrderAndTableAsync(billId);
+        await _database.AttachOrderToTableAsync(orderId, tableId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await PostAsync(client, TendersPath(terminalId, billId), cookie, new { Method = "Eft", Amount = 40m, IdempotencyKey = "rmd282-a1" });
+        Assert.Equal("Submitted", await _database.OrderStatusAsync(orderId));
+        Assert.Equal(("Occupied", (Guid?)orderId), await _database.TableStateAsync(tableId));
+
+        await PostAsync(client, TendersPath(terminalId, billId), cookie, new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd282-a2" });
+
+        Assert.Equal("Completed", await _database.OrderStatusAsync(orderId));
+        Assert.Equal(("Available", (Guid?)null), await _database.TableStateAsync(tableId));
+    }
+
+    [Fact]
+    public async Task ACheckThatWasAlreadySentToTheTillCompletesButItsTableIsNeverTouched()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd282-detached");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var (orderId, tableId) = await _database.BillOrderAndTableAsync(billId);
+        // The waiter sent the check to the till and a NEW party already sits at the table.
+        await _database.SetTableStatusAsync(tableId, "Occupied");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await PostAsync(client, TendersPath(terminalId, billId), cookie, new { Method = "Eft", Amount = 100m, IdempotencyKey = "rmd282-d1" });
+
+        Assert.Equal("Completed", await _database.OrderStatusAsync(orderId));
+        Assert.Equal(("Occupied", (Guid?)null), await _database.TableStateAsync(tableId));
+    }
+
+    [Fact]
+    public async Task AnOrderWithAnotherOpenBillStaysOpenUntilEveryBillIsSettled()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd282-split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var (orderId, tableId) = await _database.BillOrderAndTableAsync(billId);
+        var otherBill = await _database.SeedExtraOpenBillForOrderAsync(orderId, tableId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await PostAsync(client, TendersPath(terminalId, billId), cookie, new { Method = "Eft", Amount = 100m, IdempotencyKey = "rmd282-s1" });
+
+        Assert.Equal("Paid", await _database.BillStatusAsync(billId));
+        Assert.Equal("Submitted", await _database.OrderStatusAsync(orderId));
+        Assert.Equal("Open", await _database.BillStatusAsync(otherBill));
+    }
+
     [Fact]
     public async Task SummaryOnANonExistentBillIsNotFound()
     {
@@ -720,6 +779,65 @@ internal sealed class PaymentTenderHttpTestDatabase
         return (long)(await command.ExecuteScalarAsync())!;
     }
 
+    public async Task<(Guid OrderId, Guid TableId)> BillOrderAndTableAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT order_id, table_id FROM billing.bills WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        await using var reader = await command.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        return (reader.GetGuid(0), reader.GetGuid(1));
+    }
+
+    /// <summary>Marks the order as the table's attached check (the table Occupied), as a waiter's open check is.</summary>
+    public async Task AttachOrderToTableAsync(Guid orderId, Guid tableId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "UPDATE table_mgmt.tables SET current_order_id = @order, current_status = 'Occupied' WHERE table_id = @table;");
+        command.Parameters.AddWithValue("order", orderId);
+        command.Parameters.AddWithValue("table", tableId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task SetTableStatusAsync(Guid tableId, string status)
+    {
+        await using var command = DataSource.CreateCommand("UPDATE table_mgmt.tables SET current_status = @status WHERE table_id = @id;");
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("id", tableId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<string> OrderStatusAsync(Guid orderId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT status FROM orders.orders WHERE order_id = @id;");
+        command.Parameters.AddWithValue("id", orderId);
+        return (string)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<(string Status, Guid? CurrentOrderId)> TableStateAsync(Guid tableId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT current_status, current_order_id FROM table_mgmt.tables WHERE table_id = @id;");
+        command.Parameters.AddWithValue("id", tableId);
+        await using var reader = await command.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        return (reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetGuid(1));
+    }
+
+    public async Task<Guid> SeedExtraOpenBillForOrderAsync(Guid orderId, Guid tableId)
+    {
+        var billId = Guid.NewGuid();
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, order_id, table_id, status, payable_amount, opened_at, created_at, updated_at)
+            VALUES (@bill, @number, @order, @table, 'Open', 50, now(), now(), now());
+            """);
+        command.Parameters.AddWithValue("bill", billId);
+        command.Parameters.AddWithValue("number", "B-" + billId.ToString("N")[..10]);
+        command.Parameters.AddWithValue("order", orderId);
+        command.Parameters.AddWithValue("table", tableId);
+        await command.ExecuteNonQueryAsync();
+        return billId;
+    }
+
     public async Task<string> BillStatusAsync(Guid billId)
     {
         await using var command = DataSource.CreateCommand("SELECT status FROM billing.bills WHERE bill_id = @id;");
@@ -775,7 +893,7 @@ internal sealed class PaymentTenderHttpTestDatabase
         var item = new OrderItem(
             id: Guid.NewGuid(), orderId: orderId, productId: productId, productNameSnapshot: "Test Item",
             quantity: 1, unitPrice: payable, taxRate: 0m);
-        var order = new Order(orderId, OrderSource.Cashier, "ORD-" + Guid.NewGuid().ToString("N")[..8], [item], tableId: tableId);
+        var order = new Order(orderId, OrderSource.Cashier, "ORD-" + Guid.NewGuid().ToString("N")[..8], [item], tableId: tableId, status: OrderState.Submitted);
         var orders = new PostgresOrderRepository(DataSource);
         await orders.AddAsync(order);
 

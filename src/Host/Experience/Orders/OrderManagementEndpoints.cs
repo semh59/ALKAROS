@@ -65,6 +65,8 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<ShiftSummaryStore>();
         // Refactor step 3/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<CashierHandoffStore>();
+        // V1-RMD-282: closes the order once its check is paid.
+        services.TryAddSingleton<OrderSettlementService>();
         // Refactor step 4/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<TableDraftService>();
         // Refactor step 5/7 (docs/engineering/garson-refactor-plan.md).

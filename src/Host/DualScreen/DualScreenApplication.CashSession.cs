@@ -240,6 +240,7 @@ public static partial class DualScreenApplication
             CashTenderRequestV1 request,
             ICashTenderHandler tenderHandler,
             ALKAROS.Billing.PaymentClosure.IBillClosureService billClosure,
+            ALKAROS.Host.Experience.Orders.OrderSettlementService orderSettlement,
             DualScreenStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -251,7 +252,7 @@ public static partial class DualScreenApplication
                     request.IdempotencyKey, principal.UserId),
                 cancellationToken);
             // V1-RMD-276: a cash tender that covers the bill completes it (a replay of the same key stays a no-op).
-            await TryCloseBillAsync(billClosure, request.BillId, cancellationToken);
+            await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, cancellationToken);
             return Results.Ok(result);
         });
 
