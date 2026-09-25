@@ -38,6 +38,36 @@ async function expectOk(response, what) {
  * the vanilla Cashier hardcodes; it is released again (send-to-cashier) exactly
  * like the client's own dispatch does, so consecutive scenarios never collide.
  */
+/**
+ * A waiter's "Hesabi kasaya gonder": takes a round on a REAL table and sends the check to the till.
+ * The table is released for the next party; the check waits in the till queue with no bill yet.
+ */
+export async function sendCheckToCashier(page, terminalId, seed, table, { quantity = 1, productName = 'E2E Ödeme Ürünü' } = {}) {
+  const base = `/api/v1/terminals/${terminalId}`;
+  const draft = await expectOk(
+    await page.request.post(`${base}/orders/table-draft`, {
+      data: {
+        id: randomUUID(),
+        tableId: table.tableId,
+        tableNumber: table.tableNumber,
+        items: [{ id: randomUUID(), productId: seed.paymentProductId, name: productName, productName, quantity, unitPrice: 100, specialInstructions: null }],
+      },
+    }),
+    'table-draft',
+  );
+  await expectOk(
+    await page.request.post(`${base}/orders/${draft.orderId}/submit-draft`, {
+      data: { orderId: draft.orderId, expectedRowVersion: draft.rowVersion, operationId: `${draft.orderId}:submit` },
+    }),
+    'submit-draft',
+  );
+  await expectOk(
+    await page.request.post(`${base}/orders/${draft.orderId}/send-to-cashier`, { data: { tableId: table.tableId } }),
+    'send-to-cashier',
+  );
+  return draft.orderId;
+}
+
 export async function createBill(page, terminalId, seed, { quantity = 1, table = null } = {}) {
   const base = `/api/v1/terminals/${terminalId}`;
   // `table` = a real seeded table ({ tableId, tableNumber }); default is the

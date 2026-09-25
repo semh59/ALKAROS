@@ -169,7 +169,9 @@ public sealed record PendingCheckSummaryV1(
     // V1-RMD-279: the check's bill, once the cashier has opened one (null before that), and how much
     // of it is already collected, so the till can resume a part-paid check instead of starting over.
     Guid? BillId = null,
-    decimal PaidAmount = 0m);
+    decimal PaidAmount = 0m,
+    // V1-RMD-280: the first few item names, so the cashier can tell two checks of the same table apart.
+    string? ItemPreview = null);
 
 /// <summary>V1-ORD-005: request body for voiding a not-yet-sent item.</summary>
 public sealed record VoidOrderItemRequestV1(

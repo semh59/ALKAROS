@@ -175,6 +175,7 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         var beforeBill = await InQueue();
         Assert.NotNull(beforeBill);
         Assert.Null(beforeBill!.BillId);
+        Assert.Equal("Köfte", beforeBill.ItemPreview);
 
         var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open", allocated: 100m);
         var partPaid = await InQueue();

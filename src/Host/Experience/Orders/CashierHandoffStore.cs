@@ -81,7 +81,13 @@ public sealed class CashierHandoffStore
                    o.total,
                    o.created_at,
                    ob.bill_id,
-                   COALESCE(ob.paid_amount, 0)
+                   COALESCE(ob.paid_amount, 0),
+                   (SELECT string_agg(preview.product_name_snapshot, ', ')
+                    FROM (SELECT pi.product_name_snapshot
+                          FROM orders.order_items pi
+                          WHERE pi.order_id = o.order_id AND pi.status = 'Active'
+                          ORDER BY pi.created_at, pi.order_item_id
+                          LIMIT 3) preview) AS item_preview
             FROM orders.orders o
             LEFT JOIN orders.order_items i ON i.order_id = o.order_id
             LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
@@ -119,7 +125,8 @@ public sealed class CashierHandoffStore
                 reader.GetDecimal(4),
                 reader.GetFieldValue<DateTimeOffset>(5),
                 reader.IsDBNull(6) ? null : reader.GetGuid(6),
-                reader.GetDecimal(7)));
+                reader.GetDecimal(7),
+                reader.IsDBNull(8) ? null : reader.GetString(8)));
         }
         return results;
     }

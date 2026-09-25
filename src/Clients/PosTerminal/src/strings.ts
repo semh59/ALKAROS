@@ -40,6 +40,7 @@ export const navLabels = {
   sales: "Kasa",
   tables: "Masalar",
   billing: "Hesap",
+  pendingChecks: "Bekleyen hesaplar",
   kitchen: "Mutfak",
   catalog: "Menü",
   system: "Sistem",

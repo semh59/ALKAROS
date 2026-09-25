@@ -1,0 +1,85 @@
+// @vitest-environment jsdom
+import { act } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { PendingChecksWorkspace } from "./PendingChecksWorkspace";
+
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+const sample = [
+  { orderId: "o-1", orderNumber: "S-001", tableNumber: "5", itemCount: 3, total: 540, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: "Köfte, Ayran" },
+  { orderId: "o-2", orderNumber: "S-002", tableNumber: "5", itemCount: 1, total: 90, createdAt: "2026-09-24T12:10:00Z", billId: "b-2", paidAmount: 40, itemPreview: "Çay" },
+];
+
+describe("PendingChecksWorkspace", () => {
+  let root: Root | null = null;
+  const fetchMock = vi.fn();
+
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="root"></div>';
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+  afterEach(() => {
+    act(() => root?.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+  });
+
+  async function render(navigateTo = vi.fn()) {
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => {
+      root!.render(<PendingChecksWorkspace terminalId="t-1" navigateTo={navigateTo} />);
+    });
+    return navigateTo;
+  }
+
+  const ok = (body: unknown) => ({ ok: true, status: 200, json: async () => body });
+
+  it("tells two checks of the same table apart by number, time, items and remaining amount", async () => {
+    fetchMock.mockResolvedValue(ok(sample));
+    await render();
+
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("S-001");
+    expect(text).toContain("S-002");
+    expect(text).toContain("Köfte, Ayran");
+    expect(text).toContain("Kalan"); // the part-paid one shows what is left
+    expect(document.querySelectorAll("button.pending-checks__row")).toHaveLength(2);
+  });
+
+  it("opens the bill of a check that has none and goes to collection", async () => {
+    fetchMock.mockImplementation(async (url: string, init?: RequestInit) =>
+      url.includes("awaiting-payment") ? ok(sample) : url.includes("from-order/o-1") && init?.method === "POST" ? ok({ billId: "b-new", allocations: [] }) : { ok: false, status: 404, json: async () => ({}) });
+    const navigateTo = await render();
+
+    await act(async () => {
+      (document.querySelector('button[aria-label="S-001 hesabını tahsil et"]') as HTMLButtonElement).click();
+    });
+
+    expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b-new");
+  });
+
+  it("goes straight to collection when the bill already exists, without creating another", async () => {
+    fetchMock.mockResolvedValue(ok(sample));
+    const navigateTo = await render();
+
+    await act(async () => {
+      (document.querySelector('button[aria-label="S-002 hesabını tahsil et"]') as HTMLButtonElement).click();
+    });
+
+    expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b-2");
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes("from-order"))).toHaveLength(0);
+  });
+
+  it("says so when nothing is waiting and shows a Turkish message when the list cannot be read", async () => {
+    fetchMock.mockResolvedValue(ok([]));
+    await render();
+    expect(document.body.textContent).toContain("Ödeme bekleyen hesap yok.");
+
+    act(() => root?.unmount());
+    fetchMock.mockResolvedValue({ ok: false, status: 403, json: async () => ({}) });
+    await render();
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain("yetkiniz yok");
+  });
+});
