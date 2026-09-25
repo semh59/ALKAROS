@@ -1,6 +1,7 @@
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Payments.ManualResolution;
@@ -47,6 +48,25 @@ public static partial class DualScreenApplication
     /// correctly re-derive its lock state after a reload instead of relying
     /// on in-memory state alone.
     /// </summary>
+    /// <summary>
+    /// V1-RMD-276: closes the bill after a successful tender. Best effort by design: the money
+    /// has already been recorded, so a failure to flip the bill state must never turn a
+    /// successful payment into an error response; the bill just stays open and the next
+    /// tender or close attempt completes it.
+    /// </summary>
+    private static async Task<bool> TryCloseBillAsync(IBillClosureService billClosure, Guid billId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await billClosure.TryCloseAsync(billId, cancellationToken);
+            return result.Outcome is BillClosureOutcome.Closed or BillClosureOutcome.AlreadyClosed;
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            return false;
+        }
+    }
+
     public static RouteGroupBuilder MapPaymentTenderApi(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
@@ -175,6 +195,7 @@ public static partial class DualScreenApplication
             SubmitBillTenderRequestV1 request,
             TenderRouter router,
             ICardSettlementOrchestrator cardSettlementOrchestrator,
+            IBillClosureService billClosure,
             DualScreenStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -230,10 +251,12 @@ public static partial class DualScreenApplication
                             billId, request.Amount, request.IdempotencyKey, request.IdempotencyKey, cardResult),
                         cancellationToken);
 
+                    var cardClosed = settlement.Outcome == CardSettlementOutcome.Approved
+                        && await TryCloseBillAsync(billClosure, billId, cancellationToken);
                     return settlement.Outcome switch
                     {
                         CardSettlementOutcome.Approved =>
-                            Results.Ok(new SubmitBillTenderResultV1("Approved", settlement.ApprovedAmount, null)),
+                            Results.Ok(new SubmitBillTenderResultV1("Approved", settlement.ApprovedAmount, null, cardClosed)),
                         CardSettlementOutcome.Declined =>
                             Results.Ok(new SubmitBillTenderResultV1("Declined", null,
                                 ((TenderDeclined)cardResult).Reason)),
@@ -332,10 +355,15 @@ public static partial class DualScreenApplication
                     statusCode: StatusCodes.Status409Conflict);
             }
 
+            // V1-RMD-276: an approved tender may have completed the bill; close it now
+            // (idempotent, and a bill that is still short of its total simply stays open).
+            var closed = routing is TenderRoutingHandled { Result: TenderApproved }
+                && await TryCloseBillAsync(billClosure, billId, cancellationToken);
+
             return routing switch
             {
                 TenderRoutingHandled { Result: TenderApproved approved } =>
-                    Results.Ok(new SubmitBillTenderResultV1("Approved", approved.ApprovedAmount, null)),
+                    Results.Ok(new SubmitBillTenderResultV1("Approved", approved.ApprovedAmount, null, closed)),
                 TenderRoutingHandled { Result: TenderDeclined declined } =>
                     Results.Ok(new SubmitBillTenderResultV1("Declined", null, declined.Reason)),
                 TenderRoutingHandled { Result: TenderRequiresReconciliation pending } =>
@@ -363,7 +391,7 @@ public sealed record ResolveUnsettledPaymentRequestV1(string? Reason);
 
 public sealed record ResolveUnsettledPaymentResultV1(Guid PaymentId, string Status);
 
-public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedAmount, string? Reason);
+public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedAmount, string? Reason, bool BillClosed = false);
 
 public sealed record PaymentAllocationLineV1(Guid AllocationId, Guid PaymentId, decimal Amount, string PaymentStatus);
 

@@ -507,6 +507,51 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
     }
 
+    // V1-RMD-276: a fully covered bill becomes Paid; nothing else does.
+    [Fact]
+    public async Task ABillBecomesPaidExactlyWhenApprovedPaymentsCoverItAndNotBefore()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd276-close");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var first = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 40m, IdempotencyKey = "rmd276-a" });
+        Assert.False((await first.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("billClosed").GetBoolean());
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+
+        var second = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd276-b" });
+        Assert.True((await second.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("billClosed").GetBoolean());
+        Assert.Equal("Paid", await _database.BillStatusAsync(billId));
+        Assert.Equal((100m, 100m), await _database.BillTotalsAsync(billId));
+        Assert.True(await _database.BillHasClosedAtAsync(billId));
+
+        // A paid bill takes no further tender: nothing is left to collect.
+        var extra = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 10m, IdempotencyKey = "rmd276-c" });
+        Assert.Equal(HttpStatusCode.Conflict, extra.StatusCode);
+        Assert.Equal("Paid", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task ABillWhoseOnlyPaymentIsAnUnresolvedCardAttemptStaysOpen()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd276-card");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var card = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "BankCard", Amount = 100m, IdempotencyKey = "rmd276-card" });
+
+        Assert.Equal("RequiresReconciliation", (await card.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("outcome").GetString());
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
     [Fact]
     public async Task SummaryOnANonExistentBillIsNotFound()
     {
@@ -673,6 +718,29 @@ internal sealed class PaymentTenderHttpTestDatabase
         command.Parameters.AddWithValue("name", eventName);
         command.Parameters.AddWithValue("id", aggregateId);
         return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<string> BillStatusAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT status FROM billing.bills WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (string)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<(decimal Allocated, decimal Paid)> BillTotalsAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT allocated_amount, paid_amount FROM billing.bills WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        await using var reader = await command.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        return (reader.GetDecimal(0), reader.GetDecimal(1));
+    }
+
+    public async Task<bool> BillHasClosedAtAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT closed_at IS NOT NULL FROM billing.bills WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (bool)(await command.ExecuteScalarAsync())!;
     }
 
     /// <summary>Seeds a real, payable Bill (catalog product + table + order + bill) for a tender test.</summary>

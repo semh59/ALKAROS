@@ -17,6 +17,7 @@
     <ProjectReference Include="..\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj" />
     <ProjectReference Include="..\Modules\Orders\ALKAROS.Orders.csproj" />
     <ProjectReference Include="..\Modules\Billing\ALKAROS.Billing.csproj" />
+    <ProjectReference Include="..\Modules\Billing\PaymentClosure\ALKAROS.Billing.PaymentClosure.csproj" />
     <ProjectReference Include="..\Modules\Kitchen\ALKAROS.Kitchen.csproj" />
     <ProjectReference Include="..\Modules\Catalog\ALKAROS.Catalog.csproj" />
     <ProjectReference Include="..\Modules\Tables\ALKAROS.Tables.csproj" />

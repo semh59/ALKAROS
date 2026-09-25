@@ -154,6 +154,11 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var body = await tender.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal(80m, body.GetProperty("approvedAmount").GetDecimal());
         Assert.Equal(20m, body.GetProperty("changeAmount").GetDecimal());
+
+        // V1-RMD-276: the cash that covers the bill completes it.
+        await using var statusCommand = _database.DataSource.CreateCommand("SELECT status FROM billing.bills WHERE bill_id = @id;");
+        statusCommand.Parameters.AddWithValue("id", billId);
+        Assert.Equal("Paid", (string)(await statusCommand.ExecuteScalarAsync())!);
     }
 
     [Fact]

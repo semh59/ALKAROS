@@ -70,6 +70,14 @@
           "ALKAROS.Orders": "[1.0.0, )"
         }
       },
+      "alkaros.billing.paymentclosure": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Billing": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )"
+        }
+      },
       "alkaros.cash": {
         "type": "Project",
         "dependencies": {

@@ -317,6 +317,16 @@ public sealed class Bill
             openedAt: openedAt ?? DateTimeOffset.UtcNow);
     }
 
+    /// <summary>
+    /// A copy carrying the payment totals derived from approved payments and allocations
+    /// (V1-RMD-276). Status and every other field are unchanged.
+    /// </summary>
+    public Bill WithPaymentTotals(decimal allocatedAmount, decimal paidAmount, decimal changeAmount)
+        => new(
+            Id, BillNumber, _items, TableId, OrderId, CustomerAccountId, Status, CurrencyCode,
+            allocatedAmount, paidAmount, changeAmount, OpenedAt, ClosedAt, CancelledAt, ReopenedAt,
+            RowVersion, CreatedAt, DateTimeOffset.UtcNow);
+
     private Bill RebuildWith(IReadOnlyList<BillItem> items)
     {
         return new Bill(

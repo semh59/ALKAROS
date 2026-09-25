@@ -1,7 +1,5 @@
 {
   "AuthorizedReEncryptionService": "V1-RMD-273: V15 guvenlik servisleri (oturum rotasyonu, cozumleyici, yeniden sifreleme); calisan uygulamadan cagrilmiyor, cagiran eklenmeli ya da kapsam disi karari verilmeli.",
-  "BillPaymentClosureProjector": "V1-RMD-273: Hesap odeme kapanis izdusumu; calisan uygulamadan cagrilmiyor, cagiran eklenmeli ya da kapsam disi karari verilmeli.",
-  "IBillPaymentClosureProjector": "V1-RMD-273: Hesap odeme kapanis izdusumu; calisan uygulamadan cagrilmiyor, cagiran eklenmeli ya da kapsam disi karari verilmeli.",
   "IKitchenItemStateProvider": "V1-RMD-273: Porsiyon rezervasyonu (yasam dongusu, cakisma hakemi, iptal etkisi); calisan uygulamadan cagrilmiyor, cagiran eklenmeli ya da kapsam disi karari verilmeli.",
   "IKitchenRoutingService": "V1-RMD-273: Mutfak yonlendirme servisi; calisan uygulamadan cagrilmiyor, cagiran eklenmeli ya da kapsam disi karari verilmeli.",
   "IPortionCancellationDecisionService": "V1-RMD-273: Porsiyon rezervasyonu (yasam dongusu, cakisma hakemi, iptal etkisi); calisan uygulamadan cagrilmiyor, cagiran eklenmeli ya da kapsam disi karari verilmeli.",

@@ -21,5 +21,8 @@ public sealed class BillPaymentClosureModule : IModule
         ["Billing", "Payments", "Payments.Allocations.Persistence"];
 
     public void Register(ModuleContext context)
-        => context.RegisterTransient<IBillPaymentClosureProjector, BillPaymentClosureProjector>();
+    {
+        context.RegisterTransient<IBillPaymentClosureProjector, BillPaymentClosureProjector>();
+        context.RegisterTransient<IBillClosureService, BillClosureService>();
+    }
 }

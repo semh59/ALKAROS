@@ -95,6 +95,10 @@ public static class ModuleBoundaryTests
             // own IModule for the same reason as Cash.TenderHandler/
             // Payments.Allocations.Persistence above — no new doc row needed.
             ["Payments.CardSettlement"] = ["Payments", "Payments.Allocations.Persistence", "Billing"],
+            // V1-RMD-276: the payment-closure projection and closing service read Payments and
+            // allocations to decide a Bill is fully paid (module-dependency-rules.md row 5). It is
+            // its own IModule/project so Billing itself never references Payments (that would be a cycle).
+            ["Billing.PaymentClosure"] = ["Billing", "Payments", "Payments.Allocations.Persistence"],
             // V13-PAY-005: same coarse edge as Payments.CardSettlement above
             // (module-dependency-rules.md row 6, "Payment -> Bill, Identity"),
             // split into its own IModule for the same reason — no new doc
