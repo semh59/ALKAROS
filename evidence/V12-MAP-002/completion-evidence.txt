@@ -1,0 +1,16 @@
+V12-MAP-002 completion evidence (2026-09-25, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+
+Public source basis (UNVERIFIED - no sandbox; V0-YSP-001 Blocked):
+- https://developer.yemeksepeti.com/api-specifications (Partner API v2.0.2): order status enum, transport_type
+  VENDOR_DELIVERY / LOGISTICS_DELIVERY, PUT status rules (vendor: CANCELLED|DISPATCHED; logistics:
+  CANCELLED|READY_FOR_PICKUP), cancellation object.
+- https://developer.yemeksepeti.com/en/documentation/pos-partner-picking-faq: statuses sent to the webhook
+  RECEIVED, READY_FOR_PICKUP, DISPATCHED, CANCELLED, DELIVERED (DELIVERED ~30 min after READY_FOR_PICKUP);
+  cancelled_by, reason, post_picked_up.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/OnlineOrdering/Yemeksepeti/StatusMapping -> 32/32
+- python tools/plan-audit/plan_audit_tool.py validate -> 0/0; consistency_audit.py -> clean
+Mutations (reverted, cmp identical): transport ignored for READY_FOR_PICKUP -> 1 failed; unknown -> no-op ->
+10 failed; evidence id non-deterministic -> 2 failed; transport compare case-insensitive -> 1 failed.
