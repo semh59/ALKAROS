@@ -171,10 +171,14 @@ test.describe('Çevrimdışı sipariş kuyruğu (V1-WTR-053)', () => {
     await expect(ribbonQueue(page)).toContainText('1 bekleyen');
 
     await page.unroute(SUBMIT_DRAFT);
-    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
     // 15 sn'lik geri-deneme zamanlayıcısının altında: gönderimi yapan
     // zamanlayıcı değil, visibilitychange dinleyicisinin kendisi olmalı.
-    await expect(ribbonQueue(page)).toBeHidden({ timeout: 8_000 });
+    // Çevrimiçi olayının başlattığı bir gönderim hâlâ sürüyorsa uygulama ikinci
+    // tetiği bilerek atlar (yavaş CI'da bu yarış görüldü); olay yeniden tetiklenir.
+    await expect.poll(async () => {
+      await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+      return ribbonQueue(page).isHidden();
+    }, { timeout: 8_000, intervals: [250, 500, 1_000] }).toBe(true);
     await expect.poll(() => serverOrderItemCount(page, seed.offlineTableIds[4]), { timeout: 15_000 }).toBe(1);
   });
 });
