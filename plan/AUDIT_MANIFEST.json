@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1312,
-  "markdown_line_count": 100541,
-  "markdown_byte_count": 5742355,
+  "markdown_line_count": 100544,
+  "markdown_byte_count": 5742905,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2521,7 +2521,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "A3506D917128659822187AA8E7C5FE884174C294FAAB8CDCC55A6A54E4616C4D",
+      "sha256": "9093CD6E0148BF70B3A020B99F69B2D79354836F633E8A55CE3F2722A7A1B0FE",
       "lines": 2588,
       "bytes": 376824,
       "utf8": true
@@ -7204,9 +7204,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-285-waiter-live-connection-resilience.md",
-      "sha256": "79D1D5806BCB19E1647425F91ED310643A742F9727593F8663DE726938081386",
-      "lines": 48,
-      "bytes": 2288,
+      "sha256": "448B0E1B90B79250F5A42AB00512EF9D24B67ADEA7969C25C4A10D15EB40F909",
+      "lines": 51,
+      "bytes": 2838,
       "utf8": true
     },
     {

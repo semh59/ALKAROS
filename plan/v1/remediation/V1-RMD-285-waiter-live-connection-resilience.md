@@ -1,8 +1,8 @@
 # V1-RMD-285 - Garson canlı bağlantısı kopunca geri döner ve kaçırılanı telafi eder
 
 - Task ID: V1-RMD-285
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: remediation
 - Surface state: Existing
 
@@ -19,6 +19,8 @@
 - `plan/v1/remediation/V1-RMD-285-waiter-live-connection-resilience.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/waiter-app.js
   (yalnız `connectHub` ve bağlantı durumu göstergesi)
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/state.js
+  (yalnız `liveState` alanı ve `renderRibbon` metni)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/E2E/WaiterPwa/specs/09-live-connection-resilience.spec.js
 
 ## In scope
@@ -39,8 +41,9 @@
 
 ## Acceptance evidence
 
-- WaiterPwa E2E (gerçek Host + Chromium): sunucu durdurulup 30 sn sonra başlatılınca bağlantı döner ve bağlantı yokken oluşturulan QR sipariş banner'da görünür; sunucu kapalıyken sayfa açılıp sonra sunucu başlatılınca bağlantı kurulur.
-- **Mutasyon kontrolü:** yeniden deneme devre dışı bırakılınca test kırılır.
+- WaiterPwa E2E (gerçek Host + Chromium, UTF8 Postgres 18): 45/45 (43 mevcut + 2 yeni `09-live-connection-resilience`). Senaryo 1: canlı bağlantı isteği reddedilirken sayfa açılır, şerit 'yeniden bağlanıyor' der; engel kalkınca 30 sn içinde 'Bağlı' olur ve `/orders/pending` yeniden yüklenir. Senaryo 2: ağ 40 sn kesilir (eski ~19 sn hakkını aşar), geri gelince 'Bağlı' olur ve `/orders/pending` yeniden yüklenir.
+- Mutasyon kontrolü: `src/Clients/WaiterPwa` eski hâline döndürülünce her iki senaryo da kırıldı (2 failed).
+- Kapsam notu: bağlantı yokken oluşturulan gerçek bir QR siparişin banner'da görünmesi denenmedi; bunun yerine yeniden bağlanınca bekleyen sipariş uç noktasının yeniden çağrıldığı doğrulandı.
 - `plan_audit_tool.py validate` ve `consistency_audit.py` temiz.
 
 ## Handoff

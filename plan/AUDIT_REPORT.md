@@ -2486,7 +2486,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-282-payment-completes-the-order.md` | ✅ | `A2314DA783256F703F07B161A9DEB0A30A83B2438948D1A446BF564775264F09` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-283-manual-card-charged-two-person-confirmation.md` | ✅ | `0944DF0B8AF026CB2847464EF8F11F474D5683B840BC9392B100078FCA0DB70E` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-284-close-settled-orders-backlog.md` | ✅ | `541BF6AF216709BEDEA736FEEEC92BCA27909FC85D6A07E55EE3FA14C0857642` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-285-waiter-live-connection-resilience.md` | ✅ | `79D1D5806BCB19E1647425F91ED310643A742F9727593F8663DE726938081386` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-285-waiter-live-connection-resilience.md` | ✅ | `448B0E1B90B79250F5A42AB00512EF9D24B67ADEA7969C25C4A10D15EB40F909` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-286-cashier-help-hub-resilience.md` | ✅ | `90AA53C97E94CD11994FDF46B3E054A18C587251F53F5530FC413D4F05941C1B` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-287-cashier-pending-checks-live-push.md` | ✅ | `CB8746A81BE50CB2BAFE8BEF112ADAB769566A025AFFD4E17F684EF6B395B09C` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-288-outbox-dead-letter-visibility.md` | ✅ | `B9D600390C619E52483C65FE8CA60DC1C709EBE42FE6F30AAFFA624BF676D78F` | Tek-sahip görev |

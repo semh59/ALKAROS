@@ -696,13 +696,56 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
 
   let hub = null;
 
+  // V1-RMD-285: the connection used to give up for good after five automatic
+  // retries (~19 s) and a failed first start() was swallowed, so a waiter
+  // whose server blipped at page load never got live updates again. Retry
+  // forever with a capped exponential delay, and reload what was missed
+  // (pending QR orders) whenever the connection comes back.
+  const HUB_RETRY_CAP_MS = 15000;
+  const hubRetryDelay = (attempt) => Math.min(HUB_RETRY_CAP_MS, 1000 * 2 ** Math.min(attempt, 4));
+  let hubStartAttempt = 0;
+
+  function setLiveState(next) {
+    if (state.liveState === next) return;
+    state.liveState = next;
+    renderRibbon();
+  }
+
+  async function catchUpAfterReconnect() {
+    try { await loadPending(); } catch { /* the next event or reconnect retries */ }
+  }
+
+  function startHub() {
+    if (!hub) return;
+    hub.start().then(() => {
+      hubStartAttempt = 0;
+      setLiveState('connected');
+      void catchUpAfterReconnect();
+    }).catch(() => {
+      setLiveState('reconnecting');
+      window.setTimeout(startHub, hubRetryDelay(hubStartAttempt++));
+    });
+  }
+
   function connectHub() {
     if (hub || typeof signalR === 'undefined') return;
     hub = new signalR.HubConnectionBuilder()
       .withUrl(`/hubs/waiter-order-status?terminalId=${state.terminalId}`)
-      .withAutomaticReconnect([0, 1000, 3000, 5000, 10000])
+      .withAutomaticReconnect({ nextRetryDelayInMilliseconds: (context) => hubRetryDelay(context.previousRetryCount) })
       .configureLogging(signalR.LogLevel.Warning)
       .build();
+    hub.onreconnecting(() => setLiveState('reconnecting'));
+    hub.onreconnected(() => {
+      hubStartAttempt = 0;
+      setLiveState('connected');
+      void catchUpAfterReconnect();
+    });
+    // Not reachable with the policy above, kept so a future policy change
+    // cannot silently leave the waiter without live updates.
+    hub.onclose(() => {
+      setLiveState('down');
+      window.setTimeout(startHub, hubRetryDelay(hubStartAttempt++));
+    });
 
     // V1-WTR-009. Nothing in this system records which waiter serves which
     // table, so the hub broadcasts to every device; the payload carries the
@@ -733,9 +776,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       notify('Misafir siparişi', `${payload.tableNumber} masası sipariş verdi`, 'alkaros-pending-order');
     });
 
-    // Best effort: a deployment without kitchen live-sync simply never sends
-    // anything, and automatic reconnect covers a transient failure.
-    hub.start().catch(() => {});
+    startHub();
   }
 
   function notify(title, body, tag) {

@@ -57,6 +57,10 @@ function loadJsonArray(key) {
 export const state = {
   terminalId: deviceTerminalId(),
   isOnline: navigator.onLine,
+  // V1-RMD-285: state of the live-update (SignalR) connection, separate from
+  // isOnline (the browser can be online while the server is unreachable).
+  // 'connected' | 'reconnecting' | 'down'.
+  liveState: 'connected',
   offlineDisabled: false,
   offlineDisabledReason: null,
   user: null,
@@ -188,7 +192,9 @@ export function renderRibbon() {
     el.ribbonText.textContent = OFFLINE_DISABLED_REASONS[state.offlineDisabledReason]
       || OFFLINE_DISABLED_REASONS.unknown;
   } else if (state.isOnline) {
-    el.ribbonText.textContent = 'Bağlı';
+    el.ribbonText.textContent = state.liveState === 'connected'
+      ? 'Bağlı'
+      : 'Bağlı — canlı bildirimler yeniden bağlanıyor';
   } else {
     el.ribbonText.textContent = 'Bağlantı yok — siparişler kuyrukta bekliyor';
   }
