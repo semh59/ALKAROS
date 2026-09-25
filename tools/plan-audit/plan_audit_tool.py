@@ -206,6 +206,25 @@ PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER = {
     ("V13-RPT-001", "V13-FSC-001"),
 }
 
+# 2026-09-25 (TRACEABILITY C103, V12-GOV-004): Semih approved the same
+# per-edge waiver shape for the six Faz 3 (v1.2) tasks that list V0-YSP-001
+# (Yemeksepeti Partner API contract, Blocked on a real Partner Portal
+# credential/sandbox/webhook transcript) directly in their own
+# `## Dependencies`. Each consumer builds a channel-neutral port plus real
+# domain behaviour; any Yemeksepeti HTTP/webhook adapter is an explicitly
+# unverified draft grounded only in the public Partner API v2.0.2 document.
+# Sandbox-evidence clauses of the consumers stay open under V0-YSP-001 and
+# V20-INT-003. Does not let V0-YSP-001 close, and does not exempt any OTHER
+# dependency of the same consumer.
+YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER = {
+    ("V12-STK-001", "V0-YSP-001"),
+    ("V12-MAP-001", "V0-YSP-001"),
+    ("V12-MAP-002", "V0-YSP-001"),
+    ("V12-ONL-001", "V0-YSP-001"),
+    ("V12-ONL-003", "V0-YSP-001"),
+    ("V12-ONL-004", "V0-YSP-001"),
+}
+
 BROAD_HANDOFF_REPLACEMENTS = {
     "V0-DAT-001": ["GATE-V0-EXIT"],
     "V0-DAT-002": ["GATE-V0-EXIT"],
@@ -2379,6 +2398,34 @@ def validate_plan() -> None:
                     sorted(registered_waiver),
                 )
             )
+    channel_waiver_block = gate_text.split(
+        "<!-- V12_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:START -->", 1
+    )
+    if (
+        len(channel_waiver_block) != 2
+        or "<!-- V12_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:END -->"
+        not in channel_waiver_block[1]
+    ):
+        errors.append("GATES_YEMEKSEPETI_CHANNEL_WAIVER_MARKER_MISSING")
+    else:
+        channel_waiver_table = channel_waiver_block[1].split(
+            "<!-- V12_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:END -->", 1
+        )[0]
+        registered_channel_waiver = set(
+            re.findall(
+                r"^\| `(V12-[A-Z0-9]+-\d+)` \| `(V0-YSP-001)` \| `2026-09-25` \|",
+                channel_waiver_table,
+                re.MULTILINE,
+            )
+        )
+        if registered_channel_waiver != YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:
+            errors.append(
+                "GATES_YEMEKSEPETI_CHANNEL_WAIVER_MISMATCH expected=%s registered=%s"
+                % (
+                    sorted(YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER),
+                    sorted(registered_channel_waiver),
+                )
+            )
     traceability_text = read_utf8(PLAN_DIR / "TRACEABILITY.md")
     registered_corrections = set(
         re.findall(r"^\| `(C\d+)` \|", traceability_text, re.MULTILINE)
@@ -2638,6 +2685,8 @@ def validate_plan() -> None:
             # so a waived edge stays waived no matter how many other Done
             # tasks transitively reach it through the waived consumer.
             if (path[-2], dependency_id) in PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
+                return
+            if (path[-2], dependency_id) in YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:
                 return
             if len(path) == 2:
                 errors.append(

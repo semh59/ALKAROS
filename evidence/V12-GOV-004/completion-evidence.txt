@@ -1,0 +1,16 @@
+V12-GOV-004 completion evidence (2026-09-25, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+
+Commands and exit codes:
+- python -m pytest tests/Architecture/TaskScope/ -q            -> exit 0, 143 passed
+- mutation: _YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER check replaced by `in set()`
+  python -m pytest tests/Architecture/TaskScope/ -q -k Yemeksepeti -> 2 failed, 1 passed (expected); reverted
+- mutation: V12-ONL-004 row deleted from plan/GATES.md waiver table
+  python tools/plan-audit/plan_audit_tool.py validate           -> GATES_YEMEKSEPETI_CHANNEL_WAIVER_MISMATCH (expected); reverted
+- python tools/plan-audit/plan_audit_tool.py validate           -> exit 0, errors 0, warnings 0, 2109 dependency edges
+- python tools/plan-audit/plan_audit_tool.py generate-audit-report / generate-manifest / verify-manifest
+                                                                -> Manifest errors: 0 (regenerated locally only; the two
+                                                                   generated files were reverted, not committed)
+- python tools/consistency-audit/consistency_audit.py           -> clean
+
+Waived edges (consumer, dependency): V12-STK-001, V12-MAP-001, V12-MAP-002, V12-ONL-001, V12-ONL-003,
+V12-ONL-004 -> V0-YSP-001. V0-YSP-001 stays Blocked. No sandbox evidence exists or is claimed.

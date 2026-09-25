@@ -258,6 +258,41 @@ desen). Yeni product behavior başlatmaz; yalnızca bu 8 görevin
 gerçek Owned surface'ta InProgress'e alınmasına ve kendi gerçek
 kapsamlarıyla `Done` olmasına izin verir.
 
+## 2026-09-25 Semih onaylı Yemeksepeti kanal bağımlılık waiver'ı (V12-GOV-004)
+
+`V0-YSP-001` (Yemeksepeti Partner API sözleşme doğrulaması) gerçek Partner
+Portal credential'ı, sandbox erişimi ve imzalı/tokenlı gerçek webhook
+transcript'i olmadığı için `Blocked` kalıyor. v1.2'nin 12 Faz 3 görevinin altısı
+bu göreve kendi `## Dependencies` bölümünde doğrudan bağlı; kalan altısı onlara
+zincirli. Semih 2026-09-25 tarihinde, Faz 2'deki `V13-GOV-008` emsaliyle, bu
+altı doğrudan kenarın resmi olarak esnetilmesini onayladı. Her tüketici kendi
+Owned surface'ında kanal-bağımsız bir port (ör. `IOnlineOrderChannel...`) ve
+gerçek domain davranışı yazar; Yemeksepeti'ye özgü HTTP/webhook adaptörü
+yalnızca herkese açık Partner API v2.0.2 belgesine (`EXT:YSP-PARTNER-2.0.2`)
+dayanan, açıkça **doğrulanmamış taslak** olarak işaretlenen koddur ve hiçbir
+kanıt, test adı veya görev metni onu "doğrulandı" diye nitelemez. Tüketicilerin
+"gerçek sandbox kanıtı" isteyen maddeleri bu waiver'la karşılanmış sayılmaz: o
+kanıt `V0-YSP-001` ve `V20-INT-003` sahipliğinde açık kalır. Bu waiver ne
+`V0-YSP-001`'i kapatır, ne aynı tüketicinin başka bir bağımlılığını etkiler.
+
+<!-- V12_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:START -->
+| Consumer | Waived dependency | Approval date | Required evidence |
+| --- | --- | --- | --- |
+| `V12-STK-001` | `V0-YSP-001` | `2026-09-25` | Gerçek Yemeksepeti Partner Portal credential, sandbox ve webhook transcript kanıtı |
+| `V12-MAP-001` | `V0-YSP-001` | `2026-09-25` | Gerçek Yemeksepeti Partner Portal credential, sandbox ve webhook transcript kanıtı |
+| `V12-MAP-002` | `V0-YSP-001` | `2026-09-25` | Gerçek Yemeksepeti Partner Portal credential, sandbox ve webhook transcript kanıtı |
+| `V12-ONL-001` | `V0-YSP-001` | `2026-09-25` | Gerçek Yemeksepeti Partner Portal credential, sandbox ve webhook transcript kanıtı |
+| `V12-ONL-003` | `V0-YSP-001` | `2026-09-25` | Gerçek Yemeksepeti Partner Portal credential, sandbox ve webhook transcript kanıtı |
+| `V12-ONL-004` | `V0-YSP-001` | `2026-09-25` | Gerçek Yemeksepeti Partner Portal credential, sandbox ve webhook transcript kanıtı |
+<!-- V12_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:END -->
+
+Bu tablo `tools/plan-audit/plan_audit_tool.py`'nin
+`YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER` sabitiyle ve
+`tools/task-scope/task_scope_tool.py`'nin
+`_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER` sabitiyle tam eşleşmelidir (V13
+ödeme orkestrasyonu waiver'ıyla aynı fail-closed desen). Yeni product behavior
+başlatmaz ve üretimde hiçbir Yemeksepeti kanalını etkinleştirmez.
+
 2026-08-15 kullanıcı onayıyla (`TRACEABILITY.md` C69) `V0-REV-001..030`
 revalidation görevleri `## Onay` bloklu `Done`, `V0-GOV-041` ile `V0-GOV-042`
 tarihli gerekçeyle `NotApplicable` oldu; deferral satırları listeden çıkarıldı.

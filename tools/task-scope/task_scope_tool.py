@@ -190,6 +190,19 @@ _PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER = {
     ("V13-RPT-001", "V13-FSC-001"),
 }
 
+# 2026-09-25 (TRACEABILITY C103, V12-GOV-004): same per-edge waiver shape for
+# the six Faz 3 (v1.2) tasks that depend directly on V0-YSP-001. Mirrors
+# `plan_audit_tool.py`'s YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER exactly — see
+# that constant's comment for the rationale.
+_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER = {
+    ("V12-STK-001", "V0-YSP-001"),
+    ("V12-MAP-001", "V0-YSP-001"),
+    ("V12-MAP-002", "V0-YSP-001"),
+    ("V12-ONL-001", "V0-YSP-001"),
+    ("V12-ONL-003", "V0-YSP-001"),
+    ("V12-ONL-004", "V0-YSP-001"),
+}
+
 
 class TaskParseError(Exception):
     """Raised when a task Markdown file cannot be parsed."""
@@ -902,6 +915,8 @@ def validate_task_metadata(
     if not candidate_remediation:
         for dep_id in task.dependencies:
             if (task.task_id, dep_id) in _PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
+                continue
+            if (task.task_id, dep_id) in _YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:
                 continue
             is_done, reason = check_dependency_status(dep_id, plan_dir)
             if not is_done:
