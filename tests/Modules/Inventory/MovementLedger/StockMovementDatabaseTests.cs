@@ -17,6 +17,9 @@ public sealed class StockMovementTestDb : PgTestDatabase
         var sql059 = await File.ReadAllTextAsync(migration059);
         await RunAsync(DataSource, sql059);
 
+        var migration118 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "118-stock-items-reorder-point.up.sql");
+        await RunAsync(DataSource, await File.ReadAllTextAsync(migration118));
+
         var migration060 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "060-stock-movements.up.sql");
         var sql060 = await File.ReadAllTextAsync(migration060);
         await RunAsync(DataSource, sql060);

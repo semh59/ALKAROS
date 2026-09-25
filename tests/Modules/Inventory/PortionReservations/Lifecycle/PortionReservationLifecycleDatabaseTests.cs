@@ -16,6 +16,9 @@ public sealed class PortionReservationTestDb : PgTestDatabase
         var sql059 = await File.ReadAllTextAsync(migration059);
         await RunAsync(DataSource, sql059);
 
+        var migration118 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "118-stock-items-reorder-point.up.sql");
+        await RunAsync(DataSource, await File.ReadAllTextAsync(migration118));
+
         var migration064 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-portion-reservations.up.sql");
         var sql064 = await File.ReadAllTextAsync(migration064);
         await RunAsync(DataSource, sql064);

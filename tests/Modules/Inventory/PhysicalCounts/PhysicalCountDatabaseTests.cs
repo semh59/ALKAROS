@@ -19,6 +19,7 @@ public sealed class PhysicalCountTestDb : PgTestDatabase
         foreach (var file in new[]
         {
             "059-stock-master.up.sql",
+            "118-stock-items-reorder-point.up.sql",
             "060-stock-movements.up.sql",
             "061-stock-balances.up.sql",
             "087-inventory-stock-balances-non-negative.up.sql",
