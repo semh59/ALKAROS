@@ -332,6 +332,7 @@ public sealed class ProductionExperienceCompositionTests
     private static readonly Dictionary<Type, Type> ApprovedHostDecoratedModuleServices = new()
     {
         [typeof(IEscalationResolver)] = typeof(GarsonFeatureGatedEscalationResolver),
+        [typeof(ALKAROS.Security.IdentityHardening.ISuspiciousLoginAuditSink)] = typeof(ALKAROS.Host.Experience.SecurityAdministration.AuditEventStoreSuspiciousLoginSink),
     };
 
     [Fact]
