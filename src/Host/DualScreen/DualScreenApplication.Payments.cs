@@ -14,6 +14,7 @@ using ALKAROS.Payments.TenderRouting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SignalR;
 using Npgsql;
 
 namespace ALKAROS.Host.DualScreen;
@@ -55,8 +56,18 @@ public static partial class DualScreenApplication
     /// successful payment into an error response; the bill just stays open and the next
     /// tender or close attempt completes it.
     /// </summary>
+    /// <summary>
+    /// V1-RMD-294: reproduced locally first, as the task required. CustomerDisplaySnapshotDto is built
+    /// entirely from orders.orders/order_items (DualScreenStore.Display.cs), so a bill DISCOUNT - which only
+    /// ever touches billing.bill_adjustments, never orders.orders - changes nothing the display's own
+    /// snapshot query reads; there is no stale amount to refresh there under today's data model. A COMPLETED
+    /// order (this order's own Total/Message fields DO change - see GetSnapshotAsync's Completed branch and
+    /// its own Turkish thank-you message) was the one real gap: nothing told the display, so it kept showing
+    /// the last active order forever after the bill that completed it was paid.
+    /// </summary>
     private static async Task<bool> TryCloseBillAsync(
-        IBillClosureService billClosure, OrderSettlementService orderSettlement, Guid billId, CancellationToken cancellationToken)
+        IBillClosureService billClosure, OrderSettlementService orderSettlement, Guid billId,
+        IHubContext<CustomerDisplayHub> hub, Guid terminalId, CancellationToken cancellationToken)
     {
         try
         {
@@ -64,7 +75,21 @@ public static partial class DualScreenApplication
             var closed = result.Outcome is BillClosureOutcome.Closed or BillClosureOutcome.AlreadyClosed;
             // V1-RMD-282: a settled check closes its order (and frees a table it was still attached to).
             if (closed)
+            {
                 await orderSettlement.CompleteForPaidBillAsync(billId, cancellationToken);
+                // Best effort: nobody may be watching (no paired display, or it is offline), and a failed
+                // push must never turn a successful payment into an error response - the display simply
+                // shows the stale state until its own next natural refresh.
+                try
+                {
+                    await hub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
+                        CustomerDisplayHub.SnapshotChanged, new { kind = "BillSettled" }, cancellationToken);
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    // Best effort by design (see above).
+                }
+            }
             return closed;
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
@@ -274,6 +299,7 @@ public static partial class DualScreenApplication
             IAuditEventStore auditEvents,
             IAuthorizationService authorization,
             DualScreenStore store,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -298,7 +324,7 @@ public static partial class DualScreenApplication
                             requestedBy = decided.RequestedBy, approvedBy = principal.UserId, billId,
                         })),
                     cancellationToken);
-                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, cancellationToken);
+                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
                 return Results.Ok(new CardConfirmationResultV1(decided.Id, decided.Status.ToString(), closed));
             }
             catch (OverAllocationException exception)
@@ -359,6 +385,7 @@ public static partial class DualScreenApplication
             IBillClosureService billClosure,
             OrderSettlementService orderSettlement,
             DualScreenStore store,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -414,7 +441,7 @@ public static partial class DualScreenApplication
                         cancellationToken);
 
                     var cardClosed = settlement.Outcome == CardSettlementOutcome.Approved
-                        && await TryCloseBillAsync(billClosure, orderSettlement, billId, cancellationToken);
+                        && await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
                     return settlement.Outcome switch
                     {
                         CardSettlementOutcome.Approved =>
@@ -520,7 +547,7 @@ public static partial class DualScreenApplication
             // V1-RMD-276: an approved tender may have completed the bill; close it now
             // (idempotent, and a bill that is still short of its total simply stays open).
             var closed = routing is TenderRoutingHandled { Result: TenderApproved }
-                && await TryCloseBillAsync(billClosure, orderSettlement, billId, cancellationToken);
+                && await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
 
             return routing switch
             {

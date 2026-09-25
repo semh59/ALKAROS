@@ -7,6 +7,7 @@ using ALKAROS.Identity.Authorization.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SignalR;
 using Npgsql;
 
 namespace ALKAROS.Host.DualScreen;
@@ -242,6 +243,7 @@ public static partial class DualScreenApplication
             ALKAROS.Billing.PaymentClosure.IBillClosureService billClosure,
             ALKAROS.Host.Experience.Orders.OrderSettlementService orderSettlement,
             DualScreenStore store,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -252,7 +254,8 @@ public static partial class DualScreenApplication
                     request.IdempotencyKey, principal.UserId),
                 cancellationToken);
             // V1-RMD-276: a cash tender that covers the bill completes it (a replay of the same key stays a no-op).
-            await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, cancellationToken);
+            // V1-RMD-294: and (best effort) pokes the paired customer display to refresh.
+            await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, customerDisplayHub, terminalId, cancellationToken);
             return Results.Ok(result);
         });
 
