@@ -40,7 +40,10 @@ public enum CatalogPublicationStatus
     Unchanged,
 
     /// <summary>Nothing on the menu could be published; the channel was not called.</summary>
-    NothingToPublish
+    NothingToPublish,
+
+    /// <summary>V12-RMD-005: a newer publication of the same menu was requested before this one was sent; never sent.</summary>
+    Superseded
 }
 
 public sealed record CatalogPublicationSummary(

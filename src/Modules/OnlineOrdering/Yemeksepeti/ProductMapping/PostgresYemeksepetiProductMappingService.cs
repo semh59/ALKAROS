@@ -30,7 +30,24 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         Guid productId,
         DateTimeOffset effectiveFrom,
         Guid actorId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        (await MapCoreAsync(externalSku, productId, effectiveFrom, actorId, requireUnowned: false, cancellationToken).ConfigureAwait(false))!;
+
+    public Task<YemeksepetiProductMapping?> MapIfUnownedAsync(
+        string externalSku,
+        Guid productId,
+        DateTimeOffset effectiveFrom,
+        Guid actorId,
+        CancellationToken cancellationToken = default) =>
+        MapCoreAsync(externalSku, productId, effectiveFrom, actorId, requireUnowned: true, cancellationToken);
+
+    private async Task<YemeksepetiProductMapping?> MapCoreAsync(
+        string externalSku,
+        Guid productId,
+        DateTimeOffset effectiveFrom,
+        Guid actorId,
+        bool requireUnowned,
+        CancellationToken cancellationToken)
     {
         var sku = NormalizeSku(externalSku);
         if (productId == Guid.Empty)
@@ -58,6 +75,13 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         {
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return openForSku;
+        }
+
+        // V12-RMD-005: decided under the lock, so no concurrent mapping can move the SKU in between.
+        if (requireUnowned && openForSku is not null)
+        {
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return null;
         }
 
         if (await HasMappingStartingAtOrAfterAsync(sku, effectiveFrom, connection, transaction, cancellationToken).ConfigureAwait(false))
@@ -162,7 +186,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             """
             SELECT mapping_id, external_sku, product_id, effective_from
             FROM online_ordering.yemeksepeti_product_mappings
-            WHERE effective_to IS NULL
+            WHERE effective_to IS NULL AND effective_from <= now()
             ORDER BY external_sku
             LIMIT $1;
             """);

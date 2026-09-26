@@ -45,6 +45,12 @@ public sealed class CatalogPublicationService
             throw new ArgumentException("A publication needs an actor.", nameof(actorId));
         var publisher = Channel(channel);
 
+        // V12-RMD-005: the per-menu lock comes first, so the menu read below is never older than a concurrent
+        // request's that commits after it, and a delivery in progress finishes before a new request is decided.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await LockMenuAsync(publisher.Channel, menuId, connection, transaction, cancellationToken).ConfigureAwait(false);
+
         var rows = await LoadMenuAsync(menuId, cancellationToken).ConfigureAwait(false);
         var errors = new List<CatalogValidationError>();
         var items = new List<CatalogPublicationItem>();
@@ -72,21 +78,17 @@ public sealed class CatalogPublicationService
                 continue;
             }
 
-            items.Add(new CatalogPublicationItem(row.ProductId, externalId, row.Name, row.Price ?? 0m, row.Active));
+            // V12-RMD-005: an unsellable product without a price is switched off at the price the channel last
+            // received for it; one the channel never received is simply not sent (there is nothing to switch off).
+            var price = row.Price ?? await LastDeliveredPriceAsync(publisher.Channel, row.ProductId, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
+            if (price is null)
+                continue;
+            items.Add(new CatalogPublicationItem(row.ProductId, externalId, row.Name, price.Value, row.Active));
         }
 
         var unsupported = Enum.GetValues<CatalogCapability>().Where(c => !publisher.SupportedCapabilities.Contains(c)).ToList();
         var contentHash = ContentHash(items);
-
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-        await using (var lockCommand = new NpgsqlCommand(
-            "SELECT pg_advisory_xact_lock(hashtext('online-ordering.catalog:' || $1 || ':' || $2::text));", connection, transaction))
-        {
-            lockCommand.Parameters.AddWithValue(publisher.Channel);
-            lockCommand.Parameters.AddWithValue(menuId);
-            await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        }
 
         var status = items.Count == 0
             ? CatalogPublicationStatus.NothingToPublish
@@ -120,8 +122,9 @@ public sealed class CatalogPublicationService
     public async Task DeliverAsync(Guid publicationId, CancellationToken cancellationToken = default)
     {
         string channel;
+        Guid menuId;
         await using (var command = _dataSource.CreateCommand(
-            "SELECT channel, status FROM online_ordering.catalog_publications WHERE publication_id = $1;"))
+            "SELECT channel, status, menu_id FROM online_ordering.catalog_publications WHERE publication_id = $1;"))
         {
             command.Parameters.AddWithValue(publicationId);
             await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
@@ -130,6 +133,32 @@ public sealed class CatalogPublicationService
             channel = reader.GetString(0);
             if (reader.GetString(1) != nameof(CatalogPublicationStatus.Pending))
                 return;
+            menuId = reader.GetGuid(2);
+        }
+
+        // V12-RMD-005: deliveries of one menu are serialized and an overtaken publication is never sent, so the
+        // channel always ends on the newest requested content even when an older publication's retry comes late.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await LockMenuAsync(channel, menuId, connection, transaction, cancellationToken).ConfigureAwait(false);
+        await using (var supersede = new NpgsqlCommand(
+            """
+            UPDATE online_ordering.catalog_publications p
+            SET status = 'Superseded'
+            WHERE p.publication_id = $1 AND p.status = 'Pending'
+              AND EXISTS (SELECT 1 FROM online_ordering.catalog_publications newer
+                          WHERE newer.channel = p.channel AND newer.menu_id = p.menu_id
+                            AND newer.requested_at > p.requested_at
+                            AND newer.status IN ('Pending', 'Delivered'))
+            RETURNING 1;
+            """, connection, transaction))
+        {
+            supersede.Parameters.AddWithValue(publicationId);
+            if (await supersede.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is not null)
+            {
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                return;
+            }
         }
 
         var items = new List<CatalogPublicationItem>();
@@ -154,8 +183,9 @@ public sealed class CatalogPublicationService
         {
             jobId = await Channel(channel).PublishAsync(items, cancellationToken).ConfigureAwait(false);
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
+            // A timeout that is not a shutdown is recorded like any other failure (V12-RMD-005).
             await using var failure = _dataSource.CreateCommand(
                 """
                 UPDATE online_ordering.catalog_publications
@@ -164,19 +194,50 @@ public sealed class CatalogPublicationService
                 """);
             failure.Parameters.AddWithValue(publicationId);
             failure.Parameters.AddWithValue(ex.GetType().Name + ": " + ex.Message);
-            await failure.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            await failure.ExecuteNonQueryAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
 
-        await using var delivered = _dataSource.CreateCommand(
+        await using (var delivered = new NpgsqlCommand(
             """
             UPDATE online_ordering.catalog_publications
             SET status = 'Delivered', provider_job_id = $2, delivered_at = now(), delivery_attempts = delivery_attempts + 1
             WHERE publication_id = $1 AND status = 'Pending';
-            """);
-        delivered.Parameters.AddWithValue(publicationId);
-        delivered.Parameters.AddWithValue((object?)jobId ?? DBNull.Value);
-        await delivered.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            """, connection, transaction))
+        {
+            delivered.Parameters.AddWithValue(publicationId);
+            delivered.Parameters.AddWithValue((object?)jobId ?? DBNull.Value);
+            await delivered.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task LockMenuAsync(
+        string channel, Guid menuId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var lockCommand = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext('online-ordering.catalog:' || $1 || ':' || $2::text));", connection, transaction);
+        lockCommand.Parameters.AddWithValue(channel);
+        lockCommand.Parameters.AddWithValue(menuId);
+        await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<decimal?> LastDeliveredPriceAsync(
+        string channel, Guid productId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT i.price
+            FROM online_ordering.catalog_publication_items i
+            JOIN online_ordering.catalog_publications p ON p.publication_id = i.publication_id
+            WHERE p.channel = $1 AND i.product_id = $2 AND p.status = 'Delivered'
+            ORDER BY p.delivered_at DESC, p.publication_id
+            LIMIT 1;
+            """, connection, transaction);
+        command.Parameters.AddWithValue(channel);
+        command.Parameters.AddWithValue(productId);
+        return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as decimal?;
     }
 
     private ICatalogChannelPublisher Channel(string channel) =>
@@ -217,18 +278,30 @@ public sealed class CatalogPublicationService
         return rows;
     }
 
+    /// <summary>
+    /// V12-RMD-005: the content the channel has or will get — the latest publication's, when it was delivered or its
+    /// delivery is still queued. A publication whose outbox message died will never arrive, so it does not count
+    /// and the same content can be published again.
+    /// </summary>
     private static async Task<string?> LatestContentHashAsync(
         string channel, Guid menuId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
     {
         await using var command = new NpgsqlCommand(
             """
-            SELECT content_sha256 FROM online_ordering.catalog_publications
-            WHERE channel = $1 AND menu_id = $2 AND status IN ('Pending', 'Delivered')
-            ORDER BY requested_at DESC, publication_id
+            SELECT CASE
+                       WHEN p.status = 'Delivered' THEN p.content_sha256
+                       WHEN EXISTS (SELECT 1 FROM outbox_messages m
+                                    WHERE m.aggregate_id = p.publication_id AND m.event_type = $3
+                                      AND m.status IN ('pending', 'in_flight')) THEN p.content_sha256
+                   END
+            FROM online_ordering.catalog_publications p
+            WHERE p.channel = $1 AND p.menu_id = $2 AND p.status IN ('Pending', 'Delivered')
+            ORDER BY p.requested_at DESC, p.publication_id
             LIMIT 1;
             """, connection, transaction);
         command.Parameters.AddWithValue(channel);
         command.Parameters.AddWithValue(menuId);
+        command.Parameters.AddWithValue(RequestedEventType);
         return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as string;
     }
 

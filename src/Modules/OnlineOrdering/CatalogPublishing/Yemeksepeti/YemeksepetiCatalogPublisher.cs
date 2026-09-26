@@ -41,16 +41,13 @@ public sealed class YemeksepetiCatalogPublisher : ICatalogChannelPublisher
             return existing;
 
         // A mapping may legitimately move a SKU to another product over time, but publishing must never
-        // do that implicitly: a catalog SKU that already stands for a different product stays with it.
-        var now = _time.GetUtcNow();
-        var current = await _mappings.ResolveAsync(productSku, now, cancellationToken).ConfigureAwait(false);
-        if (current.ProductId is { } owner && owner != productId)
-            return null;
-
+        // do that implicitly: a catalog SKU that already stands for a different product stays with it. The
+        // check and the write are one locked step (V12-RMD-005).
         try
         {
-            var mapping = await _mappings.MapAsync(productSku, productId, now, actorId, cancellationToken).ConfigureAwait(false);
-            return mapping.ExternalSku;
+            var mapping = await _mappings.MapIfUnownedAsync(productSku, productId, _time.GetUtcNow(), actorId, cancellationToken)
+                .ConfigureAwait(false);
+            return mapping?.ExternalSku;
         }
         catch (ProductMappingRejectedException)
         {

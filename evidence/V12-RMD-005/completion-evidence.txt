@@ -1,0 +1,45 @@
+V12-RMD-005 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 2d76b071.
+Provider behaviour (Yemeksepeti catalog/availability calls) remains an UNVERIFIED DRAFT (V0-YSP-001 Blocked).
+
+Changes:
+- Availability (V12-ONL-005): the observation version comes from online_ordering.availability_observation_seq
+  (migration 152), drawn under the per-channel refresh lock with the source read under the same lock, so a
+  multiplier or mapping change is always a newer observation. The sequence starts above the largest recorded
+  desired_version. A failed row waits 30 s x 2^(n-1), at most 30 min (next_attempt_at). A pass sends rows that
+  have never failed as one batch; only when none wait does it send a single due failed row on its own, so one bad
+  SKU never blocks the others. State rows of products the channel no longer publishes are deleted.
+- Catalog (V12-ONL-004): the per-menu lock is taken before the menu is read; delivery takes the same lock and
+  marks a publication overtaken by a newer Pending/Delivered one as Superseded (never sent). "Unchanged" only
+  when the latest publication with that content is Delivered or still has a live (pending/in_flight) outbox
+  message, so a dead delivery never blocks republishing. An unpriced inactive product is switched off at the
+  price last delivered to the channel, or not sent if never delivered. A timeout that is not our shutdown is
+  recorded as a failed attempt.
+- Mapping (V12-MAP-001): MapIfUnownedAsync decides SKU ownership under the mapping lock; publishing uses it.
+  ListOpenMappingsAsync returns only mappings already in effect.
+- Migration 152 up/down guarded with to_regclass / IF EXISTS so it applies on databases without the
+  availability table (module test databases); down maps Superseded back to Unchanged.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- AvailabilityPublishing 14/14 (+4; 8 consecutive runs green), CatalogPublishing 15/15 (+4),
+  Yemeksepeti.ProductMapping 22/22 (+2), Host OnlineOrdering 50/50, Host (MigrationComposition) 161/161
+- consistency_audit clean; plan_audit validate 0 errors; project_manifest VALID
+
+Found while testing (fixed in this task):
+- the catalog test database never applied migration 152, and 152 up/down failed on a database without
+  online_ordering.availability_states; the rollback test now runs 152 down, 147 down/up, 152 up.
+- the availability test helper that made waits due collapsed all waits to one instant, which reordered
+  rows in a way production never does; it now shifts every wait by one hour, keeping their order.
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 10/10 killed):
+KILLED A1 sequence version (suite total 14)
+KILLED A2 stale delete (suite total 14)
+KILLED A3 healthy/failed split (suite total 14)
+KILLED A4 backoff filter (suite total 14)
+KILLED C1 supersede check (suite total 15)
+KILLED C2 unchanged rule (dead outbox) (suite total 15)
+KILLED C3 last delivered price (suite total 15)
+KILLED C4 timeout recorded (suite total 15)
+KILLED M1 map-if-unowned check (suite total 22)
+KILLED M2 future mapping filter (suite total 22)

@@ -9,9 +9,11 @@ namespace ALKAROS.OnlineOrdering.AvailabilityPublishing;
 /// cross-channel hold (V12-STK-001) lowers what the channels see at once. A product's units are the
 /// fewest of its mapped stock items, each divided by its multiplier.
 ///
-/// Ordering: each observation carries the product's source version (the sum of its balance rows'
-/// row versions, which only grows), and a state is replaced only by a strictly newer observation, so
-/// a delayed old observation never overwrites a newer state. A delivery locks the rows it sends
+/// Ordering (V12-RMD-005): a refresh takes a per-channel transaction lock, draws one version from
+/// <c>online_ordering.availability_observation_seq</c> and reads the source under that lock, so every refresh is
+/// newer than the one before it — including when only a mapping's multiplier or the set of mapped stock items
+/// changed, which a version derived from the balance rows alone could not see. A state is replaced only by a
+/// strictly newer observation, so a delayed old observation never overwrites a newer state. A delivery locks the rows it sends
 /// (<c>FOR UPDATE SKIP LOCKED</c>) until it records them as delivered: a newer observation of the same
 /// product waits for that and is then sent by the next pass, and parallel passes never send a product
 /// twice. Throttling: one pass sends at most one batched provider call per channel.
@@ -19,6 +21,10 @@ namespace ALKAROS.OnlineOrdering.AvailabilityPublishing;
 public sealed class AvailabilityPublicationService
 {
     private const int MaxProducts = 2000;
+
+    /// <summary>V12-RMD-005: a failed row waits 30 s x 2^(n-1) before its next attempt, at most 30 minutes.</summary>
+    public const int FirstRetryDelaySeconds = 30;
+    public const int MaxRetryDelaySeconds = 1800;
 
     private readonly NpgsqlDataSource _dataSource;
     private readonly IReadOnlyList<IAvailabilityChannelPublisher> _channels;
@@ -43,26 +49,56 @@ public sealed class AvailabilityPublicationService
         return new AvailabilityPassResult(changed, delivered);
     }
 
-    /// <summary>Records the current availability of every product the channel knows; returns how many quantities changed.</summary>
+    /// <summary>
+    /// Records the current availability of every product the channel knows; returns how many quantities changed.
+    /// States of products the channel no longer publishes are removed (V12-RMD-005).
+    /// </summary>
     public async Task<int> RefreshAsync(IAvailabilityChannelPublisher channel, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(channel);
         var products = await channel.PublishedProductsAsync(MaxProducts + 1, cancellationToken).ConfigureAwait(false);
         if (products.Count > MaxProducts)
             throw new InvalidOperationException($"Channel '{channel.Channel}' knows more than {MaxProducts} products; refusing a partial refresh.");
-        if (products.Count == 0)
-            return 0;
 
-        var observed = await ObserveAsync(products.Select(p => p.ProductId).ToArray(), cancellationToken).ConfigureAwait(false);
-        var changed = 0;
-        foreach (var product in products)
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await using (var lockCommand = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext('online-ordering.availability-refresh:' || $1));", connection, transaction))
         {
-            if (!observed.TryGetValue(product.ProductId, out var observation))
-                continue;
-            changed += await RecordObservationAsync(
-                channel.Channel, product, observation.Quantity, observation.Version, cancellationToken).ConfigureAwait(false);
+            lockCommand.Parameters.AddWithValue(channel.Channel);
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
+        var productIds = products.Select(p => p.ProductId).ToArray();
+        await using (var stale = new NpgsqlCommand(
+            "DELETE FROM online_ordering.availability_states WHERE channel = $1 AND NOT (product_id = ANY($2));", connection, transaction))
+        {
+            stale.Parameters.AddWithValue(channel.Channel);
+            stale.Parameters.AddWithValue(productIds);
+            await stale.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        var changed = 0;
+        if (products.Count > 0)
+        {
+            long version;
+            await using (var sequence = new NpgsqlCommand(
+                "SELECT nextval('online_ordering.availability_observation_seq');", connection, transaction))
+            {
+                version = (long)(await sequence.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
+            }
+
+            var observed = await ObserveAsync(productIds, connection, transaction, cancellationToken).ConfigureAwait(false);
+            foreach (var product in products)
+            {
+                if (!observed.TryGetValue(product.ProductId, out var quantity))
+                    continue;
+                changed += await RecordObservationAsync(
+                    channel.Channel, product, quantity, version, connection, transaction, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return changed;
     }
 
@@ -74,8 +110,16 @@ public sealed class AvailabilityPublicationService
     public async Task<int> RecordObservationAsync(
         string channel, PublishedChannelProduct product, int quantity, long version, CancellationToken cancellationToken = default)
     {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        return await RecordObservationAsync(channel, product, quantity, version, connection, null, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<int> RecordObservationAsync(
+        string channel, PublishedChannelProduct product, int quantity, long version,
+        NpgsqlConnection connection, NpgsqlTransaction? transaction, CancellationToken cancellationToken)
+    {
         ArgumentNullException.ThrowIfNull(product);
-        await using var command = _dataSource.CreateCommand(
+        await using var command = new NpgsqlCommand(
             """
             WITH previous AS (
                 SELECT desired_quantity FROM online_ordering.availability_states WHERE channel = $1 AND product_id = $2
@@ -96,7 +140,7 @@ public sealed class AvailabilityPublicationService
             SELECT count(*) FROM upserted
             WHERE NOT EXISTS (SELECT 1 FROM previous)
                OR upserted.desired_quantity <> (SELECT desired_quantity FROM previous);
-            """);
+            """, connection, transaction);
         command.Parameters.AddWithValue(channel);
         command.Parameters.AddWithValue(product.ProductId);
         command.Parameters.AddWithValue(product.ExternalId);
@@ -112,23 +156,13 @@ public sealed class AvailabilityPublicationService
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-        var batch = new List<(Guid ProductId, string ExternalId, int Quantity, long Version)>();
-        await using (var select = new NpgsqlCommand(
-            """
-            SELECT product_id, external_sku, desired_quantity, desired_version
-            FROM online_ordering.availability_states
-            WHERE channel = $1 AND delivered_quantity IS DISTINCT FROM desired_quantity
-            ORDER BY desired_at, product_id
-            LIMIT $2
-            FOR UPDATE SKIP LOCKED;
-            """, connection, transaction))
-        {
-            select.Parameters.AddWithValue(channel.Channel);
-            select.Parameters.AddWithValue(channel.MaxBatchSize);
-            await using var reader = await select.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-                batch.Add((reader.GetGuid(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt64(3)));
-        }
+        // V12-RMD-005: rows that have never failed go first, as one batch. Only when none are waiting is a single
+        // failed row whose wait is over sent on its own — so one bad SKU can neither block the others nor hide
+        // among them, and each failing row is retried alone until it goes through or is reconciled.
+        var batch = await SelectBatchAsync(channel, channel.MaxBatchSize, failedOnly: false, connection, transaction, cancellationToken)
+            .ConfigureAwait(false);
+        if (batch.Count == 0)
+            batch = await SelectBatchAsync(channel, 1, failedOnly: true, connection, transaction, cancellationToken).ConfigureAwait(false);
 
         if (batch.Count == 0)
         {
@@ -141,19 +175,22 @@ public sealed class AvailabilityPublicationService
             await channel.PublishAsync(batch.Select(b => new ChannelAvailability(b.ExternalId, b.Quantity)).ToList(), cancellationToken)
                 .ConfigureAwait(false);
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             await using var failure = _dataSource.CreateCommand(
                 """
                 UPDATE online_ordering.availability_states
-                SET delivery_attempts = delivery_attempts + 1, last_error = left($3, 200)
+                SET delivery_attempts = delivery_attempts + 1, last_error = left($3, 200),
+                    next_attempt_at = now() + make_interval(secs => LEAST($5, $4 * power(2, delivery_attempts)))
                 WHERE channel = $1 AND product_id = ANY($2);
                 """);
             failure.Parameters.AddWithValue(channel.Channel);
             failure.Parameters.AddWithValue(batch.Select(b => b.ProductId).ToArray());
             failure.Parameters.AddWithValue(ex.GetType().Name + ": " + ex.Message);
-            await failure.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            failure.Parameters.AddWithValue((double)FirstRetryDelaySeconds);
+            failure.Parameters.AddWithValue((double)MaxRetryDelaySeconds);
+            await failure.ExecuteNonQueryAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
 
@@ -162,7 +199,8 @@ public sealed class AvailabilityPublicationService
             await using var delivered = new NpgsqlCommand(
                 """
                 UPDATE online_ordering.availability_states
-                SET delivered_quantity = $3, delivered_version = $4, delivered_at = now(), delivery_attempts = 0, last_error = NULL
+                SET delivered_quantity = $3, delivered_version = $4, delivered_at = now(), delivery_attempts = 0, last_error = NULL,
+                    next_attempt_at = NULL
                 WHERE channel = $1 AND product_id = $2;
                 """, connection, transaction);
             delivered.Parameters.AddWithValue(channel.Channel);
@@ -209,26 +247,59 @@ public sealed class AvailabilityPublicationService
         return divergences;
     }
 
-    private async Task<Dictionary<Guid, (int Quantity, long Version)>> ObserveAsync(Guid[] productIds, CancellationToken cancellationToken)
+    private static async Task<List<(Guid ProductId, string ExternalId, int Quantity, long Version)>> SelectBatchAsync(
+        IAvailabilityChannelPublisher channel, int limit, bool failedOnly,
+        NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
+        var batch = new List<(Guid, string, int, long)>();
+        await using var select = new NpgsqlCommand(
+            failedOnly
+                ? """
+                  SELECT product_id, external_sku, desired_quantity, desired_version
+                  FROM online_ordering.availability_states
+                  WHERE channel = $1 AND delivered_quantity IS DISTINCT FROM desired_quantity
+                    AND delivery_attempts > 0 AND (next_attempt_at IS NULL OR next_attempt_at <= now())
+                  ORDER BY next_attempt_at NULLS FIRST, product_id
+                  LIMIT $2
+                  FOR UPDATE SKIP LOCKED;
+                  """
+                : """
+                  SELECT product_id, external_sku, desired_quantity, desired_version
+                  FROM online_ordering.availability_states
+                  WHERE channel = $1 AND delivered_quantity IS DISTINCT FROM desired_quantity AND delivery_attempts = 0
+                  ORDER BY desired_at, product_id
+                  LIMIT $2
+                  FOR UPDATE SKIP LOCKED;
+                  """,
+            connection, transaction);
+        select.Parameters.AddWithValue(channel.Channel);
+        select.Parameters.AddWithValue(limit);
+        await using var reader = await select.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            batch.Add((reader.GetGuid(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt64(3)));
+        return batch;
+    }
+
+    private static async Task<Dictionary<Guid, int>> ObserveAsync(
+        Guid[] productIds, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
             """
             SELECT m.product_id,
-                   MIN(GREATEST(0, FLOOR(COALESCE(b.available_quantity, 0) / m.quantity_multiplier)))::int,
-                   COALESCE(SUM(b.row_version), 0)::bigint
+                   MIN(GREATEST(0, FLOOR(COALESCE(b.available_quantity, 0) / m.quantity_multiplier)))::int
             FROM inventory.product_stock_mappings m
             JOIN inventory.stock_items s ON s.id = m.stock_item_id
             LEFT JOIN inventory.stock_balances b
                 ON b.stock_item_id = m.stock_item_id AND b.stock_location_id = s.default_location_id
             WHERE m.product_id = ANY($1)
             GROUP BY m.product_id;
-            """);
+            """, connection, transaction);
         command.Parameters.AddWithValue(productIds);
 
-        var observed = new Dictionary<Guid, (int, long)>();
+        var observed = new Dictionary<Guid, int>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-            observed[reader.GetGuid(0)] = (reader.GetInt32(1), reader.GetInt64(2));
+            observed[reader.GetGuid(0)] = reader.GetInt32(1);
         return observed;
     }
 }

@@ -77,6 +77,37 @@ public sealed class YemeksepetiProductMappingTests : IClassFixture<ProductMappin
     }
 
     [Fact]
+    public async Task PublishingNeverTakesASkuThatBelongsToAnotherProduct()
+    {
+        var owner = await _db.SeedProductAsync();
+        var other = await _db.SeedProductAsync();
+        var sku = Sku();
+        await _service.MapAsync(sku, owner, T0, _actor);
+
+        var taken = await _service.MapIfUnownedAsync(sku, other, T0.AddDays(1), _actor);
+
+        taken.Should().BeNull();
+        (await _service.ResolveAsync(sku, T0.AddDays(2))).ProductId.Should().Be(owner);
+        (await _db.CountMappingsAsync(sku)).Should().Be(1);
+        (await _service.MapIfUnownedAsync(Sku(), other, T0, _actor)).Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task AMappingThatStartsLaterIsNotListedAsOpenYet()
+    {
+        var current = await _db.SeedProductAsync();
+        var future = await _db.SeedProductAsync();
+        var currentSku = Sku();
+        var futureSku = Sku();
+        await _service.MapAsync(currentSku, current, DateTimeOffset.UtcNow.AddMinutes(-1), _actor);
+        await _service.MapAsync(futureSku, future, DateTimeOffset.UtcNow.AddDays(30), _actor);
+
+        var open = await _service.ListOpenMappingsAsync(100_000);
+
+        open.Select(m => m.ExternalSku).Should().Contain(currentSku).And.NotContain(futureSku);
+    }
+
+    [Fact]
     public async Task MappingTheSameSkuToTheSameProductAgainIsAReplay()
     {
         var product = await _db.SeedProductAsync();

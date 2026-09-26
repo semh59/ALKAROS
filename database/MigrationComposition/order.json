@@ -1296,6 +1296,15 @@
         "orders"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "152",
+      "phase": "B",
+      "tables": [
+        "availability_states",
+        "catalog_publications"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

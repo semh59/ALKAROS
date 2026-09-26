@@ -19,7 +19,8 @@ public sealed class CatalogPublishingTestDatabase : PgTestDatabase
                      "002-inbox-messages.up.sql", "003-outbox-messages.up.sql", "006-catalog.up.sql",
                      "033-message-lease-generation.up.sql", "040-wave9-schema-additions.up.sql",
                      "053-catalog-products-row-version.up.sql", "066-static-menu.up.sql", "103-products-prep-time.up.sql",
-                     "144-yemeksepeti-product-mappings.up.sql", "147-online-catalog-publications.up.sql"
+                     "144-yemeksepeti-product-mappings.up.sql", "147-online-catalog-publications.up.sql",
+                     "152-online-publishing-ordering.up.sql"
                  })
         {
             await RunFixtureAsync(file);
@@ -105,6 +106,9 @@ public sealed class RecordingPartnerClient : IYemeksepetiPartnerClient
 
     public bool Fail { get; set; }
 
+    /// <summary>V12-RMD-005: the provider call times out (not a shutdown of ours).</summary>
+    public bool TimeOut { get; set; }
+
     public Task UpdateOrderStatusAsync(YemeksepetiStatusUpdateRequested update, CancellationToken cancellationToken = default) =>
         throw new NotSupportedException("Catalog publishing never sends order status updates.");
 
@@ -112,6 +116,8 @@ public sealed class RecordingPartnerClient : IYemeksepetiPartnerClient
     {
         if (Fail)
             throw new YemeksepetiPartnerApiException("Yemeksepeti catalog update failed with HTTP 503.");
+        if (TimeOut)
+            throw new TaskCanceledException("The request was canceled due to the configured HttpClient.Timeout.");
         CatalogUpdates.Add(products);
         return Task.FromResult<string?>("job-" + CatalogUpdates.Count);
     }
@@ -307,6 +313,67 @@ public sealed class CatalogPublicationTests : IClassFixture<CatalogPublishingTes
     }
 
     [Fact]
+    public async Task AnOlderPublicationRetriedAfterANewerOneIsSupersededAndNeverSent()
+    {
+        var menu = await _db.SeedMenuAsync();
+        var (product, sku) = await _db.SeedMenuProductAsync(menu, 100m);
+        var older = await PublishAsync(menu);
+        await _db.SetPriceAsync(product, 110m);
+        var newer = await PublishAsync(menu);
+
+        await _service.DeliverAsync(newer.PublicationId);
+        await _service.DeliverAsync(older.PublicationId);
+
+        _provider.CatalogUpdates.Should().ContainSingle().Which.Should().Equal(new YemeksepetiCatalogProductUpdate(sku, 110m, true, null));
+        (await _db.PublicationAsync(older.PublicationId)).Status.Should().Be("Superseded");
+    }
+
+    [Fact]
+    public async Task APublicationWhoseDeliveryDiedDoesNotBlockPublishingTheSameMenuAgain()
+    {
+        var menu = await _db.SeedMenuAsync();
+        await _db.SeedMenuProductAsync(menu, 90m);
+        var dead = await PublishAsync(menu);
+        await _db.ScalarAsync("UPDATE outbox_messages SET status = 'dead' WHERE aggregate_id = $1 RETURNING 1::bigint;", dead.PublicationId);
+
+        var again = await PublishAsync(menu);
+
+        again.Status.Should().Be(CatalogPublicationStatus.Pending);
+        (await OutboxCountAsync(again.PublicationId)).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task AnUnpricedProductSwitchedOffUsesTheLastPriceTheChannelReceived()
+    {
+        var menu = await _db.SeedMenuAsync();
+        var (known, knownSku) = await _db.SeedMenuProductAsync(menu, 75m);
+        await _service.DeliverAsync((await PublishAsync(menu)).PublicationId);
+        await _db.ScalarAsync("UPDATE catalog.products SET current_price = NULL, active = false WHERE product_id = $1 RETURNING 1::bigint;", known);
+
+        var summary = await PublishAsync(menu);
+        await _service.DeliverAsync(summary.PublicationId);
+
+        _provider.CatalogUpdates.Last().Should().Equal(new YemeksepetiCatalogProductUpdate(knownSku, 75m, false, null));
+    }
+
+    [Fact]
+    public async Task AProviderTimeoutIsRecordedAsAFailedAttempt()
+    {
+        var menu = await _db.SeedMenuAsync();
+        await _db.SeedMenuProductAsync(menu);
+        var summary = await PublishAsync(menu);
+
+        _provider.TimeOut = true;
+        var timingOut = () => _service.DeliverAsync(summary.PublicationId);
+        await timingOut.Should().ThrowAsync<TaskCanceledException>();
+        _provider.TimeOut = false;
+
+        var state = await _db.PublicationAsync(summary.PublicationId);
+        state.Attempts.Should().Be(1);
+        state.LastError.Should().Contain("TaskCanceledException");
+    }
+
+    [Fact]
     public async Task AMenuWithNothingPublishableNeverCallsTheChannel()
     {
         var menu = await _db.SeedMenuAsync();
@@ -333,8 +400,10 @@ public sealed class CatalogPublicationTests : IClassFixture<CatalogPublishingTes
     [Fact]
     public async Task TheMigrationRollsBackAndReapplies()
     {
+        await _db.RunFixtureAsync("152-online-publishing-ordering.down.sql");
         await _db.RunFixtureAsync("147-online-catalog-publications.down.sql");
         await _db.RunFixtureAsync("147-online-catalog-publications.up.sql");
+        await _db.RunFixtureAsync("152-online-publishing-ordering.up.sql");
         var menu = await _db.SeedMenuAsync();
         await _db.SeedMenuProductAsync(menu);
 

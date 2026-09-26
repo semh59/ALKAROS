@@ -32,7 +32,7 @@ public sealed class AvailabilityTestDatabase : PgTestDatabase
                      "060-stock-movements.up.sql", "061-stock-balances.up.sql", "063-waste-records.up.sql",
                      "064-portion-reservations.up.sql", "065-reservation-balance-projection.up.sql",
                      "087-inventory-stock-balances-non-negative.up.sql", "144-yemeksepeti-product-mappings.up.sql",
-                     "148-online-availability-states.up.sql"
+                     "148-online-availability-states.up.sql", "152-online-publishing-ordering.up.sql"
                  })
         {
             await RunFixtureAsync(file);
@@ -92,6 +92,24 @@ public sealed class AvailabilityTestDatabase : PgTestDatabase
         return (reader.GetInt32(0), reader.IsDBNull(1) ? null : reader.GetInt32(1), reader.GetInt32(2), reader.IsDBNull(3) ? null : reader.GetString(3));
     }
 
+    /// <summary>V12-RMD-005: makes every failed row's wait (at most 30 min) due now, keeping their relative order.</summary>
+    public Task ExpireWaitsAsync() =>
+        ExecAsync("UPDATE online_ordering.availability_states SET next_attempt_at = next_attempt_at - interval '1 hour' WHERE next_attempt_at IS NOT NULL;");
+
+    /// <summary>V12-RMD-005: seconds until a row's next attempt is due.</summary>
+    public async Task<double> SecondsUntilNextAttemptAsync(string channel, Guid productId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT EXTRACT(EPOCH FROM next_attempt_at - now())::float8 FROM online_ordering.availability_states WHERE channel = $1 AND product_id = $2;");
+        command.Parameters.AddWithValue(channel);
+        command.Parameters.AddWithValue(productId);
+        return (double)(await command.ExecuteScalarAsync())!;
+    }
+
+    /// <summary>V12-RMD-005: changes a product's mapping multiplier without touching any stock balance.</summary>
+    public Task SetMultiplierAsync(Guid productId, decimal multiplier) =>
+        ExecAsync("UPDATE inventory.product_stock_mappings SET quantity_multiplier = $2 WHERE product_id = $1;", productId, multiplier);
+
     public async Task<long> StateCountAsync(string channel)
     {
         await using var command = DataSource.CreateCommand("SELECT count(*) FROM online_ordering.availability_states WHERE channel = $1;");
@@ -123,7 +141,12 @@ public sealed class RecordingChannel : IAvailabilityChannelPublisher
 
     public List<IReadOnlyList<ChannelAvailability>> Batches { get; } = [];
 
+    public List<IReadOnlyList<ChannelAvailability>> Rejected { get; } = [];
+
     public bool Fail { get; set; }
+
+    /// <summary>V12-RMD-005: the provider refuses any batch containing this SKU.</summary>
+    public string? RejectSku { get; set; }
 
     public TaskCompletionSource? Gate { get; set; }
 
@@ -136,6 +159,12 @@ public sealed class RecordingChannel : IAvailabilityChannelPublisher
             await gate.Task;
         if (Fail)
             throw new InvalidOperationException("channel unavailable");
+        if (RejectSku is { } rejected && availability.Any(a => a.ExternalId == rejected))
+        {
+            lock (Batches)
+                Rejected.Add(availability);
+            throw new InvalidOperationException("sku not in vendor catalog");
+        }
         lock (Batches)
             Batches.Add(availability);
     }
@@ -290,6 +319,7 @@ public sealed class AvailabilityPublicationTests : IClassFixture<AvailabilityTes
         {
             var pass = () => service.RunPassAsync();
             await pass.Should().ThrowAsync<InvalidOperationException>();
+            await _db.ExpireWaitsAsync(); // V12-RMD-005: a failed row waits; the test makes each wait due.
         }
 
         var failing = await _db.StateAsync(channel.Channel, product);
@@ -341,10 +371,99 @@ public sealed class AvailabilityPublicationTests : IClassFixture<AvailabilityTes
     }
 
     [Fact]
+    public async Task AFailedRowWaitsLongerAfterEachFailureAndIsNotRetriedBeforeItIsDue()
+    {
+        var product = await _db.SeedProductAsync((2m, 1m));
+        var channel = ChannelFor(product);
+        var service = Service(channel);
+        channel.Fail = true;
+
+        var first = () => service.RunPassAsync();
+        await first.Should().ThrowAsync<InvalidOperationException>();
+        var firstWait = await _db.SecondsUntilNextAttemptAsync(channel.Channel, product);
+        (await service.RunPassAsync()).ProductsDelivered.Should().Be(0); // not due yet: nothing is sent, so nothing throws
+
+        await _db.ExpireWaitsAsync();
+        var second = () => service.RunPassAsync();
+        await second.Should().ThrowAsync<InvalidOperationException>();
+        var secondWait = await _db.SecondsUntilNextAttemptAsync(channel.Channel, product);
+
+        firstWait.Should().BeInRange(25, 31);
+        secondWait.Should().BeInRange(55, 61);
+    }
+
+    [Fact]
+    public async Task OneBadSkuNeverBlocksTheOtherProducts()
+    {
+        var bad = await _db.SeedProductAsync((3m, 1m));
+        var good = await _db.SeedProductAsync((5m, 1m));
+        var later = await _db.SeedProductAsync((7m, 1m));
+        var channel = new RecordingChannel("rmd005-" + Guid.NewGuid().ToString("N")[..8]);
+        channel.Products.Add(new PublishedChannelProduct(bad, "sku-bad"));
+        channel.Products.Add(new PublishedChannelProduct(good, "sku-good"));
+        channel.RejectSku = "sku-bad";
+        var service = Service(channel);
+
+        for (var pass = 0; pass < 6; pass++)
+        {
+            if (pass == 3)
+                channel.Products.Add(new PublishedChannelProduct(later, "sku-later"));
+            try
+            {
+                await service.RunPassAsync();
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+            await _db.ExpireWaitsAsync();
+        }
+
+        (await _db.StateAsync(channel.Channel, good)).Delivered.Should().Be(5);
+        (await _db.StateAsync(channel.Channel, later)).Delivered.Should().Be(7);
+        (await _db.StateAsync(channel.Channel, bad)).Delivered.Should().BeNull();
+        // After its first failure the bad SKU is only ever retried alone.
+        channel.Rejected.Skip(1).Should().OnlyContain(batch => batch.Count == 1);
+    }
+
+    [Fact]
+    public async Task AMultiplierChangeIsPublishedEvenWithoutAnyStockMovement()
+    {
+        var product = await _db.SeedProductAsync((4m, 1m));
+        var channel = ChannelFor(product);
+        var service = Service(channel);
+        await service.RunPassAsync();
+
+        await _db.SetMultiplierAsync(product, 2m);
+        await service.RunPassAsync();
+
+        (await _db.StateAsync(channel.Channel, product)).Should().Be((2, (int?)2, 0, (string?)null));
+    }
+
+    [Fact]
+    public async Task AProductTheChannelNoLongerPublishesLeavesNoStaleState()
+    {
+        var kept = await _db.SeedProductAsync((1m, 1m));
+        var dropped = await _db.SeedProductAsync((1m, 1m));
+        var channel = new RecordingChannel("rmd005-" + Guid.NewGuid().ToString("N")[..8]);
+        channel.Products.Add(new PublishedChannelProduct(kept, "sku-kept"));
+        channel.Products.Add(new PublishedChannelProduct(dropped, "sku-dropped"));
+        var service = Service(channel);
+        await service.RunPassAsync();
+
+        channel.Products.RemoveAll(p => p.ProductId == dropped);
+        await service.RunPassAsync();
+
+        (await _db.StateCountAsync(channel.Channel)).Should().Be(1);
+    }
+
+    [Fact]
     public async Task TheMigrationRollsBackAndReapplies()
     {
+        await _db.RunFixtureAsync("152-online-publishing-ordering.down.sql");
         await _db.RunFixtureAsync("148-online-availability-states.down.sql");
         await _db.RunFixtureAsync("148-online-availability-states.up.sql");
+        await _db.RunFixtureAsync("152-online-publishing-ordering.up.sql");
         var product = await _db.SeedProductAsync((1m, 1m));
         var channel = ChannelFor(product);
 
