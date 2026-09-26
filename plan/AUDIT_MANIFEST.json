@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1378,
-  "markdown_line_count": 105664,
-  "markdown_byte_count": 6086371,
+  "markdown_file_count": 1379,
+  "markdown_line_count": 105720,
+  "markdown_byte_count": 6089221,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "89EA952F484B8B37908C99E32C4F1698B7071871182D84872E8DA5B5F15E6711",
-      "lines": 2654,
-      "bytes": 387918,
+      "sha256": "A8C89BD319D10ED17831D27A18BC3BA8C9F873DE645A726955EDC450045A373F",
+      "lines": 2655,
+      "bytes": 388087,
       "utf8": true
     },
     {
@@ -7557,6 +7557,13 @@
       "sha256": "7ED1EB71608117FA1532EEAEE095CC09C2D71247C31C08D52105121B573AE868",
       "lines": 69,
       "bytes": 4147,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-343-parked-cart-cleared-on-shift-close.md",
+      "sha256": "66BE30BA318CA90FED74AEFC9B6AE40626EC341CE2DF67C4B6CB057BCA9A6988",
+      "lines": 55,
+      "bytes": 2681,
       "utf8": true
     },
     {
