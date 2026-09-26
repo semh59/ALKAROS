@@ -120,6 +120,48 @@ public sealed class QrConfirmationReservationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AcceptingAQrOrderLocksEveryStockRowInTheGlobalOrderBeforeTheHoldTakesAny()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, productStock, modifierStock) = await _database.SeedQrPendingOrderWithModifierStockAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        // Another transaction holds the modifier's row, which sorts first.
+        await using var blocker = await _database.DataSource.OpenConnectionAsync();
+        await using var blockerTransaction = await blocker.BeginTransactionAsync();
+        await LockRowAsync(blocker, blockerTransaction, modifierStock);
+
+        var accept = client.SendAsync(JsonRequest(AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+        await Task.Delay(700);
+
+        // The acceptance waits on the first row of the order and has not taken the product's row out of turn.
+        bool productRowFree;
+        await using (var probe = await _database.DataSource.OpenConnectionAsync())
+        await using (var probeTransaction = await probe.BeginTransactionAsync())
+        {
+            await using var tryLock = new Npgsql.NpgsqlCommand("SELECT pg_try_advisory_xact_lock(hashtext($1)::bigint);", probe, probeTransaction);
+            tryLock.Parameters.AddWithValue($"{productStock.Item:N}:{productStock.Location:N}");
+            productRowFree = (bool)(await tryLock.ExecuteScalarAsync())!;
+            await probeTransaction.RollbackAsync();
+        }
+
+        await blockerTransaction.RollbackAsync();
+        using var response = await accept;
+
+        Assert.True(productRowFree, "the product row must not be locked before the modifier row");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    private static async Task LockRowAsync(Npgsql.NpgsqlConnection connection, Npgsql.NpgsqlTransaction transaction, (Guid Item, Guid Location) row)
+    {
+        await using var command = new Npgsql.NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+        command.Parameters.AddWithValue($"{row.Item:N}:{row.Location:N}");
+        await command.ExecuteNonQueryAsync();
+    }
+
+    [Fact]
     public async Task RejectingAQrOrderFreesTheTableAndNeverClaimsStock()
     {
         var terminalId = Guid.NewGuid();

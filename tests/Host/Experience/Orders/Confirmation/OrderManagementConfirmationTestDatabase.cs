@@ -624,6 +624,90 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         return (order.Id, tableId, productId, submissionId);
     }
 
+    /// <summary>
+    /// V12-RMD-003: a pending QR order whose one item carries a modifier, the modifier's stock row sorting BEFORE
+    /// the product's (so a lock taken in the hold's order and then the consumption's would invert them).
+    /// </summary>
+    public async Task<(Guid OrderId, (Guid Item, Guid Location) ProductStock, (Guid Item, Guid Location) ModifierStock)>
+        SeedQrPendingOrderWithModifierStockAsync()
+    {
+        var first = Guid.NewGuid();
+        var second = Guid.NewGuid();
+        var (modifierStockId, productStockId) = first.CompareTo(second) < 0 ? (first, second) : (second, first);
+        var productLocation = Guid.NewGuid();
+        var modifierLocation = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var modifierId = Guid.NewGuid();
+        var tableId = Guid.NewGuid();
+        var suffix = productId.ToString("N")[..8];
+
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status)
+            VALUES (@table_id, @table_number, 4, true, 'Reserved');
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
+            VALUES (@product_id, @sku, 'Peynirli Pide', 1, 1, true);
+            INSERT INTO inventory.stock_locations (id, code, name, location_type)
+            VALUES (@product_location, @product_location_code, 'Pide Tezgahı', 'Counter'),
+                   (@modifier_location, @modifier_location_code, 'Peynir Dolabı', 'Counter');
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+            VALUES (@product_stock, @product_stock_code, 'Pide Hamuru', 'Portion', 'adet', @product_location),
+                   (@modifier_stock, @modifier_stock_code, 'Kaşar', 'RawMaterial', 'adet', @modifier_location);
+            INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier)
+            VALUES (@product_id, @product_stock, 1.0);
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
+            VALUES (@group_id, @group_code, 'Ekstralar', 2, 0, 3, true);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@modifier_id, @group_id, @modifier_code, 'Ekstra kaşar', 15, true);
+            INSERT INTO catalog.product_modifier_groups (product_modifier_group_id, product_id, modifier_group_id)
+            VALUES (gen_random_uuid(), @product_id, @group_id);
+            INSERT INTO inventory.modifier_stock_mappings (modifier_id, stock_item_id, quantity_multiplier)
+            VALUES (@modifier_id, @modifier_stock, 1.0);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES (gen_random_uuid(), @product_stock, @product_location, 5, 0, 5),
+                   (gen_random_uuid(), @modifier_stock, @modifier_location, 5, 0, 5);
+            """,
+            ("table_id", tableId),
+            ("table_number", "RMD003-" + suffix),
+            ("product_id", productId),
+            ("sku", "rmd003-" + suffix),
+            ("product_location", productLocation),
+            ("product_location_code", "RMD003P-" + suffix),
+            ("modifier_location", modifierLocation),
+            ("modifier_location_code", "RMD003M-" + suffix),
+            ("product_stock", productStockId),
+            ("product_stock_code", "RMD003PS-" + suffix),
+            ("modifier_stock", modifierStockId),
+            ("modifier_stock_code", "RMD003MS-" + suffix),
+            ("modifier_id", modifierId),
+            ("group_id", Guid.NewGuid()),
+            ("group_code", "RMD003G-" + suffix),
+            ("modifier_code", "RMD003MOD-" + suffix));
+
+        var itemId = Guid.NewGuid();
+        var orderItem = new OrderItem(
+            itemId, Guid.NewGuid(), productId, "Peynirli Pide",
+            quantity: 1, unitPrice: 150m, taxRate: 10m,
+            modifiers: [new OrderItemModifier(Guid.NewGuid(), itemId, modifierId, "Ekstra kaşar")],
+            status: OrderItemState.Active, kitchenState: KitchenState.Sent);
+        var order = new Order(
+            Guid.NewGuid(),
+            OrderSource.Qr,
+            "RMD003-" + suffix,
+            new[] { orderItem },
+            tableId: tableId,
+            sourceReferenceId: Guid.NewGuid(),
+            status: OrderState.PendingConfirmation,
+            confirmationStatus: ConfirmationStatus.Pending);
+        await new PostgresOrderRepository(DataSource).AddAsync(order);
+        await ExecuteAsync(
+            "UPDATE table_mgmt.tables SET current_order_id = @order_id WHERE table_id = @table_id;",
+            ("order_id", order.Id),
+            ("table_id", tableId));
+
+        return (order.Id, (productStockId, productLocation), (modifierStockId, modifierLocation));
+    }
+
     /// <summary>V12-QRO-003: (status, channel, channel reference) of every hold written for an order.</summary>
     public async Task<IReadOnlyList<(string Status, string Channel, string Reference)>> GetHoldsForOrderAsync(Guid orderId)
     {

@@ -17,6 +17,12 @@ public enum CrossChannelReservationOutcome
     /// <summary>The same order already holds exactly these lines; nothing new was written.</summary>
     Replayed,
 
+    /// <summary>
+    /// V12-RMD-003: the same order's holds for exactly these lines were already consumed (the order was accepted
+    /// by another request). Nothing is held and nothing was written; the caller must not consume again.
+    /// </summary>
+    AlreadyConsumed,
+
     /// <summary>At least one stock item lacks available quantity; nothing was written.</summary>
     OutOfStock,
 
@@ -80,6 +86,9 @@ public sealed record CrossChannelReservationResult(
 
     internal static CrossChannelReservationResult Held(CrossChannelReservationOutcome outcome, IReadOnlyList<CrossChannelHold> holds) =>
         new(outcome, holds, Array.Empty<StockShortage>(), Array.Empty<UnconfiguredLine>());
+
+    internal static CrossChannelReservationResult AlreadyConsumed() =>
+        new(CrossChannelReservationOutcome.AlreadyConsumed, Array.Empty<CrossChannelHold>(), Array.Empty<StockShortage>(), Array.Empty<UnconfiguredLine>());
 
     internal static CrossChannelReservationResult OutOfStock(IReadOnlyList<StockShortage> shortages) =>
         new(CrossChannelReservationOutcome.OutOfStock, Array.Empty<CrossChannelHold>(), shortages, Array.Empty<UnconfiguredLine>());

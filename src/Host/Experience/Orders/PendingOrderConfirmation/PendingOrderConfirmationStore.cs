@@ -112,7 +112,14 @@ public sealed class PendingOrderConfirmationStore
         await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
         {
             if (order.Source == OrderSource.Qr)
-                await ReserveQrPortionsAsync(order, actorId, connection, transaction, cancellationToken).ConfigureAwait(false);
+            {
+                // Every stock row this acceptance will touch (products and modifiers) is locked first, in the one
+                // global order, before the hold locks a subset of them (V12-RMD-003).
+                await _stockConsumption.LockStockRowsAsync(order.Items, connection, transaction, cancellationToken)
+                    .ConfigureAwait(false);
+                await ReserveQrPortionsAsync(order, expectedRowVersion, actorId, connection, transaction, cancellationToken)
+                    .ConfigureAwait(false);
+            }
             await _stockConsumption.ConsumeForAcceptedOrderAsync(order, actorId, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
             newVersion = await _orders.SaveAsync(accepted, expectedRowVersion, connection, transaction, cancellationToken)
@@ -253,6 +260,7 @@ public sealed class PendingOrderConfirmationStore
     /// </summary>
     private async Task ReserveQrPortionsAsync(
         Order order,
+        long expectedRowVersion,
         Guid actorId,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
@@ -281,6 +289,12 @@ public sealed class PendingOrderConfirmationStore
             case CrossChannelReservationOutcome.Reserved:
             case CrossChannelReservationOutcome.Replayed:
                 return;
+            case CrossChannelReservationOutcome.AlreadyConsumed:
+            {
+                // A concurrent acceptance of this order committed first: its version is the one to report.
+                var current = await _orders.GetByIdAsync(order.Id, cancellationToken).ConfigureAwait(false);
+                throw new StaleOrderRowVersionException(order.Id, expectedRowVersion, current?.RowVersion ?? expectedRowVersion);
+            }
             case CrossChannelReservationOutcome.OutOfStock:
             {
                 var shortage = result.Shortages[0];

@@ -137,14 +137,7 @@ public sealed class OrderStockConsumptionService
         // location) pair this call will touch up front, and lock them all
         // in one fixed, globally-consistent order — never the order this
         // particular order happened to list its items in.
-        var requiredLocks = await CollectRequiredLocksAsync(items, cancellationToken).ConfigureAwait(false);
-        foreach (var (stockItemId, stockLocationId) in requiredLocks
-            .OrderBy(pair => pair.StockItemId)
-            .ThenBy(pair => pair.StockLocationId))
-        {
-            await _balances.AcquireOnHandLockAsync(stockItemId, stockLocationId, connection, transaction, cancellationToken)
-                .ConfigureAwait(false);
-        }
+        await LockStockRowsAsync(items, connection, transaction, cancellationToken).ConfigureAwait(false);
 
         foreach (var item in items)
         {
@@ -219,6 +212,30 @@ public sealed class OrderStockConsumptionService
     /// failing the whole order, since this data is informational, not
     /// operational.
     /// </summary>
+    /// <summary>
+    /// V12-RMD-003: locks every (stock item, location) row consuming <paramref name="items"/> would touch —
+    /// products and their modifiers — in the one global order. A caller that takes further stock locks before
+    /// consuming (QR acceptance's cross-channel hold) calls this first, so every lock of its transaction is
+    /// taken in that order; the locks are transaction-scoped and re-entrant, so consuming afterwards re-takes
+    /// them for free.
+    /// </summary>
+    public async Task LockStockRowsAsync(
+        IReadOnlyCollection<OrderItem> items,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+        var requiredLocks = await CollectRequiredLocksAsync(items, cancellationToken).ConfigureAwait(false);
+        foreach (var (stockItemId, stockLocationId) in requiredLocks
+            .OrderBy(pair => pair.StockItemId)
+            .ThenBy(pair => pair.StockLocationId))
+        {
+            await _balances.AcquireOnHandLockAsync(stockItemId, stockLocationId, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
+        }
+    }
+
     private async Task RecordTheoreticalConsumptionAsync(
         OrderItem item,
         NpgsqlConnection connection,

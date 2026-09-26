@@ -13,7 +13,9 @@ namespace ALKAROS.Inventory.CrossChannelReservation;
 /// caller's transaction, and the same per-row advisory lock order acceptance's consumption
 /// takes (<see cref="IStockBalanceRepository.AcquireOnHandLockAsync"/>), acquired in the same
 /// global (stock item, location) order, so a hold and a direct sale of the same portion are
-/// serialized and can never deadlock against each other.
+/// serialized. The order holds within one call; a caller that goes on to lock further rows in the
+/// same transaction (a consumption touching modifier stock) must lock that whole set first, in the
+/// same order, before calling here — as QR acceptance does (V12-RMD-003).
 /// </summary>
 public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArbiter
 {
@@ -98,7 +100,11 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
         {
             if (!IsSameRequest(existing, planned))
                 throw new CrossChannelReservationConflictException(request.OrderId);
-            return CrossChannelReservationResult.Held(CrossChannelReservationOutcome.Replayed, existing);
+            // Held again only while every hold is still Reserved; once consumed, a repeat must never read as
+            // "held" or its caller would consume the portion a second time (V12-RMD-003).
+            return existing.All(h => h.Status == "Reserved")
+                ? CrossChannelReservationResult.Held(CrossChannelReservationOutcome.Replayed, existing)
+                : CrossChannelReservationResult.AlreadyConsumed();
         }
 
         var available = await LoadAvailableAsync(required.Select(r => r.Pair).ToList(), connection, transaction, cancellationToken)

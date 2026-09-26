@@ -194,6 +194,13 @@ public sealed class YemeksepetiOrderIntakeService
                 SystemActorId,
                 items.Select(item => new CrossChannelReservationLine(item.Id, item.ProductId, item.Quantity)).ToList()),
             connection, transaction, cancellationToken).ConfigureAwait(false);
+        if (hold.Outcome == CrossChannelReservationOutcome.AlreadyConsumed)
+        {
+            // Cannot happen for a fresh order id; if it ever does, it is not a stock refusal and must never ask
+            // the provider to cancel. Failing lets processing retry, where the existing order is found first.
+            throw new InvalidOperationException($"Online order '{orderId}' already had its holds consumed.");
+        }
+
         if (!hold.IsHeld)
         {
             await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
