@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1365,
-  "markdown_line_count": 104763,
-  "markdown_byte_count": 6032885,
+  "markdown_file_count": 1366,
+  "markdown_line_count": 104845,
+  "markdown_byte_count": 6038110,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2542,9 +2542,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "E782A39C5EABD3B137DCAFCF05E23D7E3BFA7C81830A55013E89C67538FACC07",
-      "lines": 2641,
-      "bytes": 385706,
+      "sha256": "FA56B48C878330FA24308423D61BD7F1E2DB857678E10EF4D55E369BB1736FB5",
+      "lines": 2642,
+      "bytes": 385890,
       "utf8": true
     },
     {
@@ -7483,6 +7483,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-333-recipe-cost-snapshot-stock-unit-mapping-mandatory.md",
+      "sha256": "13794B5B80A031239DC0B00E83589AE744D98FB60D0177CE2A53A8F73BA256DA",
+      "lines": 80,
+      "bytes": 4949,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -8464,9 +8471,9 @@
     },
     {
       "path": "plan/v1.2/online-operations-ui/V12-OUI-003-online-platform-credentials.md",
-      "sha256": "5FE61547300589240EC35F3F2225500F4215D199ADEAC6F1B3866A7B11DB29E5",
-      "lines": 58,
-      "bytes": 2602,
+      "sha256": "D7CC4E56672E48049540F9170A0648F3AF4124EDDCED900638A8DBC2A18EE5AC",
+      "lines": 59,
+      "bytes": 2694,
       "utf8": true
     },
     {
