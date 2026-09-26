@@ -50,6 +50,41 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await expect(page.getByText('₺0,00').last()).toBeVisible();
   });
 
+  // V1-RMD-343 (independent 2026-09-26 audit, orta seviye bulgu): a parked
+  // (beklet) cart had no vardiya (shift) boundary at all - it stayed in
+  // localStorage indefinitely, recallable by whoever opened the NEXT shift
+  // on this same terminal. Closing the shift is exactly that boundary.
+  test('kasa kapatıldığında bekletilen sepetler temizlenir', async ({ page }) => {
+    const seed = readSeed();
+    await page.goto('/cashier/payments/cash-session/index.html');
+    await page.evaluate(() => {
+      localStorage.setItem('alkaros_cashier_parked', JSON.stringify([
+        { id: 'e2e-parked-1', items: [{ productName: 'Test', quantity: 1, unitPrice: 10 }], parkedAt: '12:00' },
+      ]));
+    });
+    expect(await page.evaluate(() => localStorage.getItem('alkaros_cashier_parked'))).not.toBeNull();
+
+    await page.locator('#username').fill(seed.cashierUsername);
+    await page.locator('#password').fill(seed.cashierPassword);
+    await page.getByRole('button', { name: 'Giriş Yap' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Vardiyayı Başlat' })).toBeVisible({ timeout: 15_000 });
+    await page.locator('#opening-balance').fill('0');
+    await page.getByRole('button', { name: 'Kasayı Aç' }).click();
+
+    await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Sayıma Başla' }).click();
+    await expect(page.getByRole('heading', { name: 'Çekmecedeki Nakdi Sayın' })).toBeVisible();
+    await page.locator('#counted-amount').fill('0');
+    await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Fark Teyidi' })).toBeVisible();
+    await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Kasa Kapatıldı' })).toBeVisible({ timeout: 10_000 });
+    expect(await page.evaluate(() => localStorage.getItem('alkaros_cashier_parked'))).toBeNull();
+  });
+
   test('kapalı süpervizör toleransını aşan fark için açıklama zorunlu tutulur', async ({ page }) => {
     const seed = readSeed();
     await loginOnCashSessionPage(page, seed);

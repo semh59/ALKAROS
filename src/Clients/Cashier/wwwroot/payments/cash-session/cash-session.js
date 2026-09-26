@@ -335,6 +335,19 @@
       state.closeResult = result.body;
       state.error = null;
       state.phase = 'closed';
+      // V1-RMD-343 (independent 2026-09-26 audit, orta seviye bulgu): a
+      // parked (beklet) cart is per-terminal and per-shift by intent (a
+      // ticket set aside mid-service), but cashier-app.js's own
+      // alkaros_cashier_parked key had no vardiya boundary at all - a
+      // cart parked before this close stayed recallable by whoever opens
+      // the NEXT shift on this same terminal. Closing the shift is exactly
+      // that boundary.
+      try {
+        window.localStorage.removeItem('alkaros_cashier_parked');
+      } catch (err) {
+        // localStorage kullanılamıyor olabilir (gizli sekme); vardiya
+        // kapanışını bu yüzden engellemek anlamsız.
+      }
       render();
     }).catch(function () {
       state.busy = false;
