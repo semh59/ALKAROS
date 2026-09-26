@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1344,
-  "markdown_line_count": 103502,
-  "markdown_byte_count": 5965110,
+  "markdown_file_count": 1345,
+  "markdown_line_count": 103550,
+  "markdown_byte_count": 5969485,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DD87D7FF33D8230A8F6D95620B36CA80F2965F950FDD13C4216A9150070282A5",
-      "lines": 2620,
-      "bytes": 382208,
+      "sha256": "BB3728B39E232671A214BBD76FC3F71B39E326D7FC6AB0043C4742795F6F6C27",
+      "lines": 2621,
+      "bytes": 382385,
       "utf8": true
     },
     {
@@ -7445,6 +7445,13 @@
       "sha256": "8D87CFC60D3B5D47A29C0732538B1419CE9A65A4608BD2B0A2F05C434ECC4A66",
       "lines": 51,
       "bytes": 3980,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-329-plan-audit-evidence-truth-gap-investigated.md",
+      "sha256": "9934D6CDB9A8BFF393DFC1F07A960C88BC0BE73C9AE2C8DEE18887F5FF907B3A",
+      "lines": 47,
+      "bytes": 4198,
       "utf8": true
     },
     {
