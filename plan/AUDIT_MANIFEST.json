@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1370,
-  "markdown_line_count": 105074,
-  "markdown_byte_count": 6050611,
+  "markdown_file_count": 1371,
+  "markdown_line_count": 105141,
+  "markdown_byte_count": 6054267,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9215AED606C8AFFCA84BABD9F375A0A7F04B31666B048D7533EC317A83A4A8FB",
-      "lines": 2646,
-      "bytes": 386529,
+      "sha256": "C3A2250F5A7D67A555140AD9BCC8E06F32FDAA8D5097B305720CD21C5FB60A06",
+      "lines": 2647,
+      "bytes": 386695,
       "utf8": true
     },
     {
@@ -7501,6 +7501,13 @@
       "sha256": "82255F117297407C391E1AC9AD0B79E2BC85D1D710183F23EB9A7E9376CC341A",
       "lines": 67,
       "bytes": 3778,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-335-caddy-security-response-headers.md",
+      "sha256": "BB3969324F125522A65EB9535A5641580C46CD1A85E036A1E489053637261E93",
+      "lines": 66,
+      "bytes": 3490,
       "utf8": true
     },
     {
