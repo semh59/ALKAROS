@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1336,
-  "markdown_line_count": 103079,
-  "markdown_byte_count": 5932399,
+  "markdown_file_count": 1338,
+  "markdown_line_count": 103174,
+  "markdown_byte_count": 5939119,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "0335E9F9A6BF28A33AC6DE73CA0F7F4C3BA1A957A69666BAEED7EC7D4731F9BB",
-      "lines": 2612,
-      "bytes": 380853,
+      "sha256": "375ADE510304AC717833E045D028FE1B37BCCB348B73EA4A99DEECED2A256E59",
+      "lines": 2614,
+      "bytes": 381191,
       "utf8": true
     },
     {
@@ -7389,6 +7389,20 @@
       "sha256": "0D84274DF9A86D411D02B266C90FC213F5CF3059318BD9C0B7E12A032ECA02FE",
       "lines": 57,
       "bytes": 4714,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-321-consistency-audit-turkish-identifier-regex.md",
+      "sha256": "16F7BFC9F0BD94471A8694F32A7A60AC7E6E1B4F8001E4C2B69D005591944FB6",
+      "lines": 46,
+      "bytes": 2867,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-322-task-scope-enforce-on-push.md",
+      "sha256": "BF28DF12993AD3BC202F7F3315E32C393A12E3BF9005269112FA05CFD5B61182",
+      "lines": 47,
+      "bytes": 3515,
       "utf8": true
     },
     {

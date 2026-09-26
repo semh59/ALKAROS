@@ -65,9 +65,14 @@ TURKISH_RE = re.compile(f"[{TURKISH_CHARS}]")
 
 CODE_SUFFIXES = (".cs", ".ts", ".tsx")
 COMMENT_PREFIX_RE = re.compile(r"^\s*(//|///|\*|#)")
+# V1-RMD-321 (independent 2026-09-26 audit, finding K12): the character class used to stop at
+# [A-Za-z0-9_] - a genuinely Turkish identifier (e.g. "var müşteriAdi") was cut off at the first Turkish
+# letter, so IDENTIFIER_RE.search(line).group(0) never actually contained the Turkish character the check
+# below searches for. Extended to include the Turkish alphabet's own letters so the FULL identifier is
+# captured, matching the same TURKISH_CHARS this module already uses for its comment check.
 IDENTIFIER_RE = re.compile(
-    r"\b(class|interface|record|enum|struct|namespace|func|function|const|let|var|type|def)\s+"
-    r"[A-Za-z_][A-Za-z0-9_]*"
+    rf"\b(class|interface|record|enum|struct|namespace|func|function|const|let|var|type|def)\s+"
+    rf"[A-Za-z_{TURKISH_CHARS}][A-Za-z0-9_{TURKISH_CHARS}]*"
 )
 # Currency proper noun with no English equivalent (Turkish lira minor unit).
 COMMENT_ALLOW_RE = re.compile(r"kuru[sş]", re.IGNORECASE)

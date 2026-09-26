@@ -25,7 +25,6 @@ env:
 jobs:
   enforce:
     name: Task scope enforcement
-    if: github.event_name != 'push'
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -51,31 +50,71 @@ jobs:
             $base = "${{ github.event.inputs.diff-base }}"
           }
           "base=$base" >> $env:GITHUB_OUTPUT
-      - name: Resolve Task ID
+      - name: Resolve Task ID(s)
         id: task
         shell: pwsh
         run: |
-          $taskId = "${{ github.event.inputs.task-id || 'V1-RMD-007' }}"
+          # V1-RMD-321 (independent 2026-09-26 audit, finding K13): this job used to skip itself entirely
+          # on a push (`if: github.event_name != 'push'`) - the repository's actual, real-world workflow is
+          # a direct push to master, never a pull_request, so Owned-surface enforcement never ran on a
+          # single real change in this repo's history. Every source this step can search for a Task ID
+          # (PR title/body, or now a push's HEAD commit message) can legitimately name MORE than one -
+          # several fixes closed together in one commit, each with its own plan task - so every match is
+          # collected, not just the first, and the next step validates the union of their allowlists.
+          $taskIds = @()
           if ("${{ github.event_name }}" -eq "pull_request") {
             $candidates = @(
               "${{ github.event.pull_request.title }}",
               "${{ github.event.pull_request.body }}"
             )
-            foreach ($candidate in $candidates) {
-              if ($candidate -match "V\d+-[A-Z]+-\d+") {
-                $taskId = $matches[0]
-                break
-              }
+          } elseif ("${{ github.event_name }}" -eq "push") {
+            $candidates = @("${{ github.event.head_commit.message }}")
+          } else {
+            $candidates = @()
+          }
+          foreach ($candidate in $candidates) {
+            $found = [regex]::Matches($candidate, "V\d+-[A-Z]+-\d+")
+            foreach ($m in $found) {
+              if ($taskIds -notcontains $m.Value) { $taskIds += $m.Value }
             }
           }
-          "task-id=$taskId" >> $env:GITHUB_OUTPUT
+          if ($taskIds.Count -eq 0) {
+            $taskIds = @("${{ github.event.inputs.task-id || 'V1-RMD-007' }}")
+          }
+          "task-ids=$($taskIds -join ',')" >> $env:GITHUB_OUTPUT
       - name: Run task-scope validation
         shell: pwsh
         run: |
-          python tools/task-scope/task_scope_tool.py `
-            --task-id "${{ steps.task.outputs.task-id }}" `
-            --diff-base "${{ steps.base.outputs.base }}" `
-            --format text
+          # A path only counts as a genuine scope violation when NONE of the referenced tasks' Owned
+          # surfaces cover it - each task is validated independently (task_scope_tool.py's own model is
+          # one task per run), then the reported out-of-scope paths are intersected across all of them.
+          $taskIds = "${{ steps.task.outputs.task-ids }}".Split(",")
+          $violationSets = @()
+          foreach ($taskId in $taskIds) {
+            $raw = python tools/task-scope/task_scope_tool.py `
+              --task-id "$taskId" `
+              --diff-base "${{ steps.base.outputs.base }}" `
+              --format json
+            $parsed = $raw | ConvertFrom-Json
+            if ($parsed.metadata_errors.Count -gt 0) {
+              Write-Error "Task metadata error for $taskId : $($parsed.metadata_errors -join '; ')"
+              exit 1
+            }
+            $violationSets += @(, ($parsed.findings | ForEach-Object { $_.path }))
+          }
+          # A plain incrementing loop, not a "1..($n-1)" range slice - that range counts DOWN (to 1,0) and
+          # produces an out-of-bounds index when there is only one task id, which behaves inconsistently
+          # across PowerShell editions instead of cleanly degenerating to "no other set to intersect with".
+          $sharedViolations = $violationSets[0]
+          for ($i = 1; $i -lt $violationSets.Count; $i++) {
+            $set = $violationSets[$i]
+            $sharedViolations = $sharedViolations | Where-Object { $set -contains $_ }
+          }
+          if ($sharedViolations.Count -gt 0) {
+            Write-Error "Scope violations not covered by any of [$($taskIds -join ', ')]: $($sharedViolations -join ', ')"
+            exit 1
+          }
+          Write-Output "OK: every changed path is within scope for at least one of [$($taskIds -join ', ')]"
 
   validate:
     name: Locked build, tests and supply chain
