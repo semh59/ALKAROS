@@ -111,6 +111,9 @@ public sealed class PostgresChannelReportService : IChannelReportService
                 FROM online_ordering.yemeksepeti_webhook_inbox i
                 WHERE i.processing_outcome IN ('Rejected', 'Diverged')
                   AND i.order_id IS NULL
+                  -- V12-RMD-006: only events before the window's end can decide an order's first refusal time
+                  -- there (the minimum below is unchanged by it), so the inbox is never scanned whole.
+                  AND i.received_at < $2
                   AND NOT EXISTS (SELECT 1 FROM orders.orders o
                                   WHERE o.source = 'Online' AND o.source_external_id = i.external_order_id)
                 GROUP BY i.external_order_id
@@ -206,7 +209,8 @@ public sealed class PostgresChannelReportService : IChannelReportService
         await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
         return new ChannelReportCheck(
             reader.GetInt32(0), reader.GetDecimal(1), reader.GetDecimal(2),
-            days.Sum(row => row.OrdersReceived), days.Sum(row => row.AcceptedValue), days.Sum(row => row.AcceptedNetValue));
+            days.Sum(row => row.OrdersReceived), days.Sum(row => row.AcceptedValue), days.Sum(row => row.AcceptedNetValue),
+            days.All(row => row.AwaitingConfirmation + row.Accepted + row.Rejected + row.Cancelled == row.OrdersReceived));
     }
 
     private static void AddWindow(NpgsqlCommand command, ChannelReportFilter filter, DateTimeOffset start, DateTimeOffset end)

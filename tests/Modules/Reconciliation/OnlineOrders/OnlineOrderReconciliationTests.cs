@@ -381,6 +381,85 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.CaseNotActive);
     }
 
+    private async Task DismissAsync(string key)
+    {
+        var record = await ActiveCaseAsync(key);
+        await _cases.TransitionCaseStatusAsync(
+            new TransitionCaseStatusRequest(record.CaseId, CaseStatus.Dismissed, record.RowVersion, Manager, "Bilinçli olarak izlenmiyor."));
+    }
+
+    [Fact]
+    public async Task ADismissedFailedEventOrDeadUpdateIsNotOpenedAgain()
+    {
+        var failedInbox = await _database.SeedInboxAsync(NewExternalId(), "Failed", attempts: 5);
+        var externalId = NewExternalId();
+        await _database.SeedOnlineOrderAsync(externalId, "Completed", 100m);
+        var dead = await _database.SeedStatusUpdateAsync(externalId, "dead");
+        var failedPair = new ProviderEventFailedSourcePair(_dataSource);
+        var deadPair = new LocallyAcceptedProviderUnknownSourcePair(_dataSource);
+        await Scanner(failedPair, deadPair).ScanAllAsync();
+        var failedKey = ProviderEventFailedSourcePair.DeduplicationPrefix + failedInbox;
+        var deadKey = LocallyAcceptedProviderUnknownSourcePair.DeduplicationPrefix + dead;
+
+        await DismissAsync(failedKey);
+        await DismissAsync(deadKey);
+        await Scanner(failedPair, deadPair).ScanAllAsync();
+
+        (await CasesForKeyAsync(failedKey)).Should().Be(1);
+        (await CasesForKeyAsync(deadKey)).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task ADismissedAvailabilityDivergenceStaysQuietUntilTheQuantityChanges()
+    {
+        var product = Guid.NewGuid();
+        await _database.SeedAvailabilityStateAsync("yemeksepeti", product, desired: 0, delivered: 4, attempts: 0, desiredMinutesAgo: 30);
+        var pair = new AvailabilityNotDeliveredSourcePair(_dataSource);
+        await Scanner(pair).ScanAllAsync();
+        var key = $"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}";
+
+        await DismissAsync(key);
+        await Scanner(pair).ScanAllAsync();
+        (await CasesForKeyAsync(key)).Should().Be(1);
+
+        await _database.CountAsync(
+            "WITH moved AS (UPDATE online_ordering.availability_states SET desired_quantity = 1, desired_at = now(), delivery_attempts = 3 WHERE product_id = $1 RETURNING 1) SELECT count(*) FROM moved;",
+            product);
+        await Scanner(pair).ScanAllAsync();
+        (await CasesForKeyAsync(key)).Should().Be(2);
+        (await _cases.GetActiveCaseByDedupKeyAsync(key)).Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task ASourceWithMoreDivergencesThanOneScanReadsSaysSo()
+    {
+        var marker = "bulk-" + Guid.NewGuid().ToString("N")[..8];
+        try
+        {
+            await _database.CountAsync(
+                """
+                WITH inserted AS (
+                    INSERT INTO online_ordering.yemeksepeti_webhook_inbox
+                        (inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
+                         processed_at, processing_outcome, processing_attempts)
+                    SELECT gen_random_uuid(), $1::text || g, $1::text || g, 'RECEIVED', $1::text || g, '\x00'::bytea, now(), 'Failed', 5
+                    FROM generate_series(1, 5001) g
+                    RETURNING 1)
+                SELECT count(*) FROM inserted;
+                """, marker);
+
+            var results = await Scanner(new ProviderEventFailedSourcePair(_dataSource)).ScanAllAsync();
+
+            results.Should().ContainSingle().Which.FailureReason.Should().Be(OnlineOrderReconciliationScanner.SourceTooLargeReason);
+        }
+        finally
+        {
+            await _database.CountAsync(
+                "WITH gone AS (DELETE FROM online_ordering.yemeksepeti_webhook_inbox WHERE external_order_id LIKE $1::text || '%' RETURNING 1) SELECT count(*) FROM gone;",
+                marker);
+        }
+    }
+
     [Fact]
     public async Task RetryAndResolveRefuseCasesThatAreNotOnlineOrderCases()
     {

@@ -34,15 +34,21 @@ public sealed class AvailabilityNotDeliveredSourcePair : IOnlineOrderSourcePair
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT channel, product_id, external_sku
-            FROM online_ordering.availability_states
-            WHERE delivered_quantity IS DISTINCT FROM desired_quantity
-              AND (desired_at < now() - make_interval(mins => $1) OR delivery_attempts >= $2)
-            ORDER BY channel, product_id
+            SELECT s.channel, s.product_id, s.external_sku
+            FROM online_ordering.availability_states s
+            WHERE s.delivered_quantity IS DISTINCT FROM s.desired_quantity
+              AND (s.desired_at < now() - make_interval(mins => $1) OR s.delivery_attempts >= $2)
+              -- V12-RMD-006: a dismissal silences the divergence a person looked at; a new quantity after it
+              -- (desired_at moves only when the quantity changes) is a new divergence and opens a new case.
+              AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
+                              WHERE rc.deduplication_key = $3 || s.channel || ':' || s.product_id::text
+                                AND rc.status = 'Dismissed' AND rc.resolved_at >= s.desired_at)
+            ORDER BY s.channel, s.product_id
             LIMIT {OnlineOrderSourceScan.MaxScanRows + 1};
             """);
         command.Parameters.AddWithValue(ToleranceMinutes);
         command.Parameters.AddWithValue(FailedAttempts);
+        command.Parameters.AddWithValue(DeduplicationPrefix);
 
         return await OnlineOrderSourceScan.ReadAsync(command, Name, reader =>
         {

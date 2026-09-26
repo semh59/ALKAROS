@@ -215,7 +215,7 @@ public static class OnlineOperationsEndpoints
         return orders;
     }
 
-    /// <summary>Provider events of the last day that ended without an order, or keep failing.</summary>
+    /// <summary>Provider events of the last day that ended without an order (since V12-RMD-006 also a status or delivery kind the mapper does not know), or keep failing.</summary>
     private static async Task<IReadOnlyList<OnlineOperationsProblemV1>> ReadProblemsAsync(
         NpgsqlDataSource dataSource, CancellationToken cancellationToken)
     {
@@ -227,7 +227,7 @@ public static class OnlineOperationsEndpoints
                    processing_attempts, received_at
             FROM online_ordering.yemeksepeti_webhook_inbox
             WHERE received_at > now() - interval '1 day'
-              AND (processing_outcome IN ('Rejected', 'Diverged', 'Failed')
+              AND (processing_outcome IN ('Rejected', 'Diverged', 'Failed', 'UnknownStatus')
                    OR (processed_at IS NULL AND processing_attempts > 0))
             ORDER BY received_at DESC, inbox_id
             LIMIT $1;

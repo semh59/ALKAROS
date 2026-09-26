@@ -1,0 +1,44 @@
+V12-RMD-006 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 486b2d5f.
+Provider behaviour remains an UNVERIFIED DRAFT (V0-YSP-001 Blocked).
+
+Changes:
+- Generic POST .../reconciliation/cases/{id}/transition refuses Resolved for an OnlineOrderMismatch case
+  (409 USE_ONLINE_RESOLUTION, Turkish message); other moves (Investigating, Dismissed, ...) are unchanged.
+- ProviderEventFailed and LocallyAcceptedProviderUnknown do not reopen a key with a Dismissed case;
+  AvailabilityNotDelivered stays quiet only for the divergence that was dismissed (resolved_at >= desired_at);
+  a new quantity afterwards opens a new case.
+- A rejected provider order records providerCancellationRequested only when a cancellation was really queued.
+- A source over the 5000-row scan bound is reported as SourceTooLargeReason, not "Kaynak okunamadı."
+- Channel report: refusal query bounded by received_at < window end (same result); Check gains
+  BucketsPartitionOrders (awaiting + accepted + rejected + cancelled = received on every day), part of IsBalanced.
+- Online operations: UnknownStatus events appear in the problems list ("Bilinmeyen sağlayıcı durumu"); every load
+  is numbered and an answer older than the latest started load is dropped.
+- MigrationManifest.cs comment no longer names a fixed range ("031 up to PhaseBMax, 152 as of V12-RMD-005").
+
+Honest limits:
+- The providerCancellationRequested fix (item 3) is not reachable from any current payload: the normalizer only
+  rejects an item as unavailable after reading its SKU, and then the item reference reader reads it too. The
+  change keeps the recorded flag truthful if that ever diverges; no test can exercise it, so no mutation.
+- The refusal query bound changes no result by design; mutation B3 (wrong bound) proves it is covered.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Reconciliation.OnlineOrders 21/21 (+3), Reporting.Channels 6/6 (+2), Host Reconciliation 12/12,
+  Host OnlineOrdering 57/57, PosTerminal vitest 217/217 (+1) and production build
+- consistency_audit clean; plan_audit validate 0 errors / 0 warnings; project_manifest VALID
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 13/13 killed):
+KILLED G1 generic resolve guard off
+KILLED G2 guard blocks every move
+KILLED D1 failed-event dismissal ignored
+KILLED D2 dead-update dismissal ignored
+KILLED D3 availability dismissal ignored
+KILLED D4 availability dismissal forever
+KILLED S1 too-large reported as unreadable
+KILLED B1 partition never checked
+KILLED B2 partition not in IsBalanced
+KILLED B3 refusal bound wrong
+KILLED U1 UnknownStatus not listed
+KILLED U2 UnknownStatus label removed
+KILLED O1 stale answer accepted

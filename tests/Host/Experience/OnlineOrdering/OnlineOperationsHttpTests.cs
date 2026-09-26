@@ -141,6 +141,10 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         var inbox = _app!.Services.GetRequiredService<YemeksepetiWebhookInbox>();
         await inbox.ReceiveAsync(Secret, Encoding.UTF8.GetBytes(
             "{\"order_id\":\"" + brokenId + "\",\"status\":\"RECEIVED\",\"transport_type\":\"LOGISTICS_DELIVERY\",\"items\":[{\"sku\":\"ys-nope\",\"pricing\":{\"pricing_type\":\"UNIT\",\"quantity\":1,\"unit_price\":1}}]}"));
+        // V12-RMD-006: a delivery kind the mapper does not know is a problem a person must see too.
+        var unknownId = Guid.NewGuid().ToString("D");
+        await inbox.ReceiveAsync(Secret, Encoding.UTF8.GetBytes(
+            "{\"order_id\":\"" + unknownId + "\",\"status\":\"RECEIVED\",\"transport_type\":\"PICKUP\",\"items\":[{\"sku\":\"ys-nope\",\"pricing\":{\"pricing_type\":\"UNIT\",\"quantity\":1,\"unit_price\":1}}]}"));
         while (await _app.Services.GetRequiredService<YemeksepetiOrderIntakeService>().ProcessNextAsync())
         {
         }
@@ -154,6 +158,7 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         Assert.Equal(("Online", "Accepted", (string?)"YS-77"), (online.Source, online.Status, online.DisplayCode));
         var problem = Assert.Single(queue.Problems, p => p.ExternalOrderId == brokenId);
         Assert.Equal(("Rejected", (string?)"UnmappedSku"), (problem.Outcome, problem.Reason));
+        Assert.Equal("UnknownStatus", Assert.Single(queue.Problems, p => p.ExternalOrderId == unknownId).Outcome);
 
         using var qrOnly = await _client.SendAsync(Get(Queue("qr"), cookie));
         var qrQueue = (await qrOnly.Content.ReadFromJsonAsync<OnlineOperationsQueueV1>())!;

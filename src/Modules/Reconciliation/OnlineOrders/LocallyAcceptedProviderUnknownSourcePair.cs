@@ -38,10 +38,14 @@ public sealed class LocallyAcceptedProviderUnknownSourcePair : IOnlineOrderSourc
             SELECT d.id, o.source_external_id, o.order_id, o.total
             FROM dead_updates d
             JOIN orders.orders o ON o.source = 'Online' AND o.source_external_id = d.external_order_id
+            -- V12-RMD-006: a person dismissed this update's case; it is not reopened on every scan.
+            WHERE NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
+                              WHERE rc.deduplication_key = $2 || d.id::text AND rc.status = 'Dismissed')
             ORDER BY d.created_at, d.id
             LIMIT {OnlineOrderSourceScan.MaxScanRows + 1};
             """);
         command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventType);
+        command.Parameters.AddWithValue(DeduplicationPrefix);
 
         return await OnlineOrderSourceScan.ReadAsync(command, Name, reader =>
         {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { formatMoney } from "../../format";
 import {
   OnlineOperationsApiError,
@@ -55,11 +55,18 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
   const headingId = useId();
   const reasonId = useId();
 
+  // V12-RMD-006: every load is numbered; an answer that arrives after a newer load started (a slow poll, or the
+  // previous filter's request) is dropped instead of overwriting the newer queue.
+  const loadSequence = useRef(0);
   const load = useCallback(async () => {
+    const sequence = ++loadSequence.current;
     try {
-      setQueue(await loadOnlineOperations(terminalId, filter));
+      const next = await loadOnlineOperations(terminalId, filter);
+      if (sequence !== loadSequence.current) return;
+      setQueue(next);
       setLoadError(undefined);
     } catch (reason) {
+      if (sequence !== loadSequence.current) return;
       setLoadError(reason instanceof OnlineOperationsApiError ? reason.message : "Online siparişler okunamadı.");
     }
   }, [terminalId, filter]);

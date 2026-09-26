@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Modules;
+using ALKAROS.Reconciliation.CaseFoundation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -102,6 +103,19 @@ public sealed class OnlineOrderReconciliationHttpTests : IAsyncLifetime
         using var noNote = await supervisor.PostAsJsonAsync($"{BasePath}/cases/{caseId}/resolve", new { expectedVersion = 1, note = "" });
         Assert.Equal(HttpStatusCode.BadRequest, noNote.StatusCode);
 
+        // V12-RMD-006: the generic case endpoint cannot resolve it around the note and the divergence check.
+        using var generic = await supervisor.PostAsJsonAsync(
+            $"/api/v1/management/reconciliation/cases/{caseId:D}/transition",
+            new TransitionReconciliationCaseV1(CaseStatus.Resolved, 1, "Genel yoldan kapatma denemesi."));
+        Assert.Equal(HttpStatusCode.Conflict, generic.StatusCode);
+        Assert.Equal("USE_ONLINE_RESOLUTION", (await generic.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal("Open", await _database.ScalarAsync<string>($"SELECT status FROM reconciliation.cases WHERE case_id = '{caseId}';"));
+        // Any other move (here: under investigation) still goes through the generic endpoint.
+        using var investigating = await supervisor.PostAsJsonAsync(
+            $"/api/v1/management/reconciliation/cases/{caseId:D}/transition",
+            new TransitionReconciliationCaseV1(CaseStatus.Investigating, 1, "İnceleniyor."));
+        Assert.Equal(HttpStatusCode.OK, investigating.StatusCode);
+
         using var retried = await supervisor.PostAsync($"{BasePath}/cases/{caseId}/retry", null);
         Assert.Equal(HttpStatusCode.OK, retried.StatusCode);
         Assert.Equal("Requeued", (await retried.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("outcome").GetString());
@@ -115,7 +129,7 @@ public sealed class OnlineOrderReconciliationHttpTests : IAsyncLifetime
             VALUES (gen_random_uuid(), 'Online', @external, 'Accepted', 'Accepted', @number, now(), now());
             """,
             ("external", externalOrderId), ("number", "YS-" + externalOrderId));
-        using var resolved = await supervisor.PostAsJsonAsync($"{BasePath}/cases/{caseId}/resolve", new { expectedVersion = 1, note = "Eşleme düzeltildi, sipariş oluştu." });
+        using var resolved = await supervisor.PostAsJsonAsync($"{BasePath}/cases/{caseId}/resolve", new { expectedVersion = 2, note = "Eşleme düzeltildi, sipariş oluştu." });
         Assert.Equal(HttpStatusCode.OK, resolved.StatusCode);
         Assert.Equal(JsonValueKind.String, (await resolved.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("resolvedAt").ValueKind);
         Assert.Equal("Resolved", await _database.ScalarAsync<string>($"SELECT status FROM reconciliation.cases WHERE case_id = '{caseId}';"));

@@ -75,6 +75,13 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
         await command.ExecuteNonQueryAsync();
     }
 
+    /// <summary>V12-RMD-006: runs a statement against the fixture database (to simulate a future order status).</summary>
+    public async Task ExecAsync(string sql)
+    {
+        await using var command = DataSource.CreateCommand(sql);
+        await command.ExecuteNonQueryAsync();
+    }
+
     public async Task<Guid> SeedCaseAsync(string kind, string status, decimal amount, DateTimeOffset openedAt)
     {
         var caseId = Guid.NewGuid();

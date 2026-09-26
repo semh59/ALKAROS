@@ -114,6 +114,54 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
     }
 
     [Fact]
+    public async Task AnOrderFirstRefusedBeforeTheRangeIsNotARefusalInIt()
+    {
+        var day = new DateOnly(2034, 2, 6);
+        await _database.SeedInboxAsync("ys-refused-earlier", "Rejected", Utc(2034, 2, 5, 9, 0));
+        await _database.SeedInboxAsync("ys-refused-earlier", "Rejected", Utc(2034, 2, 6, 9, 0));
+        await _database.SeedInboxAsync("ys-refused-later", "Rejected", Utc(2034, 2, 7, 9, 0));
+
+        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day));
+        var dayBefore = await _reports.GetReportAsync(new ChannelReportFilter(day.AddDays(-1), day.AddDays(-1)));
+
+        report.Days.Should().BeEmpty();
+        dayBefore.Days.Should().ContainSingle().Which.ProviderRefused.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task AnOrderStatusNoBucketKnowsUnbalancesTheReport()
+    {
+        var day = new DateOnly(2035, 4, 2);
+        await _database.ExecAsync(
+            """
+            ALTER TABLE orders.orders DROP CONSTRAINT orders_status_check;
+            ALTER TABLE orders.orders ADD CONSTRAINT orders_status_check CHECK (status IN ('Draft', 'Submitted',
+                'PendingConfirmation', 'Accepted', 'Rejected', 'Preparing', 'Ready', 'Served', 'Completed', 'Cancelled', 'Future'));
+            """);
+        try
+        {
+            await _database.SeedOrderAsync("Qr", "Accepted", 10m, Utc(2035, 4, 2, 9, 0));
+            await _database.SeedOrderAsync("Qr", "Future", 20m, Utc(2035, 4, 2, 9, 5));
+
+            var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day));
+
+            report.Days.Should().ContainSingle().Which.OrdersReceived.Should().Be(2);
+            report.Check.BucketsPartitionOrders.Should().BeFalse();
+            report.Check.IsBalanced.Should().BeFalse();
+        }
+        finally
+        {
+            await _database.ExecAsync(
+                """
+                DELETE FROM orders.orders WHERE status = 'Future';
+                ALTER TABLE orders.orders DROP CONSTRAINT orders_status_check;
+                ALTER TABLE orders.orders ADD CONSTRAINT orders_status_check CHECK (status IN ('Draft', 'Submitted',
+                    'PendingConfirmation', 'Accepted', 'Rejected', 'Preparing', 'Ready', 'Served', 'Completed', 'Cancelled'));
+                """);
+        }
+    }
+
+    [Fact]
     public async Task AnInvalidRangeOrSourceIsRefused()
     {
         var reversed = () => _reports.GetReportAsync(new ChannelReportFilter(Day2, Day1));

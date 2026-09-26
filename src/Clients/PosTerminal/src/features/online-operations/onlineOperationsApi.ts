@@ -121,6 +121,7 @@ const outcomeLabels: Record<string, string> = {
   Diverged: "Sağlayıcı ile uyuşmazlık",
   Failed: "İşlenemedi, durduruldu",
   Retrying: "Yeniden deneniyor",
+  UnknownStatus: "Bilinmeyen sağlayıcı durumu",
 };
 const reasonLabels: Record<string, string> = {
   UnmappedSku: "Eşlenmemiş ürün",

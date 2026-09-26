@@ -17,6 +17,9 @@ public sealed class OnlineOrderReconciliationScanner
     /// <summary>Shown instead of an infrastructure message, which may be English and technical.</summary>
     public const string SourceUnreadableReason = "Kaynak okunamadı.";
 
+    /// <summary>V12-RMD-006: the source was read but holds more divergences than one scan takes.</summary>
+    public const string SourceTooLargeReason = "Kaynakta tek taramada okunabilecekten fazla (5000) fark var; önce mevcut vakaları kapatın.";
+
     private readonly IReadOnlyList<IOnlineOrderSourcePair> _sourcePairs;
     private readonly IReconciliationService _reconciliationService;
 
@@ -52,6 +55,10 @@ public sealed class OnlineOrderReconciliationScanner
                 }
 
                 results.Add(new SourceScanResult(source.Name, WasEnabled: true, null, discrepancies.Count, null));
+            }
+            catch (OnlineOrderScanTooLargeException)
+            {
+                results.Add(new SourceScanResult(source.Name, WasEnabled: true, null, 0, SourceTooLargeReason));
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {

@@ -98,12 +98,18 @@ public sealed record ChannelReportCheck(
     decimal LedgerAcceptedNetValue,
     int ReportedOrderCount,
     decimal ReportedAcceptedValue,
-    decimal ReportedAcceptedNetValue)
+    decimal ReportedAcceptedNetValue,
+    bool BucketsPartitionOrders = true)
 {
+    /// <summary>
+    /// V12-RMD-006: also false when a day's awaiting + accepted + rejected + cancelled does not add up to the orders
+    /// it received — an order status no bucket knows would otherwise vanish from every bucket silently.
+    /// </summary>
     public bool IsBalanced =>
         LedgerOrderCount == ReportedOrderCount
         && LedgerAcceptedValue == ReportedAcceptedValue
-        && LedgerAcceptedNetValue == ReportedAcceptedNetValue;
+        && LedgerAcceptedNetValue == ReportedAcceptedNetValue
+        && BucketsPartitionOrders;
 }
 
 public sealed record ChannelReport(

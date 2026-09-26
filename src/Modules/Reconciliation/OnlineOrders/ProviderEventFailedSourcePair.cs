@@ -33,9 +33,13 @@ public sealed class ProviderEventFailedSourcePair : IOnlineOrderSourcePair
             SELECT i.inbox_id, i.external_order_id
             FROM online_ordering.yemeksepeti_webhook_inbox i
             WHERE i.processing_outcome = 'Failed'
+              -- V12-RMD-006: a person dismissed this event's case; it is not reopened on every scan.
+              AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
+                              WHERE rc.deduplication_key = $1 || i.inbox_id::text AND rc.status = 'Dismissed')
             ORDER BY i.received_at, i.inbox_id
             LIMIT {OnlineOrderSourceScan.MaxScanRows + 1};
             """);
+        command.Parameters.AddWithValue(DeduplicationPrefix);
 
         return await OnlineOrderSourceScan.ReadAsync(command, Name, reader =>
         {

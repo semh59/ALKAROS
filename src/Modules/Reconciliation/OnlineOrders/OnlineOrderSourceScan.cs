@@ -35,8 +35,17 @@ internal static class OnlineOrderSourceScan
         }
 
         if (results.Count > MaxScanRows)
-            throw new InvalidOperationException(
-                string.Create(CultureInfo.InvariantCulture, $"{sourceName} scan returned more than {MaxScanRows} rows; narrow the filter or paginate."));
+            throw new OnlineOrderScanTooLargeException(sourceName);
         return results;
+    }
+}
+
+/// <summary>V12-RMD-006: a source had more divergences than one scan reads; reported as such, not as unreadable.</summary>
+internal sealed class OnlineOrderScanTooLargeException : Exception
+{
+    public OnlineOrderScanTooLargeException(string sourceName)
+        : base(string.Create(CultureInfo.InvariantCulture,
+            $"{sourceName} scan returned more than {OnlineOrderSourceScan.MaxScanRows} rows; narrow the filter or paginate."))
+    {
     }
 }

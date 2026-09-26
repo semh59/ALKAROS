@@ -19,6 +19,7 @@ const queue: OnlineOperationsQueue = {
     { inboxId: "p-2", externalOrderId: "ext-2", providerStatus: "RECEIVED", outcome: "Diverged", reason: "OutOfStock", attempts: 0, receivedAt: "2026-09-26T09:10:00Z" },
     { inboxId: "p-3", externalOrderId: "ext-3", providerStatus: "RECEIVED", outcome: "Retrying", reason: "SomeFutureCode", attempts: 2, receivedAt: "2026-09-26T09:20:00Z" },
     { inboxId: "p-4", externalOrderId: "ext-4", providerStatus: "RECEIVED", outcome: "Rejected", reason: "UnsupportedItemStatus", attempts: 0, receivedAt: "2026-09-26T09:30:00Z" },
+    { inboxId: "p-5", externalOrderId: "ext-5", providerStatus: "PICKED_UP", outcome: "UnknownStatus", reason: null, attempts: 0, receivedAt: "2026-09-26T09:40:00Z" },
   ],
   retries: { pendingProviderEvents: 1, catalogPublicationsRetrying: 2, availabilityDivergences: 0 },
 };
@@ -62,11 +63,29 @@ describe("OnlineOperationsWorkspace", () => {
     expect(text).toContain("Yeniden deneniyor");
     expect(text).toContain("Değiştirilmiş veya desteklenmeyen kalem");
     expect(text).toContain("Yeniden denenen katalog yayını: 2");
+    expect(text).toContain("Bilinmeyen sağlayıcı durumu");
     // Unknown server values fall back to Turkish, raw codes never reach the screen.
     expect(text).toContain("Diğer");
-    for (const raw of ["PendingConfirmation", "Accepted", "UnmappedSku", "OutOfStock", "SomethingNew", "SomeFutureCode", "Rejected", "Diverged", "UnsupportedItemStatus"]) {
+    for (const raw of ["PendingConfirmation", "Accepted", "UnmappedSku", "OutOfStock", "SomethingNew", "SomeFutureCode", "Rejected", "Diverged", "UnsupportedItemStatus", "UnknownStatus"]) {
       expect(text).not.toContain(raw);
     }
+  });
+
+  it("never lets an older answer overwrite a newer one", async () => {
+    // V12-RMD-006: the first (all-sources) load answers only after the QR filter's load has already answered.
+    let releaseFirst: (value: unknown) => void = () => {};
+    const qrOnly: OnlineOperationsQueue = { ...queue, orders: [queue.orders[0]], problems: [] };
+    fetchMock
+      .mockImplementationOnce(() => new Promise((resolve) => { releaseFirst = resolve; }))
+      .mockResolvedValue(ok(qrOnly));
+    await render();
+
+    await act(async () => { button("QR").click(); });
+    await act(async () => { releaseFirst(ok(queue)); });
+
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Masa 12");
+    expect(text).not.toContain("YS-778899");
   });
 
   it("filters by source through the server", async () => {

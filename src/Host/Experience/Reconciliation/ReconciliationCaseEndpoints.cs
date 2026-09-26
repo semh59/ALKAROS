@@ -79,6 +79,20 @@ public static class ReconciliationCaseEndpoints
         {
             var actorId = ReconciliationCaseEndpointFilter.RequireActorId(context);
             await authorization.AuthorizeAsync(actorId, ManagePermission, cancellationToken);
+            // V12-RMD-006: an online order case is resolved only through its own endpoint, which requires a note
+            // and refuses while the divergence still shows; resolving it here would skip both.
+            if (request.NewStatus == CaseStatus.Resolved
+                && (await reconciliation.GetCaseByIdAsync(caseId, cancellationToken))?.CaseType == CaseType.OnlineOrderMismatch)
+            {
+                return Results.Json(
+                    new ReconciliationCaseApiErrorEnvelopeV1(new ReconciliationCaseApiErrorV1(
+                        "USE_ONLINE_RESOLUTION",
+                        "Online sipariş vakaları yalnız online mutabakat ekranından, bir çözüm notuyla kapatılabilir.",
+                        StatusCodes.Status409Conflict,
+                        context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+
             var record = await reconciliation.TransitionCaseStatusAsync(
                 new TransitionCaseStatusRequest(caseId, request.NewStatus, request.ExpectedVersion, actorId, request.ReasonOrNote),
                 cancellationToken);

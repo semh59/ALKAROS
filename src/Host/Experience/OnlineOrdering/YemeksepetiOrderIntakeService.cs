@@ -176,12 +176,15 @@ public sealed class YemeksepetiOrderIntakeService
         if (normalized.Order is not { } onlineOrder)
         {
             var itemsUnavailable = ItemUnavailableRejections.Contains(normalized.Rejection!.Value);
+            var references = YemeksepetiStatusSync.ReadItemReferences(rawPayload);
+            // V12-RMD-006: only a cancellation actually queued is recorded as requested; without readable item
+            // references none can be sent, and the case then says to fix and reprocess instead of "resend".
+            var cancellationRequested = itemsUnavailable && references.Count > 0;
             await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
                 claimed.InboxId, InboxProcessingOutcome.Rejected, null,
-                new { rejection = normalized.Rejection!.Value.ToString(), detail = normalized.Detail, providerCancellationRequested = itemsUnavailable },
+                new { rejection = normalized.Rejection!.Value.ToString(), detail = normalized.Detail, providerCancellationRequested = cancellationRequested },
                 connection, transaction, cancellationToken).ConfigureAwait(false);
-            var references = YemeksepetiStatusSync.ReadItemReferences(rawPayload);
-            if (itemsUnavailable && references.Count > 0)
+            if (cancellationRequested)
             {
                 await YemeksepetiStatusSyncService.RequestProviderCancellationAsync(
                     claimed.ExternalOrderId, references, connection, transaction, cancellationToken).ConfigureAwait(false);
