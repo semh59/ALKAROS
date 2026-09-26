@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1342,
-  "markdown_line_count": 103376,
-  "markdown_byte_count": 5955616,
+  "markdown_file_count": 1343,
+  "markdown_line_count": 103450,
+  "markdown_byte_count": 5960953,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -134,9 +134,9 @@
     },
     {
       "path": "docs/architecture/qr-relay-topology.md",
-      "sha256": "5DCC614C814D0F20377449BBDD9FA652C3C0117E27981DD11F8E953234006CAB",
-      "lines": 60,
-      "bytes": 2526,
+      "sha256": "7B96E7E2DB417EDDD762D38220F2A94EF6A8A8536B643D2301AB61BFF0C19EF3",
+      "lines": 91,
+      "bytes": 5058,
       "utf8": true
     },
     {
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "415D3B978C8EAC6FDE9A77C52AFB0A25A9AFA6E80C0E68B3490E9CC5BD29C5E1",
-      "lines": 2618,
-      "bytes": 381872,
+      "sha256": "AD10692908854B8B874070DF2D90BB08B31AAE6CDBF74D53AFC49C54581F0369",
+      "lines": 2619,
+      "bytes": 382031,
       "utf8": true
     },
     {
@@ -7431,6 +7431,13 @@
       "sha256": "131A5A57E75715AD5887A0D140ABF9ABA0B4E81B6CA28CDDC3012E80E9B0F92F",
       "lines": 53,
       "bytes": 3715,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-327-qr-relay-docs-vs-reality.md",
+      "sha256": "28B6BC248535D00545366004B84EE4B47C30162652847F66E6F16CA970431335",
+      "lines": 42,
+      "bytes": 2646,
       "utf8": true
     },
     {
