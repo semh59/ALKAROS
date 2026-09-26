@@ -1,8 +1,8 @@
 # V12-OUI-002 - Online kuyrukta platform etiketi ve süzgeci
 
 - Task ID: V12-OUI-002
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Existing
 
