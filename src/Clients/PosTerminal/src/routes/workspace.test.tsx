@@ -179,6 +179,20 @@ describe("workspace route gating uses granular permission codes, not the removed
       expect(document.body.textContent).toContain(forbiddenText);
     },
   );
+
+  // V12-OUI-003: platform API settings open only for integrations.manage, and a forbidden session never asks for them.
+  it("opens the online platform settings for integrations.manage and forbids them to a cashier", async () => {
+    await renderRoute("/online-platforms", ["integrations.manage"]);
+    expect(document.body.textContent).not.toContain(forbiddenText);
+    expect(document.body.textContent).toContain("Online platform bağlantı bilgileri");
+    await act(async () => root!.unmount());
+    root = null;
+
+    await renderRoute("/online-platforms", ["orders.create"]);
+    expect(document.body.textContent).toContain(forbiddenText);
+    const urls = (vi.mocked(fetch).mock.calls as unknown[][]).map(([url]) => String(url));
+    expect(urls.some((url) => url.includes("online-platform-credentials"))).toBe(false);
+  });
 });
 
 /**

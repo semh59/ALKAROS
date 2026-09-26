@@ -1323,6 +1323,14 @@
         "provider_product_mappings"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "155",
+      "phase": "B",
+      "tables": [
+        "platform_credentials"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

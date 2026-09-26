@@ -188,6 +188,7 @@ public static partial class DualScreenApplication
         builder.Services.AddYemeksepetiWebhookExperience();
         builder.Services.AddOnlineCatalogPublishingExperience();
         builder.Services.AddOnlineOperationsExperience();
+        builder.Services.AddOnlinePlatformCredentialExperience();
         OnlineAvailabilityPublishingHostedService.AddOnlineAvailabilityPublishingExperience(builder.Services);
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
@@ -599,6 +600,7 @@ public static partial class DualScreenApplication
         app.MapYemeksepetiWebhookApi();
         app.MapOnlineCatalogPublishingApi();
         app.MapOnlineOperationsApi();
+        app.MapOnlinePlatformCredentialApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
         app.MapRoleManagementApi();

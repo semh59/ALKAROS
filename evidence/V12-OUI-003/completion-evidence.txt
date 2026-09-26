@@ -1,0 +1,77 @@
+V12-OUI-003 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 36bce6d7.
+Migration 155 reserved with the other session (alkaros-8e) before use; it confirmed it had used no migration.
+
+Changes:
+- Migration 155: online_ordering.platform_credentials (provider PK with a name check, plain_fields JSONB object,
+  secret_fields TEXT[], envelope_bytes BYTEA; a CHECK keeps "secret fields listed" and "envelope present" in step).
+- Module (src/Modules/OnlineOrdering/Credentials):
+  - OnlinePlatformCredentialCatalog: Yemeksepeti (api-base-url, chain-id, vendor-id, client-id, client-secret,
+    webhook-secret) and Trendyol Go (api-base-url, supplier-id, api-key, api-secret; UNVERIFIED DRAFT from
+    EXT:TGO-MEAL-API). Each field answers to the secret reference {provider}-{field}, the same name its
+    environment variable already had. Migros Yemek has no public document, so no fields.
+  - PostgresOnlinePlatformCredentialStore: secrets sealed in one AES-256-GCM envelope (own resolver/cipher/
+    protector chain, own access policy, not shared DI - same as QNB/Token stores). Partial change semantics
+    (values set, cleared removed, rest kept), per-platform advisory lock, row removed when nothing is left,
+    audit.audit_events "OnlinePlatform.CredentialsChanged" in the same transaction with field names only.
+    Validation: known fields, not both set and cleared, trimmed, non-empty, <= 512 chars, no control characters,
+    URL fields https without user info; an effective no-op is refused.
+  - StoredOnlinePlatformSecretProvider: a platform setting comes from the store first and from the environment
+    only when that field is not stored; every other secret (envelope master key included) from the environment.
+  - OnlineOrderingModule: the Yemeksepeti webhook inbox and partner client are built with that provider; their
+    own code is unchanged.
+- Host: OnlinePlatformCredentialEndpoints (GET list, PUT per platform) under
+  /api/v1/terminals/{terminalId}/online-platform-credentials, integrations.manage, Turkish errors naming the field;
+  registered in DualScreenApplication.
+- PosTerminal: features/online-platform-credentials (form per platform, secrets as password inputs showing only
+  "Kayitli / Kayitli degil", "Kaldir"/"Vazgec", only changed fields sent) and a "/online-platforms" workspace
+  route + navigation item gated on integrations.manage.
+
+Commands (exit 0 unless stated):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Host OnlineOrdering tests 80/80 (16 new OnlinePlatformCredentialHttpTests)
+- ALKAROS.Host.Tests 160/161 in the full run; the one failure
+  (DualScreenHostTests.ResponseStartedFailureIsLoggedWithTraceIdBeforeKestrelAbortsTheConnection, a transport
+  abort timing test that touches no code of this task) passed 3/3 when re-run with ManifestTests (22/22 each run)
+- tests/Modules/OnlineOrdering: AvailabilityPublishing 14/14, CatalogPublishing 15/15, OrderNormalization 33/33,
+  ProductMapping 24/24, StatusMapping 32/32, StatusSync 19/19, WebhookInbox 31/31
+- PosTerminal vitest 30 files 228/228 before the route test; workspace + feature suites 18/18 after; production build ok
+- Migration 155 on an empty database: up, up (idempotent), constraint probes refused (envelope/secret_fields
+  mismatch, bad provider name), down, down, table gone, up again - all as expected
+- UI_STYLE_GUIDE section 4 English leak scan: no hit in the new feature
+- consistency_audit clean; plan_audit validate 0/0
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 27/27 killed):
+KILLED C1 secret stored as plain field
+KILLED C2 http base url accepted
+KILLED C3 url with user info accepted
+KILLED C4 change not audited
+KILLED C5 empty change accepted
+KILLED C6 empty platform row kept
+KILLED C7 control characters accepted
+KILLED C8 value not trimmed
+KILLED C9 no length limit
+KILLED C10 set and cleared both allowed
+KILLED C11 unknown field accepted
+KILLED C12 audit names wrong actor type
+KILLED P1 store not consulted
+KILLED P2 environment wins over store
+KILLED R1 inbox registered without stored settings
+KILLED R2 partner client without stored settings
+KILLED H1 no permission check
+KILLED H2 refused field not named
+KILLED H3 unknown platform maps to 500
+KILLED U1 untouched plain field cleared
+KILLED U2 removal not sent
+KILLED U3 emptied plain field not cleared
+KILLED U4 refused field not named
+KILLED U5 unknown platform shown raw
+KILLED U6 typed secret kept after save
+KILLED U7 secret input shown as text
+KILLED U8 route open without integrations.manage
+
+Not covered / honest limits:
+- The per-platform advisory lock (two managers saving at once) has no concurrency test.
+- No real platform is called; Yemeksepeti and Trendyol Go connections remain unverified drafts
+  (V0-YSP-001, V12-TGO-001 Blocked).
+- The stored value is read synchronously per secret lookup (ISecretProvider is synchronous); one small query each.
