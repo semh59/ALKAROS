@@ -1,7 +1,7 @@
 # V1-RMD-311 - Geri ödeme niyetinde eşzamanlı aynı-anahtar yarışını kapat
 
 - Task ID: V1-RMD-311
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Existing

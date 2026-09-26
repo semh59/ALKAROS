@@ -1,0 +1,20 @@
+V1-RMD-311 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: d0767114.
+
+Root cause (CI run 36219456105, 23505 uq_refund_intents_idempotency_key): CreateAsync read the idempotency key
+before taking the allocation lock; two same-key requests both missed it, took the lock in turn, and the second
+inserted without looking again.
+Fix: (1) re-read the key under the lock and return the existing intent; (2) INSERT ... ON CONFLICT ON CONSTRAINT
+uq_refund_intents_idempotency_key DO NOTHING, returning the row that won the key (covers the same key for another
+allocation, which takes a different lock).
+
+Tests (exit 0): tests/Modules/Payments/Allocations/RefundIntents -> 13/13 (+2 deterministic:
+- two submits held at the same allocation lock, 60 + 60 on a 100 allocation -> one intent, both return it
+  (without the re-read the second would exceed eligibility);
+- same key for two allocations, both held at their locks and released together -> one intent).
+Payments module regression: all projects green (see command output in the session).
+consistency_audit clean; plan_audit validate 0/0.
+
+Mutations (backup restore + cmp):
+Y1 re-read under the lock removed -> 1 failed
+Y2 ON CONFLICT removed -> 1 failed

@@ -44,10 +44,28 @@ public sealed class PostgresRefundIntentRepository : IRefundIntentRepository
         // remaining-eligibility check below can never race.
         await LockAllocationAsync(connection, transaction, allocation.Id, cancellationToken);
 
+        // V1-RMD-311: read again under the lock. A concurrent request with the same key passed the fast path
+        // above too and may have committed while this one waited for the lock.
+        existing = await ReadByIdempotencyKeyAsync(connection, transaction, idempotencyKey, cancellationToken);
+        if (existing is not null)
+        {
+            await transaction.CommitAsync(cancellationToken);
+            return existing;
+        }
+
         var alreadyPending = await SumPendingAsync(connection, transaction, allocation.Id, cancellationToken);
         var refundIntent = RefundIntentFactory.Create(allocation, paymentId, requestedAmount, alreadyPending, idempotencyKey, requestedBy);
 
-        await InsertAsync(connection, transaction, refundIntent, cancellationToken);
+        // The same key for a different allocation takes a different lock, so the insert itself also yields to a
+        // row that won the key first: nothing is written and that row is returned, never a unique violation.
+        if (!await InsertAsync(connection, transaction, refundIntent, cancellationToken))
+        {
+            var winner = await ReadByIdempotencyKeyAsync(connection, transaction, idempotencyKey, cancellationToken)
+                ?? throw new InvalidOperationException($"Refund intent key '{idempotencyKey}' conflicted but no row holds it.");
+            await transaction.CommitAsync(cancellationToken);
+            return winner;
+        }
+
         await transaction.CommitAsync(cancellationToken);
         return refundIntent;
     }
@@ -143,7 +161,8 @@ public sealed class PostgresRefundIntentRepository : IRefundIntentRepository
         return (decimal)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
-    private static async Task InsertAsync(
+    /// <summary>False when another row already holds the idempotency key (nothing was written).</summary>
+    private static async Task<bool> InsertAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, RefundIntent refundIntent, CancellationToken cancellationToken)
     {
         await using var command = CreateCommand(connection, transaction,
@@ -153,7 +172,8 @@ public sealed class PostgresRefundIntentRepository : IRefundIntentRepository
                 idempotency_key, requested_by, requested_at, rejected_at, rejection_reason, row_version)
             VALUES (
                 @refund_intent_id, @payment_id, @payment_allocation_id, @requested_amount, @status,
-                @idempotency_key, @requested_by, @requested_at, @rejected_at, @rejection_reason, @row_version);
+                @idempotency_key, @requested_by, @requested_at, @rejected_at, @rejection_reason, @row_version)
+            ON CONFLICT ON CONSTRAINT uq_refund_intents_idempotency_key DO NOTHING;
             """);
         command.Parameters.AddWithValue("refund_intent_id", refundIntent.Id);
         command.Parameters.AddWithValue("payment_id", refundIntent.PaymentId);
@@ -166,7 +186,7 @@ public sealed class PostgresRefundIntentRepository : IRefundIntentRepository
         command.Parameters.AddWithValue("rejected_at", (object?)refundIntent.RejectedAt ?? DBNull.Value);
         command.Parameters.AddWithValue("rejection_reason", (object?)refundIntent.RejectionReason ?? DBNull.Value);
         command.Parameters.AddWithValue("row_version", refundIntent.RowVersion);
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
     }
 
     private static async Task<RefundIntent?> ReadByIdempotencyKeyAsync(

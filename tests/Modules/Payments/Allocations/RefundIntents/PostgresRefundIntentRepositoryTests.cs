@@ -90,6 +90,65 @@ public sealed class PostgresRefundIntentRepositoryTests : IClassFixture<RefundIn
     }
 
     [Fact]
+    public async Task TwoSubmitsWaitingOnTheSameAllocationLockStillProduceOneIntent()
+    {
+        // V1-RMD-311: deterministic form of the race above. Both requests pass the unlocked fast path while the
+        // allocation lock is held elsewhere, then take the lock one after the other.
+        var (payment, allocation) = await SeedApprovedPaymentAndAllocationAsync(100m);
+        var idempotencyKey = "key-" + Guid.NewGuid();
+
+        await using var blocker = await _dataSource.OpenConnectionAsync();
+        await using var blockerTransaction = await blocker.BeginTransactionAsync();
+        await using (var lockCommand = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", blocker, blockerTransaction))
+        {
+            lockCommand.Parameters.AddWithValue($"refund-intent:{allocation.Id:N}");
+            await lockCommand.ExecuteNonQueryAsync();
+        }
+
+        // 60 + 60 exceeds the 100 allocation: only a re-read under the lock lets the second return the first.
+        var first = _refundIntents.CreateAsync(payment.Id, allocation, 60m, idempotencyKey);
+        var second = _refundIntents.CreateAsync(payment.Id, allocation, 60m, idempotencyKey);
+        await Task.Delay(500);
+        await blockerTransaction.RollbackAsync();
+        var results = await Task.WhenAll(first, second);
+
+        results[0].Id.Should().Be(results[1].Id);
+        (await _refundIntents.GetByAllocationIdAsync(allocation.Id)).Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task TheSameKeyForAnotherAllocationReturnsTheIntentThatWonTheKey()
+    {
+        var (firstPayment, firstAllocation) = await SeedApprovedPaymentAndAllocationAsync(100m);
+        var (secondPayment, secondAllocation) = await SeedApprovedPaymentAndAllocationAsync(100m);
+        var idempotencyKey = "key-" + Guid.NewGuid();
+
+        // Both requests pass the fast path, then wait on their own allocation's lock; released together, they
+        // insert at the same moment and only the insert's own conflict handling keeps it to one row.
+        await using var blocker = await _dataSource.OpenConnectionAsync();
+        await using var blockerTransaction = await blocker.BeginTransactionAsync();
+        foreach (var allocationId in new[] { firstAllocation.Id, secondAllocation.Id })
+        {
+            await using var lockCommand = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", blocker, blockerTransaction);
+            lockCommand.Parameters.AddWithValue($"refund-intent:{allocationId:N}");
+            await lockCommand.ExecuteNonQueryAsync();
+        }
+
+        var pending = new[]
+        {
+            _refundIntents.CreateAsync(firstPayment.Id, firstAllocation, 20m, idempotencyKey),
+            _refundIntents.CreateAsync(secondPayment.Id, secondAllocation, 30m, idempotencyKey),
+        };
+        await Task.Delay(500);
+        await blockerTransaction.RollbackAsync();
+        var results = await Task.WhenAll(pending);
+
+        results[0].Id.Should().Be(results[1].Id);
+        ((await _refundIntents.GetByAllocationIdAsync(firstAllocation.Id)).Count
+         + (await _refundIntents.GetByAllocationIdAsync(secondAllocation.Id)).Count).Should().Be(1);
+    }
+
+    [Fact]
     public async Task SaveAsyncPersistsTheRejectTransition()
     {
         var (payment, allocation) = await SeedApprovedPaymentAndAllocationAsync(100m);
