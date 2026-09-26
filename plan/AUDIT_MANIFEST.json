@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1315,
-  "markdown_line_count": 101396,
-  "markdown_byte_count": 5820830,
+  "markdown_file_count": 1321,
+  "markdown_line_count": 101878,
+  "markdown_byte_count": 5846214,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "486F856DF98BD0453E8F1B7E37B8BD339EAFA23416C7A05A9789BCE6B31889AD",
-      "lines": 4493,
-      "bytes": 219007,
+      "sha256": "D170D87AABB7107B218429777796B73F2B590FCF7EB6C3ECEB0D71D0D340D5BB",
+      "lines": 4538,
+      "bytes": 221007,
       "utf8": true
     }
   ],
@@ -2521,9 +2521,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F8C1C2850BED39C6A4337E75AD06B337E3F4BFEABF5AB9FADB0ECA1B13D8520F",
-      "lines": 2591,
-      "bytes": 377349,
+      "sha256": "B168EE5611B2157CD7B4BE8A3009979214310755340B9A2FA594B977660F65F2",
+      "lines": 2597,
+      "bytes": 378347,
       "utf8": true
     },
     {
@@ -2542,9 +2542,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "A330DF2BFD042CBA84AFE140B4CE277387220070E98E84A1E6ED6EC90D47AA37",
-      "lines": 551,
-      "bytes": 143466,
+      "sha256": "8BB2978C5016D01A110BD182C91096A399675D6B0A2AAC6EDCC7AB766CA87DFD",
+      "lines": 559,
+      "bytes": 144144,
       "utf8": true
     },
     {
@@ -2591,16 +2591,16 @@
     },
     {
       "path": "plan/TASK_STANDARD.md",
-      "sha256": "C5FCBF61C4F5D2BA760A7094E66C360A9F765052D87F2359D0CC4079CACCB8A8",
-      "lines": 164,
-      "bytes": 8297,
+      "sha256": "03DE755D3FF9304DAF2EDA739FB1559BE9724D0B88B4295BB59B1E1D030695F2",
+      "lines": 185,
+      "bytes": 9908,
       "utf8": true
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "5BC96F4416D0D6E53E397E8EE9A3B5539E1AEDB8A2C76166E2A700D840B350D8",
-      "lines": 205,
-      "bytes": 87858,
+      "sha256": "D38DBC2DD600A286267F2404A50A1F413DAFEA78A1B0A4D6E72BD3EEB63360DD",
+      "lines": 206,
+      "bytes": 89369,
       "utf8": true
     },
     {
@@ -7301,6 +7301,34 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-310-atomic-portion-cancellation.md",
+      "sha256": "EB9790F9717402BF0F1217CC0B8C8A3D4098BD2854D8549F40F7858CFA17DB6C",
+      "lines": 87,
+      "bytes": 4579,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-311-refund-intent-idempotency-race.md",
+      "sha256": "B0648733CFD357473326C4DBC3DF2029AEEC733EB8AE1480AA0B84D7B21F8F24",
+      "lines": 59,
+      "bytes": 2276,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-312-reconciliation-case-dedup-race.md",
+      "sha256": "EB2B6594C4EC71A49E72108D41439EBE429731484CC295CB6623E70192E87896",
+      "lines": 62,
+      "bytes": 2394,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-313-qr-reject-kitchen-cancel-atomic.md",
+      "sha256": "E352358B06A9918D42EB782DDF2D35EFC92473543F6C1C9989708B0DCFFCA202",
+      "lines": 65,
+      "bytes": 2449,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -8211,6 +8239,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/governance/V12-GOV-005-faz3-audit-governance-remediation.md",
+      "sha256": "20A7840CCE26FC7CF427B713F490776546539D13DD44B81EAC471F4ED18B62D5",
+      "lines": 95,
+      "bytes": 5142,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/nfc-ordering/V12-NFC-001-self-check-in-and-trusted-order-intake.md",
       "sha256": "2225556607D714E0829C5DF928D261DEFB58C51A62A948ECE95F6389ECB96D96",
       "lines": 120,
@@ -8383,6 +8418,13 @@
       "sha256": "6CD9C09F3CC579BDAA883DE725CA7F68AC0173CCE66F29A9B5845A490390D5D3",
       "lines": 108,
       "bytes": 5959,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/shared-stock/V12-RMD-003-cross-channel-arbiter-hardening.md",
+      "sha256": "3D0FEBEEC5B78ECD654E599511C299D9C2FD989CE9311CF568EEDFC1A3804614",
+      "lines": 75,
+      "bytes": 3470,
       "utf8": true
     },
     {
@@ -9073,9 +9115,9 @@
     },
     {
       "path": "plan/v2.0/acceptance/V20-UAT-001-service-flow-acceptance.md",
-      "sha256": "2F0FB83F3EADA0DE1A1F1F369DB296F199944D43214482C0A2CE546A758D2439",
-      "lines": 57,
-      "bytes": 1749,
+      "sha256": "77607DB32DB2284A765D6EE4CD7443AFB2C4CC22A46F39DE1AADBA3A4E25671E",
+      "lines": 59,
+      "bytes": 1916,
       "utf8": true
     },
     {
@@ -9150,9 +9192,9 @@
     },
     {
       "path": "plan/v2.0/integration-certification/V20-INT-003-yemeksepeti-certification.md",
-      "sha256": "CBBABEA18CA7A9961C6CF84066252EBEA1A63232B68C9174FA44550961B73432",
-      "lines": 52,
-      "bytes": 1202,
+      "sha256": "023B79B6B497382A79A6CA74F5C7EB6B8E39FC405DB7CB58CDCF9E70FE19CB45",
+      "lines": 53,
+      "bytes": 1311,
       "utf8": true
     },
     {
