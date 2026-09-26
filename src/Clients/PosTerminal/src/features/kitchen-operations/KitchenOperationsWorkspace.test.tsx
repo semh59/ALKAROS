@@ -321,6 +321,35 @@ describe("kitchen operations workspace", () => {
     expect(document.body.textContent).not.toContain("Unhealthy");
   });
 
+  // V1-RMD-293: a Failed/DeadLetter print job used to be invisible to kitchen staff and the cashier alike
+  // (KitchenPrintDispatchHostedService only ever logged it) — this panel and stat are the fix.
+  it("shows a Failed and a DeadLetter print job in the print-failure panel, with the ticket number and attempt count, but not a Printed one", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({
+      data: {
+        ...data,
+        printJobFailures: [
+          { id: "job-1", ticketId: "ticket-1", printerId: "printer-1", status: "Failed", attemptCount: 2, maxAttempts: 5, failedAt: "2026-08-26T10:03:00Z", createdAt: "2026-08-26T10:00:00Z" },
+          { id: "job-2", ticketId: "ticket-1", printerId: "printer-1", status: "DeadLetter", attemptCount: 5, maxAttempts: 5, failedAt: "2026-08-26T10:10:00Z", createdAt: "2026-08-26T10:00:00Z" },
+        ],
+      },
+    })} />);
+    expect(document.body.textContent).toContain("Yazdırma sorunları");
+    expect(document.body.textContent).toContain("KT-001");
+    expect(document.body.textContent).toContain("2/5 deneme");
+    expect(document.body.textContent).toContain("Başarısız, yeniden denenecek");
+    expect(document.body.textContent).toContain("Deneme hakları tükendi");
+    // The stat card counts both, and never a Printed job (none seeded here, so this also proves it's not hardcoded).
+    const stat = Array.from(document.querySelectorAll(".kitchen-workspace__stats > *")).find((node) => node.textContent?.includes("Yazdırma sorunu"));
+    expect(stat?.textContent).toContain("2");
+  });
+
+  it("shows no print-failure alert when printJobFailures is empty or absent", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    expect(document.body.textContent).toContain("Bekleyen yazdırma sorunu yok.");
+    const stat = Array.from(document.querySelectorAll(".kitchen-workspace__stats > *")).find((node) => node.textContent?.includes("Yazdırma sorunu"));
+    expect(stat?.textContent).toContain("0");
+  });
+
   it("shows the line special instruction on the ticket", async () => {
     await render(<KitchenOperationsWorkspace {...baseProps()} />);
     const note = document.querySelector(".kitchen-item-row__detail--note");

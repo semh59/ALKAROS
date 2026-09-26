@@ -8,8 +8,10 @@ import {
   type KitchenHealthSnapshot,
   type KitchenPerformanceReport,
   type KitchenTicket,
+  type KitchenPrintJob,
   type KitchenTicketItem,
   type KitchenUnknownDelivery,
+  printJobStatusLabels,
   type KitchenWorkspaceProps,
 } from "./models";
 import { KitchenOperationsApiError } from "./kitchenApi";
@@ -430,6 +432,7 @@ export function KitchenOperationsWorkspace({
         <Stat label="Açık masa/sipariş" value={orderGroups.length} />
         <Stat label="Açık kalem" value={openItemCount} tone={autoDense ? "warning" : "neutral"} />
         <Stat label="Doğrulanamayan baskı" value={data.unknownDeliveries.length} tone={data.unknownDeliveries.length ? "danger" : "success"} />
+        <Stat label="Yazdırma sorunu" value={(data.printJobFailures ?? []).length} tone={(data.printJobFailures ?? []).length ? "danger" : "success"} />
       </div>
       {/* V1-KDS-008: Expo (per-table) vs Tüm Gün (per-product totals) —
           same board data, two ways to look at it. */}
@@ -472,6 +475,7 @@ export function KitchenOperationsWorkspace({
       <aside className="kitchen-workspace__rail" aria-label="Mutfak operasyon uyarıları">
         <HealthPanel health={data.health} backups={data.backups} />
         <UnknownPanel deliveries={data.unknownDeliveries} canManage={canManageReprints} busyKey={busyKey} onDecision={openDecision} />
+        <PrintFailurePanel jobs={data.printJobFailures ?? []} tickets={data.tickets} printers={data.printers} />
         <PrinterPanel
           printers={data.printers}
           routes={data.routes}
@@ -742,6 +746,27 @@ function HealthPanel({ health, backups }: { health: KitchenHealthSnapshot | null
 
 function UnknownPanel({ deliveries, canManage, busyKey, onDecision }: { deliveries: readonly KitchenUnknownDelivery[]; canManage: boolean; busyKey: string | null; onDecision: (delivery: KitchenUnknownDelivery, decision: "approve" | "reject") => void }) {
   return <section className={`kitchen-panel kitchen-panel--unknown ${deliveries.length ? "has-alert" : ""}`} aria-labelledby="unknown-heading"><header><div><span className="kitchen-panel__eyebrow">YAZICI KURTARMA</span><h3 id="unknown-heading">Doğrulanamayan teslimatlar</h3></div><strong>{deliveries.length}</strong></header>{deliveries.length === 0 ? <p className="kitchen-panel__muted">Bekleyen belirsiz teslimat yok.</p> : <div className="kitchen-unknown-list">{deliveries.map((delivery) => <div className="kitchen-unknown" key={delivery.id}><div><strong>{compactId(delivery.ticketId)}</strong><span>{delivery.crashReason ?? "ACK alınamadı"}</span></div>{canManage ? <div className="kitchen-unknown__actions"><Button variant="secondary" disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "reject")}>Reddet</Button><Button disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "approve")}>Gerekçeli onay</Button></div> : <span className="kitchen-panel__muted">Süpervizör gerekli</span>}</div>)}</div>}</section>;
+}
+
+function PrintFailurePanel({ jobs, tickets, printers }: { jobs: readonly KitchenPrintJob[]; tickets: readonly KitchenTicket[]; printers: readonly KitchenWorkspaceProps["data"]["printers"][number][] }) {
+  // V1-RMD-293: read-only visibility - there is no server action to requeue a DeadLetter job or force a
+  // retry (see this task's own scope note in models.ts), so unlike UnknownPanel this has no decision buttons.
+  return <section className={`kitchen-panel ${jobs.length ? "has-alert" : ""}`} aria-labelledby="print-failure-heading">
+    <header><div><span className="kitchen-panel__eyebrow">YAZICI</span><h3 id="print-failure-heading">Yazdırma sorunları</h3></div><strong>{jobs.length}</strong></header>
+    {jobs.length === 0 ? <p className="kitchen-panel__muted">Bekleyen yazdırma sorunu yok.</p> : <ul className="kitchen-printer-list" aria-label="Yazdırma sorunları">
+      {jobs.map((job) => {
+        const ticket = tickets.find((candidate) => candidate.id === job.ticketId);
+        const printer = printers.find((candidate) => candidate.id === job.printerId);
+        return <li key={job.id}>
+          <span className={`kitchen-printer-dot ${job.status === "DeadLetter" ? "" : "is-active"}`} />
+          <div>
+            <strong>{ticket?.ticketNumber ?? compactId(job.ticketId)}</strong>
+            <span>{printer?.name ?? compactId(job.printerId)} · {printJobStatusLabels[job.status] ?? job.status} · {job.attemptCount}/{job.maxAttempts} deneme</span>
+          </div>
+        </li>;
+      })}
+    </ul>}
+  </section>;
 }
 
 function PrinterPanel({

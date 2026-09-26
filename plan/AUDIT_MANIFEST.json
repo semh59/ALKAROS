@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1313,
-  "markdown_line_count": 101238,
-  "markdown_byte_count": 5804799,
+  "markdown_line_count": 101251,
+  "markdown_byte_count": 5807281,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2521,7 +2521,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "8D7D5D06C6D7F6593349D1DC0667B8BD8FD61621A2F7AEC8EE0324C497C834F3",
+      "sha256": "2F5EB3A4C1EB9A20168C7B8BDF37E543EE9A2FB043DD78D676F23D9E89D98C0D",
       "lines": 2589,
       "bytes": 377004,
       "utf8": true
@@ -7260,9 +7260,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-293-kitchen-print-failure-visibility.md",
-      "sha256": "23E29DC7A10966F6DDB94E143DC8320133EA5E817A202D291AA9D61639B00EA2",
-      "lines": 42,
-      "bytes": 1461,
+      "sha256": "F8E8F6E78B94BBD3211E1C6B9BAAA6FF9A55531080B22F8ED784F2E288D4D653",
+      "lines": 55,
+      "bytes": 3943,
       "utf8": true
     },
     {

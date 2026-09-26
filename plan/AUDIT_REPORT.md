@@ -2495,7 +2495,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-290-e2e-suites-in-ci.md` | ✅ | `BEF657C0A61EE2B2CF4CA9668019167E7AE994726021F57A71CC8B76BF41E190` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-291-posterminal-session-expiry-handling.md` | ✅ | `D3D3DC5D9C63A6465A15294EBEF9E6E860613A08912CB9C8F17003FEC69A05B9` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-292-cashier-discount-tip-adjustment-ui.md` | ✅ | `03E8E85B3A6D4A73BDF0B4D9972D3A33450BD2FC1AF80376305F926B3E802DCA` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-293-kitchen-print-failure-visibility.md` | ✅ | `23E29DC7A10966F6DDB94E143DC8320133EA5E817A202D291AA9D61639B00EA2` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-293-kitchen-print-failure-visibility.md` | ✅ | `F8E8F6E78B94BBD3211E1C6B9BAAA6FF9A55531080B22F8ED784F2E288D4D653` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-294-customer-display-refresh-on-payment.md` | ✅ | `EA58F299920EE452EE673FA980F36A92896EDBA0BFCB04A59B5E338B5D310258` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-295-offline-reconciliation-client-decision.md` | ✅ | `9BE5C052F08EA8225CDFEB9FA7D2E461A4FB3A4D8D3F7BCB0ED6829520A10FAB` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-296-decision-management-area-ui.md` | ✅ | `BA7E4B6C9F6C1B6B8558C522089283249EABCFE46957570EE27976FCC67FCE9F` | Tek-sahip görev |

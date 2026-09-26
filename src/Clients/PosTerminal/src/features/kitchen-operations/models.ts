@@ -110,6 +110,35 @@ export interface KitchenUnknownDelivery {
   rowVersion: number;
 }
 
+// V1-RMD-293: kitchen.print_jobs' own status enum (PrintJobStatus, ALKAROS.Kitchen.PrintQueue). Labels kept
+// local to this feature rather than the central catalog strings.ts uses for other enums (finding F-7's own
+// convention) - strings.ts sits outside this task's Owned surface.
+export const printJobStatusLabels: Record<string, string> = {
+  Pending: "Sırada",
+  Leased: "Devralındı",
+  Printing: "Yazdırılıyor",
+  Printed: "Yazdırıldı",
+  Failed: "Başarısız, yeniden denenecek",
+  DeadLetter: "Deneme hakları tükendi",
+  Cancelled: "İptal edildi",
+  AwaitingOperatorReview: "Doğrulanamadı, operatör onayı bekliyor",
+};
+
+/** V1-RMD-293: one printer attempt for one ticket (kitchen.print_jobs). Only Failed/DeadLetter are shown -
+ * every other status is either fine (Printed) or already covered by KitchenUnknownDelivery's own panel
+ * (AwaitingOperatorReview). There is no server action to requeue a DeadLetter job or to force a retry; this
+ * is read-only visibility, not a remediation tool (see this task's own scope note). */
+export interface KitchenPrintJob {
+  id: string;
+  ticketId: string;
+  printerId: string;
+  status: string;
+  attemptCount: number;
+  maxAttempts: number;
+  failedAt: string | null;
+  createdAt: string;
+}
+
 export interface KitchenBackup {
   backupId: string;
   backupType: string;
@@ -137,6 +166,10 @@ export interface KitchenData {
   routes: readonly KitchenPrinterRoute[];
   categories: readonly KitchenCategory[];
   unknownDeliveries: readonly KitchenUnknownDelivery[];
+  // V1-RMD-293: Failed/DeadLetter print jobs across the currently loaded tickets - see KitchenPrintJob's own doc comment.
+  // Optional: routes/workspace.tsx's own placeholder KitchenData (outside this task's Owned surface) does not
+  // set it while a session is still loading its real data.
+  printJobFailures?: readonly KitchenPrintJob[];
   health: KitchenHealthSnapshot | null;
   backups: readonly KitchenBackup[];
   // V1-KIT-010/V1-KDS-004: kitchen.live_sync_enabled — off by default,
