@@ -1,8 +1,8 @@
 # V12-TGO-003 - Uber Eats Trendyol Go'ya sipariş durumlarını bildir
 
 - Task ID: V12-TGO-003
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: integration
 - Surface state: Planned
 
@@ -21,6 +21,14 @@ teslim edildi. Sağlayıcı davranışı yalnız herkese açık Uber Eats Trendy
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan; Semih 2026-09-26 kararı):
   - src/Host/Experience/OnlineOrdering/ (V12-ONL-003) — eylemlerin adaptöre yönlendirilmesi.
   - src/Modules/OnlineOrdering/OnlineOrderingModule.cs (V12-MAP-001) — kayıt ve deneme profili.
+  - src/Modules/OnlineOrdering/Providers/Contracts/ (V12-ONL-007) — siparişin kabulünü platforma bildirme noktası.
+  - src/Modules/OnlineOrdering/Providers/TrendyolGo/OrderIntake/ (V12-TGO-002) — sağlayıcının durum çağrıları ve ayarlar.
+  - src/Modules/OnlineOrdering/Credentials/ (V12-OUI-003) — hazırlık süresi alanı.
+  - src/Clients/PosTerminal/src/features/online-platform-credentials/ (V12-OUI-003) — alan etiketi.
+  - src/Modules/Reconciliation/OnlineOrders/ (V12-REC-001) — ölü durum bildiriminin platform bazlı vakası.
+  - tests/Modules/Reconciliation/OnlineOrders/ — testler.
+  - tests/Host/Experience/OnlineOrdering/ — testler.
+  - tests/Host/Experience/Reconciliation/ — testler.
 
 ## In scope
 
