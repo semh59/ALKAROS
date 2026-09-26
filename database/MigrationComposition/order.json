@@ -1271,6 +1271,14 @@
         "availability_states"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "149",
+      "phase": "B",
+      "tables": [
+        "online_order_retry_attempts"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

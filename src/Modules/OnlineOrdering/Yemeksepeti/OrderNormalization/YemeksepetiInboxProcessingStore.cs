@@ -131,6 +131,28 @@ public static class YemeksepetiInboxProcessingStore
     }
 
     /// <summary>
+    /// V12-REC-001: puts a refused or failed event back to waiting so processing runs it again (after the
+    /// mapping was fixed), inside the caller's transaction. Never an event whose cancellation was already
+    /// requested from the provider: creating that order now would contradict what the provider was told.
+    /// Returns 0 when the event is no longer refused or failed.
+    /// </summary>
+    public static async Task<int> ReopenForReprocessingAsync(
+        Guid inboxId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            UPDATE online_ordering.yemeksepeti_webhook_inbox
+            SET processed_at = NULL, processing_outcome = NULL, order_id = NULL, outcome_detail = NULL,
+                processing_attempts = 0, last_error = NULL
+            WHERE inbox_id = $1
+              AND processing_outcome IN ('Rejected', 'Failed')
+              AND NOT COALESCE((outcome_detail->>'providerCancellationRequested')::boolean, false);
+            """, connection, transaction);
+        command.Parameters.AddWithValue(inboxId);
+        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// The status-mapping input (V12-MAP-002) carried by a stored payload: status, delivery kind and
     /// cancellation object. A payload the inbox stored always has an order id and status.
     /// </summary>

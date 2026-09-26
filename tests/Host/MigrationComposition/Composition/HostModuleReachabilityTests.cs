@@ -16,7 +16,7 @@ public sealed class HostModuleReachabilityTests
         var catalog = ModuleRegistry.DefaultCatalog;
 
         Assert.NotEmpty(catalog);
-        Assert.Equal(32, catalog.Count); // V12-MAP-001: OnlineOrdering joined the catalog
+        Assert.Equal(33, catalog.Count); // V12-REC-001: Reconciliation.OnlineOrders joined the catalog
         Assert.All(catalog, type =>
         {
             Assert.True(typeof(IModule).IsAssignableFrom(type));

@@ -160,6 +160,7 @@ public static partial class DualScreenApplication
         // V1-RMD-250: IReconciliationService (V1-REC-001, discrepancy case
         // lifecycle) existed with zero HTTP surface.
         builder.Services.AddReconciliationCaseExperience();
+        builder.Services.AddOnlineOrderReconciliationExperience();
         builder.Services.AddSecurityAdministrationExperience();
         // V1-RMD-251: IAlertService (V1-ALT-001) and
         // IObservabilityService's health-check surface (V1-OBS-001)
@@ -574,6 +575,7 @@ public static partial class DualScreenApplication
         app.MapEndOfDayApi();
         app.MapReconciliationCaseApi();
         app.MapPaymentSettlementApi();
+        app.MapOnlineOrderReconciliationApi();
         app.MapSecurityAdministrationApi();
         app.MapObservabilityApi();
         app.MapTableManagementApi();

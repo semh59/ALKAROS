@@ -1,0 +1,43 @@
+V12-REC-001 completion evidence (2026-09-26, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+Scope: new module Reconciliation.OnlineOrders (depends only on Reconciliation), five source pairs read by
+plain SQL (online_ordering inbox, orders.orders, outbox_messages, online_ordering.availability_states),
+retry trail table reconciliation.online_order_retry_attempts (migration 149), Host endpoints under
+/api/v1/management/reconciliation/online-orders (scan, cases/{id}/retry, cases/{id}/resolve), gated by
+reports.view + reconciliation.manage. Provider behaviour is NOT verified (V0-YSP-001 Blocked, V12-GOV-004):
+only local evidence is read.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/Reconciliation/OnlineOrders -> 15/15
+- dotnet test tests/Modules/Reconciliation/Payments -> 7/7 (regression)
+- dotnet test tests/Modules/Reconciliation/CaseFoundation -> 6/6 (regression)
+- dotnet test tests/Host/Experience/Reconciliation -> 10/10 (2 new)
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- dotnet test tests/Host/MigrationComposition -> 161/161 (migration 149, catalog 33)
+- consistency_audit.py -> clean; project_manifest_tool.py -> VALID; plan_audit_tool.py validate -> 0/0
+- regression: OrderNormalization 18/18, Host OnlineOrdering 35/35
+  (AUDIT_MANIFEST/AUDIT_REPORT regenerated locally for validation only and reverted before commit)
+
+Mutations (backup restore + cmp, 13/13 killed):
+M1 dead-message condition removed from requeue -> 1 failed
+M2 source re-check skipped on resolve -> 3 failed
+M3 dispatched-cancellation exclusion removed -> 1 failed
+M4 closed-case guard for cancelled-after-handover removed -> 1 failed
+M5 failed-delivery threshold >= changed to > -> 1 failed
+M6 dead filter removed from provider-unknown scan -> 2 failed
+M7 raw exception message instead of Turkish reason -> 1 failed
+M8 processing_attempts not reset on reprocess -> 1 failed
+M9 active-case check removed from retry -> 1 failed
+M10 dismissed guard removed from refused scan -> 1 failed
+M11 cancellation-requested guard removed from reprocess -> 1 failed
+M12 next action fixed to reprocess -> 2 failed
+M13 note requirement removed from resolve -> 1 failed
+(M8 and M11 re-run after the reprocess SQL moved into YemeksepetiInboxProcessingStore: both still 1 failed.)
+
+Audit finding fixed during closure: consistency_audit rule flagged the first draft for writing
+online_ordering.yemeksepeti_webhook_inbox from the Reconciliation module. The write now goes through the
+OnlineOrdering contract (YemeksepetiInboxProcessingStore.ReopenForReprocessingAsync) behind a
+Reconciliation port bound by the Host (OnlineOrderingInboxReprocessing), in the same transaction.
+HostModuleReachabilityTests catalog count 32 -> 33 (it failed once before the update).

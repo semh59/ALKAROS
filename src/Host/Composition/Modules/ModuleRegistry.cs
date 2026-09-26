@@ -54,6 +54,7 @@ public static class ModuleRegistry
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),
         typeof(ALKAROS.Reconciliation.Payments.PaymentReconciliationModule),
+        typeof(ALKAROS.Reconciliation.OnlineOrders.OnlineOrderReconciliationModule),
         typeof(ALKAROS.Billing.PaymentClosure.BillPaymentClosureModule)
     ];
 

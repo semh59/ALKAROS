@@ -135,6 +135,9 @@ public static class ModuleBoundaryTests
             // module dependency is Reconciliation itself, for
             // IReconciliationService.
             ["Reconciliation.Payments"] = ["Reconciliation"],
+            // V12-REC-001: same read-model pattern for online order sources
+            // (online_ordering.*, orders.*, outbox_messages by plain SQL).
+            ["Reconciliation.OnlineOrders"] = ["Reconciliation"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()
