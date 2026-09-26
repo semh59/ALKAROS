@@ -339,7 +339,37 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          dotnet list ALKAROS.slnx package --vulnerable --include-transitive
+          # V1-RMD-337 (independent 2026-09-26 audit, orta seviye bulgu): `dotnet list
+          # package --vulnerable` always exits 0, even when it finds vulnerable packages -
+          # it only ever prints them. The command below never failed this step on its own;
+          # only pnpm audit's own real exit code (unaffected by this finding) did. --format
+          # json is parsed explicitly instead of grepping the human-readable text, which is
+          # localized (this SDK prints Turkish on a tr-TR host) and would silently stop
+          # matching under a different locale.
+          dotnet list ALKAROS.slnx package --vulnerable --include-transitive --format json \
+            > "$RUNNER_TEMP/vulnerable-packages.json"
+          python - "$RUNNER_TEMP/vulnerable-packages.json" <<'PY'
+          import json
+          import sys
+
+          with open(sys.argv[1], encoding="utf-8") as handle:
+              data = json.load(handle)
+
+          vulnerable = []
+          for project in data.get("projects", []):
+              for framework in project.get("frameworks", []):
+                  for key in ("topLevelPackages", "transitivePackages"):
+                      for package in framework.get(key) or []:
+                          if package.get("vulnerabilities"):
+                              vulnerable.append((project["path"], package["id"], package.get("resolvedVersion")))
+
+          if vulnerable:
+              print("Vulnerable NuGet packages found:")
+              for path, package_id, version in vulnerable:
+                  print(f"  {path}: {package_id} {version}")
+              sys.exit(1)
+          print("No vulnerable NuGet packages found.")
+          PY
           pnpm --dir src/Clients/PosTerminal audit --prod --audit-level high
       - name: SBOM and license inventory
         shell: bash
