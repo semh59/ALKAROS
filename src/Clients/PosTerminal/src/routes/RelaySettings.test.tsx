@@ -172,4 +172,29 @@ describe("RelaySettings", () => {
     expect(document.body.textContent).toContain("Bağlayıcı çalışıyor");
     expect(document.body.textContent).not.toContain("Running");
   });
+
+  // V1-RMD-324 (independent 2026-09-26 audit, finding K17): the backend now reports "Unknown" instead of
+  // a frozen, no-longer-trustworthy "Running" once the connector container stops refreshing its own
+  // status row - this screen must show a real Turkish label for that too, not leak the raw enum name.
+  it("shows the Turkish label for an unknown (stale) connector status, never the raw server enum name", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) {
+        return jsonResponse({ userId: "u1", displayName: "Zeynep", terminalId: "t1", capabilities: ["integrations.manage"] });
+      }
+      if (path.endsWith("/relay-credential/status")) {
+        return jsonResponse({
+          configured: true, updatedAt: "2026-09-07T10:00:00Z", accountId: "account-abc", zoneId: "zone-xyz", baseDomain: "alkaros.app",
+          tunnelHostname: "sube1.alkaros.app", tunnelUpdatedAt: "2026-09-07T10:05:00Z", connectorState: "Unknown",
+        });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render(<RelaySettings />);
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Bağlayıcı durumu bilinmiyor");
+    expect(document.body.textContent).not.toContain("Unknown");
+  });
 });

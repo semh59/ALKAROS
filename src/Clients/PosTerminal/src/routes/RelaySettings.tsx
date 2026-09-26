@@ -12,12 +12,15 @@ const IntegrationsManage = "integrations.manage";
 // Keyed off RelayCredentialStatus["connectorState"]'s own real union (not a
 // bare `Record<string, string>`), the same exhaustive-map technique
 // `src/strings.ts`'s `healthStatusLabels`/`backupStatusLabels` already use —
-// a 4th backend state added without updating this map is now a TypeScript
+// a 5th backend state added without updating this map is now a TypeScript
 // compile error, not a silent raw-enum leak.
 const ConnectorStateLabels: Record<RelayCredentialStatus["connectorState"], string> = {
   NotConfigured: "Bağlayıcı henüz kurulmadı",
   Running: "Bağlayıcı çalışıyor",
   Restarting: "Bağlayıcı yeniden başlatılıyor",
+  // V1-RMD-324 (independent 2026-09-26 audit, finding K17): the connector container stopped reporting in
+  // - its last known state (often "Running") is no longer trustworthy.
+  Unknown: "Bağlayıcı durumu bilinmiyor (bağlantı kesilmiş olabilir)",
 };
 
 /**

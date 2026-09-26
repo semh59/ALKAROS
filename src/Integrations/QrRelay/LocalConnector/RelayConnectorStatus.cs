@@ -18,6 +18,17 @@ public enum RelayConnectorState
 
     /// <summary>The process exited unexpectedly; a restart is pending after the backoff delay.</summary>
     Restarting,
+
+    /// <summary>
+    /// V1-RMD-324 (independent 2026-09-26 audit, finding K17): reported by
+    /// <see cref="ALKAROS.QrRelay.PublicGateway.PostgresRelayConnectorStatusReporter"/>, never by
+    /// <see cref="ALKAROS.QrRelay.LocalConnector.RelayConnectorSupervisor"/> itself — the connector
+    /// container's own view of ITSELF is never stale by definition. Means the last row
+    /// <see cref="RelayConnectorStatusPublisher"/> wrote is older than its own publish interval would
+    /// ever explain on its own: the whole connector container (this publisher included) most likely died,
+    /// leaving whatever state was last written (often "Running") frozen and no longer trustworthy.
+    /// </summary>
+    Unknown,
 }
 
 public sealed record RelayConnectorStatus(

@@ -42,11 +42,15 @@ export interface RelayCredentialStatus {
   tunnelUpdatedAt: string | null;
   // Raw server enum name (ALKAROS.QrRelay.LocalConnector.RelayConnectorState)
   // — the UI never shows this directly, see RelaySettings.tsx's Turkish
-  // mapping. Narrowed to the real 3-member union (not a bare `string`) so
-  // RelaySettings.tsx's label map is TypeScript-exhaustive: a 4th backend
+  // mapping. Narrowed to the real 4-member union (not a bare `string`) so
+  // RelaySettings.tsx's label map is TypeScript-exhaustive: a 5th backend
   // value added without updating that map is a compile error here, not a
   // silent raw-enum leak to the screen.
-  connectorState: "NotConfigured" | "Running" | "Restarting";
+  //
+  // V1-RMD-324 (independent 2026-09-26 audit, finding K17): "Unknown" - the
+  // status row has not been refreshed recently enough to trust (the
+  // connector's own container most likely died) - is the 4th, added here.
+  connectorState: "NotConfigured" | "Running" | "Restarting" | "Unknown";
 }
 
 // V14-QNB-006: userId/vergiTcKimlikNo are not secret (they identify WHICH

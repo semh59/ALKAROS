@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1339,
-  "markdown_line_count": 103223,
-  "markdown_byte_count": 5943524,
+  "markdown_file_count": 1340,
+  "markdown_line_count": 103276,
+  "markdown_byte_count": 5947785,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C637C6B3ACF6A1F1CF34172512C414DAC68D4740E6007D60F4EBD3C2716D7FE2",
-      "lines": 2615,
-      "bytes": 381369,
+      "sha256": "DFBD7DC0F2ABD3566944FD525C844E7FB9427F440AE09577CE31FA67C1695FB6",
+      "lines": 2616,
+      "bytes": 381536,
       "utf8": true
     },
     {
@@ -7410,6 +7410,13 @@
       "sha256": "196F8F702C049B6357636A50A0DDDEF40DB65BE3055A6C00E92FF93D4531B4B6",
       "lines": 48,
       "bytes": 4227,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-324-relay-connector-status-staleness.md",
+      "sha256": "3FC839899AF96C1B7DEC175C71E94CCB91B604C082F02D0BC7587549880EE16C",
+      "lines": 52,
+      "bytes": 4094,
       "utf8": true
     },
     {
