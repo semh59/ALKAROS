@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1346,
-  "markdown_line_count": 103646,
-  "markdown_byte_count": 5976187,
+  "markdown_file_count": 1364,
+  "markdown_line_count": 104683,
+  "markdown_byte_count": 6027608,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "D170D87AABB7107B218429777796B73F2B590FCF7EB6C3ECEB0D71D0D340D5BB",
-      "lines": 4538,
-      "bytes": 221007,
+      "sha256": "FD4CDC5366EC21F828900E7BAD49F9E357827B254D509AAC6EB14A8BD61927A7",
+      "lines": 4582,
+      "bytes": 222998,
       "utf8": true
     }
   ],
@@ -2457,6 +2457,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V12-GOV-006/decision-record.md",
+      "sha256": "7D7AC72AE5BEBF03889332A181150A124095F22289F47523D045F84DCD41F5D2",
+      "lines": 77,
+      "bytes": 5371,
+      "utf8": true
+    },
+    {
       "path": "evidence/V13-GOV-006/README.md",
       "sha256": "B33A4648B0FE354E6A866B54DE5377129B889B8BF6BFFAAC34AC2938BC0CE12C",
       "lines": 108,
@@ -2535,9 +2542,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "BFE818C790413D8C0F61CC2C66A80CB8268E0D49C6A6435A1D9553FCE27ED891",
-      "lines": 2622,
-      "bytes": 382574,
+      "sha256": "C6B8B0B5C9C93E846F1459FE0FB7C829D2D8AB0067CB0BA1DE85DDDA64FEEF71",
+      "lines": 2640,
+      "bytes": 385524,
       "utf8": true
     },
     {
@@ -2556,16 +2563,16 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "8BB2978C5016D01A110BD182C91096A399675D6B0A2AAC6EDCC7AB766CA87DFD",
-      "lines": 559,
-      "bytes": 144144,
+      "sha256": "93ADF55432EF68DA7CAFF84AD78027A6A3272C3CB7916A463BFD263E833F5767",
+      "lines": 577,
+      "bytes": 145580,
       "utf8": true
     },
     {
       "path": "plan/OFFICIAL_SOURCE_REGISTER.md",
-      "sha256": "B8566A2DE5E724629B94F6AE91A5948DD03E44C6A66F05D181CE5938BEEC7172",
-      "lines": 44,
-      "bytes": 7937,
+      "sha256": "55BAEDFB79F62EEAFEF1E5D9D861559DB374DC8CD8E878A484F5FB81A60B2C56",
+      "lines": 45,
+      "bytes": 8399,
       "utf8": true
     },
     {
@@ -2612,9 +2619,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "D38DBC2DD600A286267F2404A50A1F413DAFEA78A1B0A4D6E72BD3EEB63360DD",
-      "lines": 206,
-      "bytes": 89369,
+      "sha256": "D2F4F945E93A729AB28AB32C29AD21978499E8662E91C58DFF36B1D910919DB2",
+      "lines": 208,
+      "bytes": 91451,
       "utf8": true
     },
     {
@@ -8386,6 +8393,34 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/governance/V12-GOV-006-direct-online-platform-integration.md",
+      "sha256": "3B448202366F0F6ED46702EDA5F22A7854AA8BF53259ED1EF560BA60E3827AD7",
+      "lines": 75,
+      "bytes": 3085,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/governance/V12-GOV-007-trendyol-go-dependency-waiver.md",
+      "sha256": "0DD858821884EA48E64E32CA356A792DFA8E13867E248FEFECAFE5290D49DBE6",
+      "lines": 63,
+      "bytes": 2462,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/migros-yemek/V12-MGY-001-pos-integrator-contract.md",
+      "sha256": "57A43B150A2654B568D09D1FB8229EE6722F49C2686D9FFCC87D06AF113EB25F",
+      "lines": 50,
+      "bytes": 1490,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/migros-yemek/V12-MGY-002-order-adapter.md",
+      "sha256": "E9D0363920215EA94D74B08B1116F92F5D42E448F80300A57E58F9A4FF87F827",
+      "lines": 44,
+      "bytes": 1337,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/nfc-ordering/V12-NFC-001-self-check-in-and-trusted-order-intake.md",
       "sha256": "2225556607D714E0829C5DF928D261DEFB58C51A62A948ECE95F6389ECB96D96",
       "lines": 120,
@@ -8411,6 +8446,20 @@
       "sha256": "82BA92E301BC50DDF7D82A4372E44BE1254E1E98CB08C0B0B05C77362FD5F782",
       "lines": 100,
       "bytes": 5094,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-operations-ui/V12-OUI-002-provider-label-and-credentials.md",
+      "sha256": "56C232DF93E6A10F48AEAB19B2FA0F9456412D493F965650E5DEB4807470751B",
+      "lines": 48,
+      "bytes": 1898,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-operations-ui/V12-OUI-003-online-platform-credentials.md",
+      "sha256": "5FE61547300589240EC35F3F2225500F4215D199ADEAC6F1B3866A7B11DB29E5",
+      "lines": 58,
+      "bytes": 2602,
       "utf8": true
     },
     {
@@ -8449,6 +8498,34 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/online-ordering/V12-ONL-006-online-order-provider.md",
+      "sha256": "D3D18C5D7995A2B74899D754CE56C191DF421C58AFCB89F791700B835C54AA36",
+      "lines": 59,
+      "bytes": 3084,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-ONL-007-online-provider-adapter-contract.md",
+      "sha256": "B50096DABCC21253F38BDF798854AADBD902E433730188D0D95F2E89D65D30D7",
+      "lines": 63,
+      "bytes": 3260,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-ONL-008-provider-neutral-inbox-and-mapping.md",
+      "sha256": "F2AB6529601D3755E31B7E8BA8F0D5E8CCF17B80590AB4FB4C03EC1E5E31AFE9",
+      "lines": 64,
+      "bytes": 3356,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-ONL-009-provider-order-polling.md",
+      "sha256": "ADB762ECC88C9B61F3F7C6FD782024067DB734042757323F784109408CADC033",
+      "lines": 48,
+      "bytes": 1859,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/online-ordering/V12-RMD-004-online-intake-correctness.md",
       "sha256": "49AEC259B8B7D91E46D770E86A6A390886BDF268C0C2AF7484378238E0D2E395",
       "lines": 84,
@@ -8481,6 +8558,13 @@
       "sha256": "CD32EE2527957CF0CC3DF9E075307FB3ED5999562B343CBCFCB671FD4E731A2E",
       "lines": 97,
       "bytes": 5843,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-RMD-009-availability-case-per-divergence.md",
+      "sha256": "1C3E6A59AF97BBC0A280CD47220C5CF0E58929DAE7ED3C309A22938864B6AB93",
+      "lines": 51,
+      "bytes": 2332,
       "utf8": true
     },
     {
@@ -8576,9 +8660,9 @@
     },
     {
       "path": "plan/v1.2/README.md",
-      "sha256": "8B9A6547FCDAB426DC8E164A6FB1DB4DA2434C041C86494A58B3360F1D4F47CA",
-      "lines": 61,
-      "bytes": 2984,
+      "sha256": "C0E2B3658C548A5B1D4248ADC3D26F86AFBC97372A48B5CDFB320AC506F77D3C",
+      "lines": 70,
+      "bytes": 3546,
       "utf8": true
     },
     {
@@ -8586,6 +8670,13 @@
       "sha256": "6AB60C241FC789F87C34E95AFB05A94AB06C1C98F248CEC650A1627053B1CA0F",
       "lines": 136,
       "bytes": 7852,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/reconciliation/V12-REC-002-provider-aware-reconciliation.md",
+      "sha256": "1DF509E9E0B60A163ADDC51BFD761D0C6E8B3181536357581AF32571E480DEE9",
+      "lines": 55,
+      "bytes": 2590,
       "utf8": true
     },
     {
@@ -8607,6 +8698,41 @@
       "sha256": "8381DBC429C6EFF37F66CE434A0C78753D116AF859D234BBAB53C73CA74A2328",
       "lines": 99,
       "bytes": 5266,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/trendyol-go/V12-TGO-001-meal-api-contract.md",
+      "sha256": "E4A09F9E992A9E5E654D39F91681322990DEA252AD13B1C831AC0495070352B6",
+      "lines": 52,
+      "bytes": 1893,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/trendyol-go/V12-TGO-002-order-intake.md",
+      "sha256": "2556F6F06D8AAAABE742F449E76E9752EBF9BC6FE00DBA462F8AA3F02D90F94C",
+      "lines": 48,
+      "bytes": 2063,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/trendyol-go/V12-TGO-003-outbound-status.md",
+      "sha256": "1D4A2056397697D9838CC87D4DB4CC807EBCF371771781D8CBC5FE73D246E5D1",
+      "lines": 46,
+      "bytes": 1865,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/trendyol-go/V12-TGO-004-menu-availability-and-price.md",
+      "sha256": "2EB6D6F0DB92D07FC96EB1024AA358C4EB7CE63B2D83EFC5801EDA657807AEDB",
+      "lines": 44,
+      "bytes": 1708,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/trendyol-go/V12-TGO-005-uber-eats-transition-model.md",
+      "sha256": "FB434F2B34760114738F07703A9CA38B2F3D132B067E06D620AF63716D3B1260",
+      "lines": 44,
+      "bytes": 1674,
       "utf8": true
     },
     {
