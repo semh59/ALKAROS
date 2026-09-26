@@ -1,0 +1,18 @@
+V1-RMD-313 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 5bb96372.
+
+Root cause: PendingOrderConfirmationStore.RejectAsync cancelled the kitchen ticket items on their own connection and
+committed them before writing the rejection; an accept winning the order's version left an Accepted order whose
+kitchen items were cancelled.
+Fix: IKitchenTicketRepository.GetByOrderIdAsync(orderId, connection, transaction) (ticket rows FOR UPDATE) and
+SaveAsync(ticket, version, connection, transaction); RejectAsync cancels the kitchen items, saves the rejection and
+releases the table in one transaction.
+
+Tests (exit 0):
+- tests/Host/Experience/Orders/Confirmation -> 30/30 (+1 deterministic: the reject waits on the locked kitchen
+  ticket while an accept of the same order commits; the reject gets 409 and the kitchen items are not cancelled)
+- regression: KitchenOperations 35/35, Kitchen module projects (OrderItemStateSync 7, PhysicalPrintRecovery 17,
+  PrintQueue 27, Routing 23, TicketLifecycle 30) all green, Orders/VoidSent 14/14, Host OnlineOrdering 35/35
+- consistency_audit clean; plan_audit validate 0/0
+
+Mutation (backup restore + cmp): kitchen read/save moved back outside the rejection's transaction -> 1 failed.

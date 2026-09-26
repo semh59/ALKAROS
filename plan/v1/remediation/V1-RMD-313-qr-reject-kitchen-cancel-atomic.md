@@ -1,7 +1,7 @@
 # V1-RMD-313 - QR reddinde mutfak iptali siparişle aynı transaction'da olsun
 
 - Task ID: V1-RMD-313
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Existing

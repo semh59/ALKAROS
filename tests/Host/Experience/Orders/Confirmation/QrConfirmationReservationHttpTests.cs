@@ -181,6 +181,40 @@ public sealed class QrConfirmationReservationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARejectionThatLosesToAConcurrentAcceptLeavesTheKitchenItemsUntouched()
+    {
+        // V1-RMD-313: the rejection passes its version check, then waits on the kitchen ticket while an accept of
+        // the same order commits; the rejection's save then fails and must take its kitchen cancellation with it.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, productId, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 2m);
+        var orderItemId = (await _database.ReloadOrderAsync(orderId)).Items[0].Id;
+        await _database.SeedKitchenTicketAsync(orderId, orderItemId, productId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await using var blocker = await _database.DataSource.OpenConnectionAsync();
+        await using var blockerTransaction = await blocker.BeginTransactionAsync();
+        await using (var lockTickets = new Npgsql.NpgsqlCommand(
+            "SELECT id FROM kitchen.kitchen_tickets WHERE order_id = $1 FOR UPDATE;", blocker, blockerTransaction))
+        {
+            lockTickets.Parameters.AddWithValue(orderId);
+            await lockTickets.ExecuteNonQueryAsync();
+        }
+
+        var reject = client.SendAsync(JsonRequest(RejectPath(terminalId, orderId), cookie, new RejectPendingOrderRequestV1(1, "Masada kimse yok")));
+        await Task.Delay(500);
+        using var accept = await client.SendAsync(JsonRequest(AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+        await blockerTransaction.RollbackAsync();
+        using var rejectResponse = await reject;
+
+        Assert.Equal(HttpStatusCode.OK, accept.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, rejectResponse.StatusCode);
+        Assert.Equal(OrderState.Accepted, (await _database.ReloadOrderAsync(orderId)).Status);
+        Assert.DoesNotContain("Cancelled", await _database.GetKitchenTicketItemStatusesAsync(orderId));
+    }
+
+    [Fact]
     public async Task AStaleRowVersionRefusesTheQrAcceptWithoutAnyHold()
     {
         var terminalId = Guid.NewGuid();

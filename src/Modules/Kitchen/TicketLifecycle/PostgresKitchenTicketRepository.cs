@@ -84,6 +84,26 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<IReadOnlyList<KitchenTicket>> GetByOrderIdAsync(
+        Guid orderId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using (var lockCommand = new NpgsqlCommand(
+            "SELECT id FROM kitchen.kitchen_tickets WHERE order_id = @order_id ORDER BY id FOR UPDATE;", connection, transaction))
+        {
+            lockCommand.Parameters.AddWithValue("order_id", orderId);
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        return await LoadTicketGraphAsync(connection, "t.order_id = @filter", orderId, cancellationToken, transaction)
+            .ConfigureAwait(false);
+    }
+
     public async Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(string stationId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(stationId);
@@ -194,6 +214,36 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var tx = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
+        var newRowVersion = await SaveCoreAsync(ticket, expectedRowVersion, connection, tx, cancellationToken).ConfigureAwait(false);
+        await tx.CommitAsync(cancellationToken).ConfigureAwait(false);
+        ticket.RowVersion = newRowVersion;
+        return newRowVersion;
+    }
+
+    public async Task<long> SaveAsync(
+        KitchenTicket ticket,
+        long expectedRowVersion,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(ticket);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        // The caller commits; its transaction is what makes the new version real.
+        var newRowVersion = await SaveCoreAsync(ticket, expectedRowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
+        ticket.RowVersion = newRowVersion;
+        return newRowVersion;
+    }
+
+    private static async Task<long> SaveCoreAsync(
+        KitchenTicket ticket,
+        long expectedRowVersion,
+        NpgsqlConnection connection,
+        NpgsqlTransaction tx,
+        CancellationToken cancellationToken)
+    {
         var newRowVersion = expectedRowVersion + 1;
 
         await using (var cmd = connection.CreateCommand())
@@ -290,8 +340,6 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             await itemCmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        await tx.CommitAsync(cancellationToken).ConfigureAwait(false);
-        ticket.RowVersion = newRowVersion;
         return newRowVersion;
     }
 
@@ -380,7 +428,8 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         NpgsqlConnection connection,
         string predicate,
         object filter,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        NpgsqlTransaction? transaction = null)
     {
         var allowedPredicates = new HashSet<string>(StringComparer.Ordinal)
         {
@@ -391,6 +440,7 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             throw new ArgumentException("Unsupported kitchen ticket query predicate.", nameof(predicate));
 
         await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText =
             $"""
             SELECT t.id, t.order_id, t.ticket_number, t.station_id, t.status, t.row_version,

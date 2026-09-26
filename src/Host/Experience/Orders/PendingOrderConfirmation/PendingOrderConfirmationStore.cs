@@ -138,8 +138,8 @@ public sealed class PendingOrderConfirmationStore
     /// <summary>
     /// The staff member refuses the order (e.g. the ID check failed):
     /// PendingConfirmation -&gt; Rejected, every already-dispatched kitchen
-    /// ticket item is cancelled (best effort — the Order write is still the
-    /// authority on whether the order is rejected), and a table the order
+    /// ticket item is cancelled in the same transaction as the rejection
+    /// (V1-RMD-313: never without it), and a table the order
     /// still holds as Reserved becomes Available again. Refuses outright if
     /// a Bill already references the order — that should never happen for a
     /// still-PendingConfirmation order, and silently proceeding would risk
@@ -163,15 +163,17 @@ public sealed class PendingOrderConfirmationStore
             throw new OrderAlreadyBilledException(order.Id);
 
         var now = DateTimeOffset.UtcNow;
-        var cancelledTicketItems = await CancelAllKitchenTicketItemsAsync(orderId, reason, now, cancellationToken)
-            .ConfigureAwait(false);
-
         var rejected = order.TransitionTo(OrderState.Rejected, reason, actorId, now);
+        int cancelledTicketItems;
         long newVersion;
         bool tableReleased;
         await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
         await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
         {
+            // V1-RMD-313: the kitchen cancellation commits with the rejection or not at all. If a concurrent accept
+            // wins the order's version, the save below fails and the kitchen items stay as they were.
+            cancelledTicketItems = await CancelAllKitchenTicketItemsAsync(orderId, reason, now, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
             newVersion = await _orders.SaveAsync(rejected, expectedRowVersion, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
             tableReleased = await ReleaseTableAsync(order, releaseToOccupied: false, connection, transaction, cancellationToken)
@@ -186,16 +188,17 @@ public sealed class PendingOrderConfirmationStore
     }
 
     /// <summary>
-    /// Best-effort mirror cancellation on every kitchen ticket item still
+    /// Mirror cancellation, inside the rejection's transaction, on every kitchen ticket item still
     /// dispatched for this order, mirroring SentItemVoidStore's own
     /// per-item pattern (V1-IAM-027) but applied to every item on every
     /// ticket rather than one — the whole order is being refused, not a
     /// single line. A ticket item already Served or Cancelled is left alone.
     /// </summary>
     private async Task<int> CancelAllKitchenTicketItemsAsync(
-        Guid orderId, string reason, DateTimeOffset now, CancellationToken cancellationToken)
+        Guid orderId, string reason, DateTimeOffset now, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
     {
-        var tickets = await _tickets.GetByOrderIdAsync(orderId, cancellationToken).ConfigureAwait(false);
+        var tickets = await _tickets.GetByOrderIdAsync(orderId, connection, transaction, cancellationToken).ConfigureAwait(false);
         var cancelledCount = 0;
 
         foreach (var ticket in tickets)
@@ -210,7 +213,7 @@ public sealed class PendingOrderConfirmationStore
             }
 
             if (!ReferenceEquals(updated, ticket))
-                await _tickets.SaveAsync(updated, ticket.RowVersion, cancellationToken).ConfigureAwait(false);
+                await _tickets.SaveAsync(updated, ticket.RowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
         }
 
         return cancelledCount;
