@@ -1964,7 +1964,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.2/online-ordering/V12-ONL-006-online-order-provider.md` | ✅ | `D3D18C5D7995A2B74899D754CE56C191DF421C58AFCB89F791700B835C54AA36` | Tek-sahip görev |
 | `plan/v1.2/online-ordering/V12-ONL-007-online-provider-adapter-contract.md` | ✅ | `B50096DABCC21253F38BDF798854AADBD902E433730188D0D95F2E89D65D30D7` | Tek-sahip görev |
 | `plan/v1.2/online-ordering/V12-ONL-008-provider-neutral-inbox-and-mapping.md` | ✅ | `F2AB6529601D3755E31B7E8BA8F0D5E8CCF17B80590AB4FB4C03EC1E5E31AFE9` | Tek-sahip görev |
-| `plan/v1.2/online-ordering/V12-ONL-009-provider-order-polling.md` | ✅ | `C0B3385138DE5843FF3CF1D2A6D43C848C18B82F0A3C8207DE2EFBBEE8D3AAB4` | Tek-sahip görev |
+| `plan/v1.2/online-ordering/V12-ONL-009-provider-order-polling.md` | ✅ | `7B3A391E68EEFD8EB421957EB6D5CE069EAF62FC9AC72131598C8FCA88D29CE6` | Tek-sahip görev |
 | `plan/v1.2/online-ordering/V12-ONL-010-provider-neutral-intake.md` | ✅ | `2F16491B6E04430604D1D892C248EF9EA993EFF0858E0C9076513AD1091231B6` | Tek-sahip görev |
 | `plan/v1.2/online-ordering/V12-RMD-004-online-intake-correctness.md` | ✅ | `49AEC259B8B7D91E46D770E86A6A390886BDF268C0C2AF7484378238E0D2E395` | Tek-sahip görev |
 | `plan/v1.2/online-ordering/V12-RMD-005-online-publishing-correctness.md` | ✅ | `015BA511A62752B24A881458494252834BEB20C7E744806045EE3003B4DD87C8` | Tek-sahip görev |
