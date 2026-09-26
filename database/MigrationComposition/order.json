@@ -1263,6 +1263,14 @@
         "catalog_publication_items"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "148",
+      "phase": "B",
+      "tables": [
+        "availability_states"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

@@ -1,0 +1,18 @@
+V12-ONL-005 completion evidence (2026-09-26, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+UNVERIFIED DRAFT provider call (Yemeksepeti vendor catalog update with `quantity`) - public Partner API v2.0.2
+page only; "quantity - available inventory (determines active status via sales buffer)"; rate limit 50/min
+(portal page) / 60/min (FAQ). No sandbox evidence exists or is claimed (V0-YSP-001 Blocked; V20-INT-003).
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/OnlineOrdering/AvailabilityPublishing -> 10/10
+- dotnet test tests/Host/MigrationComposition -> 161/161 (migration 148, hosted service composed)
+- dotnet test tests/Host/Experience/OnlineOrdering -> 29/29 (regression)
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- consistency_audit.py -> clean; project_manifest_tool.py -> VALID; plan_audit_tool.py validate -> 0/0
+Migration 148 down -> up exercised by TheMigrationRollsBackAndReapplies.
+Mutations (backup restore + cmp): stale-observation guard removed -> 1 failed; row lock removed -> 1; batch
+bound ignored -> 1; disabled-channel check removed -> 1; MIN replaced by MAX -> 1.
+Dead code removed: the delivered-version guard on the delivery update could never be false under the row lock.

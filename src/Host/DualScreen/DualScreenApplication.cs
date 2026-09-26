@@ -177,6 +177,7 @@ public static partial class DualScreenApplication
         builder.Services.AddQnbCredentialSettingsExperience();
         builder.Services.AddYemeksepetiWebhookExperience();
         builder.Services.AddOnlineCatalogPublishingExperience();
+        OnlineAvailabilityPublishingHostedService.AddOnlineAvailabilityPublishingExperience(builder.Services);
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddRoleManagementExperience();

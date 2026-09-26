@@ -1,5 +1,7 @@
 using ALKAROS.IntegrationContracts;
 using ALKAROS.ModuleComposition;
+using ALKAROS.OnlineOrdering.AvailabilityPublishing;
+using ALKAROS.OnlineOrdering.AvailabilityPublishing.Yemeksepeti;
 using ALKAROS.OnlineOrdering.CatalogPublishing;
 using ALKAROS.OnlineOrdering.CatalogPublishing.Yemeksepeti;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
@@ -44,5 +46,8 @@ public sealed class OnlineOrderingModule : IModule
         context.RegisterTransient<ICatalogChannelPublisher, YemeksepetiCatalogPublisher>();
         context.RegisterTransient<CatalogPublicationService, CatalogPublicationService>();
         context.RegisterTransient<IIntegrationEventConsumer, CatalogPublicationConsumer>();
+        // V12-ONL-005: availability publishing per enabled channel.
+        context.RegisterTransient<IAvailabilityChannelPublisher, YemeksepetiAvailabilityPublisher>();
+        context.RegisterTransient<AvailabilityPublicationService, AvailabilityPublicationService>();
     }
 }

@@ -19,6 +19,9 @@ public interface IYemeksepetiProductMappingService
     /// <summary>V12-ONL-004: the SKU a product is currently published under, or null when it has no open mapping.</summary>
     Task<string?> FindOpenSkuForProductAsync(Guid productId, CancellationToken cancellationToken = default);
 
+    /// <summary>V12-ONL-005: the currently open mappings (at most <paramref name="limit"/>), ordered by SKU.</summary>
+    Task<IReadOnlyList<YemeksepetiProductMapping>> ListOpenMappingsAsync(int limit, CancellationToken cancellationToken = default);
+
     /// <summary>What <paramref name="externalSku"/> meant at <paramref name="at"/> — the typed answer, never a guess.</summary>
     Task<ProductMappingResolution> ResolveAsync(
         string externalSku,

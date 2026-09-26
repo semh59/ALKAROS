@@ -155,6 +155,29 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as string;
     }
 
+    public async Task<IReadOnlyList<YemeksepetiProductMapping>> ListOpenMappingsAsync(int limit, CancellationToken cancellationToken = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(limit);
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT mapping_id, external_sku, product_id, effective_from
+            FROM online_ordering.yemeksepeti_product_mappings
+            WHERE effective_to IS NULL
+            ORDER BY external_sku
+            LIMIT $1;
+            """);
+        command.Parameters.AddWithValue(limit);
+        var mappings = new List<YemeksepetiProductMapping>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            mappings.Add(new YemeksepetiProductMapping(
+                reader.GetGuid(0), reader.GetString(1), reader.GetGuid(2), reader.GetFieldValue<DateTimeOffset>(3), null));
+        }
+
+        return mappings;
+    }
+
     private static string NormalizeSku(string externalSku)
     {
         if (string.IsNullOrWhiteSpace(externalSku))

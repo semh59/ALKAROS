@@ -161,6 +161,7 @@
   <Project Path="tests/Modules/Inventory/CrossChannelReservation/ALKAROS.Inventory.CrossChannelReservation.Tests.csproj" />
   <Project Path="tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.csproj" />
   <Project Path="tests/Modules/OnlineOrdering/CatalogPublishing/ALKAROS.OnlineOrdering.CatalogPublishing.Tests.csproj" />
+  <Project Path="tests/Modules/OnlineOrdering/AvailabilityPublishing/ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.csproj" />
   <Project Path="tests/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization.Tests.csproj" />
   <Project Path="tests/Modules/OnlineOrdering/Yemeksepeti/StatusMapping/ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping.Tests.csproj" />
   <Project Path="tests/Modules/OnlineOrdering/Yemeksepeti/StatusSync/ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync.Tests.csproj" />
