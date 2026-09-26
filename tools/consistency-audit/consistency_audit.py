@@ -118,6 +118,37 @@ _SCHEMA_CONST_RE = re.compile(r'const\s+string\s+(\w+)\s*=\s*"(\w+)\.\w+"')
 _WRITE_TARGET_RE = re.compile(
     r"\b(?:UPDATE|INSERT\s+INTO|DELETE\s+FROM)\s+(?:\{(\w+)\}|(\w+)\.)", re.IGNORECASE)
 
+
+def _find_write_targets(text: str) -> list[tuple[int, str, str, str]]:
+    """Rule 5/7's own scan (V1-RMD-338, independent 2026-09-26 audit, orta seviye
+    bulgu): the previous implementation ran _WRITE_TARGET_RE per line, so a raw SQL
+    string that puts the verb and its schema-qualified target on separate lines
+    (this codebase's own C# `\"\"\"...\"\"\"` triple-quoted literals do this
+    routinely, e.g. `UPDATE\n    other_schema.table\nSET ...`) never matched at
+    all - the check simply never saw it. Matching over the WHOLE file text lets
+    `\\s+` cross line breaks the same way it already does within a single line.
+    Returns (line_number, const_name, literal_schema, matched_line_text) for every
+    match whose STARTING line is not a comment-only line (same exemption the old
+    per-line loop already applied)."""
+    results: list[tuple[int, str, str, str]] = []
+    lines = text.splitlines()
+    line_starts = [0]
+    for line in lines:
+        line_starts.append(line_starts[-1] + len(line) + 1)
+    for match in _WRITE_TARGET_RE.finditer(text):
+        line_index = 0
+        for i, start in enumerate(line_starts):
+            if start > match.start():
+                break
+            line_index = i
+        line_number = line_index + 1
+        raw_line = lines[line_index] if line_index < len(lines) else ""
+        if raw_line.strip().startswith(("//", "///", "*", "#")):
+            continue
+        const_name, literal_schema = match.group(1), match.group(2)
+        results.append((line_number, const_name or "", literal_schema or "", raw_line.strip()))
+    return results
+
 # src/Host/** has no per-module schema (it's the composition root), but each
 # Experience area is still expected to write only its own bounded context's
 # schema through ham SQL rather than another area's. Found by an independent
@@ -195,6 +226,19 @@ _LIMIT_RE = re.compile(r"\bLIMIT\b", re.IGNORECASE)
 # Only a body that actually issues a SELECT (has a FROM clause) is in scope; a
 # one-line `return _repository.GetAll...()` forwarder is not.
 _SQL_FROM_RE = re.compile(r"\bFROM\b", re.IGNORECASE)
+# V1-RMD-338 (independent 2026-09-26 audit, orta seviye bulgu): _LIMIT_RE used to
+# search the RAW method body, including its C# `//`/`///` comments — an
+# unrelated English sentence like "// no limit needed here, the caller already
+# scopes this" satisfied `\bLIMIT\b` and made the check believe a real SQL LIMIT
+# clause existed, silently passing an actually-unbounded SELECT. Line comments
+# are stripped before the LIMIT search only (never before the FROM search, and
+# never for rule 5/7's own write-target scan) — a real SQL LIMIT always lives in
+# the string literal, never in a `//` comment.
+_LINE_COMMENT_RE = re.compile(r"//.*")
+
+
+def _strip_line_comments(text: str) -> str:
+    return "\n".join(_LINE_COMMENT_RE.sub("", line) for line in text.splitlines())
 
 SKIP_DIR_PARTS = {"bin", "obj", "node_modules", "dist", ".git"}
 
@@ -313,18 +357,14 @@ def audit() -> list[str]:
                 continue
             text = path.read_text(encoding="utf-8")
             const_schema = {m.group(1): m.group(2) for m in _SCHEMA_CONST_RE.finditer(text)}
-            for number, raw in enumerate(text.splitlines(), 1):
-                line = raw.strip()
-                if line.startswith(("//", "///", "*", "#")):
-                    continue
-                for const_name, literal_schema in _WRITE_TARGET_RE.findall(raw):
-                    schema = literal_schema or const_schema.get(const_name)
-                    # 'audit' is append-only (DB trigger, AUD-01) and written by
-                    # every module by design; it is not an ownership boundary.
-                    if schema and schema != own_schema and schema != "audit":
-                        violations.append(
-                            f"{_rel(path)}:{number}: {parts[0]} module writes the '{schema}' schema; "
-                            f"state changes to another module's rows go through its contract: {line[:120]}")
+            for number, const_name, literal_schema, line in _find_write_targets(text):
+                schema = literal_schema or const_schema.get(const_name)
+                # 'audit' is append-only (DB trigger, AUD-01) and written by
+                # every module by design; it is not an ownership boundary.
+                if schema and schema != own_schema and schema != "audit":
+                    violations.append(
+                        f"{_rel(path)}:{number}: {parts[0]} module writes the '{schema}' schema; "
+                        f"state changes to another module's rows go through its contract: {line[:120]}")
 
             # Rule 6: every list read (GetAll* or GetByX) must carry a LIMIT.
             module_lines = text.splitlines()
@@ -354,7 +394,7 @@ def audit() -> list[str]:
                     if depth <= 0:
                         break
                 body_text = "\n".join(body)
-                if _SQL_FROM_RE.search(body_text) and not _LIMIT_RE.search(body_text):
+                if _SQL_FROM_RE.search(body_text) and not _LIMIT_RE.search(_strip_line_comments(body_text)):
                     violations.append(
                         f"{_rel(path)}:{index + 1}: {parts[0]} module '{signature.group(1)}' issues a SELECT "
                         f"with no LIMIT; add a bound so an outgrown table (or a widening filter) fails loud "
@@ -377,19 +417,15 @@ def audit() -> list[str]:
             own_schema = HOST_AREA_SCHEMA.get(area)
             allowed_extra = HOST_AREA_EXTRA_SCHEMAS.get(area, frozenset())
             text = path.read_text(encoding="utf-8")
-            for number, raw in enumerate(text.splitlines(), 1):
-                line = raw.strip()
-                if line.startswith(("//", "///", "*", "#")):
+            for number, _const_name, literal_schema, line in _find_write_targets(text):
+                schema = literal_schema
+                if not schema or schema == "audit" or schema == own_schema or schema in allowed_extra:
                     continue
-                for _const_name, literal_schema in _WRITE_TARGET_RE.findall(raw):
-                    schema = literal_schema
-                    if not schema or schema == "audit" or schema == own_schema or schema in allowed_extra:
-                        continue
-                    violations.append(
-                        f"{_rel(path)}:{number}: Host area '{area}' writes the '{schema}' schema "
-                        f"(expected '{own_schema or 'none mapped — update HOST_AREA_SCHEMA'}'); "
-                        f"an Experience store changes another area's rows only through its module "
-                        f"contract, or the documented table_mgmt pointer exception: {line[:120]}")
+                violations.append(
+                    f"{_rel(path)}:{number}: Host area '{area}' writes the '{schema}' schema "
+                    f"(expected '{own_schema or 'none mapped — update HOST_AREA_SCHEMA'}'); "
+                    f"an Experience store changes another area's rows only through its module "
+                    f"contract, or the documented table_mgmt pointer exception: {line[:120]}")
 
     src = REPO_ROOT / "src"
     if src.is_dir():
