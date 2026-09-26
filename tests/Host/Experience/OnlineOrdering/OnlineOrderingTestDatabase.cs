@@ -369,6 +369,13 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
             ("id", externalOrderId));
     }
 
+    /// <summary>V12-ONL-006: a single text value (or null).</summary>
+    public async Task<string?> ScalarTextAsync(string sql)
+    {
+        await using var command = DataSource.CreateCommand(sql);
+        return await command.ExecuteScalarAsync() as string;
+    }
+
     public async Task ExecAsync(string sql, params (string Name, object Value)[] parameters)
     {
         await using var command = DataSource.CreateCommand(sql);

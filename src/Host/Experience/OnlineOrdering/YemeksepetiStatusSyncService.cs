@@ -3,6 +3,7 @@ using System.Text;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Kitchen.TicketLifecycle;
+using ALKAROS.OnlineOrdering.OrderLinks;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
@@ -294,10 +295,10 @@ public sealed class YemeksepetiStatusSyncService
     private async Task<Order?> FindOrderAsync(
         string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
     {
-        await using var command = new NpgsqlCommand(
-            "SELECT order_id FROM orders.orders WHERE source = 'Online' AND source_external_id = $1 LIMIT 1;", connection, transaction);
-        command.Parameters.AddWithValue(externalOrderId);
-        return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is Guid orderId
+        // V12-ONL-006: a provider order number means something only together with its platform.
+        return await OnlineOrderLinkStore.FindOrderIdAsync(
+                OnlineOrderProviders.Yemeksepeti, externalOrderId, connection, transaction, cancellationToken)
+            .ConfigureAwait(false) is { } orderId
             ? await _orders.GetByIdAsync(orderId, cancellationToken).ConfigureAwait(false)
             : null;
     }

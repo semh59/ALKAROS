@@ -1,0 +1,29 @@
+V12-ONL-006 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: f386cabe.
+
+Changes:
+- Migration 153: online_ordering.online_orders (order_id PK, provider slug CHECK, external_order_id 1..64,
+  UNIQUE (provider, external_order_id)); existing online orders backfilled as 'yemeksepeti'; the platform-blind
+  orders index uq_orders_online_source_external_id (migration 150) is dropped. Down refuses with an explicit
+  error when two platforms share a number, otherwise restores the index and drops the table.
+- OnlineOrderLinkStore (module OnlineOrdering): LinkAsync / FindOrderIdAsync inside the caller's transaction.
+- Yemeksepeti intake links the order in the same transaction; intake and status sync find the order by
+  (platform, number). orders.orders and the Order model are unchanged (no fixture sweep).
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Host OnlineOrdering 59/59 (+3, one replaced), Host (MigrationComposition) 161/161, Reporting.Channels 6/6,
+  Host Reconciliation 12/12, Architecture 9/9
+- Reconciliation.OnlineOrders 20/21: the failing test (ADismissedAvailabilityDivergenceStaysQuietUntilTheQuantityChanges)
+  is not touched by this task; it fails on master since 9a9d083d (V1-RMD-323 made case deduplication
+  status-independent). Tracked as its own remediation task.
+- consistency_audit clean; plan_audit validate 0/0; project_manifest VALID
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 7/7 killed):
+KILLED L1 intake writes no platform link
+KILLED L2 lookup ignores the platform
+KILLED L3 no per-platform uniqueness
+KILLED L4 rollback guard removed
+KILLED L5 no backfill of existing orders
+KILLED L6 sync finds orders platform-blind
+KILLED L7 index not dropped

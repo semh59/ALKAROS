@@ -1,4 +1,5 @@
 using ALKAROS.Inventory.CrossChannelReservation;
+using ALKAROS.OnlineOrdering.OrderLinks;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
@@ -249,6 +250,11 @@ public sealed class YemeksepetiOrderIntakeService
             updatedAt: now,
             rowVersion: 1);
         await _orders.AddAsync(order, connection, transaction, cancellationToken).ConfigureAwait(false);
+        // V12-ONL-006: the order and its platform link commit together; a second local order for the same
+        // Yemeksepeti order number is refused by the link's uniqueness.
+        await OnlineOrderLinkStore.LinkAsync(
+            orderId, OnlineOrderProviders.Yemeksepeti, onlineOrder.ExternalOrderId, connection, transaction, cancellationToken)
+            .ConfigureAwait(false);
 
         var (submitted, fired) = order.FireRound(AcceptReason, SystemActorId, now);
         var version = await _orders.SaveAsync(submitted, order.RowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
@@ -312,13 +318,7 @@ public sealed class YemeksepetiOrderIntakeService
         return (bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 
-    private static async Task<Guid?> FindOrderAsync(
-        string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
-    {
-        await using var command = new NpgsqlCommand(
-            "SELECT order_id FROM orders.orders WHERE source = 'Online' AND source_external_id = $1 LIMIT 1;",
-            connection, transaction);
-        command.Parameters.AddWithValue(externalOrderId);
-        return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as Guid?;
-    }
+    private static Task<Guid?> FindOrderAsync(
+        string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken) =>
+        OnlineOrderLinkStore.FindOrderIdAsync(OnlineOrderProviders.Yemeksepeti, externalOrderId, connection, transaction, cancellationToken);
 }

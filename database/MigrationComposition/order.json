@@ -1305,6 +1305,15 @@
         "catalog_publications"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "153",
+      "phase": "B",
+      "tables": [
+        "online_orders",
+        "orders"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

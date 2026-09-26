@@ -6,6 +6,7 @@ using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Secrets;
+using ALKAROS.OnlineOrdering.OrderLinks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -432,28 +433,107 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
             Assert.Contains($"\"catalogUnitPrice\": 140", inbox.Detail);
     }
 
+    private async Task<(Guid OrderId, string Provider)?> LinkAsync(string externalOrderId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT order_id, provider FROM online_ordering.online_orders WHERE external_order_id = $1 AND provider = 'yemeksepeti';");
+        command.Parameters.AddWithValue(externalOrderId);
+        await using var reader = await command.ExecuteReaderAsync();
+        return await reader.ReadAsync() ? (reader.GetGuid(0), reader.GetString(1)) : null;
+    }
+
+    private async Task LinkDirectlyAsync(Guid orderId, string provider, string externalOrderId)
+    {
+        await using var connection = await _database.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await OnlineOrderLinkStore.LinkAsync(orderId, provider, externalOrderId, connection, transaction);
+        await transaction.CommitAsync();
+    }
+
+    private Task InsertOtherPlatformOrderAsync(Guid orderId, string externalOrderId) =>
+        _database.ExecAsync(
+            """
+            INSERT INTO orders.orders (order_id, source, source_external_id, status, confirmation_status, order_number, created_at, updated_at)
+            VALUES (@id, 'Online', @external, 'Accepted', 'Accepted', @number, now(), now());
+            """,
+            ("id", orderId), ("external", externalOrderId), ("number", "TG-" + externalOrderId[..8]));
+
     [Fact]
-    public async Task TheDatabaseRefusesASecondLocalOrderForOneProviderOrder()
+    public async Task AnOnlineOrderIsLinkedToItsPlatformAndOnePlatformNumberNeverBecomesTwoOrders()
     {
         var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
         var orderId = NewOrderId();
         await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 1)));
         Assert.Equal(1, await DrainAsync());
+        var local = Assert.Single(await _database.OnlineOrdersAsync(orderId)).OrderId;
 
-        var duplicate = await Assert.ThrowsAsync<Npgsql.PostgresException>(() => _database.ExecAsync(
-            """
-            INSERT INTO orders.orders (order_id, source, source_external_id, status, confirmation_status, order_number, created_at, updated_at)
-            VALUES (gen_random_uuid(), 'Online', @external, 'Accepted', 'Accepted', @number, now(), now());
-            """,
-            ("external", orderId), ("number", "DUP-" + orderId[..8])));
+        Assert.Equal((local, OnlineOrderProviders.Yemeksepeti), await LinkAsync(orderId));
+        var duplicate = await Assert.ThrowsAsync<Npgsql.PostgresException>(
+            () => LinkDirectlyAsync(Guid.NewGuid(), OnlineOrderProviders.Yemeksepeti, orderId));
         Assert.Equal("23505", duplicate.SqlState);
+    }
+
+    [Fact]
+    public async Task TwoPlatformsMayUseTheSameOrderNumberAndEachFindsOnlyItsOwn()
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var sharedNumber = NewOrderId();
+        // Another platform's order with the same number exists first; Yemeksepeti's own order is still created.
+        var otherOrder = Guid.NewGuid();
+        await InsertOtherPlatformOrderAsync(otherOrder, sharedNumber);
+        await LinkDirectlyAsync(otherOrder, "trendyol-go", sharedNumber);
+
+        await StoreAsync(Delivery(sharedNumber, "RECEIVED", "t1", (sku, 1)));
+        Assert.Equal(1, await DrainAsync());
+        var yemeksepetiOrder = Assert.Single(await _database.OnlineOrdersAsync(sharedNumber), o => o.OrderId != otherOrder).OrderId;
+        Assert.Equal("OrderCreated", Assert.Single(await _database.InboxAsync(sharedNumber)).Outcome);
+
+        await using (var connection = await _database.DataSource.OpenConnectionAsync())
+        {
+            await using var transaction = await connection.BeginTransactionAsync();
+            Assert.Equal(yemeksepetiOrder,
+                await OnlineOrderLinkStore.FindOrderIdAsync(OnlineOrderProviders.Yemeksepeti, sharedNumber, connection, transaction));
+            Assert.Equal(otherOrder, await OnlineOrderLinkStore.FindOrderIdAsync("trendyol-go", sharedNumber, connection, transaction));
+            Assert.Null(await OnlineOrderLinkStore.FindOrderIdAsync("migros-yemek", sharedNumber, connection, transaction));
+            await transaction.CommitAsync();
+        }
+
+        // A Yemeksepeti cancellation for that number reaches only the Yemeksepeti order.
+        await StoreAsync(Delivery(sharedNumber, "CANCELLED", "t2", (sku, 1)));
+        await DrainAsync();
+        Assert.Equal("Accepted", await _database.ScalarTextAsync($"SELECT status FROM orders.orders WHERE order_id = '{otherOrder}';"));
+        Assert.Equal("Cancelled", await _database.ScalarTextAsync($"SELECT status FROM orders.orders WHERE order_id = '{yemeksepetiOrder}';"));
+    }
+
+    [Fact]
+    public async Task ThePlatformLinkMigrationBackfillsRollsBackOnlyWhenSafeAndReapplies()
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var existing = NewOrderId();
+        await StoreAsync(Delivery(existing, "RECEIVED", "t1", (sku, 1)));
+        Assert.Equal(1, await DrainAsync());
+
+        await _database.RunFixtureAsync("153-online-order-provider-link.down.sql");
+        await _database.RunFixtureAsync("153-online-order-provider-link.up.sql");
+        Assert.Equal(OnlineOrderProviders.Yemeksepeti, (await LinkAsync(existing))?.Provider);
+
+        // Two platforms now share a number: going back to the platform-blind rule would have to drop one of them.
+        var otherOrder = Guid.NewGuid();
+        await InsertOtherPlatformOrderAsync(otherOrder, existing);
+        var refused = await Assert.ThrowsAsync<Npgsql.PostgresException>(
+            () => _database.RunFixtureAsync("153-online-order-provider-link.down.sql"));
+        Assert.Contains("rollback refused", refused.MessageText);
+        await _database.ExecAsync("DELETE FROM orders.orders WHERE order_id = @id;", ("id", otherOrder));
     }
 
     [Fact]
     public async Task TheIntakeCorrectnessMigrationRollsBackAndReapplies()
     {
+        // V12-ONL-006: 153 replaced 150's platform-blind index, so 150 is rolled back and reapplied beneath it.
+        await _database.RunFixtureAsync("153-online-order-provider-link.down.sql");
         await _database.RunFixtureAsync("150-online-intake-backoff-and-unique-order.down.sql");
         await _database.RunFixtureAsync("150-online-intake-backoff-and-unique-order.up.sql");
+        await _database.RunFixtureAsync("153-online-order-provider-link.up.sql");
         var (_, sku) = await _database.SeedSellableProductAsync(onHand: 1m);
         var orderId = NewOrderId();
         await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 1)));
