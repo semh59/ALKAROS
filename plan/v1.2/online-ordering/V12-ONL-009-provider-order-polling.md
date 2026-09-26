@@ -1,8 +1,8 @@
 # V12-ONL-009 - Webhook'u olmayan ya da kapanan platformlar için sipariş çekme altyapısı
 
 - Task ID: V12-ONL-009
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Planned
 
@@ -28,6 +28,9 @@ aynı gelen kutusuna yazan zamanlanmış servis kurulur.
   - src/Host/Composition/Migrations/MigrationManifest.cs — migration konumu (V12-GOV-008).
   - tests/Host/MigrationComposition/Manifest/ManifestTests.cs — migration konumu (V12-GOV-008).
   - tests/Host/Experience/OnlineOrdering/ — testler ve fikstür bağlantıları (V12-GOV-008).
+  - src/Modules/Reconciliation/OnlineOrders/ (V12-REC-001) — çekme hatası kaynak çifti (In scope 3).
+  - tests/Modules/Reconciliation/OnlineOrders/ — kaynak çifti testleri ve fikstür bağlantısı.
+  - tests/Host/Experience/Reconciliation/ — kayıtlı kaynak çifti sayısı.
 
 ## In scope
 
