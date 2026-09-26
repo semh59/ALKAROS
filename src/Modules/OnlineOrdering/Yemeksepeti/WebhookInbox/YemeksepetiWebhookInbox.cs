@@ -2,9 +2,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ALKAROS.Secrets;
-using ALKAROS.SensitiveData;
 using Npgsql;
 using ALKAROS.OnlineOrdering.OrderLinks;
+using ALKAROS.OnlineOrdering.Providers.Inbox;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 
@@ -49,22 +49,27 @@ public sealed class YemeksepetiWebhookInbox
 
     public const int MaxBodyBytes = 256 * 1024;
     public const int MaxCustomerNoteLength = 200;
-    private const int MaxIdentifierLength = 64;
-    private const string PayloadField = "raw_body";
-    private static readonly SecretReference MasterKey = new("envelope-master-key");
+    private const int MaxIdentifierLength = ProviderInbox.MaxIdentifierLength;
 
-    private readonly NpgsqlDataSource _dataSource;
     private readonly SecretResolver _secrets;
-    private readonly SensitivePayloadProtector _protector;
+
+    /// <summary>V12-ONL-010: the shared inbox stores and opens payloads for every platform.</summary>
+    private readonly ProviderInbox _inbox;
 
     public YemeksepetiWebhookInbox(NpgsqlDataSource dataSource, ISecretProvider secretProvider)
     {
-        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        ArgumentNullException.ThrowIfNull(dataSource);
         ArgumentNullException.ThrowIfNull(secretProvider);
-        var policy = new YemeksepetiWebhookAccessPolicy();
-        _secrets = new SecretResolver(secretProvider, policy);
-        _protector = new SensitivePayloadProtector(new AesGcmEnvelopeCipher(_secrets), policy);
+        _secrets = new SecretResolver(secretProvider, new YemeksepetiWebhookAccessPolicy());
+        _inbox = new ProviderInbox(dataSource, secretProvider);
     }
+
+    /// <summary>
+    /// V12-ONL-010: the key of a Yemeksepeti event — its order id, status and update time. Any other path that
+    /// stores a Yemeksepeti event (polling) must use it, so the same event is stored once.
+    /// </summary>
+    public static string EventKey(string orderId, string status, string? updatedAt) =>
+        Hex(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join('\u001f', orderId, status, updatedAt ?? string.Empty))));
 
     /// <summary>
     /// V12-RMD-007: the authentication step alone, so the endpoint can refuse a delivery before reading its body.
@@ -98,44 +103,12 @@ public sealed class YemeksepetiWebhookInbox
         if (!TryReadIdentity(body, out var orderId, out var status, out var updatedAt))
             return new WebhookReceipt(WebhookReceiptOutcome.Malformed, null);
 
-        var eventKey = Hex(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join('\u001f', orderId, status, updatedAt ?? string.Empty))));
-        var rawBody = Encoding.UTF8.GetString(body.Span);
-        var envelope = _protector.Protect(
-            new SensitivePayload(
-                new Dictionary<string, string> { [PayloadField] = rawBody },
-                new Dictionary<string, SensitiveCategory> { [PayloadField] = SensitiveCategory.Pii }),
-            MasterKey,
-            YemeksepetiWebhookAccessPolicy.Accessor);
-
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using (var insert = new NpgsqlCommand(
-            """
-            INSERT INTO online_ordering.provider_inbox (
-                inbox_id, event_key, external_order_id, provider_status, provider_updated_at, body_sha256, payload_envelope, provider)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            ON CONFLICT (provider, event_key) DO NOTHING
-            RETURNING inbox_id;
-            """, connection))
-        {
-            insert.Parameters.AddWithValue(Guid.NewGuid());
-            insert.Parameters.AddWithValue(eventKey);
-            insert.Parameters.AddWithValue(orderId);
-            insert.Parameters.AddWithValue(status);
-            insert.Parameters.AddWithValue((object?)updatedAt ?? DBNull.Value);
-            insert.Parameters.AddWithValue(Hex(SHA256.HashData(body.Span)));
-            insert.Parameters.AddWithValue(envelope.ToPersistenceBytes());
-            // V12-ONL-008: the inbox is shared by every platform; these rows are Yemeksepeti's.
-            insert.Parameters.AddWithValue(OnlineOrderProviders.Yemeksepeti);
-            if (await insert.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is Guid stored)
-                return new WebhookReceipt(WebhookReceiptOutcome.Stored, stored);
-        }
-
-        await using var existing = new NpgsqlCommand(
-            "SELECT inbox_id FROM online_ordering.provider_inbox WHERE provider = $1 AND event_key = $2;", connection);
-        existing.Parameters.AddWithValue(OnlineOrderProviders.Yemeksepeti);
-        existing.Parameters.AddWithValue(eventKey);
-        var inboxId = (Guid)(await existing.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
-        return new WebhookReceipt(WebhookReceiptOutcome.Duplicate, inboxId);
+        var receipt = await _inbox.StoreAsync(
+            new ProviderInboxEvent(OnlineOrderProviders.Yemeksepeti, EventKey(orderId, status, updatedAt), orderId, status, updatedAt, body),
+            cancellationToken).ConfigureAwait(false);
+        return new WebhookReceipt(
+            receipt.Outcome == ProviderInboxStoreOutcome.Stored ? WebhookReceiptOutcome.Stored : WebhookReceiptOutcome.Duplicate,
+            receipt.InboxId);
     }
 
     /// <summary>
@@ -145,9 +118,7 @@ public sealed class YemeksepetiWebhookInbox
     public string OpenPayload(byte[] payloadEnvelope)
     {
         ArgumentNullException.ThrowIfNull(payloadEnvelope);
-        var payload = _protector.Unprotect(
-            SensitiveEnvelope.FromPersistenceBytes(payloadEnvelope), MasterKey, YemeksepetiWebhookAccessPolicy.Accessor);
-        return payload.Fields[PayloadField];
+        return _inbox.OpenPayload(payloadEnvelope);
     }
 
     /// <summary>

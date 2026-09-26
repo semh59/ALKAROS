@@ -4,8 +4,8 @@ using ALKAROS.SensitiveData;
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 
 /// <summary>
-/// Only the webhook inbox itself may resolve the webhook secret and the envelope master key,
-/// or open a stored delivery. It builds its own resolver/cipher/protector chain around this
+/// Only the webhook inbox itself may resolve the webhook secret (V12-ONL-010: payloads are sealed and opened by
+/// the shared ProviderInbox under its own policy). It builds its own resolver/cipher/protector chain around this
 /// policy instead of sharing one through DI (the same single-purpose pattern as
 /// RelayCredentialAccessPolicy).
 /// </summary>

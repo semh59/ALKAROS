@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 namespace ALKAROS.Host.Experience.OnlineOrdering;
 
 /// <summary>
-/// V12-ONL-002: drains stored Yemeksepeti webhook events asynchronously — the webhook itself
-/// only stores and acknowledges (V12-ONL-001). With the channel unconfigured the inbox stays
-/// empty and every pass finds nothing to do.
+/// V12-ONL-002: drains stored platform events asynchronously (V12-ONL-010: every registered platform's) — a
+/// webhook or poller only stores and acknowledges. With no channel configured the inbox stays empty and every
+/// pass finds nothing to do.
 /// </summary>
 public sealed class YemeksepetiInboxProcessingHostedService : BackgroundService
 {
@@ -18,7 +18,7 @@ public sealed class YemeksepetiInboxProcessingHostedService : BackgroundService
         LoggerMessage.Define(
             LogLevel.Error,
             new EventId(5530, nameof(LogEventFault)),
-            "Yemeksepeti inbox event processing failed; the attempt was recorded and the event will be retried.");
+            "Online platform inbox event processing failed; the attempt was recorded and the event will be retried.");
 
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<YemeksepetiInboxProcessingHostedService> _logger;

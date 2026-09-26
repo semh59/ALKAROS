@@ -1,6 +1,7 @@
 using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.OnlineOrdering.OrderLinks;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
+using ALKAROS.OnlineOrdering.Providers.Inbox;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Orders.OrderAggregate;
@@ -10,7 +11,8 @@ using Npgsql;
 namespace ALKAROS.Host.Experience.OnlineOrdering;
 
 /// <summary>
-/// V12-ONL-002: processes stored Yemeksepeti webhook events one at a time. A new provider order
+/// V12-ONL-002: processes stored platform events one at a time (V12-ONL-010: every registered platform's, each
+/// through its own adapter; the name stays from when Yemeksepeti was the only one). A new provider order
 /// becomes exactly one internal Accepted order, and in the same transaction its portions are
 /// held through the cross-channel arbiter (V12-STK-001), its kitchen ticket is dispatched and the
 /// inbox event is marked processed. If any line cannot be mapped, or the last portion is already
@@ -46,13 +48,10 @@ public sealed class YemeksepetiOrderIntakeService
     ];
 
     private readonly NpgsqlDataSource _dataSource;
-    private readonly YemeksepetiWebhookInbox _inbox;
+    private readonly ProviderInbox _inbox;
 
-    /// <summary>
-    /// V12-ONL-007: the platform whose inbox this processor reads. Until the shared inbox (V12-ONL-008) it is
-    /// Yemeksepeti; everything platform-specific goes through the adapter contract.
-    /// </summary>
-    private readonly IOnlineOrderProvider _provider;
+    /// <summary>V12-ONL-010: the registered platforms; each event is processed by its own platform's adapter.</summary>
+    private readonly OnlineOrderProviderRegistry _providers;
     private readonly IOrderRepository _orders;
     private readonly IOrderSubmissionDispatcher _dispatcher;
     private readonly ICrossChannelPortionArbiter _arbiter;
@@ -60,7 +59,7 @@ public sealed class YemeksepetiOrderIntakeService
 
     public YemeksepetiOrderIntakeService(
         NpgsqlDataSource dataSource,
-        YemeksepetiWebhookInbox inbox,
+        ProviderInbox inbox,
         OnlineOrderProviderRegistry providers,
         IOrderRepository orders,
         IOrderSubmissionDispatcher dispatcher,
@@ -69,8 +68,7 @@ public sealed class YemeksepetiOrderIntakeService
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _inbox = inbox ?? throw new ArgumentNullException(nameof(inbox));
-        ArgumentNullException.ThrowIfNull(providers);
-        _provider = providers.Get(OnlineOrderProviders.Yemeksepeti);
+        _providers = providers ?? throw new ArgumentNullException(nameof(providers));
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _arbiter = arbiter ?? throw new ArgumentNullException(nameof(arbiter));
@@ -83,7 +81,8 @@ public sealed class YemeksepetiOrderIntakeService
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-        var claimed = await YemeksepetiInboxProcessingStore.ClaimNextAsync(DeferredStatuses, connection, transaction, cancellationToken).ConfigureAwait(false);
+        var claimed = await YemeksepetiInboxProcessingStore.ClaimNextAsync(
+            _providers.Providers, DeferredStatuses, connection, transaction, cancellationToken).ConfigureAwait(false);
         if (claimed is null)
         {
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -92,8 +91,9 @@ public sealed class YemeksepetiOrderIntakeService
 
         try
         {
+            var provider = _providers.Get(claimed.Provider);
             var rawPayload = _inbox.OpenPayload(claimed.PayloadEnvelope);
-            var mapping = _provider.MapStatus(claimed.ExternalOrderId, claimed.ProviderStatus, rawPayload);
+            var mapping = provider.MapStatus(claimed.ExternalOrderId, claimed.ProviderStatus, rawPayload);
 
             switch (mapping.Kind)
             {
@@ -108,7 +108,7 @@ public sealed class YemeksepetiOrderIntakeService
                         connection, transaction, cancellationToken).ConfigureAwait(false);
                     break;
                 case StatusMappingKind.Command when mapping.Command == InternalOrderCommand.AcceptIncomingOrder:
-                    await IntakeAsync(claimed, rawPayload, connection, transaction, cancellationToken).ConfigureAwait(false);
+                    await IntakeAsync(provider, claimed, rawPayload, connection, transaction, cancellationToken).ConfigureAwait(false);
                     break;
                 case StatusMappingKind.Command when mapping.Command == InternalOrderCommand.CancelOrder:
                     await _statusSync.ApplyProviderCancellationAsync(
@@ -137,6 +137,7 @@ public sealed class YemeksepetiOrderIntakeService
     }
 
     private async Task IntakeAsync(
+        IOnlineOrderProvider provider,
         ClaimedInboxEvent claimed,
         string rawPayload,
         NpgsqlConnection connection,
@@ -146,10 +147,10 @@ public sealed class YemeksepetiOrderIntakeService
         // Two different events of the same provider order (a retried RECEIVED with a new update
         // time) must never become two orders; serialize per provider order id — the same lock the
         // V12-ONL-003 status sync takes, so a cancellation racing this intake closes deterministically.
-        await YemeksepetiStatusSyncService.LockOrderAsync(_provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken)
+        await YemeksepetiStatusSyncService.LockOrderAsync(provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken)
             .ConfigureAwait(false);
 
-        if (await ProviderAlreadyCancelledAsync(_provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
+        if (await ProviderAlreadyCancelledAsync(provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
         {
             await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
                 claimed.InboxId, InboxProcessingOutcome.SkippedCancelledOrder, null, null,
@@ -157,7 +158,7 @@ public sealed class YemeksepetiOrderIntakeService
             return;
         }
 
-        if (await CancellationAlreadyRequestedAsync(_provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
+        if (await CancellationAlreadyRequestedAsync(provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
         {
             // V12-RMD-004: an earlier event of this order was refused and the provider was asked to cancel it; a new
             // RECEIVED (a fresh update time) must not now create the order the provider was told cannot be made.
@@ -167,7 +168,7 @@ public sealed class YemeksepetiOrderIntakeService
             return;
         }
 
-        if (await FindOrderAsync(claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false) is { } existing)
+        if (await FindOrderAsync(provider, claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false) is { } existing)
         {
             await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
                 claimed.InboxId, InboxProcessingOutcome.OrderAlreadyExists, existing, null,
@@ -175,11 +176,11 @@ public sealed class YemeksepetiOrderIntakeService
             return;
         }
 
-        var normalized = await _provider.NormalizeAsync(rawPayload, claimed.ReceivedAt, cancellationToken).ConfigureAwait(false);
+        var normalized = await provider.NormalizeAsync(rawPayload, claimed.ReceivedAt, cancellationToken).ConfigureAwait(false);
         if (normalized.Order is not { } onlineOrder)
         {
             var itemsUnavailable = ItemUnavailableRejections.Contains(normalized.Rejection!.Value);
-            var references = _provider.ReadItemReferences(rawPayload);
+            var references = provider.ReadItemReferences(rawPayload);
             // V12-RMD-006: only a cancellation actually queued is recorded as requested; without readable item
             // references none can be sent, and the case then says to fix and reprocess instead of "resend".
             var cancellationRequested = itemsUnavailable && references.Count > 0;
@@ -189,7 +190,7 @@ public sealed class YemeksepetiOrderIntakeService
                 connection, transaction, cancellationToken).ConfigureAwait(false);
             if (cancellationRequested)
             {
-                await RequestProviderCancellationAsync(claimed.ExternalOrderId, references, connection, transaction, cancellationToken)
+                await RequestProviderCancellationAsync(provider, claimed.ExternalOrderId, references, connection, transaction, cancellationToken)
                     .ConfigureAwait(false);
             }
             return;
@@ -232,6 +233,7 @@ public sealed class YemeksepetiOrderIntakeService
                 },
                 connection, transaction, cancellationToken).ConfigureAwait(false);
             await RequestProviderCancellationAsync(
+                provider,
                 onlineOrder.ExternalOrderId,
                 onlineOrder.Lines.Select(line => new OnlineOrderLineReference(line.ExternalSku, line.Quantity)).ToList(),
                 connection, transaction, cancellationToken).ConfigureAwait(false);
@@ -241,12 +243,12 @@ public sealed class YemeksepetiOrderIntakeService
         var order = new Order(
             orderId,
             OrderSource.Online,
-            _provider.OrderNumberPrefix + onlineOrder.ExternalOrderId[..Math.Min(47, onlineOrder.ExternalOrderId.Length)],
+            provider.OrderNumberPrefix + onlineOrder.ExternalOrderId[..Math.Min(47, onlineOrder.ExternalOrderId.Length)],
             items,
             sourceExternalId: onlineOrder.ExternalOrderId,
             // V12-RMD-007: the customer's note stays in the encrypted payload only (KVKK); staff open it on purpose,
             // audited, from the online operations screen.
-            notes: $"{_provider.DisplayName} {onlineOrder.DisplayCode}",
+            notes: $"{provider.DisplayName} {onlineOrder.DisplayCode}",
             status: OrderState.Draft,
             createdAt: now,
             updatedAt: now,
@@ -255,10 +257,10 @@ public sealed class YemeksepetiOrderIntakeService
         // V12-ONL-006: the order and its platform link commit together; a second local order for the same
         // platform order number is refused by the link's uniqueness.
         await OnlineOrderLinkStore.LinkAsync(
-            orderId, _provider.Provider, onlineOrder.ExternalOrderId, connection, transaction, cancellationToken)
+            orderId, provider.Provider, onlineOrder.ExternalOrderId, connection, transaction, cancellationToken)
             .ConfigureAwait(false);
 
-        var acceptReason = $"{_provider.DisplayName} siparişi - sağlayıcı tarafından kabul edildi.";
+        var acceptReason = $"{provider.DisplayName} siparişi - sağlayıcı tarafından kabul edildi.";
         var (submitted, fired) = order.FireRound(acceptReason, SystemActorId, now);
         var version = await _orders.SaveAsync(submitted, order.RowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
         await _dispatcher.DispatchAsync(submitted, fired, connection, transaction, cancellationToken).ConfigureAwait(false);
@@ -323,18 +325,20 @@ public sealed class YemeksepetiOrderIntakeService
         return (bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 
-    private Task<Guid?> FindOrderAsync(
-        string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken) =>
-        OnlineOrderLinkStore.FindOrderIdAsync(_provider.Provider, externalOrderId, connection, transaction, cancellationToken);
+    private static Task<Guid?> FindOrderAsync(
+        IOnlineOrderProvider provider, string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken) =>
+        OnlineOrderLinkStore.FindOrderIdAsync(provider.Provider, externalOrderId, connection, transaction, cancellationToken);
 
     /// <summary>Intake refused an order the platform already accepted: tell the platform its items cannot be served.</summary>
-    private Task RequestProviderCancellationAsync(
+    private static Task RequestProviderCancellationAsync(
+        IOnlineOrderProvider provider,
         string externalOrderId,
         IReadOnlyList<OnlineOrderLineReference> items,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken) =>
-        _provider.RequestStatusAsync(
+        provider.RequestStatusAsync(
             new OnlineOrderStatusRequest(
                 externalOrderId, OnlineOutboundStatus.Cancelled, OnlineCancellationReason.ItemUnavailable, items, DateTimeOffset.UtcNow),
             connection, transaction, cancellationToken);

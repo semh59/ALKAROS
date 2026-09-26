@@ -77,8 +77,8 @@ public sealed class YemeksepetiStatusSyncService
     {
         ArgumentNullException.ThrowIfNull(claimed);
         ArgumentNullException.ThrowIfNull(cancellation);
-        // The event came from the Yemeksepeti inbox (the shared inbox arrives with V12-ONL-008).
-        var provider = _providers.Get(OnlineOrderProviders.Yemeksepeti);
+        // V12-ONL-010: the platform the cancelling event came from.
+        var provider = _providers.Get(claimed.Provider);
         await LockOrderAsync(provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false);
         var detail = new { party = cancellation.Party.ToString(), reason = cancellation.Reason, afterPickup = cancellation.AfterPickup };
 

@@ -33,6 +33,8 @@ public static class YemeksepetiWebhookEndpoints
         // registers these through OnlineOrderingModule.
         services.TryAddTransient<ALKAROS.Secrets.ISecretProvider, ALKAROS.Secrets.EnvironmentVariableSecretProvider>();
         services.TryAddTransient<YemeksepetiWebhookInbox>();
+        // V12-ONL-010: the shared inbox every platform's events are stored in and opened from.
+        services.TryAddTransient<ALKAROS.OnlineOrdering.Providers.Inbox.ProviderInbox>();
         // V12-ONL-002: asynchronous processing of stored events. Order, kitchen dispatch and the
         // cross-channel arbiter come from AddOrderManagementExperience / the modules.
         services.TryAddTransient<IProductRepository, PostgresProductRepository>();

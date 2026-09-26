@@ -43,13 +43,15 @@ public enum InboxProcessingOutcome
     Failed
 }
 
-/// <summary>A stored webhook event claimed for processing inside the caller's transaction.</summary>
+/// <summary>A stored platform event claimed for processing inside the caller's transaction.</summary>
 public sealed record ClaimedInboxEvent(
     Guid InboxId,
     string ExternalOrderId,
     string ProviderStatus,
     DateTimeOffset ReceivedAt,
-    byte[] PayloadEnvelope);
+    byte[] PayloadEnvelope,
+    // V12-ONL-010: the platform the event came from; its adapter processes it.
+    string Provider);
 
 /// <summary>
 /// Claims pending webhook events one at a time (<c>FOR UPDATE SKIP LOCKED</c>, so parallel
@@ -63,26 +65,31 @@ public static class YemeksepetiInboxProcessingStore
     public const int FirstRetryDelaySeconds = 10;
     public const int MaxRetryDelaySeconds = 600;
 
+    /// <summary>
+    /// V12-ONL-010: the next pending event of any of <paramref name="providers"/> (the registered platforms); an event
+    /// of a platform that is not registered stays waiting rather than being processed without its adapter.
+    /// </summary>
     public static async Task<ClaimedInboxEvent?> ClaimNextAsync(
+        IReadOnlyCollection<string> providers,
         IReadOnlyCollection<string> deferredStatuses,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(providers);
         ArgumentNullException.ThrowIfNull(deferredStatuses);
         await using var command = new NpgsqlCommand(
             """
-            SELECT inbox_id, external_order_id, provider_status, received_at, payload_envelope
+            SELECT inbox_id, external_order_id, provider_status, received_at, payload_envelope, provider
             FROM online_ordering.provider_inbox
-            WHERE provider = $2 AND processed_at IS NULL AND NOT (provider_status = ANY($1))
+            WHERE provider = ANY($2) AND processed_at IS NULL AND NOT (provider_status = ANY($1))
               AND (next_attempt_at IS NULL OR next_attempt_at <= now())
             ORDER BY processing_attempts, received_at, inbox_id
             LIMIT 1
             FOR UPDATE SKIP LOCKED;
             """, connection, transaction);
         command.Parameters.AddWithValue(deferredStatuses.ToArray());
-        // V12-ONL-008: the shared inbox holds every platform's events; this processor handles Yemeksepeti's.
-        command.Parameters.AddWithValue(OnlineOrderProviders.Yemeksepeti);
+        command.Parameters.AddWithValue(providers.ToArray());
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             return null;
@@ -91,7 +98,8 @@ public static class YemeksepetiInboxProcessingStore
             reader.GetString(1),
             reader.GetString(2),
             reader.GetFieldValue<DateTimeOffset>(3),
-            reader.GetFieldValue<byte[]>(4));
+            reader.GetFieldValue<byte[]>(4),
+            reader.GetString(5));
     }
 
     public static async Task MarkProcessedAsync(

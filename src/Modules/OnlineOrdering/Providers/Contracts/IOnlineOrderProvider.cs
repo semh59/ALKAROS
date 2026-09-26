@@ -83,6 +83,9 @@ public sealed class OnlineOrderProviderRegistry
         }
     }
 
+    /// <summary>V12-ONL-010: the identities of every registered platform.</summary>
+    public IReadOnlyCollection<string> Providers => _providers.Keys;
+
     /// <summary>The platform with this identity; an unknown identity is a fault, never a silent default.</summary>
     public IOnlineOrderProvider Get(string provider)
     {

@@ -1,0 +1,43 @@
+V12-ONL-010 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: e94a1f74.
+Opened by V12-GOV-008 (C107): intake was Yemeksepeti-bound and only the Yemeksepeti webhook component could open
+inbox payloads, so another platform's events would never have become orders.
+
+Changes:
+- New src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs: the one writer/reader of provider_inbox payloads
+  for every platform (own access policy, not shared DI). Envelope shape unchanged (field raw_body, category Pii,
+  envelope master key; the accessor only authorizes key resolution and is not bound into the ciphertext), so rows
+  the webhook stored before open here. Stores once per (provider, event key); the event key is the adapter's
+  (lowercase SHA-256 hex), identifiers 1-64 chars without control characters.
+- YemeksepetiWebhookInbox stores and opens through it; its event-key formula is now the public EventKey(...) so a
+  polled copy of a Yemeksepeti event (V12-ONL-009) is a duplicate of the webhook delivery.
+- YemeksepetiInboxProcessingStore.ClaimNextAsync takes the registered platform ids and returns each event's
+  platform; an unregistered platform's event stays waiting (never processed without its adapter, never failed).
+- Intake (YemeksepetiOrderIntakeService; the name is kept to avoid churn across test projects, its doc says it
+  serves every platform) resolves the adapter per event; the status sync applies a platform cancellation with the
+  event's own platform. OnlineOrderProviderRegistry exposes Providers.
+- Registration: module and host experience register ProviderInbox.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Host OnlineOrdering 87/87 (7 new ProviderNeutralIntakeTests); every tests/Modules/OnlineOrdering project green
+  (14, 15, 33, 24, 32, 19, 31); Reconciliation and Reporting host/module projects green (12, 7, 8, 5, 9, 24, 7, 8,
+  8, 10, 6); ALKAROS.Host.Tests composition/registry/program subset 46/46
+- consistency_audit clean; plan_audit validate 0/0
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 9/9 killed):
+KILLED N1 claim ignores registered platforms
+KILLED N2 intake uses Yemeksepeti for every event
+KILLED N3 cancellation uses Yemeksepeti for every event
+KILLED N4 claimed platform not read
+KILLED N5 webhook key differs from EventKey
+KILLED N6 inbox stores every event as Yemeksepeti
+KILLED N7 event key not validated
+KILLED N8 identifiers not validated
+KILLED N9 payload not encrypted
+
+Honest limits:
+- No real second platform exists yet; the second platform in the tests is a test adapter reading Yemeksepeti-shaped
+  payloads under its own identity. Trendyol Go's own adapter is V12-TGO-002.
+- The customer-note view in the operations screen still reads the Yemeksepeti payload field ("comment"); a
+  platform with another shape needs its adapter to expose it (left for the adapter tasks).

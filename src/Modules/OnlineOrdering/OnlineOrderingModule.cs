@@ -2,6 +2,7 @@ using ALKAROS.IntegrationContracts;
 using ALKAROS.ModuleComposition;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.OnlineOrdering.Credentials;
+using ALKAROS.OnlineOrdering.Providers.Inbox;
 using ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing.Yemeksepeti;
@@ -38,6 +39,10 @@ public sealed class OnlineOrderingModule : IModule
         // V12-OUI-003: platform settings a manager stored from the interface; the webhook secret and the partner
         // client's settings come from there first and from environment variables only when a field is not stored.
         context.RegisterTransient<IOnlinePlatformCredentialStore, PostgresOnlinePlatformCredentialStore>();
+        // V12-ONL-010: the shared inbox; it only needs the envelope master key.
+        context.RegisterTransient(services => new ProviderInbox(
+            (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
+            (ISecretProvider)services.GetService(typeof(ISecretProvider))!));
         context.RegisterTransient(services => new YemeksepetiWebhookInbox(
             (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
             PlatformSettings(services)));
