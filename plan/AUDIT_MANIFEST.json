@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1377,
-  "markdown_line_count": 105594,
-  "markdown_byte_count": 6082051,
+  "markdown_file_count": 1378,
+  "markdown_line_count": 105664,
+  "markdown_byte_count": 6086371,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "A35EE0D57882D4FB90236CFF14FB4F8C6244F20F8B521C3422672C1B91C1BCC3",
-      "lines": 2653,
-      "bytes": 387745,
+      "sha256": "89EA952F484B8B37908C99E32C4F1698B7071871182D84872E8DA5B5F15E6711",
+      "lines": 2654,
+      "bytes": 387918,
       "utf8": true
     },
     {
@@ -7550,6 +7550,13 @@
       "sha256": "E2E7E79261C6F3D83AC45542428E1548012CFA2362C6B3BC4A3F6E63AB724709",
       "lines": 80,
       "bytes": 5171,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-342-qnb-token-credential-format-validation.md",
+      "sha256": "7ED1EB71608117FA1532EEAEE095CC09C2D71247C31C08D52105121B573AE868",
+      "lines": 69,
+      "bytes": 4147,
       "utf8": true
     },
     {
