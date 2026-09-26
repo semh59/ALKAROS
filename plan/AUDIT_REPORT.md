@@ -1542,6 +1542,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/operations/data-housekeeping.md` | ✅ | `6C37A3044624B2087B0382085C025203C8BF8DF9F022C3116B4FA12F73DEBBA6` | Tek-sahip görev |
 | `docs/operations/production-go-live-checklist.md` | ✅ | `87E8D15E44DE3C44F3AD9CB23525667BC04BF114C1C5492040F6D73B083707CE` | Tek-sahip görev |
 | `docs/operations/qr-relay-setup-guide.md` | ✅ | `6FAC765196E9824F9BA99F589C20A70240041E424524D8EAA292C87CD97062E9` | Tek-sahip görev |
+| `docs/operations/yemeksepeti-webhook-setup.md` | ✅ | `6BE78E2C23DB23DC55CE1EAD459F2CD5589D253D62BBBF89AD29355EAFB459E3` | Tek-sahip görev |
 | `docs/performance/critical-path-load-v1.md` | ✅ | `355EE858A1EA0CA6E3EB37A79CE9E8CCADEF14130B9D5682DB6BC1C8BC459FD1` | Tek-sahip görev |
 | `docs/performance/infra-tuning.md` | ✅ | `1F1687A92B88C41C0DA883F90B3926D743FC14B07BD9190AFE84743A698136BD` | Tek-sahip görev |
 | `docs/performance/load-baseline-v1.md` | ✅ | `A28B13C3EAB4D53557D7F4CBC98D596D87ADAD49B2AC621237A2A5D717A14688` | Tek-sahip görev |
@@ -1951,6 +1952,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.2/nfc-ordering/V12-NFC-001-self-check-in-and-trusted-order-intake.md` | ✅ | `2225556607D714E0829C5DF928D261DEFB58C51A62A948ECE95F6389ECB96D96` | Tek-sahip görev |
 | `plan/v1.2/nfc-ordering/V12-NFC-002-age-restricted-item-confirmation.md` | ✅ | `4170DEE6673B7DD0B46AB18C7028B8396338296F969578FB13A6E69E1B24D5E3` | Tek-sahip görev |
 | `plan/v1.2/nfc-ordering/V12-NFC-003-customer-menu-and-order-page.md` | ✅ | `F2B57326D5C154954E0238AB49BC6E46AB3A80ABFC3C70D3DDD5ACCA63390EBF` | Tek-sahip görev |
+| `plan/v1.2/online-ordering/V12-RMD-004-online-intake-correctness.md` | ✅ | `49AEC259B8B7D91E46D770E86A6A390886BDF268C0C2AF7484378238E0D2E395` | Tek-sahip görev |
+| `plan/v1.2/online-ordering/V12-RMD-007-webhook-auth-and-customer-note.md` | ✅ | `92882DE8C93F67CFFB43A3F2BEBB1F9E48C2437F5BBFB314475CCCB861B77A4B` | Tek-sahip görev |
 | `plan/v1.2/qr-ordering/V12-QRO-004-multi-guest-qr-ordering.md` | ✅ | `4D0BB935E43B4D7D8BCFCD0B8D627F3471818EC04FA16E13F773D229DBAE36C7` | Tek-sahip görev |
 | `plan/v1.2/qr-transport/V12-QRT-001-public-relay-transport.md` | ✅ | `0C0C9FFDE53FAF4DF04A5AE983F3AAEC89557FB8D365D6139597C8BD7D712593` | Tek-sahip görev |
 | `plan/v1.2/qr-transport/V12-QRT-002-relay-provider-and-onboarding-model.md` | ✅ | `385B2C9F34D3D3367C93E607B614E44FF549D8DFC7F4C5EACCB257B128167E28` | Tek-sahip görev |
@@ -2508,6 +2511,9 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-311-refund-intent-idempotency-race.md` | ✅ | `B0648733CFD357473326C4DBC3DF2029AEEC733EB8AE1480AA0B84D7B21F8F24` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-312-reconciliation-case-dedup-race.md` | ✅ | `EB2B6594C4EC71A49E72108D41439EBE429731484CC295CB6623E70192E87896` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-313-qr-reject-kitchen-cancel-atomic.md` | ✅ | `E352358B06A9918D42EB782DDF2D35EFC92473543F6C1C9989708B0DCFFCA202` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-314-tender-idempotency-key-stable-across-retry.md` | ✅ | `51C005E12F00941C08F6EE20DCA87B16A21D7D5D693A4598D09947650A778C1D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-315-current-bill-id-cleared-on-logout.md` | ✅ | `6EDEA90AE156618AEA46B9164E64F68D6F294C715A0D9969640DF98D145C147D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-316-authorization-self-approval-guard.md` | ✅ | `BD7703B8E77D52A1EDDF7B9EDB511E5FF7B597465DE406A3FD61AD9E00C68C0F` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2594,5 +2600,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1322` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1328` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

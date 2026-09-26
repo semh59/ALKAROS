@@ -60,6 +60,29 @@ test.describe('Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-R
     expect(summary.allocatedTotal).toBe(60);
   });
 
+  test('V1-RMD-314 (K3): ağ hatası sonrası "tekrar dene" aynı idempotency anahtarını kullanır, mükerrer tahsis oluşturmaz', async ({ page }) => {
+    const seed = readSeed();
+    const terminalId = await loginViaApi(page, seed);
+    const billId = await createBill(page, terminalId, seed, { quantity: 1 }); // 100,00
+    await openSplitPayment(page, billId);
+    await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
+
+    // Sunucuya HİÇ ulaşmayan bir ağ hatası simülasyonu: her iki denemede de istek gerçekten bloklanır, biz
+    // yalnızca kullanılan idempotency anahtarını gözlemleriz. Fix öncesi bu iki anahtar HER ZAMAN farklıydı
+    // (submitTender() her çağrıda crypto.randomUUID() ile taze bir anahtar üretiyordu) - gerçek bir sunucu
+    // zaman aşımından sonraki "tekrar dene" bu yüzden yeni bir tahsilat denemesi olarak işlenirdi.
+    const capturedKeys = [];
+    await page.route(`**/api/v1/terminals/${terminalId}/billing/bills/${billId}/tenders/`, async (route) => {
+      capturedKeys.push(JSON.parse(route.request().postData()).IdempotencyKey);
+      await route.abort('failed');
+    });
+    await payEft(page, 50);
+    await expect(page.getByText('Sunucuya ulaşılamadı.')).toBeVisible({ timeout: 10_000 });
+    await addButton(page).click(); // gerçek "tekrar dene" - kullanıcı formu değiştirmeden yeniden tıklıyor
+    await expect.poll(() => capturedKeys.length, { timeout: 10_000 }).toBeGreaterThanOrEqual(2);
+    expect(new Set(capturedKeys).size).toBe(1);
+  });
+
   test('eşit bölüşümün kuruş kalıntısı gizlenmez: kalan görünür kalır ve elle kapatılır', async ({ page }) => {
     const seed = readSeed();
     const terminalId = await loginViaApi(page, seed);

@@ -89,3 +89,23 @@ public sealed class AuthorizationGrantAlreadyResolvedException : Exception
 
     public Guid GrantId { get; }
 }
+
+/// <summary>
+/// V1-RMD-316 (independent 2026-09-26 audit, finding K9): raised when a user who holds both the requester
+/// role and the manager decision permission (small-establishment overlap - explicitly possible per
+/// V1-IAM-020) attempts to approve or deny their OWN grant request. <c>ResolveAsync</c>'s SQL had no
+/// comparison against <c>RequesterUserId</c> at all - only "is this grant still pending".
+/// </summary>
+public sealed class AuthorizationSelfApprovalException : Exception
+{
+    public AuthorizationSelfApprovalException(Guid grantId, Guid userId)
+        : base($"User {userId} cannot resolve their own authorization grant {grantId}.")
+    {
+        GrantId = grantId;
+        UserId = userId;
+    }
+
+    public Guid GrantId { get; }
+
+    public Guid UserId { get; }
+}

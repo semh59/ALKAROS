@@ -148,7 +148,15 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
         {
             return MapError(http, exception);
         }
+        catch (AuthorizationSelfApprovalException exception)
+        {
+            return MapError(http, exception);
+        }
         catch (BehaviouralTighteningAlreadyClearedException exception)
+        {
+            return MapError(http, exception);
+        }
+        catch (BehaviouralTighteningSelfClearException exception)
         {
             return MapError(http, exception);
         }
@@ -176,8 +184,12 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
                 (StatusCodes.Status403Forbidden, "FORBIDDEN", "The reports.view permission is required."),
             AuthorizationGrantAlreadyResolvedException =>
                 (StatusCodes.Status409Conflict, "ALREADY_RESOLVED", "Another responder already resolved this request."),
+            AuthorizationSelfApprovalException =>
+                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "You cannot resolve your own request."),
             BehaviouralTighteningAlreadyClearedException =>
                 (StatusCodes.Status409Conflict, "ALREADY_CLEARED", "This tightening is already cleared."),
+            BehaviouralTighteningSelfClearException =>
+                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "You cannot clear your own tightening."),
             BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The request is invalid."),
             ArgumentException =>

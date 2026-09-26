@@ -31,3 +31,24 @@ public sealed class BehaviouralTighteningAlreadyClearedException : Exception
 
     public Guid TighteningId { get; }
 }
+
+/// <summary>
+/// V1-RMD-316 (independent 2026-09-26 audit, finding K9): raised when the user whose OWN behaviour
+/// triggered the tightening attempts to clear it themselves (same self-approval gap as
+/// <see cref="ALKAROS.Identity.Authorization.Grants.AuthorizationSelfApprovalException"/>, one schema
+/// over - a small establishment's manager can be the same person whose spiking auto-grant rate opened
+/// this tightening in the first place).
+/// </summary>
+public sealed class BehaviouralTighteningSelfClearException : Exception
+{
+    public BehaviouralTighteningSelfClearException(Guid tighteningId, Guid userId)
+        : base($"User {userId} cannot clear their own behavioural tightening {tighteningId}.")
+    {
+        TighteningId = tighteningId;
+        UserId = userId;
+    }
+
+    public Guid TighteningId { get; }
+
+    public Guid UserId { get; }
+}

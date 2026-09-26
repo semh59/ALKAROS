@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1322,
-  "markdown_line_count": 102170,
-  "markdown_byte_count": 5875140,
+  "markdown_file_count": 1328,
+  "markdown_line_count": 102517,
+  "markdown_byte_count": 5896051,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -529,6 +529,13 @@
       "sha256": "6FAC765196E9824F9BA99F589C20A70240041E424524D8EAA292C87CD97062E9",
       "lines": 87,
       "bytes": 4359,
+      "utf8": true
+    },
+    {
+      "path": "docs/operations/yemeksepeti-webhook-setup.md",
+      "sha256": "6BE78E2C23DB23DC55CE1EAD459F2CD5589D253D62BBBF89AD29355EAFB459E3",
+      "lines": 32,
+      "bytes": 1862,
       "utf8": true
     },
     {
@@ -2528,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "54A0B35E14FF1F2C59928ACF03C20F7AE55B4249F1EE9E8AE72CBCA506AE2EB3",
-      "lines": 2598,
-      "bytes": 378495,
+      "sha256": "312D3B720FFB6CC118B508CE41E6BF8D14977210F28A08952A350918EA4EA132",
+      "lines": 2604,
+      "bytes": 379492,
       "utf8": true
     },
     {
@@ -7336,6 +7343,27 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-314-tender-idempotency-key-stable-across-retry.md",
+      "sha256": "51C005E12F00941C08F6EE20DCA87B16A21D7D5D693A4598D09947650A778C1D",
+      "lines": 46,
+      "bytes": 3294,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-315-current-bill-id-cleared-on-logout.md",
+      "sha256": "6EDEA90AE156618AEA46B9164E64F68D6F294C715A0D9969640DF98D145C147D",
+      "lines": 45,
+      "bytes": 2386,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-316-authorization-self-approval-guard.md",
+      "sha256": "BD7703B8E77D52A1EDDF7B9EDB511E5FF7B597465DE406A3FD61AD9E00C68C0F",
+      "lines": 54,
+      "bytes": 3881,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -8313,6 +8341,20 @@
       "sha256": "814568526E5FD2B9DE018544C2DFA978D75F814E996D6ACA93789B099F64A33B",
       "lines": 95,
       "bytes": 4891,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-RMD-004-online-intake-correctness.md",
+      "sha256": "49AEC259B8B7D91E46D770E86A6A390886BDF268C0C2AF7484378238E0D2E395",
+      "lines": 84,
+      "bytes": 4334,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-RMD-007-webhook-auth-and-customer-note.md",
+      "sha256": "92882DE8C93F67CFFB43A3F2BEBB1F9E48C2437F5BBFB314475CCCB861B77A4B",
+      "lines": 80,
+      "bytes": 4157,
       "utf8": true
     },
     {

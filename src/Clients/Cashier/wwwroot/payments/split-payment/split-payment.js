@@ -39,6 +39,12 @@
     busy: false,
     error: null,
     lastResult: null,
+    // V1-RMD-314 (independent 2026-09-26 audit, finding K3): the tender idempotency key for the CURRENT
+    // amount/method attempt - generated once (lazily, in submitTender) and kept across a retry (a network
+    // failure where the request may have actually landed server-side), so "tekrar dene" replays instead of
+    // minting a fresh key that the server can never recognise as the same attempt. Cleared on success (a
+    // genuinely new tender needs a fresh key) and whenever the method or amount actually changes.
+    tenderIdempotencyKey: null,
     // V1-RMD-292: billing.bill_adjustments summary/list - discount, voluntary tip and any other fee already
     // applied to this bill (billing/bills/{id}/adjustments, GET only for this task; discount/tip are the only
     // two write endpoints this task adds a client for).
@@ -55,6 +61,10 @@
     tipNoteDraft: '',
     tipBusy: false,
     tipError: null,
+    // V1-RMD-314 (finding K3): same retry-reuses-the-same-key fix as tenderIdempotencyKey above, for the
+    // discount/tip apply requests.
+    discountIdempotencyKey: null,
+    tipIdempotencyKey: null,
   };
 
   function escapeHtml(value) {
@@ -198,6 +208,9 @@
       state.locked = !!state.summary.unsettledPayment;
       state.amountDraft = remainingAmount().toFixed(2);
       state.phase = remainingAmount() <= 0.004 ? 'paid' : 'ready';
+      // V1-RMD-314: a fresh load re-derives everything from server truth - any in-flight key from before
+      // this load is stale.
+      state.tenderIdempotencyKey = null;
       render();
     }).catch(function () {
       setError('Hesap bilgisi okunamadı. Bağlantınızı kontrol edin.');
@@ -243,6 +256,8 @@
     var count = Math.max(2, Math.round(Number(state.splitCount) || 2));
     var perLine = Math.round((remainingAmount() / count) * 100) / 100;
     state.amountDraft = perLine.toFixed(2);
+    // V1-RMD-314: a recalculated split amount is a genuinely different tender attempt.
+    state.tenderIdempotencyKey = null;
     render();
   }
 
@@ -347,10 +362,12 @@
     state.discountError = null;
     state.discountNotice = null;
     render();
+    // V1-RMD-314: reuse the in-flight key across a retry - see tenderIdempotencyKey's own doc comment.
+    if (!state.discountIdempotencyKey) state.discountIdempotencyKey = crypto.randomUUID();
     api(billBase() + '/discount', {
       method: 'POST',
       body: {
-        IdempotencyKey: crypto.randomUUID(),
+        IdempotencyKey: state.discountIdempotencyKey,
         CalculationType: state.discountCalcType,
         Value: value,
         ReasonCode: state.discountReason,
@@ -358,6 +375,9 @@
       },
     }).then(function (result) {
       state.discountBusy = false;
+      // V1-RMD-314: any real server response (success OR a definitive rejection) means this key has
+      // already been consumed/decided - only a network failure (the catch below) keeps it for a retry.
+      state.discountIdempotencyKey = null;
       if (!result.ok) {
         var code = result.body && result.body.error && result.body.error.code;
         state.discountError = code === 'GRANT_DENIED'
@@ -401,11 +421,16 @@
     state.tipBusy = true;
     state.tipError = null;
     render();
+    // V1-RMD-314: reuse the in-flight key across a retry - see tenderIdempotencyKey's own doc comment.
+    if (!state.tipIdempotencyKey) state.tipIdempotencyKey = crypto.randomUUID();
     api(billBase() + '/tip', {
       method: 'POST',
-      body: { IdempotencyKey: crypto.randomUUID(), Amount: amount, Notes: state.tipNoteDraft || null },
+      body: { IdempotencyKey: state.tipIdempotencyKey, Amount: amount, Notes: state.tipNoteDraft || null },
     }).then(function (result) {
       state.tipBusy = false;
+      // V1-RMD-314: any real server response means this key has already been consumed/decided - only a
+      // network failure (the catch below) keeps it for a retry.
+      state.tipIdempotencyKey = null;
       if (!result.ok) {
         // FORBIDDEN and FEATURE_DISABLED already carry a correct Turkish message from the server
         // (BillingSplitExceptionFilter's own Map) - no client-side override needed here, unlike discount's
@@ -448,7 +473,10 @@
 
     setBusy(true);
     state.error = null;
-    var idempotencyKey = crypto.randomUUID();
+    // V1-RMD-314: reuse the in-flight key across a retry of this exact attempt - see the field's own
+    // doc comment. A brand-new key is minted only when none is pending.
+    if (!state.tenderIdempotencyKey) state.tenderIdempotencyKey = crypto.randomUUID();
+    var idempotencyKey = state.tenderIdempotencyKey;
 
     var request = state.selectedMethod === 'Cash'
       ? api('/api/v1/terminals/' + state.terminalId + '/cash-sessions/' + state.cashSessionId + '/cash-tender', {
@@ -470,6 +498,9 @@
 
     request.then(function (result) {
       state.busy = false;
+      // V1-RMD-314: any real server response (success OR a definitive rejection) means this key has
+      // already been consumed/decided - only a network failure (the catch below) keeps it for a retry.
+      state.tenderIdempotencyKey = null;
       if (!result.ok) {
         state.error = describeHttpFailure(result.status, result.body);
         // A concurrently-created unresolved Payment (e.g. another tab, or
@@ -718,6 +749,9 @@
         var method = button.getAttribute('data-method');
         state.selectedMethod = method;
         state.eftConfirmed = false;
+        // V1-RMD-314: a different method is a genuinely different tender attempt - never replay the
+        // previous method's in-flight key onto this one.
+        state.tenderIdempotencyKey = null;
         render();
         // render() replaces the whole card's innerHTML, destroying the
         // clicked chip and creating a fresh node in its place - without
@@ -734,7 +768,12 @@
     var applySplit = document.getElementById('apply-split');
     if (applySplit) applySplit.addEventListener('click', submitEqualSplit);
     var amountInput = document.getElementById('amount-draft');
-    if (amountInput) amountInput.addEventListener('input', function () { state.amountDraft = this.value; });
+    if (amountInput) amountInput.addEventListener('input', function () {
+      state.amountDraft = this.value;
+      // V1-RMD-314: a hand-edited amount is a genuinely different tender attempt - never replay the
+      // previous amount's in-flight key onto this one.
+      state.tenderIdempotencyKey = null;
+    });
     var noteInput = document.getElementById('note-draft');
     if (noteInput) noteInput.addEventListener('input', function () { state.noteDraft = this.value; });
     var eftConfirmInput = document.getElementById('eft-confirm');

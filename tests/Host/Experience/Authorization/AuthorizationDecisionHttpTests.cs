@@ -135,6 +135,61 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         Assert.Equal("ALREADY_CLEARED", error!.Error.Code);
     }
 
+    /// <summary>
+    /// V1-RMD-316 (independent 2026-09-26 audit, finding K9): a user holding both the requester role and
+    /// the manager decision permission (explicitly possible in a small establishment, per V1-IAM-020's own
+    /// doc comment) must never be able to approve or deny their OWN grant request.
+    /// </summary>
+    [Fact]
+    public async Task ManagerCannotApproveOrDenyTheirOwnGrantRequest()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var (managerId, _) = _database.LastSeededManager;
+        var grantId = await _database.SeedPendingGrantAsync("bills.comp", 75m, requesterUserId: managerId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var approve = await client.SendAsync(Request(HttpMethod.Post, GrantPath(grantId, "approve"), manager));
+        Assert.Equal(HttpStatusCode.Forbidden, approve.StatusCode);
+        var approveError = await approve.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
+        Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", approveError!.Error.Code);
+
+        using var deny = await client.SendAsync(Request(HttpMethod.Post, GrantPath(grantId, "deny"), manager));
+        Assert.Equal(HttpStatusCode.Forbidden, deny.StatusCode);
+
+        // The grant is still genuinely pending - neither attempt actually resolved it.
+        var pending = await GetAsync<List<PendingGrantV1>>(
+            client, AuthorizationDecisionEndpoints.GroupPrefix + "/pending-grants", manager);
+        Assert.Contains(pending, grant => grant.GrantId == grantId);
+    }
+
+    /// <summary>
+    /// V1-RMD-316 (independent 2026-09-26 audit, finding K9): same self-approval gap, one schema over -
+    /// the user whose own behaviour triggered the tightening must never be able to clear it themselves.
+    /// </summary>
+    [Fact]
+    public async Task ManagerCannotClearTheirOwnBehaviouralTightening()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var (managerId, _) = _database.LastSeededManager;
+        var tighteningId = await _database.SeedOpenTighteningAsync(userId: managerId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var clear = await client.SendAsync(Request(
+            HttpMethod.Post,
+            AuthorizationDecisionEndpoints.GroupPrefix + $"/behavioural-tightenings/{tighteningId:D}/clear",
+            manager));
+        Assert.Equal(HttpStatusCode.Forbidden, clear.StatusCode);
+        var error = await clear.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
+        Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", error!.Error.Code);
+
+        // Still genuinely open - the attempt did not actually clear it.
+        var tightenings = await GetAsync<List<OpenTighteningV1>>(
+            client, AuthorizationDecisionEndpoints.GroupPrefix + "/behavioural-tightenings", manager);
+        Assert.Contains(tightenings, tightening => tightening.TighteningId == tighteningId);
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -315,10 +370,15 @@ internal sealed class AuthorizationDecisionTestDatabase
         return cookie;
     }
 
-    public async Task<Guid> SeedPendingGrantAsync(string permissionCode, decimal amount)
+    public Task<Guid> SeedPendingGrantAsync(string permissionCode, decimal amount)
+        => SeedPendingGrantAsync(permissionCode, amount, requesterUserId: null);
+
+    // V1-RMD-316 (independent 2026-09-26 audit, finding K9): lets a test seed a grant whose requester is a
+    // SPECIFIC user (e.g. a manager session's own user id), to prove that user cannot approve/deny it.
+    public async Task<Guid> SeedPendingGrantAsync(string permissionCode, decimal amount, Guid? requesterUserId)
     {
         var grantId = Guid.NewGuid();
-        var requesterId = await SeedBareUserAsync();
+        var requesterId = requesterUserId ?? await SeedBareUserAsync();
         await ExecuteAsync(
             DataSource,
             """
@@ -353,10 +413,14 @@ internal sealed class AuthorizationDecisionTestDatabase
         return delegationId;
     }
 
-    public async Task<Guid> SeedOpenTighteningAsync()
+    public Task<Guid> SeedOpenTighteningAsync() => SeedOpenTighteningAsync(userId: null);
+
+    // V1-RMD-316 (independent 2026-09-26 audit, finding K9): lets a test seed a tightening whose subject
+    // is a SPECIFIC user (e.g. a manager session's own user id), to prove that user cannot clear it.
+    public async Task<Guid> SeedOpenTighteningAsync(Guid? userId)
     {
         var tighteningId = Guid.NewGuid();
-        var userId = await SeedBareUserAsync();
+        userId ??= await SeedBareUserAsync();
         await ExecuteAsync(
             DataSource,
             """

@@ -22,6 +22,12 @@
     movementDirection: 'in',
     busy: false,
     error: null,
+    // V1-RMD-314 (independent 2026-09-26 audit, finding K3): the cash-movement idempotency key for the
+    // CURRENT attempt - generated once (lazily, in submitCashMovement) and kept across a retry (a network
+    // failure where the request may have actually landed server-side), same fix/reasoning as
+    // split-payment.js's tenderIdempotencyKey. Cleared on any real server response (success or a
+    // definitive rejection); only a network failure keeps it for a retry.
+    cashMovementIdempotencyKey: null,
   };
 
   function escapeHtml(value) {
@@ -212,6 +218,10 @@
 
   function submitCashMovement(direction, amount, notes) {
     setBusy(true);
+    // V1-RMD-314: reuse the in-flight key across a retry - see cashMovementIdempotencyKey's own doc
+    // comment. Without this, V1-RMD-241's own server-side protection (below) never actually engages,
+    // because a fresh key was minted on every call, including a retry of the exact same attempt.
+    if (!state.cashMovementIdempotencyKey) state.cashMovementIdempotencyKey = crypto.randomUUID();
     api(cashSessionsBase() + '/' + state.session.cashSessionId + '/cash-movements', {
       method: 'POST',
       // V1-RMD-241: the endpoint now requires a key and rejects a second
@@ -219,9 +229,12 @@
       // race just under the button's own busy-guard, a browser/proxy
       // resend of the same request) return the original row instead of
       // posting the movement twice.
-      body: { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes || null, IdempotencyKey: crypto.randomUUID() },
+      body: { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes || null, IdempotencyKey: state.cashMovementIdempotencyKey },
     }).then(function (result) {
       state.busy = false;
+      // Any real server response (success or a definitive rejection) means this key has already been
+      // consumed/decided - only a network failure (the catch below) keeps it for a retry.
+      state.cashMovementIdempotencyKey = null;
       if (!result.ok) {
         state.error = describeHttpFailure(result.status, result.body);
         render();

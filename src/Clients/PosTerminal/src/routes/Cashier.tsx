@@ -323,6 +323,11 @@ export function Cashier() {
       setCatalog([]);
       setOrder(null);
       setNotice("");
+      // V1-RMD-314 (independent 2026-09-26 audit, finding K4): workspace.tsx reads/writes this key across
+      // a page reload so a cashier can resume the split-payment screen they were on - but logout() never
+      // cleared it, so a shift change let the NEXT cashier's session land straight on the PREVIOUS
+      // cashier's open split-payment view for whatever bill happened to be last on this device.
+      localStorage.removeItem("alkaros.current-bill-id");
     } catch (reason) {
       setError(reason instanceof ApiError ? reason.message : "Oturum kapatılamadı.");
     } finally {

@@ -57,6 +57,15 @@ public sealed class AuthorizationDecisionStore
     private async Task<ResolvedGrantV1> ResolveAsync(
         Guid grantId, GrantStatus status, Guid approverUserId, CancellationToken cancellationToken)
     {
+        // V1-RMD-316 (independent 2026-09-26 audit, finding K9): RequesterUserId is immutable once a grant
+        // is inserted, so this read-then-write has no meaningful race window for THIS check specifically -
+        // unlike ResolveAsync's own pending->terminal transition (still the real, race-safe guard via its
+        // WHERE status = 'pending'). A grant not found here behaves like AlreadyResolvedException below,
+        // matching what an unconditional ResolveAsync call would have done anyway.
+        var pending = await _grants.GetAsync(grantId, cancellationToken);
+        if (pending is not null && pending.RequesterUserId == approverUserId)
+            throw new AuthorizationSelfApprovalException(grantId, approverUserId);
+
         var resolved = await _grants.ResolveAsync(
             grantId, status, PolicyPath.Manual, approverUserId, cancellationToken);
         return new ResolvedGrantV1(
@@ -99,6 +108,19 @@ public sealed class AuthorizationDecisionStore
             .ToArray();
     }
 
-    public Task ClearTighteningAsync(Guid tighteningId, Guid managerUserId, CancellationToken cancellationToken)
-        => _tightenings.ClearAsync(tighteningId, managerUserId, cancellationToken);
+    public async Task ClearTighteningAsync(Guid tighteningId, Guid managerUserId, CancellationToken cancellationToken)
+    {
+        // V1-RMD-316 (independent 2026-09-26 audit, finding K9): same self-approval gap as ResolveAsync
+        // above, one schema over - the user whose own spiking auto-grant rate opened this tightening must
+        // never be the one who clears it. IBehaviouralTighteningRepository has no get-by-id (only
+        // FindActiveAsync by scope and ListActiveAsync), so this checks against the already-open list the
+        // manager surface itself reads (ListOpenTighteningsAsync) rather than adding a new repository
+        // method for a single, small, already-loaded set.
+        var active = await _tightenings.ListActiveAsync(cancellationToken);
+        var target = active.FirstOrDefault(t => t.TighteningId == tighteningId);
+        if (target is not null && target.UserId == managerUserId)
+            throw new BehaviouralTighteningSelfClearException(tighteningId, managerUserId);
+
+        await _tightenings.ClearAsync(tighteningId, managerUserId, cancellationToken);
+    }
 }
