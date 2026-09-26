@@ -15,7 +15,7 @@
 2026-09-26 bağımsız Faz 3 denetiminin yayın bulgularını kapatmak (V12-ONL-004, V12-ONL-005; Semih: "en küçük hata
 bile kritik"):
 
-**Stok yayını (V12-ONL-005)**
+Stok yayını (V12-ONL-005):
 
 - "Yalnız daha yeni gözlem" koruması, sürümü stok satırlarının `row_version` toplamından alıyor. Eşleme çarpanı
   değişince sürüm değişmiyor; eşlenmiş stok kalemi çıkarılınca sürüm düşüyor. İki durumda da kanalın gördüğü adet
@@ -24,7 +24,7 @@ bile kritik"):
   ürünlerin güncellemesini sonsuza kadar engelliyor.
 - Başka ürüne taşınan ya da ileri tarihli bir eşlemenin eski durum satırı hiç temizlenmiyor.
 
-**Katalog yayını (V12-ONL-004)**
+Katalog yayını (V12-ONL-004):
 
 - Yayınlar sırasız teslim edilebiliyor; sağlayıcıda eski fiyat kalabiliyor.
 - Menü, yayın kilidinden önce okunuyor.
