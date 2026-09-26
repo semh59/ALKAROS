@@ -56,6 +56,31 @@ public sealed class PaymentSettlementReportTests : IAsyncLifetime
         result.PaymentMix.Should().BeEmpty();
     }
 
+    /// <summary>
+    /// V1-RMD-325 (independent 2026-09-26 audit, finding K15): a hospitality business day runs 06:00 -&gt;
+    /// next day's 06:00, the same convention <see cref="ALKAROS.Reporting.V1Operations.OperationalReportService.CalculateServiceWindow"/>
+    /// already defines for the EOD report - a bill paid at 01:00 local time belongs to the PREVIOUS
+    /// business day (the day the restaurant was still open and serving it), not the calendar day that
+    /// just started. Before this fix this report used a plain midnight boundary, so the exact same payment
+    /// would land in two different business dates across these two reports.
+    /// </summary>
+    [Fact]
+    public async Task APaymentAtOneAmLocalTimeBelongsToThePreviousBusinessDateNotTheNewCalendarDay()
+    {
+        // Europe/Istanbul is UTC+3 - 2026-06-15 01:00 local is 2026-06-14 22:00 UTC.
+        var oneAmLocalOnJune15 = new DateTimeOffset(2026, 6, 14, 22, 0, 0, TimeSpan.Zero);
+        var bill = await _database.SeedBillAsync(50m);
+        await _database.SeedPaymentAsync(bill, "Approved", 50m, oneAmLocalOnJune15);
+
+        // It must NOT appear in June 15's report (the calendar day that started at midnight)...
+        var june15 = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+        june15.PaymentMix.Should().BeEmpty();
+
+        // ...it belongs to June 14's business day instead (06:00 on the 14th through 06:00 on the 15th).
+        var june14 = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate.AddDays(-1)));
+        june14.PaymentMix.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 50m);
+    }
+
     [Fact]
     public async Task UnsettledPaymentsAreShownSeparatelyAndNeverInPaymentMix()
     {

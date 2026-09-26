@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1340,
-  "markdown_line_count": 103276,
-  "markdown_byte_count": 5947785,
+  "markdown_file_count": 1341,
+  "markdown_line_count": 103322,
+  "markdown_byte_count": 5951740,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DFBD7DC0F2ABD3566944FD525C844E7FB9427F440AE09577CE31FA67C1695FB6",
-      "lines": 2616,
-      "bytes": 381536,
+      "sha256": "E22AA3DEAB08B644C694E4C85EC4A234D7955DD84F9B9CA3DE090C33122D7EA3",
+      "lines": 2617,
+      "bytes": 381711,
       "utf8": true
     },
     {
@@ -7417,6 +7417,13 @@
       "sha256": "3FC839899AF96C1B7DEC175C71E94CCB91B604C082F02D0BC7587549880EE16C",
       "lines": 52,
       "bytes": 4094,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-325-payment-settlement-business-day-boundary.md",
+      "sha256": "D7BBDAAC81B394D203EE3AD61160A121D1F4E51DCB032D2F09BE6534454C50E7",
+      "lines": 45,
+      "bytes": 3780,
       "utf8": true
     },
     {
