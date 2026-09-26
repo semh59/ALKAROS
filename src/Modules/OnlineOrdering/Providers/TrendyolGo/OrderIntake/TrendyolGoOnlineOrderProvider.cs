@@ -2,16 +2,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
+using ALKAROS.OnlineOrdering.Providers.TrendyolGo.StatusSync;
 using Npgsql;
 
 namespace ALKAROS.OnlineOrdering.Providers.TrendyolGo.OrderIntake;
 
 /// <summary>
 /// V12-TGO-002: Uber Eats Trendyol Go behind the shared online platform contract — its event vocabulary and package
-/// reading. UNVERIFIED DRAFT (EXT:TGO-MEAL-API; V12-TGO-001 Blocked, C106 waiver). The platform's outbound calls
-/// (acceptance with preparation time, readiness, restaurant cancellation, own-courier handover) are V12-TGO-003's;
-/// until it lands this adapter is not registered, so Trendyol Go events wait in the inbox rather than becoming orders
-/// the platform could never be told about.
+/// reading (V12-TGO-002) and its outbound calls (V12-TGO-003): acceptance with the preparation time, readiness,
+/// own-courier dispatch and restaurant cancellation, each queued in the caller's transaction. UNVERIFIED DRAFT
+/// (EXT:TGO-MEAL-API; V12-TGO-001 Blocked, C106 waiver).
 /// </summary>
 public sealed class TrendyolGoOnlineOrderProvider : IOnlineOrderProvider
 {
@@ -62,13 +62,56 @@ public sealed class TrendyolGoOnlineOrderProvider : IOnlineOrderProvider
     public IReadOnlyList<OnlineOrderLineReference> ReadItemReferences(string rawPayload) =>
         TrendyolGoOrderNormalizer.ReadItemReferences(rawPayload);
 
-    public Task<OnlineOutboundStatus?> HandoverStatusAsync(
-        Guid orderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default) =>
-        throw new NotSupportedException("Trendyol Go handover calls arrive with V12-TGO-003.");
+    /// <summary>
+    /// The handover follows the delivery kind recorded when the order was created: the platform's courier (<c>GO</c>)
+    /// collects a prepared package; the restaurant's own courier (<c>STORE</c>) is dispatched. An in-store pickup has
+    /// no documented courier step, so it is only reported prepared.
+    /// </summary>
+    public async Task<OnlineOutboundStatus?> HandoverStatusAsync(
+        Guid orderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT outcome_detail->>'transportType'
+            FROM online_ordering.provider_inbox
+            WHERE provider = $2 AND order_id = $1 AND processing_outcome = 'OrderCreated'
+            LIMIT 1;
+            """, connection, transaction);
+        command.Parameters.AddWithValue(orderId);
+        command.Parameters.AddWithValue(Provider);
+        return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) switch
+        {
+            TrendyolGoOrderNormalizer.PlatformCourier or TrendyolGoOrderNormalizer.StorePickup => OnlineOutboundStatus.ReadyForPickup,
+            TrendyolGoOrderNormalizer.OwnCourier => OnlineOutboundStatus.Dispatched,
+            _ => null
+        };
+    }
 
     public Task RequestStatusAsync(
-        OnlineOrderStatusRequest request, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default) =>
-        throw new NotSupportedException("Trendyol Go status calls arrive with V12-TGO-003.");
+        OnlineOrderStatusRequest request, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var (action, reasonId) = request.Status switch
+        {
+            OnlineOutboundStatus.ReadyForPickup => (TrendyolGoPackageAction.Invoiced, (int?)null),
+            OnlineOutboundStatus.Dispatched => (TrendyolGoPackageAction.InvoicedAndShipped, null),
+            OnlineOutboundStatus.Cancelled => (TrendyolGoPackageAction.Unsupplied, TrendyolGoStatusSync.ReasonId(request.Reason)),
+            _ => throw new ArgumentOutOfRangeException(nameof(request), request.Status, "Unknown outbound status.")
+        };
+        return TrendyolGoStatusSync.EnqueueAsync(
+            new TrendyolGoStatusUpdateRequested(Guid.NewGuid(), request.ExternalOrderId, action, reasonId, request.RequestedAt),
+            connection, transaction, cancellationToken);
+    }
+
+    /// <summary>Trendyol Go cancels a package that is not accepted (reason 625), so acceptance is reported at once.</summary>
+    public Task OrderAcceptedAsync(
+        Guid orderId, string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default) =>
+        TrendyolGoStatusSync.EnqueueAsync(
+            new TrendyolGoStatusUpdateRequested(Guid.NewGuid(), externalOrderId, TrendyolGoPackageAction.Picked, null, DateTimeOffset.UtcNow),
+            connection, transaction, cancellationToken);
 
     private static StatusMappingResult Cancel(CancellationParty party, string rawParty, string rawPayload)
     {

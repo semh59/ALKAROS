@@ -49,6 +49,8 @@ public static class OnlinePlatformCredentialCatalog
             new("integrator-name", IsSecret: false),
             new("executor-email", IsSecret: false),
             new("webhook-secret", IsSecret: true),
+            // V12-TGO-003: the preparation time reported when an order is accepted (minutes; 20 when not entered).
+            new("preparation-minutes", IsSecret: false),
         ]),
     ];
 

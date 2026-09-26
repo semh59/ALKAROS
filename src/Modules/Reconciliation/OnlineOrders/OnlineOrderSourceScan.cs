@@ -28,6 +28,22 @@ internal static class OnlineOrderSourceScan
     /// </summary>
     public const string StatusUpdateProvider = "yemeksepeti";
 
+    /// <summary>
+    /// V12-TGO-003: Trendyol Go's status update event type and platform
+    /// (<c>TrendyolGoStatusSync.StatusUpdateRequestedEventType</c>), repeated for the same reason.
+    /// </summary>
+    public const string TrendyolGoStatusUpdateEventType = "online-ordering.trendyol-go.status-update-requested.v1";
+
+    public const string TrendyolGoProvider = "trendyol-go";
+
+    /// <summary>Every platform's status update event type; both carry <c>externalOrderId</c> in their payload.</summary>
+    public static readonly string[] StatusUpdateEventTypes = [StatusUpdateEventType, TrendyolGoStatusUpdateEventType];
+
+    /// <summary>The platform of an outbox row's status update, as SQL over its <c>event_type</c>.</summary>
+    public const string ProviderOfEventTypeSql =
+        "CASE event_type WHEN '" + StatusUpdateEventType + "' THEN '" + StatusUpdateProvider
+        + "' WHEN '" + TrendyolGoStatusUpdateEventType + "' THEN '" + TrendyolGoProvider + "' END";
+
     public static async Task<IReadOnlyList<DetectedDiscrepancy>> ReadAsync(
         NpgsqlCommand command,
         string sourceName,

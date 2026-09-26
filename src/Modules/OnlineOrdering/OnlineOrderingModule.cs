@@ -4,6 +4,7 @@ using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.OnlineOrdering.Credentials;
 using ALKAROS.OnlineOrdering.Polling;
 using ALKAROS.OnlineOrdering.Providers.TrendyolGo.OrderIntake;
+using ALKAROS.OnlineOrdering.Providers.TrendyolGo.StatusSync;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.OnlineOrdering.Providers.Inbox;
 using ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
@@ -79,9 +80,8 @@ public sealed class OnlineOrderingModule : IModule
         context.RegisterTransient<IAvailabilityChannelPublisher, YemeksepetiAvailabilityPublisher>();
         context.RegisterTransient<AvailabilityPublicationService, AvailabilityPublicationService>();
 
-        // V12-TGO-002 (UNVERIFIED DRAFT): Trendyol Go events are stored by its webhook and by polling its package
-        // list. Its IOnlineOrderProvider is registered with its outbound calls (V12-TGO-003); until then its events
-        // wait in the inbox.
+        // V12-TGO-002/003 (UNVERIFIED DRAFT): Trendyol Go events are stored by its webhook and by polling its package
+        // list; the adapter turns them into orders and reports acceptance, readiness and cancellations back.
         context.RegisterTransient(services => new TrendyolGoWebhookInbox(
             (ProviderInbox)services.GetService(typeof(ProviderInbox))!, PlatformSettings(services)));
         context.RegisterTransient(services => new TrendyolGoOrderNormalizer(
@@ -95,6 +95,16 @@ public sealed class OnlineOrderingModule : IModule
             (ITaxProfileRepository)services.GetService(typeof(ITaxProfileRepository))!));
         context.RegisterSingleton<IOnlineOrderPollingSource>(services => new TrendyolGoOrderPollingSource(
             new HttpClient { Timeout = TimeSpan.FromSeconds(10) }, PlatformSettings(services), TimeProvider.System));
+        context.RegisterTransient<IOnlineOrderProvider, TrendyolGoOnlineOrderProvider>();
+        // One client instance, so its per-endpoint rate window is shared by every delivery.
+        context.RegisterSingleton(services => new TrendyolGoStatusClient(
+            new HttpClient { Timeout = TimeSpan.FromSeconds(10) }, PlatformSettings(services), TimeProvider.System));
+        context.RegisterTransient<IIntegrationEventConsumer>(services => new TrendyolGoStatusUpdateConsumer(
+            (TrendyolGoStatusClient)services.GetService(typeof(TrendyolGoStatusClient))!,
+            (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
+            (ProviderInbox)services.GetService(typeof(ProviderInbox))!,
+            PlatformSettings(services)));
+        context.RegisterSingleton(TrendyolGoStatusSync.RetryProfile);
     }
 
     private static StoredOnlinePlatformSecretProvider PlatformSettings(IServiceProvider services) => new(

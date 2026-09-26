@@ -83,8 +83,10 @@ public sealed class OnlineOrderReconciliationActions
                 (await _reprocessing.ReopenForReprocessingAsync(inboxId, connection, transaction, cancellationToken).ConfigureAwait(false),
                  $"online_ordering.provider_inbox:{inboxId}"),
             OnlineOrderNextAction.ResendProviderCancellation when details.ExternalOrderId is { } externalOrderId =>
-                (await RequeueDeadUpdatesForOrderAsync(externalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false),
-                 $"yemeksepeti:order:{externalOrderId}"),
+                (await RequeueDeadUpdatesForOrderAsync(
+                        details.Provider ?? OnlineOrderSourceScan.StatusUpdateProvider, externalOrderId, connection, transaction, cancellationToken)
+                    .ConfigureAwait(false),
+                 $"{details.Provider ?? OnlineOrderSourceScan.StatusUpdateProvider}:order:{externalOrderId}"),
             OnlineOrderNextAction.ResendProviderUpdate when details.OutboxMessageId is { } messageId =>
                 (await RequeueDeadUpdateAsync(messageId, connection, transaction, cancellationToken).ConfigureAwait(false),
                  $"outbox_messages:{messageId}"),
@@ -148,21 +150,23 @@ public sealed class OnlineOrderReconciliationActions
     }
 
     private static async Task<int> RequeueDeadUpdatesForOrderAsync(
-        string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+        string provider, string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
     {
         await using var command = new NpgsqlCommand(
-            """
+            $"""
             WITH dead_updates AS MATERIALIZED (
-                SELECT id, convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' AS external_order_id
+                SELECT id, convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' AS external_order_id,
+                       {OnlineOrderSourceScan.ProviderOfEventTypeSql} AS provider
                 FROM outbox_messages
-                WHERE event_type = $1 AND status = 'dead')
+                WHERE event_type = ANY($1) AND status = 'dead')
             UPDATE outbox_messages m
             SET status = 'pending', attempt_count = 0, next_retry_at = NULL, claimed_at = NULL, last_error = NULL
             FROM dead_updates d
-            WHERE m.id = d.id AND d.external_order_id = $2 AND m.status = 'dead';
+            WHERE m.id = d.id AND d.provider = $3 AND d.external_order_id = $2 AND m.status = 'dead';
             """, connection, transaction);
-        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventType);
+        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventTypes);
         command.Parameters.AddWithValue(externalOrderId);
+        command.Parameters.AddWithValue(provider);
         return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -173,10 +177,10 @@ public sealed class OnlineOrderReconciliationActions
             """
             UPDATE outbox_messages
             SET status = 'pending', attempt_count = 0, next_retry_at = NULL, claimed_at = NULL, last_error = NULL
-            WHERE id = $1 AND event_type = $2 AND status = 'dead';
+            WHERE id = $1 AND event_type = ANY($2) AND status = 'dead';
             """, connection, transaction);
         command.Parameters.AddWithValue(messageId);
-        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventType);
+        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventTypes);
         return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 }

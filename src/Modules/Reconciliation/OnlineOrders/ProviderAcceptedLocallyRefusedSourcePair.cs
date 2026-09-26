@@ -33,9 +33,10 @@ public sealed class ProviderAcceptedLocallyRefusedSourcePair : IOnlineOrderSourc
         await using var command = _dataSource.CreateCommand(
             $"""
             WITH status_updates AS MATERIALIZED (
-                SELECT status, convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' AS external_order_id
+                SELECT status, convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' AS external_order_id,
+                       {OnlineOrderSourceScan.ProviderOfEventTypeSql} AS provider
                 FROM outbox_messages
-                WHERE event_type = $1)
+                WHERE event_type = ANY($1))
             SELECT DISTINCT ON (i.provider, i.external_order_id)
                    i.inbox_id, i.external_order_id,
                    COALESCE((i.outcome_detail->>'providerCancellationRequested')::boolean, false),
@@ -49,18 +50,17 @@ public sealed class ProviderAcceptedLocallyRefusedSourcePair : IOnlineOrderSourc
               AND NOT EXISTS (SELECT 1 FROM online_ordering.provider_inbox c
                               WHERE c.provider = i.provider AND c.external_order_id = i.external_order_id
                                 AND c.processing_outcome = 'CancelledBeforeOrder')
-              AND NOT (i.provider = $3
-                       AND EXISTS (SELECT 1 FROM status_updates u
-                                   WHERE u.status = 'dispatched' AND u.external_order_id = i.external_order_id))
+              -- V12-TGO-003: the cancellation this platform was sent was delivered (any platform's own update queue).
+              AND NOT EXISTS (SELECT 1 FROM status_updates u
+                              WHERE u.provider = i.provider AND u.status = 'dispatched' AND u.external_order_id = i.external_order_id)
               AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
                               WHERE rc.deduplication_key = $2 || i.provider || ':' || i.external_order_id
                                 AND rc.status = 'Dismissed')
             ORDER BY i.provider, i.external_order_id, i.received_at DESC
             LIMIT {OnlineOrderSourceScan.MaxScanRows + 1};
             """);
-        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventType);
+        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventTypes);
         command.Parameters.AddWithValue(DeduplicationPrefix);
-        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateProvider);
 
         return await OnlineOrderSourceScan.ReadAsync(command, Name, reader =>
         {

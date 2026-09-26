@@ -293,6 +293,10 @@ public sealed class YemeksepetiOrderIntakeService
                     .ToList()
             },
             connection, transaction, cancellationToken).ConfigureAwait(false);
+
+        // V12-TGO-003: a platform that must hear about acceptance is told in the same transaction.
+        await provider.OrderAcceptedAsync(orderId, onlineOrder.ExternalOrderId, connection, transaction, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private static async Task<bool> CancellationAlreadyRequestedAsync(

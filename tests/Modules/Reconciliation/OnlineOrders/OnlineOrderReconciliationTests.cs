@@ -122,6 +122,52 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         (await CasesForKeyAsync(LocallyAcceptedProviderUnknownSourcePair.DeduplicationPrefix + orphan)).Should().Be(0);
     }
 
+    private const string TrendyolGoUpdates = "online-ordering.trendyol-go.status-update-requested.v1";
+
+    // V12-TGO-003: every platform's status updates are watched, each matched to its own platform's order and requeued alone.
+    [Fact]
+    public async Task ATrendyolGoUpdateThatNeverArrivedIsACaseOfItsOwnPlatformAndIsResentAlone()
+    {
+        var shared = NewExternalId();
+        await _database.SeedOnlineOrderAsync(shared, "Served", 80m, provider: "trendyol-go");
+        var tgoDead = await _database.SeedStatusUpdateAsync(shared, "dead", eventType: TrendyolGoUpdates);
+        var yemeksepetiDead = await _database.SeedStatusUpdateAsync(shared, "dead");
+
+        await Scanner(new LocallyAcceptedProviderUnknownSourcePair(_dataSource)).ScanAllAsync();
+
+        var record = await ActiveCaseAsync(LocallyAcceptedProviderUnknownSourcePair.DeduplicationPrefix + tgoDead);
+        OnlineOrderCaseDetails.TryParse(record.DetailsJson)!.Provider.Should().Be("trendyol-go");
+        // The Yemeksepeti update of the same number has no Yemeksepeti order behind it: not this kind of case.
+        (await CasesForKeyAsync(LocallyAcceptedProviderUnknownSourcePair.DeduplicationPrefix + yemeksepetiDead)).Should().Be(0);
+
+        (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.Requeued);
+        (await _database.OutboxStateAsync(tgoDead)).Should().Be(("pending", 0));
+        (await _database.OutboxStateAsync(yemeksepetiDead)).Status.Should().Be("dead");
+    }
+
+    [Fact]
+    public async Task ARefusedTrendyolGoOrderIsSettledByItsOwnDeliveredCancellationAndResentAlone()
+    {
+        var delivered = NewExternalId();
+        var stillDead = NewExternalId();
+        foreach (var id in new[] { delivered, stillDead })
+            await _database.SeedInboxAsync(id, "Diverged", detail: new { reason = "OutOfStock", providerCancellationRequested = true },
+                provider: "trendyol-go");
+        await _database.SeedStatusUpdateAsync(delivered, "dispatched", eventType: TrendyolGoUpdates);
+        // Another platform's delivered update of the same number settles nothing here.
+        await _database.SeedStatusUpdateAsync(stillDead, "dispatched");
+        var tgoDead = await _database.SeedStatusUpdateAsync(stillDead, "dead", eventType: TrendyolGoUpdates);
+        var yemeksepetiDead = await _database.SeedStatusUpdateAsync(stillDead, "dead");
+
+        await Scanner(new ProviderAcceptedLocallyRefusedSourcePair(_dataSource)).ScanAllAsync();
+
+        (await CasesForKeyAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "trendyol-go:" + delivered)).Should().Be(0);
+        var record = await ActiveCaseAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "trendyol-go:" + stillDead);
+        (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.Requeued);
+        (await _database.OutboxStateAsync(tgoDead)).Should().Be(("pending", 0));
+        (await _database.OutboxStateAsync(yemeksepetiDead)).Status.Should().Be("dead");
+    }
+
     [Fact]
     public async Task TwoManagersRetryingAtOnceRequeueTheDeadUpdateExactlyOnce()
     {

@@ -1,0 +1,49 @@
+V12-TGO-003 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: a06e4a20.
+UNVERIFIED DRAFT under the C106 waiver: calls are checked against the public document, not against Trendyol Go.
+
+Sources read 2026-09-27 (built-in browser): developers.tgoapps.com .../order-integration/accepting-order (PUT
+.../packages/picked {packageId, preparationTime}), preparing-order (PUT .../packages/invoiced {packageId, actualDate},
+"must be a past date"), manual-shipped-order (PUT .../packages/{packageId}/manual-shipped {actualDate}, own couriers
+only), manual-delivered-order (not used, see limits), cancel-order (PUT .../packages/unsupplied {packageId, itemIdList,
+reasonId}), package-models (Picking/Invoiced are sent by the restaurant; restaurant reasons 621 supply problem,
+622 store closed, 623 cannot prepare, 624/626 own couriers only, 627 order mix-up; 625 "Not Accepted").
+
+Changes:
+- IOnlineOrderProvider.OrderAcceptedAsync (default: nothing); intake calls it in the transaction that creates the order.
+  Trendyol Go queues Picked (otherwise the platform cancels with 625); Yemeksepeti is unchanged.
+- TrendyolGoOnlineOrderProvider is registered: handover GO/pickup -> Invoiced, STORE -> Invoiced then manual-shipped;
+  restaurant cancellation -> Unsupplied with 621/622/623 (ItemUnavailable/Closed/TooBusy); a reason without a documented
+  code is refused at enqueue; intake refusals request Unsupplied 621.
+- Outbox event online-ordering.trendyol-go.status-update-requested.v1 with the provider retry budget; consumer sends the
+  calls with the documented headers, reads settings on every call (a corrected credential is used at once after 401),
+  takes the package's non-cancelled packageItemIds from its stored created payload, preparation time from the new
+  setting preparation-minutes (1-120, else 20). Client keeps at most 50 calls per 10 s per endpoint (waits).
+- Reconciliation: dead status updates and delivered cancellations are read from every platform's queue and matched to
+  their own platform; resending a cancellation requeues only that platform's updates.
+
+Commands (exit 0): see completion-commands.txt.
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 17/17 killed):
+KILLED S1 acceptance not reported
+KILLED S2 closed maps to supply problem
+KILLED S3 undocumented reason allowed
+KILLED S4 own courier not shipped
+KILLED S5 pickup handed to own courier
+KILLED S6 preparation setting ignored
+KILLED S7 preparation bounds removed
+KILLED S8 cancelled items sent
+KILLED S9 actualDate in the future
+KILLED S10 failure swallowed
+KILLED S11 no rate window
+KILLED S12 manual-shipped path wrong
+KILLED S13 missing settings not refused
+KILLED R1 dead TGO update ignored
+KILLED R2 dead update matched to any platform
+KILLED R3 other platform's delivery settles
+KILLED R4 resend requeues every platform
+
+Honest limits:
+- manual-delivered is never sent: nothing local marks an own-courier delivery as done after handover.
+- A 409 on invoiced (for example after the Uber transition's automatic Invoiced) fails the delivery; V12-TGO-005 owns that.
+- The invoice link call (e-Arşiv) stays out of scope, as the task says.

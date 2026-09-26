@@ -65,6 +65,14 @@ public interface IOnlineOrderProvider
     /// <summary>Queues <paramref name="request"/> for delivery to the platform in the caller's transaction.</summary>
     Task RequestStatusAsync(
         OnlineOrderStatusRequest request, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V12-TGO-003: the platform's order became a local order; a platform that must hear about acceptance (Trendyol Go
+    /// cancels a package that is never accepted) queues that in the caller's transaction. Nothing by default.
+    /// </summary>
+    Task OrderAcceptedAsync(
+        Guid orderId, string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default) => Task.CompletedTask;
 }
 
 /// <summary>The registered platforms by identity.</summary>

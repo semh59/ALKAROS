@@ -93,7 +93,7 @@ public sealed class OnlineOrderReconciliationTestDatabase : PgTestDatabase
     }
 
     /// <summary>A status update in the outbox, serialized the way V12-ONL-003 writes it.</summary>
-    public async Task<Guid> SeedStatusUpdateAsync(string externalOrderId, string status, int attempts = 5)
+    public async Task<Guid> SeedStatusUpdateAsync(string externalOrderId, string status, int attempts = 5, string? eventType = null)
     {
         var payload = JsonSerializer.SerializeToUtf8Bytes(
             new { requestId = Guid.NewGuid(), externalOrderId, status = 2, reason = 0, items = new[] { new { sku = "sku-1", quantity = 1 } } });
@@ -103,7 +103,8 @@ public sealed class OnlineOrderReconciliationTestDatabase : PgTestDatabase
             VALUES ($1, 'yemeksepeti_order', $2, $3, $4, $5, CASE WHEN $4 = 'dead' THEN 'provider unreachable' END)
             RETURNING id;
             """);
-        command.Parameters.AddWithValue(StatusUpdateEventType);
+        // V12-TGO-003: another platform's status update queue (its payload also carries externalOrderId).
+        command.Parameters.AddWithValue(eventType ?? StatusUpdateEventType);
         command.Parameters.AddWithValue(Guid.NewGuid());
         command.Parameters.AddWithValue(payload);
         command.Parameters.AddWithValue(status);

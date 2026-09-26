@@ -32,12 +32,14 @@ public sealed class LocallyAcceptedProviderUnknownSourcePair : IOnlineOrderSourc
         await using var command = _dataSource.CreateCommand(
             $"""
             WITH dead_updates AS MATERIALIZED (
-                SELECT id, created_at, convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' AS external_order_id
+                SELECT id, created_at, convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' AS external_order_id,
+                       {OnlineOrderSourceScan.ProviderOfEventTypeSql} AS provider
                 FROM outbox_messages
-                WHERE event_type = $1 AND status = 'dead')
+                WHERE event_type = ANY($1) AND status = 'dead')
             SELECT d.id, l.external_order_id, o.order_id, o.total, l.provider
             FROM dead_updates d
-            JOIN online_ordering.online_orders l ON l.provider = $3 AND l.external_order_id = d.external_order_id
+            -- V12-TGO-003: every platform's dead status updates, each matched to its own platform's order.
+            JOIN online_ordering.online_orders l ON l.provider = d.provider AND l.external_order_id = d.external_order_id
             JOIN orders.orders o ON o.order_id = l.order_id
             -- V12-RMD-006: a person dismissed this update's case; it is not reopened on every scan.
             WHERE NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
@@ -45,9 +47,8 @@ public sealed class LocallyAcceptedProviderUnknownSourcePair : IOnlineOrderSourc
             ORDER BY d.created_at, d.id
             LIMIT {OnlineOrderSourceScan.MaxScanRows + 1};
             """);
-        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventType);
+        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventTypes);
         command.Parameters.AddWithValue(DeduplicationPrefix);
-        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateProvider);
 
         return await OnlineOrderSourceScan.ReadAsync(command, Name, reader =>
         {
