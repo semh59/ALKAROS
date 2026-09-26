@@ -115,14 +115,23 @@ public sealed class KitchenTicket
     /// <summary>
     /// Acceptance invariant: Parent ticket Ready only occurs when every non-cancelled
     /// item is Ready or Served (PDF:II.5.7A). If all items are cancelled, ticket cannot be Ready.
+    ///
+    /// V1-RMD-317 (independent 2026-09-26 audit, finding K5): a Held item (<see cref="KitchenTicketItem.IsHeld"/>)
+    /// is a print/display-only stub for a later course of the SAME round - <see cref="Order.FireCourse"/>
+    /// never advances it in place; <c>OrderSubmissionCoordinator.FireCourseAsync</c> dispatches a brand-new,
+    /// separate <see cref="KitchenTicket"/> for that course instead (its own real, independently-progressing
+    /// item). This ticket's own copy of a held item therefore never leaves <see cref="KitchenTicketItemState.Queued"/>
+    /// - counting it here would make a ticket with any later-course item permanently unable to reach Ready,
+    /// even after every item this ticket is ACTUALLY responsible for is done. Excluded exactly like a
+    /// Cancelled item already is.
     /// </summary>
     public bool CanBeMarkedReady()
     {
-        var nonCancelledItems = Items.Where(i => i.Status != KitchenTicketItemState.Cancelled).ToList();
-        if (nonCancelledItems.Count == 0)
+        var relevantItems = Items.Where(i => i.Status != KitchenTicketItemState.Cancelled && !i.IsHeld).ToList();
+        if (relevantItems.Count == 0)
             return false;
 
-        return nonCancelledItems.All(i =>
+        return relevantItems.All(i =>
             i.Status == KitchenTicketItemState.Ready || i.Status == KitchenTicketItemState.Served);
     }
 
@@ -218,8 +227,12 @@ public sealed class KitchenTicket
             implicitlyAccepted = Status == KitchenTicketState.Queued;
         }
 
-        // Auto-ready: If ticket is in Preparing or Accepted and all non-cancelled items are Ready or Served -> ticket becomes Ready
-        var nonCancelled = newItems.Where(i => i.Status != KitchenTicketItemState.Cancelled).ToList();
+        // Auto-ready: If ticket is in Preparing or Accepted and all non-cancelled, non-held items are Ready
+        // or Served -> ticket becomes Ready. V1-RMD-317 (independent 2026-09-26 audit, finding K5): a Held
+        // item is excluded here for the exact same reason CanBeMarkedReady() excludes it (see that
+        // method's own doc comment) - this is a separate, duplicated auto-promotion check, not a call to
+        // CanBeMarkedReady() itself, so it needed the identical fix applied in both places.
+        var nonCancelled = newItems.Where(i => i.Status != KitchenTicketItemState.Cancelled && !i.IsHeld).ToList();
         if (nonCancelled.Count > 0 && nonCancelled.All(i => i.Status == KitchenTicketItemState.Ready || i.Status == KitchenTicketItemState.Served))
         {
             if (newTicketStatus == KitchenTicketState.Preparing || newTicketStatus == KitchenTicketState.Accepted)

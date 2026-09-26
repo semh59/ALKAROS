@@ -18,8 +18,7 @@ Bağımsız 13 ajanlı derin denetimin (2026-09-26) K4 bulgusu: `workspace.tsx` 
 
 - `plan/v1/remediation/V1-RMD-315-current-bill-id-cleared-on-logout.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.tsx
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
-  (yeni dosya)
+- `src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx` (yeni dosya, bu görev sahiplenir)
 
 ## In scope
 

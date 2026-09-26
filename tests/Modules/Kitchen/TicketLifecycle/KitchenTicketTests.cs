@@ -294,6 +294,42 @@ public sealed class KitchenTicketUnitTests
         t3.ReadyAt.Should().NotBeNull();
     }
 
+    /// <summary>
+    /// V1-RMD-317 (independent 2026-09-26 audit, finding K5): a Held item (a later course of a multi-course
+    /// round, printed on this ticket but only ever ADVANCED via a brand-new, separate ticket that
+    /// <c>OrderSubmissionCoordinator.FireCourseAsync</c> dispatches - see <see cref="Order.FireCourse"/>)
+    /// must never block this ticket from reaching Ready once every item this ticket is actually responsible
+    /// for is done - it stays permanently Queued here by design, not because prep never finished.
+    /// </summary>
+    [Fact]
+    public void ParentReadyIgnoresAHeldLaterCourseItemThatStaysQueuedForever()
+    {
+        var ticketId = Guid.NewGuid();
+        var firstCourseItem = new KitchenTicketItem(Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Çorba", 1);
+        var heldLaterCourseItem = new KitchenTicketItem(
+            Guid.NewGuid(), ticketId, Guid.NewGuid(), Guid.NewGuid(), "Ana Yemek", 1,
+            courseNumber: 2, isHeld: true);
+
+        var ticket = new KitchenTicket(
+            ticketId,
+            Guid.NewGuid(),
+            "KT-102",
+            "Grill",
+            [firstCourseItem, heldLaterCourseItem],
+            status: KitchenTicketState.Accepted);
+
+        // The held item never moves - it stays Queued for this ticket's entire lifetime.
+        var t1 = ticket.UpdateItemStatus(firstCourseItem.Id, KitchenTicketItemState.Preparing);
+        var t2 = t1.UpdateItemStatus(firstCourseItem.Id, KitchenTicketItemState.Ready);
+        t2.Items.First(i => i.Id == heldLaterCourseItem.Id).Status.Should().Be(KitchenTicketItemState.Queued);
+
+        // The one item this ticket is actually responsible for is Ready - the ticket itself must reach
+        // Ready too, exactly as it would with no held item at all (see AllItemsReadyAutoPromotesTicketToReady).
+        t2.CanBeMarkedReady().Should().BeTrue();
+        t2.Status.Should().Be(KitchenTicketState.Ready);
+        t2.ReadyAt.Should().NotBeNull();
+    }
+
     [Fact]
     public void AllItemsReadyAutoPromotesTicketToReady()
     {

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1328,
-  "markdown_line_count": 102517,
-  "markdown_byte_count": 5896051,
+  "markdown_file_count": 1332,
+  "markdown_line_count": 102841,
+  "markdown_byte_count": 5915072,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "312D3B720FFB6CC118B508CE41E6BF8D14977210F28A08952A350918EA4EA132",
-      "lines": 2604,
-      "bytes": 379492,
+      "sha256": "2FD857B996C237673F3FE254476BABB510E500B60AB86560A367832B6001D6CE",
+      "lines": 2608,
+      "bytes": 380182,
       "utf8": true
     },
     {
@@ -7351,9 +7351,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-315-current-bill-id-cleared-on-logout.md",
-      "sha256": "6EDEA90AE156618AEA46B9164E64F68D6F294C715A0D9969640DF98D145C147D",
-      "lines": 45,
-      "bytes": 2386,
+      "sha256": "2F91FF1DA2DAEDDEFBB12DA37157D56BCDAC1AC23292013E543EA3E162B21E54",
+      "lines": 44,
+      "bytes": 2360,
       "utf8": true
     },
     {
@@ -7361,6 +7361,13 @@
       "sha256": "BD7703B8E77D52A1EDDF7B9EDB511E5FF7B597465DE406A3FD61AD9E00C68C0F",
       "lines": 54,
       "bytes": 3881,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-317-held-course-ticket-never-ready.md",
+      "sha256": "0DE6AE498D34054FEAE9663C0336EB179EAD8BD2618E3D0F9FDC9695ED0FE631",
+      "lines": 45,
+      "bytes": 3267,
       "utf8": true
     },
     {
@@ -8351,10 +8358,31 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/online-ordering/V12-RMD-005-online-publishing-correctness.md",
+      "sha256": "1C821B8DCE8661568DE13E5A2A70EF134FE2D841B12269E115B90CD5C9FA6675",
+      "lines": 95,
+      "bytes": 4795,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-RMD-006-online-reconciliation-and-ui-correctness.md",
+      "sha256": "6A6D86F4906394415DC1B4647CDC1A51080ACD96702F5664FEAD1A0D302D295D",
+      "lines": 84,
+      "bytes": 4452,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/online-ordering/V12-RMD-007-webhook-auth-and-customer-note.md",
       "sha256": "92882DE8C93F67CFFB43A3F2BEBB1F9E48C2437F5BBFB314475CCCB861B77A4B",
       "lines": 80,
       "bytes": 4157,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-RMD-008-online-status-sync-correctness.md",
+      "sha256": "CD32EE2527957CF0CC3DF9E075307FB3ED5999562B343CBCFCB671FD4E731A2E",
+      "lines": 97,
+      "bytes": 5843,
       "utf8": true
     },
     {
