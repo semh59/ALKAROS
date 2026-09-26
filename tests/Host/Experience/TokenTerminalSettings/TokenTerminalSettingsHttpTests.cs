@@ -91,6 +91,48 @@ public sealed class TokenTerminalSettingsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    // V1-RMD-342 (independent 2026-09-26 audit, orta seviye bulgu): before this, any non-empty
+    // string was accepted as the terminal id with zero format check, client or server.
+    [Theory]
+    [InlineData("111044")]
+    [InlineData("XY0000111044")]
+    [InlineData("AV")]
+    [InlineData("AV12A4")]
+    public async Task AMalformedTerminalIdIsRejected(string malformed)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "manager", "integrations.manage");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            CredentialPath(terminalId), cookie,
+            new SaveTokenTerminalCredentialHttpRequest(
+                "13e5862b-1328-47dd-887c-d9ca6cb4375c", "b81bb869-d45c-43df-a078-9337900ff84e", malformed, "cid-example", "cs-test-secret")));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        using var status = await client.SendAsync(JsonRequest(StatusPath(terminalId), cookie, method: HttpMethod.Get));
+        Assert.False((await status.Content.ReadFromJsonAsync<TokenTerminalCredentialStatusResponse>())!.Configured);
+    }
+
+    // Lowercase 'av'/'at' prefixes are accepted too - a manager retyping the physical
+    // label's own casing exactly is not something the check should depend on.
+    [Fact]
+    public async Task ALowercasePrefixTerminalIdIsAccepted()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "manager", "integrations.manage");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            CredentialPath(terminalId), cookie,
+            new SaveTokenTerminalCredentialHttpRequest(
+                "13e5862b-1328-47dd-887c-d9ca6cb4375c", "b81bb869-d45c-43df-a078-9337900ff84e", "at0000111044", "cid-example", "cs-test-secret")));
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
     [Fact]
     public async Task TheSavedClientSecretIsNeverReturnedByAnyEndpoint()
     {

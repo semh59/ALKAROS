@@ -7,6 +7,16 @@ type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
 
 const IntegrationsManage = "integrations.manage";
 
+// V1-RMD-342 (independent 2026-09-26 audit, orta seviye bulgu): mirrors the
+// server's own check (QnbCredentialSettingsEndpoints.IsValidVergiTcKimlikNo)
+// so an obviously-wrong value is caught here instead of round-tripping to
+// the server first. The Turkish tax authority's own tax id convention (10
+// digits for a legal entity, 11 for an individual taxpayer) - both
+// all-digit, fixed length, no checksum.
+function isValidVergiTcKimlikNo(value: string): boolean {
+  return (value.length === 10 || value.length === 11) && /^[0-9]+$/.test(value);
+}
+
 /**
  * V14-QNB-006. Mirrors `TokenTerminalSettings.tsx`'s exact screen shape
  * (login, status, form). Lets a manager register QNB eSolutions e-Fatura
@@ -80,7 +90,9 @@ export function QnbCredentialSettings() {
     }
   };
 
-  const canSave = userIdInput.trim() && passwordInput.trim() && vergiTcKimlikNoInput.trim();
+  const trimmedVergiTcKimlikNo = vergiTcKimlikNoInput.trim();
+  const vergiTcKimlikNoInvalid = trimmedVergiTcKimlikNo.length > 0 && !isValidVergiTcKimlikNo(trimmedVergiTcKimlikNo);
+  const canSave = Boolean(userIdInput.trim() && passwordInput.trim() && isValidVergiTcKimlikNo(trimmedVergiTcKimlikNo));
 
   const save = async (event: FormEvent) => {
     event.preventDefault();
@@ -194,8 +206,12 @@ export function QnbCredentialSettings() {
               onChange={(event) => setVergiTcKimlikNoInput(event.target.value)}
               autoComplete="off"
               placeholder="3250566851"
+              aria-invalid={vergiTcKimlikNoInvalid}
             />
           </label>
+          {vergiTcKimlikNoInvalid && (
+            <div className="alert error" role="alert">Vergi kimlik numarası 10 veya 11 haneli, yalnızca rakamlardan oluşmalıdır.</div>
+          )}
           {error && <div className="alert error" role="alert">{error}</div>}
           {saveMessage && <div className="alert information" role="status">{saveMessage}</div>}
           <button className="primary login-submit" disabled={busy || !canSave}>

@@ -1,3 +1,4 @@
+using System.Linq;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.RelaySettings;
 using ALKAROS.Identity.Authorization;
@@ -70,6 +71,17 @@ public static class TokenTerminalSettingsEndpoints
                 return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Alanların tamamı doldurulmalıdır." } });
             }
 
+            // V1-RMD-342 (independent 2026-09-26 audit, orta seviye bulgu): before this, any
+            // non-empty string was accepted as the terminal id with no format check - the
+            // screen's own label already promises this shape (an "AV"/"AT" prefix) to the
+            // manager typing it in, this just actually enforces the promise. MerchantId/
+            // BranchId have no similarly confirmed format in this codebase's own research
+            // (evidence/v0/integrations/V0-HUG-001/) to validate against.
+            if (!IsValidTokenTerminalId(request.TerminalId))
+            {
+                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Terminal kimliği 'AV' veya 'AT' ile başlamalı ve ardından yalnızca rakam içermelidir." } });
+            }
+
             await credentialStore.SaveAsync(
                 new SaveTokenTerminalCredentialRequest(
                     request.MerchantId, request.BranchId, request.TerminalId, request.ClientId, request.ClientSecret),
@@ -125,6 +137,19 @@ public static class TokenTerminalSettingsEndpoints
 
         await authorization.AuthorizeAsync(principal.UserId, permissionCode, cancellationToken);
         return principal.UserId;
+    }
+
+    // V1-RMD-342: matches this screen's own UI hint/placeholder ("AV0000111044") — two-letter
+    // prefix ("AV" or "AT"), then digits only, case-insensitive since the physical label's own
+    // casing is not something a manager reliably retypes exactly.
+    private static bool IsValidTokenTerminalId(string value)
+    {
+        if (value.Length < 3)
+            return false;
+        var prefix = value[..2];
+        if (!prefix.Equals("AV", StringComparison.OrdinalIgnoreCase) && !prefix.Equals("AT", StringComparison.OrdinalIgnoreCase))
+            return false;
+        return value[2..].All(char.IsAsciiDigit);
     }
 }
 

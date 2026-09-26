@@ -87,6 +87,43 @@ public sealed class QnbCredentialSettingsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    // V1-RMD-342 (independent 2026-09-26 audit, orta seviye bulgu): before this, any non-empty
+    // string was accepted as the VKN with zero format check, client or server.
+    [Theory]
+    [InlineData("abc1234567")]
+    [InlineData("123")]
+    [InlineData("123456789012")]
+    [InlineData("32505668-1")]
+    public async Task AMalformedVergiTcKimlikNoIsRejected(string malformed)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "manager", "integrations.manage");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            CredentialPath(terminalId), cookie, new SaveQnbCredentialHttpRequest("UserID", "cs-test-secret", malformed)));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        using var status = await client.SendAsync(JsonRequest(StatusPath(terminalId), cookie, method: HttpMethod.Get));
+        Assert.False((await status.Content.ReadFromJsonAsync<QnbCredentialStatusResponse>())!.Configured);
+    }
+
+    // 11 haneli (gerçek kişi mükellef, TCKN) de geçerli kabul edilmeli.
+    [Fact]
+    public async Task AnElevenDigitVergiTcKimlikNoIsAccepted()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "manager", "integrations.manage");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            CredentialPath(terminalId), cookie, new SaveQnbCredentialHttpRequest("UserID", "cs-test-secret", "32505668511")));
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
     [Fact]
     public async Task TheSavedPasswordIsNeverReturnedByAnyEndpoint()
     {

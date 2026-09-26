@@ -1,3 +1,4 @@
+using System.Linq;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
@@ -74,6 +75,16 @@ public static class QnbCredentialSettingsEndpoints
                 || string.IsNullOrWhiteSpace(request.VergiTcKimlikNo))
             {
                 return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Alanların tamamı doldurulmalıdır." } });
+            }
+
+            // V1-RMD-342 (independent 2026-09-26 audit, orta seviye bulgu): before this, any
+            // non-empty string was accepted as the VKN with no format check at all, client or
+            // server. The Turkish tax authority's own tax id convention (10 digits for a legal
+            // entity, 11 for an individual taxpayer) is a fixed government standard, not a
+            // vendor-specific guess.
+            if (!IsValidVergiTcKimlikNo(request.VergiTcKimlikNo))
+            {
+                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Vergi kimlik numarası 10 veya 11 haneli, yalnızca rakamlardan oluşmalıdır." } });
             }
 
             await credentialStore.SaveAsync(
@@ -172,6 +183,14 @@ public static class QnbCredentialSettingsEndpoints
         await authorization.AuthorizeAsync(principal.UserId, permissionCode, cancellationToken);
         return principal.UserId;
     }
+
+    // V1-RMD-342: the Turkish tax authority's own tax id convention (10 digits for a legal
+    // entity, 11 for an individual taxpayer) — both are all-digit, fixed-length national
+    // identifiers, never letters or separators, so a plain digit-count check is the whole rule
+    // (no checksum algorithm is published for either, unlike the bank-card Luhn check
+    // elsewhere in this codebase).
+    private static bool IsValidVergiTcKimlikNo(string value)
+        => (value.Length == 10 || value.Length == 11) && value.All(char.IsAsciiDigit);
 }
 
 public sealed record SaveQnbCredentialHttpRequest(string UserId, string Password, string VergiTcKimlikNo);

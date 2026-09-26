@@ -7,6 +7,17 @@ type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
 
 const IntegrationsManage = "integrations.manage";
 
+// V1-RMD-342 (independent 2026-09-26 audit, orta seviye bulgu): mirrors the
+// server's own check (TokenTerminalSettingsEndpoints.IsValidTokenTerminalId)
+// - matches this screen's own label/placeholder promise (an "AV"/"AT"
+// prefix, e.g. "AV0000111044"). merchantId/branchId have no similarly
+// confirmed format in this codebase's own research to validate against.
+function isValidTokenTerminalId(value: string): boolean {
+  if (value.length < 3) return false;
+  const prefix = value.slice(0, 2).toUpperCase();
+  return (prefix === "AV" || prefix === "AT") && /^[0-9]+$/.test(value.slice(2));
+}
+
 /**
  * V13-HUG-005. Mirrors `RelaySettings.tsx`'s exact screen shape (login,
  * status, form) for `V12-QRT-003`'s Cloudflare token. Lets a manager
@@ -99,9 +110,11 @@ export function TokenTerminalSettings() {
     }
   };
 
-  const canSave =
-    merchantIdInput.trim() && branchIdInput.trim() && tokenTerminalIdInput.trim()
-    && clientIdInput.trim() && clientSecretInput.trim();
+  const trimmedTokenTerminalId = tokenTerminalIdInput.trim();
+  const tokenTerminalIdInvalid = trimmedTokenTerminalId.length > 0 && !isValidTokenTerminalId(trimmedTokenTerminalId);
+  const canSave = Boolean(
+    merchantIdInput.trim() && branchIdInput.trim() && isValidTokenTerminalId(trimmedTokenTerminalId)
+    && clientIdInput.trim() && clientSecretInput.trim());
 
   const save = async (event: FormEvent) => {
     event.preventDefault();
@@ -213,8 +226,12 @@ export function TokenTerminalSettings() {
               onChange={(event) => setTokenTerminalIdInput(event.target.value)}
               autoComplete="off"
               placeholder="AV0000111044"
+              aria-invalid={tokenTerminalIdInvalid}
             />
           </label>
+          {tokenTerminalIdInvalid && (
+            <div className="alert error" role="alert">Terminal kimliği 'AV' veya 'AT' ile başlamalı ve ardından yalnızca rakam içermelidir.</div>
+          )}
           <label>
             Müşteri kimliği (Client ID)
             <input value={clientIdInput} onChange={(event) => setClientIdInput(event.target.value)} autoComplete="off" />
