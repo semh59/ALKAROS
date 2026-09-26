@@ -33,7 +33,10 @@ public static class RecipeCatalogMappingEndpoints
         ArgumentNullException.ThrowIfNull(services);
         services.TryAddScoped<IProductRecipeMappingRepository, PostgresProductRecipeMappingRepository>();
         // V1-RMD-275: recipe catalog management (V11-RCP-001) and custom unit conversions (V11-UNT-001).
-        services.TryAddTransient<IUnitConverter, UnitConverter>();
+        // V1-RMD-319 (K7): must be Singleton, matching InventoryModule/RecipesModule's own fix - see
+        // StockMasterExperience's identical comment for why a Transient registration here would silently
+        // shadow a registered custom conversion in any composition where this TryAdd wins.
+        services.TryAddSingleton<IUnitConverter, UnitConverter>();
         services.TryAddScoped<IUnitConversionRepository, PostgresUnitConversionRepository>();
         services.TryAddScoped<IRecipeRepository, PostgresRecipeRepository>();
         services.TryAddScoped<IRecipeVersionRepository, PostgresRecipeVersionRepository>();

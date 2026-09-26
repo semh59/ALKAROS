@@ -35,7 +35,11 @@ public sealed class InventoryModule : IModule
 
     public void Register(ModuleContext context)
     {
-        context.RegisterTransient<IUnitConverter, UnitConverter>();
+        // V1-RMD-319 (independent 2026-09-26 audit, finding K7): must match RecipesModule's own
+        // registration lifetime - see that module's comment and UnitConversionLoaderHostedService for why.
+        // Both modules register the same (Service, Implementation) pair; whichever the DI container's
+        // last-registration-wins resolves is still this same Singleton concrete type either way.
+        context.RegisterSingleton<IUnitConverter, UnitConverter>();
         // V1-RMD-125: shared atomic-transaction seam for InventoryAdjustmentService/
         // WasteRecordingService — see IInventoryTransactionRunner's own doc-comment.
         context.RegisterTransient<IInventoryTransactionRunner, PostgresInventoryTransactionRunner>();

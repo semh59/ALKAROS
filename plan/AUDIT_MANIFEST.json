@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1334,
-  "markdown_line_count": 102954,
-  "markdown_byte_count": 5920926,
+  "markdown_file_count": 1335,
+  "markdown_line_count": 103021,
+  "markdown_byte_count": 5927511,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "A9BDA16C156E8AB0D858B099431AB723188529251565FF6208ADA72502461885",
-      "lines": 2610,
-      "bytes": 380514,
+      "sha256": "2A3AE579F5FD37DE694BFA005E2D139A2A2814CD614337117786B8C58F497E10",
+      "lines": 2611,
+      "bytes": 380679,
       "utf8": true
     },
     {
@@ -7378,6 +7378,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-319-unit-conversions-never-applied.md",
+      "sha256": "EC55FBA76BB26333EF73564FB6041F3734F0F269CB5B0C0F1C846452A308C92A",
+      "lines": 66,
+      "bytes": 6426,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/remediation/V1-RMD-330-waiter-offline-flake-root-cause.md",
       "sha256": "3EA62D33E2F081C13BF4A0135C90931062E6EF07E385F16A54D9BD10CA758540",
       "lines": 65,
@@ -8373,9 +8380,9 @@
     },
     {
       "path": "plan/v1.2/online-ordering/V12-RMD-005-online-publishing-correctness.md",
-      "sha256": "1C821B8DCE8661568DE13E5A2A70EF134FE2D841B12269E115B90CD5C9FA6675",
+      "sha256": "015BA511A62752B24A881458494252834BEB20C7E744806045EE3003B4DD87C8",
       "lines": 95,
-      "bytes": 4795,
+      "bytes": 4789,
       "utf8": true
     },
     {

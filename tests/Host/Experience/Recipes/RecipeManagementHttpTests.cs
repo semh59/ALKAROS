@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using ALKAROS.Measurements;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -129,6 +130,69 @@ public sealed class RecipeManagementHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Created, again.StatusCode);
         var afterwards = await client.GetFromJsonAsync<UnitConversionV1[]>($"{Base}/unit-conversions");
         Assert.Equal(24m, Assert.Single(afterwards!, item => item.FromUnitCode == "kasa" && item.ToUnitCode == "adet").Factor);
+    }
+
+    /// <summary>
+    /// V1-RMD-319 (independent 2026-09-26 audit, finding K7): before this fix, nothing anywhere ever
+    /// called <see cref="IUnitConverter.RegisterConversion"/>, and <see cref="IUnitConverter"/> itself
+    /// didn't even expose that method - a persisted custom conversion never affected a real calculation.
+    /// Proves the fix end to end: POSTing a conversion through the real HTTP endpoint makes it
+    /// IMMEDIATELY usable by resolving the SAME running app's shared <see cref="IUnitConverter"/> (proving
+    /// it is genuinely a Singleton, not a fresh instance per resolution) and converting through it.
+    /// </summary>
+    [Fact]
+    public async Task AddingACustomConversionMakesItImmediatelyUsableByTheSharedRuntimeConverter()
+    {
+        using var client = CreateClient(RecipeCatalogMappingTestDatabase.ManagerToken);
+        var from = "koli-" + Guid.NewGuid().ToString("N")[..8];
+        var to = "adet-" + Guid.NewGuid().ToString("N")[..8];
+
+        var converterBefore = _application!.Services.GetRequiredService<IUnitConverter>();
+        Assert.False(converterBefore.CanConvert(from, to), "the pair does not exist yet");
+
+        var created = await client.PostAsJsonAsync($"{Base}/unit-conversions", new CreateUnitConversionV1(from, to, 12m));
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+
+        // Resolved AGAIN (a fresh call to GetRequiredService, not the same C# reference kept around) -
+        // still the same shared instance if IUnitConverter is truly Singleton in this composition.
+        var converterAfter = _application.Services.GetRequiredService<IUnitConverter>();
+        Assert.True(converterAfter.TryConvert(2m, from, to, out var result));
+        Assert.Equal(24m, result);
+    }
+
+    /// <summary>
+    /// V1-RMD-319 (K7): a conversion already persisted BEFORE the Host starts (e.g. added in a previous
+    /// run, or restored from a backup) must be usable from the very first request, not only after someone
+    /// re-adds it through the endpoint. Builds its own separate app instance (the shared
+    /// <see cref="_application"/> from <see cref="InitializeAsync"/> already started before this test
+    /// could seed anything) with <see cref="UnitConversionLoaderHostedService"/> registered, matching the
+    /// real production wiring in DualScreenApplication.cs.
+    /// </summary>
+    [Fact]
+    public async Task AConversionAlreadyPersistedBeforeStartupIsUsableFromTheFirstRequest()
+    {
+        var from = "sepet-" + Guid.NewGuid().ToString("N")[..8];
+        var to = "kg-" + Guid.NewGuid().ToString("N")[..8];
+        await _database.SeedUnitConversionAsync(from, to, 5m);
+
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
+        builder.WebHost.UseKestrel().UseUrls("http://127.0.0.1:0");
+        builder.Services.AddSingleton(_database.DataSource);
+        builder.Services.AddRecipeCatalogMappingExperience();
+        builder.Services.AddHostedService<UnitConversionLoaderHostedService>();
+
+        await using var app = builder.Build();
+        await app.StartAsync();
+        try
+        {
+            var converter = app.Services.GetRequiredService<IUnitConverter>();
+            Assert.True(converter.TryConvert(3m, from, to, out var result));
+            Assert.Equal(15m, result);
+        }
+        finally
+        {
+            await app.StopAsync();
+        }
     }
 
     private HttpClient CreateClient(string? token)

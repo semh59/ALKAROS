@@ -151,6 +151,10 @@ public static partial class DualScreenApplication
         // zero HTTP surface — a recipe's cost could never be calculated
         // through the running application.
         builder.Services.AddRecipeCostSnapshotExperience();
+        // V1-RMD-319 (independent 2026-09-26 audit, finding K7): loads recipe.unit_conversions into the
+        // now-Singleton IUnitConverter at startup - see UnitConversionLoaderHostedService's own doc
+        // comment for why this was needed at all (nothing ever called RegisterConversion before this fix).
+        builder.Services.AddHostedService<UnitConversionLoaderHostedService>();
         // V11-RPT-002: the critical-stock report finally gets a Host
         // endpoint, plus a live low-stock alert broadcast.
         builder.Services.AddInventoryReportingExperience();

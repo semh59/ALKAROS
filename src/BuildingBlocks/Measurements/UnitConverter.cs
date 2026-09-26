@@ -16,6 +16,19 @@ public sealed class UnitConverter : IUnitConverter
     private readonly ConcurrentDictionary<(string From, string To), decimal> _customConversions =
         new();
 
+    // V1-RMD-319 (independent 2026-09-26 audit, finding K7): tracks which (From, To) pairs were
+    // registered DIRECTLY (a real caller registered exactly this direction), as opposed to only ever
+    // appearing as the auto-computed reverse of some other direct registration. Needed so that
+    // RE-registering the SAME direction with a genuinely NEW factor (a legitimate update - e.g. an admin
+    // correcting "1 kasa = 12 adet" to "1 kasa = 24 adet") is allowed, while a truly contradictory
+    // registration of the OPPOSITE direction (RegisterConversionContradictoryFactorThrowsContradictoryConversionException's
+    // own scenario) still throws exactly as before - this call was added because the live "apply on
+    // write" fix for K7 (RecipeManagementEndpoints' POST /unit-conversions) needed to call
+    // RegisterConversion for a pair that may already be registered (a factor correction), and the
+    // contradiction check below used to fire on ANY re-registration of an existing pair, direct or not.
+    private readonly ConcurrentDictionary<(string From, string To), bool> _directlyRegisteredPairs =
+        new();
+
     public UnitConverter()
     {
         foreach (var (code, def) in StandardUnits.All)
@@ -49,8 +62,11 @@ public sealed class UnitConverter : IUnitConverter
             return;
         }
 
-        // Validate contradictory conversion with inverse if already exists
-        if (_customConversions.TryGetValue((to, from), out var existingInverse))
+        // Validate contradictory conversion with inverse if already exists - UNLESS this exact (from, to)
+        // direction was already directly registered before (a legitimate factor update/correction for the
+        // same pair, not a contradiction with some other pair's own reverse).
+        if (!_directlyRegisteredPairs.ContainsKey((from, to))
+            && _customConversions.TryGetValue((to, from), out var existingInverse))
         {
             var expectedInverse = 1.0m / factor;
             if (Math.Abs(existingInverse - expectedInverse) > InvertibilityTolerance)
@@ -62,6 +78,7 @@ public sealed class UnitConverter : IUnitConverter
 
         _customConversions[(from, to)] = factor;
         _customConversions[(to, from)] = 1.0m / factor;
+        _directlyRegisteredPairs[(from, to)] = true;
     }
 
     public bool IsKnownUnit(string unitCode)

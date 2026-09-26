@@ -1,3 +1,4 @@
+using ALKAROS.Measurements;
 using ALKAROS.Recipes.Units;
 using ALKAROS.Recipes.Versioning;
 using Microsoft.AspNetCore.Builder;
@@ -88,9 +89,19 @@ public static class RecipeManagementEndpoints
             Results.Ok((await conversions.GetActiveConversionsAsync(cancellationToken)).Select(UnitConversionV1.From).ToArray()));
 
         group.MapPost("/unit-conversions", async (
-            CreateUnitConversionV1 request, IUnitConversionRepository conversions, CancellationToken cancellationToken) =>
+            CreateUnitConversionV1 request,
+            IUnitConversionRepository conversions,
+            IUnitConverter converter,
+            CancellationToken cancellationToken) =>
         {
             var conversion = new UnitConversion(Guid.NewGuid(), request.FromUnitCode ?? string.Empty, request.ToUnitCode ?? string.Empty, request.Factor);
+            // V1-RMD-319 (K7): validated against the shared runtime converter BEFORE persisting - a
+            // contradictory pair (e.g. an incompatible reverse factor already registered) rejects here,
+            // before any database write, rather than leaving a persisted row that
+            // UnitConversionLoaderHostedService would then have to skip on every future startup. Before
+            // this fix, nothing anywhere ever called RegisterConversion, so a stored conversion never
+            // affected a real goods-receipt/stock-count/production-consumption calculation at all.
+            converter.RegisterConversion(conversion.FromUnitCode, conversion.ToUnitCode, conversion.Factor);
             await conversions.AddConversionAsync(conversion, cancellationToken);
             return Results.Created("/api/v1/management/recipes/unit-conversions", UnitConversionV1.From(conversion));
         });

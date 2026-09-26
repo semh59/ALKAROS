@@ -86,6 +86,20 @@ public sealed class RecipeCatalogMappingTestDatabase : PgTestDatabase
         return id;
     }
 
+    /// <summary>
+    /// V1-RMD-319 (K7): seeds a row directly, bypassing the HTTP endpoint entirely - proves
+    /// <see cref="ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService"/> actually loads a
+    /// conversion that was already persisted before the Host ever started (not just one added live
+    /// through the endpoint after startup).
+    /// </summary>
+    public async Task SeedUnitConversionAsync(string fromUnitCode, string toUnitCode, decimal factor)
+    {
+        await ExecuteAsync(
+            "INSERT INTO recipe.unit_conversions (unit_conversion_id, from_unit_code, to_unit_code, factor, active) " +
+            "VALUES (@id, @from, @to, @factor, true);",
+            ("id", Guid.NewGuid()), ("from", fromUnitCode), ("to", toUnitCode), ("factor", factor));
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

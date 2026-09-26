@@ -44,7 +44,11 @@ public static class StockMasterEndpoints
         // from InventoryModule/RecipesModule, but this self-contained
         // registration set must resolve it standalone too (same reasoning
         // as ProductionManagementExperience's own repository registrations).
-        services.TryAddTransient<IUnitConverter, UnitConverter>();
+        // V1-RMD-319 (K7): must be Singleton, matching InventoryModule/RecipesModule's own fix - a
+        // Transient instance here would silently shadow a registered custom conversion the moment this
+        // TryAdd wins in some other composition (e.g. an isolated test host that only calls this
+        // extension), exactly the bug this finding is about.
+        services.TryAddSingleton<IUnitConverter, UnitConverter>();
         services.TryAddScoped<IStockMasterService, StockMasterService>();
         // Read-only here (available-quantity display on a product's own
         // mappings) — the same contract OrderStockConsumptionService writes

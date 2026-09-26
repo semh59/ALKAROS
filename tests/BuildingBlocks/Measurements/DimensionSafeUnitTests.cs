@@ -93,6 +93,29 @@ public sealed class DimensionSafeUnitTests
             .WithMessage("*Contradictory conversion detected*");
     }
 
+    /// <summary>
+    /// V1-RMD-319 (independent 2026-09-26 audit, finding K7): re-registering the SAME direction with a
+    /// corrected factor (e.g. an admin fixing "1 kasa = 12 adet" to "1 kasa = 24 adet") must replace it,
+    /// not be treated as contradictory - the check that protects against a genuinely contradictory
+    /// registration of the OPPOSITE direction (see the test right above this one) must not also block an
+    /// intentional update of the SAME pair.
+    /// </summary>
+    [Fact]
+    public void RegisterConversionOfTheSamePairAgainWithACorrectedFactorReplacesItInsteadOfThrowing()
+    {
+        _converter.RegisterConversion("kasa", "adet", 12m);
+        _converter.TryConvert(1m, "kasa", "adet", out var before).Should().BeTrue();
+        before.Should().Be(12m);
+
+        var act = () => _converter.RegisterConversion("kasa", "adet", 24m);
+        act.Should().NotThrow();
+
+        _converter.TryConvert(1m, "kasa", "adet", out var after).Should().BeTrue();
+        after.Should().Be(24m);
+        _converter.TryConvert(24m, "adet", "kasa", out var back).Should().BeTrue();
+        Math.Abs(back - 1.0m).Should().BeLessThanOrEqualTo(UnitConverter.InvertibilityTolerance);
+    }
+
     [Fact]
     public void RegisterConversionZeroOrNegativeFactorThrowsInvalidFactorException()
     {

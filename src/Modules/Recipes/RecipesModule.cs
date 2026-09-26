@@ -24,7 +24,12 @@ public sealed class RecipesModule : IModule
 
     public void Register(ModuleContext context)
     {
-        context.RegisterTransient<IUnitConverter, UnitConverter>();
+        // V1-RMD-319 (independent 2026-09-26 audit, finding K7): Transient before this fix meant every
+        // resolution got a fresh, StandardUnits-only instance with no memory of any custom conversion
+        // another caller had registered - Singleton is required for RegisterConversion to mean anything
+        // across the whole running Host. See UnitConversionLoaderHostedService's own doc comment for the
+        // full fix (startup load + live-register-on-write).
+        context.RegisterSingleton<IUnitConverter, UnitConverter>();
         context.RegisterTransient<IUnitConversionRepository, PostgresUnitConversionRepository>();
 
         context.RegisterTransient<IRecipeRepository, PostgresRecipeRepository>();
