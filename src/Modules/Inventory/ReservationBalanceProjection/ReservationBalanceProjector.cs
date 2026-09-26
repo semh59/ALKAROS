@@ -51,6 +51,25 @@ public sealed class ReservationBalanceProjector : IReservationBalanceProjector
         return await _balanceRepo.ApplyReservationTerminalAtomicAsync(reservation, reservation.Status, ct);
     }
 
+    public Task<ApplyReservationResult> ApplyTerminalInTransactionAsync(
+        PortionReservation reservation,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(reservation);
+        if (reservation.Status is not (PortionReservationStatus.Released or PortionReservationStatus.Consumed or PortionReservationStatus.Waste))
+        {
+            throw new InvalidReservationBalanceDeltaException(
+                $"Reservation transition status must be terminal (Released, Consumed, Waste), got '{reservation.Status}'.");
+        }
+
+        // Without a caller transaction the projection commits on its own, once (applied-event record).
+        return transaction is null
+            ? _balanceRepo.ApplyReservationTerminalAtomicAsync(reservation, reservation.Status, ct)
+            : _balanceRepo.ApplyReservationTerminalAsync(reservation, reservation.Status, connection, transaction, ct);
+    }
+
     public async Task<ReservationBalanceRebuildReport> RebuildReservationBalancesAsync(CancellationToken ct = default)
     {
         var sw = Stopwatch.StartNew();

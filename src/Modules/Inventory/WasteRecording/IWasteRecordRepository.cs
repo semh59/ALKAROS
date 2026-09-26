@@ -17,5 +17,10 @@ public interface IWasteRecordRepository
 
     Task<WasteRecord?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<WasteRecord?> GetByIdempotencyKeyAsync(string idempotencyKey, CancellationToken ct = default);
+
+    /// <summary>V1-RMD-310: the idempotency lookup inside the caller's transaction (falls back for fakes).</summary>
+    Task<WasteRecord?> GetByIdempotencyKeyAsync(
+        string idempotencyKey, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+        => GetByIdempotencyKeyAsync(idempotencyKey, ct);
     Task<IReadOnlyList<WasteRecord>> GetBySourceAsync(string wasteSource, Guid sourceReferenceId, CancellationToken ct = default);
 }

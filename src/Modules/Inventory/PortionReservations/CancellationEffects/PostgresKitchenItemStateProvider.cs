@@ -11,7 +11,19 @@ public sealed class PostgresKitchenItemStateProvider : IKitchenItemStateProvider
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
-    public async Task<KitchenItemPreparationStatus> GetItemPreparationStatusAsync(Guid orderItemId, CancellationToken ct = default)
+    public Task<KitchenItemPreparationStatus> GetItemPreparationStatusAsync(Guid orderItemId, CancellationToken ct = default)
+        => ReadAsync(orderItemId, null, null, ct);
+
+    public Task<KitchenItemPreparationStatus> GetItemPreparationStatusAsync(
+        Guid orderItemId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        return ReadAsync(orderItemId, connection, transaction, ct);
+    }
+
+    private async Task<KitchenItemPreparationStatus> ReadAsync(
+        Guid orderItemId, NpgsqlConnection? connection, NpgsqlTransaction? transaction, CancellationToken ct)
     {
         const string sql = @"
             SELECT status
@@ -20,7 +32,7 @@ public sealed class PostgresKitchenItemStateProvider : IKitchenItemStateProvider
             ORDER BY created_at DESC
             LIMIT 1;";
 
-        await using var cmd = _dataSource.CreateCommand(sql);
+        await using var cmd = connection is null ? _dataSource.CreateCommand(sql) : new NpgsqlCommand(sql, connection, transaction);
         cmd.Parameters.AddWithValue(orderItemId);
 
         var statusObj = await cmd.ExecuteScalarAsync(ct);

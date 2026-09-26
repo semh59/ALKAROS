@@ -48,27 +48,30 @@ public sealed class CrossChannelReservationTestDatabase : PgTestDatabase
 
     public PostgresStockBalanceRepository Balances => new(DataSource);
 
-    public PostgresCrossChannelPortionArbiter CreateArbiter()
+    public PostgresCrossChannelPortionArbiter CreateArbiter() =>
+        new(DataSource, Balances, CreateCancellationService(CreateProjector()));
+
+    public WasteRecordingService CreateWasteService() => new(
+        new PostgresInventoryTransactionRunner(DataSource),
+        new PostgresWasteRecordRepository(DataSource),
+        new PostgresStockMovementRepository(DataSource),
+        new PostgresStockItemRepository(DataSource),
+        new PostgresStockLocationRepository(DataSource),
+        Balances,
+        new UnitConverter());
+
+    /// <summary>The real cancellation decision service over this database, with the given projector (V1-RMD-310).</summary>
+    public PortionCancellationDecisionService CreateCancellationService(IReservationBalanceProjector projector)
     {
         var items = new PostgresStockItemRepository(DataSource);
         var locations = new PostgresStockLocationRepository(DataSource);
         var reservations = new PostgresPortionReservationRepository(DataSource);
-        var movements = new PostgresStockMovementRepository(DataSource);
-        var waste = new WasteRecordingService(
-            new PostgresInventoryTransactionRunner(DataSource),
-            new PostgresWasteRecordRepository(DataSource),
-            movements,
-            items,
-            locations,
-            Balances,
-            new UnitConverter());
-        var cancellation = new PortionCancellationDecisionService(
+        return new PortionCancellationDecisionService(
             reservations,
             new PortionReservationLifecycleService(reservations, items, locations),
-            new ReservationBalanceProjector(new PostgresReservationBalanceRepository(DataSource)),
-            waste,
+            projector,
+            CreateWasteService(),
             new PostgresKitchenItemStateProvider(DataSource));
-        return new PostgresCrossChannelPortionArbiter(DataSource, Balances, cancellation);
     }
 
     public ReservationBalanceProjector CreateProjector() => new(new PostgresReservationBalanceRepository(DataSource));

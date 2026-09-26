@@ -146,6 +146,23 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
         string reason,
         CancellationToken cancellationToken = default)
     {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        var results = await CompensateAsync(orderId, actorId, reason, connection, transaction, cancellationToken).ConfigureAwait(false);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return results;
+    }
+
+    public async Task<IReadOnlyList<CancellationDecisionResult>> CompensateAsync(
+        Guid orderId,
+        Guid actorId,
+        string reason,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
         if (orderId == Guid.Empty)
             throw new InvalidCrossChannelReservationException("OrderId cannot be empty.");
         if (actorId == Guid.Empty)
@@ -154,28 +171,40 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
             throw new InvalidCrossChannelReservationException("A compensation reason is required.");
 
         const string sql = @"
-            SELECT id, order_item_id
+            SELECT id, order_item_id, stock_item_id, stock_location_id
             FROM inventory.portion_reservations
             WHERE order_id = $1 AND idempotency_key LIKE 'ccr:%' AND status <> 'Consumed'
             ORDER BY id
             LIMIT $2;";
 
-        var targets = new List<(Guid ReservationId, Guid OrderItemId)>();
-        await using (var cmd = _dataSource.CreateCommand(sql))
+        var targets = new List<(Guid ReservationId, Guid OrderItemId, Guid StockItemId, Guid StockLocationId)>();
+        await using (var cmd = new NpgsqlCommand(sql, connection, transaction))
         {
             cmd.Parameters.AddWithValue(orderId);
             cmd.Parameters.AddWithValue(MaxHoldsPerOrder + 1);
             await using var reader = await cmd.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
             while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-                targets.Add((reader.GetGuid(0), reader.GetGuid(1)));
+                targets.Add((reader.GetGuid(0), reader.GetGuid(1), reader.GetGuid(2), reader.GetGuid(3)));
         }
 
         if (targets.Count > MaxHoldsPerOrder)
             throw new InvalidOperationException(
                 $"Order '{orderId}' has more than {MaxHoldsPerOrder} holds; refusing a partial compensation.");
 
+        // The same lock order as ReserveAsync (stock item, then location, compared as Guids), so a compensation and
+        // a reservation touching the same rows can never wait on each other in a cycle.
+        foreach (var pair in targets
+                     .Select(t => (t.StockItemId, t.StockLocationId))
+                     .Distinct()
+                     .OrderBy(p => p.StockItemId)
+                     .ThenBy(p => p.StockLocationId))
+        {
+            await _balances.AcquireOnHandLockAsync(pair.StockItemId, pair.StockLocationId, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         var results = new List<CancellationDecisionResult>(targets.Count);
-        foreach (var (reservationId, orderItemId) in targets)
+        foreach (var (reservationId, orderItemId, _, _) in targets)
         {
             var decision = await _cancellation.ProcessCancellationAsync(
                 new ProcessCancellationCommand(
@@ -184,6 +213,8 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
                     actorId,
                     reason.Trim(),
                     IdempotencyKey: $"ccr-comp:{reservationId:N}"),
+                connection,
+                transaction,
                 cancellationToken).ConfigureAwait(false);
             results.Add(decision);
         }

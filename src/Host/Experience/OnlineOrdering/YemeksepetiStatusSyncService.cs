@@ -247,8 +247,9 @@ public sealed class YemeksepetiStatusSyncService
         if (!order.CanTransitionTo(OrderState.Cancelled))
             return OnlineOrderActionOutcome.NotAllowed;
 
-        // Stock first, while the kitchen items still show how far preparation got.
-        await _arbiter.CompensateAsync(order.Id, actorId, reason, cancellationToken).ConfigureAwait(false);
+        // Stock first, while the kitchen items still show how far preparation got. It joins this transaction
+        // (V1-RMD-310): if the order change below fails, the holds are not released either.
+        await _arbiter.CompensateAsync(order.Id, actorId, reason, connection, transaction, cancellationToken).ConfigureAwait(false);
 
         var now = DateTimeOffset.UtcNow;
         foreach (var ticket in await _tickets.GetByOrderIdAsync(order.Id, cancellationToken).ConfigureAwait(false))

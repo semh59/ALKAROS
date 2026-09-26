@@ -86,7 +86,19 @@ public sealed class PostgresWasteRecordRepository : IWasteRecordRepository
         return null;
     }
 
-    public async Task<WasteRecord?> GetByIdempotencyKeyAsync(string idempotencyKey, CancellationToken ct = default)
+    public Task<WasteRecord?> GetByIdempotencyKeyAsync(string idempotencyKey, CancellationToken ct = default)
+        => GetByIdempotencyKeyCoreAsync(idempotencyKey, null, null, ct);
+
+    public Task<WasteRecord?> GetByIdempotencyKeyAsync(
+        string idempotencyKey, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        return GetByIdempotencyKeyCoreAsync(idempotencyKey, connection, transaction, ct);
+    }
+
+    private async Task<WasteRecord?> GetByIdempotencyKeyCoreAsync(
+        string idempotencyKey, NpgsqlConnection? connection, NpgsqlTransaction? transaction, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(idempotencyKey))
             return null;
@@ -99,7 +111,7 @@ public sealed class PostgresWasteRecordRepository : IWasteRecordRepository
             FROM inventory.waste_records
             WHERE idempotency_key = $1;";
 
-        await using var cmd = _dataSource.CreateCommand(sql);
+        await using var cmd = connection is null ? _dataSource.CreateCommand(sql) : new NpgsqlCommand(sql, connection, transaction);
         cmd.Parameters.AddWithValue(idempotencyKey.Trim());
 
         await using var reader = await cmd.ExecuteReaderAsync(ct);

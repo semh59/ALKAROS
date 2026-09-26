@@ -214,6 +214,63 @@ public sealed class PostgresReservationBalanceRepository : IReservationBalanceRe
         }
     }
 
+    public async Task<ApplyReservationResult> ApplyReservationTerminalAsync(
+        PortionReservation reservation,
+        PortionReservationStatus terminalStatus,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(reservation);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        const string insertEventSql = @"
+            INSERT INTO inventory.reservation_balance_applied_events (
+                id, reservation_id, event_type, terminal_status, stock_item_id, stock_location_id, quantity, applied_at
+            ) VALUES (
+                $1, $2, 'Terminal', $3, $4, $5, $6, NOW()
+            )
+            ON CONFLICT (reservation_id, event_type) DO NOTHING
+            RETURNING id;";
+
+        await using (var eventCmd = new NpgsqlCommand(insertEventSql, connection, transaction))
+        {
+            eventCmd.Parameters.AddWithValue(Guid.NewGuid());
+            eventCmd.Parameters.AddWithValue(reservation.Id);
+            eventCmd.Parameters.AddWithValue(terminalStatus.ToString());
+            eventCmd.Parameters.AddWithValue(reservation.StockItemId);
+            eventCmd.Parameters.AddWithValue(reservation.StockLocationId);
+            eventCmd.Parameters.AddWithValue(reservation.Quantity);
+            if (await eventCmd.ExecuteScalarAsync(ct) is null)
+            {
+                // Already applied: nothing to undo, the caller's transaction simply goes on.
+                return new ApplyReservationResult(
+                    StockBalance.Create(reservation.StockItemId, reservation.StockLocationId), IsIdempotentReplay: true);
+            }
+        }
+
+        const string updateBalanceSql = @"
+            UPDATE inventory.stock_balances
+            SET reserved_quantity = GREATEST(0, reserved_quantity - $3),
+                available_quantity = on_hand_quantity - GREATEST(0, reserved_quantity - $3),
+                updated_at = NOW(),
+                row_version = row_version + 1
+            WHERE stock_item_id = $1 AND stock_location_id = $2
+            RETURNING stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                      reserved_quantity, available_quantity, updated_at, row_version;";
+
+        await using var balanceCmd = new NpgsqlCommand(updateBalanceSql, connection, transaction);
+        balanceCmd.Parameters.AddWithValue(reservation.StockItemId);
+        balanceCmd.Parameters.AddWithValue(reservation.StockLocationId);
+        balanceCmd.Parameters.AddWithValue(reservation.Quantity);
+        await using var reader = await balanceCmd.ExecuteReaderAsync(ct);
+        var updated = await reader.ReadAsync(ct)
+            ? MapRow(reader)
+            : StockBalance.Create(reservation.StockItemId, reservation.StockLocationId);
+        return new ApplyReservationResult(updated, IsIdempotentReplay: false);
+    }
+
     public async Task SetExactReservedBalanceAsync(
         Guid stockItemId,
         Guid stockLocationId,

@@ -35,11 +35,26 @@ public sealed class WasteRecordingService : IWasteRecordingService
         _unitConverter = unitConverter ?? throw new ArgumentNullException(nameof(unitConverter));
     }
 
-    public async Task<WasteRecordingResult> RecordWasteAsync(
+    public Task<WasteRecordingResult> RecordWasteAsync(
         RecordWasteRequest request,
         CancellationToken cancellationToken = default)
+        => RecordWasteCoreAsync(request, null, null, cancellationToken);
+
+    public Task<WasteRecordingResult> RecordWasteAsync(
+        RecordWasteRequest request,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+        => RecordWasteCoreAsync(request, connection, transaction, cancellationToken);
+
+    private async Task<WasteRecordingResult> RecordWasteCoreAsync(
+        RecordWasteRequest request,
+        NpgsqlConnection? callerConnection,
+        NpgsqlTransaction? callerTransaction,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
+        var inCallerTransaction = callerTransaction is not null;
 
         if (request.StockItemId == Guid.Empty)
             throw new ArgumentException("StockItemId cannot be empty.", nameof(request));
@@ -65,7 +80,9 @@ public sealed class WasteRecordingService : IWasteRecordingService
         // Idempotency check: duplicate submissions with identical idempotency key return the existing record without duplicate movements
         if (!string.IsNullOrWhiteSpace(request.IdempotencyKey))
         {
-            var existingRecord = await _wasteRepo.GetByIdempotencyKeyAsync(request.IdempotencyKey, cancellationToken);
+            var existingRecord = inCallerTransaction
+                ? await _wasteRepo.GetByIdempotencyKeyAsync(request.IdempotencyKey, callerConnection!, callerTransaction!, cancellationToken)
+                : await _wasteRepo.GetByIdempotencyKeyAsync(request.IdempotencyKey, cancellationToken);
             if (existingRecord != null)
             {
                 var existingMovement = await _movementRepo.GetByIdAsync(existingRecord.StockMovementId, cancellationToken);
@@ -101,9 +118,9 @@ public sealed class WasteRecordingService : IWasteRecordingService
         // waste recordings could both read the same stale balance here and
         // both pass; the guarded transactional apply below (V1-RMD-125) is
         // what actually prevents a negative outcome under a race.
-        var balance = await _balanceRepo.GetByItemAndLocationAsync(item.Id, location.Id, cancellationToken);
+        var balance = inCallerTransaction ? null : await _balanceRepo.GetByItemAndLocationAsync(item.Id, location.Id, cancellationToken);
         var currentOnHand = balance?.OnHandQuantity ?? 0m;
-        if (currentOnHand < normalizedQuantity)
+        if (!inCallerTransaction && currentOnHand < normalizedQuantity)
         {
             throw new InsufficientStockForWasteException(
                 $"Insufficient stock for waste recording. Available on-hand: {currentOnHand} {item.TrackingUnitCode}, requested waste: {normalizedQuantity} {item.TrackingUnitCode}.");
@@ -150,17 +167,36 @@ public sealed class WasteRecordingService : IWasteRecordingService
         // read that a concurrent request could race past. A guard failure
         // throws BalanceGuardFailedException so the transaction runner
         // rolls back the ledger append and waste record insert too.
+        async Task<StockBalance> WriteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction)
+        {
+            await _movementRepo.AppendAsync(movement, connection, transaction, cancellationToken);
+            await _wasteRepo.InsertAsync(wasteRecord, connection, transaction, cancellationToken);
+
+            return await _balanceRepo.TryApplyGuardedOnHandDeltaAsync(
+                item.Id, location.Id, -normalizedQuantity, connection, transaction, cancellationToken)
+                ?? throw new BalanceGuardFailedException();
+        }
+
+        if (inCallerTransaction)
+        {
+            // Inside the caller's transaction nothing can be read back after a failure (the transaction is the
+            // caller's to roll back), so a guard failure is reported with the requested quantity only.
+            try
+            {
+                await WriteAsync(callerConnection!, callerTransaction!);
+            }
+            catch (BalanceGuardFailedException)
+            {
+                throw new InsufficientStockForWasteException(
+                    $"Insufficient stock for waste recording. Requested waste: {normalizedQuantity} {item.TrackingUnitCode}.");
+            }
+
+            return new WasteRecordingResult(wasteRecord, movement, IsIdempotentReplay: false);
+        }
+
         try
         {
-            await _transactionRunner.RunAsync(async (connection, transaction) =>
-            {
-                await _movementRepo.AppendAsync(movement, connection, transaction, cancellationToken);
-                await _wasteRepo.InsertAsync(wasteRecord, connection, transaction, cancellationToken);
-
-                return await _balanceRepo.TryApplyGuardedOnHandDeltaAsync(
-                    item.Id, location.Id, -normalizedQuantity, connection, transaction, cancellationToken)
-                    ?? throw new BalanceGuardFailedException();
-            }, cancellationToken);
+            await _transactionRunner.RunAsync(WriteAsync, cancellationToken);
 
             return new WasteRecordingResult(wasteRecord, movement, IsIdempotentReplay: false);
         }

@@ -1,5 +1,7 @@
 using ALKAROS.Inventory.StockMaster;
 
+using Npgsql;
+
 namespace ALKAROS.Inventory.PortionReservations.Lifecycle;
 
 public sealed class PortionReservationLifecycleService : IPortionReservationLifecycleService
@@ -108,8 +110,27 @@ public sealed class PortionReservationLifecycleService : IPortionReservationLife
         return _repository.GetByIdAsync(id, cancellationToken);
     }
 
+    public Task<ReservationTransitionResult> TransitionInTransactionAsync(
+        TransitionReservationCommand command,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        if (command.TargetStatus is not (PortionReservationStatus.Released or PortionReservationStatus.Waste))
+            throw new ArgumentException("Only Release and Waste run inside a caller transaction.", nameof(command));
+        return ExecuteTransitionAsync(command, connection, transaction, cancellationToken);
+    }
+
+    private Task<ReservationTransitionResult> ExecuteTransitionAsync(
+        TransitionReservationCommand command,
+        CancellationToken cancellationToken)
+        => ExecuteTransitionAsync(command, null, null, cancellationToken);
+
     private async Task<ReservationTransitionResult> ExecuteTransitionAsync(
         TransitionReservationCommand command,
+        NpgsqlConnection? connection,
+        NpgsqlTransaction? transaction,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
@@ -120,7 +141,9 @@ public sealed class PortionReservationLifecycleService : IPortionReservationLife
         if (command.TransitionedBy == Guid.Empty)
             throw new UnauthorizedReservationActorException("TransitionedBy cannot be empty.");
 
-        var reservation = await _repository.GetByIdAsync(command.ReservationId, cancellationToken)
+        var reservation = (transaction is null
+                ? await _repository.GetByIdAsync(command.ReservationId, cancellationToken)
+                : await _repository.GetByIdForUpdateAsync(command.ReservationId, connection!, transaction, cancellationToken))
             ?? throw new PortionReservationNotFoundException(command.ReservationId);
 
         // Idempotency: if already in the target terminal state
@@ -139,7 +162,9 @@ public sealed class PortionReservationLifecycleService : IPortionReservationLife
         var expectedVersion = reservation.Version;
         reservation.TransitionTo(command.TargetStatus, command.TransitionedBy, command.Reason);
 
-        var success = await _repository.UpdateStatusOptimisticAsync(reservation, expectedVersion, cancellationToken);
+        var success = transaction is null
+            ? await _repository.UpdateStatusOptimisticAsync(reservation, expectedVersion, cancellationToken)
+            : await _repository.UpdateStatusOptimisticAsync(reservation, expectedVersion, connection!, transaction, cancellationToken);
         if (!success)
         {
             // Concurrent race condition detected: reload current state

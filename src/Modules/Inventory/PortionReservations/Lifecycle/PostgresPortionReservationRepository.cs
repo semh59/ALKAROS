@@ -159,7 +159,42 @@ public sealed class PostgresPortionReservationRepository : IPortionReservationRe
         return list;
     }
 
-    public async Task<bool> UpdateStatusOptimisticAsync(PortionReservation reservation, int expectedVersion, CancellationToken cancellationToken = default)
+    public async Task<PortionReservation?> GetByIdForUpdateAsync(
+        Guid id, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        const string sql = @"
+            SELECT id, order_id, order_item_id, stock_item_id, stock_location_id,
+                   quantity, unit_code, status, version, idempotency_key,
+                   reserved_at, transitioned_at, transition_reason,
+                   created_by, transitioned_by, metadata::text
+            FROM inventory.portion_reservations
+            WHERE id = $1
+            FOR UPDATE;";
+
+        await using var cmd = new NpgsqlCommand(sql, connection, transaction);
+        cmd.Parameters.AddWithValue(id);
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        return await reader.ReadAsync(cancellationToken) ? MapRow(reader) : null;
+    }
+
+    public Task<bool> UpdateStatusOptimisticAsync(PortionReservation reservation, int expectedVersion, CancellationToken cancellationToken = default)
+        => UpdateStatusCoreAsync(reservation, expectedVersion, null, null, cancellationToken);
+
+    public Task<bool> UpdateStatusOptimisticAsync(
+        PortionReservation reservation, int expectedVersion, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        return UpdateStatusCoreAsync(reservation, expectedVersion, connection, transaction, cancellationToken);
+    }
+
+    private async Task<bool> UpdateStatusCoreAsync(
+        PortionReservation reservation, int expectedVersion, NpgsqlConnection? connection, NpgsqlTransaction? transaction,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(reservation);
 
@@ -172,7 +207,7 @@ public sealed class PostgresPortionReservationRepository : IPortionReservationRe
                 transitioned_by = $5
             WHERE id = $6 AND version = $7;";
 
-        await using var cmd = _dataSource.CreateCommand(sql);
+        await using var cmd = connection is null ? _dataSource.CreateCommand(sql) : new NpgsqlCommand(sql, connection, transaction);
         cmd.Parameters.AddWithValue(reservation.Status.ToString());
         cmd.Parameters.AddWithValue(reservation.Version);
         cmd.Parameters.AddWithValue((object?)reservation.TransitionedAt ?? DBNull.Value);

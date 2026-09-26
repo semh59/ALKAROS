@@ -26,11 +26,24 @@ public interface ICrossChannelPortionArbiter
     /// Undoes an order's holds after the channel refused it (a provider rejecting the
     /// acceptance, a customer abandoning it). Each hold goes through the V11-RSV-003
     /// cancellation decision, which alone decides Release (kitchen not started) or Waste
-    /// (preparation started); holds already Consumed are left alone. Safe to repeat.
+    /// (preparation started); holds already Consumed are left alone. Safe to repeat. Runs in a
+    /// transaction of its own.
     /// </summary>
     Task<IReadOnlyList<CancellationDecisionResult>> CompensateAsync(
         Guid orderId,
         Guid actorId,
         string reason,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-RMD-310: the same compensation inside the caller's transaction, so it commits or rolls back with the
+    /// caller's order change. The stock rows are locked in the same order <see cref="ReserveAsync"/> locks them.
+    /// </summary>
+    Task<IReadOnlyList<CancellationDecisionResult>> CompensateAsync(
+        Guid orderId,
+        Guid actorId,
+        string reason,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);
 }

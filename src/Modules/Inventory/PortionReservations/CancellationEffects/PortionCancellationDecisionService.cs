@@ -1,9 +1,22 @@
 using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.WasteRecording;
+using Npgsql;
 
 namespace ALKAROS.Inventory.PortionReservations.CancellationEffects;
 
+/// <summary>
+/// Decides whether a cancelled order item's portion reservation is released (the kitchen had not started) or
+/// wasted (it had), and applies every effect of that decision in one transaction (V1-RMD-310). The reservation
+/// row is read locked, so a concurrent cancellation of the same reservation waits and then sees the result. For
+/// waste the stock movement and the on-hand decrement are written before the reserved quantity is
+/// lowered, so available stock never rises on the way — the portion that is thrown away can never be sold.
+/// A repeat after an interrupted earlier run (a reservation already Released or Waste) completes whatever that
+/// run left undone: the projection and the waste movement are each recorded once, never twice.
+/// <para>Only the overload that takes the caller's transaction is atomic; every production caller
+/// (<c>ICrossChannelPortionArbiter.CompensateAsync</c>) uses it. The overload without one is kept for existing
+/// callers and tests: each of its steps commits on its own, in the same safe order.</para>
+/// </summary>
 public sealed class PortionCancellationDecisionService : IPortionCancellationDecisionService
 {
     private readonly IPortionReservationRepository _reservationRepo;
@@ -26,9 +39,27 @@ public sealed class PortionCancellationDecisionService : IPortionCancellationDec
         _kitchenProvider = kitchenProvider ?? throw new ArgumentNullException(nameof(kitchenProvider));
     }
 
-    public async Task<CancellationDecisionResult> ProcessCancellationAsync(
+    public Task<CancellationDecisionResult> ProcessCancellationAsync(
         ProcessCancellationCommand command,
         CancellationToken ct = default)
+    {
+        Validate(command);
+        return ProcessCoreAsync(command, null, null, ct);
+    }
+
+    public Task<CancellationDecisionResult> ProcessCancellationAsync(
+        ProcessCancellationCommand command,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken ct = default)
+    {
+        Validate(command);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        return ProcessCoreAsync(command, connection, transaction, ct);
+    }
+
+    private static void Validate(ProcessCancellationCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
 
@@ -38,72 +69,94 @@ public sealed class PortionCancellationDecisionService : IPortionCancellationDec
             throw new InvalidCancellationCommandException("OrderItemId cannot be empty.");
         if (command.ActorId == Guid.Empty)
             throw new InvalidCancellationCommandException("ActorId cannot be empty.");
+    }
 
-        var reservation = await _reservationRepo.GetByIdAsync(command.ReservationId, ct);
-        if (reservation == null)
-            throw new PortionReservationNotFoundException(command.ReservationId);
+    // connection/transaction are null for the overload without a caller transaction.
+    private async Task<CancellationDecisionResult> ProcessCoreAsync(
+        ProcessCancellationCommand command,
+        NpgsqlConnection? connection,
+        NpgsqlTransaction? transaction,
+        CancellationToken ct)
+    {
+        var reservation = (transaction is null
+                ? await _reservationRepo.GetByIdAsync(command.ReservationId, ct)
+                : await _reservationRepo.GetByIdForUpdateAsync(command.ReservationId, connection!, transaction, ct))
+            ?? throw new PortionReservationNotFoundException(command.ReservationId);
 
-        // Idempotency check: if reservation already in terminal state
-        if (reservation.Status == PortionReservationStatus.Released)
-        {
-            return CancellationDecisionResult.ReplayRelease(reservation, "Already released.");
-        }
-        if (reservation.Status == PortionReservationStatus.Waste)
-        {
-            return CancellationDecisionResult.ReplayWaste(reservation, "Already recorded as waste.");
-        }
         if (reservation.Status == PortionReservationStatus.Consumed)
         {
             throw new InvalidCancellationCommandException(
                 $"Cannot cancel portion reservation '{command.ReservationId}' because it is already Consumed.");
         }
 
-        // Status lookup from kitchen
-        var kitchenStatus = await _kitchenProvider.GetItemPreparationStatusAsync(command.OrderItemId, ct);
+        if (reservation.Status == PortionReservationStatus.Released)
+        {
+            await _balanceProjector.ApplyTerminalInTransactionAsync(reservation, connection!, transaction!, ct);
+            return CancellationDecisionResult.ReplayRelease(reservation, "Already released.");
+        }
+
+        if (reservation.Status == PortionReservationStatus.Waste)
+        {
+            await RecordWasteOnceAsync(reservation, command, reservation.TransitionReason ?? "Recorded as waste", connection, transaction, ct);
+            await _balanceProjector.ApplyTerminalInTransactionAsync(reservation, connection!, transaction!, ct);
+            return CancellationDecisionResult.ReplayWaste(reservation, "Already recorded as waste.");
+        }
+
+        var kitchenStatus = transaction is null
+            ? await _kitchenProvider.GetItemPreparationStatusAsync(command.OrderItemId, ct)
+            : await _kitchenProvider.GetItemPreparationStatusAsync(command.OrderItemId, connection!, transaction, ct);
 
         if (kitchenStatus == KitchenItemPreparationStatus.NotStarted)
         {
-            // 1. Pre-kitchen cancellation -> RELEASE
             var reason = command.CancellationReason ?? "Cancelled before kitchen preparation started";
-            var transitionCmd = new TransitionReservationCommand(
-                reservation.Id, PortionReservationStatus.Released, command.ActorId, reason, command.IdempotencyKey);
-
-            var transitionResult = await _lifecycleService.ReleaseReservationAsync(transitionCmd, ct);
-
-            // Apply transition to balance projection (restores available quantity)
-            await _balanceProjector.ApplyReservationTransitionAsync(
-                transitionResult.Reservation, PortionReservationStatus.Reserved, ct);
-
-            return CancellationDecisionResult.SuccessRelease(transitionResult.Reservation, reason);
+            var released = await _lifecycleService.TransitionInTransactionAsync(
+                new TransitionReservationCommand(
+                    reservation.Id, PortionReservationStatus.Released, command.ActorId, reason, command.IdempotencyKey),
+                connection!, transaction!, ct);
+            await _balanceProjector.ApplyTerminalInTransactionAsync(released.Reservation, connection!, transaction!, ct);
+            return CancellationDecisionResult.SuccessRelease(released.Reservation, reason);
         }
-        else
-        {
-            // 2. Post-preparation cancellation -> WASTE
-            var reason = command.CancellationReason ?? $"Cancelled after kitchen preparation started ({kitchenStatus})";
-            var transitionCmd = new TransitionReservationCommand(
-                reservation.Id, PortionReservationStatus.Waste, command.ActorId, reason, command.IdempotencyKey);
 
-            var transitionResult = await _lifecycleService.WasteReservationAsync(transitionCmd, ct);
+        var wasteReason = command.CancellationReason ?? $"Cancelled after kitchen preparation started ({kitchenStatus})";
+        var waste = await RecordWasteOnceAsync(reservation, command, wasteReason, connection, transaction, ct);
+        var wasted = await _lifecycleService.TransitionInTransactionAsync(
+            new TransitionReservationCommand(
+                reservation.Id, PortionReservationStatus.Waste, command.ActorId, wasteReason, command.IdempotencyKey),
+            connection!, transaction!, ct);
+        await _balanceProjector.ApplyTerminalInTransactionAsync(wasted.Reservation, connection!, transaction!, ct);
+        return CancellationDecisionResult.SuccessWaste(wasted.Reservation, waste!, wasteReason);
+    }
 
-            // Apply transition to balance projection (decrements reserved quantity)
-            await _balanceProjector.ApplyReservationTransitionAsync(
-                transitionResult.Reservation, PortionReservationStatus.Reserved, ct);
+    /// <summary>
+    /// The waste movement for this reservation, recorded at most once whatever the idempotency key of the run
+    /// that recorded it: an existing record for the reservation is returned as it is.
+    /// </summary>
+    private async Task<WasteRecord?> RecordWasteOnceAsync(
+        PortionReservation reservation,
+        ProcessCancellationCommand command,
+        string reason,
+        NpgsqlConnection? connection,
+        NpgsqlTransaction? transaction,
+        CancellationToken ct)
+    {
+        var existing = await _wasteService.GetWasteRecordsBySourceAsync(WasteSources.PortionReservation, reservation.Id, ct);
+        if (existing.Count > 0)
+            return existing[0];
 
-            // Record waste via V11-INV-006 contract (StockMovement out, on-hand decremented)
-            var wasteReq = new RecordWasteRequest(
-                StockItemId: reservation.StockItemId,
-                StockLocationId: reservation.StockLocationId,
-                Quantity: reservation.Quantity,
-                UnitCode: reservation.UnitCode,
-                Reason: reason,
-                RecordedBy: command.ActorId,
-                WasteSource: WasteSources.PortionReservation,
-                SourceReferenceId: reservation.Id,
-                IdempotencyKey: !string.IsNullOrWhiteSpace(command.IdempotencyKey) ? "waste-" + command.IdempotencyKey.Trim() : null);
+        var request = new RecordWasteRequest(
+            StockItemId: reservation.StockItemId,
+            StockLocationId: reservation.StockLocationId,
+            Quantity: reservation.Quantity,
+            UnitCode: reservation.UnitCode,
+            Reason: reason,
+            RecordedBy: command.ActorId,
+            WasteSource: WasteSources.PortionReservation,
+            SourceReferenceId: reservation.Id,
+            IdempotencyKey: !string.IsNullOrWhiteSpace(command.IdempotencyKey)
+                ? "waste-" + command.IdempotencyKey.Trim()
+                : $"waste-portion-reservation:{reservation.Id:N}");
 
-            var wasteResult = await _wasteService.RecordWasteAsync(wasteReq, ct);
-
-            return CancellationDecisionResult.SuccessWaste(transitionResult.Reservation, wasteResult.Record, reason);
-        }
+        var result = await _wasteService.RecordWasteAsync(request, connection!, transaction!, ct);
+        return result.Record;
     }
 }

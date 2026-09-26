@@ -1,0 +1,36 @@
+V1-RMD-310 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 8831ed34.
+
+Change: one transaction for a portion cancellation.
+- IPortionCancellationDecisionService.ProcessCancellationAsync(command, connection, transaction): reservation read
+  FOR UPDATE; waste movement + guarded on-hand decrement BEFORE the reservation transition and the reserved
+  decrement, all in the caller's transaction. Replays of Released/Waste complete an interrupted earlier run
+  (projection once via applied-event, waste once per reservation whatever key recorded it).
+- ICrossChannelPortionArbiter.CompensateAsync(..., connection, transaction): locks stock rows in ReserveAsync's
+  order, then decides each hold in the caller's transaction. The old overload opens its own transaction.
+- YemeksepetiStatusSyncService.CancelLocallyAsync passes its transaction, so a failed order change no longer
+  leaves the holds released.
+- Repository interfaces got transaction overloads as default interface members (fakes keep compiling; the
+  Postgres repositories override them).
+- The non-transactional ProcessCancellationAsync is kept for existing callers/tests; each step commits on its own
+  but in the safe order. No production caller uses it any more.
+Deferred on purpose (declared-surface rule, V12-GOV-005): the kitchen item is read in the transaction but NOT
+share-locked, because V12-ONL-003 still saves the cancelled kitchen ticket on its own connection (a share lock
+would block that save). Locking it and moving the ticket save into the transaction is V12-RMD-005's.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- tests/Modules/Inventory/* (12 projects) -> all green; CrossChannelReservation 35/35 (27 + 8 new in
+  AtomicCompensationTests: 2 rollback, concurrent sale, lock order, interrupted release, interrupted waste,
+  waste under another key, legacy ordering)
+- AvailabilityPublishing 10/10, Host OnlineOrdering 35/35, Host Orders/Confirmation 28/28, ModuleBoundaries 9/9,
+  Host composition subset green
+- consistency_audit.py -> clean; plan_audit validate -> 0/0
+
+Mutations (backup restore + cmp, 6/6 killed):
+R1 compensation leaves the caller's transaction -> 6 failed
+R2 hold lowered before the waste movement -> 1 failed
+R3 release replay does not heal the projection -> 1 failed
+R4 waste replay does not heal the movement -> 1 failed
+R5 no up-front sorted row locks -> 1 failed
+R6 waste recorded again under another key -> 1 failed

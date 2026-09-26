@@ -1,7 +1,7 @@
 # V1-RMD-310 - Porsiyon iptal telafisini tek transaction'da atomik yap
 
 - Task ID: V1-RMD-310
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Existing
