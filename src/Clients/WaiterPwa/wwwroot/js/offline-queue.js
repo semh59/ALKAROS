@@ -186,7 +186,7 @@ const QUEUE_RETRY_MAX_MS = 5 * 60 * 1000;
 let queueRetryTimer = null;
 let queueRetryDelay = QUEUE_RETRY_MIN_MS;
 let flushInFlight = false;
-// V1-RMD-314: a trigger (connection back, app shown again) that arrives while a flush is running is remembered;
+// V1-RMD-330: a trigger (connection back, app shown again) that arrives while a flush is running is remembered;
 // when that flush ends with rounds still queued, one more flush runs at once instead of waiting for the timer.
 let flushRequested = false;
 

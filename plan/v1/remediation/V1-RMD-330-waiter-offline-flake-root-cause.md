@@ -1,6 +1,6 @@
-# V1-RMD-314 - Garson çevrimdışı kuyruğunun kararsız E2E testlerinin kök nedenini kapat
+# V1-RMD-330 - Garson çevrimdışı kuyruğunun kararsız E2E testlerinin kök nedenini kapat
 
-- Task ID: V1-RMD-314
+- Task ID: V1-RMD-330
 - Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
@@ -24,8 +24,8 @@ CI'daki `tests/E2E/WaiterPwa/specs/06-offline-queue.spec.js` testleri ara sıra 
 
 ## Owned surface
 
-- `plan/v1/remediation/V1-RMD-314-waiter-offline-flake-root-cause.md`
-- `evidence/V1-RMD-314/**`
+- `plan/v1/remediation/V1-RMD-330-waiter-offline-flake-root-cause.md`
+- `evidence/V1-RMD-330/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan; Semih 2026-09-26 kararı):
   - src/Clients/WaiterPwa/wwwroot/waiter-app.js ve src/Clients/WaiterPwa/wwwroot/js/ (V1-WTR-053) — kaydın
@@ -56,9 +56,9 @@ CI'daki `tests/E2E/WaiterPwa/specs/06-offline-queue.spec.js` testleri ara sıra 
 
 ## Acceptance evidence
 
-- StaticApps vitest ve WaiterPwa E2E (yerelde tekrarlı koşu) yeşil; mutasyon kontrolü `evidence/V1-RMD-314/`
+- StaticApps vitest ve WaiterPwa E2E (yerelde tekrarlı koşu) yeşil; mutasyon kontrolü `evidence/V1-RMD-330/`
   altında.
-- `task_scope_tool.py --task-id V1-RMD-314 --diff-base <InProgress commit>` exit 0.
+- `task_scope_tool.py --task-id V1-RMD-330 --diff-base <InProgress commit>` exit 0.
 
 ## Handoff
 

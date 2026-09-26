@@ -1,4 +1,4 @@
-V1-RMD-314 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+V1-RMD-330 completion evidence (2026-09-26, worktree ALKAROS-faz3)
 Baseline (InProgress) commit: d46dcd68.
 
 Root cause (from the failing CI logs, not guessed):
@@ -29,3 +29,7 @@ KILLED W2 later success keeps the warning
 KILLED R1 disabled reason hides lost connection
 KILLED F1 trigger during a flush dropped
 KILLED F2 remembered trigger never rerun
+
+Renumbering: first committed as V1-RMD-314 (f2cdaf3a); a parallel session created a different V1-RMD-314 at the
+same time (TASK_DUPLICATE on master). This task was moved to the free V1-RMD-330 (plan file, evidence, code and
+test comments); no behaviour changed. Re-ran: StaticApps vitest 26/26, plan_audit, consistency_audit.

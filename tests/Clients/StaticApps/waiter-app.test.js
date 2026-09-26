@@ -214,7 +214,7 @@ describe("waiter-app.js", () => {
     expect(shown).toContain("Sunucuya ulaşılamadı");
   });
 
-  describe("V1-RMD-314: offline mode survives a failed set-up and a busy flush", () => {
+  describe("V1-RMD-330: offline mode survives a failed set-up and a busy flush", () => {
     let register;
 
     beforeEach(() => {

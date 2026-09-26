@@ -167,7 +167,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       console.warn('Offline mode disabled: this browser has no service worker support.');
       return;
     }
-    // V1-RMD-314: a registration that fails once (typically the network dropping while sw.js downloads) used
+    // V1-RMD-330: a registration that fails once (typically the network dropping while sw.js downloads) used
     // to disable offline mode for good. It is retried when the connection returns and after a growing wait,
     // a few times, and a later success clears the "kurulamadı" state.
     workerRegistrationAttempts += 1;

@@ -173,7 +173,7 @@ test.describe('Çevrimdışı sipariş kuyruğu (V1-WTR-053)', () => {
     await page.unroute(SUBMIT_DRAFT);
     // 15 sn'lik geri-deneme zamanlayıcısının altında: gönderimi yapan
     // zamanlayıcı değil, visibilitychange dinleyicisinin kendisi olmalı.
-    // V1-RMD-314: çevrimiçi olayının başlattığı gönderim hâlâ sürüyorsa uygulama
+    // V1-RMD-330: çevrimiçi olayının başlattığı gönderim hâlâ sürüyorsa uygulama
     // artık tetiği atlamaz, hatırlar ve o gönderim bitince hemen yeniden dener;
     // bu yüzden tek bir olay yeterlidir.
     await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
