@@ -225,6 +225,18 @@ YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER = {
     ("V12-ONL-004", "V0-YSP-001"),
 }
 
+# 2026-09-26 (TRACEABILITY C106, V12-GOV-007): Semih approved the same per-edge
+# waiver for the Trendyol Go adapter. V12-TGO-002 lists V12-TGO-001 (the Uber
+# Eats Trendyol Go Meal contract, Blocked on real seller credentials and stage
+# access) in its own `## Dependencies`; V12-TGO-003..005 chain to it. The
+# adapter is an explicitly unverified draft grounded only in the public
+# developer documentation (EXT:TGO-MEAL-API); stage-evidence clauses stay open
+# under V12-TGO-001. Does not let V12-TGO-001 close, and does not exempt any
+# OTHER dependency of the same consumer.
+TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER = {
+    ("V12-TGO-002", "V12-TGO-001"),
+}
+
 BROAD_HANDOFF_REPLACEMENTS = {
     "V0-DAT-001": ["GATE-V0-EXIT"],
     "V0-DAT-002": ["GATE-V0-EXIT"],
@@ -1010,6 +1022,8 @@ def validate_task_scope_waivers() -> list[str]:
          "TASK_SCOPE_PAYMENT_ORCHESTRATION_WAIVER"),
         ("_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER", YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER,
          "TASK_SCOPE_YEMEKSEPETI_CHANNEL_WAIVER"),
+        ("_TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER", TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER,
+         "TASK_SCOPE_TRENDYOL_GO_CHANNEL_WAIVER"),
     ):
         registered = parse_task_scope_waiver_constant(tool_path, tool_name)
         if registered is None:
@@ -2471,6 +2485,34 @@ def validate_plan() -> None:
                     sorted(registered_channel_waiver),
                 )
             )
+    tgo_waiver_block = gate_text.split(
+        "<!-- V12_TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER:START -->", 1
+    )
+    if (
+        len(tgo_waiver_block) != 2
+        or "<!-- V12_TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER:END -->"
+        not in tgo_waiver_block[1]
+    ):
+        errors.append("GATES_TRENDYOL_GO_CHANNEL_WAIVER_MARKER_MISSING")
+    else:
+        tgo_waiver_table = tgo_waiver_block[1].split(
+            "<!-- V12_TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER:END -->", 1
+        )[0]
+        registered_tgo_waiver = set(
+            re.findall(
+                r"^\| `(V12-[A-Z0-9]+-\d+)` \| `(V12-TGO-001)` \| `2026-09-26` \|",
+                tgo_waiver_table,
+                re.MULTILINE,
+            )
+        )
+        if registered_tgo_waiver != TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER:
+            errors.append(
+                "GATES_TRENDYOL_GO_CHANNEL_WAIVER_MISMATCH expected=%s registered=%s"
+                % (
+                    sorted(TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER),
+                    sorted(registered_tgo_waiver),
+                )
+            )
     traceability_text = read_utf8(PLAN_DIR / "TRACEABILITY.md")
     registered_corrections = set(
         re.findall(r"^\| `(C\d+)` \|", traceability_text, re.MULTILINE)
@@ -2732,6 +2774,8 @@ def validate_plan() -> None:
             if (path[-2], dependency_id) in PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
                 return
             if (path[-2], dependency_id) in YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:
+                return
+            if (path[-2], dependency_id) in TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER:
                 return
             if len(path) == 2:
                 errors.append(

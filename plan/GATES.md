@@ -301,6 +301,24 @@ task-scope kopyalarını da okur; uyuşmazlık `TASK_SCOPE_YEMEKSEPETI_CHANNEL_W
 `TASK_SCOPE_PAYMENT_ORCHESTRATION_WAIVER_MISMATCH` hatası verir. Yeni product behavior
 başlatmaz ve üretimde hiçbir Yemeksepeti kanalını etkinleştirmez.
 
+2026-09-26 (`V12-GOV-007`, `C106`): Semih'in "Feragatle taslak olarak yaz" kararıyla aynı per-edge feragat
+Trendyol Go adaptörü için verildi. `V12-TGO-002` kendi `## Dependencies` bölümünde `Blocked` `V12-TGO-001`'e
+bağlıdır; `V12-TGO-003..005` ona zincirlenir. Adaptör yalnız herkese açık Uber Eats Trendyol Go geliştirici
+belgesine (`EXT:TGO-MEAL-API`) dayanan, açıkça **doğrulanmamış taslak** koddur. Tüketicilerin gerçek stage
+kanıtı isteyen maddeleri bu feragatle karşılanmış sayılmaz ve `V12-TGO-001`'de açık kalır. Feragat
+`V12-TGO-001`'i kapatmaz ve aynı tüketicinin başka bir bağımlılığını etkilemez.
+
+<!-- V12_TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER:START -->
+| Consumer | Waived dependency | Approval date | Required evidence |
+| --- | --- | --- | --- |
+| `V12-TGO-002` | `V12-TGO-001` | `2026-09-26` | Gerçek Uber Eats Trendyol Go satıcı bilgileri, stage erişimi ve webhook kaydı |
+<!-- V12_TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER:END -->
+
+Bu tablo `tools/plan-audit/plan_audit_tool.py`'nin `TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER` sabitiyle ve
+`tools/task-scope/task_scope_tool.py`'nin `_TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER` sabitiyle tam eşleşmelidir;
+uyuşmazlık `GATES_TRENDYOL_GO_CHANNEL_WAIVER_MISMATCH` ya da `TASK_SCOPE_TRENDYOL_GO_CHANNEL_WAIVER_MISMATCH`
+hatası verir. Yeni product behavior başlatmaz ve üretimde hiçbir Trendyol Go kanalını etkinleştirmez.
+
 2026-08-15 kullanıcı onayıyla (`TRACEABILITY.md` C69) `V0-REV-001..030`
 revalidation görevleri `## Onay` bloklu `Done`, `V0-GOV-041` ile `V0-GOV-042`
 tarihli gerekçeyle `NotApplicable` oldu; deferral satırları listeden çıkarıldı.

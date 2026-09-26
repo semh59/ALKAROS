@@ -217,6 +217,13 @@ _YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER = {
     ("V12-ONL-004", "V0-YSP-001"),
 }
 
+# 2026-09-26 (TRACEABILITY C106, V12-GOV-007): the same per-edge waiver for the
+# Trendyol Go adapter. Mirrors `plan_audit_tool.py`'s
+# TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER exactly.
+_TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER = {
+    ("V12-TGO-002", "V12-TGO-001"),
+}
+
 
 class TaskParseError(Exception):
     """Raised when a task Markdown file cannot be parsed."""
@@ -947,6 +954,8 @@ def validate_task_metadata(
             if (task.task_id, dep_id) in _PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER:
                 continue
             if (task.task_id, dep_id) in _YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:
+                continue
+            if (task.task_id, dep_id) in _TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER:
                 continue
             is_done, reason = check_dependency_status(dep_id, plan_dir)
             if not is_done:

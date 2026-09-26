@@ -1,0 +1,19 @@
+V12-GOV-007 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Baseline (InProgress) commit: 6b46cc3c. Decision: Semih 2026-09-26, Trendyol Go "Feragatle taslak olarak yaz".
+
+Changes:
+- plan_audit_tool.py: TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER = {(V12-TGO-002, V12-TGO-001)}; GATES table marker and
+  exact comparison (GATES_TRENDYOL_GO_CHANNEL_WAIVER_*); the task-scope copy is compared too
+  (TASK_SCOPE_TRENDYOL_GO_CHANNEL_WAIVER_*); the edge is exempt in the transitive Done-dependency check.
+- task_scope_tool.py: _TRENDYOL_GO_CHANNEL_DEPENDENCY_WAIVER copy and the metadata dependency exemption.
+- plan/GATES.md: marked waiver table and its limits; plan/TRACEABILITY.md: C106.
+- test_task_scope.py: TestTrendyolGoChannelDependencyWaiver (waived edge passes; another dependency of the same
+  task is still enforced; the waiver does not extend to another consumer).
+
+Commands (exit 0): plan_audit validate 0 errors / 0 warnings; pytest tests/Architecture/TaskScope 154/154;
+markdownlint 0 issues.
+
+Mutations (restored from backup, cmp verified; 3/3 killed):
+KILLED W1 GATES row removed
+KILLED W2 task-scope copy differs
+KILLED W3 task-scope skip removed
