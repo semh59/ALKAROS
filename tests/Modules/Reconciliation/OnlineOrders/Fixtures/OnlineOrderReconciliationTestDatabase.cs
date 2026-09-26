@@ -50,10 +50,10 @@ public sealed class OnlineOrderReconciliationTestDatabase : PgTestDatabase
         var eventKey = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(inboxId.ToString()))).ToLowerInvariant();
         await using var command = DataSource.CreateCommand(
             """
-            INSERT INTO online_ordering.yemeksepeti_webhook_inbox
-                (inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
+            INSERT INTO online_ordering.provider_inbox
+                (provider, inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
                  processed_at, processing_outcome, order_id, outcome_detail, processing_attempts)
-            VALUES ($1, $2, $3, 'RECEIVED', $2, '\x00'::bytea, now(), $4, $5, $6::jsonb, $7);
+            VALUES ('yemeksepeti', $1, $2, $3, 'RECEIVED', $2, '\x00'::bytea, now(), $4, $5, $6::jsonb, $7);
             """);
         command.Parameters.AddWithValue(inboxId);
         command.Parameters.AddWithValue(eventKey);
@@ -123,7 +123,7 @@ public sealed class OnlineOrderReconciliationTestDatabase : PgTestDatabase
     public async Task<(string? Outcome, int Attempts)> InboxStateAsync(Guid inboxId)
     {
         await using var command = DataSource.CreateCommand(
-            "SELECT processing_outcome, processing_attempts FROM online_ordering.yemeksepeti_webhook_inbox WHERE inbox_id = $1;");
+            "SELECT processing_outcome, processing_attempts FROM online_ordering.provider_inbox WHERE inbox_id = $1;");
         command.Parameters.AddWithValue(inboxId);
         await using var reader = await command.ExecuteReaderAsync();
         await reader.ReadAsync();

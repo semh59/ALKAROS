@@ -32,7 +32,7 @@ public sealed class ProviderPriceMismatchSourcePair : IOnlineOrderSourcePair
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT i.external_order_id, i.order_id, (i.outcome_detail->>'priceDifferenceAmount')::numeric
-            FROM online_ordering.yemeksepeti_webhook_inbox i
+            FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome = 'OrderCreated'
               AND i.outcome_detail->>'pricesMatch' = 'false'
               AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc

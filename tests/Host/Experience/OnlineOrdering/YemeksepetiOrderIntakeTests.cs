@@ -507,6 +507,26 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheYemeksepetiProcessorNeverClaimsAnotherPlatformsEvent()
+    {
+        var otherEvent = Guid.NewGuid();
+        await _database.ExecAsync(
+            """
+            INSERT INTO online_ordering.provider_inbox
+                (provider, inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope)
+            VALUES ('trendyol-go', @id, lpad(replace(@id::text, '-', ''), 64, '0'), @external, 'created',
+                    lpad(replace(@id::text, '-', ''), 64, '0'), decode('00', 'hex'));
+            """,
+            ("id", otherEvent), ("external", NewOrderId()));
+
+        Assert.Equal(0, await DrainAsync());
+
+        Assert.Null(await _database.ScalarTextAsync(
+            $"SELECT processing_outcome FROM online_ordering.provider_inbox WHERE inbox_id = '{otherEvent}';"));
+        await _database.ExecAsync("DELETE FROM online_ordering.provider_inbox WHERE inbox_id = @id;", ("id", otherEvent));
+    }
+
+    [Fact]
     public async Task ThePlatformLinkMigrationBackfillsRollsBackOnlyWhenSafeAndReapplies()
     {
         var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
@@ -531,10 +551,12 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
     public async Task TheIntakeCorrectnessMigrationRollsBackAndReapplies()
     {
         // V12-ONL-006: 153 replaced 150's platform-blind index, so 150 is rolled back and reapplied beneath it.
+        await _database.RunFixtureAsync("154-provider-neutral-inbox-and-mapping.down.sql");
         await _database.RunFixtureAsync("153-online-order-provider-link.down.sql");
         await _database.RunFixtureAsync("150-online-intake-backoff-and-unique-order.down.sql");
         await _database.RunFixtureAsync("150-online-intake-backoff-and-unique-order.up.sql");
         await _database.RunFixtureAsync("153-online-order-provider-link.up.sql");
+        await _database.RunFixtureAsync("154-provider-neutral-inbox-and-mapping.up.sql");
         var (_, sku) = await _database.SeedSellableProductAsync(onHand: 1m);
         var orderId = NewOrderId();
         await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 1)));
@@ -568,8 +590,11 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
     public async Task TheProcessingMigrationRollsBackAndReapplies()
     {
         var (_, sku) = await _database.SeedSellableProductAsync(onHand: 1m);
+        // V12-ONL-008: 154 renamed the table 146 extends, so 146 is rolled back and reapplied beneath it.
+        await _database.RunFixtureAsync("154-provider-neutral-inbox-and-mapping.down.sql");
         await _database.RunFixtureAsync("146-yemeksepeti-inbox-processing.down.sql");
         await _database.RunFixtureAsync("146-yemeksepeti-inbox-processing.up.sql");
+        await _database.RunFixtureAsync("154-provider-neutral-inbox-and-mapping.up.sql");
         var orderId = NewOrderId();
         await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 1)));
 

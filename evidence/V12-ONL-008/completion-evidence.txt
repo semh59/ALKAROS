@@ -1,0 +1,35 @@
+V12-ONL-008 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 0cacac5e.
+
+Changes:
+- Migration 154: yemeksepeti_webhook_inbox -> online_ordering.provider_inbox and yemeksepeti_product_mappings ->
+  online_ordering.provider_product_mappings, each with a provider column (slug CHECK, no default); existing rows
+  are Yemeksepeti's. Event uniqueness (provider, event_key); open mapping uniqueness (provider, external_sku) and
+  (provider, product_id); indexes include the platform. Each table guarded (module test databases load only one).
+  Down refuses when another platform's rows exist, otherwise restores the old tables, constraints and indexes.
+- Yemeksepeti inbox, processing claim, intake history checks, adapter transport lookup and product mapping service
+  read and write only their own platform's rows (mapping lock key names the platform).
+- Reconciliation pairs, channel report and online operations queries use the new table names; their platform
+  breakdown remains V12-REC-002 / V12-OUI-002.
+
+Found while testing (fixed in this task): the first rollback script combined both table checks in one PL/pgSQL
+IF, which is planned as a whole and failed on a database holding only one table; each check now runs as its own
+dynamic query.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Host.Tests incl. MigrationComposition 161/161, Host OnlineOrdering 64/64 (+1), Host Reconciliation 12/12,
+  WebhookInbox 31/31 (+1), ProductMapping 24/24 (+2), OrderNormalization 33/33, StatusMapping 32/32, StatusSync 19/19,
+  AvailabilityPublishing 14/14, CatalogPublishing 15/15, Reconciliation.OnlineOrders 22/22, Reporting.Channels 6/6,
+  Architecture 9/9
+- consistency_audit clean; plan_audit validate 0/0; project_manifest VALID
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 8/8 killed):
+KILLED Q1 duplicate lookup ignores the platform
+KILLED Q2 event unique across platforms
+KILLED Q3 processor claims every platform
+KILLED Q4 resolve ignores the platform
+KILLED Q5 one open product mapping across platforms
+KILLED Q6 open-mapping lookup ignores the platform
+KILLED Q7 existing mappings not kept as Yemeksepeti's
+KILLED Q8 rollback guard removed

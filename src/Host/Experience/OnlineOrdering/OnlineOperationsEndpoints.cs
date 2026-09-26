@@ -135,7 +135,7 @@ public static class OnlineOperationsEndpoints
         await using var command = dataSource.CreateCommand(
             """
             SELECT o.source,
-                   (SELECT i.payload_envelope FROM online_ordering.yemeksepeti_webhook_inbox i
+                   (SELECT i.payload_envelope FROM online_ordering.provider_inbox i
                     WHERE i.order_id = o.order_id AND i.processing_outcome = 'OrderCreated'
                     ORDER BY i.received_at LIMIT 1)
             FROM orders.orders o
@@ -187,7 +187,7 @@ public static class OnlineOperationsEndpoints
         await using var command = dataSource.CreateCommand(
             """
             SELECT o.order_id, o.source, o.status, o.order_number, t.table_number,
-                   (SELECT i.outcome_detail->>'displayCode' FROM online_ordering.yemeksepeti_webhook_inbox i
+                   (SELECT i.outcome_detail->>'displayCode' FROM online_ordering.provider_inbox i
                     WHERE i.order_id = o.order_id AND i.processing_outcome = 'OrderCreated' LIMIT 1),
                    o.total,
                    (SELECT count(*) FROM orders.order_items oi WHERE oi.order_id = o.order_id AND oi.status <> 'Cancelled')::int,
@@ -226,7 +226,7 @@ public static class OnlineOperationsEndpoints
                    COALESCE(processing_outcome, 'Retrying'),
                    COALESCE(outcome_detail->>'rejection', outcome_detail->>'reason'),
                    processing_attempts, received_at
-            FROM online_ordering.yemeksepeti_webhook_inbox
+            FROM online_ordering.provider_inbox
             WHERE received_at > now() - interval '1 day'
               AND (processing_outcome IN ('Rejected', 'Diverged', 'Failed', 'UnknownStatus')
                    OR (processed_at IS NULL AND processing_attempts > 0))
@@ -252,7 +252,7 @@ public static class OnlineOperationsEndpoints
     {
         await using var command = dataSource.CreateCommand(
             """
-            SELECT (SELECT count(*) FROM online_ordering.yemeksepeti_webhook_inbox WHERE processed_at IS NULL)::int,
+            SELECT (SELECT count(*) FROM online_ordering.provider_inbox WHERE processed_at IS NULL)::int,
                    (SELECT count(*) FROM online_ordering.catalog_publications WHERE status = 'Pending' AND delivery_attempts > 0)::int;
             """);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);

@@ -47,11 +47,12 @@ public sealed class YemeksepetiOnlineOrderProvider : IOnlineOrderProvider
         await using var command = new NpgsqlCommand(
             """
             SELECT outcome_detail->>'transportType'
-            FROM online_ordering.yemeksepeti_webhook_inbox
-            WHERE order_id = $1 AND processing_outcome = 'OrderCreated'
+            FROM online_ordering.provider_inbox
+            WHERE provider = $2 AND order_id = $1 AND processing_outcome = 'OrderCreated'
             LIMIT 1;
             """, connection, transaction);
         command.Parameters.AddWithValue(orderId);
+        command.Parameters.AddWithValue(Provider);
         var transportType = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as string;
         return YemeksepetiStatusSync.HandoverStatusFor(transportType) switch
         {

@@ -4,6 +4,7 @@ using System.Text.Json;
 using ALKAROS.Secrets;
 using ALKAROS.SensitiveData;
 using Npgsql;
+using ALKAROS.OnlineOrdering.OrderLinks;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 
@@ -109,10 +110,10 @@ public sealed class YemeksepetiWebhookInbox
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using (var insert = new NpgsqlCommand(
             """
-            INSERT INTO online_ordering.yemeksepeti_webhook_inbox (
-                inbox_id, event_key, external_order_id, provider_status, provider_updated_at, body_sha256, payload_envelope)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-            ON CONFLICT (event_key) DO NOTHING
+            INSERT INTO online_ordering.provider_inbox (
+                inbox_id, event_key, external_order_id, provider_status, provider_updated_at, body_sha256, payload_envelope, provider)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            ON CONFLICT (provider, event_key) DO NOTHING
             RETURNING inbox_id;
             """, connection))
         {
@@ -123,12 +124,15 @@ public sealed class YemeksepetiWebhookInbox
             insert.Parameters.AddWithValue((object?)updatedAt ?? DBNull.Value);
             insert.Parameters.AddWithValue(Hex(SHA256.HashData(body.Span)));
             insert.Parameters.AddWithValue(envelope.ToPersistenceBytes());
+            // V12-ONL-008: the inbox is shared by every platform; these rows are Yemeksepeti's.
+            insert.Parameters.AddWithValue(OnlineOrderProviders.Yemeksepeti);
             if (await insert.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is Guid stored)
                 return new WebhookReceipt(WebhookReceiptOutcome.Stored, stored);
         }
 
         await using var existing = new NpgsqlCommand(
-            "SELECT inbox_id FROM online_ordering.yemeksepeti_webhook_inbox WHERE event_key = $1;", connection);
+            "SELECT inbox_id FROM online_ordering.provider_inbox WHERE provider = $1 AND event_key = $2;", connection);
+        existing.Parameters.AddWithValue(OnlineOrderProviders.Yemeksepeti);
         existing.Parameters.AddWithValue(eventKey);
         var inboxId = (Guid)(await existing.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
         return new WebhookReceipt(WebhookReceiptOutcome.Duplicate, inboxId);

@@ -31,7 +31,7 @@ public sealed class ProviderEventFailedSourcePair : IOnlineOrderSourcePair
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT i.inbox_id, i.external_order_id
-            FROM online_ordering.yemeksepeti_webhook_inbox i
+            FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome = 'Failed'
               -- V12-RMD-006: a person dismissed this event's case; it is not reopened on every scan.
               AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
@@ -50,7 +50,7 @@ public sealed class ProviderEventFailedSourcePair : IOnlineOrderSourcePair
             return new DetectedDiscrepancy(
                 DeduplicationPrefix + inboxId,
                 CaseType.OnlineOrderMismatch,
-                $"online_ordering.yemeksepeti_webhook_inbox:{inboxId}",
+                $"online_ordering.provider_inbox:{inboxId}",
                 $"yemeksepeti:order:{externalOrderId}",
                 0m,
                 CaseSeverity.Medium,

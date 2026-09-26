@@ -108,7 +108,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
             SELECT business_date, count(*)::int
             FROM (
                 SELECT i.external_order_id, (min(i.received_at) AT TIME ZONE $3)::date AS business_date
-                FROM online_ordering.yemeksepeti_webhook_inbox i
+                FROM online_ordering.provider_inbox i
                 WHERE i.processing_outcome IN ('Rejected', 'Diverged')
                   AND i.order_id IS NULL
                   -- V12-RMD-006: only events before the window's end can decide an order's first refusal time

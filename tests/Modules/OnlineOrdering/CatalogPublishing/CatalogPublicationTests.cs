@@ -20,7 +20,7 @@ public sealed class CatalogPublishingTestDatabase : PgTestDatabase
                      "033-message-lease-generation.up.sql", "040-wave9-schema-additions.up.sql",
                      "053-catalog-products-row-version.up.sql", "066-static-menu.up.sql", "103-products-prep-time.up.sql",
                      "144-yemeksepeti-product-mappings.up.sql", "147-online-catalog-publications.up.sql",
-                     "152-online-publishing-ordering.up.sql"
+                     "152-online-publishing-ordering.up.sql", "154-provider-neutral-inbox-and-mapping.up.sql"
                  })
         {
             await RunFixtureAsync(file);
@@ -181,7 +181,7 @@ public sealed class CatalogPublicationTests : IClassFixture<CatalogPublishingTes
         again.Status.Should().Be(CatalogPublicationStatus.Unchanged);
         (await OutboxCountAsync(again.PublicationId)).Should().Be(0);
         (await _db.ScalarAsync(
-            "SELECT count(*) FROM online_ordering.yemeksepeti_product_mappings WHERE product_id = $1;", product)).Should().Be(1);
+            "SELECT count(*) FROM online_ordering.provider_product_mappings WHERE product_id = $1;", product)).Should().Be(1);
         _provider.CatalogUpdates.Should().ContainSingle();
         (await _db.Mappings.FindOpenSkuForProductAsync(product)).Should().Be(sku);
     }

@@ -26,6 +26,7 @@
     <None Include="../../../../../database/migrations/V1/V1-RMD-103/053-catalog-products-row-version.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-WTR-017/103-products-prep-time.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V12/V12-MAP-001/*.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V12/V12-ONL-008/*.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

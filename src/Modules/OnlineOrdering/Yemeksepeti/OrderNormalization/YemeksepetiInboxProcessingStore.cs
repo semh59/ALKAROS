@@ -3,6 +3,7 @@ using ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping;
 using Npgsql;
 using NpgsqlTypes;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
+using ALKAROS.OnlineOrdering.OrderLinks;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 
@@ -72,14 +73,16 @@ public static class YemeksepetiInboxProcessingStore
         await using var command = new NpgsqlCommand(
             """
             SELECT inbox_id, external_order_id, provider_status, received_at, payload_envelope
-            FROM online_ordering.yemeksepeti_webhook_inbox
-            WHERE processed_at IS NULL AND NOT (provider_status = ANY($1))
+            FROM online_ordering.provider_inbox
+            WHERE provider = $2 AND processed_at IS NULL AND NOT (provider_status = ANY($1))
               AND (next_attempt_at IS NULL OR next_attempt_at <= now())
             ORDER BY processing_attempts, received_at, inbox_id
             LIMIT 1
             FOR UPDATE SKIP LOCKED;
             """, connection, transaction);
         command.Parameters.AddWithValue(deferredStatuses.ToArray());
+        // V12-ONL-008: the shared inbox holds every platform's events; this processor handles Yemeksepeti's.
+        command.Parameters.AddWithValue(OnlineOrderProviders.Yemeksepeti);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             return null;
@@ -102,7 +105,7 @@ public static class YemeksepetiInboxProcessingStore
     {
         await using var command = new NpgsqlCommand(
             """
-            UPDATE online_ordering.yemeksepeti_webhook_inbox
+            UPDATE online_ordering.provider_inbox
             SET processed_at = now(), processing_outcome = $2, order_id = $3, outcome_detail = $4
             WHERE inbox_id = $1 AND processed_at IS NULL;
             """, connection, transaction);
@@ -129,7 +132,7 @@ public static class YemeksepetiInboxProcessingStore
         ArgumentNullException.ThrowIfNull(error);
         await using var command = new NpgsqlCommand(
             """
-            UPDATE online_ordering.yemeksepeti_webhook_inbox
+            UPDATE online_ordering.provider_inbox
             SET processing_attempts = processing_attempts + 1,
                 last_error = left($2, 200),
                 processed_at = CASE WHEN processing_attempts + 1 >= $3 THEN now() END,
@@ -156,7 +159,7 @@ public static class YemeksepetiInboxProcessingStore
     {
         await using var command = new NpgsqlCommand(
             """
-            UPDATE online_ordering.yemeksepeti_webhook_inbox
+            UPDATE online_ordering.provider_inbox
             SET processed_at = NULL, processing_outcome = NULL, order_id = NULL, outcome_detail = NULL,
                 processing_attempts = 0, last_error = NULL, next_attempt_at = NULL
             WHERE inbox_id = $1

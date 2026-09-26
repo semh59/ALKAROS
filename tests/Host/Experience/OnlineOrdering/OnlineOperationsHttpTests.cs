@@ -194,7 +194,7 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
         var (orderId, _, externalId) = await AcceptedOnlineOrderAsync(sku, productId);
         await _database.ExecAsync(
-            "UPDATE online_ordering.yemeksepeti_webhook_inbox SET outcome_detail = outcome_detail - 'transportType' WHERE order_id = @id;",
+            "UPDATE online_ordering.provider_inbox SET outcome_detail = outcome_detail - 'transportType' WHERE order_id = @id;",
             ("id", orderId));
 
         using var response = await _client!.SendAsync(

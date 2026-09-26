@@ -32,7 +32,8 @@ public sealed class AvailabilityTestDatabase : PgTestDatabase
                      "060-stock-movements.up.sql", "061-stock-balances.up.sql", "063-waste-records.up.sql",
                      "064-portion-reservations.up.sql", "065-reservation-balance-projection.up.sql",
                      "087-inventory-stock-balances-non-negative.up.sql", "144-yemeksepeti-product-mappings.up.sql",
-                     "148-online-availability-states.up.sql", "152-online-publishing-ordering.up.sql"
+                     "148-online-availability-states.up.sql", "152-online-publishing-ordering.up.sql",
+                     "154-provider-neutral-inbox-and-mapping.up.sql"
                  })
         {
             await RunFixtureAsync(file);

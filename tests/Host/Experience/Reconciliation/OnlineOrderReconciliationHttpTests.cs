@@ -78,10 +78,10 @@ public sealed class OnlineOrderReconciliationHttpTests : IAsyncLifetime
         var inboxId = Guid.NewGuid();
         await _database.ExecuteAsync(
             """
-            INSERT INTO online_ordering.yemeksepeti_webhook_inbox
-                (inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
+            INSERT INTO online_ordering.provider_inbox
+                (provider, inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
                  processed_at, processing_outcome, outcome_detail)
-            VALUES (@inbox, lpad(replace(@inbox::text, '-', ''), 64, '0'), @external, 'RECEIVED',
+            VALUES ('yemeksepeti', @inbox, lpad(replace(@inbox::text, '-', ''), 64, '0'), @external, 'RECEIVED',
                     lpad(replace(@inbox::text, '-', ''), 64, '0'), '\x00'::bytea, now(), 'Rejected',
                     '{"rejection":"UnmappedSku","providerCancellationRequested":false}'::jsonb);
             """,
@@ -120,7 +120,7 @@ public sealed class OnlineOrderReconciliationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, retried.StatusCode);
         Assert.Equal("Requeued", (await retried.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("outcome").GetString());
         Assert.Equal(0L, await _database.ScalarAsync<long>(
-            $"SELECT count(*) FROM online_ordering.yemeksepeti_webhook_inbox WHERE inbox_id = '{inboxId}' AND processed_at IS NOT NULL;"));
+            $"SELECT count(*) FROM online_ordering.provider_inbox WHERE inbox_id = '{inboxId}' AND processed_at IS NOT NULL;"));
 
         // Intake then creates the order: the provider and the restaurant agree again.
         await _database.ExecuteAsync(

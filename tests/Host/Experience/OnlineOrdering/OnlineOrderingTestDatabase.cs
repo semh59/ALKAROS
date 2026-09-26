@@ -129,7 +129,7 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
 
     public async Task<long> CountAllAsync()
     {
-        await using var command = DataSource.CreateCommand("SELECT count(*) FROM online_ordering.yemeksepeti_webhook_inbox;");
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM online_ordering.provider_inbox;");
         return (long)(await command.ExecuteScalarAsync())!;
     }
 
@@ -214,7 +214,7 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
         await using var command = DataSource.CreateCommand(
             """
             SELECT provider_status, processing_outcome, order_id, outcome_detail::text, processing_attempts
-            FROM online_ordering.yemeksepeti_webhook_inbox
+            FROM online_ordering.provider_inbox
             WHERE external_order_id = @id
             ORDER BY received_at, inbox_id;
             """);
@@ -253,13 +253,13 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
 
     /// <summary>V12-RMD-004: makes every waiting retry due now.</summary>
     public Task ExpireRetryWaitsAsync() =>
-        ExecAsync("UPDATE online_ordering.yemeksepeti_webhook_inbox SET next_attempt_at = now() - interval '1 second' WHERE processed_at IS NULL AND next_attempt_at IS NOT NULL;");
+        ExecAsync("UPDATE online_ordering.provider_inbox SET next_attempt_at = now() - interval '1 second' WHERE processed_at IS NULL AND next_attempt_at IS NOT NULL;");
 
     /// <summary>V12-RMD-004: seconds until the event's next attempt is due (negative when due).</summary>
     public async Task<double> SecondsUntilNextAttemptAsync(string externalOrderId)
     {
         await using var command = DataSource.CreateCommand(
-            "SELECT EXTRACT(EPOCH FROM next_attempt_at - now())::float8 FROM online_ordering.yemeksepeti_webhook_inbox WHERE external_order_id = @id;");
+            "SELECT EXTRACT(EPOCH FROM next_attempt_at - now())::float8 FROM online_ordering.provider_inbox WHERE external_order_id = @id;");
         command.Parameters.AddWithValue("id", externalOrderId);
         return (double)(await command.ExecuteScalarAsync())!;
     }
@@ -365,7 +365,7 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
     public async Task CorruptEnvelopeAsync(string externalOrderId)
     {
         await ExecAsync(
-            "UPDATE online_ordering.yemeksepeti_webhook_inbox SET payload_envelope = '\\x00'::bytea WHERE external_order_id = @id;",
+            "UPDATE online_ordering.provider_inbox SET payload_envelope = '\\x00'::bytea WHERE external_order_id = @id;",
             ("id", externalOrderId));
     }
 

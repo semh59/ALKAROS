@@ -1,10 +1,14 @@
 using ALKAROS.Catalog.ProductCatalog;
 using Npgsql;
+using ALKAROS.OnlineOrdering.OrderLinks;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
 
 public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProductMappingService
 {
+    /// <summary>V12-ONL-008: the shared mapping table's rows this service reads and writes.</summary>
+    private const string Provider = OnlineOrderProviders.Yemeksepeti;
+
     // Catalog's own SKU column width; a provider SKU longer than any product SKU cannot be ours.
     private const int MaxSkuLength = 100;
 
@@ -65,8 +69,9 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         // Mapping changes are rare manager/publishing actions; one table-wide lock keeps the
         // "one open mapping per SKU and per product" check and the write a single step.
         await using (var lockCommand = new NpgsqlCommand(
-            "SELECT pg_advisory_xact_lock(hashtext('online_ordering.yemeksepeti_product_mappings'));", connection, transaction))
+            "SELECT pg_advisory_xact_lock(hashtext('online_ordering.provider_product_mappings:' || $1));", connection, transaction))
         {
+            lockCommand.Parameters.AddWithValue(Provider);
             await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -95,22 +100,23 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         {
             await using var close = new NpgsqlCommand(
                 """
-                UPDATE online_ordering.yemeksepeti_product_mappings
+                UPDATE online_ordering.provider_product_mappings
                 SET effective_to = $2, closed_by = $3
-                WHERE mapping_id = $1;
+                WHERE mapping_id = $1 AND provider = $4;
                 """, connection, transaction);
             close.Parameters.AddWithValue(openForSku.MappingId);
             close.Parameters.AddWithValue(effectiveFrom);
             close.Parameters.AddWithValue(actorId);
+            close.Parameters.AddWithValue(Provider);
             await close.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
         var mapping = new YemeksepetiProductMapping(Guid.NewGuid(), sku, productId, effectiveFrom, null);
         await using (var insert = new NpgsqlCommand(
             """
-            INSERT INTO online_ordering.yemeksepeti_product_mappings (
-                mapping_id, external_sku, product_id, effective_from, effective_to, created_by
-            ) VALUES ($1, $2, $3, $4, NULL, $5);
+            INSERT INTO online_ordering.provider_product_mappings (
+                mapping_id, external_sku, product_id, effective_from, effective_to, created_by, provider
+            ) VALUES ($1, $2, $3, $4, NULL, $5, $6);
             """, connection, transaction))
         {
             insert.Parameters.AddWithValue(mapping.MappingId);
@@ -118,6 +124,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             insert.Parameters.AddWithValue(productId);
             insert.Parameters.AddWithValue(effectiveFrom);
             insert.Parameters.AddWithValue(actorId);
+            insert.Parameters.AddWithValue(Provider);
             await insert.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -135,14 +142,15 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         await using var command = _dataSource.CreateCommand(
             """
             SELECT mapping_id, product_id
-            FROM online_ordering.yemeksepeti_product_mappings
-            WHERE external_sku = $1
+            FROM online_ordering.provider_product_mappings
+            WHERE provider = $3 AND external_sku = $1
               AND effective_from <= $2
               AND (effective_to IS NULL OR effective_to > $2)
             LIMIT 2;
             """);
         command.Parameters.AddWithValue(sku);
         command.Parameters.AddWithValue(at);
+        command.Parameters.AddWithValue(Provider);
 
         var matches = new List<(Guid MappingId, Guid ProductId)>(2);
         await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
@@ -171,11 +179,12 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
     {
         await using var command = _dataSource.CreateCommand(
             """
-            SELECT external_sku FROM online_ordering.yemeksepeti_product_mappings
-            WHERE product_id = $1 AND effective_to IS NULL
+            SELECT external_sku FROM online_ordering.provider_product_mappings
+            WHERE provider = $2 AND product_id = $1 AND effective_to IS NULL
             LIMIT 1;
             """);
         command.Parameters.AddWithValue(productId);
+        command.Parameters.AddWithValue(Provider);
         return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as string;
     }
 
@@ -185,12 +194,13 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         await using var command = _dataSource.CreateCommand(
             """
             SELECT mapping_id, external_sku, product_id, effective_from
-            FROM online_ordering.yemeksepeti_product_mappings
-            WHERE effective_to IS NULL AND effective_from <= now()
+            FROM online_ordering.provider_product_mappings
+            WHERE provider = $2 AND effective_to IS NULL AND effective_from <= now()
             ORDER BY external_sku
             LIMIT $1;
             """);
         command.Parameters.AddWithValue(limit);
+        command.Parameters.AddWithValue(Provider);
         var mappings = new List<YemeksepetiProductMapping>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
@@ -243,11 +253,12 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         await using var command = new NpgsqlCommand(
             $"""
             SELECT mapping_id, external_sku, product_id, effective_from
-            FROM online_ordering.yemeksepeti_product_mappings
-            WHERE {predicate} AND effective_to IS NULL
+            FROM online_ordering.provider_product_mappings
+            WHERE provider = $2 AND {predicate} AND effective_to IS NULL
             LIMIT 1;
             """, connection, transaction);
         command.Parameters.AddWithValue(value!);
+        command.Parameters.AddWithValue(Provider);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             return null;
@@ -265,11 +276,12 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         await using var command = new NpgsqlCommand(
             """
             SELECT EXISTS (
-                SELECT 1 FROM online_ordering.yemeksepeti_product_mappings
-                WHERE external_sku = $1 AND effective_from >= $2);
+                SELECT 1 FROM online_ordering.provider_product_mappings
+                WHERE provider = $3 AND external_sku = $1 AND effective_from >= $2);
             """, connection, transaction);
         command.Parameters.AddWithValue(sku);
         command.Parameters.AddWithValue(effectiveFrom);
+        command.Parameters.AddWithValue(Provider);
         return (bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 }

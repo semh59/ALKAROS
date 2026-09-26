@@ -31,7 +31,7 @@ public sealed class ProviderStatusUnknownSourcePair : IOnlineOrderSourcePair
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT i.inbox_id, i.external_order_id, i.provider_status
-            FROM online_ordering.yemeksepeti_webhook_inbox i
+            FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome = 'UnknownStatus'
               AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
                               WHERE rc.deduplication_key = $1 || i.inbox_id::text
@@ -51,7 +51,7 @@ public sealed class ProviderStatusUnknownSourcePair : IOnlineOrderSourcePair
             return new DetectedDiscrepancy(
                 DeduplicationPrefix + inboxId,
                 CaseType.OnlineOrderMismatch,
-                $"online_ordering.yemeksepeti_webhook_inbox:{inboxId}",
+                $"online_ordering.provider_inbox:{inboxId}",
                 $"yemeksepeti:order:{externalOrderId}",
                 0m,
                 CaseSeverity.High,

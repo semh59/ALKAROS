@@ -40,12 +40,12 @@ public sealed class ProviderAcceptedLocallyRefusedSourcePair : IOnlineOrderSourc
                    i.inbox_id, i.external_order_id,
                    COALESCE((i.outcome_detail->>'providerCancellationRequested')::boolean, false),
                    COALESCE(i.outcome_detail->>'rejection', i.outcome_detail->>'reason')
-            FROM online_ordering.yemeksepeti_webhook_inbox i
+            FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome IN ('Rejected', 'Diverged')
               AND i.order_id IS NULL
               AND NOT EXISTS (SELECT 1 FROM orders.orders o
                               WHERE o.source = 'Online' AND o.source_external_id = i.external_order_id)
-              AND NOT EXISTS (SELECT 1 FROM online_ordering.yemeksepeti_webhook_inbox c
+              AND NOT EXISTS (SELECT 1 FROM online_ordering.provider_inbox c
                               WHERE c.external_order_id = i.external_order_id
                                 AND c.processing_outcome = 'CancelledBeforeOrder')
               AND NOT EXISTS (SELECT 1 FROM status_updates u
@@ -72,7 +72,7 @@ public sealed class ProviderAcceptedLocallyRefusedSourcePair : IOnlineOrderSourc
             return new DetectedDiscrepancy(
                 DeduplicationPrefix + externalOrderId,
                 CaseType.OnlineOrderMismatch,
-                $"online_ordering.yemeksepeti_webhook_inbox:{inboxId}",
+                $"online_ordering.provider_inbox:{inboxId}",
                 $"yemeksepeti:order:{externalOrderId}",
                 0m,
                 CaseSeverity.High,

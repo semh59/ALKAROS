@@ -81,7 +81,7 @@ public sealed class OnlineOrderReconciliationActions
         {
             OnlineOrderNextAction.ReprocessProviderEvent when details.InboxId is { } inboxId =>
                 (await _reprocessing.ReopenForReprocessingAsync(inboxId, connection, transaction, cancellationToken).ConfigureAwait(false),
-                 $"online_ordering.yemeksepeti_webhook_inbox:{inboxId}"),
+                 $"online_ordering.provider_inbox:{inboxId}"),
             OnlineOrderNextAction.ResendProviderCancellation when details.ExternalOrderId is { } externalOrderId =>
                 (await RequeueDeadUpdatesForOrderAsync(externalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false),
                  $"yemeksepeti:order:{externalOrderId}"),

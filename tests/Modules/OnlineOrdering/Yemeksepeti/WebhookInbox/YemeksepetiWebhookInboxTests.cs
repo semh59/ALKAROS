@@ -12,7 +12,11 @@ public sealed class WebhookInboxTestDatabase : PgTestDatabase
 {
     public WebhookInboxTestDatabase() : base("alkaros_ysp_inbox_test_") { }
 
-    protected override async Task ApplySqlAsync() => await RunSqlFileAsync("145-yemeksepeti-webhook-inbox.up.sql");
+    protected override async Task ApplySqlAsync()
+    {
+        await RunSqlFileAsync("145-yemeksepeti-webhook-inbox.up.sql");
+        await RunSqlFileAsync("154-provider-neutral-inbox-and-mapping.up.sql");
+    }
 
     public async Task RunSqlFileAsync(string file) =>
         await RunAsync(DataSource, await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", file)));
@@ -20,21 +24,38 @@ public sealed class WebhookInboxTestDatabase : PgTestDatabase
     public async Task<long> CountForOrderAsync(string externalOrderId)
     {
         await using var command = DataSource.CreateCommand(
-            "SELECT count(*) FROM online_ordering.yemeksepeti_webhook_inbox WHERE external_order_id = $1;");
+            "SELECT count(*) FROM online_ordering.provider_inbox WHERE external_order_id = $1;");
         command.Parameters.AddWithValue(externalOrderId);
         return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<long> CountAllAsync()
     {
-        await using var command = DataSource.CreateCommand("SELECT count(*) FROM online_ordering.yemeksepeti_webhook_inbox;");
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM online_ordering.provider_inbox;");
         return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    /// <summary>V12-ONL-008: the same stored event, as if another platform had received it.</summary>
+    public async Task<Guid> CopyAsOtherPlatformAsync(Guid inboxId)
+    {
+        var copy = Guid.NewGuid();
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO online_ordering.provider_inbox
+                (provider, inbox_id, event_key, external_order_id, provider_status, provider_updated_at, body_sha256, payload_envelope)
+            SELECT 'test-platform', $2, event_key, external_order_id, provider_status, provider_updated_at, body_sha256, payload_envelope
+            FROM online_ordering.provider_inbox WHERE inbox_id = $1;
+            """);
+        command.Parameters.AddWithValue(inboxId);
+        command.Parameters.AddWithValue(copy);
+        await command.ExecuteNonQueryAsync();
+        return copy;
     }
 
     public async Task<byte[]> EnvelopeAsync(Guid inboxId)
     {
         await using var command = DataSource.CreateCommand(
-            "SELECT payload_envelope FROM online_ordering.yemeksepeti_webhook_inbox WHERE inbox_id = $1;");
+            "SELECT payload_envelope FROM online_ordering.provider_inbox WHERE inbox_id = $1;");
         command.Parameters.AddWithValue(inboxId);
         return (byte[])(await command.ExecuteScalarAsync())!;
     }
@@ -105,6 +126,20 @@ public sealed class YemeksepetiWebhookInboxTests : IClassFixture<WebhookInboxTes
         receipt.Outcome.Should().Be(WebhookReceiptOutcome.Stored);
         receipt.InboxId.Should().NotBeNull();
         (await _db.CountForOrderAsync(orderId)).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task TheSameEventOnAnotherPlatformIsAnotherRecordAndNeverAnswersForYemeksepeti()
+    {
+        var orderId = NewOrderId();
+        var stored = await _inbox.ReceiveAsync(Secret, Payload(orderId));
+        var other = await _db.CopyAsOtherPlatformAsync(stored.InboxId!.Value);
+
+        var repeated = await _inbox.ReceiveAsync(Secret, Payload(orderId));
+
+        (await _db.CountForOrderAsync(orderId)).Should().Be(2);
+        repeated.Outcome.Should().Be(WebhookReceiptOutcome.Duplicate);
+        repeated.InboxId.Should().Be(stored.InboxId).And.NotBe(other);
     }
 
     [Fact]
@@ -258,8 +293,10 @@ public sealed class YemeksepetiWebhookInboxTests : IClassFixture<WebhookInboxTes
     [Fact]
     public async Task TheMigrationRollsBackAndReapplies()
     {
+        await _db.RunSqlFileAsync("154-provider-neutral-inbox-and-mapping.down.sql");
         await _db.RunSqlFileAsync("145-yemeksepeti-webhook-inbox.down.sql");
         await _db.RunSqlFileAsync("145-yemeksepeti-webhook-inbox.up.sql");
+        await _db.RunSqlFileAsync("154-provider-neutral-inbox-and-mapping.up.sql");
         var orderId = NewOrderId();
 
         (await _inbox.ReceiveAsync(Secret, Payload(orderId))).Outcome.Should().Be(WebhookReceiptOutcome.Stored);

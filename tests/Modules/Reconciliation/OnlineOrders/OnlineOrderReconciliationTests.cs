@@ -202,7 +202,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         // case still carries the reprocess action it was opened with.
         await _database.CountAsync(
             """
-            UPDATE online_ordering.yemeksepeti_webhook_inbox
+            UPDATE online_ordering.provider_inbox
             SET processed_at = now(), processing_outcome = 'Rejected',
                 outcome_detail = '{"rejection":"ProductInactive","providerCancellationRequested":true}'::jsonb
             WHERE inbox_id = $1 RETURNING 1;
@@ -470,10 +470,10 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
             await _database.CountAsync(
                 """
                 WITH inserted AS (
-                    INSERT INTO online_ordering.yemeksepeti_webhook_inbox
-                        (inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
+                    INSERT INTO online_ordering.provider_inbox
+                        (provider, inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
                          processed_at, processing_outcome, processing_attempts)
-                    SELECT gen_random_uuid(), $1::text || g, $1::text || g, 'RECEIVED', $1::text || g, '\x00'::bytea, now(), 'Failed', 5
+                    SELECT 'yemeksepeti', gen_random_uuid(), $1::text || g, $1::text || g, 'RECEIVED', $1::text || g, '\x00'::bytea, now(), 'Failed', 5
                     FROM generate_series(1, 5001) g
                     RETURNING 1)
                 SELECT count(*) FROM inserted;
@@ -486,7 +486,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         finally
         {
             await _database.CountAsync(
-                "WITH gone AS (DELETE FROM online_ordering.yemeksepeti_webhook_inbox WHERE external_order_id LIKE $1::text || '%' RETURNING 1) SELECT count(*) FROM gone;",
+                "WITH gone AS (DELETE FROM online_ordering.provider_inbox WHERE external_order_id LIKE $1::text || '%' RETURNING 1) SELECT count(*) FROM gone;",
                 marker);
         }
     }

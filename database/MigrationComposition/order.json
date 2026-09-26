@@ -1314,6 +1314,15 @@
         "orders"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "154",
+      "phase": "B",
+      "tables": [
+        "provider_inbox",
+        "provider_product_mappings"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

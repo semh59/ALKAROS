@@ -33,7 +33,7 @@ public sealed class ProviderTotalMismatchSourcePair : IOnlineOrderSourcePair
             $"""
             SELECT i.external_order_id, i.order_id,
                    (i.outcome_detail->>'providerSubTotal')::numeric, (i.outcome_detail->>'localSubTotal')::numeric
-            FROM online_ordering.yemeksepeti_webhook_inbox i
+            FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome = 'OrderCreated'
               AND i.outcome_detail->>'totalsMatch' = 'false'
               AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc

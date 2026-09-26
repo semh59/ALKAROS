@@ -33,7 +33,7 @@ public sealed class CancelledAfterHandoverSourcePair : IOnlineOrderSourcePair
             $"""
             SELECT DISTINCT ON (i.outcome_detail->>'evidenceId')
                    i.outcome_detail->>'evidenceId', i.external_order_id, i.order_id, o.total
-            FROM online_ordering.yemeksepeti_webhook_inbox i
+            FROM online_ordering.provider_inbox i
             JOIN orders.orders o ON o.order_id = i.order_id
             WHERE i.processing_outcome = 'Diverged'
               AND i.outcome_detail->>'reason' = 'CancelledAfterHandover'

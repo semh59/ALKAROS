@@ -149,7 +149,7 @@ public sealed class YemeksepetiOrderIntakeService
         await YemeksepetiStatusSyncService.LockOrderAsync(_provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken)
             .ConfigureAwait(false);
 
-        if (await ProviderAlreadyCancelledAsync(claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
+        if (await ProviderAlreadyCancelledAsync(_provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
         {
             await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
                 claimed.InboxId, InboxProcessingOutcome.SkippedCancelledOrder, null, null,
@@ -157,7 +157,7 @@ public sealed class YemeksepetiOrderIntakeService
             return;
         }
 
-        if (await CancellationAlreadyRequestedAsync(claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
+        if (await CancellationAlreadyRequestedAsync(_provider.Provider, claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
         {
             // V12-RMD-004: an earlier event of this order was refused and the provider was asked to cancel it; a new
             // RECEIVED (a fresh update time) must not now create the order the provider was told cannot be made.
@@ -294,30 +294,32 @@ public sealed class YemeksepetiOrderIntakeService
     }
 
     private static async Task<bool> CancellationAlreadyRequestedAsync(
-        string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+        string provider, string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
     {
         await using var command = new NpgsqlCommand(
             """
             SELECT EXISTS (
-                SELECT 1 FROM online_ordering.yemeksepeti_webhook_inbox
-                WHERE external_order_id = $1
+                SELECT 1 FROM online_ordering.provider_inbox
+                WHERE provider = $2 AND external_order_id = $1
                   AND processing_outcome IN ('Rejected', 'Diverged')
                   AND COALESCE((outcome_detail->>'providerCancellationRequested')::boolean, false));
             """, connection, transaction);
         command.Parameters.AddWithValue(externalOrderId);
+        command.Parameters.AddWithValue(provider);
         return (bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 
     private static async Task<bool> ProviderAlreadyCancelledAsync(
-        string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+        string provider, string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
     {
         await using var command = new NpgsqlCommand(
             """
             SELECT EXISTS (
-                SELECT 1 FROM online_ordering.yemeksepeti_webhook_inbox
-                WHERE external_order_id = $1 AND processing_outcome = 'CancelledBeforeOrder');
+                SELECT 1 FROM online_ordering.provider_inbox
+                WHERE provider = $2 AND external_order_id = $1 AND processing_outcome = 'CancelledBeforeOrder');
             """, connection, transaction);
         command.Parameters.AddWithValue(externalOrderId);
+        command.Parameters.AddWithValue(provider);
         return (bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 

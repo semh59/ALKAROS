@@ -62,10 +62,10 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
         var key = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(inboxId.ToString()))).ToLowerInvariant();
         await using var command = DataSource.CreateCommand(
             """
-            INSERT INTO online_ordering.yemeksepeti_webhook_inbox
-                (inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
+            INSERT INTO online_ordering.provider_inbox
+                (provider, inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
                  received_at, processed_at, processing_outcome, outcome_detail)
-            VALUES ($1, $2, $3, 'RECEIVED', $2, '\x00'::bytea, $4, $4, $5, '{}'::jsonb);
+            VALUES ('yemeksepeti', $1, $2, $3, 'RECEIVED', $2, '\x00'::bytea, $4, $4, $5, '{}'::jsonb);
             """);
         command.Parameters.AddWithValue(inboxId);
         command.Parameters.AddWithValue(key);

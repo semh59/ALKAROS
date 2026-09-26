@@ -15,7 +15,8 @@ public sealed class ProductMappingTestDatabase : PgTestDatabase
                      "040-wave9-schema-additions.up.sql",
                      "053-catalog-products-row-version.up.sql",
                      "103-products-prep-time.up.sql",
-                     "144-yemeksepeti-product-mappings.up.sql"
+                     "144-yemeksepeti-product-mappings.up.sql",
+                     "154-provider-neutral-inbox-and-mapping.up.sql"
                  })
         {
             await RunSqlFileAsync(file);
@@ -55,20 +56,34 @@ public sealed class ProductMappingTestDatabase : PgTestDatabase
             Guid.NewGuid(), productId, groupId);
     }
 
-    public async Task InsertRawMappingAsync(string sku, Guid productId, DateTimeOffset from, DateTimeOffset? to)
+    public async Task InsertRawMappingAsync(
+        string sku, Guid productId, DateTimeOffset from, DateTimeOffset? to, string provider = "yemeksepeti")
     {
         await ExecuteSqlAsync(
             """
-            INSERT INTO online_ordering.yemeksepeti_product_mappings (mapping_id, external_sku, product_id, effective_from, effective_to, created_by)
-            VALUES ($1, $2, $3, $4, $5, $6);
+            INSERT INTO online_ordering.provider_product_mappings (mapping_id, external_sku, product_id, effective_from, effective_to, created_by, provider)
+            VALUES ($1, $2, $3, $4, $5, $6, $7);
             """,
-            Guid.NewGuid(), sku, productId, from, (object?)to ?? DBNull.Value, Guid.NewGuid());
+            Guid.NewGuid(), sku, productId, from, (object?)to ?? DBNull.Value, Guid.NewGuid(), provider);
     }
+
+    /// <summary>V12-ONL-008: a mapping written before migration 154 (no platform column yet).</summary>
+    public Task InsertRawMappingOnOldTableAsync(string sku, Guid productId, DateTimeOffset from) =>
+        ExecuteSqlAsync(
+            """
+            INSERT INTO online_ordering.yemeksepeti_product_mappings (mapping_id, external_sku, product_id, effective_from, created_by)
+            VALUES ($1, $2, $3, $4, $5);
+            """,
+            Guid.NewGuid(), sku, productId, from, Guid.NewGuid());
+
+    /// <summary>V12-ONL-008: removes another platform's rows a test added.</summary>
+    public Task DeletePlatformMappingsAsync(string provider) =>
+        ExecuteSqlAsync("DELETE FROM online_ordering.provider_product_mappings WHERE provider = $1;", provider);
 
     public async Task<long> CountMappingsAsync(string sku)
     {
         await using var command = DataSource.CreateCommand(
-            "SELECT count(*) FROM online_ordering.yemeksepeti_product_mappings WHERE external_sku = $1;");
+            "SELECT count(*) FROM online_ordering.provider_product_mappings WHERE external_sku = $1;");
         command.Parameters.AddWithValue(sku);
         return (long)(await command.ExecuteScalarAsync())!;
     }

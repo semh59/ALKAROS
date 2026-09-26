@@ -108,6 +108,44 @@ public sealed class YemeksepetiProductMappingTests : IClassFixture<ProductMappin
     }
 
     [Fact]
+    public async Task AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti()
+    {
+        var product = await _db.SeedProductAsync();
+        var otherSku = Sku();
+        await _db.InsertRawMappingAsync(otherSku, product, T0, null, provider: "trendyol-go");
+        try
+        {
+            // The product already has an open SKU on another platform; Yemeksepeti may still publish it under its own.
+            var own = await _service.MapAsync(Sku(), product, T0, _actor);
+
+            own.ProductId.Should().Be(product);
+            (await _service.ResolveAsync(otherSku, T0.AddHours(1))).Outcome.Should().Be(ProductMappingResolutionOutcome.Unmapped);
+            (await _service.FindOpenSkuForProductAsync(product)).Should().Be(own.ExternalSku);
+            (await _service.ListOpenMappingsAsync(100_000)).Select(m => m.ExternalSku).Should().NotContain(otherSku);
+        }
+        finally
+        {
+            await _db.DeletePlatformMappingsAsync("trendyol-go");
+        }
+    }
+
+    [Fact]
+    public async Task ThePlatformMigrationRefusesToRollBackOverAnotherPlatformsRows()
+    {
+        var product = await _db.SeedProductAsync();
+        await _db.InsertRawMappingAsync(Sku(), product, T0, null, provider: "migros-yemek");
+        try
+        {
+            var rollback = () => _db.RunSqlFileAsync("154-provider-neutral-inbox-and-mapping.down.sql");
+            (await rollback.Should().ThrowAsync<Npgsql.PostgresException>()).Which.MessageText.Should().Contain("rollback refused");
+        }
+        finally
+        {
+            await _db.DeletePlatformMappingsAsync("migros-yemek");
+        }
+    }
+
+    [Fact]
     public async Task MappingTheSameSkuToTheSameProductAgainIsAReplay()
     {
         var product = await _db.SeedProductAsync();
@@ -248,8 +286,14 @@ public sealed class YemeksepetiProductMappingTests : IClassFixture<ProductMappin
     [Fact]
     public async Task TheMigrationRollsBackAndReapplies()
     {
+        await _db.RunSqlFileAsync("154-provider-neutral-inbox-and-mapping.down.sql");
         await _db.RunSqlFileAsync("144-yemeksepeti-product-mappings.down.sql");
         await _db.RunSqlFileAsync("144-yemeksepeti-product-mappings.up.sql");
+        var kept = await _db.SeedProductAsync();
+        var keptSku = Sku();
+        await _db.InsertRawMappingOnOldTableAsync(keptSku, kept, T0);
+        await _db.RunSqlFileAsync("154-provider-neutral-inbox-and-mapping.up.sql");
+        (await _service.ResolveAsync(keptSku, T0.AddHours(1))).ProductId.Should().Be(kept);
         var product = await _db.SeedProductAsync();
         var sku = Sku();
 
