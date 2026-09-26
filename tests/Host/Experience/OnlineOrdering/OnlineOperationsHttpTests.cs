@@ -156,8 +156,12 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         Assert.Equal(("Qr", "PendingConfirmation", (string?)tableNumber), (qr.Source, qr.Status, qr.TableNumber));
         var online = Assert.Single(queue.Orders, o => o.OrderId == onlineOrder);
         Assert.Equal(("Online", "Accepted", (string?)"YS-77"), (online.Source, online.Status, online.DisplayCode));
+        // V12-OUI-002: every online order and problem names its platform; a QR order has none.
+        Assert.Equal("yemeksepeti", online.Provider);
+        Assert.Null(qr.Provider);
         var problem = Assert.Single(queue.Problems, p => p.ExternalOrderId == brokenId);
         Assert.Equal(("Rejected", (string?)"UnmappedSku"), (problem.Outcome, problem.Reason));
+        Assert.Equal("yemeksepeti", problem.Provider);
         Assert.Equal("UnknownStatus", Assert.Single(queue.Problems, p => p.ExternalOrderId == unknownId).Outcome);
 
         using var qrOnly = await _client.SendAsync(Get(Queue("qr"), cookie));

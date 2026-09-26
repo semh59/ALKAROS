@@ -1,0 +1,25 @@
+V12-OUI-002 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 190f4518.
+Split (45de1389): the platform credential screen became V12-OUI-003 (two independent verbs, split test).
+
+Changes:
+- Queue endpoint: each order carries its platform (V12-ONL-006 link; null for QR) and each problem its inbox
+  platform (OnlineOperationsOrderV1.Provider, OnlineOperationsProblemV1.Provider).
+- PosTerminal: an online order's chip and a problem's new "Platform" column show the Turkish platform name
+  (Yemeksepeti, Trendyol Go, Migros Yemek; anything else "Diğer platform", never the raw id). The source filter's
+  online option reads "Online platformlar" (it no longer claims every online order is Yemeksepeti's).
+- A platform filter appears only when the queue holds more than one platform and narrows orders and problems;
+  it is client-side, so no unused server parameter exists.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors; Host OnlineOrdering 64/64 (queue test asserts platforms)
+- PosTerminal vitest 221/221 (29 files) and production build; online-operations 11/11 (+2)
+- consistency_audit clean; plan_audit validate 0/0
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 6/6 killed):
+KILLED U1 order platform not read
+KILLED U2 problem platform not read
+KILLED U3 platform filter shown for a single platform
+KILLED U4 orders not filtered by platform
+KILLED U5 problems not filtered by platform
+KILLED U6 unknown platform shown raw

@@ -191,9 +191,11 @@ public static class OnlineOperationsEndpoints
                     WHERE i.order_id = o.order_id AND i.processing_outcome = 'OrderCreated' LIMIT 1),
                    o.total,
                    (SELECT count(*) FROM orders.order_items oi WHERE oi.order_id = o.order_id AND oi.status <> 'Cancelled')::int,
-                   o.created_at, o.row_version
+                   o.created_at, o.row_version, l.provider
             FROM orders.orders o
             LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
+            -- V12-OUI-002: an online order's platform (V12-ONL-006 link); none for a QR order.
+            LEFT JOIN online_ordering.online_orders l ON l.order_id = o.order_id
             WHERE ((o.source = 'Qr' AND o.status = 'PendingConfirmation')
                    OR (o.source = 'Online' AND o.status IN ('Accepted', 'Preparing', 'Ready')))
               AND ($1::text IS NULL OR o.source = $1)
@@ -210,7 +212,8 @@ public static class OnlineOperationsEndpoints
             orders.Add(new OnlineOperationsOrderV1(
                 reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3),
                 reader.IsDBNull(4) ? null : reader.GetString(4), reader.IsDBNull(5) ? null : reader.GetString(5),
-                reader.GetDecimal(6), reader.GetInt32(7), reader.GetFieldValue<DateTimeOffset>(8), reader.GetInt64(9)));
+                reader.GetDecimal(6), reader.GetInt32(7), reader.GetFieldValue<DateTimeOffset>(8), reader.GetInt64(9),
+                reader.IsDBNull(10) ? null : reader.GetString(10)));
         }
 
         return orders;
@@ -225,7 +228,7 @@ public static class OnlineOperationsEndpoints
             SELECT inbox_id, external_order_id, provider_status,
                    COALESCE(processing_outcome, 'Retrying'),
                    COALESCE(outcome_detail->>'rejection', outcome_detail->>'reason'),
-                   processing_attempts, received_at
+                   processing_attempts, received_at, provider
             FROM online_ordering.provider_inbox
             WHERE received_at > now() - interval '1 day'
               AND (processing_outcome IN ('Rejected', 'Diverged', 'Failed', 'UnknownStatus')
@@ -241,7 +244,8 @@ public static class OnlineOperationsEndpoints
         {
             problems.Add(new OnlineOperationsProblemV1(
                 reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3),
-                reader.IsDBNull(4) ? null : reader.GetString(4), reader.GetInt32(5), reader.GetFieldValue<DateTimeOffset>(6)));
+                reader.IsDBNull(4) ? null : reader.GetString(4), reader.GetInt32(5), reader.GetFieldValue<DateTimeOffset>(6),
+                reader.GetString(7)));
         }
 
         return problems;
@@ -291,7 +295,8 @@ public sealed record OnlineOperationsOrderV1(
     decimal Total,
     int ItemCount,
     DateTimeOffset CreatedAt,
-    long RowVersion);
+    long RowVersion,
+    string? Provider);
 
 public sealed record OnlineOperationsProblemV1(
     Guid InboxId,
@@ -300,7 +305,8 @@ public sealed record OnlineOperationsProblemV1(
     string Outcome,
     string? Reason,
     int Attempts,
-    DateTimeOffset ReceivedAt);
+    DateTimeOffset ReceivedAt,
+    string Provider);
 
 public sealed record OnlineOperationsRetryV1(int PendingProviderEvents, int CatalogPublicationsRetrying, int AvailabilityDivergences);
 

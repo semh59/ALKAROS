@@ -11,7 +11,8 @@ import {
   outcomeLabel,
   reasonLabel,
   rejectQrOrder,
-  sourceLabel,
+  channelLabel,
+  platformLabel,
   statusLabel,
   type CancellationReason,
   type OnlineOperationsOrder,
@@ -25,7 +26,7 @@ const REFRESH_MS = 20_000;
 const filters: readonly { value: SourceFilter; label: string }[] = [
   { value: "all", label: "Tümü" },
   { value: "qr", label: "QR" },
-  { value: "online", label: "Yemeksepeti" },
+  { value: "online", label: "Online platformlar" },
 ];
 
 const time = (iso: string) => new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
@@ -38,6 +39,7 @@ const time = (iso: string) => new Date(iso).toLocaleTimeString("tr-TR", { hour: 
  */
 export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }) {
   const [filter, setFilter] = useState<SourceFilter>("all");
+  const [platform, setPlatform] = useState<string>();
   const [queue, setQueue] = useState<OnlineOperationsQueue | null>(null);
   // A failed reload and a refused action are separate: reloading after a refused action must not
   // erase the reason the operator needs to read.
@@ -106,8 +108,16 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
     }
   };
 
-  const orders = queue?.orders ?? [];
-  const problems = queue?.problems ?? [];
+  // V12-OUI-002: the platforms in the current queue; a platform filter is offered only when there is a choice.
+  const allOrders = queue?.orders ?? [];
+  const allProblems = queue?.problems ?? [];
+  const platforms = [...new Set([
+    ...allOrders.filter((order) => order.source === "Online" && order.provider !== null).map((order) => order.provider as string),
+    ...allProblems.map((problem) => problem.provider),
+  ])].sort();
+  const activePlatform = platform !== undefined && platforms.includes(platform) ? platform : undefined;
+  const orders = activePlatform === undefined ? allOrders : allOrders.filter((order) => order.provider === activePlatform);
+  const problems = activePlatform === undefined ? allProblems : allProblems.filter((problem) => problem.provider === activePlatform);
 
   return (
     <section className="online-ops" aria-labelledby={headingId}>
@@ -127,6 +137,25 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
         ))}
       </div>
 
+      {platforms.length > 1 && (
+        <div className="online-ops__filters" role="group" aria-label="Platforma göre süz">
+          <button type="button" className="online-ops__filter" aria-pressed={activePlatform === undefined} onClick={() => setPlatform(undefined)}>
+            Tüm platformlar
+          </button>
+          {platforms.map((option) => (
+            <button
+              key={option}
+              type="button"
+              className="online-ops__filter"
+              aria-pressed={activePlatform === option}
+              onClick={() => setPlatform(option)}
+            >
+              {platformLabel(option)}
+            </button>
+          ))}
+        </div>
+      )}
+
       <p className="online-ops__notice" role="status" aria-live="polite">{notice ?? ""}</p>
       {actionError && <p className="online-ops__error" role="alert">{actionError}</p>}
       {loadError && <p className="online-ops__error" role="alert">{loadError}</p>}
@@ -140,7 +169,7 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
           return (
             <li key={order.orderId} className="online-ops__order">
               <div className="online-ops__summary">
-                <span className={`online-ops__source online-ops__source--${order.source.toLowerCase()}`}>{sourceLabel(order.source)}</span>
+                <span className={`online-ops__source online-ops__source--${order.source.toLowerCase()}`}>{channelLabel(order)}</span>
                 <span className="online-ops__name">{title}</span>
                 <span className="online-ops__meta">
                   {statusLabel(order.status)} · {time(order.createdAt)} · {order.itemCount} kalem
@@ -231,12 +260,13 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
             <table className="online-ops__table">
               <caption className="online-ops__sr">Sağlayıcıdan gelip siparişe dönüşmeyen veya işlenemeyen olaylar</caption>
               <thead>
-                <tr><th scope="col">Saat</th><th scope="col">Sağlayıcı sipariş no</th><th scope="col">Durum</th><th scope="col">Neden</th><th scope="col">Deneme</th></tr>
+                <tr><th scope="col">Saat</th><th scope="col">Platform</th><th scope="col">Sağlayıcı sipariş no</th><th scope="col">Durum</th><th scope="col">Neden</th><th scope="col">Deneme</th></tr>
               </thead>
               <tbody>
                 {problems.map((problem) => (
                   <tr key={problem.inboxId}>
                     <td>{time(problem.receivedAt)}</td>
+                    <td>{platformLabel(problem.provider)}</td>
                     <td>{problem.externalOrderId}</td>
                     <td>{outcomeLabel(problem.outcome)}</td>
                     <td>{reasonLabel(problem.reason)}</td>

@@ -13,6 +13,8 @@ export interface OnlineOperationsOrder {
   itemCount: number;
   createdAt: string;
   rowVersion: number;
+  /** V12-OUI-002: the online platform (null for a QR order). */
+  provider: string | null;
 }
 
 export interface OnlineOperationsProblem {
@@ -23,6 +25,8 @@ export interface OnlineOperationsProblem {
   reason: string | null;
   attempts: number;
   receivedAt: string;
+  /** V12-OUI-002: the online platform the event came from. */
+  provider: string;
 }
 
 export interface OnlineOperationsRetries {
@@ -115,7 +119,13 @@ const statusLabels: Record<string, string> = {
   Preparing: "Hazırlanıyor",
   Ready: "Hazır",
 };
-const sourceLabels: Record<OnlineOrderSource, string> = { Qr: "QR", Online: "Yemeksepeti" };
+const sourceLabels: Record<OnlineOrderSource, string> = { Qr: "QR", Online: "Online" };
+/** V12-OUI-002: platform names staff read; a platform this screen does not know yet is never shown raw. */
+const platformLabels: Record<string, string> = {
+  yemeksepeti: "Yemeksepeti",
+  "trendyol-go": "Trendyol Go",
+  "migros-yemek": "Migros Yemek",
+};
 const outcomeLabels: Record<string, string> = {
   Rejected: "Sipariş alınamadı",
   Diverged: "Sağlayıcı ile uyuşmazlık",
@@ -148,5 +158,10 @@ export const cancellationReasonLabels: Record<CancellationReason, string> = {
 
 export const statusLabel = (status: string) => statusLabels[status] ?? "Diğer";
 export const sourceLabel = (source: OnlineOrderSource) => sourceLabels[source] ?? "Diğer";
+export const platformLabel = (provider: string | null) =>
+  provider === null ? "Diğer platform" : platformLabels[provider] ?? "Diğer platform";
+/** The channel chip of an order: QR, or the online platform's name. */
+export const channelLabel = (order: OnlineOperationsOrder) =>
+  order.source === "Qr" ? sourceLabel(order.source) : platformLabel(order.provider);
 export const outcomeLabel = (outcome: string) => outcomeLabels[outcome] ?? "Diğer";
 export const reasonLabel = (reason: string | null) => (reason === null ? "Ayrıntı yok" : reasonLabels[reason] ?? "Diğer");

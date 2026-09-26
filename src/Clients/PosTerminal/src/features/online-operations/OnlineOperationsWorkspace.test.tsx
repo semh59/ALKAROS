@@ -10,16 +10,16 @@ import type { OnlineOperationsQueue } from "./onlineOperationsApi";
 
 const queue: OnlineOperationsQueue = {
   orders: [
-    { orderId: "qr-1", source: "Qr", status: "PendingConfirmation", orderNumber: "QR-001", tableNumber: "12", displayCode: null, total: 180, itemCount: 2, createdAt: "2026-09-26T10:05:00Z", rowVersion: 3 },
-    { orderId: "on-1", source: "Online", status: "Accepted", orderNumber: "YS-9f0c", tableNumber: null, displayCode: "YS-778899", total: 320, itemCount: 3, createdAt: "2026-09-26T10:07:00Z", rowVersion: 4 },
-    { orderId: "on-2", source: "Online", status: "SomethingNew", orderNumber: "YS-aa11", tableNumber: null, displayCode: "YS-5", total: 50, itemCount: 1, createdAt: "2026-09-26T10:09:00Z", rowVersion: 1 },
+    { orderId: "qr-1", source: "Qr", status: "PendingConfirmation", orderNumber: "QR-001", tableNumber: "12", displayCode: null, total: 180, itemCount: 2, createdAt: "2026-09-26T10:05:00Z", rowVersion: 3, provider: null },
+    { orderId: "on-1", source: "Online", status: "Accepted", orderNumber: "YS-9f0c", tableNumber: null, displayCode: "YS-778899", total: 320, itemCount: 3, createdAt: "2026-09-26T10:07:00Z", rowVersion: 4, provider: "yemeksepeti" },
+    { orderId: "on-2", source: "Online", status: "SomethingNew", orderNumber: "YS-aa11", tableNumber: null, displayCode: "YS-5", total: 50, itemCount: 1, createdAt: "2026-09-26T10:09:00Z", rowVersion: 1, provider: "yemeksepeti" },
   ],
   problems: [
-    { inboxId: "p-1", externalOrderId: "ext-1", providerStatus: "RECEIVED", outcome: "Rejected", reason: "UnmappedSku", attempts: 0, receivedAt: "2026-09-26T09:00:00Z" },
-    { inboxId: "p-2", externalOrderId: "ext-2", providerStatus: "RECEIVED", outcome: "Diverged", reason: "OutOfStock", attempts: 0, receivedAt: "2026-09-26T09:10:00Z" },
-    { inboxId: "p-3", externalOrderId: "ext-3", providerStatus: "RECEIVED", outcome: "Retrying", reason: "SomeFutureCode", attempts: 2, receivedAt: "2026-09-26T09:20:00Z" },
-    { inboxId: "p-4", externalOrderId: "ext-4", providerStatus: "RECEIVED", outcome: "Rejected", reason: "UnsupportedItemStatus", attempts: 0, receivedAt: "2026-09-26T09:30:00Z" },
-    { inboxId: "p-5", externalOrderId: "ext-5", providerStatus: "PICKED_UP", outcome: "UnknownStatus", reason: null, attempts: 0, receivedAt: "2026-09-26T09:40:00Z" },
+    { inboxId: "p-1", externalOrderId: "ext-1", providerStatus: "RECEIVED", outcome: "Rejected", reason: "UnmappedSku", attempts: 0, receivedAt: "2026-09-26T09:00:00Z", provider: "yemeksepeti" },
+    { inboxId: "p-2", externalOrderId: "ext-2", providerStatus: "RECEIVED", outcome: "Diverged", reason: "OutOfStock", attempts: 0, receivedAt: "2026-09-26T09:10:00Z", provider: "yemeksepeti" },
+    { inboxId: "p-3", externalOrderId: "ext-3", providerStatus: "RECEIVED", outcome: "Retrying", reason: "SomeFutureCode", attempts: 2, receivedAt: "2026-09-26T09:20:00Z", provider: "yemeksepeti" },
+    { inboxId: "p-4", externalOrderId: "ext-4", providerStatus: "RECEIVED", outcome: "Rejected", reason: "UnsupportedItemStatus", attempts: 0, receivedAt: "2026-09-26T09:30:00Z", provider: "yemeksepeti" },
+    { inboxId: "p-5", externalOrderId: "ext-5", providerStatus: "PICKED_UP", outcome: "UnknownStatus", reason: null, attempts: 0, receivedAt: "2026-09-26T09:40:00Z", provider: "yemeksepeti" },
   ],
   retries: { pendingProviderEvents: 1, catalogPublicationsRetrying: 2, availabilityDivergences: 0 },
 };
@@ -69,6 +69,45 @@ describe("OnlineOperationsWorkspace", () => {
     for (const raw of ["PendingConfirmation", "Accepted", "UnmappedSku", "OutOfStock", "SomethingNew", "SomeFutureCode", "Rejected", "Diverged", "UnsupportedItemStatus", "UnknownStatus"]) {
       expect(text).not.toContain(raw);
     }
+  });
+
+  it("names each order's and problem's platform and offers no platform filter when there is one", async () => {
+    fetchMock.mockResolvedValue(ok(queue));
+    await render();
+
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Yemeksepeti");
+    expect(text).not.toContain("yemeksepeti");
+    expect(document.querySelector('[aria-label="Platforma göre süz"]')).toBeNull();
+  });
+
+  it("filters by platform when the queue holds more than one, and never shows a platform id raw", async () => {
+    const mixed: OnlineOperationsQueue = {
+      ...queue,
+      orders: [
+        ...queue.orders,
+        { orderId: "tg-1", source: "Online", status: "Accepted", orderNumber: "TG-1", tableNumber: null, displayCode: "TG-501", total: 75, itemCount: 1, createdAt: "2026-09-26T10:11:00Z", rowVersion: 2, provider: "trendyol-go" },
+        { orderId: "xx-1", source: "Online", status: "Accepted", orderNumber: "XX-1", tableNumber: null, displayCode: "XX-9", total: 10, itemCount: 1, createdAt: "2026-09-26T10:12:00Z", rowVersion: 1, provider: "future-platform" },
+      ],
+    };
+    fetchMock.mockResolvedValue(ok(mixed));
+    await render();
+
+    expect(document.querySelector('[aria-label="Platforma göre süz"]')).not.toBeNull();
+    expect(document.body.textContent).toContain("Diğer platform");
+    expect(document.body.textContent).not.toContain("future-platform");
+
+    await act(async () => { button("Trendyol Go").click(); });
+
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("TG-501");
+    expect(text).not.toContain("YS-778899");
+    expect(text).not.toContain("Masa 12");
+    expect(text).toContain("Sorun yok.");
+    expect(button("Trendyol Go").getAttribute("aria-pressed")).toBe("true");
+
+    await act(async () => { button("Tüm platformlar").click(); });
+    expect(document.body.textContent).toContain("YS-778899");
   });
 
   it("never lets an older answer overwrite a newer one", async () => {
