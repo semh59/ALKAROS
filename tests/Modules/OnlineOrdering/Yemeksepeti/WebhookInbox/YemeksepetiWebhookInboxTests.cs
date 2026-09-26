@@ -67,6 +67,34 @@ public sealed class YemeksepetiWebhookInboxTests : IClassFixture<WebhookInboxTes
              "sys":{{(updatedAt is null ? "{}" : $$"""{"updated_at":"{{updatedAt}}"}""")}}}
             """);
 
+    [Theory]
+    [InlineData("basic eWVtZWtzZXBldGk6czNjcjN0", null)]
+    [InlineData("BASIC  eWVtZWtzZXBldGk6czNjcjN0", null)]
+    [InlineData(" Basic eWVtZWtzZXBldGk6czNjcjN0 ", null)]
+    [InlineData("Basic eWVtZWtzZXBldGk6WFhYWFg=", WebhookReceiptOutcome.Unauthenticated)]
+    [InlineData("Bearer eWVtZWtzZXBldGk6czNjcjN0", WebhookReceiptOutcome.Unauthenticated)]
+    [InlineData("eWVtZWtzZXBldGk6czNjcjN0", WebhookReceiptOutcome.Unauthenticated)]
+    [InlineData("", WebhookReceiptOutcome.Unauthenticated)]
+    [InlineData(null, WebhookReceiptOutcome.Unauthenticated)]
+    public void TheSchemeIsCaseInsensitiveButTheCredentialAndTheSchemeItselfMustMatch(string? presented, WebhookReceiptOutcome? expected)
+    {
+        _inbox.Authenticate(presented).Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task TheCustomerNoteIsReadOnlyFromTheEncryptedPayloadCleanedAndBounded()
+    {
+        var orderId = NewOrderId();
+        var body = Encoding.UTF8.GetBytes(
+            "{\"order_id\":\"" + orderId + "\",\"status\":\"RECEIVED\",\"comment\":\" Zile basmayın\\u0007, 0555 111 22 33 \"}");
+        var receipt = await _inbox.ReceiveAsync(Secret, body);
+        var withoutNote = NewOrderId();
+        var bare = await _inbox.ReceiveAsync(Secret, Payload(withoutNote));
+
+        _inbox.ReadCustomerNote(await _db.EnvelopeAsync(receipt.InboxId!.Value)).Should().Be("Zile basmayın, 0555 111 22 33");
+        _inbox.ReadCustomerNote(await _db.EnvelopeAsync(bare.InboxId!.Value)).Should().BeNull();
+    }
+
     [Fact]
     public async Task AnAuthenticatedDeliveryIsStoredOnce()
     {

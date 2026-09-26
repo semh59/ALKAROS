@@ -1,0 +1,31 @@
+V12-RMD-007 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 7b6378f0.
+Provider behaviour (Authorization header carrying the Partner Portal secret) remains an UNVERIFIED DRAFT
+(V0-YSP-001 Blocked).
+
+Changes:
+- YemeksepetiWebhookInbox.Authenticate(header); the endpoint authenticates BEFORE reading the body, so an
+  unauthenticated delivery of any size is 401 and its body is never buffered. ReceiveAsync keeps the same check.
+- Matching: when both values carry a scheme it is compared case-insensitively (RFC 7235); the credential is
+  compared on SHA-256 digests in constant time; a scheme on only one side does not match. Format documented in
+  docs/operations/yemeksepeti-webhook-setup.md.
+- Customer order-level note (Semih 2026-09-26 "Mutfağa gitmesin, şifreli kalsın"): no longer written to
+  orders.notes; migration 151 removes existing plain copies from Online orders only (down is an intentional no-op:
+  the note is still in the encrypted payload). GET .../online-operations/orders/{orderId}/customer-note
+  (orders.create) opens it from the encrypted payload and writes audit event Order.CustomerNoteViewed with the
+  actor for every opening; PosTerminal "Müşteri notu" button shows it or "Müşteri notu yok.".
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- WebhookInbox 30/30 (+9), OrderNormalization 32/32, Host OnlineOrdering 50/50 (+4), Host Reconciliation 12/12,
+  Orders/Confirmation 30/30, Reporting/Channels 4/4, MigrationComposition 161/161, PosTerminal vitest 216/216 (+1)
+- PosTerminal build ok; consistency_audit clean; plan_audit validate 0/0
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 7/7 killed):
+N1 endpoint reads the body before authenticating -> 1 failed
+N2 scheme compared case-sensitively -> 2
+N3 customer note copied into orders.notes again -> 2
+N4 note opening not audited -> 1
+N5 scrub migration changes nothing -> 1
+N6 scheme ignored -> 2
+N7 note endpoint answers for a non-online order -> 1

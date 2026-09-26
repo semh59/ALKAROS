@@ -48,6 +48,11 @@ public static class YemeksepetiWebhookEndpoints
     public static RouteHandlerBuilder MapYemeksepetiWebhookApi(this IEndpointRouteBuilder endpoints) =>
         endpoints.MapPost(Route, async (HttpContext context, YemeksepetiWebhookInbox inbox, CancellationToken cancellationToken) =>
         {
+            // V12-RMD-007: refuse before reading anything, so an unauthenticated caller costs neither memory nor bandwidth.
+            if (inbox.Authenticate(context.Request.Headers.Authorization.ToString()) is { } refused)
+                return refused == WebhookReceiptOutcome.ChannelNotConfigured
+                    ? Reply(StatusCodes.Status503ServiceUnavailable, "CHANNEL_NOT_CONFIGURED")
+                    : Reply(StatusCodes.Status401Unauthorized, "UNAUTHENTICATED");
             if (context.Request.ContentLength is > YemeksepetiWebhookInbox.MaxBodyBytes)
                 return Reply(StatusCodes.Status413PayloadTooLarge, "PAYLOAD_TOO_LARGE");
 

@@ -229,6 +229,28 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
         return rows;
     }
 
+    /// <summary>V12-RMD-007: an order's notes.</summary>
+    public async Task<string?> OrderNotesAsync(Guid orderId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT notes FROM orders.orders WHERE order_id = @id;");
+        command.Parameters.AddWithValue("id", orderId);
+        return await command.ExecuteScalarAsync() as string;
+    }
+
+    /// <summary>V12-RMD-007: audit events of one name for one order, with their actor.</summary>
+    public async Task<IReadOnlyList<Guid>> AuditActorsAsync(Guid orderId, string eventName)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT actor_id FROM audit.audit_events WHERE aggregate_id = @id AND event_name = @name ORDER BY occurred_at;");
+        command.Parameters.AddWithValue("id", orderId);
+        command.Parameters.AddWithValue("name", eventName);
+        var actors = new List<Guid>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            actors.Add(reader.GetGuid(0));
+        return actors;
+    }
+
     /// <summary>V12-RMD-004: makes every waiting retry due now.</summary>
     public Task ExpireRetryWaitsAsync() =>
         ExecAsync("UPDATE online_ordering.yemeksepeti_webhook_inbox SET next_attempt_at = now() - interval '1 second' WHERE processed_at IS NULL AND next_attempt_at IS NOT NULL;");

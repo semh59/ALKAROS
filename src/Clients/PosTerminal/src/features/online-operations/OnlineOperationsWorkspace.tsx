@@ -6,6 +6,7 @@ import {
   cancelOnlineOrder,
   cancellationReasonLabels,
   handOverOnlineOrder,
+  loadCustomerNote,
   loadOnlineOperations,
   outcomeLabel,
   reasonLabel,
@@ -48,6 +49,9 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
   const [rejectReason, setRejectReason] = useState("");
   const [cancelling, setCancelling] = useState<OnlineOperationsOrder>();
   const [cancelReason, setCancelReason] = useState<CancellationReason>("ItemUnavailable");
+  // V12-RMD-007: which order's customer note is open, and its text ("" while loading, null when there is none).
+  const [noteOrderId, setNoteOrderId] = useState<string>();
+  const [noteText, setNoteText] = useState<string | null>("");
   const headingId = useId();
   const reasonId = useId();
 
@@ -80,6 +84,18 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
       setRejecting(undefined);
       setCancelling(undefined);
       await load();
+    }
+  };
+
+  const openNote = async (order: OnlineOperationsOrder) => {
+    setNoteOrderId(order.orderId);
+    setNoteText("");
+    setActionError(undefined);
+    try {
+      setNoteText(await loadCustomerNote(terminalId, order));
+    } catch (reason) {
+      setNoteOrderId(undefined);
+      setActionError(reason instanceof OnlineOperationsApiError ? reason.message : "Müşteri notu açılamadı.");
     }
   };
 
@@ -142,9 +158,18 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
                     <button type="button" className="online-ops__secondary" disabled={busy} onClick={() => { setCancelling(order); setCancelReason("ItemUnavailable"); }}>
                       İptal et
                     </button>
+                    <button type="button" className="online-ops__secondary" onClick={() => void openNote(order)}>
+                      Müşteri notu
+                    </button>
                   </>
                 )}
               </div>
+
+              {noteOrderId === order.orderId && (
+                <p className="online-ops__note" role="status" aria-live="polite">
+                  {noteText === "" ? "Müşteri notu açılıyor…" : noteText ?? "Müşteri notu yok."}
+                </p>
+              )}
 
               {rejecting?.orderId === order.orderId && (
                 <form

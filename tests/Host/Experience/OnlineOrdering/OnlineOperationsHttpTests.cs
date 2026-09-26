@@ -88,10 +88,11 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         return request;
     }
 
-    private async Task<(Guid OrderId, Guid ProductId, string ExternalId)> AcceptedOnlineOrderAsync(string sku, Guid productId)
+    private async Task<(Guid OrderId, Guid ProductId, string ExternalId)> AcceptedOnlineOrderAsync(string sku, Guid productId, string? comment = null)
     {
         var externalId = Guid.NewGuid().ToString("D");
         var body = "{\"order_id\":\"" + externalId + "\",\"external_order_id\":\"YS-77\",\"status\":\"RECEIVED\",\"transport_type\":\"LOGISTICS_DELIVERY\","
+                   + (comment is null ? string.Empty : "\"comment\":\"" + comment + "\",")
                    + "\"items\":[{\"_id\":\"i1\",\"sku\":\"" + sku + "\",\"pricing\":{\"pricing_type\":\"UNIT\",\"quantity\":1,\"unit_price\":150}}],"
                    + "\"sys\":{\"updated_at\":\"t1\"}}";
         var inbox = _app!.Services.GetRequiredService<YemeksepetiWebhookInbox>();
@@ -102,6 +103,31 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         }
 
         return (Assert.Single(await _database.OnlineOrdersAsync(externalId)).OrderId, productId, externalId);
+    }
+
+    [Fact]
+    public async Task TheCustomerNoteIsOpenedOnlyOnRequestAndEveryOpeningIsAudited()
+    {
+        var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 3m);
+        var (withNote, _, _) = await AcceptedOnlineOrderAsync(sku, productId, "Zile basmayın, 0555 111 22 33");
+        var (withoutNote, _, _) = await AcceptedOnlineOrderAsync(sku, productId);
+        var (qrOrder, _) = await _database.SeedQrPendingOrderAsync();
+
+        Assert.Equal("Yemeksepeti YS-77", await _database.OrderNotesAsync(withNote));
+        using var note = await _client!.SendAsync(Get(Action(withNote, "customer-note"), cookie));
+        using var none = await _client.SendAsync(Get(Action(withoutNote, "customer-note"), cookie));
+        using var anonymous = await _client.SendAsync(Get(Action(withNote, "customer-note"), null));
+        using var qr = await _client.SendAsync(Get(Action(qrOrder, "customer-note"), cookie));
+
+        Assert.Equal(HttpStatusCode.OK, note.StatusCode);
+        Assert.Equal("Zile basmayın, 0555 111 22 33", (await note.Content.ReadFromJsonAsync<OnlineOrderCustomerNoteV1>())!.Note);
+        Assert.Null((await none.Content.ReadFromJsonAsync<OnlineOrderCustomerNoteV1>())!.Note);
+        Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, qr.StatusCode);
+        Assert.Single(await _database.AuditActorsAsync(withNote, "Order.CustomerNoteViewed"));
+        Assert.Single(await _database.AuditActorsAsync(withoutNote, "Order.CustomerNoteViewed"));
+        Assert.Empty(await _database.AuditActorsAsync(qrOrder, "Order.CustomerNoteViewed"));
     }
 
     [Fact]

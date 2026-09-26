@@ -3,6 +3,8 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
+using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -103,7 +105,64 @@ public static class OnlineOperationsEndpoints
             return Reply(await sync.CancelByRestaurantAsync(orderId, reason, userId, request.ExpectedRowVersion, cancellationToken));
         }).RequireRateLimiting("terminal-write");
 
+        // V12-RMD-007: the customer's note is kept only in the encrypted provider payload (KVKK). Staff open it on
+        // purpose, and every opening is written to the audit trail with who opened it.
+        group.MapGet("/orders/{orderId:guid}/customer-note", async (
+            Guid terminalId,
+            Guid orderId,
+            NpgsqlDataSource dataSource,
+            YemeksepetiWebhookInbox inbox,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireStaffAsync(context, terminalId, dualStore, authorization, cancellationToken);
+            var note = await ReadCustomerNoteAsync(dataSource, inbox, orderId, cancellationToken);
+            await AuditNoteViewAsync(dataSource, orderId, userId, note is not null, cancellationToken);
+            return Results.Ok(new OnlineOrderCustomerNoteV1(note));
+        }).RequireRateLimiting("terminal-read");
+
         return group;
+    }
+
+    private static async Task<string?> ReadCustomerNoteAsync(
+        NpgsqlDataSource dataSource, YemeksepetiWebhookInbox inbox, Guid orderId, CancellationToken cancellationToken)
+    {
+        await using var command = dataSource.CreateCommand(
+            """
+            SELECT o.source,
+                   (SELECT i.payload_envelope FROM online_ordering.yemeksepeti_webhook_inbox i
+                    WHERE i.order_id = o.order_id AND i.processing_outcome = 'OrderCreated'
+                    ORDER BY i.received_at LIMIT 1)
+            FROM orders.orders o
+            WHERE o.order_id = $1;
+            """);
+        command.Parameters.AddWithValue(orderId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            throw new OrderNotFoundException(orderId);
+        if (reader.GetString(0) != "Online")
+            throw new NotAnOnlineOrderException(orderId);
+        return reader.IsDBNull(1) ? null : inbox.ReadCustomerNote(reader.GetFieldValue<byte[]>(1));
+    }
+
+    private static async Task AuditNoteViewAsync(
+        NpgsqlDataSource dataSource, Guid orderId, Guid userId, bool hadNote, CancellationToken cancellationToken)
+    {
+        await using var command = dataSource.CreateCommand(
+            """
+            INSERT INTO audit.audit_events (
+                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
+                reason, correlation_id, causation_id, before_state_json, after_state_json, metadata_json, occurred_at
+            ) VALUES ($1, 'Order.CustomerNoteViewed', 'Order', $2, $3, 'User', NULL, $4, NULL, NULL, NULL, $5::jsonb, now());
+            """);
+        command.Parameters.AddWithValue(Guid.NewGuid());
+        command.Parameters.AddWithValue(orderId);
+        command.Parameters.AddWithValue(userId);
+        command.Parameters.AddWithValue(orderId.ToString("D"));
+        command.Parameters.AddWithValue(hadNote ? "{\"hadNote\":true}" : "{\"hadNote\":false}");
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     private static IResult Reply(OnlineOrderActionOutcome outcome) => outcome switch
@@ -295,3 +354,5 @@ public sealed class OnlineOperationsExceptionFilter : IEndpointFilter
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };
 }
+
+public sealed record OnlineOrderCustomerNoteV1(string? Note);

@@ -141,6 +141,22 @@ describe("OnlineOperationsWorkspace", () => {
     expect(JSON.parse(String((init as RequestInit).body))).toEqual({ expectedRowVersion: 4, reason: "TooBusy" });
   });
 
+  it("opens the customer note only on request and says so when there is none", async () => {
+    fetchMock.mockImplementation(async (url: string) =>
+      url.endsWith("/customer-note") ? ok({ note: url.includes("on-1") ? "Zil çalışmıyor" : null }) : ok(queue));
+    await render();
+
+    expect(document.body.textContent).not.toContain("Zil çalışmıyor");
+    const noteButtons = [...document.querySelectorAll("button")].filter((b) => b.textContent === "Müşteri notu");
+    await act(async () => { noteButtons[0].click(); });
+
+    expect(fetchMock.mock.calls.at(-1)?.[0]).toBe("/api/v1/terminals/t-1/online-operations/orders/on-1/customer-note");
+    expect(document.body.textContent).toContain("Zil çalışmıyor");
+
+    await act(async () => { noteButtons[1].click(); });
+    expect(document.body.textContent).toContain("Müşteri notu yok.");
+  });
+
   it("has no critical or serious automated accessibility findings, including the open dialogs", async () => {
     fetchMock.mockResolvedValue(ok(queue));
     await render();

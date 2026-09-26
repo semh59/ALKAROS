@@ -47,6 +47,7 @@ public sealed class YemeksepetiWebhookInbox
     public static readonly SecretReference WebhookSecret = new("yemeksepeti-webhook-secret");
 
     public const int MaxBodyBytes = 256 * 1024;
+    public const int MaxCustomerNoteLength = 200;
     private const int MaxIdentifierLength = 64;
     private const string PayloadField = "raw_body";
     private static readonly SecretReference MasterKey = new("envelope-master-key");
@@ -64,10 +65,11 @@ public sealed class YemeksepetiWebhookInbox
         _protector = new SensitivePayloadProtector(new AesGcmEnvelopeCipher(_secrets), policy);
     }
 
-    public async Task<WebhookReceipt> ReceiveAsync(
-        string? authorizationHeader,
-        ReadOnlyMemory<byte> body,
-        CancellationToken cancellationToken = default)
+    /// <summary>
+    /// V12-RMD-007: the authentication step alone, so the endpoint can refuse a delivery before reading its body.
+    /// Null when the delivery presents the configured secret; otherwise why it is refused.
+    /// </summary>
+    public WebhookReceiptOutcome? Authenticate(string? authorizationHeader)
     {
         string expected;
         try
@@ -77,11 +79,19 @@ public sealed class YemeksepetiWebhookInbox
         }
         catch (SecretNotFoundException)
         {
-            return new WebhookReceipt(WebhookReceiptOutcome.ChannelNotConfigured, null);
+            return WebhookReceiptOutcome.ChannelNotConfigured;
         }
 
-        if (!Matches(authorizationHeader, expected))
-            return new WebhookReceipt(WebhookReceiptOutcome.Unauthenticated, null);
+        return Matches(authorizationHeader, expected) ? null : WebhookReceiptOutcome.Unauthenticated;
+    }
+
+    public async Task<WebhookReceipt> ReceiveAsync(
+        string? authorizationHeader,
+        ReadOnlyMemory<byte> body,
+        CancellationToken cancellationToken = default)
+    {
+        if (Authenticate(authorizationHeader) is { } refused)
+            return new WebhookReceipt(refused, null);
         if (body.Length > MaxBodyBytes)
             return new WebhookReceipt(WebhookReceiptOutcome.TooLarge, null);
         if (!TryReadIdentity(body, out var orderId, out var status, out var updatedAt))
@@ -136,14 +146,44 @@ public sealed class YemeksepetiWebhookInbox
         return payload.Fields[PayloadField];
     }
 
-    /// <summary>Compares SHA-256 digests in constant time, so neither content nor length of the secret leaks through timing.</summary>
+    /// <summary>
+    /// V12-RMD-007: the configured secret is the whole header value the provider sends (for example
+    /// <c>Bearer abc123</c>). When both values carry a scheme, the scheme is compared case-insensitively (RFC 7235)
+    /// and only the credential must match exactly; otherwise the whole values must match. The credential comparison
+    /// is on SHA-256 digests in constant time, so neither content nor length of the secret leaks through timing.
+    /// </summary>
     private static bool Matches(string? presented, string expected)
     {
-        if (string.IsNullOrEmpty(presented))
+        if (string.IsNullOrWhiteSpace(presented))
             return false;
-        return CryptographicOperations.FixedTimeEquals(
-            SHA256.HashData(Encoding.UTF8.GetBytes(presented.Trim())),
-            SHA256.HashData(Encoding.UTF8.GetBytes(expected.Trim())));
+
+        var (presentedScheme, presentedCredential) = Split(presented.Trim());
+        var (expectedScheme, expectedCredential) = Split(expected.Trim());
+        var schemeMatches = string.Equals(presentedScheme, expectedScheme, StringComparison.OrdinalIgnoreCase);
+        var credentialMatches = CryptographicOperations.FixedTimeEquals(
+            SHA256.HashData(Encoding.UTF8.GetBytes(presentedCredential)),
+            SHA256.HashData(Encoding.UTF8.GetBytes(expectedCredential)));
+        return schemeMatches & credentialMatches;
+
+        static (string Scheme, string Credential) Split(string value)
+        {
+            var space = value.IndexOf(' ', StringComparison.Ordinal);
+            return space < 0 ? (string.Empty, value) : (value[..space], value[(space + 1)..].TrimStart());
+        }
+    }
+
+    /// <summary>
+    /// V12-RMD-007: the customer's order-level note from a stored payload — control characters removed, bounded —
+    /// or null. It is never copied into an order (it often carries a phone number or an address); it is opened only
+    /// for an authorized, audited view.
+    /// </summary>
+    public string? ReadCustomerNote(byte[] payloadEnvelope)
+    {
+        using var document = JsonDocument.Parse(OpenPayload(payloadEnvelope));
+        if (!document.RootElement.TryGetProperty("comment", out var comment) || comment.ValueKind != JsonValueKind.String)
+            return null;
+        var text = new string(comment.GetString()!.Where(c => !char.IsControl(c)).ToArray()).Trim();
+        return text.Length == 0 ? null : text[..Math.Min(MaxCustomerNoteLength, text.Length)];
     }
 
     private static bool TryReadIdentity(ReadOnlyMemory<byte> body, out string orderId, out string status, out string? updatedAt)

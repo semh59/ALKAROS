@@ -96,6 +96,17 @@ export async function cancelOnlineOrder(terminalId: string, order: OnlineOperati
     post({ expectedRowVersion: order.rowVersion, reason }), "Sipariş iptal edilemedi.", fetcher);
 }
 
+/**
+ * V12-RMD-007: the customer's note is kept encrypted on the server and opened on purpose; every opening is audited
+ * there. Null when the order carried no note.
+ */
+export async function loadCustomerNote(terminalId: string, order: OnlineOperationsOrder, fetcher: typeof fetch = fetch): Promise<string | null> {
+  const response = await call(`${base(terminalId)}/online-operations/orders/${encodeURIComponent(order.orderId)}/customer-note`,
+    undefined, "Müşteri notu açılamadı.", fetcher);
+  const body = await response.json() as { note?: string | null };
+  return body.note ?? null;
+}
+
 // Every server value shown to a person goes through these dictionaries (docs/UI_STYLE_GUIDE.md);
 // an unknown value is shown as the Turkish "other" label, never as the raw English code.
 const statusLabels: Record<string, string> = {

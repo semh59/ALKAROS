@@ -91,6 +91,32 @@ public sealed class YemeksepetiWebhookHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnUnauthenticatedDeliveryIsRefusedBeforeItsBodyIsConsidered()
+    {
+        // V12-RMD-007: authentication comes first, so even an oversized body from a stranger is a 401, not a 413.
+        await using var app = await StartAsync(configured: true);
+        using var client = CreateClient(app);
+        var huge = "{\"order_id\":\"x\",\"status\":\"RECEIVED\",\"pad\":\"" + new string('a', YemeksepetiWebhookInbox.MaxBodyBytes) + "\"}";
+
+        using var response = await client.SendAsync(Delivery(huge, "Bearer guessed"));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal(0, await _database.CountAllAsync());
+    }
+
+    [Fact]
+    public async Task TheSchemeOfTheSecretIsMatchedCaseInsensitively()
+    {
+        await using var app = await StartAsync(configured: true);
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(Delivery(Body(Guid.NewGuid().ToString("D")), "bearer static-portal-token"));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(1, await _database.CountAllAsync());
+    }
+
+    [Fact]
     public async Task AnOversizedBodyIsRefusedWithoutBeingBuffered()
     {
         await using var app = await StartAsync(configured: true);

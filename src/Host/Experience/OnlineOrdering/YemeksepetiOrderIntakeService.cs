@@ -238,9 +238,9 @@ public sealed class YemeksepetiOrderIntakeService
             "YS-" + onlineOrder.ExternalOrderId[..Math.Min(47, onlineOrder.ExternalOrderId.Length)],
             items,
             sourceExternalId: onlineOrder.ExternalOrderId,
-            notes: onlineOrder.Comment is null
-                ? $"Yemeksepeti {onlineOrder.DisplayCode}"
-                : $"Yemeksepeti {onlineOrder.DisplayCode}: {onlineOrder.Comment}",
+            // V12-RMD-007: the customer's note stays in the encrypted payload only (KVKK); staff open it on purpose,
+            // audited, from the online operations screen.
+            notes: $"Yemeksepeti {onlineOrder.DisplayCode}",
             status: OrderState.Draft,
             createdAt: now,
             updatedAt: now,

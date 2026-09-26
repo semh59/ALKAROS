@@ -92,7 +92,8 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
         var order = Assert.Single(await _database.OnlineOrdersAsync(orderId));
         Assert.Equal("Accepted", order.Status);
         Assert.Equal("YS-" + orderId, order.OrderNumber);
-        Assert.Equal($"Yemeksepeti YS-{orderId[..6]}: Zil çalışmıyor", order.Notes);
+        // V12-RMD-007: the customer's note never reaches the order; it stays in the encrypted payload only.
+        Assert.Equal($"Yemeksepeti YS-{orderId[..6]}", order.Notes);
         Assert.Equal(new[] { ("Reserved", "Online") }, await _database.HoldsAsync(order.OrderId));
         Assert.Equal(1, await _database.KitchenTicketItemCountAsync(order.OrderId));
         Assert.Equal(1m, await _database.AvailableAsync(productId));
@@ -436,6 +437,27 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
 
         Assert.Equal(1, await DrainAsync());
         Assert.Equal("OrderCreated", Assert.Single(await _database.InboxAsync(orderId)).Outcome);
+    }
+
+    [Fact]
+    public async Task TheScrubMigrationRemovesCustomerNotesFromOnlineOrdersOnly()
+    {
+        var online = Guid.NewGuid();
+        var cashier = Guid.NewGuid();
+        await _database.ExecAsync(
+            """
+            INSERT INTO orders.orders (order_id, source, source_external_id, status, confirmation_status, order_number, notes, created_at, updated_at)
+            VALUES (@online, 'Online', @external, 'Accepted', 'Accepted', @online_number, 'Yemeksepeti YS-12: Zil çalışmıyor, 0555 111 22 33', now(), now()),
+                   (@cashier, 'Cashier', NULL, 'Accepted', 'NotRequired', @cashier_number, 'Yemeksepeti YS-12: kasiyer notu', now(), now());
+            """,
+            ("online", online), ("external", Guid.NewGuid().ToString("D")), ("online_number", "SCRUB-" + online.ToString("N")[..8]),
+            ("cashier", cashier), ("cashier_number", "SCRUB-" + cashier.ToString("N")[..8]));
+
+        await _database.RunFixtureAsync("151-online-order-customer-note-scrub.up.sql");
+        await _database.RunFixtureAsync("151-online-order-customer-note-scrub.down.sql");
+
+        Assert.Equal("Yemeksepeti YS-12", await _database.OrderNotesAsync(online));
+        Assert.Equal("Yemeksepeti YS-12: kasiyer notu", await _database.OrderNotesAsync(cashier));
     }
 
     [Fact]
