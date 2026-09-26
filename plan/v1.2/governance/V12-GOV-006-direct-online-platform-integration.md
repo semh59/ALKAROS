@@ -1,7 +1,7 @@
 # V12-GOV-006 - Online yemek platformlarına doğrudan entegrasyon kararı ve görev planı
 
 - Task ID: V12-GOV-006
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: decision
 - Surface state: Existing
