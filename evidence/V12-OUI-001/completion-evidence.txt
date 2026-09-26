@@ -1,0 +1,24 @@
+V12-OUI-001 completion evidence (2026-09-26, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+Path note: src/Apps/BackOffice does not exist; the operations UI lives in the real staff client
+src/Clients/PosTerminal/src/features/online-operations/**. Provider calls behind hand-over/cancel remain the
+V12-ONL-003 UNVERIFIED DRAFT (V0-YSP-001 Blocked, V12-GOV-004); nothing here claims sandbox evidence.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Host/Experience/OnlineOrdering -> 35/35 (6 new in OnlineOperationsHttpTests)
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- dotnet test tests/Host/MigrationComposition -> 161/161
+- PosTerminal: corepack pnpm run build -> ok; vitest run -> 212/212 (7 new, incl. axe-core on the open cancel form)
+- UI_STYLE_GUIDE section 4 English-leak scan on features/online-operations -> no findings
+- consistency_audit.py -> clean; project_manifest_tool.py -> VALID; plan_audit_tool.py validate -> 0/0
+  (AUDIT_MANIFEST/AUDIT_REPORT regenerated locally for validation only and reverted before commit)
+
+Mutations (backup restore + cmp):
+- hand-over body without expectedRowVersion -> 1 UI test failed
+- unknown status shown as raw code -> 1 UI test failed
+- server-side row-version check disabled -> 1 Host test failed
+- source filter ignored in the queue query -> 1 Host test failed
+
+Not done: manual screen-reader pass (NVDA/VoiceOver); only automated axe-core checks were run.

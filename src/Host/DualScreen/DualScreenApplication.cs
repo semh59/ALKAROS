@@ -177,6 +177,7 @@ public static partial class DualScreenApplication
         builder.Services.AddQnbCredentialSettingsExperience();
         builder.Services.AddYemeksepetiWebhookExperience();
         builder.Services.AddOnlineCatalogPublishingExperience();
+        builder.Services.AddOnlineOperationsExperience();
         OnlineAvailabilityPublishingHostedService.AddOnlineAvailabilityPublishingExperience(builder.Services);
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
@@ -585,6 +586,7 @@ public static partial class DualScreenApplication
         app.MapQnbCredentialSettingsApi();
         app.MapYemeksepetiWebhookApi();
         app.MapOnlineCatalogPublishingApi();
+        app.MapOnlineOperationsApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
         app.MapRoleManagementApi();

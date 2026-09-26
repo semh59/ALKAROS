@@ -12,6 +12,7 @@ using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Measurements;
 using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.TestHelpers;
 
 namespace ALKAROS.Host.Experience.OnlineOrdering.Tests;
@@ -89,6 +90,35 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
             ("menu", menuId), ("code", "OM-" + menuId.ToString("N")[..8]), ("product", productId), ("sku", sku),
             ("price", price), ("item", Guid.NewGuid()));
         return (menuId, productId, sku);
+    }
+
+    /// <summary>A QR order waiting for staff confirmation at a Reserved table, as QrOrderSubmittedConsumer leaves it.</summary>
+    public async Task<(Guid OrderId, string TableNumber)> SeedQrPendingOrderAsync()
+    {
+        var tableId = Guid.NewGuid();
+        var tableNumber = "QR-" + tableId.ToString("N")[..6];
+        await ExecAsync(
+            "INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status) VALUES (@id, @number, 4, true, 'Reserved');",
+            ("id", tableId), ("number", tableNumber));
+        var productId = Guid.NewGuid();
+        await ExecAsync(
+            "INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active) VALUES (@id, @sku, 'Çay', 1, 1, true);",
+            ("id", productId), ("sku", "QRP-" + productId.ToString("N")[..8]));
+        var orderId = Guid.NewGuid();
+        var item = new OrderItem(Guid.NewGuid(), orderId, productId, "Çay", quantity: 2, unitPrice: 15m, taxRate: 10m,
+            status: OrderItemState.Active, kitchenState: KitchenState.Sent);
+        await new PostgresOrderRepository(DataSource).AddAsync(new Order(
+            orderId, OrderSource.Qr, "QR-" + orderId.ToString("N")[..8], [item], tableId: tableId,
+            sourceReferenceId: Guid.NewGuid(), status: OrderState.PendingConfirmation, confirmationStatus: ConfirmationStatus.Pending));
+        await ExecAsync("UPDATE table_mgmt.tables SET current_order_id = @order WHERE table_id = @table;", ("order", orderId), ("table", tableId));
+        return (orderId, tableNumber);
+    }
+
+    public async Task<long> RowVersionAsync(Guid orderId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT row_version FROM orders.orders WHERE order_id = @id;");
+        command.Parameters.AddWithValue("id", orderId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<long> CountPublicationsAsync()

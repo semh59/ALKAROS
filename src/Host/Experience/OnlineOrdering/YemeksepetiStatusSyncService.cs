@@ -20,7 +20,10 @@ public enum OnlineOrderActionOutcome
     AlreadyApplied,
 
     /// <summary>The order's state does not allow the action (e.g. cancelling an order already handed over).</summary>
-    NotAllowed
+    NotAllowed,
+
+    /// <summary>V12-OUI-001: the caller acted on an older version of the order; nothing was changed.</summary>
+    Stale
 }
 
 /// <summary>
@@ -123,7 +126,8 @@ public sealed class YemeksepetiStatusSyncService
     /// Served and the provider is told (READY_FOR_PICKUP for a platform courier, DISPATCHED for the
     /// restaurant's own). Repeating it changes nothing.
     /// </summary>
-    public async Task<OnlineOrderActionOutcome> HandOverAsync(Guid orderId, Guid actorId, CancellationToken cancellationToken = default)
+    public async Task<OnlineOrderActionOutcome> HandOverAsync(
+        Guid orderId, Guid actorId, long? expectedRowVersion = null, CancellationToken cancellationToken = default)
     {
         if (actorId == Guid.Empty)
             throw new ArgumentException("A handover needs an actor.", nameof(actorId));
@@ -137,6 +141,11 @@ public sealed class YemeksepetiStatusSyncService
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return OnlineOrderActionOutcome.AlreadyApplied;
         }
+        if (expectedRowVersion is { } expectedForHandover && order.RowVersion != expectedForHandover)
+        {
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return OnlineOrderActionOutcome.Stale;
+        }
         if (order.Status is not (OrderState.Accepted or OrderState.Preparing or OrderState.Ready))
         {
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -148,7 +157,6 @@ public sealed class YemeksepetiStatusSyncService
             ?? throw new InvalidOperationException($"Online order '{order.Id}' has no documented delivery kind to report a handover for.");
 
         await _consumption.ConsumeForAcceptedOrderAsync(order, actorId, connection, transaction, cancellationToken).ConfigureAwait(false);
-
 
         var now = DateTimeOffset.UtcNow;
         var current = order;
@@ -174,14 +182,22 @@ public sealed class YemeksepetiStatusSyncService
         Guid orderId,
         YemeksepetiCancellationReason reason,
         Guid actorId,
+        long? expectedRowVersion = null,
         CancellationToken cancellationToken = default)
     {
         if (actorId == Guid.Empty)
             throw new ArgumentException("A cancellation needs an actor.", nameof(actorId));
+        if (!Enum.IsDefined(reason))
+            throw new ArgumentOutOfRangeException(nameof(reason), reason, "Only a documented cancellation reason can be sent.");
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         var order = await LoadOnlineOrderAsync(orderId, connection, transaction, cancellationToken).ConfigureAwait(false);
+        if (order.Status != OrderState.Cancelled && expectedRowVersion is { } expected && order.RowVersion != expected)
+        {
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return OnlineOrderActionOutcome.Stale;
+        }
 
         var outcome = await CancelLocallyAsync(
             order, $"Restoran iptali ({reason})", actorId, connection, transaction, cancellationToken).ConfigureAwait(false);
@@ -256,7 +272,7 @@ public sealed class YemeksepetiStatusSyncService
         var order = await _orders.GetByIdAsync(orderId, cancellationToken).ConfigureAwait(false)
             ?? throw new OrderNotFoundException(orderId);
         if (order.Source != OrderSource.Online || string.IsNullOrEmpty(order.SourceExternalId))
-            throw new InvalidOperationException($"Order '{orderId}' is not an online channel order.");
+            throw new NotAnOnlineOrderException(orderId);
 
         await LockOrderAsync(order.SourceExternalId, connection, transaction, cancellationToken).ConfigureAwait(false);
         // Re-read under the lock: a concurrent intake/cancellation/handover of the same order has committed by now.
@@ -296,4 +312,10 @@ public sealed class YemeksepetiStatusSyncService
 
     private static Guid EvidenceId(string kind, string externalOrderId) =>
         new(SHA256.HashData(Encoding.UTF8.GetBytes(kind + "\u001f" + externalOrderId)).AsSpan(0, 16));
+}
+
+/// <summary>The order exists but did not come from an online channel, so online actions do not apply to it.</summary>
+public sealed class NotAnOnlineOrderException : Exception
+{
+    public NotAnOnlineOrderException(Guid orderId) : base($"Order '{orderId}' is not an online channel order.") { }
 }
