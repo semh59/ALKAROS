@@ -15,6 +15,13 @@ import { api } from './api.js';
 
 const IDLE_LOCK_MS = 3 * 60 * 1000;
 
+// V1-RMD-340 (independent 2026-09-26 audit, orta seviye bulgu): the PIN pad's
+// own '✓' key had no double-tap guard - a fast double-tap (easy on a kiosk
+// touchscreen) fired two concurrent submitPin() calls, and a wrong PIN
+// burned two failed-attempt counters server-side instead of one, locking the
+// account out roughly twice as fast as the server's own policy intends.
+let pinSubmitInFlight = false;
+
 // ══ Full screen ════════════════════════════════════════════════════
 // Semih's own "tam ekranda çıkmayı zorlaştırmak". A web page cannot pin
 // itself the way Android Ekran Sabitleme or iOS Rehberli Erişim can - that
@@ -172,10 +179,17 @@ export function renderPinPad() {
 
 export async function submitPin() {
   if (state.pinBuffer.length < 4) return;
-  const result = await api(`/api/v1/auth/unlock?terminalId=${state.terminalId}`, {
-    method: 'POST',
-    body: { pin: state.pinBuffer }
-  });
+  if (pinSubmitInFlight) return;
+  pinSubmitInFlight = true;
+  let result;
+  try {
+    result = await api(`/api/v1/auth/unlock?terminalId=${state.terminalId}`, {
+      method: 'POST',
+      body: { pin: state.pinBuffer }
+    });
+  } finally {
+    pinSubmitInFlight = false;
+  }
 
   if (result.ok) {
     state.locked = false;

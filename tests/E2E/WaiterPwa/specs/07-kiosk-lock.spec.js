@@ -327,4 +327,38 @@ test.describe('Ekran kilidi / PIN (V1-WTR-011, V1-RMD-173/178/180)', () => {
     await expectBackgroundUsable(page);
     await expect(page.locator('#loginOverlay')).toBeHidden();
   });
+
+  // V1-RMD-340 (independent 2026-09-26 audit, orta seviye bulgu): '✓' had no
+  // double-tap guard - a fast double-tap fired two concurrent /auth/unlock
+  // calls, and for a WRONG PIN that burned two failed-attempt counters
+  // server-side instead of one, locking the account out roughly twice as
+  // fast as the server's own policy intends.
+  test('PIN tuşuna çift dokunuş sunucuya tek bir kilit açma isteği gönderir (V1-RMD-340)', async ({ page }) => {
+    await login(page, seed);
+    await armPin(page);
+    await lockNow(page);
+
+    let requestCount = 0;
+    let resolveFirst;
+    const firstRequestArrived = new Promise((resolve) => { resolveFirst = resolve; });
+    await page.route('**/api/v1/auth/unlock**', async (route) => {
+      requestCount++;
+      resolveFirst();
+      // A deliberate delay widens the window a real double-tap has to land
+      // in, so this test does not depend on two clicks racing within
+      // Playwright's own IPC latency alone.
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await route.continue();
+    });
+
+    // A wrong PIN, so the request is slow enough (see the route above) for
+    // a genuine second tap to race the first one before it resolves.
+    await pressPin(page, '0000');
+    await page.locator('#pinKeys [data-pin="ok"]').click();
+    await firstRequestArrived;
+    await page.locator('#pinKeys [data-pin="ok"]').click();
+    await expect(page.locator('#lockSub')).toHaveText('PIN hatalı, tekrar deneyin.');
+
+    expect(requestCount).toBe(1);
+  });
 });
