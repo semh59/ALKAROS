@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1373,
-  "markdown_line_count": 105271,
-  "markdown_byte_count": 6061395,
+  "markdown_file_count": 1374,
+  "markdown_line_count": 105347,
+  "markdown_byte_count": 6065896,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "CCB516BE1BBEAB3213B22893A8132D5C37668D49D6FEDBD1F106864B9505276C",
-      "lines": 2649,
-      "bytes": 387041,
+      "sha256": "6477DEA03CCBC6C5391C2E2B7C3F8DF6CDFC2390E8C120A01A244D49BA44C210",
+      "lines": 2650,
+      "bytes": 387230,
       "utf8": true
     },
     {
@@ -7522,6 +7522,13 @@
       "sha256": "729C96E64B1DD4E0C0CE2963E20FC8AB119BA0B932279C04516D2B129F01BFD4",
       "lines": 67,
       "bytes": 3695,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-338-consistency-audit-multiline-sql-and-limit-comment-gaps.md",
+      "sha256": "969B367A0AE9AFC7B7DDC767406C6A28D404FF39EDB011BA903A2060D74ADE62",
+      "lines": 75,
+      "bytes": 4312,
       "utf8": true
     },
     {
