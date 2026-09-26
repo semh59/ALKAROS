@@ -58,7 +58,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT (o.created_at AT TIME ZONE $3)::date AS business_date, o.source,
+            SELECT (o.created_at AT TIME ZONE $3)::date AS business_date, o.source, l.provider,
                    count(*)::int,
                    count(*) FILTER (WHERE o.status IN ({AwaitingStatuses}))::int,
                    count(*) FILTER (WHERE o.status IN ({AcceptedStatuses}))::int,
@@ -70,11 +70,13 @@ public sealed class PostgresChannelReportService : IChannelReportService
                    COALESCE(sum(o.discount_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
                    COALESCE(sum(o.total) FILTER (WHERE o.status = 'Cancelled'), 0)
             FROM orders.orders o
+            -- V12-REC-002: an online order's platform comes from its V12-ONL-006 link.
+            LEFT JOIN online_ordering.online_orders l ON l.order_id = o.order_id
             WHERE o.source IN ('Qr', 'Online')
               AND ($4::text IS NULL OR o.source = $4)
               AND o.created_at >= $1 AND o.created_at < $2
-            GROUP BY 1, 2
-            ORDER BY 1, 2
+            GROUP BY 1, 2, 3
+            ORDER BY 1, 2, 3 NULLS FIRST
             LIMIT {MaxRows + 1};
             """);
         AddWindow(command, filter, start, end);
@@ -86,9 +88,9 @@ public sealed class PostgresChannelReportService : IChannelReportService
         {
             rows.Add(new ChannelDayRow(
                 DateOnly.FromDateTime(reader.GetDateTime(0)), reader.GetString(1),
-                reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6),
-                reader.GetDecimal(7), reader.GetDecimal(8), reader.GetDecimal(9), reader.GetDecimal(10),
-                reader.GetDecimal(11), 0));
+                reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7),
+                reader.GetDecimal(8), reader.GetDecimal(9), reader.GetDecimal(10), reader.GetDecimal(11),
+                reader.GetDecimal(12), 0, reader.IsDBNull(2) ? null : reader.GetString(2)));
         }
 
         EnsureBounded(rows.Count, "channel order");
@@ -105,44 +107,48 @@ public sealed class PostgresChannelReportService : IChannelReportService
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT business_date, count(*)::int
+            SELECT business_date, provider, count(*)::int
             FROM (
-                SELECT i.external_order_id, (min(i.received_at) AT TIME ZONE $3)::date AS business_date
+                SELECT i.provider, i.external_order_id, (min(i.received_at) AT TIME ZONE $3)::date AS business_date
                 FROM online_ordering.provider_inbox i
                 WHERE i.processing_outcome IN ('Rejected', 'Diverged')
                   AND i.order_id IS NULL
                   -- V12-RMD-006: only events before the window's end can decide an order's first refusal time
                   -- there (the minimum below is unchanged by it), so the inbox is never scanned whole.
                   AND i.received_at < $2
-                  AND NOT EXISTS (SELECT 1 FROM orders.orders o
-                                  WHERE o.source = 'Online' AND o.source_external_id = i.external_order_id)
-                GROUP BY i.external_order_id
+                  AND NOT EXISTS (SELECT 1 FROM online_ordering.online_orders l
+                                  WHERE l.provider = i.provider AND l.external_order_id = i.external_order_id)
+                GROUP BY i.provider, i.external_order_id
                 HAVING min(i.received_at) >= $1 AND min(i.received_at) < $2
             ) refused
-            GROUP BY business_date
-            ORDER BY business_date
+            GROUP BY business_date, provider
+            ORDER BY business_date, provider
             LIMIT {MaxRows + 1};
             """);
         AddWindow(command, filter, start, end);
 
-        var refusals = new Dictionary<DateOnly, int>();
+        var refusals = new Dictionary<(DateOnly Date, string Provider), int>();
         await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
         {
             while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-                refusals[DateOnly.FromDateTime(reader.GetDateTime(0))] = reader.GetInt32(1);
+                refusals[(DateOnly.FromDateTime(reader.GetDateTime(0)), reader.GetString(1))] = reader.GetInt32(2);
         }
 
         EnsureBounded(refusals.Count, "provider refusal");
-        foreach (var (date, count) in refusals)
+        foreach (var ((date, provider), count) in refusals)
         {
-            var index = days.FindIndex(row => row.BusinessDate == date && row.Source == ChannelSource.Online);
+            var index = days.FindIndex(row =>
+                row.BusinessDate == date && row.Source == ChannelSource.Online && row.Provider == provider);
             if (index >= 0)
                 days[index] = days[index] with { ProviderRefused = count };
             else
-                days.Add(new ChannelDayRow(date, ChannelSource.Online, 0, 0, 0, 0, 0, 0m, 0m, 0m, 0m, 0m, count));
+                days.Add(new ChannelDayRow(date, ChannelSource.Online, 0, 0, 0, 0, 0, 0m, 0m, 0m, 0m, 0m, count, provider));
         }
 
-        return days.OrderBy(row => row.BusinessDate).ThenBy(row => row.Source, StringComparer.Ordinal).ToList();
+        return days.OrderBy(row => row.BusinessDate)
+            .ThenBy(row => row.Source, StringComparer.Ordinal)
+            .ThenBy(row => row.Provider, StringComparer.Ordinal)
+            .ToList();
     }
 
     private async Task<IReadOnlyList<ChannelReconciliationRow>> ReadReconciliationAsync(

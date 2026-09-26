@@ -118,7 +118,7 @@ public sealed class YemeksepetiStatusSyncService
                     new
                     {
                         reason = "CancelledAfterHandover",
-                        evidenceId = EvidenceId("CancelledAfterHandover", claimed.ExternalOrderId),
+                        evidenceId = EvidenceId("CancelledAfterHandover", provider.Provider, claimed.ExternalOrderId),
                         localStatus = order.Status.ToString(),
                         cancellation = detail
                     },
@@ -312,8 +312,9 @@ public sealed class YemeksepetiStatusSyncService
             .Select(item => new OnlineOrderLineReference(item.SkuSnapshot!, item.Quantity))
             .ToList();
 
-    private static Guid EvidenceId(string kind, string externalOrderId) =>
-        new(SHA256.HashData(Encoding.UTF8.GetBytes(kind + "\u001f" + externalOrderId)).AsSpan(0, 16));
+    /// <summary>V12-REC-002: the platform is part of the identity; two platforms' equal numbers are two divergences.</summary>
+    private static Guid EvidenceId(string kind, string provider, string externalOrderId) =>
+        new(SHA256.HashData(Encoding.UTF8.GetBytes(kind + "\u001f" + provider + "\u001f" + externalOrderId)).AsSpan(0, 16));
 }
 
 /// <summary>

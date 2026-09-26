@@ -21,6 +21,13 @@ internal static class OnlineOrderSourceScan
     /// </summary>
     public const string StatusUpdateEventType = "online-ordering.yemeksepeti.status-update-requested.v1";
 
+    /// <summary>
+    /// V12-REC-002: the platform those status updates belong to (<c>OnlineOrderProviders.Yemeksepeti</c>), repeated
+    /// for the same reason. Local orders are matched through <c>online_ordering.online_orders</c> by
+    /// (platform, platform order number), never by the number alone.
+    /// </summary>
+    public const string StatusUpdateProvider = "yemeksepeti";
+
     public static async Task<IReadOnlyList<DetectedDiscrepancy>> ReadAsync(
         NpgsqlCommand command,
         string sourceName,

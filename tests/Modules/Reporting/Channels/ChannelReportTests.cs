@@ -65,9 +65,9 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
 
         report.ReportVersion.Should().Be("channel-report.v1");
         report.Days.Should().Equal(
-            new ChannelDayRow(Day1, "Online", 3, 0, 2, 0, 1, 320.50m, 267.08m, 53.42m, 10m, 80m, 1),
+            new ChannelDayRow(Day1, "Online", 3, 0, 2, 0, 1, 320.50m, 267.08m, 53.42m, 10m, 80m, 1, "yemeksepeti"),
             new ChannelDayRow(Day1, "Qr", 3, 1, 1, 1, 0, 100m, 83.33m, 16.67m, 0m, 0m, 0),
-            new ChannelDayRow(Day2, "Online", 2, 0, 2, 0, 0, 105m, 87.50m, 17.50m, 0m, 0m, 1));
+            new ChannelDayRow(Day2, "Online", 2, 0, 2, 0, 0, 105m, 87.50m, 17.50m, 0m, 0m, 1, "yemeksepeti"));
         report.Reconciliation.Should().Equal(
             new ChannelReconciliationRow(Day1, "LocallyAcceptedProviderUnknown", 1, 0, 250.50m),
             new ChannelReconciliationRow(Day1, "ProviderAcceptedLocallyRefused", 1, 1, 0m));
@@ -96,7 +96,7 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
         qr.Check.Should().Be(new ChannelReportCheck(1, 20m, 16.67m, 1, 20m, 16.67m));
 
         var online = await _reports.GetReportAsync(new ChannelReportFilter(day, day, "Online"));
-        online.Days.Should().Equal(new ChannelDayRow(day, "Online", 1, 0, 1, 0, 0, 35m, 29.17m, 5.83m, 0m, 0m, 1));
+        online.Days.Should().Equal(new ChannelDayRow(day, "Online", 1, 0, 1, 0, 0, 35m, 29.17m, 5.83m, 0m, 0m, 1, "yemeksepeti"));
         online.Reconciliation.Should().ContainSingle().Which.Kind.Should().Be("ProviderEventFailed");
         online.RetryAttempts.Should().Be(1);
     }
@@ -109,7 +109,38 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
 
         var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day));
 
-        report.Days.Should().Equal(new ChannelDayRow(day, "Online", 0, 0, 0, 0, 0, 0m, 0m, 0m, 0m, 0m, 1));
+        report.Days.Should().Equal(new ChannelDayRow(day, "Online", 0, 0, 0, 0, 0, 0m, 0m, 0m, 0m, 0m, 1, "yemeksepeti"));
+        report.Check.IsBalanced.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task APlatformsRefusalCountsEvenWhenAnotherPlatformHasAnOrderWithThatNumber()
+    {
+        var day = new DateOnly(2037, 2, 9);
+        await _database.SeedOrderAsync("Online", "Completed", 100m, Utc(2037, 2, 9, 10, 0), "number-in-both");
+        await _database.SeedInboxAsync("number-in-both", "Rejected", Utc(2037, 2, 9, 11, 0), provider: "trendyol-go");
+
+        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day));
+
+        report.Days.Should().Equal(
+            new ChannelDayRow(day, "Online", 0, 0, 0, 0, 0, 0m, 0m, 0m, 0m, 0m, 1, "trendyol-go"),
+            new ChannelDayRow(day, "Online", 1, 0, 1, 0, 0, 100m, 83.33m, 16.67m, 0m, 0m, 0, "yemeksepeti"));
+    }
+
+    [Fact]
+    public async Task EachPlatformHasItsOwnOnlineRowEvenWithTheSameOrderNumber()
+    {
+        var day = new DateOnly(2036, 7, 3);
+        await _database.SeedOrderAsync("Online", "Completed", 100m, Utc(2036, 7, 3, 10, 0), "same-number");
+        await _database.SeedOrderAsync("Online", "Completed", 60m, Utc(2036, 7, 3, 11, 0), "same-number", provider: "trendyol-go");
+        // The refusal belongs to the platform listed second, so it cannot land on the first row by position.
+        await _database.SeedInboxAsync("refused-here", "Rejected", Utc(2036, 7, 3, 12, 0));
+
+        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day));
+
+        report.Days.Should().Equal(
+            new ChannelDayRow(day, "Online", 1, 0, 1, 0, 0, 60m, 50m, 10m, 0m, 0m, 0, "trendyol-go"),
+            new ChannelDayRow(day, "Online", 1, 0, 1, 0, 0, 100m, 83.33m, 16.67m, 0m, 0m, 1, "yemeksepeti"));
         report.Check.IsBalanced.Should().BeTrue();
     }
 

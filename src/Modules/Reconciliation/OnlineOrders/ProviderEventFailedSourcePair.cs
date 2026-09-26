@@ -30,7 +30,7 @@ public sealed class ProviderEventFailedSourcePair : IOnlineOrderSourcePair
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT i.inbox_id, i.external_order_id
+            SELECT i.inbox_id, i.external_order_id, i.provider
             FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome = 'Failed'
               -- V12-RMD-006: a person dismissed this event's case; it is not reopened on every scan.
@@ -45,13 +45,15 @@ public sealed class ProviderEventFailedSourcePair : IOnlineOrderSourcePair
         {
             var inboxId = reader.GetGuid(0);
             var externalOrderId = reader.GetString(1);
+            var provider = reader.GetString(2);
             var details = new OnlineOrderCaseDetails(
-                Kind, OnlineOrderNextAction.ReprocessProviderEvent, ExternalOrderId: externalOrderId, InboxId: inboxId);
+                Kind, OnlineOrderNextAction.ReprocessProviderEvent, ExternalOrderId: externalOrderId, InboxId: inboxId,
+                Provider: provider);
             return new DetectedDiscrepancy(
                 DeduplicationPrefix + inboxId,
                 CaseType.OnlineOrderMismatch,
                 $"online_ordering.provider_inbox:{inboxId}",
-                $"yemeksepeti:order:{externalOrderId}",
+                $"{provider}:order:{externalOrderId}",
                 0m,
                 CaseSeverity.Medium,
                 details.ToJson());

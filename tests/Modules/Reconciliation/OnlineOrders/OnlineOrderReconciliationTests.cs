@@ -65,8 +65,8 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await Scanner().ScanAllAsync();
         await Scanner().ScanAllAsync();
 
-        var unmappedKey = ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + unmapped;
-        var outOfStockKey = ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + outOfStock;
+        var unmappedKey = ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + unmapped;
+        var outOfStockKey = ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + outOfStock;
         (await CasesForKeyAsync(unmappedKey)).Should().Be(1);
         (await CasesForKeyAsync(outOfStockKey)).Should().Be(1);
 
@@ -98,7 +98,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await Scanner(new ProviderAcceptedLocallyRefusedSourcePair(_dataSource)).ScanAllAsync();
 
         foreach (var id in new[] { reprocessed, providerCancelled, cancellationDelivered })
-            (await CasesForKeyAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + id)).Should().Be(0);
+            (await CasesForKeyAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + id)).Should().Be(0);
     }
 
     [Fact]
@@ -175,11 +175,11 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         var cancellation = await _database.SeedStatusUpdateAsync(outOfStock, "pending", attempts: 1);
         await Scanner(new ProviderAcceptedLocallyRefusedSourcePair(_dataSource)).ScanAllAsync();
 
-        var reprocess = await Actions().RetryAsync((await ActiveCaseAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + unmapped)).CaseId, Manager);
+        var reprocess = await Actions().RetryAsync((await ActiveCaseAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + unmapped)).CaseId, Manager);
         reprocess.Outcome.Should().Be(OnlineOrderRetryOutcome.Requeued);
         (await _database.InboxStateAsync(unmappedInbox)).Should().Be(((string?)null, 0));
 
-        var outOfStockCase = await ActiveCaseAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + outOfStock);
+        var outOfStockCase = await ActiveCaseAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + outOfStock);
         (await Actions().RetryAsync(outOfStockCase.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NothingToRetry);
         (await _database.InboxStateAsync(outOfStockInbox)).Outcome.Should().Be("Diverged");
 
@@ -195,7 +195,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         var externalId = NewExternalId();
         var inbox = await _database.SeedInboxAsync(externalId, "Rejected", detail: new { rejection = "UnmappedSku", providerCancellationRequested = false });
         await Scanner(new ProviderAcceptedLocallyRefusedSourcePair(_dataSource)).ScanAllAsync();
-        var record = await ActiveCaseAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + externalId);
+        var record = await ActiveCaseAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + externalId);
         (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.Requeued);
 
         // Intake processes it again and refuses it again, this time asking the provider to cancel. The open
@@ -271,11 +271,11 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         var pair = new ProviderTotalMismatchSourcePair(_dataSource);
         await Scanner(pair).ScanAllAsync();
 
-        var key = ProviderTotalMismatchSourcePair.DeduplicationPrefix + externalId;
+        var key = ProviderTotalMismatchSourcePair.DeduplicationPrefix + "yemeksepeti:" + externalId;
         var record = await ActiveCaseAsync(key);
         record.DiscrepancyAmount.Should().Be(10m);
         record.SourceARef.Should().Be($"orders.orders:{orderId}");
-        (await CasesForKeyAsync(ProviderTotalMismatchSourcePair.DeduplicationPrefix + matching)).Should().Be(0);
+        (await CasesForKeyAsync(ProviderTotalMismatchSourcePair.DeduplicationPrefix + "yemeksepeti:" + matching)).Should().Be(0);
         (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NotRetryable);
 
         (await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Sağlayıcı indirimi, fark kabul edildi.", Manager)).Outcome
@@ -301,7 +301,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         var pair = new ProviderPriceMismatchSourcePair(_dataSource);
         await Scanner(pair).ScanAllAsync();
 
-        var key = ProviderPriceMismatchSourcePair.DeduplicationPrefix + externalId;
+        var key = ProviderPriceMismatchSourcePair.DeduplicationPrefix + "yemeksepeti:" + externalId;
         var record = await ActiveCaseAsync(key);
         record.CaseType.Should().Be(CaseType.OnlineOrderMismatch);
         record.DiscrepancyAmount.Should().Be(11m);
@@ -309,8 +309,8 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         var details = OnlineOrderCaseDetails.TryParse(record.DetailsJson)!;
         details.Kind.Should().Be(OnlineOrderDivergenceKind.ProviderPriceMismatch);
         details.NextAction.Should().Be(OnlineOrderNextAction.SettleWithProvider);
-        (await CasesForKeyAsync(ProviderPriceMismatchSourcePair.DeduplicationPrefix + matching)).Should().Be(0);
-        (await CasesForKeyAsync(ProviderPriceMismatchSourcePair.DeduplicationPrefix + older)).Should().Be(0);
+        (await CasesForKeyAsync(ProviderPriceMismatchSourcePair.DeduplicationPrefix + "yemeksepeti:" + matching)).Should().Be(0);
+        (await CasesForKeyAsync(ProviderPriceMismatchSourcePair.DeduplicationPrefix + "yemeksepeti:" + older)).Should().Be(0);
         (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NotRetryable);
 
         (await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Sağlayıcı kampanyası, fark kabul edildi.", Manager)).Outcome
@@ -365,13 +365,51 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
     }
 
     [Fact]
+    public async Task APlatformsRefusalIsNotHiddenByAnotherPlatformsOrderWithTheSameNumber()
+    {
+        var sharedNumber = NewExternalId();
+        await _database.SeedOnlineOrderAsync(sharedNumber, "Accepted", 90m);
+        await _database.SeedInboxAsync(sharedNumber, "Rejected", detail: new { rejection = "UnmappedSku", providerCancellationRequested = false },
+            provider: "trendyol-go");
+        var pair = new ProviderAcceptedLocallyRefusedSourcePair(_dataSource);
+
+        await Scanner(pair).ScanAllAsync();
+
+        var record = await ActiveCaseAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "trendyol-go:" + sharedNumber);
+        record.SourceBRef.Should().Be($"trendyol-go:order:{sharedNumber}");
+        OnlineOrderCaseDetails.TryParse(record.DetailsJson)!.Provider.Should().Be("trendyol-go");
+        (await CasesForKeyAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + sharedNumber)).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ADeadYemeksepetiUpdateNamesOnlyTheYemeksepetiOrderWithThatNumber()
+    {
+        var sharedNumber = NewExternalId();
+        var yemeksepetiOrder = await _database.SeedOnlineOrderAsync(sharedNumber, "Completed", 120m);
+        await _database.SeedOnlineOrderAsync(sharedNumber, "Completed", 45m, provider: "trendyol-go");
+        var dead = await _database.SeedStatusUpdateAsync(sharedNumber, "dead");
+        var pair = new LocallyAcceptedProviderUnknownSourcePair(_dataSource);
+        var key = LocallyAcceptedProviderUnknownSourcePair.DeduplicationPrefix + dead;
+
+        // One divergence per dead update: the other platform's order with the same number is not a second match.
+        (await pair.ScanAsync()).Where(d => d.DeduplicationKey == key).Should().ContainSingle()
+            .Which.SourceARef.Should().Be($"orders.orders:{yemeksepetiOrder}");
+        await Scanner(pair).ScanAllAsync();
+
+        var record = await ActiveCaseAsync(key);
+        record.SourceARef.Should().Be($"orders.orders:{yemeksepetiOrder}");
+        record.DiscrepancyAmount.Should().Be(120m);
+        OnlineOrderCaseDetails.TryParse(record.DetailsJson)!.Provider.Should().Be("yemeksepeti");
+    }
+
+    [Fact]
     public async Task ADismissedRefusalIsNotOpenedAgain()
     {
         var externalId = NewExternalId();
         await _database.SeedInboxAsync(externalId, "Rejected", detail: new { rejection = "UnmappedSku", providerCancellationRequested = false });
         var pair = new ProviderAcceptedLocallyRefusedSourcePair(_dataSource);
         await Scanner(pair).ScanAllAsync();
-        var key = ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + externalId;
+        var key = ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + externalId;
         var record = await ActiveCaseAsync(key);
 
         await _cases.TransitionCaseStatusAsync(new TransitionCaseStatusRequest(record.CaseId, CaseStatus.Dismissed, record.RowVersion, Manager, "Sağlayıcı test siparişi."));
@@ -516,7 +554,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         // No scan loses its source to a duplicate-key failure (V1-RMD-312).
         scans.SelectMany(s => s).Should().OnlyContain(r => r.FailureReason == null);
         foreach (var id in externalIds)
-            (await CasesForKeyAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + id)).Should().Be(1);
+            (await CasesForKeyAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + "yemeksepeti:" + id)).Should().Be(1);
     }
 
     [Fact]

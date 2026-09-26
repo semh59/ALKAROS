@@ -35,9 +35,10 @@ public sealed class LocallyAcceptedProviderUnknownSourcePair : IOnlineOrderSourc
                 SELECT id, created_at, convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' AS external_order_id
                 FROM outbox_messages
                 WHERE event_type = $1 AND status = 'dead')
-            SELECT d.id, o.source_external_id, o.order_id, o.total
+            SELECT d.id, l.external_order_id, o.order_id, o.total, l.provider
             FROM dead_updates d
-            JOIN orders.orders o ON o.source = 'Online' AND o.source_external_id = d.external_order_id
+            JOIN online_ordering.online_orders l ON l.provider = $3 AND l.external_order_id = d.external_order_id
+            JOIN orders.orders o ON o.order_id = l.order_id
             -- V12-RMD-006: a person dismissed this update's case; it is not reopened on every scan.
             WHERE NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
                               WHERE rc.deduplication_key = $2 || d.id::text AND rc.status = 'Dismissed')
@@ -46,6 +47,7 @@ public sealed class LocallyAcceptedProviderUnknownSourcePair : IOnlineOrderSourc
             """);
         command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventType);
         command.Parameters.AddWithValue(DeduplicationPrefix);
+        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateProvider);
 
         return await OnlineOrderSourceScan.ReadAsync(command, Name, reader =>
         {
@@ -54,7 +56,7 @@ public sealed class LocallyAcceptedProviderUnknownSourcePair : IOnlineOrderSourc
             var orderId = reader.GetGuid(2);
             var details = new OnlineOrderCaseDetails(
                 Kind, OnlineOrderNextAction.ResendProviderUpdate,
-                ExternalOrderId: externalOrderId, OrderId: orderId, OutboxMessageId: messageId);
+                ExternalOrderId: externalOrderId, OrderId: orderId, OutboxMessageId: messageId, Provider: reader.GetString(4));
             return new DetectedDiscrepancy(
                 DeduplicationPrefix + messageId,
                 CaseType.OnlineOrderMismatch,

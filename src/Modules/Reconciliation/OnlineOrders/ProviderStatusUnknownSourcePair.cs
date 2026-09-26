@@ -30,7 +30,7 @@ public sealed class ProviderStatusUnknownSourcePair : IOnlineOrderSourcePair
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT i.inbox_id, i.external_order_id, i.provider_status
+            SELECT i.inbox_id, i.external_order_id, i.provider_status, i.provider
             FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome = 'UnknownStatus'
               AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
@@ -45,14 +45,15 @@ public sealed class ProviderStatusUnknownSourcePair : IOnlineOrderSourcePair
         {
             var inboxId = reader.GetGuid(0);
             var externalOrderId = reader.GetString(1);
+            var provider = reader.GetString(3);
             var details = new OnlineOrderCaseDetails(
                 Kind, OnlineOrderNextAction.SettleWithProvider,
-                ExternalOrderId: externalOrderId, InboxId: inboxId, Reason: reader.GetString(2));
+                ExternalOrderId: externalOrderId, InboxId: inboxId, Reason: reader.GetString(2), Provider: provider);
             return new DetectedDiscrepancy(
                 DeduplicationPrefix + inboxId,
                 CaseType.OnlineOrderMismatch,
                 $"online_ordering.provider_inbox:{inboxId}",
-                $"yemeksepeti:order:{externalOrderId}",
+                $"{provider}:order:{externalOrderId}",
                 0m,
                 CaseSeverity.High,
                 details.ToJson());

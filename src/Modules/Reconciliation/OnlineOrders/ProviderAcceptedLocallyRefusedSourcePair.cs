@@ -36,44 +36,50 @@ public sealed class ProviderAcceptedLocallyRefusedSourcePair : IOnlineOrderSourc
                 SELECT status, convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' AS external_order_id
                 FROM outbox_messages
                 WHERE event_type = $1)
-            SELECT DISTINCT ON (i.external_order_id)
+            SELECT DISTINCT ON (i.provider, i.external_order_id)
                    i.inbox_id, i.external_order_id,
                    COALESCE((i.outcome_detail->>'providerCancellationRequested')::boolean, false),
-                   COALESCE(i.outcome_detail->>'rejection', i.outcome_detail->>'reason')
+                   COALESCE(i.outcome_detail->>'rejection', i.outcome_detail->>'reason'),
+                   i.provider
             FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome IN ('Rejected', 'Diverged')
               AND i.order_id IS NULL
-              AND NOT EXISTS (SELECT 1 FROM orders.orders o
-                              WHERE o.source = 'Online' AND o.source_external_id = i.external_order_id)
+              AND NOT EXISTS (SELECT 1 FROM online_ordering.online_orders l
+                              WHERE l.provider = i.provider AND l.external_order_id = i.external_order_id)
               AND NOT EXISTS (SELECT 1 FROM online_ordering.provider_inbox c
-                              WHERE c.external_order_id = i.external_order_id
+                              WHERE c.provider = i.provider AND c.external_order_id = i.external_order_id
                                 AND c.processing_outcome = 'CancelledBeforeOrder')
-              AND NOT EXISTS (SELECT 1 FROM status_updates u
-                              WHERE u.status = 'dispatched' AND u.external_order_id = i.external_order_id)
+              AND NOT (i.provider = $3
+                       AND EXISTS (SELECT 1 FROM status_updates u
+                                   WHERE u.status = 'dispatched' AND u.external_order_id = i.external_order_id))
               AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
-                              WHERE rc.deduplication_key = $2 || i.external_order_id AND rc.status = 'Dismissed')
-            ORDER BY i.external_order_id, i.received_at DESC
+                              WHERE rc.deduplication_key = $2 || i.provider || ':' || i.external_order_id
+                                AND rc.status = 'Dismissed')
+            ORDER BY i.provider, i.external_order_id, i.received_at DESC
             LIMIT {OnlineOrderSourceScan.MaxScanRows + 1};
             """);
         command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateEventType);
         command.Parameters.AddWithValue(DeduplicationPrefix);
+        command.Parameters.AddWithValue(OnlineOrderSourceScan.StatusUpdateProvider);
 
         return await OnlineOrderSourceScan.ReadAsync(command, Name, reader =>
         {
             var inboxId = reader.GetGuid(0);
             var externalOrderId = reader.GetString(1);
             var cancellationRequested = reader.GetBoolean(2);
+            var provider = reader.GetString(4);
             var details = new OnlineOrderCaseDetails(
                 Kind,
                 cancellationRequested ? OnlineOrderNextAction.ResendProviderCancellation : OnlineOrderNextAction.ReprocessProviderEvent,
                 ExternalOrderId: externalOrderId,
                 InboxId: inboxId,
-                Reason: reader.IsDBNull(3) ? null : reader.GetString(3));
+                Reason: reader.IsDBNull(3) ? null : reader.GetString(3),
+                Provider: provider);
             return new DetectedDiscrepancy(
-                DeduplicationPrefix + externalOrderId,
+                $"{DeduplicationPrefix}{provider}:{externalOrderId}",
                 CaseType.OnlineOrderMismatch,
                 $"online_ordering.provider_inbox:{inboxId}",
-                $"yemeksepeti:order:{externalOrderId}",
+                $"{provider}:order:{externalOrderId}",
                 0m,
                 CaseSeverity.High,
                 details.ToJson());

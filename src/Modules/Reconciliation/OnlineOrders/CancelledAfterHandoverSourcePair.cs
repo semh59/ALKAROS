@@ -32,7 +32,7 @@ public sealed class CancelledAfterHandoverSourcePair : IOnlineOrderSourcePair
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT DISTINCT ON (i.outcome_detail->>'evidenceId')
-                   i.outcome_detail->>'evidenceId', i.external_order_id, i.order_id, o.total
+                   i.outcome_detail->>'evidenceId', i.external_order_id, i.order_id, o.total, i.provider
             FROM online_ordering.provider_inbox i
             JOIN orders.orders o ON o.order_id = i.order_id
             WHERE i.processing_outcome = 'Diverged'
@@ -51,14 +51,15 @@ public sealed class CancelledAfterHandoverSourcePair : IOnlineOrderSourcePair
             var evidenceId = reader.GetString(0);
             var externalOrderId = reader.GetString(1);
             var orderId = reader.GetGuid(2);
+            var provider = reader.GetString(4);
             var details = new OnlineOrderCaseDetails(
                 Kind, OnlineOrderNextAction.SettleWithProvider,
-                ExternalOrderId: externalOrderId, OrderId: orderId, Reason: evidenceId);
+                ExternalOrderId: externalOrderId, OrderId: orderId, Reason: evidenceId, Provider: provider);
             return new DetectedDiscrepancy(
                 DeduplicationPrefix + evidenceId,
                 CaseType.OnlineOrderMismatch,
                 $"orders.orders:{orderId}",
-                $"yemeksepeti:order:{externalOrderId}",
+                $"{provider}:order:{externalOrderId}",
                 reader.GetDecimal(3),
                 CaseSeverity.Critical,
                 details.ToJson());

@@ -44,7 +44,8 @@ public sealed class OnlineOrderReconciliationTestDatabase : PgTestDatabase
     }
 
     public async Task<Guid> SeedInboxAsync(
-        string externalOrderId, string outcome, Guid? orderId = null, object? detail = null, int attempts = 0)
+        string externalOrderId, string outcome, Guid? orderId = null, object? detail = null, int attempts = 0,
+        string provider = "yemeksepeti")
     {
         var inboxId = Guid.NewGuid();
         var eventKey = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(inboxId.ToString()))).ToLowerInvariant();
@@ -53,7 +54,7 @@ public sealed class OnlineOrderReconciliationTestDatabase : PgTestDatabase
             INSERT INTO online_ordering.provider_inbox
                 (provider, inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
                  processed_at, processing_outcome, order_id, outcome_detail, processing_attempts)
-            VALUES ('yemeksepeti', $1, $2, $3, 'RECEIVED', $2, '\x00'::bytea, now(), $4, $5, $6::jsonb, $7);
+            VALUES ($8, $1, $2, $3, 'RECEIVED', $2, '\x00'::bytea, now(), $4, $5, $6::jsonb, $7);
             """);
         command.Parameters.AddWithValue(inboxId);
         command.Parameters.AddWithValue(eventKey);
@@ -62,24 +63,31 @@ public sealed class OnlineOrderReconciliationTestDatabase : PgTestDatabase
         command.Parameters.AddWithValue(orderId is { } id ? id : DBNull.Value);
         command.Parameters.AddWithValue(detail is null ? DBNull.Value : JsonSerializer.Serialize(detail));
         command.Parameters.AddWithValue(attempts);
+        command.Parameters.AddWithValue(provider);
         await command.ExecuteNonQueryAsync();
         return inboxId;
     }
 
-    public async Task<Guid> SeedOnlineOrderAsync(string externalOrderId, string status, decimal total)
+    public async Task<Guid> SeedOnlineOrderAsync(string externalOrderId, string status, decimal total, string provider = "yemeksepeti")
     {
         var orderId = Guid.NewGuid();
+        // V12-REC-002: an online order is linked to its platform (V12-ONL-006), as intake does.
         await using var command = DataSource.CreateCommand(
             """
-            INSERT INTO orders.orders
-                (order_id, source, source_external_id, status, confirmation_status, order_number, total, created_at, updated_at)
-            VALUES ($1, 'Online', $2, $3, 'Accepted', $4, $5, now(), now());
+            WITH created AS (
+                INSERT INTO orders.orders
+                    (order_id, source, source_external_id, status, confirmation_status, order_number, total, created_at, updated_at)
+                VALUES ($1, 'Online', $2, $3, 'Accepted', $4, $5, now(), now())
+                RETURNING order_id)
+            INSERT INTO online_ordering.online_orders (order_id, provider, external_order_id)
+            SELECT order_id, $6, $2 FROM created;
             """);
         command.Parameters.AddWithValue(orderId);
         command.Parameters.AddWithValue(externalOrderId);
         command.Parameters.AddWithValue(status);
         command.Parameters.AddWithValue("YS-" + orderId.ToString("N")[..12]);
         command.Parameters.AddWithValue(total);
+        command.Parameters.AddWithValue(provider);
         await command.ExecuteNonQueryAsync();
         return orderId;
     }

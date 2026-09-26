@@ -94,7 +94,7 @@ public sealed class OnlineOrderReconciliationHttpTests : IAsyncLifetime
         Assert.All(results.EnumerateArray(), r => Assert.Equal(JsonValueKind.Null, r.GetProperty("failureReason").ValueKind));
 
         var caseId = await _database.ScalarAsync<Guid>(
-            $"SELECT case_id FROM reconciliation.cases WHERE deduplication_key = 'online-order:provider-accepted-locally-refused:{externalOrderId}';");
+            $"SELECT case_id FROM reconciliation.cases WHERE deduplication_key = 'online-order:provider-accepted-locally-refused:yemeksepeti:{externalOrderId}';");
 
         using var stillDiverged = await supervisor.PostAsJsonAsync($"{BasePath}/cases/{caseId}/resolve", new { expectedVersion = 1, note = "Eşleme düzeltildi." });
         Assert.Equal(HttpStatusCode.Conflict, stillDiverged.StatusCode);
@@ -125,8 +125,12 @@ public sealed class OnlineOrderReconciliationHttpTests : IAsyncLifetime
         // Intake then creates the order: the provider and the restaurant agree again.
         await _database.ExecuteAsync(
             """
-            INSERT INTO orders.orders (order_id, source, source_external_id, status, confirmation_status, order_number, created_at, updated_at)
-            VALUES (gen_random_uuid(), 'Online', @external, 'Accepted', 'Accepted', @number, now(), now());
+            WITH created AS (
+                INSERT INTO orders.orders (order_id, source, source_external_id, status, confirmation_status, order_number, created_at, updated_at)
+                VALUES (gen_random_uuid(), 'Online', @external, 'Accepted', 'Accepted', @number, now(), now())
+                RETURNING order_id)
+            INSERT INTO online_ordering.online_orders (order_id, provider, external_order_id)
+            SELECT order_id, 'yemeksepeti', @external FROM created;
             """,
             ("external", externalOrderId), ("number", "YS-" + externalOrderId));
         using var resolved = await supervisor.PostAsJsonAsync($"{BasePath}/cases/{caseId}/resolve", new { expectedVersion = 2, note = "Eşleme düzeltildi, sipariş oluştu." });

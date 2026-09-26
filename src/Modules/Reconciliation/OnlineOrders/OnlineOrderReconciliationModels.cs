@@ -62,7 +62,8 @@ public sealed record OnlineOrderCaseDetails(
     Guid? OutboxMessageId = null,
     string? Channel = null,
     Guid? ProductId = null,
-    string? Reason = null)
+    string? Reason = null,
+    string? Provider = null)
 {
     private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web)
     {

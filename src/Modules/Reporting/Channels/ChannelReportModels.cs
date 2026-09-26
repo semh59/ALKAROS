@@ -75,7 +75,8 @@ public sealed record ChannelDayRow(
     decimal AcceptedTaxValue,
     decimal AcceptedDiscount,
     decimal CancelledValue,
-    int ProviderRefused);
+    int ProviderRefused,
+    string? Provider = null);
 
 /// <summary>
 /// The reconciliation difference for online orders (V0-DOM-008 "Reconciliation backlog": open cases,

@@ -31,12 +31,12 @@ public sealed class ProviderPriceMismatchSourcePair : IOnlineOrderSourcePair
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT i.external_order_id, i.order_id, (i.outcome_detail->>'priceDifferenceAmount')::numeric
+            SELECT i.external_order_id, i.order_id, (i.outcome_detail->>'priceDifferenceAmount')::numeric, i.provider
             FROM online_ordering.provider_inbox i
             WHERE i.processing_outcome = 'OrderCreated'
               AND i.outcome_detail->>'pricesMatch' = 'false'
               AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
-                              WHERE rc.deduplication_key = $1 || i.external_order_id
+                              WHERE rc.deduplication_key = $1 || i.provider || ':' || i.external_order_id
                                 AND rc.status IN ('Resolved', 'Dismissed'))
             ORDER BY i.received_at, i.inbox_id
             LIMIT {OnlineOrderSourceScan.MaxScanRows + 1};
@@ -48,13 +48,15 @@ public sealed class ProviderPriceMismatchSourcePair : IOnlineOrderSourcePair
             var externalOrderId = reader.GetString(0);
             var orderId = reader.GetGuid(1);
             var amount = reader.GetDecimal(2);
+            var platform = reader.GetString(3);
             var details = new OnlineOrderCaseDetails(
-                Kind, OnlineOrderNextAction.SettleWithProvider, ExternalOrderId: externalOrderId, OrderId: orderId);
+                Kind, OnlineOrderNextAction.SettleWithProvider, ExternalOrderId: externalOrderId, OrderId: orderId,
+                Provider: platform);
             return new DetectedDiscrepancy(
-                DeduplicationPrefix + externalOrderId,
+                $"{DeduplicationPrefix}{platform}:{externalOrderId}",
                 CaseType.OnlineOrderMismatch,
                 $"orders.orders:{orderId}",
-                $"yemeksepeti:order:{externalOrderId}",
+                $"{platform}:order:{externalOrderId}",
                 amount,
                 CaseSeverity.Medium,
                 details.ToJson());

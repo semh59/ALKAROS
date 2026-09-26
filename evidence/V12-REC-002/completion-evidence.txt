@@ -1,0 +1,33 @@
+V12-REC-002 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 8b8c9d57.
+
+Changes:
+- Order-number keyed cases (refused locally, total difference, price difference) carry the platform in the key
+  ("...:{provider}:{number}"), in SourceBRef ("{provider}:order:{number}") and in the details (Provider).
+- Local orders are matched through online_ordering.online_orders by (platform, number): a refusal on one platform
+  is no longer hidden by another platform's order with the same number; a dead Yemeksepeti status update names
+  only the Yemeksepeti order. Every online case's details carry the platform.
+- The cancelled-after-handover evidence id includes the platform.
+- Channel report: online rows and provider refusals are split per platform (ChannelDayRow.Provider); rows without
+  a platform link keep Provider null.
+- No live data exists (V0-YSP-001 Blocked), so no case keys needed migrating.
+
+Honest limit: the evidence id's platform part has no test of two platforms colliding; provider cancellations
+reach the sync only from the Yemeksepeti inbox today, so no second platform can produce that evidence yet.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Reconciliation.OnlineOrders 24/24 (+2), Reconciliation.CaseFoundation 9/9, Reporting.Channels 8/8 (+2),
+  Host Reconciliation 12/12, Host OnlineOrdering 64/64, Architecture 9/9
+- consistency_audit clean; plan_audit validate 0/0
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 8/8 killed; S5 and S8 survived the
+first run and were killed after the tests were strengthened):
+KILLED S1 refusal hidden by another platform's order
+KILLED S2 refusal key without the platform
+KILLED S3 total-difference key without the platform
+KILLED S4 price-difference key without the platform
+KILLED S5 dead update joins every platform's order
+KILLED S6 report rows lose the platform
+KILLED S7 refusal lands on any online row of the day
+KILLED S8 refusal hidden by another platform's order (report)

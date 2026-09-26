@@ -34,7 +34,9 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
     }
 
     /// <summary>An order whose stored amounts follow the Order aggregate: net = subtotal - discount, gross = net + tax (20%).</summary>
-    public async Task SeedOrderAsync(string source, string status, decimal total, DateTimeOffset createdAt, string? externalOrderId = null, decimal discount = 0m)
+    public async Task SeedOrderAsync(
+        string source, string status, decimal total, DateTimeOffset createdAt, string? externalOrderId = null, decimal discount = 0m,
+        string provider = "yemeksepeti")
     {
         var orderId = Guid.NewGuid();
         await using var command = DataSource.CreateCommand(
@@ -54,9 +56,20 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
         command.Parameters.AddWithValue(Math.Round(total / 1.2m, 2));
         command.Parameters.AddWithValue(discount);
         await command.ExecuteNonQueryAsync();
+
+        // V12-REC-002: an online order with a platform number is linked to its platform (V12-ONL-006).
+        if (source == "Online" && externalOrderId is not null)
+        {
+            await using var link = DataSource.CreateCommand(
+                "INSERT INTO online_ordering.online_orders (order_id, provider, external_order_id) VALUES ($1, $2, $3);");
+            link.Parameters.AddWithValue(orderId);
+            link.Parameters.AddWithValue(provider);
+            link.Parameters.AddWithValue(externalOrderId);
+            await link.ExecuteNonQueryAsync();
+        }
     }
 
-    public async Task SeedInboxAsync(string externalOrderId, string outcome, DateTimeOffset receivedAt)
+    public async Task SeedInboxAsync(string externalOrderId, string outcome, DateTimeOffset receivedAt, string provider = "yemeksepeti")
     {
         var inboxId = Guid.NewGuid();
         var key = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(inboxId.ToString()))).ToLowerInvariant();
@@ -65,13 +78,14 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
             INSERT INTO online_ordering.provider_inbox
                 (provider, inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope,
                  received_at, processed_at, processing_outcome, outcome_detail)
-            VALUES ('yemeksepeti', $1, $2, $3, 'RECEIVED', $2, '\x00'::bytea, $4, $4, $5, '{}'::jsonb);
+            VALUES ($6, $1, $2, $3, 'RECEIVED', $2, '\x00'::bytea, $4, $4, $5, '{}'::jsonb);
             """);
         command.Parameters.AddWithValue(inboxId);
         command.Parameters.AddWithValue(key);
         command.Parameters.AddWithValue(externalOrderId);
         command.Parameters.AddWithValue(receivedAt.UtcDateTime);
         command.Parameters.AddWithValue(outcome);
+        command.Parameters.AddWithValue(provider);
         await command.ExecuteNonQueryAsync();
     }
 
