@@ -201,6 +201,8 @@ public sealed class RecipeCostSnapshotEndpointFilter : IEndpointFilter
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu tarihte bir maliyet anlık görüntüsü zaten var."),
             MissingCostBasisException =>
                 (StatusCodes.Status400BadRequest, "MISSING_COST_BASIS", "Bir malzeme için maliyet verisi bulunamadı."),
+            MissingStockUnitMappingException =>
+                (StatusCodes.Status400BadRequest, "MISSING_STOCK_UNIT_MAPPING", "Bir malzeme için stok takip birimi belirtilmedi."),
             InvalidCostSnapshotException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>

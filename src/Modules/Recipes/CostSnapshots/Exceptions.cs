@@ -36,3 +36,20 @@ public sealed class MissingCostBasisException : RecipeCostSnapshotException
     public MissingCostBasisException(Guid stockItemId, DateOnly date)
         : base($"Cost basis could not be resolved for stock item '{stockItemId}' on or before {date:yyyy-MM-dd}.") { }
 }
+
+/// <summary>
+/// V1-RMD-333 (independent 2026-09-26 audit, orta seviye bulgu): before this, an ingredient
+/// missing from CreateSnapshotCommand.StockItemUnits silently defaulted to the recipe's own
+/// native unit as the STOCK unit too — RecipeCostSnapshotEndpoints.cs's own doc comment
+/// deliberately keeps this service without a direct Inventory dependency (V0-ARC-001), so it
+/// cannot look the real tracking unit up itself. When the native unit and the real stock
+/// tracking unit differ by a conversion factor (e.g. "kg" vs "g"), that silent default computed
+/// a snapshot cost off by exactly that factor with no error at all. Failing loud here, instead
+/// of computing a wrong number with total confidence, is the only safe option within the
+/// module's own approved boundary.
+/// </summary>
+public sealed class MissingStockUnitMappingException : RecipeCostSnapshotException
+{
+    public MissingStockUnitMappingException(Guid stockItemId)
+        : base($"No stock tracking unit was supplied for stock item '{stockItemId}'; refusing to assume it matches the recipe's own native unit.") { }
+}

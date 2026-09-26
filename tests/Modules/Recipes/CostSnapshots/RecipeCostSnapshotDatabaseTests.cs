@@ -189,13 +189,31 @@ VALUES ($1, $2, 'Fresh Tomatoes', 'RawMaterial', 'kg', true, 1);";
     [Fact]
     public async Task MissingCostBasisWithoutFallbackThrowsMissingCostBasisException()
     {
+        var (_, versionId, stockItemId) = await SeedRecipeAndItemAsync();
+
+        var act = async () => await _service.CreateSnapshotAsync(new CreateSnapshotCommand(
+            RecipeVersionId: versionId,
+            CostBasisDate: new DateOnly(2026, 8, 1),
+            StockItemUnits: new Dictionary<Guid, string> { [stockItemId] = "kg" }));
+
+        await act.Should().ThrowAsync<MissingCostBasisException>();
+    }
+
+    // V1-RMD-333 (independent 2026-09-26 audit, orta seviye bulgu): before this, omitting the
+    // stock unit mapping silently defaulted to the ingredient's own native unit ("g" here) even
+    // though the real inventory.stock_items row (seeded above) tracks in "kg" - a silent 1000x
+    // cost error. Now it fails loud instead.
+    [Fact]
+    public async Task OmittingTheStockUnitMappingRefusesInsteadOfSilentlyAssumingTheNativeUnitIsCorrect()
+    {
         var (_, versionId, _) = await SeedRecipeAndItemAsync();
 
         var act = async () => await _service.CreateSnapshotAsync(new CreateSnapshotCommand(
             RecipeVersionId: versionId,
-            CostBasisDate: new DateOnly(2026, 8, 1)));
+            CostBasisDate: new DateOnly(2026, 8, 1),
+            FallbackItemCosts: new Dictionary<Guid, decimal> { }));
 
-        await act.Should().ThrowAsync<MissingCostBasisException>();
+        await act.Should().ThrowAsync<MissingStockUnitMappingException>();
     }
 
     [Fact]

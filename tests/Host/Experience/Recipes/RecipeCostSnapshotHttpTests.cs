@@ -57,7 +57,9 @@ public sealed class RecipeCostSnapshotHttpTests : IAsyncLifetime
         var itemId = await _database.SeedStockItemAsync("RMD247-AUTH");
         var versionId = await _database.SeedRecipeVersionAsync(itemId, ingredientQuantityPerYield: 1m);
         var body = new CreateRecipeCostSnapshotV1(
-            new DateOnly(2026, 1, 1), FallbackItemCosts: new Dictionary<Guid, decimal> { [itemId] = 10m });
+            new DateOnly(2026, 1, 1),
+            StockItemUnits: new Dictionary<Guid, string> { [itemId] = "kg" },
+            FallbackItemCosts: new Dictionary<Guid, decimal> { [itemId] = 10m });
 
         using var anonymous = CreateClient(null);
         using var unauthorized = await anonymous.PostAsJsonAsync($"/api/v1/management/recipes/{versionId:D}/cost-snapshots/", body);
@@ -81,7 +83,9 @@ public sealed class RecipeCostSnapshotHttpTests : IAsyncLifetime
         using var response = await client.PostAsJsonAsync(
             $"/api/v1/management/recipes/{versionId:D}/cost-snapshots/",
             new CreateRecipeCostSnapshotV1(
-                new DateOnly(2026, 1, 1), FallbackItemCosts: new Dictionary<Guid, decimal> { [itemId] = 20m }));
+                new DateOnly(2026, 1, 1),
+                StockItemUnits: new Dictionary<Guid, string> { [itemId] = "kg" },
+                FallbackItemCosts: new Dictionary<Guid, decimal> { [itemId] = 20m }));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var snapshot = await response.Content.ReadFromJsonAsync<RecipeCostSnapshotV1>();
@@ -103,7 +107,9 @@ public sealed class RecipeCostSnapshotHttpTests : IAsyncLifetime
         var versionId = await _database.SeedRecipeVersionAsync(itemId, ingredientQuantityPerYield: 1m);
         using var client = CreateClient(RecipeCostSnapshotTestDatabase.ManagerToken);
         var body = new CreateRecipeCostSnapshotV1(
-            new DateOnly(2026, 1, 1), FallbackItemCosts: new Dictionary<Guid, decimal> { [itemId] = 5m });
+            new DateOnly(2026, 1, 1),
+            StockItemUnits: new Dictionary<Guid, string> { [itemId] = "kg" },
+            FallbackItemCosts: new Dictionary<Guid, decimal> { [itemId] = 5m });
 
         using var first = await client.PostAsJsonAsync($"/api/v1/management/recipes/{versionId:D}/cost-snapshots/", body);
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
@@ -121,9 +127,33 @@ public sealed class RecipeCostSnapshotHttpTests : IAsyncLifetime
 
         using var response = await client.PostAsJsonAsync(
             $"/api/v1/management/recipes/{versionId:D}/cost-snapshots/",
-            new CreateRecipeCostSnapshotV1(new DateOnly(2026, 1, 1)));
+            new CreateRecipeCostSnapshotV1(
+                new DateOnly(2026, 1, 1),
+                StockItemUnits: new Dictionary<Guid, string> { [itemId] = "kg" }));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    // V1-RMD-333 (independent 2026-09-26 audit, orta seviye bulgu): before this, omitting
+    // StockItemUnits entirely silently defaulted to the ingredient's own native unit - here
+    // that happens to equal the seeded stock item's real tracking unit ("kg"), which is exactly
+    // why the gap was invisible to every earlier test of this endpoint. Now it fails loud with
+    // its own distinct error code instead of ever risking a silently wrong cost.
+    [Fact]
+    public async Task OmittingTheStockUnitMappingIsRejectedWithItsOwnErrorCode()
+    {
+        var itemId = await _database.SeedStockItemAsync("RMD333-NOUNIT");
+        var versionId = await _database.SeedRecipeVersionAsync(itemId, ingredientQuantityPerYield: 1m);
+        using var client = CreateClient(RecipeCostSnapshotTestDatabase.ManagerToken);
+
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/recipes/{versionId:D}/cost-snapshots/",
+            new CreateRecipeCostSnapshotV1(
+                new DateOnly(2026, 1, 1), FallbackItemCosts: new Dictionary<Guid, decimal> { [itemId] = 5m }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var text = await response.Content.ReadAsStringAsync();
+        Assert.Contains("MISSING_STOCK_UNIT_MAPPING", text);
     }
 
     [Fact]

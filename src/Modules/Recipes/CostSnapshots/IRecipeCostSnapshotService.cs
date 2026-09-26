@@ -66,10 +66,12 @@ public sealed class RecipeCostSnapshotService : IRecipeCostSnapshotService
             // 1. Loss percentage -> waste factor (V0-DOM-010: LossPercentage 5 -> 0.05)
             var wasteFactor = ingredient.LossPercentage / 100m;
 
-            // 2. Determine stock tracking unit (defaults to native unit if not mapped)
-            var stockUnit = command.StockItemUnits != null && command.StockItemUnits.TryGetValue(stockItemId, out var mappedUnit)
-                ? mappedUnit
-                : ingredient.UnitCode;
+            // 2. Determine stock tracking unit. V1-RMD-333: this used to default to the
+            // recipe's own native unit when the caller omitted a mapping — silently wrong
+            // whenever the real stock tracking unit differs (see MissingStockUnitMappingException's
+            // own doc comment). No default: every ingredient's real stock unit must be supplied.
+            if (command.StockItemUnits is null || !command.StockItemUnits.TryGetValue(stockItemId, out var stockUnit))
+                throw new MissingStockUnitMappingException(stockItemId);
 
             // 3. Order-of-operations (CORR:C9, V0-DOM-010):
             // Effective native quantity = raw_quantity * (1 + waste_factor)
