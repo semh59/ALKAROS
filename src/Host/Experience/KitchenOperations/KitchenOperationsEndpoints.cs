@@ -631,6 +631,12 @@ public sealed class KitchenOperationsExceptionFilter : IEndpointFilter
             or UnauthorizedReprintException
             or InvalidPrinterConfigurationException =>
             (409, "DOMAIN_CONFLICT", "İşlem mevcut durumla çakışıyor."),
+        // V1-RMD-339: the reprint-approval endpoint now actually attempts the physical print
+        // (ApproveReprintAsync). A transport failure already moves the delivery itself back to
+        // Unknown (self-healing - a manager can simply approve again), so this is a real,
+        // actionable-by-retry condition, not a 500.
+        PrinterUnreachableException or PrinterTransmissionUncertainException =>
+            (503, "PRINTER_UNREACHABLE", "Yazıcıya ulaşılamadı; yeniden basım onayı tekrar denenebilir."),
         BackupProviderUnavailableException =>
             (503, "BACKUP_NOT_CONFIGURED", "Doğrulanmış production yedek sağlayıcısı yapılandırılmamış."),
         BackupExecutionException =>

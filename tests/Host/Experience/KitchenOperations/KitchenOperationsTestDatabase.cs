@@ -84,7 +84,13 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
         return $"alkaros.cashier={rawToken}";
     }
 
-    public async Task<KitchenSeed> SeedKitchenGraphAsync()
+    /// <summary>
+    /// V1-RMD-339: <paramref name="printerIpAddress"/>/<paramref name="printerPort"/> let a caller
+    /// point the seeded printer at a real loopback TCP listener (see
+    /// TcpEscPosPrinterTransportTests's own pattern) instead of the unreachable default, so a
+    /// reprint-approval test can exercise ApproveReprintAsync's now-real execution end to end.
+    /// </summary>
+    public async Task<KitchenSeed> SeedKitchenGraphAsync(string printerIpAddress = "10.0.0.8", int printerPort = 9100)
     {
         var orderId = Guid.NewGuid();
         var ticketId = Guid.NewGuid();
@@ -127,7 +133,7 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
                     'Test soup', 2, 'Extra herbs', 'az tuz, acisiz', 'Queued', 1, now());
 
             INSERT INTO kitchen.printers (id, name, station_id, ip_address, port, is_active, created_at)
-            VALUES ('{{printerId:D}}', 'Hot line printer', 'hot-line', '10.0.0.8', 9100, TRUE, now());
+            VALUES ('{{printerId:D}}', 'Hot line printer', 'hot-line', '{{printerIpAddress}}', {{printerPort}}, TRUE, now());
 
             INSERT INTO kitchen.printer_routes (id, route_level, printer_id, is_active, created_at)
             VALUES ('{{routeId:D}}', 'Default', '{{printerId:D}}', TRUE, now());

@@ -1,5 +1,8 @@
+using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
+using System.Net.Sockets;
+using System.Text;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Settings.KitchenDenseModeThreshold;
@@ -345,14 +348,35 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(15, afterChange!.DenseModeThreshold);
     }
 
+    /// <summary>
+    /// V1-RMD-339 (independent 2026-09-26 audit, orta seviye bulgu): before this,
+    /// approving a reprint left the delivery permanently stuck at ReprintApproved -
+    /// nothing anywhere ever called ExecuteApprovedReprintAsync, so the physical
+    /// printer never actually received the reprint. The seeded printer here points
+    /// at a REAL loopback TCP listener (same pattern TcpEscPosPrinterTransportTests
+    /// uses), so this proves the reprint genuinely reaches a socket end to end, not
+    /// just that a domain field flips.
+    /// </summary>
     [Fact]
-    public async Task UnknownDeliveryRequiresReasonedReprintApprovalAndNeverAutoPrints()
+    public async Task UnknownDeliveryRequiresReasonedReprintApprovalAndTheApprovalActuallyReprintsIt()
     {
+        // V1-RMD-339: the seeded printer also has a pending print_jobs row for the SAME
+        // printer, which KitchenPrintDispatchHostedService's own background poll (started
+        // by StartAsync() below, no fixed delay before its first tick) races to dispatch to
+        // this same loopback listener before the reprint-approval HTTP call even fires -
+        // this collects EVERY connection the listener receives during the test, not just one.
+        using var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+        var receivedConnections = new System.Collections.Concurrent.ConcurrentBag<byte[]>();
+        using var acceptCts = new CancellationTokenSource();
+        var acceptLoopTask = AcceptAllUntilCancelledAsync(listener, receivedConnections, acceptCts.Token);
+
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedSessionAsync(
             terminalId,
             [KitchenOperationsEndpoints.ReprintPermission]);
-        var seed = await _database.SeedKitchenGraphAsync();
+        var seed = await _database.SeedKitchenGraphAsync(IPAddress.Loopback.ToString(), port);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
@@ -379,12 +403,105 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
             $"{Prefix(terminalId)}/deliveries/{seed.DeliveryId:D}/reprint-approval",
             cookie,
             new ReprintDecisionV1("Station checked; original ticket was not printed."));
-        Assert.Equal("ReprintApproved", approved.Status);
+        Assert.Equal("Reprinted", approved.Status);
         Assert.True(approved.IsReprint);
         Assert.Equal(
-            "ReprintApproved",
+            "Reprinted",
             await _database.ScalarAsync<string>(
                 "SELECT status FROM kitchen.physical_print_deliveries WHERE id = '" + seed.DeliveryId + "';"));
+
+        // Give the accept loop a moment to pick up the reprint's own connection (it may
+        // race after the background dispatcher's), then stop it and inspect everything
+        // the listener actually received.
+        await Task.Delay(500);
+        acceptCts.Cancel();
+        try { await acceptLoopTask; } catch (OperationCanceledException) { }
+        var allReceivedText = string.Join(
+            "\n", receivedConnections.Select(bytes => Encoding.UTF8.GetString(bytes)));
+        Assert.Contains("Station checked; original ticket was not printed.", allReceivedText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// V1-RMD-339: a printer that cannot be reached must not leave the manager's
+    /// approval silently swallowed - the endpoint reports it (503) and the domain's
+    /// own self-healing (MarkReprintUnknown) means a retry after fixing the printer
+    /// is simply approving again, not a stuck record.
+    /// </summary>
+    [Fact]
+    public async Task WhenThePrinterCannotBeReachedTheApprovalReportsItAndTheDeliveryGoesBackToUnknown()
+    {
+        using var refusedPortProbe = new TcpListener(IPAddress.Loopback, 0);
+        refusedPortProbe.Start();
+        var unreachablePort = ((IPEndPoint)refusedPortProbe.LocalEndpoint).Port;
+        refusedPortProbe.Stop();
+
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(
+            terminalId,
+            [KitchenOperationsEndpoints.ReprintPermission]);
+        var seed = await _database.SeedKitchenGraphAsync(IPAddress.Loopback.ToString(), unreachablePort);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/deliveries/{seed.DeliveryId:D}/reprint-approval",
+            cookie,
+            new ReprintDecisionV1("Station checked; original ticket was not printed.")));
+
+        Assert.Equal((HttpStatusCode)503, response.StatusCode);
+        Assert.Equal(
+            "Unknown",
+            await _database.ScalarAsync<string>(
+                "SELECT status FROM kitchen.physical_print_deliveries WHERE id = '" + seed.DeliveryId + "';"));
+    }
+
+    /// <summary>Accepts every connection the listener receives until cancelled, reading each fully.</summary>
+    private static async Task AcceptAllUntilCancelledAsync(
+        TcpListener listener, System.Collections.Concurrent.ConcurrentBag<byte[]> received, CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+        {
+            TcpClient connection;
+            try
+            {
+                connection = await listener.AcceptTcpClientAsync(ct);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+
+            _ = ReadOneConnectionAsync(connection, received, ct);
+        }
+    }
+
+    private static async Task ReadOneConnectionAsync(
+        TcpClient connection, System.Collections.Concurrent.ConcurrentBag<byte[]> received, CancellationToken ct)
+    {
+        using var owned = connection;
+        using var stream = owned.GetStream();
+        using var buffer = new MemoryStream();
+        var chunk = new byte[4096];
+        try
+        {
+            int read;
+            while ((read = await stream.ReadAsync(chunk.AsMemory(), ct)) > 0)
+                buffer.Write(chunk, 0, read);
+        }
+        catch (IOException)
+        {
+            // The client (TcpEscPosPrinterTransport) closes the socket right after
+            // writing, which can surface here as a reset instead of a clean EOF.
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        received.Add(buffer.ToArray());
     }
 
     [Fact]

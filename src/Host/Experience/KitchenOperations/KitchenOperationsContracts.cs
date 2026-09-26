@@ -265,6 +265,7 @@ public sealed class KitchenOperationsForbiddenException : Exception
 public sealed class KitchenOperationsNotFoundException : Exception
 {
     public KitchenOperationsNotFoundException(string message) : base(message) { }
+    public KitchenOperationsNotFoundException(string message, Exception innerException) : base(message, innerException) { }
 }
 
 public sealed class KitchenOperationsConcurrencyException : Exception

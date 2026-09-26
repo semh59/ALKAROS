@@ -38,6 +38,8 @@ public sealed class KitchenOperationsStore
     private readonly NpgsqlDataSource _dataSource;
     private readonly CatalogManagementStore _catalog;
     private readonly IAuthorizationGrantRepository _grants;
+    private readonly IPhysicalPrintRecoveryService _recovery;
+    private readonly IPrinterTransport _printerTransport;
 
     public KitchenOperationsStore(
         IKitchenTicketRepository tickets,
@@ -55,6 +57,8 @@ public sealed class KitchenOperationsStore
         NpgsqlDataSource dataSource,
         CatalogManagementStore catalog,
         IAuthorizationGrantRepository grants,
+        IPhysicalPrintRecoveryService recovery,
+        IPrinterTransport printerTransport,
         WebPushSender? push = null)
     {
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
@@ -89,6 +93,13 @@ public sealed class KitchenOperationsStore
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
         _grants = grants ?? throw new ArgumentNullException(nameof(grants));
+        // V1-RMD-339 (independent 2026-09-26 audit, orta seviye bulgu): ApproveReprintAsync/
+        // RejectReprintAsync used to duplicate IPhysicalPrintRecoveryService's own domain
+        // transitions directly against _deliveries instead of calling the service - and nothing
+        // anywhere ever called ExecuteApprovedReprintAsync, so an approved reprint had no way to
+        // actually reach the printer. See ApproveReprintAsync's own doc comment.
+        _recovery = recovery ?? throw new ArgumentNullException(nameof(recovery));
+        _printerTransport = printerTransport ?? throw new ArgumentNullException(nameof(printerTransport));
     }
 
     public async Task<IReadOnlyList<KitchenTicketV1>> GetActiveTicketsAsync(
@@ -431,6 +442,18 @@ public sealed class KitchenOperationsStore
         return ToDto(delivery);
     }
 
+    /// <summary>
+    /// V1-RMD-339 (independent 2026-09-26 audit, orta seviye bulgu): this used to call
+    /// <c>delivery.ApproveReprint(...)</c> and <c>_deliveries.SaveAsync(...)</c> directly - the
+    /// exact same domain transition <see cref="IPhysicalPrintRecoveryService.ApproveOperatorReprintAsync"/>
+    /// already existed to do, just duplicated here. Worse: nothing anywhere ever called
+    /// <see cref="IPhysicalPrintRecoveryService.ExecuteApprovedReprintAsync"/>, so a manager's
+    /// approval moved the delivery to ReprintApproved and then dead-ended there forever - no
+    /// code path ever actually sent the reprint to the printer. Approval and execution now
+    /// happen together: a transport failure marks the delivery back to Unknown (the domain's
+    /// own self-healing transition, see PhysicalPrintDelivery.MarkReprintUnknown) so a manager
+    /// can simply approve again once the printer is reachable, rather than getting stuck.
+    /// </summary>
     public async Task<PhysicalPrintDeliveryV1> ApproveReprintAsync(
         Guid deliveryId,
         ReprintDecisionV1 request,
@@ -441,11 +464,30 @@ public sealed class KitchenOperationsStore
         EnsureId(operatorId, nameof(operatorId));
         ArgumentNullException.ThrowIfNull(request);
         var reason = RequireText(request.Reason, 500, nameof(request.Reason));
-        var delivery = await _deliveries.GetByIdAsync(deliveryId, cancellationToken)
-            ?? throw new KitchenOperationsNotFoundException("Physical print delivery was not found.");
-        var approved = delivery.ApproveReprint(operatorId.ToString("D"), reason, DateTimeOffset.UtcNow);
-        await _deliveries.SaveAsync(approved, cancellationToken);
-        return ToDto(approved);
+        PhysicalPrintDelivery approved;
+        try
+        {
+            approved = await _recovery.ApproveOperatorReprintAsync(
+                deliveryId, operatorId.ToString("D"), reason, cancellationToken);
+        }
+        catch (InvalidOperationException exception)
+        {
+            throw new KitchenOperationsNotFoundException("Physical print delivery was not found.", exception);
+        }
+
+        var printer = await _printers.GetByIdAsync(approved.PrinterId, cancellationToken)
+            ?? throw new PrinterUnreachableException($"Printer '{approved.PrinterId}' is no longer configured.");
+
+        var executed = await _recovery.ExecuteApprovedReprintAsync(
+            deliveryId,
+            async payload =>
+            {
+                await _printerTransport.SendAsync(
+                    printer.IpAddress ?? string.Empty, printer.Port ?? 0, payload, cancellationToken);
+                return true;
+            },
+            cancellationToken);
+        return ToDto(executed);
     }
 
     public async Task<PhysicalPrintDeliveryV1> RejectReprintAsync(
@@ -458,10 +500,17 @@ public sealed class KitchenOperationsStore
         EnsureId(operatorId, nameof(operatorId));
         ArgumentNullException.ThrowIfNull(request);
         var reason = RequireText(request.Reason, 500, nameof(request.Reason));
-        var delivery = await _deliveries.GetByIdAsync(deliveryId, cancellationToken)
-            ?? throw new KitchenOperationsNotFoundException("Physical print delivery was not found.");
-        var rejected = delivery.RejectReprint(operatorId.ToString("D"), reason, DateTimeOffset.UtcNow);
-        await _deliveries.SaveAsync(rejected, cancellationToken);
+        PhysicalPrintDelivery rejected;
+        try
+        {
+            rejected = await _recovery.RejectOperatorReprintAsync(
+                deliveryId, operatorId.ToString("D"), reason, cancellationToken);
+        }
+        catch (InvalidOperationException exception)
+        {
+            throw new KitchenOperationsNotFoundException("Physical print delivery was not found.", exception);
+        }
+
         return ToDto(rejected);
     }
 
